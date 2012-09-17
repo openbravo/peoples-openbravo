@@ -20,8 +20,6 @@ import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.dao.TransactionsDao;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
-import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.core.TriggerHandler;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.financialmgmt.gl.GLItem;
@@ -34,60 +32,50 @@ public class CashCloseProcessor {
 
   public JSONObject processCashClose(JSONArray cashCloseInfo) throws JSONException {
 
-    OBContext.setAdminMode(true);
-    TriggerHandler.getInstance().disable();
-    try {
-      for (int i = 0; i < cashCloseInfo.length(); i++) {
-        JSONObject cashCloseObj = cashCloseInfo.getJSONObject(i);
+    for (int i = 0; i < cashCloseInfo.length(); i++) {
+      JSONObject cashCloseObj = cashCloseInfo.getJSONObject(i);
 
-        BigDecimal difference = new BigDecimal(cashCloseObj.getString("difference"));
-        String paymentTypeId = cashCloseObj.getString("paymentTypeId");
-        OBPOSAppPayment paymentType = OBDal.getInstance().get(OBPOSAppPayment.class, paymentTypeId);
+      BigDecimal difference = new BigDecimal(cashCloseObj.getString("difference"));
+      String paymentTypeId = cashCloseObj.getString("paymentTypeId");
+      OBPOSAppPayment paymentType = OBDal.getInstance().get(OBPOSAppPayment.class, paymentTypeId);
 
-        OBPOSApplications posTerminal = paymentType.getObposApplications();
+      OBPOSApplications posTerminal = paymentType.getObposApplications();
 
-        FIN_Reconciliation reconciliation = createReconciliation(cashCloseObj, posTerminal,
-            paymentType.getFinancialAccount());
+      FIN_Reconciliation reconciliation = createReconciliation(cashCloseObj, posTerminal,
+          paymentType.getFinancialAccount());
 
-        FIN_FinaccTransaction diffTransaction = null;
-        if (!difference.equals(BigDecimal.ZERO)) {
-          diffTransaction = createDifferenceTransaction(posTerminal, reconciliation, paymentType,
-              difference);
-          OBDal.getInstance().save(diffTransaction);
-        }
-        OBDal.getInstance().save(reconciliation);
+      FIN_FinaccTransaction diffTransaction = null;
+      if (!difference.equals(BigDecimal.ZERO)) {
+        diffTransaction = createDifferenceTransaction(posTerminal, reconciliation, paymentType,
+            difference);
+        OBDal.getInstance().save(diffTransaction);
+      }
+      OBDal.getInstance().save(reconciliation);
 
-        if (paymentType.getPaymentMethod().isAutomatemovementtoother()) {
-          BigDecimal reconciliationTotal = BigDecimal.valueOf(cashCloseObj.getDouble("expected"))
-              .add(difference);
-          BigDecimal amountToKeep = BigDecimal.valueOf(cashCloseObj.getJSONObject("paymentMethod")
-              .getDouble("amountToKeep"));
-          reconciliationTotal = reconciliationTotal.subtract(amountToKeep);
+      if (paymentType.getPaymentMethod().isAutomatemovementtoother()) {
+        BigDecimal reconciliationTotal = BigDecimal.valueOf(cashCloseObj.getDouble("expected"))
+            .add(difference);
+        BigDecimal amountToKeep = BigDecimal.valueOf(cashCloseObj.getJSONObject("paymentMethod")
+            .getDouble("amountToKeep"));
+        reconciliationTotal = reconciliationTotal.subtract(amountToKeep);
 
-          FIN_FinaccTransaction paymentTransaction = createTotalTransferTransactionPayment(
-              posTerminal, reconciliation, paymentType, reconciliationTotal);
+        FIN_FinaccTransaction paymentTransaction = createTotalTransferTransactionPayment(
+            posTerminal, reconciliation, paymentType, reconciliationTotal);
 
-          OBDal.getInstance().save(paymentTransaction);
+        OBDal.getInstance().save(paymentTransaction);
 
-          FIN_FinaccTransaction depositTransaction = createTotalTransferTransactionDeposit(
-              posTerminal, reconciliation, paymentType, reconciliationTotal);
+        FIN_FinaccTransaction depositTransaction = createTotalTransferTransactionDeposit(
+            posTerminal, reconciliation, paymentType, reconciliationTotal);
 
-          OBDal.getInstance().save(depositTransaction);
-
-        }
-
-        associateTransactions(paymentType, reconciliation);
+        OBDal.getInstance().save(depositTransaction);
 
       }
-      OBDal.getInstance().flush();
-      OBDal.getInstance().commitAndClose();
-    } finally {
-      OBDal.getInstance().rollbackAndClose();
-      OBContext.restorePreviousMode();
-      if (TriggerHandler.getInstance().isDisabled()) {
-        TriggerHandler.getInstance().enable();
-      }
+
+      associateTransactions(paymentType, reconciliation);
+
     }
+    OBDal.getInstance().flush();
+    OBDal.getInstance().commitAndClose();
 
     JSONObject result = new JSONObject();
     result.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);

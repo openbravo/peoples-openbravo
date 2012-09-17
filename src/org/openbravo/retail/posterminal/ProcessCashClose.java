@@ -15,6 +15,7 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.core.TriggerHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.service.json.JsonConstants;
 
@@ -24,7 +25,7 @@ public class ProcessCashClose extends JSONProcessSimple {
 
   @Override
   public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {
-    OBContext.setAdminMode();
+    OBContext.setAdminMode(true);
     JSONObject jsonResponse = new JSONObject();
     JSONObject jsonData = new JSONObject();
     try {
@@ -45,7 +46,11 @@ public class ProcessCashClose extends JSONProcessSimple {
       jsonResponse.put(JsonConstants.RESPONSE_DATA, jsonData);
       return jsonResponse;
     } finally {
+      OBDal.getInstance().rollbackAndClose();
       OBContext.restorePreviousMode();
+      if (TriggerHandler.getInstance().isDisabled()) {
+        TriggerHandler.getInstance().enable();
+      }
     }
   }
 }

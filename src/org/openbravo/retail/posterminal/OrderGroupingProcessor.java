@@ -83,90 +83,84 @@ public class OrderGroupingProcessor {
     long taxLineNo = 0;
     TriggerHandler.getInstance().disable();
     OBContext.setAdminMode(true);
-    try {
-      while (orderLines.next()) {
-        long t = System.currentTimeMillis();
-        OrderLine orderLine = (OrderLine) orderLines.get(0);
-        log.debug("Line id:" + orderLine.getId());
-        String bpId = (String) DalUtil.getId(orderLine.getBusinessPartner());
-        if (bpId == null) {
-          bpId = (String) DalUtil.getId(orderLine.getSalesOrder().getBusinessPartner());
-        }
-        if (!bpId.equals(currentbpId)) {
-          // New business partner. We need to finish current invoice, and create a new one
-          finishInvoice(invoice, totalNetAmount, invoiceTaxes, paymentSchedule, origPaymentSchedule);
-          currentbpId = bpId;
-          currentBp = OBDal.getInstance().get(BusinessPartner.class, bpId);
-          invoice = createNewInvoice(posTerminal, currentBp, orderLine);
-          paymentSchedule = createNewPaymentSchedule(invoice);
-          origPaymentSchedule = createOriginalPaymentSchedule(invoice, paymentSchedule);
-          invoiceTaxes = new HashMap<String, InvoiceTax>();
-          totalNetAmount = BigDecimal.ZERO;
-          taxLineNo = 10;
-          OBDal.getInstance().save(invoice);
-          OBDal.getInstance().save(paymentSchedule);
-          OBDal.getInstance().save(origPaymentSchedule);
-          OBDal.getInstance().flush();
-        }
-        if (!processedOrders.contains((String) DalUtil.getId(orderLine.getSalesOrder()))) {
-          boolean success = processPaymentsFromOrder(invoice, orderLine.getSalesOrder(),
-              paymentSchedule, origPaymentSchedule);
-          if (!success) {
-            continue;
-          }
-          processedOrders.add((String) DalUtil.getId(orderLine.getSalesOrder()));
-          log.debug("processed payment");
-        }
 
-        InvoiceLine invoiceLine = createInvoiceLine(orderLine);
-        invoiceLine.setLineNo(lineno);
-        lineno += 10;
-        invoiceLine.setInvoice(invoice);
-        OBDal.getInstance().save(invoiceLine);
-        totalNetAmount = totalNetAmount.add(invoiceLine.getLineNetAmount());
-
-        List<InvoiceLineTax> lineTaxes = createInvoiceLineTaxes(orderLine);
-        for (InvoiceLineTax tax : lineTaxes) {
-          String taxId = (String) DalUtil.getId(tax.getTax());
-          InvoiceTax invoiceTax = null;
-          if (invoiceTaxes.containsKey(taxId)) {
-            invoiceTax = invoiceTaxes.get(taxId);
-          } else {
-            invoiceTax = OBProvider.getInstance().get(InvoiceTax.class);
-            invoiceTax.setTax(tax.getTax());
-            invoiceTax.setTaxableAmount(BigDecimal.ZERO);
-            invoiceTax.setTaxAmount(BigDecimal.ZERO);
-            invoiceTax.setLineNo(taxLineNo);
-            taxLineNo += 10;
-            invoiceTaxes.put(taxId, invoiceTax);
-          }
-          invoiceTax.setTaxableAmount(invoiceTax.getTaxableAmount().add(tax.getTaxableAmount()));
-          invoiceTax.setTaxAmount(invoiceTax.getTaxAmount().add(tax.getTaxAmount()));
-
-          tax.setInvoiceLine(invoiceLine);
-          tax.setInvoice(invoice);
-          invoiceLine.getInvoiceLineTaxList().add(tax);
-          invoice.getInvoiceLineTaxList().add(tax);
-          OBDal.getInstance().save(tax);
-          invoiceLine.setTaxableAmount(invoiceLine.getTaxableAmount() == null ? BigDecimal.ZERO
-              : invoiceLine.getTaxableAmount().add(tax.getTaxableAmount()));
-        }
-        log.debug("Line time: " + (System.currentTimeMillis() - t));
-        if (lineno % 500 == 0) {
-          OBDal.getInstance().flush();
-          OBDal.getInstance().getSession().clear();
-        }
+    while (orderLines.next()) {
+      long t = System.currentTimeMillis();
+      OrderLine orderLine = (OrderLine) orderLines.get(0);
+      log.debug("Line id:" + orderLine.getId());
+      String bpId = (String) DalUtil.getId(orderLine.getBusinessPartner());
+      if (bpId == null) {
+        bpId = (String) DalUtil.getId(orderLine.getSalesOrder().getBusinessPartner());
       }
-      finishInvoice(invoice, totalNetAmount, invoiceTaxes, paymentSchedule, origPaymentSchedule);
-      // The commit will be done in ProcessCashClose.java (flush), Transactional process.
-      // OBDal.getInstance().getConnection().commit();
-    } finally {
-      OBContext.restorePreviousMode();
-      OBDal.getInstance().rollbackAndClose();
-      if (TriggerHandler.getInstance().isDisabled()) {
-        TriggerHandler.getInstance().enable();
+      if (!bpId.equals(currentbpId)) {
+        // New business partner. We need to finish current invoice, and create a new one
+        finishInvoice(invoice, totalNetAmount, invoiceTaxes, paymentSchedule, origPaymentSchedule);
+        currentbpId = bpId;
+        currentBp = OBDal.getInstance().get(BusinessPartner.class, bpId);
+        invoice = createNewInvoice(posTerminal, currentBp, orderLine);
+        paymentSchedule = createNewPaymentSchedule(invoice);
+        origPaymentSchedule = createOriginalPaymentSchedule(invoice, paymentSchedule);
+        invoiceTaxes = new HashMap<String, InvoiceTax>();
+        totalNetAmount = BigDecimal.ZERO;
+        taxLineNo = 10;
+        OBDal.getInstance().save(invoice);
+        OBDal.getInstance().save(paymentSchedule);
+        OBDal.getInstance().save(origPaymentSchedule);
+        OBDal.getInstance().flush();
+      }
+      if (!processedOrders.contains((String) DalUtil.getId(orderLine.getSalesOrder()))) {
+        boolean success = processPaymentsFromOrder(invoice, orderLine.getSalesOrder(),
+            paymentSchedule, origPaymentSchedule);
+        if (!success) {
+          continue;
+        }
+        processedOrders.add((String) DalUtil.getId(orderLine.getSalesOrder()));
+        log.debug("processed payment");
+      }
+
+      InvoiceLine invoiceLine = createInvoiceLine(orderLine);
+      invoiceLine.setLineNo(lineno);
+      lineno += 10;
+      invoiceLine.setInvoice(invoice);
+      OBDal.getInstance().save(invoiceLine);
+      totalNetAmount = totalNetAmount.add(invoiceLine.getLineNetAmount());
+
+      List<InvoiceLineTax> lineTaxes = createInvoiceLineTaxes(orderLine);
+      for (InvoiceLineTax tax : lineTaxes) {
+        String taxId = (String) DalUtil.getId(tax.getTax());
+        InvoiceTax invoiceTax = null;
+        if (invoiceTaxes.containsKey(taxId)) {
+          invoiceTax = invoiceTaxes.get(taxId);
+        } else {
+          invoiceTax = OBProvider.getInstance().get(InvoiceTax.class);
+          invoiceTax.setTax(tax.getTax());
+          invoiceTax.setTaxableAmount(BigDecimal.ZERO);
+          invoiceTax.setTaxAmount(BigDecimal.ZERO);
+          invoiceTax.setLineNo(taxLineNo);
+          taxLineNo += 10;
+          invoiceTaxes.put(taxId, invoiceTax);
+        }
+        invoiceTax.setTaxableAmount(invoiceTax.getTaxableAmount().add(tax.getTaxableAmount()));
+        invoiceTax.setTaxAmount(invoiceTax.getTaxAmount().add(tax.getTaxAmount()));
+
+        tax.setInvoiceLine(invoiceLine);
+        tax.setInvoice(invoice);
+        invoiceLine.getInvoiceLineTaxList().add(tax);
+        invoice.getInvoiceLineTaxList().add(tax);
+        OBDal.getInstance().save(tax);
+        invoiceLine.setTaxableAmount(invoiceLine.getTaxableAmount() == null ? BigDecimal.ZERO
+            : invoiceLine.getTaxableAmount().add(tax.getTaxableAmount()));
+      }
+      log.debug("Line time: " + (System.currentTimeMillis() - t));
+      if (lineno % 500 == 0) {
+        OBDal.getInstance().flush();
+        OBDal.getInstance().getSession().clear();
       }
     }
+    finishInvoice(invoice, totalNetAmount, invoiceTaxes, paymentSchedule, origPaymentSchedule);
+    // The commit will be done in ProcessCashClose.java (flush), Transactional process.
+    // OBDal.getInstance().getConnection().commit();
+
     log.info("Total time: " + (System.currentTimeMillis() - t1));
     JSONObject jsonResponse = new JSONObject();
     jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
