@@ -67,7 +67,7 @@ isc.OBListItem.addProperties({
     // if the user has entered with the keyboard the exact content of a list option,
     // its callout would not be called because the change would not be detected
     // see issue https://issues.openbravo.com/view.php?id=21491
-    this._value = '';
+    this._value = (this.value) ? this._value.concat(Math.random()) : Math.random();
     this.Super('pickValue', arguments);
     delete this._pickedValue;
     if (this.moveFocusOnPickValue && this.form.focusInNextItem) {
