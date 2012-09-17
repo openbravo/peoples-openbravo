@@ -25,14 +25,14 @@ enyo.kind({
     this.model.load();
   },
   statics: {
-    initChildren: function(view) {
+    initChildren: function(view, model) {
       if (!view || !view.getComponents) {
         return;
       }
       enyo.forEach(view.getComponents(), function(child) {
-        OB.UI.WindowView.initChildren(child);
+        OB.UI.WindowView.initChildren(child, model);
         if (child.init) {
-          child.init();
+          child.init(model);
         }
       });
     },
@@ -57,8 +57,26 @@ enyo.kind({
     }
   },
   init: function() {
+    //Modularity
+    //Add new dialogs
+    var customDialogsContainerName = this.name + "_customDialogsContainer", view = this;
+    this.createComponent({
+      name: customDialogsContainerName,
+      initComponents: function(){
+        if(OB.Customizations){
+          if (OB.Customizations[this.parent.name]){
+            if(OB.Customizations[this.parent.name].dialogs){
+              enyo.forEach(OB.Customizations[this.parent.name].dialogs, function(dialog, component) {
+                this.createComponent(dialog);
+              },this);
+            }
+          }
+        }
+      }
+    });
+
     // Calling init in sub components
-    OB.UI.WindowView.initChildren(this);
+    OB.UI.WindowView.initChildren(this, this.model);
     //    enyo.forEach(this.getComponents(), function(component) {
     //      if (component.init) {
     //        component.init();
