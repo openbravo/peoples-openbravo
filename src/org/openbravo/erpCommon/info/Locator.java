@@ -69,7 +69,11 @@ public class Locator extends HttpSecureAppServlet {
       strWarehouse = strWarehouse + "%";
       vars.setSessionValue("Locator.name", strName);
       vars.setSessionValue("Locator.warehousename", strWarehouse);
-      printPage(response, vars, strName, strWarehouse);
+      String strOrg = vars.getGlobalVariable("inpadOrgId", "Locator.adorgid", "");
+      if ("".equals(strOrg) || strOrg == null) {
+        strOrg = vars.getStringParameter("paramOrgTree");
+      }
+      printPage(response, vars, strName, strWarehouse, strOrg);
     } else if (vars.commandIn("KEY")) {
       removePageSessionVariables(vars);
       String strKeyValue = vars.getRequestGlobalVariable("inpNameValue", "Locator.name");
@@ -84,7 +88,10 @@ public class Locator extends HttpSecureAppServlet {
       strKeyValue = strKeyValue + "%";
       vars.setSessionValue("Locator.name", strKeyValue);
       vars.setSessionValue("Locator.warehousename", LocatorData.selectname(this, strWarehouse));
-      String strOrg = vars.getStringParameter("inpAD_Org_ID");
+      String strOrg = vars.getStringParameter("inpadOrgId");
+      if ("".equals(strOrg) || strOrg == null) {
+        strOrg = vars.getStringParameter("paramOrgTree");
+      }
       LocatorData[] data = LocatorData.selectKey(this,
           Utility.getContext(this, vars, "#User_Client", "Locator"),
           Utility.getSelectorOrgs(this, vars, strOrg), LocatorData.selectname(this, strWarehouse),
@@ -92,7 +99,7 @@ public class Locator extends HttpSecureAppServlet {
       if (data != null && data.length == 1) {
         printPageKey(response, vars, data);
       } else
-        printPage(response, vars, strKeyValue, LocatorData.selectname(this, strWarehouse));
+        printPage(response, vars, strKeyValue, LocatorData.selectname(this, strWarehouse), strOrg);
     } else if (vars.commandIn("STRUCTURE")) {
       printGridStructure(response, vars);
     } else if (vars.commandIn("DATA")) {
@@ -109,7 +116,10 @@ public class Locator extends HttpSecureAppServlet {
       String strPageSize = vars.getStringParameter("page_size");
       String strSortCols = vars.getInStringParameter("sort_cols", columnFilter);
       String strSortDirs = vars.getInStringParameter("sort_dirs", directionFilter);
-      String strOrg = vars.getGlobalVariable("inpAD_Org_ID", "Locator.adorgid", "");
+      String strOrg = vars.getGlobalVariable("inpadOrgId", "Locator.adorgid", "");
+      if ("".equals(strOrg) || strOrg == null) {
+        strOrg = vars.getStringParameter("paramOrgTree");
+      }
       printGridData(response, vars, strName, strWarehousename, strAisle, strBin, strLevel,
           strSortCols, strSortDirs, strOffset, strPageSize, strNewFilter, strOrg);
     } else
@@ -127,7 +137,8 @@ public class Locator extends HttpSecureAppServlet {
   }
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars,
-      String strNameValue, String strWarehousename) throws IOException, ServletException {
+      String strNameValue, String strWarehousename, String strOrg) throws IOException,
+      ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Frame 1 of Locators seeker");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/Locator")
@@ -137,6 +148,7 @@ public class Locator extends HttpSecureAppServlet {
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("warehouse", strWarehousename);
+    xmlDocument.setParameter("OrgTree", strOrg);
 
     xmlDocument.setParameter("grid", "20");
     xmlDocument.setParameter("grid_Offset", "");

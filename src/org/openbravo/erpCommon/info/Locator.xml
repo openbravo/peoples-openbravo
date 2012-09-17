@@ -22,6 +22,7 @@
 	<PARAMETER id="paramDirectory" name="directory" default=""/>
 	<PARAMETER id="paramLanguage" name="language" default=""/>
 	<PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
+    <PARAMETER id="paramOrgTree" name="OrgTree" attribute="value"/>
 
 	<PARAMETER id="fieldKey" name="key" attribute="value"/>
 	<PARAMETER id="paramWarehouse" name="warehouse" attribute="value"/>
