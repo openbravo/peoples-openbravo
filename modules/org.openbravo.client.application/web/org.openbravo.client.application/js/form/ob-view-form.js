@@ -1881,13 +1881,19 @@ OB.ViewFormProperties = {
     }
   },
 
+  isID: function (item) {
+    return item.type === '_id_13';
+  },
+
   allRequiredFieldsSet: function () {
     var i, item, length = this.getItems().length,
         value, undef, nullValue = null;
     for (i = 0; i < length; i++) {
       item = this.getItems()[i];
       value = item.getValue();
-      if (this.isRequired(item) && value !== false && value !== 0 && !value) {
+      // Do no check ids, even though they are mandatory they are automatically set DAL before
+      // storing the record in the database. See issue https://issues.openbravo.com/view.php?id=21657
+      if (this.isRequired(item) && !this.isID(item) && value !== false && value !== 0 && !value) {
         return false;
       }
     }
