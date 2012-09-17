@@ -446,7 +446,7 @@ public class FormInitializationComponent extends BaseActionHandler {
         finalObject.put("dynamicCols", new JSONArray(changeEventCols));
       }
 
-      if (mode.equals("EDIT") && row != null) {
+      if ((mode.equals("EDIT") || mode.equals("CHANGE")) && row != null) {
         if ((row instanceof ClientEnabled && ((ClientEnabled) row).getClient() != null)) {
           final String rowClientId = ((ClientEnabled) row).getClient().getId();
           final String currentClientId = OBContext.getOBContext().getCurrentClient().getId();
