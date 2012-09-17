@@ -49,13 +49,15 @@
     });
   }
 
-  function servicePOST(source, dataparams, callback) {
+  function servicePOST(source, dataparams, callback, async) {
+    async = async || true;
     $.ajax({
       url: '../../org.openbravo.retail.posterminal.service.jsonrest/' + source,
       contentType: 'application/json;charset=utf-8',
+      async: async,
       dataType: 'json',
       type: 'POST',
-      data: JSON.stringify(dataparams),
+      data: JSON.stya estoyringify(dataparams),
       success: function(data, textStatus, jqXHR) {
         serviceSuccess(data, textStatus, jqXHR, callback);
       },
@@ -85,7 +87,7 @@
     this.source = source;
   };
 
-  OB.DS.Process.prototype.exec = function(params, callback) {
+  OB.DS.Process.prototype.exec = function(params, callback, async) {
     var attr;
     var data = {};
 
@@ -95,7 +97,7 @@
       }
     }
 
-    servicePOST(this.source, data, callback);
+    servicePOST(this.source, data, callback, async);
   };
 
   // Source object
