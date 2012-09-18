@@ -45,7 +45,7 @@
       return OB.I18N.formatCurrency(this.get('price'));
     },
 
-    printDiscount: function () {
+    printDiscount: function() {
       var d = OB.DEC.sub(this.get('priceList'), this.get('price'));
       if (OB.DEC.compare(d) === 0) {
         return '';
@@ -167,8 +167,7 @@
       undoCopy = this.get('undo');
       this.unset('undo');
       this.set('json', JSON.stringify(this.toJSON()));
-      OB.Dal.save(this, function(){
-      }, function() {
+      OB.Dal.save(this, function() {}, function() {
         window.console.error(arguments);
       });
       this.set('undo', undoCopy);
@@ -190,8 +189,15 @@
     },
 
     calculateGross: function() {
+      console.log('calculateGross');
       var gross = this.get('lines').reduce(function(memo, e) {
-        return OB.DEC.add(memo, e.getGross());
+        var grossLine = e.getGross();
+        if (e.get('discounts')) {
+          grossLine = e.get('discounts').reduce(function(memo, e) {
+            return OB.DEC.sub(memo, e.gross);
+          }, grossLine);
+        }
+        return OB.DEC.add(memo, grossLine);
       }, OB.DEC.Zero);
       this.set('gross', gross);
     },
@@ -424,6 +430,11 @@
       this.save();
     },
 
+    addDiscount: function(line, discounts) {
+      line.set('discounts', discounts);
+      this.save();
+    },
+
     createLine: function(p, units) {
       var me = this;
       var newline = new OrderLine({
@@ -625,8 +636,8 @@
 
     newOrder: function() {
       var order = new Order(),
-        me = this,
-        documentseq, documentseqstr;
+          me = this,
+          documentseq, documentseqstr;
 
       order.set('client', OB.POS.modelterminal.get('terminal').client);
       order.set('organization', OB.POS.modelterminal.get('terminal').organization);
@@ -663,14 +674,14 @@
     },
 
     deleteCurrent: function() {
-      function deleteCurrentFromDatabase (orderToDelete){
-        OB.Dal.remove(orderToDelete, function(){
+      function deleteCurrentFromDatabase(orderToDelete) {
+        OB.Dal.remove(orderToDelete, function() {
           return true;
-        }, function(){
+        }, function() {
           OB.UTIL.showError('Error removing');
         });
       }
-      
+
       if (this.current) {
         this.remove(this.current);
         if (this.length > 0) {

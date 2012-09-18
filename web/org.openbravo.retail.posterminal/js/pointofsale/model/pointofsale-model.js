@@ -74,6 +74,27 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
     }
   },
 
+  applyDiscounts: function(line) {
+    var discounts = [],
+        receipt = this.get('order');
+    if (line) {
+      // check which are the discounts to be applied
+      // 2x1 example
+      var i;
+      for (i = 0; i < Math.floor(line.get('qty') / 2); i++) {
+        discounts.push({
+          name: '2x1',
+          gross: line.get('priceList')
+        });
+      }
+      //--
+      
+      receipt.addDiscount(line, discounts);
+    } else {
+      // TODO: apply discounts for the whole ticket
+    }
+  },
+
   init: function() {
     var receipt = new OB.Model.Order(),
         discounts, ordersave, taxes, orderList, hwManager;
@@ -96,8 +117,17 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
         orderList.deleteCurrent();
       });
     }, this);
-    
+
     this.printReceipt = new OB.OBPOSPointOfSale.Print.Receipt(receipt);
     this.printLine = new OB.OBPOSPointOfSale.Print.ReceiptLine(receipt);
+
+    // Listening events that cause a discount recalculation
+    receipt.get('lines').on('add change:qty', function(line) {
+      this.applyDiscounts(line);
+    }, this);
+
+    receipt.on('change:bp', function(line) {
+      this.applyDiscounts();
+    }, this);
   }
 });
