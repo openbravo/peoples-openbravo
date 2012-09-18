@@ -50,7 +50,9 @@
   }
 
   function servicePOST(source, dataparams, callback, async) {
-    async = async || true;
+    if (async !== false){
+      async = true;
+    }
     $.ajax({
       url: '../../org.openbravo.retail.posterminal.service.jsonrest/' + source,
       contentType: 'application/json;charset=utf-8',
