@@ -58,8 +58,8 @@ public class DocMatchInv extends AcctServer {
     super(AD_Client_ID, AD_Org_ID, connectionProvider);
   }
 
-  public void loadObjectFieldProvider(ConnectionProvider conn, @SuppressWarnings("hiding")
-  String AD_Client_ID, String Id) throws ServletException {
+  public void loadObjectFieldProvider(ConnectionProvider conn,
+      @SuppressWarnings("hiding") String AD_Client_ID, String Id) throws ServletException {
     setObjectFieldProvider(DocMatchInvData.selectRegistro(conn, AD_Client_ID, Id));
   }
 
@@ -182,7 +182,6 @@ public class DocMatchInv extends AcctServer {
     // Expenses......................................................... Expenses in the Invoice
     // Invoice Price Variance........ Difference of cost and expenses
 
-    boolean changeSign = false;
     FieldProvider[] data = getObjectFieldProvider();
     MaterialTransaction transaction = getTransaction(Record_ID);
     Currency costCurrency = FinancialUtils.getLegalEntityCurrency(OBDal.getInstance().get(
@@ -210,25 +209,15 @@ public class DocMatchInv extends AcctServer {
 
     DocMatchInvData[] invoiceData = DocMatchInvData.selectInvoiceData(conn, vars.getClient(),
         data[0].getField("C_InvoiceLine_Id"));
-    String costCurrencyId = as.getC_Currency_ID();
-    OBContext.setAdminMode(false);
-    try {
-      costCurrencyId = OBDal.getInstance().get(Client.class, AD_Client_ID).getCurrency().getId();
-    } finally {
-      OBContext.restorePreviousMode();
-    }
 
     String strExpenses = invoiceData[0].linenetamt;
     String strInvoiceCurrency = invoiceData[0].cCurrencyId;
     String strDate = invoiceData[0].dateacct;
     String strReceiptDate = data[0].getField("ORDERDATEACCT");
-    strExpenses = getConvertedAmt(strExpenses, strInvoiceCurrency, costCurrencyId, strDate, "",
-        vars.getClient(), vars.getOrg(), conn);
     BigDecimal bdExpenses = new BigDecimal(strExpenses);
     if ((new BigDecimal(data[0].getField("QTYINVOICED")).signum() != (new BigDecimal(
         data[0].getField("MOVEMENTQTY"))).signum())
         && data[0].getField("InOutStatus").equals("VO")) {
-      changeSign = true;
       bdExpenses = bdExpenses.multiply(new BigDecimal(-1));
     }
 
@@ -244,10 +233,10 @@ public class DocMatchInv extends AcctServer {
     }
 
     dr = fact.createLine(docLine, getAccount(AcctServer.ACCTTYPE_NotInvoicedReceipts, as, conn),
-        costCurrency.getId(), bdCost.toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-        DocumentType, conn);
+        as.m_C_Currency_ID, bdCost.toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
+        conn);
     bdExpenses = new BigDecimal(getConvertedAmt(bdExpenses.toString(), strInvoiceCurrency,
-        costCurrency.getId(), strDate, "", vars.getClient(), vars.getOrg(), conn));
+        as.m_C_Currency_ID, strDate, "", vars.getClient(), vars.getOrg(), conn));
     BigDecimal bdDifference = bdExpenses.subtract(bdCost);
 
     if (dr == null) {
@@ -256,38 +245,28 @@ public class DocMatchInv extends AcctServer {
       return null;
     }
     ProductInfo p = new ProductInfo(data[0].getField("M_Product_Id"), conn);
-    for (DocLine docLineInvoice : p_lines) {
-      String strAmount = "";
-      if (strInvoiceCurrency != costCurrencyId) {
-        strAmount = getConvertedAmt((changeSign) ? new BigDecimal(docLineInvoice.getAmount())
-            .multiply(new BigDecimal(-1)).toString() : docLineInvoice.getAmount(),
-            strInvoiceCurrency, costCurrencyId, strDate, "", vars.getClient(), vars.getOrg(), conn);
-      } else {
-        strAmount = (changeSign) ? new BigDecimal(docLineInvoice.getAmount()).multiply(
-            new BigDecimal(-1)).toString() : docLineInvoice.getAmount();
-      }
 
-      cr = fact.createLine(docLineInvoice, p.getAccount(ProductInfo.ACCTTYPE_P_Expense, as, conn),
-          costCurrencyId, "0", strAmount, Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
-      if (cr == null && ZERO.compareTo(new BigDecimal(strAmount)) != 0) {
-        log4j.warn("createFact - unable to calculate line with "
-            + " expenses to product expenses account.");
-        return null;
-      }
-      // Set Locations
-      FactLine[] fLines = fact.getLines();
-      for (int i = 0; fLines != null && i < fLines.length; i++) {
-        if (fLines[i] != null) {
-          fLines[i].setLocationFromBPartner(C_BPartner_Location_ID, true, conn); // from Loc
-          fLines[i].setLocationFromOrg(fLines[i].getAD_Org_ID(conn), false, conn); // to Loc
-        }
-      }
-      updateProductInfo(as.getC_AcctSchema_ID(), conn, con); // only API
+    cr = fact.createLine(p_lines[0], p.getAccount(ProductInfo.ACCTTYPE_P_Expense, as, conn),
+        as.m_C_Currency_ID, "0", bdExpenses.toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+        DocumentType, conn);
+    if (cr == null && ZERO.compareTo(bdExpenses) != 0) {
+      log4j.warn("createFact - unable to calculate line with "
+          + " expenses to product expenses account.");
+      return null;
     }
+    // Set Locations
+    FactLine[] fLines = fact.getLines();
+    for (int i = 0; fLines != null && i < fLines.length; i++) {
+      if (fLines[i] != null) {
+        fLines[i].setLocationFromBPartner(C_BPartner_Location_ID, true, conn); // from Loc
+        fLines[i].setLocationFromOrg(fLines[i].getAD_Org_ID(conn), false, conn); // to Loc
+      }
+    }
+    updateProductInfo(as.getC_AcctSchema_ID(), conn, con); // only API
 
     if (bdCost.compareTo(bdExpenses) != 0) {
       diff = fact.createLine(docLine, p.getAccount(ProductInfo.ACCTTYPE_P_IPV, as, conn),
-          costCurrency.getId(), (bdDifference.compareTo(BigDecimal.ZERO) == 1) ? bdDifference.abs()
+          as.m_C_Currency_ID, (bdDifference.compareTo(BigDecimal.ZERO) == 1) ? bdDifference.abs()
               .toString() : "0", (bdDifference.compareTo(BigDecimal.ZERO) < 1) ? bdDifference.abs()
               .toString() : "0", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
       if (diff == null) {
