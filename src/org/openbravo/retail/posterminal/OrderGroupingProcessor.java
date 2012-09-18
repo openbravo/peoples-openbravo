@@ -74,6 +74,8 @@ public class OrderGroupingProcessor {
     Invoice invoice = null;
     FIN_PaymentSchedule paymentSchedule = null;
     Fin_OrigPaymentSchedule origPaymentSchedule = null;
+    String currentOrderId = "";
+    Order currentOrder = null;
     String currentbpId = "";
     BusinessPartner currentBp = null;
     HashMap<String, InvoiceTax> invoiceTaxes = null;
@@ -88,11 +90,30 @@ public class OrderGroupingProcessor {
       long t = System.currentTimeMillis();
       OrderLine orderLine = (OrderLine) orderLines.get(0);
       log.debug("Line id:" + orderLine.getId());
+
+      String orderId = (String) DalUtil.getId(orderLine.getSalesOrder());
+      if (!orderId.equals(currentOrderId) && !posTerminal.getObposTerminaltype().isGroupingOrders()) {
+        // New Order. We need to finish current invoice, and create a new one
+        finishInvoice(invoice, totalNetAmount, invoiceTaxes, paymentSchedule, origPaymentSchedule);
+        currentOrderId = orderId;
+        currentOrder = OBDal.getInstance().get(Order.class, orderId);
+        invoice = createNewInvoice(posTerminal, currentOrder, orderLine);
+        paymentSchedule = createNewPaymentSchedule(invoice);
+        origPaymentSchedule = createOriginalPaymentSchedule(invoice, paymentSchedule);
+        invoiceTaxes = new HashMap<String, InvoiceTax>();
+        totalNetAmount = BigDecimal.ZERO;
+        taxLineNo = 10;
+        OBDal.getInstance().save(invoice);
+        OBDal.getInstance().save(paymentSchedule);
+        OBDal.getInstance().save(origPaymentSchedule);
+        OBDal.getInstance().flush();
+      }
+
       String bpId = (String) DalUtil.getId(orderLine.getBusinessPartner());
       if (bpId == null) {
         bpId = (String) DalUtil.getId(orderLine.getSalesOrder().getBusinessPartner());
       }
-      if (!bpId.equals(currentbpId)) {
+      if (!bpId.equals(currentbpId) && posTerminal.getObposTerminaltype().isGroupingOrders()) {
         // New business partner. We need to finish current invoice, and create a new one
         finishInvoice(invoice, totalNetAmount, invoiceTaxes, paymentSchedule, origPaymentSchedule);
         currentbpId = bpId;
@@ -315,6 +336,33 @@ public class OrderGroupingProcessor {
     invoice.setProcessed(true);
     invoice.setPaymentMethod(bp.getPaymentMethod());
     invoice.setPaymentTerms(bp.getPaymentTerms());
+    invoice.setDocumentType(terminal.getObposTerminaltype().getDocumentType()
+        .getDocumentTypeForInvoice());
+    invoice.setTransactionDocument(terminal.getObposTerminaltype().getDocumentType()
+        .getDocumentTypeForInvoice());
+    invoice.setAccountingDate(new Date());
+    invoice.setInvoiceDate(new Date());
+    invoice.setPriceList(firstLine.getSalesOrder().getPriceList());
+    return invoice;
+  }
+
+  protected Invoice createNewInvoice(OBPOSApplications terminal, Order order, OrderLine firstLine) {
+    Invoice invoice = OBProvider.getInstance().get(Invoice.class);
+    invoice.setBusinessPartner(order.getBusinessPartner());
+    if (order.getBusinessPartner().getBusinessPartnerLocationList().size() == 0) {
+      throw new OBException("No addresses defined for the business partner "
+          + order.getBusinessPartner().getName());
+    }
+    invoice.setPartnerAddress(order.getBusinessPartner().getBusinessPartnerLocationList().get(0));
+    invoice.setCurrency(firstLine.getCurrency());
+    invoice.setDocumentNo(null);
+    invoice.setSalesTransaction(true);
+    invoice.setDocumentStatus("CO");
+    invoice.setDocumentAction("RE");
+    invoice.setAPRMProcessinvoice("RE");
+    invoice.setProcessed(true);
+    invoice.setPaymentMethod(order.getBusinessPartner().getPaymentMethod());
+    invoice.setPaymentTerms(order.getBusinessPartner().getPaymentTerms());
     invoice.setDocumentType(terminal.getObposTerminaltype().getDocumentType()
         .getDocumentTypeForInvoice());
     invoice.setTransactionDocument(terminal.getObposTerminaltype().getDocumentType()
