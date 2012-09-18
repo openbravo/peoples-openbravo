@@ -2141,7 +2141,7 @@
 <!--313-->  <AD_REF_LIST_ID><![CDATA[313]]></AD_REF_LIST_ID>
 <!--313-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--313-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--313-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--313-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--313-->  <VALUE><![CDATA[C+]]></VALUE>
 <!--313-->  <NAME><![CDATA[Customer Returns]]></NAME>
 <!--313-->  <AD_REFERENCE_ID><![CDATA[189]]></AD_REFERENCE_ID>
@@ -2163,7 +2163,7 @@
 <!--315-->  <AD_REF_LIST_ID><![CDATA[315]]></AD_REF_LIST_ID>
 <!--315-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--315-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--315-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--315-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--315-->  <VALUE><![CDATA[V-]]></VALUE>
 <!--315-->  <NAME><![CDATA[Vendor Returns]]></NAME>
 <!--315-->  <AD_REFERENCE_ID><![CDATA[189]]></AD_REFERENCE_ID>
