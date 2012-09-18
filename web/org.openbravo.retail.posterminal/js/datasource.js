@@ -57,7 +57,7 @@
       async: async,
       dataType: 'json',
       type: 'POST',
-      data: JSON.stya estoyringify(dataparams),
+      data: JSON.stringify(dataparams),
       success: function(data, textStatus, jqXHR) {
         serviceSuccess(data, textStatus, jqXHR, callback);
       },
