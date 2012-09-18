@@ -708,7 +708,7 @@ OB.Model.Terminal = Backbone.Model.extend({
 
   triggerReady: function() {
     var undef;
-    if (this.get('payments') && this.get('pricelistversion') && this.get('currency') && this.get('context') && this.get('permissions') && this.get('documentsequence') && this.get('windowRegistered')!== undef) {
+    if (this.get('payments') && this.get('pricelistversion') && this.get('currency') && this.get('context') && this.get('permissions') && (this.get('documentsequence')!==undef || this.get('documentsequence')===0) && this.get('windowRegistered')!== undef) {
       if (OB.POS.modelterminal.get('connectedToERP')) {
         //In online mode, we save the terminal information in the local db
         this.usermodel.set('terminalinfo', JSON.stringify(this));
