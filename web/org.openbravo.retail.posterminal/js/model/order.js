@@ -589,6 +589,8 @@
       if (jsonorder.orderType === 1) {
         jsonorder.gross = -jsonorder.gross;
         jsonorder.change = -jsonorder.change;
+        jsonorder.payment = -jsonorder.payment;
+        jsonorder.net = -jsonorder.net;
         _.forEach(jsonorder.lines, function(item) {
           item.gross = -item.gross;
           item.net = -item.net;

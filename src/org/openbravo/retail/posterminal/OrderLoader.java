@@ -626,7 +626,8 @@ public class OrderLoader {
       paymentSchedule.setOrder(order);
       paymentSchedule.setFinPaymentmethod(order.getBusinessPartner().getPaymentMethod());
       paymentSchedule.setAmount(amt);
-      paymentSchedule.setOutstandingAmount(amt);
+      // Sept 2012 -> 0 because outstanding is not allowed in Openbravo Web POS
+      paymentSchedule.setOutstandingAmount(new BigDecimal(0));
       paymentSchedule.setDueDate(order.getOrderDate());
       if (ModelProvider.getInstance().getEntity(FIN_PaymentSchedule.class)
           .hasProperty("origDueDate")) {
