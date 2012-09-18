@@ -27,15 +27,19 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
+import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.model.sales.ConditionGoods;
+import org.openbravo.service.db.DbUtility;
 
 /**
  * 
@@ -66,6 +70,21 @@ public class RMInOutPickEditLines extends BaseProcessActionHandler {
 
     } catch (Exception e) {
       log.error(e.getMessage(), e);
+      VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
+
+      try {
+        jsonRequest = new JSONObject();
+        Throwable ex = DbUtility.getUnderlyingSQLException(e);
+        String message = OBMessageUtils.translateError(ex.getMessage()).getMessage();
+        JSONObject errorMessage = new JSONObject();
+        errorMessage.put("severity", "error");
+        errorMessage.put("text", message);
+        jsonRequest.put("message", errorMessage);
+
+      } catch (Exception e2) {
+        log.error(e.getMessage(), e2);
+        // do nothing, give up
+      }
     } finally {
       OBContext.restorePreviousMode();
     }
