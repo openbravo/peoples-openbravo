@@ -121,7 +121,11 @@
 
     if (db) {
       // websql
-      whereClause = getWhereClause(whereClause, propertyMap);
+      if (whereClause && whereClause._whereClause) {
+        whereClause.sql = ' '+whereClause._whereClause;
+      } else {
+    	whereClause = getWhereClause(whereClause, propertyMap);
+      }
       sql = sql + whereClause.sql;
       params = whereClause.params;
 
