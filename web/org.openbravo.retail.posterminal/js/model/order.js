@@ -162,7 +162,7 @@
     save: function() {
       var undoCopy;
       if (this.attributes.json) {
-        delete this.attributes.json; // BINGO!!!
+        delete this.attributes.json; // Needed to avoid recursive inclusions of itself !!!
       }
       undoCopy = this.get('undo');
       this.unset('undo');
