@@ -195,11 +195,15 @@ isc.OBPickAndExecuteView.addProperties({
     }
   },
 
-  closeClick: function (refresh, message) {
+  closeClick: function (refresh, message, responseActions) {
     var window = this.parentWindow;
 
     if (message) {
       window.view.messageBar.setMessage(message.severity, message.text);
+    }
+
+    if (responseActions) {
+      OB.Utilities.Action.executeJSON(responseActions);
     }
 
     if (refresh) {
@@ -344,7 +348,7 @@ isc.OBPickAndExecuteView.addProperties({
       processId: this.processId,
       windowId: this.windowId
     }, function (rpcResponse, data, rpcRequest) {
-      view.closeClick(true, (data && data.message));
+      view.closeClick(true, (data && data.message), (data && data.responseActions));
     });
   }
 });
