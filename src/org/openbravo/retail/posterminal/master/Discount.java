@@ -23,7 +23,7 @@ public class Discount extends ProcessHQLQuery {
   protected String getQuery(JSONObject jsonsent) throws JSONException {
 
     String hql = "from PricingAdjustment where active = true ";
-
+    // TODO: prefilter by organization, price list and expired rules
     return hql;
   }
 }

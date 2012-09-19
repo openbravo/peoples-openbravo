@@ -1,4 +1,6 @@
 OB.Model.Discounts = {
+  discountRules: {},
+  
   applyDiscounts: function(receipt, line) {
     var discounts = [], bpId = receipt.get('bp').id, productId;
     console.log('applyDiscounts',receipt);
@@ -14,12 +16,13 @@ OB.Model.Discounts = {
       OB.Dal.find(OB.Model.Discount, criteria, function(d) { //OB.Dal.find success
         console.log('ds', d);
         d.forEach(function(disc) {
-          discounts.push({
-            name: disc.get('name'),
-            gross: line.get('priceList')
-          });
+          var rule = OB.Model.Discounts.discountRules['test'], ds;
+          if (rule){ // TODO: check this based on actual rule
+        	  ds = rule(disc, receipt, line);
+        	  discounts = discounts.concat(ds);
+          }
         });
-        receipt.addDiscount(line, discounts);
+        receipt.setDiscounts(line, discounts);
       }, function() {});
 
 
@@ -29,8 +32,12 @@ OB.Model.Discounts = {
     }
   },
   
+  registerRule: function(name, implementation) {
+	this.discountRules[name] = implementation;  
+  },
+  
   standardFilter: "WHERE date('now') BETWEEN DATEFROM AND COALESCE(date(DATETO), date('9999-12-31'))"
-      +" AND((BPARTNER_SELECTION = 'Y'  "
+     +" AND((BPARTNER_SELECTION = 'Y'  "
  	 +" AND NOT EXISTS"
  	 +" (SELECT 1"
  	 +" FROM M_OFFER_BPARTNER"
@@ -96,5 +103,26 @@ OB.Model.Discounts = {
  	 +" )))"
 };
 
+
+OB.Model.Discounts.registerRule('test', function(discountRule, receipt, line){
+	var discounts = [], minQuantity, totalDiscount, withoutDisc, discounted;
+	console.log(arguments);
+	if (!line) {
+	  return; // applying just to lines
+	}
+	
+	minQty = discountRule.get('minQuantity') || 0;
+	
+    if (line.get('qty')>=minQty) {
+    	totalDiscount = (line.get('qty')-minQty+1)*(line.get('priceList') * discountRule.get('discount')/100);
+		discounts.push({
+	        name: discountRule.get('name'),
+	        gross: totalDiscount
+	      });
+    }
+	
+	return discounts;
+ }
+);
 
 

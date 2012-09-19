@@ -430,7 +430,7 @@
       this.save();
     },
 
-    addDiscount: function(line, discounts) {
+    setDiscounts: function(line, discounts) {
       line.set('discounts', discounts);
       this.save();
     },
