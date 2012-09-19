@@ -2,13 +2,12 @@ OB.Model.Discounts = {
   discountRules: {},
   
   applyDiscounts: function(receipt, line) {
-    var discounts = [], bpId = receipt.get('bp').id, productId;
+    var discounts = [], alerts=[], bpId = receipt.get('bp').id, productId, criteria;
     console.log('applyDiscounts',receipt);
     if (line) {
       productId = line.get('product').id;
       // check which are the discounts to be applied
-      // 2x1 example
-      var
+
       criteria = {
         '_whereClause': this.standardFilter,
         params: [bpId, bpId, bpId, bpId, productId, productId, productId, productId]
@@ -19,17 +18,25 @@ OB.Model.Discounts = {
           var rule = OB.Model.Discounts.discountRules['test'], ds;
           if (rule){ // TODO: check this based on actual rule
         	  ds = rule(disc, receipt, line);
-        	  discounts = discounts.concat(ds);
+        	  if (ds && ds.discounts) {
+        	    discounts = discounts.concat(ds.discounts);
+        	  }
+        	  if (ds && ds.alerts) {
+        		  alerts = alerts.concat(ds.alerts);
+        	  }
           }
         });
         receipt.setDiscounts(line, discounts);
+        if (alerts && alerts[0]) {
+      	  OB.UTIL.showAlert.display(alerts[0]);
+        }
       }, function() {});
 
 
-      //--
     } else {
       // TODO: apply discounts for the whole ticket
     }
+    
   },
   
   registerRule: function(name, implementation) {
@@ -105,23 +112,26 @@ OB.Model.Discounts = {
 
 
 OB.Model.Discounts.registerRule('test', function(discountRule, receipt, line){
-	var discounts = [], minQuantity, totalDiscount, withoutDisc, discounted;
+	var discounts = [], alerts = [], minQuantity, totalDiscount, withoutDisc, discounted, qty;
 	console.log(arguments);
 	if (!line) {
 	  return; // applying just to lines
 	}
 	
+	qty = line.get('qty');
 	minQty = discountRule.get('minQuantity') || 0;
 	
-    if (line.get('qty')>=minQty) {
+    if (qty>=minQty) {
     	totalDiscount = (line.get('qty')-minQty+1)*(line.get('priceList') * discountRule.get('discount')/100);
 		discounts.push({
 	        name: discountRule.get('name'),
 	        gross: totalDiscount
 	      });
+    } else if (qty === minQty-1) {
+    	alerts.push('Next '+line.get('product').get('_identifier')+' is '+discountRule.get('discount')+'% off');
     }
 	
-	return discounts;
+	return {discounts: discounts, alerts: alerts};
  }
 );
 
