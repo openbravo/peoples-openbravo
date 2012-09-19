@@ -6089,7 +6089,7 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1042-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1042-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1042-->  <COLUMNNAME><![CDATA[P_Asset_Acct]]></COLUMNNAME>
-<!--1042-->  <NAME><![CDATA[Fixed Asset]]></NAME>
+<!--1042-->  <NAME><![CDATA[Product Asset]]></NAME>
 <!--1042-->  <PRINTNAME><![CDATA[Product Asset]]></PRINTNAME>
 <!--1042-->  <DESCRIPTION><![CDATA[A tangible asset used for business without expectation of sale in the coming fiscal year.]]></DESCRIPTION>
 <!--1042-->  <HELP><![CDATA[The Product Asset Account indicates the account used for valuing this a product in inventory.]]></HELP>
@@ -11037,8 +11037,8 @@ If selected, this column will be used in the Search Window as an available filte
 <!--2003-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--2003-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--2003-->  <COLUMNNAME><![CDATA[NetDay]]></COLUMNNAME>
-<!--2003-->  <NAME><![CDATA[Overdue Payment Day Rule]]></NAME>
-<!--2003-->  <PRINTNAME><![CDATA[Net Day]]></PRINTNAME>
+<!--2003-->  <NAME><![CDATA[Fixed Week Day]]></NAME>
+<!--2003-->  <PRINTNAME><![CDATA[Fixed Week Day]]></PRINTNAME>
 <!--2003-->  <DESCRIPTION><![CDATA[A plan to give until a specific day after the agreed payment term to pay without penalty.]]></DESCRIPTION>
 <!--2003-->  <HELP><![CDATA[When defined, overwrites the number of net days with the relative number of days to the day defined.]]></HELP>
 <!--2003-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
