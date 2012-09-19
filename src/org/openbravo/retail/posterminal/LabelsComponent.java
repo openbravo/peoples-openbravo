@@ -90,7 +90,7 @@ public class LabelsComponent extends BaseTemplateComponent {
       List<ModuleDependency> list) {
     for (ModuleDependency depModule : list) {
       if (depModule.getDependentModule().equals(module)
-          && !moduleList.contains(depModule.getDependentModule())) {
+          && !moduleList.contains(depModule.getModule())) {
         moduleList.add(depModule.getModule());
         getDependantModules(depModule.getModule(), moduleList, list);
       }
