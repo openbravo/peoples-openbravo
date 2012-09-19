@@ -468,12 +468,12 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
         // Amounts
         if (payment.isReceipt()) {
           glItem.put("glitemPaidOutAmt", psdGLItem.getAmount().signum() < 0 ? psdGLItem.getAmount()
-              : BigDecimal.ZERO);
+              .abs() : BigDecimal.ZERO);
           glItem.put("glitemReceivedInAmt",
               psdGLItem.getAmount().signum() > 0 ? psdGLItem.getAmount() : BigDecimal.ZERO);
         } else {
-          glItem.put("glitemReceivedInAmt",
-              psdGLItem.getAmount().signum() < 0 ? psdGLItem.getAmount() : BigDecimal.ZERO);
+          glItem.put("glitemReceivedInAmt", psdGLItem.getAmount().signum() < 0 ? psdGLItem
+              .getAmount().abs() : BigDecimal.ZERO);
           glItem.put("glitemPaidOutAmt", psdGLItem.getAmount().signum() > 0 ? psdGLItem.getAmount()
               : BigDecimal.ZERO);
         }
