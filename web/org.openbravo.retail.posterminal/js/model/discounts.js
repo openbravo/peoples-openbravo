@@ -27,6 +27,7 @@ OB.Model.Discounts = {
           }
         });
         receipt.setDiscounts(line, discounts);
+        receipt.calculateGross();
         if (alerts && alerts[0]) {
       	  OB.UTIL.showAlert.display(alerts[0]);
         }
