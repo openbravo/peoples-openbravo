@@ -15,7 +15,7 @@ OB.OBPOSPointOfSale.UI = OB.OBPOSPointOfSale.UI || {};
 
 //Window model
 OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
-  models: [OB.Model.TaxRate, OB.Model.Product, OB.Model.ProductPrice, OB.Model.ProductCategory, OB.Model.BusinessPartner, OB.Model.Order, OB.Model.DocumentSequence],
+  models: [OB.Model.TaxRate, OB.Model.Product, OB.Model.ProductPrice, OB.Model.ProductCategory, OB.Model.BusinessPartner, OB.Model.Order, OB.Model.DocumentSequence, OB.Model.Discount, OB.Model.DiscountFilterProduct],
 
   loadUnpaidOrders: function() {
     // Shows a modal window with the orders pending to be paid
@@ -80,16 +80,25 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
     if (line) {
       // check which are the discounts to be applied
       // 2x1 example
-      var i;
-      for (i = 0; i < Math.floor(line.get('qty') / 2); i++) {
-        discounts.push({
-          name: '2x1',
-          gross: line.get('priceList')
+      var
+      criteria = {
+        '_sql': 'where exists (select 1 from m_offer_product p where m_offer.m_offer_id = p.m_offer_id and m_product_id = \'' + line.get('product').id + '\')'
+
+      };
+      OB.Dal.find(OB.Model.Discount, criteria, function(d) { //OB.Dal.find success
+        console.log('ds', d);
+        d.forEach(function(disc) {
+          discounts.push({
+            name: disc.get('name'),
+            gross: line.get('priceList')
+          });
         });
-      }
+        receipt.addDiscount(line, discounts);
+      }, function() {
+      });
+
+
       //--
-      
-      receipt.addDiscount(line, discounts);
     } else {
       // TODO: apply discounts for the whole ticket
     }
