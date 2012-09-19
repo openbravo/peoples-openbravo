@@ -15,7 +15,7 @@ OB.OBPOSPointOfSale.UI = OB.OBPOSPointOfSale.UI || {};
 
 //Window model
 OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
-  models: [OB.Model.TaxRate, OB.Model.Product, OB.Model.ProductPrice, OB.Model.ProductCategory, OB.Model.BusinessPartner, OB.Model.Order, OB.Model.DocumentSequence, OB.Model.Discount, OB.Model.DiscountFilterProduct],
+  models: [OB.Model.TaxRate, OB.Model.Product, OB.Model.ProductPrice, OB.Model.ProductCategory, OB.Model.BusinessPartner, OB.Model.Order, OB.Model.DocumentSequence, OB.Model.Discount, OB.Model.DiscountFilterBusinessPartner, OB.Model.DiscountFilterBusinessPartnerGroup, OB.Model.DiscountFilterPriceList, OB.Model.DiscountFilterProduct, OB.Model.DiscountFilterProductCategory],
 
   loadUnpaidOrders: function() {
     // Shows a modal window with the orders pending to be paid
@@ -74,36 +74,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
     }
   },
 
-  applyDiscounts: function(line) {
-    var discounts = [],
-        receipt = this.get('order');
-    if (line) {
-      // check which are the discounts to be applied
-      // 2x1 example
-      var
-      criteria = {
-        '_sql': 'where exists (select 1 from m_offer_product p where m_offer.m_offer_id = p.m_offer_id and m_product_id = \'' + line.get('product').id + '\')'
-
-      };
-      OB.Dal.find(OB.Model.Discount, criteria, function(d) { //OB.Dal.find success
-        console.log('ds', d);
-        d.forEach(function(disc) {
-          discounts.push({
-            name: disc.get('name'),
-            gross: line.get('priceList')
-          });
-        });
-        receipt.addDiscount(line, discounts);
-      }, function() {
-      });
-
-
-      //--
-    } else {
-      // TODO: apply discounts for the whole ticket
-    }
-  },
-
   init: function() {
     var receipt = new OB.Model.Order(),
         discounts, ordersave, taxes, orderList, hwManager;
@@ -132,11 +102,11 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
 
     // Listening events that cause a discount recalculation
     receipt.get('lines').on('add change:qty', function(line) {
-      this.applyDiscounts(line);
+      OB.Model.Discounts.applyDiscounts(receipt, line);
     }, this);
 
     receipt.on('change:bp', function(line) {
-      this.applyDiscounts();
+      OB.Model.Discounts.applyDiscounts(receipt);
     }, this);
   }
 });

@@ -147,8 +147,12 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         // Core resources
         "../../org.openbravo.client.application/js/utilities/ob-utilities-number",
         "../../org.openbravo.client.application/js/utilities/ob-utilities-date",
+
         // Payment providers
-        "components/mockpayments" };
+        "components/mockpayments",
+
+        // Discounts
+        "model/discounts" };
 
     for (String resource : resourceDependency) {
       globalResources.add(createComponentResource(ComponentResourceType.Static, prefix + resource
