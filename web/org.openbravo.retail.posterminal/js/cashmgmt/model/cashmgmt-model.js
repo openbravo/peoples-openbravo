@@ -117,7 +117,9 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
           OB.UTIL.showLoading(false);
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorDropDep'));
         } else {
-          me.printCashMgmt.print(me.depsdropstosend.toJSON());
+          if (OB.POS.modelterminal.hasPermission('OBPOS_print.cashmanagement')) {
+            me.printCashMgmt.print(me.depsdropstosend.toJSON());
+          }
           OB.POS.navigate('retail.pointofsale');
         }
       });
