@@ -224,15 +224,12 @@
     END IF;
         -- Process Shipments
   
-      SELECT COUNT(*)
-        INTO v_Count
-      FROM M_INOUT IO, M_INOUTLINE IOL
-      WHERE IO.M_INOUT_ID = IOL.M_INOUT_ID
-        AND AD_ISORGINCLUDED(IOL.AD_Org_ID, IO.AD_Org_ID, IO.AD_Client_ID) <> -1
-        AND IO.M_INOUT_ID = v_Record_ID;
-      IF (v_Count=0) THEN
-        RAISE_APPLICATION_ERROR(-20000, '@NotCorrectOrgLines@') ;
-      END IF;
+     -- Set org lines like the header
+       UPDATE M_INOUTLINE
+        SET AD_ORG_ID = (SELECT AD_ORG_ID FROM M_INOUT WHERE M_INOUT_ID = v_Record_ID),
+        Updated=now(),
+        UpdatedBy=v_User
+      WHERE M_INOUT_ID = v_Record_ID;
       
       -- Check the header belongs to a organization where transactions are posible and ready to use
       SELECT AD_Org.IsReady, Ad_OrgType.IsTransactionsAllowed
