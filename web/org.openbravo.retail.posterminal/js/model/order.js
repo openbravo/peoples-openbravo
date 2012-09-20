@@ -473,19 +473,25 @@
     },
 
     setOrderTypeReturn: function() {
-      this.set('documentType', OB.POS.modelterminal.get('terminal').documentTypeForReturns);
-      this.set('orderType', 1); // 0: Sales order, 1: Return order
-      this.save();
+      if (OB.POS.modelterminal.hasPermission('OBPOS_receipt.return')) {
+        this.set('documentType', OB.POS.modelterminal.get('terminal').documentTypeForReturns);
+        this.set('orderType', 1); // 0: Sales order, 1: Return order
+        this.save();
+      }
     },
 
     setOrderInvoice: function() {
-      this.set('generateInvoice', true);
-      this.save();
+      if (OB.POS.modelterminal.hasPermission('OBPOS_receipt.invoice')) {
+        this.set('generateInvoice', true);
+        this.save();
+      }
     },
 
     resetOrderInvoice: function() {
-      this.set('generateInvoice', false);
-      this.save();
+      if (OB.POS.modelterminal.hasPermission('OBPOS_receipt.invoice')) {
+        this.set('generateInvoice', false);
+        this.save();
+      }
     },
 
     adjustPayment: function() {

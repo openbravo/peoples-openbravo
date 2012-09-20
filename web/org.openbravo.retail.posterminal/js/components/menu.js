@@ -53,6 +53,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.MenuReturn',
   kind: 'OB.UI.MenuAction',
+  permission: 'OBPOS_receipt.invoice',
   events: {
     onShowReturnText: ''
   },
@@ -65,6 +66,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.MenuInvoice',
   kind: 'OB.UI.MenuAction',
+  permission: 'OBPOS_receipt.invoice',
   events: {
     onReceiptToInvoice: ''
   },
