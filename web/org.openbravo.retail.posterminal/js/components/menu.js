@@ -75,6 +75,21 @@ enyo.kind({
 });
 
 enyo.kind({
+  name: 'OB.UI.MenuPrint',
+  kind: 'OB.UI.MenuAction',
+  permission: 'OBPOS_print.receipt',
+  events: {
+    onPrintReceipt: ''
+  },
+  label: OB.I18N.getLabel('OBPOS_LblPrintReceipt'),
+  tap: function() {
+    if (OB.POS.modelterminal.hasPermission(this.permisssion)) {
+      this.doPrintReceipt();
+    }
+  }
+});
+
+enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.StandardMenu',
   kind: 'OB.UI.ToolbarMenu',
   icon: 'btn-icon btn-icon-menu',
@@ -86,6 +101,9 @@ enyo.kind({
     });
     this.menuEntries.push({
       kind: 'OB.UI.MenuInvoice'
+    });
+    this.menuEntries.push({
+      kind: 'OB.UI.MenuPrint'
     });
 
     this.menuEntries.push({

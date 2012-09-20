@@ -13,7 +13,7 @@
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.LeftToolbarButton',
   tag: 'li',
-  classes: 'span3',
+  classes: 'span4',
   components: [{
     name: 'theButton',
     attributes: {
@@ -28,7 +28,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.LeftToolbar',
-  classes: 'span4',
+  classes: 'span3',
   components: [{
     tag: 'ul',
     classes: 'unstyled nav-pos row-fluid',
@@ -69,27 +69,12 @@ enyo.kind({
 });
 
 enyo.kind({
-  name: 'OB.UI.ButtonPrint',
-  kind: 'OB.UI.ToolbarButton',
-  icon: 'btn-icon btn-icon-print',
-  events: {
-    onPrintReceipt: ''
-  },  
-  tap: function() {
-    this.doPrintReceipt();
-  }
-});
-
-
-enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.LeftToolbarImpl',
   kind: 'OB.OBPOSPointOfSale.UI.LeftToolbar',
   buttons: [{
     kind: 'OB.UI.ButtonNew'
   }, {
     kind: 'OB.UI.ButtonDelete'
-  }, {
-    kind: 'OB.UI.ButtonPrint'
   }, {
     kind: 'OB.OBPOSPointOfSale.UI.StandardMenu'
   }]

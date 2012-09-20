@@ -24,7 +24,7 @@ public class RolePreferences implements JSONProcess {
         new Pref("OBPOS_order.discount", false), new Pref("OBPOS_payment.cash", true),
         new Pref("OBPOS_payment.voucher", true), new Pref("OBPOS_payment.card", true),
         new Pref("OBPOS_retail.pointofsale", true), new Pref("OBPOS_retail.cashup", false),
-        new Pref("OBPOS_retail.cashmanagement", false) });
+        new Pref("OBPOS_retail.cashmanagement", false), new Pref("OBPOS_print.receipt", false) });
   }
 
 
