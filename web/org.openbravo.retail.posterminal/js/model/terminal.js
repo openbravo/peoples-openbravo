@@ -141,9 +141,10 @@ OB.Model.Terminal = Backbone.Model.extend({
           } else if (data[0]) {
             me.set('terminal', data[0]);
             if(!me.usermodel){
-              OB.POS.modelterminal.setUserModelOnline();
+              OB.POS.modelterminal.setUserModelOnline(true);
+            }else{
+              me.trigger('terminal.loaded');
             }
-            me.trigger('terminal.loaded');
           } else {
             OB.UTIL.showError("Terminal does not exists: " + params.terminal);
           }
@@ -321,8 +322,6 @@ OB.Model.Terminal = Backbone.Model.extend({
         //          baseUrl = window.location.pathname.substring(0, pos);
         //          window.location = baseUrl + OB.POS.hrefWindow(OB.POS.paramWindow);
 
-        OB.Dal.initCache(OB.Model.User, [], null, null);
-        OB.Dal.initCache(OB.Model.Session, [], null, null);
         OB.POS.modelterminal.set('orgUserId', data.userId);
         me.setUserModelOnline();
         
@@ -360,8 +359,11 @@ OB.Model.Terminal = Backbone.Model.extend({
     }   
   }, 
   
-  setUserModelOnline: function() {
+  setUserModelOnline: function(triggerTerminalLoaded) {
 	  var me = this;
+      var trigger = triggerTerminalLoaded;
+      OB.Dal.initCache(OB.Model.User, [], null, null);
+      OB.Dal.initCache(OB.Model.Session, [], null, null);
 	  OB.Dal.find(OB.Model.User, {'name': me.user},
       function(users) {
         var user, session, date;
@@ -376,6 +378,9 @@ OB.Model.Terminal = Backbone.Model.extend({
             window.console.error(arguments);
           });
           me.usermodel = user;
+          if(trigger){
+            me.trigger('terminal.loaded');
+          }
         }else{
           user = users.models[0];
           me.usermodel = user;
@@ -388,6 +393,7 @@ OB.Model.Terminal = Backbone.Model.extend({
         me.updateSession(user);
       }, 
       function() {
+        window.console.error(arguments);
       }
     );
   },
