@@ -412,10 +412,16 @@
         RAISE_APPLICATION_ERROR(-20000, '@NotCorrectOrgDoctypeOrder@') ;
       END IF;
 
-      -- Set org lines like the headear
-      UPDATE C_ORDERLINE
-      SET AD_ORG_ID = (SELECT AD_ORG_ID FROM C_ORDER WHERE C_ORDER_ID = v_Record_ID)
-      WHERE C_ORDER_ID = v_Record_ID;
+      SELECT COUNT(*)
+        INTO v_Count
+      FROM C_ORDER C, C_ORDERLINE OL
+      WHERE C.C_ORDER_ID = OL.C_ORDER_ID
+        AND AD_ISORGINCLUDED(OL.AD_Org_ID, C.AD_Org_ID, C.AD_Client_ID) <> -1
+        AND C.C_ORDER_ID = v_Record_ID;
+      IF (v_Count=0) THEN
+        RAISE_APPLICATION_ERROR(-20000, '@NotCorrectOrgLines@') ;
+      END IF;
+      
 
       /**
       * Close Order - prepare
@@ -1087,10 +1093,9 @@
       END; -- Calculate Tax and Totals
       -- Synchronize Client/Org Ownership
       UPDATE C_ORDERLINE
-      SET AD_Client_ID=v_Client_ID,
-          AD_Org_ID=v_Org_ID
+      SET AD_Client_ID=v_Client_ID
       WHERE C_Order_ID=v_Record_ID
-        AND (AD_Client_ID<>v_Client_ID OR AD_Org_ID<>v_Org_ID) ;
+        AND (AD_Client_ID<>v_Client_ID) ;
 
     /**************************************************************************
      * Order Complete:5 - Something to do:6

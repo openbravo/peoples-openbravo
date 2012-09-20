@@ -1576,9 +1576,9 @@ public class CreateFrom extends HttpSecureAppServlet {
             BigDecimal taxAmt = ((lineNetAmt.multiply(taxRate)).divide(new BigDecimal("100"), 12,
                 BigDecimal.ROUND_HALF_EVEN)).setScale(curPrecision, BigDecimal.ROUND_HALF_UP);
             try {
-              final String strOrg2 = vars.getGlobalVariable("inpadOrgId", "CreateFrom|adOrgId", "");
+              //final String strOrg2 = vars.getGlobalVariable("inpadOrgId", "CreateFrom|adOrgId", "");
               CreateFromInvoiceData.insert(conn, this, strSequence, strKey, vars.getClient(),
-                  strOrg2, vars.getUser(), data[i].cOrderlineId, data[i].mInoutlineId,
+            		  data[i].adOrgId, vars.getUser(), data[i].cOrderlineId, data[i].mInoutlineId,
                   data[i].description, data[i].mProductId, data[i].cUomId, data[i].id, priceList,
                   priceActual, priceLimit, lineNetAmt.toString(), C_Tax_ID, taxAmt.toPlainString(),
                   data[i].quantityorder, data[i].mProductUomId, data[i].mAttributesetinstanceId,
