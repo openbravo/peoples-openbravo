@@ -83,7 +83,7 @@ enyo.kind({
   },
   label: OB.I18N.getLabel('OBPOS_LblPrintReceipt'),
   tap: function() {
-    if (OB.POS.modelterminal.hasPermission(this.permisssion)) {
+    if (OB.POS.modelterminal.hasPermission(this.permission)) {
       this.doPrintReceipt();
     }
   }
