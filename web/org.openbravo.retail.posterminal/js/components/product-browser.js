@@ -47,7 +47,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.BrowseProducts',
-  style: 'overflow:auto; height: 612px; margin: 5px;',
+  style: 'margin: 5px;',
   components: [{
     style: 'background-color: #ffffff; color: black; padding: 5px',
     components: [{
@@ -58,17 +58,23 @@ enyo.kind({
 });
 
 enyo.kind({
+  name: 'OB.UI.CategoryListHeader',
+  style: 'padding: 10px; border-bottom: 1px solid #cccccc;',
+  components: [{
+    tag: 'h3',
+    name: 'title',
+    content: OB.I18N.getLabel('OBPOS_LblCategories') 
+  }],
+});
+
+enyo.kind({
   name: 'OB.UI.ListCategories',
   components: [{
-    style: 'padding: 10px; border-bottom: 1px solid #cccccc;',
-    components: [{
-      tag: 'h3',
-      content: OB.I18N.getLabel('OBPOS_LblCategories')
-    }]
-  }, {
     name: 'categoryTable',
+    scrollAreaMaxHeight: '540px',
     listStyle: 'list',
-    kind: 'OB.UI.Table',
+    kind: 'OB.UI.ScrollableTable',
+    renderHeader: 'OB.UI.CategoryListHeader',
     renderEmpty: 'OB.UI.RenderEmpty',
     renderLine: 'OB.UI.RenderCategory'
   }],
@@ -94,20 +100,35 @@ enyo.kind({
   }
 });
 
+//This header is set dynamically
+//use setHeaderText method of scrollableTable
+//me.$.productTable.setHeaderText(category.get('_identifier'));
+enyo.kind({
+  handlers: {
+    onChangeHeaderText: 'changeHeader'
+  },
+  name: 'OB.UI.ProductListHeader',
+  style: 'padding: 10px; border-bottom: 1px solid #cccccc;',
+  components: [{
+    tag: 'h3',
+    name: 'title'
+  }],
+  changeHeader: function(inSender, valueToSet){
+    this.$.title.setContent(valueToSet);
+    return true;
+  }
+});
+
 enyo.kind({
   name: 'OB.UI.ListProducts',
   events: {
     onAddProduct: ''
   },
   components: [{
-    style: 'padding: 10px; border-bottom: 1px solid #cccccc;',
-    components: [{
-      tag: 'h3',
-      name: 'title'
-    }]
-  }, {
-    kind: 'OB.UI.Table',
+    kind: 'OB.UI.ScrollableTable',
     name: 'productTable',
+    scrollAreaMaxHeight: '540px',
+    renderHeader: 'OB.UI.ProductListHeader',
     renderEmpty: 'OB.UI.RenderEmpty',
     renderLine: 'OB.UI.RenderProduct'
   }],
@@ -115,12 +136,11 @@ enyo.kind({
     this.inherited(arguments);
     this.products = new OB.Collection.ProductList();
     this.$.productTable.setCollection(this.products);
-
-    this.products.on('click', function(model) {
-      this.doAddProduct({
-        product: model
-      });
-    }, this);
+        this.products.on('click', function(model) {
+          this.doAddProduct({
+            product: model
+          });
+        }, this);
   },
 
   loadCategory: function(category) {
@@ -167,7 +187,9 @@ enyo.kind({
       } else {
         me.products.reset();
       }
-      me.$.title.setContent(category.get('_identifier'));
+      debugger;
+//      TODO
+      me.$.productTable.setHeaderText(category.get('_identifier'));
     }
 
     if (category) {
