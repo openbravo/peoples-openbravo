@@ -321,7 +321,7 @@ enyo.kind({
   name: 'OB.UI.ScrollableTable',
   published: {
     collection: null,
-    headerText: null,
+    headerText: null
   },
   components: [{
     name: 'theader'

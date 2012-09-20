@@ -64,7 +64,7 @@ enyo.kind({
     tag: 'h3',
     name: 'title',
     content: OB.I18N.getLabel('OBPOS_LblCategories') 
-  }],
+  }]
 });
 
 enyo.kind({
@@ -187,7 +187,6 @@ enyo.kind({
       } else {
         me.products.reset();
       }
-      debugger;
 //      TODO
       me.$.productTable.setHeaderText(category.get('_identifier'));
     }
