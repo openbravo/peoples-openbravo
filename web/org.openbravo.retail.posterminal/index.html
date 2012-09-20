@@ -52,10 +52,11 @@
 <script src="js/utilitiesui.js"></script>
 <script src="js/i18n.js"></script>
 <script src="js/components/clock.js"></script>
-<script src="js/components/commonbuttons.js"></script>
 <script src="js/model/terminal.js"></script>
 <script src="js/components/terminal.js"></script>
 <script src="js/login/model/login-model.js"></script>
+  <script src="../../org.openbravo.client.kernel/OBPOS_Main/Labels"></script>
+<script src="js/components/commonbuttons.js"></script>
 <script src="js/login/view/login.js"></script>
   <script src="js/data/dal.js"></script>
 
@@ -65,15 +66,25 @@
   <script src="js/model/document-sequence.js"></script>
   <script src="js/model/user.js"></script>
   <script src="js/model/session.js"></script>
-  <script src="../../org.openbravo.client.kernel/OBPOS_Main/Labels"></script>
+  <script src="js/arithmetic.js"></script>
+  <script src="js/model/order.js"></script>
   <script>
     (function () {
+    	
   window.addEventListener('load', function(e) {
 
   window.applicationCache.addEventListener('updateready', function(e) {
     if (window.applicationCache.status == window.applicationCache.UPDATEREADY) {
-      window.applicationCache.swapCache();
-        window.location.reload();
+      OB.Dal.find(OB.Model.Order, {},
+        function(orders){
+    	  if(orders.models.length == 0){
+            //There are no pending orders, we can safely swap the cache
+            window.applicationCache.swapCache();
+            window.location.reload();
+    	  }else{
+            $('#DatabaseDialog').modal('show');
+    	  }
+        }, function(){window.console.error(arguments);});
     } else {
       // Manifest didn't change
     }
@@ -108,7 +119,8 @@
     (function () {
           
             OB.POS.terminal.renderInto(document.body);
-        
+
+
       var locationwarning = true;
       var focuskeeper = $('<input id="focuskeeper" style="position:fixed; top:-1000px; left:-1000px;" type="text"/>');
       $("body").append(focuskeeper);
