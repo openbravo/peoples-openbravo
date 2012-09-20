@@ -32,7 +32,6 @@ public class RolePreferences implements JSONProcess {
       List<String> preferenceList = new ArrayList<String>();
       for (org.openbravo.model.ad.domain.List listRef : refLists.list()) {
         preferenceList.add(listRef.getSearchKey());
-        System.out.println(listRef.getSearchKey());
       }
       // List of all permissions with its defaults in POS
       buildResponse(w, preferenceList);
