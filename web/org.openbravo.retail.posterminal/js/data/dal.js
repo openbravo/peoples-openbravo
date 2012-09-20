@@ -29,10 +29,10 @@
       return;
     }
     //Version of the database changed, we need to drop the tables so they can be created again
-    console.log('Updating database model. Tables will be dropped:')
+    console.log('Updating database model. Tables will be dropped:');
     for(model in OB.Model){
       if(OB.Model.hasOwnProperty(model)){
-    	modelObj = OB.Model[model];
+        modelObj = OB.Model[model];
         if(modelObj.prototype && modelObj.prototype.dropStatement){
           //There is a dropStatement, executing it
           dropTable(db, modelObj.prototype.dropStatement);
