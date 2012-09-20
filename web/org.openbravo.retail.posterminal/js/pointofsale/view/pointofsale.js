@@ -65,8 +65,8 @@ enyo.kind({
       var receipt = this.model.get('order');
       receipt.calculateTaxes(function() {
         receipt.trigger('print');
-      })
-    };
+      });
+    }
   },
   addNewOrder: function(inSender, inEvent) {
     this.model.get('orderList').addNewOrder();
