@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,6 +29,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
@@ -1005,251 +1006,262 @@ public class InitialSetupUtility {
     for (String strDefault : defaultAccts) {
       Client client = defaultElementValues.get(strDefault).getClient();
       Organization org = defaultElementValues.get(strDefault).getOrganization();
-      if (strDefault.equals("W_INVENTORY_ACCT"))
+      if (strDefault.equals("W_INVENTORY_ACCT")) {
         newAcctSchemaDefault.setWarehouseInventory(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
-
-      if (strDefault.equals("W_DIFFERENCES_ACCT"))
+      }
+      if (strDefault.equals("W_DIFFERENCES_ACCT")) {
         newAcctSchemaDefault.setWarehouseDifferences(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
-
-      if (strDefault.equals("W_REVALUATION_ACCT"))
+      }
+      if (strDefault.equals("W_REVALUATION_ACCT")) {
         newAcctSchemaDefault.setInventoryRevaluation(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
-
-      if (strDefault.equals("W_INVACTUALADJUST_ACCT"))
+      }
+      if (strDefault.equals("W_INVACTUALADJUST_ACCT")) {
         newAcctSchemaDefault.setInventoryAdjustment(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
-
-      if (strDefault.equals("P_REVENUE_ACCT"))
+      }
+      if (strDefault.equals("P_REVENUE_ACCT")) {
         newAcctSchemaDefault.setProductRevenue(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
-
-      if (strDefault.equals("P_EXPENSE_ACCT"))
+      }
+      if (strDefault.equals("P_REVENUE_RETURN_ACCT")) {
+        newAcctSchemaDefault.setProductRevenueReturn(getAcctComb(client, org,
+            defaultElementValues.get(strDefault), acctSchema, true));
+      }
+      if (strDefault.equals("P_EXPENSE_ACCT")) {
         newAcctSchemaDefault.setProductExpense(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
-
-      if (strDefault.equals("P_ASSET_ACCT"))
+      }
+      if (strDefault.equals("P_ASSET_ACCT")) {
         newAcctSchemaDefault.setFixedAsset(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
-
-      if (strDefault.equals("P_COGS_ACCT"))
+      }
+      if (strDefault.equals("P_COGS_ACCT")) {
         newAcctSchemaDefault.setProductCOGS(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
-
-      if (strDefault.equals("P_PURCHASEPRICEVARIANCE_ACCT"))
+      }
+      if (strDefault.equals("P_COGS_RETURN_ACCT")) {
+        newAcctSchemaDefault.setProductCOGSReturn(getAcctComb(client, org,
+            defaultElementValues.get(strDefault), acctSchema, true));
+      }
+      if (strDefault.equals("P_PURCHASEPRICEVARIANCE_ACCT")) {
         newAcctSchemaDefault.setPurchasePriceVariance(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
-
-      if (strDefault.equals("P_INVOICEPRICEVARIANCE_ACCT"))
+      }
+      if (strDefault.equals("P_INVOICEPRICEVARIANCE_ACCT")) {
         newAcctSchemaDefault.setInvoicePriceVariance(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
-
-      if (strDefault.equals("P_TRADEDISCOUNTREC_ACCT"))
+      }
+      if (strDefault.equals("P_TRADEDISCOUNTREC_ACCT")) {
         newAcctSchemaDefault.setTradeDiscountReceived(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
-
-      if (strDefault.equals("P_TRADEDISCOUNTGRANT_ACCT"))
+      }
+      if (strDefault.equals("P_TRADEDISCOUNTGRANT_ACCT")) {
         newAcctSchemaDefault.setTradeDiscountGranted(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
-
-      if (strDefault.equals("C_RECEIVABLE_ACCT"))
+      }
+      if (strDefault.equals("C_RECEIVABLE_ACCT")) {
         newAcctSchemaDefault.setCustomerReceivablesNo(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
-
-      if (strDefault.equals("C_PREPAYMENT_ACCT"))
+      }
+      if (strDefault.equals("C_PREPAYMENT_ACCT")) {
         newAcctSchemaDefault.setCustomerPrepayment(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
-
-      if (strDefault.equals("V_LIABILITY_ACCT"))
+      }
+      if (strDefault.equals("V_LIABILITY_ACCT")) {
         newAcctSchemaDefault.setVendorLiability(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
-
-      if (strDefault.equals("V_LIABILITY_SERVICES_ACCT"))
+      }
+      if (strDefault.equals("V_LIABILITY_SERVICES_ACCT")) {
         newAcctSchemaDefault.setVendorServiceLiability(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
-
-      if (strDefault.equals("V_PREPAYMENT_ACCT"))
+      }
+      if (strDefault.equals("V_PREPAYMENT_ACCT")) {
         newAcctSchemaDefault.setVendorPrepayment(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
-
-      if (strDefault.equals("PAYDISCOUNT_EXP_ACCT"))
+      }
+      if (strDefault.equals("PAYDISCOUNT_EXP_ACCT")) {
         newAcctSchemaDefault.setPaymentDiscountExpense(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
-
-      if (strDefault.equals("PAYDISCOUNT_REV_ACCT"))
+      }
+      if (strDefault.equals("PAYDISCOUNT_REV_ACCT")) {
         newAcctSchemaDefault.setPaymentDiscountRevenue(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
-
-      if (strDefault.equals("WRITEOFF_ACCT"))
+      }
+      if (strDefault.equals("WRITEOFF_ACCT")) {
         newAcctSchemaDefault.setWriteoff(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
-
-      if (strDefault.equals("WRITEOFF_REV_ACCT"))
+      }
+      if (strDefault.equals("WRITEOFF_REV_ACCT")) {
         newAcctSchemaDefault.setWriteoffRevenue(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
-
-      if (strDefault.equals("UNREALIZEDGAIN_ACCT"))
+      }
+      if (strDefault.equals("UNREALIZEDGAIN_ACCT")) {
         newAcctSchemaDefault.setUnrealizedGainsAcct(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
-
-      if (strDefault.equals("UNREALIZEDLOSS_ACCT"))
+      }
+      if (strDefault.equals("UNREALIZEDLOSS_ACCT")) {
         newAcctSchemaDefault.setUnrealizedLossesAcct(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
-
-      if (strDefault.equals("REALIZEDGAIN_ACCT"))
+      }
+      if (strDefault.equals("REALIZEDGAIN_ACCT")) {
         newAcctSchemaDefault.setRealizedGainAcct(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
-
-      if (strDefault.equals("REALIZEDLOSS_ACCT"))
+      }
+      if (strDefault.equals("REALIZEDLOSS_ACCT")) {
         newAcctSchemaDefault.setRealizedLossAcct(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
-
-      if (strDefault.equals("WITHHOLDING_ACCT"))
+      }
+      if (strDefault.equals("WITHHOLDING_ACCT")) {
         newAcctSchemaDefault.setWithholdingAccount(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
-
-      if (strDefault.equals("E_PREPAYMENT_ACCT"))
+      }
+      if (strDefault.equals("E_PREPAYMENT_ACCT")) {
         newAcctSchemaDefault.setEmployeePrepayments(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
-
-      if (strDefault.equals("E_EXPENSE_ACCT"))
+      }
+      if (strDefault.equals("E_EXPENSE_ACCT")) {
         newAcctSchemaDefault.setEmployeeExpenses(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
-
-      if (strDefault.equals("PJ_ASSET_ACCT"))
+      }
+      if (strDefault.equals("PJ_ASSET_ACCT")) {
         newAcctSchemaDefault.setProjectAsset(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
-
-      if (strDefault.equals("PJ_WIP_ACCT"))
+      }
+      if (strDefault.equals("PJ_WIP_ACCT")) {
         newAcctSchemaDefault.setWorkInProgress(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
-
-      if (strDefault.equals("T_EXPENSE_ACCT"))
+      }
+      if (strDefault.equals("T_EXPENSE_ACCT")) {
         newAcctSchemaDefault.setTaxExpense(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
-
-      if (strDefault.equals("T_LIABILITY_ACCT"))
+      }
+      if (strDefault.equals("T_LIABILITY_ACCT")) {
         newAcctSchemaDefault.setTaxLiability(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
-
-      if (strDefault.equals("T_RECEIVABLES_ACCT"))
+      }
+      if (strDefault.equals("T_RECEIVABLES_ACCT")) {
         newAcctSchemaDefault.setTaxReceivables(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
-
-      if (strDefault.equals("T_DUE_ACCT"))
+      }
+      if (strDefault.equals("T_DUE_ACCT")) {
         newAcctSchemaDefault.setTaxDue(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
-
-      if (strDefault.equals("T_CREDIT_ACCT"))
+      }
+      if (strDefault.equals("T_CREDIT_ACCT")) {
         newAcctSchemaDefault.setTaxCredit(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
-
-      if (strDefault.equals("B_INTRANSIT_ACCT"))
+      }
+      if (strDefault.equals("B_INTRANSIT_ACCT")) {
         newAcctSchemaDefault.setBankInTransit(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
-
-      if (strDefault.equals("B_ASSET_ACCT"))
+      }
+      if (strDefault.equals("B_ASSET_ACCT")) {
         newAcctSchemaDefault.setBankAsset(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
-
-      if (strDefault.equals("B_EXPENSE_ACCT"))
+      }
+      if (strDefault.equals("B_EXPENSE_ACCT")) {
         newAcctSchemaDefault.setBankExpense(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
-
-      if (strDefault.equals("B_INTERESTREV_ACCT"))
+      }
+      if (strDefault.equals("B_INTERESTREV_ACCT")) {
         newAcctSchemaDefault.setBankInterestRevenue(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
-
-      if (strDefault.equals("B_INTERESTEXP_ACCT"))
+      }
+      if (strDefault.equals("B_INTERESTEXP_ACCT")) {
         newAcctSchemaDefault.setBankInterestExpense(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
-
-      if (strDefault.equals("B_UNIDENTIFIED_ACCT"))
+      }
+      if (strDefault.equals("B_UNIDENTIFIED_ACCT")) {
         newAcctSchemaDefault.setBankUnidentifiedReceipts(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
-
-      if (strDefault.equals("B_SETTLEMENTGAIN_ACCT"))
+      }
+      if (strDefault.equals("B_SETTLEMENTGAIN_ACCT")) {
         newAcctSchemaDefault.setBankSettlementGain(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
-
-      if (strDefault.equals("B_SETTLEMENTLOSS_ACCT"))
+      }
+      if (strDefault.equals("B_SETTLEMENTLOSS_ACCT")) {
         newAcctSchemaDefault.setBankSettlementLoss(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
-
-      if (strDefault.equals("B_REVALUATIONGAIN_ACCT"))
+      }
+      if (strDefault.equals("B_REVALUATIONGAIN_ACCT")) {
         newAcctSchemaDefault.setBankRevaluationGain(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
-
-      if (strDefault.equals("B_REVALUATIONLOSS_ACCT"))
+      }
+      if (strDefault.equals("B_REVALUATIONLOSS_ACCT")) {
         newAcctSchemaDefault.setBankRevaluationLoss(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
-
-      if (strDefault.equals("B_PAYMENTSELECT_ACCT"))
+      }
+      if (strDefault.equals("B_PAYMENTSELECT_ACCT")) {
         newAcctSchemaDefault.setPaymentSelection(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
-
-      if (strDefault.equals("B_UNALLOCATEDCASH_ACCT"))
+      }
+      if (strDefault.equals("B_UNALLOCATEDCASH_ACCT")) {
         newAcctSchemaDefault.setUnallocatedCash(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
-
-      if (strDefault.equals("CH_EXPENSE_ACCT"))
+      }
+      if (strDefault.equals("CH_EXPENSE_ACCT")) {
         newAcctSchemaDefault.setChargeExpense(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
-
-      if (strDefault.equals("CH_REVENUE_ACCT"))
+      }
+      if (strDefault.equals("CH_REVENUE_ACCT")) {
         newAcctSchemaDefault.setChargeRevenue(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
-
-      if (strDefault.equals("UNEARNEDREVENUE_ACCT"))
+      }
+      if (strDefault.equals("UNEARNEDREVENUE_ACCT")) {
         newAcctSchemaDefault.setUnearnedRevenue(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
-
-      if (strDefault.equals("NOTINVOICEDRECEIVABLES_ACCT"))
+      }
+      if (strDefault.equals("NOTINVOICEDRECEIVABLES_ACCT")) {
         newAcctSchemaDefault.setNonInvoicedReceivables(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
-
-      if (strDefault.equals("NOTINVOICEDREVENUE_ACCT"))
+      }
+      if (strDefault.equals("NOTINVOICEDREVENUE_ACCT")) {
         newAcctSchemaDefault.setNonInvoicedRevenues(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
-
-      if (strDefault.equals("NOTINVOICEDRECEIPTS_ACCT"))
+      }
+      if (strDefault.equals("NOTINVOICEDRECEIPTS_ACCT")) {
         newAcctSchemaDefault.setNonInvoicedReceipts(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
-
-      if (strDefault.equals("CB_ASSET_ACCT"))
+      }
+      if (strDefault.equals("CB_ASSET_ACCT")) {
         newAcctSchemaDefault.setCashBookAsset(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
-
-      if (strDefault.equals("CB_CASHTRANSFER_ACCT"))
+      }
+      if (strDefault.equals("CB_CASHTRANSFER_ACCT")) {
         newAcctSchemaDefault.setCashTransfer(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
-
-      if (strDefault.equals("CB_DIFFERENCES_ACCT"))
+      }
+      if (strDefault.equals("CB_DIFFERENCES_ACCT")) {
         newAcctSchemaDefault.setCashBookDifferences(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
-
-      if (strDefault.equals("CB_RECEIPT_ACCT"))
+      }
+      if (strDefault.equals("CB_RECEIPT_ACCT")) {
         newAcctSchemaDefault.setCashBookReceipt(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
-
-      if (strDefault.equals("A_DEPRECIATION_ACCT"))
+      }
+      if (strDefault.equals("A_DEPRECIATION_ACCT")) {
         newAcctSchemaDefault.setDepreciation(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
-
-      if (strDefault.equals("A_ACCUMDEPRECIATION_ACCT"))
+      }
+      if (strDefault.equals("A_ACCUMDEPRECIATION_ACCT")) {
         newAcctSchemaDefault.setAccumulatedDepreciation(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
-
-      if (strDefault.equals("A_DISPOSAL_LOSS"))
+      }
+      if (strDefault.equals("A_DISPOSAL_LOSS")) {
         newAcctSchemaDefault.setDisposalLoss(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
-      if (strDefault.equals("A_DISPOSAL_GAIN"))
+      }
+      if (strDefault.equals("A_DISPOSAL_GAIN")) {
         newAcctSchemaDefault.setDisposalGain(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
-      if (strDefault.equals("CB_EXPENSE_ACCT"))
+      }
+      if (strDefault.equals("CB_EXPENSE_ACCT")) {
         newAcctSchemaDefault.setCashBookExpense(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
+      }
     }
 
     OBDal.getInstance().save(newAcctSchemaDefault);
@@ -1281,29 +1293,35 @@ public class InitialSetupUtility {
             defaultElementValues.get(strDefault), acctSchema, true));
         newAcctSchemaGL.setCurrencyBalancingUse(true);
       }
-      if (strDefault.equals("INTERCOMPANYDUEFROM_ACCT"))
+      if (strDefault.equals("INTERCOMPANYDUEFROM_ACCT")) {
         newAcctSchemaGL.setDueFromIntercompany(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
-      if (strDefault.equals("INTERCOMPANYDUETO_ACCT"))
+      }
+      if (strDefault.equals("INTERCOMPANYDUETO_ACCT")) {
         newAcctSchemaGL.setDueToIntercompany(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
-      if (strDefault.equals("INCOMESUMMARY_ACCT"))
+      }
+      if (strDefault.equals("INCOMESUMMARY_ACCT")) {
         newAcctSchemaGL.setIncomeSummary(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
-      if (strDefault.equals("PPVOFFSET_ACCT"))
+      }
+      if (strDefault.equals("PPVOFFSET_ACCT")) {
         newAcctSchemaGL.setPPVOffset(getAcctComb(client, org, defaultElementValues.get(strDefault),
             acctSchema, true));
-      if (strDefault.equals("RETAINEDEARNING_ACCT"))
+      }
+      if (strDefault.equals("RETAINEDEARNING_ACCT")) {
         newAcctSchemaGL.setRetainedEarning(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
+      }
       if (strDefault.equals("SUSPENSEBALANCING_ACCT")) {
         newAcctSchemaGL.setSuspenseBalancing(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
         newAcctSchemaGL.setSuspenseBalancingUse(true);
       }
-      if (strDefault.equals("SUSPENSEERROR_ACCT"))
+      if (strDefault.equals("SUSPENSEERROR_ACCT")) {
         newAcctSchemaGL.setSuspenseError(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
+      }
     }
 
     OBDal.getInstance().save(newAcctSchemaGL);
@@ -1474,6 +1492,9 @@ public class InitialSetupUtility {
     ImportResult myResult = null;
     String strSourcePath = OBPropertiesProvider.getInstance().getOpenbravoProperties()
         .getProperty("source.path");
+    if (strSourcePath == null || strSourcePath.equals("")) {
+      throw new OBException("@NoSourcePath@");
+    }
     String strPath = "";
     File datasetFile;
     OBContext.setAdminMode();
@@ -1646,6 +1667,7 @@ public class InitialSetupUtility {
       final OBCriteria<DataSet> obcDataSets = OBDal.getInstance().createCriteria(DataSet.class);
       obcDataSets.add(Restrictions.eq(DataSet.PROPERTY_MODULE, module));
       obcDataSets.add(Restrictions.in(DataSet.PROPERTY_DATAACCESSLEVEL, accessLevel));
+      obcDataSets.addOrder(Order.asc(DataSet.PROPERTY_NAME));
       if (obcDataSets.list().size() > 0) {
         return obcDataSets.list();
       } else {
@@ -1788,6 +1810,12 @@ public class InitialSetupUtility {
 
   public static Organization insertOrganization(String strOrgName, OrganizationType orgType,
       String strcLocationId, Client client) throws Exception {
+    return insertOrganization(strOrgName, orgType, strcLocationId, client, null);
+
+  }
+
+  public static Organization insertOrganization(String strOrgName, OrganizationType orgType,
+      String strcLocationId, Client client, Currency strCurrency) throws Exception {
     log4j.debug("InitialSetupUtility - insertOrganization() - name = " + strOrgName);
     OBContext.setAdminMode();
     try {
@@ -1796,6 +1824,7 @@ public class InitialSetupUtility {
       newOrg.setName(strOrgName);
       newOrg.setSearchKey(strOrgName);
       newOrg.setOrganizationType(orgType);
+      newOrg.setCurrency(strCurrency);
       OBDal.getInstance().save(newOrg);
       OBDal.getInstance().flush();
       return newOrg;

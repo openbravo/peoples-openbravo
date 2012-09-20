@@ -25,7 +25,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2008 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2012 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -108,7 +108,8 @@
           ol.DirectShip,
           ol.PriceStd,
           ol.m_attributesetinstance_id,
-          ol.taxbaseamt
+          ol.taxbaseamt,
+          ol.gross_unit_price
         FROM M_INOUT s, M_INOUTLINE sl
         RIGHT JOIN C_ORDERLINE ol
           ON sl.C_OrderLine_ID=ol.C_OrderLine_ID
@@ -207,25 +208,26 @@
           DBMS_OUTPUT.PUT_LINE('  C_Order_ID=' || v_C_Order_ID || ', BPartner_ID=' || v_BPartner_ID || ', AD_Org_ID=' || v_AD_Org_ID) ;
           -- For all Orders
           FOR Cur_Order IN
-            (SELECT *
+            (SELECT o.*, pl.istaxincluded as taxincludedpl
             FROM C_ORDER o  -- Specific InProgress Order
-            WHERE(C_Order_ID=v_C_Order_ID AND v_Selection = 'N'
+                  JOIN m_pricelist pl ON pl.m_pricelist_id = o.m_pricelist_id
+            WHERE(o.C_Order_ID=v_C_Order_ID AND v_Selection = 'N'
               AND o.DocStatus IN('IP', 'CO')) -- OR all completed and closed orders
               OR(v_C_Order_ID IS NULL AND v_Selection = 'N'
               AND o.DocStatus IN('CO', 'CL')
-              AND IsSOTrx='Y'  -- not for InvoiceSchedule
-              AND InvoiceRule<>'S'  -- of all or a specific business partner / organization
+              AND o.IsSOTrx='Y'  -- not for InvoiceSchedule
+              AND o.InvoiceRule<>'S'  -- of all or a specific business partner / organization
               AND(v_BPartner_ID IS NULL
-              OR C_BPartner_ID=v_BPartner_ID)
+              OR o.C_BPartner_ID=v_BPartner_ID)
               AND(v_InvoiceToDate IS NULL
-              OR DateOrdered<TRUNC(v_InvoiceToDate) +1)
+              OR o.DateOrdered<TRUNC(v_InvoiceToDate) +1)
               AND(v_AD_Org_ID IS NULL
-              OR AD_Org_ID=v_AD_Org_ID)) -- where there is something to invoice
+              OR o.AD_Org_ID=v_AD_Org_ID)) -- where there is something to invoice
               OR (v_Selection = 'Y'
      AND o.ISSELECTED = 'Y'
               AND o.DocStatus IN('CO', 'CL')
-              AND IsSOTrx='Y'  -- not for InvoiceSchedule
-              AND InvoiceRule NOT IN ('S','D')  -- of all or a specific business partner / organization
+              AND o.IsSOTrx='Y'  -- not for InvoiceSchedule
+              AND o.InvoiceRule NOT IN ('S','D')  -- of all or a specific business partner / organization
               )
      AND EXISTS
               (SELECT *
@@ -233,9 +235,9 @@
               WHERE o.C_Order_ID=l.C_Order_ID
                 AND l.QtyOrdered<>l.QtyInvoiced
               )
-            ORDER BY o.DateOrdered,PriorityRule,
-              C_BPartner_ID,
-              DocumentNo
+            ORDER BY o.DateOrdered,o.PriorityRule,
+              o.C_BPartner_ID,
+              o.DocumentNo
             )
           LOOP
             DBMS_OUTPUT.PUT_LINE('Order ' || Cur_Order.DocumentNo || ', ID=' || Cur_Order.C_Order_ID) ;
@@ -508,7 +510,8 @@
                         ChargeAmt, C_UOM_ID,
                         C_Tax_ID,  --MODIFIED BY F.IRIAZABAL
                         QuantityOrder, M_Product_Uom_ID, PriceStd,
-                        m_attributesetinstance_id, taxbaseamt
+                        m_attributesetinstance_id, taxbaseamt,
+                        gross_unit_price, line_gross_amount
                       )
                       VALUES
                       (
@@ -520,7 +523,8 @@
                         ptr_ol.ChargeAmt, ptr_ol.C_UOM_ID,
                         ptr_ol.C_Tax_ID,  --MODIFIED BY F.IRIAZABAL
                         v_QtyOrder, ptr_ol.M_Product_Uom_ID, ptr_ol.PriceStd,
-                        ptr_ol.m_attributesetinstance_id, ptr_ol.taxbaseamt
+                        ptr_ol.m_attributesetinstance_id, ptr_ol.taxbaseamt,
+                        ptr_ol.gross_unit_price, C_Currency_Round(v_Qty*ptr_ol.gross_unit_price, Cur_Order.C_Currency_ID, NULL)
                       )
                       ;
                   END IF;--Next_O_Line
@@ -558,7 +562,8 @@
                         ChargeAmt, C_UOM_ID,
                         C_Tax_ID,  --MODIFIED BY F.IRIAZABAL
                         QuantityOrder, M_Product_Uom_ID, PriceStd,
-                        m_attributesetinstance_id, taxbaseamt
+                        m_attributesetinstance_id, taxbaseamt,
+                        gross_unit_price, line_gross_amount
                       )
                       VALUES
                       (
@@ -570,7 +575,8 @@
                         ptr_sl.ChargeAmt, ptr_sl.C_UOM_ID,
                         ptr_sl.C_Tax_ID,  --MODIFIED BY F.IRIAZABAL
                         ptr_sl.QuantityOrder, ptr_sl.M_Product_Uom_ID, ptr_sl.PriceStd,
-                        ptr_sl.m_attributesetinstance_id, ptr_sl.taxbaseamt
+                        ptr_sl.m_attributesetinstance_id, ptr_sl.taxbaseamt,
+                        ptr_sl.gross_unit_price, C_Currency_Round(ptr_sl.MovementQty*ptr_sl.gross_unit_price, Cur_Order.C_Currency_ID, NULL)
                       )
                       ;
                   END IF;--Next_S_Line
@@ -641,6 +647,7 @@
             v_gUser2_ID VARCHAR2(32) ;
             v_description NVARCHAR2(120) ;
             v_isfinaldoctype CHAR(1) := 'N';
+            v_istaxincluded CHAR(1) := '0';
           BEGIN
             p_Invoice_ID:='-1';
             DBMS_OUTPUT.PUT_LINE('  BPartner_ID=' || v_BPartner_ID || ', AD_Org_ID=' || v_AD_Org_ID) ;
@@ -655,13 +662,13 @@
                   ELSE sh.DocumentNo
                 END
                 ) AS DocumentNo,
-                sh.Description,
-                sh.C_BPartner_ID,
+                coalesce(sh.Description, o.Description) as description,
+                coalesce(sh.C_BPartner_ID,o.c_bpartner_id) as c_bpartner_id,
                 o.BillTo_ID,
                 o.C_BPartner_Location_ID,
                 sh.AD_User_ID,
                 sh.DateOrdered,
-                sh.C_Order_ID,
+                coalesce(sh.C_Order_ID,o.C_Order_ID) as C_Order_ID,
                 o.SalesRep_ID,
                 COALESCE(o.C_PaymentTerm_ID, bp.C_PaymentTerm_ID) AS C_PaymentTerm_ID,
                 COALESCE(o.IsDiscountPrinted, bp.IsDiscountPrinted) AS IsDiscountPrinted,
@@ -700,12 +707,15 @@
                 COALESCE(ol.ChargeAmt, 0) AS Line_ChargeAmt,
                 sh.movementDate,
                 ol.PriceStd,
+                ol.gross_unit_price,
                 ol.m_attributesetinstance_id,
-                ol.taxbaseamt, o.fin_paymentmethod_id
+                ol.taxbaseamt, o.fin_paymentmethod_id,
+                pl.istaxincluded
               FROM M_INOUT sh,
                 M_INOUTLINE sl,
                 C_ORDER o,
                 C_ORDERLINE ol,
+                m_pricelist pl,
                 AD_ORGINFO ao,
                 C_BPARTNER bp
               LEFT JOIN
@@ -731,6 +741,7 @@
                 AND sh.C_BPartner_ID=bp.C_BPartner_ID
                 AND ol.C_Order_ID=o.C_Order_ID
                 AND sl.C_OrderLine_ID=ol.C_OrderLine_ID
+                AND o.m_pricelist_id = pl.m_pricelist_id
                 AND sh.AD_Org_ID=ao.AD_Org_ID  -- for all BPartners or a specific
                 AND(v_BPartner_ID IS NULL
                 OR sh.C_BPartner_ID=v_BPartner_ID) -- for all Organizations or a specific
@@ -751,7 +762,7 @@
                 OR(v_Selection<>'Y'
                 AND(si.DateLimit IS NULL
                 OR TRUNC(o.DateOrdered)<=si.DateLimit)) )
-              ORDER BY sh.C_BPartner_ID, (
+              ORDER BY sh.C_BPartner_ID, pl.istaxincluded, (
                 CASE TO_CHAR(SUBSTR(RPAD(bp.InvoiceGrouping, 15, '0'), 1, 1))
                   WHEN '0'
                   THEN '0'
@@ -871,9 +882,10 @@
               14.-User dimension 1 (User1_ID)
               15.-User dimension 2 (User2_ID)
               */
-              IF((v_Partner_ID<>Cur_InvoiceSchedule.C_BPartner_ID) OR(SUBSTR(Cur_InvoiceSchedule.InvoiceGrouping, 1, 1)='1' AND v_gOrg_ID<>Cur_InvoiceSchedule.AD_Org_ID) OR(SUBSTR(Cur_InvoiceSchedule.InvoiceGrouping, 2, 1)='1' AND v_gOrder_ID<>Cur_InvoiceSchedule.C_Order_ID) OR(SUBSTR(Cur_InvoiceSchedule.InvoiceGrouping, 3, 1)='1' AND v_gInOut_ID<>Cur_InvoiceSchedule.M_InOut_ID) OR(SUBSTR(Cur_InvoiceSchedule.InvoiceGrouping, 4, 1)='1' AND v_gBillTo_ID<>Cur_InvoiceSchedule.BillTo_ID) OR(SUBSTR(Cur_InvoiceSchedule.InvoiceGrouping, 5, 1)='1' AND v_gBPartner_Location_ID<>Cur_InvoiceSchedule.C_BPartner_Location_ID) OR(SUBSTR(Cur_InvoiceSchedule.InvoiceGrouping, 6, 1)='1' AND v_gSalesRep_ID<>Cur_InvoiceSchedule.SalesRep_ID) OR(SUBSTR(Cur_InvoiceSchedule.InvoiceGrouping, 7, 1)='1' AND v_gPaymentRule<>Cur_InvoiceSchedule.PaymentRule) OR(SUBSTR(Cur_InvoiceSchedule.InvoiceGrouping, 8, 1)='1' AND v_gPaymentTerm_ID<>Cur_InvoiceSchedule.C_PaymentTerm_ID) OR(SUBSTR(
+              IF((v_Partner_ID<>Cur_InvoiceSchedule.C_BPartner_ID) OR (v_istaxincluded <> cur_invoiceschedule.istaxincluded) OR(SUBSTR(Cur_InvoiceSchedule.InvoiceGrouping, 1, 1)='1' AND v_gOrg_ID<>Cur_InvoiceSchedule.AD_Org_ID) OR(SUBSTR(Cur_InvoiceSchedule.InvoiceGrouping, 2, 1)='1' AND v_gOrder_ID<>Cur_InvoiceSchedule.C_Order_ID) OR(SUBSTR(Cur_InvoiceSchedule.InvoiceGrouping, 3, 1)='1' AND v_gInOut_ID<>Cur_InvoiceSchedule.M_InOut_ID) OR(SUBSTR(Cur_InvoiceSchedule.InvoiceGrouping, 4, 1)='1' AND v_gBillTo_ID<>Cur_InvoiceSchedule.BillTo_ID) OR(SUBSTR(Cur_InvoiceSchedule.InvoiceGrouping, 5, 1)='1' AND v_gBPartner_Location_ID<>Cur_InvoiceSchedule.C_BPartner_Location_ID) OR(SUBSTR(Cur_InvoiceSchedule.InvoiceGrouping, 6, 1)='1' AND v_gSalesRep_ID<>Cur_InvoiceSchedule.SalesRep_ID) OR(SUBSTR(Cur_InvoiceSchedule.InvoiceGrouping, 7, 1)='1' AND v_gPaymentRule<>Cur_InvoiceSchedule.PaymentRule) OR(SUBSTR(Cur_InvoiceSchedule.InvoiceGrouping, 8, 1)='1' AND v_gPaymentTerm_ID<>Cur_InvoiceSchedule.C_PaymentTerm_ID) OR(SUBSTR(
                 Cur_InvoiceSchedule.InvoiceGrouping, 9, 1)='1' AND v_gCurrency_ID<>Cur_InvoiceSchedule.C_Currency_ID) OR(SUBSTR(Cur_InvoiceSchedule.InvoiceGrouping, 10, 1)='1' AND v_gCampaign_ID<>Cur_InvoiceSchedule.C_Campaign_ID) OR(SUBSTR(Cur_InvoiceSchedule.InvoiceGrouping, 11, 1)='1' AND ((v_gProject_ID<>Cur_InvoiceSchedule.C_Project_ID) OR (v_gProject_ID IS NULL AND Cur_InvoiceSchedule.C_Project_ID IS NOT NULL) OR (v_gProject_ID IS NOT NULL AND Cur_InvoiceSchedule.C_Project_ID IS NULL))) OR(SUBSTR(Cur_InvoiceSchedule.InvoiceGrouping, 12, 1)='1' AND v_gActivitiy_ID<>Cur_InvoiceSchedule.C_Activity_ID) OR(SUBSTR(Cur_InvoiceSchedule.InvoiceGrouping, 13, 1)='1' AND v_gOrgTrx_ID<>Cur_InvoiceSchedule.AD_OrgTrx_ID) OR(SUBSTR(Cur_InvoiceSchedule.InvoiceGrouping, 14, 1)='1' AND v_gUser1_ID<>Cur_InvoiceSchedule.User1_ID) OR(SUBSTR(Cur_InvoiceSchedule.InvoiceGrouping, 15, 1)='1' AND v_gUser2_ID<>Cur_InvoiceSchedule.User2_ID)) THEN
                 v_Partner_ID:=Cur_InvoiceSchedule.C_BPartner_ID;
+                v_istaxincluded:=cur_invoiceschedule.istaxincluded;
                 v_gOrg_ID:=Cur_InvoiceSchedule.AD_Org_ID;
                 v_gOrder_ID:=Cur_InvoiceSchedule.C_Order_ID;
                 v_gInOut_ID:=Cur_InvoiceSchedule.M_InOut_ID;
@@ -990,6 +1002,11 @@
                   v_NoRecords:=v_NoRecords + 1;
                   v_LineNo:=0;
                   v_InOut_ID:='-1';
+                  IF(v_Message NOT LIKE '%@InvoiceDocumentno@%') THEN
+                    v_Message:=v_Message||', '||'@InvoiceDocumentno@ ' || v_DocumentNo;
+                  ELSE
+                    v_Message:=v_Message||', '|| v_DocumentNo;
+                  END IF;
                 END IF;
               ELSIF (v_isfinaldoctype = 'N') THEN --If docType is not a final one update it
                 BEGIN
@@ -1040,7 +1057,8 @@
                     ChargeAmt, C_UOM_ID,
                     C_Tax_ID,  --MODIFIED BY F.IRIAZABAL
                     QuantityOrder, M_Product_Uom_ID, PriceStd,
-                    m_attributesetinstance_id, taxbaseamt
+                    m_attributesetinstance_id, taxbaseamt,
+                    gross_unit_price, line_gross_amount
                   )
                   VALUES
                   (
@@ -1052,7 +1070,8 @@
                     Cur_InvoiceSchedule.Line_ChargeAmt, Cur_InvoiceSchedule.C_UOM_ID,
                     Cur_InvoiceSchedule.C_Tax_ID,  --MODIFIED BY F.IRIAZABAL
                     Cur_InvoiceSchedule.QuantityOrder, Cur_InvoiceSchedule.M_Product_Uom_ID, Cur_InvoiceSchedule.PriceStd,
-                    Cur_InvoiceSchedule.m_attributesetinstance_id, Cur_InvoiceSchedule.taxbaseamt
+                    Cur_InvoiceSchedule.m_attributesetinstance_id, Cur_InvoiceSchedule.taxbaseamt,
+                    Cur_InvoiceSchedule.gross_unit_price, C_Currency_Round(Cur_InvoiceSchedule.MovementQty*Cur_InvoiceSchedule.gross_unit_price, Cur_InvoiceSchedule.C_Currency_ID, NULL)
                   )
                   ;
                 v_DateOrdered:=COALESCE(Cur_InvoiceSchedule.movementDate, COALESCE(Cur_InvoiceSchedule.DateOrdered, now())) ;
@@ -1079,7 +1098,13 @@
 	    	  	  INTO v_DocumentNo
 	    	  	  FROM C_INVOICE
 	    	  	  WHERE C_INVOICE_ID = p_Invoice_ID;
-	    	  	  v_Message:=v_Message||', '||'@InvoiceDocumentno@ ' || v_DocumentNo;
+	    	  	  IF(v_Message NOT LIKE '%'||v_DocumentNo||'%') THEN
+	    	  	    IF(v_Message NOT LIKE '%@InvoiceDocumentno@%') THEN
+	    	  	      v_Message:=v_Message||', '||'@InvoiceDocumentno@ ' || v_DocumentNo;
+	    	  	    ELSE
+	    	  	      v_Message:=v_Message||', '|| v_DocumentNo;
+	    	  	    END IF;
+	    	  	  END IF;
         	    END IF;
 			  END IF;
             END IF;--FINISH_PROCESS

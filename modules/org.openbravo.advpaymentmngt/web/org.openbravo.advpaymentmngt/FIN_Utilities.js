@@ -98,8 +98,11 @@ function applyFormat(number) {
  * @type String
  */
 
-function applyFormatJSToOBMasked(number) {
-  return OB.Utilities.Number.JSToOBMasked(number, globalMaskNumeric, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
+function applyFormatJSToOBMasked(number, _globalMaskNumeric) {
+  if (!_globalMaskNumeric) {
+    _globalMaskNumeric = globalMaskNumeric;
+  }
+  return OB.Utilities.Number.JSToOBMasked(number, _globalMaskNumeric, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
 }
 
 function applyFormatOBMaskedToJS(number) {
@@ -283,14 +286,24 @@ function updateConvertedAmounts(recalcExchangeRate) {
   if (actualConverted && expectedConverted && exchangeRate) {
     if (recalcExchangeRate) {
       if (actualConverted.value && actualPayment.value) {
-        exchangeRate.value = formattedNumberOpTemp(actualConverted.value, '/', actualPayment.value, roundedMask, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
+        if (compare(actualPayment.value, '!=', 0)) {
+          exchangeRate.value = formattedNumberOpTemp(actualConverted.value, '/', actualPayment.value, roundedMask, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
+        }
       } else {
         exchangeRate.value = '';
       }
     } else {
-      actualConverted.value = formattedNumberOpTemp(actualPayment.value, '*', exchangeRate.value, roundedMask, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
+      if (exchangeRate.value) {
+        actualConverted.value = formattedNumberOpTemp(actualPayment.value, '*', exchangeRate.value, roundedMask, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
+      } else {
+        actualConverted.value = applyFormat('0');
+      }
     }
-    expectedConverted.value = formattedNumberOpTemp(expectedPayment.value, '*', exchangeRate.value, roundedMask, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
+    if (exchangeRate.value && expectedPayment.value) {
+      expectedConverted.value = formattedNumberOpTemp(expectedPayment.value, '*', exchangeRate.value, roundedMask, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
+    } else {
+      expectedConverted.value = applyFormat('0');
+    }
   }
 }
 
@@ -329,6 +342,7 @@ function updateDifference() {
       total = (frm.inpTotal && frm.inpTotal.value) ? frm.inpTotal.value : applyFormat('0'),
       amount = total,
       invoicedAmount = total;
+  var exchangeRate = frm.inpExchangeRate;
 
   if (isGLItemEnabled) {
     invoicedAmount = frm.inpInvoiceAmount.value;
@@ -350,7 +364,14 @@ function updateDifference() {
   document.getElementById('paramDifference').innerHTML = frm.inpDifference.value;
   displayLogicElement('sectionDifference', (compare(expected, '!=', total) || compareWithSign(amount, '>', total)));
   displayLogicElement('sectionDifferenceBox', (compare(expected, '!=', total) || (isCreditAllowed && compareWithSign(amount, '>', total))));
-  displayLogicElement('writeoff', compare(expected, '!=', total));
+  if ((frm.strWriteOffLimit.value === 'Y') && (compare(expected, '!=', total)) && (frm.strtypewriteoff.value==='A') && (compareWithSign((applyFormat((subtract(expected,total))*exchangeRate.value)), '>',frm.strAmountwriteoff.value))) {  
+	  displayLogicElement('writeofflimit', true);
+	  displayLogicElement('writeoff', false);
+   }
+  else {
+	  displayLogicElement('writeofflimit', false);
+	  displayLogicElement('writeoff', compare(expected, '!=', total));
+  }
   displayLogicElement('underpayment', compareWithSign(expected, '>', total));
   displayLogicElement('credit', isCreditAllowed && compareWithSign(amount, '>', total));
   displayLogicElement('refund', isCreditAllowed && isReceipt && compareWithSign(amount, '>', total));
@@ -484,6 +505,8 @@ function updateTotal() {
 
 function distributeAmount(_amount) {
   var amount = applyFormat(_amount);
+  var distributedAmount = 0;
+  var keepSelection = false;
   var chk = frm.inpScheduledPaymentDetailId;
   var scheduledPaymentDetailId, outstandingAmount, j, i;
   if (isGLItemEnabled) {
@@ -496,21 +519,45 @@ function distributeAmount(_amount) {
   } else if (!chk.length) {
     scheduledPaymentDetailId = frm.inpRecordId0.value;
     outstandingAmount = frm.elements["inpRecordAmt" + scheduledPaymentDetailId].value;
-    if (compare(outstandingAmount, '>', amount)) {
-      outstandingAmount = amount;
+    if (compare(outstandingAmount, '<', 0) && compare(amount, '<', 0)) {
+      if (compare(abs(outstandingAmount), '>', abs(amount))) {
+        outstandingAmount = amount;
+      }
+    } else {
+      if (compare(outstandingAmount, '>', amount)) {
+        outstandingAmount = amount;
+      }
     }
     frm.elements["inpPaymentAmount" + scheduledPaymentDetailId].value = outstandingAmount;
-    if (!chk.checked) {
+    if (!chk.checked && compare(outstandingAmount, '!=', 0)) {
       chk.checked = true;
       updateData(chk.value, chk.checked);
     }
   } else {
     var total = chk.length;
     for (i = 0; i < total; i++) {
+      if (chk[i].checked) {
+        distributedAmount = add(distributedAmount, frm.elements["inpPaymentAmount" + chk[i].value].value);
+      }
+    }
+    if (compare(amount, '>', distributedAmount) || compare(amount, '==', distributedAmount)) {
+      amount = subtract(amount, distributedAmount);
+      keepSelection = true;
+    }
+    for (i = 0; i < total; i++) {
+      if (chk[i].checked && keepSelection) {
+        continue;
+      }
       scheduledPaymentDetailId = frm.elements["inpRecordId" + i].value;
       outstandingAmount = frm.elements["inpRecordAmt" + scheduledPaymentDetailId].value;
-      if (compare(outstandingAmount, '>', amount)) {
-        outstandingAmount = amount;
+      if (compare(outstandingAmount, '<', 0) && compare(amount, '<', 0)) {
+        if (compare(abs(outstandingAmount), '>', abs(amount))) {
+          outstandingAmount = amount;
+        }
+      } else {
+        if (compare(outstandingAmount, '>', amount)) {
+          outstandingAmount = amount;
+        }
       }
       if (compare(amount, '==', 0)) {
         frm.elements["inpPaymentAmount" + scheduledPaymentDetailId].value = "";

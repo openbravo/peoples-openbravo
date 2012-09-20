@@ -27,6 +27,7 @@ isc.OBPickAndExecuteGrid.addProperties({
   view: null,
   dataSource: null,
   showFilterEditor: true,
+  showErrorIcons: false,
 
   // Editing
   canEdit: true,
@@ -47,8 +48,14 @@ isc.OBPickAndExecuteGrid.addProperties({
     width: 32
   },
 
+  //The Cell should be validated each time the focus is changed.
+  validateByCell: true,
   // default selection
   selectionProperty: 'obSelected',
+
+  shouldFixRowHeight: function () {
+    return true;
+  },
 
   initWidget: function () {
     var i, len = this.fields.length;
@@ -93,15 +100,61 @@ isc.OBPickAndExecuteGrid.addProperties({
 
     // required to show the funnel icon and to work
     this.filterClause = this.gridProperties.filterClause;
+    if (this.filterClause && this.gridProperties.filterName) {
+      this.view.messageBar.setMessage(isc.OBMessageBar.TYPE_INFO, '<div><div class="' + OB.Styles.MessageBar.leftMsgContainerStyle + '">' + this.gridProperties.filterName + '<br/>' + OB.I18N.getLabel('OBUIAPP_ClearFilters') + '</div></div>', ' ');
+      this.view.messageBar.hasFilterMessage = true;
+    }
 
     this.orderByClause = this.gridProperties.orderByClause;
 
     this.checkboxFieldDefaults = isc.addProperties(this.checkboxFieldDefaults, {
       canFilter: true,
+      frozen: true,
+      canFreeze: true,
+      showHover: true,
+      prompt: OB.I18N.getLabel('OBUIAPP_GridSelectAllColumnPrompt'),
       filterEditorType: 'StaticTextItem'
     });
 
+    OB.TestRegistry.register('org.openbravo.client.application.process.pickandexecute.Grid', this);
+
+    this.editFormProperties = {
+      view: this.view.parentWindow.activeView
+    };
+
     this.Super('initWidget', arguments);
+  },
+
+  // when starting row editing make sure that the current
+  // value and identifier are part of a valuemap
+  // so that the combo shows the correct value without 
+  // loading it from the backend
+  rowEditorEnter: function (record, editValues, rowNum) {
+    var i = 0,
+        editRecord = this.getEditedRecord(rowNum),
+        gridFld, identifier, formFld, value, form = this.getEditForm();
+
+    if (editRecord) {
+      // go through the fields and set the edit values
+      for (i = 0; i < this.getFields().length; i++) {
+        gridFld = this.getFields()[i];
+        formFld = form.getField(gridFld.name);
+        value = editRecord[gridFld.name];
+        identifier = editRecord[gridFld.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER];
+        if (value && identifier) {
+          if (formFld.setEntry) {
+            formFld.setEntry(value, identifier);
+          } else {
+            if (!formFld.valueMap) {
+              formFld.valueMap = {};
+            }
+            formFld.valueMap[value] = identifier;
+            form.setValue(formFld, value);
+          }
+        }
+      }
+    }
+    return this.Super('rowEditorEnter', arguments);
   },
 
   selectionChanged: function (record, state) {
@@ -220,6 +273,20 @@ isc.OBPickAndExecuteGrid.addProperties({
     return this.Super('recordClick', arguments);
   },
 
+
+  // Dummy "createRecordComponent" to fix issue: https://issues.openbravo.com/view.php?id=19879
+  // It seems that if it is not present, Smartclient doesn't perform well the maths to calculate the editing fields width
+  createRecordComponent: function (record, colNum) {
+    var layout = null;
+    if (colNum === 0) {
+      layout = isc.Layout.create({
+        width: 0,
+        height: 0
+      });
+    }
+    return layout;
+  },
+
   getOrgParameter: function () {
     var view = this.view.parentWindow.activeView,
         context, i;
@@ -305,7 +372,7 @@ isc.OBPickAndExecuteGrid.addProperties({
     this.Super('setValueMap', [field, map]);
   },
 
-  processColumnValue: function (rowNum, columnName, columnValue, editValues) {
+  processColumnValue: function (rowNum, columnName, columnValue) {
     var field;
     if (!columnValue) {
       return;
@@ -324,7 +391,7 @@ isc.OBPickAndExecuteGrid.addProperties({
     var context = response && response.clientContext,
         rowNum = context && context.rowNum,
         grid = context && context.grid,
-        columnValues, prop, value, editValues, undef;
+        columnValues, prop, value, undef;
 
 
     if (rowNum === undef || !data || !data.columnValues) {
@@ -332,11 +399,10 @@ isc.OBPickAndExecuteGrid.addProperties({
     }
 
     columnValues = data.columnValues;
-    editValues = grid.getEditValues(rowNum);
 
     for (prop in columnValues) {
       if (columnValues.hasOwnProperty(prop)) {
-        grid.processColumnValue(rowNum, prop, columnValues[prop], editValues);
+        grid.processColumnValue(rowNum, prop, columnValues[prop]);
       }
     }
   },
@@ -392,7 +458,11 @@ isc.OBPickAndExecuteGrid.addProperties({
   },
 
   showInlineEditor: function (rowNum, colNum, newCell, newRow, suppressFocus) {
-    this.retrieveInitialValues(rowNum, colNum, newCell, newRow, suppressFocus);
+    // retrieve the initial values only if a new row has been selected
+    // see issue https://issues.openbravo.com/view.php?id=20653
+    if (newRow) {
+      this.retrieveInitialValues(rowNum, colNum, newCell, newRow, suppressFocus);
+    }
     this.Super('showInlineEditor', arguments);
   },
 

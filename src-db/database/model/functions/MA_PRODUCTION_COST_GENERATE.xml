@@ -21,6 +21,7 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************/
  -- Logistice
+ v_count NUMBER;
  v_ResultStr      VARCHAR2(2000);
  v_Result NUMBER:= 1;
  v_Message        VARCHAR2(2000);
@@ -32,6 +33,16 @@ TYPE RECORD IS REF CURSOR;
   Cur_Production RECORD;
   rowcount NUMBER;
 BEGIN
+
+-- Checks if instance is migrated to new cost engine
+      SELECT count(1) INTO v_count
+      FROM DUAL
+      WHERE EXISTS (SELECT 1 FROM ad_preference
+                      WHERE attribute = 'Cost_Eng_Ins_Migrated');
+
+  IF (v_count > 0) THEN
+    RAISE_APPLICATION_ERROR(-20000, '@CostMigratedInstance@');
+  END IF;
 
   --  Update AD_PInstance
   DBMS_OUTPUT.PUT_LINE('Updating PInstance - Processing ' || p_PInstance_ID);

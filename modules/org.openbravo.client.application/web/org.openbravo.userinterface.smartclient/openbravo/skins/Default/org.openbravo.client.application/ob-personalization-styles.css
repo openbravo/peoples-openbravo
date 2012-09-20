@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011 Openbravo SLU
+ * All portions are Copyright (C) 2011-2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -136,7 +136,8 @@
 .OBPersonalizationPullDownMenuCellIconOver,
 .OBPersonalizationPullDownMenuCellIconSelectedOver,
 .OBPersonalizationPullDownMenuCellIconDisabled {
-  border-right: 1px solid #64932d;
+  border: 1px solid #64932d;
+  border-width: 0px 1px 0px 0px;
   text-align: center;
 }
 
@@ -145,7 +146,8 @@
 .OBPersonalizationPullDownMenuCellSeparatorOver,
 .OBPersonalizationPullDownMenuCellSeparatorSelectedOver,
 .OBPersonalizationPullDownMenuCellSeparatorDisabled {
-  border-top: 1px solid #64932d;
+  border: 1px solid #64932d;
+  border-width: 1px 0px 0px 0px;
 }
 
 .OBPersonalizationPullDownMenuCell,

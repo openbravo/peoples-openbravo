@@ -28,6 +28,7 @@ v_invoiceid varchar2(32);
 v_taxid varchar2(32);
 taxamountnew NUMBER;
 taxamountold NUMBER;
+v_recalculate CHAR(1);
 -- BP_Withholding
 isbaseamountpercent CHAR(1);
 baseamountpercent NUMBER;
@@ -48,22 +49,24 @@ BEGIN
     IF AD_isTriggerEnabled()='N' THEN RETURN;
     END IF;
 
-
   IF(inserting) THEN
     v_invoiceid := :NEW.c_invoice_id;
     v_taxid := :NEW.c_tax_id;
     taxamountnew := :NEW.taxamt;
     taxamountold := 0;
+    v_recalculate:= :NEW.recalculate;
     ELSIF(updating) THEN
       v_invoiceid := :NEW.c_invoice_id;
       v_taxid := :NEW.c_tax_id;
       taxamountnew := :NEW.taxamt;
       taxamountold := :OLD.taxamt;
+      v_recalculate := :OLD.recalculate;
       ELSIF(deleting) THEN
         v_invoiceid := :OLD.c_invoice_id;
         v_taxid := :OLD.c_tax_id;
         taxamountnew := 0;
         taxamountold := :OLD.taxamt;
+        v_recalculate := :OLD.recalculate;
       END IF;
      -- Read data from invoice
      select c_bpartner_id,withholdingamount,issotrx , coalesce(processed,'N') ,c_withholding_id
@@ -114,6 +117,22 @@ BEGIN
         WHERE c_invoice_id = v_invoiceid;
       END IF;
 
+    END IF;
+  END IF;
+
+  IF(v_recalculate = 'N') THEN
+    IF(INSERTING) THEN
+      UPDATE c_invoice
+      SET grandtotal = grandtotal + taxamountnew
+      WHERE c_invoice_id = v_invoiceid;
+    ELSIF(UPDATING) THEN
+      UPDATE c_invoice
+      SET grandtotal = grandtotal - taxamountold + taxamountnew
+      WHERE c_invoice_id = v_invoiceid;
+    ELSIF(DELETING) THEN
+      UPDATE c_invoice
+      SET grandtotal = grandtotal - taxamountold
+      WHERE c_invoice_id = v_invoiceid;
     END IF;
   END IF;
 

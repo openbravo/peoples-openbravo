@@ -162,6 +162,7 @@ OB.Personalization.applyViewDefinition = function (persId, viewDefinition, stand
 
       if (viewTabDefinition.grid) {
         view.viewGrid.setViewState(viewTabDefinition.grid);
+        view.viewGrid.refreshContents();
       }
       if (viewTabDefinition.form) {
         OB.Personalization.personalizeForm(viewTabDefinition, view.viewForm);

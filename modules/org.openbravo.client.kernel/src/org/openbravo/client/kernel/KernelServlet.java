@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -91,6 +91,19 @@ public class KernelServlet extends BaseKernelServlet {
     servletContext = config.getServletContext();
   }
 
+  public void service(final HttpServletRequest request, HttpServletResponse response)
+      throws ServletException, IOException {
+
+    final String action = request.getParameter(KernelConstants.ACTION_PARAMETER);
+    if (action == null) {
+      Component component = getComponent(request);
+      if (component instanceof BaseComponent && ((BaseComponent) component).bypassAuthentication()) {
+        request.getSession().setAttribute("forceLogin", "Y");
+      }
+    }
+    super.service(request, response);
+  }
+
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
@@ -107,8 +120,7 @@ public class KernelServlet extends BaseKernelServlet {
     }
   }
 
-  protected void processComponentRequest(HttpServletRequest request, HttpServletResponse response)
-      throws IOException, ServletException {
+  private Component getComponent(HttpServletRequest request) {
 
     final int nameIndex = request.getRequestURI().indexOf(servletPathPart);
     final String servicePart = request.getRequestURI().substring(nameIndex);
@@ -117,7 +129,6 @@ public class KernelServlet extends BaseKernelServlet {
       throw new UnsupportedOperationException("No service name present in url "
           + request.getRequestURI());
     }
-
     final String componentProviderName = pathParts[1];
 
     final ComponentProvider componentProvider = componentProviders.select(
@@ -132,6 +143,12 @@ public class KernelServlet extends BaseKernelServlet {
 
     final Map<String, Object> parameters = getParameterMap(request);
     final Component component = componentProvider.getComponent(componentId, parameters);
+    return component;
+  }
+
+  protected void processComponentRequest(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
+    Component component = getComponent(request);
     OBContext.setAdminMode();
     String eTag;
     try {
@@ -236,11 +253,7 @@ public class KernelServlet extends BaseKernelServlet {
     }
 
     if (!parameterMap.containsKey(KernelConstants.SKIN_PARAMETER)) {
-      if (OBContext.getOBContext().isNewUI()) { // FIXME: isNewUI true the first load?
-        parameterMap.put(KernelConstants.SKIN_PARAMETER, KernelConstants.SKIN_DEFAULT);
-      } else {
-        parameterMap.put(KernelConstants.SKIN_PARAMETER, KernelConstants.SKIN_CLASSIC);
-      }
+      parameterMap.put(KernelConstants.SKIN_PARAMETER, KernelConstants.SKIN_DEFAULT);
     }
 
     return parameterMap;

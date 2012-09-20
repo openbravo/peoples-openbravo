@@ -46,6 +46,8 @@ public class SE_Order_BPartner extends SimpleCallout {
     String strDeliveryViaRule = "";
     String strPaymentterm = "";
     String strDeliveryRule = "";
+    String strDocTypeTarget = info.vars.getStringParameter("inpcDoctypetargetId");
+    String docSubTypeSO = "";
 
     BpartnerMiscData[] data = BpartnerMiscData.select(this, strBPartner);
     if (data != null && data.length > 0) {
@@ -54,8 +56,13 @@ public class SE_Order_BPartner extends SimpleCallout {
       strUserRep = SEOrderBPartnerData.userIdSalesRep(this, data[0].salesrepId);
       strUserRep = strUserRep.equals("") ? info.vars.getStringParameter("inpsalesrepId")
           : strUserRep;
-      strInvoiceRule = data[0].invoicerule.equals("") ? info.vars
-          .getStringParameter("inpinvoicerule") : data[0].invoicerule;
+      SLOrderDocTypeData[] docTypeData = SLOrderDocTypeData.select(this, strDocTypeTarget);
+      if (docTypeData != null && docTypeData.length > 0) {
+        docSubTypeSO = docTypeData[0].docsubtypeso;
+      }
+      strInvoiceRule = (docSubTypeSO.equals("PR") || docSubTypeSO.equals("WI")
+          || data[0].invoicerule.equals("") ? info.vars.getStringParameter("inpinvoicerule")
+          : data[0].invoicerule);
       strPaymentrule = (strIsSOTrx.equals("Y") ? data[0].paymentrule : data[0].paymentrulepo);
       strPaymentrule = strPaymentrule.equals("") ? info.vars.getStringParameter("inppaymentrule")
           : strPaymentrule;
@@ -96,31 +103,12 @@ public class SE_Order_BPartner extends SimpleCallout {
     // BPartner Location
 
     FieldProvider[] tdv = null;
-    try {
-      ComboTableData comboTableData = new ComboTableData(info.vars, this, "TABLEDIR",
-          "C_BPartner_Location_ID", "", "C_BPartner Location - Ship To", Utility.getContext(this,
-              info.vars, "#AccessibleOrgTree", info.getWindowId()), Utility.getContext(this,
-              info.vars, "#User_Client", info.getWindowId()), 0);
-      Utility.fillSQLParameters(this, info.vars, null, comboTableData, info.getWindowId(), "");
-      tdv = comboTableData.select(false);
-      comboTableData = null;
-    } catch (Exception ex) {
-      throw new ServletException(ex);
-    }
 
     String strLocation = info.vars.getStringParameter("inpcBpartnerId_LOC");
-
-    if (tdv != null && tdv.length > 0) {
-      info.addSelect("inpcBpartnerLocationId");
-
-      for (int i = 0; i < tdv.length; i++) {
-        info.addSelectResult(tdv[i].getField("id"), tdv[i].getField("name"), tdv[i].getField("id")
-            .equalsIgnoreCase(strLocation));
-      }
-      info.endSelect();
-    } else {
-      info.addResult("inpcBpartnerLocationId", null);
+    if (strLocation != null) {
+      info.addResult("inpcBpartnerLocationId", strLocation);
     }
+
     // Warehouses
 
     FieldProvider[] td = null;
@@ -184,10 +172,17 @@ public class SE_Order_BPartner extends SimpleCallout {
 
     FieldProvider[] l = null;
     try {
-      ComboTableData comboTableData = new ComboTableData(info.vars, this, "LIST", "",
-          "C_Order InvoiceRule", "", Utility.getContext(this, info.vars, "#AccessibleOrgTree",
-              "SEOrderBPartner"), Utility.getContext(this, info.vars, "#User_Client",
-              "SEOrderBPartner"), 0);
+      ComboTableData comboTableData = null;
+      if ("WR".equals(docSubTypeSO)) {
+        comboTableData = new ComboTableData(info.vars, this, "LIST", "", "C_Order InvoiceRule",
+            "Values for Invoice Rules for POS Sales orders", Utility.getContext(this, info.vars,
+                "#AccessibleOrgTree", "SEOrderBPartner"), Utility.getContext(this, info.vars,
+                "#User_Client", "SEOrderBPartner"), 0);
+      } else {
+        comboTableData = new ComboTableData(info.vars, this, "LIST", "", "C_Order InvoiceRule", "",
+            Utility.getContext(this, info.vars, "#AccessibleOrgTree", "SEOrderBPartner"),
+            Utility.getContext(this, info.vars, "#User_Client", "SEOrderBPartner"), 0);
+      }
       Utility.fillSQLParameters(this, info.vars, null, comboTableData, "SEOrderBPartner", "");
       l = comboTableData.select(false);
       comboTableData = null;
@@ -195,7 +190,7 @@ public class SE_Order_BPartner extends SimpleCallout {
       throw new ServletException(ex);
     }
 
-    if (tld != null && tld.length > 0) {
+    if (l != null && l.length > 0) {
       info.addSelect("inpinvoicerule");
       for (int i = 0; i < l.length; i++) {
         info.addSelectResult(l[i].getField("id"), l[i].getField("name"), l[i].getField("id")
@@ -222,30 +217,11 @@ public class SE_Order_BPartner extends SimpleCallout {
     }
 
     // Bill to
-    FieldProvider[] tlv = null;
-    try {
-      ComboTableData comboTableData = new ComboTableData(info.vars, this, "TABLE", "",
-          "C_BPartner Location", "C_BPartner Location - Bill To", Utility.getContext(this,
-              info.vars, "#AccessibleOrgTree", info.getWindowId()), Utility.getContext(this,
-              info.vars, "#User_Client", info.getWindowId()), 0);
-      Utility.fillSQLParameters(this, info.vars, null, comboTableData, info.getWindowId(), "");
-      tlv = comboTableData.select(false);
-      comboTableData = null;
-    } catch (Exception ex) {
-      throw new ServletException(ex);
+
+    if (strLocation != null) {
+      info.addResult("inpbilltoId", strLocation);
     }
 
-    if (tlv != null && tlv.length > 0) {
-      info.addSelect("inpbilltoId");
-      for (int i = 0; i < tlv.length; i++) {
-        info.addSelectResult(tlv[i].getField("id"), tlv[i].getField("name"), tlv[i].getField("id")
-            .equalsIgnoreCase(strLocation));
-      }
-
-      info.endSelect();
-    } else {
-      info.addResult("inpbilltoId", null);
-    }
     // Payment rule
 
     info.addResult("inppaymentrule", strPaymentrule);
@@ -314,11 +290,19 @@ public class SE_Order_BPartner extends SimpleCallout {
     if (tdv != null && tdv.length > 0) {
       info.addSelect("inpadUserId");
 
-      for (int i = 0; i < tdv.length; i++) {
-        info.addSelectResult(tdv[i].getField("id"), tdv[i].getField("name"), tdv[i].getField("id")
-            .equalsIgnoreCase(info.vars.getStringParameter("inpcBpartnerId_CON")));
+      String contactID = info.vars.getStringParameter("inpcBpartnerId_CON");
+      if (contactID.isEmpty()) {
+        // If a contactID has not been specified, the first one is selected
+        info.addSelectResult(tdv[0].getField("id"), tdv[0].getField("name"), true);
+        for (int i = 1; i < tdv.length; i++) {
+          info.addSelectResult(tdv[i].getField("id"), tdv[i].getField("name"), false);
+        }
+      } else {
+        for (int i = 0; i < tdv.length; i++) {
+          info.addSelectResult(tdv[i].getField("id"), tdv[i].getField("name"), tdv[i]
+              .getField("id").equalsIgnoreCase(info.vars.getStringParameter("inpcBpartnerId_CON")));
+        }
       }
-
       info.endSelect();
 
     } else {
@@ -328,10 +312,6 @@ public class SE_Order_BPartner extends SimpleCallout {
     // Message
 
     StringBuilder message = new StringBuilder();
-
-    if (strLocation.equals("")) {
-      message.append(Utility.messageBD(this, "NoBPLocation", info.vars.getLanguage()));
-    }
 
     if (data != null && data.length > 0
         && new BigDecimal(data[0].creditavailable).compareTo(BigDecimal.ZERO) < 0

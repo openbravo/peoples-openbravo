@@ -16,10 +16,19 @@
  */
 package org.openbravo.erpCommon.ad_forms;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 
 import org.apache.log4j.Logger;
+import org.openbravo.base.exception.OBException;
+import org.openbravo.costing.CostingStatus;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.common.enterprise.Warehouse;
+import org.openbravo.model.common.plm.Product;
+import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 
 public class DocLine_Material extends DocLine {
   static Logger log4jDocLine_Material = Logger.getLogger(DocLine_Material.class);
@@ -44,6 +53,7 @@ public class DocLine_Material extends DocLine {
   public String m_M_Warehouse_ID = "";
   /** Production */
   public String m_Productiontype = "";
+  public MaterialTransaction transaction = null;
 
   /**
    * Set Trasaction Quantity and Storage Qty
@@ -58,14 +68,51 @@ public class DocLine_Material extends DocLine {
     log4jDocLine_Material.debug(" setQty - productInfo.qty = " + p_productInfo.m_qty);
   } // setQty
 
+  private String getQty() {
+    return m_qty;
+  }
+
+  public void setTransaction(MaterialTransaction transaction) {
+    this.transaction = transaction;
+  }
+
+  public Warehouse getWarehouse() {
+    return OBDal.getInstance().get(Warehouse.class, m_M_Warehouse_ID);
+  }
+
   /**
-   * Get Total Product Costs
+   * Get Total Product Costs. If exists a transaction retrieves the cost from it, otherwise calls
+   * the
+   * {@link ProductInfo#getProductCosts(String, String, AcctSchema, ConnectionProvider, Connection)}
    * 
+   * @param date
+   *          String with the accounting date used in case there is no material transaction.
    * @param as
-   *          accounting schema
-   * @return costs
    */
+
   public String getProductCosts(String date, AcctSchema as, ConnectionProvider conn, Connection con) {
+    if (transaction != null && transaction.getTransactionCost() != null
+        && CostingStatus.getInstance().isMigrated()) {
+      BigDecimal sign = new BigDecimal(new BigDecimal(getQty()).signum());
+      return transaction.getTransactionCost().multiply(sign).toString();
+    } else if (transaction != null && CostingStatus.getInstance().isMigrated()) {
+      return "";
+    } else if (CostingStatus.getInstance().isMigrated()) {
+      // If there isn't any material transaction get the default cost of the product.
+      try {
+        Organization legalEntity = OBContext.getOBContext()
+            .getOrganizationStructureProvider(p_productInfo.m_AD_Client_ID)
+            .getLegalEntity(OBDal.getInstance().get(Organization.class, m_AD_Org_ID));
+        return p_productInfo.getProductDefaultCosts(date, null, legalEntity, getWarehouse(),
+            legalEntity.getCurrency() != null ? legalEntity.getCurrency() : legalEntity.getClient()
+                .getCurrency());
+      } catch (OBException e) {
+        log4jDocLine_Material.error("No standard cost found for product: "
+            + OBDal.getInstance().get(Product.class, m_M_Product_ID).getIdentifier()
+            + " DocumentType: " + p_DocumentType + " record id: " + m_TrxHeader_ID);
+        return "";
+      }
+    }
     return p_productInfo.getProductCosts(date, "", as, conn, con);
   } // getProductCosts
 

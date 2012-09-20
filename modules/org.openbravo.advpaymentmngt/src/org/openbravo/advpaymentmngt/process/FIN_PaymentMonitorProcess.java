@@ -43,7 +43,6 @@ import org.openbravo.erpCommon.utility.PropertyNotFoundException;
 import org.openbravo.model.ad.domain.Preference;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.financialmgmt.payment.DebtPayment;
-import org.openbravo.model.financialmgmt.payment.FIN_OrigPaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedInvV;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
@@ -147,12 +146,20 @@ public class FIN_PaymentMonitorProcess extends DalBaseProcess {
       invoice.setDaysTillDue(getDaysTillDue(invoice));
       if (invoice.getOutstandingAmount().compareTo(BigDecimal.ZERO) == 0) {
         Date finalSettlementDate = getFinalSettlementDate(invoice);
-        invoice.setFinalSettlementDate(finalSettlementDate);
-        invoice.setDaysSalesOutstanding(FIN_Utility.getDaysBetween(invoice.getInvoiceDate(),
-            finalSettlementDate));
+        // If date is null invoice amount = 0 then nothing to set
+        if (finalSettlementDate != null) {
+          invoice.setFinalSettlementDate(finalSettlementDate);
+          invoice.setDaysSalesOutstanding(FIN_Utility.getDaysBetween(invoice.getInvoiceDate(),
+              finalSettlementDate));
+        }
       }
-      invoice.setPercentageOverdue(amounts.get("overdueOriginal").multiply(new BigDecimal(100))
-          .divide(invoice.getGrandTotalAmount(), BigDecimal.ROUND_HALF_UP).longValue());
+      BigDecimal grandTotalAmount = invoice.getGrandTotalAmount();
+      // This prevents division by ZERO
+      if (grandTotalAmount.compareTo(BigDecimal.ZERO) == 0) {
+        grandTotalAmount = BigDecimal.ONE;
+      }
+      invoice.setPercentageOverdue(amounts.get("overdue").multiply(new BigDecimal(100))
+          .divide(grandTotalAmount, BigDecimal.ROUND_HALF_UP).longValue());
       invoice.setLastCalculatedOnDate(new Date());
 
       OBDal.getInstance().save(invoice);
@@ -212,7 +219,7 @@ public class FIN_PaymentMonitorProcess extends DalBaseProcess {
     BigDecimal paidAmt = BigDecimal.ZERO;
     BigDecimal outstandingAmt = BigDecimal.ZERO;
     BigDecimal overdueAmt = BigDecimal.ZERO;
-    BigDecimal overdueOriginal = BigDecimal.ZERO;
+    BigDecimal overdue = BigDecimal.ZERO;
     for (FIN_PaymentSchedule paymentSchedule : invoice.getFINPaymentScheduleList()) {
       BigDecimal paid = BigDecimal.ZERO;
       for (FIN_PaymentScheduleDetail psd : paymentSchedule
@@ -225,17 +232,13 @@ public class FIN_PaymentMonitorProcess extends DalBaseProcess {
             && FIN_Utility.isPaymentConfirmed(psd.getPaymentDetails().getFinPayment().getStatus(),
                 psd)) {
           paid = paid.add(psd.getAmount().add(psd.getWriteoffAmount()));
-        }
-        if (psd.getFINOrigPaymentScheduleDetailList() != null)
-          for (FIN_OrigPaymentScheduleDetail opsd : psd.getFINOrigPaymentScheduleDetailList()) {
-            // If an amount has been paid, let's check if -according to the archived payment plan-,
-            // any amount was paid late
-            Date paymentDate = opsd.getPaymentScheduleDetail().getPaymentDetails().getFinPayment()
-                .getPaymentDate();
-            Date origDueDate = opsd.getArchivedPaymentPlan().getDueDate();
-            if (paymentDate.after(origDueDate))
-              overdueOriginal = overdueOriginal.add(opsd.getAmount());
+          // If an amount has been paid, let's check if any amount was paid late
+          Date paymentDate = psd.getPaymentDetails().getFinPayment().getPaymentDate();
+          Date dueDate = psd.getInvoicePaymentSchedule().getOrigDueDate();
+          if (paymentDate.after(dueDate)) {
+            overdue = overdue.add(psd.getAmount());
           }
+        }
       }
 
       if (paymentSchedule.getPaidAmount().compareTo(paid) != 0) {
@@ -256,7 +259,7 @@ public class FIN_PaymentMonitorProcess extends DalBaseProcess {
         OBDal.getInstance().save(paymentSchedule);
       }
 
-      if (paymentSchedule.getDueDate().before(new Date())
+      if (paymentSchedule.getOrigDueDate().before(new Date())
           && paymentSchedule.getOutstandingAmount() != BigDecimal.ZERO) {
         overdueAmt = overdueAmt.add(paymentSchedule.getOutstandingAmount());
       }
@@ -267,7 +270,7 @@ public class FIN_PaymentMonitorProcess extends DalBaseProcess {
     amounts.put("paidAmt", paidAmt);
     amounts.put("outstandingAmt", outstandingAmt);
     amounts.put("overdueAmt", overdueAmt);
-    amounts.put("overdueOriginal", overdueOriginal);
+    amounts.put("overdue", overdue);
     return amounts;
   }
 
@@ -282,7 +285,7 @@ public class FIN_PaymentMonitorProcess extends DalBaseProcess {
     }
     obc.add(Restrictions.eq(FIN_PaymentSchedule.PROPERTY_INVOICE, invoice));
     obc.add(Restrictions.ne(FIN_PaymentSchedule.PROPERTY_OUTSTANDINGAMOUNT, BigDecimal.ZERO));
-    obc.setProjection(Projections.min(FIN_PaymentSchedule.PROPERTY_DUEDATE));
+    obc.setProjection(Projections.min(FIN_PaymentSchedule.PROPERTY_ORIGDUEDATE));
     Object o = obc.list().get(0);
     if (o != null) {
       return (FIN_Utility.getDaysToDue((Date) o));

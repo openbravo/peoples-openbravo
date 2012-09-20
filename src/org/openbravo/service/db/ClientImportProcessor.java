@@ -27,7 +27,6 @@ import org.openbravo.dal.xml.EntityXMLProcessor;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.system.Client;
-import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.Warehouse;
 
 /**
@@ -104,13 +103,6 @@ public class ClientImportProcessor implements EntityXMLProcessor {
         user.setUsername(getNewName() + "_" + user.getUsername());
       } else {
         user.setUsername(replace(user.getUsername(), originalName));
-      }
-    } else if (bob instanceof Organization) {
-      final Organization org = (Organization) bob;
-      if (org.getName().indexOf(originalName) == -1) {
-        org.setName(getNewName() + "_" + org.getName());
-      } else {
-        org.setName(replace(org.getName(), originalName));
       }
     } else if (bob instanceof Warehouse) {
       final Warehouse wh = (Warehouse) bob;

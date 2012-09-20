@@ -48,8 +48,7 @@ isc.OBSelectorPopupWindow.addProperties({
     cancelButton = isc.OBFormButton.create({
       title: OB.I18N.getLabel('OBUISC_Dialog.CANCEL_BUTTON_TITLE'),
       click: function () {
-        selectorWindow.hide();
-        selectorWindow.selector.focusInItem();
+        selectorWindow.closeClick();
       }
     });
 
@@ -209,6 +208,7 @@ isc.OBSelectorPopupWindow.addProperties({
 
   closeClick: function () {
     this.hide(arguments);
+    this.selector.focusInItem();
   },
 
   hide: function () {
@@ -361,6 +361,40 @@ isc.OBSelectorItem.addProperties({
     this.Super('updateValue', arguments);
   },
 
+  setValue: function (val) {
+    var i, displayedVal;
+
+    if (val && this.valueMap) {
+      displayedVal = this.valueMap[val];
+      for (i in this.valueMap) {
+        if (this.valueMap.hasOwnProperty(i)) {
+          if (this.valueMap[i] === displayedVal && i !== val) {
+            // cleaning up valueMap: there are 2 values that display the same info, keep just the one for
+            // the current value
+            delete this.valueMap[i];
+            break;
+          }
+        }
+      }
+    } else { //Select by default the first option in the picklist, if possible
+      this.selectFirstPickListOption();
+    }
+
+    this.Super('setValue', arguments);
+  },
+
+  selectFirstPickListOption: function () {
+    var firstRecord;
+    if (this.pickList) {
+      if (this.pickList.data && (this.pickList.data.totalRows > 0)) {
+        firstRecord = this.pickList.data.get(0);
+        this.pickList.selection.selectSingle(firstRecord);
+        this.pickList.clearLastHilite();
+        this.pickList.scrollRecordIntoView(0);
+      }
+    }
+  },
+
   // changed handles the case that the user removes the value using the keyboard
   // this should do the same things as setting the value through the pickvalue
   changed: function (form, item, newValue) {
@@ -382,11 +416,10 @@ isc.OBSelectorItem.addProperties({
   },
 
   enableShortcuts: function () {
-    var me = this,
-        ksAction_ShowPopup;
+    var ksAction_ShowPopup;
 
-    ksAction_ShowPopup = function () {
-      me.openSelectorWindow();
+    ksAction_ShowPopup = function (caller) {
+      caller.openSelectorWindow();
       return false; //To avoid keyboard shortcut propagation
     };
     OB.KeyboardManager.Shortcuts.set('Selector_ShowPopup', ['OBSelectorItem', 'OBSelectorItem.icon'], ksAction_ShowPopup);
@@ -395,12 +428,13 @@ isc.OBSelectorItem.addProperties({
   init: function () {
     this.enableShortcuts();
     this.icons = [{
+      selector: this,
       src: this.popupIconSrc,
       width: this.popupIconWidth,
       height: this.popupIconHeight,
       hspace: this.popupIconHspace,
       keyPress: function (keyName, character, form, item, icon) {
-        var response = OB.KeyboardManager.Shortcuts.monitor('OBSelectorItem.icon');
+        var response = OB.KeyboardManager.Shortcuts.monitor('OBSelectorItem.icon', this.selector);
         if (response !== false) {
           response = this.Super('keyPress', arguments);
         }
@@ -440,26 +474,28 @@ isc.OBSelectorItem.addProperties({
 
   setValueFromRecord: function (record, fromPopup) {
     var currentValue = this.getValue(),
-        identifierFieldName = this.name + '.' + OB.Constants.IDENTIFIER;
+        identifierFieldName = this.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
+        i;
     if (!record) {
       this.storeValue(null);
-      this.form.setValue(this.name + '.' + this.displayField, null);
+      this.form.setValue(this.name + OB.Constants.FIELDSEPARATOR + this.displayField, null);
       this.form.setValue(identifierFieldName, null);
 
       // make sure that the grid does not display the old identifier
       if (this.form.grid && this.form.grid.getEditForm()) {
         this.form.grid.setEditValue(this.form.grid.getEditRow(), this.name, null);
         this.form.grid.setEditValue(this.form.grid.getEditRow(), identifierFieldName, '');
-        this.form.grid.setEditValue(this.form.grid.getEditRow(), this.name + '.' + this.displayField, '');
+        this.form.grid.setEditValue(this.form.grid.getEditRow(), this.name + OB.Constants.FIELDSEPARATOR + this.displayField, '');
       }
     } else {
       this.handleOutFields(record);
       this.storeValue(record[this.valueField]);
-      this.form.setValue(this.name + '.' + this.displayField, record[this.displayField]);
+      this.form.setValue(this.name + OB.Constants.FIELDSEPARATOR + this.displayField, record[this.displayField]);
       this.form.setValue(identifierFieldName, record[OB.Constants.IDENTIFIER]);
       if (!this.valueMap) {
         this.valueMap = {};
       }
+
       this.valueMap[record[this.valueField]] = record[this.displayField];
       this.updateValueMap();
     }
@@ -503,7 +539,7 @@ isc.OBSelectorItem.addProperties({
             form.hiddenInputs[this.outHiddenInputPrefix + outFields[i].suffix] = value;
             item = form.getItem(outFields[i].fieldName);
             if (item && item.valueMap) {
-              item.valueMap[value] = record[outFields[i].fieldName + '._identifier'];
+              item.valueMap[value] = record[outFields[i].fieldName + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER];
             }
           } else {
             form.hiddenInputs[this.outHiddenInputPrefix + outFields[i].suffix] = null;
@@ -538,7 +574,7 @@ isc.OBSelectorItem.addProperties({
   },
 
   keyPress: function (item, form, keyName, characterValue) {
-    var response = OB.KeyboardManager.Shortcuts.monitor('OBSelectorItem');
+    var response = OB.KeyboardManager.Shortcuts.monitor('OBSelectorItem', this);
     if (response !== false) {
       response = this.Super('keyPress', arguments);
     }
@@ -568,6 +604,14 @@ isc.OBSelectorItem.addProperties({
 
     // on purpose not passing the third boolean param
     isc.addProperties(requestProperties.params, this.form.view.getContextInfo(false, true));
+
+    if (this.form.view.standardWindow) {
+      isc.addProperties(requestProperties.params, {
+        windowId: this.form.view.standardWindow.windowId,
+        tabId: this.form.view.tabId,
+        moduleId: this.form.view.moduleId
+      });
+    }
 
     // also add the special ORG parameter
     if (requestProperties.params.inpadOrgId) {
@@ -600,7 +644,8 @@ isc.OBSelectorItem.addProperties({
   },
 
   getPickListFilterCriteria: function () {
-    var crit = this.Super('getPickListFilterCriteria', arguments);
+    var crit = this.Super('getPickListFilterCriteria', arguments),
+        operator;
     this.pickList.data.useClientFiltering = false;
     var criteria = {
       operator: 'or',
@@ -626,16 +671,21 @@ isc.OBSelectorItem.addProperties({
       displayFieldValue = crit[this.displayField];
     }
     if (displayFieldValue !== null) {
+      if (this.textMatchStyle === 'substring') {
+        operator = 'iContains';
+      } else {
+        operator = 'iStartsWith';
+      }
       for (i = 0; i < this.extraSearchFields.length; i++) {
         criteria.criteria.push({
           fieldName: this.extraSearchFields[i],
-          operator: 'iContains',
+          operator: operator,
           value: displayFieldValue
         });
       }
       criteria.criteria.push({
         fieldName: this.displayField,
-        operator: 'iContains',
+        operator: operator,
         value: displayFieldValue
       });
     }
@@ -647,16 +697,25 @@ isc.OBSelectorItem.addProperties({
     if (ret === value && this.isDisabled()) {
       return '';
     }
-    if (ret === value) {
+    // if value is null then don't set it in the valueMap, this results 
+    // in null being displayed in the combobox
+    if (ret === value && value) {
       if (!this.valueMap) {
         this.valueMap = {};
         this.valueMap[value] = '';
         return '';
-      } else if (!this.valueMap[value]) {
+      } else if (!this.valueMap[value] && OB.Utilities.isUUID(value)) {
         return '';
       }
     }
     return ret;
+  },
+
+  mapDisplayToValue: function (value) {
+    if (value === '') {
+      return null;
+    }
+    return this.Super('mapDisplayToValue', arguments);
   },
 
   destroy: function () {
@@ -703,7 +762,7 @@ isc.OBSelectorLinkItem.addProperties({
   },
 
   keyPress: function (item, form, keyName, characterValue) {
-    var response = OB.KeyboardManager.Shortcuts.monitor('OBSelectorLinkItem');
+    var response = OB.KeyboardManager.Shortcuts.monitor('OBSelectorLinkItem', this);
     if (response !== false) {
       response = this.Super('keyPress', arguments);
     }
@@ -769,10 +828,10 @@ isc.OBSelectorLinkItem.addProperties({
   },
 
   enableShortcuts: function () {
-    var me = this,
-        ksAction_ShowPopup;
-    ksAction_ShowPopup = function () {
-      me.showPicker();
+    var ksAction_ShowPopup;
+
+    ksAction_ShowPopup = function (caller) {
+      caller.showPicker();
       return false; //To avoid keyboard shortcut propagation
     };
     OB.KeyboardManager.Shortcuts.set('SelectorLink_ShowPopup', 'OBSelectorLinkItem', ksAction_ShowPopup);

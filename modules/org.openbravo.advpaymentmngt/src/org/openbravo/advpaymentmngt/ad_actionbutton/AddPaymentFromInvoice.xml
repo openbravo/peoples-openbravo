@@ -39,7 +39,7 @@
     <PARAMETER id="paramActualPayment" name="actualPayment" attribute="value" format="euroEdition" default="0"/>
     <PARAMETER id="paramFinancialAccountCurrencyId" name="financialAccountCurrencyId" attribute="value"/>
     <PARAMETER id="paramFinancialAccountCurrencyPrecision" name="financialAccountCurrencyPrecision" attribute="value"/>
-    <PARAMETER id="paramExchangeRate" name="exchangeRate" attribute="value" format="generalQtyEdition"/>
+    <PARAMETER id="paramExchangeRate" name="exchangeRate" attribute="value" format="generalQtyRelation"/>
     <PARAMETER id="paramExpectedConverted" name="expectedConverted" attribute="value" format="euroEdition"/>
     <PARAMETER id="paramActualConverted" name="actualConverted" attribute="value" format="euroEdition" default="0"/>
     <PARAMETER id="paramCredit" name="credit" attribute="value" format="euroEdition"/>
@@ -62,6 +62,14 @@
     
     <PARAMETER id="sectionDetailPaymentMethod" name="sectionDetailPaymentMethod"/>
     <PARAMETER id="sectionDetailFinancialAccount" name="sectionDetailFinancialAccount"/>
+    
+    <!-- Not allow to change exchange rate and amount -->
+    <PARAMETER id="paramStrNotAllowExchange" name="strNotAllowExchange" attribute="value"/>
+    
+     <!-- Not allow to change Write Off-->
+    <PARAMETER id="paramStrWriteOffLimit" name="strWriteOffLimit" attribute="value"/>
+    <PARAMETER id="paramStrtypewriteoff" name="strtypewriteoff" attribute="value"/>
+    <PARAMETER id="paramStrAmountwriteoff" name="strAmountwriteoff" attribute="value"/>
     
     <SUBREPORT id="reportC_Currency_ID" name="reportC_Currency_ID" report="org/openbravo/erpCommon/reference/List">
       <ARGUMENT name="parameterListSelected" withId="paramC_Currency_ID"/>

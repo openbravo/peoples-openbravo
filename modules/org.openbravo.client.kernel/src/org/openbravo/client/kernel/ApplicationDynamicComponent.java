@@ -18,6 +18,8 @@
  */
 package org.openbravo.client.kernel;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.openbravo.base.model.Entity;
@@ -25,7 +27,10 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.User;
+import org.openbravo.model.ad.access.WindowAccess;
+import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.system.Client;
+import org.openbravo.model.ad.ui.Window;
 import org.openbravo.model.common.enterprise.Organization;
 
 /**
@@ -39,7 +44,46 @@ public class ApplicationDynamicComponent extends BaseTemplateComponent {
     final Set<Entity> entities = OBContext.getOBContext().getEntityAccessChecker()
         .getReadableEntities();
     entities.addAll(OBContext.getOBContext().getEntityAccessChecker().getWritableEntities());
-    return entities;
+    return removeInaccessibleEntities(entities);
+  }
+
+  // entities may contain entities not accessible by the current role, this function removes them
+  // see issue 20530
+  private Set<Entity> removeInaccessibleEntities(Set<Entity> entities) {
+    Role role = OBContext.getOBContext().getRole();
+    Role initializedRole = OBDal.getInstance().get(Role.class, role.getId());
+    List<WindowAccess> windowAccessList = initializedRole.getADWindowAccessList();
+    Set<Entity> accessibleEntities = new HashSet<Entity>();
+    for (Entity entity : entities) {
+      String tableId = entity.getTableId();
+      if ("800018".equals(tableId) || "203".equals(tableId)) {
+        // Special cases, may not link to its window/poWindow
+        // It is safer not to try to remove them
+        // See getTabId@ReferencedLink.java
+        accessibleEntities.add(entity);
+        continue;
+      }
+      Table table = OBDal.getInstance().get(Table.class, tableId);
+      Window window = table.getWindow();
+      Window poWindow = table.getPOWindow();
+      if (windowAccessible(windowAccessList, window)
+          || windowAccessible(windowAccessList, poWindow)) {
+        accessibleEntities.add(entity);
+      }
+    }
+    return accessibleEntities;
+  }
+
+  private boolean windowAccessible(List<WindowAccess> windowAccessList, Window window) {
+    if (window == null) {
+      return false;
+    }
+    for (WindowAccess wa : windowAccessList) {
+      if (wa.getWindow().getId().equals(window.getId())) {
+        return true;
+      }
+    }
+    return false;
   }
 
   @Override

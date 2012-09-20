@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2011 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2012 Openbravo S.L.U.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.ad_forms;
@@ -201,7 +201,7 @@ public class DocInvoice extends AcctServer {
         DocLine_FinPaymentSchedule dpLine = new DocLine_FinPaymentSchedule(DocumentType, Record_ID,
             Line_ID);
         log4jDocInvoice.debug(" dpLine.m_Record_Id2 = " + data[i].finPaymentScheduleId);
-        dpLine.m_Record_Id2 = data[i].finPaymentScheduleId;
+        // dpLine.m_Record_Id2 = data[i].finPaymentScheduleId;
         dpLine.C_Currency_ID_From = data[i].cCurrencyId;
         dpLine.isPaid = data[i].ispaid;
         dpLine.Amount = data[i].amount;
@@ -275,9 +275,10 @@ public class DocInvoice extends AcctServer {
 
     /** @todo Assumes TaxIncluded = N */
 
-    // ARI, ARF
+    // ARI, ARF, ARI_RM
     if (DocumentType.equals(AcctServer.DOCTYPE_ARInvoice)
-        || DocumentType.equals(AcctServer.DOCTYPE_ARProForma)) {
+        || DocumentType.equals(AcctServer.DOCTYPE_ARProForma)
+        || DocumentType.equals(AcctServer.DOCTYPE_RMSalesInvoice)) {
       log4jDocInvoice.debug("Point 1");
       // Receivables DR
       if (m_payments == null || m_payments.length == 0)
@@ -357,19 +358,24 @@ public class DocInvoice extends AcctServer {
       }
       // Revenue CR
       if (p_lines != null && p_lines.length > 0) {
-        for (int i = 0; i < p_lines.length; i++)
-          if (IsReversal.equals("Y"))
-            fact.createLine(
-                p_lines[i],
-                ((DocLine_Invoice) p_lines[i]).getAccount(ProductInfo.ACCTTYPE_P_Revenue, as, conn),
-                this.C_Currency_ID, p_lines[i].getAmount(), "", Fact_Acct_Group_ID,
-                nextSeqNo(SeqNo), DocumentType, conn);
-          else
-            fact.createLine(
-                p_lines[i],
-                ((DocLine_Invoice) p_lines[i]).getAccount(ProductInfo.ACCTTYPE_P_Revenue, as, conn),
-                this.C_Currency_ID, "", p_lines[i].getAmount(), Fact_Acct_Group_ID,
-                nextSeqNo(SeqNo), DocumentType, conn);
+        for (int i = 0; i < p_lines.length; i++) {
+          Account account = ((DocLine_Invoice) p_lines[i]).getAccount(
+              ProductInfo.ACCTTYPE_P_Revenue, as, conn);
+          if (DocumentType.equals(AcctServer.DOCTYPE_RMSalesInvoice)) {
+            Account accountReturnMaterial = ((DocLine_Invoice) p_lines[i]).getAccount(
+                ProductInfo.ACCTTYPE_P_RevenueReturn, as, conn);
+            if (accountReturnMaterial != null) {
+              account = accountReturnMaterial;
+            }
+          }
+          if (IsReversal.equals("Y")) {
+            fact.createLine(p_lines[i], account, this.C_Currency_ID, p_lines[i].getAmount(), "",
+                Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+          } else {
+            fact.createLine(p_lines[i], account, this.C_Currency_ID, "", p_lines[i].getAmount(),
+                Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+          }
+        }
       }
       // Set Locations
       FactLine[] fLines = fact.getLines();
@@ -886,8 +892,8 @@ public class DocInvoice extends AcctServer {
     // Filter the right acct schemas for the organization
     for (int i = 0; i < m_aslocal.length; i++) {
       acct = m_aslocal[i];
-      if (AcctSchemaData.selectAcctSchemaTable2(connectionProvider, acct.m_C_AcctSchema_ID,
-          AD_Table_ID, adOrgId)) {
+      if (AcctSchemaData.selectAcctSchemaTable(connectionProvider, acct.m_C_AcctSchema_ID,
+          AD_Table_ID)) {
         new_as.add(new AcctSchema(connectionProvider, acct.m_C_AcctSchema_ID));
       }
     }

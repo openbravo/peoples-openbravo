@@ -17,7 +17,7 @@
     * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
     * All Rights Reserved.
     * Contributor(s): Openbravo SLU
-    * Contributions are Copyright (C) 2001-2008 Openbravo, S.L.U.
+    * Contributions are Copyright (C) 2001-2012 Openbravo, S.L.U.
     *
     * Specifically, this derivative work is based upon the following Compiere
     * file and version.
@@ -36,14 +36,14 @@ BEGIN
     END IF;
 
 
-  --RAISE_APPLICATION_ERROR (-20506, 'Cannot modify used rate');
+  --RAISE_APPLICATION_ERROR (-20000, '@20506@');
   IF(:new.ValidTo IS NULL) THEN
     -- If there is no end date, set it to X
       :new.ValidTo:=TO_DATE('31-12-9999', 'DD-MM-YYYY') ;
   END IF;
   --Check for invalid dates
   IF :new.ValidTo < :new.ValidFrom THEN
-    RAISE_APPLICATION_ERROR(-20505, 'Date To is lower than Date From');
+    RAISE_APPLICATION_ERROR(-20000, '@20505@');
   END IF;
 
   IF UPDATING THEN
@@ -80,7 +80,7 @@ BEGIN
       );
 
     IF v_count>0 THEN
-      RAISE_APPLICATION_ERROR(-20506, 'Cannot modify used rate');
+      RAISE_APPLICATION_ERROR(-20000, '@20506@');
     END IF;
   END IF;
   IF DELETING THEN
@@ -104,7 +104,7 @@ BEGIN
      and s.c_currency_id = :old.C_Currency_ID_TO
      and f.dateacct between :old.ValidFrom and :old.ValidTo;
     IF v_count>0 THEN
-      RAISE_APPLICATION_ERROR(-20506, 'Cannot modify used rate');
+      RAISE_APPLICATION_ERROR(-20000, '@20506@');
     END IF;
   END IF;
 

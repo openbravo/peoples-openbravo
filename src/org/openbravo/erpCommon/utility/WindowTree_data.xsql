@@ -89,7 +89,7 @@
    <SqlMethod name="selectProductCategory" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        SELECT tn.Node_ID,tn.Parent_ID,tn.SeqNo, m.M_Product_Category_ID AS ID, m.Name,m.Description, 'N' AS IsSummary 
+        SELECT tn.Node_ID,tn.Parent_ID,tn.SeqNo, m.M_Product_Category_ID AS ID, m.Name,m.Description, m.IsSummary 
         FROM AD_TreeNode tn, 
           M_Product_Category m
         WHERE tn.Node_ID = m.M_Product_Category_ID 
@@ -222,6 +222,20 @@
         <Parameter name="nodeId" optional="true" after="WHERE " text="tn.Node_ID = ? AND "/>
         <Parameter name="adTreeId"/>
    </SqlMethod>
+   <SqlMethod name="selectAsset" type="preparedStatement" return="multiple">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        SELECT tn.Node_ID,tn.Parent_ID,tn.SeqNo, a.A_Asset_ID AS ID, a.Name,a.Description,a.IsSummary 
+        FROM AD_TreeNode tn, A_Asset a
+        WHERE tn.Node_ID = a.A_Asset_ID 
+        AND tn.AD_Tree_ID = ? 
+        ORDER BY COALESCE(tn.Parent_ID, '-1'), tn.SeqNo
+      </Sql>
+        <Parameter name="editable" optional="true" type="none" after="WHERE " text="tn.IsActive='Y' AND a.isActive='Y' AND "/>
+        <Parameter name="parentId" optional="true" after="WHERE " text="tn.Parent_ID = ? AND "/>
+        <Parameter name="nodeId" optional="true" after="WHERE " text="tn.Node_ID = ? AND "/>
+        <Parameter name="adTreeId"/>
+   </SqlMethod>
    <SqlMethod name="selectTreeID" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
@@ -326,6 +340,17 @@
         WHERE AD_ORG_ID = ?
       </Sql>
         <Parameter name="adOrgId"/>
+   </SqlMethod>
+   <SqlMethod name="selectIsStatic" type="preparedStatement" return="String" default="N">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        SELECT A.ISSTATIC
+        FROM A_ASSET A
+        WHERE A.A_ASSET_ID = ?
+      </Sql>
+      <Parameter name="tablename" optional="false" type="replace" after="FROM " text="A_ASSET"/>
+      <Parameter name="tablename" optional="false" type="replace" after="WHERE A." text="A_ASSET"/>
+      <Parameter name="recordId"/>
    </SqlMethod>
    <SqlMethod name="update" type="preparedStatement" return="rowCount">
       <SqlMethodComment></SqlMethodComment>

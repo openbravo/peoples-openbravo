@@ -15,6 +15,7 @@ import java.sql.Blob;
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -82,6 +83,20 @@ public class UtilSql {
       // SimpleDateFormat formatter = new SimpleDateFormat ("dd-MM-yyyy");
       SimpleDateFormat formatter = new SimpleDateFormat(strDateFormat);
       strValueReturn = formatter.format(date);
+    }
+    return strValueReturn;
+  }
+
+  public static String getDateTimeValue(ResultSet result, String strField, String strDateFormat)
+      throws java.sql.SQLException {
+    // Format the current time.
+    String strValueReturn;
+    Timestamp timestamp = result.getTimestamp(strField);
+    if (result.wasNull()) {
+      strValueReturn = "";
+    } else {
+      SimpleDateFormat formatter = new SimpleDateFormat(strDateFormat);
+      strValueReturn = formatter.format(timestamp);
     }
     return strValueReturn;
   }

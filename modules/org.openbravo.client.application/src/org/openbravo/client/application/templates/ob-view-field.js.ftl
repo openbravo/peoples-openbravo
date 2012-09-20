@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -95,7 +95,7 @@ the outputted value is already covered by a default.
             },          
         </#if>
         <#if field.searchField>
-            displayField: '${field.name?js_string}._identifier',
+            displayField: '${field.name?js_string}${Constants_FIELDSEPARATOR}${Constants_IDENTIFIER}',
             <#if field.parentProperty>
                 showPickerIcon: ${(!field.parentProperty)?string},
             </#if>

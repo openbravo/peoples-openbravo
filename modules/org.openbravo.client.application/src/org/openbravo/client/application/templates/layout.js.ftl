@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -120,13 +120,8 @@ OB.Layout.initialize = function() {
   OB.TopLayout.addMember(OB.NavBar);
   OB.TopLayout.addMember(
           isc.HLayout.create({
-              width: '100%',
-              align: 'right',
-              layoutRightMargin: 10,
-              membersMargin: 20,
-              defaultLayoutAlign: 'center',
               members: [OB.TopLayout.CompanyImageLogo, OB.TopLayout.OpenbravoLogo]
-          })      
+          }, OB.Styles.TopLayout.LogosContainer)
   );
   
   // add the top part to the main layout
@@ -163,6 +158,16 @@ OB.Layout.initialize = function() {
          OB.Layout.ClassicOBCompatibility.Popup.openConfigScriptPopup(data.oldConfigScripts);
        } else if (data.showSuccessUpgrade) {
          OB.Layout.ClassicOBCompatibility.Popup.openSuccessUpgradePopup();
+       } else if (data.showOnDemandOffPlatform) {
+          OB.Layout.ViewManager.openView('OBClassicWindow', {
+              command: "DEFAULT",
+              formId: "8D6282279F464B1696B0EE3E23023B65",
+              icon: "Form",
+              id: "/ad_forms/InstanceManagement.html",
+              obManualURL: "/ad_forms/InstanceManagement.html",
+              tabTitle: OB.I18N.getLabel('OBUIAPP_InstanceActivation'),
+              viewId: "OBClassicWindow"
+            });
        } else if (data.showInstancePurpose) {
          OB.Layout.ClassicOBCompatibility.Popup.openInstancePurpose();
        } else if (data.showHeartbeat) {

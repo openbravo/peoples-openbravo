@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -68,6 +68,7 @@ public class ActiveInstanceProcess implements Process {
     boolean localActivation = localActivationKey != null && !localActivationKey.isEmpty();
 
     if (!localActivation) {
+      log.info("Connecting to butler to get activation...");
       String instanceNo = (String) bundle.getParams().get("instanceNo");
       if (!HttpsUtils.isInternetAvailable()) {
         msg.setType("Error");
@@ -90,8 +91,11 @@ public class ActiveInstanceProcess implements Process {
       if (localActivation) {
         activationKey = localActivationKey;
       } else {
+        log.info("Activation obtained from butler, activating instance...");
         activationKey = result[1];
       }
+
+      String previousLicenseClass = ActivationKey.getInstance().getLicenseClass().getCode();
 
       ActivationKey ak = new ActivationKey(publicKey, activationKey);
       String nonAllowedMods = ak.verifyInstalledModules(false);
@@ -107,8 +111,14 @@ public class ActiveInstanceProcess implements Process {
           SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
           sysInfo.setInstancePurpose(ak.getProperty("purpose"));
 
-          sysInfo.setMaturitySearch(Integer.toString(MaturityLevel.CS_MATURITY));
-          sysInfo.setMaturityUpdate(Integer.toString(MaturityLevel.CS_MATURITY));
+          // Only reset the maturity level when changing from a
+          // community to a professional license
+          // See issue https://issues.openbravo.com/view.php?id=21251
+          String newLicenseClass = ActivationKey.getInstance().getLicenseClass().getCode();
+          if ("C".equals(previousLicenseClass) && "STD".equals(newLicenseClass)) {
+            sysInfo.setMaturitySearch(Integer.toString(MaturityLevel.CS_MATURITY));
+            sysInfo.setMaturityUpdate(Integer.toString(MaturityLevel.CS_MATURITY));
+          }
 
           updateShowProductionFields("Y");
 
@@ -190,6 +200,10 @@ public class ActiveInstanceProcess implements Process {
     content += "&sysId=" + URLEncoder.encode(SystemInfo.getSystemIdentifier(), "utf-8");
     content += "&dbId=" + URLEncoder.encode(SystemInfo.getDBIdentifier(), "utf-8");
     content += "&macId=" + URLEncoder.encode(SystemInfo.getMacAddress(), "utf-8");
+
+    if (ActivationKey.getInstance().isOffPlatform()) {
+      content += "&offPlatform=true";
+    }
 
     URL url = new URL(BUTLER_URL);
     try {

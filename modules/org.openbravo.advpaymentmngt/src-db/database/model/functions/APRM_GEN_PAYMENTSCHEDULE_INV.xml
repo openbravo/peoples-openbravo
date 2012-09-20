@@ -16,10 +16,11 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2010-2011 Openbravo SLU
+* All portions are Copyright (C) 2010-2012 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
+
 
 p_message VARCHAR(2000);
 p_record_id VARCHAR(60);
@@ -70,18 +71,21 @@ v_PaymentPriority VARCHAR(32);
 v_creditmultiplier NUMBER:= 1;
 v_lang AD_User.Default_AD_Language%TYPE;
 v_orderno C_Order.DocumentNo%TYPE:=null;
-v_finpayment_desc FIN_Payment.Description%TYPE;
+v_finpayment_desc VARCHAR2(2000);
 v_orderno_trl AD_Message.MsgText%TYPE;
 v_invoiceno_trl AD_Message.MsgText%TYPE;
 v_payment_desc AD_OrgInfo.em_aprm_payment_desc%TYPE;
-v_fin_orig_payment_schedule_id Fin_Orig_Payment_Schedule.Fin_Orig_Payment_Schedule_Id%Type;
+v_description_first BOOLEAN := TRUE;
+v_finacct_currency VARCHAR2(32);
+v_rate NUMBER;
+v_PricePr NUMBER;
 
 TYPE RECORD IS REF CURSOR;
 Cur_Params RECORD;
 cur_paymentschedule RECORD;
 cur_finaccpaymentmethod RECORD;
 cur_PaymentScheduleOrder RECORD;
-cur_paymentscheduledetail RECORD;
+cur_linktopayment_scheddetails RECORD;
 
 BEGIN
 
@@ -313,14 +317,14 @@ BEGIN
             fin_payment_schedule_id, ad_client_id, ad_org_id, isactive,
             created, createdby, updated, updatedby,
             c_invoice_id, c_currency_id, c_order_id,
-            fin_paymentmethod_id, amount, duedate,
+            fin_paymentmethod_id, amount, duedate, origduedate,
             outstandingamt, fin_payment_priority_id
            ) VALUES (
             v_payment_schedule_invoice, v_client_id, v_org_id, 'Y',
             now(), p_user, now(), p_user,
             p_record_id, v_currency_id, null,
             cur_payments.fin_paymentmethod_id,
-            v_scheduledamount, v_planneddate,
+            v_scheduledamount, v_planneddate, v_planneddate,
             v_scheduledamount, v_PaymentPriority
           );
 
@@ -570,34 +574,27 @@ BEGIN
         
         FOR cur_paymentschedule IN (
             SELECT ps.fin_paymentmethod_id, ps.duedate, ps.c_currency_id, ps.ad_org_id, ps.fin_payment_schedule_id,
-              coalesce(sum(psd.amount),0) as outstandingamt, psd.fin_payment_schedule_order
+              coalesce(sum(psd.amount),0) as outstandingamt
             FROM fin_payment_schedule ps
               INNER JOIN fin_payment_scheduledetail psd ON ps.fin_payment_schedule_id = psd.fin_payment_schedule_invoice
                                                            AND psd.fin_payment_detail_id is null
             WHERE ps.c_invoice_id = p_record_id
               AND ps.isactive = 'Y'
-            GROUP BY ps.fin_paymentmethod_id, ps.duedate, ps.c_currency_id, ps.ad_org_id, ps.fin_payment_schedule_id, psd.fin_payment_schedule_order
+            GROUP BY ps.fin_paymentmethod_id, ps.duedate, ps.c_currency_id, ps.ad_org_id, ps.fin_payment_schedule_id
             ORDER BY ps.duedate, ps.fin_payment_schedule_id
           )
         LOOP
           -- Create FIN_Payment description
           SELECT ad_message_get2('InvoiceDocumentno', v_lang) INTO v_invoiceno_trl FROM DUAL;
           v_finpayment_desc:=v_invoiceno_trl || ': ' || v_documentno;          
-          SELECT MIN(o.DocumentNo) INTO v_orderno
-          FROM fin_payment_schedule ps INNER JOIN c_order o ON (o.C_Order_ID = ps.C_Order_ID) 
-          WHERE fin_payment_schedule_id=cur_paymentschedule.fin_payment_schedule_order;
-          IF (v_orderno IS NOT NULL) THEN
-            v_finpayment_desc:=v_finpayment_desc || chr(13);
-            SELECT ad_message_get2('OrderDocumentno', v_lang) INTO v_orderno_trl FROM DUAL;
-            v_finpayment_desc:=v_finpayment_desc || v_orderno_trl || ': ' || v_orderno;
-          END IF; 
-        
+          
           FOR cur_finaccpaymentmethod IN (
               SELECT CASE WHEN v_IsSOTrx='Y' THEN AUTOMATIC_RECEIPT ELSE AUTOMATIC_PAYMENT END AS CreatePayment,
                 CASE WHEN v_IsSOTrx='Y' THEN AUTOMATIC_DEPOSIT ELSE AUTOMATIC_WITHDRAWN END AS CreateFinTransaction,
                 CASE WHEN v_IsSOTrx='Y' THEN payin_execution_type ELSE payout_execution_type END AS ExecutionType,
                 CASE WHEN v_IsSOTrx='Y' THEN payin_deferred ELSE payout_deferred END AS deferred,
-                CASE WHEN v_IsSOTrx='Y' THEN payin_execution_process_id ELSE payout_execution_process_id END AS execution_process_id
+                CASE WHEN v_IsSOTrx='Y' THEN payin_execution_process_id ELSE payout_execution_process_id END AS execution_process_id,
+                CASE WHEN v_IsSoTrx='Y' THEN Payin_IsMulticurrency ELSE Payout_IsMulticurrency END AS multicurrency
               FROM FIN_FINACC_PAYMENTMETHOD
               WHERE FIN_FINACC_PAYMENTMETHOD.FIN_PAYMENTMETHOD_ID = cur_paymentschedule.FIN_PAYMENTMETHOD_ID
                 AND FIN_FINACC_PAYMENTMETHOD.FIN_FINANCIAL_ACCOUNT_ID = v_Financial_Account_ID
@@ -637,20 +634,35 @@ BEGIN
                 'N', 'N', 'N', v_finpayment_desc,
                 v_Financial_Account_ID, v_PaymentDocType_ID, v_project_id, v_campaign_id,
                 v_activity_id, v_user1, v_user2, 'N', 'N', 'N');
-              v_FIN_PAYMENT_DETAIL_ID := GET_UUID();
-              INSERT INTO fin_payment_detail(
-                fin_payment_detail_id, ad_client_id, ad_org_id, created, createdby,
-                updated, updatedby, fin_payment_id, amount, refund, isactive,
-                writeoffamt, c_glitem_id, isprepayment)
-                  VALUES (v_FIN_PAYMENT_DETAIL_ID, v_client_id, cur_paymentschedule.AD_ORG_ID, now(), p_user,
-                now(), p_user, v_FIN_PAYMENT_ID, cur_paymentschedule.OUTSTANDINGAMT, 'N', 'Y',
-                0, NULL, 'N');
+              
+              v_description_first := TRUE;
+              -- link to the new payment all the pending payment schedule details
+              FOR cur_linktopayment_scheddetails IN (
+                   SELECT FIN_PAYMENT_SCHEDULEDETAIL_ID, AMOUNT
+                   FROM FIN_PAYMENT_SCHEDULEDETAIL
+                   WHERE FIN_PAYMENT_SCHEDULE_INVOICE = cur_paymentschedule.FIN_PAYMENT_SCHEDULE_ID
+                   AND FIN_PAYMENT_DETAIL_ID IS NULL
+                   )
+              LOOP
+                v_FIN_PAYMENT_DETAIL_ID := GET_UUID();
+                INSERT INTO fin_payment_detail(
+                  fin_payment_detail_id, ad_client_id, ad_org_id, created, createdby,
+                  updated, updatedby, fin_payment_id, amount, refund, isactive,
+                  writeoffamt, c_glitem_id, isprepayment)
+                VALUES (v_FIN_PAYMENT_DETAIL_ID, v_client_id, cur_paymentschedule.AD_ORG_ID, now(), p_user,
+                  now(), p_user, v_FIN_PAYMENT_ID, cur_linktopayment_scheddetails.AMOUNT, 'N', 'Y',
+                  0, NULL, 'N');
+
+                UPDATE FIN_PAYMENT_SCHEDULEDETAIL
+                SET FIN_PAYMENT_DETAIL_ID = v_FIN_PAYMENT_DETAIL_ID
+                WHERE FIN_PAYMENT_SCHEDULEDETAIL_ID = cur_linktopayment_scheddetails.FIN_PAYMENT_SCHEDULEDETAIL_ID
+                  AND FIN_PAYMENT_DETAIL_ID IS NULL;
+              END LOOP;
 
               --Fixes 14403 defect 
               -- Payment document id is added in success message when invoice is completed with auto receipt is checked
               v_Message:='@APRM_PaymentDocumentno@ ' || v_PaymentDocumentNo || ' @beenCreated@';
               UPDATE ad_ep_instance_para SET p_text= v_Message WHERE ad_ep_instance_id= p_ep_instance AND parametername LIKE 'Message';
-
               IF (cur_finaccpaymentmethod.deferred = 'N'
                   AND cur_finaccpaymentmethod.ExecutionType='A') THEN
                 INSERT INTO aprm_pending_paymentinvoice (
@@ -662,11 +674,7 @@ BEGIN
                   now(), p_user, now(), p_user,
                   'N', v_fin_payment_id, p_record_id, cur_finaccpaymentmethod.execution_process_id);
               END IF;
-
-              UPDATE FIN_PAYMENT_SCHEDULEDETAIL
-              SET FIN_PAYMENT_DETAIL_ID = v_FIN_PAYMENT_DETAIL_ID
-              WHERE FIN_PAYMENT_SCHEDULE_INVOICE = cur_paymentschedule.FIN_PAYMENT_SCHEDULE_ID
-                AND FIN_PAYMENT_DETAIL_ID IS NULL;
+              
               UPDATE FIN_PAYMENT
               SET PROCESSED = 'Y',
                   EM_APRM_PROCESS_PAYMENT = 'R'
@@ -674,15 +682,27 @@ BEGIN
 
               -- Update payment schedule amounts and payment monitor in case that the payment is not left in awaiting
               -- execution status.
-              IF (cur_finaccpaymentmethod.ExecutionType<>'A') THEN
-                FOR cur_PaymentScheduleOrder IN (
-                  SELECT FIN_PAYMENT_SCHEDULE_ORDER
-                  FROM FIN_PAYMENT_SCHEDULEDETAIL
-                  WHERE FIN_PAYMENT_SCHEDULE_INVOICE = cur_paymentschedule.FIN_PAYMENT_SCHEDULE_ID
-                    AND FIN_PAYMENT_SCHEDULE_ORDER IS NOT NULL
-                  GROUP BY FIN_PAYMENT_SCHEDULE_ORDER
-                  ) LOOP
-
+              FOR cur_PaymentScheduleOrder IN (
+                SELECT FIN_PAYMENT_SCHEDULE_ORDER
+                FROM FIN_PAYMENT_SCHEDULEDETAIL
+                WHERE FIN_PAYMENT_SCHEDULE_INVOICE = cur_paymentschedule.FIN_PAYMENT_SCHEDULE_ID
+                  AND FIN_PAYMENT_SCHEDULE_ORDER IS NOT NULL
+                GROUP BY FIN_PAYMENT_SCHEDULE_ORDER
+                ) LOOP
+                SELECT MIN(o.DocumentNo) INTO v_orderno
+                FROM fin_payment_schedule ps INNER JOIN c_order o ON (o.C_Order_ID = ps.C_Order_ID)
+                WHERE fin_payment_schedule_id=cur_PaymentScheduleOrder.FIN_PAYMENT_SCHEDULE_ORDER;
+                IF (v_orderno IS NOT NULL) THEN
+                  IF (v_description_first) THEN
+                    v_finpayment_desc:=v_finpayment_desc || chr(13);
+                    SELECT ad_message_get2('OrderDocumentno', v_lang) INTO v_orderno_trl FROM DUAL;
+                    v_finpayment_desc:=v_finpayment_desc || v_orderno_trl || ': ' || v_orderno;
+                    v_description_first := FALSE;
+                  ELSE
+                    v_finpayment_desc:=v_finpayment_desc || ', ' || v_orderno;
+                  END IF;
+                END IF;
+                IF (cur_finaccpaymentmethod.ExecutionType<>'A') THEN
                   UPDATE FIN_PAYMENT_SCHEDULE
                   SET PAIDAMT = (SELECT COALESCE(sum(amount + COALESCE(writeoffamt, 0)), 0)
                                  FROM fin_payment_scheduledetail
@@ -703,8 +723,14 @@ BEGIN
                                                       and fin_payment.processed='Y' and fin_payment.status = 'RPAE'
                                                       and fin_payment_detail.fin_payment_detail_id = fin_payment_scheduledetail.fin_payment_detail_id)))
                   WHERE FIN_PAYMENT_SCHEDULE_ID = cur_PaymentScheduleOrder.FIN_PAYMENT_SCHEDULE_ORDER;
-                END LOOP;
-
+                END IF;
+              END LOOP;
+              IF (length(v_finpayment_desc) > 255) THEN
+                SELECT SUBSTR(v_finpayment_desc, 1, 252) || '...' INTO v_finpayment_desc FROM DUAL;
+              END IF;
+              UPDATE FIN_PAYMENT SET DESCRIPTION = v_finpayment_desc
+                WHERE FIN_PAYMENT_ID = v_FIN_PAYMENT_ID;
+              IF (cur_finaccpaymentmethod.ExecutionType<>'A') THEN  
                 UPDATE FIN_PAYMENT_SCHEDULE
                 SET PAIDAMT = PAIDAMT + COALESCE(cur_paymentschedule.OUTSTANDINGAMT,0),
                     OUTSTANDINGAMT = OUTSTANDINGAMT - COALESCE(cur_paymentschedule.OUTSTANDINGAMT, 0)
@@ -718,7 +744,10 @@ BEGIN
                 UPDATE C_INVOICE
                 SET TOTALPAID = TOTALPAID + COALESCE(cur_paymentschedule.OUTSTANDINGAMT, 0),
                     OUTSTANDINGAMT = OUTSTANDINGAMT - COALESCE(cur_paymentschedule.OUTSTANDINGAMT, 0),
-                    DUEAMT = V_DueAmount
+                    DUEAMT = V_DueAmount, 
+                    FINALSETTLEMENT = cur_paymentschedule.duedate,
+                    DAYSOUTSTANDING = 0,
+                    PERCENTAGEOVERDUE = 0
                 WHERE C_INVOICE_ID = P_RECORD_ID;
                 UPDATE C_INVOICE
                 SET ISPAID = 'Y'
@@ -735,19 +764,41 @@ BEGIN
                 v_ResultStr:='Generating FIN_FINACC_TRANSACTION';
                 v_FIN_FINACC_TRANSACTION_ID := GET_UUID();
                 SELECT COALESCE(MAX(LINE),0) INTO v_Line FROM FIN_FINACC_TRANSACTION WHERE FIN_FINANCIAL_ACCOUNT_ID = v_Financial_Account_ID;
-                INSERT INTO fin_finacc_transaction(
-                  fin_finacc_transaction_id, ad_client_id, ad_org_id, created,
-                  createdby, updated, updatedby, isactive, c_currency_id, fin_financial_account_id,
-                  line, fin_payment_id, dateacct, c_glitem_id, status, paymentamt,
-                  depositamt, processed, processing, posted, c_project_id, c_campaign_id,
-                  c_activity_id, user1_id, user2_id, trxtype, statementdate, description,
-                  fin_reconciliation_id)
-                VALUES (v_FIN_FINACC_TRANSACTION_ID, v_client_id, cur_paymentschedule.AD_ORG_ID, now(), p_user,
-                  now(), p_user, 'Y', cur_paymentschedule.C_CURRENCY_ID, v_Financial_Account_ID,
-                  v_Line, v_FIN_PAYMENT_ID, cur_paymentschedule.DUEDATE, NULL, CASE WHEN v_IsSOTrx='Y' THEN 'RDNC' ELSE 'PWNC' END, CASE WHEN v_IsSOTrx='N' THEN cur_paymentschedule.OUTSTANDINGAMT ELSE 0 END,
-                  CASE WHEN v_IsSOTrx='Y' THEN cur_paymentschedule.OUTSTANDINGAMT ELSE 0 END, 'Y', 'N', 'N', v_project_id, v_campaign_id,
-                  v_activity_id, v_user1, v_user2, CASE WHEN v_IsSOTrx='N' THEN 'BPW' ELSE 'BPD' END, cur_paymentschedule.DUEDATE, 'Invoice No.: ' || v_documentno,
-                  NULL);
+                --check the currency of the invoice and the currency of the financial account
+                select c_currency_id into v_finacct_currency from FIN_Financial_Account where FIN_Financial_Account_id =v_Financial_Account_ID;
+                IF (v_finacct_currency<>cur_paymentschedule.C_CURRENCY_ID AND cur_finaccpaymentmethod.multicurrency='Y') THEN
+                  v_rate := C_CURRENCY_RATE(cur_paymentschedule.C_CURRENCY_ID, v_finacct_currency, cur_paymentschedule.DUEDATE, NULL, v_client_id, cur_paymentschedule.AD_ORG_ID );
+                  SELECT priceprecision into v_PricePr from C_CURRENCY where c_currency_id = v_finacct_currency;
+                  INSERT INTO fin_finacc_transaction(
+                    fin_finacc_transaction_id, ad_client_id, ad_org_id, created,
+                    createdby, updated, updatedby, isactive, c_currency_id, fin_financial_account_id,
+                    line, fin_payment_id, dateacct, c_glitem_id, status, paymentamt,
+                    depositamt, processed, processing, posted, c_project_id, c_campaign_id,
+                    c_activity_id, user1_id, user2_id, trxtype, statementdate, description,
+                    fin_reconciliation_id, foreign_currency_id, foreign_convert_rate, foreign_amount)
+                  VALUES (v_FIN_FINACC_TRANSACTION_ID, v_client_id, cur_paymentschedule.AD_ORG_ID, now(), p_user,
+                    now(), p_user, 'Y', v_finacct_currency, v_Financial_Account_ID,
+                    v_Line, v_FIN_PAYMENT_ID, cur_paymentschedule.DUEDATE, NULL, CASE WHEN v_IsSOTrx='Y' THEN 'RDNC' ELSE 'PWNC' END, CASE WHEN v_IsSOTrx='N' THEN ROUND(cur_paymentschedule.OUTSTANDINGAMT*v_rate, v_PricePr) ELSE 0 END,
+                    CASE WHEN v_IsSOTrx='Y' THEN ROUND(cur_paymentschedule.OUTSTANDINGAMT*v_rate, v_PricePr) ELSE 0 END, 'Y', 'N', 'N', v_project_id, v_campaign_id,
+                    v_activity_id, v_user1, v_user2, CASE WHEN v_IsSOTrx='N' THEN 'BPW' ELSE 'BPD' END, cur_paymentschedule.DUEDATE, 'Invoice No.: ' || v_documentno,
+                    NULL, cur_paymentschedule.C_CURRENCY_ID, v_rate , CASE WHEN v_IsSOTrx='N' THEN cur_paymentschedule.OUTSTANDINGAMT ELSE cur_paymentschedule.OUTSTANDINGAMT END);
+                ELSE
+                  INSERT INTO fin_finacc_transaction(
+                    fin_finacc_transaction_id, ad_client_id, ad_org_id, created,
+                    createdby, updated, updatedby, isactive, c_currency_id, fin_financial_account_id,
+                    line, fin_payment_id, dateacct, c_glitem_id, status, paymentamt,
+                    depositamt, processed, processing, posted, c_project_id, c_campaign_id,
+                    c_activity_id, user1_id, user2_id, trxtype, statementdate, description,
+                    fin_reconciliation_id)
+                  VALUES (v_FIN_FINACC_TRANSACTION_ID, v_client_id, cur_paymentschedule.AD_ORG_ID, now(), p_user,
+                    now(), p_user, 'Y', cur_paymentschedule.C_CURRENCY_ID, v_Financial_Account_ID,
+                    v_Line, v_FIN_PAYMENT_ID, cur_paymentschedule.DUEDATE, NULL, CASE WHEN v_IsSOTrx='Y' THEN 'RDNC' ELSE 'PWNC' END, CASE WHEN v_IsSOTrx='N' THEN cur_paymentschedule.OUTSTANDINGAMT ELSE 0 END,
+                    CASE WHEN v_IsSOTrx='Y' THEN cur_paymentschedule.OUTSTANDINGAMT ELSE 0 END, 'Y', 'N', 'N', v_project_id, v_campaign_id,
+                    v_activity_id, v_user1, v_user2, CASE WHEN v_IsSOTrx='N' THEN 'BPW' ELSE 'BPD' END, cur_paymentschedule.DUEDATE, 'Invoice No.: ' || v_documentno,
+                    NULL);
+                END IF;
+                
+                
                 UPDATE FIN_PAYMENT SET STATUS = CASE WHEN v_IsSOTrx='Y' THEN 'RDNC' ELSE 'PWNC' END
                   WHERE FIN_PAYMENT_ID = v_FIN_PAYMENT_ID;
                   --UPDATE FINANCIAL ACCOUNT CURRENT BALANCE
@@ -758,53 +809,6 @@ BEGIN
           END LOOP;
         END LOOP;
       END IF;
-
-      FOR cur_paymentschedule IN (
-        SELECT fin_payment_schedule_id,
-               c_invoice_id, c_currency_id, c_order_id,
-               fin_paymentmethod_id, amount, duedate,
-               fin_payment_priority_id
-        FROM FIN_PAYMENT_SCHEDULE
-	WHERE C_INVOICE_ID=p_record_id
-        )
-      LOOP
-        v_fin_orig_payment_schedule_id:=get_uuid();
-        INSERT INTO fin_orig_payment_schedule
-        (
-          fin_orig_payment_schedule_id, ad_client_id, ad_org_id, isactive,
-          created, createdby, updated, updatedby,
-          c_invoice_id, c_currency_id, c_order_id,
-          fin_paymentmethod_id,
-          amount, duedate,
-          fin_payment_priority_id
-         ) VALUES (
-          v_fin_orig_payment_schedule_id, v_client_id, v_org_id, 'Y',
-          now(), p_user, now(), p_user,
-          p_record_id, cur_paymentschedule.c_currency_id, cur_paymentschedule.c_order_id,
-          cur_paymentschedule.fin_paymentmethod_id,
-          cur_paymentschedule.amount, cur_paymentschedule.duedate,
-          cur_paymentschedule.fin_payment_priority_id
-        );
-        FOR cur_paymentscheduledetail IN (
-          SELECT FIN_PAYMENT_SCHEDULEDETAIL_ID, FIN_PAYMENT_DETAIL_ID,
-                 AMOUNT, ISACTIVE, WRITEOFFAMT
-          FROM FIN_PAYMENT_SCHEDULEDETAIL
-          WHERE FIN_PAYMENT_SCHEDULE_INVOICE = cur_paymentschedule.fin_payment_schedule_id
-            AND ISCANCELED <> 'Y'
-            AND FIN_PAYMENT_DETAIL_ID IS NOT NULL
-          )
-        LOOP
-          INSERT INTO fin_orig_paym_scheddetail(FIN_ORIG_PAYM_SCHEDDETAIL_ID,
-            AD_CLIENT_ID, AD_ORG_ID, CREATED, CREATEDBY, UPDATED, UPDATEDBY,
-            FIN_ORIG_PAYMENT_SCHEDULE_ID, FIN_PAYMENT_SCHEDULEDETAIL_ID,
-            AMOUNT, WRITEOFFAMT, ISACTIVE, ISCANCELED)
-          VALUES (get_uuid(),
-            v_client_id, v_org_id, now(), p_user, now(), p_user,
-            v_fin_orig_payment_schedule_id, cur_paymentscheduledetail.FIN_PAYMENT_SCHEDULEDETAIL_ID,
-            cur_paymentscheduledetail.AMOUNT, cur_paymentscheduledetail.WRITEOFFAMT, 'Y', 'N'
-            );
-        END LOOP;
-      END LOOP;
     END;
 
   ELSIF (p_docaction = 'RE') THEN
@@ -941,9 +945,6 @@ BEGIN
           END IF;
         END LOOP;
       END LOOP;
-
-      DELETE FROM fin_orig_paym_scheddetail WHERE fin_orig_payment_schedule_id in (SELECT fin_orig_payment_schedule_id FROM fin_orig_payment_schedule WHERE c_invoice_id = p_record_id);
-      DELETE FROM fin_orig_payment_schedule WHERE c_invoice_id = p_record_id;
 
       DELETE FROM fin_payment_schedule WHERE (c_invoice_id = p_record_id
                   OR

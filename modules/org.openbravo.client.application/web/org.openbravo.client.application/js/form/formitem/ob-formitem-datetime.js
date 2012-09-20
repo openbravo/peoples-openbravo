@@ -149,5 +149,16 @@ isc.OBDateTimeItem.addProperties({
     if (completedDate !== oldValue) {
       item.setValue(completedDate);
     }
+  },
+
+  pickerDataChanged: function (picker) {
+    var date, now = new Date();
+    this.Super('pickerDataChanged', arguments);
+
+    // SC sets time to local 0:00 to date in pickerDataChanged method
+    // setting now current time
+    date = this.getValue();
+    date.setHours(now.getHours(), now.getMinutes(), now.getSeconds());
+    this.setValue(date);
   }
 });

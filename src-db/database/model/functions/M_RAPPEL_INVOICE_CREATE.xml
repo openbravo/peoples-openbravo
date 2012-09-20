@@ -16,7 +16,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2008 Openbravo SLU
+* All portions are Copyright (C) 2001-2012 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -264,32 +264,34 @@
         AND I.DATEINVOICED<v_LimitDate+1
         AND I.C_BPARTNER_ID=RP.C_BPARTNER_ID
         AND IL.M_PRODUCT_ID IN
-        (SELECT P.M_PRODUCT_ID
-        FROM M_RAPPEL R,
-          M_PRODUCT P
-        WHERE R.M_RAPPEL_ID=RP.M_RAPPEL_ID
-          AND ((COALESCE(R.INCLUDE_PRODUCT_CATEGORY, 'Y')='N'
-          AND P.M_PRODUCT_CATEGORY_ID IN
-          (SELECT M_PRODUCT_CATEGORY_ID
-          FROM M_RAPPEL_PRODUCTCATEGORY RC
-          WHERE RC.M_RAPPEL_ID=R.M_RAPPEL_ID
-          )))
-        UNION
-        SELECT M_PRODUCT_ID
-        FROM M_RAPPEL_PRODUCT RP,
-          M_RAPPEL R1
-        WHERE R.M_RAPPEL_ID=RP.M_RAPPEL_ID
-          AND  R1.M_RAPPEL_ID=RP.M_RAPPEL_ID
-          AND RP.ISACTIVE='Y'
-          AND COALESCE(R1.INCLUDE_PRODUCT, 'Y')='N' MINUS
-        SELECT M_PRODUCT_ID
-        FROM M_RAPPEL_PRODUCT RP,
-          M_RAPPEL R1
-        WHERE R.M_RAPPEL_ID=RP.M_RAPPEL_ID
-          AND  R1.M_RAPPEL_ID=RP.M_RAPPEL_ID
-          AND RP.ISACTIVE='Y'
-          AND COALESCE(R1.INCLUDE_PRODUCT, 'Y')='Y'
-        )
+	(SELECT P.M_PRODUCT_ID
+	FROM M_RAPPEL R,
+	  M_PRODUCT P
+	WHERE R.M_RAPPEL_ID=RP.M_RAPPEL_ID
+	  AND ((COALESCE(R.INCLUDE_PRODUCT_CATEGORY, 'Y')='N' -- Only defined categories
+	  AND P.M_PRODUCT_CATEGORY_ID IN
+	  (SELECT M_PRODUCT_CATEGORY_ID
+	  FROM M_RAPPEL_PRODUCTCATEGORY RC
+	  WHERE RC.M_RAPPEL_ID=R.M_RAPPEL_ID
+	  AND RC.ISACTIVE = 'Y'))
+	  OR (COALESCE(R.INCLUDE_PRODUCT_CATEGORY, 'Y')='Y' -- All categories except defined
+	  AND P.M_PRODUCT_CATEGORY_ID NOT IN
+	  (SELECT M_PRODUCT_CATEGORY_ID
+	  FROM M_RAPPEL_PRODUCTCATEGORY RC
+	  WHERE RC.M_RAPPEL_ID=R.M_RAPPEL_ID
+	  AND RC.ISACTIVE = 'Y')))
+	  AND ((COALESCE(R.INCLUDE_PRODUCT, 'Y')='N' -- Only defined products
+	  AND P.M_PRODUCT_ID IN
+	  (SELECT M_PRODUCT_ID
+	  FROM M_RAPPEL_PRODUCT RP
+	  WHERE RP.M_RAPPEL_ID=R.M_RAPPEL_ID
+	  AND RP.ISACTIVE='Y'))
+	  OR (COALESCE(R.INCLUDE_PRODUCT, 'Y')='Y' -- All products except defined
+	  AND P.M_PRODUCT_ID NOT IN
+	  (SELECT M_PRODUCT_ID
+	  FROM M_RAPPEL_PRODUCT RP
+	  WHERE RP.M_RAPPEL_ID=R.M_RAPPEL_ID
+	  AND RP.ISACTIVE='Y'))))
         AND I.C_BPARTNER_ID=PL.C_BPARTNER_ID
         AND NOT EXISTS
         (SELECT 1
@@ -329,6 +331,14 @@
           v_pricelistId
         FROM C_BPARTNER
         WHERE C_BPARTNER.C_BPARTNER_ID=CUR_INVOICE.C_BPARTNER_ID;
+
+        IF (v_paymenttermId is NULL) THEN
+          RAISE_APPLICATION_ERROR(-20000, '@notnullpaymentterm@') ;
+        END IF;
+        IF (v_pricelistId is NULL) THEN
+          RAISE_APPLICATION_ERROR(-20000, '@notnullpricelist@') ;
+        END IF;
+
         INSERT
         INTO C_INVOICE
           (

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -404,7 +404,7 @@
           
         var state=msg.Response.state;
         var errorStatus=msg.Response.statusofstate;
-        if(msg.Response.processFinished==='Y' && !process_finished){
+        if((msg.Response.processFinished==='Y' || msg.processFinished==='Y') && !process_finished){
             process_finished=true;
             var frm = document.frmMain;
             submitXmlHttpRequest(update, frm, "UPDATESTATUS", "ApplyModulesCallServlet.html", false, null, null);
@@ -429,8 +429,8 @@
  
           error_status[getStatusIndex(state)]=errorStatus;
           var message;
-          if(msg.Response.lastmessage!==null){
-            message=msg.Response.lastmessage.substring(0,30);
+          if(msg.Response.lastmessage!==null && (typeof msg.Response.lastmessage!=='undefined')){
+            message=msg.Response.lastmessage.substring(0,85);
           }else{
             message="";
           }
@@ -734,7 +734,7 @@
            
 
               <tr><td colspan="4">
-                <div style="overflow: auto; width: 600px;">
+                <div style="overflow: hidden; width: 600px;">
                   <span id="rebuildMessage" class="CheckList_RebuildSystemWindow_title">Elapsed time: <span id="localTimer">00:00</span>.</br> Do not close this window.</span>
                  </div>
               </td></tr>
@@ -743,7 +743,7 @@
     <tr><td><table class="Popup_Client_TablePopup" cellpadding="0" cellspacing="0" id="restartOptions" style="margin-top: 5px;">
               
               <tr><td colspan="2">
-                <div style="overflow: auto; width: 600px;">
+                <div style="overflow: hidden; width: 600px;">
                   <span class="PlainText_normal">In order for the changes to take effect, you need to restart the servlet container.</span>
                 </div>
               </td></tr>
@@ -789,7 +789,7 @@
               <tr><td colspan="4">
 
 
-                <div class="TextArea_FourCells_width" id="CheckList">
+                <div id="CheckList">
                   <div style="padding: 15 5 15 5;" id="CheckListContainer">
                     <div id=sectionStepTree>
                       <div class="CheckList_Row" id="node_xxyy">
@@ -811,7 +811,7 @@
               </td></tr>
 
               <tr><td colspan="4">
-                <div style="overflow: auto; width: 600px;">
+                <div style="overflow: hidden; width: 600px;">
                   <span class="CheckList_RebuildSystemWindow_title">Warnings and errors:</span>
                 </div>
               </td></tr>

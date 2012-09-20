@@ -92,7 +92,12 @@ isc.OBNumberItem.addProperties({
 
     if (oldCaretPosition !== newCaretPosition || editValue !== this.getElementValue()) {
       this.setElementValue(editValue);
-      this.setSelectionRange(newCaretPosition, newCaretPosition);
+      // in grid editing always the complete value is selected on focus
+      if (this.form && this.form.grid && this.form.selectOnFocus) {
+        this.selectValue();
+      } else {
+        this.setSelectionRange(newCaretPosition, newCaretPosition);
+      }
     }
   },
 
@@ -469,7 +474,7 @@ isc.OBNumberItem.validateCondition = function (item, validator, value) {
   }
 
   type = item.typeInstance;
-  validator.resultingValue = null;
+  delete validator.resultingValue;
 
   // return a formatted value, if it was valid
   if (isc.isA.String(value)) {
@@ -486,6 +491,7 @@ isc.OBNumberItem.validateCondition = function (item, validator, value) {
       return false;
     }
   } else if (isc.isA.Number(value)) {
+    validator.resultingValue = value;
     return true;
   }
   // don't loose illegal values

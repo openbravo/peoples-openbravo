@@ -32,9 +32,12 @@ import org.openbravo.base.util.Check;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.ad.utility.Tree;
 import org.openbravo.model.ad.utility.TreeNode;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.common.enterprise.OrganizationType;
 
 /**
  * Builds a tree of organizations to compute the accessible organizations for the current
@@ -127,10 +130,12 @@ public class OrganizationStructureProvider implements OBNotSingleton {
    */
   public Set<String> getNaturalTree(String orgId) {
     initialize();
-    Set<String> result = naturalTreesByOrgID.get(orgId);
-    if (result == null) {
+    Set<String> result;
+    if (naturalTreesByOrgID.get(orgId) == null) {
       result = new HashSet<String>();
       result.add(orgId);
+    } else {
+      result = new HashSet<String>(naturalTreesByOrgID.get(orgId));
     }
     return result;
   }
@@ -227,6 +232,18 @@ public class OrganizationStructureProvider implements OBNotSingleton {
   }
 
   /**
+   * Returns the parent organization of an organization.
+   * 
+   * @param orgId
+   *          the id of the organization for which the parent organization is determined.
+   * @return the parent organization.
+   */
+  public Organization getParentOrg(Organization org) {
+    initialize();
+    return OBDal.getInstance().get(Organization.class, parentByOrganizationID.get(org.getId()));
+  }
+
+  /**
    * Returns the child organization tree of an organization.
    * 
    * @param orgId
@@ -266,7 +283,11 @@ public class OrganizationStructureProvider implements OBNotSingleton {
     if (childByOrganizationID.get(orgId) == null) {
       reInitialize();
     }
-    return childByOrganizationID.get(orgId);
+    if (childByOrganizationID.get(orgId) == null) {
+      return new HashSet<String>();
+    } else {
+      return new HashSet<String>(childByOrganizationID.get(orgId));
+    }
   }
 
   class OrgNode {
@@ -363,5 +384,90 @@ public class OrganizationStructureProvider implements OBNotSingleton {
 
   public void setClientId(String clientId) {
     this.clientId = clientId;
+  }
+
+  /*
+   * Returns the legal entities of the client.
+   */
+  public List<Organization> getLegalEntitiesList() {
+    StringBuffer where = new StringBuffer();
+    where.append(" as org");
+    where.append(" join org." + Organization.PROPERTY_ORGANIZATIONTYPE + " as orgType");
+    where.append(" where org." + Organization.PROPERTY_CLIENT + ".id = :client");
+    where.append("   and orgType." + OrganizationType.PROPERTY_LEGALENTITY + " = true");
+    OBQuery<Organization> orgQry = OBDal.getInstance().createQuery(Organization.class,
+        where.toString());
+    orgQry.setFilterOnReadableClients(false);
+    orgQry.setFilterOnReadableOrganization(false);
+    orgQry.setNamedParameter("client", clientId);
+    return orgQry.list();
+  }
+
+  /**
+   * Returns the legal entity of the given organization
+   * 
+   * @param org
+   *          organization to get its legal entity
+   * @return legal entity (with or without accounting) organization or null if not found
+   */
+  public Organization getLegalEntity(final Organization org) {
+    // Admin mode needed to get the Organization type.
+    OBContext.setAdminMode(true);
+    try {
+      for (final String orgId : getParentList(org.getId(), true)) {
+        final Organization parentOrg = OBDal.getInstance().get(Organization.class, orgId);
+        if (parentOrg.getOrganizationType().isLegalEntity()) {
+          return parentOrg;
+        }
+      }
+      return null;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  /**
+   * Returns the legal entity or Business Unit of the given organization
+   * 
+   * @param org
+   *          organization to get its legal entity or business unit
+   * @return legal entity (with or without accounting) organization or null if not found
+   */
+  public Organization getLegalEntityOrBusinessUnit(final Organization org) {
+    // Admin mode needed to get the Organization type.
+    OBContext.setAdminMode(true);
+    try {
+      for (final String orgId : getParentList(org.getId(), true)) {
+        final Organization parentOrg = OBDal.getInstance().get(Organization.class, orgId);
+        if (parentOrg.getOrganizationType().isLegalEntity()
+            || parentOrg.getOrganizationType().isBusinessUnit()) {
+          return parentOrg;
+        }
+      }
+      return null;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  /**
+   * Returns the organization that is period control allowed for the org Organization. If no
+   * organization is found, it returns NULL.
+   * 
+   * @param org
+   *          Organization to get its period control allowed organization.
+   * @return
+   */
+  public Organization getPeriodControlAllowedOrganization(final Organization org) {
+    if (org.isAllowPeriodControl()) {
+      return org;
+    }
+    for (final String orgId : getParentList(org.getId(), false)) {
+      final Organization parentOrg = OBDal.getInstance().get(Organization.class, orgId);
+      if (parentOrg.isAllowPeriodControl()) {
+        return parentOrg;
+      }
+    }
+    return null;
   }
 }

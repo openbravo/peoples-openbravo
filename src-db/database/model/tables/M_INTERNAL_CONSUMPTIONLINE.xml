@@ -73,6 +73,13 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="VOID_INTCONSUMPTION_LINE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <foreign-key foreignTable="M_INTERNAL_CONSUMPTIONLINE" name="M_INTCONSUMPTIONLINE_VOIDLINE">
+        <reference local="VOID_INTCONSUMPTION_LINE_ID" foreign="M_INTERNAL_CONSUMPTIONLINE_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_CLIENT" name="M_INTERNAL_CONSUMPTIONLINE_AD_">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>

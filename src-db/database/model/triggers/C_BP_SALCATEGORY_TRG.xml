@@ -15,7 +15,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2008 Openbravo SLU
+* All portions are Copyright (C) 2001-2012 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -45,7 +45,7 @@ BEGIN
       WHERE C_SALARY_CATEGORY_ID=:NEW.C_SALARY_CATEGORY_ID;
 
       IF (v_count=0) THEN
-        RAISE_APPLICATION_ERROR(-20519,'@Salary Category without cost@');
+        RAISE_APPLICATION_ERROR(-20000,'@20519@');
       ELSE
 
         SELECT COUNT(*) INTO v_count
@@ -54,7 +54,7 @@ BEGIN
         AND DATEFROM<=:NEW.DATEFROM;
 
         IF (v_count=0) THEN
-          RAISE_APPLICATION_ERROR(-20518,'@Cost not available for Dates@');
+          RAISE_APPLICATION_ERROR(-20000,'@20518@');
         END IF;
       END IF;
     END IF;

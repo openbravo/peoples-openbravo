@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -92,8 +92,7 @@ public class DefaultJsonDataService implements JsonDataService {
         boolean preventCountOperation = !parameters.containsKey(JsonConstants.NOCOUNT_PARAMETER)
             || "true".equals(parameters.get(JsonConstants.NOCOUNT_PARAMETER));
 
-        final DataEntityQueryService queryService = createSetQueryService(parameters);
-
+        DataEntityQueryService queryService = createSetQueryService(parameters, true);
         queryService.setEntityName(entityName);
 
         // only do the count if a paging request is done and it has not been prevented
@@ -128,6 +127,9 @@ public class DefaultJsonDataService implements JsonDataService {
           jsonResponse.put(JsonConstants.RESPONSE_TOTALROWS, count);
           return jsonResponse.toString();
         }
+
+        queryService = createSetQueryService(parameters, false);
+        queryService.setEntityName(entityName);
 
         bobs = queryService.list();
 
@@ -178,8 +180,9 @@ public class DefaultJsonDataService implements JsonDataService {
   }
 
   public void fetch(Map<String, String> parameters, QueryResultWriter writer) {
+    long t = System.currentTimeMillis();
     final String entityName = parameters.get(JsonConstants.ENTITYNAME);
-    final DataEntityQueryService queryService = createSetQueryService(parameters);
+    final DataEntityQueryService queryService = createSetQueryService(parameters, false);
     queryService.setEntityName(entityName);
 
     final DataToJsonConverter toJsonConverter = OBProvider.getInstance().get(
@@ -187,16 +190,24 @@ public class DefaultJsonDataService implements JsonDataService {
     toJsonConverter.setAdditionalProperties(JsonUtils.getAdditionalProperties(parameters));
 
     final ScrollableResults scrollableResults = queryService.scroll();
+    int i = 0;
     while (scrollableResults.next()) {
       final Object result = scrollableResults.get()[0];
       final JSONObject json = toJsonConverter.toJsonObject((BaseOBObject) result,
           DataResolvingMode.FULL);
       writer.write(json);
-      OBDal.getInstance().getSession().evict(result);
+      i++;
+      // Clear session every 1000 records to prevent huge memory consumption in case of big loops
+      if (i % 1000 == 0) {
+        OBDal.getInstance().getSession().clear();
+        log.debug("clearing in record " + i + " elapsed time " + (System.currentTimeMillis() - t));
+      }
     }
+    log.debug("Fetch took " + (System.currentTimeMillis() - t) + " ms");
   }
 
-  private DataEntityQueryService createSetQueryService(Map<String, String> parameters) {
+  private DataEntityQueryService createSetQueryService(Map<String, String> parameters,
+      boolean forCountOperation) {
     final String entityName = parameters.get(JsonConstants.ENTITYNAME);
     final String startRowStr = parameters.get(JsonConstants.STARTROW_PARAMETER);
     final String endRowStr = parameters.get(JsonConstants.ENDROW_PARAMETER);
@@ -208,14 +219,22 @@ public class DefaultJsonDataService implements JsonDataService {
     if (parameters.containsKey(JsonConstants.USE_ALIAS)) {
       queryService.setUseAlias();
     }
-    // set the where/org filter parameters and the @ parameters
-    for (String key : parameters.keySet()) {
-      if (key.equals(JsonConstants.WHERE_PARAMETER)
-          || key.equals(JsonConstants.IDENTIFIER)
-          || key.equals(JsonConstants.ORG_PARAMETER)
-          || (key.startsWith(DataEntityQueryService.PARAM_DELIMITER) && key
-              .endsWith(DataEntityQueryService.PARAM_DELIMITER))) {
-        queryService.addFilterParameter(key, parameters.get(key));
+    boolean directNavigation = parameters.containsKey("_directNavigation")
+        && "true".equals(parameters.get("_directNavigation"))
+        && parameters.containsKey(JsonConstants.TARGETRECORDID_PARAMETER);
+
+    if (!directNavigation) {
+      // set the where/org filter parameters and the @ parameters
+      for (String key : parameters.keySet()) {
+        if (key.equals(JsonConstants.WHERE_PARAMETER)
+            || key.equals(JsonConstants.IDENTIFIER)
+            || key.equals(JsonConstants.ORG_PARAMETER)
+            || key.equals(JsonConstants.TARGETRECORDID_PARAMETER)
+            || (key.startsWith(DataEntityQueryService.PARAM_DELIMITER) && key
+                .endsWith(DataEntityQueryService.PARAM_DELIMITER))) {
+          queryService.addFilterParameter(key, parameters.get(key));
+        }
+
       }
     }
     queryService.setCriteria(JsonUtils.buildCriteria(parameters));
@@ -260,7 +279,8 @@ public class DefaultJsonDataService implements JsonDataService {
 
     // compute a new startrow if the targetrecordid was passed in
     int targetRowNumber = -1;
-    if (parameters.containsKey(JsonConstants.TARGETRECORDID_PARAMETER)) {
+    if (!forCountOperation && !directNavigation
+        && parameters.containsKey(JsonConstants.TARGETRECORDID_PARAMETER)) {
       final String targetRecordId = parameters.get(JsonConstants.TARGETRECORDID_PARAMETER);
       targetRowNumber = queryService.getRowNumber(targetRecordId);
       if (targetRowNumber != -1) {
@@ -274,6 +294,13 @@ public class DefaultJsonDataService implements JsonDataService {
         }
         queryService.setFirstResult(startRow);
       }
+      queryService.clearCachedValues();
+    }
+    if (!forCountOperation) {
+      queryService.setAdditionalProperties(JsonUtils.getAdditionalProperties(parameters));
+      // joining associated entities actually proved to be slower than doing
+      // individual queries for them... so disabling this functionality for now
+      // queryService.setJoinAssociatedEntities(true);
     }
     return queryService;
   }
@@ -320,12 +347,11 @@ public class DefaultJsonDataService implements JsonDataService {
     if (entityName == null) {
       return JsonUtils.convertExceptionToJson(new IllegalStateException("No entityName parameter"));
     }
-    final BaseOBObject bob = OBDal.getInstance().get(entityName, id);
+    BaseOBObject bob = OBDal.getInstance().get(entityName, id);
     if (bob != null) {
 
       try {
         // create the result info before deleting to prevent Hibernate errors
-
         final DataToJsonConverter toJsonConverter = OBProvider.getInstance().get(
             DataToJsonConverter.class);
         final List<JSONObject> jsonObjects = toJsonConverter.toJsonObjects(Collections
@@ -335,7 +361,13 @@ public class DefaultJsonDataService implements JsonDataService {
         jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
         jsonResponse.put(JsonConstants.RESPONSE_DATA, new JSONArray(jsonObjects));
         jsonResult.put(JsonConstants.RESPONSE_RESPONSE, jsonResponse);
+        OBDal.getInstance().commitAndClose();
 
+        // now do the real delete in a separate transaction
+        // to prevent side effects that a child can not be deleted
+        // from its parent
+        // https://issues.openbravo.com/view.php?id=21229
+        bob = OBDal.getInstance().get(entityName, id);
         OBDal.getInstance().remove(bob);
         OBDal.getInstance().commitAndClose();
 

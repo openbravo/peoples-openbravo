@@ -20,7 +20,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2008 Openbravo SLU
+* All portions are Copyright (C) 2001-2012 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -35,7 +35,7 @@ BEGIN
 
  IF (INSERTING) THEN
   IF (:NEW.PROCESSED = 'Y') THEN
-  RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted');
+  RAISE_APPLICATION_ERROR(-20000, '@20501@');
  END IF;
  ELSE
    IF (UPDATING AND :OLD.PROCESSED = 'Y') THEN
@@ -43,7 +43,7 @@ BEGIN
           OR :NEW.C_BPartner_ID<>:OLD.C_BPartner_ID
           OR :NEW.DATEREPORT<>:OLD.DATEREPORT)
           OR :NEW.AD_ORG_ID<>:OLD.AD_ORG_ID THEN
-       RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted');
+       RAISE_APPLICATION_ERROR(-20000, '@20501@');
      END IF;
   END IF;
  END IF;

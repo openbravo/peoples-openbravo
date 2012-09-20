@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -48,25 +48,39 @@ public abstract class DalBaseProcess implements Process {
   public void execute(ProcessBundle bundle) throws Exception {
     final ProcessContext processContext = bundle.getContext();
 
-    boolean errorOccured = true;
+    boolean errorOccured = false;
     final OBContext currentOBContext = OBContext.getOBContext();
     try {
       String userId = processContext.getUser();
       String roleId = processContext.getRole();
       String clientId = processContext.getClient();
       String orgId = processContext.getOrganization();
+      String lang = processContext.getLanguage();
 
       log.debug("Setting user context to user=" + userId + ",roleId=" + roleId + ",client="
-          + clientId + ",org=" + orgId);
+          + clientId + ",org=" + orgId + ",lang=" + lang);
 
-      OBContext.setOBContext(userId, roleId, clientId, orgId);
+      OBContext.setOBContext(userId, roleId, clientId, orgId, lang);
       doExecute(bundle);
-      errorOccured = false;
+    } catch (Exception e) {
+      errorOccured = true;
+      log.error("The process " + bundle.getProcessClass().getName() + " has thrown an exception. ",
+          e);
     } finally {
       if (errorOccured) {
-        OBDal.getInstance().rollbackAndClose();
+        if (bundle.getCloseConnection()) {
+          OBDal.getInstance().rollbackAndClose();
+        } else {
+          bundle.getConnection().releaseRollbackConnection(bundle.getConnection().getConnection());
+        }
+
       } else {
-        OBDal.getInstance().commitAndClose();
+        if (bundle.getCloseConnection()) {
+          OBDal.getInstance().commitAndClose();
+        } else {
+          bundle.getConnection().releaseCommitConnection(bundle.getConnection().getConnection());
+        }
+
       }
 
       // remove the context at the end, maybe the process scheduler

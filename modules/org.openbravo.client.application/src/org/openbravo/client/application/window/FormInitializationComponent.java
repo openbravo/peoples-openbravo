@@ -35,6 +35,7 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.NativeArray;
@@ -64,6 +65,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.Sqlc;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.datamodel.Column;
@@ -73,7 +75,6 @@ import org.openbravo.model.ad.ui.AuxiliaryInput;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
-import org.openbravo.model.ad.utility.Attachment;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonToDataConverter;
@@ -124,7 +125,7 @@ public class FormInitializationComponent extends BaseActionHandler {
       String multipleRowIds[] = (String[]) parameters.get("MULTIPLE_ROW_IDS");
       // The column changed by the user. Only relevant on CHANGE mode
       String changedColumn = readParameter(parameters, "CHANGED_COLUMN");
-      Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+      Tab tab = getTab(tabId);
       BaseOBObject row = null;
       BaseOBObject parentRecord = null;
       Map<String, JSONObject> columnValues = new HashMap<String, JSONObject>();
@@ -256,6 +257,7 @@ public class FormInitializationComponent extends BaseActionHandler {
       long t9 = System.currentTimeMillis();
       JSONObject finalObject = buildJSONObject(mode, tab, columnValues, row, changeEventCols,
           calloutMessages, attachments, jsExcuteCode, hiddenInputs, noteCount);
+      analyzeResponse(tab, columnValues);
       long t10 = System.currentTimeMillis();
       log.debug("Elapsed time: " + (System.currentTimeMillis() - iniTime) + "(" + (t2 - t1) + ","
           + (t3 - t2) + "," + (t4 - t3) + "," + (t5 - t4) + "," + (t6 - t5) + "," + (t7 - t6) + ","
@@ -276,11 +278,45 @@ public class FormInitializationComponent extends BaseActionHandler {
     return null;
   }
 
+  private void analyzeResponse(Tab tab, Map<String, JSONObject> columnValues) {
+    int maxEntries = 1000;
+    int i = 0;
+    String heavyCols = "";
+    for (String col : columnValues.keySet()) {
+      if (columnValues.get(col).has("entries")) {
+        try {
+          JSONArray array = columnValues.get(col).getJSONArray("entries");
+          if (array.length() > maxEntries) {
+            if (i > 0) {
+              heavyCols += ",";
+            }
+            heavyCols += col;
+            i++;
+          }
+        } catch (JSONException e) {
+          log.error("There was an error while analyzing the response for field: " + col);
+        }
+      }
+    }
+    if (!"".equals(heavyCols)) {
+      log.warn("Warning: In the window "
+          + tab.getWindow().getName()
+          + ", in tab "
+          + tab.getName()
+          + " the combo fields "
+          + heavyCols
+          + " contain more than "
+          + maxEntries
+          + " entries, and this could cause bad performance in the application. Possible fixes include changing these columns from a combo into a Selector, or adding a validation to reduce the number of entries in the combo.");
+    }
+  }
+
   private int computeNoteCount(Tab tab, String rowId) {
-    OBCriteria<Note> criteria = OBDao.getFilteredCriteria(Note.class,
-        Restrictions.eq("table.id", (String) DalUtil.getId(tab.getTable())),
-        Restrictions.eq("record", rowId));
-    return criteria.count();
+    OBQuery<Note> obq = OBDal.getInstance().createQuery(Note.class,
+        " table.id=:tableId and record=:recordId");
+    obq.setNamedParameter("tableId", (String) DalUtil.getId(tab.getTable()));
+    obq.setNamedParameter("recordId", rowId);
+    return obq.count();
   }
 
   private List<String> convertJSONArray(JSONArray jsonArray) {
@@ -298,22 +334,27 @@ public class FormInitializationComponent extends BaseActionHandler {
   private List<JSONObject> attachmentForRows(Tab tab, String rowId, String[] multipleRowIds) {
     String tableId = (String) DalUtil.getId(tab.getTable());
     List<JSONObject> attachmentList = new ArrayList<JSONObject>();
-    OBCriteria<Attachment> attachments;
+    Query q;
     if (multipleRowIds == null) {
-      attachments = OBDao.getFilteredCriteria(Attachment.class,
-          Restrictions.eq("table.id", tableId), Restrictions.eq("record", rowId));
+      String hql = "select n.name, n.id, n.updated, n.updatedBy.name from org.openbravo.model.ad.utility.Attachment n where n.table.id=:tableId and n.record=:recordId";
+      q = OBDal.getInstance().getSession().createQuery(hql);
+      q.setParameter("tableId", tableId);
+      q.setParameter("recordId", rowId);
     } else {
-      attachments = OBDao.getFilteredCriteria(Attachment.class,
-          Restrictions.eq("table.id", tableId), Restrictions.in("record", multipleRowIds));
+
+      String hql = "select n.name, n.id, n.updated, n.updatedBy.name from org.openbravo.model.ad.utility.Attachment n where n.table.id=:tableId and n.record in :recordId";
+      q = OBDal.getInstance().getSession().createQuery(hql);
+      q.setParameter("tableId", tableId);
+      q.setParameterList("recordId", multipleRowIds);
     }
-    attachments.addOrderBy("creationDate", false);
-    for (Attachment attachment : attachments.list()) {
+    for (Object qobj : q.list()) {
+      Object[] array = (Object[]) qobj;
       JSONObject obj = new JSONObject();
       try {
-        obj.put("name", attachment.getName());
-        obj.put("id", attachment.getId());
-        obj.put("age", (new Date().getTime() - attachment.getUpdated().getTime()));
-        obj.put("updatedby", attachment.getUpdatedBy().getName());
+        obj.put("name", (String) array[0]);
+        obj.put("id", (String) array[1]);
+        obj.put("age", (new Date().getTime() - ((Date) array[2]).getTime()));
+        obj.put("updatedby", (String) array[3]);
       } catch (JSONException e) {
         log.error("Error while reading attachments", e);
       }
@@ -381,7 +422,7 @@ public class FormInitializationComponent extends BaseActionHandler {
           // This session attributes could be a preference
           if (field.getDisplayLogic() != null && field.isDisplayed() && field.isActive()) {
             final DynamicExpressionParser parser = new DynamicExpressionParser(
-                field.getDisplayLogic(), tab);
+                field.getDisplayLogic(), tab, cachedStructures);
             setSessionAttributesFromParserResult(parser, sessionAttributesMap, tab.getWindow()
                 .getId());
           }
@@ -389,7 +430,7 @@ public class FormInitializationComponent extends BaseActionHandler {
           if (field.getColumn().getReadOnlyLogic() != null && field.isDisplayed()
               && field.isActive()) {
             final DynamicExpressionParser parser = new DynamicExpressionParser(field.getColumn()
-                .getReadOnlyLogic(), tab);
+                .getReadOnlyLogic(), tab, cachedStructures);
             setSessionAttributesFromParserResult(parser, sessionAttributesMap, tab.getWindow()
                 .getId());
           }
@@ -405,7 +446,7 @@ public class FormInitializationComponent extends BaseActionHandler {
         finalObject.put("dynamicCols", new JSONArray(changeEventCols));
       }
 
-      if (mode.equals("EDIT") && row != null) {
+      if ((mode.equals("EDIT") || mode.equals("CHANGE")) && row != null) {
         if ((row instanceof ClientEnabled && ((ClientEnabled) row).getClient() != null)) {
           final String rowClientId = ((ClientEnabled) row).getClient().getId();
           final String currentClientId = OBContext.getOBContext().getCurrentClient().getId();
@@ -591,8 +632,7 @@ public class FormInitializationComponent extends BaseActionHandler {
           }
         }
       } catch (Exception e) {
-        throw new OBException(
-            "Couldn't get data for column " + field.getColumn().getDBColumnName(), e);
+        log.error("Couldn't get data for column " + field.getColumn().getDBColumnName(), e);
       }
     }
 
@@ -744,7 +784,7 @@ public class FormInitializationComponent extends BaseActionHandler {
         if (field.getColumn() == null) {
           continue;
         }
-        setValueOfColumnInRequest(row, field.getColumn().getDBColumnName());
+        setValueOfColumnInRequest(row, field, field.getColumn().getDBColumnName());
       }
     }
     // and then overwrite with what gets passed in
@@ -815,7 +855,7 @@ public class FormInitializationComponent extends BaseActionHandler {
     Entity parentEntity = parentRecord.getEntity();
     Entity entity = ModelProvider.getInstance().getEntityByTableId(
         field.getTab().getTable().getId());
-    Property property = entity.getPropertyByColumnName(field.getColumn().getDBColumnName());
+    Property property = KernelUtils.getProperty(field);
     Entity referencedEntity = property.getReferencedProperty().getEntity();
     return referencedEntity.equals(parentEntity);
   }
@@ -962,27 +1002,48 @@ public class FormInitializationComponent extends BaseActionHandler {
     }
   }
 
-  private void setValueOfColumnInRequest(BaseOBObject obj, String columnName) {
+  private void setValueOfColumnInRequest(BaseOBObject obj, Field field, String columnName) {
     Entity entity = obj.getEntity();
-    Property prop = entity.getPropertyByColumnName(columnName);
-    Object currentValue = obj.get(prop.getName());
-
-    if (currentValue != null && !currentValue.toString().equals("null")) {
-      if (currentValue instanceof BaseOBObject) {
-        if (prop.getReferencedProperty() != null) {
-          currentValue = ((BaseOBObject) currentValue).get(prop.getReferencedProperty().getName());
-        } else {
-          currentValue = ((BaseOBObject) currentValue).getId();
-        }
+    final Property prop;
+    Object currentValue;
+    if (field != null) {
+      prop = KernelUtils.getProperty(field);
+      if (field.getProperty() != null) {
+        currentValue = DalUtil.getValueFromPath(obj, field.getProperty());
       } else {
-        currentValue = UIDefinitionController.getInstance().getUIDefinition(prop.getColumnId())
-            .convertToClassicString(currentValue);
+        currentValue = obj.get(prop.getName());
       }
-      if (currentValue != null && currentValue.equals("null")) {
-        currentValue = null;
+    } else {
+      prop = entity.getPropertyByColumnName(columnName);
+      currentValue = obj.get(prop.getName());
+    }
+
+    try {
+      if (currentValue != null && !currentValue.toString().equals("null")) {
+        if (currentValue instanceof BaseOBObject) {
+          if (prop.getReferencedProperty() != null) {
+            currentValue = ((BaseOBObject) currentValue)
+                .get(prop.getReferencedProperty().getName());
+          } else {
+            currentValue = ((BaseOBObject) currentValue).getId();
+          }
+        } else {
+          currentValue = UIDefinitionController.getInstance().getUIDefinition(prop.getColumnId())
+              .convertToClassicString(currentValue);
+        }
+        if (currentValue != null && currentValue.equals("null")) {
+          currentValue = null;
+        }
+        if (currentValue == null) {
+          RequestContext.get().setRequestParameter(
+              "inp" + Sqlc.TransformaNombreColumna(columnName), null);
+        } else {
+          RequestContext.get().setRequestParameter(
+              "inp" + Sqlc.TransformaNombreColumna(columnName), currentValue.toString());
+        }
       }
-      RequestContext.get().setRequestParameter("inp" + Sqlc.TransformaNombreColumna(columnName),
-          currentValue.toString());
+    } catch (Exception e) {
+      log.error("Couldn't get the value for column " + columnName);
     }
   }
 
@@ -1006,7 +1067,7 @@ public class FormInitializationComponent extends BaseActionHandler {
         }
         // We also set the value of every column in the RequestContext so that it is available for
         // the Auxiliary Input computation
-        setValueOfColumnInRequest(object, col.getDBColumnName());
+        setValueOfColumnInRequest(object, null, col.getDBColumnName());
       }
     }
     List<AuxiliaryInput> auxInputs = getAuxiliaryInputList(tab.getId());
@@ -1319,10 +1380,15 @@ public class FormInitializationComponent extends BaseActionHandler {
                       // selectors
                       Object el = element.get(1, null);
                       if (el != null) {
-                        hiddenInputs.put(name, el);
-                        // We set the hidden fields in the request, so that subsequent callouts can
-                        // use them
-                        rq.setRequestParameter(name, el.toString());
+                        if (el instanceof NativeArray) {
+                          // In this case, we ignore the value, as a hidden input cannot be an array
+                          // of elements
+                        } else {
+                          hiddenInputs.put(name, el);
+                          // We set the hidden fields in the request, so that subsequent callouts
+                          // can use them
+                          rq.setRequestParameter(name, el.toString());
+                        }
                       }
                     }
                   }
@@ -1389,7 +1455,7 @@ public class FormInitializationComponent extends BaseActionHandler {
     String initS = "id=\"paramArray\">";
     String resp = calloutResponse.substring(calloutResponse.indexOf(initS) + initS.length());
     resp = resp.substring(0, resp.indexOf("</")).trim();
-    if (!resp.contains("new Array(")) {
+    if (!resp.contains("new Array(") && !resp.contains("[[")) {
       return null;
     }
     try {
@@ -1516,21 +1582,25 @@ public class FormInitializationComponent extends BaseActionHandler {
         log.debug("Transformed SQL code: " + sql);
         int indP = 1;
         PreparedStatement ps = OBDal.getInstance().getConnection(false).prepareStatement(sql);
-        for (String parameter : params) {
-          String value = "";
-          if (parameter.substring(0, 1).equals("#")) {
-            value = Utility.getContext(new DalConnectionProvider(false), RequestContext.get()
-                .getVariablesSecureApp(), parameter, windowId);
-          } else {
-            String fieldId = "inp" + Sqlc.TransformaNombreColumna(parameter);
-            value = RequestContext.get().getRequestParameter(fieldId);
+        try {
+          for (String parameter : params) {
+            String value = "";
+            if (parameter.substring(0, 1).equals("#")) {
+              value = Utility.getContext(new DalConnectionProvider(false), RequestContext.get()
+                  .getVariablesSecureApp(), parameter, windowId);
+            } else {
+              String fieldId = "inp" + Sqlc.TransformaNombreColumna(parameter);
+              value = RequestContext.get().getRequestParameter(fieldId);
+            }
+            log.debug("Parameter: " + parameter + ": Value " + value);
+            ps.setObject(indP++, value);
           }
-          log.debug("Parameter: " + parameter + ": Value " + value);
-          ps.setObject(indP++, value);
-        }
-        ResultSet rs = ps.executeQuery();
-        if (rs.next()) {
-          fvalue = rs.getObject(1);
+          ResultSet rs = ps.executeQuery();
+          if (rs.next()) {
+            fvalue = rs.getObject(1);
+          }
+        } finally {
+          ps.close();
         }
       } else if (code.startsWith("@")) {
         String codeWithoutAt = code.substring(1, code.length() - 1);
@@ -1545,6 +1615,10 @@ public class FormInitializationComponent extends BaseActionHandler {
           + " from tab: " + auxIn.getTab().getName(), e);
     }
     return null;
+  }
+
+  private Tab getTab(String tabId) {
+    return cachedStructures.getTab(tabId);
   }
 
   private List<Field> getADFieldList(String tabId) {

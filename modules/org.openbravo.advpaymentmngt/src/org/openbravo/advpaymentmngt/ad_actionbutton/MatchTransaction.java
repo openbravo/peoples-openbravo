@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -25,7 +25,9 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -66,7 +68,9 @@ import org.openbravo.model.financialmgmt.payment.FIN_BankStatementLine;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
+import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentMethod;
+import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_Reconciliation;
 import org.openbravo.model.financialmgmt.payment.FIN_ReconciliationLineTemp;
@@ -368,6 +372,7 @@ public class MatchTransaction extends HttpSecureAppServlet {
     FIN_FinancialAccount financial = OBDal.getInstance().get(FIN_FinancialAccount.class,
         strFinancialAccountId);
     try {
+      OBContext.setAdminMode(true);
       new FIN_MatchingTransaction(financial.getMatchingAlgorithm().getJavaClassName());
     } catch (Exception ex) {
       OBDal.getInstance().rollbackAndClose();
@@ -376,6 +381,8 @@ public class MatchTransaction extends HttpSecureAppServlet {
       vars.setMessage(strTabId, message);
       printPageClosePopUp(response, vars, Utility.getTabURL(strTabId, "R", true));
       return;
+    } finally {
+      OBContext.restorePreviousMode();
     }
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
@@ -404,8 +411,16 @@ public class MatchTransaction extends HttpSecureAppServlet {
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/advpaymentmngt/ad_actionbutton/MatchTransactionGrid").createXmlDocument();
 
-    FieldProvider[] data = getMatchedBankStatementLinesData(vars, strFinancialAccountId,
-        strReconciliationId, strPaymentTypeFilter, strShowCleared, strHideDate);
+    FieldProvider[] data = null;
+    try {
+      OBContext.setAdminMode(true);
+      data = getMatchedBankStatementLinesData(vars, strFinancialAccountId, strReconciliationId,
+          strPaymentTypeFilter, strShowCleared, strHideDate);
+    } catch (Exception e) {
+      log4j.debug("Output: Exception ocurred while retrieving Bank Statement Lines.");
+    } finally {
+      OBContext.restorePreviousMode();
+    }
 
     xmlDocument.setData("structure", data);
 
@@ -464,6 +479,11 @@ public class MatchTransaction extends HttpSecureAppServlet {
     FieldProvider[] data = FieldProviderFactory.getFieldProviderArray(bankLines);
 
     OBContext.setAdminMode();
+    final String MATCHED_AGAINST_TRANSACTION = FIN_Utility.messageBD("APRM_Transaction");
+    final String MATCHED_AGAINST_PAYMENT = FIN_Utility.messageBD("APRM_Payment");
+    final String MATCHED_AGAINST_INVOICE = FIN_Utility.messageBD("APRM_Invoice");
+    final String MATCHED_AGAINST_ORDER = FIN_Utility.messageBD("APRM_Order");
+    final String MATCHED_AGAINST_CREDIT = FIN_Utility.messageBD("APRM_Credit");
     try {
       List<FIN_FinaccTransaction> excluded = new ArrayList<FIN_FinaccTransaction>();
       for (int i = 0; i < data.length; i++) {
@@ -543,11 +563,6 @@ public class MatchTransaction extends HttpSecureAppServlet {
         FieldProviderFactory.setField(data[i], "matchingType", matchingType);
 
         if (transaction != null) {
-          final String MATCHED_AGAINST_TRANSACTION = FIN_Utility.messageBD("APRM_Transaction");
-          final String MATCHED_AGAINST_PAYMENT = FIN_Utility.messageBD("APRM_Payment");
-          final String MATCHED_AGAINST_INVOICE = FIN_Utility.messageBD("APRM_Invoice");
-          final String MATCHED_AGAINST_ORDER = FIN_Utility.messageBD("APRM_Order");
-          final String MATCHED_AGAINST_CREDIT = FIN_Utility.messageBD("APRM_Credit");
           FieldProviderFactory.setField(data[i], "disabled", "N");
           // Auto Matching or already matched
           FieldProviderFactory.setField(data[i], "checked",
@@ -568,10 +583,8 @@ public class MatchTransaction extends HttpSecureAppServlet {
               .getFINPaymentDetailList().get(0).getFINPaymentScheduleDetailList().get(0)
               .getInvoicePaymentSchedule() == null && transaction.getFinPayment()
               .getFINPaymentDetailList().get(0).getFINPaymentScheduleDetailList().get(0)
-              .getOrderPaymentSchedule() == null) ? MATCHED_AGAINST_CREDIT : (transaction
-              .getFinPayment().getFINPaymentDetailList().get(0).getFINPaymentScheduleDetailList()
-              .get(0).getInvoicePaymentSchedule() != null ? MATCHED_AGAINST_INVOICE
-              : MATCHED_AGAINST_ORDER)));
+              .getOrderPaymentSchedule() == null) ? MATCHED_AGAINST_CREDIT
+              : (isInvoiceMatch(transaction) ? MATCHED_AGAINST_INVOICE : MATCHED_AGAINST_ORDER)));
           String bpName = "";
           if (transaction.getFinPayment() != null) {
             if (transaction.getFinPayment().getBusinessPartner() != null) {
@@ -652,8 +665,9 @@ public class MatchTransaction extends HttpSecureAppServlet {
           .getFINReconciliationLineTempList();
       for (FIN_ReconciliationLineTemp oldtempLine : oldTempLines) {
         OBDal.getInstance().remove(oldtempLine);
-        OBDal.getInstance().flush();
       }
+      oldTempLines.clear();
+      OBDal.getInstance().flush();
       // Now copy info taken from the reconciliation when first opened
       List<FIN_ReconciliationLine_v> reconciledlines = reconciliation
           .getFINReconciliationLineVList();
@@ -670,8 +684,12 @@ public class MatchTransaction extends HttpSecureAppServlet {
               && !reconciledLine.getFinancialAccountTransaction().getFinPayment()
                   .isCreatedByAlgorithm()) {
             lineTemp.setPayment(reconciledLine.getPayment());
-          } else if (reconciledLine.getFinancialAccountTransaction().getFinPayment()
-              .getFINPaymentDetailList().get(0).getFINPaymentScheduleDetailList() != null
+          } else if (reconciledLine.getFinancialAccountTransaction() != null
+              && reconciledLine.getFinancialAccountTransaction().getFinPayment() != null
+              && reconciledLine.getFinancialAccountTransaction().getFinPayment()
+                  .getFINPaymentDetailList().size() > 0
+              && reconciledLine.getFinancialAccountTransaction().getFinPayment()
+                  .getFINPaymentDetailList().get(0).getFINPaymentScheduleDetailList() != null
               && reconciledLine.getFinancialAccountTransaction().getFinPayment()
                   .getFINPaymentDetailList().get(0).getFINPaymentScheduleDetailList().size() > 0
               && (reconciledLine.getFinancialAccountTransaction().getFinPayment()
@@ -694,8 +712,9 @@ public class MatchTransaction extends HttpSecureAppServlet {
             .setMatched(reconciledLine.getBankStatementLine().getFinancialAccountTransaction() != null);
         lineTemp.setMatchlevel(reconciledLine.getBankStatementLine().getMatchingtype());
         OBDal.getInstance().save(lineTemp);
-        OBDal.getInstance().flush();
       }
+      OBDal.getInstance().flush();
+      OBDal.getInstance().getSession().clear();
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -1154,9 +1173,8 @@ public class MatchTransaction extends HttpSecureAppServlet {
         FIN_BankStatementLine.class);
     obc.add(Restrictions.eq(FIN_BankStatementLine.PROPERTY_BANKSTATEMENT, bsline.getBankStatement()));
     obc.add(Restrictions.eq(FIN_BankStatementLine.PROPERTY_LINENO, bsline.getLineNo()));
-    obc.add(Restrictions.isNull(FIN_BankStatementLine.PROPERTY_FINANCIALACCOUNTTRANSACTION));
 
-    return (obc.list().size() > 0);
+    return (obc.list().size() > 1);
   }
 
   /**
@@ -1182,6 +1200,31 @@ public class MatchTransaction extends HttpSecureAppServlet {
     new FIN_TransactionProcess().execute(pb);
     myMessage = (OBError) pb.getResult();
     return myMessage;
+  }
+
+  private boolean isInvoiceMatch(FIN_FinaccTransaction transaction) {
+    if (transaction.getFinPayment() == null) {
+      return false;
+    } else {
+      OBCriteria<FIN_PaymentScheduleDetail> obc = OBDal.getInstance().createCriteria(
+          FIN_PaymentScheduleDetail.class);
+      obc.createAlias(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS, "pd");
+      obc.add(Restrictions.eq("pd." + FIN_PaymentDetail.PROPERTY_FINPAYMENT,
+          transaction.getFinPayment()));
+      Set<FIN_PaymentSchedule> invoiceplans = new HashSet<FIN_PaymentSchedule>();
+      for (FIN_PaymentScheduleDetail paymentScheduleDetail : obc.list()) {
+        if (!invoiceplans.contains(paymentScheduleDetail.getInvoicePaymentSchedule())) {
+          invoiceplans.add(paymentScheduleDetail.getInvoicePaymentSchedule());
+        }
+        if (invoiceplans.size() > 1) {
+          return false;
+        }
+      }
+      if (invoiceplans.size() == 1) {
+        return true;
+      }
+    }
+    return false;
   }
 
   public String getServletInfo() {

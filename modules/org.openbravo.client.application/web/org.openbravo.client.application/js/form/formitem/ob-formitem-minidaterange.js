@@ -50,6 +50,50 @@ isc.RelativeDateItem.addProperties({
     "+1w": OB.I18N.getLabel('OBUIAPP_Current_day_of_next_week'),
     "-1m": OB.I18N.getLabel('OBUIAPP_Current_day_of_last_month'),
     "+1m": OB.I18N.getLabel('OBUIAPP_Current_day_of_next_month')
+  },
+
+  // Function to load just needed OB.DateItemProperties properties, since all of them can not be loaded
+  // because there are some parameters like "init", "pickerDataChanged", ... that cannot be overwritten
+  // because SmartClient also overwrites them while creating this isc.RelativeDateItem definition.
+  // Fixes issue: https://issues.openbravo.com/view.php?id=21552
+  addDateItemProperties: function () {
+    this.setDateParams = OB.DateItemProperties.setDateParams;
+    this.parseValue = OB.DateItemProperties.parseValue;
+    this.expandPart = OB.DateItemProperties.expandPart;
+    this.reachedLength = OB.DateItemProperties.reachedLength;
+    this.isNumber = OB.DateItemProperties.isNumber;
+    this.isSeparator = OB.DateItemProperties.isSeparator;
+    this.setDateParams();
+  },
+
+  areDateItemPropertiesSet: false,
+
+  blurValue: function () {
+    if (this.editor && this.editor.items[0] && this.editor.items[0].getElementValue) {
+      return this.editor.items[0].getElementValue();
+    } else {
+      return null;
+    }
+  },
+
+  blur: function () {
+    var blurValue = this.blurValue(),
+        digitRegExp = new RegExp('^\\d+$', 'gm'),
+        areOnlyDigits = digitRegExp.test(blurValue),
+        newValue;
+
+    if (areOnlyDigits) {
+      if (!this.areDateItemPropertiesSet) {
+        this.addDateItemProperties();
+        this.areDateItemPropertiesSet = true;
+      }
+      newValue = this.parseValue();
+      if (newValue) {
+        this.setValue(OB.Utilities.Date.OBToJS(newValue, this.dateFormat));
+      }
+    }
+
+    this.Super('blur', arguments);
   }
 });
 
@@ -316,6 +360,16 @@ isc.OBMiniDateRangeItem.addProperties(OB.DateItemProperties, {
       return;
     }
 
+    if (criterion.operator === 'isNull') {
+      this.setValue('#');
+      return;
+    }
+
+    if (criterion.operator === 'notNull') {
+      this.setValue('!#');
+      return;
+    }
+
     if (criterion.operator === 'equals') {
       this.setSingleDateValue(criterion.value);
       return;
@@ -331,6 +385,22 @@ isc.OBMiniDateRangeItem.addProperties(OB.DateItemProperties, {
   },
 
   getCriterion: function () {
+    var value = this.blurValue();
+    if (value === '#') {
+      return {
+        fieldName: this.name,
+        operator: 'isNull'
+      };
+    }
+    if (value === '!#') {
+      return {
+        fieldName: this.name,
+        operator: 'notNull'
+      };
+    }
+    if (value === '') {
+      return {};
+    }
     if (this.singleDateValue) {
       return {
         fieldName: this.name,
@@ -343,6 +413,10 @@ isc.OBMiniDateRangeItem.addProperties(OB.DateItemProperties, {
   },
 
   canEditCriterion: function (criterion) {
+
+    if (criterion.fieldName === this.name && (criterion.operator === 'isNull' || criterion.operator === 'notNull')) {
+      return true;
+    }
     if (this.singleDateMode && criterion.fieldName === this.name) {
       return true;
     }

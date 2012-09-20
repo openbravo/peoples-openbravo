@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -283,17 +283,12 @@ public class UsedByLink extends HttpSecureAppServlet {
           windowId + "|" + columnName);
 
       final UsedByLinkData[] data = UsedByLinkData.keyColumns(this, adTabId);
-      if (data == null || data.length == 0) {
-        // // in order to preserve old behavior we use bdError method to report errors
-        // bdError(request, response, "RecordError", vars.getLanguage());
-        // return;
+      if (data != null && data.length > 0) {
+        final SearchResult searchResult = getLinkedItems(vars, data, windowId, columnName, keyId,
+            adTabId, tableName, inpcolumnName, tableId);
+        // jsonObject
+        jsonObject = buildJsonObject(jsonObject, searchResult);
       }
-
-      final SearchResult searchResult = getLinkedItems(vars, data, windowId, columnName, keyId,
-          adTabId, tableName, inpcolumnName, tableId);
-
-      jsonObject = buildJsonObject(jsonObject, searchResult);
-      // jsonObject
 
     } catch (Exception e) {
       try {
@@ -313,92 +308,103 @@ public class UsedByLink extends HttpSecureAppServlet {
       String keyColumn, String keyId, String tableId) throws IOException, ServletException {
 
     final String keyColumnId = UsedByLinkData.selectKeyColumnId(this, tableId);
-
+    int numOfRelatedColumns = 0;
     boolean nonAccessible = false;
 
     UsedByLinkData[] data = null;
 
-    // Obtain the list of tables that are linked to the current one using DAL, this list will return
+    // Obtain the list of columns that are linked to the current one using DAL, this list will
+    // return
     // any reference including user defined ones. It will be joined with the old ones because
     // currently it doesn't support views.
-    StringBuffer linkedTablesQuery = new StringBuffer();
+    StringBuffer linkedColumnsQuery = new StringBuffer();
     for (LinkedTable linkedTable : getLinkedTables(tableId)) {
-      if (linkedTablesQuery.length() != 0) {
-        linkedTablesQuery.append(", ");
+      if (linkedColumnsQuery.length() != 0) {
+        linkedColumnsQuery.append(", ");
       }
-      linkedTablesQuery.append(linkedTable.toQueryString());
+      linkedColumnsQuery.append(linkedTable.toQueryString());
     }
-    if (linkedTablesQuery.length() == 0) {
-      linkedTablesQuery.append("'--'");
+    if (linkedColumnsQuery.length() == 0) {
+      linkedColumnsQuery.append("'--'");
+      numOfRelatedColumns = 0;
+    } else {
+      numOfRelatedColumns = linkedColumnsQuery.toString().split(",").length;
     }
 
-    data = UsedByLinkData.select(this, vars.getClient(), vars.getLanguage(), vars.getRole(),
-        keyColumnId, keyColumn, tableId, linkedTablesQuery.toString());
+    if (numOfRelatedColumns < 1000) {
+      data = UsedByLinkData.select(this, vars.getClient(), vars.getLanguage(), vars.getRole(),
+          keyColumnId, keyColumn, tableId, linkedColumnsQuery.toString());
 
-    if (data != null && data.length > 0) {
-      final Vector<UsedByLinkData> vecTotal = new Vector<UsedByLinkData>();
-      for (int i = 0; i < data.length; i++) {
-        String keyValue = keyId;
-        if (!data[i].referencedColumnId.equals(keyColumnId)) {
-          try {
-            keyValue = UsedByLinkData.selectKeyValue(this,
-                UsedByLinkData.selectColumnName(this, data[i].referencedColumnId),
-                data[i].tablename, data[i].columnname, keyId);
-          } catch (Exception e) {
-            // TODO: handle exception
+      if (data != null && data.length > 0) {
+        final Vector<UsedByLinkData> vecTotal = new Vector<UsedByLinkData>();
+        for (int i = 0; i < data.length; i++) {
+          String keyValue = keyId;
+          if (!data[i].referencedColumnId.equals(keyColumnId)) {
+            try {
+              keyValue = UsedByLinkData.selectKeyValue(this,
+                  UsedByLinkData.selectColumnName(this, data[i].referencedColumnId),
+                  data[i].tablename, data[i].columnname, keyId);
+            } catch (Exception e) {
+              // TODO: handle exception
+            }
           }
-        }
-        if (log4j.isDebugEnabled())
-          log4j.debug("***Referenced tab: " + data[i].adTabId);
-        final UsedByLinkData[] dataRef = UsedByLinkData.windowRef(this, data[i].adTabId);
-        if (dataRef == null || dataRef.length == 0)
-          continue;
-        String strWhereClause = getWhereClause(vars, strWindow, dataRef[0].whereclause);
-        if (log4j.isDebugEnabled())
-          log4j.debug("***   Referenced where clause (1): " + strWhereClause);
-        strWhereClause += getAditionalWhereClause(vars, strWindow, data[i].adTabId,
-            data[i].tablename, keyColumn, data[i].columnname,
-            UsedByLinkData.getTabTableName(this, tableId));
-        if (log4j.isDebugEnabled())
-          log4j.debug("***   Referenced where clause (2): " + strWhereClause);
-        if (!nonAccessible) {
-          final String strNonAccessibleWhere = strWhereClause + " AND AD_ORG_ID NOT IN ("
-              + vars.getUserOrg() + ")";
-          if (!UsedByLinkData.countLinks(this, data[i].tablename, data[i].columnname, keyValue,
-              strNonAccessibleWhere).equals("0")) {
+          if (log4j.isDebugEnabled())
+            log4j.debug("***Referenced tab: " + data[i].adTabId);
+          final UsedByLinkData[] dataRef = UsedByLinkData.windowRef(this, data[i].adTabId);
+          if (dataRef == null || dataRef.length == 0)
+            continue;
+          String strWhereClause = getWhereClause(vars, strWindow, dataRef[0].whereclause);
+          if (log4j.isDebugEnabled())
+            log4j.debug("***   Referenced where clause (1): " + strWhereClause);
+          strWhereClause += getAditionalWhereClause(vars, strWindow, data[i].adTabId,
+              data[i].tablename, keyColumn, data[i].columnname,
+              UsedByLinkData.getTabTableName(this, tableId));
+          if (log4j.isDebugEnabled())
+            log4j.debug("***   Referenced where clause (2): " + strWhereClause);
+          if (!nonAccessible) {
+            final String strNonAccessibleWhere = strWhereClause + " AND AD_ORG_ID NOT IN ("
+                + vars.getUserOrg() + ")";
+            if (!UsedByLinkData.countLinks(this, data[i].tablename, data[i].columnname, keyValue,
+                strNonAccessibleWhere).equals("0")) {
+              nonAccessible = true;
+            }
+          }
+          strWhereClause += " AND AD_ORG_ID IN (" + vars.getUserOrg() + ") AND AD_CLIENT_ID IN ("
+              + vars.getUserClient() + ")";
+          int total = Integer.valueOf(
+              UsedByLinkData.countLinks(this, data[i].tablename, data[i].columnname, keyValue,
+                  strWhereClause)).intValue();
+
+          if (log4j.isDebugEnabled())
+            log4j.debug("***   Count: " + total);
+
+          data[i].total = Integer.toString(total);
+
+          if (data[i].accessible.equals("N") && total > 0) {
             nonAccessible = true;
+          } else if (total > 0 && !existsInVector(data[i], vecTotal)) {
+            vecTotal.addElement(data[i]);
           }
-
         }
-        strWhereClause += " AND AD_ORG_ID IN (" + vars.getUserOrg() + ") AND AD_CLIENT_ID IN ("
-            + vars.getUserClient() + ")";
-        int total = Integer.valueOf(
-            UsedByLinkData.countLinks(this, data[i].tablename, data[i].columnname, keyValue,
-                strWhereClause)).intValue();
-
-        if (log4j.isDebugEnabled())
-          log4j.debug("***   Count: " + total);
-
-        data[i].total = Integer.toString(total);
-
-        if (data[i].accessible.equals("N") && total > 0) {
-          nonAccessible = true;
-        } else if (total > 0 && !existsInVector(data[i], vecTotal)) {
-          vecTotal.addElement(data[i]);
-        }
+        data = new UsedByLinkData[vecTotal.size()];
+        vecTotal.copyInto(data);
       }
-      data = new UsedByLinkData[vecTotal.size()];
-      vecTotal.copyInto(data);
-    }
 
-    if (nonAccessible) {
+      if (nonAccessible) {
+        final OBError myMessage = new OBError();
+        myMessage.setType("Info");
+        myMessage.setMessage(Utility.messageBD(this, "NonAccessibleRecords", vars.getLanguage()));
+        myMessage.setTitle(Utility.messageBD(this, "Info", vars.getLanguage()));
+        return new SearchResult(data, myMessage);
+      } else {
+        return new SearchResult(data);
+      }
+    } else {
       final OBError myMessage = new OBError();
       myMessage.setType("Info");
-      myMessage.setMessage(Utility.messageBD(this, "NonAccessibleRecords", vars.getLanguage()));
+      myMessage.setMessage(Utility.messageBD(this, "TooManyColumnsLinked", vars.getLanguage()));
       myMessage.setTitle(Utility.messageBD(this, "Info", vars.getLanguage()));
       return new SearchResult(data, myMessage);
-    } else {
-      return new SearchResult(data);
     }
   }
 
@@ -507,31 +513,36 @@ public class UsedByLink extends HttpSecureAppServlet {
     final OBError msg = searchResult.getMessage();
 
     final List<JSONObject> usedByLinkDataJsonObjects = new ArrayList<JSONObject>();
+    if (usedByLinkData != null) {
+      for (UsedByLinkData data : usedByLinkData) {
+        final JSONObject usedByLinkDataJsonObj = new JSONObject();
+        usedByLinkDataJsonObj.put("accessible", data.accessible);
+        usedByLinkDataJsonObj.put("adMenuName", data.adMenuName);
+        usedByLinkDataJsonObj.put("adTabId", data.adTabId);
+        usedByLinkDataJsonObj.put("adWindowId", data.adWindowId);
+        usedByLinkDataJsonObj.put("columnName", data.columnname);
+        usedByLinkDataJsonObj.put("elementName", data.elementName);
+        usedByLinkDataJsonObj.put("fullElementName", data.elementName + " - " + data.tabname + " ("
+            + data.total + ")");
+        usedByLinkDataJsonObj.put("hasTree", data.hastree);
+        usedByLinkDataJsonObj.put("id", data.id);
+        usedByLinkDataJsonObj.put("name", data.name);
+        usedByLinkDataJsonObj.put("referencedColumnId", data.referencedColumnId);
+        usedByLinkDataJsonObj.put("tableName", data.tablename);
+        usedByLinkDataJsonObj.put("tabName", data.tabname);
+        usedByLinkDataJsonObj.put("total", data.total);
+        usedByLinkDataJsonObj.put("whereClause", data.whereclause);
+        usedByLinkDataJsonObj.put("windowName", data.windowname);
+        usedByLinkDataJsonObj.put("singleRecord", "SR".equals(data.uipattern));
+        usedByLinkDataJsonObj.put("readOnly", "RO".equals(data.uipattern));
+        usedByLinkDataJsonObjects.add(usedByLinkDataJsonObj);
+      }
 
-    for (UsedByLinkData data : usedByLinkData) {
-      final JSONObject usedByLinkDataJsonObj = new JSONObject();
-      usedByLinkDataJsonObj.put("accessible", data.accessible);
-      usedByLinkDataJsonObj.put("adMenuName", data.adMenuName);
-      usedByLinkDataJsonObj.put("adTabId", data.adTabId);
-      usedByLinkDataJsonObj.put("adWindowId", data.adWindowId);
-      usedByLinkDataJsonObj.put("columnName", data.columnname);
-      usedByLinkDataJsonObj.put("elementName", data.elementName);
-      usedByLinkDataJsonObj.put("fullElementName", data.elementName + " - " + data.tabname + " ("
-          + data.total + ")");
-      usedByLinkDataJsonObj.put("hasTree", data.hastree);
-      usedByLinkDataJsonObj.put("id", data.id);
-      usedByLinkDataJsonObj.put("name", data.name);
-      usedByLinkDataJsonObj.put("referencedColumnId", data.referencedColumnId);
-      usedByLinkDataJsonObj.put("tableName", data.tablename);
-      usedByLinkDataJsonObj.put("tabName", data.tabname);
-      usedByLinkDataJsonObj.put("total", data.total);
-      usedByLinkDataJsonObj.put("whereClause", data.whereclause);
-      usedByLinkDataJsonObj.put("windowName", data.windowname);
-      usedByLinkDataJsonObjects.add(usedByLinkDataJsonObj);
+      jsonObject.put("usedByLinkData", usedByLinkDataJsonObjects);
     }
-
-    jsonObject.put("usedByLinkData", usedByLinkDataJsonObjects);
-    jsonObject.put("msg", msg);
+    if (msg != null) {
+      jsonObject.put("msg", msg.getMessage());
+    }
     return jsonObject;
   }
 

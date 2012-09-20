@@ -15,7 +15,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2008-2010 Openbravo SLU
+* All portions are Copyright (C) 2008-2012 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -87,16 +87,17 @@ BEGIN
         COALESCE(:NEW.Developmentstatus , '.') != COALESCE(:OLD.Developmentstatus , '.') OR
         COALESCE(:NEW.AD_Package_ID , '.') != COALESCE(:OLD.AD_Package_ID , '.') OR 
         COALESCE(:NEW.Acctclassname , '.') != COALESCE(:OLD.Acctclassname , '.') OR
+        COALESCE(:NEW.TreeType , '.') != COALESCE(:OLD.TreeType , '.') OR
         COALESCE(:NEW.Acctdate_Column_ID , '.') != COALESCE(:OLD.Acctdate_Column_ID , '.') 
         
         --SQL_Record_Identifier is not going to be exported
         ) THEN
-      RAISE_APPLICATION_ERROR(-20532, 'Cannot update an object in a module not in developement and without an active template');
+      RAISE_APPLICATION_ERROR(-20000, '@20532@');
     END IF;
   END IF;
   
   IF ((DELETING OR INSERTING) AND devModule='N') THEN
-    RAISE_APPLICATION_ERROR(-20533, 'Cannot insert/delete objects in a module not in development.');
+    RAISE_APPLICATION_ERROR(-20000, '@20533@');
   END IF;
   
   --Check the only updated column is isFullyAudited. In this case maitin updated
@@ -124,6 +125,7 @@ BEGIN
       COALESCE(:NEW.TREETYPE             ,'.') = COALESCE(:OLD.TREETYPE             ,'.') AND                                                                                                                                                                            
       COALESCE(:NEW.ACCTDATE_COLUMN_ID   ,'.') = COALESCE(:OLD.ACCTDATE_COLUMN_ID   ,'.') AND                                                                                                                                                                            
       COALESCE(:NEW.ACCTCLASSNAME        ,'.') = COALESCE(:OLD.ACCTCLASSNAME        ,'.') AND
+      COALESCE(:NEW.TreeType             ,'.') = COALESCE(:OLD.TreeType             ,'.') AND
       :NEW.ISFULLYAUDITED != :OLD.ISFULLYAUDITED) THEN
          :NEW.UPDATED := :OLD.UPDATED;
     END IF;

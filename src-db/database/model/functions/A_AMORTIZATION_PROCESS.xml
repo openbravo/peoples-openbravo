@@ -64,7 +64,7 @@
     INTO v_PROCESSED, v_POSTED, v_AD_Org_ID, v_date
     FROM A_AMORTIZATION
     WHERE A_AMORTIZATION_ID=V_Record_ID;
-    IF(v_PROCESSED='Y' AND v_POSTED='N') THEN
+    IF(v_PROCESSED='Y' AND v_POSTED<>'Y') THEN
       --UnProcess amortization
       v_ResultStr:='ProcessAmortization';
       UPDATE A_Amortization

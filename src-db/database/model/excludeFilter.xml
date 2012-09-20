@@ -61,7 +61,6 @@
     <excludedFunction name="AD_ORG_CHK_DOC_PAYMENTS"/>
     <excludedFunction name="C_CREATE_TEMPORARY_TABLES"/>
     <excludedFunction name="AD_DB_MODIFIED"/>
-    <excludedFunction name="AD_GET_DOC_LE_BU"/>
     <excludedFunction name="AD_GET_RDBMS"/>
     <excludedFunction name="AD_CREATE_AUDIT_TRIGGERS"/>
     <excludedFunction name="TEMP_FINDINARRAY"/>

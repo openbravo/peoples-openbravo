@@ -273,8 +273,8 @@ isc.OBMyOpenbravo.addProperties({
       width: '*',
       showColumnMenus: false,
       canResizeColumns: false,
-      canResizeRows: false,
-      membersMargin: 10,
+      canResizePortlets: false,
+      membersMargin: OB.Styles.OBMyOpenbravo.portalLayout.membersMargin,
       columnBorder: 0,
       overflow: 'auto',
       height: '100%',
@@ -285,7 +285,7 @@ isc.OBMyOpenbravo.addProperties({
       // child name of 'column', the properties of the Column
       // can be set like this using the AutoChild concept of SC
       columnProperties: {
-        membersMargin: 12,
+        membersMargin: OB.Styles.OBMyOpenbravo.portalLayout.columnProperties.membersMargin,
         canAcceptDrop: true,
         overflow: 'visible',
 
@@ -336,14 +336,11 @@ isc.OBMyOpenbravo.addProperties({
             portlet.setHeight('100%');
           }
 
-          var dynamicProperties = // canResizeRows attribute derived from parent
-          {
-            showResizeBar: this.canResizeRows
-          };
+          var dynamicProperties = {};
           if (userHeight !== null) {
             dynamicProperties.height = userHeight;
           }
-          var portalRow = this.createAutoChild('row', dynamicProperties);
+          var portalRow = this.makePortalRow(dynamicProperties);
 
           this.addMember(portalRow, position);
           portalRow.addMember(portlet);
@@ -828,7 +825,8 @@ isc.OBMyOpenbravo.addProperties({
   },
 
   setAdminMode: function (level, levelValue) {
-    var leftColumn = this.leftColumnLayout;
+    var leftColumn = this.leftColumnLayout,
+        levelLabel, levelValueLabel;
 
     this.adminMode = true;
     this.portalLayout.sendEvents = false;
@@ -838,14 +836,17 @@ isc.OBMyOpenbravo.addProperties({
     leftColumn.recentViewsLayout.hide();
     leftColumn.refreshLayout.hide();
     leftColumn.recentDocumentsLayout.hide();
+    //set this values before destroy because after that there will be undefined
+    levelLabel = level.getDisplayValue();
+    levelValueLabel = levelValue.getDisplayValue ? levelValue.getDisplayValue() : '';
     leftColumn.adminOtherMyOBLayout.getMembers()[1].destroy(); // remove DynamicForm
     leftColumn.adminOtherMyOBLayout.hide();
     if (!leftColumn.addWidgetLayout.getMember(0).isOpened()) {
       leftColumn.addWidgetLayout.getMember(0).doOpen();
     }
     leftColumn.addMember(isc.OBMyOBPublishChangesDialog.create({
-      levelLabel: level.getDisplayValue(),
-      levelValueLabel: levelValue.getDisplayValue ? levelValue.getDisplayValue() : ''
+      levelLabel: levelLabel,
+      levelValueLabel: levelValueLabel
     }));
     this.reloadWidgets();
   },

@@ -23,6 +23,7 @@ import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -44,6 +45,7 @@ import org.openbravo.base.filter.RequestFilter;
 import org.openbravo.base.filter.ValueListFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -58,7 +60,9 @@ import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.financialmgmt.gl.GLItem;
+import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
+import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.model.marketing.Campaign;
 import org.openbravo.model.materialmgmt.cost.ABCActivity;
@@ -81,8 +85,9 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
       String strTabId = vars.getGlobalVariable("inpTabId", "AddOrderOrInvoice|Tab_ID");
       String strPaymentId = vars.getGlobalVariable("inpfinPaymentId", strWindowId + "|"
           + "FIN_Payment_ID");
+      String strFinancialAccountId = vars.getStringParameter("inpfinFinancialAccountId");
 
-      printPage(response, vars, strPaymentId, strWindowId, strTabId);
+      printPage(response, vars, strPaymentId, strWindowId, strTabId, strFinancialAccountId);
 
     } else if (vars.commandIn("GRIDLIST")) {
       String strBusinessPartnerId = vars.getRequestGlobalVariable("inpBusinessPartnerId", "");
@@ -150,11 +155,16 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
             vars, strSelectedScheduledPaymentDetailIds);
 
         FIN_Payment payment = dao.getObject(FIN_Payment.class, strPaymentId);
+        // Remove edited lines which are not in final selection and adjust outstanding amount for
+        // documents
+        removeNonSelectedDetails(payment, selectedPaymentDetails);
         BigDecimal newPaymentAmount = new BigDecimal(strPaymentAmount);
         if (newPaymentAmount.compareTo(payment.getAmount()) != 0) {
           payment.setAmount(newPaymentAmount);
+          OBDal.getInstance().save(payment);
         }
-
+        // load object in memory
+        payment.getFINPaymentDetailList();
         if (addedGLITemsArray != null) {
           for (int i = 0; i < addedGLITemsArray.length(); i++) {
             JSONObject glItem = addedGLITemsArray.getJSONObject(i);
@@ -168,7 +178,6 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
             }
             final String strGLItemId = glItem.getString("glitemId");
             checkID(strGLItemId);
-
             // Accounting Dimensions
             final String strElement_BP = glItem.getString("cBpartnerDim");
             checkID(strElement_BP);
@@ -201,16 +210,21 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
         }
         FIN_AddPayment.setFinancialTransactionAmountAndRate(payment, exchangeRate, convertedAmount);
         payment = FIN_AddPayment.savePayment(payment, isReceipt, null, null, null, null, null,
-            null, null, null, null, selectedPaymentDetails, selectedPaymentDetailAmounts,
-            strDifferenceAction.equals("writeoff"), strDifferenceAction.equals("refund"),
-            dao.getObject(Currency.class, paymentCurrencyId), exchangeRate, convertedAmount);
+            strPaymentAmount, null, null, null, selectedPaymentDetails,
+            selectedPaymentDetailAmounts, strDifferenceAction.equals("writeoff"),
+            strDifferenceAction.equals("refund"), dao.getObject(Currency.class, paymentCurrencyId),
+            exchangeRate, convertedAmount);
 
         if (strAction.equals("PRP") || strAction.equals("PPP") || strAction.equals("PRD")
             || strAction.equals("PPW")) {
           try {
-            // If Action PRP o PPW, Process payment but as well create a financial transaction
-            message = FIN_AddPayment.processPayment(vars, this,
-                (strAction.equals("PRP") || strAction.equals("PPP")) ? "P" : "D", payment);
+            // Process just in case there are lines, empty Refund payment does not need to call
+            // process
+            if (payment.getFINPaymentDetailList().size() > 0) {
+              // If Action PRP o PPW, Process payment but as well create a financial transaction
+              message = FIN_AddPayment.processPayment(vars, this,
+                  (strAction.equals("PRP") || strAction.equals("PPP")) ? "P" : "D", payment);
+            }
             if (strDifferenceAction.equals("refund")) {
               Boolean newPayment = !payment.getFINPaymentDetailList().isEmpty();
               FIN_Payment refundPayment = FIN_AddPayment.createRefundPayment(this, vars, payment,
@@ -249,6 +263,7 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
         }
         bdErrorGeneralPopUp(request, response, "Error", strMessage);
         OBDal.getInstance().rollbackAndClose();
+        log4j.error("AddOrderOrInvoice - SAVE AND PROCESS", ex);
         return;
 
       } finally {
@@ -261,6 +276,61 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
 
   }
 
+  /*
+   * Removes lines and schedule details which are not included in the given selected list
+   */
+  private void removeNonSelectedDetails(FIN_Payment payment,
+      List<FIN_PaymentScheduleDetail> selectedPaymentDetails) {
+    Set<String> toRemovePDs = new HashSet<String>();
+    for (FIN_PaymentDetail pd : payment.getFINPaymentDetailList()) {
+      for (FIN_PaymentScheduleDetail psd : pd.getFINPaymentScheduleDetailList()) {
+        if (!selectedPaymentDetails.contains(psd)) {
+          if (pd.getGLItem() != null) {
+            toRemovePDs.add(pd.getId());
+            continue;
+          }
+          // update outstanding amount
+          List<FIN_PaymentScheduleDetail> outStandingPSDs = FIN_AddPayment.getOutstandingPSDs(psd);
+          if (outStandingPSDs.size() == 0) {
+            FIN_PaymentScheduleDetail newOutstanding = (FIN_PaymentScheduleDetail) DalUtil.copy(
+                psd, false);
+            newOutstanding.setPaymentDetails(null);
+            newOutstanding.setWriteoffAmount(BigDecimal.ZERO);
+            OBDal.getInstance().save(newOutstanding);
+            toRemovePDs.add(pd.getId());
+          } else {
+            // First make sure outstanding amount is not equal zero
+            if (outStandingPSDs.get(0).getAmount().add(psd.getAmount()).signum() == 0) {
+              OBDal.getInstance().remove(outStandingPSDs.get(0));
+            } else {
+              // update existing PD with difference
+              outStandingPSDs.get(0).setAmount(
+                  outStandingPSDs.get(0).getAmount().add(psd.getAmount()));
+              OBDal.getInstance().save(outStandingPSDs.get(0));
+            }
+            toRemovePDs.add(pd.getId());
+          }
+        }
+      }
+    }
+    for (String pdID : toRemovePDs) {
+      FIN_PaymentDetail pd = OBDal.getInstance().get(FIN_PaymentDetail.class, pdID);
+      boolean hasPSD = pd.getFINPaymentScheduleDetailList().size() > 0;
+      if (hasPSD) {
+        FIN_PaymentScheduleDetail psd = OBDal.getInstance().get(FIN_PaymentScheduleDetail.class,
+            pd.getFINPaymentScheduleDetailList().get(0).getId());
+        pd.getFINPaymentScheduleDetailList().remove(psd);
+        OBDal.getInstance().save(pd);
+        OBDal.getInstance().remove(psd);
+      }
+      payment.getFINPaymentDetailList().remove(pd);
+      OBDal.getInstance().save(payment);
+      OBDal.getInstance().remove(pd);
+      OBDal.getInstance().flush();
+      OBDal.getInstance().refresh(payment);
+    }
+  }
+
   private void checkID(final String id) throws ServletException {
     if (!IsIDFilter.instance.accept(id)) {
       log4j.error("Input: " + id + " not accepted by filter: IsIDFilter");
@@ -269,8 +339,8 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
   }
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars,
-      String strPaymentId, String strWindowId, String strTabId) throws IOException,
-      ServletException {
+      String strPaymentId, String strWindowId, String strTabId, String strFinancialAccountId)
+      throws IOException, ServletException {
     log4j.debug("Output: Add Payment button pressed on Make / Receipt Payment windows");
 
     FIN_Payment payment = new AdvPaymentMngtDao().getObject(FIN_Payment.class, strPaymentId);
@@ -328,13 +398,18 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
     xmlDocument.setParameter("generatedCredit", payment.getGeneratedCredit() != null ? payment
         .getGeneratedCredit().toString() : BigDecimal.ZERO.toString());
 
-    final Currency financialAccountCurrency = payment.getAccount().getCurrency();
-    if (financialAccountCurrency != null) {
-      xmlDocument.setParameter("financialAccountCurrencyId", financialAccountCurrency.getId());
-      xmlDocument.setParameter("financialAccountCurrencyName",
-          financialAccountCurrency.getISOCode());
-      xmlDocument.setParameter("financialAccountCurrencyPrecision", financialAccountCurrency
-          .getStandardPrecision().toString());
+    OBContext.setAdminMode(true);
+    try {
+      final Currency financialAccountCurrency = payment.getAccount().getCurrency();
+      if (financialAccountCurrency != null) {
+        xmlDocument.setParameter("financialAccountCurrencyId", financialAccountCurrency.getId());
+        xmlDocument.setParameter("financialAccountCurrencyName",
+            financialAccountCurrency.getISOCode());
+        xmlDocument.setParameter("financialAccountCurrencyPrecision", financialAccountCurrency
+            .getStandardPrecision().toString());
+      }
+    } finally {
+      OBContext.restorePreviousMode();
     }
     xmlDocument.setParameter("exchangeRate",
         payment.getFinancialTransactionConvertRate() == null ? "" : payment
@@ -380,6 +455,93 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
     xmlDocument.setParameter("strElement_SR", strElement_SR);
     xmlDocument.setParameter("strElement_MC", strElement_MC);
 
+    // Add GL Items
+    JSONArray addedGLITemsArray = new JSONArray();
+    List<FIN_PaymentScheduleDetail> gLItemScheduleDetailLines = FIN_AddPayment
+        .getGLItemScheduleDetails(payment);
+    for (FIN_PaymentScheduleDetail psdGLItem : gLItemScheduleDetailLines) {
+      try {
+        JSONObject glItem = new JSONObject();
+        glItem.put("glitemId", psdGLItem.getPaymentDetails().getGLItem().getId());
+        glItem.put("glitemDesc", psdGLItem.getPaymentDetails().getGLItem().getIdentifier());
+        glItem.put("finPaymentScheduleDetailId", psdGLItem.getId());
+        // Amounts
+        if (payment.isReceipt()) {
+          glItem.put("glitemPaidOutAmt", psdGLItem.getAmount().signum() < 0 ? psdGLItem.getAmount()
+              .abs() : BigDecimal.ZERO);
+          glItem.put("glitemReceivedInAmt",
+              psdGLItem.getAmount().signum() > 0 ? psdGLItem.getAmount() : BigDecimal.ZERO);
+        } else {
+          glItem.put("glitemReceivedInAmt", psdGLItem.getAmount().signum() < 0 ? psdGLItem
+              .getAmount().abs() : BigDecimal.ZERO);
+          glItem.put("glitemPaidOutAmt", psdGLItem.getAmount().signum() > 0 ? psdGLItem.getAmount()
+              : BigDecimal.ZERO);
+        }
+        // Accounting Dimensions
+        glItem.put("cBpartnerDim", psdGLItem.getBusinessPartner() != null ? psdGLItem
+            .getBusinessPartner().getId() : "");
+        glItem.put("cBpartnerDimDesc", psdGLItem.getBusinessPartner() != null ? psdGLItem
+            .getBusinessPartner().getIdentifier() : "");
+        glItem.put("mProductDim", psdGLItem.getProduct() != null ? psdGLItem.getProduct().getId()
+            : "");
+        glItem.put("mProductDimDesc", psdGLItem.getProduct() != null ? psdGLItem.getProduct()
+            .getIdentifier() : "");
+        glItem.put("cProjectDim", psdGLItem.getProject() != null ? psdGLItem.getProject().getId()
+            : "");
+        glItem.put("cProjectDimDesc", psdGLItem.getProject() != null ? psdGLItem.getProject()
+            .getIdentifier() : "");
+        glItem.put("cActivityDim", psdGLItem.getActivity() != null ? psdGLItem.getActivity()
+            .getId() : "");
+        glItem.put("cActivityDimDesc", psdGLItem.getActivity() != null ? psdGLItem.getActivity()
+            .getIdentifier() : "");
+        glItem.put("cSalesregionDim", psdGLItem.getSalesRegion() != null ? psdGLItem
+            .getSalesRegion().getId() : "");
+        glItem.put("cSalesregionDimDesc", psdGLItem.getSalesRegion() != null ? psdGLItem
+            .getSalesRegion().getIdentifier() : "");
+        glItem.put("cCampaignDim", psdGLItem.getSalesCampaign() != null ? psdGLItem
+            .getSalesCampaign().getId() : "");
+        glItem.put("cCampaignDimDesc", psdGLItem.getSalesCampaign() != null ? psdGLItem
+            .getSalesCampaign().getIdentifier() : "");
+        // DisplayLogics
+        glItem.put("cBpartnerDimDisplayed", strElement_BP);
+        glItem.put("mProductDimDisplayed", strElement_PR);
+        glItem.put("cProjectDimDisplayed", strElement_PJ);
+        glItem.put("cActivityDimDisplayed", strElement_AY);
+        glItem.put("cSalesregionDimDisplayed", strElement_SR);
+        glItem.put("cCampaignDimDisplayed", strElement_MC);
+        addedGLITemsArray.put(glItem);
+      } catch (JSONException e) {
+        log4j.error(e);
+      }
+    }
+    xmlDocument.setParameter("glItems",
+        addedGLITemsArray.toString().replace("'", "").replaceAll("\"", "'"));
+    // If UsedCredit is not equal zero, check Use available credit
+    xmlDocument.setParameter("useCredit", payment.getUsedCredit().signum() != 0 ? "Y" : "N");
+
+    // Not allow to change exchange rate and amount
+    final String strNotAllowExchange = Utility.getContext(this, vars, "NotAllowChangeExchange",
+        strWindowId);
+    xmlDocument.setParameter("strNotAllowExchange", strNotAllowExchange);
+
+    dao = new AdvPaymentMngtDao();
+    FIN_FinancialAccount financialAccount = dao.getObject(FIN_FinancialAccount.class,
+        strFinancialAccountId);
+
+    if (financialAccount.getWriteofflimit() != null) {
+      final String strtypewriteoff;
+      final String strAmountwriteoff;
+
+      strtypewriteoff = financialAccount.getTypewriteoff();
+      strAmountwriteoff = financialAccount.getWriteofflimit().toString();
+      xmlDocument.setParameter("strtypewriteoff", strtypewriteoff);
+      xmlDocument.setParameter("strAmountwriteoff", strAmountwriteoff);
+
+      // Not allow to write off
+      final String strWriteOffLimit = Utility.getContext(this, vars, "WriteOffLimitPreference",
+          strWindowId);
+      xmlDocument.setParameter("strWriteOffLimit", strWriteOffLimit);
+    }
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
@@ -401,12 +563,32 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/advpaymentmngt/ad_actionbutton/AddPaymentGrid", discard).createXmlDocument();
 
-    // Pending Payments from invoice
-    final List<FIN_PaymentScheduleDetail> selectedScheduledPaymentDetails = FIN_AddPayment
-        .getSelectedPaymentDetails(null, strSelectedPaymentDetails);
-
     FIN_Payment payment = dao.getObject(FIN_Payment.class, strPaymentId);
 
+    List<FIN_PaymentScheduleDetail> storedScheduledPaymentDetails = new ArrayList<FIN_PaymentScheduleDetail>();
+    // This is to identify first load of the grid
+    String strFirstLoad = vars.getStringParameter("isFirstLoad");
+    if (payment.getFINPaymentDetailList().size() > 0) {
+      // Add payment schedule details related to orders or invoices to storedSchedulePaymentDetails
+      OBContext.setAdminMode();
+      try {
+        OBCriteria<FIN_PaymentScheduleDetail> obc = OBDal.getInstance().createCriteria(
+            FIN_PaymentScheduleDetail.class);
+        obc.add(Restrictions.in(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS,
+            payment.getFINPaymentDetailList()));
+        obc.add(Restrictions.or(
+            Restrictions.isNotNull(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE),
+            Restrictions.isNotNull(FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE)));
+        storedScheduledPaymentDetails = obc.list();
+      } finally {
+        OBContext.restorePreviousMode();
+      }
+    }
+    // Pending Payments from invoice
+    final List<FIN_PaymentScheduleDetail> selectedScheduledPaymentDetails = FIN_AddPayment
+        .getSelectedPaymentDetails(
+            "true".equals(strFirstLoad) ? new ArrayList<FIN_PaymentScheduleDetail>(
+                storedScheduledPaymentDetails) : null, strSelectedPaymentDetails);
     // filtered scheduled payments list
     final List<FIN_PaymentScheduleDetail> filteredScheduledPaymentDetails = dao
         .getFilteredScheduledPaymentDetails(dao.getObject(Organization.class, strOrgId),
@@ -415,9 +597,43 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
             FIN_Utility.getDate(DateTimeData.nDaysAfter(this, strDueDateTo, "1")), strDocumentType,
             showAlternativePM ? null : payment.getPaymentMethod(), selectedScheduledPaymentDetails,
             isReceipt);
+    // Remove related outstanding schedule details related to those ones being edited as amount will
+    // be later added to storedScheduledPaymentDetails
+    for (FIN_PaymentScheduleDetail psd : storedScheduledPaymentDetails) {
+      filteredScheduledPaymentDetails.removeAll(FIN_AddPayment.getOutstandingPSDs(psd));
+    }
+    // Get stored not selected PSDs
+    List<FIN_PaymentScheduleDetail> storedNotSelectedPSDs = new ArrayList<FIN_PaymentScheduleDetail>(
+        storedScheduledPaymentDetails);
+    storedNotSelectedPSDs.removeAll(selectedScheduledPaymentDetails);
+    // Add stored but not selected details which maps documenttype
+    filteredScheduledPaymentDetails.addAll(filterDocumenttype(storedNotSelectedPSDs,
+        strDocumentType));
 
     FieldProvider[] data = FIN_AddPayment.getShownScheduledPaymentDetails(vars,
-        selectedScheduledPaymentDetails, filteredScheduledPaymentDetails, false, null);
+        selectedScheduledPaymentDetails, filteredScheduledPaymentDetails, false, null,
+        strSelectedPaymentDetails);
+    for (FIN_PaymentScheduleDetail psd : storedScheduledPaymentDetails) {
+      // Calculate pending amount
+      BigDecimal outstandingAmount = BigDecimal.ZERO;
+      List<FIN_PaymentScheduleDetail> outStandingPSDs = FIN_AddPayment.getOutstandingPSDs(psd);
+      if (outStandingPSDs.size() != 0) {
+        for (FIN_PaymentScheduleDetail outPSD : outStandingPSDs) {
+          outstandingAmount = outstandingAmount.add(outPSD.getAmount());
+        }
+      }
+      for (int i = 0; i < data.length; i++) {
+        if (data[i].getField("finScheduledPaymentDetailId").equals(psd.getId())) {
+          FieldProviderFactory.setField(data[i], "outstandingAmount",
+              psd.getAmount().add(outstandingAmount).toPlainString());
+          if ("true".equals(strFirstLoad)) {
+            FieldProviderFactory.setField(data[i], "difference", outstandingAmount.toPlainString());
+            FieldProviderFactory
+                .setField(data[i], "paymentAmount", psd.getAmount().toPlainString());
+          }
+        }
+      }
+    }
     data = groupPerDocumentType(data, strDocumentType);
     xmlDocument.setData("structure", (data == null) ? set() : data);
 
@@ -566,8 +782,22 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
     HashMap<String, BigDecimal> recordsAmounts = new HashMap<String, BigDecimal>();
     // PSD needs to be properly ordered to ensure negative amounts are processed first
     List<FIN_PaymentScheduleDetail> psds = getOrderedPaymentScheduleDetails(psdSet);
+    BigDecimal outstandingAmount = BigDecimal.ZERO;
     for (FIN_PaymentScheduleDetail paymentScheduleDetail : psds) {
-      BigDecimal outstandingAmount = paymentScheduleDetail.getAmount();
+      if (paymentScheduleDetail.getPaymentDetails() != null) {
+        // This schedule detail comes from an edited payment so outstanding amount needs to be
+        // properly calculated
+        List<FIN_PaymentScheduleDetail> outStandingPSDs = FIN_AddPayment
+            .getOutstandingPSDs(paymentScheduleDetail);
+        if (outStandingPSDs.size() > 0) {
+          outstandingAmount = paymentScheduleDetail.getAmount().add(
+              outStandingPSDs.get(0).getAmount());
+        } else {
+          outstandingAmount = paymentScheduleDetail.getAmount();
+        }
+      } else {
+        outstandingAmount = paymentScheduleDetail.getAmount();
+      }
       // Manage negative amounts
       if ((remainingAmount.compareTo(BigDecimal.ZERO) > 0 && remainingAmount
           .compareTo(outstandingAmount) >= 0)
@@ -590,6 +820,21 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
     orderedPSDs.add(Restrictions.in(FIN_PaymentScheduleDetail.PROPERTY_ID, psdSet));
     orderedPSDs.addOrderBy(FIN_PaymentScheduleDetail.PROPERTY_AMOUNT, true);
     return orderedPSDs.list();
+  }
+
+  private List<FIN_PaymentScheduleDetail> filterDocumenttype(
+      List<FIN_PaymentScheduleDetail> storedNotSelectedPSDs, String strDocumentType) {
+    List<FIN_PaymentScheduleDetail> listIterator = new ArrayList<FIN_PaymentScheduleDetail>(
+        storedNotSelectedPSDs);
+    for (FIN_PaymentScheduleDetail paymentScheduleDetail : listIterator) {
+      if (paymentScheduleDetail.getInvoicePaymentSchedule() != null && "O".equals(strDocumentType)) {
+        storedNotSelectedPSDs.remove(paymentScheduleDetail);
+      } else if (paymentScheduleDetail.getOrderPaymentSchedule() != null
+          && "I".equals(strDocumentType)) {
+        storedNotSelectedPSDs.remove(paymentScheduleDetail);
+      }
+    }
+    return storedNotSelectedPSDs;
   }
 
   public String getServletInfo() {

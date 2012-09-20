@@ -191,7 +191,11 @@ public class DalMappingGenerator implements OBSingleton {
     }
     sb.append(" type=\"" + type + "\"");
 
-    sb.append(" column=\"" + p.getColumnName() + "\"");
+    if (p.getSqlLogic() != null) {
+      sb.append(" formula=\"" + processSqlLogic(p.getSqlLogic()) + "\"");
+    } else {
+      sb.append(" column=\"" + p.getColumnName() + "\"");
+    }
 
     if (p.isMandatory()) {
       sb.append(" not-null=\"true\"");
@@ -201,10 +205,8 @@ public class DalMappingGenerator implements OBSingleton {
     // for ui and not for background processes
     // if (!p.isUpdatable() || p.isInactive()) {
 
-    if (p.isInactive() || p.getEntity().isView()) {
+    if (p.isInactive() || p.getEntity().isView() || p.getSqlLogic() != null) {
       sb.append(" update=\"false\"");
-    }
-    if (p.isInactive() || p.getEntity().isView()) {
       sb.append(" insert=\"false\"");
     }
 
@@ -233,9 +235,12 @@ public class DalMappingGenerator implements OBSingleton {
 
       // language is always loaded explicitly by Hibernate because it is a non-pk
       // association, eager fetch with the parent then..
-      // disabled for now for later study
-      // if (p.getTargetEntity().getName().equals("ADLanguage")) {
-      // sb.append(" fetch=\"join\" ");
+      // after some more thought, normally only a limited number of languages are used
+      // resulting in a few extra queries in the beginning of the transaction, the rest is loaded
+      // from the first level cache, so the current approach is fine, keep the following
+      // lines commented
+      // if (p.getTargetEntity() != null && p.getTargetEntity().getName().equals("ADLanguage")) {
+      // sb.append(" fetch=\"join\"");
       // }
 
       if (p.isInactive() || p.getEntity().isView()) {
@@ -382,5 +387,19 @@ public class DalMappingGenerator implements OBSingleton {
     } catch (final IOException e) {
       throw new OBException(e);
     }
+  }
+
+  private String processSqlLogic(String val) {
+    String localVal = val.trim();
+    if (val.contains("\"")) {
+      localVal = localVal.replace("\"", "");
+    }
+    if (!localVal.startsWith("(")) {
+      localVal = "(" + localVal;
+    }
+    if (!localVal.endsWith(")")) {
+      localVal = localVal + ")";
+    }
+    return localVal;
   }
 }

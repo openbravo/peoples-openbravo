@@ -39,7 +39,9 @@ isc.ClassFactory.mixInInterface('OBSearchItem', 'OBLinkTitleItem');
         targetFld.valueMap = {};
       }
       targetFld.valueMap[targetFld.getValue()] = display;
-      targetFld.form.setValue(targetFld.displayField, display);
+      if (targetFld.displayField) {
+        targetFld.form.setValue(targetFld.displayField, display);
+      }
       targetFld.updateValueMap(true);
 
       if (parameters && parameters.length > 0) {
@@ -52,9 +54,15 @@ isc.ClassFactory.mixInInterface('OBSearchItem', 'OBLinkTitleItem');
         }
       }
       targetFld._hasChanged = true;
-      targetFld.form.handleItemChange(targetFld);
+      if (targetFld.form.handleItemChange) {
+        targetFld.form.handleItemChange(targetFld);
+      }
       // fire with a delay otherwise results in strange errors
       targetFld.fireOnPause('validate', targetFld.validate, null, targetFld);
+
+      if (targetFld.form.focusInNextItem) {
+        targetFld.form.focusInNextItem(targetFld.name);
+      }
     }
     isc.OBSearchItem.openedWindow.close();
     isc.OBSearchItem.openSearchItem = null;
@@ -169,7 +177,7 @@ isc.OBSearchItem.addProperties({
     var hidden, i;
     var displayedValue = '';
 
-    if (this.valueMap[this.getValue()]) {
+    if (this.valueMap && this.valueMap[this.getValue()]) {
       displayedValue = this.valueMap[this.getValue()];
     }
 
@@ -241,5 +249,14 @@ isc.OBSearchItem.addProperties({
       window.releaseEvents(isc.Event.UNLOAD);
     }
     window.onunload = function () {};
+  },
+
+  mapValueToDisplay: function (value) {
+    if (this.displayField) {
+      return this.form.getValue(this.displayField);
+    } else {
+      return this.Super('mapValueToDisplay', arguments);
+    }
   }
+
 });

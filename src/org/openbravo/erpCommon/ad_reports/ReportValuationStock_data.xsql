@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,39 +28,50 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     <![CDATA[
-      SELECT CATEGORY_NAME, M_PRODUCT_ID, PRODUCT_NAME, QTY, UOM_NAME, AVERAGE_COST, TOTAL_COST FROM (
-      SELECT M_PRODUCT_CATEGORY.NAME AS CATEGORY_NAME, A.M_PRODUCT_ID, AD_COLUMN_IDENTIFIER(TO_CHAR('M_Product'), TO_CHAR(M_PRODUCT.M_PRODUCT_ID), TO_CHAR(?)) AS PRODUCT_NAME, 
-      A.QTY, C_UOM.NAME AS UOM_NAME, 
-      C_CURRENCY_CONVERT(M_GET_PRODUCT_COST(A.M_PRODUCT_ID,TO_DATE(?), NULL), ?, ?, COALESCE(MC.DATEFROM,TO_DATE(?)), NULL, MC.AD_CLIENT_ID, MC.AD_ORG_ID) AS AVERAGE_COST,       
-	  A.QTY * C_CURRENCY_CONVERT(M_GET_PRODUCT_COST(A.M_PRODUCT_ID,TO_DATE(?), NULL), ?, ?, COALESCE(MC.DATEFROM,TO_DATE(?)), NULL, MC.AD_CLIENT_ID, MC.AD_ORG_ID) AS TOTAL_COST
-      FROM M_PRODUCT_CATEGORY,
-      (SELECT M_PRODUCT_ID, SUM(MOVEMENTQTY) AS QTY, C_UOM_ID FROM M_TRANSACTION, M_LOCATOR
-      WHERE M_TRANSACTION.M_LOCATOR_ID = M_LOCATOR.M_LOCATOR_ID
-      AND MOVEMENTDATE < to_date(?)
-      AND M_LOCATOR.M_WAREHOUSE_ID = ?
-      GROUP BY M_PRODUCT_ID, C_UOM_ID) A, C_UOM,
-      M_PRODUCT LEFT JOIN M_COSTING MC ON MC.M_PRODUCT_ID = M_PRODUCT.M_PRODUCT_ID
-      WHERE A.M_PRODUCT_ID = M_PRODUCT.M_PRODUCT_ID
-      AND A.C_UOM_ID = C_UOM.C_UOM_ID
-      AND M_PRODUCT.M_PRODUCT_CATEGORY_ID = M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID
-      AND 1=1
-      AND A.QTY <>0) ZZ
-      GROUP BY M_PRODUCT_ID, CATEGORY_NAME , PRODUCT_NAME, QTY, UOM_NAME, AVERAGE_COST, TOTAL_COST
-      ORDER BY CATEGORY_NAME, PRODUCT_NAME
+        SELECT CATEGORY_NAME, M_PRODUCT_ID, PRODUCT_NAME, SUM(QTY) AS QTY, UOM_NAME, CASE ISCOSTCALCULATED
+                       WHEN 'Y' THEN SUM(TOTAL_COST) / SUM(QTY)
+                       ELSE NULL
+                     END AS AVERAGE_COST,
+               SUM(TOTAL_COST) AS TOTAL_COST
+        FROM (SELECT M_PRODUCT_CATEGORY.NAME AS CATEGORY_NAME, A.M_PRODUCT_ID, AD_COLUMN_IDENTIFIER (to_char('M_Product'),to_char(M_PRODUCT.M_PRODUCT_ID),to_char(?)) AS PRODUCT_NAME, 
+              A.QTY, C_UOM.NAME AS UOM_NAME,
+                     CASE a.iscostcalculated
+                       WHEN 'Y' THEN C_CURRENCY_CONVERT_PRECISION (Suma,A.c_currency_id,?,A.movementdate,NULL,A.AD_CLIENT_ID,?,'C')
+                       ELSE NULL
+                     END AS TOTAL_COST,  A.ISCOSTCALCULATED, A.AD_CLIENT_ID, A.MOVEMENTDATE, A.C_CURRENCY_ID
+              FROM M_PRODUCT_CATEGORY,
+                   (SELECT trx.M_PRODUCT_ID, sum(trx.MOVEMENTQTY) AS QTY, sum(CASE WHEN trx.MOVEMENTQTY < 0 THEN- tc.trxcost ELSE tc.trxcost END) AS Suma, 
+                   trx.C_UOM_ID, trx.AD_CLIENT_ID, trx.iscostcalculated, tc.c_currency_id, coalesce(io.dateacct,trx.movementdate) as movementdate
+                    FROM M_TRANSACTION trx 
+                      JOIN M_LOCATOR l ON trx.M_LOCATOR_ID = l.M_LOCATOR_ID 
+                      LEFT JOIN M_INOUTLINE iol ON trx.M_INOUTLINE_ID = iol.M_INOUTLINE_ID 
+                      LEFT JOIN M_INOUT io ON iol.M_INOUT_ID = io.M_INOUT_ID 
+                      LEFT JOIN (SELECT sum(cost) AS trxcost, m_transaction_id, c_currency_id
+                                 FROM M_TRANSACTION_COST
+                                 WHERE costdate < to_date(?)
+                                 GROUP BY m_transaction_id, c_currency_id) tc ON trx.m_transaction_id = tc.m_transaction_id
+                    WHERE trx.MOVEMENTDATE < to_date(?)
+              AND l.M_WAREHOUSE_ID = ?
+                    GROUP BY trx.M_PRODUCT_ID, trx.C_UOM_ID, trx.AD_CLIENT_ID, trx.iscostcalculated, tc.c_currency_id, coalesce(io.dateacct,trx.movementdate)) A,
+                   C_UOM,
+                   M_PRODUCT
+              WHERE A.M_PRODUCT_ID = M_PRODUCT.M_PRODUCT_ID
+              AND   A.C_UOM_ID = C_UOM.C_UOM_ID
+              AND   M_PRODUCT.M_PRODUCT_CATEGORY_ID = M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID
+              AND   1 = 1
+              AND   A.QTY <> 0) ZZ
+        GROUP BY ZZ.M_PRODUCT_ID, CATEGORY_NAME, PRODUCT_NAME, UOM_NAME, ISCOSTCALCULATED
+        HAVING SUM(QTY) <>0
+        ORDER BY CATEGORY_NAME, PRODUCT_NAME      
      ]]></Sql>
       <Field name="rownum" value="count"/>
       <Parameter name="adLanguage"/>
-      <Parameter name="date"/>
-      <Parameter name="cCurrencyBase"/>
       <Parameter name="cCurrencyConv"/>
-      <Parameter name="date"/>
-      <Parameter name="date"/>
-      <Parameter name="cCurrencyBase"/>
-      <Parameter name="cCurrencyConv"/>
-      <Parameter name="date"/>
+      <Parameter name="legalEntity"/>
+      <Parameter name="datePlus"/>
       <Parameter name="datePlus"/>
       <Parameter name="warehouse"/>
-      <Parameter name="categoryProduct" optional="true" after="AND 1=1"><![CDATA[ AND M_PRODUCT.M_PRODUCT_CATEGORY_ID= ? ]]></Parameter>
+      <Parameter name="categoryProduct" optional="true" after="AND   1 = 1"><![CDATA[ AND M_PRODUCT.M_PRODUCT_CATEGORY_ID= ? ]]></Parameter>
   </SqlMethod>
   <SqlMethod name="set" type="constant" return="multiple">
       <SqlMethodComment></SqlMethodComment>

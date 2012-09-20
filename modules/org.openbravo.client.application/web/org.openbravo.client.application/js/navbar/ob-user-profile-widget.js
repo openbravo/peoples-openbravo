@@ -24,7 +24,9 @@ isc.ClassFactory.defineClass('OBUserProfile', isc.OBQuickRun);
 // user/role information and change the password.
 isc.OBUserProfile.addProperties({
 
-  layoutProperties: {},
+  layoutProperties: {
+    width: 280
+  },
 
   // ** {{{ title }}} **
   //
@@ -104,10 +106,6 @@ isc.OBUserProfile.addProperties({
       pickListTallBaseStyle: OB.Styles.OBFormField.DefaultComboBox.pickListTallBaseStyle,
       pickerIconSrc: OB.Styles.OBFormField.DefaultComboBox.pickerIconSrc,
 
-      // without this in chrome the content is sorted according to the id/value
-      // not the displayfield
-      sortField: 0,
-
       height: OB.Styles.OBFormField.DefaultComboBox.height,
       pickerIconWidth: OB.Styles.OBFormField.DefaultComboBox.pickerIconWidth,
       pickListCellHeight: OB.Styles.OBFormField.DefaultComboBox.pickListCellHeight,
@@ -130,7 +128,34 @@ isc.OBUserProfile.addProperties({
       selectOnFocus: true,
       addUnknownValues: false,
       allowEmptyValue: false,
-      defaultToFirstOption: true
+      defaultToFirstOption: true,
+
+      // to solve: https://issues.openbravo.com/view.php?id=20067
+      // in chrome the order of the valueMap object is not retained
+      // the solution is to keep a separate entries array with the
+      // records in the correct order, see also the setEntries
+      // method
+      getClientPickListData: function () {
+        if (this.entries) {
+          return this.entries;
+        }
+        return this.Super('getClientPickListData', arguments);
+      },
+
+      setEntries: function (entries) {
+        var length = entries.length,
+            i, id, identifier, valueField = this.getValueFieldName(),
+            valueMap = {};
+        this.entries = [];
+        for (i = 0; i < length; i++) {
+          id = entries[i][OB.Constants.ID] || '';
+          identifier = entries[i][OB.Constants.IDENTIFIER] || '';
+          valueMap[id] = identifier;
+          this.entries[i] = {};
+          this.entries[i][valueField] = id;
+        }
+        this.setValueMap(valueMap);
+      }
     };
 
     roleField = isc.addProperties({
@@ -224,7 +249,7 @@ isc.OBUserProfile.addProperties({
         // this is needed because the select items will reject values
         // if the valuemap is not yet set
         this.setValue('role', this.localFormData.initialValues.role);
-        this.setValueMaps();
+        this.setOtherEntries();
         // note, need to make a copy of the initial values
         // otherwise they are updated when the form values change!
         this.setValues(isc.addProperties({}, this.localFormData.initialValues));
@@ -239,11 +264,11 @@ isc.OBUserProfile.addProperties({
         // order of these statements is important see comments in reset
         // function
         this.localFormData = data;
-        this.setValueMap('language', data.language.valueMap);
-        this.setValueMap('role', data.role.valueMap);
+        this.getItem('language').setEntries(data.language.valueMap);
+        this.getItem('role').setEntries(data.role.valueMap);
         this.setValue('role', data.initialValues.role);
         this.setValue('client', data.initialValues.client);
-        this.setValueMaps();
+        this.setOtherEntries();
         //First we set initial values, but warehouse will not work
         //as its combo hasn't yet been filled
         this.setValues(isc.addProperties({}, data.initialValues));
@@ -253,26 +278,26 @@ isc.OBUserProfile.addProperties({
       },
       // updates the dependent combos
       itemChanged: function (item, newValue) {
-        this.setValueMaps();
+        this.setOtherEntries();
         if (item.name === 'role') {
           if (this.getItem('organization').getClientPickListData().length > 0) {
             this.getItem('organization').moveToFirstValue();
           }
         }
         this.setWarehouseValueMap();
-        if (item.name !== 'warehouse') {
+        if (item.name !== 'warehouse' && item.name !== 'default') {
           if (this.getItem('warehouse').getClientPickListData().length > 0) {
             this.getItem('warehouse').moveToFirstValue();
           }
         }
       },
-      setValueMaps: function () {
+      setOtherEntries: function () {
         var i, role, roleId = this.getValue('role'),
             length = this.localFormData.role.roles.length;
         for (i = 0; i < length; i++) {
           role = this.localFormData.role.roles[i];
           if (role.id === roleId) {
-            this.setValueMap('organization', role.organizationValueMap);
+            this.getItem('organization').setEntries(role.organizationValueMap);
             this.setValue('client', role.client);
           }
         }
@@ -291,7 +316,7 @@ isc.OBUserProfile.addProperties({
             for (j = 0; j < length; j++) {
               warehouseOrg = role.warehouseOrgMap[j];
               if (warehouseOrg.orgId === orgId) {
-                this.setValueMap('warehouse', warehouseOrg.warehouseMap);
+                this.getItem('warehouse').setEntries(warehouseOrg.warehouseMap);
               }
             }
           }
@@ -337,11 +362,16 @@ isc.OBUserProfile.addProperties({
       align: 'center',
       overflow: 'visible',
       height: 1,
-      width: '100%'
+      width: 248
     });
+    if (isc.Page.isRTL()) { //HACK: in RTL mode this width is higher than in LTR (Even with width: '100%'). Manual set to a lower value.
+      buttonLayout.width = 220;
+    }
+
     buttonLayout.addMembers(isc.OBFormButton.create({
       title: OB.I18N.getLabel('OBUIAPP_Apply'),
       click: function () {
+        isc.OBQuickRun.currentQuickRun.doHide();
         roleForm.doSave();
       }
     }));
@@ -502,11 +532,14 @@ isc.OBUserProfile.addProperties({
     pwdButtonLayout = isc.HStack.create({
       layoutTopMargin: 10,
       membersMargin: 10,
-      width: '100%',
+      width: 248,
       align: 'center',
       overflow: 'visible',
       height: 1
     });
+    if (isc.Page.isRTL()) { //HACK: in RTL mode this width is higher than in LTR (Even with width: '100%'). Manual set to a lower value.
+      pwdButtonLayout.width = 220;
+    }
     pwdButtonLayout.addMembers(pwdSaveButton);
     pwdButtonLayout.addMembers(isc.OBFormButton.create({
       title: OB.I18N.getLabel('UINAVBA_Cancel'),

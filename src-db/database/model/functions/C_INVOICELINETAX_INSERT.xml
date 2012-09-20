@@ -40,7 +40,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2010 Openbravo SLU
+* All portions are Copyright (C) 2010-2012 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -59,6 +59,7 @@
   v_LineNo C_INVOICETAX.LINE%TYPE;
   v_Rate C_TAX.RATE%TYPE;
   v_Client_ID VARCHAR2(32) ;
+  V_istaxincluded CHAR(1);
   TYPE RECORD IS REF CURSOR;
     Cur_Taxes RECORD;
     FINISH_PROCESS BOOLEAN:=false;
@@ -71,6 +72,12 @@
     IF(v_BaseAmount='LNA' OR v_BaseAmount='LNATAX') THEN
       v_TaxBaseAmount:=p_LineNetAmt;
     ELSIF (v_BaseAmount='TBA' OR v_BaseAmount='TBATAX') THEN
+      SELECT pl.istaxincluded INTO v_istaxincluded
+      FROM c_invoice i JOIN m_pricelist pl ON i.m_pricelist_id = pl.m_pricelist_id
+      WHERE i.c_invoice_id = p_invoice_id;
+      IF (v_istaxincluded = 'Y') THEN
+        RAISE_APPLICATION_ERROR(-20000, '@AlternateAndTaxInclusiveNotSupported@');
+      END IF;
       v_TaxBaseAmount:=p_AlternateTaxBaseAmt;
     END IF;
     IF (v_TaxBaseAmount IS NULL) THEN
@@ -97,7 +104,7 @@
       FROM C_INVOICELINETAX
       WHERE C_INVOICELINE_ID = p_invoiceline_id;
       IF(p_invoice_id IS NULL OR p_invoiceline_id IS NULL) THEN
-         RAISE_APPLICATION_ERROR(-20200, 'Null ORDER OR LINE ID');
+         RAISE_APPLICATION_ERROR(-20000, '@20200@');
       END IF;
       INSERT
       INTO C_INVOICELINETAX (

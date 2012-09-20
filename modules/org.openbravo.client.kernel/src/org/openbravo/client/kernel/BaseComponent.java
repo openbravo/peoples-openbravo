@@ -32,6 +32,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.client.kernel.BaseComponentProvider.ComponentResource;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -284,5 +285,35 @@ public abstract class BaseComponent implements Component {
 
   public boolean isInDevelopment() {
     return getModule().isInDevelopment();
+  }
+
+  protected String getApplicationName() {
+
+    final String appName = getParameter(KernelConstants.APP_NAME_PARAMETER);
+
+    if (!appName.equals("")) {
+      return appName;
+    }
+
+    final String appMode = getParameter(KernelConstants.MODE_PARAMETER);
+
+    if (appMode.equals("") || appMode.equals(KernelConstants.MODE_PARAMETER_CLASSIC)) {
+      return ComponentResource.APP_CLASSIC;
+    }
+
+    if (appMode.equals(KernelConstants.MODE_PARAMETER_300)) {
+      return ComponentResource.APP_OB3;
+    }
+
+    log4j.error("Couldn't detect the application name in StaticResource call");
+    return "";
+  }
+
+  protected boolean isClassicMode() {
+    return getApplicationName().equals(ComponentResource.APP_CLASSIC);
+  }
+
+  public boolean bypassAuthentication() {
+    return false;
   }
 }

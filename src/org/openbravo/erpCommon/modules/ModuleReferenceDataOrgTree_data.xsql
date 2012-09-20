@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2008-2011 Openbravo SLU
+ * All portions are Copyright (C) 2008-2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -48,7 +48,8 @@
                      '' as endline,
                      '' as updateversion,
                      '' as updatedescription,
-                     '' as position
+                     '' as position,
+                     '' as updatelabel
             FROM AD_Module M
 			WHERE M.TYPE = 'M'
 			AND M.ISACTIVE = 'Y'
@@ -56,7 +57,8 @@
 			AND ((EXISTS (SELECT 1 FROM ad_dataset
 							WHERE M.ad_module_id = AD_DATASET.ad_module_id
 							AND AD_DATASET.ACCESSLEVEL IN ('3','1')
-							AND AD_DATASET.EXPORTALLOWED = 'Y')
+							AND AD_DATASET.EXPORTALLOWED = 'Y'
+							AND ISACTIVE = 'Y')
 						AND M.HASREFERENCEDATA = 'Y')
 						OR M.haschartofaccounts = 'Y')
 			AND NOT EXISTS (SELECT 1 FROM AD_CLIENTMODULE CM
@@ -81,9 +83,10 @@
                      CASE WHEN AD_ORGMODULE.CHECKSUM NOT LIKE '%'|| AD_DATASET.CHECKSUM  ||'%' THEN 'Y' ELSE '' END AS Update_Available,
                      m.seqno
            FROM AD_Module M left join AD_DATASET on M.ad_module_id = AD_DATASET.ad_module_id
-			    LEFT JOIN AD_ORGMODULE ON M.AD_MODULE_ID = AD_ORGMODULE.AD_MODULE_ID
+			    LEFT JOIN AD_ORGMODULE ON (M.AD_MODULE_ID = AD_ORGMODULE.AD_MODULE_ID AND AD_ORGMODULE.AD_Client_ID = ? AND AD_ORGMODULE.AD_ORG_ID = ? )
           WHERE M.TYPE = 'M'
             AND M.ISACTIVE = 'Y'
+            AND AD_DATASET.ISACTIVE = 'Y'
             AND 1=1
             AND M.HASREFERENCEDATA = 'Y'
             AND EXPORTALLOWED = 'Y'
@@ -110,6 +113,8 @@
           ]]>
       </Sql>
       <Parameter name="lang"/>
+      <Parameter name="client"/>
+      <Parameter name="org"/>
       <Parameter name="client"/>
       <Parameter name="client"/>
       <Parameter name="org"/>
@@ -140,7 +145,8 @@
                             AND IsIncluded = 'Y')
             AND EXISTS (SELECT 1 FROM AD_DATASET
                         WHERE AD_DATASET.AD_MODULE_ID = M.AD_MODULE_ID
-                        AND EXPORTALLOWED = 'Y')
+                        AND EXPORTALLOWED = 'Y'
+                        AND ISACTIVE = 'Y')
              AND ISACTIVE = 'Y'
      </Sql>
      <Parameter name="lang"/>

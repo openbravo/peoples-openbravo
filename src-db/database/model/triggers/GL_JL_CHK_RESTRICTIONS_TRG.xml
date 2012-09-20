@@ -19,7 +19,7 @@
     * under the License.
     * The Original Code is Openbravo ERP.
     * The Initial Developer of the Original Code is Openbravo SLU
-    * All portions are Copyright (C) 2001-2009 Openbravo SLU
+    * All portions are Copyright (C) 2001-2012 Openbravo SLU
     * All Rights Reserved.
     * Contributor(s):  ______________________________________.
     ************************************************************************/
@@ -57,14 +57,14 @@ BEGIN
         OR(COALESCE(:old.C_UOM_ID, '0') <> COALESCE(:new.C_UOM_ID, '0'))
         OR(COALESCE(:old.AD_ORG_ID, '0') <> COALESCE(:new.AD_ORG_ID, '0'))
         OR(COALESCE(:old.AD_CLIENT_ID, '0') <> COALESCE(:new.AD_CLIENT_ID, '0')))) THEN
-        RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
+        RAISE_APPLICATION_ERROR(-20000, '@20501@') ;
       END IF;
 
       IF(v_Posted='Y'
         AND ((COALESCE(:old.C_VALIDCOMBINATION_ID, '0') <> COALESCE(:new.C_VALIDCOMBINATION_ID, '0'))
         OR(COALESCE(:old.AMTACCTDR, 0) <> COALESCE(:new.AMTACCTDR, 0))
         OR(COALESCE(:old.AMTACCTCR, 0) <> COALESCE(:new.AMTACCTCR, 0)))) THEN
-        RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
+        RAISE_APPLICATION_ERROR(-20000, '@20501@') ;
       END IF;
     END IF;
   END IF;
@@ -76,7 +76,7 @@ BEGIN
     FROM GL_JOURNAL
     WHERE GL_JOURNAL_ID=v_GL_JOURNAL_ID;
     IF (v_Processed='Y') THEN
-      RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
+      RAISE_APPLICATION_ERROR(-20000, '@20501@') ;
     END IF;
   END IF;
   IF(INSERTING) THEN
@@ -87,7 +87,7 @@ BEGIN
     FROM GL_JOURNAL
     WHERE GL_JOURNAL_ID=v_GL_JOURNAL_ID;
     IF (v_Processed='Y') THEN
-      RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
+      RAISE_APPLICATION_ERROR(-20000, '@20501@') ;
     END IF;
   END IF;
 END GL_JL_CHK_RESTRICTIONS_TRG

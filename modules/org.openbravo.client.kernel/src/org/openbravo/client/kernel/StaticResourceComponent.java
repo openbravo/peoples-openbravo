@@ -95,11 +95,7 @@ public class StaticResourceComponent extends BaseComponent {
       // directly and not the document.write, see here:
       // http://www.codehouse.com/javascript/articles/external/
 
-      final boolean classicMode = !getParameters().containsKey(KernelConstants.MODE_PARAMETER)
-          || !getParameters().get(KernelConstants.MODE_PARAMETER).equals(
-              KernelConstants.MODE_PARAMETER_300);
-
-      if (!classicMode) {
+      if (isClassicMode()) {
         // set in the session that we are looking at the new ui
         // note injecting the HttpSession through Weld does not work
         // as it will instantiate one of the subclasses of HttpSession
@@ -113,14 +109,21 @@ public class StaticResourceComponent extends BaseComponent {
       final String scriptPath = getContextUrl() + GEN_TARGET_LOCATION + "/"
           + getStaticResourceFileName() + ".js";
 
-      if (classicMode) {
+      if (isClassicMode()) {
         result.append("document.write(\"<LINK rel='stylesheet' type='text/css' href='"
             + getContextUrl()
             + "org.openbravo.client.kernel/OBCLKER_Kernel/StyleSheetResources?_skinVersion="
-            + KernelConstants.SKIN_CLASSIC + "&_mode=" + KernelConstants.MODE_PARAMETER_CLASSIC
+            + KernelConstants.SKIN_DEFAULT + "&_mode=" + KernelConstants.MODE_PARAMETER_CLASSIC
             + "'></link>\");\n");
         result
             .append("var isomorphicDir='../web/org.openbravo.userinterface.smartclient/isomorphic/';\n");
+
+        final String scDevModulePackage = "org.openbravo.userinterface.smartclient.dev";
+        if (KernelUtils.getInstance().isModulePresent(scDevModulePackage)
+            && KernelUtils.getInstance().getModule(scDevModulePackage).isInDevelopment()) {
+          result
+              .append("document.write('<'+'SCRIPT SRC=' + window.isomorphicDir + 'ISC_Combined.uncompressed.js><'+'/SCRIPT>');");
+        }
       }
       result.append("document.write(\"<s\" + \"cript type='text/javascript' src='" + scriptPath
           + "'><\\/s\"+\"cript>\");");
@@ -149,20 +152,15 @@ public class StaticResourceComponent extends BaseComponent {
         KernelConstants.SERVLET_CONTEXT);
     final StringBuffer sb = new StringBuffer();
 
-    final boolean classicMode = !getParameters().containsKey(KernelConstants.MODE_PARAMETER)
-        || !getParameters().get(KernelConstants.MODE_PARAMETER).equals(
-            KernelConstants.MODE_PARAMETER_300);
-
     final String skinParam;
-    if (classicMode) {
-      skinParam = KernelConstants.SKIN_CLASSIC;
-    } else if (getParameters().containsKey(KernelConstants.SKIN_PARAMETER)) {
+    if (getParameters().containsKey(KernelConstants.SKIN_PARAMETER)) {
       skinParam = (String) getParameters().get(KernelConstants.SKIN_PARAMETER);
     } else {
       skinParam = KernelConstants.SKIN_DEFAULT;
     }
 
     int cntDynamicScripts = 0;
+    final String appName = getApplicationName();
 
     for (Module module : modules) {
       for (ComponentProvider provider : componentProviders) {
@@ -173,10 +171,8 @@ public class StaticResourceComponent extends BaseComponent {
 
         if (provider.getModule().getId().equals(module.getId())) {
           for (ComponentResource resource : resources) {
-            if (classicMode && !resource.isIncludeAlsoInClassicMode()) {
-              continue;
-            }
-            if (!classicMode && !resource.isIncludeInNewUIMode()) {
+
+            if (!resource.isValidForApp(appName)) {
               continue;
             }
 
@@ -227,13 +223,17 @@ public class StaticResourceComponent extends BaseComponent {
       }
     }
 
-    sb.append("if (typeof(OBStartApplication) !== 'undefined' && isc.isA.Function(OBStartApplication)) { OBStartApplication(); }");
+    if (!"".equals(sb.toString())) {
+      sb.append("if (window.onerror && window.onerror.name === '"
+          + KernelConstants.BOOTSTRAP_ERROR_HANDLER_NAME + "') { window.onerror = null; }");
+      sb.append("if (typeof OBStartApplication !== 'undefined' && Object.prototype.toString.call(OBStartApplication) === '[object Function]') { OBStartApplication(); }");
+    }
 
     for (int i = 0; i < cntDynamicScripts; i++) {
       // add extra exception handling code otherwise exceptions occuring in
       // the Labs wait function are not visible.
       sb.append("\n} catch (_exception) {");
-      sb.append("isc.warn(_exception + ' ' + _exception.message + ' ' + _exception.stack);");
+      sb.append("if (isc) { isc.Log.logError(_exception + ' ' + _exception.message + ' ' + _exception.stack); }");
       sb.append("if (console && console.trace) { console.trace();}");
       sb.append("}\n});");
     }
@@ -242,7 +242,7 @@ public class StaticResourceComponent extends BaseComponent {
     // when changing development status, system needs to be restarted.
     final String output;
     // in classicmode the isc combined is included, compressing that gives errors
-    if (!isInDevelopment() && !classicMode) {
+    if (!isInDevelopment() && !isClassicMode()) {
       output = JSCompressor.getInstance().compress(sb.toString());
     } else {
       output = sb.toString();

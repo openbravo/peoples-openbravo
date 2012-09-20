@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2011 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2012 Openbravo S.L.U.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.ad_forms;
@@ -19,17 +19,24 @@ package org.openbravo.erpCommon.ad_forms;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.costing.CostingStatus;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.SequenceIdData;
+import org.openbravo.financial.FinancialUtils;
 import org.openbravo.model.ad.system.Client;
+import org.openbravo.model.common.currency.Currency;
+import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.common.plm.Product;
+import org.openbravo.model.materialmgmt.transaction.InternalMovementLine;
 
 public class DocMovement extends AcctServer {
   private static final long serialVersionUID = 1L;
@@ -77,6 +84,7 @@ public class DocMovement extends AcctServer {
   public DocLine[] loadLines(ConnectionProvider conn) {
     ArrayList<Object> list = new ArrayList<Object>();
     DocLineMovementData[] data = null;
+    OBContext.setAdminMode(false);
     try {
       data = DocLineMovementData.select(conn, Record_ID);
       for (int i = 0; i < data.length; i++) {
@@ -86,12 +94,21 @@ public class DocMovement extends AcctServer {
         docLine.setQty(data[i].getField("MovementQty"), conn);
         docLine.m_M_Locator_ID = data[i].getField("M_Locator_ID");
         docLine.m_M_LocatorTo_ID = data[i].getField("M_LocatorTo_ID");
+        // Get related M_Transaction_ID
+        InternalMovementLine movLine = OBDal.getInstance().get(InternalMovementLine.class, Line_ID);
+        if (movLine.getMaterialMgmtMaterialTransactionList().size() > 0) {
+          // Internal movement lines have 2 related transactions, both of them with the same cost
+          docLine.setTransaction(movLine.getMaterialMgmtMaterialTransactionList().get(0));
+        }
+
         //
         log4jDocMovement.debug("Movement line: " + Line_ID + " loaded.");
         list.add(docLine);
       }
     } catch (ServletException e) {
       log4jDocMovement.warn(e);
+    } finally {
+      OBContext.restorePreviousMode();
     }
     // Return Array
     DocLine[] dl = new DocLine[list.size()];
@@ -147,33 +164,41 @@ public class DocMovement extends AcctServer {
     FactLine dr = null;
     FactLine cr = null;
     log4jDocMovement.debug("DocMovement - Before the loop");
-    String costCurrencyId = as.getC_Currency_ID();
-    OBContext.setAdminMode(false);
-    try {
-      costCurrencyId = OBDal.getInstance().get(Client.class, AD_Client_ID).getCurrency().getId();
-    } finally {
-      OBContext.restorePreviousMode();
-    }
     for (int i = 0; i < p_lines.length; i++) {
       DocLine_Material line = (DocLine_Material) p_lines[i];
       log4jDocMovement.debug("DocMovement - Before calculating the costs for line i = " + i);
+      Currency costCurrency = FinancialUtils.getLegalEntityCurrency(OBDal.getInstance().get(
+          Organization.class, line.m_AD_Org_ID));
+      if (!CostingStatus.getInstance().isMigrated()) {
+        costCurrency = OBDal.getInstance().get(Client.class, AD_Client_ID).getCurrency();
+      } else if (line.transaction != null && line.transaction.getCurrency() != null) {
+        costCurrency = line.transaction.getCurrency();
+      }
+      if (CostingStatus.getInstance().isMigrated() && line.transaction != null
+          && !line.transaction.isCostCalculated()) {
+        Map<String, String> parameters = getNotCalculatedCostParameters(line.transaction);
+        setMessageResult(conn, STATUS_NotCalculatedCost, "error", parameters);
+        throw new IllegalStateException();
+      }
       String costs = line.getProductCosts(DateAcct, as, conn, con);
       BigDecimal b_Costs = new BigDecimal(costs);
-      if (b_Costs.compareTo(BigDecimal.ZERO) == 0) {
-        setStatus(STATUS_InvalidCost);
-        continue;
-      } else
-        setStatus(STATUS_NotPosted);// Default status. LoadDocument
+      if (b_Costs.compareTo(BigDecimal.ZERO) == 0 && !CostingStatus.getInstance().isMigrated()
+          && DocInOutData.existsCost(conn, DateAcct, line.m_M_Product_ID).equals("0")) {
+        Map<String, String> parameters = getInvalidCostParameters(
+            OBDal.getInstance().get(Product.class, line.m_M_Product_ID).getIdentifier(), DateAcct);
+        setMessageResult(conn, STATUS_InvalidCost, "error", parameters);
+        throw new IllegalStateException();
+      }
       // Inventory DR CR
       dr = fact.createLine(line, line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn),
-          costCurrencyId, (b_Costs.negate()).toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-          DocumentType, conn); // from
+          costCurrency.getId(), (b_Costs.negate()).toString(), Fact_Acct_Group_ID,
+          nextSeqNo(SeqNo), DocumentType, conn); // from
       // (-)
       // CR
       dr.setM_Locator_ID(line.m_M_Locator_ID);
       // InventoryTo DR CR
       cr = fact.createLine(line, line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn),
-          costCurrencyId, costs, Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn); // to
+          costCurrency.getId(), costs, Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn); // to
       // (+)
       // DR
       cr.setM_Locator_ID(line.m_M_LocatorTo_ID);

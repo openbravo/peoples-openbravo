@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -21,6 +21,7 @@ package org.openbravo.advpaymentmngt.utility;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -128,6 +129,7 @@ public abstract class FIN_BankStatementImport {
     InputStream file = null;
     FIN_BankStatement bankStatement;
     List<FIN_BankStatementLine> bankStatementLines = new ArrayList<FIN_BankStatementLine>();
+    int previousNumberofLines = 0;
     int numberOfLines = 0;
 
     try {
@@ -153,6 +155,8 @@ public abstract class FIN_BankStatementImport {
       return getMyError();
     }
 
+    previousNumberofLines = bankStatementLines.size();
+
     try {
       numberOfLines = saveFINBankStatementLines(bankStatementLines);
       OBDal.getInstance().refresh(bankStatement);
@@ -167,6 +171,16 @@ public abstract class FIN_BankStatementImport {
       OBDal.getInstance().rollbackAndClose();
       return getMyError();
     } else if (getMyError() != null && getMyError().getType().toLowerCase().equals("success")) {
+      if (numberOfLines < previousNumberofLines) {
+        OBError msg = new OBError();
+        msg.setType("Success");
+        msg.setTitle(Utility.messageBD(conn, "Success", vars.getLanguage()));
+        String message = String.format(
+            Utility.messageBD(conn, "APRM_ZeroAmountNotInserted", vars.getLanguage()),
+            String.valueOf(numberOfLines), String.valueOf(previousNumberofLines - numberOfLines));
+        msg.setMessage(message);
+        setMyError(msg);
+      }
       return getMyError();
     } else {
       return getOBError(conn, vars, "@APRM_BankStatementNo@ " + bankStatement.getDocumentNo()
@@ -185,17 +199,28 @@ public abstract class FIN_BankStatementImport {
 
   private int saveFINBankStatementLines(List<FIN_BankStatementLine> bankStatementLines) {
     int counter = 0;
+    BigDecimal crAmount;
+    BigDecimal drAmount;
     for (FIN_BankStatementLine bankStatementLine : bankStatementLines) {
       BusinessPartner businessPartner;
-      try {
-        businessPartner = matchBusinessPartner(bankStatementLine.getBpartnername(),
-            bankStatementLine.getOrganization(), bankStatementLine.getBankStatement().getAccount());
-      } catch (Exception e) {
-        businessPartner = null;
+      crAmount = bankStatementLine.getCramount();
+      drAmount = bankStatementLine.getDramount();
+      if (!(crAmount.compareTo(BigDecimal.ZERO) == 0)
+          || !(drAmount.compareTo(BigDecimal.ZERO) == 0)) {
+        try {
+          businessPartner = matchBusinessPartner(bankStatementLine.getBpartnername(),
+              bankStatementLine.getOrganization(), bankStatementLine.getBankStatement()
+                  .getAccount());
+        } catch (Exception e) {
+          businessPartner = null;
+        }
+        bankStatementLine.setBusinessPartner(businessPartner);
+        bankStatementLine.setLineNo(new Long((counter + 1) * 10));
+        OBDal.getInstance().save(bankStatementLine);
+        counter++;
+      } else {
+        OBDal.getInstance().remove(bankStatementLine);
       }
-      bankStatementLine.setBusinessPartner(businessPartner);
-      OBDal.getInstance().save(bankStatementLine);
-      counter++;
     }
     OBDal.getInstance().flush();
     return counter;
@@ -236,7 +261,7 @@ public abstract class FIN_BankStatementImport {
 
   private BusinessPartner matchBusinessPartnerByName(String partnername, Organization organization,
       FIN_FinancialAccount account) {
-    if (partnername == null || "".equals(partnername)) {
+    if (partnername == null || "".equals(partnername.trim())) {
       return null;
     }
     final StringBuilder whereClause = new StringBuilder();
@@ -252,7 +277,7 @@ public abstract class FIN_BankStatementImport {
       whereClause.append(FIN_BankStatement.PROPERTY_ACCOUNT + ".id = ?");
       parameters.add(account.getId());
       whereClause.append(" and bsl." + FIN_BankStatementLine.PROPERTY_ORGANIZATION + ".id in (");
-      whereClause.append(FIN_Utility.getInStrSet(new OrganizationStructureProvider()
+      whereClause.append(Utility.getInStrSet(new OrganizationStructureProvider()
           .getNaturalTree(organization.getId())) + ") ");
       whereClause.append(" and bsl.bankStatement.processed = 'Y'");
       whereClause.append(" order by bsl." + FIN_BankStatementLine.PROPERTY_CREATIONDATE + " desc");
@@ -271,7 +296,7 @@ public abstract class FIN_BankStatementImport {
   }
 
   private BusinessPartner finBPByName(String partnername, Organization organization) {
-    if (partnername == null || "".equals(partnername)) {
+    if (partnername == null || "".equals(partnername.trim())) {
       return null;
     }
     final StringBuilder whereClause = new StringBuilder();
@@ -283,7 +308,7 @@ public abstract class FIN_BankStatementImport {
       whereClause.append(" where bp." + BusinessPartner.PROPERTY_NAME + " = ?");
       parameters.add(partnername);
       whereClause.append(" and bp." + BusinessPartner.PROPERTY_ORGANIZATION + ".id in (");
-      whereClause.append(FIN_Utility.getInStrSet(new OrganizationStructureProvider()
+      whereClause.append(Utility.getInStrSet(new OrganizationStructureProvider()
           .getNaturalTree(organization.getId())) + ") ");
       final OBQuery<BusinessPartner> bp = OBDal.getInstance().createQuery(BusinessPartner.class,
           whereClause.toString(), parameters);
@@ -304,7 +329,7 @@ public abstract class FIN_BankStatementImport {
 
   private BusinessPartner matchBusinessPartnerByNameTokens(String partnername,
       Organization organization) {
-    if (partnername == null || "".equals(partnername)) {
+    if (partnername == null || "".equals(partnername.trim())) {
       return null;
     }
     StringTokenizer st = new StringTokenizer(partnername);
@@ -330,7 +355,7 @@ public abstract class FIN_BankStatementImport {
       }
       whereClause.delete(whereClause.length() - 3, whereClause.length()).append(")");
       whereClause.append(" and b." + BusinessPartner.PROPERTY_ORGANIZATION + ".id in (");
-      whereClause.append(FIN_Utility.getInStrSet(new OrganizationStructureProvider()
+      whereClause.append(Utility.getInStrSet(new OrganizationStructureProvider()
           .getNaturalTree(organization.getId())) + ") ");
       final OBQuery<BusinessPartner> bl = OBDal.getInstance().createQuery(BusinessPartner.class,
           whereClause.toString(), parameters);

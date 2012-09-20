@@ -15,7 +15,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2009-2010 Openbravo SLU
+* All portions are Copyright (C) 2009-2012 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  Valery Lezhebokov.
 ************************************************************************/
@@ -43,7 +43,7 @@ BEGIN
     END IF;
     
     IF instr(:new.VERSION,'.') <= 0 OR instr(:new.VERSION,'.',1,2) <= 0 OR instr(:new.VERSION,'.',1,3) > 0 THEN
-       RAISE_APPLICATION_ERROR(-20104, 'The version has to be formatted like x.y.z where x, y and z are integers.');
+       RAISE_APPLICATION_ERROR(-20000, '@10102@');
     END IF;
 
     v1 := SUBSTR(:new.VERSION,1,instr(:new.VERSION,'.')-1);
@@ -53,7 +53,7 @@ BEGIN
     IF COALESCE(LENGTH(TRIM(TRANSLATE(v1, number_pattern, ' '))),0) <> 0 OR 
        COALESCE(LENGTH(TRIM(TRANSLATE(v2, number_pattern, ' '))),0) <> 0 OR 
        COALESCE(LENGTH(TRIM(TRANSLATE(v3, number_pattern, ' '))),0) <> 0 THEN
-            RAISE_APPLICATION_ERROR(-20104, 'The version has to be formatted like x.y.z where x, y and z are integers.');
+            RAISE_APPLICATION_ERROR(-20000, '@10102@');
     END IF;
 
 END AD_MODULE_VERSION_TRG

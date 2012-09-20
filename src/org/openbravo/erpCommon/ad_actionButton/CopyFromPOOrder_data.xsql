@@ -61,14 +61,16 @@
         DATEORDERED, DATEPROMISED, DESCRIPTION, M_PRODUCT_ID, 
         M_WAREHOUSE_ID, C_UOM_ID, QTYORDERED, QUANTITYORDER, QTYINVOICED, QTYDELIVERED, QTYRESERVED, 
         C_CURRENCY_ID, PRICELIST, PRICEACTUAL, 
-        PRICELIMIT, C_TAX_ID, DISCOUNT, M_PRODUCT_UOM_ID, PRICESTD, M_OFFER_ID, REF_ORDERLINE_ID, M_ATTRIBUTESETINSTANCE_ID) 
+        PRICELIMIT, C_TAX_ID, DISCOUNT, M_PRODUCT_UOM_ID, PRICESTD, M_OFFER_ID, REF_ORDERLINE_ID, M_ATTRIBUTESETINSTANCE_ID,
+          GROSSPRICELIST, GROSS_UNIT_PRICE, LINE_GROSS_AMOUNT) 
         VALUES 
           (?,?,?,TO_DATE(NOW()),?,TO_DATE(NOW()),?,
            ?,TO_NUMBER(?),?,?,
            TO_DATE(?),TO_DATE(?),?,?,
            ?,?,TO_NUMBER(?),TO_NUMBER(?),0,0,0,
            ?,TO_NUMBER(?),M_GET_OFFERS_PRICE(TO_DATE(now()), ?, ?, TO_NUMBER(?), TO_NUMBER(?), ?),
-           TO_NUMBER(?),?,TO_NUMBER(?),?,TO_NUMBER(?),M_GET_OFFER(TO_DATE(now()), ?, ?),?,?)
+           TO_NUMBER(?),?,TO_NUMBER(?),?,TO_NUMBER(?),M_GET_OFFER(TO_DATE(now()), ?, ?),?,?,
+           TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?))
       ]]>
     </Sql>
     <Parameter name="cOrderlineId"/>
@@ -104,6 +106,9 @@
     <Parameter name="mProductId"/>
     <Parameter name="refOrdeline"/>
     <Parameter name="mAttributeSetInstanceId"/>
+    <Parameter name="grosslistprice"/>
+    <Parameter name="grossprice"/>
+    <Parameter name="grossAmount"/>
   </SqlMethod>
   <SqlMethod name="cBPartnerLocationId" type="preparedStatement" return="string">
     <SqlMethodComment>Names of the columns of the fields of a tab</SqlMethodComment>
@@ -131,7 +136,7 @@
   <SqlMethod name="selectOrderPricelist" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
-      SELECT C_Currency.StdPrecision, C_Currency.PricePrecision, M_PriceList.EnforcePriceLimit, M_PriceList.M_PriceList_ID 
+      SELECT C_Currency.StdPrecision, C_Currency.PricePrecision, M_PriceList.EnforcePriceLimit, M_PriceList.M_PriceList_ID
       FROM C_Order, M_PriceList, C_Currency 
       WHERE C_Order.M_PriceList_ID = M_PriceList.M_PriceList_ID
       AND M_PriceList.C_Currency_ID = C_Currency.C_Currency_ID

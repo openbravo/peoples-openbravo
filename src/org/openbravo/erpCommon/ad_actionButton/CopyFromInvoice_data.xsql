@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -48,6 +48,7 @@
         AND C_INVOICELINE.AD_ORG_ID IN ('1')
         AND C_INVOICELINE.ISACTIVE = 'Y'
         AND (APPLYINORDER IS NULL OR APPLYINORDER <> 'N')
+        ORDER BY C_INVOICELINE.LINE
       ]]>
     </Sql>
     <Parameter name="cInvoiceId"/>
@@ -59,15 +60,18 @@
     <Sql>
       <![CDATA[
         INSERT INTO C_INVOICELINE (C_InvoiceLine_ID, C_Invoice_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, 
-        CREATED, CREATEDBY, UPDATED, UPDATEDBY, LINE, DESCRIPTION, M_PRODUCT_ID, 
-        QTYINVOICED, PRICELIST, PRICEACTUAL, PRICELIMIT, LINENETAMT, C_CHARGE_ID, CHARGEAMT, C_UOM_ID, C_TAX_ID, 
-        S_RESOURCEASSIGNMENT_ID, TAXAMT, M_ATTRIBUTESETINSTANCE_ID, ISDESCRIPTION, QUANTITYORDER, M_PRODUCT_UOM_ID, 
-        PRICESTD, ACCOUNT_ID,FINANCIAL_INVOICE_LINE)
+            CREATED, CREATEDBY, UPDATED, UPDATEDBY, LINE, DESCRIPTION, M_PRODUCT_ID, 
+            QTYINVOICED, PRICELIST, PRICEACTUAL, PRICELIMIT, LINENETAMT, C_CHARGE_ID, CHARGEAMT, C_UOM_ID, C_TAX_ID, 
+            S_RESOURCEASSIGNMENT_ID, TAXAMT, M_ATTRIBUTESETINSTANCE_ID, ISDESCRIPTION, QUANTITYORDER, M_PRODUCT_UOM_ID, 
+            PRICESTD, ACCOUNT_ID,FINANCIAL_INVOICE_LINE,
+            gross_unit_price, line_gross_amount
+        )
         SELECT ?, ?, ?, ?, 'Y', now(), ?, now(), ?,
         (SELECT COALESCE(MAX(LINE),0)+10 FROM C_InvoiceLine WHERE C_Invoice_ID = ?), DESCRIPTION, M_PRODUCT_ID, 
         QTYINVOICED, TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), C_CHARGE_ID, CHARGEAMT, C_UOM_ID, ?, 
         S_RESOURCEASSIGNMENT_ID, TAXAMT, M_ATTRIBUTESETINSTANCE_ID, ISDESCRIPTION, QUANTITYORDER, M_PRODUCT_UOM_ID, 
-        PRICESTD, ACCOUNT_ID,FINANCIAL_INVOICE_LINE
+        PRICESTD, ACCOUNT_ID,FINANCIAL_INVOICE_LINE,
+        TO_NUMBER(?), TO_NUMBER(?)
         FROM C_INVOICELINE 
         WHERE C_INVOICELINE_ID = ? 
       ]]>
@@ -84,6 +88,8 @@
     <Parameter name="priceLimit"/>
     <Parameter name="lineNetAmount"/>
     <Parameter name="cTaxId"/>
+    <Parameter name="priceGross"/>
+    <Parameter name="amtGross"/>
     <Parameter name="cInvoicelineId"/>
   </SqlMethod>
   <SqlMethod name="insertAcctDimension" type="preparedStatement" connection="true" return="rowCount">

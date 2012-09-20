@@ -29,8 +29,7 @@ isc.OBListItem.addProperties({
   completeOnTab: true,
   validateOnExit: true,
 
-  // https://issues.openbravo.com/view.php?id=19876
-  selectOnFocus: false,
+  selectOnFocus: true,
   // still do select on focus initially
   doInitialSelectOnFocus: true,
 
@@ -64,12 +63,22 @@ isc.OBListItem.addProperties({
   // is overridden to keep track that a value has been explicitly picked
   pickValue: function (value) {
     this._pickedValue = true;
+    // force the update of the list
+    // if the user has entered with the keyboard the exact content of a list option,
+    // its callout would not be called because the change would not be detected
+    // see issue https://issues.openbravo.com/view.php?id=21491
+    this._value = (this.value) ? this._value.concat(Math.random()) : Math.random();
     this.Super('pickValue', arguments);
     delete this._pickedValue;
     if (this.moveFocusOnPickValue && this.form.focusInNextItem) {
       // update the display before moving the focus
       this.updateValueMap(true);
-      this.form.focusInNextItem(this.name);
+      // Only focus in the next item if the key that triggered the event is
+      // not the tab key, so the focus is not moved twice
+      // See issue https://issues.openbravo.com/view.php?id=21419
+      if (isc.EH.getKeyName() !== 'Tab') {
+        this.form.focusInNextItem(this.name);
+      }
     }
   },
 
@@ -138,21 +147,39 @@ isc.OBListItem.addProperties({
   mapValueToDisplay: function (value) {
     var ret = this.Super('mapValueToDisplay', arguments);
     if (this.valueMap && this.valueMap[value]) {
+      this.lastSelectedValue = value;
       return this.valueMap[value];
     }
+
     if (ret === value && this.isDisabled()) {
       return '';
     }
-    if (ret === value) {
+
+    // don't update the valuemap if the value is null or undefined
+    if (ret === value && value) {
       if (!this.valueMap) {
         this.valueMap = {};
         this.valueMap[value] = '';
         return '';
-      } else if (!this.valueMap[value]) {
+      } else if (!this.valueMap[value] && OB.Utilities.isUUID(value)) {
         return '';
       }
     }
     return ret;
+  },
+
+  mapDisplayToValue: function (display) {
+    if (display === '') {
+      return null;
+    }
+    if (this.lastSelectedValue && display === this.mapValueToDisplay(this.lastSelectedValue)) {
+      // Prevents mapDisplayToValue from failing when there are several
+      // entries in the valuemap with the same value
+      // See issue https://issues.openbravo.com/view.php?id=21553
+      return this.lastSelectedValue;
+    } else {
+      return this.Super('mapDisplayToValue', arguments);
+    }
   }
 
 });

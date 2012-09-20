@@ -40,7 +40,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2010 Openbravo SLU
+* All portions are Copyright (C) 2001-2012 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -122,6 +122,9 @@
             AND o.AD_Org_ID = p_Org_ID
             AND t.ValidFrom <= p_shipDate
             AND t.isActive = 'Y'
+            AND (t.sopotype = CASE WHEN (p_issotrx = 'Y') 
+                    THEN ('S')
+                    ELSE ('P') END OR t.sopotype = 'B')
           ORDER BY t.VALIDFROM DESC
           )
         LOOP
@@ -171,13 +174,13 @@
           (SELECT t.C_Tax_ID, '' AS billToC_Location_ID, '' AS IsTaxExempt
           FROM  (SELECT C_Tax_ID, C_Country_ID, C_Region_ID, To_Country_Id,
                    To_Region_ID, ValidFrom, C_TaxCategory_ID,
-                   Parent_Tax_ID, C_BP_TaxCategory_ID, SoPoType, c_Tax.ad_org_id,c_Tax.ad_client_id
+                   Parent_Tax_ID, C_BP_TaxCategory_ID, SoPoType, c_Tax.ad_org_id,c_Tax.ad_client_id,IsDefault
                  FROM c_Tax
                 WHERE c_Tax.isActive = 'Y'
                  UNION
                  SELECT tz.C_Tax_ID, tz.From_Country_ID, tz.From_Region_ID, tz.To_Country_ID,
                    tz.To_Region_ID, ValidFrom, C_TaxCategory_ID,
-                   Parent_Tax_Id, C_BP_TaxCategory_ID, ct.SoPoType, ct.ad_org_id,ct.ad_client_id
+                   Parent_Tax_Id, C_BP_TaxCategory_ID, ct.SoPoType, ct.ad_org_id,ct.ad_client_id,ct.IsDefault
                  FROM c_Tax_Zone tz,
                       c_Tax ct
                  WHERE tz.C_Tax_ID = ct.C_Tax_ID
@@ -198,7 +201,7 @@
          --   AND ((t.C_BP_TaxCategory_ID = v_BPTaxCategory) OR (v_BPTaxCategory IS NULL))
             AND ((t.C_BP_TaxCategory_ID IS NOT NULL AND t.C_BP_TaxCategory_ID = v_BPTaxCategory) OR (t.C_BP_TaxCategory_ID IS NULL))
             AND (SoPoType = 'B' OR (SoPoType =(case when p_IsSOTrx='Y' then 'S' else 'P' end)))
-          ORDER BY ad_isorgincluded(p_org_id, t.ad_org_id,t.ad_client_id),t.C_BP_TaxCategory_ID, t.C_Country_ID, t.To_Country_ID, t.C_Region_ID, t.To_Region_ID, t.ValidFrom DESC
+          ORDER BY ad_isorgincluded(p_org_id, t.ad_org_id,t.ad_client_id),t.C_BP_TaxCategory_ID, t.IsDefault DESC,t.C_Country_ID, t.To_Country_ID, t.C_Region_ID, t.To_Region_ID, t.ValidFrom DESC
           )
         LOOP
           v_TaxID := SEL1.C_Tax_ID;
@@ -210,13 +213,13 @@
             FROM
               (SELECT C_Tax_ID, C_Country_ID, C_Region_ID, To_Country_Id,
                 To_Region_ID, ValidFrom, C_TaxCategory_ID,
-                Parent_Tax_ID, C_BP_TaxCategory_ID, SoPoType, c_Tax.ad_org_id,c_Tax.ad_client_id
+                Parent_Tax_ID, C_BP_TaxCategory_ID, SoPoType, c_Tax.ad_org_id,c_Tax.ad_client_id,IsDefault
               FROM c_Tax
               WHERE c_Tax.isActive = 'Y'
               UNION
               SELECT tz.C_Tax_ID, tz.From_Country_ID, tz.From_Region_ID, tz.To_Country_ID,
                 tz.To_Region_ID, ValidFrom, C_TaxCategory_ID,
-                Parent_Tax_Id, C_BP_TaxCategory_ID, SoPoType, ct.ad_org_id, ct.ad_client_id
+                Parent_Tax_Id, C_BP_TaxCategory_ID, SoPoType, ct.ad_org_id, ct.ad_client_id,ct.IsDefault
               FROM c_Tax_Zone tz,
                 c_Tax ct
               WHERE tz.C_Tax_ID = ct.C_Tax_ID
@@ -238,7 +241,7 @@
               --AND ((t.C_BP_TaxCategory_ID = v_BPTaxCategory) OR (v_BPTaxCategory IS NULL))
               AND ((t.C_BP_TaxCategory_ID IS NOT NULL AND t.C_BP_TaxCategory_ID = v_BPTaxCategory) OR (t.C_BP_TaxCategory_ID IS NULL))
               AND (SoPoType = 'B' OR (SoPoType =(case when p_IsSOTrx='Y' then 'S' else 'P' end)))
-            ORDER BY ad_isorgincluded(p_org_id, t.ad_org_id,t.ad_client_id),t.C_BP_TaxCategory_ID,t.C_Country_ID, t.C_Region_ID, t.ValidFrom DESC
+            ORDER BY ad_isorgincluded(p_org_id, t.ad_org_id,t.ad_client_id),t.C_BP_TaxCategory_ID,t.IsDefault DESC,t.C_Country_ID, t.C_Region_ID, t.ValidFrom DESC
             )
           LOOP
             v_TaxID := SEL2.C_Tax_ID;

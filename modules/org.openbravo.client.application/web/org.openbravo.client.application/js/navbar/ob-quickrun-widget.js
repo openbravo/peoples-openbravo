@@ -188,7 +188,10 @@ isc.OBQuickRun.addProperties({
     // }
     this.focusOnHide = isc.EH.getFocusCanvas();
 
-    var left = this.getLeftPosition() + 1;
+    var left = this.getLeftPosition();
+    if (isc.Page.isRTL()) {
+      left = left - this.layout.getVisibleWidth() + this.getVisibleWidth() + 1;
+    }
     var top = this.getPageTop() + this.getVisibleHeight() - 1;
 
     this.beforeShow();
@@ -210,7 +213,7 @@ isc.OBQuickRun.addProperties({
       height: 3,
       width: layoutContainer.getVisibleWidth() - 2,
       top: layoutContainer.getPageTop() + layoutContainer.getVisibleHeight() - 1,
-      left: layoutContainer.getPageLeft() + 1,
+      left: this.getLeftPosition() + 1,
       overflow: 'hidden'
     });
     this.selectedHideLayout.show();
@@ -224,7 +227,7 @@ isc.OBQuickRun.addProperties({
   },
 
   getLeftPosition: function () {
-    return this.parentElement.getPageLeft() - 1;
+    return this.parentElement.getPageLeft();
   },
 
   // ** {{{ beforeShow }}} **

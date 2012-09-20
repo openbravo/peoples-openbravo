@@ -13,7 +13,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2010 Openbravo SLU
+ * All portions are Copyright (C) 2001-2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -50,12 +50,44 @@
       </script>
 <script language="JavaScript" type="text/javascript">
  function ShipmentOrReceipt(id, issotrx){
-  if (issotrx == 'Y')  submitCommandFormParameter('DIRECT', document.frmMain.inpmInoutId, id, false, document.frmMain, '../GoodsShipment/Header_Relation.html', null, false, true);
-  else submitCommandFormParameter('DIRECT', document.frmMain.inpmInoutId, id, false, document.frmMain, '../GoodsReceipt/Header_Relation.html', null, false, true)
+   var myframe = getFrame('LayoutMDI') || top.opener;
+   if (myframe) {
+     if (issotrx == 'Y'){
+       myframe.OB.Utilities.openDirectTab('257', id); //Goods Shipment
+     }
+     else{
+       myframe.OB.Utilities.openDirectTab('296', id); //Goods Receipt
+     }
+   }
  }
  function BOMorWorkEffort(id, isBOM){
-	 if (isBOM == 'Y') submitCommandFormParameter('DIRECT', document.frmMain.inpmProductionplanId, id, false, document.frmMain, '../BillofMaterialsProduction/ProductionPlan_Relation.html', null, false, true);
-	 else submitCommandFormParameter('DIRECT', document.frmMain.inpmProductionplanId, id, false, document.frmMain, '../WorkEffort/ProductionRun_Relation.html', null, false, true);
+   var myframe = getFrame('LayoutMDI') || top.opener;
+   if (myframe) {
+     if (isBOM == 'Y'){
+       myframe.OB.Utilities.openDirectTab('320', id); //BillofMaterialsProduction, Production Plan
+     }
+     else{
+       myframe.OB.Utilities.openDirectTab('800117', id); //WorkEffort, Production Run
+     }
+   }
+ }
+ function openPhysicalInventory(recordid){
+   var myframe = getFrame('LayoutMDI') || top.opener;
+   if (myframe) {
+     myframe.OB.Utilities.openDirectTab('255', recordid); //Physical Inventory
+   }
+ }
+ function openGoodsMovements(recordid){
+   var myframe = getFrame('LayoutMDI') || top.opener;
+   if (myframe) {
+     myframe.OB.Utilities.openDirectTab('259', recordid); //Goods Movements
+   }
+ }
+ function openInternalConsumption(recordid){
+   var myframe = getFrame('LayoutMDI') || top.opener;
+   if (myframe) {
+     myframe.OB.Utilities.openDirectTab('800202', recordid); //Internal Consumption
+   }
  }
 function validate(action)
 {
@@ -113,6 +145,16 @@ function onloadFunctions(){
 	function onResizeDo(){
 		resizeArea();
 	}
+	
+	function checkEmptyFields(){
+	  var frm = document.frmMain;
+	  if (frm.paramProductDescription.value == ""){
+	    frm.paramProductId.value = "";
+	  }
+	  if (frm.paramBPartnerDescription.value == ""){
+	    frm.paramBPartnerId.value = "";
+	  }
+	}
 	</script>
 </head>
     <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">
@@ -122,6 +164,7 @@ function onloadFunctions(){
   <input type="hidden" name="inpmInventoryId"></input>
   <input type="hidden" name="inpmMovementId"></input>
   <input type="hidden" name="inpmProductionplanId"></input>
+  <input type="hidden" name="inpmInternalConsumptionId"></input>
   <input type="hidden" name="inpLastFieldChanged" value=""/>
   <table height="100%" border="0" cellpadding="0" cellspacing="0" id="main">
     <tr>
@@ -389,6 +432,11 @@ function onloadFunctions(){
               <td class="ContentCell"> </td>
             </tr>
             <tr>
+              <td class="TitleCell"><span class="LabelText">Internal Consumption</span></td>
+              <td class="Radio_Check_ContentCell"><span class="Checkbox_container_NOT_Focused"><input type="checkbox" name="inpInternalConsumption" id="paramInternalConsumption" value="-1" checked></input></span></td>
+              <td class="ContentCell"> </td>
+            </tr>
+            <tr>
               <td colspan="6">
                 <table class="FieldGroup" cellspacing="0" cellpadding="0" border="0">
                 <tbody>
@@ -412,7 +460,7 @@ function onloadFunctions(){
                   <button type="button" 
                     id="buttonHTML" 
                     class="ButtonLink" 
-                    onclick="submitCommandForm('FIND', true, null, 'ReportProductMovement.html', '_self', null, false);return false;" 
+                    onclick="checkEmptyFields();submitCommandForm('FIND', true, null, 'ReportProductMovement.html', '_self', null, false);return false;" 
                     onfocus="buttonEvent('onfocus', this); window.status='View Results in a New Window'; return true;" 
                     onblur="buttonEvent('onblur', this);" 
                     onkeyup="buttonEvent('onkeyup', this);" 
@@ -446,35 +494,37 @@ function onloadFunctions(){
                 <div style="height:25px;" />
                 <table cellspacing="0" cellpadding="0" width="100%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;" id="selEliminar1">
                   <tr class="DataGrid_Body_Row"> 
-                    <th class="DataGrid_Header_Cell" colspan="12"><span>Incoming/Outgoing</span></th>
+                    <th class="DataGrid_Header_Cell" colspan="14"><span>Incoming/Outgoing</span></th>
                   </tr>
                   <div id="sectionPartner"> 
                     <tr class="DataGrid_Body_Row"> 
-                      <th colspan="12" class="DataGrid_Header_Cell"><span>Customer<span>:&nbsp;</span><span id="fieldPartnername">xxAguinaga</span></span></th>
+                      <th colspan="14" class="DataGrid_Header_Cell"><span>Customer<span>:&nbsp;</span><span id="fieldPartnername">xxAguinaga</span></span></th>
                     </tr>
                     <tr class="DataGrid_Body_Row"> 
-                      <th width="10%" class="DataGrid_Header_Cell">Document No.</th>
-                      <th width="10%" class="DataGrid_Header_Cell">Date</th>
-                      <th width="34%" class="DataGrid_Header_Cell">Description</th>
-                      <th width="20%" class="DataGrid_Header_Cell">Attribute</th>
-                      <th width="12%" class="DataGrid_Header_Cell" colspan="3">
+                      <th width="8%" class="DataGrid_Header_Cell">Document No.</th>
+                      <th width="8%" class="DataGrid_Header_Cell">Date</th>
+                      <th width="12%" class="DataGrid_Header_Cell">Description</th>
+                      <th width="10%" class="DataGrid_Header_Cell">Attribute</th>
+                      <th width="16%" class="DataGrid_Header_Cell">Starting Warehouse</th>
+                      <th width="9%" class="DataGrid_Header_Cell" colspan="3">
                         <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background: none; border: 0px none">
-                          <tr class="DataGrid_Body_Row">
+                          <tr class="DataGrid_Header_Cell">
                             <th class="DataGrid_Header_Cell" width="100%" colspan="3" style="background: none; border: 0px none">Starting location</th>
                           </tr>
-                          <tr class="DataGrid_Body_Row">
+                          <tr class="DataGrid_Header_Cell">
                             <th class="DataGrid_Header_Cell" width="34%" style="background: none; border: 0px none">X</th>
                             <th class="DataGrid_Header_Cell" width="33%" style="background: none; border: 0px none">Y</th>
                             <th class="DataGrid_Header_Cell" width="33%" style="background: none; border: 0px none">Z</th>
                           </tr>
                         </table>
                       </th>
-                      <th width="12%" class="DataGrid_Header_Cell" colspan="3">
+                      <th width="16%" class="DataGrid_Header_Cell">Final Warehouse</th>
+                      <th width="9%" class="DataGrid_Header_Cell" colspan="3">
                         <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background: none; border: 0px none">
-                          <tr class="DataGrid_Body_Row" style="background: none; border: 0px none">
+                          <tr class="DataGrid_Header_Cell" style="background: none; border: 0px none">
                             <th class="DataGrid_Header_Cell" width="100%" colspan="3" style="background: none; border: 0px none">Final location</th>
                           </tr>
-                          <tr class="DataGrid_Body_Row">
+                          <tr class="DataGrid_Header_Cell">
                             <th class="DataGrid_Header_Cell" width="34%" style="background: none; border: 0px none">X</th>
                             <th class="DataGrid_Header_Cell" width="33%" style="background: none; border: 0px none">Y</th>
                             <th class="DataGrid_Header_Cell" width="33%" style="background: none; border: 0px none">Z</th>
@@ -482,23 +532,25 @@ function onloadFunctions(){
                         </table>
                       </th>
                       <th width="6%" class="DataGrid_Header_Cell">Exit</th>
-                      <th width="10%" class="DataGrid_Header_Cell">Quantity</th>
+                      <th width="6%" class="DataGrid_Header_Cell">Quantity</th>
                     </tr>
                     <div id="sectionDetail"> 
                       <tr class="DataGrid_Body_Row DataGrid_Body_Row_yy" id="funcEvenOddRow1xx">
-                        <td width="10%" class="DataGrid_Body_Cell"><a href="#" onclick="ShipmentOrReceipt('xx', 'yy');return false;" onmouseover="window.status='Incoming/Outgoing';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldId"> 
+                        <td width="8%" class="DataGrid_Body_Cell"><a href="#" onclick="ShipmentOrReceipt('xx', 'yy');return false;" onmouseover="window.status='Incoming/Outgoing';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldId"> 
                           <span id="fieldDocumentNo">xx850000007</span></a></td>
-                        <td width="10%" class="DataGrid_Body_Cell" id="fieldMovementdate">xxfd200</td>
-                        <td width="34%" class="DataGrid_Body_Cell" id="fieldName">xx2345</td>
-                        <td width="20%" class="DataGrid_Body_Cell" id="fieldAttr">xx2345</td>
-                        <td width="4%"  class="DataGrid_Body_Cell" id="fieldXOrigin">xx3</td>
-                        <td width="4%"  class="DataGrid_Body_Cell" id="fieldYOrigin">xx3</td>
-                        <td width="4%"  class="DataGrid_Body_Cell" id="fieldZOrigin">xx3</td>
-                        <td width="4%"  class="DataGrid_Body_Cell" id="fieldXDestiny">xx2</td>
-                        <td width="4%"  class="DataGrid_Body_Cell" id="fieldYDestiny">xx2</td>
-                        <td width="4%"  class="DataGrid_Body_Cell" id="fieldZDestiny">xx2</td>
+                        <td width="8%" class="DataGrid_Body_Cell" id="fieldMovementdate">xxfd200</td>
+                        <td width="12%" class="DataGrid_Body_Cell" id="fieldName">xx2345</td>
+                        <td width="10%" class="DataGrid_Body_Cell" id="fieldAttr">xx2345</td>
+                        <td width="16%" class="DataGrid_Body_Cell" id="fieldWaOrigin">xx3</td>
+                        <td width="3%"  class="DataGrid_Body_Cell" id="fieldXOrigin">xx3</td>
+                        <td width="3%"  class="DataGrid_Body_Cell" id="fieldYOrigin">xx3</td>
+                        <td width="3%"  class="DataGrid_Body_Cell" id="fieldZOrigin">xx3</td>
+                        <td width="16%" class="DataGrid_Body_Cell" id="fieldWaDestiny">xx2</td>
+                        <td width="3%"  class="DataGrid_Body_Cell" id="fieldXDestiny">xx2</td>
+                        <td width="3%"  class="DataGrid_Body_Cell" id="fieldYDestiny">xx2</td>
+                        <td width="3%"  class="DataGrid_Body_Cell" id="fieldZDestiny">xx2</td>
                         <td width="6%"  class="DataGrid_Body_Cell" id="fieldOut">xxsi</td>
-                        <td width="10%" class="DataGrid_Body_Cell" id="fieldMovementqty">xx23</td>
+                        <td width="6%" class="DataGrid_Body_Cell" id="fieldMovementqty">xx23</td>
                       </tr>
                     </div>
                   </div>
@@ -506,41 +558,43 @@ function onloadFunctions(){
                 <div style="height:15px;" />
                 <table cellspacing="0" cellpadding="0" width="100%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;" id="selEliminar2">
                   <tr class="DataGrid_Body_Row">
-                    <th class="DataGrid_Header_Cell" align="center" colspan="8"><span>Inventory regulation</span></th>
+                    <th class="DataGrid_Header_Cell" align="center" colspan="10"><span>Inventory regulation</span></th>
                   </tr>
                   <div id="sectionPartner1"> 
                     <tr class="DataGrid_Body_Row">
-                      <th class="DataGrid_Header_Cell" colspan="8"><span>Customer<span>:&nbsp;</span><span id="fieldPartnername1">xxAguinaga</span></span></th>
+                      <th class="DataGrid_Header_Cell" colspan="10"><span>Customer<span>:&nbsp;</span><span id="fieldPartnername1">xxAguinaga</span></span></th>
                     </tr>
                     <tr class="DataGrid_Body_Row">
-                      <th class="DataGrid_Header_Cell" width="8%">Date</td>
-                      <th class="DataGrid_Header_Cell" width="26%">Movement</td>
-                      <th class="DataGrid_Header_Cell" width="26%">Description</td>
+                      <th class="DataGrid_Header_Cell" width="10%">Date</td>
+                      <th class="DataGrid_Header_Cell" width="20%">Movement</td>
+                      <th class="DataGrid_Header_Cell" width="15%">Description</td>
+                      <th class="DataGrid_Header_Cell" width="20%">Warehouse</td>
                       <th class="DataGrid_Header_Cell" width="12%" colspan="3">
                         <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background: none; border: 0px none">
-                          <tr class="DataGrid_Body_Row">
+                          <tr class="DataGrid_Header_Cell">
                             <th class="DataGrid_Header_Cell" width="100%" colspan="3" style="background: none; border: 0px none">Location</th>
                           </tr>
-                          <tr class="DataGrid_Body_Row">
+                          <tr class="DataGrid_Header_Cell">
                             <th class="DataGrid_Header_Cell" width="34%" style="background: none; border: 0px none">X</th>
                             <th class="DataGrid_Header_Cell" width="33%" style="background: none; border: 0px none">Y</th>
                             <th class="DataGrid_Header_Cell" width="33%" style="background: none; border: 0px none">Z</th>
                           </tr>
                         </table>
                       </th>
-                      <th class="DataGrid_Header_Cell"  width="6%">Exit</th>
+                      <th class="DataGrid_Header_Cell"  width="8%">Exit</th>
                       <th class="DataGrid_Header_Cell"  width="15%">Quantity</th>
                     </tr>
                     <div id="sectionDetail1"> 
                       <tr class="DataGrid_Body_Row DataGrid_Body_Row_yy" id="funcEvenOddRow2xx">
-                        <td class="DataGrid_Body_Cell" width="8%" id="fieldMovementdate1">xx23-02-2004</td>
-                        <td class="DataGrid_Body_Cell" width="26%"> <a href="#" onclick="submitCommandFormParameter('DIRECT', document.frmMain.inpmInventoryId, 'xx', false, document.frmMain, '../PhysicalInventory/Header_Relation.html', null, false, true);return false;" onmouseover="window.status='yy';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldId2"> 
+                        <td class="DataGrid_Body_Cell" width="10%" id="fieldMovementdate1">xx23-02-2004</td>
+                        <td class="DataGrid_Body_Cell" width="20%"> <a href="#" onclick="openPhysicalInventory('xx');return false;" onmouseover="window.status='yy';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldId2">
                           <span id="fieldMovement">xx850000007</span></a></td>
-                        <td class="DataGrid_Body_Cell" width="26%" id="fieldName1">xx2345</td>
+                        <td class="DataGrid_Body_Cell" width="15%" id="fieldName1">xx2345</td>
+                        <td class="DataGrid_Body_Cell" width="20%"  id="fieldWaOrigin1">xx3</td>
                         <td class="DataGrid_Body_Cell" width="4%"  id="fieldXOrigin1">xx3</td>
                         <td class="DataGrid_Body_Cell" width="4%"  id="fieldYOrigin1">xx3</td>
                         <td class="DataGrid_Body_Cell" width="4%"  id="fieldZOrigin1">xx3</td>
-                        <td class="DataGrid_Body_Cell" width="6%"  id="fieldOut1">xxsi</td>
+                        <td class="DataGrid_Body_Cell" width="8%"  id="fieldOut1">xxsi</td>
                         <td class="DataGrid_Body_Cell" width="15%" id="fieldMovementqty1">xx23</td>
                       </tr>
                     </div>
@@ -549,34 +603,36 @@ function onloadFunctions(){
                 <div style="height:15px;" />
                 <table cellspacing="0" cellpadding="0" width="100%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;" id="selEliminar3">
                   <tr class="DataGrid_Body_Row">
-                    <th class="DataGrid_Header_Cell" colspan="11"><span>Internal movements</span></th>
+                    <th class="DataGrid_Header_Cell" colspan="13"><span>Internal movements</span></th>
                   </tr>
                   <div id="sectionPartner2">
                     <tr class="DataGrid_Body_Row">
-                      <th class="DataGrid_Header_Cell" colspan="11"><span>Customer<span>:&nbsp;</span><span id="fieldPartnername2">xxAguinaga</span></span></th>
+                      <th class="DataGrid_Header_Cell" colspan="13"><span>Customer<span>:&nbsp;</span><span id="fieldPartnername2">xxAguinaga</span></span></th>
                     </tr>
                     <tr class="DataGrid_Body_Row">
-                      <th class="DataGrid_Header_Cell" width="7%">Date</th>
-                      <th class="DataGrid_Header_Cell" width="20%">Movement</th>
-                      <th class="DataGrid_Header_Cell" width="26%">Description</th>
-                      <th class="DataGrid_Header_Cell" width="12%" colspan="3">
+                      <th class="DataGrid_Header_Cell" width="8%">Date</th>
+                      <th class="DataGrid_Header_Cell" width="15%">Movement</th>
+                      <th class="DataGrid_Header_Cell" width="15%">Description</th>
+                      <th class="DataGrid_Header_Cell" width="15%">Starting Warehouse</th>
+                      <th class="DataGrid_Header_Cell" width="9%" colspan="3">
                         <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background: none; border: 0px none">
-                          <tr class="Border TableDetailHeader"> 
+                          <tr> 
                             <th class="DataGrid_Header_Cell" width="100%" colspan="3" style="background: none; border: 0px none">Starting location</th>
                           </tr>
-                          <tr class="Border TableDetailHeader"> 
+                          <tr> 
                             <th class="DataGrid_Header_Cell" width="34%" style="background: none; border: 0px none">X</th>
                             <th class="DataGrid_Header_Cell" width="33%" style="background: none; border: 0px none">Y</th>
                             <th class="DataGrid_Header_Cell" width="33%" style="background: none; border: 0px none">Z</th>
                           </tr>
                         </table>
                       </th>
-                      <th class="DataGrid_Header_Cell" width="12%" colspan="3">
+                      <th class="DataGrid_Header_Cell" width="15%">Final Warehouse</th>
+                      <th class="DataGrid_Header_Cell" width="9%" colspan="3">
                         <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background: none; border: 0px none">
-                          <tr class="Border TableDetailHeader"> 
+                          <tr> 
                             <th class="DataGrid_Header_Cell" width="100%" colspan="3" style="background: none; border: 0px none">Final location</th>
                           </tr>
-                          <tr class="Border TableDetailHeader"> 
+                          <tr> 
                             <th class="DataGrid_Header_Cell" width="34%" style="background: none; border: 0px none">X</th>
                             <th class="DataGrid_Header_Cell" width="33%" style="background: none; border: 0px none">Y</th>
                             <th class="DataGrid_Header_Cell" width="33%" style="background: none; border: 0px none">Z</th>
@@ -584,22 +640,24 @@ function onloadFunctions(){
                         </table>
                       </th>
                       <th class="DataGrid_Header_Cell" width="6%">Exit</th>
-                      <th class="DataGrid_Header_Cell" width="10%">Quantity</th>
+                      <th class="DataGrid_Header_Cell" width="8%">Quantity</th>
                     </tr>
                     <div id="sectionDetail2">
                       <tr class="DataGrid_Body_Row DataGrid_Body_Row_yy" id="funcEvenOddRow3xx">
-                        <td class="DataGrid_Body_Cell" width="7%" id="fieldMovementdate2">xxfd200</td>
-                        <td class="DataGrid_Body_Cell" width="20%"> <a href="#" onclick="submitCommandFormParameter('DIRECT', document.frmMain.inpmMovementId, 'xx', false,     document.frmMain, '../GoodsMovements/Header_Relation.html', null, false, true);return false;" onmouseover="window.status='Inventory Move';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldId3"> 
+                        <td class="DataGrid_Body_Cell" width="8%" id="fieldMovementdate2">xxfd200</td>
+                        <td class="DataGrid_Body_Cell" width="15%"> <a href="#" onclick="openGoodsMovements('xx');return false;" onmouseover="window.status='Inventory Move';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldId3">
                           <span id="fieldMovement2">xx850000007</span></a></td>
-                        <td class="DataGrid_Body_Cell" width="26%" id="fieldName2">xx2345</td>
-                        <td class="DataGrid_Body_Cell" width="4%" id="fieldXOrigin2">xx3</td>
-                        <td class="DataGrid_Body_Cell" width="4%" id="fieldYOrigin2">xx3</td>
-                        <td class="DataGrid_Body_Cell" width="4%" id="fieldZOrigin2">xx3</td>
-                        <td class="DataGrid_Body_Cell" width="4%" id="fieldXDestiny2">xx2</td>
-                        <td class="DataGrid_Body_Cell" width="4%" id="fieldYDestiny2">xx2</td>
-                        <td class="DataGrid_Body_Cell" width="4%" id="fieldZDestiny2">xx2</td>
+                        <td class="DataGrid_Body_Cell" width="15%" id="fieldName2">xx2345</td>
+                        <td class="DataGrid_Body_Cell" width="15%" id="fieldWaOrigin2">xx3</td>
+                        <td class="DataGrid_Body_Cell" width="3%" id="fieldXOrigin2">xx3</td>
+                        <td class="DataGrid_Body_Cell" width="3%" id="fieldYOrigin2">xx3</td>
+                        <td class="DataGrid_Body_Cell" width="3%" id="fieldZOrigin2">xx3</td>
+                        <td class="DataGrid_Body_Cell" width="15%" id="fieldWaDestiny2">xx2</td>
+                        <td class="DataGrid_Body_Cell" width="3%" id="fieldXDestiny2">xx2</td>
+                        <td class="DataGrid_Body_Cell" width="3%" id="fieldYDestiny2">xx2</td>
+                        <td class="DataGrid_Body_Cell" width="3%" id="fieldZDestiny2">xx2</td>
                         <td class="DataGrid_Body_Cell" width="6%" id="fieldOut2">xxsi</td>
-                        <td class="DataGrid_Body_Cell" width="10%" id="fieldMovementqty2">xx23</td>
+                        <td class="DataGrid_Body_Cell" width="8%" id="fieldMovementqty2">xx23</td>
                       </tr>
                     </div>
                   </div>
@@ -607,34 +665,36 @@ function onloadFunctions(){
                 <div style="height:15px;" />
                 <table cellspacing="0" cellpadding="0" width="100%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;" id="selEliminar4">
                   <tr class="DataGrid_Body_Row">
-                    <th class="DataGrid_Header_Cell" colspan="11"><span>Production</span></td>
+                    <th class="DataGrid_Header_Cell" colspan="13"><span>Production</span></td>
                   </tr>
                   <div id="sectionPartner3"> 
                     <tr class="DataGrid_Body_Row">
-                      <th class="DataGrid_Header_Cell" colspan="11"><span>Customer<span>:&nbsp;</span><span id="fieldPartnername3">xxAguinaga</span></span></th>
+                      <th class="DataGrid_Header_Cell" colspan="13"><span>Customer<span>:&nbsp;</span><span id="fieldPartnername3">xxAguinaga</span></span></th>
                     </tr>
                     <tr class="DataGrid_Body_Row">
-                      <th class="DataGrid_Header_Cell" width="7%">Date</th>
-                      <th class="DataGrid_Header_Cell" width="20%">Movement</th>
-                      <th class="DataGrid_Header_Cell" width="26%">Description</th>
-                      <th class="DataGrid_Header_Cell" width="12%" colspan="3">
+                      <th class="DataGrid_Header_Cell" width="8%" >Date</th>
+                      <th class="DataGrid_Header_Cell" width="15%">Movement</th>
+                      <th class="DataGrid_Header_Cell" width="15%">Description</th>
+                      <th class="DataGrid_Header_Cell" width="15%">Starting Warehouse</th>
+                      <th class="DataGrid_Header_Cell" width="9%" colspan="3">
                         <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background: none; border: 0px none">
-                          <tr class="Border TableDetailHeader"> 
+                          <tr> 
                             <th class="DataGrid_Header_Cell" width="100%" colspan="3" style="background: none; border: 0px none">Location</th>
                           </tr>
-                          <tr class="Border TableDetailHeader"> 
+                          <tr> 
                             <th class="DataGrid_Header_Cell" width="34%" style="background: none; border: 0px none">X</th>
                             <th class="DataGrid_Header_Cell" width="33%" style="background: none; border: 0px none">Y</th>
                             <th class="DataGrid_Header_Cell" width="33%" style="background: none; border: 0px none">Z</th>
                           </tr>
                         </table>
                       </th>
-                      <th class="DataGrid_Header_Cell" width="12%" colspan="3">
+                      <th class="DataGrid_Header_Cell" width="15%">Final Warehouse</th>
+                      <th class="DataGrid_Header_Cell" width="9%" colspan="3">
                         <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background: none; border: 0px none">
-                          <tr class="Border TableDetailHeader"> 
+                          <tr > 
                             <th class="DataGrid_Header_Cell" width="100%" colspan="3" style="background: none; border: 0px none">Location</th>
                           </tr>
-                          <tr class="Border TableDetailHeader"> 
+                          <tr> 
                             <th class="DataGrid_Header_Cell" width="34%" style="background: none; border: 0px none">X</th>
                             <th class="DataGrid_Header_Cell" width="33%" style="background: none; border: 0px none">Y</th>
                             <th class="DataGrid_Header_Cell" width="33%" style="background: none; border: 0px none">Z</th>
@@ -642,23 +702,70 @@ function onloadFunctions(){
                         </table>
                       </th>
                       <th class="DataGrid_Header_Cell" width="6%">Exit</th>
-                      <th class="DataGrid_Header_Cell" width="10%">Quantity</th>
+                      <th class="DataGrid_Header_Cell" width="8%">Quantity</th>
                     </tr>
                     </tr>
                     <div id="sectionDetail3"> 
                       <tr class="DataGrid_Body_Row DataGrid_Body_Row_yy" id="funcEvenOddRow4xx">
-                        <td class="DataGrid_Body_Cell" width="7%" id="fieldMovementdate3">xxfd200</td>
-                        <td class="DataGrid_Body_Cell" width="20%"> <a href="#" onclick="BOMorWorkEffort('xx', 'yy');return false;" onmouseover="window.status='Production Plan';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldId4"> 
+                        <td class="DataGrid_Body_Cell" width="8%" id="fieldMovementdate3">xxfd200</td>
+                        <td class="DataGrid_Body_Cell" width="15%"> <a href="#" onclick="BOMorWorkEffort('xx', 'yy');return false;" onmouseover="window.status='Production Plan';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldId4"> 
                         <span id="fieldProductionPlan">xx850000007</span></a></td>
-                        <td class="DataGrid_Body_Cell" width="26%" id="fieldName3">xx2345</td>
-                        <td class="DataGrid_Body_Cell" width="4%" id="fieldXOrigin3">xx3</td>
-                        <td class="DataGrid_Body_Cell" width="4%" id="fieldYOrigin3">xx3</td>
-                        <td class="DataGrid_Body_Cell" width="4%" id="fieldZOrigin3">xx3</td>
-                        <td class="DataGrid_Body_Cell" width="4%" id="fieldXDestiny3">xx2</td>
-                        <td class="DataGrid_Body_Cell" width="4%" id="fieldYDestiny3">xx2</td>
-                        <td class="DataGrid_Body_Cell" width="4%" id="fieldZDestiny3">xx2</td>
+                        <td class="DataGrid_Body_Cell" width="15%" id="fieldName3">xx2345</td>
+                        <td class="DataGrid_Body_Cell" width="15%" id="fieldWaOrigin3">xx3</td>
+                        <td class="DataGrid_Body_Cell" width="3%" id="fieldXOrigin3">xx3</td>
+                        <td class="DataGrid_Body_Cell" width="3%" id="fieldYOrigin3">xx3</td>
+                        <td class="DataGrid_Body_Cell" width="3%" id="fieldZOrigin3">xx3</td>
+                        <td class="DataGrid_Body_Cell" width="15%" id="fieldWaDestiny3">xx2</td>
+                        <td class="DataGrid_Body_Cell" width="3%" id="fieldXDestiny3">xx2</td>
+                        <td class="DataGrid_Body_Cell" width="3%" id="fieldYDestiny3">xx2</td>
+                        <td class="DataGrid_Body_Cell" width="3%" id="fieldZDestiny3">xx2</td>
                         <td class="DataGrid_Body_Cell" width="6%" id="fieldOut3">xxsi</td>
-                        <td class="DataGrid_Body_Cell" width="10%" id="fieldMovementqty3">xx23</td>
+                        <td class="DataGrid_Body_Cell" width="8%" id="fieldMovementqty3">xx23</td>
+                      </tr>
+                    </div>
+                  </div>
+                </table>
+                <div style="height:15px;" />
+                <table cellspacing="0" cellpadding="0" width="100%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;" id="selEliminar5">
+                  <tr class="DataGrid_Body_Row">
+                    <th class="DataGrid_Header_Cell" align="center" colspan="9"><span>Internal Consumption</span></th>
+                  </tr>
+                  <div id="sectionPartner4"> 
+                    <tr class="DataGrid_Body_Row">
+                      <th class="DataGrid_Header_Cell" colspan="9"><span>Customer<span>:&nbsp;</span><span id="fieldPartnername4">xxAguinaga</span></span></th>
+                    </tr>
+                    <tr class="DataGrid_Body_Row">
+                      <th class="DataGrid_Header_Cell" width="8%">Date</td>
+                      <th class="DataGrid_Header_Cell" width="20%">Movement</td>
+                      <th class="DataGrid_Header_Cell" width="20%">Description</td>
+                      <th class="DataGrid_Header_Cell" width="20%">Warehouse</td>
+                      <th class="DataGrid_Header_Cell" width="12%" colspan="3">
+                        <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background: none; border: 0px none">
+                          <tr >
+                            <th class="DataGrid_Header_Cell" width="100%" colspan="3" style="background: none; border: 0px none">Location</th>
+                          </tr>
+                          <tr >
+                            <th class="DataGrid_Header_Cell" width="34%" style="background: none; border: 0px none">X</th>
+                            <th class="DataGrid_Header_Cell" width="33%" style="background: none; border: 0px none">Y</th>
+                            <th class="DataGrid_Header_Cell" width="33%" style="background: none; border: 0px none">Z</th>
+                          </tr>
+                        </table>
+                      </th>
+                      <th class="DataGrid_Header_Cell"  width="6%">Exit</th>
+                      <th class="DataGrid_Header_Cell"  width="14%">Quantity</th>
+                    </tr>
+                    <div id="sectionDetail4"> 
+                      <tr class="DataGrid_Body_Row DataGrid_Body_Row_yy" id="funcEvenOddRow5xx">
+                        <td class="DataGrid_Body_Cell" width="8%" id="fieldMovementdate4">xx23-02-2004</td>
+                        <td class="DataGrid_Body_Cell" width="20%"> <a href="#" onclick="openInternalConsumption('xx');return false;" onmouseover="window.status='yy';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldId5">
+                          <span id="fieldMovement3">xx850000007</span></a></td>
+                        <td class="DataGrid_Body_Cell" width="20%" id="fieldName4">xx2345</td>
+                        <td class="DataGrid_Body_Cell" width="20%"  id="fieldWaOrigin4">xx3</td>
+                        <td class="DataGrid_Body_Cell" width="4%"  id="fieldXOrigin4">xx3</td>
+                        <td class="DataGrid_Body_Cell" width="4%"  id="fieldYOrigin4">xx3</td>
+                        <td class="DataGrid_Body_Cell" width="4%"  id="fieldZOrigin4">xx3</td>
+                        <td class="DataGrid_Body_Cell" width="6%"  id="fieldOut4">xxsi</td>
+                        <td class="DataGrid_Body_Cell" width="14%" id="fieldMovementqty4">xx23</td>
                       </tr>
                     </div>
                   </div>

@@ -58,7 +58,12 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
           "AttributeSetInstance.instance");
       String strProduct = vars.getRequestGlobalVariable("inpProduct",
           "AttributeSetInstance.product");
-      vars.getRequestGlobalVariable("inpwindowId", "AttributeSetInstance.windowId");
+      String windowId = vars.getRequestGlobalVariable("inpwindowId",
+          "AttributeSetInstance.windowId");
+      if ("".equals(windowId)) {
+        vars.setSessionValue("AttributeSetInstance.windowId",
+            vars.getSessionValue("CREATEFROM|windowId"));
+      }
       vars.getRequestGlobalVariable("inpLocatorId", "AttributeSetInstance.locatorId");
       vars.getRequestGlobalVariable("inpTabId", "AttributeSetInstance.tabId");
       String strAttributeSet = "";

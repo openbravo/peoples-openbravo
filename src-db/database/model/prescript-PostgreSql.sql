@@ -1258,15 +1258,19 @@ CREATE OR REPLACE VIEW user_tab_columns AS
                     ELSE 10 
                 END
         END AS data_precision,
-        0 AS data_scale,
+        CASE 
+            WHEN upper(pg_type.typname) = 'NUMERIC' and cols.numeric_scale is not null THEN cols.numeric_scale
+            ELSE 0
+        END AS data_scale,
         CASE pg_attribute.atthasdef
             WHEN true THEN ( SELECT pg_attrdef.adsrc
                FROM pg_attrdef
               WHERE pg_attrdef.adrelid = pg_class.oid AND pg_attrdef.adnum = pg_attribute.attnum)
             ELSE NULL::text
         END AS data_default, not pg_attribute.attnotnull AS nullable, pg_attribute.attnum AS column_id
-   FROM pg_class, pg_namespace, pg_attribute, pg_type
-  WHERE pg_attribute.attrelid = pg_class.oid AND pg_attribute.atttypid = pg_type.oid AND pg_class.relnamespace = pg_namespace.oid AND pg_namespace.nspname = current_schema() AND pg_attribute.attnum > 0
+   FROM pg_class, pg_namespace, pg_attribute, pg_type, information_schema.columns cols
+  WHERE pg_attribute.attrelid = pg_class.oid AND pg_attribute.atttypid = pg_type.oid AND pg_class.relnamespace = pg_namespace.oid AND pg_namespace.nspname = current_schema() AND pg_attribute.attnum > 0 
+  AND upper(cols.table_name)=upper(pg_class.relname) AND upper(cols.column_name)=upper(pg_attribute.attname) AND cols.table_schema = current_schema()
 /-- END
 
 SELECT * FROM drop_view('v$version')
@@ -1288,7 +1292,7 @@ SELECT * FROM drop_view('USER_TRIGGERS')
 CREATE OR REPLACE VIEW USER_TRIGGERS
 (TABLE_NAME, TABLESPACE_NAME, TRIGGER_NAME, STATUS)
 AS 
-SELECT UPPER(PG_CLASS.RELNAME), UPPER(PG_NAMESPACE.NSPNAME), PG_TRIGGER.TGNAME, 'ENABLED'::text
+SELECT UPPER(PG_CLASS.RELNAME), UPPER(PG_NAMESPACE.NSPNAME), PG_TRIGGER.TGNAME, CASE WHEN pg_trigger.tgenabled = 'D'::"char" THEN 'DISABLED'::text ELSE 'ENABLED'::text END AS status
 FROM PG_TRIGGER, PG_CLASS, PG_NAMESPACE
 WHERE PG_TRIGGER.tgrelid = PG_CLASS.OID
 AND PG_CLASS.RELNAMESPACE = PG_NAMESPACE.OID
@@ -1611,5 +1615,30 @@ SELECT * FROM drop_acctschema_default()
 /-- END
 
 DROP FUNCTION drop_acctschema_default ()
+/-- END
+ 
+CREATE OR REPLACE FUNCTION AD_GET_RDBMS()
+  RETURNS varchar AS
+$BODY$ DECLARE
+/*************************************************************************
+* The contents of this file are subject to the Openbravo  Public  License
+* Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
+* Version 1.1  with a permitted attribution clause; you may not  use this
+* file except in compliance with the License. You  may  obtain  a copy of
+* the License at http://www.openbravo.com/legal/license.html
+* Software distributed under the License  is  distributed  on  an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+* License for the specific  language  governing  rights  and  limitations
+* under the License.
+* The Original Code is Openbravo ERP.
+* The Initial Developer of the Original Code is Openbravo SLU
+* All portions are Copyright (C) 2009-2012 Openbravo SLU
+* All Rights Reserved.
+* Contributor(s):  ______________________________________.
+************************************************************************/
+BEGIN
+  return 'POSTGRE';
+END;   $BODY$
+  LANGUAGE 'plpgsql' IMMUTABLE
 /-- END
 

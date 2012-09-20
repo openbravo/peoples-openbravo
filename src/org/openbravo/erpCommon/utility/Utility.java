@@ -48,6 +48,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -1607,8 +1608,9 @@ public class Utility {
   public static String arrayListToString(ArrayList<String> list, boolean addQuotes) {
     String rt = "";
     for (int i = 0; i < list.size(); i++) {
-      rt += rt.equals("") ? "" : ", " + (addQuotes ? "'" : "") + list.get(i)
+      String aux = (rt.equals("") ? "" : ", ") + (addQuotes ? "'" : "") + list.get(i)
           + (addQuotes ? "'" : "");
+      rt = rt + aux;
     }
     return rt;
   }
@@ -2134,6 +2136,11 @@ public class Utility {
           img = organization.getOrganizationInformationList().get(0).getYourCompanyDocumentImage();
         }
         if (img == null) {
+          img = OBDal.getInstance()
+              .get(ClientInformation.class, OBContext.getOBContext().getCurrentClient().getId())
+              .getYourCompanyDocumentImage();
+        }
+        if (img == null) {
           img = OBDal.getInstance().get(SystemInformation.class, "0").getYourCompanyDocumentImage();
         }
       } else if ("banner-production".equals(logo)) {
@@ -2463,4 +2470,23 @@ public class Utility {
     Object[] names = (Object[]) qName.list().get(0);
     return names[0] != null ? (String) names[0] : (String) names[1];
   }
+
+  /**
+   * Creates a comma separated string with the Id's of the Set of Strings.
+   * 
+   * @param set
+   *          Set of Strings
+   * @return Comma separated string of Id's
+   */
+  public static String getInStrSet(Set<String> set) {
+    StringBuilder strInList = new StringBuilder();
+    for (String string : set) {
+      if (strInList.length() == 0)
+        strInList.append("'" + string + "'");
+      else
+        strInList.append(", '" + string + "'");
+    }
+    return strInList.toString();
+  }
+
 }

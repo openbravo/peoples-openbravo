@@ -17,17 +17,62 @@
  ************************************************************************
  */
 
+/* ob-application-menu-styles.js */
+
+isc.OBApplicationMenuTreeChild.addProperties({
+  iconBodyStyleName_rtl: 'OBApplicationMenuTreeIconBody'
+});
+
+isc.OBApplicationMenuTree.addProperties({
+  iconBodyStyleName_rtl: 'OBApplicationMenuTreeIconBody'
+});
+
+
 /* ob-form-styles.js */
+
+isc.OBDateItem.addProperties({
+  textAlign: 'right'
+});
 
 isc.OBSectionItemButton.changeDefaults('backgroundDefaults', {
   icon: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/sectionItem-ico-RTL.png'
 });
 
 
+/* ob-grid-styles.js */
+
+isc.OBGridButtonsComponent.addProperties({
+  layoutLeftMargin: 0,
+  layoutRightMargin: -2
+});
+
+
+/* ob-navigation-bar-styles.js */
+
+isc.OBQuickLaunch.addProperties({
+  createNew_src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/navbar/iconCreateNew-RTL.png',
+  quickLaunch_src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/navbar/iconQuickLaunch-RTL.png'
+});
+
+isc.OBLogout.addProperties({
+  src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/navbar/iconClose-RTL.png'
+});
+
+OB.Styles.TopLayout.LogosContainer.align = 'left';
+
+
 /* ob-personalization-styles.js */
 
 OB.Styles.Personalization.Icons.fieldGroup = OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/personalization/iconFolder-RTL.png';
 OB.Styles.Personalization.TabSet.tabBarAlign = 'right';
+OB.Styles.Personalization.Menu.iconBodyStyleName_rtl = 'OBPersonalizationPullDownMenuBody';
+OB.Styles.Personalization.Menu.itemIcon = OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/personalization/iconSelectedView-RTL.png';
+
+
+/* ob-process-styles.js */
+
+OB.Styles.Process.PickAndExecute.addNewButtonAlign = 'right';
+
 
 /* ob-statusbar-styles.js */
 

@@ -22,7 +22,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2010 Openbravo SLU
+ * All portions are Copyright (C) 2001-2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************/
@@ -39,6 +39,7 @@
   v_countAux                            NUMBER;
   v_count2                              NUMBER;
   v_count3                              VARCHAR2(32);
+  v_productName                         M_Product.Name%TYPE;
   v_ProductionDate                      DATE;
   v_Result NUMBER:= 1;
   v_ProductionCost                      NUMBER;
@@ -58,6 +59,7 @@
   v_Cost_UOM                            CHAR;
   v_NextNo                              VARCHAR2(32);
   v_ProductionNo                        NUMBER;
+  v_iscostmigrated                      CHAR;
   Cur_ProductionPlan RECORD;
   Cur_ProductionLine RECORD;
   Cur_WIP RECORD;
@@ -105,6 +107,11 @@ BEGIN
       AND pr.m_production_id = pp.m_production_id
       AND pp.m_productionplan_id = pl.m_productionplan_id
       AND pl.calculated = 'N';
+
+    SELECT CASE COUNT(1) WHEN 0 THEN 'N' ELSE 'Y' END INTO v_iscostmigrated
+    FROM DUAL
+    WHERE EXISTS (SELECT 1 FROM m_costing_rule cr
+               WHERE cr.isvalidated = 'Y');
 
     v_ResultStr := 'Calculate cost';
 
@@ -167,8 +174,8 @@ BEGIN
         FOR Cur_WIP IN (SELECT c.COST*ppl.MOVEMENTQTY AS cost, ppl.M_PRODUCTIONLINE_ID
                         FROM M_COSTING c, M_PRODUCTIONLINE ppl
                         WHERE c.M_PRODUCT_ID = ppl.M_PRODUCT_ID
-                          AND c.DATEFROM <= v_ProductionDate
-                          AND c.DATETO > v_ProductionDate
+                          AND TRUNC(c.DATEFROM) <= v_ProductionDate
+                          AND TRUNC(c.DATETO) > v_ProductionDate
                           AND ppl.PRODUCTIONTYPE = '-'
                           AND ppl.M_PRODUCTIONPLAN_ID = Cur_ProductionPlan.M_PRODUCTIONPLAN_ID
                           AND c.ISPRODUCTION='Y') LOOP
@@ -184,16 +191,16 @@ BEGIN
         FOR Cur_RawMaterial IN (SELECT c.COST*ppl.MOVEMENTQTY AS cost, ppl.M_PRODUCTIONLINE_ID
                                 FROM M_COSTING c, M_PRODUCTIONLINE ppl
                                 WHERE c.M_PRODUCT_ID = ppl.M_PRODUCT_ID
-                                  AND c.DATEFROM <= v_ProductionDate
-                                  AND c.DATETO > v_ProductionDate
+                                  AND TRUNC(c.DATEFROM) <= v_ProductionDate
+                                  AND TRUNC(c.DATETO) > v_ProductionDate
                                   AND ppl.PRODUCTIONTYPE = '-'
                                   AND ppl.M_PRODUCTIONPLAN_ID = Cur_ProductionPlan.M_PRODUCTIONPLAN_ID
                                   AND c.ISPRODUCTION='N'
                                   AND NOT EXISTS (SELECT 1
                                                   FROM M_COSTING, M_PRODUCTIONLINE
                                                   WHERE M_COSTING.M_PRODUCT_ID = M_PRODUCTIONLINE.M_PRODUCT_ID
-                                                    AND M_COSTING.DATEFROM <= v_ProductionDate
-                                                    AND M_COSTING.DATETO > v_ProductionDate
+                                                    AND TRUNC(M_COSTING.DATEFROM) <= v_ProductionDate
+                                                    AND TRUNC(M_COSTING.DATETO) > v_ProductionDate
                                                     AND M_PRODUCTIONLINE.PRODUCTIONTYPE = '-'
                                                     AND M_PRODUCTIONLINE.M_PRODUCT_ID = c.M_Product_ID
                                                     AND M_COSTING.ISPRODUCTION='Y')) LOOP
@@ -204,6 +211,18 @@ BEGIN
         END LOOP;
         v_ProductionCost := v_ProductionCost + COALESCE(v_ProductionCost_Tmp,0);
         v_ProductionCost_Tmp := 0;
+        
+        IF (v_iscostmigrated = 'Y') THEN
+          SELECT count(1), max(p.name) INTO v_count2, v_productname
+          FROM m_productionline pl JOIN m_product p ON pl.m_product_id = p.m_product_id
+          WHERE pl.m_productionplan_id = Cur_ProductionPlan.M_PRODUCTIONPLAN_ID
+            AND pl.productiontype = '-'
+            AND pl.calccost IS NULL;
+          IF (v_count2 > 0) THEN
+            v_message := '@NoAvgCostDefined@ @Product@: ' || v_productname || ', @Date@:' || v_ProductionDate;
+            RAISE_APPLICATION_ERROR(-20000, v_message);
+          END IF;
+        END IF;
 
         -- Calculates the cost of the cost center
         -- Cost directly inserted on cost center definition
@@ -347,16 +366,16 @@ BEGIN
           SELECT COUNT(*) INTO v_count2
           FROM M_COSTING
           WHERE M_Product_ID = Cur_ProductionLine.M_PRODUCT_ID
-            AND DATETO > v_ProductionDate
-            AND DATEFROM <=v_ProductionDate
+            AND TRUNC(DATETO) > v_ProductionDate
+            AND TRUNC(DATEFROM) <=v_ProductionDate
             AND ISPRODUCTION='Y';
           v_ResultStr := 'previous costs ' || v_count2 || ' product: ' || Cur_ProductionLine.M_Product_ID;
           IF (v_count2 IS NOT NULL AND v_count2 <> 0) THEN
             SELECT COALESCE(COST,0) INTO v_CostOld
             FROM M_COSTING
             WHERE M_Product_ID = Cur_ProductionLine.M_PRODUCT_ID
-              AND DATETO > v_ProductionDate
-              AND DATEFROM <=v_ProductionDate
+              AND TRUNC(DATETO) > v_ProductionDate
+              AND TRUNC(DATEFROM) <=v_ProductionDate
               AND ISPRODUCTION='Y';
           ELSE
             v_CostOld := 0;
@@ -392,7 +411,10 @@ BEGIN
               AND ISPRODUCTION='Y';
 
             --Insert cost per unit.
-            IF (v_count2 = 0) THEN
+            IF (v_iscostmigrated = 'Y') THEN
+              --Do nothing
+              v_ResultStr := 'new engine in use';
+            ELSIF (v_count2 = 0) THEN
               v_ResultStr := 'new cost';
               Ad_Sequence_Next('M_Costing', Cur_ProductionLine.AD_ORG_ID, v_NextNo);
               --First time

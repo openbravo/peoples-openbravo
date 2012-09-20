@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -261,7 +261,8 @@ public class ModelProvider implements OBSingleton {
                   e.getTableName(), p.getColumnName()));
               if (mandatory != null) {
                 p.setMandatory(mandatory);
-              } else {
+              } else if (p.getSqlLogic() == null) {
+                // only log in case the sql logic is not set
                 log.warn("Column " + p + " mandatory setting not found in the database metadata. "
                     + "A cause can be that the column does not exist in the database schema");
               }
@@ -509,12 +510,7 @@ public class ModelProvider implements OBSingleton {
       // }
 
       if (t.getPrimaryKeyColumns().size() == 0) {
-        // note, after this issue is solved:
-        // https://issues.openbravo.com/view.php?id=14696
-        // then also log.warn for views
-        if (!t.isView()) {
-          log.warn("Ignoring table/view " + t.getName() + " because it has no primary key columns");
-        }
+        log.warn("Ignoring table/view " + t.getName() + " because it has no primary key columns");
         toRemove.add(t);
         continue;
       }

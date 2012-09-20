@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -35,6 +35,7 @@
 <script language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/js/appStatus.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/searchs.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/ajax.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/default/MessageBox.js" type="text/javascript"></script>
@@ -43,8 +44,6 @@
 <script language="JavaScript" src="../../../../../web/org.openbravo.userinterface.selector/js/classic-skin-variable.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/../org.openbravo.client.kernel/OBCLKER_Kernel/StaticResources" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/calculator.js" type="text/javascript"></script>
-<script language="JavaScript" src="../../../../../web/js/jscalendar/calendar.js" type="text/javascript"></script>
-<script language="JavaScript" src="../../../../../web/js/jscalendar/lang/calendar-es.js" type="text/javascript" id="fieldCalendar"></script>
 <script language="JavaScript" src="../../../../../web/js/default/DateTextBox.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/org.openbravo.advpaymentmngt/FIN_Utilities.js" type="text/javascript"></script>
 <script type="text/javascript">
@@ -54,6 +53,9 @@
 var sc_JsDateFormat = null;
 </script>
 <script language="JavaScript" type="text/javascript">
+var APRMMatchStatementIds;
+var serverWorking=false;
+var checksToEnable=[];
 function transactionFind(selected) {
   var depositAmt = returnCalcToFormatted(selected.depositAmount, globalMaskNumeric, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
   var paymentAmt = returnCalcToFormatted(selected.paymentAmount, globalMaskNumeric, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
@@ -74,8 +76,8 @@ function transactionFind(selected) {
   document.getElementById("inpFinancialTransactionId_" + sc_FIN_FinAcc_Transaction_ID.bslId).value = selected.id;
   document.getElementById("inpTransactionDate_" + sc_FIN_FinAcc_Transaction_ID.bslId).innerHTML = OB.Utilities.Date.JSToOB(selected.transactionDate, sc_JsDateFormat);
   document.getElementById("inpMatchedDocument_" + sc_FIN_FinAcc_Transaction_ID.bslId).innerHTML = document.getElementById("paraMatchedAgainstTransaction").value;
-  document.getElementById("inpBPartner_" + sc_FIN_FinAcc_Transaction_ID.bslId).innerHTML = selected["finPayment.businessPartner._identifier"]==undefined?'':selected["finPayment.businessPartner._identifier"];
-  document.getElementById("inpReferenceNo_" + sc_FIN_FinAcc_Transaction_ID.bslId).innerHTML = selected["finPayment.referenceNo"]==undefined?'':selected["finPayment.referenceNo"];
+  document.getElementById("inpBPartner_" + sc_FIN_FinAcc_Transaction_ID.bslId).innerHTML = selected["finPayment" + OB.Constants.FIELDSEPARATOR + "businessPartner" + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER]==undefined?'':selected["finPayment" + OB.Constants.FIELDSEPARATOR + "businessPartner" + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER];
+  document.getElementById("inpReferenceNo_" + sc_FIN_FinAcc_Transaction_ID.bslId).innerHTML = selected["finPayment" + OB.Constants.FIELDSEPARATOR + "referenceNo"]==undefined?'':selected["finPayment" + OB.Constants.FIELDSEPARATOR + "referenceNo"];
   document.getElementById("inpAmount_" + sc_FIN_FinAcc_Transaction_ID.bslId).innerHTML = subtract(depositAmt, paymentAmt);
   document.getElementById("inpMatchingType_" + sc_FIN_FinAcc_Transaction_ID.bslId).value = "MA";
   document.getElementById("inpCheckBox_" + sc_FIN_FinAcc_Transaction_ID.bslId).checked = true;
@@ -103,8 +105,29 @@ isc.OBSelectorLinkWidget.addProperties({
   bslId: ''
  });
 
+function enableChecks(){
+  for(var i=0; i<checksToEnable.length; i++){
+    document.getElementById(checksToEnable[i]).disabled=false;
+  }
+}
+
+function disableChecks(){
+  var items = document.frmMain.getElementsByTagName("input");
+  checksToEnable = [];
+  for(var i=0; i<items.length; i++){
+    if(items[i].name === 'inpBankStatementLineId'){
+      if(items[i].checked){
+        items[i].disabled=true;
+        checksToEnable.push(items[i].id);
+      }
+    }
+  }
+}
+
 function unMatchLine(bankStatementLineId, isChecked) {
   if (!isChecked) {
+    disableChecks();
+    APRMMatchStatementIds[bankStatementLineId]=false;
     document.frmMain.inpFinBankStatementLineId.value = bankStatementLineId;
     document.getElementById("inpMatchedDocument_" + bankStatementLineId).innerHTML = "";
     document.getElementById("inpTransactionDate_" + bankStatementLineId).innerHTML = "";
@@ -116,6 +139,9 @@ function unMatchLine(bankStatementLineId, isChecked) {
     document.getElementById("inpMatchingType_" + bankStatementLineId).value = "";
     sendActionToServer("UNMATCH");
   }
+  else {
+    APRMMatchStatementIds[bankStatementLineId]=true;
+  }
   return true;
 }
 </script>
@@ -125,14 +151,21 @@ function closeThisPage() {
     return true;
 }
 function submitThisPage(strCommand) {
-  if (validate(strCommand)) {
-    submitCommandForm(strCommand, false, null, 'MatchTransaction.html', '_self');
+  //if server is working the button should be disabled
+  if(serverWorking == false){
+    APRMMatchStatementIds = null;
+    if (validate(strCommand)) {
+      setProcessingMode('popup', true);
+      submitCommandForm(strCommand, false, null, 'MatchTransaction.html', '_self');
+    }
     return true;
   }
-  return true;
 }
 function openAddTransaction(bankStatementLineId){
   document.frmMain.inpFinBankStatementLineId.value = bankStatementLineId;
+  if ( document.getElementById('inpCheckBox_' + bankStatementLineId) && document.getElementById('inpCheckBox_' + bankStatementLineId).checked){
+    unMatchLine(bankStatementLineId, false);
+  }
   openServletNewWindow('DEFAULT', false, '../org.openbravo.advpaymentmngt.ad_actionbutton/AddTransaction.html', 'ADDTRANSACTION', '2EED9BC16DB34D2B80BA40A21564BECF', false,600, 900, null, null, false, true, true);
   return true;
 }
@@ -142,6 +175,8 @@ function openAddTransaction(bankStatementLineId){
       try {
         var url = "../org.openbravo.advpaymentmngt.ad_actionbutton/MatchTransaction.html";
         var paramXMLReq = null;
+        serverWorking = true;
+        document.frmMain.buttonProcess.disabled = true;
         return submitXmlHttpRequest(callBackGrid, document.frmMain, "GRID", url, false, null, paramXMLReq);
       } catch (e) {
         alert(e);
@@ -153,6 +188,8 @@ function openAddTransaction(bankStatementLineId){
       if (getReadyStateHandler(XMLHttpRequestObj)) {
         try {
           if (XMLHttpRequestObj.responseText) {
+            serverWorking = false;
+            document.frmMain.buttonProcess.disabled = false;
             strText = XMLHttpRequestObj.responseText;
             var data = eval(strText);
             var grid = data.grid;
@@ -167,9 +204,12 @@ function openAddTransaction(bankStatementLineId){
               var newRows = '<table><tbody id=\"sectionGrid\">'+ aux;
               temp.innerHTML = newRows;
               tableBody.parentNode.replaceChild(temp.firstChild.firstChild, tableBody);
-              temp.parentNode.removeChild(temp);
+              if (temp.parentNode) {
+                temp.parentNode.removeChild(temp);
+              }
+            } else {
+              tableBody.innerHTML = aux;
             }
-            tableBody.innerHTML = aux;
             if (document.frmMain.isFirstLoad.value=="true"){
               document.frmMain.isFirstLoad.value="false";
             }
@@ -178,10 +218,19 @@ function openAddTransaction(bankStatementLineId){
             }else{
               initialize_MessageBox('messageBoxID');
             }
+            for (var i in APRMMatchStatementIds) { 
+                if(data.grid.indexOf('inpCheckBox_'+i)){
+                  if (document.getElementById('inpCheckBox_'+i).checked !== true){
+                    document.getElementById('inpCheckBox_'+i).checked=APRMMatchStatementIds[i];
+                  }
+                }
+            }
             showWarning();
           } else {
             document.getElementById('sectionGrid').innerHTML = '';
           }
+          document.frmMain.inpShowCleared.disabled = false;
+          document.frmMain.inphideDate.disabled = false;
         } catch (e) {
         }
       }
@@ -196,6 +245,8 @@ function openAddTransaction(bankStatementLineId){
         try {
           var url = "../org.openbravo.advpaymentmngt.ad_actionbutton/MatchTransaction.html";
           var paramXMLReq = null;
+          serverWorking = true;
+          document.frmMain.buttonProcess.disabled = true;
           return submitXmlHttpRequest(dummyCallBack, document.frmMain, action, url, false, null, paramXMLReq);
         } catch (e) {
           alert(e);
@@ -207,10 +258,14 @@ function dummyCallBack(paramXMLParticular, XMLHttpRequestObj) {
   if (getReadyStateHandler(XMLHttpRequestObj)) {
     try {
       if (XMLHttpRequestObj.responseText) {
+        serverWorking = false;
+        document.frmMain.buttonProcess.disabled = false;
         strText = XMLHttpRequestObj.responseText;
         var data = eval(strText);
         if (data.forceLoadGrid) {
           loadGrid();
+        }else{
+          enableChecks();
         }
       }
     } catch (e) {
@@ -223,6 +278,8 @@ function splitRow() {
   try {
     var url = "../org.openbravo.advpaymentmngt.ad_actionbutton/MatchTransaction.html";
     var paramXMLReq = null;
+    serverWorking=true;
+    document.frmMain.buttonProcess.disabled = true;
     return submitXmlHttpRequest(splitCallback, document.frmMain, "SPLIT", url, false, null, paramXMLReq);
   } catch (e) {
     alert(e);
@@ -234,6 +291,8 @@ function splitCallback(paramXMLParticular, XMLHttpRequestObj) {
     if (getReadyStateHandler(XMLHttpRequestObj)) {
       try {
         if (XMLHttpRequestObj.responseText) {
+          serverWorking=false;
+          document.frmMain.buttonProcess.disabled = false;
           strText = XMLHttpRequestObj.responseText;
           var data = eval(strText);
           if (data.showJSMessage) {
@@ -255,6 +314,7 @@ function splitCallback(paramXMLParticular, XMLHttpRequestObj) {
       } else initialize_MessageBox('messageBoxID');
   }
   function onLoadDo(){
+    APRMMatchStatementIds = new Object();
     this.windowTables = new Array(
               new windowTableId('client_top_popup', 'buttonProcess'),
               new windowTableId('client_middle', 'buttonProcess'),
@@ -515,9 +575,9 @@ function splitCallback(paramXMLParticular, XMLHttpRequestObj) {
                         <td colspan="5" style="text-align: center; font-weight: bold;">Transactions in Openbravo</td>
                       </tr>
                       <tr style="border-top: thin solid gray;">
-                        <td colspan="5" style="border-right: thin solid gray;"><span class="LabelText">Show</span><span><select name="inpPaymentTypeFilter" class="ComboKey Combo_TwoCells_width required" id="inpPaymentTypeFilter" onchange="loadGrid(); return true;"><option value="" class="discard">Deposits and payments</option></select></span>&nbsp;&nbsp;<span>Cleared</span><span><input type="checkbox" name="inpShowCleared" id="inpShowCleared" value="Y" onclick="loadGrid(); return true;" /></span></td>
+                        <td colspan="5" style="border-right: thin solid gray;"><span class="LabelText">Show</span>&nbsp;<span><select name="inpPaymentTypeFilter" class="ComboKey Combo_TwoCells_width required" id="inpPaymentTypeFilter" onchange="loadGrid(); return true;"><option value="" class="discard">Deposits and payments</option></select></span>&nbsp;<nobr><span class="LabelText">Cleared</span>&nbsp;<span><input type="checkbox" name="inpShowCleared" id="inpShowCleared" disabled=true value="Y" onclick="loadGrid(); return true;" /></span></nobr></td>
                         <td style="text-align: center;"></td>
-                        <td colspan="5" style="border-left: thin solid gray;"></span>&nbsp;&nbsp;<span>Hide transactions after statement date</span>&nbsp;&nbsp;<span><input type="checkbox" name="inphideDate" id="fieldhideDate" value="Y" onClick="loadGrid(); return true;"/></span>&nbsp;&nbsp;<span>Ending Date</span>&nbsp;&nbsp;<span type="LabelText" id="paramDateTo"></span></td>
+                        <td colspan="5" style="border-left: thin solid gray;"></span>&nbsp;&nbsp;<span>Hide transactions after statement date</span>&nbsp;&nbsp;<span><input type="checkbox" name="inphideDate" id="fieldhideDate" disabled=true value="Y" onClick="loadGrid(); return true;"/></span>&nbsp;&nbsp;<span>Ending Date</span>&nbsp;&nbsp;<span type="LabelText" id="paramDateTo"></span></td>
                       </tr>
                       <tr class="DataGrid_Body_Row">
                         <th class="DataGrid_Header_LineNoCell DataGrid_Body_Cell_CheckBox" width="25">

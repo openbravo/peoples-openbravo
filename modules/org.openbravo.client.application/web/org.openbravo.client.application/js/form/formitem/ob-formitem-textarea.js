@@ -86,6 +86,6 @@ isc.OBPopUpTextAreaItem.addProperties({
 if (isc.ListGrid.getPrototype()._popUpTextAreaEditorTypes) {
   // handle case when loading source code
   isc.ListGrid.getPrototype()._popUpTextAreaEditorTypes.OBPopUpTextAreaItem = true;
-} else if (isc.ListGrid.getPrototype().$309) {
-  isc.ListGrid.getPrototype().$309.OBPopUpTextAreaItem = true;
+} else if (isc.ListGrid.getPrototype().$52x) {
+  isc.ListGrid.getPrototype().$52x.OBPopUpTextAreaItem = true;
 }

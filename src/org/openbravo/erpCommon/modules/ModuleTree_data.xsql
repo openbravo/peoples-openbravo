@@ -116,7 +116,7 @@
                                FROM AD_MODULE
                               WHERE AD_Module_ID = M.AD_Module_ID)
             AND ISACTIVE = 'Y'
-            order by Seqno
+            order by Seqno, name
       </Sql>
       <Parameter name="lang"/>
       <Parameter name="lang"/>

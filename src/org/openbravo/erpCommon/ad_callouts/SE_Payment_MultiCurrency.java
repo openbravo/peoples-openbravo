@@ -86,6 +86,8 @@ public class SE_Payment_MultiCurrency extends SimpleCallout {
           } else {
             info.addResult("inpfinaccTxnAmount", "");
           }
+        } else {
+          info.addResult("inpfinaccTxnConvertRate", finAccConvertRate);
         }
       }
 

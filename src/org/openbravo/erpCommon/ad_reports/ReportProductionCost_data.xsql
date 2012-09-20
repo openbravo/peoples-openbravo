@@ -75,20 +75,22 @@
        SELECT auxSeq.M_Product_ID AS ID, M_Product.Name, 
         SUM(auxSeq.ComponentCost*auxSeq.ConsumedQty)/SUM(auxSeq.ProducedQty) AS ConsumedPerUnit, 
         SUM(auxSeq.TotalRealCost)/SUM(auxSeq.ConsumedQty) AS CostPerUnit,
-        SUM(auxSeq.ComponentCost*sp.Quantity)/SUM(sp.Quantity) AS ConsumedPerUnitStd, 
+        SUM(auxSeq.ComponentCost*sp.Quantity)/SUM(auxSeq.ProducedStdQuantity) * SUM(Coalesce(sp.decrease,1)) * SUM(coalesce(sp.rejected,1)) AS ConsumedPerUnitStd, 
         MAX(C_CURRENCY_CONVERT(sp.Cost, ?, ?, TO_DATE(sp.Updated), null, sp.ad_client_id, sp.ad_org_id)) AS CostPerUnitStd, 
             to_char(?)||to_char(auxSeq.M_Product_ID) as identifier, to_char((to_number(?)+1)*5) as level_blanck, to_char(40-((to_number(?)+1)*5)) as level_name, case when M_Product.MA_ProcessPlan_ID is null then '' else 'datawarehouseclose' end as button_class, to_char(to_number(?)+1) as levelid
         FROM 
           (SELECT rpn.M_Product_ID, rpp.ComponentCost, SUM(rpn.ConsumedQty) AS ConsumedQty, 
-           SUM(rpp.ProducedQty) AS ProducedQty, SUM(rpn.ConsumedQty*rpn.CalcCost) AS TotalRealCost, rpp.MA_Sequence_ID
+           SUM(rpp.ProducedQty) AS ProducedQty, SUM(rpn.ConsumedQty*rpn.CalcCost) AS TotalRealCost, rpp.MA_Sequence_ID, rpp.ProducedStdQuantity
            FROM
               (SELECT SUM(pl.MovementQty) AS ProducedQty, 
               MAX(C_CURRENCY_CONVERT(pl.ComponentCost, ?, ?, TO_DATE(p.movementdate), null, pl.ad_client_id, pl.ad_org_id)) AS ComponentCost, 
-              pp.M_ProductionPlan_ID, wrp.MA_Sequence_ID
+              pp.M_ProductionPlan_ID, wrp.MA_Sequence_ID,sum(sp.quantity) as ProducedStdQuantity
               FROM M_Production p
                 INNER JOIN M_ProductionPlan pp ON (p.M_Production_ID = pp.M_Production_ID)
                 INNER JOIN M_ProductionLine pl ON (pp.M_ProductionPlan_ID = pl.M_ProductionPlan_ID)
                 INNER JOIN MA_WRPhase wrp ON (pp.MA_WRPhase_ID = wrp.MA_WRPhase_ID)
+                LEFT OUTER JOIN MA_SequenceProduct sp 
+                ON (pl.M_Product_ID = sp.M_Product_ID AND wrp.MA_Sequence_ID = sp.MA_Sequence_ID)
               WHERE p.IsSOTrx = 'N'
               AND pl.ProductionType = '+'
               AND p.Processed = 'Y'
@@ -108,7 +110,7 @@
               GROUP BY pl.M_Product_ID, pl.M_ProductionPlan_ID
               HAVING SUM(pl.MovementQty) <> 0) rpn 
            ON (rpp.M_ProductionPlan_ID = rpn.M_ProductionPlan_ID) 
-           GROUP BY rpn.M_Product_ID, rpp.ComponentCost, rpp.MA_Sequence_ID) auxSeq
+           GROUP BY rpn.M_Product_ID, rpp.ComponentCost, rpp.MA_Sequence_ID, rpp.ProducedStdQuantity) auxSeq
         LEFT OUTER JOIN MA_SequenceProduct sp 
         ON (auxSeq.M_Product_ID = sp.M_Product_ID AND auxSeq.MA_Sequence_ID = sp.MA_Sequence_ID), M_Product
         WHERE auxSeq.M_Product_ID = M_Product.M_Product_ID

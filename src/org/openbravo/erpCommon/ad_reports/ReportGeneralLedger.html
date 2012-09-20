@@ -13,7 +13,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2011 Openbravo SLU
+ * All portions are Copyright (C) 2001-2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -130,22 +130,22 @@ function onloadFunctions() {
   }
 
   function openGeneralLedgerJournal(recordid) {
-	  
-	  var myframe = getFrame('LayoutMDI') || top.opener;
-      if (myframe) {	  
-		  myframe.OB.RemoteCallManager.call('org.openbravo.client.application.ComputeTranslatedNameActionHandler', {}, {'processId': '800000'}, 
-		  function(response, data, request){
-		            myframe.OB.Layout.ViewManager.openView('OBClassicWindow', {
-		                command: 'DIRECT2',
-		                icon: '[SKINIMG]../../org.openbravo.client.application/images/application-menu/iconReport.png',
-		                id: '800000',
-		                obManualURL: '/ad_reports/ReportGeneralLedgerJournal.html?inpFactAcctGroupId=' + recordid,
-		                processId: '800000',
-		                tabTitle: data.processTitle,
-		                type: 'report',
-		                viewId: 'OBClassicWindow'
-		            });		        		   
-		  });
+      
+      var myframe = getFrame('LayoutMDI') || top.opener;
+      if (myframe) {      
+          myframe.OB.RemoteCallManager.call('org.openbravo.client.application.ComputeTranslatedNameActionHandler', {}, {'processId': '800000'}, 
+          function(response, data, request){
+                    myframe.OB.Layout.ViewManager.openView('OBClassicWindow', {
+                        command: 'DIRECT2',
+                        icon: '[SKINIMG]../../org.openbravo.client.application/images/application-menu/iconReport.png',
+                        id: '800000',
+                        obManualURL: '/ad_reports/ReportGeneralLedgerJournal.html?inpFactAcctGroupId=' + recordid,
+                        processId: '800000',
+                        tabTitle: data.processTitle,
+                        type: 'report',
+                        viewId: 'OBClassicWindow'
+                    });                        
+          });
       }
   }
   </script>
@@ -374,9 +374,6 @@ function onloadFunctions() {
                   <div id="reportAD_ORGID"></div>
                 </select>
               </td>
-              <td class="TitleCell"><span class="LabelText">Hide matched Debt/Payments</span></td>
-              <td class="Radio_Check_ContentCell"><input TYPE="checkbox" id="paramHideMatched" name="inpHideMatched" value="Y"/></td>
-              <td class="ContentCell"></td>
             </tr>
             <tr>
               <td class="TitleCell"> <span class="LabelText">Accounting schema</span></td>
@@ -808,8 +805,7 @@ function onloadFunctions() {
                 <div id="sectionAmount">
                   <table cellspacing="0" cellpadding="0" width="100%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;">
                     <tr class="DataGrid_Body_Row">
-                      <th colspan="2" class="DataGrid_Header_Cell">Account No.<span>:&nbsp;</span><span id="fieldValue">xx70000</span></th>
-                      <th colspan="3" class="DataGrid_Header_Cell">Name<span>:&nbsp;</span><span id="fieldName">xxChecking Unallocated Receipts</span></th>
+                      <th colspan="5" class="DataGrid_Header_Cell">Account<span>:&nbsp;</span><span id="fieldValue">xx70000</span><span>&nbsp;</span><span id="fieldName">xxChecking Unallocated Receipts</span></th>
                     </tr>
 
                     <tr class="DataGrid_Body_Row">
@@ -852,6 +848,8 @@ function onloadFunctions() {
                       <input type="hidden" id="fieldTotalCredit" name="fieldTotalCredit" value=""/>
                       <input type="hidden" id="fieldTotalacctdrSum" value=""/>
                       <input type="hidden" id="fieldTotalacctcrSum" value=""/>
+                      <input type="hidden" id="fieldAmtacctdrprevsum" value=""/>
+                      <input type="hidden" id="fieldAmtacctcrprevsum" value=""/>
                       <input type="hidden" id="fieldTotalacctsubSum" value=""/>
                       <TH width="10%" class="DataGrid_Header_Cell_Amount"><SPAN id="fieldTotalDrAdded">xx100.00</SPAN></TH>
                       <TH width="10%" class="DataGrid_Header_Cell_Amount"><SPAN id="fieldTotalCrAdded">xx100.00</SPAN></TH>
@@ -874,16 +872,12 @@ function onloadFunctions() {
                 </div>
                 <div id="sectionGroupBy">
                   <table cellspacing="0" cellpadding="0" width="90%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;">
-                    <tr class="DataGrid_Body_Row">
-                      <th colspan="5" class="DataGrid_Header_Cell"><span id="fieldGroupBy">xxBusiness Partner</span><span>:&nbsp;</span>
-                        <span id="fieldGroupByName">xxGroupbyname</span></th>
-                    </tr>
-
                     <div id="sectionAmount2">
 
                       <tr class="DataGrid_Body_Row">
-                        <th colspan="2" class="DataGrid_Header_Cell">Account No.<span>:&nbsp;</span><span id="fieldValue2">xx70000</span></th>
-                        <th colspan="3" class="DataGrid_Header_Cell">Name<span>:&nbsp;</span><span id="fieldName2">xxChecking Unallocated Receipts</span></th>
+                        <th colspan="4" class="DataGrid_Header_Cell">Account<span>:&nbsp;</span><span id="fieldValue2">xx70000</span><span>&nbsp;</span><span id="fieldName2">xxChecking Unallocated Receipts</span></th>
+                        <th class="DataGrid_Header_Cell"><span id="fieldGroupBy">xxBusiness Partner</span><span>:&nbsp;</span>
+                        <span id="fieldGroupByName">xxGroupbyname</span></th>
                       </tr>
                       <tr class="DataGrid_Body_Row">
                         <th width="10%" class="DataGrid_Header_Cell">DATE</th>
@@ -926,6 +920,8 @@ function onloadFunctions() {
             <input type="hidden" id="fieldTotalBalance2" value=""/>
             <input type="hidden" id="fieldTotalacctdrSum2" value=""/>
             <input type="hidden" id="fieldTotalacctcrSum2" value=""/>
+            <input type="hidden" id="fieldAmtacctdrprevsum2" value=""/>
+            <input type="hidden" id="fieldAmtacctcrprevsum2" value=""/>
             <input type="hidden" id="fieldTotalacctsubSum2" value=""/>
             <TH width="10%" class="DataGrid_Header_Cell_Amount"><SPAN id="fieldTotalDrAdded2">xx100.00</SPAN></TH>
             <TH width="10%" class="DataGrid_Header_Cell_Amount"><SPAN id="fieldTotalCrAdded2">xx100.00</SPAN></TH>

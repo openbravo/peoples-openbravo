@@ -236,7 +236,7 @@ isc.OBStandardView.addProperties({
 
     this.Super('initWidget', arguments);
 
-    this.toolBar.updateButtonState(true);
+    this.toolBar.updateButtonState(true, false, true);
   },
 
   show: function () {
@@ -399,7 +399,8 @@ isc.OBStandardView.addProperties({
   // ** {{{ createMainParts }}} **
   // Creates the main layout components of this view.
   createMainParts: function () {
-    var me = this;
+    var me = this,
+        completeFieldsWithoutImages, fieldsWithoutImages;
     if (this.tabId && this.tabId.length > 0) {
       this.formGridLayout = isc.HLayout.create({
         canFocus: true,
@@ -428,7 +429,12 @@ isc.OBStandardView.addProperties({
         }
       });
 
-      this.viewGrid.setDataSource(this.dataSource, this.viewGrid.completeFields || this.viewGrid.fields);
+      // the grid should not show the image fields
+      // see issue 20049 (https://issues.openbravo.com/view.php?id=20049)
+      completeFieldsWithoutImages = this.removeImageFields(this.viewGrid.completeFields);
+      fieldsWithoutImages = this.removeImageFields(this.viewGrid.fields);
+
+      this.viewGrid.setDataSource(this.dataSource, completeFieldsWithoutImages || fieldsWithoutImages);
 
       if (this.viewGrid) {
         this.viewGrid.setWidth('100%');
@@ -504,6 +510,31 @@ isc.OBStandardView.addProperties({
       // children
       this.statusBar.maximizeButton.disable();
     }
+  },
+
+  // returns a copy of fields after deleting the image fields
+  // see issue 20049 (https://issues.openbravo.com/view.php?id=20049)
+  removeImageFields: function (fields) {
+    var indexesToDelete, i, length, fieldsWithoutImages;
+    indexesToDelete = [];
+    if (fields) {
+      fieldsWithoutImages = fields.duplicate();
+      length = fieldsWithoutImages.length;
+      // gets the index of the image fields
+      for (i = 0; i < length; i++) {
+        if (fieldsWithoutImages[i].targetEntity === 'ADImage') {
+          indexesToDelete.push(i);
+        }
+      }
+      // removes the image fields
+      length = indexesToDelete.length;
+      for (i = 0; i < length; i++) {
+        fieldsWithoutImages.splice(indexesToDelete[i] - i, 1);
+      }
+    } else {
+      fieldsWithoutImages = fields;
+    }
+    return fieldsWithoutImages;
   },
 
   getDirectLinkUrl: function () {
@@ -616,6 +647,9 @@ isc.OBStandardView.addProperties({
   setReadOnly: function (readOnly) {
     this.readOnly = readOnly;
     this.viewForm.readOnly = readOnly;
+    if (this.viewGrid && readOnly) {
+      this.viewGrid.setReadOnlyMode();
+    }
   },
 
   setSingleRecord: function (singleRecord) {
@@ -629,6 +663,15 @@ isc.OBStandardView.addProperties({
     // clear for a non-focusable item
     if (this.lastFocusedItem && !this.lastFocusedItem.getCanFocus()) {
       this.lastFocusedItem = null;
+    }
+
+    // Enable the shortcuts of the form and grid view
+    // See issue 20651 (https://issues.openbravo.com/view.php?id=20651)
+    if (this.viewForm && this.viewForm.enableShortcuts) {
+      this.viewForm.enableShortcuts();
+    }
+    if (this.viewGrid && this.viewGrid.enableShortcuts) {
+      this.viewGrid.enableShortcuts();
     }
 
     if (this.isShowingForm && this.viewForm && this.viewForm.getFocusItem()) {
@@ -727,6 +770,7 @@ isc.OBStandardView.addProperties({
       if (this.isShowingForm && !this.viewForm.isNew) {
         this.setTargetRecordInWindow(this.viewGrid.getSelectedRecord().id);
       }
+      this.toolBar.updateButtonState(true, false, true);
     } else {
 
       // close any editors we may have
@@ -756,8 +800,8 @@ isc.OBStandardView.addProperties({
     }
   },
 
-  doRefreshContents: function (doRefreshWhenVisible, forceRefresh) {
-
+  doRefreshContents: function (doRefreshWhenVisible, forceRefresh, keepSelection) {
+    var callback, me = this;
     // if not visible anymore, reset the view back
     if (!this.isViewVisible()) {
       if (this.isShowingForm) {
@@ -782,13 +826,20 @@ isc.OBStandardView.addProperties({
     // can be used by others to see that we are refreshing content
     this.refreshContents = true;
 
+    if (keepSelection) {
+      this.viewGrid.recordsSelectedBeforeRefresh = this.viewGrid.getSelectedRecords();
+      this.formVisibleBeforeRefresh = this.isShowingForm;
+    }
+
     // clear all our selections..
     // note the true parameter prevents autosave actions from happening
     // this should have been done before anyway
     this.viewGrid.deselectAllRecords(false, true);
 
     if (this.viewGrid.filterEditor) {
-      this.viewGrid.clearFilter(false, true);
+      // do not clear the implicit filter
+      // see issue https://issues.openbravo.com/view.php?id=19943
+      this.viewGrid.clearFilter(true, true);
     }
     if (this.viewGrid.data && this.viewGrid.data.setCriteria) {
       this.viewGrid.data.setCriteria(null);
@@ -810,7 +861,25 @@ isc.OBStandardView.addProperties({
       this.switchFormGridVisibility();
     }
 
-    this.viewGrid.refreshContents();
+    if (keepSelection) {
+      callback = function () {
+        var length, i, recordIndex;
+        length = me.viewGrid.recordsSelectedBeforeRefresh.length;
+        for (i = 0; i < length; i++) {
+          recordIndex = me.viewGrid.getRecordIndex(me.viewGrid.recordsSelectedBeforeRefresh[i]);
+          me.viewGrid.selectRecord(recordIndex);
+        }
+        if (me.formVisibleBeforeRefresh) {
+          me.switchFormGridVisibility();
+        }
+        delete me.formVisibleBeforeRefresh;
+        delete me.viewGrid.recordsSelectedBeforeRefresh;
+      };
+    } else {
+      callback = null;
+    }
+
+    this.viewGrid.refreshContents(callback);
 
     this.toolBar.updateButtonState(true);
 
@@ -823,7 +892,7 @@ isc.OBStandardView.addProperties({
     this.refreshContents = false;
   },
 
-  refreshChildViews: function () {
+  refreshChildViews: function (keepSelection) {
     var i, length, tabViewPane;
 
     if (this.childTabSet) {
@@ -832,24 +901,38 @@ isc.OBStandardView.addProperties({
         tabViewPane = this.childTabSet.tabs[i].pane;
         // force a refresh, only the visible ones will really 
         // be refreshed
-        tabViewPane.doRefreshContents(true);
+        tabViewPane.doRefreshContents(true, null, keepSelection);
       }
     }
   },
 
-  refreshChildViewsWithEntity: function (entity) {
-    var i, length, tabViewPane;
-    if (entity && this.childTabSet) {
-      length = this.childTabSet.tabs.length;
-      for (i = 0; i < length; i++) {
-        tabViewPane = this.childTabSet.tabs[i].pane;
-        // if the view belong to the input entity, it is refreshed
-        // See https://issues.openbravo.com/view.php?id=18951
-        if (tabViewPane && tabViewPane.entity === entity) {
-          tabViewPane.doRefreshContents(true);
+  refreshMeAndMyChildViewsWithEntity: function (entity, excludedTabIds) {
+    var i, length, tabViewPane, excludeTab = false;
+    if (entity && excludedTabIds) {
+      //Check is the tab has to be refreshed
+      for (i = 0; i < excludedTabIds.length; i++) {
+        if (excludedTabIds[i].match(this.tabId)) {
+          excludeTab = true;
+          // removes the tabId from the list of excluded, so it does
+          // not have to be checked by the child tabs
+          excludedTabIds.splice(i, 1);
+          break;
         }
-        // Refresh the child views of these tab
-        tabViewPane.refreshChildViewsWithEntity(entity);
+      }
+      // If it the tab is not in the exclude list, refresh 
+      // it if it belongs to the entered entity
+      if (!excludeTab) {
+        if (this.entity === entity) {
+          this.doRefreshContents(true);
+        }
+      }
+      // Refresh the child views of this tab
+      if (this.childTabSet) {
+        length = this.childTabSet.tabs.length;
+        for (i = 0; i < length; i++) {
+          tabViewPane = this.childTabSet.tabs[i].pane;
+          tabViewPane.refreshMeAndMyChildViewsWithEntity(entity, excludedTabIds);
+        }
       }
     }
   },
@@ -960,7 +1043,9 @@ isc.OBStandardView.addProperties({
   // Opens the edit form and selects the record in the grid, will refresh
   // child views also
   editRecord: function (record, preventFocus, focusFieldName) {
-
+    var rowNum,
+    // at this point the time fields of the record are formatted in local time
+    localTime = true;
     this.messageBar.hide();
 
     if (!this.isShowingForm) {
@@ -976,8 +1061,8 @@ isc.OBStandardView.addProperties({
 
       // also handle the case that there are unsaved values in the grid
       // show them in the form
-      var rowNum = this.viewGrid.getRecordIndex(record);
-      this.viewForm.editRecord(this.viewGrid.getEditedRecord(rowNum), preventFocus, this.viewGrid.recordHasChanges(rowNum), focusFieldName);
+      rowNum = this.viewGrid.getRecordIndex(record);
+      this.viewForm.editRecord(this.viewGrid.getEditedRecord(rowNum), preventFocus, this.viewGrid.recordHasChanges(rowNum), focusFieldName, localTime);
     }
   },
 
@@ -1087,6 +1172,14 @@ isc.OBStandardView.addProperties({
     if (!this.hasSelectionStateChanged()) {
       return;
     }
+
+    // If the record has been automatically selected because was the only record in the header tab,
+    // only select the record if the window has not been opened by clicking on the recent views icon to
+    // create a new record
+    // see issue https://issues.openbravo.com/view.php?id=20564
+    if (this.isShowingForm && this.viewForm.isNew) {
+      return;
+    }
     var me = this,
         callback = function () {
         me.delayedRecordSelected();
@@ -1123,6 +1216,9 @@ isc.OBStandardView.addProperties({
 
         if (!selectedRecordId || !this.isOpenDirectModeParent || selectedRecordId !== tabViewPane.parentRecordId) {
           tabViewPane.doRefreshContents(true);
+        }
+        if (this.isOpenDirectModeParent) {
+          tabViewPane.toolBar.updateButtonState(true);
         }
       }
     }
@@ -1271,7 +1367,7 @@ isc.OBStandardView.addProperties({
     // added check on tab as initially it is not set
     if (this.isRootView && tab) {
       // update the document title
-      document.title = 'Openbravo - ' + tab.title;
+      document.title = OB.Constants.WINTITLE + ' - ' + tab.title;
     }
   },
 
@@ -1288,7 +1384,10 @@ isc.OBStandardView.addProperties({
   // - refresh the current selected record without changing the selection
   // - refresh the parent/grand-parent in the same way without changing the selection
   // - recursive to children: refresh the children, put the children in grid mode and refresh
-  refresh: function (refreshCallback, autoSaveDone) {
+  refresh: function (refreshCallback, autoSaveDone, newRecordsToBeIncluded) {
+    // If a record should be visible after the refresh, even if it does not comply with the
+    // current filter, its ID should be entered in the newRecordsToBeIncluded parameter
+    // See issue https://issues.openbravo.com/view.php?id=20722
     var me = this,
         view = this,
         actionObject, formRefresh, callback;
@@ -1298,7 +1397,7 @@ isc.OBStandardView.addProperties({
       actionObject = {
         target: this,
         method: this.refresh,
-        parameters: [refreshCallback, true]
+        parameters: [refreshCallback, true, newRecordsToBeIncluded]
       };
       this.standardWindow.doActionAfterAutoSave(actionObject, false);
       return;
@@ -1315,18 +1414,21 @@ isc.OBStandardView.addProperties({
       me.viewForm.refresh();
     };
 
+    if (!newRecordsToBeIncluded) {
+      this.newRecordsAfterRefresh = [];
+    }
     if (!this.isShowingForm) {
-      this.viewGrid.refreshGrid(refreshCallback);
+      this.viewGrid.refreshGrid(refreshCallback, newRecordsToBeIncluded);
     } else {
       if (this.viewForm.hasChanged) {
         callback = function (ok) {
           if (ok) {
-            view.viewGrid.refreshGrid(formRefresh);
+            view.viewGrid.refreshGrid(formRefresh, newRecordsToBeIncluded);
           }
         };
         isc.ask(OB.I18N.getLabel('OBUIAPP_ConfirmRefresh'), callback);
       } else {
-        this.viewGrid.refreshGrid(formRefresh);
+        this.viewGrid.refreshGrid(formRefresh, newRecordsToBeIncluded);
       }
     }
   },
@@ -1432,7 +1534,7 @@ isc.OBStandardView.addProperties({
     var msg, dialogTitle, view = this,
         deleteCount, callback;
 
-    if (!this.readOnly) {
+    if (!this.readOnly && this.isDeleteableTable) {
       // first save what we have edited
       if (!autoSaveDone) {
         var actionObject = {
@@ -1738,7 +1840,14 @@ isc.OBStandardView.addProperties({
     if (this.isEditingGrid && this.viewGrid.getEditForm()) {
       rowNum = this.viewGrid.getEditRow();
       if (rowNum || rowNum === 0) {
-        record = isc.addProperties({}, this.viewGrid.getRecord(rowNum), this.viewGrid.getEditValues(rowNum));
+        if (this.viewGrid._hidingField || this.viewGrid._showingField) {
+          // If this has been caused by hiding or showing a field while the grid was being edited,
+          // add the properties of the saved edit values
+          // See issue https://issues.openbravo.com/view.php?id=21352
+          record = isc.addProperties({}, this.viewGrid.getRecord(rowNum), this.viewGrid.getEditValues(rowNum), this.viewGrid._savedEditValues);
+        } else {
+          record = isc.addProperties({}, this.viewGrid.getRecord(rowNum), this.viewGrid.getEditValues(rowNum));
+        }
       } else {
         record = isc.addProperties({}, this.viewGrid.getSelectedRecord());
       }
@@ -1835,11 +1944,28 @@ isc.OBStandardView.addProperties({
   },
 
   convertContextValue: function (value, type) {
-    var isTime = isc.isA.Date(value) && type && isc.SimpleType.getType(type).inheritsFrom === 'time';
+    var isTime;
+    // if a string is received, it is converted to a date so that the function
+    //   is able to return its UTC time in the HH:mm:ss format
+    if (isc.isA.String(value) && value.length > 0 && type && isc.SimpleType.getType(type).inheritsFrom === 'time') {
+      value = this.convertToDate(value);
+    }
+    isTime = isc.isA.Date(value) && type && isc.SimpleType.getType(type).inheritsFrom === 'time';
     if (isTime) {
       return value.getUTCHours() + ':' + value.getUTCMinutes() + ':' + value.getUTCSeconds();
     }
     return value;
+  },
+
+  convertToDate: function (stringValue) {
+    var today = new Date(),
+        dateValue = isc.Time.parseInput(stringValue);
+    // Only the time is relevant. In order to be able to convert it from UTC to local time
+    //   properly the date value should be today's date
+    dateValue.setYear(today.getFullYear());
+    dateValue.setMonth(today.getMonth());
+    dateValue.setDate(today.getDate());
+    return dateValue;
   },
 
   getPropertyDefinition: function (property) {
@@ -1925,10 +2051,10 @@ isc.OBStandardView.addProperties({
     return result;
   },
 
-  setFieldFormProperties: function (fld) {
+  setFieldFormProperties: function (fld, isGridField) {
     var onChangeFunction;
 
-    if (fld.displayed === false) {
+    if (fld.displayed === false && !isGridField) {
       fld.visible = false;
       fld.alwaysTakeSpace = false;
     }
@@ -1946,7 +2072,11 @@ isc.OBStandardView.addProperties({
         OB.Utilities.fixNull250(currentValues);
 
         try {
-          originalShowIfValue = this.originalShowIf(item, value, form, currentValues, context);
+          if (isc.isA.Function(this.originalShowIf)) {
+            originalShowIfValue = this.originalShowIf(item, value, form, currentValues, context);
+          } else {
+            originalShowIfValue = isc.JSON.decode(this.originalShowIf);
+          }
         } catch (_exception) {
           isc.warn(_exception + ' ' + _exception.message + ' ' + _exception.stack);
         }
@@ -2053,8 +2183,8 @@ isc.OBStandardView.addProperties({
       fld.escapeHTML = (fld.escapeHTML === false ? false : true);
       fld.prompt = fld.title;
       fld.editorProperties = isc.addProperties({}, fld, isc.shallowClone(fld.editorProps));
-      this.setFieldFormProperties(fld.editorProperties);
-
+      //issue 20192: 2nd parameter is true because fld.editorProperties is a grid property.
+      this.setFieldFormProperties(fld.editorProperties, true);
       if (fld.disabled) {
         fld.editorProperties.disabled = true;
       }
@@ -2074,7 +2204,7 @@ isc.OBStandardView.addProperties({
       }
 
       if (fld.fkField) {
-        fld.displayField = fld.name + '.' + OB.Constants.IDENTIFIER;
+        fld.displayField = fld.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER;
         fld.valueField = fld.name;
       }
 

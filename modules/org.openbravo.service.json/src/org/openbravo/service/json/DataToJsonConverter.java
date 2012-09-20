@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,6 +22,7 @@ package org.openbravo.service.json;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -63,6 +64,8 @@ public class DataToJsonConverter {
   private final SimpleDateFormat xmlDateFormat = JsonUtils.createDateFormat();
   private final SimpleDateFormat xmlDateTimeFormat = JsonUtils.createDateTimeFormat();
   private final static SimpleDateFormat xmlTimeFormat = JsonUtils.createTimeFormat();
+  private final static SimpleDateFormat xmlTimeFormatWithoutMTOffset = JsonUtils
+      .createTimeFormatWithoutGMTOffset();
 
   // additional properties to return as a flat list
   private List<String> additionalProperties = new ArrayList<String>();
@@ -165,7 +168,9 @@ public class DataToJsonConverter {
           continue;
         }
         final Object value = DalUtil.getValueFromPath(bob, additionalProperty);
-        if (value instanceof BaseOBObject) {
+        if (value == null) {
+          jsonObject.put(replaceDots(additionalProperty), (Object) null);
+        } else if (value instanceof BaseOBObject) {
           final Property additonalPropertyObject = getPropertyFromPath(bob, additionalProperty);
           addBaseOBObject(jsonObject, additonalPropertyObject, additionalProperty,
               additonalPropertyObject.getReferencedProperty(), (BaseOBObject) value);
@@ -174,9 +179,9 @@ public class DataToJsonConverter {
               .getPropertyFromPath(bob.getEntity(), additionalProperty);
           // identifier
           if (additionalProperty.endsWith(JsonConstants.IDENTIFIER)) {
-            jsonObject.put(additionalProperty, value);
+            jsonObject.put(replaceDots(additionalProperty), value);
           } else {
-            jsonObject.put(additionalProperty, convertPrimitiveValue(property, value));
+            jsonObject.put(replaceDots(additionalProperty), convertPrimitiveValue(property, value));
           }
         }
       }
@@ -189,6 +194,10 @@ public class DataToJsonConverter {
     } catch (JSONException e) {
       throw new IllegalStateException(e);
     }
+  }
+
+  private String replaceDots(String value) {
+    return value.replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR);
   }
 
   private Property getPropertyFromPath(BaseOBObject bob, String propertyPath) {
@@ -206,6 +215,7 @@ public class DataToJsonConverter {
       if (!currentEntity.hasProperty(part)) {
         return null;
       }
+      result = currentEntity.getProperty(part);
       value = currentBob.get(part);
       // if there is a next step, just make it
       // if it is last then we stop anyway
@@ -223,17 +233,19 @@ public class DataToJsonConverter {
     // jsonObject.put(propertyName, toJsonObject(obObject, DataResolvingMode.SHORT));
     if (referencedProperty != null) {
       try {
-        jsonObject.put(propertyName, obObject.get(referencedProperty.getName()));
+        jsonObject.put(propertyName.replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR),
+            obObject.get(referencedProperty.getName()));
       } catch (ObjectNotFoundException e) {
         // Referenced object does not exist, set UUID
         jsonObject.put(propertyName, e.getIdentifier());
-        jsonObject.put(propertyName + "." + JsonConstants.IDENTIFIER, e.getIdentifier());
+        jsonObject.put(propertyName + DalUtil.FIELDSEPARATOR + JsonConstants.IDENTIFIER,
+            e.getIdentifier());
         return;
       }
     } else {
       jsonObject.put(propertyName, obObject.getId());
     }
-    // jsonObject.put(propertyName + "." + JsonConstants.ID, obObject.getId());
+    // jsonObject.put(propertyName + DalUtil.DOT + JsonConstants.ID, obObject.getId());
 
     if (referencingProperty != null && referencingProperty.hasDisplayColumn()) {
 
@@ -241,19 +253,21 @@ public class DataToJsonConverter {
           referencingProperty.getDisplayPropertyName());
       if (displayColumnProperty.hasDisplayColumn()) {
         // Allowing one level deep of displayed column pointing to references with display column
-        jsonObject.put(propertyName + "." + JsonConstants.IDENTIFIER, ((BaseOBObject) obObject
-            .get(referencingProperty.getDisplayPropertyName())).get(displayColumnProperty
-            .getDisplayPropertyName()));
+        jsonObject.put(propertyName + DalUtil.FIELDSEPARATOR + JsonConstants.IDENTIFIER,
+            ((BaseOBObject) obObject.get(referencingProperty.getDisplayPropertyName()))
+                .get(displayColumnProperty.getDisplayPropertyName()));
       } else if (!displayColumnProperty.isPrimitive()) {
         // Displaying identifier for non primitive properties
-        jsonObject.put(propertyName + "." + JsonConstants.IDENTIFIER, ((BaseOBObject) obObject
-            .get(referencingProperty.getDisplayPropertyName())).getIdentifier());
+        jsonObject.put(propertyName + DalUtil.FIELDSEPARATOR + JsonConstants.IDENTIFIER,
+            ((BaseOBObject) obObject.get(referencingProperty.getDisplayPropertyName()))
+                .getIdentifier());
       } else {
-        jsonObject.put(propertyName + "." + JsonConstants.IDENTIFIER,
+        jsonObject.put(propertyName + DalUtil.FIELDSEPARATOR + JsonConstants.IDENTIFIER,
             obObject.get(referencingProperty.getDisplayPropertyName()));
       }
     } else {
-      jsonObject.put(propertyName + "." + JsonConstants.IDENTIFIER, obObject.getIdentifier());
+      jsonObject.put(propertyName.replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR)
+          + DalUtil.FIELDSEPARATOR + JsonConstants.IDENTIFIER, obObject.getIdentifier());
     }
   }
 
@@ -262,8 +276,11 @@ public class DataToJsonConverter {
     final Class<?> clz = property.getPrimitiveObjectType();
     if (Date.class.isAssignableFrom(clz)) {
       if (property.getDomainType() instanceof TimestampDomainType) {
-        final String formattedValue = xmlTimeFormat.format(value);
-        return JsonUtils.convertToCorrectXSDFormat(formattedValue);
+
+        Timestamp localTime = (Timestamp) value;
+        Date UTCTime = convertToUTC(localTime);
+
+        return xmlTimeFormatWithoutMTOffset.format(UTCTime.getTime());
       } else if (property.isDatetime() || Timestamp.class.isAssignableFrom(clz)) {
         final String formattedValue = xmlDateTimeFormat.format(value);
         return JsonUtils.convertToCorrectXSDFormat(formattedValue);
@@ -278,6 +295,20 @@ public class DataToJsonConverter {
       return Base64.encodeBase64String((byte[]) value);
     }
     return value;
+  }
+
+  private static Date convertToUTC(Date localTime) {
+    Calendar now = Calendar.getInstance();
+    Calendar calendar = Calendar.getInstance();
+    calendar.setTime(localTime);
+    calendar.set(Calendar.DATE, now.get(Calendar.DATE));
+    calendar.set(Calendar.MONTH, now.get(Calendar.MONTH));
+    calendar.set(Calendar.YEAR, now.get(Calendar.YEAR));
+
+    int gmtMillisecondOffset = (now.get(Calendar.ZONE_OFFSET) + now.get(Calendar.DST_OFFSET));
+    calendar.add(Calendar.MILLISECOND, -gmtMillisecondOffset);
+
+    return calendar.getTime();
   }
 
   protected Object convertPrimitiveValue(Object value) {

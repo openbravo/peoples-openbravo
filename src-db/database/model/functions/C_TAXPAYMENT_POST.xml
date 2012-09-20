@@ -16,7 +16,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2009 Openbravo SLU
+* All portions are Copyright (C) 2001-2012 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -86,6 +86,7 @@ v_currency_ID VARCHAR2(32);
 v_currencyratetype VARCHAR2(30);
 v_gl_category_ID VARCHAR2(32);
 v_period_ID VARCHAR2(32);
+v_gl_category_count  NUMBER;
 
 v_name NVARCHAR2(255);
 v_TRTcountY  NUMBER;
@@ -135,9 +136,26 @@ BEGIN
         from c_taxpayment
         where c_taxpayment_id=v_record_id;
 
-      select max(gl_category_id)
-      into v_gl_category_id
-      from gl_category where name='Standard';
+      select count(*) 
+      into v_gl_category_count
+      from gl_category 
+      where ad_isorgincluded(v_org_id, gl_category.ad_org_id, v_client_id)<>-1
+      AND gl_category.ad_client_id = v_client_id
+      and gl_category.categorytype = 'M';
+
+      if (v_gl_category_count>0) then
+          select max(gl_category_id)
+          into v_gl_category_id
+          from    (select gl_category_id
+		  from gl_category 
+		  where gl_category.categorytype = 'M'
+		  AND ad_isorgincluded(v_org_id, gl_category.ad_org_id, v_client_id)<>-1
+		  AND gl_category.ad_client_id = v_client_id
+		  order by isdefault desc) tmp;
+      else
+          RAISE_APPLICATION_ERROR(-20000, '@OrgForManualGLCategory@');
+      end if;
+   
 
         v_paymentrule := 'T';
         v_currencyratetype := 'S';
@@ -284,7 +302,7 @@ BEGIN
       from c_taxregister_type tt where tt.issotrx='N';
 
       if v_TRTcountY=0 or v_TRTcountN=0 then
-      RAISE_APPLICATION_ERROR(-20100, '@TwoRegisterTypesNeeded@');
+      RAISE_APPLICATION_ERROR(-20000, '@TwoRegisterTypesNeeded@');
       end if;
 
       select case when tt.issotrx='Y' then max(glitem_credit_acct) else max(glitem_debit_acct) end, max(tt.c_glitem_id)

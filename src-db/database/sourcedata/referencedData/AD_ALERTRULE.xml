@@ -495,14 +495,16 @@ where p.m_product_id = po.m_product_id
         now() as updated,
         0 as updatedBy
   from c_order o
-where o.processed = 'Y'
+ where o.processed = 'Y'
   and trunc(datepromised) <= trunc(now())
   and issotrx='N'
-  and not exists (select 1
-                from c_orderline ol
-              where o.c_order_id = ol.c_order_id
-                and qtydelivered !=0)
-and 0 != (select sum(qtyordered) 
+  and not exists (select 1 
+                from C_ORDERLINE l left join M_MATCHPO m on l.C_OrderLine_ID=m.C_OrderLine_ID
+                and  m.M_InOutLine_ID is not null 
+                where l.C_ORDER_ID = o.C_ORDER_ID
+                group by l.C_OrderLine_ID, l.QtyOrdered
+                having (l.QtyOrdered-SUM(COALESCE(m.Qty,0))) = 0)
+  and 0 != (select sum(qtyordered)
               from c_orderline ol
              where o.c_order_id = ol.c_order_id)]]></SQL>
 <!--1000021-->  <TYPE><![CDATA[D]]></TYPE>

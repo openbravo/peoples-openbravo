@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s): Enterprise Intelligence Systems (http://www.eintel.com.au).
  *************************************************************************
@@ -35,16 +35,19 @@
 <script language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/js/appStatus.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/searchs.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/ajax.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/default/MessageBox.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></script>
 <script language="JavaScript" src="../utility/DynamicJS.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/../org.openbravo.client.kernel/OBCLKER_Kernel/StaticResources" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/calculator.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/jscalendar/calendar.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/jscalendar/lang/calendar-es.js" type="text/javascript" id="fieldCalendar"></script>
 <script language="JavaScript" src="../../../../../web/js/default/DateTextBox.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/org.openbravo.advpaymentmngt/FIN_Utilities.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/js/appStatus.js" type="text/javascript"></script>
 <script type="text/javascript">
   window.onunload = reloadOpener; // reloads opener on closing
 </script>
@@ -53,6 +56,17 @@
 function validate(action) {
   var frm = document.frmMain;
   if (action=='openprocess') {
+	if (isMulticurrencyTxn()) {
+	  if (frm.inpActualConverted.value==null || frm.inpActualConverted.value=="") {
+	   setWindowElementFocus(frm.inpActualConverted);
+	   showJSMessage(7);
+	   return false;
+	  } else if (frm.inpExchangeRate.value==null || frm.inpExchangeRate.value=="") {
+	   setWindowElementFocus(frm.inpExchangeRate);
+	   showJSMessage(7);
+	   return false;
+	   }
+	 }
     if (frm.inpDocNumber.value==null || frm.inpDocNumber.value=="") {
       setWindowElementFocus(frm.inpDocNumber);
       showJSMessage(7);
@@ -81,16 +95,6 @@ function validate(action) {
       setWindowElementFocus(frm.inpPaymentDate);
       showJSMessage(7);
       return false;
-    } else if (isMulticurrencyTxn()) {
-      if (frm.inpActualConverted.value==null || frm.inpActualConverted.value=="") {
-        setWindowElementFocus(frm.inpActualConverted);
-        showJSMessage(7);
-        return false;
-      } else if (frm.inpExchangeRate.value==null || frm.inpExchangeRate.value=="") {
-        setWindowElementFocus(frm.inpExchangeRate);
-        showJSMessage(7);
-        return false;
-      }
     } else {
       var diffAction = frm.inpDifferenceAction,
           i,
@@ -118,6 +122,7 @@ function closeThisPage() {
 }
 function submitThisPage(strCommand) {
   if (validate(strCommand)) {
+    setProcessingMode('popup', true);
     submitCommandForm(strCommand, false, null, null);
     return true;
   }
@@ -215,9 +220,11 @@ function callBackExchangeRate(paramXMLParticular, XMLHttpRequestObj) {
     try {
       if (XMLHttpRequestObj.responseText) {
         var resp = decodeJSON(XMLHttpRequestObj.responseText);
-        document.getElementById('paramExchangeRate').value=resp.exchangeRate;
-      } else {
-        document.getElementById('paramExchangeRate').value='';
+        if (resp.exchangeRate) {
+          document.getElementById('paramExchangeRate').value=applyFormatJSToOBMasked(resp.exchangeRate, resp.formatOutput);  
+        } else {
+          document.getElementById('paramExchangeRate').value='';  
+        }
       }
       updateConvertedAmounts();
       displayMulticurrencyControls();
@@ -254,6 +261,16 @@ function displayMulticurrencyControls() {
   displayLogicElement('lblExpectedConverted', display );
   displayLogicElement('paramActualConvertedCell', display );
   displayLogicElement('lblActualConverted', display );
+  if (document.frmMain.strNotAllowExchange.value === 'Y' && display) {  
+      readOnlyLogicElement('paramExchangeRate', true);
+      readOnlyLogicElement('paramActualConverted', true);
+      displayLogicElement('actualConvertedCal', false );
+   }
+  else {
+      readOnlyLogicElement('paramExchangeRate', false);
+      readOnlyLogicElement('paramActualConverted', false);
+      displayLogicElement('actualConvertedCal', true );
+  }
 }
 
 
@@ -285,9 +302,12 @@ function callBackGrid(paramXMLParticular, XMLHttpRequestObj) {
           var newRows = '<table><tbody id=\"sectionGrid\">'+ aux;
           temp.innerHTML = newRows;
           tableBody.parentNode.replaceChild(temp.firstChild.firstChild, tableBody);
-          temp.parentNode.removeChild(temp);
+          if (temp.parentNode) {
+            temp.parentNode.removeChild(temp);
+          }
+        } else {
+          tableBody.innerHTML = aux;
         }
-        tableBody.innerHTML = aux;
         
         updateAll();
         updateTotal();
@@ -354,11 +374,20 @@ function callBackFinancialAccount(paramXMLParticular, XMLHttpRequestObj) {
         var resp = decodeJSON(XMLHttpRequestObj.responseText);
         createCombo(document.getElementById('inpFinancialAccount'), resp.combo);
         document.getElementById('paramFinancialAccountCurrencyId').value = resp.financialAccountCurrencyId;
-        document.getElementById('paramExchangeRate').value = resp.exchangeRate;
-      } else {
-        document.getElementById('inpFinancialAccount').innerHTML = '';
-        document.getElementById('paramFinancialAccountCurrencyId').value = '';
-        document.getElementById('paramExchangeRate').value = '';
+        if (resp.exchangeRate) {
+          document.getElementById('paramExchangeRate').value = applyFormatJSToOBMasked(resp.exchangeRate, resp.formatOutput);
+        } else {
+          document.getElementById('paramExchangeRate').value = '';
+        }
+        if (resp.twriteoff) {
+            document.getElementById('paramStrtypewriteoff').value = applyFormatJSToOBMasked(resp.twriteoff, resp.formatOutput);
+            document.getElementById('paramStrAmountwriteoff').value = applyFormatJSToOBMasked(resp.awriteoff, resp.formatOutput);
+        }
+        else{
+        	document.getElementById('paramStrtypewriteoff').value = '';
+            document.getElementById('paramStrAmountwriteoff').value = '';
+        }
+        updateDifference();
       }
       displayMulticurrencyControls();
       updateConvertedAmounts();
@@ -413,6 +442,7 @@ var strText = "";
     displayLogicElement('paramUseCreditContainer', hasCredit );
     displayLogicElement('rowCredit', hasCredit );
     displayMulticurrencyControls();
+    
     if (isTrue('isReceipt')) {
         setWindowElementFocus(frm.inpActualPayment);
     } else {
@@ -439,6 +469,10 @@ var strText = "";
   <input type="hidden" name="inpTabId" value="" id="fieldTabId"/>
   <input type="hidden" name="isReceipt" value="" id="fieldReceipt"/>
   <input type="hidden" name="isFirstLoad" value="true"/>
+  <input type="hidden" name="strNotAllowExchange" id="paramStrNotAllowExchange" value=""/>
+  <input type="hidden" name="strWriteOffLimit" id="paramStrWriteOffLimit" value=""/>
+  <input type="hidden" name="strtypewriteoff" id="paramStrtypewriteoff" value=""/>
+  <input type="hidden" name="strAmountwriteoff" id="paramStrAmountwriteoff" value=""/>
   <div class="Popup_ContentPane_CircleLogo">
     <div class="Popup_WindowLogo">
       <img class="Popup_WindowLogo_Icon Popup_WindowLogo_Icon_process" src="../../../../../web/images/blank.gif" border=0/></img>
@@ -691,7 +725,7 @@ var strText = "";
 
             <!-- Line 1 -->
             <tr>
-              <td class="TitleCell"><span name="lblP" id="lblPDocNo" class="LabelText">Payment Out Document No.</span><span name="lblR" id="lblRDocNo" class="LabelText">Payment In Document No.</span></td>
+              <td class="TitleCell"><span id="lblPDocNo" class="LabelText">Payment Document No.</span></td>
               <td class="TextBox_ContentCell" colspan="2"><input class="dojoValidateValid required TextBox_TwoCells_width" type="text" name="inpDocNumber" value="" id="paramDocNumber"></input></td>
               <td class="TitleCell"><span class="LabelText" name="lblR" id="lblRCustomerBalance">Customer Balance</span></td>
               <td class="TextBox_ContentCell"><input class="readonly dojoValidateValid TextBox_OneCell_width number" type="text" name="inpCustBalance" value="" id="paramCustBalance"></input></td>
@@ -756,7 +790,7 @@ var strText = "";
               <td class="Textbox_ContentCell">
                 <table style="border: 0px none; border-collapse: collapse;">
                   <tr><td style="padding-top: 0px;">
-                    <input type="text" onblur="numberInputEvent('onblur', this);" onfocus="numberInputEvent('onfocus', this);" outputformat="generalQtyEdition" onchange="updateConvertedAmounts();return true;" onpaste="changeToEditingMode('onpaste');" oncut="changeToEditingMode('oncut');" onkeypress="changeToEditingMode('onkeypress');" onkeydown="changeToEditingMode('onkeydown'); numberInputEvent('onkeydown', this, event);" onkeyup="" name="inpExchangeRate" maxlength="22" value="" required="true" class="dojoValidateValid required TextBox_btn_OneCell_width number" id="paramExchangeRate"/>
+                    <input type="text" onblur="numberInputEvent('onblur', this);" onfocus="numberInputEvent('onfocus', this);" outputformat="generalQtyRelation" onchange="updateConvertedAmounts();return true;" onpaste="changeToEditingMode('onpaste');" oncut="changeToEditingMode('oncut');" onkeypress="changeToEditingMode('onkeypress');" onkeydown="changeToEditingMode('onkeydown'); numberInputEvent('onkeydown', this, event);" onkeyup="" name="inpExchangeRate" maxlength="22" value="" required="true" class="dojoValidateValid required TextBox_btn_OneCell_width number" id="paramExchangeRate"/>
                   </td></tr>
                 </table>
                 <span id="paramExchangeRateinvalidSpan" style="display: none;" class="TextBox_MsgContainer_span">
@@ -775,7 +809,7 @@ var strText = "";
             
             <!-- Line 6 -->
             <tr>
-              <td class="TitleCell"><span name="lblP" id="lblPExpectedPaym" class="LabelText">Expected Payment Out</span><span name="lblR" id="lblRExpectedPaym" class="LabelText">Expected Payment In</span></td>
+              <td class="TitleCell"><span id="lblPExpectedPaym" class="LabelText">Expected Payment</span></td>
               <td class="TextBox_ContentCell"> <input class="readonly dojoValidateValid required TextBox_OneCell_width number" type="text" id="paramExpectedPayment" name="inpExpectedPayment" value="" onchange="updateDifference();updateConvertedAmounts();" disabled="true"></input>
               </td>
               <td class="TitleCell"></td>
@@ -787,7 +821,7 @@ var strText = "";
             
             <!-- Line 7 -->
             <tr>
-              <td class="TitleCell"><span name="lblP" id="lblPActualPaym"class="LabelText">Actual Payment Out</span><span name="lblR" id="lblRActualPaym" class="LabelText">Actual Payment In</span></td>
+              <td class="TitleCell"><span id="lblPActualPaym"class="LabelText">Actual Payment</span></td>
               <td class="TextBox_btn_ContentCell">
                   <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                     <tr>
@@ -855,7 +889,7 @@ var strText = "";
                       </span>
                       </td>
                       <td class="FieldButton_ContentCell">
-                      <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Amount From'; return true;" onblur=" window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="calculator('frmMain.inpActualConverted', document.frmMain.inpActualConverted.value, false);return false;">
+                      <a id="actualConvertedCal" class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Amount From'; return true;" onblur=" window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="calculator('frmMain.inpActualConverted', document.frmMain.inpActualConverted.value, false);return false;">
                       <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;" id="NoPackageslinkCalc">
                           <tr>
                             <td class="FieldButton_bg">
@@ -873,7 +907,7 @@ var strText = "";
             
             <!-- Line 8 -->
             <tr>
-              <td class="TitleCell"><span name="lblP" id="lblPPaymDate" class="LabelText">Payment Out Date</span><span name="lblR" id="lblRPaymDate"class="LabelText">Payment In Date</span></td>
+              <td class="TitleCell"><span id="lblPPaymDate" class="LabelText">Payment Date</span></td>
               <td class="TextBox_btn_ContentCell">
                 <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                   <tr>
@@ -922,8 +956,8 @@ var strText = "";
             <!-- Text -->
             <tr>
                 <td colspan="6" class="LabelText" style="font-weight: bold;">
-                    <span name="lblP" id="lblPText">Select additional purchase invoices or purchase orders that you want to add to this payment out</span>
-                    <span name="lblR" id="lblRText">Select additional sales invoices or sales orders that you want to add to this payment in</span>
+                    <span name="lblP" id="lblPText">Select additional purchase invoices or purchase orders that you want to add to this payment</span>
+                    <span name="lblR" id="lblRText">Select additional sales invoices or sales orders that you want to add to this payment</span>
                 </td>
             </tr>
             
@@ -974,8 +1008,7 @@ var strText = "";
              </tr>
              
              <tr>
-              <td class="TitleCell" ><span name="lblP" id="lblPShowAlternative" class="TitleCell LabelText"><label for="paramAlternativePaymentMethod">Show payments out for alternative payment methods</label></span>
-                                     <span name="lblR" id="lblRShowAlternative" class="TitleCell LabelText"><label for="paramAlternativePaymentMethod">Show payments in for alternative payment methods</label></span></td>
+              <td class="TitleCell" ><span id="lblPShowAlternative" class="TitleCell LabelText"><label for="paramAlternativePaymentMethod">Show payments for alternative payment methods</label></span></td>
               <td class="Radio_Check_ContentCell">
                 <span class="Radio_Check_ContentCell Checkbox_container_NOT_Focused"><input type="checkbox" name="inpAlternativePaymentMethod" value="Y" id="paramAlternativePaymentMethod" onclick="loadGridList()"></input></span>                
               </td>
@@ -1042,7 +1075,7 @@ var strText = "";
                         <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="100">Invoiced Amount</th>
                         <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="100">Expected Amount</th>
                         <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="100">Outstanding Amount</th>
-                        <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="110"><span name="lblP" id="lblPPayment">Payment Out</span><span name="lblR" id="lblRPayment">Payment In</span></th>
+                        <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="110"><span id="lblPPayment">Payment</span></th>
                       </tr>
                     </thead>
                     <tbody id="sectionGrid">
@@ -1087,6 +1120,12 @@ var strText = "";
                               <input type="radio" name="inpDifferenceAction" value="writeoff"/>
                             </td>
                             <td><span class="LabelText">Write off the difference</span></td>
+                          </tr>
+                          <tr id="writeofflimit">
+                            <td class="Radio_Check_ContentCell" >
+                              <input type="radio" name="inpDifferenceAction" value="writeofflimit" id="radiolimit" DISABLED/>
+                            </td>
+                            <td><span class="LabelText">Write off the difference (Above limit)</span></td>
                           </tr>
                         </table>
                       </td>

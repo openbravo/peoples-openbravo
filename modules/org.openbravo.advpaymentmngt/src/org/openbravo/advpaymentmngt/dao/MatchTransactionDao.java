@@ -407,14 +407,15 @@ public class MatchTransactionDao {
       projections.add(Projections.sum(FIN_BankStatementLine.PROPERTY_DRAMOUNT));
       obcBsl.setProjection(projections);
 
-      if (obcBsl.list() != null && obcBsl.list().size() > 0) {
-        @SuppressWarnings("rawtypes")
-        List o = obcBsl.list();
+      @SuppressWarnings("rawtypes")
+      List o = obcBsl.list();
+      if (o != null && o.size() > 0) {
         Object[] resultSet = (Object[]) o.get(0);
         BigDecimal credit = (resultSet[0] != null) ? (BigDecimal) resultSet[0] : BigDecimal.ZERO;
         BigDecimal debit = (resultSet[1] != null) ? (BigDecimal) resultSet[1] : BigDecimal.ZERO;
         total = credit.subtract(debit);
       }
+      o.clear();
 
     } finally {
       OBContext.restorePreviousMode();
@@ -459,14 +460,15 @@ public class MatchTransactionDao {
       projections.add(Projections.sum(FIN_BankStatementLine.PROPERTY_DRAMOUNT));
       obcBsl.setProjection(projections);
 
-      if (obcBsl.list() != null && obcBsl.list().size() > 0) {
-        @SuppressWarnings("rawtypes")
-        List o = obcBsl.list();
+      @SuppressWarnings("rawtypes")
+      List o = obcBsl.list();
+      if (o != null && o.size() > 0) {
         Object[] resultSet = (Object[]) o.get(0);
         BigDecimal credit = (resultSet[0] != null) ? (BigDecimal) resultSet[0] : BigDecimal.ZERO;
         BigDecimal debit = (resultSet[1] != null) ? (BigDecimal) resultSet[1] : BigDecimal.ZERO;
         total = credit.subtract(debit);
       }
+      o.clear();
 
     } finally {
       OBContext.restorePreviousMode();

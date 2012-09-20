@@ -38,6 +38,8 @@ isc.OBAlertGrid.addProperties({
   selectOnEdit: false,
   dataPageSize: 100,
 
+  arrowKeyAction: 'select',
+
   // keeps track if we are in objectSelectionMode or in toggleSelectionMode
   // objectSelectionMode = singleRecordSelection === true
   singleRecordSelection: false,
@@ -50,7 +52,7 @@ isc.OBAlertGrid.addProperties({
   gridFields: [{
     name: 'alertRule',
     title: OB.I18N.getLabel('OBUIAPP_AlertGrid_AlertRule'),
-    displayField: 'alertRule._identifier',
+    displayField: 'alertRule' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
     canFilter: true,
     canEdit: false,
     filterOnKeypress: true,
@@ -191,7 +193,7 @@ isc.OBAlertGrid.addProperties({
       }
     }
     if (alertRuleIds !== '') {
-      whereClause += ' and alertRule.id in (' + alertRuleIds + ')';
+      whereClause += ' and e.alertRule.id in (' + alertRuleIds + ')';
     } else {
       whereClause += ' and 1=2';
     }

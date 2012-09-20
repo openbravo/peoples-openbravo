@@ -169,8 +169,8 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
     StringBuffer additionalFilter = new StringBuffer();
     final String entityAlias = sel.getEntityAlias();
     // Client filter
-    additionalFilter.append(entityAlias + ".client.id ='")
-        .append(OBContext.getOBContext().getCurrentClient().getId()).append("'");
+    additionalFilter.append(entityAlias + ".client.id in ('0', '")
+        .append(OBContext.getOBContext().getCurrentClient().getId()).append("')");
 
     // Organization filter
     final String orgs = getOrgs(parameters.get(JsonConstants.ORG_PARAMETER));

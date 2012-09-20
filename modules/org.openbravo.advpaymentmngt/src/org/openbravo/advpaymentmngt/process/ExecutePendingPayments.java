@@ -35,6 +35,10 @@ public class ExecutePendingPayments extends DalBaseProcess {
     try {
       List<APRMPendingPaymentFromInvoice> pendingPayments = dao.getPendingPayments();
       List<FIN_Payment> payments = new ArrayList<FIN_Payment>();
+      // If there are no pending payments to process, return and skip this process.
+      if (pendingPayments.size() == 0) {
+        return;
+      }
       try {
         for (APRMPendingPaymentFromInvoice pendingPayment : pendingPayments) {
           if (executionProcess != null

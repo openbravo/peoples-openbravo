@@ -37,7 +37,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="CLASSNAME" primaryKey="false" required="true" type="NVARCHAR" size="60" autoIncrement="false">
+      <column name="CLASSNAME" primaryKey="false" required="true" type="NVARCHAR" size="1000" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>

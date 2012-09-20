@@ -17,22 +17,19 @@
  ************************************************************************
  */
 
-isc.defineClass('OBPickAndExecuteView', isc.OBPopup);
+isc.defineClass('OBPickAndExecuteView', isc.VLayout);
 
 
 isc.OBPickAndExecuteView.addProperties({
+  // Set default properties for the OBPopup container
+  showMinimizeButton: true,
+  showMaximizeButton: true,
+  popupWidth: '90%',
+  popupHeight: '90%',
+  // Set later inside initWidget
+  firstFocusedItem: null,
 
-  // Override default properties of OBPopup
-  canDragReposition: false,
-  canDragResize: false,
-  isModal: false,
-  showModalMask: false,
-  dismissOnEscape: false,
-  showMinimizeButton: false,
-  showMaximizeButton: false,
-  showFooter: false,
-  showTitle: true,
-
+  // Set now pure P&E layout properties
   width: '100%',
   height: '100%',
   overflow: 'auto',
@@ -49,19 +46,32 @@ isc.OBPickAndExecuteView.addProperties({
   initWidget: function () {
 
     var view = this,
-        okButton, cancelButton, i, buttonLayout = [];
+        okButton, newButton, cancelButton, i, buttonLayout = [];
 
     function actionClick() {
+      view.messageBar.hide();
       if (view.validate()) {
         view.doProcess(this._buttonValue);
+      } else {
+        // If the messageBar is visible, it means that it has been set due to a custom validation inside view.validate()
+        // so we don't want to overwrite it with the generic OBUIAPP_ErrorInFields message
+        if (!view.messageBar.isVisible()) {
+          view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_ErrorInFields'));
+        }
       }
     }
+
+    this.messageBar = isc.OBMessageBar.create({
+      visibility: 'hidden',
+      view: this
+    });
 
     okButton = isc.OBFormButton.create({
       title: OB.I18N.getLabel('OBUIAPP_Done'),
       _buttonValue: 'DONE',
       click: actionClick
     });
+    this.firstFocusedItem = okButton;
 
     cancelButton = isc.OBFormButton.create({
       title: OB.I18N.getLabel('OBUISC_Dialog.CANCEL_BUTTON_TITLE'),
@@ -109,11 +119,14 @@ isc.OBPickAndExecuteView.addProperties({
       for (i in this.buttons) {
         if (this.buttons.hasOwnProperty(i)) {
 
-          buttonLayout.push(isc.OBFormButton.create({
+          newButton = isc.OBFormButton.create({
             title: this.buttons[i],
             _buttonValue: i,
             click: actionClick
-          }));
+          });
+          buttonLayout.push(newButton);
+          OB.TestRegistry.register('org.openbravo.client.application.process.pickandexecute.button.' + i, newButton);
+
 
           // pushing a spacer
           buttonLayout.push(isc.LayoutSpacer.create({
@@ -123,6 +136,7 @@ isc.OBPickAndExecuteView.addProperties({
       }
     } else {
       buttonLayout.push(okButton);
+      OB.TestRegistry.register('org.openbravo.client.application.process.pickandexecute.button.ok', okButton);
       buttonLayout.push(isc.LayoutSpacer.create({
         width: 32
       }));
@@ -130,6 +144,8 @@ isc.OBPickAndExecuteView.addProperties({
 
     buttonLayout.push(cancelButton);
     buttonLayout.push(isc.LayoutSpacer.create({}));
+    OB.TestRegistry.register('org.openbravo.client.application.process.pickandexecute.button.cancel', cancelButton);
+
 
     if (this.viewProperties.allowAdd) {
       this.addNewButton = isc.OBLinkButtonItem.create({
@@ -144,12 +160,12 @@ isc.OBPickAndExecuteView.addProperties({
         }
       });
     }
-    OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.pickandexecute.button.addnew', this.addNewButton);
+    OB.TestRegistry.register('org.openbravo.client.application.process.pickandexecute.button.addnew', this.addNewButton);
 
-    this.items = [this.viewGrid, isc.HLayout.create({
+    this.members = [this.messageBar, this.viewGrid, isc.HLayout.create({
       height: 1,
       overflow: 'visible',
-      align: 'left',
+      align: OB.Styles.Process.PickAndExecute.addNewButtonAlign,
       width: '100%',
       visibility: (this.addNewButton ? 'visible' : 'hidden'),
       members: (this.addNewButton ? [this.addNewButton] : [])
@@ -168,6 +184,7 @@ isc.OBPickAndExecuteView.addProperties({
     })];
 
     this.Super('initWidget', arguments);
+    OB.TestRegistry.register('org.openbravo.client.application.process.pickandexecute.popup', this);
 
     if (this.viewGrid.saveLocally) {
       // Using "disconnected" data to avoid update/remove/add operations to the back-end
@@ -181,10 +198,6 @@ isc.OBPickAndExecuteView.addProperties({
   closeClick: function (refresh, message) {
     var window = this.parentWindow;
 
-    window.processLayout.hide();
-    window.toolBarLayout.show();
-    window.view.show();
-
     if (message) {
       window.view.messageBar.setMessage(message.severity, message.text);
     }
@@ -193,7 +206,10 @@ isc.OBPickAndExecuteView.addProperties({
       window.refresh();
     }
 
-    this.Super('closeClick', arguments);
+    this.closeClick = function () {
+      return true;
+    }; // To avoid loop when "Super call"
+    this.parentElement.parentElement.closeClick(); // Super call
   },
 
   prepareGridFields: function (fields) {
@@ -234,6 +250,7 @@ isc.OBPickAndExecuteView.addProperties({
       canSort: false,
       canReorder: false,
       canHide: false,
+      frozen: true,
       canFreeze: false,
       canDragResize: false,
       canGroupBy: false,
@@ -241,7 +258,7 @@ isc.OBPickAndExecuteView.addProperties({
       width: OB.Styles.Process.PickAndExecute.pinColumnWidth,
       formatCellValue: function (value, record, rowNum, colNum, grid) {
         if (record[grid.selectionProperty]) {
-          return '<img src="' + OB.Styles.Process.PickAndExecute.iconPinSrc + '" />';
+          return '<img class="' + OB.Styles.Process.PickAndExecute.iconPinStyle + '" src="' + OB.Styles.Process.PickAndExecute.iconPinSrc + '" />';
         }
         return '';
       },
@@ -279,7 +296,7 @@ isc.OBPickAndExecuteView.addProperties({
             onmouseover = 'this.src=\'' + srcWithoutExt + '_Over.' + srcExt + '\'',
             onmousedown = 'this.src=\'' + srcWithoutExt + '_Down.' + srcExt + '\'',
             onmouseout = 'this.src=\'' + src + '\'';
-        return '<img style="cursor: pointer;" onmouseover="' + onmouseover + '" onmousedown="' + onmousedown + '" onmouseout="' + onmouseout + '" src="' + src + '" />';
+        return '<img class="' + OB.Styles.Process.PickAndExecute.iconDeleteStyle + '" onmouseover="' + onmouseover + '" onmousedown="' + onmousedown + '" onmouseout="' + onmouseout + '" src="' + src + '" />';
       },
       formatEditorValue: function (value, record, rowNum, colNum, grid) {
         return this.formatCellValue(arguments);

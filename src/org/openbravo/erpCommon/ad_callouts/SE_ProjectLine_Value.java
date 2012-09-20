@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -30,6 +30,7 @@ import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.Tax;
 import org.openbravo.erpCommon.utility.DateTimeData;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
@@ -51,11 +52,14 @@ public class SE_ProjectLine_Value extends HttpSecureAppServlet {
       String strProjectId = vars.getStringParameter("inpcProjectId");
       String strPhaseId = vars.getStringParameter("inpcProjectphaseId");
       String strADOrgID = vars.getStringParameter("inpadOrgId");
+      String strPriceStd = vars.getNumericParameter("inpmProductId_PSTD");
+      String strCreatePL = vars.getStringParameter("inpcreatetemppricelist");
+      String strStatus = vars.getStringParameter("inpprojectstatus");
       String strPriceListVersion = vars.getGlobalVariable("inpPriceListVersion",
           "Product.priceListVersion", "");
       try {
         printPage(response, vars, strmProductId, strPriceListVersion, strTabId, strProjectId,
-            strPhaseId, strADOrgID);
+            strPhaseId, strADOrgID, strPriceStd, strCreatePL, strStatus);
       } catch (ServletException ex) {
         pageErrorCallOut(response);
       }
@@ -65,7 +69,8 @@ public class SE_ProjectLine_Value extends HttpSecureAppServlet {
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars,
       String strmProductId, String strPriceListVersion, String strTabId, String strProjectId,
-      String strPhaseId, String strADOrgID) throws IOException, ServletException {
+      String strPhaseId, String strADOrgID, String strPriceStd, String strCreatePL, String strStatus)
+      throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -106,6 +111,11 @@ public class SE_ProjectLine_Value extends HttpSecureAppServlet {
         } else
           strMessage = "PriceNotFound";
       }
+      if ("OR".equalsIgnoreCase(strStatus) && "Y".equalsIgnoreCase(strCreatePL)) {
+        // Warning message: is not going to add in the pricelist.
+        strMessage = OBMessageUtils.messageBD("PriceListNotUpdated");
+      }
+      resultado.append("new Array(\"inpplannedprice\", " + strPriceStd + " ),\n");
       if (!strProjCat.equals("S")) {
         if (strCBPartnerLocationID != null && !strCBPartnerLocationID.equals("")
             && strMWarehouseID != null && !strMWarehouseID.equals("")) {

@@ -223,6 +223,7 @@
       v_TaxID := C_GetTax(Cur_workproposal.M_Product_ID, v_DateDoc, v_Org_ID, v_M_Warehouse_ID, v_BillTo_ID, v_BPartner_Location_ID, null, 'N');
 
       v_ResultStr:='Insert order line';
+
       INSERT INTO C_OrderLine
         (C_ORDERLINE_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE,
          CREATED, CREATEDBY, UPDATED, UPDATEDBY,
@@ -239,7 +240,7 @@
        Cur_workproposal.PLANNEDORDERDATE, Cur_workproposal.PLANNEDDATE, v_Description, Cur_workproposal.M_Product_ID,
        v_M_Warehouse_ID, Cur_workproposal.C_UOM_ID, Cur_workproposal.QTY, Cur_workproposal.C_Currency_ID,
        v_PriceList, v_PriceActual, v_PriceLimit,
-       v_PriceStd, v_PriceActual*Cur_workproposal.QTY,(((v_PriceList-v_PriceStd) / v_PriceList) * 100),
+       v_PriceStd, v_PriceActual*Cur_workproposal.QTY,CASE v_PriceList WHEN 0 THEN 0 ELSE ROUND((((v_PriceList-v_PriceStd) / v_PriceList) * 100),2) END,
        v_TaxID
       );
 

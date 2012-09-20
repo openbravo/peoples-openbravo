@@ -50,7 +50,6 @@
   {"id": "ViewGrid_EditInGrid", "keyComb": {"key": "f2"}},
   {"id": "ViewGrid_CancelEditing", "keyComb": {"key": "Escape"}},
   {"id": "ViewGrid_DeleteSelectedRecords", "keyComb": {"key": "Delete"}},
-  {"id": "ViewGrid_CancelChanges", "keyComb": {"key": "Escape"}},
   {"id": "ViewForm_OpenLinkOut", "keyComb": {"ctrl": true, "alt": true, "key": "Enter"}},
   {"id": "Selector_ShowPopup", "keyComb": {"ctrl": true, "key": "Enter"}},
   {"id": "SelectorLink_ShowPopup", "keyComb": {"ctrl": true, "key": "Enter"}}

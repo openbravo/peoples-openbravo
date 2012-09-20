@@ -19,7 +19,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2011 Openbravo SLU
+* All portions are Copyright (C) 2001-2012 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -54,6 +54,7 @@
   v_DocBaseTypeTarget VARCHAR(60);
   v_IsReturnDocType CHAR(1);
   v_IsBinding CHAR(1):='Y';
+  v_istaxincluded CHAR(1);
   --
   ToDeliver NUMBER;
   ToInvoice NUMBER;
@@ -107,6 +108,8 @@
   v_precision NUMBER;
   Cur_OrderLine RECORD;
   v_DiscountExist NUMBER;
+  v_gross_unit_price NUMBER;
+  v_line_gross_amount NUMBER;
   BEGIN
     IF (p_PInstance_ID IS NOT NULL) THEN
       --  Update AD_PInstance
@@ -139,16 +142,16 @@
     */
     v_ResultStr:='ReadingOrder';
     SELECT Processing, Processed, DocAction, DocStatus,
-      C_DocType_ID, C_DocTypeTarget_ID, AD_Client_ID,
-      AD_Org_ID, UpdatedBy, M_Warehouse_ID, TRUNC(DateOrdered),
-      Issotrx, c_Bpartner_Id, c_currency_id, C_PROJECT_ID,
-      C_BPartner_ID, M_PriceList_ID, invoicerule
+      C_DocType_ID, C_DocTypeTarget_ID, c_order.AD_Client_ID,
+      c_order.AD_Org_ID, c_order.UpdatedBy, M_Warehouse_ID, TRUNC(DateOrdered),
+      Issotrx, c_Bpartner_Id, c_order.c_currency_id, C_PROJECT_ID,
+      C_BPartner_ID, c_order.M_PriceList_ID, invoicerule, m_pricelist.istaxincluded
     INTO v_IsProcessing, v_IsProcessed, v_DocAction, v_DocStatus,
       v_DocType_ID, v_DocTypeTarget_ID, v_Client_ID,
       v_Org_ID, v_UpdatedBy, v_M_Warehouse_ID, v_Date,
       v_isSoTrx, v_c_Bpartner_Id, v_c_currency_id, v_C_PROJECT_ID,
-      v_CBPartner_ID, v_PriceList_ID, v_invoicerule
-    FROM C_ORDER
+      v_CBPartner_ID, v_PriceList_ID, v_invoicerule, v_istaxincluded
+    FROM C_ORDER JOIN m_pricelist ON c_order.m_pricelist_id = m_pricelist.m_pricelist_id
     WHERE C_Order_ID=v_Record_ID  FOR UPDATE;
     -- Get current DocSubTypeSO
     SELECT DocSubTypeSO
@@ -421,35 +424,79 @@
         -- Cancel undelivered Items
         IF (v_isSoTrx='Y') THEN --Sales orders
           UPDATE C_ORDERLINE
-          SET QtyOrdered=GREATEST(QtyDelivered, qtyinvoiced),
+          SET QtyOrdered=(CASE WHEN (qtyinvoiced = 0) THEN QtyDelivered ELSE 
+				(CASE WHEN (QtyDelivered = 0) THEN qtyinvoiced ELSE 
+					(CASE WHEN (QtyDelivered < 0 AND qtyinvoiced < 0) THEN LEAST(QtyDelivered, qtyinvoiced) ELSE GREATEST(QtyDelivered, qtyinvoiced) END) END) END),
               --MODIFIED BY P.SAROBE
-              linenetamt=GREATEST(QtyDelivered, qtyinvoiced)*priceactual,
-              --MODIFIED BY F.IRIAZABAL
-              QuantityOrder=QuantityOrder,
+              linenetamt=(CASE WHEN (qtyinvoiced = 0) THEN QtyDelivered ELSE 
+				(CASE WHEN (QtyDelivered = 0) THEN qtyinvoiced ELSE 
+					(CASE WHEN (QtyDelivered < 0 AND qtyinvoiced < 0) THEN LEAST(QtyDelivered, qtyinvoiced) ELSE GREATEST(QtyDelivered, qtyinvoiced) END) END) END) * priceactual,
+              QuantityOrder= CASE WHEN M_PRODUCT_UOM_ID IS NULL THEN QuantityOrder
+                             ELSE (c_uom_convert((CASE WHEN (qtyinvoiced = 0) THEN QtyDelivered ELSE 
+				(CASE WHEN (QtyDelivered = 0) THEN qtyinvoiced ELSE 
+					(CASE WHEN (QtyDelivered < 0 AND qtyinvoiced < 0) THEN LEAST(QtyDelivered, qtyinvoiced) ELSE GREATEST(QtyDelivered, qtyinvoiced) END) END) END), C_UOM_ID, (SELECT UOM.C_UOM_ID FROM M_PRODUCT_UOM UOM WHERE UOM.M_PRODUCT_UOM_ID=C_ORDERLINE.M_PRODUCT_UOM_ID),'Y')) END,
               Updated=now()
           WHERE C_Order_ID=v_Record_ID
-            AND QtyOrdered<>GREATEST(QtyDelivered, qtyinvoiced);
+            AND QtyOrdered <> (SELECT (CASE WHEN (qtyinvoiced = 0) THEN QtyDelivered ELSE 
+				(CASE WHEN (QtyDelivered = 0) THEN qtyinvoiced ELSE 
+					(CASE WHEN (QtyDelivered < 0 AND qtyinvoiced < 0) THEN LEAST(QtyDelivered, qtyinvoiced) ELSE GREATEST(QtyDelivered, qtyinvoiced) END) END) END)
+                             FROM C_ORDERLINE COL
+                             WHERE COL.C_ORDERLINE_ID = C_ORDERLINE.C_ORDERLINE_ID);
           -- For Purchase orders, M_MatchPO table used. Notice that only delivered lines(C_Invoiceline_Id is null) using
         ELSE
           UPDATE C_ORDERLINE
           SET QTYORDERED=COALESCE((
-                  SELECT GREATEST(SUM(CASE WHEN M_MATCHPO.C_INVOICELINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END),
-                               SUM(CASE WHEN M_MATCHPO.M_INOUTLINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END))
+                  SELECT (CASE WHEN (SUM(CASE WHEN M_MATCHPO.M_INOUTLINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END) = 0) 
+				THEN SUM(CASE WHEN M_MATCHPO.C_INVOICELINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END) ELSE 
+					(CASE WHEN (SUM(CASE WHEN M_MATCHPO.C_INVOICELINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END) = 0) 
+						THEN SUM(CASE WHEN M_MATCHPO.M_INOUTLINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END)  
+						ELSE (CASE WHEN (SUM(CASE WHEN M_MATCHPO.M_INOUTLINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END) < 0 AND SUM(CASE WHEN M_MATCHPO.C_INVOICELINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END) < 0)  
+							THEN LEAST(SUM(CASE WHEN M_MATCHPO.M_INOUTLINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END),SUM(CASE WHEN M_MATCHPO.C_INVOICELINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END)) 
+							ELSE GREATEST(SUM(CASE WHEN M_MATCHPO.M_INOUTLINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END),SUM(CASE WHEN M_MATCHPO.C_INVOICELINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END)) END) 
+					END)
+				END)
                   FROM M_MATCHPO
                   WHERE M_MATCHPO.C_ORDERLINE_ID=C_ORDERLINE.C_ORDERLINE_ID
                   ), 0),
-              QuantityOrder=C_ORDERLINE.QuantityOrder,
+              QuantityOrder=CASE WHEN M_PRODUCT_UOM_ID IS NULL THEN QuantityOrder
+                             ELSE c_uom_convert(COALESCE((
+                  SELECT (CASE WHEN (SUM(CASE WHEN M_MATCHPO.M_INOUTLINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END) = 0) 
+				THEN SUM(CASE WHEN M_MATCHPO.C_INVOICELINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END) ELSE 
+					(CASE WHEN (SUM(CASE WHEN M_MATCHPO.C_INVOICELINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END) = 0) 
+						THEN SUM(CASE WHEN M_MATCHPO.M_INOUTLINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END)  
+						ELSE (CASE WHEN (SUM(CASE WHEN M_MATCHPO.M_INOUTLINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END) < 0 AND SUM(CASE WHEN M_MATCHPO.C_INVOICELINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END) < 0)  
+							THEN LEAST(SUM(CASE WHEN M_MATCHPO.M_INOUTLINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END),SUM(CASE WHEN M_MATCHPO.C_INVOICELINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END)) 
+							ELSE GREATEST(SUM(CASE WHEN M_MATCHPO.M_INOUTLINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END),SUM(CASE WHEN M_MATCHPO.C_INVOICELINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END)) END) 
+					END)
+				END)
+                  FROM M_MATCHPO
+                  WHERE M_MATCHPO.C_ORDERLINE_ID=C_ORDERLINE.C_ORDERLINE_ID
+                  ), 0),C_UOM_ID,(SELECT UOM.C_UOM_ID FROM M_PRODUCT_UOM UOM WHERE UOM.M_PRODUCT_UOM_ID=C_ORDERLINE.M_PRODUCT_UOM_ID),'Y') END,
               Updated=now(),
               linenetamt=COALESCE((
-                  SELECT GREATEST(SUM(CASE WHEN M_MATCHPO.C_INVOICELINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END),
-                               SUM(CASE WHEN M_MATCHPO.M_INOUTLINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END))
+                  SELECT (CASE WHEN (SUM(CASE WHEN M_MATCHPO.M_INOUTLINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END) = 0) 
+				THEN SUM(CASE WHEN M_MATCHPO.C_INVOICELINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END) ELSE 
+					(CASE WHEN (SUM(CASE WHEN M_MATCHPO.C_INVOICELINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END) = 0) 
+						THEN SUM(CASE WHEN M_MATCHPO.M_INOUTLINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END)  
+						ELSE (CASE WHEN (SUM(CASE WHEN M_MATCHPO.M_INOUTLINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END) < 0 AND SUM(CASE WHEN M_MATCHPO.C_INVOICELINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END) < 0)  
+							THEN LEAST(SUM(CASE WHEN M_MATCHPO.M_INOUTLINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END),SUM(CASE WHEN M_MATCHPO.C_INVOICELINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END)) 
+							ELSE GREATEST(SUM(CASE WHEN M_MATCHPO.M_INOUTLINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END),SUM(CASE WHEN M_MATCHPO.C_INVOICELINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END)) END) 
+					END)
+				END)
                   FROM M_MATCHPO
                   WHERE M_MATCHPO.C_ORDERLINE_ID=C_ORDERLINE.C_ORDERLINE_ID
                   ), 0)*priceactual
           WHERE C_ORDERLINE.C_ORDER_ID=v_Record_ID
             AND qtyordered <> COALESCE((
-                  SELECT GREATEST(SUM(CASE WHEN M_MATCHPO.C_INVOICELINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END),
-                               SUM(CASE WHEN M_MATCHPO.M_INOUTLINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END))
+                  SELECT (CASE WHEN (SUM(CASE WHEN M_MATCHPO.M_INOUTLINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END) = 0) 
+				THEN SUM(CASE WHEN M_MATCHPO.C_INVOICELINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END) ELSE 
+					(CASE WHEN (SUM(CASE WHEN M_MATCHPO.C_INVOICELINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END) = 0) 
+						THEN SUM(CASE WHEN M_MATCHPO.M_INOUTLINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END)  
+						ELSE (CASE WHEN (SUM(CASE WHEN M_MATCHPO.M_INOUTLINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END) < 0 AND SUM(CASE WHEN M_MATCHPO.C_INVOICELINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END) < 0)  
+							THEN LEAST(SUM(CASE WHEN M_MATCHPO.M_INOUTLINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END),SUM(CASE WHEN M_MATCHPO.C_INVOICELINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END)) 
+							ELSE GREATEST(SUM(CASE WHEN M_MATCHPO.M_INOUTLINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END),SUM(CASE WHEN M_MATCHPO.C_INVOICELINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END)) END) 
+					END)
+				END)
                   FROM M_MATCHPO
                   WHERE M_MATCHPO.C_ORDERLINE_ID=C_ORDERLINE.C_ORDERLINE_ID
                   ), 0);
@@ -601,7 +648,8 @@
         v_OldCumDiscount:=v_OldCumDiscount + v_CumDiscount;
         FOR Cur_TaxDiscount IN
            (SELECT C_ORDERLINE.C_TAX_ID,
-              SUM(C_ORDERLINE.LINENETAMT) AS LINENETAMT
+              SUM(C_ORDERLINE.LINENETAMT) AS LINENETAMT,
+              SUM(C_ORDERLINE.LINE_GROSS_AMOUNT) AS LINEGROSSAMT
             FROM C_ORDERLINE
             WHERE C_ORDER_ID=v_Record_ID
               AND C_ORDERLINE.LINENETAMT<>0
@@ -609,10 +657,22 @@
             GROUP BY C_TAX_ID
             )
         LOOP
-          IF (Cur_COrderDiscount.CASCADE='Y') THEN
-            v_Discount:=(-1) * Cur_TaxDiscount.LINENETAMT * v_CumDiscount;
+          IF (v_istaxincluded = 'Y') THEN
+            IF (Cur_COrderDiscount.CASCADE='Y') THEN
+              v_line_gross_amount:=(-1) * Cur_TaxDiscount.LINEGROSSAMT * v_CumDiscount;
+            ELSE
+              v_line_gross_amount:=(-1) * Cur_TaxDiscount.LINEGROSSAMT * Cur_COrderDiscount.Discount/100;
+            END IF;
+            v_Discount:= C_GET_NET_PRICE_FROM_GROSS(Cur_TaxDiscount.C_TAX_ID, v_line_gross_amount, 0, v_precision, 1);
+            v_gross_unit_price:= v_line_gross_amount;
           ELSE
-            v_Discount:=(-1) * Cur_TaxDiscount.LINENETAMT * Cur_COrderDiscount.Discount/100;
+            IF (Cur_COrderDiscount.CASCADE='Y') THEN
+              v_Discount:=(-1) * Cur_TaxDiscount.LINENETAMT * v_CumDiscount;
+            ELSE
+              v_Discount:=(-1) * Cur_TaxDiscount.LINENETAMT * Cur_COrderDiscount.Discount/100;
+            END IF;
+            v_gross_unit_price:= 0;
+            v_line_gross_amount:= 0;
           END IF;
 
           SELECT COUNT(*) INTO v_DiscountExist FROM C_ORDERLINE
@@ -632,7 +692,8 @@
                 pricelist, priceactual, pricelimit, linenetamt, discount, freightamt,
                 c_charge_id, chargeamt, c_tax_id, s_resourceassignment_id, ref_orderline_id,
                 m_attributesetinstance_id, isdescription, quantityorder, m_product_uom_id,
-                m_offer_id, pricestd, C_ORDER_DISCOUNT_ID
+                m_offer_id, pricestd, C_ORDER_DISCOUNT_ID,
+                gross_unit_price, line_gross_amount
               )
             VALUES
               (
@@ -644,9 +705,10 @@
                 ROUND(v_Discount,v_precision), ROUND(v_Discount,v_precision), ROUND(v_Discount,v_precision), ROUND(v_Discount,v_precision), 0, 0,
                 NULL, NULL, Cur_TaxDiscount.C_TAX_ID, NULL, NULL,
                 NULL, 'N', NULL, NULL,
-                NULL, ROUND(v_Discount,v_precision), NULL
+                NULL, ROUND(v_Discount,v_precision), NULL,
+                ROUND(v_gross_unit_price, v_precision), ROUND(v_line_gross_amount, v_precision)
               );
-  
+
             UPDATE C_ORDERLINE
             SET C_ORDER_DISCOUNT_ID=Cur_COrderDiscount.C_ORDER_DISCOUNT_ID
             WHERE C_ORDERLINE_ID=v_OrderLine;
@@ -814,6 +876,7 @@
                 FROM M_PRODUCT_BOM b
                       INNER JOIN M_PRODUCT p ON (b.M_ProductBOM_ID=p.M_Product_ID)
                 WHERE b.M_Product_ID=CUR_BOM_Line.M_Product_ID
+                AND b.isactive='Y'
                 ORDER BY Line
                )
             LOOP
@@ -951,7 +1014,7 @@
               RAISE NO_DATA_FOUND;
               COMMIT;
             END IF;
-            RAISE_APPLICATION_ERROR(-20011, 'Did not update Line');
+            RAISE_APPLICATION_ERROR(-20000, '@20011@');
           END IF;
         END LOOP; -- For all lines needing reservation
       END; -- Reserve Inventory
@@ -978,7 +1041,7 @@
         -- For all Tax Rates
         v_ResultStr:='InsertNewTaxes';
         FOR Cur_Tax IN
-            (SELECT l.C_OrderLine_ID, l.C_Tax_ID, o.IsTaxIncluded,
+            (SELECT l.C_OrderLine_ID, l.C_Tax_ID, o.IsTaxIncluded, l.line_gross_amount,
                 SUM(l.LineNetAmt) + SUM(l.FreightAmt) + SUM(coalesce(l.ChargeAmt,0)) AS LineNetAmt,
                 SUM(l.TaxBaseAmt) + SUM(l.FreightAmt) + SUM(coalesce(l.ChargeAmt,0)) AS TaxBaseAmt,
                 SUM(o.FreightAmt) + SUM(coalesce(o.ChargeAmt,0)) AS HeaderNet,
@@ -988,7 +1051,7 @@
               AND o.C_Order_ID=v_Record_ID -- Parameter
               AND l.C_Tax_ID=t.C_Tax_ID
               AND o.C_Currency_ID=c.C_Currency_ID
-            GROUP BY l.C_OrderLine_ID, l.C_Tax_ID, o.IsTaxIncluded, t.Rate,
+            GROUP BY l.C_OrderLine_ID, l.C_Tax_ID, l.line_gross_amount, o.IsTaxIncluded, t.Rate,
                      t.IsSummary, c.StdPrecision, t.BaseAmount, o.C_Order_ID
             ORDER BY 4 DESC
             )
@@ -1000,17 +1063,26 @@
             v_LineNetAmt:=v_LineNetAmt + Cur_Tax.HeaderNet;
           END IF;
           C_ORDERLINETAX_INSERT(v_Org_ID, Cur_Tax.C_Order_ID, Cur_Tax.C_OrderLine_ID, v_UpdatedBy, Cur_Tax.C_Tax_ID, Cur_Tax.C_Tax_ID, Cur_Tax.LineNetAmt, Cur_Tax.TaxBaseAmt, Cur_Tax.StdPrecision);
+          IF (v_istaxincluded = 'Y') THEN
+            C_ORDERLINETAX_ROUNDING(Cur_Tax.C_OrderLine_ID, Cur_Tax.line_gross_amount, Cur_Tax.LineNetAmt);
+          END IF;
         END LOOP; -- Insert New Taxes
-        SELECT COALESCE(SUM(TAXAMT), 0)
-            INTO xGrandTotal
-        FROM C_ORDERTAX
-        WHERE C_ORDER_ID = v_Record_ID;
-        xGrandTotal:=xGrandTotal+ xTotalLines;    
+        IF (v_istaxincluded = 'Y') THEN
+          SELECT COALESCE(SUM(line_gross_amount), 0) INTO xGrandTotal
+          FROM c_orderline
+          WHERE c_order_id = v_record_id;
+        ELSE
+          SELECT COALESCE(SUM(TAXAMT), 0) INTO xGrandTotal
+          FROM C_ORDERTAX
+          WHERE C_ORDER_ID = v_Record_ID;
+          xGrandTotal:=xGrandTotal+ xTotalLines;
+        END IF;
         -- Update Header
         UPDATE C_ORDER
         SET TotalLines=xTotalLines,
             GrandTotal=xGrandTotal
         WHERE C_Order_ID=v_Record_ID;
+        C_ORDERTAX_ROUNDING(v_Record_ID, xGrandTotal, xTotalLines);
         DBMS_OUTPUT.PUT_LINE('GrandTotal=' || xGrandTotal) ;
       END; -- Calculate Tax and Totals
       -- Synchronize Client/Org Ownership

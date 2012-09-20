@@ -169,7 +169,8 @@ static Logger log4j = Logger.getLogger(WrongPaymentScheduleDetailsCheckData.clas
       "                    WHERE psdo.fin_payment_schedule_order = pso.fin_payment_schedule_id)) o" +
       "          JOIN c_orderline ol ON ol.c_order_id = o.c_order_id" +
       "          JOIN c_invoiceline il ON il.c_orderline_id = ol.c_orderline_id" +
-      "          JOIN c_invoice i ON i.c_invoice_id = il.c_invoice_id";
+      "          JOIN c_invoice i ON i.c_invoice_id = il.c_invoice_id" +
+      "          WHERE i.docstatus <> 'VO'";
 
     ResultSet result;
     boolean boolReturn = false;
@@ -568,14 +569,14 @@ static Logger log4j = Logger.getLogger(WrongPaymentScheduleDetailsCheckData.clas
       "        ?, '0', '0', 'Y'," +
       "        now(), '100', now(), '100'," +
       "        'Wrong payment plan on invoiced orders', '263', '', 'D'," +
-      "        'select distinct inv.c_invoice_id as referencekey_id," +
+      "        'SELECT distinct inv.c_invoice_id as referencekey_id," +
       "           ad_column_identifier(''C_Invoice'', inv.c_invoice_id, ''en_US'') as record_id," +
       "           0 as ad_role_id, null as ad_user_id," +
       "           ''This invoice belongs to an order that has its payment plan wrong distributed through its invoices. Please reactivate all the invoices related to the order and complete them again.'' as description," +
       "           ''Y'' as isActive," +
       "           inv.ad_org_id, inv.ad_client_id," +
       "           now() as created, 0 as createdBy, now() as updated, 0 as updatedBy" +
-      "          FROM (" +
+      "         FROM (" +
       "            SELECT o.c_order_id" +
       "            FROM c_order o" +
       "                JOIN fin_payment_schedule pso ON o.c_order_id = pso.c_order_id" +
@@ -593,7 +594,8 @@ static Logger log4j = Logger.getLogger(WrongPaymentScheduleDetailsCheckData.clas
       "                        WHERE psdo.fin_payment_schedule_order = pso.fin_payment_schedule_id)) o" +
       "            JOIN c_orderline ol ON ol.c_order_id = o.c_order_id" +
       "            JOIN c_invoiceline il ON il.c_orderline_id = ol.c_orderline_id" +
-      "            JOIN c_invoice inv ON inv.c_invoice_id = il.c_invoice_id'" +
+      "            JOIN c_invoice inv ON inv.c_invoice_id = il.c_invoice_id" +
+      "         WHERE inv.docstatus <> ''VO'' '" +
       "      )";
 
     int updateCount = 0;
@@ -682,6 +684,44 @@ Check if the FIN_Payment_ScheduleDetail table exist
       result = st.executeQuery();
       if(result.next()) {
         boolReturn = !UtilSql.getValue(result, "existing").equals("0");
+      }
+      result.close();
+    } catch(SQLException e){
+      log4j.error("SQL error in query: " + strSql + "Exception:"+ e);
+      throw new ServletException("@CODE=" + Integer.toString(e.getErrorCode()) + "@" + e.getMessage());
+    } catch(Exception ex){
+      log4j.error("Exception in query: " + strSql + "Exception:"+ ex);
+      throw new ServletException("@CODE=@" + ex.getMessage());
+    } finally {
+      try {
+        connectionProvider.releasePreparedStatement(st);
+      } catch(Exception ignore){
+        ignore.printStackTrace();
+      }
+    }
+    return(boolReturn);
+  }
+
+/**
+Check if the core version is before 3.0MP3(3.0.13698)
+ */
+  public static boolean before30MP3(ConnectionProvider connectionProvider)    throws ServletException {
+    String strSql = "";
+    strSql = strSql + 
+      "       SELECT count(*) AS STARTVERSION " +
+      "       FROM ad_module " +
+      "       WHERE ad_module_id = '0' AND TO_NUMBER(REPLACE(version,'.','')) <= 3013698";
+
+    ResultSet result;
+    boolean boolReturn = false;
+    PreparedStatement st = null;
+
+    try {
+    st = connectionProvider.getPreparedStatement(strSql);
+
+      result = st.executeQuery();
+      if(result.next()) {
+        boolReturn = !UtilSql.getValue(result, "startversion").equals("0");
       }
       result.close();
     } catch(SQLException e){

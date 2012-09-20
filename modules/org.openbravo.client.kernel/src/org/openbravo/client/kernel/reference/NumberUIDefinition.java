@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -162,7 +162,12 @@ public abstract class NumberUIDefinition extends UIDefinition {
     valueStr = valueStr.replace(
         variables.getSessionValue("#GroupSeparator|" + getFormat()).substring(0, 1), "").replace(
         variables.getSessionValue("#DecimalSeparator|" + getFormat()).substring(0, 1), ".");
-    return new BigDecimal(valueStr);
+    try {
+      return new BigDecimal(valueStr);
+    } catch (Exception e) {
+      return null;
+    }
+
   }
 
   @Override
@@ -184,6 +189,16 @@ public abstract class NumberUIDefinition extends UIDefinition {
 
     public String getFormat() {
       return "euroEdition";
+    }
+  }
+
+  public static class BigDecimalUIDefinition extends NumberUIDefinition {
+    public String getParentType() {
+      return "float";
+    }
+
+    public String getFormat() {
+      return "generalQtyEdition";
     }
   }
 

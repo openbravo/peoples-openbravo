@@ -123,16 +123,16 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
       String strCurrencyId = vars.getRequestGlobalVariable("inpCurrencyId", "");
       String strPaymentDate = vars.getRequestGlobalVariable("inpPaymentDate", "");
       boolean isReceipt = vars.getRequiredStringParameter("isReceipt").equals("Y");
-      refreshFinancialAccountCombo(response, strPaymentMethodId, strFinancialAccountId, strOrgId,
-          strCurrencyId, isReceipt, strPaymentDate, conversionRatePrecision);
+      refreshFinancialAccountCombo(response, vars, strPaymentMethodId, strFinancialAccountId,
+          strOrgId, strCurrencyId, isReceipt, strPaymentDate, conversionRatePrecision);
     } else if (vars.commandIn("FILLFINANCIALACCOUNT")) {
       String strFinancialAccountId = vars.getRequestGlobalVariable("inpFinancialAccount", "");
       String strOrgId = vars.getRequestGlobalVariable("inpadOrgId", "");
       String strCurrencyId = vars.getRequestGlobalVariable("inpCurrencyId", "");
       String strPaymentDate = vars.getRequestGlobalVariable("inpPaymentDate", "");
       boolean isReceipt = vars.getRequiredStringParameter("isReceipt").equals("Y");
-      refreshFinancialAccountCombo(response, "", strFinancialAccountId, strOrgId, strCurrencyId,
-          isReceipt, strPaymentDate, conversionRatePrecision);
+      refreshFinancialAccountCombo(response, vars, "", strFinancialAccountId, strOrgId,
+          strCurrencyId, isReceipt, strPaymentDate, conversionRatePrecision);
 
     } else if (vars.commandIn("FILLPAYMENTMETHOD")) {
       String strPaymentMethodId = vars.getRequiredStringParameter("inpPaymentMethod");
@@ -147,8 +147,8 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
       final String strOrgId = vars.getRequestGlobalVariable("inpadOrgId", "");
       final String strPaymentDate = vars.getRequestGlobalVariable("inpPaymentDate", "");
       Organization org = OBDal.getInstance().get(Organization.class, strOrgId);
-      refreshExchangeRate(response, strCurrencyId, strFinancialAccountCurrencyId, strPaymentDate,
-          org, conversionRatePrecision);
+      refreshExchangeRate(response, vars, strCurrencyId, strFinancialAccountCurrencyId,
+          strPaymentDate, org, conversionRatePrecision);
 
     } else if (vars.commandIn("SAVE") || vars.commandIn("SAVEANDPROCESS")) {
       boolean isReceipt = vars.getRequiredStringParameter("isReceipt").equals("Y");
@@ -342,6 +342,14 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
     List<FIN_FinancialAccount> financialAccounts = dao.getFilteredFinancialAccounts(
         strPaymentMethodId, strOrgId, strCurrencyId,
         isReceipt ? AdvPaymentMngtDao.PaymentDirection.IN : AdvPaymentMngtDao.PaymentDirection.OUT);
+
+    if (financialAccounts.size() == 0) {
+      final OBError myMessage = Utility.translateError(this, vars, vars.getLanguage(),
+          Utility.messageBD(this, "APRM_NoFinancialAccountDefined", vars.getLanguage()));
+      vars.setMessage(strTabId, myMessage);
+      printPageClosePopUp(response, vars);
+    }
+
     String finAccountComboHtml = FIN_Utility.getOptionsList(financialAccounts,
         strFinancialAccountId, true);
     if (financialAccounts.size() > 0 && account == null) {
@@ -349,11 +357,35 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
     }
     xmlDocument.setParameter("sectionDetailFinancialAccount", finAccountComboHtml);
 
+    final String strtypewriteoff;
+    final String strAmountwriteoff;
     if (account != null) {
       if (!financialAccounts.contains(account)) {
         strFinancialAccountId = financialAccounts.get(0).getId();
+        if (financialAccounts.get(0).getWriteofflimit() != null) {
+          strtypewriteoff = financialAccounts.get(0).getTypewriteoff();
+          strAmountwriteoff = financialAccounts.get(0).getWriteofflimit().toString();
+          xmlDocument.setParameter("strtypewriteoff", strtypewriteoff);
+          xmlDocument.setParameter("strAmountwriteoff", strAmountwriteoff);
+        }
+
+      } else {
+        if (account.getWriteofflimit() != null) {
+          strtypewriteoff = account.getTypewriteoff();
+          strAmountwriteoff = account.getWriteofflimit().toString();
+          xmlDocument.setParameter("strtypewriteoff", strtypewriteoff);
+          xmlDocument.setParameter("strAmountwriteoff", strAmountwriteoff);
+        }
+      }
+    } else {
+      if (financialAccounts.get(0).getWriteofflimit() != null) {
+        strtypewriteoff = financialAccounts.get(0).getTypewriteoff();
+        strAmountwriteoff = financialAccounts.get(0).getWriteofflimit().toString();
+        xmlDocument.setParameter("strtypewriteoff", strtypewriteoff);
+        xmlDocument.setParameter("strAmountwriteoff", strAmountwriteoff);
       }
     }
+
     // Currency
     xmlDocument.setParameter("CurrencyId", strCurrencyId);
     final Currency paymentCurrency = dao.getObject(Currency.class, strCurrencyId);
@@ -379,9 +411,10 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
         xmlDocument.setParameter("financialAccountCurrencyPrecision", financialAccountCurrency
             .getStandardPrecision().toString());
       }
-      String exchangeRate = findExchangeRate(paymentCurrency, financialAccountCurrency, new Date(),
-          OBDal.getInstance().get(Organization.class, strOrgId), conversionRatePrecision);
-      xmlDocument.setParameter("exchangeRate", exchangeRate);
+      BigDecimal exchangeRate = findExchangeRate(vars, paymentCurrency, financialAccountCurrency,
+          new Date(), OBDal.getInstance().get(Organization.class, strOrgId),
+          conversionRatePrecision);
+      xmlDocument.setParameter("exchangeRate", exchangeRate.toPlainString());
 
     } finally {
       OBContext.restorePreviousMode();
@@ -405,6 +438,15 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
     } catch (Exception ex) {
       throw new ServletException(ex);
     }
+    // Not allow to change exchange rate and amount
+    final String strNotAllowExchange = Utility.getContext(this, vars, "NotAllowChangeExchange",
+        strWindowId);
+    xmlDocument.setParameter("strNotAllowExchange", strNotAllowExchange);
+
+    // Not allow to write off
+    final String strWriteOffLimit = Utility.getContext(this, vars, "WriteOffLimitPreference",
+        strWindowId);
+    xmlDocument.setParameter("strWriteOffLimit", strWriteOffLimit);
 
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
@@ -464,11 +506,11 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     out.println(paymentMethodComboHtml.replaceAll("\"", "\\'"));
-    out.close();
 
+    out.close();
   }
 
-  private void refreshFinancialAccountCombo(HttpServletResponse response,
+  private void refreshFinancialAccountCombo(HttpServletResponse response, VariablesSecureApp vars,
       String strPaymentMethodId, String strFinancialAccountId, String strOrgId,
       String strCurrencyId, boolean isReceipt, String paymentDate, int conversionRatePrecision)
       throws IOException, ServletException {
@@ -482,17 +524,30 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
     final Currency financialAccountCurrency = dao
         .getFinancialAccountCurrency(strFinancialAccountId);
     final Currency paymentCurrency = dao.getObject(Currency.class, strCurrencyId);
+    final String formatOutput = vars.getSessionValue("#FormatOutput|generalQtyRelation",
+        "#,##0.######");
 
-    String exchangeRate = findExchangeRate(paymentCurrency, financialAccountCurrency,
+    BigDecimal exchangeRate = findExchangeRate(vars, paymentCurrency, financialAccountCurrency,
         FIN_Utility.getDate(paymentDate), OBDal.getInstance().get(Organization.class, strOrgId),
         conversionRatePrecision);
 
+    FIN_FinancialAccount financialAccount = dao.getObject(FIN_FinancialAccount.class,
+        strFinancialAccountId);
+
     JSONObject msg = new JSONObject();
     try {
+      if (financialAccount.getWriteofflimit() != null) {
+        msg.put("twriteoff", financialAccount.getTypewriteoff());
+        msg.put("awriteoff", financialAccount.getWriteofflimit().toString());
+      }
       msg.put("combo", finAccountComboHtml);
-      msg.put("financialAccountCurrencyId", financialAccountCurrency.getId());
-      msg.put("exchangeRate", exchangeRate);
-      msg.put("financialAccountCurrencyPrecision", financialAccountCurrency.getStandardPrecision());
+      if (financialAccountCurrency != null) {
+        msg.put("financialAccountCurrencyId", financialAccountCurrency.getId());
+        msg.put("financialAccountCurrencyPrecision",
+            financialAccountCurrency.getStandardPrecision());
+      }
+      msg.put("exchangeRate", exchangeRate == null ? "" : exchangeRate);
+      msg.put("formatOutput", formatOutput);
     } catch (JSONException e) {
       log4j.error("JSON object error" + msg.toString());
     }
@@ -504,22 +559,25 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
 
   }
 
-  private void refreshExchangeRate(HttpServletResponse response, String strCurrencyId,
-      String strFinancialAccountCurrencyId, String strPaymentDate, Organization organization,
-      int conversionRatePrecision) throws IOException, ServletException {
+  private void refreshExchangeRate(HttpServletResponse response, VariablesSecureApp vars,
+      String strCurrencyId, String strFinancialAccountCurrencyId, String strPaymentDate,
+      Organization organization, int conversionRatePrecision) throws IOException, ServletException {
 
     dao = new AdvPaymentMngtDao();
 
     final Currency financialAccountCurrency = dao.getObject(Currency.class,
         strFinancialAccountCurrencyId);
     final Currency paymentCurrency = dao.getObject(Currency.class, strCurrencyId);
+    final String formatOutput = vars.getSessionValue("#FormatOutput|generalQtyRelation",
+        "#,##0.######");
 
-    String exchangeRate = findExchangeRate(paymentCurrency, financialAccountCurrency,
+    BigDecimal exchangeRate = findExchangeRate(vars, paymentCurrency, financialAccountCurrency,
         FIN_Utility.getDate(strPaymentDate), organization, conversionRatePrecision);
 
     JSONObject msg = new JSONObject();
     try {
-      msg.put("exchangeRate", exchangeRate);
+      msg.put("exchangeRate", exchangeRate == null ? "" : exchangeRate);
+      msg.put("formatOutput", formatOutput);
     } catch (JSONException e) {
       log4j.error("JSON object error" + msg.toString());
     }
@@ -529,17 +587,18 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
     out.close();
   }
 
-  private String findExchangeRate(Currency paymentCurrency, Currency financialAccountCurrency,
-      Date paymentDate, Organization organization, int conversionRatePrecision) {
-    String exchangeRate = "1";
+  private BigDecimal findExchangeRate(VariablesSecureApp vars, Currency paymentCurrency,
+      Currency financialAccountCurrency, Date paymentDate, Organization organization,
+      int conversionRatePrecision) {
+    BigDecimal exchangeRate = BigDecimal.ONE;
     if (financialAccountCurrency != null && !financialAccountCurrency.equals(paymentCurrency)) {
       final ConversionRate conversionRate = FIN_Utility.getConversionRate(paymentCurrency,
           financialAccountCurrency, paymentDate, organization);
       if (conversionRate == null) {
-        exchangeRate = "";
+        exchangeRate = null;
       } else {
-        exchangeRate = conversionRate.getMultipleRateBy()
-            .setScale(conversionRatePrecision, RoundingMode.HALF_UP).toPlainString();
+        exchangeRate = conversionRate.getMultipleRateBy().setScale(conversionRatePrecision,
+            RoundingMode.HALF_UP);
       }
     }
     return exchangeRate;

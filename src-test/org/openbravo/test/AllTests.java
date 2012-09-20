@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,6 +26,7 @@ import org.openbravo.erpCommon.info.ClassicSelectorTest;
 import org.openbravo.test.dal.DalConnectionProviderTest;
 import org.openbravo.test.dal.DalCopyTest;
 import org.openbravo.test.dal.DalFilterTest;
+import org.openbravo.test.dal.DalPerformanceProxyTest;
 import org.openbravo.test.dal.DalQueryTest;
 import org.openbravo.test.dal.DalStoredProcedureTest;
 import org.openbravo.test.dal.DalTest;
@@ -79,6 +80,7 @@ public class AllTests {
     suite.addTestSuite(DalCopyTest.class);
     suite.addTestSuite(DalStoredProcedureTest.class);
     suite.addTestSuite(ReadByNameTest.class);
+    suite.addTestSuite(DalPerformanceProxyTest.class);
 
     // model
     suite.addTestSuite(RuntimeModelTest.class);

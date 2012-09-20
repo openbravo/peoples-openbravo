@@ -187,6 +187,17 @@ public class AdvPaymentMngtDao {
       Date dueDateFrom, Date dueDateTo, Date transactionDateFrom, Date transactionDateTo,
       String strTransactionType, String strDocumentNo, FIN_PaymentMethod paymentMethod,
       List<FIN_PaymentScheduleDetail> selectedScheduledPaymentDetails, boolean isReceipt) {
+    return getFilteredScheduledPaymentDetails(organization, businessPartner, currency, dueDateFrom,
+        dueDateTo, null, null, strTransactionType, "", paymentMethod,
+        selectedScheduledPaymentDetails, isReceipt, "", "");
+  }
+
+  public List<FIN_PaymentScheduleDetail> getFilteredScheduledPaymentDetails(
+      Organization organization, BusinessPartner businessPartner, Currency currency,
+      Date dueDateFrom, Date dueDateTo, Date transactionDateFrom, Date transactionDateTo,
+      String strTransactionType, String strDocumentNo, FIN_PaymentMethod paymentMethod,
+      List<FIN_PaymentScheduleDetail> selectedScheduledPaymentDetails, boolean isReceipt,
+      String strAmountFrom, String strAmountTo) {
 
     final StringBuilder whereClause = new StringBuilder();
     final List<Object> parameters = new ArrayList<Object>();
@@ -209,7 +220,7 @@ public class AdvPaymentMngtDao {
       whereClause.append(" and psd.");
       whereClause.append(FIN_PaymentSchedule.PROPERTY_ORGANIZATION);
       whereClause.append(".id in (");
-      whereClause.append(FIN_Utility.getInStrSet(OBContext.getOBContext()
+      whereClause.append(Utility.getInStrSet(OBContext.getOBContext()
           .getOrganizationStructureProvider().getNaturalTree(organization.getId())));
       whereClause.append(")");
 
@@ -233,7 +244,20 @@ public class AdvPaymentMngtDao {
         }
         whereClause.append(" and psd.id not in (" + FIN_Utility.getInStrList(aux) + ")");
       }
-
+      if (!StringUtils.isEmpty(strAmountFrom)) {
+        whereClause.append(" and psd.");
+        whereClause.append(FIN_PaymentScheduleDetail.PROPERTY_AMOUNT);
+        whereClause.append(" >= ");
+        whereClause.append(strAmountFrom);
+        whereClause.append(" ");
+      }
+      if (!StringUtils.isEmpty(strAmountTo)) {
+        whereClause.append(" and psd.");
+        whereClause.append(FIN_PaymentScheduleDetail.PROPERTY_AMOUNT);
+        whereClause.append(" <= ");
+        whereClause.append(strAmountTo);
+        whereClause.append(" ");
+      }
       // Transaction type filter
       whereClause.append(" and (");
       if (strTransactionType.equals("I") || strTransactionType.equals("B")) {
@@ -534,6 +558,7 @@ public class AdvPaymentMngtDao {
     ps.setOrder(order);
     ps.setCurrency(invoice.getCurrency());
     ps.setDueDate(dueDate);
+    ps.setOrigDueDate(dueDate);
     ps.setFinPaymentmethod(paymentMethod);
     ps.setOutstandingAmount(amount);
     ps.setPaidAmount(BigDecimal.ZERO);
@@ -818,7 +843,10 @@ public class AdvPaymentMngtDao {
     Iterator<FIN_PaymentScheduleDetail> itPSD = lPSD.iterator();
 
     while (itPSD.hasNext()) {
-      removePaymentScheduleDetail(itPSD.next());
+      FIN_PaymentScheduleDetail psdToRemove = itPSD.next();
+      fin_PaymentSchedule.getFINPaymentScheduleDetailInvoicePaymentScheduleList().remove(
+          psdToRemove);
+      removePaymentScheduleDetail(psdToRemove);
     }
     OBDal.getInstance().remove(fin_PaymentSchedule);
     OBDal.getInstance().flush();
@@ -829,10 +857,6 @@ public class AdvPaymentMngtDao {
    * 
    */
   public void removePaymentScheduleDetail(FIN_PaymentScheduleDetail fin_PaymentScheduleDetail) {
-
-    fin_PaymentScheduleDetail.setInvoicePaymentSchedule(null);
-    fin_PaymentScheduleDetail.setOrderPaymentSchedule(null);
-    OBDal.getInstance().save(fin_PaymentScheduleDetail);
     OBDal.getInstance().remove(fin_PaymentScheduleDetail);
     OBDal.getInstance().flush();
   }
@@ -1169,7 +1193,7 @@ public class AdvPaymentMngtDao {
       if (payMethods.isEmpty()) {
         return (new ArrayList<FIN_PaymentMethod>());
       }
-      obc.add(Restrictions.in("id", payMethods));
+      addPaymentMethodList(obc, payMethods);
     } else {
       if (excludePaymentMethodWithoutAccount) {
 
@@ -1185,7 +1209,7 @@ public class AdvPaymentMngtDao {
         if (payMethods.isEmpty()) {
           return (new ArrayList<FIN_PaymentMethod>());
         }
-        obc.add(Restrictions.in("id", payMethods));
+        addPaymentMethodList(obc, payMethods);
       }
       if (paymentDirection == PaymentDirection.IN) {
         obc.add(Restrictions.eq(FIN_PaymentMethod.PROPERTY_PAYINALLOW, true));
@@ -1195,6 +1219,31 @@ public class AdvPaymentMngtDao {
     }
 
     return obc.list();
+  }
+
+  private void addPaymentMethodList(OBCriteria obc, List<String> paymentMethods) {
+    List<String> paymentMethodsToRemove;
+    Criterion compoundExp = null;
+    while (paymentMethods.size() > 999) {
+      paymentMethodsToRemove = new ArrayList<String>(paymentMethods.subList(0, 999));
+      if (compoundExp == null) {
+        compoundExp = Restrictions.in("id", paymentMethods.subList(0, 999));
+      } else {
+        compoundExp = Restrictions.or(compoundExp,
+            Restrictions.in("id", paymentMethods.subList(0, 999)));
+      }
+      paymentMethods.removeAll(paymentMethodsToRemove);
+    }
+    if (paymentMethods.size() > 0) {
+      if (compoundExp == null) {
+        compoundExp = Restrictions.in("id", paymentMethods);
+      } else {
+        compoundExp = Restrictions.or(compoundExp, Restrictions.in("id", paymentMethods));
+      }
+    }
+    if (compoundExp != null) {
+      obc.add(compoundExp);
+    }
   }
 
   @Deprecated
@@ -1273,6 +1322,8 @@ public class AdvPaymentMngtDao {
       Criterion crit = exp.getCriterion();
       if (crit != null) {
         obc.add(crit);
+      } else {
+        return new ArrayList<FIN_FinancialAccount>();
       }
     }
     return obc.list();
@@ -1319,7 +1370,11 @@ public class AdvPaymentMngtDao {
     obc.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACTIVE, true));
     obc.setFilterOnReadableClients(false);
     obc.setFilterOnReadableOrganization(false);
-    return obc.list().get(0);
+    try {
+      return obc.list().get(0);
+    } catch (IndexOutOfBoundsException e) {
+      throw new OBException(FIN_Utility.messageBD("APRM_PaymentMethod"));
+    }
   }
 
   public boolean isAutomatedExecutionPayment(FIN_FinancialAccount account,
@@ -1573,14 +1628,15 @@ public class AdvPaymentMngtDao {
    */
   public List<FIN_Payment> getCustomerPaymentsWithCredit(Organization org, BusinessPartner bp,
       boolean isReceipt) {
+
+    List<String> confirmedStatus = FIN_Utility.getListPaymentConfirmed();
     try {
       OBContext.setAdminMode(true);
       OBCriteria<FIN_Payment> obcPayment = OBDal.getInstance().createCriteria(FIN_Payment.class);
       obcPayment.add(Restrictions.eq(FIN_Payment.PROPERTY_BUSINESSPARTNER, bp));
       obcPayment.add(Restrictions.eq(FIN_Payment.PROPERTY_RECEIPT, isReceipt));
       obcPayment.add(Restrictions.ne(FIN_Payment.PROPERTY_GENERATEDCREDIT, BigDecimal.ZERO));
-      obcPayment.add(Restrictions.ne(FIN_Payment.PROPERTY_STATUS, "RPAP"));
-      obcPayment.add(Restrictions.ne(FIN_Payment.PROPERTY_STATUS, "RPVOID"));
+      obcPayment.add(Restrictions.in(FIN_Payment.PROPERTY_STATUS, confirmedStatus));
       obcPayment.add(Restrictions.neProperty(FIN_Payment.PROPERTY_GENERATEDCREDIT,
           FIN_Payment.PROPERTY_USEDCREDIT));
       final Organization legalEntity = FIN_Utility.getLegalEntityOrg(org);

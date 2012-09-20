@@ -17,6 +17,9 @@
  ************************************************************************
  */
 
+OB = window.OB || {};
+OB.Utilities = window.OB.Utilities || {};
+
 // = Openbravo Number Utilities =
 // Defines utility methods related to handling numbers on the client, for 
 // example formatting. 
@@ -288,7 +291,8 @@ OB.Utilities.Number.OBMaskedToJS = function (numberStr, decSeparator, groupSepar
 // Return:
 // * The OB formatted number.
 OB.Utilities.Number.JSToOBMasked = function (number, maskNumeric, decSeparator, groupSeparator, groupInterval) {
-  if (!isc.isA.Number(number)) {
+  var isANumber = Object.prototype.toString.call(number) === '[object Number]';
+  if (!isANumber) {
     return number;
   }
   var formattedNumber = number;

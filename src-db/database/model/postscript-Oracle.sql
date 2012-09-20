@@ -13,7 +13,7 @@ AS
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2009 Openbravo SLU
+* All portions are Copyright (C) 2001-2012 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -361,90 +361,6 @@ AS
 END DBA_AfterImport;
 /-- END
 
-CREATE OR REPLACE FUNCTION AD_GET_DOC_LE_BU(p_header_table IN VARCHAR2, p_document_id IN VARCHAR2, p_header_column_id IN VARCHAR2, p_type IN VARCHAR2)
- RETURN VARCHAR
- AS
-/*************************************************************************
-* The contents of this file are subject to the Openbravo  Public  License
-* Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
-* Version 1.1  with a permitted attribution clause; you may not  use this
-* file except in compliance with the License. You  may  obtain  a copy of
-* the License at http://www.openbravo.com/legal/license.html
-* Software distributed under the License  is  distributed  on  an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
-* License for the specific  language  governing  rights  and  limitations
-* under the License.
-* The Original Code is Openbravo ERP.
-* The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2009 Openbravo SLU
-* All Rights Reserved.
-* Contributor(s):  ______________________________________.
-************************************************************************/
-   v_org_header_id ad_org.ad_org_id%TYPE;
-   v_isbusinessunit ad_orgtype.isbusinessunit%TYPE;
-   v_islegalentity ad_orgtype.islegalentity%TYPE;
-   
- BEGIN
- 
-   -- Gets the organization and the organization type of the document's header
-   EXECUTE IMMEDIATE 
-     'SELECT ad_org.ad_org_id, ad_orgtype.isbusinessunit, ad_orgtype.islegalentity 
-     FROM '||p_header_table||', ad_org, ad_orgtype
-     WHERE '||p_header_table||'.'||p_header_column_id||' = '''||p_document_id||'''
-     AND ad_org.ad_orgtype_id = ad_orgtype.ad_orgtype_id
-     AND '||p_header_table||'.ad_org_id=ad_org.ad_org_id ' 
-     INTO v_org_header_id, v_isbusinessunit, v_islegalentity; 
- 
-   -- Gets recursively the organization parent until finding a Business Unit or a Legal Entity
-   IF (p_type IS NULL) THEN
-	   WHILE (v_isbusinessunit='N' AND v_islegalentity='N') LOOP
-	     SELECT hh.parent_id, ad_orgtype.isbusinessunit, ad_orgtype.islegalentity
-	     INTO v_org_header_id, v_isbusinessunit, v_islegalentity
-	     FROM ad_org, ad_orgtype, ad_treenode pp, ad_treenode hh
-	     WHERE pp.node_id = hh.parent_id
-	     AND hh.ad_tree_id = pp.ad_tree_id
-	     AND pp.node_id=ad_org.ad_org_id
-	     AND hh.node_id=v_org_header_id
-	     AND ad_org.ad_orgtype_id=ad_orgtype.ad_orgtype_id
-	     AND ad_org.isready='Y'
-	     AND  EXISTS (SELECT 1 FROM ad_tree WHERE ad_tree.treetype='OO' AND hh.ad_tree_id=ad_tree.ad_tree_id AND hh.ad_client_id=ad_tree.ad_client_id);     
-	   END LOOP;
-   -- Gets recursively the organization parent until finding a Legal Entity
-   ELSIF (p_type='LE') THEN
-	   WHILE (v_islegalentity='N') LOOP
-         SELECT hh.parent_id, ad_orgtype.islegalentity
-         INTO v_org_header_id, v_islegalentity
-         FROM ad_org, ad_orgtype, ad_treenode pp, ad_treenode hh
-         WHERE pp.node_id = hh.parent_id
-         AND hh.ad_tree_id = pp.ad_tree_id
-         AND pp.node_id=ad_org.ad_org_id
-         AND hh.node_id=v_org_header_id
-         AND ad_org.ad_orgtype_id=ad_orgtype.ad_orgtype_id
-         AND ad_org.isready='Y'
-         AND  EXISTS (SELECT 1 FROM ad_tree WHERE ad_tree.treetype='OO' AND hh.ad_tree_id=ad_tree.ad_tree_id AND hh.ad_client_id=ad_tree.ad_client_id);     
-       END LOOP;
-   -- Gets recursively the organization parent until finding a Business Unit
-   ELSIF (p_type='BU') THEN
-       WHILE (v_isbusinessunit='N' AND v_org_header_id<>'0') LOOP
-         SELECT hh.parent_id, ad_orgtype.isbusinessunit
-         INTO v_org_header_id, v_isbusinessunit
-         FROM ad_org, ad_orgtype, ad_treenode pp, ad_treenode hh
-         WHERE pp.node_id = hh.parent_id
-         AND hh.ad_tree_id = pp.ad_tree_id
-         AND pp.node_id=ad_org.ad_org_id
-         AND hh.node_id=v_org_header_id
-         AND ad_org.ad_orgtype_id=ad_orgtype.ad_orgtype_id
-         AND ad_org.isready='Y'
-         AND  EXISTS (SELECT 1 FROM ad_tree WHERE ad_tree.treetype='OO' AND hh.ad_tree_id=ad_tree.ad_tree_id AND hh.ad_client_id=ad_tree.ad_client_id);     
-       END LOOP;
-       RETURN NULL;
-   END IF;
-   
-   RETURN v_org_header_id;
-   
-END AD_GET_DOC_LE_BU;
-/-- END
-
 CREATE OR REPLACE FUNCTION AD_ORG_CHK_DOCUMENTS(p_header_table IN VARCHAR2, p_lines_table IN VARCHAR2, p_document_id IN VARCHAR2, p_header_column_id IN VARCHAR2, p_lines_column_id IN VARCHAR2) 
  RETURN NUMBER
  AS
@@ -621,29 +537,6 @@ SELECT to_number(a.value) AS value
   WHERE a.value <= 1024
 /-- END
 
-create or replace FUNCTION AD_GET_RDBMS RETURN VARCHAR2
-AS
-/*************************************************************************
-* The contents of this file are subject to the Openbravo  Public  License
-* Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
-* Version 1.1  with a permitted attribution clause; you may not  use this
-* file except in compliance with the License. You  may  obtain  a copy of
-* the License at http://www.openbravo.com/legal/license.html
-* Software distributed under the License  is  distributed  on  an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
-* License for the specific  language  governing  rights  and  limitations
-* under the License.
-* The Original Code is Openbravo ERP.
-* The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2009 Openbravo SLU
-* All Rights Reserved.
-* Contributor(s):  ______________________________________.
-************************************************************************/
-BEGIN
- return 'ORACLE';
-END AD_GET_RDBMS;
-/-- END
- 
 --Inserts an alert recipient for available updates
 --See issue:  https://issues.openbravo.com/view.php?id=11743
 BEGIN
@@ -700,7 +593,7 @@ AS
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2009-2010 Openbravo SLU
+* All portions are Copyright (C) 2009-2012 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -799,6 +692,8 @@ DECLARE
   V_NEW_NUMBER NUMBER := NULL;
   V_OLD_DATE DATE := NULL;
   V_NEW_DATE DATE := NULL;
+  V_OLD_TEXT CLOB := NULL;
+  V_NEW_TEXT CLOB := NULL;
   V_TIME DATE;
   V_ORG VARCHAR2(32);
   V_CLIENT VARCHAR2(32);
@@ -884,6 +779,9 @@ SELECT COALESCE(MAX(RECORD_REVISION),0)+1
       elsif (cur_cols.data_type in ('DATE')) then
         datatype := 'DATE';
         code := code || 'IF (UPDATING AND COALESCE(:NEW.'||cur_cols.COLUMN_NAME||', now()) != COALESCE(:OLD.'||cur_cols.COLUMN_NAME||', now()))';
+      elsif (cur_cols.data_type in ('CLOB')) then
+        datatype := 'TEXT';
+        code := code || 'IF (UPDATING AND ((COALESCE(:NEW.'||cur_cols.COLUMN_NAME||',''.'') != COALESCE(:OLD.'||cur_cols.COLUMN_NAME||',''.'')) OR ((:NEW.'||cur_cols.COLUMN_NAME||' IS NULL) AND :OLD.'||cur_cols.COLUMN_NAME||'=''.'') OR ((:OLD.'||cur_cols.COLUMN_NAME||' IS NULL) AND :NEW.'||cur_cols.COLUMN_NAME||'=''.'')))';
       else
         datatype := 'NUMBER';
         code := code || 'IF (UPDATING AND COALESCE(:NEW.'||cur_cols.COLUMN_NAME||', -1) != COALESCE(:OLD.'||cur_cols.COLUMN_NAME||', -1))';

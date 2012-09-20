@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -58,6 +58,13 @@ public class BusinessPartnerMultiple extends HttpSecureAppServlet {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
+      // When the pop up is opened, values of the previous session must be removed
+      vars.removeSessionValue("BusinessPartnerMultiple.contact");
+      vars.removeSessionValue("BusinessPartnerMultiple.zip");
+      vars.removeSessionValue("BusinessPartnerMultiple.provincia");
+      vars.removeSessionValue("BusinessPartnerMultiple.bpartner");
+      vars.removeSessionValue("BusinessPartnerMultiple.city");
+
       String strWindowId = vars.getStringParameter("WindowID");
       String strNameValue = vars.getRequestGlobalVariable("inpNameValue",
           "BusinessPartnerMultiple.name");
@@ -85,14 +92,25 @@ public class BusinessPartnerMultiple extends HttpSecureAppServlet {
       String action = vars.getStringParameter("action");
       log4j.debug("command DATA - action: " + action);
 
+      if (vars.getStringParameter("clear").equals("true")) {
+        vars.removeSessionValue("BusinessPartnerMultiple.key");
+        vars.removeSessionValue("BusinessPartnerMultiple.name");
+        vars.removeSessionValue("BusinessPartnerMultiple.contact");
+        vars.removeSessionValue("BusinessPartnerMultiple.zip");
+        vars.removeSessionValue("BusinessPartnerMultiple.provincia");
+        vars.removeSessionValue("BusinessPartnerMultiple.bpartner");
+        vars.removeSessionValue("BusinessPartnerMultiple.city");
+      }
       String strKey = vars.getGlobalVariable("inpKey", "BusinessPartnerMultiple.key", "");
       String strName = vars.getGlobalVariable("inpName", "BusinessPartnerMultiple.name", "");
-      String strContact = vars.getStringParameter("inpContact");
-      String strZIP = vars.getStringParameter("inpZIP");
-      String strProvincia = vars.getStringParameter("inpProvincia");
+      String strContact = vars.getGlobalVariable("inpContact", "BusinessPartnerMultiple.contact",
+          "");
+      String strZIP = vars.getGlobalVariable("inpZIP", "BusinessPartnerMultiple.zip", "");
+      String strProvincia = vars.getGlobalVariable("inpProvincia",
+          "BusinessPartnerMultiple.provincia", "");
       String strBpartners = vars.getGlobalVariable("inpBpartner",
           "BusinessPartnerMultiple.bpartner", "all");
-      String strCity = vars.getStringParameter("inpCity");
+      String strCity = vars.getGlobalVariable("inpCity", "BusinessPartnerMultiple.city", "");
       String strNewFilter = vars.getStringParameter("newFilter");
       String strOffset = vars.getStringParameter("offset");
       String strPageSize = vars.getStringParameter("page_size");

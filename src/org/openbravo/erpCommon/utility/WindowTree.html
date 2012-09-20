@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,7 +19,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>Menu</title>
+<title>Tree View</title>
 <link rel="shortcut icon" href="../../../../../web/images/favicon.ico" type="image/x-icon" />
 <link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Openbravo_ERP_250.css" id="paramCSS"></link>
 <script language="JavaScript" type="text/javascript" id="paramDirectory">
@@ -170,8 +170,16 @@ function getKeyField() {
       var topAreaContainer = document.getElementById("topArea");
       var bottomAreaContainer = document.getElementById("bottomArea");
       var menuAreaContainer = document.getElementById("openbravo_tree");
-      var windowHeight = document.getElementsByTagName("BODY")[0].clientHeight;
-      menuAreaContainer.style.height = windowHeight - topAreaContainer.clientHeight - bottomAreaContainer.clientHeight;
+      var body = document.getElementsByTagName("BODY");
+      var windowHeight;
+      if (isIE9Strict) {
+        windowHeight = window.innerHeight;
+      } else {
+        windowHeight = body[0].clientHeight;
+      }
+      var menuAreaContainerHeight = windowHeight - topAreaContainer.clientHeight - bottomAreaContainer.clientHeight;
+      if (menuAreaContainerHeight < 0) { menuAreaContainerHeight = 0; }
+      menuAreaContainer.style.height = menuAreaContainerHeight;
     }
   </script>
 <script language="JavaScript" type="text/javascript">

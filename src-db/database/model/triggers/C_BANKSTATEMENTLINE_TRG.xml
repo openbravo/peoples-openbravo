@@ -17,7 +17,7 @@
     * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
     * All Rights Reserved.
     * Contributor(s): Openbravo SLU
-    * Contributions are Copyright (C) 2001-2008 Openbravo, S.L.U.
+    * Contributions are Copyright (C) 2001-2012 Openbravo, S.L.U.
     *
     * Specifically, this derivative work is based upon the following Compiere
     * file and version.
@@ -53,7 +53,7 @@ BEGIN
   WHERE C_BankStatement_ID=v_ID
   AND Processed='Y';
   IF (v_RO > 0) THEN
-  RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted');
+  RAISE_APPLICATION_ERROR(-20000, '@20501@');
   END IF;*/
   -- Update header
   UPDATE C_BankStatement

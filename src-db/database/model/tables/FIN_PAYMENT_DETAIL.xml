@@ -69,5 +69,8 @@
       <foreign-key foreignTable="C_GLITEM" name="FIN_PAYMENT_DETAIL_C_GLITEM">
         <reference local="C_GLITEM_ID" foreign="C_GLITEM_ID"/>
       </foreign-key>
+      <index name="FIN_PYMT_DETAIL_PYMT_IXD" unique="false">
+        <index-column name="FIN_PAYMENT_ID"/>
+      </index>
     </table>
   </database>

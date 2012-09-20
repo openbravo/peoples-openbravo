@@ -21,6 +21,13 @@ package org.openbravo.client.kernel.reference;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.model.Property;
+import org.openbravo.client.kernel.KernelUtils;
+import org.openbravo.dal.core.DalUtil;
+import org.openbravo.model.ad.datamodel.Column;
+import org.openbravo.model.ad.datamodel.Table;
+import org.openbravo.model.ad.domain.Reference;
+import org.openbravo.model.ad.domain.ReferencedTable;
 import org.openbravo.model.ad.ui.Field;
 
 /**
@@ -31,6 +38,8 @@ import org.openbravo.model.ad.ui.Field;
  */
 public class FKComboUIDefinition extends ForeignKeyUIDefinition {
 
+  private static final String TABLE_AD_REFERENCE_ID = "18";
+
   @Override
   public String getParentType() {
     // ensures that the field will have a oneOf validator
@@ -38,7 +47,49 @@ public class FKComboUIDefinition extends ForeignKeyUIDefinition {
   }
 
   public String getGridEditorFieldProperties(Field field) {
-    return "displayField: null, valueField: null ";
+    return "displayField: null, valueField: null";
+  }
+
+  @Override
+  // Overriden to include the criteriaField property for those Fields whose reference is table, and
+  // whose referenced table has more than one column acting as identifier
+  public String getGridFieldProperties(Field field) {
+    Column column = field.getColumn();
+    Reference reference = column.getReference();
+    String criteriaField = "";
+    if (reference.getId().equals(TABLE_AD_REFERENCE_ID)) {
+      Reference referenceSearchKey = column.getReferenceSearchKey();
+      if (referenceSearchKey != null && referenceSearchKey.getADReferencedTableList().size() > 0) {
+        ReferencedTable referencedTable = referenceSearchKey.getADReferencedTableList().get(0);
+        if (referencedTable != null
+            && isTableWithMultipleIdentifierColumns(referencedTable.getTable())) {
+          Property prop = KernelUtils.getInstance().getPropertyFromColumn(column);
+          Property referencedProp = KernelUtils.getInstance().getPropertyFromColumn(
+              referencedTable.getDisplayedColumn());
+          if (prop != null && referencedProp != null) {
+            criteriaField = ", criteriaField: " + "'" + prop.getName() + DalUtil.FIELDSEPARATOR
+                + referencedProp.getName() + "'";
+          }
+        }
+      }
+    }
+    return super.getGridFieldProperties(field) + criteriaField;
+  }
+
+  /* Returns true if the identifier of the table is composed of more than one column */
+  private Boolean isTableWithMultipleIdentifierColumns(Table relatedTable) {
+    int nIdentifiers = 0;
+    for (Column curColumn : relatedTable.getADColumnList()) {
+      if (curColumn.isIdentifier()) {
+        nIdentifiers += 1;
+        if (nIdentifiers > 1) {
+          // if there is more than one identifier return true
+          return true;
+        }
+      }
+    }
+    // there is only one identifier column
+    return false;
   }
 
   @Override

@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -32,5 +32,15 @@
       AND M_Requisition.M_Requisition_ID = ?
     </Sql>
     <Parameter name="mRequisitionId"/>
+  </SqlMethod>
+  <SqlMethod name="selectPriceListLine" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      SELECT C_Currency.StdPrecision, C_Currency.PricePrecision
+      FROM M_PriceList, C_Currency 
+      WHERE M_PriceList.C_Currency_ID = C_Currency.C_Currency_ID
+      AND M_PriceList.M_Pricelist_ID = ?
+    </Sql>
+    <Parameter name="mPriceListId"/>
   </SqlMethod>
 </SqlClass>

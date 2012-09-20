@@ -100,6 +100,7 @@ isc.ClassFactory.defineClass('OBImageCanvas', isc.HLayout);
 
 isc.OBImageCanvas.addProperties({
   initWidget: function () {
+    this.Super('initWidget', arguments);
     this.imageLayout = isc.OBImageItemSmallImageContainer.create({
       imageItem: this.creator
     });
@@ -126,7 +127,24 @@ isc.OBImageCanvas.addProperties({
           form: this.imageItem.form,
           imageItem: this.imageItem
         });
-        selector.show();
+        var title = OB.I18N.getLabel('OBUIAPP_ImageSelectorTitle'),
+            height = selector.height,
+            width = selector.width,
+            showMinimizeButton = false,
+            showMaximizeButton = false;
+        if (this.imageItem && this.imageItem.form && this.imageItem.form.view && this.imageItem.form.view.standardWindow && this.imageItem.form.view.standardWindow.openPopupInTab) {
+          this.imageItem.form.view.standardWindow.openPopupInTab(selector, title, width, height, showMaximizeButton, showMaximizeButton, true, true, this.imageItem.form);
+        } else {
+          var selectorContainer = isc.OBPopup.create({
+            showMinimizeButton: showMinimizeButton,
+            showMaximizeButton: showMaximizeButton,
+            title: title,
+            width: width,
+            height: height,
+            items: [selector]
+          });
+          selectorContainer.show();
+        }
       },
       updateState: function (value) {
         if (value) {
@@ -244,14 +262,11 @@ isc.OBImageItem.addProperties({
 
 //== OBImageSelector ==
 //This class displays a selector in a popup which can be used to upload images
-isc.defineClass('OBImageSelector', isc.OBPopup);
+isc.defineClass('OBImageSelector', isc.VLayout);
 
 isc.OBImageSelector.addProperties({
   submitButton: null,
   addForm: null,
-  showMinimizeButton: false,
-  showMaximizeButton: false,
-  title: OB.I18N.getLabel('OBUIAPP_ImageSelectorTitle'),
   initWidget: function (args) {
     var imageId = this.imageItem.getValue();
     var view = args.form.view;
@@ -267,6 +282,7 @@ isc.OBImageSelector.addProperties({
       imageHeightValue = 0;
     }
     var form = isc.DynamicForm.create({
+      autoFocus: true,
       fields: [{
         name: 'inpFile',
         title: OB.I18N.getLabel('OBUIAPP_ImageFile'),
@@ -365,7 +381,7 @@ isc.OBImageSelector.addProperties({
       messageBar.show();
     }
 
-    this.addItems([
+    this.addMembers([
     isc.HLayout.create({
       width: '100%',
       height: 1,
@@ -487,6 +503,6 @@ isc.OBImageSelector.addProperties({
   },
   refreshImage: function (imageId) {
     this.imageItem.refreshImage(imageId);
-    this.hide();
+    this.parentElement.parentElement.closeClick();
   }
 });

@@ -18,6 +18,6 @@ LEFT JOIN fin_payment_detail_v pdv ON pdv.fin_payment_detail_v_id = psd.fin_paym
 WHERE psd.fin_payment_schedule_invoice = ps.fin_payment_schedule_id) AS daysoverdue, COALESCE((SELECT sum(psd.amount) AS sum
 FROM fin_payment_scheduledetail psd, fin_payment_detail pd
 LEFT JOIN fin_payment p ON pd.fin_payment_id = p.fin_payment_id
-WHERE psd.fin_payment_schedule_invoice = ps.fin_payment_schedule_id AND psd.fin_payment_detail_id = pd.fin_payment_detail_id AND p.status = 'RPAE'), 0) AS awaiting_execution
+WHERE psd.fin_payment_schedule_invoice = ps.fin_payment_schedule_id AND psd.fin_payment_detail_id = pd.fin_payment_detail_id AND p.status = 'RPAE'), 0) AS awaiting_execution, 'Y' AS em_aprm_modif_paym_sched, 'Y' AS em_aprm_modif_paym_out_sched
 FROM fin_payment_schedule ps]]></view>
   </database>

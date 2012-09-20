@@ -43,9 +43,11 @@ public class SL_SequenceProduct_Product_Attribute extends SimpleCallout {
   protected void execute(CalloutInfo info) throws ServletException {
     try {
       OBContext.setAdminMode(true);
+      String strChanged = info.getLastFieldChanged();
       String strmSequenceProductId = info
           .getStringParameter("inpmaSequenceproductfromId", idFilter);
       String strmProductSequenceId = info.getStringParameter("inpmaSequenceproductId", idFilter);
+      String strCopySpecialIntoNormal = info.getStringParameter("inpcopySpecialIntoNormal", null);
 
       OperationProduct fromOpProduct = OBDal.getInstance().get(OperationProduct.class,
           strmSequenceProductId);
@@ -54,25 +56,28 @@ public class SL_SequenceProduct_Product_Attribute extends SimpleCallout {
         OperationProduct opProduct = OBDal.getInstance().get(OperationProduct.class,
             strmProductSequenceId);
 
-        OBCriteria<AttributeUse> attributeUseCriteria = OBDal.getInstance().createCriteria(
-            AttributeUse.class);
-        attributeUseCriteria.add(Restrictions.eq(AttributeUse.PROPERTY_ATTRIBUTESET, fromOpProduct
-            .getProduct().getAttributeSet()));
-        attributeUseCriteria.addOrderBy(AttributeUse.PROPERTY_SEQUENCENUMBER, true);
-        java.util.List<AttributeUse> attUseList = attributeUseCriteria.list();
+        if (!strChanged.equals("inpcopySpecialIntoNormal")) {
+          OBCriteria<AttributeUse> attributeUseCriteria = OBDal.getInstance().createCriteria(
+              AttributeUse.class);
+          attributeUseCriteria.add(Restrictions.eq(AttributeUse.PROPERTY_ATTRIBUTESET,
+              fromOpProduct.getProduct().getAttributeSet()));
+          attributeUseCriteria.addOrderBy(AttributeUse.PROPERTY_SEQUENCENUMBER, true);
+          java.util.List<AttributeUse> attUseList = attributeUseCriteria.list();
 
-        info.addSelect("inpmAttributeuseId");
-        for (AttributeUse attUse : attUseList) {
-          info.addSelectResult(attUse.getId(), attUse.getAttribute().getIdentifier());
+          info.addSelect("inpmAttributeuseId");
+          for (AttributeUse attUse : attUseList) {
+            info.addSelectResult(attUse.getId(), attUse.getAttribute().getIdentifier());
+          }
+          info.endSelect();
         }
-        info.endSelect();
 
         // fill special attributes
         if (opProduct.getProduct().getAttributeSet() != null) {
           info.addSelect("inpspecialatt");
           // lot
           if (fromOpProduct.getProduct().getAttributeSet().isLot()
-              && opProduct.getProduct().getAttributeSet().isLot()) {
+              && (opProduct.getProduct().getAttributeSet().isLot() || strCopySpecialIntoNormal
+                  .equals("Y"))) {
             org.openbravo.model.ad.domain.List lot = SpecialAttListValue(lotSearchKey);
             if (lot != null)
               info.addSelectResult(lot.getSearchKey(), lot.getName());
@@ -80,7 +85,8 @@ public class SL_SequenceProduct_Product_Attribute extends SimpleCallout {
 
           // serial no.
           if (fromOpProduct.getProduct().getAttributeSet().isSerialNo()
-              && opProduct.getProduct().getAttributeSet().isSerialNo()) {
+              && (opProduct.getProduct().getAttributeSet().isSerialNo() || strCopySpecialIntoNormal
+                  .equals("Y"))) {
             org.openbravo.model.ad.domain.List sn = SpecialAttListValue(serialNoSearchKey);
             if (sn != null)
               info.addSelectResult(sn.getSearchKey(), sn.getName());
@@ -88,7 +94,8 @@ public class SL_SequenceProduct_Product_Attribute extends SimpleCallout {
 
           // expirationDate
           if (fromOpProduct.getProduct().getAttributeSet().isExpirationDate()
-              && opProduct.getProduct().getAttributeSet().isExpirationDate()) {
+              && opProduct.getProduct().getAttributeSet().isExpirationDate()
+              && strCopySpecialIntoNormal.equals("N")) {
             org.openbravo.model.ad.domain.List ed = SpecialAttListValue(expirationDateSearchKey);
             if (ed != null)
               info.addSelectResult(ed.getSearchKey(), ed.getName());

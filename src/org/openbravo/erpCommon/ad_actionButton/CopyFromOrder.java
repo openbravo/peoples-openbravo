@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -33,11 +33,16 @@ import org.openbravo.base.filter.IsPositiveIntFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.service.db.DalConnectionProvider;
+import org.openbravo.financial.FinancialUtils;
+import org.openbravo.model.common.order.Order;
+import org.openbravo.model.common.plm.Product;
+import org.openbravo.model.pricing.pricelist.ProductPrice;
 import org.openbravo.utils.Replace;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -69,14 +74,15 @@ public class CopyFromOrder extends HttpSecureAppServlet {
         strRownum = vars.getRequiredInStringParameter("inpRownumId", IsPositiveIntFilter.instance);
       } catch (ServletException e) {
         log4j.error("Error captured: ", e);
-        throw new ServletException(Utility.messageBD(new DalConnectionProvider(), "@JS1@",
-            OBContext.getOBContext().getLanguage().getLanguage()));
+        throw new ServletException(OBMessageUtils.messageBD("@JS1@"));
       }
       String strKey = vars.getRequiredStringParameter("inpcOrderId");
-      String strWindowId = vars.getStringParameter("inpWindowId");
-      String strSOTrx = vars.getStringParameter("inpissotrx");
       String strTabId = vars.getStringParameter("inpTabId");
-      OBError myError = copyLines(vars, strRownum, strKey, strWindowId, strSOTrx);
+      if (strRownum.startsWith("(")) {
+        strRownum = strRownum.substring(1, strRownum.length() - 1);
+      }
+      strRownum = Replace.replace(strRownum, "'", "");
+      OBError myError = copyLines(vars, strRownum, strKey);
 
       String strWindowPath = Utility.getTabURL(strTabId, "R", true);
       if (strWindowPath.equals(""))
@@ -88,104 +94,118 @@ public class CopyFromOrder extends HttpSecureAppServlet {
       pageErrorPopUp(response);
   }
 
-  private OBError copyLines(VariablesSecureApp vars, String strRownum, String strKey,
-      String strWindowId, String strSOTrx) throws IOException, ServletException {
+  private OBError copyLines(VariablesSecureApp vars, String strRownums, String strKey)
+      throws IOException, ServletException {
 
     OBError myError = null;
     int count = 0;
 
-    if (strRownum.equals("")) {
+    if (strRownums.equals("")) {
       // return "";
-      myError = Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
+      myError = OBMessageUtils.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
       return myError;
     }
     Connection conn = null;
     try {
       conn = getTransactionConnection();
-      if (strRownum.startsWith("("))
-        strRownum = strRownum.substring(1, strRownum.length() - 1);
-      if (!strRownum.equals("")) {
-        strRownum = Replace.replace(strRownum, "'", "");
-        StringTokenizer st = new StringTokenizer(strRownum, ",", false);
-        BigDecimal discount, priceActual, priceList, priceStd;
-        while (st.hasMoreTokens()) {
-          strRownum = st.nextToken().trim();
-          String strmProductId = vars.getStringParameter("inpmProductId" + strRownum);
-          String strmAttributesetinstanceId = vars.getStringParameter("inpmAttributesetinstanceId"
-              + strRownum);
-          String strLastpriceso = vars.getNumericParameter("inpLastpriceso" + strRownum);
-          String strQty = vars.getNumericParameter("inpquantity" + strRownum);
-          String strcTaxId = vars.getStringParameter("inpcTaxId" + strRownum);
-          String strcUOMId = vars.getStringParameter("inpcUOMId" + strRownum);
-          String strPrecision = "0";
-          String strPricePrecision = "0";
-          String strCOrderlineID = SequenceIdData.getUUID();
-          CopyFromOrderRecordData[] order = CopyFromOrderRecordData.select(this, strKey);
-          CopyFromOrderData[] orderlineprice = CopyFromOrderData.selectPrices(this,
-              order[0].dateordered, strmProductId, order[0].mPricelistId);
-          priceStd = new BigDecimal(CopyFromOrderData.getOffersStdPrice(this, order[0].cBpartnerId,
-              strLastpriceso, strmProductId, order[0].dateordered, strQty, order[0].mPricelistId,
-              strKey));
-          if (orderlineprice == null || orderlineprice.length == 0) {
-            orderlineprice = CopyFromOrderData.set();
-            orderlineprice[0].pricelist = "0";
-            orderlineprice[0].pricelimit = "0";
-            CopyFromOrderData[] precisions = CopyFromOrderData.selectPrecisions(this, strKey);
-            strPrecision = precisions[0].stdprecision.equals("") ? "0" : precisions[0].stdprecision;
-            strPricePrecision = precisions[0].priceprecision.equals("") ? "0"
-                : precisions[0].priceprecision;
-          } else {
-            strPrecision = orderlineprice[0].stdprecision.equals("") ? "0"
-                : orderlineprice[0].stdprecision;
-            strPricePrecision = orderlineprice[0].priceprecision.equals("") ? "0"
-                : orderlineprice[0].priceprecision;
-          }
-          int StdPrecision = Integer.valueOf(strPrecision).intValue();
-          int PricePrecision = Integer.valueOf(strPricePrecision).intValue();
-          priceList = (orderlineprice[0].pricelist.equals("") ? ZERO : new BigDecimal(
-              orderlineprice[0].pricelist));
-          priceActual = (strLastpriceso.equals("") ? ZERO : new BigDecimal(strLastpriceso));
+      StringTokenizer st = new StringTokenizer(strRownums, ",", false);
+      CopyFromOrderRecordData[] orderData = CopyFromOrderRecordData.select(this, strKey);
+      Order order = OBDal.getInstance().get(Order.class, strKey);
 
-          if (priceList.compareTo(BigDecimal.ZERO) == 0)
-            discount = ZERO;
-          else {
-            if (log4j.isDebugEnabled())
-              log4j.debug("pricelist:" + Double.toString(priceList.doubleValue()));
-            if (log4j.isDebugEnabled())
-              log4j.debug("priceActual:" + Double.toString(priceActual.doubleValue()));
-            discount = ((priceList.subtract(priceActual)).divide(priceList, 12,
-                BigDecimal.ROUND_HALF_EVEN)).multiply(new BigDecimal("100")); // (PL-PA)/PL*
-            // 100
-          }
-          if (log4j.isDebugEnabled())
-            log4j.debug("Discount: " + discount.toString());
-          if (discount.scale() > StdPrecision)
-            discount = discount.setScale(StdPrecision, BigDecimal.ROUND_HALF_UP);
-          if (priceStd.scale() > PricePrecision)
-            priceStd = priceStd.setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
-
-          try {
-            CopyFromOrderData.insertCOrderline(conn, this, strCOrderlineID, order[0].adClientId,
-                order[0].adOrgId, vars.getUser(), strKey, order[0].cBpartnerId,
-                order[0].cBpartnerLocationId, order[0].dateordered, order[0].dateordered,
-                strmProductId, order[0].mWarehouseId.equals("") ? vars.getWarehouse()
-                    : order[0].mWarehouseId, strcUOMId, strQty, order[0].cCurrencyId,
-                orderlineprice[0].pricelist, strLastpriceso, orderlineprice[0].pricelimit, priceStd
-                    .toString(), discount.toString(), strcTaxId, strmAttributesetinstanceId);
-          } catch (ServletException ex) {
-            myError = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
-            releaseRollbackConnection(conn);
-            return myError;
-          }
-          count++;
+      BigDecimal discount, priceActual, priceList, netPriceList, grossPriceList, priceStd, priceLimit, priceGross, amtGross;
+      while (st.hasMoreTokens()) {
+        String strRownum = st.nextToken().trim();
+        String strmProductId = vars.getStringParameter("inpmProductId" + strRownum);
+        String strmAttributesetinstanceId = vars.getStringParameter("inpmAttributesetinstanceId"
+            + strRownum);
+        String strLastpriceso = vars.getNumericParameter("inpLastpriceso" + strRownum);
+        String strQty = vars.getNumericParameter("inpquantity" + strRownum);
+        String strcTaxId = vars.getStringParameter("inpcTaxId" + strRownum);
+        String strcUOMId = vars.getStringParameter("inpcUOMId" + strRownum);
+        String strCOrderlineID = SequenceIdData.getUUID();
+        priceStd = new BigDecimal(CopyFromOrderData.getOffersStdPrice(this,
+            orderData[0].cBpartnerId, strLastpriceso, strmProductId, orderData[0].dateordered,
+            strQty, orderData[0].mPricelistId, strKey));
+        ProductPrice prices = FinancialUtils.getProductPrice(
+            OBDal.getInstance().get(Product.class, strmProductId), order.getOrderDate(),
+            order.isSalesTransaction(), order.getPriceList(), false);
+        if (prices != null) {
+          priceLimit = prices.getPriceLimit();
+          priceList = prices.getListPrice();
+        } else {
+          priceLimit = BigDecimal.ZERO;
+          priceList = BigDecimal.ZERO;
         }
+
+        int stdPrecision = 2;
+        int pricePrecision = 2;
+        OBContext.setAdminMode(true);
+        try {
+          stdPrecision = order.getCurrency().getStandardPrecision().intValue();
+          pricePrecision = order.getCurrency().getPricePrecision().intValue();
+        } finally {
+          OBContext.restorePreviousMode();
+        }
+
+        if (order.getPriceList().isPriceIncludesTax()) {
+          BigDecimal qty = new BigDecimal(strQty);
+          priceGross = (strLastpriceso.equals("") ? ZERO : new BigDecimal(strLastpriceso));
+          amtGross = priceGross.multiply(qty).setScale(stdPrecision, BigDecimal.ROUND_HALF_UP);
+          priceActual = FinancialUtils.calculateNetFromGross(strcTaxId, amtGross, pricePrecision,
+              amtGross, qty);
+          priceLimit = priceActual;
+          netPriceList = priceActual;
+          grossPriceList = priceList;
+        } else {
+          priceActual = (strLastpriceso.equals("") ? ZERO : new BigDecimal(strLastpriceso));
+          netPriceList = priceList;
+          priceGross = BigDecimal.ZERO;
+          amtGross = BigDecimal.ZERO;
+          grossPriceList = BigDecimal.ZERO;
+        }
+
+        if (priceList.compareTo(BigDecimal.ZERO) == 0) {
+          discount = ZERO;
+        } else {
+          log4j.debug("pricelist:" + priceList.toString());
+          log4j.debug("priceActual:" + priceActual.toString());
+          BigDecimal unitPrice;
+          if (order.getPriceList().isPriceIncludesTax()) {
+            unitPrice = priceGross;
+          } else {
+            unitPrice = priceActual;
+          }
+          // (PL-UP)/PL * 100
+          discount = ((priceList.subtract(unitPrice)).multiply(new BigDecimal("100")).divide(
+              priceList, stdPrecision, BigDecimal.ROUND_HALF_UP));
+        }
+        log4j.debug("Discount: " + discount.toString());
+        if (priceStd.scale() > pricePrecision) {
+          priceStd = priceStd.setScale(pricePrecision, BigDecimal.ROUND_HALF_UP);
+        }
+
+        try {
+          CopyFromOrderData.insertCOrderline(conn, this, strCOrderlineID, orderData[0].adClientId,
+              orderData[0].adOrgId, vars.getUser(), strKey, orderData[0].cBpartnerId,
+              orderData[0].cBpartnerLocationId, orderData[0].dateordered, orderData[0].dateordered,
+              strmProductId, orderData[0].mWarehouseId.equals("") ? vars.getWarehouse()
+                  : orderData[0].mWarehouseId, strcUOMId, strQty, orderData[0].cCurrencyId,
+              netPriceList.toString(), priceActual.toString(), priceLimit.toString(), priceStd
+                  .toString(), discount.toString(), strcTaxId, strmAttributesetinstanceId,
+              grossPriceList.toString(), priceGross.toString(), amtGross.toString());
+        } catch (ServletException ex) {
+          myError = OBMessageUtils.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+          releaseRollbackConnection(conn);
+          return myError;
+        }
+        count++;
       }
+
       releaseCommitConnection(conn);
       myError = new OBError();
       myError.setType("Success");
-      myError.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
-      myError
-          .setMessage(Utility.messageBD(this, "RecordsCopied", vars.getLanguage()) + " " + count);
+      myError.setTitle(OBMessageUtils.messageBD("Success"));
+      myError.setMessage(OBMessageUtils.messageBD("RecordsCopied") + " " + count);
     } catch (Exception e) {
       try {
         releaseRollbackConnection(conn);
@@ -193,7 +213,7 @@ public class CopyFromOrder extends HttpSecureAppServlet {
       }
       e.printStackTrace();
       log4j.warn("Rollback in transaction");
-      myError = Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
+      myError = OBMessageUtils.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
     }
     return myError;
   }
@@ -206,9 +226,10 @@ public class CopyFromOrder extends HttpSecureAppServlet {
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_actionButton/CopyFromOrder").createXmlDocument();
     CopyFromOrderRecordData[] dataOrder = CopyFromOrderRecordData.select(this, strKey);
+    Order order = OBDal.getInstance().get(Order.class, strKey);
     CopyFromOrderData[] data = CopyFromOrderData.select(this, strBpartner, strmPricelistId,
-        dataOrder[0].dateordered, strSOTrx, dataOrder[0].lastDays.equals("") ? "0"
-            : dataOrder[0].lastDays);
+        dataOrder[0].dateordered, order.getPriceList().isPriceIncludesTax() ? "Y" : "N", strSOTrx,
+        dataOrder[0].lastDays.equals("") ? "0" : dataOrder[0].lastDays);
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("theme", vars.getTheme());

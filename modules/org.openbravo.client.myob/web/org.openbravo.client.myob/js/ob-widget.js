@@ -467,7 +467,10 @@ isc.defineClass('OBWidget', isc.Portlet).addProperties({
     if (isc.isA.emptyObject(this.parameters)) {
       return;
     }
-
+    if (OB.MyOB.adminMode && !this.dbInstanceId) {
+      this.switchMode();
+      return;
+    }
     post = {
       ID: this.ID,
       dbInstanceId: this.dbInstanceId,
@@ -491,7 +494,6 @@ isc.defineClass('OBWidget', isc.Portlet).addProperties({
         }
       }
     }
-
     OB.RemoteCallManager.call('org.openbravo.client.application.ParametersActionHandler', post, {}, function (rpcResponse, data, rpcRequest) {
       if (data && data.ID && window[data.ID]) {
         window[data.ID].saveParametersResponseHandler(rpcResponse, data, rpcRequest);

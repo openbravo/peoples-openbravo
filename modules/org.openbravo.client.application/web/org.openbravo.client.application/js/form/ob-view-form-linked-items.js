@@ -224,7 +224,7 @@ isc.OBLinkedItemLayout.addProperties({
    * Opens linked item in a new window
    */
   openLinkedItemInNewWindow: function (record) {
-    OB.Utilities.openView(record.adWindowId, record.adTabId, record.adMenuName, record.id, 'DIRECT');
+    OB.Utilities.openView(record.adWindowId, record.adTabId, record.adMenuName, record.id, 'DIRECT', null, record.readOnly, record.singleRecord, true);
   },
 
   /**
@@ -308,7 +308,7 @@ isc.OBLinkedItemLayout.addProperties({
       height: 300,
       dataSource: this.linkedItemCategoryDS,
       layout: this,
-      emptyDataMessage: this.emptyMessage,
+      emptyDataMessage: OB.I18N.getLabel('OBUISC_ListGrid.emptyMessage'),
       loadingDataMessage: OB.I18N.getLabel('OBUISC_ListGrid.loadingDataMessage'),
       recordClick: 'this.layout.loadLinkedItems(record)',
       showFilterEditor: true,

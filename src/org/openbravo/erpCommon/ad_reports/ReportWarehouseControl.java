@@ -71,17 +71,10 @@ public class ReportWarehouseControl extends HttpSecureAppServlet {
     PrintWriter out = response.getWriter();
     XmlDocument xmlDocument = null;
 
-    String strRef;
-    if (strReferential.equals("")) {
-      strRef = strReferential;
-    } else {
-      strRef = "#" + strReferential;
-    }
-
     ReportWarehouseControlData[] data = ReportWarehouseControlData.select(this,
         Utility.getContext(this, vars, "#User_Client", "ReportWarehouseControl"),
         Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportWarehouseControl"),
-        strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strRef);
+        strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strReferential);
 
     if (data == null || data.length == 0 || vars.commandIn("DEFAULT")) {
       String discard[] = { "sectionDescription" };
