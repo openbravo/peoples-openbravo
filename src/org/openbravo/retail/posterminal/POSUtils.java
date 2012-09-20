@@ -1,5 +1,6 @@
 package org.openbravo.retail.posterminal;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -8,8 +9,11 @@ import org.hibernate.ScrollableResults;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
+import org.openbravo.model.ad.module.Module;
+import org.openbravo.model.ad.module.ModuleDependency;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.pricing.pricelist.PriceList;
@@ -213,5 +217,38 @@ public class POSUtils {
       }
     }
     return maxNumber;
+  }
+
+  public static String getRetailDependantModuleIds() {
+    StringBuffer ids = new StringBuffer();
+
+    List<Module> dependantModules = new ArrayList<Module>();
+    Module retailModule = OBDal.getInstance().get(Module.class, "FF808181326CC34901326D53DBCF0018");
+    OBCriteria<ModuleDependency> totalDeps = OBDal.getInstance().createCriteria(
+        ModuleDependency.class);
+    dependantModules.add(retailModule);
+    getRetailDependantModules(retailModule, dependantModules, totalDeps.list());
+    int n = 0;
+    ids.append("(");
+    for (Module mod : dependantModules) {
+      if (n > 0) {
+        ids.append(",");
+      }
+      ids.append("'" + mod.getId() + "'");
+      n++;
+    }
+    ids.append(")");
+    return ids.toString();
+  }
+
+  public static void getRetailDependantModules(Module module, List<Module> moduleList,
+      List<ModuleDependency> list) {
+    for (ModuleDependency depModule : list) {
+      if (depModule.getDependentModule().equals(module)
+          && !moduleList.contains(depModule.getModule())) {
+        moduleList.add(depModule.getModule());
+        getRetailDependantModules(depModule.getModule(), moduleList, list);
+      }
+    }
   }
 }

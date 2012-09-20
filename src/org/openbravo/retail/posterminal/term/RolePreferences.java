@@ -2,34 +2,46 @@ package org.openbravo.retail.posterminal.term;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.ServletException;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.retail.posterminal.JSONProcess;
 import org.openbravo.retail.posterminal.JSONRowConverter;
+import org.openbravo.retail.posterminal.POSUtils;
 import org.openbravo.service.json.JsonConstants;
 
 public class RolePreferences implements JSONProcess {
 
   @Override
   public void exec(Writer w, JSONObject jsonsent) throws IOException, ServletException {
+    OBContext.setAdminMode(true);
+    try {
+      String whereClause = "where reference.id = 'A26BA480E2014707B47257024C3CBFF7' and module.id in "
+          + POSUtils.getRetailDependantModuleIds() + "";
+      OBQuery<org.openbravo.model.ad.domain.List> refLists = OBDal.getInstance().createQuery(
+          org.openbravo.model.ad.domain.List.class, whereClause);
+      List<String> preferenceList = new ArrayList<String>();
+      for (org.openbravo.model.ad.domain.List listRef : refLists.list()) {
+        preferenceList.add(listRef.getSearchKey());
+      }
+      // List of all permissions with its defaults in POS
+      buildResponse(w, preferenceList);
 
-    // List of all permissions with its defaults in POS
-    buildResponse(w, new Pref[] { new Pref("OBPOS_order.changePrice", false),
-        new Pref("OBPOS_order.discount", false), new Pref("OBPOS_payment.cash", true),
-        new Pref("OBPOS_payment.voucher", true), new Pref("OBPOS_payment.card", true),
-        new Pref("OBPOS_retail.pointofsale", true), new Pref("OBPOS_retail.cashup", false),
-        new Pref("OBPOS_retail.cashmanagement", false), new Pref("OBPOS_print.receipt", false) });
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
-
-  public void buildResponse(Writer w, Pref[] prefs)
-      throws IOException {
+  public void buildResponse(Writer w, List<String> prefs) throws IOException {
 
     final int startRow = 0;
     int rows = 0;
@@ -37,13 +49,13 @@ public class RolePreferences implements JSONProcess {
 
     try {
       w.write("\"data\":[");
-      while (rows < prefs.length) {
+      while (rows < prefs.size()) {
         if (rows > 0) {
           w.write(',');
         }
         JSONObject json = new JSONObject();
-        json.put("key", prefs[rows].getKey());
-        json.put("value", getPreferenceValue(prefs[rows].getKey(), prefs[rows].getDefault()));
+        json.put("key", prefs.get(rows));
+        json.put("value", getPreferenceValue(prefs.get(rows)));
         w.write(json.toString());
         rows++;
       }
@@ -75,31 +87,14 @@ public class RolePreferences implements JSONProcess {
     }
   }
 
-  private boolean getPreferenceValue(String p, boolean def) {
+  private boolean getPreferenceValue(String p) {
     try {
       return "Y".equals(Preferences.getPreferenceValue(p, true, OBContext.getOBContext()
           .getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(), OBContext
           .getOBContext().getUser(), OBContext.getOBContext().getRole(), null));
     } catch (PropertyException e) {
-      return def;
+      return false;
     }
   }
 
-  private static class Pref {
-    private String key;
-    private boolean def;
-
-    public Pref(String key, boolean def) {
-      this.key = key;
-      this.def = def;
-    }
-
-    public String getKey() {
-      return key;
-    }
-
-    public boolean getDefault() {
-      return def;
-    }
-  }
 }
