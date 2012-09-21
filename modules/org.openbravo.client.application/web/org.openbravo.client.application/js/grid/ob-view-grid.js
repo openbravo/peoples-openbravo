@@ -2384,6 +2384,10 @@ isc.OBViewGrid.addProperties({
         isc.Log.logDebug('hideInlineEditor has NO record and editColumnLayout', 'OB');
       }
       this.view.isEditingGrid = false;
+      // Update the tab title after the record has been saved or canceled
+      // to get rid of the '*' in the tab title
+      // See https://issues.openbravo.com/view.php?id=21709
+      this.view.updateTabTitle();
     }
 
     // always hide the clickmask, as it needs to be re-applied
