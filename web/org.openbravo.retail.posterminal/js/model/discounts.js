@@ -6,6 +6,7 @@ OB.Model.Discounts = {
     console.log('applyDiscounts',receipt);
     if (line) {
       productId = line.get('product').id;
+      line.set('discountedLinePrice', null);
       // check which are the discounts to be applied
 
       criteria = {
@@ -15,8 +16,8 @@ OB.Model.Discounts = {
       OB.Dal.find(OB.Model.Discount, criteria, function(d) { //OB.Dal.find success
         console.log('ds', d);
         d.forEach(function(disc) {
-          var rule = OB.Model.Discounts.discountRules['test'], ds;
-          if (rule){ // TODO: check this based on actual rule
+          var rule = OB.Model.Discounts.discountRules[disc.get('discountType')], ds;
+          if (rule){ 
         	  ds = rule(disc, receipt, line);
         	  if (ds && ds.discounts) {
         	    discounts = discounts.concat(ds.discounts);
@@ -24,6 +25,8 @@ OB.Model.Discounts = {
         	  if (ds && ds.alerts) {
         		  alerts = alerts.concat(ds.alerts);
         	  }
+          } else {
+             console.warn('No POS implementation for discount '+disc.get('discountType'));
           }
         });
         receipt.setDiscounts(line, discounts);
@@ -112,7 +115,7 @@ OB.Model.Discounts = {
 };
 
 
-OB.Model.Discounts.registerRule('test', function(discountRule, receipt, line){
+OB.Model.Discounts.registerRule('PRADJ', function(discountRule, receipt, line){
 	var discounts = [], alerts = [], minQuantity, totalDiscount, withoutDisc, discounted, qty;
 	console.log(arguments);
 	if (!line) {
