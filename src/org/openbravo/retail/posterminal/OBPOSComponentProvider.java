@@ -77,8 +77,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
 
     final String[] resourceDependency = {
         // Common components
-        "datasource",
-        "data/dal",
+        "datasource", "data/dal",
         "utilities",
         "utilitiesui",
         "arithmetic",
@@ -90,6 +89,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "model/user",
         "components/commonbuttons",
         "components/table",
+        "components/scrollabletable",
         "components/terminal",
         "components/modalprofile",
         "components/modallogout",

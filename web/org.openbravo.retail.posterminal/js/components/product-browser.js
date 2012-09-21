@@ -58,6 +58,7 @@ enyo.kind({
 });
 
 enyo.kind({
+  kind: 'OB.UI.ScrollableTableHeader',
   name: 'OB.UI.CategoryListHeader',
   style: 'padding: 10px; border-bottom: 1px solid #cccccc;',
   components: [{
@@ -101,19 +102,17 @@ enyo.kind({
 });
 
 //This header is set dynamically
-//use setHeaderText method of scrollableTable
+//use scrollableTableHeaderChanged_handler method of scrollableTable to manage changes
 //me.$.productTable.setHeaderText(category.get('_identifier'));
 enyo.kind({
-  handlers: {
-    onChangeHeaderText: 'changeHeader'
-  },
+  kind: 'OB.UI.ScrollableTableHeader',
   name: 'OB.UI.ProductListHeader',
   style: 'padding: 10px; border-bottom: 1px solid #cccccc;',
   components: [{
     tag: 'h3',
     name: 'title'
   }],
-  changeHeader: function(inSender, valueToSet){
+  scrollableTableHeaderChanged_handler: function(inSender, valueToSet){
     this.$.title.setContent(valueToSet);
     return true;
   }
@@ -188,7 +187,7 @@ enyo.kind({
         me.products.reset();
       }
 //      TODO
-      me.$.productTable.setHeaderText(category.get('_identifier'));
+      me.$.productTable.setScrolleableTableHeader(category.get('_identifier'));
     }
 
     if (category) {
