@@ -62,6 +62,74 @@ var hasBPartner = null;
 </script>
 <script language="JavaScript" type="text/javascript">
 //Ajax calls
+function distributeAmount(_amount) {
+  var amount = applyFormat(_amount);
+  var distributedAmount = 0;
+  var keepSelection = false;
+  var chk = frm.inpScheduledPaymentDetailId;
+  var scheduledPaymentDetailId, outstandingAmount, j, i;
+  if (isGLItemEnabled) {
+    amount = subtract(amount, frm.inpGLSumAmount.value);
+  }
+  
+  if (!chk) {
+    updateTotal();
+    return;
+  } else if (!chk.length) {
+    scheduledPaymentDetailId = frm.inpRecordId0.value;
+    outstandingAmount = frm.elements["inpRecordAmt" + scheduledPaymentDetailId].value;
+    if ( compare(outstandingAmount, '>', amount) ) {
+      outstandingAmount = amount;
+    }
+    frm.elements["inpPaymentAmount" + scheduledPaymentDetailId].value = outstandingAmount;
+    if (!chk.checked && compare(outstandingAmount, '!=', 0)) {
+      chk.checked = true;
+      updateData(chk.value, chk.checked);
+    }
+  } else {
+    var total = chk.length;
+    for ( i = 0; i < total; i++) {
+      if (chk[i].checked) {
+        distributedAmount = add(distributedAmount, frm.elements["inpPaymentAmount" + chk[i].value].value);
+      }
+    }
+    if (compare(amount, '>', distributedAmount) || compare(amount, '==', distributedAmount)) {
+      amount = subtract(amount, distributedAmount);
+      keepSelection = true;
+    }
+    for (i = 0; i < total; i++) {
+      if (chk[i].checked && keepSelection) {
+        continue;
+      }
+      scheduledPaymentDetailId = frm.elements["inpRecordId" + i].value;
+      outstandingAmount = frm.elements["inpRecordAmt" + scheduledPaymentDetailId].value;
+      if ( compare(outstandingAmount, '>', amount) ) {
+        outstandingAmount = amount;
+      }
+      if ( compare(amount, '==', 0) && compare(outstandingAmount, '>=', 0 )) {
+        frm.elements["inpPaymentAmount" + scheduledPaymentDetailId].value = "";
+        for ( j = 0; j < total; j++) {
+          if (chk[j].checked && chk[j].value === scheduledPaymentDetailId) {
+            chk[j].checked = false;
+            updateData(chk[j].value, chk[j].checked);
+          }
+        }
+      } else {
+        frm.elements["inpPaymentAmount" + scheduledPaymentDetailId].value = outstandingAmount;
+        for ( j = 0; j < total; j++) {
+          if (!chk[j].checked && chk[j].value === scheduledPaymentDetailId) {
+            chk[j].checked = true;
+            updateData(chk[j].value, chk[j].checked,null ,true );
+          }
+        }
+        amount = subtract(amount, outstandingAmount);
+      }
+    }
+  }
+  updateTotal();
+  return true;
+}
+
 function callBackGrid(paramXMLParticular, XMLHttpRequestObj) {
   var strText = '';
   if (getReadyStateHandler(XMLHttpRequestObj)) {
@@ -421,7 +489,7 @@ function updateAll(drivenByGrid) {
         }
       }
       else{
-          updateData(chk[i].value, chk[i].checked, drivenByGrid,false);
+          updateData(chk[i].value, chk[i].checked, drivenByGrid,true);
       }
     }
   }
