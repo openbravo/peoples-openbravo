@@ -42,7 +42,7 @@
     },
 
     printPrice: function() {
-      return OB.I18N.formatCurrency(this.get('price'));
+      return OB.I18N.formatCurrency(this.get('_price') || this.get('price'));
     },
 
     printDiscount: function() {
@@ -63,7 +63,7 @@
     },
 
     printGross: function() {
-      return OB.I18N.formatCurrency(this.getGross());
+      return OB.I18N.formatCurrency(this.get('_gross') || this.getGross());
     }
   });
 
