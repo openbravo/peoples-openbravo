@@ -64,7 +64,7 @@ enyo.kind({
   components: [{
     tag: 'h3',
     name: 'title',
-    content: OB.I18N.getLabel('OBPOS_LblCategories') 
+    content: OB.I18N.getLabel('OBPOS_LblCategories')
   }]
 });
 
@@ -112,7 +112,7 @@ enyo.kind({
     tag: 'h3',
     name: 'title'
   }],
-  scrollableTableHeaderChanged_handler: function(inSender, valueToSet){
+  scrollableTableHeaderChanged_handler: function(inSender, valueToSet) {
     this.$.title.setContent(valueToSet);
     return true;
   }
@@ -135,11 +135,11 @@ enyo.kind({
     this.inherited(arguments);
     this.products = new OB.Collection.ProductList();
     this.$.productTable.setCollection(this.products);
-        this.products.on('click', function(model) {
-          this.doAddProduct({
-            product: model
-          });
-        }, this);
+    this.products.on('click', function(model) {
+      this.doAddProduct({
+        product: model
+      });
+    }, this);
   },
 
   loadCategory: function(category) {
@@ -186,8 +186,8 @@ enyo.kind({
       } else {
         me.products.reset();
       }
-//      TODO
-      me.$.productTable.setScrolleableTableHeader(category.get('_identifier'));
+      //      TODO
+      me.$.productTable.setScrollableTableHeader(category.get('_identifier'));
     }
 
     if (category) {
