@@ -375,7 +375,8 @@ public abstract class AcctServer {
         con = connectionProvider.getTransactionConnection();
         strIDs += data[i].getField("ID") + ", ";
         this.setMessageResult(null);
-        if (!post(data[i].getField("ID"), false, vars, connectionProvider, con)) {
+        if (!get(AD_Table_ID, AD_Client_ID, AD_Org_ID, connectionProvider).post(
+            data[i].getField("ID"), false, vars, connectionProvider, con)) {
           connectionProvider.releaseRollbackConnection(con);
           return;
         } else {
