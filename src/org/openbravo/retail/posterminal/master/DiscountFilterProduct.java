@@ -22,7 +22,7 @@ public class DiscountFilterProduct extends ProcessHQLQuery {
   @Override
   protected String getQuery(JSONObject jsonsent) throws JSONException {
 
-    String hql = "from PricingAdjustmentProduct where active = true ";
+    String hql = "from PricingAdjustmentProduct where active = true order by priority";
 
     return hql;
   }
