@@ -378,9 +378,6 @@ OB.Model.Terminal = Backbone.Model.extend({
             window.console.error(arguments);
           });
           me.usermodel = user;
-          if(trigger){
-            me.trigger('terminal.loaded');
-          }
         }else{
           user = users.models[0];
           me.usermodel = user;
@@ -391,6 +388,9 @@ OB.Model.Terminal = Backbone.Model.extend({
           });
         }
         me.updateSession(user);
+        if(trigger){
+          me.trigger('terminal.loaded');
+        }
       }, 
       function() {
         window.console.error(arguments);
