@@ -90,7 +90,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
     this.loadUnpaidOrders();
 
     receipt.on('paymentDone', function() {
-      receipt.calculateTaxes(function() {
+      receipt.prepareToSend(function() {
         receipt.trigger('closed');
         receipt.trigger('print'); // to guaranty execution order
         orderList.deleteCurrent();

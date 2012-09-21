@@ -180,6 +180,50 @@
       this.save();
     },
 
+    prepareToSend: function(callback) {
+      this.adjustPrices();
+      this.calculateTaxes(callback);
+    },
+
+    adjustPrices: function() {
+      //TODO: discount (%)
+      // Apply calculated discounts and promotions to price and gross prices
+      // so ERP saves them in the proper place
+      this.get('lines').each(function(line) {
+        var price = line.get('price'),
+            gross = line.get('gross'),
+            totalDiscount = 0;
+        console.log('line', line)
+        if (!line.get('discounts')) {
+          return;
+        }
+
+        // keep price and gross to be used in printed ticket
+        // TODO: if order is recovered from DB these should be used
+        line.set('_price', price, {
+          silent: true
+        });
+        line.set('_gross', gross, {
+          silent: true
+        });
+
+        _.forEach(line.get('discounts'), function(discount) {
+          totalDiscount = OB.DEC.add(totalDiscount, discount.gross);
+        }, this);
+        gross = OB.DEC.sub(gross, totalDiscount);
+        price = OB.DEC.div(gross, line.get('qty'));
+
+        console.log('p', price, 'g', gross);
+
+        line.set('price', price, {
+          silent: true
+        });
+        line.set('gross', gross, {
+          silent: true
+        });
+      }, this);
+    },
+
     getTotal: function() {
       return this.getGross();
     },
@@ -587,6 +631,7 @@
       // this.toJSON() generates a collection instance for members like "lines"
       // We need a plain array object
       var jsonorder = JSON.parse(JSON.stringify(this.toJSON()));
+      console.log('serialize', jsonorder);
 
       // remove not needed members
       delete jsonorder.undo;
