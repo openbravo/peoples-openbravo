@@ -12,7 +12,6 @@
 enyo.kind({
   name: 'OB.UI.SearchProductHeader',
   kind: 'OB.UI.ScrollableTableHeader',
-  style: 'border-bottom: 1px solid #cccccc;',
   events: {
     onSearchAction: '',
     onClearAction: ''

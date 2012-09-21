@@ -11,6 +11,7 @@
 
 enyo.kind({
   name: 'OB.UI.ScrollableTableHeader',
+  style: 'border-bottom: 1px solid #cccccc;',
   handlers: {
     onScrollableTableHeaderChanged: 'scrollableTableHeaderChanged_handler'
   }
