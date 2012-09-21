@@ -61,7 +61,7 @@ enyo.kind({
               style: 'float: left; width: 60%;'
             }
           }, {
-            content: -d.gross,
+            content: OB.I18N.formatCurrency(-d.gross),
             attributes: {
               style: 'float: right; width: 20%; text-align: right;'
             }
