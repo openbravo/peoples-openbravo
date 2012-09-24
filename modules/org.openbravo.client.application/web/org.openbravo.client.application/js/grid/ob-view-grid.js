@@ -2210,7 +2210,9 @@ isc.OBViewGrid.addProperties({
     // If leaving the row...
     if (editCompletionEvent === 'enter' || editCompletionEvent === 'arrow_up' || editCompletionEvent === 'arrow_down') {
       // See issue https://issues.openbravo.com/view.php?id=19830
-      this.view.standardWindow.getDirtyEditForm().validateForm();
+      if (this.view.standardWindow.getDirtyEditForm()) {
+        this.view.standardWindow.getDirtyEditForm().validateForm();
+      }
     }
 
     this._leavingCell = true;
