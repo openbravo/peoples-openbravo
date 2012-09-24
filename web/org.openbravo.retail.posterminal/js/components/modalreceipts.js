@@ -45,7 +45,8 @@ enyo.kind({
     }, {
       components: [{
         name: 'receiptslistitemprinter',
-        kind: 'OB.UI.Table',
+        kind: 'OB.UI.ScrollableTable',
+        scrollAreaMaxHeight: '400px',
         renderLine: 'OB.UI.ListReceiptLine',
         renderEmpty: 'OB.UI.RenderEmpty'
       }]

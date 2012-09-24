@@ -112,9 +112,8 @@ enyo.kind({
     tag: 'h3',
     name: 'title'
   }],
-  scrollableTableHeaderChanged_handler: function(inSender, valueToSet) {
+  setHeader: function(valueToSet) {
     this.$.title.setContent(valueToSet);
-    return true;
   }
 });
 
@@ -187,7 +186,7 @@ enyo.kind({
         me.products.reset();
       }
       //      TODO
-      me.$.productTable.setScrollableTableHeader(category.get('_identifier'));
+      me.$.productTable.getHeader().setHeader(category.get('_identifier'));
     }
 
     if (category) {

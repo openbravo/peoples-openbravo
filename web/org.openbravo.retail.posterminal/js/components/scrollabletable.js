@@ -20,8 +20,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ScrollableTable',
   published: {
-    collection: null,
-    scrollableTableHeader: null
+    collection: null
   },
   components: [{
     name: 'theader'
@@ -110,6 +109,8 @@ enyo.kind({
       } else if (this.listStyle === 'edit') {
         model.trigger('selected', model);
       }
+      //Put scroller in the position of new item
+      this.getScrollArea().scrollToControl(this.$.tbody.getComponents()[options.index]);
     }, this);
 
     this.collection.on('remove', function(model, prop, options) {
@@ -129,6 +130,9 @@ enyo.kind({
       if (this.collection.length === 0) {
         this.$.tbody.hide();
         this.$.tempty.show();
+      }else{
+        //Put scroller in the previous item of deleted one.
+        this.getScrollArea().scrollToControl(this.$.tbody.getComponents()[options.index -1]);
       }
     }, this);
 
@@ -173,8 +177,22 @@ enyo.kind({
     // XXX: Reseting to show the collection if registered with data
     this.collection.trigger('reset');
   },
-  scrollableTableHeaderChanged: function(oldValue) {
-    this.waterfall('onScrollableTableHeaderChanged', this.scrollableTableHeader);
+  getScrollArea: function(){
+    return this.$.scrollArea;
+  },
+  getHeader: function(){
+    var tableName = this.name || '';
+    if(this.$.theader.getComponents()){
+      if (this.$.theader.getComponents().length > 0){
+        if (this.$.theader.getComponents().length === 1){
+          return this.$.theader.getComponents()[0];
+        }else{
+          //developers help
+          throw enyo.format('Each scrolleable table ahould have only one component as header', tableName);
+        }
+      }
+    }
+    return null;
   },
   _addModelToCollection: function(model, index) {
     var tr = this.$.tbody.createComponent({

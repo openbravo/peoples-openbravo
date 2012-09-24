@@ -76,9 +76,8 @@ enyo.kind({
       }]
     }]
   }],
-  scrollableTableHeaderChanged_handler: function(inSender, valueToSet) {
+  setHeaderCollection: function(valueToSet){
     this.$.productcategory.setCollection(valueToSet);
-    return true;
   },
   searchAction: function() {
     this.doSearchAction({
@@ -137,7 +136,7 @@ enyo.kind({
 
     //first the main collection of the component
     this.$.products.setCollection(this.products);
-    this.$.products.setScrollableTableHeader(this.categories);
+    this.$.products.getHeader().setHeaderCollection(this.categories);
 
     function errorCallback(tx, error) {
       OB.UTIL.showError("OBDAL error: " + error);

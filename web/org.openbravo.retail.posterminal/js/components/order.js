@@ -45,8 +45,9 @@ enyo.kind({
     order: null
   },
   components: [{
-    kind: 'OB.UI.Table',
+    kind: 'OB.UI.ScrollableTable',
     name: 'listOrderLines',
+    scrollAreaMaxHeight: '391px',
     renderLine: 'OB.UI.RenderOrderLine',
     renderEmpty: 'OB.UI.RenderOrderLineEmpty',
     //defined on redenderorderline.js
