@@ -19,9 +19,13 @@
 <!--5EE6D055A7FE4C4DA7EB557F6C61D0EA-->  <VALUE><![CDATA[[
   {"id": "TabSet_CloseSelectedTab", "keyComb": {"alt": true, "shift": true, "key": "W"}},
   {"id": "TabSet_SelectParentTab", "keyComb": {"alt": true, "shift": true, "key": "Arrow_Up"}},
+  {"id": "TabSet_SelectParentTab_Alternative", "keyComb": {"ctrl": true, "space": true, "key": "Arrow_Up"}},
   {"id": "TabSet_SelectChildTab", "keyComb": {"alt": true, "shift": true, "key": "Arrow_Down"}},
+  {"id": "TabSet_SelectChildTab_Alternative", "keyComb": {"ctrl": true, "space": true, "key": "Arrow_Down"}},
   {"id": "TabSet_SelectPreviousTab", "keyComb": {"alt": true, "shift": true, "key": "Arrow_Left"}},
+  {"id": "TabSet_SelectPreviousTab_Alternative", "keyComb": {"ctrl": true, "space": true, "key": "Arrow_Left"}},
   {"id": "TabSet_SelectNextTab", "keyComb": {"alt": true, "shift": true, "key": "Arrow_Right"}},
+  {"id": "TabSet_SelectNextTab_Alternative", "keyComb": {"ctrl": true, "space": true, "key": "Arrow_Right"}},
   {"id": "TabSet_SelectWorkspaceTab", "keyComb": {"alt": true, "shift": true, "key": "1"}},
   {"id": "ToolBar_NewDoc", "keyComb": {"ctrl": true, "key": "D"}},
   {"id": "ToolBar_NewRow", "keyComb": {"ctrl": true, "key": "I"}},

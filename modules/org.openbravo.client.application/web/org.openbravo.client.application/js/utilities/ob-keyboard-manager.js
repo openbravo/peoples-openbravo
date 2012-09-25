@@ -116,6 +116,17 @@
               this.list[position].keyComb.text += 'Shift';
             }
           }
+          if (typeof keyComb.space === 'undefined') {
+            this.list[position].keyComb.space = false;
+          } else {
+            this.list[position].keyComb.space = keyComb.space;
+            if (keyComb.space === true) {
+              if (this.list[position].keyComb.text.length > 0) {
+                this.list[position].keyComb.text += '+';
+              }
+              this.list[position].keyComb.text += 'Space';
+            }
+          }
           if (typeof keyComb.key === 'undefined') {
             this.list[position].keyComb.key = null;
           } else {
@@ -275,6 +286,8 @@
         return this.list;
       },
 
+      isSpacePressed: false,
+
       monitor: function (execLevel, caller) {
         var i, j, length = this.list.length,
             position = null,
@@ -282,6 +295,7 @@
         pushedKS.ctrl = false;
         pushedKS.alt = false;
         pushedKS.shift = false;
+        pushedKS.space = false;
         pushedKS.key = null;
         if (isc.Event.ctrlKeyDown()) {
           pushedKS.ctrl = true;
@@ -292,7 +306,13 @@
         if (isc.Event.shiftKeyDown()) {
           pushedKS.shift = true;
         }
+        if (this.isSpacePressed) {
+          pushedKS.space = true;
+        }
         pushedKS.key = isc.Event.getKey();
+        if (pushedKS.key === 'Space' && pushedKS.ctrl && pushedKS.space) {
+          return false; // To avoid write a space when "just" ctrl+space combination is pressed
+        }
 
         for (i = 0; i < length; i++) {
           if (typeof this.list[i] === 'undefined' && !execLevel) {
@@ -300,7 +320,7 @@
           }
           if (this.list[i].execLevel) {
             for (j = 0; j < this.list[i].execLevel.length; j++) {
-              if (this.list[i].execLevel[j] === execLevel && this.list[i].keyComb.ctrl === pushedKS.ctrl && this.list[i].keyComb.alt === pushedKS.alt && this.list[i].keyComb.shift === pushedKS.shift && this.list[i].keyComb.key === pushedKS.key) {
+              if (this.list[i].execLevel[j] === execLevel && this.list[i].keyComb.ctrl === pushedKS.ctrl && this.list[i].keyComb.alt === pushedKS.alt && this.list[i].keyComb.shift === pushedKS.shift && this.list[i].keyComb.space === pushedKS.space && this.list[i].keyComb.key === pushedKS.key) {
                 position = i;
                 break;
               }
@@ -330,11 +350,22 @@
   /* isc.Page.setEvent('keyPress', 'OB.KeyboardManager.Shortcuts.monitor('Canvas')'); // Discart due to Chrome event propagation problems http://forums.smartclient.com/showthread.php?p=65578 */
   isc.Canvas.getPrototype()._originalKeyDown = isc.Canvas.getPrototype().keyDown;
   isc.Canvas.getPrototype().keyDown = function () {
+    if (isc.Event.getKey() === 'Space') {
+      OB.KeyboardManager.Shortcuts.isSpacePressed = true;
+    }
     var response = OB.KeyboardManager.Shortcuts.monitor('Canvas');
     if (response) { // To ensure that if a previous keyDown was set in the Canvas it is executed if the action KeyboardManager.action should be propagated
       response = this._originalKeyDown();
     }
     return response;
+  };
+
+  isc.Canvas.getPrototype()._originalKeyUp = isc.Canvas.getPrototype().keyUp;
+  isc.Canvas.getPrototype().keyUp = function () {
+    if (isc.Event.getKey() === 'Space') {
+      OB.KeyboardManager.Shortcuts.isSpacePressed = false;
+    }
+    return this._originalKeyUp();
   };
 
 }(OB, isc));
