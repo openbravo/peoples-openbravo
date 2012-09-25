@@ -40,17 +40,26 @@
     }
   }
 
-  function serviceError(jqXHR, textStatus, errorThrown, callback) {
-    callback({
-      exception: {
-        message: (errorThrown ? errorThrown : OB.I18N.getLabel('OBPOS_MsgApplicationServerNotAvailable')),
-        status: jqXHR.status
-      }
-    });
+  function serviceError(jqXHR, textStatus, errorThrown, callback, callbackError) {
+    if (callbackError) {
+      callbackError({
+        exception: {
+          message: (errorThrown ? errorThrown : OB.I18N.getLabel('OBPOS_MsgApplicationServerNotAvailable')),
+          status: jqXHR.status
+        }
+      });
+    } else {
+      callback({
+        exception: {
+          message: (errorThrown ? errorThrown : OB.I18N.getLabel('OBPOS_MsgApplicationServerNotAvailable')),
+          status: jqXHR.status
+        }
+      });
+    }
   }
 
-  function servicePOST(source, dataparams, callback, async) {
-    if (async !== false){
+  function servicePOST(source, dataparams, callback, callbackError, async) {
+    if (async !== false) {
       async = true;
     }
     $.ajax({
@@ -64,22 +73,26 @@
         serviceSuccess(data, textStatus, jqXHR, callback);
       },
       error: function(jqXHR, textStatus, errorThrown) {
-        serviceError(jqXHR, textStatus, errorThrown, callback);
+        serviceError(jqXHR, textStatus, errorThrown, callback, callbackError);
       }
     });
   }
 
-  function serviceGET(source, dataparams, callback) {
+  function serviceGET(source, dataparams, callback, callbackError, async) {
+    if (async !== false) {
+      async = true;
+    }
     $.ajax({
       url: '../../org.openbravo.retail.posterminal.service.jsonrest/' + source + '/' + encodeURI(JSON.stringify(dataparams)),
       contentType: 'application/json;charset=utf-8',
+      async: async,
       dataType: 'json',
       type: 'GET',
       success: function(data, textStatus, jqXHR) {
         serviceSuccess(data, textStatus, jqXHR, callback);
       },
       error: function(jqXHR, textStatus, errorThrown) {
-        serviceError(jqXHR, textStatus, errorThrown, callback);
+        serviceError(jqXHR, textStatus, errorThrown, callback, callbackError);
       }
     });
   }
@@ -89,7 +102,7 @@
     this.source = source;
   };
 
-  OB.DS.Process.prototype.exec = function(params, callback, async) {
+  OB.DS.Process.prototype.exec = function(params, callback, callbackError, async) {
     var attr;
     var data = {};
 
@@ -99,11 +112,11 @@
       }
     }
 
-    servicePOST(this.source, data, callback, async);
+    servicePOST(this.source, data, callback, callbackError, async);
   };
 
   // Source object
-  OB.DS.Request = function (source, client, org, pos) {
+  OB.DS.Request = function(source, client, org, pos) {
     this.model = source && source.prototype && source.prototype.modelName && source; // we're using a Backbone.Model as source
     this.source = (this.model && this.model.prototype.source) || source; // we're using a plain String as source
     if (!this.source) {
@@ -114,7 +127,7 @@
     this.pos = pos;
   };
 
-  OB.DS.Request.prototype.exec = function(params, callback) {
+  OB.DS.Request.prototype.exec = function(params, callback, callbackError, async) {
     var p, i;
     var data = {};
 
@@ -164,7 +177,7 @@
       data.pos = this.pos;
     }
 
-    serviceGET(this.source, data, callback);
+    serviceGET(this.source, data, callback, callbackError, async);
   };
 
   function check(elem, filter) {
@@ -298,13 +311,11 @@
   };
 
   // HWServer
-  
-  
   OB.DS.HWResource = function(res) {
     this.resource = res;
     this.resourcedata = null;
   };
-  
+
   OB.DS.HWResource.prototype.getData = function(callback) {
     if (this.resourcedata) {
       callback(this.resourcedata);
@@ -348,9 +359,9 @@
       });
     }
   };
-  
+
   OB.DS.HWServer.prototype.print = function(template, params, callback) {
-    
+
     if (template.getData) {
       var me = this;
       template.getData(function(data) {
@@ -360,7 +371,7 @@
       this._print(template, params, callback);
     }
   };
-  
+
   OB.DS.HWServer.prototype._print = function(templatedata, params, callback) {
     if (this.url) {
       var me = this;
