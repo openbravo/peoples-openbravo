@@ -192,21 +192,51 @@
       this.get('lines').each(function(line) {
         var price = line.get('price'),
             gross = line.get('gross'),
-            totalDiscount = 0;
-        console.log('line', line)
+            totalDiscount = 0,
+            grossListPrice, grossUnitPrice, discountPercentage;
+        console.log('line', line);
+
+        // Calculate inline discount: discount applied before promotions
+        if (line.get('priceList') !== price) {
+          grossListPrice = new BigDecimal(line.get('priceList').toString());
+          grossUnitPrice = new BigDecimal(price.toString());
+          discountPercentage = grossListPrice.subtract(grossUnitPrice).multiply(new BigDecimal('100')).divide(grossListPrice, 2, BigDecimal.prototype.ROUND_HALF_EVEN);
+          discountPercentage = parseFloat(discountPercentage.setScale(2, BigDecimal.prototype.ROUND_HALF_EVEN).toString(), 10);
+        } else {
+          discountPercentage = OB.DEC.Zero;
+        }
+        console.log('discountPercentage', discountPercentage);
+
+        line.set({
+          discountPercentage: discountPercentage
+        }, {
+          silent: true
+        });
+
         if (!line.get('discounts')) {
           return;
         }
 
         // keep price and gross to be used in printed ticket
         // TODO: if order is recovered from DB these should be used
-        line.set('_price', price, {
-          silent: true
-        });
-        line.set('_gross', gross, {
-          silent: true
-        });
+        //
+        //        line.set({
+        //          '_price': price,
+        //          '_gross': gross
+        //        }, {
+        //          silent: true
+        //        });
+        if (line.get('priceList') !== price) {
+          grossListPrice = new BigDecimal(line.get('priceList').toString());
+          grossUnitPrice = new BigDecimal(price);
+          discountPercentage = grossListPrice.subtract(grossUnitPrice).multiply(new BigDecimal('100')).divide(grossListPrice, 2, BigDecimal.prototype.ROUND_HALF_EVEN);
+          discountPercentage = parseFloat(discountPercentage.setScale(2, BigDecimal.prototype.ROUND_HALF_EVEN).toString(), 10);
+        } else {
+          discountPercentage = OB.DEC.Zero;
+        }
+        console.log('discountPercentage', discountPercentage);
 
+        // Calculate prices after promotions
         _.forEach(line.get('discounts'), function(discount) {
           totalDiscount = OB.DEC.add(totalDiscount, discount.gross);
         }, this);
@@ -215,10 +245,11 @@
 
         console.log('p', price, 'g', gross);
 
-        line.set('price', price, {
-          silent: true
-        });
-        line.set('gross', gross, {
+
+        line.set({
+          _price: price,
+          _gross: gross,
+        }, {
           silent: true
         });
       }, this);
