@@ -98,6 +98,8 @@ OB.Model.Terminal = Backbone.Model.extend({
         params = {
         terminal: OB.POS.paramTerminal
         };
+    
+    OB.POS.modelterminal.loggingIn = true;
 
     OB.POS.modelterminal.off('terminal.loaded'); // Unregister previous events.
 
@@ -716,6 +718,7 @@ OB.Model.Terminal = Backbone.Model.extend({
   triggerReady: function() {
     var undef;
     if (this.get('payments') && this.get('pricelistversion') && this.get('currency') && this.get('context') && this.get('permissions') && (this.get('documentsequence')!==undef || this.get('documentsequence')===0) && this.get('windowRegistered')!== undef) {
+      OB.POS.modelterminal.loggingIn = false;
       if (OB.POS.modelterminal.get('connectedToERP')) {
         //In online mode, we save the terminal information in the local db
         this.usermodel.set('terminalinfo', JSON.stringify(this));
@@ -737,13 +740,17 @@ OB.Model.Terminal = Backbone.Model.extend({
   },
 
   triggerOnLine: function() {
-    this.set('connectedToERP', true);
-    this.trigger('online');
+    if(!OB.POS.modelterminal.loggingIn){
+      this.set('connectedToERP', true);
+      this.trigger('online');
+    }
   },
 
   triggerOffLine: function() {
-    this.set('connectedToERP', false);
-    this.trigger('offline');
+    if(!OB.POS.modelterminal.loggingIn){
+      this.set('connectedToERP', false);
+      this.trigger('offline');
+    }
   },
 
   triggerLoginFail: function(e, mode, data) {
