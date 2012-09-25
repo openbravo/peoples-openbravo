@@ -14,11 +14,11 @@
     * under the License.
     * The Original Code is Openbravo ERP.
     * The Initial Developer of the Original Code is Openbravo SLU
-    * All portions are Copyright (C) 2010 Openbravo SLU
+    * All portions are Copyright (C) 2010-2012 Openbravo SLU
     * All Rights Reserved.
     * Contributor(s):  ______________________________________.
     ************************************************************************/
-    TYPE RECORD IS REF CURSOR;
+ v_IBAN FIN_FINANCIAL_ACCOUNT.ACCOUNTNO%TYPE;
 BEGIN
 
     IF AD_isTriggerEnabled()='N' THEN RETURN;
@@ -28,6 +28,36 @@ BEGIN
     :NEW.currentbalance := :NEW.initialbalance;
     
   END IF;
+  
+  IF(INSERTING OR UPDATING) THEN
+    IF (:NEW.TYPE='B') THEN
+      IF (:NEW.IBAN IS NOT NULL) THEN
+        IF (:NEW.C_COUNTRY_ID IS NULL) THEN
+	  RAISE_APPLICATION_ERROR(-20000, '@COUNTRY_IBAN@') ;
+        ELSE
+          :NEW.IBAN := REPLACE(:NEW.IBAN, ' ', '');
+          v_IBAN := C_GET_IBAN_DISPLAYED_ACCOUNT(:NEW.IBAN, :NEW.C_COUNTRY_ID);
+        END IF;
+      END IF;
+      
+      IF (:NEW.BANKFORMAT='IBAN') THEN
+        :NEW.ACCOUNTNO:=v_IBAN;
+      ELSIF (:NEW.BANKFORMAT='SWIFT') THEN
+        :NEW.ACCOUNTNO:=:NEW.SWIFTCODE || :NEW.GENERICACCOUNTNO;
+      ELSIF (:NEW.BANKFORMAT='SPANISH') THEN
+        :NEW.ACCOUNTNO:= :NEW.CODEBANK || :NEW.CODEBRANCH || :NEW.BANK_DIGITCONTROL || :NEW.ACCOUNT_DIGITCONTROL || :NEW.CODEACCOUNT;
+      ELSIF (:NEW.BANKFORMAT='GENERIC') THEN
+        :NEW.ACCOUNTNO:=:NEW.GENERICACCOUNTNO;
+      END IF;
+    END IF;
+  END IF;
+EXCEPTION
+  WHEN NO_DATA_FOUND THEN
+    RAISE_APPLICATION_ERROR(-20000, '@20257@') ;
+  -- Hack for displaying beautiful message in case of exception from C_GET_IBAN_DISPLAYED_ACCOUNT
+  WHEN OTHERS THEN 
+    RAISE;
+
 END FIN_FINANCIAL_ACCOUNT_TRG2
 ]]></body>
     </trigger>
