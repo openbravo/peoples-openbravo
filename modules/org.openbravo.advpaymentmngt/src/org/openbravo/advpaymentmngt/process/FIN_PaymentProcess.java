@@ -843,10 +843,12 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
                       .getInvoicePaymentSchedule()
                       .getFINPaymentScheduleDetailInvoicePaymentScheduleList()) {
                     if (invScheDetail.getPaymentDetails() == null) {
-                      outStandingAmt = outStandingAmt.add(invScheDetail.getAmount());
+                      outStandingAmt = outStandingAmt.add(invScheDetail.getAmount()).add(
+                          invScheDetail.getWriteoffAmount());
                       removedPDS.add(invScheDetail);
                     } else if (invScheDetail.equals(paymentScheduleDetail)) {
-                      outStandingAmt = outStandingAmt.add(invScheDetail.getAmount());
+                      outStandingAmt = outStandingAmt.add(invScheDetail.getAmount()).add(
+                          invScheDetail.getWriteoffAmount());
                       paymentScheduleDetail.setCanceled(true);
                     }
                     invoiceDocNos.add(paymentScheduleDetail.getInvoicePaymentSchedule()
@@ -866,10 +868,12 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
                       .getOrderPaymentSchedule()
                       .getFINPaymentScheduleDetailOrderPaymentScheduleList()) {
                     if (ordScheDetail.getPaymentDetails() == null) {
-                      outStandingAmt = outStandingAmt.add(ordScheDetail.getAmount());
+                      outStandingAmt = outStandingAmt.add(ordScheDetail.getAmount()).add(
+                          ordScheDetail.getWriteoffAmount());
                       removedPDS.add(ordScheDetail);
                     } else if (ordScheDetail.equals(paymentScheduleDetail)) {
-                      outStandingAmt = outStandingAmt.add(ordScheDetail.getAmount());
+                      outStandingAmt = outStandingAmt.add(ordScheDetail.getAmount()).add(
+                          ordScheDetail.getWriteoffAmount());
                       paymentScheduleDetail.setCanceled(true);
                     }
                   }
