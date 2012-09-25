@@ -213,28 +213,12 @@
           silent: true
         });
 
-        if (!line.get('discounts')) {
-          return;
-        }
-
-        // keep price and gross to be used in printed ticket
-        // TODO: if order is recovered from DB these should be used
-        //
-        //        line.set({
-        //          '_price': price,
-        //          '_gross': gross
-        //        }, {
-        //          silent: true
-        //        });
-
         // Calculate prices after promotions
         _.forEach(line.get('discounts')||[], function(discount) {
           totalDiscount = OB.DEC.add(totalDiscount, discount.gross);
         }, this);
         gross = OB.DEC.sub(gross, totalDiscount);
         price = OB.DEC.div(gross, line.get('qty'));
-
-        console.log('p', price, 'g', gross);
 
         line.set({
           grossUnitPrice: price,
