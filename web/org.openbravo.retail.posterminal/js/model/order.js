@@ -494,13 +494,34 @@
       if (!replaced) {
         discounts.push(disc);
       }
-      
-      console.log('discounts:',disc,discounts);
+
       line.set('discounts', discounts);
       line.trigger('change');
       this.save();
     },
 
+    removeDiscount: function(line, rule) {
+      var discounts = line.get('discounts'),
+          ruleId = rule.id,
+          removed = false,
+          res = [];
+      if (!discounts) {
+        return;
+      }
+
+      for (i = 0; i < discounts.length; i++) {
+        if (discounts[i].ruleId === rule.id) {
+          removed = true;
+        } else {
+          res.push(discounts[i]);
+        }
+      }
+      if (removed) {
+        line.set('discounts', res);
+        line.trigger('change');
+        this.save();
+      }
+    },
     createLine: function(p, units) {
       var me = this;
       var newline = new OrderLine({
