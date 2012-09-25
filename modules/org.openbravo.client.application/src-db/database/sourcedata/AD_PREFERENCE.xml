@@ -35,7 +35,7 @@
   {"id": "ToolBar_Clone", "keyComb": {"ctrl": true, "shift": true, "key": "K"}},
   {"id": "ToolBar_Print", "keyComb": {"ctrl": true, "shift": true, "key": "P"}},
   {"id": "ToolBar_Email", "keyComb": {"ctrl": true, "shift": true, "key": "M"}},
-  {"id": "ToolBar_Audit", "keyComb": {"ctrl": true, "shift": true, "key": "L"}},
+  {"id": "ToolBar_Audit", "keyComb": {"ctrl": true, "shift": true, "key": "Y"}},
   {"id": "ToolBar_Link", "keyComb": {"ctrl": true, "shift": true, "key": "U"}},
   {"id": "StatusBar_Previous", "keyComb": {"alt": true, "shift": true, "key": "Page_Up"}},
   {"id": "StatusBar_Next", "keyComb": {"alt": true, "shift": true, "key": "Page_Down"}},
