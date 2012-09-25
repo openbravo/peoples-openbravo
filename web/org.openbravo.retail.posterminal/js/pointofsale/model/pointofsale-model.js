@@ -102,15 +102,15 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
 
     // Listening events that cause a discount recalculation
     receipt.get('lines').on('add change:qty change:price', function(line) {
-      OB.Model.Discounts.applyDiscounts(receipt, line);
+      OB.Model.Discounts.applyPromotions(receipt, line);
     }, this);
 
     receipt.get('lines').on('remove', function() {
-      OB.Model.Discounts.applyDiscounts(receipt);
+      OB.Model.Discounts.applyPromotions(receipt);
     });
 
     receipt.on('change:bp', function(line) {
-      OB.Model.Discounts.applyDiscounts(receipt);
+      OB.Model.Discounts.applyPromotions(receipt);
     }, this);
   }
 });

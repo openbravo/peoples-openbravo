@@ -1,16 +1,15 @@
 OB.Model.Discounts = {
   discountRules: {},
   
-  applyDiscounts: function(receipt, line) {
+  applyPromotions: function(receipt, line) {
     var alerts=[], bpId = receipt.get('bp').id, productId, criteria;
-    console.log('applyDiscounts',receipt);
     if (line) {
       productId = line.get('product').id;
-      line.set('discounts',null, {silent:true});
+      line.set('promotions',null, {silent:true});
       line.set('discountedLinePrice', null,{silent:true});
       line.set('promotionCandidates', null,{silent:true});
-      // check which are the discounts to be applied
-
+      
+      // check which are the promotions to be applied
       criteria = {
         '_whereClause': this.standardFilter,
         params: [bpId, bpId, bpId, bpId, productId, productId, productId, productId]
@@ -37,7 +36,7 @@ OB.Model.Discounts = {
 
     } else {
       receipt.get('lines').forEach(function(l){
-    	  this.applyDiscounts(receipt, l);
+    	  this.applyPromotions(receipt, l);
       }, this);
     }
     
@@ -113,30 +112,4 @@ OB.Model.Discounts = {
  	 +"   AND OP.M_PRODUCT_CATEGORY_ID = P.M_PRODUCT_CATEGORY_ID"
  	 +" )))"
 };
-
-
-OB.Model.Discounts.registerRule('PRADJ', function(discountRule, receipt, line){
-	var discounts = [], alerts = [], minQuantity, totalDiscount, withoutDisc, discounted, qty;
-	console.log(arguments);
-	if (!line) {
-	  return; // applying just to lines
-	}
-	
-	qty = line.get('qty');
-	minQty = discountRule.get('minQuantity') || 0;
-	
-    if (qty>=minQty) {
-    	totalDiscount = (line.get('qty')-minQty+1)*(line.get('priceList') * discountRule.get('discount')/100);
-		discounts.push({
-	        name: discountRule.get('name'),
-	        gross: totalDiscount
-	      });
-    } else if (qty === minQty-1) {
-    	alerts.push('Next '+line.get('product').get('_identifier')+' is '+discountRule.get('discount')+'% off');
-    }
-	
-	return {discounts: discounts, alerts: alerts};
- }
-);
-
 

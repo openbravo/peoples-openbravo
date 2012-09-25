@@ -46,9 +46,8 @@ enyo.kind({
     this.$.quantity.setContent(this.model.printQty());
     this.$.price.setContent(this.model.printPrice());
     this.$.gross.setContent(this.model.printGross());
-    if (this.model.get('discounts')) {
-      console.log('discounts', this.model.get('discounts'));
-      enyo.forEach(this.model.get('discounts'), function(d) {
+    if (this.model.get('promotions')) {
+      enyo.forEach(this.model.get('promotions'), function(d) {
         this.createComponent({
           components: [{
             content: '.',
@@ -61,7 +60,7 @@ enyo.kind({
               style: 'float: left; width: 60%;'
             }
           }, {
-            content: OB.I18N.formatCurrency(-d.gross),
+            content: OB.I18N.formatCurrency(-d.amt),
             attributes: {
               style: 'float: right; width: 20%; text-align: right;'
             }

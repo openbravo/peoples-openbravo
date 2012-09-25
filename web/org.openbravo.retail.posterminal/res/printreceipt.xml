@@ -59,14 +59,14 @@
         <text align ="left" length="8"><%= line.printGross() %></text>
       </line>
     <%
-        promotions =  line.get('discounts');
-        if (line.get('discounts')){
+        promotions = line.get('promotions');
+        if (promotions){
           promotions.forEach(function(p) {
             %>
           <line>
             <text align="left" length="2"/>
             <text align="left" length="32"><%= p.name %></text>
-            <text align="right" length="8"><%= OB.I18N.formatCurrency(-p.gross) %></text>
+            <text align="right" length="8"><%= OB.I18N.formatCurrency(-p.amt) %></text>
           </line>
           <%
           });

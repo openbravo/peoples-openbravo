@@ -186,7 +186,6 @@
     },
 
     adjustPrices: function() {
-      //TODO: discount (%)
       // Apply calculated discounts and promotions to price and gross prices
       // so ERP saves them in the proper place
       this.get('lines').each(function(line) {
@@ -194,7 +193,6 @@
             gross = line.get('gross'),
             totalDiscount = 0,
             grossListPrice, grossUnitPrice, discountPercentage;
-        console.log('line', line);
 
         // Calculate inline discount: discount applied before promotions
         if (line.get('priceList') !== price) {
@@ -205,8 +203,6 @@
         } else {
           discountPercentage = OB.DEC.Zero;
         }
-        console.log('discountPercentage', discountPercentage);
-
         line.set({
           discountPercentage: discountPercentage
         }, {
@@ -214,8 +210,8 @@
         });
 
         // Calculate prices after promotions
-        _.forEach(line.get('discounts')||[], function(discount) {
-          totalDiscount = OB.DEC.add(totalDiscount, discount.gross);
+        _.forEach(line.get('promotions') || [], function(discount) {
+          totalDiscount = OB.DEC.add(totalDiscount, discount.amt);
         }, this);
         gross = OB.DEC.sub(gross, totalDiscount);
         price = OB.DEC.div(gross, line.get('qty'));
@@ -241,9 +237,9 @@
       console.log('calculateGross');
       var gross = this.get('lines').reduce(function(memo, e) {
         var grossLine = e.getGross();
-        if (e.get('discounts')) {
-          grossLine = e.get('discounts').reduce(function(memo, e) {
-            return OB.DEC.sub(memo, e.gross);
+        if (e.get('promotions')) {
+          grossLine = e.get('promotions').reduce(function(memo, e) {
+            return OB.DEC.sub(memo, e.amt);
           }, grossLine);
         }
         return OB.DEC.add(memo, grossLine);
@@ -479,54 +475,55 @@
       this.save();
     },
 
-    addDiscount: function(line, rule, discount) {
-      var discounts = line.get('discounts') || [],
+    addPromotion: function(line, rule, discount) {
+      var promotions = line.get('promotions') || [],
           disc = {},
           i, replaced = false;
 
       disc.name = discount.name || rule.get('printName') || rule.get('name');
       disc.ruleId = rule.id;
-      disc.gross = discount.gross;
+      disc.amt = discount.amt;
 
-      for (i = 0; i < discounts.length; i++) {
-        if (discounts[i].ruleId === rule.id) {
-          discounts[i] = disc;
+      for (i = 0; i < promotions.length; i++) {
+        if (promotions[i].ruleId === rule.id) {
+          promotions[i] = disc;
           replaced = true;
           break;
         }
       }
 
       if (!replaced) {
-        discounts.push(disc);
+        promotions.push(disc);
       }
 
-      line.set('discounts', discounts);
+      line.set('promotions', promotions);
       line.trigger('change');
       this.save();
     },
 
-    removeDiscount: function(line, rule) {
-      var discounts = line.get('discounts'),
+    removePromotion: function(line, rule) {
+      var promotions = line.get('promotions'),
           ruleId = rule.id,
           removed = false,
           res = [];
-      if (!discounts) {
+      if (!promotions) {
         return;
       }
 
-      for (i = 0; i < discounts.length; i++) {
-        if (discounts[i].ruleId === rule.id) {
+      for (i = 0; i < promotions.length; i++) {
+        if (promotions[i].ruleId === rule.id) {
           removed = true;
         } else {
-          res.push(discounts[i]);
+          res.push(promotions[i]);
         }
       }
       if (removed) {
-        line.set('discounts', res);
+        line.set('promotions', res);
         line.trigger('change');
         this.save();
       }
     },
+
     createLine: function(p, units) {
       var me = this;
       var newline = new OrderLine({
