@@ -467,8 +467,6 @@ public class OrderLoader {
       orderline.setLineNetAmount(BigDecimal.valueOf(jsonOrderLine.getDouble("net")));
       orderline.setListPrice(orderline.getUnitPrice());
 
-      orderline.setLineGrossAmount(BigDecimal.valueOf(jsonOrderLine.getDouble("gross")));
-
       // shipment is created, so all is delivered
       orderline.setDeliveredQuantity(orderline.getOrderedQuantity());
 
@@ -844,8 +842,6 @@ public class OrderLoader {
       return "partnerAddress";
     } else if (key.equals("qty")) {
       return "orderedQuantity";
-    } else if (key.equals("price")) {
-      return "grossUnitPrice";
     } else if (key.equals("posTerminal")) {
       return "obposApplications";
     } else if (key.equals("pricenet")) {
@@ -853,6 +849,7 @@ public class OrderLoader {
     } else if (key.equals("discountPercentage")) {
       return "discount";
     }
+    // TODO: Save price (from list to discount, before promotions)
     return null;
   }
 }

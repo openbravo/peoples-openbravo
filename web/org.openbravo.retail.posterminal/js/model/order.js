@@ -226,18 +226,9 @@
         //        }, {
         //          silent: true
         //        });
-        if (line.get('priceList') !== price) {
-          grossListPrice = new BigDecimal(line.get('priceList').toString());
-          grossUnitPrice = new BigDecimal(price);
-          discountPercentage = grossListPrice.subtract(grossUnitPrice).multiply(new BigDecimal('100')).divide(grossListPrice, 2, BigDecimal.prototype.ROUND_HALF_EVEN);
-          discountPercentage = parseFloat(discountPercentage.setScale(2, BigDecimal.prototype.ROUND_HALF_EVEN).toString(), 10);
-        } else {
-          discountPercentage = OB.DEC.Zero;
-        }
-        console.log('discountPercentage', discountPercentage);
 
         // Calculate prices after promotions
-        _.forEach(line.get('discounts'), function(discount) {
+        _.forEach(line.get('discounts')||[], function(discount) {
           totalDiscount = OB.DEC.add(totalDiscount, discount.gross);
         }, this);
         gross = OB.DEC.sub(gross, totalDiscount);
@@ -245,10 +236,9 @@
 
         console.log('p', price, 'g', gross);
 
-
         line.set({
-          _price: price,
-          _gross: gross,
+          grossUnitPrice: price,
+          lineGrossAmount: gross,
         }, {
           silent: true
         });
