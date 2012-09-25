@@ -240,8 +240,7 @@ public class FIN_AddPayment {
           BigDecimal paymentDetailAmount = selectedPaymentScheduleDetailsAmounts
               .get(paymentScheduleDetail.getId());
           // If detail to be added is zero amount, skip it
-          if (paymentDetailAmount.signum() == 0
-              && paymentScheduleDetail.getWriteoffAmount().signum() == 0) {
+          if (paymentDetailAmount.signum() == 0 && !isWriteoff) {
             continue;
           }
           BigDecimal amountDifference = paymentScheduleDetail.getAmount().subtract(
