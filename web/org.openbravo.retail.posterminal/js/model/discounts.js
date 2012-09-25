@@ -36,7 +36,9 @@ OB.Model.Discounts = {
 
 
     } else {
-      // TODO: apply discounts for the whole ticket
+      receipt.get('lines').forEach(function(l){
+    	  this.applyDiscounts(receipt, l);
+      }, this);
     }
     
   },
