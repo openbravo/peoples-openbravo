@@ -474,8 +474,30 @@
       this.save();
     },
 
-    setDiscounts: function(line, discounts) {
+    addDiscount: function(line, rule, discount) {
+      var discounts = line.get('discounts') || [],
+          disc = {},
+          i, replaced = false;
+
+      disc.name = discount.name || rule.get('printName') || rule.get('name');
+      disc.ruleId = rule.id;
+      disc.gross = discount.gross;
+
+      for (i = 0; i < discounts.length; i++) {
+        if (discounts[i].ruleId === rule.id) {
+          discounts[i] = disc;
+          replaced = true;
+          break;
+        }
+      }
+
+      if (!replaced) {
+        discounts.push(disc);
+      }
+      
+      console.log('discounts:',disc,discounts);
       line.set('discounts', discounts);
+      line.trigger('change');
       this.save();
     },
 

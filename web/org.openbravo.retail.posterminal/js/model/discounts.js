@@ -2,11 +2,13 @@ OB.Model.Discounts = {
   discountRules: {},
   
   applyDiscounts: function(receipt, line) {
-    var discounts = [], alerts=[], bpId = receipt.get('bp').id, productId, criteria;
+    var alerts=[], bpId = receipt.get('bp').id, productId, criteria;
     console.log('applyDiscounts',receipt);
     if (line) {
       productId = line.get('product').id;
-      line.set('discountedLinePrice', null);
+      line.set('discounts',null, {silent:true});
+      line.set('discountedLinePrice', null,{silent:true});
+      line.set('promotionCandidates', null,{silent:true});
       // check which are the discounts to be applied
 
       criteria = {
@@ -19,9 +21,6 @@ OB.Model.Discounts = {
           var rule = OB.Model.Discounts.discountRules[disc.get('discountType')], ds;
           if (rule){ 
         	  ds = rule(disc, receipt, line);
-        	  if (ds && ds.discounts) {
-        	    discounts = discounts.concat(ds.discounts);
-        	  }
         	  if (ds && ds.alerts) {
         		  alerts = alerts.concat(ds.alerts);
         	  }
@@ -29,7 +28,6 @@ OB.Model.Discounts = {
              console.warn('No POS implementation for discount '+disc.get('discountType'));
           }
         });
-        receipt.setDiscounts(line, discounts);
         receipt.calculateGross();
         if (alerts && alerts[0]) {
       	  OB.UTIL.showAlert.display(alerts[0]);
