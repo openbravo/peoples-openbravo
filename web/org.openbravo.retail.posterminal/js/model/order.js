@@ -379,7 +379,6 @@
           // sets the new quantity
           line.set('qty', qty);
           line.calculateGross();
-          this.calculateGross();
           // sets the undo action
           this.set('undo', {
             text: text || OB.I18N.getLabel('OBPOS_SetUnits', [line.get('qty'), line.get('product').get('_identifier')]),
@@ -388,7 +387,6 @@
             undo: function() {
               line.set('qty', oldqty);
               line.calculateGross();
-              me.calculateGross();
               me.set('undo', null);
             }
           });
@@ -408,7 +406,6 @@
           // sets the new price
           line.set('price', price);
           line.calculateGross();
-          this.calculateGross();
           // sets the undo action
           this.set('undo', {
             text: OB.I18N.getLabel('OBPOS_SetPrice', [line.printPrice(), line.get('product').get('_identifier')]),
@@ -417,7 +414,6 @@
             undo: function() {
               line.set('price', oldprice);
               line.calculateGross();
-              me.calculateGross();
               me.set('undo', null);
             }
           });
@@ -432,7 +428,6 @@
       var index = this.get('lines').indexOf(line);
       // remove the line
       this.get('lines').remove(line);
-      this.calculateGross();
       // set the undo action
       this.set('undo', {
         text: OB.I18N.getLabel('OBPOS_DeleteLine', [line.get('qty'), line.get('product').get('_identifier')]),
@@ -441,7 +436,6 @@
           me.get('lines').add(line, {
             at: index
           });
-          me.calculateGross();
           me.set('undo', null);
         }
       });
@@ -537,14 +531,12 @@
 
       // add the created line
       this.get('lines').add(newline);
-      this.calculateGross();
       // set the undo action
       this.set('undo', {
         text: OB.I18N.getLabel('OBPOS_AddLine', [newline.get('qty'), newline.get('product').get('_identifier')]),
         line: newline,
         undo: function() {
           me.get('lines').remove(newline);
-          me.calculateGross();
           me.set('undo', null);
         }
       });

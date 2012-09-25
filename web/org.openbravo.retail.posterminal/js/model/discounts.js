@@ -31,9 +31,8 @@ OB.Model.Discounts = {
         if (alerts && alerts[0]) {
       	  OB.UTIL.showAlert.display(alerts[0]);
         }
+        receipt.calculateGross();
       }, function() {});
-
-
     } else {
       receipt.get('lines').forEach(function(l){
     	  this.applyPromotions(receipt, l);
