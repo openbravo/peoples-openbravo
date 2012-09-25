@@ -253,8 +253,8 @@ var baseDirectory = "../../../../../web/";
                   <td class="Radio_Check_ContentCell"><span class="Checkbox_container_NOT_Focused"><input type="checkbox" name="inpAccounting" value="Y" id="paramAccounting"></input></span></td>
                   <td class="TitleCell"><span class="LabelText">Show translation tabs</span></td>
                   <td class="Radio_Check_ContentCell"><span class="Checkbox_container_NOT_Focused"><input type="checkbox" name="inpTranslate" value="Y" id="paramTranslate"></input></span></td>
-                  <td class="TitleCell"><span class="LabelText">Show test</span></td>
-                  <td class="Radio_Check_ContentCell"><span class="Checkbox_container_NOT_Focused"><input type="checkbox" name="inpTest" value="Y" id="paramTest"></input></span></td>
+                  <td class="TitleCell" style="display:none;"><span class="LabelText">Show test</span></td>
+                  <td class="Radio_Check_ContentCell" style="display:none;"><span class="Checkbox_container_NOT_Focused"><input type="checkbox" name="inpTest" value="Y" id="paramTest"></input></span></td>
                 </tr>
 
                 <tr>
@@ -340,7 +340,7 @@ var baseDirectory = "../../../../../web/";
                           <input dojoType="openbravo:RealNumberTextbox" class="TextBox_btn_OneCell_width" type="text" name="inpRecordRangeInfo" id="RecordRangeInfo" value="xx" maxlength="10" outputformat="integerEdition"></input><script>djConfig.searchIds.push("RecordRangeInfo");</script>
                         </td>
                         <td class="FieldButton_ContentCell">
-                          <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calculator'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"   onclick="calculator('frmMain.inpTransactionalRange', document.frmMain.inpTransactionalRange.value, false);return false;">
+                          <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calculator'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"   onclick="calculator('frmMain.inpRecordRangeInfo', document.frmMain.inpRecordRangeInfo.value, false);return false;">
                           <table class="FieldButton" onmouseout="window.status='';return true;" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calculator';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
                             <tr>
                               <td class="FieldButton_bg">
@@ -360,21 +360,22 @@ var baseDirectory = "../../../../../web/";
                   <td colspan="2" class="Button_RightAlign_ContentCell">
                     <div>
                       <button type="button" 
+                        id="buttonSave" 
                         class="ButtonLink" 
-                        onclick="submitCommandForm('DEFAULT', false, null, '../utility/PoolStatus.html', '_self');return true;" 
-                        onfocus="buttonEvent('onfocus', this); window.status='Connections pool'; return true;" 
+                        onclick="savePreferences(); return false;" 
+                        onfocus="buttonEvent('onfocus', this); window.status='Save'; return true;" 
                         onblur="buttonEvent('onblur', this);" 
                         onkeyup="buttonEvent('onkeyup', this);" 
                         onkeydown="buttonEvent('onkeydown', this);" 
                         onkeypress="buttonEvent('onkeypress', this);" 
                         onmouseup="buttonEvent('onmouseup', this);" 
                         onmousedown="buttonEvent('onmousedown', this);" 
-                        onmouseover="buttonEvent('onmouseover', this); window.status='Connections pool'; return true;" 
+                        onmouseover="buttonEvent('onmouseover', this); window.status='Save'; return true;" 
                         onmouseout="buttonEvent('onmouseout', this);">
                         <table class="Button">
                           <tr>
-                            <td class="Button_left"><img class="Button_Icon Button_Icon_process" alt="Connections pool" title="Connections pool" src="../../../../../web/images/blank.gif" border="0" /></td>
-                            <td class="Button_text">Connections pool</td>
+                            <td class="Button_left"><img class="Button_Icon Button_Icon_save" alt="Save" title="Save" src="../../../../../web/images/blank.gif" border="0" /></td>
+                            <td class="Button_text">Save Preferences</td>
                             <td class="Button_right"></td>
                           </tr>
                         </table>
@@ -405,7 +406,7 @@ var baseDirectory = "../../../../../web/";
                       </button>
                     </div>
                   </td>
-                  <td colspan="2" class="Button_LeftAlign_ContentCell">
+                  <td colspan="2" class="Button_LeftAlign_ContentCell" style="display:none;">
                     <div>
                       <button type="button" 
                         class="ButtonLink" 
@@ -430,26 +431,25 @@ var baseDirectory = "../../../../../web/";
                     </div>
                   </td>
                 </tr>
-                <tr>
+                <tr style="display:none;">
                   <td colspan="2" class="Button_RightAlign_ContentCell">
                     <div>
                       <button type="button" 
-                        id="buttonSave" 
                         class="ButtonLink" 
-                        onclick="savePreferences(); return false;" 
-                        onfocus="buttonEvent('onfocus', this); window.status='Save'; return true;" 
+                        onclick="submitCommandForm('DEFAULT', false, null, '../utility/PoolStatus.html', '_self');return true;" 
+                        onfocus="buttonEvent('onfocus', this); window.status='Connections pool'; return true;" 
                         onblur="buttonEvent('onblur', this);" 
                         onkeyup="buttonEvent('onkeyup', this);" 
                         onkeydown="buttonEvent('onkeydown', this);" 
                         onkeypress="buttonEvent('onkeypress', this);" 
                         onmouseup="buttonEvent('onmouseup', this);" 
                         onmousedown="buttonEvent('onmousedown', this);" 
-                        onmouseover="buttonEvent('onmouseover', this); window.status='Save'; return true;" 
+                        onmouseover="buttonEvent('onmouseover', this); window.status='Connections pool'; return true;" 
                         onmouseout="buttonEvent('onmouseout', this);">
                         <table class="Button">
                           <tr>
-                            <td class="Button_left"><img class="Button_Icon Button_Icon_save" alt="Save" title="Save" src="../../../../../web/images/blank.gif" border="0" /></td>
-                            <td class="Button_text">Save Preferences</td>
+                            <td class="Button_left"><img class="Button_Icon Button_Icon_process" alt="Connections pool" title="Connections pool" src="../../../../../web/images/blank.gif" border="0" /></td>
+                            <td class="Button_text">Connections pool</td>
                             <td class="Button_right"></td>
                           </tr>
                         </table>
