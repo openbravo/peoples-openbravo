@@ -211,7 +211,7 @@
 
         // Calculate prices after promotions
         _.forEach(line.get('promotions') || [], function(discount) {
-          totalDiscount = OB.DEC.add(totalDiscount, discount.amt);
+          totalDiscount = OB.DEC.add(totalDiscount, discount.actualAmt || discount.amt);
         }, this);
         gross = OB.DEC.sub(gross, totalDiscount);
         price = OB.DEC.div(gross, line.get('qty'));
@@ -239,7 +239,7 @@
         var grossLine = e.getGross();
         if (e.get('promotions')) {
           grossLine = e.get('promotions').reduce(function(memo, e) {
-            return OB.DEC.sub(memo, e.amt);
+            return OB.DEC.sub(memo, e.actualAmt || e.amt);
           }, grossLine);
         }
         return OB.DEC.add(memo, grossLine);
@@ -477,6 +477,9 @@
       disc.name = discount.name || rule.get('printName') || rule.get('name');
       disc.ruleId = rule.id;
       disc.amt = discount.amt;
+      disc.actualAmt=discount.actualAmt;
+      
+      disc.hidden = discount.actualAmt && !disc.amt;
 
       for (i = 0; i < promotions.length; i++) {
         if (promotions[i].ruleId === rule.id) {

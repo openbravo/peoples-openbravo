@@ -48,6 +48,10 @@ enyo.kind({
     this.$.gross.setContent(this.model.printGross());
     if (this.model.get('promotions')) {
       enyo.forEach(this.model.get('promotions'), function(d) {
+        if (d.hidden) {
+          // continue
+          return;
+        }
         this.createComponent({
           components: [{
             content: '.',
