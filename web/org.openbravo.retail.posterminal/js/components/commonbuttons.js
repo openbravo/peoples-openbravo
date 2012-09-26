@@ -301,7 +301,7 @@ enyo.kind({
     if (this.permission && !OB.POS.modelterminal.hasPermission(this.permission)) {
       this.$.lbl.setStyle('color: #cccccc; padding: 12px 15px 12px 15px;');
     }
-  
+
   }
 });
 
@@ -314,6 +314,10 @@ enyo.kind({
       kind: 'OB.UI.AcceptDialogButton'
     }]
   },
+  show: function() {
+    $('#' + this.myId).modal('show');
+  },
+  closeOnAcceptButton: true,
   initComponents: function() {
     this.inherited(arguments);
     this.$.bodyButtons.$.acceptDialogButton.dialogContainer = this;
@@ -326,6 +330,11 @@ enyo.kind({
   content: OB.I18N.getLabel('OBPOS_LblOk'),
   classes: 'btnlink btnlink-gray modal-dialog-content-button',
   tap: function() {
-    $('#' + this.dialogContainer.getId()).modal('hide');
+    if (this.dialogContainer.acceptCallback) {
+      this.dialogContainer.acceptCallback();
+    }
+    if (this.dialogContainer.closeOnAcceptButton) {
+      $('#' + this.dialogContainer.getId()).modal('hide');
+    }
   }
 });
