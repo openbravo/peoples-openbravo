@@ -1415,7 +1415,11 @@ isc.OBStandardView.addProperties({
     };
 
     if (!newRecordsToBeIncluded) {
-      this.newRecordsAfterRefresh = [];
+      if (this.parentRecordId) {
+        this.newRecordsAfterRefresh[this.parentRecordId] = [];
+      } else {
+        this.newRecordsAfterRefresh = [];
+      }
     }
     if (!this.isShowingForm) {
       this.viewGrid.refreshGrid(refreshCallback, newRecordsToBeIncluded);

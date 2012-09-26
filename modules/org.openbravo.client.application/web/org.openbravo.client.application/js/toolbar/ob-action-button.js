@@ -146,7 +146,7 @@ isc.OBToolbarActionButton.addProperties({
     afterRefresh = function (doRefresh) {
       var undef, refresh = (doRefresh === undef || doRefresh),
           autosaveDone = false,
-          currentRecordId;
+          currentRecordId, recordsAfterRefresh;
 
       // Refresh context view
       contextView.getTabMessage();
@@ -162,7 +162,12 @@ isc.OBToolbarActionButton.addProperties({
         // The selected record should be shown after the refresh, even
         // if the filter would exclude it
         // See issue https://issues.openbravo.com/view.php?id=20722
-        currentView.refresh(null, autosaveDone, currentView.newRecordsAfterRefresh);
+        if (currentView.parentTabId) {
+          recordsAfterRefresh = currentView.newRecordsAfterRefresh[currentView.parentTabId];
+        } else {
+          recordsAfterRefresh = currentView.newRecordsAfterRefresh;
+        }
+        currentView.refresh(null, autosaveDone, recordsAfterRefresh);
       }
     };
 

@@ -1493,10 +1493,20 @@ OB.ViewFormProperties = {
           return;
         }
 
-        if (!view.newRecordsAfterRefresh) {
-          view.newRecordsAfterRefresh = [];
+        if (view.parentRecordId) {
+          if (!view.newRecordsAfterRefresh) {
+            view.newRecordsAfterRefresh = {};
+          }
+          if (!view.newRecordsAfterRefresh[view.parentRecordId]) {
+            view.newRecordsAfterRefresh[view.parentRecordId] = [];
+          }
+          view.newRecordsAfterRefresh[view.parentRecordId].push(data[OB.Constants.ID]);
+        } else {
+          if (!view.newRecordsAfterRefresh) {
+            view.newRecordsAfterRefresh = [];
+          }
+          view.newRecordsAfterRefresh.push(data[OB.Constants.ID]);
         }
-        view.newRecordsAfterRefresh.push(data[OB.Constants.ID]);
 
         // do this after doing autoSave as the setHasChanged will clean
         // the autosave info
