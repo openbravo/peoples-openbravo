@@ -533,10 +533,11 @@ public class EntityResolver implements OBNotSingleton {
   // a referenced one, otherwise use the naturaltree
   private String[] getOrgIds(String orgId) {
     final String[] searchOrgIds;
-    if (orgId.equals("0")) {
-      searchOrgIds = zeroOrgTree;
-    } else {
+    if (organization != null && orgId.equals(organization.getId())) {
       searchOrgIds = orgNaturalTree;
+    } else {
+      final Set<String> orgs = organizationStructureProvider.getNaturalTree(orgId);
+      searchOrgIds = orgs.toArray(new String[orgs.size()]);
     }
     return searchOrgIds;
   }
