@@ -8,9 +8,13 @@
  */
 package org.openbravo.retail.posterminal.master;
 
+import java.util.Calendar;
+import java.util.Date;
+
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.retail.posterminal.ProcessHQLQuery;
+import org.openbravo.service.json.JsonUtils;
 
 public class Discount extends ProcessHQLQuery {
 
@@ -21,9 +25,21 @@ public class Discount extends ProcessHQLQuery {
 
   @Override
   protected String getQuery(JSONObject jsonsent) throws JSONException {
+    String hql = "from PricingAdjustment ";
+    hql += "where active = true ";
+    hql += "and (endingDate is null or endingDate>:today) ";
+    hql += "order by priority, id";
 
-    String hql = "from PricingAdjustment where active = true ";
-    // TODO: prefilter by organization, price list and expired rules
+    JSONObject today = new JSONObject();
+    JSONObject value = new JSONObject();
+    value.put("type", "DATE");
+    Calendar now = Calendar.getInstance();
+    now.add(Calendar.DAY_OF_MONTH, -1);
+    value.put("value", JsonUtils.createDateFormat().format(new Date(now.getTimeInMillis())));
+    today.put("today", value);
+    jsonsent.put("parameters", today);
+
+    // TODO: prefilter by organization, price list
     return hql;
   }
 }
