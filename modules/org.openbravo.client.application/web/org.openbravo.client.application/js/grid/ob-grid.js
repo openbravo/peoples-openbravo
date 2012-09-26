@@ -70,7 +70,12 @@ isc.OBGrid.addProperties({
     OB.KeyboardManager.Shortcuts.set('Grid_FocusFilter', ['OBGrid.body', 'OBGrid.editForm'], ksAction_FocusFilter);
 
     ksAction_FocusGrid = function (caller) {
-      caller.focus();
+      if (caller.getPrototype().Class !== 'OBViewGrid' || caller.data.localData[0]) { // In OBViewGrid case, only execute action if there are at least one row in the grid
+        caller.focus();
+        if (!caller.getSelectedRecord()) { // If there are no rows already selected in the grid, select the first one
+          caller.selectSingleRecord(0);
+        }
+      }
       return false; //To avoid keyboard shortcut propagation
     };
     OB.KeyboardManager.Shortcuts.set('Grid_FocusGrid', 'OBGrid.filter', ksAction_FocusGrid);
