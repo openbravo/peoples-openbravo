@@ -11,13 +11,19 @@ OB.Model.Discounts = {
   discountRules: {},
   executor: new OB.Model.DiscountsExecutor(),
   applyPromotions: function(receipt, line) {
-    var alerts=[], bpId = receipt.get('bp').id, productId, criteria;
+    var lines;
     if (line) {
       this.executor.addEvent(new Backbone.Model({id: line.cid, receipt:receipt, line:line}), true);
     } else {
-      receipt.get('lines').forEach(function(l){
-    	this.applyPromotions(receipt, l);
-      }, this);
+      lines =receipt.get('lines');
+      if (lines.length === 0){
+    	// Removing last line, recalculate total
+    	receipt.calculateGross();
+      } else {
+        lines.forEach(function(l){
+    	  this.applyPromotions(receipt, l);
+        }, this);
+      }
     }
   },
   
