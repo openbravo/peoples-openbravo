@@ -10,19 +10,16 @@ package org.openbravo.retail.posterminal.master;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.openbravo.retail.posterminal.ProcessHQLQuery;
 
-public class DiscountFilterProduct extends ProcessHQLQuery {
-
-  @Override
-  protected boolean isAdminMode() {
-    return true;
-  }
+public class DiscountFilterProduct extends Discount {
 
   @Override
-  protected String getQuery(JSONObject jsonsent) throws JSONException {
+  protected String prepareQuery(JSONObject jsonsent) throws JSONException {
 
-    String hql = "from PricingAdjustmentProduct where active = true";
+    String hql = "from PricingAdjustmentProduct ap where active = true";
+
+    hql += " and exists (select 1 " + getPromotionsHQL(jsonsent);
+    hql += "              and ap.priceAdjustment = p)";
 
     return hql;
   }

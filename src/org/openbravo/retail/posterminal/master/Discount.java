@@ -24,8 +24,7 @@ public class Discount extends ProcessHQLQuery {
     return true;
   }
 
-  @Override
-  protected String getQuery(JSONObject jsonsent) throws JSONException {
+  protected String getPromotionsHQL(JSONObject jsonsent) throws JSONException {
     String orgId = jsonsent.getString("organization");
     String priceListId = POSUtils.getPriceListByOrgId(orgId).getId();
 
@@ -38,13 +37,13 @@ public class Discount extends ProcessHQLQuery {
     hql += "  and not exists (select 1 ";
     hql += "         from PricingAdjustmentPriceList pl";
     hql += "        where active = true";
-    hql += "          and pl.priceAdjustment.id = p.id";
+    hql += "          and pl.priceAdjustment = p";
     hql += "          and pl.priceList.id ='" + priceListId + "')) ";
     hql += "   or (includePriceLists='N' ";
     hql += "  and  exists (select 1 ";
     hql += "         from PricingAdjustmentPriceList pl";
     hql += "        where active = true";
-    hql += "          and pl.priceAdjustment.id = p.id";
+    hql += "          and pl.priceAdjustment = p";
     hql += "          and pl.priceList.id ='" + priceListId + "')) ";
     hql += "    ) ";
 
@@ -53,18 +52,21 @@ public class Discount extends ProcessHQLQuery {
     hql += "  and not exists (select 1 ";
     hql += "         from PricingAdjustmentOrganization o";
     hql += "        where active = true";
-    hql += "          and o.priceAdjustment.id = p.id";
+    hql += "          and o.priceAdjustment = p";
     hql += "          and o.organization.id ='" + orgId + "')) ";
     hql += "   or (includedOrganizations='N' ";
     hql += "  and  exists (select 1 ";
     hql += "         from PricingAdjustmentOrganization o";
     hql += "        where active = true";
-    hql += "          and o.priceAdjustment.id = p.id";
+    hql += "          and o.priceAdjustment = p";
     hql += "          and o.organization.id ='" + orgId + "')) ";
     hql += "    ) ";
 
-    hql += "order by priority, id";
+    return hql;
+  }
 
+  @Override
+  protected String getQuery(JSONObject jsonsent) throws JSONException {
     JSONObject today = new JSONObject();
     JSONObject value = new JSONObject();
     value.put("type", "DATE");
@@ -74,6 +76,12 @@ public class Discount extends ProcessHQLQuery {
     today.put("today", value);
     jsonsent.put("parameters", today);
 
+    return prepareQuery(jsonsent);
+  }
+
+  protected String prepareQuery(JSONObject jsonsent) throws JSONException {
+    String hql = getPromotionsHQL(jsonsent);
+    hql += "order by priority, id";
     return hql;
   }
 }
