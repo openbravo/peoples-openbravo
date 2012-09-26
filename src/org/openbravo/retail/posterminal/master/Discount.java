@@ -26,12 +26,14 @@ public class Discount extends ProcessHQLQuery {
 
   @Override
   protected String getQuery(JSONObject jsonsent) throws JSONException {
-    String priceListId = POSUtils.getPriceListByOrgId(jsonsent.getString("organization")).getId();
+    String orgId = jsonsent.getString("organization");
+    String priceListId = POSUtils.getPriceListByOrgId(orgId).getId();
 
     String hql = "from PricingAdjustment p ";
     hql += "where active = true ";
     hql += "and (endingDate is null or endingDate>:today) ";
 
+    // price list
     hql += "and ((includePriceLists='Y' ";
     hql += "  and not exists (select 1 ";
     hql += "         from PricingAdjustmentPriceList pl";
@@ -44,7 +46,22 @@ public class Discount extends ProcessHQLQuery {
     hql += "        where active = true";
     hql += "          and pl.priceAdjustment.id = p.id";
     hql += "          and pl.priceList.id ='" + priceListId + "')) ";
-    hql += "    ))";
+    hql += "    ) ";
+
+    // organization
+    hql += "and ((includedOrganizations='Y' ";
+    hql += "  and not exists (select 1 ";
+    hql += "         from PricingAdjustmentOrganization o";
+    hql += "        where active = true";
+    hql += "          and o.priceAdjustment.id = p.id";
+    hql += "          and o.organization.id ='" + orgId + "')) ";
+    hql += "   or (includedOrganizations='N' ";
+    hql += "  and  exists (select 1 ";
+    hql += "         from PricingAdjustmentOrganization o";
+    hql += "        where active = true";
+    hql += "          and o.priceAdjustment.id = p.id";
+    hql += "          and o.organization.id ='" + orgId + "')) ";
+    hql += "    ) ";
 
     hql += "order by priority, id";
 
@@ -57,7 +74,6 @@ public class Discount extends ProcessHQLQuery {
     today.put("today", value);
     jsonsent.put("parameters", today);
 
-    // TODO: prefilter by organization, price list
     return hql;
   }
 }
