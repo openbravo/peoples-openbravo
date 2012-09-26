@@ -388,8 +388,6 @@ public class OBViewFieldHandler {
       statusBarFields.add(property.getName());
 
       final OBViewField viewField = new OBViewField();
-      // Prevents the field from being displayed twice: on the status bar and in the form footer
-      field.setDisplayed(false);
       viewField.setField(field);
       viewField.setProperty(property);
       viewField.setRedrawOnChange(false);
@@ -1302,7 +1300,11 @@ public class OBViewFieldHandler {
     }
 
     public boolean isDisplayed() {
-      return field.isDisplayed() != null && field.isDisplayed();
+      if (field.isShownInStatusBar()) {
+        return false;
+      } else {
+        return field.isDisplayed() != null && field.isDisplayed();
+      }
     }
 
     public boolean isShowInitiallyInGrid() {

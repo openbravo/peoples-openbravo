@@ -34,6 +34,9 @@ v_Rate  C_TAX.RATE%TYPE;
 v_Processed   VARCHAR(60);
 v_Increment_Amount C_ORDERTAX.TAXAMT%TYPE ;
 v_Increment_Base C_ORDERTAX.TAXBASEAMT%TYPE ;
+v_totallines NUMBER:=0;
+v_grandtotal NUMBER:=0;
+v_istaxincluded CHAR(1);
     
 BEGIN
     
@@ -48,10 +51,11 @@ BEGIN
       v_C_Invoice_ID:=:OLD.C_INVOICE_ID;
     END IF;
 
-    SELECT C_CURRENCY.STDPRECISION, PROCESSED
-    INTO v_Prec, v_Processed
-    FROM C_INVOICE, C_CURRENCY
+    SELECT C_CURRENCY.STDPRECISION, PROCESSED,  M_PRICELIST.istaxincluded
+    INTO v_Prec, v_Processed, v_istaxincluded
+    FROM C_INVOICE, C_CURRENCY, M_PRICELIST
     WHERE C_INVOICE.C_CURRENCY_ID = C_CURRENCY.C_CURRENCY_ID
+    AND C_INVOICE.M_PRICELIST_ID = M_PRICELIST.M_PRICELIST_ID
     AND C_INVOICE_ID = v_C_Invoice_ID;
     
     SELECT DOCTAXAMOUNT, RATE
@@ -107,8 +111,16 @@ BEGIN
     WHERE C_INVOICE_ID = :OLD.C_Invoice_ID
     AND C_TAX_ID = :OLD.C_TAX_ID
     AND TAXAMT=0 AND TAXBASEAMT=0;
+    
+ 		IF (v_istaxincluded = 'Y') THEN
+      SELECT totallines, grandtotal INTO v_totallines, v_grandtotal
+      FROM C_invoice
+      WHERE c_invoice_id = v_C_Invoice_ID;
+      C_INVOICETAX_ROUNDING(v_C_Invoice_ID, v_grandtotal, v_totallines);
     END IF;
-  END IF;
+    
+	END IF;
+END IF;
 END C_INVOICELINETAX_TRG
 ]]></body>
     </trigger>

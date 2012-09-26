@@ -710,7 +710,7 @@ public class PrintController extends HttpSecureAppServlet {
 
       host = mailConfig.getSmtpServer();
 
-      if ("N".equals(mailConfig.isSMTPAuthentification())) {
+      if (!mailConfig.isSMTPAuthentification()) {
         auth = false;
       }
       username = mailConfig.getSmtpServerAccount();

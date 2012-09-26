@@ -372,6 +372,7 @@ public class MatchTransaction extends HttpSecureAppServlet {
     FIN_FinancialAccount financial = OBDal.getInstance().get(FIN_FinancialAccount.class,
         strFinancialAccountId);
     try {
+      OBContext.setAdminMode(true);
       new FIN_MatchingTransaction(financial.getMatchingAlgorithm().getJavaClassName());
     } catch (Exception ex) {
       OBDal.getInstance().rollbackAndClose();
@@ -380,6 +381,8 @@ public class MatchTransaction extends HttpSecureAppServlet {
       vars.setMessage(strTabId, message);
       printPageClosePopUp(response, vars, Utility.getTabURL(strTabId, "R", true));
       return;
+    } finally {
+      OBContext.restorePreviousMode();
     }
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
@@ -408,8 +411,16 @@ public class MatchTransaction extends HttpSecureAppServlet {
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/advpaymentmngt/ad_actionbutton/MatchTransactionGrid").createXmlDocument();
 
-    FieldProvider[] data = getMatchedBankStatementLinesData(vars, strFinancialAccountId,
-        strReconciliationId, strPaymentTypeFilter, strShowCleared, strHideDate);
+    FieldProvider[] data = null;
+    try {
+      OBContext.setAdminMode(true);
+      data = getMatchedBankStatementLinesData(vars, strFinancialAccountId, strReconciliationId,
+          strPaymentTypeFilter, strShowCleared, strHideDate);
+    } catch (Exception e) {
+      log4j.debug("Output: Exception ocurred while retrieving Bank Statement Lines.");
+    } finally {
+      OBContext.restorePreviousMode();
+    }
 
     xmlDocument.setData("structure", data);
 

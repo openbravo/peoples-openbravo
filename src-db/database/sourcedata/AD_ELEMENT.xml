@@ -5648,10 +5648,10 @@ Usually, company's internal identifiers for various records (products, customers
 <!--973-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--973-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--973-->  <COLUMNNAME><![CDATA[SwiftCode]]></COLUMNNAME>
-<!--973-->  <NAME><![CDATA[Swift code]]></NAME>
-<!--973-->  <PRINTNAME><![CDATA[Swift code]]></PRINTNAME>
-<!--973-->  <DESCRIPTION><![CDATA[Swift Code (Society of Worldwide Interbank Financial Telecommunications)]]></DESCRIPTION>
-<!--973-->  <HELP><![CDATA[The SWIFT code is an identifier of a Bank]]></HELP>
+<!--973-->  <NAME><![CDATA[SWIFT Code]]></NAME>
+<!--973-->  <PRINTNAME><![CDATA[SWIFT Code]]></PRINTNAME>
+<!--973-->  <DESCRIPTION><![CDATA[SWIFT Code (Society of Worldwide Interbank Financial Telecommunications)]]></DESCRIPTION>
+<!--973-->  <HELP><![CDATA[The SWIFT Code is an identifier of a Bank]]></HELP>
 <!--973-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--973-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--973--></AD_ELEMENT>
@@ -6089,7 +6089,7 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1042-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1042-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1042-->  <COLUMNNAME><![CDATA[P_Asset_Acct]]></COLUMNNAME>
-<!--1042-->  <NAME><![CDATA[Fixed Asset]]></NAME>
+<!--1042-->  <NAME><![CDATA[Product Asset]]></NAME>
 <!--1042-->  <PRINTNAME><![CDATA[Product Asset]]></PRINTNAME>
 <!--1042-->  <DESCRIPTION><![CDATA[A tangible asset used for business without expectation of sale in the coming fiscal year.]]></DESCRIPTION>
 <!--1042-->  <HELP><![CDATA[The Product Asset Account indicates the account used for valuing this a product in inventory.]]></HELP>
@@ -11037,8 +11037,8 @@ If selected, this column will be used in the Search Window as an available filte
 <!--2003-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--2003-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--2003-->  <COLUMNNAME><![CDATA[NetDay]]></COLUMNNAME>
-<!--2003-->  <NAME><![CDATA[Overdue Payment Day Rule]]></NAME>
-<!--2003-->  <PRINTNAME><![CDATA[Net Day]]></PRINTNAME>
+<!--2003-->  <NAME><![CDATA[Fixed Week Day]]></NAME>
+<!--2003-->  <PRINTNAME><![CDATA[Fixed Week Day]]></PRINTNAME>
 <!--2003-->  <DESCRIPTION><![CDATA[A plan to give until a specific day after the agreed payment term to pay without penalty.]]></DESCRIPTION>
 <!--2003-->  <HELP><![CDATA[When defined, overwrites the number of net days with the relative number of days to the day defined.]]></HELP>
 <!--2003-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -20442,10 +20442,10 @@ The causes are The Requisition to Order window or the inclusion of the demand in
 <!--1005500008-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1005500008-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1005500008-->  <COLUMNNAME><![CDATA[GenericAccount]]></COLUMNNAME>
-<!--1005500008-->  <NAME><![CDATA[Generic Account]]></NAME>
-<!--1005500008-->  <PRINTNAME><![CDATA[Generic Account]]></PRINTNAME>
-<!--1005500008-->  <DESCRIPTION><![CDATA[Number of the bank account, in a generic format. Usefull if the bank does not use nor IBAN nor our country bank account number's structure]]></DESCRIPTION>
-<!--1005500008-->  <HELP><![CDATA[Number of the bank account, in a generic format. Usefull if the bank does not use nor IBAN nor our country bank account number's structure]]></HELP>
+<!--1005500008-->  <NAME><![CDATA[Generic Account No.]]></NAME>
+<!--1005500008-->  <PRINTNAME><![CDATA[Generic Account No.]]></PRINTNAME>
+<!--1005500008-->  <DESCRIPTION><![CDATA[Bank account number in a generic format.]]></DESCRIPTION>
+<!--1005500008-->  <HELP><![CDATA[Bank account number in a generic format.]]></HELP>
 <!--1005500008-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1005500008-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--1005500008--></AD_ELEMENT>
@@ -20456,10 +20456,10 @@ The causes are The Requisition to Order window or the inclusion of the demand in
 <!--1005500009-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1005500009-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1005500009-->  <COLUMNNAME><![CDATA[ShowAccountNo]]></COLUMNNAME>
-<!--1005500009-->  <NAME><![CDATA[Show Generic]]></NAME>
-<!--1005500009-->  <PRINTNAME><![CDATA[Show Generic]]></PRINTNAME>
-<!--1005500009-->  <DESCRIPTION><![CDATA[Show Generic]]></DESCRIPTION>
-<!--1005500009-->  <HELP><![CDATA[Show Generic]]></HELP>
+<!--1005500009-->  <NAME><![CDATA[Use Generic Account No.]]></NAME>
+<!--1005500009-->  <PRINTNAME><![CDATA[Use Generic Account No.]]></PRINTNAME>
+<!--1005500009-->  <DESCRIPTION><![CDATA[Use the Generic Account Number for generating the Displayed Account Number]]></DESCRIPTION>
+<!--1005500009-->  <HELP><![CDATA[Use the Generic Account Number for generating the Displayed Account Number]]></HELP>
 <!--1005500009-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1005500009-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--1005500009--></AD_ELEMENT>
@@ -20470,10 +20470,10 @@ The causes are The Requisition to Order window or the inclusion of the demand in
 <!--1005500010-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1005500010-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1005500010-->  <COLUMNNAME><![CDATA[ShowIBAN]]></COLUMNNAME>
-<!--1005500010-->  <NAME><![CDATA[Show IBAN]]></NAME>
-<!--1005500010-->  <PRINTNAME><![CDATA[Show IBAN]]></PRINTNAME>
-<!--1005500010-->  <DESCRIPTION><![CDATA[Show IBAN]]></DESCRIPTION>
-<!--1005500010-->  <HELP><![CDATA[Show IBAN]]></HELP>
+<!--1005500010-->  <NAME><![CDATA[Use IBAN]]></NAME>
+<!--1005500010-->  <PRINTNAME><![CDATA[Use IBAN]]></PRINTNAME>
+<!--1005500010-->  <DESCRIPTION><![CDATA[Use IBAN for generating the Displayed Account Number]]></DESCRIPTION>
+<!--1005500010-->  <HELP><![CDATA[Use IBAN for generating the Displayed Account Number]]></HELP>
 <!--1005500010-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1005500010-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--1005500010--></AD_ELEMENT>
@@ -20484,10 +20484,10 @@ The causes are The Requisition to Order window or the inclusion of the demand in
 <!--1005500011-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1005500011-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1005500011-->  <COLUMNNAME><![CDATA[ShowSpanish]]></COLUMNNAME>
-<!--1005500011-->  <NAME><![CDATA[Show Spanish]]></NAME>
-<!--1005500011-->  <PRINTNAME><![CDATA[Show Spanish]]></PRINTNAME>
-<!--1005500011-->  <DESCRIPTION><![CDATA[Show Spanish]]></DESCRIPTION>
-<!--1005500011-->  <HELP><![CDATA[Show Spanish]]></HELP>
+<!--1005500011-->  <NAME><![CDATA[Use Spanish Format]]></NAME>
+<!--1005500011-->  <PRINTNAME><![CDATA[Use Spanish Format]]></PRINTNAME>
+<!--1005500011-->  <DESCRIPTION><![CDATA[Use Spanish Format]]></DESCRIPTION>
+<!--1005500011-->  <HELP><![CDATA[Use Spanish Format]]></HELP>
 <!--1005500011-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1005500011-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--1005500011--></AD_ELEMENT>
@@ -28546,6 +28546,20 @@ The main purpose of this whereclause is to select which of the records in a part
 <!--BD2D5C4D0AED4962B1EDF25726015579-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--BD2D5C4D0AED4962B1EDF25726015579-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--BD2D5C4D0AED4962B1EDF25726015579--></AD_ELEMENT>
+
+<!--BD442402746540CF8171E3CF5B018CD8--><AD_ELEMENT>
+<!--BD442402746540CF8171E3CF5B018CD8-->  <AD_ELEMENT_ID><![CDATA[BD442402746540CF8171E3CF5B018CD8]]></AD_ELEMENT_ID>
+<!--BD442402746540CF8171E3CF5B018CD8-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--BD442402746540CF8171E3CF5B018CD8-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--BD442402746540CF8171E3CF5B018CD8-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--BD442402746540CF8171E3CF5B018CD8-->  <COLUMNNAME><![CDATA[Bankformat]]></COLUMNNAME>
+<!--BD442402746540CF8171E3CF5B018CD8-->  <NAME><![CDATA[Bank Account Format]]></NAME>
+<!--BD442402746540CF8171E3CF5B018CD8-->  <PRINTNAME><![CDATA[Bank Account Format]]></PRINTNAME>
+<!--BD442402746540CF8171E3CF5B018CD8-->  <DESCRIPTION><![CDATA[Bank Account Format used for generating the Displayed Account No]]></DESCRIPTION>
+<!--BD442402746540CF8171E3CF5B018CD8-->  <HELP><![CDATA[Bank Account Format used for generating the Displayed Account Number]]></HELP>
+<!--BD442402746540CF8171E3CF5B018CD8-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--BD442402746540CF8171E3CF5B018CD8-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
+<!--BD442402746540CF8171E3CF5B018CD8--></AD_ELEMENT>
 
 <!--BEADA4ABFE544524B69FEC20E82F2D95--><AD_ELEMENT>
 <!--BEADA4ABFE544524B69FEC20E82F2D95-->  <AD_ELEMENT_ID><![CDATA[BEADA4ABFE544524B69FEC20E82F2D95]]></AD_ELEMENT_ID>

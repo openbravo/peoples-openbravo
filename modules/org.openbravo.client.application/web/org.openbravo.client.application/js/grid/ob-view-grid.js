@@ -2210,7 +2210,9 @@ isc.OBViewGrid.addProperties({
     // If leaving the row...
     if (editCompletionEvent === 'enter' || editCompletionEvent === 'arrow_up' || editCompletionEvent === 'arrow_down') {
       // See issue https://issues.openbravo.com/view.php?id=19830
-      this.view.standardWindow.getDirtyEditForm().validateForm();
+      if (this.view.standardWindow.getDirtyEditForm()) {
+        this.view.standardWindow.getDirtyEditForm().validateForm();
+      }
     }
 
     this._leavingCell = true;
@@ -2384,6 +2386,10 @@ isc.OBViewGrid.addProperties({
         isc.Log.logDebug('hideInlineEditor has NO record and editColumnLayout', 'OB');
       }
       this.view.isEditingGrid = false;
+      // Update the tab title after the record has been saved or canceled
+      // to get rid of the '*' in the tab title
+      // See https://issues.openbravo.com/view.php?id=21709
+      this.view.updateTabTitle();
     }
 
     // always hide the clickmask, as it needs to be re-applied

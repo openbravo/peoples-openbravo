@@ -134,8 +134,8 @@ public class VersionUtility {
       }
       if (dep.maxVer != null && !dep.maxVer.isEmpty()) {
         // if lastVersion!=null, firstVersion >= installedVersion >= lastVersion
-        if (versionCompare(dep.minVer, dep.maxVer, false) == 1
-            && versionCompare(mod.availableMinVer, dep.maxVer, true) == 1) {
+        if (versionCompare(dep.minVer, mod.availableMaxVer, false) == 1
+            || versionCompare(mod.availableMinVer, dep.maxVer, true) == 1) {
           errors.add(depParentMod + " @CR_DependensOnModule@ \"" + strModName
               + "\" @CR_InVersion@ \"" + dep.maxVer + "\", @CR_MaxAvailableVersion@ \""
               + mod.availableMinVer + "\". ");
@@ -493,8 +493,9 @@ public class VersionUtility {
         n2[i] = Integer.parseInt(s2[i]);
     }
 
-    if (n1[0] > n2[0] || (n1[0] == n2[0] && n1[1] > n2[1])
-        || (n1[0] == n2[0] && n1[1] == n2[1] && n1[2] > n2[2]))
+    if ((!onlyMayorVersion && (n1[0] > n2[0] || (n1[0] == n2[0] && n1[1] > n2[1]) || (n1[0] == n2[0]
+        && n1[1] == n2[1] && n1[2] > n2[2])))
+        || (onlyMayorVersion && (n1[0] > n2[0] || (n1[0] == n2[0] && n1[1] > n2[1]))))
       return 1;
     else if ((onlyMayorVersion && n1[0] == n2[0] && n1[1] == n2[1] && n1[2] <= n2[2])
         || (!onlyMayorVersion && n1[0] == n2[0] && n1[1] == n2[1] && n1[2] == n2[2]))

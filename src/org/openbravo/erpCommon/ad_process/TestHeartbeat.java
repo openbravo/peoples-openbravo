@@ -131,8 +131,6 @@ public class TestHeartbeat extends HttpSecureAppServlet {
 
           final ProcessRequest pr = requestList.get(0);
 
-          OBDal.getInstance().save(pr);
-
           final ProcessBundle bundle = ProcessBundle.request(pr.getId(), vars, connectionProvider);
 
           OBScheduler.getInstance().unschedule(pr.getId(), bundle.getContext());
