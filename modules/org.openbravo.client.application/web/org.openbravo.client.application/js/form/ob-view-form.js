@@ -1493,6 +1493,11 @@ OB.ViewFormProperties = {
           return;
         }
 
+        if (!view.newRecordsAfterRefresh) {
+          view.newRecordsAfterRefresh = [];
+        }
+        view.newRecordsAfterRefresh.push(data[OB.Constants.ID]);
+
         // do this after doing autoSave as the setHasChanged will clean
         // the autosave info
         form.setHasChanged(false);

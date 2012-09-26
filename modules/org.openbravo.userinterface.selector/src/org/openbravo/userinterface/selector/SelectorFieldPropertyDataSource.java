@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -73,6 +74,13 @@ public class SelectorFieldPropertyDataSource extends ModelDataSourceService {
     for (Property prop : entityProperties) {
       if (prop.isOneToMany()) {
         toRemove.add(prop);
+      }
+      // Blob columns have been disabled because they are not supported by the new selectors
+      // See issue https://issues.openbravo.com/view.php?id=13147
+      if (prop.getReferencedProperty() != null) {
+        if (StringUtils.equals(prop.getReferencedProperty().getColumnName(), "AD_Image_ID")) {
+          toRemove.add(prop);
+        }
       }
     }
     entityProperties.removeAll(toRemove);

@@ -76,6 +76,9 @@ v_orderno_trl AD_Message.MsgText%TYPE;
 v_invoiceno_trl AD_Message.MsgText%TYPE;
 v_payment_desc AD_OrgInfo.em_aprm_payment_desc%TYPE;
 v_description_first BOOLEAN := TRUE;
+v_finacct_currency VARCHAR2(32);
+v_rate NUMBER;
+v_PricePr NUMBER;
 
 TYPE RECORD IS REF CURSOR;
 Cur_Params RECORD;
@@ -590,7 +593,8 @@ BEGIN
                 CASE WHEN v_IsSOTrx='Y' THEN AUTOMATIC_DEPOSIT ELSE AUTOMATIC_WITHDRAWN END AS CreateFinTransaction,
                 CASE WHEN v_IsSOTrx='Y' THEN payin_execution_type ELSE payout_execution_type END AS ExecutionType,
                 CASE WHEN v_IsSOTrx='Y' THEN payin_deferred ELSE payout_deferred END AS deferred,
-                CASE WHEN v_IsSOTrx='Y' THEN payin_execution_process_id ELSE payout_execution_process_id END AS execution_process_id
+                CASE WHEN v_IsSOTrx='Y' THEN payin_execution_process_id ELSE payout_execution_process_id END AS execution_process_id,
+                CASE WHEN v_IsSoTrx='Y' THEN Payin_IsMulticurrency ELSE Payout_IsMulticurrency END AS multicurrency
               FROM FIN_FINACC_PAYMENTMETHOD
               WHERE FIN_FINACC_PAYMENTMETHOD.FIN_PAYMENTMETHOD_ID = cur_paymentschedule.FIN_PAYMENTMETHOD_ID
                 AND FIN_FINACC_PAYMENTMETHOD.FIN_FINANCIAL_ACCOUNT_ID = v_Financial_Account_ID
@@ -760,19 +764,41 @@ BEGIN
                 v_ResultStr:='Generating FIN_FINACC_TRANSACTION';
                 v_FIN_FINACC_TRANSACTION_ID := GET_UUID();
                 SELECT COALESCE(MAX(LINE),0) INTO v_Line FROM FIN_FINACC_TRANSACTION WHERE FIN_FINANCIAL_ACCOUNT_ID = v_Financial_Account_ID;
-                INSERT INTO fin_finacc_transaction(
-                  fin_finacc_transaction_id, ad_client_id, ad_org_id, created,
-                  createdby, updated, updatedby, isactive, c_currency_id, fin_financial_account_id,
-                  line, fin_payment_id, dateacct, c_glitem_id, status, paymentamt,
-                  depositamt, processed, processing, posted, c_project_id, c_campaign_id,
-                  c_activity_id, user1_id, user2_id, trxtype, statementdate, description,
-                  fin_reconciliation_id)
-                VALUES (v_FIN_FINACC_TRANSACTION_ID, v_client_id, cur_paymentschedule.AD_ORG_ID, now(), p_user,
-                  now(), p_user, 'Y', cur_paymentschedule.C_CURRENCY_ID, v_Financial_Account_ID,
-                  v_Line, v_FIN_PAYMENT_ID, cur_paymentschedule.DUEDATE, NULL, CASE WHEN v_IsSOTrx='Y' THEN 'RDNC' ELSE 'PWNC' END, CASE WHEN v_IsSOTrx='N' THEN cur_paymentschedule.OUTSTANDINGAMT ELSE 0 END,
-                  CASE WHEN v_IsSOTrx='Y' THEN cur_paymentschedule.OUTSTANDINGAMT ELSE 0 END, 'Y', 'N', 'N', v_project_id, v_campaign_id,
-                  v_activity_id, v_user1, v_user2, CASE WHEN v_IsSOTrx='N' THEN 'BPW' ELSE 'BPD' END, cur_paymentschedule.DUEDATE, 'Invoice No.: ' || v_documentno,
-                  NULL);
+                --check the currency of the invoice and the currency of the financial account
+                select c_currency_id into v_finacct_currency from FIN_Financial_Account where FIN_Financial_Account_id =v_Financial_Account_ID;
+                IF (v_finacct_currency<>cur_paymentschedule.C_CURRENCY_ID AND cur_finaccpaymentmethod.multicurrency='Y') THEN
+                  v_rate := C_CURRENCY_RATE(cur_paymentschedule.C_CURRENCY_ID, v_finacct_currency, cur_paymentschedule.DUEDATE, NULL, v_client_id, cur_paymentschedule.AD_ORG_ID );
+                  SELECT priceprecision into v_PricePr from C_CURRENCY where c_currency_id = v_finacct_currency;
+                  INSERT INTO fin_finacc_transaction(
+                    fin_finacc_transaction_id, ad_client_id, ad_org_id, created,
+                    createdby, updated, updatedby, isactive, c_currency_id, fin_financial_account_id,
+                    line, fin_payment_id, dateacct, c_glitem_id, status, paymentamt,
+                    depositamt, processed, processing, posted, c_project_id, c_campaign_id,
+                    c_activity_id, user1_id, user2_id, trxtype, statementdate, description,
+                    fin_reconciliation_id, foreign_currency_id, foreign_convert_rate, foreign_amount)
+                  VALUES (v_FIN_FINACC_TRANSACTION_ID, v_client_id, cur_paymentschedule.AD_ORG_ID, now(), p_user,
+                    now(), p_user, 'Y', v_finacct_currency, v_Financial_Account_ID,
+                    v_Line, v_FIN_PAYMENT_ID, cur_paymentschedule.DUEDATE, NULL, CASE WHEN v_IsSOTrx='Y' THEN 'RDNC' ELSE 'PWNC' END, CASE WHEN v_IsSOTrx='N' THEN ROUND(cur_paymentschedule.OUTSTANDINGAMT*v_rate, v_PricePr) ELSE 0 END,
+                    CASE WHEN v_IsSOTrx='Y' THEN ROUND(cur_paymentschedule.OUTSTANDINGAMT*v_rate, v_PricePr) ELSE 0 END, 'Y', 'N', 'N', v_project_id, v_campaign_id,
+                    v_activity_id, v_user1, v_user2, CASE WHEN v_IsSOTrx='N' THEN 'BPW' ELSE 'BPD' END, cur_paymentschedule.DUEDATE, 'Invoice No.: ' || v_documentno,
+                    NULL, cur_paymentschedule.C_CURRENCY_ID, v_rate , CASE WHEN v_IsSOTrx='N' THEN cur_paymentschedule.OUTSTANDINGAMT ELSE cur_paymentschedule.OUTSTANDINGAMT END);
+                ELSE
+                  INSERT INTO fin_finacc_transaction(
+                    fin_finacc_transaction_id, ad_client_id, ad_org_id, created,
+                    createdby, updated, updatedby, isactive, c_currency_id, fin_financial_account_id,
+                    line, fin_payment_id, dateacct, c_glitem_id, status, paymentamt,
+                    depositamt, processed, processing, posted, c_project_id, c_campaign_id,
+                    c_activity_id, user1_id, user2_id, trxtype, statementdate, description,
+                    fin_reconciliation_id)
+                  VALUES (v_FIN_FINACC_TRANSACTION_ID, v_client_id, cur_paymentschedule.AD_ORG_ID, now(), p_user,
+                    now(), p_user, 'Y', cur_paymentschedule.C_CURRENCY_ID, v_Financial_Account_ID,
+                    v_Line, v_FIN_PAYMENT_ID, cur_paymentschedule.DUEDATE, NULL, CASE WHEN v_IsSOTrx='Y' THEN 'RDNC' ELSE 'PWNC' END, CASE WHEN v_IsSOTrx='N' THEN cur_paymentschedule.OUTSTANDINGAMT ELSE 0 END,
+                    CASE WHEN v_IsSOTrx='Y' THEN cur_paymentschedule.OUTSTANDINGAMT ELSE 0 END, 'Y', 'N', 'N', v_project_id, v_campaign_id,
+                    v_activity_id, v_user1, v_user2, CASE WHEN v_IsSOTrx='N' THEN 'BPW' ELSE 'BPD' END, cur_paymentschedule.DUEDATE, 'Invoice No.: ' || v_documentno,
+                    NULL);
+                END IF;
+                
+                
                 UPDATE FIN_PAYMENT SET STATUS = CASE WHEN v_IsSOTrx='Y' THEN 'RDNC' ELSE 'PWNC' END
                   WHERE FIN_PAYMENT_ID = v_FIN_PAYMENT_ID;
                   --UPDATE FINANCIAL ACCOUNT CURRENT BALANCE

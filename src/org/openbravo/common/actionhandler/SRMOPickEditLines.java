@@ -28,15 +28,18 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBDao;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
-import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.financial.FinancialUtils;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
@@ -49,6 +52,7 @@ import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.model.pricing.pricelist.ProductPrice;
 import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.service.db.DalConnectionProvider;
+import org.openbravo.service.db.DbUtility;
 
 /**
  * 
@@ -71,8 +75,10 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
       // Issue 20585: https://issues.openbravo.com/view.php?id=20585
       final String strOrderId = jsonRequest.getString("C_Order_ID");
       Order order = OBDal.getInstance().get(Order.class, strOrderId);
-      if (cleanOrderLines(order)) {
-        createOrderLines(jsonRequest);
+
+      if (order != null) {
+        List<String> idList = OBDao.getIDListFromOBObject(order.getOrderLineList());
+        createOrderLines(jsonRequest, idList);
       }
 
     } catch (Exception e) {
@@ -82,13 +88,14 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
 
       try {
         jsonRequest = new JSONObject();
-
+        Throwable ex = DbUtility.getUnderlyingSQLException(e);
+        String message = OBMessageUtils.translateError(new DalConnectionProvider(), vars,
+            vars.getLanguage(), ex.getMessage()).getMessage();
         JSONObject errorMessage = new JSONObject();
         errorMessage.put("severity", "error");
-        errorMessage.put("text",
-            Utility.messageBD(new DalConnectionProvider(), e.getMessage(), vars.getLanguage()));
-
+        errorMessage.put("text", message);
         jsonRequest.put("message", errorMessage);
+
       } catch (Exception e2) {
         log.error(e.getMessage(), e2);
         // do nothing, give up
@@ -99,46 +106,48 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
     return jsonRequest;
   }
 
-  private boolean cleanOrderLines(Order order) {
-    if (order == null) {
-      return false;
-    } else if (order.getOrderLineList().isEmpty()) {
-      // nothing to delete.
-      return true;
-    }
-    try {
-      order.getOrderLineList().clear();
-      OBDal.getInstance().save(order);
-      OBDal.getInstance().flush();
-    } catch (Exception e) {
-      log.error(e.getMessage(), e);
-      return false;
-    }
-    return true;
-  }
-
-  private void createOrderLines(JSONObject jsonRequest) throws JSONException, OBException {
+  private void createOrderLines(JSONObject jsonRequest, List<String> idList) throws JSONException,
+      OBException {
     JSONArray selectedLines = jsonRequest.getJSONArray("_selection");
-    // if no lines selected don't do anything.
-    if (selectedLines.length() == 0) {
-      return;
-    }
     final String strOrderId = jsonRequest.getString("C_Order_ID");
     Order order = OBDal.getInstance().get(Order.class, strOrderId);
     boolean isSOTrx = order.isSalesTransaction();
+    // if no lines selected don't do anything.
+    if (selectedLines.length() == 0) {
+      removeNonSelectedLines(idList, order);
+      return;
+    }
+    OBCriteria<OrderLine> obc = OBDal.getInstance().createCriteria(OrderLine.class);
+    obc.add(Restrictions.eq(OrderLine.PROPERTY_SALESORDER, order));
+    obc.setProjection(Projections.max(OrderLine.PROPERTY_LINENO));
+    Long lineNo = 0L;
+    Object o = obc.list().get(0);
+    if (o != null) {
+      lineNo = (Long) o;
+    }
+
     for (long i = 0; i < selectedLines.length(); i++) {
       JSONObject selectedLine = selectedLines.getJSONObject((int) i);
       log.debug(selectedLine);
       if (selectedLine.get("returned").equals(null)) {
         continue;
       }
-      OrderLine newOrderLine = OBProvider.getInstance().get(OrderLine.class);
-      newOrderLine.setSalesOrder(order);
-      newOrderLine.setOrganization(order.getOrganization());
-      newOrderLine.setLineNo((i + 1L) * 10L);
-      newOrderLine.setOrderDate(order.getOrderDate());
-      newOrderLine.setWarehouse(order.getWarehouse());
-      newOrderLine.setCurrency(order.getCurrency());
+
+      OrderLine newOrderLine = null;
+      boolean notExistsOrderLine = selectedLine.get("salesOrderLine").equals(null);
+      if (notExistsOrderLine) {
+        newOrderLine = OBProvider.getInstance().get(OrderLine.class);
+        newOrderLine.setSalesOrder(order);
+        newOrderLine.setOrganization(order.getOrganization());
+        lineNo = lineNo + 10L;
+        newOrderLine.setLineNo(lineNo);
+        newOrderLine.setOrderDate(order.getOrderDate());
+        newOrderLine.setWarehouse(order.getWarehouse());
+        newOrderLine.setCurrency(order.getCurrency());
+      } else {
+        newOrderLine = OBDal.getInstance().get(OrderLine.class, selectedLine.get("salesOrderLine"));
+        idList.remove(selectedLine.get("salesOrderLine"));
+      }
 
       ShipmentInOutLine shipmentLine = OBDal.getInstance().get(ShipmentInOutLine.class,
           selectedLine.getString("goodsShipmentLine"));
@@ -255,11 +264,27 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
         newOrderLine.setReturnReason(order.getReturnReason());
       }
 
-      List<OrderLine> orderLines = order.getOrderLineList();
-      orderLines.add(newOrderLine);
-      order.setOrderLineList(orderLines);
+      if (notExistsOrderLine) {
+        List<OrderLine> orderLines = order.getOrderLineList();
+        orderLines.add(newOrderLine);
+        order.setOrderLineList(orderLines);
+      }
 
       OBDal.getInstance().save(newOrderLine);
+      OBDal.getInstance().save(order);
+      OBDal.getInstance().flush();
+    }
+
+    removeNonSelectedLines(idList, order);
+  }
+
+  private void removeNonSelectedLines(List<String> idList, Order order) {
+    if (idList.size() > 0) {
+      for (String id : idList) {
+        OrderLine ol = OBDal.getInstance().get(OrderLine.class, id);
+        order.getOrderLineList().remove(ol);
+        OBDal.getInstance().remove(ol);
+      }
       OBDal.getInstance().save(order);
       OBDal.getInstance().flush();
     }

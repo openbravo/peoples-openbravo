@@ -72,6 +72,16 @@
     
     <PARAMETER id="paramUseCreditChecked" name="check" default="Y"/>
     <PARAMETER id="paramUseCredit" name="useCredit" boolean="checked" withId="paramUseCreditChecked"/>
+    
+     <!-- Not allow to change exchange rate and amount -->
+    <PARAMETER id="paramStrNotAllowExchange" name="strNotAllowExchange" attribute="value"/>
+    
+    <!-- Not allow to change Write Off-->
+    <PARAMETER id="paramStrWriteOffLimit" name="strWriteOffLimit" attribute="value"/>
+    <PARAMETER id="paramStrtypewriteoff" name="strtypewriteoff" attribute="value"/>
+    <PARAMETER id="paramStrAmountwriteoff" name="strAmountwriteoff" attribute="value"/>
+    
 
     <DISCARD id="discard"/>
 </REPORT>
+

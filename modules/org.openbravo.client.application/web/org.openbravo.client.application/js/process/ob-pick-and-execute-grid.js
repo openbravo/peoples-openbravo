@@ -48,6 +48,8 @@ isc.OBPickAndExecuteGrid.addProperties({
     width: 32
   },
 
+  //The Cell should be validated each time the focus is changed.
+  validateByCell: true,
   // default selection
   selectionProperty: 'obSelected',
 
@@ -98,6 +100,10 @@ isc.OBPickAndExecuteGrid.addProperties({
 
     // required to show the funnel icon and to work
     this.filterClause = this.gridProperties.filterClause;
+    if (this.filterClause && this.gridProperties.filterName) {
+      this.view.messageBar.setMessage(isc.OBMessageBar.TYPE_INFO, '<div><div class="' + OB.Styles.MessageBar.leftMsgContainerStyle + '">' + this.gridProperties.filterName + '<br/>' + OB.I18N.getLabel('OBUIAPP_ClearFilters') + '</div></div>', ' ');
+      this.view.messageBar.hasFilterMessage = true;
+    }
 
     this.orderByClause = this.gridProperties.orderByClause;
 

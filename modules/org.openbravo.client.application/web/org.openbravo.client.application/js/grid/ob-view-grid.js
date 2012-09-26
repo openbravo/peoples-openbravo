@@ -305,6 +305,19 @@ isc.OBViewGrid.addProperties({
       this.contextMenu = this.getMenuConstructor().create({
         items: menuItems
       });
+      this.contextMenu.show = function () {
+        var me = this;
+        if (!grid.view.isActiveView()) {
+          // The view where the context menu is being opened must be active
+          // See issue https://issues.openbravo.com/view.php?id=20872
+          grid.view.setAsActiveView(true);
+          setTimeout(function () {
+            me.Super('show', arguments);
+          }, 10);
+        } else {
+          me.Super('show', arguments);
+        }
+      };
     }
 
     var ret = this.Super('initWidget', arguments);
@@ -1000,13 +1013,14 @@ isc.OBViewGrid.addProperties({
   },
 
   removeOrClause: function (criteria) {
-    // The original criteria is stored in the position #1
-    // The criteria to select the selected record is stored in position #0
-    return criteria.criteria.get(1);
+    // The original criteria is stored in the position #0
+    // The criteria to select the recently created records is stored in position #1..length-1
+    return criteria.criteria.get(0);
   },
 
-  refreshGrid: function (callback, forceCurrentRecordID) {
-    var originalCriteria, criteria = {};
+  refreshGrid: function (callback, newRecordsToBeIncluded) {
+    var originalCriteria, criteria = {},
+        newRecordsCriteria, newRecordsLength, i;
     if (this.getSelectedRecord()) {
       this.targetRecordId = this.getSelectedRecord()[OB.Constants.ID];
       // as the record is already selected it is already in the filter
@@ -1030,18 +1044,24 @@ isc.OBViewGrid.addProperties({
     // If a record has to be included in the refresh, it must be included
     // in the filter with an 'or' operator, along with the original filter,
     // but only if there is an original filter
-    if (forceCurrentRecordID && originalCriteria.criteria.length > 0) {
+    if (newRecordsToBeIncluded && newRecordsToBeIncluded.length > 0 && originalCriteria.criteria.length > 0) {
       // Adds the current record to the criteria
+      newRecordsCriteria = [];
+      newRecordsLength = newRecordsToBeIncluded.length;
+      for (i = 0; i < newRecordsLength; i++) {
+        newRecordsCriteria.push({
+          fieldName: 'id',
+          operator: 'equals',
+          value: newRecordsToBeIncluded[i]
+        });
+      }
+
+
       this._criteriaWithOrClause = true;
       criteria._constructor = 'AdvancedCriteria';
       criteria._OrExpression = true; // trick to get a really _or_ in the backend
       criteria.operator = 'or';
-      criteria.criteria = [{
-        fieldName: 'id',
-        operator: 'equals',
-        value: forceCurrentRecordID
-      }];
-      criteria.criteria.push(originalCriteria); // original filter
+      criteria.criteria = [originalCriteria].concat(newRecordsCriteria);
     } else {
       criteria = originalCriteria;
     }
@@ -2187,6 +2207,12 @@ isc.OBViewGrid.addProperties({
       return;
     }
 
+    // If leaving the row...
+    if (editCompletionEvent === 'enter' || editCompletionEvent === 'arrow_up' || editCompletionEvent === 'arrow_down') {
+      // See issue https://issues.openbravo.com/view.php?id=19830
+      this.view.standardWindow.getDirtyEditForm().validateForm();
+    }
+
     this._leavingCell = true;
 
     if (newValue) {
@@ -2266,8 +2292,8 @@ isc.OBViewGrid.addProperties({
   // latest values. This can happen when the focus is in a field and the save action is
   // done, at that point first try to force a fic call (handleItemChange) and if that
   // indeed happens stop the saveEdit until the fic returns
-  saveEditedValues: function (rowNum, colNum, newValues, oldValues, editValuesID, editCompletionEvent, saveCallback, ficCallDone) {
-    var previousExplicitOffline;
+  saveEditedValues: function (rowNum, colNum, newValues, oldValues, editValuesID, editCompletionEvent, originalCallback, ficCallDone) {
+    var previousExplicitOffline, saveCallback;
     if (!rowNum && rowNum !== 0) {
       rowNum = this.getEditRow();
     }
@@ -2277,11 +2303,23 @@ isc.OBViewGrid.addProperties({
 
     // nothing changed just fire the calback and bail
     if (!ficCallDone && this.getEditForm() && !this.getEditForm().hasChanged && !this.getEditForm().isNew) {
-      if (saveCallback) {
-        this.fireCallback(saveCallback, "rowNum,colNum,editCompletionEvent,success", [rowNum, colNum, editCompletionEvent]);
+      if (originalCallback) {
+        this.fireCallback(originalCallback, "rowNum,colNum,editCompletionEvent,success", [rowNum, colNum, editCompletionEvent]);
       }
       return true;
     }
+
+    saveCallback = function () {
+      if (originalCallback) {
+        if (this.getSelectedRecord() && this.getSelectedRecord()[OB.Constants.ID]) {
+          if (!this.view.newRecordsAfterRefresh) {
+            this.view.newRecordsAfterRefresh = [];
+          }
+          this.view.newRecordsAfterRefresh.push(this.getSelectedRecord()[OB.Constants.ID]);
+        }
+        this.fireCallback(originalCallback, "rowNum,colNum,editCompletionEvent,success", [rowNum, colNum, editCompletionEvent]);
+      }
+    };
 
     if (ficCallDone) {
       // reset the new values as this can have changed because of a fic call
@@ -2346,10 +2384,6 @@ isc.OBViewGrid.addProperties({
         isc.Log.logDebug('hideInlineEditor has NO record and editColumnLayout', 'OB');
       }
       this.view.isEditingGrid = false;
-      // Update the tab title after the record has been saved or canceled
-      // to get rid of the '*' in the tab title
-      // See https://issues.openbravo.com/view.php?id=21709
-      this.view.updateTabTitle();
     }
 
     // always hide the clickmask, as it needs to be re-applied

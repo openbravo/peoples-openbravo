@@ -48,6 +48,7 @@
 <script language="JavaScript" src="../../../../../web/js/jscalendar/lang/calendar-es.js" type="text/javascript" id="fieldCalendar"></script>
 <script language="JavaScript" src="../../../../../web/js/default/DateTextBox.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/org.openbravo.advpaymentmngt/FIN_Utilities.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/js/appStatus.js" type="text/javascript"></script>
 <script language="JavaScript" type="text/javascript">
   OB.APRM = OB.APRM || {};
   OB.APRM.APFT_GLItems = [];
@@ -368,6 +369,17 @@ function removeGLItem(key, removedAmount) {
 function validate(action) {
   var frm = document.frmMain;
   if (action === 'openprocess') {
+	if (isMulticurrencyTxn()) {
+	  if (frm.inpActualConverted.value==null || frm.inpActualConverted.value=="") {
+	    setWindowElementFocus(frm.inpActualConverted);
+	    showJSMessage(7);
+	    return false;
+	  } else if (frm.inpExchangeRate.value==null || frm.inpExchangeRate.value=="") {
+	    setWindowElementFocus(frm.inpExchangeRate);
+	    showJSMessage(7);
+	     return false;
+	  }
+	}
     if (frm.inpActualPayment.value === null || frm.inpActualPayment.value === '') {
       setWindowElementFocus(frm.inpActualPayment);
       showJSMessage(7);
@@ -388,17 +400,7 @@ function validate(action) {
       setWindowElementFocus(frm.inpPaymentDate);
       showJSMessage(7);
       return false;
-    } else if (isMulticurrencyTxn()) {
-      if (frm.inpActualConverted.value==null || frm.inpActualConverted.value=="") {
-        setWindowElementFocus(frm.inpActualConverted);
-        showJSMessage(7);
-        return false;
-      } else if (frm.inpExchangeRate.value==null || frm.inpExchangeRate.value=="") {
-        setWindowElementFocus(frm.inpExchangeRate);
-        showJSMessage(7);
-        return false;
-      }
-    } else {
+    }  else {
       var diffAction = frm.inpDifferenceAction,
           selectedAction = null, i, actionSelected = false;
       for (i = 0; i < diffAction.length; i++) {
@@ -625,6 +627,16 @@ function displayMulticurrencyControls() {
   displayLogicElement('lblExpectedConverted', display );
   displayLogicElement('paramActualConvertedCell', display );
   displayLogicElement('lblActualConverted', display );
+  if (document.frmMain.strNotAllowExchange.value === 'Y' && display) {  
+	  readOnlyLogicElement('paramExchangeRate', true);
+      readOnlyLogicElement('paramActualConverted', true);
+      displayLogicElement('actualConvertedCal', false );
+   }
+  else {
+	  readOnlyLogicElement('paramExchangeRate', false);
+      readOnlyLogicElement('paramActualConvertedCell', false);
+      displayLogicElement('actualConvertedCal', true );
+  }
 }
 
 function currencyOnChange() {
@@ -659,6 +671,7 @@ function currencyOnChange() {
 function currencyOnChangeOnLoad() {
   if( isPaymentMethodMulticurrency() ) {
     changeClass('paramCurrencyId','ComboKeyReadOnly ', 'ComboKey dojoValidateValid required ',true);
+    
   } else {
     changeClass('paramCurrencyId', 'ComboKey dojoValidateValid required ', 'ComboKeyReadOnly ',true);
   }
@@ -815,6 +828,12 @@ function closeProcessPayment() {
   <input type="hidden" name="strElement_AY" id="paramStrElement_AY" value=""/>
   <input type="hidden" name="strElement_SR" id="paramStrElement_SR" value=""/>
   <input type="hidden" name="strElement_MC" id="paramStrElement_MC" value=""/>
+  <input type="hidden" name="strNotAllowExchange" id="paramStrNotAllowExchange" value=""/>
+  <input type="hidden" name="strWriteOffLimit" id="paramStrWriteOffLimit" value=""/>
+  <input type="hidden" name="strtypewriteoff" id="paramStrtypewriteoff" value=""/>
+  <input type="hidden" name="strAmountwriteoff" id="paramStrAmountwriteoff" value=""/>
+  
+  
   <div class="Popup_ContentPane_CircleLogo">
     <div class="Popup_WindowLogo">
       <img class="Popup_WindowLogo_Icon Popup_WindowLogo_Icon_process" src="../../../../../web/images/blank.gif" border=0/></img>
@@ -1212,7 +1231,7 @@ function closeProcessPayment() {
                       </span>
                       </td>
                       <td class="FieldButton_ContentCell">
-                      <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Amount From'; return true;" onblur=" window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="calculator('frmMain.inpActualConverted', document.frmMain.inpActualConverted.value, false);return false;">
+                      <a id="actualConvertedCal" class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Amount From'; return true;" onblur=" window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="calculator('frmMain.inpActualConverted', document.frmMain.inpActualConverted.value, false);return false;">
                       <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;" id="NoPackageslinkCalc">
                           <tr>
                             <td class="FieldButton_bg">
@@ -1849,6 +1868,12 @@ function closeProcessPayment() {
                             </td>
                             <td><span class="LabelText">Write off the difference</span></td>
                           </tr>
+                           <tr id="writeofflimit">
+                            <td class="Radio_Check_ContentCell" >
+                              <input type="radio" name="inpDifferenceAction" value="writeofflimit" id="radiolimit" DISABLED/>
+                            </td>
+                            <td><span class="LabelText">Write off the difference (Above limit)</span></td>
+                          </tr>  
                         </table>
                       </td>
                     </tr>

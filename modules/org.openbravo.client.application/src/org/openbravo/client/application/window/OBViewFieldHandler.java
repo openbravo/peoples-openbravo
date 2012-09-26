@@ -206,6 +206,10 @@ public class OBViewFieldHandler {
         continue;
       }
 
+      if (field.isStartnewline()) {
+        colNum = 1;
+      }
+
       if (field.getColumn() == null) {
         final OBClientClassField viewField = new OBClientClassField();
 

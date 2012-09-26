@@ -333,9 +333,8 @@ build.war: build a war file in the lib directory.
     <pathelement path="${build.sqlc}/srcAD" />
     <pathelement path="${base.src.test}" />
     <dirset dir="${base.modules}">
-      <include name="*/*" />
-      <exclude name="*/src-util" />
-      <exclude name="*/src-wad" />
+      <include name="*/src" />
+      <include name="*/src-test" />
     </dirset>
   </path>
  

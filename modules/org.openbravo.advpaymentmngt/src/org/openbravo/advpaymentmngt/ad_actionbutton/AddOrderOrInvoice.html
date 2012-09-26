@@ -48,6 +48,7 @@
 <script language="JavaScript" src="../../../../../web/js/jscalendar/lang/calendar-es.js" type="text/javascript" id="fieldCalendar"></script>
 <script language="JavaScript" src="../../../../../web/js/default/DateTextBox.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/org.openbravo.advpaymentmngt/FIN_Utilities.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/js/appStatus.js" type="text/javascript"></script>
 <script type="text/javascript">
   window.onunload = reloadOpener; // reloads opener on closing
 </script>
@@ -61,6 +62,74 @@ var hasBPartner = null;
 </script>
 <script language="JavaScript" type="text/javascript">
 //Ajax calls
+function distributeAmount(_amount) {
+  var amount = applyFormat(_amount);
+  var distributedAmount = 0;
+  var keepSelection = false;
+  var chk = frm.inpScheduledPaymentDetailId;
+  var scheduledPaymentDetailId, outstandingAmount, j, i;
+  if (isGLItemEnabled) {
+    amount = subtract(amount, frm.inpGLSumAmount.value);
+  }
+  
+  if (!chk) {
+    updateTotal();
+    return;
+  } else if (!chk.length) {
+    scheduledPaymentDetailId = frm.inpRecordId0.value;
+    outstandingAmount = frm.elements["inpRecordAmt" + scheduledPaymentDetailId].value;
+    if ( compare(outstandingAmount, '>', amount) ) {
+      outstandingAmount = amount;
+    }
+    frm.elements["inpPaymentAmount" + scheduledPaymentDetailId].value = outstandingAmount;
+    if (!chk.checked && compare(outstandingAmount, '!=', 0)) {
+      chk.checked = true;
+      updateData(chk.value, chk.checked);
+    }
+  } else {
+    var total = chk.length;
+    for ( i = 0; i < total; i++) {
+      if (chk[i].checked) {
+        distributedAmount = add(distributedAmount, frm.elements["inpPaymentAmount" + chk[i].value].value);
+      }
+    }
+    if (compare(amount, '>', distributedAmount) || compare(amount, '==', distributedAmount)) {
+      amount = subtract(amount, distributedAmount);
+      keepSelection = true;
+    }
+    for (i = 0; i < total; i++) {
+      if (chk[i].checked && keepSelection) {
+        continue;
+      }
+      scheduledPaymentDetailId = frm.elements["inpRecordId" + i].value;
+      outstandingAmount = frm.elements["inpRecordAmt" + scheduledPaymentDetailId].value;
+      if ( compare(outstandingAmount, '>', amount) ) {
+        outstandingAmount = amount;
+      }
+      if ( compare(amount, '==', 0) && compare(outstandingAmount, '>=', 0 )) {
+        frm.elements["inpPaymentAmount" + scheduledPaymentDetailId].value = "";
+        for ( j = 0; j < total; j++) {
+          if (chk[j].checked && chk[j].value === scheduledPaymentDetailId) {
+            chk[j].checked = false;
+            updateData(chk[j].value, chk[j].checked);
+          }
+        }
+      } else {
+        frm.elements["inpPaymentAmount" + scheduledPaymentDetailId].value = outstandingAmount;
+        for ( j = 0; j < total; j++) {
+          if (!chk[j].checked && chk[j].value === scheduledPaymentDetailId) {
+            chk[j].checked = true;
+            updateData(chk[j].value, chk[j].checked,null ,true );
+          }
+        }
+        amount = subtract(amount, outstandingAmount);
+      }
+    }
+  }
+  updateTotal();
+  return true;
+}
+
 function callBackGrid(paramXMLParticular, XMLHttpRequestObj) {
   var strText = '';
   if (getReadyStateHandler(XMLHttpRequestObj)) {
@@ -339,6 +408,14 @@ function displayMulticurrencyControls() {
   var display = ( invCurrency && accountCurrency && invCurrency != accountCurrency );
 
   displayLogicElement('multiCurrencyRow', display );
+  if (document.frmMain.strNotAllowExchange.value === 'Y' && display) {  
+      readOnlyLogicElement('paramExchangeRate', true);
+      readOnlyLogicElement('paramActualConverted', true);
+   }
+  else {
+      readOnlyLogicElement('paramExchangeRate', false);
+      readOnlyLogicElement('paramActualConverted', false);
+  }
 }
 </script>
 <script language="JavaScript" type="text/javascript">
@@ -412,7 +489,7 @@ function updateAll(drivenByGrid) {
         }
       }
       else{
-          updateData(chk[i].value, chk[i].checked, drivenByGrid,false);
+          updateData(chk[i].value, chk[i].checked, drivenByGrid,true);
       }
     }
   }
@@ -697,6 +774,11 @@ function closeProcessPayment() {
   <input type="hidden" name="strElement_AY" id="paramStrElement_AY" value=""/>
   <input type="hidden" name="strElement_SR" id="paramStrElement_SR" value=""/>
   <input type="hidden" name="strElement_MC" id="paramStrElement_MC" value=""/>
+  <input type="hidden" name="strNotAllowExchange" id="paramStrNotAllowExchange" value=""/>
+  <input type="hidden" name="strWriteOffLimit" id="paramStrWriteOffLimit" value=""/>
+  <input type="hidden" name="strtypewriteoff" id="paramStrtypewriteoff" value=""/>
+  <input type="hidden" name="strAmountwriteoff" id="paramStrAmountwriteoff" value=""/>
+  
   <div class="Popup_ContentPane_CircleLogo">
     <div class="Popup_WindowLogo">
       <img class="Popup_WindowLogo_Icon Popup_WindowLogo_Icon_process" src="../../../../../web/images/blank.gif" border=0/></img>
@@ -1468,6 +1550,12 @@ function closeProcessPayment() {
                             </td>
                             <td><span class="LabelText">Write off the difference</span></td>
                           </tr>
+                           <tr id="writeofflimit">
+                            <td class="Radio_Check_ContentCell" >
+                              <input type="radio" name="inpDifferenceAction" value="writeofflimit" id="radiolimit" DISABLED/>
+                            </td>
+                            <td><span class="LabelText">Write off the difference (Above limit)</span></td>
+                          </tr>       
                         </table>
                       </td>
                     </tr>

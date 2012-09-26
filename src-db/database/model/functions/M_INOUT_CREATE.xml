@@ -60,6 +60,7 @@
   v_ResultStr VARCHAR2(2000):='';
   v_result NUMBER(1):=1;
   v_PostResult NUMBER;
+  v_stdPrecision NUMBER:=2;
   v_logLines NUMBER:=0;
   v_isWholeLog BOOLEAN := true;
   v_Message VARCHAR2(2000):='';
@@ -364,14 +365,15 @@
                 --MODIFIED BY F.IRIAZABAL
                 v_QtyOrder:=0;
                 IF(ol.M_Product_UOM_ID IS NOT NULL) THEN
-                  SELECT M_PRODUCT_UOM.C_UOM_ID INTO v_ProductUOM
+                  SELECT M_PRODUCT_UOM.C_UOM_ID, C_UOM.stdprecision
+                  INTO v_ProductUOM, v_stdPrecision
                   FROM M_PRODUCT_UOM, C_UOM
                   WHERE M_PRODUCT_UOM.C_UOM_ID=C_UOM.C_UOM_ID
                     AND M_Product_UOM_ID=ol.M_Product_UOM_ID;
                   IF(ol.QtyDelivered=0) THEN
                     v_QtyOrder:=ol.QuantityOrder;
                   ELSIF(v_ProductUOM IS NOT NULL) THEN
-                    v_QtyOrder:=ol.QuantityOrder*v_Qty/ol.QtyOrdered;
+                    v_QtyOrder:=ROUND(ol.QuantityOrder*v_Qty/ol.QtyOrdered,v_stdPrecision);
                     --v_QtyOrder:=C_Uom_Convert(v_Qty, ol.C_UOM_ID, v_ProductUOM, 'Y') ;
                   ELSE
                     v_QtyOrder:=NULL;

@@ -104,4 +104,12 @@ public class OBDao {
     }
     return baseOBObjectList;
   }
+
+  public static <T extends BaseOBObject> List<String> getIDListFromOBObject(List<T> list) {
+    List<String> idList = new ArrayList<String>();
+    for (BaseOBObject o : list) {
+      idList.add(o.getId().toString());
+    }
+    return idList;
+  }
 }

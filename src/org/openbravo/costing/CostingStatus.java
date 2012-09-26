@@ -26,6 +26,7 @@ import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.ad.domain.Preference;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.materialmgmt.cost.CostingRule;
 
 public class CostingStatus implements OBSingleton {
   private static CostingStatus instance;
@@ -51,6 +52,23 @@ public class CostingStatus implements OBSingleton {
         crQry.setFilterOnReadableOrganization(false);
         crQry.setMaxResult(1);
         isMigrated = crQry.uniqueResult() != null;
+
+        if (!isMigrated) {
+          OBQuery<org.openbravo.model.materialmgmt.cost.Costing> costingQry = OBDal.getInstance()
+              .createQuery(org.openbravo.model.materialmgmt.cost.Costing.class, "");
+          costingQry.setFilterOnReadableClients(false);
+          costingQry.setFilterOnReadableOrganization(false);
+
+          OBQuery<CostingRule> cRuleQry = OBDal.getInstance().createQuery(CostingRule.class,
+              CostingRule.PROPERTY_VALIDATED + " = true");
+          cRuleQry.setFilterOnReadableClients(false);
+          cRuleQry.setFilterOnReadableOrganization(false);
+
+          if (costingQry.count() == 0 || cRuleQry.count() > 0) {
+            setMigrated();
+          }
+        }
+
       } finally {
         OBContext.restorePreviousMode();
       }
@@ -59,7 +77,7 @@ public class CostingStatus implements OBSingleton {
   }
 
   public void setMigrated() {
-    if (isMigrated()) {
+    if (isMigrated) {
       return;
     }
     OBContext.setAdminMode(false);

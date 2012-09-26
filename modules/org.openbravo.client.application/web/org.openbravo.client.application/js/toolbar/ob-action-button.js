@@ -162,10 +162,7 @@ isc.OBToolbarActionButton.addProperties({
         // The selected record should be shown after the refresh, even
         // if the filter would exclude it
         // See issue https://issues.openbravo.com/view.php?id=20722
-        if (currentView.viewGrid.getSelectedRecord()) {
-          currentRecordId = currentView.viewGrid.getSelectedRecord()[OB.Constants.ID];
-        }
-        currentView.refresh(null, autosaveDone, currentRecordId);
+        currentView.refresh(null, autosaveDone, currentView.newRecordsAfterRefresh);
       }
     };
 

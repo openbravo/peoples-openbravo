@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2012 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,7 +20,10 @@ package org.openbravo.erpCommon.ad_reports;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -28,14 +31,19 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
+import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.common.uom.UOM;
+import org.openbravo.model.project.Project;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
@@ -135,6 +143,16 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
     myMessage = new OBError();
     String strBaseCurrencyId = Utility.stringBaseCurrencyId(this, vars.getClient());
     try {
+      List<UOM> uomList = noConversionToHours(strProject, OBDateUtils.getDate(strDateFrom2),
+          OBDateUtils.getDate(strDateTo2), strTreeOrg, strProjectType, strResponsible,
+          OBDateUtils.getDate(strDateFrom), OBDateUtils.getDate(strDateTo), strPartner,
+          OBDateUtils.getDate(strDateFrom3), OBDateUtils.getDate(strDateTo3));
+      if (uomList.size() > 0) {
+        String uomsString = getUOMsString(uomList);
+        advisePopUp(request, response, "ERROR",
+            Utility.messageBD(this, "Error", vars.getLanguage()),
+            Utility.messageBD(this, "NoConversionHourUOM", vars.getLanguage()) + uomsString);
+      }
       data = ReportProjectProfitabilityData.select(this, strCurrencyId, strBaseCurrencyId,
           strDateFrom2, DateTimeData.nDaysAfter(this, strDateTo2, "1"), strTreeOrg,
           Utility.getContext(this, vars, "#User_Client", "ReportProjectProfitabilityJR"),
@@ -143,21 +161,10 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
           strResponsible, strPartner);
     } catch (ServletException ex) {
       myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+    } catch (Exception ex) {
     }
     strConvRateErrorMsg = myMessage.getMessage();
 
-    // for (int i = 0; i < data.length; i++) {
-    // if (data[i].realservices != null && !data[i].realservices.equals("")
-    // && !data[i].realservices.trim().equals("0") && data[i].cuomid != null
-    // && !data[i].cuomid.equals("")) {
-    // String count = ReportExpenseData.selectUOM(this, data[i].cuomid);
-    // String count2 = ReportExpenseData.selectUOM2(this, data[i].cuomid);
-    // if (Integer.parseInt(count) + Integer.parseInt(count2) == 0) {
-    // advisePopUp(request, response, "ERROR", Utility.messageBD(this, "Error", vars
-    // .getLanguage()), Utility.messageBD(this, "NoConversionDayUom", vars.getLanguage()));
-    // }
-    // }
-    // }
     // If a conversion rate is missing for a certain transaction, an error
     // message window pops-up.
     if (!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
@@ -177,6 +184,92 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
       HashMap<String, Object> parameters = new HashMap<String, Object>();
 
       renderJR(vars, response, strReportName, strOutput, parameters, data, null);
+    }
+  }
+
+  private String getUOMsString(List<UOM> uomList) {
+    String uomsString = " ";
+    for (UOM uom : uomList) {
+      uomsString = uomsString + uom.getIdentifier() + ", ";
+    }
+    uomsString = uomsString.substring(0, uomsString.length() - 2);
+    return uomsString;
+  }
+
+  private List<UOM> noConversionToHours(String strProject, Date dateFrom, Date dateTo,
+      String strOrg, String strProjectType, String strResponsible, Date dateFromContract,
+      Date dateToContract, String strPartner, Date dateFromStarting, Date dateToStarting) {
+    final StringBuilder hsqlScript = new StringBuilder();
+    final List<Object> parameters = new ArrayList<Object>();
+
+    hsqlScript.append(" as unitofmeasure");
+    hsqlScript.append(" where exists (");
+    hsqlScript.append("   select 1 ");
+    hsqlScript.append("   from TimeAndExpenseSheetLine as tel ");
+    hsqlScript.append("        join tel.expenseSheet as es ");
+    hsqlScript.append("        left outer join tel.project as p");
+    hsqlScript.append("   where tel.timeSheet = true ");
+    hsqlScript.append("         and tel.uOM.id = unitofmeasure.id ");
+    hsqlScript.append("         and tel.uOM.id <> '101' ");
+    hsqlScript.append("         and es.processed = true ");
+    if (!"".equals(strProject)) {
+      hsqlScript.append("    and p.id = ?");
+      parameters.add(strProject);
+    }
+    if (!"".equals(strOrg)) {
+      hsqlScript.append("    and p." + Project.PROPERTY_ORGANIZATION + ".id in (" + strOrg + ")");
+    }
+    if (!"".equals(strProjectType)) {
+      hsqlScript.append("    and p." + Project.PROPERTY_PROJECTTYPE + ".id = ?");
+      parameters.add(strProjectType);
+    }
+    if (!"".equals(strResponsible)) {
+      hsqlScript.append("    and p." + Project.PROPERTY_PERSONINCHARGE + ".id = ?");
+      parameters.add(strResponsible);
+    }
+    if (!"".equals(strPartner)) {
+      hsqlScript.append("    and p." + Project.PROPERTY_BUSINESSPARTNER + ".id = ?");
+      parameters.add(strPartner);
+    }
+    if (dateFrom != null) {
+      hsqlScript.append("    and es.reportDate >= ?");
+      parameters.add(dateFrom);
+    }
+    if (dateTo != null) {
+      hsqlScript.append("    and es.reportDate <= ?");
+      parameters.add(dateTo);
+    }
+    if (dateFromStarting != null) {
+      hsqlScript.append("    and p." + Project.PROPERTY_STARTINGDATE + " >= ?");
+      parameters.add(dateFromStarting);
+    }
+    if (dateToStarting != null) {
+      hsqlScript.append("    and p." + Project.PROPERTY_STARTINGDATE + " < ?");
+      parameters.add(dateToStarting);
+    }
+    if (dateFromContract != null) {
+      hsqlScript.append("    and p." + Project.PROPERTY_CONTRACTDATE + " >= ?");
+      parameters.add(dateFromContract);
+    }
+    if (dateToContract != null) {
+      hsqlScript.append("    and p." + Project.PROPERTY_CONTRACTDATE + " < ?");
+      parameters.add(dateToContract);
+    }
+    hsqlScript.append(" )");
+    hsqlScript.append(" and not exists (");
+    hsqlScript.append("   select 1 ");
+    hsqlScript.append("   from UOMConversion as uomconv ");
+    hsqlScript.append("   where uomconv.uOM.id =  unitofmeasure.id ");
+    hsqlScript.append("         and uomconv.toUOM.id =  '101' ");
+    hsqlScript.append(" )");
+
+    final OBQuery<UOM> query = OBDal.getInstance().createQuery(UOM.class, hsqlScript.toString());
+    query.setParameters(parameters);
+    if (query.list().size() == 0) {
+      return new ArrayList<UOM>();
+    } else {
+      List<UOM> noConvUOMList = query.list();
+      return noConvUOMList;
     }
   }
 

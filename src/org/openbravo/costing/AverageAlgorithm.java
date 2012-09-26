@@ -32,6 +32,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.financial.FinancialUtils;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.Warehouse;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.materialmgmt.cost.Costing;
@@ -131,7 +132,11 @@ public class AverageAlgorithm extends CostingAlgorithm {
     cost.setEndingDate(dateTo);
     cost.setInventoryTransaction(transaction);
     cost.setProduct(transaction.getProduct());
-    cost.setOrganization(costOrg);
+    if (transaction.getProduct().isProduction()) {
+      cost.setOrganization(OBDal.getInstance().get(Organization.class, "0"));
+    } else {
+      cost.setOrganization(costOrg);
+    }
     cost.setQuantity(transaction.getMovementQuantity());
     cost.setTotalMovementQuantity(currentStock.add(transaction.getMovementQuantity()));
     if (transaction.getMovementQuantity().signum() == 0) {

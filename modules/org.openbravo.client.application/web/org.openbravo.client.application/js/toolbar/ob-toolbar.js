@@ -207,7 +207,9 @@ isc.OBToolbar.addClassProperties({
       if (this.view.isShowingForm) {
         this.setDisabled(false);
       } else {
-        this.setDisabled(!this.view.isEditingGrid);
+        // Only enabled when the grid is being edited or when
+        // the selected records have errors
+        this.setDisabled(!this.view.isEditingGrid && this.view.hasNotChanged());
       }
     },
     keyboardShortcutId: 'ToolBar_Undo'
@@ -356,6 +358,9 @@ isc.OBToolbar.addClassProperties({
         this.setDisabled(false);
       }
       this.resetBaseStyle();
+      if (this.view.viewForm.readOnly && !this.view.attachmentExists) {
+        this.setDisabled(true);
+      }
     },
     keyboardShortcutId: 'ToolBar_Attachments'
   },
@@ -518,19 +523,7 @@ isc.OBToolbar.addProperties({
 
     this.Super('initWidget', arguments);
 
-    function getRandomId() {
-      var chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz',
-          stringLength = 8,
-          randomString = '',
-          i, rnum;
-      for (i = 0; i < stringLength; i++) {
-        rnum = Math.floor(Math.random() * chars.length);
-        randomString += chars.substring(rnum, rnum + 1);
-      }
-      return randomString;
-    }
-
-    this.randomId = getRandomId();
+    this.randomId = OB.Utilities.generateRandomString(8, true, true, true, false);
 
     this.members = null;
 

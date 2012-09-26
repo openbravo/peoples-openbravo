@@ -29,9 +29,11 @@
   v_Discount NUMBER;
 BEGIN
   v_Price := p_PriceActual;
+
   IF v_Price IS NULL THEN
     v_Price := 0;
   END IF;
+
   IF p_Offer_ID IS NOT NULL THEN
     SELECT FIXED,
       COALESCE(ADDAMT, 0),
@@ -41,10 +43,13 @@ BEGIN
       v_Discount
     FROM M_OFFER
     WHERE M_OFFER_ID = p_Offer_ID;
+
     IF v_Fixed IS NOT NULL THEN
       v_Price := v_Fixed;
+    ELSIF (v_Discount = 100) THEN
+      v_Price := v_AddAmt;
     ELSE
-      v_Price := v_AddAmt +(p_PriceActual/(1-v_Discount/100)) ;
+      v_Price := v_AddAmt + (p_PriceActual/(1-v_Discount/100));
     END IF;
   END IF;
   RETURN v_Price;

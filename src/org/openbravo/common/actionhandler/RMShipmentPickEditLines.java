@@ -28,13 +28,18 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
+import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBDao;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
+import org.openbravo.service.db.DbUtility;
 
 /**
  * 
@@ -58,52 +63,62 @@ public class RMShipmentPickEditLines extends BaseProcessActionHandler {
       // Issue 20585: https://issues.openbravo.com/view.php?id=20585
       final String strInOutId = jsonRequest.getString("M_InOut_ID");
       ShipmentInOut inOut = OBDal.getInstance().get(ShipmentInOut.class, strInOutId);
-      if (cleanInOutLines(inOut)) {
-        createInOutLines(jsonRequest);
+      if (inOut != null) {
+        List<String> idList = OBDao.getIDListFromOBObject(inOut
+            .getMaterialMgmtShipmentInOutLineList());
+        createInOutLines(jsonRequest, idList);
       }
 
     } catch (Exception e) {
       log.error(e.getMessage(), e);
+      VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
+
+      try {
+        jsonRequest = new JSONObject();
+        Throwable ex = DbUtility.getUnderlyingSQLException(e);
+        String message = OBMessageUtils.translateError(ex.getMessage()).getMessage();
+        JSONObject errorMessage = new JSONObject();
+        errorMessage.put("severity", "error");
+        errorMessage.put("text", message);
+        jsonRequest.put("message", errorMessage);
+
+      } catch (Exception e2) {
+        log.error(e.getMessage(), e2);
+        // do nothing, give up
+      }
     } finally {
       OBContext.restorePreviousMode();
     }
     return jsonRequest;
   }
 
-  private boolean cleanInOutLines(ShipmentInOut inOut) {
-    if (inOut == null) {
-      return false;
-    } else if (inOut.getMaterialMgmtShipmentInOutLineList().isEmpty()) {
-      if (inOut.getOrderReference() == null) {
-        setRefNo = true;
-      }
-      // nothing to delete.
-      return true;
-    }
-    try {
-      inOut.getMaterialMgmtShipmentInOutLineList().clear();
-      OBDal.getInstance().save(inOut);
-      OBDal.getInstance().flush();
-    } catch (Exception e) {
-      e.printStackTrace();
-      return false;
-    }
-    return true;
-  }
-
-  private void createInOutLines(JSONObject jsonRequest) throws JSONException {
+  private void createInOutLines(JSONObject jsonRequest, List<String> idList) throws JSONException {
     JSONArray selectedLines = jsonRequest.getJSONArray("_selection");
-    // if no lines selected don't do anything.
-    if (selectedLines.length() == 0) {
-      return;
-    }
     final String strInOutId = jsonRequest.getString("M_InOut_ID");
     ShipmentInOut inOut = OBDal.getInstance().get(ShipmentInOut.class, strInOutId);
+    // if no lines selected don't do anything.
+    if (selectedLines.length() == 0) {
+      removeNonSelectedLines(idList, inOut);
+      return;
+    }
     TreeSet<String> rmVendorRefs = new TreeSet<String>();
     for (long i = 0; i < selectedLines.length(); i++) {
       JSONObject selectedLine = selectedLines.getJSONObject((int) i);
       log.debug(selectedLine);
-      ShipmentInOutLine newInOutLine = OBProvider.getInstance().get(ShipmentInOutLine.class);
+
+      if (selectedLine.get("movementQuantity").equals("0")) {
+        continue;
+      }
+
+      ShipmentInOutLine newInOutLine = null;
+      boolean notExistsShipmentLine = selectedLine.get("goodsShipmentLine").equals(null);
+      if (notExistsShipmentLine) {
+        newInOutLine = OBProvider.getInstance().get(ShipmentInOutLine.class);
+      } else {
+        newInOutLine = OBDal.getInstance().get(ShipmentInOutLine.class,
+            selectedLine.get("goodsShipmentLine"));
+        idList.remove(selectedLine.get("goodsShipmentLine"));
+      }
       newInOutLine.setShipmentReceipt(inOut);
       newInOutLine.setOrganization(inOut.getOrganization());
       newInOutLine.setLineNo((i + 1L) * 10L);
@@ -123,16 +138,33 @@ public class RMShipmentPickEditLines extends BaseProcessActionHandler {
       BigDecimal qtyReceived = new BigDecimal(selectedLine.getString("movementQuantity"));
       newInOutLine.setMovementQuantity(qtyReceived.negate());
 
-      List<ShipmentInOutLine> inOutLines = inOut.getMaterialMgmtShipmentInOutLineList();
-      inOutLines.add(newInOutLine);
-      inOut.setMaterialMgmtShipmentInOutLineList(inOutLines);
+      if (notExistsShipmentLine) {
+        List<ShipmentInOutLine> inOutLines = inOut.getMaterialMgmtShipmentInOutLineList();
+        inOutLines.add(newInOutLine);
+        inOut.setMaterialMgmtShipmentInOutLineList(inOutLines);
+      }
 
       OBDal.getInstance().save(newInOutLine);
       OBDal.getInstance().save(inOut);
       OBDal.getInstance().flush();
     }
+
+    removeNonSelectedLines(idList, inOut);
+
     if (setRefNo && rmVendorRefs.size() == 1) {
       inOut.setOrderReference(rmVendorRefs.first());
+      OBDal.getInstance().save(inOut);
+      OBDal.getInstance().flush();
+    }
+  }
+
+  private void removeNonSelectedLines(List<String> idList, ShipmentInOut inOut) {
+    if (idList.size() > 0) {
+      for (String id : idList) {
+        ShipmentInOutLine iol = OBDal.getInstance().get(ShipmentInOutLine.class, id);
+        inOut.getMaterialMgmtShipmentInOutLineList().remove(iol);
+        OBDal.getInstance().remove(iol);
+      }
       OBDal.getInstance().save(inOut);
       OBDal.getInstance().flush();
     }

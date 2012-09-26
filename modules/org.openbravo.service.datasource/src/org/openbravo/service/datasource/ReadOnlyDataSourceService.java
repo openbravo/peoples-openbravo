@@ -63,6 +63,9 @@ public abstract class ReadOnlyDataSourceService extends DefaultDataSourceService
     if (endRowStr != null) {
       doCount = true;
     }
+    boolean preventCountOperation = !parameters.containsKey(JsonConstants.NOCOUNT_PARAMETER)
+        || "true".equals(parameters.get(JsonConstants.NOCOUNT_PARAMETER));
+
     final List<JSONObject> jsonObjects = fetchJSONObject(parameters);
 
     // now jsonfy the data
@@ -72,7 +75,7 @@ public abstract class ReadOnlyDataSourceService extends DefaultDataSourceService
       jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
       jsonResponse.put(JsonConstants.RESPONSE_STARTROW, startRow);
       jsonResponse.put(JsonConstants.RESPONSE_ENDROW, jsonObjects.size() + startRow - 1);
-      if (doCount) {
+      if (doCount && !preventCountOperation) {
         int num = getCount(parameters);
         if (num == -1) {
           int endRow = Integer.parseInt(endRowStr);

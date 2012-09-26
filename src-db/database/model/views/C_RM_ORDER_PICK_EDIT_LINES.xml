@@ -16,7 +16,7 @@ CASE pl.istaxincluded
 WHEN 'N' THEN ol.priceactual
 ELSE ol.gross_unit_price
 END
-END AS priceactual, rol.c_return_reason_id, o.documentno AS orderno, COALESCE(rol.issotrx, i.issotrx) AS issotrx, (-1) * retol.returnedqty AS returnedqty, COALESCE(rol.c_bpartner_id, i.c_bpartner_id) AS c_bpartner_id, COALESCE(rol.c_tax_id, ol.c_tax_id) AS c_tax_id, pl.istaxincluded
+END AS priceactual, rol.c_return_reason_id, o.documentno AS orderno, COALESCE(rol.issotrx, i.issotrx) AS issotrx, (-1) * retol.returnedqty AS returnedqty, COALESCE(rol.c_bpartner_id, i.c_bpartner_id) AS c_bpartner_id, COALESCE(rol.c_tax_id, ol.c_tax_id) AS c_tax_id, pl.istaxincluded, rol.c_orderline_id
 FROM m_inoutline il
 JOIN m_inout i ON il.m_inout_id = i.m_inout_id AND i.processed = 'Y' AND i.docstatus <> 'VO'
 JOIN c_doctype dt ON i.c_doctype_id = dt.c_doctype_id AND dt.isreturn = 'N'

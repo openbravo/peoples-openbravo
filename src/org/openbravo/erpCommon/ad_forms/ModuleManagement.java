@@ -341,15 +341,16 @@ public class ModuleManagement extends HttpSecureAppServlet {
     JSONArray upgrades = new JSONArray();
     try {
       String restartTomcat = ModuleManagementData.selectRestartTomcat(this);
-      // Check if last build was done but Tomcat wasn't restarted
-      if (!restartTomcat.equals("0")) {
+      String totalToBeRebuilt = ModuleManagementData.selectRebuild(this);
+      // Check if last build was done but Tomcat wasn't restarted,
+      // but dont show the restart tomcat message is a rebuild need to be done
+      if (!restartTomcat.equals("0") && totalToBeRebuilt.equals("0")) {
         updatesRebuildHTML = "<a class=\"LabelLink_noicon\" href=\"#\" onclick=\"openServletNewWindow('TOMCAT', false, '../ad_process/ApplyModules.html', 'BUTTON', null, true, 650, 900, null, null, null, null, true);return false;\">"
             + Utility.messageBD(this, "Restart_Tomcat", lang) + "</a>";
       } else {
         // Check for rebuild system
-        String total = ModuleManagementData.selectRebuild(this);
-        if (!total.equals("0")) {
-          updatesRebuildHTML = total
+        if (!totalToBeRebuilt.equals("0")) {
+          updatesRebuildHTML = totalToBeRebuilt
               + "&nbsp;"
               + Utility.messageBD(this, "ApplyModules", lang)
               + ", <a id=\"rebuildNow\" class=\"LabelLink_noicon\" href=\"#\" onclick=\"openServletNewWindow('DEFAULT', false, '../ad_process/ApplyModules.html', 'BUTTON', null, true, 700, 900, null, null, null, null, true);return false;\">"
@@ -358,7 +359,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
 
         // Check for updates
         String message = "";
-        total = ModuleManagementData.selectUpdate(this);
+        String total = ModuleManagementData.selectUpdate(this);
         if (!total.equals("0")) {
           if (!updatesRebuildHTML.isEmpty()) {
             updatesRebuildHTML += "&nbsp;/&nbsp;";
@@ -2636,15 +2637,15 @@ public class ModuleManagement extends HttpSecureAppServlet {
     if (!sources.exists()) {
       throw new OBException(Utility.messageBD(this, "WrongPathError", vars.getLanguage()));
     }
-    //Added to check write access
-    if(!sources.canWrite()) {
-       throw new OBException(Utility.messageBD(this, "NoApplicableModules", vars.getLanguage()));
+    // Added to check write access
+    if (!sources.canWrite()) {
+      throw new OBException(Utility.messageBD(this, "NoApplicableModules", vars.getLanguage()));
     }
     File model = new File(sources, "src-db/database/model/tables");
     if (model.exists()) {
       modelFiles.add(model);
     } else {
-      throw new OBException(Utility.messageBD(this,"WrongPathError",vars.getLanguage()));
+      throw new OBException(Utility.messageBD(this, "WrongPathError", vars.getLanguage()));
     }
     for (File moduleFile : (new File(sources, "modules").listFiles())) {
       File mmodel = new File(moduleFile, "src-db/database/model/tables");

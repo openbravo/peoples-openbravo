@@ -1322,6 +1322,8 @@ public class AdvPaymentMngtDao {
       Criterion crit = exp.getCriterion();
       if (crit != null) {
         obc.add(crit);
+      } else {
+        return new ArrayList<FIN_FinancialAccount>();
       }
     }
     return obc.list();

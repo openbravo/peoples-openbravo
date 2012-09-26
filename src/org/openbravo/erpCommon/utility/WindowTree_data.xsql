@@ -341,6 +341,17 @@
       </Sql>
         <Parameter name="adOrgId"/>
    </SqlMethod>
+   <SqlMethod name="selectIsStatic" type="preparedStatement" return="String" default="N">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        SELECT A.ISSTATIC
+        FROM A_ASSET A
+        WHERE A.A_ASSET_ID = ?
+      </Sql>
+      <Parameter name="tablename" optional="false" type="replace" after="FROM " text="A_ASSET"/>
+      <Parameter name="tablename" optional="false" type="replace" after="WHERE A." text="A_ASSET"/>
+      <Parameter name="recordId"/>
+   </SqlMethod>
    <SqlMethod name="update" type="preparedStatement" return="rowCount">
       <SqlMethodComment></SqlMethodComment>
       <Sql>

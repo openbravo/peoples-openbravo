@@ -21,6 +21,7 @@ package org.openbravo.advpaymentmngt.actionHandler;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -34,6 +35,7 @@ import org.openbravo.client.application.process.BaseProcessActionHandler;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBDao;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentMethod;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentPropDetail;
@@ -63,20 +65,19 @@ public class PaymentProposalPickEditLines extends BaseProcessActionHandler {
       FIN_PaymentMethod paymentMethod = OBDal.getInstance().get(FIN_PaymentMethod.class,
           strPaymentMethodId);
 
-      if (cleanPaymentProposalDetails(paymentProposal)) {
-        HashMap<String, String> map = createPaymentProposalDetails(jsonRequest, paymentMethod);
-        jsonRequest = new JSONObject();
+      List<String> idList = OBDao.getIDListFromOBObject(paymentProposal
+          .getFINPaymentPropDetailList());
+      HashMap<String, String> map = createPaymentProposalDetails(jsonRequest, paymentMethod, idList);
+      jsonRequest = new JSONObject();
 
-        JSONObject errorMessage = new JSONObject();
-        errorMessage.put("severity", "success");
-        errorMessage.put("text", OBMessageUtils.messageBD("Success"));
-        if (map.get("DifferentPaymentMethod").equals("true")) {
-          errorMessage.put("severity", "warning");
-          errorMessage.put("text",
-              OBMessageUtils.messageBD("APRM_Different_PaymentMethod_Selected"));
-        }
-        jsonRequest.put("message", errorMessage);
+      JSONObject errorMessage = new JSONObject();
+      errorMessage.put("severity", "success");
+      errorMessage.put("text", OBMessageUtils.messageBD("Success"));
+      if (map.get("DifferentPaymentMethod").equals("true")) {
+        errorMessage.put("severity", "warning");
+        errorMessage.put("text", OBMessageUtils.messageBD("APRM_Different_PaymentMethod_Selected"));
       }
+      jsonRequest.put("message", errorMessage);
 
     } catch (Exception e) {
       OBDal.getInstance().rollbackAndClose();
@@ -100,40 +101,21 @@ public class PaymentProposalPickEditLines extends BaseProcessActionHandler {
     return jsonRequest;
   }
 
-  private boolean cleanPaymentProposalDetails(FIN_PaymentProposal paymentProposal) {
-    if (paymentProposal == null) {
-      return false;
-    } else if (paymentProposal.getFINPaymentPropDetailList().isEmpty()) {
-      // nothing to delete.
-      return true;
-    }
-    try {
-      paymentProposal.getFINPaymentPropDetailList().clear();
-      paymentProposal.setAmount(BigDecimal.ZERO);
-      paymentProposal.setWriteoffAmount(BigDecimal.ZERO);
-      OBDal.getInstance().save(paymentProposal);
-      OBDal.getInstance().flush();
-    } catch (Exception e) {
-      log.error(e.getMessage(), e);
-      return false;
-    }
-    return true;
-  }
-
   private HashMap<String, String> createPaymentProposalDetails(JSONObject jsonRequest,
-      FIN_PaymentMethod paymentMethod) throws JSONException, OBException {
+      FIN_PaymentMethod paymentMethod, List<String> idList) throws JSONException, OBException {
 
     HashMap<String, String> map = new HashMap<String, String>();
     map.put("DifferentPaymentMethod", "false");
     map.put("Count", "0");
     JSONArray selectedLines = jsonRequest.getJSONArray("_selection");
-    // if no lines selected don't do anything.
-    if (selectedLines.length() == 0) {
-      return map;
-    }
     final String strPaymentProposalId = jsonRequest.getString("Fin_Payment_Proposal_ID");
     FIN_PaymentProposal paymentProposal = OBDal.getInstance().get(FIN_PaymentProposal.class,
         strPaymentProposalId);
+    // if no lines selected don't do anything.
+    if (selectedLines.length() == 0) {
+      removeNonSelectedLines(idList, paymentProposal);
+      return map;
+    }
     BigDecimal totalAmount = BigDecimal.ZERO, totalWriteOff = BigDecimal.ZERO;
     int cont = 0;
     String differentPaymentMethod = "false";
@@ -148,7 +130,17 @@ public class PaymentProposalPickEditLines extends BaseProcessActionHandler {
         if (!paymentMethod.equals(linePaymentMethod)) {
           differentPaymentMethod = "true";
         }
-        FIN_PaymentPropDetail newPPD = OBProvider.getInstance().get(FIN_PaymentPropDetail.class);
+
+        FIN_PaymentPropDetail newPPD = null;
+        String strPpdId = selectedLine.getString("id");
+        boolean notExistsPayPropLine = idList.contains(strPpdId);
+        if (notExistsPayPropLine) {
+          newPPD = OBDal.getInstance().get(FIN_PaymentPropDetail.class, strPpdId);
+          idList.remove(strPpdId);
+        } else {
+          newPPD = OBProvider.getInstance().get(FIN_PaymentPropDetail.class);
+        }
+
         newPPD.setOrganization(paymentProposal.getOrganization());
         newPPD.setClient(paymentProposal.getClient());
         newPPD.setCreatedBy(paymentProposal.getCreatedBy());
@@ -172,11 +164,25 @@ public class PaymentProposalPickEditLines extends BaseProcessActionHandler {
       }
     }
 
+    removeNonSelectedLines(idList, paymentProposal);
+
     paymentProposal.setAmount(totalAmount);
     paymentProposal.setWriteoffAmount(totalWriteOff);
     OBDal.getInstance().save(paymentProposal);
     map.put("DifferentPaymentMethod", differentPaymentMethod);
     map.put("Count", Integer.toString(cont));
     return map;
+  }
+
+  private void removeNonSelectedLines(List<String> idList, FIN_PaymentProposal paymentProposal) {
+    if (idList.size() > 0) {
+      for (String id : idList) {
+        FIN_PaymentPropDetail ppd = OBDal.getInstance().get(FIN_PaymentPropDetail.class, id);
+        paymentProposal.getFINPaymentPropDetailList().remove(ppd);
+        OBDal.getInstance().remove(ppd);
+      }
+      OBDal.getInstance().save(paymentProposal);
+      OBDal.getInstance().flush();
+    }
   }
 }

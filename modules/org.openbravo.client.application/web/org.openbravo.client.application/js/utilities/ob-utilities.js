@@ -922,6 +922,51 @@ OB.Utilities.getValue = function (object, property) {
   return object[property];
 };
 
+//** {{{ OB.Utilities.generateRandomString }}} **
+//
+// Generates a random string based on the arguments
+// Parameters:
+//  * {{{stringLength}}} Length of the generated random string
+//  * {{{allowLowerCaseChars}}} Boolean to check if lower case characters are allowed (true by default)
+//  * {{{allowUpperCaseChars}}} Boolean to check if upper case characters are allowed (true by default)
+//  * {{{allowDigits}}} Boolean to check if digits are allowed (false by default)
+//  * {{{allowSpecialChars}}} Boolean to check if special characters are allowed (false by default)
+OB.Utilities.generateRandomString = function (stringLength, allowLowerCaseChars, allowUpperCaseChars, allowDigits, allowSpecialChars) {
+  stringLength = parseInt(stringLength, 10);
+  if (!stringLength) {
+    stringLength = 1;
+  }
+  allowLowerCaseChars = (allowLowerCaseChars !== false ? true : false);
+  allowUpperCaseChars = (allowUpperCaseChars !== false ? true : false);
+  allowDigits = (allowDigits !== true ? false : true);
+  allowSpecialChars = (allowSpecialChars !== true ? false : true);
+
+  var chars = '',
+      randomString = '',
+      i, rnum;
+  if (allowLowerCaseChars) {
+    chars += 'abcdefghijklmnopqrstuvwxyz';
+  }
+  if (allowUpperCaseChars) {
+    chars += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  }
+  if (allowDigits) {
+    chars += '0123456789';
+  }
+  if (allowSpecialChars) {
+    chars += '!@#$%^&*()+=-[]\\\';,./{}|\":<>?~_';
+  }
+  if (chars === '') {
+    return '';
+  }
+
+  for (i = 0; i < stringLength; i++) {
+    rnum = Math.floor(Math.random() * chars.length);
+    randomString += chars.substring(rnum, rnum + 1);
+  }
+  return randomString;
+};
+
 /* This function will return true if it receives a string parameter, and 
  * which complies with the OB UUID format (that is, its a
  * hexadecimal number of length 32)

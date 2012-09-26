@@ -166,6 +166,7 @@
       INTO v_Currency_Pre
       FROM C_CURRENCY
       WHERE C_CURRENCY_ID = v_C_CURRENCY_ID;
+            
       IF(v_AMORTIZATIONTYPE='LI') THEN
         IF(v_ASSETSCHEDULE='YE' OR v_AMORTIZATIONCALCTYPE='PE') THEN
           if ((v_USELIFEYEARS=v_DepreciatedLines) or (v_USELIFEYEARS=v_DepreciatedLines-1)) then
@@ -183,25 +184,27 @@
             end if;
           END IF; --FINISH_PROCESS
           IF(NOT FINISH_PROCESS) THEN
-            if v_AMORTIZATIONCALCTYPE='PE' then
-              v_PercentageGeneral:=v_AMORTIZATIONPERCENTAGE;
-              v_UseLifeYears:=ceil(100/v_PercentageGeneral) ;
-            else
-              --  v_PercentageGeneral := 100 / v_USELIFEYEARS;
-              v_PercentageGeneral:=((v_AMORTIZATIONVALUEAMT-v_DEPRECIATEDPREVIOUSAMT) *100/(v_AMORTIZATIONVALUEAMT-v_DEPRECIATEDPREVIOUSAMT)) /(v_USELIFEYEARS) ;
-              SELECT to_number(TO_DATE(ADD_MONTHS(v_AMORTIZATIONSTARTDATE, 12*v_USELIFEYEARS)) - v_AMORTIZATIONSTARTDATE)
-              INTO v_TOTAL_DAYS
-              FROM DUAL;
-            end if;
-            v_AMORTIZATIONVALUEAMT:=v_AMORTIZATIONVALUEAMT-v_DEPRECIATEDPREVIOUSAMT;
             v_Count:=coalesce(v_depreciatedLines, 0) +1;
             v_BEGINING_DATE:=v_AMORTIZATIONSTARTDATE;
             v_FIRST_DAY_DATE:=TO_DATE('01-01-' || TO_CHAR(v_AMORTIZATIONSTARTDATE, 'YYYY'), 'DD-MM-YYYY') ;
             v_LAST_DAY_DATE:=TO_DATE('31-12-' || TO_CHAR(v_AMORTIZATIONSTARTDATE, 'YYYY'), 'DD-MM-YYYY') ;
             if v_Count>1 then
               v_BEGINING_DATE:=TO_DATE('31-12-' || to_char(TO_number(to_char(v_BEGINING_DATE, 'yyyy')) +v_Count-1), 'DD-MM-YYYY') ;
-              v_USELIFEYEARS:=v_USELIFEYEARS+1;
+	      v_USELIFEYEARS:=v_USELIFEYEARS+ (1- (to_number(TO_DATE('31-12-' || TO_CHAR(v_AMORTIZATIONSTARTDATE, 'YYYY'), 'DD-MM-YYYY') - v_AMORTIZATIONSTARTDATE) /
+              to_number(TO_DATE('31-12-' || TO_CHAR(v_AMORTIZATIONSTARTDATE, 'YYYY'), 'DD-MM-YYYY') - TO_DATE('01-01-' || TO_CHAR(v_AMORTIZATIONSTARTDATE, 'YYYY'), 'DD-MM-YYYY'))));
             end if;
+            if v_AMORTIZATIONCALCTYPE='PE' then
+              v_PercentageGeneral:=v_AMORTIZATIONPERCENTAGE;
+              v_UseLifeYears:=ceil(100/v_PercentageGeneral) ;
+            else
+              --  v_PercentageGeneral := 100 / v_USELIFEYEARS;
+              v_PercentageGeneral:=((v_AMORTIZATIONVALUEAMT-v_DEPRECIATEDPREVIOUSAMT-v_depreciatedPlan) *100/v_AMORTIZATIONVALUEAMT) /(v_USELIFEYEARS-v_DepreciatedLines) ;
+              SELECT to_number(TO_DATE(ADD_MONTHS(v_AMORTIZATIONSTARTDATE, 12*v_USELIFEYEARS)) - v_AMORTIZATIONSTARTDATE)
+              INTO v_TOTAL_DAYS
+              FROM DUAL;
+            end if;
+            v_AMORTIZATIONVALUEAMT:=v_AMORTIZATIONVALUEAMT-v_DEPRECIATEDPREVIOUSAMT;
+            
             v_AUXAMT:=0;
             v_PERCENTAGE:=0;
             v_TotalAmt:=coalesce(v_DepreciatedPlan, 0) ;
@@ -248,17 +251,17 @@
               INTO v_LINE
               FROM A_AMORTIZATIONLINE
               WHERE A_AMORTIZATION_ID=v_NEW_AMORTIZATION;
-              IF((((v_AMORTIZATIONVALUEAMT) *v_PERCENTAGE/100)>(v_AMORTIZATIONVALUEAMT -v_TotalAmt))OR(v_Inserted+1>=v_USELIFEYEARS)) THEN
+              IF((((v_AMORTIZATIONVALUEAMT+v_DEPRECIATEDPREVIOUSAMT) *v_PERCENTAGE/100)>(v_AMORTIZATIONVALUEAMT -v_TotalAmt))OR(v_Inserted+1>=v_USELIFEYEARS)) THEN
                 SELECT COALESCE(SUM(AMORTIZATIONAMT),0), COALESCE(SUM(AMORTIZATION_PERCENTAGE),0)
                 INTO v_AMOUNT, v_PERCENTAGE
                 FROM A_AMORTIZATIONLINE
                 WHERE A_ASSET_ID=v_Record_ID;
                 v_AMOUNT:=v_AMORTIZATIONVALUEAMT - v_AMOUNT;
-                v_PERCENTAGE:=v_AMOUNT*100/(v_AMORTIZATIONVALUEAMT) ;
+                v_PERCENTAGE:=v_AMOUNT*100/(v_AMORTIZATIONVALUEAMT+v_DEPRECIATEDPREVIOUSAMT) ;
                 finish:=true;
               ELSE
-                v_AMOUNT:=(v_AMORTIZATIONVALUEAMT) *v_PERCENTAGE/100;
-              END IF;
+                v_AMOUNT:=(v_AMORTIZATIONVALUEAMT+ v_DEPRECIATEDPREVIOUSAMT) *v_PERCENTAGE/100;
+              END IF;  
               if v_percentage>0 then
                 Ad_Sequence_Next('A_Amortizationline', '1000000', v_AMORTIZATIONLINE) ;
                 INSERT
@@ -301,6 +304,16 @@
           END IF; --FINISH_PROCESS
           IF(NOT FINISH_PROCESS) THEN
             v_AMORTIZATIONVALUEAMT:=v_AMORTIZATIONVALUEAMT-v_DEPRECIATEDPREVIOUSAMT;
+            v_Count:=coalesce(v_depreciatedLines, 0) +1;
+            v_BEGINING_DATE:=v_AMORTIZATIONSTARTDATE;
+            v_FIRST_DAY_DATE:=TO_DATE('01-'|| TO_CHAR(v_AMORTIZATIONSTARTDATE, 'MM') || '-' || TO_CHAR(v_AMORTIZATIONSTARTDATE, 'YYYY'), 'DD-MM-YYYY') ;
+            v_LAST_DAY_DATE:=TO_DATE('31-12-'|| TO_CHAR(v_AMORTIZATIONSTARTDATE, 'YYYY'), 'DD-MM-YYYY') ;
+            if v_Count>1 then
+              v_BEGINING_DATE:=TO_DATE(ADD_MONTHS(LAST_DAY(TO_DATE('01-' || TO_CHAR(v_BEGINING_DATE, 'MM') || '-' || TO_CHAR(v_BEGINING_DATE, 'yyyy'), 'DD-MM-YYYY')), v_DepreciatedLines)) ; 
+              v_USELIFEMonths:=v_USELIFEMonths + (1- (to_number(last_day(v_AMORTIZATIONSTARTDATE) - v_AMORTIZATIONSTARTDATE) /
+              to_number(last_day(v_AMORTIZATIONSTARTDATE) - TO_DATE('01-' || TO_CHAR(v_AMORTIZATIONSTARTDATE, 'MM-YYYY'), 'DD-MM-YYYY'))));
+            end if;
+            
             if v_AMORTIZATIONCALCTYPE='PE' then
               v_PercentageGeneral:=v_AMORTIZATIONPERCENTAGE/12;
               v_UseLifeMonths:=trunc(100/v_AMORTIZATIONPERCENTAGE*12) ;
@@ -308,21 +321,13 @@
               --  v_PercentageGeneral := 100 / v_USELIFEYEARS;
               v_UseLifeYears:=v_UseLifeMonths/12;
               if (v_assetschedule = 'MO') then 
-                v_PercentageGeneral:=(((v_AMORTIZATIONVALUEAMT) *100/v_AMORTIZATIONVALUEAMT) /(v_USELIFEYEARS*12));
-              else 
-                v_PercentageGeneral:=(((v_AMORTIZATIONVALUEAMT) *100/v_AMORTIZATIONVALUEAMT) /(v_USELIFEYEARS)) /12;
+                v_PercentageGeneral:=(((v_AMORTIZATIONVALUEAMT-v_depreciatedPlan) *100/v_AMORTIZATIONVALUEAMT) /(v_USELIFEMonths-v_DepreciatedLines));
+              else
+                  v_PercentageGeneral:=(((v_AMORTIZATIONVALUEAMT-v_depreciatedPlan) *100/v_AMORTIZATIONVALUEAMT) /(v_USELIFEYEARS-v_DepreciatedLines)) /12;
               end if;
               SELECT to_number(TO_DATE(ADD_MONTHS(v_AMORTIZATIONSTARTDATE, 12*v_USELIFEYEARS)) - TO_DATE(v_AMORTIZATIONSTARTDATE))
               INTO v_TOTAL_DAYS
               FROM DUAL;
-            end if;
-            v_Count:=coalesce(v_depreciatedLines, 0) +1;
-            v_BEGINING_DATE:=v_AMORTIZATIONSTARTDATE;
-            v_FIRST_DAY_DATE:=TO_DATE('01-'|| TO_CHAR(v_AMORTIZATIONSTARTDATE, 'MM') || '-' || TO_CHAR(v_AMORTIZATIONSTARTDATE, 'YYYY'), 'DD-MM-YYYY') ;
-            v_LAST_DAY_DATE:=TO_DATE('31-12-'|| TO_CHAR(v_AMORTIZATIONSTARTDATE, 'YYYY'), 'DD-MM-YYYY') ;
-            if v_Count>1 then
-              v_BEGINING_DATE:=TO_DATE(ADD_MONTHS(LAST_DAY(TO_DATE('01-' || TO_CHAR(v_BEGINING_DATE, 'MM') || '-' || TO_CHAR(v_BEGINING_DATE, 'yyyy'), 'DD-MM-YYYY')), v_DepreciatedLines)) ;
-              v_USELIFEMonths:=v_USELIFEMonths+1;
             end if;
             v_AUXAMT:=0;
             v_PERCENTAGE:=0;
@@ -332,7 +337,7 @@
             loop
               IF(v_COUNT=1 AND to_number(v_BEGINING_DATE-v_FIRST_DAY_DATE)<>0) THEN
                 v_Percentage:=(to_number(to_number(last_day(v_BEGINING_DATE) -v_BEGINING_DATE)) + 1) / (trunc((last_day(v_BEGINING_DATE) -(TO_DATE('01-'||to_char(TO_DATE(v_BEGINING_DATE), 'MM-YYYY'), 'DD-MM-YYYY')))) +1) * v_PercentageGeneral;
-                v_USELIFEMONTHS:=v_USELIFEMONTHS+1;
+		v_USELIFEMONTHS:=v_USELIFEMONTHS+1;
               ELSE
                 v_Percentage:=v_PercentageGeneral;
               END IF;
@@ -419,7 +424,7 @@
     END IF;
     IF  ((v_AMORTIZATIONCALCTYPE='TI' AND v_ASSETSCHEDULE='YE' AND v_Inserted + v_DepreciatedLines <> v_ORIGUSELIFEYEARS)
       OR (v_AMORTIZATIONCALCTYPE='TI' AND v_ASSETSCHEDULE='MO' AND v_Inserted + v_DepreciatedLines <> v_ORIGUSELIFEMONTHS)) THEN
-      RAISE_APPLICATION_ERROR(-20000, '@TooLowValueToAmortize@');
+        RAISE_APPLICATION_ERROR(-20000, '@TooLowValueToAmortize@');
     END IF;
     IF(FINISH_PROCESS) THEN
       UPDATE A_ASSET SET PROCESSED='Y', PROCESSING='N'  WHERE A_ASSET_ID=v_Record_ID;

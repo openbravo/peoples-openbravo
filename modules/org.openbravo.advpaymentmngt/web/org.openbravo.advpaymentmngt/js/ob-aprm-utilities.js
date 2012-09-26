@@ -129,11 +129,21 @@ OB.APRM.validatePaymentProposalPickAndEdit = function (item, validator, value, r
       break;
     }
   }
+  var contextInfo = null;
+  contextInfo = item.grid.view.parentWindow.activeView.getContextInfo(false, true, true, true);
 
   // When possible to capture on change event, move this code to another method
   if (row) {
     row.difference = Number(outstanding.subtract(paidamount));
     row.payment = Number(record.payment);
+    if (contextInfo.inplimitwriteoff !== "") {
+      var differencewriteoff = OB.Utilities.Number.JSToOBMasked((row.difference * contextInfo.inpfinaccTxnConvertRate), OB.Format.defaultNumericMask, OB.Format.defaultDecimalSymbol, OB.Format.defaultGroupingSymbol, OB.Format.defaultGroupingSize);
+      if (differencewriteoff > contextInfo.inplimitwriteoff && record.writeoff === true) {
+        isc.warn(OB.I18N.getLabel('APRM_NotAllowWriteOff'));
+        return false;
+      }
+    }
+
   } else {
     return false;
   }

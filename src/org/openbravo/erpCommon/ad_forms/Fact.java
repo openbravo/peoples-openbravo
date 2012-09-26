@@ -190,8 +190,24 @@ public class Fact {
       return null;
     }
     if (strNegate.equals("N") && (DebitAmt.compareTo(ZERO) < 0 || CreditAmt.compareTo(ZERO) < 0)) {
-      return createLine(docLine, account, C_Currency_ID, CreditAmt.abs().toString(), DebitAmt.abs()
-          .toString(), Fact_Acct_Group_ID, SeqNo, DocBaseType, conn);
+      if (DebitAmt.compareTo(ZERO) < 0) {
+        CreditAmt = CreditAmt.add(DebitAmt.abs());
+        DebitAmt = BigDecimal.ZERO;
+      }
+      if (CreditAmt.compareTo(ZERO) < 0) {
+        DebitAmt = DebitAmt.add(CreditAmt.abs());
+        CreditAmt = BigDecimal.ZERO;
+      }
+      // If this is a manual entry then we need to recompute Amounts which were set in loadLines for
+      // GL Journal Document
+      if ("GLJ".equals(DocBaseType)) {
+        docLine.setConvertedAmt(docLine.m_C_AcctSchema_ID, DebitAmt.toString(),
+            CreditAmt.toString());
+      }
+      if (strNegate.equals("N") && (DebitAmt.compareTo(ZERO) < 0 || CreditAmt.compareTo(ZERO) < 0)) {
+        return createLine(docLine, account, C_Currency_ID, CreditAmt.abs().toString(), DebitAmt
+            .abs().toString(), Fact_Acct_Group_ID, SeqNo, DocBaseType, conn);
+      }
     }
 
     log4jFact.debug("createLine - " + account + " - Dr=" + debitAmt + ", Cr=" + creditAmt);

@@ -64,13 +64,14 @@ public class InstanceManagement extends HttpSecureAppServlet {
 
     if (vars.commandIn("DEFAULT")) {
       printPageActive(response, vars, ActivationKey.getInstance());
-    } else if (ActivationKey.getInstance().isGolden()) {
-      pageError(response);
     } else if (vars.commandIn("SHOW_ACTIVATE")) {
       printPageNotActive(response, vars);
     } else if (vars.commandIn("ACTIVATE")) {
       activateCancelRemote(vars, true);
       printPageClosePopUp(response, vars);
+    } else if (ActivationKey.getInstance().isGolden()) {
+      // Following options are not allowed for Golden Key licenses
+      pageError(response);
     } else if (vars.commandIn("SHOW_ACTIVATE_LOCAL")) {
       printPageActivateLocal(response, vars);
     } else if (vars.commandIn("INSTALLFILE")) {
@@ -377,7 +378,7 @@ public class InstanceManagement extends HttpSecureAppServlet {
 
     ActivationKey activationKey = ActivationKey.getInstance();
     response.setContentType("text/html; charset=UTF-8");
-    String discard[] = { "", "" };
+    String discard[] = { "", "", "" };
     if (activationKey.isOPSInstance()) {
       if (activationKey.hasExpired()) {
         // Renew
@@ -392,6 +393,12 @@ public class InstanceManagement extends HttpSecureAppServlet {
       // Activate
       discard[0] = "OPSRefresh";
       discard[1] = "OPSRenew";
+    }
+
+    if (activationKey.isGolden()) {
+      discard[2] = "editable";
+    } else {
+      discard[2] = "readonly";
     }
 
     final PrintWriter out = response.getWriter();

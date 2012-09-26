@@ -51,7 +51,7 @@
       <foreign-key foreignTable="AD_ORG" name="OBUIAPP_NOTE_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_TABLE" name="OBUIAPP_NOTE_AD_TABLE">
+      <foreign-key foreignTable="AD_TABLE" name="OBUIAPP_NOTE_AD_TABLE" onDelete="cascade">
         <reference local="AD_TABLE_ID" foreign="AD_TABLE_ID"/>
       </foreign-key>
       <index name="OBUIAPP_NOTE_AD_TABLE" unique="false">

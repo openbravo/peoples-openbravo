@@ -261,7 +261,7 @@ public abstract class FIN_BankStatementImport {
 
   private BusinessPartner matchBusinessPartnerByName(String partnername, Organization organization,
       FIN_FinancialAccount account) {
-    if (partnername == null || "".equals(partnername)) {
+    if (partnername == null || "".equals(partnername.trim())) {
       return null;
     }
     final StringBuilder whereClause = new StringBuilder();
@@ -296,7 +296,7 @@ public abstract class FIN_BankStatementImport {
   }
 
   private BusinessPartner finBPByName(String partnername, Organization organization) {
-    if (partnername == null || "".equals(partnername)) {
+    if (partnername == null || "".equals(partnername.trim())) {
       return null;
     }
     final StringBuilder whereClause = new StringBuilder();
@@ -329,7 +329,7 @@ public abstract class FIN_BankStatementImport {
 
   private BusinessPartner matchBusinessPartnerByNameTokens(String partnername,
       Organization organization) {
-    if (partnername == null || "".equals(partnername)) {
+    if (partnername == null || "".equals(partnername.trim())) {
       return null;
     }
     StringTokenizer st = new StringTokenizer(partnername);

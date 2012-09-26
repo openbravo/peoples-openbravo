@@ -618,6 +618,11 @@ isc.OBSelectorItem.addProperties({
       requestProperties.params[OB.Constants.ORG_PARAMETER] = requestProperties.params.inpadOrgId;
     }
 
+    if (this.form.getFocusItem() !== this && !this.form.view.isShowingForm && this.getEnteredValue() === '' && this.savedEnteredValue) {
+      this.setElementValue(this.savedEnteredValue);
+      delete this.savedEnteredValue;
+    }
+
     var criteria = this.getPickListFilterCriteria(),
         i;
     for (i = 0; i < criteria.criteria.length; i++) {
@@ -644,7 +649,8 @@ isc.OBSelectorItem.addProperties({
   },
 
   getPickListFilterCriteria: function () {
-    var crit = this.Super('getPickListFilterCriteria', arguments);
+    var crit = this.Super('getPickListFilterCriteria', arguments),
+        operator;
     this.pickList.data.useClientFiltering = false;
     var criteria = {
       operator: 'or',
@@ -670,16 +676,21 @@ isc.OBSelectorItem.addProperties({
       displayFieldValue = crit[this.displayField];
     }
     if (displayFieldValue !== null) {
+      if (this.textMatchStyle === 'substring') {
+        operator = 'iContains';
+      } else {
+        operator = 'iStartsWith';
+      }
       for (i = 0; i < this.extraSearchFields.length; i++) {
         criteria.criteria.push({
           fieldName: this.extraSearchFields[i],
-          operator: 'iContains',
+          operator: operator,
           value: displayFieldValue
         });
       }
       criteria.criteria.push({
         fieldName: this.displayField,
-        operator: 'iContains',
+        operator: operator,
         value: displayFieldValue
       });
     }
@@ -701,6 +712,9 @@ isc.OBSelectorItem.addProperties({
       } else if (!this.valueMap[value] && OB.Utilities.isUUID(value)) {
         return '';
       }
+    }
+    if (value && value !== '' && ret === '') {
+      this.savedEnteredValue = value;
     }
     return ret;
   },

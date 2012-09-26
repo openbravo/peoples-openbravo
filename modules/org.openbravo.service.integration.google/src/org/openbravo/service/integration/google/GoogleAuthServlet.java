@@ -142,7 +142,7 @@ public class GoogleAuthServlet extends HttpBaseServlet {
 
       User user = OpenIDManager.getInstance().getUser(oid);
 
-      if (user == null) {
+      if (user == null && oid != null) {
         user = createUser(oid, req, resp);
         if (user == null) {
           return;
@@ -151,10 +151,12 @@ public class GoogleAuthServlet extends HttpBaseServlet {
 
       req.getSession(true).removeAttribute("#Authenticated_user");
 
-      String sessionId = createDBSession(req, user.getUsername(), user.getId());
-      req.getSession(true).setAttribute("#Authenticated_user", user.getId());
-      vars.setSessionValue("#AD_SESSION_ID", sessionId);
-      vars.setSessionValue("#LOGGINGIN", "Y");
+      if (user != null) {
+        String sessionId = createDBSession(req, user.getUsername(), user.getId());
+        req.getSession(true).setAttribute("#Authenticated_user", user.getId());
+        vars.setSessionValue("#AD_SESSION_ID", sessionId);
+        vars.setSessionValue("#LOGGINGIN", "Y");
+      }
 
       resp.sendRedirect(strDireccion + "/security/Menu.html");
 
