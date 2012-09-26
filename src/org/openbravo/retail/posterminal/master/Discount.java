@@ -13,6 +13,7 @@ import java.util.Date;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.retail.posterminal.POSUtils;
 import org.openbravo.retail.posterminal.ProcessHQLQuery;
 import org.openbravo.service.json.JsonUtils;
 
@@ -25,9 +26,26 @@ public class Discount extends ProcessHQLQuery {
 
   @Override
   protected String getQuery(JSONObject jsonsent) throws JSONException {
-    String hql = "from PricingAdjustment ";
+    String priceListId = POSUtils.getPriceListByOrgId(jsonsent.getString("organization")).getId();
+
+    String hql = "from PricingAdjustment p ";
     hql += "where active = true ";
     hql += "and (endingDate is null or endingDate>:today) ";
+
+    hql += "and ((includePriceLists='Y' ";
+    hql += "  and not exists (select 1 ";
+    hql += "         from PricingAdjustmentPriceList pl";
+    hql += "        where active = true";
+    hql += "          and pl.priceAdjustment.id = p.id";
+    hql += "          and pl.priceList.id ='" + priceListId + "')) ";
+    hql += "   or (includePriceLists='N' ";
+    hql += "  and  exists (select 1 ";
+    hql += "         from PricingAdjustmentPriceList pl";
+    hql += "        where active = true";
+    hql += "          and pl.priceAdjustment.id = p.id";
+    hql += "          and pl.priceList.id ='" + priceListId + "')) ";
+    hql += "    ))";
+
     hql += "order by priority, id";
 
     JSONObject today = new JSONObject();
