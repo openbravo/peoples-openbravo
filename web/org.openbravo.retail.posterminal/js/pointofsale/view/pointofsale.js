@@ -60,10 +60,13 @@ enyo.kind({
     }]
   }],
   printReceipt: function () {
-    var receipt = this.model.get('order');
-    receipt.calculateTaxes(function() {
-      receipt.trigger('print');
-    });
+    
+    if (OB.POS.modelterminal.hasPermission('OBPOS_print.receipt')) {
+      var receipt = this.model.get('order');
+      receipt.calculateTaxes(function() {
+        receipt.trigger('print');
+      });
+    }
   },
   addNewOrder: function(inSender, inEvent) {
     this.model.get('orderList').addNewOrder();

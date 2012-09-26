@@ -10,9 +10,96 @@
  */
 
 enyo.kind({
+  name: 'OB.UI.SearchProductHeader',
+  kind: 'OB.UI.ScrollableTableHeader',
+  events: {
+    onSearchAction: '',
+    onClearAction: ''
+  },
+  components: [{
+    style: 'padding: 10px 10px 5px 10px;',
+    components: [{
+      style: 'display: table;',
+      components: [{
+        style: 'display: table-cell; width: 100%;',
+        components: [{
+          kind: 'OB.UI.SearchInput',
+          name: 'productname',
+          classes: 'input',
+          attributes: {
+            'x-webkit-speech': 'x-webkit-speech'
+          },
+          style: 'width: 100%;',
+          onchange: 'searchAction'
+        }]
+      }, {
+        style: 'display: table-cell;',
+        components: [{
+          kind: 'OB.UI.SmallButton',
+          classes: 'btnlink-gray btn-icon-small btn-icon-clear',
+          style: 'width: 100px; margin: 0px 5px 8px 19px;',
+          ontap: 'clearAction'
+        }]
+      }, {
+        style: 'display: table-cell;',
+        components: [{
+          kind: 'OB.UI.SmallButton',
+          classes: 'btnlink-yellow btn-icon-small btn-icon-search',
+          style: 'width: 100px; margin: 0px 0px 8px 5px;',
+          ontap: 'searchAction'
+        }]
+      }]
+    }, {
+      style: 'margin: 5px 0px 0px 0px;',
+      components: [{
+        kind: 'OB.UI.List',
+        name: 'productcategory',
+        classes: 'combo',
+        style: 'width: 100%',
+        renderHeader: enyo.kind({
+          kind: 'enyo.Option',
+          initComponents: function() {
+            this.inherited(arguments);
+            this.setValue('__all__');
+            this.setContent(OB.I18N.getLabel('OBPOS_SearchAllCategories'));
+          }
+        }),
+        renderLine: enyo.kind({
+          kind: 'enyo.Option',
+          initComponents: function() {
+            this.inherited(arguments);
+            this.setValue(this.model.get('id'));
+            this.setContent(this.model.get('_identifier'));
+          }
+        }),
+        renderEmpty: 'enyo.Control'
+      }]
+    }]
+  }],
+  setHeaderCollection: function(valueToSet){
+    this.$.productcategory.setCollection(valueToSet);
+  },
+  searchAction: function() {
+    this.doSearchAction({
+      productCat: this.$.productcategory.getValue(),
+      productName: this.$.productname.getValue()
+    });
+  },
+  clearAction: function() {
+    this.$.productname.setValue('');
+    this.$.productcategory.setSelected(0);
+    this.doClearAction();
+  }
+});
+
+enyo.kind({
   name: 'OB.UI.SearchProduct',
   published: {
     receipt: null
+  },
+  handlers: {
+    onSearchAction: 'searchAction',
+    onClearAction: 'clearAction'
   },
   events: {
     onAddProduct: ''
@@ -25,75 +112,14 @@ enyo.kind({
         classes: 'row-fluid',
         style: 'border-bottom: 1px solid #cccccc;',
         components: [{
-          classes: 'span12',
-          components: [{
-            style: 'padding: 10px 10px 5px 10px;',
-            components: [{
-              style: 'display: table;',
-              components: [{
-                style: 'display: table-cell; width: 100%;',
-                components: [{
-                  kind: 'OB.UI.SearchInput',
-                  name: 'productname',
-                  classes: 'input',
-                  attributes: {
-                    'x-webkit-speech': 'x-webkit-speech'
-                  },
-                  style: 'width: 100%;',
-                  onchange: 'searchAction'
-                }]
-              }, {
-                style: 'display: table-cell;',
-                components: [{
-                  kind: 'OB.UI.SmallButton',
-                  classes: 'btnlink-gray btn-icon-small btn-icon-clear',
-                  style: 'width: 100px; margin: 0px 5px 8px 19px;',
-                  ontap: 'clearAction'
-                }]
-              }, {
-                style: 'display: table-cell;',
-                components: [{
-                  kind: 'OB.UI.SmallButton',
-                  classes: 'btnlink-yellow btn-icon-small btn-icon-search',
-                  style: 'width: 100px; margin: 0px 0px 8px 5px;',
-                  ontap: 'searchAction'
-                }]
-              }]
-            }, {
-              style: 'margin: 5px 0px 0px 0px;',
-              components: [{
-                kind: 'OB.UI.List',
-                name: 'productcategory',
-                classes: 'combo',
-                style: 'width: 100%',
-                renderHeader: enyo.kind({
-                  kind: 'enyo.Option',
-                  initComponents: function() {
-                    this.inherited(arguments);
-                    this.setValue('__all__');
-                    this.setContent(OB.I18N.getLabel('OBPOS_SearchAllCategories'));
-                  }
-                }),
-                renderLine: enyo.kind({
-                  kind: 'enyo.Option',
-                  initComponents: function() {
-                    this.inherited(arguments);
-                    this.setValue(this.model.get('id'));
-                    this.setContent(this.model.get('_identifier'));
-                  }
-                }),
-                renderEmpty: 'enyo.Control'
-              }]
-            }]
-          }]
-        }, {
           classes: 'row-fluid',
-          style: 'height: 483px; overflow: auto;',
           components: [{
             classes: 'span12',
             components: [{
-              kind: 'OB.UI.Table',
+              kind: 'OB.UI.ScrollableTable',
               name: 'products',
+              scrollAreaMaxHeight: '500px',
+              renderHeader: 'OB.UI.SearchProductHeader',
               renderEmpty: 'OB.UI.RenderEmpty',
               renderLine: 'OB.UI.RenderProduct'
             }]
@@ -107,8 +133,10 @@ enyo.kind({
     this.inherited(arguments);
     this.categories = new OB.Collection.ProductCategoryList();
     this.products = new OB.Collection.ProductList();
-    this.$.productcategory.setCollection(this.categories);
+
+    //first the main collection of the component
     this.$.products.setCollection(this.products);
+    this.$.products.getHeader().setHeaderCollection(this.categories);
 
     function errorCallback(tx, error) {
       OB.UTIL.showError("OBDAL error: " + error);
@@ -121,7 +149,7 @@ enyo.kind({
         me.categories.reset();
       }
     }
-    
+
     this.products.on('click', function(model) {
       this.doAddProduct({
         product: model
@@ -132,17 +160,16 @@ enyo.kind({
   },
   receiptChanged: function() {
     this.receipt.on('clear', function() {
-      this.$.productname.setContent('');
-      this.$.productcategory.setContent('');
+      this.$.products.$.theader.$.searchProductHeader.$.productname.setContent('');
+      this.$.products.$.theader.$.searchProductHeader.$.productcategory.setContent('');
       //A filter should be set before show products. -> Big data!!
       //this.products.exec({priceListVersion: OB.POS.modelterminal.get('pricelistversion').id, product: {}});
     }, this);
   },
-  clearAction: function() {
-    this.$.productname.setValue('');
-    this.searchAction();
+  clearAction: function(inSender, params) {
+    this.products.reset();
   },
-  searchAction: function() {
+  searchAction: function(inSender, params) {
     var criteria = {},
         me = this;
 
@@ -193,14 +220,14 @@ enyo.kind({
       }
     }
 
-    if (me.$.productname.getValue()) {
+    if (params.productName) {
       criteria._identifier = {
         operator: OB.Dal.CONTAINS,
-        value: me.$.productname.getValue()
+        value: params.productName
       };
     }
-    if (me.$.productcategory.getValue() && me.$.productcategory.getValue() !== '__all__') {
-      criteria.productCategory = me.$.productcategory.getValue();
+    if (params.productCat && params.productCat !== '__all__') {
+      criteria.productCategory = params.productCat;
     }
     OB.Dal.find(OB.Model.Product, criteria, successCallbackProducts, errorCallback);
   }

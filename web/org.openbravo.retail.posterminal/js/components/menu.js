@@ -53,6 +53,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.MenuReturn',
   kind: 'OB.UI.MenuAction',
+  permission: 'OBPOS_receipt.invoice',
   events: {
     onShowReturnText: ''
   },
@@ -65,12 +66,28 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.MenuInvoice',
   kind: 'OB.UI.MenuAction',
+  permission: 'OBPOS_receipt.invoice',
   events: {
     onReceiptToInvoice: ''
   },
   label: OB.I18N.getLabel('OBPOS_LblInvoice'),
   tap: function() {
     this.doReceiptToInvoice();
+  }
+});
+
+enyo.kind({
+  name: 'OB.UI.MenuPrint',
+  kind: 'OB.UI.MenuAction',
+  permission: 'OBPOS_print.receipt',
+  events: {
+    onPrintReceipt: ''
+  },
+  label: OB.I18N.getLabel('OBPOS_LblPrintReceipt'),
+  tap: function() {
+    if (OB.POS.modelterminal.hasPermission(this.permission)) {
+      this.doPrintReceipt();
+    }
   }
 });
 
@@ -86,6 +103,9 @@ enyo.kind({
     });
     this.menuEntries.push({
       kind: 'OB.UI.MenuInvoice'
+    });
+    this.menuEntries.push({
+      kind: 'OB.UI.MenuPrint'
     });
 
     this.menuEntries.push({

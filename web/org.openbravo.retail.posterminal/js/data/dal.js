@@ -9,12 +9,38 @@
 
 /*global define,_,console,Backbone */
 (function () {
+	
+
+  function dropTable(db, sql){
+    db.transaction(function (tx) {
+      tx.executeSql(sql, {}, function(){console.log('succesfully dropped table: '+sql);}, function(){window.console.error(arguments);});
+    });
+  }
 
   var dbSize = 50 * 1024 * 1024,
       undef, wsql = window.openDatabase !== undef,
-      db = (wsql && window.openDatabase('WEBPOS', '0.1', 'Openbravo Web POS', dbSize)),
+      db = (wsql && window.openDatabase('WEBPOS', '', 'Openbravo Web POS', dbSize)),
       OP;
-
+  OB.POS.databaseVersion = '0.2';
+  db.changeVersion(db.version, OB.POS.databaseVersion, function(t){
+    var model, modelObj;
+    if(db.version === OB.POS.databaseVersion){
+      //Database version didn't change. No change needed.
+      return;
+    }
+    //Version of the database changed, we need to drop the tables so they can be created again
+    console.log('Updating database model. Tables will be dropped:');
+    for(model in OB.Model){
+      if(OB.Model.hasOwnProperty(model)){
+        modelObj = OB.Model[model];
+        if(modelObj.prototype && modelObj.prototype.dropStatement){
+          //There is a dropStatement, executing it
+          dropTable(db, modelObj.prototype.dropStatement);
+        }
+      }
+    }
+  });
+ 
   OP = {
     EQ: '=',
     CONTAINS: 'contains',

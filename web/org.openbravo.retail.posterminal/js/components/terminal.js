@@ -168,12 +168,12 @@ enyo.kind({
 
     this.terminal.on('change:connectedToERP', function(model){
       this.$.onlineviewer.setOnlineState(model.get('connectedToERP'));
-      if(OB.POS.modelterminal.get('loggedOffline')!=undefined){
+      if(OB.POS.modelterminal.get('loggedOffline')!==undefined){
         if(OB.POS.modelterminal.get('connectedToERP')){
-    	  OB.POS.terminal.$.dialogsContainer.createComponent({
-    	      kind: 'OB.UI.ModalOnline'
-    	    }).render();
-    	  $('#modalOnline').modal('show');
+          OB.POS.terminal.$.dialogsContainer.createComponent({
+            kind: 'OB.UI.ModalOnline'
+          }).render();
+          $('#modalOnline').modal('show');
         }else{
           OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_OfflineModeWarning'));
         }

@@ -285,6 +285,7 @@ enyo.kind({
 enyo.kind({
   tag: 'li',
   name: 'OB.UI.MenuAction',
+  permission: null,
   components: [{
     name: 'lbl',
     tag: 'a',
@@ -297,5 +298,34 @@ enyo.kind({
   initComponents: function() {
     this.inherited(arguments);
     this.$.lbl.setContent(this.label);
+    if (this.permission && !OB.POS.modelterminal.hasPermission(this.permission)) {
+      this.$.lbl.setStyle('color: #cccccc; padding: 12px 15px 12px 15px;');
+    }
+  
+  }
+});
+
+
+enyo.kind({
+  name: 'OB.UI.ModalInfo',
+  kind: 'OB.UI.ModalAction',
+  bodyButtons: {
+    components: [{
+      kind: 'OB.UI.AcceptDialogButton'
+    }]
+  },
+  initComponents: function() {
+    this.inherited(arguments);
+    this.$.bodyButtons.$.acceptDialogButton.dialogContainer = this;
+  }
+});
+
+enyo.kind({
+  name: 'OB.UI.AcceptDialogButton',
+  kind: 'OB.UI.ModalDialogButton',
+  content: OB.I18N.getLabel('OBPOS_LblOk'),
+  classes: 'btnlink btnlink-gray modal-dialog-content-button',
+  tap: function() {
+    $('#' + this.dialogContainer.getId()).modal('hide');
   }
 });

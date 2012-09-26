@@ -162,7 +162,7 @@
     save: function() {
       var undoCopy;
       if (this.attributes.json) {
-        delete this.attributes.json; // BINGO!!!
+        delete this.attributes.json; // Needed to avoid recursive inclusions of itself !!!
       }
       undoCopy = this.get('undo');
       this.unset('undo');
@@ -568,19 +568,25 @@
     },
 
     setOrderTypeReturn: function() {
-      this.set('documentType', OB.POS.modelterminal.get('terminal').documentTypeForReturns);
-      this.set('orderType', 1); // 0: Sales order, 1: Return order
-      this.save();
+      if (OB.POS.modelterminal.hasPermission('OBPOS_receipt.return')) {
+        this.set('documentType', OB.POS.modelterminal.get('terminal').documentTypeForReturns);
+        this.set('orderType', 1); // 0: Sales order, 1: Return order
+        this.save();
+      }
     },
 
     setOrderInvoice: function() {
-      this.set('generateInvoice', true);
-      this.save();
+      if (OB.POS.modelterminal.hasPermission('OBPOS_receipt.invoice')) {
+        this.set('generateInvoice', true);
+        this.save();
+      }
     },
 
     resetOrderInvoice: function() {
-      this.set('generateInvoice', false);
-      this.save();
+      if (OB.POS.modelterminal.hasPermission('OBPOS_receipt.invoice')) {
+        this.set('generateInvoice', false);
+        this.save();
+      }
     },
 
     adjustPayment: function() {
@@ -685,6 +691,8 @@
       if (jsonorder.orderType === 1) {
         jsonorder.gross = -jsonorder.gross;
         jsonorder.change = -jsonorder.change;
+        jsonorder.payment = -jsonorder.payment;
+        jsonorder.net = -jsonorder.net;
         _.forEach(jsonorder.lines, function(item) {
           item.gross = -item.gross;
           item.net = -item.net;

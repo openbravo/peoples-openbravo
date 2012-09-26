@@ -13,7 +13,7 @@
 // ----------------------------------------------------------------------------
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.RightToolbar',
-  classes: 'span8',
+  classes: 'span9',
   components: [{
     tag: 'ul',
     classes: 'unstyled nav-pos row-fluid',
@@ -38,10 +38,10 @@ enyo.kind({
   kind: 'OB.OBPOSPointOfSale.UI.RightToolbar',
   buttons: [{
     kind: 'OB.OBPOSPointOfSale.UI.ButtonTabPayment',
-    containerCssClass: 'span3'
+    containerCssClass: 'span4'
   }, {
     kind: 'OB.OBPOSPointOfSale.UI.ButtonTabScan',
-    containerCssClass: 'span3'
+    containerCssClass: 'span2'
   }, {
     kind: 'OB.OBPOSPointOfSale.UI.ButtonTabBrowse',
     containerCssClass: 'span2'
