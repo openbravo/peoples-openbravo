@@ -205,8 +205,6 @@
       OB.UTIL.setConnectivityLabel('Offline');
     });
 
-    OB.UTIL.checkConnectivityStatus(); //Initial check;
-    setInterval(OB.UTIL.checkConnectivityStatus, 5000);
   });
 
 }());

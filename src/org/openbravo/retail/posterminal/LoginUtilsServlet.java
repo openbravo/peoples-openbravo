@@ -76,17 +76,8 @@ public class LoginUtilsServlet extends WebServiceAbstractServlet {
         queryCount++;
         data.put(item);
 
-        item = new JSONObject();
-        // TODO: Don't retrieve only OBPOS messages but also messages in modules depending on it
-        String hqlLabel = "select message.searchKey, message.messageText "
-            + "from ADMessage message " + "where message.searchKey like 'OBPOS_%'";
-        Query qryLabel = OBDal.getInstance().getSession().createQuery(hqlLabel);
-        for (Object qryLabelObject : qryLabel.list()) {
-          final Object[] qryLabelObjectItem = (Object[]) qryLabelObject;
-          item.put(qryLabelObjectItem[0].toString(), qryLabelObjectItem[1].toString());
-        }
         queryCount++;
-        data.put(item);
+        data.put(LabelsComponent.getLabels(null));
 
         item = new JSONObject();
         final Properties props = OBPropertiesProvider.getInstance().getOpenbravoProperties();

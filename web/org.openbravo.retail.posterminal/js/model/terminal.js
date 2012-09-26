@@ -137,6 +137,9 @@ OB.Model.Terminal = Backbone.Model.extend({
       });
     });
     if (OB.POS.modelterminal.get('connectedToERP')) {
+      new OB.DS.Request('org.openbravo.retail.posterminal.term.Labels').exec({languageId: window.localStorage.getItem('POSlanguageId')}, function(data) {
+    		OB.I18N.labels=data;
+    	
         new OB.DS.Request('org.openbravo.retail.posterminal.term.Terminal').exec(params, function(data) {
           if (data.exception) {
             me.logout();
@@ -151,11 +154,12 @@ OB.Model.Terminal = Backbone.Model.extend({
             OB.UTIL.showError("Terminal does not exists: " + params.terminal);
           }
         });
-        }else{
+      });
+    }else{
           //Offline mode, we get the terminal information from the local db
           me.set('terminal', JSON.parse(me.usermodel.get('terminalinfo')).terminal);
           me.trigger('terminal.loaded');
-        }
+    }
 
 
   },
