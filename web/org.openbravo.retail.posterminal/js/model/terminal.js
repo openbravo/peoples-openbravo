@@ -372,22 +372,28 @@ OB.Model.Terminal = Backbone.Model.extend({
       OB.Dal.initCache(OB.Model.Session, [], null, null);
 	  OB.Dal.find(OB.Model.User, {'name': me.user},
       function(users) {
-        var user, session, date;
+        var user, session, date, savedPass;
         if(users.models.length === 0 ) {
           date= new Date().toString();
           user = new OB.Model.User();
           user.set('name', me.user);
-          user.set('password', me.generate_sha1(me.password+date));
+          savedPass = me.generate_sha1(me.password+date);
+          user.set('password', savedPass);
           user.set('created', date);
           OB.Dal.save(user, function(){
           }, function() {
             window.console.error(arguments);
           });
           me.usermodel = user;
-        }else{
+        }else {
           user = users.models[0];
           me.usermodel = user;
-          user.set('password', me.generate_sha1(me.password+user.get('created')));
+          if(me.password){
+            //The password will only be recomputed in case it was properly entered
+            //(that is, if the call comes from the login page directly)
+            savedPass = me.generate_sha1(me.password+user.get('created'));
+            user.set('password',savedPass);
+          }
           OB.Dal.save(user, function(){
           }, function() {
             window.console.error(arguments);
