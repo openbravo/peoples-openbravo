@@ -13,7 +13,7 @@ OB.Model.Discounts = {
   applyPromotions: function(receipt, line) {
     var alerts=[], bpId = receipt.get('bp').id, productId, criteria;
     if (line) {
-      this.executor.addEvent(new Backbone.Model({receipt:receipt, line:line}), true);
+      this.executor.addEvent(new Backbone.Model({id: line.cid, receipt:receipt, line:line}), true);
     } else {
       receipt.get('lines').forEach(function(l){
     	this.applyPromotions(receipt, l);

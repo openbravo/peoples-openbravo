@@ -22,7 +22,7 @@ OB.Model.Executor = Backbone.Model.extend({
     this.set('actionQueue', new Backbone.Collection());
 
     eventQueue.on('add', function() {
-      console.log('add event', eventQueue.length, this.get('executing'))
+
       if (!this.get('executing')) {
         // Adding an event to an empty queue, firing it
         this.nextEvent();
@@ -31,7 +31,23 @@ OB.Model.Executor = Backbone.Model.extend({
   },
 
   addEvent: function(event, replaceExistent) {
-    var evtQueue = this.get('eventQueue');
+    var evtQueue = this.get('eventQueue'),
+        currentEvt, actionQueue;
+    console.log('add event', evtQueue.length, this.get('executing'))
+    if (replaceExistent && evtQueue) {
+      currentEvt = this.get('currentEvent');
+      evtQueue.where({
+        id: event.get('id')
+      }).forEach(function(evt) {
+        if (currentEvt === evt) {
+          this.set('eventQueue')
+          actionQueue.remove(actionQueue.models);
+          console.log('remove actions')
+        }
+        evtQueue.remove(evt);
+        console.log('remove evt')
+      }, this);
+    }
     // TODO: replace if exists
     evtQueue.add(event);
   },
@@ -112,12 +128,12 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
     var rule = OB.Model.Discounts.discountRules[disc.get('discountType')],
         ds, ruleListener;
     if (rule && rule.implementation) {
-    	console.log('applying rule',rule);
+      console.log('applying rule', rule);
       if (rule.async) {
         // waiting listener to trigger completed to move to next action
         ruleListener = new Backbone.Model();
         ruleListener.on('completed', function() {
-        	console.log('async action completed');
+          console.log('async action completed');
           this.nextAction(evt);
         }, this);
       }
