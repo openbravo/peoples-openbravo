@@ -4697,7 +4697,7 @@
 <!--582-->  <AD_REF_LIST_ID><![CDATA[582]]></AD_REF_LIST_ID>
 <!--582-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--582-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--582-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--582-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--582-->  <VALUE><![CDATA[W+]]></VALUE>
 <!--582-->  <NAME><![CDATA[Work Order +]]></NAME>
 <!--582-->  <AD_REFERENCE_ID><![CDATA[189]]></AD_REFERENCE_ID>
@@ -4708,7 +4708,7 @@
 <!--583-->  <AD_REF_LIST_ID><![CDATA[583]]></AD_REF_LIST_ID>
 <!--583-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--583-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--583-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--583-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--583-->  <VALUE><![CDATA[W-]]></VALUE>
 <!--583-->  <NAME><![CDATA[Work Order -]]></NAME>
 <!--583-->  <AD_REFERENCE_ID><![CDATA[189]]></AD_REFERENCE_ID>
