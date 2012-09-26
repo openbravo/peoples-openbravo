@@ -87,6 +87,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "model/order",
         "model/terminal",
         "model/user",
+        "model/executor",
         "components/commonbuttons",
         "components/table",
         "components/scrollabletable",
