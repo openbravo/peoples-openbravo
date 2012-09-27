@@ -69,6 +69,7 @@ enyo.kind({
         type: type
       }))();
       alert.renderInto(enyo.dom.byId('alertContainer'));
+      return alert;
     }
   },
 
@@ -108,6 +109,10 @@ OB.UTIL.showSuccess = function(s) {
 
 OB.UTIL.showWarning = function(s) {
   OB.UTIL.showAlert.display(s, OB.I18N.getLabel('OBPOS_LblWarning'), '');
+};
+
+OB.UTIL.showStatus = function(s) {
+  return OB.UTIL.showAlert.display(s, 'Wait', '');
 };
 
 OB.UTIL.showError = function(s) {
