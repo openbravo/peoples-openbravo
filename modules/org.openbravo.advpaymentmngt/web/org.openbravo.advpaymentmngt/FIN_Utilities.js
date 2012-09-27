@@ -364,13 +364,12 @@ function updateDifference() {
   document.getElementById('paramDifference').innerHTML = frm.inpDifference.value;
   displayLogicElement('sectionDifference', (compare(expected, '!=', total) || compareWithSign(amount, '>', total)));
   displayLogicElement('sectionDifferenceBox', (compare(expected, '!=', total) || (isCreditAllowed && compareWithSign(amount, '>', total))));
-  if ((frm.strWriteOffLimit.value === 'Y') && (compare(expected, '!=', total)) && (frm.strtypewriteoff.value==='A') && (compareWithSign((applyFormat((subtract(expected,total))*exchangeRate.value)), '>',frm.strAmountwriteoff.value))) {  
-	  displayLogicElement('writeofflimit', true);
-	  displayLogicElement('writeoff', false);
-   }
-  else {
-	  displayLogicElement('writeofflimit', false);
-	  displayLogicElement('writeoff', compare(expected, '!=', total));
+  if ((frm.strWriteOffLimit.value === 'Y') && (compare(expected, '!=', total)) && (frm.strtypewriteoff.value === 'A') && (compareWithSign((applyFormat((subtract(expected, total)) * exchangeRate.value)), '>', frm.strAmountwriteoff.value))) {
+    displayLogicElement('writeofflimit', true);
+    displayLogicElement('writeoff', false);
+  } else {
+    displayLogicElement('writeofflimit', false);
+    displayLogicElement('writeoff', compare(expected, '!=', total));
   }
   displayLogicElement('underpayment', compareWithSign(expected, '>', total));
   displayLogicElement('credit', isCreditAllowed && compareWithSign(amount, '>', total));
