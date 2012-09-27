@@ -1415,7 +1415,7 @@ isc.OBStandardView.addProperties({
     };
 
     if (!newRecordsToBeIncluded) {
-      if (this.parentRecordId) {
+      if (this.parentRecordId && this.newRecordsAfterRefresh) {
         this.newRecordsAfterRefresh[this.parentRecordId] = [];
       } else {
         this.newRecordsAfterRefresh = [];
