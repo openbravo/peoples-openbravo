@@ -62,6 +62,9 @@
       <foreign-key foreignTable="AD_ORG" name="M_RESERVATION_STOCK_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="M_RESERVATION" name="M_RESERVATION_STOCK_RESERV">
+        <reference local="M_RESERVATION_ID" foreign="M_RESERVATION_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="M_STORAGE_DETAIL" name="M_RESERVATION_STOCK_ST_DET">
         <reference local="M_STORAGE_DETAIL_ID" foreign="M_STORAGE_DETAIL_ID"/>
       </foreign-key>
