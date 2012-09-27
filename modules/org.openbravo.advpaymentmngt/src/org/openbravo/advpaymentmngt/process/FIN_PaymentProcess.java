@@ -39,6 +39,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
@@ -103,6 +104,17 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
           dao.createAPRMReadyPreference();
         }
 
+        if (!FIN_Utility.isPeriodOpen(payment.getClient().getId(), payment.getDocumentType()
+            .getDocumentCategory(), payment.getOrganization().getId(), OBDateUtils
+            .formatDate(payment.getPaymentDate()))) {
+          msg.setType("Error");
+          msg.setTitle(Utility.messageBD(conProvider, "Error", language));
+          msg.setMessage(Utility.parseTranslation(conProvider, vars, language,
+              "@PeriodNotAvailable@"));
+          bundle.setResult(msg);
+          OBDal.getInstance().rollbackAndClose();
+          return;
+        }
         Set<String> documentOrganizations = OBContext.getOBContext()
             .getOrganizationStructureProvider(payment.getClient().getId())
             .getNaturalTree(payment.getOrganization().getId());
