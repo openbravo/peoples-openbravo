@@ -646,13 +646,17 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
                   final String creditMsg = Utility.messageBD(new DalConnectionProvider(),
                       "APRM_InvoiceDescUsedCredit", vars.getLanguage());
                   if (creditMsg != null) {
-                    final StringBuffer newDesc = new StringBuffer();
+                    StringBuffer newDesc = new StringBuffer();
                     for (final String line : invDesc.split("\n")) {
                       if (!line.startsWith(creditMsg.substring(0, creditMsg.lastIndexOf("%s")))) {
                         newDesc.append(line);
                         if (!"".equals(line))
                           newDesc.append("\n");
                       }
+                    }
+                    if (newDesc.length() > 255) {
+                      newDesc = newDesc.delete(251, newDesc.length());
+                      newDesc = newDesc.append("...\n");
                     }
                     invoice.setDescription(newDesc.toString());
                   }
