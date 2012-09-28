@@ -262,8 +262,7 @@ isc.OBStandardWindow.addProperties({
         if (processClass) {
           this.selectedState = this.activeView && this.activeView.viewGrid && this.activeView.viewGrid.getSelectedState();
           this.runningProcess = processClass.create(isc.addProperties({}, params, {
-            parentWindow: this,
-            sourceView: this.activeView
+            parentWindow: this
           }));
 
           this.openPopupInTab(this.runningProcess, params.windowTitle, (this.runningProcess.popupWidth ? this.runningProcess.popupWidth : '90%'), (this.runningProcess.popupHeight ? this.runningProcess.popupHeight : '90%'), (this.runningProcess.showMinimizeButton ? this.runningProcess.showMinimizeButton : false), (this.runningProcess.showMaximizeButton ? this.runningProcess.showMaximizeButton : false), true, true);
