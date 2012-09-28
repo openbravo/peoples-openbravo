@@ -37,11 +37,23 @@ public class UpdateADClientInfo extends ModuleScript {
       createTreeAndUpdateClientInfo(cp, "Asset", "AS", "AD_TREE_ASSET_ID");
       // Product Category tree
       updateClientInfo(cp, "AD_TREE_PRODUCT_CATEGORY_ID", "PC");
+      // Cost Center Tree
+      updateClientInfo(cp, "AD_TREE_COSTCENTER_ID", "CC");
+      //User Defined Dimension 1 Tree
+      updateClientInfo(cp, "AD_TREE_USER1_ID", "U1");
+      //User Defined Dimension 2 Tree
+      updateClientInfo(cp, "AD_TREE_USER2_ID", "U2");
 
       // Insert Missing Treenodes for Assets
       UpdateADClientInfoData.insertMissingTreeNodes(cp, "AS", "A_ASSET");
       // Insert Missing Treenodes for Product Categories
       UpdateADClientInfoData.insertMissingTreeNodes(cp, "PC", "M_PRODUCT_CATEGORY");
+      //Insert Missing Treenodes for Cost Center
+      UpdateADClientInfoData.insertMissingCostcenterNodes(cp, "CC", "C_COSTCENTER");
+      //Insert Missing Treenodes for User Defined Dimension 1
+      UpdateADClientInfoData.insertMissingUser1Nodes(cp, "U1", "C_USER1");
+      //Insert Missing Treenodes for User Defined Dimension 1
+      UpdateADClientInfoData.insertMissingUser2Nodes(cp, "U2", "C_USER2");
     } catch (Exception e) {
       handleError(e);
     }
@@ -60,9 +72,29 @@ public class UpdateADClientInfo extends ModuleScript {
 
     private void updateClientInfo(final ConnectionProvider cp, final String columnName, final String treeTypeValue)
 	throws ServletException {
-      UpdateADClientInfoData[] clientsID = UpdateADClientInfoData.selectClientsWithoutTree(cp, columnName);
-      for (UpdateADClientInfoData clientID : clientsID) {
-        UpdateADClientInfoData.updateClientTreeAuto(cp, columnName, treeTypeValue, clientID.adClientId);
+      if (treeTypeValue.equals("PC")) {
+        UpdateADClientInfoData[] clientsID = UpdateADClientInfoData.selectClientsWithoutTree(cp, columnName);
+        for (UpdateADClientInfoData clientID : clientsID) {
+          UpdateADClientInfoData.updateClientTreeAuto(cp, columnName, treeTypeValue, clientID.adClientId);
+        }
+      }
+      else if (treeTypeValue.equals("CC")) {
+        UpdateADClientInfoData[] clientsID = UpdateADClientInfoData.selectClientsMissingCostcenterTree(cp, columnName);
+        for (UpdateADClientInfoData clientID : clientsID) {
+          UpdateADClientInfoData.updateCostcenterTreeAuto(cp, columnName, treeTypeValue, clientID.adClientId);
+        }
+      }
+      else if (treeTypeValue.equals("U1")) {
+        UpdateADClientInfoData[] clientsID = UpdateADClientInfoData.selectClientsMissingUser1Tree(cp, columnName);
+        for (UpdateADClientInfoData clientID : clientsID) {
+          UpdateADClientInfoData.updateUser1TreeAuto(cp, columnName, treeTypeValue, clientID.adClientId);
+        }
+      }
+      else if (treeTypeValue.equals("U2")) {
+        UpdateADClientInfoData[] clientsID = UpdateADClientInfoData.selectClientsMissingUser2Tree(cp, columnName);
+        for (UpdateADClientInfoData clientID : clientsID) {
+          UpdateADClientInfoData.updateUser2TreeAuto(cp, columnName, treeTypeValue, clientID.adClientId);
+        }
       }
     }
 }
