@@ -42,7 +42,6 @@ import org.openbravo.erpCommon.ad_process.buildStructure.Build;
 import org.openbravo.erpCommon.ad_process.buildStructure.BuildTranslation;
 import org.openbravo.erpCommon.utility.BasicUtility;
 import org.openbravo.erpCommon.utility.OBError;
-import org.openbravo.erpCommon.utility.Utility;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
@@ -91,8 +90,6 @@ public class TranslationManager {
   static final String XML_CONTRIB = "Contributors";
 
   private static final Logger log4j = Logger.getLogger(TranslationManager.class);
-
-  private static String unparsedXMLFiles = null;
 
   /**
    * Export all the trl tables that refers to tables with ad_module_id column or trl tables that
@@ -246,7 +243,6 @@ public class TranslationManager {
     final int AD_Client_ID = Integer.valueOf(strClient);
     try {
       final TranslationData[] tables = TranslationData.trlTables(cp);
-      unparsedXMLFiles = null;
       for (int i = 0; i < tables.length; i++)
         importTrlFile(cp, directory, AD_Client_ID, AD_Language, tables[i].c);
       importContributors(cp, directory, AD_Language);
@@ -267,15 +263,9 @@ public class TranslationManager {
           return subDirError;
       }
     }
-    if (unparsedXMLFiles != null) {
-      myMessage.setType("Error");
-      String message = String.format(Utility.messageBD(cp, "ERROR_PARSE_FILE", UILanguage),
-          unparsedXMLFiles);
-      myMessage.setMessage(message);
-    } else {
-      myMessage.setType("Success");
-      myMessage.setMessage(BasicUtility.messageBD(cp, "Success", UILanguage));
-    }
+
+    myMessage.setType("Success");
+    myMessage.setMessage(BasicUtility.messageBD(cp, "Success", UILanguage));
     return myMessage;
   }
 
@@ -642,11 +632,6 @@ public class TranslationManager {
       // handler.getUpdateCount();
       return "";
     } catch (final Exception e) {
-      if (unparsedXMLFiles != null) {
-        unparsedXMLFiles = unparsedXMLFiles.concat(", " + fileName);
-      } else {
-        unparsedXMLFiles = fileName;
-      }
       log4j.error("importTrlFile - error parsing file: " + fileName, e);
       return e.toString();
     }
