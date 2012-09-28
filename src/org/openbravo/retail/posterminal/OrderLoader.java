@@ -73,7 +73,6 @@ import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
-import org.openbravo.model.pricing.priceadjustment.PriceAdjustment;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
@@ -458,10 +457,12 @@ public class OrderLoader {
 
   protected void createOrderLines(Order order, JSONObject jsonorder, JSONArray orderlines,
       ArrayList<OrderLine> lineReferences) throws JSONException {
-    for (int i = 0; i < orderlines.length(); i++) {
+    Entity orderLineEntity = ModelProvider.getInstance().getEntity(OrderLine.class);
+    Entity promotionLineEntity = ModelProvider.getInstance().getEntity(OrderLineOffer.class);
 
+    for (int i = 0; i < orderlines.length(); i++) {
       OrderLine orderline = OBProvider.getInstance().get(OrderLine.class);
-      Entity orderLineEntity = ModelProvider.getInstance().getEntity(OrderLine.class);
+
       JSONObject jsonOrderLine = orderlines.getJSONObject(i);
 
       fillBobFromJSON(orderLineEntity, orderline, jsonOrderLine);
@@ -494,16 +495,12 @@ public class OrderLoader {
         for (int p = 0; p < jsonPromotions.length(); p++) {
           JSONObject jsonPromotion = jsonPromotions.getJSONObject(p);
           OrderLineOffer promotion = OBProvider.getInstance().get(OrderLineOffer.class);
+          fillBobFromJSON(promotionLineEntity, promotion, jsonPromotion);
           promotion.setLineNo((long) ((p + 1) * 10));
-          promotion.setPriceAdjustment((PriceAdjustment) OBDal.getInstance().getProxy(
-              "PricingAdjustment", jsonPromotion.get("ruleId")));
-          promotion.setPriceAdjustmentAmt(BigDecimal.valueOf(jsonPromotion.getDouble("amt")));
-          promotion.setAdjustedPrice(BigDecimal.valueOf(jsonPromotion.getDouble("basePrice")));
           promotion.setSalesOrderLine(orderline);
           orderline.getOrderLineOfferList().add(promotion);
         }
       }
-
     }
   }
 
@@ -871,6 +868,16 @@ public class OrderLoader {
       return "discount";
     }
     // TODO: Save price (from list to discount, before promotions)
+
+    // Mappings for promotions
+    else if (key.equals("ruleId")) {
+      return "priceAdjustment";
+    } else if (key.equals("amt")) {
+      return "priceAdjustmentAmt";
+    } else if (key.equals("basePrice")) {
+      return "adjustedPrice";
+    }
+
     return null;
   }
 }
