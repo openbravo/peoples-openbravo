@@ -576,7 +576,15 @@
         this.set('documentType', OB.POS.modelterminal.get('terminal').documentTypeForReturns);
         this.set('orderType', 1); // 0: Sales order, 1: Return order
         this.save();
+
+        // remove promotions
+        OB.Model.Discounts.applyPromotions(this);
       }
+    },
+
+    shouldApplyPromotions: function() {
+      // Do not apply promotions in return tickets
+      return this.get('orderType') !== 1;
     },
 
     setOrderInvoice: function() {

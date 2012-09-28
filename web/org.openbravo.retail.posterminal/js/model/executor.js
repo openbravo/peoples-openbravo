@@ -104,6 +104,12 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
         me = this,
         criteria;
 
+    if (!receipt.shouldApplyPromotions()) {
+      // Cannot apply promotions, leave actions empty
+      evt.trigger('actionsCreated');
+      return;
+    }
+
     criteria = {
       '_whereClause': OB.Model.Discounts.standardFilter,
       params: [bpId, bpId, bpId, bpId, productId, productId, productId, productId]
@@ -153,13 +159,17 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
   },
 
   preAction: function(evt) {
-    var line = evt.get('line');
+    var line = evt.get('line'),
+        receipt = evt.get('receipt'),
+        silent;
+
+    silent = receipt.shouldApplyPromotions();
     line.set({
       promotions: null,
       discountedLinePrice: null,
       promotionCandidates: null
     }, {
-      silent: true
+      silent: silent
     });
   },
 
