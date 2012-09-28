@@ -224,10 +224,17 @@ enyo.kind({
   style: 'display:none',
   bodyContentClass: 'modal-dialog-content-text',
   bodyButtonsClass: 'modal-dialog-content-buttons-container',
+  showDialog: function(){
+    $('#' + this.myId).modal('show');
+  },
+  hideDialog: function(){
+    $('#' + this.myId).modal('hide');
+  },
   components: [{
     tag: 'div',
     classes: 'modal-header modal-dialog-header',
     components: [{
+      name: 'headerCloseButton',
       tag: 'a',
       classes: 'close',
       attributes: {
@@ -255,7 +262,20 @@ enyo.kind({
       }]
     }]
   }],
-
+  rendered: function(){
+    this.inherited(arguments);
+    
+    if (this.executeOnShown){
+      $('#' + this.myId).on('shown', {dialog: this}, this.executeOnShown);
+    }
+    if (this.executeOnShow){
+      $('#' + this.myId).on('show', {dialog: this}, this.executeOnShow);
+    }
+    if (this.executeOnHide){
+      $('#' + this.myId).on('hide', {dialog: this}, this.executeOnHide);
+    }
+  },
+  
   initComponents: function() {
     this.inherited(arguments);
     this.$.header.setContent(this.header);
@@ -301,7 +321,6 @@ enyo.kind({
     if (this.permission && !OB.POS.modelterminal.hasPermission(this.permission)) {
       this.$.lbl.setStyle('color: #cccccc; padding: 12px 15px 12px 15px;');
     }
-
   }
 });
 
@@ -321,6 +340,7 @@ enyo.kind({
   initComponents: function() {
     this.inherited(arguments);
     this.$.bodyButtons.$.acceptDialogButton.dialogContainer = this;
+
   }
 });
 
