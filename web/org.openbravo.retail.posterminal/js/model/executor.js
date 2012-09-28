@@ -129,10 +129,13 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
   applyRule: function(disc, evt) {
     var receipt = evt.get('receipt'),
         line = evt.get('line'),
-        alerts = [];
-
-    var rule = OB.Model.Discounts.discountRules[disc.get('discountType')],
+        rule = OB.Model.Discounts.discountRules[disc.get('discountType')],
         ds, ruleListener;
+    if (line.stopApplyingPromotions()) {
+      this.nextAction(evt);
+      return;
+    }
+
     if (rule && rule.implementation) {
       console.log('applying rule', rule);
       if (rule.async) {
@@ -161,11 +164,13 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
   preAction: function(evt) {
     var line = evt.get('line');
 
-    line.set({
-      promotions: null,
-      discountedLinePrice: null,
-      promotionCandidates: null
-    });
+    if (!line.stopApplyingPromotions()) {
+      line.set({
+        promotions: null,
+        discountedLinePrice: null,
+        promotionCandidates: null
+      });
+    }
   },
 
   postAction: function(evt) {

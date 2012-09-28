@@ -64,6 +64,19 @@
 
     printGross: function() {
       return OB.I18N.formatCurrency(this.get('_gross') || this.getGross());
+    },
+
+    stopApplyingPromotions: function() {
+      var promotions = this.get('promotions'),
+          i;
+      if (this.get('promotions')) {
+        for (i = 0; i < promotions.length; i++) {
+          if (!promotions[i].applyNext) {
+            return true;
+          }
+        }
+      }
+      return false;
     }
   });
 
@@ -484,6 +497,7 @@
       disc.actualAmt = discount.actualAmt;
 
       disc.hidden = discount.actualAmt && !disc.amt;
+      disc.applyNext = rule.get('applyNext');
 
       for (i = 0; i < promotions.length; i++) {
         if (promotions[i].ruleId === rule.id) {
