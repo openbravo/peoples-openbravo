@@ -345,6 +345,7 @@
           this.deleteLine(line);
         }
         this.adjustPayment();
+        this.save();
       }
     },
 
