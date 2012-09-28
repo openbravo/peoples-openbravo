@@ -159,17 +159,12 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
   },
 
   preAction: function(evt) {
-    var line = evt.get('line'),
-        receipt = evt.get('receipt'),
-        silent;
+    var line = evt.get('line');
 
-    silent = receipt.shouldApplyPromotions();
     line.set({
       promotions: null,
       discountedLinePrice: null,
       promotionCandidates: null
-    }, {
-      silent: silent
     });
   },
 
