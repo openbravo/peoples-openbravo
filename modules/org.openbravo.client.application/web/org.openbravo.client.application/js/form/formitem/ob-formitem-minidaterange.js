@@ -278,6 +278,12 @@ isc.OBMiniDateRangeItem.addProperties(OB.DateItemProperties, {
       return;
     }
 
+    // Apply the empty filter if the date text has been deleted
+    // See issue https://issues.openbravo.com/view.php?id=21697
+    if (newValue === '') {
+      return true;
+    }
+
     if (newValue === oldValue) {
       return false;
     }
