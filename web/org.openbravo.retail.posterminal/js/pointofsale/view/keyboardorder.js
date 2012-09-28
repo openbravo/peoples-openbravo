@@ -151,9 +151,9 @@ enyo.kind({
     OB.Dal.find(OB.Model.Product, criteria, successCallbackProducts, errorCallback);      
   },
   
-  addProductToReceipt: function (keyboard, product) {
-    keyboard.receipt.addProduct(product);
-    keyboard.receipt.trigger('scan');      
+  addProductToReceipt: function (receipt, product) {
+    receipt.addProduct(product);
+    receipt.trigger('scan');      
   }
 });
 
