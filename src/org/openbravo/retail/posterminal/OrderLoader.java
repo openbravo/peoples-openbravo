@@ -58,6 +58,7 @@ import org.openbravo.model.common.invoice.InvoiceLine;
 import org.openbravo.model.common.invoice.InvoiceTax;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
+import org.openbravo.model.common.order.OrderLineOffer;
 import org.openbravo.model.common.order.OrderTax;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_OrigPaymentScheduleDetail;
@@ -72,6 +73,7 @@ import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
+import org.openbravo.model.pricing.priceadjustment.PriceAdjustment;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
@@ -121,6 +123,7 @@ public class OrderLoader {
           errorEntry.setJsoninfo(jsonorder.toString());
           OBDal.getInstance().save(errorEntry);
           OBDal.getInstance().flush();
+
           try {
             OBDal.getInstance().getConnection().commit();
           } catch (SQLException e1) {
@@ -483,6 +486,22 @@ public class OrderLoader {
       tax.setSalesOrderLine(orderline);
       orderline.getOrderLineTaxList().add(tax);
       order.getOrderLineTaxList().add(tax);
+
+      // Discounts & Promotions
+      if (jsonOrderLine.has("promotions") && jsonOrderLine.get("promotions") != null) {
+        JSONArray jsonPromotions = jsonOrderLine.getJSONArray("promotions");
+        for (int p = 0; p < jsonPromotions.length(); p++) {
+          JSONObject jsonPromotion = jsonPromotions.getJSONObject(p);
+          OrderLineOffer promotion = OBProvider.getInstance().get(OrderLineOffer.class);
+          promotion.setLineNo((long) ((p + 1) * 10));
+          promotion.setPriceAdjustment((PriceAdjustment) OBDal.getInstance().getProxy(
+              "PricingAdjustment", jsonPromotion.get("ruleId")));
+          promotion.setPriceAdjustmentAmt(BigDecimal.valueOf(jsonPromotion.getDouble("amt")));
+          promotion.setAdjustedPrice(BigDecimal.valueOf(jsonPromotion.getDouble("basePrice")));
+          promotion.setSalesOrderLine(orderline);
+          orderline.getOrderLineOfferList().add(promotion);
+        }
+      }
 
     }
   }
