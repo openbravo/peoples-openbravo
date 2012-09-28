@@ -36,6 +36,7 @@ import org.apache.commons.betwixt.io.BeanReader;
 import org.apache.commons.betwixt.io.BeanWriter;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.ad_process.buildStructure.Build;
@@ -246,7 +247,13 @@ public class TranslationManager {
       for (int i = 0; i < tables.length; i++)
         importTrlFile(cp, directory, AD_Client_ID, AD_Language, tables[i].c);
       importContributors(cp, directory, AD_Language);
-    } catch (final Exception e) {
+    } catch (OBException e) {
+      myMessage.setType("Error");
+      String message = String.format(BasicUtility.messageBD(cp, "ERROR_PARSE_FILE", UILanguage),
+          e.getMessage());
+      myMessage.setMessage(BasicUtility.messageBD(cp, message, UILanguage));
+      return myMessage;
+    } catch (Exception e) {
       log4j.error(e.toString());
       myMessage.setType("Error");
       myMessage.setMessage(BasicUtility.messageBD(cp, "Error", UILanguage));
@@ -633,7 +640,7 @@ public class TranslationManager {
       return "";
     } catch (final Exception e) {
       log4j.error("importTrlFile - error parsing file: " + fileName, e);
-      return e.toString();
+      throw new OBException(fileName);
     }
   }
 
