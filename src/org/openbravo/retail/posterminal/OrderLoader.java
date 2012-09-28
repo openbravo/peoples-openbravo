@@ -124,6 +124,7 @@ public class OrderLoader {
           OBDal.getInstance().save(errorEntry);
           OBDal.getInstance().flush();
 
+          log.error("Error while loading order", e);
           try {
             OBDal.getInstance().getConnection().commit();
           } catch (SQLException e1) {
