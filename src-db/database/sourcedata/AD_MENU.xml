@@ -563,7 +563,7 @@
 <!--155-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--155-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--155-->  <NAME><![CDATA[General Setup]]></NAME>
-<!--155-->  <DESCRIPTION><![CDATA[General Setup is the area where basic data such as currencies and countries is stored by default. This is also the area where to configure basic instance settings such as session preferences, alerts, clients and enterprises models.]]></DESCRIPTION>
+<!--155-->  <DESCRIPTION><![CDATA[General Setup is the place where to configure basic Openbravo settings such as the enterprise model, users and roles  as well as other more advance setting such as alerts, preferences and processes.]]></DESCRIPTION>
 <!--155-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--155-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--155--></AD_MENU>
@@ -1301,7 +1301,7 @@
 <!--278-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--278-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--278-->  <NAME><![CDATA[Financial Management]]></NAME>
-<!--278-->  <DESCRIPTION><![CDATA[Financial Management supports daily accounting activities such as payable and receivable accounts management, assets amortization as well as the opening and closing of periods.]]></DESCRIPTION>
+<!--278-->  <DESCRIPTION><![CDATA[The "Financial Management" area supports daily accounting activities such as payable and receivable accounts management, assets amortization as well as the opening and closing of the accounting year.]]></DESCRIPTION>
 <!--278-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--278-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--278--></AD_MENU>

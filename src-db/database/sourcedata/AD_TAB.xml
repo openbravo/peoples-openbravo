@@ -858,7 +858,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--143-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--143-->  <NAME><![CDATA[Organization]]></NAME>
 <!--143-->  <DESCRIPTION><![CDATA[Create organizations to manage your company's organizational structure.]]></DESCRIPTION>
-<!--143-->  <HELP><![CDATA[Organization window allows to maintain the organizations which compose an enterprise model.]]></HELP>
+<!--143-->  <HELP><![CDATA[The Organization window allows to maintain the organizations created by the Initial Organization Setup process.]]></HELP>
 <!--143-->  <AD_TABLE_ID><![CDATA[155]]></AD_TABLE_ID>
 <!--143-->  <AD_WINDOW_ID><![CDATA[110]]></AD_WINDOW_ID>
 <!--143-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -886,7 +886,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--145-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--145-->  <NAME><![CDATA[Client]]></NAME>
 <!--145-->  <DESCRIPTION><![CDATA[Add client's detailed information.]]></DESCRIPTION>
-<!--145-->  <HELP><![CDATA[Client window allows to view and maintain the clients created by running the Initiial Client Setup process.]]></HELP>
+<!--145-->  <HELP><![CDATA[Client window allows to view and maintain the clients created by running the Initial Client Setup process.]]></HELP>
 <!--145-->  <AD_TABLE_ID><![CDATA[112]]></AD_TABLE_ID>
 <!--145-->  <AD_WINDOW_ID><![CDATA[109]]></AD_WINDOW_ID>
 <!--145-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -1793,7 +1793,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--199-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--199-->  <NAME><![CDATA[Accounting Schema]]></NAME>
 <!--199-->  <DESCRIPTION><![CDATA[Create multiple accounting schemas.]]></DESCRIPTION>
-<!--199-->  <HELP><![CDATA[Accounting schema window allows to review and maintain imported accounting schemas and to create new ones if needed.]]></HELP>
+<!--199-->  <HELP><![CDATA[The accounting schema window allows you to review and maintain imported accounting schemas and to create new ones if needed.]]></HELP>
 <!--199-->  <AD_TABLE_ID><![CDATA[265]]></AD_TABLE_ID>
 <!--199-->  <AD_WINDOW_ID><![CDATA[125]]></AD_WINDOW_ID>
 <!--199-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -2230,7 +2230,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--217-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--217-->  <NAME><![CDATA[Account Schema Element]]></NAME>
 <!--217-->  <DESCRIPTION><![CDATA[Add and edit account elements to be used for a specified accounting schema.]]></DESCRIPTION>
-<!--217-->  <HELP><![CDATA[Account Schema Element tab is a list of the mandatory accounting dimensions and the ones selected while running either the Initial Client Setup process or the Initial Organization Setup process. It is always possible to add additional accounting dimensions to the list.]]></HELP>
+<!--217-->  <HELP><![CDATA[The account schema element tab list the accounting dimensions  selected while running either the Initial Client Setup process or the Initial Organization Setup process. It is always possible to add additional accounting dimensions to the list.]]></HELP>
 <!--217-->  <AD_TABLE_ID><![CDATA[279]]></AD_TABLE_ID>
 <!--217-->  <AD_WINDOW_ID><![CDATA[125]]></AD_WINDOW_ID>
 <!--217-->  <SEQNO><![CDATA[20]]></SEQNO>
@@ -2917,7 +2917,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--255-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--255-->  <NAME><![CDATA[Header]]></NAME>
 <!--255-->  <DESCRIPTION><![CDATA[Create an inventory count to update your stock quantities.]]></DESCRIPTION>
-<!--255-->  <HELP><![CDATA[Create an inventory count to update your stock quantities.]]></HELP>
+<!--255-->  <HELP><![CDATA[Goods count process requires to create an inventory count to check or to update stock quantities.]]></HELP>
 <!--255-->  <AD_TABLE_ID><![CDATA[321]]></AD_TABLE_ID>
 <!--255-->  <AD_WINDOW_ID><![CDATA[168]]></AD_WINDOW_ID>
 <!--255-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -2944,7 +2944,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--256-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--256-->  <NAME><![CDATA[Lines]]></NAME>
 <!--256-->  <DESCRIPTION><![CDATA[Add or edit individual products to be included in the inventory count.]]></DESCRIPTION>
-<!--256-->  <HELP><![CDATA[Add or edit individual products to be included in the inventory count.]]></HELP>
+<!--256-->  <HELP><![CDATA[Lines tab allows to add or to edit individual products to be included in the inventory count list.]]></HELP>
 <!--256-->  <AD_TABLE_ID><![CDATA[322]]></AD_TABLE_ID>
 <!--256-->  <AD_WINDOW_ID><![CDATA[168]]></AD_WINDOW_ID>
 <!--256-->  <SEQNO><![CDATA[20]]></SEQNO>
@@ -3787,7 +3787,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--317-->  <HELP><![CDATA[Edit the bill of materials components the selected product consists of.]]></HELP>
 <!--317-->  <AD_TABLE_ID><![CDATA[383]]></AD_TABLE_ID>
 <!--317-->  <AD_WINDOW_ID><![CDATA[140]]></AD_WINDOW_ID>
-<!--317-->  <SEQNO><![CDATA[30]]></SEQNO>
+<!--317-->  <SEQNO><![CDATA[31]]></SEQNO>
 <!--317-->  <TABLEVEL><![CDATA[1]]></TABLEVEL>
 <!--317-->  <ISSINGLEROW><![CDATA[N]]></ISSINGLEROW>
 <!--317-->  <ISINFOTAB><![CDATA[N]]></ISINFOTAB>
@@ -11875,7 +11875,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--01F5E95D71544D428E1B9004B05D0298-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--01F5E95D71544D428E1B9004B05D0298-->  <NAME><![CDATA[Payment Method]]></NAME>
 <!--01F5E95D71544D428E1B9004B05D0298-->  <DESCRIPTION><![CDATA[Shows all payment methods related to the given financial account.]]></DESCRIPTION>
-<!--01F5E95D71544D428E1B9004B05D0298-->  <HELP><![CDATA[Shows all payment methods related to the given financial account and the configuration related.]]></HELP>
+<!--01F5E95D71544D428E1B9004B05D0298-->  <HELP><![CDATA[Shows all payment methods related to the financial account as well as their configuration in terms of payment in/out management and accounting.]]></HELP>
 <!--01F5E95D71544D428E1B9004B05D0298-->  <AD_TABLE_ID><![CDATA[AC389EBD8A774AAE8223A77F692983D8]]></AD_TABLE_ID>
 <!--01F5E95D71544D428E1B9004B05D0298-->  <AD_WINDOW_ID><![CDATA[94EAA455D2644E04AB25D93BE5157B6D]]></AD_WINDOW_ID>
 <!--01F5E95D71544D428E1B9004B05D0298-->  <SEQNO><![CDATA[29]]></SEQNO>
@@ -12666,7 +12666,7 @@ The corresponding tables have then the following setting:
 <!--4DE17FC05C3843C4959166BB67967486-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--4DE17FC05C3843C4959166BB67967486-->  <NAME><![CDATA[Open/Close Period Control]]></NAME>
 <!--4DE17FC05C3843C4959166BB67967486-->  <DESCRIPTION><![CDATA[It allows to open or close periods for the allowed organizations]]></DESCRIPTION>
-<!--4DE17FC05C3843C4959166BB67967486-->  <HELP><![CDATA[Accounting periods can be manually open or closed as required for a given document category or for all of them.]]></HELP>
+<!--4DE17FC05C3843C4959166BB67967486-->  <HELP><![CDATA[Accounting periods can be opened, closed or permanently closed.]]></HELP>
 <!--4DE17FC05C3843C4959166BB67967486-->  <AD_TABLE_ID><![CDATA[84B117B791D9407187EB929BB2B3DD19]]></AD_TABLE_ID>
 <!--4DE17FC05C3843C4959166BB67967486-->  <AD_WINDOW_ID><![CDATA[E56E701CCBA14B8BA480CBDE37C50D7A]]></AD_WINDOW_ID>
 <!--4DE17FC05C3843C4959166BB67967486-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -13303,7 +13303,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--8391062D5C6A47EA94A83A304AD720BE-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--8391062D5C6A47EA94A83A304AD720BE-->  <NAME><![CDATA[Accounting Configuration]]></NAME>
 <!--8391062D5C6A47EA94A83A304AD720BE-->  <DESCRIPTION><![CDATA[Relation of accounts used for the given financial account]]></DESCRIPTION>
-<!--8391062D5C6A47EA94A83A304AD720BE-->  <HELP><![CDATA[Relation of accounts used for the given financial account]]></HELP>
+<!--8391062D5C6A47EA94A83A304AD720BE-->  <HELP><![CDATA[The accounting configuration tab is used to define the ledger accounts to use while accounting bank transactions such as bank fees as well as payment transactions such as Receipts and Deposit, Payments and Widhdrawals and Reconciliations.]]></HELP>
 <!--8391062D5C6A47EA94A83A304AD720BE-->  <AD_TABLE_ID><![CDATA[6F98C7AB59D3410CB828DB25D638DE2C]]></AD_TABLE_ID>
 <!--8391062D5C6A47EA94A83A304AD720BE-->  <AD_WINDOW_ID><![CDATA[94EAA455D2644E04AB25D93BE5157B6D]]></AD_WINDOW_ID>
 <!--8391062D5C6A47EA94A83A304AD720BE-->  <SEQNO><![CDATA[27]]></SEQNO>
@@ -14931,7 +14931,7 @@ AND @MaterialMgmtShipmentInOut.businessPartner@ = e.orderLine.salesOrder.busines
 <!--FF808181309036230130905FCB450044-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--FF808181309036230130905FCB450044-->  <NAME><![CDATA[Exchange rates]]></NAME>
 <!--FF808181309036230130905FCB450044-->  <DESCRIPTION><![CDATA[In this tab the user can define another currency conversion rate for this document different than Openbravo systema exchange rate.]]></DESCRIPTION>
-<!--FF808181309036230130905FCB450044-->  <HELP><![CDATA[In this tab the user can define another currency conversion rate for this document different than Openbravo systema exchange rate.]]></HELP>
+<!--FF808181309036230130905FCB450044-->  <HELP><![CDATA[This tab allows to define a currency conversion rate to be used while posting the financial account transaction. ]]></HELP>
 <!--FF808181309036230130905FCB450044-->  <AD_TABLE_ID><![CDATA[FF808181308EA42301308FB5F7BC0049]]></AD_TABLE_ID>
 <!--FF808181309036230130905FCB450044-->  <AD_WINDOW_ID><![CDATA[94EAA455D2644E04AB25D93BE5157B6D]]></AD_WINDOW_ID>
 <!--FF808181309036230130905FCB450044-->  <SEQNO><![CDATA[25]]></SEQNO>
