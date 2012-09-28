@@ -36,9 +36,11 @@ import org.openbravo.model.ad.access.OrderLineTax;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.invoice.InvoiceLine;
+import org.openbravo.model.common.invoice.InvoiceLineOffer;
 import org.openbravo.model.common.invoice.InvoiceTax;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
+import org.openbravo.model.common.order.OrderLineOffer;
 import org.openbravo.model.financialmgmt.payment.FIN_OrigPaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
@@ -290,6 +292,16 @@ public class OrderGroupingProcessor {
     invoiceLine.setGoodsShipmentLine(getShipmentLine(orderLine));
 
     orderLine.setInvoicedQuantity(orderLine.getOrderedQuantity());
+
+    // Promotions. Loading all together as there shoudn't be many promotions per line
+    List<OrderLineOffer> promotions = orderLine.getOrderLineOfferList();
+    for (OrderLineOffer orderLinePromotion : promotions) {
+      InvoiceLineOffer promotion = OBProvider.getInstance().get(InvoiceLineOffer.class);
+      copyObject(orderLinePromotion, promotion);
+
+      promotion.setInvoiceLine(invoiceLine);
+      invoiceLine.getInvoiceLineOfferList().add(promotion);
+    }
 
     return invoiceLine;
   }
