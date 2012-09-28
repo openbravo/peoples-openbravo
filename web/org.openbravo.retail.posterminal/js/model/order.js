@@ -192,7 +192,7 @@
         var price = line.get('price'),
             gross = line.get('gross'),
             totalDiscount = 0,
-            grossListPrice, grossUnitPrice, discountPercentage;
+            grossListPrice, grossUnitPrice, discountPercentage, base;
 
         // Calculate inline discount: discount applied before promotions
         if (line.get('priceList') !== price) {
@@ -210,9 +210,13 @@
         });
 
         // Calculate prices after promotions
+        base = line.get('price');
         _.forEach(line.get('promotions') || [], function(discount) {
+          discount.basePrice = base;
           totalDiscount = OB.DEC.add(totalDiscount, discount.actualAmt || discount.amt);
+          base = OB.DEC.sub(base, totalDiscount);
         }, this);
+
         gross = OB.DEC.sub(gross, totalDiscount);
         price = OB.DEC.div(gross, line.get('qty'));
 
@@ -477,8 +481,8 @@
       disc.name = discount.name || rule.get('printName') || rule.get('name');
       disc.ruleId = rule.id;
       disc.amt = discount.amt;
-      disc.actualAmt=discount.actualAmt;
-      
+      disc.actualAmt = discount.actualAmt;
+
       disc.hidden = discount.actualAmt && !disc.amt;
 
       for (i = 0; i < promotions.length; i++) {
