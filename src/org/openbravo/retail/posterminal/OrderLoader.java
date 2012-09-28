@@ -55,6 +55,7 @@ import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.invoice.InvoiceLine;
+import org.openbravo.model.common.invoice.InvoiceLineOffer;
 import org.openbravo.model.common.invoice.InvoiceTax;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
@@ -280,6 +281,7 @@ public class OrderLoader {
 
   protected void createInvoiceLines(Invoice invoice, Order order, JSONObject jsonorder,
       JSONArray orderlines, ArrayList<OrderLine> lineReferences) throws JSONException {
+    Entity promotionLineEntity = ModelProvider.getInstance().getEntity(OrderLineOffer.class);
 
     for (int i = 0; i < orderlines.length(); i++) {
       InvoiceLine line = OBProvider.getInstance().get(InvoiceLine.class);
@@ -305,8 +307,21 @@ public class OrderLoader {
       tax.setInvoiceLine(line);
       line.getInvoiceLineTaxList().add(tax);
       invoice.getInvoiceLineTaxList().add(tax);
-    }
 
+      // Discounts & Promotions
+      if (orderlines.getJSONObject(i).has("promotions")
+          && orderlines.getJSONObject(i).get("promotions") != null) {
+        JSONArray jsonPromotions = orderlines.getJSONObject(i).getJSONArray("promotions");
+        for (int p = 0; p < jsonPromotions.length(); p++) {
+          JSONObject jsonPromotion = jsonPromotions.getJSONObject(p);
+          InvoiceLineOffer promotion = OBProvider.getInstance().get(InvoiceLineOffer.class);
+          fillBobFromJSON(promotionLineEntity, promotion, jsonPromotion);
+          promotion.setLineNo((long) ((p + 1) * 10));
+          promotion.setInvoiceLine(line);
+          line.getInvoiceLineOfferList().add(promotion);
+        }
+      }
+    }
   }
 
   protected void createInvoice(Invoice invoice, Order order, JSONObject jsonorder)
