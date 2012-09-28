@@ -307,7 +307,7 @@ isc.OBViewGrid.addProperties({
       });
       this.contextMenu.show = function () {
         var me = this;
-        // If not in the header tab, and no parent is selected, do now show the context menu
+        // If not in the header tab, and no parent is selected, do not show the context menu
         // See issue https://issues.openbravo.com/view.php?id=21787
         if (!grid.view.hasValidState()) {
           return;
