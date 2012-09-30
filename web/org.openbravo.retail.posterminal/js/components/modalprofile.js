@@ -156,7 +156,6 @@ enyo.kind({
       return;
     }
     this.isActive = false;
-
     var newLanguageId = this.owner.owner.$.bodyContent.$.langList.getValue(),
         newRoleId = this.owner.owner.$.bodyContent.$.roleList.getValue(),
         isDefault = this.owner.owner.$.bodyContent.$.defaultBox.checked,
@@ -167,6 +166,7 @@ enyo.kind({
         'default': isDefault,
         'defaultRoleProperty': 'oBPOSDefaultPOSRole'
         };
+    window.localStorage.setItem('POSlanguageId', newLanguageId);
     $.ajax({
       url: actionURL,
       type: 'POST',

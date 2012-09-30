@@ -27,6 +27,7 @@ import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.client.kernel.BaseTemplateComponent;
 import org.openbravo.client.kernel.KernelConstants;
 import org.openbravo.client.kernel.Template;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 
 public class LabelsComponent extends BaseTemplateComponent {
@@ -39,10 +40,15 @@ public class LabelsComponent extends BaseTemplateComponent {
   }
 
   public String getLabelsObj() {
-    String moduleIds = POSUtils.getRetailDependantModuleIds();
     StringBuffer sb = new StringBuffer();
+    sb.append(getLabels(null));
+    return sb.toString();
 
+  }
+
+  public static JSONObject getLabels(String languageId) {
     try {
+      String moduleIds = POSUtils.getRetailDependantModuleIds();
       JSONObject labels = new JSONObject();
       String hqlLabel = "select message.searchKey, message.messageText "
           + "from ADMessage message " + "where module.id in " + moduleIds;
@@ -51,12 +57,21 @@ public class LabelsComponent extends BaseTemplateComponent {
         final Object[] qryLabelObjectItem = (Object[]) qryLabelObject;
         labels.put(qryLabelObjectItem[0].toString(), qryLabelObjectItem[1].toString());
       }
-      sb.append(labels.toString());
+
+      String langId = languageId != null ? languageId : OBContext.getOBContext().getLanguage()
+          .getId();
+      String hqlTrlLabels = "select trl.message.searchKey, trl.messageText from ADMessageTrl trl where trl.message.module.id in "
+          + moduleIds + " and trl.language.id='" + langId + "'";
+      Query qryTrlLabels = OBDal.getInstance().getSession().createQuery(hqlTrlLabels);
+      for (Object qryTrlObj : qryTrlLabels.list()) {
+        final Object[] qryTrlObject = (Object[]) qryTrlObj;
+        labels.put(qryTrlObject[0].toString(), qryTrlObject[1].toString());
+      }
+      return labels;
     } catch (Exception e) {
       log.error("There was an exception while generating the Web POS labels", e);
+      return new JSONObject();
     }
-    return sb.toString();
-
   }
 
   public String getFormat() {

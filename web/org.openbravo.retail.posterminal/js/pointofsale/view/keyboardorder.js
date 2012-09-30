@@ -111,7 +111,7 @@ enyo.kind({
         _.each(dataProducts.models, function(currentProd) {
           if (currentProd.get('price') === undefined) {
             var price = new OB.Model.ProductPrice({
-              'listPrice': 0
+              'standardPrice': 0
             });
             dataProducts.get(currentProd.get('id')).set('price', price);
             OB.UTIL.showWarning("No price found for product " + currentProd.get('_identifier'));
@@ -121,7 +121,7 @@ enyo.kind({
         OB.UTIL.showWarning("OBDAL No prices found for products");
         _.each(dataProducts.models, function(currentProd) {
           var price = new OB.Model.ProductPrice({
-            'listPrice': 0
+            'standardPrice': 0
           });
           currentProd.set('price', price);
         });
@@ -151,9 +151,9 @@ enyo.kind({
     OB.Dal.find(OB.Model.Product, criteria, successCallbackProducts, errorCallback);      
   },
   
-  addProductToReceipt: function (keyboard, product) {
-    keyboard.receipt.addProduct(product);
-    keyboard.receipt.trigger('scan');      
+  addProductToReceipt: function (receipt, product) {
+    receipt.addProduct(product);
+    receipt.trigger('scan');      
   }
 });
 

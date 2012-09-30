@@ -32,7 +32,7 @@
         this.set('priceList', attributes.priceList);
         this.set('gross', attributes.gross);
         if (attributes.product && attributes.product.price) {
-          this.set('grossListPrice', attributes.product.price.listPrice);
+          this.set('grossListPrice', attributes.product.price.standardPrice);
         }
       }
     },
@@ -411,6 +411,7 @@
           this.deleteLine(line);
         }
         this.adjustPayment();
+        this.save();
       }
     },
 
@@ -545,8 +546,8 @@
         product: p,
         uOM: p.get('uOM'),
         qty: OB.DEC.number(units),
-        price: OB.DEC.number(p.get('price').get('listPrice')),
-        priceList: OB.DEC.number(p.get('price').get('listPrice'))
+        price: OB.DEC.number(p.get('price').get('standardPrice')),
+        priceList: OB.DEC.number(p.get('price').get('standardPrice'))
       });
       newline.calculateGross();
 

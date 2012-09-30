@@ -24,7 +24,6 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
-import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.process.FIN_AddPayment;
 import org.openbravo.advpaymentmngt.process.FIN_PaymentProcess;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
@@ -39,16 +38,13 @@ import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.TriggerHandler;
-import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.ad_forms.AcctServer;
 import org.openbravo.erpCommon.utility.OBError;
-import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.InvoiceLineTax;
 import org.openbravo.model.ad.access.OrderLineTax;
-import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.businesspartner.Location;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Locator;
@@ -89,7 +85,6 @@ public class OrderLoader {
   private static final Logger log = Logger.getLogger(OrderLoader.class);
 
   private static final BigDecimal NEGATIVE_ONE = new BigDecimal(-1);
-  private static final BigDecimal ZERO = new BigDecimal(0);
 
   public JSONObject saveOrder(JSONArray jsonarray) throws JSONException {
     boolean error = false;
@@ -155,13 +150,11 @@ public class OrderLoader {
     Order order = null;
     ShipmentInOut shipment = null;
     Invoice invoice = null;
-    Client client = null;
     TriggerHandler.getInstance().disable();
     try {
       t1 = System.currentTimeMillis();
       boolean createInvoice = (jsonorder.has("generateInvoice") && jsonorder
           .getBoolean("generateInvoice"));
-      client = OBDal.getInstance().get(Client.class, jsonorder.getString("client"));
       // Order header
       order = OBProvider.getInstance().get(Order.class);
       long t111 = System.currentTimeMillis();
@@ -215,7 +208,7 @@ public class OrderLoader {
     }
 
     // Stock manipulation
-    handleStock(shipment, client);
+    handleStock(shipment);
 
     log.info("Initial flush: " + (t1 - t0) + "; Generate bobs:" + (t11 - t1) + "; Save bobs:"
         + (t2 - t11) + "; First flush:" + (t3 - t2) + "; Second flush: " + (t4 - t3)
@@ -564,10 +557,7 @@ public class OrderLoader {
     }
   }
 
-  protected void handleStock(ShipmentInOut shipment, Client client) {
-    HashMap<Locator, BigDecimal> usedBins = null;
-    String prevProduct = null;
-    BigDecimal totalUnitOfSameProd = new BigDecimal(0);
+  protected void handleStock(ShipmentInOut shipment) {
     for (ShipmentInOutLine line : shipment.getMaterialMgmtShipmentInOutLineList()) {
       MaterialTransaction transaction = OBProvider.getInstance().get(MaterialTransaction.class);
       transaction.setOrganization(line.getOrganization());
@@ -582,49 +572,6 @@ public class OrderLoader {
       transaction.setGoodsShipmentLine(line);
 
       OBDal.getInstance().save(transaction);
-
-      if (client.getClientInformationList().size() == 1) {
-        if (!client.getClientInformationList().get(0).isAllowNegativeStock()) {
-
-          if (prevProduct == null || prevProduct != line.getProduct().getId()) {
-            usedBins = new HashMap<Locator, BigDecimal>();
-            totalUnitOfSameProd = new BigDecimal(0);
-          }
-
-          totalUnitOfSameProd = totalUnitOfSameProd.add(line.getMovementQuantity());
-
-          final OBCriteria<StorageDetail> obCriteria = OBDal.getInstance().createCriteria(
-              StorageDetail.class);
-          obCriteria.add(Restrictions.eq("storageBin.id", line.getStorageBin().getId()));
-          obCriteria.add(Restrictions.eq("product.id", line.getProduct().getId()));
-
-          final List<StorageDetail> itemsInBin = obCriteria.list();
-          if (itemsInBin != null) {
-            if (itemsInBin.size() == 1) {
-              BigDecimal newQtyOnHand = new BigDecimal(0);
-
-              if (usedBins.containsKey(line.getStorageBin())) {
-                newQtyOnHand = usedBins.get(line.getStorageBin()).subtract(
-                    line.getMovementQuantity());
-              } else {
-                newQtyOnHand = itemsInBin.get(0).getQuantityOnHand()
-                    .subtract(line.getMovementQuantity());
-              }
-
-              usedBins.put(line.getStorageBin(), newQtyOnHand);
-
-              if (usedBins.get(line.getStorageBin()).compareTo(ZERO) == -1) {
-                String[] messageParams = { client.getIdentifier(),
-                    line.getStorageBin().getWarehouse().getIdentifier(),
-                    totalUnitOfSameProd.toString(), line.getProduct().getIdentifier() };
-                throw new OBException(OBMessageUtils.getI18NMessage("OBPOS_notEnoughStock",
-                    messageParams));
-              }
-            }
-          }
-        }
-      }
-      prevProduct = line.getProduct().getId();
     }
   }
 
