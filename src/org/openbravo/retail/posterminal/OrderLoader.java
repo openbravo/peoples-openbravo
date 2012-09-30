@@ -498,7 +498,8 @@ public class OrderLoader {
       order.getOrderLineTaxList().add(tax);
 
       // Discounts & Promotions
-      if (jsonOrderLine.has("promotions") && jsonOrderLine.get("promotions") != null) {
+      if (jsonOrderLine.has("promotions") && !jsonOrderLine.isNull("promotions")
+          && !jsonOrderLine.getString("promotions").equals("null")) {
         JSONArray jsonPromotions = jsonOrderLine.getJSONArray("promotions");
         for (int p = 0; p < jsonPromotions.length(); p++) {
           JSONObject jsonPromotion = jsonPromotions.getJSONObject(p);
