@@ -48,6 +48,7 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.FieldProvider;
+import org.openbravo.erpCommon.ad_forms.AcctServer;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
@@ -209,6 +210,19 @@ public class Reconciliation extends HttpSecureAppServlet {
           msg.setType("Error");
           msg.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
           msg.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), strMessage));
+          vars.setMessage(strTabId, msg);
+          msg = null;
+          printPageClosePopUpAndRefreshParent(response, vars);
+          return;
+        }
+
+        if (FIN_Utility.isPeriodOpen(reconciliation.getClient().getId(),
+            AcctServer.DOCTYPE_Reconciliation, reconciliation.getOrganization().getId(),
+            strStatementDate)) {
+          msg.setType("Error");
+          msg.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
+          msg.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(),
+              "@PeriodNotAvailable@"));
           vars.setMessage(strTabId, msg);
           msg = null;
           printPageClosePopUpAndRefreshParent(response, vars);
