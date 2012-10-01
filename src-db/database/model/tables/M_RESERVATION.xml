@@ -73,6 +73,14 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="RESERVEDQTY" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="PENDINGQTY" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="M_ATTRIBUTESETINSTANCE" name="M_RESERVATION_ATTRSETINSTANCE">
         <reference local="M_ATTRIBUTESETINSTANCE_ID" foreign="M_ATTRIBUTESETINSTANCE_ID"/>
       </foreign-key>
