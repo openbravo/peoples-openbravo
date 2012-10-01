@@ -150,7 +150,10 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
       if (rule.async) {
         // waiting listener to trigger completed to move to next action
         ruleListener = new Backbone.Model();
-        ruleListener.on('completed', function() {
+        ruleListener.on('completed', function(obj) {
+          if (obj && obj.alerts) {
+            OB.UTIL.showAlert.display(obj.alerts);
+          }
           console.log('async action completed');
           this.nextAction(evt);
         }, this);
