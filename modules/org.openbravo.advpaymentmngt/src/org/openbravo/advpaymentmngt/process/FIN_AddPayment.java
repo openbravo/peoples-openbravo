@@ -46,6 +46,7 @@ import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBDao;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
@@ -55,6 +56,7 @@ import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.common.enterprise.OrganizationInformation;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.financialmgmt.gl.GLItem;
@@ -730,10 +732,28 @@ public class FIN_AddPayment {
           FieldProviderFactory.setField(data[i], "orderPaymentScheduleId", "");
         }
         if (FIN_PaymentScheduleDetails[i].getInvoicePaymentSchedule() != null) {
-          FieldProviderFactory.setField(data[i], "invoiceNr", FIN_PaymentScheduleDetails[i]
-              .getInvoicePaymentSchedule().getInvoice().getDocumentNo());
-          FieldProviderFactory.setField(data[i], "invoiceNrTrunc", FIN_PaymentScheduleDetails[i]
-              .getInvoicePaymentSchedule().getInvoice().getDocumentNo());
+          FIN_PaymentSchedule psd = FIN_PaymentScheduleDetails[i].getInvoicePaymentSchedule();
+          OrganizationInformation orgInfo = OBDao.getActiveOBObjectList(psd.getOrganization(),
+              Organization.PROPERTY_ORGANIZATIONINFORMATIONLIST) != null ? (OrganizationInformation) OBDao
+              .getActiveOBObjectList(psd.getOrganization(),
+                  Organization.PROPERTY_ORGANIZATIONINFORMATIONLIST).get(0) : null;
+          if (!psd.getInvoice().isSalesTransaction() && orgInfo != null
+              && orgInfo.getAPRMPaymentDescription().equals("Supplier Reference")) {
+            // When the Organization of the Invoice sets that the Invoice Document No. is the
+            // supplier's
+            FieldProviderFactory.setField(data[i], "invoiceNr", FIN_PaymentScheduleDetails[i]
+                .getInvoicePaymentSchedule().getInvoice().getOrderReference());
+            FieldProviderFactory.setField(data[i], "invoiceNrTrunc", FIN_PaymentScheduleDetails[i]
+                .getInvoicePaymentSchedule().getInvoice().getOrderReference());
+          } else {
+            // When the Organization of the Invoice sets that the Invoice Document No. is the
+            // default
+            // Invoice Number
+            FieldProviderFactory.setField(data[i], "invoiceNr", FIN_PaymentScheduleDetails[i]
+                .getInvoicePaymentSchedule().getInvoice().getDocumentNo());
+            FieldProviderFactory.setField(data[i], "invoiceNrTrunc", FIN_PaymentScheduleDetails[i]
+                .getInvoicePaymentSchedule().getInvoice().getDocumentNo());
+          }
           FieldProviderFactory.setField(data[i], "invoicePaymentScheduleId",
               FIN_PaymentScheduleDetails[i].getInvoicePaymentSchedule().getId());
         } else {
