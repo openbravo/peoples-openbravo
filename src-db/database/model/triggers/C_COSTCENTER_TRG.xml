@@ -84,7 +84,7 @@ BEGIN
     AND AD_TREE_ID=v_Tree_ID;
 
     IF(v_count>0) THEN
-      RAISE_APPLICATION_ERROR(-20000, '@ElementHasChildren@');
+      RAISE_APPLICATION_ERROR(-20000, '@CostcenterHasChildren@');
     END IF;
 
     DELETE
