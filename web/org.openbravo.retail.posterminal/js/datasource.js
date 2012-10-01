@@ -280,7 +280,7 @@
         OB.Dal.initCache(me.request.model, data, function() {
           me.trigger('ready');
         }, function() {
-          window.console.error(arguments);
+          window.console.error(arguments,me.request.model.prototype);
         });
       } else {
         me.trigger('ready');
