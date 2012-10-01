@@ -22,7 +22,6 @@ OB.Model.Executor = Backbone.Model.extend({
     this.set('actionQueue', new Backbone.Collection());
 
     eventQueue.on('add', function() {
-
       if (!this.get('executing')) {
         // Adding an event to an empty queue, firing it
         this.nextEvent();
@@ -45,18 +44,27 @@ OB.Model.Executor = Backbone.Model.extend({
           console.log('remove actions')
         }
         evtQueue.remove(evt);
-        console.log('remove evt')
       }, this);
     }
-    // TODO: replace if exists
+
+    event.on('finish', function() {
+      console.log('event execution time', (new Date().getTime()) - event.get('start'));
+    });
+
     evtQueue.add(event);
   },
 
   nextEvent: function() {
-    var evt = this.get('eventQueue').shift();
+    var evt = this.get('eventQueue').shift(),
+        previousEvt = this.get('currentEvent');
+    if (previousEvt) {
+      previousEvt.trigger('finish');
+    }
     if (evt) {
       this.set('executing', true);
       this.set('currentEvent', evt);
+      console.log('start');
+      evt.set('start', new Date().getTime());
       evt.on('actionsCreated', function() {
         this.preAction(evt);
         this.nextAction(evt);
@@ -102,7 +110,7 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
         productId = line.get('product').id,
         actionQueue = this.get('actionQueue'),
         me = this,
-        criteria;
+        criteria, t0 = new Date().getTime();
 
     if (!receipt.shouldApplyPromotions()) {
       // Cannot apply promotions, leave actions empty
@@ -123,6 +131,7 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
         });
       })
       evt.trigger('actionsCreated');
+      console.log('time took by query to pomotions', new Date().getTime() - t0)
     }, function() {});
   },
 
@@ -164,13 +173,12 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
   preAction: function(evt) {
     var line = evt.get('line');
 
-    if (!line.stopApplyingPromotions()) {
-      line.set({
-        promotions: null,
-        discountedLinePrice: null,
-        promotionCandidates: null
-      });
-    }
+    line.set({
+      promotions: null,
+      discountedLinePrice: null,
+      promotionCandidates: null
+    });
+
   },
 
   postAction: function(evt) {
