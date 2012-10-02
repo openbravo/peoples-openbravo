@@ -54,7 +54,8 @@ enyo.kind({
         }
         this.createComponent({
           components: [{
-            content: '.',
+            content: '&nbsp;',
+            allowHtml: true,
             attributes: {
               style: 'float: left; width: 20%;'
             }
