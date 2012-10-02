@@ -307,8 +307,20 @@ public class OrderLoader {
         JSONArray jsonPromotions = orderlines.getJSONObject(i).getJSONArray("promotions");
         for (int p = 0; p < jsonPromotions.length(); p++) {
           JSONObject jsonPromotion = jsonPromotions.getJSONObject(p);
+          boolean hasActualAmt = jsonPromotion.has("actualAmt");
+          if (hasActualAmt && jsonPromotion.getDouble("actualAmt") == 0) {
+            continue;
+          }
+
           InvoiceLineOffer promotion = OBProvider.getInstance().get(InvoiceLineOffer.class);
           fillBobFromJSON(promotionLineEntity, promotion, jsonPromotion);
+
+          if (hasActualAmt) {
+            promotion
+                .setPriceAdjustmentAmt(BigDecimal.valueOf(jsonPromotion.getDouble("actualAmt")));
+          } else {
+            promotion.setPriceAdjustmentAmt(BigDecimal.valueOf(jsonPromotion.getDouble("amt")));
+          }
           promotion.setLineNo((long) ((p + 1) * 10));
           promotion.setInvoiceLine(line);
           line.getInvoiceLineOfferList().add(promotion);
@@ -503,8 +515,20 @@ public class OrderLoader {
         JSONArray jsonPromotions = jsonOrderLine.getJSONArray("promotions");
         for (int p = 0; p < jsonPromotions.length(); p++) {
           JSONObject jsonPromotion = jsonPromotions.getJSONObject(p);
+          boolean hasActualAmt = jsonPromotion.has("actualAmt");
+          if (hasActualAmt && jsonPromotion.getDouble("actualAmt") == 0) {
+            continue;
+          }
+
           OrderLineOffer promotion = OBProvider.getInstance().get(OrderLineOffer.class);
           fillBobFromJSON(promotionLineEntity, promotion, jsonPromotion);
+
+          if (hasActualAmt) {
+            promotion
+                .setPriceAdjustmentAmt(BigDecimal.valueOf(jsonPromotion.getDouble("actualAmt")));
+          } else {
+            promotion.setPriceAdjustmentAmt(BigDecimal.valueOf(jsonPromotion.getDouble("amt")));
+          }
           promotion.setLineNo((long) ((p + 1) * 10));
           promotion.setSalesOrderLine(orderline);
           orderline.getOrderLineOfferList().add(promotion);
@@ -835,8 +859,6 @@ public class OrderLoader {
     // Mappings for promotions
     else if (key.equals("ruleId")) {
       return "priceAdjustment";
-    } else if (key.equals("amt")) {
-      return "priceAdjustmentAmt";
     } else if (key.equals("basePrice")) {
       return "adjustedPrice";
     }
