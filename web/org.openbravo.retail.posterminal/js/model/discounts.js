@@ -98,3 +98,26 @@ OB.Model.Discounts = {
  	 +" )))"
 };
 
+OB.Model.Discounts.registerRule('ADJUSTMENT', {
+  async: false,
+  implementation: function(discountRule, receipt, line) {
+    var linePrice, discountedLinePrice, qty = line.get('qty'),
+        minQty = discountRule.get('minQuantity'),
+        maxQty = discountRule.get('maxQuantity');
+
+    if ((minQty && qty < minQty) || (maxQty && qty > maxQty)) {
+      return;
+    }
+
+    linePrice = line.get('discountedLinePrice') || line.get('price');
+    if (discountRule.get('fixedPrice') || discountRule.get('fixedPrice') === 0) {
+      discountedLinePrice = discountRule.get('fixedPrice');
+    } else {
+      discountedLinePrice = (linePrice - discountRule.get('discountAmount')) * (1 - discountRule.get('discount') / 100);
+    }
+    receipt.addPromotion(line, discountRule, {
+      amt: (linePrice - discountedLinePrice) * qty
+    });
+    line.set('discountedLinePrice', discountedLinePrice);
+  }
+});
