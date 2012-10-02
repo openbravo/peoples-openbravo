@@ -122,23 +122,14 @@
 					<text><![CDATA[REFERENCE]]></text>
 				</staticText>
 				<staticText>
-					<reportElement key="staticText-2" style="Detail_Header" x="295" y="3" width="60" height="17" forecolor="#FFFFFF" backcolor="#666666"/>
+					<reportElement key="staticText-2" style="Detail_Header" x="295" y="3" width="80" height="17" forecolor="#FFFFFF" backcolor="#666666"/>
 					<textElement textAlignment="Right" verticalAlignment="Top">
 						<font isBold="false" pdfFontName="Helvetica"/>
 					</textElement>
 					<text><![CDATA[PRICE]]></text>
 				</staticText>
 				<staticText>
-					<reportElement key="staticText-3" style="Detail_Header" x="355" y="3" width="60" height="17" forecolor="#FFFFFF" backcolor="#666666"/>
-					<textElement textAlignment="Right" verticalAlignment="Top">
-						<font isBold="false" pdfFontName="Helvetica"/>
-					</textElement>
-					<text><![CDATA[BASE]]></text>
-				</staticText>
-				<staticText>
-					<reportElement key="staticText-4" style="Detail_Header" x="415" y="3" width="60" height="17" forecolor="#FFFFFF" backcolor="#666666">
-						<printWhenExpression><![CDATA[$P{ISTAXINCLUDED}.equals("N")]]></printWhenExpression>
-					</reportElement>
+					<reportElement key="staticText-4" style="Detail_Header" x="375" y="3" width="100" height="17" forecolor="#FFFFFF" backcolor="#666666"/>
 					<textElement textAlignment="Right" verticalAlignment="Top">
 						<font isBold="false" pdfFontName="Helvetica"/>
 					</textElement>
@@ -154,10 +145,7 @@
 					<reportElement key="line-16" x="235" y="3" width="1" height="17" forecolor="#FFFFFF"/>
 				</line>
 				<line>
-					<reportElement key="line-17" x="415" y="3" width="1" height="17" forecolor="#FFFFFF"/>
-				</line>
-				<line>
-					<reportElement key="line-18" x="355" y="3" width="1" height="17" forecolor="#FFFFFF"/>
+					<reportElement key="line-17" x="375" y="3" width="1" height="17" forecolor="#FFFFFF"/>
 				</line>
 				<line>
 					<reportElement key="line-19" x="200" y="3" width="1" height="17" forecolor="#FFFFFF"/>
@@ -237,7 +225,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{PRODUCT_NAME}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField" style="default" x="295" y="0" width="60" height="16" forecolor="#000000"/>
+				<reportElement key="textField" style="default" x="295" y="0" width="80" height="16" forecolor="#000000"/>
 				<box leftPadding="2" rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -250,20 +238,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[($F{PRICEACTUAL}!=null)?$P{NUMBERFORMAT}.format($F{PRICEACTUAL}).toString():new String(" ")]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField" style="default" x="355" y="0" width="60" height="16" forecolor="#000000"/>
-				<box leftPadding="2" rightPadding="2">
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="false"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{BASE}!=null)?$P{NUMBERFORMAT}.format($F{BASE}).toString() :new String(" ")]]></textFieldExpression>
-			</textField>
-			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField" style="default" x="415" y="0" width="60" height="16" forecolor="#000000"/>
+				<reportElement key="textField" style="default" x="375" y="0" width="100" height="16" forecolor="#000000"/>
 				<box leftPadding="2" rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -288,10 +263,7 @@
 				<reportElement key="line-5" stretchType="RelativeToBandHeight" x="295" y="0" width="1" height="16"/>
 			</line>
 			<line>
-				<reportElement key="line-6" stretchType="RelativeToBandHeight" x="355" y="0" width="1" height="16"/>
-			</line>
-			<line>
-				<reportElement key="line-7" stretchType="RelativeToBandHeight" x="415" y="0" width="1" height="16"/>
+				<reportElement key="line-7" stretchType="RelativeToBandHeight" x="375" y="0" width="1" height="16"/>
 			</line>
 			<line>
 				<reportElement key="line-8" stretchType="RelativeToBandHeight" x="475" y="0" width="1" height="16"/>
