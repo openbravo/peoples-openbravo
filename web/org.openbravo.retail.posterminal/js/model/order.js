@@ -226,7 +226,7 @@
         base = line.get('price');
         _.forEach(line.get('promotions') || [], function(discount) {
           discount.basePrice = base;
-          totalDiscount = OB.DEC.add(totalDiscount, discount.actualAmt || discount.amt);
+          totalDiscount = OB.DEC.add(totalDiscount, discount.actualAmt || discount.amt || 0);
           base = OB.DEC.sub(base, totalDiscount);
         }, this);
 
@@ -256,7 +256,7 @@
         var grossLine = e.getGross();
         if (e.get('promotions')) {
           grossLine = e.get('promotions').reduce(function(memo, e) {
-            return OB.DEC.sub(memo, e.actualAmt || e.amt);
+            return OB.DEC.sub(memo, e.actualAmt || e.amt || 0);
           }, grossLine);
         }
         return OB.DEC.add(memo, grossLine);
@@ -497,7 +497,7 @@
       disc.amt = discount.amt;
       disc.actualAmt = discount.actualAmt;
 
-      disc.hidden = discount.actualAmt && !disc.amt;
+      disc.hidden = discount.hidden === true || (discount.actualAmt && !disc.amt);
       disc.applyNext = rule.get('applyNext');
 
       for (i = 0; i < promotions.length; i++) {
