@@ -542,10 +542,23 @@
           res.push(promotions[i]);
         }
       }
+
       if (removed) {
         line.set('promotions', res);
         line.trigger('change');
         this.save();
+
+        // Recalculate promotions for all lines affected by this same rule,
+        // because this rule could have prevented other ones to be applied
+        this.get('lines').forEach(function(ln) {
+          if (ln.get('promotionCandidates')) {
+            ln.get('promotionCandidates').forEach(function(candidateRule) {
+              if (candidateRule === ruleId) {
+                OB.Model.Discounts.applyPromotions(this, line);
+              }
+            }, this);
+          }
+        }, this);
       }
     },
 
