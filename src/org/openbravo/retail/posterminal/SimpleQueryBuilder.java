@@ -8,11 +8,14 @@
  */
 package org.openbravo.retail.posterminal;
 
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
+import org.openbravo.service.json.JsonUtils;
 
 /**
  * An HQL Query builder.
@@ -24,12 +27,13 @@ public class SimpleQueryBuilder {
   private String hql;
   private String client;
   private String org;
+  private Date lastUpdated;
 
-  public SimpleQueryBuilder(String hql, String client, String org) {
+  public SimpleQueryBuilder(String hql, String client, String org, Date lastUpdated) {
     this.hql = hql;
     this.client = client;
     this.org = org;
-
+    this.lastUpdated = lastUpdated;
     // :orgCriteria
     // :clientCriteria
     // :activeCriteria
@@ -69,7 +73,8 @@ public class SimpleQueryBuilder {
     }
 
     public String getPart() {
-      OrganizationStructureProvider osp = OBContext.getOBContext().getOrganizationStructureProvider(client);
+      OrganizationStructureProvider osp = OBContext.getOBContext()
+          .getOrganizationStructureProvider(client);
       return getOrgFilter(osp.getNaturalTree(org));
     }
   }
@@ -161,6 +166,7 @@ public class SimpleQueryBuilder {
       return " (" + client.getPart() + " and " + active.getPart() + ") ";
     }
   }
+
   private static class ActiveCriteria implements PartBuilder {
     public String getPart() {
       return " ($$$$active = 'Y') ";
@@ -185,6 +191,26 @@ public class SimpleQueryBuilder {
     }
   }
 
+  private static class IncrementalUpdateCriteria implements PartBuilder {
+    Date lastUpdate;
+    SimpleDateFormat dateFormat = JsonUtils.createDateTimeFormat();
+
+    public IncrementalUpdateCriteria(Date lastUpdate) {
+      this.lastUpdate = lastUpdate;
+    }
+
+    public String getPart() {
+      String part = "";
+      part += " $$$$updated>'"
+          + (lastUpdate == null ? dateFormat.format(new Date(0)) : dateFormat.format(lastUpdate))
+          + "' ";
+      if (lastUpdate == null) {
+        part += "OR (1=1) ";
+      }
+      return part;
+    }
+  }
+
   public String getHQLQuery() {
 
     String newhql = hql;
@@ -196,6 +222,8 @@ public class SimpleQueryBuilder {
     newhql = replaceAll(newhql, "$parentOrgCriteria", new ParentOrganizationCriteria(client, org));
     newhql = replaceAll(newhql, "$childOrgCriteria", new ChildOrganizationCriteria(client, org));
     newhql = replaceAll(newhql, "$activeCriteria", new ActiveCriteria());
+    newhql = replaceAll(newhql, "$incrementalUpdateCriteria", new IncrementalUpdateCriteria(
+        lastUpdated));
 
     newhql = replaceAll(newhql, "$readableCriteria", new ReadableCriteria());
     newhql = replaceAll(newhql, "$readableClientCriteria", new ReadableClientCriteria());

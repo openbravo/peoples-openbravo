@@ -21,7 +21,7 @@
   OB = window.OB || {};
   OB.Model = OB.Model || {};
   OB.Model.Util = {
-    loadModels: function(online, models, data) {
+    loadModels: function(online, models, data, incremental) {
       var somethigToLoad = false;
 
       models._LoadOnline = online;
@@ -44,7 +44,7 @@
               window.console.error('init error', arguments);
             });
           } else {
-            ds = new OB.DS.DataSource(new OB.DS.Request(item, OB.POS.modelterminal.get('terminal').client, OB.POS.modelterminal.get('terminal').organization, OB.POS.modelterminal.get('terminal').id));
+            ds = new OB.DS.DataSource(new OB.DS.Request(item, OB.POS.modelterminal.get('terminal').client, OB.POS.modelterminal.get('terminal').organization, OB.POS.modelterminal.get('terminal').id, incremental));
             somethigToLoad = true;
             models._LoadQueue = models._LoadQueue || {};
             models._LoadQueue[item.prototype.modelName] = false;
@@ -55,7 +55,7 @@
               models._LoadQueue[item.prototype.modelName] = true;
               triggerReady(models);
             });
-            ds.load(item.params);
+            ds.load(item.params, incremental);
           }
         }
       });

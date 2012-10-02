@@ -124,7 +124,7 @@ public class JSONRowConverter {
         return JsonUtils.convertToCorrectXSDFormat(formattedValue);
       } else if (value instanceof java.sql.Time) {
         final String formattedValue = xmlTimeFormat.format(value);
-        return JsonUtils.convertToCorrectXSDFormat(formattedValue);        
+        return JsonUtils.convertToCorrectXSDFormat(formattedValue);
       } else if (value instanceof java.sql.Date) {
         return xmlDateFormat.format(value);
       } else {
@@ -139,8 +139,7 @@ public class JSONRowConverter {
     }
   }
 
-  public static void buildResponse(Writer w, Scroll listdata, String[] aliases)
-      throws IOException {
+  public static void buildResponse(Writer w, Scroll listdata, String[] aliases) throws IOException {
 
     final JSONRowConverter converter = new JSONRowConverter(aliases);
 
@@ -180,6 +179,7 @@ public class JSONRowConverter {
         w.write(JsonConstants.RESPONSE_STATUS);
         w.write("\":");
         w.write(Integer.toString(JsonConstants.RPCREQUEST_STATUS_SUCCESS));
+        w.write(",\"lastUpdated\":" + (new Date()).getTime());
       } else {
         JSONRowConverter.addJSONExceptionFields(w, t);
       }

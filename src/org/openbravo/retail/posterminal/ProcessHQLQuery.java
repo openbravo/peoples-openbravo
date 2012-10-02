@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -45,8 +46,13 @@ public abstract class ProcessHQLQuery implements JSONProcess {
         OBContext.setAdminMode();
       }
 
+      Long lastUpdated = jsonsent.has("lastUpdated")
+          && !jsonsent.get("lastUpdated").equals("undefined") ? jsonsent.getLong("lastUpdated")
+          : null;
+
       SimpleQueryBuilder querybuilder = new SimpleQueryBuilder(getQuery(jsonsent),
-          jsonsent.optString("client"), jsonsent.optString("organization"));
+          jsonsent.optString("client"), jsonsent.optString("organization"),
+          lastUpdated != null ? new Date(lastUpdated) : null);
 
       final Session session = OBDal.getInstance().getSession();
       final Query query = session.createQuery(querybuilder.getHQLQuery());

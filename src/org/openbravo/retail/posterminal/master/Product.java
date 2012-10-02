@@ -27,7 +27,7 @@ public class Product extends ProcessHQLQuery {
     if (productList != null) {
       return "select pli.product.id as id, pli.product.name as _identifier, pli.product.taxCategory.id as taxCategory, "
           + "pli.product.productCategory.id as productCategory, pli.product.obposScale as obposScale, pli.product.uOM.id as uOM, pli.product.uPCEAN as uPCEAN, img.bindaryData as img "
-          + "FROM OBRETCO_Prol_Product pli left outer join pli.product.image img, "
+          + "FROM OBRETCO_Prol_Product as pli left outer join pli.product.image img, "
           + "PricingProductPrice ppp, "
           + "PricingPriceListVersion pplv "
           + "WHERE (pli.obretcoProductlist = '"
@@ -45,7 +45,9 @@ public class Product extends ProcessHQLQuery {
           + ") AND ("
           + "ppp.priceListVersion.id = pplv.id"
           + ") AND ("
-          + "pli.product.id = ppp.product.id" + ") order by pli.product.name";
+          + "pli.product.id = ppp.product.id"
+          + ") AND "
+          + "(pli.product.$incrementalUpdateCriteria) order by pli.product.name";
     } else {
       throw new JSONException("Product list not found");
     }

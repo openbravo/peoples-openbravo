@@ -164,28 +164,85 @@ OB.Model.Terminal = Backbone.Model.extend({
 
   },
 
-  registerWindow: function(window) {
-    var datasources = [],
-        windowClass, windowName = window.route;
-    OB.POS.windows.add(window);
-
-    windowClass = window.windowClass;
-    if(OB.POS.modelterminal.get('connectedToERP')){
-      if (OB.DATA[windowName]) {
-        // old way of defining datasources...
-        datasources = OB.DATA[windowName];
-      } else if (windowClass.prototype && windowClass.prototype.windowmodel && windowClass.prototype.windowmodel.prototype && windowClass.prototype.windowmodel.prototype.models) {
-        datasources = windowClass.prototype.windowmodel.prototype.models;
-      }
-
-      _.extend(datasources, Backbone.Events);
-
+  
+  loadModels: function(windowv, incremental){
+    var windows,i, windowName, windowClass, datasources;
+    var timestamp = 0;
+    if(windowv){
+      windows=[windowv];
+    }else{
+      windows=OB.POS.windowObjs;
     }
-    OB.Model.Util.loadModels(false, datasources);
+    if(incremental && window.localStorage.getItem('lastUpdatedTimestamp')){
+      timestamp = window.localStorage.getItem('lastUpdatedTimestamp');
+    }
+    if(incremental){
+      window.localStorage.setItem('POSLastIncRefresh', new Date().getTime());
+    }else{
+      window.localStorage.setItem('POSLastTotalRefresh', new Date().getTime());
+    }
+    for(i=0;i<windows.length;i++){
+      windowClass = windows[i].windowClass;
+      windowName = windows[i].route
+      if(OB.POS.modelterminal.get('connectedToERP')){
+        if (OB.DATA[windowName]) {
+          // old way of defining datasources...
+          datasources = OB.DATA[windowName];
+        } else if (windowClass.prototype && windowClass.prototype.windowmodel && windowClass.prototype.windowmodel.prototype && windowClass.prototype.windowmodel.prototype.models) {
+          datasources = windowClass.prototype.windowmodel.prototype.models;
+        }
+
+        _.extend(datasources, Backbone.Events);
+
+      }
+      OB.Model.Util.loadModels(false, datasources, null, timestamp);
+    }
+  },
+  
+  
+  registerWindow: function(windowp) {
+    var datasources = [],
+        windowClass, windowName = windowp.route, minTotalRefresh, minIncRefresh,
+        lastTotalRefresh, lastIncRefresh, intervalTotal, intervalInc, now;
+    OB.POS.windows.add(windowp);
+    if(!OB.POS.windowObjs){
+      OB.POS.windowObjs = [];
+    }
+    OB.POS.windowObjs.push(windowp);
+    
+
+    minTotalRefresh = OB.POS.modelterminal.get('terminal').minutestorefreshdatatotal*60*1000;
+    minIncRefresh = OB.POS.modelterminal.get('terminal').minutestorefreshdatainc*60*1000;
+    lastTotalRefresh = window.localStorage.getItem('POSLastTotalRefresh');
+    lastIncRefresh = window.localStorage.getItem('POSLastIncRefresh');
+    if((!minTotalRefresh && !minIncRefresh) ||
+        (!lastTotalRefresh && !lastIncRefresh)){
+      // If no configuration of the masterdata loading has been done, 
+      // or an initial load has not been done, then always do 
+      // a total refresh during the login
+      this.loadModels(windowp, false);
+    }else{
+      now=new Date().getTime();
+      intervalTotal=lastTotalRefresh?(now-lastTotalRefresh):0;
+      intervalInc=lastIncRefresh?(now-lastIncRefresh):0;
+      if(intervalTotal<0){
+        //It's time to do a full refresh
+        this.loadModels(windowp, false);
+      }else if(intervalInc<0){
+        //It's time to do a partial refresh
+        this.loadModels(windowp, true);
+      }else{
+        //A partial refresh is done just in case
+        this.loadModels(windowp, true);
+      }
+    }
 
     this.router.route(windowName, windowName, function() {
       this.renderGenericWindow(windowName);
     });
+
+    
+    
 
     //TODO: load OB.DATA??? It should be done only if needed...
   },
@@ -726,7 +783,8 @@ OB.Model.Terminal = Backbone.Model.extend({
   },
 
   triggerReady: function() {
-    var undef;
+    var undef, loadModelsIncFunc, loadModelsTotalFunc,
+      minTotalRefresh, minIncRefresh;
     if (this.get('payments') && this.get('pricelistversion') && this.get('currency') && this.get('context') && this.get('permissions') && (this.get('documentsequence')!==undef || this.get('documentsequence')===0) && this.get('windowRegistered')!== undef) {
       OB.POS.modelterminal.loggingIn = false;
       if (OB.POS.modelterminal.get('connectedToERP')) {
@@ -736,6 +794,24 @@ OB.Model.Terminal = Backbone.Model.extend({
         }, function() {
           window.console.error(arguments);
         });
+      }
+      minTotalRefresh = OB.POS.modelterminal.get('terminal').minutestorefreshdatatotal*60*1000;
+      minIncRefresh = OB.POS.modelterminal.get('terminal').minutestorefreshdatainc*60*1000;
+      if(minTotalRefresh){
+        loadModelsTotalFunc = function(){
+          console.log('Performing total masterdata refresh');
+          OB.POS.modelterminal.loadModels(null, false);
+          setTimeout(loadModelsTotalFunc, minTotalRefresh);
+        }
+        setTimeout(loadModelsTotalFunc, minTotalRefresh);
+      }
+      if(minIncRefresh){
+        loadModelsIncFunc = function(){
+          console.log('Performing incremental masterdata refresh');
+          OB.POS.modelterminal.loadModels(null, true);
+          setTimeout(loadModelsIncFunc, minIncRefresh);
+        }
+        setTimeout(loadModelsIncFunc, minIncRefresh);
       }
       this.trigger('ready');
     }

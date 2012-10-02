@@ -53,7 +53,8 @@ public class Terminal extends ProcessHQLQuery {
         + ", pos.orderdocnoPrefix as docNoPrefix "
         + ", "
         + lastDocumentNumber
-        + " as lastDocumentNumber "
+        + " as lastDocumentNumber, pos.obposTerminaltype.minutestorefreshdatatotal as minutestorefreshdatatotal, "
+        + " pos.obposTerminaltype.minutestorefreshdatainc as minutestorefreshdatainc"
         + " from OBPOS_Applications AS pos where pos.$readableCriteria and searchKey = :terminal";
   }
 

@@ -21,7 +21,7 @@ public class BusinessPartner extends ProcessHQLQuery {
     Organization org = POSUtils.getOrganization(jsonsent.getString("organization"));
     return "SELECT bpl.businessPartner.id as id, bpl.businessPartner.name as name, bpl.businessPartner.name as _identifier, bpl.businessPartner.searchKey as searchKey, bpl.businessPartner.description as description, bpl.businessPartner.taxID as taxId, bpl.businessPartner.sOBPTaxCategory.id as taxCategory, bpl.businessPartner.paymentMethod.id as paymentMethod, bpl.businessPartner.paymentTerms.id as paymentTerms, bpl.businessPartner.invoiceTerms as invoiceTerms, bpl.id as locId, max(bpl.name) as locName "
         + "FROM BusinessPartnerLocation AS bpl "
-        + "WHERE ("
+        + "WHERE (bpl.$incrementalUpdateCriteria) AND ("
         + "(bpl.id = '"
         + org.getObretcoCBpLocation().getId()
         + "')"
@@ -32,7 +32,7 @@ public class BusinessPartner extends ProcessHQLQuery {
         + "bpl.invoiceToAddress = true AND "
         + "bpl.businessPartner.customer = true AND "
         + "$readableClientCriteria AND "
-        + "$naturalOrgCriteria"
+        + "$naturalOrgCriteria "
         + "))"
         + "GROUP BY bpl.businessPartner.id, bpl.businessPartner.name, bpl.businessPartner.name, bpl.businessPartner.searchKey, bpl.businessPartner.description, bpl.businessPartner.taxID, bpl.businessPartner.sOBPTaxCategory.id, bpl.businessPartner.paymentMethod.id, bpl.businessPartner.paymentTerms.id, bpl.businessPartner.invoiceTerms, bpl.id "
         + "ORDER BY bpl.businessPartner.name";
