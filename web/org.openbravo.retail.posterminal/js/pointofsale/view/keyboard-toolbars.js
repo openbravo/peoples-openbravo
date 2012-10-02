@@ -113,8 +113,7 @@ enyo.kind({
       action: function(keyboard, txt) {
         var exactpayment = allpayments[keyboard.status] || defaultpayment,
             amount = me.receipt.getPending();
-
-        if (amount > 0 && exactpayment) {
+        if (amount > 0 && exactpayment && OB.POS.modelterminal.hasPermission(exactpayment.payment.searchKey)) {
           me.pay(amount, exactpayment.payment.searchKey, exactpayment.payment._identifier, exactpayment.paymentMethod);
         }
       }
