@@ -54,15 +54,9 @@ enyo.kind({
         }
         this.createComponent({
           components: [{
-            content: '&nbsp;',
-            allowHtml: true,
+            content: '-- ' + d.name,
             attributes: {
-              style: 'float: left; width: 20%;'
-            }
-          }, {
-            content: d.name,
-            attributes: {
-              style: 'float: left; width: 60%;'
+              style: 'float: left; width: 80%;'
             }
           }, {
             content: OB.I18N.formatCurrency(-d.amt),
