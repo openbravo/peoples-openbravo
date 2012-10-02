@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global $LAB, _, $, enyo, Backbone, CryptoJS */
+/*global $LAB, _, $, enyo, Backbone, CryptoJS, console */
 
 OB = window.OB || {};
 OB.Model = window.OB.Model || {};
@@ -138,8 +138,8 @@ OB.Model.Terminal = Backbone.Model.extend({
     });
     if (OB.POS.modelterminal.get('connectedToERP')) {
       new OB.DS.Request('org.openbravo.retail.posterminal.term.Labels').exec({languageId: window.localStorage.getItem('POSlanguageId')}, function(data) {
-    		OB.I18N.labels=data;
-    	
+        OB.I18N.labels=data;
+
         new OB.DS.Request('org.openbravo.retail.posterminal.term.Terminal').exec(params, function(data) {
           if (data.exception) {
             me.logout();
@@ -183,7 +183,7 @@ OB.Model.Terminal = Backbone.Model.extend({
     }
     for(i=0;i<windows.length;i++){
       windowClass = windows[i].windowClass;
-      windowName = windows[i].route
+      windowName = windows[i].route;
       if(OB.POS.modelterminal.get('connectedToERP')){
         if (OB.DATA[windowName]) {
           // old way of defining datasources...
@@ -802,7 +802,7 @@ OB.Model.Terminal = Backbone.Model.extend({
           console.log('Performing total masterdata refresh');
           OB.POS.modelterminal.loadModels(null, false);
           setTimeout(loadModelsTotalFunc, minTotalRefresh);
-        }
+        };
         setTimeout(loadModelsTotalFunc, minTotalRefresh);
       }
       if(minIncRefresh){
@@ -810,7 +810,7 @@ OB.Model.Terminal = Backbone.Model.extend({
           console.log('Performing incremental masterdata refresh');
           OB.POS.modelterminal.loadModels(null, true);
           setTimeout(loadModelsIncFunc, minIncRefresh);
-        }
+        };
         setTimeout(loadModelsIncFunc, minIncRefresh);
       }
       this.trigger('ready');

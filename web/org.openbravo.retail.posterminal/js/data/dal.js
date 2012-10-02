@@ -343,7 +343,7 @@
               propMap = model.prototype.propertyMap,
               values, _idx = 0,
               updateRecord = function(tx, model, values){
-                tx.executeSql("DELETE FROM "+model.prototype.tableName+" WHERE "+model.prototype.propertyMap['id']+"=?",[values[0]], function(){
+                tx.executeSql("DELETE FROM "+model.prototype.tableName+" WHERE "+model.prototype.propertyMap.id+"=?",[values[0]], function(){
                   tx.executeSql(model.prototype.insertStatement, values, null, error);
                 }, error);
               };
