@@ -216,7 +216,7 @@ public class Reconciliation extends HttpSecureAppServlet {
           return;
         }
 
-        if (FIN_Utility.isPeriodOpen(reconciliation.getClient().getId(),
+        if (!FIN_Utility.isPeriodOpen(reconciliation.getClient().getId(),
             AcctServer.DOCTYPE_Reconciliation, reconciliation.getOrganization().getId(),
             strStatementDate)) {
           msg.setType("Error");
