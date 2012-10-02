@@ -499,6 +499,15 @@
 
       disc.hidden = discount.hidden === true || (discount.actualAmt && !disc.amt);
       disc.applyNext = rule.get('applyNext');
+      disc._idx = rule.get('_idx');
+
+      for (i = 0; i < promotions.length; i++) {
+        if (disc._idx < promotions[i]._idx) {
+          // Trying to apply promotions in incorrect order: recalculate whole line again
+          OB.Model.Discounts.applyPromotions(this, line);
+          return;
+        }
+      }
 
       for (i = 0; i < promotions.length; i++) {
         if (promotions[i].ruleId === rule.id) {
