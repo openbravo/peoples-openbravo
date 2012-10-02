@@ -1197,7 +1197,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
                 message.setType("Warning");
                 message.setTitle(Utility.messageBD(this, message.getType(), vars.getLanguage()));
                 message.setMessage(module.getName() + " " + module.getVersionNo() + " "
-                    + Utility.messageBD(this, "OtherModuleVersionToinstall", vars.getLanguage())
+                    + Utility.messageBD(this, "OtherModuleVersionToInstall", vars.getLanguage())
                     + " " + installOrig[i].getVersionNo());
               }
               if (found) {
