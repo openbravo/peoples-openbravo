@@ -32,7 +32,8 @@
           '' AS InvoiceRule, '' AS DeliveryRule, '' AS FreightCostRule, '' AS DeliveryViaRule,
           '' AS PaymentRulePO, '' AS PO_PaymentTerm_ID, '' AS DESCRIPTION, '' AS C_UOM_ID, '' AS QUANTITYORDER, '' AS M_PRODUCT_UOM_ID,
           '' AS PRICELIMIT, '' AS PRICEACTUAL, '' AS DISCOUNT, '' AS TAX, '' AS C_ORDERLINE_ID,
-          '' AS PADRE, '' AS ID, '' AS NAME, '' AS PRICESTD, '' AS TO_CLOSE, '' AS UOMNAME, '' AS SECUOMNAME, '' AS PO_PAYMENTMETHOD_ID
+          '' AS PADRE, '' AS ID, '' AS NAME, '' AS PRICESTD, '' AS TO_CLOSE, '' AS UOMNAME, '' AS SECUOMNAME, '' AS PO_PAYMENTMETHOD_ID,
+          '' as GROSS_UNIT, '' AS GROSS_AMT
         FROM DUAL
       ]]></Sql>
     <Field name="rownum" value="count"/>
@@ -48,18 +49,18 @@
         SELECT M_REQUISITIONLINE_ID, M_REQUISITIONLINE.NEEDBYDATE,
           M_REQUISITIONLINE.QTY - M_REQUISITIONLINE.ORDEREDQTY AS QTYTOORDER,
           QUANTITYORDER, C_UOM1.NAME AS SECUOMNAME, C_UOM.NAME AS UOMNAME,
-          M_REQUISITIONLINE.PRICEACTUAL AS PRICE,
+          CASE WHEN pl.istaxincluded = 'Y' THEN M_REQUISITIONLINE.GROSS_UNIT_PRICE ELSE M_REQUISITIONLINE.PRICEACTUAL END AS PRICE,
           AD_COLUMN_IDENTIFIER(to_char('C_BPartner'), to_char(COALESCE(M_REQUISITIONLINE.C_BPARTNER_ID, M_REQUISITION.C_BPARTNER_ID)), ?) AS VENDOR,
           AD_COLUMN_IDENTIFIER(to_char('M_PriceList'), to_char(COALESCE(M_REQUISITIONLINE.M_PRICELIST_ID, M_REQUISITION.M_PRICELIST_ID)), ?) AS PRICELISTID,
           AD_COLUMN_IDENTIFIER(to_char('M_Product'), to_char(M_REQUISITIONLINE.M_PRODUCT_ID), ?) AS PRODUCT,
           AD_COLUMN_IDENTIFIER(to_char('M_AttributeSetInstance'), to_char(M_REQUISITIONLINE.M_ATTRIBUTESETINSTANCE_ID), ?) AS ATTRIBUTE,
           AD_COLUMN_IDENTIFIER(to_char('AD_User'), to_char(M_REQUISITION.AD_USER_ID), ?) AS REQUESTER
-        FROM M_REQUISITIONLINE LEFT JOIN C_UOM ON C_UOM.C_UOM_ID = M_REQUISITIONLINE.C_UOM_ID
+        FROM M_REQUISITION inner join M_REQUISITIONLINE on M_REQUISITION.M_REQUISITION_ID = M_REQUISITIONLINE.M_REQUISITION_ID 
+                               LEFT JOIN C_UOM ON C_UOM.C_UOM_ID = M_REQUISITIONLINE.C_UOM_ID
                                LEFT JOIN M_PRODUCT_UOM ON M_PRODUCT_UOM.M_PRODUCT_UOM_ID = M_REQUISITIONLINE.M_PRODUCT_UOM_ID
-                               LEFT JOIN C_UOM C_UOM1 ON M_PRODUCT_UOM.C_UOM_ID = C_UOM1.C_UOM_ID, 
-             M_REQUISITION
-        WHERE M_REQUISITIONLINE.M_REQUISITION_ID = M_REQUISITION.M_REQUISITION_ID
-          AND M_REQUISITION.ISACTIVE = 'Y'
+                               LEFT JOIN C_UOM C_UOM1 ON M_PRODUCT_UOM.C_UOM_ID = C_UOM1.C_UOM_ID
+                               LEFT JOIN m_pricelist pl on COALESCE(M_REQUISITIONLINE.M_PRICELIST_ID, M_REQUISITION.M_PRICELIST_ID) = pl.m_pricelist_id
+        WHERE M_REQUISITION.ISACTIVE = 'Y'
           AND M_REQUISITIONLINE.ISACTIVE = 'Y'
           AND M_REQUISITION.DOCSTATUS = 'CO'
           AND M_REQUISITIONLINE.REQSTATUS = 'O'
@@ -92,18 +93,19 @@
           M_REQUISITIONLINE.ORDEREDQTY AS MATCHEDQTY, M_REQUISITIONLINE.PRICELIST,
           COALESCE(LOCKQTY, QTY-ORDEREDQTY) AS LOCKQTY,
           QUANTITYORDER, C_UOM1.NAME AS SECUOMNAME, C_UOM.NAME AS UOMNAME,
-          COALESCE(LOCKPRICE, PRICEACTUAL) AS LOCKPRICE,
+          COALESCE(LOCKPRICE, CASE WHEN pl.istaxincluded = 'Y' THEN M_REQUISITIONLINE.GROSS_UNIT_PRICE ELSE M_REQUISITIONLINE.PRICEACTUAL END) AS LOCKPRICE,
           COALESCE(M_REQUISITIONLINE.C_BPARTNER_ID, M_REQUISITION.C_BPARTNER_ID, '-1') AS VENDOR_ID,
           COALESCE(M_REQUISITIONLINE.M_PRICELIST_ID, M_REQUISITION.M_PRICELIST_ID, '-1') AS M_PRICELIST_ID,
           AD_COLUMN_IDENTIFIER(to_char('C_BPartner'), to_char(COALESCE(M_REQUISITIONLINE.C_BPARTNER_ID, M_REQUISITION.C_BPARTNER_ID)), ?) AS VENDOR,
           AD_COLUMN_IDENTIFIER(to_char('M_Product'), to_char(M_REQUISITIONLINE.M_PRODUCT_ID), ?) AS PRODUCT,
           AD_COLUMN_IDENTIFIER(to_char('M_AttributeSetInstance'), to_char(M_REQUISITIONLINE.M_ATTRIBUTESETINSTANCE_ID), ?) AS ATTRIBUTE,
           AD_COLUMN_IDENTIFIER(to_char('M_PriceList'), to_char(COALESCE(M_REQUISITIONLINE.M_PRICELIST_ID, M_REQUISITION.M_PRICELIST_ID)), ?) AS PRICELISTID
-        FROM M_REQUISITION, M_REQUISITIONLINE LEFT JOIN C_UOM ON C_UOM.C_UOM_ID = M_REQUISITIONLINE.C_UOM_ID
+        FROM M_REQUISITION inner join M_REQUISITIONLINE on M_REQUISITION.M_REQUISITION_ID = M_REQUISITIONLINE.M_REQUISITION_ID 
+                                              LEFT JOIN C_UOM ON C_UOM.C_UOM_ID = M_REQUISITIONLINE.C_UOM_ID
                                               LEFT JOIN M_PRODUCT_UOM ON M_PRODUCT_UOM.M_PRODUCT_UOM_ID = M_REQUISITIONLINE.M_PRODUCT_UOM_ID
                                               LEFT JOIN C_UOM C_UOM1 ON M_PRODUCT_UOM.C_UOM_ID = C_UOM1.C_UOM_ID
-        WHERE M_REQUISITION.M_REQUISITION_ID = M_REQUISITIONLINE.M_REQUISITION_ID
-          AND M_REQUISITION.ISACTIVE = 'Y'
+                                              LEFT JOIN m_pricelist pl ON COALESCE(M_REQUISITIONLINE.M_PRICELIST_ID,M_REQUISITION.M_PRICELIST_ID, '-1') = pl.m_pricelist_id
+        WHERE M_REQUISITION.ISACTIVE = 'Y'
           AND M_REQUISITIONLINE.ISACTIVE = 'Y'
           AND M_REQUISITION.DOCSTATUS = 'CO'
           AND M_REQUISITIONLINE.REQSTATUS = 'O'
@@ -126,26 +128,45 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT M_REQUISITIONLINE.M_PRODUCT_ID, M_ATTRIBUTESETINSTANCE_ID, LOCKQTY, DESCRIPTION, C_UOM_ID, QUANTITYORDER, M_PRODUCT_UOM_ID,
+        SELECT M_REQUISITIONLINE.M_PRODUCT_ID, M_ATTRIBUTESETINSTANCE_ID, LOCKQTY, M_REQUISITIONLINE.DESCRIPTION, C_UOM_ID, QUANTITYORDER, M_PRODUCT_UOM_ID,
           M_REQUISITIONLINE_ID, '' AS C_ORDERLINE_ID,
           COALESCE(M_PRODUCTPRICE.PRICELIST, M_REQUISITIONLINE.PRICELIST, LOCKPRICE) AS PRICELIST,
           COALESCE(M_PRODUCTPRICE.PRICELIMIT, LOCKPRICE) AS PRICELIMIT,
           COALESCE(M_PRODUCTPRICE.PRICESTD, LOCKPRICE) AS PRICESTD,
-          ROUND(COALESCE(LOCKPRICE, M_PRODUCTPRICE.PRICESTD),(SELECT PRICEPRECISION FROM C_CURRENCY WHERE C_CURRENCY_ID = ?)) AS PRICEACTUAL,
+          CASE WHEN M_Pricelist.istaxincluded = 'Y' then C_GET_NET_PRICE_FROM_GROSS(C_GetTax(M_REQUISITIONLINE.M_PRODUCT_ID, to_date(?), ?, ?, ?, ?, null, 'N'), 
+                                                                                    ROUND(COALESCE(LOCKPRICE, M_PRODUCTPRICE.PRICESTD) * LOCKQTY,
+                                                                                         (SELECT PRICEPRECISION FROM C_CURRENCY WHERE C_CURRENCY_ID = ?)) , 
+                                                                                    ROUND(COALESCE(LOCKPRICE, M_PRODUCTPRICE.PRICESTD) * LOCKQTY,
+                                                                                         (SELECT PRICEPRECISION FROM C_CURRENCY WHERE C_CURRENCY_ID = ?)), 
+                                                                                    (SELECT PRICEPRECISION FROM C_CURRENCY WHERE C_CURRENCY_ID = ?), LOCKQTY) 
+                                                ELSE ROUND(COALESCE(LOCKPRICE, M_PRODUCTPRICE.PRICESTD),(SELECT PRICEPRECISION FROM C_CURRENCY WHERE C_CURRENCY_ID = ?)) END AS PRICEACTUAL,
           CASE WHEN COALESCE(M_PRODUCTPRICE.PRICELIST, M_REQUISITIONLINE.PRICELIST, LOCKPRICE) = 0 THEN 0 ELSE
-          ROUND((COALESCE(M_PRODUCTPRICE.PRICELIST, M_REQUISITIONLINE.PRICELIST, LOCKPRICE) - COALESCE(LOCKPRICE, M_PRODUCTPRICE.PRICESTD))/
-                   COALESCE(M_PRODUCTPRICE.PRICELIST, M_REQUISITIONLINE.PRICELIST, LOCKPRICE)*100,
-                (SELECT STDPRECISION FROM C_CURRENCY WHERE C_CURRENCY_ID = ?)) END AS DISCOUNT,
+                    ROUND((COALESCE(M_PRODUCTPRICE.PRICELIST, M_REQUISITIONLINE.PRICELIST, LOCKPRICE) - COALESCE(LOCKPRICE, M_PRODUCTPRICE.PRICESTD))/
+                           COALESCE(M_PRODUCTPRICE.PRICELIST, M_REQUISITIONLINE.PRICELIST, LOCKPRICE)*100,
+                    (SELECT STDPRECISION FROM C_CURRENCY WHERE C_CURRENCY_ID = ?)) END AS DISCOUNT,
           C_GetTax(M_REQUISITIONLINE.M_PRODUCT_ID, to_date(?), ?, ?, ?, ?, null, 'N') AS TAX,
-          CASE WHEN LOCKQTY < (M_REQUISITIONLINE.QTY - M_REQUISITIONLINE.ORDEREDQTY) THEN 'N' ELSE 'Y' END AS TO_CLOSE
-        FROM M_REQUISITIONLINE LEFT JOIN M_PRODUCTPRICE
+          CASE WHEN LOCKQTY < (M_REQUISITIONLINE.QTY - M_REQUISITIONLINE.ORDEREDQTY) THEN 'N' ELSE 'Y' END AS TO_CLOSE,
+          CASE WHEN M_Pricelist.istaxincluded = 'Y' THEN ROUND(COALESCE(LOCKPRICE, M_PRODUCTPRICE.PRICESTD),(SELECT PRICEPRECISION FROM C_CURRENCY WHERE C_CURRENCY_ID = ?)) ELSE 0 END AS GROSS_UNIT,
+          CASE WHEN M_Pricelist.istaxincluded = 'Y' THEN ROUND(COALESCE(LOCKPRICE, M_PRODUCTPRICE.PRICESTD)*LOCKQTY,(SELECT PRICEPRECISION FROM C_CURRENCY WHERE C_CURRENCY_ID = ?)) ELSE 0 END AS GROSS_AMT
+          FROM M_REQUISITIONLINE LEFT JOIN M_PRODUCTPRICE
                                          ON M_REQUISITIONLINE.M_PRODUCT_ID = M_PRODUCTPRICE.M_PRODUCT_ID
                                             AND M_PRODUCTPRICE.M_PRICELIST_VERSION_ID = ?
+                               LEFT JOIN m_pricelist_version on M_PRODUCTPRICE.M_PRICELIST_VERSION_ID = m_pricelist_version.M_PRICELIST_VERSION_ID
+                               LEFT JOIN m_pricelist on m_pricelist_version.m_pricelist_id = m_pricelist.m_pricelist_id
         WHERE 1=1
         ORDER BY M_REQUISITIONLINE.M_PRODUCT_ID, M_ATTRIBUTESETINSTANCE_ID, SUPPLIERNOTES, 
                  ROUND(COALESCE(LOCKPRICE, M_PRODUCTPRICE.PRICESTD),(SELECT PRICEPRECISION FROM C_CURRENCY WHERE C_CURRENCY_ID = ?))
         ]]></Sql>
     <Field name="rownum" value="count"/>
+    <Parameter name="orderdate"/>
+    <Parameter name="org"/>
+    <Parameter name="warehouse"/>
+    <Parameter name="billto"/>
+    <Parameter name="shipto"/>
+    <Parameter name="currency"/>
+    <Parameter name="currency"/>
+    <Parameter name="currency"/>
+    
     <Parameter name="currency"/>
     <Parameter name="currency"/>
     <Parameter name="orderdate"/>
@@ -153,6 +174,10 @@
     <Parameter name="warehouse"/>
     <Parameter name="billto"/>
     <Parameter name="shipto"/>
+    
+    <Parameter name="currency"/>
+    <Parameter name="currency"/>
+    
     <Parameter name="pricelistversion"/>
     <Parameter name="parRequisitionLines" optional="true" type="argument" after="WHERE 1=1" text=" AND M_RequisitionLine_ID IN"/>
     <Parameter name="currency"/>
@@ -424,7 +449,7 @@
         PRICELIST, 
         PRICEACTUAL, 
         PRICELIMIT, C_TAX_ID, S_RESOURCEASSIGNMENT_ID, DISCOUNT, 
-        PRICESTD) 
+        PRICESTD, GROSS_UNIT_PRICE, LINE_GROSS_AMOUNT)
         VALUES (?,?,?,now(),?,now(),?,
         ?,TO_NUMBER(?),?,?,TO_DATE(?),TO_DATE(?),
         ?,?,?,
@@ -432,7 +457,7 @@
         TO_NUMBER(?), 
         M_GET_OFFERS_PRICE(to_date(now()),?,?,TO_NUMBER(?),TO_NUMBER(?),?),
         TO_NUMBER(?), ?, ?,TO_NUMBER(?), 
-        TO_NUMBER(?))
+        TO_NUMBER(?),  TO_NUMBER(?), TO_NUMBER(?))
       ]]>
     </Sql>
     <Parameter name="cOrderlineId"/>
@@ -466,6 +491,8 @@
     <Parameter name="sResourceassignmentId"/>
     <Parameter name="discount"/>
     <Parameter name="priceactual"/>
+    <Parameter name="priceGross"/>
+    <Parameter name="lineGrossAmt"/>
   </SqlMethod>
   <SqlMethod name="insertRequisitionOrder" type="preparedStatement" connection="true" return="rowCount">
     <SqlMethodComment></SqlMethodComment>

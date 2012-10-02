@@ -64,6 +64,7 @@ public class SL_RequisitionLine_Product extends HttpSecureAppServlet {
       String strPriceListId = vars.getStringParameter("inpmPricelistId");
       String strAttributeSetInstance = vars.getStringParameter("inpmProductId_ATR");
       String strUOM = vars.getStringParameter("inpmProductId_UOM");
+
       try {
         printPage(response, vars, strMProductID, strWindowId, strTabId, strAttributeSetInstance,
             strUOM, strRequisition, strPriceListId, strChanged);
@@ -136,8 +137,14 @@ public class SL_RequisitionLine_Product extends HttpSecureAppServlet {
               }
               strResult.append("new Array(\"inppricelist\", "
                   + (strPriceList.equals("") ? "\"\"" : strPriceList) + "),\n");
-              strResult.append("new Array(\"inppriceactual\", "
-                  + (strPriceActual.equals("") ? "\"\"" : strPriceActual) + "),\n");
+              if (OBDal.getInstance().get(PriceList.class, strPriceListId).isPriceIncludesTax()) {
+                strResult.append("new Array(\"inpgrossUnitPrice\", "
+                    + (strPriceActual.equals("") ? "0" : strPriceActual) + "),\n");
+              } else {
+                strResult.append("new Array(\"inppriceactual\", "
+                    + (strPriceActual.equals("") ? "\"\"" : strPriceActual) + "),\n");
+
+              }
               strResult.append("new Array(\"inpdiscount\", \"" + discount.toString() + "\"),\n");
             }
           } else
@@ -145,6 +152,12 @@ public class SL_RequisitionLine_Product extends HttpSecureAppServlet {
         } else
           strMessage = "PriceListVersionNotFound";
       }
+    }
+
+    if (OBDal.getInstance().get(PriceList.class, strPriceListId).isPriceIncludesTax()) {
+      strResult.append("new Array(\"inpgrossprice\", \"Y\"),\n"); // auxiliaryInput
+    } else {
+      strResult.append("new Array(\"inpgrossprice\",  \"N\"),\n"); // auxiliaryInput
     }
 
     if (strChanged.equals("inpmProductId")) {

@@ -518,11 +518,16 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
       BigDecimal qtyOrder = new BigDecimal("0");
       boolean insertLine = false;
 
-      RequisitionToOrderData[] lines = RequisitionToOrderData.linesToOrder(this, cCurrencyId,
-          strOrderDate, strOrg, strWarehouse, RequisitionToOrderData.billto(this, strVendor)
-              .equals("") ? RequisitionToOrderData.cBPartnerLocationId(this, strVendor)
-              : RequisitionToOrderData.billto(this, strVendor), RequisitionToOrderData
-              .cBPartnerLocationId(this, strVendor), strPriceListVersionId, strSelected);
+      RequisitionToOrderData[] lines = RequisitionToOrderData.linesToOrder(
+          this,
+          strOrderDate,
+          strOrg,
+          strWarehouse,
+          RequisitionToOrderData.billto(this, strVendor).equals("") ? RequisitionToOrderData
+              .cBPartnerLocationId(this, strVendor) : RequisitionToOrderData
+              .billto(this, strVendor),
+          RequisitionToOrderData.cBPartnerLocationId(this, strVendor), cCurrencyId,
+          strPriceListVersionId, strSelected);
       for (int i = 0; lines != null && i < lines.length; i++) {
         if ("".equals(lines[i].tax)) {
           RequisitionLine rl = OBDal.getInstance().get(RequisitionLine.class,
@@ -568,7 +573,7 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
                 lines[i].mAttributesetinstanceId, strWarehouse, lines[i].mProductUomId,
                 lines[i].cUomId, lines[i].quantityorder, qtyOrder.toPlainString(), cCurrencyId,
                 lines[i].pricelist, lines[i].priceactual, strPriceListId, lines[i].pricelimit,
-                lines[i].tax, "", lines[i].discount);
+                lines[i].tax, "", lines[i].discount, lines[i].grossUnit, lines[i].grossAmt);
           } catch (ServletException ex) {
             myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
             releaseRollbackConnection(conn);
