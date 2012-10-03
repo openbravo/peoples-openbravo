@@ -37,6 +37,7 @@
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
+    Cur_line RECORD;
     Cur_Order RECORD;
   -- Record Info
   v_Client_ID VARCHAR2(32);
@@ -110,6 +111,7 @@
   v_DiscountExist NUMBER;
   v_gross_unit_price NUMBER;
   v_line_gross_amount NUMBER;
+  v_acctAmount NUMBER;
   BEGIN
     IF (p_PInstance_ID IS NOT NULL) THEN
       --  Update AD_PInstance
@@ -137,6 +139,29 @@
     END IF;
     DBMS_OUTPUT.PUT_LINE('  Record_ID=' || v_Record_ID) ;
   BEGIN --BODY
+  
+  /*Orderline acct dimension*/
+  SELECT C_ORDER.ISSOTRX INTO v_IsSOTrx
+  FROM C_ORDER
+  WHERE C_ORDER_ID = v_Record_ID;
+  IF (v_IsSOTrx = 'N') THEN
+    FOR Cur_line IN
+      (SELECT C_ORDERLINE.C_OrderLine_ID,
+       C_ORDERLINE.LinenetAmt
+       FROM C_ORDERLINE
+       WHERE C_Order_ID = v_Record_ID
+      )
+    LOOP
+      SELECT SUM(Amt) INTO v_acctAmount
+      FROM C_ORDERLINE_ACCTDIMENSION
+      WHERE C_OrderLine_ID = Cur_line.C_OrderLine_ID;
+      IF (v_acctAmount <> Cur_line.LinenetAmt) THEN
+        v_Message:='@QuantitiesNotMatch@';
+        RAISE_APPLICATION_ERROR(-20000, '@QuantitiesNotMatch@') ;
+      END IF;
+    END LOOP;
+  END IF;
+  
     /**
     * Read Order
     */
