@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,6 +28,7 @@
   <script language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></script>
   <script language="JavaScript" type="text/javascript" id="paramLanguage">defaultLang = "en_US";</script>
   <script language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></script>
+  <script language="JavaScript" src="../../../../../web/js/appStatus.js" type="text/javascript"></script>
   <script language="JavaScript" src="../../../../../web/js/searchs.js" type="text/javascript"></script>
   <script type="text/javascript">
     window.onunload = reloadOpener; // reloads opener on closing
@@ -49,6 +50,7 @@
 	  showJSMessage(7);
 	  return false;
     }
+    setProcessingMode('popup', true);
     submitCommandForm(strCommand, false, null, null);
     return true;
   }

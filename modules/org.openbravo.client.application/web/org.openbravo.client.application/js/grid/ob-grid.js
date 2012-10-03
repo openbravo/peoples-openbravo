@@ -61,36 +61,35 @@ isc.OBGrid.addProperties({
   },
 
   enableShortcuts: function () {
-    var me = this,
-        ksAction_FocusFilter, ksAction_FocusGrid, ksAction_ClearFilter, ksAction_SelectAll, ksAction_UnselectAll;
+    var ksAction_FocusFilter, ksAction_FocusGrid, ksAction_ClearFilter, ksAction_SelectAll, ksAction_UnselectAll;
 
-    ksAction_FocusFilter = function () {
-      me.focusInFirstFilterEditor();
+    ksAction_FocusFilter = function (caller) {
+      caller.focusInFirstFilterEditor();
       return false; //To avoid keyboard shortcut propagation
     };
-    OB.KeyboardManager.Shortcuts.set('Grid_FocusFilter', 'OBGrid.body', ksAction_FocusFilter);
+    OB.KeyboardManager.Shortcuts.set('Grid_FocusFilter', ['OBGrid.body', 'OBGrid.editForm'], ksAction_FocusFilter);
 
-    ksAction_FocusGrid = function () {
-      me.focus();
+    ksAction_FocusGrid = function (caller) {
+      caller.focus();
       return false; //To avoid keyboard shortcut propagation
     };
     OB.KeyboardManager.Shortcuts.set('Grid_FocusGrid', 'OBGrid.filter', ksAction_FocusGrid);
 
-    ksAction_ClearFilter = function () {
-      me.clearFilter(true);
+    ksAction_ClearFilter = function (caller) {
+      caller.clearFilter(true);
       return false; //To avoid keyboard shortcut propagation
     };
-    OB.KeyboardManager.Shortcuts.set('Grid_ClearFilter', ['OBGrid.body', 'OBGrid.filter'], ksAction_ClearFilter);
+    OB.KeyboardManager.Shortcuts.set('Grid_ClearFilter', ['OBGrid.body', 'OBGrid.filter', 'OBGrid.editForm'], ksAction_ClearFilter);
 
-    ksAction_SelectAll = function () {
-      me.selectAllRecords();
+    ksAction_SelectAll = function (caller) {
+      caller.selectAllRecords();
       return false; //To avoid keyboard shortcut propagation
     };
     OB.KeyboardManager.Shortcuts.set('Grid_SelectAll', 'OBGrid.body', ksAction_SelectAll);
 
-    ksAction_UnselectAll = function () {
-      if (me.getSelectedRecords().length > 1) {
-        me.deselectAllRecords();
+    ksAction_UnselectAll = function (caller) {
+      if (caller.getSelectedRecords().length > 1) {
+        caller.deselectAllRecords();
       }
       return false; //To avoid keyboard shortcut propagation
     };
@@ -103,18 +102,27 @@ isc.OBGrid.addProperties({
   },
 
   bodyKeyPress: function (event, eventInfo) {
-    if ((eventInfo.keyName === isc.OBViewGrid.ARROW_UP_KEY_NAME && this.data.localData[0].id === this.lastSelectedRecord.id) || (eventInfo.keyName === isc.OBViewGrid.ARROW_DOWN_KEY_NAME && this.data.localData[this.data.localData.length - 1] && this.data.localData[this.data.localData.length - 1].id === this.lastSelectedRecord.id)) {
+    if (eventInfo && this.lastSelectedRecord && ((eventInfo.keyName === isc.OBViewGrid.ARROW_UP_KEY_NAME && this.data.localData[0].id === this.lastSelectedRecord.id) || (eventInfo.keyName === isc.OBViewGrid.ARROW_DOWN_KEY_NAME && this.data.localData[this.data.localData.length - 1] && this.data.localData[this.data.localData.length - 1].id === this.lastSelectedRecord.id))) {
       return true;
     }
-    var response = OB.KeyboardManager.Shortcuts.monitor('OBGrid.body');
+    var response = OB.KeyboardManager.Shortcuts.monitor('OBGrid.body', this);
     if (response !== false) {
       response = this.Super('bodyKeyPress', arguments);
     }
     return response;
   },
 
+  editFormKeyDown: function () {
+    // Custom method. Only works if the form is an OBViewForm
+    var response = OB.KeyboardManager.Shortcuts.monitor('OBGrid.editForm', this);
+    if (response !== false) {
+      response = this.Super('editFormKeyDown', arguments);
+    }
+    return response;
+  },
+
   filterFieldsKeyDown: function (item, form, keyName) {
-    var response = OB.KeyboardManager.Shortcuts.monitor('OBGrid.filter');
+    var response = OB.KeyboardManager.Shortcuts.monitor('OBGrid.filter', this.grid.fieldSourceGrid);
     if (response !== false) {
       response = this.Super('filterFieldsKeyDown', arguments);
     }
@@ -267,6 +275,25 @@ isc.OBGrid.addProperties({
       this.fireOnPause("performFilter", {}, this.fetchDelay);
     },
 
+    // If the criteria contains an 'or' operator due to the changes made for solving
+    // issue 20722 (https://issues.openbravo.com/view.php?id=20722), remove the criteria
+    // that makes reference to a specific id and return the original one
+    removeSpecificIdFilter: function (criteria) {
+      if (!criteria) {
+        return criteria;
+      }
+      if (criteria.operator !== 'or') {
+        return criteria;
+      }
+      if (criteria.criteria && criteria.criteria.length !== 2) {
+        return criteria;
+      }
+      if (criteria.criteria.get(0).fieldName !== 'id') {
+        return criteria;
+      }
+      return criteria.criteria.get(1);
+    },
+
     // repair that filter criteria on fk fields can be 
     // on the identifier instead of the field itself.
     // after applying the filter the grid will set the criteria
@@ -281,6 +308,9 @@ isc.OBGrid.addProperties({
       // make a copy so that we don't change the object
       // which is maybe used somewhere else
       criteria = isc.clone(criteria);
+      // If a criterion has been added to include the selected record, remove it
+      // See issue https://issues.openbravo.com/view.php?id=20722
+      criteria = this.removeSpecificIdFilter(criteria);
       var internCriteria = criteria.criteria;
       if (internCriteria && this.getEditForm()) {
         // now remove anything which is not a field
@@ -302,7 +332,7 @@ isc.OBGrid.addProperties({
           var fnd = false,
               j;
           for (j = 0; j < length; j++) {
-            if (fields[j].displayField === fullPropName) {
+            if (fields[j].displayField === fullPropName || fields[j].criteriaField === fullPropName) {
               fnd = true;
               break;
             }
@@ -321,7 +351,6 @@ isc.OBGrid.addProperties({
           }
         }
       }
-
       return this.Super('setValuesAsCriteria', [criteria, refresh]);
     },
 
@@ -377,6 +406,10 @@ isc.OBGrid.addProperties({
         }
 
         field.filterEditorProperties.keyDown = this.filterFieldsKeyDown;
+
+        if (field.criteriaField) {
+          field.filterEditorProperties.criteriaField = field.criteriaField;
+        }
 
         if (field.isLink) {
           // store the originalFormatCellValue if not already set
@@ -538,11 +571,10 @@ isc.OBGrid.addProperties({
       }
       var value = criterion.value;
       // see the description in setValuesAsCriteria above
-      if (prop.endsWith(OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER)) {
-        var index = prop.lastIndexOf(OB.Constants.FIELDSEPARATOR);
-        prop = prop.substring(0, index);
+      var separatorIndex = prop.lastIndexOf(OB.Constants.FIELDSEPARATOR);
+      if (separatorIndex !== -1) {
+        prop = prop.substring(0, separatorIndex);
       }
-
       var field = this.filterEditor.getField(prop);
       // criterion.operator is set in case of an and/or expression
       if (this.isValidFilterField(field) && (criterion.operator || value === false || value || value === 0)) {
@@ -563,6 +595,21 @@ isc.OBGrid.addProperties({
       return false;
     }
     return !field.name.startsWith('_') && field.canFilter;
+  },
+
+  // the valuemap is updated in the form item, make sure that the
+  // grid field also has it
+  getEditorValueMap: function (field, values) {
+    var form, ret = this.Super('getEditorValueMap', arguments);
+    if (!ret) {
+      if (this.getEditForm()) {
+        form = this.getEditForm();
+        if (form.getItem(field.name) && form.getItem(field.name).valueMap) {
+          return form.getItem(field.name).valueMap;
+        }
+      }
+    }
+    return ret;
   },
 
   // = exportData =

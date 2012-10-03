@@ -895,17 +895,19 @@ public class FIN_AddPayment {
       psdFilter.add(Restrictions.eq(FIN_PaymentScheduleDetail.PROPERTY_ORGANIZATION,
           psd.getOrganization()));
       psdFilter.add(Restrictions.isNull(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS));
-      if (psd.getOrderPaymentSchedule() == null)
+      if (psd.getOrderPaymentSchedule() == null) {
         psdFilter.add(Restrictions.isNull(FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE));
-      else
+      } else {
         psdFilter.add(Restrictions.eq(FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE,
             psd.getOrderPaymentSchedule()));
-      if (psd.getInvoicePaymentSchedule() == null)
+      }
+      if (psd.getInvoicePaymentSchedule() == null) {
         psdFilter.add(Restrictions
             .isNull(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE));
-      else
+      } else {
         psdFilter.add(Restrictions.eq(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE,
             psd.getInvoicePaymentSchedule()));
+      }
 
       // Update amount and remove payment schedule detail
       final List<String> removedPDSIds = new ArrayList<String>();
@@ -923,8 +925,19 @@ public class FIN_AddPayment {
       }
 
       for (String pdToRm : removedPDSIds) {
-        OBDal.getInstance()
-            .remove(OBDal.getInstance().get(FIN_PaymentScheduleDetail.class, pdToRm));
+        FIN_PaymentScheduleDetail psdToRemove = OBDal.getInstance().get(
+            FIN_PaymentScheduleDetail.class, pdToRm);
+        if (psdToRemove.getInvoicePaymentSchedule() != null) {
+          psdToRemove.getInvoicePaymentSchedule()
+              .getFINPaymentScheduleDetailInvoicePaymentScheduleList().remove(psdToRemove);
+          OBDal.getInstance().save(psdToRemove.getInvoicePaymentSchedule());
+        }
+        if (psdToRemove.getOrderPaymentSchedule() != null) {
+          psdToRemove.getOrderPaymentSchedule()
+              .getFINPaymentScheduleDetailOrderPaymentScheduleList().remove(psdToRemove);
+          OBDal.getInstance().save(psdToRemove.getOrderPaymentSchedule());
+        }
+        OBDal.getInstance().remove(psdToRemove);
       }
 
       psd.setAmount(psd.getAmount().add(

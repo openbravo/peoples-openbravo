@@ -389,7 +389,7 @@ isc.OBAttachmentsLayout.addProperties({
       canvas: this,
       action: function () {
         var canvas = this.canvas;
-        isc.confirm(OB.I18N.getLabel('OBUIAPP_ConfirmDownloadMultiple'), function (clickedOK) {
+        isc.confirm(OB.I18N.getLabel('OBUIAPP_FormConfirmDownloadMultiple'), function (clickedOK) {
           if (clickedOK) {
             var d = {
               Command: 'GET_MULTIPLE_RECORDS_OB3',

@@ -10,11 +10,15 @@ import static org.openbravo.base.ConfigParameters.CONFIG_ATTRIBUTE;
 import static org.openbravo.base.ConnectionProviderContextListener.POOL_ATTRIBUTE;
 import static org.quartz.ee.servlet.QuartzInitializerListener.QUARTZ_FACTORY_KEY;
 
+import java.sql.Connection;
+import java.sql.Statement;
+
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import org.apache.log4j.Logger;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.scheduling.OBScheduler;
 import org.quartz.Scheduler;
 import org.quartz.impl.StdSchedulerFactory;
@@ -109,10 +113,25 @@ public class OBSchedulerInitializerListener implements ServletContextListener {
       log.info("Storing ConfigParameters and ConnectionProvider in " + "Scheduler Context.");
       scheduler.getContext().put(POOL_ATTRIBUTE, servletContext.getAttribute(POOL_ATTRIBUTE));
       scheduler.getContext().put(CONFIG_ATTRIBUTE, servletContext.getAttribute(CONFIG_ATTRIBUTE));
-
       log.info("Initalizing singleton instance of " + OBScheduler.class.getName());
       OBScheduler.getInstance().initialize(scheduler);
 
+      // Update Interrupted Process Instance's End time with current time.
+      try {
+        Connection connection = OBDal.getInstance().getConnection();
+        if (connection != null) {
+          Statement s = connection.createStatement();
+          String query = "UPDATE AD_PROCESS_RUN SET END_TIME=NOW(),STATUS='SYR' WHERE END_TIME IS NULL";
+          s.executeUpdate(query);
+          OBDal.getInstance().flush();
+          OBDal.getInstance().getConnection().commit();
+        } else {
+          System.out.println("Connection Failed!");
+        }
+
+      } catch (Exception e) {
+        log.error("Error updating Process Instance " + e.toString(), e);
+      }
     } catch (final Exception e) {
       log.error("Quartz Scheduler failed to initialize: " + e.toString(), e);
     }

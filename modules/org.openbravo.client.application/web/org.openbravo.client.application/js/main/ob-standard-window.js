@@ -58,14 +58,12 @@ isc.OBStandardWindow.addProperties({
   initWidget: function () {
     this.views = [];
 
-    this.processLayout = isc.VStack.create({
-      height: '100%',
+    this.windowLayout = isc.VLayout.create({
       width: '100%',
-      overflow: 'auto',
-      visibility: 'hidden'
+      // is set by its content
+      height: '100%',
+      overflow: 'visible'
     });
-
-    this.addMember(this.processLayout);
 
     this.toolBarLayout = isc.HLayout.create({
       mouseDownCancelParentPropagation: true,
@@ -81,7 +79,8 @@ isc.OBStandardWindow.addProperties({
       this.directTabInfo = {};
     }
 
-    this.addMember(this.toolBarLayout);
+    this.addChild(this.windowLayout);
+    this.windowLayout.addMember(this.toolBarLayout);
 
     this.viewProperties.standardWindow = this;
     this.viewProperties.isRootView = true;
@@ -91,7 +90,7 @@ isc.OBStandardWindow.addProperties({
     this.viewState = OB.PropertyStore.get('OBUIAPP_GridConfiguration', this.windowId);
     this.view = isc.OBStandardView.create(this.viewProperties);
     this.addView(this.view);
-    this.addMember(this.view);
+    this.windowLayout.addMember(this.view);
 
     this.Super('initWidget', arguments);
 
@@ -108,6 +107,126 @@ isc.OBStandardWindow.addProperties({
       this.setWindowSettings(this.getClass().windowSettingsCached);
     } else if (this.getClass().personalization) {
       this.setPersonalization(this.getClass().personalization);
+    }
+  },
+
+  openPopupInTab: function (element, title, width, height, showMinimizeControl, showMaximizeControl, showCloseControl, isModal) {
+    var prevFocusedItem = isc.EH.getFocusCanvas();
+    title = (title ? title : '');
+    width = (width ? width : '85%');
+    height = (height ? height : '85%');
+    showMinimizeControl = (showMinimizeControl ? showMinimizeControl : false);
+    showMaximizeControl = (showMaximizeControl ? showMaximizeControl : false);
+    showCloseControl = (showCloseControl ? showCloseControl : true);
+    isModal = (isModal !== false ? true : false);
+
+    var dummyFirstField = isc.OBFocusButton.create({
+      getFocusTarget: function () {
+        return this.parentElement.children[2];
+      }
+    });
+
+    var dummyMiddleField = isc.Button.create({
+      title: '',
+      width: 1,
+      height: 1,
+      border: '0px solid'
+    });
+
+    var dummyLastField = isc.OBFocusButton.create({
+      getFocusTarget: function () {
+        return this.parentElement.children[2];
+      }
+    });
+
+    var thePopup = isc.OBPopup.create({
+      width: width,
+      height: height,
+      title: title,
+      showMinimizeButton: showMinimizeControl,
+      showMaximizeButton: showMaximizeControl,
+      showCloseButton: showCloseControl,
+      autoSize: false,
+      canDragReposition: true,
+      canDragResize: true,
+      keepInParentRect: true,
+      itemCloseClick: function () {
+        return true;
+      },
+      restore: function () {
+        this.Super('restore', arguments);
+        if (isc.Browser.isWebKit) { // To avoid strange effect in Chrome when restoring the maximized window (it only happens odd times)
+          this.parentElement.parentElement.parentElement.setWidth('99%');
+          this.parentElement.parentElement.parentElement.setWidth('100%');
+        }
+      },
+      initWidget: function () {
+        if (width.toString().indexOf('%') === -1) {
+          // Smartclient to calculate the width takes into account the margin width
+          this.setWidth(parseInt(width, 10) + this.edgeSize + this.edgeSize);
+        }
+        if (height.toString().indexOf('%') === -1) {
+          // Smartclient to calculate the width takes into account the margin width
+          this.setHeight(parseInt(height, 10) + this.edgeBottom + this.edgeTop);
+        }
+        if (this.items[0].closeClick) {
+          this.itemCloseClick = function () {
+            this.items[0].closeClick();
+          };
+        }
+        this.closeClick = function () {
+          this.itemCloseClick();
+          this.Super('closeClick', arguments);
+        };
+
+        this.Super('initWidget', arguments);
+      },
+      items: [element]
+    });
+
+    if (isModal) {
+      thePopup.closeClick = function () {
+        thePopup.itemCloseClick();
+        if (prevFocusedItem) {
+          prevFocusedItem.focus();
+        }
+        if (this.parentElement) {
+          this.parentElement.destroy();
+        }
+        return false;
+      };
+      var theModalMask = isc.Canvas.create({
+        width: '100%',
+        height: '100%',
+        memberOverlap: '100%',
+        draw: function () {
+          var me = this;
+          if (prevFocusedItem) {
+            var myInterval;
+            myInterval = setInterval(function () {
+              if (prevFocusedItem === isc.EH.getFocusCanvas()) {
+                if (me.children[3] && me.children[3].items[0] && me.children[3].items[0].firstFocusedItem) {
+                  me.children[3].items[0].firstFocusedItem.focus();
+                } else {
+                  me.children[2].focus();
+                }
+              } else {
+                clearInterval(myInterval);
+              }
+            }, 10);
+          }
+          this.Super('draw', arguments);
+        },
+        children: [
+        isc.Canvas.create({
+          width: '100%',
+          height: '100%',
+          styleName: 'OBPopupInTabModalMask'
+        }), dummyFirstField, dummyMiddleField, thePopup, dummyLastField]
+      });
+      this.addChild(theModalMask);
+    } else {
+      this.addChild(thePopup);
     }
   },
 
@@ -146,14 +265,15 @@ isc.OBStandardWindow.addProperties({
             parentWindow: this
           }));
 
-          this.processLayout.addMember(this.runningProcess);
-          this.toolBarLayout.hide();
-          this.view.hide();
-          this.processLayout.show();
+          this.openPopupInTab(this.runningProcess, params.windowTitle, (this.runningProcess.popupWidth ? this.runningProcess.popupWidth : '90%'), (this.runningProcess.popupHeight ? this.runningProcess.popupHeight : '90%'), (this.runningProcess.showMinimizeButton ? this.runningProcess.showMinimizeButton : false), (this.runningProcess.showMaximizeButton ? this.runningProcess.showMaximizeButton : false), true, true);
+
         } else {
-          if (window.console) {
-            window.console.error('Cannot find class for process in window ' + params.windowId);
-          }
+          isc.warn(OB.I18N.getLabel('OBUIAPP_ProcessClassNotFound', [params.windowId]), function () {
+            return true;
+          }, {
+            icon: '[SKINIMG]Dialog/error.png',
+            title: OB.I18N.getLabel('OBUIAPP_Error')
+          });
         }
       }
     }
@@ -174,7 +294,7 @@ isc.OBStandardWindow.addProperties({
       //        contextView.setHalfSplit();
       //      }
       // Refresh in order to show possible new records
-      currentView.refresh(null, false, true);
+      currentView.refresh(null, false);
     };
 
     if (!currentView) {
@@ -288,8 +408,8 @@ isc.OBStandardWindow.addProperties({
         tab = data.tabs[t];
         view = this.getView(tab.tabId);
         disabledFields = [];
-        for (i = 0; i < view.viewForm.fields.length; i++) {
-          field = view.viewForm.fields[i];
+        for (i = 0; i < view.viewForm.getFields().length; i++) {
+          field = view.viewForm.getFields()[i];
           if (tab.fields[field.name] !== undefined) {
             field.updatable = tab.fields[field.name];
             field.disabled = !tab.fields[field.name];
@@ -299,8 +419,8 @@ isc.OBStandardWindow.addProperties({
           }
         }
         view.disabledFields = disabledFields;
-        for (i = 0; i < view.viewGrid.fields.length; i++) {
-          field = view.viewGrid.fields[i];
+        for (i = 0; i < view.viewGrid.getFields().length; i++) {
+          field = view.viewGrid.getFields()[i];
           if (tab.fields[field.name] !== undefined) {
             field.editorProperties.updatable = tab.fields[field.name];
             field.editorProperties.disabled = !tab.fields[field.name];
@@ -410,7 +530,7 @@ isc.OBStandardWindow.addProperties({
         return 1;
       });
     }
-    
+
     // restore focus as the focusitem may have been hidden now
     // https://issues.openbravo.com/view.php?id=21249
     this.setFocusInView();

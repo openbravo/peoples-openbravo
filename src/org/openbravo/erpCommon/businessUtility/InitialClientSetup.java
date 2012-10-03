@@ -27,6 +27,7 @@ import java.util.List;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.log4j.Logger;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.service.OBDal;
@@ -65,11 +66,13 @@ public class InitialClientSetup {
   private static final String STRTREETYPEPRODUCT = "PR";
   private static final String STRTREETYPEACCOUNT = "EV";
   private static final String STRTREETYPECAMPAIGN = "MC";
+  private static final String STRTREETYPEASSET = "AS";
+  private static final String STRTREETYPEPRODUCTCATEGORY = "PC";
   private static final String STRSEPARATOR = "*****************************************************";
   private static final String STRCLIENTNAMESUFFIX = " Admin";
   private boolean bAccountingCreated = false;
   private Tree treeOrg, treeBPartner, treeProject, treeSalesRegion, treeProduct, treeAccount,
-      treeMenu, treeCampaign;
+      treeMenu, treeCampaign, treeAsset, treeProductCategory;
   private Client client;
   private Role role;
   private Currency currency;
@@ -338,6 +341,12 @@ public class InitialClientSetup {
     } else if (strTreeType.endsWith(STRTREETYPECAMPAIGN)) {
       treeCampaign = tree;
       return;
+    } else if (strTreeType.endsWith(STRTREETYPEASSET)) {
+      treeAsset = tree;
+      return;
+    } else if (strTreeType.endsWith(STRTREETYPEPRODUCTCATEGORY)) {
+      treeProductCategory = tree;
+      return;
     }
   }
 
@@ -345,7 +354,7 @@ public class InitialClientSetup {
     log4j.debug("insertClientInfo() - Starting the creation of client information.");
     if (client == null || treeMenu == null || treeOrg == null || treeBPartner == null
         || treeProject == null || treeSalesRegion == null || treeProduct == null
-	|| treeCampaign == null) {
+        || treeCampaign == null || treeAsset == null || treeProductCategory == null) {
       return logErrorAndRollback("@CreateClientFailed@",
           "insertClientInfo() - ERROR - Required information is not present. "
               + "Please check that client and trees where correctly created.");
@@ -356,9 +365,13 @@ public class InitialClientSetup {
     try {
       clientInfo = InitialSetupUtility.insertClientinfo(client, treeMenu, treeOrg, treeBPartner,
           treeProject, treeSalesRegion, treeProduct, treeCampaign, true);
-      if (clientInfo == null)
+      if (clientInfo == null) {
         return logErrorAndRollback("@CreateClientFailed@",
             "insertClientInfo() - ERROR - Unable to create client information");
+      } else {
+        clientInfo.setPrimaryTreeAsset(treeAsset);
+        clientInfo.setPrimaryTreeProductCategory(treeProductCategory);
+      }
     } catch (Exception e) {
       return logErrorAndRollback("@CreateClientFailed@",
           "insertClientInfo() - ERROR - Unable to create client information", e);
@@ -652,6 +665,9 @@ public class InitialClientSetup {
         ImportResult iResult;
         try {
           iResult = InitialSetupUtility.insertReferenceData(dataSet, client, null);
+        } catch (OBException e) {
+          return logErrorAndRollback(e.getMessage(),
+              "Exception ocurred while getting source.path from Openbravo.properties", e);
         } catch (Exception e) {
           return logErrorAndRollback("@CreateReferenceDataFailed@",
               "insertReferenceDataModules() - Exception ocurred while obtaining datasets for module "

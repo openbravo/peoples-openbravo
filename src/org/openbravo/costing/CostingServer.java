@@ -78,8 +78,11 @@ public class CostingServer {
       log4j.debug("  *** Algorithm initializated: " + costingAlgorithm.getClass());
 
       trxCost = costingAlgorithm.getTransactionCost();
-      if (trxCost == null) {
+      if (trxCost == null && !transaction.getCostingStatus().equals("P")) {
         throw new OBException("@NoCostCalculated@: " + transaction.getIdentifier());
+      }
+      if (transaction.getCostingStatus().equals("P")) {
+        return;
       }
 
       trxCost = trxCost.setScale(costingAlgorithm.getCostCurrency().getStandardPrecision()
@@ -89,6 +92,7 @@ public class CostingServer {
       transaction.setTransactionCost(trxCost);
       transaction.setCurrency(currency);
       transaction.setCostCalculated(true);
+      transaction.setCostingStatus("CC");
       // insert on m_transaction_cost
       createTransactionCost();
       OBDal.getInstance().save(transaction);
@@ -190,9 +194,13 @@ public class CostingServer {
     if (organization != null) {
       return organization;
     }
-    return OBContext.getOBContext()
+    Organization org = OBContext.getOBContext()
         .getOrganizationStructureProvider(transaction.getClient().getId())
         .getLegalEntity(transaction.getOrganization());
+    if (org == null) {
+      throw new OBException("@WrongCostOrganization@" + transaction.getIdentifier());
+    }
+    return org;
   }
 
   public CostingRule getCostingRule() {

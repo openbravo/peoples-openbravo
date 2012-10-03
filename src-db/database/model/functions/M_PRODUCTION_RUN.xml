@@ -320,6 +320,11 @@ BEGIN --BODY
               v_QtyStorage:=0;
               v_ResultStr:='FetchingData';
               FETCH CUR_STOCK INTO v_storage;
+              IF (CUR_STOCK%NOTFOUND) THEN
+                CLOSE CUR_STOCK;
+                CUR_STOCK_ISOPEN:=false;
+                EXIT;
+              END IF;
               EXIT WHEN CUR_STOCK%NOTFOUND;
               v_QtyStorage:=v_storage.Qty;
             END LOOP;

@@ -115,19 +115,23 @@ public class ActionButtonUtility {
       }
 
       data = new SQLReturnObject[v.size()];
-      v.copyInto(data);
       if (log4j.isDebugEnabled())
         log4j.debug("DocAction - total combo elements: " + data.length);
-      for (int i = 0; i < data.length; i++) {
-        if (log4j.isDebugEnabled())
-          log4j.debug("DocAction - Element: " + i + " - ID: " + data[i].getField("ID"));
-        for (int j = 0; j < ld.length; j++) {
-          if (data[i].getField("ID").equals(ld[j].getField("ID"))) {
-            data[i].setData("NAME", ld[j].getField("NAME"));
-            data[i].setData("DESCRIPTION", ld[j].getField("DESCRIPTION"));
+      int ind1 = 0, ind2 = 0;
+      while (ind1 < ld.length && ind2 < v.size()) {
+        for (int j = 0; j < v.size(); j++) {
+          SQLReturnObject sqlro = (SQLReturnObject) v.get(j);
+          if (sqlro.getField("ID").equals(ld[ind1].getField("ID"))) {
+            if (log4j.isDebugEnabled())
+              log4j.debug("DocAction - Element: " + ind1 + " - ID: " + sqlro.getField("ID"));
+            data[ind2] = sqlro;
+            data[ind2].setData("NAME", ld[ind1].getField("NAME"));
+            data[ind2].setData("DESCRIPTION", ld[ind1].getField("DESCRIPTION"));
+            ind2++;
             break;
           }
         }
+        ind1++;
       }
     }
     return data;

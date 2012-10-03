@@ -16,31 +16,30 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-package org.openbravo.modulescript;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.UUID;
-import org.apache.log4j.Logger;
+package org.openbravo.erpCommon.ad_callouts;
 
 import javax.servlet.ServletException;
 
-import org.openbravo.database.ConnectionProvider;
+import org.apache.log4j.Logger;
 
-public class PopulateOriginalPaymentPlan extends ModuleScript {
+public class SL_StatusFieldDefaults extends SimpleCallout {
+  private static final long serialVersionUID = 1L;
+  private static Logger logger = Logger.getLogger(SL_StatusFieldDefaults.class);
+
   @Override
-  //   Populates the original plan information, in case it doesn't exist, with the
-  // Payment Plan information.
-  public void execute() {
+  protected void execute(CalloutInfo info) throws ServletException {
     try {
-      ConnectionProvider cp = getConnectionProvider();
-      PopulateOriginalPaymentPlanData[] data=PopulateOriginalPaymentPlanData.select(cp);
-      for (PopulateOriginalPaymentPlanData ps : data) {
-        PopulateOriginalPaymentPlanData.populateOPS(cp, ps.finOrigPaymentScheduleId, ps.finPaymentScheduleId);
-        PopulateOriginalPaymentPlanData.populateOPSD(cp, ps.finOrigPaymentScheduleId, ps.finPaymentScheduleId);
+      // Gets the last changed field and its value
+      String lastChanged = info.getStringParameter("inpLastFieldChanged", null);
+      String lastChangedValue = info.getStringParameter(lastChanged, null);
+      if (lastChanged.equals("inpisshowninstatusbar")) {
+        if (lastChangedValue.equals("Y")) {
+          info.addResult("inpisreadonly", lastChangedValue);
+        }
       }
     } catch (Exception e) {
-      handleError(e);
+      logger.error(e);
     }
   }
 }

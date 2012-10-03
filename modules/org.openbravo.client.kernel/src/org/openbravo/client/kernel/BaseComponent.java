@@ -312,4 +312,8 @@ public abstract class BaseComponent implements Component {
   protected boolean isClassicMode() {
     return getApplicationName().equals(ComponentResource.APP_CLASSIC);
   }
+
+  public boolean bypassAuthentication() {
+    return false;
+  }
 }

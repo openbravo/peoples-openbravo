@@ -29,6 +29,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
@@ -1491,6 +1492,9 @@ public class InitialSetupUtility {
     ImportResult myResult = null;
     String strSourcePath = OBPropertiesProvider.getInstance().getOpenbravoProperties()
         .getProperty("source.path");
+    if (strSourcePath == null || strSourcePath.equals("")) {
+      throw new OBException("@NoSourcePath@");
+    }
     String strPath = "";
     File datasetFile;
     OBContext.setAdminMode();

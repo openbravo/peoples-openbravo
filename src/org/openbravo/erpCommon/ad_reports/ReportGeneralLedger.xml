@@ -78,9 +78,11 @@
     <FUNCTION id="fieldTotalacctcrSum" name="SUM" format="euroInform" attribute="value">totalacctcr</FUNCTION>
     <FUNCTION id="fieldTotalacctSubSum" name="SUM" format="euroInform" attribute="value">totalacctsub</FUNCTION>
 
+    <FUNCTION id="fieldAmtacctdrprevsum" name="SUM" format="euroInform">amtacctdrprevsum</FUNCTION>
+    <FUNCTION id="fieldAmtacctcrprevsum" name="SUM" format="euroInform">amtacctcrprevsum</FUNCTION>
     <!-- Function adding the partial amounts and the previous amounts -->
-    <FUNCTION id="fieldTotalDrAdded" name="ADD" arg1="fieldTotalDebit" arg2="fieldTotalacctdrSum" format="euroInform"/>
-    <FUNCTION id="fieldTotalCrAdded" name="ADD" arg1="fieldTotalCredit" arg2="fieldTotalacctcrSum" format="euroInform"/>
+    <FUNCTION id="fieldTotalDrAdded" name="ADD" arg1="fieldTotalDebit" arg2="fieldAmtacctdrprevsum" format="euroInform"/>
+    <FUNCTION id="fieldTotalCrAdded" name="ADD" arg1="fieldTotalCredit" arg2="fieldAmtacctcrprevsum" format="euroInform"/>
     <FUNCTION id="fieldTotalSubAdded" name="SUBTRACT" arg1="fieldTotalDrAdded" arg2="fieldTotalCrAdded" format="euroInform"/>
 
     <FIELD id="fieldSubreportPreviousDebit" format="euroInform">previousdebit</FIELD>
@@ -150,9 +152,11 @@
     <FUNCTION id="fieldTotalacctdrSum2" name="SUM" format="euroInform" attribute="value">totalacctdr</FUNCTION>
     <FUNCTION id="fieldTotalacctcrSum2" name="SUM" format="euroInform" attribute="value">totalacctcr</FUNCTION>
 
+    <FUNCTION id="fieldAmtacctdrprevsum2" name="SUM" format="euroInform">amtacctdrprevsum</FUNCTION>
+    <FUNCTION id="fieldAmtacctcrprevsum2" name="SUM" format="euroInform">amtacctcrprevsum</FUNCTION>
     <!-- Function adding the total and the total previously-->
-    <FUNCTION id="fieldTotalDrAdded2" name="ADD" arg1="fieldTotalDebit2" arg2="fieldTotalacctdrSum2" format="euroInform"/>
-    <FUNCTION id="fieldTotalCrAdded2" name="ADD" arg1="fieldTotalCredit2" arg2="fieldTotalacctcrSum2" format="euroInform"/>
+    <FUNCTION id="fieldTotalDrAdded2" name="ADD" arg1="fieldTotalDebit2" arg2="fieldAmtacctdrprevsum2" format="euroInform"/>
+    <FUNCTION id="fieldTotalCrAdded2" name="ADD" arg1="fieldTotalCredit2" arg2="fieldAmtacctcrprevsum2" format="euroInform"/>
     <FUNCTION id="fieldTotalSubAdded2" name="SUBTRACT" arg1="fieldTotalDrAdded2" arg2="fieldTotalCrAdded2" format="euroInform"/>
 
     <FIELD id="fieldSubreportPreviousDebit2" format="euroInform">previousdebit</FIELD>

@@ -109,7 +109,7 @@ isc.OBToolbarActionButton.addProperties({
     if (this.modal) {
       allProperties.Command = this.command;
       callbackFunction = function () {
-        var popup = OB.Layout.ClassicOBCompatibility.Popup.open('process', 900, 600, OB.Utilities.applicationUrl(me.obManualURL), '', null, false, false, true, allProperties);
+        var popup = OB.Layout.ClassicOBCompatibility.Popup.open('process', 900, 600, OB.Utilities.applicationUrl(me.obManualURL), '', null, true, true, true, allProperties);
         if (autosaveButton) {
           // Back to header if autosave button
           popup.activeViewWhenClosed = theView;
@@ -144,7 +144,9 @@ isc.OBToolbarActionButton.addProperties({
         afterRefresh, parsePathPart, parts;
 
     afterRefresh = function (doRefresh) {
-      var undef, refresh = (doRefresh === undef || doRefresh);
+      var undef, refresh = (doRefresh === undef || doRefresh),
+          autosaveDone = false,
+          currentRecordId;
 
       // Refresh context view
       contextView.getTabMessage();
@@ -155,10 +157,15 @@ isc.OBToolbarActionButton.addProperties({
         // let's set half for each in order to see the message
         contextView.setHalfSplit();
       }
-
       // Refresh in order to show possible new records
       if (refresh) {
-        currentView.refresh(null, false, true);
+        // The selected record should be shown after the refresh, even
+        // if the filter would exclude it
+        // See issue https://issues.openbravo.com/view.php?id=20722
+        if (currentView.viewGrid.getSelectedRecord()) {
+          currentRecordId = currentView.viewGrid.getSelectedRecord()[OB.Constants.ID];
+        }
+        currentView.refresh(null, autosaveDone, currentRecordId);
       }
     };
 

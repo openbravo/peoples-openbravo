@@ -138,18 +138,22 @@ BEGIN
 
       select count(*) 
       into v_gl_category_count
-      from gl_category where name='Standard'
-      AND ad_isorgincluded(v_org_id, gl_category.ad_org_id, v_client_id)<>-1
-      AND gl_category.ad_client_id = v_client_id;
+      from gl_category 
+      where ad_isorgincluded(v_org_id, gl_category.ad_org_id, v_client_id)<>-1
+      AND gl_category.ad_client_id = v_client_id
+      and gl_category.categorytype = 'M';
 
       if (v_gl_category_count>0) then
           select max(gl_category_id)
           into v_gl_category_id
-          from gl_category where name='Standard'
-          AND ad_isorgincluded(v_org_id, gl_category.ad_org_id, v_client_id)<>-1
-          AND gl_category.ad_client_id = v_client_id;
+          from    (select gl_category_id
+		  from gl_category 
+		  where gl_category.categorytype = 'M'
+		  AND ad_isorgincluded(v_org_id, gl_category.ad_org_id, v_client_id)<>-1
+		  AND gl_category.ad_client_id = v_client_id
+		  order by isdefault desc) tmp;
       else
-          RAISE_APPLICATION_ERROR(-20000, '@OrgForStandardGLCategory@');
+          RAISE_APPLICATION_ERROR(-20000, '@OrgForManualGLCategory@');
       end if;
    
 

@@ -95,6 +95,8 @@ public class ActiveInstanceProcess implements Process {
         activationKey = result[1];
       }
 
+      String previousLicenseClass = ActivationKey.getInstance().getLicenseClass().getCode();
+
       ActivationKey ak = new ActivationKey(publicKey, activationKey);
       String nonAllowedMods = ak.verifyInstalledModules(false);
       if (!nonAllowedMods.isEmpty()) {
@@ -109,8 +111,14 @@ public class ActiveInstanceProcess implements Process {
           SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
           sysInfo.setInstancePurpose(ak.getProperty("purpose"));
 
-          sysInfo.setMaturitySearch(Integer.toString(MaturityLevel.CS_MATURITY));
-          sysInfo.setMaturityUpdate(Integer.toString(MaturityLevel.CS_MATURITY));
+          // Only reset the maturity level when changing from a
+          // community to a professional license
+          // See issue https://issues.openbravo.com/view.php?id=21251
+          String newLicenseClass = ActivationKey.getInstance().getLicenseClass().getCode();
+          if ("C".equals(previousLicenseClass) && "STD".equals(newLicenseClass)) {
+            sysInfo.setMaturitySearch(Integer.toString(MaturityLevel.CS_MATURITY));
+            sysInfo.setMaturityUpdate(Integer.toString(MaturityLevel.CS_MATURITY));
+          }
 
           updateShowProductionFields("Y");
 

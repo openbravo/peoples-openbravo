@@ -535,6 +535,17 @@
           * Reverse Correction
           */
         ELSIF(Cur_InOut.DocStatus='CO' AND Cur_InOut.DocAction='RC') THEN
+          --Check if the m_inoutlines has an invoice lines related. In this case is not possible to void the m_inout.
+	  SELECT COUNT(*)
+          INTO v_count
+          FROM M_INOUTLINE MIOL 
+              JOIN C_INVOICELINE CIL ON MIOL.M_INOUTLINE_ID=CIL.M_INOUTLINE_ID 
+              JOIN C_INVOICE CI ON CI.C_INVOICE_ID=CIL.C_INVOICE_ID
+          WHERE M_INOUT_ID=Cur_InOut.m_inout_id
+          AND CI.DOCSTATUS <> 'VO';
+          IF (v_count <> 0) THEN
+	     RAISE_APPLICATION_ERROR(-20000,'@VoidShipmentWithRelatedInvoice@');
+          END IF;
           --Check that there isn't any line with an invoice if the order's 
           --invoice rule is after delivery
           select count(*), max(line) into v_count, v_line

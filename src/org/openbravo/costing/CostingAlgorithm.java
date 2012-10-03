@@ -20,7 +20,6 @@ package org.openbravo.costing;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -40,12 +39,13 @@ import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.materialmgmt.cost.Costing;
+import org.openbravo.model.materialmgmt.cost.CostingRule;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.materialmgmt.transaction.ProductionLine;
 import org.openbravo.model.materialmgmt.transaction.ProductionTransaction;
 import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.model.pricing.pricelist.ProductPrice;
-import org.openbravo.service.db.DalConnectionProvider;
+import org.openbravo.service.db.CallStoredProcedure;
 
 public abstract class CostingAlgorithm {
   protected MaterialTransaction transaction;
@@ -53,6 +53,7 @@ public abstract class CostingAlgorithm {
   protected Organization costOrg;
   protected Currency costCurrency;
   protected TrxType trxType;
+  protected CostingRule costingRule;
   protected static Logger log4j = Logger.getLogger(CostingAlgorithm.class);
 
   /**
@@ -73,7 +74,7 @@ public abstract class CostingAlgorithm {
     costCurrency = costingServer.getCostCurrency();
     trxType = TrxType.getTrxType(this.transaction);
 
-    org.openbravo.model.materialmgmt.cost.CostingRule costingRule = costingServer.getCostingRule();
+    costingRule = costingServer.getCostingRule();
     costDimensions = CostingUtils.getEmptyDimensions();
     if (costingRule.isWarehouseDimension()) {
       costDimensions.put(CostDimension.Warehouse, transaction.getStorageBin().getWarehouse());
@@ -192,9 +193,6 @@ public abstract class CostingAlgorithm {
    * @return BigDecimal object representing the total cost amount of the transaction.
    */
   protected BigDecimal getShipmentVoidCost() {
-    if (transaction.getGoodsShipmentLine().getCanceledInoutLine() == null) {
-      return getDefaultCost();
-    }
     return getOriginalInOutLineCost();
   }
 
@@ -251,9 +249,6 @@ public abstract class CostingAlgorithm {
    * @return BigDecimal object representing the total cost amount of the transaction.
    */
   protected BigDecimal getReceiptVoidCost() {
-    if (transaction.getGoodsShipmentLine().getCanceledInoutLine() == null) {
-      return getOutgoingTransactionCost();
-    }
     return getOriginalInOutLineCost();
   }
 
@@ -471,8 +466,12 @@ public abstract class CostingAlgorithm {
       MaterialTransaction partTransaction = prodLine.getMaterialMgmtMaterialTransactionList()
           .get(0);
       // Calculate transaction cost if it is not calculated yet.
-      totalCost = totalCost.add(CostingUtils.getTransactionCost(partTransaction,
-          transaction.getTransactionProcessDate(), true, costCurrency));
+      BigDecimal trxCost = CostingUtils.getTransactionCost(partTransaction,
+          transaction.getTransactionProcessDate(), true, costCurrency);
+      if (trxCost == null) {
+        throw new OBException("@NoCostCalculated@: " + partTransaction.getIdentifier());
+      }
+      totalCost = totalCost.add(trxCost);
     }
     return totalCost;
   }
@@ -492,8 +491,9 @@ public abstract class CostingAlgorithm {
       calculateWorkEffortCost(transaction.getProductionLine().getProductionPlan().getProduction());
     }
     OBDal.getInstance().refresh(transaction.getProductionLine());
-    return transaction.getProductionLine().getEstimatedCost()
-        .multiply(transaction.getMovementQuantity().abs());
+    return transaction.getProductionLine().getEstimatedCost() != null ? transaction
+        .getProductionLine().getEstimatedCost().multiply(transaction.getMovementQuantity().abs())
+        : BigDecimal.ZERO;
   }
 
   /**
@@ -518,11 +518,10 @@ public abstract class CostingAlgorithm {
   private void calculateWorkEffortCost(ProductionTransaction production) {
 
     try {
-      // first get a connection
-      final Connection connection = OBDal.getInstance().getConnection();
-
-      CostingData.calculateWorkEffortCost(connection, new DalConnectionProvider(),
-          production.getId(), (String) DalUtil.getId(OBContext.getOBContext().getUser()));
+      List<Object> params = new ArrayList<Object>();
+      params.add(production.getId());
+      params.add((String) DalUtil.getId(OBContext.getOBContext().getUser()));
+      CallStoredProcedure.getInstance().call("MA_PRODUCTION_COST", params, null, true, false);
 
     } catch (Exception e) {
       OBDal.getInstance().rollbackAndClose();

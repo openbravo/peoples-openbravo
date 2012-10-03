@@ -347,12 +347,11 @@ public class DefaultJsonDataService implements JsonDataService {
     if (entityName == null) {
       return JsonUtils.convertExceptionToJson(new IllegalStateException("No entityName parameter"));
     }
-    final BaseOBObject bob = OBDal.getInstance().get(entityName, id);
+    BaseOBObject bob = OBDal.getInstance().get(entityName, id);
     if (bob != null) {
 
       try {
         // create the result info before deleting to prevent Hibernate errors
-
         final DataToJsonConverter toJsonConverter = OBProvider.getInstance().get(
             DataToJsonConverter.class);
         final List<JSONObject> jsonObjects = toJsonConverter.toJsonObjects(Collections
@@ -362,7 +361,13 @@ public class DefaultJsonDataService implements JsonDataService {
         jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
         jsonResponse.put(JsonConstants.RESPONSE_DATA, new JSONArray(jsonObjects));
         jsonResult.put(JsonConstants.RESPONSE_RESPONSE, jsonResponse);
+        OBDal.getInstance().commitAndClose();
 
+        // now do the real delete in a separate transaction
+        // to prevent side effects that a child can not be deleted
+        // from its parent
+        // https://issues.openbravo.com/view.php?id=21229
+        bob = OBDal.getInstance().get(entityName, id);
         OBDal.getInstance().remove(bob);
         OBDal.getInstance().commitAndClose();
 

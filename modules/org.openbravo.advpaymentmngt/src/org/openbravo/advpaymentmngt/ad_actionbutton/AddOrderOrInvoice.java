@@ -60,7 +60,6 @@ import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.financialmgmt.gl.GLItem;
-import org.openbravo.model.financialmgmt.payment.FIN_OrigPaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
@@ -295,7 +294,6 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
                 psd, false);
             newOutstanding.setPaymentDetails(null);
             newOutstanding.setWriteoffAmount(BigDecimal.ZERO);
-            newOutstanding.setFINOrigPaymentScheduleDetailList(null);
             OBDal.getInstance().save(newOutstanding);
             toRemovePDs.add(pd.getId());
           } else {
@@ -321,21 +319,6 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
             pd.getFINPaymentScheduleDetailList().get(0).getId());
         pd.getFINPaymentScheduleDetailList().remove(psd);
         OBDal.getInstance().save(pd);
-        psd.setFINOrigPaymentScheduleDetailList(null);
-        OBDal.getInstance().save(psd);
-        ArrayList<String> opsdToRemove = new ArrayList<String>();
-        OBCriteria<FIN_OrigPaymentScheduleDetail> opsds = OBDal.getInstance().createCriteria(
-            FIN_OrigPaymentScheduleDetail.class);
-        opsds.add(Restrictions
-            .eq(FIN_OrigPaymentScheduleDetail.PROPERTY_PAYMENTSCHEDULEDETAIL, psd));
-        for (FIN_OrigPaymentScheduleDetail opsd : opsds.list()) {
-          opsdToRemove.add(opsd.getId());
-        }
-        for (String id : opsdToRemove) {
-          FIN_OrigPaymentScheduleDetail opsd = OBDal.getInstance().get(
-              FIN_OrigPaymentScheduleDetail.class, id);
-          OBDal.getInstance().remove(opsd);
-        }
         OBDal.getInstance().remove(psd);
       }
       payment.getFINPaymentDetailList().remove(pd);

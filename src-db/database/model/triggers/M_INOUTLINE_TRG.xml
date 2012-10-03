@@ -21,6 +21,7 @@
   v_ISSOTRX CHAR(1);
   v_QTYVARIABLE CHAR(1);
   v_OrderProduct VARCHAR2(32);
+  v_IsUpdateDifferentProduct BOOLEAN;
 /******************************************************************************
  * The contents of this file are subject to the   Compiere License  Version 1.1
  * ("License"); You may not use this file except in compliance with the License
@@ -165,9 +166,12 @@ BEGIN
    END IF;
  END IF;
 
+ IF (UPDATING) THEN
+   v_IsUpdateDifferentProduct := COALESCE(:OLD.m_product_id, '0') <> COALESCE(:NEW.m_product_id, '0');
+ END IF;
 
  -- Do not allow different product than the one in the related orderline.
- IF ((UPDATING OR INSERTING)) THEN
+ IF (INSERTING OR v_IsUpdateDifferentProduct) THEN
    IF (:new.C_OrderLine_ID is not null) THEN
      SELECT m_product_id INTO v_OrderProduct FROM C_OrderLine WHERE C_OrderLine_ID = :new.C_OrderLine_ID;
      IF (v_OrderProduct <> :new.M_Product_ID) THEN
@@ -175,7 +179,6 @@ BEGIN
      END IF;
    END IF;
  END IF;
-
  
  -- UPDATING inventory
  IF (UPDATING OR DELETING) THEN

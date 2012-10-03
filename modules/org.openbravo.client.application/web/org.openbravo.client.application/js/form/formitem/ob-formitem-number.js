@@ -474,7 +474,7 @@ isc.OBNumberItem.validateCondition = function (item, validator, value) {
   }
 
   type = item.typeInstance;
-  validator.resultingValue = null;
+  delete validator.resultingValue;
 
   // return a formatted value, if it was valid
   if (isc.isA.String(value)) {
@@ -491,6 +491,7 @@ isc.OBNumberItem.validateCondition = function (item, validator, value) {
       return false;
     }
   } else if (isc.isA.Number(value)) {
+    validator.resultingValue = value;
     return true;
   }
   // don't loose illegal values

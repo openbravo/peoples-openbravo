@@ -65,7 +65,11 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
     try {
       jsonRequest = new JSONObject(content);
       log.debug(jsonRequest);
-      final String strOrderId = jsonRequest.getString("inpcOrderId");
+      // When the focus is NOT in the tab of the button (i.e. any child tab) and the tab does not
+      // contain any record, the inpcOrderId parameter contains "null" string. Use C_Order_ID
+      // instead because it always contains the id of the selected order.
+      // Issue 20585: https://issues.openbravo.com/view.php?id=20585
+      final String strOrderId = jsonRequest.getString("C_Order_ID");
       Order order = OBDal.getInstance().get(Order.class, strOrderId);
       if (cleanOrderLines(order)) {
         createOrderLines(jsonRequest);
@@ -119,7 +123,7 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
     if (selectedLines.length() == 0) {
       return;
     }
-    final String strOrderId = jsonRequest.getString("inpcOrderId");
+    final String strOrderId = jsonRequest.getString("C_Order_ID");
     Order order = OBDal.getInstance().get(Order.class, strOrderId);
     boolean isSOTrx = order.isSalesTransaction();
     for (long i = 0; i < selectedLines.length(); i++) {

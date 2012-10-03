@@ -225,7 +225,8 @@ public class OBViewFieldHandler {
         }
 
         // change in fieldgroup
-        if (field.getFieldGroup() != null && field.getFieldGroup() != currentADFieldGroup) {
+        if (field.isDisplayed() && field.getFieldGroup() != null
+            && field.getFieldGroup() != currentADFieldGroup) {
           // start of a fieldgroup use it
           final OBViewFieldGroup viewFieldGroup = new OBViewFieldGroup();
           fields.add(viewFieldGroup);
@@ -269,7 +270,8 @@ public class OBViewFieldHandler {
         }
 
         // change in fieldgroup
-        if (field.getFieldGroup() != null && field.getFieldGroup() != currentADFieldGroup) {
+        if (field.isDisplayed() && field.getFieldGroup() != null
+            && field.getFieldGroup() != currentADFieldGroup) {
           // start of a fieldgroup use it
           final OBViewFieldGroup viewFieldGroup = new OBViewFieldGroup();
           fields.add(viewFieldGroup);
@@ -382,6 +384,8 @@ public class OBViewFieldHandler {
       statusBarFields.add(property.getName());
 
       final OBViewField viewField = new OBViewField();
+      // Prevents the field from being displayed twice: on the status bar and in the form footer
+      field.setDisplayed(false);
       viewField.setField(field);
       viewField.setProperty(property);
       viewField.setRedrawOnChange(false);

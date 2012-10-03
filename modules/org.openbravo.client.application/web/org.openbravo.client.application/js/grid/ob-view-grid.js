@@ -26,7 +26,16 @@ isc.OBViewGrid.addClassProperties({
   // ListGrid._$ArrowUp and ListGrid._$ArrowDown
   ARROW_UP_KEY_NAME: 'Arrow_Up',
   ARROW_DOWN_KEY_NAME: 'Arrow_Down',
-  ERROR_MESSAGE_PROP: isc.OBViewGrid.ERROR_MESSAGE_PROP
+  ERROR_MESSAGE_PROP: isc.OBViewGrid.ERROR_MESSAGE_PROP,
+  ICONS: {
+    PROGRESS: 0,
+    OPEN_IN_FORM: 1,
+    SEPARATOR1: 2,
+    EDIT_IN_GRID: 3,
+    CANCEL: 4,
+    SEPARATOR2: 5,
+    SAVE: 6
+  }
 });
 
 if (!isc.Browser.isIE) {
@@ -116,7 +125,9 @@ isc.OBViewGrid.addProperties({
   // it is better to allow fast grid interaction and if an error occurs
   // dismiss any new records being edited and go back to the edit row
   // which causes the error
-  waitForSave: false,
+  // set to true to solve this issue:
+  // https://issues.openbravo.com/view.php?id=21352
+  waitForSave: true,
   stopOnErrors: false,
   confirmDiscardEdits: false,
   canMultiSort: false,
@@ -473,14 +484,26 @@ isc.OBViewGrid.addProperties({
   },
 
   hideField: function (field, suppressRelayout) {
-    var res = this.Super('hideField', arguments);
+    var res;
+    this._hidingField = true;
+    this._savedEditValues = this.getEditValues(this.getEditRow());
+    res = this.Super('hideField', arguments);
+    delete this._savedEditValues;
+    delete this._hidingField;
     this.view.standardWindow.storeViewState();
+    this.refreshContents();
     return res;
   },
 
   showField: function (field, suppressRelayout) {
-    var res = this.Super('showField', arguments);
+    var res;
+    this._showingField = true;
+    this._savedEditValues = this.getEditValues(this.getEditRow());
+    res = this.Super('showField', arguments);
+    delete this._savedEditValues;
+    delete this._showingField;
     this.view.standardWindow.storeViewState();
+    this.refreshContents();
     return res;
   },
 
@@ -542,7 +565,7 @@ isc.OBViewGrid.addProperties({
       if (this.filterEditor && this.filterEditor.getEditForm() && this.filterEditor.getEditForm().getFocusItem()) {
         this.filterEditor.getEditForm().getFocusItem().hasFocus = false;
       }
-      
+
       this.deleteSelectedParentRecordFilter(localState);
 
       this.Super('setViewState', ['(' + isc.Comm.serialize(localState, false) + ')']);
@@ -672,10 +695,19 @@ isc.OBViewGrid.addProperties({
   bodyKeyPress: function (event, eventInfo) {
     var response = OB.KeyboardManager.Shortcuts.monitor('OBViewGrid.body');
     if (response !== false) {
-      if (event.keyName === 'Space' && (isc.EventHandler.ctrlKeyDown() || isc.EventHandler.altKeyDown() || isc.EventHandler.shiftKeyDown())) {
+      if (event && event.keyName === 'Space' && (isc.EventHandler.ctrlKeyDown() || isc.EventHandler.altKeyDown() || isc.EventHandler.shiftKeyDown())) {
         return true;
       }
       response = this.Super('bodyKeyPress', arguments);
+    }
+    return response;
+  },
+
+  editFormKeyDown: function () {
+    // Custom method. Only works if the form is an OBViewForm
+    var response = OB.KeyboardManager.Shortcuts.monitor('OBViewGrid.editForm');
+    if (response !== false) {
+      response = this.Super('editFormKeyDown', arguments);
     }
     return response;
   },
@@ -702,16 +734,7 @@ isc.OBViewGrid.addProperties({
     var me = this,
         ksAction_CancelEditing, ksAction_MoveUpWhileEditing, ksAction_MoveDownWhileEditing, ksAction_DeleteSelectedRecords, ksAction_EditInGrid, ksAction_EditInForm, ksAction_CancelChanges;
 
-    ksAction_CancelEditing = function () {
-      if (me.getEditForm()) {
-        me.cancelEditing();
-        return false; //To avoid keyboard shortcut propagation
-      } else {
-        return true;
-      }
-    };
-    OB.KeyboardManager.Shortcuts.set('ViewGrid_CancelEditing', ['OBViewGrid', 'OBViewGrid.body'], ksAction_CancelEditing);
-
+    // This is JUST for the case of an editing row with the whole row in "read only mode"
     ksAction_MoveUpWhileEditing = function () {
       if (me.getEditForm()) {
         var editRow = me.getEditRow();
@@ -724,10 +747,11 @@ isc.OBViewGrid.addProperties({
         return true;
       }
     };
-    OB.KeyboardManager.Shortcuts.set('ViewGrid_MoveUpWhileEditing', ['OBViewGrid', 'OBViewGrid.body'], ksAction_MoveUpWhileEditing, null, {
+    OB.KeyboardManager.Shortcuts.set('ViewGrid_MoveUpWhileEditing', 'OBViewGrid.body', ksAction_MoveUpWhileEditing, null, {
       "key": "Arrow_Up"
     });
 
+    // This is JUST for the case of an editing row with the whole row in "read only mode"
     ksAction_MoveDownWhileEditing = function () {
       if (me.getEditForm()) {
         var editRow = me.getEditRow();
@@ -740,12 +764,23 @@ isc.OBViewGrid.addProperties({
         return true;
       }
     };
-    OB.KeyboardManager.Shortcuts.set('ViewGrid_MoveDownWhileEditing', ['OBViewGrid', 'OBViewGrid.body'], ksAction_MoveDownWhileEditing, null, {
+    OB.KeyboardManager.Shortcuts.set('ViewGrid_MoveDownWhileEditing', 'OBViewGrid.body', ksAction_MoveDownWhileEditing, null, {
       "key": "Arrow_Down"
     });
 
+    ksAction_CancelEditing = function () {
+      if (me.getEditForm()) {
+        me.cancelEditing();
+        return false; //To avoid keyboard shortcut propagation
+      } else {
+        return true;
+      }
+    };
+    OB.KeyboardManager.Shortcuts.set('ViewGrid_CancelEditing', ['OBViewGrid.body', 'OBViewGrid.editForm'], ksAction_CancelEditing);
+
     ksAction_DeleteSelectedRecords = function () {
-      if (me.getSelectedRecords().length > 0) {
+      var isDeletingEnabled = !me.view.toolBar.getLeftMember(isc.OBToolbar.TYPE_DELETE).disabled;
+      if (me.getSelectedRecords().length > 0 && isDeletingEnabled) {
         me.view.deleteSelectedRows();
         return false; //To avoid keyboard shortcut propagation
       } else {
@@ -774,13 +809,7 @@ isc.OBViewGrid.addProperties({
         return true;
       }
     };
-    OB.KeyboardManager.Shortcuts.set('ViewGrid_EditInForm', 'OBViewGrid.body', ksAction_EditInForm);
-
-    ksAction_CancelChanges = function () {
-      me.view.undo();
-      return false;
-    };
-    OB.KeyboardManager.Shortcuts.set('ViewGrid_CancelChanges', 'OBViewGrid.body', ksAction_CancelChanges);
+    OB.KeyboardManager.Shortcuts.set('ViewGrid_EditInForm', ['OBViewGrid.body', 'OBViewGrid.editForm'], ksAction_EditInForm);
 
     this.Super('enableShortcuts', arguments);
   },
@@ -887,7 +916,7 @@ isc.OBViewGrid.addProperties({
     if (this.uiPattern === 'SR' || this.uiPattern === 'RO') {
       this.noDataEmptyMessage = '<span class="' + this.emptyMessageStyle + '">' + OB.I18N.getLabel('OBUIAPP_NoDataInGrid') + '</span>';
     } else {
-      this.noDataEmptyMessage = '<span class="' + this.emptyMessageStyle + '">' + OB.I18N.getLabel('OBUIAPP_GridNoRecords') + '</span>' + '<span onclick="window[\'' + this.ID + '\'].view.newRow();" class="' + this.emptyMessageLinkStyle + '">' + OB.I18N.getLabel('OBUIAPP_GridCreateOne') + '</span>';
+      this.noDataEmptyMessage = '<span class="' + this.emptyMessageStyle + '">' + OB.I18N.getLabel('OBUIAPP_GridNoRecords') + '</span>' + '<span onclick="this.onclick = new Function(); setTimeout(function() { window[\'' + this.ID + '\'].view.newRow(); }, 50); return false;" class="' + this.emptyMessageLinkStyle + '">' + OB.I18N.getLabel('OBUIAPP_GridCreateOne') + '</span>';
     }
     this.resetEmptyMessage();
 
@@ -970,7 +999,14 @@ isc.OBViewGrid.addProperties({
     }, this.Super('getFilterEditorProperties', arguments));
   },
 
-  refreshGrid: function (callback) {
+  removeOrClause: function (criteria) {
+    // The original criteria is stored in the position #1
+    // The criteria to select the selected record is stored in position #0
+    return criteria.criteria.get(1);
+  },
+
+  refreshGrid: function (callback, forceCurrentRecordID) {
+    var originalCriteria, criteria = {};
     if (this.getSelectedRecord()) {
       this.targetRecordId = this.getSelectedRecord()[OB.Constants.ID];
       // as the record is already selected it is already in the filter
@@ -982,7 +1018,39 @@ isc.OBViewGrid.addProperties({
     var context = {
       showPrompt: false
     };
-    this.filterData(this.getCriteria(), null, context);
+
+    // Removes the 'or' clause, if there is one
+    // See note at the function foot
+    originalCriteria = this.getCriteria();
+    if (this._criteriaWithOrClause) {
+      originalCriteria = this.removeOrClause(originalCriteria);
+      this._criteriaWithOrClause = false;
+    }
+
+    // If a record has to be included in the refresh, it must be included
+    // in the filter with an 'or' operator, along with the original filter,
+    // but only if there is an original filter
+    if (forceCurrentRecordID && originalCriteria.criteria.length > 0) {
+      // Adds the current record to the criteria
+      this._criteriaWithOrClause = true;
+      criteria._constructor = 'AdvancedCriteria';
+      criteria._OrExpression = true; // trick to get a really _or_ in the backend
+      criteria.operator = 'or';
+      criteria.criteria = [{
+        fieldName: 'id',
+        operator: 'equals',
+        value: forceCurrentRecordID
+      }];
+      criteria.criteria.push(originalCriteria); // original filter
+    } else {
+      criteria = originalCriteria;
+    }
+    this.filterData(criteria, null, context);
+    // At this point the original criteria should be restored, to prevent
+    // the 'or' clause that was just added to be used in subsequent refreshes.
+    // It is not possible to do it here, though, because a this.setCriteria(originalCriteria)
+    // would trigger an automatic refresh that would leave without effect that last filterData
+    // The additional criteria will be removed in the next call to refreshGrid
   },
 
   // with a delay to handle the target record when the body has been drawn
@@ -1212,6 +1280,16 @@ isc.OBViewGrid.addProperties({
         } else if (isc.isA.emptyString(criterion.value)) {
           shouldRemove = true;
         }
+        // if the field referenced by the criterion has a criteriaField, remove the redundant criterion that references its displayField
+        if (!shouldRemove && this.fields) {
+          for (j = 0; j < this.fields.length; j++) {
+            if (criterion.operator === 'iContains' && this.fields[j].criteriaField && this.fields[j].displayField === criterion.fieldName && criterion.fieldName !== this.fields[j].criteriaField) {
+              shouldRemove = true;
+              break;
+            }
+          }
+        }
+
         if (shouldRemove) {
           internalCriteria.removeAt(i);
         } else {
@@ -1892,7 +1970,7 @@ isc.OBViewGrid.addProperties({
   editComplete: function (rowNum, colNum, newValues, oldValues, editCompletionEvent, dsResponse) {
 
     var record = this.getRecord(rowNum),
-        editRow, editSession, autoSaveAction;
+        editRow, editSession, autoSaveAction, keepSelection;
 
     // a new id has been computed use that now    
     if (record && record._newId) {
@@ -1921,7 +1999,8 @@ isc.OBViewGrid.addProperties({
     // if nothing else got selected, select ourselves then
     if (!this.getSelectedRecord()) {
       this.selectRecord(record);
-      this.view.refreshChildViews();
+      keepSelection = true;
+      this.view.refreshChildViews(keepSelection);
     } else if (this.getSelectedRecord() === record) {
       this.view.refreshChildViews();
     }
@@ -1931,7 +2010,9 @@ isc.OBViewGrid.addProperties({
     // update after the error message has been removed
     this.view.updateTabTitle();
     this.view.toolBar.updateButtonState(true);
-    this.view.messageBar.hide();
+    if (this.view.messageBar.type === isc.OBMessageBar.TYPE_ERROR) {
+      this.view.messageBar.hide();
+    }
     this.view.refreshParentRecord();
     this.refreshRow(rowNum);
   },
@@ -2087,6 +2168,15 @@ isc.OBViewGrid.addProperties({
     var nextEditCell = ((rowNum || rowNum === 0) && (colNum || colNum === 0) ? this.getNextEditCell(rowNum, colNum, editCompletionEvent) : null);
     var newRow = nextEditCell && nextEditCell[0] !== rowNum;
     var enterKey = editCompletionEvent === 'enter';
+
+    // no newValue, compute it, this because in the super method there is a check
+    // how many arguments are passed on, sometimes the newValue is not passed in
+    // and then it must be recomputed, so if we then use the undefined newValue
+    // in the actionObject below things will go wrong
+    if (arguments.length < 2) {
+      newValue = this.getEditValue(rowNum, colNum);
+    }
+
     if (!this.view.standardWindow.isAutoSaveEnabled() && !enterKey && !autoSaveDone && newRow && (editForm.hasChanged || editForm.isNew)) {
       var actionObject = {
         target: this,
@@ -2096,9 +2186,9 @@ isc.OBViewGrid.addProperties({
       this.view.standardWindow.doActionAfterAutoSave(actionObject, true);
       return;
     }
-    
+
     this._leavingCell = true;
-    
+
     if (newValue) {
       this.Super('cellEditEnd', [editCompletionEvent, newValue]);
     } else {
@@ -2177,6 +2267,7 @@ isc.OBViewGrid.addProperties({
   // done, at that point first try to force a fic call (handleItemChange) and if that
   // indeed happens stop the saveEdit until the fic returns
   saveEditedValues: function (rowNum, colNum, newValues, oldValues, editValuesID, editCompletionEvent, saveCallback, ficCallDone) {
+    var previousExplicitOffline;
     if (!rowNum && rowNum !== 0) {
       rowNum = this.getEditRow();
     }
@@ -2211,7 +2302,10 @@ isc.OBViewGrid.addProperties({
         }
       }
     }
+    previousExplicitOffline = isc.Offline.explicitOffline;
+    isc.Offline.explicitOffline = false;
     this.Super('saveEditedValues', [rowNum, colNum, newValues, oldValues, editValuesID, editCompletionEvent, saveCallback]);
+    isc.Offline.explicitOffline = previousExplicitOffline;
     // commented out as it removes an autosave action which is done in the edit complete method
     //    this.view.standardWindow.setDirtyEditForm(null);
   },
@@ -2230,6 +2324,13 @@ isc.OBViewGrid.addProperties({
     var rowNum = this.getEditRow(),
         record = this.getRecord(rowNum),
         editForm = this.getEditForm();
+
+    // Do not hide the inline editor if the action has been caused
+    // by hiding or showing a field
+    // See issue https://issues.openbravo.com/view.php?id=21352
+    if (this._hidingField || this._showingField) {
+      return;
+    }
     this._hidingInlineEditor = true;
     if (record && (rowNum === 0 || rowNum)) {
       if (!this.rowHasErrors(rowNum)) {
@@ -2245,6 +2346,10 @@ isc.OBViewGrid.addProperties({
         isc.Log.logDebug('hideInlineEditor has NO record and editColumnLayout', 'OB');
       }
       this.view.isEditingGrid = false;
+      // Update the tab title after the record has been saved or canceled
+      // to get rid of the '*' in the tab title
+      // See https://issues.openbravo.com/view.php?id=21709
+      this.view.updateTabTitle();
     }
 
     // always hide the clickmask, as it needs to be re-applied
@@ -2634,6 +2739,20 @@ isc.OBViewGrid.addProperties({
       this.getEditForm().doChangeFICCall(null, true);
     }
     this.Super('fieldStateChanged', arguments);
+  },
+
+  getFieldFromColumnName: function (columnName) {
+    var i, field, length, fields = this.completeFields;
+
+    length = fields.length;
+
+    for (i = 0; i < fields.length; i++) {
+      if (fields[i].columnName === columnName) {
+        field = fields[i];
+        break;
+      }
+    }
+    return field;
   }
 
 });
@@ -2769,29 +2888,35 @@ isc.OBGridButtonsComponent.addProperties({
 
   toggleProgressIcon: function (toggle) {
     if (toggle) {
-      this.hideMember(6);
-      this.hideMember(5);
-      this.hideMember(4);
-      this.showMember(0);
+      this.hideAllMembers();
+      this.showMember(isc.OBViewGrid.PROGRESS);
     } else {
-      var offset = 0;
-      if (this.cancelButton) {
-        offset = 1;
-        this.hideMember(0);
+      this.hideMember(isc.OBViewGrid.PROGRESS);
+      if (this.grid.view.isEditingGrid) {
+        this.showSaveCancel();
+      } else {
+        this.showEditOpen();
       }
-      this.showMember(2 + offset);
-      this.showMember(1 + offset);
-      this.showMember(offset);
     }
+  },
+
+  hideAllMembers: function () {
+    this.hideMember(isc.OBViewGrid.ICONS.EDIT_IN_GRID);
+    this.hideMember(isc.OBViewGrid.ICONS.SEPARATOR1);
+    this.hideMember(isc.OBViewGrid.ICONS.OPEN_IN_FORM);
+    this.hideMember(isc.OBViewGrid.ICONS.PROGRESS);
+    this.hideMember(isc.OBViewGrid.ICONS.CANCEL);
+    this.hideMember(isc.OBViewGrid.ICONS.SEPARATOR2);
+    this.hideMember(isc.OBViewGrid.ICONS.SAVE);
   },
 
   showEditOpen: function () {
     var offset = 0;
     if (this.cancelButton) {
-      this.hideMember(6);
-      this.hideMember(5);
-      this.hideMember(4);
-      this.hideMember(0);
+      this.hideMember(isc.OBViewGrid.ICONS.SAVE);
+      this.hideMember(isc.OBViewGrid.ICONS.SEPARATOR2);
+      this.hideMember(isc.OBViewGrid.ICONS.CANCEL);
+      this.hideMember(isc.OBViewGrid.ICONS.PROGRESS);
       offset = 1;
     }
     this.showMember(offset);
@@ -2808,14 +2933,14 @@ isc.OBGridButtonsComponent.addProperties({
   showSaveCancel: function () {
     this.addSaveCancelProgressButtons();
 
-    this.hideMember(3);
-    this.hideMember(2);
-    this.hideMember(1);
-    this.hideMember(0);
+    this.hideMember(isc.OBViewGrid.ICONS.EDIT_IN_GRID);
+    this.hideMember(isc.OBViewGrid.ICONS.SEPARATOR1);
+    this.hideMember(isc.OBViewGrid.ICONS.OPEN_IN_FORM);
+    this.hideMember(isc.OBViewGrid.ICONS.PROGRESS);
 
-    this.showMember(4);
-    this.showMember(5);
-    this.showMember(6);
+    this.showMember(isc.OBViewGrid.ICONS.CANCEL);
+    this.showMember(isc.OBViewGrid.ICONS.SEPARATOR2);
+    this.showMember(isc.OBViewGrid.ICONS.SAVE);
 
     this.grid.currentEditColumnLayout = this;
   },

@@ -88,7 +88,6 @@ public class DefaultAuthenticationManager extends AuthenticationManager {
         log4j.debug(strUser + " is locked cannot activate session ID " + sessionId);
         errorMsg.setTitle("LOCKED_USER_TITLE");
         errorMsg.setMessage("LOCKED_USER_MSG");
-        updateDBSession(sessionId, false, "LU");
       }
 
       // throw error message will be caught by LoginHandler

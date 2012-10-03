@@ -25,6 +25,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -265,8 +266,23 @@ public class Login extends HttpBaseServlet {
       showForgeLogo = !ActivationKey.getInstance().isActive()
           || (ActivationKey.getInstance().isActive() && sysInfo.isShowForgeLogoInLogin());
       itLink = sysInfo.getSupportContact() == null ? "" : sysInfo.getSupportContact();
+      if (!itLink.isEmpty()
+          && !(StringUtils.startsWithIgnoreCase(itLink, "http://")
+              || StringUtils.startsWithIgnoreCase(itLink, "https://") || StringUtils
+                .startsWithIgnoreCase(itLink, "ftp://"))) {
+        itLink = "http://" + itLink;
+      }
       companyLink = sysInfo.getYourCompanyURL() == null ? "" : sysInfo.getYourCompanyURL();
+      if (!companyLink.isEmpty()
+          && !(StringUtils.startsWithIgnoreCase(companyLink, "http://")
+              || StringUtils.startsWithIgnoreCase(companyLink, "https://") || StringUtils
+                .startsWithIgnoreCase(companyLink, "ftp://"))) {
+        companyLink = "http://" + companyLink;
+      }
     }
+
+    Client systemClient = OBDal.getInstance().get(Client.class, "0");
+    xmlEngine.sessionLanguage = systemClient.getLanguage().getLanguage();
 
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/security/Login")
         .createXmlDocument();

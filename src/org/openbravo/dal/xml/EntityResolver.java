@@ -245,6 +245,9 @@ public class EntityResolver implements OBNotSingleton {
       // search client and system
       result = searchClientRefLoaded(id, entity, refLoadeds);
       if (result == null) {
+        result = searchSystemRefLoaded(id, entity, refLoadeds);
+      }
+      if (result == null) {
         result = searchSystem(id, entity);
       }
     } else if (al == AccessLevel.CLIENT) {
@@ -336,6 +339,20 @@ public class EntityResolver implements OBNotSingleton {
       }
     }
     return doSearch(id, entity, client.getId(), "0");
+  }
+
+  private BaseOBObject searchSystemRefLoaded(String id, Entity entity,
+      List<RefDataLoaded> refLoadeds) {
+    BaseOBObject result = null;
+    for (RefDataLoaded refLoaded : refLoadeds) {
+      if (refLoaded.getClientId().equals('0') && refLoaded.getOrgId().equals("0")) {
+        result = doSearch(refLoaded.getSpecificId(), entity, "0", "0");
+        if (result != null) {
+          return result;
+        }
+      }
+    }
+    return doSearch(id, entity, "0", "0");
   }
 
   public String getOriginalId(BaseOBObject bob) {

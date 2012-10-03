@@ -91,6 +91,19 @@ public class KernelServlet extends BaseKernelServlet {
     servletContext = config.getServletContext();
   }
 
+  public void service(final HttpServletRequest request, HttpServletResponse response)
+      throws ServletException, IOException {
+
+    final String action = request.getParameter(KernelConstants.ACTION_PARAMETER);
+    if (action == null) {
+      Component component = getComponent(request);
+      if (component instanceof BaseComponent && ((BaseComponent) component).bypassAuthentication()) {
+        request.getSession().setAttribute("forceLogin", "Y");
+      }
+    }
+    super.service(request, response);
+  }
+
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
@@ -107,8 +120,7 @@ public class KernelServlet extends BaseKernelServlet {
     }
   }
 
-  protected void processComponentRequest(HttpServletRequest request, HttpServletResponse response)
-      throws IOException, ServletException {
+  private Component getComponent(HttpServletRequest request) {
 
     final int nameIndex = request.getRequestURI().indexOf(servletPathPart);
     final String servicePart = request.getRequestURI().substring(nameIndex);
@@ -117,7 +129,6 @@ public class KernelServlet extends BaseKernelServlet {
       throw new UnsupportedOperationException("No service name present in url "
           + request.getRequestURI());
     }
-
     final String componentProviderName = pathParts[1];
 
     final ComponentProvider componentProvider = componentProviders.select(
@@ -132,6 +143,12 @@ public class KernelServlet extends BaseKernelServlet {
 
     final Map<String, Object> parameters = getParameterMap(request);
     final Component component = componentProvider.getComponent(componentId, parameters);
+    return component;
+  }
+
+  protected void processComponentRequest(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
+    Component component = getComponent(request);
     OBContext.setAdminMode();
     String eTag;
     try {

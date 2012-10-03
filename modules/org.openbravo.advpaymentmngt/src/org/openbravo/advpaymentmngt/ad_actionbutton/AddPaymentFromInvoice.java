@@ -387,10 +387,10 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
         xmlDocument.setParameter("financialAccountCurrencyPrecision", financialAccountCurrency
             .getStandardPrecision().toString());
       }
-      String exchangeRate = findExchangeRate(vars, paymentCurrency, financialAccountCurrency,
+      BigDecimal exchangeRate = findExchangeRate(vars, paymentCurrency, financialAccountCurrency,
           new Date(), OBDal.getInstance().get(Organization.class, strOrgId),
           conversionRatePrecision);
-      xmlDocument.setParameter("exchangeRate", exchangeRate);
+      xmlDocument.setParameter("exchangeRate", exchangeRate.toPlainString());
 
     } finally {
       OBContext.restorePreviousMode();
@@ -491,8 +491,10 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
     final Currency financialAccountCurrency = dao
         .getFinancialAccountCurrency(strFinancialAccountId);
     final Currency paymentCurrency = dao.getObject(Currency.class, strCurrencyId);
+    final String formatOutput = vars.getSessionValue("#FormatOutput|generalQtyRelation",
+        "#,##0.######");
 
-    String exchangeRate = findExchangeRate(vars, paymentCurrency, financialAccountCurrency,
+    BigDecimal exchangeRate = findExchangeRate(vars, paymentCurrency, financialAccountCurrency,
         FIN_Utility.getDate(paymentDate), OBDal.getInstance().get(Organization.class, strOrgId),
         conversionRatePrecision);
 
@@ -500,7 +502,8 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
     try {
       msg.put("combo", finAccountComboHtml);
       msg.put("financialAccountCurrencyId", financialAccountCurrency.getId());
-      msg.put("exchangeRate", exchangeRate);
+      msg.put("exchangeRate", exchangeRate == null ? "" : exchangeRate);
+      msg.put("formatOutput", formatOutput);
       msg.put("financialAccountCurrencyPrecision", financialAccountCurrency.getStandardPrecision());
     } catch (JSONException e) {
       log4j.error("JSON object error" + msg.toString());
@@ -522,13 +525,16 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
     final Currency financialAccountCurrency = dao.getObject(Currency.class,
         strFinancialAccountCurrencyId);
     final Currency paymentCurrency = dao.getObject(Currency.class, strCurrencyId);
+    final String formatOutput = vars.getSessionValue("#FormatOutput|generalQtyRelation",
+        "#,##0.######");
 
-    String exchangeRate = findExchangeRate(vars, paymentCurrency, financialAccountCurrency,
+    BigDecimal exchangeRate = findExchangeRate(vars, paymentCurrency, financialAccountCurrency,
         FIN_Utility.getDate(strPaymentDate), organization, conversionRatePrecision);
 
     JSONObject msg = new JSONObject();
     try {
-      msg.put("exchangeRate", exchangeRate);
+      msg.put("exchangeRate", exchangeRate == null ? "" : exchangeRate);
+      msg.put("formatOutput", formatOutput);
     } catch (JSONException e) {
       log4j.error("JSON object error" + msg.toString());
     }
@@ -538,22 +544,18 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
     out.close();
   }
 
-  private String findExchangeRate(VariablesSecureApp vars, Currency paymentCurrency,
+  private BigDecimal findExchangeRate(VariablesSecureApp vars, Currency paymentCurrency,
       Currency financialAccountCurrency, Date paymentDate, Organization organization,
       int conversionRatePrecision) {
-    String exchangeRate = "1";
+    BigDecimal exchangeRate = BigDecimal.ONE;
     if (financialAccountCurrency != null && !financialAccountCurrency.equals(paymentCurrency)) {
       final ConversionRate conversionRate = FIN_Utility.getConversionRate(paymentCurrency,
           financialAccountCurrency, paymentDate, organization);
       if (conversionRate == null) {
-        exchangeRate = "";
+        exchangeRate = null;
       } else {
-        exchangeRate = conversionRate.getMultipleRateBy()
-            .setScale(conversionRatePrecision, RoundingMode.HALF_UP).toPlainString();
-        String decimal = vars.getSessionValue("#decimalSeparator|generalQtyEdition", ".");
-        if (",".equalsIgnoreCase(decimal)) {
-          exchangeRate = exchangeRate.replace(".", ",");
-        }
+        exchangeRate = conversionRate.getMultipleRateBy().setScale(conversionRatePrecision,
+            RoundingMode.HALF_UP);
       }
     }
     return exchangeRate;

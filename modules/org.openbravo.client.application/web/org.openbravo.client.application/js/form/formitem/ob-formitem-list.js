@@ -29,8 +29,7 @@ isc.OBListItem.addProperties({
   completeOnTab: true,
   validateOnExit: true,
 
-  // https://issues.openbravo.com/view.php?id=19876
-  selectOnFocus: false,
+  selectOnFocus: true,
   // still do select on focus initially
   doInitialSelectOnFocus: true,
 
@@ -140,10 +139,13 @@ isc.OBListItem.addProperties({
     if (this.valueMap && this.valueMap[value]) {
       return this.valueMap[value];
     }
+
     if (ret === value && this.isDisabled()) {
       return '';
     }
-    if (ret === value) {
+
+    // don't update the valuemap if the value is null or undefined
+    if (ret === value && value) {
       if (!this.valueMap) {
         this.valueMap = {};
         this.valueMap[value] = '';
@@ -153,6 +155,13 @@ isc.OBListItem.addProperties({
       }
     }
     return ret;
+  },
+
+  mapDisplayToValue: function (value) {
+    if (value === '') {
+      return null;
+    }
+    return this.Super('mapDisplayToValue', arguments);
   }
 
 });

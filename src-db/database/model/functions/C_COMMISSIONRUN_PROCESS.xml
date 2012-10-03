@@ -16,7 +16,7 @@
   * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
   * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2009 Openbravo S.L.U.
+  * Contributions are Copyright (C) 2001-2012 Openbravo S.L.U.
   ******************************************************************************/
  -- Logistice
  v_ResultStr     VARCHAR2(2000) := '';
@@ -49,6 +49,7 @@ TYPE RECORD IS REF CURSOR;
  v_UOM_ID      varchar2(32);
  v_IsDiscountPrinted    CHAR(1);
  v_CommissionName VARCHAR(60);
+ v_countNoCost NUMBER(10);
   FINISH_PROCESS BOOLEAN := false;
 BEGIN
     --  Update AD_PInstance
@@ -72,6 +73,13 @@ BEGIN
  END LOOP; -- Get Parameter
  DBMS_OUTPUT.PUT_LINE('  Record_ID=' || v_Record_ID);
 
+ SELECT count(*) INTO v_countNoCost 
+ FROM c_commissionDetail inner join c_commissionamt on c_commissionDetail.c_commissionamt_id = c_commissionamt.c_commissionamt_id
+      inner join c_commissionrun on c_commissionamt.c_commissionrun_id = c_commissionrun.c_commissionrun_id
+ WHERE c_commissionrun.C_CommissionRun_ID = v_Record_ID AND IsCostCalculated='N'; 
+ IF v_countNoCost >0 THEN
+   RAISE_APPLICATION_ERROR(-20000, '@Commission_NoCostCalculated@');
+ END IF;
 
  FOR CUR_ComRun IN (SELECT *
   FROM C_COMMISSIONRUN

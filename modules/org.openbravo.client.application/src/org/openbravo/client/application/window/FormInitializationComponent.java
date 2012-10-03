@@ -1376,10 +1376,15 @@ public class FormInitializationComponent extends BaseActionHandler {
                       // selectors
                       Object el = element.get(1, null);
                       if (el != null) {
-                        hiddenInputs.put(name, el);
-                        // We set the hidden fields in the request, so that subsequent callouts can
-                        // use them
-                        rq.setRequestParameter(name, el.toString());
+                        if (el instanceof NativeArray) {
+                          // In this case, we ignore the value, as a hidden input cannot be an array
+                          // of elements
+                        } else {
+                          hiddenInputs.put(name, el);
+                          // We set the hidden fields in the request, so that subsequent callouts
+                          // can use them
+                          rq.setRequestParameter(name, el.toString());
+                        }
                       }
                     }
                   }
@@ -1573,21 +1578,25 @@ public class FormInitializationComponent extends BaseActionHandler {
         log.debug("Transformed SQL code: " + sql);
         int indP = 1;
         PreparedStatement ps = OBDal.getInstance().getConnection(false).prepareStatement(sql);
-        for (String parameter : params) {
-          String value = "";
-          if (parameter.substring(0, 1).equals("#")) {
-            value = Utility.getContext(new DalConnectionProvider(false), RequestContext.get()
-                .getVariablesSecureApp(), parameter, windowId);
-          } else {
-            String fieldId = "inp" + Sqlc.TransformaNombreColumna(parameter);
-            value = RequestContext.get().getRequestParameter(fieldId);
+        try {
+          for (String parameter : params) {
+            String value = "";
+            if (parameter.substring(0, 1).equals("#")) {
+              value = Utility.getContext(new DalConnectionProvider(false), RequestContext.get()
+                  .getVariablesSecureApp(), parameter, windowId);
+            } else {
+              String fieldId = "inp" + Sqlc.TransformaNombreColumna(parameter);
+              value = RequestContext.get().getRequestParameter(fieldId);
+            }
+            log.debug("Parameter: " + parameter + ": Value " + value);
+            ps.setObject(indP++, value);
           }
-          log.debug("Parameter: " + parameter + ": Value " + value);
-          ps.setObject(indP++, value);
-        }
-        ResultSet rs = ps.executeQuery();
-        if (rs.next()) {
-          fvalue = rs.getObject(1);
+          ResultSet rs = ps.executeQuery();
+          if (rs.next()) {
+            fvalue = rs.getObject(1);
+          }
+        } finally {
+          ps.close();
         }
       } else if (code.startsWith("@")) {
         String codeWithoutAt = code.substring(1, code.length() - 1);

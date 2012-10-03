@@ -240,11 +240,22 @@
       getMDIKS: function () {
         var key, auxKey, action, funcParam, keyMap, ClassicKeyJSON = [],
             LKS = O.KeyboardManager.Shortcuts,
-            i, length = LKS.list.length;
+            i, j, isCanvasShortcut, length = LKS.list.length;
 
         for (i = 0; i < length; i++) {
           auxKey = '';
-          if (LKS.list[i].isGlobal) {
+          isCanvasShortcut = false;
+
+          if (LKS.list[i].execLevel) {
+            for (j = 0; j < LKS.list[i].execLevel.length; j++) {
+              if (LKS.list[i].execLevel[j] === 'Canvas') {
+                isCanvasShortcut = true;
+                break;
+              }
+            }
+          }
+
+          if (isCanvasShortcut) {
             if (LKS.list[i].keyComb.ctrl === true) {
               if (auxKey.length > 0) {
                 auxKey += '+';
@@ -385,6 +396,9 @@
           popupURL: url + urlCharacter + 'IsPopUpCall=1'
         });
         cPopup.show();
+        if (cPopup.getIframeHtmlObj) {
+          cPopup.getIframeHtmlObj().name = 'OBClassicPopup_iframe'; //To be used in automated tests: https://issues.openbravo.com/view.php?id=16786
+        }
         cobcomp.Popup.postOpen(cPopup, postParams);
         OB.Utilities.registerClassicPopupInTestRegistry(url, cPopup);
         return cPopup;

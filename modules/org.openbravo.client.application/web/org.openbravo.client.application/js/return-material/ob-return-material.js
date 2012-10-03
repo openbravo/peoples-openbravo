@@ -36,7 +36,7 @@ OB.RM.RMOrderQtyValidate = function (item, validator, value, record) {
   if ((value !== null) && (newReturnedQty.compareTo(movementQty.subtract(returnedQty))) <= 0 && (value > 0)) {
     return true;
   } else {
-    isc.warn(OB.I18N.getLabel('OBUIAPP_RM_OutOfRange', [movementQty.subtract(returnedQty).toString()]));
+    item.grid.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_RM_OutOfRange', [movementQty.subtract(returnedQty).toString()]));
     return false;
   }
 };
@@ -60,7 +60,7 @@ OB.RM.RMReceiptQtyValidate = function (item, validator, value, record) {
   if ((value !== null) && (value <= record.pending) && (value > 0)) {
     return true;
   } else {
-    isc.warn(OB.I18N.getLabel('OBUIAPP_RM_ReceivingMoreThanPending', [record.pending]));
+    item.grid.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_RM_ReceivingMoreThanPending', [record.pending]));
     return false;
   }
 };
@@ -93,9 +93,9 @@ OB.RM.RMShipmentQtyValidate = function (item, validator, value, record) {
   // check value is positive and below available qty and pending qty
   if (value === null || value < 0 || value > record.pending || value > record.availableQty) {
     if (record.pending < record.availableQty) {
-      isc.warn(OB.I18N.getLabel('OBUIAPP_RM_MoreThanPending', [record.pending]));
+      item.grid.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_RM_MoreThanPending', [record.pending]));
     } else {
-      isc.warn(OB.I18N.getLabel('OBUIAPP_RM_MoreThanAvailable', [record.availableQty]));
+      item.grid.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_RM_MoreThanAvailable', [record.availableQty]));
     }
     return false;
   }
@@ -105,7 +105,7 @@ OB.RM.RMShipmentQtyValidate = function (item, validator, value, record) {
     if (editedRecord.orderLine === orderLine) {
       pendingQty -= editedRecord.movementQuantity;
       if (pendingQty < 0) {
-        isc.warn(OB.I18N.getLabel('OBUIAPP_RM_TooMuchShipped', [record.pending]));
+        item.grid.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_RM_TooMuchShipped', [record.pending]));
         return false;
       }
     }

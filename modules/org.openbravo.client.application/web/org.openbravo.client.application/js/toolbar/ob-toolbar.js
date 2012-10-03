@@ -230,7 +230,7 @@ isc.OBToolbar.addClassProperties({
     buttonType: 'export',
     prompt: OB.I18N.getLabel('OBUIAPP_ExportGrid'),
     updateState: function () {
-      this.setDisabled(this.view.isShowingForm || this.view.viewGrid.getTotalRows() === 0);
+      this.setDisabled(this.view.isShowingForm || this.view.viewGrid.getTotalRows() === 0 || OB.PropertyStore.get("ExportToCsv", this.view.standardWindow.id) === 'N');
     },
     keyboardShortcutId: 'ToolBar_Export'
   },
@@ -620,11 +620,14 @@ isc.OBToolbar.addProperties({
   // 
   // NOTE: new buttons should implement the updateState method.
   //
-  updateButtonState: function (noSetSession, changeEvent) {
-    var me = this;
-    this.fireOnPause('updateButtonState', function () {
-      me.pausedUpdateButtonState(noSetSession, changeEvent);
-    });
+  updateButtonState: function (noSetSession, changeEvent, forceUpdate) {
+    var me = this,
+        isActiveTab = false;
+    if (forceUpdate || (this.view && this.view.isActiveView && this.view.isActiveView())) {
+      this.fireOnPause('updateButtonState', function () {
+        me.pausedUpdateButtonState(noSetSession, changeEvent);
+      });
+    }
   },
 
   pausedUpdateButtonState: function (noSetSession, changeEvent) {

@@ -50,11 +50,11 @@ if (!isc.OBClassicIButton) {
 // componentprovider.
 if (!isc.Page.isRTL()) {
   isc.OBSelectorWidget.addClassProperties({
-    fieldPickerIconSrc: OB.Styles.skinsPath + '250to300Comp/org.openbravo.userinterface.selector/images/selector-widget/selector/selectorButton.png'
+    fieldPickerIconSrc: OB.Styles.skinsPath + '250to300Comp/org.openbravo.userinterface.selector/selector/selectorBtn.png'
   });
 } else {
   isc.OBSelectorWidget.addClassProperties({
-    fieldPickerIconSrc: OB.Styles.skinsPath + '250to300Comp/org.openbravo.userinterface.selector/images/selector-widget/selector/selectorButton-RTL.png'
+    fieldPickerIconSrc: OB.Styles.skinsPath + '250to300Comp/org.openbravo.userinterface.selector/selector/selectorBtn-RTL.png'
   });
 }
 
@@ -71,14 +71,14 @@ isc.OBSelectorWidget.addClassProperties({
 
     // ** {{{ filterEditorIcon properties }}} **
     // filterEditorIcon is shown in the popup grid next to each field.
-    filterEditorClearIconSrc: OB.Styles.skinsPath + '250to300Comp/org.openbravo.userinterface.selector/images/selector-widget/selector/filterClear.png',
+    filterEditorClearIconSrc: OB.Styles.skinsPath + '250to300Comp/org.openbravo.userinterface.selector/selector/filterClear.png',
     filterEditorClearIconWidth: 15,
     filterEditorClearIconHeight: 15,
     filterEditorClearIconHSpace: 0,
 
     // ** {{{ fieldPicker properties }}} **
     // fieldPicker icon is shown next to the field in the form
-    //fieldPickerIconSrc: OB.Styles.skinsPath + '250to300Comp/org.openbravo.userinterface.selector/images/selector-widget/selector/selectorButton.png', //Set before to allow RTL operation
+    //fieldPickerIconSrc: OB.Styles.skinsPath + '250to300Comp/org.openbravo.userinterface.selector/selector/selectorBtn.png', //Set before to allow RTL operation
     fieldPickerIconWidth: 27,
     fieldPickerIconHeight: 17,
     fieldPickerIconHSpace: 0,
@@ -95,7 +95,7 @@ isc.OBSelectorWidget.addClassProperties({
     modalPopupRelativeHeight: '85%',
 
     // modal popup top left icon
-    modalPopupHeaderIconSrc: OB.Styles.skinsPath + '250to300Comp/org.openbravo.userinterface.selector/images/selector-widget/button/icons/iconSearch.png',
+    modalPopupHeaderIconSrc: OB.Styles.skinsPath + '250to300Comp/org.openbravo.userinterface.selector/btn/icons/iconSearch.png',
     modalPopupHeaderIconWidth: 16,
     modalPopupHeaderIconHeight: 16,
 
@@ -106,12 +106,12 @@ isc.OBSelectorWidget.addClassProperties({
     modalPopupButtonSeparatorWidth: 20,
 
     // modal popup bottom Ok button
-    modalPopupOkButtonSrc: OB.Styles.skinsPath + '250to300Comp/org.openbravo.userinterface.selector/images/selector-widget/button/icons/iconOk.png',
+    modalPopupOkButtonSrc: OB.Styles.skinsPath + '250to300Comp/org.openbravo.userinterface.selector/btn/icons/iconOk.png',
     modalPopupOkButtonAlign: 'center',
     modalPopupOkButtonWidth: 115,
 
     // modal popup bottom Cancel button
-    modalPopupCancelButtonSrc: OB.Styles.skinsPath + '250to300Comp/org.openbravo.userinterface.selector/images/selector-widget/button/icons/iconCancel.png',
+    modalPopupCancelButtonSrc: OB.Styles.skinsPath + '250to300Comp/org.openbravo.userinterface.selector/btn/icons/iconCancel.png',
     modalPopupCancelButtonAlign: 'center',
     modalPopupCancelButtonWidth: 115,
 

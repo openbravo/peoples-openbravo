@@ -285,7 +285,7 @@ isc.OBUserProfile.addProperties({
           }
         }
         this.setWarehouseValueMap();
-        if (item.name !== 'warehouse') {
+        if (item.name !== 'warehouse' && item.name !== 'default') {
           if (this.getItem('warehouse').getClientPickListData().length > 0) {
             this.getItem('warehouse').moveToFirstValue();
           }
@@ -371,6 +371,7 @@ isc.OBUserProfile.addProperties({
     buttonLayout.addMembers(isc.OBFormButton.create({
       title: OB.I18N.getLabel('OBUIAPP_Apply'),
       click: function () {
+        isc.OBQuickRun.currentQuickRun.doHide();
         roleForm.doSave();
       }
     }));

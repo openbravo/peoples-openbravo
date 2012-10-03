@@ -18,6 +18,7 @@
  */
 package org.openbravo.costing;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -29,7 +30,9 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.plm.Product;
+import org.openbravo.model.materialmgmt.cost.CostingRule;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.scheduling.ProcessLogger;
@@ -42,6 +45,7 @@ import org.openbravo.service.db.DalBaseProcess;
 public class CostingBackground extends DalBaseProcess {
   private static final Logger log4j = Logger.getLogger(CostingBackground.class);
   private ProcessLogger logger;
+  private int maxTransactions = 0;
 
   @Override
   protected void doExecute(ProcessBundle bundle) throws Exception {
@@ -50,9 +54,33 @@ public class CostingBackground extends DalBaseProcess {
     result.setType("Success");
     result.setTitle(OBMessageUtils.messageBD("Success"));
 
-    List<MaterialTransaction> trxs = getTransactionsBatch();
+    // Get organizations with costing rules.
+    StringBuffer where = new StringBuffer();
+    where.append(" as o");
+    where.append(" where exists (");
+    where.append("    select 1 from " + CostingRule.ENTITY_NAME + " as cr");
+    where.append("    where ad_isorgincluded(o.id, cr." + CostingRule.PROPERTY_ORGANIZATION
+        + ".id, " + CostingRule.PROPERTY_CLIENT + ".id) <> -1 ");
+    where.append("      and cr." + CostingRule.PROPERTY_VALIDATED + " is true");
+    where.append(" )");
+    OBQuery<Organization> orgQry = OBDal.getInstance().createQuery(Organization.class,
+        where.toString());
+    List<Organization> orgs = orgQry.list();
+    List<String> orgsWithRule = new ArrayList<String>();
+    if (orgs.size() == 0) {
+      log4j.debug("No organizations with Cosrting Rule defiend");
+      logger.logln(OBMessageUtils.messageBD("Success"));
+      bundle.setResult(result);
+      return;
+    }
+    for (Organization org : orgs) {
+      orgsWithRule.add(org.getId());
+    }
+
+    List<MaterialTransaction> trxs = getTransactionsBatch(orgsWithRule);
     int counter = 0, total = trxs.size(), batch = 0;
-    while (trxs.size() > 0) {
+    boolean pendingTrx = trxs.size() > 0;
+    while (pendingTrx && counter < maxTransactions) {
       batch++;
       for (MaterialTransaction transaction : trxs) {
         counter++;
@@ -83,27 +111,57 @@ public class CostingBackground extends DalBaseProcess {
         SessionHandler.getInstance().commitAndStart();
       }
       OBDal.getInstance().getSession().clear();
-      trxs = getTransactionsBatch();
+      trxs = getTransactionsBatch(orgsWithRule);
+      pendingTrx = areTransactionsPending(orgsWithRule);
       total += trxs.size();
     }
     logger.logln(OBMessageUtils.messageBD("Success"));
     bundle.setResult(result);
   }
 
-  private List<MaterialTransaction> getTransactionsBatch() {
+  private List<MaterialTransaction> getTransactionsBatch(List<String> orgsWithRule) {
     StringBuffer where = new StringBuffer();
     where.append(" as trx");
     where.append(" join trx." + MaterialTransaction.PROPERTY_PRODUCT + " as p");
     where.append(" where trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = false");
+    where.append("   and trx." + MaterialTransaction.PROPERTY_COSTINGSTATUS + " <> 'S'");
     where.append("   and p." + Product.PROPERTY_PRODUCTTYPE + " = 'I'");
     where.append("   and p." + Product.PROPERTY_STOCKED + " = true");
     where.append("   and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " <= :now");
+    where.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
     where.append(" order by trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE);
     OBQuery<MaterialTransaction> trxQry = OBDal.getInstance().createQuery(
         MaterialTransaction.class, where.toString());
-    trxQry.setMaxResult(1000);
     trxQry.setNamedParameter("now", new Date());
+    trxQry.setFilterOnReadableOrganization(false);
+    trxQry.setNamedParameter("orgs", orgsWithRule);
+
+    if (maxTransactions == 0) {
+      maxTransactions = trxQry.count();
+    }
+    trxQry.setMaxResult(1000);
 
     return trxQry.list();
+  }
+
+  private boolean areTransactionsPending(List<String> orgsWithRule) {
+    StringBuffer where = new StringBuffer();
+    where.append(" as trx");
+    where.append(" join trx." + MaterialTransaction.PROPERTY_PRODUCT + " as p");
+    where.append(" where trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = false");
+    where.append("   and trx." + MaterialTransaction.PROPERTY_COSTINGSTATUS + " = 'NC'");
+    where.append("   and p." + Product.PROPERTY_PRODUCTTYPE + " = 'I'");
+    where.append("   and p." + Product.PROPERTY_STOCKED + " = true");
+    where.append("   and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " <= :now");
+    where.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
+    where.append(" order by trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE);
+    OBQuery<MaterialTransaction> trxQry = OBDal.getInstance().createQuery(
+        MaterialTransaction.class, where.toString());
+    trxQry.setMaxResult(1);
+    trxQry.setNamedParameter("now", new Date());
+    trxQry.setFilterOnReadableOrganization(false);
+    trxQry.setNamedParameter("orgs", orgsWithRule);
+
+    return trxQry.list().size() > 0;
   }
 }

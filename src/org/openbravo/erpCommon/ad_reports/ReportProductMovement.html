@@ -113,6 +113,16 @@ function onloadFunctions(){
 	function onResizeDo(){
 		resizeArea();
 	}
+	
+	function checkEmptyFields(){
+	  var frm = document.frmMain;
+	  if (frm.paramProductDescription.value == ""){
+	    frm.paramProductId.value = "";
+	  }
+	  if (frm.paramBPartnerDescription.value == ""){
+	    frm.paramBPartnerId.value = "";
+	  }
+	}
 	</script>
 </head>
     <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">
@@ -418,7 +428,7 @@ function onloadFunctions(){
                   <button type="button" 
                     id="buttonHTML" 
                     class="ButtonLink" 
-                    onclick="submitCommandForm('FIND', true, null, 'ReportProductMovement.html', '_self', null, false);return false;" 
+                    onclick="checkEmptyFields();submitCommandForm('FIND', true, null, 'ReportProductMovement.html', '_self', null, false);return false;" 
                     onfocus="buttonEvent('onfocus', this); window.status='View Results in a New Window'; return true;" 
                     onblur="buttonEvent('onblur', this);" 
                     onkeyup="buttonEvent('onkeyup', this);" 

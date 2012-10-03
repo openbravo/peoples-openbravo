@@ -476,7 +476,7 @@ OB.ViewFormProperties = {
       // autofocus will do it for us
       return;
     }
-    
+
     if (focusItem && focusItem.isFocusable()) {
       focusItem.focusInItem();
       this.view.lastFocusedItem = focusItem;
@@ -715,6 +715,13 @@ OB.ViewFormProperties = {
         sessionAttributes = data.sessionAttributes,
         editValues, item, section, retHiddenInputs = data.hiddenInputs;
 
+
+    // apparently sometimes an empty string is returned
+    if (calloutMessages && calloutMessages.length > 0 && calloutMessages[calloutMessages.length - 1].text !== '') {
+      // TODO: check as what type should call out messages be displayed
+      this.view.messageBar.setMessage(isc.OBMessageBar[calloutMessages[calloutMessages.length - 1].severity], null, calloutMessages[calloutMessages.length - 1].text);
+    }
+
     // edit row has changed when returning, don't update the form anymore
     if (this.grid && gridEditInformation && this.grid.getEditRow() !== gridEditInformation.editRow) {
       if (columnValues) {
@@ -763,12 +770,6 @@ OB.ViewFormProperties = {
       } else if (request.params.MODE === 'EDIT') {
         this.noteSection.setNoteCount(0);
       }
-    }
-
-    // apparently sometimes an empty string is returned
-    if (calloutMessages && calloutMessages.length > 0 && calloutMessages[calloutMessages.length - 1].text !== '') {
-      // TODO: check as what type should call out messages be displayed
-      this.view.messageBar.setMessage(isc.OBMessageBar[calloutMessages[calloutMessages.length - 1].severity], null, calloutMessages[calloutMessages.length - 1].text);
     }
     if (auxInputs) {
       for (prop in auxInputs) {
@@ -881,7 +882,7 @@ OB.ViewFormProperties = {
     var previousAllItemsDisabled = this.allItemsDisabled || false,
         i, length;
     this.allItemsDisabled = state;
-    
+
     if (previousAllItemsDisabled !== this.allItemsDisabled) {
       if (this.getFocusItem()) {
         if (this.allItemsDisabled) {
@@ -1084,6 +1085,11 @@ OB.ViewFormProperties = {
       gridEditInformation.grid.setEditValue(gridEditInformation.editRow, prop, null, true, true);
     }
 
+    if (!field) {
+      // Look in the complete fields, the column might be hidden
+      field = this.grid.getFieldFromColumnName(columnName);
+    }
+
     // store the textualvalue so that it is correctly send back to the server
     if (field) {
       // Adjust to formatting if exists value and classicValue.
@@ -1115,12 +1121,28 @@ OB.ViewFormProperties = {
 
   // calls setValue and the onchange handling
   setItemValue: function (item, value) {
-    var currentValue, view;
+    var currentValue, view, isGridItem, completeFieldsLength, i;
 
     if (isc.isA.String(item)) {
 
       // not an item, set and bail
       if (!this.getField(item)) {
+        // It might be a column that is not being displayed in the grid
+        if (!this.view.isShowingForm && this.grid) {
+          // check if the item is included in the complete fields of the grid
+          // see issue https://issues.openbravo.com/view.php?id=21375
+          isGridItem = false;
+          completeFieldsLength = this.grid.completeFields;
+          for (i = 0; i < completeFieldsLength; i++) {
+            if (item === this.grid.completeFields[i].name) {
+              isGridItem = true;
+              break;
+            }
+          }
+          if (isGridItem) {
+            this.grid.setEditValue(this.grid.getEditRow(), item, value);
+          }
+        }
         this.setValue(item, value);
         return;
       }
@@ -1365,8 +1387,12 @@ OB.ViewFormProperties = {
   // function
   saveRow: function () {
     var savingNewRecord = this.isNew,
-        i, length, flds, form = this,
+        storedFocusItem, i, length, flds, form = this,
         ficCallDone, record, recordIndex, callback, viewsNotToRefresh;
+
+    if (this.getFocusItem()) {
+      storedFocusItem = this.getFocusItem();
+    }
 
     // store the value of the current focus item
     if (this.getFocusItem() && this.saveFocusItemChanged !== this.getFocusItem()) {
@@ -1386,12 +1412,19 @@ OB.ViewFormProperties = {
     form.isSaving = true;
 
     // remove the error message if any
-    this.view.messageBar.hide();
+    if (this.view.messageBar.type === isc.OBMessageBar.TYPE_ERROR) {
+      this.view.messageBar.hide();
+    }
 
     callback = function (resp, data, req) {
       var index1, index2, view = form.view,
           localRecord, status = resp.status,
-          sessionProperties;
+          sessionProperties, keepSelection;
+
+      if (this.hasOwnProperty('previousExplicitOffline')) {
+        isc.Offline.explicitOffline = this.previousExplicitOffline;
+        delete this.previousExplicitOffline;
+      }
 
       // if no recordIndex then select explicitly
       if (recordIndex === -1) {
@@ -1449,9 +1482,8 @@ OB.ViewFormProperties = {
 
         view.viewGrid.markForRedraw();
 
-        if (form.isNew) {
-          view.refreshChildViews();
-        }
+        keepSelection = true;
+        view.refreshChildViews(keepSelection);
 
         // success invoke the action, if any there
         view.standardWindow.autoSaveDone(view, true);
@@ -1514,6 +1546,14 @@ OB.ViewFormProperties = {
 
       form.isSaving = false;
       view.toolBar.updateButtonState(true);
+      if (form.isVisible() && storedFocusItem && storedFocusItem.isFocusable(true)) {
+        // The setTimeout fixes issue https://issues.openbravo.com/view.php?id=21546
+        // that is only reproducible in certain versions of Chrome
+        setTimeout(function () {
+          form.setFocusItem(storedFocusItem);
+          form.setFocusInForm();
+        }, 10);
+      }
 
       return false;
     };
@@ -1527,6 +1567,8 @@ OB.ViewFormProperties = {
       if (!form.validateForm()) {
         return;
       }
+      this.previousExplicitOffline = isc.Offline.explicitOffline;
+      isc.Offline.explicitOffline = false;
       // last parameter true prevents additional validation
       this.saveData(callback, {
         willHandleError: true,
@@ -1561,7 +1603,7 @@ OB.ViewFormProperties = {
       this.delayCall('focusInNextItem', [currentItemName], 100);
       return;
     }
-    
+
     this.computeFocusItem(this.getField(currentItemName));
     if (this.getFocusItem()) {
       this.getFocusItem().focusInItem();
@@ -1777,6 +1819,10 @@ OB.ViewFormProperties = {
   },
 
   keyDown: function () {
+    if (this.grid && this.grid.editFormKeyDown) {
+      // To fix issue https://issues.openbravo.com/view.php?id=21382
+      this.grid.editFormKeyDown(arguments);
+    }
     var response = OB.KeyboardManager.Shortcuts.monitor('OBViewForm');
     if (response !== false) {
       response = this.Super('keyDown', arguments);
@@ -1835,13 +1881,19 @@ OB.ViewFormProperties = {
     }
   },
 
+  isID: function (item) {
+    return item.type === '_id_13';
+  },
+
   allRequiredFieldsSet: function () {
     var i, item, length = this.getItems().length,
         value, undef, nullValue = null;
     for (i = 0; i < length; i++) {
       item = this.getItems()[i];
       value = item.getValue();
-      if (this.isRequired(item) && value !== false && value !== 0 && !value) {
+      // Do no check ids, even though they are mandatory they are automatically set DAL before
+      // storing the record in the database. See issue https://issues.openbravo.com/view.php?id=21657
+      if (this.isRequired(item) && !this.isID(item) && value !== false && value !== 0 && !value) {
         return false;
       }
     }

@@ -207,6 +207,10 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       OBContext.setAdminMode();
 
       strUserAuth = m_AuthManager.authenticate(request, response);
+      if (strUserAuth == null && "Y".equals(request.getSession().getAttribute("forceLogin"))) {
+        strUserAuth = "0";
+        variables.loggingIn = "Y";
+      }
 
       if (strUserAuth == null) {
         // auth-manager return null after redirecting to the login page -> stop request-processing
@@ -217,6 +221,9 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
 
       boolean loggedOK = false;
 
+      if ("Y".equals(request.getSession().getAttribute("forceLogin"))) {
+        variables.loggingIn = "Y";
+      }
       // NOTE !isLoggingIn assumes that the value of LoggingIn is N, this
       // is done by the fillSessionArguments below
       if (!variables.isLoggingIn()) {
@@ -1218,8 +1225,14 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
           jasperPrint = JasperFillManager.fillReport(jasperReport, designParameters, con);
         }
       } catch (final Exception e) {
-        throw new ServletException(e.getCause() instanceof SQLException ? e.getCause().getMessage()
-            : e.getMessage(), e);
+        Throwable t = e.getCause().getCause();
+        if (t != null) {
+          throw new ServletException((t instanceof SQLException && t.getMessage().contains(
+              "@NoConversionRate@")) ? t.getMessage() : e.getMessage(), e);
+        } else {
+          throw new ServletException(e.getCause() instanceof SQLException ? e.getCause()
+              .getMessage() : e.getMessage(), e);
+        }
       } finally {
         releaseRollbackConnection(con);
       }
