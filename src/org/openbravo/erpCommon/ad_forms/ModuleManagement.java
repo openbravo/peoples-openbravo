@@ -1404,8 +1404,17 @@ public class ModuleManagement extends HttpSecureAppServlet {
       if (installed) {
         if (minVersions != null && minVersions.get(module.getModuleID()) != null
             && !minVersions.get(module.getModuleID()).equals("")) {
-          mod.put("versionNoMin", Utility.messageBD(this, "UpdateModuleNeed", lang) + " "
-              + minVersions.get(module.getModuleID()));
+          /*
+           * Checking whether the module version is the same as the minimum version number. Refer
+           * issue https://issues.openbravo.com/view.php?id=13576
+           */
+          String versionNumber = this.removeVersionLabel(module.getVersionNo());
+          Boolean moduleVersionSameAsMinimumVersion = versionNumber.equals(minVersions.get(module
+              .getModuleID()));
+          if (!moduleVersionSameAsMinimumVersion) {
+            mod.put("versionNoMin", Utility.messageBD(this, "UpdateModuleNeed", lang) + " "
+                + minVersions.get(module.getModuleID()));
+          }
         }
         mod.put("versionNoCurr", currentInstalledVersion(module.getModuleID()));
       } else {
@@ -1427,6 +1436,15 @@ public class ModuleManagement extends HttpSecureAppServlet {
       rt.add(mod);
     }
     return FieldProviderFactory.getFieldProviderArray(rt);
+  }
+
+  /*
+   * The version number of module returned by web service has the MP tag attached to it. To compare
+   * with the minimum version, we are removing the tag. eg., Openbravo 3.0 3.0.17885 (MP15) to
+   * Openbravo 3.0 3.0.17885. Related to Issue https://issues.openbravo.com/view.php?id=13576
+   */
+  private String removeVersionLabel(String versionWithLabel) {
+    return versionWithLabel.split("\\(")[0].trim();
   }
 
   private String currentInstalledVersion(String moduleId) {
