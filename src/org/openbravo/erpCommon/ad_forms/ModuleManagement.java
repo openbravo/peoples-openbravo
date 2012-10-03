@@ -342,6 +342,15 @@ public class ModuleManagement extends HttpSecureAppServlet {
     try {
       String restartTomcat = ModuleManagementData.selectRestartTomcat(this);
       String totalToBeRebuilt = ModuleManagementData.selectRebuild(this);
+      /*
+       * Set rebuild now option if System is under Maintenance. Refer
+       * https://issues.openbravo.com/view.php?id=13212
+       */
+      Boolean lastBuildFailed = false;
+      SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
+      if (sysInfo.getSystemStatus() != null && !sysInfo.getSystemStatus().equals("RB70")) {
+        lastBuildFailed = true;
+      }
       // Check if last build was done but Tomcat wasn't restarted,
       // but dont show the restart tomcat message is a rebuild need to be done
       if (!restartTomcat.equals("0") && totalToBeRebuilt.equals("0")) {
@@ -349,7 +358,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
             + Utility.messageBD(this, "Restart_Tomcat", lang) + "</a>";
       } else {
         // Check for rebuild system
-        if (!totalToBeRebuilt.equals("0")) {
+        if (!totalToBeRebuilt.equals("0") || lastBuildFailed) {
           updatesRebuildHTML = totalToBeRebuilt
               + "&nbsp;"
               + Utility.messageBD(this, "ApplyModules", lang)
