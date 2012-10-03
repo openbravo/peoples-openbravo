@@ -7605,9 +7605,9 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800079-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800079-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800079-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800079-->  <NAME><![CDATA[Adjustments]]></NAME>
-<!--800079-->  <DESCRIPTION><![CDATA[Define price adjustments to be applied to business partners, products, and price lists.]]></DESCRIPTION>
-<!--800079-->  <HELP><![CDATA[Define price adjustments to be applied to business partners, products, and price lists.]]></HELP>
+<!--800079-->  <NAME><![CDATA[Promotions and Discounts]]></NAME>
+<!--800079-->  <DESCRIPTION><![CDATA[Definition of Discounts and Promotions]]></DESCRIPTION>
+<!--800079-->  <HELP><![CDATA[Defines the Promotion/Discount main caracteristiques such as Discount Type, how it is filtered and actual discount information based on type.]]></HELP>
 <!--800079-->  <AD_TABLE_ID><![CDATA[800062]]></AD_TABLE_ID>
 <!--800079-->  <AD_WINDOW_ID><![CDATA[800028]]></AD_WINDOW_ID>
 <!--800079-->  <SEQNO><![CDATA[0]]></SEQNO>
@@ -7634,8 +7634,8 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800080-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800080-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800080-->  <NAME><![CDATA[Business Partner]]></NAME>
-<!--800080-->  <DESCRIPTION><![CDATA[Add business partners in order to include or exclude them from a selected price adjustment.]]></DESCRIPTION>
-<!--800080-->  <HELP><![CDATA[Add business partners in order to include or exclude them from a selected price adjustment.]]></HELP>
+<!--800080-->  <DESCRIPTION><![CDATA[Add business partners in order to include or exclude them from a selected Promotion/Discount..]]></DESCRIPTION>
+<!--800080-->  <HELP><![CDATA[Add business partners in order to include or exclude them from a selected Promotion/Discount..]]></HELP>
 <!--800080-->  <AD_TABLE_ID><![CDATA[800063]]></AD_TABLE_ID>
 <!--800080-->  <AD_WINDOW_ID><![CDATA[800028]]></AD_WINDOW_ID>
 <!--800080-->  <SEQNO><![CDATA[20]]></SEQNO>
@@ -7662,8 +7662,8 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800081-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800081-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800081-->  <NAME><![CDATA[Business Partner Category]]></NAME>
-<!--800081-->  <DESCRIPTION><![CDATA[Add business partner categories in order to include or exclude them from a selected price adjustment.]]></DESCRIPTION>
-<!--800081-->  <HELP><![CDATA[Add business partner categories in order to include or exclude them from a selected price adjustment.]]></HELP>
+<!--800081-->  <DESCRIPTION><![CDATA[Add business partner categories in order to include or exclude them from a selected Promotion/Discount..]]></DESCRIPTION>
+<!--800081-->  <HELP><![CDATA[Add business partner categories in order to include or exclude them from a selected Promotion/Discount..]]></HELP>
 <!--800081-->  <AD_TABLE_ID><![CDATA[800064]]></AD_TABLE_ID>
 <!--800081-->  <AD_WINDOW_ID><![CDATA[800028]]></AD_WINDOW_ID>
 <!--800081-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -7690,8 +7690,8 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800082-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800082-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800082-->  <NAME><![CDATA[Products]]></NAME>
-<!--800082-->  <DESCRIPTION><![CDATA[Add products in order to include or exclude them from a selected price adjustment.]]></DESCRIPTION>
-<!--800082-->  <HELP><![CDATA[Add products in order to include or exclude them from a selected price adjustment.]]></HELP>
+<!--800082-->  <DESCRIPTION><![CDATA[Add products in order to include or exclude them from a selected Promotion/Discount..]]></DESCRIPTION>
+<!--800082-->  <HELP><![CDATA[Add products in order to include or exclude them from a selected Promotion/Discount..]]></HELP>
 <!--800082-->  <AD_TABLE_ID><![CDATA[800065]]></AD_TABLE_ID>
 <!--800082-->  <AD_WINDOW_ID><![CDATA[800028]]></AD_WINDOW_ID>
 <!--800082-->  <SEQNO><![CDATA[30]]></SEQNO>
@@ -7718,8 +7718,8 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800083-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800083-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800083-->  <NAME><![CDATA[Product Category]]></NAME>
-<!--800083-->  <DESCRIPTION><![CDATA[Add product categories in order to include or exclude them from a selected price adjustment.]]></DESCRIPTION>
-<!--800083-->  <HELP><![CDATA[Add product categories in order to include or exclude them from a selected price adjustment.]]></HELP>
+<!--800083-->  <DESCRIPTION><![CDATA[Add product categories in order to include or exclude them from a selected Promotion/Discount..]]></DESCRIPTION>
+<!--800083-->  <HELP><![CDATA[Add product categories in order to include or exclude them from a selected Promotion/Discount..]]></HELP>
 <!--800083-->  <AD_TABLE_ID><![CDATA[800066]]></AD_TABLE_ID>
 <!--800083-->  <AD_WINDOW_ID><![CDATA[800028]]></AD_WINDOW_ID>
 <!--800083-->  <SEQNO><![CDATA[25]]></SEQNO>
@@ -10123,9 +10123,9 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800221-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800221-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800221-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800221-->  <NAME><![CDATA[Price Adjustment]]></NAME>
-<!--800221-->  <DESCRIPTION><![CDATA[View applied price adjustments for each order line.]]></DESCRIPTION>
-<!--800221-->  <HELP><![CDATA[View applied price adjustments for each order line.]]></HELP>
+<!--800221-->  <NAME><![CDATA[Promotions and Discounts]]></NAME>
+<!--800221-->  <DESCRIPTION><![CDATA[View applied Promotions and Discounts for each order line.]]></DESCRIPTION>
+<!--800221-->  <HELP><![CDATA[View applied Promotions and Discounts for each order line.]]></HELP>
 <!--800221-->  <AD_TABLE_ID><![CDATA[800185]]></AD_TABLE_ID>
 <!--800221-->  <AD_WINDOW_ID><![CDATA[181]]></AD_WINDOW_ID>
 <!--800221-->  <SEQNO><![CDATA[25]]></SEQNO>
@@ -10153,9 +10153,9 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800222-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800222-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800222-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800222-->  <NAME><![CDATA[Price Adjustments]]></NAME>
+<!--800222-->  <NAME><![CDATA[Promotions and Discounts]]></NAME>
 <!--800222-->  <DESCRIPTION><![CDATA[View applied price adjustments for each order line.]]></DESCRIPTION>
-<!--800222-->  <HELP><![CDATA[View applied price adjustments for each order line.]]></HELP>
+<!--800222-->  <HELP><![CDATA[View applied Promotions and Discounts for each order line.]]></HELP>
 <!--800222-->  <AD_TABLE_ID><![CDATA[800185]]></AD_TABLE_ID>
 <!--800222-->  <AD_WINDOW_ID><![CDATA[143]]></AD_WINDOW_ID>
 <!--800222-->  <SEQNO><![CDATA[25]]></SEQNO>
@@ -10181,9 +10181,9 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800223-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800223-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800223-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800223-->  <NAME><![CDATA[Price Adjustments]]></NAME>
+<!--800223-->  <NAME><![CDATA[Promotions and Discounts]]></NAME>
 <!--800223-->  <DESCRIPTION><![CDATA[View applied price adjustments for each order line.]]></DESCRIPTION>
-<!--800223-->  <HELP><![CDATA[View applied price adjustments for each order line.]]></HELP>
+<!--800223-->  <HELP><![CDATA[View applied Promotions and Discounts for each order line.]]></HELP>
 <!--800223-->  <AD_TABLE_ID><![CDATA[800186]]></AD_TABLE_ID>
 <!--800223-->  <AD_WINDOW_ID><![CDATA[167]]></AD_WINDOW_ID>
 <!--800223-->  <SEQNO><![CDATA[25]]></SEQNO>
@@ -10209,9 +10209,9 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800224-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800224-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800224-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800224-->  <NAME><![CDATA[Price Adjustment]]></NAME>
+<!--800224-->  <NAME><![CDATA[Promotions and Discounts]]></NAME>
 <!--800224-->  <DESCRIPTION><![CDATA[View applied price adjustments for each order line.]]></DESCRIPTION>
-<!--800224-->  <HELP><![CDATA[View applied price adjustments for each order line.]]></HELP>
+<!--800224-->  <HELP><![CDATA[View applied Promotions and Discounts for each invoice line.]]></HELP>
 <!--800224-->  <AD_TABLE_ID><![CDATA[800186]]></AD_TABLE_ID>
 <!--800224-->  <AD_WINDOW_ID><![CDATA[183]]></AD_WINDOW_ID>
 <!--800224-->  <SEQNO><![CDATA[25]]></SEQNO>
@@ -10436,8 +10436,8 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800232-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800232-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800232-->  <NAME><![CDATA[Price List]]></NAME>
-<!--800232-->  <DESCRIPTION><![CDATA[Add price lists in order to include or exclude them from a selected price adjustment.]]></DESCRIPTION>
-<!--800232-->  <HELP><![CDATA[Add price lists in order to include or exclude them from a selected price adjustment.]]></HELP>
+<!--800232-->  <DESCRIPTION><![CDATA[Add price lists in order to include or exclude them from a selected Promotion/Discount.]]></DESCRIPTION>
+<!--800232-->  <HELP><![CDATA[Add price lists in order to include or exclude them from a selected Promotion/Discount.]]></HELP>
 <!--800232-->  <AD_TABLE_ID><![CDATA[800194]]></AD_TABLE_ID>
 <!--800232-->  <AD_WINDOW_ID><![CDATA[800028]]></AD_WINDOW_ID>
 <!--800232-->  <SEQNO><![CDATA[40]]></SEQNO>
@@ -12098,6 +12098,8 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--1EB39A39CFDB402FBDA86AB8BAF2EDB4-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1EB39A39CFDB402FBDA86AB8BAF2EDB4-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1EB39A39CFDB402FBDA86AB8BAF2EDB4-->  <NAME><![CDATA[Organization]]></NAME>
+<!--1EB39A39CFDB402FBDA86AB8BAF2EDB4-->  <DESCRIPTION><![CDATA[Add price lists in order to include or exclude them from a selected price adjustment.]]></DESCRIPTION>
+<!--1EB39A39CFDB402FBDA86AB8BAF2EDB4-->  <HELP><![CDATA[Add organizations in order to include or exclude them from a selected Promotion/Discount.]]></HELP>
 <!--1EB39A39CFDB402FBDA86AB8BAF2EDB4-->  <AD_TABLE_ID><![CDATA[CBF045D2539A4249B091CCE4B1F5EEDB]]></AD_TABLE_ID>
 <!--1EB39A39CFDB402FBDA86AB8BAF2EDB4-->  <AD_WINDOW_ID><![CDATA[800028]]></AD_WINDOW_ID>
 <!--1EB39A39CFDB402FBDA86AB8BAF2EDB4-->  <SEQNO><![CDATA[50]]></SEQNO>

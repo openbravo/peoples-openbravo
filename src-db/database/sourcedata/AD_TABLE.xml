@@ -5257,8 +5257,8 @@ For example, once the goods have been shipped to the customer, the merchant can 
 <!--800062-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800062-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800062-->  <NAME><![CDATA[PricingAdjustment]]></NAME>
-<!--800062-->  <DESCRIPTION><![CDATA[Price Adjustments configuration]]></DESCRIPTION>
-<!--800062-->  <HELP><![CDATA[The Price Adjustments have a valid period and are applied to the configured business partners, products, product categories and business partner groups. The offer can be based upon percentage or fixed price.]]></HELP>
+<!--800062-->  <DESCRIPTION><![CDATA[Promotions and Discounts configuration]]></DESCRIPTION>
+<!--800062-->  <HELP><![CDATA[Defines the Promotion/Discount main caracteristiques such as Discount Type, how it is filtered and actual discount information based on type.]]></HELP>
 <!--800062-->  <TABLENAME><![CDATA[M_Offer]]></TABLENAME>
 <!--800062-->  <CLASSNAME><![CDATA[PriceAdjustment]]></CLASSNAME>
 <!--800062-->  <ISVIEW><![CDATA[N]]></ISVIEW>

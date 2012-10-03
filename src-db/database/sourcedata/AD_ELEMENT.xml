@@ -14382,10 +14382,10 @@ For example, if you want to create different invoices for each ship location for
 <!--800273-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800273-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800273-->  <COLUMNNAME><![CDATA[M_Offer_ID]]></COLUMNNAME>
-<!--800273-->  <NAME><![CDATA[Price Adjustment]]></NAME>
-<!--800273-->  <PRINTNAME><![CDATA[Price Adjustment]]></PRINTNAME>
+<!--800273-->  <NAME><![CDATA[Promotion/Discount]]></NAME>
+<!--800273-->  <PRINTNAME><![CDATA[Promotion/Discount]]></PRINTNAME>
 <!--800273-->  <DESCRIPTION><![CDATA[The ability to raise or lower prices.]]></DESCRIPTION>
-<!--800273-->  <HELP><![CDATA[Price Adjustment applied to a particular line (product) automatically by the system.]]></HELP>
+<!--800273-->  <HELP><![CDATA[Promotion or Discount applied to a particular line (product) automatically by the system.]]></HELP>
 <!--800273-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800273-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--800273--></AD_ELEMENT>
