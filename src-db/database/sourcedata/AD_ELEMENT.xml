@@ -14343,10 +14343,10 @@ For example, if you want to create different invoices for each ship location for
 <!--800270-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800270-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800270-->  <COLUMNNAME><![CDATA[Fixed]]></COLUMNNAME>
-<!--800270-->  <NAME><![CDATA[Fixed Net Unit Price]]></NAME>
+<!--800270-->  <NAME><![CDATA[Fixed Unit Price]]></NAME>
 <!--800270-->  <PRINTNAME><![CDATA[Fixed Net Unit Price]]></PRINTNAME>
 <!--800270-->  <DESCRIPTION><![CDATA[A price that does not change when price adjustments are made.]]></DESCRIPTION>
-<!--800270-->  <HELP><![CDATA[Fixed price for the price adjustment]]></HELP>
+<!--800270-->  <HELP><![CDATA[Fixed price for the promotion. When the promotion is applied, this is the final price the product will have.]]></HELP>
 <!--800270-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800270-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--800270--></AD_ELEMENT>
@@ -21718,8 +21718,9 @@ Glossary orphan elements are preserved when running Synchronize Terminology proc
 <!--4D1BCC68A52C4FC4A8DF1A7A37DB704F-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--4D1BCC68A52C4FC4A8DF1A7A37DB704F-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--4D1BCC68A52C4FC4A8DF1A7A37DB704F-->  <COLUMNNAME><![CDATA[Apply_Next]]></COLUMNNAME>
-<!--4D1BCC68A52C4FC4A8DF1A7A37DB704F-->  <NAME><![CDATA[Apply_Next]]></NAME>
-<!--4D1BCC68A52C4FC4A8DF1A7A37DB704F-->  <PRINTNAME><![CDATA[Apply_Next]]></PRINTNAME>
+<!--4D1BCC68A52C4FC4A8DF1A7A37DB704F-->  <NAME><![CDATA[Apply Next Discount]]></NAME>
+<!--4D1BCC68A52C4FC4A8DF1A7A37DB704F-->  <PRINTNAME><![CDATA[Apply Next Discount]]></PRINTNAME>
+<!--4D1BCC68A52C4FC4A8DF1A7A37DB704F-->  <HELP><![CDATA[In case there are other discounts applicable to this same line with less priority than this one, this flag decides whether the next one should be applied or not.]]></HELP>
 <!--4D1BCC68A52C4FC4A8DF1A7A37DB704F-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--4D1BCC68A52C4FC4A8DF1A7A37DB704F-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--4D1BCC68A52C4FC4A8DF1A7A37DB704F--></AD_ELEMENT>
@@ -26702,8 +26703,10 @@ In case the field is not checked, the preference is defined by Attribute, which 
 <!--8791FFA10E864602B17E9DCE7EE3581C-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--8791FFA10E864602B17E9DCE7EE3581C-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--8791FFA10E864602B17E9DCE7EE3581C-->  <COLUMNNAME><![CDATA[Print_Name]]></COLUMNNAME>
-<!--8791FFA10E864602B17E9DCE7EE3581C-->  <NAME><![CDATA[Print_Name]]></NAME>
-<!--8791FFA10E864602B17E9DCE7EE3581C-->  <PRINTNAME><![CDATA[Print_Name]]></PRINTNAME>
+<!--8791FFA10E864602B17E9DCE7EE3581C-->  <NAME><![CDATA[Printed Name]]></NAME>
+<!--8791FFA10E864602B17E9DCE7EE3581C-->  <PRINTNAME><![CDATA[Printed Name]]></PRINTNAME>
+<!--8791FFA10E864602B17E9DCE7EE3581C-->  <DESCRIPTION><![CDATA[Printed Name]]></DESCRIPTION>
+<!--8791FFA10E864602B17E9DCE7EE3581C-->  <HELP><![CDATA[Name that will be shown to final user in UI and reports to identify current promotion. In case it is empty, name will be used instead. In general, name should be used internally, whereas printed name is intended to be read by user.]]></HELP>
 <!--8791FFA10E864602B17E9DCE7EE3581C-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--8791FFA10E864602B17E9DCE7EE3581C-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--8791FFA10E864602B17E9DCE7EE3581C--></AD_ELEMENT>
