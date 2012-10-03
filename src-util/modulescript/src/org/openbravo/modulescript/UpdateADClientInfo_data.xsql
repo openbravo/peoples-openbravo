@@ -150,163 +150,70 @@
   <SqlMethod name="selectClientsMissingCostcenterTree" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql><![CDATA[
-      SELECT AD_CLIENT_ID 
-      FROM AD_CLIENTINFO CI
-      WHERE CI.AD_TREE_COSTCENTER_ID IS NULL 
-      AND CI.AD_CLIENT_ID <> '0'
+      SELECT C.AD_CLIENT_ID, C.NAME as clientname
+      FROM AD_CLIENTINFO CI INNER JOIN AD_CLIENT C ON (C.AD_CLIENT_ID = CI.AD_CLIENT_ID)
+      WHERE CI.AD_CLIENT_ID <> '0'
+      AND 1=1 AND CI.AD_TREE_COSTCENTER_ID IS NULL
       ]]>
     </Sql>
-    <Parameter name="columnname" optional="false" type="replace" after="WHERE CI." text="AD_TREE_COSTCENTER_ID"/>
+    <Parameter name="columnname" optional="false" type="replace" after="AND 1=1 AND CI." text="AD_TREE_COSTCENTER_ID"/>
   </SqlMethod>
   <SqlMethod name="updateCostcenterTreeAuto" type="preparedStatement" return="rowcount">
     <SqlMethodComment>Updates client tree info for already created trees</SqlMethodComment>
     <Sql><![CDATA[
       UPDATE AD_CLIENTINFO 
-      SET AD_TREE_COSTCENTER_ID = 
-        (SELECT AD_TREE_ID FROM AD_TREE T 
-         WHERE TREETYPE = ? AND AD_CLIENT_ID = ?) 
-        WHERE AD_CLIENT_ID = ? 
+      SET AD_TREE_COSTCENTER_ID = ?
+      WHERE AD_CLIENT_ID = ?
       ]]>
     </Sql>
     <Parameter name="columnname" optional="false" type="replace" after="SET " text="AD_TREE_COSTCENTER_ID"/>
-    <Parameter name="treetype"/>
+    <Parameter name="treeID"/>
     <Parameter name="clientID"/>
-    <Parameter name="clientID"/>
-  </SqlMethod>
-  <SqlMethod name="insertMissingCostcenterNodes" type="preparedStatement" return="rowcount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql><![CDATA[
-    INSERT
-    INTO AD_TreeNode
-      (
-        ad_treeNode_Id, AD_Client_ID, AD_Org_ID, IsActive,
-        Created, CreatedBy, Updated,
-        UpdatedBy, AD_Tree_ID, Node_ID,
-        Parent_ID, SeqNo
-      )
-      SELECT get_uuid(), a.ad_client_id, a.ad_org_id, a.isactive,
-	now(), '0', now(), 
-	'0', (SELECT ad_tree_id from ad_tree where treetype = ? AND ad_tree.ad_client_id = a.ad_client_id) AS treeID, a.C_Costcenter_id,
-	'0', 999
-      FROM C_COSTCENTER a
-      WHERE NOT EXISTS (SELECT 1 
-                        FROM AD_TREENODE tn INNER JOIN AD_TREE t ON (t.ad_tree_id=tn.ad_tree_id)
-                        WHERE t.treetype = ?
-		        AND 1=1 AND a.C_Costcenter_id = tn.node_id)
-      ]]>
-    </Sql>
-    <Parameter name="treetype"/>
-    <Parameter name="tablename" optional="false" type="replace" after="AS treeID, a." text="C_COSTCENTER"/>
-    <Parameter name="tablename" optional="false" type="replace" after="FROM " text="C_COSTCENTER"/>
-    <Parameter name="treetype"/>
-    <Parameter name="tablename" optional="false" type="replace" after="AND 1=1 AND a." text="C_COSTCENTER"/>
   </SqlMethod>
   <SqlMethod name="selectClientsMissingUser1Tree" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql><![CDATA[
-      SELECT AD_CLIENT_ID 
-      FROM AD_CLIENTINFO CI
-      WHERE CI.AD_TREE_USER1_ID IS NULL 
-      AND CI.AD_CLIENT_ID <> '0'
+      SELECT C.AD_CLIENT_ID, C.NAME as clientname
+      FROM AD_CLIENTINFO CI INNER JOIN AD_CLIENT C ON (C.AD_CLIENT_ID = CI.AD_CLIENT_ID)
+      WHERE CI.AD_CLIENT_ID <> '0'
+      AND 1=1 AND CI.AD_TREE_USER1_ID IS NULL
       ]]>
     </Sql>
-    <Parameter name="columnname" optional="false" type="replace" after="WHERE CI." text="AD_TREE_USER1_ID"/>
+    <Parameter name="columnname" optional="false" type="replace" after="AND 1=1 AND CI." text="AD_TREE_USER1_ID"/>
   </SqlMethod>
   <SqlMethod name="updateUser1TreeAuto" type="preparedStatement" return="rowcount">
     <SqlMethodComment>Updates client tree info for already created trees</SqlMethodComment>
     <Sql><![CDATA[
       UPDATE AD_CLIENTINFO 
-      SET AD_TREE_USER1_ID = 
-        (SELECT AD_TREE_ID FROM AD_TREE T 
-         WHERE TREETYPE = ? AND AD_CLIENT_ID = ?) 
-        WHERE AD_CLIENT_ID = ? 
+      SET AD_TREE_USER1_ID = ?
+      WHERE AD_CLIENT_ID = ?
       ]]>
     </Sql>
     <Parameter name="columnname" optional="false" type="replace" after="SET " text="AD_TREE_USER1_ID"/>
-    <Parameter name="treetype"/>
+    <Parameter name="treeID"/>
     <Parameter name="clientID"/>
-    <Parameter name="clientID"/>
-  </SqlMethod>
-  <SqlMethod name="insertMissingUser1Nodes" type="preparedStatement" return="rowcount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql><![CDATA[
-    INSERT
-    INTO AD_TreeNode
-      (
-        ad_treeNode_Id, AD_Client_ID, AD_Org_ID, IsActive,
-        Created, CreatedBy, Updated,
-        UpdatedBy, AD_Tree_ID, Node_ID,
-        Parent_ID, SeqNo
-      )
-      SELECT get_uuid(), a.ad_client_id, a.ad_org_id, a.isactive,
-	now(), '0', now(), 
-	'0', (SELECT ad_tree_id from ad_tree where treetype = ? AND ad_tree.ad_client_id = a.ad_client_id) AS treeID, a.C_User1_id,
-	'0', 999
-      FROM C_USER1 a
-      WHERE NOT EXISTS (SELECT 1 
-                        FROM AD_TREENODE tn INNER JOIN AD_TREE t ON (t.ad_tree_id=tn.ad_tree_id)
-                        WHERE t.treetype = ?
-		        AND 1=1 AND a.C_USER1_id = tn.node_id)
-      ]]>
-    </Sql>
-    <Parameter name="treetype"/>
-    <Parameter name="tablename" optional="false" type="replace" after="AS treeID, a." text="C_USER1"/>
-    <Parameter name="tablename" optional="false" type="replace" after="FROM " text="C_USER1"/>
-    <Parameter name="treetype"/>
-    <Parameter name="tablename" optional="false" type="replace" after="AND 1=1 AND a." text="C_USER1"/>
   </SqlMethod>
   <SqlMethod name="selectClientsMissingUser2Tree" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql><![CDATA[
-      SELECT AD_CLIENT_ID 
-      FROM AD_CLIENTINFO CI
-      WHERE CI.AD_TREE_USER2_ID IS NULL 
-      AND CI.AD_CLIENT_ID <> '0'
+      SELECT C.AD_CLIENT_ID, C.NAME as clientname
+      FROM AD_CLIENTINFO CI INNER JOIN AD_CLIENT C ON (C.AD_CLIENT_ID = CI.AD_CLIENT_ID)
+      WHERE CI.AD_CLIENT_ID <> '0'
+      AND 1=1 AND CI.AD_TREE_USER2_ID IS NULL
       ]]>
     </Sql>
-    <Parameter name="columnname" optional="false" type="replace" after="WHERE CI." text="AD_TREE_USER2_ID"/>
+    <Parameter name="columnname" optional="false" type="replace" after="AND 1=1 AND CI." text="AD_TREE_USER2_ID"/>
   </SqlMethod>
   <SqlMethod name="updateUser2TreeAuto" type="preparedStatement" return="rowcount">
     <SqlMethodComment>Updates client tree info for already created trees</SqlMethodComment>
     <Sql><![CDATA[
       UPDATE AD_CLIENTINFO 
-      SET AD_TREE_USER2_ID = 
-        (SELECT AD_TREE_ID FROM AD_TREE T 
-         WHERE TREETYPE = ? AND AD_CLIENT_ID = ?) 
-        WHERE AD_CLIENT_ID = ? 
+      SET AD_TREE_USER2_ID = ?
+      WHERE AD_CLIENT_ID = ?
       ]]>
     </Sql>
     <Parameter name="columnname" optional="false" type="replace" after="SET " text="AD_TREE_USER2_ID"/>
-    <Parameter name="treetype"/>
+    <Parameter name="treeID"/>
     <Parameter name="clientID"/>
-    <Parameter name="clientID"/>
-  </SqlMethod>
-  <SqlMethod name="insertMissingUser2Nodes" type="preparedStatement" return="rowcount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql><![CDATA[
-    INSERT
-    INTO AD_TreeNode
-      (
-        ad_treeNode_Id, AD_Client_ID, AD_Org_ID, IsActive,
-        Created, CreatedBy, Updated,
-        UpdatedBy, AD_Tree_ID, Node_ID,
-        Parent_ID, SeqNo
-      )
-      SELECT get_uuid(), a.ad_client_id, a.ad_org_id, a.isactive,
-	now(), '0', now(), 
-	'0', (SELECT ad_tree_id from ad_tree where treetype = ? AND ad_tree.ad_client_id = a.ad_client_id) AS treeID, a.C_USER2_id,
-	'0', 999
-      FROM C_USER2 a
-      WHERE NOT EXISTS (SELECT 1 
-                        FROM AD_TREENODE tn INNER JOIN AD_TREE t ON (t.ad_tree_id=tn.ad_tree_id)
-                        WHERE t.treetype = ?
-		        AND 1=1 AND a.C_USER2_id = tn.node_id)
-      ]]>
-    </Sql>
-    <Parameter name="treetype"/>
-    <Parameter name="tablename" optional="false" type="replace" after="AS treeID, a." text="C_USER2"/>
-    <Parameter name="tablename" optional="false" type="replace" after="FROM " text="C_USER2"/>
-    <Parameter name="treetype"/>
-    <Parameter name="tablename" optional="false" type="replace" after="AND 1=1 AND a." text="C_USER2"/>
   </SqlMethod>
 </SqlClass>
