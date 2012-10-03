@@ -1336,7 +1336,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
 
     if (upd != null && upd.length > 0) {
       xmlDocument.setData("updates",
-          getModuleFieldProvider(upd, minVersions, false, vars.getLanguage(), islocal));
+          getModuleFieldProvider(upd, minVersions, true, vars.getLanguage(), islocal));
     }
 
     if (merges != null && merges.length > 0) {
@@ -1434,7 +1434,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
     org.openbravo.model.ad.module.Module mod = OBDal.getInstance().get(
         org.openbravo.model.ad.module.Module.class, moduleId);
     if (mod != null) {
-      currentVersion = mod.getVersion();
+      currentVersion = currentVersion.concat(" (" + mod.getVersionLabel() + ")");
     }
     return currentVersion;
   }
