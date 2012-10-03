@@ -18,6 +18,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.servlet.ServletException;
+
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
@@ -73,7 +75,7 @@ import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonToDataConverter;
 
-public class OrderLoader {
+public class OrderLoader extends JSONProcessSimple {
 
   HashMap<String, DocumentType> paymentDocTypes = new HashMap<String, DocumentType>();
   HashMap<String, DocumentType> invoiceDocTypes = new HashMap<String, DocumentType>();
@@ -83,6 +85,29 @@ public class OrderLoader {
   private static final Logger log = Logger.getLogger(OrderLoader.class);
 
   private static final BigDecimal NEGATIVE_ONE = new BigDecimal(-1);
+
+  @Override
+  public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {
+
+    Object jsonorder = jsonsent.get("order");
+
+    JSONArray array = null;
+    if (jsonorder instanceof JSONObject) {
+      array = new JSONArray();
+      array.put(jsonorder);
+    } else if (jsonorder instanceof String) {
+      JSONObject obj = new JSONObject((String) jsonorder);
+      array = new JSONArray();
+      array.put(obj);
+    } else if (jsonorder instanceof JSONArray) {
+      array = (JSONArray) jsonorder;
+    }
+
+    long t1 = System.currentTimeMillis();
+    JSONObject result = this.saveOrder(array);
+    log.info("Final total time: " + (System.currentTimeMillis() - t1));
+    return result;
+  }
 
   public JSONObject saveOrder(JSONArray jsonarray) throws JSONException {
     boolean error = false;
