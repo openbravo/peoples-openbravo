@@ -674,8 +674,20 @@ isc.OBStandardView.addProperties({
       this.viewGrid.enableShortcuts();
     }
 
-    if (this.isShowingForm && this.viewForm && this.viewForm.getFocusItem()) {
-      object = this.viewForm.getFocusItem();
+    if (this.isShowingForm && this.viewForm) {
+      if (this.lastFocusedItem && this.lastFocusedItem.getCanFocus()) {
+        object = this.lastFocusedItem;
+      } else if (this.viewForm.getFocusItem() && this.viewForm.getFocusItem().getCanFocus()) {
+        object = this.viewForm.getFocusItem();
+      } else {
+        var fields = this.viewForm.fields;
+        for (i = 0; i < fields.length; i++) {
+          if (fields[i].getCanFocus()) {
+            object = fields[i];
+            break;
+          }
+        }
+      }
       functionName = 'focusInItem';
     } else if (this.isEditingGrid && this.viewGrid.getEditForm() && this.viewGrid.getEditForm().getFocusItem()) {
       object = this.viewGrid.getEditForm();
