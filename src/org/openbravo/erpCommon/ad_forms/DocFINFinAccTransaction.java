@@ -23,7 +23,9 @@ import java.math.BigDecimal;
 import java.sql.Connection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 
@@ -967,10 +969,39 @@ public class DocFINFinAccTransaction extends AcctServer {
           account = getAccount(conn, lines.get(0).getUponWithdrawalUse(), accountList.get(0),
               bIsReceipt);
       } else {
-        if (bIsReceipt)
-          account = new Account(conn, accountList.get(0).getDepositAccount().getId());
-        else
-          account = new Account(conn, accountList.get(0).getWithdrawalAccount().getId());
+        if (bIsReceipt) {
+          if (accountList.get(0).getDepositAccount() != null) {
+            account = new Account(conn, accountList.get(0).getDepositAccount().getId());
+          } else {
+            Map<String, String> parameters = new HashMap<String, String>();
+            parameters.put("Account", "@DepositAccount@");
+            parameters.put("Entity", finAccount.getName());
+            parameters.put(
+                "AccountingSchema",
+                OBDal
+                    .getInstance()
+                    .get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
+                        as.getC_AcctSchema_ID()).getIdentifier());
+            setMessageResult(conn, STATUS_InvalidAccount, "error", parameters);
+            throw new IllegalStateException();
+          }
+        } else {
+          if (accountList.get(0).getWithdrawalAccount() != null) {
+            account = new Account(conn, accountList.get(0).getWithdrawalAccount().getId());
+          } else {
+            Map<String, String> parameters = new HashMap<String, String>();
+            parameters.put("Account", "@WithdrawalAccount@");
+            parameters.put("Entity", finAccount.getName());
+            parameters.put(
+                "AccountingSchema",
+                OBDal
+                    .getInstance()
+                    .get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
+                        as.getC_AcctSchema_ID()).getIdentifier());
+            setMessageResult(conn, STATUS_InvalidAccount, "error", parameters);
+            throw new IllegalStateException();
+          }
+        }
       }
     } finally {
       OBContext.restorePreviousMode();
