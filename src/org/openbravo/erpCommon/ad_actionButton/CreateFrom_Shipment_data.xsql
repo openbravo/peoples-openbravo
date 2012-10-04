@@ -54,7 +54,7 @@
         AND l.M_Product_ID=p.M_Product_ID
         AND l.C_Order_ID = ? 
         GROUP BY o.C_ORDER_ID, o.DocumentNo, o.DateOrdered, o.GrandTotal, l.QtyOrdered,l.qtydelivered, 
-        l.C_UOM_ID,uom.UOMSymbol,l.M_Product_ID,p.NAME,l.Line,l.C_OrderLine_ID, l.ad_org_id, l.DESCRIPTION, l.QUANTITYORDER, l.M_PRODUCT_UOM_ID, l.M_ATTRIBUTESETINSTANCE_ID
+        l.C_UOM_ID,uom.UOMSymbol,l.M_Product_ID,p.NAME,l.Line,l.C_OrderLine_ID, l.ad_org_id, l.DESCRIPTION, l.QUANTITYORDER, l.M_PRODUCT_UOM_ID, l.M_ATTRIBUTESETINSTANCE_ID, l.a_asset_id, l.c_project_id, l.c_costcenter_id, l.c_user1_id, l.c_user2_id
         HAVING (l.QtyOrdered-SUM(COALESCE(m.Qty,0))) <> 0
         ORDER BY NAME, l.Line
       ]]>
@@ -111,7 +111,8 @@
         AND ic.C_Order_ID = ?
         AND l.QtyOrdered <> COALESCE(l.qtydelivered,0)
         GROUP BY o.C_ORDER_ID, o.DocumentNo, o.DateOrdered, o.GrandTotal, l.QtyOrdered,l.qtydelivered, 
-        l.C_UOM_ID,uom.UOMSymbol,l.M_Product_ID,p.NAME,l.Line,l.C_OrderLine_ID, l.ad_org_id, l.DESCRIPTION
+        l.C_UOM_ID,uom.UOMSymbol,l.M_Product_ID,p.NAME,l.Line,l.C_OrderLine_ID, l.ad_org_id, l.DESCRIPTION,
+        l.a_asset_id, l.c_project_id, l.c_costcenter_id, l.c_user1_id, l.c_user2_id
         ORDER BY NAME, l.Line
       ]]>
     </Sql>
@@ -235,7 +236,8 @@
       WHERE l.C_UOM_ID=uom.C_UOM_ID
       AND l.M_Product_ID=p.M_Product_ID
       GROUP BY l.QtyOrdered,l.qtydelivered,l.C_UOM_ID,uom.UOMSymbol,l.M_Product_ID,p.NAME,l.Line,l.C_OrderLine_ID, 
-      uom1.BREAKDOWN, l.QUANTITYORDER, l.M_Product_UOM_ID, l.M_ATTRIBUTESETINSTANCE_ID, l.ad_org_id, l.DESCRIPTION
+      uom1.BREAKDOWN, l.QUANTITYORDER, l.M_Product_UOM_ID, l.M_ATTRIBUTESETINSTANCE_ID, l.ad_org_id, l.DESCRIPTION,
+      l.a_asset_id, l.c_project_id, l.c_costcenter_id, l.c_user1_id, l.c_user2_id
       ORDER BY l.Line
       ]]>
     </Sql>
@@ -259,7 +261,8 @@
       WHERE l.C_UOM_ID=uom.C_UOM_ID
       AND l.M_Product_ID=p.M_Product_ID
       GROUP BY l.QtyOrdered,l.qtydelivered,l.C_UOM_ID,uom.UOMSymbol,l.M_Product_ID,p.NAME,l.Line,l.C_OrderLine_ID, 
-      uom1.BREAKDOWN, l.QUANTITYORDER, l.M_Product_UOM_ID, l.M_ATTRIBUTESETINSTANCE_ID, l.ad_org_id, l.DESCRIPTION
+      uom1.BREAKDOWN, l.QUANTITYORDER, l.M_Product_UOM_ID, l.M_ATTRIBUTESETINSTANCE_ID, l.ad_org_id, l.DESCRIPTION,
+      l.a_asset_id, l.c_project_id, l.c_costcenter_id, l.c_user1_id, l.c_user2_id
       HAVING l.QtyOrdered - COALESCE(l.QTYDELIVERED,0)<>0
       ORDER BY l.Line
       ]]>
@@ -297,7 +300,7 @@
         AND l.M_Product_ID=p.M_Product_ID 
         AND l.C_Invoice_ID = ? 
         GROUP BY i.C_Invoice_ID, i.DocumentNo, DateInvoiced, GrandTotal, l.QtyInvoiced, 
-        l.C_UOM_ID,uom.UOMSymbol,l.M_Product_ID,p.NAME, l.C_InvoiceLine_ID,l.Line,l.C_OrderLine_ID, l.DESCRIPTION,l.QUANTITYORDER, l.M_PRODUCT_UOM_ID,l.M_ATTRIBUTESETINSTANCE_ID
+        l.C_UOM_ID,uom.UOMSymbol,l.M_Product_ID,p.NAME, l.C_InvoiceLine_ID,l.Line,l.C_OrderLine_ID, l.DESCRIPTION,l.QUANTITYORDER, l.M_PRODUCT_UOM_ID,l.M_ATTRIBUTESETINSTANCE_ID, l.a_asset_id, l.c_project_id, l.c_costcenter_id, l.c_user1_id, l.c_user2_id
         HAVING (l.QtyInvoiced-SUM(COALESCE(mi.Qty,0))) <> 0 
         ORDER BY NAME, l.Line
       ]]>
@@ -328,7 +331,8 @@
         AND l.M_Product_ID=p.M_Product_ID 
         AND l.C_Invoice_ID = ?
         GROUP BY i.C_Invoice_ID, i.DocumentNo, DateInvoiced, GrandTotal, l.QtyInvoiced, 
-        l.C_UOM_ID,uom.UOMSymbol,l.M_Product_ID,p.NAME, l.C_InvoiceLine_ID,l.Line,l.C_OrderLine_ID, l.DESCRIPTION
+        l.C_UOM_ID,uom.UOMSymbol,l.M_Product_ID,p.NAME, l.C_InvoiceLine_ID,l.Line,l.C_OrderLine_ID, l.DESCRIPTION,
+        l.a_asset_id, l.c_project_id, l.c_costcenter_id, l.c_user1_id, l.c_user2_id
         HAVING (l.QtyInvoiced-SUM(COALESCE(mi.MOVEMENTQTY,0))) <> 0 
         ORDER BY NAME, l.Line
       ]]>
@@ -451,7 +455,8 @@
       AND l.M_Product_ID=p.M_Product_ID 
       GROUP BY l.QtyInvoiced,
       l.C_UOM_ID,uom.UOMSymbol,l.M_Product_ID,p.NAME, l.C_InvoiceLine_ID,l.Line,l.C_OrderLine_ID, 
-      uom1.BREAKDOWN, l.QUANTITYORDER, l.M_Product_UOM_ID, l.M_ATTRIBUTESETINSTANCE_ID, l.ad_org_id, l.DESCRIPTION, l.C_INVOICE_ID
+      uom1.BREAKDOWN, l.QUANTITYORDER, l.M_Product_UOM_ID, l.M_ATTRIBUTESETINSTANCE_ID, l.ad_org_id, l.DESCRIPTION, l.C_INVOICE_ID,
+      l.a_asset_id, l.c_project_id, l.c_costcenter_id, l.c_user1_id, l.c_user2_id
       HAVING l.QtyInvoiced-SUM(COALESCE(mi.Qty,0))<>0
       ORDER BY l.Line
       ]]>
@@ -479,7 +484,8 @@
       AND l.M_Product_ID=p.M_Product_ID 
       GROUP BY l.QtyInvoiced,
       l.C_UOM_ID,uom.UOMSymbol,l.M_Product_ID,p.NAME, l.C_InvoiceLine_ID,l.Line,l.C_OrderLine_ID, 
-      uom1.BREAKDOWN, l.QUANTITYORDER, l.M_Product_UOM_ID, l.M_ATTRIBUTESETINSTANCE_ID, l.ad_org_id, l.DESCRIPTION
+      uom1.BREAKDOWN, l.QUANTITYORDER, l.M_Product_UOM_ID, l.M_ATTRIBUTESETINSTANCE_ID, l.ad_org_id, l.DESCRIPTION,
+      l.a_asset_id, l.c_project_id, l.c_costcenter_id, l.c_user1_id, l.c_user2_id
       HAVING l.QtyInvoiced-SUM(COALESCE(mi.MOVEMENTQTY,0))<>0
       ORDER BY l.Line
       ]]>

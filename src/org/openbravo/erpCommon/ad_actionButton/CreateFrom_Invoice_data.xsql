@@ -117,7 +117,7 @@
         AND ic.C_Order_ID = ? 
         GROUP BY o.C_ORDER_ID, o.DocumentNo, o.DateOrdered, o.GrandTotal, l.QtyOrdered,
         l.C_UOM_ID,uom.UOMSymbol,l.M_Product_ID,p.NAME,l.Line,l.C_OrderLine_ID, l.QTYINVOICED, l.ad_org_id,
-        l.taxbaseamt
+        l.taxbaseamt, l.a_asset_id, l.c_project_id, l.c_costcenter_id, l.c_user1_id, l.c_user2_id
         ORDER BY NAME, l.Line
       ]]>
     </Sql>
@@ -479,7 +479,8 @@
         AND l.M_InOut_ID=? 
         AND (l.c_orderline_id is null OR pl.istaxincluded = ?)
         GROUP BY s.M_InOut_ID, s.DocumentNo, s.MovementDate, l.MovementQty,l.C_UOM_ID,uom.UOMSymbol, uomt.UOMSymbol,
-        l.M_Product_ID,p.NAME, ma.serno, l.M_InOutLine_ID,l.Line,l.C_OrderLine_ID 
+        l.M_Product_ID,p.NAME, ma.serno, l.M_InOutLine_ID,l.Line,l.C_OrderLine_ID,
+        l.a_asset_id, l.c_project_id, l.c_costcenter_id, l.c_user1_id, l.c_user2_id
         HAVING  (l.MovementQty-SUM(COALESCE(mi.Qty,0))) <> 0
         ORDER BY NAME, l.Line
       ]]>
@@ -521,7 +522,8 @@
         AND l.M_InOut_ID=? 
         AND (l.c_orderline_id is null OR pl.istaxincluded = ?)
         GROUP BY s.M_InOut_ID, s.DocumentNo, s.MovementDate, l.MovementQty,l.C_UOM_ID,uom.UOMSymbol, uomt.UOMSymbol,
-        l.M_Product_ID,p.NAME,ma.serno, l.M_InOutLine_ID,l.Line,l.C_OrderLine_ID
+        l.M_Product_ID,p.NAME,ma.serno, l.M_InOutLine_ID,l.Line,l.C_OrderLine_ID,
+        l.a_asset_id, l.c_project_id, l.c_costcenter_id, l.c_user1_id, l.c_user2_id
         ORDER BY NAME, l.Line
       ]]>
     </Sql>
@@ -547,7 +549,8 @@
       C_UOM uom,  M_PRODUCT p
       WHERE l.C_UOM_ID=uom.C_UOM_ID
       AND l.M_Product_ID=p.M_Product_ID
-      GROUP BY l.MovementQty,l.C_UOM_ID,uom.UOMSymbol,l.M_Product_ID,p.NAME, l.M_InOutLine_ID,l.Line,l.C_OrderLine_ID, l.Description,l.quantityOrder, l.M_Product_UOM_ID, l.M_ATTRIBUTESETINSTANCE_ID, l.ad_org_id, co.taxbaseamt,co.qtyordered
+      GROUP BY l.MovementQty,l.C_UOM_ID,uom.UOMSymbol,l.M_Product_ID,p.NAME, l.M_InOutLine_ID,l.Line,l.C_OrderLine_ID, l.Description,l.quantityOrder, l.M_Product_UOM_ID, l.M_ATTRIBUTESETINSTANCE_ID, l.ad_org_id, co.taxbaseamt,co.qtyordered,
+      l.a_asset_id, l.c_project_id, l.c_costcenter_id, l.c_user1_id, l.c_user2_id
       ORDER BY l.Line
       ]]>
     </Sql>
@@ -566,7 +569,8 @@
         WHERE l.C_UOM_ID=uom.C_UOM_ID
         AND l.M_Product_ID=p.M_Product_ID 
         AND l.isinvoiced = 'N' 
-        GROUP BY l.MovementQty,l.C_UOM_ID,uom.UOMSymbol,l.M_Product_ID,p.NAME, l.M_InOutLine_ID,l.Line,l.C_OrderLine_ID, l.Description, l.quantityOrder, l.M_Product_UOM_ID, l.M_ATTRIBUTESETINSTANCE_ID, l.ad_org_id
+        GROUP BY l.MovementQty,l.C_UOM_ID,uom.UOMSymbol,l.M_Product_ID,p.NAME, l.M_InOutLine_ID,l.Line,l.C_OrderLine_ID, l.Description, l.quantityOrder, l.M_Product_UOM_ID, l.M_ATTRIBUTESETINSTANCE_ID, l.ad_org_id,
+        l.a_asset_id, l.c_project_id, l.c_costcenter_id, l.c_user1_id, l.c_user2_id
         ORDER BY l.Line
       ]]>
     </Sql>
