@@ -59,11 +59,10 @@ enyo.kind({
       }]
     }]
   }],
-  printReceipt: function () {
-    
+  printReceipt: function() {
     if (OB.POS.modelterminal.hasPermission('OBPOS_print.receipt')) {
       var receipt = this.model.get('order');
-      receipt.calculateTaxes(function() {
+      receipt.prepareToSend(function() {
         receipt.trigger('print');
       });
     }
