@@ -36,6 +36,5 @@ enyo.kind({
     }).render();
 
     this.showDialog();
-    // $('#modalp').modal('show');
   }
 });

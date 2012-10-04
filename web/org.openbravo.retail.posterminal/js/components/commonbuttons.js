@@ -253,6 +253,7 @@ enyo.kind({
     }, {
       tag: 'div',
       classes: 'modal-body modal-dialog-body',
+      name: 'bodyParent',
       components: [{
         tag: 'div',
         name: 'bodyContent'
@@ -279,6 +280,8 @@ enyo.kind({
   initComponents: function() {
     this.inherited(arguments);
     this.$.header.setContent(this.header);
+    
+    this.$.bodyParent.setStyle('max-height: ' + this.maxheight + ';');
 
     this.$.bodyContent.setClasses(this.bodyContentClass);
     this.$.bodyContent.createComponent(this.bodyContent);
