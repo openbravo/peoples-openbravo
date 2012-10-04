@@ -237,6 +237,8 @@ OB.Utilities.determineViewOfFormItem = function (item) {
 // If action is null/undefined then nothing is done and undefined is returned.
 // When the action is called the result of the action is returned.
 OB.Utilities.callAction = function (action) {
+  var response;
+
   function IEApplyHack(method, object, parameters) {
     if (!object) {
       object = window;
@@ -262,18 +264,19 @@ OB.Utilities.callAction = function (action) {
     return result;
   }
 
-  if (!action) {
+  if (!action || !action.method) {
     return;
   }
   if (action.callback) {
     action.callback();
   } else {
     if (navigator.userAgent.toUpperCase().indexOf("MSIE") !== -1) {
-      IEApplyHack(action.method, action.target, action.parameters);
+      response = IEApplyHack(action.method, action.target, action.parameters);
     } else {
-      action.method.apply(action.target, action.parameters);
+      response = action.method.apply(action.target, action.parameters);
     }
   }
+  return response;
 };
 
 // ** {{{OB.Utilities.replaceNullStringValue}}} **

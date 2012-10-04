@@ -127,7 +127,14 @@ isc.OBGrid.addProperties({
   },
 
   filterFieldsKeyDown: function (item, form, keyName) {
-    var response = OB.KeyboardManager.Shortcuts.monitor('OBGrid.filter', this.grid.fieldSourceGrid);
+    // To fix issue https://issues.openbravo.com/view.php?id=21786
+    var isEscape = isc.EH.getKey() === 'Escape' && !isc.EH.ctrlKeyDown() && !isc.EH.altKeyDown() && !isc.EH.shiftKeyDown(),
+        response;
+    if (isEscape && item && Object.prototype.toString.call(item.isPickListShown) === '[object Function]' && item.isPickListShown()) {
+      return true; // Then the event will bubble to ComboBoxItem.keyDown
+    }
+
+    response = OB.KeyboardManager.Shortcuts.monitor('OBGrid.filter', this.grid.fieldSourceGrid);
     if (response !== false) {
       response = this.Super('filterFieldsKeyDown', arguments);
     }

@@ -347,25 +347,55 @@
   // Initialize KeyboardManager object
   keyboardMgr = O.KeyboardManager = new KeyboardManager();
 
+  // To fix issue https://issues.openbravo.com/view.php?id=21786
+  isc.ComboBoxItem.getPrototype()._originalKeyDown = isc.ComboBoxItem.getPrototype().keyDown;
+  isc.ComboBoxItem.getPrototype().keyDown = function () {
+    var actionObject = {
+      target: this,
+      method: this._originalKeyDown,
+      parameters: arguments
+    },
+        response = OB.Utilities.callAction(actionObject),
+        isEscape = isc.EH.getKey() === 'Escape' && !isc.EH.ctrlKeyDown() && !isc.EH.altKeyDown() && !isc.EH.shiftKeyDown();
+
+    if (isEscape && this.isPickListShown()) {
+      this.hidePicker();
+      response = false;
+    }
+    return response;
+  };
+
   /* isc.Page.setEvent('keyPress', 'OB.KeyboardManager.Shortcuts.monitor('Canvas')'); // Discart due to Chrome event propagation problems http://forums.smartclient.com/showthread.php?p=65578 */
   isc.Canvas.getPrototype()._originalKeyDown = isc.Canvas.getPrototype().keyDown;
   isc.Canvas.getPrototype().keyDown = function () {
+    var actionObject = {
+      target: this,
+      method: this._originalKeyDown,
+      parameters: arguments
+    },
+        response;
+
     if (isc.Event.getKey() === 'Space') {
       OB.KeyboardManager.Shortcuts.isSpacePressed = true;
     }
-    var response = OB.KeyboardManager.Shortcuts.monitor('Canvas');
-    if (response) { // To ensure that if a previous keyDown was set in the Canvas it is executed if the action KeyboardManager.action should be propagated
-      response = this._originalKeyDown();
+    response = OB.KeyboardManager.Shortcuts.monitor('Canvas');
+    if (response !== false) { // To ensure that if a previous keyDown was set in the Canvas it is executed if the action KeyboardManager.action should be propagated
+      response = OB.Utilities.callAction(actionObject);
     }
     return response;
   };
 
   isc.Canvas.getPrototype()._originalKeyUp = isc.Canvas.getPrototype().keyUp;
   isc.Canvas.getPrototype().keyUp = function () {
+    var actionObject = {
+      target: this,
+      method: this._originalKeyUp,
+      parameters: arguments
+    };
     if (isc.Event.getKey() === 'Space') {
       OB.KeyboardManager.Shortcuts.isSpacePressed = false;
     }
-    return this._originalKeyUp();
+    return OB.Utilities.callAction(actionObject);
   };
 
 }(OB, isc));

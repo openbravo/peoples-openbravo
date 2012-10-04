@@ -1835,6 +1835,13 @@ OB.ViewFormProperties = {
 
   keyDown: function () {
     if (this.grid && this.grid.editFormKeyDown) {
+      // To fix issue https://issues.openbravo.com/view.php?id=21786
+      var focusedItem = this.getFocusItem(),
+          isEscape = isc.EH.getKey() === 'Escape' && !isc.EH.ctrlKeyDown() && !isc.EH.altKeyDown() && !isc.EH.shiftKeyDown();
+      if (isEscape && focusedItem && Object.prototype.toString.call(focusedItem.isPickListShown) === '[object Function]' && focusedItem.isPickListShown()) {
+        return true; // Then the event will bubble to ComboBoxItem.keyDown
+      }
+
       // To fix issue https://issues.openbravo.com/view.php?id=21382
       this.grid.editFormKeyDown(arguments);
     }

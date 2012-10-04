@@ -36,7 +36,7 @@ isc.OBToolbarActionButton.addProperties({
     var theView = this.view,
         record, rowNum, actionObject;
 
-    if (!theView.isShowingForm && theView.viewGrid.getSelectedRecords().length === 1) {
+    if (!theView.isShowingForm && theView.viewGrid.getSelectedRecords() && theView.viewGrid.getSelectedRecords().length === 1) {
       // Keep current selection that might be lost in autosave
       record = theView.viewGrid.getSelectedRecord();
       rowNum = theView.viewGrid.getRecordIndex(record);
