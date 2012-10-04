@@ -646,3 +646,15 @@ button.modal-dialog-content-button {
   width: 340px;
   background-position: 10px center;
 }
+
+.hiddenInput {
+	 height: 1px;
+	 width: 1px;
+	 margin: 0px;
+	 padding: 0px;
+	 cursor: default;
+	 color: transparent;
+	 background-color: transparent;
+	 border: transparent;
+	 outline: none;
+}
