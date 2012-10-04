@@ -27,12 +27,9 @@
     <Sql>
       <![CDATA[
           SELECT IO.AD_ORG_ID, IO.M_PRODUCT_ID, IO.LINE, IO.DESCRIPTION,
-          IO.C_UOM_ID, IO.M_INOUTLINE_ID, IO.MOVEMENTQTY, IO.M_LOCATOR_ID,
-          A.C_Campaign_ID, A.C_Project_Id, A.C_User1_ID, A.C_User2_ID,
-          A.C_Costcenter_ID, A.A_Asset_ID, A.C_BPartner_ID, A.C_Activity_ID
-          FROM M_InOutLine IO left join M_InOutLine_AcctDimension A on IO.M_InOutLine_ID = A.M_InOutLine_ID
-          WHERE M_InOut_ID=? 
-          ORDER BY Line
+          IO.C_UOM_ID, IO.M_INOUTLINE_ID, IO.MOVEMENTQTY, IO.M_LOCATOR_ID
+          FROM M_InOutLine IO 
+          WHERE M_InOut_ID=? ORDER BY Line
      ]]>
      </Sql>
      <Parameter name="M_InOut_ID"/>
