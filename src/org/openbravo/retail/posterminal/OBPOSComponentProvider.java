@@ -99,7 +99,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "main",
         // Web POS window
         "components/keypadbasic", "components/keyboard", "components/keypadcoins",
-        "data/datamaster", "data/dataordersave", "data/dataordertaxes",
+        "data/dataordersave", "data/dataordertaxes",
         "data/dataorderdiscount",
         "components/modalreceipts",
         "components/rendercategory",
@@ -143,7 +143,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "closecash/view/tabcashtokeep", "closecash/view/tabpostprintclose",
         "closecash/components/cashup-modals",
 
-        "closecash/data/datamaster", "closecash/model/daycash", "closecash/data/dataclosecash",
+        "closecash/model/daycash",
         // Core resources
         "../../org.openbravo.client.application/js/utilities/ob-utilities-number",
         "../../org.openbravo.client.application/js/utilities/ob-utilities-date",
