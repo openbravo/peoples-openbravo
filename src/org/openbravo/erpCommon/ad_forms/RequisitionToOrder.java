@@ -233,8 +233,9 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
     xmlDocument.setParameter("paramAdOrgId", strOrgId);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_User_ID", "",
-          "", Utility.getContext(this, vars, "#AccessibleOrgTree", "RequisitionToOrder"),
-          Utility.getContext(this, vars, "#User_Client", "RequisitionToOrder"), 0);
+          "UsersWithRequisition", Utility.getContext(this, vars, "#AccessibleOrgTree",
+              "RequisitionToOrder"), Utility.getContext(this, vars, "#User_Client",
+              "RequisitionToOrder"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "RequisitionToOrder",
           strRequesterId);
       xmlDocument.setData("reportRequester_ID", "liststructure", comboTableData.select(false));
