@@ -55,41 +55,12 @@ public class UpdateADClientInfo extends ModuleScript {
 
     private void createTreeAndUpdateClientInfo(final ConnectionProvider cp, final String treeTypeName, final String treeTypeValue, final String columnName)
 	throws ServletException {
-      if(treeTypeValue.equals("AS")) {
-        UpdateADClientInfoData[] clientsID = UpdateADClientInfoData.selectClientsMissingTree(cp, columnName);
-        for (UpdateADClientInfoData clientID: clientsID) {
-          final String treeId = UpdateADClientInfoData.getUUID(cp);
-          final String nameAndDesc = clientID.clientname + " " + treeTypeName;
-          UpdateADClientInfoData.createTree(cp, treeId, clientID.adClientId, nameAndDesc, treeTypeValue);
-          UpdateADClientInfoData.updateClientTree(cp, columnName, treeId, clientID.adClientId);
-        }
-      }
-      else if(treeTypeValue.equals("CC")) {
-        UpdateADClientInfoData[] clientsID = UpdateADClientInfoData.selectClientsMissingCostcenterTree(cp, columnName);
-        for (UpdateADClientInfoData clientID: clientsID) {
-          final String treeId = UpdateADClientInfoData.getUUID(cp);
-          final String nameAndDesc = clientID.clientname + " " + treeTypeName;
-          UpdateADClientInfoData.createTree(cp, treeId, clientID.adClientId, nameAndDesc, treeTypeValue);
-          UpdateADClientInfoData.updateCostcenterTreeAuto(cp, columnName, treeId, clientID.adClientId);
-        }
-      }
-      else if(treeTypeValue.equals("U1")) {
-        UpdateADClientInfoData[] clientsID = UpdateADClientInfoData.selectClientsMissingUser1Tree(cp, columnName);
-        for (UpdateADClientInfoData clientID: clientsID) {
-          final String treeId = UpdateADClientInfoData.getUUID(cp);
-          final String nameAndDesc = clientID.clientname + " " + treeTypeName;
-          UpdateADClientInfoData.createTree(cp, treeId, clientID.adClientId, nameAndDesc, treeTypeValue);
-          UpdateADClientInfoData.updateUser1TreeAuto(cp, columnName, treeId, clientID.adClientId);
-        }
-      }
-      else if(treeTypeValue.equals("U2")) {
-        UpdateADClientInfoData[] clientsID = UpdateADClientInfoData.selectClientsMissingUser2Tree(cp, columnName);
-        for (UpdateADClientInfoData clientID: clientsID) {
-          final String treeId = UpdateADClientInfoData.getUUID(cp);
-          final String nameAndDesc = clientID.clientname + " " + treeTypeName;
-          UpdateADClientInfoData.createTree(cp, treeId, clientID.adClientId, nameAndDesc, treeTypeValue);
-          UpdateADClientInfoData.updateUser2TreeAuto(cp, columnName, treeId, clientID.adClientId);
-        }
+      UpdateADClientInfoData[] clientsID = UpdateADClientInfoData.selectClientsMissingTree(cp, columnName);
+      for (UpdateADClientInfoData clientID: clientsID) {
+        final String treeId = UpdateADClientInfoData.getUUID(cp);
+        final String nameAndDesc = clientID.clientname + " " + treeTypeName;
+        UpdateADClientInfoData.createTree(cp, treeId, clientID.adClientId, nameAndDesc, treeTypeValue);
+        UpdateADClientInfoData.updateClientTree(cp, columnName, treeId, clientID.adClientId);
       }
     }
 

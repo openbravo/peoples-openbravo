@@ -142,6 +142,12 @@ class WindowTreeChecks {
       result = "";
     } else if (TreeType.equals("AS")) { // Asset
       result = "";
+    } else if (TreeType.equals("CC")) { // Cost Center
+      result = "";
+    } else if (TreeType.equals("U1")) { // User Defined Dimension 1
+      result = "";
+    } else if (TreeType.equals("U2")) { // User Defined Dimension 2
+      result = "";
     } else
       result = WindowTreeChecksClient.checkChanges(conn, vars, tabId, topNodeId, nodeId, isChild,
           TreeType, key);

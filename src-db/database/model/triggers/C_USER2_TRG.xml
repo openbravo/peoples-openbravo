@@ -19,7 +19,6 @@
 * Contributor(s):  ______________________________________.
 ************************************************************************/
     v_Tree_ID VARCHAR2(32);
-    v_Parent_ID VARCHAR2(32);
     v_count NUMBER;
     
 BEGIN
@@ -29,18 +28,13 @@ BEGIN
 
 
   IF (INSERTING) THEN    
+
     --  Create TreeNode --
-    --  get AD_Tree_ID + ParentID
-    SELECT c.AD_Tree_User2_ID,
-      n.Node_ID
-    INTO v_Tree_ID,
-      v_Parent_ID
-    FROM AD_ClientInfo c,
-      AD_TreeNode n
-    WHERE c.AD_Tree_User2_ID=n.AD_Tree_ID
-      AND n.Parent_ID IS NULL
-      AND c.AD_Client_ID=:new.AD_Client_ID;
-    --  DBMS_OUTPUT.PUT_LINE('Tree='||xTree_ID||'  Node='||:new.C_Project_ID||'  Parent='||xParent_ID);
+    SELECT c.AD_Tree_User2_ID
+    INTO v_Tree_ID
+    FROM AD_ClientInfo c
+    WHERE c.AD_Client_ID=:new.AD_Client_ID;
+
     --  Insert into TreeNode
     INSERT
     INTO AD_TreeNode
@@ -55,7 +49,7 @@ BEGIN
         get_uuid(), :new.AD_Client_ID, :new.AD_Org_ID, :new.IsActive,
         :new.Created, :new.CreatedBy, :new.Updated,
         :new.UpdatedBy, v_Tree_ID, :new.C_User2_ID,
-        v_Parent_ID,(
+        '0',(
         CASE :new.IsSummary
           WHEN 'Y'
           THEN 100
