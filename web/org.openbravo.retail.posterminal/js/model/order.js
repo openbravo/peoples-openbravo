@@ -251,7 +251,6 @@
     },
 
     calculateGross: function() {
-      console.log('calculateGross');
       var gross = this.get('lines').reduce(function(memo, e) {
         var grossLine = e.getGross();
         if (e.get('promotions')) {
@@ -726,7 +725,6 @@
       // this.toJSON() generates a collection instance for members like "lines"
       // We need a plain array object
       var jsonorder = JSON.parse(JSON.stringify(this.toJSON()));
-      console.log('serialize', jsonorder);
 
       // remove not needed members
       delete jsonorder.undo;

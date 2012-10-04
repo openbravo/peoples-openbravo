@@ -32,7 +32,6 @@ OB.Model.Executor = Backbone.Model.extend({
   addEvent: function(event, replaceExistent) {
     var evtQueue = this.get('eventQueue'),
         currentEvt, actionQueue;
-    console.log('add event', evtQueue.length, this.get('executing'))
     if (replaceExistent && evtQueue) {
       currentEvt = this.get('currentEvent');
       evtQueue.where({
@@ -41,7 +40,6 @@ OB.Model.Executor = Backbone.Model.extend({
         if (currentEvt === evt) {
           this.set('eventQueue')
           actionQueue.remove(actionQueue.models);
-          console.log('remove actions')
         }
         evtQueue.remove(evt);
       }, this);
@@ -63,7 +61,6 @@ OB.Model.Executor = Backbone.Model.extend({
     if (evt) {
       this.set('executing', true);
       this.set('currentEvent', evt);
-      console.log('start');
       evt.set('start', new Date().getTime());
       evt.on('actionsCreated', function() {
         this.preAction(evt);
@@ -131,7 +128,6 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
         });
       })
       evt.trigger('actionsCreated');
-      console.log('time took by query to pomotions', new Date().getTime() - t0)
     }, function() {});
   },
 
@@ -146,7 +142,6 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
     }
 
     if (rule && rule.implementation) {
-      console.log('applying rule', rule);
       if (rule.async) {
         // waiting listener to trigger completed to move to next action
         ruleListener = new Backbone.Model();
@@ -154,7 +149,6 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
           if (obj && obj.alerts) {
             OB.UTIL.showAlert.display(obj.alerts);
           }
-          console.log('async action completed');
           this.nextAction(evt);
         }, this);
       }
