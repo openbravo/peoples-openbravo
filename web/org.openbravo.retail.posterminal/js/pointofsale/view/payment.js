@@ -177,10 +177,13 @@ enyo.kind({
       style: 'float: left; width: 15%; padding: 5px 0px 0px 0px;'
     }, {
       name: 'info',
-      style: 'float: left; width: 50%; padding: 5px 0px 0px 0px;'
+      style: 'float: left; width: 20%; padding: 5px 0px 0px 0px;'
+    }, {
+      name: 'foreignAmount',
+      style: 'float: left; width: 25%; padding: 5px 0px 0px 0px; text-align: right;'
     }, {
       name: 'amount',
-      style: 'float: left; width: 20%; padding: 5px 0px 0px 0px; text-align: right;'
+      style: 'float: left; width: 25%; padding: 5px 0px 0px 0px; text-align: right;'
     }, {
       style: 'float: left; width: 15%; text-align: right;',
       components: [{
@@ -194,6 +197,11 @@ enyo.kind({
     this.inherited(arguments);
     this.$.name.setContent(OB.POS.modelterminal.getPaymentName(this.model.get('kind')));
     this.$.amount.setContent(this.model.printAmount());
+    if (this.model.get('rate') && this.model.get('rate')!=='1') {
+      this.$.foreignAmount.setContent(this.model.printForeignAmount());
+    } else {
+      this.$.foreignAmount.setContent('');
+    }
     if (this.model.get('paymentData')) {
       this.$.info.setContent(this.model.get('paymentData').Name);
     } else {

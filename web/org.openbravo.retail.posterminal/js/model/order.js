@@ -76,10 +76,18 @@
   var PaymentLine = Backbone.Model.extend({
     defaults: {
       'amount': OB.DEC.Zero,
+      'origAmount': OB.DEC.Zero,
       'paid': OB.DEC.Zero // amount - change...
     },
     printAmount: function() {
-      return OB.I18N.formatCurrency(this.get('amount'));
+      if(this.get('rate')){
+        return OB.I18N.formatCurrency(OB.DEC.mul(this.get('amount'),this.get('rate')));
+      }else{
+        return OB.I18N.formatCurrency(this.get('amount'));
+      }
+    },
+    printForeignAmount: function() {
+      return '('+OB.I18N.formatCurrency(this.get('amount'))+' '+this.get('isocode')+')';
     }
   });
 
@@ -502,32 +510,47 @@
 
       var nocash = OB.DEC.Zero;
       var cash = OB.DEC.Zero;
+      var origCash = OB.DEC.Zero;
+      var auxCash = OB.DEC.Zero;
       var pcash;
 
       for (i = 0, max = payments.length; i < max; i++) {
         p = payments.at(i);
-        p.set('paid', p.get('amount'));
+        if(p.get('rate') && p.get('rate')!=='1'){
+          p.set('origAmount', OB.DEC.mul(p.get('amount'),p.get('rate')));
+        }else{
+          p.set('origAmount', p.get('amount'));
+        }
+        p.set('paid', p.get('origAmount'));
         if (p.get('kind') === 'OBPOS_payment.cash') {
-          cash = OB.DEC.add(cash, p.get('amount'));
+          cash = OB.DEC.add(cash, p.get('origAmount'));
+          pcash = p;
+        } else if (p.get('kind').indexOf('.cash', p.get('kind').length - '.cash'.length) !== -1) {
+          origCash = OB.DEC.add(origCash, p.get('origAmount'));
           pcash = p;
         } else {
-          nocash = OB.DEC.add(nocash, p.get('amount'));
+          nocash = OB.DEC.add(nocash, p.get('origAmount'));
         }
       }
 
       // Calculation of the change....
       if (pcash) {
+        if(pcash.get('kind') !== 'OBPOS_payment.cash'){
+          auxCash=origCash;
+        }else{
+          auxCash=cash;
+        }
         if (OB.DEC.compare(nocash - total) > 0) {
           pcash.set('paid', OB.DEC.Zero);
           this.set('payment', nocash);
-          this.set('change', cash);
-        } else if (OB.DEC.compare(OB.DEC.sub(OB.DEC.add(nocash, cash), total)) > 0) {
+          this.set('change', auxCash);
+        } else if (OB.DEC.compare(OB.DEC.sub(OB.DEC.add(OB.DEC.add(nocash, cash),origCash), total)) > 0) {
           pcash.set('paid', OB.DEC.sub(total, nocash));
           this.set('payment', total);
-          this.set('change', OB.DEC.sub(OB.DEC.add(nocash, cash), total));
+          this.set('change', OB.DEC.sub(OB.DEC.add(OB.DEC.add(nocash, cash), origCash), total));
         } else {
-          pcash.set('paid', cash);
-          this.set('payment', OB.DEC.add(nocash, cash));
+          pcash.set('paid', auxCash);
+          this.set('payment', OB.DEC.add(OB.DEC.add(nocash, cash),origCash));
           this.set('change', OB.DEC.Zero);
         }
       } else {
@@ -563,6 +586,9 @@
           p = payments.at(i);
           if (p.get('kind') === payment.get('kind')) {
             p.set('amount', OB.DEC.add(payment.get('amount'), p.get('amount')));
+            if(p.get('rate') && p.get('rate')!=='1'){
+              p.set('origAmount', OB.DEC.add(payment.get('origAmount'), OB.DEC.mul(p.get('origAmount'),p.get('rate'))));
+            }
             this.adjustPayment();
             return;
           }

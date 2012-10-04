@@ -19,21 +19,25 @@ enyo.kind({
       style: 'border-bottom: 1px solid #cccccc;',
       components: [{
         name: 'description',
-        style: 'padding: 6px 20px 6px 10px;  float: left; width: 40%'
+        style: 'padding: 6px 20px 6px 10px;  float: left; width:30%'
       }, {
         name: 'user',
-        style: 'text-align:right; padding: 6px 20px 6px 10px; float: left;  width: 15%'
+        style: 'text-align:right; padding: 6px 20px 6px 10px; float: left;  width: 12%'
       }, {
         name: 'time',
-        style: 'text-align:right; padding: 6px 20px 6px 10px; float: left;  width: 10%'
+        style: 'text-align:right; padding: 6px 20px 6px 10px; float: left;  width: 8%'
+      }, {
+        name: 'foreignAmt',
+        style: 'text-align:right; padding: 6px 0px 6px 10px; float: left;  width: 15% ',
+        content:''
       }, {
         name: 'amt',
-        style: 'text-align:right; padding: 6px 20px 6px 10px; float: right;'
+        style: 'text-align:right; padding: 6px 20px 6px 10px; float: right; width: 10%'
       }]
     }]
   }],
   create: function () {
-    var amnt, lbl, time = new Date(this.model.get('time'));
+    var amnt, foreignAmt, lbl, time = new Date(this.model.get('time'));
 
     this.inherited(arguments);
 
@@ -41,16 +45,35 @@ enyo.kind({
       time.setMinutes(time.getMinutes() + this.model.get('timeOffset') + time.getTimezoneOffset());
     }
     if (this.model.get('drop') !== 0) {
-      amnt = OB.I18N.formatCurrency(OB.DEC.add(0, this.model.get('drop')));
       lbl = OB.I18N.getLabel('OBPOS_LblWithdrawal') + ': ';
+      if(this.model.get('origAmount')){
+        foreignAmt = OB.I18N.formatCurrency(OB.DEC.add(0, this.model.get('drop')));
+        amnt = OB.I18N.formatCurrency(this.model.get('origAmount'));
+      }else if(this.model.get('rate') && this.model.get('rate')!=='1'){
+        foreignAmt = OB.I18N.formatCurrency(OB.DEC.div(this.model.get('drop'),this.model.get('rate')));
+        amnt = OB.I18N.formatCurrency(OB.DEC.add(0, this.model.get('drop')));
+      }else{
+        amnt = OB.I18N.formatCurrency(OB.DEC.add(0, this.model.get('drop')));
+      }
     } else {
-      amnt = OB.I18N.formatCurrency(OB.DEC.add(0, this.model.get('deposit')));
       lbl = OB.I18N.getLabel('OBPOS_LblDeposit') + ': ';
+      if(this.model.get('origAmount')){
+        foreignAmt = OB.I18N.formatCurrency(OB.DEC.add(0, this.model.get('deposit')));
+        amnt = OB.I18N.formatCurrency(this.model.get('origAmount'));
+      }else if(this.model.get('rate') && this.model.get('rate')!=='1'){
+        foreignAmt = OB.I18N.formatCurrency(OB.DEC.div(this.model.get('deposit'),this.model.get('rate')));
+        amnt = OB.I18N.formatCurrency(OB.DEC.add(0, this.model.get('deposit')));
+      }else{
+        amnt = OB.I18N.formatCurrency(OB.DEC.add(0, this.model.get('deposit')));
+      }
     }
 
     this.$.description.setContent(lbl + this.model.get('description'));
     this.$.user.setContent(this.model.get('user'));
     this.$.time.setContent(time.toString().substring(16, 21));
+    if(foreignAmt && ((this.model.get('rate') && this.model.get('rate')!=='1') || amnt!==foreignAmt)){
+      this.$.foreignAmt.setContent('('+foreignAmt+' '+this.model.get('isocode')+')');
+    }
     this.$.amt.setContent(amnt);
   }
 });
@@ -68,7 +91,7 @@ enyo.kind({
     }, this);
   },
   totalChanged: function (oldValue) {
-    this.setContent(this.total);
+    this.setContent(OB.I18N.formatCurrency(this.total));
     if (OB.DEC.compare(this.total) < 0) {
       this.applyStyle('color', 'red');
     } else {
@@ -162,7 +185,15 @@ enyo.kind({
 
     this.inherited(arguments);
     total = OB.DEC.add(OB.DEC.add(this.model.get('startingCash'),this.model.get('totalTendered')), _.reduce(transactionsArray, function (accum, trx) {
-      return accum + trx.deposit - trx.drop;
+      if(trx.origAmount){
+        if(trx.deposit!==0){
+          return accum + trx.origAmount;
+        }else{
+          return accum - trx.origAmount;
+        }
+      }else{
+        return accum + trx.deposit - trx.drop;
+      }
     }, 0));
 
     this.model.set('total', total, {

@@ -36,6 +36,7 @@ public class CashCloseProcessor {
       JSONObject cashCloseObj = cashCloseInfo.getJSONObject(i);
 
       BigDecimal difference = new BigDecimal(cashCloseObj.getString("difference"));
+      BigDecimal origDifference = new BigDecimal(cashCloseObj.getString("origDifference"));
       String paymentTypeId = cashCloseObj.getString("paymentTypeId");
       OBPOSAppPayment paymentType = OBDal.getInstance().get(OBPOSAppPayment.class, paymentTypeId);
 
@@ -53,17 +54,20 @@ public class CashCloseProcessor {
       OBDal.getInstance().save(reconciliation);
 
       if (paymentType.getPaymentMethod().isAutomatemovementtoother()) {
+        BigDecimal origReconciliationTotal = BigDecimal.valueOf(
+            cashCloseObj.getDouble("origExpected")).add(origDifference);
         BigDecimal reconciliationTotal = BigDecimal.valueOf(cashCloseObj.getDouble("expected"))
             .add(difference);
         BigDecimal amountToKeep = BigDecimal.valueOf(cashCloseObj.getJSONObject("paymentMethod")
             .getDouble("amountToKeep"));
-        reconciliationTotal = reconciliationTotal.subtract(amountToKeep);
+        origReconciliationTotal = origReconciliationTotal.subtract(amountToKeep);
 
         FIN_FinaccTransaction paymentTransaction = createTotalTransferTransactionPayment(
-            posTerminal, reconciliation, paymentType, reconciliationTotal);
+            posTerminal, reconciliation, paymentType, origReconciliationTotal);
 
         OBDal.getInstance().save(paymentTransaction);
 
+        reconciliationTotal = reconciliationTotal.subtract(amountToKeep);
         FIN_FinaccTransaction depositTransaction = createTotalTransferTransactionDeposit(
             posTerminal, reconciliation, paymentType, reconciliationTotal);
 

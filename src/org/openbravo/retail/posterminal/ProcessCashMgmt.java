@@ -40,6 +40,7 @@ public class ProcessCashMgmt extends JSONProcessSimple {
         JSONObject jsonsent = array.getJSONObject(i);
         String description = jsonsent.getString("description");
         BigDecimal amount = BigDecimal.valueOf(jsonsent.getDouble("amount"));
+        BigDecimal origAmount = BigDecimal.valueOf(jsonsent.getDouble("origAmount"));
         String type = jsonsent.getString("type");
         String cashManagementReasonId = jsonsent.getString("reasonId");
 
@@ -60,7 +61,7 @@ public class ProcessCashMgmt extends JSONProcessSimple {
 
         FIN_FinaccTransaction transaction = OBProvider.getInstance().get(
             FIN_FinaccTransaction.class);
-        transaction.setCurrency(terminalPaymentMethod.getCurrency());
+        transaction.setCurrency(account.getCurrency());
         transaction.setAccount(account);
         transaction.setLineNo(TransactionsDao.getTransactionMaxLineNo(account) + 10);
         transaction.setGLItem(glItemMain);
@@ -95,11 +96,11 @@ public class ProcessCashMgmt extends JSONProcessSimple {
         // The second transaction describes the opposite movement of the first transaction.
         // If the first is a deposit, the second is a drop
         if (type.equals("deposit")) {
-          secondTransaction.setPaymentAmount(amount);
-          secondAccount.setCurrentBalance(secondAccount.getCurrentBalance().subtract(amount));
+          secondTransaction.setPaymentAmount(origAmount);
+          secondAccount.setCurrentBalance(secondAccount.getCurrentBalance().subtract(origAmount));
         } else {
-          secondTransaction.setDepositAmount(amount);
-          secondAccount.setCurrentBalance(secondAccount.getCurrentBalance().add(amount));
+          secondTransaction.setDepositAmount(origAmount);
+          secondAccount.setCurrentBalance(secondAccount.getCurrentBalance().add(origAmount));
         }
         secondTransaction.setProcessed(true);
         secondTransaction.setTransactionType("BPW");

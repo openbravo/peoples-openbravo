@@ -667,6 +667,8 @@ public class OrderLoader extends JSONProcessSimple {
     OBContext.setAdminMode(true);
     try {
       BigDecimal amount = BigDecimal.valueOf(payment.getDouble("paid"));
+      BigDecimal origAmount = BigDecimal.valueOf(payment.getDouble("amount"));
+      // writeoffAmt.divide(BigDecimal.valueOf(payment.getDouble("rate")));
       if (amount.signum() == 0) {
         return;
       }
@@ -720,11 +722,16 @@ public class OrderLoader extends JSONProcessSimple {
       List<FIN_PaymentScheduleDetail> detail = new ArrayList<FIN_PaymentScheduleDetail>();
       detail.add(paymentScheduleDetail);
 
+      BigDecimal mulrate = new BigDecimal(1);
+      if (payment.has("mulrate")) {
+        mulrate = BigDecimal.valueOf(payment.getDouble("mulrate"));
+      }
+
       FIN_Payment finPayment = FIN_AddPayment.savePayment(null, true,
           getPaymentDocumentType(order.getOrganization()), order.getDocumentNo(),
           order.getBusinessPartner(), paymentType.getPaymentMethod().getPaymentMethod(), account,
           amount.toString(), order.getOrderDate(), order.getOrganization(), null, detail,
-          paymentAmount, false, false);
+          paymentAmount, false, false, order.getCurrency(), mulrate, amount.multiply(mulrate));
       if (writeoffAmt.signum() != 0) {
         FIN_AddPayment.saveGLItem(finPayment, writeoffAmt, paymentType.getPaymentMethod()
             .getGlitemWriteoff());

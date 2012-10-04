@@ -70,12 +70,22 @@
     </line>
     <%
     _.each(cashup.report.get('drops'), function(drop){
+    if(drop.rate!=='1'){
+    %>
+    <line>
+      <text align ="left" length="18"><%=OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblWithdrawal')+': '+drop.description) %></text>
+      <text align ="right" length="11"><%= '('+OB.I18N.formatCurrency(OB.DEC.div(drop.amount, drop.rate))+' '+drop.isocode+')' %></text>
+      <text align ="right" length="10"><%= OB.I18N.formatCurrency(drop.amount) %></text>
+    </line>
+    <%
+    }else{
     %>
     <line>
       <text align ="left" length="25"><%=OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblWithdrawal')+': '+drop.description) %></text>
-      <text align ="right" length="14"><%= OB.I18N.formatCurrency(cashup.report.get('totalDrops')) %></text>
+      <text align ="right" length="14"><%= OB.I18N.formatCurrency(drop.amount) %></text>
     </line>
     <%
+    }
     });
     %>
     <line>
@@ -86,12 +96,22 @@
     </line>
     <%
     _.each(cashup.report.get('deposits'), function(deposit){
+    if(deposit.rate!=='1'){
     %>
+    <line>
+      <text align ="left" length="18"><%=OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblDeposit')+': '+deposit.description) %></text>
+      <text align ="right" length="11"><%= '('+OB.I18N.formatCurrency(OB.DEC.div(deposit.amount, deposit.rate))+' '+deposit.isocode+')' %></text>
+      <text align ="right" length="10"><%= OB.I18N.formatCurrency(deposit.amount) %></text>
+    </line>
+    <%
+    }else{
+     %>
     <line>
       <text align ="left" length="25"><%=OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblDeposit')+': '+deposit.description) %></text>
       <text align ="right" length="14"><%= OB.I18N.formatCurrency(deposit.amount) %></text>
     </line>
     <%
+    }
     });
     %>
     <line>
@@ -102,12 +122,22 @@
     </line>
     <%
     _.each(cashup.summary.expectedSummary, function(payment){
+    if(payment.rate!=='1'){
     %>
+    <line>
+      <text align ="left" length="18"><%=OB.UTIL.encodeXMLComponent(payment.name) %></text>
+      <text align ="right" length="11"><%= '('+OB.I18N.formatCurrency(OB.DEC.div(payment.value, payment.rate))+' '+payment.isocode+')' %></text>
+      <text align ="right" length="10"><%= OB.I18N.formatCurrency(payment.value) %></text>
+    </line>
+    <%
+    }else{
+     %>
     <line>
       <text align ="left" length="25"><%=OB.UTIL.encodeXMLComponent(payment.name) %></text>
       <text align ="right" length="14"><%= OB.I18N.formatCurrency(payment.value) %></text>
     </line>
     <%
+    }
     });
     %>
     <line>
@@ -118,12 +148,22 @@
     </line>
     <%
     _.each(cashup.summary.countedSummary, function(payment){
+   if(payment.rate!=='1'){
     %>
+    <line>
+      <text align ="left" length="18"><%=OB.UTIL.encodeXMLComponent(payment.name) %></text>
+      <text align ="right" length="11"><%= '('+OB.I18N.formatCurrency(OB.DEC.div(payment.value, payment.rate))+' '+payment.isocode+')' %></text>
+      <text align ="right" length="10"><%= OB.I18N.formatCurrency(payment.value) %></text>
+    </line>
+    <%
+    }else{
+     %>
     <line>
       <text align ="left" length="25"><%=OB.UTIL.encodeXMLComponent(payment.name) %></text>
       <text align ="right" length="14"><%= OB.I18N.formatCurrency(payment.value) %></text>
     </line>
     <%
+    }
     });
     %>
     <line>
@@ -134,12 +174,22 @@
     </line>
     <%
     _.each(cashup.summary.differenceSummary, function(payment){
+   if(payment.rate!=='1'){
     %>
     <line>
-      <text align ="left" length="25"><%=OB.UTIL.encodeXMLComponent(payment.name+' '+ OB.I18N.getLabel('OBPOS_LblDifference')) %></text>
+      <text align ="left" length="18"><%=OB.UTIL.encodeXMLComponent(payment.name) %></text>
+      <text align ="right" length="11"><%= '('+OB.I18N.formatCurrency(OB.DEC.div(payment.value, payment.rate))+' '+payment.isocode+')' %></text>
+      <text align ="right" length="10"><%= OB.I18N.formatCurrency(payment.value) %></text>
+    </line>
+    <%
+    }else{
+     %>
+    <line>
+      <text align ="left" length="25"><%=OB.UTIL.encodeXMLComponent(payment.name) %></text>
       <text align ="right" length="14"><%= OB.I18N.formatCurrency(payment.value) %></text>
     </line>
     <%
+    }
     });
     %>
     <line>
