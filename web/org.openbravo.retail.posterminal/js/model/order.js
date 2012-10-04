@@ -45,7 +45,7 @@
       return OB.I18N.formatCurrency(this.get('price'));
     },
 
-    printDiscount: function () {
+    printDiscount: function() {
       var d = OB.DEC.sub(this.get('priceList'), this.get('price'));
       if (OB.DEC.compare(d) === 0) {
         return '';
@@ -162,6 +162,11 @@
         this.set('taxes', attributes.taxes);
         this.set('hasbeenpaid', attributes.hasbeenpaid);
         this.set('isbeingprocessed', attributes.isbeingprocessed);
+        _.each(_.keys(attributes), function(key) {
+          if (!this.has(key)) {
+            this.set(key, attributes[key]);
+          }
+        }, this);
       } else {
         this.clearOrderAttributes();
       }
@@ -175,8 +180,7 @@
       undoCopy = this.get('undo');
       this.unset('undo');
       this.set('json', JSON.stringify(this.toJSON()));
-      OB.Dal.save(this, function(){
-      }, function() {
+      OB.Dal.save(this, function() {}, function() {
         window.console.error(arguments);
       });
       this.set('undo', undoCopy);
@@ -274,41 +278,25 @@
     },
 
     clearWith: function(_order) {
-      this.set('id', _order.get('id'));
-      this.set('client', _order.get('client'));
-      this.set('organization', _order.get('organization'));
-      this.set('createdBy', _order.get('createdBy'));
-      this.set('updatedBy', _order.get('updatedBy'));
-      this.set('documentType', _order.get('documentType'));
-      this.set('orderType', _order.get('orderType'));
-      this.set('generateInvoice', _order.get('generateInvoice'));
-      this.set('priceList', _order.get('priceList'));
-      this.set('currency', _order.get('currency'));
-      this.set('currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, _order.get('currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER));
-      this.set('session', _order.get('session'));
-      this.set('warehouse', _order.get('warehouse'));
-      this.set('salesRepresentative', _order.get('salesRepresentative'));
-      this.set('salesRepresentative' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, _order.get('salesRepresentative' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER));
-      this.set('posTerminal', _order.get('posTerminal'));
-      this.set('posTerminal' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, _order.get('posTerminal' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER));
-      this.set('orderDate', _order.get('orderDate'));
-      this.set('documentNo', _order.get('documentNo'));
-      this.set('undo', null);
-      this.set('bp', _order.get('bp'));
-      this.get('lines').reset();
-      _order.get('lines').forEach(function(elem) {
-        this.get('lines').add(elem);
-      }, this);
-      this.get('payments').reset();
-      _order.get('payments').forEach(function(elem) {
-        this.get('payments').add(elem);
-      }, this);
-      this.set('taxes', _order.get('taxes'));
-      this.set('payment', _order.get('payment'));
-      this.set('change', _order.get('change'));
-      this.set('gross', _order.get('gross'));
-      this.set('hasbeenpaid', _order.get('hasbeenpaid'));
-      this.set('isbeingprocessed', _order.get('isbeingprocessed'));
+      var me = this,
+          undf;
+      _.each(_.keys(_order.attributes), function(key) {
+        if (_order.get(key) !== undf) {
+          if (_order.get(key) === null) {
+            me.set(key, null);
+          } else if (_order.get(key).at) {
+            //collection
+            me.get(key).reset();
+            _order.get(key).forEach(function(elem) {
+              me.get(key).add(elem);
+            });
+          } else {
+            //property
+            me.set(key, _order.get(key));
+          }
+        }
+      });
+
       this.trigger('change');
       this.trigger('clear');
     },
@@ -660,8 +648,8 @@
 
     newOrder: function() {
       var order = new Order(),
-        me = this,
-        documentseq, documentseqstr;
+          me = this,
+          documentseq, documentseqstr;
 
       order.set('client', OB.POS.modelterminal.get('terminal').client);
       order.set('organization', OB.POS.modelterminal.get('terminal').organization);
@@ -698,14 +686,14 @@
     },
 
     deleteCurrent: function() {
-      function deleteCurrentFromDatabase (orderToDelete){
-        OB.Dal.remove(orderToDelete, function(){
+      function deleteCurrentFromDatabase(orderToDelete) {
+        OB.Dal.remove(orderToDelete, function() {
           return true;
-        }, function(){
+        }, function() {
           OB.UTIL.showError('Error removing');
         });
       }
-      
+
       if (this.current) {
         this.remove(this.current);
         if (this.length > 0) {
