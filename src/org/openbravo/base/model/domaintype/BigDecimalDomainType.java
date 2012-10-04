@@ -20,6 +20,13 @@
 package org.openbravo.base.model.domaintype;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.dom4j.Document;
+import org.dom4j.Element;
+import org.openbravo.base.session.OBPropertiesProvider;
 
 /**
  * The type for a decimal column.
@@ -28,6 +35,28 @@ import java.math.BigDecimal;
  */
 
 public class BigDecimalDomainType extends BasePrimitiveDomainType {
+
+  @Override
+  public String convertToString(Object value) {
+    if (value == null) {
+      return EMPTY_STRING;
+    }
+    Map<String, String> localFormatDefinitions = new HashMap<String, String>();
+    Document doc = OBPropertiesProvider.getInstance().getFormatXMLDocument();
+    Element root = doc.getRootElement();
+    for (Object object : root.elements()) {
+      final Element element = (Element) object;
+      String formatDefinition = new String();
+
+      formatDefinition = element.attributeValue("formatInternal").replace(",", "");
+      localFormatDefinitions.put(element.attributeValue("name"), formatDefinition);
+    }
+
+    DecimalFormat format = new DecimalFormat(localFormatDefinitions.get(this.getFormatId()
+        + "Edition"));
+
+    return format.format(value).toString().replace(",", ".");
+  }
 
   /**
    * @return class of the {@link BigDecimal}
@@ -78,5 +107,4 @@ public class BigDecimalDomainType extends BasePrimitiveDomainType {
   public String getXMLSchemaType() {
     return "ob:decimal";
   }
-
 }
