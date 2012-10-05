@@ -4285,8 +4285,11 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--355-->  <HASTREE><![CDATA[N]]></HASTREE>
 <!--355-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--355-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
+<!--355-->  <FILTERCLAUSE><![CDATA[C_Commission.IsActive='Y']]></FILTERCLAUSE>
 <!--355-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--355-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--355-->  <HQLFILTERCLAUSE><![CDATA[e.active='Y']]></HQLFILTERCLAUSE>
+<!--355-->  <FILTERNAME><![CDATA[Active commissions]]></FILTERNAME>
 <!--355-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--355-->  <EM_OBUIAPP_CAN_ADD><![CDATA[N]]></EM_OBUIAPP_CAN_ADD>
 <!--355-->  <EM_OBUIAPP_CAN_DELETE><![CDATA[N]]></EM_OBUIAPP_CAN_DELETE>
