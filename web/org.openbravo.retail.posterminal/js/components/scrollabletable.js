@@ -114,7 +114,8 @@ enyo.kind({
     }, this);
 
     this.collection.on('remove', function(model, prop, options) {
-      var index = options.index;
+      var index = options.index,
+      indexToPoint = index-1;
 
       this.$.tbody.getComponents()[index].destroy(); // controlAtIndex ?
       if (index >= this.collection.length) {
@@ -131,8 +132,12 @@ enyo.kind({
         this.$.tbody.hide();
         this.$.tempty.show();
       }else{
-        //Put scroller in the previous item of deleted one.
-        this.getScrollArea().scrollToControl(this.$.tbody.getComponents()[options.index -1]);
+        //Put scroller in the previous item of deleted one
+        //Issue 0021835 except when the deleted is the first one.
+        if (indexToPoint < 0){
+          indexToPoint = 0;
+        }
+        this.getScrollArea().scrollToControl(this.$.tbody.getComponents()[indexToPoint]);
       }
     }, this);
 
