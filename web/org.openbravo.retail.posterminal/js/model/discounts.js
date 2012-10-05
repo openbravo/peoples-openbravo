@@ -100,7 +100,8 @@ OB.Model.Discounts = {
       +" )))"
 };
 
-OB.Model.Discounts.registerRule('ADJUSTMENT', {
+// Price Adjustment
+OB.Model.Discounts.registerRule('5D4BAF6BB86D4D2C9ED3D5A6FC051579', {
   async: false,
   implementation: function(discountRule, receipt, line) {
     var linePrice, discountedLinePrice, qty = line.get('qty'),
