@@ -6,6 +6,7 @@
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
+/*global Backbone */
 
 /**
  * OB.Model.Executor provides a mechanism to execute actions synchronously even each of
@@ -38,7 +39,7 @@ OB.Model.Executor = Backbone.Model.extend({
         id: event.get('id')
       }).forEach(function(evt) {
         if (currentEvt === evt) {
-          this.set('eventQueue')
+          this.set('eventQueue');
           actionQueue.remove(actionQueue.models);
         }
         evtQueue.remove(evt);
@@ -46,7 +47,7 @@ OB.Model.Executor = Backbone.Model.extend({
     }
 
     event.on('finish', function() {
-      console.log('event execution time', (new Date().getTime()) - event.get('start'));
+      window.console.log('event execution time', (new Date().getTime()) - event.get('start'));
     });
 
     evtQueue.add(event);
@@ -126,7 +127,7 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
           action: me.applyRule,
           args: disc
         });
-      })
+      });
       evt.trigger('actionsCreated');
     }, function() {});
   },
@@ -162,7 +163,7 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
         this.nextAction(evt);
       }
     } else {
-      console.warn('No POS implementation for discount ' + disc.get('discountType'));
+      window.console.warn('No POS implementation for discount ' + disc.get('discountType'));
       this.nextAction(evt);
     }
   },

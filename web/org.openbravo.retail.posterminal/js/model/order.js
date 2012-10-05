@@ -235,7 +235,7 @@
 
         line.set({
           grossUnitPrice: price,
-          lineGrossAmount: gross,
+          lineGrossAmount: gross
         }, {
           silent: true
         });
@@ -529,7 +529,8 @@
       var promotions = line.get('promotions'),
           ruleId = rule.id,
           removed = false,
-          res = [];
+          res = [],
+          i;
       if (!promotions) {
         return;
       }
