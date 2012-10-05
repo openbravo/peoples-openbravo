@@ -27,14 +27,9 @@ public class UpdateProductPrice extends ModuleScript {
 
   public void execute() {
     try {
-      String query = " UPDATE m_productprice ";
-      query = query + "SET ad_org_id = plv.ad_org_id ";
-      query = query + "FROM m_pricelist_version plv ";
-      query = query + "WHERE plv.m_pricelist_version_id = m_productprice.m_pricelist_version_id ";
-      query = query + "  AND plv.ad_org_id <> m_productprice.ad_org_id ";
+      
       ConnectionProvider cp = getConnectionProvider();
-      PreparedStatement ps = cp.getPreparedStatement(query);
-      ps.executeUpdate();
+      UpdateProductPriceData.update(cp);  
     } catch (Exception e) {
       handleError(e);
     }
