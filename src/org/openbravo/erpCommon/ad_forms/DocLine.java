@@ -85,6 +85,7 @@ public class DocLine {
   public String m_C_LocTo_ID = "";
   public String m_User1_ID = "";
   public String m_User2_ID = "";
+  public String m_C_Costcenter_ID = "";
   //
   public String m_C_Charge_ID = "";
   public String m_ChargeAmt = "";
@@ -123,6 +124,7 @@ public class DocLine {
     m_C_LocTo_ID = data.getField("cLoctoId");
     m_User1_ID = data.getField("user1Id");
     m_User2_ID = data.getField("user2Id");
+    m_C_Costcenter_ID = data.getField("cCostcenterId");
     // Line, Description, Currency
     m_Line = data.getField("line");
     m_description = data.getField("description");

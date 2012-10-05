@@ -98,6 +98,7 @@ public abstract class AcctServer {
   public String C_LocTo_ID = "";
   public String User1_ID = "";
   public String User2_ID = "";
+  public String C_Costcenter_ID = "";
   public String Name = "";
   public String DocumentNo = "";
   public String DateAcct = "";
@@ -879,6 +880,7 @@ public abstract class AcctServer {
     C_LocTo_ID = data[0].getField("C_LocTo_ID");
     User1_ID = data[0].getField("User1_ID");
     User2_ID = data[0].getField("User2_ID");
+    C_Costcenter_ID = data[0].getField("C_Costcenter_ID");
 
     Name = data[0].getField("Name");
     DocumentNo = data[0].getField("DocumentNo");
