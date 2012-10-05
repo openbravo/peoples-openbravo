@@ -250,6 +250,10 @@ Order closed: All the products agreed have been delivered.]]></HELP>
 <!--3AC833E6798F459F82EA1E8D80DE79BE-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--3AC833E6798F459F82EA1E8D80DE79BE-->  <AD_COLUMN_ID><![CDATA[E16A80E93828476A8989A6ED4DAADA1A]]></AD_COLUMN_ID>
 <!--3AC833E6798F459F82EA1E8D80DE79BE-->  <NAME><![CDATA[Search Key]]></NAME>
+<!--3AC833E6798F459F82EA1E8D80DE79BE-->  <DESCRIPTION><![CDATA[A fast method for finding a particular record.]]></DESCRIPTION>
+<!--3AC833E6798F459F82EA1E8D80DE79BE-->  <HELP><![CDATA[A search key allows for a fast method of finding a particular record. If you leave the search key empty, the system automatically creates a numeric number originating from a document sequence defined in the  "Document Sequence" window. The sequence naming convention follows a rule "DocumentNo_TableName", where TableName is the actual name of the database table (e.g. C_Order).
+
+Usually, company's internal identifiers for various records (products, customers, etc) are stored here.]]></HELP>
 <!--3AC833E6798F459F82EA1E8D80DE79BE-->  <PROPERTY><![CDATA[searchKey]]></PROPERTY>
 <!--3AC833E6798F459F82EA1E8D80DE79BE-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
 <!--3AC833E6798F459F82EA1E8D80DE79BE-->  <SORT><![CDATA[Y]]></SORT>
@@ -291,6 +295,10 @@ Order closed: All the products agreed have been delivered.]]></HELP>
 <!--3D1D6078EFA04ED68A07B6F7A6E8EBD5-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--3D1D6078EFA04ED68A07B6F7A6E8EBD5-->  <AD_COLUMN_ID><![CDATA[799D89B4CE8742B7AEF3277892A68AA6]]></AD_COLUMN_ID>
 <!--3D1D6078EFA04ED68A07B6F7A6E8EBD5-->  <NAME><![CDATA[Search Key]]></NAME>
+<!--3D1D6078EFA04ED68A07B6F7A6E8EBD5-->  <DESCRIPTION><![CDATA[A fast method for finding a particular record.]]></DESCRIPTION>
+<!--3D1D6078EFA04ED68A07B6F7A6E8EBD5-->  <HELP><![CDATA[A search key allows for a fast method of finding a particular record. If you leave the search key empty, the system automatically creates a numeric number originating from a document sequence defined in the  "Document Sequence" window. The sequence naming convention follows a rule "DocumentNo_TableName", where TableName is the actual name of the database table (e.g. C_Order).
+
+Usually, company's internal identifiers for various records (products, customers, etc) are stored here.]]></HELP>
 <!--3D1D6078EFA04ED68A07B6F7A6E8EBD5-->  <PROPERTY><![CDATA[searchKey]]></PROPERTY>
 <!--3D1D6078EFA04ED68A07B6F7A6E8EBD5-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
 <!--3D1D6078EFA04ED68A07B6F7A6E8EBD5-->  <SORT><![CDATA[Y]]></SORT>
@@ -738,6 +746,8 @@ Order closed: All the products agreed have been delivered.]]></HELP>
 <!--7EBD7304966048A2B346AA8CF33A6CBF-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--7EBD7304966048A2B346AA8CF33A6CBF-->  <AD_COLUMN_ID><![CDATA[8056]]></AD_COLUMN_ID>
 <!--7EBD7304966048A2B346AA8CF33A6CBF-->  <NAME><![CDATA[Name]]></NAME>
+<!--7EBD7304966048A2B346AA8CF33A6CBF-->  <DESCRIPTION><![CDATA[A non-unique identifier for a record/document often used as a search tool.]]></DESCRIPTION>
+<!--7EBD7304966048A2B346AA8CF33A6CBF-->  <HELP><![CDATA[A more descriptive identifier (that does need to be unique) of a record/document that is used as a default search option along with the search key (that is unique and mostly shorter). It is up to 60 characters in length.]]></HELP>
 <!--7EBD7304966048A2B346AA8CF33A6CBF-->  <PROPERTY><![CDATA[name]]></PROPERTY>
 <!--7EBD7304966048A2B346AA8CF33A6CBF-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
 <!--7EBD7304966048A2B346AA8CF33A6CBF-->  <SORT><![CDATA[Y]]></SORT>
@@ -822,6 +832,8 @@ Order closed: All the products agreed have been delivered.]]></HELP>
 <!--8C5DB30F056C4BD8BDFA70ED6FFFCF68-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--8C5DB30F056C4BD8BDFA70ED6FFFCF68-->  <AD_COLUMN_ID><![CDATA[87616414E9634283BB4FDBC22988C069]]></AD_COLUMN_ID>
 <!--8C5DB30F056C4BD8BDFA70ED6FFFCF68-->  <NAME><![CDATA[Name]]></NAME>
+<!--8C5DB30F056C4BD8BDFA70ED6FFFCF68-->  <DESCRIPTION><![CDATA[A non-unique identifier for a record/document often used as a search tool.]]></DESCRIPTION>
+<!--8C5DB30F056C4BD8BDFA70ED6FFFCF68-->  <HELP><![CDATA[A more descriptive identifier (that does need to be unique) of a record/document that is used as a default search option along with the search key (that is unique and mostly shorter). It is up to 60 characters in length.]]></HELP>
 <!--8C5DB30F056C4BD8BDFA70ED6FFFCF68-->  <PROPERTY><![CDATA[name]]></PROPERTY>
 <!--8C5DB30F056C4BD8BDFA70ED6FFFCF68-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
 <!--8C5DB30F056C4BD8BDFA70ED6FFFCF68-->  <SORT><![CDATA[Y]]></SORT>
@@ -885,6 +897,10 @@ Order closed: All the products agreed have been delivered.]]></HELP>
 <!--8EA455BB55B8498F989354B47FE27985-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--8EA455BB55B8498F989354B47FE27985-->  <AD_COLUMN_ID><![CDATA[8054]]></AD_COLUMN_ID>
 <!--8EA455BB55B8498F989354B47FE27985-->  <NAME><![CDATA[Search Key]]></NAME>
+<!--8EA455BB55B8498F989354B47FE27985-->  <DESCRIPTION><![CDATA[A fast method for finding a particular record.]]></DESCRIPTION>
+<!--8EA455BB55B8498F989354B47FE27985-->  <HELP><![CDATA[A search key allows for a fast method of finding a particular record. If you leave the search key empty, the system automatically creates a numeric number originating from a document sequence defined in the  "Document Sequence" window. The sequence naming convention follows a rule "DocumentNo_TableName", where TableName is the actual name of the database table (e.g. C_Order).
+
+Usually, company's internal identifiers for various records (products, customers, etc) are stored here.]]></HELP>
 <!--8EA455BB55B8498F989354B47FE27985-->  <PROPERTY><![CDATA[searchKey]]></PROPERTY>
 <!--8EA455BB55B8498F989354B47FE27985-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
 <!--8EA455BB55B8498F989354B47FE27985-->  <SORT><![CDATA[Y]]></SORT>
@@ -1211,6 +1227,10 @@ Usually, company's internal identifiers for various records (products, customers
 <!--C33C7FD9DCF64DDC89F0CCBCE32A7E3A-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--C33C7FD9DCF64DDC89F0CCBCE32A7E3A-->  <AD_COLUMN_ID><![CDATA[1E29020103854EC99665D6F18B1BA774]]></AD_COLUMN_ID>
 <!--C33C7FD9DCF64DDC89F0CCBCE32A7E3A-->  <NAME><![CDATA[Search Key]]></NAME>
+<!--C33C7FD9DCF64DDC89F0CCBCE32A7E3A-->  <DESCRIPTION><![CDATA[A fast method for finding a particular record.]]></DESCRIPTION>
+<!--C33C7FD9DCF64DDC89F0CCBCE32A7E3A-->  <HELP><![CDATA[A search key allows for a fast method of finding a particular record. If you leave the search key empty, the system automatically creates a numeric number originating from a document sequence defined in the  "Document Sequence" window. The sequence naming convention follows a rule "DocumentNo_TableName", where TableName is the actual name of the database table (e.g. C_Order).
+
+Usually, company's internal identifiers for various records (products, customers, etc) are stored here.]]></HELP>
 <!--C33C7FD9DCF64DDC89F0CCBCE32A7E3A-->  <PROPERTY><![CDATA[searchKey]]></PROPERTY>
 <!--C33C7FD9DCF64DDC89F0CCBCE32A7E3A-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
 <!--C33C7FD9DCF64DDC89F0CCBCE32A7E3A-->  <SORT><![CDATA[Y]]></SORT>
@@ -1319,6 +1339,8 @@ Usually, company's internal identifiers for various records (products, customers
 <!--D28E1E1D317844B896947BBD5DDD902A-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--D28E1E1D317844B896947BBD5DDD902A-->  <AD_COLUMN_ID><![CDATA[878150DBBA274340878EFE20B8F48546]]></AD_COLUMN_ID>
 <!--D28E1E1D317844B896947BBD5DDD902A-->  <NAME><![CDATA[Name]]></NAME>
+<!--D28E1E1D317844B896947BBD5DDD902A-->  <DESCRIPTION><![CDATA[A non-unique identifier for a record/document often used as a search tool.]]></DESCRIPTION>
+<!--D28E1E1D317844B896947BBD5DDD902A-->  <HELP><![CDATA[A more descriptive identifier (that does need to be unique) of a record/document that is used as a default search option along with the search key (that is unique and mostly shorter). It is up to 60 characters in length.]]></HELP>
 <!--D28E1E1D317844B896947BBD5DDD902A-->  <PROPERTY><![CDATA[name]]></PROPERTY>
 <!--D28E1E1D317844B896947BBD5DDD902A-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
 <!--D28E1E1D317844B896947BBD5DDD902A-->  <SORT><![CDATA[Y]]></SORT>
@@ -1532,6 +1554,8 @@ Usually, company's internal identifiers for various records (products, customers
 <!--F4626A8044754C09B1961E6956B0B6C4-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--F4626A8044754C09B1961E6956B0B6C4-->  <AD_COLUMN_ID><![CDATA[09A651EB04074B3781FFC9BA21EAAEDD]]></AD_COLUMN_ID>
 <!--F4626A8044754C09B1961E6956B0B6C4-->  <NAME><![CDATA[Name]]></NAME>
+<!--F4626A8044754C09B1961E6956B0B6C4-->  <DESCRIPTION><![CDATA[A non-unique identifier for a record/document often used as a search tool.]]></DESCRIPTION>
+<!--F4626A8044754C09B1961E6956B0B6C4-->  <HELP><![CDATA[A more descriptive identifier (that does need to be unique) of a record/document that is used as a default search option along with the search key (that is unique and mostly shorter). It is up to 60 characters in length.]]></HELP>
 <!--F4626A8044754C09B1961E6956B0B6C4-->  <PROPERTY><![CDATA[name]]></PROPERTY>
 <!--F4626A8044754C09B1961E6956B0B6C4-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
 <!--F4626A8044754C09B1961E6956B0B6C4-->  <SORT><![CDATA[Y]]></SORT>
