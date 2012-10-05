@@ -93,9 +93,9 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="DISCOUNT_TYPE" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
-        <default><![CDATA[ADJUSTMENT]]></default>
-        <onCreateDefault><![CDATA['ADJUSTMENT']]></onCreateDefault>
+      <column name="M_OFFER_TYPE_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default><![CDATA[5D4BAF6BB86D4D2C9ED3D5A6FC051579]]></default>
+        <onCreateDefault><![CDATA['5D4BAF6BB86D4D2C9ED3D5A6FC051579']]></onCreateDefault>
       </column>
       <column name="APPLY_NEXT" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[Y]]></default>
@@ -114,6 +114,9 @@
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="M_OFFER_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_OFFER_TYPE" name="M_OFFER_OFFERTYPE">
+        <reference local="M_OFFER_TYPE_ID" foreign="M_OFFER_TYPE_ID"/>
       </foreign-key>
       <check name="M_OFFER_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
