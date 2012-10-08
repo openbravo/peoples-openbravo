@@ -153,7 +153,6 @@ enyo.kind({
     this.model.get('windowManager').on('change:currentWindow', function(changedModel) {
       //TODO backbone route
       if (this.$[changedModel.get('currentWindow')]) {
-        debugger;
         this.$[changedModel.previousAttributes().currentWindow].setShowing(false);
         this.$[changedModel.get('currentWindow')].setShowing(true);
       } else {
