@@ -2071,6 +2071,7 @@ isc.OBStandardView.addProperties({
     var onChangeFunction;
 
     if (fld.displayed === false && !isGridField) {
+      fld.hiddenInForm = true;
       fld.visible = false;
       fld.alwaysTakeSpace = false;
     }
