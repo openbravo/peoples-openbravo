@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.openbravo.base.model.Entity;
+import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.model.domaintype.ForeignKeyDomainType;
 import org.openbravo.client.application.ApplicationUtils;
@@ -368,6 +370,9 @@ public class OBViewFieldHandler {
   }
 
   private void processStatusBarFields(List<OBViewFieldDefinition> viewFields, List<Field> adFields) {
+    final Entity entity = ModelProvider.getInstance().getEntityByTableId(
+        getTab().getTable().getId());
+
     if (statusBarFields != null) {
       return;
     }
@@ -382,10 +387,14 @@ public class OBViewFieldHandler {
         continue;
       }
 
-      final Property property = KernelUtils.getInstance().getPropertyFromColumn(field.getColumn(),
-          false);
-
-      statusBarFields.add(property.getName());
+      final Property property;
+      if (field.getProperty() != null) {
+        property = DalUtil.getPropertyFromPath(entity, field.getProperty());
+        statusBarFields.add(field.getProperty().replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR));
+      } else {
+        property = KernelUtils.getInstance().getPropertyFromColumn(field.getColumn(), false);
+        statusBarFields.add(property.getName());
+      }
 
       final OBViewField viewField = new OBViewField();
       viewField.setField(field);
