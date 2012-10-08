@@ -230,11 +230,11 @@ public class DefaultDataSourceService extends BaseDataSourceService {
           .createQuery(
               Field.class,
               "as f where f.tab.id = :tabId"
-                  + " and (exists (from f.aDFieldAccessList fa where fa.tabAccess.windowAccess.role.id = :roleId and fa.editableField = false and fa.ischeckonsave = true)"
-                  + "      or (not exists (from f.aDFieldAccessList fa where fa.tabAccess.windowAccess.role.id = :roleId)"
-                  + "          and exists (from f.tab.aDTabAccessList ta where ta.windowAccess.role.id = :roleId and ta.editableField = false)"
-                  + "          or not exists (from f.tab.aDTabAccessList  ta where  ta.windowAccess.role.id = :roleId)"
-                  + "          and exists (from ADWindowAccess wa where f.tab.window = wa.window and wa.role.id = :roleId and wa.editableField = false)))");
+                  + " and (exists (from f.aDFieldAccessList fa where fa.tabAccess.windowAccess.role.id = :roleId and fa.editableField = false and fa.active = true and fa.ischeckonsave = true)"
+                  + "      or (not exists (from f.aDFieldAccessList fa where fa.tabAccess.windowAccess.role.id = :roleId and and fa.active = true)"
+                  + "          and exists (from f.tab.aDTabAccessList ta where ta.windowAccess.role.id = :roleId and ta.editableField = false and ta.active = true)"
+                  + "          or not exists (from f.tab.aDTabAccessList  ta where  ta.windowAccess.role.id = :roleId and ta.active = true)"
+                  + "          and exists (from ADWindowAccess wa where f.tab.window = wa.window and wa.role.id = :roleId and wa.editableField = false and wa.active = true)))");
       fieldQuery.setNamedParameter("tabId", tab.getId());
       fieldQuery.setNamedParameter("roleId", roleId);
       final Entity entity = ModelProvider.getInstance().getEntity(entityName);
