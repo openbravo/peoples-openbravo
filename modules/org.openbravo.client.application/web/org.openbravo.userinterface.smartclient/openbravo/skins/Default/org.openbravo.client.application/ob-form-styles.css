@@ -107,6 +107,7 @@
 .OBFormFieldSelectInputDisabled,
 .OBFormFieldSelectInputFocused,
 .OBFormFieldSelectInputError,
+.OBFormFieldSelectInputErrorFocused,
 .OBFormFieldSelectInputHint,
 
 .OBFormFieldSelectInputPending,
@@ -194,6 +195,7 @@
 
 .OBFormFieldSelectInput,
 .OBFormFieldSelectInputError,
+.OBFormFieldSelectInputErrorFocused,
 .OBFormFieldSelectInputFocused,
 .OBFormFieldSelectInputHint,
 
@@ -268,6 +270,7 @@
 .OBFormFieldNumberInputRequiredError,
 .OBFormFieldInputError,
 .OBFormFieldSelectInputError,
+.OBFormFieldSelectInputErrorFocused,
 .OBFormFieldDateInputError,
 .OBFormFieldLabelError { 
   color: red; /*#204268;*/
@@ -317,7 +320,9 @@
 .OBFormFieldDateInputSelectedFocused
 .OBFormFieldNumberInput:focus,
 .OBFormFieldNumberInputFocused,
-.OBFormFieldNumberInputSelectedFocused {
+.OBFormFieldNumberInputSelectedFocused,
+.OBFormFieldSelectInputError:focus,
+.OBFormFieldSelectInputErrorFocused {
   -moz-outline-offset: -1;
   outline-offset: -1;
   outline: none;
@@ -326,6 +331,7 @@
 
 .OBFormFieldSelectInput,
 .OBFormFieldSelectInputError,
+.OBFormFieldSelectInputErrorFocused,
 .OBFormFieldSelectInputSelectedFocused,
 .OBFormFieldSelectInputFocused,
 .OBFormFieldSelectInputDisabled,

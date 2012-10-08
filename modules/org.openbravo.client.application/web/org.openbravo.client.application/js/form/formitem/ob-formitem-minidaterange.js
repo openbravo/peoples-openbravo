@@ -76,17 +76,49 @@ isc.RelativeDateItem.addProperties({
     }
   },
 
+  validateOnExit: true,
+  showErrorIcon: false,
+
+  validateRelativeDateItem: function (value) {
+    var isADate = Object.prototype.toString.call(value) === '[object Date]';
+    if (value === null || isADate) {
+      this.editor.items[0].textBoxStyle = this.editor.items[0].textBoxStyleNormal;
+      this.editor.items[0].redraw();
+      return true;
+    } else {
+      this.editor.items[0].textBoxStyle = this.editor.items[0].textBoxStyleError;
+      this.editor.items[0].redraw();
+      return false;
+    }
+  },
+
+  validators: [{
+    type: 'custom',
+    condition: function (item, validator, value) {
+      return item.validateRelativeDateItem(value);
+    }
+  }],
+
   blur: function () {
     var blurValue = this.blurValue(),
+        newBlurValue = '',
         digitRegExp = new RegExp('^\\d+$', 'gm'),
-        areOnlyDigits = digitRegExp.test(blurValue),
-        newValue;
+        newValue, i;
 
-    if (areOnlyDigits) {
-      if (!this.areDateItemPropertiesSet) {
-        this.addDateItemProperties();
-        this.areDateItemPropertiesSet = true;
+    if (!this.areDateItemPropertiesSet) {
+      this.addDateItemProperties();
+      this.areDateItemPropertiesSet = true;
+    }
+
+    // Remove all kind of separators of the input value
+    for (i = 0; i < blurValue.length; i++) {
+      if (!this.isSeparator(blurValue, i)) {
+        newBlurValue += blurValue[i];
       }
+    }
+
+    // If are only digits/numbers
+    if (digitRegExp.test(newBlurValue)) {
       newValue = this.parseValue();
       if (newValue) {
         this.setValue(OB.Utilities.Date.OBToJS(newValue, this.dateFormat));
@@ -152,13 +184,25 @@ isc.OBDateRangeDialog.addProperties({
   initWidget: function () {
     this.Super('initWidget', arguments);
     this.rangeForm.setFocusItem(this.rangeItem);
+
+    var fromField = this.rangeForm.items[0].fromField,
+        toField = this.rangeForm.items[0].toField;
+    this.clearButton.click = function () {
+      this.creator.clearValues();
+      fromField.validate();
+      toField.validate();
+    };
   },
 
   show: function () {
     this.Super('show', arguments);
-    this.rangeForm.items[0].fromField.calculatedDateField.canFocus = false;
-    this.rangeForm.items[0].toField.calculatedDateField.canFocus = false;
-    this.rangeForm.items[0].fromField.valueField.focusInItem();
+    var fromField = this.rangeForm.items[0].fromField,
+        toField = this.rangeForm.items[0].toField;
+    fromField.calculatedDateField.canFocus = false;
+    fromField.validate();
+    toField.calculatedDateField.canFocus = false;
+    toField.validate();
+    fromField.valueField.focusInItem();
     this.rangeForm.focus();
   },
 
