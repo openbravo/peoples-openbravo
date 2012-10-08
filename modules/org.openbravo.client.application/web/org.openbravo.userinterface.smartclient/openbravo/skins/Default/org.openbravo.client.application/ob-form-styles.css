@@ -315,14 +315,14 @@
 .OBFormFieldSelectInputFocused,
 .OBFormFieldSelectInputSelectedFocused,
 .OBFormFieldSelectInput:focus,
+.OBFormFieldSelectInputError:focus,
+.OBFormFieldSelectInputErrorFocused,
 .OBFormFieldDateInput:focus,
 .OBFormFieldDateInputFocused,
 .OBFormFieldDateInputSelectedFocused
 .OBFormFieldNumberInput:focus,
 .OBFormFieldNumberInputFocused,
-.OBFormFieldNumberInputSelectedFocused,
-.OBFormFieldSelectInputError:focus,
-.OBFormFieldSelectInputErrorFocused {
+.OBFormFieldNumberInputSelectedFocused {
   -moz-outline-offset: -1;
   outline-offset: -1;
   outline: none;
