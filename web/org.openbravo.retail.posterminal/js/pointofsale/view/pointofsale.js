@@ -28,39 +28,45 @@ enyo.kind({
     onRemovePayment: 'removePayment',
     onChangeCurrentOrder: 'changeCurrentOrder',
     onChangeBusinessPartner: 'changeBusinessPartner',
-    onPrintReceipt: 'printReceipt'
+    onPrintReceipt: 'printReceipt',
+    onChangeWindow: 'changeWindow'
   },
   components: [{
-    kind: 'OB.UI.ModalDeleteReceipt'
+    name: 'otherSubWindowsContainer',
   }, {
-    kind: 'OB.UI.ModalBusinessPartners'
-  }, {
-    classes: 'row',
-    style: 'margin-bottom: 5px;',
+    name: 'mainSubWindow',
     components: [{
-      kind: 'OB.OBPOSPointOfSale.UI.LeftToolbarImpl'
+      kind: 'OB.UI.ModalDeleteReceipt'
     }, {
-      kind: 'OB.OBPOSPointOfSale.UI.RightToolbarImpl',
-      name: 'rightToolbar'
-    }]
-  }, {
-    classes: 'row',
-    components: [{
-      kind: 'OB.OBPOSPointOfSale.UI.ReceiptView',
-      name: 'receiptview'
+      kind: 'OB.UI.ModalBusinessPartners'
     }, {
-      classes: 'span6',
+      classes: 'row',
+      style: 'margin-bottom: 5px;',
       components: [{
-        kind: 'OB.OBPOSPointOfSale.UI.RightToolbarPane',
-        name: 'toolbarpane'
+        kind: 'OB.OBPOSPointOfSale.UI.LeftToolbarImpl'
       }, {
-        kind: 'OB.OBPOSPointOfSale.UI.KeyboardOrder',
-        name: 'keyboard'
+        kind: 'OB.OBPOSPointOfSale.UI.RightToolbarImpl',
+        name: 'rightToolbar'
+      }]
+    }, {
+      classes: 'row',
+      components: [{
+        kind: 'OB.OBPOSPointOfSale.UI.ReceiptView',
+        name: 'receiptview'
+      }, {
+        classes: 'span6',
+        components: [{
+          kind: 'OB.OBPOSPointOfSale.UI.RightToolbarPane',
+          name: 'toolbarpane'
+        }, {
+          kind: 'OB.OBPOSPointOfSale.UI.KeyboardOrder',
+          name: 'keyboard'
+        }]
       }]
     }]
   }],
-  printReceipt: function () {
-    
+  printReceipt: function() {
+
     if (OB.POS.modelterminal.hasPermission('OBPOS_print.receipt')) {
       var receipt = this.model.get('order');
       receipt.calculateTaxes(function() {
@@ -136,11 +142,26 @@ enyo.kind({
     }
     this.model.get('order').removePayment(event.payment);
   },
+  changeWindow: function(sender, event) {
+    this.model.get('windowManager').set('currentWindow', event.newWindow);
+  },
   init: function() {
     var receipt, receiptList;
     this.inherited(arguments);
     receipt = this.model.get('order');
     receiptList = this.model.get('orderList');
+    this.model.get('windowManager').on('change:currentWindow', function(changedModel) {
+      //TODO backbone route
+      if (this.$[changedModel.get('currentWindow')]) {
+        debugger;
+        this.$[changedModel.previousAttributes().currentWindow].setShowing(false);
+        this.$[changedModel.get('currentWindow')].setShowing(true);
+      } else {
+        this.model.get('windowManager').set('currentWindow', changedModel.previousAttributes().currentWindow, {
+          silent: true
+        });
+      }
+    }, this);
     this.$.receiptview.setOrder(receipt);
     this.$.receiptview.setOrderList(receiptList);
     this.$.toolbarpane.setModel(this.model);
