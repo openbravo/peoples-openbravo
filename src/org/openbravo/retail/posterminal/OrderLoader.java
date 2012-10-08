@@ -597,9 +597,10 @@ public class OrderLoader extends JSONProcessSimple {
       paymentSchedule.setCurrency(order.getCurrency());
       paymentSchedule.setOrder(order);
       paymentSchedule.setFinPaymentmethod(order.getBusinessPartner().getPaymentMethod());
-      paymentSchedule.setAmount(amt);
-      // Sept 2012 -> 0 because outstanding is not allowed in Openbravo Web POS
-      paymentSchedule.setOutstandingAmount(new BigDecimal(0));
+      // paymentSchedule.setPaidAmount(new BigDecimal(0));
+      paymentSchedule.setAmount(BigDecimal.valueOf(jsonorder.getDouble("gross")));
+      // Sept 2012 -> gross because outstanding is not allowed in Openbravo Web POS
+      paymentSchedule.setOutstandingAmount(BigDecimal.valueOf(jsonorder.getDouble("gross")));
       paymentSchedule.setDueDate(order.getOrderDate());
       if (ModelProvider.getInstance().getEntity(FIN_PaymentSchedule.class)
           .hasProperty("origDueDate")) {
@@ -667,7 +668,15 @@ public class OrderLoader extends JSONProcessSimple {
     OBContext.setAdminMode(true);
     try {
       BigDecimal amount = BigDecimal.valueOf(payment.getDouble("paid"));
-      BigDecimal origAmount = BigDecimal.valueOf(payment.getDouble("amount"));
+      BigDecimal origAmount = amount;
+      if (payment.has("rate")) {
+        origAmount = BigDecimal.valueOf(payment.getDouble("amount"));
+      }
+      BigDecimal mulrate = new BigDecimal(1);
+      if (payment.has("mulrate")) {
+        mulrate = BigDecimal.valueOf(payment.getDouble("mulrate"));
+      }
+
       // writeoffAmt.divide(BigDecimal.valueOf(payment.getDouble("rate")));
       if (amount.signum() == 0) {
         return;
@@ -722,20 +731,19 @@ public class OrderLoader extends JSONProcessSimple {
       List<FIN_PaymentScheduleDetail> detail = new ArrayList<FIN_PaymentScheduleDetail>();
       detail.add(paymentScheduleDetail);
 
-      BigDecimal mulrate = new BigDecimal(1);
-      if (payment.has("mulrate")) {
-        mulrate = BigDecimal.valueOf(payment.getDouble("mulrate"));
-      }
-
       FIN_Payment finPayment = FIN_AddPayment.savePayment(null, true,
           getPaymentDocumentType(order.getOrganization()), order.getDocumentNo(),
           order.getBusinessPartner(), paymentType.getPaymentMethod().getPaymentMethod(), account,
           amount.toString(), order.getOrderDate(), order.getOrganization(), null, detail,
-          paymentAmount, false, false, order.getCurrency(), mulrate, amount.multiply(mulrate));
+          paymentAmount, false, false, order.getCurrency(), mulrate, origAmount);
       if (writeoffAmt.signum() != 0) {
         FIN_AddPayment.saveGLItem(finPayment, writeoffAmt, paymentType.getPaymentMethod()
             .getGlitemWriteoff());
       }
+      // Update Payment In amount after adding GLItem
+      finPayment.setAmount(BigDecimal.valueOf(payment.getDouble("paid")));
+      OBDal.getInstance().save(finPayment);
+
       String description = getPaymentDescription();
       description += ": " + order.getDocumentNo().substring(1, order.getDocumentNo().length() - 1)
           + "\n";
