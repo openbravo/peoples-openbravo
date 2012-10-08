@@ -4,6 +4,9 @@
       <parameter name="p_order_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
+      <parameter name="p_user_id" type="VARCHAR" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
@@ -23,110 +26,145 @@
   v_date DATE;
   v_partner VARCHAR2(32);
   v_priceList VARCHAR2(32);
-  v_method VARCHAR(100);
+  v_method VARCHAR(200);
+  v_precision NUMBER;
+  v_apply_next  VARCHAR(1);
+  v_taxIncluded VARCHAR(1);
+
+  v_oldUnitPrice NUMBER;
 
   Cur_Order RECORD;
   Cur_Offer RECORD;
  
 BEGIN
-  select c_bpartner_id, m_priceList_id, dateordered
-    into v_partner, v_priceList, v_date
-    from C_Order
-   where C_Order_ID = p_order_id;
+  select o.c_bpartner_id, o.m_priceList_id, o.dateordered, c.priceprecision, pl.isTaxIncluded
+    into v_partner, v_priceList, v_date, v_precision, v_taxIncluded
+    from C_Order o, c_currency c, m_priceList pl
+   where C_Order_ID = p_order_id
+     and c.C_Currency_ID = o.C_Currency_ID
+     and pl.m_priceList_ID = o.m_priceList_ID;
 
   for Cur_Order in (select *
                       from c_orderline 
                      where c_order_id = p_order_id) loop
 
-    FOR Cur_Offer IN
-      (SELECT M_OFFER_ID, t.value, t.PL_Order_Implementor
-      FROM M_OFFER, M_Offer_Type t
-      WHERE v_date BETWEEN DATEFROM AND COALESCE(DATETO, TO_DATE('31-12-9999', 'DD-MM-YYYY'))
-        AND M_OFFER.IsActive = 'Y'
-        AND t.M_Offer_Type_ID = M_Offer.M_Offer_Type_ID
-  AND ((PRICELIST_SELECTION='Y' AND NOT EXISTS (SELECT 1 FROM M_OFFER_PRICELIST
-           WHERE M_OFFER_ID=M_OFFER.M_OFFER_ID
-           AND M_PRICELIST_ID = v_priceList))
-         OR (PRICELIST_SELECTION='N' AND EXISTS(SELECT 1 FROM M_OFFER_PRICELIST
-            WHERE M_OFFER_ID = M_OFFER.M_OFFER_ID
-            AND M_PRICELIST_ID = v_priceList)))
-        AND((BPARTNER_SELECTION = 'Y'
-        AND NOT EXISTS
-        (SELECT 1
-        FROM M_OFFER_BPARTNER
-        WHERE M_OFFER_ID = M_OFFER.M_OFFER_ID
-          AND C_BPARTNER_ID = v_partner
-        ))
-        OR(BPARTNER_SELECTION = 'N'
-        AND EXISTS
-        (SELECT 1
-        FROM M_OFFER_BPARTNER
-        WHERE M_OFFER_ID = M_OFFER.M_OFFER_ID
-          AND C_BPARTNER_ID = v_partner
-        )))
-        AND((BP_GROUP_SELECTION = 'Y'
-        AND NOT EXISTS
-        (SELECT 1
-        FROM C_BPARTNER B,
-          M_OFFER_BP_GROUP OB
-        WHERE OB.M_OFFER_ID = M_OFFER.M_OFFER_ID
-          AND B.C_BPARTNER_ID = v_partner
-          AND OB.C_BP_GROUP_ID = B.C_BP_GROUP_ID
-        ))
-        OR(BP_GROUP_SELECTION = 'N'
-        AND EXISTS
-        (SELECT 1
-        FROM C_BPARTNER B,
-          M_OFFER_BP_GROUP OB
-        WHERE OB.M_OFFER_ID = M_OFFER.M_OFFER_ID
-          AND B.C_BPARTNER_ID = v_partner
-          AND OB.C_BP_GROUP_ID = B.C_BP_GROUP_ID
-        )))
-        AND((PRODUCT_SELECTION = 'Y'
-        AND NOT EXISTS
-        (SELECT 1
-        FROM M_OFFER_PRODUCT
-        WHERE M_OFFER_ID = M_OFFER.M_OFFER_ID
-          AND M_PRODUCT_ID = Cur_Order.M_Product_ID
-        ))
-        OR(PRODUCT_SELECTION = 'N'
-        AND EXISTS
-        (SELECT 1
-        FROM M_OFFER_PRODUCT
-        WHERE M_OFFER_ID = M_OFFER.M_OFFER_ID
-          AND M_PRODUCT_ID = Cur_Order.M_Product_ID
-        )))
-        AND((PROD_CAT_SELECTION = 'Y'
-        AND NOT EXISTS
-        (SELECT 1
-        FROM M_PRODUCT P,
-          M_OFFER_PROD_CAT OP
-        WHERE OP.M_OFFER_ID = M_OFFER.M_OFFER_ID
-          AND P.M_PRODUCT_ID = Cur_Order.M_Product_ID
-          AND OP.M_PRODUCT_CATEGORY_ID = P.M_PRODUCT_CATEGORY_ID
-        ))
-        OR(PROD_CAT_SELECTION = 'N'
-        AND EXISTS
-        (SELECT 1
-        FROM M_PRODUCT P,
-          M_OFFER_PROD_CAT OP
-        WHERE OP.M_OFFER_ID = M_OFFER.M_OFFER_ID
-          AND P.M_PRODUCT_ID = Cur_Order.M_Product_ID
-          AND OP.M_PRODUCT_CATEGORY_ID = P.M_PRODUCT_CATEGORY_ID
-        )))
-      ORDER BY PRIORITY,
-        M_OFFER_ID ASC
-      )
-    loop
-      if (Cur_Offer.PL_Order_Implementor is not null) then
-        v_method := Cur_Offer.PL_Order_Implementor || '('''||Cur_Offer.M_Offer_ID||''','''||Cur_Order.C_OrderLine_ID||''')';
-        if (AD_Get_RDBMS() = 'ORACLE') then
-          execute 'CALL ' || v_method;
-        else
-          execute 'SELECT ' || v_method ||' FROM DUAL';
-        end if;
-      end if;
+    v_apply_next := 'Y';
+
+    -- Remove existent discounts as they are going to be recalculated
+    -- TODO: recalculate prices
+    v_oldUnitPrice := Cur_Order.gross_unit_price;
+    for Cur_Offer in (select *
+                            from c_orderline_offer
+                           where c_orderline_id = Cur_Order.c_orderline_id
+                           order by line desc) loop
+      -- TODO: PNIT
+      -- TODO: This can be done once we have new column in order line pit by priceActual = priceStd
+      v_oldUnitPrice := v_oldUnitPrice + Cur_Offer.amtoffer;
+      update c_orderline
+        set gross_unit_price = v_oldUnitPrice,
+            line_gross_amount = v_oldUnitPrice * qtyordered,
+            priceactual = c_get_net_price_from_gross(Cur_Order.c_tax_id, v_oldUnitPrice, v_oldUnitPrice, v_precision, qtyordered),
+            linenetamt = c_get_net_price_from_gross(Cur_Order.c_tax_id, v_oldUnitPrice * qtyordered, v_oldUnitPrice * qtyordered, v_precision, qtyordered)
+      where c_orderline_id = Cur_Order.C_OrderLine_ID;
     end loop;
+
+    delete from c_orderline_offer
+    where c_orderline_id = Cur_Order.c_orderline_id;
+
+    -- Look for candidate promotions to be applied to current line
+    if (Cur_Order.cancelpricead = 'N') then
+      FOR Cur_Offer IN
+        (SELECT M_OFFER_ID, t.PL_Order_Implementor
+        FROM M_OFFER, M_Offer_Type t
+        WHERE v_date BETWEEN DATEFROM AND COALESCE(DATETO, TO_DATE('31-12-9999', 'DD-MM-YYYY'))
+          AND M_OFFER.IsActive = 'Y'
+          AND t.M_Offer_Type_ID = M_Offer.M_Offer_Type_ID
+          AND ((PRICELIST_SELECTION='Y' AND NOT EXISTS (SELECT 1 FROM M_OFFER_PRICELIST
+             WHERE M_OFFER_ID=M_OFFER.M_OFFER_ID
+             AND M_PRICELIST_ID = v_priceList))
+           OR (PRICELIST_SELECTION='N' AND EXISTS(SELECT 1 FROM M_OFFER_PRICELIST
+              WHERE M_OFFER_ID = M_OFFER.M_OFFER_ID
+              AND M_PRICELIST_ID = v_priceList)))
+          AND((BPARTNER_SELECTION = 'Y'
+          AND NOT EXISTS
+          (SELECT 1
+          FROM M_OFFER_BPARTNER
+          WHERE M_OFFER_ID = M_OFFER.M_OFFER_ID
+            AND C_BPARTNER_ID = v_partner
+          ))
+          OR(BPARTNER_SELECTION = 'N'
+          AND EXISTS
+          (SELECT 1
+          FROM M_OFFER_BPARTNER
+          WHERE M_OFFER_ID = M_OFFER.M_OFFER_ID
+            AND C_BPARTNER_ID = v_partner
+          )))
+          AND((BP_GROUP_SELECTION = 'Y'
+          AND NOT EXISTS
+          (SELECT 1
+          FROM C_BPARTNER B,
+            M_OFFER_BP_GROUP OB
+          WHERE OB.M_OFFER_ID = M_OFFER.M_OFFER_ID
+            AND B.C_BPARTNER_ID = v_partner
+            AND OB.C_BP_GROUP_ID = B.C_BP_GROUP_ID
+          ))
+          OR(BP_GROUP_SELECTION = 'N'
+          AND EXISTS
+          (SELECT 1
+          FROM C_BPARTNER B,
+            M_OFFER_BP_GROUP OB
+          WHERE OB.M_OFFER_ID = M_OFFER.M_OFFER_ID
+            AND B.C_BPARTNER_ID = v_partner
+            AND OB.C_BP_GROUP_ID = B.C_BP_GROUP_ID
+          )))
+          AND((PRODUCT_SELECTION = 'Y'
+          AND NOT EXISTS
+          (SELECT 1
+          FROM M_OFFER_PRODUCT
+          WHERE M_OFFER_ID = M_OFFER.M_OFFER_ID
+            AND M_PRODUCT_ID = Cur_Order.M_Product_ID
+          ))
+          OR(PRODUCT_SELECTION = 'N'
+          AND EXISTS
+          (SELECT 1
+          FROM M_OFFER_PRODUCT
+          WHERE M_OFFER_ID = M_OFFER.M_OFFER_ID
+            AND M_PRODUCT_ID = Cur_Order.M_Product_ID
+          )))
+          AND((PROD_CAT_SELECTION = 'Y'
+          AND NOT EXISTS
+          (SELECT 1
+          FROM M_PRODUCT P,
+            M_OFFER_PROD_CAT OP
+          WHERE OP.M_OFFER_ID = M_OFFER.M_OFFER_ID
+            AND P.M_PRODUCT_ID = Cur_Order.M_Product_ID
+            AND OP.M_PRODUCT_CATEGORY_ID = P.M_PRODUCT_CATEGORY_ID
+          ))
+          OR(PROD_CAT_SELECTION = 'N'
+          AND EXISTS
+          (SELECT 1
+          FROM M_PRODUCT P,
+            M_OFFER_PROD_CAT OP
+          WHERE OP.M_OFFER_ID = M_OFFER.M_OFFER_ID
+            AND P.M_PRODUCT_ID = Cur_Order.M_Product_ID
+            AND OP.M_PRODUCT_CATEGORY_ID = P.M_PRODUCT_CATEGORY_ID
+          )))
+        ORDER BY PRIORITY,
+          M_OFFER_ID ASC
+        )
+      loop
+        raise notice '%', Cur_Offer.PL_Order_Implementor;
+        if (v_apply_next = 'Y' AND Cur_Offer.PL_Order_Implementor is not null) then
+          v_method := Cur_Offer.PL_Order_Implementor || '('''||Cur_Offer.M_Offer_ID||''','''||Cur_Order.C_OrderLine_ID||''', '||v_precision||', '''||p_user_id||''', '''||v_taxIncluded||''')';
+          if (AD_Get_RDBMS() = 'ORACLE') then
+            execute 'CALL ' || v_method;
+          --TODO: do it  execute 'begin :1:=test0(); end;' using out v_aa;
+          else
+            execute 'SELECT ' || v_method ||' FROM DUAL' into v_apply_next;
+          end if;
+        end if;
+      end loop;
+    end if;
   end loop;
 END M_PROMOTION_CALCULATE
 ]]></body>
