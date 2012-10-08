@@ -23,7 +23,6 @@ OB.Utilities = window.OB.Utilities || {};
 // = Openbravo Date Utilities =
 // Defines utility methods related to handling date, incl. formatting.
 OB.Utilities.Date = {};
-
 // ** {{{ OB.Utilities.Date.centuryReference }}} **
 // For a two-digit year display format, it establishes where is the frontier
 // between the 20th and the 21st century
@@ -272,4 +271,13 @@ OB.Utilities.Date.convertUTCTimeToLocalTime = function (newData, allFields) {
       }
     }
   }
+};
+
+//** {{{ OB.Utilities.Date.getUTCOffsetInMiliseconds }}} **
+//
+// Return the offset with UTC measured in miliseconds
+OB.Utilities.Date.getUTCOffsetInMiliseconds = function () {
+  var UTCHourOffset = isc.Time.getUTCHoursDisplayOffset(new Date()),
+      UTCMinuteOffset = isc.Time.getUTCMinutesDisplayOffset(new Date());
+  return (UTCHourOffset * 60 * 60 * 1000) + (UTCMinuteOffset * 60 * 1000);
 };

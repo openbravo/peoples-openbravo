@@ -656,7 +656,8 @@ isc.OBGrid.addProperties({
       viewState: expProp.viewState,
       tab: expProp.tab,
       exportToFile: true,
-      _textMatchStyle: 'substring'
+      _textMatchStyle: 'substring',
+      _UTCOffsetMiliseconds: OB.Utilities.Date.getUTCOffsetInMiliseconds()
     }, lcriteria, this.getFetchRequestParams());
     if (this.getSortField()) {
       sortCriteria = this.getSort();
