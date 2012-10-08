@@ -202,6 +202,8 @@ isc.OBPickAndExecuteView.addProperties({
       window.view.messageBar.setMessage(message.severity, message.text);
     }
 
+    this.buttonOwnerView.setAsActiveView();
+
     if (refresh) {
       window.refresh();
     }
@@ -318,7 +320,7 @@ isc.OBPickAndExecuteView.addProperties({
     var i, tmp, view = this,
         grid = view.viewGrid,
         activeView = view.parentWindow && view.parentWindow.activeView,
-        allProperties = activeView.getContextInfo(false, true, false, true) || {},
+        allProperties = this.sourceView.getContextInfo(false, true, false, true) || {},
         selection = grid.getSelectedRecords() || [],
         len = selection.length,
         allRows = grid.data.allRows || grid.data;
