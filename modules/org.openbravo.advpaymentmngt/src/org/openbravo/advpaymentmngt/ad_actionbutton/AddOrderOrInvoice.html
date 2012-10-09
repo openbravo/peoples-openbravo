@@ -98,11 +98,14 @@ function distributeAmount(_amount) {
       keepSelection = true;
     }
     for (i = 0; i < total; i++) {
-      if (chk[i].checked && keepSelection) {
-        continue;
-      }
       scheduledPaymentDetailId = frm.elements["inpRecordId" + i].value;
       outstandingAmount = frm.elements["inpRecordAmt" + scheduledPaymentDetailId].value;
+      if (chk[i].checked && keepSelection) {
+        if(compare(outstandingAmount, '<', amount) && compare(distributedAmount, '==', outstandingAmount))
+    	  continue;
+        else
+          amount = add(amount, frm.elements["inpPaymentAmount" + chk[i].value].value);
+      }
       if ( compare(outstandingAmount, '>', amount) ) {
         outstandingAmount = amount;
       }
