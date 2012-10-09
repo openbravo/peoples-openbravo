@@ -133,11 +133,9 @@ public class EmailSender implements Runnable {
     } finally {
       OBDal.getInstance().save(order);
       OBDal.getInstance().flush();
-      log4j.info("DOOOOOOOOOOONE!!!!!! we sent a email to "
-          + jsonorder.getJSONObject("bp").getString("email"));
+      log4j.info("DONE! we sent a email to " + jsonorder.getJSONObject("bp").getString("email"));
       log4j.info("Client: " + jsonorder.getString("client"));
       log4j.info("Organization: " + jsonorder.getString("organization"));
-
     }
 
   }

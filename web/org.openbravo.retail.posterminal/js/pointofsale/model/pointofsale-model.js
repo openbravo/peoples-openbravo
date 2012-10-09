@@ -80,7 +80,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
     
     ViewManager = Backbone.Model.extend({
       defaults: {
-        currentWindow: 'mainSubWindow'
+        currentWindow: {name: 'mainSubWindow', params:[]}
       },
       initialize: function() {
       }
@@ -89,7 +89,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
     orderList = new OB.Collection.OrderList(receipt);
     this.set('orderList', orderList);
 
-    this.set('windowManager', new ViewManager);
+    this.set('subWindowManager', new ViewManager());
     discounts = new OB.DATA.OrderDiscount(receipt);
     ordersave = new OB.DATA.OrderSave(this);
     taxes = new OB.DATA.OrderTaxes(receipt);
