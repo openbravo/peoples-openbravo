@@ -164,7 +164,7 @@ public class OBContext implements OBNotSingleton {
     } else if (OBContext.getOBContext() == adminContext) {
       return;
     }
-    if (OBContext.getOBContext() != null) {
+    if (OBContext.getOBContext() != null && ADMIN_TRACE_SIZE != 0) {
       addStackTrace("setAdminMode");
     }
   }
@@ -219,7 +219,9 @@ public class OBContext implements OBNotSingleton {
     if (OBContext.getOBContext() == null) {
       return;
     }
-    addStackTrace("restorePreviousMode");
+    if (ADMIN_TRACE_SIZE != 0) {
+      addStackTrace("restorePreviousMode");
+    }
     if (stack.isEmpty() && OBContext.getOBContext() == adminContext) {
       OBContext.setOBContext((OBContext) null);
     }
@@ -255,10 +257,6 @@ public class OBContext implements OBNotSingleton {
   }
 
   private static void addStackTrace(String prefix) {
-    if (ADMIN_TRACE_SIZE == 0) {
-      return;
-    }
-
     final StringWriter sw = new StringWriter();
     final PrintWriter pw = new PrintWriter(sw);
     sw.write(prefix + "\n");
