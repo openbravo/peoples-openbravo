@@ -156,12 +156,7 @@ BEGIN
         raise notice '%', Cur_Offer.PL_Order_Implementor;
         if (v_apply_next = 'Y' AND Cur_Offer.PL_Order_Implementor is not null) then
           v_method := Cur_Offer.PL_Order_Implementor || '('''||Cur_Offer.M_Offer_ID||''','''||Cur_Order.C_OrderLine_ID||''', '||v_precision||', '''||p_user_id||''', '''||v_taxIncluded||''')';
-          if (AD_Get_RDBMS() = 'ORACLE') then
-            execute 'CALL ' || v_method;
-          --TODO: do it  execute 'begin :1:=test0(); end;' using out v_aa;
-          else
-            execute 'SELECT ' || v_method ||' FROM DUAL' into v_apply_next;
-          end if;
+          v_apply_next := AD_Execute_Function(v_method);
         end if;
       end loop;
     end if;
