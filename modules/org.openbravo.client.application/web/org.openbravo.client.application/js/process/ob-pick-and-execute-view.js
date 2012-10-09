@@ -199,7 +199,7 @@ isc.OBPickAndExecuteView.addProperties({
     var window = this.parentWindow;
 
     if (message) {
-      window.view.messageBar.setMessage(message.severity, message.text);
+      this.buttonOwnerView.messageBar.setMessage(message.severity, message.text);
     }
 
     this.buttonOwnerView.setAsActiveView();
