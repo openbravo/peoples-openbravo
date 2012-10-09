@@ -63,7 +63,7 @@ BEGIN
         AND l.m_warehouse_id = p_warehouse_id
       GROUP BY t.m_locator_id
       HAVING sum(ms.quantity) >= v_quantity
-      ORDER BY ms.priority
+      ORDER BY MIN(ms.priority)
   ) LOOP
     v_selectedlocatorid := cur_mstock.m_locator_id;
     EXIT;
