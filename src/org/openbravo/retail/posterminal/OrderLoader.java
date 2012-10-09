@@ -171,11 +171,13 @@ public class OrderLoader extends JSONProcessSimple {
     Order order = null;
     ShipmentInOut shipment = null;
     Invoice invoice = null;
+    boolean sendEmail = false;
     TriggerHandler.getInstance().disable();
     try {
       t1 = System.currentTimeMillis();
       boolean createInvoice = (jsonorder.has("generateInvoice") && jsonorder
           .getBoolean("generateInvoice"));
+      sendEmail = (jsonorder.has("sendEmail") && jsonorder.getBoolean("sendEmail"));
       // Order header
       order = OBProvider.getInstance().get(Order.class);
       long t111 = System.currentTimeMillis();
@@ -230,6 +232,11 @@ public class OrderLoader extends JSONProcessSimple {
 
     // Stock manipulation
     handleStock(shipment);
+
+    // Send email
+    if (sendEmail) {
+      EmailSender emailSender = new EmailSender(order, jsonorder);
+    }
 
     log.info("Initial flush: " + (t1 - t0) + "; Generate bobs:" + (t11 - t1) + "; Save bobs:"
         + (t2 - t11) + "; First flush:" + (t3 - t2) + "; Second flush: " + (t4 - t3)
@@ -539,6 +546,7 @@ public class OrderLoader extends JSONProcessSimple {
     order.setDocumentAction("--");
     order.setProcessed(true);
     order.setProcessNow(false);
+    order.setObposSendemail((jsonorder.has("sendEmail") && jsonorder.getBoolean("sendEmail")));
 
     JSONObject taxes = jsonorder.getJSONObject("taxes");
     @SuppressWarnings("unchecked")

@@ -442,6 +442,16 @@ div.btnlink {
   background-image: url('../img/checkbox-off.png');
 }
 
+/*if disabled don't change*/
+
+.btn-check[disabled="disabled"]:active{
+  background-image: url('../img/checkbox-off.png');
+}
+
+.btn-check.active[disabled="disabled"]:active{
+  background-image: url('../img/checkbox-on.png');
+}
+
 .btn-radio,
 .btn-radio:hover,
 .btn-radio:active,
@@ -605,6 +615,7 @@ h3.modal-dialog-header-text {
   color: white;
 }
 
+div.modal-dialog-content-receipt-properties,
 div.modal-dialog-content-text,
 div.modal-dialog-content-profile {
   text-align: center;
@@ -613,11 +624,16 @@ div.modal-dialog-content-profile {
   color: white;
   margin: 15px 50px 10px 50px;
 }
+
 div.modal-dialog-content-text > div > br {
   line-height: 50px;
 }
 
 div.modal-dialog-content-profile {
+  margin: 0px;
+}
+
+div.modal-dialog-content-receipt-properties {
   margin: 0px;
 }
 
@@ -635,6 +651,13 @@ button.modal-dialog-content-button {
 }
 
 .modal-dialog-profile-combo {
+  height: 40px;
+  width: 343px;
+  margin: 0px;
+  background-color: white;
+}
+
+.modal-dialog-receipt-properties-text {
   height: 40px;
   width: 343px;
   margin: 0px;

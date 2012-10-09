@@ -1,4 +1,4 @@
-/*global OB, enyo, confirm */
+/*global OB, enyo, $, confirm */
 
 /*
  ************************************************************************************
@@ -29,7 +29,9 @@ enyo.kind({
     onChangeCurrentOrder: 'changeCurrentOrder',
     onChangeBusinessPartner: 'changeBusinessPartner',
     onPrintReceipt: 'printReceipt',
-    onChangeWindow: 'changeWindow'
+    onChangeSubWindow: 'changeSubWindow',
+    onSetProperty: 'setProperty',
+    onShowReceiptProperties: 'showModalReceiptProperties'
   },
   components: [{
     name: 'otherSubWindowsContainer',
@@ -39,6 +41,8 @@ enyo.kind({
       kind: 'OB.UI.ModalDeleteReceipt'
     }, {
       kind: 'OB.UI.ModalBusinessPartners'
+    }, {
+      kind: 'OB.UI.ModalReceiptPropertiesImpl'
     }, {
       classes: 'row',
       style: 'margin-bottom: 5px;',
@@ -142,21 +146,37 @@ enyo.kind({
     }
     this.model.get('order').removePayment(event.payment);
   },
-  changeWindow: function(sender, event) {
-    this.model.get('windowManager').set('currentWindow', event.newWindow);
+  changeSubWindow: function(sender, event) {
+    this.model.get('subWindowManager').set('currentWindow', event.newWindow);
+  },
+  showModalReceiptProperties: function(inSender, inEvent) {
+    $('#receiptPropertiesDialog').modal('show');
+    return true;
+  },
+  setProperty: function(inSender, inEvent) {
+    this.model.get('order').setProperty(inEvent.property, inEvent.value);
+    this.model.get('orderList').saveCurrent();
+    return true;
+  },
+  beforeSetShowing: function(value, params){
+    this.setShowing(value);
   },
   init: function() {
     var receipt, receiptList;
     this.inherited(arguments);
     receipt = this.model.get('order');
     receiptList = this.model.get('orderList');
-    this.model.get('windowManager').on('change:currentWindow', function(changedModel) {
+    this.model.get('subWindowManager').on('change:currentWindow', function(changedModel) {
       //TODO backbone route
-      if (this.$[changedModel.get('currentWindow')]) {
-        this.$[changedModel.previousAttributes().currentWindow].setShowing(false);
-        this.$[changedModel.get('currentWindow')].setShowing(true);
+      if (this.$[changedModel.get('currentWindow').name]) {
+        this.$[changedModel.previousAttributes().currentWindow.name].setShowing(false);
+        if (this.$[changedModel.get('currentWindow').name].beforeSetShowing) {
+          this.$[changedModel.get('currentWindow').name].beforeSetShowing(true, changedModel.get('currentWindow').params);
+        } else {
+          this.$[changedModel.get('currentWindow').name].setShowing(true);
+        }
       } else {
-        this.model.get('windowManager').set('currentWindow', changedModel.previousAttributes().currentWindow, {
+        this.model.get('subWindowManager').set('currentWindow', changedModel.previousAttributes().currentWindow, {
           silent: true
         });
       }

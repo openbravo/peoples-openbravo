@@ -64,6 +64,18 @@ enyo.kind({
 });
 
 enyo.kind({
+  name: 'OB.UI.MenuProperties',
+  kind: 'OB.UI.MenuAction',
+  events: {
+    onShowReceiptProperties: ''
+  },
+  label: OB.I18N.getLabel('OBPOS_LblProperties'),
+  tap: function() {
+    this.doShowReceiptProperties();
+  }
+});
+
+enyo.kind({
   name: 'OB.UI.MenuInvoice',
   kind: 'OB.UI.MenuAction',
   permission: 'OBPOS_receipt.invoice',
@@ -100,6 +112,9 @@ enyo.kind({
     this.menuEntries = [];
     this.menuEntries.push({
       kind: 'OB.UI.MenuReturn'
+    });
+    this.menuEntries.push({
+      kind: 'OB.UI.MenuProperties'
     });
     this.menuEntries.push({
       kind: 'OB.UI.MenuInvoice'

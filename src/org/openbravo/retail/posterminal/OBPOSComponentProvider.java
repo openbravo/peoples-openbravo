@@ -96,6 +96,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/modalonline",
         "components/modalcancel",
         "components/windowview",
+        "components/modalreceiptproperties",
         "main",
         // Web POS window
         "components/keypadbasic", "components/keyboard", "components/keypadcoins",

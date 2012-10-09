@@ -162,6 +162,9 @@
         this.set('taxes', attributes.taxes);
         this.set('hasbeenpaid', attributes.hasbeenpaid);
         this.set('isbeingprocessed', attributes.isbeingprocessed);
+        this.set('description', attributes.description);
+        this.set('print', attributes.print);
+        this.set('sendEmail', attributes.sendEmail);
         _.each(_.keys(attributes), function(key) {
           if (!this.has(key)) {
             this.set(key, attributes[key]);
@@ -275,6 +278,9 @@
       this.set('gross', OB.DEC.Zero);
       this.set('hasbeenpaid', 'N');
       this.set('isbeingprocessed', 'N');
+      this.set('description', '');
+      this.set('print', true);
+      this.set('sendEmail', false);
     },
 
     clearWith: function(_order) {
@@ -628,6 +634,11 @@
       }
 
       return jsonorder;
+    },
+
+    setProperty: function(_property, _value) {
+      this.set(_property, _value);
+      this.save();
     }
   });
 
@@ -675,6 +686,8 @@
       order.set('documentNo', OB.POS.modelterminal.get('terminal').docNoPrefix + '/' + documentseqstr);
 
       order.set('bp', OB.POS.modelterminal.get('businessPartner'));
+      order.set('print', true);
+      order.set('sendEmail', false);
       return order;
     },
 
@@ -682,10 +695,12 @@
       this.saveCurrent();
       this.current = this.newOrder();
       this.add(this.current);
-      this.loadCurrent();
+      this.loadCurrent(true);
     },
 
     deleteCurrent: function() {
+      var isNew = false;
+
       function deleteCurrentFromDatabase(orderToDelete) {
         OB.Dal.remove(orderToDelete, function() {
           return true;
@@ -701,8 +716,9 @@
         } else {
           this.current = this.newOrder();
           this.add(this.current);
+          isNew = true;
         }
-        this.loadCurrent();
+        this.loadCurrent(isNew);
       }
     },
 
@@ -721,8 +737,14 @@
         this.current.clearWith(this.modelorder);
       }
     },
-    loadCurrent: function() {
+    loadCurrent: function(isNew) {
       if (this.current) {
+        if (isNew) {
+          //set values of new attrs in current, 
+          //this values will be copied to modelOrder
+          //in the next instruction
+          this.modelorder.trigger('beforeChangeOrderForNewOne', this.current);
+        }
         this.modelorder.clearWith(this.current);
       }
     }
