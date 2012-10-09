@@ -27,6 +27,7 @@
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
   v_Record_ID VARCHAR2(32);
+  v_result NUMBER:=1;
   
   -- Parameter
   TYPE RECORD IS REF CURSOR;
@@ -43,7 +44,7 @@
   v_AttributesetinstanceID  VARCHAR2(32) ;
   v_AD_User_ID VARCHAR2(32) ;
   v_ClientID VARCHAR2(32) ;
-  v_UniqueAttribute CHAR(1);
+  v_warehouse_rule_id VARCHAR2(32);
   v_UomID VARCHAR2(32) ;
   v_ProductUomID VARCHAR2(32) ;
   v_TableID  VARCHAR2(32):='-1';
@@ -98,9 +99,9 @@ BEGIN --BODY
     ELSIF (Cur_Parameter.ParameterName = 'M_AttributesetInstance_ID') THEN
       v_AttributesetinstanceID:=Cur_Parameter.P_String;
       DBMS_OUTPUT.PUT_LINE(' M_AttributesetInstance_ID=' || v_AttributesetinstanceID);
-    ELSIF (Cur_Parameter.ParameterName = 'UniqueAttribute') THEN
-      v_UniqueAttribute:=Cur_Parameter.P_String;
-      DBMS_OUTPUT.PUT_LINE(' UniqueAttribute=' || v_UniqueAttribute);
+    ELSIF (Cur_Parameter.ParameterName = 'M_Warehouse_Rule_ID') THEN
+      v_warehouse_rule_id:=Cur_Parameter.P_String;
+      DBMS_OUTPUT.PUT_LINE(' M_Warehouse_Rule_ID=' || v_warehouse_rule_id);
     ELSIF (Cur_Parameter.ParameterName = 'TableId') THEN
       v_TableID:=Cur_Parameter.P_String;
       DBMS_OUTPUT.PUT_LINE(' TableId=' || v_TableID);
@@ -127,6 +128,7 @@ BEGIN --BODY
           JOIN m_locator l ON t.m_locator_id = l.m_locator_id
           JOIN m_warehouse w ON l.m_warehouse_id = w.m_warehouse_id
           JOIN ad_org_warehouse ow ON w.m_warehouse_id = ow.m_warehouse_id
+          LEFT JOIN m_attributesetinstance asi ON t.m_attributesetinstance_id = asi.m_attributesetinstance_id
           LEFT JOIN m_product_uom pu ON t.m_product_uom_id = pu.m_product_uom_id
           LEFT JOIN c_uom u ON pu.c_uom_id = u.c_uom_id
       WHERE t.m_product_id = v_productid
@@ -140,7 +142,7 @@ BEGIN --BODY
         AND COALESCE(w.m_warehouse_id, '-1') = COALESCE(v_warehouseid, w.m_warehouse_id, '-1')
         AND ow.ad_org_id = v_orgid
         AND COALESCE(ms.quantity, 0)>0
-      ORDER BY ow.priority, l.priorityno, lastupdated
+      ORDER BY ow.priority, l.priorityno, asi.created, t.created
   ) LOOP
     INSERT INTO m_stock_proposed (
         m_stock_proposed_id, ad_client_id, ad_org_id, isactive, 
@@ -161,6 +163,7 @@ BEGIN --BODY
           JOIN m_locator l ON t.m_locator_id=l.m_locator_id
           JOIN m_warehouse w ON l.m_warehouse_id = w.m_warehouse_id
           JOIN ad_org_warehouse ow ON w.m_warehouse_id = ow.m_warehouse_id
+          LEFT JOIN m_attributesetinstance asi ON t.m_attributesetinstance_id = asi.m_attributesetinstance_id
           LEFT JOIN m_product_uom pu ON t.m_product_uom_id = pu.m_product_uom_id
           LEFT JOIN c_uom u ON pu.c_uom_id = u.c_uom_id
       WHERE t.m_product_id=v_productid
@@ -171,7 +174,7 @@ BEGIN --BODY
         AND COALESCE(w.m_warehouse_id, '-1') = COALESCE(v_warehouseid, w.m_warehouse_id, '-1')
         AND ow.ad_org_id = v_orgid
         AND COALESCE(t.qtyonhand, 0)>0
-      ORDER BY ow.priority, l.priorityno, lastupdated
+      ORDER BY ow.priority, l.priorityno, asi.created, t.created
   ) LOOP
     INSERT INTO m_stock_proposed (
         m_stock_proposed_id, ad_client_id, ad_org_id, isactive, 
@@ -215,64 +218,55 @@ BEGIN --BODY
       WHERE ad_ep_instance_id = v_ep_instance;
     END;
   END IF;
-
-  IF (v_UniqueAttribute = 'Y') THEN
-    DECLARE
-      v_SelectedAttSetInstanceID VARCHAR2(32) ;
-      v_ProductName M_Product.NAME%TYPE;
-    BEGIN
-      DELETE FROM m_stock_proposed ms
-      WHERE ad_pinstance_id = pinstance_id
-        AND EXISTS (SELECT 1
-                    FROM m_storage_detail t
-                    WHERE t.m_storage_detail_id = ms.m_storage_detail_id
-                    AND t.m_attributesetinstance_id = '0');
-      v_SelectedAttSetInstanceID := null;
-
-      FOR Cur_MStock IN (
-          SELECT A.m_attributesetinstance_id
-          FROM (
-            SELECT sum(ms.quantity) AS qty, t.m_attributesetinstance_id, MIN(priority) AS priority
-            FROM m_stock_proposed ms
-                 JOIN m_storage_detail t ON ms.m_storage_detail_id = t.m_storage_detail_id
-            WHERE ad_pinstance_id = pinstance_id
-            GROUP BY t.m_attributesetinstance_id
-            HAVING sum(ms.quantity) >= v_quantity
-            ) A
-          ORDER BY A.priority
-      ) LOOP
-        v_SelectedAttSetInstanceID := Cur_MStock.M_ATTRIBUTESETINSTANCE_ID;
-        EXIT;
-      END LOOP;
   
-      IF (v_SelectedAttSetInstanceID IS NULL) THEN
-        -- Return with error result. Not enough stocked with unique attribute.
-        SELECT name INTO v_productname
-        FROM m_product
-        WHERE m_product_id = v_productid;
-        v_Message := '@Product@: ' || v_productname ||'. @NotEnoughAttUniqueStock@';
-        AD_UPDATE_PINSTANCE(PInstance_ID, NULL, 'N', 0, v_Message, p_calledfromapp) ;
-        RETURN;
+  -- Apply stock rules
+  DECLARE
+    v_sql VARCHAR2(2000);
+    v_applyrule CHAR(1);
+  BEGIN
+    FOR cur_warehouse IN (
+        SELECT l.m_warehouse_id, wr.procedurename, wr.m_warehouse_rule_id
+        FROM m_stock_proposed sp
+            JOIN m_storage_detail sd ON sp.m_storage_detail_id = sd.m_storage_detail_id
+            JOIN m_locator l ON sd.m_locator_id = l.m_locator_id
+            JOIN m_warehouse w ON l.m_warehouse_id = w.m_warehouse_id
+            JOIN m_warehouse_rule wr ON wr.m_warehouse_rule_id = COALESCE(v_warehouse_rule_id, w.m_warehouse_rule_id)
+        WHERE ad_pinstance_id = pinstance_id
+        GROUP BY l.m_warehouse_id, wr.m_warehouse_rule_id, wr.procedurename
+        ORDER BY MIN(sp.priority)
+    ) LOOP
+      IF (AD_GET_RDBMS() = 'ORACLE') THEN
+        v_Sql := 'CALL ' || cur_warehouse.procedurename || '('''||pinstance_id||''', '''||cur_warehouse.m_warehouse_id||''')';
       ELSE
-        DELETE FROM M_STOCK_PROPOSED MS
-        WHERE AD_PINSTANCE_ID = pinstance_id
-          AND EXISTS (SELECT 1
-                      FROM M_STORAGE_DETAIL T
-                      WHERE T.M_STORAGE_DETAIL_ID = MS.M_STORAGE_DETAIL_ID
-                        AND T.M_ATTRIBUTESETINSTANCE_ID <> v_SelectedAttSetInstanceID);
+        v_Sql := 'SELECT ' || cur_warehouse.procedurename || '('''||pinstance_id||''', '''||cur_warehouse.m_warehouse_id||''') FROM DUAL';
       END IF;
-    END;
-  END IF;
+      BEGIN
+        EXECUTE IMMEDIATE v_Sql;
+      EXCEPTION WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('ERROR EXECUTING STOCK RULE PROCEDURE');
+      END;
+      SELECT result, errormsg INTO v_result, v_message
+      FROM ad_pinstance
+      WHERE ad_pinstance_id = pinstance_id;
+      IF (v_result = 0) THEN
+        RAISE_APPLICATION_ERROR(-20000, v_message);
+      END IF;
+    END LOOP;
+  END;
 
   --  Update AD_PInstance
   DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
-  AD_UPDATE_PINSTANCE(PInstance_ID, NULL, 'N', 1, v_Message, p_calledfromapp) ;
+  AD_UPDATE_PINSTANCE(PInstance_ID, NULL, 'N', v_result, v_Message, p_calledfromapp) ;
   RETURN;
 END; --BODY
 EXCEPTION
 WHEN OTHERS THEN
   DBMS_OUTPUT.PUT_LINE(v_ResultStr) ;
-  v_ResultStr:= '@ERROR=' || SQLERRM;
+  IF (SQLERRM LIKE '@ERROR=%') THEN
+    v_resultstr := SQLERRM;
+  ELSE
+    v_ResultStr:= '@ERROR=' || SQLERRM;
+  END IF;
   DBMS_OUTPUT.PUT_LINE(v_ResultStr) ;
   AD_UPDATE_PINSTANCE(PInstance_ID, NULL, 'N', 0, v_ResultStr, p_calledfromapp);
   IF (p_calledfromapp = 'Y') THEN
