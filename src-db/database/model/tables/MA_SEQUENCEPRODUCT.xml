@@ -93,6 +93,10 @@
         <default><![CDATA[0]]></default>
         <onCreateDefault/>
       </column>
+      <column name="M_WAREHOUSE_RULE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MASEQUENCEPRODUCT">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
@@ -110,6 +114,9 @@
       </foreign-key>
       <foreign-key foreignTable="MA_SEQUENCE" name="MA_SEQUENCEPRODUCT_MA_SEQUENCE">
         <reference local="MA_SEQUENCE_ID" foreign="MA_SEQUENCE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_WAREHOUSE_RULE" name="MA_SEQUENCERODUCT_WHRULE">
+        <reference local="M_WAREHOUSE_RULE_ID" foreign="M_WAREHOUSE_RULE_ID"/>
       </foreign-key>
       <index name="MA_SEQ_PROD_SEQ_ID" unique="false">
         <index-column name="MA_SEQUENCE_ID"/>
