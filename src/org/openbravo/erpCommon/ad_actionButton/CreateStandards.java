@@ -255,7 +255,7 @@ public class CreateStandards implements org.openbravo.scheduling.Process {
             attSetInstanceTo.setGuaranteeDate(dateToString(addDays(movementdate, days)));
           }
           OBError createAttributeInstanceError = attSetInstanceTo.setAttributeInstance(conn, vars,
-              opProduct.getProduct().getAttributeSet().getId(), "", "", "N", opProduct.getProduct()
+              opProduct.getProduct().getAttributeSet().getId(), "", "", "Y", opProduct.getProduct()
                   .getId(), attValues);
           if (!createAttributeInstanceError.getType().equals("Success")) {
             throw new OBException(createAttributeInstanceError.getMessage());
