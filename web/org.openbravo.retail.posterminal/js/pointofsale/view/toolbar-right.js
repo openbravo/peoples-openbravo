@@ -185,6 +185,14 @@ enyo.kind({
     onTabChange: ''
   },
   tap: function() {
+    var receipt = this.model.get('order');
+    if(receipt.get('quotation')){
+      receipt.calculateTaxes(function() {
+      receipt.trigger('closed');
+      //this.get('orderList').deleteCurrent();
+  });
+      return;
+    }
     this.doTabChange({
       keyboard: 'toolbarpayment',
       edit: false
@@ -206,6 +214,9 @@ enyo.kind({
   initComponents: function() {
     this.inherited(arguments);
     this.removeClass('btnlink-gray');
+  },
+  init: function(model){
+    this.model = model
   },
   renderTotal: function(sender, event) {
     this.$.totalPrinter.renderTotal(event.newTotal);

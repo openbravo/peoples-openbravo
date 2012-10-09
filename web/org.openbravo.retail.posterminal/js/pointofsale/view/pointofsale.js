@@ -19,6 +19,7 @@ enyo.kind({
     onAddProduct: 'addProductToOrder',
     onCancelReceiptToInvoice: 'cancelReceiptToInvoice',
     onReceiptToInvoice: 'receiptToInvoice',
+    onCreateQuotation: 'createQuotation',
     onShowReturnText: 'showReturnText',
     onAddNewOrder: 'addNewOrder',
     onDeleteOrder: 'deleteCurrentOrder',
@@ -98,6 +99,11 @@ enyo.kind({
   },
   receiptToInvoice: function() {
     this.model.get('order').setOrderInvoice();
+    this.model.get('orderList').saveCurrent();
+    return true;
+  },
+  createQuotation: function(){
+    this.model.get('order').createQuotation();
     this.model.get('orderList').saveCurrent();
     return true;
   },

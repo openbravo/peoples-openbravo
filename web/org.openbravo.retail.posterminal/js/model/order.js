@@ -140,6 +140,7 @@
         this.set('updatedBy', attributes.updatedBy);
         this.set('orderType', attributes.orderType); // 0: Sales order, 1: Return order
         this.set('generateInvoice', attributes.generateInvoice);
+        this.set('quotation', attributes.quotation);
         this.set('priceList', attributes.priceList);
         this.set('currency', attributes.currency);
         this.set('currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, attributes['currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER]);
@@ -255,6 +256,7 @@
       this.set('documentType', null);
       this.set('orderType', 0); // 0: Sales order, 1: Return order
       this.set('generateInvoice', false);
+      this.set('quotation', false);
       this.set('priceList', null);
       this.set('currency', null);
       this.set('currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, null);
@@ -483,6 +485,15 @@
         this.save();
       }
     },
+    
+    createQuotation: function() {
+      if (OB.POS.modelterminal.hasPermission('OBPOS_receipt.quotation')) {
+        this.set('quotation', true);
+        this.set('documentType', OB.POS.modelterminal.get('terminal').documentTypeForQuotations);
+        this.save();
+      }
+    },
+    
 
     resetOrderInvoice: function() {
       if (OB.POS.modelterminal.hasPermission('OBPOS_receipt.invoice')) {
@@ -658,6 +669,7 @@
       order.set('documentType', OB.POS.modelterminal.get('terminal').documentType);
       order.set('orderType', 0); // 0: Sales order, 1: Return order
       order.set('generateInvoice', false);
+      order.set('quotation', false);
       order.set('session', OB.POS.modelterminal.get('session'));
       order.set('priceList', OB.POS.modelterminal.get('terminal').priceList);
       order.set('currency', OB.POS.modelterminal.get('terminal').currency);

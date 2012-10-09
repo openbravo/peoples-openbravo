@@ -92,6 +92,23 @@ enyo.kind({
 });
 
 enyo.kind({
+  name: 'OB.UI.MenuQuotation',
+  kind: 'OB.UI.MenuAction',
+  permission: 'OBPOS_receipt.quotation',
+  events: {
+    onCreateQuotation: ''
+  },
+  label: OB.I18N.getLabel('OBPOS_CreateQuotation'),
+  tap: function() {
+    if(OB.POS.modelterminal.get('terminal').documentTypeForQuotations){
+      this.doCreateQuotation();
+    }else{
+      OB.UTIL.showError(OB.I18N.getLabel('OBPOS_QuotationNoDocType'));
+    }
+  }
+});
+
+enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.StandardMenu',
   kind: 'OB.UI.ToolbarMenu',
   icon: 'btn-icon btn-icon-menu',
@@ -106,6 +123,9 @@ enyo.kind({
     });
     this.menuEntries.push({
       kind: 'OB.UI.MenuPrint'
+    });
+    this.menuEntries.push({
+      kind: 'OB.UI.MenuQuotation'
     });
 
     this.menuEntries.push({

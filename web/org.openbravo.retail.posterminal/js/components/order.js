@@ -40,6 +40,20 @@ enyo.kind({
 });
 
 enyo.kind({
+  name: 'btnquotation',
+  showing: false,
+  style: 'float: left; width: 50%;',
+  components: [{
+    tag: 'span',
+    content: ' '
+  }, {
+    tag: 'span',
+    style: 'font-weight:bold; ',
+    content: 'Quotation'
+  }]
+});
+
+enyo.kind({
   name: 'OB.UI.OrderView',
   published: {
     order: null
@@ -83,6 +97,10 @@ enyo.kind({
           style: 'float: right; width: 50%; text-align: right; font-weight:bold; font-size: 30px; color: #f8941d;',
           content: OB.I18N.getLabel('OBPOS_ToBeReturned')
         }, {
+          kind: 'btnquotation',
+          name: 'divbtnquotation',
+          showing: false
+        }, {
           style: 'clear: both;'
         }]
       }]
@@ -112,6 +130,13 @@ enyo.kind({
         this.$.divbtninvoice.show();
       } else {
         this.$.divbtninvoice.hide();
+      }
+    }, this);
+    this.order.on('change:quotation', function(model) {
+      if (model.get('quotation')) {
+        this.$.divbtnquotation.show();
+      } else {
+        this.$.divbtnquotation.hide();
       }
     }, this);
   }

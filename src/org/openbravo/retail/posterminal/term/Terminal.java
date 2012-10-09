@@ -49,13 +49,15 @@ public class Terminal extends ProcessHQLQuery {
         + getIdentifierAlias("documentType")
         + ", pos.obposTerminaltype.documentTypeForReturns.id as documentTypeForReturns, pos.obposTerminaltype.documentTypeForReturns.name as "
         + getIdentifierAlias("documentTypeForReturns")
+        + ", quot.id as documentTypeForQuotations, quot.name as "
+        + getIdentifierAlias("documentTypeForQuotations")
         + ", pos.organization.obretcoMWarehouse.id as warehouse "
         + ", pos.orderdocnoPrefix as docNoPrefix "
         + ", "
         + lastDocumentNumber
         + " as lastDocumentNumber, pos.obposTerminaltype.minutestorefreshdatatotal as minutestorefreshdatatotal, "
         + " pos.obposTerminaltype.minutestorefreshdatainc as minutestorefreshdatainc"
-        + " from OBPOS_Applications AS pos where pos.$readableCriteria and searchKey = :terminal";
+        + " from OBPOS_Applications AS pos left join pos.obposTerminaltype.documentTypeForQuotations as quot where pos.$readableCriteria and pos.searchKey = :terminal";
   }
 
   private String getIdentifierAlias(String propertyName) {
