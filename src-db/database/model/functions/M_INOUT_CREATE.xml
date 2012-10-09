@@ -341,6 +341,7 @@ BEGIN --BODY
           v_UOM_old varchar2(32);
           v_Attribute_old varchar2(32);
           v_Product_UOM_old varchar2(32);
+          v_orderline_old varchar2(32);
           v_QtyStorage NUMBER:=0;
           v_LocatorQty NUMBER;
           v_Locator_ID VARCHAR2(32) ;
@@ -391,12 +392,14 @@ BEGIN --BODY
                         OR v_Warehouse_old<>ol.M_Warehouse_ID
                         OR v_UOM_old<>ol.C_UOM_ID
                         OR COALESCE(v_Attribute_old, '0') <> COALESCE(ol.M_AttributeSetInstance_ID, '0')
-                        OR COALESCE(v_Product_UOM_old, '0') <> COALESCE(ol.M_Product_UOM_ID, '0'))) THEN
+                        OR COALESCE(v_Product_UOM_old, '0') <> COALESCE(ol.M_Product_UOM_ID, '0'))
+                        OR v_orderline_old<>ol.c_orderline_id) THEN
                   v_Product_old := ol.M_Product_ID;
                   v_Warehouse_old := ol.M_Warehouse_ID;
                   v_UOM_old := ol.C_UOM_ID;
                   v_Attribute_old := ol.M_AttributeSetInstance_ID;
                   v_Product_UOM_old := ol.M_Product_UOM_ID;
+                  v_orderline_old := ol.c_orderline_id;
                   IF (Cur_Storage_ISOPEN) THEN
                     CLOSE Cur_Storage;
                     Cur_Storage_ISOPEN:=false;
@@ -406,6 +409,7 @@ BEGIN --BODY
                   DECLARE
                     v_pinstance_result AD_PInstance.result%TYPE;
                     v_pinstance_msg AD_PInstance.errormsg%TYPE;
+                    v_warehouse_rule_id VARCHAR2(32);
                   BEGIN
                     v_pinstance_id := get_uuid();
                     INSERT INTO ad_pinstance (
@@ -419,14 +423,20 @@ BEGIN --BODY
                     );
       
                     AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '10', 'AD_Client_ID', v_ad_client_id, null, null, null, null, null);
-                    --AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '20', 'AD_Org_ID', cur_bom.org_id, null, null, null, null, null);
+                    AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '20', 'AD_Org_ID', Cur_Order.AD_Org_ID, null, null, null, null, null);
                     AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '30', 'M_Product_ID', v_Product_old, null, null, null, null, null);
                     AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '40', 'C_Uom_ID', v_UOM_old, null, null, null, null, null);
                     AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '50', 'M_Product_Uom_ID', v_Product_UOM_old, null, null, null, null, null);
                     AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '60', 'M_Warehouse_ID', v_Warehouse_old, null, null, null, null, null);
                     AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '70', 'M_AttributesetInstance_ID', v_Attribute_old, null, null, null, null, null);
-                    AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '90', 'ProcessID', '137', null, null, null, null, null);
-      
+                    AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '80', 'Quantity', null, null, v_Qty, null, null, null);
+                    AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '90', 'ProcessID', '118', null, null, null, null, null);
+
+                    SELECT m_warehouse_rule_id INTO v_warehouse_rule_id
+                    FROM c_orderline
+                    WHERE c_orderline_id = ol.c_orderline_id;
+                    AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '100', 'M_Warehouse_Rule_ID', v_warehouse_rule_id, null, null, null, null, null);
+
                     M_GET_STOCK(v_pinstance_ID, 'N');
                     -- Check result
                     SELECT result, errormsg
