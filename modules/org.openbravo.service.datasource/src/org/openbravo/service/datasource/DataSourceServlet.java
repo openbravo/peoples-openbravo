@@ -333,28 +333,39 @@ public class DataSourceServlet extends BaseKernelServlet {
         // Now we calculate ref lists and nice property names
         final String userLanguageId = OBContext.getOBContext().getLanguage().getId();
         if (entity != null) {
+          final Map<String, Property> properties = new HashMap<String, Property>();
           for (Property prop : entity.getProperties()) {
             if (!fieldProperties.contains(prop.getName())) {
               continue;
             }
+            properties.put(prop.getName(), prop);
+          }
+          for (String fieldProperty : fieldProperties) {
+            if (fieldProperty.contains(DalUtil.FIELDSEPARATOR)) {
+              properties.put(fieldProperty, DalUtil.getPropertyFromPath(entity, fieldProperty));
+            }
+          }
+
+          for (String propKey : properties.keySet()) {
+            final Property prop = properties.get(propKey);
             Column col = OBDal.getInstance().get(Column.class, prop.getColumnId());
 
             if (prop.isAuditInfo()) {
               Element element = null;
-              if ("creationDate".equals(prop.getName())) {
+              if ("creationDate".equals(propKey)) {
                 element = OBViewUtil.createdElement;
-              } else if ("createdBy".equals(prop.getName())) {
+              } else if ("createdBy".equals(propKey)) {
                 element = OBViewUtil.createdByElement;
-              } else if ("updated".equals(prop.getName())) {
+              } else if ("updated".equals(propKey)) {
                 element = OBViewUtil.updatedElement;
-              } else if ("updatedBy".equals(prop.getName())) {
+              } else if ("updatedBy".equals(propKey)) {
                 element = OBViewUtil.updatedByElement;
               }
               if (element != null) {
-                niceFieldProperties.put(prop.getName(),
+                niceFieldProperties.put(propKey,
                     OBViewUtil.getLabel(element, element.getADElementTrlList()));
               } else {
-                niceFieldProperties.put(prop.getName(), col.getName());
+                niceFieldProperties.put(propKey, col.getName());
               }
             } else if (parameters.get("tab") != null && !parameters.get("tab").equals("")) {
               Tab tab = OBDal.getInstance().get(Tab.class, parameters.get("tab"));
@@ -362,21 +373,31 @@ public class DataSourceServlet extends BaseKernelServlet {
                 if (field.getColumn() == null || !field.getColumn().getId().equals(col.getId())) {
                   continue;
                 }
-                niceFieldProperties.put(prop.getName(), field.getName());
+                niceFieldProperties.put(propKey, field.getName());
                 for (FieldTrl fieldTrl : field.getADFieldTrlList()) {
                   if (fieldTrl.getLanguage().getId().equals(userLanguageId)) {
-                    niceFieldProperties.put(prop.getName(), fieldTrl.getName());
+                    niceFieldProperties.put(propKey, fieldTrl.getName());
                   }
                 }
               }
             } else {
-              niceFieldProperties.put(prop.getName(), col.getName());
+              niceFieldProperties.put(propKey, col.getName());
             }
             UIDefinition uiDef = UIDefinitionController.getInstance().getUIDefinition(col.getId());
             if (uiDef instanceof NumberUIDefinition) {
-              formats.put(prop.getName(),
+              formats.put(propKey,
                   Utility.getFormat(vars, ((NumberUIDefinition) uiDef).getFormat()));
             }
+
+            // We also store the date properties
+            if (prop.isDate()) {
+              dateCols.add(propKey);
+            } else if (prop.isDatetime()) {
+              dateTimeCols.add(propKey);
+            } else if (prop.isPrimitive() && prop.isNumericType()) {
+              numericCols.add(propKey);
+            }
+
             if (!(prop.getDomainType() instanceof EnumerateDomainType)) {
               continue;
             }
@@ -400,19 +421,8 @@ public class DataSourceServlet extends BaseKernelServlet {
               final Object[] row = (Object[]) o;
               reflists.put(row[0].toString(), row[1].toString());
             }
-            refListCols.add(prop.getName());
-            refLists.put(prop.getName(), reflists);
-          }
-
-          // We also store the date properties
-          for (Property prop : entity.getProperties()) {
-            if (prop.isDate()) {
-              dateCols.add(prop.getName());
-            } else if (prop.isDatetime()) {
-              dateTimeCols.add(prop.getName());
-            } else if (prop.isPrimitive() && prop.isNumericType()) {
-              numericCols.add(prop.getName());
-            }
+            refListCols.add(propKey);
+            refLists.put(propKey, reflists);
           }
         }
         if (fieldProperties.size() > 0) {
@@ -421,8 +431,10 @@ public class DataSourceServlet extends BaseKernelServlet {
             if (i > 0) {
               writer.append(fieldSeparator);
             }
-            writer.append("\"").append(niceFieldProperties.get(fieldProperties.get(i)))
-                .append("\"");
+            if (niceFieldProperties.get(fieldProperties.get(i)) != null) {
+              writer.append("\"").append(niceFieldProperties.get(fieldProperties.get(i)))
+                  .append("\"");
+            }
           }
           propertiesWritten = true;
         }

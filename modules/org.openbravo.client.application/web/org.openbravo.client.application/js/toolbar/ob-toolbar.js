@@ -220,6 +220,7 @@ isc.OBToolbar.addClassProperties({
       var requestProperties = {
         exportAs: 'csv',
         exportDisplay: 'download',
+        _extraProperties: this.view && this.view.dataSource && this.view.dataSource.requestProperties.params._extraProperties,
         params: {
           exportToFile: true
         },

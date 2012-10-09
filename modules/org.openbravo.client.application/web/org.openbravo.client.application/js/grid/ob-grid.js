@@ -634,7 +634,7 @@ isc.OBGrid.addProperties({
   // be presented with a save-as dialog.
   // Parameters:
   // * {{{exportProperties}}} defines different properties used for controlling the export, currently only the 
-  // exportProperties.exportFormat is supported (which is defaulted to csv).
+  // exportProperties.exportAs and exportProperties._extraProperties are supported (which is defaulted to csv).
   // * {{{data}}} the parameters to post to the server, in addition the filter criteria of the grid are posted.  
   exportData: function (exportProperties, data) {
     var d = data || {},
@@ -654,6 +654,7 @@ isc.OBGrid.addProperties({
       // never do count for export
       exportAs: expProp.exportAs || 'csv',
       viewState: expProp.viewState,
+      _extraProperties: expProp._extraProperties,
       tab: expProp.tab,
       exportToFile: true,
       _textMatchStyle: 'substring',
