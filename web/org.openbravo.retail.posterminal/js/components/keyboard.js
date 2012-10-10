@@ -513,6 +513,7 @@ enyo.kind({
       kind: 'OB.UI.ButtonKey',
       label: this.btn.label,
       command: this.btn.command,
+      permission: this.btn.permission,
       definition: this.btn.definition,
       classButtonActive: this.btn.classButtonActive || 'btnactive-green'
     });

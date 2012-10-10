@@ -22,10 +22,13 @@ enyo.kind({
         style: 'border-bottom: 1px solid #cccccc;',
         components: [{
           name: 'name',
-          style: 'padding: 10px 20px 10px 10px; float: left; width: 20%'
+          style: 'padding: 10px 20px 10px 10px; float: left; width: 15%'
+        }, {
+          name: 'foreignExpected',
+          style: 'padding: 10px 10px 10px 0px; float: left; width: 15%;'
         }, {
           name: 'expected',
-          style: 'padding: 10px 20px 10px 10px; float: left; width: 20%'
+          style: 'padding: 10px 10px 10px 0px; float: left; width: 15%'
         }, {
           style: 'float: left;',
           components: [{
@@ -43,8 +46,12 @@ enyo.kind({
             ontap: 'lineOK'
           }]
         }, {
+          name: 'foreignCounted',
+          style: 'float: left; padding: 10px 0px 10px 0px; width: 15%',
+          content: ''
+        }, {
           name: 'counted',
-          style: 'float: left; padding: 10px 0px 10px 10px;',
+          style: 'float: left; padding: 10px 0px 10px 0px; width: 15%',
           showing: false
         }]
       }]
@@ -53,6 +60,10 @@ enyo.kind({
   create: function() {
     this.inherited(arguments);
     this.$.name.setContent(this.model.get('name'));
+    if(this.model.get('rate') && this.model.get('rate')!=='1'){
+      this.$.foreignExpected.setContent('('+OB.I18N.formatCurrency(OB.DEC.div(OB.DEC.add(0, this.model.get('expected')),this.model.get('rate')))+' '+ this.model.get('isocode') +')');
+      this.$.foreignExpected.show();
+    }
     this.$.expected.setContent(OB.I18N.formatCurrency(OB.DEC.add(0, this.model.get('expected'))));
   },
   render: function() {
@@ -62,6 +73,9 @@ enyo.kind({
     if (counted !== null && counted !== udfn) {
       this.$.counted.setContent(OB.I18N.formatCurrency(OB.DEC.add(0, counted)));
       this.$.counted.show();
+      if(this.model.get('rate') && this.model.get('rate')!=='1'){
+        this.$.foreignCounted.setContent('('+OB.I18N.formatCurrency(OB.DEC.div(OB.DEC.add(0, counted),this.model.get('rate')))+' '+this.model.get('isocode')+')');
+      }
       this.$.buttonOk.hide();
     }
   },
@@ -84,7 +98,7 @@ enyo.kind({
   },
   totalChanged: function(oldValue) {
     // console.log('totalC');
-    this.setContent(this.total);
+    this.setContent(OB.I18N.formatCurrency(this.total));
     if (OB.DEC.compare(this.total) < 0) {
       this.applyStyle('color', 'red');
     } else {
@@ -125,10 +139,10 @@ enyo.kind({
                 classes: 'span12',
                 style: 'border-bottom: 1px solid #cccccc;',
                 components: [{
-                  style: 'padding: 10px 20px 10px 10px; float: left; width: 20%',
+                  style: 'padding: 10px 20px 10px 10px; float: left; width: 32%',
                   content: OB.I18N.getLabel('OBPOS_LblPaymentMethod')
                 }, {
-                  style: 'padding: 10px 20px 10px 10px; float: left; width: 20%',
+                  style: 'padding: 10px 20px 10px 0px; float: left; width: 39%',
                   content: OB.I18N.getLabel('OBPOS_LblExpected')
                 }, {
                   style: 'padding: 10px 0px 10px 0px;  float: left;',
@@ -152,7 +166,7 @@ enyo.kind({
                   }, {
                     style: 'padding: 10px 20px 10px 10px;  float: left; width: 20%;'
                   }, {
-                    style: 'padding: 10px 20px 10px 10px;  float: left; width: 30px;'
+                    style: 'padding: 10px 20px 10px 10px;  float: left; width: 49px;'
                   }, {
                     style: 'float: left;',
                     components: [{
@@ -171,17 +185,17 @@ enyo.kind({
                 style: 'border-bottom: 1px solid #cccccc;',
                 components: [{
                   name: 'totalLbl',
-                  style: 'padding: 10px 20px 10px 10px; float: left; width: 20%;',
+                  style: 'padding: 10px 20px 10px 10px; float: left; width: 32%;',
                   content: OB.I18N.getLabel('OBPOS_ReceiptTotal')
                 }, {
-                  style: 'padding: 10px 20px 10px 0px; float: left; width: 20%;',
+                  style: 'padding: 10px 20px 10px 0px; float: left; width: 14%;',
                   components: [{
                     name: 'total',
                     kind: 'OB.OBPOSCashUp.UI.RenderTotal',
                     style: 'font-weight: bold;'
                   }]
                 }, {
-                  style: 'padding: 17px 10px 17px 10px; float: left; width: 44px'
+                  style: 'padding: 17px 10px 17px 10px; float: left; width: 126px'
                 }, {
                   style: 'padding: 10px 5px 10px 0px; float: left;',
                   components: [{

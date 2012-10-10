@@ -62,7 +62,7 @@
     }, true);
   };
   
-  OB.UTIL.processOrderClass = 'org.openbravo.retail.posterminal.ProcessOrder';
+  OB.UTIL.processOrderClass = 'org.openbravo.retail.posterminal.OrderLoader';
 
   OB.UTIL.processOrders = function(model, orders, successCallback, errorCallback) {
     var ordersToJson = [];

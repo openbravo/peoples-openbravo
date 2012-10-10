@@ -35,6 +35,7 @@ import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.RequestContext;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBError;
@@ -89,7 +90,20 @@ public class JSONRowConverter {
   private Object convert(String[] fi, Object obj) throws JSONException {
 
     if (obj instanceof BaseOBObject) {
-      return toJsonConverter.toJsonObject((BaseOBObject) obj, mode);
+      JSONObject jsonobj = toJsonConverter.toJsonObject((BaseOBObject) obj, mode);
+      // Performance improvement. These json fields are not needed by WebPOS and for instance no
+      // need to send.
+      jsonobj.remove("_entityName");
+      jsonobj.remove("$ref");
+      jsonobj.remove("active");
+      jsonobj.remove("created");
+      jsonobj.remove("createdBy");
+      jsonobj.remove("createdBy" + DalUtil.FIELDSEPARATOR + "_identifier");
+      jsonobj.remove("updated");
+      jsonobj.remove("updatedBy");
+      jsonobj.remove("updatedBy" + DalUtil.FIELDSEPARATOR + "_identifier");
+      jsonobj.remove("recordTime");
+      return jsonobj;
     } else if (obj instanceof Object[]) {
       if (fi == null) {
         JSONArray row = new JSONArray();
@@ -124,7 +138,7 @@ public class JSONRowConverter {
         return JsonUtils.convertToCorrectXSDFormat(formattedValue);
       } else if (value instanceof java.sql.Time) {
         final String formattedValue = xmlTimeFormat.format(value);
-        return JsonUtils.convertToCorrectXSDFormat(formattedValue);        
+        return JsonUtils.convertToCorrectXSDFormat(formattedValue);
       } else if (value instanceof java.sql.Date) {
         return xmlDateFormat.format(value);
       } else {
@@ -139,8 +153,7 @@ public class JSONRowConverter {
     }
   }
 
-  public static void buildResponse(Writer w, Scroll listdata, String[] aliases)
-      throws IOException {
+  public static void buildResponse(Writer w, Scroll listdata, String[] aliases) throws IOException {
 
     final JSONRowConverter converter = new JSONRowConverter(aliases);
 
@@ -180,6 +193,7 @@ public class JSONRowConverter {
         w.write(JsonConstants.RESPONSE_STATUS);
         w.write("\":");
         w.write(Integer.toString(JsonConstants.RPCREQUEST_STATUS_SUCCESS));
+        w.write(",\"lastUpdated\":" + (new Date()).getTime());
       } else {
         JSONRowConverter.addJSONExceptionFields(w, t);
       }

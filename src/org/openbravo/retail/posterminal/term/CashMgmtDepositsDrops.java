@@ -154,7 +154,7 @@ public class CashMgmtDepositsDrops extends JSONProcessSimple {
               totalNetAmount.add(totalSalesTax).subtract(
                   totalReturnsAmount.add(totalReturnsTax.abs())));
 
-      String hqlDropsDeposits = "select trans.description, trans.paymentAmount, trans.depositAmount, trans.createdBy.name, trans.transactionDate as date "
+      String hqlDropsDeposits = "select trans.description, trans.paymentAmount, trans.depositAmount, trans.createdBy.name, trans.transactionDate as date, c_currency_rate(payment.financialAccount.currency, payment.obposApplications.organization.currency, null, null) as rate, payment.financialAccount.currency.iSOCode as isocode "
           + "from org.openbravo.retail.posterminal.OBPOSAppPayment as payment, org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction as trans "
           + "where (trans.gLItem=payment.paymentMethod.gLItemForDrops or trans.gLItem=payment.paymentMethod.gLItemForDeposits) and trans.reconciliation is null "
           + "and payment.id=? and trans.account=payment.financialAccount order by trans.transactionDate asc";
@@ -166,11 +166,15 @@ public class CashMgmtDepositsDrops extends JSONProcessSimple {
         Object[] objdropdeposit = (Object[]) obj;
         JSONObject dropDeposit = new JSONObject();
         dropDeposit.put("description", objdropdeposit[0]);
-        dropDeposit.put("drop", (BigDecimal) objdropdeposit[1]);
-        dropDeposit.put("deposit", (BigDecimal) objdropdeposit[2]);
+        dropDeposit.put("drop",
+            ((BigDecimal) objdropdeposit[1]).multiply(new BigDecimal((String) objdropdeposit[5])));
+        dropDeposit.put("deposit",
+            ((BigDecimal) objdropdeposit[2]).multiply(new BigDecimal((String) objdropdeposit[5])));
         dropDeposit.put("user", objdropdeposit[3]);
         dropDeposit.put("time", objdropdeposit[4]);
         dropDeposit.put("timeOffset", serverMinutesTimezoneOffset);
+        dropDeposit.put("rate", objdropdeposit[5]);
+        dropDeposit.put("isocode", objdropdeposit[6]);
         listdepositsdrops.put(dropDeposit);
       }
       paymentResult.put("listdepositsdrops", listdepositsdrops);

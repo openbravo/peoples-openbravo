@@ -34,7 +34,7 @@ enyo.kind({
         command: payment.get('_id'),
         definition: {
           action: function(keyboard, amt) {
-            payment.set('counted', amt);
+            payment.set('counted', OB.DEC.mul(amt,payment.get('rate')));
           }
         },
         label: payment.get('name')

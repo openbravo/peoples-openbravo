@@ -48,10 +48,10 @@ enyo.kind({
       }]
     }, {
       name: 'totalLbl',
-      style: 'padding: 5px 0px 0px 5px; border-bottom: 1px solid #cccccc; border-top: 1px solid #cccccc; border-right: 1px solid #cccccc; float: left; width: 60%; font-weight:bold;'
+      style: 'padding: 5px 0px 0px 5px; border-bottom: 1px solid #cccccc; border-top: 1px solid #cccccc; border-right: 1px solid #cccccc; float: left; width: 55%; font-weight:bold;'
     }, {
       name: 'totalQty',
-      style: 'padding: 5px 0px 0px 5px; border-bottom: 1px solid #cccccc; border-top: 1px solid #cccccc; float: left; width: 15%; text-align:right; font-weight:bold;'
+      style: 'padding: 5px 0px 0px 5px; border-bottom: 1px solid #cccccc; border-top: 1px solid #cccccc; float: left; width: 20%; text-align:right; font-weight:bold;'
     }, {
       style: 'width: 10%; float: left;',
       components: [{
@@ -67,7 +67,7 @@ enyo.kind({
   },
   render: function() {
     this.$.totalLbl.setContent(this.label);
-    this.$.totalQty.setContent(this.value);
+    this.$.totalQty.setContent(OB.I18N.formatCurrency(this.value));
   },
   initComponents: function() {
     this.inherited(arguments);
@@ -94,12 +94,16 @@ enyo.kind({
       }]
     }, {
       name: 'itemLbl',
-      style: 'padding: 5px 0px 0px 5px;  border-top: 1px solid #cccccc; border-right: 1px solid #cccccc; float: left; width: 60%',
+      style: 'padding: 5px 0px 0px 5px;  border-top: 1px solid #cccccc; float: left; width: 35%',
       content: 'Item Label'
     }, {
+      name: 'foreignItemQty',
+      style: 'padding: 5px 0px 0px 0px;  border-top: 1px solid #cccccc; float: left; width: 20%; text-align:right;',
+      content: ''
+    }, {
       name: 'itemQty',
-      style: 'padding: 5px 0px 0px 5px;  border-top: 1px solid #cccccc; float: left; width: 15%; text-align:right;',
-      content: 'item Qty'
+      style: 'padding: 5px 0px 0px 5px;  border-top: 1px solid #cccccc; border-left: 1px solid #cccccc; float: left; width: 20%; text-align:right;',
+      content: ''
     }, {
       style: 'width: 10%; float: left;',
       components: [{
@@ -115,13 +119,21 @@ enyo.kind({
   },
   render: function() {
     this.$.itemLbl.setContent(this.label);
-    this.$.itemQty.setContent(this.value);
+    this.$.itemQty.setContent(OB.I18N.formatCurrency(this.value));
+    if(this.rate && this.rate!=='1'){
+      this.$.foreignItemQty.setContent('('+OB.I18N.formatCurrency(OB.DEC.div(this.value,this.rate))+' '+ this.isocode +')');
+    }else{
+      this.$.foreignItemQty.setContent('');
+    }
   },
   create: function() {
     this.inherited(arguments);
     if (this.model) {
       this.label = this.model[this.lblProperty];
       this.value = this.model[this.qtyProperty];
+      //FIXME
+      this.rate = this.model.rate;
+      this.isocode = this.model.isocode;
     }
   }
 });

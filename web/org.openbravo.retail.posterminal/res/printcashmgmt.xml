@@ -50,6 +50,13 @@
     </line>
     <%
     total = OB.DEC.sub(total, depositsdrops.amount);
+    if(depositsdrops.amount!==depositsdrops.origAmount){
+      %>
+     <line>
+      <text align ="right" length="32"><%= '('+OB.I18N.formatCurrency(OB.DEC.sub(0,depositsdrops.origAmount))+' '+depositsdrops.isocode+')' %></text>
+    </line>
+    <%
+    }
     }else{
     %>
      <line>
@@ -62,6 +69,13 @@
     </line>
     <%
     total = OB.DEC.add(total, depositsdrops.amount);
+    if(depositsdrops.amount!==depositsdrops.origAmount){
+      %>
+     <line>
+      <text align ="right" length="32"><%= '('+OB.I18N.formatCurrency(OB.DEC.add(0,depositsdrops.origAmount))+' '+depositsdrops.isocode+')' %></text>
+    </line>
+    <%
+    }
     }
     });
     %>

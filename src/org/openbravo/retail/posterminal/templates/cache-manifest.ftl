@@ -55,7 +55,7 @@ CACHE:
 
 ../../web/org.openbravo.retail.posterminal/res/printline.xml
 ../../web/org.openbravo.retail.posterminal/res/printreceipt.xml
-
+#eee
 # Images
 <#list data.imageFileList as imageFile>
 ${imageFile}

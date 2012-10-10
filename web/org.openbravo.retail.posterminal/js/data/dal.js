@@ -321,7 +321,7 @@
     }
   }
 
-  function initCache(model, initialData, success, error) {
+  function initCache(model, initialData, success, error, incremental) {
     if (db) {
       if (!model.prototype.createStatement || !model.prototype.dropStatement) {
         throw 'Model requires a create and drop statement';
@@ -331,7 +331,7 @@
         throw 'initialData must be passed as parameter';
       }
 
-      if (!model.prototype.local) {
+      if (!model.prototype.local && !incremental) {
         db.transaction(function (tx) {
           tx.executeSql(model.prototype.dropStatement);
         }, error);
@@ -345,7 +345,12 @@
         db.transaction(function (tx) {
           var props = model.prototype.properties,
               propMap = model.prototype.propertyMap,
-              values, _idx = 0;
+              values, _idx = 0,
+              updateRecord = function(tx, model, values){
+                tx.executeSql("DELETE FROM "+model.prototype.tableName+" WHERE "+model.prototype.propertyMap.id+"=?",[values[0]], function(){
+                  tx.executeSql(model.prototype.insertStatement, values, null, error);
+                }, error);
+              };
 
           _.each(initialData, function (item) {
             values = [];
@@ -357,8 +362,11 @@
               values.push(item[propName]);
             });
             values.push(_idx);
-
-            tx.executeSql(model.prototype.insertStatement, values, null, error);
+            if(incremental){
+              updateRecord(tx, model, values);
+            }else{
+              tx.executeSql(model.prototype.insertStatement, values, null, error);
+            }
             _idx++;
           });
         }, error, function () {

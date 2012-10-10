@@ -89,10 +89,18 @@
   var PaymentLine = Backbone.Model.extend({
     defaults: {
       'amount': OB.DEC.Zero,
+      'origAmount': OB.DEC.Zero,
       'paid': OB.DEC.Zero // amount - change...
     },
     printAmount: function() {
-      return OB.I18N.formatCurrency(this.get('amount'));
+      if(this.get('rate')){
+        return OB.I18N.formatCurrency(OB.DEC.mul(this.get('amount'),this.get('rate')));
+      }else{
+        return OB.I18N.formatCurrency(this.get('amount'));
+      }
+    },
+    printForeignAmount: function() {
+      return '('+OB.I18N.formatCurrency(this.get('amount'))+' '+this.get('isocode')+')';
     }
   });
 
@@ -167,6 +175,14 @@
         this.set('taxes', attributes.taxes);
         this.set('hasbeenpaid', attributes.hasbeenpaid);
         this.set('isbeingprocessed', attributes.isbeingprocessed);
+        this.set('description', attributes.description);
+        this.set('print', attributes.print);
+        this.set('sendEmail', attributes.sendEmail);
+        _.each(_.keys(attributes), function(key) {
+          if (!this.has(key)) {
+            this.set(key, attributes[key]);
+          }
+        }, this);
       } else {
         this.clearOrderAttributes();
       }
@@ -330,44 +346,31 @@
       this.set('gross', OB.DEC.Zero);
       this.set('hasbeenpaid', 'N');
       this.set('isbeingprocessed', 'N');
+      this.set('description', '');
+      this.set('print', true);
+      this.set('sendEmail', false);
     },
 
     clearWith: function(_order) {
-      this.set('id', _order.get('id'));
-      this.set('client', _order.get('client'));
-      this.set('organization', _order.get('organization'));
-      this.set('createdBy', _order.get('createdBy'));
-      this.set('updatedBy', _order.get('updatedBy'));
-      this.set('documentType', _order.get('documentType'));
-      this.set('orderType', _order.get('orderType'));
-      this.set('generateInvoice', _order.get('generateInvoice'));
-      this.set('priceList', _order.get('priceList'));
-      this.set('currency', _order.get('currency'));
-      this.set('currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, _order.get('currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER));
-      this.set('session', _order.get('session'));
-      this.set('warehouse', _order.get('warehouse'));
-      this.set('salesRepresentative', _order.get('salesRepresentative'));
-      this.set('salesRepresentative' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, _order.get('salesRepresentative' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER));
-      this.set('posTerminal', _order.get('posTerminal'));
-      this.set('posTerminal' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, _order.get('posTerminal' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER));
-      this.set('orderDate', _order.get('orderDate'));
-      this.set('documentNo', _order.get('documentNo'));
-      this.set('undo', null);
-      this.set('bp', _order.get('bp'));
-      this.get('lines').reset();
-      _order.get('lines').forEach(function(elem) {
-        this.get('lines').add(elem);
-      }, this);
-      this.get('payments').reset();
-      _order.get('payments').forEach(function(elem) {
-        this.get('payments').add(elem);
-      }, this);
-      this.set('taxes', _order.get('taxes'));
-      this.set('payment', _order.get('payment'));
-      this.set('change', _order.get('change'));
-      this.set('gross', _order.get('gross'));
-      this.set('hasbeenpaid', _order.get('hasbeenpaid'));
-      this.set('isbeingprocessed', _order.get('isbeingprocessed'));
+      var me = this,
+          undf;
+      _.each(_.keys(_order.attributes), function(key) {
+        if (_order.get(key) !== undf) {
+          if (_order.get(key) === null) {
+            me.set(key, null);
+          } else if (_order.get(key).at) {
+            //collection
+            me.get(key).reset();
+            _order.get(key).forEach(function(elem) {
+              me.get(key).add(elem);
+            });
+          } else {
+            //property
+            me.set(key, _order.get(key));
+          }
+        }
+      });
+
       this.trigger('change');
       this.trigger('clear');
     },
@@ -645,32 +648,47 @@
 
       var nocash = OB.DEC.Zero;
       var cash = OB.DEC.Zero;
+      var origCash = OB.DEC.Zero;
+      var auxCash = OB.DEC.Zero;
       var pcash;
 
       for (i = 0, max = payments.length; i < max; i++) {
         p = payments.at(i);
-        p.set('paid', p.get('amount'));
+        if(p.get('rate') && p.get('rate')!=='1'){
+          p.set('origAmount', OB.DEC.mul(p.get('amount'),p.get('rate')));
+        }else{
+          p.set('origAmount', p.get('amount'));
+        }
+        p.set('paid', p.get('origAmount'));
         if (p.get('kind') === 'OBPOS_payment.cash') {
-          cash = OB.DEC.add(cash, p.get('amount'));
+          cash = OB.DEC.add(cash, p.get('origAmount'));
+          pcash = p;
+        } else if (p.get('kind').indexOf('.cash', p.get('kind').length - '.cash'.length) !== -1) {
+          origCash = OB.DEC.add(origCash, p.get('origAmount'));
           pcash = p;
         } else {
-          nocash = OB.DEC.add(nocash, p.get('amount'));
+          nocash = OB.DEC.add(nocash, p.get('origAmount'));
         }
       }
 
       // Calculation of the change....
       if (pcash) {
+        if(pcash.get('kind') !== 'OBPOS_payment.cash'){
+          auxCash=origCash;
+        }else{
+          auxCash=cash;
+        }
         if (OB.DEC.compare(nocash - total) > 0) {
           pcash.set('paid', OB.DEC.Zero);
           this.set('payment', nocash);
-          this.set('change', cash);
-        } else if (OB.DEC.compare(OB.DEC.sub(OB.DEC.add(nocash, cash), total)) > 0) {
+          this.set('change', auxCash);
+        } else if (OB.DEC.compare(OB.DEC.sub(OB.DEC.add(OB.DEC.add(nocash, cash),origCash), total)) > 0) {
           pcash.set('paid', OB.DEC.sub(total, nocash));
           this.set('payment', total);
-          this.set('change', OB.DEC.sub(OB.DEC.add(nocash, cash), total));
+          this.set('change', OB.DEC.sub(OB.DEC.add(OB.DEC.add(nocash, cash), origCash), total));
         } else {
-          pcash.set('paid', cash);
-          this.set('payment', OB.DEC.add(nocash, cash));
+          pcash.set('paid', auxCash);
+          this.set('payment', OB.DEC.add(OB.DEC.add(nocash, cash),origCash));
           this.set('change', OB.DEC.Zero);
         }
       } else {
@@ -706,6 +724,9 @@
           p = payments.at(i);
           if (p.get('kind') === payment.get('kind')) {
             p.set('amount', OB.DEC.add(payment.get('amount'), p.get('amount')));
+            if(p.get('rate') && p.get('rate')!=='1'){
+              p.set('origAmount', OB.DEC.add(payment.get('origAmount'), OB.DEC.mul(p.get('origAmount'),p.get('rate'))));
+            }
             this.adjustPayment();
             return;
           }
@@ -757,6 +778,11 @@
       }
 
       return jsonorder;
+    },
+
+    setProperty: function(_property, _value) {
+      this.set(_property, _value);
+      this.save();
     }
   });
 
@@ -804,6 +830,8 @@
       order.set('documentNo', OB.POS.modelterminal.get('terminal').docNoPrefix + '/' + documentseqstr);
 
       order.set('bp', OB.POS.modelterminal.get('businessPartner'));
+      order.set('print', true);
+      order.set('sendEmail', false);
       return order;
     },
 
@@ -811,10 +839,12 @@
       this.saveCurrent();
       this.current = this.newOrder();
       this.add(this.current);
-      this.loadCurrent();
+      this.loadCurrent(true);
     },
 
     deleteCurrent: function() {
+      var isNew = false;
+
       function deleteCurrentFromDatabase(orderToDelete) {
         OB.Dal.remove(orderToDelete, function() {
           return true;
@@ -830,8 +860,9 @@
         } else {
           this.current = this.newOrder();
           this.add(this.current);
+          isNew = true;
         }
-        this.loadCurrent();
+        this.loadCurrent(isNew);
       }
     },
 
@@ -850,8 +881,14 @@
         this.current.clearWith(this.modelorder);
       }
     },
-    loadCurrent: function() {
+    loadCurrent: function(isNew) {
       if (this.current) {
+        if (isNew) {
+          //set values of new attrs in current, 
+          //this values will be copied to modelOrder
+          //in the next instruction
+          this.modelorder.trigger('beforeChangeOrderForNewOne', this.current);
+        }
         this.modelorder.clearWith(this.current);
       }
     }

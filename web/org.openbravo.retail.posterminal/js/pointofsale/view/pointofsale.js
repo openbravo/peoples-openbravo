@@ -1,4 +1,4 @@
-/*global OB, enyo, confirm */
+/*global OB, enyo, $, confirm */
 
 /*
  ************************************************************************************
@@ -28,41 +28,51 @@ enyo.kind({
     onRemovePayment: 'removePayment',
     onChangeCurrentOrder: 'changeCurrentOrder',
     onChangeBusinessPartner: 'changeBusinessPartner',
-    onPrintReceipt: 'printReceipt'
+    onPrintReceipt: 'printReceipt',
+    onChangeSubWindow: 'changeSubWindow',
+    onSetProperty: 'setProperty',
+    onShowReceiptProperties: 'showModalReceiptProperties'
   },
   components: [{
-    kind: 'OB.UI.ModalDeleteReceipt'
+    name: 'otherSubWindowsContainer',
   }, {
-    kind: 'OB.UI.ModalBusinessPartners'
-  }, {
-    classes: 'row',
-    style: 'margin-bottom: 5px;',
+    name: 'mainSubWindow',
     components: [{
-      kind: 'OB.OBPOSPointOfSale.UI.LeftToolbarImpl'
+      kind: 'OB.UI.ModalDeleteReceipt'
     }, {
-      kind: 'OB.OBPOSPointOfSale.UI.RightToolbarImpl',
-      name: 'rightToolbar'
-    }]
-  }, {
-    classes: 'row',
-    components: [{
-      kind: 'OB.OBPOSPointOfSale.UI.ReceiptView',
-      name: 'receiptview'
+      kind: 'OB.UI.ModalBusinessPartners'
     }, {
-      classes: 'span6',
+      kind: 'OB.UI.ModalReceiptPropertiesImpl'
+    }, {
+      classes: 'row',
+      style: 'margin-bottom: 5px;',
       components: [{
-        kind: 'OB.OBPOSPointOfSale.UI.RightToolbarPane',
-        name: 'toolbarpane'
+        kind: 'OB.OBPOSPointOfSale.UI.LeftToolbarImpl'
       }, {
-        kind: 'OB.OBPOSPointOfSale.UI.KeyboardOrder',
-        name: 'keyboard'
+        kind: 'OB.OBPOSPointOfSale.UI.RightToolbarImpl',
+        name: 'rightToolbar'
+      }]
+    }, {
+      classes: 'row',
+      components: [{
+        kind: 'OB.OBPOSPointOfSale.UI.ReceiptView',
+        name: 'receiptview'
+      }, {
+        classes: 'span6',
+        components: [{
+          kind: 'OB.OBPOSPointOfSale.UI.RightToolbarPane',
+          name: 'toolbarpane'
+        }, {
+          kind: 'OB.OBPOSPointOfSale.UI.KeyboardOrder',
+          name: 'keyboard'
+        }]
       }]
     }]
   }],
   printReceipt: function() {
     if (OB.POS.modelterminal.hasPermission('OBPOS_print.receipt')) {
       var receipt = this.model.get('order');
-      receipt.prepareToSend(function() {
+      receipt.calculateTaxes(function() {
         receipt.trigger('print');
       });
     }
@@ -135,11 +145,41 @@ enyo.kind({
     }
     this.model.get('order').removePayment(event.payment);
   },
+  changeSubWindow: function(sender, event) {
+    this.model.get('subWindowManager').set('currentWindow', event.newWindow);
+  },
+  showModalReceiptProperties: function(inSender, inEvent) {
+    $('#receiptPropertiesDialog').modal('show');
+    return true;
+  },
+  setProperty: function(inSender, inEvent) {
+    this.model.get('order').setProperty(inEvent.property, inEvent.value);
+    this.model.get('orderList').saveCurrent();
+    return true;
+  },
+  beforeSetShowing: function(value, params){
+    this.setShowing(value);
+  },
   init: function() {
     var receipt, receiptList;
     this.inherited(arguments);
     receipt = this.model.get('order');
     receiptList = this.model.get('orderList');
+    this.model.get('subWindowManager').on('change:currentWindow', function(changedModel) {
+      //TODO backbone route
+      if (this.$[changedModel.get('currentWindow').name]) {
+        this.$[changedModel.previousAttributes().currentWindow.name].setShowing(false);
+        if (this.$[changedModel.get('currentWindow').name].beforeSetShowing) {
+          this.$[changedModel.get('currentWindow').name].beforeSetShowing(true, changedModel.get('currentWindow').params);
+        } else {
+          this.$[changedModel.get('currentWindow').name].setShowing(true);
+        }
+      } else {
+        this.model.get('subWindowManager').set('currentWindow', changedModel.previousAttributes().currentWindow, {
+          silent: true
+        });
+      }
+    }, this);
     this.$.receiptview.setOrder(receipt);
     this.$.receiptview.setOrderList(receiptList);
     this.$.toolbarpane.setModel(this.model);

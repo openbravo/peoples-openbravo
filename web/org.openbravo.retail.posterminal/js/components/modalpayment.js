@@ -11,22 +11,22 @@
 
 enyo.kind({
   name: 'OB.UI.ModalPayment',
-  kind: 'OB.UI.Modal',
+  kind: 'OB.UI.ModalAction',
   myId: 'modalp',
   header: '',
   maxheight: '600px',
   show: function(receipt, provider, key, name, paymentMethod, amount) {
     
     if (receipt.get('orderType') === 0) {
-      this.$.divheader.setContent(OB.I18N.getLabel('OBPOS_LblModalPayment', [OB.I18N.formatCurrency(amount)]));
+      this.$.header.setContent(OB.I18N.getLabel('OBPOS_LblModalPayment', [OB.I18N.formatCurrency(amount)]));
     } else if  (receipt.get('orderType') === 1) {
-      this.$.divheader.setContent(OB.I18N.getLabel('OBPOS_LblModalReturn', [OB.I18N.formatCurrency(amount)]));
+      this.$.header.setContent(OB.I18N.getLabel('OBPOS_LblModalReturn', [OB.I18N.formatCurrency(amount)]));
     } else {
-      this.$.divheader.setContent('');
+      this.$.header.setContent('');
     }    
     
-	  this.$.body.destroyComponents();
-    this.$.body.createComponent({
+	  this.$.bodyContent.destroyComponents();
+    this.$.bodyContent.createComponent({
       kind: provider,
       paymentMethod: paymentMethod,
       paymentType: name,
@@ -35,6 +35,6 @@ enyo.kind({
       receipt: receipt
     }).render();
 
-    $('#modalp').modal('show');
+    this.showDialog();
   }
 });

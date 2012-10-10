@@ -50,6 +50,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
 
     this.set('orderlist', new OB.Collection.OrderList());
     this.set('paymentList', this.getData('DataCloseCashPaymentMethod'));
+    this.convertExpected();
     this.setIgnoreStep3();
     this.set('cashUpReport', this.getData('DataCashCloseReport'));
 
@@ -220,12 +221,16 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
         if (!this.get('paymentList').models[i].get(enumConcepts[counter])) {
           countCashSummary[enumSummarys[counter]].push({
             name: this.get('paymentList').models[i].get('name'),
-            value: 0
+            value: 0,
+            rate: this.get('paymentList').models[i].get('rate'),
+            isocode: this.get('paymentList').models[i].get('isocode')
           });
         } else {
           countCashSummary[enumSummarys[counter]].push({
             name: this.get('paymentList').models[i].get('name'),
-            value: this.get('paymentList').models[i].get(enumConcepts[counter])
+            value: this.get('paymentList').models[i].get(enumConcepts[counter]),
+            rate: this.get('paymentList').models[i].get('rate'),
+            isocode: this.get('paymentList').models[i].get('isocode')
           });
         }
       }
@@ -250,7 +255,9 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
       };
       cashCloseInfo.paymentTypeId = curModel.get('id');
       cashCloseInfo.difference = curModel.get('difference');
+      cashCloseInfo.origDifference = OB.DEC.div(curModel.get('difference'),curModel.get('rate'));
       cashCloseInfo.expected = curModel.get('expected');
+      cashCloseInfo.origExpected = OB.DEC.div(curModel.get('expected'),curModel.get('rate'));
       curModel.get('paymentMethod').amountToKeep = curModel.get('qtyToKeep');
       cashCloseInfo.paymentMethod = curModel.get('paymentMethod');
       objToSend.cashCloseInfo.push(cashCloseInfo);
@@ -269,5 +276,10 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
         me.set("finished", true); //$('#modalFinishClose').modal('show');
       }
     });
+  },
+  convertExpected: function() {
+    _.each(this.get('paymentList').models, function(model) {
+      model.set('expected',OB.DEC.mul(model.get('expected'),model.get('rate')));
+    }, this);
   }
 });

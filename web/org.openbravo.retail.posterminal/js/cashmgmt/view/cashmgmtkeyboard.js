@@ -14,7 +14,7 @@
 enyo.kind({
   name: 'OB.OBPOSCashMgmt.UI.CashMgmtKeyboard',
   kind: 'OB.UI.Keyboard',
-  getPayment: function(id, key, name, identifier, type) {
+  getPayment: function(id, key, name, identifier, type, rate, isocode) {
     return {
       permission: key,
       action: function(keyboard, txt) {
@@ -23,7 +23,9 @@ enyo.kind({
           amount: txt,
           identifier: identifier,
           destinationKey: key,
-          type: type
+          type: type,
+          rate: rate,
+          isocode: isocode
         };
 
         if (type === 'drop') {
@@ -46,7 +48,7 @@ enyo.kind({
       if (paymentMethod.get('allowdeposits')) {
         buttons.push({
           command: payment.searchKey + '_' + OB.I18N.getLabel('OBPOS_LblDeposit'),
-          definition: this.getPayment(payment.id, payment.searchKey, payment._identifier, payment._identifier, 'deposit'),
+          definition: this.getPayment(payment.id, payment.searchKey, payment._identifier, payment._identifier, 'deposit', paymentMethod.get('rate'), paymentMethod.get('isocode')),
           label: payment._identifier + ' ' + OB.I18N.getLabel('OBPOS_LblDeposit')
         });
       }
@@ -54,7 +56,7 @@ enyo.kind({
       if (paymentMethod.get('allowdrops')) {
         buttons.push({
           command: payment.searchKey + '_' + OB.I18N.getLabel('OBPOS_LblWithdrawal'),
-          definition: this.getPayment(payment.id, payment.searchKey, payment._identifier, payment._identifier, 'drop'),
+          definition: this.getPayment(payment.id, payment.searchKey, payment._identifier, payment._identifier, 'drop', paymentMethod.get('rate'), paymentMethod.get('isocode')),
           label: payment._identifier + ' ' + OB.I18N.getLabel('OBPOS_LblWithdrawal')
         });
       }

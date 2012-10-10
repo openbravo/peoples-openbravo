@@ -17,7 +17,8 @@ public class ProductPrice extends ProcessHQLQuery {
 
   @Override
   protected String getQuery(JSONObject jsonsent) throws JSONException {
-    return "from PricingProductPrice where priceListVersion in "
+    return "from PricingProductPrice as pricingProductPrice where "
+        + "(pricingProductPrice.$incrementalUpdateCriteria) AND priceListVersion in "
         + "(select plv.id from PricingPriceList as ppl, PricingPriceListVersion as plv "
         + "where ppl.id = '"
         + POSUtils.getPriceListByOrgId(jsonsent.getString("organization")).getId()

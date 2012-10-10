@@ -134,7 +134,7 @@ public class CashCloseReport extends JSONProcessSimple {
     BigDecimal totalDrops = BigDecimal.ZERO;
     BigDecimal totalDeposits = BigDecimal.ZERO;
 
-    String hqlDropsDeposits = "select trans.description, trans.paymentAmount, trans.depositAmount "
+    String hqlDropsDeposits = "select trans.description, trans.paymentAmount, trans.depositAmount , c_currency_rate(payment.financialAccount.currency, payment.obposApplications.organization.currency, null, null) as rate, payment.financialAccount.currency.iSOCode as isocode "
         + "from org.openbravo.retail.posterminal.OBPOSAppPayment as payment, org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction as trans "
         + "where (trans.gLItem=payment.paymentMethod.gLItemForDrops or trans.gLItem=payment.paymentMethod.gLItemForDeposits) and trans.reconciliation is null "
         + "and payment.obposApplications=? and trans.account=payment.financialAccount";
@@ -144,8 +144,10 @@ public class CashCloseReport extends JSONProcessSimple {
       Object[] objdropdeposit = (Object[]) obj;
       JSONObject dropDeposit = new JSONObject();
       dropDeposit.put("description", objdropdeposit[0]);
-      BigDecimal drop = (BigDecimal) objdropdeposit[1];
-      BigDecimal deposit = (BigDecimal) objdropdeposit[2];
+      BigDecimal drop = ((BigDecimal) objdropdeposit[1]).multiply(new BigDecimal(
+          (String) objdropdeposit[3]));
+      BigDecimal deposit = ((BigDecimal) objdropdeposit[2]).multiply(new BigDecimal(
+          (String) objdropdeposit[3]));
       if (drop.compareTo(deposit) > 0) {
         dropDeposit.put("amount", drop);
         drops.put(dropDeposit);
@@ -155,15 +157,17 @@ public class CashCloseReport extends JSONProcessSimple {
         deposits.put(dropDeposit);
         totalDeposits = totalDeposits.add(deposit);
       }
+      dropDeposit.put("rate", objdropdeposit[3]);
+      dropDeposit.put("isocode", objdropdeposit[4]);
     }
 
-    String hqlSalesDeposits = "select obpay.commercialName, sum(trans.depositAmount)"
+    String hqlSalesDeposits = "select obpay.commercialName, sum(trans.depositAmount), c_currency_rate(obpay.financialAccount.currency, obpay.obposApplications.organization.currency, null, null) as rate, obpay.financialAccount.currency.iSOCode as isocode"
         + " from org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction as trans "
         + "inner join trans.finPayment as pay, "
         + "org.openbravo.retail.posterminal.OBPOSAppPayment as obpay "
         + "where pay.account=obpay.financialAccount and trans.gLItem is null "
         + "and trans.reconciliation is null and obpay.obposApplications.id=? "
-        + "group by obpay.commercialName";
+        + "group by obpay.commercialName, obpay.financialAccount.currency, obpay.obposApplications.organization.currency, obpay.financialAccount.currency.iSOCode";
 
     Query salesDepositsQuery = OBDal.getInstance().getSession().createQuery(hqlSalesDeposits);
     salesDepositsQuery.setString(0, posTerminalId);
@@ -172,18 +176,20 @@ public class CashCloseReport extends JSONProcessSimple {
       JSONObject salesDep = new JSONObject();
       salesDep.put("description",
           OBMessageUtils.getI18NMessage("OBPOS_Sales", new String[] { (String) obja[0] }));
-      salesDep.put("amount", obja[1]);
+      salesDep.put("amount", ((BigDecimal) obja[1]).multiply(new BigDecimal((String) obja[2])));
+      salesDep.put("rate", obja[2]);
+      salesDep.put("isocode", obja[3]);
       deposits.put(salesDep);
       totalDeposits = totalDeposits.add((BigDecimal) obja[1]);
     }
 
-    String hqlReturnsDrop = "select obpay.commercialName, sum(trans.paymentAmount)"
+    String hqlReturnsDrop = "select obpay.commercialName, sum(trans.paymentAmount), c_currency_rate(obpay.financialAccount.currency, obpay.obposApplications.organization.currency, null, null) as rate, obpay.financialAccount.currency.iSOCode as isocode"
         + " from org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction as trans "
         + "inner join trans.finPayment as pay, "
         + "org.openbravo.retail.posterminal.OBPOSAppPayment as obpay "
         + "where pay.account=obpay.financialAccount and trans.gLItem is null "
         + "and trans.reconciliation is null and obpay.obposApplications.id=? "
-        + "group by obpay.commercialName";
+        + "group by obpay.commercialName, obpay.financialAccount.currency, obpay.obposApplications.organization.currency, obpay.financialAccount.currency.iSOCode";
 
     Query returnDropsQuery = OBDal.getInstance().getSession().createQuery(hqlReturnsDrop);
     returnDropsQuery.setString(0, posTerminalId);
@@ -192,7 +198,9 @@ public class CashCloseReport extends JSONProcessSimple {
       JSONObject returnDrop = new JSONObject();
       returnDrop.put("description",
           OBMessageUtils.getI18NMessage("OBPOS_Returns", new String[] { (String) obja[0] }));
-      returnDrop.put("amount", obja[1]);
+      returnDrop.put("amount", ((BigDecimal) obja[1]).multiply(new BigDecimal((String) obja[2])));
+      returnDrop.put("rate", obja[2]);
+      returnDrop.put("isocode", obja[3]);
       drops.put(returnDrop);
       totalDrops = totalDrops.add((BigDecimal) obja[1]);
     }

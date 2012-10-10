@@ -183,13 +183,16 @@ enyo.kind({
     btn.applyStyle('border', '10px solid' + (this.bordercolor || this.background));
   },
   tap: function() {
-    var me = this,
-        receipt = this.owner.owner.owner.owner.model.get('order');
-
-    receipt.addPayment(new OB.Model.PaymentLine({
-      kind: me.paymenttype,
-      name: OB.POS.modelterminal.getPaymentName(me.paymenttype),
-      amount: OB.DEC.number(me.amount)
-    }));
+    
+    if (OB.POS.modelterminal.hasPermission(this.paymenttype)) {
+      var me = this,
+          receipt = this.owner.owner.owner.owner.model.get('order');
+  
+      receipt.addPayment(new OB.Model.PaymentLine({
+        kind: me.paymenttype,
+        name: OB.POS.modelterminal.getPaymentName(me.paymenttype),
+        amount: OB.DEC.number(me.amount)
+      }));
+    }
   }
 });

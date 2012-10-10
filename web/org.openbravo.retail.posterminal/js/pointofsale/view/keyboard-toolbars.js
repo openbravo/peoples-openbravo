@@ -35,7 +35,7 @@ enyo.kind({
     receipt: null
   },
   toolbarName: 'toolbarpayment',
-  pay: function(amount, key, name, paymentMethod) {
+  pay: function(amount, key, name, paymentMethod, rate, mulrate, isocode) {
     if (OB.DEC.compare(amount) > 0) {
       
       var provider;
@@ -48,17 +48,20 @@ enyo.kind({
       }
       
       if (provider) {
-        this.$.modalpayment.show(this.receipt, provider, key, name, paymentMethod, amount);
+        this.$.modalpayment.show(this.receipt, provider, key, name, paymentMethod, amount, rate, mulrate, isocode);
       } else {
         this.receipt.addPayment(new OB.Model.PaymentLine({
           'kind': key,
           'name': name,
-          'amount': amount
+          'amount': amount,
+          'rate': rate,
+          'mulrate': mulrate,
+          'isocode': isocode
         }));
       }
     }
   },
-  getPayment: function(key, name, paymentMethod) {
+  getPayment: function(key, name, paymentMethod, rate, mulrate, isocode) {
     var me = this;
     return ({
       'permission': key,
@@ -66,7 +69,7 @@ enyo.kind({
       'action': function(keyboard, txt) {
         var amount = OB.DEC.number(OB.I18N.parseNumber(txt));
         amount = _.isNaN(amount) ? me.receipt.getPending() : amount;
-        me.pay(amount, key, name, paymentMethod);
+        me.pay(amount, key, name, paymentMethod, rate, mulrate, isocode);
       }
     });
   },
@@ -92,7 +95,7 @@ enyo.kind({
           command: payment.payment.searchKey,
           label: payment.payment._identifier,
           permission: payment.payment.searchKey,
-          definition: this.getPayment(payment.payment.searchKey, payment.payment._identifier, payment.paymentMethod)
+          definition: this.getPayment(payment.payment.searchKey, payment.payment._identifier, payment.paymentMethod, payment.rate, payment.mulrate, payment.isocode)
         }
       });
     }, this);
@@ -113,9 +116,11 @@ enyo.kind({
       action: function(keyboard, txt) {
         var exactpayment = allpayments[keyboard.status] || defaultpayment,
             amount = me.receipt.getPending();
-
-        if (amount > 0 && exactpayment) {
-          me.pay(amount, exactpayment.payment.searchKey, exactpayment.payment._identifier, exactpayment.paymentMethod);
+        if(exactpayment.rate && exactpayment.rate!=='1'){
+          amount = OB.DEC.div(me.receipt.getPending(),exactpayment.rate);
+        }
+        if (amount > 0 && exactpayment && OB.POS.modelterminal.hasPermission(exactpayment.payment.searchKey)) {
+          me.pay(amount, exactpayment.payment.searchKey, exactpayment.payment._identifier, exactpayment.paymentMethod, exactpayment.rate, exactpayment.mulrate, exactpayment.isocode);
         }
       }
     });

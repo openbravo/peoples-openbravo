@@ -18,6 +18,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.servlet.ServletException;
+
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
@@ -75,7 +77,7 @@ import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonToDataConverter;
 
-public class OrderLoader {
+public class OrderLoader extends JSONProcessSimple {
 
   HashMap<String, DocumentType> paymentDocTypes = new HashMap<String, DocumentType>();
   HashMap<String, DocumentType> invoiceDocTypes = new HashMap<String, DocumentType>();
@@ -85,6 +87,29 @@ public class OrderLoader {
   private static final Logger log = Logger.getLogger(OrderLoader.class);
 
   private static final BigDecimal NEGATIVE_ONE = new BigDecimal(-1);
+
+  @Override
+  public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {
+
+    Object jsonorder = jsonsent.get("order");
+
+    JSONArray array = null;
+    if (jsonorder instanceof JSONObject) {
+      array = new JSONArray();
+      array.put(jsonorder);
+    } else if (jsonorder instanceof String) {
+      JSONObject obj = new JSONObject((String) jsonorder);
+      array = new JSONArray();
+      array.put(obj);
+    } else if (jsonorder instanceof JSONArray) {
+      array = (JSONArray) jsonorder;
+    }
+
+    long t1 = System.currentTimeMillis();
+    JSONObject result = this.saveOrder(array);
+    log.info("Final total time: " + (System.currentTimeMillis() - t1));
+    return result;
+  }
 
   public JSONObject saveOrder(JSONArray jsonarray) throws JSONException {
     boolean error = false;
@@ -150,11 +175,13 @@ public class OrderLoader {
     Order order = null;
     ShipmentInOut shipment = null;
     Invoice invoice = null;
+    boolean sendEmail = false;
     TriggerHandler.getInstance().disable();
     try {
       t1 = System.currentTimeMillis();
       boolean createInvoice = (jsonorder.has("generateInvoice") && jsonorder
           .getBoolean("generateInvoice"));
+      sendEmail = (jsonorder.has("sendEmail") && jsonorder.getBoolean("sendEmail"));
       // Order header
       order = OBProvider.getInstance().get(Order.class);
       long t111 = System.currentTimeMillis();
@@ -209,6 +236,11 @@ public class OrderLoader {
 
     // Stock manipulation
     handleStock(shipment);
+
+    // Send email
+    if (sendEmail) {
+      EmailSender emailSender = new EmailSender(order, jsonorder);
+    }
 
     log.info("Initial flush: " + (t1 - t0) + "; Generate bobs:" + (t11 - t1) + "; Save bobs:"
         + (t2 - t11) + "; First flush:" + (t3 - t2) + "; Second flush: " + (t4 - t3)
@@ -561,6 +593,7 @@ public class OrderLoader {
     order.setDocumentAction("--");
     order.setProcessed(true);
     order.setProcessNow(false);
+    order.setObposSendemail((jsonorder.has("sendEmail") && jsonorder.getBoolean("sendEmail")));
 
     JSONObject taxes = jsonorder.getJSONObject("taxes");
     @SuppressWarnings("unchecked")
@@ -619,9 +652,10 @@ public class OrderLoader {
       paymentSchedule.setCurrency(order.getCurrency());
       paymentSchedule.setOrder(order);
       paymentSchedule.setFinPaymentmethod(order.getBusinessPartner().getPaymentMethod());
-      paymentSchedule.setAmount(amt);
-      // Sept 2012 -> 0 because outstanding is not allowed in Openbravo Web POS
-      paymentSchedule.setOutstandingAmount(new BigDecimal(0));
+      // paymentSchedule.setPaidAmount(new BigDecimal(0));
+      paymentSchedule.setAmount(BigDecimal.valueOf(jsonorder.getDouble("gross")));
+      // Sept 2012 -> gross because outstanding is not allowed in Openbravo Web POS
+      paymentSchedule.setOutstandingAmount(BigDecimal.valueOf(jsonorder.getDouble("gross")));
       paymentSchedule.setDueDate(order.getOrderDate());
       if (ModelProvider.getInstance().getEntity(FIN_PaymentSchedule.class)
           .hasProperty("origDueDate")) {
@@ -689,6 +723,16 @@ public class OrderLoader {
     OBContext.setAdminMode(true);
     try {
       BigDecimal amount = BigDecimal.valueOf(payment.getDouble("paid"));
+      BigDecimal origAmount = amount;
+      if (payment.has("rate")) {
+        origAmount = BigDecimal.valueOf(payment.getDouble("amount"));
+      }
+      BigDecimal mulrate = new BigDecimal(1);
+      if (payment.has("mulrate")) {
+        mulrate = BigDecimal.valueOf(payment.getDouble("mulrate"));
+      }
+
+      // writeoffAmt.divide(BigDecimal.valueOf(payment.getDouble("rate")));
       if (amount.signum() == 0) {
         return;
       }
@@ -746,11 +790,15 @@ public class OrderLoader {
           getPaymentDocumentType(order.getOrganization()), order.getDocumentNo(),
           order.getBusinessPartner(), paymentType.getPaymentMethod().getPaymentMethod(), account,
           amount.toString(), order.getOrderDate(), order.getOrganization(), null, detail,
-          paymentAmount, false, false);
+          paymentAmount, false, false, order.getCurrency(), mulrate, origAmount);
       if (writeoffAmt.signum() != 0) {
         FIN_AddPayment.saveGLItem(finPayment, writeoffAmt, paymentType.getPaymentMethod()
             .getGlitemWriteoff());
       }
+      // Update Payment In amount after adding GLItem
+      finPayment.setAmount(BigDecimal.valueOf(payment.getDouble("paid")));
+      OBDal.getInstance().save(finPayment);
+
       String description = getPaymentDescription();
       description += ": " + order.getDocumentNo().substring(1, order.getDocumentNo().length() - 1)
           + "\n";

@@ -23,6 +23,9 @@
       var response = data.response;
       var status = response.status;
       if (status === 0) {
+        if(response.data && response.data.length>0){
+          window.localStorage.setItem('lastUpdatedTimestamp', response.lastUpdated);
+        }
         callback(response.data, response.message);
       } else if (response.errors) {
         callback({
@@ -116,7 +119,7 @@
   };
 
   // Source object
-  OB.DS.Request = function(source, client, org, pos) {
+  OB.DS.Request = function(source, client, org, pos, lastUpdated) {
     this.model = source && source.prototype && source.prototype.modelName && source; // we're using a Backbone.Model as source
     this.source = (this.model && this.model.prototype.source) || source; // we're using a plain String as source
     if (!this.source) {
@@ -125,6 +128,7 @@
     this.client = client;
     this.org = org;
     this.pos = pos;
+    this.lastUpdated = lastUpdated;
   };
 
   OB.DS.Request.prototype.exec = function(params, callback, callbackError, async) {
@@ -175,6 +179,10 @@
 
     if (this.pos) {
       data.pos = this.pos;
+    }
+    
+    if(this.lastUpdated){
+      data.lastUpdated = this.lastUpdated;
     }
 
     serviceGET(this.source, data, callback, callbackError, async);
@@ -264,7 +272,7 @@
   };
   _.extend(OB.DS.DataSource.prototype, Backbone.Events);
 
-  OB.DS.DataSource.prototype.load = function(params) {
+  OB.DS.DataSource.prototype.load = function(params, incremental) {
     var me = this;
     this.cache = null;
 
@@ -281,7 +289,7 @@
           me.trigger('ready');
         }, function() {
           window.console.error(arguments,me.request.model.prototype);
-        });
+        }, incremental);
       } else {
         me.trigger('ready');
       }

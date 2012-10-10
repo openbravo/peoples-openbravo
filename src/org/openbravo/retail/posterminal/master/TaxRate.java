@@ -43,7 +43,8 @@ public class TaxRate extends ProcessHQLQuery {
     final Region toRegion = posDetail.getOrganization().getObretcoCBpLocation()
         .getLocationAddress().getRegion();
 
-    String hql = "from FinancialMgmtTaxRate where active = true "
+    String hql = "from FinancialMgmtTaxRate as financialMgmtTaxRate where "
+        + "(financialMgmtTaxRate.$incrementalUpdateCriteria) AND active = true "
         + "and parentTaxRate is null and salesPurchaseType in ('S', 'B') ";
 
     if (fromCountry != null) {

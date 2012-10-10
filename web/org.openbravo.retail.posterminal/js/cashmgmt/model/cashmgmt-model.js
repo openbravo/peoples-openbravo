@@ -54,7 +54,7 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
 
       depList.each(function(dep) {
         if (p.destinationKey === dep.get('paySearchKey')) {
-          error = (p.type === 'drop' && OB.DEC.sub(dep.get('total'), p.amount) < 0);
+          error = (p.type === 'drop' && OB.DEC.sub(dep.get('total'), OB.DEC.mul(p.amount,p.rate)) < 0);
           deposits = dep.get('listdepositsdrops');
           tmp = dep;
         }
@@ -71,7 +71,9 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
         description: p.identifier + ' - ' + model.get('name'),
         name: p.destinationKey,
         user: OB.POS.modelterminal.get('context').user._identifier,
-        time: new Date()
+        time: new Date(),
+        origAmount: OB.DEC.mul(p.amount,p.rate),
+        isocode: p.isocode
       };
 
       if (p.type === 'drop') {
@@ -91,7 +93,9 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
         type: p.type,
         reasonId: model.get('id'),
         user: OB.POS.modelterminal.get('context').user._identifier,
-        time: new Date().toString().substring(16, 21)
+        time: new Date().toString().substring(16, 21),
+        origAmount: OB.DEC.mul(p.amount,p.rate),
+        isocode: p.isocode
       });
       tmp.trigger('change');
     }, this);
