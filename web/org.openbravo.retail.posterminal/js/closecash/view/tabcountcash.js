@@ -61,20 +61,20 @@ enyo.kind({
     this.inherited(arguments);
     this.$.name.setContent(this.model.get('name'));
     if(this.model.get('rate') && this.model.get('rate')!=='1'){
-      this.$.foreignExpected.setContent('('+OB.I18N.formatCurrency(OB.DEC.div(OB.DEC.add(0, this.model.get('expected')),this.model.get('rate')))+' '+ this.model.get('isocode') +')');
+      this.$.foreignExpected.setContent('('+OB.I18N.formatCurrency(this.model.get('foreignExpected'))+' '+ this.model.get('isocode') +')');
       this.$.foreignExpected.show();
     }
     this.$.expected.setContent(OB.I18N.formatCurrency(OB.DEC.add(0, this.model.get('expected'))));
   },
   render: function() {
-    var udfn, counted;
+    var udfn, counted, foreignCounted;
     this.inherited(arguments);
     counted = this.model.get('counted');
     if (counted !== null && counted !== udfn) {
       this.$.counted.setContent(OB.I18N.formatCurrency(OB.DEC.add(0, counted)));
       this.$.counted.show();
       if(this.model.get('rate') && this.model.get('rate')!=='1'){
-        this.$.foreignCounted.setContent('('+OB.I18N.formatCurrency(OB.DEC.div(OB.DEC.add(0, counted),this.model.get('rate')))+' '+this.model.get('isocode')+')');
+        this.$.foreignCounted.setContent('('+OB.I18N.formatCurrency(this.model.get('foreignCounted'))+' '+this.model.get('isocode')+')');
       }
       this.$.buttonOk.hide();
     }
@@ -84,6 +84,7 @@ enyo.kind({
   },
   lineOK: function(inSender, inEvent) {
     this.model.set('counted', this.model.get('expected'));
+    this.model.set('foreignCounted', this.model.get('foreignExpected'));
   }
 });
 

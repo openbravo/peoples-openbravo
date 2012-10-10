@@ -61,6 +61,9 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
 
     this.get('paymentList').on('change:counted', function(mod) {
       mod.set('difference', OB.DEC.sub(mod.get('counted'), mod.get('expected')));
+      if(mod.get('foreignCounted') && mod.get('foreignExpected')){
+        mod.set('foreignDifference', OB.DEC.sub(mod.get('foreignCounted'), mod.get('foreignExpected')));
+      }
       this.set('totalCounted', _.reduce(this.get('paymentList').models, function(total, model) {
         return model.get('counted') ? OB.DEC.add(total, model.get('counted')) : total;
       }, 0), 0);
@@ -160,6 +163,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
   // Step 2: logic, expected vs counted 
   countAll: function() {
     this.get('paymentList').each(function(model) {
+      model.set('foreignCounted', OB.DEC.add(0, model.get('foreignExpected')));
       model.set('counted', OB.DEC.add(0, model.get('expected')));
     });
   },
@@ -222,14 +226,18 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
           countCashSummary[enumSummarys[counter]].push({
             name: this.get('paymentList').models[i].get('name'),
             value: 0,
-            rate: this.get('paymentList').models[i].get('rate'),
+            foreignExpected: 0,
+            foreignCounted: 0,
+            foreignDifference: 0,
             isocode: this.get('paymentList').models[i].get('isocode')
           });
         } else {
           countCashSummary[enumSummarys[counter]].push({
             name: this.get('paymentList').models[i].get('name'),
             value: this.get('paymentList').models[i].get(enumConcepts[counter]),
-            rate: this.get('paymentList').models[i].get('rate'),
+            foreignExpected: this.get('paymentList').models[i].get('foreignExpected'),
+            foreignCounted: this.get('paymentList').models[i].get('foreignCounted'),
+            foreignDifference: this.get('paymentList').models[i].get('foreignDifference'),
             isocode: this.get('paymentList').models[i].get('isocode')
           });
         }
@@ -255,9 +263,9 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
       };
       cashCloseInfo.paymentTypeId = curModel.get('id');
       cashCloseInfo.difference = curModel.get('difference');
-      cashCloseInfo.origDifference = OB.DEC.div(curModel.get('difference'),curModel.get('rate'));
+      cashCloseInfo.foreignDifference = curModel.get('foreignDifference');
       cashCloseInfo.expected = curModel.get('expected');
-      cashCloseInfo.origExpected = OB.DEC.div(curModel.get('expected'),curModel.get('rate'));
+      cashCloseInfo.foreignExpected = curModel.get('foreignExpected');
       curModel.get('paymentMethod').amountToKeep = curModel.get('qtyToKeep');
       cashCloseInfo.paymentMethod = curModel.get('paymentMethod');
       objToSend.cashCloseInfo.push(cashCloseInfo);
@@ -279,6 +287,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
   },
   convertExpected: function() {
     _.each(this.get('paymentList').models, function(model) {
+      model.set('foreignExpected',model.get('expected'));
       model.set('expected',OB.DEC.mul(model.get('expected'),model.get('rate')));
     }, this);
   }

@@ -34,7 +34,7 @@ enyo.kind({
     onShowReceiptProperties: 'showModalReceiptProperties'
   },
   components: [{
-    name: 'otherSubWindowsContainer',
+    name: 'otherSubWindowsContainer'
   }, {
     name: 'mainSubWindow',
     components: [{

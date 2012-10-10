@@ -144,18 +144,18 @@ public class CashCloseReport extends JSONProcessSimple {
       Object[] objdropdeposit = (Object[]) obj;
       JSONObject dropDeposit = new JSONObject();
       dropDeposit.put("description", objdropdeposit[0]);
-      BigDecimal drop = ((BigDecimal) objdropdeposit[1]).multiply(new BigDecimal(
-          (String) objdropdeposit[3]));
-      BigDecimal deposit = ((BigDecimal) objdropdeposit[2]).multiply(new BigDecimal(
-          (String) objdropdeposit[3]));
+      BigDecimal drop = (BigDecimal) objdropdeposit[1];
+      BigDecimal deposit = (BigDecimal) objdropdeposit[2];
       if (drop.compareTo(deposit) > 0) {
         dropDeposit.put("amount", drop);
         drops.put(dropDeposit);
-        totalDrops = totalDrops.add(drop);
+        totalDrops = totalDrops.add((drop.multiply(new BigDecimal((String) objdropdeposit[3])))
+            .setScale(2, BigDecimal.ROUND_HALF_EVEN));
       } else {
         dropDeposit.put("amount", deposit);
         deposits.put(dropDeposit);
-        totalDeposits = totalDeposits.add(deposit);
+        totalDeposits = totalDeposits.add((deposit.multiply(new BigDecimal(
+            (String) objdropdeposit[3]))).setScale(2, BigDecimal.ROUND_HALF_EVEN));
       }
       dropDeposit.put("rate", objdropdeposit[3]);
       dropDeposit.put("isocode", objdropdeposit[4]);
@@ -176,11 +176,12 @@ public class CashCloseReport extends JSONProcessSimple {
       JSONObject salesDep = new JSONObject();
       salesDep.put("description",
           OBMessageUtils.getI18NMessage("OBPOS_Sales", new String[] { (String) obja[0] }));
-      salesDep.put("amount", ((BigDecimal) obja[1]).multiply(new BigDecimal((String) obja[2])));
+      salesDep.put("amount", obja[1]);
       salesDep.put("rate", obja[2]);
       salesDep.put("isocode", obja[3]);
       deposits.put(salesDep);
-      totalDeposits = totalDeposits.add((BigDecimal) obja[1]);
+      totalDeposits = totalDeposits.add((((BigDecimal) obja[1]).multiply(new BigDecimal(
+          (String) obja[2]))).setScale(2, BigDecimal.ROUND_HALF_EVEN));
     }
 
     String hqlReturnsDrop = "select obpay.commercialName, sum(trans.paymentAmount), c_currency_rate(obpay.financialAccount.currency, obpay.obposApplications.organization.currency, null, null) as rate, obpay.financialAccount.currency.iSOCode as isocode"
@@ -198,11 +199,12 @@ public class CashCloseReport extends JSONProcessSimple {
       JSONObject returnDrop = new JSONObject();
       returnDrop.put("description",
           OBMessageUtils.getI18NMessage("OBPOS_Returns", new String[] { (String) obja[0] }));
-      returnDrop.put("amount", ((BigDecimal) obja[1]).multiply(new BigDecimal((String) obja[2])));
+      returnDrop.put("amount", obja[1]);
       returnDrop.put("rate", obja[2]);
       returnDrop.put("isocode", obja[3]);
       drops.put(returnDrop);
-      totalDrops = totalDrops.add((BigDecimal) obja[1]);
+      totalDrops = totalDrops.add((((BigDecimal) obja[1])
+          .multiply(new BigDecimal((String) obja[2]))).setScale(2, BigDecimal.ROUND_HALF_EVEN));
     }
 
     result.put("drops", drops);

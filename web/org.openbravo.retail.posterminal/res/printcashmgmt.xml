@@ -46,14 +46,14 @@
       <text align ="left" length="8"><%=OB.UTIL.encodeXMLComponent(depositsdrops.user) %></text>
       <text align ="left" length="1"><%=' '%></text>
       <text align ="left" length="5"><%=OB.UTIL.encodeXMLComponent(depositsdrops.time) %></text>
-      <text align ="right" length="10"><%= OB.I18N.formatCurrency(OB.DEC.sub(0,depositsdrops.amount)) %></text>
+      <text align ="right" length="10"><%= OB.I18N.formatCurrency(OB.DEC.sub(0,depositsdrops.origAmount)) %></text>
     </line>
     <%
     total = OB.DEC.sub(total, depositsdrops.amount);
     if(depositsdrops.amount!==depositsdrops.origAmount){
       %>
      <line>
-      <text align ="right" length="32"><%= '('+OB.I18N.formatCurrency(OB.DEC.sub(0,depositsdrops.origAmount))+' '+depositsdrops.isocode+')' %></text>
+      <text align ="right" length="32"><%= '('+OB.I18N.formatCurrency(OB.DEC.sub(0,depositsdrops.amount))+' '+depositsdrops.isocode+')' %></text>
     </line>
     <%
     }
@@ -65,14 +65,14 @@
       <text align ="left" length="8"><%=OB.UTIL.encodeXMLComponent(depositsdrops.user) %></text>
       <text align ="left" length="1"><%=' '%></text>
       <text align ="left" length="5"><%=OB.UTIL.encodeXMLComponent(depositsdrops.time) %></text>
-      <text align ="right" length="10"><%= OB.I18N.formatCurrency(OB.DEC.add(0,depositsdrops.amount)) %></text>
+      <text align ="right" length="10"><%= OB.I18N.formatCurrency(OB.DEC.add(0,depositsdrops.origAmount)) %></text>
     </line>
     <%
     total = OB.DEC.add(total, depositsdrops.amount);
     if(depositsdrops.amount!==depositsdrops.origAmount){
       %>
      <line>
-      <text align ="right" length="32"><%= '('+OB.I18N.formatCurrency(OB.DEC.add(0,depositsdrops.origAmount))+' '+depositsdrops.isocode+')' %></text>
+      <text align ="right" length="32"><%= '('+OB.I18N.formatCurrency(OB.DEC.add(0,depositsdrops.amount))+' '+depositsdrops.isocode+')' %></text>
     </line>
     <%
     }
