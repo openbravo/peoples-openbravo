@@ -41,7 +41,7 @@
         and USER1_ID is null
         and USER2_ID is null
         group by account_id, ad_client_id
-        having count(account_id) > 1) as a
+        having count(account_id) > 1) a
       ]]>
     </Sql>
   </SqlMethod>
