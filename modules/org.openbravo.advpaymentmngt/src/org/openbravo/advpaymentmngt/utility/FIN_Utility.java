@@ -38,6 +38,8 @@ import java.util.TimeZone;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -1029,4 +1031,28 @@ public class FIN_Utility {
     }
   }
 
+  public static boolean isPeriodOpen(String client, String documentType, String org, String dateAcct) {
+    final Session session = OBDal.getInstance().getSession();
+
+    final StringBuilder hql = new StringBuilder();
+    hql.append("select max(p.id) as period ");
+    hql.append(" from FinancialMgmtPeriodControl pc ");
+    hql.append("   left join pc.period p ");
+    hql.append(" where p.client = '").append(client).append("' ");
+    hql.append(" and pc.documentCategory = '").append(documentType).append("' ");
+    hql.append(" and pc.periodStatus = 'O' ");
+    hql.append(" and pc.organization = ad_org_getcalendarowner('").append(org).append("') ");
+    hql.append(" and to_date('").append(dateAcct).append("') >= p.startingDate ");
+    hql.append(" and to_date('").append(dateAcct).append("') < p.endingDate + 1 ");
+
+    final Query qry = session.createQuery(hql.toString());
+
+    String period = (String) (qry.list().get(0));
+
+    if (period == null) {
+      return false;
+    } else {
+      return true;
+    }
+  }
 }

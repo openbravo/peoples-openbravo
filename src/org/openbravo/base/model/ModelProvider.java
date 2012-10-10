@@ -425,6 +425,7 @@ public class ModelProvider implements OBSingleton {
   private List<Column> readColumns(Session session) {
     final Criteria c = session.createCriteria(Column.class);
     c.addOrder(Order.asc("position"));
+    c.addOrder(Order.asc("name"));
     return c.list();
   }
 

@@ -2,6 +2,9 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="C_OrderLinesJR" pageWidth="477" pageHeight="802" columnWidth="477" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -20,9 +23,12 @@
 	</parameter>
 	<parameter name="NUMBERFORMAT" class="java.text.DecimalFormat" isForPrompting="false"/>
 	<parameter name="LOCALE" class="java.util.Locale" isForPrompting="false"/>
+	<parameter name="ISTAXINCLUDED" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[SELECT 1 AS ISBOM, C_ORDERLINE.LINE, COALESCE(M_PRODUCT.NAME, C_ORDERLINE.DESCRIPTION) AS PRODUCT_NAME, C_ORDERLINE.QTYORDERED AS QUANTITY,
-        TO_CHAR(C_UOM.NAME) AS UOM,  C_ORDERLINE.PRICEACTUAL, TO_NUMBER(NULL) AS BASE, C_ORDERLINE.LINENETAMT, TO_NUMBER(NULL) AS TAXLINE,
+        TO_CHAR(C_UOM.NAME) AS UOM,  CASE WHEN $P{ISTAXINCLUDED} = 'N' THEN C_ORDERLINE.PRICEACTUAL ELSE C_ORDERLINE.GROSS_UNIT_PRICE END as PRICEACTUAL ,
+        TO_NUMBER(NULL) AS BASE, CASE WHEN $P{ISTAXINCLUDED} = 'N' THEN C_ORDERLINE.LINENETAMT ELSE C_ORDERLINE.LINE_GROSS_AMOUNT END as LINENETAMT,
+        TO_NUMBER(NULL) AS TAXLINE,
         C_ORDER.docstatus AS STATUS, TO_CHAR(M_PRODUCT.VALUE) AS VALUE
         FROM C_ORDERLINE left join M_PRODUCT on C_ORDERLINE.M_PRODUCT_ID = M_PRODUCT.M_PRODUCT_ID
                          left join C_UOM on C_ORDERLINE.C_UOM_ID = C_UOM.C_UOM_ID,
@@ -48,6 +54,7 @@
             AND C_TAX.C_TAX_ID = C_ORDERTAX.C_TAX_ID
             AND C_ORDERTAX.TAXAMT <> 0
             AND C_ORDER.C_ORDER_ID = $P{C_ORDER_ID}
+            AND $P{ISTAXINCLUDED} = 'N'
         ORDER BY LINE,ISBOM, TAXLINE]]>
 	</queryString>
 	<field name="ISBOM" class="java.lang.Integer"/>
@@ -129,11 +136,13 @@
 					<text><![CDATA[BASE]]></text>
 				</staticText>
 				<staticText>
-					<reportElement key="staticText-4" style="Detail_Header" x="415" y="3" width="60" height="17" forecolor="#FFFFFF" backcolor="#666666"/>
+					<reportElement key="staticText-4" style="Detail_Header" x="415" y="3" width="60" height="17" forecolor="#FFFFFF" backcolor="#666666">
+						<printWhenExpression><![CDATA[$P{ISTAXINCLUDED}.equals("N")]]></printWhenExpression>
+					</reportElement>
 					<textElement textAlignment="Right" verticalAlignment="Top">
 						<font isBold="false" pdfFontName="Helvetica"/>
 					</textElement>
-					<text><![CDATA[NET]]></text>
+					<text><![CDATA[TOTAL]]></text>
 				</staticText>
 				<line>
 					<reportElement key="line-14" x="295" y="3" width="1" height="17" forecolor="#FFFFFF"/>

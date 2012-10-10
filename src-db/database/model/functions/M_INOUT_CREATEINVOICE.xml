@@ -255,10 +255,10 @@
           FOR CUR_ShipmentLines IN
             (SELECT *  FROM M_INOUTLINE  WHERE M_InOut_ID=v_Record_ID)
           LOOP
+            v_LinesFromOrder:= v_LinesFromOrder + 1;
             -- Get Price
             IF(CUR_ShipmentLines.C_OrderLine_ID IS NOT NULL) THEN
               v_ResultStr:='GettingPrice-Order';
-              v_LinesFromOrder:= v_LinesFromOrder + 1;
               SELECT COALESCE(MAX(PriceList), 0),
                 COALESCE(MAX(PriceActual), 0),
                 COALESCE(MAX(PriceLimit), 0),

@@ -314,7 +314,8 @@ isc.OBQueryListGrid.addProperties({
     var field = this.getField(colNum);
     if (field.isLink) {
       if (field.OB_TabId && field.OB_LinkExpression) {
-        OB.Utilities.openDirectView(field.OB_WindowId, field.OB_keyColumnName, field.OB_entityName, record[field.OB_LinkExpression]);
+        //To open the tab provided in the widget column. Refer https://issues.openbravo.com/view.php?id=17411.
+        OB.Utilities.openDirectTab(field.OB_TabId, record[field.OB_LinkExpression]);
       }
     }
   },

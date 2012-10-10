@@ -342,6 +342,15 @@ public class ModuleManagement extends HttpSecureAppServlet {
     try {
       String restartTomcat = ModuleManagementData.selectRestartTomcat(this);
       String totalToBeRebuilt = ModuleManagementData.selectRebuild(this);
+      /*
+       * Set rebuild now option if System is under Maintenance. Refer
+       * https://issues.openbravo.com/view.php?id=13212
+       */
+      Boolean lastBuildFailed = false;
+      SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
+      if (sysInfo.getSystemStatus() != null && !sysInfo.getSystemStatus().equals("RB70")) {
+        lastBuildFailed = true;
+      }
       // Check if last build was done but Tomcat wasn't restarted,
       // but dont show the restart tomcat message is a rebuild need to be done
       if (!restartTomcat.equals("0") && totalToBeRebuilt.equals("0")) {
@@ -349,7 +358,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
             + Utility.messageBD(this, "Restart_Tomcat", lang) + "</a>";
       } else {
         // Check for rebuild system
-        if (!totalToBeRebuilt.equals("0")) {
+        if (!totalToBeRebuilt.equals("0") || lastBuildFailed) {
           updatesRebuildHTML = totalToBeRebuilt
               + "&nbsp;"
               + Utility.messageBD(this, "ApplyModules", lang)
@@ -1197,7 +1206,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
                 message.setType("Warning");
                 message.setTitle(Utility.messageBD(this, message.getType(), vars.getLanguage()));
                 message.setMessage(module.getName() + " " + module.getVersionNo() + " "
-                    + Utility.messageBD(this, "OtherModuleVersionToinstall", vars.getLanguage())
+                    + Utility.messageBD(this, "OtherModuleVersionToInstall", vars.getLanguage())
                     + " " + installOrig[i].getVersionNo());
               }
               if (found) {
@@ -1327,7 +1336,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
 
     if (upd != null && upd.length > 0) {
       xmlDocument.setData("updates",
-          getModuleFieldProvider(upd, minVersions, false, vars.getLanguage(), islocal));
+          getModuleFieldProvider(upd, minVersions, true, vars.getLanguage(), islocal));
     }
 
     if (merges != null && merges.length > 0) {
@@ -1395,8 +1404,17 @@ public class ModuleManagement extends HttpSecureAppServlet {
       if (installed) {
         if (minVersions != null && minVersions.get(module.getModuleID()) != null
             && !minVersions.get(module.getModuleID()).equals("")) {
-          mod.put("versionNoMin", Utility.messageBD(this, "UpdateModuleNeed", lang) + " "
-              + minVersions.get(module.getModuleID()));
+          /*
+           * Checking whether the module version is the same as the minimum version number. Refer
+           * issue https://issues.openbravo.com/view.php?id=13576
+           */
+          String versionNumber = this.removeVersionLabel(module.getVersionNo());
+          Boolean moduleVersionSameAsMinimumVersion = versionNumber.equals(minVersions.get(module
+              .getModuleID()));
+          if (!moduleVersionSameAsMinimumVersion) {
+            mod.put("versionNoMin", Utility.messageBD(this, "UpdateModuleNeed", lang) + " "
+                + minVersions.get(module.getModuleID()));
+          }
         }
         mod.put("versionNoCurr", currentInstalledVersion(module.getModuleID()));
       } else {
@@ -1420,12 +1438,21 @@ public class ModuleManagement extends HttpSecureAppServlet {
     return FieldProviderFactory.getFieldProviderArray(rt);
   }
 
+  /*
+   * The version number of module returned by web service has the MP tag attached to it. To compare
+   * with the minimum version, we are removing the tag. eg., Openbravo 3.0 3.0.17885 (MP15) to
+   * Openbravo 3.0 3.0.17885. Related to Issue https://issues.openbravo.com/view.php?id=13576
+   */
+  private String removeVersionLabel(String versionWithLabel) {
+    return versionWithLabel.split("\\(")[0].trim();
+  }
+
   private String currentInstalledVersion(String moduleId) {
     String currentVersion = "";
     org.openbravo.model.ad.module.Module mod = OBDal.getInstance().get(
         org.openbravo.model.ad.module.Module.class, moduleId);
     if (mod != null) {
-      currentVersion = mod.getVersion();
+      currentVersion = currentVersion.concat(" (" + mod.getVersionLabel() + ")");
     }
     return currentVersion;
   }

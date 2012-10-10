@@ -577,6 +577,12 @@ isc.OBNumberFilterItem.addProperties({
     return ret;
   },
 
+  // If the filter has not been applied yet, apply it when it loses the focus
+  blur: function () {
+    this.form.grid.performAction();
+    return this.Super('blur', arguments);
+  },
+
   convertToStringValue: function (value) {
     var type = this.typeInstance;
     if (!isc.isA.String(value)) {

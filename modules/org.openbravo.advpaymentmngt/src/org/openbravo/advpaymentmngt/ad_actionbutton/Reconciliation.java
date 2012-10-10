@@ -46,7 +46,9 @@ import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.FieldProvider;
+import org.openbravo.erpCommon.ad_forms.AcctServer;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
@@ -208,6 +210,32 @@ public class Reconciliation extends HttpSecureAppServlet {
           msg.setType("Error");
           msg.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
           msg.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), strMessage));
+          vars.setMessage(strTabId, msg);
+          msg = null;
+          printPageClosePopUpAndRefreshParent(response, vars);
+          return;
+        }
+
+        if (!FIN_Utility.isPeriodOpen(reconciliation.getClient().getId(),
+            AcctServer.DOCTYPE_Reconciliation, reconciliation.getOrganization().getId(),
+            strStatementDate)) {
+          msg.setType("Error");
+          msg.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
+          msg.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(),
+              "@PeriodNotAvailable@"));
+          vars.setMessage(strTabId, msg);
+          msg = null;
+          printPageClosePopUpAndRefreshParent(response, vars);
+          return;
+        }
+
+        String identifier = linesInNotAvailablePeriod(reconciliation.getId());
+        if (!identifier.equalsIgnoreCase("")) {
+          msg.setType("Error");
+          msg.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
+          msg.setMessage(String.format(
+              Utility.messageBD(this, "APRM_PeriodNotAvailableClearedItem", vars.getLanguage()),
+              identifier));
           vars.setMessage(strTabId, msg);
           msg = null;
           printPageClosePopUpAndRefreshParent(response, vars);
@@ -459,6 +487,28 @@ public class Reconciliation extends HttpSecureAppServlet {
 
   public String getServletInfo() {
     return "This servlet manages manual transactions reconciliations.";
+  }
+
+  private String linesInNotAvailablePeriod(String reconciliationId) {
+    final StringBuilder hql = new StringBuilder();
+
+    hql.append(" as rl ");
+    hql.append(" where rl.reconciliation.id = '").append(reconciliationId).append("' ");
+    hql.append("   and c_chk_open_period(rl.organization, rl.transactionDate, 'REC', null) = 0 ");
+    hql.append(" order by rl.transactionDate");
+
+    final OBQuery<FIN_ReconciliationLine_v> obqRL = OBDal.getInstance().createQuery(
+        FIN_ReconciliationLine_v.class, hql.toString());
+    obqRL.setMaxResult(1);
+
+    List<FIN_ReconciliationLine_v> obqRLlist = obqRL.list();
+
+    if (obqRLlist.size() == 0) {
+      return "";
+    } else {
+      return obqRLlist.get(0).getIdentifier();
+    }
+
   }
 
 }

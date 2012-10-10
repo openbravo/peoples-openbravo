@@ -16,7 +16,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2008-2010 Openbravo SLU
+* All portions are Copyright (C) 2008-2012 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -49,13 +49,19 @@
   v_PriceActual NUMBER;
   v_Discount NUMBER;
   v_Tax_ID VARCHAR2(32);
+  v_gross_unit_price NUMBER;
+  v_line_gross_amount NUMBER;
+  v_lineNetAmt NUMBER;
+  v_stdPre NUMBER;
+  v_priPre NUMBER;
+  v_Gross NUMBER;
 
   p_OrderDate DATE;
   p_Vendor_ID VARCHAR2(32);
   p_PriceList_ID VARCHAR2(32);
   p_Org_ID VARCHAR2(32);
   p_Warehouse_ID VARCHAR2(32);
-
+  
   --  Parameter
   TYPE RECORD IS REF CURSOR;
   Cur_Parameter RECORD;
@@ -119,7 +125,8 @@ BEGIN
       (SELECT A.*,
            COALESCE(A.A_PRICELIST_ID, C_BPARTNER.PO_PRICELIST_ID) AS PRICELIST_ID,
            C_BPARTNER.PAYMENTRULEPO AS PAYMENTRULE, C_BPARTNER.PO_PAYMENTMETHOD_ID, C_BPARTNER.PO_PAYMENTTERM_ID AS C_PAYMENTTERM_ID,
-           C_BPARTNER.DELIVERYRULE, C_BPARTNER.DELIVERYVIARULE, C_BPARTNER.C_BPARTNER_ID AS C_BPID
+           C_BPARTNER.DELIVERYRULE, C_BPARTNER.DELIVERYVIARULE, C_BPARTNER.C_BPARTNER_ID AS C_BPID, 
+           M_PRICELIST.ISTAXINCLUDED
        FROM (SELECT COALESCE(p_Vendor_ID, M_REQUISITIONLINE.C_BPARTNER_ID, M_REQUISITION.C_BPARTNER_ID, PRODUCT_PO.C_BPARTNER_ID) AS VENDOR_ID,
                  COALESCE(p_PriceList_ID, M_REQUISITIONLINE.M_PRICELIST_ID, M_REQUISITION.M_PRICELIST_ID) AS A_PRICELIST_ID,
                  M_REQUISITIONLINE.*
@@ -135,8 +142,9 @@ BEGIN
                 AND M_REQUISITIONLINE.REQSTATUS = 'O'
                 AND NOT (COALESCE(M_REQUISITIONLINE.LOCKEDBY, v_User_ID) <> v_User_ID
                          AND COALESCE(M_REQUISITIONLINE.LOCKDATE, TO_DATE('01-01-1900', 'DD-MM-YYYY')) >= (now()-3))
-              ) A, C_BPARTNER
+              ) A, C_BPARTNER, M_PRICELIST
        WHERE A.VENDOR_ID = C_BPARTNER.C_BPARTNER_ID
+       AND m_pricelist.m_pricelist_ID = CASE WHEN A.A_PRICELIST_ID is not null then A.A_PRICELIST_ID ELSE C_BPARTNER.PO_PRICELIST_ID END
        ORDER BY A.VENDOR_ID, COALESCE(A.A_PRICELIST_ID, C_BPARTNER.PO_PRICELIST_ID), A.NEEDBYDATE) LOOP
       v_ResultStr:='Line start';
 
@@ -219,13 +227,14 @@ BEGIN
       Ad_Sequence_Next('C_OrderLine', v_Client_ID, v_COrderLine_ID);
 
       SELECT pp.PRICELIST, pp.PRICELIMIT, pp.PRICESTD,
-             ROUND(M_GET_OFFERS_PRICE(TO_DATE(p_OrderDate),Cur_Lines.C_BPID,Cur_Lines.M_Product_ID,COALESCE(Cur_Lines.PRICEACTUAL, pp.PRICESTD),Cur_Lines.QTY - Cur_Lines.ORDEREDQTY,Cur_Lines.PRICELIST_ID),CUR.PRICEPRECISION),
-             ROUND((pp.PRICELIST - pp.PRICESTD)/pp.PRICELIST*100,CUR.STDPRECISION)
-        INTO v_PriceList, v_PriceLimit, v_PriceStd, v_PriceActual, v_Discount
+             ROUND(M_GET_OFFERS_PRICE(TO_DATE(p_OrderDate),Cur_Lines.C_BPID,Cur_Lines.M_Product_ID,COALESCE(Cur_Lines.PRICEACTUAL, pp.PRICESTD),Cur_Lines.QTY - Cur_Lines.ORDEREDQTY,Cur_Lines.PRICELIST_ID),CUR.PRICEPRECISION), 
+             pp.Gross
+        INTO v_PriceList, v_PriceLimit, v_PriceStd, v_PriceActual, v_Gross
       FROM
         (SELECT COALESCE(Cur_Lines.PRICELIST, MAX(M_PRODUCTPRICE.PRICELIST), Cur_Lines.PRICEACTUAL) AS PRICELIST,
              COALESCE(MAX(M_PRODUCTPRICE.PRICELIMIT), Cur_Lines.PRICEACTUAL) AS PRICELIMIT,
-             COALESCE(Cur_Lines.PRICEACTUAL, MAX(M_PRODUCTPRICE.PRICESTD)) AS PRICESTD
+             COALESCE(Cur_Lines.PRICEACTUAL, MAX(M_PRODUCTPRICE.PRICESTD)) AS PRICESTD,
+             COALESCE(Cur_Lines.Gross_Unit_Price, 0) as Gross
          FROM M_PRODUCTPRICE
          WHERE M_PRICELIST_VERSION_ID = M_GET_PRICELIST_VERSION(Cur_Lines.PRICELIST_ID, p_OrderDate)
            AND M_PRODUCT_ID = Cur_Lines.M_PRODUCT_ID) pp, (SELECT PRICEPRECISION, STDPRECISION FROM C_CURRENCY WHERE C_CURRENCY_ID = v_Currency_ID) CUR;
@@ -236,8 +245,30 @@ BEGIN
       END IF;
 
       v_Tax_ID := C_GetTax(Cur_Lines.M_Product_ID, p_OrderDate, p_Org_ID, p_Warehouse_ID, v_BillTo_ID, v_BPartner_Location_ID, null, 'N');
-
+      SELECT STDPRECISION, PRICEPRECISION INTO v_stdPre, v_priPre FROM C_CURRENCY WHERE C_CURRENCY_ID = v_Currency_ID;
+    
       v_ResultStr:='Insert order line';
+      IF (Cur_Lines.istaxincluded = 'Y') THEN
+        v_gross_unit_price:= v_Gross;
+        v_line_gross_amount:= ROUND(v_gross_unit_price * (Cur_Lines.QTY - Cur_Lines.ORDEREDQTY), v_stdPre);
+        v_PriceActual:= C_GET_NET_PRICE_FROM_GROSS(v_Tax_ID, v_line_gross_amount, v_line_gross_amount, v_priPre, (Cur_Lines.QTY - Cur_Lines.ORDEREDQTY));
+        v_LineNetAmt:= ROUND(v_PriceActual * (Cur_Lines.QTY - Cur_Lines.ORDEREDQTY), v_stdPre);
+        IF (v_PriceList = 0) THEN
+          v_Discount := 0 ;
+        ELSE
+          v_Discount :=ROUND((v_PriceList-v_gross_unit_price) / v_PriceList*100, v_stdPre); -- Calculate rounded discount
+        END IF;
+      ELSE
+        v_LineNetAmt:= ROUND(v_PriceActual*(Cur_Lines.QTY - Cur_Lines.ORDEREDQTY), v_stdPre);
+        v_gross_unit_price := 0;
+        v_line_gross_amount:= 0;
+        IF (v_PriceList = 0) THEN
+          v_Discount := 0 ;
+        ELSE
+          v_Discount :=ROUND((v_PriceList-v_PriceActual) / v_PriceList*100, v_stdPre); -- Calculate rounded discount
+        END IF;
+      END IF;
+      
       INSERT INTO C_OrderLine (
           C_ORDERLINE_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE,
           CREATED, CREATEDBY, UPDATED, UPDATEDBY,
@@ -247,7 +278,7 @@ BEGIN
           M_WAREHOUSE_ID, C_UOM_ID, QTYORDERED, C_CURRENCY_ID,
           PRICELIST, PRICEACTUAL, PRICELIMIT,
           PRICESTD, LINENETAMT, DISCOUNT,
-          C_TAX_ID, M_PRODUCT_UOM_ID, QUANTITYORDER
+          C_TAX_ID, M_PRODUCT_UOM_ID, QUANTITYORDER, GROSS_UNIT_PRICE, LINE_GROSS_AMOUNT
       ) VALUES (
           v_COrderLine_ID,v_Client_ID, p_Org_ID,'Y',
           now(), v_User_ID, now(), v_User_ID,
@@ -256,8 +287,8 @@ BEGIN
           Cur_Lines.M_AttributeSetInstance_ID,
           p_Warehouse_ID, Cur_Lines.C_UOM_ID, Cur_Lines.QTY - Cur_Lines.ORDEREDQTY, v_Currency_ID,
           v_PriceList, v_PriceActual, v_PriceLimit,
-          v_PriceStd, v_PriceActual*(Cur_Lines.QTY - Cur_Lines.ORDEREDQTY),v_Discount,
-          v_Tax_ID, Cur_Lines.M_Product_UOM_ID, Cur_Lines.QuantityOrder
+          v_PriceStd, v_LineNetAmt,v_Discount,
+          v_Tax_ID, Cur_Lines.M_Product_UOM_ID, Cur_Lines.QuantityOrder, v_gross_unit_price, v_line_gross_amount
       );
 
       Ad_Sequence_Next('M_RequisitionOrder', v_User_ID, v_RequisitionOrder_ID);

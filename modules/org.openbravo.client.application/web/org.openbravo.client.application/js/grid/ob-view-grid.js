@@ -307,6 +307,11 @@ isc.OBViewGrid.addProperties({
       });
       this.contextMenu.show = function () {
         var me = this;
+        // If not in the header tab, and no parent is selected, do not show the context menu
+        // See issue https://issues.openbravo.com/view.php?id=21787
+        if (!grid.view.hasValidState()) {
+          return;
+        }
         if (!grid.view.isActiveView()) {
           // The view where the context menu is being opened must be active
           // See issue https://issues.openbravo.com/view.php?id=20872
@@ -2314,10 +2319,20 @@ isc.OBViewGrid.addProperties({
     saveCallback = function () {
       if (originalCallback) {
         if (this.getSelectedRecord() && this.getSelectedRecord()[OB.Constants.ID]) {
-          if (!this.view.newRecordsAfterRefresh) {
-            this.view.newRecordsAfterRefresh = [];
+          if (this.view.parentRecordId) {
+            if (!this.view.newRecordsAfterRefresh) {
+              this.view.newRecordsAfterRefresh = {};
+            }
+            if (!this.view.newRecordsAfterRefresh[this.view.parentRecordId]) {
+              this.view.newRecordsAfterRefresh[this.view.parentRecordId] = [];
+            }
+            this.view.newRecordsAfterRefresh[this.view.parentRecordId].push(this.getSelectedRecord()[OB.Constants.ID]);
+          } else {
+            if (!this.view.newRecordsAfterRefresh) {
+              this.view.newRecordsAfterRefresh = [];
+            }
+            this.view.newRecordsAfterRefresh.push(this.getSelectedRecord()[OB.Constants.ID]);
           }
-          this.view.newRecordsAfterRefresh.push(this.getSelectedRecord()[OB.Constants.ID]);
         }
         this.fireCallback(originalCallback, "rowNum,colNum,editCompletionEvent,success", [rowNum, colNum, editCompletionEvent]);
       }

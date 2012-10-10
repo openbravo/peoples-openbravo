@@ -29,6 +29,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.pricing.pricelist.PriceList;
+import org.openbravo.model.procurement.Requisition;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class SL_RequisitionLine_Amt extends HttpSecureAppServlet {
@@ -53,9 +56,10 @@ public class SL_RequisitionLine_Amt extends HttpSecureAppServlet {
       String strPriceList = vars.getNumericParameter("inppricelist");
       String strDiscount = vars.getNumericParameter("inpdiscount");
       String strMPricelistId = vars.getStringParameter("inpmPricelistId");
+      String strGrossPrice = vars.getNumericParameter("inpgrossUnitPrice");
       try {
         printPage(response, vars, strQty, strPriceActual, strDiscount, strPriceList, strChanged,
-            strMPricelistId);
+            strMPricelistId, strGrossPrice);
       } catch (ServletException ex) {
         pageErrorCallOut(response);
       }
@@ -66,7 +70,7 @@ public class SL_RequisitionLine_Amt extends HttpSecureAppServlet {
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strQty,
       String strPriceActual, String strDiscount, String strPriceList, String strChanged,
-      String strMPricelistId) throws IOException, ServletException {
+      String strMPricelistId, String strGrossPrice) throws IOException, ServletException {
 
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
@@ -77,12 +81,12 @@ public class SL_RequisitionLine_Amt extends HttpSecureAppServlet {
     StringBuffer resultado = new StringBuffer();
     resultado.append("var calloutName='SL_RequisitionLine_Amt';\n\n");
     resultado.append("var respuesta = new Array(");
+    String strRequisition = vars.getStringParameter("inpmRequisitionId");
+    BigDecimal LineNetAmt, priceActual;
+    if (!strPriceActual.equals("") || !strGrossPrice.equals("")) {
 
-    if (!strPriceActual.equals("")) {
+      BigDecimal qty, discount, priceList;
 
-      BigDecimal qty, LineNetAmt, priceActual, discount, priceList;
-
-      String strRequisition = vars.getStringParameter("inpmRequisitionId");
       SLRequisitionLineAmtData[] data = null;
       if ("".equals(strMPricelistId)) {
         data = SLRequisitionLineAmtData.select(this, strRequisition);
@@ -124,7 +128,12 @@ public class SL_RequisitionLine_Amt extends HttpSecureAppServlet {
         if (!strDiscount.equals(discount.toString())) {
           resultado.append("new Array(\"inpdiscount\", " + discount.toString() + "),");
         }
-        resultado.append("new Array(\"inppriceactual\", " + priceActual.toString() + "),");
+        if (!("").equals(strMPricelistId)
+            && (OBDal.getInstance().get(PriceList.class, strMPricelistId).isPriceIncludesTax())
+            || (("").equals(strMPricelistId) && OBDal.getInstance()
+                .get(Requisition.class, strRequisition).getPriceList().isPriceIncludesTax())) {
+          resultado.append("new Array(\"inppriceactual\", " + priceActual.toString() + "),");
+        }
 
       } else if (strChanged.equals("inpdiscount")) { // calculate std and
         // actual
@@ -144,13 +153,27 @@ public class SL_RequisitionLine_Amt extends HttpSecureAppServlet {
           resultado.append("new Array(\"inppriceactual\", " + priceActual.toString() + "),");
         }
       }
+      if (!("").equals(strMPricelistId)
+          && (OBDal.getInstance().get(PriceList.class, strMPricelistId).isPriceIncludesTax())
+          || (("").equals(strMPricelistId) && OBDal.getInstance()
+              .get(Requisition.class, strRequisition).getPriceList().isPriceIncludesTax())) {
+        priceActual = strGrossPrice.equals("") ? ZERO : internalRound(
+            new BigDecimal(strGrossPrice), pricePrecision);
+        resultado.append("new Array(\"inpgrossUnitPrice\", " + priceActual.toString() + "),");
+      }
       LineNetAmt = qty.multiply(priceActual);
 
       LineNetAmt = internalRound(LineNetAmt, stdPrecision);
       strLineNetAmt = LineNetAmt.toString();
     }
-
-    resultado.append("new Array(\"inplinenetamt\", " + strLineNetAmt + ")");
+    if (!("").equals(strMPricelistId)
+        && (OBDal.getInstance().get(PriceList.class, strMPricelistId).isPriceIncludesTax())
+        || (("").equals(strMPricelistId) && OBDal.getInstance()
+            .get(Requisition.class, strRequisition).getPriceList().isPriceIncludesTax())) {
+      resultado.append("new Array(\"inpgrossAmt\", " + strLineNetAmt + ")");
+    } else {
+      resultado.append("new Array(\"inplinenetamt\", " + strLineNetAmt + ")");
+    }
     resultado.append(");");
     xmlDocument.setParameter("array", resultado.toString());
     xmlDocument.setParameter("frameName", "appFrame");

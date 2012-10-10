@@ -70,7 +70,12 @@ isc.OBGrid.addProperties({
     OB.KeyboardManager.Shortcuts.set('Grid_FocusFilter', ['OBGrid.body', 'OBGrid.editForm'], ksAction_FocusFilter);
 
     ksAction_FocusGrid = function (caller) {
-      caller.focus();
+      if (caller.getPrototype().Class !== 'OBViewGrid' || caller.data.localData[0]) { // In OBViewGrid case, only execute action if there are at least one row in the grid
+        caller.focus();
+        if (!caller.getSelectedRecord()) { // If there are no rows already selected in the grid, select the first one
+          caller.selectSingleRecord(0);
+        }
+      }
       return false; //To avoid keyboard shortcut propagation
     };
     OB.KeyboardManager.Shortcuts.set('Grid_FocusGrid', 'OBGrid.filter', ksAction_FocusGrid);
@@ -122,7 +127,14 @@ isc.OBGrid.addProperties({
   },
 
   filterFieldsKeyDown: function (item, form, keyName) {
-    var response = OB.KeyboardManager.Shortcuts.monitor('OBGrid.filter', this.grid.fieldSourceGrid);
+    // To fix issue https://issues.openbravo.com/view.php?id=21786
+    var isEscape = isc.EH.getKey() === 'Escape' && !isc.EH.ctrlKeyDown() && !isc.EH.altKeyDown() && !isc.EH.shiftKeyDown(),
+        response;
+    if (isEscape && item && Object.prototype.toString.call(item.isPickListShown) === '[object Function]' && item.isPickListShown()) {
+      return true; // Then the event will bubble to ComboBoxItem.keyDown
+    }
+
+    response = OB.KeyboardManager.Shortcuts.monitor('OBGrid.filter', this.grid.fieldSourceGrid);
     if (response !== false) {
       response = this.Super('filterFieldsKeyDown', arguments);
     }
@@ -622,7 +634,7 @@ isc.OBGrid.addProperties({
   // be presented with a save-as dialog.
   // Parameters:
   // * {{{exportProperties}}} defines different properties used for controlling the export, currently only the 
-  // exportProperties.exportFormat is supported (which is defaulted to csv).
+  // exportProperties.exportAs and exportProperties._extraProperties are supported (which is defaulted to csv).
   // * {{{data}}} the parameters to post to the server, in addition the filter criteria of the grid are posted.  
   exportData: function (exportProperties, data) {
     var d = data || {},
@@ -642,9 +654,11 @@ isc.OBGrid.addProperties({
       // never do count for export
       exportAs: expProp.exportAs || 'csv',
       viewState: expProp.viewState,
+      _extraProperties: expProp._extraProperties,
       tab: expProp.tab,
       exportToFile: true,
-      _textMatchStyle: 'substring'
+      _textMatchStyle: 'substring',
+      _UTCOffsetMiliseconds: OB.Utilities.Date.getUTCOffsetInMiliseconds()
     }, lcriteria, this.getFetchRequestParams());
     if (this.getSortField()) {
       sortCriteria = this.getSort();

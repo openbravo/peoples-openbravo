@@ -527,6 +527,7 @@ isc.OBSelectorItem.addProperties({
           if (record) {
             value = record[i];
             if (typeof value === 'undefined') {
+              form.hiddenInputs[this.outHiddenInputPrefix + outFields[i].suffix] = '';
               continue;
             }
             if (isc.isA.Number(value)) {

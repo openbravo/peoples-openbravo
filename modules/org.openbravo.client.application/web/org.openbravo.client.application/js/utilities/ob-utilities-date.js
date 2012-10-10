@@ -23,7 +23,6 @@ OB.Utilities = window.OB.Utilities || {};
 // = Openbravo Date Utilities =
 // Defines utility methods related to handling date, incl. formatting.
 OB.Utilities.Date = {};
-
 // ** {{{ OB.Utilities.Date.centuryReference }}} **
 // For a two-digit year display format, it establishes where is the frontier
 // between the 20th and the 21st century
@@ -115,6 +114,12 @@ OB.Utilities.Date.OBToJS = function (OBDate, dateFormat) {
   var hours = dateFormat.indexOf('%H') !== -1 ? OBDate.substring(dateFormat.indexOf('%H'), dateFormat.indexOf('%H') + 2) : 0;
   var minutes = dateFormat.indexOf('%M') !== -1 ? OBDate.substring(dateFormat.indexOf('%M'), dateFormat.indexOf('%M') + 2) : 0;
   var seconds = dateFormat.indexOf('%S') !== -1 ? OBDate.substring(dateFormat.indexOf('%S'), dateFormat.indexOf('%S') + 2) : 0;
+
+  // Check that really all date parts (if they are present) are numbers
+  var digitRegExp = ['^\\d+$', 'gm'];
+  if ((year && !(new RegExp(digitRegExp[0], digitRegExp[1]).test(year))) || (fullYear && !(new RegExp(digitRegExp[0], digitRegExp[1]).test(fullYear))) || (month && !(new RegExp(digitRegExp[0], digitRegExp[1]).test(month))) || (day && !(new RegExp(digitRegExp[0], digitRegExp[1]).test(day))) || (hours && !(new RegExp(digitRegExp[0], digitRegExp[1]).test(hours))) || (minutes && !(new RegExp(digitRegExp[0], digitRegExp[1]).test(minutes))) || (seconds && !(new RegExp(digitRegExp[0], digitRegExp[1]).test(seconds)))) {
+    return null;
+  }
 
   month = parseInt(month, 10);
   day = parseInt(day, 10);
@@ -272,4 +277,13 @@ OB.Utilities.Date.convertUTCTimeToLocalTime = function (newData, allFields) {
       }
     }
   }
+};
+
+//** {{{ OB.Utilities.Date.getUTCOffsetInMiliseconds }}} **
+//
+// Return the offset with UTC measured in miliseconds
+OB.Utilities.Date.getUTCOffsetInMiliseconds = function () {
+  var UTCHourOffset = isc.Time.getUTCHoursDisplayOffset(new Date()),
+      UTCMinuteOffset = isc.Time.getUTCMinutesDisplayOffset(new Date());
+  return (UTCHourOffset * 60 * 60 * 1000) + (UTCMinuteOffset * 60 * 1000);
 };

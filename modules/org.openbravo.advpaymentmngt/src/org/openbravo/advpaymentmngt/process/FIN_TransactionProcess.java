@@ -30,6 +30,8 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.ad_forms.AcctServer;
+import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.currency.ConversionRateDoc;
@@ -66,6 +68,16 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
           // ***********************
           // Process Transaction
           // ***********************
+          if (!FIN_Utility.isPeriodOpen(transaction.getClient().getId(),
+              AcctServer.DOCTYPE_FinAccTransaction, transaction.getOrganization().getId(),
+              OBDateUtils.formatDate(transaction.getDateAcct()))) {
+            msg.setType("Error");
+            msg.setTitle(Utility.messageBD(conProvider, "Error", language));
+            msg.setMessage(Utility.parseTranslation(conProvider, vars, language,
+                "@PeriodNotAvailable@"));
+            bundle.setResult(msg);
+            return;
+          }
           final FIN_FinancialAccount financialAccount = transaction.getAccount();
           financialAccount.setCurrentBalance(financialAccount.getCurrentBalance().add(
               transaction.getDepositAmount().subtract(transaction.getPaymentAmount())));

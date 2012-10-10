@@ -235,7 +235,7 @@ isc.OBStandardWindow.addProperties({
         len = parts.length,
         className = '_',
         tabSet = OB.MainView.TabSet,
-        vStack, manualJS, originalClassName, processClass;
+        vStack, manualJS, originalClassName, processClass, processOwnerView;
 
     if (params.uiPattern === 'M') { // Manual UI Pattern
       try {
@@ -260,9 +260,12 @@ isc.OBStandardWindow.addProperties({
         processClass = isc[className] || isc[originalClassName];
 
         if (processClass) {
-          this.selectedState = this.activeView && this.activeView.viewGrid && this.activeView.viewGrid.getSelectedState();
+          processOwnerView = this.getProcessOwnerView(params.processId);
+          this.selectedState = processOwnerView.viewGrid && processOwnerView.viewGrid.getSelectedState();
           this.runningProcess = processClass.create(isc.addProperties({}, params, {
-            parentWindow: this
+            parentWindow: this,
+            sourceView: this.activeView,
+            buttonOwnerView: processOwnerView
           }));
 
           this.openPopupInTab(this.runningProcess, params.windowTitle, (this.runningProcess.popupWidth ? this.runningProcess.popupWidth : '90%'), (this.runningProcess.popupHeight ? this.runningProcess.popupHeight : '90%'), (this.runningProcess.showMinimizeButton ? this.runningProcess.showMinimizeButton : false), (this.runningProcess.showMaximizeButton ? this.runningProcess.showMaximizeButton : false), true, true);
@@ -673,7 +676,10 @@ isc.OBStandardWindow.addProperties({
       }
 
       // if not dirty or we know that the object has errors
-      if (!me.getDirtyEditForm() || (me.getDirtyEditForm() && !me.getDirtyEditForm().validateForm())) {
+      if (!me.getDirtyEditForm() || (me.getDirtyEditForm() && me.getDirtyEditForm().inFicCall) || (me.getDirtyEditForm() && !me.getDirtyEditForm().validateForm())) {
+        if (me.getDirtyEditForm() && me.getDirtyEditForm().inFicCall) {
+          me.getDirtyEditForm().callSaveAfterFICReturn = true;
+        }
         // clean up before calling the action, as the action
         // can set dirty form again
         me.cleanUpAutoSaveProperties();
@@ -1081,5 +1087,19 @@ isc.OBStandardWindow.addProperties({
     }
     this.viewState = result;
     OB.PropertyStore.set('OBUIAPP_GridConfiguration', result, this.windowId);
+  },
+
+  getProcessOwnerView: function (processId) {
+    var ownerView, i, j, nActionButtons, nViews = this.views.length;
+    for (i = 0; i < nViews; i++) {
+      nActionButtons = this.views[i].actionToolbarButtons.length;
+      for (j = 0; j < nActionButtons; j++) {
+        if (processId === this.views[i].actionToolbarButtons[j].processId) {
+          return this.views[i];
+        }
+      }
+    }
+    // If it is not found, return the header view
+    return this.view;
   }
 });

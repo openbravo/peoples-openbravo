@@ -998,10 +998,10 @@ or All (AD_CLIENT=anything, AD_ORG_ID=anything)]]></HELP>
 <!--199-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--199-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--199-->  <COLUMNNAME><![CDATA[C_Element_ID]]></COLUMNNAME>
-<!--199-->  <NAME><![CDATA[Accounting Element]]></NAME>
+<!--199-->  <NAME><![CDATA[Account Tree]]></NAME>
 <!--199-->  <PRINTNAME><![CDATA[Element]]></PRINTNAME>
-<!--199-->  <DESCRIPTION><![CDATA[A unique identifier for an account type.]]></DESCRIPTION>
-<!--199-->  <HELP><![CDATA[The Account Element uniquely identifies an Account Type.  These are commonly known as a Chart of Accounts.]]></HELP>
+<!--199-->  <DESCRIPTION><![CDATA[A unique identifier of the Account Tree.]]></DESCRIPTION>
+<!--199-->  <HELP><![CDATA[The Account Tree uniquely identifies the Account Tree, also known as Chart of Accounts, linked to the Accounting Schema.]]></HELP>
 <!--199-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--199-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--199--></AD_ELEMENT>
@@ -10594,7 +10594,8 @@ If selected, this column will be used in the Search Window as an available filte
 <!--1899-->  <NAME><![CDATA[Product Type]]></NAME>
 <!--1899-->  <PRINTNAME><![CDATA[Product Type]]></PRINTNAME>
 <!--1899-->  <DESCRIPTION><![CDATA[An important classification used to determine the accounting and management of a product.]]></DESCRIPTION>
-<!--1899-->  <HELP><![CDATA[The type of product also determines accounting consequences.]]></HELP>
+<!--1899-->  <HELP><![CDATA[There are four types of products available. Item type can be used to configure any product such as raw materials or finished products ready to be sold. An item can be flagged as Socked or not, can be part of a production process and/or can be a bill of materials. Item type is the only one for which a cost type calculation can be configured.  Service type can be used to configure consultancy, transport or insurance services. Service type can be purchased or sold but can not be stocked. A service can be a bill of materials. Finally Resource and Expense are product types which can be used to distinguish between different types of products which can be purchased or sold but make not sense to stock. Expense type can be used to configure travel expenses fto be used while reporting Employee Expenses.
+The fact of using a given product type does not mean a different accounting. All product types account same way while being purchased, stocked or sold. All of them use the ledger accounts defined in the Accounting tab of the Product window.]]></HELP>
 <!--1899-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1899-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--1899--></AD_ELEMENT>
@@ -28852,6 +28853,18 @@ The main purpose of this whereclause is to select which of the records in a part
 <!--C8561E14272B427EB15A6C5E81DAC83A-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--C8561E14272B427EB15A6C5E81DAC83A-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--C8561E14272B427EB15A6C5E81DAC83A--></AD_ELEMENT>
+
+<!--C958F9CA64A6AD2DE040007F01004595--><AD_ELEMENT>
+<!--C958F9CA64A6AD2DE040007F01004595-->  <AD_ELEMENT_ID><![CDATA[C958F9CA64A6AD2DE040007F01004595]]></AD_ELEMENT_ID>
+<!--C958F9CA64A6AD2DE040007F01004595-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--C958F9CA64A6AD2DE040007F01004595-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--C958F9CA64A6AD2DE040007F01004595-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--C958F9CA64A6AD2DE040007F01004595-->  <COLUMNNAME><![CDATA[Gross_Amt]]></COLUMNNAME>
+<!--C958F9CA64A6AD2DE040007F01004595-->  <NAME><![CDATA[Gross Amount]]></NAME>
+<!--C958F9CA64A6AD2DE040007F01004595-->  <PRINTNAME><![CDATA[Gross Amount]]></PRINTNAME>
+<!--C958F9CA64A6AD2DE040007F01004595-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--C958F9CA64A6AD2DE040007F01004595-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
+<!--C958F9CA64A6AD2DE040007F01004595--></AD_ELEMENT>
 
 <!--C9626ADBB0154295BE43B3E47A75D7AB--><AD_ELEMENT>
 <!--C9626ADBB0154295BE43B3E47A75D7AB-->  <AD_ELEMENT_ID><![CDATA[C9626ADBB0154295BE43B3E47A75D7AB]]></AD_ELEMENT_ID>
