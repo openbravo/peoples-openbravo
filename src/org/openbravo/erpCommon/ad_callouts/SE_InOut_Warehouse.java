@@ -40,7 +40,7 @@ public class SE_InOut_Warehouse extends SimpleCallout {
       OBContext.setAdminMode();
       try {
         Warehouse warehouse = OBDal.getInstance().get(Warehouse.class, strWarehouseId);
-        if (warehouse.getReturnlocator().getId() != null) {
+        if (warehouse.getReturnlocator() != null) {
           info.addResult("ReturnLocator", warehouse.getReturnlocator().getId());
         }
       } finally {
