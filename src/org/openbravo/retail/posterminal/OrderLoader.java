@@ -235,7 +235,7 @@ public class OrderLoader extends JSONProcessSimple {
 
     // Send email
     if (sendEmail) {
-      EmailSender emailSender = new EmailSender(order, jsonorder);
+      EmailSender emailSender = new EmailSender(order.getId(), jsonorder);
     }
 
     log.info("Initial flush: " + (t1 - t0) + "; Generate bobs:" + (t11 - t1) + "; Save bobs:"
