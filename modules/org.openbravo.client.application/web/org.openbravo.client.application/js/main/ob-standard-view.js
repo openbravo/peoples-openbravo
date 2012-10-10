@@ -743,6 +743,10 @@ isc.OBStandardView.addProperties({
   },
 
   setAsActiveView: function (autoSaveDone) {
+    var activeView = this.standardWindow.activeView;
+    if (activeView && activeView !== this && ((activeView.isShowingForm && activeView.viewForm.inFicCall) || (!activeView.isShowingForm && activeView.viewGrid.getEditForm() && activeView.viewGrid.getEditForm().inFicCall))) {
+      return;
+    }
     if (!autoSaveDone && this.standardWindow.activeView && this.standardWindow.activeView !== this) {
       var actionObject = {
         target: this,
