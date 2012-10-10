@@ -109,6 +109,32 @@ enyo.kind({
 });
 
 enyo.kind({
+  name: 'OB.UI.MenuCreateOrderFromQuotation',
+  kind: 'OB.UI.MenuAction',
+  permission: 'OBPOS_receipt.createorderfromquotation',
+  events: {
+    onCreateQuotation: ''
+  },
+  label: OB.I18N.getLabel('OBPOS_CreateOrderFromQuotation'),
+  tap: function() {
+    console('vamosss');
+  },
+  init: function(model){
+    var receipt = model.get('order'),
+    me = this;
+    receipt.on('change:quotation', function(model) {
+      if (model.get('quotation')) {
+        me.show();
+        console.log('hola');
+      } else {
+        me.hide();
+        console.log('adios');
+      }
+    }, this);
+  }
+});
+
+enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.StandardMenu',
   kind: 'OB.UI.ToolbarMenu',
   icon: 'btn-icon btn-icon-menu',
@@ -132,6 +158,10 @@ enyo.kind({
       kind: 'OB.UI.MenuSeparator'
     });
 
+    this.menuEntries.push({
+      kind: 'OB.UI.MenuCreateOrderFromQuotation'
+    });
+    
     this.menuEntries.push({
       kind: 'OB.UI.MenuItem',
       label: OB.I18N.getLabel('OBPOS_LblOpenbravoWorkspace'),

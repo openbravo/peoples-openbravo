@@ -187,10 +187,17 @@ enyo.kind({
   tap: function() {
     var receipt = this.model.get('order');
     if(receipt.get('quotation')){
-      receipt.calculateTaxes(function() {
-      receipt.trigger('closed');
-      //this.get('orderList').deleteCurrent();
-  });
+      if(receipt.get('hasbeenpaid')!=='Y'){
+        receipt.calculateTaxes(function() {
+          receipt.trigger('closed');
+          receipt.trigger('scan'); 
+        });
+      }else{
+        receipt.calculateTaxes(function() {
+        receipt.trigger('scan'); 
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_QuotationClosed'));
+        });
+      }
       return;
     }
     this.doTabChange({

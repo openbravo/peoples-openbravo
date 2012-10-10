@@ -399,6 +399,10 @@
 
     addProduct: function(p) {
       var me = this;
+      if(me.get('quotation') && me.get('hasbeenpaid')==='Y'){
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_QuotationClosed'));
+        return;
+      }
       if (p.get('obposScale')) {
         OB.POS.hwserver.getWeight(function(data) {
           if (data.exception) {
