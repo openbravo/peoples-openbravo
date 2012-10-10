@@ -78,6 +78,7 @@ public class SL_TaxCategory_Org extends SimpleCallout {
         OBCriteria<ProductCategory> productCatCrit = OBDao.getFilteredCriteria(ProductCategory.class, Restrictions.in(
             ProductCategory.PROPERTY_ORGANIZATION + "." + Organization.PROPERTY_ID,
             new OrganizationStructureProvider().getNaturalTree(strOrgId)));
+        productCatCrit.add(Restrictions.eq(ProductCategory.PROPERTY_SUMMARYLEVEL, false));
         productCatCrit.addOrderBy(ProductCategory.PROPERTY_NAME, true);
         String defaultCategoryId = getDefaultCategory(strOrgId);
         for (final ProductCategory productCategory : productCatCrit.list()) {
@@ -97,6 +98,7 @@ public class SL_TaxCategory_Org extends SimpleCallout {
       OBCriteria<ProductCategory> productCatCrit = OBDao.getFilteredCriteria(ProductCategory.class, Restrictions.eq(
           ProductCategory.PROPERTY_ORGANIZATION + "." + Organization.PROPERTY_ID, strOrgId), Restrictions
           .eq(ProductCategory.PROPERTY_DEFAULT, true));
+      productCatCrit.add(Restrictions.eq(ProductCategory.PROPERTY_SUMMARYLEVEL, false));
       List<ProductCategory> categories = productCatCrit.list();
       if (categories.size() > 0) {
         return categories.get(0).getId();
