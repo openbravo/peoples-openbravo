@@ -350,6 +350,11 @@ public abstract class AcctServer {
   }
 
   public void run(VariablesSecureApp vars) throws IOException, ServletException {
+    run(vars, null, null);
+  }
+
+  public void run(VariablesSecureApp vars, String strDateFrom, String strDateTo)
+      throws IOException, ServletException {
     if (AD_Client_ID.equals(""))
       AD_Client_ID = vars.getClient();
     Connection con = null;
@@ -357,13 +362,23 @@ public abstract class AcctServer {
       String strIDs = "";
 
       if (log4j.isDebugEnabled()) {
-        log4j.debug("AcctServer - Run - TableName = " + tableName);
+        log4j.debug("AcctServer - Run - TableName = " + tableName + strDateFrom + strDateTo);
       }
 
       log4j.debug("AcctServer.run - AD_Client_ID: " + AD_Client_ID);
-      AcctServerData[] data = AcctServerData.select(connectionProvider, tableName, AD_Client_ID,
-          AD_Org_ID, strDateColumn, 0, Integer.valueOf(batchSize).intValue());
 
+      AcctServerData[] data = null;
+
+      if ((strDateFrom == null && strDateTo == null)
+          || (strDateFrom.equals("") && strDateTo.equals(""))) {
+        data = AcctServerData.select(connectionProvider, tableName, AD_Client_ID, AD_Org_ID,
+            strDateColumn, 0, Integer.valueOf(batchSize).intValue());
+      } else {
+
+        data = AcctServerData.selectFilterDates(connectionProvider, tableName, AD_Client_ID,
+            AD_Org_ID, strDateColumn, strDateFrom, strDateTo);
+
+      }
       if (data != null && data.length > 0) {
         if (log4j.isDebugEnabled()) {
           log4j.debug("AcctServer - Run -Select inicial realizada N = " + data.length + " - Key: "
@@ -1877,6 +1892,30 @@ public abstract class AcctServer {
     }
     return false;
   } // end of checkDocuments() method
+
+  public boolean filterDatesCheckDocuments(String dateFrom, String dateTo) throws ServletException {
+    if (m_as.length == 0)
+      return false;
+    AcctServerData[] docTypes = AcctServerData.selectDocTypes(connectionProvider, AD_Table_ID,
+        AD_Client_ID);
+    // if (log4j.isDebugEnabled())
+    // log4j.debug("AcctServer - AcctSchema length-" + (this.m_as).length);
+    for (int i = 0; i < docTypes.length; i++) {
+      AcctServerData data = AcctServerData.filterDatesSelectDocuments(connectionProvider,
+          tableName, AD_Client_ID, AD_Org_ID, docTypes[i].name, strDateColumn, dateFrom, dateTo);
+
+      if (data != null) {
+        if (data.id != null && !data.id.equals("")) {
+          if (log4j.isDebugEnabled()) {
+            log4j.debug("AcctServer - not posted - " + docTypes[i].name + " document id: "
+                + data.id);
+          }
+          return true;
+        }
+      }
+    }
+    return false;
+  } // end of filterDatesCheckDocuments() method
 
   public void setMessageResult(OBError error) {
     messageResult = error;
