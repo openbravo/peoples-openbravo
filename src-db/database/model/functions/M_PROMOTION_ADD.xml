@@ -79,10 +79,10 @@ BEGIN
 		 where c_orderline_id = p_line_id;
   
 		 update c_orderline 
-				set gross_unit_price = v_newUnitPrice,
-						line_gross_amount = v_newGrossAmt,
-						priceactual = p_newNetLine,
-						linenetamt = p_newNetAmt
+				set gross_unit_price = round(v_newUnitPrice, p_priceprecision),
+						line_gross_amount = round(v_newGrossAmt, p_priceprecision),
+						priceactual = round(p_newNetLine, p_priceprecision),
+						linenetamt = round(p_newNetAmt, p_priceprecision)
 			where c_orderline_id = p_line_id;
 
 		insert into c_orderline_offer
@@ -94,7 +94,7 @@ BEGIN
 			(get_uuid(), v_client, v_org,
 			 'Y', p_user_id, p_user_id,
 			 p_line_id, v_nextLineNum, p_rule_id,
-			 p_basePrice, v_promotionDiscounted);
+			 p_basePrice, round(v_promotionDiscounted, p_priceprecision));
 			 -- TODO: update new field in c_orderline_offer
 	 else
 		 select coalesce(max(line), 0) + 10
@@ -108,10 +108,10 @@ BEGIN
 		 where c_invoiceline_id = p_line_id;
 
 		 update c_invoiceline 
-				set gross_unit_price = v_newUnitPrice,
-						line_gross_amount = v_newGrossAmt,
-						priceactual = p_newNetLine,
-						linenetamt = p_newNetAmt
+				set gross_unit_price = round(v_newUnitPrice, p_priceprecision),
+						line_gross_amount = round(v_newGrossAmt, p_priceprecision),
+						priceactual = round(p_newNetLine, p_priceprecision),
+						linenetamt = round(p_newNetAmt, p_priceprecision)
 			where c_invoiceline_id = p_line_id;
 
 		insert into c_invoiceline_offer
@@ -123,7 +123,7 @@ BEGIN
 			(get_uuid(), v_client, v_org,
 			 'Y', p_user_id, p_user_id,
 			 p_line_id, v_nextLineNum, p_rule_id,
-			 p_basePrice, v_promotionDiscounted);
+			 p_basePrice, round(v_promotionDiscounted, p_priceprecision));
 			 -- TODO: update new field in c_orderline_offer
 	 end if;
 END M_PROMOTION_ADD
