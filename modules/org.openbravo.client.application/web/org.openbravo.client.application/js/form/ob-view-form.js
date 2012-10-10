@@ -191,7 +191,7 @@ OB.ViewFormProperties = {
     //   from the datasource, so it has to be converted from UTC to local time
     // see issue https://issues.openbravo.com/view.php?id=20684
     if (!isLocalTime) {
-      OB.Utilities.Date.convertUTCTimeToLocalTime([record], this.fields);
+      record = OB.Utilities.Date.convertUTCTimeToLocalTime([record], this.fields)[0];
     }
 
     ret = this.Super('editRecord', arguments);

@@ -260,23 +260,24 @@ OB.Utilities.Date.getTimeFields = function (allFields) {
 // * {{{newData}}}: records to be converted
 // * {{{allFields}}}: array with the fields of the records
 // Return:
-// * Nothing. newData is modified, its time fields are converted from UTC to local time
+// * Nothing. newData, after converting its time fields from UTC timezone the the client side timezone
 OB.Utilities.Date.convertUTCTimeToLocalTime = function (newData, allFields) {
-  var textField, fieldToDate, i, j, newDataLength = newData.length,
-      UTCHourOffset = isc.Time.getUTCHoursDisplayOffset(new Date()),
-      UTCMinuteOffset = isc.Time.getUTCMinutesDisplayOffset(new Date()),
+  var textField, fieldToDate, i, j, UTCOffsetInMiliseconds = OB.Utilities.Date.getUTCOffsetInMiliseconds(),
       timeFields = OB.Utilities.Date.getTimeFields(allFields),
-      timeFieldsLength = timeFields.length;
+      timeFieldsLength = timeFields.length,
+      convertedData = isc.clone(newData),
+      convertedDataLength = convertedData.length;
   for (i = 0; i < timeFieldsLength; i++) {
-    for (j = 0; j < newDataLength; j++) {
-      textField = newData[j][timeFields[i]];
+    for (j = 0; j < convertedDataLength; j++) {
+      textField = convertedData[j][timeFields[i]];
       if (textField && textField.length > 0) {
         fieldToDate = isc.Time.parseInput(textField);
-        fieldToDate.setTime(fieldToDate.getTime() + (UTCHourOffset * 60 * 60 * 1000) + (UTCMinuteOffset * 60 * 1000));
-        newData[j][timeFields[i]] = fieldToDate.getHours() + ':' + fieldToDate.getMinutes() + ':' + fieldToDate.getSeconds();
+        fieldToDate.setTime(fieldToDate.getTime() + UTCOffsetInMiliseconds);
+        convertedData[j][timeFields[i]] = fieldToDate.getHours() + ':' + fieldToDate.getMinutes() + ':' + fieldToDate.getSeconds();
       }
     }
   }
+  return convertedData;
 };
 
 //** {{{ OB.Utilities.Date.getUTCOffsetInMiliseconds }}} **
