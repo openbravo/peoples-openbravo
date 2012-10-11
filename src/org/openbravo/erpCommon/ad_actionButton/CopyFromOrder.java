@@ -112,7 +112,7 @@ public class CopyFromOrder extends HttpSecureAppServlet {
       CopyFromOrderRecordData[] orderData = CopyFromOrderRecordData.select(this, strKey);
       Order order = OBDal.getInstance().get(Order.class, strKey);
 
-      BigDecimal discount, priceActual, priceList, netPriceList, grossPriceList, priceStd, priceLimit, priceGross, amtGross;
+      BigDecimal discount, priceActual, priceList, netPriceList, grossPriceList, priceStd, priceLimit, priceGross, amtGross, pricestdgross;
       while (st.hasMoreTokens()) {
         String strRownum = st.nextToken().trim();
         String strmProductId = vars.getStringParameter("inpmProductId" + strRownum);
@@ -132,9 +132,11 @@ public class CopyFromOrder extends HttpSecureAppServlet {
         if (prices != null) {
           priceLimit = prices.getPriceLimit();
           priceList = prices.getListPrice();
+          pricestdgross = prices.getStandardPrice();
         } else {
           priceLimit = BigDecimal.ZERO;
           priceList = BigDecimal.ZERO;
+          pricestdgross = BigDecimal.ZERO;
         }
 
         int stdPrecision = 2;
@@ -171,7 +173,7 @@ public class CopyFromOrder extends HttpSecureAppServlet {
           log4j.debug("priceActual:" + priceActual.toString());
           BigDecimal unitPrice;
           if (order.getPriceList().isPriceIncludesTax()) {
-            unitPrice = priceGross;
+            unitPrice = pricestdgross;
           } else {
             unitPrice = priceActual;
           }
@@ -192,7 +194,8 @@ public class CopyFromOrder extends HttpSecureAppServlet {
                   : orderData[0].mWarehouseId, strcUOMId, strQty, orderData[0].cCurrencyId,
               netPriceList.toString(), priceActual.toString(), priceLimit.toString(), priceStd
                   .toString(), discount.toString(), strcTaxId, strmAttributesetinstanceId,
-              grossPriceList.toString(), priceGross.toString(), amtGross.toString());
+              grossPriceList.toString(), priceGross.toString(), amtGross.toString(), pricestdgross
+                  .toString());
         } catch (ServletException ex) {
           myError = OBMessageUtils.translateError(this, vars, vars.getLanguage(), ex.getMessage());
           releaseRollbackConnection(conn);

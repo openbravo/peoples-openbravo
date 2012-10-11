@@ -97,6 +97,7 @@ public class SL_Order_Product extends HttpSecureAppServlet {
     String strPriceStd = _strPriceStd;
     String strNetPriceList = strPriceList;
     String strGrossPriceList = strPriceList;
+    String strGrossBaseUnitPrice = _strPriceStd;
     if (strPriceList.startsWith("\"")) {
       strNetPriceList = strPriceList.substring(1, strPriceList.length() - 1);
       strGrossPriceList = strPriceList.substring(1, strPriceList.length() - 1);
@@ -139,10 +140,10 @@ public class SL_Order_Product extends HttpSecureAppServlet {
     if (isTaxIncludedPriceList) {
       BigDecimal priceList = (strGrossPriceList.equals("") ? BigDecimal.ZERO : new BigDecimal(
           strGrossPriceList));
-      BigDecimal priceActual = (strPriceActual.equals("") ? BigDecimal.ZERO : new BigDecimal(
-          strPriceActual));
+      BigDecimal grossBaseUnitPrice = (strGrossBaseUnitPrice.equals("") ? BigDecimal.ZERO
+          : new BigDecimal(strGrossBaseUnitPrice));
       if (priceList.compareTo(BigDecimal.ZERO) != 0) {
-        discount = priceList.subtract(priceActual).multiply(new BigDecimal("100"))
+        discount = priceList.subtract(grossBaseUnitPrice).multiply(new BigDecimal("100"))
             .divide(priceList, 2, BigDecimal.ROUND_HALF_UP);
       }
     } else {
@@ -163,6 +164,8 @@ public class SL_Order_Product extends HttpSecureAppServlet {
           + (strPriceActual.equals("") ? "0" : strPriceActual) + "),");
       resultado.append("new Array(\"inpgrosspricelist\", "
           + (strGrossPriceList.equals("") ? "0" : strGrossPriceList) + "),");
+      resultado.append("new Array(\"inpgrosspricestd\", "
+          + (strGrossBaseUnitPrice.equals("") ? "0" : strGrossBaseUnitPrice) + "),");
     } else {
       resultado.append("new Array(\"inppricelist\", "
           + (strNetPriceList.equals("") ? "0" : strNetPriceList) + "),");
@@ -242,8 +245,8 @@ public class SL_Order_Product extends HttpSecureAppServlet {
         resultado.append("new Array(");
         for (int i = 0; i < tld.length; i++) {
           resultado.append("new Array(\"" + tld[i].getField("id") + "\", \""
-              + FormatUtilities.replaceJS(tld[i].getField("name")) + "\", \"" 
-	      + (i == 0 ? "true" : "false") + "\")");
+              + FormatUtilities.replaceJS(tld[i].getField("name")) + "\", \""
+              + (i == 0 ? "true" : "false") + "\")");
           if (i < tld.length - 1) {
             resultado.append(",\n");
           }
