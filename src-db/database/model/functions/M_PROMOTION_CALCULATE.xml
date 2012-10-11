@@ -34,7 +34,7 @@
   v_apply_next  VARCHAR(1);
   v_taxIncluded VARCHAR(1);
 
-  v_oldUnitPrice NUMBER;
+  v_count NUMBER;
 
   Cur_Order RECORD;
   Cur_Offer RECORD;
@@ -64,53 +64,59 @@ BEGIN
                       from c_invoiceline 
                      where c_invoice_id = p_doc_id
                        and p_type = 'I') loop
-
-    v_apply_next := 'Y';
-
-    -- Remove existent discounts as they are going to be recalculated
-    -- TODO: recalculate prices
-    v_oldUnitPrice := Cur_Order.gross_unit_price;
-
+    -- Remove existent promotions as they are going to be recalculated
     if (p_type = 'O') then
-			for Cur_Offer in (select *
-															from c_orderline_offer
-														 where c_orderline_id = Cur_Order.id
-														 order by line desc) loop
-				-- TODO: PNIT
-				-- TODO: This can be done once we have new column in order line pit by priceActual = priceStd
-				v_oldUnitPrice := v_oldUnitPrice + Cur_Offer.amtoffer;
-				update c_orderline
-					set gross_unit_price = v_oldUnitPrice,
-							line_gross_amount = v_oldUnitPrice * qtyordered,
-							priceactual = c_get_net_price_from_gross(Cur_Order.c_tax_id, v_oldUnitPrice, v_oldUnitPrice, v_precision, qtyordered),
-							linenetamt = c_get_net_price_from_gross(Cur_Order.c_tax_id, v_oldUnitPrice * qtyordered, v_oldUnitPrice * qtyordered, v_precision, qtyordered)
-				where c_orderline_id = Cur_Order.id;
-			end loop;
-
-      delete from c_orderline_offer
+      select count(*) 
+        into v_count
+        from c_orderline_offer
        where c_orderline_id = Cur_Order.id;
-		else
-		  for Cur_Offer in (select *
-															from c_invoiceline_offer
-														 where c_invoiceline_id = Cur_Order.id
-														 order by line desc) loop
-				-- TODO: PNIT
-				-- TODO: This can be done once we have new column in order line pit by priceActual = priceStd
-				v_oldUnitPrice := v_oldUnitPrice + Cur_Offer.amtoffer;
-				update c_invoiceline
-					set gross_unit_price = v_oldUnitPrice,
-							line_gross_amount = v_oldUnitPrice * qtyinvoiced,
-							priceactual = c_get_net_price_from_gross(Cur_Order.c_tax_id, v_oldUnitPrice, v_oldUnitPrice, v_precision, qtyinvoiced),
-							linenetamt = c_get_net_price_from_gross(Cur_Order.c_tax_id, v_oldUnitPrice * qtyinvoiced, v_oldUnitPrice * qtyinvoiced, v_precision, qtyinvoiced)
-				where c_invoiceline_id = Cur_Order.id;
-			end loop;
 
-      delete from c_invoiceline_offer
+      if (v_count>0) then
+				if (v_taxIncluded = 'Y') then
+					update c_orderline
+						 set gross_unit_price = grosspricestd,
+								 line_gross_amount = grosspricestd * qtyordered,
+								 priceactual = c_get_net_price_from_gross(Cur_Order.c_tax_id, grosspricestd, v_oldUnitPrice, v_precision, 1),
+								 linenetamt = c_get_net_price_from_gross(Cur_Order.c_tax_id, grosspricestd * qtyordered, v_oldUnitPrice * qtyordered, v_precision, 1)
+					 where c_orderline_id = Cur_Order.id;
+				else
+					update c_orderline
+						 set priceactual = pricestd,
+								 linenetamt = pricestd * qtyordered
+					 where c_orderline_id = Cur_Order.id;
+				end if;
+				
+				delete from c_orderline_offer
+				 where c_orderline_id = Cur_Order.id;
+      end if;
+		else
+      select count(*) 
+        into v_count
+        from c_invoiceline_offer
        where c_invoiceline_id = Cur_Order.id;
+
+      if (v_count>0) then
+				if (v_taxIncluded = 'Y') then
+					update c_invoiceline
+						 set gross_unit_price = grosspricestd,
+								 line_gross_amount = grosspricestd * qtyinvoiced,
+								 priceactual = c_get_net_price_from_gross(Cur_Order.c_tax_id, grosspricestd, v_oldUnitPrice, v_precision, 1),
+								 linenetamt = c_get_net_price_from_gross(Cur_Order.c_tax_id, grosspricestd * qtyordered, v_oldUnitPrice * qtyordered, v_precision, 1)
+					 where c_invoiceline_id = Cur_Order.id;
+				else
+					update c_invoiceline
+						 set priceactual = pricestd,
+								 linenetamt = pricestd * qtyinvoiced
+					 where c_invoiceline_id = Cur_Order.id;
+				end if;
+
+				delete from c_invoiceline_offer
+				 where c_invoiceline_id = Cur_Order.id;
+      end if;
 		end if;
 
-raise notice '%', v_partner || '-' ||v_priceList|| '-' || v_date;
     -- Look for candidate promotions to be applied to current line
+    v_apply_next := 'Y';
     if (Cur_Order.cancelpricead = 'N') then
       FOR Cur_Offer IN
         (SELECT M_OFFER_ID, t.PL_Order_Implementor
@@ -192,7 +198,6 @@ raise notice '%', v_partner || '-' ||v_priceList|| '-' || v_date;
           M_OFFER_ID
         )
       loop
-        raise notice '%', Cur_Offer.PL_Order_Implementor;
         if (v_apply_next = 'Y' AND Cur_Offer.PL_Order_Implementor is not null) then
           v_method := Cur_Offer.PL_Order_Implementor || '('''||p_type||''', '''||Cur_Offer.M_Offer_ID||''','''||Cur_Order.id||''', '||v_precision||', '''||p_user_id||''', '''||v_taxIncluded||''')';
           v_apply_next := AD_Execute_Function(v_method);
