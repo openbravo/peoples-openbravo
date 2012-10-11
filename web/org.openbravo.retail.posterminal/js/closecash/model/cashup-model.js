@@ -180,7 +180,8 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
       message: ''
     };
     if (qty !== unfd && qty !== null && $.isNumeric(qty)) {
-      if (this.get('paymentList').at(this.get('stepOfStep3')).get('counted') >= qty) {
+      //foreignCounted: In case of not be a foreign currency: foreignCounted===counted
+      if (this.get('paymentList').at(this.get('stepOfStep3')).get('foreignCounted') >= qty) {
         result.result = true;
         result.message = '';
       } else {
@@ -200,7 +201,8 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
     var unfd;
     if (this.get('paymentList').at(this.get('stepOfStep3')).get('qtyToKeep') !== unfd && this.get('paymentList').at(this.get('stepOfStep3')).get('qtyToKeep') !== null) {
       if ($.isNumeric(this.get('paymentList').at(this.get('stepOfStep3')).get('qtyToKeep'))) {
-        if (this.get('paymentList').at(this.get('stepOfStep3')).get('counted') >= this.get('paymentList').at(this.get('stepOfStep3')).get('qtyToKeep')) {
+        //foreignCounted: In case of not be a foreign currency: foreignCounted===counted
+        if (this.get('paymentList').at(this.get('stepOfStep3')).get('foreignCounted') >= this.get('paymentList').at(this.get('stepOfStep3')).get('qtyToKeep')) {
           return true;
         }
       }
