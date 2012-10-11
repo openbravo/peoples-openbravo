@@ -138,19 +138,13 @@ enyo.kind({
             this.doResetQtyToKeep({qtyToKeep: null});
           },
           renderFixedAmount: function(modelToDraw){
-            var udfn, cnted;
-            if(modelToDraw.get('foreignCounted')){
-              cnted=modelToDraw.get('foreignCounted');
-            }else{
-              cnted=modelToDraw.get('counted');
-            }
+            var udfn;
             this.$.keepfixedamount.setShowing(modelToDraw.get('paymentMethod').keepfixedamount);
             if(modelToDraw.get('paymentMethod').keepfixedamount){
-              //foreignCounted: In case of not be a foreign currency: foreignCounted===counted
-              if (cnted !== null && cnted !== udfn){
-                if (cnted < modelToDraw.get('paymentMethod').amount){
-                  this.$.keepfixedamount.render(OB.I18N.formatCurrency(cnted));
-                  this.$.keepfixedamount.setQtyToKeep(cnted);
+              if (modelToDraw.get('counted') !== null && modelToDraw.get('counted') !== udfn){
+                if (modelToDraw.get('counted') < modelToDraw.get('paymentMethod').amount){
+                  this.$.keepfixedamount.render(OB.I18N.formatCurrency(modelToDraw.get('counted')));
+                  this.$.keepfixedamount.setQtyToKeep(modelToDraw.get('counted'));
                 }else{
                   this.$.keepfixedamount.render(OB.I18N.formatCurrency(modelToDraw.get('paymentMethod').amount));
                   this.$.keepfixedamount.setQtyToKeep(modelToDraw.get('paymentMethod').amount);
@@ -174,9 +168,8 @@ enyo.kind({
             
             this.$.allowdontmove.setShowing(paymentMethod.allowdontmove);
             if(paymentMethod.allowdontmove){
-              //foreignCounted: In case of not be a foreign currency: foreignCounted===counted
-              this.$.allowdontmove.setQtyToKeep(modelToDraw.get('foreignCounted'));
-              this.$.allowdontmove.render(OB.I18N.getLabel('OBPOS_LblTotalAmount') + ' ' + OB.I18N.formatCurrency(modelToDraw.get('foreignCounted')));
+              this.$.allowdontmove.setQtyToKeep(modelToDraw.get('expected'));
+              this.$.allowdontmove.render(OB.I18N.getLabel('OBPOS_LblTotalAmount') + ' ' + OB.I18N.formatCurrency(modelToDraw.get('expected')));
             }else{
               this.$.allowdontmove.render('');
             }
