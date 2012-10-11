@@ -53,6 +53,11 @@
                 data[item.prototype.modelName] = new Backbone.Collection(ds.cache);
               }
               models._LoadQueue[item.prototype.modelName] = true;
+              if(incremental){
+                window.localStorage.setItem('POSLastIncRefresh', new Date().getTime());
+              }else{
+                window.localStorage.setItem('POSLastTotalRefresh', new Date().getTime());
+              }
               triggerReady(models);
             });
             ds.load(item.params, incremental);
