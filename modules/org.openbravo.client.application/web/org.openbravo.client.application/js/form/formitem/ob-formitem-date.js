@@ -228,6 +228,9 @@ OB.DateItemProperties = {
 isc.OBDateItem.addProperties(OB.DateItemProperties, {
   validateOnExit: true,
 
+  startDate: Date.createLogicalDate(1950, 0, 1),
+  endDate: Date.createLogicalDate(2050, 11, 31),
+
   init: function () {
     // this call super.init
     this.doInit();
