@@ -119,5 +119,6 @@
         <reference local="M_OFFER_TYPE_ID" foreign="M_OFFER_TYPE_ID"/>
       </foreign-key>
       <check name="M_OFFER_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="M_OFFER_NEXT_CHECK"><![CDATA[APPLY_NEXT IN ('Y', 'N')]]></check>
     </table>
   </database>
