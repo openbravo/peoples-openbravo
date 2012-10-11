@@ -166,6 +166,9 @@ OB.Model.Terminal = Backbone.Model.extend({
 
   
   loadModels: function(windowv, incremental){
+    if(!OB.POS.modelterminal.get('connectedToERP')){
+      return;
+    }
     var windows,i, windowName, windowClass, datasources;
     var timestamp = 0;
     if(windowv){
@@ -184,17 +187,15 @@ OB.Model.Terminal = Backbone.Model.extend({
     for(i=0;i<windows.length;i++){
       windowClass = windows[i].windowClass;
       windowName = windows[i].route;
-      if(OB.POS.modelterminal.get('connectedToERP')){
-        if (OB.DATA[windowName]) {
-          // old way of defining datasources...
-          datasources = OB.DATA[windowName];
-        } else if (windowClass.prototype && windowClass.prototype.windowmodel && windowClass.prototype.windowmodel.prototype && windowClass.prototype.windowmodel.prototype.models) {
-          datasources = windowClass.prototype.windowmodel.prototype.models;
-        }
-
-        _.extend(datasources, Backbone.Events);
-
+      if (OB.DATA[windowName]) {
+        // old way of defining datasources...
+        datasources = OB.DATA[windowName];
+      } else if (windowClass.prototype && windowClass.prototype.windowmodel && windowClass.prototype.windowmodel.prototype && windowClass.prototype.windowmodel.prototype.models) {
+        datasources = windowClass.prototype.windowmodel.prototype.models;
       }
+
+      _.extend(datasources, Backbone.Events);
+
       OB.Model.Util.loadModels(false, datasources, null, timestamp);
     }
   },
