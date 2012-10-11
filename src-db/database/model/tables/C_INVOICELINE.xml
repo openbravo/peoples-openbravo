@@ -161,7 +161,7 @@
         <default><![CDATA[0]]></default>
         <onCreateDefault/>
       </column>
-      <column name="grosspricestd" primaryKey="false" required="true" type="DECIMAL" autoIncrement="false">
+      <column name="GROSSPRICESTD" primaryKey="false" required="true" type="DECIMAL" autoIncrement="false">
         <default><![CDATA[0]]></default>
         <onCreateDefault/>
       </column>

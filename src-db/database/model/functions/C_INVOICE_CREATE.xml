@@ -580,7 +580,7 @@
                         ptr_sl.QuantityOrder, ptr_sl.M_Product_Uom_ID, ptr_sl.PriceStd,
                         ptr_sl.m_attributesetinstance_id, ptr_sl.taxbaseamt,
                         ptr_sl.gross_unit_price, C_Currency_Round(ptr_sl.MovementQty*ptr_sl.gross_unit_price, Cur_Order.C_Currency_ID, NULL),
-                        COALESCE(ptr_ol.grosspricestd,0), COALESCE(ptr_ol.grosspricelist,0)
+                        COALESCE(ptr_sl.grosspricestd,0), COALESCE(ptr_sl.grosspricelist,0)
                       )
                       ;
                   END IF;--Next_S_Line
@@ -1077,7 +1077,7 @@
                     Cur_InvoiceSchedule.QuantityOrder, Cur_InvoiceSchedule.M_Product_Uom_ID, Cur_InvoiceSchedule.PriceStd,
                     Cur_InvoiceSchedule.m_attributesetinstance_id, Cur_InvoiceSchedule.taxbaseamt,
                     Cur_InvoiceSchedule.gross_unit_price, C_Currency_Round(Cur_InvoiceSchedule.MovementQty*Cur_InvoiceSchedule.gross_unit_price, Cur_InvoiceSchedule.C_Currency_ID, NULL),
-                    COALESCE(ptr_ol.grosspricestd,0), COALESCE(ptr_ol.grosspricelist,0)
+                    COALESCE(Cur_InvoiceSchedule.grosspricestd,0), COALESCE(Cur_InvoiceSchedule.grosspricelist,0)
                   )
                   ;
                 v_DateOrdered:=COALESCE(Cur_InvoiceSchedule.movementDate, COALESCE(Cur_InvoiceSchedule.DateOrdered, now())) ;
