@@ -53,6 +53,9 @@
       <foreign-key foreignTable="M_PRODUCT" name="M_OFFER_PRODUCT_PRODUCT">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
+      <index name="M_OFFERPRODUCT_OFFER_IDX" unique="false">
+        <index-column name="M_OFFER_ID"/>
+      </index>
       <unique name="M_OFFER_PRODUCT_UNIQUE">
         <unique-column name="M_PRODUCT_ID"/>
         <unique-column name="M_OFFER_ID"/>

@@ -53,5 +53,8 @@
       <foreign-key foreignTable="M_PRICELIST" name="M_OFFER_PRICELIST_M_PRICELIST">
         <reference local="M_PRICELIST_ID" foreign="M_PRICELIST_ID"/>
       </foreign-key>
+      <index name="M_OFFERPL_OFFER_IDX" unique="false">
+        <index-column name="M_OFFER_ID"/>
+      </index>
     </table>
   </database>
