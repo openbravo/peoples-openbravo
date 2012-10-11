@@ -41,6 +41,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
     //Check for orders wich are being processed in this moment.
     //cancel -> back to point of sale
     //Ok -> Continue closing without these orders
+    var undf;
     this.arePendingOrdersToBeProcess();
 
     //steps
@@ -61,7 +62,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
 
     this.get('paymentList').on('change:counted', function(mod) {
       mod.set('difference', OB.DEC.sub(mod.get('counted'), mod.get('expected')));
-      if(mod.get('foreignCounted') && mod.get('foreignExpected')){
+      if(mod.get('foreignCounted')!==null && mod.get('foreignCounted')!==undf && mod.get('foreignExpected')!==null  && mod.get('foreignExpected')!==undf){
         mod.set('foreignDifference', OB.DEC.sub(mod.get('foreignCounted'), mod.get('foreignExpected')));
       }
       this.set('totalCounted', _.reduce(this.get('paymentList').models, function(total, model) {
@@ -180,7 +181,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
       message: ''
     };
     if (qty !== unfd && qty !== null && $.isNumeric(qty)) {
-      if (this.get('paymentList').at(this.get('stepOfStep3')).get('counted') >= qty) {
+      if (this.get('paymentList').at(this.get('stepOfStep3')).get('foreignCounted') >= qty) {
         result.result = true;
         result.message = '';
       } else {
@@ -200,7 +201,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
     var unfd;
     if (this.get('paymentList').at(this.get('stepOfStep3')).get('qtyToKeep') !== unfd && this.get('paymentList').at(this.get('stepOfStep3')).get('qtyToKeep') !== null) {
       if ($.isNumeric(this.get('paymentList').at(this.get('stepOfStep3')).get('qtyToKeep'))) {
-        if (this.get('paymentList').at(this.get('stepOfStep3')).get('counted') >= this.get('paymentList').at(this.get('stepOfStep3')).get('qtyToKeep')) {
+        if (this.get('paymentList').at(this.get('stepOfStep3')).get('foreignCounted') >= this.get('paymentList').at(this.get('stepOfStep3')).get('qtyToKeep')) {
           return true;
         }
       }

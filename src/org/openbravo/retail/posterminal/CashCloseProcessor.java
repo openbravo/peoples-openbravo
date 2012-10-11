@@ -36,9 +36,12 @@ public class CashCloseProcessor {
       JSONObject cashCloseObj = cashCloseInfo.getJSONObject(i);
 
       BigDecimal difference = new BigDecimal(cashCloseObj.getString("difference"));
+      BigDecimal differenceToApply = difference;
       BigDecimal foreignDifference = new BigDecimal(0);
+
       if (cashCloseObj.has("foreignDifference")) {
         foreignDifference = new BigDecimal(cashCloseObj.getString("foreignDifference"));
+        differenceToApply = foreignDifference;
       }
       String paymentTypeId = cashCloseObj.getString("paymentTypeId");
       OBPOSAppPayment paymentType = OBDal.getInstance().get(OBPOSAppPayment.class, paymentTypeId);
@@ -49,9 +52,9 @@ public class CashCloseProcessor {
           paymentType.getFinancialAccount());
 
       FIN_FinaccTransaction diffTransaction = null;
-      if (!difference.equals(BigDecimal.ZERO)) {
+      if (!differenceToApply.equals(BigDecimal.ZERO)) {
         diffTransaction = createDifferenceTransaction(posTerminal, reconciliation, paymentType,
-            difference);
+            differenceToApply);
         OBDal.getInstance().save(diffTransaction);
       }
       OBDal.getInstance().save(reconciliation);
