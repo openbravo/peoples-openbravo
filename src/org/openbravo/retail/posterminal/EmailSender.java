@@ -54,25 +54,27 @@ public class EmailSender implements Runnable {
     String emailSubject = "[Openbravo Web POS] Sale " + jsonorder.getString("documentNo")
         + " done in " + jsonorder.getString("posTerminal$_identifier");
     String emailBody = "";
-    emailBody += "Date: " + jsonorder.getString("orderDate") + " \r\n";
-    emailBody += "Document Number: " + jsonorder.getString("documentNo") + " \r\n";
-    emailBody = "Total Gross: " + jsonorder.getString("gross") + " \r\n";
-    emailBody += "Total Net: " + jsonorder.getString("net") + " \r\n";
+    try {
+      emailBody += "Date: " + jsonorder.getString("orderDate") + " \r\n";
+      emailBody += "Document Number: " + jsonorder.getString("documentNo") + " \r\n";
+      emailBody = "Total Gross: " + jsonorder.getString("gross") + " \r\n";
+      emailBody += "Total Net: " + jsonorder.getString("net") + " \r\n";
 
-    emailBody += "\r\n";
-    emailBody += "Lines \r\n";
-    emailBody += "------\r\n";
-
-    JSONArray lines = jsonorder.getJSONArray("lines");
-    for (int i = 0; i < lines.length(); i++) {
-      JSONObject jsonOrderLine = lines.getJSONObject(i);
-      emailBody += jsonOrderLine.getString("qty") + " - ";
-      emailBody += jsonOrderLine.getString("price") + " - ";
-      emailBody += jsonOrderLine.getJSONObject("product").getString("_identifier");
       emailBody += "\r\n";
-    }
+      emailBody += "Lines \r\n";
+      emailBody += "------\r\n";
 
-    // + jsonorder.getString("documentNo") + " " + jsonorder.getString("payment");
+      JSONArray lines = jsonorder.getJSONArray("lines");
+      for (int i = 0; i < lines.length(); i++) {
+        JSONObject jsonOrderLine = lines.getJSONObject(i);
+        emailBody += jsonOrderLine.getString("qty") + " - ";
+        emailBody += jsonOrderLine.getString("price") + " - ";
+        emailBody += jsonOrderLine.getJSONObject("product").getString("_identifier");
+        emailBody += "\r\n";
+      }
+    } catch (Exception e) {
+      emailBody = "the email body cannot be generated";
+    }
 
     String host = null;
     boolean auth = true;

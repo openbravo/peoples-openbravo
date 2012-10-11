@@ -217,13 +217,13 @@ enyo.kind({
     classes: 'modal-dialog-btn-check active',
     modelProperty: 'print',
     label: OB.I18N.getLabel('OBPOS_Lbl_RP_Print')
-  }, {
+  }/*, {
     kind: 'OB.UI.renderBooleanProperty',
     name: 'emailBox',
     modelContent: 'bp:email',
     modelProperty: 'sendEmail',
     label: OB.I18N.getLabel('OBPOS_LblEmail')
-  }, {
+  }*/, {
     kind: 'OB.UI.renderBooleanProperty',
     name: 'invoiceBox',
     modelProperty: 'generateInvoice',
