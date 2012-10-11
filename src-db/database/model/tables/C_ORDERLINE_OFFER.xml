@@ -69,5 +69,8 @@
       <foreign-key foreignTable="M_OFFER" name="C_ORDERLINE_OFFER_M_OFFER">
         <reference local="M_OFFER_ID" foreign="M_OFFER_ID"/>
       </foreign-key>
+      <index name="C_ORDERLINEOFFER_LINE_IDX" unique="false">
+        <index-column name="C_ORDERLINE_ID"/>
+      </index>
     </table>
   </database>
