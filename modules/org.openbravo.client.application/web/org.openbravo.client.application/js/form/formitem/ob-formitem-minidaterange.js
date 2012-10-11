@@ -42,7 +42,7 @@ isc.RelativeDateItem.addProperties({
   quartersFromNowTitle: OB.I18N.getLabel('OBUIAPP_quarters_from_now'),
   yearsFromNowTitle: OB.I18N.getLabel('OBUIAPP_years_from_now'),
 
-  startDate: Date.createLogicalDate(1950, 0, 1),
+  startDate: Date.createLogicalDate(1951, 0, 1),
   endDate: Date.createLogicalDate(2050, 11, 31),
 
   presetOptions: {
