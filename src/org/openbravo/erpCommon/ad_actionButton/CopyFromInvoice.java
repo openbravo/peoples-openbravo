@@ -48,6 +48,7 @@ import org.openbravo.model.common.invoice.InvoiceLine;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.financialmgmt.gl.GLItem;
 import org.openbravo.model.financialmgmt.tax.TaxRate;
+import org.openbravo.model.pricing.pricelist.ProductPrice;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class CopyFromInvoice extends HttpSecureAppServlet {
@@ -116,8 +117,8 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
           String strInvPriceList = "";
           String strBPartnerId = "";
           String strmProductId = "";
-          BigDecimal priceActual, priceStd, priceList, priceLimit, priceGross;
-          priceActual = priceStd = priceList = priceLimit = priceGross = BigDecimal.ZERO;
+          BigDecimal priceActual, priceStd, priceList, priceLimit, priceGross, priceListGross, priceStdGross;
+          priceActual = priceStd = priceList = priceLimit = priceGross = priceListGross = priceStdGross = BigDecimal.ZERO;
           BigDecimal lineNetAmt, lineGrossAmt;
           lineNetAmt = lineGrossAmt = BigDecimal.ZERO;
           strDateInvoiced = dataInvoice[0].dateinvoiced;
@@ -151,6 +152,8 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
                 priceStd = (invoicelineprice[j].pricestd.equals("") ? BigDecimal.ZERO
                     : (new BigDecimal(invoicelineprice[j].pricestd))).setScale(pricePrecision,
                     BigDecimal.ROUND_HALF_UP);
+                priceListGross = BigDecimal.ZERO;
+                priceStdGross = BigDecimal.ZERO;
 
                 if (invoice.getPriceList().isPriceIncludesTax()) {
                   priceGross = priceStd;
@@ -158,6 +161,14 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
                       stdPrecision, BigDecimal.ROUND_HALF_UP);
                   priceActual = FinancialUtils.calculateNetFromGross(strCTaxID, lineGrossAmt,
                       pricePrecision, lineGrossAmt, invLine.getInvoicedQuantity());
+                  ProductPrice prices = FinancialUtils.getProductPrice(
+                      OBDal.getInstance().get(Product.class, strmProductId),
+                      invoice.getInvoiceDate(), invoice.isSalesTransaction(),
+                      invoice.getPriceList(), false);
+                  if (prices != null) {
+                    priceListGross = prices.getListPrice();
+                    priceStdGross = prices.getStandardPrice();
+                  }
                 } else {
                   // Calculate price adjustments (offers)
                   priceActual = new BigDecimal(CopyFromInvoiceData.getOffersStdPrice(this,
@@ -182,6 +193,8 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
             priceGross = invLine.getGrossUnitPrice();
             lineNetAmt = invLine.getLineNetAmount();
             lineGrossAmt = invLine.getGrossAmount();
+            priceListGross = invLine.getGrossListPrice();
+            priceStdGross = invLine.getBaseGrossUnitPrice();
           }
 
           // Checking, why is not possible to get a tax
@@ -193,7 +206,8 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
           CopyFromInvoiceData.insert(conn, this, strSequence, strKey, dataInvoice[0].adClientId,
               dataInvoice[0].adOrgId, vars.getUser(), priceList.toString(), priceActual.toString(),
               priceLimit.toString(), lineNetAmt.toString(), strCTaxID, priceGross.toString(),
-              lineGrossAmt.toString(), data[i].cInvoicelineId);
+              lineGrossAmt.toString(), data[i].cInvoicelineId, priceListGross.toString(),
+              priceStdGross.toString());
 
           // Copy accounting dimensions
           CopyFromInvoiceData.insertAcctDimension(conn, this, dataInvoice[0].adClientId,

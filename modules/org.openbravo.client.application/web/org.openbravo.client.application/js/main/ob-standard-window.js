@@ -676,10 +676,7 @@ isc.OBStandardWindow.addProperties({
       }
 
       // if not dirty or we know that the object has errors
-      if (!me.getDirtyEditForm() || (me.getDirtyEditForm() && me.getDirtyEditForm().inFicCall) || (me.getDirtyEditForm() && !me.getDirtyEditForm().validateForm())) {
-        if (me.getDirtyEditForm() && me.getDirtyEditForm().inFicCall) {
-          me.getDirtyEditForm().callSaveAfterFICReturn = true;
-        }
+      if (!me.getDirtyEditForm() || (me.getDirtyEditForm() && !me.getDirtyEditForm().validateForm())) {
         // clean up before calling the action, as the action
         // can set dirty form again
         me.cleanUpAutoSaveProperties();

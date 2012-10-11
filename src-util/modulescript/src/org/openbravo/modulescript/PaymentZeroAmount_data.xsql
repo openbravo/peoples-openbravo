@@ -22,7 +22,7 @@
   <SqlMethod name="select" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql><![CDATA[
-      SELECT '' as ad_client_id FROM DUAL;
+      SELECT '' as ad_client_id FROM DUAL
       ]]>
     </Sql>
   </SqlMethod>

@@ -22,7 +22,7 @@
   <SqlMethod name="select" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql><![CDATA[
-      SELECT 1 as DUMMY FROM DUAL;
+      SELECT 1 as DUMMY FROM DUAL
       ]]>
     </Sql>
   </SqlMethod>

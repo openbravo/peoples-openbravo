@@ -214,13 +214,13 @@ isc.OBViewGrid.addProperties({
       // when the data is received from the datasource, time fields are formatted in UTC time. They have to be converted to local time
       if (dsResponse && dsResponse.context && (dsResponse.context.operationType === 'fetch' || dsResponse.context.operationType === 'update' || dsResponse.context.operationType === 'add')) {
         if (this.grid) {
-          OB.Utilities.Date.convertUTCTimeToLocalTime(newData, this.grid.completeFields);
+          newData = OB.Utilities.Date.convertUTCTimeToLocalTime(newData, this.grid.completeFields);
         }
       }
       // only do this stuff for fetch operations, in other cases strange things
       // happen as update/delete operations do not return the totalRows parameter      
       if (dsResponse && dsResponse.context && dsResponse.context.operationType !== 'fetch') {
-        return;
+        return newData;
       }
       // correct the length if there is already data in the localData array
       if (this.localData) {
@@ -242,6 +242,7 @@ isc.OBViewGrid.addProperties({
       if (this.localData && this.localData[dsResponse.totalRows]) {
         this.localData[dsResponse.totalRows] = null;
       }
+      return newData;
     }
   },
 

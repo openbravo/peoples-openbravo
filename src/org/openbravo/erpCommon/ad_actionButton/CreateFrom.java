@@ -44,7 +44,6 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.financial.FinancialUtils;
-import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.pricing.pricelist.PriceList;
@@ -553,7 +552,7 @@ public class CreateFrom extends HttpSecureAppServlet {
       if (isSOTrx.equals("Y")) {
         xmlDocument.setData("reportShipmentReciept", "liststructure", CreateFromInvoiceData
             .selectFromShipmentSOTrxCombo(this, vars.getLanguage(),
-                Utility.getContext(this, vars, "#User_Client", strWindowId), narturalOrgTreeList, 
+                Utility.getContext(this, vars, "#User_Client", strWindowId), narturalOrgTreeList,
                 strBPartner, strIsTaxIncluded));
         xmlDocument.setData("reportPurchaseOrder", "liststructure", CreateFromInvoiceData
             .selectFromPOSOTrxCombo(this, vars.getLanguage(),
@@ -562,7 +561,7 @@ public class CreateFrom extends HttpSecureAppServlet {
       } else {
         xmlDocument.setData("reportShipmentReciept", "liststructure", CreateFromInvoiceData
             .selectFromShipmentCombo(this, vars.getLanguage(),
-                Utility.getContext(this, vars, "#User_Client", strWindowId), narturalOrgTreeList, 
+                Utility.getContext(this, vars, "#User_Client", strWindowId), narturalOrgTreeList,
                 strBPartner, strIsTaxIncluded));
         xmlDocument.setData("reportPurchaseOrder", "liststructure", CreateFromInvoiceData
             .selectFromPOCombo(this, vars.getLanguage(),
@@ -693,31 +692,23 @@ public class CreateFrom extends HttpSecureAppServlet {
           .getOrganizationStructureProvider().getNaturalTree(shipment.getOrganization().getId()));
       String narturalOrgTreeList = Utility.arrayListToString(organizationList, true);
       if (isSOTrx.equals("Y")) {
-        xmlDocument.setData(
-            "reportInvoice",
-            "liststructure",
-            CreateFromShipmentData.selectFromInvoiceTrxCombo(this, vars.getLanguage(),
-                Utility.getContext(this, vars, "#User_Client", strWindowId),
-                narturalOrgTreeList, strBPartner));
-        xmlDocument.setData(
-            "reportPurchaseOrder",
-            "liststructure",
-            CreateFromShipmentData.selectFromPOSOTrxCombo(this, vars.getLanguage(),
-                Utility.getContext(this, vars, "#User_Client", strWindowId),
-                narturalOrgTreeList, strBPartner));
+        xmlDocument.setData("reportInvoice", "liststructure", CreateFromShipmentData
+            .selectFromInvoiceTrxCombo(this, vars.getLanguage(),
+                Utility.getContext(this, vars, "#User_Client", strWindowId), narturalOrgTreeList,
+                strBPartner));
+        xmlDocument.setData("reportPurchaseOrder", "liststructure", CreateFromShipmentData
+            .selectFromPOSOTrxCombo(this, vars.getLanguage(),
+                Utility.getContext(this, vars, "#User_Client", strWindowId), narturalOrgTreeList,
+                strBPartner));
       } else {
-        xmlDocument.setData(
-            "reportInvoice",
-            "liststructure",
-            CreateFromShipmentData.selectFromInvoiceCombo(this, vars.getLanguage(),
-                Utility.getContext(this, vars, "#User_Client", strWindowId),
-                narturalOrgTreeList, strBPartner));
-        xmlDocument.setData(
-            "reportPurchaseOrder",
-            "liststructure",
-            CreateFromShipmentData.selectFromPOCombo(this, vars.getLanguage(),
-                Utility.getContext(this, vars, "#User_Client", strWindowId),
-                narturalOrgTreeList, strBPartner));
+        xmlDocument.setData("reportInvoice", "liststructure", CreateFromShipmentData
+            .selectFromInvoiceCombo(this, vars.getLanguage(),
+                Utility.getContext(this, vars, "#User_Client", strWindowId), narturalOrgTreeList,
+                strBPartner));
+        xmlDocument.setData("reportPurchaseOrder", "liststructure", CreateFromShipmentData
+            .selectFromPOCombo(this, vars.getLanguage(),
+                Utility.getContext(this, vars, "#User_Client", strWindowId), narturalOrgTreeList,
+                strBPartner));
       }
     }
 
@@ -1470,7 +1461,7 @@ public class CreateFrom extends HttpSecureAppServlet {
     final String strIsTaxIncluded = OBDal.getInstance().get(PriceList.class, strPriceList)
         .isPriceIncludesTax() ? "Y" : "N";
 
-    String strPO = "", priceActual = "0", priceLimit = "0", priceList = "0", strPriceListVersion = "", priceStd = "0";
+    String strPO = "", priceActual = "0", priceLimit = "0", priceList = "0", strPriceListVersion = "", priceStd = "0", priceListGross = "0", priceStdGross = "0";
     String priceGross = "0";
     CreateFromInvoiceData[] data = null;
     CreateFromInvoiceData[] dataAux = null;
@@ -1534,6 +1525,8 @@ public class CreateFrom extends HttpSecureAppServlet {
                 priceStd = price[0].pricestd;
                 priceActual = price[0].priceactual;
                 priceGross = price[0].grossUnitPrice;
+                priceListGross = price[0].grosspricelist;
+                priceStdGross = price[0].grosspricestd;
               }
               if (isSOTrx.equals("Y") && price[0].cancelpricead.equals("Y")) {
                 priceActual = priceStd;
@@ -1554,6 +1547,8 @@ public class CreateFrom extends HttpSecureAppServlet {
                   priceList = price[0].pricelist;
                   priceLimit = price[0].pricelimit;
                   priceGross = price[0].pricestd;
+                  priceListGross = priceList;
+                  priceStdGross = priceGross;
                   BigDecimal grossAmount = new BigDecimal(priceGross).multiply(qty);
                   final BigDecimal netUnitPrice = FinancialUtils.calculateNetFromGross(C_Tax_ID,
                       grossAmount, curPrecision, grossAmount, qty);
@@ -1582,7 +1577,8 @@ public class CreateFrom extends HttpSecureAppServlet {
                   data[i].description, data[i].mProductId, data[i].cUomId, data[i].id, priceList,
                   priceActual, priceLimit, lineNetAmt.toString(), C_Tax_ID, taxAmt.toPlainString(),
                   data[i].quantityorder, data[i].mProductUomId, data[i].mAttributesetinstanceId,
-                  priceStd, lineNetAmt.toString(), priceGross, grossAmt.toString());
+                  priceStd, lineNetAmt.toString(), priceGross, grossAmt.toString(),
+                  priceListGross.toString(), priceStdGross.toString());
             } catch (final ServletException ex) {
               myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
               releaseRollbackConnection(conn);

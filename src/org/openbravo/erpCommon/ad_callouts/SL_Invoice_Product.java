@@ -133,6 +133,10 @@ public class SL_Invoice_Product extends HttpSecureAppServlet {
     if (OBDal.getInstance().get(Invoice.class, strCInvoiceID).getPriceList().isPriceIncludesTax()) {
       resultado.append("new Array(\"inpgrossUnitPrice\", "
           + (strPriceActual.equals("") ? "0" : strPriceActual) + "),");
+      resultado.append("new Array(\"inpgrosspricestd\", "
+          + (strPriceStd.equals("") ? "0" : strPriceStd) + "),");
+      resultado.append("new Array(\"inpgrosspricelist\", "
+          + (strPriceList.equals("") ? "\"\"" : strPriceList) + "),");
 
     } else {
       resultado.append("new Array(\"inppricestd\", "
