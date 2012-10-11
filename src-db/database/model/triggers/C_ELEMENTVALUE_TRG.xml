@@ -143,9 +143,9 @@ BEGIN
       SET Updated=now(), 
           combination= TO_CHAR(REPLACE(combination, :old.VALUE, :new.VALUE)),
           description= TO_CHAR(REPLACE(description, :old.NAME, :new.NAME))
-      WHERE (Account_ID=:new.C_ElementValue_ID OR User1_ID=:new.C_ElementValue_ID OR User2_ID=:new.C_ElementValue_ID)
-         AND (combination <> (TO_CHAR(REPLACE(combination, :old.VALUE, :new.VALUE))))
-         OR description <> (TO_CHAR(REPLACE(description, :old.NAME, :new.NAME)));
+      WHERE (Account_ID=:new.C_ElementValue_ID
+         AND ((combination <> (TO_CHAR(REPLACE(combination, :old.VALUE, :new.VALUE))))
+         OR description <> (TO_CHAR(REPLACE(description, :old.NAME, :new.NAME)))));
      IF(:new.elementlevel <> 'S' and :old.elementlevel = 'S') THEN
 		    UPDATE C_ValidCombination
 		      SET Updated=now(), isactive = 'N' 		          
