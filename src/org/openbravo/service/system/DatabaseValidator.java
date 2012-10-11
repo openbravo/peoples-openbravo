@@ -168,10 +168,16 @@ public class DatabaseValidator implements SystemValidator {
     // 2) table present in db, not in ad
     // 3) table present on both sides, column match check
 
-    final org.apache.ddlutils.model.Table[] dbTables = getDatabase().getTables();
     final Map<String, org.apache.ddlutils.model.Table> dbTablesByName = new HashMap<String, org.apache.ddlutils.model.Table>();
+
+    final org.apache.ddlutils.model.Table[] dbTables = getDatabase().getTables();
     for (org.apache.ddlutils.model.Table dbTable : dbTables) {
       dbTablesByName.put(dbTable.getName().toUpperCase(), dbTable);
+    }
+
+    final org.apache.ddlutils.model.Table[] dbModifiedTables = getDatabase().getModifiedTables();
+    for (org.apache.ddlutils.model.Table dbModifiedTable : dbModifiedTables) {
+      dbTablesByName.put(dbModifiedTable.getName().toUpperCase(), dbModifiedTable);
     }
     final Map<String, org.apache.ddlutils.model.Table> tmpDBTablesByName = new HashMap<String, org.apache.ddlutils.model.Table>(
         dbTablesByName);
@@ -464,14 +470,14 @@ public class DatabaseValidator implements SystemValidator {
       }
     }
 
-    if (moduleId == null
-        || (adTable.getDataPackage().getModule() != null && adTable.getDataPackage().getModule()
-            .getId().equals(moduleId))) {
-      for (org.apache.ddlutils.model.Column dbColumn : dbColumnsByName.values()) {
-        result.addError(SystemValidationResult.SystemValidationType.NOT_EXIST_IN_AD, "Column "
-            + dbTable.getName() + "." + dbColumn.getName() + " present in the database "
-            + " but not defined in the Application Dictionary.");
-      }
+    // The columns in dbColumnsByName belong either to the tables defined in the module being
+    // validated, or
+    // to its modified tables, so they have to be checked always at this point
+
+    for (org.apache.ddlutils.model.Column dbColumn : dbColumnsByName.values()) {
+      result.addError(SystemValidationResult.SystemValidationType.NOT_EXIST_IN_AD, "Column "
+          + dbTable.getName() + "." + dbColumn.getName() + " present in the database "
+          + " but not defined in the Application Dictionary.");
     }
   }
 
