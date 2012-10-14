@@ -29,6 +29,7 @@ enyo.kind({
     onChangeCurrentOrder: 'changeCurrentOrder',
     onChangeBusinessPartner: 'changeBusinessPartner',
     onPrintReceipt: 'printReceipt',
+    onBackOffice: 'backOffice',
     onChangeSubWindow: 'changeSubWindow',
     onSetProperty: 'setProperty',
     onShowReceiptProperties: 'showModalReceiptProperties'
@@ -76,6 +77,11 @@ enyo.kind({
       receipt.calculateTaxes(function() {
         receipt.trigger('print');
       });
+    }
+  },
+  backOffice: function(inSender, inEvent) {
+    if (inEvent.url) {
+      window.open(inEvent.url, '_blank');
     }
   },
   addNewOrder: function(inSender, inEvent) {
