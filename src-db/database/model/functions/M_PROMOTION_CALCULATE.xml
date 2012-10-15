@@ -55,12 +55,14 @@ BEGIN
 			 and pl.m_priceList_ID = o.m_priceList_ID;
 	end if;
 
-  for Cur_Order in (select c_orderline_id as id, gross_unit_price, c_tax_id, cancelpricead, M_Product_ID
+  for Cur_Order in (select c_orderline_id as id, gross_unit_price, c_tax_id, cancelpricead, 
+                           M_Product_ID, ad_client_id, ad_org_id
                       from c_orderline 
                      where c_order_id = p_doc_id
                        and p_type = 'O'
                      union
-                    select c_invoiceline_id, gross_unit_price, c_tax_id, 'N', M_Product_ID
+                    select c_invoiceline_id, gross_unit_price, c_tax_id, 'N', 
+                           M_Product_ID, ad_client_id, ad_org_id
                       from c_invoiceline 
                      where c_invoice_id = p_doc_id
                        and p_type = 'I') loop
@@ -122,6 +124,7 @@ BEGIN
         (SELECT M_OFFER_ID, t.PL_Order_Implementor
         FROM M_OFFER, M_Offer_Type t
         WHERE v_date BETWEEN DATEFROM AND COALESCE(DATETO, TO_DATE('31-12-9999', 'DD-MM-YYYY'))
+          AND M_OFFER.AD_Client_ID = Cur_Order.AD_Client_ID
           AND M_OFFER.IsActive = 'Y'
           AND t.M_Offer_Type_ID = M_Offer.M_Offer_Type_ID
           AND ((PRICELIST_SELECTION='Y' AND NOT EXISTS (SELECT 1 FROM M_OFFER_PRICELIST
@@ -193,6 +196,20 @@ BEGIN
           WHERE OP.M_OFFER_ID = M_OFFER.M_OFFER_ID
             AND P.M_PRODUCT_ID = Cur_Order.M_Product_ID
             AND OP.M_PRODUCT_CATEGORY_ID = P.M_PRODUCT_CATEGORY_ID
+          )))
+          AND ((ORG_SELECTION = 'Y'
+          AND NOT EXISTS
+          (SELECT 1
+          FROM M_OFFER_ORGANIZATION O
+          WHERE O.M_OFFER_ID = M_OFFER.M_OFFER_ID
+            AND O.AD_ORG_ID = Cur_Order.AD_Org_ID
+          ))
+          OR(ORG_SELECTION = 'N'
+          AND EXISTS
+          (SELECT 1
+          FROM M_OFFER_ORGANIZATION O
+          WHERE O.M_OFFER_ID = M_OFFER.M_OFFER_ID
+            AND O.AD_ORG_ID = Cur_Order.AD_Org_ID
           )))
         ORDER BY PRIORITY,
           M_OFFER_ID
