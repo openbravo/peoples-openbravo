@@ -348,10 +348,9 @@ public class OrderLoader extends JSONProcessSimple {
           fillBobFromJSON(promotionLineEntity, promotion, jsonPromotion);
 
           if (hasActualAmt) {
-            promotion
-                .setPriceAdjustmentAmt(BigDecimal.valueOf(jsonPromotion.getDouble("actualAmt")));
+            promotion.setTotalAmount(BigDecimal.valueOf(jsonPromotion.getDouble("actualAmt")));
           } else {
-            promotion.setPriceAdjustmentAmt(BigDecimal.valueOf(jsonPromotion.getDouble("amt")));
+            promotion.setTotalAmount(BigDecimal.valueOf(jsonPromotion.getDouble("amt")));
           }
           promotion.setLineNo((long) ((p + 1) * 10));
           promotion.setInvoiceLine(line);
@@ -556,10 +555,9 @@ public class OrderLoader extends JSONProcessSimple {
           fillBobFromJSON(promotionLineEntity, promotion, jsonPromotion);
 
           if (hasActualAmt) {
-            promotion
-                .setPriceAdjustmentAmt(BigDecimal.valueOf(jsonPromotion.getDouble("actualAmt")));
+            promotion.setTotalAmount(BigDecimal.valueOf(jsonPromotion.getDouble("actualAmt")));
           } else {
-            promotion.setPriceAdjustmentAmt(BigDecimal.valueOf(jsonPromotion.getDouble("amt")));
+            promotion.setTotalAmount(BigDecimal.valueOf(jsonPromotion.getDouble("amt")));
           }
           promotion.setLineNo((long) ((p + 1) * 10));
           promotion.setSalesOrderLine(orderline);
@@ -908,7 +906,9 @@ public class OrderLoader extends JSONProcessSimple {
     else if (key.equals("ruleId")) {
       return "priceAdjustment";
     } else if (key.equals("basePrice")) {
-      return "adjustedPrice";
+      return "baseGrossUnitPrice";
+    } else if (key.equals("unitDiscount")) {
+      return "priceAdjustmentAmt";
     }
 
     return null;

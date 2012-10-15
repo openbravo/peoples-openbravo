@@ -241,8 +241,10 @@
         // Calculate prices after promotions
         base = line.get('price');
         _.forEach(line.get('promotions') || [], function(discount) {
+          var discountAmt = discount.actualAmt || discount.amt || 0;
           discount.basePrice = base;
-          totalDiscount = OB.DEC.add(totalDiscount, discount.actualAmt || discount.amt || 0);
+          discount.unitDiscount = OB.DEC.div(discountAmt, line.get('qty'));
+          totalDiscount = OB.DEC.add(totalDiscount, discountAmt);
           base = OB.DEC.sub(base, totalDiscount);
         }, this);
 
