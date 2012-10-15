@@ -55,8 +55,6 @@
   v_client VARCHAR(32);
   v_org VARCHAR(32);
 BEGIN
-  -- TODO rounding based on price precision	
-  
   if (p_taxIncluded = 'Y') then
      v_newUnitPrice := p_newUnitPrice;
      v_newGrossAmt := p_newGrossAmt;
@@ -85,17 +83,29 @@ BEGIN
 						linenetamt = round(p_newNetAmt, p_priceprecision)
 			where c_orderline_id = p_line_id;
 
-		insert into c_orderline_offer
-			(c_orderline_offer_id, ad_client_id, ad_org_id,                         
-			 isactive, createdby, updatedby,           
-			 c_orderline_id, line, m_offer_id,          
-			 priceoffer, amtoffer)
-		 values
-			(get_uuid(), v_client, v_org,
-			 'Y', p_user_id, p_user_id,
-			 p_line_id, v_nextLineNum, p_rule_id,
-			 p_basePrice, round(v_promotionDiscounted, p_priceprecision));
-			 -- TODO: update new field in c_orderline_offer
+    if (p_taxIncluded = 'Y') then
+			insert into c_orderline_offer
+				(c_orderline_offer_id, ad_client_id, ad_org_id,                         
+				 isactive, createdby, updatedby,           
+				 c_orderline_id, line, m_offer_id,          
+				 priceoffergross, amtoffer)
+			 values
+				(get_uuid(), v_client, v_org,
+				 'Y', p_user_id, p_user_id,
+				 p_line_id, v_nextLineNum, p_rule_id,
+				 p_basePrice, round(v_promotionDiscounted, p_priceprecision));
+	   else
+       insert into c_orderline_offer
+				(c_orderline_offer_id, ad_client_id, ad_org_id,                         
+				 isactive, createdby, updatedby,           
+				 c_orderline_id, line, m_offer_id,          
+				 priceoffer, amtoffer)
+			 values
+				(get_uuid(), v_client, v_org,
+				 'Y', p_user_id, p_user_id,
+				 p_line_id, v_nextLineNum, p_rule_id,
+				 p_basePrice, round(v_promotionDiscounted, p_priceprecision));
+	   end if;
 	 else
 		 select coalesce(max(line), 0) + 10
 			 into v_nextLineNum
@@ -114,17 +124,29 @@ BEGIN
 						linenetamt = round(p_newNetAmt, p_priceprecision)
 			where c_invoiceline_id = p_line_id;
 
-		insert into c_invoiceline_offer
-			(c_invoiceline_offer_id, ad_client_id, ad_org_id,                         
-			 isactive, createdby, updatedby,           
-			 c_invoiceline_id, line, m_offer_id,          
-			 priceoffer, amtoffer)
-		 values
-			(get_uuid(), v_client, v_org,
-			 'Y', p_user_id, p_user_id,
-			 p_line_id, v_nextLineNum, p_rule_id,
-			 p_basePrice, round(v_promotionDiscounted, p_priceprecision));
-			 -- TODO: update new field in c_orderline_offer
+    if (p_taxIncluded = 'Y') then
+      insert into c_invoiceline_offer
+				(c_invoiceline_offer_id, ad_client_id, ad_org_id,                         
+				 isactive, createdby, updatedby,           
+				 c_invoiceline_id, line, m_offer_id,          
+				 priceoffergross, amtoffer)
+			 values
+				(get_uuid(), v_client, v_org,
+				 'Y', p_user_id, p_user_id,
+				 p_line_id, v_nextLineNum, p_rule_id,
+				 p_basePrice, round(v_promotionDiscounted, p_priceprecision));
+    else
+			insert into c_invoiceline_offer
+				(c_invoiceline_offer_id, ad_client_id, ad_org_id,                         
+				 isactive, createdby, updatedby,           
+				 c_invoiceline_id, line, m_offer_id,          
+				 priceoffer, amtoffer)
+			 values
+				(get_uuid(), v_client, v_org,
+				 'Y', p_user_id, p_user_id,
+				 p_line_id, v_nextLineNum, p_rule_id,
+				 p_basePrice, round(v_promotionDiscounted, p_priceprecision));
+		 end if;
 	 end if;
 END M_PROMOTION_ADD
 ]]></body>
