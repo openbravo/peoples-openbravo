@@ -497,7 +497,21 @@
         this.save();
       }
     },
-    
+
+    createOrderFromQuotation: function(){
+      this.set('id',null);
+      this.set('quotation', false);
+      this.set('documentType', OB.POS.modelterminal.get('terminal').documentType);
+      this.set('hasbeenpaid', false);
+      this.save();
+    },
+    reactivateQuotation: function(){
+alert('reactivate!!')
+    },
+
+    rejectQuotation: function(){
+alert('reject!!')
+    },
 
     resetOrderInvoice: function() {
       if (OB.POS.modelterminal.hasPermission('OBPOS_receipt.invoice')) {

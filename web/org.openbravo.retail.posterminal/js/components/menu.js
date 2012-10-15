@@ -60,6 +60,17 @@ enyo.kind({
   label: OB.I18N.getLabel('OBPOS_LblReturn'),
   tap: function() {
     this.doShowReturnText();
+  },
+  init: function(model){
+    var receipt = model.get('order'),
+    me = this;
+    receipt.on('change:quotation', function(model) {
+      if (!model.get('quotation')) {
+        me.show();
+      } else {
+        me.hide();
+      }
+    }, this);
   }
 });
 
@@ -73,6 +84,17 @@ enyo.kind({
   label: OB.I18N.getLabel('OBPOS_LblInvoice'),
   tap: function() {
     this.doReceiptToInvoice();
+  },
+  init: function(model){
+    var receipt = model.get('order'),
+    me = this;
+    receipt.on('change:quotation', function(model) {
+      if (!model.get('quotation')) {
+        me.show();
+      } else {
+        me.hide();
+      }
+    }, this);
   }
 });
 
@@ -88,6 +110,17 @@ enyo.kind({
     if (OB.POS.modelterminal.hasPermission(this.permission)) {
       this.doPrintReceipt();
     }
+  },
+  init: function(model){
+    var receipt = model.get('order'),
+    me = this;
+    receipt.on('change:quotation', function(model) {
+      if (!model.get('quotation')) {
+        me.show();
+      } else {
+        me.hide();
+      }
+    }, this);
   }
 });
 
@@ -105,6 +138,17 @@ enyo.kind({
     }else{
       OB.UTIL.showError(OB.I18N.getLabel('OBPOS_QuotationNoDocType'));
     }
+  },
+  init: function(model){
+    var receipt = model.get('order'),
+    me = this;
+    receipt.on('change:quotation', function(model) {
+      if (!model.get('quotation')) {
+        me.show();
+      } else {
+        me.hide();
+      }
+    }, this);
   }
 });
 
@@ -113,22 +157,70 @@ enyo.kind({
   kind: 'OB.UI.MenuAction',
   permission: 'OBPOS_receipt.createorderfromquotation',
   events: {
-    onCreateQuotation: ''
+    onCreateOrderFromQuotation: ''
   },
   label: OB.I18N.getLabel('OBPOS_CreateOrderFromQuotation'),
   tap: function() {
-    console('vamosss');
+    this.doCreateOrderFromQuotation();
   },
   init: function(model){
     var receipt = model.get('order'),
     me = this;
+    me.hide();
     receipt.on('change:quotation', function(model) {
       if (model.get('quotation')) {
         me.show();
-        console.log('hola');
       } else {
         me.hide();
-        console.log('adios');
+      }
+    }, this);
+  }
+});
+
+enyo.kind({
+  name: 'OB.UI.MenuRejectQuotation',
+  kind: 'OB.UI.MenuAction',
+  permission: 'OBPOS_receipt.rejectquotation',
+  events: {
+    onRejectQuotation: ''
+  },
+  label: OB.I18N.getLabel('OBPOS_RejectQuotation'),
+  tap: function() {
+    this.doRejectQuotation();
+  },
+  init: function(model){
+    var receipt = model.get('order'),
+    me = this;
+    me.hide();
+    receipt.on('change:quotation', function(model) {
+      if (model.get('quotation')) {
+        me.show();
+      } else {
+        me.hide();
+      }
+    }, this);
+  }
+});
+enyo.kind({
+  name: 'OB.UI.MenuReactivateQuotation',
+  kind: 'OB.UI.MenuAction',
+  permission: 'OBPOS_receipt.reactivatequotation',
+  events: {
+    onReactivateQuotation: ''
+  },
+  label: OB.I18N.getLabel('OBPOS_ReactivateQuotation'),
+  tap: function() {
+    this.doReactivateQuotation();
+  },
+  init: function(model){
+    var receipt = model.get('order'),
+    me = this;
+    me.hide();
+    receipt.on('change:quotation', function(model) {
+      if (model.get('quotation')) {
+        me.show();
+      } else {
+        me.hide();
       }
     }, this);
   }
@@ -155,11 +247,19 @@ enyo.kind({
     });
 
     this.menuEntries.push({
-      kind: 'OB.UI.MenuSeparator'
+      kind: 'OB.UI.MenuReactivateQuotation'
+    });
+
+    this.menuEntries.push({
+      kind: 'OB.UI.MenuRejectQuotation'
     });
 
     this.menuEntries.push({
       kind: 'OB.UI.MenuCreateOrderFromQuotation'
+    });
+    
+    this.menuEntries.push({
+      kind: 'OB.UI.MenuSeparator'
     });
     
     this.menuEntries.push({

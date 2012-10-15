@@ -20,6 +20,9 @@ enyo.kind({
     onCancelReceiptToInvoice: 'cancelReceiptToInvoice',
     onReceiptToInvoice: 'receiptToInvoice',
     onCreateQuotation: 'createQuotation',
+    onCreateOrderFromQuotation: 'createOrderFromQuotation',
+    onReactivateQuotation: 'reactivateQuotation',
+    onRejectQuotation: 'rejectQuotation',
     onShowReturnText: 'showReturnText',
     onAddNewOrder: 'addNewOrder',
     onDeleteOrder: 'deleteCurrentOrder',
@@ -104,6 +107,21 @@ enyo.kind({
   },
   createQuotation: function(){
     this.model.get('order').createQuotation();
+    this.model.get('orderList').saveCurrent();
+    return true;
+  },
+  createOrderFromQuotation: function(){
+    this.model.get('order').createOrderFromQuotation();
+    this.model.get('orderList').saveCurrent();
+    return true;
+  },
+  reactivateQuotation: function(){
+    this.model.get('order').reactivateQuotation();
+    this.model.get('orderList').saveCurrent();
+    return true;
+  },
+  rejectQuotation: function(){
+    this.model.get('order').rejectQuotation();
     this.model.get('orderList').saveCurrent();
     return true;
   },

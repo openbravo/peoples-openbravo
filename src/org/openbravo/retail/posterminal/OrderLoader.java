@@ -535,7 +535,11 @@ public class OrderLoader extends JSONProcessSimple {
     order.setSummedLineAmount(BigDecimal.valueOf(jsonorder.getDouble("net")));
 
     order.setSalesTransaction(true);
-    order.setDocumentStatus("CO");
+    if (jsonorder.getBoolean("quotation")) {
+      order.setDocumentStatus("CO"); // should be UE, not yet because of dal validation
+    } else {
+      order.setDocumentStatus("CO");
+    }
     order.setDocumentAction("--");
     order.setProcessed(true);
     order.setProcessNow(false);
