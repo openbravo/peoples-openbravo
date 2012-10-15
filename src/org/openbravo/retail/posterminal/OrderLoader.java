@@ -899,8 +899,9 @@ public class OrderLoader extends JSONProcessSimple {
       return "unitPrice";
     } else if (key.equals("discountPercentage")) {
       return "discount";
+    } else if (key.equals("price")) {
+      return "baseGrossUnitPrice";
     }
-    // TODO: Save price (from list to discount, before promotions)
 
     // Mappings for promotions
     else if (key.equals("ruleId")) {
