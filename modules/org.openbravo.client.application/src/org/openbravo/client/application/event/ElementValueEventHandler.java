@@ -25,6 +25,7 @@ import java.util.List;
 
 import javax.enterprise.event.Observes;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
@@ -38,10 +39,8 @@ import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.utility.Tree;
 import org.openbravo.model.ad.utility.TreeNode;
-import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.financialmgmt.accounting.coa.ElementValue;
 
 public class ElementValueEventHandler extends EntityPersistenceEventObserver {
@@ -55,7 +54,8 @@ public class ElementValueEventHandler extends EntityPersistenceEventObserver {
     return entities;
   }
 
-  public void onSave(@Observes EntityNewEvent event) {
+  public void onSave(@Observes
+  EntityNewEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -69,11 +69,13 @@ public class ElementValueEventHandler extends EntityPersistenceEventObserver {
     }
     // Skip for initial client setup and initial org setup;
     // - Initial organization setup: Organization is not yet Ready
-    // - Initial Client Setup: There are no related organizations at this point
+    // - Initial Client Setup: Readable client list just contains system client ('0')
     // Skip is required as accounts come with a tree definition
     OBContext.setAdminMode();
     try {
-      if (!account.getOrganization().isReady() || getOrganizationNumber(account.getClient()) == 0) {
+      if (!account.getOrganization().isReady()
+          || !ArrayUtils.contains(OBContext.getOBContext().getReadableClients(), account
+              .getClient().getId())) {
         return;
       }
     } finally {
@@ -82,7 +84,8 @@ public class ElementValueEventHandler extends EntityPersistenceEventObserver {
     doIt(account);
   }
 
-  public void onUpdate(@Observes EntityUpdateEvent event) {
+  public void onUpdate(@Observes
+  EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -133,16 +136,8 @@ public class ElementValueEventHandler extends EntityPersistenceEventObserver {
         .put("SeqNo", String.valueOf(getNextSeqNo(account.getAccountingElement().getTree(), "0")));
     List<ElementValue> accounts = getAccountList(account);
     ElementValue previousElement = null;
-    if (!accounts.contains(account)) {
-      accounts.remove(account);
-    }
-    for (int i = 0; i < accounts.size(); i++) {
-      if (accounts.get(i).getSearchKey().replace('(', ' ').trim().replace(')', ' ').trim()
-          .compareTo(account.getSearchKey()) < 0) {
-        if (i > 0) {
-          previousElement = accounts.get(i);
-        }
-      }
+    for (ElementValue elementValue : accounts) {
+      previousElement = elementValue;
     }
     if (previousElement != null && previousElement.isSummaryLevel() && !account.isSummaryLevel()) {
       result.put("ParentID", previousElement.getId());
@@ -168,8 +163,9 @@ public class ElementValueEventHandler extends EntityPersistenceEventObserver {
     obc.add(Restrictions.eq(ElementValue.PROPERTY_ACCOUNTINGELEMENT, account.getAccountingElement()));
     obc.add(Restrictions.eq(ElementValue.PROPERTY_ACTIVE, true));
     obc.add(Restrictions.le(ElementValue.PROPERTY_SEARCHKEY, account.getSearchKey()));
+    obc.add(Restrictions.ne(ElementValue.PROPERTY_ID, account.getId()));
     obc.addOrder(Order.desc(ElementValue.PROPERTY_SEARCHKEY));
-    obc.setMaxResults(2);
+    obc.setMaxResults(1);
     obc.setFilterOnReadableClients(false);
     obc.setFilterOnReadableOrganization(false);
     return obc.list();
@@ -206,14 +202,5 @@ public class ElementValueEventHandler extends EntityPersistenceEventObserver {
 
   private Property getValueProperty() {
     return entities[0].getProperty(ElementValue.PROPERTY_SEARCHKEY);
-  }
-
-  int getOrganizationNumber(Client client) {
-    OBCriteria<Organization> obc = OBDal.getInstance().createCriteria(Organization.class);
-    obc.add(Restrictions.eq(Organization.PROPERTY_CLIENT, client));
-    obc.setFilterOnReadableClients(false);
-    obc.setFilterOnReadableOrganization(false);
-    obc.setMaxResults(1);
-    return obc.list().size();
   }
 }
