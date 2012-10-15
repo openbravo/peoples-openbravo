@@ -4561,13 +4561,6 @@ public class Wad extends DefaultHandler {
       sqlDateFormat = properties.getProperty("dateFormat.sql");
       WADControl.setDateFormat(sqlDateFormat);
       log4j.info("sqlDateFormat: " + sqlDateFormat);
-
-      generateAllClassic250Windows = false;
-      String compileAll250 = properties.getProperty("wad.generateAllClassic250Windows");
-      if (compileAll250 != null && compileAll250.equalsIgnoreCase("true")) {
-        generateAllClassic250Windows = true;
-      }
-      log4j.info("generateAllClassic250Windows: " + generateAllClassic250Windows);
     } catch (final IOException e) {
       // catch possible io errors from readLine()
       e.printStackTrace();
