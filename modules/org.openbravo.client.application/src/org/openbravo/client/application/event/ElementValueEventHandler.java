@@ -30,15 +30,18 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
+import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.client.kernel.event.EntityNewEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.utility.Tree;
 import org.openbravo.model.ad.utility.TreeNode;
-import org.openbravo.model.financialmgmt.accounting.coa.Element;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.financialmgmt.accounting.coa.ElementValue;
 
 public class ElementValueEventHandler extends EntityPersistenceEventObserver {
@@ -64,11 +67,27 @@ public class ElementValueEventHandler extends EntityPersistenceEventObserver {
     } catch (NumberFormatException e) {
       return;
     }
+    // Skip for initial client setup and initial org setup;
+    // - Initial organization setup: Organization is not yet Ready
+    // - Initial Client Setup: There are no related organizations at this point
+    // Skip is required as accounts come with a tree definition
+    OBContext.setAdminMode();
+    try {
+      if (!account.getOrganization().isReady() || getOrganizationNumber(account.getClient()) == 0) {
+        return;
+      }
+    } finally {
+      OBContext.restorePreviousMode();
+    }
     doIt(account);
   }
 
   public void onUpdate(@Observes EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
+      return;
+    }
+    if (event.getPreviousState(getValueProperty())
+        .equals(event.getCurrentState(getValueProperty()))) {
       return;
     }
     final ElementValue account = (ElementValue) event.getTargetInstance();
@@ -100,9 +119,6 @@ public class ElementValueEventHandler extends EntityPersistenceEventObserver {
       treeElement.setNode(account.getId());
       treeElement.setTree(account.getAccountingElement().getTree());
       treeElement.setReportSet(!isNumber ? rootNode : parent_ID);
-      // System.out.println("ElementValueEventHandler - node_id=" + account.getId() +
-      // " - parent_id="
-      // + treeElement.getReportSet() + " - Tree_id=" + treeElement.getTree().getId());
       treeElement.setSequenceNumber(new Long(seqNo));
       OBDal.getInstance().save(treeElement);
     }
@@ -115,7 +131,7 @@ public class ElementValueEventHandler extends EntityPersistenceEventObserver {
     result.put("ParentID", "0");
     result
         .put("SeqNo", String.valueOf(getNextSeqNo(account.getAccountingElement().getTree(), "0")));
-    List<ElementValue> accounts = getAccountList(account.getAccountingElement());
+    List<ElementValue> accounts = getAccountList(account);
     ElementValue previousElement = null;
     if (!accounts.contains(account)) {
       accounts.remove(account);
@@ -147,11 +163,13 @@ public class ElementValueEventHandler extends EntityPersistenceEventObserver {
 
   }
 
-  List<ElementValue> getAccountList(Element accountElement) {
+  List<ElementValue> getAccountList(ElementValue account) {
     OBCriteria<ElementValue> obc = OBDal.getInstance().createCriteria(ElementValue.class);
-    obc.add(Restrictions.eq(ElementValue.PROPERTY_ACCOUNTINGELEMENT, accountElement));
+    obc.add(Restrictions.eq(ElementValue.PROPERTY_ACCOUNTINGELEMENT, account.getAccountingElement()));
     obc.add(Restrictions.eq(ElementValue.PROPERTY_ACTIVE, true));
-    obc.addOrder(Order.asc(ElementValue.PROPERTY_SEARCHKEY));
+    obc.add(Restrictions.le(ElementValue.PROPERTY_SEARCHKEY, account.getSearchKey()));
+    obc.addOrder(Order.desc(ElementValue.PROPERTY_SEARCHKEY));
+    obc.setMaxResults(2);
     obc.setFilterOnReadableClients(false);
     obc.setFilterOnReadableOrganization(false);
     return obc.list();
@@ -186,4 +204,16 @@ public class ElementValueEventHandler extends EntityPersistenceEventObserver {
     }
   }
 
+  private Property getValueProperty() {
+    return entities[0].getProperty(ElementValue.PROPERTY_SEARCHKEY);
+  }
+
+  int getOrganizationNumber(Client client) {
+    OBCriteria<Organization> obc = OBDal.getInstance().createCriteria(Organization.class);
+    obc.add(Restrictions.eq(Organization.PROPERTY_CLIENT, client));
+    obc.setFilterOnReadableClients(false);
+    obc.setFilterOnReadableOrganization(false);
+    obc.setMaxResults(1);
+    return obc.list().size();
+  }
 }
