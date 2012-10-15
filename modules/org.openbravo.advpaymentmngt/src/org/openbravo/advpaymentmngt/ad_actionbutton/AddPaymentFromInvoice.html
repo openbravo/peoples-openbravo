@@ -137,6 +137,7 @@ function openProcessPayment() {
       submitThisPage('SAVEANDPROCESS');
       return true;
     }
+    calculateProperProcessOptions();
     document.getElementById('client_top_popup').style.display = 'block';
     document.getElementById('client_top').style.display = 'none';
     document.getElementById('client_middle').style.display = 'none';
@@ -405,6 +406,16 @@ function reFillPaymentMethodCombo() {
   }
 }
 
+function calculateProperProcessOptions() {
+  try {
+    var url = "../org.openbravo.advpaymentmngt.ad_actionbutton/AddPaymentFromInvoice.html";
+    var paramXMLReq = null;
+    return submitXmlHttpRequest(callBackProperOption, document.frmMain, "PROPERPROCESSOPTIONS", url, false, null, paramXMLReq);
+  } catch (e) {
+    alert(e);
+  }
+}
+
 function callBackFinancialAccount(paramXMLParticular, XMLHttpRequestObj) {
   if (getReadyStateHandler(XMLHttpRequestObj)) {
     try {
@@ -444,6 +455,27 @@ var strText = "";
         createCombo(document.getElementById('inpPaymentMethod'), strText);
       } else {
         document.getElementById('inpPaymentMethod').innerHTML = '';
+      }
+    } catch (e) {
+    }
+  }
+  return true;
+}
+
+function callBackProperOption(paramXMLParticular, XMLHttpRequestObj) {
+  var strText = "";
+  if (getReadyStateHandler(XMLHttpRequestObj)) {
+    try {
+      if (XMLHttpRequestObj.responseText) {
+    	strText = XMLHttpRequestObj.responseText;
+    	debugger;
+        createCombo(document.getElementById('paramActionDocument'), strText);
+	    document.getElementById('client_top_popup').style.display = 'block';
+        document.getElementById('client_top').style.display = 'none';
+        document.getElementById('client_middle').style.display = 'none';
+        document.getElementById('client_bottom').style.display = 'none';
+      } else {
+        document.getElementById('paramActionDocument').innerHTML = '';
       }
     } catch (e) {
     }

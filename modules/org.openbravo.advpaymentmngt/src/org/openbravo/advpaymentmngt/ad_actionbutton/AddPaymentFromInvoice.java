@@ -33,6 +33,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.process.FIN_AddPayment;
@@ -264,6 +265,13 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
 
       vars.setMessage(strTabId, message);
       printPageClosePopUp(response, vars, strWindowPath);
+    } else if (vars.commandIn("PROPERPROCESSOPTIONS")) {
+      String strPaymentMethodId = vars.getRequiredStringParameter("inpPaymentMethod");
+      String strFinancialAccountId = vars.getRequiredStringParameter("inpFinancialAccount");
+      String strOrgId = vars.getRequiredStringParameter("inpadOrgId");
+      boolean isReceipt = vars.getRequiredStringParameter("isReceipt").equals("Y");
+      refreshProcessOptions(response, strPaymentMethodId, strFinancialAccountId, strOrgId,
+          isReceipt);
     }
 
   }
@@ -585,6 +593,107 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
     PrintWriter out = response.getWriter();
     out.println(msg.toString());
     out.close();
+  }
+
+  private void refreshProcessOptions(HttpServletResponse response, String strPaymentMethod,
+      String strFinancialAccountId, String strOrgId, boolean isReceipt) throws IOException,
+      ServletException {
+    log4j.debug("Callout: Financial Account has changed to" + strFinancialAccountId);
+
+    FIN_PaymentMethod paymentMethod = OBDal.getInstance().get(FIN_PaymentMethod.class,
+        strPaymentMethod);
+    FIN_FinancialAccount financialAccount = OBDal.getInstance().get(FIN_FinancialAccount.class,
+        strFinancialAccountId);
+    FinAccPaymentMethod finAccPaymentMethod = null;
+
+    for (FinAccPaymentMethod finAccPaymentMethodItem : financialAccount
+        .getFinancialMgmtFinAccPaymentMethodList()) {
+      if (finAccPaymentMethodItem.getPaymentMethod().getId()
+          .equalsIgnoreCase(paymentMethod.getId())) {
+        finAccPaymentMethod = finAccPaymentMethodItem;
+      }
+    }
+    String processOprtionsComboHtml = null;
+    if (isReceipt) {
+      if (finAccPaymentMethod.isAutomaticDeposit()) {
+        // 1 option: Process.
+        processOprtionsComboHtml = FIN_Utility.getOptionsList(
+            processActionWithDepositWithdrawn("F903F726B41A49D3860243101CEEBA25", true), null,
+            true, true);
+
+      } else {
+        // 2 options: Process or Process and Deposit.
+        try {
+          OBContext.setAdminMode(true);
+          org.openbravo.model.ad.domain.Reference reference = OBDal.getInstance().get(
+              org.openbravo.model.ad.domain.Reference.class, "F903F726B41A49D3860243101CEEBA25");
+          processOprtionsComboHtml = FIN_Utility.getOptionsList(reference.getADListList(), null,
+              true, true);
+        } catch (Exception e) {
+
+        } finally {
+          OBContext.restorePreviousMode();
+        }
+      }
+    } else {
+      if (finAccPaymentMethod.isAutomaticWithdrawn()) {
+        // 1 option: Process.
+        processOprtionsComboHtml = FIN_Utility.getOptionsList(
+            processActionWithDepositWithdrawn("F15C13A199A748F1B0B00E985A64C036", false), null,
+            true, true);
+
+      } else {
+        // 2 Options: Process or Process and Withdrawn
+        try {
+          OBContext.setAdminMode(true);
+          org.openbravo.model.ad.domain.Reference reference = OBDal.getInstance().get(
+              org.openbravo.model.ad.domain.Reference.class, "F15C13A199A748F1B0B00E985A64C036");
+          processOprtionsComboHtml = FIN_Utility.getOptionsList(reference.getADListList(), null,
+              true, true);
+        } catch (Exception e) {
+
+        } finally {
+          OBContext.restorePreviousMode();
+        }
+      }
+    }
+
+    response.setContentType("text/html; charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    out.println(processOprtionsComboHtml.replaceAll("\"", "\\'"));
+
+    out.close();
+  }
+
+  /**
+   * Returns the list of the reference list for payment process
+   * 
+   * @param refId
+   *          . Indicates the Id of the reference.
+   * @param deposit
+   *          . Indicates whether the method is being executed for deposit of withdrawn.
+   * @return. Returns the list of process actions.
+   */
+  private List processActionWithDepositWithdrawn(String refId, boolean deposit) {
+    try {
+      OBContext.setAdminMode(true);
+      StringBuilder hql = new StringBuilder();
+      hql.append("select l ");
+      hql.append("from ADReference r ");
+      hql.append("  left join r.aDListList l ");
+      hql.append("where r.id = '").append(refId).append("' ");
+      hql.append("  and lower(l.name) like '%").append((deposit == true) ? "deposit" : "withdrawn")
+          .append("%'");
+
+      final Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
+
+      return query.list();
+    } catch (Exception e) {
+      return null;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+
   }
 
   private BigDecimal findExchangeRate(VariablesSecureApp vars, Currency paymentCurrency,
