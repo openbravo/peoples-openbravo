@@ -105,6 +105,10 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
         orderList.deleteCurrent();
       });
     }, this);
+
+    receipt.on('openDrawer', function() {
+      receipt.trigger('popenDrawer');
+    }, this);
     
     this.printReceipt = new OB.OBPOSPointOfSale.Print.Receipt(receipt);
     this.printLine = new OB.OBPOSPointOfSale.Print.ReceiptLine(receipt);

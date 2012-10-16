@@ -14,7 +14,9 @@
   var PrintReceipt = function(receipt) {
     this.receipt = receipt;
     this.receipt.on('print', this.print, this);
+    this.receipt.on('popenDrawer', this.openDrawer, this);
 
+    this.templateopendrawer = new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.OpenDrawer);
     this.templatereceipt = new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.ReceiptTemplate);
     this.templateinvoice = new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.ReceiptTemplateInvoice);
     this.templatereturn = new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.ReceiptTemplateReturn);
@@ -45,6 +47,14 @@
     OB.POS.hwserver.print(template, { order: receipt });    
   };
   
+  PrintReceipt.prototype.openDrawer = function () {
+    // Clone the receipt
+    var receipt = new OB.Model.Order();
+    receipt.clearWith(this.receipt);
+    this.template = new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.OpenDrawerTemplate);
+    OB.POS.hwserver.print(this.template, { order: receipt });
+  };
+
   var PrintReceiptLine = function (receipt) {
     this.receipt = receipt;
     this.line = null;
@@ -79,6 +89,7 @@
   OB.OBPOSPointOfSale.Print.ReceiptTemplateReturn = 'res/printreturn.xml';
   OB.OBPOSPointOfSale.Print.ReceiptTemplateReturnInvoice = 'res/printreturninvoice.xml';
   OB.OBPOSPointOfSale.Print.ReceiptLine = PrintReceiptLine; 
-  OB.OBPOSPointOfSale.Print.ReceiptLineTemplate = 'res/printline.xml'; 
+  OB.OBPOSPointOfSale.Print.ReceiptLineTemplate = 'res/printline.xml';
+  OB.OBPOSPointOfSale.Print.OpenDrawerTemplate = 'res/opendrawer.xml';
 
 }());

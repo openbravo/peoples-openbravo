@@ -129,6 +129,10 @@ enyo.kind({
       this.$.totalpending.show();
       this.$.totalpendinglbl.show();
       this.$.doneaction.hide();
+      if(this.$.doneButton.drawerpreference){
+        this.$.doneButton.setContent(OB.I18N.getLabel('OBPOS_LblOpen'));
+        this.$.doneButton.drawerOpened=false;
+      }
     }
 
     if (paymentstatus.done || this.receipt.getGross() === 0) {
@@ -149,8 +153,32 @@ enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.DoneButton',
   kind: 'OB.UI.RegularButton',
   content: OB.I18N.getLabel('OBPOS_LblDone'),
+  drawerOpened: true,
+  init: function (){
+    this.drawerpreference = OB.POS.modelterminal.get('terminal').drawerpreference;
+    if(this.drawerpreference){
+      this.drawerOpened= false;
+      this.setContent(OB.I18N.getLabel('OBPOS_LblOpen'));
+    }else{
+      this.drawerOpened= true;
+      this.setContent(OB.I18N.getLabel('OBPOS_LblDone'));
+    }
+  },
   tap: function() {
-    this.owner.receipt.trigger('paymentDone');
+    if(this.drawerpreference){
+      if(this.drawerOpened){
+      this.owner.receipt.trigger('paymentDone');
+      this.drawerOpened= false;
+      this.setContent(OB.I18N.getLabel('OBPOS_LblOpen'));
+      }else{
+      this.owner.receipt.trigger('openDrawer');
+      this.drawerOpened= true;
+      this.setContent(OB.I18N.getLabel('OBPOS_LblDone'));
+      }
+   }else{
+     this.owner.receipt.trigger('paymentDone');
+     this.owner.receipt.trigger('openDrawer');
+   }
   }
 });
 
