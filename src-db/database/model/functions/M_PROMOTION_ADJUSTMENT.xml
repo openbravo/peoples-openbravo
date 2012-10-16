@@ -27,7 +27,7 @@
 * the License at http://www.openbravo.com/legal/license.html
 * Software distributed under the License  is  distributed  on  an "AS IS"
 * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
-* License for the specific  language  governing  rights  and  limitations
+* License for the specific  language  governing  rights  and  limitations 
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
@@ -50,6 +50,10 @@
   v_newNetLine NUMBER;
   v_priceactual NUMBER;
   v_basePrice NUMBER;
+
+  v_origGrossAmt NUMBER;
+  v_origLineNetAmt NUMBER;
+  v_totalPromotion NUMBER;
 BEGIN
   select fixed, coalesce(addamt, 0), coalesce(discount, 0),
          qty_From, qty_To, apply_next
@@ -59,13 +63,17 @@ BEGIN
    where m_offer_id = p_rule_id;
 
   if (p_type ='O') then
-		select gross_unit_price, c_tax_id, qtyordered, priceactual
-			into v_unitprice, v_tax, v_qty, v_priceactual
+		select gross_unit_price, c_tax_id, qtyordered, priceactual,
+		       line_gross_amount, linenetamt
+			into v_unitprice, v_tax, v_qty, v_priceactual,
+			     v_origGrossAmt, v_origLineNetAmt
 			from c_orderline
 		 where c_orderline_id = p_line_id;
   else 
-	 select gross_unit_price, c_tax_id, qtyinvoiced, priceactual
-		 into v_unitprice, v_tax, v_qty, v_priceactual
+	 select gross_unit_price, c_tax_id, qtyinvoiced, priceactual,
+	        line_gross_amount, linenetamt
+		 into v_unitprice, v_tax, v_qty, v_priceactual,
+		      v_origGrossAmt, v_origLineNetAmt
 		 from c_invoiceline
 		where c_invoiceline_id = p_line_id;
   end if;
@@ -82,6 +90,7 @@ BEGIN
     end if;
     
     v_newGrossAmt := v_newUnitPrice * v_qty;
+    v_totalPromotion := v_origGrossAmt - v_newGrossAmt;
 
     v_newNetLine := c_get_net_price_from_gross(v_tax, v_newGrossAmt, v_newGrossAmt, p_priceprecision, v_qty);
     v_newNetAmt := c_get_net_price_from_gross(v_tax, v_newGrossAmt,v_newGrossAmt, p_priceprecision, 1);
@@ -94,10 +103,11 @@ BEGIN
     end if;
 
     v_newNetAmt := v_newNetLine * v_qty;
+    v_totalPromotion := v_origLineNetAmt - v_newNetAmt;
     v_basePrice := v_priceactual;
   end if;
 
-  M_PROMOTION_ADD(p_type, p_line_id, p_rule_id, p_taxIncluded, p_priceprecision, v_newUnitPrice, v_newGrossAmt, v_newNetLine, v_newNetAmt, v_basePrice, p_user_id);
+  M_PROMOTION_ADD(p_type, p_line_id, p_rule_id, p_taxIncluded, p_priceprecision, v_newUnitPrice, v_newGrossAmt, v_newNetLine, v_newNetAmt, v_totalPromotion, v_totalPromotion, v_basePrice, p_user_id);
 
   return v_apply_next;
 END M_PROMOTION_ADJUSTMENT
