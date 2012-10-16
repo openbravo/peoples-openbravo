@@ -81,7 +81,7 @@
       <foreign-key foreignTable="C_ORDERLINE" name="M_MATCHPO_C_ORDERLINE">
         <reference local="C_ORDERLINE_ID" foreign="C_ORDERLINE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_INOUTLINE" name="M_MATCHPO_M_INOUTLINE">
+      <foreign-key foreignTable="M_INOUTLINE" name="M_MATCHPO_M_INOUTLINE" onDelete="cascade">
         <reference local="M_INOUTLINE_ID" foreign="M_INOUTLINE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_PRODUCT" name="M_MATCHPO_M_PRODUCT">
