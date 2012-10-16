@@ -38,6 +38,10 @@
 
   Cur_Order RECORD;
   Cur_Offer RECORD;
+  v_totalamt NUMBER;
+  v_displayedtotalamt NUMBER;
+  v_qtyordered NUMBER;
+  v_qtyinvoiced NUMBER;
 BEGIN
   if (p_type = 'O') then
 		select o.c_bpartner_id, o.m_priceList_id, o.dateordered, c.priceprecision, pl.isTaxIncluded
@@ -56,13 +60,13 @@ BEGIN
 	end if;
 
   for Cur_Order in (select c_orderline_id as id, gross_unit_price, c_tax_id, cancelpricead, 
-                           M_Product_ID, ad_client_id, ad_org_id
+                           M_Product_ID, ad_client_id, ad_org_id, null as from_order
                       from c_orderline 
                      where c_order_id = p_doc_id
                        and p_type = 'O'
                      union
                     select c_invoiceline_id, gross_unit_price, c_tax_id, 'N', 
-                           M_Product_ID, ad_client_id, ad_org_id
+                           M_Product_ID, ad_client_id, ad_org_id, c_orderline_id
                       from c_invoiceline 
                      where c_invoice_id = p_doc_id
                        and p_type = 'I') loop
@@ -117,9 +121,43 @@ BEGIN
       end if;
 		end if;
 
-    -- Look for candidate promotions to be applied to current line
-    v_apply_next := 'Y';
-    if (Cur_Order.cancelpricead = 'N') then
+		if (p_type = 'I' and cur_order.from_order is not null) then
+      -- Invoice line generated from order line, don't recalculate promotions,
+      -- just apply existent ones. Price is not recalculated, it should have been
+      -- properly set previous to this point.
+      select o.qtyordered, i.qtyinvoiced
+        into v_qtyordered, v_qtyinvoiced
+        from c_orderline o, c_invoiceline i
+       where i.c_invoiceline_id = cur_order.id
+         and o.c_orderline_id = i.c_orderline_id;
+      
+      for Cur_Offer in (select *
+                          from c_orderline_offer 
+                         where c_orderline_id = Cur_Order.id) loop
+        if (v_qtyordered = v_qtyinvoiced) then
+          v_totalamt := Cur_Offer.totalamt;
+          v_displayedtotalamt := Cur_Offer.displayedtotalamt;
+        else
+          v_totalamt := round(Cur_Offer.totalamt * v_qtyinvoiced / v_qtyordered, v_precision);
+          v_displayedtotalamt := round(Cur_Offer.displayedtotalamt * v_qtyinvoiced / v_qtyordered, v_precision);
+        end if;
+        
+        insert into c_invoiceline_offer
+          (c_invoiceline_offer_id, ad_client_id, ad_org_id,              
+					 isactive, createdby, updatedby,              
+					 c_invoiceline_id, line, m_offer_id,             
+					 priceoffer, amtoffer, priceoffergross,        
+					 totalamt, displayedtotalamt) 
+				values
+				  (get_uuid(), cur_order.ad_client_id, cur_order.ad_org_id,              
+					 Cur_Offer.isactive, p_user_id, p_user_id,              
+					 cur_order.id, Cur_Offer.line, Cur_Offer.m_offer_id,             
+					 Cur_Offer.priceoffer, Cur_Offer.amtoffer, Cur_Offer.priceoffergross,        
+					 v_totalamt, v_displayedtotalamt);
+      end loop;
+    elsif (Cur_Order.cancelpricead = 'N') then
+      -- Look for candidate promotions to be applied to current line
+      v_apply_next := 'Y';
       FOR Cur_Offer IN
         (SELECT M_OFFER_ID, t.PL_Order_Implementor
         FROM M_OFFER, M_Offer_Type t
