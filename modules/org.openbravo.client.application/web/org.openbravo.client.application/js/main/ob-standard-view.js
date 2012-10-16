@@ -675,6 +675,9 @@ isc.OBStandardView.addProperties({
     }
 
     if (this.isShowingForm && this.viewForm) {
+      if (!this.lastFocusedItem) {
+        this.lastFocusedItem = this.viewForm.getItem(this.firstFocusedField);
+      }
       if (this.lastFocusedItem && this.lastFocusedItem.getCanFocus()) {
         object = this.lastFocusedItem;
       } else if (this.viewForm.getFocusItem() && this.viewForm.getFocusItem().getCanFocus()) {
