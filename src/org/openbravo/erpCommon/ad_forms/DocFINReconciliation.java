@@ -1076,7 +1076,7 @@ public class DocFINReconciliation extends AcctServer {
       }
       // Exists line in closed period
       for (FIN_FinaccTransaction line : transactionsToBePosted) {
-        Period linePeriod = documentGetPeriod(line.getDateAcct());
+        Period linePeriod = documentGetPeriod(line.getDateAcct(), reconciliation.getOrganization());
         if (linePeriod == null) {
           setStatus(STATUS_PeriodClosed);
           return false;
@@ -1469,31 +1469,28 @@ public class DocFINReconciliation extends AcctServer {
     return account;
   }
 
-  Period documentGetPeriod(Date date) {
+  Period documentGetPeriod(Date date, Organization org) {
     OBCriteria<PeriodControl> obCriteria = OBDal.getInstance().createCriteria(PeriodControl.class);
     obCriteria.createAlias(PeriodControl.PROPERTY_PERIOD, "p");
     obCriteria.createAlias("p." + Period.PROPERTY_YEAR, "y");
     obCriteria.add(Restrictions.eq(PeriodControl.PROPERTY_PERIODSTATUS, "O"));
     obCriteria.add(Restrictions.eq(PeriodControl.PROPERTY_DOCUMENTCATEGORY,
         AcctServer.DOCTYPE_Reconciliation));
-    obCriteria.add(Restrictions.eq("y." + Year.PROPERTY_CALENDAR, getCalendar(AD_Org_ID)));
+    obCriteria.add(Restrictions.eq("y." + Year.PROPERTY_CALENDAR, getCalendar(org)));
     obCriteria.add(Restrictions.in(PeriodControl.PROPERTY_ORGANIZATION + "."
         + Organization.PROPERTY_ID, OBContext.getOBContext().getOrganizationStructureProvider()
-        .getNaturalTree(AD_Org_ID)));
+        .getNaturalTree(org.getId())));
+    obCriteria.add(Restrictions.eq("p." + PeriodControl.PROPERTY_CLIENT, org.getClient()));
     obCriteria.add(Restrictions.le("p." + Period.PROPERTY_STARTINGDATE, date));
     obCriteria.add(Restrictions.ge("p." + Period.PROPERTY_ENDINGDATE, date));
     obCriteria.setFilterOnReadableOrganization(false);
+    obCriteria.setFilterOnReadableClients(false);
     List<PeriodControl> lines = obCriteria.list();
     return lines.size() == 0 ? null : lines.get(0).getPeriod();
   }
 
-  Calendar getCalendar(String organization) {
-    OBCriteria<Organization> obCriteria = OBDal.getInstance().createCriteria(Organization.class);
-    obCriteria.add(Restrictions.eq(Organization.PROPERTY_ID, organization));
-    obCriteria.setFilterOnReadableClients(false);
-    obCriteria.setFilterOnReadableOrganization(false);
-    List<Organization> lines = obCriteria.list();
-    Calendar calendar = lines.get(0).getCalendar();
+  Calendar getCalendar(Organization organization) {
+    Calendar calendar = organization.getCalendar();
     if (calendar != null) {
       return calendar;
     } else {
