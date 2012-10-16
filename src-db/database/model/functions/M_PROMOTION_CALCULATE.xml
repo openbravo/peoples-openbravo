@@ -82,8 +82,8 @@ BEGIN
 					update c_orderline
 						 set gross_unit_price = grosspricestd,
 								 line_gross_amount = grosspricestd * qtyordered,
-								 priceactual = c_get_net_price_from_gross(Cur_Order.c_tax_id, grosspricestd, v_oldUnitPrice, v_precision, 1),
-								 linenetamt = c_get_net_price_from_gross(Cur_Order.c_tax_id, grosspricestd * qtyordered, v_oldUnitPrice * qtyordered, v_precision, 1)
+								 priceactual = c_get_net_price_from_gross(Cur_Order.c_tax_id, grosspricestd, grosspricestd, v_precision, 1),
+								 linenetamt = c_get_net_price_from_gross(Cur_Order.c_tax_id, grosspricestd * qtyordered, grosspricestd * qtyordered, v_precision, 1)
 					 where c_orderline_id = Cur_Order.id;
 				else
 					update c_orderline
@@ -106,8 +106,8 @@ BEGIN
 					update c_invoiceline
 						 set gross_unit_price = grosspricestd,
 								 line_gross_amount = grosspricestd * qtyinvoiced,
-								 priceactual = c_get_net_price_from_gross(Cur_Order.c_tax_id, grosspricestd, v_oldUnitPrice, v_precision, 1),
-								 linenetamt = c_get_net_price_from_gross(Cur_Order.c_tax_id, grosspricestd * qtyordered, v_oldUnitPrice * qtyordered, v_precision, 1)
+								 priceactual = c_get_net_price_from_gross(Cur_Order.c_tax_id, grosspricestd, grosspricestd, v_precision, 1),
+								 linenetamt = c_get_net_price_from_gross(Cur_Order.c_tax_id, grosspricestd * qtyordered, grosspricestd * qtyordered, v_precision, 1)
 					 where c_invoiceline_id = Cur_Order.id;
 				else
 					update c_invoiceline
