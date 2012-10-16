@@ -166,6 +166,10 @@ public class OrderLoader extends JSONProcessSimple {
 
   public JSONObject saveOrder(JSONObject jsonorder) throws Exception {
 
+    if (verifyOrderExistance(jsonorder)) {
+      return successMessage(jsonorder);
+    }
+
     long t0 = System.currentTimeMillis();
     long t1, t11, t2, t3;
     Order order = null;
@@ -242,6 +246,10 @@ public class OrderLoader extends JSONProcessSimple {
         + (t2 - t11) + "; First flush:" + (t3 - t2) + "; Second flush: " + (t4 - t3)
         + "; Process Payments:" + (System.currentTimeMillis() - t4));
 
+    return successMessage(jsonorder);
+  }
+
+  protected JSONObject successMessage(JSONObject jsonorder) throws Exception {
     final JSONObject jsonResponse = new JSONObject();
 
     jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
@@ -249,6 +257,22 @@ public class OrderLoader extends JSONProcessSimple {
     jsonResponse.put("data", jsonorder);
 
     return jsonResponse;
+  }
+
+  protected boolean verifyOrderExistance(JSONObject jsonorder) throws Exception {
+    if (jsonorder.has("isbeingretriggered")
+        && jsonorder.getString("isbeingretriggered").equals("Y")) {
+      // This order has been sent previously. We need to verify if it was saved before, or not.
+      List<Object> parameters = new ArrayList<Object>();
+      parameters.add(jsonorder.getString("documentNo"));
+      parameters.add(jsonorder.getString("posTerminal"));
+      parameters.add(jsonorder.getJSONObject("bp").getString("id"));
+      OBQuery<Order> orders = OBDal.getInstance().createQuery(Order.class,
+          "documentNo=? and obposApplications.id=? and businessPartner.id=?");
+      orders.setParameters(parameters);
+      return orders.count() > 0;
+    }
+    return false;
   }
 
   protected String getPaymentDescription() {
