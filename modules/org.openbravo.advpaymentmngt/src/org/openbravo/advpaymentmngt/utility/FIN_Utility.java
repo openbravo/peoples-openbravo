@@ -505,12 +505,35 @@ public class FIN_Utility {
    */
   public static <T extends BaseOBObject> String getOptionsList(List<T> obObjectList,
       String selectedValue, boolean isMandatory) {
+    return getOptionsList(obObjectList, selectedValue, isMandatory, false);
+  }
+
+  /**
+   * Returns a String containing the html code with the options based on the given List of
+   * BaseOBObjects
+   * 
+   * @param <T>
+   *          Class that extends BaseOBObject.
+   * @param obObjectList
+   *          List containing the values to be included in the options.
+   * @param selectedValue
+   *          value to set as selected by default.
+   * @param isMandatory
+   *          boolean to add a blank option in the options list.
+   * @param isRefList
+   *          boolean to let know if the options belong to a refList. In that case, the value must
+   *          be the search key of the list item instead of it's id.
+   * @return a String containing the html code with the options. *
+   */
+  public static <T extends BaseOBObject> String getOptionsList(List<T> obObjectList,
+      String selectedValue, boolean isMandatory, boolean isRefList) {
     StringBuilder strOptions = new StringBuilder();
     if (!isMandatory)
       strOptions.append("<option value=\"\"></option>");
 
     for (T obObject : obObjectList) {
-      strOptions.append("<option value=\"").append(obObject.getId()).append("\"");
+      strOptions.append("<option value=\"")
+          .append((isRefList) ? obObject.getValue("searchKey") : obObject.getId()).append("\"");
       if (obObject.getId().equals(selectedValue))
         strOptions.append(" selected=\"selected\"");
       strOptions.append(">");

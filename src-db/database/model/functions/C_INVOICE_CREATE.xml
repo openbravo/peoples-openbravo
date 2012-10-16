@@ -109,7 +109,9 @@
           ol.PriceStd,
           ol.m_attributesetinstance_id,
           ol.taxbaseamt,
-          ol.gross_unit_price
+          ol.gross_unit_price,
+          ol.grosspricestd,
+          ol.grosspricelist
         FROM M_INOUT s, M_INOUTLINE sl
         RIGHT JOIN C_ORDERLINE ol
           ON sl.C_OrderLine_ID=ol.C_OrderLine_ID
@@ -714,7 +716,9 @@
                 ol.gross_unit_price,
                 ol.m_attributesetinstance_id,
                 ol.taxbaseamt, o.fin_paymentmethod_id,
-                pl.istaxincluded
+                pl.istaxincluded,
+                ol.grosspricestd,
+                ol.grosspricelist
               FROM M_INOUT sh,
                 M_INOUTLINE sl,
                 C_ORDER o,

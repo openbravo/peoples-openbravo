@@ -257,7 +257,7 @@
                 FROM A_AMORTIZATIONLINE
                 WHERE A_ASSET_ID=v_Record_ID;
                 v_AMOUNT:=v_AMORTIZATIONVALUEAMT - v_AMOUNT;
-                v_PERCENTAGE:=v_AMOUNT*100/(v_AMORTIZATIONVALUEAMT+v_DEPRECIATEDPREVIOUSAMT) ;
+                v_PERCENTAGE:=100 - v_PERCENTAGE;
                 finish:=true;
               ELSE
                 v_AMOUNT:=(v_AMORTIZATIONVALUEAMT+ v_DEPRECIATEDPREVIOUSAMT) *v_PERCENTAGE/100;

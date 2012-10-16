@@ -156,7 +156,7 @@
         FROM AD_COLUMN C, AD_FIELD F 
         WHERE C.AD_COLUMN_ID = F.AD_COLUMN_ID 
         AND C.ISACTIVE = 'Y' 
-        AND (C.ISKEY = 'Y' OR ISSECONDARYKEY = 'Y')
+        AND COALESCE(C.ISKEY,C.ISSECONDARYKEY) = 'Y'
         AND F.AD_TAB_ID = ? 
         ORDER BY C.SEQNO
       ]]>
