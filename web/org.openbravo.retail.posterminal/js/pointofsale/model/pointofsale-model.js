@@ -60,6 +60,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
         if (!ordersPaidNotProcessed || ordersPaidNotProcessed.length === 0) {
           return;
         }
+        ordersPaidNotProcessed.each(function(order) {
+            order.set('isbeingretriggered', 'Y');
+        });
         successCallback = function() {
           $('.alert:contains("' + OB.I18N.getLabel('OBPOS_ProcessPendingOrders') + '")').alert('close');
           OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgSuccessProcessOrder'));
@@ -106,6 +109,10 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
       });
     }, this);
 
+    receipt.on('openDrawer', function() {
+      receipt.trigger('popenDrawer');
+    }, this);
+    
     this.printReceipt = new OB.OBPOSPointOfSale.Print.Receipt(receipt);
     this.printLine = new OB.OBPOSPointOfSale.Print.ReceiptLine(receipt);
 

@@ -652,6 +652,7 @@
       var cash = OB.DEC.Zero;
       var origCash = OB.DEC.Zero;
       var auxCash = OB.DEC.Zero;
+      var prevCash = OB.DEC.Zero;
       var pcash;
 
       for (i = 0, max = payments.length; i < max; i++) {
@@ -674,18 +675,21 @@
       }
 
       // Calculation of the change....
+      //FIXME
       if (pcash) {
         if(pcash.get('kind') !== 'OBPOS_payment.cash'){
           auxCash=origCash;
+          prevCash=cash;
         }else{
           auxCash=cash;
+          prevCash=origCash;
         }
         if (OB.DEC.compare(nocash - total) > 0) {
           pcash.set('paid', OB.DEC.Zero);
           this.set('payment', nocash);
           this.set('change', auxCash);
         } else if (OB.DEC.compare(OB.DEC.sub(OB.DEC.add(OB.DEC.add(nocash, cash),origCash), total)) > 0) {
-          pcash.set('paid', OB.DEC.sub(total, nocash));
+          pcash.set('paid', OB.DEC.sub(total, OB.DEC.add(nocash,prevCash)));
           this.set('payment', total);
           this.set('change', OB.DEC.sub(OB.DEC.add(OB.DEC.add(nocash, cash), origCash), total));
         } else {

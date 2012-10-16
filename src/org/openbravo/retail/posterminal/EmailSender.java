@@ -7,6 +7,7 @@ import java.util.List;
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
+import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.dal.core.OBContext;
@@ -21,15 +22,15 @@ public class EmailSender implements Runnable {
   private static final Logger log4j = Logger.getLogger(EmailSender.class);
   Thread runner;
   JSONObject jsonorder;
-  Order order;
+  String orderId;
 
   public EmailSender() {
   }
 
-  public EmailSender(Order order, JSONObject jsonorder) {
+  public EmailSender(String orderId, JSONObject jsonorder) {
     this.jsonorder = jsonorder;
-    this.order = order;
-    runner = new Thread(this, order.getId()); // Create a new thread.
+    this.orderId = orderId;
+    runner = new Thread(this, orderId); // Create a new thread.
     runner.start(); // Start the thread.
   }
 
@@ -47,12 +48,33 @@ public class EmailSender implements Runnable {
 
   public void sendDocumentEmail() throws JSONException, IOException, ServletException {
     final String toName = jsonorder.getJSONObject("bp").getString("name");
+    boolean setFailed = false;
     String toEmail = jsonorder.getJSONObject("bp").getString("email");
 
-    String emailSubject = jsonorder.getString("posTerminal$_identifier") + " "
-        + jsonorder.getString("documentNo");
-    String emailBody = jsonorder.getString("posTerminal$_identifier") + " "
-        + jsonorder.getString("documentNo") + " " + jsonorder.getString("payment");
+    String emailSubject = "[Openbravo Web POS] Sale " + jsonorder.getString("documentNo")
+        + " done in " + jsonorder.getString("posTerminal$_identifier");
+    String emailBody = "";
+    try {
+      emailBody += "Date: " + jsonorder.getString("orderDate") + " \r\n";
+      emailBody += "Document Number: " + jsonorder.getString("documentNo") + " \r\n";
+      emailBody = "Total Gross: " + jsonorder.getString("gross") + " \r\n";
+      emailBody += "Total Net: " + jsonorder.getString("net") + " \r\n";
+
+      emailBody += "\r\n";
+      emailBody += "Lines \r\n";
+      emailBody += "------\r\n";
+
+      JSONArray lines = jsonorder.getJSONArray("lines");
+      for (int i = 0; i < lines.length(); i++) {
+        JSONObject jsonOrderLine = lines.getJSONObject(i);
+        emailBody += jsonOrderLine.getString("qty") + " - ";
+        emailBody += jsonOrderLine.getString("price") + " - ";
+        emailBody += jsonOrderLine.getJSONObject("product").getString("_identifier");
+        emailBody += "\r\n";
+      }
+    } catch (Exception e) {
+      emailBody = "the email body cannot be generated";
+    }
 
     String host = null;
     boolean auth = true;
@@ -66,8 +88,9 @@ public class EmailSender implements Runnable {
     String replyToEmail = null;
     String senderAddress = null;
     OBContext.setAdminMode(true);
-
+    Order order = null;
     try {
+
       final Client client = OBDal.getInstance().get(Client.class, jsonorder.getString("client"));
 
       emailServersConfiguration = client.getEmailServerConfigurationList();
@@ -105,7 +128,7 @@ public class EmailSender implements Runnable {
     }
 
     if ((replyToEmail == null || replyToEmail.length() == 0)) {
-      order.setObposEmailStatus("Failed");
+      setFailed = true;
       // throw new ServletException(Utility.messageBD(this, "NoSalesRepEmail", vars.getLanguage()));
       log4j.error("Cannot send email because there is no sales representative email address!");
     }
@@ -113,16 +136,39 @@ public class EmailSender implements Runnable {
     if ((toEmail == null || toEmail.length() == 0)) {
       // throw new ServletException(Utility.messageBD(this, "NoCustomerEmail", vars.getLanguage()));
       log4j.error("Cannot send email because there is no customer email address!");
-      order.setObposEmailStatus("Failed");
+      setFailed = true;
     }
 
     List<File> attachments = null;
 
     try {
-      EmailManager.sendEmail(host, auth, username, password, connSecurity, port, senderAddress,
-          recipientTO, recipientCC, recipientBCC, replyTo, emailSubject, emailBody, contentType,
-          attachments, null, null);
-      order.setObposEmailStatus("Sent");
+      OBContext.setAdminMode(false);
+      OBDal.getInstance().get(Order.class, this.orderId);
+      int cont = 1;
+      while (order == null) {
+        try {
+          Thread.currentThread();
+          Thread.sleep(2000);
+        } catch (Exception e) {
+          // TODO: handle exception
+        }
+        log4j.info("Waiting for order... " + cont);
+        order = OBDal.getInstance().get(Order.class, this.orderId);
+        if (cont > 5) {
+          log4j.info("email cannot be send because order " + orderId
+              + " can't be retrieved from database... ");
+          return;
+        }
+        cont += 1;
+      }
+      if (setFailed == false) {
+        EmailManager.sendEmail(host, auth, username, password, connSecurity, port, senderAddress,
+            recipientTO, recipientCC, recipientBCC, replyTo, emailSubject, emailBody, contentType,
+            attachments, null, null);
+        order.setObposEmailStatus("Sent");
+      } else {
+        order.setObposEmailStatus("Failed");
+      }
     } catch (Exception exception) {
       log4j.error(exception);
       final String exceptionClass = exception.getClass().toString().replace("class ", "");
@@ -133,9 +179,10 @@ public class EmailSender implements Runnable {
     } finally {
       OBDal.getInstance().save(order);
       OBDal.getInstance().flush();
-      log4j.info("DONE! we sent a email to " + jsonorder.getJSONObject("bp").getString("email"));
-      log4j.info("Client: " + jsonorder.getString("client"));
-      log4j.info("Organization: " + jsonorder.getString("organization"));
+      OBDal.getInstance().commitAndClose();
+      OBContext.restorePreviousMode();
+      log4j.info("DONE! the order" + order.getDocumentNo() + " has been sent to "
+          + jsonorder.getJSONObject("bp").getString("email"));
     }
 
   }

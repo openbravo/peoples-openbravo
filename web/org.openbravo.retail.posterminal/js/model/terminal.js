@@ -182,6 +182,9 @@ OB.Model.Terminal = Backbone.Model.extend({
 
   
   loadModels: function(windowv, incremental){
+    if(!OB.POS.modelterminal.get('connectedToERP')){
+      return;
+    }
     var windows,i, windowName, windowClass, datasources;
     var timestamp = 0;
     if(windowv){
@@ -192,25 +195,18 @@ OB.Model.Terminal = Backbone.Model.extend({
     if(incremental && window.localStorage.getItem('lastUpdatedTimestamp')){
       timestamp = window.localStorage.getItem('lastUpdatedTimestamp');
     }
-    if(incremental){
-      window.localStorage.setItem('POSLastIncRefresh', new Date().getTime());
-    }else{
-      window.localStorage.setItem('POSLastTotalRefresh', new Date().getTime());
-    }
     for(i=0;i<windows.length;i++){
       windowClass = windows[i].windowClass;
       windowName = windows[i].route;
-      if(OB.POS.modelterminal.get('connectedToERP')){
-        if (OB.DATA[windowName]) {
-          // old way of defining datasources...
-          datasources = OB.DATA[windowName];
-        } else if (windowClass.prototype && windowClass.prototype.windowmodel && windowClass.prototype.windowmodel.prototype && windowClass.prototype.windowmodel.prototype.models) {
-          datasources = windowClass.prototype.windowmodel.prototype.models;
-        }
-
-        _.extend(datasources, Backbone.Events);
-
+      if (OB.DATA[windowName]) {
+        // old way of defining datasources...
+        datasources = OB.DATA[windowName];
+      } else if (windowClass.prototype && windowClass.prototype.windowmodel && windowClass.prototype.windowmodel.prototype && windowClass.prototype.windowmodel.prototype.models) {
+        datasources = windowClass.prototype.windowmodel.prototype.models;
       }
+
+      _.extend(datasources, Backbone.Events);
+
       OB.Model.Util.loadModels(false, datasources, null, timestamp);
     }
   },
@@ -239,12 +235,12 @@ OB.Model.Terminal = Backbone.Model.extend({
       this.loadModels(windowp, false);
     }else{
       now=new Date().getTime();
-      intervalTotal=lastTotalRefresh?(now-lastTotalRefresh):0;
-      intervalInc=lastIncRefresh?(now-lastIncRefresh):0;
-      if(intervalTotal<0){
+      intervalTotal=lastTotalRefresh?(now-lastTotalRefresh-minTotalRefresh):0;
+      intervalInc=lastIncRefresh?(now-lastIncRefresh-minIncRefresh):0;
+      if(intervalTotal>0){
         //It's time to do a full refresh
         this.loadModels(windowp, false);
-      }else if(intervalInc<0){
+      }else if(intervalInc>0){
         //It's time to do a partial refresh
         this.loadModels(windowp, true);
       }else{
@@ -811,16 +807,7 @@ OB.Model.Terminal = Backbone.Model.extend({
           window.console.error(arguments);
         });
       }
-      minTotalRefresh = OB.POS.modelterminal.get('terminal').minutestorefreshdatatotal*60*1000;
       minIncRefresh = OB.POS.modelterminal.get('terminal').minutestorefreshdatainc*60*1000;
-      if(minTotalRefresh){
-        loadModelsTotalFunc = function(){
-          console.log('Performing total masterdata refresh');
-          OB.POS.modelterminal.loadModels(null, false);
-          setTimeout(loadModelsTotalFunc, minTotalRefresh);
-        };
-        setTimeout(loadModelsTotalFunc, minTotalRefresh);
-      }
       if(minIncRefresh){
         loadModelsIncFunc = function(){
           console.log('Performing incremental masterdata refresh');

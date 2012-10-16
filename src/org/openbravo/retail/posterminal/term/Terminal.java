@@ -35,7 +35,7 @@ public class Terminal extends ProcessHQLQuery {
         + getIdentifierAlias("organization")
         + ", pos.client.id as client, pos.client.name as "
         + getIdentifierAlias("client")
-        + ", pos.hardwareurl as hardwareurl, pos.scaleurl as scaleurl, "
+        + ", pos.hardwareurl as hardwareurl, pos.scaleurl as scaleurl, pos.obposTerminaltype.openDrawer as drawerpreference, "
         + "'"
         + pricesList.getId()
         + "' as priceList, '"

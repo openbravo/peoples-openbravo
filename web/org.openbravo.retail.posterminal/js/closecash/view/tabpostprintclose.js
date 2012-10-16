@@ -120,8 +120,15 @@ enyo.kind({
   render: function() {
     this.$.itemLbl.setContent(this.label);
     this.$.itemQty.setContent(OB.I18N.formatCurrency(this.value));
-    if(this.rate && this.rate!=='1'){
-      this.$.foreignItemQty.setContent('('+OB.I18N.formatCurrency(OB.DEC.div(this.value,this.rate))+' '+ this.isocode +')');
+    if(this.foreignExpected && this.type==='expected' && this.foreignExpected!==this.value){
+      this.$.foreignItemQty.setContent('('+OB.I18N.formatCurrency(this.foreignExpected)+' '+ this.isocode +')');
+    }else if(this.foreignCounted && this.type==='counted' && this.foreignCounted!==this.value){
+      this.$.foreignItemQty.setContent('('+OB.I18N.formatCurrency(this.foreignCounted)+' '+ this.isocode +')');
+    }else if(this.foreignDifference && this.type==='difference' && this.foreignDifference!==this.value){
+      this.$.foreignItemQty.setContent('('+OB.I18N.formatCurrency(this.foreignDifference)+' '+ this.isocode +')');
+    }else if(this.rate && this.rate!=='1' && (this.type==='deposits' || this.type==='drops') ){
+      this.$.foreignItemQty.setContent('('+OB.I18N.formatCurrency(this.value)+' '+ this.isocode +')');
+      this.$.itemQty.setContent(OB.I18N.formatCurrency(OB.DEC.mul(this.value,this.rate)));
     }else{
       this.$.foreignItemQty.setContent('');
     }
@@ -131,7 +138,11 @@ enyo.kind({
     if (this.model) {
       this.label = this.model[this.lblProperty];
       this.value = this.model[this.qtyProperty];
+      this.type = this.owner.typeProperty;
       //FIXME
+      this.foreignExpected = this.model.foreignExpected;
+      this.foreignCounted = this.model.foreignCounted;
+      this.foreignDifference = this.model.foreignDifference;
       this.rate = this.model.rate;
       this.isocode = this.model.isocode;
     }
@@ -222,7 +233,8 @@ enyo.kind({
     kind: 'OB.OBPOSCashUp.UI.ppc_collectionLines',
     name: 'drops',
     lblProperty: 'description',
-    qtyProperty: 'amount'
+    qtyProperty: 'amount',
+    typeProperty: 'drops'
   }, {
     kind: 'OB.OBPOSCashUp.UI.ppc_totalsLine',
     name: 'totaldrops',
@@ -243,7 +255,8 @@ enyo.kind({
     kind: 'OB.OBPOSCashUp.UI.ppc_collectionLines',
     name: 'deposits',
     lblProperty: 'description',
-    qtyProperty: 'amount'
+    qtyProperty: 'amount',
+    typeProperty: 'deposits'
   }, {
     kind: 'OB.OBPOSCashUp.UI.ppc_totalsLine',
     name: 'totaldeposits',
@@ -264,7 +277,8 @@ enyo.kind({
     kind: 'OB.OBPOSCashUp.UI.ppc_collectionLines',
     name: 'expectedPerPayment',
     lblProperty: 'name',
-    qtyProperty: 'value'
+    qtyProperty: 'value',
+    typeProperty: 'expected'
   }, {
     kind: 'OB.OBPOSCashUp.UI.ppc_totalsLine',
     name: 'totalexpected',
@@ -285,7 +299,8 @@ enyo.kind({
     kind: 'OB.OBPOSCashUp.UI.ppc_collectionLines',
     name: 'differencePerPayment',
     lblProperty: 'name',
-    qtyProperty: 'value'
+    qtyProperty: 'value',
+    typeProperty: 'difference'
   }, {
     kind: 'OB.OBPOSCashUp.UI.ppc_totalsLine',
     name: 'totaldifference',
@@ -306,7 +321,8 @@ enyo.kind({
     kind: 'OB.OBPOSCashUp.UI.ppc_collectionLines',
     name: 'countedPerPayment',
     lblProperty: 'name',
-    qtyProperty: 'value'
+    qtyProperty: 'value',
+    typeProperty: 'counted'
   }, {
     kind: 'OB.OBPOSCashUp.UI.ppc_totalsLine',
     name: 'totalcounted',

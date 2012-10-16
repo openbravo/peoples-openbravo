@@ -34,6 +34,7 @@ enyo.kind({
         command: payment.get('_id'),
         definition: {
           action: function(keyboard, amt) {
+            payment.set('foreignCounted', OB.DEC.add(0,amt));
             payment.set('counted', OB.DEC.mul(amt,payment.get('rate')));
           }
         },

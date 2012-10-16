@@ -36,7 +36,13 @@ public class CashCloseProcessor {
       JSONObject cashCloseObj = cashCloseInfo.getJSONObject(i);
 
       BigDecimal difference = new BigDecimal(cashCloseObj.getString("difference"));
-      BigDecimal origDifference = new BigDecimal(cashCloseObj.getString("origDifference"));
+      BigDecimal differenceToApply = difference;
+      BigDecimal foreignDifference = new BigDecimal(0);
+
+      if (cashCloseObj.has("foreignDifference")) {
+        foreignDifference = new BigDecimal(cashCloseObj.getString("foreignDifference"));
+        differenceToApply = foreignDifference;
+      }
       String paymentTypeId = cashCloseObj.getString("paymentTypeId");
       OBPOSAppPayment paymentType = OBDal.getInstance().get(OBPOSAppPayment.class, paymentTypeId);
 
@@ -46,16 +52,18 @@ public class CashCloseProcessor {
           paymentType.getFinancialAccount());
 
       FIN_FinaccTransaction diffTransaction = null;
-      if (!difference.equals(BigDecimal.ZERO)) {
+      if (!differenceToApply.equals(BigDecimal.ZERO)) {
         diffTransaction = createDifferenceTransaction(posTerminal, reconciliation, paymentType,
-            difference);
+            differenceToApply);
         OBDal.getInstance().save(diffTransaction);
       }
       OBDal.getInstance().save(reconciliation);
 
-      if (paymentType.getPaymentMethod().isAutomatemovementtoother()) {
-        BigDecimal origReconciliationTotal = BigDecimal.valueOf(
-            cashCloseObj.getDouble("origExpected")).add(origDifference);
+      BigDecimal origReconciliationTotal = BigDecimal.valueOf(
+          cashCloseObj.getDouble("foreignExpected")).add(foreignDifference);
+      if (paymentType.getPaymentMethod().isAutomatemovementtoother()
+          && origReconciliationTotal.compareTo(new BigDecimal(0)) != 0) {
+
         BigDecimal reconciliationTotal = BigDecimal.valueOf(cashCloseObj.getDouble("expected"))
             .add(difference);
         BigDecimal amountToKeep = BigDecimal.valueOf(cashCloseObj.getJSONObject("paymentMethod")

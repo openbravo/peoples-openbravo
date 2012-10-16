@@ -102,6 +102,23 @@ enyo.kind({
     }
   }
 });
+enyo.kind({
+  name: 'OB.UI.MenuBackOffice',
+  kind: 'OB.UI.MenuAction',
+  permission: 'OBPOS_retail.backoffice',
+  url: '../..',
+  events: {
+    onBackOffice: ''
+  },
+  label: OB.I18N.getLabel('OBPOS_LblOpenbravoWorkspace'),
+  tap: function() {
+    if (OB.POS.modelterminal.hasPermission(this.permission)) {
+      this.doBackOffice({
+        url: this.url
+      });
+    }
+  }
+});
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.StandardMenu',
@@ -128,9 +145,7 @@ enyo.kind({
     });
 
     this.menuEntries.push({
-      kind: 'OB.UI.MenuItem',
-      label: OB.I18N.getLabel('OBPOS_LblOpenbravoWorkspace'),
-      url: '../..'
+      kind: 'OB.UI.MenuBackOffice'
     });
 
     enyo.forEach(OB.POS.windows.filter(function(window) {
