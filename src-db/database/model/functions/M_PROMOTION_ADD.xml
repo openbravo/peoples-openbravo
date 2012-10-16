@@ -28,6 +28,12 @@
       <parameter name="p_newnetamt" type="NUMERIC" mode="in">
         <default/>
       </parameter>
+      <parameter name="p_total_amt" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_displayed_amt" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <parameter name="p_baseprice" type="NUMERIC" mode="in">
         <default/>
       </parameter>
@@ -88,23 +94,27 @@ BEGIN
 				(c_orderline_offer_id, ad_client_id, ad_org_id,                         
 				 isactive, createdby, updatedby,           
 				 c_orderline_id, line, m_offer_id,          
-				 priceoffergross, amtoffer)
+				 priceoffergross, amtoffer, 
+			   totalamt, displayedtotalamt)
 			 values
 				(get_uuid(), v_client, v_org,
 				 'Y', p_user_id, p_user_id,
 				 p_line_id, v_nextLineNum, p_rule_id,
-				 p_basePrice, round(v_promotionDiscounted, p_priceprecision));
+				 p_basePrice, round(v_promotionDiscounted, p_priceprecision),
+			 round(p_total_amnt, p_priceprecision), round(p_displayed_amt, p_priceprecision));
 	   else
        insert into c_orderline_offer
 				(c_orderline_offer_id, ad_client_id, ad_org_id,                         
 				 isactive, createdby, updatedby,           
 				 c_orderline_id, line, m_offer_id,          
-				 priceoffer, amtoffer)
+				 priceoffer, amtoffer, 
+			   totalamt, displayedtotalamt)
 			 values
 				(get_uuid(), v_client, v_org,
 				 'Y', p_user_id, p_user_id,
 				 p_line_id, v_nextLineNum, p_rule_id,
-				 p_basePrice, round(v_promotionDiscounted, p_priceprecision));
+				 p_basePrice, round(v_promotionDiscounted, p_priceprecision),
+			 round(p_total_amnt, p_priceprecision), round(p_displayed_amt, p_priceprecision));
 	   end if;
 	 else
 		 select coalesce(max(line), 0) + 10
@@ -129,23 +139,27 @@ BEGIN
 				(c_invoiceline_offer_id, ad_client_id, ad_org_id,                         
 				 isactive, createdby, updatedby,           
 				 c_invoiceline_id, line, m_offer_id,          
-				 priceoffergross, amtoffer)
+				 priceoffergross, amtoffer, 
+			 totalamt, displayedtotalamt)
 			 values
 				(get_uuid(), v_client, v_org,
 				 'Y', p_user_id, p_user_id,
 				 p_line_id, v_nextLineNum, p_rule_id,
-				 p_basePrice, round(v_promotionDiscounted, p_priceprecision));
+				 p_basePrice, round(v_promotionDiscounted, p_priceprecision),
+			 round(p_total_amnt, p_priceprecision), round(p_displayed_amt, p_priceprecision));
     else
 			insert into c_invoiceline_offer
 				(c_invoiceline_offer_id, ad_client_id, ad_org_id,                         
 				 isactive, createdby, updatedby,           
 				 c_invoiceline_id, line, m_offer_id,          
-				 priceoffer, amtoffer)
+				 priceoffer, amtoffer, 
+			 totalamt, displayedtotalamt)
 			 values
 				(get_uuid(), v_client, v_org,
 				 'Y', p_user_id, p_user_id,
 				 p_line_id, v_nextLineNum, p_rule_id,
-				 p_basePrice, round(v_promotionDiscounted, p_priceprecision));
+				 p_basePrice, round(v_promotionDiscounted, p_priceprecision),
+			 round(p_total_amnt, p_priceprecision), round(p_displayed_amt, p_priceprecision));
 		 end if;
 	 end if;
 END M_PROMOTION_ADD
