@@ -101,7 +101,7 @@ BEGIN
 				 'Y', p_user_id, p_user_id,
 				 p_line_id, v_nextLineNum, p_rule_id,
 				 p_basePrice, round(v_promotionDiscounted, p_priceprecision),
-			 round(p_total_amnt, p_priceprecision), round(p_displayed_amt, p_priceprecision));
+			   round(p_total_amt, p_priceprecision), round(p_displayed_amt, p_priceprecision));
 	   else
        insert into c_orderline_offer
 				(c_orderline_offer_id, ad_client_id, ad_org_id,                         
@@ -114,7 +114,7 @@ BEGIN
 				 'Y', p_user_id, p_user_id,
 				 p_line_id, v_nextLineNum, p_rule_id,
 				 p_basePrice, round(v_promotionDiscounted, p_priceprecision),
-			 round(p_total_amnt, p_priceprecision), round(p_displayed_amt, p_priceprecision));
+			   round(p_total_amt, p_priceprecision), round(p_displayed_amt, p_priceprecision));
 	   end if;
 	 else
 		 select coalesce(max(line), 0) + 10
@@ -146,7 +146,7 @@ BEGIN
 				 'Y', p_user_id, p_user_id,
 				 p_line_id, v_nextLineNum, p_rule_id,
 				 p_basePrice, round(v_promotionDiscounted, p_priceprecision),
-			 round(p_total_amnt, p_priceprecision), round(p_displayed_amt, p_priceprecision));
+			 round(p_total_amt, p_priceprecision), round(p_displayed_amt, p_priceprecision));
     else
 			insert into c_invoiceline_offer
 				(c_invoiceline_offer_id, ad_client_id, ad_org_id,                         
@@ -159,7 +159,7 @@ BEGIN
 				 'Y', p_user_id, p_user_id,
 				 p_line_id, v_nextLineNum, p_rule_id,
 				 p_basePrice, round(v_promotionDiscounted, p_priceprecision),
-			 round(p_total_amnt, p_priceprecision), round(p_displayed_amt, p_priceprecision));
+			 round(p_total_amt, p_priceprecision), round(p_displayed_amt, p_priceprecision));
 		 end if;
 	 end if;
 END M_PROMOTION_ADD
