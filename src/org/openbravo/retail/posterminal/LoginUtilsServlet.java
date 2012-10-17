@@ -148,7 +148,7 @@ public class LoginUtilsServlet extends WebServiceAbstractServlet {
             + "userRoles.active = true and "
             + "role.active = true and "
             + "formAccess.active = true and "
-            + "user.username != '' and "
+            + "user.username is not null and "
             + "user.password is not null and "
             + "exists (from ADRoleOrganization ro where ro.role = role and ro.organization = terminal.organization) and "
             + "terminal.searchKey = :theTerminalSearchKey and "
