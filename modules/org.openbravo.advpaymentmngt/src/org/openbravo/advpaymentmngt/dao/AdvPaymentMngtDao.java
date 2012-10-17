@@ -55,6 +55,7 @@ import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.common.enterprise.OrganizationInformation;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.plm.Product;
@@ -214,6 +215,8 @@ public class AdvPaymentMngtDao {
       whereClause.append(" left outer join psd.invoicePaymentSchedule as ips ");
       whereClause.append(" left outer join ips.invoice as inv");
       whereClause.append(" left outer join ips.fINPaymentPriority as ipriority");
+      whereClause.append(" left outer join psd.organization as org");
+      whereClause.append(" left outer join org.organizationInformationList as oinfo");
       whereClause.append(" where psd.");
       whereClause.append(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS);
       whereClause.append(" is null");
@@ -223,6 +226,7 @@ public class AdvPaymentMngtDao {
       whereClause.append(Utility.getInStrSet(OBContext.getOBContext()
           .getOrganizationStructureProvider().getNaturalTree(organization.getId())));
       whereClause.append(")");
+      whereClause.append(" and (oinfo is null or oinfo.active = true)");
 
       // remove selected payments
       if (selectedScheduledPaymentDetails != null && selectedScheduledPaymentDetails.size() > 0) {
@@ -292,13 +296,33 @@ public class AdvPaymentMngtDao {
         whereClause.append(Invoice.PROPERTY_SALESTRANSACTION);
         whereClause.append(" = ");
         whereClause.append(isReceipt);
+
+        // Invoice Document No. filter
         if (!StringUtils.isEmpty(strDocumentNo)) {
-          whereClause.append(" and inv.");
+          whereClause.append(" and (case when");
+          whereClause.append(" (inv.");
+          whereClause.append(Invoice.PROPERTY_SALESTRANSACTION);
+          whereClause.append(" = false");
+          whereClause.append(" and oinfo is not null");
+          whereClause.append(" and oinfo.");
+          whereClause.append(OrganizationInformation.PROPERTY_APRMPAYMENTDESCRIPTION);
+          whereClause.append(" like 'Supplier Reference')");
+          whereClause.append(" then ");
+          // When the Organization of the Invoice sets that the Invoice Document No. is the
+          // supplier's
+          whereClause.append(" inv.");
+          whereClause.append(Invoice.PROPERTY_ORDERREFERENCE);
+          whereClause.append(" else ");
+          // When the Organization of the Invoice sets that the Invoice Document No. is the default
+          // Invoice Number
+          whereClause.append(" inv.");
           whereClause.append(Invoice.PROPERTY_DOCUMENTNO);
+          whereClause.append(" end) ");
           whereClause.append(" like '%");
           whereClause.append(strDocumentNo);
           whereClause.append("%' ");
         }
+
         whereClause.append(" and inv.");
         whereClause.append(Invoice.PROPERTY_CURRENCY);
         whereClause.append(".id = '");

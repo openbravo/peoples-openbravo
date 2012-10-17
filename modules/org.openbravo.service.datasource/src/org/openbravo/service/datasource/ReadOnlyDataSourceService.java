@@ -63,8 +63,7 @@ public abstract class ReadOnlyDataSourceService extends DefaultDataSourceService
     if (endRowStr != null) {
       doCount = true;
     }
-    boolean preventCountOperation = !parameters.containsKey(JsonConstants.NOCOUNT_PARAMETER)
-        || "true".equals(parameters.get(JsonConstants.NOCOUNT_PARAMETER));
+    boolean preventCountOperation = "true".equals(parameters.get(JsonConstants.NOCOUNT_PARAMETER));
 
     final List<JSONObject> jsonObjects = fetchJSONObject(parameters);
 

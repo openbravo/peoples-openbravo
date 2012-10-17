@@ -39,6 +39,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
@@ -103,6 +104,17 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
           dao.createAPRMReadyPreference();
         }
 
+        if (!FIN_Utility.isPeriodOpen(payment.getClient().getId(), payment.getDocumentType()
+            .getDocumentCategory(), payment.getOrganization().getId(), OBDateUtils
+            .formatDate(payment.getPaymentDate()))) {
+          msg.setType("Error");
+          msg.setTitle(Utility.messageBD(conProvider, "Error", language));
+          msg.setMessage(Utility.parseTranslation(conProvider, vars, language,
+              "@PeriodNotAvailable@"));
+          bundle.setResult(msg);
+          OBDal.getInstance().rollbackAndClose();
+          return;
+        }
         Set<String> documentOrganizations = OBContext.getOBContext()
             .getOrganizationStructureProvider(payment.getClient().getId())
             .getNaturalTree(payment.getOrganization().getId());
@@ -646,13 +658,17 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
                   final String creditMsg = Utility.messageBD(new DalConnectionProvider(),
                       "APRM_InvoiceDescUsedCredit", vars.getLanguage());
                   if (creditMsg != null) {
-                    final StringBuffer newDesc = new StringBuffer();
+                    StringBuffer newDesc = new StringBuffer();
                     for (final String line : invDesc.split("\n")) {
                       if (!line.startsWith(creditMsg.substring(0, creditMsg.lastIndexOf("%s")))) {
                         newDesc.append(line);
                         if (!"".equals(line))
                           newDesc.append("\n");
                       }
+                    }
+                    if (newDesc.length() > 255) {
+                      newDesc = newDesc.delete(251, newDesc.length());
+                      newDesc = newDesc.append("...\n");
                     }
                     invoice.setDescription(newDesc.toString());
                   }
@@ -843,10 +859,12 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
                       .getInvoicePaymentSchedule()
                       .getFINPaymentScheduleDetailInvoicePaymentScheduleList()) {
                     if (invScheDetail.getPaymentDetails() == null) {
-                      outStandingAmt = outStandingAmt.add(invScheDetail.getAmount());
+                      outStandingAmt = outStandingAmt.add(invScheDetail.getAmount()).add(
+                          invScheDetail.getWriteoffAmount());
                       removedPDS.add(invScheDetail);
                     } else if (invScheDetail.equals(paymentScheduleDetail)) {
-                      outStandingAmt = outStandingAmt.add(invScheDetail.getAmount());
+                      outStandingAmt = outStandingAmt.add(invScheDetail.getAmount()).add(
+                          invScheDetail.getWriteoffAmount());
                       paymentScheduleDetail.setCanceled(true);
                     }
                     invoiceDocNos.add(paymentScheduleDetail.getInvoicePaymentSchedule()
@@ -866,10 +884,12 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
                       .getOrderPaymentSchedule()
                       .getFINPaymentScheduleDetailOrderPaymentScheduleList()) {
                     if (ordScheDetail.getPaymentDetails() == null) {
-                      outStandingAmt = outStandingAmt.add(ordScheDetail.getAmount());
+                      outStandingAmt = outStandingAmt.add(ordScheDetail.getAmount()).add(
+                          ordScheDetail.getWriteoffAmount());
                       removedPDS.add(ordScheDetail);
                     } else if (ordScheDetail.equals(paymentScheduleDetail)) {
-                      outStandingAmt = outStandingAmt.add(ordScheDetail.getAmount());
+                      outStandingAmt = outStandingAmt.add(ordScheDetail.getAmount()).add(
+                          ordScheDetail.getWriteoffAmount());
                       paymentScheduleDetail.setCanceled(true);
                     }
                   }

@@ -88,6 +88,7 @@
       FROM M_InOut
       WHERE C_Order_ID=v_Record_ID
         AND DocStatus<>'RE' -- Not the existing reversal trx
+        AND DocStatus<>'VO'
         FOR UPDATE
       )
     LOOP

@@ -36,7 +36,6 @@ public class SL_Inventory_Product extends SimpleCallout {
   protected void execute(CalloutInfo info) throws ServletException {
 
     // Locator
-
     String strLocator = info.vars.getStringParameter("inpmProductId_LOC");
 
     if (strLocator.startsWith("\"")) {
@@ -127,7 +126,10 @@ public class SL_Inventory_Product extends SimpleCallout {
       throw new ServletException(ex);
     }
 
-    if (tld != null && tld.length > 0) {
+    // Verify that the selected product from the warehouse has secondary unit
+    String strHasSecondaryUOMInInventory = info.vars.getStringParameter("inpmProductId_PUOM");
+
+    if (tld != null && tld.length > 0 && !"".equals(strHasSecondaryUOMInInventory)) {
       info.addSelect("inpmProductUomId");
       for (int i = 0; i < tld.length; i++) {
         info.addSelectResult(tld[i].getField("id"), tld[i].getField("name"), tld[i].getField("id")

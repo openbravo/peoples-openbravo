@@ -23,11 +23,15 @@ import java.util.List;
 import javax.servlet.ServletException;
 
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBDao;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.ad.utility.TreeNode;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.common.plm.ProductCategory;
 import org.openbravo.model.financialmgmt.tax.TaxCategory;
 
 public class SL_TaxCategory_Org extends SimpleCallout {
@@ -66,5 +70,48 @@ public class SL_TaxCategory_Org extends SimpleCallout {
       }
     }
     info.addResult("inpcTaxcategoryId", taxCategoryId);
+    
+    if (strOrgId != null && !"".equals(strOrgId)) {
+      try {
+        OBContext.setAdminMode();
+        info.addSelect("inpmProductCategoryId");
+        OBCriteria<ProductCategory> productCatCrit = OBDao.getFilteredCriteria(ProductCategory.class, Restrictions.in(
+            ProductCategory.PROPERTY_ORGANIZATION + "." + Organization.PROPERTY_ID,
+            new OrganizationStructureProvider().getNaturalTree(strOrgId)));
+        productCatCrit.add(Restrictions.eq(ProductCategory.PROPERTY_SUMMARYLEVEL, false));
+        productCatCrit.addOrderBy(ProductCategory.PROPERTY_NAME, true);
+        String defaultCategoryId = getDefaultCategory(strOrgId);
+        for (final ProductCategory productCategory : productCatCrit.list()) {
+          info.addSelectResult(productCategory.getId(), productCategory.getIdentifier(),
+              defaultCategoryId.equals(productCategory.getId()));
+        }
+        info.endSelect();
+      } finally {
+        OBContext.restorePreviousMode();
+      }
+    }
+  }
+
+  private String getDefaultCategory(String strOrgId) {
+    OBContext.setAdminMode();
+    try {
+      OBCriteria<ProductCategory> productCatCrit = OBDao.getFilteredCriteria(ProductCategory.class, Restrictions.eq(
+          ProductCategory.PROPERTY_ORGANIZATION + "." + Organization.PROPERTY_ID, strOrgId), Restrictions
+          .eq(ProductCategory.PROPERTY_DEFAULT, true));
+      productCatCrit.add(Restrictions.eq(ProductCategory.PROPERTY_SUMMARYLEVEL, false));
+      List<ProductCategory> categories = productCatCrit.list();
+      if (categories.size() > 0) {
+        return categories.get(0).getId();
+      } else {
+        String parentOrg = OBContext.getOBContext().getOrganizationStructureProvider()
+            .getParentOrg(strOrgId);
+        if (parentOrg != null && !"".equals(parentOrg)) {
+          return getDefaultCategory(parentOrg);
+        }
+      }
+      return "";
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 }

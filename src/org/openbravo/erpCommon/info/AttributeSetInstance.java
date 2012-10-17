@@ -142,19 +142,23 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
           vars.getStringParameter("inplockDescription"));
       AttributeSet attSet = OBDal.getInstance().get(AttributeSet.class, strAttributeSet);
       HashMap<String, String> attValues = new HashMap<String, String>();
-      for (AttributeUse attrUse : attSet.getAttributeUseList()) {
-        final String elementName = attrUse.getAttribute().getName();
-        if (attrUse.isActive() && attrUse.getAttribute().isActive()) {
-          if (attrUse.getAttribute().isMandatory()) {
-            attValues.put(replace(elementName),
-                vars.getRequiredStringParameter("inp" + replace(elementName)));
-          } else {
-            attValues.put(replace(elementName),
-                vars.getStringParameter("inp" + replace(elementName)));
+      try {
+        OBContext.setAdminMode(true);
+        for (AttributeUse attrUse : attSet.getAttributeUseList()) {
+          final String elementName = attrUse.getAttribute().getName();
+          if (attrUse.isActive() && attrUse.getAttribute().isActive()) {
+            if (attrUse.getAttribute().isMandatory()) {
+              attValues.put(replace(elementName),
+                  vars.getRequiredStringParameter("inp" + replace(elementName)));
+            } else {
+              attValues.put(replace(elementName),
+                  vars.getStringParameter("inp" + replace(elementName)));
+            }
           }
         }
+      } finally {
+        OBContext.restorePreviousMode();
       }
-
       OBError myMessage = attSetValue.setAttributeInstance(this, vars, strAttributeSet,
           strInstance, strWindowId, strIsSOTrx, strProduct, attValues);
       vars.setSessionValue("AttributeSetInstance.instance", attSetValue.getAttSetInstanceId());

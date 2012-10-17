@@ -567,6 +567,20 @@ isc.FormItem.addProperties({
   }
 });
 
+// To fix issue https://issues.openbravo.com/view.php?id=21786
+isc.ComboBoxItem.addProperties({
+  isPickListShown: function () {
+    return (this.pickList ? (this.pickList.isDrawn() && this.pickList.isVisible()) : false);
+  },
+
+  hidePicker: function () {
+    if (this.pickList) {
+      this.pickList.hideClickMask();
+      this.pickList.hide();
+    }
+  }
+});
+
 // overridden to never show a prompt. A prompt can be created manually 
 // when overriding for example the DataSource (see the OBStandardView).
 isc.RPCManager.showPrompt = false;

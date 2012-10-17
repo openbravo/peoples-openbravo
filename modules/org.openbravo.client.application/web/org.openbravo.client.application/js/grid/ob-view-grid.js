@@ -214,13 +214,13 @@ isc.OBViewGrid.addProperties({
       // when the data is received from the datasource, time fields are formatted in UTC time. They have to be converted to local time
       if (dsResponse && dsResponse.context && (dsResponse.context.operationType === 'fetch' || dsResponse.context.operationType === 'update' || dsResponse.context.operationType === 'add')) {
         if (this.grid) {
-          OB.Utilities.Date.convertUTCTimeToLocalTime(newData, this.grid.completeFields);
+          newData = OB.Utilities.Date.convertUTCTimeToLocalTime(newData, this.grid.completeFields);
         }
       }
       // only do this stuff for fetch operations, in other cases strange things
       // happen as update/delete operations do not return the totalRows parameter      
       if (dsResponse && dsResponse.context && dsResponse.context.operationType !== 'fetch') {
-        return;
+        return newData;
       }
       // correct the length if there is already data in the localData array
       if (this.localData) {
@@ -242,6 +242,7 @@ isc.OBViewGrid.addProperties({
       if (this.localData && this.localData[dsResponse.totalRows]) {
         this.localData[dsResponse.totalRows] = null;
       }
+      return newData;
     }
   },
 
@@ -301,12 +302,17 @@ isc.OBViewGrid.addProperties({
 
     // TODO: add dynamic part of readonly (via setWindowSettings: see issue 17441)
     // add context-menu only if 'new' is allowed in tab definition
-    if (this.uiPattern !== 'SR' && this.uiPattern !== 'RO') {
+    if (this.uiPattern !== 'SR' && this.uiPattern !== 'RO' && this.uiPattern !== 'ED') {
       this.contextMenu = this.getMenuConstructor().create({
         items: menuItems
       });
       this.contextMenu.show = function () {
         var me = this;
+        // If not in the header tab, and no parent is selected, do not show the context menu
+        // See issue https://issues.openbravo.com/view.php?id=21787
+        if (!grid.view.hasValidState()) {
+          return;
+        }
         if (!grid.view.isActiveView()) {
           // The view where the context menu is being opened must be active
           // See issue https://issues.openbravo.com/view.php?id=20872
@@ -926,7 +932,7 @@ isc.OBViewGrid.addProperties({
   dataArrived: function (startRow, endRow) {
     // do this now, to replace the loading message
     // TODO: add dynamic part of readonly (via setWindowSettings: see issue 17441)
-    if (this.uiPattern === 'SR' || this.uiPattern === 'RO') {
+    if (this.uiPattern === 'SR' || this.uiPattern === 'RO' || this.uiPattern !== 'ED') {
       this.noDataEmptyMessage = '<span class="' + this.emptyMessageStyle + '">' + OB.I18N.getLabel('OBUIAPP_NoDataInGrid') + '</span>';
     } else {
       this.noDataEmptyMessage = '<span class="' + this.emptyMessageStyle + '">' + OB.I18N.getLabel('OBUIAPP_GridNoRecords') + '</span>' + '<span onclick="this.onclick = new Function(); setTimeout(function() { window[\'' + this.ID + '\'].view.newRow(); }, 50); return false;" class="' + this.emptyMessageLinkStyle + '">' + OB.I18N.getLabel('OBUIAPP_GridCreateOne') + '</span>';
@@ -1521,7 +1527,7 @@ isc.OBViewGrid.addProperties({
       });
     }
 
-    if (!this.view.singleRecord && !this.view.readOnly) {
+    if (!this.view.singleRecord && !this.view.readOnly && !this.view.editOrDeleteOnly) {
       menuItems.add({
         title: OB.I18N.getLabel('OBUIAPP_CreateRecordInGrid'),
         keyTitle: OB.KeyboardManager.Shortcuts.getProperty('keyComb.text', 'ToolBar_NewRow', 'id'),
@@ -2193,7 +2199,7 @@ isc.OBViewGrid.addProperties({
     // how many arguments are passed on, sometimes the newValue is not passed in
     // and then it must be recomputed, so if we then use the undefined newValue
     // in the actionObject below things will go wrong
-    if (arguments.length < 2) {
+    if (arguments.length < 2 && this.view.allowNewRow()) {
       newValue = this.getEditValue(rowNum, colNum);
     }
 
@@ -2210,7 +2216,9 @@ isc.OBViewGrid.addProperties({
     // If leaving the row...
     if (editCompletionEvent === 'enter' || editCompletionEvent === 'arrow_up' || editCompletionEvent === 'arrow_down') {
       // See issue https://issues.openbravo.com/view.php?id=19830
-      this.view.standardWindow.getDirtyEditForm().validateForm();
+      if (this.view.standardWindow.getDirtyEditForm()) {
+        this.view.standardWindow.getDirtyEditForm().validateForm();
+      }
     }
 
     this._leavingCell = true;
@@ -2236,7 +2244,7 @@ isc.OBViewGrid.addProperties({
     var ret, i, length = this.getFields().length;
     this._inGetNextEditCell = true;
     // past the last row
-    if (editCompletionEvent === isc.ListGrid.ENTER_KEYPRESS && rowNum === (this.getTotalRows() - 1)) {
+    if (editCompletionEvent === isc.ListGrid.ENTER_KEYPRESS && rowNum === (this.getTotalRows() - 1) && this.view.allowNewRow()) {
       // move to the next row
       ret = this.findNextEditCell(rowNum + 1, 0, 1, true, true);
 
@@ -2254,12 +2262,17 @@ isc.OBViewGrid.addProperties({
 
     // when moving between rows with the arrow keys, force the focus in the correct 
     // column
-    if (ret && ret[0] !== rowNum && this.getField(colNum) && (editCompletionEvent === isc.ListGrid.UP_ARROW_KEYPRESS || editCompletionEvent === isc.ListGrid.DOWN_ARROW_KEYPRESS)) {
+    if (ret && ret[0] !== rowNum && this.getField(colNum) && (editCompletionEvent === isc.ListGrid.UP_ARROW_KEYPRESS || editCompletionEvent === isc.ListGrid.DOWN_ARROW_KEYPRESS) && this.view.allowNewRow()) {
       this.forceFocusColumn = this.getField(colNum).name;
     }
 
     delete this._inGetNextEditCell;
     return ret;
+  },
+  
+  //used in Edit or Delete only UI pattern
+  setListEndEditAction: function () {
+	this.listEndEditAction = "done";
   },
 
   // overridden to take into account disabled at item level
@@ -2312,10 +2325,20 @@ isc.OBViewGrid.addProperties({
     saveCallback = function () {
       if (originalCallback) {
         if (this.getSelectedRecord() && this.getSelectedRecord()[OB.Constants.ID]) {
-          if (!this.view.newRecordsAfterRefresh) {
-            this.view.newRecordsAfterRefresh = [];
+          if (this.view.parentRecordId) {
+            if (!this.view.newRecordsAfterRefresh) {
+              this.view.newRecordsAfterRefresh = {};
+            }
+            if (!this.view.newRecordsAfterRefresh[this.view.parentRecordId]) {
+              this.view.newRecordsAfterRefresh[this.view.parentRecordId] = [];
+            }
+            this.view.newRecordsAfterRefresh[this.view.parentRecordId].push(this.getSelectedRecord()[OB.Constants.ID]);
+          } else {
+            if (!this.view.newRecordsAfterRefresh) {
+              this.view.newRecordsAfterRefresh = [];
+            }
+            this.view.newRecordsAfterRefresh.push(this.getSelectedRecord()[OB.Constants.ID]);
           }
-          this.view.newRecordsAfterRefresh.push(this.getSelectedRecord()[OB.Constants.ID]);
         }
         this.fireCallback(originalCallback, "rowNum,colNum,editCompletionEvent,success", [rowNum, colNum, editCompletionEvent]);
       }
@@ -2384,6 +2407,10 @@ isc.OBViewGrid.addProperties({
         isc.Log.logDebug('hideInlineEditor has NO record and editColumnLayout', 'OB');
       }
       this.view.isEditingGrid = false;
+      // Update the tab title after the record has been saved or canceled
+      // to get rid of the '*' in the tab title
+      // See https://issues.openbravo.com/view.php?id=21709
+      this.view.updateTabTitle();
     }
 
     // always hide the clickmask, as it needs to be re-applied

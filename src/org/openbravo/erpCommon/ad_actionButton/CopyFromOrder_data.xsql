@@ -150,11 +150,11 @@
         INSERT INTO C_ORDERLINE (C_ORDERLINE_ID, AD_CLIENT_ID, AD_ORG_ID, CREATED, CREATEDBY, UPDATED, UPDATEDBY,
             C_ORDER_ID, LINE, C_BPARTNER_ID, C_BPARTNER_LOCATION_ID, DATEORDERED, DATEPROMISED, M_PRODUCT_ID, M_WAREHOUSE_ID, C_UOM_ID,
             QTYORDERED, C_CURRENCY_ID, PRICELIST, PRICEACTUAL, PRICELIMIT, PRICESTD, DISCOUNT, C_TAX_ID, M_ATTRIBUTESETINSTANCE_ID,
-            grosspricelist, gross_unit_price, line_gross_amount
+            grosspricelist, gross_unit_price, line_gross_amount, grosspricestd
         ) VALUES (?,?,?,NOW(),?,NOW(),?,
                 ?,(SELECT (coalesce(Max(Line),0))+10 FROM C_OrderLine WHERE C_Order_id = ?),?,?,TO_DATE(?),TO_DATE(?),?,?,?,
                 TO_NUMBER(?),?,TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?), ?, ?,
-            TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?)
+            TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?)
         )
       ]]>
     </Sql>
@@ -184,6 +184,7 @@
     <Parameter name="priceListGross"/>
     <Parameter name="priceGross"/>
     <Parameter name="amtGross"/>
+    <Parameter name="pricestdgross"/>
   </SqlMethod>
   <SqlMethod name="selectPrecisions" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>

@@ -527,6 +527,7 @@ isc.OBSelectorItem.addProperties({
           if (record) {
             value = record[i];
             if (typeof value === 'undefined') {
+              form.hiddenInputs[this.outHiddenInputPrefix + outFields[i].suffix] = '';
               continue;
             }
             if (isc.isA.Number(value)) {
@@ -618,6 +619,11 @@ isc.OBSelectorItem.addProperties({
       requestProperties.params[OB.Constants.ORG_PARAMETER] = requestProperties.params.inpadOrgId;
     }
 
+    if (this.form.getFocusItem() !== this && !this.form.view.isShowingForm && this.getEnteredValue() === '' && this.savedEnteredValue) {
+      this.setElementValue(this.savedEnteredValue);
+      delete this.savedEnteredValue;
+    }
+
     var criteria = this.getPickListFilterCriteria(),
         i;
     for (i = 0; i < criteria.criteria.length; i++) {
@@ -707,6 +713,9 @@ isc.OBSelectorItem.addProperties({
       } else if (!this.valueMap[value] && OB.Utilities.isUUID(value)) {
         return '';
       }
+    }
+    if (value && value !== '' && ret === '') {
+      this.savedEnteredValue = value;
     }
     return ret;
   },

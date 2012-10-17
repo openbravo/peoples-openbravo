@@ -38,6 +38,8 @@ import java.util.TimeZone;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -503,12 +505,35 @@ public class FIN_Utility {
    */
   public static <T extends BaseOBObject> String getOptionsList(List<T> obObjectList,
       String selectedValue, boolean isMandatory) {
+    return getOptionsList(obObjectList, selectedValue, isMandatory, false);
+  }
+
+  /**
+   * Returns a String containing the html code with the options based on the given List of
+   * BaseOBObjects
+   * 
+   * @param <T>
+   *          Class that extends BaseOBObject.
+   * @param obObjectList
+   *          List containing the values to be included in the options.
+   * @param selectedValue
+   *          value to set as selected by default.
+   * @param isMandatory
+   *          boolean to add a blank option in the options list.
+   * @param isRefList
+   *          boolean to let know if the options belong to a refList. In that case, the value must
+   *          be the search key of the list item instead of it's id.
+   * @return a String containing the html code with the options. *
+   */
+  public static <T extends BaseOBObject> String getOptionsList(List<T> obObjectList,
+      String selectedValue, boolean isMandatory, boolean isRefList) {
     StringBuilder strOptions = new StringBuilder();
     if (!isMandatory)
       strOptions.append("<option value=\"\"></option>");
 
     for (T obObject : obObjectList) {
-      strOptions.append("<option value=\"").append(obObject.getId()).append("\"");
+      strOptions.append("<option value=\"")
+          .append((isRefList) ? obObject.getValue("searchKey") : obObject.getId()).append("\"");
       if (obObject.getId().equals(selectedValue))
         strOptions.append(" selected=\"selected\"");
       strOptions.append(">");
@@ -1029,4 +1054,28 @@ public class FIN_Utility {
     }
   }
 
+  public static boolean isPeriodOpen(String client, String documentType, String org, String dateAcct) {
+    final Session session = OBDal.getInstance().getSession();
+
+    final StringBuilder hql = new StringBuilder();
+    hql.append("select max(p.id) as period ");
+    hql.append(" from FinancialMgmtPeriodControl pc ");
+    hql.append("   left join pc.period p ");
+    hql.append(" where p.client = '").append(client).append("' ");
+    hql.append(" and pc.documentCategory = '").append(documentType).append("' ");
+    hql.append(" and pc.periodStatus = 'O' ");
+    hql.append(" and pc.organization = ad_org_getcalendarowner('").append(org).append("') ");
+    hql.append(" and to_date('").append(dateAcct).append("') >= p.startingDate ");
+    hql.append(" and to_date('").append(dateAcct).append("') < p.endingDate + 1 ");
+
+    final Query qry = session.createQuery(hql.toString());
+
+    String period = (String) (qry.list().get(0));
+
+    if (period == null) {
+      return false;
+    } else {
+      return true;
+    }
+  }
 }

@@ -1259,9 +1259,10 @@ public class FormInitializationComponent extends BaseActionHandler {
                     messages.add(message);
                     createNewPreferenceForWindow(tab.getWindow());
                     log.warn("An EXECUTE element has been found in the response of the callout "
-                        + calloutClassName + ". A preference has been created for the window "
+                        + calloutClassName
+                        + ". A preference has been created for the window "
                         + tab.getWindow().getName()
-                        + "so that it's shown in classic mode until this problem is fixed.");
+                        + "so that it's shown in classic mode until this problem is fixed. This requires to build the system to generate this classic window.");
                   }
                 }
               } else {

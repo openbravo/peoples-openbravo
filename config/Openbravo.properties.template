@@ -199,3 +199,8 @@ allow.root=false
 # Setting this to true will enable extra (hidden) functionality used 
 # automated test scripts.
 test.environment=false
+
+# allows to compile classic 2.50 windows for all available tab
+# By default those all not generated anymore for tabs for which they are not needed
+#wad.generateAllClassic250Windows=true
+

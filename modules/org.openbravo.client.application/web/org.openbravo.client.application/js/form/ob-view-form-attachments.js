@@ -257,6 +257,7 @@ isc.OBAttachmentsLayout.addProperties({
         if (OB.Utilities.currentUploader === null || forceUpload) {
           var attachmentFile = OB.I18N.getLabel('OBUIAPP_AttachmentFile');
           var form = isc.DynamicForm.create({
+            autoFocus: true,
             fields: [{
               name: 'inpname',
               title: attachmentFile,

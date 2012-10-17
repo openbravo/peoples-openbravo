@@ -40,7 +40,7 @@
     v_cPaymenttermId varchar2(32);
     v_projectStatus VARCHAR(60) ;
     v_value NVARCHAR2(40) ;
-    v_Accountno NVARCHAR2(20) ;
+    v_Accountno C_BP_BANKACCOUNT.ACCOUNTNO%TYPE;
     --  Copy
   BEGIN
     --  Update AD_PInstance
@@ -117,7 +117,7 @@
               AND ISACTIVE='Y'
             )
           LOOP
-            v_Accountno:=Cur_CBPBancAcct.Accountno;
+            v_Accountno:=SUBSTR(Cur_CBPBancAcct.Accountno, 1, 20);
             EXIT;
           END LOOP;
         END;

@@ -37,8 +37,8 @@
         l.C_OrderLine_ID,l.Line, l.ad_org_id, '' as STDPRECISION, 
         '' as M_InOutLine_ID, '' AS PriceActual, '' AS PriceList, '' AS PriceLimit, '' AS Description, '' as PriceStd,
         '' AS QUANTITYORDER, '' AS M_Product_UOM_ID, '' AS M_ATTRIBUTESETINSTANCE_ID, '' AS M_Offer_ID, '' AS PricePrecision,
-        l.taxbaseamt, l.CancelPriceAD, '' AS Rate, '' AS gross_unit_price, l.a_asset_id, l.c_project_id, l.c_costcenter_id,
-        l.c_user1_id, l.c_user2_id
+        l.taxbaseamt, l.CancelPriceAD, '' AS Rate, '' AS gross_unit_price, '' AS grosspricelist, '' AS grosspricestd,
+        l.a_asset_id, l.c_project_id, l.c_costcenter_id, l.c_user1_id, l.c_user2_id
         FROM C_ORDERLINE l left join M_MATCHPO m on  l.C_OrderLine_ID=m.C_OrderLine_ID
                                                  AND m.C_InvoiceLine_ID IS NOT NULL, 
         C_ORDER o, C_UOM uom,  M_PRODUCT p
@@ -605,7 +605,7 @@
       <![CDATA[
       SELECT PriceActual, PriceList, PriceLimit, Description,
           '' AS C_ORDERLINE_ID, PriceStd, CancelPriceAD,
-          gross_unit_price
+          gross_unit_price, COALESCE(grosspricelist,0) AS grosspricelist, COALESCE(grosspricestd,0) AS grosspricestd
       FROM C_OrderLine 
       WHERE C_OrderLine_ID=?
       ]]>
@@ -644,8 +644,8 @@
         PriceActual,PriceLimit, LineNetAmt,
         ChargeAmt,C_Tax_ID, taxamt, QuantityOrder, M_Product_UOM_ID,
         M_Attributesetinstance_ID, PriceStd, taxbaseamt, excludeforwithholding,
-        gross_unit_price, line_gross_amount, a_asset_id, c_project_id,
-        c_costcenter_id, c_user1_id, c_user2_id)
+        gross_unit_price, line_gross_amount, grosspricelist, grosspricestd,
+        a_asset_id, c_project_id, c_costcenter_id, c_user1_id, c_user2_id)
       VALUES 
         (?, ?, ?, ?, 'Y', 
          now(), ?, now(), ?, 
@@ -654,8 +654,8 @@
          TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?),
          0, ?, TO_NUMBER(?), TO_NUMBER(?), ?, 
          ?, TO_NUMBER(?), TO_NUMBER(?), 'N',
-         TO_NUMBER(?), TO_NUMBER(?), ?, ?,
-         ?, ?, ?)
+         TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?),
+         ?, ?, ?, ?, ?)
     </Sql>
     <Parameter name="cInvoicelineId"/>
     <Parameter name="cInvoiceId"/>
@@ -683,6 +683,8 @@
     <Parameter name="taxBaseAmt"/>
     <Parameter name="grossUnitPrice"/>
     <Parameter name="grossAmount"/>
+    <Parameter name="priceListGross"/>
+    <Parameter name="priceStdGross"/>
     <Parameter name="aAssetId"/>
     <Parameter name="cProjectId"/>
     <Parameter name="cCostcenterId"/>

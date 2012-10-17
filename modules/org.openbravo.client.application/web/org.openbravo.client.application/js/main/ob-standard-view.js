@@ -71,6 +71,7 @@ isc.OBStandardView.addClassProperties({
 
   UI_PATTERN_READONLY: 'RO',
   UI_PATTERN_SINGLERECORD: 'SR',
+  UI_PATTERN_EDITORDELETEONLY: 'ED',
   UI_PATTERN_STANDARD: 'ST'
 });
 
@@ -185,6 +186,7 @@ isc.OBStandardView.addProperties({
 
   readOnly: false,
   singleRecord: false,
+  editOrDeleteOnly: false,
 
   isShowingForm: false,
   isEditingGrid: false,
@@ -652,8 +654,22 @@ isc.OBStandardView.addProperties({
     }
   },
 
+  setEditOrDeleteOnly: function (editOrDeleteOnly) {
+    this.editOrDeleteOnly = editOrDeleteOnly;
+    if (editOrDeleteOnly) {
+      this.viewGrid.setListEndEditAction();
+    }
+  },
+
   setSingleRecord: function (singleRecord) {
     this.singleRecord = singleRecord;
+  },
+
+  allowNewRow: function () {
+    if (this.readOnly || this.singleRecord || this.editOrDeleteOnly) {
+      return false;
+    }
+    return true;
   },
 
   setViewFocus: function () {
@@ -674,8 +690,23 @@ isc.OBStandardView.addProperties({
       this.viewGrid.enableShortcuts();
     }
 
-    if (this.isShowingForm && this.viewForm && this.viewForm.getFocusItem()) {
-      object = this.viewForm.getFocusItem();
+    if (this.isShowingForm && this.viewForm) {
+      if (!this.lastFocusedItem) {
+        this.lastFocusedItem = this.viewForm.getItem(this.firstFocusedField);
+      }
+      if (this.lastFocusedItem && this.lastFocusedItem.getCanFocus()) {
+        object = this.lastFocusedItem;
+      } else if (this.viewForm.getFocusItem() && this.viewForm.getFocusItem().getCanFocus()) {
+        object = this.viewForm.getFocusItem();
+      } else {
+        var fields = this.viewForm.fields;
+        for (i = 0; i < fields.length; i++) {
+          if (fields[i].getCanFocus()) {
+            object = fields[i];
+            break;
+          }
+        }
+      }
       functionName = 'focusInItem';
     } else if (this.isEditingGrid && this.viewGrid.getEditForm() && this.viewGrid.getEditForm().getFocusItem()) {
       object = this.viewGrid.getEditForm();
@@ -731,6 +762,10 @@ isc.OBStandardView.addProperties({
   },
 
   setAsActiveView: function (autoSaveDone) {
+    var activeView = this.standardWindow.activeView;
+    if (activeView && activeView !== this && ((activeView.isShowingForm && activeView.viewForm.inFicCall) || (!activeView.isShowingForm && activeView.viewGrid.getEditForm() && activeView.viewGrid.getEditForm().inFicCall))) {
+      return;
+    }
     if (!autoSaveDone && this.standardWindow.activeView && this.standardWindow.activeView !== this) {
       var actionObject = {
         target: this,
@@ -1415,7 +1450,11 @@ isc.OBStandardView.addProperties({
     };
 
     if (!newRecordsToBeIncluded) {
-      this.newRecordsAfterRefresh = [];
+      if (this.parentRecordId && this.newRecordsAfterRefresh) {
+        this.newRecordsAfterRefresh[this.parentRecordId] = [];
+      } else {
+        this.newRecordsAfterRefresh = [];
+      }
     }
     if (!this.isShowingForm) {
       this.viewGrid.refreshGrid(refreshCallback, newRecordsToBeIncluded);
@@ -2055,6 +2094,7 @@ isc.OBStandardView.addProperties({
     var onChangeFunction;
 
     if (fld.displayed === false && !isGridField) {
+      fld.hiddenInForm = true;
       fld.visible = false;
       fld.alwaysTakeSpace = false;
     }

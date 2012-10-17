@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -58,7 +58,40 @@
       </Sql>
       <Parameter name="name"/>
   </SqlMethod>
-  
+
+  <SqlMethod name="selectTabDebugData" type="preparedStatement" return="single">
+      <Sql>
+      SELECT AD_TAB.name as tabname, ad_tab.tablevel as tablevel 
+      FROM ad_tab WHERE ad_tab_id = ?
+      </Sql>
+      <Parameter name="tabid"/> 
+  </SqlMethod>
+
+  <SqlMethod name="selectShowWindowIn250ClassicMode" type="preparedStatement" return="boolean">
+      <Sql>
+      SELECT count(*) as res FROM ad_tab t
+      WHERE ad_window_id = ? and
+            isactive = 'Y' and
+      (
+         (whereclause is not null and hqlwhereclause is null) OR 
+         (orderbyclause is not null and hqlorderbyclause is null) OR
+         (filterclause is not null and hqlfilterclause is null) OR
+         (editreference is not null)
+      )
+      </Sql>
+      <Parameter name="windowid"/> 
+  </SqlMethod>
+
+  <SqlMethod name="selectShowWindowIn250ClassicModePreference" type="preparedStatement" return="boolean">
+      <Sql>
+      SELECT count(*) as res FROM ad_preference p
+      WHERE ad_window_id = ? and
+            isactive = 'Y' and
+            property = 'OBUIAPP_UseClassicMode'
+      </Sql>
+      <Parameter name="windowid"/> 
+  </SqlMethod>
+
   <SqlMethod name="selectTabsinModules" type="preparedStatement" return="multiple">
       <SqlMethodComment>Tabs of windows with name like parameter</SqlMethodComment>
       <Sql><![CDATA[
@@ -216,6 +249,13 @@
                        WHERE AD_WINDOW.AD_WINDOW_ID = TB.AD_WINDOW_ID
                          AND A.AD_TAB_ID = TB.AD_TAB_ID
                          AND A.UPDATED > SI.LAST_BUILD
+                     UNION
+                       SELECT 1
+                         FROM AD_PREFERENCE P
+                         WHERE P.AD_WINDOW_ID = AD_WINDOW.AD_WINDOW_ID
+                         AND ISACTIVE='Y'
+                         AND PROPERTY = 'OBUIAPP_UseClassicMode'
+                         AND P.UPDATED > SI.LAST_BUILD
                        )
         ORDER BY AD_WINDOW.name, AD_TAB.tablevel, AD_TAB.seqno
           ]]>

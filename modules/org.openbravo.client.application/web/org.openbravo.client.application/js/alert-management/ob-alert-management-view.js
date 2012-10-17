@@ -87,6 +87,16 @@ isc.OBUIAPP_AlertManagement.addProperties({
     this.getAlertRules();
   },
 
+  tabSelected: function (tabNum, tabPane, ID, tab) {
+    if (OB.AlertManagement.grids.New) {
+      // TODO: Add a more sophisticated focus logic to ensure each time the Alert Management is selected,
+      // the previous focused item is selected instead of the first grid filter editor
+      setTimeout(function () {
+        OB.AlertManagement.grids.New.focusInFirstFilterEditor();
+      }, 10);
+    }
+  },
+
   getAlertRules: function () {
     var post = {
       'eventType': 'getAlertRules'

@@ -109,7 +109,9 @@
           ol.PriceStd,
           ol.m_attributesetinstance_id,
           ol.taxbaseamt,
-          ol.gross_unit_price
+          ol.gross_unit_price,
+          ol.grosspricestd,
+          ol.grosspricelist
         FROM M_INOUT s, M_INOUTLINE sl
         RIGHT JOIN C_ORDERLINE ol
           ON sl.C_OrderLine_ID=ol.C_OrderLine_ID
@@ -511,7 +513,8 @@
                         C_Tax_ID,  --MODIFIED BY F.IRIAZABAL
                         QuantityOrder, M_Product_Uom_ID, PriceStd,
                         m_attributesetinstance_id, taxbaseamt,
-                        gross_unit_price, line_gross_amount
+                        gross_unit_price, line_gross_amount,
+                        grosspricestd, grosspricelist
                       )
                       VALUES
                       (
@@ -524,7 +527,8 @@
                         ptr_ol.C_Tax_ID,  --MODIFIED BY F.IRIAZABAL
                         v_QtyOrder, ptr_ol.M_Product_Uom_ID, ptr_ol.PriceStd,
                         ptr_ol.m_attributesetinstance_id, ptr_ol.taxbaseamt,
-                        ptr_ol.gross_unit_price, C_Currency_Round(v_Qty*ptr_ol.gross_unit_price, Cur_Order.C_Currency_ID, NULL)
+                        ptr_ol.gross_unit_price, C_Currency_Round(v_Qty*ptr_ol.gross_unit_price, Cur_Order.C_Currency_ID, NULL),
+                        COALESCE(ptr_ol.grosspricestd,0), COALESCE(ptr_ol.grosspricelist,0)
                       )
                       ;
                   END IF;--Next_O_Line
@@ -563,7 +567,8 @@
                         C_Tax_ID,  --MODIFIED BY F.IRIAZABAL
                         QuantityOrder, M_Product_Uom_ID, PriceStd,
                         m_attributesetinstance_id, taxbaseamt,
-                        gross_unit_price, line_gross_amount
+                        gross_unit_price, line_gross_amount,
+                        grosspricestd, grosspricelist
                       )
                       VALUES
                       (
@@ -576,7 +581,8 @@
                         ptr_sl.C_Tax_ID,  --MODIFIED BY F.IRIAZABAL
                         ptr_sl.QuantityOrder, ptr_sl.M_Product_Uom_ID, ptr_sl.PriceStd,
                         ptr_sl.m_attributesetinstance_id, ptr_sl.taxbaseamt,
-                        ptr_sl.gross_unit_price, C_Currency_Round(ptr_sl.MovementQty*ptr_sl.gross_unit_price, Cur_Order.C_Currency_ID, NULL)
+                        ptr_sl.gross_unit_price, C_Currency_Round(ptr_sl.MovementQty*ptr_sl.gross_unit_price, Cur_Order.C_Currency_ID, NULL),
+                        COALESCE(ptr_sl.grosspricestd,0), COALESCE(ptr_sl.grosspricelist,0)
                       )
                       ;
                   END IF;--Next_S_Line
@@ -710,7 +716,9 @@
                 ol.gross_unit_price,
                 ol.m_attributesetinstance_id,
                 ol.taxbaseamt, o.fin_paymentmethod_id,
-                pl.istaxincluded
+                pl.istaxincluded,
+                ol.grosspricestd,
+                ol.grosspricelist
               FROM M_INOUT sh,
                 M_INOUTLINE sl,
                 C_ORDER o,
@@ -1058,7 +1066,8 @@
                     C_Tax_ID,  --MODIFIED BY F.IRIAZABAL
                     QuantityOrder, M_Product_Uom_ID, PriceStd,
                     m_attributesetinstance_id, taxbaseamt,
-                    gross_unit_price, line_gross_amount
+                    gross_unit_price, line_gross_amount,
+                    grosspricestd, grosspricelist
                   )
                   VALUES
                   (
@@ -1071,7 +1080,8 @@
                     Cur_InvoiceSchedule.C_Tax_ID,  --MODIFIED BY F.IRIAZABAL
                     Cur_InvoiceSchedule.QuantityOrder, Cur_InvoiceSchedule.M_Product_Uom_ID, Cur_InvoiceSchedule.PriceStd,
                     Cur_InvoiceSchedule.m_attributesetinstance_id, Cur_InvoiceSchedule.taxbaseamt,
-                    Cur_InvoiceSchedule.gross_unit_price, C_Currency_Round(Cur_InvoiceSchedule.MovementQty*Cur_InvoiceSchedule.gross_unit_price, Cur_InvoiceSchedule.C_Currency_ID, NULL)
+                    Cur_InvoiceSchedule.gross_unit_price, C_Currency_Round(Cur_InvoiceSchedule.MovementQty*Cur_InvoiceSchedule.gross_unit_price, Cur_InvoiceSchedule.C_Currency_ID, NULL),
+                    COALESCE(Cur_InvoiceSchedule.grosspricestd,0), COALESCE(Cur_InvoiceSchedule.grosspricelist,0)
                   )
                   ;
                 v_DateOrdered:=COALESCE(Cur_InvoiceSchedule.movementDate, COALESCE(Cur_InvoiceSchedule.DateOrdered, now())) ;

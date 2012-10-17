@@ -71,13 +71,14 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
       String strTaxId = vars.getStringParameter("inpcTaxId");
       String strGrossUnitPrice = vars.getNumericParameter("inpgrossUnitPrice");
       String strGrossPriceList = vars.getNumericParameter("inpgrosspricelist");
+      String strGrossBaseUnitPrice = vars.getNumericParameter("inpgrosspricestd");
       String strtaxbaseamt = vars.getNumericParameter("inptaxbaseamt");
 
       try {
         printPage(response, vars, strChanged, strQtyOrdered, strPriceActual, strDiscount,
             strPriceLimit, strPriceList, strCOrderId, strProduct, strUOM, strAttribute, strQty,
             strPriceStd, cancelPriceAd, strLineNetAmt, strTaxId, strGrossUnitPrice,
-            strGrossPriceList, strtaxbaseamt);
+            strGrossPriceList, strtaxbaseamt, strGrossBaseUnitPrice);
       } catch (ServletException ex) {
         pageErrorCallOut(response);
       }
@@ -90,7 +91,7 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
       String strPriceList, String strCOrderId, String strProduct, String strUOM,
       String strAttribute, String strQty, String strPriceStd, String cancelPriceAd,
       String strLineNetAmt, String strTaxId, String strGrossUnitPrice, String strGrossPriceList,
-      String strTaxBaseAmt) throws IOException, ServletException {
+      String strTaxBaseAmt, String strGrossBaseUnitPrice) throws IOException, ServletException {
 
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
@@ -138,6 +139,8 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
         strGrossUnitPrice).setScale(pricePrecision, BigDecimal.ROUND_HALF_UP));
     BigDecimal grossPriceList = (strGrossPriceList.equals("") ? ZERO : new BigDecimal(
         strGrossPriceList).setScale(pricePrecision, BigDecimal.ROUND_HALF_UP));
+    BigDecimal grossBaseUnitPrice = (strGrossBaseUnitPrice.equals("") ? ZERO : new BigDecimal(
+        strGrossBaseUnitPrice).setScale(pricePrecision, BigDecimal.ROUND_HALF_UP));
     /*
      * if (enforcedLimit) { String strPriceVersion = ""; PriceListVersionComboData[] data1 =
      * PriceListVersionComboData.selectActual(this, data[0].mPricelistId, DateTimeData.today(this));
@@ -232,8 +235,13 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
       } else {
         log4j.debug("pricelist:" + priceList.toString());
         log4j.debug("unit price:" + unitPrice.toString());
-        discount = priceList.subtract(unitPrice).multiply(new BigDecimal("100"))
-            .divide(priceList, stdPrecision, BigDecimal.ROUND_HALF_EVEN);
+        if (isTaxIncludedPriceList) {
+          discount = priceList.subtract(grossBaseUnitPrice).multiply(new BigDecimal("100"))
+              .divide(priceList, stdPrecision, BigDecimal.ROUND_HALF_EVEN);
+        } else {
+          discount = priceList.subtract(unitPrice).multiply(new BigDecimal("100"))
+              .divide(priceList, stdPrecision, BigDecimal.ROUND_HALF_EVEN);
+        }
       }
       log4j.debug("Discount rounded: " + discount.toString());
       resultado.append("new Array(\"inpdiscount\", " + discount.toString() + "),");
@@ -271,13 +279,13 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
         priceList = netPriceList;
       }
       if (priceList.compareTo(BigDecimal.ZERO) != 0) {
-        BigDecimal unitPrice = BigDecimal.ZERO;
+        BigDecimal baseUnitPrice = BigDecimal.ZERO;
         if (isTaxIncludedPriceList) {
-          unitPrice = grossUnitPrice;
+          baseUnitPrice = grossBaseUnitPrice;
         } else {
-          unitPrice = priceStd;
+          baseUnitPrice = priceStd;
         }
-        origDiscount = priceList.subtract(unitPrice).multiply(new BigDecimal("100"))
+        origDiscount = priceList.subtract(baseUnitPrice).multiply(new BigDecimal("100"))
             .divide(priceList, stdPrecision, BigDecimal.ROUND_HALF_UP);
       } else {
         origDiscount = BigDecimal.ZERO;
@@ -286,15 +294,16 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
           .setScale(stdPrecision, BigDecimal.ROUND_HALF_UP));
 
       if (origDiscount.compareTo(newDiscount) != 0) {
-        BigDecimal unitPrice = priceList.subtract(priceList.multiply(newDiscount).divide(
+        BigDecimal baseUnitPrice = priceList.subtract(priceList.multiply(newDiscount).divide(
             new BigDecimal("100"), pricePrecision, BigDecimal.ROUND_HALF_UP));
         if (isTaxIncludedPriceList) {
-          grossUnitPrice = unitPrice;
+          grossUnitPrice = baseUnitPrice;
           isGrossUnitPriceChanged = true;
+          resultado.append("new Array(\"inpgrosspricestd\", " + grossUnitPrice.toString() + "),");
           resultado.append("new Array(\"inpgrossUnitPrice\", " + grossUnitPrice.toString() + "),");
         } else {
           // checks if rounded discount has changed
-          priceStd = unitPrice;
+          priceStd = baseUnitPrice;
           priceActual = new BigDecimal(SLOrderProductData.getOffersPrice(this,
               dataOrder[0].dateordered, dataOrder[0].cBpartnerId, strProduct,
               priceStd.toPlainString(), strQty, dataOrder[0].mPricelistId, dataOrder[0].id))

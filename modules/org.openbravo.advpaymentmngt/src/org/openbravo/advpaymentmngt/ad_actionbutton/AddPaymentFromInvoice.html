@@ -56,17 +56,17 @@
 function validate(action) {
   var frm = document.frmMain;
   if (action=='openprocess') {
-	if (isMulticurrencyTxn()) {
-	  if (frm.inpActualConverted.value==null || frm.inpActualConverted.value=="") {
-	   setWindowElementFocus(frm.inpActualConverted);
-	   showJSMessage(7);
-	   return false;
-	  } else if (frm.inpExchangeRate.value==null || frm.inpExchangeRate.value=="") {
-	   setWindowElementFocus(frm.inpExchangeRate);
-	   showJSMessage(7);
-	   return false;
-	   }
-	 }
+    if (isMulticurrencyTxn()) {
+      if (frm.inpActualConverted.value==null || frm.inpActualConverted.value=="") {
+       setWindowElementFocus(frm.inpActualConverted);
+       showJSMessage(7);
+       return false;
+      } else if (frm.inpExchangeRate.value==null || frm.inpExchangeRate.value=="") {
+       setWindowElementFocus(frm.inpExchangeRate);
+       showJSMessage(7);
+       return false;
+       }
+     }
     if (frm.inpDocNumber.value==null || frm.inpDocNumber.value=="") {
       setWindowElementFocus(frm.inpDocNumber);
       showJSMessage(7);
@@ -137,6 +137,7 @@ function openProcessPayment() {
       submitThisPage('SAVEANDPROCESS');
       return true;
     }
+    calculateProperProcessOptions();
     document.getElementById('client_top_popup').style.display = 'block';
     document.getElementById('client_top').style.display = 'none';
     document.getElementById('client_middle').style.display = 'none';
@@ -150,7 +151,43 @@ function closeProcessPayment() {
   document.getElementById('client_bottom').style.display = 'block';
 }
 
-function updateData(key, mark, drivenByGrid) {
+function updateAll(drivenByGrid) {
+  var frm = document.frmMain;
+  var chk = frm.inpScheduledPaymentDetailId;
+  var recordAmount, i;
+
+  frm.inpExpectedPayment.value = applyFormat('0');
+  if (isGLItemEnabled) {
+    frm.inpExpectedPayment.value = frm.inpGLSumAmount.value || applyFormat('0');
+  }
+  if (!chk) {
+    return;
+  } else if (!chk.length) {
+    if (!chk.checked) {
+      recordAmount = frm.elements["inpRecordAmt" + chk.value].value;
+      frm.inpExpectedPayment.value = add(frm.inpExpectedPayment.value, recordAmount);
+    }
+    updateData(chk.value, chk.checked, drivenByGrid);
+  } else {
+    var total = chk.length;
+    for (i = 0; i < total; i++) {
+      if (!chk[i].checked) {
+        recordAmount = frm.elements["inpRecordAmt" + chk[i].value].value;
+        frm.inpExpectedPayment.value = add(frm.inpExpectedPayment.value, recordAmount);
+      }
+      if (!drivenByGrid || drivenByGrid == false){
+        updateData(chk[i].value, chk[i].checked, drivenByGrid,true);
+      }
+      else{
+        updateData(chk[i].value, chk[i].checked, drivenByGrid,false);
+      }
+    }
+    updateTotal();
+  }
+  return true;
+}
+
+function updateData(key, mark, drivenByGrid,all) {
   if (mark==null) mark=false;
   updateReadOnly(key, mark);
   var paymentAmount = document.frmMain.elements['inpPaymentAmount'+key];
@@ -190,7 +227,9 @@ function updateData(key, mark, drivenByGrid) {
       }
     }
   }
-  updateTotal();
+  if(!all){
+    updateTotal();
+  }
 
   return true;
 }
@@ -367,6 +406,16 @@ function reFillPaymentMethodCombo() {
   }
 }
 
+function calculateProperProcessOptions() {
+  try {
+    var url = "../org.openbravo.advpaymentmngt.ad_actionbutton/AddPaymentFromInvoice.html";
+    var paramXMLReq = null;
+    return submitXmlHttpRequest(callBackProperOption, document.frmMain, "PROPERPROCESSOPTIONS", url, false, null, paramXMLReq);
+  } catch (e) {
+    alert(e);
+  }
+}
+
 function callBackFinancialAccount(paramXMLParticular, XMLHttpRequestObj) {
   if (getReadyStateHandler(XMLHttpRequestObj)) {
     try {
@@ -384,7 +433,7 @@ function callBackFinancialAccount(paramXMLParticular, XMLHttpRequestObj) {
             document.getElementById('paramStrAmountwriteoff').value = applyFormatJSToOBMasked(resp.awriteoff, resp.formatOutput);
         }
         else{
-        	document.getElementById('paramStrtypewriteoff').value = '';
+            document.getElementById('paramStrtypewriteoff').value = '';
             document.getElementById('paramStrAmountwriteoff').value = '';
         }
         updateDifference();
@@ -406,6 +455,26 @@ var strText = "";
         createCombo(document.getElementById('inpPaymentMethod'), strText);
       } else {
         document.getElementById('inpPaymentMethod').innerHTML = '';
+      }
+    } catch (e) {
+    }
+  }
+  return true;
+}
+
+function callBackProperOption(paramXMLParticular, XMLHttpRequestObj) {
+  var strText = "";
+  if (getReadyStateHandler(XMLHttpRequestObj)) {
+    try {
+      if (XMLHttpRequestObj.responseText) {
+    	strText = XMLHttpRequestObj.responseText;
+        createCombo(document.getElementById('paramActionDocument'), strText);
+	    document.getElementById('client_top_popup').style.display = 'block';
+        document.getElementById('client_top').style.display = 'none';
+        document.getElementById('client_middle').style.display = 'none';
+        document.getElementById('client_bottom').style.display = 'none';
+      } else {
+        document.getElementById('paramActionDocument').innerHTML = '';
       }
     } catch (e) {
     }

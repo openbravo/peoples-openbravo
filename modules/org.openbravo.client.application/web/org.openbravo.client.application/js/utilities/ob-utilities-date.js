@@ -23,7 +23,6 @@ OB.Utilities = window.OB.Utilities || {};
 // = Openbravo Date Utilities =
 // Defines utility methods related to handling date, incl. formatting.
 OB.Utilities.Date = {};
-
 // ** {{{ OB.Utilities.Date.centuryReference }}} **
 // For a two-digit year display format, it establishes where is the frontier
 // between the 20th and the 21st century
@@ -115,6 +114,12 @@ OB.Utilities.Date.OBToJS = function (OBDate, dateFormat) {
   var hours = dateFormat.indexOf('%H') !== -1 ? OBDate.substring(dateFormat.indexOf('%H'), dateFormat.indexOf('%H') + 2) : 0;
   var minutes = dateFormat.indexOf('%M') !== -1 ? OBDate.substring(dateFormat.indexOf('%M'), dateFormat.indexOf('%M') + 2) : 0;
   var seconds = dateFormat.indexOf('%S') !== -1 ? OBDate.substring(dateFormat.indexOf('%S'), dateFormat.indexOf('%S') + 2) : 0;
+
+  // Check that really all date parts (if they are present) are numbers
+  var digitRegExp = ['^\\d+$', 'gm'];
+  if ((year && !(new RegExp(digitRegExp[0], digitRegExp[1]).test(year))) || (fullYear && !(new RegExp(digitRegExp[0], digitRegExp[1]).test(fullYear))) || (month && !(new RegExp(digitRegExp[0], digitRegExp[1]).test(month))) || (day && !(new RegExp(digitRegExp[0], digitRegExp[1]).test(day))) || (hours && !(new RegExp(digitRegExp[0], digitRegExp[1]).test(hours))) || (minutes && !(new RegExp(digitRegExp[0], digitRegExp[1]).test(minutes))) || (seconds && !(new RegExp(digitRegExp[0], digitRegExp[1]).test(seconds)))) {
+    return null;
+  }
 
   month = parseInt(month, 10);
   day = parseInt(day, 10);
@@ -255,21 +260,31 @@ OB.Utilities.Date.getTimeFields = function (allFields) {
 // * {{{newData}}}: records to be converted
 // * {{{allFields}}}: array with the fields of the records
 // Return:
-// * Nothing. newData is modified, its time fields are converted from UTC to local time
+// * Nothing. newData, after converting its time fields from UTC timezone the the client side timezone
 OB.Utilities.Date.convertUTCTimeToLocalTime = function (newData, allFields) {
-  var textField, fieldToDate, i, j, newDataLength = newData.length,
-      UTCHourOffset = isc.Time.getUTCHoursDisplayOffset(new Date()),
-      UTCMinuteOffset = isc.Time.getUTCMinutesDisplayOffset(new Date()),
+  var textField, fieldToDate, i, j, UTCOffsetInMiliseconds = OB.Utilities.Date.getUTCOffsetInMiliseconds(),
       timeFields = OB.Utilities.Date.getTimeFields(allFields),
-      timeFieldsLength = timeFields.length;
+      timeFieldsLength = timeFields.length,
+      convertedData = isc.clone(newData),
+      convertedDataLength = convertedData.length;
   for (i = 0; i < timeFieldsLength; i++) {
-    for (j = 0; j < newDataLength; j++) {
-      textField = newData[j][timeFields[i]];
+    for (j = 0; j < convertedDataLength; j++) {
+      textField = convertedData[j][timeFields[i]];
       if (textField && textField.length > 0) {
         fieldToDate = isc.Time.parseInput(textField);
-        fieldToDate.setTime(fieldToDate.getTime() + (UTCHourOffset * 60 * 60 * 1000) + (UTCMinuteOffset * 60 * 1000));
-        newData[j][timeFields[i]] = fieldToDate.getHours() + ':' + fieldToDate.getMinutes() + ':' + fieldToDate.getSeconds();
+        fieldToDate.setTime(fieldToDate.getTime() + UTCOffsetInMiliseconds);
+        convertedData[j][timeFields[i]] = fieldToDate.getHours() + ':' + fieldToDate.getMinutes() + ':' + fieldToDate.getSeconds();
       }
     }
   }
+  return convertedData;
+};
+
+//** {{{ OB.Utilities.Date.getUTCOffsetInMiliseconds }}} **
+//
+// Return the offset with UTC measured in miliseconds
+OB.Utilities.Date.getUTCOffsetInMiliseconds = function () {
+  var UTCHourOffset = isc.Time.getUTCHoursDisplayOffset(new Date()),
+      UTCMinuteOffset = isc.Time.getUTCMinutesDisplayOffset(new Date());
+  return (UTCHourOffset * 60 * 60 * 1000) + (UTCMinuteOffset * 60 * 1000);
 };

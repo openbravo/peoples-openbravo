@@ -101,7 +101,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '16452';
+  var number = '18119';
   return number;
 }
 
@@ -1514,26 +1514,28 @@ function keyControl(pushedKey) {
                 }
               }
               if (keyArray[i].field==null || (keyTarget!=null && keyTarget.name!=null && isIdenticalField(keyArray[i].field, keyTarget.name))) {
-                var evalfuncTrl = replaceEventString(keyArray[i].evalfunc, keyTarget.name, keyArray[i].field);
-                try {
-                  if (!isWindowInMDIContext || typeof keyArray[i].evalfunc !== "object") {
-                    eval(evalfuncTrl);
-                  } else {
-                    var LayoutMDI = getFrame('LayoutMDI');
-                    LayoutMDI.OB.Layout.ClassicOBCompatibility.Keyboard.executeKSFunction(keyArray[i].evalfunc[0], keyArray[i].evalfunc[1]);
+                if (keyArray[i].key !== null && keyArray[i].key !== '' && keyArray[i].key !== 'null' && typeof keyArray[i].key !== 'undefined') {
+                  var evalfuncTrl = replaceEventString(keyArray[i].evalfunc, keyTarget.name, keyArray[i].field);
+                  try {
+                    if (!isWindowInMDIContext || typeof keyArray[i].evalfunc !== "object") {
+                      eval(evalfuncTrl);
+                    } else {
+                      var LayoutMDI = getFrame('LayoutMDI');
+                      LayoutMDI.OB.Layout.ClassicOBCompatibility.Keyboard.executeKSFunction(keyArray[i].evalfunc[0], keyArray[i].evalfunc[1]);
+                    }
+                    thereIsShortcut = true;
+                    if (propagateEnter == false && keyArray[i].key == 'ENTER') { // Special ENTER case logic to not propagate if there is default action
+                      propagateEnter = true;
+                      return false;
+                    }
+                    if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) {
+                      return false;
+                    } else {
+                      //return true;
+                    }
+                  } catch (e) {
+                    return true;
                   }
-                  thereIsShortcut = true;
-                  if (propagateEnter == false && keyArray[i].key == 'ENTER') { // Special ENTER case logic to not propagate if there is default action
-                    propagateEnter = true;
-                    return false;
-                  }
-                  if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) {
-                    return false;
-                  } else {
-                    //return true;
-                  }
-                } catch (e) {
-                  return true;
                 }
               }
             }
@@ -1594,26 +1596,28 @@ function keyControl(pushedKey) {
               if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) 
                 //stopKeyPressEvent();
               if (keyArray[i].field==null || (keyTarget!=null && keyTarget.name!=null && isIdenticalField(keyArray[i].field, keyTarget.name))) {
-                var evalfuncTrl = replaceEventString(keyArray[i].evalfunc, keyTarget.name, keyArray[i].field);
-                try {
-                  if (!isWindowInMDIContext || typeof keyArray[i].evalfunc !== "object") {
-                    eval(evalfuncTrl);
-                  } else {
-                    var LayoutMDI = getFrame('LayoutMDI');
-                    LayoutMDI.OB.Layout.ClassicOBCompatibility.Keyboard.executeKSFunction(keyArray[i].evalfunc[0], keyArray[i].evalfunc[1]);
-                  }
-                  thereIsShortcut = true;
-                  if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) {
-                    return false;
-                  } else {
+                if (keyArray[i].key !== null && keyArray[i].key !== '' && keyArray[i].key !== 'null' && typeof keyArray[i].key !== 'undefined') {
+                  var evalfuncTrl = replaceEventString(keyArray[i].evalfunc, keyTarget.name, keyArray[i].field);
+                  try {
+                    if (!isWindowInMDIContext || typeof keyArray[i].evalfunc !== "object") {
+                      eval(evalfuncTrl);
+                    } else {
+                      var LayoutMDI = getFrame('LayoutMDI');
+                      LayoutMDI.OB.Layout.ClassicOBCompatibility.Keyboard.executeKSFunction(keyArray[i].evalfunc[0], keyArray[i].evalfunc[1]);
+                    }
+                    thereIsShortcut = true;
+                    if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) {
+                      return false;
+                    } else {
+                      return true;
+                    }
+                  } catch (e) {
+                    startKeyPressEvent();
                     return true;
                   }
-                } catch (e) {
                   startKeyPressEvent();
                   return true;
                 }
-                startKeyPressEvent();
-                return true;
               }
             }
           } else if (keyArray[i].field == null || (keyTarget!=null && keyTarget.name!=null && isIdenticalField(keyArray[i].field, keyTarget.name))) {

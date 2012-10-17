@@ -27,12 +27,24 @@
       ]]>
     </Sql>
   </SqlMethod>
+  <SqlMethod name="selectCheck" type="preparedStatement" return="boolean">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT count(1) as name from dual
+        WHERE EXISTS(SELECT 1 FROM FACT_ACCT 
+        WHERE NOT EXISTS (SELECT 1 FROM C_DEBT_PAYMENT WHERE C_DEBT_PAYMENT_ID = RECORD_ID2)
+        AND RECORD_ID2 IS NOT NULL)
+      ]]>
+    </Sql>
+  </SqlMethod>
   <SqlMethod name="update" type="preparedStatement" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
         UPDATE FACT_ACCT SET RECORD_ID2 = NULL 
         WHERE NOT EXISTS (SELECT 1 FROM C_DEBT_PAYMENT WHERE C_DEBT_PAYMENT_ID = RECORD_ID2)
+        AND RECORD_ID2 IS NOT NULL
       ]]>
     </Sql>
   </SqlMethod>

@@ -120,7 +120,7 @@ isc.OBToolbar.addClassProperties({
     updateState: function () {
       var view = this.view,
           selectedRecords = view.viewGrid.getSelectedRecords();
-      this.setDisabled(view.isShowingForm || view.readOnly || view.singleRecord || !view.hasValidState() || (selectedRecords && selectedRecords.length > 1));
+      this.setDisabled(view.isShowingForm || view.readOnly || view.singleRecord || view.editOrDeleteOnly || !view.hasValidState() || (selectedRecords && selectedRecords.length > 1));
     },
     keyboardShortcutId: 'ToolBar_NewRow'
   },
@@ -135,9 +135,9 @@ isc.OBToolbar.addClassProperties({
       var view = this.view,
           form = view.viewForm;
       if (view.isShowingForm) {
-        this.setDisabled(form.isSaving || view.readOnly || view.singleRecord || !view.hasValidState());
+        this.setDisabled(form.isSaving || view.readOnly || view.singleRecord || view.editOrDeleteOnly || !view.hasValidState());
       } else {
-        this.setDisabled(view.readOnly || view.singleRecord || !view.hasValidState());
+        this.setDisabled(view.readOnly || view.singleRecord || view.editOrDeleteOnly || !view.hasValidState());
       }
     },
     keyboardShortcutId: 'ToolBar_NewDoc'
@@ -172,9 +172,9 @@ isc.OBToolbar.addClassProperties({
         }
       }
       if (view.isShowingForm) {
-        this.setDisabled(form.isSaving || form.readOnly || view.singleRecord || !view.hasValidState() || form.isNew);
+        this.setDisabled(form.isSaving || form.readOnly || view.singleRecord || !view.hasValidState() || form.isNew || OB.PropertyStore.get("AllowDelete", this.view.standardWindow.id) === 'N');
       } else {
-        this.setDisabled(view.readOnly || view.singleRecord || !view.hasValidState() || !grid.getSelectedRecords() || grid.getSelectedRecords().length === 0);
+        this.setDisabled(view.readOnly || view.singleRecord || !view.hasValidState() || !grid.getSelectedRecords() || grid.getSelectedRecords().length === 0 || OB.PropertyStore.get("AllowDelete", this.view.standardWindow.id) === 'N');
       }
     },
     keyboardShortcutId: 'ToolBar_Eliminate'
@@ -220,6 +220,7 @@ isc.OBToolbar.addClassProperties({
       var requestProperties = {
         exportAs: 'csv',
         exportDisplay: 'download',
+        _extraProperties: this.view && this.view.dataSource && this.view.dataSource.requestProperties.params._extraProperties,
         params: {
           exportToFile: true
         },
@@ -361,6 +362,11 @@ isc.OBToolbar.addClassProperties({
       if (this.view.viewForm.readOnly && !this.view.attachmentExists) {
         this.setDisabled(true);
       }
+      if (OB.PropertyStore.get("AllowAttachment", this.view.standardWindow.id) === 'N') {
+        this.view.viewForm.enableAttachmentsSection(false);
+        this.setDisabled(true);
+      }
+
     },
     keyboardShortcutId: 'ToolBar_Attachments'
   },

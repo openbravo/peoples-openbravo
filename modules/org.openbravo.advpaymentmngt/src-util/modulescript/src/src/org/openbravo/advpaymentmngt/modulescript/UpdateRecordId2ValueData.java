@@ -22,7 +22,7 @@ static Logger log4j = Logger.getLogger(UpdateRecordId2ValueData.class);
   }
 
   public String getField(String fieldName) {
-    if (fieldName.equalsIgnoreCase("name"))
+    if (fieldName.equalsIgnoreCase("NAME"))
       return name;
    else {
      log4j.debug("Field does not exist: " + fieldName);
@@ -57,7 +57,7 @@ static Logger log4j = Logger.getLogger(UpdateRecordId2ValueData.class);
       while(continueResult && result.next()) {
         countRecord++;
         UpdateRecordId2ValueData objectUpdateRecordId2ValueData = new UpdateRecordId2ValueData();
-        objectUpdateRecordId2ValueData.name = UtilSql.getValue(result, "name");
+        objectUpdateRecordId2ValueData.name = UtilSql.getValue(result, "NAME");
         objectUpdateRecordId2ValueData.InitRecordNumber = Integer.toString(firstRegister);
         vector.addElement(objectUpdateRecordId2ValueData);
         if (countRecord >= numberRegisters && numberRegisters != 0) {
@@ -83,11 +83,48 @@ static Logger log4j = Logger.getLogger(UpdateRecordId2ValueData.class);
     return(objectUpdateRecordId2ValueData);
   }
 
+  public static boolean selectCheck(ConnectionProvider connectionProvider)    throws ServletException {
+    String strSql = "";
+    strSql = strSql + 
+      "        SELECT count(1) as name from dual" +
+      "        WHERE EXISTS(SELECT 1 FROM FACT_ACCT " +
+      "        WHERE NOT EXISTS (SELECT 1 FROM C_DEBT_PAYMENT WHERE C_DEBT_PAYMENT_ID = RECORD_ID2)" +
+      "        AND RECORD_ID2 IS NOT NULL)";
+
+    ResultSet result;
+    boolean boolReturn = false;
+    PreparedStatement st = null;
+
+    try {
+    st = connectionProvider.getPreparedStatement(strSql);
+
+      result = st.executeQuery();
+      if(result.next()) {
+        boolReturn = !UtilSql.getValue(result, "NAME").equals("0");
+      }
+      result.close();
+    } catch(SQLException e){
+      log4j.error("SQL error in query: " + strSql + "Exception:"+ e);
+      throw new ServletException("@CODE=" + Integer.toString(e.getErrorCode()) + "@" + e.getMessage());
+    } catch(Exception ex){
+      log4j.error("Exception in query: " + strSql + "Exception:"+ ex);
+      throw new ServletException("@CODE=@" + ex.getMessage());
+    } finally {
+      try {
+        connectionProvider.releasePreparedStatement(st);
+      } catch(Exception ignore){
+        ignore.printStackTrace();
+      }
+    }
+    return(boolReturn);
+  }
+
   public static int update(ConnectionProvider connectionProvider)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
       "        UPDATE FACT_ACCT SET RECORD_ID2 = NULL " +
-      "        WHERE NOT EXISTS (SELECT 1 FROM C_DEBT_PAYMENT WHERE C_DEBT_PAYMENT_ID = RECORD_ID2)";
+      "        WHERE NOT EXISTS (SELECT 1 FROM C_DEBT_PAYMENT WHERE C_DEBT_PAYMENT_ID = RECORD_ID2)" +
+      "        AND RECORD_ID2 IS NOT NULL";
 
     int updateCount = 0;
     PreparedStatement st = null;

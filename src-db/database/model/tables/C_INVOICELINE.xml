@@ -165,8 +165,16 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="GROSSPRICESTD" primaryKey="false" required="true" type="DECIMAL" autoIncrement="false">
+        <default><![CDATA[0]]></default>
+        <onCreateDefault/>
+      </column>
       <column name="A_ASSET_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="GROSSPRICELIST" primaryKey="false" required="true" type="DECIMAL" autoIncrement="false">
+        <default><![CDATA[0]]></default>
         <onCreateDefault/>
       </column>
       <column name="C_PROJECT_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">

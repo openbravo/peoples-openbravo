@@ -343,7 +343,7 @@ public class MenuManager implements Serializable {
   private void removeInaccessibleNodes() {
     final List<MenuOption> toRemove = new ArrayList<MenuOption>();
     for (MenuOption menuOption : menuOptions) {
-      if (!isAccessible(menuOption)) {
+      if (!menuOption.isAccessible()) {
         toRemove.add(menuOption);
       }
     }
@@ -353,29 +353,6 @@ public class MenuManager implements Serializable {
       }
     }
     menuOptions.removeAll(toRemove);
-  }
-
-  private boolean isAccessible(MenuOption menuOption) {
-    // In order to be accessible, all its menu entry parents must be active;
-    MenuOption parentMenuOption = menuOption;
-    TreeNode treeNode = menuOption.getTreeNode();
-    Menu menuEntry = OBDal.getInstance().get(Menu.class, treeNode.getNode());
-    while (menuEntry != null && menuEntry.isActive()) {
-      parentMenuOption = parentMenuOption.getParentMenuOption();
-      if (parentMenuOption == null) {
-        treeNode = null;
-        menuEntry = null;
-      } else {
-        treeNode = parentMenuOption.getTreeNode();
-        menuEntry = OBDal.getInstance().get(Menu.class, treeNode.getNode());
-      }
-    }
-    if (menuEntry == null) {
-      // All its ancestors are active
-      return true;
-    } else {
-      return menuEntry.isActive();
-    }
   }
 
   private void createInitialMenuList() {
@@ -464,6 +441,14 @@ public class MenuManager implements Serializable {
       return Boolean.toString(isReadOnly());
     }
 
+    public boolean isEditOrDeleteOnly() {
+      return getTab() != null && getTab().getUIPattern().equals("ED");
+    }
+
+    public String getEditOrDeleteOnlyStringValue() {
+      return Boolean.toString(isEditOrDeleteOnly());
+    }
+
     public boolean isReport() {
       return isReport;
     }
@@ -496,6 +481,16 @@ public class MenuManager implements Serializable {
         visible = true;
       }
       return visible;
+    }
+
+    public boolean isAccessible() {
+      // In order to be accessible, all its menu entry parents must be active;
+      Menu menuEntry = OBDal.getInstance().get(Menu.class, treeNode.getNode());
+      if (parentMenuOption == null) {
+        return menuEntry.isActive();
+      } else {
+        return menuEntry.isActive() && parentMenuOption.isAccessible();
+      }
     }
 
     public void setVisible(Boolean visible) {

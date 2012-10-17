@@ -853,8 +853,8 @@
 <!--154-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--154-->  <VALUE><![CDATA[M_InOut_CreateInvoice]]></VALUE>
 <!--154-->  <NAME><![CDATA[Generate Invoice from Receipt]]></NAME>
-<!--154-->  <DESCRIPTION><![CDATA[Create and process Invoice from this receipt.  The receipt should be correct and completed.]]></DESCRIPTION>
-<!--154-->  <HELP><![CDATA[Generate Invoice from Receipt will create an invoice based on the selected receipt and match the invoice to that receipt.]]></HELP>
+<!--154-->  <DESCRIPTION><![CDATA[Create and process Invoice from this receipt. The receipt should be correct and completed.]]></DESCRIPTION>
+<!--154-->  <HELP><![CDATA[Generate Invoice from Receipt will create an invoice based on the selected receipt and match the invoice to that receipt. If the receipt line is related to an existing order line, then the price of the invoice line is taken from that order line. In other case, it uses the retrieved price from the price list selected in the below drop-down list.]]></HELP>
 <!--154-->  <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
 <!--154-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--154-->  <PROCEDURENAME><![CDATA[M_InOut_CreateInvoice]]></PROCEDURENAME>
@@ -862,6 +862,7 @@
 <!--154-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
 <!--154-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--154-->  <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--154-->  <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--154-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--154-->  <UIPATTERN><![CDATA[S]]></UIPATTERN>
 <!--154-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
@@ -2700,7 +2701,7 @@ The ledger accounting entries created by the Fiscal Year closing process are:
 <!--800068-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800068-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800068-->  <VALUE><![CDATA[M_Rappel_Invoice_Create]]></VALUE>
-<!--800068-->  <NAME><![CDATA[Create Invoice]]></NAME>
+<!--800068-->  <NAME><![CDATA[Create Invoice  (Volume Discount)]]></NAME>
 <!--800068-->  <DESCRIPTION><![CDATA[Create invoice]]></DESCRIPTION>
 <!--800068-->  <HELP><![CDATA[Create invoice]]></HELP>
 <!--800068-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
@@ -2710,6 +2711,7 @@ The ledger accounting entries created by the Fiscal Year closing process are:
 <!--800068-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
 <!--800068-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--800068-->  <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--800068-->  <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--800068-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800068-->  <UIPATTERN><![CDATA[S]]></UIPATTERN>
 <!--800068-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
