@@ -30,6 +30,7 @@ public class Discount extends ProcessHQLQuery {
 
     String hql = "from PricingAdjustment p ";
     hql += "where active = true ";
+    hql += "and client.id = '" + jsonsent.getString("client") + "' ";
     hql += "and (endingDate is null or endingDate>:today) ";
 
     // price list
