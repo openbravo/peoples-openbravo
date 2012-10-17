@@ -653,13 +653,23 @@ isc.OBStandardView.addProperties({
       this.viewGrid.setReadOnlyMode();
     }
   },
-  
+
   setEditOrDeleteOnly: function (editOrDeleteOnly) {
     this.editOrDeleteOnly = editOrDeleteOnly;
+    if (editOrDeleteOnly) {
+      this.viewGrid.setListEndEditAction();
+    }
   },
 
   setSingleRecord: function (singleRecord) {
     this.singleRecord = singleRecord;
+  },
+
+  allowNewRow: function () {
+    if (this.readOnly || this.singleRecord || this.editOrDeleteOnly) {
+      return false;
+    }
+    return true;
   },
 
   setViewFocus: function () {

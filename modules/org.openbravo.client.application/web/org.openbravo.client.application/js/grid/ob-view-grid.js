@@ -2199,7 +2199,7 @@ isc.OBViewGrid.addProperties({
     // how many arguments are passed on, sometimes the newValue is not passed in
     // and then it must be recomputed, so if we then use the undefined newValue
     // in the actionObject below things will go wrong
-    if (arguments.length < 2) {
+    if (arguments.length < 2 && this.view.allowNewRow()) {
       newValue = this.getEditValue(rowNum, colNum);
     }
 
@@ -2244,7 +2244,7 @@ isc.OBViewGrid.addProperties({
     var ret, i, length = this.getFields().length;
     this._inGetNextEditCell = true;
     // past the last row
-    if (editCompletionEvent === isc.ListGrid.ENTER_KEYPRESS && rowNum === (this.getTotalRows() - 1)) {
+    if (editCompletionEvent === isc.ListGrid.ENTER_KEYPRESS && rowNum === (this.getTotalRows() - 1) && this.view.allowNewRow()) {
       // move to the next row
       ret = this.findNextEditCell(rowNum + 1, 0, 1, true, true);
 
@@ -2262,12 +2262,17 @@ isc.OBViewGrid.addProperties({
 
     // when moving between rows with the arrow keys, force the focus in the correct 
     // column
-    if (ret && ret[0] !== rowNum && this.getField(colNum) && (editCompletionEvent === isc.ListGrid.UP_ARROW_KEYPRESS || editCompletionEvent === isc.ListGrid.DOWN_ARROW_KEYPRESS)) {
+    if (ret && ret[0] !== rowNum && this.getField(colNum) && (editCompletionEvent === isc.ListGrid.UP_ARROW_KEYPRESS || editCompletionEvent === isc.ListGrid.DOWN_ARROW_KEYPRESS) && this.view.allowNewRow()) {
       this.forceFocusColumn = this.getField(colNum).name;
     }
 
     delete this._inGetNextEditCell;
     return ret;
+  },
+  
+  //used in Edit or Delete only UI pattern
+  setListEndEditAction: function () {
+	this.listEndEditAction = "done";
   },
 
   // overridden to take into account disabled at item level
