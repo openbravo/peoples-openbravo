@@ -172,9 +172,9 @@ isc.OBToolbar.addClassProperties({
         }
       }
       if (view.isShowingForm) {
-        this.setDisabled(form.isSaving || form.readOnly || view.singleRecord || !view.hasValidState() || form.isNew);
+        this.setDisabled(form.isSaving || form.readOnly || view.singleRecord || !view.hasValidState() || form.isNew || OB.PropertyStore.get("AllowDelete", this.view.standardWindow.id) === 'N');
       } else {
-        this.setDisabled(view.readOnly || view.singleRecord || !view.hasValidState() || !grid.getSelectedRecords() || grid.getSelectedRecords().length === 0);
+        this.setDisabled(view.readOnly || view.singleRecord || !view.hasValidState() || !grid.getSelectedRecords() || grid.getSelectedRecords().length === 0 || OB.PropertyStore.get("AllowDelete", this.view.standardWindow.id) === 'N');
       }
     },
     keyboardShortcutId: 'ToolBar_Eliminate'
@@ -362,6 +362,11 @@ isc.OBToolbar.addClassProperties({
       if (this.view.viewForm.readOnly && !this.view.attachmentExists) {
         this.setDisabled(true);
       }
+      if (OB.PropertyStore.get("AllowAttachment", this.view.standardWindow.id) === 'N') {
+        this.view.viewForm.enableAttachmentsSection(false);
+        this.setDisabled(true);
+      }
+
     },
     keyboardShortcutId: 'ToolBar_Attachments'
   },
