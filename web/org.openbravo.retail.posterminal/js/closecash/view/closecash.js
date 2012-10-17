@@ -113,7 +113,9 @@ enyo.kind({
       this.$.cashToKeep.setPaymentToKeep(this.model.get('paymentList').at(this.model.get('stepOfStep3')));
       this.refresh();
     }, this);
-
+    this.model.get('paymentList').at(this.model.get('stepOfStep3')).on('change:foreignCounted', function(){
+      this.$.cashToKeep.$.formkeep.renderBody(this.model.get('paymentList').at(this.model.get('stepOfStep3')));
+    },this);
     // Cash Up Report - Step 4
     //this data doesn't changes
     this.$.postPrintClose.setModel(this.model.get('cashUpReport').at(0));
