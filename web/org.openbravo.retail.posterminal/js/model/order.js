@@ -502,6 +502,13 @@
       disc.actualAmt = discount.actualAmt;
 
       disc.hidden = discount.hidden === true || (discount.actualAmt && !disc.amt);
+
+      if (disc.hidden) {
+        disc.displayedTotalAmount = 0;
+      } else {
+        disc.displayedTotalAmount = disc.amt || discount.actualAmt;
+      }
+
       disc.applyNext = rule.get('applyNext');
       disc._idx = rule.get('_idx');
 
