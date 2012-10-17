@@ -63,6 +63,7 @@ isc.OBApplicationMenuButton.create({
     </#if>
     , singleRecord: ${menuOption.singleRecordStringValue}
     , readOnly: ${menuOption.readOnlyStringValue}
+    , editOrDeleteOnly: ${menuOption.editOrDeleteOnlyStringValue}
     
     <#list menuOption.parameters as parameter>
         , '${parameter.name?js_string}': '${parameter.parameterValue?js_string}'        

@@ -91,7 +91,8 @@ public class QuickCreateDataSource extends ReadOnlyDataSourceService {
         final Map<String, Object> data = new HashMap<String, Object>();
 
         // read only tab
-        if (menuOption.isSingleRecord() || menuOption.isReadOnly()) {
+        if (menuOption.isSingleRecord() || menuOption.isReadOnly()
+            || menuOption.isEditOrDeleteOnly()) {
           continue;
         }
 

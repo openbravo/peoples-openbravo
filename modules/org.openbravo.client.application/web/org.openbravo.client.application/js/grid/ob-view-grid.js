@@ -302,7 +302,7 @@ isc.OBViewGrid.addProperties({
 
     // TODO: add dynamic part of readonly (via setWindowSettings: see issue 17441)
     // add context-menu only if 'new' is allowed in tab definition
-    if (this.uiPattern !== 'SR' && this.uiPattern !== 'RO') {
+    if (this.uiPattern !== 'SR' && this.uiPattern !== 'RO' && this.uiPattern !== 'ED') {
       this.contextMenu = this.getMenuConstructor().create({
         items: menuItems
       });
@@ -932,7 +932,7 @@ isc.OBViewGrid.addProperties({
   dataArrived: function (startRow, endRow) {
     // do this now, to replace the loading message
     // TODO: add dynamic part of readonly (via setWindowSettings: see issue 17441)
-    if (this.uiPattern === 'SR' || this.uiPattern === 'RO') {
+    if (this.uiPattern === 'SR' || this.uiPattern === 'RO' || this.uiPattern !== 'ED') {
       this.noDataEmptyMessage = '<span class="' + this.emptyMessageStyle + '">' + OB.I18N.getLabel('OBUIAPP_NoDataInGrid') + '</span>';
     } else {
       this.noDataEmptyMessage = '<span class="' + this.emptyMessageStyle + '">' + OB.I18N.getLabel('OBUIAPP_GridNoRecords') + '</span>' + '<span onclick="this.onclick = new Function(); setTimeout(function() { window[\'' + this.ID + '\'].view.newRow(); }, 50); return false;" class="' + this.emptyMessageLinkStyle + '">' + OB.I18N.getLabel('OBUIAPP_GridCreateOne') + '</span>';
@@ -1527,7 +1527,7 @@ isc.OBViewGrid.addProperties({
       });
     }
 
-    if (!this.view.singleRecord && !this.view.readOnly) {
+    if (!this.view.singleRecord && !this.view.readOnly && !this.view.editOrDeleteOnly) {
       menuItems.add({
         title: OB.I18N.getLabel('OBUIAPP_CreateRecordInGrid'),
         keyTitle: OB.KeyboardManager.Shortcuts.getProperty('keyComb.text', 'ToolBar_NewRow', 'id'),

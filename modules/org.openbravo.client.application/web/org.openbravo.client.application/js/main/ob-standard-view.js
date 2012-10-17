@@ -71,6 +71,7 @@ isc.OBStandardView.addClassProperties({
 
   UI_PATTERN_READONLY: 'RO',
   UI_PATTERN_SINGLERECORD: 'SR',
+  UI_PATTERN_EDITORDELETEONLY: 'ED',
   UI_PATTERN_STANDARD: 'ST'
 });
 
@@ -185,6 +186,7 @@ isc.OBStandardView.addProperties({
 
   readOnly: false,
   singleRecord: false,
+  editOrDeleteOnly: false,
 
   isShowingForm: false,
   isEditingGrid: false,
@@ -650,6 +652,10 @@ isc.OBStandardView.addProperties({
     if (this.viewGrid && readOnly) {
       this.viewGrid.setReadOnlyMode();
     }
+  },
+  
+  setEditOrDeleteOnly: function (editOrDeleteOnly) {
+    this.editOrDeleteOnly = editOrDeleteOnly;
   },
 
   setSingleRecord: function (singleRecord) {

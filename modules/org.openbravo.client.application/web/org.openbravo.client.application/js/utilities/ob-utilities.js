@@ -382,7 +382,7 @@ OB.Utilities.removeFragment = function (str) {
 // ** {{{OB.Utilities.openView}}} **
 // Open a view taking into account if a specific window should be opened in classic mode or not.
 // Returns the object used to open the window.
-OB.Utilities.openView = function (windowId, tabId, tabTitle, recordId, command, icon, readOnly, singleRecord, direct) {
+OB.Utilities.openView = function (windowId, tabId, tabTitle, recordId, command, icon, readOnly, singleRecord, direct, editOrDeleteOnly) {
   var isClassicEnvironment = OB.Utilities.useClassicMode(windowId);
 
   var openObject;
@@ -409,7 +409,8 @@ OB.Utilities.openView = function (windowId, tabId, tabTitle, recordId, command, 
       tabTitle: tabTitle,
       windowId: windowId,
       readOnly: readOnly,
-      singleRecord: singleRecord
+      singleRecord: singleRecord,
+      editOrDeleteOnly: editOrDeleteOnly
     };
   } else {
     openObject = {
@@ -420,7 +421,8 @@ OB.Utilities.openView = function (windowId, tabId, tabTitle, recordId, command, 
       windowId: windowId,
       icon: icon,
       readOnly: readOnly,
-      singleRecord: singleRecord
+      singleRecord: singleRecord,
+      editOrDeleteOnly: editOrDeleteOnly
     };
   }
   if (command) {

@@ -120,7 +120,7 @@ isc.OBToolbar.addClassProperties({
     updateState: function () {
       var view = this.view,
           selectedRecords = view.viewGrid.getSelectedRecords();
-      this.setDisabled(view.isShowingForm || view.readOnly || view.singleRecord || !view.hasValidState() || (selectedRecords && selectedRecords.length > 1));
+      this.setDisabled(view.isShowingForm || view.readOnly || view.singleRecord || view.editOrDeleteOnly || !view.hasValidState() || (selectedRecords && selectedRecords.length > 1));
     },
     keyboardShortcutId: 'ToolBar_NewRow'
   },
@@ -135,9 +135,9 @@ isc.OBToolbar.addClassProperties({
       var view = this.view,
           form = view.viewForm;
       if (view.isShowingForm) {
-        this.setDisabled(form.isSaving || view.readOnly || view.singleRecord || !view.hasValidState());
+        this.setDisabled(form.isSaving || view.readOnly || view.singleRecord || view.editOrDeleteOnly || !view.hasValidState());
       } else {
-        this.setDisabled(view.readOnly || view.singleRecord || !view.hasValidState());
+        this.setDisabled(view.readOnly || view.singleRecord || view.editOrDeleteOnly || !view.hasValidState());
       }
     },
     keyboardShortcutId: 'ToolBar_NewDoc'
