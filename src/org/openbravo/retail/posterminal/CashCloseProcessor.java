@@ -61,8 +61,7 @@ public class CashCloseProcessor {
 
       BigDecimal origReconciliationTotal = BigDecimal.valueOf(
           cashCloseObj.getDouble("foreignExpected")).add(foreignDifference);
-      if (paymentType.getPaymentMethod().isAutomatemovementtoother()
-          && origReconciliationTotal.compareTo(new BigDecimal(0)) != 0) {
+      if (origReconciliationTotal.compareTo(new BigDecimal(0)) != 0) {
 
         BigDecimal reconciliationTotal = BigDecimal.valueOf(cashCloseObj.getDouble("expected"))
             .add(difference);
