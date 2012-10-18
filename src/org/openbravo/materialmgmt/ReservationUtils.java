@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.openbravo.base.exception.OBException;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBError;
@@ -52,7 +53,7 @@ public class ReservationUtils {
     final List<Object> parameters = new ArrayList<Object>();
     parameters.add(soLine.getId());
     parameters.add(doProcess ? "Y" : "N");
-    // parameters.add(null);
+    parameters.add(DalUtil.getId(OBContext.getOBContext().getUser()));
     Reservation reservation = (Reservation) CallStoredProcedure.getInstance().call(
         "M_CREATE_RESERVE_FROM_SOL", parameters, null);
 
