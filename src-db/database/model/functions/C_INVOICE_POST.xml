@@ -1151,6 +1151,13 @@ BEGIN --BODY
     END;
   END IF;--FINISH_PROCESS
   IF (NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
+     /**************************************************************************
+      * Calculate promotions                                                   
+      *************************************************************************/
+      IF (v_DocAction = 'CO') THEN
+         M_PROMOTION_CALCULATE('I', v_Record_ID, v_User);
+      END IF;
+
     /**************************************************************************
      * Calculate Discounts
      *************************************************************************/
