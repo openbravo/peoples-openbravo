@@ -35,7 +35,177 @@ enyo.kind({
     onShowReceiptProperties: 'showModalReceiptProperties'
   },
   components: [{
-    name: 'otherSubWindowsContainer'
+    name: 'otherSubWindowsContainer',
+    components: [{
+      style: 'background-color: #FFFFFF;',
+      name: 'subWindow_customers',
+      beforeSetShowing: function(value, params) {
+        this.setShowing(value);
+      },
+      showing: false,
+      components: [{
+        tag: 'div',
+        style: 'padding: 9px 15px;',
+        components: [{
+          tag: 'a',
+          classes: 'close',
+          components: [{
+            tag: 'span',
+            style: 'font-size: 150%',
+            allowHtml: true,
+            content: '&times;'
+          }],
+          tap: function() {
+            this.model.get('subWindowManager').set('currentWindow', {
+              name: 'mainSubWindow',
+              params: []
+            });
+          },
+          init: function(model) {
+            this.model = model;
+          }
+        }, {
+          tag: 'h3',
+          name: 'divheaderCustomerAdvancedSearch',
+          content: OB.I18N.getLabel('OBPOS_TitleCustomerAdvancedSearch')
+        }]
+      }, {
+        kind: 'OB.UI.ListCustomers'
+      }]
+    }]
+  }, {
+    name: 'NewCustomerSubWindowsContainer',
+    components: [{
+      kind: 'OB.UI.ModalConfigurationRequiredForCreateCustomers'
+    },{
+      style: 'background-color: #FFFFFF;',
+      name: 'subWindow_new_customer',
+      beforeSetShowing: function(value, params) {
+        this.setShowing(value);
+        this.waterfall('onSetCustomer', {
+          customer: params.businessPartner,
+          callerWindow: params.callerWindow
+        });
+      },
+      showing: false,
+      components: [{
+        tag: 'div',
+        style: 'padding: 9px 15px;',
+        components: [{
+          tag: 'a',
+          classes: 'close',
+          components: [{
+            tag: 'span',
+            style: 'font-size: 150%',
+            allowHtml: true,
+            content: '&times;'
+          }],
+          tap: function() {
+            this.model.get('subWindowManager').set('currentWindow', {
+              name: 'subWindow_customers',
+              params: []
+            });
+          },
+          init: function(model) {
+            this.model = model;
+          }
+        }, {
+          tag: 'h3',
+          name: 'divheaderCustomerEditNew',
+          content: OB.I18N.getLabel('OBPOS_TitleEditNewCustomer')
+        }]
+      },{
+        name: 'OB.UI.NewCustomerWindowImpl',
+        kind: 'OB.UI.NewCustomerWindow',
+        windowHeader: 'OB.UI.NewCustomerWindowHeader',
+        newAttributes: [{
+          kind: 'OB.UI.CustomerTextProperty',
+          name: 'customerName',
+          modelProperty: 'name',
+          label: OB.I18N.getLabel('OBPOS_LblName')
+        }, {
+          kind: 'OB.UI.CustomerTextProperty',
+          name: 'customerLocName',
+          modelProperty: 'locName',
+          label: OB.I18N.getLabel('OBPOS_LblAddress')
+        }, {
+          kind: 'OB.UI.CustomerTextProperty',
+          name: 'customerPostalCode',
+          modelProperty: 'postalcode',
+          label: OB.I18N.getLabel('OBPOS_LblPostalCode')
+        }, {
+          kind: 'OB.UI.CustomerTextProperty',
+          name: 'customerCity',
+          modelProperty: 'city',
+          label: OB.I18N.getLabel('OBPOS_LblCity')
+        }, {
+          kind: 'OB.UI.CustomerTextProperty',
+          name: 'customerPhone',
+          modelProperty: 'phone',
+          label: OB.I18N.getLabel('OBPOS_LblPhone')
+        }, {
+          kind: 'OB.UI.CustomerTextProperty',
+          name: 'customerEmail',
+          modelProperty: 'email',
+          label: OB.I18N.getLabel('OBPOS_LblEmail')
+        }]
+      }]
+    }]
+  }, {
+    name: 'EditCustomerSubWindowsContainer',
+    components: [{
+      style: 'background-color: #FFFFFF;',
+      name: 'subWindow_edit_customer',
+      beforeSetShowing: function(value, params) {
+        this.setShowing(value);
+        this.waterfall('onSetCustomer', {
+          customer: params.businessPartner
+        });
+      },
+      showing: false,
+      components: [{
+        name: 'OB.UI.EditCustomerWindowImpl',
+        kind: 'OB.UI.NewCustomerWindow',
+        windowHeader: 'OB.UI.EditCustomerWindowHeader',
+        newAttributes: [{
+          kind: 'OB.UI.CustomerTextProperty',
+          name: 'customerName',
+          modelProperty: 'name',
+          label: OB.I18N.getLabel('OBPOS_LblName'),
+          readOnly: true
+        }, {
+          kind: 'OB.UI.CustomerTextProperty',
+          name: 'customerLocName',
+          modelProperty: 'locName',
+          label: OB.I18N.getLabel('OBPOS_LblAddress'),
+          readOnly: true
+        }, {
+          kind: 'OB.UI.CustomerTextProperty',
+          name: 'customerPostalCode',
+          modelProperty: 'postalcode',
+          label: OB.I18N.getLabel('OBPOS_LblPostalCode'),
+          readOnly: true
+        }, {
+          kind: 'OB.UI.CustomerTextProperty',
+          name: 'customerCity',
+          modelProperty: 'city',
+          label: OB.I18N.getLabel('OBPOS_LblCity'),
+          readOnly: true
+        }, {
+          kind: 'OB.UI.CustomerTextProperty',
+          name: 'customerPhone',
+          modelProperty: 'phone',
+          label: OB.I18N.getLabel('OBPOS_LblPhone'),
+          readOnly: true
+        }, {
+          kind: 'OB.UI.CustomerTextProperty',
+          name: 'customerEmail',
+          modelProperty: 'email',
+          label: OB.I18N.getLabel('OBPOS_LblEmail'),
+          readOnly: true
+        }]
+      }]
+    }]
   }, {
     name: 'mainSubWindow',
     components: [{

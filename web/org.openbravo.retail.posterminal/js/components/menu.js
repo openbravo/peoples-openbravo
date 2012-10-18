@@ -89,6 +89,24 @@ enyo.kind({
 });
 
 enyo.kind({
+  name: 'OB.UI.MenuCustomers',
+  kind: 'OB.UI.MenuAction',
+  permission: 'OBPOS_receipt.invoice',
+  events: {
+    onChangeSubWindow: ''
+  },
+  label: 'Customers',
+  tap: function() {
+    this.doChangeSubWindow({
+      newWindow: {
+        name: 'subWindow_customers',
+        params: []
+      }
+    });
+  }
+});
+
+enyo.kind({
   name: 'OB.UI.MenuPrint',
   kind: 'OB.UI.MenuAction',
   permission: 'OBPOS_print.receipt',
@@ -139,7 +157,9 @@ enyo.kind({
     this.menuEntries.push({
       kind: 'OB.UI.MenuPrint'
     });
-
+    this.menuEntries.push({
+      kind: 'OB.UI.MenuCustomers'
+    });
     this.menuEntries.push({
       kind: 'OB.UI.MenuSeparator'
     });
