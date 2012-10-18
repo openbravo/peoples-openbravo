@@ -24,11 +24,11 @@
   <PARAMETER id="paramDirectory" name="directory" default=""/>
   <PARAMETER id="paramLanguage" name="paramLanguage" default=""/>
   <PARAMETER id="paramDateFrom" name="dateFrom" attribute="value"/>
-	<PARAMETER id="paramDateFrom" name="dateFromdisplayFormat" attribute="displayformat" replace="xx"/>
-	<PARAMETER id="paramDateFrom" name="dateFromsaveFormat" attribute="saveformat" replace="yy"/>
+    <PARAMETER id="paramDateFrom" name="dateFromdisplayFormat" attribute="displayformat" replace="xx"/>
+    <PARAMETER id="paramDateFrom" name="dateFromsaveFormat" attribute="saveformat" replace="yy"/>
   <PARAMETER id="paramDateTo" name="dateTo" attribute="value"/>
-	<PARAMETER id="paramDateTo" name="dateTodisplayFormat" attribute="displayformat" replace="xx"/>
-	<PARAMETER id="paramDateTo" name="dateTosaveFormat" attribute="saveformat" replace="yy"/>
+    <PARAMETER id="paramDateTo" name="dateTodisplayFormat" attribute="displayformat" replace="xx"/>
+    <PARAMETER id="paramDateTo" name="dateTosaveFormat" attribute="saveformat" replace="yy"/>
   <PARAMETER id="paramAD_ORGID" name="adOrgId"/>
   <PARAMETER id="paramDocument" name="document"/>
   <PARAMETER id="paramGroupId" name="groupId" default="0"/>
@@ -47,7 +47,6 @@
   <PARAMETER id="paramPageNo" name="inpPageNo" attribute="value" default="1"/>
   <PARAMETER id="paramEntryNo" name="inpEntryNo" attribute="value" default="1"/>
   <PARAMETER id="paramInitialBalance" name="inpInitialBalance" format="euroEdition" attribute="value" default="0"/>
-
   <PARAMETER id="fieldCheck" name="check" default="Y"/>
   <PARAMETER id="paramShowRegular" name="showRegular" boolean="checked" withId="fieldCheck"/>
   <PARAMETER id="paramShowClosing" name="showClosing" boolean="checked" withId="fieldCheck"/>
@@ -69,19 +68,26 @@
     </SUBREPORT>
 
   <PARAMETER id="param2" name="param2" default="2"/>
-
+  <PARAMETER id="secTable" name="secTable" default=""/>
+   
   <structure name="structure1">
+
     <FIELD id="fieldRownum1">rownum</FIELD>
     <FUNCTION id="funcEvenOddRow1xx" name="MODULE" arg1="fieldRownum1" arg2="param2" format="integerEdition" attribute="class" replace="yy"/>
-    <FIELD id="fieldSchemaName">schemaName</FIELD>	
+    <FIELD id="fieldSchemaName">schemaName</FIELD>  
     <FIELD id="fieldIdentifier" attribute="onclick" replace="xx">identifier</FIELD>
     <FIELD id="fieldIdentifier" attribute="onclick" replace="yy">dateacct</FIELD>
     <FIELD id="fieldDateacct">dateacct</FIELD>
+    <FIELD id="fieldEntry" attribute="style" replace="xx">newstyle</FIELD>
+    <FIELD id="fieldDateacct" attribute="style" replace="xx">newstyle</FIELD>
+    <FIELD id="fieldDetail" attribute="style" replace="xx">newstyle</FIELD>
+    <FIELD id="fieldDocName" attribute="style" replace="xx">newstyle</FIELD>
     <FIELD id="fieldName">name</FIELD>
     <FIELD id="fieldAmtacctdr" format="euroInform">amtacctdr</FIELD>
     <FIELD id="fieldAmtacctcr" format="euroInform">amtacctcr</FIELD>
     <FIELD id="fieldValue">value</FIELD>
     <FIELD id="fieldDescription">description</FIELD>
+    <FIELD id="fieldDocName">docName</FIELD>
     <FIELD id="fieldId" attribute="onclick" replace="xx">id</FIELD>
     <FIELD id="fieldId" attribute="onclick" replace="yy">adTableId</FIELD>
     <FIELD id="fieldId" attribute="onclick" replace="zz">docbasetype</FIELD>
@@ -89,10 +95,11 @@
     <FUNCTION id="functionOrderJournal" name="ORDER" attribute="value">identifier</FUNCTION>
     <FUNCTION id="functionCalculateOrderJournal" name="ADD" arg1="functionOrderJournal" arg2="paramGroupId" format="integerInform"/>
     <FUNCTION id="functionCalculateOrderJournalWithInitial" name="ADD" arg1="functionCalculateOrderJournal" arg2="paramEntryNo" format="integerInform"/>
-    <SECTION id="sectionSchema" field="schemaName"/>    	
+    <SECTION id="sectionSchema" field="schemaName"/>        
     <SECTION id="sectionDateAcct" field="dateacct"/>
     <SECTION id="sectionJournal" field="identifier"/>
     <SECTION id="sectionDetail"/>
+
   </structure>
   <DISCARD id="discard"/>
 </REPORT>
