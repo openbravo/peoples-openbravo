@@ -681,3 +681,35 @@ button.modal-dialog-content-button {
 	 border: transparent;
 	 outline: none;
 }
+
+button.btnlink-left-toolbar {
+  display: inline-block;
+  font-weight: bold;
+  border: none;
+  font-size: 18px;
+  text-decoration: none;
+  background-color: #959595;
+  color: white;
+  cursor: pointer;
+  line-height: 36px;
+  border: 1px solid #FFF;
+  width: 100%;
+}
+
+button.btnlink-left-toolbar:hover{
+  background-color: #F8E859;
+}
+
+button.btnselect-customer {
+  display: block;
+  width: 100%;
+  background-color: #ECECEC;
+  position: relative;
+  border: none;
+  padding: 8px 10px 8px 10px;
+  text-decoration: none;
+  text-align: left;
+  color: black;
+  cursor: pointer;
+  border-bottom: 1px solid #FFFFFF;
+}
