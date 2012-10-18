@@ -335,3 +335,60 @@ OB.Utilities.Number.IsValidValueString = function (type, numberStr) {
   }
   return false;
 };
+
+OB.Utilities.Number.Grouping = {
+  getGroupingModes: function () {
+    return this.groupingModes;
+  },
+  groupingModes: {
+    byDecimal10: OB.I18N.getLabel('OBUIAPP_GroupByDecimal10'),
+    by1: OB.I18N.getLabel('OBUIAPP_GroupBy1'),
+    by10: OB.I18N.getLabel('OBUIAPP_GroupBy10'),
+    by100: OB.I18N.getLabel('OBUIAPP_GroupBy100'),
+    by1000: OB.I18N.getLabel('OBUIAPP_GroupBy1000'),
+    by10000: OB.I18N.getLabel('OBUIAPP_GroupBy10000'),
+    by100000: OB.I18N.getLabel('OBUIAPP_GroupBy100000')
+  },
+  defaultGroupingMode: 'by10',
+  //default grouping mode
+  groupingMode: 'by10',
+  getGroupingMultiplier: function (groupingMode) {
+    switch (groupingMode) {
+    case 'byDecimal10':
+      return 0.1;
+    case 'by1':
+      return 1;
+    case 'by10':
+      return 10;
+    case 'by100':
+      return 100;
+    case 'by1000':
+      return 1000;
+    case 'by10000':
+      return 10000;
+    case 'by100000':
+      return 100000;
+    }
+    // default
+    return 10;
+  },
+  getGroupValue: function (value, record, field, fieldName, grid) {
+    var returnValue, groupingMode = (field.groupingMode || OB.Utilities.Number.Grouping.defaultGroupingMode),
+        multiplier = this.getGroupingMultiplier(groupingMode);
+
+    if (!isc.isA.Number(value) || !groupingMode) {
+      return value;
+    }
+    returnValue = value / multiplier;
+    // round down
+    returnValue = Math.round(returnValue - 0.49);
+    returnValue = returnValue * multiplier;
+    return returnValue;
+  },
+  getGroupTitle: function (value, record, field, fieldName, grid) {
+    var groupValue = this.getGroupValue(value, record, field, fieldName, grid),
+        groupingMode = (field.groupingMode || OB.Utilities.Number.Grouping.defaultGroupingMode),
+        multiplier = this.getGroupingMultiplier(groupingMode);
+    return groupValue + ' - ' + (groupValue + multiplier);
+  }
+};

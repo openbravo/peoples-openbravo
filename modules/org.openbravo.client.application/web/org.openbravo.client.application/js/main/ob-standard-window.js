@@ -56,6 +56,9 @@ isc.OBStandardWindow.addProperties({
   dirtyEditForm: null,
 
   initWidget: function () {
+    var me = this,
+        callback;
+
     this.views = [];
 
     this.windowLayout = isc.VLayout.create({
@@ -104,7 +107,11 @@ isc.OBStandardWindow.addProperties({
     if (!this.getClass().windowSettingsRead) {
       this.readWindowSettings();
     } else if (this.getClass().windowSettingsCached) {
-      this.setWindowSettings(this.getClass().windowSettingsCached);
+      callback = function () {
+        me.setWindowSettings(me.getClass().windowSettingsCached);
+      };
+      this.fireOnPause('setWindowSettings_' + this.ID, callback);
+
     } else if (this.getClass().personalization) {
       this.setPersonalization(this.getClass().personalization);
     }
@@ -928,7 +935,7 @@ isc.OBStandardWindow.addProperties({
   },
 
   closeClick: function (tab, tabSet) {
-    if (!this.activeView.viewForm.hasChanged && this.activeView.viewForm.isNew) {
+    if ((!this.activeView || !this.activeView.viewForm.hasChanged) && this.activeView.viewForm.isNew) {
       this.view.standardWindow.setDirtyEditForm(null);
     }
 

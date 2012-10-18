@@ -49,6 +49,18 @@ OB.Utilities.checkProfessionalLicense = function (msg, doNotShowMessage) {
   return true;
 };
 
+//** {{{OB.Utilities.encodeSearchOperator}}} **
+//Encodes and and or in a string with a forward slash
+OB.Utilities.encodeSearchOperator = function (value) {
+  var val = value;
+  if (!val || !isc.isA.String(val)) {
+    return val;
+  }
+  val = val.replace(/ and /g, ' \\and ');
+  val = val.replace(/ or /g, ' \\or ');
+  return val;
+};
+
 // ** {{{OB.Utilities.truncTitle}}} **
 // Truncs a string after a specific length. Initial implementation is 
 // simple (just cuts of at the specified length). Returns the trunced title
