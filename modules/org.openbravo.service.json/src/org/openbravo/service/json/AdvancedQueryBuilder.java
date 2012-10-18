@@ -1417,7 +1417,6 @@ public class AdvancedQueryBuilder {
     orderByClause = null;
     joinDefinitions.clear();
     typedParameters.clear();
-    selectClauseParts.clear();
   }
 
   public void addSelectFunctionPart(String function, String field) {
