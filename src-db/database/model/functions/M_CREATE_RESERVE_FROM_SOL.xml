@@ -7,6 +7,9 @@
       <parameter name="p_process_reserve" type="CHAR" mode="in">
         <default/>
       </parameter>
+      <parameter name="p_user_id" type="VARCHAR" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
@@ -26,20 +29,51 @@
 /*************
 * Function to create reservations for the given Sales Order Line.
 **************/
-  v_product_id    VARCHAR2(32);
-  v_uom_id        VARCHAR2(32);
-  v_qty           NUMBER;
-  v_reserve_id    VARCHAR2(32) := get_uuid();
+  v_product_id        VARCHAR2(32);
+  v_uom_id            VARCHAR2(32);
+  v_client_id         VARCHAR2(32);
+  v_org_id            VARCHAR2(32);
+  v_qtyordered        NUMBER;
+  v_qtydelivered      NUMBER;
+  v_issotrx           CHAR(1);
+  v_reservation_id    VARCHAR2(32) := get_uuid();
 BEGIN
-  SELECT m_product_id, c_uom_id, qtyordered - qtydelivered
-    INTO v_product_id, v_uom_id, v_qty
-  FROM c_orderline
-  WHERE c_orderline_id = p_orderline_id;
+  SELECT ol.m_product_id, ol.c_uom_id, ol.qtyordered, ol.qtydelivered, o.issotrx,
+         ol.ad_client_id, ol.ad_org_id
+    INTO v_product_id, v_uom_id, v_qtyordered, v_qtydelivered, v_issotrx,
+         v_client_id, v_org_id
+  FROM c_orderline ol JOIN c_order o ON ol.c_order_id = o.c_order_id
+  WHERE ol.c_orderline_id = p_orderline_id;
 
+  IF (v_issotrx = 'N') THEN
+    RAISE_APPLICATION_ERROR(-20000,'@cannotReservePurchaseOrder@');
+  END IF;
+  IF (v_qtyordered < 0) THEN
+    RAISE_APPLICATION_ERROR(-20000,'@cannotReservePurchaseOrder@');
+  END IF;
+  IF (v_qtyordered - v_qtydelivered <= 0) THEN
+    RAISE_APPLICATION_ERROR(-20000,'@cannotReserveDeliveredSalesOrderLine@');
+  END IF;
 
+  INSERT INTO m_reservation(
+    m_reservation_id, ad_client_id, ad_org_id, isactive,
+    created, createdby, updated, updatedby,
+    c_orderline_id,
+    m_product_id, c_uom_id, quantity, reservedqty, pendingqty,
+    res_status, res_process
+  ) VALUES (
+    v_reservation_id, v_client_id, v_org_id, 'Y',
+    now(), p_user_id, now(), p_user_id,
+    p_orderline_id,
+    v_product_id, v_uom_id, v_qtyordered, 0, v_qtyordered - v_qtydelivered,
+    'DR', 'CO'
+  );
 
+  IF (p_process_reserve = 'Y') THEN
+    M_RESERVATION_POST(null, v_reservation_id, 'PR', p_user_id);
+  END IF;
 
-  RETURN v_reserve_id;
+  RETURN v_reservation_id;
 END M_CREATE_RESERVE_FROM_SOL]]></body>
     </function>
   </database>
