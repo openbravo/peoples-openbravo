@@ -202,7 +202,8 @@ isc.OBViewGrid.addProperties({
 
     // overridden to update the context/request properties for the fetch
     fetchRemoteData: function (serverCriteria, startRow, endRow) {
-      var requestProperties = this.context;
+      // clone to prevent side effects
+      var requestProperties = isc.clone(this.context);
       this.grid.getFetchRequestParams(requestProperties.params);
 
       return this.Super('fetchRemoteData', arguments);
@@ -975,6 +976,7 @@ isc.OBViewGrid.addProperties({
 
   setViewState: function (state) {
     var localState, i, fld, hasSummaryFunction;
+    
     localState = this.evalViewState(state, 'viewState');
 
     // strange case, sometimes need to call twice
