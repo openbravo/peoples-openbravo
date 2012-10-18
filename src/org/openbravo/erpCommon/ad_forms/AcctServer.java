@@ -1186,6 +1186,7 @@ public abstract class AcctServer {
         // ("AcctServer - get converted amount (init)");
         String amt = "";
         OBQuery<ConversionRateDoc> conversionQuery = null;
+        int conversionCount = 0;
         if (AD_Table_ID.equals(TABLEID_Invoice)) {
           conversionQuery = OBDal.getInstance().createQuery(
               ConversionRateDoc.class,
@@ -1202,7 +1203,10 @@ public abstract class AcctServer {
               "financialAccountTransaction = '" + Record_ID + "' and currency='" + currency
                   + "' and toCurrency='" + acctSchema.m_C_Currency_ID + "'");
         }
-        if (conversionQuery.count() > 0) {
+        if (conversionQuery != null) {
+          conversionCount = conversionQuery.count();
+        }
+        if (conversionCount > 0) {
           List<ConversionRateDoc> conversionRate = conversionQuery.list();
           OBCriteria<Currency> currencyCrit = OBDal.getInstance().createCriteria(Currency.class);
           currencyCrit.add(Restrictions.eq(Currency.PROPERTY_ID, acctSchema.m_C_Currency_ID));
