@@ -1,16 +1,19 @@
 <?xml version="1.0"?>
   <database name="FUNCTION M_ADD_RESERVED_STOCK">
     <function name="M_ADD_RESERVED_STOCK" type="VARCHAR">
-      <parameter name="p_reserve_id" type="VARCHAR" mode="in">
+      <parameter name="p_reservation_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_storage_detail_id" type="VARCHAR" mode="in">
+      <parameter name="p_type_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_po_line_id" type="VARCHAR" mode="in">
+      <parameter name="p_stock_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <parameter name="p_qty" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_user_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -31,17 +34,60 @@
 ************************************************************************/
 /*************
 * Function to reserve given stock or purchase order line.
+* Available types are:
+*   - 'SD': p_stock_id represents a m_storage_detail_id reserves stock in the warehouse.
+*   - 'PO': p_stock_id represents a c_orderline_id of a pending to receipt purchase order line.
 **************/
-  v_product_id    VARCHAR2(32);
-  v_uom_id        VARCHAR2(32);
-  v_qty           NUMBER;
-  v_message       VARCHAR2(2000) := '';
+  v_reservation_stock_ID    VARCHAR2(32) := get_uuid();
+  v_client_id               VARCHAR2(32);
+  v_org_id                  VARCHAR2(32);
+  v_locator_id              VARCHAR2(32);
+  v_asi_id                  VARCHAR2(32);
+  v_poline_id               VARCHAR2(32);
+  v_count                   NUMBER;
 BEGIN
+  SELECT ad_client_id, ad_org_id
+    INTO v_client_id, v_org_id
+  FROM m_reservation
+  WHERE m_reservation_id = p_reservation_id;
+  IF (p_type_id = 'SD') THEN
+    SELECT count(*) INTO v_count
+    FROM m_storage_detail sd
+      JOIN m_locator loc ON sd.m_locator_id = loc.m_locator_id
+      JOIN m_reservation res ON res.m_reservation_id = p_reservation_id
+    WHERE sd.m_storage_detail_id = p_stock_id
+      AND sd.m_product_id = res.m_product_id
+      AND sd.m_attributesetinstance_id = COALESCE(res.m_attributesetinstance_id, sd.m_attributesetinstance_id)
+      AND sd.m_locator_id = COALESCE(res.m_locator_id, sd.m_locator_id)
+      AND loc.m_warehouse_id = COALESCE(res.m_warehouse_id, loc.m_warehouse_id);
+    IF (v_count = 0) THEN
+      RAISE_APPLICATION_ERROR(-20000, '@GivenStorageDetailDoesNotMatchReservationRequirements@');
+    END IF;
+
+    SELECT m_locator_id, m_attributesetinstance_id
+      INTO v_locator_id, v_asi_id
+    FROM m_storage_detail
+    WHERE m_storage_detail_id = p_stock_id;
+  ELSIF (p_type_id = 'PO') THEN
+    v_poline_id := p_stock_id;
+  ELSE
+    RAISE_APPLICATION_ERROR(-20000, '@UnsupportedReservationType@');
+  END IF;
+
+  INSERT INTO m_reservation_stock(
+    m_reservation_stock_id, ad_client_id, ad_org_id, isactive,
+    created, createdby, updated, updatedby,
+    m_reservation_id, m_attributesetinstance_id, m_locator_id, c_orderline_id,
+    quantity, pendingqty
+  ) VALUES (
+    v_reservation_stock_id, v_client_id, v_org_id, 'Y',
+    now(), p_user_id, now(), p_user_id,
+    p_reservation_id, v_asi_id, v_locator_id, v_poline_id,
+    p_qty, p_qty
+  );
 
 
-
-
-  RETURN v_message;
+  RETURN v_reservation_stock_id;
 END M_ADD_RESERVED_STOCK]]></body>
     </function>
   </database>
