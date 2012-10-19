@@ -546,10 +546,10 @@ BEGIN --BODY
 
         -- Add promotions
         FOR Cur_Offer IN 
-          (SELECT *
-					 FROM C_INVOICELINE_OFFER
-					 WHERE C_Invoice_ID=v_Record_ID
-					 ORDER BY LINE
+          (SELECT o.*
+					 FROM C_INVOICELINE_OFFER o, c_InvoiceLine i
+					 WHERE i.C_Invoice_ID=v_Record_ID
+             AND o.c_InvoiceLine_ID = i.c_InvoiceLine_ID
 					) LOOP
 	        INSERT INTO C_INVOICELINE_OFFER
 					(c_invoiceline_offer_id, ad_client_id, ad_org_id,                         
@@ -559,7 +559,7 @@ BEGIN --BODY
 					 totalamt, displayedtotalamt)
 					 values
 					(get_uuid(), Cur_Offer.AD_Client_ID, Cur_Offer.AD_Org_ID,
-					 'Y', Cur_Offer.AD_User_ID, Cur_Offer.AD_User_ID,
+					 'Y', v_UpdatedBy, v_UpdatedBy,
 					 Cur_Offer.c_invoiceline_id, Cur_Offer.line, Cur_Offer.m_offer_id,
 					 Cur_Offer.priceoffer, Cur_Offer.priceoffergross, Cur_Offer.amtoffer,
 					 Cur_Offer.totalamt, Cur_Offer.displayedtotalamt);
@@ -1177,7 +1177,7 @@ BEGIN --BODY
       * Calculate promotions                                                   
       *************************************************************************/
       IF (v_DocAction = 'CO') THEN
-         M_PROMOTION_CALCULATE('I', v_Record_ID, v_User);
+         M_PROMOTION_CALCULATE('I', v_Record_ID, v_UpdatedBy);
       END IF;
 
     /**************************************************************************
