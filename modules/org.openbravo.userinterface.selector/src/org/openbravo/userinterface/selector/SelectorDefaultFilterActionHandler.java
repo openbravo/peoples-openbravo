@@ -94,6 +94,15 @@ public class SelectorDefaultFilterActionHandler extends BaseActionHandler {
                   + f.getDisplayColumnAlias() + ": " + e.getMessage(), e);
         }
       }
+
+      // Obtaining the filter Expression from Selector. Refer issue
+      // https://issues.openbravo.com/view.php?id=21541
+      Object dynamicFilterExpression = null;
+      if (sel.getFilterExpression() != null) {
+        dynamicFilterExpression = engine.eval(sel.getFilterExpression());
+        result.put("filterExpression", dynamicFilterExpression.toString());
+      }
+
     } catch (Exception e) {
       log.error("Error generating Default Filter action result: " + e.getMessage(), e);
     } finally {

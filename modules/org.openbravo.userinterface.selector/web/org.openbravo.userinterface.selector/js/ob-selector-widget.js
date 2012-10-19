@@ -421,6 +421,16 @@ isc.OBSelectorWidget.addProperties({
 
     setOBTabBehavior(false);
 
+    //Adding dynamic generated filter Expression to whereClause. Refer Issue https://issues.openbravo.com/view.php?id=21541
+    if (data.filterExpression) {
+      if (this.selectorGrid.selector.whereClause) {
+        this.selectorGrid.selector.whereClause = this.selectorGrid.selector.whereClause + " and " + data.filterExpression;
+      } else {
+        this.selectorGrid.selector.whereClause = data.filterExpression;
+      }
+      delete data.filterExpression;
+    }
+
     // draw now already otherwise the filter does not work the
     // first time
     this.selectorWindow.show();
