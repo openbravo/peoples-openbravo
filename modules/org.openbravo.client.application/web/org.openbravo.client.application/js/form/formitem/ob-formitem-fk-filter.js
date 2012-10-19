@@ -23,6 +23,7 @@ isc.ClassFactory.defineClass('OBFKFilterTextItem', isc.OBListFilterItem);
 
 isc.OBFKFilterTextItem.addProperties({
   operator: 'iContains',
+  overrideTextMatchStyle: 'substring',
   allowExpressions: false,
   showOptionsFromDataSource: true,
   selectOnFocus: false,
@@ -48,6 +49,12 @@ isc.OBFKFilterTextItem.addProperties({
         grid = this.form.grid.sourceWidget,
         gridField = grid.getField(this.name);
 
+    // the textMatchStyle is sometimes overridden from the underlying
+    // grid, this happens when used within the selector editor.
+    // for foreign key fields we only support like/contains/substring
+    // so force that
+    this.textMatchStyle = this.overrideTextMatchStyle;
+    
     // the data from the datasource will contain the id and the identifier
     // the value for the filter and the display are the same: the identifier
     this.displayField = OB.Constants.IDENTIFIER;
@@ -110,7 +117,7 @@ isc.OBFKFilterTextItem.addProperties({
     };
 
     this.setOptionDataSource(OB.Datasource.create({
-      dataURL: 'org.openbravo.service.datasource/' + grid.view.entity,
+      dataURL: grid.getDataSource().dataURL,
       requestProperties: {
         params: {
           // distinct forces the distinct query on the server side
