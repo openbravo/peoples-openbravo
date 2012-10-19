@@ -89,28 +89,28 @@ BEGIN
     if (v_fixed is not null) then
       v_newUnitPrice := v_fixed;
     else
-      v_newUnitPrice := (v_unitprice - v_add) * (1 - v_discount / 100);
+      v_newUnitPrice := round((v_unitprice - v_add) * (1 - v_discount / 100), p_priceprecision);
     end if;
     
-    v_newGrossAmt := v_newUnitPrice * v_qty;
+    v_newGrossAmt := round(v_newUnitPrice * v_qty, p_stdprecision);
     v_totalPromotion := v_origGrossAmt - v_newGrossAmt;
 
     v_newNetLine := c_get_net_price_from_gross(v_tax, v_newGrossAmt, v_newGrossAmt, p_priceprecision, v_qty);
-    v_newNetAmt := v_newNetLine * v_qty;
+    v_newNetAmt := round(v_newNetLine * v_qty, p_stdprecision);
     v_basePrice := v_unitprice;
   else
     if (v_fixed is not null) then
       v_newNetLine := v_fixed;
     else
-      v_newNetLine := (v_priceactual - v_add) * (1 - v_discount / 100);
+      v_newNetLine := round((v_priceactual - v_add) * (1 - v_discount / 100), p_priceprecision);
     end if;
 
-    v_newNetAmt := v_newNetLine * v_qty;
+    v_newNetAmt := round(v_newNetLine * v_qty, p_stdprecision);
     v_totalPromotion := v_origLineNetAmt - v_newNetAmt;
     v_basePrice := v_priceactual;
   end if;
 
-  M_PROMOTION_ADD(p_type, p_line_id, p_rule_id, p_taxIncluded, p_priceprecision, p_stdprecision, v_newUnitPrice, v_newGrossAmt, v_newNetLine, v_newNetAmt, v_totalPromotion, v_totalPromotion, v_basePrice, p_user_id);
+  M_PROMOTION_ADD(p_type, p_line_id, p_rule_id, p_taxIncluded, v_newUnitPrice, v_newGrossAmt, v_newNetLine, v_newNetAmt, v_totalPromotion, v_totalPromotion, v_basePrice, p_user_id);
 
   return v_apply_next;
 END M_PROMOTION_ADJUSTMENT
