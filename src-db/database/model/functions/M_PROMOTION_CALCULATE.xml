@@ -52,6 +52,17 @@ BEGIN
 			 and c.C_Currency_ID = o.C_Currency_ID
 			 and pl.m_priceList_ID = o.m_priceList_ID;
   else
+    --Skip reversal invoices
+    select count(*)
+      into v_count
+      from c_invoice_reverse
+     where c_invoice_id = p_doc_id;
+     
+    if (v_count != 0) then
+      return;
+    end if;
+       
+
 		select o.c_bpartner_id, o.m_priceList_id, o.dateinvoiced, c.priceprecision, pl.isTaxIncluded
 			into v_partner, v_priceList, v_date, v_precision, v_taxIncluded
 			from C_Invoice o, c_currency c, m_priceList pl
