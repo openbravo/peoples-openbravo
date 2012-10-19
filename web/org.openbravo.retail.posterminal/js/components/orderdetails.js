@@ -19,7 +19,11 @@ enyo.kind({
   },
   initComponents: function() {},
   renderData: function(docNo) {
-    this.setContent(OB.I18N.formatHour(this.order.get('orderDate')) + ' - ' + docNo);
+    if(this.order.get('orderDate') instanceof Date){
+      this.setContent(OB.I18N.formatHour(this.order.get('orderDate')) + ' - ' + docNo);
+    }else{
+      this.setContent(this.order.get('orderDate') + ' - ' + docNo);
+    }
   },
   orderChanged: function(oldValue) {
     this.renderData(this.order.get('documentNo'));

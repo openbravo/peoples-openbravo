@@ -690,6 +690,7 @@
       order.set('posTerminal', OB.POS.modelterminal.get('terminal').id);
       order.set('posTerminal' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, OB.POS.modelterminal.get('terminal')._identifier);
       order.set('orderDate', new Date());
+      order.set('isPaid', false);
 
       documentseq = OB.POS.modelterminal.get('documentsequence') + 1;
       documentseqstr = OB.UTIL.padNumber(documentseq, 5);
@@ -701,10 +702,51 @@
       order.set('sendEmail', false);
       return order;
     },
+    newPaidReceipt: function(model) {
+      var order = new Order(),
+          me = this,
+          documentseq, documentseqstr, bp, newline, lines, prod;
+      this.lines = new Backbone.Collection();
+      order.set('documentNo', model.documentNo);
+      order.set('isPaid',true);
+      bp = new Object();
+      bp._identifier = model.businessPartner; 
+      order.set('bp', new Backbone.Model(bp));
+      
+      _.each(model.receiptLines, function(iter){
+        prod = new OB.Model.Product();
+        prod.set('_identifier', iter.name);
+        newline = new OrderLine({
+          product: prod,
+          uOM: iter.uOM,
+          qty: OB.DEC.number(iter.quantity),
+          price: OB.DEC.number(iter.unitPrice),
+          priceList: OB.DEC.number(iter.unitPrice)
+        });
+        newline.set('gross', OB.DEC.mul(iter.quantity, iter.unitPrice));
+        // add the created line
+        me.lines.add(newline);
+        order.set('gross', OB.DEC.add(order.get('gross'),OB.DEC.mul(iter.quantity, iter.unitPrice)));
+      });
+      order.set('lines', me.lines);      
+      order.set('orderDate', model.orderDate.toString().substring(0,10));
+//      var payments='';
+//      _.each(model.receiptPayments, function(iter){
+//        payments = payments + ' Payment by '+iter.name+' '+iter.amount;
+//      });
+//      order.set('payments',payments);
+      return order;
+    },
 
     addNewOrder: function() {
       this.saveCurrent();
       this.current = this.newOrder();
+      this.add(this.current);
+      this.loadCurrent(true);
+    },
+    addPaidReceipt: function(model) {
+      this.saveCurrent();
+      this.current = model;
       this.add(this.current);
       this.loadCurrent(true);
     },

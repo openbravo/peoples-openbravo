@@ -31,6 +31,7 @@ enyo.kind({
     onChangeBusinessPartner: 'changeBusinessPartner',
     onPrintReceipt: 'printReceipt',
     onBackOffice: 'backOffice',
+    onPaidReceipts: 'paidReceipts',
     onChangeSubWindow: 'changeSubWindow',
     onSetProperty: 'setProperty',
     onSetLineProperty: 'setLineProperty',
@@ -215,6 +216,8 @@ enyo.kind({
     }, {
       kind: 'OB.UI.ModalBusinessPartners'
     }, {
+      kind: 'OB.UI.ModalPaidReceipts'
+    }, {
       kind: 'OB.UI.ModalReceiptPropertiesImpl'
     }, {
       kind: 'OB.UI.ModalReceiptLinesPropertiesImpl'
@@ -252,6 +255,10 @@ enyo.kind({
         receipt.trigger('print');
       });
     }
+  },
+ paidReceipts: function(inSender, inEvent) {
+    $('#modalPaidReceipts').modal('show');
+    //return true;
   },
   backOffice: function(inSender, inEvent) {
     if (inEvent.url) {

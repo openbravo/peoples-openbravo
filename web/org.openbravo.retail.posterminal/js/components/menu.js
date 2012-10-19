@@ -121,6 +121,32 @@ enyo.kind({
     }
   }
 });
+
+enyo.kind({
+	  name: 'OB.UI.MenuSeparator',
+	  tag: 'li',
+	  classes: 'divider'
+	});
+
+enyo.kind({
+	  name: 'OB.UI.MenuPaidReceipts',
+	  kind: 'OB.UI.MenuAction',
+	  permission: 'OBPOS_retail.paidReceipts',
+	  events: {
+	    onPaidReceipts: ''
+	  },
+	  label: OB.I18N.getLabel('OBPOS_LblPaidReceipts'),
+	  tap: function() {
+	    if(!OB.POS.modelterminal.get('connectedToERP')){
+	      OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OfflineWindowRequiresOnline'));
+	      return;
+	    }
+	    if (OB.POS.modelterminal.hasPermission(this.permission)) {
+	      this.doPaidReceipts();
+	    }
+	  }
+	});
+
 enyo.kind({
   name: 'OB.UI.MenuBackOffice',
   kind: 'OB.UI.MenuAction',
@@ -164,6 +190,10 @@ enyo.kind({
     this.menuEntries.push({
       kind: 'OB.UI.MenuSeparator'
     });
+
+    this.menuEntries.push({
+        kind: 'OB.UI.MenuPaidReceipts'
+      });
 
     this.menuEntries.push({
       kind: 'OB.UI.MenuBackOffice'
