@@ -66,6 +66,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.MenuProperties',
   kind: 'OB.UI.MenuAction',
+  permission: 'OBPOS_receipt.properties',
   events: {
     onShowReceiptProperties: ''
   },
@@ -91,7 +92,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.MenuCustomers',
   kind: 'OB.UI.MenuAction',
-  permission: 'OBPOS_receipt.invoice',
+  permission: 'OBPOS_receipt.customers',
   events: {
     onChangeSubWindow: ''
   },
