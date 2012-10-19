@@ -188,7 +188,7 @@ enyo.kind({
   searchAction: function(inSender, inEvent) {
     var me = this,
         process = new OB.DS.Process('org.openbravo.retail.posterminal.PaidReceipts');
-    
+    this.clearAction();
     process.exec({
       filters: inEvent.filters
     }, function(data) {
