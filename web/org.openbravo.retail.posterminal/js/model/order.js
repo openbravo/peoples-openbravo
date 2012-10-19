@@ -19,7 +19,8 @@
       qty: OB.DEC.Zero,
       price: OB.DEC.Zero,
       priceList: OB.DEC.Zero,
-      gross: OB.DEC.Zero
+      gross: OB.DEC.Zero,
+      description: ''
     },
 
     initialize: function(attributes) {
@@ -44,7 +45,7 @@
     printPrice: function() {
       return OB.I18N.formatCurrency(this.get('price'));
     },
-
+    
     printDiscount: function() {
       var d = OB.DEC.sub(this.get('priceList'), this.get('price'));
       if (OB.DEC.compare(d) === 0) {
@@ -379,6 +380,12 @@
       this.save();
     },
 
+    setLineProperty: function (line, property, value){
+      var me = this;
+      var index = this.get('lines').indexOf(line);
+      this.get('lines').at(index).set(property, value);
+    },
+    
     deleteLine: function(line) {
       var me = this;
       var index = this.get('lines').indexOf(line);

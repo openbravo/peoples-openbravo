@@ -15,7 +15,8 @@ enyo.kind({
     receipt: null
   },
   events: {
-    onDeleteLine: ''
+    onDeleteLine: '',
+    onEditLine: ''
   },
   components: [{
     style: 'background-color: #ffffff; color: black; height: 200px; margin: 5px; padding: 5px',
@@ -37,6 +38,15 @@ enyo.kind({
                 classes: 'btnlink-orange',
                 tap: function() {
                   this.owner.doDeleteLine({
+                    line: this.owner.line
+                  });
+                }
+              },{
+                kind: 'OB.UI.SmallButton',
+                content: 'Description',
+                classes: 'btnlink-orange',
+                tap: function() {
+                  this.owner.doEditLine({
                     line: this.owner.line
                   });
                 }

@@ -24,6 +24,7 @@ enyo.kind({
     onDeleteOrder: 'deleteCurrentOrder',
     onTabChange: 'tabChange',
     onDeleteLine: 'deleteLine',
+    onEditLine: 'editLine',
     onExactPayment: 'exactPayment',
     onRemovePayment: 'removePayment',
     onChangeCurrentOrder: 'changeCurrentOrder',
@@ -32,6 +33,7 @@ enyo.kind({
     onBackOffice: 'backOffice',
     onChangeSubWindow: 'changeSubWindow',
     onSetProperty: 'setProperty',
+    onSetLineProperty: 'setLineProperty',
     onShowReceiptProperties: 'showModalReceiptProperties'
   },
   components: [{
@@ -77,7 +79,7 @@ enyo.kind({
     name: 'NewCustomerSubWindowsContainer',
     components: [{
       kind: 'OB.UI.ModalConfigurationRequiredForCreateCustomers'
-    },{
+    }, {
       style: 'background-color: #FFFFFF;',
       name: 'subWindow_new_customer',
       beforeSetShowing: function(value, params) {
@@ -114,7 +116,7 @@ enyo.kind({
           name: 'divheaderCustomerEditNew',
           content: OB.I18N.getLabel('OBPOS_TitleEditNewCustomer')
         }]
-      },{
+      }, {
         name: 'OB.UI.NewCustomerWindowImpl',
         kind: 'OB.UI.NewCustomerWindow',
         windowHeader: 'OB.UI.NewCustomerWindowHeader',
@@ -215,6 +217,8 @@ enyo.kind({
     }, {
       kind: 'OB.UI.ModalReceiptPropertiesImpl'
     }, {
+      kind: 'OB.UI.ModalReceiptLinesPropertiesImpl'
+    }, {
       classes: 'row',
       style: 'margin-bottom: 5px;',
       components: [{
@@ -309,6 +313,9 @@ enyo.kind({
       receipt.trigger('scan');
     }
   },
+  editLine: function(sender, event) {
+    $("#receiptLinesPropertiesDialog").modal('show');
+  },
   exactPayment: function(sender, event) {
     this.$.keyboard.execStatelessCommand('cashexact');
   },
@@ -334,7 +341,16 @@ enyo.kind({
     this.model.get('orderList').saveCurrent();
     return true;
   },
-  beforeSetShowing: function(value, params){
+  setLineProperty: function(inSender, inEvent) {
+    var line = inEvent.line,
+        receipt = this.model.get('order');
+    if (line && receipt) {
+      receipt.setLineProperty(line, inEvent.property, inEvent.value);
+    }
+    this.model.get('orderList').saveCurrent();
+    return true;
+  },
+  beforeSetShowing: function(value, params) {
     this.setShowing(value);
   },
   init: function() {

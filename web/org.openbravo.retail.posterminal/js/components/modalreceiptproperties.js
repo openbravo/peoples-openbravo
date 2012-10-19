@@ -127,7 +127,8 @@ enyo.kind({
     onApplyChange: 'applyChange'
   },
   events: {
-    onSetProperty: ''
+    onSetProperty: '',
+    onSetLineProperty: ''
   },
   loadValue: function(sender, event) {
     if (this.modelProperty === event.modelProperty) {
@@ -137,10 +138,18 @@ enyo.kind({
     }
   },
   applyChange: function(sender, event) {
-    this.doSetProperty({
-      property: this.modelProperty,
-      value: this.getValue()
-    });
+    if (event.orderline) {
+      this.doSetLineProperty({
+        line: event.orderline,
+        property: this.modelProperty,
+        value: this.getValue()
+      });
+    } else {
+      this.doSetProperty({
+        property: this.modelProperty,
+        value: this.getValue()
+      });
+    }
   }
 });
 
@@ -154,7 +163,8 @@ enyo.kind({
     onLoadContent: 'loadContent',
   },
   events: {
-    onSetProperty: ''
+    onSetProperty: '',
+    onSetLineProperty: ''
   },
   loadValue: function(sender, event) {
     if (this.modelProperty == event.modelProperty) {
@@ -190,10 +200,18 @@ enyo.kind({
 
   },
   applyChange: function(sender, event) {
-    this.doSetProperty({
-      property: this.modelProperty,
-      value: this.checked
-    });
+    if (event.orderline) {
+      this.doSetLineProperty({
+        line: event.orderline,
+        property: this.modelProperty,
+        value: this.checked
+      });
+    } else {
+      this.doSetProperty({
+        property: this.modelProperty,
+        value: this.checked
+      });
+    }
   },
   initComponents: function() {
     if (this.readOnly) {
@@ -217,13 +235,16 @@ enyo.kind({
     classes: 'modal-dialog-btn-check active',
     modelProperty: 'print',
     label: OB.I18N.getLabel('OBPOS_Lbl_RP_Print')
-  }/*, {
+  }
+/*, {
     kind: 'OB.UI.renderBooleanProperty',
     name: 'emailBox',
     modelContent: 'bp:email',
     modelProperty: 'sendEmail',
     label: OB.I18N.getLabel('OBPOS_LblEmail')
-  }*/, {
+  }*/
+  ,
+  {
     kind: 'OB.UI.renderBooleanProperty',
     name: 'invoiceBox',
     modelProperty: 'generateInvoice',
