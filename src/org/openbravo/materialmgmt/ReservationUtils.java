@@ -90,18 +90,28 @@ public class ReservationUtils {
     return obmessage;
   }
 
+  /**
+   * Allowed actions:
+   * <ul>
+   * <li>PR Process</li>
+   * <li>RE Reactivate</li>
+   * <li>HO Put on Hold</li>
+   * <li>UNHO Unhold</li>
+   * <li>CL Close</li>
+   * </ul>
+   */
   public OBError processReserve(Reservation reservation, String action) throws OBException {
 
     OBContext.setAdminMode(true);
     Process process = null;
     try {
-      process = OBDal.getInstance().get(Process.class, "");
+      process = OBDal.getInstance().get(Process.class, "5A2A0AF88AF54BB085DCC52FCC9B17B7");
     } finally {
       OBContext.restorePreviousMode();
     }
 
     Map<String, String> parameters = new HashMap<String, String>();
-    parameters.put("action", action);
+    parameters.put("RES_Action", action);
 
     final ProcessInstance pinstance = CallProcess.getInstance().call(process, reservation.getId(),
         parameters);
