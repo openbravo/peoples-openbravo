@@ -60,6 +60,18 @@ enyo.kind({
   label: OB.I18N.getLabel('OBPOS_LblReturn'),
   tap: function() {
     this.doShowReturnText();
+  },
+  init: function(model){
+    this.model = model;
+    this.model.get('order').on('change:isPaid', function(newValue){
+      if (newValue){
+        if(newValue.get('isPaid') === true){
+          this.setShowing(false);
+          return;
+        }
+      }
+      this.setShowing(true);
+    }, this);
   }
 });
 
@@ -73,6 +85,18 @@ enyo.kind({
   label: OB.I18N.getLabel('OBPOS_LblProperties'),
   tap: function() {
     this.doShowReceiptProperties();
+  },
+  init: function(model){
+    this.model = model;
+    this.model.get('order').on('change:isPaid', function(newValue){
+      if (newValue){
+        if(newValue.get('isPaid') === true){
+          this.setShowing(false);
+          return;
+        }
+      }
+      this.setShowing(true);
+    }, this);
   }
 });
 
@@ -86,6 +110,18 @@ enyo.kind({
   label: OB.I18N.getLabel('OBPOS_LblInvoice'),
   tap: function() {
     this.doReceiptToInvoice();
+  },
+  init: function(model){
+    this.model = model;
+    this.model.get('order').on('change:isPaid', function(newValue){
+      if (newValue){
+        if(newValue.get('isPaid') === true){
+          this.setShowing(false);
+          return;
+        }
+      }
+      this.setShowing(true);
+    }, this);
   }
 });
 

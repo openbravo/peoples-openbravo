@@ -166,6 +166,7 @@
         this.set('description', attributes.description);
         this.set('print', attributes.print);
         this.set('sendEmail', attributes.sendEmail);
+        this.set('sendEmail', attributes.isPaid);
         _.each(_.keys(attributes), function(key) {
           if (!this.has(key)) {
             this.set(key, attributes[key]);
@@ -282,6 +283,7 @@
       this.set('description', '');
       this.set('print', true);
       this.set('sendEmail', false);
+      this.set('isPaid', false);
     },
 
     clearWith: function(_order) {
