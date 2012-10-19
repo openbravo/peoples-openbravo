@@ -13,13 +13,13 @@
       <parameter name="p_taxincluded" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_newunitprice" type="NUMERIC" mode="in">
+      <parameter name="p_newgrossprice" type="NUMERIC" mode="in">
         <default/>
       </parameter>
       <parameter name="p_newgrossamt" type="NUMERIC" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_newnetline" type="NUMERIC" mode="in">
+      <parameter name="p_newnetprice" type="NUMERIC" mode="in">
         <default/>
       </parameter>
       <parameter name="p_newnetamt" type="NUMERIC" mode="in">
@@ -59,13 +59,13 @@
   v_org VARCHAR(32);
 BEGIN
   if (p_taxIncluded = 'Y') then
-     v_newUnitPrice := p_newUnitPrice;
+     v_newUnitPrice := p_newgrossprice;
      v_newGrossAmt := p_newGrossAmt;
      v_promotionDiscounted := p_basePrice - v_newUnitPrice;
   else
      v_newUnitPrice := 0;
      v_newGrossAmt := 0;
-     v_promotionDiscounted := p_basePrice - p_newNetLine;
+     v_promotionDiscounted := p_basePrice - p_newnetprice;
   end if;
 
   if (p_type ='O') then
@@ -82,7 +82,7 @@ BEGIN
 		 update c_orderline 
 				set gross_unit_price = v_newUnitPrice,
 						line_gross_amount = v_newGrossAmt,
-						priceactual = p_newNetLine,
+						priceactual = p_newnetprice,
 						linenetamt = p_newNetAmt
       where c_orderline_id = p_line_id;
 
@@ -127,7 +127,7 @@ BEGIN
 		 update c_invoiceline 
 				set gross_unit_price = v_newUnitPrice,
 						line_gross_amount = v_newGrossAmt,
-						priceactual = p_newNetLine,
+						priceactual = p_newnetprice,
 						linenetamt = p_newNetAmt
 			where c_invoiceline_id = p_line_id;
 
