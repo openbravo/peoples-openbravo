@@ -17394,10 +17394,9 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800670-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800670-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800670-->  <COLUMNNAME><![CDATA[Amtoffer]]></COLUMNNAME>
-<!--800670-->  <NAME><![CDATA[Price Adjustment Amt.]]></NAME>
+<!--800670-->  <NAME><![CDATA[Discount per Unit]]></NAME>
 <!--800670-->  <PRINTNAME><![CDATA[Amount offer]]></PRINTNAME>
-<!--800670-->  <DESCRIPTION><![CDATA[The amount by which this price is raised or lowered.]]></DESCRIPTION>
-<!--800670-->  <HELP><![CDATA[Amount to be discounted by the offer.]]></HELP>
+<!--800670-->  <HELP><![CDATA[Defines the amount per that is discounted per unit by this promotion. If the used price list includes taxes this discount applies to gross unit, whereas if it doesn't include taxes, it applies to net unit price.]]></HELP>
 <!--800670-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800670-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--800670--></AD_ELEMENT>
@@ -21789,7 +21788,7 @@ Glossary orphan elements are preserved when running Synchronize Terminology proc
 <!--50D7082455744001B4B4188A7AF54DF3-->  <COLUMNNAME><![CDATA[DisplayedTotalAmt]]></COLUMNNAME>
 <!--50D7082455744001B4B4188A7AF54DF3-->  <NAME><![CDATA[Displayed Total Amount]]></NAME>
 <!--50D7082455744001B4B4188A7AF54DF3-->  <PRINTNAME><![CDATA[Displayed Total Amount]]></PRINTNAME>
-<!--50D7082455744001B4B4188A7AF54DF3-->  <HELP><![CDATA[It is the total amount that should be displayed to final user, it can be different than the actual amount that is actually internally computed.]]></HELP>
+<!--50D7082455744001B4B4188A7AF54DF3-->  <HELP><![CDATA[This field represents the total amount this promotion discounts from the line. It is the value that is displayed to user rather than the actual one used internally which might be different depending on the Promotion Type.]]></HELP>
 <!--50D7082455744001B4B4188A7AF54DF3-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--50D7082455744001B4B4188A7AF54DF3-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--50D7082455744001B4B4188A7AF54DF3--></AD_ELEMENT>
@@ -29443,6 +29442,9 @@ The main purpose of this whereclause is to select which of the records in a part
 <!--F00369E4DAE247D48CFAEB000C452F74-->  <COLUMNNAME><![CDATA[Priceoffergross]]></COLUMNNAME>
 <!--F00369E4DAE247D48CFAEB000C452F74-->  <NAME><![CDATA[Base Gross Unit Price]]></NAME>
 <!--F00369E4DAE247D48CFAEB000C452F74-->  <PRINTNAME><![CDATA[Base Gross Unit Price]]></PRINTNAME>
+<!--F00369E4DAE247D48CFAEB000C452F74-->  <HELP><![CDATA[Gross unit price before applying this promotion. In case multiple promotions are applied in cascade, this price is the one after applying all promotions with more priority than current one.
+
+This field is populated in case the used price list includes taxes.]]></HELP>
 <!--F00369E4DAE247D48CFAEB000C452F74-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--F00369E4DAE247D48CFAEB000C452F74-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--F00369E4DAE247D48CFAEB000C452F74--></AD_ELEMENT>
@@ -29669,6 +29671,9 @@ Invoices marked as Credit Memo will behave as Credit Memos, which implies that:
 <!--FF8081813021C3180130226601410050-->  <COLUMNNAME><![CDATA[BaseNetUnitPrice]]></COLUMNNAME>
 <!--FF8081813021C3180130226601410050-->  <NAME><![CDATA[Base Net Unit Price]]></NAME>
 <!--FF8081813021C3180130226601410050-->  <PRINTNAME><![CDATA[Base Net Unit Price]]></PRINTNAME>
+<!--FF8081813021C3180130226601410050-->  <HELP><![CDATA[Net unit price before applying this promotion. In case multiple promotions are applied in cascade, this price is the one after applying all promotions with more priority than current one.
+
+This field is populated in case the used price list does not include taxes.]]></HELP>
 <!--FF8081813021C3180130226601410050-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--FF8081813021C3180130226601410050-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--FF8081813021C3180130226601410050--></AD_ELEMENT>
