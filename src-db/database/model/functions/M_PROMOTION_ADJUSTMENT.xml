@@ -13,6 +13,9 @@
       <parameter name="p_priceprecision" type="NUMERIC" mode="in">
         <default/>
       </parameter>
+      <parameter name="p_stdprecision" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <parameter name="p_user_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
@@ -93,7 +96,7 @@ BEGIN
     v_totalPromotion := v_origGrossAmt - v_newGrossAmt;
 
     v_newNetLine := c_get_net_price_from_gross(v_tax, v_newGrossAmt, v_newGrossAmt, p_priceprecision, v_qty);
-    v_newNetAmt := c_get_net_price_from_gross(v_tax, v_newGrossAmt,v_newGrossAmt, p_priceprecision, 1);
+    v_newNetAmt := v_newNetLine * v_qty;
     v_basePrice := v_unitprice;
   else
     if (v_fixed is not null) then
@@ -107,7 +110,7 @@ BEGIN
     v_basePrice := v_priceactual;
   end if;
 
-  M_PROMOTION_ADD(p_type, p_line_id, p_rule_id, p_taxIncluded, p_priceprecision, v_newUnitPrice, v_newGrossAmt, v_newNetLine, v_newNetAmt, v_totalPromotion, v_totalPromotion, v_basePrice, p_user_id);
+  M_PROMOTION_ADD(p_type, p_line_id, p_rule_id, p_taxIncluded, p_priceprecision, p_stdprecision, v_newUnitPrice, v_newGrossAmt, v_newNetLine, v_newNetAmt, v_totalPromotion, v_totalPromotion, v_basePrice, p_user_id);
 
   return v_apply_next;
 END M_PROMOTION_ADJUSTMENT

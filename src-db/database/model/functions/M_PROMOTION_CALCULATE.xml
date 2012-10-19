@@ -43,10 +43,13 @@
   v_displayedtotalamt NUMBER;
   v_qtyordered NUMBER;
   v_qtyinvoiced NUMBER;
+  v_stdPrecision NUMBER;
 BEGIN
   if (p_type = 'O') then
-		select o.c_bpartner_id, o.m_priceList_id, o.dateordered, c.priceprecision, pl.isTaxIncluded
-			into v_partner, v_priceList, v_date, v_precision, v_taxIncluded
+		select o.c_bpartner_id, o.m_priceList_id, o.dateordered, 
+           c.priceprecision, c.stdPrecision, pl.isTaxIncluded
+			into v_partner, v_priceList, v_date, 
+           v_precision, v_stdPrecision, v_taxIncluded
 			from C_Order o, c_currency c, m_priceList pl
 		 where C_Order_ID = p_doc_id
 			 and c.C_Currency_ID = o.C_Currency_ID
@@ -61,10 +64,11 @@ BEGIN
     if (v_count != 0) then
       return;
     end if;
-       
 
-		select o.c_bpartner_id, o.m_priceList_id, o.dateinvoiced, c.priceprecision, pl.isTaxIncluded
-			into v_partner, v_priceList, v_date, v_precision, v_taxIncluded
+		select o.c_bpartner_id, o.m_priceList_id, o.dateinvoiced, 
+           c.priceprecision, c.stdPrecision, pl.isTaxIncluded
+			into v_partner, v_priceList, v_date, 
+           v_precision, v_stdPrecision, v_taxIncluded
 			from C_Invoice o, c_currency c, m_priceList pl
 		 where C_Invoice_ID = p_doc_id
 			 and c.C_Currency_ID = o.C_Currency_ID
@@ -266,7 +270,7 @@ BEGIN
         )
       loop
         if (v_apply_next = 'Y' AND Cur_Offer.PL_Order_Implementor is not null) then
-          v_method := Cur_Offer.PL_Order_Implementor || '('''||p_type||''', '''||Cur_Offer.M_Offer_ID||''','''||Cur_Order.id||''', '||v_precision||', '''||p_user_id||''', '''||v_taxIncluded||''')';
+          v_method := Cur_Offer.PL_Order_Implementor || '('''||p_type||''', '''||Cur_Offer.M_Offer_ID||''','''||Cur_Order.id||''', '||v_precision||', '|| v_stdprecision||', '''||p_user_id||''', '''||v_taxIncluded||''')';
           v_apply_next := AD_Execute_Function(v_method);
         end if;
       end loop;
