@@ -88,7 +88,6 @@ public class OrderLoader extends JSONProcessSimple {
 
   @Override
   public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {
-
     Object jsonorder = jsonsent.get("order");
 
     JSONArray array = null;
@@ -111,6 +110,7 @@ public class OrderLoader extends JSONProcessSimple {
 
   public JSONObject saveOrder(JSONArray jsonarray) throws JSONException {
     boolean error = false;
+    String backendId = null;
     OBContext.setAdminMode(true);
     try {
       for (int i = 0; i < jsonarray.length(); i++) {
@@ -122,6 +122,9 @@ public class OrderLoader extends JSONProcessSimple {
               JsonConstants.RPCREQUEST_STATUS_SUCCESS)) {
             log.error("There was an error importing order: " + jsonorder.toString());
             error = true;
+          }
+          if (result.has("backendId")) {
+            backendId = result.getString("backendId");
           }
           if (i % 1 == 0) {
             OBDal.getInstance().flush();
@@ -154,6 +157,11 @@ public class OrderLoader extends JSONProcessSimple {
       OBContext.restorePreviousMode();
     }
     JSONObject jsonResponse = new JSONObject();
+    if (backendId != null) {
+      JSONObject data = new JSONObject();
+      data.put("backendId", backendId);
+      jsonResponse.put("data", data);
+    }
     if (!error) {
       jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
       jsonResponse.put("result", "0");
@@ -240,7 +248,9 @@ public class OrderLoader extends JSONProcessSimple {
     jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
     jsonResponse.put("result", "0");
     jsonResponse.put("data", jsonorder);
-
+    if (jsonorder.getBoolean("quotation")) {
+      jsonResponse.put("backendId", order.getId());
+    }
     return jsonResponse;
   }
 

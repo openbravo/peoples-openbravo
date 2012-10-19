@@ -106,8 +106,7 @@ enyo.kind({
     return true;
   },
   createQuotation: function(){
-    this.model.get('order').createQuotation();
-    this.model.get('orderList').saveCurrent();
+    this.model.get('orderList').addNewQuotation();
     return true;
   },
   createOrderFromQuotation: function(){

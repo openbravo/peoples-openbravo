@@ -715,6 +715,15 @@ alert('reject!!')
       this.loadCurrent();
     },
 
+    addNewQuotation: function() {
+      this.saveCurrent();
+      this.current = this.newOrder();
+      this.current.set('quotation', true);
+      this.current.set('documentType', OB.POS.modelterminal.get('terminal').documentTypeForQuotations);
+      this.add(this.current);
+      this.loadCurrent();
+    },
+
     deleteCurrent: function() {
       function deleteCurrentFromDatabase(orderToDelete) {
         OB.Dal.remove(orderToDelete, function() {

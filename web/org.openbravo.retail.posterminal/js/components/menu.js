@@ -242,9 +242,6 @@ enyo.kind({
     this.menuEntries.push({
       kind: 'OB.UI.MenuPrint'
     });
-    this.menuEntries.push({
-      kind: 'OB.UI.MenuQuotation'
-    });
 
     this.menuEntries.push({
       kind: 'OB.UI.MenuReactivateQuotation'
@@ -256,6 +253,14 @@ enyo.kind({
 
     this.menuEntries.push({
       kind: 'OB.UI.MenuCreateOrderFromQuotation'
+    });
+
+    this.menuEntries.push({
+      kind: 'OB.UI.MenuSeparator'
+    });
+    
+    this.menuEntries.push({
+      kind: 'OB.UI.MenuQuotation'
     });
     
     this.menuEntries.push({

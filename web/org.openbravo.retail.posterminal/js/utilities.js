@@ -86,6 +86,10 @@
             errorCallback();
           }
         } else {
+          if(data && data.backendId){
+            model.get('order').set('backendId', data.backendId);
+          }
+          model.get('orderList').remove(order);
           // Orders have been processed, delete them
           orders.each(function(order) {
             model.get('orderList').remove(order);
