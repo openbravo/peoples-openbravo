@@ -45,7 +45,7 @@
     printPrice: function() {
       return OB.I18N.formatCurrency(this.get('price'));
     },
-    
+
     printDiscount: function() {
       var d = OB.DEC.sub(this.get('priceList'), this.get('price'));
       if (OB.DEC.compare(d) === 0) {
@@ -81,14 +81,14 @@
       'paid': OB.DEC.Zero // amount - change...
     },
     printAmount: function() {
-      if(this.get('rate')){
-        return OB.I18N.formatCurrency(OB.DEC.mul(this.get('amount'),this.get('rate')));
-      }else{
+      if (this.get('rate')) {
+        return OB.I18N.formatCurrency(OB.DEC.mul(this.get('amount'), this.get('rate')));
+      } else {
         return OB.I18N.formatCurrency(this.get('amount'));
       }
     },
     printForeignAmount: function() {
-      return '('+OB.I18N.formatCurrency(this.get('amount'))+' '+this.get('isocode')+')';
+      return '(' + OB.I18N.formatCurrency(this.get('amount')) + ' ' + this.get('isocode') + ')';
     }
   });
 
@@ -166,7 +166,8 @@
         this.set('description', attributes.description);
         this.set('print', attributes.print);
         this.set('sendEmail', attributes.sendEmail);
-        this.set('sendEmail', attributes.isPaid);
+        this.set('isPaid', attributes.isPaid);
+        this.set('isEditable', attributes.isEditable);
         _.each(_.keys(attributes), function(key) {
           if (!this.has(key)) {
             this.set(key, attributes[key]);
@@ -284,6 +285,7 @@
       this.set('print', true);
       this.set('sendEmail', false);
       this.set('isPaid', false);
+      this.set('isEditable', true);
     },
 
     clearWith: function(_order) {
@@ -382,12 +384,12 @@
       this.save();
     },
 
-    setLineProperty: function (line, property, value){
+    setLineProperty: function(line, property, value) {
       var me = this;
       var index = this.get('lines').indexOf(line);
       this.get('lines').at(index).set(property, value);
     },
-    
+
     deleteLine: function(line) {
       var me = this;
       var index = this.get('lines').indexOf(line);
@@ -520,9 +522,9 @@
 
       for (i = 0, max = payments.length; i < max; i++) {
         p = payments.at(i);
-        if(p.get('rate') && p.get('rate')!=='1'){
-          p.set('origAmount', OB.DEC.mul(p.get('amount'),p.get('rate')));
-        }else{
+        if (p.get('rate') && p.get('rate') !== '1') {
+          p.set('origAmount', OB.DEC.mul(p.get('amount'), p.get('rate')));
+        } else {
           p.set('origAmount', p.get('amount'));
         }
         p.set('paid', p.get('origAmount'));
@@ -540,24 +542,24 @@
       // Calculation of the change....
       //FIXME
       if (pcash) {
-        if(pcash.get('kind') !== 'OBPOS_payment.cash'){
-          auxCash=origCash;
-          prevCash=cash;
-        }else{
-          auxCash=cash;
-          prevCash=origCash;
+        if (pcash.get('kind') !== 'OBPOS_payment.cash') {
+          auxCash = origCash;
+          prevCash = cash;
+        } else {
+          auxCash = cash;
+          prevCash = origCash;
         }
         if (OB.DEC.compare(nocash - total) > 0) {
           pcash.set('paid', OB.DEC.Zero);
           this.set('payment', nocash);
           this.set('change', auxCash);
-        } else if (OB.DEC.compare(OB.DEC.sub(OB.DEC.add(OB.DEC.add(nocash, cash),origCash), total)) > 0) {
-          pcash.set('paid', OB.DEC.sub(total, OB.DEC.add(nocash,prevCash)));
+        } else if (OB.DEC.compare(OB.DEC.sub(OB.DEC.add(OB.DEC.add(nocash, cash), origCash), total)) > 0) {
+          pcash.set('paid', OB.DEC.sub(total, OB.DEC.add(nocash, prevCash)));
           this.set('payment', total);
           this.set('change', OB.DEC.sub(OB.DEC.add(OB.DEC.add(nocash, cash), origCash), total));
         } else {
           pcash.set('paid', auxCash);
-          this.set('payment', OB.DEC.add(OB.DEC.add(nocash, cash),origCash));
+          this.set('payment', OB.DEC.add(OB.DEC.add(nocash, cash), origCash));
           this.set('change', OB.DEC.Zero);
         }
       } else {
@@ -593,8 +595,8 @@
           p = payments.at(i);
           if (p.get('kind') === payment.get('kind')) {
             p.set('amount', OB.DEC.add(payment.get('amount'), p.get('amount')));
-            if(p.get('rate') && p.get('rate')!=='1'){
-              p.set('origAmount', OB.DEC.add(payment.get('origAmount'), OB.DEC.mul(p.get('origAmount'),p.get('rate'))));
+            if (p.get('rate') && p.get('rate') !== '1') {
+              p.set('origAmount', OB.DEC.add(payment.get('origAmount'), OB.DEC.mul(p.get('origAmount'), p.get('rate'))));
             }
             this.adjustPayment();
             return;
@@ -704,18 +706,34 @@
       order.set('sendEmail', false);
       return order;
     },
+
     newPaidReceipt: function(model) {
       var order = new Order(),
           me = this,
           documentseq, documentseqstr, bp, newline, lines, prod;
       this.lines = new Backbone.Collection();
       order.set('documentNo', model.documentNo);
-      order.set('isPaid',true);
+      order.set('isPaid', true);
+      order.set('isEditable', false);
+      order.set('id', model.orderid);
+      order.set('client', model.client);
+      order.set('documentType', model.documenttype);
+      order.set('organization', model.organization);
+      order.set('posTerminal', model.posterminal);
+      order.set('posTerminal$_identifier', model.posterminalidentifier);
+      order.set('warehouse', model.warehouse);
+      order.set('currency$_identifier', model.currency);
+      order.set('isbeingprocessed', 'N');
+      order.set('hasbeenpaid', 'Y');
+
+
       bp = new Object();
-      bp._identifier = model.businessPartner; 
+      bp._identifier = model.businessPartner;
       order.set('bp', new Backbone.Model(bp));
-      
-      _.each(model.receiptLines, function(iter){
+      order.set('gross', model.totalamount);
+      order.set('salesRepresentative$_identifier', model.salesrepresentative);
+
+      _.each(model.receiptLines, function(iter) {
         prod = new OB.Model.Product();
         prod.set('_identifier', iter.name);
         newline = new OrderLine({
@@ -728,15 +746,30 @@
         newline.set('gross', OB.DEC.mul(iter.quantity, iter.unitPrice));
         // add the created line
         me.lines.add(newline);
-        order.set('gross', OB.DEC.add(order.get('gross'),OB.DEC.mul(iter.quantity, iter.unitPrice)));
       });
-      order.set('lines', me.lines);      
-      order.set('orderDate', model.orderDate.toString().substring(0,10));
-//      var payments='';
-//      _.each(model.receiptPayments, function(iter){
-//        payments = payments + ' Payment by '+iter.name+' '+iter.amount;
-//      });
-//      order.set('payments',payments);
+      order.set('lines', me.lines);
+      order.set('orderDate', model.orderDate.toString().substring(0, 10));
+      //order.set('payments', model.receiptPayments);
+      var payments = new PaymentLineList();
+      _.each(model.receiptPayments, function(iter) {
+        var curPayment = new PaymentLine();
+        for (var prop in iter) {
+          curPayment.set(prop, iter[prop]);
+        }
+        payments.add(curPayment);
+      });
+      order.set('payments', payments);
+
+
+      var taxes = {};
+      _.each(model.receiptTaxes, function(iter) {
+        taxes[iter.taxid] = {};
+        for (var prop in iter) {
+          taxes[iter.taxid][prop] = iter[prop]
+        }
+      });
+      order.set('taxes', taxes);
+
       return order;
     },
 

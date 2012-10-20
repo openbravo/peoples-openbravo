@@ -835,8 +835,6 @@ public class OrderLoader extends JSONProcessSimple {
       }
 
       Property p = entity.getProperty(key);
-      if (bob.get(p.getName()) != null)
-        continue;
       Object value = json.get(oldKey);
       if (p.isPrimitive()) {
         if (p.isDate()) {

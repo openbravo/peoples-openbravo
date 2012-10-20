@@ -213,7 +213,9 @@ enyo.kind({
     name: 'mainSubWindow',
     components: [{
       kind: 'OB.UI.ModalDeleteReceipt'
-    }, {
+    },{
+      kind: 'OB.UI.Modalnoteditableorder',
+    },{
       kind: 'OB.UI.ModalBusinessPartners'
     }, {
       kind: 'OB.UI.ModalPaidReceipts'
@@ -251,6 +253,10 @@ enyo.kind({
 
     if (OB.POS.modelterminal.hasPermission('OBPOS_print.receipt')) {
       var receipt = this.model.get('order');
+      if(receipt.get("isPaid")){
+        receipt.trigger('print');
+        return;
+      }
       receipt.calculateTaxes(function() {
         receipt.trigger('print');
       });
@@ -258,7 +264,7 @@ enyo.kind({
   },
  paidReceipts: function(inSender, inEvent) {
     $('#modalPaidReceipts').modal('show');
-    //return true;
+    return true;
   },
   backOffice: function(inSender, inEvent) {
     if (inEvent.url) {
@@ -278,26 +284,46 @@ enyo.kind({
     return true;
   },
   addProductToOrder: function(inSender, inEvent) {
+    if(this.model.get('order').get('isEditable') === false){
+      $("#modalNotEditableOrder").modal("show");
+      return true;
+    }
     this.model.get('order').addProduct(inEvent.product);
     this.model.get('orderList').saveCurrent();
     return true;
   },
   changeBusinessPartner: function(inSender, inEvent) {
+    if(this.model.get('order').get('isEditable') === false){
+      $("#modalNotEditableOrder").modal("show");
+      return true;
+    }
     this.model.get('order').setBPandBPLoc(inEvent.businessPartner, false, true);
     this.model.get('orderList').saveCurrent();
     return true;
   },
   receiptToInvoice: function() {
+    if(this.model.get('order').get('isEditable') === false){
+      $("#modalNotEditableOrder").modal("show");
+      return true;
+    }
     this.model.get('order').setOrderInvoice();
     this.model.get('orderList').saveCurrent();
     return true;
   },
   showReturnText: function(inSender, inEvent) {
+    if(this.model.get('order').get('isEditable') === false){
+      $("#modalNotEditableOrder").modal("show");
+      return true;
+    }
     this.model.get('order').setOrderTypeReturn();
     this.model.get('orderList').saveCurrent();
     return true;
   },
   cancelReceiptToInvoice: function(inSender, inEvent) {
+    if(this.model.get('order').get('isEditable') === false){
+      $("#modalNotEditableOrder").modal("show");
+      return true;
+    }
     this.model.get('order').resetOrderInvoice();
     this.model.get('orderList').saveCurrent();
     return true;
@@ -313,6 +339,10 @@ enyo.kind({
     }
   },
   deleteLine: function(sender, event) {
+    if(this.model.get('order').get('isEditable') === false){
+      $("#modalNotEditableOrder").modal("show");
+      return true;
+    }
     var line = event.line,
         receipt = this.model.get('order');
     if (line && receipt) {
@@ -321,6 +351,10 @@ enyo.kind({
     }
   },
   editLine: function(sender, event) {
+    if(this.model.get('order').get('isEditable') === false){
+      $("#modalNotEditableOrder").modal("show");
+      return true;
+    }
     $("#receiptLinesPropertiesDialog").modal('show');
   },
   exactPayment: function(sender, event) {
@@ -344,11 +378,19 @@ enyo.kind({
     return true;
   },
   setProperty: function(inSender, inEvent) {
+    if(this.model.get('order').get('isEditable') === false){
+      $("#modalNotEditableOrder").modal("show");
+      return true;
+    }
     this.model.get('order').setProperty(inEvent.property, inEvent.value);
     this.model.get('orderList').saveCurrent();
     return true;
   },
   setLineProperty: function(inSender, inEvent) {
+    if(this.model.get('order').get('isEditable') === false){
+      $("#modalNotEditableOrder").modal("show");
+      return true;
+    }
     var line = inEvent.line,
         receipt = this.model.get('order');
     if (line && receipt) {

@@ -40,6 +40,18 @@ enyo.kind({
                   this.owner.doDeleteLine({
                     line: this.owner.line
                   });
+                },
+                init: function(model){
+                  this.model = model;
+                  this.model.get('order').on('change:isPaid', function(newValue){
+                    if (newValue){
+                      if(newValue.get('isPaid') === true){
+                        this.setShowing(false);
+                        return;
+                      }
+                    }
+                    this.setShowing(true);
+                  }, this);
                 }
               },{
                 kind: 'OB.UI.SmallButton',
@@ -49,6 +61,18 @@ enyo.kind({
                   this.owner.doEditLine({
                     line: this.owner.line
                   });
+                },
+                init: function(model){
+                  this.model = model;
+                  this.model.get('order').on('change:isPaid', function(newValue){
+                    if (newValue){
+                      if(newValue.get('isPaid') === true){
+                        this.setShowing(false);
+                        return;
+                      }
+                    }
+                    this.setShowing(true);
+                  }, this);
                 }
               }]
             }]

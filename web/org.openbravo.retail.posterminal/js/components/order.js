@@ -83,64 +83,15 @@ enyo.kind({
           style: 'float: right; width: 50%; text-align: right; font-weight:bold; font-size: 30px; color: #f8941d;',
           content: OB.I18N.getLabel('OBPOS_ToBeReturned')
         }, {
-          style: 'clear: both;'
-        }]
-      }]
-    }, {
-      tag: 'li',
-      components: [ {
-          name: 'divpaid',
-          showing: false,
-          style: 'float: left; width: 50%; text-align: right; font-weight:bold; font-size: 30px; color: #f8941d;',
-          content: 'PAID'
-        }, {
-          style: 'clear: both;'
-        }]
-      },
-      {
-      tag: 'li',
-      components: [ {
-          name: 'divpayments',
+          name: 'divispaid',
           showing: false,
           style: 'float: right; width: 50%; text-align: right; font-weight:bold; font-size: 30px; color: #f8941d;',
-          content: 'PAID'
-        }, {
-          style: 'clear: both;'
-        }]
-      },
-      {
-      tag: 'li',
-      components: [ {
-          name: 'divdate',
-          showing: false,
-          style: 'float: right; width: 50%; text-align: right; font-weight:bold; font-size: 30px; color: #f8941d;',
-          content: 'PAID'
-        }, {
-          style: 'clear: both;'
-        }]
-      },
-      {
-      tag: 'li',
-      components: [ {
-          name: 'divuser',
-          showing: false,
-          style: 'float: right; width: 50%; text-align: right; font-weight:bold; font-size: 30px; color: #f8941d;',
-          content: 'PAID'
-        }, {
-          style: 'clear: both;'
-        }]
-      },
-      {
-      tag: 'li',
-      components: [ {
-          name: 'divpos',
-          showing: false,
-          style: 'float: right; width: 50%; text-align: right; font-weight:bold; font-size: 30px; color: #f8941d;',
-          content: 'PAID'
+          content: OB.I18N.getLabel('OBPOS_paid')
         }, {
           style: 'clear: both;'
         }]
       }]
+    }]
   }],
   renderTotal: function(newTotal) {
     this.$.totalgross.setContent(OB.I18N.formatCurrency(newTotal));
@@ -168,21 +119,12 @@ enyo.kind({
         this.$.divbtninvoice.hide();
       }
     }, this);
-  },
-  init: function(model){
-    this.model = model;
-    this.model.get('order').on('change:isPaid', function(newValue){
-      if (newValue){
-        if(newValue.get('isPaid') === true){
-          this.$.divpaid.show();
-          this.$.divuser.show();
-          this.$.divdate.show();
-        }else{
-          this.$.divpaid.hide();
-          this.$.divuser.hide();
-          this.$.divdate.hide();
+    this.order.on('change:isPaid', function(model) {
+        if (model.get('isPaid') === true) {
+          this.$.divispaid.show();
+        } else {
+          this.$.divispaid.hide();
         }
-      }
-    },this);
+    }, this);
   }
 });

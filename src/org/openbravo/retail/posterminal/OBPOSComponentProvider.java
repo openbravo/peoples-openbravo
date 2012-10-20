@@ -77,7 +77,10 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
 
     final String[] resourceDependency = {
         // Common components
-        "datasource", "data/dal", "utilities", "utilitiesui",
+        "datasource",
+        "data/dal",
+        "utilities",
+        "utilitiesui",
         "arithmetic",
         "i18n",
         "data/windowmodel",
@@ -97,12 +100,17 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/windowview",
         "components/modalreceiptproperties",
         "components/modalreceiptlineproperties",
+        "components/modalnoteditableorder",
         "components/customersadvancedsearch",
         "components/editcustomer",
         "main",
         // Web POS window
-        "components/keypadbasic", "components/keyboard", "components/keypadcoins",
-        "data/dataordersave", "data/dataordertaxes", "data/datacustomersave",
+        "components/keypadbasic",
+        "components/keyboard",
+        "components/keypadcoins",
+        "data/dataordersave",
+        "data/dataordertaxes",
+        "data/datacustomersave",
         "data/dataorderdiscount",
         "components/modalreceipts",
         "components/rendercategory",
@@ -117,7 +125,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/listreceiptscounter",
         "components/product-browser",
         "components/menu",
-        //Old Tickets
+        // Old Tickets
         "components/modalpaidreceipts",
 
         // Point of sale

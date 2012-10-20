@@ -31,6 +31,10 @@ enyo.kind({
   initComponents: function() {
     this.addCommand('line:qty', {
       action: function(keyboard, txt) {
+        if(keyboard.receipt.get('isEditable') === false){
+          $("#modalNotEditableOrder").modal("show");
+          return true;
+        }
         if (keyboard.line) {
           keyboard.receipt.setUnit(keyboard.line, OB.I18N.parseNumber(txt));
           keyboard.receipt.trigger('scan');
@@ -41,6 +45,10 @@ enyo.kind({
     this.addCommand('line:price', {
       permission: 'OBPOS_order.changePrice',
       action: function(keyboard, txt) {
+        if(keyboard.receipt.get('isEditable') === false){
+          $("#modalNotEditableOrder").modal("show");
+          return true;
+        }
         if (keyboard.line) {
           keyboard.receipt.setPrice(keyboard.line, OB.I18N.parseNumber(txt));
           keyboard.receipt.trigger('scan');
@@ -50,6 +58,10 @@ enyo.kind({
     this.addCommand('line:dto', {
       permission: 'OBPOS_order.discount',
       action: function(keyboard, txt) {
+        if(keyboard.receipt.get('isEditable') === false){
+          $("#modalNotEditableOrder").modal("show");
+          return true;
+        }
         if (keyboard.line) {
           keyboard.receipt.trigger('discount', keyboard.line, OB.I18N.parseNumber(txt));
         }
@@ -59,6 +71,10 @@ enyo.kind({
     this.addCommand('+', {
       stateless: true,
       action: function(keyboard, txt) {
+        if(keyboard.receipt.get('isEditable') === false){
+          $("#modalNotEditableOrder").modal("show");
+          return true;
+        }
         if (keyboard.line) {
           keyboard.receipt.addUnit(keyboard.line, OB.I18N.parseNumber(txt));
           keyboard.receipt.trigger('scan');
@@ -68,6 +84,10 @@ enyo.kind({
     this.addCommand('-', {
       stateless: true,
       action: function(keyboard, txt) {
+        if(keyboard.receipt.get('isEditable') === false){
+          $("#modalNotEditableOrder").modal("show");
+          return true;
+        }
         if (keyboard.line) {
           keyboard.receipt.removeUnit(keyboard.line, OB.I18N.parseNumber(txt));
           keyboard.receipt.trigger('scan');
@@ -90,7 +110,10 @@ enyo.kind({
   kind: enyo.Object,
   
   action: function(keyboard, txt) {
-   
+    if(keyboard.receipt.get('isEditable') === false){
+      $("#modalNotEditableOrder").modal("show");
+      return true;
+    }
     var me = this;
     
     this.findProductByBarcode(txt, function(product) {

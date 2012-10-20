@@ -8,6 +8,8 @@
  */
 package org.openbravo.retail.posterminal;
 
+import java.math.BigDecimal;
+
 import javax.servlet.ServletException;
 
 import org.codehaus.jettison.json.JSONArray;
@@ -31,7 +33,8 @@ public class PaidReceipts extends JSONProcessSimple {
     String organization = json.getString("organization");
 
     String hqlPaidReceipts = "select ord.id as id, ord.documentNo as documentNo, ord.orderDate as orderDate, "
-        + "ord.businessPartner.name as businessPartner from Order as ord where ord.client=? and ord.organization=? and ord.obposApplications is not null";
+        + "ord.businessPartner.name as businessPartner, ord.grandTotalAmount as totalamount,  ord.salesRepresentative.name as salesRepresentative,  ord.documentType.name as documenttype, "
+        + "ord.id as orderid, ord.warehouse.id as warehouse, ord.currency.iSOCode as currency, ord.obposApplications.name as posterminalidentifier from Order as ord where ord.client=? and ord.organization=? and ord.obposApplications is not null";
     if (!json.getString("documentNo").isEmpty()) {
       hqlPaidReceipts += " and ord.documentNo like '%" + json.getString("documentNo") + "%' ";
     }
@@ -51,10 +54,20 @@ public class PaidReceipts extends JSONProcessSimple {
       paidReceipt.put("documentNo", objpaidReceipts[1]);
       paidReceipt.put("orderDate", (objpaidReceipts[2]));
       paidReceipt.put("businessPartner", objpaidReceipts[3]);
+      paidReceipt.put("totalamount", objpaidReceipts[4]);
+      paidReceipt.put("salesrepresentative", objpaidReceipts[5]);
+      paidReceipt.put("documenttype", objpaidReceipts[6]);
+      paidReceipt.put("orderid", objpaidReceipts[7]);
+      paidReceipt.put("warehouse", objpaidReceipts[8]);
+      paidReceipt.put("currency", objpaidReceipts[9]);
+      paidReceipt.put("posterminalidentifier", objpaidReceipts[10]);
+      paidReceipt.put("organization", json.getString("organization"));
+      paidReceipt.put("posterminal", json.getString("pos"));
+      paidReceipt.put("client", json.getString("client"));
 
       JSONArray listpaidReceiptsLines = new JSONArray();
       String hqlPaidReceiptsLines = "select ordLine.product.id as id, ordLine.product.name as name, ordLine.product.uOM.id as uOM, ordLine.orderedQuantity as quantity, "
-          + "ordLine.unitPrice as unitPrice from OrderLine as ordLine where ordLine.salesOrder.id=?";
+          + "ordLine.grossUnitPrice as unitPrice from OrderLine as ordLine where ordLine.salesOrder.id=?";
       Query paidReceiptsLinesQuery = OBDal.getInstance().getSession()
           .createQuery(hqlPaidReceiptsLines);
       // // paidReceiptsQuery.setString(0, id);
@@ -115,6 +128,25 @@ public class PaidReceipts extends JSONProcessSimple {
       }
 
       paidReceipt.put("receiptPayments", listpaidReceiptsPayments);
+
+      String hqlReceiptTaxes = "select orderTax.tax.id as taxId, orderTax.tax.rate as rate, orderTax.taxableAmount as taxableamount, orderTax.taxAmount as taxamount, orderTax.tax.name as name from OrderTax as orderTax where orderTax.salesOrder.id=?";
+      Query ReceiptTaxesQuery = OBDal.getInstance().getSession().createQuery(hqlReceiptTaxes);
+      ReceiptTaxesQuery.setString(0, (String) objpaidReceipts[0]);
+      JSONArray jsonListTaxes = new JSONArray();
+      for (Object objTax : ReceiptTaxesQuery.list()) {
+        Object[] objTaxInfo = (Object[]) objTax;
+        JSONObject jsonObjTaxes = new JSONObject();
+        jsonObjTaxes.put("taxid", objTaxInfo[0]);
+        jsonObjTaxes.put("rate", objTaxInfo[1]);
+        jsonObjTaxes.put("net", objTaxInfo[2]);
+        jsonObjTaxes.put("amount", objTaxInfo[3]);
+        jsonObjTaxes.put("name", objTaxInfo[4]);
+        jsonObjTaxes.put("gross", new BigDecimal((String) objTaxInfo[2].toString())
+            .add(new BigDecimal((String) objTaxInfo[3].toString())));
+        jsonListTaxes.put(jsonObjTaxes);
+      }
+
+      paidReceipt.put("receiptTaxes", jsonListTaxes);
 
       respArray.put(paidReceipt);
     }

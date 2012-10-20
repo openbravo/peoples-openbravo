@@ -63,9 +63,9 @@ enyo.kind({
   },
   init: function(model){
     this.model = model;
-    this.model.get('order').on('change:isPaid', function(newValue){
+    this.model.get('order').on('change:isEditable', function(newValue){
       if (newValue){
-        if(newValue.get('isPaid') === true){
+        if(newValue.get('isEditable') === false){
           this.setShowing(false);
           return;
         }
@@ -88,9 +88,9 @@ enyo.kind({
   },
   init: function(model){
     this.model = model;
-    this.model.get('order').on('change:isPaid', function(newValue){
+    this.model.get('order').on('change:isEditable', function(newValue){
       if (newValue){
-        if(newValue.get('isPaid') === true){
+        if(newValue.get('isEditable') === false){
           this.setShowing(false);
           return;
         }
@@ -113,9 +113,9 @@ enyo.kind({
   },
   init: function(model){
     this.model = model;
-    this.model.get('order').on('change:isPaid', function(newValue){
+    this.model.get('order').on('change:isEditable', function(newValue){
       if (newValue){
-        if(newValue.get('isPaid') === true){
+        if(newValue.get('isEditable') === false){
           this.setShowing(false);
           return;
         }
@@ -224,13 +224,11 @@ enyo.kind({
       kind: 'OB.UI.MenuCustomers'
     });
     this.menuEntries.push({
+      kind: 'OB.UI.MenuPaidReceipts'
+    });
+    this.menuEntries.push({
       kind: 'OB.UI.MenuSeparator'
     });
-
-    this.menuEntries.push({
-        kind: 'OB.UI.MenuPaidReceipts'
-      });
-
     this.menuEntries.push({
       kind: 'OB.UI.MenuBackOffice'
     });
