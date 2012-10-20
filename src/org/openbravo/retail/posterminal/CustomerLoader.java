@@ -23,9 +23,11 @@ import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.businesspartner.Category;
 import org.openbravo.model.common.businesspartner.Location;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.geography.Country;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentMethod;
 import org.openbravo.model.financialmgmt.payment.PaymentTerm;
@@ -190,6 +192,10 @@ public class CustomerLoader extends JSONProcessSimple {
 
   protected BusinessPartner createBPartner(JSONObject jsonCustomer) throws JSONException {
     BusinessPartner customer = OBProvider.getInstance().get(BusinessPartner.class);
+
+    customer.setOrganization(OBDal.getInstance().get(Organization.class,
+        jsonCustomer.getString("organization")));
+    customer.setClient(OBDal.getInstance().get(Client.class, jsonCustomer.getString("client")));
 
     // BP id (required)
     if (jsonCustomer.has("id") && !jsonCustomer.getString("id").equals("null")) {

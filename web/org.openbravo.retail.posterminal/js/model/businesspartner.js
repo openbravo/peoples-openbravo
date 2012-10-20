@@ -82,6 +82,8 @@
         this.set('searchKey', newSk);
       }
 
+      this.set('client', OB.POS.modelterminal.get('terminal').client);
+      this.set('organization', OB.POS.modelterminal.get('terminal').organization);
       this.set('_identifier', this.get('name'));
 
       this.trigger('customerSaved');
