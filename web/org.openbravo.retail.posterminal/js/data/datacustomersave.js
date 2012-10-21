@@ -58,7 +58,6 @@
             OB.UTIL.processCustomers(customersListToChange, successCallback, errorCallback);
           }
         }, function() {
-          debugger;
         });
       }, function() {
         OB.UTIL.showError('Customer cannot be saved locally');

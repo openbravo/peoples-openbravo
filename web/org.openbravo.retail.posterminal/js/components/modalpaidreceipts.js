@@ -208,7 +208,6 @@ enyo.kind({
     this.prsList = new Backbone.Collection();
     this.$.prslistitemprinter.setCollection(this.prsList);
     this.prsList.on('click', function(model) {
-      debugger;
       this.doChangePaidReceipt({
         newPaidReceipt: model
       });
@@ -232,7 +231,6 @@ enyo.kind({
     onChangePaidReceipt: 'changePaidReceipt',
   },
   changePaidReceipt: function(inSender, inEvent) {
-    debugger;
     this.model.get('orderList').addPaidReceipt(inEvent.newPaidReceipt);
     return true;
   },
