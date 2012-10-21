@@ -47,7 +47,7 @@ enyo.kind({
   },
   initComponents: function() {
     this.inherited(arguments);
-    this.attributeContainer = this.$.bodyContent.$.attributes
+    this.attributeContainer = this.$.bodyContent.$.attributes;
     enyo.forEach(this.newAttributes, function(natt) {
       this.$.bodyContent.$.attributes.createComponent({
         kind: 'OB.UI.PropertyEditLine',
@@ -57,10 +57,11 @@ enyo.kind({
     }, this);
   },
   init: function(model) {
+    var att;
     this.model = model;
     this.model.get('order').bind('change', function() {
       var diff = this.model.get('order').changedAttributes();
-      for (var att in diff) {
+      for (att in diff) {
         this.loadValue(att);
       }
     }, this);
@@ -104,7 +105,7 @@ enyo.kind({
     style: 'border: 1px solid #F0F0F0; float: left;',
     components: [{
       name: 'newAttribute',
-      classes: 'modal-dialog-receipt-properties-text',
+      classes: 'modal-dialog-receipt-properties-text'
     }]
   }, {
     style: 'clear: both'
@@ -160,15 +161,16 @@ enyo.kind({
   handlers: {
     onLoadValue: 'loadValue',
     onApplyChange: 'applyChange',
-    onLoadContent: 'loadContent',
+    onLoadContent: 'loadContent'
   },
   events: {
     onSetProperty: '',
     onSetLineProperty: ''
   },
   loadValue: function(sender, event) {
-    if (this.modelProperty == event.modelProperty) {
-      if (event.order.get(this.modelProperty) != undefined) {
+    var i, splitResult, contentProperty, contentInModel;
+    if (this.modelProperty === event.modelProperty) {
+      if (event.order.get(this.modelProperty) !== undefined) {
         this.checked = event.order.get(this.modelProperty);
       }
 
@@ -179,18 +181,18 @@ enyo.kind({
       }
     }
 
-    if (this.modelContent != undefined && this.modelContent != "") {
-      var splitResult = this.modelContent.split(':');
+    if (this.modelContent !== undefined && this.modelContent !== "") {
+      splitResult = this.modelContent.split(':');
       if (splitResult.length > 0) {
-        var contentProperty = splitResult[0];
+        contentProperty = splitResult[0];
 
-        if (contentProperty == event.modelProperty) {
-          var contentInModel = event.order;
-          for (var i = 0; i < splitResult.length; i++) {
+        if (contentProperty === event.modelProperty) {
+          contentInModel = event.order;
+          for (i = 0; i < splitResult.length; i++) {
             contentInModel = contentInModel.get(splitResult[i]);
           }
 
-          if (contentInModel != undefined) {
+          if (contentInModel !== undefined) {
             $('#' + this.id).text(contentInModel);
             this.content = contentInModel;
           }

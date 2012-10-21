@@ -49,7 +49,7 @@ enyo.kind({
   },
   initComponents: function() {
     this.inherited(arguments);
-    this.attributeContainer = this.$.bodyContent.$.attributes
+    this.attributeContainer = this.$.bodyContent.$.attributes;
     enyo.forEach(this.newAttributes, function(natt) {
       this.$.bodyContent.$.attributes.createComponent({
         kind: 'OB.UI.PropertyEditLine',
@@ -59,12 +59,13 @@ enyo.kind({
     }, this);
   },
   init: function(model) {
+    var att;
     this.model = model;
     this.model.get('order').get('lines').on('selected', function(lineSelected) {
       this.currentLine = lineSelected;
       if (lineSelected) {
         var diff = lineSelected.attributes;
-        for (var att in diff) {
+        for (att in diff) {
           this.loadValue(att);
         }
       }
