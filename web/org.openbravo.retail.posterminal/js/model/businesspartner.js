@@ -78,7 +78,7 @@
         if (length > 25) {
           newSk = this.get('name').substring(0, 25);
         }
-        newSk = newSk + "_" + new Date().getFullYear() + "" + (new Date().getMonth() + 1) + "" + new Date().getDate() + "_" + new Date().getHours() + "" + new Date().getMinutes();
+        newSk = newSk + '_' + new Date().getFullYear() + '' + (new Date().getMonth() + 1) + '' + new Date().getDate() + '_' + new Date().getHours() + '' + new Date().getMinutes();
         this.set('searchKey', newSk);
       }
 

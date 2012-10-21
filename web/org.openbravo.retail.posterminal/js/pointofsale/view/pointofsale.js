@@ -214,7 +214,7 @@ enyo.kind({
     components: [{
       kind: 'OB.UI.ModalDeleteReceipt'
     },{
-      kind: 'OB.UI.Modalnoteditableorder',
+      kind: 'OB.UI.Modalnoteditableorder'
     },{
       kind: 'OB.UI.ModalBusinessPartners'
     }, {

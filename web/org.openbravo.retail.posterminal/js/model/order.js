@@ -710,7 +710,7 @@
     newPaidReceipt: function(model) {
       var order = new Order(),
           me = this,
-          documentseq, documentseqstr, bp, newline, lines, prod;
+          documentseq, documentseqstr, bp, newline, lines, prod, payments, curPayment, taxes, paymentProp, taxProp;
       this.lines = new Backbone.Collection();
       order.set('documentNo', model.documentNo);
       order.set('isPaid', true);
@@ -727,7 +727,7 @@
       order.set('hasbeenpaid', 'Y');
 
 
-      bp = new Object();
+      bp = {};
       bp._identifier = model.businessPartner;
       order.set('bp', new Backbone.Model(bp));
       order.set('gross', model.totalamount);
@@ -750,22 +750,22 @@
       order.set('lines', me.lines);
       order.set('orderDate', model.orderDate.toString().substring(0, 10));
       //order.set('payments', model.receiptPayments);
-      var payments = new PaymentLineList();
+      payments = new PaymentLineList();
       _.each(model.receiptPayments, function(iter) {
-        var curPayment = new PaymentLine();
-        for (var prop in iter) {
-          curPayment.set(prop, iter[prop]);
+        curPayment = new PaymentLine();
+        for (paymentProp in iter) {
+          curPayment.set(paymentProp, iter[paymentProp]);
         }
         payments.add(curPayment);
       });
       order.set('payments', payments);
 
 
-      var taxes = {};
+      taxes = {};
       _.each(model.receiptTaxes, function(iter) {
         taxes[iter.taxid] = {};
-        for (var prop in iter) {
-          taxes[iter.taxid][prop] = iter[prop]
+        for (taxProp in iter) {
+          taxes[iter.taxid][taxProp] = iter[taxProp];
         }
       });
       order.set('taxes', taxes);

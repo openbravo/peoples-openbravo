@@ -32,7 +32,7 @@
 
   OB.UTIL.get_UUID = function() {
     return (S4() + S4() + S4() + S4() + S4() + S4() + S4() + S4());
-  }
+  };
 
   OB.UTIL.padNumber = function(n, p) {
     var s = n.toString();
@@ -170,7 +170,7 @@ OB.UTIL.processCustomerClass = 'org.openbravo.retail.posterminal.CustomerLoader'
                     OB.UTIL.showError(err);
                   });
                 }, function() {
-                  OB.UTIL.showError("Customer " + customerToUpdate.get('_identifier') + "cannot be updated");
+                  OB.UTIL.showError("Customer " + customerToInsert.get('_identifier') + "cannot be updated");
                 }, true);
               }
             }, function() {

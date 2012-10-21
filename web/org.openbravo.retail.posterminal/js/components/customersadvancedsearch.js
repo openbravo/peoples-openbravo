@@ -1,4 +1,13 @@
-/*header of scrollable customer table*/
+/*
+ ************************************************************************************
+ * Copyright (C) 2012 Openbravo S.L.U.
+ * Licensed under the Openbravo Commercial License version 1.0
+ * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
+ * or in the legal folder of this module distribution.
+ ************************************************************************************
+ */
+
+/*global B, Backbone, $, _, enyo */
 
 enyo.kind({
   name: 'OB.UI.ModalConfigurationRequiredForCreateCustomers',
@@ -275,14 +284,16 @@ enyo.kind({
         filter = inEvent.bpName,
         splitFilter = filter.split(","),
         splitFilterLength = splitFilter.length,
-        _operator = inEvent.operator;
+        _operator = inEvent.operator,
+        i,
+        criteria = {};
 
     function errorCallback(tx, error) {
       OB.UTIL.showError("OBDAL error: " + error);
     }
 
     function successCallbackBPs(dataBps, args) {
-      if (args == 0) {
+      if (args === 0) {
         me.bpsList.reset();
       }
       if (dataBps && dataBps.length > 0) {
@@ -293,7 +304,6 @@ enyo.kind({
 
     if (filter && filter !== '') {
       for (i = 0; i < splitFilter.length; i++) {
-        var criteria = {};
         criteria._identifier = {
           operator: _operator,
           value: splitFilter[i]
@@ -301,7 +311,6 @@ enyo.kind({
         OB.Dal.find(OB.Model.BusinessPartner, criteria, successCallbackBPs, errorCallback, i);
       }
     } else {
-      var criteria = {};
       OB.Dal.find(OB.Model.BusinessPartner, criteria, successCallbackBPs, errorCallback, 0);
     }
 
