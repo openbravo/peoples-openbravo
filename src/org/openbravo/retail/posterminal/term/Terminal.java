@@ -49,10 +49,12 @@ public class Terminal extends ProcessHQLQuery {
         + getIdentifierAlias("documentType")
         + ", pos.obposTerminaltype.documentTypeForReturns.id as documentTypeForReturns, pos.obposTerminaltype.documentTypeForReturns.name as "
         + getIdentifierAlias("documentTypeForReturns")
-        + ", pos.organization.obretcoCBpInvoicerules as defaultbp_invoiceterm "
-        + ", pos.organization.obretcoCPaymentterm.id as defaultbp_paymentterm "
-        + ", pos.organization.obretcoFinPaymntmthd.id as defaultbp_paymentmethod "
-        + ", pos.organization.obretcoCBpGroup.id as defaultbp_bpcategory "
+        + ", pos.organization.obretcoDbpIrulesid as defaultbp_invoiceterm "
+        + ", pos.organization.obretcoDbpPtermid.id as defaultbp_paymentterm "
+        + ", pos.organization.obretcoDbpPmethodid.id as defaultbp_paymentmethod "
+        + ", pos.organization.obretcoDbpBpcatid.id as defaultbp_bpcategory "
+        + ", pos.organization.obretcoDbpCountryid.id as defaultbp_bpcountry "
+        + ", pos.organization.obretcoDbpOrgid.id as defaultbp_bporg "
         + ", pos.organization.obretcoMWarehouse.id as warehouse "
         + ", pos.orderdocnoPrefix as docNoPrefix "
         + ", "

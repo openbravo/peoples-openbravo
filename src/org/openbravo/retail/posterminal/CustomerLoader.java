@@ -167,7 +167,10 @@ public class CustomerLoader extends JSONProcessSimple {
       if (jsonCustomer.has("city")) {
         rootLocation.setCityName(jsonCustomer.getString("city"));
       }
-      rootLocation.setCountry(OBDal.getInstance().get(Country.class, "106"));
+      if (jsonCustomer.has("country")) {
+        rootLocation.setCountry(OBDal.getInstance().get(Country.class,
+            jsonCustomer.getString("country")));
+      }
 
       OBDal.getInstance().save(rootLocation);
 
@@ -193,10 +196,16 @@ public class CustomerLoader extends JSONProcessSimple {
   protected BusinessPartner createBPartner(JSONObject jsonCustomer) throws JSONException {
     BusinessPartner customer = OBProvider.getInstance().get(BusinessPartner.class);
 
-    customer.setOrganization(OBDal.getInstance().get(Organization.class,
-        jsonCustomer.getString("organization")));
     customer.setClient(OBDal.getInstance().get(Client.class, jsonCustomer.getString("client")));
-
+    // BP org (required)
+    if (jsonCustomer.has("organization") && !jsonCustomer.getString("organization").equals("null")) {
+      customer.setOrganization(OBDal.getInstance().get(Organization.class,
+          jsonCustomer.getString("organization")));
+    } else {
+      String errorMessage = "Business partner organization is a mandatory field to create a new customer from Web Pos";
+      log.error(errorMessage);
+      throw new OBException(errorMessage, null);
+    }
     // BP id (required)
     if (jsonCustomer.has("id") && !jsonCustomer.getString("id").equals("null")) {
       customer.setId(jsonCustomer.getString("id"));

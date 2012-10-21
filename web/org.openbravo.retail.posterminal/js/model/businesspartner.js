@@ -82,8 +82,6 @@
         this.set('searchKey', newSk);
       }
 
-      this.set('client', OB.POS.modelterminal.get('terminal').client);
-      this.set('organization', OB.POS.modelterminal.get('terminal').organization);
       this.set('_identifier', this.get('name'));
 
       this.trigger('customerSaved');
@@ -127,6 +125,9 @@
         this.set('businessPartnerCategory', OB.POS.modelterminal.get('terminal').defaultbp_bpcategory);
         this.set('paymentTerms', OB.POS.modelterminal.get('terminal').defaultbp_paymentterm);
         this.set('invoiceTerms', OB.POS.modelterminal.get('terminal').defaultbp_invoiceterm);
+        this.set('country', OB.POS.modelterminal.get('terminal').defaultbp_bpcountry);
+        this.set('client', OB.POS.modelterminal.get('terminal').client);
+        this.set('organization', OB.POS.modelterminal.get('terminal').defaultbp_bporg);
         this.set('locId', null);
         this.set('locName', null);
         this.set('_identifier', null);
