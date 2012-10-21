@@ -16,7 +16,7 @@
 
   OB.DATA.CustomerSave = function(model) {
     this.context = model;
-    this.customer = model.get('customer'),
+    this.customer = model.get('customer');
 
 
     this.customer.on('customerSaved', function() {
@@ -63,5 +63,5 @@
         OB.UTIL.showError('Customer cannot be saved locally');
       });
     }, this);
-  }
+  };
 }());
