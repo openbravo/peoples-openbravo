@@ -48,7 +48,7 @@ public class CalculatePromotions extends DalBaseProcess {
         type = "I";
       }
 
-      final String id = (String) bundle.getParams().get("C_Order_ID");
+      final String id = (String) bundle.getParams().get(tableName + "_ID");
       DalConnectionProvider conn = new DalConnectionProvider(false);
       String st;
       if (conn.getRDBMS().equals("ORACLE")) {
