@@ -2029,7 +2029,7 @@ public abstract class AcctServer {
             Utility.parseTranslation(conn, vars, vars.getLanguage(), parameters.get("Account")));
       }
     } else if (strStatus.equals(STATUS_PeriodClosed)) {
-      strTitle = "@PeriodClosed@";
+      strTitle = "@PeriodNotAvailable@";
     } else if (strStatus.equals(STATUS_NotConvertible)) {
       strTitle = "@NotConvertible@";
     } else if (strStatus.equals(STATUS_NotBalanced)) {
@@ -2047,9 +2047,10 @@ public abstract class AcctServer {
     }
     messageResult.setMessage(Utility.parseTranslation(conn, vars, parameters, vars.getLanguage(),
         Utility.parseTranslation(conn, vars, vars.getLanguage(), strTitle)));
-    if (strMessage != null)
+    if (strMessage != null) {
       messageResult.setMessage(Utility.parseTranslation(conn, vars, parameters, vars.getLanguage(),
           Utility.parseTranslation(conn, vars, vars.getLanguage(), strMessage)));
+    }
   }
 
   public Map<String, String> getInvalidAccountParameters(String strAccount, String strEntity,
