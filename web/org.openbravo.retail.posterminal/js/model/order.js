@@ -743,7 +743,7 @@
           price: OB.DEC.number(iter.unitPrice),
           priceList: OB.DEC.number(iter.unitPrice)
         });
-        newline.set('gross', OB.DEC.mul(iter.quantity, iter.unitPrice));
+        newline.set('gross', iter.linegrossamount);
         // add the created line
         me.lines.add(newline);
       });

@@ -67,7 +67,7 @@ public class PaidReceipts extends JSONProcessSimple {
 
       JSONArray listpaidReceiptsLines = new JSONArray();
       String hqlPaidReceiptsLines = "select ordLine.product.id as id, ordLine.product.name as name, ordLine.product.uOM.id as uOM, ordLine.orderedQuantity as quantity, "
-          + "ordLine.grossUnitPrice as unitPrice from OrderLine as ordLine where ordLine.salesOrder.id=?";
+          + "ordLine.grossUnitPrice as unitPrice, ordLine.lineGrossAmount as linegrossamount from OrderLine as ordLine where ordLine.salesOrder.id=?";
       Query paidReceiptsLinesQuery = OBDal.getInstance().getSession()
           .createQuery(hqlPaidReceiptsLines);
       // // paidReceiptsQuery.setString(0, id);
@@ -80,6 +80,7 @@ public class PaidReceipts extends JSONProcessSimple {
         paidReceiptLine.put("uOM", objpaidReceiptsLines[2]);
         paidReceiptLine.put("quantity", objpaidReceiptsLines[3]);
         paidReceiptLine.put("unitPrice", objpaidReceiptsLines[4]);
+        paidReceiptLine.put("linegrossamount", objpaidReceiptsLines[5]);
         listpaidReceiptsLines.put(paidReceiptLine);
       }
       paidReceipt.put("receiptLines", listpaidReceiptsLines);
