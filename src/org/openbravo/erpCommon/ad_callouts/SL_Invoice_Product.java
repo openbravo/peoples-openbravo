@@ -206,8 +206,7 @@ public class SL_Invoice_Product extends HttpSecureAppServlet {
       resultado.append("new Array(");
       for (int i = 0; i < tld.length; i++) {
         resultado.append("new Array(\"" + tld[i].getField("id") + "\", \""
-            + FormatUtilities.replaceJS(tld[i].getField("name")) + "\", \""
-            + (i == 0 ? "true" : "false") + "\")");
+            + FormatUtilities.replaceJS(tld[i].getField("name")) + "\", \"false\")");
         if (i < tld.length - 1)
           resultado.append(",\n");
       }
