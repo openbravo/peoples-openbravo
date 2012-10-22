@@ -41,6 +41,11 @@
           OB.Dal.get(OB.Model.Order, receiptId, function (receipt) {
             var successCallback, errorCallback, orderList;
             successCallback = function() {
+              //In case the processed document is a quotation, we remove its id so it can be reactivated
+              if(model.get('order') && model.get('order').get('quotation')){
+                model.get('order').set('oldId', model.get('order').get('id'));
+                model.get('order').set('id', null);
+              }
               OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgReceiptSaved', [docno]));
             };
             errorCallback = function() {

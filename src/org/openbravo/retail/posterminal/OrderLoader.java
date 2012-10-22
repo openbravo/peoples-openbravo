@@ -110,7 +110,6 @@ public class OrderLoader extends JSONProcessSimple {
 
   public JSONObject saveOrder(JSONArray jsonarray) throws JSONException {
     boolean error = false;
-    String backendId = null;
     OBContext.setAdminMode(true);
     try {
       for (int i = 0; i < jsonarray.length(); i++) {
@@ -123,9 +122,6 @@ public class OrderLoader extends JSONProcessSimple {
             log.error("There was an error importing order: " + jsonorder.toString());
             error = true;
           }
-          if (result.has("backendId")) {
-            backendId = result.getString("backendId");
-          }
           if (i % 1 == 0) {
             OBDal.getInstance().flush();
             OBDal.getInstance().getConnection().commit();
@@ -133,6 +129,7 @@ public class OrderLoader extends JSONProcessSimple {
           }
           log.info("Total order time: " + (System.currentTimeMillis() - t1));
         } catch (Exception e) {
+          e.printStackTrace();
           // Creation of the order failed. We will now store the order in the import errors table
           OBDal.getInstance().rollbackAndClose();
           if (TriggerHandler.getInstance().isDisabled()) {
@@ -157,11 +154,6 @@ public class OrderLoader extends JSONProcessSimple {
       OBContext.restorePreviousMode();
     }
     JSONObject jsonResponse = new JSONObject();
-    if (backendId != null) {
-      JSONObject data = new JSONObject();
-      data.put("backendId", backendId);
-      jsonResponse.put("data", data);
-    }
     if (!error) {
       jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
       jsonResponse.put("result", "0");
@@ -180,10 +172,16 @@ public class OrderLoader extends JSONProcessSimple {
     ShipmentInOut shipment = null;
     Invoice invoice = null;
     TriggerHandler.getInstance().disable();
+    boolean isQuotation = jsonorder.has("quotation") && jsonorder.getBoolean("quotation");
     try {
+      if (jsonorder.has("oldId") && jsonorder.has("quotation") && jsonorder.getBoolean("quotation")) {
+        deleteOldDocument(jsonorder);
+      }
+
       t1 = System.currentTimeMillis();
-      boolean createInvoice = (jsonorder.has("generateInvoice") && jsonorder
-          .getBoolean("generateInvoice"));
+      boolean createInvoice = !isQuotation
+          && (jsonorder.has("generateInvoice") && jsonorder.getBoolean("generateInvoice"));
+      boolean createShipment = !isQuotation;
       // Order header
       order = OBProvider.getInstance().get(Order.class);
       long t111 = System.currentTimeMillis();
@@ -195,13 +193,14 @@ public class OrderLoader extends JSONProcessSimple {
       createOrderLines(order, jsonorder, orderlines, lineReferences);
 
       long t113 = System.currentTimeMillis();
-      // Shipment header
-      shipment = OBProvider.getInstance().get(ShipmentInOut.class);
-      createShipment(shipment, order, jsonorder);
+      if (createShipment) {
+        // Shipment header
+        shipment = OBProvider.getInstance().get(ShipmentInOut.class);
+        createShipment(shipment, order, jsonorder);
 
-      long t114 = System.currentTimeMillis();
-      // Shipment lines
-      createShipmentLines(shipment, order, jsonorder, orderlines, lineReferences);
+        // Shipment lines
+        createShipmentLines(shipment, order, jsonorder, orderlines, lineReferences);
+      }
       long t115 = System.currentTimeMillis();
       if (createInvoice) {
         // Invoice header
@@ -213,7 +212,9 @@ public class OrderLoader extends JSONProcessSimple {
       }
       t11 = System.currentTimeMillis();
       OBDal.getInstance().save(order);
-      OBDal.getInstance().save(shipment);
+      if (shipment != null) {
+        OBDal.getInstance().save(shipment);
+      }
       if (invoice != null) {
         OBDal.getInstance().save(invoice);
       }
@@ -221,8 +222,7 @@ public class OrderLoader extends JSONProcessSimple {
       OBDal.getInstance().flush();
       t3 = System.currentTimeMillis();
       log.debug("Creation of bobs. Order: " + (t112 - t111) + "; Orderlines: " + (t113 - t112)
-          + "; Shipment: " + (t114 - t113) + "; Shipmentlines: " + (t115 - t114) + "; Invoice: "
-          + (t11 - t115));
+          + "; Shipment: " + (t115 - t113) + "; Invoice: " + (t11 - t115));
 
     } finally {
       TriggerHandler.getInstance().enable();
@@ -230,14 +230,16 @@ public class OrderLoader extends JSONProcessSimple {
 
     long t4 = System.currentTimeMillis();
 
-    // Payment
-    JSONObject paymentResponse = handlePayments(jsonorder, order, invoice);
-    if (paymentResponse != null) {
-      return paymentResponse;
-    }
+    if (!isQuotation) {
+      // Payment
+      JSONObject paymentResponse = handlePayments(jsonorder, order, invoice);
+      if (paymentResponse != null) {
+        return paymentResponse;
+      }
 
-    // Stock manipulation
-    handleStock(shipment);
+      // Stock manipulation
+      handleStock(shipment);
+    }
 
     log.info("Initial flush: " + (t1 - t0) + "; Generate bobs:" + (t11 - t1) + "; Save bobs:"
         + (t2 - t11) + "; First flush:" + (t3 - t2) + "; Second flush: " + (t4 - t3)
@@ -252,6 +254,12 @@ public class OrderLoader extends JSONProcessSimple {
       jsonResponse.put("backendId", order.getId());
     }
     return jsonResponse;
+  }
+
+  protected void deleteOldDocument(JSONObject jsonorder) throws JSONException {
+    Order oldOrder = OBDal.getInstance().get(Order.class, jsonorder.getString("oldId"));
+    OBDal.getInstance().remove(oldOrder);
+    OBDal.getInstance().flush();
   }
 
   protected String getPaymentDescription() {
@@ -528,6 +536,8 @@ public class OrderLoader extends JSONProcessSimple {
   protected void createOrder(Order order, JSONObject jsonorder) throws JSONException {
     Entity orderEntity = ModelProvider.getInstance().getEntity(Order.class);
     fillBobFromJSON(orderEntity, order, jsonorder);
+    order.setNewOBObject(true);
+    order.setId(jsonorder.getString("id"));
 
     order.setTransactionDocument((DocumentType) OBDal.getInstance().getProxy("DocumentType",
         jsonorder.getString("documentType")));

@@ -123,7 +123,7 @@ enyo.kind({
       if (model.get('quotation')) {
         this.$.divbtnquotation.show();
         this.$.listOrderLines.children[3].children[0].setContent(OB.I18N.getLabel('OBPOS_QuotationNew'))
-        if (model.get('hasbeenpaid')) {
+        if (model.get('hasbeenpaid')==='Y') {
           this.$.divbtnquotation.setContent(OB.I18N.getLabel('OBPOS_QuotationUnderEvaluation'));
         } else if(!model.get('hasbeenpaid')){
           this.$.divbtnquotation.setContent(OB.I18N.getLabel('OBPOS_QuotationDraft'));
@@ -134,9 +134,9 @@ enyo.kind({
       }
     }, this);
     this.order.on('change:hasbeenpaid', function(model) {
-      if (model.get('quotation') && model.get('hasbeenpaid')) {
+      if (model.get('quotation') && model.get('hasbeenpaid')==='Y') {
         this.$.divbtnquotation.setContent(OB.I18N.getLabel('OBPOS_QuotationUnderEvaluation'));
-      } else if(model.get('quotation') && !model.get('hasbeenpaid')){
+      } else if(model.get('quotation') && model.get('hasbeenpaid')==='N'){
         this.$.divbtnquotation.setContent(OB.I18N.getLabel('OBPOS_QuotationDraft'));
       }
     }, this);

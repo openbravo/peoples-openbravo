@@ -139,15 +139,18 @@ enyo.kind({
       OB.UTIL.showError(OB.I18N.getLabel('OBPOS_QuotationNoDocType'));
     }
   },
+  updateVisibility: function(model){
+    if (!model.get('quotation')) {
+      this.show();
+    } else {
+      this.hide();
+    }
+  },
   init: function(model){
     var receipt = model.get('order'),
     me = this;
     receipt.on('change:quotation', function(model) {
-      if (!model.get('quotation')) {
-        me.show();
-      } else {
-        me.hide();
-      }
+      this.updateVisibility(model);
     }, this);
   }
 });
@@ -163,16 +166,22 @@ enyo.kind({
   tap: function() {
     this.doCreateOrderFromQuotation();
   },
+  updateVisibility: function(model){
+    if (model.get('quotation') && model.get('hasbeenpaid')==='Y') {
+      this.show();
+    } else {
+      this.hide();
+    }
+  },
   init: function(model){
     var receipt = model.get('order'),
     me = this;
     me.hide();
     receipt.on('change:quotation', function(model) {
-      if (model.get('quotation')) {
-        me.show();
-      } else {
-        me.hide();
-      }
+      this.updateVisibility(model);
+    }, this);
+    receipt.on('change:hasbeenpaid', function(model) {
+      this.updateVisibility(model);
     }, this);
   }
 });
@@ -188,16 +197,22 @@ enyo.kind({
   tap: function() {
     this.doRejectQuotation();
   },
+  updateVisibility: function(model){
+    if (model.get('quotation') && model.get('hasbeenpaid')==='Y') {
+      this.show();
+    } else {
+      this.hide();
+    }
+  },
   init: function(model){
     var receipt = model.get('order'),
     me = this;
     me.hide();
     receipt.on('change:quotation', function(model) {
-      if (model.get('quotation')) {
-        me.show();
-      } else {
-        me.hide();
-      }
+      this.updateVisibility(model);
+    }, this);
+    receipt.on('change:hasbeenpaid', function(model) {
+      this.updateVisibility(model);
     }, this);
   }
 });
@@ -212,16 +227,22 @@ enyo.kind({
   tap: function() {
     this.doReactivateQuotation();
   },
+  updateVisibility: function(model){
+    if (model.get('quotation') && model.get('hasbeenpaid')==='Y') {
+      this.show();
+    } else {
+      this.hide();
+    }
+  },
   init: function(model){
     var receipt = model.get('order'),
     me = this;
     me.hide();
     receipt.on('change:quotation', function(model) {
-      if (model.get('quotation')) {
-        me.show();
-      } else {
-        me.hide();
-      }
+      this.updateVisibility(model);
+    }, this);
+    receipt.on('change:hasbeenpaid', function(model) {
+      this.updateVisibility(model);
     }, this);
   }
 });

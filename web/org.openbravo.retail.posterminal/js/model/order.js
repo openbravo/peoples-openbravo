@@ -502,11 +502,12 @@
       this.set('id',null);
       this.set('quotation', false);
       this.set('documentType', OB.POS.modelterminal.get('terminal').documentType);
-      this.set('hasbeenpaid', false);
+      this.set('hasbeenpaid', 'N');
       this.save();
     },
     reactivateQuotation: function(){
-alert('reactivate!!')
+      this.set('hasbeenpaid', 'N');
+      this.save();
     },
 
     rejectQuotation: function(){
