@@ -509,8 +509,9 @@ public class OrderLoader extends JSONProcessSimple {
       Entity orderLineEntity = ModelProvider.getInstance().getEntity(OrderLine.class);
       JSONObject jsonOrderLine = orderlines.getJSONObject(i);
 
-      fillBobFromJSON(orderLineEntity, orderline, jsonOrderLine);
       fillBobFromJSON(ModelProvider.getInstance().getEntity(OrderLine.class), orderline, jsonorder);
+      fillBobFromJSON(orderLineEntity, orderline, jsonOrderLine);
+
       orderline.setActive(true);
       orderline.setSalesOrder(order);
       orderline.setLineNetAmount(BigDecimal.valueOf(jsonOrderLine.getDouble("net")));
