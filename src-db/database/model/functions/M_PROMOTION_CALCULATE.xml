@@ -88,53 +88,39 @@ BEGIN
                        and p_type = 'I') loop
     -- Remove existent promotions as they are going to be recalculated
     if (p_type = 'O') then
-      select count(*) 
-        into v_count
-        from c_orderline_offer
-       where c_orderline_id = Cur_Order.id;
-
-      if (v_count>0) then
-				if (v_taxIncluded = 'Y') then
-					update c_orderline
-						 set gross_unit_price = grosspricestd,
-								 line_gross_amount = grosspricestd * qtyordered,
-								 priceactual = c_get_net_price_from_gross(Cur_Order.c_tax_id, grosspricestd, grosspricestd, v_precision, 1),
-								 linenetamt = c_get_net_price_from_gross(Cur_Order.c_tax_id, grosspricestd * qtyordered, grosspricestd * qtyordered, v_precision, 1)
-					 where c_orderline_id = Cur_Order.id;
-				else
-					update c_orderline
-						 set priceactual = pricestd,
-								 linenetamt = pricestd * qtyordered
-					 where c_orderline_id = Cur_Order.id;
-				end if;
-				
-				delete from c_orderline_offer
+			if (v_taxIncluded = 'Y') then
+				update c_orderline
+					 set gross_unit_price = grosspricestd,
+							 line_gross_amount = round(grosspricestd * qtyordered, v_stdPrecision),
+							 priceactual = c_get_net_price_from_gross(Cur_Order.c_tax_id, round(grosspricestd * qtyordered, v_stdPrecision), round(grosspricestd * qtyordered, v_stdPrecision), v_precision, qtyordered),
+							 linenetamt = round(c_get_net_price_from_gross(Cur_Order.c_tax_id, round(grosspricestd * qtyordered, v_stdPrecision), round(grosspricestd * qtyordered, v_stdPrecision), v_precision, qtyordered) * qtyordered, v_stdPrecision)
 				 where c_orderline_id = Cur_Order.id;
-      end if;
+			else
+				update c_orderline
+					 set priceactual = pricestd,
+							 linenetamt = round(pricestd * qtyordered, v_stdPrecision)
+				 where c_orderline_id = Cur_Order.id;
+			end if;
+			
+			delete from c_orderline_offer
+			 where c_orderline_id = Cur_Order.id;
 		else
-      select count(*) 
-        into v_count
-        from c_invoiceline_offer
-       where c_invoiceline_id = Cur_Order.id;
-
-      if (v_count>0) then
-				if (v_taxIncluded = 'Y') then
-					update c_invoiceline
-						 set gross_unit_price = grosspricestd,
-								 line_gross_amount = grosspricestd * qtyinvoiced,
-								 priceactual = c_get_net_price_from_gross(Cur_Order.c_tax_id, grosspricestd, grosspricestd, v_precision, 1),
-								 linenetamt = c_get_net_price_from_gross(Cur_Order.c_tax_id, grosspricestd * qtyinvoiced, grosspricestd * qtyinvoiced, v_precision, 1)
-					 where c_invoiceline_id = Cur_Order.id;
-				else
-					update c_invoiceline
-						 set priceactual = pricestd,
-								 linenetamt = pricestd * qtyinvoiced
-					 where c_invoiceline_id = Cur_Order.id;
-				end if;
-
-				delete from c_invoiceline_offer
+			if (v_taxIncluded = 'Y') then
+				update c_invoiceline
+					 set gross_unit_price = grosspricestd,
+							 line_gross_amount = round(grosspricestd * qtyinvoiced, v_stdPrecision),
+							 priceactual = c_get_net_price_from_gross(Cur_Order.c_tax_id, round(grosspricestd * qtyordered, v_stdPrecision), round(grosspricestd * qtyordered, v_stdPrecision), v_precision, qtyordered),
+							 linenetamt = round(c_get_net_price_from_gross(Cur_Order.c_tax_id, round(grosspricestd * qtyordered, v_stdPrecision), round(grosspricestd * qtyordered, v_stdPrecision), v_precision, qtyordered) * qtyordered, v_stdPrecision)
 				 where c_invoiceline_id = Cur_Order.id;
-      end if;
+			else
+				update c_invoiceline
+					 set priceactual = pricestd,
+							 linenetamt = round(pricestd * qtyinvoiced, v_stdPrecision)
+				 where c_invoiceline_id = Cur_Order.id;
+			end if;
+
+			delete from c_invoiceline_offer
+			 where c_invoiceline_id = Cur_Order.id;
 		end if;
 
 		if (p_type = 'I' and cur_order.from_order is not null) then
