@@ -34,6 +34,7 @@
   Cur_Parameter RECORD;
   Cur_Stock RECORD;
   Cur_MStock RECORD;
+  cur_warehouse RECORD;
 
   -- Parameter Variables
   v_Quantity NUMBER(10);
