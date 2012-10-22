@@ -48,6 +48,7 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.OBError;
@@ -300,6 +301,7 @@ public class AddTransaction extends HttpSecureAppServlet {
     xmlDocument.setParameter("orgId", strOrgId);
     xmlDocument.setParameter("finFinancialAccountId", strFinancialAccountId);
     xmlDocument.setParameter("finBankStatementLineId", strBankStatementLineId);
+    String transactionType = "P";
     if (!"".equals(strBankStatementLineId)) {
       FIN_BankStatementLine bsl = OBDal.getInstance().get(FIN_BankStatementLine.class,
           strBankStatementLineId);
@@ -312,14 +314,42 @@ public class AddTransaction extends HttpSecureAppServlet {
       xmlDocument.setParameter("depositAmountGLItem", bsl.getCramount().toString());
       xmlDocument.setParameter("paymentAmountGLItem", bsl.getDramount().toString());
       xmlDocument.setParameter("mainDate", dateFormater.format(bsl.getTransactionDate()));
-
+      String bslDescription = !"".equals(bsl) ? bsl.getDescription() : "";
+      String strDescription = !"".equals(bsl.getBpartnername()) ? bsl.getBpartnername() + "\n"
+          + bslDescription : bslDescription;
+      xmlDocument.setParameter("GLItemDescription", strDescription);
+      xmlDocument.setParameter("FeeDescription", strDescription);
+      if (bsl.getGLItem() != null) {
+        transactionType = "GL";
+        xmlDocument.setParameter("GLItemID", bsl.getGLItem().getId());
+        xmlDocument.setParameter("GLItemName", bsl.getGLItem().getIdentifier());
+      }
+      if (bsl.getBusinessPartner() != null) {
+        xmlDocument.setParameter("BPartnerID", bsl.getBusinessPartner().getId());
+        xmlDocument.setParameter("BPartnerName", bsl.getBusinessPartner().getIdentifier());
+      }
     } else {
       xmlDocument.setParameter("depositAmount", BigDecimal.ZERO.toString());
       xmlDocument.setParameter("paymentAmount", BigDecimal.ZERO.toString());
       xmlDocument.setParameter("depositAmountGLItem", BigDecimal.ZERO.toString());
       xmlDocument.setParameter("paymentAmountGLItem", BigDecimal.ZERO.toString());
-    }
+      xmlDocument.setParameter("GLItemDescription", "");
+      xmlDocument.setParameter("FeeDescription", "");
 
+    }
+    try {
+      String Transaction_Type_AddTransaction_Reference_ID = "C1B4345A1F8841C2B1ADD403CA733D75";
+      ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
+          Transaction_Type_AddTransaction_Reference_ID, "", Utility.getContext(this, vars,
+              "#AccessibleOrgTree", "AddTransaction"), Utility.getContext(this, vars,
+              "#User_Client", "AddTransaction"), 0);
+      Utility.fillSQLParameters(this, vars, null, comboTableData, "AddTransaction", "");
+      xmlDocument.setData("reportTransactionType", "liststructure", comboTableData.select(false));
+      comboTableData = null;
+    } catch (Exception ex) {
+      throw new ServletException(ex);
+    }
+    xmlDocument.setParameter("transactionType", transactionType);
     // Accounting Dimensions
     final String strElement_BP = Utility.getContext(this, vars, "$Element_BP", strWindowId);
     final String strElement_PR = Utility.getContext(this, vars, "$Element_PR", strWindowId);

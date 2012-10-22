@@ -383,13 +383,16 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
         OBCriteria<BusinessPartner> obcBP = OBDal.getInstance().createCriteria(
             BusinessPartner.class);
         obcBP.add(Restrictions.eq(BusinessPartner.PROPERTY_NAME, bsline.getBpartnername()));
+        obcBP.setMaxResults(1);
         if (obcBP.list() != null && obcBP.list().size() > 0) {
-          xmlDocument.setParameter("businessPartner", obcBP.list().get(0).getIdentifier());
+          xmlDocument.setParameter("businessPartner", obcBP.list().get(0).getId());
+          xmlDocument.setParameter("businessPartnerName", obcBP.list().get(0).getName());
           defaultPaymentMethod = (obcBP.list().get(0).getPaymentMethod() != null) ? obcBP.list()
               .get(0).getPaymentMethod().getId() : "";
         }
       } else {
-        xmlDocument.setParameter("businessPartner", bsline.getBusinessPartner().getIdentifier());
+        xmlDocument.setParameter("businessPartner", bsline.getBusinessPartner().getId());
+        xmlDocument.setParameter("businessPartnerName", bsline.getBusinessPartner().getName());
       }
     }
     // Take payment date from the add transaction popup

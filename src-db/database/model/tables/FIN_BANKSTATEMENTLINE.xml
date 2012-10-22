@@ -77,6 +77,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="C_GLITEM_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="FIN_BANKSTATLINE_ADCLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -85,6 +89,9 @@
       </foreign-key>
       <foreign-key foreignTable="C_BPARTNER" name="FIN_BANKSTATLINE_CBPARTNER">
         <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_GLITEM" name="FIN_BANKSTATLINE_CGLITEM">
+        <reference local="C_GLITEM_ID" foreign="C_GLITEM_ID"/>
       </foreign-key>
       <foreign-key foreignTable="FIN_FINACC_TRANSACTION" name="FIN_BANKSTATLINE_FINACCTRX">
         <reference local="FIN_FINACC_TRANSACTION_ID" foreign="FIN_FINACC_TRANSACTION_ID"/>

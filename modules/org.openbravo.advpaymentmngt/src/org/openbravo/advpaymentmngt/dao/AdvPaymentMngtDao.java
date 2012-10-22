@@ -1241,8 +1241,29 @@ public class AdvPaymentMngtDao {
         obc.add(Restrictions.eq(FIN_PaymentMethod.PROPERTY_PAYOUTALLOW, true));
       }
     }
-
+    obc.addOrderBy(FIN_PaymentMethod.PROPERTY_NAME, true);
     return obc.list();
+  }
+
+  public String getDefaultPaymentMethodId(FIN_FinancialAccount account, boolean paymentIn) {
+    final OBCriteria<FinAccPaymentMethod> obc = OBDal.getInstance().createCriteria(
+        FinAccPaymentMethod.class);
+    obc.createAlias(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, "pm");
+    obc.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, account));
+    obc.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_DEFAULT, true));
+    if (paymentIn) {
+      obc.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYINALLOW, true));
+    } else {
+      obc.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYOUTALLOW, true));
+    }
+    obc.addOrder(org.hibernate.criterion.Order.asc("pm." + FIN_PaymentMethod.PROPERTY_NAME));
+    obc.setFilterOnReadableOrganization(false);
+    List<FinAccPaymentMethod> defaults = obc.list();
+    if (defaults.size() > 0) {
+      return obc.list().get(0).getPaymentMethod().getId();
+    } else {
+      return "";
+    }
   }
 
   private void addPaymentMethodList(OBCriteria obc, List<String> paymentMethods) {

@@ -422,11 +422,16 @@ public class FIN_Utility {
       String strFinancialAccountId, String strOrgId, boolean isMandatory,
       boolean excludePaymentMethodWithoutAccount, boolean isInPayment) {
     dao = new AdvPaymentMngtDao();
+    String selectedPaymentMethodId = strPaymentMethodId;
     List<FIN_PaymentMethod> paymentMethods = dao.getFilteredPaymentMethods(strFinancialAccountId,
         strOrgId, excludePaymentMethodWithoutAccount,
         isInPayment ? AdvPaymentMngtDao.PaymentDirection.IN
             : AdvPaymentMngtDao.PaymentDirection.OUT);
-    String options = getOptionsList(paymentMethods, strPaymentMethodId, isMandatory);
+    if ("".equals(selectedPaymentMethodId) && !"".equals(strFinancialAccountId)) {
+      selectedPaymentMethodId = dao.getDefaultPaymentMethodId(
+          OBDal.getInstance().get(FIN_FinancialAccount.class, strFinancialAccountId), isInPayment);
+    }
+    String options = getOptionsList(paymentMethods, selectedPaymentMethodId, isMandatory);
     return options;
   }
 

@@ -141,7 +141,7 @@ public class FIN_BankStatementProcess implements org.openbravo.scheduling.Proces
 
     // If no previous bank statement is found get the ending date of the last reconciliation
     FIN_Reconciliation rec = org.openbravo.advpaymentmngt.dao.TransactionsDao
-        .getLastReconciliation(account, null);
+        .getLastReconciliation(account, "Y");
     org.openbravo.dal.core.OBContext.setAdminMode(true);
     try {
       return (rec == null) ? null : rec.getEndingDate();

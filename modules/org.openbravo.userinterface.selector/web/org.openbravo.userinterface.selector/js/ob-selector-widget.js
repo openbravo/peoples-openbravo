@@ -603,7 +603,12 @@ isc.OBSelectorWidget.addProperties({
   // form, suggestion box and popup modal and grid components.
   initWidget: function () {
 
-    var baseTestRegistryName = 'org.openbravo.userinterface.selector.' + this.openbravoField + '.';
+    var baseTestRegistryName = 'org.openbravo.userinterface.selector.' + this.openbravoField + '.',
+        initialValueMap = {};
+
+    if (this.openbravoField.value) {
+      initialValueMap[this.openbravoField.value] = this.openbravoField.getAttribute('identifier');
+    }
 
     // Do not destroy dataSource after creation
     // https://issues.openbravo.com/view.php?id=18456
@@ -626,8 +631,7 @@ isc.OBSelectorWidget.addProperties({
       shouldSaveValue: false,
       validateOnChange: true,
       completeOnTab: true,
-
-      valueMap: {},
+      valueMap: initialValueMap,
       icons: [{
         selector: this,
         showFocused: true,
@@ -784,6 +788,7 @@ isc.OBSelectorWidget.addProperties({
     } else {
       this.selectorField.textBoxStyle = isc.OBSelectorWidget.styling.selectorFieldTextBoxStyle;
     }
+
     this.selectorField.setValue(this.openbravoField.value);
     this.initialValue = this.selectorField.getValue();
 
