@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Tax;
 import org.openbravo.erpCommon.utility.DateTimeData;
@@ -96,8 +97,15 @@ public class CopyFromPOOrder extends HttpSecureAppServlet {
       CopyFromPOOrderData[] data = CopyFromPOOrderData.selectLines(this, strOrder);
       CopyFromPOOrderData[] orderData = CopyFromPOOrderData.select(this, strKey);
       Order order = OBDal.getInstance().get(Order.class, strKey);
-      int stdPrecision = order.getCurrency().getStandardPrecision().intValue();
-      int pricePrecision = order.getCurrency().getPricePrecision().intValue();
+      int stdPrecision = 0;
+      int pricePrecision = 0;
+      OBContext.setAdminMode(true);
+      try {
+        stdPrecision = order.getCurrency().getStandardPrecision().intValue();
+        pricePrecision = order.getCurrency().getPricePrecision().intValue();
+      } finally {
+        OBContext.restorePreviousMode();
+      }
 
       for (i = 0; data != null && i < data.length; i++) {
         CopyFromPOOrderData[] data3 = CopyFromPOOrderData.selectPriceForProduct(this,
