@@ -8,28 +8,28 @@
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
-	<style name="default" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="11"/>
-	<style name="Report_Title" fontName="Bitstream Vera Sans" fontSize="18"/>
-	<style name="Report_Subtitle" forecolor="#555555" fontName="Bitstream Vera Sans" fontSize="14"/>
-	<style name="Total_Field" mode="Opaque" forecolor="#000000" backcolor="#CCCCCC" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="11" isBold="true"/>
-	<style name="Detail_Header" mode="Opaque" forecolor="#FFFFFF" backcolor="#5D5D5D" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="11" isBold="true"/>
-	<style name="GroupHeader_DarkGray" mode="Opaque" forecolor="#FFFFFF" backcolor="#555555" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="18" isBold="true"/>
+	<style name="default" vAlign="Middle" fontName="DejaVu Sans" fontSize="11"/>
+	<style name="Report_Title" fontName="DejaVu Sans" fontSize="18"/>
+	<style name="Report_Subtitle" forecolor="#555555" fontName="DejaVu Sans" fontSize="14"/>
+	<style name="Total_Field" mode="Opaque" forecolor="#000000" backcolor="#CCCCCC" vAlign="Middle" fontName="DejaVu Sans" fontSize="11" isBold="true"/>
+	<style name="Detail_Header" mode="Opaque" forecolor="#FFFFFF" backcolor="#5D5D5D" vAlign="Middle" fontName="DejaVu Sans" fontSize="11" isBold="true"/>
+	<style name="GroupHeader_DarkGray" mode="Opaque" forecolor="#FFFFFF" backcolor="#555555" vAlign="Middle" fontName="DejaVu Sans" fontSize="18" isBold="true"/>
 	<style name="GroupHeader_Gray" mode="Opaque" backcolor="#999999"/>
-	<style name="Detail_Line" fontName="Bitstream Vera Sans" fontSize="11">
+	<style name="Detail_Line" fontName="DejaVu Sans" fontSize="11">
 		<conditionalStyle>
 			<conditionExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue()%2==1)]]></conditionExpression>
 			<style mode="Opaque" backcolor="#CCCCCC"/>
 		</conditionalStyle>
 	</style>
 	<style name="Total_Gray" mode="Opaque" forecolor="#000000" backcolor="#CCCCCC"/>
-	<style name="Report_Data_Label" fontName="Bitstream Vera Sans" fontSize="11" isBold="true"/>
-	<style name="Report_Data_Field" fontName="Bitstream Vera Sans" fontSize="11" isBold="false"/>
-	<style name="Report_Footer" isDefault="true" fontName="Bitstream Vera Sans" fontSize="11"/>
-	<style name="Group_Data_Label" fontName="Bitstream Vera Sans" fontSize="14" isBold="true"/>
-	<style name="Group_Data_Field" fontName="Bitstream Vera Sans" fontSize="14"/>
-	<style name="Detail_Data_Label" mode="Opaque" backcolor="#CCCCCC" fontName="Bitstream Vera Sans" fontSize="11" isBold="true"/>
-	<style name="Detail_Data_Field" mode="Opaque" backcolor="#CCCCCC" fontName="Bitstream Vera Sans" fontSize="11"/>
-	<style name="Group_Footer" fontName="Bitstream Vera Sans" fontSize="11" isBold="true"/>
+	<style name="Report_Data_Label" fontName="DejaVu Sans" fontSize="11" isBold="true"/>
+	<style name="Report_Data_Field" fontName="DejaVu Sans" fontSize="11" isBold="false"/>
+	<style name="Report_Footer" isDefault="true" fontName="DejaVu Sans" fontSize="11"/>
+	<style name="Group_Data_Label" fontName="DejaVu Sans" fontSize="14" isBold="true"/>
+	<style name="Group_Data_Field" fontName="DejaVu Sans" fontSize="14"/>
+	<style name="Detail_Data_Label" mode="Opaque" backcolor="#CCCCCC" fontName="DejaVu Sans" fontSize="11" isBold="true"/>
+	<style name="Detail_Data_Field" mode="Opaque" backcolor="#CCCCCC" fontName="DejaVu Sans" fontSize="11"/>
+	<style name="Group_Footer" fontName="DejaVu Sans" fontSize="11" isBold="true"/>
 	<parameter name="Subtitle" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="NUMBERFORMAT" class="java.text.DecimalFormat" isForPrompting="false">
 		<defaultValueExpression><![CDATA[new DecimalFormat("#,##0.00",new DecimalFormatSymbols(Locale.US))]]></defaultValueExpression>
@@ -115,7 +115,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Left">
-					<font fontName="SansSerif" size="12"/>
+					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{Subtitle}]]></textFieldExpression>
 			</textField>
@@ -128,7 +128,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement>
-					<font fontName="SansSerif" size="12" isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font fontName="DejaVu Sans" size="12" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
 				<text><![CDATA[Journal Entries Report]]></text>
 			</staticText>
@@ -141,7 +141,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="8"/>
+					<font fontName="DejaVu Sans" size="8"/>
 				</textElement>
 				<text><![CDATA[Printed on]]></text>
 			</staticText>
@@ -154,7 +154,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="Bitstream Vera Sans" size="8"/>
+					<font fontName="DejaVu Sans" size="8"/>
 				</textElement>
 				<textFieldExpression class="java.util.Date"><![CDATA[new Date()]]></textFieldExpression>
 			</textField>
@@ -171,7 +171,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement>
-					<font fontName="SansSerif" size="8" isBold="true"/>
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Entry]]></text>
 			</staticText>
@@ -184,7 +184,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement>
-					<font fontName="SansSerif" size="8" isBold="true"/>
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Date]]></text>
 			</staticText>
@@ -197,7 +197,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="SansSerif" size="8" isBold="true"/>
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Account No]]></text>
 			</staticText>
@@ -210,7 +210,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="SansSerif" size="8" isBold="true"/>
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Name]]></text>
 			</staticText>
@@ -223,7 +223,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="8" isBold="true"/>
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Debit]]></text>
 			</staticText>
@@ -236,14 +236,14 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="8" isBold="true"/>
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Credit]]></text>
 			</staticText>
 			<staticText>
 				<reportElement mode="Opaque" x="91" y="9" width="125" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single" markup="none">
-					<font fontName="SansSerif" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<font fontName="DejaVu Sans" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 				</textElement>
 				<text><![CDATA[Document]]></text>
 			</staticText>
@@ -269,7 +269,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="8"/>
+					<font fontName="DejaVu Sans" size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{VALUE}]]></textFieldExpression>
 			</textField>
@@ -282,7 +282,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="SansSerif" size="8"/>
+					<font fontName="DejaVu Sans" size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{NAME}]]></textFieldExpression>
 			</textField>
@@ -295,7 +295,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="8"/>
+					<font fontName="DejaVu Sans" size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[($F{AMTACCTDR}!=null)?$P{NUMBERFORMAT}.format($F{AMTACCTDR}):new String(" ")]]></textFieldExpression>
 			</textField>
@@ -308,7 +308,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="8"/>
+					<font fontName="DejaVu Sans" size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[($F{AMTACCTCR}!=null)?$P{NUMBERFORMAT}.format($F{AMTACCTCR}):new String(" ")]]></textFieldExpression>
 			</textField>
@@ -323,7 +323,7 @@
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Left">
-						<font fontName="SansSerif" size="8" isBold="false"/>
+						<font fontName="DejaVu Sans" size="8" isBold="false"/>
 					</textElement>
 					<textFieldExpression class="java.math.BigDecimal"><![CDATA[($V{entry}!=null)?$V{entry}.add(new BigDecimal($P{InitialEntryNumber})).subtract(BigDecimal.ONE): BigDecimal.ONE]]></textFieldExpression>
 				</textField>
@@ -336,7 +336,7 @@
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Left">
-						<font fontName="SansSerif" size="8" isBold="false" pdfFontName="Helvetica"/>
+						<font fontName="DejaVu Sans" size="8" isBold="false" pdfFontName="Helvetica"/>
 					</textElement>
 					<textFieldExpression class="java.util.Date"><![CDATA[$F{DATEACCT}]]></textFieldExpression>
 				</textField>
@@ -349,7 +349,7 @@
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font fontName="SansSerif" size="8" isBold="false"/>
+						<font fontName="DejaVu Sans" size="8" isBold="false"/>
 					</textElement>
 					<textFieldExpression class="java.lang.String"><![CDATA[$F{DOCNAME}]]></textFieldExpression>
 				</textField>
@@ -373,14 +373,14 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
-					<font fontName="SansSerif" size="8"/>
+					<font fontName="DejaVu Sans" size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA["Page "+new java.lang.Integer(($V{PAGE_NUMBER}.intValue()) +(Integer.parseInt($P{PageNo}))-(1)).toString()+" of "]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report">
 				<reportElement x="518" y="1" width="15" height="12"/>
 				<textElement verticalAlignment="Bottom">
-					<font fontName="SansSerif" size="8"/>
+					<font fontName="DejaVu Sans" size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Integer"><![CDATA[new java.lang.Integer($V{PAGE_NUMBER})]]></textFieldExpression>
 			</textField>
@@ -394,7 +394,7 @@
 			<textField evaluationTime="Report">
 				<reportElement x="518" y="2" width="16" height="12"/>
 				<textElement verticalAlignment="Bottom">
-					<font fontName="SansSerif" size="8"/>
+					<font fontName="DejaVu Sans" size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Integer"><![CDATA[new java.lang.Integer($V{PAGE_NUMBER})]]></textFieldExpression>
 			</textField>
@@ -407,7 +407,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
-					<font fontName="SansSerif" size="8"/>
+					<font fontName="DejaVu Sans" size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA["Page "+new java.lang.Integer(($V{PAGE_NUMBER}.intValue()) +(Integer.parseInt($P{PageNo}))-(1)).toString()+" of "]]></textFieldExpression>
 			</textField>
