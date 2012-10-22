@@ -59,14 +59,16 @@ enyo.kind({
     }, this);
   },
   init: function(model) {
-    var att;
     this.model = model;
     this.model.get('order').get('lines').on('selected', function(lineSelected) {
+      var diff, att;
       this.currentLine = lineSelected;
       if (lineSelected) {
-        var diff = lineSelected.attributes;
+        diff = lineSelected.attributes;
         for (att in diff) {
-          this.loadValue(att);
+          if (diff.hasOwnProperty(att)) {
+            this.loadValue(att);
+          }
         }
       }
     }, this);

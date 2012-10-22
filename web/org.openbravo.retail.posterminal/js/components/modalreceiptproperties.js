@@ -57,12 +57,14 @@ enyo.kind({
     }, this);
   },
   init: function(model) {
-    var att;
     this.model = model;
     this.model.get('order').bind('change', function() {
-      var diff = this.model.get('order').changedAttributes();
+      var diff = this.model.get('order').changedAttributes(),
+      att;
       for (att in diff) {
-        this.loadValue(att);
+        if(diff.hasOwnProperty(att)){
+          this.loadValue(att);
+        }
       }
     }, this);
   }

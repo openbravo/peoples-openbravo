@@ -73,12 +73,12 @@
       }
 
       if (!this.get('searchKey')) {
-        nameLength = this.get('name').length;
+        nameLength = this.get('name').toString().length;
         newSk = this.get('name');
-        if (length > 25) {
+        if (nameLength > 25) {
           newSk = this.get('name').substring(0, 25);
         }
-        newSk = newSk + '_' + new Date().getFullYear() + '' + (new Date().getMonth() + 1) + '' + new Date().getDate() + '_' + new Date().getHours() + '' + new Date().getMinutes();
+        newSk = newSk + '_' + (new Date().getFullYear().toString()) + ((new Date().getMonth() + 1).toString()) + (new Date().getDate().toString()) + '_' + (new Date().getHours().toString()) + (new Date().getMinutes().toString());
         this.set('searchKey', newSk);
       }
 

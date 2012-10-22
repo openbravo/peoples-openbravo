@@ -710,7 +710,7 @@
     newPaidReceipt: function(model) {
       var order = new Order(),
           me = this,
-          documentseq, documentseqstr, bp, newline, lines, prod, payments, curPayment, taxes, paymentProp, taxProp;
+          documentseq, documentseqstr, bp, newline, lines, prod, payments, curPayment, taxes;
       this.lines = new Backbone.Collection();
       order.set('documentNo', model.documentNo);
       order.set('isPaid', true);
@@ -752,9 +752,12 @@
       //order.set('payments', model.receiptPayments);
       payments = new PaymentLineList();
       _.each(model.receiptPayments, function(iter) {
+        var paymentProp;
         curPayment = new PaymentLine();
         for (paymentProp in iter) {
-          curPayment.set(paymentProp, iter[paymentProp]);
+          if (iter.hasOwnProperty(paymentProp)) {
+            curPayment.set(paymentProp, iter[paymentProp]);
+          }
         }
         payments.add(curPayment);
       });
@@ -763,9 +766,12 @@
 
       taxes = {};
       _.each(model.receiptTaxes, function(iter) {
+        var taxProp;
         taxes[iter.taxid] = {};
         for (taxProp in iter) {
-          taxes[iter.taxid][taxProp] = iter[taxProp];
+          if (iter.hasOwnProperty(taxProp)) {
+            taxes[iter.taxid][taxProp] = iter[taxProp];
+          }
         }
       });
       order.set('taxes', taxes);
