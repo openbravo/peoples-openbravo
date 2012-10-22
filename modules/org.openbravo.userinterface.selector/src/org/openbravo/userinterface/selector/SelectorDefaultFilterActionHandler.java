@@ -29,9 +29,14 @@ import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.base.model.Entity;
+import org.openbravo.base.model.ModelProvider;
+import org.openbravo.base.model.Property;
+import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.application.OBBindings;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.client.kernel.KernelConstants;
+import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
@@ -61,6 +66,9 @@ public class SelectorDefaultFilterActionHandler extends BaseActionHandler {
       String selectorId = params.get("_selectorDefinitionId");
 
       Selector sel = OBDal.getInstance().get(Selector.class, selectorId);
+      final String entityName = sel.getTable().getName();
+      final Entity entity = ModelProvider.getInstance().getEntity(entityName);
+
       OBCriteria<SelectorField> obc = OBDal.getInstance().createCriteria(SelectorField.class);
       obc.add(Restrictions.eq(SelectorField.PROPERTY_OBUISELSELECTOR, sel));
       obc.add(Restrictions.isNotNull(SelectorField.PROPERTY_DEFAULTEXPRESSION));
@@ -81,6 +89,20 @@ public class SelectorDefaultFilterActionHandler extends BaseActionHandler {
         try {
           exprResult = engine.eval(f.getDefaultExpression());
 
+          if (exprResult != null && !exprResult.equals("") && !exprResult.equals("''")) {
+            Property property = null;
+            if (f.getColumn() != null) {
+              property = KernelUtils.getInstance().getPropertyFromColumn(f.getColumn());
+            } else if (f.getProperty() != null) {
+              property = DalUtil.getPropertyFromPath(entity, f.getProperty());
+            }
+            if (property != null && property.getTargetEntity() != null && !property.isOneToMany()) {
+              final BaseOBObject bob = OBDal.getInstance().get(
+                  property.getTargetEntity().getName(), exprResult);
+              exprResult = bob.getIdentifier();
+            }
+          }
+
           if (sel.isCustomQuery()) {
             result.put(f.getDisplayColumnAlias().replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR),
                 exprResult);
@@ -94,6 +116,15 @@ public class SelectorDefaultFilterActionHandler extends BaseActionHandler {
                   + f.getDisplayColumnAlias() + ": " + e.getMessage(), e);
         }
       }
+
+      // Obtaining the filter Expression from Selector. Refer issue
+      // https://issues.openbravo.com/view.php?id=21541
+      Object dynamicFilterExpression = null;
+      if (sel.getFilterExpression() != null) {
+        dynamicFilterExpression = engine.eval(sel.getFilterExpression());
+        result.put("filterExpression", dynamicFilterExpression.toString());
+      }
+
     } catch (Exception e) {
       log.error("Error generating Default Filter action result: " + e.getMessage(), e);
     } finally {

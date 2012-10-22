@@ -141,7 +141,7 @@ isc.OBPickAndExecuteGrid.addProperties({
         formFld = form.getField(gridFld.name);
         value = editRecord[gridFld.name];
         identifier = editRecord[gridFld.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER];
-        if (value && identifier) {
+        if (formFld && value && identifier) {
           if (formFld.setEntry) {
             formFld.setEntry(value, identifier);
           } else {

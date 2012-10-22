@@ -142,7 +142,8 @@
         and c_elementvalue.c_element_id = c_acctschema_element.c_element_id
         and not exists (select 1 from c_validcombination
                                         where c_validcombination.account_id = c_elementvalue.c_elementvalue_id
-                                        and isactive='Y')
+                                        and isactive='Y'
+                                        and c_validcombination.c_acctschema_id = c_acctschema_element.c_acctschema_id)
       ]]>
     </Sql>
   </SqlMethod>

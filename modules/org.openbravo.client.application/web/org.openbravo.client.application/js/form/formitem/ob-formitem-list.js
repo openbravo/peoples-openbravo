@@ -36,6 +36,10 @@ isc.OBListItem.addProperties({
   // textMatchStyle is used for the client-side picklist
   textMatchStyle: 'substring',
 
+  pickListProperties: {
+    showHeaderContextMenu: false
+  },
+
   // NOTE: Setting this property to false fixes the issue when using the mouse
   // to pick a value
   // FIXME: Sometimes the field label gets a red color (a blink)
@@ -94,10 +98,6 @@ isc.OBListItem.addProperties({
     }
   },
 
-  pickListProperties: {
-    showHeaderContextMenu: false
-  },
-
   // to solve: https://issues.openbravo.com/view.php?id=17800
   // in chrome the order of the valueMap object is not retained
   // the solution is to keep a separate entries array with the
@@ -145,10 +145,29 @@ isc.OBListItem.addProperties({
 
   // prevent ids from showing up
   mapValueToDisplay: function (value) {
-    var ret = this.Super('mapValueToDisplay', arguments);
-    if (this.valueMap && this.valueMap[value]) {
-      this.lastSelectedValue = value;
-      return this.valueMap[value];
+    var i, ret = this.Super('mapValueToDisplay', arguments),
+        result;
+
+    // the datasource should handle it
+    if (this.optionDataSource) {
+      return ret;
+    }
+
+    if (this.valueMap) {
+      // handle multi-select
+      if (isc.isA.Array(value)) {
+        this.lastSelectedValue = value;
+        for (i = 0; i < value.length; i++) {
+          if (i > 0) {
+            result += this.multipleValueSeparator;
+          }
+          // encode or and and
+          result += OB.Utilities.encodeSearchOperator(this.Super('mapValueToDisplay', value[i]));
+        }
+      } else if (this.valueMap[value]) {
+        this.lastSelectedValue = value;
+        return this.valueMap[value];
+      }
     }
 
     if (ret === value && this.isDisabled()) {
@@ -168,7 +187,24 @@ isc.OBListItem.addProperties({
     return ret;
   },
 
+  isUnknownValue: function (value) {
+    var i, array;
+    if (!value || !this.multiple || !value.contains(this.multipleValueSeparator)) {
+      return this.Super('isUnknownValue', arguments);
+    }
+    // handle multi-select
+    array = value.split(this.multipleValueSeparator);
+    for (i = 0; i < array.length; i++) {
+      if (this.isUnknownValue(array[i])) {
+        return true;
+      }
+    }
+    return false;
+  },
+
   mapDisplayToValue: function (display) {
+    var i, array, result;
+
     if (display === '') {
       return null;
     }
@@ -177,8 +213,15 @@ isc.OBListItem.addProperties({
       // entries in the valuemap with the same value
       // See issue https://issues.openbravo.com/view.php?id=21553
       return this.lastSelectedValue;
-    } else {
+    } else if (!display || !this.multiple || !display.contains(this.multipleValueSeparator)) {
       return this.Super('mapDisplayToValue', arguments);
+    } else {
+      array = display.split(this.multipleValueSeparator);
+      result = [];
+      for (i = 0; i < array.length; i++) {
+        result.add(this.Super('mapDisplayToValue', [array[i]]));
+      }
+      return result;
     }
   }
 

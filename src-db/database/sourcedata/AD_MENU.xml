@@ -1971,8 +1971,8 @@
 <!--800005-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800005-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800005-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800005-->  <NAME><![CDATA[General Ledger Journal]]></NAME>
-<!--800005-->  <DESCRIPTION><![CDATA[General ledger journal]]></DESCRIPTION>
+<!--800005-->  <NAME><![CDATA[Journal Entries Report]]></NAME>
+<!--800005-->  <DESCRIPTION><![CDATA[Journal Entries Report]]></DESCRIPTION>
 <!--800005-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--800005-->  <ACTION><![CDATA[R]]></ACTION>
 <!--800005-->  <AD_PROCESS_ID><![CDATA[800000]]></AD_PROCESS_ID>
@@ -2257,7 +2257,7 @@
 <!--800042-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800042-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800042-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800042-->  <NAME><![CDATA[Trial Balance Report]]></NAME>
+<!--800042-->  <NAME><![CDATA[Trial Balance]]></NAME>
 <!--800042-->  <DESCRIPTION><![CDATA[Trial Balance Report]]></DESCRIPTION>
 <!--800042-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--800042-->  <ACTION><![CDATA[R]]></ACTION>

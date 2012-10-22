@@ -376,7 +376,7 @@ isc.OBGrid.addProperties({
     // prevent this as we get the datasource later it is not 
     // yet set
     getEditorProperties: function (field) {
-      var noDataSource = field.displayField && !field.optionDataSource,
+      var noDataSource = !field.optionDataSource,
           ret = this.Super('getEditorProperties', arguments);
       if (ret.optionDataSource && noDataSource) {
         delete ret.optionDataSource;
@@ -719,10 +719,8 @@ isc.ClassFactory.defineClass('OBGridSummary', isc.OBGrid);
 isc.OBGridSummary.addProperties({
   getCellStyle: function (record, rowNum, colNum) {
     var field = this.getField(colNum);
-    if (field.summaryFunction === 'sum' && this.summaryRowStyle_sum) {
-      return this.summaryRowStyle_sum;
-    } else if (field.summaryFunction === 'avg' && this.summaryRowStyle_avg) {
-      return this.summaryRowStyle_avg;
+    if (field.summaryFunction && this['summaryRowStyle_' + field.summaryFunction]) {
+      return this['summaryRowStyle_' + field.summaryFunction];
     } else {
       return this.summaryRowStyle;
     }

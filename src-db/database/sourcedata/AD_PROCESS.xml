@@ -2025,9 +2025,9 @@ NOTE: You will not be able to close the fiscal year if you close all its periods
 <!--800000-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800000-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800000-->  <VALUE><![CDATA[RV_GeneralLedgerJournal]]></VALUE>
-<!--800000-->  <NAME><![CDATA[General Ledger Journal]]></NAME>
-<!--800000-->  <DESCRIPTION><![CDATA[General ledger journal]]></DESCRIPTION>
-<!--800000-->  <HELP><![CDATA[The General Ledger Journal report lists every accounting entry of an accounting schema within a given period of time.]]></HELP>
+<!--800000-->  <NAME><![CDATA[Journal Entries Report]]></NAME>
+<!--800000-->  <DESCRIPTION><![CDATA[Journal Entries Report]]></DESCRIPTION>
+<!--800000-->  <HELP><![CDATA[The Journal Entries Report lists every accounting entry of an accounting schema within a given period of time.]]></HELP>
 <!--800000-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--800000-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--800000-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
@@ -2493,7 +2493,7 @@ The ledger accounting entries created by the Fiscal Year closing process are:
 <!--800039-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800039-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800039-->  <VALUE><![CDATA[ReportTrialBalance]]></VALUE>
-<!--800039-->  <NAME><![CDATA[Trial Balance Report]]></NAME>
+<!--800039-->  <NAME><![CDATA[Trial Balance]]></NAME>
 <!--800039-->  <DESCRIPTION><![CDATA[Trial Balance Report]]></DESCRIPTION>
 <!--800039-->  <HELP><![CDATA[Trial Balance Report shows totalized debit balances and credit balances to confirm that total debits equals total credits. ]]></HELP>
 <!--800039-->  <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
@@ -3627,9 +3627,9 @@ Depending on the configuration of the Cost Center the process will also calculat
 <!--800133-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800133-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800133-->  <VALUE><![CDATA[RV_ReportGeneralLedgerJournalDetail]]></VALUE>
-<!--800133-->  <NAME><![CDATA[General Ledger Journal Detail]]></NAME>
-<!--800133-->  <DESCRIPTION><![CDATA[Report general ledger journal detail]]></DESCRIPTION>
-<!--800133-->  <HELP><![CDATA[Report general ledger journal detail]]></HELP>
+<!--800133-->  <NAME><![CDATA[Journal Entries Report Detail]]></NAME>
+<!--800133-->  <DESCRIPTION><![CDATA[Journal Entries Report detail]]></DESCRIPTION>
+<!--800133-->  <HELP><![CDATA[Journal Entries Report detail]]></HELP>
 <!--800133-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--800133-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--800133-->  <ISREPORT><![CDATA[Y]]></ISREPORT>

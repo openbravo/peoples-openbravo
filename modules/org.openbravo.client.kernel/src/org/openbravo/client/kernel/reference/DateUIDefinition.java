@@ -142,6 +142,9 @@ public class DateUIDefinition extends UIDefinition {
         + "return OB.Utilities.Date.JSToOB(value, " + getClientFormatObject() + ");" + "},"
         + "createClassicString: function(value) {" + "return OB.Utilities.Date.JSToOB(value, "
         + getClientFormatObject() + ");" + "},");
+    sb.append("getGroupingModes: isc.SimpleType.getType('date').getGroupingModes,");
+    sb.append("getGroupValue: isc.SimpleType.getType('date').getGroupValue,");
+    sb.append("getGroupTitle: isc.SimpleType.getType('date').getGroupTitle,");
     return sb.toString();
   }
 

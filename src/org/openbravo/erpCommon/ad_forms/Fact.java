@@ -192,11 +192,15 @@ public class Fact {
     if (strNegate.equals("N") && (DebitAmt.compareTo(ZERO) < 0 || CreditAmt.compareTo(ZERO) < 0)) {
       if (DebitAmt.compareTo(ZERO) < 0) {
         CreditAmt = CreditAmt.add(DebitAmt.abs());
+        creditAmt = CreditAmt.toString();
         DebitAmt = BigDecimal.ZERO;
+        debitAmt = DebitAmt.toString();
       }
       if (CreditAmt.compareTo(ZERO) < 0) {
         DebitAmt = DebitAmt.add(CreditAmt.abs());
+        debitAmt = DebitAmt.toString();
         CreditAmt = BigDecimal.ZERO;
+        creditAmt = CreditAmt.toString();
       }
       // If this is a manual entry then we need to recompute Amounts which were set in loadLines for
       // GL Journal Document

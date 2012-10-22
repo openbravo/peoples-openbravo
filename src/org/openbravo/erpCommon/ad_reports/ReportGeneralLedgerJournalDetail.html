@@ -42,29 +42,29 @@
 
 
 </script>
-	<script language="JavaScript" type="text/javascript">
-	function onLoadDo(){
-		this.windowTables = new Array(
-		  new windowTableId('client', 'fieldValue')
-		);
-		setWindowTableParentElement();
-		this.tabsTables = new Array(
-		  new tabTableId('tdtopTabs')
-		);
-		setTabTableParentElement();
-		enableShortcuts('edition');
-		setBrowserAutoComplete(false);
-		
-		xx();
-		resizeArea()
+    <script language="JavaScript" type="text/javascript">
+    function onLoadDo(){
+        this.windowTables = new Array(
+          new windowTableId('client', 'fieldValue')
+        );
+        setWindowTableParentElement();
+        this.tabsTables = new Array(
+          new tabTableId('tdtopTabs')
+        );
+        setTabTableParentElement();
+        enableShortcuts('edition');
+        setBrowserAutoComplete(false);
+        
+        xx();
+        resizeArea()
 
-		setWindowElementFocus('firstElement');	
-	}
+        setWindowElementFocus('firstElement');  
+    }
 
-	function onResizeDo(){
-		resizeArea();
-	}
-	</script>
+    function onResizeDo(){
+        resizeArea();
+    }
+    </script>
 </head>
 <body onload="onLoadDo();" onresize="onResizeDo();" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
 <form method="post" action="ReportGeneralLedgerJournalDetail.html" name="frmMain" >
@@ -211,10 +211,10 @@
                                 </tr>
                                 <tr class="DataGrid_Body_Row"> 
                                   <th width="8%" class="DataGrid_Header_Cell" >Account No.</th>
-                                  <th width="30%" class="DataGrid_Header_Cell" >NAME</th>
-                                  <th width="11%" class="DataGrid_Header_Cell" >DEBIT</th>
-                                  <th width="10%" class="DataGrid_Header_Cell" >CREDIT</th>
-                                  <th width="30%" class="DataGrid_Header_Cell" >DESCRIPTION</th>
+                                  <th width="30%" class="DataGrid_Header_Cell" style="text-align:left;">Name</th>
+                                  <th width="11%" class="DataGrid_Header_Cell" style="text-align:right;">Debit&nbsp</th>
+                                  <th width="10%" class="DataGrid_Header_Cell" style="text-align:right;">Credit&nbsp</th>
+                                  <th width="30%" class="DataGrid_Header_Cell" style="text-align:left;">Description</th>
                                 </tr>
                                 <div id="sectionDetail"> 
                                   <tr class="DataGrid_Body_Row DataGrid_Body_Row_yy" id="funcEvenOddRow1xx"> 
@@ -223,8 +223,8 @@
                                      <span style="display:yy" id="fieldValue2">XX12345</span>
                                     </td>
                                     <td width="30%" class="DataGrid_Body_Cell" id="fieldName">Accounts receivable - Trade</td>
-                                    <td width="10%" class="DataGrid_Body_Cell" id="fieldAmtacctdr" >xx14500.34</td>
-                                    <td width="10%" class="DataGrid_Body_Cell" id="fieldAmtacctcr">xx14500.34</td>
+                                    <td width="10%" class="DataGrid_Body_Cell" id="fieldAmtacctdr" style="text-align:right;">xx14500.34</td>
+                                    <td width="10%" class="DataGrid_Body_Cell" id="fieldAmtacctcr" style="text-align:right;">xx14500.34</td>
                                     <td width="30%" class="DataGrid_Body_Cell" id="fieldDescription">xxdescripcion</td>
                                   </tr>
                                 </div>

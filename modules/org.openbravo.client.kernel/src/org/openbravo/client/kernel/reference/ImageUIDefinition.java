@@ -45,6 +45,11 @@ public class ImageUIDefinition extends UIDefinition {
   }
 
   @Override
+  public String getGridFieldProperties(Field field) {
+    return super.getGridFieldProperties(field) + ", canGroupBy: false";
+  }
+
+  @Override
   public String getFieldProperties(Field field) {
     String fieldProperties = super.getFieldProperties(field);
     try {

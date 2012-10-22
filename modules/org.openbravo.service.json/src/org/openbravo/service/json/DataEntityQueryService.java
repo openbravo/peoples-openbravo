@@ -18,6 +18,8 @@
  */
 package org.openbravo.service.json;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -28,8 +30,11 @@ import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
+import org.openbravo.base.model.ModelProvider;
+import org.openbravo.base.model.Property;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.util.Check;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 
@@ -59,6 +64,11 @@ public class DataEntityQueryService {
 
   private boolean filterOnActive = true;
   private AdvancedQueryBuilder queryBuilder = new AdvancedQueryBuilder();
+
+  private String distinct;
+
+  private String summarySettings;
+  private List<String> summaryFields = new ArrayList<String>();
 
   /**
    * Count the records which fit in the filter criteria.
@@ -101,15 +111,41 @@ public class DataEntityQueryService {
     return qry.scroll(ScrollMode.FORWARD_ONLY);
   }
 
-  private OBQuery<BaseOBObject> buildOBQuery() {
+  /**
+   * Build an OBQuery object using the generated where, order by and select clauses.
+   */
+  public OBQuery<BaseOBObject> buildOBQuery() {
     final String whereOrderBy = queryBuilder.getJoinClause() + queryBuilder.getWhereClause()
-        + queryBuilder.getOrderByClause();
+        + (getSummarySettings() == null ? queryBuilder.getOrderByClause() : "");
 
     log.debug("Querying for " + entityName + " " + whereOrderBy);
 
-    // System.err.println("Querying for " + entityName + " " + whereOrderBy);
-
     final OBQuery<BaseOBObject> obq = OBDal.getInstance().createQuery(entityName, whereOrderBy);
+    if (getSummarySettings() != null) {
+      obq.setSelectClause(queryBuilder.getSelectClause());
+    } else if (getDistinct() != null) {
+      final String localDistinct = getDistinct();
+      queryBuilder.addSelectClausePart(localDistinct + ".id");
+
+      final Property property = DalUtil.getPropertyFromPath(
+          ModelProvider.getInstance().getEntity(getEntityName()), localDistinct);
+
+      for (Property identifierProp : property.getTargetEntity().getIdentifierProperties()) {
+        if (identifierProp.getTargetEntity() != null) {
+          // go one level deeper
+          final List<Property> nextIdentifierProps = JsonUtils.getIdentifierSet(identifierProp);
+          for (Property nextIdentifierProp : nextIdentifierProps) {
+            queryBuilder.addSelectClausePart(localDistinct + DalUtil.DOT + identifierProp.getName()
+                + "." + nextIdentifierProp);
+          }
+        } else {
+          queryBuilder.addSelectClausePart(localDistinct + DalUtil.DOT + identifierProp.getName());
+        }
+      }
+
+      obq.setSelectClause("distinct " + queryBuilder.getSelectClause());
+    }
+
     if (getFirstResult() != null) {
       obq.setFirstResult(getFirstResult());
       log.debug("Firstresult " + getFirstResult());
@@ -238,6 +274,42 @@ public class DataEntityQueryService {
 
   public void clearCachedValues() {
     queryBuilder.clearCachedValues();
+  }
+
+  public String getDistinct() {
+    return distinct;
+  }
+
+  public void setDistinct(String distinct) {
+    this.distinct = distinct.replace(DalUtil.FIELDSEPARATOR, DalUtil.DOT);
+  }
+
+  public String getSummarySettings() {
+    return summarySettings;
+  }
+
+  public void setSummarySettings(String summarySettings) {
+    this.summarySettings = summarySettings;
+    if (getSummarySettings() != null) {
+      try {
+        summaryFields.clear();
+        final JSONObject summarySetting = new JSONObject(getSummarySettings());
+        final Iterator<?> it = summarySetting.keys();
+        while (it.hasNext()) {
+          final String key = (String) it.next();
+          summaryFields.add(key);
+          final String value = summarySetting.getString(key);
+          queryBuilder.addSelectFunctionPart(value,
+              key.replace(DalUtil.FIELDSEPARATOR, DalUtil.DOT));
+        }
+      } catch (JSONException e) {
+        throw new RuntimeException(e);
+      }
+    }
+  }
+
+  public List<String> getSummaryFields() {
+    return summaryFields;
   }
 
 }
