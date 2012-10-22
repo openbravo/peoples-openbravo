@@ -34,7 +34,7 @@ public class BusinessPartner extends ProcessHQLQuery {
         + "bpl.$readableClientCriteria AND "
         + "bpl.$naturalOrgCriteria "
         + "))"
-        + "GROUP BY bpl.businessPartner.id, bpl.businessPartner.name, bpl.businessPartner.name, bpl.businessPartner.searchKey, bpl.businessPartner.description, bpl.businessPartner.taxID, bpl.businessPartner.sOBPTaxCategory.id, bpl.businessPartner.paymentMethod.id, bpl.businessPartner.paymentTerms.id, bpl.businessPartner.invoiceTerms, bpl.id, ulist.email, , ulist.phone,bpl.locationAddress.cityName, bpl.locationAddress.postalCode, bpl.businessPartner.businessPartnerCategory.id  "
+        + "GROUP BY bpl.businessPartner.id, bpl.businessPartner.name, bpl.businessPartner.name, bpl.businessPartner.searchKey, bpl.businessPartner.description, bpl.businessPartner.taxID, bpl.businessPartner.sOBPTaxCategory.id, bpl.businessPartner.paymentMethod.id, bpl.businessPartner.paymentTerms.id, bpl.businessPartner.invoiceTerms, bpl.id, ulist.email, ulist.phone,bpl.locationAddress.cityName, bpl.locationAddress.postalCode, bpl.businessPartner.businessPartnerCategory.id  "
         + "ORDER BY bpl.businessPartner.name";
     // probar los casos con varias loc para un mismo BP
     // return "select bp as BusinessPartner, loc as BusinessPartnerLocation "
