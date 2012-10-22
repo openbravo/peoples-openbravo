@@ -87,7 +87,7 @@ BEGIN
     v_newaction := 'HO';
     
     -- ADD RESERVED STOCK
-    v_message := M_CREATE_RESERVE_STOCK (v_reservation_id, v_user_id);
+    M_RESERVE_STOCK_AUTO (v_reservation_id, v_user_id, v_message);
 
   ELSIF (v_resaction = 'HO') THEN
   /*

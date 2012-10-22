@@ -19,10 +19,10 @@
 package org.openbravo.materialmgmt;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+
+import javax.servlet.ServletException;
 
 import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.core.DalUtil;
@@ -34,13 +34,15 @@ import org.openbravo.model.ad.process.ProcessInstance;
 import org.openbravo.model.ad.ui.Process;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.materialmgmt.onhandquantity.Reservation;
-import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
+import org.openbravo.model.materialmgmt.onhandquantity.ReservationStock;
 import org.openbravo.service.db.CallProcess;
-import org.openbravo.service.db.CallStoredProcedure;
+import org.openbravo.service.db.DalConnectionProvider;
 
 public class ReservationUtils {
+  String returnValue;
+  String exito;
 
-  public Reservation createReserveFromSalesOrderLine(OrderLine soLine, boolean doProcess)
+  public static Reservation createReserveFromSalesOrderLine(OrderLine soLine, boolean doProcess)
       throws OBException {
     if (!soLine.getSalesOrder().isSalesTransaction()) {
       throw new OBException("@cannotReservePurchaseOrder@");
@@ -50,22 +52,35 @@ public class ReservationUtils {
       throw new OBException("@cannotReserveDeliveredSalesOrderLine@");
     }
 
-    final List<Object> parameters = new ArrayList<Object>();
-    parameters.add(soLine.getId());
-    parameters.add(doProcess ? "Y" : "N");
-    parameters.add(DalUtil.getId(OBContext.getOBContext().getUser()));
-    Reservation reservation = (Reservation) CallStoredProcedure.getInstance().call(
-        "M_CREATE_RESERVE_FROM_SOL", parameters, null);
+    CSResponse cs = null;
+    try {
+      cs = ReservationUtilsData.createReserveFromSalesOrderLine(
+          OBDal.getInstance().getConnection(false), new DalConnectionProvider(), soLine.getId(),
+          doProcess ? "Y" : "N", (String) DalUtil.getId(OBContext.getOBContext().getUser()));
+    } catch (ServletException e) {
+    }
 
-    return reservation;
+    if (cs != null && cs.returnValue != null) {
+      return OBDal.getInstance().get(Reservation.class, cs.returnValue);
+    }
+
+    return null;
   }
 
-  public OBError createReserveStock(Reservation reservation) throws OBException {
+  public static OBError reserveStockAuto(Reservation reservation) throws OBException {
+    CSResponse cs = null;
+    try {
+      cs = ReservationUtilsData.reserveStockAuto(OBDal.getInstance().getConnection(false),
+          new DalConnectionProvider(), reservation.getId(),
+          (String) DalUtil.getId(OBContext.getOBContext().getUser()));
+    } catch (ServletException e) {
+      throw new OBException(e.getMessage());
+    }
 
-    final List<Object> parameters = new ArrayList<Object>();
-    parameters.add(reservation.getId());
-    String message = (String) CallStoredProcedure.getInstance().call("M_CREATE_RESERVE_STOCK",
-        parameters, null);
+    String message = "";
+    if (cs != null && cs.returnValue != null) {
+      message = cs.returnValue;
+    }
 
     OBError obmessage = new OBError();
     obmessage.setType("SUCCESS");
@@ -73,21 +88,23 @@ public class ReservationUtils {
     return obmessage;
   }
 
-  public OBError addReserveStock(Reservation reservation, StorageDetail stock, OrderLine poLine,
-      BigDecimal quantity) throws OBException {
+  public static ReservationStock reserveStockManual(Reservation reservation, String strType,
+      String strStockId, BigDecimal quantity) throws OBException {
 
-    final List<Object> parameters = new ArrayList<Object>();
-    parameters.add(reservation.getId());
-    parameters.add(stock.getId());
-    parameters.add(poLine.getId());
-    parameters.add(quantity);
-    String message = (String) CallStoredProcedure.getInstance().call("M_ADD_RESERVED_STOCK",
-        parameters, null);
+    CSResponse cs = null;
+    try {
+      cs = ReservationUtilsData.reserveStockManual(OBDal.getInstance().getConnection(false),
+          new DalConnectionProvider(), reservation.getId(), strType, strStockId,
+          quantity.toString(), (String) DalUtil.getId(OBContext.getOBContext().getUser()));
+    } catch (ServletException e) {
+      throw new OBException(e.getMessage());
+    }
 
-    OBError obmessage = new OBError();
-    obmessage.setType("SUCCESS");
-    obmessage.setMessage(message);
-    return obmessage;
+    if (cs != null && cs.returnValue != null) {
+      return OBDal.getInstance().get(ReservationStock.class, cs.returnValue);
+    }
+
+    return null;
   }
 
   /**
@@ -100,7 +117,7 @@ public class ReservationUtils {
    * <li>CL Close</li>
    * </ul>
    */
-  public OBError processReserve(Reservation reservation, String action) throws OBException {
+  public static OBError processReserve(Reservation reservation, String action) throws OBException {
 
     OBContext.setAdminMode(true);
     Process process = null;

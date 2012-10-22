@@ -61,7 +61,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="PENDINGQTY" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
+      <column name="RELEASEDQTY" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>

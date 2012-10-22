@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="FUNCTION M_CREATE_RESERVE_FROM_SOL">
-    <function name="M_CREATE_RESERVE_FROM_SOL" type="VARCHAR">
+    <function name="M_CREATE_RESERVE_FROM_SOL" type="NULL">
       <parameter name="p_orderline_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
@@ -8,6 +8,9 @@
         <default/>
       </parameter>
       <parameter name="p_user_id" type="VARCHAR" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_reservation_id" type="VARCHAR" mode="out">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -27,7 +30,7 @@
 * Contributor(s):  ______________________________________.
 ************************************************************************/
 /*************
-* Function to create reservations for the given Sales Order Line.
+* Procedure to create reservations for the given Sales Order Line.
 **************/
   v_product_id        VARCHAR2(32);
   v_uom_id            VARCHAR2(32);
@@ -59,13 +62,13 @@ BEGIN
     m_reservation_id, ad_client_id, ad_org_id, isactive,
     created, createdby, updated, updatedby,
     c_orderline_id,
-    m_product_id, c_uom_id, quantity, reservedqty, pendingqty,
+    m_product_id, c_uom_id, quantity, reservedqty, releasedqty,
     res_status, res_process
   ) VALUES (
     v_reservation_id, v_client_id, v_org_id, 'Y',
     now(), p_user_id, now(), p_user_id,
     p_orderline_id,
-    v_product_id, v_uom_id, v_qtyordered, 0, v_qtyordered - v_qtydelivered,
+    v_product_id, v_uom_id, v_qtyordered, 0, v_qtydelivered,
     'DR', 'CO'
   );
 
@@ -73,7 +76,8 @@ BEGIN
     M_RESERVATION_POST(null, v_reservation_id, 'PR', p_user_id);
   END IF;
 
-  RETURN v_reservation_id;
+  p_reservation_id := v_reservation_id;
+RETURN;
 END M_CREATE_RESERVE_FROM_SOL]]></body>
     </function>
   </database>
