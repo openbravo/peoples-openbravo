@@ -139,6 +139,9 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "pointofsale/view/payment",
         "pointofsale/view/keyboard-toolbars",
         "pointofsale/view/keyboardorder",
+        "pointofsale/view/subwindows/customersadvancedsearch",
+        "pointofsale/view/subwindows/newcustomerform",
+        "pointofsale/view/subwindows/editcustomerform",
 
         // Cash Management window
         "cashmgmt/model/cashmgmt-print", "cashmgmt/model/cashmgmt-model",

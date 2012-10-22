@@ -136,7 +136,7 @@ enyo.kind({
   tap: function() {
     this.doChangeSubWindow({
       newWindow: {
-        name: 'subWindow_customers',
+        name: 'customerAdvancedSearch',
         params: []
       }
     });

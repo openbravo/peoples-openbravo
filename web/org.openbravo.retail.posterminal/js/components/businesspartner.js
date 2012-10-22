@@ -63,9 +63,9 @@ enyo.kind({
   },
   tap: function(model) {
     this.model.get('subWindowManager').set('currentWindow', {
-      name: 'subWindow_new_customer',
+      name: 'customerCreate',
       params: {
-        callerWindow: 'subWindow_customers'
+        callerWindow: 'mainSubWindow'
       }
     });
   }
@@ -88,7 +88,7 @@ enyo.kind({
   },
   tap: function() {
     this.model.get('subWindowManager').set('currentWindow', {
-      name: 'subWindow_customers',
+      name: 'customerAdvancedSearch',
       params: {
         callerWindow: 'mainSubWindow'
       }

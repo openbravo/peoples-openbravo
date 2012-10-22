@@ -170,7 +170,7 @@ enyo.kind({
       }],
       tap: function() {
         this.model.get('subWindowManager').set('currentWindow', {
-          name: 'subWindow_customers',
+          name: 'customerAdvancedSearch',
           params: []
         });
       },
@@ -197,10 +197,10 @@ enyo.kind({
           },
           tap: function() {
             this.model.get('subWindowManager').set('currentWindow', {
-              name: 'subWindow_new_customer',
+              name: 'customerCreate',
               params: {
                 businessPartner: this.customer,
-                callerWindow: 'subWindow_edit_customer'
+                callerWindow: 'customerEdit'
               }
             });
           },
@@ -255,7 +255,7 @@ enyo.kind({
 
     function goToEditWindow(params) {
       subWindowManager.set('currentWindow', {
-        name: 'subWindow_edit_customer',
+        name: 'customerEdit',
         params: {
           businessPartner: params.customer
         }
