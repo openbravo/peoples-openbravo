@@ -704,7 +704,7 @@ public class DatabaseValidator implements SystemValidator {
                     + "should have the value " + Organization.PROPERTY_CLIENT
                     + ", it currently has " + invalidClientName);
       }
-      if (hasOrgReference && !hasValidOrg) {
+      if (hasOrgReference && !hasValidOrg && !entity.getName().equals("Organization")) {
         result
             .addError(
                 SystemValidationType.INCORRECT_CLIENT_ORG_PROPERTY_NAME,
