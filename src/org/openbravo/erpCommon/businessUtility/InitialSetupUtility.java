@@ -1038,6 +1038,12 @@ public class InitialSetupUtility {
         newAcctSchemaDefault.setProductExpense(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
       }
+
+      if (strDefault.equals("P_DEF_EXPENSE_ACCT")) {
+        newAcctSchemaDefault.setProductDeferredExpense(getAcctComb(client, org,
+            defaultElementValues.get(strDefault), acctSchema, true));
+      }
+
       if (strDefault.equals("P_ASSET_ACCT")) {
         newAcctSchemaDefault.setFixedAsset(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));

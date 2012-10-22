@@ -201,13 +201,34 @@ public class SL_Invoice_Product extends HttpSecureAppServlet {
           resultado.append(", new Array(\"inpisdeferredrevenue\", \"N\")");
           resultado.append(", new Array(\"inprevplantype\", \"\")");
           resultado.append(", new Array(\"inpperiodnumber\", \"\")");
-
+        }
+        resultado.append(", new Array(\"inpisdeferredexpense\", \"N\")");
+        resultado.append(", new Array(\"inpexpplantype\", \"\")");
+        resultado.append(", new Array(\"inpperiodnumberExp\", \"\")");
+      } else if (!inv.isSalesTransaction() && !"".equals(strMProductID)) {
+        Product product = OBDal.getInstance().get(Product.class, strMProductID);
+        resultado.append(", new Array(\"inpisdeferredrevenue\", \"N\")");
+        resultado.append(", new Array(\"inprevplantype\", \"\")");
+        resultado.append(", new Array(\"inpperiodnumber\", \"\")");
+        if (product.isDeferredexpense()) {
+          resultado.append(", new Array(\"inpisdeferredexpense\", \""
+              + (product.isDeferredexpense() ? "Y" : "N") + "\")");
+          resultado.append(", new Array(\"inpexpplantype\", \"" + product.getExpplantype() + "\")");
+          resultado.append(", new Array(\"inpperiodnumberExp\", \"" + product.getPeriodnumberExp()
+              + "\")");
+        } else {
+          resultado.append(", new Array(\"inpisdeferredexpense\", \"N\")");
+          resultado.append(", new Array(\"inpexpplantype\", \"\")");
+          resultado.append(", new Array(\"inpperiodnumberExp\", \"\")");
         }
       } else {
         resultado.append(", new Array(\"inpisdeferredrevenue\", \"N\")");
         resultado.append(", new Array(\"inprevplantype\", \"\")");
         resultado.append(", new Array(\"inpperiodnumber\", \"\")");
 
+        resultado.append(", new Array(\"inpisdeferredexpense\", \"N\")");
+        resultado.append(", new Array(\"inpexpplantype\", \"\")");
+        resultado.append(", new Array(\"inpperiodnumberExp\", \"\")");
       }
     }
     resultado.append(", new Array(\"inpmProductUomId\", ");

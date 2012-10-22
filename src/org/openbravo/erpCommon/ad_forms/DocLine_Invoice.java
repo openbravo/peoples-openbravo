@@ -45,6 +45,14 @@ public class DocLine_Invoice extends DocLine {
   private int m_PeriodNumber = 0;
   /** Starting Date */
   private String m_StatingPeriodId = "";
+  /** Is Deferred Expense */
+  private boolean m_IsDeferredExpense = false;
+  /** Expense Plan type */
+  private String m_ExpPlanType = "";
+  /** Period Number */
+  private int m_PeriodNumberExp = 0;
+  /** Starting Date */
+  private String m_StatingPeriodExpId = "";
 
   public boolean isDeferredRevenue() {
     return m_IsDeferredRevenue;
@@ -76,6 +84,38 @@ public class DocLine_Invoice extends DocLine {
 
   public void setStartingPeriodId(String m_StartingPeriodId) {
     this.m_StatingPeriodId = m_StartingPeriodId;
+  }
+
+  public boolean isDeferredExpense() {
+    return m_IsDeferredExpense;
+  }
+
+  public void setIsDeferredExpense(boolean m_IsDeferredExpense) {
+    this.m_IsDeferredExpense = m_IsDeferredExpense;
+  }
+
+  public String getExpPlanType() {
+    return m_ExpPlanType;
+  }
+
+  public void setExpPlanType(String m_ExpPlanType) {
+    this.m_ExpPlanType = m_ExpPlanType;
+  }
+
+  public int getPeriodNumberExp() {
+    return m_PeriodNumberExp;
+  }
+
+  public void setPeriodNumbeExp(int m_PeriodNumberExp) {
+    this.m_PeriodNumberExp = m_PeriodNumberExp;
+  }
+
+  public String getStartingPeriodExpId() {
+    return m_StatingPeriodExpId;
+  }
+
+  public void setStartingPeriodExpId(String m_StartingPeriodExpId) {
+    this.m_StatingPeriodExpId = m_StartingPeriodExpId;
   }
 
   public void setAmount(String LineNetAmt, String PriceList, String Qty) {
