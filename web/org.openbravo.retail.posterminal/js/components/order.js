@@ -83,6 +83,11 @@ enyo.kind({
           style: 'float: right; width: 50%; text-align: right; font-weight:bold; font-size: 30px; color: #f8941d;',
           content: OB.I18N.getLabel('OBPOS_ToBeReturned')
         }, {
+          name: 'divispaid',
+          showing: false,
+          style: 'float: right; width: 50%; text-align: right; font-weight:bold; font-size: 30px; color: #f8941d;',
+          content: OB.I18N.getLabel('OBPOS_paid')
+        }, {
           style: 'clear: both;'
         }]
       }]
@@ -113,6 +118,13 @@ enyo.kind({
       } else {
         this.$.divbtninvoice.hide();
       }
+    }, this);
+    this.order.on('change:isPaid', function(model) {
+        if (model.get('isPaid') === true) {
+          this.$.divispaid.show();
+        } else {
+          this.$.divispaid.hide();
+        }
     }, this);
   }
 });

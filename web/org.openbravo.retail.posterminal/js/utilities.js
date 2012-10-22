@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global B, Backbone, $, _ */
+/*global B, Backbone, $, _, enyo */
 
 (function() {
 
@@ -24,6 +24,14 @@
 
   OB.UTIL.escapeRegExp = function(text) {
     return text.replace(/[\-\[\]{}()+?.,\\\^$|#\s]/g, '\\$&');
+  };
+
+  function S4() {
+    return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1).toUpperCase();
+  }
+
+  OB.UTIL.get_UUID = function() {
+    return (S4() + S4() + S4() + S4() + S4() + S4() + S4() + S4());
   };
 
   OB.UTIL.padNumber = function(n, p) {
@@ -100,6 +108,79 @@
       });
     }
   };
+
+OB.UTIL.processCustomerClass = 'org.openbravo.retail.posterminal.CustomerLoader';
+
+  OB.UTIL.processCustomers = function(changedCustomers, successCallback, errorCallback) {
+    var customersToJson = [];
+    changedCustomers.each(function(customer) {
+      customersToJson.push(customer.get('json'));
+    });
+    this.proc = new OB.DS.Process(OB.UTIL.processCustomerClass);
+    if (OB.POS.modelterminal.get('connectedToERP')) {
+      this.proc.exec({
+        customer: customersToJson
+      }, function(data, message) {
+        if (data && data.exception) {
+          // Orders have not been processed
+          changedCustomers.each(function(changedCustomer) {
+            changedCustomer.set('isbeingprocessed', 'N');
+            changedCustomer.set('json', JSON.stringify(changedCustomer.get('json')));
+            OB.Dal.save(changedCustomer, null, function(tx, err) {
+              OB.UTIL.showError(err);
+            });
+          });
+          if (errorCallback) {
+            errorCallback();
+          }
+        } else {
+          // Orders have been processed, delete them
+          // and update businessPartner
+          changedCustomers.each(function(changedCustomer) {
+            var criteria = {
+              id: changedCustomer.get('c_bpartner_id')
+            };
+            OB.Dal.find(OB.Model.BusinessPartner, criteria, function(data) {
+              if (data && data.length > 0) {
+                var customerToUpdate = data.at(0);
+                customerToUpdate.loadByJSON(changedCustomer.get('json'));
+                OB.Dal.save(customerToUpdate, function() {
+                  OB.UTIL.showSuccess("Customer " + customerToUpdate.get('_identifier') + "updated");
+                  OB.Dal.remove(changedCustomer, function() {
+                    if (successCallback) {
+                      successCallback();
+                    }
+                  }, function(tx, err) {
+                    OB.UTIL.showError(err);
+                  });
+                }, function() {
+                  OB.UTIL.showError("Customer " + customerToUpdate.get('_identifier') + "cannot be updated");
+                });
+              } else {
+                var customerToInsert = new OB.Model.BusinessPartner();
+                customerToInsert.newCustomer();
+                customerToInsert.loadByJSON(changedCustomer.get('json'));
+                OB.Dal.save(customerToInsert, function() {
+                  OB.UTIL.showSuccess("Customer " + customerToInsert.get('_identifier') + "updated");
+                  OB.Dal.remove(changedCustomer, function() {
+                    if (successCallback) {
+                      successCallback();
+                    }
+                  }, function(tx, err) {
+                    OB.UTIL.showError(err);
+                  });
+                }, function() {
+                  OB.UTIL.showError("Customer " + customerToInsert.get('_identifier') + "cannot be updated");
+                }, true);
+              }
+            }, function() {
+              OB.UTIL.showError("Error while search " + changedCustomer.get('_identifier'));
+            });
+          });
+          }
+        });
+      }
+    };
 
   OB.UTIL.checkConnectivityStatus = function() {
     var ajaxParams, currentlyConnected = OB.POS.modelterminal.get('connectedToERP');

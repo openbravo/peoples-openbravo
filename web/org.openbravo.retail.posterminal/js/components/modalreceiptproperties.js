@@ -47,7 +47,7 @@ enyo.kind({
   },
   initComponents: function() {
     this.inherited(arguments);
-    this.attributeContainer = this.$.bodyContent.$.attributes
+    this.attributeContainer = this.$.bodyContent.$.attributes;
     enyo.forEach(this.newAttributes, function(natt) {
       this.$.bodyContent.$.attributes.createComponent({
         kind: 'OB.UI.PropertyEditLine',
@@ -59,9 +59,12 @@ enyo.kind({
   init: function(model) {
     this.model = model;
     this.model.get('order').bind('change', function() {
-      var diff = this.model.get('order').changedAttributes();
-      for (var att in diff) {
-        this.loadValue(att);
+      var diff = this.model.get('order').changedAttributes(),
+      att;
+      for (att in diff) {
+        if(diff.hasOwnProperty(att)){
+          this.loadValue(att);
+        }
       }
     }, this);
   }
@@ -104,7 +107,7 @@ enyo.kind({
     style: 'border: 1px solid #F0F0F0; float: left;',
     components: [{
       name: 'newAttribute',
-      classes: 'modal-dialog-receipt-properties-text',
+      classes: 'modal-dialog-receipt-properties-text'
     }]
   }, {
     style: 'clear: both'
@@ -127,7 +130,8 @@ enyo.kind({
     onApplyChange: 'applyChange'
   },
   events: {
-    onSetProperty: ''
+    onSetProperty: '',
+    onSetLineProperty: ''
   },
   loadValue: function(sender, event) {
     if (this.modelProperty === event.modelProperty) {
@@ -137,10 +141,18 @@ enyo.kind({
     }
   },
   applyChange: function(sender, event) {
-    this.doSetProperty({
-      property: this.modelProperty,
-      value: this.getValue()
-    });
+    if (event.orderline) {
+      this.doSetLineProperty({
+        line: event.orderline,
+        property: this.modelProperty,
+        value: this.getValue()
+      });
+    } else {
+      this.doSetProperty({
+        property: this.modelProperty,
+        value: this.getValue()
+      });
+    }
   }
 });
 
@@ -151,14 +163,16 @@ enyo.kind({
   handlers: {
     onLoadValue: 'loadValue',
     onApplyChange: 'applyChange',
-    onLoadContent: 'loadContent',
+    onLoadContent: 'loadContent'
   },
   events: {
-    onSetProperty: ''
+    onSetProperty: '',
+    onSetLineProperty: ''
   },
   loadValue: function(sender, event) {
-    if (this.modelProperty == event.modelProperty) {
-      if (event.order.get(this.modelProperty) != undefined) {
+    var i, splitResult, contentProperty, contentInModel;
+    if (this.modelProperty === event.modelProperty) {
+      if (event.order.get(this.modelProperty) !== undefined) {
         this.checked = event.order.get(this.modelProperty);
       }
 
@@ -169,18 +183,18 @@ enyo.kind({
       }
     }
 
-    if (this.modelContent != undefined && this.modelContent != "") {
-      var splitResult = this.modelContent.split(':');
+    if (this.modelContent !== undefined && this.modelContent !== "") {
+      splitResult = this.modelContent.split(':');
       if (splitResult.length > 0) {
-        var contentProperty = splitResult[0];
+        contentProperty = splitResult[0];
 
-        if (contentProperty == event.modelProperty) {
-          var contentInModel = event.order;
-          for (var i = 0; i < splitResult.length; i++) {
+        if (contentProperty === event.modelProperty) {
+          contentInModel = event.order;
+          for (i = 0; i < splitResult.length; i++) {
             contentInModel = contentInModel.get(splitResult[i]);
           }
 
-          if (contentInModel != undefined) {
+          if (contentInModel !== undefined) {
             $('#' + this.id).text(contentInModel);
             this.content = contentInModel;
           }
@@ -190,10 +204,18 @@ enyo.kind({
 
   },
   applyChange: function(sender, event) {
-    this.doSetProperty({
-      property: this.modelProperty,
-      value: this.checked
-    });
+    if (event.orderline) {
+      this.doSetLineProperty({
+        line: event.orderline,
+        property: this.modelProperty,
+        value: this.checked
+      });
+    } else {
+      this.doSetProperty({
+        property: this.modelProperty,
+        value: this.checked
+      });
+    }
   },
   initComponents: function() {
     if (this.readOnly) {
@@ -217,13 +239,16 @@ enyo.kind({
     classes: 'modal-dialog-btn-check active',
     modelProperty: 'print',
     label: OB.I18N.getLabel('OBPOS_Lbl_RP_Print')
-  }/*, {
+  }
+/*, {
     kind: 'OB.UI.renderBooleanProperty',
     name: 'emailBox',
     modelContent: 'bp:email',
     modelProperty: 'sendEmail',
     label: OB.I18N.getLabel('OBPOS_LblEmail')
-  }*/, {
+  }*/
+  ,
+  {
     kind: 'OB.UI.renderBooleanProperty',
     name: 'invoiceBox',
     modelProperty: 'generateInvoice',

@@ -18,6 +18,7 @@
 
     this.templateopendrawer = new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.OpenDrawer);
     this.templatereceipt = new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.ReceiptTemplate);
+    this.templateclosedreceipt = new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.ClosedReceiptTemplate);
     this.templateinvoice = new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.ReceiptTemplateInvoice);
     this.templatereturn = new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.ReceiptTemplateReturn);
     this.templatereturninvoice = new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.ReceiptTemplateReturnInvoice);    
@@ -60,6 +61,9 @@
     this.line = null;
     
     this.receipt.get('lines').on('selected', function(line) {
+      if(this.receipt.get("isPaid") === true){
+        return;
+      }
       if (this.line) {
         this.line.off('change', this.print);
       }
@@ -85,6 +89,7 @@
   
   OB.OBPOSPointOfSale.Print.Receipt = PrintReceipt; 
   OB.OBPOSPointOfSale.Print.ReceiptTemplate = 'res/printreceipt.xml';
+  OB.OBPOSPointOfSale.Print.ReceiptTemplate = 'res/printclosedreceipt.xml';
   OB.OBPOSPointOfSale.Print.ReceiptTemplateInvoice = 'res/printinvoice.xml';
   OB.OBPOSPointOfSale.Print.ReceiptTemplateReturn = 'res/printreturn.xml';
   OB.OBPOSPointOfSale.Print.ReceiptTemplateReturnInvoice = 'res/printreturninvoice.xml';

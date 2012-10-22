@@ -15,6 +15,10 @@ enyo.kind({
   myId: 'modalp',
   header: '',
   maxheight: '600px',
+  bodyContent: {
+  },
+  bodyButtons: {
+  },
   show: function(receipt, provider, key, name, paymentMethod, amount) {
     
     if (receipt.get('orderType') === 0) {

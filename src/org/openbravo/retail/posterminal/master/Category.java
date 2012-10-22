@@ -26,11 +26,12 @@ public class Category extends ProcessHQLQuery {
     final PriceList priceList = POSUtils.getPriceListByOrgId(jsonsent.getString("organization"));
 
     if (productList != null) {
-      return "select distinct pli.product.productCategory.id as id, pli.product.productCategory.searchKey as searchKey,pli.product.productCategory.name as name, pli.product.productCategory.name as _identifier, img.bindaryData as img "
-          + "from OBRETCO_Prol_Product pli left outer join pli.product.productCategory.image img, "
+      return "select pCat.id as id, pCat.searchKey as searchKey,pCat.name as name, pCat.name as _identifier, img.bindaryData as img  from ProductCategory as pCat left outer join pCat.image as img  "
+          + " where exists("
+          + "from OBRETCO_Prol_Product pli, "
           + "PricingProductPrice ppp, "
           + "PricingPriceListVersion pplv "
-          + "WHERE (pli.obretcoProductlist = '"
+          + "WHERE pCat=pli.product.productCategory and (pli.obretcoProductlist = '"
           + productList.getId()
           + "') "
           + "AND ("
@@ -47,7 +48,7 @@ public class Category extends ProcessHQLQuery {
           + ") AND ("
           + "pli.product.id = ppp.product.id"
           + ") AND "
-          + "(ppp.$incrementalUpdateCriteria) AND (pplv.$incrementalUpdateCriteria) order by pli.product.productCategory.name";
+          + "(ppp.$incrementalUpdateCriteria) AND (pplv.$incrementalUpdateCriteria)) order by pCat.name";
     } else {
       throw new JSONException("Product list not found");
     }

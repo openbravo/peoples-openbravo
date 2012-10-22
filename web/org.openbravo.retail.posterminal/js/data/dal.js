@@ -118,7 +118,7 @@
           if (operator === OP.CONTAINS) {
             value = '%' + value + '%';
           } else if (operator === OP.STARTSWITH) {
-            value = '%' + value;
+            value = value + '%';
           } else if (operator === OP.ENDSWITH) {
             value = value + '%';
           }
@@ -182,7 +182,7 @@
     }
   }
 
-  function save(model, success, error) {
+  function save(model, success, error, forceInsert) {
     var modelProto = model.constructor.prototype,
         tableName = modelProto.tableName,
         sql = '',
@@ -190,17 +190,19 @@
         firstParam = true,
         uuid, propertyName;
 
+    forceInsert = forceInsert || false;
+
     if (db) {
       // websql
       if (!tableName) {
         throw 'Missing table name in model';
       }
 
-      if (model.get('id')) {
+      if (model.get('id') && forceInsert === false) {
         // UPDATE
         sql = 'UPDATE ' + tableName + ' SET ';
 
-        _.each(_.keys(modelProto.properties), function (attr) {
+        _.each(_.keys(modelProto.properties), function(attr) {
           propertyName = modelProto.properties[attr];
           if (attr === 'id') {
             return;
@@ -225,13 +227,17 @@
         // INSERT
         params = [];
         sql = modelProto.insertStatement;
-        uuid = get_uuid();
-        params.push(uuid);
-        model.set('id', uuid);
+        if (forceInsert === false) {
+          uuid = get_uuid();
+          params.push(uuid);
+          model.set('id', uuid);
+        }
 
-        _.each(modelProto.properties, function (property) {
-          if ('id' === property) {
-            return;
+        _.each(modelProto.properties, function(property) {
+          if (forceInsert === false) {
+            if ('id' === property) {
+              return;
+            }
           }
           params.push(model.get(property) === undefined ? null : model.get(property));
         });

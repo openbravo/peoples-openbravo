@@ -47,6 +47,56 @@ enyo.kind({
 
 /*header of scrollable table*/
 enyo.kind({
+  kind: 'OB.UI.Button',
+  name: 'OB.UI.NewCustomerWindowButton',
+  style: 'width: 150px; margin: 0px 5px 8px 19px;',
+  classes: 'btnlink-yellow btnlink btnlink-small',
+  content: OB.I18N.getLabel('OBPOS_LblNewCustomer'),
+  attributes: {
+    'data-dismiss': 'modal'
+  },
+  handlers: {
+    onSetModel: 'setModel'
+  },
+  setModel: function(sender, event) {
+    this.model = event.model;
+  },
+  tap: function(model) {
+    this.model.get('subWindowManager').set('currentWindow', {
+      name: 'subWindow_new_customer',
+      params: {
+        callerWindow: 'subWindow_customers'
+      }
+    });
+  }
+});
+
+enyo.kind({
+  kind: 'OB.UI.Button',
+  name: 'OB.UI.AdvancedSearchCustomerWindowButton',
+  style: 'width: 170px; margin: 0px 0px 8px 5px;',
+  classes: 'btnlink-yellow btnlink btnlink-small',
+  content: OB.I18N.getLabel('OBPOS_LblAdvancedSearch'),
+  attributes: {
+    'data-dismiss': 'modal'
+  },
+  handlers: {
+    onSetModel: 'setModel'
+  },
+  setModel: function(sender, event) {
+    this.model = event.model;
+  },
+  tap: function() {
+    this.model.get('subWindowManager').set('currentWindow', {
+      name: 'subWindow_customers',
+      params: {
+        callerWindow: 'mainSubWindow'
+      }
+    });
+  }
+});
+
+enyo.kind({
   name: 'OB.UI.ModalBpScrollableHeader',
   kind: 'OB.UI.ScrollableTableHeader',
   events: {
@@ -95,6 +145,22 @@ enyo.kind({
             tag: 'span'
           }],
           ontap: 'clearAction'
+        }]
+      }]
+    }]
+  }, {
+    style: 'padding: 10px;',
+    components: [{
+      style: 'display: table;',
+      components: [{
+        style: 'display: table-cell;',
+        components: [{
+          kind: 'OB.UI.NewCustomerWindowButton'
+        }]
+      }, {
+        style: 'display: table-cell;',
+        components: [{
+          kind: 'OB.UI.AdvancedSearchCustomerWindowButton'
         }]
       }]
     }]
@@ -194,7 +260,7 @@ enyo.kind({
     return true;
   },
   bpsList: null,
-  init: function() {
+  init: function(model) {
     this.bpsList = new Backbone.Collection();
     this.$.bpslistitemprinter.setCollection(this.bpsList);
     this.bpsList.on('click', function(model) {
@@ -217,5 +283,10 @@ enyo.kind({
   body: {
     kind: 'OB.UI.ListBps'
   },
-  init: function() {}
+  init: function(model) {
+    this.model = model;
+    this.waterfall('onSetModel', {
+      model: this.model
+    });
+  }
 });

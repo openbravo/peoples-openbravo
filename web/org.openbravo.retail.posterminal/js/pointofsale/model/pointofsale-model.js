@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global $ */
+/*global $ Backbone enyo */
 
 OB.OBPOSPointOfSale = OB.OBPOSPointOfSale || {};
 OB.OBPOSPointOfSale.Model = OB.OBPOSPointOfSale.Model || {};
@@ -15,7 +15,7 @@ OB.OBPOSPointOfSale.UI = OB.OBPOSPointOfSale.UI || {};
 
 //Window model
 OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
-  models: [OB.Model.TaxRate, OB.Model.Product, OB.Model.ProductPrice, OB.Model.ProductCategory, OB.Model.BusinessPartner, OB.Model.Order, OB.Model.DocumentSequence, OB.Model.Discount, OB.Model.DiscountFilterBusinessPartner, OB.Model.DiscountFilterBusinessPartnerGroup, OB.Model.DiscountFilterProduct, OB.Model.DiscountFilterProductCategory],
+  models: [OB.Model.TaxRate, OB.Model.Product, OB.Model.ProductPrice, OB.Model.ProductCategory, OB.Model.BusinessPartner, OB.Model.Order, OB.Model.DocumentSequence, OB.Model.ChangedBusinessPartners, OB.Model.Discount, OB.Model.DiscountFilterBusinessPartner, OB.Model.DiscountFilterBusinessPartnerGroup, OB.Model.DiscountFilterProduct, OB.Model.DiscountFilterProductCategory],
 
   loadUnpaidOrders: function() {
     // Shows a modal window with the orders pending to be paid
@@ -77,20 +77,54 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
     }
   },
 
+  processChangedCustomers: function() {
+    // Processes the customers who has been changed
+    var me = this;
+
+    if (OB.POS.modelterminal.get('connectedToERP')) {
+      OB.Dal.find(OB.Model.ChangedBusinessPartners, null, function(customersChangedNotProcessed) { //OB.Dal.find success
+        var successCallback, errorCallback;
+        if (!customersChangedNotProcessed || customersChangedNotProcessed.length === 0) {
+          me.processPaidOrders();
+          me.loadUnpaidOrders();
+          return;
+        }
+        successCallback = function() {
+          OB.UTIL.showSuccess('Changed customers have been processed correctly');
+          me.processPaidOrders();
+          me.loadUnpaidOrders();
+        };
+        errorCallback = function() {
+          OB.UTIL.showSuccess('ERROR processing changed customers');
+        };
+        OB.UTIL.showAlert.display('Processing changed customers');
+        customersChangedNotProcessed.each(function(cus) {
+          cus.set('json', enyo.json.parse(cus.get('json')));
+        });
+        OB.UTIL.processCustomers(customersChangedNotProcessed, successCallback, errorCallback);
+      });
+    }
+  },
+
   init: function() {
     var receipt = new OB.Model.Order(),
-        discounts, ordersave, taxes, orderList, hwManager, ViewManager;
-    
+        discounts, ordersave, customersave, taxes, orderList, hwManager, ViewManager;
+
     ViewManager = Backbone.Model.extend({
       defaults: {
-        currentWindow: {name: 'mainSubWindow', params:[]}
+        currentWindow: {
+          name: 'mainSubWindow',
+          params: []
+        }
       },
-      initialize: function() {
-      }
+      initialize: function() {}
     });
     this.set('order', receipt);
     orderList = new OB.Collection.OrderList(receipt);
     this.set('orderList', orderList);
+    this.set('customer', new OB.Model.BusinessPartner());
+
+    customersave = new OB.DATA.CustomerSave(this);
 
     this.set('subWindowManager', new ViewManager());
     discounts = new OB.DATA.OrderDiscount(receipt);
@@ -98,8 +132,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
     taxes = new OB.DATA.OrderTaxes(receipt);
 
     OB.POS.modelterminal.saveDocumentSequenceInDB();
-    this.processPaidOrders();
-    this.loadUnpaidOrders();
+    this.processChangedCustomers();
 
     receipt.on('paymentDone', function() {
       receipt.prepareToSend(function() {

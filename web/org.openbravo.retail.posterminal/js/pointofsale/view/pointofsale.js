@@ -24,26 +24,205 @@ enyo.kind({
     onDeleteOrder: 'deleteCurrentOrder',
     onTabChange: 'tabChange',
     onDeleteLine: 'deleteLine',
+    onEditLine: 'editLine',
     onExactPayment: 'exactPayment',
     onRemovePayment: 'removePayment',
     onChangeCurrentOrder: 'changeCurrentOrder',
     onChangeBusinessPartner: 'changeBusinessPartner',
     onPrintReceipt: 'printReceipt',
     onBackOffice: 'backOffice',
+    onPaidReceipts: 'paidReceipts',
     onChangeSubWindow: 'changeSubWindow',
     onSetProperty: 'setProperty',
+    onSetLineProperty: 'setLineProperty',
     onShowReceiptProperties: 'showModalReceiptProperties'
   },
   components: [{
-    name: 'otherSubWindowsContainer'
+    name: 'otherSubWindowsContainer',
+    components: [{
+      style: 'background-color: #FFFFFF;',
+      name: 'subWindow_customers',
+      beforeSetShowing: function(value, params) {
+        this.setShowing(value);
+      },
+      showing: false,
+      components: [{
+        tag: 'div',
+        style: 'padding: 9px 15px;',
+        components: [{
+          tag: 'a',
+          classes: 'close',
+          components: [{
+            tag: 'span',
+            style: 'font-size: 150%',
+            allowHtml: true,
+            content: '&times;'
+          }],
+          tap: function() {
+            this.model.get('subWindowManager').set('currentWindow', {
+              name: 'mainSubWindow',
+              params: []
+            });
+          },
+          init: function(model) {
+            this.model = model;
+          }
+        }, {
+          tag: 'h3',
+          name: 'divheaderCustomerAdvancedSearch',
+          content: OB.I18N.getLabel('OBPOS_TitleCustomerAdvancedSearch')
+        }]
+      }, {
+        kind: 'OB.UI.ListCustomers'
+      }]
+    }]
+  }, {
+    name: 'NewCustomerSubWindowsContainer',
+    components: [{
+      kind: 'OB.UI.ModalConfigurationRequiredForCreateCustomers'
+    }, {
+      style: 'background-color: #FFFFFF;',
+      name: 'subWindow_new_customer',
+      beforeSetShowing: function(value, params) {
+        this.setShowing(value);
+        this.waterfall('onSetCustomer', {
+          customer: params.businessPartner,
+          callerWindow: params.callerWindow
+        });
+      },
+      showing: false,
+      components: [{
+        tag: 'div',
+        style: 'padding: 9px 15px;',
+        components: [{
+          tag: 'a',
+          classes: 'close',
+          components: [{
+            tag: 'span',
+            style: 'font-size: 150%',
+            allowHtml: true,
+            content: '&times;'
+          }],
+          tap: function() {
+            this.model.get('subWindowManager').set('currentWindow', {
+              name: 'subWindow_customers',
+              params: []
+            });
+          },
+          init: function(model) {
+            this.model = model;
+          }
+        }, {
+          tag: 'h3',
+          name: 'divheaderCustomerEditNew',
+          content: OB.I18N.getLabel('OBPOS_TitleEditNewCustomer')
+        }]
+      }, {
+        name: 'OB.UI.NewCustomerWindowImpl',
+        kind: 'OB.UI.NewCustomerWindow',
+        windowHeader: 'OB.UI.NewCustomerWindowHeader',
+        newAttributes: [{
+          kind: 'OB.UI.CustomerTextProperty',
+          name: 'customerName',
+          modelProperty: 'name',
+          label: OB.I18N.getLabel('OBPOS_LblName')
+        }, {
+          kind: 'OB.UI.CustomerTextProperty',
+          name: 'customerLocName',
+          modelProperty: 'locName',
+          label: OB.I18N.getLabel('OBPOS_LblAddress')
+        }, {
+          kind: 'OB.UI.CustomerTextProperty',
+          name: 'customerPostalCode',
+          modelProperty: 'postalcode',
+          label: OB.I18N.getLabel('OBPOS_LblPostalCode')
+        }, {
+          kind: 'OB.UI.CustomerTextProperty',
+          name: 'customerCity',
+          modelProperty: 'city',
+          label: OB.I18N.getLabel('OBPOS_LblCity')
+        }, {
+          kind: 'OB.UI.CustomerTextProperty',
+          name: 'customerPhone',
+          modelProperty: 'phone',
+          label: OB.I18N.getLabel('OBPOS_LblPhone')
+        }, {
+          kind: 'OB.UI.CustomerTextProperty',
+          name: 'customerEmail',
+          modelProperty: 'email',
+          label: OB.I18N.getLabel('OBPOS_LblEmail')
+        }]
+      }]
+    }]
+  }, {
+    name: 'EditCustomerSubWindowsContainer',
+    components: [{
+      style: 'background-color: #FFFFFF;',
+      name: 'subWindow_edit_customer',
+      beforeSetShowing: function(value, params) {
+        this.setShowing(value);
+        this.waterfall('onSetCustomer', {
+          customer: params.businessPartner
+        });
+      },
+      showing: false,
+      components: [{
+        name: 'OB.UI.EditCustomerWindowImpl',
+        kind: 'OB.UI.NewCustomerWindow',
+        windowHeader: 'OB.UI.EditCustomerWindowHeader',
+        newAttributes: [{
+          kind: 'OB.UI.CustomerTextProperty',
+          name: 'customerName',
+          modelProperty: 'name',
+          label: OB.I18N.getLabel('OBPOS_LblName'),
+          readOnly: true
+        }, {
+          kind: 'OB.UI.CustomerTextProperty',
+          name: 'customerLocName',
+          modelProperty: 'locName',
+          label: OB.I18N.getLabel('OBPOS_LblAddress'),
+          readOnly: true
+        }, {
+          kind: 'OB.UI.CustomerTextProperty',
+          name: 'customerPostalCode',
+          modelProperty: 'postalcode',
+          label: OB.I18N.getLabel('OBPOS_LblPostalCode'),
+          readOnly: true
+        }, {
+          kind: 'OB.UI.CustomerTextProperty',
+          name: 'customerCity',
+          modelProperty: 'city',
+          label: OB.I18N.getLabel('OBPOS_LblCity'),
+          readOnly: true
+        }, {
+          kind: 'OB.UI.CustomerTextProperty',
+          name: 'customerPhone',
+          modelProperty: 'phone',
+          label: OB.I18N.getLabel('OBPOS_LblPhone'),
+          readOnly: true
+        }, {
+          kind: 'OB.UI.CustomerTextProperty',
+          name: 'customerEmail',
+          modelProperty: 'email',
+          label: OB.I18N.getLabel('OBPOS_LblEmail'),
+          readOnly: true
+        }]
+      }]
+    }]
   }, {
     name: 'mainSubWindow',
     components: [{
       kind: 'OB.UI.ModalDeleteReceipt'
-    }, {
+    },{
+      kind: 'OB.UI.Modalnoteditableorder'
+    },{
       kind: 'OB.UI.ModalBusinessPartners'
     }, {
+      kind: 'OB.UI.ModalPaidReceipts'
+    }, {
       kind: 'OB.UI.ModalReceiptPropertiesImpl'
+    }, {
+      kind: 'OB.UI.ModalReceiptLinesPropertiesImpl'
     }, {
       classes: 'row',
       style: 'margin-bottom: 5px;',
@@ -73,10 +252,18 @@ enyo.kind({
   printReceipt: function() {
     if (OB.POS.modelterminal.hasPermission('OBPOS_print.receipt')) {
       var receipt = this.model.get('order');
+      if(receipt.get("isPaid")){
+        receipt.trigger('print');
+        return;
+      }
       receipt.calculateTaxes(function() {
         receipt.trigger('print');
       });
     }
+  },
+ paidReceipts: function(inSender, inEvent) {
+    $('#modalPaidReceipts').modal('show');
+    return true;
   },
   backOffice: function(inSender, inEvent) {
     if (inEvent.url) {
@@ -96,26 +283,46 @@ enyo.kind({
     return true;
   },
   addProductToOrder: function(inSender, inEvent) {
+    if(this.model.get('order').get('isEditable') === false){
+      $("#modalNotEditableOrder").modal("show");
+      return true;
+    }
     this.model.get('order').addProduct(inEvent.product);
     this.model.get('orderList').saveCurrent();
     return true;
   },
   changeBusinessPartner: function(inSender, inEvent) {
+    if(this.model.get('order').get('isEditable') === false){
+      $("#modalNotEditableOrder").modal("show");
+      return true;
+    }
     this.model.get('order').setBPandBPLoc(inEvent.businessPartner, false, true);
     this.model.get('orderList').saveCurrent();
     return true;
   },
   receiptToInvoice: function() {
+    if(this.model.get('order').get('isEditable') === false){
+      $("#modalNotEditableOrder").modal("show");
+      return true;
+    }
     this.model.get('order').setOrderInvoice();
     this.model.get('orderList').saveCurrent();
     return true;
   },
   showReturnText: function(inSender, inEvent) {
+    if(this.model.get('order').get('isEditable') === false){
+      $("#modalNotEditableOrder").modal("show");
+      return true;
+    }
     this.model.get('order').setOrderTypeReturn();
     this.model.get('orderList').saveCurrent();
     return true;
   },
   cancelReceiptToInvoice: function(inSender, inEvent) {
+    if(this.model.get('order').get('isEditable') === false){
+      $("#modalNotEditableOrder").modal("show");
+      return true;
+    }
     this.model.get('order').resetOrderInvoice();
     this.model.get('orderList').saveCurrent();
     return true;
@@ -131,12 +338,23 @@ enyo.kind({
     }
   },
   deleteLine: function(sender, event) {
+    if(this.model.get('order').get('isEditable') === false){
+      $("#modalNotEditableOrder").modal("show");
+      return true;
+    }
     var line = event.line,
         receipt = this.model.get('order');
     if (line && receipt) {
       receipt.deleteLine(line);
       receipt.trigger('scan');
     }
+  },
+  editLine: function(sender, event) {
+    if(this.model.get('order').get('isEditable') === false){
+      $("#modalNotEditableOrder").modal("show");
+      return true;
+    }
+    $("#receiptLinesPropertiesDialog").modal('show');
   },
   exactPayment: function(sender, event) {
     this.$.keyboard.execStatelessCommand('cashexact');
@@ -159,11 +377,28 @@ enyo.kind({
     return true;
   },
   setProperty: function(inSender, inEvent) {
+    if(this.model.get('order').get('isEditable') === false){
+      $("#modalNotEditableOrder").modal("show");
+      return true;
+    }
     this.model.get('order').setProperty(inEvent.property, inEvent.value);
     this.model.get('orderList').saveCurrent();
     return true;
   },
-  beforeSetShowing: function(value, params){
+  setLineProperty: function(inSender, inEvent) {
+    if(this.model.get('order').get('isEditable') === false){
+      $("#modalNotEditableOrder").modal("show");
+      return true;
+    }
+    var line = inEvent.line,
+        receipt = this.model.get('order');
+    if (line && receipt) {
+      receipt.setLineProperty(line, inEvent.property, inEvent.value);
+    }
+    this.model.get('orderList').saveCurrent();
+    return true;
+  },
+  beforeSetShowing: function(value, params) {
     this.setShowing(value);
   },
   init: function() {
