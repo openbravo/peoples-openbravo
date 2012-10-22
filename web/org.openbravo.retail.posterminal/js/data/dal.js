@@ -155,6 +155,10 @@
         sql = sql + ' ORDER BY _idx ';
       }
 
+      if (model.prototype.dataLimit)  {
+        sql = sql + ' LIMIT ' + model.prototype.dataLimit;
+      }
+      
       //console.log(sql);
       //console.log(params);
       db.readTransaction(function (tx) {

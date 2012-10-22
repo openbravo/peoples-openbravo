@@ -17,6 +17,7 @@
     tableName: 'm_product',
     entityName: 'Product',
     source: 'org.openbravo.retail.posterminal.master.Product',
+    dataLimit: 300,
     properties: ['id', 'uPCEAN', 'uOM', 'productCategory', 'taxCategory', 'img', 'obposScale', '_identifier', '_idx'],
     propertyMap: {
       'id': 'm_product_id',

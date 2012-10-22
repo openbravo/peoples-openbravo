@@ -38,6 +38,10 @@ enyo.kind({
       }]
     }]
   }, {
+    name: 'tlimit',
+    showing: false,
+    style: 'border-bottom: 1px solid #cccccc; padding: 15px; text-align:center; font-weight: bold; color: #cc0000'
+  }, {
     name: 'tinfo',
     showing: false,
     style: 'border-bottom: 1px solid #cccccc; padding: 15px; font-weight: bold; color: #cccccc'
@@ -61,6 +65,8 @@ enyo.kind({
     if (this.collection) {
       this.collectionChanged(null);
     }
+    
+    this.$.tlimit.setContent(OB.I18N.getLabel('OBPOS_DataLimitReached'));
   },
 
   collectionChanged: function(oldCollection) {
@@ -142,8 +148,9 @@ enyo.kind({
     }, this);
 
     this.collection.on('reset', function(a, b, c) {
-      var modelsel;
+      var modelsel, dataLimit;
 
+      this.$.tlimit.hide();
       this.$.tbody.hide();
       this.$.tempty.show();
 
@@ -159,6 +166,11 @@ enyo.kind({
         this.collection.each(function(model) {
           this._addModelToCollection(model);
         }, this);
+        
+        dataLimit = this.collection.at(0).dataLimit;
+        if (dataLimit && dataLimit <= this.collection.length) {
+          this.$.tlimit.show();
+        }
 
         if (this.listStyle === 'list') {
           modelsel = this.collection.at(0);

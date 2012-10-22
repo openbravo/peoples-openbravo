@@ -18,6 +18,7 @@
     tableName: 'c_bpartner',
     entityName: 'BusinessPartner',
     source: 'org.openbravo.retail.posterminal.master.BusinessPartner',
+    dataLimit: 300,
     properties: [
      'id',
      'searchKey',
