@@ -35,7 +35,7 @@ public class Terminal extends ProcessHQLQuery {
         + getIdentifierAlias("organization")
         + ", pos.client.id as client, pos.client.name as "
         + getIdentifierAlias("client")
-        + ", pos.hardwareurl as hardwareurl, pos.scaleurl as scaleurl, "
+        + ", pos.hardwareurl as hardwareurl, pos.scaleurl as scaleurl, pos.obposTerminaltype.openDrawer as drawerpreference, "
         + "'"
         + pricesList.getId()
         + "' as priceList, '"
@@ -51,6 +51,12 @@ public class Terminal extends ProcessHQLQuery {
         + getIdentifierAlias("documentTypeForReturns")
         + ", quot.id as documentTypeForQuotations, quot.name as "
         + getIdentifierAlias("documentTypeForQuotations")
+        + ", pos.organization.obretcoDbpIrulesid as defaultbp_invoiceterm "
+        + ", pos.organization.obretcoDbpPtermid.id as defaultbp_paymentterm "
+        + ", pos.organization.obretcoDbpPmethodid.id as defaultbp_paymentmethod "
+        + ", pos.organization.obretcoDbpBpcatid.id as defaultbp_bpcategory "
+        + ", pos.organization.obretcoDbpCountryid.id as defaultbp_bpcountry "
+        + ", pos.organization.obretcoDbpOrgid.id as defaultbp_bporg "
         + ", pos.organization.obretcoMWarehouse.id as warehouse "
         + ", pos.orderdocnoPrefix as docNoPrefix "
         + ", "

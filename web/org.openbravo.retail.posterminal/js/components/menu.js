@@ -62,6 +62,7 @@ enyo.kind({
     this.doShowReturnText();
   },
   init: function(model){
+    this.model = model;
     var receipt = model.get('order'),
     me = this;
     receipt.on('change:quotation', function(model) {
@@ -70,6 +71,40 @@ enyo.kind({
       } else {
         me.hide();
       }
+    }, this);
+    receipt.on('change:isEditable', function(newValue){
+      if (newValue){
+        if(newValue.get('isEditable') === false){
+          this.setShowing(false);
+          return;
+        }
+      }
+      this.setShowing(true);
+    }, this);
+  }
+});
+
+enyo.kind({
+  name: 'OB.UI.MenuProperties',
+  kind: 'OB.UI.MenuAction',
+  permission: 'OBPOS_receipt.properties',
+  events: {
+    onShowReceiptProperties: ''
+  },
+  label: OB.I18N.getLabel('OBPOS_LblProperties'),
+  tap: function() {
+    this.doShowReceiptProperties();
+  },
+  init: function(model){
+    this.model = model;
+    this.model.get('order').on('change:isEditable', function(newValue){
+      if (newValue){
+        if(newValue.get('isEditable') === false){
+          this.setShowing(false);
+          return;
+        }
+      }
+      this.setShowing(true);
     }, this);
   }
 });
@@ -86,6 +121,7 @@ enyo.kind({
     this.doReceiptToInvoice();
   },
   init: function(model){
+    this.model = model;
     var receipt = model.get('order'),
     me = this;
     receipt.on('change:quotation', function(model) {
@@ -95,6 +131,33 @@ enyo.kind({
         me.hide();
       }
     }, this);
+    receipt.on('change:isEditable', function(newValue){
+      if (newValue){
+        if(newValue.get('isEditable') === false){
+          this.setShowing(false);
+          return;
+        }
+      }
+      this.setShowing(true);
+    }, this);
+  }
+});
+
+enyo.kind({
+  name: 'OB.UI.MenuCustomers',
+  kind: 'OB.UI.MenuAction',
+  permission: 'OBPOS_receipt.customers',
+  events: {
+    onChangeSubWindow: ''
+  },
+  label: 'Customers',
+  tap: function() {
+    this.doChangeSubWindow({
+      newWindow: {
+        name: 'subWindow_customers',
+        params: []
+      }
+    });
   }
 });
 
@@ -248,6 +311,49 @@ enyo.kind({
 });
 
 enyo.kind({
+	  name: 'OB.UI.MenuSeparator',
+	  tag: 'li',
+	  classes: 'divider'
+	});
+
+enyo.kind({
+	  name: 'OB.UI.MenuPaidReceipts',
+	  kind: 'OB.UI.MenuAction',
+	  permission: 'OBPOS_retail.paidReceipts',
+	  events: {
+	    onPaidReceipts: ''
+	  },
+	  label: OB.I18N.getLabel('OBPOS_LblPaidReceipts'),
+	  tap: function() {
+	    if(!OB.POS.modelterminal.get('connectedToERP')){
+	      OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OfflineWindowRequiresOnline'));
+	      return;
+	    }
+	    if (OB.POS.modelterminal.hasPermission(this.permission)) {
+	      this.doPaidReceipts();
+	    }
+	  }
+	});
+
+enyo.kind({
+  name: 'OB.UI.MenuBackOffice',
+  kind: 'OB.UI.MenuAction',
+  permission: 'OBPOS_retail.backoffice',
+  url: '../..',
+  events: {
+    onBackOffice: ''
+  },
+  label: OB.I18N.getLabel('OBPOS_LblOpenbravoWorkspace'),
+  tap: function() {
+    if (OB.POS.modelterminal.hasPermission(this.permission)) {
+      this.doBackOffice({
+        url: this.url
+      });
+    }
+  }
+});
+
+enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.StandardMenu',
   kind: 'OB.UI.ToolbarMenu',
   icon: 'btn-icon btn-icon-menu',
@@ -258,12 +364,20 @@ enyo.kind({
       kind: 'OB.UI.MenuReturn'
     });
     this.menuEntries.push({
+      kind: 'OB.UI.MenuProperties'
+    });
+    this.menuEntries.push({
       kind: 'OB.UI.MenuInvoice'
     });
     this.menuEntries.push({
       kind: 'OB.UI.MenuPrint'
     });
-
+    this.menuEntries.push({
+      kind: 'OB.UI.MenuCustomers'
+    });
+    this.menuEntries.push({
+      kind: 'OB.UI.MenuPaidReceipts'
+    });
     this.menuEntries.push({
       kind: 'OB.UI.MenuReactivateQuotation'
     });
@@ -289,9 +403,7 @@ enyo.kind({
     });
     
     this.menuEntries.push({
-      kind: 'OB.UI.MenuItem',
-      label: OB.I18N.getLabel('OBPOS_LblOpenbravoWorkspace'),
-      url: '../..'
+      kind: 'OB.UI.MenuBackOffice'
     });
 
     enyo.forEach(OB.POS.windows.filter(function(window) {

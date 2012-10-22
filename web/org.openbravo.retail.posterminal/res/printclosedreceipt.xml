@@ -27,9 +27,7 @@
     </line>
     <line>
       <text align="left" length="22"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_datetime')) %></text>
-      <text><%= OB.I18N.formatDate(order.get('orderDate')) %></text>
-      <text> </text>
-      <text><%= OB.I18N.formatHour(order.get('orderDate')) %></text>
+      <text><%= OB.I18N.formatDate(order.orderDate) %></text>
     </line>
     <line>
       <text align="left" length="22"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_cashierPOS')) %></text>
@@ -37,13 +35,7 @@
       <text>, </text>
       <text><%= OB.UTIL.encodeXMLComponent(order.get('posTerminal'+OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER)) %></text>
     </line>
-    
     <line></line>
-    <line size="1">
-      <text align ="center" length="42"><%= OB.I18N.getLabel('OBPOS_ToReturn') %></text>
-    </line>
-    <line></line>
-    
     <line>
       <text align ="left" length="21"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LineItem'))%></text>
       <text align ="center" length="5">#</text>
@@ -70,11 +62,11 @@
     <line size="1">
       <text align ="left" length="25"><%=OB.I18N.getLabel('OBPOS_ReceiptTotal') + ' ' + order.get('currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER) %></text>
       <text align ="right" length="14"><%= order.printGross() %></text>
-    </line>
+    </line>   
       <%
         var payments = order.get('payments');
         for (var i = 0; i < payments.length; i++) {
-      if(payments.at(i).get('rate') && payments.at(i).get('rate')!=='1'){
+         if(payments.at(i).get('rate') && payments.at(i).get('rate')!=='1'){
       %>
         <line>
           <text align="left" length="15"><%= payments.at(i).get('name') %></text>
@@ -118,17 +110,9 @@
           }
         }
       %>   
-    <line>
-      <text align="left" length="20"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_ticketChange')) %></text>
-      <text align="right" length="20"><%= OB.I18N.formatCurrency(order.get('change'))%></text>
-    </line>
     <line></line>
     <line size="1">
-      <% if (order.get('hasbeenpaid') === 'Y') { %>
-        <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_tckfooter_line1')) %></text>
-      <% } else { %>
-        <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_tckfooter_draft'))  %></text>
-      <% } %>
+      <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_ticketIsClosed')) %></text>
     </line>
     <line>
       <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_tckfooter_line2'))%></text>

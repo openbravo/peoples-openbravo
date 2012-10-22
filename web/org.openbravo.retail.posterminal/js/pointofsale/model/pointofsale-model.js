@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global $ */
+/*global $ Backbone enyo */
 
 OB.OBPOSPointOfSale = OB.OBPOSPointOfSale || {};
 OB.OBPOSPointOfSale.Model = OB.OBPOSPointOfSale.Model || {};
@@ -15,7 +15,7 @@ OB.OBPOSPointOfSale.UI = OB.OBPOSPointOfSale.UI || {};
 
 //Window model
 OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
-  models: [OB.Model.TaxRate, OB.Model.Product, OB.Model.ProductPrice, OB.Model.ProductCategory, OB.Model.BusinessPartner, OB.Model.Order, OB.Model.DocumentSequence],
+  models: [OB.Model.TaxRate, OB.Model.Product, OB.Model.ProductPrice, OB.Model.ProductCategory, OB.Model.BusinessPartner, OB.Model.Order, OB.Model.DocumentSequence, OB.Model.ChangedBusinessPartners],
 
   loadUnpaidOrders: function() {
     // Shows a modal window with the orders pending to be paid
@@ -60,6 +60,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
         if (!ordersPaidNotProcessed || ordersPaidNotProcessed.length === 0) {
           return;
         }
+        ordersPaidNotProcessed.each(function(order) {
+            order.set('isbeingretriggered', 'Y');
+        });
         successCallback = function() {
           $('.alert:contains("' + OB.I18N.getLabel('OBPOS_ProcessPendingOrders') + '")').alert('close');
           OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgSuccessProcessOrder'));
@@ -74,29 +77,62 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
     }
   },
 
+  processChangedCustomers: function() {
+    // Processes the customers who has been changed
+    var me = this;
+
+    if (OB.POS.modelterminal.get('connectedToERP')) {
+      OB.Dal.find(OB.Model.ChangedBusinessPartners, null, function(customersChangedNotProcessed) { //OB.Dal.find success
+        var successCallback, errorCallback;
+        if (!customersChangedNotProcessed || customersChangedNotProcessed.length === 0) {
+          me.processPaidOrders();
+          me.loadUnpaidOrders();
+          return;
+        }
+        successCallback = function() {
+          OB.UTIL.showSuccess('Changed customers have been processed correctly');
+          me.processPaidOrders();
+          me.loadUnpaidOrders();
+        };
+        errorCallback = function() {
+          OB.UTIL.showSuccess('ERROR processing changed customers');
+        };
+        OB.UTIL.showAlert.display('Processing changed customers');
+        customersChangedNotProcessed.each(function(cus) {
+          cus.set('json', enyo.json.parse(cus.get('json')));
+        });
+        OB.UTIL.processCustomers(customersChangedNotProcessed, successCallback, errorCallback);
+      });
+    }
+  },
+
   init: function() {
     var receipt = new OB.Model.Order(),
-        discounts, ordersave, taxes, orderList, hwManager, ViewManager;
-    
+        discounts, ordersave, customersave, taxes, orderList, hwManager, ViewManager;
+
     ViewManager = Backbone.Model.extend({
       defaults: {
-        currentWindow: 'mainSubWindow'
+        currentWindow: {
+          name: 'mainSubWindow',
+          params: []
+        }
       },
-      initialize: function() {
-      }
+      initialize: function() {}
     });
     this.set('order', receipt);
     orderList = new OB.Collection.OrderList(receipt);
     this.set('orderList', orderList);
+    this.set('customer', new OB.Model.BusinessPartner());
 
-    this.set('windowManager', new ViewManager);
+    customersave = new OB.DATA.CustomerSave(this);
+
+    this.set('subWindowManager', new ViewManager());
     discounts = new OB.DATA.OrderDiscount(receipt);
     ordersave = new OB.DATA.OrderSave(this);
     taxes = new OB.DATA.OrderTaxes(receipt);
 
     OB.POS.modelterminal.saveDocumentSequenceInDB();
-    this.processPaidOrders();
-    this.loadUnpaidOrders();
+    this.processChangedCustomers();
 
     receipt.on('paymentDone', function() {
       receipt.calculateTaxes(function() {
@@ -104,6 +140,10 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
         receipt.trigger('print'); // to guaranty execution order
         orderList.deleteCurrent();
       });
+    }, this);
+
+    receipt.on('openDrawer', function() {
+      receipt.trigger('popenDrawer');
     }, this);
     
     this.printReceipt = new OB.OBPOSPointOfSale.Print.Receipt(receipt);

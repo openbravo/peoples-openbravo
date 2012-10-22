@@ -54,7 +54,7 @@ enyo.kind({
   }],
 
   manualTap: function(tab) {
-    // Hack to manually tap on bootstrap tab
+    //Hack to manually tap on bootstrap tab
     var domButton = $(tab.tabPanel + '_button');
     domButton.tab('show');
     domButton.parent().parent().addClass('active');
@@ -65,7 +65,11 @@ enyo.kind({
     var totalPrinterComponent;
 
     this.receipt.on('clear scan', function() {
-      this.manualTap(this.scan);
+      if (this.receipt.get('isEditable') === false) {
+        this.manualTap(this.edit);
+      } else {
+        this.manualTap(this.scan);
+      }
     }, this);
 
     this.receipt.get('lines').on('click', function() {
@@ -133,7 +137,6 @@ enyo.kind({
       edit: false
     });
   },
-
   makeId: function() {
     return 'scan_button';
   }
@@ -200,6 +203,9 @@ enyo.kind({
       }
       return;
     }
+    if (this.model.get('order').get('isEditable') === false) {
+      return true;
+    }
     this.doTabChange({
       keyboard: 'toolbarpayment',
       edit: false
@@ -227,6 +233,24 @@ enyo.kind({
   },
   renderTotal: function(sender, event) {
     this.$.totalPrinter.renderTotal(event.newTotal);
+  },
+  init: function(model) {
+    this.model = model;
+    this.model.get('order').on('change:isEditable', function(newValue) {
+      if (newValue) {
+        if (newValue.get('isEditable') === false) {
+          this.setAttribute('data-toogle', null);
+          this.setAttribute('disabled', 'disabled');
+          this.setAttribute('href', null);
+          this.disabled = true;
+          return;
+        }
+      }
+      this.setAttribute('data-toogle', 'tab');
+      this.setAttribute('disabled', null);
+      this.setAttribute('href', '#payment');
+      this.disabled = true;
+    }, this);
   }
 });
 

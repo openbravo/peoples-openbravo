@@ -84,9 +84,13 @@ enyo.kind({
           content: OB.I18N.getLabel('OBPOS_ToBeReturned')
         }, {
           name: 'divbtnquotation',
-          showing: false,
           style: 'float: right; width: 100%; text-align: right; font-weight:bold; font-size: 30px; color: #f8941d;',
           content: OB.I18N.getLabel('OBPOS_QuotationDraft')
+        }, {
+          name: 'divispaid',
+          showing: false,
+          style: 'float: right; width: 50%; text-align: right; font-weight:bold; font-size: 30px; color: #f8941d;',
+          content: OB.I18N.getLabel('OBPOS_paid')
         }, {
           style: 'clear: both;'
         }]
@@ -122,15 +126,15 @@ enyo.kind({
     this.order.on('change:quotation', function(model) {
       if (model.get('quotation')) {
         this.$.divbtnquotation.show();
-        this.$.listOrderLines.children[3].children[0].setContent(OB.I18N.getLabel('OBPOS_QuotationNew'))
+        this.$.listOrderLines.children[4].children[0].setContent(OB.I18N.getLabel('OBPOS_QuotationNew'))
         if (model.get('hasbeenpaid')==='Y') {
           this.$.divbtnquotation.setContent(OB.I18N.getLabel('OBPOS_QuotationUnderEvaluation'));
         } else if(!model.get('hasbeenpaid')){
           this.$.divbtnquotation.setContent(OB.I18N.getLabel('OBPOS_QuotationDraft'));
+        } else {
+          this.$.divbtnquotation.hide();
+          this.$.listOrderLines.children[4].children[0].setContent(OB.I18N.getLabel('OBPOS_ReceiptNew'))
         }
-      } else {
-        this.$.divbtnquotation.hide();
-        this.$.listOrderLines.children[3].children[0].setContent(OB.I18N.getLabel('OBPOS_ReceiptNew'))
       }
     }, this);
     this.order.on('change:hasbeenpaid', function(model) {
@@ -139,6 +143,13 @@ enyo.kind({
       } else if(model.get('quotation') && model.get('hasbeenpaid')==='N'){
         this.$.divbtnquotation.setContent(OB.I18N.getLabel('OBPOS_QuotationDraft'));
       }
+    }, this);
+    this.order.on('change:isPaid', function(model) {
+        if (model.get('isPaid') === true) {
+          this.$.divispaid.show();
+        } else {
+          this.$.divispaid.hide();
+        }
     }, this);
   }
 });

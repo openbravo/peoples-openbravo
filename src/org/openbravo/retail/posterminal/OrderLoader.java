@@ -166,11 +166,16 @@ public class OrderLoader extends JSONProcessSimple {
 
   public JSONObject saveOrder(JSONObject jsonorder) throws Exception {
 
+    if (verifyOrderExistance(jsonorder)) {
+      return successMessage(jsonorder);
+    }
+
     long t0 = System.currentTimeMillis();
     long t1, t11, t2, t3;
     Order order = null;
     ShipmentInOut shipment = null;
     Invoice invoice = null;
+    boolean sendEmail = false;
     TriggerHandler.getInstance().disable();
     boolean isQuotation = jsonorder.has("quotation") && jsonorder.getBoolean("quotation");
     try {
@@ -182,6 +187,7 @@ public class OrderLoader extends JSONProcessSimple {
       boolean createInvoice = !isQuotation
           && (jsonorder.has("generateInvoice") && jsonorder.getBoolean("generateInvoice"));
       boolean createShipment = !isQuotation;
+      sendEmail = (jsonorder.has("sendEmail") && jsonorder.getBoolean("sendEmail"));
       // Order header
       order = OBProvider.getInstance().get(Order.class);
       long t111 = System.currentTimeMillis();
@@ -239,20 +245,24 @@ public class OrderLoader extends JSONProcessSimple {
 
       // Stock manipulation
       handleStock(shipment);
+      // Send email
+      if (sendEmail) {
+        EmailSender emailSender = new EmailSender(order.getId(), jsonorder);
+      }
     }
 
     log.info("Initial flush: " + (t1 - t0) + "; Generate bobs:" + (t11 - t1) + "; Save bobs:"
         + (t2 - t11) + "; First flush:" + (t3 - t2) + "; Second flush: " + (t4 - t3)
         + "; Process Payments:" + (System.currentTimeMillis() - t4));
 
+    return successMessage(jsonorder);
+  }
+
+  protected JSONObject successMessage(JSONObject jsonorder) throws Exception {
     final JSONObject jsonResponse = new JSONObject();
 
     jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
     jsonResponse.put("result", "0");
-    jsonResponse.put("data", jsonorder);
-    if (jsonorder.getBoolean("quotation")) {
-      jsonResponse.put("backendId", order.getId());
-    }
     return jsonResponse;
   }
 
@@ -260,6 +270,22 @@ public class OrderLoader extends JSONProcessSimple {
     Order oldOrder = OBDal.getInstance().get(Order.class, jsonorder.getString("oldId"));
     OBDal.getInstance().remove(oldOrder);
     OBDal.getInstance().flush();
+  }
+
+  protected boolean verifyOrderExistance(JSONObject jsonorder) throws Exception {
+    if (jsonorder.has("isbeingretriggered")
+        && jsonorder.getString("isbeingretriggered").equals("Y")) {
+      // This order has been sent previously. We need to verify if it was saved before, or not.
+      List<Object> parameters = new ArrayList<Object>();
+      parameters.add(jsonorder.getString("documentNo"));
+      parameters.add(jsonorder.getString("posTerminal"));
+      parameters.add(jsonorder.getJSONObject("bp").getString("id"));
+      OBQuery<Order> orders = OBDal.getInstance().createQuery(Order.class,
+          "documentNo=? and obposApplications.id=? and businessPartner.id=?");
+      orders.setParameters(parameters);
+      return orders.count() > 0;
+    }
+    return false;
   }
 
   protected String getPaymentDescription() {
@@ -496,8 +522,9 @@ public class OrderLoader extends JSONProcessSimple {
       Entity orderLineEntity = ModelProvider.getInstance().getEntity(OrderLine.class);
       JSONObject jsonOrderLine = orderlines.getJSONObject(i);
 
-      fillBobFromJSON(orderLineEntity, orderline, jsonOrderLine);
       fillBobFromJSON(ModelProvider.getInstance().getEntity(OrderLine.class), orderline, jsonorder);
+      fillBobFromJSON(orderLineEntity, orderline, jsonOrderLine);
+
       orderline.setActive(true);
       orderline.setSalesOrder(order);
       orderline.setLineNetAmount(BigDecimal.valueOf(jsonOrderLine.getDouble("net")));
@@ -563,6 +590,7 @@ public class OrderLoader extends JSONProcessSimple {
     order.setDocumentAction("--");
     order.setProcessed(true);
     order.setProcessNow(false);
+    order.setObposSendemail((jsonorder.has("sendEmail") && jsonorder.getBoolean("sendEmail")));
 
     JSONObject taxes = jsonorder.getJSONObject("taxes");
     @SuppressWarnings("unchecked")

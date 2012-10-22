@@ -16,8 +16,16 @@ import org.openbravo.retail.posterminal.ProcessHQLQuery;
 public class ProductPrice extends ProcessHQLQuery {
 
   @Override
+  protected boolean isAdminMode() {
+    return true;
+  }
+
+  @Override
   protected String getQuery(JSONObject jsonsent) throws JSONException {
-    return "from PricingProductPrice as pricingProductPrice where "
+    return "select pricingProductPrice.id as id, pricingProductPrice.priceListVersion.id as priceListVersion, pricingProductPrice.product.id as product, "
+        + " pricingProductPrice.listPrice as listPrice, pricingProductPrice.standardPrice as standardPrice, pricingProductPrice.priceLimit as priceLimit, "
+        + "pricingProductPrice.cost as cost, pricingProductPrice.product.name||' - '||pricingProductPrice.priceListVersion.priceList.name as _identifier"
+        + " from PricingProductPrice as pricingProductPrice where "
         + "(pricingProductPrice.$incrementalUpdateCriteria) AND priceListVersion in "
         + "(select plv.id from PricingPriceList as ppl, PricingPriceListVersion as plv "
         + "where ppl.id = '"
