@@ -28,6 +28,7 @@
 
   TYPE RECORD IS REF CURSOR;
   Cur_Parameter RECORD;
+  Cur_MStock    RECORD;
 
   v_quantity NUMBER;
   v_ProductID   VARCHAR2(32);
