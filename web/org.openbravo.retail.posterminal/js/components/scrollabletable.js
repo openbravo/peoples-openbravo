@@ -40,7 +40,7 @@ enyo.kind({
   }, {
     name: 'tlimit',
     showing: false,
-    style: 'border-bottom: 1px solid #cccccc; padding: 15px; text-align:center; font-weight: bold; color: #cc0000'
+    style: 'border-bottom: 1px solid #cccccc; padding: 15px; text-align:center; font-weight: bold; color: #a1a328'
   }, {
     name: 'tinfo',
     showing: false,
