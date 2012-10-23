@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s): Enterprise Intelligence Systems (http://www.eintel.com.au).
  *************************************************************************
@@ -53,11 +53,11 @@
     <PARAMETER id="paramPaymentDate" name="dateDisplayFormat" attribute="displayformat" replace="xx"/>
     <PARAMETER id="paramPaymentDate" name="dateDisplayFormat" attribute="saveformat" replace="yy"/>
     
-    <PARAMETER id="paramDueDateFrom" name="dateDisplayFormat" attribute="displayformat" replace="xx"/>
-    <PARAMETER id="paramDueDateFrom" name="dateDisplayFormat" attribute="saveformat" replace="yy"/>
+    <PARAMETER id="paramExpectedDateFrom" name="dateDisplayFormat" attribute="displayformat" replace="xx"/>
+    <PARAMETER id="paramExpectedDateFrom" name="dateDisplayFormat" attribute="saveformat" replace="yy"/>
     
-    <PARAMETER id="paramDueDateTo" name="dateDisplayFormat" attribute="displayformat" replace="xx"/>
-    <PARAMETER id="paramDueDateTo" name="dateDisplayFormat" attribute="saveformat" replace="yy"/>
+    <PARAMETER id="paramExpectedDateTo" name="dateDisplayFormat" attribute="displayformat" replace="xx"/>
+    <PARAMETER id="paramExpectedDateTo" name="dateDisplayFormat" attribute="saveformat" replace="yy"/>
     <PARAMETER id="paramCurrencyId" name="CurrencyId" attribute="onchange" replace="xx"/>
     
     <PARAMETER id="sectionDetailPaymentMethod" name="sectionDetailPaymentMethod"/>

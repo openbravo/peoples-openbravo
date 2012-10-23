@@ -119,7 +119,7 @@ BEGIN
         fin_payment_schedule_id, ad_client_id, ad_org_id, isactive,
         created, createdby, updated, updatedby,
         c_invoice_id, c_currency_id, c_order_id,
-        fin_paymentmethod_id, amount, duedate, origduedate,
+        fin_paymentmethod_id, amount, duedate, expecteddate,
         outstandingamt, fin_payment_priority_id
        )
       VALUES
