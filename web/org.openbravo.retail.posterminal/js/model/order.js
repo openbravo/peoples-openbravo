@@ -744,8 +744,12 @@ alert('reject!!')
           documentseq, documentseqstr, bp, newline, lines, prod, payments, curPayment, taxes;
       this.lines = new Backbone.Collection();
       order.set('documentNo', model.documentNo);
-      order.set('isPaid', true);
-      order.set('isEditable', false);
+      if(model.quotation){
+        order.set('quotation', true);
+      }else{
+        order.set('isEditable', false);
+        order.set('isPaid', true);
+      }
       order.set('id', model.orderid);
       order.set('client', model.client);
       order.set('documentType', model.documenttype);

@@ -35,8 +35,12 @@ public class PaidReceipts extends JSONProcessSimple {
     String hqlPaidReceipts = "select ord.id as id, ord.documentNo as documentNo, ord.orderDate as orderDate, "
         + "ord.businessPartner.name as businessPartner, ord.grandTotalAmount as totalamount,  ord.salesRepresentative.name as salesRepresentative,  ord.documentType.name as documenttype, "
         + "ord.id as orderid, ord.warehouse.id as warehouse, ord.currency.iSOCode as currency, ord.obposApplications.name as posterminalidentifier from Order as ord where ord.client=? and ord.organization=? and ord.obposApplications is not null";
-    if (!json.getString("documentNo").isEmpty()) {
-      hqlPaidReceipts += " and ord.documentNo like '%" + json.getString("documentNo") + "%' ";
+    if (!json.getString("filterText").isEmpty()) {
+      hqlPaidReceipts += " and (ord.documentNo like '%" + json.getString("filterText")
+          + "%' or ord.businessPartner.name like '%" + json.getString("filterText") + "%') ";
+    }
+    if (!json.getString("documentType").isEmpty()) {
+      hqlPaidReceipts += " and ord.documentType.id='" + json.getString("documentType") + "'";
     }
     if (!json.getString("startDate").isEmpty()) {
       hqlPaidReceipts += " and ord.orderDate >='" + json.getString("startDate") + "'";
@@ -64,6 +68,7 @@ public class PaidReceipts extends JSONProcessSimple {
       paidReceipt.put("organization", json.getString("organization"));
       paidReceipt.put("posterminal", json.getString("pos"));
       paidReceipt.put("client", json.getString("client"));
+      paidReceipt.put("quotation", json.getBoolean("quotation"));
 
       JSONArray listpaidReceiptsLines = new JSONArray();
       String hqlPaidReceiptsLines = "select ordLine.product.id as id, ordLine.product.name as name, ordLine.product.uOM.id as uOM, ordLine.orderedQuantity as quantity, "

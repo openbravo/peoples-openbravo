@@ -23,6 +23,7 @@ enyo.kind({
     onCreateOrderFromQuotation: 'createOrderFromQuotation',
     onReactivateQuotation: 'reactivateQuotation',
     onRejectQuotation: 'rejectQuotation',
+    onQuotations: 'quotations',
     onShowReturnText: 'showReturnText',
     onAddNewOrder: 'addNewOrder',
     onDeleteOrder: 'deleteCurrentOrder',
@@ -222,7 +223,8 @@ enyo.kind({
     },{
       kind: 'OB.UI.ModalBusinessPartners'
     }, {
-      kind: 'OB.UI.ModalPaidReceipts'
+      kind: 'OB.UI.ModalPaidReceipts',
+      name: 'paidReceiptsView'
     }, {
       kind: 'OB.UI.ModalReceiptPropertiesImpl'
     }, {
@@ -267,9 +269,16 @@ enyo.kind({
     }
   },
  paidReceipts: function(inSender, inEvent) {
+   this.$.paidReceiptsView.setParams({quotation: false});
     $('#modalPaidReceipts').modal('show');
     return true;
   },
+  
+  quotations: function(inSender, inEvent) {
+    this.$.paidReceiptsView.setParams({quotation: true});
+    $('#modalPaidReceipts').modal('show');
+  },
+  
   backOffice: function(inSender, inEvent) {
     if (inEvent.url) {
       window.open(inEvent.url, '_blank');

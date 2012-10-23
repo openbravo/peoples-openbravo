@@ -262,7 +262,7 @@ enyo.kind({
   },
   updateVisibility: function(model){
     if (model.get('quotation') && model.get('hasbeenpaid')==='Y') {
-      this.show();
+      this.hide();
     } else {
       this.hide();
     }
@@ -335,6 +335,26 @@ enyo.kind({
 	  }
 	});
 
+
+enyo.kind({
+    name: 'OB.UI.MenuQuotations',
+    kind: 'OB.UI.MenuAction',
+    permission: 'OBPOS_retail.quotations',
+    events: {
+      onQuotations: ''
+    },
+    label: OB.I18N.getLabel('OBPOS_Quotations'),
+    tap: function() {
+      if(!OB.POS.modelterminal.get('connectedToERP')){
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OfflineWindowRequiresOnline'));
+        return;
+      }
+      if (OB.POS.modelterminal.hasPermission(this.permission)) {
+        this.doQuotations();
+      }
+    }
+  });
+
 enyo.kind({
   name: 'OB.UI.MenuBackOffice',
   kind: 'OB.UI.MenuAction',
@@ -379,6 +399,12 @@ enyo.kind({
       kind: 'OB.UI.MenuPaidReceipts'
     });
     this.menuEntries.push({
+      kind: 'OB.UI.MenuQuotations'
+    });
+    this.menuEntries.push({
+      kind: 'OB.UI.MenuSeparator'
+    });
+    this.menuEntries.push({
       kind: 'OB.UI.MenuReactivateQuotation'
     });
 
@@ -390,9 +416,6 @@ enyo.kind({
       kind: 'OB.UI.MenuCreateOrderFromQuotation'
     });
 
-    this.menuEntries.push({
-      kind: 'OB.UI.MenuSeparator'
-    });
     
     this.menuEntries.push({
       kind: 'OB.UI.MenuQuotation'
