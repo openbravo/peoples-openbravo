@@ -66,6 +66,19 @@
   cur_reserved_stock       RECORD;
   cur_not_allocated_stock  RECORD;
 BEGIN
+  SELECT r.m_product_id, r.c_uom_id, COALESCE(r.reservedqty, 0), COALESCE(r.releasedqty, 0), r.quantity - COALESCE(r.reservedqty, 0),
+      COALESCE(SUM(alloc.quantity - COALESCE(alloc.releasedqty, 0)), 0),
+      r.m_warehouse_id, r.m_locator_id, r.m_attributesetinstance_id
+    INTO v_product_id, v_uom_id, v_this_reservedqty, v_this_releasedqty, v_this_notreserved,
+      v_this_allocated,
+      v_dim_warehouse_id, v_dim_locator_id, v_dim_asi_id
+  FROM m_reservation r
+      LEFT JOIN m_reservation_stock alloc ON r.m_reservation_id = alloc.m_reservation_id AND alloc.isallocated = 'Y'
+  WHERE r.m_reservation_id = p_reservation_id
+  GROUP BY r.m_product_id, r.c_uom_id, r.reservedqty, r.releasedqty, r.quantity,
+      r.m_warehouse_id, r.m_locator_id, r.m_attributesetinstance_id;
+  v_this_noalloc := v_this_reservedqty - v_this_allocated;
+
   SELECT sd.qtyonhand - COALESCE(rs.reservedstock, 0), sd.m_storage_detail_id, loc.m_warehouse_id
     INTO v_notreservedstock, v_storage_detail_id, v_warehouse_id
   FROM m_storage_detail sd
@@ -84,16 +97,6 @@ BEGIN
     AND COALESCE(sd.m_attributesetinstance_id, '0') = COALESCE(p_attributesetinstance_id, '0')
     AND sd.m_locator_id = p_locator_id;
 
-  SELECT r.m_product_id, r.c_uom_id, COALESCE(r.reservedqty, 0)y, COALESCE(r.releasedqty, 0), r.quantity - COALESCE(r.reservedqty, 0),
-      COALESCE(SUM(alloc.quantity - COALESCE(alloc.releasedqty, 0)), 0),
-      r.m_warehouse_id, r.m_locator_id, r.m_attributesetinstance_id
-    INTO v_product_id, v_uom_id, v_this_reservedqty, v_this_releasedqty, v_this_notreserved,
-      v_this_allocated,
-      v_dim_warehouse_id, v_dim_locator_id, v_dim_asi_id
-  FROM m_reservation r
-      LEFT JOIN m_reservation_stock alloc ON r.m_reservation_id = alloc.m_reservation_id AND alloc.isallocated = 'Y'
-  WHERE r.m_reservation_id = p_reservation_id;
-  v_this_noalloc := v_this_reservedqty - v_this_allocated;
 
   IF (COALESCE(v_dim_warehouse_id, v_warehouse_id) != v_warehouse_id
       OR COALESCE(v_dim_locator_id, p_locator_id) != p_locator_id
@@ -112,7 +115,7 @@ BEGIN
       SELECT quantity - releasedqty AS reservedqty, m_reservation_stock_id, isallocated
       FROM m_reservation_stock
       WHERE m_locator_id = p_locator_id
-        AND m_attributesetinstance_id = p_attributesetinstance_id
+        AND COALESCE(m_attributesetinstance_id, '0') = COALESCE(p_attributesetinstance_id, '0')
       ORDER BY CASE isallocated WHEN 'Y' THEN 0 ELSE 1 END
   ) LOOP
     v_qtytorelease := LEAST(cur_reserved_stock.reservedqty, v_pendingtorelease);

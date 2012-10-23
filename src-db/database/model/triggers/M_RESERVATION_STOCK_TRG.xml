@@ -28,14 +28,14 @@ BEGIN
   END IF;
 
   IF (INSERTING OR UPDATING) THEN
-    v_reservedqtydiff := :NEW.quantity;
-    v_releasedqtydiff := :NEW.releasedqty;
+    v_reservedqtydiff := COALESCE(:NEW.quantity, 0);
+    v_releasedqtydiff := COALESCE(:NEW.releasedqty, 0);
     v_reservation_id := :NEW.m_reservation_id;
   END IF;
 
   IF (UPDATING OR DELETING) THEN
-    v_reservedqtydiff := -:OLD.quantity;
-    v_releasedqtydiff := -:OLD.releasedqty;
+    v_reservedqtydiff := v_reservedqtydiff - COALESCE(:OLD.quantity, 0);
+    v_releasedqtydiff := v_releasedqtydiff - COALESCE(:OLD.releasedqty, 0);
     v_reservation_id := :OLD.m_reservation_id;
   END IF;
 
