@@ -1177,7 +1177,7 @@ isc.OBStandardView.addProperties({
       }
       if (increment < 0) {
         // previous, pick the last from the group
-        newRecord = newRecord.groupMembers[newRecord.groupMembers.length -1];
+        newRecord = newRecord.groupMembers[newRecord.groupMembers.length - 1];
         newRowNum = this.viewGrid.getRecordIndex(newRecord);
       } else {
         // next, pick the first from the group

@@ -976,7 +976,7 @@ isc.OBViewGrid.addProperties({
 
   setViewState: function (state) {
     var localState, i, fld, hasSummaryFunction;
-    
+
     localState = this.evalViewState(state, 'viewState');
 
     // strange case, sometimes need to call twice

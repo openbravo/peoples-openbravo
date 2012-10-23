@@ -54,7 +54,7 @@ isc.OBFKFilterTextItem.addProperties({
     // for foreign key fields we only support like/contains/substring
     // so force that
     this.textMatchStyle = this.overrideTextMatchStyle;
-    
+
     // the data from the datasource will contain the id and the identifier
     // the value for the filter and the display are the same: the identifier
     this.displayField = OB.Constants.IDENTIFIER;
