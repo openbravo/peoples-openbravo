@@ -148,25 +148,18 @@ enyo.kind({
       name: 'btn'
     }]
   }],
-  setLabel: function() {
-    var lbl;
-    if (this.keyboard.state.get('keypadName') === 'basic') {
-      lbl = OB.I18N.getLabel('OBPOS_KeypadCoins');
-    } else {
-      lbl = OB.I18N.getLabel('OBPOS_KeypadBasic');
-    }
+  setLabel: function(lbl) {
     this.$.btn.setContent(lbl);
   },
   tap: function() {
-    var newKeypad = this.keyboard.state.get('keypadName') === 'coins' ? 'basic' : 'coins';
-    this.keyboard.showKeypad(newKeypad);
+    this.keyboard.showNextKeypad();
   },
 
   create: function() {
     this.inherited(arguments);
-    this.keyboard.state.on('change:keypadLabel', function() {
-      this.setLabel();
+    this.keyboard.state.on('change:keypadNextLabel', function() {
+      this.setLabel(this.keyboard.state.get('keypadNextLabel'));
     }, this);
-    this.setLabel();
+    this.setLabel(this.keyboard.state.get('keypadNextLabel'));
   }
 });

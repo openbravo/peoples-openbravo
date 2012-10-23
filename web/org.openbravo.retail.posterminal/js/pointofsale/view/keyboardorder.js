@@ -13,6 +13,7 @@
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.KeyboardOrder',
   kind: 'OB.UI.Keyboard',
+  keypads: [ 'OB.UI.KeypadCoins' ],
   published: {
     receipt: null
   },
@@ -98,7 +99,10 @@ enyo.kind({
     // calling super after setting keyboard properties
     this.inherited(arguments);
 
-    this.addKeypad('OB.UI.KeypadCoins');
+    _.each(this.keypads, function (keypadname) {
+      this.addKeypad(keypadname);
+    }, this);
+    
     this.addToolbarComponent('OB.OBPOSPointOfSale.UI.ToolbarPayment');
     this.addToolbar(OB.OBPOSPointOfSale.UI.ToolbarScan);
   }
@@ -185,3 +189,163 @@ enyo.kind({
   name: 'OB.UI.BarcodeActionHandler',
   kind: 'OB.UI.AbstractBarcodeActionHandler'
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+enyo.kind({
+  name: 'OB.UI.KeypadUSD',
+  label: OB.I18N.getLabel('USD'),
+  padName: 'usd',
+  padPayment: 'OBPOS_payment.voucher',
+  components: [{
+    classes: 'row-fluid',
+    components: [{
+      classes: 'span4',
+      components: [{
+        kind: 'OB.UI.ButtonKey',
+        classButton: 'btnkeyboard-num',
+        label: '/',
+        command: '/'
+      }]
+    }, {
+      classes: 'span4',
+      components: [{
+        kind: 'OB.UI.ButtonKey',
+        classButton: 'btnkeyboard-num',
+        label: '*',
+        command: '*'
+      }]
+    }, {
+      classes: 'span4',
+      components: [{
+        kind: 'OB.UI.ButtonKey',
+        classButton: 'btnkeyboard-num',
+        label: '%',
+        command: '%'
+      }]
+    }]
+  }, {
+    classes: 'row-fluid',
+    components: [{
+      classes: 'span4',
+      components: [{
+        kind: 'OB.UI.PaymentButton',
+        paymenttype: 'OBPOS_payment.cash',
+        amount: 10,
+        background: '#e9b7c3'
+      }]
+    }, {
+      classes: 'span4',
+      components: [{
+        kind: 'OB.UI.PaymentButton',
+        paymenttype: 'OBPOS_payment.cash',
+        amount: 10,
+        background: '#bac3de'
+      }]
+    }, {
+      classes: 'span4',
+      components: [{
+        kind: 'OB.UI.PaymentButton',
+        paymenttype: 'OBPOS_payment.cash',
+        amount: 10,
+        background: '#f9bb92'
+      }]
+    }]
+  }, {
+    classes: 'row-fluid',
+    components: [{
+      classes: 'span4',
+      components: [{
+        kind: 'OB.UI.PaymentButton',
+        paymenttype: 'OBPOS_payment.cash',
+        amount: 10,
+        background: '#e4e0e3',
+        bordercolor: '#f9e487'
+      }]
+    }, {
+      classes: 'span4',
+      components: [{
+        kind: 'OB.UI.PaymentButton',
+        paymenttype: 'OBPOS_payment.cash',
+        amount: 10,
+        background: '#f9e487',
+        bordercolor: '#e4e0e3'
+      }]
+    }, {
+      classes: 'span4',
+      components: [{
+        kind: 'OB.UI.PaymentButton',
+        paymenttype: 'OBPOS_payment.cash',
+        amount: 10,
+        background: '#bccdc5'
+      }]
+    }]
+  }, {
+    classes: 'row-fluid',
+    components: [{
+      classes: 'span4',
+      components: [{
+        kind: 'OB.UI.PaymentButton',
+        paymenttype: 'OBPOS_payment.cash',
+        amount: 10,
+        background: '#f9e487'
+      }]
+    }, {
+      classes: 'span4',
+      components: [{
+        kind: 'OB.UI.PaymentButton',
+        paymenttype: 'OBPOS_payment.cash',
+        amount: 10,
+        background: '#f9e487'
+      }]
+    }, {
+      classes: 'span4',
+      components: [{
+        kind: 'OB.UI.PaymentButton',
+        paymenttype: 'OBPOS_payment.cash',
+        amount: 10,
+        background: '#f9e487'
+      }]
+    }]
+  }, {
+    classes: 'row-fluid',
+    components: [{
+      classes: 'span4',
+      components: [{
+        kind: 'OB.UI.PaymentButton',
+        paymenttype: 'OBPOS_payment.cash',
+        amount: 10,
+        background: '#f3bc9e'
+      }]
+    }, {
+      classes: 'span4',
+      components: [{
+        kind: 'OB.UI.PaymentButton',
+        paymenttype: 'OBPOS_payment.cash',
+        amount: 10,
+        background: '#f3bc9e'
+      }]
+    }, {
+      classes: 'span4',
+      components: [{
+        kind: 'OB.UI.PaymentButton',
+        paymenttype: 'OBPOS_payment.cash',
+        amount: 10,
+        background: '#f3bc9e'
+      }]
+    }]
+  }]
+});
+
+OB.OBPOSPointOfSale.UI.KeyboardOrder.prototype.keypads.push('OB.UI.KeypadUSD');

@@ -232,6 +232,12 @@ enyo.kind({
       status: newstatus
     });
 
+    // set the right keypad by default
+    if (this.namedkeypads[this.status]) {
+      this.showKeypad(this.namedkeypads[this.status]);
+    } else {
+      this.showKeypad('basic');
+    }
 
     btn = this.buttons[this.status];
     if (btn && (btn.classButtonActive || (btn.owner && btn.owner.classButtonActive))) {
@@ -347,6 +353,8 @@ enyo.kind({
   initComponents: function() {
     var me = this;
     this.buttons = {}; // must be intialized before calling super, not after.
+    this.activekeypads = [];
+    this.namedkeypads = {};
 
     this.inherited(arguments);
     this.state = new Backbone.Model();
@@ -480,6 +488,13 @@ enyo.kind({
   },
 
   addKeypad: function(keypad) {
+    
+    var keypadconstructor = enyo.constructorForKind(keypad);
+    this.activekeypads.push(keypadconstructor.prototype.padName);
+    if (keypadconstructor.prototype.padPayment) {
+      this.namedkeypads[keypadconstructor.prototype.padPayment] = keypadconstructor.prototype.padName;
+    }
+    
     this.$.keypadcontainer.createComponent({
       kind: keypad,
       keyboard: this
@@ -487,15 +502,41 @@ enyo.kind({
   },
 
   showKeypad: function(keypadName) {
+    var firstLabel = null, 
+        foundLabel = false;
     this.state.set('keypadName', keypadName);
     enyo.forEach(this.$.keypadcontainer.getComponents(), function(pad) {
+      if (!firstLabel) {
+        firstLabel = pad.label;
+      } else if (foundLabel) {
+        this.state.set('keypadNextLabel', pad.label);
+        foundLabel = false;
+      }
       if (pad.padName === keypadName) {
-        this.state.set('keypadLabel', pad.label);
+        foundLabel = true;       
         pad.show();
+        // Set the right payment status. If needed.
+        if (pad.padPayment && this.status !== pad.padPayment) {
+          this.setStatus(pad.padPayment);
+        }
       } else {
         pad.hide();
       }
     }, this);
+    if (foundLabel) {
+      this.state.set('keypadNextLabel', firstLabel);
+    }
+  },
+  
+  showNextKeypad: function() {
+    var i, max, current = this.state.get('keypadName'), pad;
+    
+    for (i = 0, max = this.activekeypads.length; i < max; i++) {
+      if (this.activekeypads[i] === current) {
+        this.showKeypad(i < this.activekeypads.length - 1 ? this.activekeypads[i + 1] : this.activekeypads[0]);
+        break;
+      }
+    }
   },
 
   showSidepad: function(sidepadname) {
