@@ -261,7 +261,7 @@ enyo.kind({
       if (this.$[changedModel.get('currentWindow').name]) {
         if (!changedModel.get('currentWindow').params.caller) {
           //developers helps
-          console.log("Caller has been set as previous subwindow");
+          console.log("Caller is not set. Caller has been set as previous subwindow");
           params.caller = changedModel.previousAttributes().currentWindow.name;
         }
         if (this.$[changedModel.get('currentWindow').name].mainBeforeSetShowing) {
@@ -278,13 +278,13 @@ enyo.kind({
             this.$[changedModel.get('currentWindow').name].setShowing(true);
           } else {
             //developers helps
-            console.log("Error! A subwindow must inherits from OB.UI.subwindow -> go to main window");
+            console.log("Error! A subwindow must inherits from OB.UI.subwindow -> restore previous state");
             restorePreviousState(this.model.get('subWindowManager'), changedModel);
           }
         }
       } else {
         //developers helps
-        console.log("The subwindow to navigate doesn't exists");
+        console.log("The subwindow to navigate doesn't exists -> restore previous state");
         restorePreviousState(this.model.get('subWindowManager'), changedModel);
       }
     }, this);
