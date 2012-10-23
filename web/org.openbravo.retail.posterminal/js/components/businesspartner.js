@@ -49,6 +49,9 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.Button',
   name: 'OB.UI.NewCustomerWindowButton',
+  events: {
+    onChangeSubWindow: ''
+  },
   style: 'width: 150px; margin: 0px 5px 8px 19px;',
   classes: 'btnlink-yellow btnlink btnlink-small',
   content: OB.I18N.getLabel('OBPOS_LblNewCustomer'),
@@ -62,10 +65,9 @@ enyo.kind({
     this.model = event.model;
   },
   tap: function(model) {
-    this.model.get('subWindowManager').set('currentWindow', {
-      name: 'customerCreate',
-      params: {
-        caller: 'mainSubWindow'
+    this.doChangeSubWindow({
+      newWindow: {
+        name: 'customerCreateAndEdit'
       }
     });
   }

@@ -15,8 +15,11 @@ enyo.kind({
     onChangeSubWindow: ''
   },
   classes: 'subwindow',
+  showing: false,
   mainBeforeSetShowing: function(args) {
-    this.caller = args.caller;
+    if(args.caller){
+      this.caller = args.caller;  
+    }
     if (this.beforeSetShowing){
       return this.beforeSetShowing(args);
     }
@@ -73,6 +76,7 @@ enyo.kind({
   initComponents: function(){
     this.inherited(arguments);
     this.$.headermessage.setContent(this.headermessage);
+    this.$.closebutton.headerContainer = this.$.closebutton.parent;
     this.$.closebutton.tap = this.onTapCloseButton;
   }
 });

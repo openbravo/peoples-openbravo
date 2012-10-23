@@ -102,7 +102,6 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/modalreceiptproperties",
         "components/modalreceiptlineproperties",
         "components/modalnoteditableorder",
-        "components/editcustomer",
         "main",
         // Web POS window
         "components/keypadbasic",
@@ -139,9 +138,10 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "pointofsale/view/payment",
         "pointofsale/view/keyboard-toolbars",
         "pointofsale/view/keyboardorder",
-        "pointofsale/view/subwindows/customersadvancedsearch",
-        "pointofsale/view/subwindows/newcustomerform",
-        "pointofsale/view/subwindows/editcustomerform",
+        "pointofsale/view/subwindows/customers/components/sharedcomponents",
+        "pointofsale/view/subwindows/customers/customersadvancedsearch",
+        "pointofsale/view/subwindows/customers/editcreatecustomerform",
+        "pointofsale/view/subwindows/customers/customerdetailview",
 
         // Cash Management window
         "cashmgmt/model/cashmgmt-print", "cashmgmt/model/cashmgmt-model",

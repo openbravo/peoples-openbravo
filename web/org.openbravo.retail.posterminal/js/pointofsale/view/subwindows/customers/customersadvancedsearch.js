@@ -24,7 +24,6 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.cas',
   kind: 'OB.UI.subwindow',
-  showing: false,
   header: {
     kind: 'OB.OBPOSPointOfSale.UI.casheader'
   },
@@ -153,7 +152,7 @@ enyo.kind({
     var sw = this.subWindow;
     this.doChangeSubWindow({
       newWindow: {
-        name: 'customerCreate',
+        name: 'customerCreateAndEdit',
         params: {
           caller: sw.getName()
         }
@@ -328,7 +327,7 @@ enyo.kind({
       var sw = this.subWindow;
       this.doChangeSubWindow({
         newWindow: {
-          name: 'customerEdit',
+          name: 'customerView',
           params: {
             caller: sw.getName(),
             businessPartner: model
@@ -347,7 +346,7 @@ enyo.kind({
     var subWindow = this.subWindow;
     subWindow.doChangeSubWindow({
     newWindow: {
-      name: subWindow.caller,
+      name: 'mainSubWindow',
       params: {
         caller: subWindow.getName()  
       }

@@ -1,4 +1,4 @@
-/*global OB, enyo, $, confirm */
+/*global OB, enyo, console, $, confirm */
 
 /*
  ************************************************************************************
@@ -45,11 +45,11 @@ enyo.kind({
       kind: 'OB.OBPOSPointOfSale.UI.cas',
       name: 'customerAdvancedSearch'
     }, {
-      kind: 'OB.OBPOSPointOfSale.UI.sw_newcustomers',
-      name: 'customerCreate'
+      kind: 'OB.OBPOSPointOfSale.customers.UI.newcustomer',
+      name: 'customerCreateAndEdit'
     }, {
-      kind: 'OB.OBPOSPointOfSale.UI.sw_editcustomers',
-      name: 'customerEdit'
+      kind: 'OB.OBPOSPointOfSale.customers.UI.editcustomer',
+      name: 'customerView'
     }]
   }, {
     name: 'mainSubWindow',
@@ -214,7 +214,6 @@ enyo.kind({
     this.model.get('order').removePayment(event.payment);
   },
   changeSubWindow: function(sender, event) {
-    debugger;
     this.model.get('subWindowManager').set('currentWindow', event.newWindow);
   },
   showModalReceiptProperties: function(inSender, inEvent) {
@@ -259,10 +258,11 @@ enyo.kind({
       //TODO backbone route
       var showNewSubWindow = false;
       if (this.$[changedModel.get('currentWindow').name]) {
-        if (!changedModel.get('currentWindow').params.caller) {
+        if (!changedModel.get('currentWindow').params) {
+          changedModel.get('currentWindow').params = {};
           //developers helps
-          console.log("Caller is not set. Caller has been set as previous subwindow");
-          params.caller = changedModel.previousAttributes().currentWindow.name;
+          console.log("Caller is not set. Caller has been set as main subwindow");
+          changedModel.get('currentWindow').params.caller = 'mainSubWindow';
         }
         if (this.$[changedModel.get('currentWindow').name].mainBeforeSetShowing) {
           showNewSubWindow = this.$[changedModel.get('currentWindow').name].mainBeforeSetShowing(changedModel.get('currentWindow').params);
