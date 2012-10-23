@@ -42,7 +42,7 @@ enyo.kind({
     components: [{
       kind: 'OB.UI.ModalConfigurationRequiredForCreateCustomers'
     },{
-      kind: 'OB.OBPOSPointOfSale.UI.sw_advancedSearch',
+      kind: 'OB.OBPOSPointOfSale.UI.cas',
       name: 'customerAdvancedSearch'
     }, {
       kind: 'OB.OBPOSPointOfSale.UI.sw_newcustomers',
@@ -53,6 +53,7 @@ enyo.kind({
     }]
   }, {
     name: 'mainSubWindow',
+    isMainSubWindow: true,
     components: [{
       kind: 'OB.UI.ModalDeleteReceipt'
     }, {
@@ -213,6 +214,7 @@ enyo.kind({
     this.model.get('order').removePayment(event.payment);
   },
   changeSubWindow: function(sender, event) {
+    debugger;
     this.model.get('subWindowManager').set('currentWindow', event.newWindow);
   },
   showModalReceiptProperties: function(inSender, inEvent) {
@@ -250,17 +252,29 @@ enyo.kind({
       //TODO backbone route
       var showNewSubWindow = false;
       if (this.$[changedModel.get('currentWindow').name]) {
-        if (this.$[changedModel.get('currentWindow').name].beforeSetShowing) {
-          showNewSubWindow = this.$[changedModel.get('currentWindow').name].beforeSetShowing(changedModel.get('currentWindow').params);
+        if (!changedModel.get('currentWindow').params.caller){
+          //developers helps
+          console.log("Caller has been set as previous subwindow");
+          params.caller = changedModel.previousAttributes().currentWindow.name;
+        }
+        if (this.$[changedModel.get('currentWindow').name].mainBeforeSetShowing) {
+          showNewSubWindow = this.$[changedModel.get('currentWindow').name].mainBeforeSetShowing(changedModel.get('currentWindow').params);
           if(showNewSubWindow){
             this.$[changedModel.previousAttributes().currentWindow.name].setShowing(false);
             this.$[changedModel.get('currentWindow').name].setShowing(true);
           }
         } else {
-          this.$[changedModel.previousAttributes().currentWindow.name].setShowing(false);
-          this.$[changedModel.get('currentWindow').name].setShowing(true);
+          if (this.$[changedModel.get('currentWindow').name].isMainSubWindow){
+            this.$[changedModel.previousAttributes().currentWindow.name].setShowing(false);
+            this.$[changedModel.get('currentWindow').name].setShowing(true);
+          }else{
+            //developers helps
+            console.log("A subwindow must inherits form OB.UI.subwindow");            
+          }
         }
       } else {
+        //developers helps
+        console.log("The subwindow to navigate doesn't exists");
         this.model.get('subWindowManager').set('currentWindow', changedModel.previousAttributes().currentWindow, {
           silent: true
         });

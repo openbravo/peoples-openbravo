@@ -65,7 +65,7 @@ enyo.kind({
     this.model.get('subWindowManager').set('currentWindow', {
       name: 'customerCreate',
       params: {
-        callerWindow: 'mainSubWindow'
+        caller: 'mainSubWindow'
       }
     });
   }
@@ -90,7 +90,7 @@ enyo.kind({
     this.model.get('subWindowManager').set('currentWindow', {
       name: 'customerAdvancedSearch',
       params: {
-        callerWindow: 'mainSubWindow'
+        caller: 'mainSubWindow'
       }
     });
   }

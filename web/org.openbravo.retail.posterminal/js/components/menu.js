@@ -137,7 +137,9 @@ enyo.kind({
     this.doChangeSubWindow({
       newWindow: {
         name: 'customerAdvancedSearch',
-        params: []
+        params: {
+          caller: 'mainSubWindow'
+        }
       }
     });
   }
