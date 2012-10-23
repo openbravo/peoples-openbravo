@@ -150,11 +150,12 @@ enyo.kind({
   },
   classes: 'btnlink-left-toolbar',
   tap: function() {
+    var sw = this.subWindow;
     this.doChangeSubWindow({
       newWindow: {
         name: 'customerCreate',
         params: {
-          callerWindow: 'customerAdvancedSearch'
+          caller: sw.getName()
         }
       }
     });
@@ -324,10 +325,12 @@ enyo.kind({
     this.bpsList = new Backbone.Collection();
     this.$.bpslistitemprinter.setCollection(this.bpsList);
     this.bpsList.on('click', function(model) {
+      var sw = this.subWindow;
       this.doChangeSubWindow({
         newWindow: {
           name: 'customerEdit',
           params: {
+            caller: sw.getName(),
             businessPartner: model
           }
         }
