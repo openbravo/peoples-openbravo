@@ -16,6 +16,22 @@ input, button, select, textarea {
   font-size: 16px;
 }
 
+/*subwindows*/
+div.subwindow{
+  background-color: #FFFFFF;
+}
+div.subwindow .subwindowheader{
+  padding: 9px 15px;  
+}
+
+div.subwindow .subwindowheadertext{
+  
+}
+
+div.subwindow .subwindowheader .close>span:first-child {
+  font-size: 150%;
+}
+
 /*used by enyo.Scroller*/
 .enyo-scroller {
   position: relative;
@@ -671,15 +687,15 @@ button.modal-dialog-content-button {
 }
 
 .hiddenInput {
-	 height: 1px;
-	 width: 1px;
-	 margin: 0px;
-	 padding: 0px;
-	 cursor: default;
-	 color: transparent;
-	 background-color: transparent;
-	 border: transparent;
-	 outline: none;
+   height: 1px;
+   width: 1px;
+   margin: 0px;
+   padding: 0px;
+   cursor: default;
+   color: transparent;
+   background-color: transparent;
+   border: transparent;
+   outline: none;
 }
 
 button.btnlink-left-toolbar {
