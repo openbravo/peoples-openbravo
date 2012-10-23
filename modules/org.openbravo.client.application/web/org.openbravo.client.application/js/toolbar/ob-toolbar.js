@@ -135,9 +135,9 @@ isc.OBToolbar.addClassProperties({
       var view = this.view,
           form = view.viewForm;
       if (view.isShowingForm) {
-        this.setDisabled(form.isSaving || view.readOnly || view.singleRecord || !view.hasValidState());
+        this.setDisabled(form.isSaving || view.readOnly || view.singleRecord || !view.hasValidState() || view.editOrDeleteOnly);
       } else {
-        this.setDisabled(view.readOnly || view.singleRecord || !view.hasValidState());
+        this.setDisabled(view.readOnly || view.singleRecord || !view.hasValidState() || view.editOrDeleteOnly);
       }
     },
     keyboardShortcutId: 'ToolBar_NewDoc'
