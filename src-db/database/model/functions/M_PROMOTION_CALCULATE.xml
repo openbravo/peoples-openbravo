@@ -109,8 +109,8 @@ BEGIN
 				update c_invoiceline
 					 set gross_unit_price = grosspricestd,
 							 line_gross_amount = round(grosspricestd * qtyinvoiced, v_stdPrecision),
-							 priceactual = c_get_net_price_from_gross(Cur_Order.c_tax_id, round(grosspricestd * qtyordered, v_stdPrecision), round(grosspricestd * qtyordered, v_stdPrecision), v_precision, qtyordered),
-							 linenetamt = round(c_get_net_price_from_gross(Cur_Order.c_tax_id, round(grosspricestd * qtyordered, v_stdPrecision), round(grosspricestd * qtyordered, v_stdPrecision), v_precision, qtyordered) * qtyordered, v_stdPrecision)
+							 priceactual = c_get_net_price_from_gross(Cur_Order.c_tax_id, round(grosspricestd * qtyinvoiced, v_stdPrecision), round(grosspricestd * qtyinvoiced, v_stdPrecision), v_precision, qtyinvoiced),
+							 linenetamt = round(c_get_net_price_from_gross(Cur_Order.c_tax_id, round(grosspricestd * qtyinvoiced, v_stdPrecision), round(grosspricestd * qtyinvoiced, v_stdPrecision), v_precision, qtyinvoiced) * qtyinvoiced, v_stdPrecision)
 				 where c_invoiceline_id = Cur_Order.id;
 			else
 				update c_invoiceline
@@ -122,7 +122,6 @@ BEGIN
 			delete from c_invoiceline_offer
 			 where c_invoiceline_id = Cur_Order.id;
 		end if;
-
 		if (p_type = 'I' and cur_order.from_order is not null) then
       -- Invoice line generated from order line, don't recalculate promotions,
       -- just apply existent ones. Price is not recalculated, it should have been
