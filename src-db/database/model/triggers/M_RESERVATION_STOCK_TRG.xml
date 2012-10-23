@@ -43,6 +43,7 @@ BEGIN
   SET reservedqty = COALESCE(reservedqty, 0) + v_reservedqtydiff,
       releasedqty = COALESCE(releasedqty, 0) + v_releasedqtydiff
   WHERE m_reservation_id = v_reservation_id;
-END]]></body>
+END M_RESERVATION_STOCK_TRG
+]]></body>
     </trigger>
   </database>
