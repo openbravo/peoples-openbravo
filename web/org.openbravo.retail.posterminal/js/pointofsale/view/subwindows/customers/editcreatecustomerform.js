@@ -12,7 +12,6 @@
 enyo.kind({
   kind: 'OB.UI.subwindow',
   name: 'OB.OBPOSPointOfSale.customers.UI.newcustomer',
-  style: 'background-color: #FFFFFF;',
   beforeSetShowing: function(params) {
 
     if (OB.POS.modelterminal.get('terminal').defaultbp_paymentmethod !== null && OB.POS.modelterminal.get('terminal').defaultbp_bpcategory !== null && OB.POS.modelterminal.get('terminal').defaultbp_paymentterm !== null && OB.POS.modelterminal.get('terminal').defaultbp_invoiceterm !== null && OB.POS.modelterminal.get('terminal').defaultbp_bpcountry !== null && OB.POS.modelterminal.get('terminal').defaultbp_bporg !== null) {
@@ -30,7 +29,7 @@ enyo.kind({
   },
   header: {
     kind: 'OB.UI.subwindowheader',
-    headermessage: 'Create customer',
+    headermessage: OB.I18N.getLabel('OBPOS_TitleEditNewCustomer'),
     handlers: {
       onSetCustomer: 'setCustomer'
     },

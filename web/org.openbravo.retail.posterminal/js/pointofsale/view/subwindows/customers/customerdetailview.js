@@ -27,7 +27,7 @@ enyo.kind({
   },
   header: {
     kind: 'OB.UI.subwindowheader',
-    headermessage: 'Customer details',
+    headermessage: OB.I18N.getLabel('OBPOS_TitleViewCustomer'),
     onTapCloseButton: function() {
       var subWindow = this.subWindow;
       subWindow.doChangeSubWindow({
