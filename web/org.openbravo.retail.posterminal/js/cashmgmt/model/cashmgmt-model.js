@@ -1,5 +1,3 @@
-/*global OB, Backbone */
-
 /*
  ************************************************************************************
  * Copyright (C) 2012 Openbravo S.L.U.
@@ -9,6 +7,7 @@
  ************************************************************************************
  */
 
+/*global OB, Backbone */
 
 OB.OBPOSCashMgmt = OB.OBPOSCashMgmt || {};
 OB.OBPOSCashMgmt.Model = OB.OBPOSCashMgmt.Model || {};

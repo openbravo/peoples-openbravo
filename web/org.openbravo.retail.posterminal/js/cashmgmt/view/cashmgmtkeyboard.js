@@ -1,5 +1,3 @@
-/*global OB, $, _,  enyo */
-
 /*
  ************************************************************************************
  * Copyright (C) 2012 Openbravo S.L.U.
@@ -9,6 +7,7 @@
  ************************************************************************************
  */
 
+/*global OB, $, _,  enyo */
 
 // Numeric keyboard with buttons for each payment method accepting drops/deposits
 enyo.kind({

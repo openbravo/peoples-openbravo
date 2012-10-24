@@ -1,5 +1,3 @@
-/*global OB, enyo */
-
 /*
  ************************************************************************************
  * Copyright (C) 2012 Openbravo S.L.U.
@@ -8,6 +6,8 @@
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
+
+/*global OB, enyo */
 
 // Cash Management main window view
 enyo.kind({

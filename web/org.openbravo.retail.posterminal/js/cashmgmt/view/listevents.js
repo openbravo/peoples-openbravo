@@ -1,4 +1,3 @@
-/*global OB, Backbone, enyo */
 /*
  ************************************************************************************
  * Copyright (C) 2012 Openbravo S.L.U.
@@ -8,6 +7,7 @@
  ************************************************************************************
  */
 
+/*global OB, Backbone, enyo */
 
 //Renders a modal popup with a list of reasons for drops/deposits
 enyo.kind({

@@ -1,5 +1,3 @@
-/*global enyo */
-
 /*
  ************************************************************************************
  * Copyright (C) 2012 Openbravo S.L.U.
@@ -8,6 +6,8 @@
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
+
+/*global enyo */
 
 //Renders the summary of deposits/drops and contains a list (OB.OBPOSCasgMgmt.UI.RenderDepositsDrops)
 //with detailed information for each payment typ

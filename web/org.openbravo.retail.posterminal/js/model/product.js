@@ -9,7 +9,6 @@
 
 /*global Backbone */
 
-
 (function () {
 
   var Product = Backbone.Model.extend({

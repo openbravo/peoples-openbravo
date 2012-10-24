@@ -9,7 +9,6 @@
 
 /*global B, Backbone, $, _, enyo */
 
-
 /*header of scrollable table*/
 enyo.kind({
   name: 'OB.UI.ModalPRScrollableHeader',

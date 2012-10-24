@@ -1,5 +1,3 @@
-/*global _, Backbone, $, enyo */
-
 /*
  ************************************************************************************
  * Copyright (C) 2012 Openbravo S.L.U.
@@ -8,6 +6,8 @@
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
+
+/*global _, Backbone, $, enyo */
 
 enyo.kind({
   name: 'OB.UI.iterateArray',

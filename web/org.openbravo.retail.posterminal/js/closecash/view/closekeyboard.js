@@ -1,5 +1,3 @@
-/*global OB, enyo, _ */
-
 /*
  ************************************************************************************
  * Copyright (C) 2012 Openbravo S.L.U.
@@ -8,6 +6,8 @@
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
+
+/*global OB, enyo, _ */
 
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.CashUpKeyboard',

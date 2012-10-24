@@ -9,7 +9,6 @@
 
 /*global enyo */
 
-
 enyo.kind({
   kind: 'OB.UI.SelectButton',
   name: 'OB.UI.RenderOrderLine',

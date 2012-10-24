@@ -8,6 +8,7 @@
  */
 
 /*global Backbone */
+
 (function () {
   var ChangedBusinessPartners = Backbone.Model.extend({
     modelName: 'ChangedBusinessPartners',

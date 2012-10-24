@@ -1,5 +1,3 @@
-/*global OB, Backbone, enyo */
-
 /*
  ************************************************************************************
  * Copyright (C) 2012 Openbravo S.L.U.
@@ -8,6 +6,8 @@
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
+
+/*global OB, Backbone, enyo */
 
 // Top-right panel with clock and buttons
 enyo.kind({
