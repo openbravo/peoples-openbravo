@@ -128,7 +128,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/modalpaidreceipts",
 
         // Point of sale
-        "pointofsale/model/pointofsale-print", "pointofsale/model/pointofsale-model",
+        "pointofsale/model/pointofsale-print",
+        "pointofsale/model/pointofsale-model",
         "pointofsale/view/pointofsale",
         "pointofsale/view/ps-receiptview",
         "pointofsale/view/toolbar-left",
@@ -138,10 +139,13 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "pointofsale/view/payment",
         "pointofsale/view/keyboard-toolbars",
         "pointofsale/view/keyboardorder",
+        // Point of sale subwindows
         "pointofsale/view/subwindows/customers/components/sharedcomponents",
         "pointofsale/view/subwindows/customers/customersadvancedsearch",
         "pointofsale/view/subwindows/customers/editcreatecustomerform",
         "pointofsale/view/subwindows/customers/customerdetailview",
+        // Point of sale modals
+        "pointofsale/view/modals/modalconfirmclosepaidticket",
 
         // Cash Management window
         "cashmgmt/model/cashmgmt-print", "cashmgmt/model/cashmgmt-model",

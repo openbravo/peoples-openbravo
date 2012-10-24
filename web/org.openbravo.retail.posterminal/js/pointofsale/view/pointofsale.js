@@ -57,6 +57,8 @@ enyo.kind({
     components: [{
       kind: 'OB.UI.ModalDeleteReceipt'
     }, {
+      kind: 'OB.OBPOSPointOfSale.Modals.UI.ModalClosePaidReceipt'
+    }, {
       kind: 'OB.UI.Modalnoteditableorder'
     }, {
       kind: 'OB.UI.ModalBusinessPartners'

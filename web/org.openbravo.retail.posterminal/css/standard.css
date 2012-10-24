@@ -420,6 +420,9 @@ div.btnlink {
 .btn-icon-delete {
   background-image: url('../img/iconDelete.png');
 }
+.btn-icon-delete.paidticket {
+  background-image: url('../img/iconClearPaidTicket.png');
+}
 .btn-icon-print {
   background-image: url('../img/iconPrint.png');
 }
