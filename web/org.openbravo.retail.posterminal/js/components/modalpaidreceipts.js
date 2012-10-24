@@ -227,7 +227,7 @@ enyo.kind({
   modalClass: 'modal',
   headerClass: 'modal-header',
   bodyClass: 'modal-header',
-  header: OB.I18N.getLabel('OBPOS_LblAssignCustomer'),
+  header: OB.I18N.getLabel('OBPOS_LblPaidReceipts'),
   body: {
     kind: 'OB.UI.ListPRs'
   },
