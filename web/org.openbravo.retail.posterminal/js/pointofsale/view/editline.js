@@ -55,7 +55,7 @@ enyo.kind({
                 }
               }, {
                 kind: 'OB.UI.SmallButton',
-                content: 'Description',
+                content: OB.I18N.getLabel('OBPOS_LblDescription'),
                 classes: 'btnlink-orange',
                 tap: function () {
                   this.owner.doEditLine({
