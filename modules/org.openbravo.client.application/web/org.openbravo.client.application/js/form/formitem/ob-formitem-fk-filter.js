@@ -27,6 +27,7 @@ isc.OBFKFilterTextItem.addProperties({
   allowExpressions: false,
   showOptionsFromDataSource: true,
   selectOnFocus: false,
+  validateOnExit: true,
 
   multiple: true,
   multipleAppearance: 'picklist',
@@ -88,7 +89,7 @@ isc.OBFKFilterTextItem.addProperties({
         }
         return record[OB.Constants.IDENTIFIER] === values;
       },
-
+      
       // override data arrived to prevent the first entry from being
       // selected
       // this to handle the picklist in foreign key filter item. When a user
@@ -140,6 +141,21 @@ isc.OBFKFilterTextItem.addProperties({
     this.multipleValueSeparator = ' or ';
   },
 
+  // note: can't override changed as it is used by the filter editor 
+  // itself, see the RecordEditor source code and the changed event
+  change: function (form, item, value, oldValue) {
+    this._hasChanged = true;
+    this.Super('change', arguments);
+  },
+  
+  blur: function() {
+    if (this._hasChanged) {
+      this.form.grid.performAction();
+    }
+    delete this._hasChanged;
+    this.Super('blur', arguments);
+  },
+  
   // overridden otherwise the picklist fields from the grid field
   // are being used
   getPickListFields: function () {
