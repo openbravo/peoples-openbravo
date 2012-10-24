@@ -145,36 +145,36 @@ OB.UTIL.processCustomerClass = 'org.openbravo.retail.posterminal.CustomerLoader'
                 var customerToUpdate = data.at(0);
                 customerToUpdate.loadByJSON(changedCustomer.get('json'));
                 OB.Dal.save(customerToUpdate, function() {
-                  OB.UTIL.showSuccess("Customer " + customerToUpdate.get('_identifier') + "updated");
+                  OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_customerUpdated',[customerToUpdate.get('_identifier')]));
                   OB.Dal.remove(changedCustomer, function() {
                     if (successCallback) {
                       successCallback();
                     }
                   }, function(tx, err) {
-                    OB.UTIL.showError(err);
+                    OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorCustomerUpdateLocally',[customerToUpdate.get('_identifier')]));
                   });
                 }, function() {
-                  OB.UTIL.showError("Customer " + customerToUpdate.get('_identifier') + "cannot be updated");
+                  OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorCustomerUpdateLocally',[customerToUpdate.get('_identifier')]));
                 });
               } else {
                 var customerToInsert = new OB.Model.BusinessPartner();
                 customerToInsert.newCustomer();
                 customerToInsert.loadByJSON(changedCustomer.get('json'));
                 OB.Dal.save(customerToInsert, function() {
-                  OB.UTIL.showSuccess("Customer " + customerToInsert.get('_identifier') + "updated");
+                  OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_customerInserted',[customerToInsert.get('_identifier')]));
                   OB.Dal.remove(changedCustomer, function() {
                     if (successCallback) {
                       successCallback();
                     }
                   }, function(tx, err) {
-                    OB.UTIL.showError(err);
+                    OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorRemovingLocallyProcessedCustomer',[customerToInsert.get('_identifier')]));
                   });
                 }, function() {
-                  OB.UTIL.showError("Customer " + customerToInsert.get('_identifier') + "cannot be updated");
+                  OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorCustomerInsertLocally',[customerToInsert.get('_identifier')]));
                 }, true);
               }
             }, function() {
-              OB.UTIL.showError("Error while search " + changedCustomer.get('_identifier'));
+              OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorWhileSearchAfterServerOk',[changedCustomer.get('_identifier')]));
             });
           });
           }

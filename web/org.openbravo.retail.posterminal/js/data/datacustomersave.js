@@ -48,10 +48,10 @@
           if (OB.POS.modelterminal.get('connectedToERP')) {
             var successCallback, errorCallback, List;
             successCallback = function() {
-              OB.UTIL.showSuccess('Customer saved');
+              OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_customerSavedSuccessfullyLocally',[me.customer.get('_identifier')]));
             };
             errorCallback = function() {
-              OB.UTIL.showError('Error saving customer');
+              OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorSavingCustomerLocally',[me.customer.get('_identifier')]));
             };
             customersListToChange = new OB.Collection.ChangedBusinessPartnersList();
             customersListToChange.add(bpToSave);
@@ -60,7 +60,7 @@
         }, function() {
         });
       }, function() {
-        OB.UTIL.showError('Customer cannot be saved locally');
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorSavingCustomerLocally',[me.customer.get('_identifier')]));
       });
     }, this);
   };
