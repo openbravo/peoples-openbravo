@@ -17,7 +17,7 @@ enyo.kind({
   events: {
     onDeleteOrder: ''
   },
-  tap: function() {
+  tap: function () {
     $('#modalConfirmClosePaidTicket').modal('hide');
     this.doDeleteOrder();
   }
