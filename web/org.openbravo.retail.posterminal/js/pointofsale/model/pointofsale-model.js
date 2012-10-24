@@ -90,14 +90,16 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
           return;
         }
         successCallback = function() {
-          OB.UTIL.showSuccess('Changed customers have been processed correctly');
+          OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_pendigDataOfCustomersProcessed'));
+          
           me.processPaidOrders();
           me.loadUnpaidOrders();
         };
         errorCallback = function() {
-          OB.UTIL.showSuccess('ERROR processing changed customers');
+          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorProcessingCustomersPendingData'));
+          me.processPaidOrders();
+          me.loadUnpaidOrders();
         };
-        OB.UTIL.showAlert.display('Processing changed customers');
         customersChangedNotProcessed.each(function(cus) {
           cus.set('json', enyo.json.parse(cus.get('json')));
         });

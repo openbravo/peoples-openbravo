@@ -122,7 +122,7 @@ OB.UTIL.processCustomerClass = 'org.openbravo.retail.posterminal.CustomerLoader'
         customer: customersToJson
       }, function(data, message) {
         if (data && data.exception) {
-          // Orders have not been processed
+          // The server response is an Error! -> Orders have not been processed
           changedCustomers.each(function(changedCustomer) {
             changedCustomer.set('isbeingprocessed', 'N');
             changedCustomer.set('json', JSON.stringify(changedCustomer.get('json')));
@@ -135,33 +135,35 @@ OB.UTIL.processCustomerClass = 'org.openbravo.retail.posterminal.CustomerLoader'
           }
         } else {
           // Orders have been processed, delete them
-          // and update businessPartner
+          // and update or insert the businessPartner
           changedCustomers.each(function(changedCustomer) {
             var criteria = {
               id: changedCustomer.get('c_bpartner_id')
             };
             OB.Dal.find(OB.Model.BusinessPartner, criteria, function(data) {
               if (data && data.length > 0) {
+                //processed BP exists locally -> update c_bpartner and remove from changedbusinesspartners
                 var customerToUpdate = data.at(0);
                 customerToUpdate.loadByJSON(changedCustomer.get('json'));
                 OB.Dal.save(customerToUpdate, function() {
-                  OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_customerUpdated',[customerToUpdate.get('_identifier')]));
+                  //OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_customerUpdated',[customerToUpdate.get('_identifier')]));
                   OB.Dal.remove(changedCustomer, function() {
                     if (successCallback) {
                       successCallback();
                     }
                   }, function(tx, err) {
-                    OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorCustomerUpdateLocally',[customerToUpdate.get('_identifier')]));
+                    OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorRemovingLocallyProcessedCustomer',[customerToUpdate.get('_identifier')]));
                   });
                 }, function() {
                   OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorCustomerUpdateLocally',[customerToUpdate.get('_identifier')]));
                 });
               } else {
+                //processed BP doesn't exists locally -> insert into c_bpartner and remove from changedbusinesspartners
                 var customerToInsert = new OB.Model.BusinessPartner();
                 customerToInsert.newCustomer();
                 customerToInsert.loadByJSON(changedCustomer.get('json'));
                 OB.Dal.save(customerToInsert, function() {
-                  OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_customerInserted',[customerToInsert.get('_identifier')]));
+                  //OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_customerInserted',[customerToInsert.get('_identifier')]));
                   OB.Dal.remove(changedCustomer, function() {
                     if (successCallback) {
                       successCallback();
