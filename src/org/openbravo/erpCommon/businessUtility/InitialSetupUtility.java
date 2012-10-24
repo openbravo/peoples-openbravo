@@ -1026,6 +1026,10 @@ public class InitialSetupUtility {
         newAcctSchemaDefault.setProductRevenue(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
       }
+      if (strDefault.equals("P_DEF_REVENUE_ACCT")) {
+        newAcctSchemaDefault.setProductDeferredRevenue(getAcctComb(client, org,
+            defaultElementValues.get(strDefault), acctSchema, true));
+      }
       if (strDefault.equals("P_REVENUE_RETURN_ACCT")) {
         newAcctSchemaDefault.setProductRevenueReturn(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
@@ -1034,6 +1038,12 @@ public class InitialSetupUtility {
         newAcctSchemaDefault.setProductExpense(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
       }
+
+      if (strDefault.equals("P_DEF_EXPENSE_ACCT")) {
+        newAcctSchemaDefault.setProductDeferredExpense(getAcctComb(client, org,
+            defaultElementValues.get(strDefault), acctSchema, true));
+      }
+
       if (strDefault.equals("P_ASSET_ACCT")) {
         newAcctSchemaDefault.setFixedAsset(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
@@ -1810,6 +1820,12 @@ public class InitialSetupUtility {
 
   public static Organization insertOrganization(String strOrgName, OrganizationType orgType,
       String strcLocationId, Client client) throws Exception {
+    return insertOrganization(strOrgName, orgType, strcLocationId, client, null);
+
+  }
+
+  public static Organization insertOrganization(String strOrgName, OrganizationType orgType,
+      String strcLocationId, Client client, Currency strCurrency) throws Exception {
     log4j.debug("InitialSetupUtility - insertOrganization() - name = " + strOrgName);
     OBContext.setAdminMode();
     try {
@@ -1818,6 +1834,7 @@ public class InitialSetupUtility {
       newOrg.setName(strOrgName);
       newOrg.setSearchKey(strOrgName);
       newOrg.setOrganizationType(orgType);
+      newOrg.setCurrency(strCurrency);
       OBDal.getInstance().save(newOrg);
       OBDal.getInstance().flush();
       return newOrg;

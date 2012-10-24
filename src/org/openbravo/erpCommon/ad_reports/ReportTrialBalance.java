@@ -83,7 +83,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
               Utility.getContext(this, vars, "#AccessibleOrgTree", "Account"),
               Utility.getContext(this, vars, "#User_Client", "Account")));
       String strNotInitialBalance = vars.getGlobalVariable("inpNotInitialBalance",
-          "ReportTrialBalance|notInitialBalance", "N");
+          "ReportTrialBalance|notInitialBalance", "Y");
       String strcElementValueFromDes = "", strcElementValueToDes = "";
       if (!strcElementValueFrom.equals(""))
         strcElementValueFromDes = ReportTrialBalanceData.selectSubaccountDescription(this,
@@ -417,7 +417,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
     xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("adOrgId", strOrg);
-    xmlDocument.setParameter("Level", strLevel);
+    xmlDocument.setParameter("Level", "".equals(strLevel) ? "S" : strLevel);
     xmlDocument.setParameter("cAcctschemaId", strcAcctSchemaId);
     xmlDocument.setParameter("paramElementvalueIdFrom", strcElementValueFrom);
     xmlDocument.setParameter("paramElementvalueIdTo", strcElementValueTo);
@@ -474,7 +474,9 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
 
     response.setContentType("text/html; charset=UTF-8");
     ReportTrialBalanceData[] data = null;
-    boolean showDimensions = false;
+    boolean showbpartner = false;
+    boolean showproduct = false;
+    boolean showProject = false;
     String strTreeOrg = TreeData.getTreeOrg(this, vars.getClient());
     String strOrgFamily = getFamily(strTreeOrg, strOrg);
     String strTreeAccount = ReportTrialBalanceData.treeAccount(this, vars.getClient());
@@ -499,7 +501,25 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
             strAccountFromValue, strAccountToValue, strDateFrom, strcBpartnerId, strmProductId,
             strcProjectId, strcAcctSchemaId, (strNotInitialBalance.equals("Y") ? "O" : "P"),
             DateTimeData.nDaysAfter(this, strDateTo, "1"));
-        showDimensions = true;
+        if (strGroupBy.equals("BPartner")) {
+          showbpartner = true;
+          showproduct = false;
+          showProject = false;
+
+        } else if (strGroupBy.equals("Product")) {
+          showbpartner = false;
+          showproduct = true;
+          showProject = false;
+
+        } else if (strGroupBy.equals("Project")) {
+          showbpartner = false;
+          showproduct = false;
+          showProject = true;
+        } else {
+          showbpartner = false;
+          showproduct = false;
+          showProject = false;
+        }
       } else {
         data = getDataWhenNotSubAccount(vars, strDateFrom, strDateTo, strOrg, strOrgFamily,
             strcAcctSchemaId, strLevel, strTreeAccount, strNotInitialBalance);
@@ -518,13 +538,18 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
         String strLanguage = vars.getLanguage();
 
         StringBuilder strSubTitle = new StringBuilder();
-        strSubTitle.append(Utility.messageBD(this, "DateFrom", strLanguage) + ": " + strDateFrom
-            + " - " + Utility.messageBD(this, "DateTo", strLanguage) + ": " + strDateTo + " (");
-        strSubTitle.append(ReportTrialBalanceData.selectCompany(this, vars.getClient()) + " - ");
-        strSubTitle.append(ReportTrialBalanceData.selectOrgName(this, strOrg) + ")");
+
+        strSubTitle.append(Utility.messageBD(this, "LegalEntity", vars.getLanguage()) + ": ");
+        strSubTitle.append(ReportTrialBalanceData.selectCompany(this, vars.getClient()) + "\n");
+        strSubTitle.append("As of: " + strDateTo);
+
         parameters.put("REPORT_SUBTITLE", strSubTitle.toString());
         parameters.put("SHOWTOTALS", false);
-        parameters.put("SHOWDIMENSIONS", showDimensions);
+        parameters.put("SHOWBPARTNER", showbpartner);
+        parameters.put("SHOWPRODUCT", showproduct);
+        parameters.put("SHOWPROJECT", showProject);
+        parameters.put("DATE_FROM", strDateFrom);
+        parameters.put("DATE_TO", strDateTo);
 
         renderJR(vars, response, strReportName, "xls", parameters, data, null);
       }
@@ -591,16 +616,19 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
 
         parameters.put("TOTAL", Utility.messageBD(this, "Total", strLanguage));
         StringBuilder strSubTitle = new StringBuilder();
-        strSubTitle.append(Utility.messageBD(this, "DateFrom", strLanguage) + ": " + strDateFrom
-            + " - " + Utility.messageBD(this, "DateTo", strLanguage) + ": " + strDateTo + "\n");
-        strSubTitle.append(ReportTrialBalanceData.selectCompany(this, vars.getClient()) + " - ");
-        strSubTitle.append(ReportTrialBalanceData.selectOrgName(this, strOrg));
+
+        strSubTitle.append(Utility.messageBD(this, "LegalEntity", vars.getLanguage()) + ": ");
+        strSubTitle.append(ReportTrialBalanceData.selectCompany(this, vars.getClient()) + "\n");
+        strSubTitle.append("As of: " + strDateTo);
+
         parameters.put("REPORT_SUBTITLE", strSubTitle.toString());
 
         parameters.put("DEFAULTVIEW", !strIsSubAccount);
         parameters.put("SUBACCOUNTVIEW", strIsSubAccount);
         parameters.put("DUMMY", true);
         parameters.put("PageNo", strPageNo);
+        parameters.put("DATE_FROM", strDateFrom);
+        parameters.put("DATE_TO", strDateTo);
 
         renderJR(vars, response, strReportName, "pdf", parameters, data, null);
       }
@@ -626,9 +654,9 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
         DateTimeData.nDaysAfter(this, strDateTo, "1"), "", "");
     ReportTrialBalanceData[] dataInitialBalance = ReportTrialBalanceData.selectInitialBalance(this,
         strDateFrom, strcAcctSchemaId, "", "", "", strOrgFamily,
-        Utility.getContext(this, vars, "#User_Client", "ReportTrialBalance"), 
-	strNotInitialBalance.equals("Y") ? "initial" : "notinitial", 
-	strNotInitialBalance.equals("Y") ? "initial" : "notinitial");
+        Utility.getContext(this, vars, "#User_Client", "ReportTrialBalance"),
+        strNotInitialBalance.equals("Y") ? "initial" : "notinitial",
+        strNotInitialBalance.equals("Y") ? "initial" : "notinitial");
 
     log4j.debug("Calculating tree...");
     dataAux = calculateTree(dataAux, null, new Vector<Object>(), dataInitialBalance,

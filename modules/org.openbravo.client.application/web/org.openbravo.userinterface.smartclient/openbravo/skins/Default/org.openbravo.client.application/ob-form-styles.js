@@ -428,6 +428,8 @@ isc.RelativeDateItem.changeDefaults('valueFieldDefaults', {
   cellStyle: 'OBFormField',
   titleStyle: 'OBFormFieldLabel',
   textBoxStyle: 'OBFormFieldSelectInput',
+  textBoxStyleNormal: 'OBFormFieldSelectInput',
+  textBoxStyleError: 'OBFormFieldSelectInputError',
   controlStyle: 'OBFormFieldSelectControl',
   pickerIconSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/comboBoxPicker.png',
   pickerIconWidth: 21,

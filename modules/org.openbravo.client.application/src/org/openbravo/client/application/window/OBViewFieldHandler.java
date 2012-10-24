@@ -19,6 +19,7 @@
 package org.openbravo.client.application.window;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -26,6 +27,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.openbravo.base.model.Entity;
+import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.model.domaintype.ForeignKeyDomainType;
 import org.openbravo.client.application.ApplicationUtils;
@@ -55,6 +58,9 @@ public class OBViewFieldHandler {
   private static Logger log = Logger.getLogger(OBViewFieldHandler.class);
 
   private String parentProperty;
+
+  private static List<String> STANDARD_SUMMARY_FN = Arrays.asList("sum", "avg", "max", "min",
+      "multiplier", "count", "title");
 
   private static final long ONE_COLUMN_MAX_LENGTH = 60;
   private static final String TEXT_AD_REFERENCE_ID = "14";
@@ -204,6 +210,10 @@ public class OBViewFieldHandler {
       // are added separately
       if (field.isShownInStatusBar()) {
         continue;
+      }
+
+      if (field.isStartnewline()) {
+        colNum = 1;
       }
 
       if (field.getColumn() == null) {
@@ -364,6 +374,9 @@ public class OBViewFieldHandler {
   }
 
   private void processStatusBarFields(List<OBViewFieldDefinition> viewFields, List<Field> adFields) {
+    final Entity entity = ModelProvider.getInstance().getEntityByTableId(
+        getTab().getTable().getId());
+
     if (statusBarFields != null) {
       return;
     }
@@ -378,14 +391,16 @@ public class OBViewFieldHandler {
         continue;
       }
 
-      final Property property = KernelUtils.getInstance().getPropertyFromColumn(field.getColumn(),
-          false);
-
-      statusBarFields.add(property.getName());
+      final Property property;
+      if (field.getProperty() != null) {
+        property = DalUtil.getPropertyFromPath(entity, field.getProperty());
+        statusBarFields.add(field.getProperty().replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR));
+      } else {
+        property = KernelUtils.getInstance().getPropertyFromColumn(field.getColumn(), false);
+        statusBarFields.add(property.getName());
+      }
 
       final OBViewField viewField = new OBViewField();
-      // Prevents the field from being displayed twice: on the status bar and in the form footer
-      field.setDisplayed(false);
       viewField.setField(field);
       viewField.setProperty(property);
       viewField.setRedrawOnChange(false);
@@ -1298,7 +1313,11 @@ public class OBViewFieldHandler {
     }
 
     public boolean isDisplayed() {
-      return field.isDisplayed() != null && field.isDisplayed();
+      if (field.isShownInStatusBar()) {
+        return false;
+      } else {
+        return field.isDisplayed() != null && field.isDisplayed();
+      }
     }
 
     public boolean isShowInitiallyInGrid() {
@@ -1321,17 +1340,28 @@ public class OBViewFieldHandler {
     }
 
     public boolean isShowSummary() {
-      if (field.isOBUIAPPShowSummary() != null) {
-        return field.isOBUIAPPShowSummary();
+      if (field.isOBUIAPPShowSummary() != null || field.getObuiappSummaryfn() != null) {
+        return field.getObuiappSummaryfn() != null || field.isOBUIAPPShowSummary();
       }
       return false;
     }
 
     public String getSummaryFunction() {
       if (field.getObuiappSummaryfn() != null) {
-        return field.getObuiappSummaryfn();
+        return addQuotesToStandardSummaryFunctions(field.getObuiappSummaryfn());
       }
       return "";
+    }
+
+    private String addQuotesToStandardSummaryFunctions(String value) {
+      String localValue = value.trim();
+      if (localValue.startsWith("'") || localValue.startsWith("\"")) {
+        return value;
+      }
+      if (STANDARD_SUMMARY_FN.contains(localValue)) {
+        return "'" + localValue + "'";
+      }
+      return value;
     }
   }
 

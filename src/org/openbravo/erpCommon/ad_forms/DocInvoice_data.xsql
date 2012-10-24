@@ -26,7 +26,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT t.IsTaxUndeductable as rateTaxUndeductable, (select IsTaxUndeductable from ad_orginfo o where o.ad_org_id=it.ad_org_id) as orgTaxUndeductable, it.C_Tax_ID, t.Name, t.Rate, t.IsTaxDeductable, it.TaxBaseAmt, it.TaxAmt, '' AS C_INVOICE_ID, '' AS AD_CLIENT_ID, '' AS AD_ORG_ID,
+        SELECT t.IsTaxUndeductable as rateTaxUndeductable, (select IsTaxUndeductable from ad_orginfo o where o.ad_org_id=it.ad_org_id) as orgTaxUndeductable, it.C_Tax_ID, t.Name, t.Rate, t.IsTaxDeductable, SUM(it.TaxBaseAmt) AS TaxBaseAmt, SUM(it.TaxAmt) AS TaxAmt, '' AS C_INVOICE_ID, '' AS AD_CLIENT_ID, '' AS AD_ORG_ID,
         '' AS ISACTIVE, '' AS CREATED, '' AS CREATEDBY, '' AS UPDATED, '' AS UPDATEDBY, '' AS ISSOTRX, '' AS DOCUMENTNO,
         '' AS DOCSTATUS, '' AS DOCACTION, '' AS PROCESSING, '' AS PROCESSED, '' AS POSTED, '' AS C_DOCTYPE_ID, '' AS C_DOCTYPETARGET_ID,
         '' AS C_ORDER_ID, '' AS DESCRIPTION, '' AS ISTRANSFERRED, '' AS ISPRINTED, '' AS SALESREP_ID, '' AS DATEINVOICED,
@@ -39,6 +39,7 @@
         '' AS FININVCOUNT, '' AS FINACCTCOUNT, '' AS FIN_PAYMENT_ID
         FROM C_Tax t, C_InvoiceTax it
         WHERE t.C_Tax_ID=it.C_Tax_ID AND it.C_Invoice_ID=?
+	GROUP BY t.IsTaxUndeductable, it.C_Tax_ID, t.Name, t.Rate, t.IsTaxDeductable, it.ad_org_id
      ]]>
      </Sql>
      <Parameter name="invoice"/>

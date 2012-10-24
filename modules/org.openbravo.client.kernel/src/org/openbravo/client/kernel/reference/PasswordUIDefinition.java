@@ -35,6 +35,11 @@ public class PasswordUIDefinition extends StringUIDefinition {
     return "OBEncryptedItem";
   }
 
+  @Override
+  public String getGridFieldProperties(Field field) {
+    return super.getGridFieldProperties(field) + ", canGroupBy: false";
+  }
+
   // disable display of raw-value in grid mode
   @Override
   public String getTypeProperties() {

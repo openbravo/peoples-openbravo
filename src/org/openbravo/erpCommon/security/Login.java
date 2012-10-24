@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -245,7 +245,7 @@ public class Login extends HttpBaseServlet {
     SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
     Module module = OBDal.getInstance().get(Module.class, GOOGLE_INTEGRATION_MODULE_ID);
 
-    ActivationKey ak = ActivationKey.getInstance();
+    ActivationKey ak = ActivationKey.getInstance(true);
     if (ak.isActive()) {
       String hql = "from ADPreference pref where searchKey like :value and property = :prop and (visibleAtClient is null or visibleAtClient.id = '0')";
       Query q = OBDal.getInstance().getSession().createQuery(hql);

@@ -191,7 +191,7 @@ OB.ViewFormProperties = {
     //   from the datasource, so it has to be converted from UTC to local time
     // see issue https://issues.openbravo.com/view.php?id=20684
     if (!isLocalTime) {
-      OB.Utilities.Date.convertUTCTimeToLocalTime([record], this.fields);
+      record = OB.Utilities.Date.convertUTCTimeToLocalTime([record], this.fields)[0];
     }
 
     ret = this.Super('editRecord', arguments);
@@ -1437,7 +1437,7 @@ OB.ViewFormProperties = {
       if (status === isc.RPCResponse.STATUS_SUCCESS && recordIndex === -1) {
         var visibleRows = view.viewGrid.body.getVisibleRows();
         if (visibleRows[0] !== -1) {
-          view.viewGrid.data.insertCacheData(data, visibleRows[0]);
+          view.viewGrid.addToCacheData(data, visibleRows[0]);
           recordIndex = visibleRows[0];
         }
       }
@@ -1491,6 +1491,21 @@ OB.ViewFormProperties = {
         // stop here if the window was getting closed anyway
         if (view.standardWindow.closing) {
           return;
+        }
+
+        if (view.parentRecordId) {
+          if (!view.newRecordsAfterRefresh) {
+            view.newRecordsAfterRefresh = {};
+          }
+          if (!view.newRecordsAfterRefresh[view.parentRecordId]) {
+            view.newRecordsAfterRefresh[view.parentRecordId] = [];
+          }
+          view.newRecordsAfterRefresh[view.parentRecordId].push(data[OB.Constants.ID]);
+        } else {
+          if (!view.newRecordsAfterRefresh) {
+            view.newRecordsAfterRefresh = [];
+          }
+          view.newRecordsAfterRefresh.push(data[OB.Constants.ID]);
         }
 
         // do this after doing autoSave as the setHasChanged will clean
@@ -1820,6 +1835,13 @@ OB.ViewFormProperties = {
 
   keyDown: function () {
     if (this.grid && this.grid.editFormKeyDown) {
+      // To fix issue https://issues.openbravo.com/view.php?id=21786
+      var focusedItem = this.getFocusItem(),
+          isEscape = isc.EH.getKey() === 'Escape' && !isc.EH.ctrlKeyDown() && !isc.EH.altKeyDown() && !isc.EH.shiftKeyDown();
+      if (isEscape && focusedItem && Object.prototype.toString.call(focusedItem.isPickListShown) === '[object Function]' && focusedItem.isPickListShown()) {
+        return true; // Then the event will bubble to ComboBoxItem.keyDown
+      }
+
       // To fix issue https://issues.openbravo.com/view.php?id=21382
       this.grid.editFormKeyDown(arguments);
     }

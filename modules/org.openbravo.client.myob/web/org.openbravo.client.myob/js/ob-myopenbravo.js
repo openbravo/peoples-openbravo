@@ -450,7 +450,7 @@ isc.OBMyOpenbravo.addProperties({
           });
           entryLayout.addMember(lbl);
           // if a standard window then show the new icon
-          if (recent.windowId && !recent.singleRecord && !recent.readOnly) {
+          if (recent.windowId && !recent.singleRecord && !recent.readOnly && !recent.editOrDeleteOnly) {
             // make a copy
             newRecent = isc.addProperties({}, recent);
             newRecent.command = 'NEW';

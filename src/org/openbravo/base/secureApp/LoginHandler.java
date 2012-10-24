@@ -64,6 +64,8 @@ public class LoginHandler extends HttpBaseServlet {
 
     // Empty session
     vars.removeSessionValue("#Authenticated_user");
+    vars.removeSessionValue("#AD_Role_ID");
+    vars.setSessionObject("#loggingIn", "Y");
 
     final String strUser = vars.getStringParameter("user");
 
@@ -311,6 +313,7 @@ public class LoginHandler extends HttpBaseServlet {
       throws IOException, ServletException {
 
     String target = vars.getSessionValue("target");
+
     if (target.equals("")) {
       target = strDireccion + "/security/Menu.html";
     }

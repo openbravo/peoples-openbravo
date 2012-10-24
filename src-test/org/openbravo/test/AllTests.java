@@ -45,7 +45,6 @@ import org.openbravo.test.security.AccessLevelTest;
 import org.openbravo.test.security.AllowedOrganizationsTest;
 import org.openbravo.test.security.EntityAccessTest;
 import org.openbravo.test.security.WritableReadableOrganizationClientTest;
-import org.openbravo.test.xml.ClientExportImportTest;
 import org.openbravo.test.xml.EntityXMLImportTestBusinessObject;
 import org.openbravo.test.xml.EntityXMLImportTestReference;
 import org.openbravo.test.xml.EntityXMLImportTestSingle;
@@ -91,7 +90,6 @@ public class AllTests {
     suite.addTestSuite(EvaluationTest.class);
 
     // xml
-    suite.addTestSuite(ClientExportImportTest.class);
     suite.addTestSuite(EntityXMLImportTestBusinessObject.class);
     suite.addTestSuite(EntityXMLImportTestReference.class);
     suite.addTestSuite(EntityXMLImportTestSingle.class);

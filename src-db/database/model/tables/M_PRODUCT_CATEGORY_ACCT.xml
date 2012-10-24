@@ -85,6 +85,20 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="P_DEF_REVENUE_ACCT" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="P_DEF_EXPENSE_ACCT" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="M_PROD_CAT_ACCT_P_DEFEXPENSE">
+        <reference local="P_DEF_EXPENSE_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="M_PROD_CAT_ACCT_P_DEFREVENUE">
+        <reference local="P_DEF_REVENUE_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_CLIENT" name="M_PRODUCT_CATEGORY_ACCT_AD_CLI">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>

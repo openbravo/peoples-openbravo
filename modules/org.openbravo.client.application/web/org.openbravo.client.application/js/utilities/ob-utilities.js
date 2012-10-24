@@ -49,6 +49,18 @@ OB.Utilities.checkProfessionalLicense = function (msg, doNotShowMessage) {
   return true;
 };
 
+//** {{{OB.Utilities.encodeSearchOperator}}} **
+//Encodes and and or in a string with a forward slash
+OB.Utilities.encodeSearchOperator = function (value) {
+  var val = value;
+  if (!val || !isc.isA.String(val)) {
+    return val;
+  }
+  val = val.replace(/ and /g, ' \\and ');
+  val = val.replace(/ or /g, ' \\or ');
+  return val;
+};
+
 // ** {{{OB.Utilities.truncTitle}}} **
 // Truncs a string after a specific length. Initial implementation is 
 // simple (just cuts of at the specified length). Returns the trunced title
@@ -237,6 +249,8 @@ OB.Utilities.determineViewOfFormItem = function (item) {
 // If action is null/undefined then nothing is done and undefined is returned.
 // When the action is called the result of the action is returned.
 OB.Utilities.callAction = function (action) {
+  var response;
+
   function IEApplyHack(method, object, parameters) {
     if (!object) {
       object = window;
@@ -262,18 +276,19 @@ OB.Utilities.callAction = function (action) {
     return result;
   }
 
-  if (!action) {
+  if (!action || !action.method) {
     return;
   }
   if (action.callback) {
     action.callback();
   } else {
     if (navigator.userAgent.toUpperCase().indexOf("MSIE") !== -1) {
-      IEApplyHack(action.method, action.target, action.parameters);
+      response = IEApplyHack(action.method, action.target, action.parameters);
     } else {
-      action.method.apply(action.target, action.parameters);
+      response = action.method.apply(action.target, action.parameters);
     }
   }
+  return response;
 };
 
 // ** {{{OB.Utilities.replaceNullStringValue}}} **
@@ -379,7 +394,7 @@ OB.Utilities.removeFragment = function (str) {
 // ** {{{OB.Utilities.openView}}} **
 // Open a view taking into account if a specific window should be opened in classic mode or not.
 // Returns the object used to open the window.
-OB.Utilities.openView = function (windowId, tabId, tabTitle, recordId, command, icon, readOnly, singleRecord, direct) {
+OB.Utilities.openView = function (windowId, tabId, tabTitle, recordId, command, icon, readOnly, singleRecord, direct, editOrDeleteOnly) {
   var isClassicEnvironment = OB.Utilities.useClassicMode(windowId);
 
   var openObject;
@@ -406,7 +421,8 @@ OB.Utilities.openView = function (windowId, tabId, tabTitle, recordId, command, 
       tabTitle: tabTitle,
       windowId: windowId,
       readOnly: readOnly,
-      singleRecord: singleRecord
+      singleRecord: singleRecord,
+      editOrDeleteOnly: editOrDeleteOnly
     };
   } else {
     openObject = {
@@ -417,7 +433,8 @@ OB.Utilities.openView = function (windowId, tabId, tabTitle, recordId, command, 
       windowId: windowId,
       icon: icon,
       readOnly: readOnly,
-      singleRecord: singleRecord
+      singleRecord: singleRecord,
+      editOrDeleteOnly: editOrDeleteOnly
     };
   }
   if (command) {
@@ -920,6 +937,51 @@ OB.Utilities.getTimePassedInterval = function (timeInMiliseconds) {
 // is a reserved javascript word
 OB.Utilities.getValue = function (object, property) {
   return object[property];
+};
+
+//** {{{ OB.Utilities.generateRandomString }}} **
+//
+// Generates a random string based on the arguments
+// Parameters:
+//  * {{{stringLength}}} Length of the generated random string
+//  * {{{allowLowerCaseChars}}} Boolean to check if lower case characters are allowed (true by default)
+//  * {{{allowUpperCaseChars}}} Boolean to check if upper case characters are allowed (true by default)
+//  * {{{allowDigits}}} Boolean to check if digits are allowed (false by default)
+//  * {{{allowSpecialChars}}} Boolean to check if special characters are allowed (false by default)
+OB.Utilities.generateRandomString = function (stringLength, allowLowerCaseChars, allowUpperCaseChars, allowDigits, allowSpecialChars) {
+  stringLength = parseInt(stringLength, 10);
+  if (!stringLength) {
+    stringLength = 1;
+  }
+  allowLowerCaseChars = (allowLowerCaseChars !== false ? true : false);
+  allowUpperCaseChars = (allowUpperCaseChars !== false ? true : false);
+  allowDigits = (allowDigits !== true ? false : true);
+  allowSpecialChars = (allowSpecialChars !== true ? false : true);
+
+  var chars = '',
+      randomString = '',
+      i, rnum;
+  if (allowLowerCaseChars) {
+    chars += 'abcdefghijklmnopqrstuvwxyz';
+  }
+  if (allowUpperCaseChars) {
+    chars += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  }
+  if (allowDigits) {
+    chars += '0123456789';
+  }
+  if (allowSpecialChars) {
+    chars += '!@#$%^&*()+=-[]\\\';,./{}|\":<>?~_';
+  }
+  if (chars === '') {
+    return '';
+  }
+
+  for (i = 0; i < stringLength; i++) {
+    rnum = Math.floor(Math.random() * chars.length);
+    randomString += chars.substring(rnum, rnum + 1);
+  }
+  return randomString;
 };
 
 /* This function will return true if it receives a string parameter, and 

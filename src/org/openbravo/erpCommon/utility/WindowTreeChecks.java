@@ -63,6 +63,10 @@ class WindowTreeChecks {
       String isReady = WindowTreeData.selectIsReady(conn, nodeId);
       if ("Y".equals(isReady))
         return Utility.messageBD(conn, "OrgIsReady", vars.getLanguage());
+      if ("AS".equals(TreeType)
+          && "Y".equals(WindowTreeData.selectIsStatic(conn, "A_ASSET", nodeId))) {
+        return OBMessageUtils.messageBD("StaticRecord");
+      }
       if (isChild && !topNodeId.equals("0")
           && WindowTreeChecksData.selectIsSummary(conn, table, key, topNodeId).equals("N"))
         return Utility.messageBD(conn, "NotIsSummary", vars.getLanguage());

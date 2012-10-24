@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2010 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2012 Openbravo S.L.U.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.ad_forms;
@@ -36,6 +36,87 @@ public class DocLine_Invoice extends DocLine {
   private String m_ListAmt = "0";
   /** Discount Amount */
   private String m_DiscountAmt = "0";
+  // Accruals and Deferrals info:
+  /** Is Deferred Revenue */
+  private boolean m_IsDeferredRevenue = false;
+  /** Revenue Plan type */
+  private String m_RevPlanType = "";
+  /** Period Number */
+  private int m_PeriodNumber = 0;
+  /** Starting Date */
+  private String m_StatingPeriodId = "";
+  /** Is Deferred Expense */
+  private boolean m_IsDeferredExpense = false;
+  /** Expense Plan type */
+  private String m_ExpPlanType = "";
+  /** Period Number */
+  private int m_PeriodNumberExp = 0;
+  /** Starting Date */
+  private String m_StatingPeriodExpId = "";
+
+  public boolean isDeferredRevenue() {
+    return m_IsDeferredRevenue;
+  }
+
+  public void setIsDeferredRevenue(boolean m_IsDeferredRevenue) {
+    this.m_IsDeferredRevenue = m_IsDeferredRevenue;
+  }
+
+  public String getRevPlanType() {
+    return m_RevPlanType;
+  }
+
+  public void setRevPlanType(String m_RevPlanType) {
+    this.m_RevPlanType = m_RevPlanType;
+  }
+
+  public int getPeriodNumber() {
+    return m_PeriodNumber;
+  }
+
+  public void setPeriodNumber(int m_PeriodNumber) {
+    this.m_PeriodNumber = m_PeriodNumber;
+  }
+
+  public String getStartingPeriodId() {
+    return m_StatingPeriodId;
+  }
+
+  public void setStartingPeriodId(String m_StartingPeriodId) {
+    this.m_StatingPeriodId = m_StartingPeriodId;
+  }
+
+  public boolean isDeferredExpense() {
+    return m_IsDeferredExpense;
+  }
+
+  public void setIsDeferredExpense(boolean m_IsDeferredExpense) {
+    this.m_IsDeferredExpense = m_IsDeferredExpense;
+  }
+
+  public String getExpPlanType() {
+    return m_ExpPlanType;
+  }
+
+  public void setExpPlanType(String m_ExpPlanType) {
+    this.m_ExpPlanType = m_ExpPlanType;
+  }
+
+  public int getPeriodNumberExp() {
+    return m_PeriodNumberExp;
+  }
+
+  public void setPeriodNumbeExp(int m_PeriodNumberExp) {
+    this.m_PeriodNumberExp = m_PeriodNumberExp;
+  }
+
+  public String getStartingPeriodExpId() {
+    return m_StatingPeriodExpId;
+  }
+
+  public void setStartingPeriodExpId(String m_StartingPeriodExpId) {
+    this.m_StatingPeriodExpId = m_StartingPeriodExpId;
+  }
 
   public void setAmount(String LineNetAmt, String PriceList, String Qty) {
     BigDecimal ZERO = new BigDecimal("0");

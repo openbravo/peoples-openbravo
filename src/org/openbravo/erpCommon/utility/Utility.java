@@ -1608,8 +1608,9 @@ public class Utility {
   public static String arrayListToString(ArrayList<String> list, boolean addQuotes) {
     String rt = "";
     for (int i = 0; i < list.size(); i++) {
-      rt += rt.equals("") ? "" : ", " + (addQuotes ? "'" : "") + list.get(i)
+      String aux = (rt.equals("") ? "" : ", ") + (addQuotes ? "'" : "") + list.get(i)
           + (addQuotes ? "'" : "");
+      rt = rt + aux;
     }
     return rt;
   }

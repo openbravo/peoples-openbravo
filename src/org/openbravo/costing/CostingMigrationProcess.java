@@ -358,7 +358,6 @@ public class CostingMigrationProcess implements Process {
     rule.setStartingDate(startingDate);
     log4j.debug("setting starting date " + startingDate);
     OBDal.getInstance().flush();
-    OBDal.getInstance().refresh(rule);
   }
 
   private void calculateCosts(Organization org) {

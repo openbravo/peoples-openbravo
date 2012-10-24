@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -34,6 +34,13 @@ public class ActionButtonUtility {
   public static FieldProvider[] docAction(ConnectionProvider conn, VariablesSecureApp vars,
       String strDocAction, String strReference, String strDocStatus, String strProcessing,
       String strTable) {
+    return docAction(conn, vars, strDocAction, strReference, strDocStatus, strProcessing, strTable,
+        null);
+  }
+
+  public static FieldProvider[] docAction(ConnectionProvider conn, VariablesSecureApp vars,
+      String strDocAction, String strReference, String strDocStatus, String strProcessing,
+      String strTable, String tabId) {
     FieldProvider[] ld = null;
     if (log4j.isDebugEnabled())
       log4j.debug("DocAction - generating combo elements for table: " + strTable

@@ -85,6 +85,7 @@ public class MenuManager implements Serializable {
         linkForms();
 
         removeInvisibleNodes();
+        removeInaccessibleNodes();
 
         // set the globals
         final MenuOption localCachedRoot = new MenuOption();
@@ -339,6 +340,21 @@ public class MenuManager implements Serializable {
     menuOptions.removeAll(toRemove);
   }
 
+  private void removeInaccessibleNodes() {
+    final List<MenuOption> toRemove = new ArrayList<MenuOption>();
+    for (MenuOption menuOption : menuOptions) {
+      if (!menuOption.isAccessible()) {
+        toRemove.add(menuOption);
+      }
+    }
+    for (MenuOption menuOption : toRemove) {
+      if (menuOption.getParentMenuOption() != null) {
+        menuOption.getParentMenuOption().getChildren().remove(menuOption);
+      }
+    }
+    menuOptions.removeAll(toRemove);
+  }
+
   private void createInitialMenuList() {
     Role role = OBDal.getInstance().get(Role.class, roleId);
     final Tree tree;
@@ -425,6 +441,14 @@ public class MenuManager implements Serializable {
       return Boolean.toString(isReadOnly());
     }
 
+    public boolean isEditOrDeleteOnly() {
+      return getTab() != null && getTab().getUIPattern().equals("ED");
+    }
+
+    public String getEditOrDeleteOnlyStringValue() {
+      return Boolean.toString(isEditOrDeleteOnly());
+    }
+
     public boolean isReport() {
       return isReport;
     }
@@ -457,6 +481,16 @@ public class MenuManager implements Serializable {
         visible = true;
       }
       return visible;
+    }
+
+    public boolean isAccessible() {
+      // In order to be accessible, all its menu entry parents must be active;
+      Menu menuEntry = OBDal.getInstance().get(Menu.class, treeNode.getNode());
+      if (parentMenuOption == null) {
+        return menuEntry.isActive();
+      } else {
+        return menuEntry.isActive() && parentMenuOption.isAccessible();
+      }
     }
 
     public void setVisible(Boolean visible) {

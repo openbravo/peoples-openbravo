@@ -34,6 +34,7 @@
   v_Message VARCHAR2(2000):='';
   v_Record_ID VARCHAR2(32);
   v_User_ID VARCHAR2(32):='0';
+  v_LinesFromOrder NUMBER:= 0;
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
@@ -254,6 +255,7 @@
           FOR CUR_ShipmentLines IN
             (SELECT *  FROM M_INOUTLINE  WHERE M_InOut_ID=v_Record_ID)
           LOOP
+            v_LinesFromOrder:= v_LinesFromOrder + 1;
             -- Get Price
             IF(CUR_ShipmentLines.C_OrderLine_ID IS NOT NULL) THEN
               v_ResultStr:='GettingPrice-Order';
@@ -342,6 +344,7 @@
           END LOOP; -- ShipLines
         END IF;
       END LOOP; -- All Shipments
+      v_Message:= v_Message || '. ' || v_LinesFromOrder || ' ' || '@UsedPricesFromOrder@';
     END;
     --<<FINISH_PROCESS>>
     --  Update AD_PInstance

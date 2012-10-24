@@ -34,12 +34,14 @@ public class StandardMatchingAlgorithm implements FIN_MatchingAlgorithm {
   public FIN_MatchedTransaction match(FIN_BankStatementLine line,
       List<FIN_FinaccTransaction> excluded) throws ServletException {
     List<FIN_FinaccTransaction> transactions = MatchTransactionDao.getMatchingFinancialTransaction(
-        line.getBankStatement().getAccount().getId(), line.getReferenceNo(),
-        (line.getCramount().subtract(line.getDramount())), line.getBpartnername(), excluded);
+        line.getBankStatement().getAccount().getId(), line.getTransactionDate(),
+        line.getReferenceNo(), (line.getCramount().subtract(line.getDramount())),
+        line.getBpartnername(), excluded);
     if (!transactions.isEmpty())
       return new FIN_MatchedTransaction(transactions.get(0), FIN_MatchedTransaction.STRONG);
     transactions = MatchTransactionDao.getMatchingFinancialTransaction(line.getBankStatement()
-        .getAccount().getId(), line.getCramount().subtract(line.getDramount()), excluded);
+        .getAccount().getId(), line.getTransactionDate(),
+        line.getCramount().subtract(line.getDramount()), excluded);
     if (!transactions.isEmpty())
       return new FIN_MatchedTransaction(transactions.get(0), FIN_MatchedTransaction.WEAK);
 

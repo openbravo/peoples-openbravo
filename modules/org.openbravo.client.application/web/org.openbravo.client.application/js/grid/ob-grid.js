@@ -70,7 +70,12 @@ isc.OBGrid.addProperties({
     OB.KeyboardManager.Shortcuts.set('Grid_FocusFilter', ['OBGrid.body', 'OBGrid.editForm'], ksAction_FocusFilter);
 
     ksAction_FocusGrid = function (caller) {
-      caller.focus();
+      if (caller.getPrototype().Class !== 'OBViewGrid' || caller.data.localData[0]) { // In OBViewGrid case, only execute action if there are at least one row in the grid
+        caller.focus();
+        if (!caller.getSelectedRecord()) { // If there are no rows already selected in the grid, select the first one
+          caller.selectSingleRecord(0);
+        }
+      }
       return false; //To avoid keyboard shortcut propagation
     };
     OB.KeyboardManager.Shortcuts.set('Grid_FocusGrid', 'OBGrid.filter', ksAction_FocusGrid);
@@ -122,7 +127,14 @@ isc.OBGrid.addProperties({
   },
 
   filterFieldsKeyDown: function (item, form, keyName) {
-    var response = OB.KeyboardManager.Shortcuts.monitor('OBGrid.filter', this.grid.fieldSourceGrid);
+    // To fix issue https://issues.openbravo.com/view.php?id=21786
+    var isEscape = isc.EH.getKey() === 'Escape' && !isc.EH.ctrlKeyDown() && !isc.EH.altKeyDown() && !isc.EH.shiftKeyDown(),
+        response;
+    if (isEscape && item && Object.prototype.toString.call(item.isPickListShown) === '[object Function]' && item.isPickListShown()) {
+      return true; // Then the event will bubble to ComboBoxItem.keyDown
+    }
+
+    response = OB.KeyboardManager.Shortcuts.monitor('OBGrid.filter', this.grid.fieldSourceGrid);
     if (response !== false) {
       response = this.Super('filterFieldsKeyDown', arguments);
     }
@@ -279,19 +291,24 @@ isc.OBGrid.addProperties({
     // issue 20722 (https://issues.openbravo.com/view.php?id=20722), remove the criteria
     // that makes reference to a specific id and return the original one
     removeSpecificIdFilter: function (criteria) {
+      var i, length;
       if (!criteria) {
         return criteria;
       }
       if (criteria.operator !== 'or') {
         return criteria;
       }
-      if (criteria.criteria && criteria.criteria.length !== 2) {
+      if (criteria.criteria && criteria.criteria.length < 2) {
         return criteria;
       }
-      if (criteria.criteria.get(0).fieldName !== 'id') {
-        return criteria;
+      // The original criteria is in the position 0, the rest are specific ids
+      length = criteria.criteria.length;
+      for (i = 1; i < length; i++) {
+        if (criteria.criteria.get(i).fieldName !== 'id') {
+          return criteria;
+        }
       }
-      return criteria.criteria.get(1);
+      return criteria.criteria.get(0);
     },
 
     // repair that filter criteria on fk fields can be 
@@ -359,7 +376,7 @@ isc.OBGrid.addProperties({
     // prevent this as we get the datasource later it is not 
     // yet set
     getEditorProperties: function (field) {
-      var noDataSource = field.displayField && !field.optionDataSource,
+      var noDataSource = !field.optionDataSource,
           ret = this.Super('getEditorProperties', arguments);
       if (ret.optionDataSource && noDataSource) {
         delete ret.optionDataSource;
@@ -617,7 +634,7 @@ isc.OBGrid.addProperties({
   // be presented with a save-as dialog.
   // Parameters:
   // * {{{exportProperties}}} defines different properties used for controlling the export, currently only the 
-  // exportProperties.exportFormat is supported (which is defaulted to csv).
+  // exportProperties.exportAs and exportProperties._extraProperties are supported (which is defaulted to csv).
   // * {{{data}}} the parameters to post to the server, in addition the filter criteria of the grid are posted.  
   exportData: function (exportProperties, data) {
     var d = data || {},
@@ -637,9 +654,11 @@ isc.OBGrid.addProperties({
       // never do count for export
       exportAs: expProp.exportAs || 'csv',
       viewState: expProp.viewState,
+      _extraProperties: expProp._extraProperties,
       tab: expProp.tab,
       exportToFile: true,
-      _textMatchStyle: 'substring'
+      _textMatchStyle: 'substring',
+      _UTCOffsetMiliseconds: OB.Utilities.Date.getUTCOffsetInMiliseconds()
     }, lcriteria, this.getFetchRequestParams());
     if (this.getSortField()) {
       sortCriteria = this.getSort();
@@ -700,10 +719,8 @@ isc.ClassFactory.defineClass('OBGridSummary', isc.OBGrid);
 isc.OBGridSummary.addProperties({
   getCellStyle: function (record, rowNum, colNum) {
     var field = this.getField(colNum);
-    if (field.summaryFunction === 'sum' && this.summaryRowStyle_sum) {
-      return this.summaryRowStyle_sum;
-    } else if (field.summaryFunction === 'avg' && this.summaryRowStyle_avg) {
-      return this.summaryRowStyle_avg;
+    if (field.summaryFunction && this['summaryRowStyle_' + field.summaryFunction]) {
+      return this['summaryRowStyle_' + field.summaryFunction];
     } else {
       return this.summaryRowStyle;
     }

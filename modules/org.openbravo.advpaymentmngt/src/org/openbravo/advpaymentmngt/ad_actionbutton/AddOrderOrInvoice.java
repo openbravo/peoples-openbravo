@@ -60,6 +60,7 @@ import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.financialmgmt.gl.GLItem;
+import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
@@ -84,8 +85,9 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
       String strTabId = vars.getGlobalVariable("inpTabId", "AddOrderOrInvoice|Tab_ID");
       String strPaymentId = vars.getGlobalVariable("inpfinPaymentId", strWindowId + "|"
           + "FIN_Payment_ID");
+      String strFinancialAccountId = vars.getStringParameter("inpfinFinancialAccountId");
 
-      printPage(response, vars, strPaymentId, strWindowId, strTabId);
+      printPage(response, vars, strPaymentId, strWindowId, strTabId, strFinancialAccountId);
 
     } else if (vars.commandIn("GRIDLIST")) {
       String strBusinessPartnerId = vars.getRequestGlobalVariable("inpBusinessPartnerId", "");
@@ -337,8 +339,8 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
   }
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars,
-      String strPaymentId, String strWindowId, String strTabId) throws IOException,
-      ServletException {
+      String strPaymentId, String strWindowId, String strTabId, String strFinancialAccountId)
+      throws IOException, ServletException {
     log4j.debug("Output: Add Payment button pressed on Make / Receipt Payment windows");
 
     FIN_Payment payment = new AdvPaymentMngtDao().getObject(FIN_Payment.class, strPaymentId);
@@ -466,12 +468,12 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
         // Amounts
         if (payment.isReceipt()) {
           glItem.put("glitemPaidOutAmt", psdGLItem.getAmount().signum() < 0 ? psdGLItem.getAmount()
-              : BigDecimal.ZERO);
+              .abs() : BigDecimal.ZERO);
           glItem.put("glitemReceivedInAmt",
               psdGLItem.getAmount().signum() > 0 ? psdGLItem.getAmount() : BigDecimal.ZERO);
         } else {
-          glItem.put("glitemReceivedInAmt",
-              psdGLItem.getAmount().signum() < 0 ? psdGLItem.getAmount() : BigDecimal.ZERO);
+          glItem.put("glitemReceivedInAmt", psdGLItem.getAmount().signum() < 0 ? psdGLItem
+              .getAmount().abs() : BigDecimal.ZERO);
           glItem.put("glitemPaidOutAmt", psdGLItem.getAmount().signum() > 0 ? psdGLItem.getAmount()
               : BigDecimal.ZERO);
         }
@@ -517,6 +519,29 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
     // If UsedCredit is not equal zero, check Use available credit
     xmlDocument.setParameter("useCredit", payment.getUsedCredit().signum() != 0 ? "Y" : "N");
 
+    // Not allow to change exchange rate and amount
+    final String strNotAllowExchange = Utility.getContext(this, vars, "NotAllowChangeExchange",
+        strWindowId);
+    xmlDocument.setParameter("strNotAllowExchange", strNotAllowExchange);
+
+    dao = new AdvPaymentMngtDao();
+    FIN_FinancialAccount financialAccount = dao.getObject(FIN_FinancialAccount.class,
+        strFinancialAccountId);
+
+    if (financialAccount.getWriteofflimit() != null) {
+      final String strtypewriteoff;
+      final String strAmountwriteoff;
+
+      strtypewriteoff = financialAccount.getTypewriteoff();
+      strAmountwriteoff = financialAccount.getWriteofflimit().toString();
+      xmlDocument.setParameter("strtypewriteoff", strtypewriteoff);
+      xmlDocument.setParameter("strAmountwriteoff", strAmountwriteoff);
+
+      // Not allow to write off
+      final String strWriteOffLimit = Utility.getContext(this, vars, "WriteOffLimitPreference",
+          strWindowId);
+      xmlDocument.setParameter("strWriteOffLimit", strWriteOffLimit);
+    }
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());

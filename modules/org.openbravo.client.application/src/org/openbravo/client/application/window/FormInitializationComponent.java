@@ -446,7 +446,7 @@ public class FormInitializationComponent extends BaseActionHandler {
         finalObject.put("dynamicCols", new JSONArray(changeEventCols));
       }
 
-      if (mode.equals("EDIT") && row != null) {
+      if ((mode.equals("EDIT") || mode.equals("CHANGE")) && row != null) {
         if ((row instanceof ClientEnabled && ((ClientEnabled) row).getClient() != null)) {
           final String rowClientId = ((ClientEnabled) row).getClient().getId();
           final String currentClientId = OBContext.getOBContext().getCurrentClient().getId();
@@ -632,8 +632,7 @@ public class FormInitializationComponent extends BaseActionHandler {
           }
         }
       } catch (Exception e) {
-        throw new OBException(
-            "Couldn't get data for column " + field.getColumn().getDBColumnName(), e);
+        log.error("Couldn't get data for column " + field.getColumn().getDBColumnName(), e);
       }
     }
 
@@ -1019,27 +1018,32 @@ public class FormInitializationComponent extends BaseActionHandler {
       currentValue = obj.get(prop.getName());
     }
 
-    if (currentValue != null && !currentValue.toString().equals("null")) {
-      if (currentValue instanceof BaseOBObject) {
-        if (prop.getReferencedProperty() != null) {
-          currentValue = ((BaseOBObject) currentValue).get(prop.getReferencedProperty().getName());
+    try {
+      if (currentValue != null && !currentValue.toString().equals("null")) {
+        if (currentValue instanceof BaseOBObject) {
+          if (prop.getReferencedProperty() != null) {
+            currentValue = ((BaseOBObject) currentValue)
+                .get(prop.getReferencedProperty().getName());
+          } else {
+            currentValue = ((BaseOBObject) currentValue).getId();
+          }
         } else {
-          currentValue = ((BaseOBObject) currentValue).getId();
+          currentValue = UIDefinitionController.getInstance().getUIDefinition(prop.getColumnId())
+              .convertToClassicString(currentValue);
         }
-      } else {
-        currentValue = UIDefinitionController.getInstance().getUIDefinition(prop.getColumnId())
-            .convertToClassicString(currentValue);
+        if (currentValue != null && currentValue.equals("null")) {
+          currentValue = null;
+        }
+        if (currentValue == null) {
+          RequestContext.get().setRequestParameter(
+              "inp" + Sqlc.TransformaNombreColumna(columnName), null);
+        } else {
+          RequestContext.get().setRequestParameter(
+              "inp" + Sqlc.TransformaNombreColumna(columnName), currentValue.toString());
+        }
       }
-      if (currentValue != null && currentValue.equals("null")) {
-        currentValue = null;
-      }
-      if (currentValue == null) {
-        RequestContext.get().setRequestParameter("inp" + Sqlc.TransformaNombreColumna(columnName),
-            null);
-      } else {
-        RequestContext.get().setRequestParameter("inp" + Sqlc.TransformaNombreColumna(columnName),
-            currentValue.toString());
-      }
+    } catch (Exception e) {
+      log.error("Couldn't get the value for column " + columnName);
     }
   }
 
@@ -1255,9 +1259,10 @@ public class FormInitializationComponent extends BaseActionHandler {
                     messages.add(message);
                     createNewPreferenceForWindow(tab.getWindow());
                     log.warn("An EXECUTE element has been found in the response of the callout "
-                        + calloutClassName + ". A preference has been created for the window "
+                        + calloutClassName
+                        + ". A preference has been created for the window "
                         + tab.getWindow().getName()
-                        + "so that it's shown in classic mode until this problem is fixed.");
+                        + "so that it's shown in classic mode until this problem is fixed. This requires to build the system to generate this classic window.");
                   }
                 }
               } else {

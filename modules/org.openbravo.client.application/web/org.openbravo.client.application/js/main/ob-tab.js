@@ -113,11 +113,13 @@ isc.OBTabSetMain.addProperties({
       return false; //To avoid keyboard shortcut propagation
     };
     OB.KeyboardManager.Shortcuts.set('TabSet_SelectParentTab', 'Canvas', ksAction_SelectParentTab);
+    OB.KeyboardManager.Shortcuts.set('TabSet_SelectParentTab_Alternative', 'Canvas', ksAction_SelectParentTab);
     ksAction_SelectChildTab = function () {
       me.selectChildTab();
       return false; //To avoid keyboard shortcut propagation
     };
     OB.KeyboardManager.Shortcuts.set('TabSet_SelectChildTab', 'Canvas', ksAction_SelectChildTab);
+    OB.KeyboardManager.Shortcuts.set('TabSet_SelectChildTab_Alternative', 'Canvas', ksAction_SelectChildTab);
     ksAction_SelectPreviousTab = function () {
       if (!isc.Page.isRTL()) { // LTR mode
         me.selectPreviousTab();
@@ -127,6 +129,7 @@ isc.OBTabSetMain.addProperties({
       return false; //To avoid keyboard shortcut propagation
     };
     OB.KeyboardManager.Shortcuts.set('TabSet_SelectPreviousTab', 'Canvas', ksAction_SelectPreviousTab);
+    OB.KeyboardManager.Shortcuts.set('TabSet_SelectPreviousTab_Alternative', 'Canvas', ksAction_SelectPreviousTab);
     ksAction_SelectNextTab = function () {
       if (!isc.Page.isRTL()) { // LTR mode
         me.selectNextTab();
@@ -136,6 +139,7 @@ isc.OBTabSetMain.addProperties({
       return false; //To avoid keyboard shortcut propagation
     };
     OB.KeyboardManager.Shortcuts.set('TabSet_SelectNextTab', 'Canvas', ksAction_SelectNextTab);
+    OB.KeyboardManager.Shortcuts.set('TabSet_SelectNextTab_Alternative', 'Canvas', ksAction_SelectNextTab);
     ksAction_SelectWorkspaceTab = function () {
       me.selectTab(0);
       return false; //To avoid keyboard shortcut propagation

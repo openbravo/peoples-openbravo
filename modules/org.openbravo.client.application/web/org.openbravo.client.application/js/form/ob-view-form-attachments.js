@@ -257,6 +257,7 @@ isc.OBAttachmentsLayout.addProperties({
         if (OB.Utilities.currentUploader === null || forceUpload) {
           var attachmentFile = OB.I18N.getLabel('OBUIAPP_AttachmentFile');
           var form = isc.DynamicForm.create({
+            autoFocus: true,
             fields: [{
               name: 'inpname',
               title: attachmentFile,
@@ -367,7 +368,9 @@ isc.OBAttachmentsLayout.addProperties({
         }
       }
     });
-    hLayout.addMember(addButton);
+    if (!this.getForm().view.viewForm.readOnly) {
+      hLayout.addMember(addButton);
+    }
     // If there are no attachments, we only display the "[Add]" button
     if (!attachments || attachments.length === 0) {
       this.getForm().getItem('_attachments_').setValue(OB.I18N.getLabel('OBUIAPP_AttachmentTitle'));
@@ -425,7 +428,9 @@ isc.OBAttachmentsLayout.addProperties({
       }
     });
     hLayout.addMember(downloadAllButton);
-    hLayout.addMember(removeAllButton);
+    if (!this.getForm().view.viewForm.readOnly) {
+      hLayout.addMember(removeAllButton);
+    }
 
     var downloadActions;
     downloadActions = function () {
@@ -495,7 +500,9 @@ isc.OBAttachmentsLayout.addProperties({
       buttonLayout.addMember(attachmentLabel);
       buttonLayout.addMember(attachmentBy);
       buttonLayout.addMember(downloadAttachment);
-      buttonLayout.addMember(removeAttachment);
+      if (!this.getForm().view.viewForm.readOnly) {
+        buttonLayout.addMember(removeAttachment);
+      }
       this.addMember(buttonLayout);
     }
   },

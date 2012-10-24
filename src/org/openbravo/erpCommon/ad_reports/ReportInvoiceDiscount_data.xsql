@@ -48,7 +48,7 @@
 	C_CURRENCY_CONVERT(I.TOTALLINES, I.C_CURRENCY_ID, ?,  TO_DATE(COALESCE(I.DATEINVOICED, NOW())), NULL, I.AD_CLIENT_ID, I.AD_ORG_ID) AS TOTALLINES, 
 	C_CURRENCY_CONVERT(-SUM(LINENETAMT), I.C_CURRENCY_ID, ?,  TO_DATE(COALESCE(I.DATEINVOICED, NOW())), NULL, IL.AD_CLIENT_ID, IL.AD_ORG_ID) AS DISCOUNTLINES
 	FROM C_INVOICE I, C_INVOICELINE IL           
-	WHERE I.C_INVOICE_ID = IL.C_INVOICE_ID AND IL.C_INVOICE_DISCOUNT_ID IS NOT NULL           
+	WHERE I.C_INVOICE_ID = IL.C_INVOICE_ID AND IL.C_INVOICE_DISCOUNT_ID IS NOT NULL AND I.AD_CLIENT_ID IN ('1') AND I.AD_ORG_ID IN ('1')                 
 	GROUP BY I.C_INVOICE_ID, I.TOTALLINES, I.C_CURRENCY_ID, I.DATEINVOICED, I.AD_CLIENT_ID, I.AD_ORG_ID, IL.AD_CLIENT_ID, IL.AD_ORG_ID) BB) A on C_INVOICELINE.C_INVOICE_ID = A.C_INVOICE_ID
     left join C_INVOICE on C_INVOICELINE.C_INVOICE_ID = C_INVOICE.C_INVOICE_ID
     LEFT Join C_DOCTYPE on C_INVOICE.C_DOCTYPE_ID=C_DOCTYPE.C_DOCTYPE_ID,
@@ -76,6 +76,8 @@
 	<Parameter name="cCurrencyConv"/>
 	<Parameter name="cCurrencyConv"/>
 	<Parameter name="cCurrencyConv"/>
+    <Parameter name="adUserClient" type="replace" optional="true" after="I.AD_CLIENT_ID IN (" text="'1'"/>
+    <Parameter name="adUserOrg" type="replace" optional="true" after="I.AD_ORG_ID IN (" text="'1'"/>
     <Parameter name="adUserClient" type="replace" optional="true" after="C_INVOICE.AD_CLIENT_ID IN (" text="'1'"/>
     <Parameter name="adUserOrg" type="replace" optional="true" after="C_INVOICE.AD_ORG_ID IN (" text="'1'"/>
     <Parameter name="datefrom"/>

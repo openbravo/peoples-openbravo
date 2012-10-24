@@ -86,6 +86,7 @@ public class CopyFromPOOrder extends HttpSecureAppServlet {
     String strPriceLimit = "";
     String strDiscount = "";
     String strGrossUnitPrice = "0";
+    String strGrossBaseUnitPrice = "0";
     String strGrossAmount = "0";
     String strNetPriceList = "0";
     String strGrossPriceList = "0";
@@ -155,6 +156,7 @@ public class CopyFromPOOrder extends HttpSecureAppServlet {
           BigDecimal grossAmount, grossUnitPrice, qtyOrdered, priceActual;
 
           strGrossUnitPrice = strPriceActual;
+          strGrossBaseUnitPrice = strGrossUnitPrice;
           grossUnitPrice = (strGrossUnitPrice.equals("") ? ZERO
               : (new BigDecimal(strGrossUnitPrice))).setScale(pricePrecision,
               BigDecimal.ROUND_HALF_UP);
@@ -187,27 +189,25 @@ public class CopyFromPOOrder extends HttpSecureAppServlet {
                 vars.getUser(), vars.getUser(), data[i].mAttributesetinstanceId);
             data[i].mAttributesetinstanceId = strMAttributesetinstanceID;
           }
-          CopyFromPOOrderData
-              .insertCOrderline(
-                  conn,
-                  this,
-                  strCOrderlineID,
-                  orderData[0].adClientId,
-                  orderData[0].adOrgId,
-                  vars.getUser(),
-                  strKey,
-                  Integer.toString(line),
-                  orderData[0].cBpartnerId,
-                  orderData[0].cBpartnerLocationId.equals("") ? ExpenseSOrderData
-                      .cBPartnerLocationId(this, orderData[0].cBpartnerId)
-                      : orderData[0].cBpartnerLocationId, orderData[0].dateordered,
-                  orderData[0].datepromised, data[i].description, data[i].mProductId,
-                  orderData[0].mWarehouseId.equals("") ? vars.getWarehouse()
-                      : orderData[0].mWarehouseId, data[i].cUomId, data[i].qtyordered,
-                  data[i].quantityorder, data[i].cCurrencyId, strNetPriceList, strPriceActual,
-                  strPriceLimit, strCTaxID, strDiscount, data[i].mProductUomId, data[i].orderline,
-                  data[i].mAttributesetinstanceId, strGrossPriceList, strGrossUnitPrice,
-                  strGrossAmount);
+          CopyFromPOOrderData.insertCOrderline(
+              conn,
+              this,
+              strCOrderlineID,
+              orderData[0].adClientId,
+              orderData[0].adOrgId,
+              vars.getUser(),
+              strKey,
+              Integer.toString(line),
+              orderData[0].cBpartnerId,
+              orderData[0].cBpartnerLocationId.equals("") ? ExpenseSOrderData.cBPartnerLocationId(
+                  this, orderData[0].cBpartnerId) : orderData[0].cBpartnerLocationId,
+              orderData[0].dateordered, orderData[0].datepromised, data[i].description,
+              data[i].mProductId, orderData[0].mWarehouseId.equals("") ? vars.getWarehouse()
+                  : orderData[0].mWarehouseId, data[i].cUomId, data[i].qtyordered,
+              data[i].quantityorder, data[i].cCurrencyId, strNetPriceList, strPriceActual,
+              strPriceLimit, strCTaxID, strDiscount, data[i].mProductUomId, data[i].orderline,
+              data[i].mAttributesetinstanceId, strGrossPriceList, strGrossUnitPrice,
+              strGrossAmount, strGrossBaseUnitPrice);
         } catch (ServletException ex) {
           myError = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
           releaseRollbackConnection(conn);

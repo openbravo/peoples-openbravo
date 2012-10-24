@@ -30,10 +30,6 @@ OB.DateItemProperties = {
   pickerConstructor: 'OBDateChooser',
   useSharedPicker: true,
 
-  // ** {{{ dateFormat }}} **
-  // Dateformat function
-  dateFormat: OB.Format.date,
-
   // ** {{{ useTextField }}} **
   // use text field for date entry
   useTextField: true,
@@ -47,11 +43,12 @@ OB.DateItemProperties = {
   validateOnChange: false,
   stopOnError: false,
 
-  dateParts: [],
-
-  doInit: function () {
+  setDateParams: function () {
     var i, dateFormatUpper, index = 0,
         length, currentTime;
+
+    this.dateFormat = OB.Format.date;
+    this.dateParts = [];
 
     dateFormatUpper = this.dateFormat.toUpperCase();
     length = dateFormatUpper.length;
@@ -74,6 +71,10 @@ OB.DateItemProperties = {
       this.currentDay = '0' + this.currentDay;
     }
     this.currentYear = String(currentTime.getFullYear());
+  },
+
+  doInit: function () {
+    this.setDateParams();
 
     this.Super('init', arguments);
 
@@ -226,6 +227,9 @@ OB.DateItemProperties = {
 
 isc.OBDateItem.addProperties(OB.DateItemProperties, {
   validateOnExit: true,
+
+  startDate: Date.createLogicalDate(1951, 0, 1),
+  endDate: Date.createLogicalDate(2050, 11, 31),
 
   init: function () {
     // this call super.init

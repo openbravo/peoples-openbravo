@@ -1161,6 +1161,14 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
   protected void renderJR(VariablesSecureApp variables, HttpServletResponse response,
       String strReportName, String strOutputType, HashMap<String, Object> designParameters,
       FieldProvider[] data, Map<Object, Object> exportParameters) throws ServletException {
+    renderJR(variables, response, strReportName, null, strOutputType, designParameters, data,
+        exportParameters);
+  }
+
+  protected void renderJR(VariablesSecureApp variables, HttpServletResponse response,
+      String strReportName, String strFileName, String strOutputType,
+      HashMap<String, Object> designParameters, FieldProvider[] data,
+      Map<Object, Object> exportParameters) throws ServletException {
 
     if (strReportName == null || strReportName.equals(""))
       strReportName = PrintJRData.getReportName(this, classInfo.id);
@@ -1174,7 +1182,9 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
 
     strReportName = Replace.replace(Replace.replace(strReportName, "@basedesign@", strBaseDesign),
         "@attach@", strAttach);
-    final String strFileName = strReportName.substring(strReportName.lastIndexOf("/") + 1);
+    if (strFileName == null) {
+      strFileName = strReportName.substring(strReportName.lastIndexOf("/") + 1);
+    }
 
     ServletOutputStream os = null;
     UUID reportId = null;

@@ -28,7 +28,7 @@
       SELECT ad_column.ad_column_id as adColumnId, ad_column.ColumnName as realName, ad_column.ColumnName As Name, '' as NameRef, 
         'x' as xmltext, ad_reference_id as reference, ad_reference_value_id as referencevalue,
         ismandatory as required, (CASE ad_field.isActive WHEN 'N' THEN 'N' ELSE isDisplayed END) as isdisplayed, isupdateable as isupdateable,
-        REPLACE(REPLACE(ad_column.defaultvalue, CHR(13), '\\n'), CHR(10), '') As defaultValue, 
+        REPLACE(ad_column.defaultvalue, CHR(10), '') As defaultValue, 
         ad_column.fieldlength As fieldLength, 
         'Medio' as Text_Align, '' AS Xml_Format, 
         ad_field.displaylength, REPLACE(replace(REPLACE(REPLACE(AD_ELEMENT.columnname, 'Substitute_ID', 'M_Product_ID'), 'C_Settlement_Cancel_ID', 'C_Settlement_ID'), 'BOM_ID', '_ID'), 'M_LocatorTo_ID', 'M_Locator_ID') as columnname, 
@@ -260,7 +260,7 @@
       <![CDATA[
       SELECT ad_column.AD_COLUMN_ID as adColumnId, ad_column.ISMANDATORY as required, 
       REPLACE(replace(REPLACE(REPLACE(columnname, 'Substitute_ID', 'M_Product_ID'), 'C_Settlement_Cancel_ID', 'C_Settlement_ID'), 'BOM_ID', '_ID'), 'M_LocatorTo_ID', 'M_Locator_ID') as Name, 
-      REPLACE(REPLACE(ad_column.defaultvalue, CHR(13), '\\n'), CHR(10), '') as defaultValue, '' as WHERECLAUSE, 
+      REPLACE(ad_column.defaultvalue, CHR(10), '') as defaultValue, '' as WHERECLAUSE, 
       ad_reference_id as reference,
       isdisplayed, ad_column.columnname as columnname, ad_table.ACCESSLEVEL, 
       ad_table.TABLENAME as NameRef, ad_reference_value_id as referencevalue, ad_column.name as realname
@@ -273,7 +273,7 @@
       union
       SELECT ad_column.AD_COLUMN_ID as reference, ad_column.ISMANDATORY as required, 
       columnname as Name, 
-      REPLACE(REPLACE(ad_column.defaultvalue, CHR(13), '\\n'), CHR(10), '') as defaultValue, '' as WHERECLAUSE, 
+      REPLACE(ad_column.defaultvalue, CHR(10), '') as defaultValue, '' as WHERECLAUSE, 
       ad_reference_id as referencevalue,
       'Y', ad_column.columnname as columnname, ad_table.ACCESSLEVEL, 
       ad_table.TABLENAME as NameRef, ad_reference_value_id as type, ad_column.name as realname

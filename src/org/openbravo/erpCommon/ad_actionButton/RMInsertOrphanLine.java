@@ -86,12 +86,21 @@ public class RMInsertOrphanLine implements org.openbravo.scheduling.Process {
         newOrderLine.setListPrice(productPrice.getListPrice());
         newOrderLine.setPriceLimit(productPrice.getPriceLimit());
         newOrderLine.setStandardPrice(productPrice.getStandardPrice());
+        if (order.getPriceList().isPriceIncludesTax()) {
+          newOrderLine.setGrossUnitPrice(productPrice.getStandardPrice());
+          newOrderLine.setLineGrossAmount(productPrice.getStandardPrice().multiply(returnedQty)
+              .negate());
+        }
       } else {
         BigDecimal unitPrice = new BigDecimal(strUnitPrice);
         newOrderLine.setUnitPrice(unitPrice);
         newOrderLine.setListPrice(unitPrice);
         newOrderLine.setPriceLimit(unitPrice);
         newOrderLine.setStandardPrice(unitPrice);
+        if (order.getPriceList().isPriceIncludesTax()) {
+          newOrderLine.setGrossUnitPrice(unitPrice);
+          newOrderLine.setLineGrossAmount(unitPrice.multiply(returnedQty).negate());
+        }
       }
       // tax
       TaxRate tax = null;

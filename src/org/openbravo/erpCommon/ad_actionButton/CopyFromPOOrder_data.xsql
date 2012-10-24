@@ -62,7 +62,7 @@
         M_WAREHOUSE_ID, C_UOM_ID, QTYORDERED, QUANTITYORDER, QTYINVOICED, QTYDELIVERED, QTYRESERVED, 
         C_CURRENCY_ID, PRICELIST, PRICEACTUAL, 
         PRICELIMIT, C_TAX_ID, DISCOUNT, M_PRODUCT_UOM_ID, PRICESTD, M_OFFER_ID, REF_ORDERLINE_ID, M_ATTRIBUTESETINSTANCE_ID,
-          GROSSPRICELIST, GROSS_UNIT_PRICE, LINE_GROSS_AMOUNT) 
+          GROSSPRICELIST, GROSS_UNIT_PRICE, LINE_GROSS_AMOUNT, grosspricestd) 
         VALUES 
           (?,?,?,TO_DATE(NOW()),?,TO_DATE(NOW()),?,
            ?,TO_NUMBER(?),?,?,
@@ -70,7 +70,7 @@
            ?,?,TO_NUMBER(?),TO_NUMBER(?),0,0,0,
            ?,TO_NUMBER(?),M_GET_OFFERS_PRICE(TO_DATE(now()), ?, ?, TO_NUMBER(?), TO_NUMBER(?), ?),
            TO_NUMBER(?),?,TO_NUMBER(?),?,TO_NUMBER(?),M_GET_OFFER(TO_DATE(now()), ?, ?),?,?,
-           TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?))
+           TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?), TO_NUMBER(?))
       ]]>
     </Sql>
     <Parameter name="cOrderlineId"/>
@@ -109,6 +109,7 @@
     <Parameter name="grosslistprice"/>
     <Parameter name="grossprice"/>
     <Parameter name="grossAmount"/>
+    <Parameter name="grossBaseUnitPrice"/>
   </SqlMethod>
   <SqlMethod name="cBPartnerLocationId" type="preparedStatement" return="string">
     <SqlMethodComment>Names of the columns of the fields of a tab</SqlMethodComment>

@@ -177,7 +177,7 @@
 <!--110-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--110-->  <NAME><![CDATA[Organization]]></NAME>
 <!--110-->  <DESCRIPTION><![CDATA[Create organizations and manage the organizational structure according to your business necessities.]]></DESCRIPTION>
-<!--110-->  <HELP><![CDATA[An organization is an enterprise of a Client. Each client must have at least one enterprise or organization created by running the Initial Organization Setup process. The process of creating an organization ends after setting it as "Ready".]]></HELP>
+<!--110-->  <HELP><![CDATA[An organization is an enterprise of a Client. Each client must have at least one organization created by running the Initial Organization Setup process. The process of creating an organization ends after setting it as "Ready".]]></HELP>
 <!--110-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--110-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--110-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -366,7 +366,7 @@
 <!--125-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--125-->  <NAME><![CDATA[Accounting Schema]]></NAME>
 <!--125-->  <DESCRIPTION><![CDATA[Create and edit multiple accounting schemas and assign them account elements; define DB tables to be included in the accounting processes, and define the GL accounts to be used by default.]]></DESCRIPTION>
-<!--125-->  <HELP><![CDATA[An accounting schema is set of accounting rules to be used while posting transactions in an organization.]]></HELP>
+<!--125-->  <HELP><![CDATA[An accounting schema is set of accounting rules to be used while posting transactions in an organization. Accounting rules such as the currency and the account tree to use while posting transactions to the ledger.]]></HELP>
 <!--125-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--125-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--125-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -435,7 +435,7 @@
 <!--132-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--132-->  <NAME><![CDATA[G/L Journal]]></NAME>
 <!--132-->  <DESCRIPTION><![CDATA[Create and edit manual G/L journal entries.]]></DESCRIPTION>
-<!--132-->  <HELP><![CDATA[General Ledger journals allow to manually enter and post ledger entries including "opening" balance accounts ones.]]></HELP>
+<!--132-->  <HELP><![CDATA[General Ledger journals allow to manually enter and post accounting entries including "opening" balance accounts ones.]]></HELP>
 <!--132-->  <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
 <!--132-->  <ISSOTRX><![CDATA[N]]></ISSOTRX>
 <!--132-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -829,7 +829,7 @@
 <!--168-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--168-->  <NAME><![CDATA[Physical Inventory]]></NAME>
 <!--168-->  <DESCRIPTION><![CDATA[Create and edit inventory counts and update your stock quantities.]]></DESCRIPTION>
-<!--168-->  <HELP><![CDATA[Create and edit inventory counts and update your stock quantities.]]></HELP>
+<!--168-->  <HELP><![CDATA[Physical Inventory window allows to execute goods count process in Openbravo.]]></HELP>
 <!--168-->  <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
 <!--168-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--168-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -1066,7 +1066,7 @@
 <!--207-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--207-->  <NAME><![CDATA[Commission]]></NAME>
 <!--207-->  <DESCRIPTION><![CDATA[Define how and when you want commissions to be calculated and to whom they are to be paid.]]></DESCRIPTION>
-<!--207-->  <HELP><![CDATA[Define how and when you want commissions to be calculated and to whom they are to be paid.]]></HELP>
+<!--207-->  <HELP><![CDATA[Define how and when commissions are going to be calculated and to whom they are going to be paid.]]></HELP>
 <!--207-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--207-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--207-->  <PROCESSING><![CDATA[N]]></PROCESSING>

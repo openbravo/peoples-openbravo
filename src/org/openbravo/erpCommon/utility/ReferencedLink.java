@@ -74,6 +74,7 @@ public class ReferencedLink extends HttpSecureAppServlet {
       response.sendRedirect(servletURL.toString());
 
     } else if (vars.commandIn("JSON")) {
+      response.setCharacterEncoding("UTF-8");
       response.setContentType("application/json");
       PrintWriter out = response.getWriter();
       out.print(getJSON(vars));

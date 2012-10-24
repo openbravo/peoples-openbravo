@@ -71,6 +71,7 @@ isc.OBStandardView.addClassProperties({
 
   UI_PATTERN_READONLY: 'RO',
   UI_PATTERN_SINGLERECORD: 'SR',
+  UI_PATTERN_EDITORDELETEONLY: 'ED',
   UI_PATTERN_STANDARD: 'ST'
 });
 
@@ -185,6 +186,7 @@ isc.OBStandardView.addProperties({
 
   readOnly: false,
   singleRecord: false,
+  editOrDeleteOnly: false,
 
   isShowingForm: false,
   isEditingGrid: false,
@@ -652,8 +654,22 @@ isc.OBStandardView.addProperties({
     }
   },
 
+  setEditOrDeleteOnly: function (editOrDeleteOnly) {
+    this.editOrDeleteOnly = editOrDeleteOnly;
+    if (editOrDeleteOnly) {
+      this.viewGrid.setListEndEditAction();
+    }
+  },
+
   setSingleRecord: function (singleRecord) {
     this.singleRecord = singleRecord;
+  },
+
+  allowNewRow: function () {
+    if (this.readOnly || this.singleRecord || this.editOrDeleteOnly) {
+      return false;
+    }
+    return true;
   },
 
   setViewFocus: function () {
@@ -674,8 +690,23 @@ isc.OBStandardView.addProperties({
       this.viewGrid.enableShortcuts();
     }
 
-    if (this.isShowingForm && this.viewForm && this.viewForm.getFocusItem()) {
-      object = this.viewForm.getFocusItem();
+    if (this.isShowingForm && this.viewForm) {
+      if (!this.lastFocusedItem) {
+        this.lastFocusedItem = this.viewForm.getItem(this.firstFocusedField);
+      }
+      if (this.lastFocusedItem && this.lastFocusedItem.getCanFocus()) {
+        object = this.lastFocusedItem;
+      } else if (this.viewForm.getFocusItem() && this.viewForm.getFocusItem().getCanFocus()) {
+        object = this.viewForm.getFocusItem();
+      } else {
+        var fields = this.viewForm.fields;
+        for (i = 0; i < fields.length; i++) {
+          if (fields[i].getCanFocus()) {
+            object = fields[i];
+            break;
+          }
+        }
+      }
       functionName = 'focusInItem';
     } else if (this.isEditingGrid && this.viewGrid.getEditForm() && this.viewGrid.getEditForm().getFocusItem()) {
       object = this.viewGrid.getEditForm();
@@ -731,6 +762,10 @@ isc.OBStandardView.addProperties({
   },
 
   setAsActiveView: function (autoSaveDone) {
+    var activeView = this.standardWindow.activeView;
+    if (activeView && activeView !== this && ((activeView.isShowingForm && activeView.viewForm.inFicCall) || (!activeView.isShowingForm && activeView.viewGrid.getEditForm() && activeView.viewGrid.getEditForm().inFicCall))) {
+      return;
+    }
     if (!autoSaveDone && this.standardWindow.activeView && this.standardWindow.activeView !== this) {
       var actionObject = {
         target: this,
@@ -1112,19 +1147,46 @@ isc.OBStandardView.addProperties({
 
   // go to a next or previous record, if !next then the previous one is used
   editNextPreviousRecord: function (next) {
-    var rowNum, newRowNum, newRecord, currentSelectedRecord = this.viewGrid.getSelectedRecord();
+    var rowNum, increment, newRowNum, newRecord, currentSelectedRecord = this.viewGrid.getSelectedRecord();
     if (!currentSelectedRecord) {
       return;
     }
     rowNum = this.viewGrid.data.indexOf(currentSelectedRecord);
     if (next) {
-      newRowNum = rowNum + 1;
+      increment = 1;
     } else {
-      newRowNum = rowNum - 1;
+      increment = -1;
     }
+
+    newRowNum = rowNum + increment;
     newRecord = this.viewGrid.getRecord(newRowNum);
     if (!newRecord) {
       return;
+    }
+    // a group and moving back, go back one more
+    if (newRecord.isFolder && increment < 0) {
+      newRowNum = newRowNum + increment;
+      newRecord = this.viewGrid.getRecord(newRowNum);
+    }
+    if (!newRecord) {
+      return;
+    }
+    if (newRecord.isFolder) {
+      if (!this.viewGrid.groupTree.isOpen(newRecord)) {
+        this.viewGrid.groupTree.openFolder(newRecord);
+      }
+      if (increment < 0) {
+        // previous, pick the last from the group
+        newRecord = newRecord.groupMembers[newRecord.groupMembers.length - 1];
+        newRowNum = this.viewGrid.getRecordIndex(newRecord);
+      } else {
+        // next, pick the first from the group
+        newRowNum = newRowNum + increment;
+        newRecord = this.viewGrid.getRecord(newRowNum);
+      }
+      if (!newRecord) {
+        return;
+      }
     }
     this.viewGrid.scrollRecordToTop(newRowNum);
     this.editRecord(newRecord);
@@ -1384,9 +1446,9 @@ isc.OBStandardView.addProperties({
   // - refresh the current selected record without changing the selection
   // - refresh the parent/grand-parent in the same way without changing the selection
   // - recursive to children: refresh the children, put the children in grid mode and refresh
-  refresh: function (refreshCallback, autoSaveDone, forceCurrentRecordId) {
+  refresh: function (refreshCallback, autoSaveDone, newRecordsToBeIncluded) {
     // If a record should be visible after the refresh, even if it does not comply with the
-    // current filter, its ID should be entered in the forceCurrentRecordId parameter
+    // current filter, its ID should be entered in the newRecordsToBeIncluded parameter
     // See issue https://issues.openbravo.com/view.php?id=20722
     var me = this,
         view = this,
@@ -1397,7 +1459,7 @@ isc.OBStandardView.addProperties({
       actionObject = {
         target: this,
         method: this.refresh,
-        parameters: [refreshCallback, true, forceCurrentRecordId]
+        parameters: [refreshCallback, true, newRecordsToBeIncluded]
       };
       this.standardWindow.doActionAfterAutoSave(actionObject, false);
       return;
@@ -1414,18 +1476,25 @@ isc.OBStandardView.addProperties({
       me.viewForm.refresh();
     };
 
+    if (!newRecordsToBeIncluded) {
+      if (this.parentRecordId && this.newRecordsAfterRefresh) {
+        this.newRecordsAfterRefresh[this.parentRecordId] = [];
+      } else {
+        this.newRecordsAfterRefresh = [];
+      }
+    }
     if (!this.isShowingForm) {
-      this.viewGrid.refreshGrid(refreshCallback, forceCurrentRecordId);
+      this.viewGrid.refreshGrid(refreshCallback, newRecordsToBeIncluded);
     } else {
       if (this.viewForm.hasChanged) {
         callback = function (ok) {
           if (ok) {
-            view.viewGrid.refreshGrid(formRefresh, forceCurrentRecordId);
+            view.viewGrid.refreshGrid(formRefresh, newRecordsToBeIncluded);
           }
         };
         isc.ask(OB.I18N.getLabel('OBUIAPP_ConfirmRefresh'), callback);
       } else {
-        this.viewGrid.refreshGrid(formRefresh, forceCurrentRecordId);
+        this.viewGrid.refreshGrid(formRefresh, newRecordsToBeIncluded);
       }
     }
   },
@@ -2052,6 +2121,7 @@ isc.OBStandardView.addProperties({
     var onChangeFunction;
 
     if (fld.displayed === false && !isGridField) {
+      fld.hiddenInForm = true;
       fld.visible = false;
       fld.alwaysTakeSpace = false;
     }
@@ -2069,7 +2139,11 @@ isc.OBStandardView.addProperties({
         OB.Utilities.fixNull250(currentValues);
 
         try {
-          originalShowIfValue = this.originalShowIf(item, value, form, currentValues, context);
+          if (isc.isA.Function(this.originalShowIf)) {
+            originalShowIfValue = this.originalShowIf(item, value, form, currentValues, context);
+          } else {
+            originalShowIfValue = isc.JSON.decode(this.originalShowIf);
+          }
         } catch (_exception) {
           isc.warn(_exception + ' ' + _exception.message + ' ' + _exception.stack);
         }
@@ -2196,9 +2270,16 @@ isc.OBStandardView.addProperties({
         fld.filterEditorType = type.filterEditorType;
       }
 
+      if (!fld.filterEditorProperties) {
+        fld.filterEditorProperties = {};
+      }
+
       if (fld.fkField) {
         fld.displayField = fld.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER;
         fld.valueField = fld.name;
+        fld.filterOnKeypress = false;
+        fld.filterEditorProperties.displayField = OB.Constants.IDENTIFIER;
+        fld.filterEditorProperties.valueField = OB.Constants.IDENTIFIER;
       }
 
       if (fld.validationFn) {
@@ -2213,10 +2294,22 @@ isc.OBStandardView.addProperties({
         });
       }
 
-      if (!fld.filterEditorProperties) {
-        fld.filterEditorProperties = {};
-      }
       fld.filterEditorProperties.required = false;
+
+      // get rid of illegal summary functions
+      if (fld.summaryFunction && !isc.OBViewGrid.SUPPORTED_SUMMARY_FUNCTIONS.contains(fld.summaryFunction)) {
+        delete fld.summaryFunction;
+      }
+
+      // add grouping stuff
+      if (type.inheritsFrom === 'float' || type.inheritsFrom === 'integer') {
+        // this is needed because of a bug in smartclient in Listgrid
+        // only groupingmodes on type level are considered
+        // http://forums.smartclient.com/showthread.php?p=91605#post91605
+        isc.addProperties(type, OB.Utilities.Number.Grouping);
+        // so can't define on field level 
+        //      isc.addProperties(fld, OB.Utilities.Number.Grouping);
+      }
 
       result.push(fld);
     }

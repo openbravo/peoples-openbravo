@@ -36,6 +36,10 @@ isc.OBListItem.addProperties({
   // textMatchStyle is used for the client-side picklist
   textMatchStyle: 'substring',
 
+  pickListProperties: {
+    showHeaderContextMenu: false
+  },
+
   // NOTE: Setting this property to false fixes the issue when using the mouse
   // to pick a value
   // FIXME: Sometimes the field label gets a red color (a blink)
@@ -63,12 +67,22 @@ isc.OBListItem.addProperties({
   // is overridden to keep track that a value has been explicitly picked
   pickValue: function (value) {
     this._pickedValue = true;
+    // force the update of the list
+    // if the user has entered with the keyboard the exact content of a list option,
+    // its callout would not be called because the change would not be detected
+    // see issue https://issues.openbravo.com/view.php?id=21491
+    this._value = (this.value) ? this._value.concat(Math.random()) : Math.random();
     this.Super('pickValue', arguments);
     delete this._pickedValue;
     if (this.moveFocusOnPickValue && this.form.focusInNextItem) {
       // update the display before moving the focus
       this.updateValueMap(true);
-      this.form.focusInNextItem(this.name);
+      // Only focus in the next item if the key that triggered the event is
+      // not the tab key, so the focus is not moved twice
+      // See issue https://issues.openbravo.com/view.php?id=21419
+      if (isc.EH.getKeyName() !== 'Tab') {
+        this.form.focusInNextItem(this.name);
+      }
     }
   },
 
@@ -82,10 +96,6 @@ isc.OBListItem.addProperties({
     if (this._hasChanged && this.form && this.form.handleItemChange) {
       this.form.handleItemChange(this);
     }
-  },
-
-  pickListProperties: {
-    showHeaderContextMenu: false
   },
 
   // to solve: https://issues.openbravo.com/view.php?id=17800
@@ -135,9 +145,29 @@ isc.OBListItem.addProperties({
 
   // prevent ids from showing up
   mapValueToDisplay: function (value) {
-    var ret = this.Super('mapValueToDisplay', arguments);
-    if (this.valueMap && this.valueMap[value]) {
-      return this.valueMap[value];
+    var i, ret = this.Super('mapValueToDisplay', arguments),
+        result;
+
+    // the datasource should handle it
+    if (this.optionDataSource) {
+      return ret;
+    }
+
+    if (this.valueMap) {
+      // handle multi-select
+      if (isc.isA.Array(value)) {
+        this.lastSelectedValue = value;
+        for (i = 0; i < value.length; i++) {
+          if (i > 0) {
+            result += this.multipleValueSeparator;
+          }
+          // encode or and and
+          result += OB.Utilities.encodeSearchOperator(this.Super('mapValueToDisplay', value[i]));
+        }
+      } else if (this.valueMap[value]) {
+        this.lastSelectedValue = value;
+        return this.valueMap[value];
+      }
     }
 
     if (ret === value && this.isDisabled()) {
@@ -157,11 +187,42 @@ isc.OBListItem.addProperties({
     return ret;
   },
 
-  mapDisplayToValue: function (value) {
-    if (value === '') {
+  isUnknownValue: function (value) {
+    var i, array;
+    if (!value || !this.multiple || !value.contains(this.multipleValueSeparator)) {
+      return this.Super('isUnknownValue', arguments);
+    }
+    // handle multi-select
+    array = value.split(this.multipleValueSeparator);
+    for (i = 0; i < array.length; i++) {
+      if (this.isUnknownValue(array[i])) {
+        return true;
+      }
+    }
+    return false;
+  },
+
+  mapDisplayToValue: function (display) {
+    var i, array, result;
+
+    if (display === '') {
       return null;
     }
-    return this.Super('mapDisplayToValue', arguments);
+    if (this.lastSelectedValue && display === this.mapValueToDisplay(this.lastSelectedValue)) {
+      // Prevents mapDisplayToValue from failing when there are several
+      // entries in the valuemap with the same value
+      // See issue https://issues.openbravo.com/view.php?id=21553
+      return this.lastSelectedValue;
+    } else if (!display || !this.multiple || !display.contains(this.multipleValueSeparator)) {
+      return this.Super('mapDisplayToValue', arguments);
+    } else {
+      array = display.split(this.multipleValueSeparator);
+      result = [];
+      for (i = 0; i < array.length; i++) {
+        result.add(this.Super('mapDisplayToValue', [array[i]]));
+      }
+      return result;
+    }
   }
 
 });

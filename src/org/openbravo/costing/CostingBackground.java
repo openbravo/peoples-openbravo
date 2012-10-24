@@ -49,74 +49,89 @@ public class CostingBackground extends DalBaseProcess {
 
   @Override
   protected void doExecute(ProcessBundle bundle) throws Exception {
+
     logger = bundle.getLogger();
     OBError result = new OBError();
-    result.setType("Success");
-    result.setTitle(OBMessageUtils.messageBD("Success"));
+    try {
+      OBContext.setAdminMode(false);
+      result.setType("Success");
+      result.setTitle(OBMessageUtils.messageBD("Success"));
 
-    // Get organizations with costing rules.
-    StringBuffer where = new StringBuffer();
-    where.append(" as o");
-    where.append(" where exists (");
-    where.append("    select 1 from " + CostingRule.ENTITY_NAME + " as cr");
-    where.append("    where ad_isorgincluded(o.id, cr." + CostingRule.PROPERTY_ORGANIZATION
-        + ".id, " + CostingRule.PROPERTY_CLIENT + ".id) <> -1 ");
-    where.append("      and cr." + CostingRule.PROPERTY_VALIDATED + " is true");
-    where.append(" )");
-    OBQuery<Organization> orgQry = OBDal.getInstance().createQuery(Organization.class,
-        where.toString());
-    List<Organization> orgs = orgQry.list();
-    List<String> orgsWithRule = new ArrayList<String>();
-    if (orgs.size() == 0) {
-      log4j.debug("No organizations with Cosrting Rule defiend");
+      // Get organizations with costing rules.
+      StringBuffer where = new StringBuffer();
+      where.append(" as o");
+      where.append(" where exists (");
+      where.append("    select 1 from " + CostingRule.ENTITY_NAME + " as cr");
+      where.append("    where ad_isorgincluded(o.id, cr." + CostingRule.PROPERTY_ORGANIZATION
+          + ".id, " + CostingRule.PROPERTY_CLIENT + ".id) <> -1 ");
+      where.append("      and cr." + CostingRule.PROPERTY_VALIDATED + " is true");
+      where.append(" )");
+      OBQuery<Organization> orgQry = OBDal.getInstance().createQuery(Organization.class,
+          where.toString());
+      List<Organization> orgs = orgQry.list();
+      List<String> orgsWithRule = new ArrayList<String>();
+      if (orgs.size() == 0) {
+        log4j.debug("No organizations with Cosrting Rule defiend");
+        logger.logln(OBMessageUtils.messageBD("Success"));
+        bundle.setResult(result);
+        return;
+      }
+      for (Organization org : orgs) {
+        orgsWithRule.add(org.getId());
+      }
+
+      List<MaterialTransaction> trxs = getTransactionsBatch(orgsWithRule);
+      int counter = 0, total = trxs.size(), batch = 0;
+      boolean pendingTrx = trxs.size() > 0;
+      while (pendingTrx && counter < maxTransactions) {
+        batch++;
+        for (MaterialTransaction transaction : trxs) {
+          counter++;
+          try {
+            log4j.debug("Start transaction process: " + transaction.getId());
+            CostingServer transactionCost = new CostingServer(transaction);
+            transactionCost.process();
+            log4j.debug("Transaction processed: " + counter + "/" + total + " batch: " + batch);
+          } catch (OBException e) {
+            String resultMsg = OBMessageUtils.parseTranslation(e.getMessage());
+            log4j.error(e);
+            logger.logln(resultMsg);
+            result.setType("Error");
+            result.setTitle(OBMessageUtils.messageBD("Error"));
+            result.setMessage(resultMsg);
+            bundle.setResult(result);
+            return;
+          } catch (Exception e) {
+            result = OBMessageUtils.translateError(bundle.getConnection(), bundle.getContext()
+                .toVars(), OBContext.getOBContext().getLanguage().getLanguage(), e.getMessage());
+            log4j.error(result.getMessage(), e);
+            logger.logln(result.getMessage());
+            bundle.setResult(result);
+            return;
+          }
+
+          // If cost has been calculated successfully do a commit.
+          SessionHandler.getInstance().commitAndStart();
+        }
+        OBDal.getInstance().getSession().clear();
+        trxs = getTransactionsBatch(orgsWithRule);
+        pendingTrx = areTransactionsPending(orgsWithRule);
+        total += trxs.size();
+      }
+
       logger.logln(OBMessageUtils.messageBD("Success"));
       bundle.setResult(result);
+    } catch (OBException e) {
+      OBDal.getInstance().rollbackAndClose();
+      result = OBMessageUtils.translateError(bundle.getConnection(), bundle.getContext().toVars(),
+          OBContext.getOBContext().getLanguage().getLanguage(), e.getMessage());
+      log4j.error(result.getMessage(), e);
+      logger.logln(result.getMessage());
+      bundle.setResult(result);
       return;
+    } finally {
+      OBContext.restorePreviousMode();
     }
-    for (Organization org : orgs) {
-      orgsWithRule.add(org.getId());
-    }
-
-    List<MaterialTransaction> trxs = getTransactionsBatch(orgsWithRule);
-    int counter = 0, total = trxs.size(), batch = 0;
-    boolean pendingTrx = trxs.size() > 0;
-    while (pendingTrx && counter < maxTransactions) {
-      batch++;
-      for (MaterialTransaction transaction : trxs) {
-        counter++;
-        try {
-          log4j.debug("Start transaction process: " + transaction.getId());
-          CostingServer transactionCost = new CostingServer(transaction);
-          transactionCost.process();
-          log4j.debug("Transaction processed: " + counter + "/" + total + " batch: " + batch);
-        } catch (OBException e) {
-          String resultMsg = OBMessageUtils.parseTranslation(e.getMessage());
-          log4j.error(e);
-          logger.logln(resultMsg);
-          result.setType("Error");
-          result.setTitle(OBMessageUtils.messageBD("Error"));
-          result.setMessage(resultMsg);
-          bundle.setResult(result);
-          return;
-        } catch (Exception e) {
-          result = OBMessageUtils.translateError(bundle.getConnection(), bundle.getContext()
-              .toVars(), OBContext.getOBContext().getLanguage().getLanguage(), e.getMessage());
-          log4j.error(result.getMessage(), e);
-          logger.logln(result.getMessage());
-          bundle.setResult(result);
-          return;
-        }
-
-        // If cost has been calculated successfully do a commit.
-        SessionHandler.getInstance().commitAndStart();
-      }
-      OBDal.getInstance().getSession().clear();
-      trxs = getTransactionsBatch(orgsWithRule);
-      pendingTrx = areTransactionsPending(orgsWithRule);
-      total += trxs.size();
-    }
-    logger.logln(OBMessageUtils.messageBD("Success"));
-    bundle.setResult(result);
   }
 
   private List<MaterialTransaction> getTransactionsBatch(List<String> orgsWithRule) {

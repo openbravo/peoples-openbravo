@@ -384,12 +384,12 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
             BusinessPartner.class);
         obcBP.add(Restrictions.eq(BusinessPartner.PROPERTY_NAME, bsline.getBpartnername()));
         if (obcBP.list() != null && obcBP.list().size() > 0) {
-          xmlDocument.setParameter("businessPartner", obcBP.list().get(0).getId());
+          xmlDocument.setParameter("businessPartner", obcBP.list().get(0).getIdentifier());
           defaultPaymentMethod = (obcBP.list().get(0).getPaymentMethod() != null) ? obcBP.list()
               .get(0).getPaymentMethod().getId() : "";
         }
       } else {
-        xmlDocument.setParameter("businessPartner", bsline.getBusinessPartner().getId());
+        xmlDocument.setParameter("businessPartner", bsline.getBusinessPartner().getIdentifier());
       }
     }
     // Take payment date from the add transaction popup
@@ -528,6 +528,25 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
     xmlDocument.setParameter("strElement_AY", strElement_AY);
     xmlDocument.setParameter("strElement_SR", strElement_SR);
     xmlDocument.setParameter("strElement_MC", strElement_MC);
+
+    // Not allow to change exchange rate and amount
+    final String strNotAllowExchange = Utility.getContext(this, vars, "NotAllowChangeExchange",
+        strWindowId);
+    xmlDocument.setParameter("strNotAllowExchange", strNotAllowExchange);
+
+    if (financialAccount.getWriteofflimit() != null) {
+      final String strtypewriteoff;
+      final String strAmountwriteoff;
+
+      strtypewriteoff = financialAccount.getTypewriteoff();
+      strAmountwriteoff = financialAccount.getWriteofflimit().toString();
+      xmlDocument.setParameter("strtypewriteoff", strtypewriteoff);
+      xmlDocument.setParameter("strAmountwriteoff", strAmountwriteoff);
+
+      final String strWriteOffLimit = Utility.getContext(this, vars, "WriteOffLimitPreference",
+          strWindowId);
+      xmlDocument.setParameter("strWriteOffLimit", strWriteOffLimit);
+    }
 
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();

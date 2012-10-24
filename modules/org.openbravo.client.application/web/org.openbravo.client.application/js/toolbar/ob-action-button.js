@@ -36,7 +36,7 @@ isc.OBToolbarActionButton.addProperties({
     var theView = this.view,
         record, rowNum, actionObject;
 
-    if (!theView.isShowingForm && theView.viewGrid.getSelectedRecords().length === 1) {
+    if (!theView.isShowingForm && theView.viewGrid.getSelectedRecords() && theView.viewGrid.getSelectedRecords().length === 1) {
       // Keep current selection that might be lost in autosave
       record = theView.viewGrid.getSelectedRecord();
       rowNum = theView.viewGrid.getRecordIndex(record);
@@ -146,7 +146,7 @@ isc.OBToolbarActionButton.addProperties({
     afterRefresh = function (doRefresh) {
       var undef, refresh = (doRefresh === undef || doRefresh),
           autosaveDone = false,
-          currentRecordId;
+          currentRecordId, recordsAfterRefresh;
 
       // Refresh context view
       contextView.getTabMessage();
@@ -162,10 +162,12 @@ isc.OBToolbarActionButton.addProperties({
         // The selected record should be shown after the refresh, even
         // if the filter would exclude it
         // See issue https://issues.openbravo.com/view.php?id=20722
-        if (currentView.viewGrid.getSelectedRecord()) {
-          currentRecordId = currentView.viewGrid.getSelectedRecord()[OB.Constants.ID];
+        if (currentView.parentTabId) {
+          recordsAfterRefresh = currentView.newRecordsAfterRefresh[currentView.parentTabId];
+        } else {
+          recordsAfterRefresh = currentView.newRecordsAfterRefresh;
         }
-        currentView.refresh(null, autosaveDone, currentRecordId);
+        currentView.refresh(null, autosaveDone, recordsAfterRefresh);
       }
     };
 

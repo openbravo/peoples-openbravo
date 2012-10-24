@@ -56,6 +56,9 @@ isc.OBStandardWindow.addProperties({
   dirtyEditForm: null,
 
   initWidget: function () {
+    var me = this,
+        callback;
+
     this.views = [];
 
     this.windowLayout = isc.VLayout.create({
@@ -104,7 +107,11 @@ isc.OBStandardWindow.addProperties({
     if (!this.getClass().windowSettingsRead) {
       this.readWindowSettings();
     } else if (this.getClass().windowSettingsCached) {
-      this.setWindowSettings(this.getClass().windowSettingsCached);
+      callback = function () {
+        me.setWindowSettings(me.getClass().windowSettingsCached);
+      };
+      this.fireOnPause('setWindowSettings_' + this.ID, callback);
+
     } else if (this.getClass().personalization) {
       this.setPersonalization(this.getClass().personalization);
     }
@@ -235,7 +242,7 @@ isc.OBStandardWindow.addProperties({
         len = parts.length,
         className = '_',
         tabSet = OB.MainView.TabSet,
-        vStack, manualJS, originalClassName, processClass;
+        vStack, manualJS, originalClassName, processClass, processOwnerView;
 
     if (params.uiPattern === 'M') { // Manual UI Pattern
       try {
@@ -260,9 +267,12 @@ isc.OBStandardWindow.addProperties({
         processClass = isc[className] || isc[originalClassName];
 
         if (processClass) {
-          this.selectedState = this.activeView && this.activeView.viewGrid && this.activeView.viewGrid.getSelectedState();
+          processOwnerView = this.getProcessOwnerView(params.processId);
+          this.selectedState = processOwnerView.viewGrid && processOwnerView.viewGrid.getSelectedState();
           this.runningProcess = processClass.create(isc.addProperties({}, params, {
-            parentWindow: this
+            parentWindow: this,
+            sourceView: this.activeView,
+            buttonOwnerView: processOwnerView
           }));
 
           this.openPopupInTab(this.runningProcess, params.windowTitle, (this.runningProcess.popupWidth ? this.runningProcess.popupWidth : '90%'), (this.runningProcess.popupHeight ? this.runningProcess.popupHeight : '90%'), (this.runningProcess.showMinimizeButton ? this.runningProcess.showMinimizeButton : false), (this.runningProcess.showMaximizeButton ? this.runningProcess.showMaximizeButton : false), true, true);
@@ -370,6 +380,7 @@ isc.OBStandardWindow.addProperties({
     for (i = 0; i < length; i++) {
       this.views[i].setReadOnly(data.uiPattern[this.views[i].tabId] === isc.OBStandardView.UI_PATTERN_READONLY);
       this.views[i].setSingleRecord(data.uiPattern[this.views[i].tabId] === isc.OBStandardView.UI_PATTERN_SINGLERECORD);
+      this.views[i].setEditOrDeleteOnly(data.uiPattern[this.views[i].tabId] === isc.OBStandardView.UI_PATTERN_EDITORDELETEONLY);
       this.views[i].toolBar.updateButtonState(true);
     }
 
@@ -924,7 +935,7 @@ isc.OBStandardWindow.addProperties({
   },
 
   closeClick: function (tab, tabSet) {
-    if (!this.activeView.viewForm.hasChanged && this.activeView.viewForm.isNew) {
+    if ((!this.activeView || !this.activeView.viewForm.hasChanged) && this.activeView.viewForm.isNew) {
       this.view.standardWindow.setDirtyEditForm(null);
     }
 
@@ -1081,5 +1092,19 @@ isc.OBStandardWindow.addProperties({
     }
     this.viewState = result;
     OB.PropertyStore.set('OBUIAPP_GridConfiguration', result, this.windowId);
+  },
+
+  getProcessOwnerView: function (processId) {
+    var ownerView, i, j, nActionButtons, nViews = this.views.length;
+    for (i = 0; i < nViews; i++) {
+      nActionButtons = this.views[i].actionToolbarButtons.length;
+      for (j = 0; j < nActionButtons; j++) {
+        if (processId === this.views[i].actionToolbarButtons[j].processId) {
+          return this.views[i];
+        }
+      }
+    }
+    // If it is not found, return the header view
+    return this.view;
   }
 });

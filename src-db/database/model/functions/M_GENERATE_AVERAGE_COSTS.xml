@@ -48,6 +48,7 @@
   v_BaseCurrency VARCHAR2(32);
   v_Incremental BOOLEAN := FALSE;
   v_doNothing BOOLEAN := FALSE;
+  v_CostingId VARCHAR2(32);
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
@@ -118,7 +119,7 @@
         AND M_INOUT.ISSOTRX='N'
         AND M_INOUT.PROCESSED='Y'
         AND M_INOUTLINE.MOVEMENTQTY>0
-        AND M_INOUT.DOCSTATUS <> 'DR' AND M_INOUT.DOCSTATUS <> 'RE' AND M_INOUT.DOCSTATUS <> 'VO'
+        AND M_INOUT.DOCSTATUS <> 'DR' AND M_INOUT.DOCSTATUS <> 'RE' AND M_INOUT.DOCSTATUS <> 'VO' AND ISLOGISTIC = 'N'
         AND M_INOUT.AD_CLIENT_ID = v_Client
         AND NOT EXISTS
            (SELECT 1 FROM M_COSTING WHERE M_INOUTLINE_ID=M_INOUTLINE.M_INOUTLINE_ID);
@@ -359,7 +360,7 @@
         AND M_INOUT.ISSOTRX='N'
         AND M_INOUT.PROCESSED='Y'
         AND M_INOUTLINE.MOVEMENTQTY>0
-        AND M_INOUT.DOCSTATUS <> 'DR' AND M_INOUT.DOCSTATUS <> 'RE' AND M_INOUT.DOCSTATUS <> 'VO'
+        AND M_INOUT.DOCSTATUS <> 'DR' AND M_INOUT.DOCSTATUS <> 'RE' AND M_INOUT.DOCSTATUS <> 'VO' AND ISLOGISTIC = 'N'
         AND M_INOUT.AD_CLIENT_ID = v_Client
         AND M_INOUT.MOVEMENTDATE >= v_MinDateCosting
         AND NOT EXISTS
@@ -391,6 +392,7 @@
       
       IF(Cur_InOutLine.M_PRODUCT_ID<>v_ProductOld) THEN
         v_Date:=NULL;
+        v_CostingId:=NULL;
         v_CumQty:=v_PermanentQty;
       ELSIF (Cur_InOutLine.MOVEMENTDATE<>v_DateOld) THEN
         v_CumQty:=v_PermanentQty;
@@ -412,11 +414,7 @@
         LOOP
           v_Cost:=Cur_ProdCost.COST;
           v_Date:=Cur_ProdCost.DATETO;
-          UPDATE M_COSTING
-          SET DATETO = Cur_InOutLine.MOVEMENTDATE,
-          Updated=now(),
-      	  UpdatedBy=v_User
-          WHERE M_COSTING_ID = Cur_ProdCost.M_COSTING_ID;
+          v_CostingId:=Cur_ProdCost.M_COSTING_ID;
           EXIT;
         END LOOP;
         IF (v_Date IS NULL) THEN
@@ -537,6 +535,14 @@
 	      ELSE
 		v_ResultStr:='insert costing:   '||Cur_InOutLine.M_INOUTLINE_ID;
 	      END IF;
+
+	      IF (v_costingid IS NOT NULL) THEN
+                UPDATE M_COSTING
+                SET DATETO = Cur_InOutLine.MOVEMENTDATE,
+                Updated=now(),
+                UpdatedBy=v_User
+                WHERE M_COSTING_ID = v_CostingId;
+              END IF;
 	      
 	      INSERT
 	      INTO M_COSTING

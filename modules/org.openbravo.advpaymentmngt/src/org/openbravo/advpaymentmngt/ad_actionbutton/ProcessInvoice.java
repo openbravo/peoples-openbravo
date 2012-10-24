@@ -186,28 +186,29 @@ public class ProcessInvoice extends HttpSecureAppServlet {
           String invoiceDocCategory = "";
           try {
             invoiceDocCategory = invoice.getDocumentType().getDocumentCategory();
+
+            /*
+             * Print a grid popup in case of credit payment
+             */
+            // If the invoice grand total is ZERO or already has payments (due to
+            // payment method automation) or the business partner does not have a default financial
+            // account defined or invoice's payment method is not inside BP's financial
+            // account do not cancel credit
+            if (BigDecimal.ZERO.compareTo(invoice.getGrandTotalAmount()) != 0
+                && isPaymentMethodConfigured(invoice)
+                && !isInvoiceWithPayments(invoice)
+                && (AcctServer.DOCTYPE_ARInvoice.equals(invoiceDocCategory) || AcctServer.DOCTYPE_APInvoice
+                    .equals(invoiceDocCategory))) {
+              creditPayments = dao.getCustomerPaymentsWithCredit(invoice.getOrganization(),
+                  invoice.getBusinessPartner(), invoice.isSalesTransaction());
+              if (creditPayments != null && !creditPayments.isEmpty()) {
+                printPageCreditPaymentGrid(response, vars, strC_Invoice_ID, strdocaction, strTabId,
+                    strC_Invoice_ID, strdocaction, strWindowId, strTabId, invoice.getInvoiceDate(),
+                    strOrg);
+              }
+            }
           } finally {
             OBContext.restorePreviousMode();
-          }
-          /*
-           * Print a grid popup in case of credit payment
-           */
-          // If the invoice grand total is ZERO or already has payments (due to
-          // payment method automation) or the business partner does not have a default financial
-          // account defined or invoice's payment method is not inside BP's financial
-          // account do not cancel credit
-          if (BigDecimal.ZERO.compareTo(invoice.getGrandTotalAmount()) != 0
-              && isPaymentMethodConfigured(invoice)
-              && !isInvoiceWithPayments(invoice)
-              && (AcctServer.DOCTYPE_ARInvoice.equals(invoiceDocCategory) || AcctServer.DOCTYPE_APInvoice
-                  .equals(invoiceDocCategory))) {
-            creditPayments = dao.getCustomerPaymentsWithCredit(invoice.getOrganization(),
-                invoice.getBusinessPartner(), invoice.isSalesTransaction());
-            if (creditPayments != null && !creditPayments.isEmpty()) {
-              printPageCreditPaymentGrid(response, vars, strC_Invoice_ID, strdocaction, strTabId,
-                  strC_Invoice_ID, strdocaction, strWindowId, strTabId, invoice.getInvoiceDate(),
-                  strOrg);
-            }
           }
 
           executePayments(response, vars, strWindowId, strTabId, strC_Invoice_ID, strOrg);

@@ -42,6 +42,9 @@ isc.RelativeDateItem.addProperties({
   quartersFromNowTitle: OB.I18N.getLabel('OBUIAPP_quarters_from_now'),
   yearsFromNowTitle: OB.I18N.getLabel('OBUIAPP_years_from_now'),
 
+  startDate: Date.createLogicalDate(1951, 0, 1),
+  endDate: Date.createLogicalDate(2050, 11, 31),
+
   presetOptions: {
     "$today": OB.I18N.getLabel('OBUISC_DateChooser.todayButtonTitle'),
     "$yesterday": OB.I18N.getLabel('OBUIAPP_Yesterday'),
@@ -50,6 +53,82 @@ isc.RelativeDateItem.addProperties({
     "+1w": OB.I18N.getLabel('OBUIAPP_Current_day_of_next_week'),
     "-1m": OB.I18N.getLabel('OBUIAPP_Current_day_of_last_month'),
     "+1m": OB.I18N.getLabel('OBUIAPP_Current_day_of_next_month')
+  },
+
+  // Function to load just needed OB.DateItemProperties properties, since all of them can not be loaded
+  // because there are some parameters like "init", "pickerDataChanged", ... that cannot be overwritten
+  // because SmartClient also overwrites them while creating this isc.RelativeDateItem definition.
+  // Fixes issue: https://issues.openbravo.com/view.php?id=21552
+  addDateItemProperties: function () {
+    this.setDateParams = OB.DateItemProperties.setDateParams;
+    this.parseValue = OB.DateItemProperties.parseValue;
+    this.expandPart = OB.DateItemProperties.expandPart;
+    this.reachedLength = OB.DateItemProperties.reachedLength;
+    this.isNumber = OB.DateItemProperties.isNumber;
+    this.isSeparator = OB.DateItemProperties.isSeparator;
+    this.setDateParams();
+  },
+
+  areDateItemPropertiesSet: false,
+
+  blurValue: function () {
+    if (this.editor && this.editor.items[0] && this.editor.items[0].getElementValue) {
+      return this.editor.items[0].getElementValue();
+    } else {
+      return null;
+    }
+  },
+
+  validateOnExit: true,
+  showErrorIcon: false,
+
+  validateRelativeDateItem: function (value) {
+    var isADate = Object.prototype.toString.call(value) === '[object Date]';
+    if (value === null || isADate) {
+      this.editor.items[0].textBoxStyle = this.editor.items[0].textBoxStyleNormal;
+      this.editor.items[0].redraw();
+      return true;
+    } else {
+      this.editor.items[0].textBoxStyle = this.editor.items[0].textBoxStyleError;
+      this.editor.items[0].redraw();
+      return false;
+    }
+  },
+
+  validators: [{
+    type: 'custom',
+    condition: function (item, validator, value) {
+      return item.validateRelativeDateItem(value);
+    }
+  }],
+
+  blur: function () {
+    var blurValue = this.blurValue(),
+        newBlurValue = '',
+        digitRegExp = new RegExp('^\\d+$', 'gm'),
+        newValue, i;
+
+    if (!this.areDateItemPropertiesSet) {
+      this.addDateItemProperties();
+      this.areDateItemPropertiesSet = true;
+    }
+
+    // Remove all kind of separators of the input value
+    for (i = 0; i < blurValue.length; i++) {
+      if (!this.isSeparator(blurValue, i)) {
+        newBlurValue += blurValue[i];
+      }
+    }
+
+    // If are only digits/numbers
+    if (digitRegExp.test(newBlurValue)) {
+      newValue = this.parseValue();
+      if (newValue) {
+        this.setValue(OB.Utilities.Date.OBToJS(newValue, this.dateFormat));
+      }
+    }
+
+    this.Super('blur', arguments);
   }
 });
 
@@ -108,13 +187,25 @@ isc.OBDateRangeDialog.addProperties({
   initWidget: function () {
     this.Super('initWidget', arguments);
     this.rangeForm.setFocusItem(this.rangeItem);
+
+    var fromField = this.rangeForm.items[0].fromField,
+        toField = this.rangeForm.items[0].toField;
+    this.clearButton.click = function () {
+      this.creator.clearValues();
+      fromField.validate();
+      toField.validate();
+    };
   },
 
   show: function () {
     this.Super('show', arguments);
-    this.rangeForm.items[0].fromField.calculatedDateField.canFocus = false;
-    this.rangeForm.items[0].toField.calculatedDateField.canFocus = false;
-    this.rangeForm.items[0].fromField.valueField.focusInItem();
+    var fromField = this.rangeForm.items[0].fromField,
+        toField = this.rangeForm.items[0].toField;
+    fromField.calculatedDateField.canFocus = false;
+    fromField.validate();
+    toField.calculatedDateField.canFocus = false;
+    toField.validate();
+    fromField.valueField.focusInItem();
     this.rangeForm.focus();
   },
 
@@ -232,6 +323,12 @@ isc.OBMiniDateRangeItem.addProperties(OB.DateItemProperties, {
 
     if (!this.singleDateMode) {
       return;
+    }
+
+    // Apply the empty filter if the date text has been deleted
+    // See issue https://issues.openbravo.com/view.php?id=21697
+    if (newValue === '') {
+      return true;
     }
 
     if (newValue === oldValue) {

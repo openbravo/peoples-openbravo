@@ -120,7 +120,7 @@ isc.OBToolbar.addClassProperties({
     updateState: function () {
       var view = this.view,
           selectedRecords = view.viewGrid.getSelectedRecords();
-      this.setDisabled(view.isShowingForm || view.readOnly || view.singleRecord || !view.hasValidState() || (selectedRecords && selectedRecords.length > 1));
+      this.setDisabled(view.viewGrid.isGrouped || view.isShowingForm || view.readOnly || view.editOrDeleteOnly || view.singleRecord || !view.hasValidState() || (selectedRecords && selectedRecords.length > 1));
     },
     keyboardShortcutId: 'ToolBar_NewRow'
   },
@@ -135,9 +135,9 @@ isc.OBToolbar.addClassProperties({
       var view = this.view,
           form = view.viewForm;
       if (view.isShowingForm) {
-        this.setDisabled(form.isSaving || view.readOnly || view.singleRecord || !view.hasValidState());
+        this.setDisabled(form.isSaving || view.readOnly || view.singleRecord || !view.hasValidState() || view.editOrDeleteOnly);
       } else {
-        this.setDisabled(view.readOnly || view.singleRecord || !view.hasValidState());
+        this.setDisabled(view.readOnly || view.singleRecord || !view.hasValidState() || view.editOrDeleteOnly);
       }
     },
     keyboardShortcutId: 'ToolBar_NewDoc'
@@ -172,9 +172,9 @@ isc.OBToolbar.addClassProperties({
         }
       }
       if (view.isShowingForm) {
-        this.setDisabled(form.isSaving || form.readOnly || view.singleRecord || !view.hasValidState() || form.isNew);
+        this.setDisabled(form.isSaving || form.readOnly || view.singleRecord || !view.hasValidState() || form.isNew || OB.PropertyStore.get("AllowDelete", this.view.standardWindow.windowId) === 'N');
       } else {
-        this.setDisabled(view.readOnly || view.singleRecord || !view.hasValidState() || !grid.getSelectedRecords() || grid.getSelectedRecords().length === 0);
+        this.setDisabled(view.readOnly || view.singleRecord || !view.hasValidState() || !grid.getSelectedRecords() || grid.getSelectedRecords().length === 0 || OB.PropertyStore.get("AllowDelete", this.view.standardWindow.windowId) === 'N');
       }
     },
     keyboardShortcutId: 'ToolBar_Eliminate'
@@ -207,7 +207,9 @@ isc.OBToolbar.addClassProperties({
       if (this.view.isShowingForm) {
         this.setDisabled(false);
       } else {
-        this.setDisabled(!this.view.isEditingGrid);
+        // Only enabled when the grid is being edited or when
+        // the selected records have errors
+        this.setDisabled(!this.view.isEditingGrid && this.view.hasNotChanged());
       }
     },
     keyboardShortcutId: 'ToolBar_Undo'
@@ -218,6 +220,7 @@ isc.OBToolbar.addClassProperties({
       var requestProperties = {
         exportAs: 'csv',
         exportDisplay: 'download',
+        _extraProperties: this.view && this.view.dataSource && this.view.dataSource.requestProperties.params._extraProperties,
         params: {
           exportToFile: true
         },
@@ -230,7 +233,7 @@ isc.OBToolbar.addClassProperties({
     buttonType: 'export',
     prompt: OB.I18N.getLabel('OBUIAPP_ExportGrid'),
     updateState: function () {
-      this.setDisabled(this.view.isShowingForm || this.view.viewGrid.getTotalRows() === 0 || OB.PropertyStore.get("ExportToCsv", this.view.standardWindow.id) === 'N');
+      this.setDisabled(this.view.isShowingForm || this.view.viewGrid.getTotalRows() === 0 || OB.PropertyStore.get("ExportToCsv", this.view.standardWindow.windowId) === 'N');
     },
     keyboardShortcutId: 'ToolBar_Export'
   },
@@ -356,6 +359,13 @@ isc.OBToolbar.addClassProperties({
         this.setDisabled(false);
       }
       this.resetBaseStyle();
+      if (this.view.viewForm.readOnly && !this.view.attachmentExists) {
+        this.setDisabled(true);
+      }
+      if (OB.PropertyStore.get("AllowAttachment", this.view.standardWindow.windowId) === 'N') {
+        this.view.viewForm.enableAttachmentsSection(false);
+        this.setDisabled(true);
+      }
     },
     keyboardShortcutId: 'ToolBar_Attachments'
   },
@@ -518,19 +528,7 @@ isc.OBToolbar.addProperties({
 
     this.Super('initWidget', arguments);
 
-    function getRandomId() {
-      var chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz',
-          stringLength = 8,
-          randomString = '',
-          i, rnum;
-      for (i = 0; i < stringLength; i++) {
-        rnum = Math.floor(Math.random() * chars.length);
-        randomString += chars.substring(rnum, rnum + 1);
-      }
-      return randomString;
-    }
-
-    this.randomId = getRandomId();
+    this.randomId = OB.Utilities.generateRandomString(8, true, true, true, false);
 
     this.members = null;
 
