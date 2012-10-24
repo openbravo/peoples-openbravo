@@ -37,9 +37,9 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="DUEDATE" primaryKey="false" required="false" type="TIMESTAMP" size="7" autoIncrement="false">
+      <column name="DUEDATE" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false">
         <default/>
-        <onCreateDefault/>
+        <onCreateDefault><![CDATA[NOW()]]></onCreateDefault>
       </column>
       <column name="FIN_PAYMENTMETHOD_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>

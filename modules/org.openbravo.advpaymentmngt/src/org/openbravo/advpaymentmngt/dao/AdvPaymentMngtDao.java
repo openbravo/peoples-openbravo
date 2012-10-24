@@ -194,6 +194,17 @@ public class AdvPaymentMngtDao {
 
   public List<FIN_PaymentScheduleDetail> getFilteredScheduledPaymentDetails(
       Organization organization, BusinessPartner businessPartner, Currency currency,
+      Date dueDateFrom, Date dueDateTo, Date transactionDateFrom, Date transactionDateTo,
+      String strTransactionType, String strDocumentNo, FIN_PaymentMethod paymentMethod,
+      List<FIN_PaymentScheduleDetail> selectedScheduledPaymentDetails, boolean isReceipt,
+      String strAmountFrom, String strAmountTo) {
+    return getFilteredScheduledPaymentDetails(organization, businessPartner, currency, dueDateFrom,
+        dueDateTo, null, null, transactionDateFrom, transactionDateTo, strTransactionType, "",
+        paymentMethod, selectedScheduledPaymentDetails, isReceipt, strAmountFrom, strAmountTo);
+  }
+
+  public List<FIN_PaymentScheduleDetail> getFilteredScheduledPaymentDetails(
+      Organization organization, BusinessPartner businessPartner, Currency currency,
       Date dueDateFrom, Date dueDateTo, Date expectedDateFrom, Date expectedDateTo,
       Date transactionDateFrom, Date transactionDateTo, String strTransactionType,
       String strDocumentNo, FIN_PaymentMethod paymentMethod,
