@@ -77,6 +77,10 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
+      <column name="CONSIDER_ZERO" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
+        <default><![CDATA[NEVER]]></default>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="C_ELEMENTVALUE" name="AD_ACCOUNTINGRPT_ELEMENT_ACCOU">
         <reference local="ACCOUNT_ID" foreign="C_ELEMENTVALUE_ID"/>
       </foreign-key>
