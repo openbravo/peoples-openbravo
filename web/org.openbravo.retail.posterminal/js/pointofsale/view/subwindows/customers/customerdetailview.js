@@ -140,6 +140,13 @@ enyo.kind({
     readOnly: true
   }, {
     kind: 'OB.UI.CustomerTextProperty',
+    name: 'customerTaxId',
+    modelProperty: 'taxId',
+    label: OB.I18N.getLabel('OBPOS_TaxId'),
+    readOnly: true,
+    displayLogic: OB.POS.modelterminal.get('terminal').bp_showtaxid
+  }, {
+    kind: 'OB.UI.CustomerTextProperty',
     name: 'customerLocName',
     modelProperty: 'locName',
     label: OB.I18N.getLabel('OBPOS_LblAddress'),

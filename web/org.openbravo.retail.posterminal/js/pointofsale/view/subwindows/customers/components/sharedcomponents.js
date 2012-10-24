@@ -147,11 +147,22 @@ enyo.kind({
     });
     this.attributeContainer = this.$.customerAttributes;
     enyo.forEach(this.newAttributes, function(natt) {
-      this.$.customerAttributes.createComponent({
-        kind: 'OB.UI.CustomerPropertyLine',
-        name: 'line_' + natt.name,
-        newAttribute: natt
-      });
+      var resultDisplay = true,
+          undf;
+      if (natt.displayLogic !== undf && natt.displayLogic !== null) {
+        if (enyo.isFunction(natt.displayLogic)) {
+          resultDisplay = natt.displayLogic(this);
+        } else {
+          resultDisplay = natt.displayLogic;
+        }
+      }
+      if (resultDisplay) {
+        this.$.customerAttributes.createComponent({
+          kind: 'OB.UI.CustomerPropertyLine',
+          name: 'line_' + natt.name,
+          newAttribute: natt
+        });
+      }
     }, this);
   },
   init: function(model) {
