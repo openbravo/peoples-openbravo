@@ -1,4 +1,4 @@
-/*global OB, enyo, console, $, confirm */
+/*global OB, enyo, $, confirm */
 
 /*
  ************************************************************************************
@@ -261,7 +261,7 @@ enyo.kind({
         if (!changedModel.get('currentWindow').params) {
           changedModel.get('currentWindow').params = {};
           //developers helps
-          console.log("Caller is not set. Caller has been set as main subwindow");
+          //console.log("Caller is not set. Caller has been set as main subwindow");
           changedModel.get('currentWindow').params.caller = 'mainSubWindow';
         }
         if (this.$[changedModel.get('currentWindow').name].mainBeforeSetShowing) {
@@ -278,13 +278,13 @@ enyo.kind({
             this.$[changedModel.get('currentWindow').name].setShowing(true);
           } else {
             //developers helps
-            console.log("Error! A subwindow must inherits from OB.UI.subwindow -> restore previous state");
+            //console.log("Error! A subwindow must inherits from OB.UI.subwindow -> restore previous state");
             restorePreviousState(this.model.get('subWindowManager'), changedModel);
           }
         }
       } else {
         //developers helps
-        console.log("The subwindow to navigate doesn't exists -> restore previous state");
+        //console.log("The subwindow to navigate doesn't exists -> restore previous state");
         restorePreviousState(this.model.get('subWindowManager'), changedModel);
       }
     }, this);
