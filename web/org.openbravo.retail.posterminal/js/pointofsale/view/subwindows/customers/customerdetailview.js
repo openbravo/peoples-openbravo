@@ -142,7 +142,7 @@ enyo.kind({
     kind: 'OB.UI.CustomerTextProperty',
     name: 'customerTaxId',
     modelProperty: 'taxId',
-    label: OB.I18N.getLabel('OBPOS_TaxId'),
+    label: OB.I18N.getLabel('OBPOS_LblTaxId'),
     readOnly: true,
     displayLogic: OB.POS.modelterminal.get('terminal').bp_showtaxid
   }, {

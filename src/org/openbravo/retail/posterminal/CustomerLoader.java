@@ -106,15 +106,13 @@ public class CustomerLoader extends JSONProcessSimple {
     try {
       customer = getCustomer(jsoncustomer.getString("id"));
       if (customer.getId() == null) {
-        // create location
         customer = createBPartner(jsoncustomer);
-        editLocation(customer, jsoncustomer);
-        editBPartnerContact(customer, jsoncustomer, true);
       } else {
-        editLocation(customer, jsoncustomer);
-        editBPartner(customer, jsoncustomer);
-        editBPartnerContact(customer, jsoncustomer, false);
+        customer = editBPartner(customer, jsoncustomer);
       }
+
+      editLocation(customer, jsoncustomer);
+      editBPartnerContact(customer, jsoncustomer);
       OBDal.getInstance().flush();
     } catch (Exception e) {
       throw e;
@@ -134,70 +132,6 @@ public class CustomerLoader extends JSONProcessSimple {
       return customer;
     }
     return new BusinessPartner();
-  }
-
-  protected void editLocation(BusinessPartner customer, JSONObject jsonCustomer)
-      throws JSONException {
-    final OBCriteria<Location> criteria = OBDal.getInstance().createCriteria(Location.class);
-    criteria.add(Restrictions.eq("businessPartner.id", jsonCustomer.getString("id")));
-    criteria.addOrderBy("name", false);
-    final List<Location> colLocations = criteria.list();
-    if (colLocations != null && colLocations.size() > 0) {
-      final org.openbravo.model.common.geography.Location rootLocation = colLocations.get(0)
-          .getLocationAddress();
-      if (jsonCustomer.has("locName")) {
-        rootLocation.setAddressLine1(jsonCustomer.getString("locName"));
-      }
-      if (jsonCustomer.has("postalcode")) {
-        rootLocation.setPostalCode(jsonCustomer.getString("postalcode"));
-      }
-      if (jsonCustomer.has("city")) {
-        rootLocation.setCityName(jsonCustomer.getString("city"));
-      }
-      OBDal.getInstance().save(rootLocation);
-    } else {
-      final org.openbravo.model.common.geography.Location rootLocation = OBProvider.getInstance()
-          .get(org.openbravo.model.common.geography.Location.class);
-
-      rootLocation.setOrganization(OBDal.getInstance().get(Organization.class,
-          jsonCustomer.getString("organization")));
-
-      if (jsonCustomer.has("locName")) {
-        rootLocation.setAddressLine1(jsonCustomer.getString("locName"));
-      }
-      if (jsonCustomer.has("postalcode")) {
-        rootLocation.setPostalCode(jsonCustomer.getString("postalcode"));
-      }
-      if (jsonCustomer.has("city")) {
-        rootLocation.setCityName(jsonCustomer.getString("city"));
-      }
-      if (jsonCustomer.has("country")) {
-        rootLocation.setCountry(OBDal.getInstance().get(Country.class,
-            jsonCustomer.getString("country")));
-      }
-
-      OBDal.getInstance().save(rootLocation);
-
-      Location newLocation = OBProvider.getInstance().get(Location.class);
-      if (jsonCustomer.has("locId")) {
-        newLocation.setId(jsonCustomer.getString("locId"));
-      } else {
-        String errorMessage = "Business partner Location ID is a mandatory field to create a new customer from Web Pos";
-        log.error(errorMessage);
-        throw new OBException(errorMessage, null);
-      }
-      if (jsonCustomer.has("locName")) {
-        newLocation.setName(jsonCustomer.getString("locName"));
-      }
-
-      newLocation.setOrganization(OBDal.getInstance().get(Organization.class,
-          jsonCustomer.getString("organization")));
-
-      newLocation.setBusinessPartner(customer);
-      newLocation.setLocationAddress(rootLocation);
-      newLocation.setNewOBObject(true);
-      OBDal.getInstance().save(newLocation);
-    }
   }
 
   protected BusinessPartner createBPartner(JSONObject jsonCustomer) throws JSONException {
@@ -300,7 +234,7 @@ public class CustomerLoader extends JSONProcessSimple {
     return customer;
   }
 
-  protected void editBPartner(BusinessPartner customer, JSONObject jsonCustomer)
+  protected BusinessPartner editBPartner(BusinessPartner customer, JSONObject jsonCustomer)
       throws JSONException {
     customer.setCustomer(true);
     if (jsonCustomer.has("name") && !jsonCustomer.getString("name").equals("null")) {
@@ -333,16 +267,31 @@ public class CustomerLoader extends JSONProcessSimple {
       customer.setInvoiceTerms(jsonCustomer.getString("invoiceTerms"));
     }
     OBDal.getInstance().save(customer);
+    return customer;
   }
 
-  protected void editBPartnerContact(BusinessPartner customer, JSONObject jsonCustomer,
-      Boolean isNew) throws JSONException {
-    if (isNew) {
+  protected void editBPartnerContact(BusinessPartner customer, JSONObject jsonCustomer)
+      throws JSONException {
+    final OBCriteria<org.openbravo.model.ad.access.User> criteria = OBDal.getInstance()
+        .createCriteria(org.openbravo.model.ad.access.User.class);
+    criteria.add(Restrictions.eq("businessPartner.id", jsonCustomer.getString("id")));
+    criteria.addOrderBy("name", false);
+    final List<org.openbravo.model.ad.access.User> colUsers = criteria.list();
+    if (colUsers.size() > 0) {
+      // Contact exist > modify it
+      if (jsonCustomer.has("email")) {
+        colUsers.get(0).setEmail(jsonCustomer.getString("email"));
+      }
+      if (jsonCustomer.has("phone")) {
+        colUsers.get(0).setPhone(jsonCustomer.getString("phone"));
+      }
+      OBDal.getInstance().save(colUsers.get(0));
+    } else {
+      // Contact doesn't exists > create it - create user linked to BP
       final org.openbravo.model.ad.access.User usr = OBProvider.getInstance().get(
           org.openbravo.model.ad.access.User.class);
 
-      usr.setOrganization(OBDal.getInstance().get(Organization.class,
-          jsonCustomer.getString("organization")));
+      usr.setOrganization(customer.getOrganization());
       usr.setName(jsonCustomer.getString("name"));
       usr.setUsername(jsonCustomer.getString("name").trim());
       usr.setFirstName(jsonCustomer.getString("name").trim());
@@ -354,22 +303,70 @@ public class CustomerLoader extends JSONProcessSimple {
         usr.setPhone(jsonCustomer.getString("phone"));
       }
       usr.setBusinessPartner(customer);
-      OBDal.getInstance().save(usr);
-    } else {
-      final OBCriteria<org.openbravo.model.ad.access.User> criteria = OBDal.getInstance()
-          .createCriteria(org.openbravo.model.ad.access.User.class);
-      criteria.add(Restrictions.eq("businessPartner.id", jsonCustomer.getString("id")));
-      criteria.addOrderBy("name", false);
-      final List<org.openbravo.model.ad.access.User> colUsers = criteria.list();
-      if (colUsers.size() > 0) {
-        if (jsonCustomer.has("email")) {
-          colUsers.get(0).setEmail(jsonCustomer.getString("email"));
-        }
-        if (jsonCustomer.has("phone")) {
-          colUsers.get(0).setPhone(jsonCustomer.getString("phone"));
-        }
-        OBDal.getInstance().save(colUsers.get(0));
+    }
+  }
+
+  protected void editLocation(BusinessPartner customer, JSONObject jsonCustomer)
+      throws JSONException {
+    final OBCriteria<Location> criteria = OBDal.getInstance().createCriteria(Location.class);
+    criteria.add(Restrictions.eq("businessPartner.id", jsonCustomer.getString("id")));
+    criteria.addOrderBy("name", false);
+    final List<Location> colLocations = criteria.list();
+    if (colLocations != null && colLocations.size() > 0) {
+      // location exist > modify it
+      final org.openbravo.model.common.geography.Location rootLocation = colLocations.get(0)
+          .getLocationAddress();
+      if (jsonCustomer.has("locName")) {
+        rootLocation.setAddressLine1(jsonCustomer.getString("locName"));
       }
+      if (jsonCustomer.has("postalcode")) {
+        rootLocation.setPostalCode(jsonCustomer.getString("postalcode"));
+      }
+      if (jsonCustomer.has("city")) {
+        rootLocation.setCityName(jsonCustomer.getString("city"));
+      }
+      OBDal.getInstance().save(rootLocation);
+    } else {
+      // location not exists > create location and bplocation
+      final org.openbravo.model.common.geography.Location rootLocation = OBProvider.getInstance()
+          .get(org.openbravo.model.common.geography.Location.class);
+
+      rootLocation.setOrganization(customer.getOrganization());
+
+      if (jsonCustomer.has("locName")) {
+        rootLocation.setAddressLine1(jsonCustomer.getString("locName"));
+      }
+      if (jsonCustomer.has("postalcode")) {
+        rootLocation.setPostalCode(jsonCustomer.getString("postalcode"));
+      }
+      if (jsonCustomer.has("city")) {
+        rootLocation.setCityName(jsonCustomer.getString("city"));
+      }
+      if (jsonCustomer.has("country")) {
+        rootLocation.setCountry(OBDal.getInstance().get(Country.class,
+            jsonCustomer.getString("country")));
+      }
+
+      OBDal.getInstance().save(rootLocation);
+
+      Location newLocation = OBProvider.getInstance().get(Location.class);
+      if (jsonCustomer.has("locId")) {
+        newLocation.setId(jsonCustomer.getString("locId"));
+      } else {
+        String errorMessage = "Business partner Location ID is a mandatory field to create a new customer from Web Pos";
+        log.error(errorMessage);
+        throw new OBException(errorMessage, null);
+      }
+      if (jsonCustomer.has("locName")) {
+        newLocation.setName(jsonCustomer.getString("locName"));
+      }
+
+      newLocation.setOrganization(customer.getOrganization());
+
+      newLocation.setBusinessPartner(customer);
+      newLocation.setLocationAddress(rootLocation);
+      newLocation.setNewOBObject(true);
+      OBDal.getInstance().save(newLocation);
     }
   }
 }
