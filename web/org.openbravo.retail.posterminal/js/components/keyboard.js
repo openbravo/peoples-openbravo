@@ -405,7 +405,7 @@ enyo.kind({
 
   keyPressed: function(key) {
     var t;
-    if (key.match(/^([0-9]|\.|,|[a-z])$/)) {
+    if (key.match(/^([0-9]|\.|,| |[a-z]|[A-Z])$/)) {
       t = this.$.editbox.getContent();
       this.$.editbox.setContent(t + key);
     } else if (key === 'del') {
