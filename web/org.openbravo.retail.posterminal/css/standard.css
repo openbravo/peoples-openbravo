@@ -140,6 +140,18 @@ div.subwindow .subwindowheader .close>span:first-child {
   background-image: url('../img/loading-bar.gif');
 }
 
+.postab-content {
+  width: 100%;
+}
+
+.postab-pane {
+  display: none;
+}
+
+.postab-content > .active {
+  display: block;
+}
+
 .btnlink-toolbar:after {
   clear: both;
 }

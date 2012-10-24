@@ -175,14 +175,9 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.Button',
   name: 'OB.UI.ButtonTab',
-  attributes: {
-    'data-toggle': 'tab'
-  },
-  tabPanel: '#',
   initComponents: function() {
     this.inherited(arguments);
     this.addClass('btnlink btnlink-gray');
-    this.setAttribute('href', this.tabPanel);
     if (this.label) {
       this.createComponent({
         name: 'lbl',
@@ -203,9 +198,6 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ToolbarButtonTab',
   kind: 'OB.UI.ButtonTab',
-  attributes: {
-    'data-toggle': 'tab'
-  },
   events: {
     onTabChange: ''
   },
@@ -213,6 +205,12 @@ enyo.kind({
     this.inherited(arguments);
     this.addClass('btnlink-toolbar');
   }
+});
+
+
+enyo.kind({
+  name: 'OB.UI.TabPane',
+  classes: 'postab-pane'
 });
 
 

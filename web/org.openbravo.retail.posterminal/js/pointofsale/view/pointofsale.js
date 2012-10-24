@@ -172,6 +172,9 @@ enyo.kind({
     return true;
   },
   tabChange: function(sender, event) {
+    this.waterfall('onTabButtonTap', {
+      tabPanel: event.tabPanel
+    });
     this.waterfall('onChangeEditMode', {
       edit: event.edit
     });

@@ -14,11 +14,46 @@
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.RightToolbar',
   classes: 'span9',
+  handlers: {
+    onTabButtonTap: 'tabButtonTapHandler'
+  },
   components: [{
     tag: 'ul',
     classes: 'unstyled nav-pos row-fluid',
     name: 'toolbar'
   }],
+  tabButtonTapHandler: function(sender, event) {
+    if (event.tabPanel) {
+      this.setTabButtonActive(event.tabPanel);
+    }
+  },
+  setTabButtonActive: function(tabName) {
+    var buttonContainerArray = this.getComponents()[0].getComponents(), i;
+
+    for (i = 0; i < buttonContainerArray.length; i++) {
+      buttonContainerArray[i].removeClass('active');
+      if (buttonContainerArray[i].getComponents()[0].getComponents()[0].name === tabName) {
+        buttonContainerArray[i].addClass('active');
+      }
+    }
+  },
+  manualTap: function(tabName) {
+    var tab;
+    function getButtonByName(name, me) {
+      var componentArray = me.$.toolbar.getComponents(), i;
+      for (i = 0; i < componentArray.length; i++) {
+        if (componentArray[i].$.theButton.getComponents()[0].name === name) {
+          return componentArray[i].$.theButton.getComponents()[0];
+        }
+      }
+      return null;
+    }
+
+    tab = getButtonByName(tabName, this);
+    if (tab) {
+      tab.tap();
+    }
+  },
   initComponents: function() {
     this.inherited(arguments);
     enyo.forEach(this.buttons, function(btn) {
@@ -38,42 +73,39 @@ enyo.kind({
   kind: 'OB.OBPOSPointOfSale.UI.RightToolbar',
   buttons: [{
     kind: 'OB.OBPOSPointOfSale.UI.ButtonTabPayment',
+    name: 'payment',
     containerCssClass: 'span4'
   }, {
     kind: 'OB.OBPOSPointOfSale.UI.ButtonTabScan',
+    name: 'scan',
     containerCssClass: 'span2'
   }, {
     kind: 'OB.OBPOSPointOfSale.UI.ButtonTabBrowse',
+    name: 'catalog',
     containerCssClass: 'span2'
   }, {
     kind: 'OB.OBPOSPointOfSale.UI.ButtonTabSearch',
+    name: 'search',
     containerCssClass: 'span2'
   }, {
     kind: 'OB.OBPOSPointOfSale.UI.ButtonTabEditLine',
+    name: 'edit',
     containerCssClass: 'span2'
   }],
-
-  manualTap: function(tab) {
-    //Hack to manually tap on bootstrap tab
-    var domButton = $(tab.tabPanel + '_button');
-    domButton.tab('show');
-    domButton.parent().parent().addClass('active');
-    tab.tap();
-  },
 
   receiptChanged: function() {
     var totalPrinterComponent;
 
     this.receipt.on('clear scan', function() {
       if (this.receipt.get('isEditable') === false) {
-        this.manualTap(this.edit);
+        this.manualTap('edit');
       } else {
-        this.manualTap(this.scan);
+        this.manualTap('scan');
       }
     }, this);
 
     this.receipt.get('lines').on('click', function() {
-      this.manualTap(this.edit);
+      this.manualTap('edit');
     }, this);
 
     //some button will draw the total
@@ -85,18 +117,6 @@ enyo.kind({
         newTotal: this.receipt.getTotal()
       });
     }, this);
-  },
-  initComponents: function() {
-    var me = this;
-
-    function getButtonInPos(pos) {
-      return me.$.toolbar.getComponents()[pos].$.theButton.getComponents()[0];
-    }
-
-    this.inherited(arguments);
-
-    this.scan = getButtonInPos(1);
-    this.edit = getButtonInPos(4);
   }
 });
 
@@ -107,7 +127,6 @@ enyo.kind({
   components: [{
     name: 'theButton',
     attributes: {
-      'data-toggle': 'tab',
       style: 'margin: 0px 5px 0px 5px;'
     }
   }],
@@ -126,19 +145,17 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ButtonTabScan',
   kind: 'OB.UI.ToolbarButtonTab',
-  tabPanel: '#scan',
+  tabPanel: 'scan',
   label: OB.I18N.getLabel('OBPOS_LblScan'),
   events: {
     onTabChange: ''
   },
   tap: function() {
     this.doTabChange({
+      tabPanel: this.tabPanel,
       keyboard: 'toolbarscan',
       edit: false
     });
-  },
-  makeId: function() {
-    return 'scan_button';
   }
 });
 
@@ -148,10 +165,11 @@ enyo.kind({
   events: {
     onTabChange: ''
   },
-  tabPanel: '#catalog',
+  tabPanel: 'catalog',
   label: OB.I18N.getLabel('OBPOS_LblBrowse'),
   tap: function() {
     this.doTabChange({
+      tabPanel: this.tabPanel,
       keyboard: false,
       edit: false
     });
@@ -161,13 +179,14 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ButtonTabSearch',
   kind: 'OB.UI.ToolbarButtonTab',
-  tabPanel: '#search',
+  tabPanel: 'search',
   label: OB.I18N.getLabel('OBPOS_LblSearch'),
   events: {
     onTabChange: ''
   },
   tap: function() {
     this.doTabChange({
+      tabPanel: this.tabPanel,
       keyboard: false,
       edit: false
     });
@@ -180,7 +199,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ButtonTabPayment',
   kind: 'OB.UI.ToolbarButtonTab',
-  tabPanel: '#payment',
+  tabPanel: 'payment',
   handlers: {
     onChangeTotal: 'renderTotal'
   },
@@ -192,6 +211,7 @@ enyo.kind({
       return true;
     }
     this.doTabChange({
+      tabPanel: this.tabPanel,
       keyboard: 'toolbarpayment',
       edit: false
     });
@@ -221,16 +241,14 @@ enyo.kind({
     this.model.get('order').on('change:isEditable', function(newValue) {
       if (newValue) {
         if (newValue.get('isEditable') === false) {
-          this.setAttribute('data-toogle', null);
+          this.tabPanel = null;
           this.setAttribute('disabled', 'disabled');
-          this.setAttribute('href', null);
           this.disabled = true;
           return;
         }
       }
-      this.setAttribute('data-toogle', 'tab');
+      this.tabPanel = 'payment';
       this.setAttribute('disabled', null);
-      this.setAttribute('href', '#payment');
       this.disabled = true;
     }, this);
   }
@@ -242,19 +260,17 @@ enyo.kind({
     ticketLines: null
   },
   kind: 'OB.UI.ToolbarButtonTab',
-  tabPanel: '#edition',
+  tabPanel: 'edit',
   label: OB.I18N.getLabel('OBPOS_LblEdit'),
   events: {
     onTabChange: ''
   },
   tap: function() {
     this.doTabChange({
+      tabPanel: this.tabPanel,
       keyboard: 'toolbarscan',
       edit: true
     });
-  },
-  makeId: function() {
-    return 'edition_button';
   }
 });
 
@@ -266,12 +282,16 @@ enyo.kind({
   published: {
     model: null
   },
-  classes: 'tab-content',
+  classes: 'postab-content',
+  handlers: {
+    onTabButtonTap: 'tabButtonTapHandler'
+  },
   components: [{
     kind: 'OB.OBPOSPointOfSale.UI.TabScan',
     name: 'scan'
   }, {
-    kind: 'OB.OBPOSPointOfSale.UI.TabBrowse'
+    kind: 'OB.OBPOSPointOfSale.UI.TabBrowse',
+    name: 'catalog'
   }, {
     kind: 'OB.OBPOSPointOfSale.UI.TabSearch',
     name: 'search'
@@ -282,6 +302,21 @@ enyo.kind({
     kind: 'OB.OBPOSPointOfSale.UI.TabEditLine',
     name: 'edit'
   }],
+  tabButtonTapHandler: function(sender, event) {
+    if (event.tabPanel) {
+      this.showPane(event.tabPanel);
+    }
+  },
+  showPane: function(tabName) {
+    var paneArray = this.getComponents(), i;
+
+    for (i = 0; i < paneArray.length; i++) {
+      paneArray[i].removeClass('active');
+      if (paneArray[i].name === tabName) {
+        paneArray[i].addClass('active');
+      }
+    }
+  },
   modelChanged: function() {
     var receipt = this.model.get('order');
     this.$.scan.setReceipt(receipt);
@@ -293,10 +328,10 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.TabSearch',
+  kind: 'OB.UI.TabPane',
   published: {
     receipt: null
   },
-  classes: 'tab-pane',
   components: [{
     style: 'overflow: auto; margin: 5px',
     components: [{
@@ -307,9 +342,6 @@ enyo.kind({
       }]
     }]
   }],
-  makeId: function() {
-    return 'search';
-  },
   receiptChanged: function() {
     this.$.search.setReceipt(this.receipt);
   }
@@ -317,29 +349,22 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.TabBrowse',
-  classes: 'tab-pane',
+  kind: 'OB.UI.TabPane',
   components: [{
     kind: 'OB.UI.ProductBrowser'
-  }],
-
-  makeId: function() {
-    return 'catalog';
-  }
+  }]
 });
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.TabScan',
+  kind: 'OB.UI.TabPane',
   published: {
     receipt: null
   },
-  classes: 'tab-pane',
   components: [{
     kind: 'OB.OBPOSPointOfSale.UI.Scan',
     name: 'scan'
   }],
-  makeId: function() {
-    return 'scan';
-  },
   receiptChanged: function() {
     this.$.scan.setReceipt(this.receipt);
   }
@@ -347,17 +372,14 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.TabEditLine',
+  kind: 'OB.UI.TabPane',
   published: {
     receipt: null
   },
-  classes: 'tab-pane',
   components: [{
     kind: 'OB.OBPOSPointOfSale.UI.EditLine',
     name: 'edit'
   }],
-  makeId: function() {
-    return 'edition';
-  },
   receiptChanged: function() {
     this.$.edit.setReceipt(this.receipt);
   }
@@ -365,17 +387,14 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.TabPayment',
+  kind: 'OB.UI.TabPane',
   published: {
     receipt: null
   },
-  classes: 'tab-pane',
   components: [{
     kind: 'OB.OBPOSPointOfSale.UI.Payment',
     name: 'payment'
   }],
-  makeId: function() {
-    return 'payment';
-  },
   receiptChanged: function() {
     this.$.payment.setReceipt(this.receipt);
   }
