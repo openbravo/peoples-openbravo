@@ -89,7 +89,7 @@ isc.OBFKFilterTextItem.addProperties({
         }
         return record[OB.Constants.IDENTIFIER] === values;
       },
-      
+
       // override data arrived to prevent the first entry from being
       // selected
       // this to handle the picklist in foreign key filter item. When a user
@@ -147,15 +147,15 @@ isc.OBFKFilterTextItem.addProperties({
     this._hasChanged = true;
     this.Super('change', arguments);
   },
-  
-  blur: function() {
+
+  blur: function () {
     if (this._hasChanged) {
       this.form.grid.performAction();
     }
     delete this._hasChanged;
     this.Super('blur', arguments);
   },
-  
+
   // overridden otherwise the picklist fields from the grid field
   // are being used
   getPickListFields: function () {
