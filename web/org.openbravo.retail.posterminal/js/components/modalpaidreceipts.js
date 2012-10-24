@@ -123,8 +123,11 @@ enyo.kind({
     this.doClearAction();
   },
   searchAction: function() {
+    var params = this.parent.parent.parent.parent.parent.parent.parent.parent.params;
     this.filters = {
-      documentNo: this.$.filterText.getValue(),
+      documentType: params.quotation?(OB.POS.modelterminal.get('terminal').documentTypeForQuotations):(OB.POS.modelterminal.get('terminal').documentType),
+      quotation: params.quotation?true:false,
+      filterText: this.$.filterText.getValue(),
       startDate: this.$.startDate.getValue(),
       endDate: this.$.endDate.getValue(),
       pos: OB.POS.modelterminal.get('terminal').id,
@@ -232,6 +235,12 @@ enyo.kind({
   headerClass: 'modal-header',
   bodyClass: 'modal-header',
   header: OB.I18N.getLabel('OBPOS_LblAssignCustomer'),
+  published:{
+    params: null
+  },
+  changedParams: function(value){
+    
+  },
   body: {
     kind: 'OB.UI.ListPRs'
   },
