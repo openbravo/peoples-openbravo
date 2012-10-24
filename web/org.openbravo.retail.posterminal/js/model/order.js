@@ -331,23 +331,28 @@
       if (OB.DEC.isNumber(qty)) {
         var oldqty = line.get('qty');
         if (OB.DEC.compare(qty) > 0) {
-          var me = this;
-          // sets the new quantity
-          line.set('qty', qty);
-          line.calculateGross();
-          this.calculateGross();
-          // sets the undo action
-          this.set('undo', {
-            text: text || OB.I18N.getLabel('OBPOS_SetUnits', [line.get('qty'), line.get('product').get('_identifier')]),
-            oldqty: oldqty,
-            line: line,
-            undo: function () {
-              line.set('qty', oldqty);
-              line.calculateGross();
-              me.calculateGross();
-              me.set('undo', null);
-            }
-          });
+          if (line.get('product').get('groupProduct') === false) {
+            this.addProduct(line.get('product'));
+            return true;
+          } else {
+            var me = this;
+            // sets the new quantity
+            line.set('qty', qty);
+            line.calculateGross();
+            this.calculateGross();
+            // sets the undo action
+            this.set('undo', {
+              text: text || OB.I18N.getLabel('OBPOS_SetUnits', [line.get('qty'), line.get('product').get('_identifier')]),
+              oldqty: oldqty,
+              line: line,
+              undo: function () {
+                line.set('qty', oldqty);
+                line.calculateGross();
+                me.calculateGross();
+                me.set('undo', null);
+              }
+            });
+          }
         } else {
           this.deleteLine(line);
         }

@@ -37,6 +37,10 @@ enyo.kind({
           return true;
         }
         if (keyboard.line) {
+          if (keyboard.line.get('product').get('groupProduct') === false) {
+            $("#modalProductCannotBeGroup").modal("show");
+            return true;
+          }
           keyboard.receipt.setUnit(keyboard.line, OB.I18N.parseNumber(txt));
           keyboard.receipt.trigger('scan');
         }
@@ -77,6 +81,10 @@ enyo.kind({
           return true;
         }
         if (keyboard.line) {
+          if (keyboard.line.get('product').get('groupProduct') === false) {
+            $("#modalProductCannotBeGroup").modal("show");
+            return true;
+          }
           keyboard.receipt.addUnit(keyboard.line, OB.I18N.parseNumber(txt));
           keyboard.receipt.trigger('scan');
         }

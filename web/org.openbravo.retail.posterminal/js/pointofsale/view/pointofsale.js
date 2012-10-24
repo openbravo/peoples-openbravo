@@ -59,6 +59,8 @@ enyo.kind({
     }, {
       kind: 'OB.OBPOSPointOfSale.Modals.UI.ModalClosePaidReceipt'
     }, {
+      kind: 'OB.OBPOSPointOfSale.Modals.UI.ModalProductCannotBeGroup'
+    }, {
       kind: 'OB.UI.Modalnoteditableorder'
     }, {
       kind: 'OB.UI.ModalBusinessPartners'
