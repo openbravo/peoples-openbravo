@@ -158,6 +158,10 @@ public class CustomerLoader extends JSONProcessSimple {
     } else {
       final org.openbravo.model.common.geography.Location rootLocation = OBProvider.getInstance()
           .get(org.openbravo.model.common.geography.Location.class);
+
+      rootLocation.setOrganization(OBDal.getInstance().get(Organization.class,
+          jsonCustomer.getString("organization")));
+
       if (jsonCustomer.has("locName")) {
         rootLocation.setAddressLine1(jsonCustomer.getString("locName"));
       }
@@ -185,6 +189,9 @@ public class CustomerLoader extends JSONProcessSimple {
       if (jsonCustomer.has("locName")) {
         newLocation.setName(jsonCustomer.getString("locName"));
       }
+
+      newLocation.setOrganization(OBDal.getInstance().get(Organization.class,
+          jsonCustomer.getString("organization")));
 
       newLocation.setBusinessPartner(customer);
       newLocation.setLocationAddress(rootLocation);
@@ -334,6 +341,8 @@ public class CustomerLoader extends JSONProcessSimple {
       final org.openbravo.model.ad.access.User usr = OBProvider.getInstance().get(
           org.openbravo.model.ad.access.User.class);
 
+      usr.setOrganization(OBDal.getInstance().get(Organization.class,
+          jsonCustomer.getString("organization")));
       usr.setName(jsonCustomer.getString("name"));
       usr.setUsername(jsonCustomer.getString("name").trim());
       usr.setFirstName(jsonCustomer.getString("name").trim());
