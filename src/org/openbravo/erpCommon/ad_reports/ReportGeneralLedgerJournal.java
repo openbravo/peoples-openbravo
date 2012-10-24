@@ -646,7 +646,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
     if (!"".equals(strcAcctSchemaId)) {
       AcctSchema financialMgmtAcctSchema = OBDal.getInstance().get(AcctSchema.class,
           strcAcctSchemaId);
-      strSubtitle += Utility.messageBD(this, "accountingSchema", vars.getLanguage()) + ": "
+      strSubtitle += Utility.messageBD(this, "generalLedger", vars.getLanguage()) + ": "
           + financialMgmtAcctSchema.getName();
     }
 

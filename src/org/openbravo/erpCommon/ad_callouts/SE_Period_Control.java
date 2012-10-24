@@ -74,6 +74,10 @@ public class SE_Period_Control extends HttpSecureAppServlet {
     if (strIsBULE == null && strIsReady.equals("N")) {
       resultado.append("new Array(\"inpisperiodcontrolallowed\", \"" + "N" + "\"),\n ");
     }
+    String strIsLegalEntity = SEPeriodControlData.selectIsLegalEntity(this, strAdOrgTypeID);
+    String strIsBusinessUnit = SEPeriodControlData.selectIsBusinessUnit(this, strAdOrgTypeID);
+    resultado.append("new Array(\"inpisorglegalentiy\", \"" + strIsLegalEntity + "\"),\n ");
+    resultado.append("new Array(\"inpisorgbusinessunit\", \"" + strIsBusinessUnit + "\"),\n ");
 
     resultado.append("new Array(\"EXECUTE\", \"displayLogic();\")\n");
     resultado.append(");");

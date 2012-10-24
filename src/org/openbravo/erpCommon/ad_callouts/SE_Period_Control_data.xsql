@@ -31,4 +31,26 @@
     </Sql>
     <Parameter name="adOrgId"/>
   </SqlMethod>
+  <SqlMethod name="selectIsLegalEntity" type="preparedStatement" return="String">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT IsLegalEntity
+        FROM AD_OrgType 
+        WHERE AD_OrgType_ID=? 
+      ]]>
+    </Sql>
+    <Parameter name="adOrgId"/>
+  </SqlMethod>
+  <SqlMethod name="selectIsBusinessUnit" type="preparedStatement" return="String">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT ISBUSINESSUNIT
+        FROM AD_OrgType 
+        WHERE AD_OrgType_ID=? 
+      ]]>
+    </Sql>
+    <Parameter name="adOrgId"/>
+  </SqlMethod>
 </SqlClass>

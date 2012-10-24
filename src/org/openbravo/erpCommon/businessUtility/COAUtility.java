@@ -159,12 +159,12 @@ public class COAUtility {
     // Not meaningful message, but set to keep backwards compatibility
     logEvent("@C_ElementValue_ID@ #");
 
-    log4j.debug("createAccounting() - Inserting accounting schema");
+    log4j.debug("createAccounting() - Inserting accounting schema (general ledger)");
     obeResult = insertAccountingSchema(strGAAPProvided, strCostingMethodProvided, currency,
         hasBPartner, hasProduct, hasProject, hasMCampaign, hasSRegion);
     if (!obeResult.getType().equals(strMessageOk))
       return obeResult;
-    log4j.debug("createAccounting() - Accounting schema correctly inserted");
+    log4j.debug("createAccounting() - Accounting schema (general ledger) correctly inserted");
 
     return obeResult;
   }
@@ -236,17 +236,19 @@ public class COAUtility {
       strCostingMethod = "A"; // AD_Reference_ID=122
     String strAcctSchemaName = (organization == null) ? client.getName() : organization.getName()
         + " " + strGAAP + "/" + strCostingMethod + "/" + currency.getDescription();
-    log4j.debug("insertAccountingSchema() - Creating accounting schema " + strAcctSchemaName);
+    log4j.debug("insertAccountingSchema() - Creating accounting schema (general ledger) "
+        + strAcctSchemaName);
     AcctSchema acctSchema = null;
     try {
       acctSchema = InitialSetupUtility.insertAcctSchema(client, organization, currency,
           strAcctSchemaName, strGAAP, strCostingMethod, true);
       if (acctSchema == null)
         return logError("@CreateAccountingFailed@",
-            "insertAccountingSchema() - Could not create accounting schema " + strAcctSchemaName);
+            "insertAccountingSchema() - Could not create accounting schema (general ledger)"
+                + strAcctSchemaName);
     } catch (Exception e) {
       return logError("@CreateAccountingFailed@",
-          "insertAccountingSchema() - Exception occured while creating accounting schema "
+          "insertAccountingSchema() - Exception occured while creating accounting schema (general ledger)"
               + strAcctSchemaName, e);
     }
     log4j.debug("insertAccountingSchema() - Retrieving Reference List elements belonging to"
@@ -285,12 +287,13 @@ public class COAUtility {
         } catch (Exception e) {
           return logError(
               "@CreateAccountingFailed@",
-              "insertAccountingSchema() - Error while creating accounting schema element for organization",
+              "insertAccountingSchema() - Error while creating accounting schema element (general ledger element) for organization",
               e);
         }
         if (organizationAcctSchemaElement == null)
-          return logError("@CreateAccountingFailed@",
-              "insertAccountingSchema() - Error while creating accounting schema element for organization");
+          return logError(
+              "@CreateAccountingFailed@",
+              "insertAccountingSchema() - Error while creating accounting schema element (general ledger element) for organization");
         logEvent("@C_AcctSchema_Element_ID@=" + listElement.getName());
       }
       if (strElement.equals(ACCT_SCHEMA_ELEMENT_ACCOUNT)) {
@@ -301,12 +304,13 @@ public class COAUtility {
         } catch (Exception e) {
           return logError(
               "@CreateAccountingFailed@",
-              "insertAccountingSchema() - Error while creating accounting schema element for account",
+              "insertAccountingSchema() - Error while creating accounting schema element (general ledger element) for account",
               e);
         }
         if (accountAcctSchemaElement == null)
-          return logError("@CreateAccountingFailed@",
-              "insertAccountingSchema() - Error while creating accounting schema element for account");
+          return logError(
+              "@CreateAccountingFailed@",
+              "insertAccountingSchema() - Error while creating accounting schema element (general ledger element) for account");
         logEvent("@C_AcctSchema_Element_ID@=" + listElement.getName());
       }
       if (strElement.equals(ACCT_SCHEMA_ELEMENT_PRODUCT) && hasProduct) {
@@ -316,12 +320,13 @@ public class COAUtility {
         } catch (Exception e) {
           return logError(
               "@CreateAccountingFailed@",
-              "insertAccountingSchema() - Error while creating accounting schema element for product",
+              "insertAccountingSchema() - Error while creating accounting schema element (general ledger element) for product",
               e);
         }
         if (productAcctSchemaElement == null)
-          return logError("@CreateAccountingFailed@",
-              "insertAccountingSchema() - Error while creating accounting schema element for product");
+          return logError(
+              "@CreateAccountingFailed@",
+              "insertAccountingSchema() - Error while creating accounting schema element (general ledger element) for product");
         logEvent("@C_AcctSchema_Element_ID@=" + listElement.getName());
       }
       if (strElement.equals(ACCT_SCHEMA_ELEMENT_BP) && hasBPartner) {
@@ -331,12 +336,13 @@ public class COAUtility {
         } catch (Exception e) {
           return logError(
               "@CreateAccountingFailed@",
-              "insertAccountingSchema() - Error while creating accounting schema element for business partner",
+              "insertAccountingSchema() - Error while creating accounting schema element (general ledger element) for business partner",
               e);
         }
         if (bpartnerAcctSchemaElement == null)
-          return logError("@CreateAccountingFailed@",
-              "insertAccountingSchema() - Error while creating accounting schema element for business partner");
+          return logError(
+              "@CreateAccountingFailed@",
+              "insertAccountingSchema() - Error while creating accounting schema element (general ledger element) for business partner");
         logEvent("@C_AcctSchema_Element_ID@=" + listElement.getName());
       }
       if (strElement.equals(ACCT_SCHEMA_ELEMENT_PROJECT) && hasProject) {
@@ -344,12 +350,14 @@ public class COAUtility {
           projectAcctSchemaElement = InitialSetupUtility.insertAcctSchemaElement(acctSchema,
               organization, listElement, 50L, false, false, null, element);
         } catch (Exception e) {
-          return logError("@CreateAccountingFailed@",
-              "insertAccountingSchema() - Error while creating accounting schema element for project");
+          return logError(
+              "@CreateAccountingFailed@",
+              "insertAccountingSchema() - Error while creating accounting schema element (general ledger element) for project");
         }
         if (projectAcctSchemaElement == null)
-          return logError("@CreateAccountingFailed@",
-              "insertAccountingSchema() - Error while creating accounting schema element for project");
+          return logError(
+              "@CreateAccountingFailed@",
+              "insertAccountingSchema() - Error while creating accounting schema element (general ledger element) for project");
         logEvent("@C_AcctSchema_Element_ID@=" + listElement.getName());
       }
       if (strElement.equals(ACCT_SCHEMA_ELEMENT_CAMPAIGN) && hasMCampaign) {
@@ -359,12 +367,13 @@ public class COAUtility {
         } catch (Exception e) {
           return logError(
               "@CreateAccountingFailed@",
-              "insertAccountingSchema() - Error while creating accounting schema element for campaign",
+              "insertAccountingSchema() - Error while creating accounting schema element (general ledger element) for campaign",
               e);
         }
         if (campaignAcctSchemaElement == null)
-          return logError("@CreateAccountingFailed@",
-              "insertAccountingSchema() - Error while creating accounting schema element for campaign");
+          return logError(
+              "@CreateAccountingFailed@",
+              "insertAccountingSchema() - Error while creating accounting schema element (general ledger element) for campaign");
         logEvent("@C_AcctSchema_Element_ID@=" + listElement.getName());
       }
       if (strElement.equals(ACCT_SCHEMA_ELEMENT_SALESREGION) && hasSRegion) {
@@ -374,12 +383,13 @@ public class COAUtility {
         } catch (Exception e) {
           return logError(
               "@CreateAccountingFailed@",
-              "insertAccountingSchema() - Error while creating accounting schema element for sales region",
+              "insertAccountingSchema() - Error while creating accounting schema element (general ledger element) for sales region",
               e);
         }
         if (salesregionAcctSchemaElement == null)
-          return logError("@CreateAccountingFailed@",
-              "insertAccountingSchema() - Error while creating accounting schema element for sales region");
+          return logError(
+              "@CreateAccountingFailed@",
+              "insertAccountingSchema() - Error while creating accounting schema element (general ledger element) for sales region");
         logEvent("@C_AcctSchema_Element_ID@=" + listElement.getName());
       }
     }
@@ -413,7 +423,7 @@ public class COAUtility {
           "insertAccountingSchema() - Exception while creating acct. schema defaults entry in database");
     log4j.debug("insertAccountingSchema() - Acct.schema defaults correctly iserted.");
 
-    log4j.debug("insertAccountingSchema() - Inserting Organization Accounting Schema record.");
+    log4j.debug("insertAccountingSchema() - Inserting Organization  (general ledger) record.");
     OrganizationAcctSchema orgAcctSchema = null;
     if (organization != null && organization.getId() != "0") {
       try {
@@ -425,9 +435,12 @@ public class COAUtility {
             e);
       }
 
-      if (orgAcctSchema == null)
+      if (orgAcctSchema == null) {
         return logError("@CreateAccountingFailed@",
             "insertAccountingSchema() - Exception while creating organization - acct. schema entry");
+      } else {
+        organization.setGeneralLedger(acctSchema);
+      }
     }
     return obeResult;
   }

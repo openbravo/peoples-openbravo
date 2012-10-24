@@ -1342,8 +1342,8 @@
 <!--3F41C500ECEB40D09089FEA4C3793F29-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--3F41C500ECEB40D09089FEA4C3793F29-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--3F41C500ECEB40D09089FEA4C3793F29-->  <NAME><![CDATA[Accounting Schema]]></NAME>
-<!--3F41C500ECEB40D09089FEA4C3793F29-->  <DESCRIPTION><![CDATA[The structure used in accounting including costing methods, currencies, and the calendar.]]></DESCRIPTION>
-<!--3F41C500ECEB40D09089FEA4C3793F29-->  <HELP><![CDATA[An Accounting Schema defines the rules used in accounting such as costing method, currency and calendar]]></HELP>
+<!--3F41C500ECEB40D09089FEA4C3793F29-->  <DESCRIPTION><![CDATA[The book containing all financial transactions recorded for the legal entity.]]></DESCRIPTION>
+<!--3F41C500ECEB40D09089FEA4C3793F29-->  <HELP><![CDATA[The book containing all financial transactions recorded for the legal entity.]]></HELP>
 <!--3F41C500ECEB40D09089FEA4C3793F29-->  <COLUMNNAME><![CDATA[C_Acctschema_ID]]></COLUMNNAME>
 <!--3F41C500ECEB40D09089FEA4C3793F29-->  <AD_TABLE_ID><![CDATA[FF80808130BB89090130BB8E3D7E0012]]></AD_TABLE_ID>
 <!--3F41C500ECEB40D09089FEA4C3793F29-->  <AD_REFERENCE_ID><![CDATA[19]]></AD_REFERENCE_ID>
@@ -4926,8 +4926,8 @@ The distribution algorithm will be driven by this priority. The pending payments
 <!--96221416E24540059B9BEFEC5F09D3FF-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--96221416E24540059B9BEFEC5F09D3FF-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--96221416E24540059B9BEFEC5F09D3FF-->  <NAME><![CDATA[Accounting Schema]]></NAME>
-<!--96221416E24540059B9BEFEC5F09D3FF-->  <DESCRIPTION><![CDATA[The structure used in accounting including costing methods, currencies, and the calendar.]]></DESCRIPTION>
-<!--96221416E24540059B9BEFEC5F09D3FF-->  <HELP><![CDATA[An Accounting Schema defines the rules used in accounting such as costing method, currency and calendar]]></HELP>
+<!--96221416E24540059B9BEFEC5F09D3FF-->  <DESCRIPTION><![CDATA[The book containing all financial transactions recorded for the legal entity.]]></DESCRIPTION>
+<!--96221416E24540059B9BEFEC5F09D3FF-->  <HELP><![CDATA[The book containing all financial transactions recorded for the legal entity.]]></HELP>
 <!--96221416E24540059B9BEFEC5F09D3FF-->  <COLUMNNAME><![CDATA[C_Acctschema_ID]]></COLUMNNAME>
 <!--96221416E24540059B9BEFEC5F09D3FF-->  <AD_TABLE_ID><![CDATA[1BAA61D216CB4A62838AA785658EE092]]></AD_TABLE_ID>
 <!--96221416E24540059B9BEFEC5F09D3FF-->  <AD_REFERENCE_ID><![CDATA[30]]></AD_REFERENCE_ID>

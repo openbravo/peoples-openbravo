@@ -1874,9 +1874,9 @@ Usually, company's internal identifiers for various records (products, customers
 <!--283-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--283-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--283-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--283-->  <NAME><![CDATA[Accounting Schema]]></NAME>
-<!--283-->  <DESCRIPTION><![CDATA[The structure used in accounting including costing methods, currencies, and the calendar.]]></DESCRIPTION>
-<!--283-->  <HELP><![CDATA[An Accounting Schema defines the rules used in accounting such as costing method, currency and calendar]]></HELP>
+<!--283-->  <NAME><![CDATA[General Ledger]]></NAME>
+<!--283-->  <DESCRIPTION><![CDATA[The book containing all financial transactions recorded for the legal entity.]]></DESCRIPTION>
+<!--283-->  <HELP><![CDATA[The book containing all financial transactions recorded for the legal entity.]]></HELP>
 <!--283-->  <AD_PROCESS_ID><![CDATA[203]]></AD_PROCESS_ID>
 <!--283-->  <SEQNO><![CDATA[10]]></SEQNO>
 <!--283-->  <AD_REFERENCE_ID><![CDATA[19]]></AD_REFERENCE_ID>
@@ -2146,9 +2146,9 @@ Usually, company's internal identifiers for various records (products, customers
 <!--298-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--298-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--298-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--298-->  <NAME><![CDATA[Accounting Schema]]></NAME>
-<!--298-->  <DESCRIPTION><![CDATA[The structure used in accounting including costing methods, currencies, and the calendar.]]></DESCRIPTION>
-<!--298-->  <HELP><![CDATA[An Accounting Schema defines the rules used in accounting such as costing method, currency and calendar]]></HELP>
+<!--298-->  <NAME><![CDATA[General Ledger]]></NAME>
+<!--298-->  <DESCRIPTION><![CDATA[The book containing all financial transactions recorded for the legal entity.]]></DESCRIPTION>
+<!--298-->  <HELP><![CDATA[The book containing all financial transactions recorded for the legal entity.]]></HELP>
 <!--298-->  <AD_PROCESS_ID><![CDATA[204]]></AD_PROCESS_ID>
 <!--298-->  <SEQNO><![CDATA[5]]></SEQNO>
 <!--298-->  <AD_REFERENCE_ID><![CDATA[19]]></AD_REFERENCE_ID>
@@ -2904,9 +2904,9 @@ Usually, company's internal identifiers for various records (products, customers
 <!--364-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--364-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--364-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--364-->  <NAME><![CDATA[Accounting Schema]]></NAME>
-<!--364-->  <DESCRIPTION><![CDATA[The structure used in accounting including costing methods, currencies, and the calendar.]]></DESCRIPTION>
-<!--364-->  <HELP><![CDATA[An Accounting Schema defines the rules used in accounting such as costing method, currency and calendar]]></HELP>
+<!--364-->  <NAME><![CDATA[General Ledger]]></NAME>
+<!--364-->  <DESCRIPTION><![CDATA[The book containing all financial transactions recorded for the legal entity.]]></DESCRIPTION>
+<!--364-->  <HELP><![CDATA[The book containing all financial transactions recorded for the legal entity.]]></HELP>
 <!--364-->  <AD_PROCESS_ID><![CDATA[226]]></AD_PROCESS_ID>
 <!--364-->  <SEQNO><![CDATA[10]]></SEQNO>
 <!--364-->  <AD_REFERENCE_ID><![CDATA[19]]></AD_REFERENCE_ID>
@@ -3804,9 +3804,9 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1000600000-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--1000600000-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1000600000-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1000600000-->  <NAME><![CDATA[Accounting Schema]]></NAME>
-<!--1000600000-->  <DESCRIPTION><![CDATA[The structure used in accounting including costing methods, currencies, and the calendar.]]></DESCRIPTION>
-<!--1000600000-->  <HELP><![CDATA[An Accounting Schema defines the rules used in accounting such as costing method, currency and calendar]]></HELP>
+<!--1000600000-->  <NAME><![CDATA[General Ledger]]></NAME>
+<!--1000600000-->  <DESCRIPTION><![CDATA[The book containing all financial transactions recorded for the legal entity.]]></DESCRIPTION>
+<!--1000600000-->  <HELP><![CDATA[The book containing all financial transactions recorded for the legal entity.]]></HELP>
 <!--1000600000-->  <AD_PROCESS_ID><![CDATA[140]]></AD_PROCESS_ID>
 <!--1000600000-->  <SEQNO><![CDATA[20]]></SEQNO>
 <!--1000600000-->  <AD_REFERENCE_ID><![CDATA[19]]></AD_REFERENCE_ID>
@@ -3825,9 +3825,9 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1000600001-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--1000600001-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1000600001-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1000600001-->  <NAME><![CDATA[Accounting Schema]]></NAME>
-<!--1000600001-->  <DESCRIPTION><![CDATA[The structure used in accounting including costing methods, currencies, and the calendar.]]></DESCRIPTION>
-<!--1000600001-->  <HELP><![CDATA[An Accounting Schema defines the rules used in accounting such as costing method, currency and calendar]]></HELP>
+<!--1000600001-->  <NAME><![CDATA[General Ledger]]></NAME>
+<!--1000600001-->  <DESCRIPTION><![CDATA[The book containing all financial transactions recorded for the legal entity.]]></DESCRIPTION>
+<!--1000600001-->  <HELP><![CDATA[The book containing all financial transactions recorded for the legal entity.]]></HELP>
 <!--1000600001-->  <AD_PROCESS_ID><![CDATA[112]]></AD_PROCESS_ID>
 <!--1000600001-->  <SEQNO><![CDATA[20]]></SEQNO>
 <!--1000600001-->  <AD_REFERENCE_ID><![CDATA[19]]></AD_REFERENCE_ID>
@@ -3990,9 +3990,9 @@ Price Lists are used to determine the pricing, margin and cost of items purchase
 <!--0A83F9207E2A49C99E275A6EE7340989-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--0A83F9207E2A49C99E275A6EE7340989-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--0A83F9207E2A49C99E275A6EE7340989-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--0A83F9207E2A49C99E275A6EE7340989-->  <NAME><![CDATA[Accounting Schema]]></NAME>
-<!--0A83F9207E2A49C99E275A6EE7340989-->  <DESCRIPTION><![CDATA[The structure used in accounting including costing methods, currencies, and the calendar.]]></DESCRIPTION>
-<!--0A83F9207E2A49C99E275A6EE7340989-->  <HELP><![CDATA[An Accounting Schema defines the rules used in accounting such as costing method, currency and calendar]]></HELP>
+<!--0A83F9207E2A49C99E275A6EE7340989-->  <NAME><![CDATA[General Ledger]]></NAME>
+<!--0A83F9207E2A49C99E275A6EE7340989-->  <DESCRIPTION><![CDATA[The book containing all financial transactions recorded for the legal entity.]]></DESCRIPTION>
+<!--0A83F9207E2A49C99E275A6EE7340989-->  <HELP><![CDATA[The book containing all financial transactions recorded for the legal entity.]]></HELP>
 <!--0A83F9207E2A49C99E275A6EE7340989-->  <AD_PROCESS_ID><![CDATA[108]]></AD_PROCESS_ID>
 <!--0A83F9207E2A49C99E275A6EE7340989-->  <SEQNO><![CDATA[20]]></SEQNO>
 <!--0A83F9207E2A49C99E275A6EE7340989-->  <AD_REFERENCE_ID><![CDATA[19]]></AD_REFERENCE_ID>
@@ -4283,9 +4283,9 @@ The distribution algorithm will be driven by this priority. The pending payments
 <!--A49C24DB7D4E423183D1C18CA79F4861-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--A49C24DB7D4E423183D1C18CA79F4861-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--A49C24DB7D4E423183D1C18CA79F4861-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--A49C24DB7D4E423183D1C18CA79F4861-->  <NAME><![CDATA[Accounting Schema]]></NAME>
-<!--A49C24DB7D4E423183D1C18CA79F4861-->  <DESCRIPTION><![CDATA[The structure used in accounting including costing methods, currencies, and the calendar.]]></DESCRIPTION>
-<!--A49C24DB7D4E423183D1C18CA79F4861-->  <HELP><![CDATA[An Accounting Schema defines the rules used in accounting such as costing method, currency and calendar]]></HELP>
+<!--A49C24DB7D4E423183D1C18CA79F4861-->  <NAME><![CDATA[General Ledger]]></NAME>
+<!--A49C24DB7D4E423183D1C18CA79F4861-->  <DESCRIPTION><![CDATA[The book containing all financial transactions recorded for the legal entity.]]></DESCRIPTION>
+<!--A49C24DB7D4E423183D1C18CA79F4861-->  <HELP><![CDATA[The book containing all financial transactions recorded for the legal entity.]]></HELP>
 <!--A49C24DB7D4E423183D1C18CA79F4861-->  <AD_PROCESS_ID><![CDATA[800136]]></AD_PROCESS_ID>
 <!--A49C24DB7D4E423183D1C18CA79F4861-->  <SEQNO><![CDATA[20]]></SEQNO>
 <!--A49C24DB7D4E423183D1C18CA79F4861-->  <AD_REFERENCE_ID><![CDATA[19]]></AD_REFERENCE_ID>
