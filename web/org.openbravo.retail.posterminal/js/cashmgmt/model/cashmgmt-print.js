@@ -12,11 +12,11 @@
 (function () {
 
   var PrintCashMgmt = function () {
-    this.templatecashmgmt = new OB.DS.HWResource(OB.OBPOSCashMgmt.Print.CashMgmtTemplate);
-  };
+      this.templatecashmgmt = new OB.DS.HWResource(OB.OBPOSCashMgmt.Print.CashMgmtTemplate);
+      };
 
   PrintCashMgmt.prototype.print = function (depsdropstosend) {
-    
+
     OB.POS.hwserver.print(this.templatecashmgmt, {
       cashmgmt: depsdropstosend
     });

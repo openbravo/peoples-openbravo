@@ -29,14 +29,14 @@ enyo.kind({
     name: 'image',
     style: 'margin: auto; height: 100%; width: 100%; background-size: contain;'
   }],
-  initComponents: function() {
+  initComponents: function () {
     this.inherited(arguments);
     this.applyStyle('height', this.height);
     this.applyStyle('width', this.width);
     this.imgChanged();
   },
 
-  imgChanged: function() {
+  imgChanged: function () {
     var url = (this.img) ? 'data:' + this.contentType + ';base64,' + this.img : this['default'];
     this.$.image.applyStyle('background', '#ffffff url(' + url + ') center center no-repeat');
     this.$.image.applyStyle('background-size', 'contain');
@@ -61,7 +61,7 @@ enyo.kind({
     name: 'txt'
   }],
   statics: {
-    display: function(txt, title, type) {
+    display: function (txt, title, type) {
       var alert = new(enyo.kind({
         kind: 'OB.UTIL.showAlert',
         title: title,
@@ -73,19 +73,19 @@ enyo.kind({
     }
   },
 
-  initComponents: function() {
+  initComponents: function () {
     this.inherited(arguments);
     this.$.title.setContent(this.title);
     this.$.txt.setContent(this.txt);
     this.addClass('alert fade in ' + this.type);
 
-    setTimeout(function() {
+    setTimeout(function () {
       $('.alert').alert('close');
     }, 5000);
   }
 });
 
-OB.UTIL.isSupportedBrowser = function() {
+OB.UTIL.isSupportedBrowser = function () {
   if ($.browser.webkit && window.openDatabase) { //If the browser is not supported, show message and finish.
     return true;
   } else {
@@ -93,7 +93,7 @@ OB.UTIL.isSupportedBrowser = function() {
   }
 };
 
-OB.UTIL.showLoading = function(value) {
+OB.UTIL.showLoading = function (value) {
   if (value) {
     $('#containerLoading').css('display', '');
     $('#containerWindow').css('display', 'none');
@@ -103,26 +103,26 @@ OB.UTIL.showLoading = function(value) {
   }
 };
 
-OB.UTIL.showSuccess = function(s) {
+OB.UTIL.showSuccess = function (s) {
   OB.UTIL.showAlert.display(s, OB.I18N.getLabel('OBPOS_LblSuccess'), 'alert-success');
 };
 
-OB.UTIL.showWarning = function(s) {
+OB.UTIL.showWarning = function (s) {
   OB.UTIL.showAlert.display(s, OB.I18N.getLabel('OBPOS_LblWarning'), '');
 };
 
-OB.UTIL.showStatus = function(s) {
+OB.UTIL.showStatus = function (s) {
   return OB.UTIL.showAlert.display(s, 'Wait', '');
 };
 
-OB.UTIL.showError = function(s) {
+OB.UTIL.showError = function (s) {
   OB.UTIL.showLoading(false);
   OB.UTIL.showAlert.display(s, OB.I18N.getLabel('OBPOS_LblError'), 'alert-error');
 };
 
 /* This will automatically set the focus in the first focusable item in the modal popup */
-OB.UTIL.focusInModal = function(modalObj) {
-  modalObj.on('shown', function(e) {
+OB.UTIL.focusInModal = function (modalObj) {
+  modalObj.on('shown', function (e) {
     var firstFocusableItem = $(this).find('input,select,button').filter(':visible:enabled:first');
     if (firstFocusableItem) {
       firstFocusableItem.focus();
@@ -133,8 +133,8 @@ OB.UTIL.focusInModal = function(modalObj) {
 
 /* Twitter Bootstrap is not able to position in a good way a modal popup based on the 'left' and 'top' css parameters.
  * This function fixes it */
-OB.UTIL.adjustModalPosition = function(modalObj) {
-  modalObj.on('shown', function(e) {
+OB.UTIL.adjustModalPosition = function (modalObj) {
+  modalObj.on('shown', function (e) {
     function getCSSPosition(element, type) {
       var position = element.css(type);
       if (position && position.indexOf('%') !== -1) {

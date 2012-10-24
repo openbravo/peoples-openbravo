@@ -16,7 +16,7 @@
     tableName: 'm_product_category',
     entityName: 'ProductCategory',
     source: 'org.openbravo.retail.posterminal.master.Category',
-    dataLimit: 300,    
+    dataLimit: 300,
     properties: ['id', 'searchKey', 'name', 'img', '_identifier', '_idx'],
     propertyMap: {
       'id': 'm_product_category_id',

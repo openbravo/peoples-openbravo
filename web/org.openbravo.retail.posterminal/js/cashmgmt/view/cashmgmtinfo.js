@@ -45,7 +45,7 @@ enyo.kind({
   classes: 'btnlink-white btnlink-fontgray',
   style: 'min-width: 115px;',
   content: OB.I18N.getLabel('OBPOS_LblDone'),
-  tap: function() {
+  tap: function () {
     this.owner.owner.model.depsdropstosend.trigger('makeDeposits');
   }
 });

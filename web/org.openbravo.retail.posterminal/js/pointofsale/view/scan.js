@@ -41,7 +41,7 @@ enyo.kind({
             kind: 'OB.UI.SmallButton',
             content: OB.I18N.getLabel('OBPOS_LblUndo'),
             classes: 'btnlink-white btnlink-fontblue',
-            tap: function() {
+            tap: function () {
               if (this.undoclick) {
                 this.undoclick();
               }
@@ -52,15 +52,15 @@ enyo.kind({
     }]
   }],
 
-  receiptChanged: function() {
-    this.receipt.on('clear change:undo', function() {
+  receiptChanged: function () {
+    this.receipt.on('clear change:undo', function () {
       this.manageUndo();
     }, this);
 
     this.manageUndo();
   },
 
-  manageUndo: function() {
+  manageUndo: function () {
     var undoaction = this.receipt.get('undo');
 
     if (undoaction) {

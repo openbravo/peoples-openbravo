@@ -22,13 +22,14 @@ enyo.kind({
     classes: 'unstyled nav-pos row-fluid',
     name: 'toolbar'
   }],
-  tabButtonTapHandler: function(sender, event) {
+  tabButtonTapHandler: function (sender, event) {
     if (event.tabPanel) {
       this.setTabButtonActive(event.tabPanel);
     }
   },
-  setTabButtonActive: function(tabName) {
-    var buttonContainerArray = this.getComponents()[0].getComponents(), i;
+  setTabButtonActive: function (tabName) {
+    var buttonContainerArray = this.getComponents()[0].getComponents(),
+        i;
 
     for (i = 0; i < buttonContainerArray.length; i++) {
       buttonContainerArray[i].removeClass('active');
@@ -37,10 +38,12 @@ enyo.kind({
       }
     }
   },
-  manualTap: function(tabName) {
+  manualTap: function (tabName) {
     var tab;
+
     function getButtonByName(name, me) {
-      var componentArray = me.$.toolbar.getComponents(), i;
+      var componentArray = me.$.toolbar.getComponents(),
+          i;
       for (i = 0; i < componentArray.length; i++) {
         if (componentArray[i].$.theButton.getComponents()[0].name === name) {
           return componentArray[i].$.theButton.getComponents()[0];
@@ -54,9 +57,9 @@ enyo.kind({
       tab.tap();
     }
   },
-  initComponents: function() {
+  initComponents: function () {
     this.inherited(arguments);
-    enyo.forEach(this.buttons, function(btn) {
+    enyo.forEach(this.buttons, function (btn) {
       this.$.toolbar.createComponent({
         kind: 'OB.OBPOSPointOfSale.UI.RightToolbarButton',
         button: btn
@@ -93,10 +96,10 @@ enyo.kind({
     containerCssClass: 'span2'
   }],
 
-  receiptChanged: function() {
+  receiptChanged: function () {
     var totalPrinterComponent;
 
-    this.receipt.on('clear scan', function() {
+    this.receipt.on('clear scan', function () {
       if (this.receipt.get('isEditable') === false) {
         this.manualTap('edit');
       } else {
@@ -104,7 +107,7 @@ enyo.kind({
       }
     }, this);
 
-    this.receipt.get('lines').on('click', function() {
+    this.receipt.get('lines').on('click', function () {
       this.manualTap('edit');
     }, this);
 
@@ -112,7 +115,7 @@ enyo.kind({
     this.waterfall('onChangeTotal', {
       newTotal: this.receipt.getTotal()
     });
-    this.receipt.on('change:gross', function(model) {
+    this.receipt.on('change:gross', function (model) {
       this.waterfall('onChangeTotal', {
         newTotal: this.receipt.getTotal()
       });
@@ -130,7 +133,7 @@ enyo.kind({
       style: 'margin: 0px 5px 0px 5px;'
     }
   }],
-  initComponents: function() {
+  initComponents: function () {
     this.inherited(arguments);
     if (this.button.containerCssClass) {
       this.setClassAttribute(this.button.containerCssClass);
@@ -150,7 +153,7 @@ enyo.kind({
   events: {
     onTabChange: ''
   },
-  tap: function() {
+  tap: function () {
     this.doTabChange({
       tabPanel: this.tabPanel,
       keyboard: 'toolbarscan',
@@ -167,7 +170,7 @@ enyo.kind({
   },
   tabPanel: 'catalog',
   label: OB.I18N.getLabel('OBPOS_LblBrowse'),
-  tap: function() {
+  tap: function () {
     this.doTabChange({
       tabPanel: this.tabPanel,
       keyboard: false,
@@ -184,14 +187,14 @@ enyo.kind({
   events: {
     onTabChange: ''
   },
-  tap: function() {
+  tap: function () {
     this.doTabChange({
       tabPanel: this.tabPanel,
       keyboard: false,
       edit: false
     });
   },
-  initComponents: function() {
+  initComponents: function () {
     this.inherited(arguments);
   }
 });
@@ -206,7 +209,7 @@ enyo.kind({
   events: {
     onTabChange: ''
   },
-  tap: function() {
+  tap: function () {
     if (this.model.get('order').get('isEditable') === false) {
       return true;
     }
@@ -229,16 +232,16 @@ enyo.kind({
       name: 'totalPrinter'
     }]
   }],
-  initComponents: function() {
+  initComponents: function () {
     this.inherited(arguments);
     this.removeClass('btnlink-gray');
   },
-  renderTotal: function(sender, event) {
+  renderTotal: function (sender, event) {
     this.$.totalPrinter.renderTotal(event.newTotal);
   },
-  init: function(model) {
+  init: function (model) {
     this.model = model;
-    this.model.get('order').on('change:isEditable', function(newValue) {
+    this.model.get('order').on('change:isEditable', function (newValue) {
       if (newValue) {
         if (newValue.get('isEditable') === false) {
           this.tabPanel = null;
@@ -265,7 +268,7 @@ enyo.kind({
   events: {
     onTabChange: ''
   },
-  tap: function() {
+  tap: function () {
     this.doTabChange({
       tabPanel: this.tabPanel,
       keyboard: 'toolbarscan',
@@ -302,13 +305,14 @@ enyo.kind({
     kind: 'OB.OBPOSPointOfSale.UI.TabEditLine',
     name: 'edit'
   }],
-  tabButtonTapHandler: function(sender, event) {
+  tabButtonTapHandler: function (sender, event) {
     if (event.tabPanel) {
       this.showPane(event.tabPanel);
     }
   },
-  showPane: function(tabName) {
-    var paneArray = this.getComponents(), i;
+  showPane: function (tabName) {
+    var paneArray = this.getComponents(),
+        i;
 
     for (i = 0; i < paneArray.length; i++) {
       paneArray[i].removeClass('active');
@@ -317,7 +321,7 @@ enyo.kind({
       }
     }
   },
-  modelChanged: function() {
+  modelChanged: function () {
     var receipt = this.model.get('order');
     this.$.scan.setReceipt(receipt);
     this.$.search.setReceipt(receipt);
@@ -342,7 +346,7 @@ enyo.kind({
       }]
     }]
   }],
-  receiptChanged: function() {
+  receiptChanged: function () {
     this.$.search.setReceipt(this.receipt);
   }
 });
@@ -365,7 +369,7 @@ enyo.kind({
     kind: 'OB.OBPOSPointOfSale.UI.Scan',
     name: 'scan'
   }],
-  receiptChanged: function() {
+  receiptChanged: function () {
     this.$.scan.setReceipt(this.receipt);
   }
 });
@@ -380,7 +384,7 @@ enyo.kind({
     kind: 'OB.OBPOSPointOfSale.UI.EditLine',
     name: 'edit'
   }],
-  receiptChanged: function() {
+  receiptChanged: function () {
     this.$.edit.setReceipt(this.receipt);
   }
 });
@@ -395,7 +399,7 @@ enyo.kind({
     kind: 'OB.OBPOSPointOfSale.UI.Payment',
     name: 'payment'
   }],
-  receiptChanged: function() {
+  receiptChanged: function () {
     this.$.payment.setReceipt(this.receipt);
   }
 });

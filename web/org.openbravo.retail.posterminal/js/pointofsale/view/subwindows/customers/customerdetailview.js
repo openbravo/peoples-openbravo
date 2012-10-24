@@ -12,7 +12,7 @@
 enyo.kind({
   kind: 'OB.UI.subwindow',
   name: 'OB.OBPOSPointOfSale.customers.UI.editcustomer',
-  beforeSetShowing: function(params) {
+  beforeSetShowing: function (params) {
     if (OB.POS.modelterminal.get('terminal').defaultbp_paymentmethod !== null && OB.POS.modelterminal.get('terminal').defaultbp_bpcategory !== null && OB.POS.modelterminal.get('terminal').defaultbp_paymentterm !== null && OB.POS.modelterminal.get('terminal').defaultbp_invoiceterm !== null && OB.POS.modelterminal.get('terminal').defaultbp_bpcountry !== null && OB.POS.modelterminal.get('terminal').defaultbp_bporg !== null) {
 
       this.waterfall('onSetCustomer', {
@@ -28,7 +28,7 @@ enyo.kind({
   header: {
     kind: 'OB.UI.subwindowheader',
     headermessage: OB.I18N.getLabel('OBPOS_TitleViewCustomer'),
-    onTapCloseButton: function() {
+    onTapCloseButton: function () {
       var subWindow = this.subWindow;
       subWindow.doChangeSubWindow({
         newWindow: {
@@ -56,10 +56,10 @@ enyo.kind({
   events: {
     onChangeBusinessPartner: ''
   },
-  setCustomer: function(sender, event) {
+  setCustomer: function (sender, event) {
     this.customer = event.customer;
   },
-  tap: function() {
+  tap: function () {
     var sw = this.subWindow;
     sw.doChangeSubWindow({
       newWindow: {
@@ -70,7 +70,7 @@ enyo.kind({
       businessPartner: this.customer
     });
   },
-  init: function(model) {
+  init: function (model) {
     this.model = model;
   }
 });
@@ -95,10 +95,10 @@ enyo.kind({
           style: 'width: 100px; margin: 0px 5px 8px 19px;',
           classes: 'btnlink-orange btnlink btnlink-small',
           content: OB.I18N.getLabel('OBPOS_LblEdit'),
-          setCustomer: function(sender, event) {
+          setCustomer: function (sender, event) {
             this.customer = event.customer;
           },
-          tap: function() {
+          tap: function () {
             this.model.get('subWindowManager').set('currentWindow', {
               name: 'customerCreateAndEdit',
               params: {
@@ -107,7 +107,7 @@ enyo.kind({
               }
             });
           },
-          init: function(model) {
+          init: function (model) {
             this.model = model;
           }
         }]
@@ -119,7 +119,7 @@ enyo.kind({
       }]
     }]
   }],
-  searchAction: function() {
+  searchAction: function () {
     this.doSearchAction({
       bpName: this.$.filterText.getValue()
     });

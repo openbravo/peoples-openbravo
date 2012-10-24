@@ -16,7 +16,7 @@ enyo.kind({
   },
   kind: 'OB.UI.Keyboard',
 
-  init: function() {
+  init: function () {
     this.inherited(arguments);
 
     this.addToolbar({
@@ -27,15 +27,15 @@ enyo.kind({
     this.showToolbar('toolbarempty');
   },
 
-  paymentsChanged: function() {
+  paymentsChanged: function () {
     var buttons = [];
-    this.payments.each(function(payment) {
+    this.payments.each(function (payment) {
       buttons.push({
         command: payment.get('_id'),
         definition: {
-          action: function(keyboard, amt) {
-            payment.set('foreignCounted', OB.DEC.add(0,amt));
-            payment.set('counted', OB.DEC.mul(amt,payment.get('rate')));
+          action: function (keyboard, amt) {
+            payment.set('foreignCounted', OB.DEC.add(0, amt));
+            payment.set('counted', OB.DEC.mul(amt, payment.get('rate')));
           }
         },
         label: payment.get('name')

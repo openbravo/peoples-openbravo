@@ -12,7 +12,7 @@
 OB.Model.WindowModel = Backbone.Model.extend({
   data: {},
 
-  load: function() {
+  load: function () {
     var me = this,
         queue = {};
     if (!this.models) {
@@ -21,7 +21,7 @@ OB.Model.WindowModel = Backbone.Model.extend({
 
     _.extend(this.models, Backbone.Events);
 
-    this.models.on('ready', function() {
+    this.models.on('ready', function () {
       if (this.init) {
         this.init();
       }
@@ -30,7 +30,7 @@ OB.Model.WindowModel = Backbone.Model.extend({
     }, this);
     if (OB.POS.modelterminal.get('connectedToERP')) {
       OB.Model.Util.loadModels(true, this.models, this.data);
-    }else{
+    } else {
       if (this.init) {
         this.init();
       }
@@ -39,7 +39,7 @@ OB.Model.WindowModel = Backbone.Model.extend({
     //TODO: load offline models when regesitering window
   },
 
-  setAllOff: function(model) {
+  setAllOff: function (model) {
     var p;
     if (model.off) {
       model.off();
@@ -53,19 +53,19 @@ OB.Model.WindowModel = Backbone.Model.extend({
     }
   },
 
-  setOff: function() {
+  setOff: function () {
     if (!this.data) {
       return;
     }
     if (this.data) {
-      _.forEach(this.data, function(model) {
+      _.forEach(this.data, function (model) {
         this.setAllOff(model);
       }, this);
     }
     this.data = null;
 
     if (this.models) {
-      _.forEach(this.models, function(model) {
+      _.forEach(this.models, function (model) {
         if (model.off) {
           model.off();
         }
@@ -77,7 +77,7 @@ OB.Model.WindowModel = Backbone.Model.extend({
     this.models = null;
   },
 
-  getData: function(dsName) {
+  getData: function (dsName) {
     return this.data[dsName];
   }
 });

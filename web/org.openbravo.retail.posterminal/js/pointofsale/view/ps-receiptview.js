@@ -56,12 +56,12 @@ enyo.kind({
       }]
     }]
   }],
-  orderChanged: function(oldValue) {
+  orderChanged: function (oldValue) {
     this.$.bpbutton.setOrder(this.order);
     this.$.orderdetails.setOrder(this.order);
     this.$.orderview.setOrder(this.order);
   },
-  orderListChanged: function(oldValue) {
+  orderListChanged: function (oldValue) {
     this.$.receiptcounter.setOrderList(this.orderList);
   }
 });

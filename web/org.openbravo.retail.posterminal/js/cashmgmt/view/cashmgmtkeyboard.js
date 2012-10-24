@@ -13,10 +13,10 @@
 enyo.kind({
   name: 'OB.OBPOSCashMgmt.UI.CashMgmtKeyboard',
   kind: 'OB.UI.Keyboard',
-  getPayment: function(id, key, name, identifier, type, rate, isocode) {
+  getPayment: function (id, key, name, identifier, type, rate, isocode) {
     return {
       permission: key,
-      action: function(keyboard, txt) {
+      action: function (keyboard, txt) {
         keyboard.owner.currentPayment = {
           id: id,
           amount: txt,
@@ -36,13 +36,13 @@ enyo.kind({
     };
   },
 
-  init: function() {
+  init: function () {
     var buttons = [];
     this.inherited(arguments);
     _.bind(this.getPayment, this);
 
 
-    this.owner.model.getData('DataCashMgmtPaymentMethod').each(function(paymentMethod) {
+    this.owner.model.getData('DataCashMgmtPaymentMethod').each(function (paymentMethod) {
       var payment = paymentMethod.get('payment');
       if (paymentMethod.get('allowdeposits')) {
         buttons.push({

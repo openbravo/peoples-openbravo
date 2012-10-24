@@ -27,7 +27,7 @@ enyo.kind({
       style: 'clear:both;'
     }]
   }],
-  initComponents: function() {
+  initComponents: function () {
     this.inherited(arguments);
     this.addClass('btnselect-browse');
     this.$.identifier.setContent(this.model.get('_identifier'));

@@ -16,18 +16,18 @@ enyo.kind({
   },
   classes: 'subwindow',
   showing: false,
-  mainBeforeSetShowing: function(args) {
-    if(args.caller){
-      this.caller = args.caller;  
+  mainBeforeSetShowing: function (args) {
+    if (args.caller) {
+      this.caller = args.caller;
     }
-    if (this.beforeSetShowing){
+    if (this.beforeSetShowing) {
       return this.beforeSetShowing(args);
     }
     return true;
   },
   header: {},
   body: {},
-  goBack: function() {
+  goBack: function () {
     //navigate to this.caller
   },
   components: [{
@@ -35,16 +35,16 @@ enyo.kind({
   }, {
     name: 'subWindowBody'
   }],
-  relComponentsWithSubWindow: function(comp, subWin) {
+  relComponentsWithSubWindow: function (comp, subWin) {
     if (!comp || !comp.getComponents) {
       return;
     }
-    enyo.forEach(comp.getComponents(), function(child) {
+    enyo.forEach(comp.getComponents(), function (child) {
       subWin.relComponentsWithSubWindow(child, subWin);
       child.subWindow = subWin;
     });
   },
-  initComponents: function() {
+  initComponents: function () {
     this.inherited(arguments);
     //set header
     this.$.subWindowHeader.createComponent(this.header);
@@ -73,7 +73,7 @@ enyo.kind({
     name: 'headermessage',
     content: OB.I18N.getLabel('OBPOS_TitleCustomerAdvancedSearch')
   }],
-  initComponents: function(){
+  initComponents: function () {
     this.inherited(arguments);
     this.$.headermessage.setContent(this.headermessage);
     this.$.closebutton.headerContainer = this.$.closebutton.parent;

@@ -31,7 +31,7 @@ enyo.kind({
   }, {
     style: 'clear:both;'
   }],
-  initComponents: function() {
+  initComponents: function () {
     this.inherited(arguments);
     this.$.identifier.setContent(this.model.get('_identifier'));
     this.$.price.setContent(OB.I18N.formatCurrency(this.model.get('price').get('standardPrice')));

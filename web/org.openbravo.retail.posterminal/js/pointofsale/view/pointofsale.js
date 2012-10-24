@@ -92,7 +92,7 @@ enyo.kind({
       }]
     }]
   }],
-  printReceipt: function() {
+  printReceipt: function () {
 
     if (OB.POS.modelterminal.hasPermission('OBPOS_print.receipt')) {
       var receipt = this.model.get('order');
@@ -100,25 +100,25 @@ enyo.kind({
         receipt.trigger('print');
         return;
       }
-      receipt.calculateTaxes(function() {
+      receipt.calculateTaxes(function () {
         receipt.trigger('print');
       });
     }
   },
-  paidReceipts: function(inSender, inEvent) {
+  paidReceipts: function (inSender, inEvent) {
     $('#modalPaidReceipts').modal('show');
     return true;
   },
-  backOffice: function(inSender, inEvent) {
+  backOffice: function (inSender, inEvent) {
     if (inEvent.url) {
       window.open(inEvent.url, '_blank');
     }
   },
-  addNewOrder: function(inSender, inEvent) {
+  addNewOrder: function (inSender, inEvent) {
     this.model.get('orderList').addNewOrder();
     return true;
   },
-  deleteCurrentOrder: function() {
+  deleteCurrentOrder: function () {
     if (this.model.get('order').get('id')) {
       this.model.get('orderList').saveCurrent();
       OB.Dal.remove(this.model.get('orderList').current, null, null);
@@ -126,7 +126,7 @@ enyo.kind({
     this.model.get('orderList').deleteCurrent();
     return true;
   },
-  addProductToOrder: function(inSender, inEvent) {
+  addProductToOrder: function (inSender, inEvent) {
     if (this.model.get('order').get('isEditable') === false) {
       $("#modalNotEditableOrder").modal("show");
       return true;
@@ -135,7 +135,7 @@ enyo.kind({
     this.model.get('orderList').saveCurrent();
     return true;
   },
-  changeBusinessPartner: function(inSender, inEvent) {
+  changeBusinessPartner: function (inSender, inEvent) {
     if (this.model.get('order').get('isEditable') === false) {
       $("#modalNotEditableOrder").modal("show");
       return true;
@@ -144,7 +144,7 @@ enyo.kind({
     this.model.get('orderList').saveCurrent();
     return true;
   },
-  receiptToInvoice: function() {
+  receiptToInvoice: function () {
     if (this.model.get('order').get('isEditable') === false) {
       $("#modalNotEditableOrder").modal("show");
       return true;
@@ -153,7 +153,7 @@ enyo.kind({
     this.model.get('orderList').saveCurrent();
     return true;
   },
-  showReturnText: function(inSender, inEvent) {
+  showReturnText: function (inSender, inEvent) {
     if (this.model.get('order').get('isEditable') === false) {
       $("#modalNotEditableOrder").modal("show");
       return true;
@@ -162,7 +162,7 @@ enyo.kind({
     this.model.get('orderList').saveCurrent();
     return true;
   },
-  cancelReceiptToInvoice: function(inSender, inEvent) {
+  cancelReceiptToInvoice: function (inSender, inEvent) {
     if (this.model.get('order').get('isEditable') === false) {
       $("#modalNotEditableOrder").modal("show");
       return true;
@@ -171,7 +171,7 @@ enyo.kind({
     this.model.get('orderList').saveCurrent();
     return true;
   },
-  tabChange: function(sender, event) {
+  tabChange: function (sender, event) {
     this.waterfall('onTabButtonTap', {
       tabPanel: event.tabPanel
     });
@@ -184,7 +184,7 @@ enyo.kind({
       this.$.keyboard.hide();
     }
   },
-  deleteLine: function(sender, event) {
+  deleteLine: function (sender, event) {
     if (this.model.get('order').get('isEditable') === false) {
       $("#modalNotEditableOrder").modal("show");
       return true;
@@ -196,34 +196,34 @@ enyo.kind({
       receipt.trigger('scan');
     }
   },
-  editLine: function(sender, event) {
+  editLine: function (sender, event) {
     if (this.model.get('order').get('isEditable') === false) {
       $("#modalNotEditableOrder").modal("show");
       return true;
     }
     $("#receiptLinesPropertiesDialog").modal('show');
   },
-  exactPayment: function(sender, event) {
+  exactPayment: function (sender, event) {
     this.$.keyboard.execStatelessCommand('cashexact');
   },
-  changeCurrentOrder: function(inSender, inEvent) {
+  changeCurrentOrder: function (inSender, inEvent) {
     this.model.get('orderList').load(inEvent.newCurrentOrder);
     return true;
   },
-  removePayment: function(sender, event) {
+  removePayment: function (sender, event) {
     if (this.model.get('paymentData') && !confirm(OB.I18N.getLabel('OBPOS_MsgConfirmRemovePayment'))) {
       return;
     }
     this.model.get('order').removePayment(event.payment);
   },
-  changeSubWindow: function(sender, event) {
+  changeSubWindow: function (sender, event) {
     this.model.get('subWindowManager').set('currentWindow', event.newWindow);
   },
-  showModalReceiptProperties: function(inSender, inEvent) {
+  showModalReceiptProperties: function (inSender, inEvent) {
     $('#receiptPropertiesDialog').modal('show');
     return true;
   },
-  setProperty: function(inSender, inEvent) {
+  setProperty: function (inSender, inEvent) {
     if (this.model.get('order').get('isEditable') === false) {
       $("#modalNotEditableOrder").modal("show");
       return true;
@@ -232,7 +232,7 @@ enyo.kind({
     this.model.get('orderList').saveCurrent();
     return true;
   },
-  setLineProperty: function(inSender, inEvent) {
+  setLineProperty: function (inSender, inEvent) {
     if (this.model.get('order').get('isEditable') === false) {
       $("#modalNotEditableOrder").modal("show");
       return true;
@@ -245,12 +245,12 @@ enyo.kind({
     this.model.get('orderList').saveCurrent();
     return true;
   },
-  init: function() {
+  init: function () {
     var receipt, receiptList;
     this.inherited(arguments);
     receipt = this.model.get('order');
     receiptList = this.model.get('orderList');
-    this.model.get('subWindowManager').on('change:currentWindow', function(changedModel) {
+    this.model.get('subWindowManager').on('change:currentWindow', function (changedModel) {
 
       function restorePreviousState(swManager, changedModel) {
         swManager.set('currentWindow', changedModel.previousAttributes().currentWindow, {
@@ -297,7 +297,7 @@ enyo.kind({
     this.$.keyboard.setReceipt(receipt);
     this.$.rightToolbar.setReceipt(receipt);
   },
-  initComponents: function() {
+  initComponents: function () {
     this.inherited(arguments);
   }
 });

@@ -87,11 +87,11 @@ enyo.kind({
       }]
     }]
   }],
-  clearAction: function() {
+  clearAction: function () {
     this.$.filterText.setValue('');
     this.doClearAction();
   },
-  searchAction: function() {
+  searchAction: function () {
     this.doSearchAction({
       bpName: this.$.filterText.getValue(),
       operator: OB.Dal.CONTAINS
@@ -117,7 +117,7 @@ enyo.kind({
       style: 'clear: both;'
     }]
   }],
-  create: function() {
+  create: function () {
     this.inherited(arguments);
     this.$.identifier.setContent(this.model.get('_identifier') + ' / ');
     this.$.address.setContent(this.model.get('locName'));
@@ -132,7 +132,7 @@ enyo.kind({
     onSearchAction: ''
   },
   classes: 'btnlink-left-toolbar',
-  searchAction: function(params) {
+  searchAction: function (params) {
     this.doSearchAction({
       bpName: params.initial,
       operator: params.operator
@@ -148,7 +148,7 @@ enyo.kind({
     onChangeSubWindow: ''
   },
   classes: 'btnlink-left-toolbar',
-  tap: function() {
+  tap: function () {
     var sw = this.subWindow;
     this.doChangeSubWindow({
       newWindow: {
@@ -170,7 +170,7 @@ enyo.kind({
   }, {
     kind: 'OB.UI.SearchCustomerButton',
     content: OB.I18N.getLabel('OBPOS_LblAC'),
-    tap: function() {
+    tap: function () {
       this.searchAction({
         initial: 'A,B,C',
         operator: OB.Dal.STARTSWITH
@@ -179,7 +179,7 @@ enyo.kind({
   }, {
     kind: 'OB.UI.SearchCustomerButton',
     content: OB.I18N.getLabel('OBPOS_LblDF'),
-    tap: function() {
+    tap: function () {
       this.searchAction({
         initial: 'D,E,F',
         operator: OB.Dal.STARTSWITH
@@ -188,7 +188,7 @@ enyo.kind({
   }, {
     kind: 'OB.UI.SearchCustomerButton',
     content: OB.I18N.getLabel('OBPOS_LblGI'),
-    tap: function() {
+    tap: function () {
       this.searchAction({
         initial: 'G,H,I',
         operator: OB.Dal.STARTSWITH
@@ -197,7 +197,7 @@ enyo.kind({
   }, {
     kind: 'OB.UI.SearchCustomerButton',
     content: OB.I18N.getLabel('OBPOS_LblJL'),
-    tap: function() {
+    tap: function () {
       this.searchAction({
         initial: 'J,K,L',
         operator: OB.Dal.STARTSWITH
@@ -206,7 +206,7 @@ enyo.kind({
   }, {
     kind: 'OB.UI.SearchCustomerButton',
     content: OB.I18N.getLabel('OBPOS_LblMO'),
-    tap: function() {
+    tap: function () {
       this.searchAction({
         initial: 'M,N,O',
         operator: OB.Dal.STARTSWITH
@@ -215,7 +215,7 @@ enyo.kind({
   }, {
     kind: 'OB.UI.SearchCustomerButton',
     content: OB.I18N.getLabel('OBPOS_LblPR'),
-    tap: function() {
+    tap: function () {
       this.searchAction({
         initial: 'P,Q,R',
         operator: OB.Dal.STARTSWITH
@@ -224,7 +224,7 @@ enyo.kind({
   }, {
     kind: 'OB.UI.SearchCustomerButton',
     content: OB.I18N.getLabel('OBPOS_LblSV'),
-    tap: function() {
+    tap: function () {
       this.searchAction({
         initial: 'S,T,U,V',
         operator: OB.Dal.STARTSWITH
@@ -233,7 +233,7 @@ enyo.kind({
   }, {
     kind: 'OB.UI.SearchCustomerButton',
     content: OB.I18N.getLabel('OBPOS_LblWZ'),
-    tap: function() {
+    tap: function () {
       this.searchAction({
         initial: 'W,X,Y,Z',
         operator: OB.Dal.STARTSWITH
@@ -278,11 +278,11 @@ enyo.kind({
   }, {
     style: 'clear: both'
   }],
-  clearAction: function(inSender, inEvent) {
+  clearAction: function (inSender, inEvent) {
     this.bpsList.reset();
     return true;
   },
-  searchAction: function(inSender, inEvent) {
+  searchAction: function (inSender, inEvent) {
     var me = this,
         filter = inEvent.bpName,
         splitFilter = filter.split(","),
@@ -320,10 +320,10 @@ enyo.kind({
     return true;
   },
   bpsList: null,
-  init: function() {
+  init: function () {
     this.bpsList = new Backbone.Collection();
     this.$.bpslistitemprinter.setCollection(this.bpsList);
-    this.bpsList.on('click', function(model) {
+    this.bpsList.on('click', function (model) {
       var sw = this.subWindow;
       this.doChangeSubWindow({
         newWindow: {
@@ -342,15 +342,16 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.subwindowheader',
   name: 'OB.OBPOSPointOfSale.UI.casheader',
-  onTapCloseButton: function() {
+  onTapCloseButton: function () {
     var subWindow = this.subWindow;
     subWindow.doChangeSubWindow({
-    newWindow: {
-      name: 'mainSubWindow',
-      params: {
-        caller: subWindow.getName()  
+      newWindow: {
+        name: 'mainSubWindow',
+        params: {
+          caller: subWindow.getName()
+        }
       }
-    }});
+    });
   },
   headermessage: OB.I18N.getLabel('OBPOS_TitleCustomerAdvancedSearch')
 });

@@ -16,7 +16,7 @@
     tableName: 'ad_user',
     entityName: 'User',
     source: 'org.openbravo.retail.posterminal.User',
-    properties: ['id','name', 'password', 'terminalinfo', 'formatInfo', 'created', '_identifier', '_idx'],
+    properties: ['id', 'name', 'password', 'terminalinfo', 'formatInfo', 'created', '_identifier', '_idx'],
     propertyMap: {
       'id': 'ad_user_id',
       'name': 'name',

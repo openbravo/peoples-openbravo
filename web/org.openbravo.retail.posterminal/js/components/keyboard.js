@@ -16,7 +16,7 @@ enyo.kind({
   buttons: {},
   status: '',
   sideBarEnabled: false,
-  destroy: function() {
+  destroy: function () {
     this.buttons = null;
     this.commands = null;
     $(window).unbind('keypress');
@@ -219,7 +219,7 @@ enyo.kind({
     onRegisterButton: 'registerButton'
   },
 
-  setStatus: function(newstatus) {
+  setStatus: function (newstatus) {
     var btn = this.buttons[this.status];
 
     if (btn && (btn.classButtonActive || (btn.owner && btn.owner.classButtonActive))) {
@@ -245,32 +245,32 @@ enyo.kind({
     }
   },
 
-  execCommand: function(cmddefinition, txt) {
+  execCommand: function (cmddefinition, txt) {
     if (!cmddefinition.permission || OB.POS.modelterminal.hasPermission(cmddefinition.permission)) {
       cmddefinition.action(this, txt);
     }
   },
 
-  execStatelessCommand: function(cmd, txt) {
+  execStatelessCommand: function (cmd, txt) {
     this.commands[cmd].action(this, txt);
   },
 
-  getNumber: function() {
+  getNumber: function () {
     return OB.I18N.parseNumber(this.getString());
   },
 
-  getString: function() {
+  getString: function () {
     var s = this.$.editbox.getContent();
     this.$.editbox.setContent('');
     return s;
   },
 
-  clear: function() {
+  clear: function () {
     this.$.editbox.setContent('');
     this.setStatus('');
   },
 
-  commandHandler: function(sender, event) {
+  commandHandler: function (sender, event) {
     var txt, me = this,
         cmd = event.key;
 
@@ -285,8 +285,8 @@ enyo.kind({
       }
     } else if (cmd === 'OK') {
       txt = this.getString();
-      
-      if(txt==='0' && this.status===''){
+
+      if (txt === '0' && this.status === '') {
         OB.POS.lock();
       }
 
@@ -320,7 +320,7 @@ enyo.kind({
     }
   },
 
-  registerButton: function(sender, event) {
+  registerButton: function (sender, event) {
     var me = this,
         button = event.originator;
     if (button.command) {
@@ -340,17 +340,17 @@ enyo.kind({
     }
 
     if (button.command) {
-      button.$.button.tap = function() {
+      button.$.button.tap = function () {
         me.keyPressed(button.command);
       };
-      
+
       this.addButton(button.command, button.$.button);
     } else {
       button.$.button.addClass('btnkeyboard-inactive');
     }
   },
 
-  initComponents: function() {
+  initComponents: function () {
     var me = this;
     this.buttons = {}; // must be intialized before calling super, not after.
     this.activekeypads = [];
@@ -378,7 +378,7 @@ enyo.kind({
 
 
     //Special case to manage the dot (.) pressing in the numeric keypad (only can be managed using keydown)
-    $(window).keydown(function(e) {
+    $(window).keydown(function (e) {
       if (window.fixFocus()) {
         if (OB.Format.defaultDecimalSymbol !== '.') {
           if (e.keyCode === 110) { //Numeric keypad dot (.)
@@ -394,7 +394,7 @@ enyo.kind({
       return true;
     });
 
-    $(window).keypress(function(e) {
+    $(window).keypress(function (e) {
       if (window.fixFocus()) {
         if (e.which !== 46 || OB.Format.defaultDecimalSymbol === '.') { //Any keypress except any kind of dot (.)
           me.keyPressed(String.fromCharCode(e.which));
@@ -403,7 +403,7 @@ enyo.kind({
     });
   },
 
-  keyPressed: function(key) {
+  keyPressed: function (key) {
     var t;
     if (key.match(/^([0-9]|\.|,| |[a-z]|[A-Z])$/)) {
       t = this.$.editbox.getContent();
@@ -420,7 +420,7 @@ enyo.kind({
     }
   },
 
-  addToolbar: function(newToolbar) {
+  addToolbar: function (newToolbar) {
     var toolbar = this.$.toolbarcontainer.createComponent({
       toolbarName: newToolbar.name,
       shown: newToolbar.shown,
@@ -433,7 +433,7 @@ enyo.kind({
     },
         i = 0;
 
-    enyo.forEach(newToolbar.buttons, function(btnDef) {
+    enyo.forEach(newToolbar.buttons, function (btnDef) {
       if (btnDef.command) {
         toolbar.createComponent({
           kind: 'OB.UI.BtnSide',
@@ -452,16 +452,16 @@ enyo.kind({
     }
   },
 
-  addToolbarComponent: function(newToolbar) {
+  addToolbarComponent: function (newToolbar) {
     this.$.toolbarcontainer.createComponent({
       kind: newToolbar,
       keyboard: this
     });
   },
 
-  showToolbar: function(toolbarName) {
+  showToolbar: function (toolbarName) {
     this.show();
-    enyo.forEach(this.$.toolbarcontainer.getComponents(), function(toolbar) {
+    enyo.forEach(this.$.toolbarcontainer.getComponents(), function (toolbar) {
       if (toolbar.toolbarName === toolbarName) {
         toolbar.show();
         if (toolbar.shown) {
@@ -473,11 +473,11 @@ enyo.kind({
     }, this);
   },
 
-  addCommand: function(cmd, definition) {
+  addCommand: function (cmd, definition) {
     this.commands[cmd] = definition;
   },
 
-  addButton: function(cmd, btn) {
+  addButton: function (cmd, btn) {
     if (this.buttons[cmd]) {
       if (this.buttons[cmd].add) {
         this.buttons[cmd] = this.buttons[cmd].add(btn);
@@ -487,25 +487,25 @@ enyo.kind({
     }
   },
 
-  addKeypad: function(keypad) {
-    
+  addKeypad: function (keypad) {
+
     var keypadconstructor = enyo.constructorForKind(keypad);
     this.activekeypads.push(keypadconstructor.prototype.padName);
     if (keypadconstructor.prototype.padPayment) {
       this.namedkeypads[keypadconstructor.prototype.padPayment] = keypadconstructor.prototype.padName;
     }
-    
+
     this.$.keypadcontainer.createComponent({
       kind: keypad,
       keyboard: this
     }).hide();
   },
 
-  showKeypad: function(keypadName) {
-    var firstLabel = null, 
+  showKeypad: function (keypadName) {
+    var firstLabel = null,
         foundLabel = false;
     this.state.set('keypadName', keypadName);
-    enyo.forEach(this.$.keypadcontainer.getComponents(), function(pad) {
+    enyo.forEach(this.$.keypadcontainer.getComponents(), function (pad) {
       if (!firstLabel) {
         firstLabel = pad.label;
       } else if (foundLabel) {
@@ -513,7 +513,7 @@ enyo.kind({
         foundLabel = false;
       }
       if (pad.padName === keypadName) {
-        foundLabel = true;       
+        foundLabel = true;
         pad.show();
         // Set the right payment status. If needed.
         if (pad.padPayment && this.status !== pad.padPayment) {
@@ -527,10 +527,11 @@ enyo.kind({
       this.state.set('keypadNextLabel', firstLabel);
     }
   },
-  
-  showNextKeypad: function() {
-    var i, max, current = this.state.get('keypadName'), pad;
-    
+
+  showNextKeypad: function () {
+    var i, max, current = this.state.get('keypadName'),
+        pad;
+
     for (i = 0, max = this.activekeypads.length; i < max; i++) {
       if (this.activekeypads[i] === current) {
         this.showKeypad(i < this.activekeypads.length - 1 ? this.activekeypads[i + 1] : this.activekeypads[0]);
@@ -539,7 +540,7 @@ enyo.kind({
     }
   },
 
-  showSidepad: function(sidepadname) {
+  showSidepad: function (sidepadname) {
     this.$.sideenabled.hide();
     this.$.sidedisabled.hide();
     this.$[sidepadname].show();
@@ -549,7 +550,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.BtnSide',
   style: 'display:table; width:100%',
-  initComponents: function() {
+  initComponents: function () {
     this.createComponent({
       kind: 'OB.UI.ButtonKey',
       label: this.btn.label,

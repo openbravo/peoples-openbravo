@@ -16,7 +16,7 @@
     tableName: 'ad_session',
     entityName: 'Session',
     source: 'org.openbravo.retail.posterminal.Session',
-    properties: ['id','user', 'terminal', 'active', '_identifier', '_idx'],
+    properties: ['id', 'user', 'terminal', 'active', '_identifier', '_idx'],
     propertyMap: {
       'id': 'ad_session_id',
       'user': 'ad_user_id',

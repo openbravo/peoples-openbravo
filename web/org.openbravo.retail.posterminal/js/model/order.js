@@ -9,7 +9,7 @@
 
 /*global B,_,Backbone,localStorage */
 
-(function() {
+(function () {
   // Sales.OrderLine Model
   var OrderLine = Backbone.Model.extend({
     defaults: {
@@ -23,7 +23,7 @@
       description: ''
     },
 
-    initialize: function(attributes) {
+    initialize: function (attributes) {
       if (attributes && attributes.product) {
         this.set('product', new OB.Model.Product(attributes.product));
         this.set('productidentifier', attributes.productidentifier);
@@ -38,15 +38,15 @@
       }
     },
 
-    printQty: function() {
+    printQty: function () {
       return this.get('qty').toString();
     },
 
-    printPrice: function() {
+    printPrice: function () {
       return OB.I18N.formatCurrency(this.get('price'));
     },
 
-    printDiscount: function() {
+    printDiscount: function () {
       var d = OB.DEC.sub(this.get('priceList'), this.get('price'));
       if (OB.DEC.compare(d) === 0) {
         return '';
@@ -55,15 +55,15 @@
       }
     },
 
-    calculateGross: function() {
+    calculateGross: function () {
       this.set('gross', OB.DEC.mul(this.get('qty'), this.get('price')));
     },
 
-    getGross: function() {
+    getGross: function () {
       return this.get('gross');
     },
 
-    printGross: function() {
+    printGross: function () {
       return OB.I18N.formatCurrency(this.getGross());
     }
   });
@@ -80,14 +80,14 @@
       'origAmount': OB.DEC.Zero,
       'paid': OB.DEC.Zero // amount - change...
     },
-    printAmount: function() {
+    printAmount: function () {
       if (this.get('rate')) {
         return OB.I18N.formatCurrency(OB.DEC.mul(this.get('amount'), this.get('rate')));
       } else {
         return OB.I18N.formatCurrency(this.get('amount'));
       }
     },
-    printForeignAmount: function() {
+    printForeignAmount: function () {
       return '(' + OB.I18N.formatCurrency(this.get('amount')) + ' ' + this.get('isocode') + ')';
     }
   });
@@ -122,7 +122,7 @@
     insertStatement: 'INSERT INTO c_order(c_order_id, json, ad_session_id, hasbeenpaid, isbeingprocessed) VALUES (?,?,?,?,?)',
     local: true,
     _id: 'modelorder',
-    initialize: function(attributes) {
+    initialize: function (attributes) {
       var orderId;
       if (attributes && attributes.id && attributes.json) {
         // The attributes of the order are stored in attributes.json
@@ -168,7 +168,7 @@
         this.set('sendEmail', attributes.sendEmail);
         this.set('isPaid', attributes.isPaid);
         this.set('isEditable', attributes.isEditable);
-        _.each(_.keys(attributes), function(key) {
+        _.each(_.keys(attributes), function (key) {
           if (!this.has(key)) {
             this.set(key, attributes[key]);
           }
@@ -178,7 +178,7 @@
       }
     },
 
-    save: function() {
+    save: function () {
       var undoCopy;
       if (this.attributes.json) {
         delete this.attributes.json; // Needed to avoid recursive inclusions of itself !!!
@@ -186,55 +186,55 @@
       undoCopy = this.get('undo');
       this.unset('undo');
       this.set('json', JSON.stringify(this.toJSON()));
-      OB.Dal.save(this, function() {}, function() {
+      OB.Dal.save(this, function () {}, function () {
         window.console.error(arguments);
       });
       this.set('undo', undoCopy);
     },
 
-    calculateTaxes: function(callback) {
+    calculateTaxes: function (callback) {
       if (callback) {
         callback();
       }
       this.save();
     },
 
-    getTotal: function() {
+    getTotal: function () {
       return this.getGross();
     },
 
-    printTotal: function() {
+    printTotal: function () {
       return OB.I18N.formatCurrency(this.getTotal());
     },
 
-    calculateGross: function() {
-      var gross = this.get('lines').reduce(function(memo, e) {
+    calculateGross: function () {
+      var gross = this.get('lines').reduce(function (memo, e) {
         return OB.DEC.add(memo, e.getGross());
       }, OB.DEC.Zero);
       this.set('gross', gross);
     },
 
-    getGross: function() {
+    getGross: function () {
       return this.get('gross');
     },
 
-    printGross: function() {
+    printGross: function () {
       return OB.I18N.formatCurrency(this.getGross());
     },
 
-    getPayment: function() {
+    getPayment: function () {
       return this.get('payment');
     },
 
-    getChange: function() {
+    getChange: function () {
       return this.get('change');
     },
 
-    getPending: function() {
+    getPending: function () {
       return OB.DEC.sub(this.getTotal(), this.getPayment());
     },
 
-    getPaymentStatus: function() {
+    getPaymentStatus: function () {
       var total = this.getTotal();
       var pay = this.getPayment();
       return {
@@ -246,13 +246,13 @@
       };
     },
 
-    clear: function() {
+    clear: function () {
       this.clearOrderAttributes();
       this.trigger('change');
       this.trigger('clear');
     },
 
-    clearOrderAttributes: function() {
+    clearOrderAttributes: function () {
       this.set('id', null);
       this.set('client', null);
       this.set('organization', null);
@@ -288,17 +288,17 @@
       this.set('isEditable', true);
     },
 
-    clearWith: function(_order) {
+    clearWith: function (_order) {
       var me = this,
           undf;
-      _.each(_.keys(_order.attributes), function(key) {
+      _.each(_.keys(_order.attributes), function (key) {
         if (_order.get(key) !== undf) {
           if (_order.get(key) === null) {
             me.set(key, null);
           } else if (_order.get(key).at) {
             //collection
             me.get(key).reset();
-            _order.get(key).forEach(function(elem) {
+            _order.get(key).forEach(function (elem) {
               me.get(key).add(elem);
             });
           } else {
@@ -312,21 +312,21 @@
       this.trigger('clear');
     },
 
-    removeUnit: function(line, qty) {
+    removeUnit: function (line, qty) {
       if (!OB.DEC.isNumber(qty)) {
         qty = OB.DEC.One;
       }
       this.setUnit(line, OB.DEC.sub(line.get('qty'), qty), OB.I18N.getLabel('OBPOS_RemoveUnits', [qty, line.get('product').get('_identifier')]));
     },
 
-    addUnit: function(line, qty) {
+    addUnit: function (line, qty) {
       if (!OB.DEC.isNumber(qty)) {
         qty = OB.DEC.One;
       }
       this.setUnit(line, OB.DEC.add(line.get('qty'), qty), OB.I18N.getLabel('OBPOS_AddUnits', [qty, line.get('product').get('_identifier')]));
     },
 
-    setUnit: function(line, qty, text) {
+    setUnit: function (line, qty, text) {
 
       if (OB.DEC.isNumber(qty)) {
         var oldqty = line.get('qty');
@@ -341,7 +341,7 @@
             text: text || OB.I18N.getLabel('OBPOS_SetUnits', [line.get('qty'), line.get('product').get('_identifier')]),
             oldqty: oldqty,
             line: line,
-            undo: function() {
+            undo: function () {
               line.set('qty', oldqty);
               line.calculateGross();
               me.calculateGross();
@@ -356,7 +356,7 @@
       }
     },
 
-    setPrice: function(line, price) {
+    setPrice: function (line, price) {
 
       if (OB.DEC.isNumber(price)) {
         var oldprice = line.get('price');
@@ -371,7 +371,7 @@
             text: OB.I18N.getLabel('OBPOS_SetPrice', [line.printPrice(), line.get('product').get('_identifier')]),
             oldprice: oldprice,
             line: line,
-            undo: function() {
+            undo: function () {
               line.set('price', oldprice);
               line.calculateGross();
               me.calculateGross();
@@ -384,13 +384,13 @@
       this.save();
     },
 
-    setLineProperty: function(line, property, value) {
+    setLineProperty: function (line, property, value) {
       var me = this;
       var index = this.get('lines').indexOf(line);
       this.get('lines').at(index).set(property, value);
     },
 
-    deleteLine: function(line) {
+    deleteLine: function (line) {
       var me = this;
       var index = this.get('lines').indexOf(line);
       // remove the line
@@ -400,7 +400,7 @@
       this.set('undo', {
         text: OB.I18N.getLabel('OBPOS_DeleteLine', [line.get('qty'), line.get('product').get('_identifier')]),
         line: line,
-        undo: function() {
+        undo: function () {
           me.get('lines').add(line, {
             at: index
           });
@@ -412,10 +412,10 @@
       this.save();
     },
 
-    addProduct: function(p) {
+    addProduct: function (p) {
       var me = this;
       if (p.get('obposScale')) {
-        OB.POS.hwserver.getWeight(function(data) {
+        OB.POS.hwserver.getWeight(function (data) {
           if (data.exception) {
             alert(data.exception.message);
           } else if (data.result === 0) {
@@ -425,7 +425,7 @@
           }
         });
       } else {
-        var line = this.get('lines').find(function(l) {
+        var line = this.get('lines').find(function (l) {
           return l.get('product').id === p.id;
         });
         if (line) {
@@ -438,7 +438,7 @@
       this.save();
     },
 
-    createLine: function(p, units) {
+    createLine: function (p, units) {
       var me = this;
       var newline = new OrderLine({
         product: p,
@@ -456,7 +456,7 @@
       this.set('undo', {
         text: OB.I18N.getLabel('OBPOS_AddLine', [newline.get('qty'), newline.get('product').get('_identifier')]),
         line: newline,
-        undo: function() {
+        undo: function () {
           me.get('lines').remove(newline);
           me.calculateGross();
           me.set('undo', null);
@@ -465,7 +465,7 @@
       this.adjustPayment();
     },
 
-    setBPandBPLoc: function(businessPartner, showNotif, saveChange) {
+    setBPandBPLoc: function (businessPartner, showNotif, saveChange) {
       var me = this,
           undef;
       var oldbp = this.get('bp');
@@ -475,7 +475,7 @@
         this.set('undo', {
           text: businessPartner ? OB.I18N.getLabel('OBPOS_SetBP', [businessPartner.get('_identifier')]) : OB.I18N.getLabel('OBPOS_ResetBP'),
           bp: businessPartner,
-          undo: function() {
+          undo: function () {
             me.set('bp', oldbp);
             me.set('undo', null);
           }
@@ -486,7 +486,7 @@
       }
     },
 
-    setOrderTypeReturn: function() {
+    setOrderTypeReturn: function () {
       if (OB.POS.modelterminal.hasPermission('OBPOS_receipt.return')) {
         this.set('documentType', OB.POS.modelterminal.get('terminal').documentTypeForReturns);
         this.set('orderType', 1); // 0: Sales order, 1: Return order
@@ -494,21 +494,21 @@
       }
     },
 
-    setOrderInvoice: function() {
+    setOrderInvoice: function () {
       if (OB.POS.modelterminal.hasPermission('OBPOS_receipt.invoice')) {
         this.set('generateInvoice', true);
         this.save();
       }
     },
 
-    resetOrderInvoice: function() {
+    resetOrderInvoice: function () {
       if (OB.POS.modelterminal.hasPermission('OBPOS_receipt.invoice')) {
         this.set('generateInvoice', false);
         this.save();
       }
     },
 
-    adjustPayment: function() {
+    adjustPayment: function () {
       var i, max, p;
       var payments = this.get('payments');
       var total = this.getTotal();
@@ -568,7 +568,7 @@
       }
     },
 
-    addPayment: function(payment) {
+    addPayment: function (payment) {
       var i, max, p;
 
       if (OB.DEC.compare(this.getTotal()) === 0) {
@@ -607,14 +607,14 @@
       this.adjustPayment();
     },
 
-    removePayment: function(payment) {
+    removePayment: function (payment) {
       var payments = this.get('payments');
       payments.remove(payment);
       this.adjustPayment();
       this.save();
     },
 
-    serializeToJSON: function() {
+    serializeToJSON: function () {
       // this.toJSON() generates a collection instance for members like "lines"
       // We need a plain array object
       var jsonorder = JSON.parse(JSON.stringify(this.toJSON()));
@@ -623,7 +623,7 @@
       delete jsonorder.undo;
       delete jsonorder.json;
 
-      _.forEach(jsonorder.lines, function(item) {
+      _.forEach(jsonorder.lines, function (item) {
         delete item.product.img;
       });
 
@@ -633,16 +633,16 @@
         jsonorder.change = -jsonorder.change;
         jsonorder.payment = -jsonorder.payment;
         jsonorder.net = -jsonorder.net;
-        _.forEach(jsonorder.lines, function(item) {
+        _.forEach(jsonorder.lines, function (item) {
           item.gross = -item.gross;
           item.net = -item.net;
           item.qty = -item.qty;
         });
-        _.forEach(jsonorder.payments, function(item) {
+        _.forEach(jsonorder.payments, function (item) {
           item.amount = -item.amount;
           item.paid = -item.paid;
         });
-        _.forEach(jsonorder.taxes, function(item) {
+        _.forEach(jsonorder.taxes, function (item) {
           item.amount = -item.amount;
           item.net = -item.net;
         });
@@ -651,7 +651,7 @@
       return jsonorder;
     },
 
-    setProperty: function(_property, _value) {
+    setProperty: function (_property, _value) {
       this.set(_property, _value);
       this.save();
     }
@@ -660,7 +660,7 @@
   var OrderList = Backbone.Collection.extend({
     model: Order,
 
-    constructor: function(modelOrder) {
+    constructor: function (modelOrder) {
       if (modelOrder) {
         //this._id = 'modelorderlist';
         this.modelorder = modelOrder;
@@ -668,11 +668,11 @@
       Backbone.Collection.prototype.constructor.call(this);
     },
 
-    initialize: function() {
+    initialize: function () {
       this.current = null;
     },
 
-    newOrder: function() {
+    newOrder: function () {
       var order = new Order(),
           me = this,
           documentseq, documentseqstr;
@@ -707,7 +707,7 @@
       return order;
     },
 
-    newPaidReceipt: function(model) {
+    newPaidReceipt: function (model) {
       var order = new Order(),
           me = this,
           documentseq, documentseqstr, bp, newline, lines, prod, payments, curPayment, taxes;
@@ -733,7 +733,7 @@
       order.set('gross', model.totalamount);
       order.set('salesRepresentative$_identifier', model.salesrepresentative);
 
-      _.each(model.receiptLines, function(iter) {
+      _.each(model.receiptLines, function (iter) {
         prod = new OB.Model.Product();
         prod.set('_identifier', iter.name);
         newline = new OrderLine({
@@ -751,7 +751,7 @@
       order.set('orderDate', model.orderDate.toString().substring(0, 10));
       //order.set('payments', model.receiptPayments);
       payments = new PaymentLineList();
-      _.each(model.receiptPayments, function(iter) {
+      _.each(model.receiptPayments, function (iter) {
         var paymentProp;
         curPayment = new PaymentLine();
         for (paymentProp in iter) {
@@ -765,7 +765,7 @@
 
 
       taxes = {};
-      _.each(model.receiptTaxes, function(iter) {
+      _.each(model.receiptTaxes, function (iter) {
         var taxProp;
         taxes[iter.taxid] = {};
         for (taxProp in iter) {
@@ -779,26 +779,26 @@
       return order;
     },
 
-    addNewOrder: function() {
+    addNewOrder: function () {
       this.saveCurrent();
       this.current = this.newOrder();
       this.add(this.current);
       this.loadCurrent(true);
     },
-    addPaidReceipt: function(model) {
+    addPaidReceipt: function (model) {
       this.saveCurrent();
       this.current = model;
       this.add(this.current);
       this.loadCurrent(true);
     },
 
-    deleteCurrent: function() {
+    deleteCurrent: function () {
       var isNew = false;
 
       function deleteCurrentFromDatabase(orderToDelete) {
-        OB.Dal.remove(orderToDelete, function() {
+        OB.Dal.remove(orderToDelete, function () {
           return true;
-        }, function() {
+        }, function () {
           OB.UTIL.showError('Error removing');
         });
       }
@@ -816,7 +816,7 @@
       }
     },
 
-    load: function(model) {
+    load: function (model) {
       // Workaround to prevent the pending receipts moder window from remaining open
       // when the current receipt is selected from the list
       if (model && this.current && model.get('documentNo') === this.current.get('documentNo')) {
@@ -826,12 +826,12 @@
       this.current = model;
       this.loadCurrent();
     },
-    saveCurrent: function() {
+    saveCurrent: function () {
       if (this.current) {
         this.current.clearWith(this.modelorder);
       }
     },
-    loadCurrent: function(isNew) {
+    loadCurrent: function (isNew) {
       if (this.current) {
         if (isNew) {
           //set values of new attrs in current, 

@@ -22,9 +22,9 @@ enyo.kind({
     name: 'date'
   }],
 
-  initComponents: function() {
+  initComponents: function () {
     var me = this,
-        updateClock = function() {
+        updateClock = function () {
         var d = new Date();
         if (!me.$.clock) {
           return;

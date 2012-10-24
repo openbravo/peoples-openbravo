@@ -29,7 +29,7 @@ enyo.kind({
           style: 'width:100%',
           classes: 'input',
           name: 'filterText',
-//          onchange: 'searchUsingBpsFilter',
+          //          onchange: 'searchUsingBpsFilter',
           attributes: {
             'x-webkit-speech': 'x-webkit-speech'
           }
@@ -61,10 +61,9 @@ enyo.kind({
           ontap: 'clearAction'
         }]
       }]
-    },
-    {
+    }, {
       style: 'display: table;',
-      components: [ {
+      components: [{
         style: 'display: table-cell;',
         components: [{
           tag: 'h4',
@@ -79,9 +78,9 @@ enyo.kind({
           style: 'width 200px; margin: 0px 0px 2px 65px;'
         }]
       }]
-    },{
+    }, {
       style: 'display: table;',
-      components: [ {
+      components: [{
         style: 'display: table-cell;',
         components: [{
           kind: 'enyo.Input',
@@ -90,24 +89,22 @@ enyo.kind({
           type: 'text',
           style: 'width: 100px;  margin: 0px 0px 8px 5px;'
         }]
-      },
-      {
+      }, {
         style: 'display: table-cell;',
         components: [{
           tag: 'h4',
           content: 'yyyy-mm-dd',
           style: 'width: 100px; color:gray;  margin: 0px 0px 8px 5px;'
         }]
-      },
-      {
+      }, {
         kind: 'enyo.Input',
         name: 'endDate',
         size: '10',
         type: 'text',
         style: 'width: 100px;  margin: 0px 0px 8px 50px;'
-      },{
+      }, {
         style: 'display: table-cell;',
-        components: [  {
+        components: [{
           tag: 'h4',
           content: 'yyyy-mm-dd',
           style: 'width: 100px; color:gray;  margin: 0px 0px 8px 5px;'
@@ -115,13 +112,13 @@ enyo.kind({
       }]
     }]
   }],
-  clearAction: function() {
+  clearAction: function () {
     this.$.filterText.setValue('');
     this.$.startDate.setValue('');
     this.$.endDate.setValue('');
     this.doClearAction();
   },
-  searchAction: function() {
+  searchAction: function () {
     this.filters = {
       documentNo: this.$.filterText.getValue(),
       startDate: this.$.startDate.getValue(),
@@ -152,9 +149,9 @@ enyo.kind({
       style: 'clear: both;'
     }]
   }],
-  create: function() {
+  create: function () {
     this.inherited(arguments);
-    this.$.topLine.setContent(this.model.get('documentNo')+' - '+this.model.get('bp').get('_identifier'));
+    this.$.topLine.setContent(this.model.get('documentNo') + ' - ' + this.model.get('bp').get('_identifier'));
     this.$.bottonLine.setContent(this.model.get('gross'));
   }
 });
@@ -188,19 +185,19 @@ enyo.kind({
       }]
     }]
   }],
-  clearAction: function(inSender, inEvent) {
+  clearAction: function (inSender, inEvent) {
     this.prsList.reset();
     return true;
   },
-  searchAction: function(inSender, inEvent) {
+  searchAction: function (inSender, inEvent) {
     var me = this,
         process = new OB.DS.Process('org.openbravo.retail.posterminal.PaidReceipts');
     this.clearAction();
     process.exec({
       filters: inEvent.filters
-    }, function(data) {
+    }, function (data) {
       if (data) {
-        _.each(data, function(iter){
+        _.each(data, function (iter) {
           me.prsList.add(me.model.get('orderList').newPaidReceipt(iter));
         });
       } else {
@@ -210,11 +207,11 @@ enyo.kind({
     return true;
   },
   prsList: null,
-  init: function(model) {
+  init: function (model) {
     this.model = model;
     this.prsList = new Backbone.Collection();
     this.$.prslistitemprinter.setCollection(this.prsList);
-    this.prsList.on('click', function(model) {
+    this.prsList.on('click', function (model) {
       this.doChangePaidReceipt({
         newPaidReceipt: model
       });
@@ -237,11 +234,11 @@ enyo.kind({
   handlers: {
     onChangePaidReceipt: 'changePaidReceipt'
   },
-  changePaidReceipt: function(inSender, inEvent) {
+  changePaidReceipt: function (inSender, inEvent) {
     this.model.get('orderList').addPaidReceipt(inEvent.newPaidReceipt);
     return true;
   },
-  init: function(model) {
+  init: function (model) {
     this.model = model;
   }
 });

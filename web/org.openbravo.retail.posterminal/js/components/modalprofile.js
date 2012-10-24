@@ -33,7 +33,7 @@ enyo.kind({
           renderEmpty: enyo.Control,
           renderLine: enyo.kind({
             kind: 'enyo.Option',
-            initComponents: function() {
+            initComponents: function () {
               this.setValue(this.model.get('id'));
               this.setContent(this.model.get('_identifier'));
               if (this.model.get('id') === this.owner.owner.owner.ctx.role.id) {
@@ -63,7 +63,7 @@ enyo.kind({
           renderEmpty: enyo.Control,
           renderLine: enyo.kind({
             kind: 'enyo.Option',
-            initComponents: function() {
+            initComponents: function () {
               this.setValue(this.model.get('id'));
               this.setContent(this.model.get('_identifier'));
               this.setContent(this.model.get('_identifier'));
@@ -103,7 +103,7 @@ enyo.kind({
       kind: 'OB.UI.ProfileDialogCancel'
     }]
   },
-  initComponents: function() {
+  initComponents: function () {
     this.inherited(arguments);
     // TODO: check this, not working: this.addStyles('width: 500px;');
     this.ctx = OB.POS.modelterminal.get('context');
@@ -113,7 +113,7 @@ enyo.kind({
     var RoleCollection = Backbone.Collection.extend({
       model: RoleModel,
       url: '../../org.openbravo.retail.posterminal.service.profileutils?command=availableRoles&terminalName=' + terminalName + '&userId=' + userId,
-      parse: function(response, error) {
+      parse: function (response, error) {
         if (response && response.response[0] && response.response[0].data) {
           return response.response[0].data;
         } else {
@@ -130,7 +130,7 @@ enyo.kind({
     var LanguageCollection = Backbone.Collection.extend({
       model: LanguageModel,
       url: '../../org.openbravo.retail.posterminal.service.profileutils?command=availableLanguages',
-      parse: function(response, error) {
+      parse: function (response, error) {
         if (response && response.response[0] && response.response[0].data) {
           return response.response[0].data;
         } else {
@@ -151,7 +151,7 @@ enyo.kind({
   isActive: true,
   content: OB.I18N.getLabel('OBPOS_LblApply'),
   classes: 'btnlink btnlink-gray modal-dialog-content-button',
-  tap: function() {
+  tap: function () {
     if (!this.isActive) {
       return;
     }
@@ -173,7 +173,7 @@ enyo.kind({
       contentType: 'application/json;charset=utf-8',
       dataType: 'json',
       data: JSON.stringify(postData),
-      success: function(data, textStatus, jqXHR) {
+      success: function (data, textStatus, jqXHR) {
         if (data.result === 'success') {
           window.location.reload();
         } else {
@@ -181,7 +181,7 @@ enyo.kind({
         }
         this.isActive = true;
       },
-      error: function(jqXHR, textStatus, errorThrown) {
+      error: function (jqXHR, textStatus, errorThrown) {
         OB.UTIL.showError(errorThrown);
         this.isActive = true;
       }

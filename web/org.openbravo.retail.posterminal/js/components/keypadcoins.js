@@ -163,7 +163,7 @@ enyo.kind({
     name: 'btn'
   }],
   background: '#6cb33f',
-  initComponents: function() {
+  initComponents: function () {
     var btn;
     this.inherited(arguments);
 
@@ -172,12 +172,12 @@ enyo.kind({
     btn.applyStyle('background-color', this.background);
     btn.applyStyle('border', '10px solid' + (this.bordercolor || this.background));
   },
-  tap: function() {
-    
+  tap: function () {
+
     if (OB.POS.modelterminal.hasPermission(this.paymenttype)) {
       var me = this,
           receipt = this.owner.owner.owner.owner.model.get('order');
-  
+
       receipt.addPayment(new OB.Model.PaymentLine({
         kind: me.paymenttype,
         name: OB.POS.modelterminal.getPaymentName(me.paymenttype),

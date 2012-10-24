@@ -12,7 +12,7 @@
 enyo.kind({
   kind: 'OB.UI.subwindow',
   name: 'OB.OBPOSPointOfSale.customers.UI.newcustomer',
-  beforeSetShowing: function(params) {
+  beforeSetShowing: function (params) {
 
     if (OB.POS.modelterminal.get('terminal').defaultbp_paymentmethod !== null && OB.POS.modelterminal.get('terminal').defaultbp_bpcategory !== null && OB.POS.modelterminal.get('terminal').defaultbp_paymentterm !== null && OB.POS.modelterminal.get('terminal').defaultbp_invoiceterm !== null && OB.POS.modelterminal.get('terminal').defaultbp_bpcountry !== null && OB.POS.modelterminal.get('terminal').defaultbp_bporg !== null) {
 
@@ -33,10 +33,10 @@ enyo.kind({
     handlers: {
       onSetCustomer: 'setCustomer'
     },
-    setCustomer: function(sender, event) {
+    setCustomer: function (sender, event) {
       this.customer = event.customer;
     },
-    onTapCloseButton: function() {
+    onTapCloseButton: function () {
       var subWindow = this.subWindow;
       if (subWindow.caller === 'mainSubWindow') {
         subWindow.doChangeSubWindow({
@@ -76,7 +76,7 @@ enyo.kind({
   events: {
     onSaveCustomer: ''
   },
-  tap: function() {
+  tap: function () {
     this.doSaveCustomer();
   }
 });
@@ -101,10 +101,10 @@ enyo.kind({
           handlers: {
             onSetCustomer: 'setCustomer'
           },
-          setCustomer: function(sender, event) {
+          setCustomer: function (sender, event) {
             this.customer = event.customer;
           },
-          tap: function() {
+          tap: function () {
             var subWindow = this.subWindow;
             subWindow.doChangeSubWindow({
               newWindow: {

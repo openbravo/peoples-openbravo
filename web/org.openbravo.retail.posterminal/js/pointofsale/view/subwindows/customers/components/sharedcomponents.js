@@ -28,7 +28,7 @@ enyo.kind({
   }, {
     style: 'clear: both'
   }],
-  initComponents: function() {
+  initComponents: function () {
     this.inherited(arguments);
     this.$.newAttribute.createComponent(this.newAttribute);
     this.$.labelLine.content = this.newAttribute.label;
@@ -48,7 +48,7 @@ enyo.kind({
   events: {
     onSaveProperty: ''
   },
-  loadValue: function(sender, event) {
+  loadValue: function (sender, event) {
     if (event.customer !== undefined) {
       if (event.customer.get(this.modelProperty) !== undefined) {
         this.setValue(event.customer.get(this.modelProperty));
@@ -57,10 +57,10 @@ enyo.kind({
       this.setValue('');
     }
   },
-  saveChange: function(sender, event) {
+  saveChange: function (sender, event) {
     event.customer.set(this.modelProperty, this.getValue());
   },
-  initComponents: function() {
+  initComponents: function () {
     if (this.readOnly) {
       this.setAttribute('readonly', 'readonly');
     }
@@ -79,13 +79,13 @@ enyo.kind({
   }, {
     name: 'customerAttributes'
   }],
-  setCustomer: function(sender, event) {
+  setCustomer: function (sender, event) {
     this.customer = event.customer;
     this.waterfall('onLoadValue', {
       customer: this.customer
     });
   },
-  saveCustomer: function(sender, event) {
+  saveCustomer: function (sender, event) {
     var me = this,
         sw = me.subWindow;
 
@@ -129,7 +129,7 @@ enyo.kind({
         customer: this.model.get('customer')
       });
     } else {
-      this.model.get('customer').loadById(this.customer.get('id'), function(customer) {
+      this.model.get('customer').loadById(this.customer.get('id'), function (customer) {
         getCustomerValues({
           customer: customer
         });
@@ -140,13 +140,13 @@ enyo.kind({
       });
     }
   },
-  initComponents: function() {
+  initComponents: function () {
     this.inherited(arguments);
     this.$.bodyheader.createComponent({
       kind: this.windowHeader
     });
     this.attributeContainer = this.$.customerAttributes;
-    enyo.forEach(this.newAttributes, function(natt) {
+    enyo.forEach(this.newAttributes, function (natt) {
       var resultDisplay = true,
           undf;
       if (natt.displayLogic !== undf && natt.displayLogic !== null) {
@@ -165,7 +165,7 @@ enyo.kind({
       }
     }, this);
   },
-  init: function(model) {
+  init: function (model) {
     this.model = model;
   }
 });

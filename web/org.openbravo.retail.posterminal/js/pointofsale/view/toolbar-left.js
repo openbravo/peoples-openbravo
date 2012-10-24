@@ -20,7 +20,7 @@ enyo.kind({
       style: 'margin: 0px 5px 0px 5px;'
     }
   }],
-  initComponents: function() {
+  initComponents: function () {
     this.inherited(arguments);
     this.$.theButton.createComponent(this.button);
   }
@@ -34,9 +34,9 @@ enyo.kind({
     classes: 'unstyled nav-pos row-fluid',
     name: 'toolbar'
   }],
-  initComponents: function() {
+  initComponents: function () {
     this.inherited(arguments);
-    enyo.forEach(this.buttons, function(btn) {
+    enyo.forEach(this.buttons, function (btn) {
       this.$.toolbar.createComponent({
         kind: 'OB.OBPOSPointOfSale.UI.LeftToolbarButton',
         button: btn
@@ -52,7 +52,7 @@ enyo.kind({
   events: {
     onAddNewOrder: ''
   },
-  tap: function() {
+  tap: function () {
     this.doAddNewOrder();
   }
 });

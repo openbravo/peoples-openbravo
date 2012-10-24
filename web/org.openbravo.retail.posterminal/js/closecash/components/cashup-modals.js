@@ -23,7 +23,7 @@ enyo.kind({
       kind: 'OB.UI.Button',
       classes: 'btnlink btnlink-gray modal-dialog-content-button',
       content: OB.I18N.getLabel('OBPOS_LblOk'),
-      tap: function() {
+      tap: function () {
         $('#' + this.parent.parent.parent.parent.parent.getId()).modal('hide');
         OB.POS.navigate('retail.pointofsale');
       }
@@ -36,7 +36,7 @@ enyo.kind({
   name: 'OB.OBPOSCashUp.UI.modalFinishedWrongly',
   header: OB.I18N.getLabel('OBPOS_CashUpWronglyHeader'),
   bodyContent: {
-    content:  OB.I18N.getLabel('OBPOS_CashUpWrongly')
+    content: OB.I18N.getLabel('OBPOS_CashUpWrongly')
   },
   bodyButtons: {
     tag: 'div',
@@ -45,7 +45,7 @@ enyo.kind({
       kind: 'OB.UI.Button',
       classes: 'btnlink btnlink-gray modal-dialog-content-button',
       content: OB.I18N.getLabel('OBPOS_LblOk'),
-      tap: function() {
+      tap: function () {
         $('#' + this.parent.parent.parent.parent.parent.getId()).modal('hide');
       }
     }]
@@ -65,7 +65,7 @@ enyo.kind({
       kind: 'OB.UI.Button',
       classes: 'btnlink btnlink-gray modal-dialog-content-button',
       content: OB.I18N.getLabel('OBPOS_LblOk'),
-      tap: function() {
+      tap: function () {
         //continue with orders which have been paid.
         $('#' + this.parent.parent.parent.parent.parent.getId()).modal('hide');
       }
@@ -73,7 +73,7 @@ enyo.kind({
       kind: 'OB.UI.Button',
       classes: 'btnlink btnlink-gray modal-dialog-content-button',
       content: OB.I18N.getLabel('OBPOS_LblCancel'),
-      tap: function() {
+      tap: function () {
         $('#' + this.parent.parent.parent.parent.parent.getId()).modal('hide');
         OB.POS.navigate('retail.pointofsale');
       }

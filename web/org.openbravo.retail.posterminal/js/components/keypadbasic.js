@@ -164,7 +164,7 @@ enyo.kind({
     name: 'button',
     classes: 'btnkeyboard'
   }],
-  initComponents: function() {
+  initComponents: function () {
     var me = this;
 
     this.inherited(arguments);
