@@ -227,7 +227,7 @@ enyo.kind({
   },
   label: OB.I18N.getLabel('OBPOS_CreateOrderFromQuotation'),
   tap: function() {
-    this.doCreateOrderFromQuotation();
+    $('#modalCreateOrderFromQuotation').modal('show');
   },
   updateVisibility: function(model){
     if (model.get('quotation') && model.get('hasbeenpaid')==='Y') {

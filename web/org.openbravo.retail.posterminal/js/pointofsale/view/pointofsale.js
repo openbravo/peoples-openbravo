@@ -226,6 +226,9 @@ enyo.kind({
       kind: 'OB.UI.ModalPaidReceipts',
       name: 'paidReceiptsView'
     }, {
+      kind: 'OB.UI.ModalCreateOrderFromQuotation',
+      name: 'modalCreateOrderFromQuotation'
+    }, {
       kind: 'OB.UI.ModalReceiptPropertiesImpl'
     }, {
       kind: 'OB.UI.ModalReceiptLinesPropertiesImpl'
