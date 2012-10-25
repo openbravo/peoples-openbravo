@@ -267,7 +267,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
       cashCloseInfo.foreignDifference = curModel.get('foreignDifference');
       cashCloseInfo.expected = curModel.get('expected');
       cashCloseInfo.foreignExpected = curModel.get('foreignExpected');
-      curModel.get('paymentMethod').amountToKeep = curModel.get('qtyToKeep');
+      curModel.get('paymentMethod').amountToKeep = curModel.get('qtyToKeep') || 0;
       cashCloseInfo.paymentMethod = curModel.get('paymentMethod');
       objToSend.cashCloseInfo.push(cashCloseInfo);
     }, this);
