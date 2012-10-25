@@ -41,6 +41,7 @@
   v_ProductID   VARCHAR2(32);
   v_LocatorID   VARCHAR2(32);
   v_WarehouseID VARCHAR2(32) ;
+  v_PriorityWarehouseID VARCHAR2(32);
   v_OrgID VARCHAR2(32) ;
   v_AttributesetinstanceID  VARCHAR2(32) ;
   v_AD_User_ID VARCHAR2(32) ;
@@ -91,6 +92,9 @@ BEGIN --BODY
     ELSIF (Cur_Parameter.ParameterName = 'M_Warehouse_ID') THEN
       v_WarehouseID:=Cur_Parameter.P_String;
       DBMS_OUTPUT.PUT_LINE(' M_Warehouse_ID=' || v_WarehouseID);
+    ELSIF (Cur_Parameter.ParameterName = 'Priority_Warehouse_ID') THEN
+      v_PriorityWarehouseID:=Cur_Parameter.P_String;
+      DBMS_OUTPUT.PUT_LINE(' Priority_Warehouse_ID=' || v_WarehouseID);
     ELSIF (Cur_Parameter.ParameterName = 'AD_Client_ID') THEN
       v_ClientID:=Cur_Parameter.P_String;
       DBMS_OUTPUT.PUT_LINE(' AD_Client_ID=' || v_ClientID);
@@ -143,7 +147,7 @@ BEGIN --BODY
         AND COALESCE(w.m_warehouse_id, '-1') = COALESCE(v_warehouseid, w.m_warehouse_id, '-1')
         AND ow.ad_org_id = v_orgid
         AND COALESCE(ms.quantity, 0)>0
-      ORDER BY ow.priority, l.priorityno, asi.created, t.created
+      ORDER BY CASE w.m_warehouse_id WHEN COALESCE(v_PriorityWarehouseID, '-1') THEN 0 ELSE 1 END, ow.priority, l.priorityno, asi.created, t.created
   ) LOOP
     INSERT INTO m_stock_proposed (
         m_stock_proposed_id, ad_client_id, ad_org_id, isactive, 
@@ -175,7 +179,7 @@ BEGIN --BODY
         AND COALESCE(w.m_warehouse_id, '-1') = COALESCE(v_warehouseid, w.m_warehouse_id, '-1')
         AND ow.ad_org_id = v_orgid
         AND COALESCE(t.qtyonhand, 0)>0
-      ORDER BY ow.priority, l.priorityno, asi.created, t.created
+      ORDER BY CASE w.m_warehouse_id WHEN COALESCE(v_PriorityWarehouseID, '-1') THEN 0 ELSE 1 END, ow.priority, l.priorityno, asi.created, t.created
   ) LOOP
     INSERT INTO m_stock_proposed (
         m_stock_proposed_id, ad_client_id, ad_org_id, isactive, 
