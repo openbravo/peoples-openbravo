@@ -45,8 +45,10 @@
               if(model.get('order') && model.get('order').get('quotation')){
                 model.get('order').set('oldId', model.get('order').get('id'));
                 model.get('order').set('id', null);
+                OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationSaved', [docno]));
+              }else{
+                OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgReceiptSaved', [docno]));
               }
-              OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgReceiptSaved', [docno]));
             };
             errorCallback = function() {
               OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgReceiptNotSaved', [docno]));

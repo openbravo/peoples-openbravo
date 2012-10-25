@@ -521,6 +521,7 @@
       this.set('documentType', OB.POS.modelterminal.get('terminal').documentType);
       this.set('hasbeenpaid', 'N');
       this.save();
+      OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationCreatedOrder'));
     },
     reactivateQuotation: function(){
       this.set('hasbeenpaid', 'N');

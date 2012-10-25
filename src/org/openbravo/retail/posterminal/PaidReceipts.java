@@ -37,7 +37,8 @@ public class PaidReceipts extends JSONProcessSimple {
         + "ord.id as orderid, ord.warehouse.id as warehouse, ord.currency.iSOCode as currency, ord.obposApplications.name as posterminalidentifier from Order as ord where ord.client=? and ord.organization=? and ord.obposApplications is not null";
     if (!json.getString("filterText").isEmpty()) {
       hqlPaidReceipts += " and (ord.documentNo like '%" + json.getString("filterText")
-          + "%' or ord.businessPartner.name like '%" + json.getString("filterText") + "%') ";
+          + "%' or upper(ord.businessPartner.name) like upper('%" + json.getString("filterText")
+          + "%')) ";
     }
     if (!json.getString("documentType").isEmpty()) {
       hqlPaidReceipts += " and ord.documentType.id='" + json.getString("documentType") + "'";
