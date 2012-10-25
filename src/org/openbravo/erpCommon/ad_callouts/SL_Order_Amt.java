@@ -175,7 +175,7 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
 
       if (isTaxIncludedPriceList) {
         priceList = grossPriceList;
-        unitPrice = grossUnitPrice;
+        unitPrice = grossBaseUnitPrice;
       } else {
         priceList = netPriceList;
         unitPrice = priceStd;
