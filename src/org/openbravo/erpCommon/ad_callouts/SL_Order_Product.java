@@ -118,10 +118,6 @@ public class SL_Order_Product extends HttpSecureAppServlet {
         strNetPriceList = "0";
       } else {
         strGrossPriceList = "0";
-        strPriceActual = SLOrderProductData.getOffersPrice(this, dataOrder[0].dateordered,
-            dataOrder[0].cBpartnerId, strMProductID, (strPriceStd.equals("undefined") ? "0"
-                : strPriceStd.replace("\"", "")), strQty, dataOrder[0].mPricelistId,
-            dataOrder[0].id);
       }
       log4j.debug("get Offers price:" + strPriceActual);
 
@@ -131,9 +127,7 @@ public class SL_Order_Product extends HttpSecureAppServlet {
     }
     StringBuffer resultado = new StringBuffer();
 
-    if (strPriceActual.equals("") || "Y".equals(cancelPriceAd)) {
-      strPriceActual = strPriceStd;
-    }
+    strPriceActual = strPriceStd;
 
     // Discount...
     BigDecimal discount = BigDecimal.ZERO;

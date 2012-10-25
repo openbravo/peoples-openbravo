@@ -114,18 +114,12 @@ public class SL_Invoice_Product extends HttpSecureAppServlet {
         log4j.debug("get Offers date: " + dataInvoice[0].dateinvoiced + " partner:"
             + dataInvoice[0].cBpartnerId + " prod:" + strMProductID + " std:"
             + strPriceStd.replace("\"", ""));
-      strPriceActual = SLOrderProductData.getOffersPriceInvoice(this, dataInvoice[0].dateinvoiced,
-          dataInvoice[0].cBpartnerId, strMProductID, strPriceStd.replace("\"", ""), strQty,
-          dataInvoice[0].mPricelistId, dataInvoice[0].id);
-      if (log4j.isDebugEnabled())
-        log4j.debug("get Offers price:" + strPriceActual);
 
       dataInvoice = null;
     }
     StringBuffer resultado = new StringBuffer();
 
-    if (strPriceActual.equals(""))
-      strPriceActual = strPriceStd;
+    strPriceActual = strPriceStd;
 
     resultado.append("var calloutName='SL_Invoice_Product';\n\n");
     resultado.append("var respuesta = new Array(");
