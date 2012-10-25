@@ -11,7 +11,7 @@
 
 enyo.kind({
   kind: 'OB.UI.subwindow',
-  name: 'OB.OBPOSPointOfSale.customers.UI.editcustomer',
+  name: 'OB.OBPOSPointOfSale.UI.customers.editcustomer',
   beforeSetShowing: function (params) {
     if (OB.POS.modelterminal.get('terminal').defaultbp_paymentmethod !== null && OB.POS.modelterminal.get('terminal').defaultbp_bpcategory !== null && OB.POS.modelterminal.get('terminal').defaultbp_paymentterm !== null && OB.POS.modelterminal.get('terminal').defaultbp_invoiceterm !== null && OB.POS.modelterminal.get('terminal').defaultbp_bpcountry !== null && OB.POS.modelterminal.get('terminal').defaultbp_bporg !== null) {
 
@@ -38,7 +38,7 @@ enyo.kind({
     }
   },
   body: {
-    kind: 'OB.OBPOSPointOfSale.customers.UI.editcustomers_impl'
+    kind: 'OB.OBPOSPointOfSale.UI.customers.editcustomers_impl'
   }
 });
 
@@ -46,7 +46,7 @@ enyo.kind({
 /**/
 enyo.kind({
   kind: 'OB.UI.Button',
-  name: 'OB.OBPOSPointOfSale.customers.UI.assigncustomertoticket',
+  name: 'OB.OBPOSPointOfSale.UI.customers.assigncustomertoticket',
   style: 'width: 150px; margin: 0px 0px 8px 5px;',
   classes: 'btnlink btnlink-small',
   content: OB.I18N.getLabel('OBPOS_LblAssignToTicket'),
@@ -77,7 +77,7 @@ enyo.kind({
 
 /*header of window body*/
 enyo.kind({
-  name: 'OB.OBPOSPointOfSale.customers.UI.EditCustomerWindowHeader',
+  name: 'OB.OBPOSPointOfSale.UI.customers.EditCustomerWindowHeader',
   events: {
     onSearchAction: ''
   },
@@ -114,7 +114,7 @@ enyo.kind({
       }, {
         style: 'display: table-cell;',
         components: [{
-          kind: 'OB.OBPOSPointOfSale.customers.UI.assigncustomertoticket'
+          kind: 'OB.OBPOSPointOfSale.UI.customers.assigncustomertoticket'
         }]
       }]
     }]
@@ -128,10 +128,10 @@ enyo.kind({
 
 
 enyo.kind({
-  kind: 'OB.OBPOSPointOfSale.customers.UI.edit_createcustomers',
-  name: 'OB.OBPOSPointOfSale.customers.UI.editcustomers_impl',
+  kind: 'OB.OBPOSPointOfSale.UI.customers.edit_createcustomers',
+  name: 'OB.OBPOSPointOfSale.UI.customers.editcustomers_impl',
   style: 'padding: 9px 15px;',
-  windowHeader: 'OB.OBPOSPointOfSale.customers.UI.EditCustomerWindowHeader',
+  windowHeader: 'OB.OBPOSPointOfSale.UI.customers.EditCustomerWindowHeader',
   newAttributes: [{
     kind: 'OB.UI.CustomerTextProperty',
     name: 'customerName',

@@ -10,7 +10,18 @@
 /*global enyo, $ */
 
 enyo.kind({
-  name: 'OB.OBPOSPointOfSale.customers.UI.cancelEdit',
+  name: 'OB.OBPOSPointOfSale.UI.customers.ModalConfigurationRequiredForCreateCustomers',
+  kind: 'OB.UI.ModalInfo',
+  header: OB.I18N.getLabel('OBPOS_configurationRequired'),
+  bodyContent: {
+    tag: 'div',
+    content: OB.I18N.getLabel('OBPOS_configurationNeededToCreateCustomers')
+  },
+  myId: 'modalConfigurationRequiredForCreateNewCustomers'
+});
+
+enyo.kind({
+  name: 'OB.OBPOSPointOfSale.UI.customers.cancelEdit',
   kind: 'OB.UI.Button',
   style: 'width: 100px; margin: 0px 0px 8px 5px;',
   classes: 'btnlink-gray btnlink btnlink-small',
@@ -68,7 +79,7 @@ enyo.kind({
 });
 
 enyo.kind({
-  name: 'OB.OBPOSPointOfSale.customers.UI.edit_createcustomers',
+  name: 'OB.OBPOSPointOfSale.UI.customers.edit_createcustomers',
   handlers: {
     onSetCustomer: 'setCustomer',
     onSaveCustomer: 'saveCustomer'

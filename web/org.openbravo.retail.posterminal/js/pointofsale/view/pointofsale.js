@@ -40,15 +40,15 @@ enyo.kind({
   components: [{
     name: 'otherSubWindowsContainer',
     components: [{
-      kind: 'OB.UI.ModalConfigurationRequiredForCreateCustomers'
+      kind: 'OB.OBPOSPointOfSale.UI.customers.ModalConfigurationRequiredForCreateCustomers'
     }, {
-      kind: 'OB.OBPOSPointOfSale.UI.cas',
+      kind: 'OB.OBPOSPointOfSale.UI.customers.cas',
       name: 'customerAdvancedSearch'
     }, {
-      kind: 'OB.OBPOSPointOfSale.customers.UI.newcustomer',
+      kind: 'OB.OBPOSPointOfSale.UI.customers.newcustomer',
       name: 'customerCreateAndEdit'
     }, {
-      kind: 'OB.OBPOSPointOfSale.customers.UI.editcustomer',
+      kind: 'OB.OBPOSPointOfSale.UI.customers.editcustomer',
       name: 'customerView'
     }]
   }, {
@@ -57,9 +57,9 @@ enyo.kind({
     components: [{
       kind: 'OB.UI.ModalDeleteReceipt'
     }, {
-      kind: 'OB.OBPOSPointOfSale.Modals.UI.ModalClosePaidReceipt'
+      kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalClosePaidReceipt'
     }, {
-      kind: 'OB.OBPOSPointOfSale.Modals.UI.ModalProductCannotBeGroup'
+      kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalProductCannotBeGroup'
     }, {
       kind: 'OB.UI.Modalnoteditableorder'
     }, {

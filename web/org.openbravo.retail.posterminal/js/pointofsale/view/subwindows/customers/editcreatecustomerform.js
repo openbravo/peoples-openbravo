@@ -11,7 +11,7 @@
 
 enyo.kind({
   kind: 'OB.UI.subwindow',
-  name: 'OB.OBPOSPointOfSale.customers.UI.newcustomer',
+  name: 'OB.OBPOSPointOfSale.UI.customers.newcustomer',
   beforeSetShowing: function (params) {
 
     if (OB.POS.modelterminal.get('terminal').defaultbp_paymentmethod !== null && OB.POS.modelterminal.get('terminal').defaultbp_bpcategory !== null && OB.POS.modelterminal.get('terminal').defaultbp_paymentterm !== null && OB.POS.modelterminal.get('terminal').defaultbp_invoiceterm !== null && OB.POS.modelterminal.get('terminal').defaultbp_bpcountry !== null && OB.POS.modelterminal.get('terminal').defaultbp_bporg !== null) {
@@ -62,14 +62,14 @@ enyo.kind({
     }
   },
   body: {
-    kind: 'OB.OBPOSPointOfSale.customers.UI.edit_createcustomers_impl'
+    kind: 'OB.OBPOSPointOfSale.UI.customers.edit_createcustomers_impl'
   }
 });
 
 //button of header of the body
 enyo.kind({
   kind: 'OB.UI.Button',
-  name: 'OB.OBPOSPointOfSale.customers.UI.newcustomersave',
+  name: 'OB.OBPOSPointOfSale.UI.customers.newcustomersave',
   style: 'width: 100px; margin: 0px 5px 8px 19px;',
   classes: 'btnlink btnlink-small',
   content: OB.I18N.getLabel('OBPOS_LblSave'),
@@ -84,7 +84,7 @@ enyo.kind({
 
 //Header of body
 enyo.kind({
-  name: 'OB.OBPOSPointOfSale.customers.UI.subwindowNewCustomer_bodyheader',
+  name: 'OB.OBPOSPointOfSale.UI.customers.subwindowNewCustomer_bodyheader',
   components: [{
     style: 'padding: 10px 500px 10px 500px;',
     components: [{
@@ -92,12 +92,12 @@ enyo.kind({
       components: [{
         style: 'display: table-cell;',
         components: [{
-          kind: 'OB.OBPOSPointOfSale.customers.UI.newcustomersave'
+          kind: 'OB.OBPOSPointOfSale.UI.customers.newcustomersave'
         }]
       }, {
         style: 'display: table-cell;',
         components: [{
-          kind: 'OB.OBPOSPointOfSale.customers.UI.cancelEdit',
+          kind: 'OB.OBPOSPointOfSale.UI.customers.cancelEdit',
           handlers: {
             onSetCustomer: 'setCustomer'
           },
@@ -124,10 +124,10 @@ enyo.kind({
 
 
 enyo.kind({
-  name: 'OB.OBPOSPointOfSale.customers.UI.edit_createcustomers_impl',
-  kind: 'OB.OBPOSPointOfSale.customers.UI.edit_createcustomers',
+  name: 'OB.OBPOSPointOfSale.UI.customers.edit_createcustomers_impl',
+  kind: 'OB.OBPOSPointOfSale.UI.customers.edit_createcustomers',
   style: 'padding: 9px 15px;',
-  windowHeader: 'OB.OBPOSPointOfSale.customers.UI.subwindowNewCustomer_bodyheader',
+  windowHeader: 'OB.OBPOSPointOfSale.UI.customers.subwindowNewCustomer_bodyheader',
   newAttributes: [{
     kind: 'OB.UI.CustomerTextProperty',
     name: 'customerName',

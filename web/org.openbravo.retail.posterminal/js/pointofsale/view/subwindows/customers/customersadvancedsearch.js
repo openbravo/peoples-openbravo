@@ -11,30 +11,19 @@
 
 //Modal pop up
 enyo.kind({
-  name: 'OB.UI.ModalConfigurationRequiredForCreateCustomers',
-  kind: 'OB.UI.ModalInfo',
-  header: OB.I18N.getLabel('OBPOS_configurationRequired'),
-  bodyContent: {
-    tag: 'div',
-    content: OB.I18N.getLabel('OBPOS_configurationNeededToCreateCustomers')
-  },
-  myId: 'modalConfigurationRequiredForCreateNewCustomers'
-});
-
-enyo.kind({
-  name: 'OB.OBPOSPointOfSale.UI.cas',
+  name: 'OB.OBPOSPointOfSale.UI.customers.cas',
   kind: 'OB.UI.subwindow',
   header: {
-    kind: 'OB.OBPOSPointOfSale.UI.casheader'
+    kind: 'OB.OBPOSPointOfSale.UI.customers.casheader'
   },
   body: {
-    kind: 'OB.OBPOSPointOfSale.UI.casbody'
+    kind: 'OB.OBPOSPointOfSale.UI.customers.casbody'
   }
 });
 
-//Header of cas (customer advanced search)
+//Header of the body of cas (customer advanced search)
 enyo.kind({
-  name: 'OB.UI.ModalCustomerScrollableHeader',
+  name: 'OB.OBPOSPointOfSale.UI.customers.ModalCustomerScrollableHeader',
   kind: 'OB.UI.ScrollableTableHeader',
   style: 'border-bottom: 10px solid #ff0000;',
   events: {
@@ -101,7 +90,7 @@ enyo.kind({
 
 /*items of collection Customer*/
 enyo.kind({
-  name: 'OB.UI.ListCustomersLine',
+  name: 'OB.OBPOSPointOfSale.UI.customers.ListCustomersLine',
   kind: 'OB.UI.SelectButton',
   classes: 'btnselect-customer',
   components: [{
@@ -126,7 +115,7 @@ enyo.kind({
 
 /*Search Customer Button*/
 enyo.kind({
-  name: 'OB.UI.SearchCustomerButton',
+  name: 'OB.OBPOSPointOfSale.UI.customers.SearchCustomerButton',
   kind: 'OB.UI.Button',
   events: {
     onSearchAction: ''
@@ -142,7 +131,7 @@ enyo.kind({
 
 /*New Customer Button*/
 enyo.kind({
-  name: 'OB.UI.NewCustomerButton',
+  name: 'OB.OBPOSPointOfSale.UI.customers.NewCustomerButton',
   kind: 'OB.UI.Button',
   events: {
     onChangeSubWindow: ''
@@ -163,12 +152,12 @@ enyo.kind({
 
 /* Buttons Left bar*/
 enyo.kind({
-  name: 'OB.UI.CustomerLeftBar',
+  name: 'OB.OBPOSPointOfSale.UI.customers.CustomerLeftBar',
   components: [{
-    kind: 'OB.UI.NewCustomerButton',
+    kind: 'OB.OBPOSPointOfSale.UI.customers.NewCustomerButton',
     content: OB.I18N.getLabel('OBPOS_LblNew')
   }, {
-    kind: 'OB.UI.SearchCustomerButton',
+    kind: 'OB.OBPOSPointOfSale.UI.customers.SearchCustomerButton',
     content: OB.I18N.getLabel('OBPOS_LblAC'),
     tap: function () {
       this.searchAction({
@@ -177,7 +166,7 @@ enyo.kind({
       });
     }
   }, {
-    kind: 'OB.UI.SearchCustomerButton',
+    kind: 'OB.OBPOSPointOfSale.UI.customers.SearchCustomerButton',
     content: OB.I18N.getLabel('OBPOS_LblDF'),
     tap: function () {
       this.searchAction({
@@ -186,7 +175,7 @@ enyo.kind({
       });
     }
   }, {
-    kind: 'OB.UI.SearchCustomerButton',
+    kind: 'OB.OBPOSPointOfSale.UI.customers.SearchCustomerButton',
     content: OB.I18N.getLabel('OBPOS_LblGI'),
     tap: function () {
       this.searchAction({
@@ -195,7 +184,7 @@ enyo.kind({
       });
     }
   }, {
-    kind: 'OB.UI.SearchCustomerButton',
+    kind: 'OB.OBPOSPointOfSale.UI.customers.SearchCustomerButton',
     content: OB.I18N.getLabel('OBPOS_LblJL'),
     tap: function () {
       this.searchAction({
@@ -204,7 +193,7 @@ enyo.kind({
       });
     }
   }, {
-    kind: 'OB.UI.SearchCustomerButton',
+    kind: 'OB.OBPOSPointOfSale.UI.customers.SearchCustomerButton',
     content: OB.I18N.getLabel('OBPOS_LblMO'),
     tap: function () {
       this.searchAction({
@@ -213,7 +202,7 @@ enyo.kind({
       });
     }
   }, {
-    kind: 'OB.UI.SearchCustomerButton',
+    kind: 'OB.OBPOSPointOfSale.UI.customers.SearchCustomerButton',
     content: OB.I18N.getLabel('OBPOS_LblPR'),
     tap: function () {
       this.searchAction({
@@ -222,7 +211,7 @@ enyo.kind({
       });
     }
   }, {
-    kind: 'OB.UI.SearchCustomerButton',
+    kind: 'OB.OBPOSPointOfSale.UI.customers.SearchCustomerButton',
     content: OB.I18N.getLabel('OBPOS_LblSV'),
     tap: function () {
       this.searchAction({
@@ -231,7 +220,7 @@ enyo.kind({
       });
     }
   }, {
-    kind: 'OB.UI.SearchCustomerButton',
+    kind: 'OB.OBPOSPointOfSale.UI.customers.SearchCustomerButton',
     content: OB.I18N.getLabel('OBPOS_LblWZ'),
     tap: function () {
       this.searchAction({
@@ -244,7 +233,7 @@ enyo.kind({
 
 /*scrollable table (body of customer)*/
 enyo.kind({
-  name: 'OB.UI.ListCustomers',
+  name: 'OB.OBPOSPointOfSale.UI.customers.ListCustomers',
   handlers: {
     onSearchAction: 'searchAction',
     onClearAction: 'clearAction'
@@ -256,7 +245,7 @@ enyo.kind({
   components: [{
     style: 'width: 10%; float: left; text-align: center; padding-top: 10px',
     components: [{
-      kind: 'OB.UI.CustomerLeftBar'
+      kind: 'OB.OBPOSPointOfSale.UI.customers.CustomerLeftBar'
     }]
   }, {
     style: 'width: 90%; float: left;',
@@ -269,8 +258,8 @@ enyo.kind({
           name: 'bpslistitemprinter',
           kind: 'OB.UI.ScrollableTable',
           scrollAreaMaxHeight: '800px',
-          renderHeader: 'OB.UI.ModalCustomerScrollableHeader',
-          renderLine: 'OB.UI.ListCustomersLine',
+          renderHeader: 'OB.OBPOSPointOfSale.UI.customers.ModalCustomerScrollableHeader',
+          renderLine: 'OB.OBPOSPointOfSale.UI.customers.ListCustomersLine',
           renderEmpty: 'OB.UI.RenderEmpty'
         }]
       }]
@@ -341,7 +330,7 @@ enyo.kind({
 //header
 enyo.kind({
   kind: 'OB.UI.subwindowheader',
-  name: 'OB.OBPOSPointOfSale.UI.casheader',
+  name: 'OB.OBPOSPointOfSale.UI.customers.casheader',
   onTapCloseButton: function () {
     var subWindow = this.subWindow;
     subWindow.doChangeSubWindow({
@@ -359,8 +348,8 @@ enyo.kind({
 
 /*instance*/
 enyo.kind({
-  name: 'OB.OBPOSPointOfSale.UI.casbody',
+  name: 'OB.OBPOSPointOfSale.UI.customers.casbody',
   components: [{
-    kind: 'OB.UI.ListCustomers'
+    kind: 'OB.OBPOSPointOfSale.UI.customers.ListCustomers'
   }]
 });
