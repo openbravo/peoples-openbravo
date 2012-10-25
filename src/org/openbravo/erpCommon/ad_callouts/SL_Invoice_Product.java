@@ -191,8 +191,7 @@ public class SL_Invoice_Product extends HttpSecureAppServlet {
       if (inv.isSalesTransaction() && !"".equals(strMProductID)) {
         Product product = OBDal.getInstance().get(Product.class, strMProductID);
         if (product.isDeferredRevenue()) {
-          resultado.append(", new Array(\"inpisdeferredrevenue\", \""
-              + (product.isDeferredRevenue() ? "Y" : "N") + "\")");
+          resultado.append(", new Array(\"inpisdeferredrevenue\", \"Y\")");
           resultado.append(", new Array(\"inprevplantype\", \"" + product.getRevenuePlanType()
               + "\")");
           resultado.append(", new Array(\"inpperiodnumber\", \"" + product.getPeriodNumber()
@@ -211,8 +210,7 @@ public class SL_Invoice_Product extends HttpSecureAppServlet {
         resultado.append(", new Array(\"inprevplantype\", \"\")");
         resultado.append(", new Array(\"inpperiodnumber\", \"\")");
         if (product.isDeferredexpense()) {
-          resultado.append(", new Array(\"inpisdeferredexpense\", \""
-              + (product.isDeferredexpense() ? "Y" : "N") + "\")");
+          resultado.append(", new Array(\"inpisdeferredexpense\", \"Y\")");
           resultado.append(", new Array(\"inpexpplantype\", \"" + product.getExpplantype() + "\")");
           resultado.append(", new Array(\"inpperiodnumberExp\", \"" + product.getPeriodnumberExp()
               + "\")");
