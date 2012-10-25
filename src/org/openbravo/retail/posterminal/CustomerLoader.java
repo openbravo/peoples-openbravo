@@ -143,7 +143,9 @@ public class CustomerLoader extends JSONProcessSimple {
       throw new OBException(errorMessage, null);
     }
     // BP id (required)
-    if (!jsonCustomer.has("id") && jsonCustomer.getString("id").equals("null")) {
+    if (jsonCustomer.has("id") && !jsonCustomer.getString("id").equals("null")) {
+      customer.setId(jsonCustomer.getString("id"));
+    } else {
       String errorMessage = "Business partner id is a mandatory field to create a new customer from Web Pos";
       log.error(errorMessage);
       throw new OBException(errorMessage, null);
