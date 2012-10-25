@@ -19,8 +19,8 @@
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
-  v_reservedqtydiff NUMBER :=0;
-  v_releasedqtydiff NUMBER :=0;
+  v_reservedqtydiff NUMBER:=0;
+  v_releasedqtydiff NUMBER:=0;
   v_reservation_id      VARCHAR2(32);
 BEGIN
   IF (AD_isTriggerEnabled()='N') THEN
