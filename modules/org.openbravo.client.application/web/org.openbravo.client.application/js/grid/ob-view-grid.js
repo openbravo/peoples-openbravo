@@ -732,6 +732,11 @@ isc.OBViewGrid.addProperties({
         editorProperties, len = fields.length,
         ds, dataSources = [];
 
+    if (this.getDataSource()) {
+      // will get destroyed in the super class then
+      this.getDataSource().potentiallyShared = false;
+    }
+
     for (i = 0; i < len; i++) {
       field = fields[i];
       editorProperties = field && field.editorProperties;
