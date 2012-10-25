@@ -324,7 +324,7 @@
               FROM ma_wrphaseproduct wrpp
                   JOIN ma_sequenceproduct sp ON wrpp.ma_sequenceproduct_id = sp.ma_sequenceproduct_id
               WHERE wrpp.ma_wrphaseproduct_id = cur_wrpused.ma_wrphaseproduct_id;
-              AD_PINSTANCE_PARA_INSERT(v_AD_Pinstance_ID, '100', 'M_Warehouse_Rule_ID', v_warehouse_rule_id, null, null, null, null, null);
+              AD_PINSTANCE_PARA_INSERT(v_AD_Pinstance_ID, '110', 'M_Warehouse_Rule_ID', v_warehouse_rule_id, null, null, null, null, null);
 
               M_GET_STOCK(v_AD_Pinstance_ID, 'N');
               -- Check result
