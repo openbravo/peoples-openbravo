@@ -330,7 +330,7 @@ BEGIN
   IF (v_pendingtorelease > 0) THEN
     RAISE_APPLICATION_ERROR(-20000, '@CannotConsumeAllStock@');
   END IF;
-
-END M_RESERVATION_CONSUMPTION]]></body>
+END M_RESERVATION_CONSUMPTION
+]]></body>
     </function>
   </database>

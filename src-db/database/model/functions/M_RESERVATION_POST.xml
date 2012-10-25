@@ -33,7 +33,7 @@
   v_Message         VARCHAR2(2000):='';
   v_reservation_id  VARCHAR2(32);
   v_user_id         VARCHAR2(32);
-  v_Result          NUMBER:=1; --  Success
+  v_Result NUMBER:=1; --  Success
   v_resaction       VARCHAR2(60);
   v_resstatus       VARCHAR2(60);
   v_newstatus       VARCHAR2(60);
@@ -87,7 +87,7 @@ BEGIN
     v_newaction := 'HO';
     
     -- ADD RESERVED STOCK
-    M_RESERVE_STOCK_AUTO (v_reservation_id, v_user_id, v_message);
+    M_RESERVE_STOCK_AUTO(v_reservation_id, v_user_id, v_message);
 
   ELSIF (v_resaction = 'HO') THEN
   /*

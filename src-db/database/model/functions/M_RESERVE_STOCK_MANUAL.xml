@@ -91,6 +91,7 @@ BEGIN
 
   p_reservation_stock_id := v_reservation_stock_id;
   RETURN ;
-END M_RESERVE_STOCK_MANUAL]]></body>
+END M_RESERVE_STOCK_MANUAL
+]]></body>
     </function>
   </database>

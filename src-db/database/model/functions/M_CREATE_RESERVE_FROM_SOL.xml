@@ -78,6 +78,7 @@ BEGIN
 
   p_reservation_id := v_reservation_id;
 RETURN;
-END M_CREATE_RESERVE_FROM_SOL]]></body>
+END M_CREATE_RESERVE_FROM_SOL
+]]></body>
     </function>
   </database>

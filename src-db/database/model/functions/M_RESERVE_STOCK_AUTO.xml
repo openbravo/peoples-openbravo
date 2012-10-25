@@ -129,6 +129,7 @@ BEGIN
 
   p_reservedqty := v_reserveqty - v_pendingqty;
   RETURN;
-END M_RESERVE_STOCK_AUTO]]></body>
+END M_RESERVE_STOCK_AUTO
+]]></body>
     </function>
   </database>
