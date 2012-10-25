@@ -27,6 +27,7 @@ enyo.kind({
       return false;
     }
   },
+  defaultNavigateOnClose: 'customerView',
   header: {
     kind: 'OB.UI.subwindowheader',
     headermessage: OB.I18N.getLabel('OBPOS_TitleEditNewCustomer'),
@@ -41,11 +42,7 @@ enyo.kind({
       if (subWindow.caller === 'mainSubWindow') {
         subWindow.doChangeSubWindow({
           newWindow: {
-            name: 'customerView',
-            params: {
-              caller: 'mainSubWindow',
-              businessPartner: this.headerContainer.customer
-            }
+            name: subWindow.caller
           }
         });
       } else {
@@ -53,7 +50,7 @@ enyo.kind({
           newWindow: {
             name: subWindow.caller,
             params: {
-              caller: 'customerAdvancedSearch',
+              navigateOnClose: 'customerAdvancedSearch',
               businessPartner: this.headerContainer.customer
             }
           }
@@ -106,15 +103,23 @@ enyo.kind({
           },
           tap: function () {
             var subWindow = this.subWindow;
-            subWindow.doChangeSubWindow({
-              newWindow: {
-                name: subWindow.caller,
-                params: {
-                  caller: subWindow.getName(),
-                  businessPartner: this.customer
+            if (subWindow.caller === 'mainSubWindow') {
+              subWindow.doChangeSubWindow({
+                newWindow: {
+                  name: subWindow.caller
                 }
-              }
-            });
+              });
+            } else {
+              subWindow.doChangeSubWindow({
+                newWindow: {
+                  name: subWindow.caller,
+                  params: {
+                    navigateOnClose: 'customerAdvancedSearch',
+                    businessPartner: this.customer
+                  }
+                }
+              });
+            }
           }
         }]
       }]

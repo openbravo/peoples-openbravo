@@ -20,8 +20,22 @@ enyo.kind({
     if (args.caller) {
       this.caller = args.caller;
     }
+    if (args.navigateOnClose) {
+      this.navigateOnClose = args.navigateOnClose;
+    }else{
+      this.navigateOnClose = this.defaultNavigateOnClose;
+    }
     if (this.beforeSetShowing) {
       return this.beforeSetShowing(args);
+    }
+    return true;
+  },
+  mainBeforeClose: function (dest) {
+    if (dest) {
+      this.lastLeaveTo = dest;
+    }
+    if (this.beforeClose) {
+      return this.beforeClose(dest);
     }
     return true;
   },

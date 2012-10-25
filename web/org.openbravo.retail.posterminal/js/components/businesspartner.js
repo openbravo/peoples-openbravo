@@ -67,7 +67,10 @@ enyo.kind({
   tap: function (model) {
     this.doChangeSubWindow({
       newWindow: {
-        name: 'customerCreateAndEdit'
+        name: 'customerCreateAndEdit',
+        params: {
+          navigateOnClose: 'mainSubWindow'
+        }
       }
     });
   }
