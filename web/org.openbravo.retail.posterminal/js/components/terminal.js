@@ -39,7 +39,7 @@ enyo.kind({
 // Container for the whole POS application
 enyo.kind({
   name: 'OB.UI.Terminal',
-  classes: 'container',
+  classes: 'pos-container',
   components: [{
     classes: 'section',
     name: 'topsection',
