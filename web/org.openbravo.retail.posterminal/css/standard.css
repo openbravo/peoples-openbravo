@@ -40,7 +40,7 @@ ul {
 }
 
 /*subwindows*/
-div.subwindow{
+div.subwindow {
   background-color: #FFFFFF;
 }
 
@@ -50,12 +50,12 @@ div.subwindowheadertext {
   font-weight: bold;
 }
 
-div.subwindow .subwindowheader{
+div.subwindow .subwindowheader {
   padding: 9px 15px;  
 }
 
-div.subwindow .subwindowheadertext{
-  
+div.subwindow .subwindowheadertext {
+
 }
 
 div.subwindow .subwindowheader .close>span:first-child {
@@ -210,7 +210,7 @@ div.subwindow .subwindowheader .close>span:first-child {
   display: none;
 }
 
-.postab-content > .active {
+.postab-pane.active {
   display: block;
 }
 

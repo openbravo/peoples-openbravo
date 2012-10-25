@@ -71,7 +71,7 @@ enyo.kind({
   name: 'OB.UI.ListCategories',
   components: [{
     name: 'categoryTable',
-    scrollAreaMaxHeight: '540px',
+    scrollAreaMaxHeight: '574px',
     listStyle: 'list',
     kind: 'OB.UI.ScrollableTable',
     renderHeader: 'OB.UI.CategoryListHeader',
@@ -124,7 +124,7 @@ enyo.kind({
   components: [{
     kind: 'OB.UI.ScrollableTable',
     name: 'productTable',
-    scrollAreaMaxHeight: '540px',
+    scrollAreaMaxHeight: '574px',
     renderHeader: 'OB.UI.ProductListHeader',
     renderEmpty: 'OB.UI.RenderEmpty',
     renderLine: 'OB.UI.RenderProduct'

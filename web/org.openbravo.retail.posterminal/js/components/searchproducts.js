@@ -118,7 +118,7 @@ enyo.kind({
             components: [{
               kind: 'OB.UI.ScrollableTable',
               name: 'products',
-              scrollAreaMaxHeight: '500px',
+              scrollAreaMaxHeight: '482px',
               renderHeader: 'OB.UI.SearchProductHeader',
               renderEmpty: 'OB.UI.RenderEmpty',
               renderLine: 'OB.UI.RenderProduct'
