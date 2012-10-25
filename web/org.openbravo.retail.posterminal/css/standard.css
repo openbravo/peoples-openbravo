@@ -16,6 +16,11 @@ input, button, select, textarea {
   font-size: 16px;
 }
 
+input.error {
+  background-color: rgba(255, 0, 0);
+  background-color: rgba(255, 0, 0, 0.5);
+}
+
 /*subwindows*/
 div.subwindow{
   background-color: #FFFFFF;

@@ -112,6 +112,21 @@ enyo.kind({
       }]
     }]
   }],
+  showValidationErrors: function (stDate, endDate) {
+    var me = this;
+    if (stDate === false) {
+      this.$.startDate.addClass('error');
+      setTimeout(function () {
+        me.$.startDate.removeClass('error');
+      }, 5000);
+    }
+    if (endDate === false) {
+      this.$.endDate.addClass('error');
+      setTimeout(function () {
+        me.$.endDate.removeClass('error');
+      }, 5000);
+    }
+  },
   clearAction: function () {
     this.$.filterText.setValue('');
     this.$.startDate.setValue('');
@@ -119,6 +134,36 @@ enyo.kind({
     this.doClearAction();
   },
   searchAction: function () {
+    var startDate, endDate, startDateValidated = true,
+        endDateValidated = true;
+    startDate = this.$.startDate.getValue();
+    endDate = this.$.endDate.getValue();
+
+    if (startDate !== '') {
+      startDateValidated = false;
+      startDateValidated = moment(startDate, "YYYY-MM-DD").isValid();
+    }
+
+    if (endDate !== '') {
+      endDateValidated = false;
+      endDateValidated = moment(endDate, "YYYY-MM-DD").isValid();
+    }
+
+    if (startDate !== '' && startDateValidated && endDate !== '' && endDateValidated) {
+      if (moment(endDate, "YYYY-MM-DD").diff(moment(startDate, "YYYY-MM-DD")) < 0) {
+        endDateValidated = false;
+        startDateValidated = false;
+      }
+    }
+
+    if (startDateValidated === false || endDateValidated === false) {
+      this.showValidationErrors(startDateValidated, endDateValidated);
+      return true;
+    } else {
+      this.$.startDate.removeClass("error");
+      this.$.endDate.removeClass("error");
+    }
+
     this.filters = {
       documentNo: this.$.filterText.getValue(),
       startDate: this.$.startDate.getValue(),
