@@ -965,7 +965,7 @@ OB.ViewFormProperties = {
       // handle the case that the FIC returns a null value as a string
       // should be repaired in the FIC
       // note: do not use clearvalue as this removes the value from the form
-      this.setValue(field.name, null);
+      this.setItemValue(field.name, null);
     } else if (columnValue.value || columnValue.value === 0 || columnValue.value === false) {
       isDate = field.type && (isc.SimpleType.getType(field.type).inheritsFrom === 'date' || isc.SimpleType.getType(field.type).inheritsFrom === 'time');
       isDateTime = field.type && isc.SimpleType.getType(field.type).inheritsFrom === 'datetime';
@@ -1010,7 +1010,7 @@ OB.ViewFormProperties = {
     } else {
       // note: do not use clearvalue as this removes the value from the form
       // which results it to not be sent to the server anymore
-      this.setValue(field.name, null);
+      this.setItemValue(field.name, null);
       if (this.getValue(field.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER)) {
         this.setItemValue(field.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, null);
       }
@@ -1022,7 +1022,7 @@ OB.ViewFormProperties = {
 
     // store the textualvalue so that it is correctly send back to the server
     typeInstance = isc.SimpleType.getType(field.type);
-    if (columnValue.classicValue && typeInstance.decSeparator) {
+    if ((columnValue.classicValue || columnValue.classicValue === '') && typeInstance.decSeparator) {
       this.setTextualValue(field.name, assignClassicValue, typeInstance);
     }
   },
@@ -1095,7 +1095,7 @@ OB.ViewFormProperties = {
       // Adjust to formatting if exists value and classicValue.
       assignClassicValue = (field.typeInstance && field.typeInstance.parseInput && field.typeInstance.editFormatter) ? field.typeInstance.editFormatter(field.typeInstance.parseInput(columnValue.classicValue)) : columnValue.classicValue;
       typeInstance = isc.SimpleType.getType(field.type);
-      if (columnValue.classicValue && typeInstance.decSeparator) {
+      if ((columnValue.classicValue || columnValue.classicValue === '') && typeInstance.decSeparator) {
         this.setTextualValue(field.name, assignClassicValue, typeInstance, gridEditInformation);
       }
     }
