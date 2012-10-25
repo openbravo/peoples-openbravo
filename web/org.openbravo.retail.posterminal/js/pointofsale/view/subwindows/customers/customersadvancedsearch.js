@@ -281,7 +281,7 @@ enyo.kind({
         components: [{
           name: 'bpslistitemprinter',
           kind: 'OB.UI.ScrollableTable',
-          scrollAreaMaxHeight: '800px',
+          scrollAreaMaxHeight: '301px',
           renderHeader: 'OB.OBPOSPointOfSale.UI.customers.ModalCustomerScrollableHeader',
           renderLine: 'OB.OBPOSPointOfSale.UI.customers.ListCustomersLine',
           renderEmpty: 'OB.UI.RenderEmpty'
