@@ -33,6 +33,7 @@ import org.openbravo.base.session.SessionFactoryController;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.Identifiable;
 import org.openbravo.base.util.Check;
+import org.openbravo.dal.service.OBDal;
 
 /**
  * Keeps the Hibernate Session and Transaction in a ThreadLocal so that it is available throughout
@@ -208,6 +209,7 @@ public class SessionHandler implements OBNotSingleton {
     boolean err = true;
     try {
       checkInvariant();
+      flushRemainingChanges();
       tx.commit();
       tx = null;
       err = false;
@@ -232,10 +234,28 @@ public class SessionHandler implements OBNotSingleton {
    */
   public void commitAndStart() {
     checkInvariant();
+    flushRemainingChanges();
     tx.commit();
     tx = null;
     tx = getSession().beginTransaction();
     log.debug("Committed and started new transaction");
+  }
+
+  private void flushRemainingChanges() {
+
+    // business event handlers can change the data
+    // during flush, flush several times until
+    // the session is really cleaned up
+    int countFlushes = 0;
+    while (OBDal.getInstance().getSession().isDirty()) {
+      OBDal.getInstance().flush();
+      countFlushes++;
+      // arbitrary point to give up...
+      if (countFlushes > 100) {
+        log.error("Infinite loop in flushing session, tried more than 100 flushes");
+        break;
+      }
+    }
   }
 
   /**
