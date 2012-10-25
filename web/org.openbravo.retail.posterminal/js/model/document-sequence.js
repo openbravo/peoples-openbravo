@@ -8,6 +8,7 @@
  */
 
 /*global Backbone */
+
 (function () {
   var DocumentSequence = Backbone.Model.extend({
     modelName: 'DocumentSequence',

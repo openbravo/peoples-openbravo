@@ -15,21 +15,19 @@ enyo.kind({
   myId: 'modalp',
   header: '',
   maxheight: '600px',
-  bodyContent: {
-  },
-  bodyButtons: {
-  },
-  show: function(receipt, provider, key, name, paymentMethod, amount) {
-    
+  bodyContent: {},
+  bodyButtons: {},
+  show: function (receipt, provider, key, name, paymentMethod, amount) {
+
     if (receipt.get('orderType') === 0) {
       this.$.header.setContent(OB.I18N.getLabel('OBPOS_LblModalPayment', [OB.I18N.formatCurrency(amount)]));
-    } else if  (receipt.get('orderType') === 1) {
+    } else if (receipt.get('orderType') === 1) {
       this.$.header.setContent(OB.I18N.getLabel('OBPOS_LblModalReturn', [OB.I18N.formatCurrency(amount)]));
     } else {
       this.$.header.setContent('');
-    }    
-    
-	  this.$.bodyContent.destroyComponents();
+    }
+
+    this.$.bodyContent.destroyComponents();
     this.$.bodyContent.createComponent({
       kind: provider,
       paymentMethod: paymentMethod,

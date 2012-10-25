@@ -9,7 +9,7 @@
 
 /*global B,$,Backbone,_ */
 
-(function() {
+(function () {
 
   OB = window.OB || {};
   OB.DS = window.OB.DS || {};
@@ -23,7 +23,7 @@
       var response = data.response;
       var status = response.status;
       if (status === 0) {
-        if(response.data && response.data.length>0){
+        if (response.data && response.data.length > 0) {
           window.localStorage.setItem('lastUpdatedTimestamp', response.lastUpdated);
         }
         callback(response.data, response.message);
@@ -72,10 +72,10 @@
       dataType: 'json',
       type: 'POST',
       data: JSON.stringify(dataparams),
-      success: function(data, textStatus, jqXHR) {
+      success: function (data, textStatus, jqXHR) {
         serviceSuccess(data, textStatus, jqXHR, callback);
       },
-      error: function(jqXHR, textStatus, errorThrown) {
+      error: function (jqXHR, textStatus, errorThrown) {
         serviceError(jqXHR, textStatus, errorThrown, callback, callbackError);
       }
     });
@@ -91,21 +91,21 @@
       async: async,
       dataType: 'json',
       type: 'GET',
-      success: function(data, textStatus, jqXHR) {
+      success: function (data, textStatus, jqXHR) {
         serviceSuccess(data, textStatus, jqXHR, callback);
       },
-      error: function(jqXHR, textStatus, errorThrown) {
+      error: function (jqXHR, textStatus, errorThrown) {
         serviceError(jqXHR, textStatus, errorThrown, callback, callbackError);
       }
     });
   }
 
   // Process object
-  OB.DS.Process = function(source) {
+  OB.DS.Process = function (source) {
     this.source = source;
   };
 
-  OB.DS.Process.prototype.exec = function(params, callback, callbackError, async) {
+  OB.DS.Process.prototype.exec = function (params, callback, callbackError, async) {
     var attr;
     var data = {};
 
@@ -119,7 +119,7 @@
   };
 
   // Source object
-  OB.DS.Request = function(source, client, org, pos, lastUpdated) {
+  OB.DS.Request = function (source, client, org, pos, lastUpdated) {
     this.model = source && source.prototype && source.prototype.modelName && source; // we're using a Backbone.Model as source
     this.source = (this.model && this.model.prototype.source) || source; // we're using a plain String as source
     if (!this.source) {
@@ -131,7 +131,7 @@
     this.lastUpdated = lastUpdated;
   };
 
-  OB.DS.Request.prototype.exec = function(params, callback, callbackError, async) {
+  OB.DS.Request.prototype.exec = function (params, callback, callbackError, async) {
     var p, i;
     var data = {};
 
@@ -180,8 +180,8 @@
     if (this.pos) {
       data.pos = this.pos;
     }
-    
-    if(this.lastUpdated){
+
+    if (this.lastUpdated) {
       data.lastUpdated = this.lastUpdated;
     }
 
@@ -193,7 +193,7 @@
 
     for (p in filter) {
       if (filter.hasOwnProperty(p)) {
-        if (typeof(filter[p]) === 'object') {
+        if (typeof (filter[p]) === 'object') {
           return check(elem[p], filter[p]);
         } else {
           if (filter[p].substring(0, 2) === '%i') {
@@ -240,7 +240,7 @@
       };
     } else {
       f = filterfunction ||
-      function(item) {
+      function (item) {
         return item;
       };
       newdata = [];
@@ -266,17 +266,17 @@
 
   // DataSource objects
   // OFFLINE GOES HERE
-  OB.DS.DataSource = function(request) {
+  OB.DS.DataSource = function (request) {
     this.request = request;
     this.cache = null;
   };
   _.extend(OB.DS.DataSource.prototype, Backbone.Events);
 
-  OB.DS.DataSource.prototype.load = function(params, incremental) {
+  OB.DS.DataSource.prototype.load = function (params, incremental) {
     var me = this;
     this.cache = null;
 
-    this.request.exec(params, function(data) {
+    this.request.exec(params, function (data) {
 
       if (data.exception) {
         throw data.exception;
@@ -285,9 +285,9 @@
       me.cache = data;
 
       if (me.request.model && !me.request.model.prototype.online) {
-        OB.Dal.initCache(me.request.model, data, function() {
+        OB.Dal.initCache(me.request.model, data, function () {
           me.trigger('ready');
-        }, function() {
+        }, function () {
           window.console.error(arguments,me.request.model.prototype);
         }, incremental);
       } else {
@@ -296,22 +296,22 @@
     });
   };
 
-  OB.DS.DataSource.prototype.find = function(filter, callback) {
+  OB.DS.DataSource.prototype.find = function (filter, callback) {
     if (this.cache) {
       callback(findInData(this.cache, filter));
     } else {
-      this.on('ready', function() {
+      this.on('ready', function () {
         callback(findInData(this.cache, filter));
       }, this);
     }
   };
 
-  OB.DS.DataSource.prototype.exec = function(filter, callback) {
+  OB.DS.DataSource.prototype.exec = function (filter, callback) {
     if (this.cache) {
       var result1 = execInData(this.cache, filter);
       callback(result1.data, result1.info);
     } else {
-      this.on('ready', function() {
+      this.on('ready', function () {
         var result2 = execInData(this.cache, filter);
         callback(result2.data, result2.info);
       }, this);
@@ -319,38 +319,38 @@
   };
 
   // HWServer
-  OB.DS.HWResource = function(res) {
+  OB.DS.HWResource = function (res) {
     this.resource = res;
     this.resourcedata = null;
   };
 
-  OB.DS.HWResource.prototype.getData = function(callback) {
+  OB.DS.HWResource.prototype.getData = function (callback) {
     if (this.resourcedata) {
       callback(this.resourcedata);
     } else {
-      OB.UTIL.loadResource(this.resource, function(data) {
+      OB.UTIL.loadResource(this.resource, function (data) {
         this.resourcedata = data;
         callback(this.resourcedata);
       }, this);
     }
   };
 
-  OB.DS.HWServer = function(url, scaleurl) {
+  OB.DS.HWServer = function (url, scaleurl) {
     this.url = url;
     this.scaleurl = scaleurl;
   };
 
-  OB.DS.HWServer.prototype.getWeight = function(callback) {
+  OB.DS.HWServer.prototype.getWeight = function (callback) {
     if (this.scaleurl) {
       var me = this;
       $.ajax({
         url: me.scaleurl,
         dataType: 'json',
         type: 'GET',
-        success: function(data, textStatus, jqXHR) {
+        success: function (data, textStatus, jqXHR) {
           callback(data);
         },
-        error: function(jqXHR, textStatus, errorThrown) {
+        error: function (jqXHR, textStatus, errorThrown) {
           if (callback) {
             callback({
               exception: {
@@ -368,11 +368,11 @@
     }
   };
 
-  OB.DS.HWServer.prototype.print = function(template, params, callback) {
+  OB.DS.HWServer.prototype.print = function (template, params, callback) {
 
     if (template.getData) {
       var me = this;
-      template.getData(function(data) {
+      template.getData(function (data) {
         me.print(data, params, callback);
       });
     } else {
@@ -380,7 +380,7 @@
     }
   };
 
-  OB.DS.HWServer.prototype._print = function(templatedata, params, callback) {
+  OB.DS.HWServer.prototype._print = function (templatedata, params, callback) {
     if (this.url) {
       var me = this;
       $.ajax({
@@ -389,12 +389,12 @@
         dataType: 'json',
         type: 'POST',
         data: params ? _.template(templatedata, params) : templatedata,
-        success: function(data, textStatus, jqXHR) {
+        success: function (data, textStatus, jqXHR) {
           if (callback) {
             callback(data);
           }
         },
-        error: function(jqXHR, textStatus, errorThrown) {
+        error: function (jqXHR, textStatus, errorThrown) {
           if (callback) {
             callback({
               exception: {

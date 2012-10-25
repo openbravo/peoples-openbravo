@@ -39,7 +39,7 @@ enyo.kind({
   kind: 'OB.UI.Button',
   content: OB.I18N.getLabel('OBPOS_LogoutDialogLogout'),
   classes: 'btnlink btnlink-gray modal-dialog-content-button',
-  tap: function() {
+  tap: function () {
     $('#logoutDialog').modal('hide');
     OB.POS.logout();
   }
@@ -50,7 +50,7 @@ enyo.kind({
   kind: 'OB.UI.Button',
   content: OB.I18N.getLabel('OBPOS_LogoutDialogLock'),
   classes: 'btnlink btnlink-gray modal-dialog-content-button',
-  tap: function() {
+  tap: function () {
     $('#logoutDialog').modal('hide');
     OB.POS.lock();
   }

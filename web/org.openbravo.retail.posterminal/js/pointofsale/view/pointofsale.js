@@ -1,5 +1,3 @@
-/*global OB, enyo, $, confirm */
-
 /*
  ************************************************************************************
  * Copyright (C) 2012 Openbravo S.L.U.
@@ -8,6 +6,8 @@
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
+
+/*global OB, enyo, $, confirm */
 
 // Point of sale main window view
 enyo.kind({
@@ -40,182 +40,29 @@ enyo.kind({
   components: [{
     name: 'otherSubWindowsContainer',
     components: [{
-      style: 'background-color: #FFFFFF;',
-      name: 'subWindow_customers',
-      beforeSetShowing: function(value, params) {
-        this.setShowing(value);
-      },
-      showing: false,
-      components: [{
-        tag: 'div',
-        style: 'padding: 9px 15px;',
-        components: [{
-          tag: 'a',
-          classes: 'close',
-          components: [{
-            tag: 'span',
-            style: 'font-size: 150%',
-            allowHtml: true,
-            content: '&times;'
-          }],
-          tap: function() {
-            this.model.get('subWindowManager').set('currentWindow', {
-              name: 'mainSubWindow',
-              params: []
-            });
-          },
-          init: function(model) {
-            this.model = model;
-          }
-        }, {
-          tag: 'h3',
-          name: 'divheaderCustomerAdvancedSearch',
-          content: OB.I18N.getLabel('OBPOS_TitleCustomerAdvancedSearch')
-        }]
-      }, {
-        kind: 'OB.UI.ListCustomers'
-      }]
-    }]
-  }, {
-    name: 'NewCustomerSubWindowsContainer',
-    components: [{
-      kind: 'OB.UI.ModalConfigurationRequiredForCreateCustomers'
+      kind: 'OB.OBPOSPointOfSale.UI.customers.ModalConfigurationRequiredForCreateCustomers'
     }, {
-      style: 'background-color: #FFFFFF;',
-      name: 'subWindow_new_customer',
-      beforeSetShowing: function(value, params) {
-        this.setShowing(value);
-        this.waterfall('onSetCustomer', {
-          customer: params.businessPartner,
-          callerWindow: params.callerWindow
-        });
-      },
-      showing: false,
-      components: [{
-        tag: 'div',
-        style: 'padding: 9px 15px;',
-        components: [{
-          tag: 'a',
-          classes: 'close',
-          components: [{
-            tag: 'span',
-            style: 'font-size: 150%',
-            allowHtml: true,
-            content: '&times;'
-          }],
-          tap: function() {
-            this.model.get('subWindowManager').set('currentWindow', {
-              name: 'subWindow_customers',
-              params: []
-            });
-          },
-          init: function(model) {
-            this.model = model;
-          }
-        }, {
-          tag: 'h3',
-          name: 'divheaderCustomerEditNew',
-          content: OB.I18N.getLabel('OBPOS_TitleEditNewCustomer')
-        }]
-      }, {
-        name: 'OB.UI.NewCustomerWindowImpl',
-        kind: 'OB.UI.NewCustomerWindow',
-        windowHeader: 'OB.UI.NewCustomerWindowHeader',
-        newAttributes: [{
-          kind: 'OB.UI.CustomerTextProperty',
-          name: 'customerName',
-          modelProperty: 'name',
-          label: OB.I18N.getLabel('OBPOS_LblName')
-        }, {
-          kind: 'OB.UI.CustomerTextProperty',
-          name: 'customerLocName',
-          modelProperty: 'locName',
-          label: OB.I18N.getLabel('OBPOS_LblAddress')
-        }, {
-          kind: 'OB.UI.CustomerTextProperty',
-          name: 'customerPostalCode',
-          modelProperty: 'postalcode',
-          label: OB.I18N.getLabel('OBPOS_LblPostalCode')
-        }, {
-          kind: 'OB.UI.CustomerTextProperty',
-          name: 'customerCity',
-          modelProperty: 'city',
-          label: OB.I18N.getLabel('OBPOS_LblCity')
-        }, {
-          kind: 'OB.UI.CustomerTextProperty',
-          name: 'customerPhone',
-          modelProperty: 'phone',
-          label: OB.I18N.getLabel('OBPOS_LblPhone')
-        }, {
-          kind: 'OB.UI.CustomerTextProperty',
-          name: 'customerEmail',
-          modelProperty: 'email',
-          label: OB.I18N.getLabel('OBPOS_LblEmail')
-        }]
-      }]
-    }]
-  }, {
-    name: 'EditCustomerSubWindowsContainer',
-    components: [{
-      style: 'background-color: #FFFFFF;',
-      name: 'subWindow_edit_customer',
-      beforeSetShowing: function(value, params) {
-        this.setShowing(value);
-        this.waterfall('onSetCustomer', {
-          customer: params.businessPartner
-        });
-      },
-      showing: false,
-      components: [{
-        name: 'OB.UI.EditCustomerWindowImpl',
-        kind: 'OB.UI.NewCustomerWindow',
-        windowHeader: 'OB.UI.EditCustomerWindowHeader',
-        newAttributes: [{
-          kind: 'OB.UI.CustomerTextProperty',
-          name: 'customerName',
-          modelProperty: 'name',
-          label: OB.I18N.getLabel('OBPOS_LblName'),
-          readOnly: true
-        }, {
-          kind: 'OB.UI.CustomerTextProperty',
-          name: 'customerLocName',
-          modelProperty: 'locName',
-          label: OB.I18N.getLabel('OBPOS_LblAddress'),
-          readOnly: true
-        }, {
-          kind: 'OB.UI.CustomerTextProperty',
-          name: 'customerPostalCode',
-          modelProperty: 'postalcode',
-          label: OB.I18N.getLabel('OBPOS_LblPostalCode'),
-          readOnly: true
-        }, {
-          kind: 'OB.UI.CustomerTextProperty',
-          name: 'customerCity',
-          modelProperty: 'city',
-          label: OB.I18N.getLabel('OBPOS_LblCity'),
-          readOnly: true
-        }, {
-          kind: 'OB.UI.CustomerTextProperty',
-          name: 'customerPhone',
-          modelProperty: 'phone',
-          label: OB.I18N.getLabel('OBPOS_LblPhone'),
-          readOnly: true
-        }, {
-          kind: 'OB.UI.CustomerTextProperty',
-          name: 'customerEmail',
-          modelProperty: 'email',
-          label: OB.I18N.getLabel('OBPOS_LblEmail'),
-          readOnly: true
-        }]
-      }]
+      kind: 'OB.OBPOSPointOfSale.UI.customers.cas',
+      name: 'customerAdvancedSearch'
+    }, {
+      kind: 'OB.OBPOSPointOfSale.UI.customers.newcustomer',
+      name: 'customerCreateAndEdit'
+    }, {
+      kind: 'OB.OBPOSPointOfSale.UI.customers.editcustomer',
+      name: 'customerView'
     }]
   }, {
     name: 'mainSubWindow',
+    isMainSubWindow: true,
     components: [{
       kind: 'OB.UI.ModalDeleteReceipt'
-    },{
+    }, {
+      kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalClosePaidReceipt'
+    }, {
+      kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalProductCannotBeGroup'
+    }, {
       kind: 'OB.UI.Modalnoteditableorder'
-    },{
+    }, {
       kind: 'OB.UI.ModalBusinessPartners'
     }, {
       kind: 'OB.UI.ModalPaidReceipts'
@@ -249,32 +96,33 @@ enyo.kind({
       }]
     }]
   }],
-  printReceipt: function() {
+  printReceipt: function () {
+
     if (OB.POS.modelterminal.hasPermission('OBPOS_print.receipt')) {
       var receipt = this.model.get('order');
-      if(receipt.get("isPaid")){
+      if (receipt.get("isPaid")) {
         receipt.trigger('print');
         return;
       }
-      receipt.calculateTaxes(function() {
+      receipt.calculateTaxes(function () {
         receipt.trigger('print');
       });
     }
   },
- paidReceipts: function(inSender, inEvent) {
+  paidReceipts: function (inSender, inEvent) {
     $('#modalPaidReceipts').modal('show');
     return true;
   },
-  backOffice: function(inSender, inEvent) {
+  backOffice: function (inSender, inEvent) {
     if (inEvent.url) {
       window.open(inEvent.url, '_blank');
     }
   },
-  addNewOrder: function(inSender, inEvent) {
+  addNewOrder: function (inSender, inEvent) {
     this.model.get('orderList').addNewOrder();
     return true;
   },
-  deleteCurrentOrder: function() {
+  deleteCurrentOrder: function () {
     if (this.model.get('order').get('id')) {
       this.model.get('orderList').saveCurrent();
       OB.Dal.remove(this.model.get('orderList').current, null, null);
@@ -282,8 +130,8 @@ enyo.kind({
     this.model.get('orderList').deleteCurrent();
     return true;
   },
-  addProductToOrder: function(inSender, inEvent) {
-    if(this.model.get('order').get('isEditable') === false){
+  addProductToOrder: function (inSender, inEvent) {
+    if (this.model.get('order').get('isEditable') === false) {
       $("#modalNotEditableOrder").modal("show");
       return true;
     }
@@ -291,8 +139,8 @@ enyo.kind({
     this.model.get('orderList').saveCurrent();
     return true;
   },
-  changeBusinessPartner: function(inSender, inEvent) {
-    if(this.model.get('order').get('isEditable') === false){
+  changeBusinessPartner: function (inSender, inEvent) {
+    if (this.model.get('order').get('isEditable') === false) {
       $("#modalNotEditableOrder").modal("show");
       return true;
     }
@@ -300,8 +148,8 @@ enyo.kind({
     this.model.get('orderList').saveCurrent();
     return true;
   },
-  receiptToInvoice: function() {
-    if(this.model.get('order').get('isEditable') === false){
+  receiptToInvoice: function () {
+    if (this.model.get('order').get('isEditable') === false) {
       $("#modalNotEditableOrder").modal("show");
       return true;
     }
@@ -309,8 +157,8 @@ enyo.kind({
     this.model.get('orderList').saveCurrent();
     return true;
   },
-  showReturnText: function(inSender, inEvent) {
-    if(this.model.get('order').get('isEditable') === false){
+  showReturnText: function (inSender, inEvent) {
+    if (this.model.get('order').get('isEditable') === false) {
       $("#modalNotEditableOrder").modal("show");
       return true;
     }
@@ -318,8 +166,8 @@ enyo.kind({
     this.model.get('orderList').saveCurrent();
     return true;
   },
-  cancelReceiptToInvoice: function(inSender, inEvent) {
-    if(this.model.get('order').get('isEditable') === false){
+  cancelReceiptToInvoice: function (inSender, inEvent) {
+    if (this.model.get('order').get('isEditable') === false) {
       $("#modalNotEditableOrder").modal("show");
       return true;
     }
@@ -327,7 +175,10 @@ enyo.kind({
     this.model.get('orderList').saveCurrent();
     return true;
   },
-  tabChange: function(sender, event) {
+  tabChange: function (sender, event) {
+    this.waterfall('onTabButtonTap', {
+      tabPanel: event.tabPanel
+    });
     this.waterfall('onChangeEditMode', {
       edit: event.edit
     });
@@ -337,8 +188,8 @@ enyo.kind({
       this.$.keyboard.hide();
     }
   },
-  deleteLine: function(sender, event) {
-    if(this.model.get('order').get('isEditable') === false){
+  deleteLine: function (sender, event) {
+    if (this.model.get('order').get('isEditable') === false) {
       $("#modalNotEditableOrder").modal("show");
       return true;
     }
@@ -349,35 +200,35 @@ enyo.kind({
       receipt.trigger('scan');
     }
   },
-  editLine: function(sender, event) {
-    if(this.model.get('order').get('isEditable') === false){
+  editLine: function (sender, event) {
+    if (this.model.get('order').get('isEditable') === false) {
       $("#modalNotEditableOrder").modal("show");
       return true;
     }
     $("#receiptLinesPropertiesDialog").modal('show');
   },
-  exactPayment: function(sender, event) {
+  exactPayment: function (sender, event) {
     this.$.keyboard.execStatelessCommand('cashexact');
   },
-  changeCurrentOrder: function(inSender, inEvent) {
+  changeCurrentOrder: function (inSender, inEvent) {
     this.model.get('orderList').load(inEvent.newCurrentOrder);
     return true;
   },
-  removePayment: function(sender, event) {
+  removePayment: function (sender, event) {
     if (this.model.get('paymentData') && !confirm(OB.I18N.getLabel('OBPOS_MsgConfirmRemovePayment'))) {
       return;
     }
     this.model.get('order').removePayment(event.payment);
   },
-  changeSubWindow: function(sender, event) {
+  changeSubWindow: function (sender, event) {
     this.model.get('subWindowManager').set('currentWindow', event.newWindow);
   },
-  showModalReceiptProperties: function(inSender, inEvent) {
+  showModalReceiptProperties: function (inSender, inEvent) {
     $('#receiptPropertiesDialog').modal('show');
     return true;
   },
-  setProperty: function(inSender, inEvent) {
-    if(this.model.get('order').get('isEditable') === false){
+  setProperty: function (inSender, inEvent) {
+    if (this.model.get('order').get('isEditable') === false) {
       $("#modalNotEditableOrder").modal("show");
       return true;
     }
@@ -385,8 +236,8 @@ enyo.kind({
     this.model.get('orderList').saveCurrent();
     return true;
   },
-  setLineProperty: function(inSender, inEvent) {
-    if(this.model.get('order').get('isEditable') === false){
+  setLineProperty: function (inSender, inEvent) {
+    if (this.model.get('order').get('isEditable') === false) {
       $("#modalNotEditableOrder").modal("show");
       return true;
     }
@@ -398,27 +249,50 @@ enyo.kind({
     this.model.get('orderList').saveCurrent();
     return true;
   },
-  beforeSetShowing: function(value, params) {
-    this.setShowing(value);
-  },
-  init: function() {
+  init: function () {
     var receipt, receiptList;
     this.inherited(arguments);
     receipt = this.model.get('order');
     receiptList = this.model.get('orderList');
-    this.model.get('subWindowManager').on('change:currentWindow', function(changedModel) {
-      //TODO backbone route
-      if (this.$[changedModel.get('currentWindow').name]) {
-        this.$[changedModel.previousAttributes().currentWindow.name].setShowing(false);
-        if (this.$[changedModel.get('currentWindow').name].beforeSetShowing) {
-          this.$[changedModel.get('currentWindow').name].beforeSetShowing(true, changedModel.get('currentWindow').params);
-        } else {
-          this.$[changedModel.get('currentWindow').name].setShowing(true);
-        }
-      } else {
-        this.model.get('subWindowManager').set('currentWindow', changedModel.previousAttributes().currentWindow, {
+    this.model.get('subWindowManager').on('change:currentWindow', function (changedModel) {
+
+      function restorePreviousState(swManager, changedModel) {
+        swManager.set('currentWindow', changedModel.previousAttributes().currentWindow, {
           silent: true
         });
+      }
+
+      //TODO backbone route
+      var showNewSubWindow = false;
+      if (this.$[changedModel.get('currentWindow').name]) {
+        if (!changedModel.get('currentWindow').params) {
+          changedModel.get('currentWindow').params = {};
+          //developers helps
+          //console.log("Caller is not set. Caller has been set as main subwindow");
+          changedModel.get('currentWindow').params.caller = 'mainSubWindow';
+        }
+        if (this.$[changedModel.get('currentWindow').name].mainBeforeSetShowing) {
+          showNewSubWindow = this.$[changedModel.get('currentWindow').name].mainBeforeSetShowing(changedModel.get('currentWindow').params);
+          if (showNewSubWindow) {
+            this.$[changedModel.previousAttributes().currentWindow.name].setShowing(false);
+            this.$[changedModel.get('currentWindow').name].setShowing(true);
+          } else {
+            restorePreviousState(this.model.get('subWindowManager'), changedModel);
+          }
+        } else {
+          if (this.$[changedModel.get('currentWindow').name].isMainSubWindow) {
+            this.$[changedModel.previousAttributes().currentWindow.name].setShowing(false);
+            this.$[changedModel.get('currentWindow').name].setShowing(true);
+          } else {
+            //developers helps
+            //console.log("Error! A subwindow must inherits from OB.UI.subwindow -> restore previous state");
+            restorePreviousState(this.model.get('subWindowManager'), changedModel);
+          }
+        }
+      } else {
+        //developers helps
+        //console.log("The subwindow to navigate doesn't exists -> restore previous state");
+        restorePreviousState(this.model.get('subWindowManager'), changedModel);
       }
     }, this);
     this.$.receiptview.setOrder(receipt);
@@ -427,7 +301,7 @@ enyo.kind({
     this.$.keyboard.setReceipt(receipt);
     this.$.rightToolbar.setReceipt(receipt);
   },
-  initComponents: function() {
+  initComponents: function () {
     this.inherited(arguments);
   }
 });

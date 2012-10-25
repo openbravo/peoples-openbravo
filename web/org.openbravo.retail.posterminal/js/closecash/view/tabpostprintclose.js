@@ -1,5 +1,3 @@
-/*global enyo */
-
 /*
  ************************************************************************************
  * Copyright (C) 2012 Openbravo S.L.U.
@@ -8,6 +6,8 @@
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
+
+/*global enyo */
 
 //Renders the summary of deposits/drops and contains a list (OB.OBPOSCasgMgmt.UI.RenderDepositsDrops)
 //with detailed information for each payment typ
@@ -61,15 +61,15 @@ enyo.kind({
       }]
     }]
   }, {}],
-  setValue: function(value) {
+  setValue: function (value) {
     this.value = value;
     this.render();
   },
-  render: function() {
+  render: function () {
     this.$.totalLbl.setContent(this.label);
     this.$.totalQty.setContent(OB.I18N.formatCurrency(this.value));
   },
-  initComponents: function() {
+  initComponents: function () {
     this.inherited(arguments);
     if (this.label && this.value) {
       this.$.totalLbl.setContent(this.label);
@@ -113,27 +113,27 @@ enyo.kind({
       }]
     }]
   }, {}],
-  setValue: function(value) {
+  setValue: function (value) {
     this.value = value;
     this.render();
   },
-  render: function() {
+  render: function () {
     this.$.itemLbl.setContent(this.label);
     this.$.itemQty.setContent(OB.I18N.formatCurrency(this.value));
-    if(this.foreignExpected && this.type==='expected' && this.foreignExpected!==this.value){
-      this.$.foreignItemQty.setContent('('+OB.I18N.formatCurrency(this.foreignExpected)+' '+ this.isocode +')');
-    }else if(this.foreignCounted && this.type==='counted' && this.foreignCounted!==this.value){
-      this.$.foreignItemQty.setContent('('+OB.I18N.formatCurrency(this.foreignCounted)+' '+ this.isocode +')');
-    }else if(this.foreignDifference && this.type==='difference' && this.foreignDifference!==this.value){
-      this.$.foreignItemQty.setContent('('+OB.I18N.formatCurrency(this.foreignDifference)+' '+ this.isocode +')');
-    }else if(this.rate && this.rate!=='1' && (this.type==='deposits' || this.type==='drops') ){
-      this.$.foreignItemQty.setContent('('+OB.I18N.formatCurrency(this.value)+' '+ this.isocode +')');
-      this.$.itemQty.setContent(OB.I18N.formatCurrency(OB.DEC.mul(this.value,this.rate)));
-    }else{
+    if (this.foreignExpected && this.type === 'expected' && this.foreignExpected !== this.value) {
+      this.$.foreignItemQty.setContent('(' + OB.I18N.formatCurrency(this.foreignExpected) + ' ' + this.isocode + ')');
+    } else if (this.foreignCounted && this.type === 'counted' && this.foreignCounted !== this.value) {
+      this.$.foreignItemQty.setContent('(' + OB.I18N.formatCurrency(this.foreignCounted) + ' ' + this.isocode + ')');
+    } else if (this.foreignDifference && this.type === 'difference' && this.foreignDifference !== this.value) {
+      this.$.foreignItemQty.setContent('(' + OB.I18N.formatCurrency(this.foreignDifference) + ' ' + this.isocode + ')');
+    } else if (this.rate && this.rate !== '1' && (this.type === 'deposits' || this.type === 'drops')) {
+      this.$.foreignItemQty.setContent('(' + OB.I18N.formatCurrency(this.value) + ' ' + this.isocode + ')');
+      this.$.itemQty.setContent(OB.I18N.formatCurrency(OB.DEC.mul(this.value, this.rate)));
+    } else {
       this.$.foreignItemQty.setContent('');
     }
   },
-  create: function() {
+  create: function () {
     this.inherited(arguments);
     if (this.model) {
       this.label = this.model[this.lblProperty];
@@ -158,7 +158,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.ppc_table',
-  setValue: function(name, value) {
+  setValue: function (name, value) {
     this.$[name].setValue(value);
   }
 });
@@ -183,7 +183,7 @@ enyo.kind({
     kind: 'OB.OBPOSCashUp.UI.ppc_lineSeparator',
     name: 'separator'
   }],
-  setCollection: function(col) {
+  setCollection: function (col) {
     this.$.salestaxes.setCollection(col);
   }
 });
@@ -208,7 +208,7 @@ enyo.kind({
     kind: 'OB.OBPOSCashUp.UI.ppc_lineSeparator',
     name: 'separator'
   }],
-  setCollection: function(col) {
+  setCollection: function (col) {
     this.$.retunrnstaxes.setCollection(col);
   }
 });
@@ -243,7 +243,7 @@ enyo.kind({
     kind: 'OB.OBPOSCashUp.UI.ppc_lineSeparator',
     name: 'separator'
   }],
-  setCollection: function(col) {
+  setCollection: function (col) {
     this.$.drops.setCollection(col);
   }
 });
@@ -265,7 +265,7 @@ enyo.kind({
     kind: 'OB.OBPOSCashUp.UI.ppc_lineSeparator',
     name: 'separator'
   }],
-  setCollection: function(col) {
+  setCollection: function (col) {
     this.$.deposits.setCollection(col);
   }
 });
@@ -287,7 +287,7 @@ enyo.kind({
     kind: 'OB.OBPOSCashUp.UI.ppc_lineSeparator',
     name: 'separator'
   }],
-  setCollection: function(col) {
+  setCollection: function (col) {
     this.$.expectedPerPayment.setCollection(col);
   }
 });
@@ -309,7 +309,7 @@ enyo.kind({
     kind: 'OB.OBPOSCashUp.UI.ppc_lineSeparator',
     name: 'separator'
   }],
-  setCollection: function(col) {
+  setCollection: function (col) {
     this.$.differencePerPayment.setCollection(col);
   }
 });
@@ -331,7 +331,7 @@ enyo.kind({
     kind: 'OB.OBPOSCashUp.UI.ppc_lineSeparator',
     name: 'separator'
   }],
-  setCollection: function(col) {
+  setCollection: function (col) {
     this.$.countedPerPayment.setCollection(col);
   }
 });
@@ -418,13 +418,13 @@ enyo.kind({
         }, {
           kind: 'OB.OBPOSCashUp.UI.ppc_cashDepositsTable',
           name: 'depositsTable'
-        },{
+        }, {
           kind: 'OB.OBPOSCashUp.UI.ppc_cashExpectedTable',
           name: 'expectedTable'
-        },{
+        }, {
           kind: 'OB.OBPOSCashUp.UI.ppc_cashCountedTable',
           name: 'countedTable'
-        },{
+        }, {
           kind: 'OB.OBPOSCashUp.UI.ppc_cashDifferenceTable',
           name: 'differenceTable'
         }]
@@ -449,25 +449,24 @@ enyo.kind({
       }]
     }]
   }],
-  create: function() {
+  create: function () {
     this.inherited(arguments);
     this.$.user.setContent(OB.I18N.getLabel('OBPOS_LblUser') + ': ' + OB.POS.modelterminal.get('context').user._identifier);
     this.$.time.setContent(OB.I18N.getLabel('OBPOS_LblTime') + ': ' + new Date().toString().substring(3, 24));
   },
-  init: function() {
-  },
-  summaryChanged: function(){
+  init: function () {},
+  summaryChanged: function () {
     this.$.expectedTable.setCollection(this.summary.expectedSummary);
     this.$.expectedTable.setValue('totalexpected', this.summary.totalExpected);
-    
+
     this.$.countedTable.setCollection(this.summary.countedSummary);
     this.$.countedTable.setValue('totalcounted', this.summary.totalCounted);
-    
+
     this.$.differenceTable.setCollection(this.summary.differenceSummary);
     this.$.differenceTable.setValue('totaldifference', this.summary.totalDifference);
   },
-  modelChanged: function() {  
-    
+  modelChanged: function () {
+
     this.$.sales.setCollection(this.model.get('salesTaxes'));
     this.$.sales.setValue('netsales', this.model.get('netSales'));
     this.$.sales.setValue('totalsales', this.model.get('grossSales'));
@@ -483,8 +482,8 @@ enyo.kind({
 
     this.$.depositsTable.setCollection(this.model.get('deposits'));
     this.$.depositsTable.setValue('totaldeposits', this.model.get('totalDeposits'));
-    
-    this.model.on('change:time', function(){
+
+    this.model.on('change:time', function () {
       this.$.time.setContent(OB.I18N.getLabel('OBPOS_LblTime') + ': ' + OB.I18N.formatDate(this.model.get('time')) + ' - ' + OB.I18N.formatHour(this.model.get('time')));
     }, this);
   }

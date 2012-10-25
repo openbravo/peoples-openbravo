@@ -1,5 +1,3 @@
-/*global _, Backbone, $, enyo */
-
 /*
  ************************************************************************************
  * Copyright (C) 2012 Openbravo S.L.U.
@@ -9,12 +7,14 @@
  ************************************************************************************
  */
 
+/*global _, Backbone, $, enyo */
+
 enyo.kind({
   name: 'OB.UI.iterateArray',
   published: {
     collection: null
   },
-  create: function() {
+  create: function () {
     var listName = this.name || '';
 
     this.inherited(arguments);
@@ -34,19 +34,19 @@ enyo.kind({
     }
   },
 
-  collectionChanged: function(oldCollection) {
+  collectionChanged: function (oldCollection) {
     var int = 0;
     this.destroyComponents();
     if (!this.collection) { // set to null ?
       return;
     }
 
-    for ( int ; int < this.collection.length; int++) {
+    for (int; int < this.collection.length; int++) {
       this._addModelToCollection(this.collection[int]);
     }
     this.render();
   },
-  _addModelToCollection: function(model, index) {
+  _addModelToCollection: function (model, index) {
     var tr = this.createComponent({
       kind: this.renderLine,
       model: model,
@@ -70,7 +70,7 @@ enyo.kind({
   published: {
     collection: null
   },
-  create: function() {
+  create: function () {
     var listName = this.name || '';
 
     this.inherited(arguments);
@@ -91,41 +91,41 @@ enyo.kind({
     }
   },
 
-  collectionChanged: function(oldCollection) {
+  collectionChanged: function (oldCollection) {
     if (!this.collection) { // set to null ?
       return;
     }
 
-    this.collection.on('change', function(model, prop) {
+    this.collection.on('change', function (model, prop) {
       var index = this.collection.indexOf(model);
       // FIXME: instead of recreate the item, we call changed? init ?
       // repeated items needs to reset the values
       // e.g. this.controlAtIndex(index + this.header).changed();
     }, this);
 
-    this.collection.on('add', function(model, prop, options) {
+    this.collection.on('add', function (model, prop, options) {
       this._addModelToCollection(model, options.index);
     }, this);
 
-    this.collection.on('remove', function(model, prop, options) {
+    this.collection.on('remove', function (model, prop, options) {
       var index = options.index;
       this.controlAtIndex(index + this.header).destroy();
     }, this);
 
-    this.collection.on('reset', function() {
+    this.collection.on('reset', function () {
       this.destroyComponents();
       if (this.renderHeader) {
         this.createComponent({
           kind: this.renderHeader
         }).render();
       }
-      this.collection.each(function(model) {
+      this.collection.each(function (model) {
         this._addModelToCollection(model);
       }, this);
     }, this);
 
   },
-  _addModelToCollection: function(model, index) {
+  _addModelToCollection: function (model, index) {
     var tr = this.createComponent({
       kind: this.renderLine,
       model: model
@@ -160,7 +160,7 @@ enyo.kind({
   }, {
     name: 'tempty'
   }],
-  create: function() {
+  create: function () {
     var tableName = this.name || '';
 
     this.inherited(arguments);
@@ -179,7 +179,7 @@ enyo.kind({
     }
   },
 
-  collectionChanged: function(oldCollection) {
+  collectionChanged: function (oldCollection) {
     this.selected = null;
 
     if (this.renderHeader && this.$.theader.getComponents().length === 0) {
@@ -198,7 +198,7 @@ enyo.kind({
       return;
     }
 
-    this.collection.on('selected', function(model) {
+    this.collection.on('selected', function (model) {
       if (!model && this.listStyle) {
         if (this.selected) {
           this.selected.addRemoveClass('selected', false);
@@ -207,7 +207,7 @@ enyo.kind({
       }
     }, this);
 
-    this.collection.on('add', function(model, prop, options) {
+    this.collection.on('add', function (model, prop, options) {
 
       this.$.tempty.hide();
       this.$.tbody.show();
@@ -223,7 +223,7 @@ enyo.kind({
       }
     }, this);
 
-    this.collection.on('remove', function(model, prop, options) {
+    this.collection.on('remove', function (model, prop, options) {
       var index = options.index;
 
       this.$.tbody.getComponents()[index].destroy(); // controlAtIndex ?
@@ -243,7 +243,7 @@ enyo.kind({
       }
     }, this);
 
-    this.collection.on('reset', function(a, b, c) {
+    this.collection.on('reset', function (a, b, c) {
       var modelsel;
 
       this.$.tbody.hide();
@@ -258,21 +258,21 @@ enyo.kind({
       } else {
         this.$.tempty.hide();
         this.$.tbody.show();
-        this.collection.each(function(model) {
+        this.collection.each(function (model) {
           this._addModelToCollection(model);
         }, this);
 
         if (this.listStyle === 'list') {
           modelsel = this.collection.at(0);
           modelsel.trigger('selected', modelsel);
-        } else  if (this.listStyle === 'edit') {
+        } else if (this.listStyle === 'edit') {
           modelsel = this.collection.at(this.collection.size() - 1);
           modelsel.trigger('selected', modelsel);
         }
       }
     }, this);
 
-    this.collection.on('info', function(info) {
+    this.collection.on('info', function (info) {
       if (info) {
         this.$.tinfo.setContent(OB.I18N.getLabel(info));
         this.$.tinfo.show();
@@ -285,7 +285,7 @@ enyo.kind({
     this.collection.trigger('reset');
   },
 
-  _addModelToCollection: function(model, index) {
+  _addModelToCollection: function (model, index) {
     var tr = this.$.tbody.createComponent({
       tag: 'li'
     });
@@ -296,7 +296,7 @@ enyo.kind({
 
     tr.render();
 
-    model.on('change', function() {
+    model.on('change', function () {
       tr.destroyComponents();
       tr.createComponent({
         kind: this.renderLine,
@@ -304,7 +304,7 @@ enyo.kind({
       }).render();
     }, this);
 
-    model.on('selected', function() {
+    model.on('selected', function () {
       if (this.listStyle) {
         if (this.selected) {
           this.selected.addRemoveClass('selected', false);

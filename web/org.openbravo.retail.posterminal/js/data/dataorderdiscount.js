@@ -9,13 +9,13 @@
 
 /*global B */
 
-(function() {
+(function () {
 
   OB = window.OB || {};
   OB.DATA = window.OB.DATA || {};
 
-  OB.DATA.OrderDiscount = function(receipt) {
-    receipt.on('discount', function(line, percentage) {
+  OB.DATA.OrderDiscount = function (receipt) {
+    receipt.on('discount', function (line, percentage) {
 
       if (line) {
         if (OB.DEC.compare(percentage) > 0 && OB.DEC.compare(OB.DEC.sub(percentage, OB.DEC.number(100))) <= 0) {

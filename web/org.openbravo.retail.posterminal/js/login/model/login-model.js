@@ -9,7 +9,7 @@
 
 /*global B, $, _, Backbone, window, confirm */
 
-(function() {
+(function () {
 
   function triggerReady(models) {
     if (models._LoadOnline && OB.UTIL.queueStatus(models._LoadQueue || {})) {
@@ -21,7 +21,7 @@
   OB = window.OB || {};
   OB.Model = OB.Model || {};
   OB.Model.Util = {
-    loadModels: function(online, models, data, incremental) {
+    loadModels: function (online, models, data, incremental) {
       var somethigToLoad = false;
 
       models._LoadOnline = online;
@@ -31,16 +31,16 @@
         return;
       }
 
-      _.each(models, function(item) {
+      _.each(models, function (item) {
         var ds, load;
 
         load = (online && item.prototype.online) || (!online && !item.prototype.online);
         //TODO: check permissions
         if (load) {
           if (item.prototype.local) {
-            OB.Dal.initCache(item, [], function() {
+            OB.Dal.initCache(item, [], function () {
               // window.console.log('init success: ' + item.prototype.modelName);
-            }, function() {
+            }, function () {
               window.console.error('init error', arguments);
             });
           } else {
@@ -48,14 +48,14 @@
             somethigToLoad = true;
             models._LoadQueue = models._LoadQueue || {};
             models._LoadQueue[item.prototype.modelName] = false;
-            ds.on('ready', function() {
+            ds.on('ready', function () {
               if (data) {
                 data[item.prototype.modelName] = new Backbone.Collection(ds.cache);
               }
               models._LoadQueue[item.prototype.modelName] = true;
-              if(incremental){
+              if (incremental) {
                 window.localStorage.setItem('POSLastIncRefresh', new Date().getTime());
-              }else{
+              } else {
                 window.localStorage.setItem('POSLastTotalRefresh', new Date().getTime());
               }
               triggerReady(models);
@@ -75,9 +75,9 @@
       main: 'main'
     },
 
-    main: function(query, page) {},
+    main: function (query, page) {},
 
-    renderGenericWindow: function(windowName) {
+    renderGenericWindow: function (windowName) {
       this.terminal.renderGenericWindow(windowName);
     }
   });
@@ -91,17 +91,17 @@
     //      test:'1',
     //      terminal: this.modelterminal
     //    }),
-    hrefWindow: function(windowname) {
+    hrefWindow: function (windowname) {
       return '?terminal=' + window.encodeURIComponent(OB.POS.paramTerminal) + '&window=' + window.encodeURIComponent(windowname);
     },
-    logout: function(callback) {
+    logout: function (callback) {
       this.modelterminal.logout();
     },
-    lock: function(callback) {
+    lock: function (callback) {
       this.modelterminal.lock();
     },
     windows: null,
-    navigate: function(route) {
+    navigate: function (route) {
       //HACK -> when f5 in login page
       //the route to navigate is the same that we are.
       //Backbone doesn't navigates
@@ -113,13 +113,13 @@
         trigger: true
       });
     },
-    registerWindow: function(windowName, window) {
+    registerWindow: function (windowName, window) {
       this.modelterminal.registerWindow(windowName, window);
 
     },
-    cleanWindows: function() {
+    cleanWindows: function () {
       this.windows = new(Backbone.Collection.extend({
-        comparator: function(window) {
+        comparator: function (window) {
           // sorts by menu position, 0 if not defined
           var position = window.get('menuPosition');
           return position ? position : 0;
@@ -143,7 +143,7 @@
 
   OB.I18N.labels = {};
 
-  OB.I18N.getLabel = function(key, params, object, property) {
+  OB.I18N.getLabel = function (key, params, object, property) {
     if (!OB.I18N.labels[key]) {
       if (object && property) {
         OB.I18N.getLabelFromServer(key, params, object, property);
@@ -167,7 +167,7 @@
     return label;
   };
 
-  $(document).ready(function() {
+  $(document).ready(function () {
 
     OB.POS.modelterminal.off('loginfail');
     $(window).off('keypress');
@@ -202,11 +202,11 @@
     //    }
     //
     //    preRenderActions();
-    OB.POS.modelterminal.on('online', function() {
+    OB.POS.modelterminal.on('online', function () {
       OB.UTIL.setConnectivityLabel('Online');
     });
 
-    OB.POS.modelterminal.on('offline', function() {
+    OB.POS.modelterminal.on('offline', function () {
       OB.UTIL.setConnectivityLabel('Offline');
     });
 

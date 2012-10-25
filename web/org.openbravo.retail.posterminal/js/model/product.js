@@ -9,7 +9,6 @@
 
 /*global Backbone */
 
-
 (function () {
 
   var Product = Backbone.Model.extend({
@@ -17,7 +16,8 @@
     tableName: 'm_product',
     entityName: 'Product',
     source: 'org.openbravo.retail.posterminal.master.Product',
-    properties: ['id', 'uPCEAN', 'uOM', 'productCategory', 'taxCategory', 'img', 'obposScale', '_identifier', '_idx'],
+    dataLimit: 300,
+    properties: ['id', 'uPCEAN', 'uOM', 'productCategory', 'taxCategory', 'img', 'obposScale', 'groupProduct', '_identifier', '_idx'],
     propertyMap: {
       'id': 'm_product_id',
       'uPCEAN': 'upc',
@@ -26,12 +26,13 @@
       'taxCategory': 'c_taxcategory_id',
       'img': 'img',
       'obposScale': 'em_obpos_scale',
+      'groupProduct': 'em_obpos_groupedproduct',
       '_identifier': '_identifier',
       '_idx': '_idx'
     },
-    createStatement: 'CREATE TABLE IF NOT EXISTS m_product (m_product_id TEXT PRIMARY KEY , upc TEXT, c_uom_id TEXT, m_product_category_id TEXT, c_taxcategory_id TEXT, img TEXT, em_obpos_scale TEXT, _identifier TEXT, _idx NUMERIC)',
+    createStatement: 'CREATE TABLE IF NOT EXISTS m_product (m_product_id TEXT PRIMARY KEY , upc TEXT, c_uom_id TEXT, m_product_category_id TEXT, c_taxcategory_id TEXT, img TEXT, em_obpos_scale TEXT, em_obpos_groupedproduct TEXT, _identifier TEXT, _idx NUMERIC)',
     dropStatement: 'DROP TABLE IF EXISTS m_product',
-    insertStatement: 'INSERT INTO m_product(m_product_id, upc, c_uom_id, m_product_category_id, c_taxcategory_id, img, em_obpos_scale, _identifier, _idx)  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+    insertStatement: 'INSERT INTO m_product(m_product_id, upc, c_uom_id, m_product_category_id, c_taxcategory_id, img, em_obpos_scale, em_obpos_groupedproduct, _identifier, _idx)  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
     updateStatement: ''
   });
 

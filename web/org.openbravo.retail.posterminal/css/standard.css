@@ -16,6 +16,27 @@ input, button, select, textarea {
   font-size: 16px;
 }
 
+input.error {
+  background-color: rgba(255, 0, 0);
+  background-color: rgba(255, 0, 0, 0.5);
+}
+
+/*subwindows*/
+div.subwindow{
+  background-color: #FFFFFF;
+}
+div.subwindow .subwindowheader{
+  padding: 9px 15px;  
+}
+
+div.subwindow .subwindowheadertext{
+  
+}
+
+div.subwindow .subwindowheader .close>span:first-child {
+  font-size: 150%;
+}
+
 /*used by enyo.Scroller*/
 .enyo-scroller {
   position: relative;
@@ -122,6 +143,18 @@ input, button, select, textarea {
   height: 16px;
   margin: 0px auto;
   background-image: url('../img/loading-bar.gif');
+}
+
+.postab-content {
+  width: 100%;
+}
+
+.postab-pane {
+  display: none;
+}
+
+.postab-content > .active {
+  display: block;
 }
 
 .btnlink-toolbar:after {
@@ -391,6 +424,9 @@ div.btnlink {
 }
 .btn-icon-delete {
   background-image: url('../img/iconDelete.png');
+}
+.btn-icon-delete.paidticket {
+  background-image: url('../img/iconClearPaidTicket.png');
 }
 .btn-icon-print {
   background-image: url('../img/iconPrint.png');
@@ -671,15 +707,15 @@ button.modal-dialog-content-button {
 }
 
 .hiddenInput {
-	 height: 1px;
-	 width: 1px;
-	 margin: 0px;
-	 padding: 0px;
-	 cursor: default;
-	 color: transparent;
-	 background-color: transparent;
-	 border: transparent;
-	 outline: none;
+   height: 1px;
+   width: 1px;
+   margin: 0px;
+   padding: 0px;
+   cursor: default;
+   color: transparent;
+   background-color: transparent;
+   border: transparent;
+   outline: none;
 }
 
 button.btnlink-left-toolbar {

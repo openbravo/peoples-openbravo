@@ -35,20 +35,20 @@ enyo.kind({
       kind: 'OB.UI.ReceiptPropertiesDialogCancel'
     }]
   },
-  loadValue: function(mProperty) {
+  loadValue: function (mProperty) {
     this.waterfall('onLoadValue', {
       order: this.model.get('order'),
       modelProperty: mProperty
     });
   },
-  applyChanges: function(sender, event) {
+  applyChanges: function (sender, event) {
     $('#' + this.myId).modal('hide');
     this.waterfall('onApplyChange', {});
   },
-  initComponents: function() {
+  initComponents: function () {
     this.inherited(arguments);
     this.attributeContainer = this.$.bodyContent.$.attributes;
-    enyo.forEach(this.newAttributes, function(natt) {
+    enyo.forEach(this.newAttributes, function (natt) {
       this.$.bodyContent.$.attributes.createComponent({
         kind: 'OB.UI.PropertyEditLine',
         name: 'line_' + natt.name,
@@ -56,13 +56,13 @@ enyo.kind({
       });
     }, this);
   },
-  init: function(model) {
+  init: function (model) {
     this.model = model;
-    this.model.get('order').bind('change', function() {
+    this.model.get('order').bind('change', function () {
       var diff = this.model.get('order').changedAttributes(),
-      att;
+          att;
       for (att in diff) {
-        if(diff.hasOwnProperty(att)){
+        if (diff.hasOwnProperty(att)) {
           this.loadValue(att);
         }
       }
@@ -79,7 +79,7 @@ enyo.kind({
   events: {
     onApplyChanges: ''
   },
-  tap: function() {
+  tap: function () {
     this.doApplyChanges();
   }
 });
@@ -112,7 +112,7 @@ enyo.kind({
   }, {
     style: 'clear: both'
   }],
-  initComponents: function() {
+  initComponents: function () {
     this.inherited(arguments);
     this.$.newAttribute.createComponent(this.newAttribute);
     this.$.labelLine.content = this.newAttribute.label;
@@ -133,14 +133,14 @@ enyo.kind({
     onSetProperty: '',
     onSetLineProperty: ''
   },
-  loadValue: function(sender, event) {
+  loadValue: function (sender, event) {
     if (this.modelProperty === event.modelProperty) {
       if (event.order.get(this.modelProperty) !== undefined) {
         this.setValue(event.order.get(this.modelProperty));
       }
     }
   },
-  applyChange: function(sender, event) {
+  applyChange: function (sender, event) {
     if (event.orderline) {
       this.doSetLineProperty({
         line: event.orderline,
@@ -152,6 +152,11 @@ enyo.kind({
         property: this.modelProperty,
         value: this.getValue()
       });
+    }
+  },
+  initComponents: function () {
+    if (this.readOnly) {
+      this.setAttribute('readonly', 'readonly');
     }
   }
 });
@@ -169,7 +174,7 @@ enyo.kind({
     onSetProperty: '',
     onSetLineProperty: ''
   },
-  loadValue: function(sender, event) {
+  loadValue: function (sender, event) {
     var i, splitResult, contentProperty, contentInModel;
     if (this.modelProperty === event.modelProperty) {
       if (event.order.get(this.modelProperty) !== undefined) {
@@ -203,7 +208,7 @@ enyo.kind({
     }
 
   },
-  applyChange: function(sender, event) {
+  applyChange: function (sender, event) {
     if (event.orderline) {
       this.doSetLineProperty({
         line: event.orderline,
@@ -217,7 +222,7 @@ enyo.kind({
       });
     }
   },
-  initComponents: function() {
+  initComponents: function () {
     if (this.readOnly) {
       this.setAttribute('disabled', 'disabled');
     }

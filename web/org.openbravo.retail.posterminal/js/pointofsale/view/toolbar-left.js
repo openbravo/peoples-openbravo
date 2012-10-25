@@ -20,7 +20,7 @@ enyo.kind({
       style: 'margin: 0px 5px 0px 5px;'
     }
   }],
-  initComponents: function() {
+  initComponents: function () {
     this.inherited(arguments);
     this.$.theButton.createComponent(this.button);
   }
@@ -34,9 +34,9 @@ enyo.kind({
     classes: 'unstyled nav-pos row-fluid',
     name: 'toolbar'
   }],
-  initComponents: function() {
+  initComponents: function () {
     this.inherited(arguments);
-    enyo.forEach(this.buttons, function(btn) {
+    enyo.forEach(this.buttons, function (btn) {
       this.$.toolbar.createComponent({
         kind: 'OB.OBPOSPointOfSale.UI.LeftToolbarButton',
         button: btn
@@ -52,7 +52,7 @@ enyo.kind({
   events: {
     onAddNewOrder: ''
   },
-  tap: function() {
+  tap: function () {
     this.doAddNewOrder();
   }
 });
@@ -62,9 +62,22 @@ enyo.kind({
   name: 'OB.UI.ButtonDelete',
   kind: 'OB.UI.ToolbarButton',
   icon: 'btn-icon btn-icon-delete',
-  attributes: {
-    href: '#modalConfirmReceiptDelete',
-    'data-toggle': 'modal'
+  tap: function () {
+    if (this.model.get('order').get('isPaid')) {
+      $('#modalConfirmClosePaidTicket').modal('show');
+    } else {
+      $('#modalConfirmReceiptDelete').modal('show');
+    }
+  },
+  init: function (model) {
+    this.model = model;
+    this.model.get('order').on('change:isPaid', function (changedModel) {
+      if (changedModel.get('isPaid')) {
+        this.addClass('paidticket');
+        return;
+      }
+      this.removeClass('paidticket');
+    }, this)
   }
 });
 

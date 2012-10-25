@@ -13,19 +13,19 @@ OB = window.OB || {};
 OB.Model = window.OB.Model || {};
 
 OB.Model.Collection = Backbone.Collection.extend({
-  constructor: function(data) {
+  constructor: function (data) {
     this.ds = data.ds;
     Backbone.Collection.prototype.constructor.call(this);
   },
-  inithandler: function(init) {
+  inithandler: function (init) {
     if (init) {
       init.call(this);
     }
   },
-  exec: function(filter) {
+  exec: function (filter) {
     var me = this;
     if (this.ds) {
-      this.ds.exec(filter, function(data, info) {
+      this.ds.exec(filter, function (data, info) {
         var i;
         me.reset();
         me.trigger('info', info);
@@ -58,12 +58,12 @@ OB.Model.Terminal = Backbone.Model.extend({
     connectedToERP: null
   },
 
-  initialize: function() {
+  initialize: function () {
     var me = this;
-    $(window).bind('online', function() {
+    $(window).bind('online', function () {
       OB.UTIL.checkConnectivityStatus();
     });
-    $(window).bind('offline', function() {
+    $(window).bind('offline', function () {
       OB.UTIL.checkConnectivityStatus();
     });
 
@@ -78,7 +78,7 @@ OB.Model.Terminal = Backbone.Model.extend({
     this.router.route('main', 'main', this.renderMain);
   },
 
-  renderLogin: function() {
+  renderLogin: function () {
     //      var loginWindow = new OB.OBPOSLogin.UI.Login({});
     //      loginWindow.renderInto(enyo.dom.byId('containerWindow'));
     //      loginWindow.postRenderActions();
@@ -89,7 +89,7 @@ OB.Model.Terminal = Backbone.Model.extend({
   },
 
 
-  renderMain: function() {
+  renderMain: function () {
     if (!OB.UTIL.isSupportedBrowser()) {
       OB.POS.modelterminal.renderLogin();
       return false;
@@ -98,46 +98,44 @@ OB.Model.Terminal = Backbone.Model.extend({
         params = {
         terminal: OB.POS.paramTerminal
         };
-    
+
     OB.POS.modelterminal.loggingIn = true;
 
     OB.POS.modelterminal.off('terminal.loaded'); // Unregister previous events.
-
-    OB.POS.modelterminal.on('terminal.loaded', function() {
+    OB.POS.modelterminal.on('terminal.loaded', function () {
       var oldOB = OB;
 
       $LAB.setGlobalDefaults({
         AppendTo: 'body'
       });
-      if(!OB.POS.modelterminal.get('connectedToERP')){
-          OB.Format = JSON.parse(me.usermodel.get('formatInfo'));
-          OB.POS.cleanWindows();
-          $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=FinancialMgmtTaxRate&modelName=TaxRate&source=org.openbravo.retail.posterminal.master.TaxRate');
-          $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingProductPrice&modelName=ProductPrice&source=org.openbravo.retail.posterminal.master.ProductPrice');
+      if (!OB.POS.modelterminal.get('connectedToERP')) {
+        OB.Format = JSON.parse(me.usermodel.get('formatInfo'));
+        OB.POS.cleanWindows();
+        $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=FinancialMgmtTaxRate&modelName=TaxRate&source=org.openbravo.retail.posterminal.master.TaxRate');
+        $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingProductPrice&modelName=ProductPrice&source=org.openbravo.retail.posterminal.master.ProductPrice');
 
-          //Models for discounts and promotions
-          $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustment&modelName=Discount&source=org.openbravo.retail.posterminal.master.Discount');
-          $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustmentBusinessPartner&modelName=DiscountFilterBusinessPartner&source=org.openbravo.retail.posterminal.master.DiscountFilterBusinessPartner');
-          $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustmentBusinessPartnerGroup&modelName=DiscountFilterBusinessPartnerGroup&source=org.openbravo.retail.posterminal.master.DiscountFilterBusinessPartnerGroup');
-          $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustmentProduct&modelName=DiscountFilterProduct&source=org.openbravo.retail.posterminal.master.DiscountFilterProduct');
-          $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustmentProductCategory&modelName=DiscountFilterProductCategory&source=org.openbravo.retail.posterminal.master.DiscountFilterProductCategory');
+        //Models for discounts and promotions
+        $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustment&modelName=Discount&source=org.openbravo.retail.posterminal.master.Discount');
+        $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustmentBusinessPartner&modelName=DiscountFilterBusinessPartner&source=org.openbravo.retail.posterminal.master.DiscountFilterBusinessPartner');
+        $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustmentBusinessPartnerGroup&modelName=DiscountFilterBusinessPartnerGroup&source=org.openbravo.retail.posterminal.master.DiscountFilterBusinessPartnerGroup');
+        $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustmentProduct&modelName=DiscountFilterProduct&source=org.openbravo.retail.posterminal.master.DiscountFilterProduct');
+        $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustmentProductCategory&modelName=DiscountFilterProductCategory&source=org.openbravo.retail.posterminal.master.DiscountFilterProductCategory');
 
-          $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/StaticResources?_appName=WebPOS');
-          return;
+        $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/StaticResources?_appName=WebPOS');
+        return;
       }
-      $LAB.script('../../org.openbravo.client.kernel/OBCLKER_Kernel/Application').wait(function() {
+      $LAB.script('../../org.openbravo.client.kernel/OBCLKER_Kernel/Application').wait(function () {
         var newFormat = OB.Format;
         _.extend(OB, oldOB);
         OB.Format = newFormat;
         OB.POS.cleanWindows();
 
         me.usermodel.set('formatInfo', JSON.stringify(OB.Format));
-        OB.Dal.save(me.usermodel, function(){
-        }, function() {
+        OB.Dal.save(me.usermodel, function () {}, function () {
           window.console.error(arguments);
         });
-        
-        $LAB.script('js/i18n.js').wait(function() {
+
+        $LAB.script('js/i18n.js').wait(function () {
           $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=FinancialMgmtTaxRate&modelName=TaxRate&source=org.openbravo.retail.posterminal.master.TaxRate');
           $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingProductPrice&modelName=ProductPrice&source=org.openbravo.retail.posterminal.master.ProductPrice');
 
@@ -153,17 +151,19 @@ OB.Model.Terminal = Backbone.Model.extend({
       });
     });
     if (OB.POS.modelterminal.get('connectedToERP')) {
-      new OB.DS.Request('org.openbravo.retail.posterminal.term.Labels').exec({languageId: window.localStorage.getItem('POSlanguageId')}, function(data) {
-        OB.I18N.labels=data;
+      new OB.DS.Request('org.openbravo.retail.posterminal.term.Labels').exec({
+        languageId: window.localStorage.getItem('POSlanguageId')
+      }, function (data) {
+        OB.I18N.labels = data;
 
-        new OB.DS.Request('org.openbravo.retail.posterminal.term.Terminal').exec(params, function(data) {
+        new OB.DS.Request('org.openbravo.retail.posterminal.term.Terminal').exec(params, function (data) {
           if (data.exception) {
             me.logout();
           } else if (data[0]) {
             me.set('terminal', data[0]);
-            if(!me.usermodel){
+            if (!me.usermodel) {
               OB.POS.modelterminal.setUserModelOnline(true);
-            }else{
+            } else {
               me.trigger('terminal.loaded');
             }
           } else {
@@ -171,31 +171,31 @@ OB.Model.Terminal = Backbone.Model.extend({
           }
         });
       });
-    }else{
-          //Offline mode, we get the terminal information from the local db
-          me.set('terminal', JSON.parse(me.usermodel.get('terminalinfo')).terminal);
-          me.trigger('terminal.loaded');
+    } else {
+      //Offline mode, we get the terminal information from the local db
+      me.set('terminal', JSON.parse(me.usermodel.get('terminalinfo')).terminal);
+      me.trigger('terminal.loaded');
     }
 
 
   },
 
-  
-  loadModels: function(windowv, incremental){
-    if(!OB.POS.modelterminal.get('connectedToERP')){
+
+  loadModels: function (windowv, incremental) {
+    if (!OB.POS.modelterminal.get('connectedToERP')) {
       return;
     }
-    var windows,i, windowName, windowClass, datasources;
+    var windows, i, windowName, windowClass, datasources;
     var timestamp = 0;
-    if(windowv){
-      windows=[windowv];
-    }else{
-      windows=OB.POS.windowObjs;
+    if (windowv) {
+      windows = [windowv];
+    } else {
+      windows = OB.POS.windowObjs;
     }
-    if(incremental && window.localStorage.getItem('lastUpdatedTimestamp')){
+    if (incremental && window.localStorage.getItem('lastUpdatedTimestamp')) {
       timestamp = window.localStorage.getItem('lastUpdatedTimestamp');
     }
-    for(i=0;i<windows.length;i++){
+    for (i = 0; i < windows.length; i++) {
       windowClass = windows[i].windowClass;
       windowName = windows[i].route;
       if (OB.DATA[windowName]) {
@@ -210,72 +210,71 @@ OB.Model.Terminal = Backbone.Model.extend({
       OB.Model.Util.loadModels(false, datasources, null, timestamp);
     }
   },
-  
-  
-  registerWindow: function(windowp) {
+
+
+  registerWindow: function (windowp) {
     var datasources = [],
-        windowClass, windowName = windowp.route, minTotalRefresh, minIncRefresh,
-        lastTotalRefresh, lastIncRefresh, intervalTotal, intervalInc, now;
+        windowClass, windowName = windowp.route,
+        minTotalRefresh, minIncRefresh, lastTotalRefresh, lastIncRefresh, intervalTotal, intervalInc, now;
     OB.POS.windows.add(windowp);
-    if(!OB.POS.windowObjs){
+    if (!OB.POS.windowObjs) {
       OB.POS.windowObjs = [];
     }
     OB.POS.windowObjs.push(windowp);
-    
 
-    minTotalRefresh = OB.POS.modelterminal.get('terminal').minutestorefreshdatatotal*60*1000;
-    minIncRefresh = OB.POS.modelterminal.get('terminal').minutestorefreshdatainc*60*1000;
+
+    minTotalRefresh = OB.POS.modelterminal.get('terminal').minutestorefreshdatatotal * 60 * 1000;
+    minIncRefresh = OB.POS.modelterminal.get('terminal').minutestorefreshdatainc * 60 * 1000;
     lastTotalRefresh = window.localStorage.getItem('POSLastTotalRefresh');
     lastIncRefresh = window.localStorage.getItem('POSLastIncRefresh');
-    if((!minTotalRefresh && !minIncRefresh) ||
-        (!lastTotalRefresh && !lastIncRefresh)){
+    if ((!minTotalRefresh && !minIncRefresh) || (!lastTotalRefresh && !lastIncRefresh)) {
       // If no configuration of the masterdata loading has been done, 
       // or an initial load has not been done, then always do 
       // a total refresh during the login
       this.loadModels(windowp, false);
-    }else{
-      now=new Date().getTime();
-      intervalTotal=lastTotalRefresh?(now-lastTotalRefresh-minTotalRefresh):0;
-      intervalInc=lastIncRefresh?(now-lastIncRefresh-minIncRefresh):0;
-      if(intervalTotal>0){
+    } else {
+      now = new Date().getTime();
+      intervalTotal = lastTotalRefresh ? (now - lastTotalRefresh - minTotalRefresh) : 0;
+      intervalInc = lastIncRefresh ? (now - lastIncRefresh - minIncRefresh) : 0;
+      if (intervalTotal > 0) {
         //It's time to do a full refresh
         this.loadModels(windowp, false);
-      }else if(intervalInc>0){
+      } else if (intervalInc > 0) {
         //It's time to do a partial refresh
         this.loadModels(windowp, true);
-      }else{
+      } else {
         //A partial refresh is done just in case
         this.loadModels(windowp, true);
       }
     }
 
-    this.router.route(windowName, windowName, function() {
+    this.router.route(windowName, windowName, function () {
       this.renderGenericWindow(windowName);
     });
 
-    
-    
+
+
 
     //TODO: load OB.DATA??? It should be done only if needed...
   },
-  
-  isWindowOnline: function(route) {
+
+  isWindowOnline: function (route) {
     var i, windows;
     windows = OB.POS.windows.toArray();
-    for(i=0;i<windows.length;i++){
-      if(windows[i].get('route') === route) {
-        return windows[i].get('online');  
+    for (i = 0; i < windows.length; i++) {
+      if (windows[i].get('route') === route) {
+        return windows[i].get('online');
       }
     }
     return false;
   },
 
-  renderGenericWindow: function(windowName) {
+  renderGenericWindow: function (windowName) {
     OB.UTIL.showLoading(true);
     var terminal = OB.POS.modelterminal.get('terminal'),
         windowClass;
 
-    this.on('window:ready', function(w) {
+    this.on('window:ready', function (w) {
       OB.POS.terminal.$.containerWindow.render();
       OB.UTIL.showLoading(false);
     }, this);
@@ -290,73 +289,80 @@ OB.Model.Terminal = Backbone.Model.extend({
     });
   },
 
-  updateSession: function(user) {
-    OB.Dal.find(OB.Model.Session, {'user': user.get('id')},
-        function(sessions) {
-          var session;
-          if(sessions.models.length === 0){
-            session=new OB.Model.Session();
-            session.set('user', user.get('id'));
-            session.set('terminal', OB.POS.paramTerminal);
-            session.set('active', 'Y');
-            OB.Dal.save(session, function(){
-            }, function() {
-              window.console.error(arguments);
-            });
-          }else{
-            session=sessions.models[0];
-            session.set('active', 'Y');
-            OB.Dal.save(session, function(){
-            }, function() {
-              window.console.error(arguments);
-            });
-          }
-          OB.POS.modelterminal.set('session', session.get('id'));
-        },
-    function(){window.console.error(arguments);});
-  },
-  
-  closeSession: function() {
-    var sessionId = OB.POS.modelterminal.get('session');
-    OB.Dal.get(OB.Model.Session, sessionId, 
-      function(session){
-        session.set('active','N');
-        OB.Dal.save(session, function(){
-          //All pending to be paid orders will be removed on logout
-            OB.Dal.find(OB.Model.Order, {'session': session.get('id'), 'hasbeenpaid':'N'},
-              function(orders) {
-                var i,j, order, orderlines, orderline,
-                errorFunc = function(){ window.console.error(arguments);};
-                var triggerLogoutFunc = function(){OB.POS.modelterminal.triggerLogout();};
-                if(orders.models.length===0){
-                  //If there are no orders to remove, a logout is triggered
-                  OB.POS.modelterminal.triggerLogout();
-                }
-                for(i=0;i<orders.models.length;i++) {
-                  order = orders.models[i];
-                  OB.Dal.removeAll(OB.Model.Order, {'order':order.get('id')}, null,errorFunc);
-                  //Logout will only be triggered after last order
-                  OB.Dal.remove(order, i<orders.models.length-1?null:triggerLogoutFunc,
-                    errorFunc);
-                }
-              },function() {window.console.error(arguments);});
-        }, function() {
+  updateSession: function (user) {
+    OB.Dal.find(OB.Model.Session, {
+      'user': user.get('id')
+    }, function (sessions) {
+      var session;
+      if (sessions.models.length === 0) {
+        session = new OB.Model.Session();
+        session.set('user', user.get('id'));
+        session.set('terminal', OB.POS.paramTerminal);
+        session.set('active', 'Y');
+        OB.Dal.save(session, function () {}, function () {
           window.console.error(arguments);
         });
-      },function(){
+      } else {
+        session = sessions.models[0];
+        session.set('active', 'Y');
+        OB.Dal.save(session, function () {}, function () {
+          window.console.error(arguments);
+        });
+      }
+      OB.POS.modelterminal.set('session', session.get('id'));
+    }, function () {
       window.console.error(arguments);
     });
   },
-  
+
+  closeSession: function () {
+    var sessionId = OB.POS.modelterminal.get('session');
+    OB.Dal.get(OB.Model.Session, sessionId, function (session) {
+      session.set('active', 'N');
+      OB.Dal.save(session, function () {
+        //All pending to be paid orders will be removed on logout
+        OB.Dal.find(OB.Model.Order, {
+          'session': session.get('id'),
+          'hasbeenpaid': 'N'
+        }, function (orders) {
+          var i, j, order, orderlines, orderline, errorFunc = function () {
+              window.console.error(arguments);
+              };
+          var triggerLogoutFunc = function () {
+              OB.POS.modelterminal.triggerLogout();
+              };
+          if (orders.models.length === 0) {
+            //If there are no orders to remove, a logout is triggered
+            OB.POS.modelterminal.triggerLogout();
+          }
+          for (i = 0; i < orders.models.length; i++) {
+            order = orders.models[i];
+            OB.Dal.removeAll(OB.Model.Order, {
+              'order': order.get('id')
+            }, null, errorFunc);
+            //Logout will only be triggered after last order
+            OB.Dal.remove(order, i < orders.models.length - 1 ? null : triggerLogoutFunc, errorFunc);
+          }
+        }, function () {
+          window.console.error(arguments);
+        });
+      }, function () {
+        window.console.error(arguments);
+      });
+    }, function () {
+      window.console.error(arguments);
+    });
+  },
+
   generate_sha1: function (theString) {
     return CryptoJS.enc.Hex.stringify(CryptoJS.SHA1(theString));
   },
-  
-  login: function(user, password, mode) {
+
+  login: function (user, password, mode) {
     OB.UTIL.showLoading(true);
     var me = this;
-	me.user = user;
-	me.password = password;
+    me.user = user;
+    me.password = password;
     this.set('terminal', null);
     this.set('payments', null);
     this.set('context', null);
@@ -374,112 +380,105 @@ OB.Model.Terminal = Backbone.Model.extend({
     //    'hasbeenpaid': 'N'
     //  }, null, null);
     //}
-
     if (OB.POS.modelterminal.get('connectedToERP')) {
 
-    $.ajax({
-      url: '../../org.openbravo.retail.posterminal/POSLoginHandler',
-      data: {
-        'user': user,
-        'password': password,
-        'terminal': OB.POS.paramTerminal,
-        'Command': 'DEFAULT',
-        'IsAjaxCall': 1
-      },
-      type: 'POST',
-      success: function(data, textStatus, jqXHR) {
-        var pos, baseUrl;
-        if (data && data.showMessage) {
-          me.triggerLoginFail(401, mode, data);
-          return;
-        }
-        //          pos = location.pathname.indexOf('login.jsp');
-        //          baseUrl = window.location.pathname.substring(0, pos);
-        //          window.location = baseUrl + OB.POS.hrefWindow(OB.POS.paramWindow);
+      $.ajax({
+        url: '../../org.openbravo.retail.posterminal/POSLoginHandler',
+        data: {
+          'user': user,
+          'password': password,
+          'terminal': OB.POS.paramTerminal,
+          'Command': 'DEFAULT',
+          'IsAjaxCall': 1
+        },
+        type: 'POST',
+        success: function (data, textStatus, jqXHR) {
+          var pos, baseUrl;
+          if (data && data.showMessage) {
+            me.triggerLoginFail(401, mode, data);
+            return;
+          }
+          //          pos = location.pathname.indexOf('login.jsp');
+          //          baseUrl = window.location.pathname.substring(0, pos);
+          //          window.location = baseUrl + OB.POS.hrefWindow(OB.POS.paramWindow);
+          OB.POS.modelterminal.set('orgUserId', data.userId);
+          me.setUserModelOnline();
 
-        OB.POS.modelterminal.set('orgUserId', data.userId);
-        me.setUserModelOnline();
-        
-        OB.POS.navigate('main', {
-          trigger: true
+          OB.POS.navigate('main', {
+            trigger: true
+          });
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+          me.triggerLoginFail(jqXHR.status, mode);
+        }
+      });
+    } else {
+      OB.POS.modelterminal.set('windowRegistered', undefined);
+      OB.Dal.find(OB.Model.User, {
+        'name': me.user
+      }, function (users) {
+        var user;
+        if (users.models.length === 0) {
+          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_OfflineUserNotRegistered'));
+        } else {
+          if (users.models[0].get('password') === me.generate_sha1(me.password + users.models[0].get('created'))) {
+            me.usermodel = users.models[0];
+            me.updateSession(me.usermodel);
+            OB.POS.navigate('main', {
+              trigger: true
+            });
+          } else {
+            OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_OfflinePasswordNotCorrect'));
+            OB.POS.navigate('login');
+          }
+        }
+      }, function () {});
+    }
+  },
+
+  setUserModelOnline: function (triggerTerminalLoaded) {
+    var me = this;
+    var trigger = triggerTerminalLoaded;
+    OB.Dal.initCache(OB.Model.User, [], null, null);
+    OB.Dal.initCache(OB.Model.Session, [], null, null);
+    OB.Dal.find(OB.Model.User, {
+      'name': me.user
+    }, function (users) {
+      var user, session, date, savedPass;
+      if (users.models.length === 0) {
+        date = new Date().toString();
+        user = new OB.Model.User();
+        user.set('name', me.user);
+        savedPass = me.generate_sha1(me.password + date);
+        user.set('password', savedPass);
+        user.set('created', date);
+        OB.Dal.save(user, function () {}, function () {
+          window.console.error(arguments);
         });
-      },
-      error: function(jqXHR, textStatus, errorThrown) {
-        me.triggerLoginFail(jqXHR.status, mode);
-      }
-    });
-    }else{
-        OB.POS.modelterminal.set('windowRegistered', undefined);
-        OB.Dal.find(OB.Model.User, {'name': me.user},
-          function(users) {
-            var user;
-            if(users.models.length === 0 ) {
-                OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_OfflineUserNotRegistered'));
-            }else{
-              if(users.models[0].get('password') === me.generate_sha1(me.password+users.models[0].get('created'))){
-                me.usermodel = users.models[0];
-                me.updateSession(me.usermodel);
-                OB.POS.navigate('main', {
-                  trigger: true
-                });
-              } else{
-                  OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_OfflinePasswordNotCorrect'));
-                  OB.POS.navigate('login');
-              }
-            }
-          }, 
-          function() {
-          }
-        );
-    }   
-  }, 
-  
-  setUserModelOnline: function(triggerTerminalLoaded) {
-	  var me = this;
-      var trigger = triggerTerminalLoaded;
-      OB.Dal.initCache(OB.Model.User, [], null, null);
-      OB.Dal.initCache(OB.Model.Session, [], null, null);
-	  OB.Dal.find(OB.Model.User, {'name': me.user},
-      function(users) {
-        var user, session, date, savedPass;
-        if(users.models.length === 0 ) {
-          date= new Date().toString();
-          user = new OB.Model.User();
-          user.set('name', me.user);
-          savedPass = me.generate_sha1(me.password+date);
+        me.usermodel = user;
+      } else {
+        user = users.models[0];
+        me.usermodel = user;
+        if (me.password) {
+          //The password will only be recomputed in case it was properly entered
+          //(that is, if the call comes from the login page directly)
+          savedPass = me.generate_sha1(me.password + user.get('created'));
           user.set('password', savedPass);
-          user.set('created', date);
-          OB.Dal.save(user, function(){
-          }, function() {
-            window.console.error(arguments);
-          });
-          me.usermodel = user;
-        }else {
-          user = users.models[0];
-          me.usermodel = user;
-          if(me.password){
-            //The password will only be recomputed in case it was properly entered
-            //(that is, if the call comes from the login page directly)
-            savedPass = me.generate_sha1(me.password+user.get('created'));
-            user.set('password',savedPass);
-          }
-          OB.Dal.save(user, function(){
-          }, function() {
-            window.console.error(arguments);
-          });
         }
-        me.updateSession(user);
-        if(trigger){
-          me.trigger('terminal.loaded');
-        }
-      }, 
-      function() {
-        window.console.error(arguments);
+        OB.Dal.save(user, function () {}, function () {
+          window.console.error(arguments);
+        });
       }
-    );
+      me.updateSession(user);
+      if (trigger) {
+        me.trigger('terminal.loaded');
+      }
+    }, function () {
+      window.console.error(arguments);
+    });
   },
 
-  logout: function() {
+  logout: function () {
     var me = this;
     this.set('terminal', null);
     this.set('payments', null);
@@ -492,22 +491,22 @@ OB.Model.Terminal = Backbone.Model.extend({
     this.set('currency', null);
     this.set('currencyPrecision', null);
 
-    
+
     $.ajax({
       url: '../../org.openbravo.retail.posterminal.service.logout',
       contentType: 'application/json;charset=utf-8',
       dataType: 'json',
       type: 'GET',
-      success: function(data, textStatus, jqXHR) {
+      success: function (data, textStatus, jqXHR) {
         me.closeSession();
       },
-      error: function(jqXHR, textStatus, errorThrown) {
+      error: function (jqXHR, textStatus, errorThrown) {
         me.closeSession();
       }
     });
   },
 
-  lock: function() {
+  lock: function () {
     var me = this;
     this.set('terminal', null);
     this.set('payments', null);
@@ -525,18 +524,18 @@ OB.Model.Terminal = Backbone.Model.extend({
       contentType: 'application/json;charset=utf-8',
       dataType: 'json',
       type: 'GET',
-      success: function(data, textStatus, jqXHR) {
+      success: function (data, textStatus, jqXHR) {
         me.triggerLogout();
       },
-      error: function(jqXHR, textStatus, errorThrown) {
+      error: function (jqXHR, textStatus, errorThrown) {
         me.triggerLogout();
       }
     });
   },
 
-  load: function() {
+  load: function () {
     var termInfo, i, max;
-	if(!OB.POS.modelterminal.get('connectedToERP')){
+    if (!OB.POS.modelterminal.get('connectedToERP')) {
       termInfo = JSON.parse(this.usermodel.get('terminalinfo'));
       this.set('payments', termInfo.payments);
       this.paymentnames = {};
@@ -557,7 +556,7 @@ OB.Model.Terminal = Backbone.Model.extend({
       this.triggerReady();
       return;
     }
-	  
+
     // reset all application state.
     $(window).off('keypress');
     //  this.set('terminal', null);
@@ -579,7 +578,7 @@ OB.Model.Terminal = Backbone.Model.extend({
     };
 
     new OB.DS.Request('org.openbravo.retail.posterminal.term.Terminal').exec(
-    params, function(data) {
+    params, function (data) {
       if (data.exception) {
         me.logout();
       } else if (data[0]) {
@@ -599,11 +598,11 @@ OB.Model.Terminal = Backbone.Model.extend({
     });
   },
 
-  loadPayments: function() {
+  loadPayments: function () {
     var me = this;
     new OB.DS.Request('org.openbravo.retail.posterminal.term.Payments').exec({
       pos: this.get('terminal').id
-    }, function(data) {
+    }, function (data) {
       if (data) {
         var i, max;
         me.set('payments', data);
@@ -616,9 +615,9 @@ OB.Model.Terminal = Backbone.Model.extend({
     });
   },
 
-  loadContext: function() {
+  loadContext: function () {
     var me = this;
-    new OB.DS.Request('org.openbravo.retail.posterminal.term.Context').exec({}, function(data) {
+    new OB.DS.Request('org.openbravo.retail.posterminal.term.Context').exec({}, function (data) {
       if (data[0]) {
         me.set('context', data[0]);
         me.triggerReady();
@@ -626,9 +625,9 @@ OB.Model.Terminal = Backbone.Model.extend({
     });
   },
 
-  loadPermissions: function() {
+  loadPermissions: function () {
     var me = this;
-    new OB.DS.Request('org.openbravo.retail.posterminal.term.RolePreferences').exec({}, function(data) {
+    new OB.DS.Request('org.openbravo.retail.posterminal.term.RolePreferences').exec({}, function (data) {
       var i, max, permissions = {};
       if (data) {
         for (i = 0, max = data.length; i < max; i++) {
@@ -640,37 +639,37 @@ OB.Model.Terminal = Backbone.Model.extend({
     });
   },
 
-  loadBP: function() {
+  loadBP: function () {
     this.set('businesspartner', this.get('terminal').businessPartner);
   },
 
-  loadLocation: function() {
+  loadLocation: function () {
     var me = this;
     new OB.DS.Request('org.openbravo.retail.posterminal.term.Location').exec({
       org: this.get('terminal').organization
-    }, function(data) {
+    }, function (data) {
       if (data[0]) {
         me.set('location', data[0]);
       }
     });
   },
 
-  loadPriceList: function() {
+  loadPriceList: function () {
     var me = this;
     new OB.DS.Request('org.openbravo.retail.posterminal.term.PriceList').exec({
       pricelist: this.get('terminal').priceList
-    }, function(data) {
+    }, function (data) {
       if (data[0]) {
         me.set('pricelist', data[0]);
       }
     });
   },
 
-  loadPriceListVersion: function() {
+  loadPriceListVersion: function () {
     var me = this;
     new OB.DS.Request('org.openbravo.retail.posterminal.term.PriceListVersion').exec({
       pricelist: this.get('terminal').priceList
-    }, function(data) {
+    }, function (data) {
       if (data[0]) {
         me.set('pricelistversion', data[0]);
         me.triggerReady();
@@ -678,11 +677,11 @@ OB.Model.Terminal = Backbone.Model.extend({
     });
   },
 
-  loadCurrency: function() {
+  loadCurrency: function () {
     var me = this;
     new OB.DS.Request('org.openbravo.retail.posterminal.term.Currency').exec({
       currency: this.get('terminal').currency
-    }, function(data) {
+    }, function (data) {
       if (data[0]) {
         me.set('currency', data[0]);
         //Precision used by arithmetics operations is set using the currency
@@ -692,12 +691,12 @@ OB.Model.Terminal = Backbone.Model.extend({
     });
   },
 
-  setDocumentSequence: function() {
+  setDocumentSequence: function () {
     var me = this;
     // Obtains the persisted document number (documentno of the last processed order)
     OB.Dal.find(OB.Model.DocumentSequence, {
       'posSearchKey': OB.POS.modelterminal.get('terminal').searchKey
-    }, function(documentsequence) {
+    }, function (documentsequence) {
       var lastInternalDocumentSequence, max;
       if (documentsequence && documentsequence.length > 0) {
         lastInternalDocumentSequence = documentsequence.at(0).get('documentSequence');
@@ -715,18 +714,18 @@ OB.Model.Terminal = Backbone.Model.extend({
         me.compareDocSeqWithPendingOrdersAndSave(max);
       }
 
-    }, function() {
+    }, function () {
       var max = OB.POS.modelterminal.get('terminal').lastDocumentNumber;
       // Compares the maximum with the document number of the paid pending orders
       me.compareDocSeqWithPendingOrdersAndSave(max);
     });
   },
 
-  compareDocSeqWithPendingOrdersAndSave: function(maxDocumentSequence) {
+  compareDocSeqWithPendingOrdersAndSave: function (maxDocumentSequence) {
     var me = this;
     // compare the last document number returned from the ERP with
     // the last document number of the unprocessed pending lines (if any)
-    OB.Dal.find(OB.Model.Order, {}, function(fetchedOrderList) {
+    OB.Dal.find(OB.Model.Order, {}, function (fetchedOrderList) {
       var criteria, maxDocumentSequencePendingOrders;
       if (!fetchedOrderList || fetchedOrderList.length === 0) {
         // There are no pending orders, the initial document sequence
@@ -743,14 +742,14 @@ OB.Model.Terminal = Backbone.Model.extend({
           me.saveDocumentSequenceAndGo(maxDocumentSequence);
         }
       }
-    }, function() {
+    }, function () {
       // If c_order does not exist yet, go with the sequence
       // number fetched from the server
       me.saveDocumentSequenceAndGo(maxDocumentSequence);
     });
   },
 
-  getMaxDocumentSequenceFromPendingOrders: function(pendingOrders) {
+  getMaxDocumentSequenceFromPendingOrders: function (pendingOrders) {
     var nPreviousOrders = pendingOrders.length,
         maxDocumentSequence = OB.POS.modelterminal.get('terminal').lastDocumentNumber,
         posDocumentNoPrefix = OB.POS.modelterminal.get('terminal').docNoPrefix,
@@ -765,19 +764,19 @@ OB.Model.Terminal = Backbone.Model.extend({
     return maxDocumentSequence;
   },
 
-  saveDocumentSequenceAndGo: function(documentSequence) {
+  saveDocumentSequenceAndGo: function (documentSequence) {
     this.set('documentsequence', documentSequence);
     this.triggerReady();
   },
 
-  saveDocumentSequenceInDB: function() {
+  saveDocumentSequenceInDB: function () {
     var me = this,
         modelterminal = OB.POS.modelterminal,
         documentSequence = modelterminal.get('documentsequence'),
         criteria = {
         'posSearchKey': OB.POS.modelterminal.get('terminal').searchKey
         };
-    OB.Dal.find(OB.Model.DocumentSequence, criteria, function(documentSequenceList) {
+    OB.Dal.find(OB.Model.DocumentSequence, criteria, function (documentSequenceList) {
       var docSeq;
       if (documentSequenceList && documentSequenceList.length !== 0) {
         // There can only be one documentSequence model in the list (posSearchKey is unique)
@@ -794,22 +793,20 @@ OB.Model.Terminal = Backbone.Model.extend({
     });
   },
 
-  triggerReady: function() {
-    var undef, loadModelsIncFunc, loadModelsTotalFunc,
-      minTotalRefresh, minIncRefresh;
-    if (this.get('payments') && this.get('pricelistversion') && this.get('currency') && this.get('context') && this.get('permissions') && (this.get('documentsequence')!==undef || this.get('documentsequence')===0) && this.get('windowRegistered')!== undef) {
+  triggerReady: function () {
+    var undef, loadModelsIncFunc, loadModelsTotalFunc, minTotalRefresh, minIncRefresh;
+    if (this.get('payments') && this.get('pricelistversion') && this.get('currency') && this.get('context') && this.get('permissions') && (this.get('documentsequence') !== undef || this.get('documentsequence') === 0) && this.get('windowRegistered') !== undef) {
       OB.POS.modelterminal.loggingIn = false;
       if (OB.POS.modelterminal.get('connectedToERP')) {
         //In online mode, we save the terminal information in the local db
         this.usermodel.set('terminalinfo', JSON.stringify(this));
-        OB.Dal.save(this.usermodel, function(){
-        }, function() {
+        OB.Dal.save(this.usermodel, function () {}, function () {
           window.console.error(arguments);
         });
       }
-      minIncRefresh = OB.POS.modelterminal.get('terminal').minutestorefreshdatainc*60*1000;
-      if(minIncRefresh){
-        loadModelsIncFunc = function(){
+      minIncRefresh = OB.POS.modelterminal.get('terminal').minutestorefreshdatainc * 60 * 1000;
+      if (minIncRefresh) {
+        loadModelsIncFunc = function () {
           console.log('Performing incremental masterdata refresh');
           OB.POS.modelterminal.loadModels(null, true);
           setTimeout(loadModelsIncFunc, minIncRefresh);
@@ -820,29 +817,29 @@ OB.Model.Terminal = Backbone.Model.extend({
     }
   },
 
-  triggerLogout: function() {
+  triggerLogout: function () {
     this.trigger('logout');
   },
 
-  triggerLoginSuccess: function() {
+  triggerLoginSuccess: function () {
     this.trigger('loginsuccess');
   },
 
-  triggerOnLine: function() {
-    if(!OB.POS.modelterminal.loggingIn){
+  triggerOnLine: function () {
+    if (!OB.POS.modelterminal.loggingIn) {
       this.set('connectedToERP', true);
       this.trigger('online');
     }
   },
 
-  triggerOffLine: function() {
-    if(!OB.POS.modelterminal.loggingIn){
+  triggerOffLine: function () {
+    if (!OB.POS.modelterminal.loggingIn) {
       this.set('connectedToERP', false);
       this.trigger('offline');
     }
   },
 
-  triggerLoginFail: function(e, mode, data) {
+  triggerLoginFail: function (e, mode, data) {
     OB.UTIL.showLoading(false);
     if (mode === 'userImgPress') {
       this.trigger('loginUserImgPressfail', e);
@@ -851,15 +848,15 @@ OB.Model.Terminal = Backbone.Model.extend({
     }
   },
 
-  hasPermission: function(p) {
+  hasPermission: function (p) {
     return !this.get('context').role.manual || this.get('permissions')[p] || this.get('permissions')['OBPOS_' + p];
   },
 
-  getPaymentName: function(key) {
+  getPaymentName: function (key) {
     return this.paymentnames[key];
   },
 
-  hasPayment: function(key) {
+  hasPayment: function (key) {
     return this.paymentnames[key];
   }
 

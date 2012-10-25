@@ -21,18 +21,18 @@ enyo.kind({
     'data-toggle': 'modal',
     'href': '#modalcustomer'
   },
-  initComponents: function() {},
-  renderCustomer: function(newCustomer) {
+  initComponents: function () {},
+  renderCustomer: function (newCustomer) {
     this.setContent(newCustomer);
   },
-  orderChanged: function(oldValue) {
+  orderChanged: function (oldValue) {
     if (this.order.get('bp')) {
       this.renderCustomer(this.order.get('bp').get('_identifier'));
     } else {
       this.renderCustomer('');
     }
 
-    this.order.on('change:bp', function(model) {
+    this.order.on('change:bp', function (model) {
       if (model.get('bp')) {
         this.renderCustomer(model.get('bp').get('_identifier'));
       } else {
@@ -49,6 +49,9 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.Button',
   name: 'OB.UI.NewCustomerWindowButton',
+  events: {
+    onChangeSubWindow: ''
+  },
   style: 'width: 150px; margin: 0px 5px 8px 19px;',
   classes: 'btnlink-yellow btnlink btnlink-small',
   content: OB.I18N.getLabel('OBPOS_LblNewCustomer'),
@@ -58,14 +61,13 @@ enyo.kind({
   handlers: {
     onSetModel: 'setModel'
   },
-  setModel: function(sender, event) {
+  setModel: function (sender, event) {
     this.model = event.model;
   },
-  tap: function(model) {
-    this.model.get('subWindowManager').set('currentWindow', {
-      name: 'subWindow_new_customer',
-      params: {
-        callerWindow: 'subWindow_customers'
+  tap: function (model) {
+    this.doChangeSubWindow({
+      newWindow: {
+        name: 'customerCreateAndEdit'
       }
     });
   }
@@ -83,14 +85,14 @@ enyo.kind({
   handlers: {
     onSetModel: 'setModel'
   },
-  setModel: function(sender, event) {
+  setModel: function (sender, event) {
     this.model = event.model;
   },
-  tap: function() {
+  tap: function () {
     this.model.get('subWindowManager').set('currentWindow', {
-      name: 'subWindow_customers',
+      name: 'customerAdvancedSearch',
       params: {
-        callerWindow: 'mainSubWindow'
+        caller: 'mainSubWindow'
       }
     });
   }
@@ -165,11 +167,11 @@ enyo.kind({
       }]
     }]
   }],
-  clearAction: function() {
+  clearAction: function () {
     this.$.filterText.setValue('');
     this.doClearAction();
   },
-  searchAction: function() {
+  searchAction: function () {
     this.doSearchAction({
       bpName: this.$.filterText.getValue()
     });
@@ -192,7 +194,7 @@ enyo.kind({
       style: 'clear: both;'
     }]
   }],
-  create: function() {
+  create: function () {
     this.inherited(arguments);
     this.$.identifier.setContent(this.model.get('_identifier'));
     this.$.address.setContent(this.model.get('locName'));
@@ -228,11 +230,11 @@ enyo.kind({
       }]
     }]
   }],
-  clearAction: function(inSender, inEvent) {
+  clearAction: function (inSender, inEvent) {
     this.bpsList.reset();
     return true;
   },
-  searchAction: function(inSender, inEvent) {
+  searchAction: function (inSender, inEvent) {
     var me = this,
         filter = inEvent.bpName;
 
@@ -260,10 +262,10 @@ enyo.kind({
     return true;
   },
   bpsList: null,
-  init: function(model) {
+  init: function (model) {
     this.bpsList = new Backbone.Collection();
     this.$.bpslistitemprinter.setCollection(this.bpsList);
-    this.bpsList.on('click', function(model) {
+    this.bpsList.on('click', function (model) {
       this.doChangeBusinessPartner({
         businessPartner: model
       });
@@ -283,7 +285,7 @@ enyo.kind({
   body: {
     kind: 'OB.UI.ListBps'
   },
-  init: function(model) {
+  init: function (model) {
     this.model = model;
     this.waterfall('onSetModel', {
       model: this.model

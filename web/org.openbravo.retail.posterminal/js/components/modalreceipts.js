@@ -24,7 +24,7 @@ enyo.kind({
     kind: 'OB.UI.ListReceipts',
     name: 'listreceipts'
   },
-  receiptsListChanged: function(oldValue) {
+  receiptsListChanged: function (oldValue) {
     this.$.body.$.listreceipts.setReceiptsList(this.receiptsList);
   }
 });
@@ -52,9 +52,9 @@ enyo.kind({
       }]
     }]
   }],
-  receiptsListChanged: function(oldValue) {
+  receiptsListChanged: function (oldValue) {
     this.$.receiptslistitemprinter.setCollection(this.receiptsList);
-    this.receiptsList.on('click', function(model) {
+    this.receiptsList.on('click', function (model) {
       this.doChangeCurrentOrder({
         newCurrentOrder: model
       });
@@ -94,11 +94,11 @@ enyo.kind({
       }]
     }]
   }],
-  create: function() {
+  create: function () {
     this.inherited(arguments);
-    if(this.model.get('orderDate') instanceof Date){
+    if (this.model.get('orderDate') instanceof Date) {
       this.$.time.setContent(OB.I18N.formatHour(this.model.get('orderDate')));
-    }else{
+    } else {
       this.$.time.setContent(this.model.get('orderDate'));
     }
     this.$.orderNo.setContent(this.model.get('documentNo'));
@@ -134,7 +134,7 @@ enyo.kind({
   events: {
     onDeleteOrder: ''
   },
-  tap: function() {
+  tap: function () {
     $('#modalConfirmReceiptDelete').modal('hide');
     this.doDeleteOrder();
   }

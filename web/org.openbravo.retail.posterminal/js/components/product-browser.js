@@ -7,7 +7,6 @@
  ************************************************************************************
  */
 
-
 /*global enyo, _ */
 
 enyo.kind({
@@ -26,8 +25,8 @@ enyo.kind({
       name: 'browseCategories'
     }]
   }],
-  init: function() {
-    this.$.browseCategories.$.listCategories.categories.on('selected', function(category) {
+  init: function () {
+    this.$.browseCategories.$.listCategories.categories.on('selected', function (category) {
       this.$.browseProducts.$.listProducts.loadCategory(category);
     }, this);
   }
@@ -80,7 +79,7 @@ enyo.kind({
     renderLine: 'OB.UI.RenderCategory'
   }],
 
-  init: function() {
+  init: function () {
     var me = this;
     this.categories = new OB.Collection.ProductCategoryList();
     this.$.categoryTable.setCollection(this.categories);
@@ -112,7 +111,7 @@ enyo.kind({
     tag: 'h3',
     name: 'title'
   }],
-  setHeader: function(valueToSet) {
+  setHeader: function (valueToSet) {
     this.$.title.setContent(valueToSet);
   }
 });
@@ -130,28 +129,28 @@ enyo.kind({
     renderEmpty: 'OB.UI.RenderEmpty',
     renderLine: 'OB.UI.RenderProduct'
   }],
-  init: function() {
+  init: function () {
     this.inherited(arguments);
     this.products = new OB.Collection.ProductList();
     this.$.productTable.setCollection(this.products);
-    this.products.on('click', function(model) {
+    this.products.on('click', function (model) {
       this.doAddProduct({
         product: model
       });
     }, this);
   },
 
-  loadCategory: function(category) {
+  loadCategory: function (category) {
     var criteria, me = this;
 
     function successCallbackPrices(dataPrices, dataProducts) {
       if (dataPrices && dataPrices.length > 0) {
-        _.each(dataPrices.models, function(currentPrice) {
+        _.each(dataPrices.models, function (currentPrice) {
           if (dataProducts.get(currentPrice.get('product'))) {
             dataProducts.get(currentPrice.get('product')).set('price', currentPrice);
           }
         });
-        _.each(dataProducts.models, function(currentProd) {
+        _.each(dataProducts.models, function (currentProd) {
           if (currentProd.get('price') === undefined) {
             var price = new OB.Model.ProductPrice({
               'standardPrice': 0
@@ -162,7 +161,7 @@ enyo.kind({
         });
       } else {
         OB.UTIL.showWarning("OBDAL No prices found for products");
-        _.each(dataProducts.models, function(currentProd) {
+        _.each(dataProducts.models, function (currentProd) {
           var price = new OB.Model.ProductPrice({
             'standardPrice': 0
           });

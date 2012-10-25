@@ -12,11 +12,11 @@
 enyo.kind({
   name: 'OB.UI.WindowView',
   windowmodel: null,
-  create: function() {
+  create: function () {
 
     this.inherited(arguments);
     this.model = new this.windowmodel();
-    this.model.on('ready', function() {
+    this.model.on('ready', function () {
       if (this.init) {
         this.init();
       }
@@ -25,18 +25,18 @@ enyo.kind({
     this.model.load();
   },
   statics: {
-    initChildren: function(view, model) {
+    initChildren: function (view, model) {
       if (!view || !view.getComponents) {
         return;
       }
-      enyo.forEach(view.getComponents(), function(child) {
+      enyo.forEach(view.getComponents(), function (child) {
         OB.UI.WindowView.initChildren(child, model);
         if (child.init) {
           child.init(model);
         }
       });
     },
-    destroyModels: function(view) {
+    destroyModels: function (view) {
       var p;
       if (!view) {
         return;
@@ -51,24 +51,25 @@ enyo.kind({
         return;
       }
 
-      enyo.forEach(view.getComponents(), function(child) {
+      enyo.forEach(view.getComponents(), function (child) {
         OB.UI.WindowView.destroyModels(child);
       });
     }
   },
-  init: function() {
+  init: function () {
     //Modularity
     //Add new dialogs
-    var customDialogsContainerName = this.name + "_customDialogsContainer", view = this;
+    var customDialogsContainerName = this.name + "_customDialogsContainer",
+        view = this;
     this.createComponent({
       name: customDialogsContainerName,
-      initComponents: function(){
-        if(OB.Customizations){
-          if (OB.Customizations[this.parent.name]){
-            if(OB.Customizations[this.parent.name].dialogs){
-              enyo.forEach(OB.Customizations[this.parent.name].dialogs, function(dialog, component) {
+      initComponents: function () {
+        if (OB.Customizations) {
+          if (OB.Customizations[this.parent.name]) {
+            if (OB.Customizations[this.parent.name].dialogs) {
+              enyo.forEach(OB.Customizations[this.parent.name].dialogs, function (dialog, component) {
                 this.createComponent(dialog);
-              },this);
+              }, this);
             }
           }
         }
@@ -84,7 +85,7 @@ enyo.kind({
     //    });
   },
 
-  destroy: function() {
+  destroy: function () {
     this.model.setOff();
     this.model = null;
     OB.UI.WindowView.destroyModels(this);

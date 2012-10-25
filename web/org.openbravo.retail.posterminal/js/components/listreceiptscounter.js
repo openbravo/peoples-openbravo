@@ -34,7 +34,7 @@ enyo.kind({
     kind: 'OB.UI.ModalReceipts',
     name: 'modalreceipts'
   }],
-  renderNrItems: function(nrItems) {
+  renderNrItems: function (nrItems) {
     if (nrItems > 1) {
       this.$.counter.setContent(nrItems - 1);
       this.show();
@@ -43,15 +43,15 @@ enyo.kind({
       this.hide();
     }
   },
-  orderListChanged: function(oldValue) {
+  orderListChanged: function (oldValue) {
     var me = this;
     this.$.modalreceipts.setReceiptsList(this.orderList);
     this.renderNrItems(this.orderList.length);
-    this.orderList.on('all', function(model) {
+    this.orderList.on('all', function (model) {
       me.renderNrItems(me.orderList.length);
     }, this);
   },
-  initComponents: function() {
+  initComponents: function () {
     this.inherited(arguments);
   }
 });

@@ -35,7 +35,7 @@ enyo.kind({
     classes: 'dropdown-menu',
     name: 'menu'
   }],
-  initComponents: function() {
+  initComponents: function () {
     this.inherited(arguments);
     if (this.icon) {
       this.$.leftIcon.addClass(this.icon);
@@ -44,7 +44,7 @@ enyo.kind({
       this.$.rightIcon.addClass(this.iconright);
     }
 
-    enyo.forEach(this.menuEntries, function(entry) {
+    enyo.forEach(this.menuEntries, function (entry) {
       this.$.menu.createComponent(entry);
     }, this);
   }
@@ -58,14 +58,14 @@ enyo.kind({
     onShowReturnText: ''
   },
   label: OB.I18N.getLabel('OBPOS_LblReturn'),
-  tap: function() {
+  tap: function () {
     this.doShowReturnText();
   },
-  init: function(model){
+  init: function (model) {
     this.model = model;
-    this.model.get('order').on('change:isEditable', function(newValue){
-      if (newValue){
-        if(newValue.get('isEditable') === false){
+    this.model.get('order').on('change:isEditable', function (newValue) {
+      if (newValue) {
+        if (newValue.get('isEditable') === false) {
           this.setShowing(false);
           return;
         }
@@ -83,14 +83,14 @@ enyo.kind({
     onShowReceiptProperties: ''
   },
   label: OB.I18N.getLabel('OBPOS_LblProperties'),
-  tap: function() {
+  tap: function () {
     this.doShowReceiptProperties();
   },
-  init: function(model){
+  init: function (model) {
     this.model = model;
-    this.model.get('order').on('change:isEditable', function(newValue){
-      if (newValue){
-        if(newValue.get('isEditable') === false){
+    this.model.get('order').on('change:isEditable', function (newValue) {
+      if (newValue) {
+        if (newValue.get('isEditable') === false) {
           this.setShowing(false);
           return;
         }
@@ -108,14 +108,14 @@ enyo.kind({
     onReceiptToInvoice: ''
   },
   label: OB.I18N.getLabel('OBPOS_LblInvoice'),
-  tap: function() {
+  tap: function () {
     this.doReceiptToInvoice();
   },
-  init: function(model){
+  init: function (model) {
     this.model = model;
-    this.model.get('order').on('change:isEditable', function(newValue){
-      if (newValue){
-        if(newValue.get('isEditable') === false){
+    this.model.get('order').on('change:isEditable', function (newValue) {
+      if (newValue) {
+        if (newValue.get('isEditable') === false) {
           this.setShowing(false);
           return;
         }
@@ -133,11 +133,10 @@ enyo.kind({
     onChangeSubWindow: ''
   },
   label: 'Customers',
-  tap: function() {
+  tap: function () {
     this.doChangeSubWindow({
       newWindow: {
-        name: 'subWindow_customers',
-        params: []
+        name: 'customerAdvancedSearch'
       }
     });
   }
@@ -151,7 +150,7 @@ enyo.kind({
     onPrintReceipt: ''
   },
   label: OB.I18N.getLabel('OBPOS_LblPrintReceipt'),
-  tap: function() {
+  tap: function () {
     if (OB.POS.modelterminal.hasPermission(this.permission)) {
       this.doPrintReceipt();
     }
@@ -159,29 +158,29 @@ enyo.kind({
 });
 
 enyo.kind({
-	  name: 'OB.UI.MenuSeparator',
-	  tag: 'li',
-	  classes: 'divider'
-	});
+  name: 'OB.UI.MenuSeparator',
+  tag: 'li',
+  classes: 'divider'
+});
 
 enyo.kind({
-	  name: 'OB.UI.MenuPaidReceipts',
-	  kind: 'OB.UI.MenuAction',
-	  permission: 'OBPOS_retail.paidReceipts',
-	  events: {
-	    onPaidReceipts: ''
-	  },
-	  label: OB.I18N.getLabel('OBPOS_LblPaidReceipts'),
-	  tap: function() {
-	    if(!OB.POS.modelterminal.get('connectedToERP')){
-	      OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OfflineWindowRequiresOnline'));
-	      return;
-	    }
-	    if (OB.POS.modelterminal.hasPermission(this.permission)) {
-	      this.doPaidReceipts();
-	    }
-	  }
-	});
+  name: 'OB.UI.MenuPaidReceipts',
+  kind: 'OB.UI.MenuAction',
+  permission: 'OBPOS_retail.paidReceipts',
+  events: {
+    onPaidReceipts: ''
+  },
+  label: OB.I18N.getLabel('OBPOS_LblPaidReceipts'),
+  tap: function () {
+    if (!OB.POS.modelterminal.get('connectedToERP')) {
+      OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OfflineWindowRequiresOnline'));
+      return;
+    }
+    if (OB.POS.modelterminal.hasPermission(this.permission)) {
+      this.doPaidReceipts();
+    }
+  }
+});
 
 enyo.kind({
   name: 'OB.UI.MenuBackOffice',
@@ -192,7 +191,7 @@ enyo.kind({
     onBackOffice: ''
   },
   label: OB.I18N.getLabel('OBPOS_LblOpenbravoWorkspace'),
-  tap: function() {
+  tap: function () {
     if (OB.POS.modelterminal.hasPermission(this.permission)) {
       this.doBackOffice({
         url: this.url
@@ -205,7 +204,7 @@ enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.StandardMenu',
   kind: 'OB.UI.ToolbarMenu',
   icon: 'btn-icon btn-icon-menu',
-  initComponents: function() {
+  initComponents: function () {
     // dynamically generating the menu
     this.menuEntries = [];
     this.menuEntries.push({
@@ -233,10 +232,10 @@ enyo.kind({
       kind: 'OB.UI.MenuBackOffice'
     });
 
-    enyo.forEach(OB.POS.windows.filter(function(window) {
+    enyo.forEach(OB.POS.windows.filter(function (window) {
       // show in menu only the ones with menuPosition
       return window.get('menuPosition');
-    }), function(window) {
+    }), function (window) {
       this.menuEntries.push({
         kind: 'OB.UI.MenuItem',
         label: window.get('menuLabel'),
@@ -265,20 +264,20 @@ enyo.kind({
       href: '#'
     }
   }],
-  initComponents: function() {
+  initComponents: function () {
     this.inherited(arguments);
     this.$.item.setContent(this.label);
     if (!OB.POS.modelterminal.hasPermission(this.route)) {
       this.$.item.setStyle('color: #cccccc; padding-bottom: 10px;padding-left: 15px; padding-right: 15px;padding-top: 10px;');
     }
   },
-  tap: function() {
-    if(OB.POS.modelterminal.isWindowOnline(this.route) === true){
-      if(!OB.POS.modelterminal.get('connectedToERP')){
+  tap: function () {
+    if (OB.POS.modelterminal.isWindowOnline(this.route) === true) {
+      if (!OB.POS.modelterminal.get('connectedToERP')) {
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OfflineWindowRequiresOnline'));
         return;
       }
-      if(OB.POS.modelterminal.get('loggedOffline')===true){
+      if (OB.POS.modelterminal.get('loggedOffline') === true) {
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OfflineWindowOfflineLogin'));
         return;
       }
@@ -294,4 +293,3 @@ enyo.kind({
     }
   }
 });
-

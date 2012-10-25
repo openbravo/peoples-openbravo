@@ -9,20 +9,21 @@
 
 /*global B, Backbone, $, _, enyo */
 
+//Modal pop up
 enyo.kind({
-  name: 'OB.UI.ModalConfigurationRequiredForCreateCustomers',
-  kind: 'OB.UI.ModalInfo',
-  header: OB.I18N.getLabel('OBPOS_configurationRequired'),
-  bodyContent: {
-    tag: 'div',
-    content: OB.I18N.getLabel('OBPOS_configurationNeededToCreateCustomers')
+  name: 'OB.OBPOSPointOfSale.UI.customers.cas',
+  kind: 'OB.UI.subwindow',
+  header: {
+    kind: 'OB.OBPOSPointOfSale.UI.customers.casheader'
   },
-  myId: 'modalConfigurationRequiredForCreateNewCustomers'
+  body: {
+    kind: 'OB.OBPOSPointOfSale.UI.customers.casbody'
+  }
 });
 
-
+//Header of the body of cas (customer advanced search)
 enyo.kind({
-  name: 'OB.UI.ModalCustomerScrollableHeader',
+  name: 'OB.OBPOSPointOfSale.UI.customers.ModalCustomerScrollableHeader',
   kind: 'OB.UI.ScrollableTableHeader',
   style: 'border-bottom: 10px solid #ff0000;',
   events: {
@@ -75,11 +76,11 @@ enyo.kind({
       }]
     }]
   }],
-  clearAction: function() {
+  clearAction: function () {
     this.$.filterText.setValue('');
     this.doClearAction();
   },
-  searchAction: function() {
+  searchAction: function () {
     this.doSearchAction({
       bpName: this.$.filterText.getValue(),
       operator: OB.Dal.CONTAINS
@@ -89,7 +90,7 @@ enyo.kind({
 
 /*items of collection Customer*/
 enyo.kind({
-  name: 'OB.UI.ListCustomersLine',
+  name: 'OB.OBPOSPointOfSale.UI.customers.ListCustomersLine',
   kind: 'OB.UI.SelectButton',
   classes: 'btnselect-customer',
   components: [{
@@ -105,7 +106,7 @@ enyo.kind({
       style: 'clear: both;'
     }]
   }],
-  create: function() {
+  create: function () {
     this.inherited(arguments);
     this.$.identifier.setContent(this.model.get('_identifier') + ' / ');
     this.$.address.setContent(this.model.get('locName'));
@@ -114,13 +115,13 @@ enyo.kind({
 
 /*Search Customer Button*/
 enyo.kind({
-  name: 'OB.UI.SearchCustomerButton',
+  name: 'OB.OBPOSPointOfSale.UI.customers.SearchCustomerButton',
   kind: 'OB.UI.Button',
   events: {
     onSearchAction: ''
   },
   classes: 'btnlink-left-toolbar',
-  searchAction: function(params) {
+  searchAction: function (params) {
     this.doSearchAction({
       bpName: params.initial,
       operator: params.operator
@@ -130,107 +131,98 @@ enyo.kind({
 
 /*New Customer Button*/
 enyo.kind({
-  name: 'OB.UI.NewCustomerButton',
+  name: 'OB.OBPOSPointOfSale.UI.customers.NewCustomerButton',
   kind: 'OB.UI.Button',
   events: {
     onChangeSubWindow: ''
   },
   classes: 'btnlink-left-toolbar',
-  tap: function() {
-    if (OB.POS.modelterminal.get('terminal').defaultbp_paymentmethod !== null && 
-        OB.POS.modelterminal.get('terminal').defaultbp_bpcategory !== null && 
-        OB.POS.modelterminal.get('terminal').defaultbp_paymentterm !== null && 
-        OB.POS.modelterminal.get('terminal').defaultbp_invoiceterm !== null &&
-        OB.POS.modelterminal.get('terminal').defaultbp_bpcountry !== null &&
-        OB.POS.modelterminal.get('terminal').defaultbp_bporg !== null) {
-      this.doChangeSubWindow({
-        newWindow: {
-          name: 'subWindow_new_customer',
-          params: {
-            callerWindow: 'subWindow_customers'
-          }
+  tap: function () {
+    var sw = this.subWindow;
+    this.doChangeSubWindow({
+      newWindow: {
+        name: 'customerCreateAndEdit',
+        params: {
+          caller: sw.getName()
         }
-      });
-    } else {
-      $('#modalConfigurationRequiredForCreateNewCustomers').modal("show");
-    }
+      }
+    });
   }
 });
 
-
 /* Buttons Left bar*/
 enyo.kind({
-  name: 'OB.UI.CustomerLeftBar',
+  name: 'OB.OBPOSPointOfSale.UI.customers.CustomerLeftBar',
   components: [{
-    kind: 'OB.UI.NewCustomerButton',
+    kind: 'OB.OBPOSPointOfSale.UI.customers.NewCustomerButton',
     content: OB.I18N.getLabel('OBPOS_LblNew')
   }, {
-    kind: 'OB.UI.SearchCustomerButton',
+    kind: 'OB.OBPOSPointOfSale.UI.customers.SearchCustomerButton',
     content: OB.I18N.getLabel('OBPOS_LblAC'),
-    tap: function() {
+    tap: function () {
       this.searchAction({
         initial: 'A,B,C',
         operator: OB.Dal.STARTSWITH
       });
     }
   }, {
-    kind: 'OB.UI.SearchCustomerButton',
+    kind: 'OB.OBPOSPointOfSale.UI.customers.SearchCustomerButton',
     content: OB.I18N.getLabel('OBPOS_LblDF'),
-    tap: function() {
+    tap: function () {
       this.searchAction({
         initial: 'D,E,F',
         operator: OB.Dal.STARTSWITH
       });
     }
   }, {
-    kind: 'OB.UI.SearchCustomerButton',
+    kind: 'OB.OBPOSPointOfSale.UI.customers.SearchCustomerButton',
     content: OB.I18N.getLabel('OBPOS_LblGI'),
-    tap: function() {
+    tap: function () {
       this.searchAction({
         initial: 'G,H,I',
         operator: OB.Dal.STARTSWITH
       });
     }
   }, {
-    kind: 'OB.UI.SearchCustomerButton',
+    kind: 'OB.OBPOSPointOfSale.UI.customers.SearchCustomerButton',
     content: OB.I18N.getLabel('OBPOS_LblJL'),
-    tap: function() {
+    tap: function () {
       this.searchAction({
         initial: 'J,K,L',
         operator: OB.Dal.STARTSWITH
       });
     }
   }, {
-    kind: 'OB.UI.SearchCustomerButton',
+    kind: 'OB.OBPOSPointOfSale.UI.customers.SearchCustomerButton',
     content: OB.I18N.getLabel('OBPOS_LblMO'),
-    tap: function() {
+    tap: function () {
       this.searchAction({
         initial: 'M,N,O',
         operator: OB.Dal.STARTSWITH
       });
     }
   }, {
-    kind: 'OB.UI.SearchCustomerButton',
+    kind: 'OB.OBPOSPointOfSale.UI.customers.SearchCustomerButton',
     content: OB.I18N.getLabel('OBPOS_LblPR'),
-    tap: function() {
+    tap: function () {
       this.searchAction({
         initial: 'P,Q,R',
         operator: OB.Dal.STARTSWITH
       });
     }
   }, {
-    kind: 'OB.UI.SearchCustomerButton',
+    kind: 'OB.OBPOSPointOfSale.UI.customers.SearchCustomerButton',
     content: OB.I18N.getLabel('OBPOS_LblSV'),
-    tap: function() {
+    tap: function () {
       this.searchAction({
         initial: 'S,T,U,V',
         operator: OB.Dal.STARTSWITH
       });
     }
   }, {
-    kind: 'OB.UI.SearchCustomerButton',
+    kind: 'OB.OBPOSPointOfSale.UI.customers.SearchCustomerButton',
     content: OB.I18N.getLabel('OBPOS_LblWZ'),
-    tap: function() {
+    tap: function () {
       this.searchAction({
         initial: 'W,X,Y,Z',
         operator: OB.Dal.STARTSWITH
@@ -241,7 +233,7 @@ enyo.kind({
 
 /*scrollable table (body of customer)*/
 enyo.kind({
-  name: 'OB.UI.ListCustomers',
+  name: 'OB.OBPOSPointOfSale.UI.customers.ListCustomers',
   handlers: {
     onSearchAction: 'searchAction',
     onClearAction: 'clearAction'
@@ -253,7 +245,7 @@ enyo.kind({
   components: [{
     style: 'width: 10%; float: left; text-align: center; padding-top: 10px',
     components: [{
-      kind: 'OB.UI.CustomerLeftBar'
+      kind: 'OB.OBPOSPointOfSale.UI.customers.CustomerLeftBar'
     }]
   }, {
     style: 'width: 90%; float: left;',
@@ -266,8 +258,8 @@ enyo.kind({
           name: 'bpslistitemprinter',
           kind: 'OB.UI.ScrollableTable',
           scrollAreaMaxHeight: '800px',
-          renderHeader: 'OB.UI.ModalCustomerScrollableHeader',
-          renderLine: 'OB.UI.ListCustomersLine',
+          renderHeader: 'OB.OBPOSPointOfSale.UI.customers.ModalCustomerScrollableHeader',
+          renderLine: 'OB.OBPOSPointOfSale.UI.customers.ListCustomersLine',
           renderEmpty: 'OB.UI.RenderEmpty'
         }]
       }]
@@ -275,18 +267,17 @@ enyo.kind({
   }, {
     style: 'clear: both'
   }],
-  clearAction: function(inSender, inEvent) {
+  clearAction: function (inSender, inEvent) {
     this.bpsList.reset();
     return true;
   },
-  searchAction: function(inSender, inEvent) {
+  searchAction: function (inSender, inEvent) {
     var me = this,
         filter = inEvent.bpName,
         splitFilter = filter.split(","),
         splitFilterLength = splitFilter.length,
         _operator = inEvent.operator,
-        i,
-        criteria = {};
+        i, criteria = {};
 
     function errorCallback(tx, error) {
       OB.UTIL.showError("OBDAL error: " + error);
@@ -318,18 +309,47 @@ enyo.kind({
     return true;
   },
   bpsList: null,
-  init: function() {
+  init: function () {
     this.bpsList = new Backbone.Collection();
     this.$.bpslistitemprinter.setCollection(this.bpsList);
-    this.bpsList.on('click', function(model) {
+    this.bpsList.on('click', function (model) {
+      var sw = this.subWindow;
       this.doChangeSubWindow({
         newWindow: {
-          name: 'subWindow_edit_customer',
+          name: 'customerView',
           params: {
+            caller: sw.getName(),
             businessPartner: model
           }
         }
       });
     }, this);
   }
+});
+
+//header
+enyo.kind({
+  kind: 'OB.UI.subwindowheader',
+  name: 'OB.OBPOSPointOfSale.UI.customers.casheader',
+  onTapCloseButton: function () {
+    var subWindow = this.subWindow;
+    subWindow.doChangeSubWindow({
+      newWindow: {
+        name: 'mainSubWindow',
+        params: {
+          caller: subWindow.getName()
+        }
+      }
+    });
+  },
+  headermessage: OB.I18N.getLabel('OBPOS_TitleCustomerAdvancedSearch')
+});
+
+
+/*instance*/
+enyo.kind({
+  name: 'OB.OBPOSPointOfSale.UI.customers.casbody',
+  components: [{
+    kind: 'OB.OBPOSPointOfSale.UI.customers.ListCustomers'
+  }]
 });

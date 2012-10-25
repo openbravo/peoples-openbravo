@@ -39,7 +39,7 @@
           businessPartnerTaxCategory: bpTaxCategory
         }, function (coll, args) { // success
           var taxRate, rate, taxAmt, net, pricenet, amount, taxId;
-          if (coll){
+          if (coll) {
             if (coll.length > 0) {
               taxRate = coll.at(0);
               taxId = taxRate.get('id');
@@ -49,7 +49,7 @@
 
               pricenet = OB.DEC.div(element.get('grossUnitPrice') || element.get('price'), rate.add(new BigDecimal('1')));
 
-              net =  OB.DEC.mul(pricenet, element.get('qty'));
+              net = OB.DEC.mul(pricenet, element.get('qty'));
               gross = element.get('lineGrossAmount') || element.get('gross');
               amount = OB.DEC.sub(gross, net);
 
@@ -87,10 +87,10 @@
                   callback();
                 }
               }
-            }else{
+            } else {
               OB.UTIL.showError("OBDAL error: Not tax found for " + args.get('_identifier'));
             }
-          }else{
+          } else {
             OB.UTIL.showError("OBDAL error: Not tax found for " + args.get('_identifier'));
           }
         }, function (tx, error) { // error

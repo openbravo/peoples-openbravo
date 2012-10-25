@@ -40,10 +40,10 @@
         if (OB.POS.modelterminal.get('connectedToERP')) {
           OB.Dal.get(OB.Model.Order, receiptId, function (receipt) {
             var successCallback, errorCallback, orderList;
-            successCallback = function() {
+            successCallback = function () {
               OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgReceiptSaved', [docno]));
             };
-            errorCallback = function() {
+            errorCallback = function () {
               OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgReceiptNotSaved', [docno]));
             };
             orderList = new OB.Collection.OrderList();

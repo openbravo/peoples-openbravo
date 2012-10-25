@@ -9,17 +9,17 @@
 
 /*global B, $, _, Backbone, window, confirm, OB, localStorage */
 
-(function() {
+(function () {
   var modelterminal = OB.POS.modelterminal;
 
   // alert all errors
-  window.onerror = function(e) {
-    if (typeof(e) === 'string') {
+  window.onerror = function (e) {
+    if (typeof (e) === 'string') {
       OB.UTIL.showError(e);
     }
   };
 
-  modelterminal.on('ready', function() {
+  modelterminal.on('ready', function () {
     var webwindow, terminal = OB.POS.modelterminal.get('terminal');
 
     // We are Logged !!!
@@ -45,7 +45,9 @@
 
     // Set Arithmetic properties:
     OB.DEC.setContext(OB.POS.modelterminal.get('currency').pricePrecision, BigDecimal.prototype.ROUND_HALF_EVEN);
-    webwindow = OB.POS.windows.where({route:OB.POS.paramWindow})[0].get('windowClass');
+    webwindow = OB.POS.windows.where({
+      route: OB.POS.paramWindow
+    })[0].get('windowClass');
 
     if (webwindow) {
       if (OB.POS.modelterminal.hasPermission(OB.POS.paramWindow)) {
@@ -58,16 +60,16 @@
       OB.UTIL.showLoading(false);
       alert(OB.I18N.getLabel('OBPOS_WindowNotFound', [OB.POS.paramWindow]));
     }
-    if(OB.POS.modelterminal.get('loggedOffline')===true) {
+    if (OB.POS.modelterminal.get('loggedOffline') === true) {
       OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_OfflineLogin'));
     }
   });
 
-  modelterminal.on('loginsuccess', function() {
+  modelterminal.on('loginsuccess', function () {
     modelterminal.load();
   });
 
-  modelterminal.on('logout', function() {
+  modelterminal.on('logout', function () {
 
     // Logged out. go to login window
     modelterminal.off('loginfail');
@@ -79,33 +81,33 @@
     window.location = window.location.pathname + '?terminal=' + window.encodeURIComponent(OB.POS.paramTerminal);
   });
 
-  $(document).ready(function() {
+  $(document).ready(function () {
 
-	  modelterminal.load();
-	  modelterminal.on('ready', function(){
-    OB.POS.terminal.$.dialogsContainer.createComponent({
-      kind: 'OB.UI.ModalLogout'
-    }).render();
-    OB.POS.terminal.$.dialogsContainer.createComponent({
-      kind: 'OB.UI.ModalProfile'
-    }).render();
-	  });
+    modelterminal.load();
+    modelterminal.on('ready', function () {
+      OB.POS.terminal.$.dialogsContainer.createComponent({
+        kind: 'OB.UI.ModalLogout'
+      }).render();
+      OB.POS.terminal.$.dialogsContainer.createComponent({
+        kind: 'OB.UI.ModalProfile'
+      }).render();
+    });
 
 
-    
 
-    modelterminal.on('online', function() {
+
+    modelterminal.on('online', function () {
       OB.UTIL.setConnectivityLabel('Online');
     });
 
-    modelterminal.on('offline', function() {
+    modelterminal.on('offline', function () {
       OB.UTIL.setConnectivityLabel('Offline');
     });
 
     OB.UTIL.checkConnectivityStatus(); //Initial check;
     setInterval(OB.UTIL.checkConnectivityStatus, 5000);
 
-    $(window).on('beforeunload', function() {
+    $(window).on('beforeunload', function () {
       if (!OB.POS.modelterminal.get('connectedToERP')) {
         return OB.I18N.getLabel('OBPOS_ShouldNotCloseWindow');
       }

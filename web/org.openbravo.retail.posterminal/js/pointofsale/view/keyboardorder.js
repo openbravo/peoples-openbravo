@@ -13,29 +13,34 @@
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.KeyboardOrder',
   kind: 'OB.UI.Keyboard',
+  keypads: ['OB.UI.KeypadCoins'],
   published: {
     receipt: null
   },
   sideBarEnabled: true,
 
-  receiptChanged: function() {
+  receiptChanged: function () {
     this.$.toolbarcontainer.$.toolbarPayment.setReceipt(this.receipt);
 
     this.line = null;
 
-    this.receipt.get('lines').on('selected', function(line) {
+    this.receipt.get('lines').on('selected', function (line) {
       this.line = line;
       this.clear();
     }, this);
   },
-  initComponents: function() {
+  initComponents: function () {
     this.addCommand('line:qty', {
-      action: function(keyboard, txt) {
-        if(keyboard.receipt.get('isEditable') === false){
+      action: function (keyboard, txt) {
+        if (keyboard.receipt.get('isEditable') === false) {
           $("#modalNotEditableOrder").modal("show");
           return true;
         }
         if (keyboard.line) {
+          if (keyboard.line.get('product').get('groupProduct') === false) {
+            $("#modalProductCannotBeGroup").modal("show");
+            return true;
+          }
           keyboard.receipt.setUnit(keyboard.line, OB.I18N.parseNumber(txt));
           keyboard.receipt.trigger('scan');
         }
@@ -44,8 +49,8 @@ enyo.kind({
 
     this.addCommand('line:price', {
       permission: 'OBPOS_order.changePrice',
-      action: function(keyboard, txt) {
-        if(keyboard.receipt.get('isEditable') === false){
+      action: function (keyboard, txt) {
+        if (keyboard.receipt.get('isEditable') === false) {
           $("#modalNotEditableOrder").modal("show");
           return true;
         }
@@ -57,8 +62,8 @@ enyo.kind({
     });
     this.addCommand('line:dto', {
       permission: 'OBPOS_order.discount',
-      action: function(keyboard, txt) {
-        if(keyboard.receipt.get('isEditable') === false){
+      action: function (keyboard, txt) {
+        if (keyboard.receipt.get('isEditable') === false) {
           $("#modalNotEditableOrder").modal("show");
           return true;
         }
@@ -70,12 +75,16 @@ enyo.kind({
     this.addCommand('code', new OB.UI.BarcodeActionHandler());
     this.addCommand('+', {
       stateless: true,
-      action: function(keyboard, txt) {
-        if(keyboard.receipt.get('isEditable') === false){
+      action: function (keyboard, txt) {
+        if (keyboard.receipt.get('isEditable') === false) {
           $("#modalNotEditableOrder").modal("show");
           return true;
         }
         if (keyboard.line) {
+          if (keyboard.line.get('product').get('groupProduct') === false) {
+            $("#modalProductCannotBeGroup").modal("show");
+            return true;
+          }
           keyboard.receipt.addUnit(keyboard.line, OB.I18N.parseNumber(txt));
           keyboard.receipt.trigger('scan');
         }
@@ -83,8 +92,8 @@ enyo.kind({
     });
     this.addCommand('-', {
       stateless: true,
-      action: function(keyboard, txt) {
-        if(keyboard.receipt.get('isEditable') === false){
+      action: function (keyboard, txt) {
+        if (keyboard.receipt.get('isEditable') === false) {
           $("#modalNotEditableOrder").modal("show");
           return true;
         }
@@ -98,7 +107,10 @@ enyo.kind({
     // calling super after setting keyboard properties
     this.inherited(arguments);
 
-    this.addKeypad('OB.UI.KeypadCoins');
+    _.each(this.keypads, function (keypadname) {
+      this.addKeypad(keypadname);
+    }, this);
+
     this.addToolbarComponent('OB.OBPOSPointOfSale.UI.ToolbarPayment');
     this.addToolbar(OB.OBPOSPointOfSale.UI.ToolbarScan);
   }
@@ -108,30 +120,30 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.AbstractBarcodeActionHandler',
   kind: enyo.Object,
-  
-  action: function(keyboard, txt) {
-    if(keyboard.receipt.get('isEditable') === false){
+
+  action: function (keyboard, txt) {
+    if (keyboard.receipt.get('isEditable') === false) {
       $("#modalNotEditableOrder").modal("show");
       return true;
     }
     var me = this;
-    
-    this.findProductByBarcode(txt, function(product) {
-      me.addProductToReceipt(keyboard.receipt, product);       
+
+    this.findProductByBarcode(txt, function (product) {
+      me.addProductToReceipt(keyboard.receipt, product);
     });
-  }, 
-  
+  },
+
   findProductByBarcode: function (txt, callback) {
     var criteria;
 
     function successCallbackPrices(dataPrices, dataProducts) {
       if (dataPrices && dataPrices.length !== 0) {
-        _.each(dataPrices.models, function(currentPrice) {
+        _.each(dataPrices.models, function (currentPrice) {
           if (dataProducts.get(currentPrice.get('product'))) {
             dataProducts.get(currentPrice.get('product')).set('price', currentPrice);
           }
         });
-        _.each(dataProducts.models, function(currentProd) {
+        _.each(dataProducts.models, function (currentProd) {
           if (currentProd.get('price') === undefined) {
             var price = new OB.Model.ProductPrice({
               'standardPrice': 0
@@ -142,7 +154,7 @@ enyo.kind({
         });
       } else {
         OB.UTIL.showWarning("OBDAL No prices found for products");
-        _.each(dataProducts.models, function(currentProd) {
+        _.each(dataProducts.models, function (currentProd) {
           var price = new OB.Model.ProductPrice({
             'standardPrice': 0
           });
@@ -171,12 +183,12 @@ enyo.kind({
     criteria = {
       'uPCEAN': txt
     };
-    OB.Dal.find(OB.Model.Product, criteria, successCallbackProducts, errorCallback);      
+    OB.Dal.find(OB.Model.Product, criteria, successCallbackProducts, errorCallback);
   },
-  
+
   addProductToReceipt: function (receipt, product) {
     receipt.addProduct(product);
-    receipt.trigger('scan');      
+    receipt.trigger('scan');
   }
 });
 

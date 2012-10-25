@@ -16,7 +16,7 @@ OB.OBPOSPointOfSale.UI.ToolbarScan = {
     label: OB.I18N.getLabel('OBPOS_KbCode'),
     classButtonActive: 'btnactive-blue'
   }],
-  shown: function() {
+  shown: function () {
     var keyboard = this.owner.owner;
     keyboard.showKeypad('basic');
     keyboard.showSidepad('sideenabled');
@@ -35,18 +35,18 @@ enyo.kind({
     receipt: null
   },
   toolbarName: 'toolbarpayment',
-  pay: function(amount, key, name, paymentMethod, rate, mulrate, isocode) {
+  pay: function (amount, key, name, paymentMethod, rate, mulrate, isocode) {
     if (OB.DEC.compare(amount) > 0) {
-      
+
       var provider;
       if (this.receipt.get('orderType') === 0) {
         provider = paymentMethod.paymentProvider;
-      } else if  (this.receipt.get('orderType') === 1) {
+      } else if (this.receipt.get('orderType') === 1) {
         provider = paymentMethod.refundProvider;
       } else {
         provider = null;
       }
-      
+
       if (provider) {
         this.$.modalpayment.show(this.receipt, provider, key, name, paymentMethod, amount, rate, mulrate, isocode);
       } else {
@@ -61,12 +61,12 @@ enyo.kind({
       }
     }
   },
-  getPayment: function(key, name, paymentMethod, rate, mulrate, isocode) {
+  getPayment: function (key, name, paymentMethod, rate, mulrate, isocode) {
     var me = this;
     return ({
       'permission': key,
       'stateless': false,
-      'action': function(keyboard, txt) {
+      'action': function (keyboard, txt) {
         var amount = OB.DEC.number(OB.I18N.parseNumber(txt));
         amount = _.isNaN(amount) ? me.receipt.getPending() : amount;
         me.pay(amount, key, name, paymentMethod, rate, mulrate, isocode);
@@ -74,7 +74,7 @@ enyo.kind({
     });
   },
 
-  initComponents: function() {
+  initComponents: function () {
     //TODO: modal payments
     var i, max, payments, Btn, inst, cont, defaultpayment, allpayments = {},
         me = this;
@@ -83,7 +83,7 @@ enyo.kind({
 
     payments = OB.POS.modelterminal.get('payments');
 
-    enyo.forEach(payments, function(payment) {
+    enyo.forEach(payments, function (payment) {
       if (payment.payment.searchKey === 'OBPOS_payment.cash') {
         defaultpayment = payment;
       }
@@ -113,11 +113,11 @@ enyo.kind({
     });
 
     this.owner.owner.addCommand('cashexact', {
-      action: function(keyboard, txt) {
+      action: function (keyboard, txt) {
         var exactpayment = allpayments[keyboard.status] || defaultpayment,
             amount = me.receipt.getPending();
-        if(exactpayment.rate && exactpayment.rate!=='1'){
-          amount = OB.DEC.div(me.receipt.getPending(),exactpayment.rate);
+        if (exactpayment.rate && exactpayment.rate !== '1') {
+          amount = OB.DEC.div(me.receipt.getPending(), exactpayment.rate);
         }
         if (amount > 0 && exactpayment && OB.POS.modelterminal.hasPermission(exactpayment.payment.searchKey)) {
           me.pay(amount, exactpayment.payment.searchKey, exactpayment.payment._identifier, exactpayment.paymentMethod, exactpayment.rate, exactpayment.mulrate, exactpayment.isocode);
@@ -125,7 +125,7 @@ enyo.kind({
       }
     });
   },
-  shown: function() {
+  shown: function () {
     var keyboard = this.owner.owner;
     keyboard.showKeypad('coins');
     keyboard.showSidepad('sidedisabled');
@@ -148,25 +148,18 @@ enyo.kind({
       name: 'btn'
     }]
   }],
-  setLabel: function() {
-    var lbl;
-    if (this.keyboard.state.get('keypadName') === 'basic') {
-      lbl = OB.I18N.getLabel('OBPOS_KeypadCoins');
-    } else {
-      lbl = OB.I18N.getLabel('OBPOS_KeypadBasic');
-    }
+  setLabel: function (lbl) {
     this.$.btn.setContent(lbl);
   },
-  tap: function() {
-    var newKeypad = this.keyboard.state.get('keypadName') === 'coins' ? 'basic' : 'coins';
-    this.keyboard.showKeypad(newKeypad);
+  tap: function () {
+    this.keyboard.showNextKeypad();
   },
 
-  create: function() {
+  create: function () {
     this.inherited(arguments);
-    this.keyboard.state.on('change:keypadLabel', function() {
-      this.setLabel();
+    this.keyboard.state.on('change:keypadNextLabel', function () {
+      this.setLabel(this.keyboard.state.get('keypadNextLabel'));
     }, this);
-    this.setLabel();
+    this.setLabel(this.keyboard.state.get('keypadNextLabel'));
   }
 });

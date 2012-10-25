@@ -9,7 +9,6 @@
 
 /*global enyo */
 
-
 enyo.kind({
   kind: 'OB.UI.SelectButton',
   name: 'OB.UI.RenderOrderLine',
@@ -40,7 +39,7 @@ enyo.kind({
   }, {
     style: 'clear: both;'
   }],
-  initComponents: function() {
+  initComponents: function () {
     this.inherited(arguments);
     this.$.product.setContent(this.model.get('product').get('_identifier'));
     this.$.quantity.setContent(this.model.printQty());
@@ -69,7 +68,7 @@ enyo.kind({
 
     }
   },
-  changeEditMode: function(sender, event) {
+  changeEditMode: function (sender, event) {
     this.addRemoveClass('btnselect-orderline-edit', event.edit);
   }
 
@@ -78,7 +77,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.RenderOrderLineEmpty',
   style: 'border-bottom: 1px solid #cccccc; padding: 20px; text-align: center; font-weight: bold; font-size: 30px; color: #cccccc',
-  initComponents: function() {
+  initComponents: function () {
     this.inherited(arguments);
     this.setContent(OB.I18N.getLabel('OBPOS_ReceiptNew'));
   }

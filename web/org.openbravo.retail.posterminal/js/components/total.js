@@ -16,7 +16,7 @@ enyo.kind({
   attributes: {
     style: 'font-weight:bold;'
   },
-  renderTotal: function(total) {
+  renderTotal: function (total) {
     this.setContent(OB.I18N.formatCurrency(total));
   }
 });

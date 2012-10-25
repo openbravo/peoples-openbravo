@@ -35,22 +35,22 @@ enyo.kind({
       kind: 'OB.UI.ReceiptPropertiesDialogCancel'
     }]
   },
-  loadValue: function(mProperty) {
+  loadValue: function (mProperty) {
     this.waterfall('onLoadValue', {
       order: this.currentLine,
       modelProperty: mProperty
     });
   },
-  applyChanges: function(sender, event) {
+  applyChanges: function (sender, event) {
     $('#' + this.myId).modal('hide');
     this.waterfall('onApplyChange', {
       orderline: this.currentLine
     });
   },
-  initComponents: function() {
+  initComponents: function () {
     this.inherited(arguments);
     this.attributeContainer = this.$.bodyContent.$.attributes;
-    enyo.forEach(this.newAttributes, function(natt) {
+    enyo.forEach(this.newAttributes, function (natt) {
       this.$.bodyContent.$.attributes.createComponent({
         kind: 'OB.UI.PropertyEditLine',
         name: 'line_' + natt.name,
@@ -58,9 +58,9 @@ enyo.kind({
       });
     }, this);
   },
-  init: function(model) {
+  init: function (model) {
     this.model = model;
-    this.model.get('order').get('lines').on('selected', function(lineSelected) {
+    this.model.get('order').get('lines').on('selected', function (lineSelected) {
       var diff, att;
       this.currentLine = lineSelected;
       if (lineSelected) {

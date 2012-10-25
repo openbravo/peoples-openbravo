@@ -1,5 +1,3 @@
-/*global enyo, $ */
-
 /*
  ************************************************************************************
  * Copyright (C) 2012 Openbravo S.L.U.
@@ -8,6 +6,8 @@
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
+
+/*global enyo, $ */
 
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.CashToKeepRadioButton',
@@ -20,17 +20,19 @@ enyo.kind({
     onPaymentMethodKept: ''
   },
   tap: function () {
-    this.doPaymentMethodKept({qtyToKeep: this.qtyToKeep});
+    this.doPaymentMethodKept({
+      qtyToKeep: this.qtyToKeep
+    });
   },
-  render: function(content){
+  render: function (content) {
     this.$.lbl.setContent(content);
   },
-  setQtyToKeep: function(qty){
+  setQtyToKeep: function (qty) {
     this.qtyToKeep = qty;
   },
-  initComponents: function(){
+  initComponents: function () {
     this.inherited(arguments);
-    if(this.label){
+    if (this.label) {
       this.$.lbl.setContent(this.label);
     }
   }
@@ -77,13 +79,13 @@ enyo.kind({
       style: 'padding-top: 0px; padding-right: 0px; padding-bottom: 0px; padding-left: 40px; margin-top: 10px; margin-right: 10px; margin-bottom: 10px; margin-left: 10px;',
       components: [{
         style: 'display: table-row;',
-        components:[{
+        components: [{
           style: 'vertical-align: middle; display: table-cell; ',
           content: OB.I18N.getLabel('OBPOS_LblOther')
-        },{
+        }, {
           kind: 'OB.UI.SearchInput',
           name: 'variableInput',
-          tap: function(){
+          tap: function () {
             return true;
           },
           onkeyup: 'tri',
@@ -94,9 +96,9 @@ enyo.kind({
       }]
     }]
   }],
-  tri: function(){
+  tri: function () {
     var value = this.$.variableInput.getValue();
-    if(value===''){
+    if (value === '') {
       value = 0;
     }
     this.$.allowvariableamount.setQtyToKeep(value);
@@ -122,7 +124,7 @@ enyo.kind({
             components: [{
               name: 'cashtokeepheader',
               style: 'padding: 10px; border-bottom: 1px solid #cccccc; text-align:center;',
-              renderHeader: function(value){
+              renderHeader: function (value) {
                 this.setContent(OB.I18N.getLabel('OBPOS_LblStep3of4', [value]));
               }
             }]
@@ -130,74 +132,76 @@ enyo.kind({
         }, {
           kind: 'OB.OBPOSCashUp.UI.KeepDetails',
           name: 'formkeep',
-          disableControls: function(){
+          disableControls: function () {
             //remove selected RButtons
             //reset UI and model.
             $('#' + this.getId()).find('button').removeClass('active');
             this.$.variableInput.setValue('');
-            this.doResetQtyToKeep({qtyToKeep: null});
+            this.doResetQtyToKeep({
+              qtyToKeep: null
+            });
           },
-          renderFixedAmount: function(modelToDraw){
+          renderFixedAmount: function (modelToDraw) {
             var udfn, cnted;
-            if(modelToDraw.get('foreignCounted')){
-              cnted=modelToDraw.get('foreignCounted');
-            }else{
-              cnted=modelToDraw.get('counted');
+            if (modelToDraw.get('foreignCounted')) {
+              cnted = modelToDraw.get('foreignCounted');
+            } else {
+              cnted = modelToDraw.get('counted');
             }
             this.$.keepfixedamount.setShowing(modelToDraw.get('paymentMethod').keepfixedamount);
-            if(modelToDraw.get('paymentMethod').keepfixedamount){
-              if (modelToDraw.get('foreignCounted') !== null && modelToDraw.get('foreignCounted') !== udfn){
-                if (cnted < modelToDraw.get('paymentMethod').amount){
+            if (modelToDraw.get('paymentMethod').keepfixedamount) {
+              if (modelToDraw.get('foreignCounted') !== null && modelToDraw.get('foreignCounted') !== udfn) {
+                if (cnted < modelToDraw.get('paymentMethod').amount) {
                   this.$.keepfixedamount.render(OB.I18N.formatCurrency(cnted));
                   this.$.keepfixedamount.setQtyToKeep(cnted);
-                }else{
+                } else {
                   this.$.keepfixedamount.render(OB.I18N.formatCurrency(modelToDraw.get('paymentMethod').amount));
                   this.$.keepfixedamount.setQtyToKeep(modelToDraw.get('paymentMethod').amount);
                 }
-              }else{
+              } else {
                 this.$.keepfixedamount.render(OB.I18N.formatCurrency(modelToDraw.get('paymentMethod').amount));
                 this.$.keepfixedamount.setQtyToKeep(modelToDraw.get('paymentMethod').amount);
               }
-            }else{
+            } else {
               this.$.keepfixedamount.render('');
             }
           },
-          renderBody: function(modelToDraw){
-            
+          renderBody: function (modelToDraw) {
+
             var paymentMethod = modelToDraw.get('paymentMethod');
             this.disableControls();
             //draw
             this.renderFixedAmount(modelToDraw);
-            
+
             this.$.allowmoveeverything.setShowing(paymentMethod.allowmoveeverything);
-            
+
             this.$.allowdontmove.setShowing(paymentMethod.allowdontmove);
-            if(paymentMethod.allowdontmove){
+            if (paymentMethod.allowdontmove) {
               this.$.allowdontmove.setQtyToKeep(modelToDraw.get('foreignCounted'));
               this.$.allowdontmove.render(OB.I18N.getLabel('OBPOS_LblTotalAmount') + ' ' + OB.I18N.formatCurrency(modelToDraw.get('foreignCounted')));
-            }else{
+            } else {
               this.$.allowdontmove.render('');
             }
-            
+
             this.$.allowvariableamount.setShowing(paymentMethod.allowvariableamount);
           }
         }]
       }]
     }]
   }],
-  paymentToKeepChanged: function(model){
+  paymentToKeepChanged: function (model) {
     this.$.cashtokeepheader.renderHeader(this.paymentToKeep.get('name'));
     this.$.formkeep.renderBody(this.paymentToKeep);
-    
+
     //If fixed quantity to keep is more than counted quantity,
     //counted quantity should be propossed to keep.
-    if(this.paymentToKeep.get('paymentMethod').keepfixedamount){
-      this.paymentToKeep.on('change:counted', function(mod){
+    if (this.paymentToKeep.get('paymentMethod').keepfixedamount) {
+      this.paymentToKeep.on('change:counted', function (mod) {
         this.$.formkeep.renderFixedAmount(this.paymentToKeep);
-      },this);     
+      }, this);
     }
   },
-  disableSelection: function(){
+  disableSelection: function () {
     this.$.formkeep.disableControls();
   }
 });

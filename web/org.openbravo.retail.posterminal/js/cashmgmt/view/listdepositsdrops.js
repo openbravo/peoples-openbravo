@@ -1,5 +1,3 @@
-/*global Backbone, _, enyo */
-
 /*
  ************************************************************************************
  * Copyright (C) 2012 Openbravo S.L.U.
@@ -8,6 +6,8 @@
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
+
+/*global Backbone, _, enyo */
 
 // Renders lines of deposits/drops
 enyo.kind({
@@ -29,7 +29,7 @@ enyo.kind({
       }, {
         name: 'foreignAmt',
         style: 'text-align:right; padding: 6px 0px 6px 10px; float: left;  width: 15% ',
-        content:''
+        content: ''
       }, {
         name: 'amt',
         style: 'text-align:right; padding: 6px 20px 6px 10px; float: right; width: 10%'
@@ -46,24 +46,24 @@ enyo.kind({
     }
     if (this.model.get('drop') !== 0) {
       lbl = OB.I18N.getLabel('OBPOS_LblWithdrawal') + ': ';
-      if(this.model.get('origAmount')){
+      if (this.model.get('origAmount')) {
         foreignAmt = OB.I18N.formatCurrency(OB.DEC.add(0, this.model.get('drop')));
         amnt = OB.I18N.formatCurrency(this.model.get('origAmount'));
-      }else if(this.model.get('rate') && this.model.get('rate')!=='1'){
-        foreignAmt = OB.I18N.formatCurrency(OB.DEC.div(this.model.get('drop'),this.model.get('rate')));
+      } else if (this.model.get('rate') && this.model.get('rate') !== '1') {
+        foreignAmt = OB.I18N.formatCurrency(OB.DEC.div(this.model.get('drop'), this.model.get('rate')));
         amnt = OB.I18N.formatCurrency(OB.DEC.add(0, this.model.get('drop')));
-      }else{
+      } else {
         amnt = OB.I18N.formatCurrency(OB.DEC.add(0, this.model.get('drop')));
       }
     } else {
       lbl = OB.I18N.getLabel('OBPOS_LblDeposit') + ': ';
-      if(this.model.get('origAmount')){
+      if (this.model.get('origAmount')) {
         foreignAmt = OB.I18N.formatCurrency(OB.DEC.add(0, this.model.get('deposit')));
         amnt = OB.I18N.formatCurrency(this.model.get('origAmount'));
-      }else if(this.model.get('rate') && this.model.get('rate')!=='1'){
-        foreignAmt = OB.I18N.formatCurrency(OB.DEC.div(this.model.get('deposit'),this.model.get('rate')));
+      } else if (this.model.get('rate') && this.model.get('rate') !== '1') {
+        foreignAmt = OB.I18N.formatCurrency(OB.DEC.div(this.model.get('deposit'), this.model.get('rate')));
         amnt = OB.I18N.formatCurrency(OB.DEC.add(0, this.model.get('deposit')));
-      }else{
+      } else {
         amnt = OB.I18N.formatCurrency(OB.DEC.add(0, this.model.get('deposit')));
       }
     }
@@ -71,8 +71,8 @@ enyo.kind({
     this.$.description.setContent(lbl + this.model.get('description'));
     this.$.user.setContent(this.model.get('user'));
     this.$.time.setContent(time.toString().substring(16, 21));
-    if(foreignAmt && ((this.model.get('rate') && this.model.get('rate')!=='1') || amnt!==foreignAmt)){
-      this.$.foreignAmt.setContent('('+foreignAmt+' '+this.model.get('isocode')+')');
+    if (foreignAmt && ((this.model.get('rate') && this.model.get('rate') !== '1') || amnt !== foreignAmt)) {
+      this.$.foreignAmt.setContent('(' + foreignAmt + ' ' + this.model.get('isocode') + ')');
     }
     this.$.amt.setContent(amnt);
   }
@@ -184,14 +184,14 @@ enyo.kind({
         total;
 
     this.inherited(arguments);
-    total = OB.DEC.add(OB.DEC.add(this.model.get('startingCash'),this.model.get('totalTendered')), _.reduce(transactionsArray, function (accum, trx) {
-      if(trx.origAmount){
-        if(trx.deposit!==0){
+    total = OB.DEC.add(OB.DEC.add(this.model.get('startingCash'), this.model.get('totalTendered')), _.reduce(transactionsArray, function (accum, trx) {
+      if (trx.origAmount) {
+        if (trx.deposit !== 0) {
           return accum + trx.origAmount;
-        }else{
+        } else {
           return accum - trx.origAmount;
         }
-      }else{
+      } else {
         return accum + trx.deposit - trx.drop;
       }
     }, 0));
