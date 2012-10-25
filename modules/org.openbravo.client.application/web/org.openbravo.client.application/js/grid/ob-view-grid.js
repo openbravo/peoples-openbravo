@@ -2433,6 +2433,9 @@ isc.OBViewGrid.addProperties({
       }
     }
 
+    // make sure that we are visible    
+    this.scrollRecordIntoView(rowNum);
+
     ret = this.Super('startEditing', [rowNum, colNum, suppressFocus, eCe, suppressWarning]);
 
     this.recomputeCanvasComponents(rowNum);
