@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2011 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2012 Openbravo S.L.U.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.ad_forms;
@@ -96,7 +96,7 @@ public class ProductInfo {
    * @return Requested Product Account
    */
   public Account getAccount(String AcctType, AcctSchema as, ConnectionProvider conn) {
-    if (Integer.parseInt(AcctType) < 1 || Integer.parseInt(AcctType) > 10)
+    if (Integer.parseInt(AcctType) < 1 || Integer.parseInt(AcctType) > 12)
       return null;
     // No Product - get Default from Accounting Schema defaults then from default Product Category
     // and finally from oldest Product Category
@@ -139,6 +139,12 @@ public class ProductInfo {
         break;
       case 10:
         validCombination_ID = data[0].cogsreturn;
+        break;
+      case 11:
+        validCombination_ID = data[0].defrevenue;
+        break;
+      case 12:
+        validCombination_ID = data[0].defexpense;
         break;
       }
       if (validCombination_ID.equals(""))
@@ -360,5 +366,9 @@ public class ProductInfo {
   public static final String ACCTTYPE_P_RevenueReturn = "9";
   /** Product COGS Return Acct */
   public static final String ACCTTYPE_P_CogsReturn = "10";
+  /** Product COGS Return Acct */
+  public static final String ACCTTYPE_P_DefRevenue = "11";
+  /** Product Def Expense Acct */
+  public static final String ACCTTYPE_P_DefExpense = "12";
 
 } // ProductInfo

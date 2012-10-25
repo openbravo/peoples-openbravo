@@ -27,6 +27,7 @@ isc.OBFKFilterTextItem.addProperties({
   allowExpressions: false,
   showOptionsFromDataSource: true,
   selectOnFocus: false,
+  validateOnExit: true,
 
   multiple: true,
   multipleAppearance: 'picklist',
@@ -54,7 +55,7 @@ isc.OBFKFilterTextItem.addProperties({
     // for foreign key fields we only support like/contains/substring
     // so force that
     this.textMatchStyle = this.overrideTextMatchStyle;
-    
+
     // the data from the datasource will contain the id and the identifier
     // the value for the filter and the display are the same: the identifier
     this.displayField = OB.Constants.IDENTIFIER;
@@ -138,6 +139,21 @@ isc.OBFKFilterTextItem.addProperties({
     this.observe(grid, "dataArrived", "observer.setForceReload()");
 
     this.multipleValueSeparator = ' or ';
+  },
+
+  // note: can't override changed as it is used by the filter editor 
+  // itself, see the RecordEditor source code and the changed event
+  change: function (form, item, value, oldValue) {
+    this._hasChanged = true;
+    this.Super('change', arguments);
+  },
+
+  blur: function () {
+    if (this._hasChanged) {
+      this.form.grid.performAction();
+    }
+    delete this._hasChanged;
+    this.Super('blur', arguments);
   },
 
   // overridden otherwise the picklist fields from the grid field

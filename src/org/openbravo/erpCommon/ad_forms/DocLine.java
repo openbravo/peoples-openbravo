@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2010 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2012 Openbravo S.L.U.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.ad_forms;
@@ -151,6 +151,46 @@ public class DocLine {
     if (m_C_Currency_ID != null && m_C_Currency_ID.equals(""))
       m_C_Currency_ID = vo.C_Currency_ID;
   } // loadAttributes
+
+  public void copyInfo(DocLine source) {
+    m_Record_Id2 = source.m_Record_Id2;
+    m_AD_Org_ID = source.m_AD_Org_ID;
+    m_C_BPartner_ID = source.m_C_BPartner_ID;
+    m_M_Product_ID = source.m_M_Product_ID;
+    m_C_Glitem_ID = source.m_C_Glitem_ID;
+    m_AD_OrgTrx_ID = source.m_AD_OrgTrx_ID;
+    m_C_SalesRegion_ID = source.m_C_SalesRegion_ID;
+    m_C_Project_ID = source.m_C_Project_ID;
+    m_A_Asset_ID = source.m_A_Asset_ID;
+    m_C_Campaign_ID = source.m_C_Campaign_ID;
+    m_C_Activity_ID = source.m_C_Activity_ID;
+    m_C_LocFrom_ID = source.m_C_LocFrom_ID;
+    m_C_LocTo_ID = source.m_C_LocTo_ID;
+    m_User1_ID = source.m_User1_ID;
+    m_User2_ID = source.m_User2_ID;
+    // Line, Description, Currency
+    m_Line = source.m_Line;
+    m_description = source.m_description;
+    m_C_Currency_ID = source.m_C_Currency_ID;
+    // Qty
+    m_C_UOM_ID = source.m_C_UOM_ID;
+    m_qty = source.m_qty;
+    //
+    m_C_Tax_ID = source.m_C_Tax_ID;
+    m_C_WithHolding_ID = source.m_C_WithHolding_ID;
+    m_C_Charge_ID = source.m_C_Charge_ID;
+    m_ChargeAmt = source.m_ChargeAmt;
+    //
+    m_DateAcct = source.m_DateAcct;
+    m_DateDoc = source.m_DateDoc;
+    //
+    // Product Info
+    p_productInfo = source.p_productInfo;
+
+    // Document Consistency
+    m_AD_Org_ID = source.m_AD_Org_ID;
+    m_C_Currency_ID = source.m_C_Currency_ID;
+  } // copyInfo
 
   public String getM_C_WithHolding_ID() {
     return m_C_WithHolding_ID;

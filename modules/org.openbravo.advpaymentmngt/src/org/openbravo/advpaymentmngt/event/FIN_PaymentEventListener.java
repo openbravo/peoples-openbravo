@@ -54,7 +54,7 @@ public class FIN_PaymentEventListener extends EntityPersistenceEventObserver {
     if (pdList.size() > 0) {
       String language = OBContext.getOBContext().getLanguage().getLanguage();
       ConnectionProvider conn = new DalConnectionProvider(false);
-      throw new OBException(Utility.messageBD(conn, "APRM_PaymentCanNotBeDeleted", language));
+      throw new OBException(Utility.messageBD(conn, "ForeignKeyViolation", language));
     }
   }
 }

@@ -976,7 +976,7 @@ isc.OBViewGrid.addProperties({
 
   setViewState: function (state) {
     var localState, i, fld, hasSummaryFunction;
-    
+
     localState = this.evalViewState(state, 'viewState');
 
     // strange case, sometimes need to call twice
@@ -2085,7 +2085,7 @@ isc.OBViewGrid.addProperties({
         }
       });
     }
-    if (this.view.isDeleteableTable && recordsSelected && !this.view.readOnly && !this.view.singleRecord && this.allSelectedRecordsWritable()) {
+    if (this.view.isDeleteableTable && recordsSelected && !this.view.readOnly && !this.view.singleRecord && this.allSelectedRecordsWritable() && (this.view.standardWindow.allowDelete !== 'N')) {
       menuItems.add({
         title: OB.I18N.getLabel('OBUIAPP_Delete'),
         keyTitle: OB.KeyboardManager.Shortcuts.getProperty('keyComb.text', 'ToolBar_Eliminate', 'id'),
@@ -2432,6 +2432,9 @@ isc.OBViewGrid.addProperties({
         }
       }
     }
+
+    // make sure that we are visible    
+    this.scrollRecordIntoView(rowNum);
 
     ret = this.Super('startEditing', [rowNum, colNum, suppressFocus, eCe, suppressWarning]);
 

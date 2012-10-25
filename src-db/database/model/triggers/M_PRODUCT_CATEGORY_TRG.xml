@@ -58,7 +58,7 @@ BEGIN
           M_Product_Category_Acct_ID, M_Product_Category_ID, C_AcctSchema_ID, AD_Client_ID,
           AD_Org_ID, IsActive, Created,
           CreatedBy, Updated, UpdatedBy,
-          P_Revenue_Acct, P_Expense_Acct, P_Asset_Acct,
+          P_Revenue_Acct, P_Def_Revenue_Acct, P_Expense_Acct, P_Def_Expense_Acct, P_Asset_Acct,
           P_COGS_Acct, P_PurchasePriceVariance_Acct, P_InvoicePriceVariance_Acct,
           P_TradeDiscountRec_Acct, P_TradeDiscountGrant_Acct,
           P_COGS_Return_Acct, P_Revenue_Return_Acct
@@ -68,7 +68,7 @@ BEGIN
           get_uuid(), :new.M_Product_Category_ID, Cur_Defaults.C_AcctSchema_ID, :new.AD_Client_ID,
           :new.AD_ORG_ID,  'Y', now(),
           :new.CreatedBy, now(), :new.UpdatedBy,
-          Cur_Defaults.P_Revenue_Acct, Cur_Defaults.P_Expense_Acct, Cur_Defaults.P_Asset_Acct,
+          Cur_Defaults.P_Revenue_Acct, Cur_Defaults.P_Def_Revenue_Acct, Cur_Defaults.P_Expense_Acct, Cur_Defaults.P_Def_Expense_Acct, Cur_Defaults.P_Asset_Acct,
           Cur_Defaults.P_COGS_Acct, Cur_Defaults.P_PurchasePriceVariance_Acct, Cur_Defaults.P_InvoicePriceVariance_Acct,
           Cur_Defaults.P_TradeDiscountRec_Acct, Cur_Defaults.P_TradeDiscountGrant_Acct,
           Cur_Defaults.P_COGS_Return_Acct, Cur_Defaults.P_Revenue_Return_Acct

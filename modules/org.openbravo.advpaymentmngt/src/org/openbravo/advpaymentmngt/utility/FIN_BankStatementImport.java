@@ -24,17 +24,20 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.StringTokenizer;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.process.FIN_AddPayment;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.database.ConnectionProvider;
@@ -43,6 +46,9 @@ import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.financialmgmt.gl.GLItem;
+import org.openbravo.model.financialmgmt.payment.BankFileException;
+import org.openbravo.model.financialmgmt.payment.BankFileFormat;
 import org.openbravo.model.financialmgmt.payment.FIN_BankStatement;
 import org.openbravo.model.financialmgmt.payment.FIN_BankStatementLine;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
@@ -53,8 +59,9 @@ public abstract class FIN_BankStatementImport {
   OBError myError = null;
   String filename = "";
 
-  /** TALONES - REINTEGROS */
   public static final String DOCUMENT_BankStatementFile = "BSF";
+
+  ArrayList<String> stringExceptions = null;
 
   public FIN_BankStatementImport(FIN_FinancialAccount _financialAccount) {
     setFinancialAccount(_financialAccount);
@@ -131,7 +138,8 @@ public abstract class FIN_BankStatementImport {
     List<FIN_BankStatementLine> bankStatementLines = new ArrayList<FIN_BankStatementLine>();
     int previousNumberofLines = 0;
     int numberOfLines = 0;
-
+    BankFileFormat bff = getBankFileFormat();
+    stringExceptions = loadExceptions(bff);
     try {
       file = getFile(vars);
     } catch (IOException e) {
@@ -202,19 +210,34 @@ public abstract class FIN_BankStatementImport {
     BigDecimal crAmount;
     BigDecimal drAmount;
     for (FIN_BankStatementLine bankStatementLine : bankStatementLines) {
-      BusinessPartner businessPartner;
+      BusinessPartner businessPartner = null;
+      GLItem glItem = null;
       crAmount = bankStatementLine.getCramount();
       drAmount = bankStatementLine.getDramount();
       if (!(crAmount.compareTo(BigDecimal.ZERO) == 0)
           || !(drAmount.compareTo(BigDecimal.ZERO) == 0)) {
-        try {
-          businessPartner = matchBusinessPartner(bankStatementLine.getBpartnername(),
-              bankStatementLine.getOrganization(), bankStatementLine.getBankStatement()
-                  .getAccount());
-        } catch (Exception e) {
-          businessPartner = null;
+        // Try finding Previous matches
+        HashMap<String, String> previous = matchPreviousBSL(bankStatementLine.getBpartnername(),
+            bankStatementLine.getOrganization(), bankStatementLine.getBankStatement().getAccount());
+        if (!"".equals(previous.get("BPartnerID"))) {
+          businessPartner = OBDal.getInstance().get(BusinessPartner.class,
+              previous.get("BPartnerID"));
+        }
+        if (!"".equals(previous.get("GLItemID"))) {
+          glItem = OBDal.getInstance().get(GLItem.class, previous.get("GLItemID"));
+        }
+        // if no previous BSL is found, try match BP Name
+        if (businessPartner == null) {
+          try {
+            businessPartner = matchBusinessPartner(bankStatementLine.getBpartnername(),
+                bankStatementLine.getOrganization(), bankStatementLine.getBankStatement()
+                    .getAccount());
+          } catch (Exception e) {
+            businessPartner = null;
+          }
         }
         bankStatementLine.setBusinessPartner(businessPartner);
+        bankStatementLine.setGLItem(glItem);
         bankStatementLine.setLineNo(new Long((counter + 1) * 10));
         OBDal.getInstance().save(bankStatementLine);
         counter++;
@@ -249,18 +272,18 @@ public abstract class FIN_BankStatementImport {
   private BusinessPartner matchBusinessPartner(String partnername, Organization organization,
       FIN_FinancialAccount account) {
     // TODO extend with other matching methods. It will make it easier to later reconcile
-    BusinessPartner bp = matchBusinessPartnerByName(partnername, organization, account);
-    if (bp == null) {
-      bp = finBPByName(partnername, organization);
-    }
+    BusinessPartner bp = finBPByName(partnername, organization);
     if (bp == null) {
       bp = matchBusinessPartnerByNameTokens(partnername, organization);
     }
     return bp;
   }
 
-  private BusinessPartner matchBusinessPartnerByName(String partnername, Organization organization,
+  private HashMap<String, String> matchPreviousBSL(String partnername, Organization organization,
       FIN_FinancialAccount account) {
+    HashMap<String, String> result = new HashMap<String, String>();
+    result.put("BPartnerID", "");
+    result.put("GLItemID", "");
     if (partnername == null || "".equals(partnername.trim())) {
       return null;
     }
@@ -269,10 +292,11 @@ public abstract class FIN_BankStatementImport {
     OBContext.setAdminMode();
     try {
       whereClause.append(" as bsl ");
-      whereClause.append(" where bsl." + FIN_BankStatementLine.PROPERTY_BPARTNERNAME + " = ?");
+      whereClause.append(" where translate(bsl." + FIN_BankStatementLine.PROPERTY_BPARTNERNAME
+          + ",'0123456789', '          ') = translate( ?,'0123456789', '          ')");
       parameters.add(partnername);
-      whereClause.append(" and bsl." + FIN_BankStatementLine.PROPERTY_BUSINESSPARTNER
-          + " is not null");
+      whereClause.append(" and (bsl." + FIN_BankStatementLine.PROPERTY_BUSINESSPARTNER
+          + " is not null or bsl." + FIN_BankStatementLine.PROPERTY_GLITEM + " is not null)");
       whereClause.append(" and bsl." + FIN_BankStatementLine.PROPERTY_BANKSTATEMENT + ".");
       whereClause.append(FIN_BankStatement.PROPERTY_ACCOUNT + ".id = ?");
       parameters.add(account.getId());
@@ -284,12 +308,20 @@ public abstract class FIN_BankStatementImport {
       final OBQuery<FIN_BankStatementLine> bsl = OBDal.getInstance().createQuery(
           FIN_BankStatementLine.class, whereClause.toString(), parameters);
       bsl.setFilterOnReadableOrganization(false);
-      List<FIN_BankStatementLine> matchedLines = bsl.list();
-      if (matchedLines.size() == 0)
-        return null;
-      else
-        return matchedLines.get(0).getBusinessPartner();
-
+      // Just look in las 10 matches
+      bsl.setMaxResult(10);
+      for (FIN_BankStatementLine line : bsl.list()) {
+        if (line.getGLItem() != null && "".equals(result.get("GLItemID"))) {
+          result.put("GLItemID", line.getGLItem().getId());
+        }
+        if (line.getBusinessPartner() != null && "".equals(result.get("BPartnerID"))) {
+          result.put("BPartnerID", line.getBusinessPartner().getId());
+        }
+        if (!"".equals(result.get("BPartnerID")) && !"".equals(result.get("GLItemID"))) {
+          return result;
+        }
+      }
+      return result;
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -332,7 +364,12 @@ public abstract class FIN_BankStatementImport {
     if (partnername == null || "".equals(partnername.trim())) {
       return null;
     }
-    StringTokenizer st = new StringTokenizer(partnername);
+    String parsedPartnername = partnername.toLowerCase();
+    // Remove exceptions
+    for (String eliminate : stringExceptions) {
+      parsedPartnername = parsedPartnername.replaceAll(eliminate.toLowerCase(), "");
+    }
+    StringTokenizer st = new StringTokenizer(parsedPartnername);
     List<String> list = new ArrayList<String>();
     while (st.hasMoreTokens()) {
       String token = st.nextToken();
@@ -378,22 +415,65 @@ public abstract class FIN_BankStatementImport {
     BusinessPartner targetBusinessPartner = businessPartners.get(0);
     int distance = StringUtils.getLevenshteinDistance(partnername, businessPartners.get(0)
         .getName());
+    String parsedPartnername = partnername.toLowerCase();
+    // Remove exceptions
+    for (String eliminate : stringExceptions) {
+      parsedPartnername = parsedPartnername.replaceAll(eliminate.toLowerCase(), "");
+    }
+    // Remove Numeric characters
+    char[] digits = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
+    for (char character : digits) {
+      parsedPartnername = parsedPartnername.replace(character, ' ');
+      parsedPartnername = parsedPartnername.trim();
+    }
+
     for (BusinessPartner bp : businessPartners) {
       // Calculates distance between two strings meaning number of changes required for a string to
       // convert in another string
-      int bpDistance = StringUtils.getLevenshteinDistance(partnername, bp.getName());
+      int bpDistance = StringUtils.getLevenshteinDistance(partnername, bp.getName().toLowerCase());
       if (bpDistance < distance) {
         distance = bpDistance;
         targetBusinessPartner = bp;
       }
     }
-    // Tolerance: discard business partners where number of changes needed to match is higher than
-    // half of its length
-    if (distance > (partnername.length() / 2)) {
-      return null;
-    } else {
-      return targetBusinessPartner;
-    }
+    return targetBusinessPartner;
   }
 
+  private BankFileFormat getBankFileFormat() {
+    List<BankFileFormat> bankFileFormat = new ArrayList<BankFileFormat>();
+    OBContext.setAdminMode();
+    final String JAVACLASSNAME = this.getClass().getName();
+    try {
+      OBCriteria<BankFileFormat> obc = OBDal.getInstance().createCriteria(BankFileFormat.class);
+      obc.add(Restrictions.eq(BankFileFormat.PROPERTY_JAVACLASSNAME, JAVACLASSNAME));
+      obc.setMaxResults(1);
+      bankFileFormat = obc.list();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    return bankFileFormat.size() > 0 ? bankFileFormat.get(0) : null;
+  }
+
+  ArrayList<String> loadExceptions(BankFileFormat bankFileFormat) {
+    ArrayList<String> exceptions = new ArrayList<String>();
+    List<BankFileException> bankFileExceptions = new ArrayList<BankFileException>();
+    OBContext.setAdminMode();
+    try {
+      OBCriteria<BankFileException> obc = OBDal.getInstance().createCriteria(
+          BankFileException.class);
+      obc.createAlias(BankFileException.PROPERTY_BANKFILEFORMAT, "BFF");
+      obc.add(Restrictions.eq("BFF." + BankFileFormat.PROPERTY_JAVACLASSNAME,
+          bankFileFormat.getJavaClassName()));
+      obc.add(Restrictions.or(
+          Restrictions.eq(BankFileException.PROPERTY_FINANCIALACCOUNT, financialAccount),
+          Restrictions.isNull(BankFileException.PROPERTY_FINANCIALACCOUNT)));
+      bankFileExceptions = obc.list();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    for (BankFileException ex : bankFileExceptions) {
+      exceptions.add(ex.getTextToExclude());
+    }
+    return exceptions;
+  }
 }

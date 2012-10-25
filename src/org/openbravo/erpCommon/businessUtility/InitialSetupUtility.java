@@ -1026,6 +1026,10 @@ public class InitialSetupUtility {
         newAcctSchemaDefault.setProductRevenue(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
       }
+      if (strDefault.equals("P_DEF_REVENUE_ACCT")) {
+        newAcctSchemaDefault.setProductDeferredRevenue(getAcctComb(client, org,
+            defaultElementValues.get(strDefault), acctSchema, true));
+      }
       if (strDefault.equals("P_REVENUE_RETURN_ACCT")) {
         newAcctSchemaDefault.setProductRevenueReturn(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
@@ -1034,6 +1038,12 @@ public class InitialSetupUtility {
         newAcctSchemaDefault.setProductExpense(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
       }
+
+      if (strDefault.equals("P_DEF_EXPENSE_ACCT")) {
+        newAcctSchemaDefault.setProductDeferredExpense(getAcctComb(client, org,
+            defaultElementValues.get(strDefault), acctSchema, true));
+      }
+
       if (strDefault.equals("P_ASSET_ACCT")) {
         newAcctSchemaDefault.setFixedAsset(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));

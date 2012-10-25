@@ -165,11 +165,19 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="PERIODNUMBER" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <column name="GROSSPRICESTD" primaryKey="false" required="true" type="DECIMAL" autoIncrement="false">
         <default><![CDATA[0]]></default>
         <onCreateDefault/>
       </column>
       <column name="A_ASSET_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="REVPLANTYPE" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -181,7 +189,19 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="ISDEFERREDREVENUE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="C_PERIOD_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <column name="C_COSTCENTER_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="EXPPLANTYPE" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -189,7 +209,19 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="ISDEFERREDEXPENSE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="C_PERIOD_EXP_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <column name="C_USER2_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="PERIODNUMBER_EXP" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -219,6 +251,12 @@
       </foreign-key>
       <foreign-key foreignTable="C_ORDERLINE" name="C_INVOICELINE_C_ORDERLINE">
         <reference local="C_ORDERLINE_ID" foreign="C_ORDERLINE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_PERIOD" name="C_INVOICELINE_C_PERIOD">
+        <reference local="C_PERIOD_ID" foreign="C_PERIOD_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_PERIOD" name="C_INVOICELINE_C_PERIODEXP">
+        <reference local="C_PERIOD_EXP_ID" foreign="C_PERIOD_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_PROJECTLINE" name="C_INVOICELINE_C_PROJECTLINE">
         <reference local="C_PROJECTLINE_ID" foreign="C_PROJECTLINE_ID"/>
@@ -271,8 +309,14 @@
       <index name="C_INVOICELINE_PRODUCT" unique="false">
         <index-column name="M_PRODUCT_ID"/>
       </index>
+      <check name="C_INVLINE_ISEXPDEFERRED_CHK"><![CDATA[ISDEFERREDEXPENSE IN ('Y', 'N')]]></check>
+      <check name="C_INVLINE_ISREVDEFERRED_CHK"><![CDATA[ISDEFERREDREVENUE IN ('Y', 'N')]]></check>
+      <check name="C_INVLINE_PERIODNUMBER_CHK"><![CDATA[((ISDEFERREDREVENUE = 'Y') AND (PERIODNUMBER > 0)) OR (ISDEFERREDREVENUE = 'N')]]></check>
+      <check name="C_INVLINE_PERIODNUMBEREXP_CHK"><![CDATA[((ISDEFERREDEXPENSE = 'Y') AND (PERIODNUMBER_EXP > 0)) OR (ISDEFERREDEXPENSE = 'N')]]></check>
       <check name="C_INVOICELINE_CHECK1"><![CDATA[((QUANTITYORDER IS NULL) AND (M_PRODUCT_UOM_ID IS NULL)) OR ((QUANTITYORDER IS NOT NULL) AND (M_PRODUCT_UOM_ID IS NOT NULL))]]></check>
       <check name="C_INVOICELINE_CHECK2"><![CDATA[(LINENETAMT = 0) OR (C_TAX_ID IS NOT NULL)]]></check>
+      <check name="C_INVOICELINE_CHECK3"><![CDATA[(((((ISDEFERREDREVENUE = 'Y') AND (C_PERIOD_ID IS NOT NULL)) AND (REVPLANTYPE IS NOT NULL)) AND (M_PRODUCT_ID IS NOT NULL)) AND (PERIODNUMBER IS NOT NULL)) OR (ISDEFERREDREVENUE = 'N')]]></check>
+      <check name="C_INVOICELINE_CHECK4"><![CDATA[(((((ISDEFERREDEXPENSE = 'Y') AND (C_PERIOD_EXP_ID IS NOT NULL)) AND (EXPPLANTYPE IS NOT NULL)) AND (M_PRODUCT_ID IS NOT NULL)) AND (PERIODNUMBER_EXP IS NOT NULL)) OR (ISDEFERREDEXPENSE = 'N')]]></check>
       <check name="C_INVOICELINE_FIN_INVLINE_CHK"><![CDATA[FINANCIAL_INVOICE_LINE IN ('Y', 'N')]]></check>
       <check name="C_INVOICELINE_FINACCT_CHK"><![CDATA[((FINANCIAL_INVOICE_LINE = 'Y') AND (ACCOUNT_ID IS NOT NULL)) OR ((FINANCIAL_INVOICE_LINE = 'N') AND (ACCOUNT_ID IS NULL))]]></check>
       <check name="C_INVOICELINE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>

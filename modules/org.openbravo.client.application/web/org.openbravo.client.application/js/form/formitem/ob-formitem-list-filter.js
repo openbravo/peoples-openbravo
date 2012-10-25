@@ -30,8 +30,8 @@ isc.OBListFilterItem.addProperties({
   filterOnKeypress: true,
   addUnknownValues: false,
 
-  defaultToFirstOption: false, 
-  
+  defaultToFirstOption: false,
+
   multiple: true,
   multipleAppearance: 'picklist',
   multipleValueSeparator: ' or ',
@@ -44,17 +44,16 @@ isc.OBListFilterItem.addProperties({
     delete ret[0].width;
     return ret;
   },
-  
+
   // overridden to prevent selection of first item
-  selectDefaultItem: function() {    
-  },
-  
-  showPickList: function() {
+  selectDefaultItem: function () {},
+
+  showPickList: function () {
     var ret = this.Super('showPickList', arguments);
-    
+
     this.selectItemFromValue(this.getValue());
   },
-  
+
   // note: can't override changed as it is used by the filter editor 
   // itself, see the RecordEditor source code and the changed event
   change: function (form, item, value, oldValue) {

@@ -18,6 +18,7 @@
  */
 package org.openbravo.service.json;
 
+import java.sql.BatchUpdateException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -546,6 +547,19 @@ public class DefaultJsonDataService implements JsonDataService {
         }
         OBDal.getInstance().flush();
 
+        // business event handlers can change the data
+        // flush again before refreshing, refreshing can
+        // potentially remove any in-memory changes
+        int countFlushes = 0;
+        while (OBDal.getInstance().getSession().isDirty()) {
+          OBDal.getInstance().flush();
+          countFlushes++;
+          // arbitrary point to give up...
+          if (countFlushes > 100) {
+            throw new OBException("Infinite loop in flushing when persisting json: " + content);
+          }
+        }
+
         // refresh the objects from the db as they can have changed
         for (BaseOBObject bob : bobs) {
           OBDal.getInstance().getSession().refresh(bob);
@@ -584,9 +598,15 @@ public class DefaultJsonDataService implements JsonDataService {
         jsonResult.put(JsonConstants.RESPONSE_RESPONSE, jsonResponse);
         return jsonResult.toString();
       }
-    } catch (Exception e) {
-      log.error(e.getMessage(), e);
-      return JsonUtils.convertExceptionToJson(e);
+    } catch (Throwable t) {
+      Throwable localThrowable = t;
+      if (localThrowable.getCause() instanceof BatchUpdateException) {
+        final BatchUpdateException batchException = (BatchUpdateException) localThrowable
+            .getCause();
+        localThrowable = batchException.getNextException();
+      }
+      log.error(localThrowable.getMessage(), localThrowable);
+      return JsonUtils.convertExceptionToJson(localThrowable);
     }
 
   }
