@@ -141,7 +141,7 @@ enyo.kind({
   }, {
     kind: 'OB.UI.CustomerTextProperty',
     name: 'customerTaxId',
-    modelProperty: 'taxId',
+    modelProperty: 'taxID',
     label: OB.I18N.getLabel('OBPOS_LblTaxId'),
     readOnly: true,
     displayLogic: OB.POS.modelterminal.get('terminal').bp_showtaxid
@@ -154,13 +154,13 @@ enyo.kind({
   }, {
     kind: 'OB.UI.CustomerTextProperty',
     name: 'customerPostalCode',
-    modelProperty: 'postalcode',
+    modelProperty: 'postalCode',
     label: OB.I18N.getLabel('OBPOS_LblPostalCode'),
     readOnly: true
   }, {
     kind: 'OB.UI.CustomerTextProperty',
     name: 'customerCity',
-    modelProperty: 'city',
+    modelProperty: 'cityName',
     label: OB.I18N.getLabel('OBPOS_LblCity'),
     readOnly: true
   }, {

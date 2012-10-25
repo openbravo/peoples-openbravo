@@ -13,7 +13,6 @@ import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -32,10 +31,8 @@ import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
-import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
@@ -73,7 +70,6 @@ import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
-import org.openbravo.service.json.JsonToDataConverter;
 
 public class OrderLoader extends JSONProcessSimple {
 
@@ -330,8 +326,9 @@ public class OrderLoader extends JSONProcessSimple {
     for (int i = 0; i < orderlines.length(); i++) {
       InvoiceLine line = OBProvider.getInstance().get(InvoiceLine.class);
       Entity inlineEntity = ModelProvider.getInstance().getEntity(InvoiceLine.class);
-      fillBobFromJSON(inlineEntity, line, orderlines.getJSONObject(i));
-      fillBobFromJSON(ModelProvider.getInstance().getEntity(InvoiceLine.class), line, jsonorder);
+      JSONPropertyToEntity.fillBobFromJSON(inlineEntity, line, orderlines.getJSONObject(i));
+      JSONPropertyToEntity.fillBobFromJSON(
+          ModelProvider.getInstance().getEntity(InvoiceLine.class), line, jsonorder);
       line.setLineNo((long) ((i + 1) * 10));
       line.setLineNetAmount(BigDecimal.valueOf(orderlines.getJSONObject(i).getDouble("net")));
       BigDecimal qty = lineReferences.get(i).getOrderedQuantity();
@@ -358,7 +355,7 @@ public class OrderLoader extends JSONProcessSimple {
   protected void createInvoice(Invoice invoice, Order order, JSONObject jsonorder)
       throws JSONException {
     Entity invoiceEntity = ModelProvider.getInstance().getEntity(Invoice.class);
-    fillBobFromJSON(invoiceEntity, invoice, jsonorder);
+    JSONPropertyToEntity.fillBobFromJSON(invoiceEntity, invoice, jsonorder);
 
     invoice.setDocumentNo(null);
     invoice
@@ -469,8 +466,9 @@ public class OrderLoader extends JSONProcessSimple {
       BigDecimal qty, Locator bin) throws JSONException {
     ShipmentInOutLine line = OBProvider.getInstance().get(ShipmentInOutLine.class);
 
-    fillBobFromJSON(shplineentity, line, jsonOrderLine);
-    fillBobFromJSON(ModelProvider.getInstance().getEntity(ShipmentInOutLine.class), line, jsonorder);
+    JSONPropertyToEntity.fillBobFromJSON(shplineentity, line, jsonOrderLine);
+    JSONPropertyToEntity.fillBobFromJSON(
+        ModelProvider.getInstance().getEntity(ShipmentInOutLine.class), line, jsonorder);
     line.setLineNo(lineNo);
     line.setShipmentReceipt(shipment);
     line.setSalesOrderLine(orderLine);
@@ -483,7 +481,7 @@ public class OrderLoader extends JSONProcessSimple {
   protected void createShipment(ShipmentInOut shipment, Order order, JSONObject jsonorder)
       throws JSONException {
     Entity shpEntity = ModelProvider.getInstance().getEntity(ShipmentInOut.class);
-    fillBobFromJSON(shpEntity, shipment, jsonorder);
+    JSONPropertyToEntity.fillBobFromJSON(shpEntity, shipment, jsonorder);
     shipment.setDocumentNo(null);
     shipment
         .setDocumentType(getShipmentDocumentType((String) DalUtil.getId(order.getDocumentType())));
@@ -509,8 +507,9 @@ public class OrderLoader extends JSONProcessSimple {
       Entity orderLineEntity = ModelProvider.getInstance().getEntity(OrderLine.class);
       JSONObject jsonOrderLine = orderlines.getJSONObject(i);
 
-      fillBobFromJSON(ModelProvider.getInstance().getEntity(OrderLine.class), orderline, jsonorder);
-      fillBobFromJSON(orderLineEntity, orderline, jsonOrderLine);
+      JSONPropertyToEntity.fillBobFromJSON(ModelProvider.getInstance().getEntity(OrderLine.class),
+          orderline, jsonorder);
+      JSONPropertyToEntity.fillBobFromJSON(orderLineEntity, orderline, jsonOrderLine);
 
       orderline.setActive(true);
       orderline.setSalesOrder(order);
@@ -549,7 +548,7 @@ public class OrderLoader extends JSONProcessSimple {
 
   protected void createOrder(Order order, JSONObject jsonorder) throws JSONException {
     Entity orderEntity = ModelProvider.getInstance().getEntity(Order.class);
-    fillBobFromJSON(orderEntity, order, jsonorder);
+    JSONPropertyToEntity.fillBobFromJSON(orderEntity, order, jsonorder);
 
     order.setTransactionDocument((DocumentType) OBDal.getInstance().getProxy("DocumentType",
         jsonorder.getString("documentType")));
@@ -808,78 +807,9 @@ public class OrderLoader extends JSONProcessSimple {
 
   }
 
-  protected void fillBobFromJSON(Entity entity, BaseOBObject bob, JSONObject json)
-      throws JSONException {
-    @SuppressWarnings("unchecked")
-    Iterator<String> keys = json.keys();
-    while (keys.hasNext()) {
-      String key = keys.next();
-      if (key.equals("id")) {
-        continue;
-      }
-      String oldKey = key;
-      if (entity.hasProperty(key)) {
-        log.debug("Found property: " + key + " in entity " + entity.getName());
-      } else {
-        key = getEquivalentKey(key);
-        if (key == null) {
-          log.debug("Did not find property: " + oldKey);
-          continue;
-        } else {
-          if (entity.hasProperty(key)) {
-            log.debug("Found equivalent key: " + key);
-          } else {
-            log.debug("Did not find property: " + oldKey);
-            continue;
-          }
-        }
-      }
-
-      Property p = entity.getProperty(key);
-      Object value = json.get(oldKey);
-      if (p.isPrimitive()) {
-        if (p.isDate()) {
-          bob.set(p.getName(),
-              (Date) JsonToDataConverter.convertJsonToPropertyValue(PropertyByType.DATE, value));
-        } else if (p.isNumericType()) {
-          value = json.getString(oldKey);
-          bob.set(key, new BigDecimal((String) value));
-        } else {
-          bob.set(p.getName(), value);
-        }
-      } else {
-        Property refProp = p.getReferencedProperty();
-        Entity refEntity = refProp.getEntity();
-        if (value instanceof JSONObject) {
-          value = ((JSONObject) value).getString("id");
-        }
-        BaseOBObject refBob = OBDal.getInstance().getProxy(refEntity.getName(), value.toString());
-        bob.set(p.getName(), refBob);
-      }
-
-    }
-  }
-
   public static String getErrorMessage(Exception e) {
     StringWriter sb = new StringWriter();
     e.printStackTrace(new PrintWriter(sb));
     return sb.toString();
-  }
-
-  private static String getEquivalentKey(String key) {
-    if (key.equals("bp")) {
-      return "businessPartner";
-    } else if (key.equals("bploc")) {
-      return "partnerAddress";
-    } else if (key.equals("qty")) {
-      return "orderedQuantity";
-    } else if (key.equals("price")) {
-      return "grossUnitPrice";
-    } else if (key.equals("posTerminal")) {
-      return "obposApplications";
-    } else if (key.equals("pricenet")) {
-      return "unitPrice";
-    }
-    return null;
   }
 }

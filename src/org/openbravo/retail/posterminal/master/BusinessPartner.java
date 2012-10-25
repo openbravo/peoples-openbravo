@@ -19,7 +19,7 @@ public class BusinessPartner extends ProcessHQLQuery {
   @Override
   protected String getQuery(JSONObject jsonsent) throws JSONException {
     Organization org = POSUtils.getOrganization(jsonsent.getString("organization"));
-    return "SELECT bpl.businessPartner.id as id, bpl.businessPartner.name as name, bpl.businessPartner.name as _identifier, bpl.businessPartner.searchKey as searchKey, bpl.businessPartner.description as description, bpl.businessPartner.taxID as taxId, bpl.businessPartner.sOBPTaxCategory.id as taxCategory, bpl.businessPartner.paymentMethod.id as paymentMethod, bpl.businessPartner.paymentTerms.id as paymentTerms, bpl.businessPartner.invoiceTerms as invoiceTerms, bpl.id as locId, max(bpl.name) as locName, ulist.email as email, ulist.phone as phone, bpl.locationAddress.cityName as city, bpl.locationAddress.postalCode as postalcode "
+    return "SELECT bpl.businessPartner.id as id, bpl.businessPartner.name as name, bpl.businessPartner.name as _identifier, bpl.businessPartner.searchKey as searchKey, bpl.businessPartner.description as description, bpl.businessPartner.taxID as taxID, bpl.businessPartner.sOBPTaxCategory.id as taxCategory, bpl.businessPartner.paymentMethod.id as paymentMethod, bpl.businessPartner.paymentTerms.id as paymentTerms, bpl.businessPartner.invoiceTerms as invoiceTerms, bpl.id as locId, max(bpl.name) as locName, ulist.email as email, ulist.phone as phone, bpl.locationAddress.cityName as cityName, bpl.locationAddress.postalCode as postalCode "
         + "FROM BusinessPartnerLocation AS bpl left outer join bpl.businessPartner.aDUserList AS ulist "
         + "WHERE (bpl.$incrementalUpdateCriteria) AND ("
         + "(bpl.id = '"
