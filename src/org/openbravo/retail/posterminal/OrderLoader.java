@@ -12,6 +12,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -68,6 +69,7 @@ import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.scheduling.ProcessBundle;
+import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
 
@@ -402,6 +404,46 @@ public class OrderLoader extends JSONProcessSimple {
       invoice.getInvoiceTaxList().add(invoiceTax);
     }
 
+    // Update customer credit
+    BigDecimal total = invoice.getGrandTotalAmount();
+
+    if (!invoice.getCurrency().equals(invoice.getBusinessPartner().getPriceList().getCurrency())) {
+      total = convertCurrencyInvoice(invoice);
+    }
+    // Same currency, no conversion required
+    if (jsonorder.getLong("orderType") == 1) {
+      invoice.getBusinessPartner().setCreditUsed(
+          invoice.getBusinessPartner().getCreditUsed().add(total));
+    } else {
+      invoice.getBusinessPartner().setCreditUsed(
+          invoice.getBusinessPartner().getCreditUsed().subtract(total));
+    }
+
+  }
+
+  public static BigDecimal convertCurrencyInvoice(Invoice invoice) {
+
+    List<Object> parameters = new ArrayList<Object>();
+    List<Class<?>> types = new ArrayList<Class<?>>();
+    parameters.add(invoice.getGrandTotalAmount());
+    types.add(BigDecimal.class);
+    parameters.add(invoice.getCurrency());
+    types.add(BaseOBObject.class);
+    parameters.add(invoice.getBusinessPartner().getPriceList().getCurrency());
+    types.add(BaseOBObject.class);
+    parameters.add(invoice.getInvoiceDate());
+    types.add(Timestamp.class);
+    parameters.add("S");
+    types.add(String.class);
+    parameters.add(OBContext.getOBContext().getCurrentClient());
+    types.add(BaseOBObject.class);
+    parameters.add(OBContext.getOBContext().getCurrentOrganization());
+    types.add(BaseOBObject.class);
+    parameters.add('A');
+    types.add(Character.class);
+
+    return (BigDecimal) CallStoredProcedure.getInstance().call("c_currency_convert_precision",
+        parameters, types);
   }
 
   protected void createShipmentLines(ShipmentInOut shipment, Order order, JSONObject jsonorder,
