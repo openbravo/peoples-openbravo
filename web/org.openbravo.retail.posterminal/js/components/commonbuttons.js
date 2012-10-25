@@ -64,7 +64,7 @@ enyo.kind({
         content: '&times;'
       }]
     }, {
-      tag: 'h3',
+      style: 'line-height: 27px; font-size: 18px; font-weight: bold;',
       name: 'divheader'
     }]
   }, {
@@ -246,7 +246,6 @@ enyo.kind({
       }]
     }, {
       name: 'header',
-      tag: 'h3',
       classes: 'modal-dialog-header-text'
     }, {
       tag: 'div',

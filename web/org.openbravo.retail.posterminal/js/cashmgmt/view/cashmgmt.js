@@ -29,12 +29,9 @@ enyo.kind({
     {
       classes: 'span6',
       components: [{
-        classes: 'span6',
-        components: [{
-          kind: 'OB.OBPOSCashMgmt.UI.CashMgmtInfo'
-        }, {
-          kind: 'OB.OBPOSCashMgmt.UI.CashMgmtKeyboard'
-        }]
+        kind: 'OB.OBPOSCashMgmt.UI.CashMgmtInfo'
+      }, {
+        kind: 'OB.OBPOSCashMgmt.UI.CashMgmtKeyboard'
       }]
     },
     //hidden stuff

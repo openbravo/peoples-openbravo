@@ -45,7 +45,7 @@ enyo.kind({
             style: 'text-align: right; width: 100%; height: 40px;',
             components: [{
               tag: 'pre',
-              style: 'font-size: 35px; height: 33px; padding: 22px 5px 0px 0px;',
+              style: 'margin: 0px 0px 9px 0px; background-color: whiteSmoke; border: 1px solid #CCC; word-wrap: break-word; font-size: 35px; height: 33px; padding: 22px 5px 0px 0px;',
               components: [
               // ' ', XXX:???
               {

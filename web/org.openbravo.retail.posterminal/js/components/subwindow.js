@@ -82,7 +82,6 @@ enyo.kind({
       content: '&times;'
     }]
   }, {
-    tag: 'h3',
     classes: 'subwindowheadertext',
     name: 'headermessage',
     content: OB.I18N.getLabel('OBPOS_TitleCustomerAdvancedSearch')

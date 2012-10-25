@@ -45,14 +45,11 @@ enyo.kind({
     }, {
       classes: 'span6',
       components: [{
-        classes: 'span6',
-        components: [{
-          kind: 'OB.OBPOSCashUp.UI.CashUpInfo',
-          name: 'cashUpInfo'
-        }, {
-          kind: 'OB.OBPOSCashUp.UI.CashUpKeyboard',
-          name: 'cashUpKeyboard'
-        }]
+        kind: 'OB.OBPOSCashUp.UI.CashUpInfo',
+        name: 'cashUpInfo'
+      }, {
+        kind: 'OB.OBPOSCashUp.UI.CashUpKeyboard',
+        name: 'cashUpKeyboard'
       }]
     }, {
       kind: 'OB.UI.ModalCancel',

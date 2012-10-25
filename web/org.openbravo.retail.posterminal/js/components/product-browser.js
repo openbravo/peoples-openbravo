@@ -61,7 +61,7 @@ enyo.kind({
   name: 'OB.UI.CategoryListHeader',
   style: 'padding: 10px; border-bottom: 1px solid #cccccc;',
   components: [{
-    tag: 'h3',
+    style: 'line-height: 27px; font-size: 18px; font-weight: bold;',
     name: 'title',
     content: OB.I18N.getLabel('OBPOS_LblCategories')
   }]
@@ -108,7 +108,7 @@ enyo.kind({
   name: 'OB.UI.ProductListHeader',
   style: 'padding: 10px; border-bottom: 1px solid #cccccc;',
   components: [{
-    tag: 'h3',
+    style: 'line-height: 27px; font-size: 18px; font-weight: bold;',
     name: 'title'
   }],
   setHeader: function (valueToSet) {

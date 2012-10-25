@@ -45,10 +45,10 @@ enyo.kind({
     name: 'topsection',
     components: [{
       classes: 'row',
-      style: 'height: 50px; vertical-align: middle; display: table-cell;',
+      style: 'height: 50px; vertical-align: middle;',
       components: [{
         classes: 'span12',
-        style: 'color: white; font-size: 16px;',
+        style: 'padding: 10px 0px 0px 0px; color: white; font-size: 16px;',
         components: [{
           name: 'onlineContainer',
           style: 'display: inline-block; vertical-align: middle; margin: 3px 0px 0px 0px;',
