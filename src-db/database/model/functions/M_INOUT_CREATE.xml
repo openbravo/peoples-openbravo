@@ -422,7 +422,7 @@ BEGIN --BODY
                   AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '30', 'M_Product_ID', v_Product_old, null, null, null, null, null);
                   AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '40', 'C_Uom_ID', v_UOM_old, null, null, null, null, null);
                   AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '50', 'M_Product_Uom_ID', v_Product_UOM_old, null, null, null, null, null);
-                  AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '60', 'M_Warehouse_ID', v_Warehouse_old, null, null, null, null, null);
+                  AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '60', 'Priority_Warehouse_ID', v_Warehouse_old, null, null, null, null, null);
                   AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '70', 'M_AttributesetInstance_ID', v_Attribute_old, null, null, null, null, null);
                   AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '80', 'Quantity', null, null, v_Qty, null, null, null);
                   AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '90', 'ProcessID', '118', null, null, null, null, null);

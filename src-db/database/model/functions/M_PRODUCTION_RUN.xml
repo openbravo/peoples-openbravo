@@ -62,7 +62,7 @@
   v_Product_Name VARCHAR2(2000):='';
   -- Stocked BOMs
   -- Proposed stock from given warehouse is priorized.
-  CURSOR CUR_STOCK (v_ad_pinstance_id VARCHAR, v_warehouse_id VARCHAR) IS
+  CURSOR CUR_STOCK (v_ad_pinstance_id VARCHAR) IS
       SELECT sd.m_product_id, sd.m_locator_id, sd.m_attributesetinstance_id,
           sd.c_uom_id, sd.m_product_uom_id, u.stdprecision,
           ms.quantity AS qty, ms.qtyorder AS qtyorder,
@@ -73,7 +73,7 @@
             LEFT JOIN c_uom u ON pu.c_uom_id = u.c_uom_id
             LEFT JOIN m_locator l ON sd.m_locator_id = l.m_locator_id
       WHERE ms.ad_pinstance_id = v_ad_pinstance_id
-      ORDER BY (CASE l.m_warehouse_id WHEN v_warehouse_id THEN 0 ELSE 1 END), ms.priority;
+      ORDER BY ms.priority;
   v_storage CUR_STOCK%ROWTYPE;
   NEXT_PRODUCT BOOLEAN:=false;
   CUR_STOCK_ISOPEN BOOLEAN:=false;
@@ -265,6 +265,7 @@ BEGIN --BODY
               -- Records in m_aux_stock are not considered in BOM production.
               --AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '60', 'AuxID', v_record_id, null, null, null, null, null);
               --AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '70', 'TableId', '325', null, null, null, null, null);
+              AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '60', 'Priority_Warehouse_ID', v_Warehouse_old, null, null, null, null, null);
               AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '80', 'LineNo', null, null, 10, null, null, null);
               AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '90', 'ProcessID', '137', null, null, null, null, null);
 
@@ -280,7 +281,7 @@ BEGIN --BODY
               END IF;
             END; -- End Call M_GET_STOCK
             
-            OPEN CUR_STOCK(v_pinstance_id, v_Warehouse_old);
+            OPEN CUR_STOCK(v_pinstance_id);
             CUR_STOCK_ISOPEN:=true;
             FETCH CUR_STOCK INTO v_storage;
             IF (CUR_STOCK%NOTFOUND) THEN
