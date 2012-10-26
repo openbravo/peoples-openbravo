@@ -134,6 +134,9 @@ isc.OBFKFilterTextItem.addProperties({
 
     this.Super('init', arguments);
 
+    // don't validate for FK filtering, any value is allowed
+    this.validators = [];
+
     // listen to data arrival in the grid
     // if data arrived we have to reload also
     this.observe(grid, "dataArrived", "observer.setForceReload()");
