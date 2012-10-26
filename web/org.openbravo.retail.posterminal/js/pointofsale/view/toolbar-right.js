@@ -189,7 +189,7 @@ enyo.kind({
   },
   tap: function() {
     var receipt = this.model.get('order');
-    if(receipt.get('quotation')){
+    if(receipt.get('isQuotation')){
       if(receipt.get('hasbeenpaid')!=='Y'){
         receipt.calculateTaxes(function() {
           receipt.trigger('closed');

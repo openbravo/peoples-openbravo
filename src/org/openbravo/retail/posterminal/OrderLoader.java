@@ -177,9 +177,9 @@ public class OrderLoader extends JSONProcessSimple {
     Invoice invoice = null;
     boolean sendEmail = false;
     TriggerHandler.getInstance().disable();
-    boolean isQuotation = jsonorder.has("quotation") && jsonorder.getBoolean("quotation");
+    boolean isQuotation = jsonorder.has("isQuotation") && jsonorder.getBoolean("isQuotation");
     try {
-      if (jsonorder.has("oldId") && jsonorder.has("quotation") && jsonorder.getBoolean("quotation")) {
+      if (jsonorder.has("oldId") && jsonorder.has("isQuotation") && jsonorder.getBoolean("isQuotation")) {
         deleteOldDocument(jsonorder);
       }
 
@@ -582,7 +582,7 @@ public class OrderLoader extends JSONProcessSimple {
     order.setSummedLineAmount(BigDecimal.valueOf(jsonorder.getDouble("net")));
 
     order.setSalesTransaction(true);
-    if (jsonorder.getBoolean("quotation")) {
+    if (jsonorder.getBoolean("isQuotation")) {
       order.setDocumentStatus("CO"); // should be UE, not yet because of dal validation
     } else {
       order.setDocumentStatus("CO");

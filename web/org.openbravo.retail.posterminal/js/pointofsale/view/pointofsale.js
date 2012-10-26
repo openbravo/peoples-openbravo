@@ -272,13 +272,13 @@ enyo.kind({
     }
   },
  paidReceipts: function(inSender, inEvent) {
-   this.$.paidReceiptsView.setParams({quotation: false});
+   this.$.paidReceiptsView.setParams({isQuotation: false});
     $('#modalPaidReceipts').modal('show');
     return true;
   },
   
   quotations: function(inSender, inEvent) {
-    this.$.paidReceiptsView.setParams({quotation: true});
+    this.$.paidReceiptsView.setParams({isQuotation: true});
     $('#modalPaidReceipts').modal('show');
   },
   

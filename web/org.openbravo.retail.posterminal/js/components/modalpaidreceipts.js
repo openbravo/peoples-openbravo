@@ -125,8 +125,8 @@ enyo.kind({
   searchAction: function() {
     var params = this.parent.parent.parent.parent.parent.parent.parent.parent.params;
     this.filters = {
-      documentType: params.quotation?(OB.POS.modelterminal.get('terminal').documentTypeForQuotations):(OB.POS.modelterminal.get('terminal').documentType),
-      quotation: params.quotation?true:false,
+      documentType: params.isQuotation?(OB.POS.modelterminal.get('terminal').documentTypeForQuotations):(OB.POS.modelterminal.get('terminal').documentType),
+      isQuotation: params.isQuotation?true:false,
       filterText: this.$.filterText.getValue(),
       startDate: this.$.startDate.getValue(),
       endDate: this.$.endDate.getValue(),

@@ -141,7 +141,7 @@
         this.set('updatedBy', attributes.updatedBy);
         this.set('orderType', attributes.orderType); // 0: Sales order, 1: Return order
         this.set('generateInvoice', attributes.generateInvoice);
-        this.set('quotation', attributes.quotation);
+        this.set('isQuotation', attributes.isQuotation);
         this.set('priceList', attributes.priceList);
         this.set('currency', attributes.currency);
         this.set('currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, attributes['currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER]);
@@ -262,7 +262,7 @@
       this.set('documentType', null);
       this.set('orderType', 0); // 0: Sales order, 1: Return order
       this.set('generateInvoice', false);
-      this.set('quotation', false);
+      this.set('isQuotation', false);
       this.set('priceList', null);
       this.set('currency', null);
       this.set('currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, null);
@@ -416,7 +416,7 @@
 
     addProduct: function(p) {
       var me = this;
-      if(me.get('quotation') && me.get('hasbeenpaid')==='Y'){
+      if(me.get('isQuotation') && me.get('hasbeenpaid')==='Y'){
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_QuotationClosed'));
         return;
       }
@@ -509,7 +509,7 @@
     
     createQuotation: function() {
       if (OB.POS.modelterminal.hasPermission('OBPOS_receipt.quotation')) {
-        this.set('quotation', true);
+        this.set('isQuotation', true);
         this.set('documentType', OB.POS.modelterminal.get('terminal').documentTypeForQuotations);
         this.save();
       }
@@ -517,7 +517,7 @@
 
     createOrderFromQuotation: function(){
       this.set('id',null);
-      this.set('quotation', false);
+      this.set('isQuotation', false);
       this.set('documentType', OB.POS.modelterminal.get('terminal').documentType);
       this.set('hasbeenpaid', 'N');
       this.save();
@@ -715,7 +715,7 @@ alert('reject!!')
       order.set('documentType', OB.POS.modelterminal.get('terminal').documentType);
       order.set('orderType', 0); // 0: Sales order, 1: Return order
       order.set('generateInvoice', false);
-      order.set('quotation', false);
+      order.set('isQuotation', false);
       order.set('session', OB.POS.modelterminal.get('session'));
       order.set('priceList', OB.POS.modelterminal.get('terminal').priceList);
       order.set('currency', OB.POS.modelterminal.get('terminal').currency);
@@ -745,8 +745,8 @@ alert('reject!!')
           documentseq, documentseqstr, bp, newline, lines, prod, payments, curPayment, taxes;
       this.lines = new Backbone.Collection();
       order.set('documentNo', model.documentNo);
-      if(model.quotation){
-        order.set('quotation', true);
+      if(model.isQuotation){
+        order.set('isQuotation', true);
       }else{
         order.set('isEditable', false);
         order.set('isPaid', true);
@@ -831,7 +831,7 @@ alert('reject!!')
     addNewQuotation: function() {
       this.saveCurrent();
       this.current = this.newOrder();
-      this.current.set('quotation', true);
+      this.current.set('isQuotation', true);
       this.current.set('documentType', OB.POS.modelterminal.get('terminal').documentTypeForQuotations);
       this.add(this.current);
       this.loadCurrent();

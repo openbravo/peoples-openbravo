@@ -69,7 +69,7 @@ public class PaidReceipts extends JSONProcessSimple {
       paidReceipt.put("organization", json.getString("organization"));
       paidReceipt.put("posterminal", json.getString("pos"));
       paidReceipt.put("client", json.getString("client"));
-      paidReceipt.put("quotation", json.getBoolean("quotation"));
+      paidReceipt.put("isQuotation", json.getBoolean("isQuotation"));
 
       JSONArray listpaidReceiptsLines = new JSONArray();
       String hqlPaidReceiptsLines = "select ordLine.product.id as id, ordLine.product.name as name, ordLine.product.uOM.id as uOM, ordLine.orderedQuantity as quantity, "

@@ -65,8 +65,8 @@ enyo.kind({
     this.model = model;
     var receipt = model.get('order'),
     me = this;
-    receipt.on('change:quotation', function(model) {
-      if (!model.get('quotation')) {
+    receipt.on('change:isQuotation', function(model) {
+      if (!model.get('isQuotation')) {
         me.show();
       } else {
         me.hide();
@@ -124,8 +124,8 @@ enyo.kind({
     this.model = model;
     var receipt = model.get('order'),
     me = this;
-    receipt.on('change:quotation', function(model) {
-      if (!model.get('quotation')) {
+    receipt.on('change:isQuotation', function(model) {
+      if (!model.get('isQuotation')) {
         me.show();
       } else {
         me.hide();
@@ -177,8 +177,8 @@ enyo.kind({
   init: function(model){
     var receipt = model.get('order'),
     me = this;
-    receipt.on('change:quotation', function(model) {
-      if (!model.get('quotation')) {
+    receipt.on('change:isQuotation', function(model) {
+      if (!model.get('isQuotation')) {
         me.show();
       } else {
         me.hide();
@@ -203,7 +203,7 @@ enyo.kind({
     }
   },
   updateVisibility: function(model){
-    if (!model.get('quotation')) {
+    if (!model.get('isQuotation')) {
       this.show();
     } else {
       this.hide();
@@ -212,7 +212,7 @@ enyo.kind({
   init: function(model){
     var receipt = model.get('order'),
     me = this;
-    receipt.on('change:quotation', function(model) {
+    receipt.on('change:isQuotation', function(model) {
       this.updateVisibility(model);
     }, this);
   }
@@ -230,7 +230,7 @@ enyo.kind({
     $('#modalCreateOrderFromQuotation').modal('show');
   },
   updateVisibility: function(model){
-    if (model.get('quotation') && model.get('hasbeenpaid')==='Y') {
+    if (model.get('isQuotation') && model.get('hasbeenpaid')==='Y') {
       this.show();
     } else {
       this.hide();
@@ -240,7 +240,7 @@ enyo.kind({
     var receipt = model.get('order'),
     me = this;
     me.hide();
-    receipt.on('change:quotation', function(model) {
+    receipt.on('change:isQuotation', function(model) {
       this.updateVisibility(model);
     }, this);
     receipt.on('change:hasbeenpaid', function(model) {
@@ -261,7 +261,7 @@ enyo.kind({
     this.doRejectQuotation();
   },
   updateVisibility: function(model){
-    if (model.get('quotation') && model.get('hasbeenpaid')==='Y') {
+    if (model.get('isQuotation') && model.get('hasbeenpaid')==='Y') {
       this.hide();
     } else {
       this.hide();
@@ -271,7 +271,7 @@ enyo.kind({
     var receipt = model.get('order'),
     me = this;
     me.hide();
-    receipt.on('change:quotation', function(model) {
+    receipt.on('change:isQuotation', function(model) {
       this.updateVisibility(model);
     }, this);
     receipt.on('change:hasbeenpaid', function(model) {
@@ -291,7 +291,7 @@ enyo.kind({
     this.doReactivateQuotation();
   },
   updateVisibility: function(model){
-    if (model.get('quotation') && model.get('hasbeenpaid')==='Y') {
+    if (model.get('isQuotation') && model.get('hasbeenpaid')==='Y') {
       this.show();
     } else {
       this.hide();
@@ -301,7 +301,7 @@ enyo.kind({
     var receipt = model.get('order'),
     me = this;
     me.hide();
-    receipt.on('change:quotation', function(model) {
+    receipt.on('change:isQuotation', function(model) {
       this.updateVisibility(model);
     }, this);
     receipt.on('change:hasbeenpaid', function(model) {
