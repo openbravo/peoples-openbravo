@@ -141,6 +141,14 @@ isc.OBFKFilterTextItem.addProperties({
     this.multipleValueSeparator = ' or ';
   },
 
+  destroy: function () {
+    var grid = this.form && this.form.grid && this.form.grid.sourceWidget;
+    if (grid) {
+      this.ignore(grid, 'dataArrived');
+    }
+    return this.Super('destroy', arguments);
+  },
+
   // note: can't override changed as it is used by the filter editor 
   // itself, see the RecordEditor source code and the changed event
   change: function (form, item, value, oldValue) {

@@ -65,6 +65,13 @@ isc.OBClientClassCanvasItem.addProperties({
     return canvas;
   },
 
+  destroy: function () {
+    if (this.canvas && this.form) {
+      this.canvas.ignore(this.form, 'itemChanged');
+    }
+    return this.Super('destroy', arguments);
+  },
+
   redrawing: function () {
     if (this.canvas.redrawingItem) {
       this.canvas.redrawingItem();
