@@ -148,7 +148,7 @@
                   kind: 'enyo.Input',
                   type: 'text',
                   name: 'username',
-                  classes: 'login-inputs-username',
+                  classes: 'input login-inputs-username',
                   onkeydown: 'handleEnterKeyDown'
                 }]
               }]
@@ -159,7 +159,7 @@
                   kind: 'enyo.Input',
                   type: 'password',
                   name: 'password',
-                  classes: 'login-inputs-password',
+                  classes: 'input login-inputs-password',
                   onkeydown: 'handleEnterKeyDown'
                 }]
               }]

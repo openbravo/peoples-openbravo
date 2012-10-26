@@ -267,9 +267,10 @@ enyo.kind({
       if (this.$[changedModel.get('currentWindow').name]) {
         if (!changedModel.get('currentWindow').params) {
           changedModel.get('currentWindow').params = {};
-          //developers helps
-          //console.log("Caller is not set. Caller has been set as main subwindow");
-          changedModel.get('currentWindow').params.caller = 'mainSubWindow';
+        }
+        changedModel.get('currentWindow').params.caller = changedModel.previousAttributes().currentWindow.name;
+        if (this.$[changedModel.previousAttributes().currentWindow.name].mainBeforeClose) {
+          this.$[changedModel.previousAttributes().currentWindow.name].mainBeforeClose(changedModel.get('currentWindow').name);  
         }
         if (this.$[changedModel.get('currentWindow').name].mainBeforeSetShowing) {
           showNewSubWindow = this.$[changedModel.get('currentWindow').name].mainBeforeSetShowing(changedModel.get('currentWindow').params);

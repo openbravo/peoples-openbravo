@@ -89,9 +89,8 @@ enyo.kind({
             return true;
           },
           onkeyup: 'tri',
-          classes: 'span1',
           type: 'text',
-          style: 'vertical-align: middle; margin-top: 0px; margin-right: 0px; margin-bottom: 0px; margin-left: 10px; display: inline-block; '
+          style: 'width: 90px; vertical-align: middle; margin-top: 0px; margin-right: 0px; margin-bottom: 0px; margin-left: 10px; display: inline-block; '
         }]
       }]
     }]

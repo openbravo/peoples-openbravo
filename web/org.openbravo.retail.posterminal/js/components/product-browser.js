@@ -61,7 +61,7 @@ enyo.kind({
   name: 'OB.UI.CategoryListHeader',
   style: 'padding: 10px; border-bottom: 1px solid #cccccc;',
   components: [{
-    tag: 'h3',
+    style: 'line-height: 27px; font-size: 18px; font-weight: bold;',
     name: 'title',
     content: OB.I18N.getLabel('OBPOS_LblCategories')
   }]
@@ -71,7 +71,7 @@ enyo.kind({
   name: 'OB.UI.ListCategories',
   components: [{
     name: 'categoryTable',
-    scrollAreaMaxHeight: '540px',
+    scrollAreaMaxHeight: '574px',
     listStyle: 'list',
     kind: 'OB.UI.ScrollableTable',
     renderHeader: 'OB.UI.CategoryListHeader',
@@ -108,7 +108,7 @@ enyo.kind({
   name: 'OB.UI.ProductListHeader',
   style: 'padding: 10px; border-bottom: 1px solid #cccccc;',
   components: [{
-    tag: 'h3',
+    style: 'line-height: 27px; font-size: 18px; font-weight: bold;',
     name: 'title'
   }],
   setHeader: function (valueToSet) {
@@ -124,7 +124,7 @@ enyo.kind({
   components: [{
     kind: 'OB.UI.ScrollableTable',
     name: 'productTable',
-    scrollAreaMaxHeight: '540px',
+    scrollAreaMaxHeight: '574px',
     renderHeader: 'OB.UI.ProductListHeader',
     renderEmpty: 'OB.UI.RenderEmpty',
     renderLine: 'OB.UI.RenderProduct'

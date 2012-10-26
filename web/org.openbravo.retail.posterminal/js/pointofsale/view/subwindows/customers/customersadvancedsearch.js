@@ -13,6 +13,30 @@
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.customers.cas',
   kind: 'OB.UI.subwindow',
+  events: {
+    onSearchAction: ''
+  },
+  beforeSetShowing: function (params) {
+    if (this.caller === 'mainSubWindow') {
+      this.waterfall('onSearchAction', {
+        cleanResults: true
+      });
+    } else {
+      this.waterfall('onSearchAction', {
+        executeLastCriteria: true
+      });
+    }
+
+    return true;
+  },
+  beforeClose: function (dest) {
+    if (dest === 'mainSubWindow') {
+      this.waterfall('onSearchAction', {
+        cleanResults: true
+      });
+    }
+  },
+  defaultNavigateOnClose: 'mainSubWindow',
   header: {
     kind: 'OB.OBPOSPointOfSale.UI.customers.casheader'
   },
@@ -143,7 +167,7 @@ enyo.kind({
       newWindow: {
         name: 'customerCreateAndEdit',
         params: {
-          caller: sw.getName()
+          navigateOnClose: 'customerView'
         }
       }
     });
@@ -243,13 +267,13 @@ enyo.kind({
     onChangeSubWindow: ''
   },
   components: [{
-    style: 'width: 10%; float: left; text-align: center; padding-top: 10px',
+    style: 'text-align: center; padding-top: 10px',
+    classes: 'span1',
     components: [{
       kind: 'OB.OBPOSPointOfSale.UI.customers.CustomerLeftBar'
     }]
   }, {
-    style: 'width: 90%; float: left;',
-    classes: 'span12',
+    classes: 'span11',
     components: [{
       classes: 'row-fluid',
       components: [{
@@ -257,7 +281,7 @@ enyo.kind({
         components: [{
           name: 'bpslistitemprinter',
           kind: 'OB.UI.ScrollableTable',
-          scrollAreaMaxHeight: '800px',
+          scrollAreaMaxHeight: '301px',
           renderHeader: 'OB.OBPOSPointOfSale.UI.customers.ModalCustomerScrollableHeader',
           renderLine: 'OB.OBPOSPointOfSale.UI.customers.ListCustomersLine',
           renderEmpty: 'OB.UI.RenderEmpty'
@@ -273,11 +297,8 @@ enyo.kind({
   },
   searchAction: function (inSender, inEvent) {
     var me = this,
-        filter = inEvent.bpName,
-        splitFilter = filter.split(","),
-        splitFilterLength = splitFilter.length,
-        _operator = inEvent.operator,
-        i, criteria = {};
+        filter, splitFilter, splitFilterLength, _operator, i, criteria = {},
+        lastCriteria = [];
 
     function errorCallback(tx, error) {
       OB.UTIL.showError("OBDAL error: " + error);
@@ -292,6 +313,33 @@ enyo.kind({
       }
     }
 
+    function reset(me) {
+      me.bpsList.reset();
+      me.lastCriteria = null;
+      return true;
+    }
+
+    if (inEvent.executeLastCriteria) {
+      if (this.lastCriteria) {
+        for (i = 0; i < this.lastCriteria.length; i++) {
+          OB.Dal.find(OB.Model.BusinessPartner, this.lastCriteria[i], successCallbackBPs, errorCallback, i);
+          lastCriteria.push(this.lastCriteria[i]);
+        }
+        this.lastCriteria = lastCriteria;
+        return true;
+      } else {
+        return reset(this);
+      }
+    }
+
+    if (inEvent.cleanResults) {
+      return reset(this);
+    }
+
+    filter = inEvent.bpName;
+    splitFilter = filter.split(",");
+    splitFilterLength = splitFilter.length;
+    _operator = inEvent.operator;
 
     if (filter && filter !== '') {
       for (i = 0; i < splitFilter.length; i++) {
@@ -300,7 +348,9 @@ enyo.kind({
           value: splitFilter[i]
         };
         OB.Dal.find(OB.Model.BusinessPartner, criteria, successCallbackBPs, errorCallback, i);
+        lastCriteria.push(enyo.clone(criteria));
       }
+      this.lastCriteria = lastCriteria;
     } else {
       OB.Dal.find(OB.Model.BusinessPartner, criteria, successCallbackBPs, errorCallback, 0);
     }
@@ -318,7 +368,7 @@ enyo.kind({
         newWindow: {
           name: 'customerView',
           params: {
-            caller: sw.getName(),
+            navigateOnClose: sw.getName(),
             businessPartner: model
           }
         }
@@ -335,10 +385,7 @@ enyo.kind({
     var subWindow = this.subWindow;
     subWindow.doChangeSubWindow({
       newWindow: {
-        name: 'mainSubWindow',
-        params: {
-          caller: subWindow.getName()
-        }
+        name: 'mainSubWindow'
       }
     });
   },

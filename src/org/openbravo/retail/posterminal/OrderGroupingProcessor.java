@@ -415,6 +415,17 @@ public class OrderGroupingProcessor {
     paymentSchedule.setPaidAmount(paymentSchedule.getAmount());
     origPaymentSchedule.setAmount(paymentSchedule.getAmount());
 
+    // Update customer credit
+
+    BigDecimal total = invoice.getGrandTotalAmount();
+
+    if (!invoice.getCurrency().equals(invoice.getBusinessPartner().getPriceList().getCurrency())) {
+      // We need to convert the total taking into account the currency difference
+      total = OrderLoader.convertCurrencyInvoice(invoice);
+    }
+    invoice.getBusinessPartner().setCreditUsed(
+        invoice.getBusinessPartner().getCreditUsed().add(total));
+
     OBDal.getInstance().flush();
     log.debug("Finishing invoice: " + (System.currentTimeMillis() - tf));
   }
