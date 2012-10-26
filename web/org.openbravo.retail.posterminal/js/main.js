@@ -24,6 +24,7 @@
 
     // We are Logged !!!
     $(window).off('keypress');
+    $(window).off('keydown');
     $('#logoutlink').css('visibility', 'visible');
 
     function searchCurrentBP() {
@@ -74,6 +75,7 @@
     // Logged out. go to login window
     modelterminal.off('loginfail');
     $(window).off('keypress');
+    $(window).off('keydown');
     $('#logoutlink').css('visibility', 'hidden');
 
     // Redirect to login window

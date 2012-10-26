@@ -171,6 +171,7 @@
 
     OB.POS.modelterminal.off('loginfail');
     $(window).off('keypress');
+    $(window).off('keydown');
 
     //    function renderLoginPage() {
     //      var c = _.extend({}, Backbone.Events);

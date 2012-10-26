@@ -378,6 +378,7 @@ enyo.kind({
 
 
     //Special case to manage the dot (.) pressing in the numeric keypad (only can be managed using keydown)
+    $(window).off('keydown');
     $(window).keydown(function (e) {
       if (window.fixFocus()) {
         if (OB.Format.defaultDecimalSymbol !== '.') {
@@ -394,6 +395,7 @@ enyo.kind({
       return true;
     });
 
+    $(window).off('keypress');
     $(window).keypress(function (e) {
       if (window.fixFocus()) {
         if (e.which !== 46 || OB.Format.defaultDecimalSymbol === '.') { //Any keypress except any kind of dot (.)

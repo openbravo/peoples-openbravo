@@ -15,6 +15,6 @@ enyo.kind({
   myId: 'modalProductCannotBeGroup',
   header: OB.I18N.getLabel('OBPOS_productCannotBeGroupHeader'),
   bodyContent: {
-    content: OB.I18N.getLabel('OBPOS_productCannotBeGroupMessage'),
+    content: OB.I18N.getLabel('OBPOS_productCannotBeGroupMessage')
   }
 });

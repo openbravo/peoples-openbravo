@@ -559,6 +559,7 @@ OB.Model.Terminal = Backbone.Model.extend({
 
     // reset all application state.
     $(window).off('keypress');
+    $(window).off('keydown');
     //  this.set('terminal', null);
     this.set('payments', null);
     this.set('context', null);

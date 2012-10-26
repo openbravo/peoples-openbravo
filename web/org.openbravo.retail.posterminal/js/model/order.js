@@ -57,6 +57,7 @@
 
     calculateGross: function () {
       this.set('gross', OB.DEC.mul(this.get('qty'), this.get('price')));
+      this.trigger('calculategross');
     },
 
     getGross: function () {
@@ -308,7 +309,7 @@
       var total = this.getTotal();
       var pay = this.getPayment();
       return {
-        'done': (OB.DEC.compare(total) > 0 && OB.DEC.compare(OB.DEC.sub(pay, total)) >= 0),
+        'done': (this.get('lines').length > 0 && OB.DEC.compare(total) >= 0 && OB.DEC.compare(OB.DEC.sub(pay, total)) >= 0),
         'total': OB.I18N.formatCurrency(total),
         'pending': OB.DEC.compare(OB.DEC.sub(pay, total)) >= 0 ? OB.I18N.formatCurrency(OB.DEC.Zero) : OB.I18N.formatCurrency(OB.DEC.sub(total, pay)),
         'change': OB.DEC.compare(this.getChange()) > 0 ? OB.I18N.formatCurrency(this.getChange()) : null,
