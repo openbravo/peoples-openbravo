@@ -16,8 +16,12 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.common.order.OrderLineOffer;
 import org.openbravo.service.json.JsonConstants;
 
 public class PaidReceipts extends JSONProcessSimple {
@@ -67,7 +71,7 @@ public class PaidReceipts extends JSONProcessSimple {
 
       JSONArray listpaidReceiptsLines = new JSONArray();
       String hqlPaidReceiptsLines = "select ordLine.product.id as id, ordLine.product.name as name, ordLine.product.uOM.id as uOM, ordLine.orderedQuantity as quantity, "
-          + "ordLine.grossUnitPrice as unitPrice, ordLine.lineGrossAmount as linegrossamount from OrderLine as ordLine where ordLine.salesOrder.id=?";
+          + "ordLine.baseGrossUnitPrice as unitPrice, ordLine.lineGrossAmount as linegrossamount, ordLine.id as lineId from OrderLine as ordLine where ordLine.salesOrder.id=?";
       Query paidReceiptsLinesQuery = OBDal.getInstance().getSession()
           .createQuery(hqlPaidReceiptsLines);
       // // paidReceiptsQuery.setString(0, id);
@@ -75,12 +79,42 @@ public class PaidReceipts extends JSONProcessSimple {
       for (Object objLine : paidReceiptsLinesQuery.list()) {
         Object[] objpaidReceiptsLines = (Object[]) objLine;
         JSONObject paidReceiptLine = new JSONObject();
+
         paidReceiptLine.put("id", objpaidReceiptsLines[0]);
         paidReceiptLine.put("name", objpaidReceiptsLines[1]);
         paidReceiptLine.put("uOM", objpaidReceiptsLines[2]);
         paidReceiptLine.put("quantity", objpaidReceiptsLines[3]);
         paidReceiptLine.put("unitPrice", objpaidReceiptsLines[4]);
-        paidReceiptLine.put("linegrossamount", objpaidReceiptsLines[5]);
+
+        // promotions per line
+        OBCriteria<OrderLineOffer> qPromotions = OBDal.getInstance().createCriteria(
+            OrderLineOffer.class);
+        qPromotions.add(Restrictions.eq(OrderLineOffer.PROPERTY_SALESORDERLINE + ".id",
+            (String) objpaidReceiptsLines[6]));
+        qPromotions.addOrder(Order.asc(OrderLineOffer.PROPERTY_LINENO));
+        JSONArray promotions = new JSONArray();
+        boolean hasPromotions = false;
+        for (OrderLineOffer promotion : qPromotions.list()) {
+          JSONObject jsonPromo = new JSONObject();
+          jsonPromo.put("name", promotion.getPriceAdjustment().getName());
+          jsonPromo.put("amt", promotion.getDisplayedTotalAmount());
+          jsonPromo.put("actualAmt", promotion.getTotalAmount());
+          promotions.put(jsonPromo);
+          hasPromotions = true;
+        }
+
+        BigDecimal lineAmount;
+        if (hasPromotions) {
+          // When it has promotions, show line amount without them as they are shown after it
+          lineAmount = ((BigDecimal) objpaidReceiptsLines[4])
+              .multiply((BigDecimal) objpaidReceiptsLines[3]);
+        } else {
+          lineAmount = (BigDecimal) objpaidReceiptsLines[5];
+        }
+        paidReceiptLine.put("linegrossamount", lineAmount);
+
+        paidReceiptLine.put("promotions", promotions);
+
         listpaidReceiptsLines.put(paidReceiptLine);
       }
       paidReceipt.put("receiptLines", listpaidReceiptsLines);
@@ -150,6 +184,8 @@ public class PaidReceipts extends JSONProcessSimple {
       paidReceipt.put("receiptTaxes", jsonListTaxes);
 
       respArray.put(paidReceipt);
+
+      System.out.println(paidReceipt.toString(1));
     }
 
     JSONObject result = new JSONObject();

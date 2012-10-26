@@ -904,7 +904,8 @@
           uOM: iter.uOM,
           qty: OB.DEC.number(iter.quantity),
           price: OB.DEC.number(iter.unitPrice),
-          priceList: OB.DEC.number(iter.unitPrice)
+          priceList: OB.DEC.number(iter.unitPrice),
+          promotions: iter.promotions
         });
         newline.set('gross', iter.linegrossamount);
         // add the created line
