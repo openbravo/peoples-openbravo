@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global enyo */
+/*global enyo console _ */
 
 enyo.kind({
   name: 'OB.UI.WindowView',
@@ -36,6 +36,18 @@ enyo.kind({
         }
       });
     },
+    registerPopup: function (windowClass, dialogToAdd) {
+      var kind;
+      kind = enyo.getObject(windowClass);
+      if (!_.isEmpty(kind)) {
+        kind.prototype.popups.push({
+          dialog: dialogToAdd,
+          windowClass: windowClass
+        });
+      } else {
+        OB.UTIL.showWarning("An error occurs adding the pop up " + dialogToAdd.kind + ". The window class " + windowClass + " cannot be found.");
+      }
+    },
     destroyModels: function (view) {
       var p;
       if (!view) {
@@ -56,33 +68,26 @@ enyo.kind({
       });
     }
   },
+  popups: [],
   init: function () {
     //Modularity
     //Add new dialogs
     var customDialogsContainerName = this.name + "_customDialogsContainer",
-        view = this;
-    this.createComponent({
-      name: customDialogsContainerName,
-      initComponents: function () {
-        if (OB.Customizations) {
-          if (OB.Customizations[this.parent.name]) {
-            if (OB.Customizations[this.parent.name].dialogs) {
-              enyo.forEach(OB.Customizations[this.parent.name].dialogs, function (dialog, component) {
-                this.createComponent(dialog);
-              }, this);
-            }
-          }
-        }
-      }
+        dialogContainer;
+    dialogContainer = this.createComponent({
+      name: customDialogsContainerName
     });
+
+    enyo.forEach(this.popups, function (dialog) {
+      if (dialog.windowClass === this.kindName) {
+        this.createComponent(dialog, {
+          owner: dialogContainer
+        });
+      }
+    }, this);
 
     // Calling init in sub components
     OB.UI.WindowView.initChildren(this, this.model);
-    //    enyo.forEach(this.getComponents(), function(component) {
-    //      if (component.init) {
-    //        component.init();
-    //      }
-    //    });
   },
 
   destroy: function () {
@@ -93,3 +98,14 @@ enyo.kind({
     this.inherited(arguments);
   }
 });
+
+OB.Customizations = {};
+OB.Customizations.pointOfSale = {};
+OB.Customizations.pointOfSale.dialogs = {
+  push: function (kind) {
+    //developers help
+    console.warn('WARNING! OB.Customizations.pointOfSale.dialogs has been deprecated. Use OB.UI.WindowView.registerPopup() instead.');
+    OB.UI.WindowView.registerPopup('OB.OBPOSPointOfSale.UI.PointOfSale', kind);
+  }
+};
+OB.Customizations.pointOfSale.dialogs = OB.Customizations.pointOfSale.dialogs || [];
