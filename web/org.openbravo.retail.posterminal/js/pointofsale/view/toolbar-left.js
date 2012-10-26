@@ -77,7 +77,7 @@ enyo.kind({
         return;
       }
       this.removeClass('paidticket');
-    }, this)
+    }, this);
   }
 });
 
