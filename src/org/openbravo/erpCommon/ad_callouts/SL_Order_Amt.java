@@ -165,6 +165,24 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
       }
     }
 
+    // if taxinclusive field is changed then modify net unit price and gross price
+    if (isGrossUnitPriceChanged || (strChanged.equals("inpcTaxId") && isTaxIncludedPriceList)) {
+      BigDecimal grossAmount = grossUnitPrice.multiply(qtyOrdered).setScale(stdPrecision,
+          RoundingMode.HALF_UP);
+
+      final BigDecimal netUnitPrice = FinancialUtils.calculateNetFromGross(strTaxId, grossAmount,
+          pricePrecision, taxBaseAmt, qtyOrdered);
+
+      priceActual = netUnitPrice;
+      priceStd = netUnitPrice;
+      grossBaseUnitPrice = grossUnitPrice;
+      resultado.append("new Array(\"inpgrosspricestd\", " + grossBaseUnitPrice.toString() + "),");
+
+      resultado.append("new Array(\"inppriceactual\"," + netUnitPrice.toString() + "),");
+      resultado.append("new Array(\"inppricelimit\", " + netUnitPrice.toString() + "),");
+      resultado.append("new Array(\"inppricestd\"," + netUnitPrice.toString() + "),");
+    }
+
     // calculating discount
     if (strChanged.equals("inppricelist") || strChanged.equals("inppriceactual")
         || strChanged.equals("inplinenetamt") || strChanged.equals("inpgrosspricelist")
@@ -267,23 +285,6 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
         resultado.append("new Array('MESSAGE', \""
             + Utility.messageBD(this, "UnderLimitPrice", vars.getLanguage()) + "\")");
       }
-    }
-
-    // if taxinclusive field is changed then modify net unit price and gross price
-    if (isGrossUnitPriceChanged || (strChanged.equals("inpcTaxId") && isTaxIncludedPriceList)) {
-      BigDecimal grossAmount = grossUnitPrice.multiply(qtyOrdered).setScale(stdPrecision,
-          RoundingMode.HALF_UP);
-
-      final BigDecimal netUnitPrice = FinancialUtils.calculateNetFromGross(strTaxId, grossAmount,
-          pricePrecision, taxBaseAmt, qtyOrdered);
-
-      priceActual = netUnitPrice;
-      priceStd = netUnitPrice;
-      resultado.append("new Array(\"inpgrosspricestd\", " + grossUnitPrice.toString() + "),");
-
-      resultado.append("new Array(\"inppriceactual\"," + netUnitPrice.toString() + "),");
-      resultado.append("new Array(\"inppricelimit\", " + netUnitPrice.toString() + "),");
-      resultado.append("new Array(\"inppricestd\"," + netUnitPrice.toString() + "),");
     }
 
     // if net unit price changed then modify tax inclusive unit price
