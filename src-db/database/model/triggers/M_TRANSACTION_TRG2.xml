@@ -29,7 +29,7 @@ BEGIN
   IF (INSERTING) THEN
     IF (:NEW.movementqty < 0) THEN
       -- Check reservations. Reserved stock must be released before inserting the transacion.
-      SELECT COALESCE(sum(rs.quantity -rs.releasedqty), 0), qtyonhand
+      SELECT COALESCE(sum(rs.quantity -rs.releasedqty), 0), sd.qtyonhand
         INTO v_reserved, v_onhand
       FROM m_reservation_stock rs
           JOIN m_reservation r ON rs.m_reservation_id = r.m_reservation_id
@@ -42,7 +42,8 @@ BEGIN
         AND r.m_product_id = :NEW.m_product_id
         AND r.c_uom_id = :NEW.c_uom_id
         AND rs.m_attributesetinstance_id = :NEW.m_attributesetinstance_id
-        AND rs.m_locator_id = :NEW.m_locator_id;
+        AND rs.m_locator_id = :NEW.m_locator_id
+      GROUP BY sd.qtyonhand, sd.m_storage_detail_id;
       IF (v_onhand - v_reserved < ABS(:NEW.movementqty)) THEN
         RAISE_APPLICATION_ERROR(-20000, '@CannotTakeOutReservedStock@');
       END IF;
