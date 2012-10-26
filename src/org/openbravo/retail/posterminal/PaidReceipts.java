@@ -96,9 +96,12 @@ public class PaidReceipts extends JSONProcessSimple {
         boolean hasPromotions = false;
         for (OrderLineOffer promotion : qPromotions.list()) {
           JSONObject jsonPromo = new JSONObject();
-          jsonPromo.put("name", promotion.getPriceAdjustment().getName());
+          String name = promotion.getPriceAdjustment().getPrintName() != null ? promotion
+              .getPriceAdjustment().getPrintName() : promotion.getPriceAdjustment().getName();
+          jsonPromo.put("name", name);
           jsonPromo.put("amt", promotion.getDisplayedTotalAmount());
           jsonPromo.put("actualAmt", promotion.getTotalAmount());
+          jsonPromo.put("hidden", promotion.getDisplayedTotalAmount().equals(BigDecimal.ZERO));
           promotions.put(jsonPromo);
           hasPromotions = true;
         }
