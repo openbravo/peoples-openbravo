@@ -172,6 +172,8 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
       priceActual = netUnitPrice;
       priceStd = netUnitPrice;
 
+      resultado.append("new Array(\"inpgrosspricestd\", " + grossUnitPrice.toString() + "),");
+
       resultado.append("new Array(\"inppriceactual\"," + netUnitPrice.toString() + "),");
       resultado.append("new Array(\"inppricelimit\", " + netUnitPrice.toString() + "),");
       resultado.append("new Array(\"inppricestd\", " + netUnitPrice.toString() + "),");
