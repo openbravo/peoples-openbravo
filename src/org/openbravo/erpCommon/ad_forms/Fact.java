@@ -264,6 +264,9 @@ public class Fact {
     log4jFact.debug("createLine - " + m_doc.DocumentNo);
     log4jFact.debug("********************* Fact - createLine - DocumentNo - " + m_doc.DocumentNo
         + " -  m_lines.size() - " + m_lines.size());
+
+    line.roundToCurrencyPrecision();
+
     m_lines.add(line);
     return line;
   } // createLine
