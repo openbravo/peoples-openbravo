@@ -708,7 +708,7 @@ public class AdvancedQueryBuilder {
         && (operator.equals(OPERATOR_GREATERTHAN) || operator.equals(OPERATOR_GREATEROREQUAL)
             || operator.equals(OPERATOR_IGREATERTHAN) || operator.equals(OPERATOR_IGREATEROREQUAL)
             || operator.equals(OPERATOR_GREATERTHANFIElD) || operator
-            .equals(OPERATOR_GREATEROREQUALFIELD));
+              .equals(OPERATOR_GREATEROREQUALFIELD));
   }
 
   private boolean isLesserOperator(String operator) {
@@ -716,7 +716,7 @@ public class AdvancedQueryBuilder {
         && (operator.equals(OPERATOR_LESSTHAN) || operator.equals(OPERATOR_LESSOREQUAL)
             || operator.equals(OPERATOR_ILESSTHAN) || operator.equals(OPERATOR_ILESSOREQUAL)
             || operator.equals(OPERATOR_LESSTHANFIELD) || operator
-            .equals(OPERATOR_LESSOREQUALFIElD));
+              .equals(OPERATOR_LESSOREQUALFIElD));
   }
 
   private String computeLeftWhereClauseForIdentifier(Property property, String key,
@@ -1188,10 +1188,10 @@ public class AdvancedQueryBuilder {
               + " from " + prop.getTranslationProperty().getEntity().getName() + " as t where t."
               + prop.getTrlParentProperty().getName() + " = "
               + prefix.substring(0, prefix.lastIndexOf('.')) + " and t.language.language='"
-              + OBContext.getOBContext().getLanguage().getLanguage() + "')), to_char(" + prefix
-              + prop.getName() + "), '')");
+              + OBContext.getOBContext().getLanguage().getLanguage() + "')), to_char("
+              + replaceValueWithJoins(prefix + prop.getName()) + "), '')");
         } else {
-          sb.append("COALESCE(to_char(" + prefix + prop.getName() + "),'')");
+          sb.append("COALESCE(to_char(" + replaceValueWithJoins(prefix + prop.getName()) + "),'')");
         }
 
       } else {
@@ -1203,6 +1203,32 @@ public class AdvancedQueryBuilder {
     }
 
     return "(" + sb.toString() + ")";
+  }
+
+  /*
+   * To handle cases where joins are formed but the property path is used to compare with values.
+   * For eg., instead of join_4.description, e.product.attributeSetValue.description is used in
+   * where clause which results in exception when null objects are sub referenced.Refer issue
+   * https://issues.openbravo.com/view.php?id=22007
+   */
+  private String replaceValueWithJoins(String value) {
+    String query = value;
+    String compare = value.substring(0, value.lastIndexOf(DalUtil.DOT));
+    String properties[] = value.split("\\.");
+    if (properties.length > 2) {
+      for (JoinDefinition join : joinDefinitions) {
+        if (compare.contains("join")) {
+          if (properties[0].equalsIgnoreCase(join.ownerAlias)) {
+            return join.joinAlias + DalUtil.DOT + properties[properties.length - 1];
+          }
+        } else {
+          if (compare.equalsIgnoreCase(getMainAlias() + DalUtil.DOT + join.property)) {
+            return join.joinAlias + DalUtil.DOT + properties[properties.length - 1];
+          }
+        }
+      }
+    }
+    return query;
   }
 
   /**
