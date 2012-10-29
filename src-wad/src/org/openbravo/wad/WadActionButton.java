@@ -524,7 +524,7 @@ class WadActionButton {
       html.append("xmlDocument.setParameter(\"processDescription\", \"" + strAux + "\");\n");
       html.append("xmlDocument.setParameter(\"docaction\", (strdocaction.equals(\"--\")?\"CL\":strdocaction));\n");
       html.append("FieldProvider[] dataDocAction = ActionButtonUtility.docAction(this, vars, strdocaction, \""
-          + fd.adReferenceValueId + "\", strdocstatus, strProcessing, stradTableId);\n");
+          + fd.adReferenceValueId + "\", strdocstatus, strProcessing, stradTableId, tabId);\n");
       html.append("xmlDocument.setData(\"reportdocaction\", \"liststructure\", dataDocAction);\n");
       html.append("StringBuffer dact = new StringBuffer();\n");
       html.append("if (dataDocAction!=null) {\n");

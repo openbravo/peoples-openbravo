@@ -71,6 +71,8 @@ public class OBQuery<E extends BaseOBObject> {
   private int maxResult = -1;
   private int fetchSize = -1;
 
+  private String selectClause;
+
   // package visible
   OBQuery() {
   }
@@ -352,11 +354,11 @@ public class OBQuery<E extends BaseOBObject> {
 
     final String result;
     if (alias != null) {
-      result = "select " + alias + " from " + getEntity().getName() + " " + aliasJoinClause + " "
-          + whereClause + orderByClause;
+      result = "select " + (selectClause == null ? alias : selectClause) + " from "
+          + getEntity().getName() + " " + aliasJoinClause + " " + whereClause + orderByClause;
     } else {
-      result = "from " + getEntity().getName() + " " + aliasJoinClause + " " + whereClause
-          + orderByClause;
+      result = (selectClause == null ? "" : "select " + selectClause) + "from "
+          + getEntity().getName() + " " + aliasJoinClause + " " + whereClause + orderByClause;
     }
     log.debug("Created query string " + result);
     return result;
@@ -617,5 +619,13 @@ public class OBQuery<E extends BaseOBObject> {
 
   public void setFetchSize(int fetchSize) {
     this.fetchSize = fetchSize;
+  }
+
+  public String getSelectClause() {
+    return selectClause;
+  }
+
+  public void setSelectClause(String selectClause) {
+    this.selectClause = selectClause;
   }
 }

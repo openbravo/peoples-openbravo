@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -39,6 +39,7 @@ import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.invoice.Invoice;
+import org.openbravo.model.common.plm.Product;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -156,14 +157,16 @@ public class SL_Invoice_Product extends HttpSecureAppServlet {
         resultado.append("new Array(\"inpmAttributesetinstanceId_R\", \""
             + FormatUtilities.replaceJS(dataPAttr[0].description) + "\"),");
       }
+      resultado.append("new Array(\"inpattributeset\", \""
+          + FormatUtilities.replaceJS(dataPAttr[0].mAttributesetId) + "\"),\n");
+      resultado.append("new Array(\"inpattrsetvaluetype\", \""
+          + FormatUtilities.replaceJS(dataPAttr[0].attrsetvaluetype) + "\"),\n");
     } else {
       resultado.append("new Array(\"inpmAttributesetinstanceId\", \"\"),");
       resultado.append("new Array(\"inpmAttributesetinstanceId_R\", \"\"),");
+      resultado.append("new Array(\"inpattributeset\", \"\"),\n");
+      resultado.append("new Array(\"inpattrsetvaluetype\", \"\"),\n");
     }
-    resultado.append("new Array(\"inpattributeset\", \""
-        + FormatUtilities.replaceJS(dataPAttr[0].mAttributesetId) + "\"),\n");
-    resultado.append("new Array(\"inpattrsetvaluetype\", \""
-        + FormatUtilities.replaceJS(dataPAttr[0].attrsetvaluetype) + "\"),\n");
     String strHasSecondaryUOM = SLOrderProductData.hasSecondaryUOM(this, strMProductID);
     resultado.append("new Array(\"inphasseconduom\", " + strHasSecondaryUOM + "),\n");
     resultado.append("new Array(\"inpcCurrencyId\", "
@@ -177,7 +180,51 @@ public class SL_Invoice_Product extends HttpSecureAppServlet {
 
       resultado.append(", new Array(\"inpcTaxId\", \"" + strCTaxID + "\")");
     }
+    if (!"".equals(strCInvoiceID)) {
+      Invoice inv = OBDal.getInstance().get(Invoice.class, strCInvoiceID);
+      if (inv.isSalesTransaction() && !"".equals(strMProductID)) {
+        Product product = OBDal.getInstance().get(Product.class, strMProductID);
+        if (product.isDeferredRevenue()) {
+          resultado.append(", new Array(\"inpisdeferredrevenue\", \""
+              + (product.isDeferredRevenue() ? "Y" : "N") + "\")");
+          resultado.append(", new Array(\"inprevplantype\", \"" + product.getRevenuePlanType()
+              + "\")");
+          resultado.append(", new Array(\"inpperiodnumber\", \"" + product.getPeriodNumber()
+              + "\")");
+        } else {
+          resultado.append(", new Array(\"inpisdeferredrevenue\", \"N\")");
+          resultado.append(", new Array(\"inprevplantype\", \"\")");
+          resultado.append(", new Array(\"inpperiodnumber\", \"\")");
+        }
+        resultado.append(", new Array(\"inpisdeferredexpense\", \"N\")");
+        resultado.append(", new Array(\"inpexpplantype\", \"\")");
+        resultado.append(", new Array(\"inpperiodnumberExp\", \"\")");
+      } else if (!inv.isSalesTransaction() && !"".equals(strMProductID)) {
+        Product product = OBDal.getInstance().get(Product.class, strMProductID);
+        resultado.append(", new Array(\"inpisdeferredrevenue\", \"N\")");
+        resultado.append(", new Array(\"inprevplantype\", \"\")");
+        resultado.append(", new Array(\"inpperiodnumber\", \"\")");
+        if (product.isDeferredexpense()) {
+          resultado.append(", new Array(\"inpisdeferredexpense\", \""
+              + (product.isDeferredexpense() ? "Y" : "N") + "\")");
+          resultado.append(", new Array(\"inpexpplantype\", \"" + product.getExpplantype() + "\")");
+          resultado.append(", new Array(\"inpperiodnumberExp\", \"" + product.getPeriodnumberExp()
+              + "\")");
+        } else {
+          resultado.append(", new Array(\"inpisdeferredexpense\", \"N\")");
+          resultado.append(", new Array(\"inpexpplantype\", \"\")");
+          resultado.append(", new Array(\"inpperiodnumberExp\", \"\")");
+        }
+      } else {
+        resultado.append(", new Array(\"inpisdeferredrevenue\", \"N\")");
+        resultado.append(", new Array(\"inprevplantype\", \"\")");
+        resultado.append(", new Array(\"inpperiodnumber\", \"\")");
 
+        resultado.append(", new Array(\"inpisdeferredexpense\", \"N\")");
+        resultado.append(", new Array(\"inpexpplantype\", \"\")");
+        resultado.append(", new Array(\"inpperiodnumberExp\", \"\")");
+      }
+    }
     resultado.append(", new Array(\"inpmProductUomId\", ");
     // if (strUOM.startsWith("\""))
     // strUOM=strUOM.substring(1,strUOM.length()-1);
@@ -200,8 +247,7 @@ public class SL_Invoice_Product extends HttpSecureAppServlet {
       resultado.append("new Array(");
       for (int i = 0; i < tld.length; i++) {
         resultado.append("new Array(\"" + tld[i].getField("id") + "\", \""
-            + FormatUtilities.replaceJS(tld[i].getField("name")) + "\", \""
-            + (i == 0 ? "true" : "false") + "\")");
+            + FormatUtilities.replaceJS(tld[i].getField("name")) + "\", \"false\")");
         if (i < tld.length - 1)
           resultado.append(",\n");
       }

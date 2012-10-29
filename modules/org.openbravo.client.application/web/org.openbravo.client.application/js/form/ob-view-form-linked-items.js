@@ -224,7 +224,7 @@ isc.OBLinkedItemLayout.addProperties({
    * Opens linked item in a new window
    */
   openLinkedItemInNewWindow: function (record) {
-    OB.Utilities.openView(record.adWindowId, record.adTabId, record.adMenuName, record.id, 'DIRECT', null, record.readOnly, record.singleRecord, true);
+    OB.Utilities.openView(record.adWindowId, record.adTabId, record.adMenuName, record.id, 'DIRECT', null, record.readOnly, record.singleRecord, true, record.editOrDeleteOnly);
   },
 
   /**

@@ -108,6 +108,7 @@ the outputted value is already covered by a default.
         </#if>
         <#if field.showSummary>
             showGridSummary: true,
+            showGroupSummary: true,
             <#if field.summaryFunction != "">
               summaryFunction: ${field.summaryFunction},
             <#else>

@@ -237,7 +237,7 @@ isc.OBQuickLaunch.addProperties({
             isc.OBQuickRun.currentQuickRun.doHide();
             var openObject = isc.addProperties({}, record);
             if (record.optionType && record.optionType === 'tab') {
-              openObject = OB.Utilities.openView(record.windowId, viewValue, record[OB.Constants.IDENTIFIER], null, this.command, record.icon, record.readOnly, record.singleRecord);
+              openObject = OB.Utilities.openView(record.windowId, viewValue, record[OB.Constants.IDENTIFIER], null, this.command, record.icon, record.readOnly, record.singleRecord, null, record.editOrDeleteOnly);
               if (openObject) {
                 OB.RecentUtilities.addRecent(this.recentPropertyName, openObject);
               }

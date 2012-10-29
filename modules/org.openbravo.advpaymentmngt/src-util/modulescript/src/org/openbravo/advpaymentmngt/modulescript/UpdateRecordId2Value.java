@@ -31,7 +31,9 @@ public class UpdateRecordId2Value extends ModuleScript {
   public void execute() {
     try {
       ConnectionProvider cp = getConnectionProvider();
-      UpdateRecordId2ValueData.update(cp);
+      if(UpdateRecordId2ValueData.selectCheck(cp)){
+        UpdateRecordId2ValueData.update(cp);
+      }
     } catch (Exception e) {
       handleError(e);
     }

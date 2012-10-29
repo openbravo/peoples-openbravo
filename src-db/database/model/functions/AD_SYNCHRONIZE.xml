@@ -233,8 +233,11 @@
                             AND T.AD_PACKAGE_ID = PA.AD_PACKAGE_ID
                             AND MT.AD_MODULE_ID = PA.AD_MODULE_ID                                                    
                             AND P.AD_MODULE_DBPREFIX_ID = (SELECT MAX(AD_MODULE_DBPREFIX_ID)
-                                                            FROM AD_MODULE_DBPREFIX P1
-                                                          WHERE P1.AD_MODULE_ID = C.Ad_MODULE_ID))
+								FROM AD_MODULE_DBPREFIX P1
+								WHERE P1.AD_MODULE_ID = C.Ad_MODULE_ID
+								AND ((instr(upper(C.columnname), 'EM_'||upper(P1.name)||'_') = 1)
+								OR (MT.AD_MODULE_ID = C.AD_MODULE_ID))
+								))
     WHERE AD_Element_ID IS NULL
       AND EXISTS (SELECT 1 
                     FROM AD_MODULE M

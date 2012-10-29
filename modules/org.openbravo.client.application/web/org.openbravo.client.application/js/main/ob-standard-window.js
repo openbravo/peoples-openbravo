@@ -55,7 +55,14 @@ isc.OBStandardWindow.addProperties({
   // in the window
   dirtyEditForm: null,
 
+  allowDelete: 'Y',
+
+  allowAttachment: 'Y',
+
   initWidget: function () {
+    var me = this,
+        callback;
+
     this.views = [];
 
     this.windowLayout = isc.VLayout.create({
@@ -88,6 +95,8 @@ isc.OBStandardWindow.addProperties({
       this.viewProperties.allowDefaultEditMode = false;
     }
     this.viewState = OB.PropertyStore.get('OBUIAPP_GridConfiguration', this.windowId);
+    this.allowDelete = OB.PropertyStore.get("AllowDelete", this.windowId);
+    this.allowAttachment = OB.PropertyStore.get("AllowAttachment", this.windowId);
     this.view = isc.OBStandardView.create(this.viewProperties);
     this.addView(this.view);
     this.windowLayout.addMember(this.view);
@@ -104,7 +113,11 @@ isc.OBStandardWindow.addProperties({
     if (!this.getClass().windowSettingsRead) {
       this.readWindowSettings();
     } else if (this.getClass().windowSettingsCached) {
-      this.setWindowSettings(this.getClass().windowSettingsCached);
+      callback = function () {
+        me.setWindowSettings(me.getClass().windowSettingsCached);
+      };
+      this.fireOnPause('setWindowSettings_' + this.ID, callback);
+
     } else if (this.getClass().personalization) {
       this.setPersonalization(this.getClass().personalization);
     }
@@ -373,6 +386,7 @@ isc.OBStandardWindow.addProperties({
     for (i = 0; i < length; i++) {
       this.views[i].setReadOnly(data.uiPattern[this.views[i].tabId] === isc.OBStandardView.UI_PATTERN_READONLY);
       this.views[i].setSingleRecord(data.uiPattern[this.views[i].tabId] === isc.OBStandardView.UI_PATTERN_SINGLERECORD);
+      this.views[i].setEditOrDeleteOnly(data.uiPattern[this.views[i].tabId] === isc.OBStandardView.UI_PATTERN_EDITORDELETEONLY);
       this.views[i].toolBar.updateButtonState(true);
     }
 
@@ -927,7 +941,7 @@ isc.OBStandardWindow.addProperties({
   },
 
   closeClick: function (tab, tabSet) {
-    if (!this.activeView.viewForm.hasChanged && this.activeView.viewForm.isNew) {
+    if ((!this.activeView || !this.activeView.viewForm.hasChanged) && this.activeView.viewForm.isNew) {
       this.view.standardWindow.setDirtyEditForm(null);
     }
 

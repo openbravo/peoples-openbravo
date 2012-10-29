@@ -468,7 +468,6 @@ function callBackProperOption(paramXMLParticular, XMLHttpRequestObj) {
     try {
       if (XMLHttpRequestObj.responseText) {
     	strText = XMLHttpRequestObj.responseText;
-    	debugger;
         createCombo(document.getElementById('paramActionDocument'), strText);
 	    document.getElementById('client_top_popup').style.display = 'block';
         document.getElementById('client_top').style.display = 'none';

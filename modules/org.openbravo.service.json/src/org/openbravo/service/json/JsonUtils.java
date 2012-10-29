@@ -34,6 +34,7 @@ import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.base.structure.IdentifierProvider;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
@@ -49,6 +50,24 @@ import org.openbravo.service.db.DalConnectionProvider;
  */
 public class JsonUtils {
   private static final Logger log = Logger.getLogger(JsonUtils.class);
+
+  /**
+   * A utility method which retrieves the properties used for identifying an entity and its first
+   * level references. Takes into accoun the different scenarios implemented in the
+   * {@link IdentifierProvider#getIdentifier(Object)} method.
+   * 
+   * Is used by distinct queries to get the smallest possible select clauses.
+   */
+  public static List<Property> getIdentifierSet(Property property) {
+    final List<Property> properties = new ArrayList<Property>();
+    final Entity entity = property.getTargetEntity();
+    properties.addAll(entity.getIdProperties());
+    properties.addAll(entity.getIdentifierProperties());
+    if (property.hasDisplayColumn()) {
+      properties.add(entity.getProperty(property.getDisplayPropertyName()));
+    }
+    return properties;
+  }
 
   /**
    * @return a new instance of the {@link SimpleDateFormat} using a format of yyyy-MM-dd (xml schema

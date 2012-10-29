@@ -24,6 +24,8 @@
   <PARAMETER id="paramDirectory" name="directory" default=""/>
   <PARAMETER id="paramMessage" name="paramMessage" attribute="onload" replace="xx();"/>
   <PARAMETER id="paramLanguage" name="paramLanguage" default=""/>
+  <PARAMETER id="paramDate_From" name="dateFrom"  default=""/>
+  <PARAMETER id="paramDate_To" name="dateTo"  default=""/>
   <PARAMETER id="paramDateFrom" name="dateFrom" attribute="value"/>
   <PARAMETER id="paramDateFrom" name="dateFromdisplayFormat" attribute="displayformat" replace="xx"/>
   <PARAMETER id="paramDateFrom" name="dateFromsaveFormat" attribute="saveformat" replace="yy"/>

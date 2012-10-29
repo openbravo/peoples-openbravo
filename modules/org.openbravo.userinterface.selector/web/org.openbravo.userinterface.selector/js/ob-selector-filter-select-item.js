@@ -16,38 +16,9 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-isc.ClassFactory.defineClass('OBSelectorFilterSelectItem', isc.SelectItem);
+isc.ClassFactory.defineClass('OBSelectorFilterSelectItem', isc.OBFKFilterTextItem);
 
 isc.OBSelectorFilterSelectItem.addProperties({
-  fetchMissingValues: true,
-  operator: 'equals',
-  valueField: OB.Constants.ID,
-
-  init: function () {
-    OB.Datasource.get(this.entity, this);
-    this.Super('init', arguments);
-  },
-
-  // prevent ids from showing up
-  mapValueToDisplay: function (value) {
-    var ret = this.Super('mapValueToDisplay', arguments);
-    if (ret === value) {
-      return '';
-    }
-    return ret;
-  },
-
-  setDataSource: function (ds) {
-    var val;
-    this.optionDataSource = ds;
-    if (this.getValue()) {
-      val = this.getValue();
-      // first clear 
-      this.setValue(null);
-      // then set again to force a load
-      this.setValue(val);
-    }
-  },
 
   filterDataBoundPickList: function (requestProperties, dropCache) {
     requestProperties = requestProperties || {};

@@ -91,7 +91,8 @@ public class YesNoUIDefinition extends UIDefinition {
 
   @Override
   public String getGridFieldProperties(Field field) {
-    return super.getGridFieldProperties(field) + ", width: '*', autoFitWidth: false, yesNo: true";
+    return super.getGridFieldProperties(field)
+        + ", canGroupBy: false, width: '*', autoFitWidth: false, yesNo: true";
   }
 
   @Override

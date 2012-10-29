@@ -59,10 +59,14 @@ isc.OBGrid.addProperties({
     showRollOver: false
   },
   summaryRowHeight: 22,
+  groupSummaryStyle: 'OBGridSummaryCell',
   summaryRowStyle: 'OBGridSummaryCell',
+  summaryRowStyle_min: 'OBGridSummaryCell_min',
+  summaryRowStyle_max: 'OBGridSummaryCell_max',
   summaryRowStyle_sum: 'OBGridSummaryCell_sum',
   summaryRowStyle_avg: 'OBGridSummaryCell_avg',
   summaryRowStyle_count: 'OBGridSummaryCell_count',
+  groupNodeStyle: 'OBGridSummaryCell',
 
   progressIconDefaults: {
     width: 16,

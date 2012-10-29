@@ -63,12 +63,15 @@ public class DataToJsonConverter {
   // TODO: need to be revisited when client side data formatting is solved
   private final SimpleDateFormat xmlDateFormat = JsonUtils.createDateFormat();
   private final SimpleDateFormat xmlDateTimeFormat = JsonUtils.createDateTimeFormat();
-  private final static SimpleDateFormat xmlTimeFormat = JsonUtils.createTimeFormat();
+  // private final static SimpleDateFormat xmlTimeFormat = JsonUtils.createTimeFormat();
   private final static SimpleDateFormat xmlTimeFormatWithoutMTOffset = JsonUtils
       .createTimeFormatWithoutGMTOffset();
 
   // additional properties to return as a flat list
   private List<String> additionalProperties = new ArrayList<String>();
+
+  // limit the json serialization to these properties
+  private List<String> selectedProperties = new ArrayList<String>();
 
   /**
    * Convert a list of Maps with key value pairs to a list of {@link JSONObject}.
@@ -149,6 +152,12 @@ public class DataToJsonConverter {
         if (isDerivedReadable && !property.allowDerivedRead()) {
           continue;
         }
+
+        // check if the property is part of the selection
+        if (selectedProperties.size() > 0 && !selectedProperties.contains(property.getName())) {
+          continue;
+        }
+
         final Object value = bob.get(property.getName());
         if (value != null) {
           if (property.isPrimitive()) {
@@ -334,5 +343,15 @@ public class DataToJsonConverter {
 
   public void setAdditionalProperties(List<String> additionalProperties) {
     this.additionalProperties = additionalProperties;
+  }
+
+  public void setSelectedProperties(String selectedPropertiesStr) {
+    if (selectedPropertiesStr == null || selectedPropertiesStr.trim().isEmpty()) {
+      return;
+    }
+    for (String selectedProp : selectedPropertiesStr.split(",")) {
+      if (!selectedProp.isEmpty())
+        selectedProperties.add(selectedProp);
+    }
   }
 }

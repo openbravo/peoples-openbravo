@@ -35,7 +35,10 @@ isc.OBViewGrid.addClassProperties({
     CANCEL: 4,
     SEPARATOR2: 5,
     SAVE: 6
-  }
+  },
+
+  SUPPORTED_SUMMARY_FUNCTIONS: ['count', 'avg', 'min', 'max', 'sum']
+
 });
 
 if (!isc.Browser.isIE) {
@@ -73,7 +76,7 @@ isc.OBViewGrid.addProperties({
     canHide: false,
     showTitle: true,
     title: '&nbsp;',
-    //autoFitWidth: true,
+    // autoFitWidth: true,
     canDragResize: false,
     canFilter: true,
     autoExpand: false,
@@ -105,7 +108,12 @@ isc.OBViewGrid.addProperties({
   canFreezeFields: true,
   canAddFormulaFields: true,
   canAddSummaryFields: true,
-  canGroupBy: false,
+
+  canGroupBy: true,
+  showGroupSummaryInHeader: true,
+  showGroupSummary: true,
+  showGroupTitleColumn: false,
+  groupByMaxRecords: 1000,
   selectionAppearance: 'checkbox',
   arrowKeyAction: 'select',
   useAllDataSourceFields: false,
@@ -114,6 +122,8 @@ isc.OBViewGrid.addProperties({
   canOpenRecordEditor: true,
   showDetailFields: true,
   showErrorIcons: false,
+  ungroupText: OB.I18N.getLabel('OBUIAPP_ungroup'),
+  groupByText: OB.I18N.getLabel('OBUIAPP_GroupBy'),
 
   allowFilterExpressions: true,
   showFilterExpressionLegendMenuItem: true,
@@ -138,11 +148,11 @@ isc.OBViewGrid.addProperties({
 
   // commented out because of: https://issues.openbravo.com/view.php?id=16515
   // default is much smaller which give smoother scrolling
-  //  quickDrawAheadRatio: 1.0,
-  //drawAheadRatio: 2.0,
+  // quickDrawAheadRatio: 1.0,
+  // drawAheadRatio: 2.0,
   // see this discussion:
   // http://forums.smartclient.com/showthread.php?t=16376
-  //scrollRedrawDelay: 20,
+  // scrollRedrawDelay: 20,
   // note: don't set drawAllMaxCells too high as it results in extra reads
   // of data, Smartclient will try to read until drawAllMaxCells has been
   // reached
@@ -176,22 +186,24 @@ isc.OBViewGrid.addProperties({
   // the smartclient forum:
   // http://forums.smartclient.com/showthread.php?p=63146
   showAllColumns: true,
-  //showGridSummary: true,
+  // showGridSummary: true,
   timeFormatter: 'to24HourTime',
 
   dataProperties: {
-    // this means that after an update/add the new/updated row does not fit 
+    // this means that after an update/add the new/updated row does not fit
     // in the current filter criteria then they are still shown
     // note that if this is set to false that when using the _dummy criteria
-    // that the _dummy criteria can mean that new/updated records are not 
+    // that the _dummy criteria can mean that new/updated records are not
     // shown in the grid
     neverDropUpdatedRows: true,
     useClientFiltering: false,
     useClientSorting: false,
+    fetchDelay: 300,
 
     // overridden to update the context/request properties for the fetch
     fetchRemoteData: function (serverCriteria, startRow, endRow) {
-      var requestProperties = this.context;
+      // clone to prevent side effects
+      var requestProperties = isc.clone(this.context);
       this.grid.getFetchRequestParams(requestProperties.params);
 
       return this.Super('fetchRemoteData', arguments);
@@ -218,7 +230,7 @@ isc.OBViewGrid.addProperties({
         }
       }
       // only do this stuff for fetch operations, in other cases strange things
-      // happen as update/delete operations do not return the totalRows parameter      
+      // happen as update/delete operations do not return the totalRows parameter
       if (dsResponse && dsResponse.context && dsResponse.context.operationType !== 'fetch') {
         return newData;
       }
@@ -233,9 +245,9 @@ isc.OBViewGrid.addProperties({
           }
         }
 
-        // get rid of old loading markers, this has to be done explicitly 
+        // get rid of old loading markers, this has to be done explicitly
         // as we can return another rowset than requested
-        // call with a delay otherwise the grid will keep requesting rows while processing the 
+        // call with a delay otherwise the grid will keep requesting rows while processing the
         // current rowset
         this.delayCall('clearLoadingMarkers', [dsResponse.context.startRow, dsResponse.context.endRow], 100);
       }
@@ -249,10 +261,80 @@ isc.OBViewGrid.addProperties({
   initWidget: function () {
     var i, vwState;
 
-    // make a copy of the dataProperties otherwise we get 
+    // make a copy of the dataProperties otherwise we get
     // change results that values of one grid are copied/coming back
     // in other grids
     this.dataProperties = isc.addProperties({}, this.dataProperties);
+
+    // override setSort to sort by group title when the grouped by 
+    // column is clicked
+    this.groupTreeProperties = {
+      grid: this,
+
+      // always return all records
+      getRange: function (start, end) {
+        return this.getOpenList(
+        this.root, this.openDisplayNodeType, null, this.sortDirection, this.openListCriteria, null, true).slice(start, end);
+      },
+
+      setSort: function (sortSpecifier) {
+        var i, fld, sortSpec = isc.clone(sortSpecifier),
+            flds = this.grid.getAllFields(),
+            groupByFields = this.grid.getGroupByFields();
+
+        if (groupByFields && sortSpec && sortSpec[0]) {
+          for (i = 0; i < flds.length; i++) {
+            fld = flds[i];
+            if (groupByFields.contains(fld.name) && (fld.name === sortSpec[0].property || fld.displayField === sortSpec[0].property)) {
+              sortSpec[0].property = 'groupValue';
+              break;
+            }
+          }
+        }
+
+        return this.Super('setSort', [sortSpec]);
+      }
+    };
+
+    // re-use getCellValue to handle count and related functions
+    this.summaryRowProperties = {
+      cellHoverHTML: this.cellHoverHTML,
+
+      getCellAlign: function (record, rowNum, colNum) {
+        var fld = this.getFields()[colNum],
+            isRTL = this.isRTL(),
+            func = this.getGridSummaryFunction(fld),
+            isSummary = record && (record[this.groupSummaryRecordProperty] || record[this.gridSummaryRecordProperty]);
+
+        // the count of a character column should also be right aligned
+        if (isSummary && func === 'count') {
+          return isRTL ? isc.Canvas.LEFT : isc.Canvas.RIGHT;
+        }
+
+        return this.Super('getCellAlign', arguments);
+      },
+
+      // only set active view but don't do any context menu
+      cellContextClick: function () {
+        this.view.setAsActiveView();
+        return false;
+      },
+
+      view: this.view,
+
+      getCellValue: function (record, recordNum, fieldNum, gridBody) {
+        var field = this.getField(fieldNum),
+            func = this.getGridSummaryFunction(field),
+            value = record && field ? (field.displayField ? record[field.displayField] : record[field.name]) : null;
+        // handle count much simpler than smartclient does
+        // so no extra titles or formatting
+        if (record && func === 'count' && value >= 0) {
+          return value;
+        }
+
+        return this.Super('getCellValue', arguments);
+      }
+    };
 
     var thisGrid = this,
         localEditLinkField;
@@ -302,7 +384,7 @@ isc.OBViewGrid.addProperties({
 
     // TODO: add dynamic part of readonly (via setWindowSettings: see issue 17441)
     // add context-menu only if 'new' is allowed in tab definition
-    if (this.uiPattern !== 'SR' && this.uiPattern !== 'RO') {
+    if (this.uiPattern !== 'SR' && this.uiPattern !== 'RO' && this.uiPattern !== 'ED') {
       this.contextMenu = this.getMenuConstructor().create({
         items: menuItems
       });
@@ -311,6 +393,9 @@ isc.OBViewGrid.addProperties({
         // If not in the header tab, and no parent is selected, do not show the context menu
         // See issue https://issues.openbravo.com/view.php?id=21787
         if (!grid.view.hasValidState()) {
+          return;
+        }
+        if (grid.isGrouped) {
           return;
         }
         if (!grid.view.isActiveView()) {
@@ -327,6 +412,13 @@ isc.OBViewGrid.addProperties({
     }
 
     var ret = this.Super('initWidget', arguments);
+
+    // only show summary rows if there are summary functions
+    for (i = 0; i < this.getFields().length; i++) {
+      if (this.getFields()[i].summaryFunction) {
+        this.showGridSummary = true;
+      }
+    }
 
     // only personalize if there is a professional license
     if (!OB.Utilities.checkProfessionalLicense(null, true)) {
@@ -348,6 +440,284 @@ isc.OBViewGrid.addProperties({
     this.Super('clearFilter', arguments);
   },
 
+  // select the first field after the frozen fields
+  // as the one to use for grouping headers
+  getGroupTitleField: function () {
+    var frozenFields = this.frozenFields;
+    if (frozenFields) {
+      // first field after frozen section
+      return this.getField(frozenFields.length).name;
+    }
+    // field number 2 is the first one after the standard frozen section
+    return this.getField(2).name;
+  },
+
+  // prevent a jscript error if there are no group summary functions
+  getGroupSummaryData: function () {
+    var ret = this.Super('getGroupSummaryData', arguments);
+    if (isc.isAn.Array(ret) && !ret[0]) {
+      return [{}];
+    }
+    return ret;
+  },
+
+  // Overridden to sort before grouping, so that groups are sorted
+  // and open initial group, move the group field to the left,
+  // or put it back when ungrouping
+  groupBy: function (fields) {
+    var fld, currentGroupByFields, currentGroupByField;
+
+    // move the current group column to where it came from
+    currentGroupByFields = this.getGroupByFields();
+
+    // no changes go away
+    if (!currentGroupByFields && !fields) {
+      return;
+    } else if (fields === currentGroupByFields) {
+      return;
+    }
+
+    if (currentGroupByFields && currentGroupByFields[0]) {
+      currentGroupByField = this.getField(currentGroupByFields[0]);
+      currentGroupByField.canReorder = true;
+      currentGroupByField.canHide = true;
+      this.reorderField(this.getFieldNum(currentGroupByField), currentGroupByField.previousFieldNum);
+    }
+
+    // first sort so that groups are correctly sorted
+    if (fields) {
+      if (isc.isAn.Array(fields)) {
+        fld = fields[0];
+      } else {
+        fld = fields;
+      }
+      this.getField(fld).previousFieldNum = this.getFieldNum(fld);
+      fld = this.getField(fld);
+      fld.canReorder = false;
+      fld.canHide = false;
+      this.reorderField(this.getFieldNum(fld), 0);
+      this.sort(fld);
+    }
+
+    this.Super('groupBy', arguments);
+
+    this.view.toolBar.updateButtonState(true);
+
+    // when there was already a group open, changing the group by
+    // starts with all groups closed, explicitly open the first group
+    if (fields && currentGroupByFields) {
+      this.openInitialGroups();
+    }
+
+    this.view.standardWindow.storeViewState();
+  },
+
+  clearGroupBy: function () {
+    var currentGroupByFields, currentGroupByField;
+
+    // reason for clearing was large dataset, tell the user
+    if (this.data && this.data.getLength() > this.groupByMaxRecords) {
+      // move the current group column to where it came from
+      currentGroupByFields = this.getGroupByFields();
+      if (currentGroupByFields && currentGroupByFields[0]) {
+        currentGroupByField = this.getField(currentGroupByFields[0]);
+        currentGroupByField.canReorder = true;
+        currentGroupByField.canHide = true;
+        this.reorderField(this.getFieldNum(currentGroupByField), currentGroupByField.previousFieldNum);
+      }
+
+      this.Super('clearGroupBy');
+
+      this.view.standardWindow.storeViewState();
+
+      isc.say(OB.I18N.getLabel('OBUIAPP_MaxGroupingReached', [this.groupByMaxRecords]));
+    } else {
+      this.Super('clearGroupBy');
+    }
+  },
+
+  // Overrides the standard SC function as that function
+  // also returns the default summary function from the 
+  // type definition. We only want the explicitly set
+  // summary functions.
+  getGridSummaryFunction: function (field) {
+    if (!field) {
+      return;
+    }
+    return field.summaryFunction;
+  },
+
+  // when the summary information changes, refresh
+  // the grid in the correct way
+  setSummaryFunctionActions: function (clear) {
+    var i, noSummaryFunction;
+    if (this.isGrouped) {
+      this.regroup();
+    }
+    if (!clear) {
+      if (!this.showGridSummary) {
+        this.setShowGridSummary(true);
+      }
+      this.recalculateGridSummary();
+    } else if (this.showGridSummary) {
+      noSummaryFunction = true;
+      for (i = 0; i < this.getFields().length; i++) {
+        if (this.summaryFunction) {
+          noSummaryFunction = false;
+          break;
+        }
+      }
+      if (noSummaryFunction) {
+        this.setShowGridSummary(false);
+      } else {
+        this.recalculateGridSummary();
+      }
+    }
+  },
+
+  getHeaderContextMenuItems: function (colNum) {
+    var field = this.getField(colNum),
+        i, summarySubMenu = [],
+        grid = this,
+        groupByFields = this.getGroupByFields(),
+        type, isDate, isNumber, menuItems = this.Super('getHeaderContextMenuItems', arguments);
+
+
+    // remove the group by menu option if the field is grouped 
+    // and it does not have a submenu
+    if (groupByFields && groupByFields.contains(field.name)) {
+      for (i = 0; i < menuItems.length; i++) {
+        if (menuItems[i].groupItem && !menuItems[i].submenu) {
+          menuItems.removeAt(i);
+          break;
+        }
+      }
+    }
+
+    if (field) {
+      type = isc.SimpleType.getType(field.type);
+      isDate = isc.SimpleType.inheritsFrom(type, 'date');
+      isNumber = isc.SimpleType.inheritsFrom(type, 'integer') || isc.SimpleType.inheritsFrom(type, 'float');
+
+      if (isNumber) {
+        summarySubMenu.add({
+          title: OB.I18N.getLabel('OBUIAPP_SummaryFunctionSum'),
+          // enabled: field.summaryFunction != 'sum',
+          checked: field.summaryFunction === 'sum',
+          click: function (target, item) {
+            field.summaryFunction = 'sum';
+            grid.setSummaryFunctionActions();
+          }
+        });
+
+        summarySubMenu.add({
+          title: OB.I18N.getLabel('OBUIAPP_SummaryFunctionAvg'),
+          // enabled: field.summaryFunction != 'avg',
+          checked: field.summaryFunction === 'avg',
+          click: function (target, item) {
+            field.summaryFunction = 'avg';
+            grid.setSummaryFunctionActions();
+          }
+        });
+      }
+
+      summarySubMenu.add({
+        title: OB.I18N.getLabel('OBUIAPP_SummaryFunctionMin'),
+        checked: field.summaryFunction === 'min',
+        click: function (target, item) {
+          field.summaryFunction = 'min';
+          grid.setSummaryFunctionActions();
+        }
+      });
+
+      summarySubMenu.add({
+        title: OB.I18N.getLabel('OBUIAPP_SummaryFunctionMax'),
+        checked: field.summaryFunction === 'max',
+        click: function (target, item) {
+          field.summaryFunction = 'max';
+          grid.setSummaryFunctionActions();
+        }
+      });
+
+      summarySubMenu.add({
+        title: OB.I18N.getLabel('OBUIAPP_SummaryFunctionCount'),
+        // enabled: field.summaryFunction != 'count',
+        checked: field.summaryFunction === 'count',
+        click: function (target, item) {
+          field.summaryFunction = 'count';
+          grid.setSummaryFunctionActions();
+        }
+      });
+
+      menuItems.add({
+        isSeparator: true
+      });
+
+      menuItems.add({
+        groupItem: true,
+        title: OB.I18N.getLabel('OBUIAPP_SetSummaryFunction'),
+        fieldName: field.name,
+        targetField: field,
+        prompt: OB.I18N.getLabel('OBUIAPP_SetSummaryFunction_Description'),
+        canSelectParent: true,
+        submenu: summarySubMenu
+      });
+
+      if (field.summaryFunction) {
+        menuItems.add({
+          title: OB.I18N.getLabel('OBUIAPP_ClearSummaryFunction'),
+          targetField: field,
+          click: function (target, item) {
+            delete field.summaryFunction;
+            grid.setSummaryFunctionActions(true);
+          }
+        });
+      }
+
+      menuItems.add({
+        title: OB.I18N.getLabel('OBUIAPP_ClearSummaries'),
+        targetField: field,
+        click: function (target, item) {
+          var i, fld;
+          for (i = 0; i < grid.getFields().length; i++) {
+            fld = grid.getFields()[i];
+            delete fld.summaryFunction;
+          }
+          grid.setSummaryFunctionActions(true);
+        }
+      });
+    }
+
+    // add the summary functions
+    return menuItems;
+  },
+
+  // overridden to load all data in one request
+  requestVisibleRows: function () {
+    // fake smartclient to think that there groupByMaxRecords + 1 records
+    if (this.data && this.isGrouped && !this.data.allRows) {
+      this.data.totalRows = this.groupByMaxRecords + 1;
+    }
+    this.Super('requestVisibleRows', arguments);
+  },
+
+  // Overridden to make sure that the group header is not shown in
+  // the frozen body
+  getGroupNodeHTML: function (node, gridBody) {
+    var isFrozenBody = this.frozenBody === gridBody;
+    if (this.frozenBody && isFrozenBody) {
+      return this.emptyCellValue;
+    }
+    var state = this.data.isOpen(node) ? 'opened' : 'closed',
+        url = isc.Img.urlForState(this.groupIcon, null, null, state),
+        iconIndent = isc.Canvas.spacerHTML(this.groupIconPadding, 1),
+        groupIndent = isc.Canvas.spacerHTML((this.data.getLevel(node) - 1) * this.groupIndentSize + this.groupLeadingIndent, 1);
+    var img = this.imgHTML(url, this.groupIconSize, this.groupIconSize);
+    var retStr = (this.canCollapseGroup ? groupIndent + img + iconIndent + this.getGroupTitle(node) : groupIndent + iconIndent + this.getGroupTitle(node));
+
+    return retStr;
+  },
+
   filterEditorSubmit: function () {
     // hide the messagebar
     this.view.messageBar.hide();
@@ -355,7 +725,7 @@ isc.OBViewGrid.addProperties({
   },
 
   // destroy the context menu also
-  // see why this needs to be done in the 
+  // see why this needs to be done in the
   // documentation of canvas.contextMenu in Canvas.js
   destroy: function () {
     var i, field, fields = this.getFields(),
@@ -450,10 +820,18 @@ isc.OBViewGrid.addProperties({
   },
 
   getCellAlign: function (record, rowNum, colNum) {
-    var fld = this.getFields()[colNum];
+    var fld = this.getFields()[colNum],
+        isRTL = this.isRTL(),
+        func = this.getGridSummaryFunction(fld),
+        isSummary = record && (record[this.groupSummaryRecordProperty] || record[this.gridSummaryRecordProperty]);
     if (!fld.clientClass && rowNum === this.getEditRow()) {
       return 'center';
     }
+
+    if (isSummary && func === 'count') {
+      return isRTL ? isc.Canvas.LEFT : isc.Canvas.RIGHT;
+    }
+
     return this.Super('getCellAlign', arguments);
   },
 
@@ -472,12 +850,42 @@ isc.OBViewGrid.addProperties({
   },
 
   cellHoverHTML: function (record, rowNum, colNum) {
+
     var ret, field = this.getField(colNum),
         cellErrors, msg = '',
-        i;
+        prefix = '',
+        i, func = this.getGridSummaryFunction(field),
+        isGroupOrSummary = record && (record[this.groupSummaryRecordProperty] || record[this.gridSummaryRecordProperty]);
+
+    if (!record) {
+      return;
+    }
+
+    if (func && (isGroupOrSummary)) {
+      if (func === 'sum') {
+        prefix = OB.I18N.getLabel('OBUIAPP_SummaryFunctionSum');
+      }
+      if (func === 'min') {
+        prefix = OB.I18N.getLabel('OBUIAPP_SummaryFunctionMin');
+      }
+      if (func === 'max') {
+        prefix = OB.I18N.getLabel('OBUIAPP_SummaryFunctionMax');
+      }
+      if (func === 'count') {
+        prefix = OB.I18N.getLabel('OBUIAPP_SummaryFunctionCount');
+      }
+      if (func === 'avg') {
+        prefix = OB.I18N.getLabel('OBUIAPP_SummaryFunctionAvg');
+      }
+      if (prefix) {
+        prefix = prefix + ' ';
+      }
+    }
+
     if (this.isCheckboxField(field)) {
       return OB.I18N.getLabel('OBUIAPP_GridSelectColumnPrompt');
     }
+
     if (this.cellHasErrors(rowNum, colNum)) {
       cellErrors = this.getCellErrors(rowNum, colNum);
       // note cellErrors can be a string or array
@@ -493,7 +901,7 @@ isc.OBViewGrid.addProperties({
     this.inCellHoverHTML = true;
     ret = this.Super('cellHoverHTML', arguments);
     delete this.inCellHoverHTML;
-    return ret;
+    return prefix + (ret ? ret : '');
   },
 
   reorderField: function (fieldNum, moveToPosition) {
@@ -534,13 +942,24 @@ isc.OBViewGrid.addProperties({
 
   // also store the filter criteria
   getViewState: function (returnObject, includeFilter) {
-    var state = this.Super('getViewState', [returnObject || true]);
+    var i, fld, state = this.Super('getViewState', [returnObject || true]);
 
     if (includeFilter) {
       state.filter = this.getCriteria();
 
       if (!this.filterClause) {
         state.noFilterClause = true;
+      }
+    }
+
+    // set summary information, can not be stored in the field state
+    // because smartclient does not provide a nice override point
+    // when setting the fieldstate back to also set the summary function
+    state.summaryFunctions = {};
+    for (i = 0; i < this.getAllFields().length; i++) {
+      fld = this.getAllFields()[i];
+      if (fld.summaryFunction && isc.isA.String(fld.summaryFunction)) {
+        state.summaryFunctions[fld.name] = fld.summaryFunction;
       }
     }
 
@@ -556,7 +975,8 @@ isc.OBViewGrid.addProperties({
   },
 
   setViewState: function (state) {
-    var localState;
+    var localState, i, fld, hasSummaryFunction;
+
     localState = this.evalViewState(state, 'viewState');
 
     // strange case, sometimes need to call twice
@@ -574,7 +994,21 @@ isc.OBViewGrid.addProperties({
       delete localState.selected;
       this.deselectAllRecords();
 
-      // remove focus as this results in blur behavior before the 
+      if (localState.summaryFunctions) {
+        hasSummaryFunction = false;
+        for (i = 0; i < this.getAllFields().length; i++) {
+          fld = this.getAllFields()[i];
+          if (localState.summaryFunctions[fld.name]) {
+            hasSummaryFunction = true;
+            fld.summaryFunction = localState.summaryFunctions[fld.name];
+          } else {
+            delete fld.summaryFunction;
+          }
+        }
+        this.setShowGridSummary(hasSummaryFunction);
+      }
+
+      // remove focus as this results in blur behavior before the
       // (filter)editor is redrawn with new fields when
       // doing setviewstate
       // https://issues.openbravo.com/view.php?id=21249
@@ -608,7 +1042,43 @@ isc.OBViewGrid.addProperties({
     }
   },
 
-  //Deletes the implicit filter on the selected record of the parent
+  // overridden to also store the group mode
+  // http://forums.smartclient.com/showthread.php?p=93877#post93877
+  getGroupState: function () {
+    var i, fld, state = this.Super('getGroupState', arguments),
+        result = {};
+    result.groupByFields = state;
+    result.groupingModes = {};
+    for (i = 0; i < this.getFields().length; i++) {
+      fld = this.getFields()[i];
+      if (fld.groupingMode) {
+        result.groupingModes[fld.name] = fld.groupingMode;
+      }
+    }
+    return result;
+  },
+
+  setGroupState: function (state) {
+    var i, fld, key;
+    if (state && (state.groupByFields || state.groupByFields === '')) {
+      if (state.groupingModes) {
+        for (key in state.groupingModes) {
+          if (state.groupingModes.hasOwnProperty(key)) {
+            fld = this.getField(key);
+            if (fld) {
+              fld.groupingMode = state.groupingModes[key];
+            }
+          }
+        }
+      }
+      this.Super('setGroupState', [state.groupByFields]);
+    } else {
+      // older state definition
+      this.Super('setGroupState', arguments);
+    }
+  },
+
+  // Deletes the implicit filter on the selected record of the parent
   deleteSelectedParentRecordFilter: function (state) {
     var i, filterLength, filterItem;
     if (state.filter) {
@@ -616,7 +1086,7 @@ isc.OBViewGrid.addProperties({
       for (i = 0; i < filterLength; i++) {
         filterItem = state.filter.criteria[i];
         if (filterItem.fieldName === this.view.parentProperty) {
-          //This way it is ensured that the sub tabs will not show the registers associated with
+          // This way it is ensured that the sub tabs will not show the registers associated with
           // the register of its parent tab that was selected when the filter was created
           state.filter.criteria[i].value = '-1';
           break;
@@ -625,8 +1095,38 @@ isc.OBViewGrid.addProperties({
     }
   },
 
+  getSummaryRowDataSource: function () {
+    if (this.getSummarySettings()) {
+      return this.getDataSource();
+    }
+  },
+
+  getSummaryRowFetchRequestConfig: function () {
+    var fld, i, summary = this.getSummarySettings(),
+        config = this.Super('getSummaryRowFetchRequestConfig', arguments);
+    if (summary) {
+      config.params = config.params || {};
+      config.params._summary = summary;
+      config.params = this.getFetchRequestParams(config.params);
+    }
+    return config;
+  },
+
+  getSummarySettings: function () {
+    var fld, i, summary;
+
+    for (i = 0; i < this.getFields().length; i++) {
+      fld = this.getFields()[i];
+      if (fld.summaryFunction && isc.OBViewGrid.SUPPORTED_SUMMARY_FUNCTIONS.contains(fld.summaryFunction)) {
+        summary = summary || {};
+        summary[fld.displayField || fld.name] = fld.summaryFunction;
+      }
+    }
+    return summary;
+  },
+
   setView: function (view) {
-    var dataPageSizeaux, length, i, crit;
+    var dataPageSizeaux, length, i, crit, groupByMaxRecords;
 
     this.view = view;
 
@@ -637,8 +1137,8 @@ isc.OBViewGrid.addProperties({
       this.getField(this.view.parentProperty).canEdit = false;
     }
 
-    //// Begins-added to have the additional filter clause and tabid..Mallikarjun M
-    //URL example:http://localhost:8080/openbravo/?tabId=186&filterClause=e.businessPartner.searchKey%3D%27mcgiver%27&replaceDefaultFilter=true&
+    // Begins-added to have the additional filter clause and tabid..Mallikarjun M
+    // URL example:http://localhost:8080/openbravo/?tabId=186&filterClause=e.businessPartner.searchKey%3D%27mcgiver%27&replaceDefaultFilter=true&
     if (this.view.tabId === this.view.standardWindow.additionalFilterTabId) {
 
       if (!this.filterClause || this.view.standardWindow.replaceDefaultFilter === 'true') {
@@ -647,7 +1147,7 @@ isc.OBViewGrid.addProperties({
         this.filterClause = '((' + this.filterClause + ') and (' + unescape(this.view.standardWindow.additionalFilterClause) + '))';
       }
     }
-    //// Ends..
+    // Ends..
     if (this.view.tabId === this.view.standardWindow.additionalCriteriaTabId && this.view.standardWindow.additionalCriteria) {
       crit = isc.JSON.decode(unescape(this.view.standardWindow.additionalCriteria));
       this.setCriteria(crit);
@@ -667,9 +1167,13 @@ isc.OBViewGrid.addProperties({
         }
       }
     }
-    //Modify the quantity of lines to count per Window
-    dataPageSizeaux = OB.PropertyStore.get('dataPageSize', this.view.windowId);
+    // Modify the quantity of lines to count per Window
+    dataPageSizeaux = OB.PropertyStore.get('dataPageSize', this.view.standardWindow.windowId);
     this.dataPageSize = dataPageSizeaux ? +dataPageSizeaux : 100;
+
+    groupByMaxRecords = OB.PropertyStore.get('OBUIAPP_GroupingMaxRecords', this.view.standardWindow.windowId);
+    this.groupByMaxRecords = groupByMaxRecords ? +groupByMaxRecords : 1000;
+    this.canGroupBy = 'Y' === OB.PropertyStore.get('OBUIAPP_GroupingEnabled', this.view.standardWindow.windowId);
   },
 
   show: function () {
@@ -761,7 +1265,7 @@ isc.OBViewGrid.addProperties({
         if (editRow) {
           me.startEditing(editRow - 1);
         }
-        return false; //To avoid keyboard shortcut propagation
+        return false; // To avoid keyboard shortcut propagation
       } else {
         return true;
       }
@@ -778,7 +1282,7 @@ isc.OBViewGrid.addProperties({
         if (editRow || editRow === 0) {
           me.startEditing(editRow + 1);
         }
-        return false; //To avoid keyboard shortcut propagation
+        return false; // To avoid keyboard shortcut propagation
       } else {
         return true;
       }
@@ -790,7 +1294,7 @@ isc.OBViewGrid.addProperties({
     ksAction_CancelEditing = function () {
       if (me.getEditForm()) {
         me.cancelEditing();
-        return false; //To avoid keyboard shortcut propagation
+        return false; // To avoid keyboard shortcut propagation
       } else {
         return true;
       }
@@ -801,7 +1305,7 @@ isc.OBViewGrid.addProperties({
       var isDeletingEnabled = !me.view.toolBar.getLeftMember(isc.OBToolbar.TYPE_DELETE).disabled;
       if (me.getSelectedRecords().length > 0 && isDeletingEnabled) {
         me.view.deleteSelectedRows();
-        return false; //To avoid keyboard shortcut propagation
+        return false; // To avoid keyboard shortcut propagation
       } else {
         return true;
       }
@@ -812,7 +1316,7 @@ isc.OBViewGrid.addProperties({
       if (me.getSelectedRecords().length === 1) {
         me.endEditing();
         me.startEditing(me.getRecordIndex(me.getSelectedRecords()[0]));
-        return false; //To avoid keyboard shortcut propagation
+        return false; // To avoid keyboard shortcut propagation
       } else {
         return true;
       }
@@ -823,7 +1327,7 @@ isc.OBViewGrid.addProperties({
       if (me.getSelectedRecords().length === 1) {
         me.endEditing();
         me.view.editRecord(me.getSelectedRecords()[0]);
-        return false; //To avoid keyboard shortcut propagation
+        return false; // To avoid keyboard shortcut propagation
       } else {
         return true;
       }
@@ -879,7 +1383,7 @@ isc.OBViewGrid.addProperties({
       return;
     }
     var newValue = '',
-        length = this.data.getLength();
+        length = isc.isA.Tree(this.data) ? this.countGroupContent() : this.data.getLength();
     if (length > this.dataPageSize) {
       newValue = '>' + this.dataPageSize;
     } else if (length === 0) {
@@ -891,6 +1395,17 @@ isc.OBViewGrid.addProperties({
       this.filterEditor.getEditForm().setValue(isc.OBViewGrid.EDIT_LINK_FIELD_NAME, newValue);
       this.filterEditor.getEditForm().getField(isc.OBViewGrid.EDIT_LINK_FIELD_NAME).defaultValue = newValue;
     }
+  },
+
+  countGroupContent: function () {
+    var i, cnt = 0,
+        data = this.data.getRange(0, this.groupByMaxRecords + 1);
+    for (i = 0; i < data.length; i++) {
+      if (!data[i].isFolder) {
+        cnt++;
+      }
+    }
+    return cnt;
   },
 
   refreshContents: function (callback) {
@@ -932,7 +1447,7 @@ isc.OBViewGrid.addProperties({
   dataArrived: function (startRow, endRow) {
     // do this now, to replace the loading message
     // TODO: add dynamic part of readonly (via setWindowSettings: see issue 17441)
-    if (this.uiPattern === 'SR' || this.uiPattern === 'RO') {
+    if (this.uiPattern === 'SR' || this.uiPattern === 'RO' || this.uiPattern !== 'ED') {
       this.noDataEmptyMessage = '<span class="' + this.emptyMessageStyle + '">' + OB.I18N.getLabel('OBUIAPP_NoDataInGrid') + '</span>';
     } else {
       this.noDataEmptyMessage = '<span class="' + this.emptyMessageStyle + '">' + OB.I18N.getLabel('OBUIAPP_GridNoRecords') + '</span>' + '<span onclick="this.onclick = new Function(); setTimeout(function() { window[\'' + this.ID + '\'].view.newRow(); }, 50); return false;" class="' + this.emptyMessageLinkStyle + '">' + OB.I18N.getLabel('OBUIAPP_GridCreateOne') + '</span>';
@@ -1010,14 +1525,6 @@ isc.OBViewGrid.addProperties({
     return ret;
   },
 
-  // overridden to prevent the filter editor fields from using the 
-  // grids datasource
-  getFilterEditorProperties: function (field) {
-    return isc.addProperties({
-      optionDataSource: null
-    }, this.Super('getFilterEditorProperties', arguments));
-  },
-
   removeOrClause: function (criteria) {
     // The original criteria is stored in the position #0
     // The criteria to select the recently created records is stored in position #1..length-1
@@ -1061,7 +1568,6 @@ isc.OBViewGrid.addProperties({
           value: newRecordsToBeIncluded[i]
         });
       }
-
 
       this._criteriaWithOrClause = true;
       criteria._constructor = 'AdvancedCriteria';
@@ -1320,10 +1826,10 @@ isc.OBViewGrid.addProperties({
           internalCriteria.removeAt(i);
         } else {
           var fieldName;
-          //The first name a date time field is filtered, the fieldName is stored in criteria.criteria[i].criteria[0].fieldName
+          // The first name a date time field is filtered, the fieldName is stored in criteria.criteria[i].criteria[0].fieldName
           if (criteria.criteria[i].criteria && criteria.criteria[i].criteria[0]) {
             fieldName = criteria.criteria[i].criteria[0].fieldName;
-          } else { //After the first time, the fieldName is stored in criteria.criteria[i].fieldName
+          } else { // After the first time, the fieldName is stored in criteria.criteria[i].fieldName
             fieldName = criteria.criteria[i].fieldName;
           }
 
@@ -1363,7 +1869,7 @@ isc.OBViewGrid.addProperties({
         this.filterClause = null;
       }
 
-      // this mode means that no parent is selected but the parent needs to be 
+      // this mode means that no parent is selected but the parent needs to be
       // determined from the target record and the parent property
       if (this.isOpenDirectMode && this.view.parentView) {
         params._filterByParentProperty = this.view.parentProperty;
@@ -1470,7 +1976,7 @@ isc.OBViewGrid.addProperties({
       parentIsNew = parentIsNew || (selectedValues.length === 1 && selectedValues[0]._new);
       if (parentIsNew) {
         this.emptyMessage = '<span class="' + this.emptyMessageStyle + '">' + OB.I18N.getLabel('OBUIAPP_ParentIsNew') + '</span>';
-      } else if (selectedValues.length === 0) {
+      } else if (!selectedValues || selectedValues.length === 0) {
         this.emptyMessage = '<span class="' + this.emptyMessageStyle + '">' + OB.I18N.getLabel('OBUIAPP_NoParentSelected') + '</span>';
       } else if (selectedValues.length > 1) {
         this.emptyMessage = '<span class="' + this.emptyMessageStyle + '">' + OB.I18N.getLabel('OBUIAPP_MultipleParentsSelected') + '</span>';
@@ -1485,6 +1991,7 @@ isc.OBViewGrid.addProperties({
 
   // +++++++++++++++++++++++++++++ Context menu on record click +++++++++++++++++++++++
   cellContextClick: function (record, rowNum, colNum) {
+    var isGroupOrSummary = record && (record[this.groupSummaryRecordProperty] || record[this.gridSummaryRecordProperty]);
 
     // don't do anything if right-clicking on a selected record
     if (!this.isSelected(record)) {
@@ -1492,6 +1999,11 @@ isc.OBViewGrid.addProperties({
     }
 
     this.view.setAsActiveView();
+
+    if (isGroupOrSummary) {
+      return false;
+    }
+
     var ret = this.Super('cellContextClick', arguments);
     return ret;
   },
@@ -1527,7 +2039,7 @@ isc.OBViewGrid.addProperties({
       });
     }
 
-    if (!this.view.singleRecord && !this.view.readOnly) {
+    if (!this.view.singleRecord && !this.view.readOnly && !this.isGrouped && !this.view.editOrDeleteOnly) {
       menuItems.add({
         title: OB.I18N.getLabel('OBUIAPP_CreateRecordInGrid'),
         keyTitle: OB.KeyboardManager.Shortcuts.getProperty('keyComb.text', 'ToolBar_NewRow', 'id'),
@@ -1552,7 +2064,7 @@ isc.OBViewGrid.addProperties({
           if (isc.isA.Date(value) && field.filterEditorType === 'OBMiniDateRangeItem') {
             grid.filterEditor.getEditForm().getField(field.name).setSingleDateValue(value);
           } else {
-            grid.filterEditor.getEditForm().setValue(field.name, value);
+            grid.filterEditor.getEditForm().setValue(field.name, OB.Utilities.encodeSearchOperator(value));
           }
           var criteria = grid.filterEditor.getEditForm().getValuesAsCriteria();
           grid.checkShowFilterFunnelIcon(criteria);
@@ -1573,7 +2085,7 @@ isc.OBViewGrid.addProperties({
         }
       });
     }
-    if (this.view.isDeleteableTable && recordsSelected && !this.view.readOnly && !this.view.singleRecord && this.allSelectedRecordsWritable()) {
+    if (this.view.isDeleteableTable && recordsSelected && !this.view.readOnly && !this.view.singleRecord && this.allSelectedRecordsWritable() && (this.view.standardWindow.allowDelete !== 'N')) {
       menuItems.add({
         title: OB.I18N.getLabel('OBUIAPP_Delete'),
         keyTitle: OB.KeyboardManager.Shortcuts.getProperty('keyComb.text', 'ToolBar_Eliminate', 'id'),
@@ -1826,10 +2338,29 @@ isc.OBViewGrid.addProperties({
   // overridden to prevent the checkbox to be shown when only one
   // record is selected.
   getCellValue: function (record, recordNum, fieldNum, gridBody) {
-    var field = this.fields[fieldNum];
+    var field = this.fields[fieldNum],
+        value, isEditRow = (recordNum === this.getEditRow()),
+        wasGrouped, func = this.getGridSummaryFunction(field),
+        isGroupOrSummary = record && (record[this.groupSummaryRecordProperty] || record[this.gridSummaryRecordProperty]);
+
+    // no checkbox in checkbox column for summary row
+    if (isGroupOrSummary && this.isCheckboxField(field)) {
+      return '';
+    }
+
     if (!field || this.allSelected) {
       return this.Super('getCellValue', arguments);
     }
+
+    if (isGroupOrSummary) {
+      // handle count much simpler than smartclient does
+      // so no extra titles or formatting
+      if (!this.getGroupByFields().contains(field.name) && func === 'count' && (record[field.name] === 0 || record[field.name])) {
+        return record[field.name];
+      }
+      return this.Super('getCellValue', arguments);
+    }
+
     // do all the cases which are handled in the super directly
     if (this.isCheckboxField(field)) {
       // NOTE: code copied from super class
@@ -1852,7 +2383,16 @@ isc.OBViewGrid.addProperties({
 
       return html;
     } else {
-      return this.Super('getCellValue', arguments);
+      // prevent group style behavior for edit rows
+      if (isEditRow && this.isGrouped) {
+        wasGrouped = true;
+        this.isGrouped = false;
+      }
+      value = this.Super('getCellValue', arguments);
+      if (wasGrouped) {
+        this.isGrouped = true;
+      }
+      return value;
     }
   },
 
@@ -1952,7 +2492,7 @@ isc.OBViewGrid.addProperties({
       id: '_' + new Date().getTime()
     };
 
-    this.data.insertCacheData(record, rowNum);
+    this.addToCacheData(record, rowNum);
     this.scrollToRow(rowNum);
     this.updateRowCountDisplay();
     this.view.toolBar.updateButtonState(true);
@@ -1961,11 +2501,17 @@ isc.OBViewGrid.addProperties({
     this.markForRedraw();
   },
 
+  addToCacheData: function (record, rowNum) {
+    // originalData is used when the grid is grouped
+    var data = this.originalData || this.data;
+    data.insertCacheData(record, rowNum);
+  },
+
   editFailed: function (rowNum, colNum, newValues, oldValues, editCompletionEvent, dsResponse, dsRequest) {
     var record = this.getRecord(rowNum),
         editRow, editSession, view = this.view;
 
-    // set the default error message, 
+    // set the default error message,
     // is possibly overridden in the next call
     if (record) {
       if (!record[isc.OBViewGrid.ERROR_MESSAGE_PROP]) {
@@ -1998,7 +2544,13 @@ isc.OBViewGrid.addProperties({
     var record = this.getRecord(rowNum),
         editRow, editSession, autoSaveAction, keepSelection;
 
-    // a new id has been computed use that now    
+    // this happens when the record change causes a group name
+    // change and therefore a group collapse
+    if (!record) {
+      return;
+    }
+
+    // a new id has been computed use that now
     if (record && record._newId) {
       record.id = record._newId;
       delete record._newId;
@@ -2079,7 +2631,7 @@ isc.OBViewGrid.addProperties({
       return record[this.recordCustomStyleProperty];
     }
 
-    if (!this.view.isActiveView() && record[this.selection.selectionProperty]) {
+    if (!this.view.isActiveView() && record && record[this.selection.selectionProperty]) {
       return this.recordStyleSelectedViewInActive;
     }
 
@@ -2199,7 +2751,7 @@ isc.OBViewGrid.addProperties({
     // how many arguments are passed on, sometimes the newValue is not passed in
     // and then it must be recomputed, so if we then use the undefined newValue
     // in the actionObject below things will go wrong
-    if (arguments.length < 2) {
+    if (arguments.length < 2 && this.view.allowNewRow()) {
       newValue = this.getEditValue(rowNum, colNum);
     }
 
@@ -2244,7 +2796,7 @@ isc.OBViewGrid.addProperties({
     var ret, i, length = this.getFields().length;
     this._inGetNextEditCell = true;
     // past the last row
-    if (editCompletionEvent === isc.ListGrid.ENTER_KEYPRESS && rowNum === (this.getTotalRows() - 1)) {
+    if (editCompletionEvent === isc.ListGrid.ENTER_KEYPRESS && rowNum === (this.getTotalRows() - 1) && this.view.allowNewRow()) {
       // move to the next row
       ret = this.findNextEditCell(rowNum + 1, 0, 1, true, true);
 
@@ -2262,12 +2814,17 @@ isc.OBViewGrid.addProperties({
 
     // when moving between rows with the arrow keys, force the focus in the correct 
     // column
-    if (ret && ret[0] !== rowNum && this.getField(colNum) && (editCompletionEvent === isc.ListGrid.UP_ARROW_KEYPRESS || editCompletionEvent === isc.ListGrid.DOWN_ARROW_KEYPRESS)) {
+    if (ret && ret[0] !== rowNum && this.getField(colNum) && (editCompletionEvent === isc.ListGrid.UP_ARROW_KEYPRESS || editCompletionEvent === isc.ListGrid.DOWN_ARROW_KEYPRESS) && this.view.allowNewRow()) {
       this.forceFocusColumn = this.getField(colNum).name;
     }
 
     delete this._inGetNextEditCell;
     return ret;
+  },
+
+  //used in Edit or Delete only UI pattern
+  setListEndEditAction: function () {
+    this.listEndEditAction = "done";
   },
 
   // overridden to take into account disabled at item level
@@ -2719,9 +3276,10 @@ isc.OBViewGrid.addProperties({
   // +++++++++++++++++ functions for the edit-link column +++++++++++++++++
   createRecordComponent: function (record, colNum) {
     var fld = this.getFields()[colNum],
+        isSummary = record[this.groupSummaryRecordProperty],
         canvas, rowNum = this.getRecordIndex(record),
         isEditRecord = rowNum === this.getEditRow();
-    if (this.isEditLinkColumn(colNum)) {
+    if (!isSummary && this.isEditLinkColumn(colNum)) {
       var layout = isc.OBGridButtonsComponent.create({
         record: record,
         grid: this

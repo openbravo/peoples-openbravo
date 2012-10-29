@@ -40,6 +40,7 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.enterprise.DocumentType;
+import org.openbravo.model.financialmgmt.gl.GLItem;
 import org.openbravo.model.financialmgmt.payment.FIN_BankStatement;
 import org.openbravo.model.financialmgmt.payment.FIN_BankStatementLine;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
@@ -316,6 +317,41 @@ public class MatchTransactionDao {
     if (transactionDate != null) {
       whereClause.append("   and ft.").append(FIN_FinaccTransaction.PROPERTY_TRANSACTIONDATE);
       whereClause.append(" = ?");
+      parameters.add(transactionDate);
+    }
+    final OBQuery<FIN_FinaccTransaction> obData = OBDal.getInstance().createQuery(
+        FIN_FinaccTransaction.class, whereClause.toString());
+    obData.setParameters(parameters);
+    List<FIN_FinaccTransaction> result = obData.list();
+    result.removeAll(excluded);
+    return result;
+  }
+
+  public static List<FIN_FinaccTransaction> getMatchingGLItemTransaction(
+      String strFinancialAccountId, GLItem glItem, Date transactionDate, BigDecimal amount,
+      List<FIN_FinaccTransaction> excluded) {
+    final StringBuilder whereClause = new StringBuilder();
+    final List<Object> parameters = new ArrayList<Object>();
+
+    whereClause.append(" as ft ");
+    whereClause.append(" where ft.").append(FIN_FinaccTransaction.PROPERTY_ACCOUNT);
+    whereClause.append(".id = '").append(strFinancialAccountId).append("'");
+    whereClause.append("   and ft.").append(FIN_FinaccTransaction.PROPERTY_RECONCILIATION);
+    whereClause.append(" is null");
+    whereClause.append("   and ft.").append(FIN_FinaccTransaction.PROPERTY_PROCESSED)
+        .append(" = true");
+    whereClause.append("   and ft.").append(FIN_FinaccTransaction.PROPERTY_GLITEM);
+    whereClause.append(" = ?");
+    parameters.add(glItem);
+    whereClause.append("   and ft.").append(FIN_FinaccTransaction.PROPERTY_STATUS);
+    whereClause.append(" <> 'RPPC' ");
+    whereClause.append("   and (ft.").append(FIN_FinaccTransaction.PROPERTY_DEPOSITAMOUNT);
+    whereClause.append(" - ").append(FIN_FinaccTransaction.PROPERTY_PAYMENTAMOUNT).append(")");
+    whereClause.append(" = ?");
+    parameters.add(amount);
+    if (transactionDate != null) {
+      whereClause.append("   and ft.").append(FIN_FinaccTransaction.PROPERTY_TRANSACTIONDATE);
+      whereClause.append(" <= ?");
       parameters.add(transactionDate);
     }
     final OBQuery<FIN_FinaccTransaction> obData = OBDal.getInstance().createQuery(

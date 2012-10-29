@@ -71,6 +71,7 @@ isc.OBStandardView.addClassProperties({
 
   UI_PATTERN_READONLY: 'RO',
   UI_PATTERN_SINGLERECORD: 'SR',
+  UI_PATTERN_EDITORDELETEONLY: 'ED',
   UI_PATTERN_STANDARD: 'ST'
 });
 
@@ -185,6 +186,7 @@ isc.OBStandardView.addProperties({
 
   readOnly: false,
   singleRecord: false,
+  editOrDeleteOnly: false,
 
   isShowingForm: false,
   isEditingGrid: false,
@@ -652,8 +654,22 @@ isc.OBStandardView.addProperties({
     }
   },
 
+  setEditOrDeleteOnly: function (editOrDeleteOnly) {
+    this.editOrDeleteOnly = editOrDeleteOnly;
+    if (editOrDeleteOnly) {
+      this.viewGrid.setListEndEditAction();
+    }
+  },
+
   setSingleRecord: function (singleRecord) {
     this.singleRecord = singleRecord;
+  },
+
+  allowNewRow: function () {
+    if (this.readOnly || this.singleRecord || this.editOrDeleteOnly) {
+      return false;
+    }
+    return true;
   },
 
   setViewFocus: function () {
@@ -675,6 +691,9 @@ isc.OBStandardView.addProperties({
     }
 
     if (this.isShowingForm && this.viewForm) {
+      if (!this.lastFocusedItem) {
+        this.lastFocusedItem = this.viewForm.getItem(this.firstFocusedField);
+      }
       if (this.lastFocusedItem && this.lastFocusedItem.getCanFocus()) {
         object = this.lastFocusedItem;
       } else if (this.viewForm.getFocusItem() && this.viewForm.getFocusItem().getCanFocus()) {
@@ -1128,19 +1147,46 @@ isc.OBStandardView.addProperties({
 
   // go to a next or previous record, if !next then the previous one is used
   editNextPreviousRecord: function (next) {
-    var rowNum, newRowNum, newRecord, currentSelectedRecord = this.viewGrid.getSelectedRecord();
+    var rowNum, increment, newRowNum, newRecord, currentSelectedRecord = this.viewGrid.getSelectedRecord();
     if (!currentSelectedRecord) {
       return;
     }
     rowNum = this.viewGrid.data.indexOf(currentSelectedRecord);
     if (next) {
-      newRowNum = rowNum + 1;
+      increment = 1;
     } else {
-      newRowNum = rowNum - 1;
+      increment = -1;
     }
+
+    newRowNum = rowNum + increment;
     newRecord = this.viewGrid.getRecord(newRowNum);
     if (!newRecord) {
       return;
+    }
+    // a group and moving back, go back one more
+    if (newRecord.isFolder && increment < 0) {
+      newRowNum = newRowNum + increment;
+      newRecord = this.viewGrid.getRecord(newRowNum);
+    }
+    if (!newRecord) {
+      return;
+    }
+    if (newRecord.isFolder) {
+      if (!this.viewGrid.groupTree.isOpen(newRecord)) {
+        this.viewGrid.groupTree.openFolder(newRecord);
+      }
+      if (increment < 0) {
+        // previous, pick the last from the group
+        newRecord = newRecord.groupMembers[newRecord.groupMembers.length - 1];
+        newRowNum = this.viewGrid.getRecordIndex(newRecord);
+      } else {
+        // next, pick the first from the group
+        newRowNum = newRowNum + increment;
+        newRecord = this.viewGrid.getRecord(newRowNum);
+      }
+      if (!newRecord) {
+        return;
+      }
     }
     this.viewGrid.scrollRecordToTop(newRowNum);
     this.editRecord(newRecord);
@@ -2224,9 +2270,16 @@ isc.OBStandardView.addProperties({
         fld.filterEditorType = type.filterEditorType;
       }
 
+      if (!fld.filterEditorProperties) {
+        fld.filterEditorProperties = {};
+      }
+
       if (fld.fkField) {
         fld.displayField = fld.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER;
         fld.valueField = fld.name;
+        fld.filterOnKeypress = false;
+        fld.filterEditorProperties.displayField = OB.Constants.IDENTIFIER;
+        fld.filterEditorProperties.valueField = OB.Constants.IDENTIFIER;
       }
 
       if (fld.validationFn) {
@@ -2241,10 +2294,22 @@ isc.OBStandardView.addProperties({
         });
       }
 
-      if (!fld.filterEditorProperties) {
-        fld.filterEditorProperties = {};
-      }
       fld.filterEditorProperties.required = false;
+
+      // get rid of illegal summary functions
+      if (fld.summaryFunction && !isc.OBViewGrid.SUPPORTED_SUMMARY_FUNCTIONS.contains(fld.summaryFunction)) {
+        delete fld.summaryFunction;
+      }
+
+      // add grouping stuff
+      if (type.inheritsFrom === 'float' || type.inheritsFrom === 'integer') {
+        // this is needed because of a bug in smartclient in Listgrid
+        // only groupingmodes on type level are considered
+        // http://forums.smartclient.com/showthread.php?p=91605#post91605
+        isc.addProperties(type, OB.Utilities.Number.Grouping);
+        // so can't define on field level 
+        //      isc.addProperties(fld, OB.Utilities.Number.Grouping);
+      }
 
       result.push(fld);
     }

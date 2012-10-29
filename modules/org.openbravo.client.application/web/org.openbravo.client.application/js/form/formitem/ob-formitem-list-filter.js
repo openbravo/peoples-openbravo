@@ -27,24 +27,31 @@ isc.OBListFilterItem.addProperties({
   operator: 'equals',
   validateOnExit: false,
   validateOnChange: false,
-  filterOnKeypress: false,
+  filterOnKeypress: true,
   addUnknownValues: false,
 
-  init: function () {
-    if (this.valueMap) {
-      // add the empty value in this way to make sure that the 
-      // space is shown first
-      this.valueMap = isc.addProperties({
-        '': ''
-      }, this.valueMap);
-    }
-    this.Super('init', arguments);
+  defaultToFirstOption: false,
+
+  multiple: true,
+  multipleAppearance: 'picklist',
+  multipleValueSeparator: ' or ',
+
+  // remove the width so that smartclient will autoflow the content
+  // will make sure that the picklist is resized.
+  // http://forums.smartclient.com/showthread.php?p=93868#post93868
+  getPickListFields: function () {
+    var ret = this.Super('getPickListFields', arguments);
+    delete ret[0].width;
+    return ret;
   },
 
-  setValueMap: function (valueMap) {
-    this.Super('setValueMap', [isc.addProperties({
-      '': ''
-    }, valueMap)]);
+  // overridden to prevent selection of first item
+  selectDefaultItem: function () {},
+
+  showPickList: function () {
+    var ret = this.Super('showPickList', arguments);
+
+    this.selectItemFromValue(this.getValue());
   },
 
   // note: can't override changed as it is used by the filter editor 

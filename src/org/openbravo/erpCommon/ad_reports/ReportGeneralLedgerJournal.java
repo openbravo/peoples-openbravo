@@ -21,15 +21,26 @@ package org.openbravo.erpCommon.ad_reports;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesHistory;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.businessUtility.AccountingSchemaMiscData;
 import org.openbravo.erpCommon.businessUtility.Tree;
 import org.openbravo.erpCommon.businessUtility.TreeData;
@@ -41,6 +52,9 @@ import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.common.enterprise.DocumentType;
+import org.openbravo.model.financialmgmt.accounting.coa.AcctSchema;
+import org.openbravo.model.financialmgmt.accounting.coa.AcctSchemaTable;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
@@ -306,6 +320,17 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
     } else if (vars.commandIn("NEXT_RELATION")) {
       vars.setSessionValue("ReportGeneralLedgerJournal.initRecordNumberOld", "-1");
       response.sendRedirect(strDireccion + request.getServletPath());
+    } else if (vars.commandIn("DOC")) {
+      String org = vars.getStringParameter("inpOrg");
+      String accSchema = vars.getStringParameter("inpcAcctSchemaId");
+      List<DocumentType> doctype = getDocuments(org, accSchema);
+      String combobox = getJSONComboBox(doctype, null, false);
+
+      response.setContentType("text/html; charset=UTF-8");
+      PrintWriter out = response.getWriter();
+      out.println("objson = " + combobox);
+      out.close();
+
     } else
       pageError(response);
   }
@@ -403,7 +428,8 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
             Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
             Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
             strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strDocument,
-            strcAcctSchemaId, strOrgFamily, strCheck, initRecordNumber, intRecordRangeUsed);
+            strcAcctSchemaId, strOrgFamily, strCheck, vars.getLanguage(), initRecordNumber,
+            intRecordRangeUsed);
         if (data != null && data.length > 0)
           strPosition = ReportGeneralLedgerJournalData.selectCount(this,
               Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
@@ -443,7 +469,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
             strFactAcctGroupId, data[0].dateacct, data[0].identifier);
     }
     if (data == null || data.length == 0) {
-      String discard[] = { "sectionSchema" };
+      String discard[] = { "secTable" };
       toolbar
           .prepareRelationBarTemplate(false, false,
               "submitCommandForm('XLS', false, null, 'ReportGeneralLedgerJournal.xls', 'EXCEL');return false;");
@@ -453,6 +479,8 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
       data = ReportGeneralLedgerJournalData.set("0");
       data[0].rownum = "0";
     } else {
+
+      data = notshow(data, vars);
       boolean hasPrevious = !(data == null || data.length == 0 || initRecordNumber <= 1);
       boolean hasNext = !(data == null || data.length == 0 || lastRecordNumber >= totalAcctEntries);
       toolbar
@@ -553,9 +581,20 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
     xmlDocument.setParameter("showOpening", ("".equals(strShowOpening)) ? "N" : strShowOpening);
     xmlDocument.setParameter("showDescription", ("".equals(strShowDescription)) ? "N"
         : strShowDescription);
+
     xmlDocument.setData("structure1", data);
     out.println(xmlDocument.print());
     out.close();
+  }
+
+  private ReportGeneralLedgerJournalData[] notshow(ReportGeneralLedgerJournalData[] data,
+      VariablesSecureApp vars) {
+    for (int i = 0; i < data.length - 1; i++) {
+      if (data[i].identifier.toString().equals(data[i + 1].identifier.toString())) {
+        data[i + 1].newstyle = "visibility: hidden";
+      }
+    }
+    return data;
   }
 
   private void printPagePDF(HttpServletResponse response, VariablesSecureApp vars,
@@ -583,7 +622,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
           Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
           Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"), strDateFrom,
           DateTimeData.nDaysAfter(this, strDateTo, "1"), strDocument, strcAcctSchemaId,
-          strOrgFamily, strCheck);
+          strOrgFamily, strCheck, vars.getLanguage());
     } else
       data = ReportGeneralLedgerJournalData.selectDirect(this,
           ("".equals(strShowDescription)) ? "ACCTDESCRIPTION" : "DESCRIPTION",
@@ -591,15 +630,25 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
           Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"), strTable,
           strRecord);
 
-    String strSubtitle = Utility.messageBD(this, "CompanyName", vars.getLanguage()) + ": "
-        + ReportGeneralLedgerJournalData.selectCompany(this, vars.getClient());
+    String strSubtitle = (Utility.messageBD(this, "LegalEntity", vars.getLanguage()) + ": ")
+        + ReportGeneralLedgerJournalData.selectCompany(this, vars.getClient()) + "\n";
+    ;
 
     if (!("0".equals(strOrg)))
-      strSubtitle += " - " + ReportGeneralLedgerJournalData.selectOrg(this, strOrg);
+      strSubtitle += (Utility.messageBD(this, "OBUIAPP_Organization", vars.getLanguage()) + ": ")
+          + ReportGeneralLedgerJournalData.selectOrg(this, strOrg) + "\n";
 
     if (!"".equals(strDateFrom) || !"".equals(strDateTo))
-      strSubtitle += " - " + Utility.messageBD(this, "Period", vars.getLanguage()) + ": "
-          + strDateFrom + " - " + strDateTo;
+      strSubtitle += (Utility.messageBD(this, "From", vars.getLanguage()) + ": ") + strDateFrom
+          + "  " + (Utility.messageBD(this, "OBUIAPP_To", vars.getLanguage()) + ": ") + strDateTo
+          + "\n";
+
+    if (!"".equals(strcAcctSchemaId)) {
+      AcctSchema financialMgmtAcctSchema = OBDal.getInstance().get(AcctSchema.class,
+          strcAcctSchemaId);
+      strSubtitle += Utility.messageBD(this, "accountingSchema", vars.getLanguage()) + ": "
+          + financialMgmtAcctSchema.getName();
+    }
 
     String strOutput;
     String strReportName;
@@ -617,7 +666,8 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
     parameters.put("InitialBalance", new BigDecimal(strInitialBalance));
     parameters.put("InitialEntryNumber", strEntryNo);
     parameters.put("TaxID", ReportGeneralLedgerJournalData.selectOrgTaxID(this, strOrg));
-    renderJR(vars, response, strReportName, strOutput, parameters, data, null);
+    renderJR(vars, response, strReportName, "JournalEntriesReport", strOutput, parameters, data,
+        null);
   }
 
   private String getFamily(String strTree, String strChild) throws IOException, ServletException {
@@ -647,6 +697,80 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
       }
     }
     return strCheck;
+  }
+
+  private <T extends BaseOBObject> String getJSONComboBox(List<T> obObjectList,
+      String selectedValue, boolean isMandatory) {
+
+    JSONObject json = new JSONObject();
+    JSONArray select = new JSONArray();
+    Map<String, String> attr = null;
+    try {
+      int i = 0;
+      if (!isMandatory) {
+        attr = new HashMap<String, String>();
+        attr.put("value", "");
+        attr.put("selected", "false");
+        attr.put("text", "");
+        select.put(i, attr);
+        i++;
+      }
+      for (T ob : obObjectList) {
+        attr = new HashMap<String, String>();
+        attr.put("value", ob.getId().toString());
+        attr.put("selected", (ob.getId().equals(selectedValue)) ? "true" : "false");
+        attr.put("text", ob.getIdentifier());
+        select.put(i, attr);
+        json.put("optionlist", select);
+        i++;
+      }
+      json.put("ismandatory", String.valueOf(isMandatory));
+
+    } catch (JSONException e) {
+      log4j.error("Error creating JSON object for representing subaccount lines", e);
+    }
+
+    return json.toString();
+  }
+
+  public static List<DocumentType> getDocuments(String org, String accSchema) {
+
+    final StringBuilder whereClause = new StringBuilder();
+    final List<Object> parameters = new ArrayList<Object>();
+    OBContext.setAdminMode();
+    try {
+      // Set<String> orgStrct = OBContext.getOBContext().getOrganizationStructureProvider()
+      // .getChildTree(org, true);
+      Set<String> orgStrct = OBContext.getOBContext().getOrganizationStructureProvider()
+          .getNaturalTree(org);
+      whereClause.append(" as cd ,");
+      whereClause.append(AcctSchemaTable.ENTITY_NAME);
+      whereClause.append(" as ca ");
+      whereClause.append(" where cd.");
+      whereClause.append(DocumentType.PROPERTY_TABLE + ".id");
+      whereClause.append("= ca.");
+      whereClause.append(AcctSchemaTable.PROPERTY_TABLE + ".id");
+      whereClause.append(" and ca.");
+      whereClause.append(AcctSchemaTable.PROPERTY_ACCOUNTINGSCHEMA + ".id");
+      whereClause.append(" = ? ");
+      parameters.add(accSchema);
+      whereClause.append("and ca.");
+      whereClause.append(AcctSchemaTable.PROPERTY_ACTIVE + "='Y'");
+      whereClause.append(" and cd.");
+      whereClause.append(DocumentType.PROPERTY_ORGANIZATION + ".id");
+      whereClause.append(" in (" + Utility.getInStrSet(orgStrct) + ")");
+      whereClause.append(" and ca." + AcctSchemaTable.PROPERTY_ORGANIZATION + ".id");
+      whereClause.append(" in (" + Utility.getInStrSet(orgStrct) + ")");
+      final OBQuery<DocumentType> obqDt = OBDal.getInstance().createQuery(DocumentType.class,
+          whereClause.toString());
+      obqDt.setParameters(parameters);
+      obqDt.setFilterOnReadableOrganization(false);
+      return obqDt.list();
+
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+
   }
 
   @Override

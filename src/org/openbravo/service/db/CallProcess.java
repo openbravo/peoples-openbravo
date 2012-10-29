@@ -23,6 +23,7 @@ package org.openbravo.service.db;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.Map;
 import java.util.Properties;
@@ -175,13 +176,13 @@ public class CallProcess {
       // flush, this gives pInstance an ID
       OBDal.getInstance().flush();
 
+      PreparedStatement ps = null;
       // call the SP
       try {
         // first get a connection
         final Connection connection = OBDal.getInstance().getConnection(false);
 
         final Properties obProps = OBPropertiesProvider.getInstance().getOpenbravoProperties();
-        final PreparedStatement ps;
         if (obProps.getProperty("bbdd.rdbms") != null
             && obProps.getProperty("bbdd.rdbms").equals("POSTGRE")) {
           ps = connection.prepareStatement("SELECT * FROM " + process.getProcedure() + "(?)");
@@ -193,6 +194,11 @@ public class CallProcess {
         ps.execute();
       } catch (Exception e) {
         throw new IllegalStateException(e);
+      } finally {
+        try {
+          ps.close();
+        } catch (SQLException e) {
+        }
       }
 
       // refresh the pInstance as the SP has changed it

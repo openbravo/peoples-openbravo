@@ -19,6 +19,7 @@
 package org.openbravo.client.application.window;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -57,6 +58,9 @@ public class OBViewFieldHandler {
   private static Logger log = Logger.getLogger(OBViewFieldHandler.class);
 
   private String parentProperty;
+
+  private static List<String> STANDARD_SUMMARY_FN = Arrays.asList("sum", "avg", "max", "min",
+      "multiplier", "count", "title");
 
   private static final long ONE_COLUMN_MAX_LENGTH = 60;
   private static final String TEXT_AD_REFERENCE_ID = "14";
@@ -1336,17 +1340,28 @@ public class OBViewFieldHandler {
     }
 
     public boolean isShowSummary() {
-      if (field.isOBUIAPPShowSummary() != null) {
-        return field.isOBUIAPPShowSummary();
+      if (field.isOBUIAPPShowSummary() != null || field.getObuiappSummaryfn() != null) {
+        return field.getObuiappSummaryfn() != null || field.isOBUIAPPShowSummary();
       }
       return false;
     }
 
     public String getSummaryFunction() {
       if (field.getObuiappSummaryfn() != null) {
-        return field.getObuiappSummaryfn();
+        return addQuotesToStandardSummaryFunctions(field.getObuiappSummaryfn());
       }
       return "";
+    }
+
+    private String addQuotesToStandardSummaryFunctions(String value) {
+      String localValue = value.trim();
+      if (localValue.startsWith("'") || localValue.startsWith("\"")) {
+        return value;
+      }
+      if (STANDARD_SUMMARY_FN.contains(localValue)) {
+        return "'" + localValue + "'";
+      }
+      return value;
     }
   }
 

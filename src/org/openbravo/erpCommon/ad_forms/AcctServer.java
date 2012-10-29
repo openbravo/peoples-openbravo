@@ -19,6 +19,7 @@ package org.openbravo.erpCommon.ad_forms;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -34,6 +35,7 @@ import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.APRM_FinaccTransactionV;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -1182,11 +1184,48 @@ public abstract class AcctServer {
       if (!currency.equals(acctSchema.m_C_Currency_ID)) {
         // if (log4j.isDebugEnabled()) log4j.debug
         // ("AcctServer - get converted amount (init)");
-        String amt = getConvertedAmt("1", currency, acctSchema.m_C_Currency_ID, DateAcct,
-            acctSchema.m_CurrencyRateType, AD_Client_ID, AD_Org_ID, conn);
+        String amt = "";
+        OBQuery<ConversionRateDoc> conversionQuery = null;
+        int conversionCount = 0;
+        if (AD_Table_ID.equals(TABLEID_Invoice)) {
+          conversionQuery = OBDal.getInstance().createQuery(
+              ConversionRateDoc.class,
+              "invoice = '" + Record_ID + "' and currency='" + currency + "' and toCurrency='"
+                  + acctSchema.m_C_Currency_ID + "'");
+        } else if (AD_Table_ID.equals(TABLEID_Payment)) {
+          conversionQuery = OBDal.getInstance().createQuery(
+              ConversionRateDoc.class,
+              "payment = '" + Record_ID + "' and currency='" + currency + "' and toCurrency='"
+                  + acctSchema.m_C_Currency_ID + "'");
+        } else if (AD_Table_ID.equals(TABLEID_Transaction)) {
+          conversionQuery = OBDal.getInstance().createQuery(
+              ConversionRateDoc.class,
+              "financialAccountTransaction = '" + Record_ID + "' and currency='" + currency
+                  + "' and toCurrency='" + acctSchema.m_C_Currency_ID + "'");
+        }
+        if (conversionQuery != null) {
+          conversionCount = conversionQuery.count();
+        }
+        if (conversionCount > 0) {
+          List<ConversionRateDoc> conversionRate = conversionQuery.list();
+          OBCriteria<Currency> currencyCrit = OBDal.getInstance().createCriteria(Currency.class);
+          currencyCrit.add(Restrictions.eq(Currency.PROPERTY_ID, acctSchema.m_C_Currency_ID));
+          currencyCrit.setProjection(Projections.max(Currency.PROPERTY_STANDARDPRECISION));
+          Long precision = 0L;
+          if (currencyCrit.count() > 0) {
+            List<Currency> toCurrency = currencyCrit.list();
+            precision = toCurrency.get(0).getStandardPrecision();
+          }
+          BigDecimal convertedAmount = new BigDecimal("1")
+              .multiply(conversionRate.get(0).getRate());
+          amt = convertedAmount.setScale(precision.intValue(), RoundingMode.HALF_UP).toString();
+        }
+        if (("").equals(amt) || amt == null)
+          amt = getConvertedAmt("1", currency, acctSchema.m_C_Currency_ID, DateAcct,
+              acctSchema.m_CurrencyRateType, AD_Client_ID, AD_Org_ID, conn);
         // if (log4j.isDebugEnabled()) log4j.debug
         // ("get converted amount (end)");
-        if (amt == null || amt.equals("")) {
+        if (amt == null || ("").equals(amt)) {
           convertible = false;
           log4j.warn("AcctServer - isConvertible NOT from " + currency + " - " + DocumentNo);
         } else if (log4j.isDebugEnabled())
@@ -1990,7 +2029,7 @@ public abstract class AcctServer {
             Utility.parseTranslation(conn, vars, vars.getLanguage(), parameters.get("Account")));
       }
     } else if (strStatus.equals(STATUS_PeriodClosed)) {
-      strTitle = "@PeriodClosed@";
+      strTitle = "@PeriodNotAvailable@";
     } else if (strStatus.equals(STATUS_NotConvertible)) {
       strTitle = "@NotConvertible@";
     } else if (strStatus.equals(STATUS_NotBalanced)) {
@@ -2008,9 +2047,10 @@ public abstract class AcctServer {
     }
     messageResult.setMessage(Utility.parseTranslation(conn, vars, parameters, vars.getLanguage(),
         Utility.parseTranslation(conn, vars, vars.getLanguage(), strTitle)));
-    if (strMessage != null)
+    if (strMessage != null) {
       messageResult.setMessage(Utility.parseTranslation(conn, vars, parameters, vars.getLanguage(),
           Utility.parseTranslation(conn, vars, vars.getLanguage(), strMessage)));
+    }
   }
 
   public Map<String, String> getInvalidAccountParameters(String strAccount, String strEntity,

@@ -441,6 +441,14 @@ public class MenuManager implements Serializable {
       return Boolean.toString(isReadOnly());
     }
 
+    public boolean isEditOrDeleteOnly() {
+      return getTab() != null && getTab().getUIPattern().equals("ED");
+    }
+
+    public String getEditOrDeleteOnlyStringValue() {
+      return Boolean.toString(isEditOrDeleteOnly());
+    }
+
     public boolean isReport() {
       return isReport;
     }

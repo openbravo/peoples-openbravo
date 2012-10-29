@@ -251,6 +251,8 @@
 }
 
 .OBGridSummaryCell div,
+.OBGridSummaryCell_max div,
+.OBGridSummaryCell_min div,
 .OBGridSummaryCell_sum div,
 .OBGridSummaryCell_avg div,
 .OBGridSummaryCell_count div {
@@ -258,6 +260,8 @@
 }
 
 .OBGridSummaryCell,
+.OBGridSummaryCell_min,
+.OBGridSummaryCell_max,
 .OBGridSummaryCell_sum,
 .OBGridSummaryCell_avg,
 .OBGridSummaryCell_count {
@@ -270,6 +274,20 @@
 
 .OBGridSummaryCell {
   padding: 0px 4px 0px 4px;
+}
+
+.OBGridSummaryCell_min {
+  padding: 0px 4px 0px 28px;
+  background-image: url(./images/grid/gridSummary_bg_min.png);
+  background-position: 4px center;
+  background-repeat: no-repeat;
+}
+
+.OBGridSummaryCell_max {
+  padding: 0px 4px 0px 28px;
+  background-image: url(./images/grid/gridSummary_bg_max.png);
+  background-position: 4px center;
+  background-repeat: no-repeat;
 }
 
 .OBGridSummaryCell_sum {

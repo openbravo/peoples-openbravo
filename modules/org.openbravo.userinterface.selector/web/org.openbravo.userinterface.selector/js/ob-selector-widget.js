@@ -421,6 +421,16 @@ isc.OBSelectorWidget.addProperties({
 
     setOBTabBehavior(false);
 
+    //Adding dynamic generated filter Expression to whereClause. Refer Issue https://issues.openbravo.com/view.php?id=21541
+    if (data.filterExpression) {
+      if (this.selectorGrid.selector.whereClause) {
+        this.selectorGrid.selector.whereClause = this.selectorGrid.selector.whereClause + " and " + data.filterExpression;
+      } else {
+        this.selectorGrid.selector.whereClause = data.filterExpression;
+      }
+      delete data.filterExpression;
+    }
+
     // draw now already otherwise the filter does not work the
     // first time
     this.selectorWindow.show();
@@ -593,7 +603,12 @@ isc.OBSelectorWidget.addProperties({
   // form, suggestion box and popup modal and grid components.
   initWidget: function () {
 
-    var baseTestRegistryName = 'org.openbravo.userinterface.selector.' + this.openbravoField + '.';
+    var baseTestRegistryName = 'org.openbravo.userinterface.selector.' + this.openbravoField + '.',
+        initialValueMap = {};
+
+    if (this.openbravoField.value) {
+      initialValueMap[this.openbravoField.value] = this.openbravoField.getAttribute('identifier');
+    }
 
     // Do not destroy dataSource after creation
     // https://issues.openbravo.com/view.php?id=18456
@@ -616,8 +631,7 @@ isc.OBSelectorWidget.addProperties({
       shouldSaveValue: false,
       validateOnChange: true,
       completeOnTab: true,
-
-      valueMap: {},
+      valueMap: initialValueMap,
       icons: [{
         selector: this,
         showFocused: true,
@@ -774,6 +788,7 @@ isc.OBSelectorWidget.addProperties({
     } else {
       this.selectorField.textBoxStyle = isc.OBSelectorWidget.styling.selectorFieldTextBoxStyle;
     }
+
     this.selectorField.setValue(this.openbravoField.value);
     this.initialValue = this.selectorField.getValue();
 

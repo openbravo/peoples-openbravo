@@ -49,6 +49,18 @@ OB.Utilities.checkProfessionalLicense = function (msg, doNotShowMessage) {
   return true;
 };
 
+//** {{{OB.Utilities.encodeSearchOperator}}} **
+//Encodes and and or in a string with a forward slash
+OB.Utilities.encodeSearchOperator = function (value) {
+  var val = value;
+  if (!val || !isc.isA.String(val)) {
+    return val;
+  }
+  val = val.replace(/ and /g, ' \\and ');
+  val = val.replace(/ or /g, ' \\or ');
+  return val;
+};
+
 // ** {{{OB.Utilities.truncTitle}}} **
 // Truncs a string after a specific length. Initial implementation is 
 // simple (just cuts of at the specified length). Returns the trunced title
@@ -382,7 +394,7 @@ OB.Utilities.removeFragment = function (str) {
 // ** {{{OB.Utilities.openView}}} **
 // Open a view taking into account if a specific window should be opened in classic mode or not.
 // Returns the object used to open the window.
-OB.Utilities.openView = function (windowId, tabId, tabTitle, recordId, command, icon, readOnly, singleRecord, direct) {
+OB.Utilities.openView = function (windowId, tabId, tabTitle, recordId, command, icon, readOnly, singleRecord, direct, editOrDeleteOnly) {
   var isClassicEnvironment = OB.Utilities.useClassicMode(windowId);
 
   var openObject;
@@ -409,7 +421,8 @@ OB.Utilities.openView = function (windowId, tabId, tabTitle, recordId, command, 
       tabTitle: tabTitle,
       windowId: windowId,
       readOnly: readOnly,
-      singleRecord: singleRecord
+      singleRecord: singleRecord,
+      editOrDeleteOnly: editOrDeleteOnly
     };
   } else {
     openObject = {
@@ -420,7 +433,8 @@ OB.Utilities.openView = function (windowId, tabId, tabTitle, recordId, command, 
       windowId: windowId,
       icon: icon,
       readOnly: readOnly,
-      singleRecord: singleRecord
+      singleRecord: singleRecord,
+      editOrDeleteOnly: editOrDeleteOnly
     };
   }
   if (command) {

@@ -51,15 +51,15 @@
       </script>
 <script language="javascript" type="text/javascript">
 function submitPage(Command, frm, recordId, table, docbasetype) {
-	frm.inprecordId.value = recordId;
-	frm.inpadTableId.value = table;
-	frm.inpdocbasetype.value = docbasetype;
-	return submitCommandForm(Command, false, frm, null, null, false, true);
+    frm.inprecordId.value = recordId;
+    frm.inpadTableId.value = table;
+    frm.inpdocbasetype.value = docbasetype;
+    return submitCommandForm(Command, false, frm, null, null, false, true);
 }
 function openJournalEntry(tabId, recordId){
-	var myframe = getFrame('LayoutMDI') || top.opener;
-	if (myframe) {
-		myframe.OB.Utilities.openDirectTab(tabId, recordId);
+    var myframe = getFrame('LayoutMDI') || top.opener;
+    if (myframe) {
+        myframe.OB.Utilities.openDirectTab(tabId, recordId);
     }
 }
 function openTabToDetail(factAcctGroupId){
@@ -85,41 +85,112 @@ function openTabToDetail(factAcctGroupId){
 
 function imprimir()
 {
-	openPDFFiltered("ReportGeneralLedgerJournalPDF.pdf?Command=PDF","PDF");
-	return true;
+    openPDFFiltered("ReportGeneralLedgerJournalPDF.pdf?Command=PDF","PDF");
+    return true;
 }
 
 function onloadFunctions() {
 }
+
+function displayAdvancedFilters(){
+    if (advancedFiltersrow1.style.display == 'none') {
+        displayLogicElement('advancedFiltersrow1', true);
+        displayLogicElement('advancedFiltersrow2', true);
+        displayLogicElement('advancedFiltersrow3', true);
+        displayLogicElement('advancedFiltersrow4', true);
+        displayLogicElement('advancedFiltersrow5', true);
+    }
+    else{
+        displayLogicElement('advancedFiltersrow1', false);
+        displayLogicElement('advancedFiltersrow2', false);
+        displayLogicElement('advancedFiltersrow3', false);
+        displayLogicElement('advancedFiltersrow4', false);
+        displayLogicElement('advancedFiltersrow5', false);
+    }    
+}
+
+function createCombo(node, jsonstring) {
+       try {
+         var objson = eval(jsonstring);
+         node.options.length = 0;
+         if (typeof objson !== undefined) {
+           var rowslength = objson.optionlist.length;
+           for (i=0; i<rowslength; i++) {
+             var option = document.createElement('OPTION');
+             option.setAttribute("value",objson.optionlist[i].value);
+             if (objson.optionlist[i].selected === "true") {
+               option.setAttribute("selected", "selected");
+             }
+             var textin = document.createTextNode(objson.optionlist[i].text);
+             option.appendChild(textin);
+             node.appendChild(option);
+           }
+         }
+       } catch(e) {
+         console.log(e);
+       }
+}
+
+function callback(paramXMLParticular, XMLHttpRequestObj) {
+       var strText = "";
+        if (getReadyStateHandler(XMLHttpRequestObj)) {
+          try {
+            if (XMLHttpRequestObj.responseText) {
+              strText = XMLHttpRequestObj.responseText;
+              createCombo(document.getElementById('inpDocument'), strText);
+            }
+          } catch (e) {
+          }
+         }
+        return true;
+      }
+      
+ function selectDocument() {
+        try {
+             var paramXMLReq = null;
+             return submitXmlHttpRequest(callback, document.frmMain, "DOC", "ReportGeneralLedgerJournal.html", false, null, paramXMLReq);
+         
+        } catch (e) {
+          alert(e);
+        }
+      }
+    
+
 </script>
 <script language="JavaScript" type="text/javascript" id="jsDisablePreviousNext">
 
 </script>
-	<script language="JavaScript" type="text/javascript">
-	function onLoadDo(){
-		this.windowTables = new Array(
-		  new windowTableId('client', 'buttonHTML')
-		);
-		setWindowTableParentElement();
-		this.tabsTables = new Array(
-		  new tabTableId('tdtopTabs')
-		);
-		setTabTableParentElement();
-		enableShortcuts('edition');
-		setBrowserAutoComplete(false);
-		
-		resizeArea();
-		updateMenuIcon('buttonMenu');
+    <script language="JavaScript" type="text/javascript">
+    function onLoadDo(){
+        this.windowTables = new Array(
+          new windowTableId('client', 'buttonHTML')
+        );
+        setWindowTableParentElement();
+        this.tabsTables = new Array(
+          new tabTableId('tdtopTabs')
+        );
+        setTabTableParentElement();
+        enableShortcuts('edition');
+        setBrowserAutoComplete(false);
+        
+        resizeArea();
+        updateMenuIcon('buttonMenu');
 
-		setWindowElementFocus('firstElement');
+        setWindowElementFocus('firstElement');
+        displayAdvancedFilters();
+        selectDocument();
+        if (checkPreviousNextButtons) {
+        checkPreviousNextButtons();
+        } 
+        
+    }
 
-		checkPreviousNextButtons();
-	}
-
-	function onResizeDo(){
-		resizeArea();
-	}
-	</script>
+    function onResizeDo(){
+        resizeArea();
+    }
+    
+    
+    </script>
 </head>
 <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">
 <form method="post" action="ReportGeneralLedgerJournal.html" name="frmMain" id="form">
@@ -263,7 +334,7 @@ function onloadFunctions() {
                   <tr class="FieldGroup_TopMargin"/>
                   <tr>
                     <td class="FieldGroupTitle_Left"><img class="FieldGroupTitle_Left_bg" border="0" src="../../../../../web/images/blank.gif"/></td>
-                    <td class="FieldGroupTitle">Primary Filters</td>
+                    <td class="FieldGroupTitle">Primary Filters&nbsp;&nbsp;&nbsp;&nbsp;</td>
                     <td class="FieldGroupTitle_Right"><img class="FieldGroupTitle_Right_bg" border="0" src="../../../../../web/images/blank.gif"/></td>
                     <td class="FieldGroupContent"/>
                   </tr>
@@ -273,14 +344,17 @@ function onloadFunctions() {
               </td>
             </tr>
             <tr>
-              <td class="TitleCell"><span class="LabelText">From Date</span></td>
+              <td class="TitleCell"><span class="LabelText">From</span></td>
               <td class="TextBox_btn_ContentCell">
                 <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                   <tr>
                     <td class="TextBox_ContentCell">
+                      <table style="border: 0px none; border-collapse: collapse;">
+                        <tr><td style="padding-top: 0px;">
                       <input dojoType="openbravo:DateTextbox" lowerThan="paramDateTo" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width" type="text" name="inpDateFrom" id="paramDateFrom" size="10" maxlength="10" value="" onkeyup="autoCompleteDate(this.textbox, this.displayFormat);return true;"></input><script>djConfig.searchIds.push("paramDateFrom");</script>
-                    </td>
-                    <td class="FieldButton_bg">
+                     </td></tr>
+                      </table>
+                    <td class="FieldButton_ContentCell">
                       <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="showCalendar('frmMain.inpDateFrom', document.frmMain.inpDateFrom.value, false);return false;"  >
                       <table class="FieldButton"onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calendar';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
                         <tr>
@@ -295,14 +369,17 @@ function onloadFunctions() {
                 </table>
               </td>
               <td class="TitleCell"></td>
-              <td class="TitleCell"><span class="LabelText">To Date</span></td>
+              <td class="TitleCell"><span class="LabelText">To</span></td>
               <td class="TextBox_btn_ContentCell">
                 <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                   <tr>
                     <td class="TextBox_ContentCell">
+                      <table style="border: 0px none; border-collapse: collapse;">
+                        <tr><td style="padding-top: 0px;">
                       <input dojoType="openbravo:DateTextbox" greaterThan="paramDateFrom" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width" type="text" name="inpDateTo" id="paramDateTo" size="10" maxlength="10" value="" onkeyup="autoCompleteDate(this.textbox, this.displayFormat);return true;"></input><script>djConfig.searchIds.push("paramDateTo");</script>
-                    </td>
-                    <td class="FieldButton_bg">
+                        </td></tr>
+                      </table>
+                    <td class="FieldButton_ContentCell">
                       <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="showCalendar('frmMain.inpDateTo', document.frmMain.inpDateTo.value, false);return false;">
                       <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calendar';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
                         <tr>
@@ -320,67 +397,43 @@ function onloadFunctions() {
             </tr>
             <tr>
               <td class="TitleCell"><span class="LabelText">Organization</span></td>
-              <td class="Combo_ContentCell" colspan="2"> <select  name="inpOrg" id="inpOrg" class="Combo Combo_TwoCells_width">
+              <td class="Combo_ContentCell" colspan="2"> <select  name="inpOrg" id="inpOrg" class="ComboKey Combo_TwoCells_width required Combo_focus" required="true" onchange="selectDocument();">
                  <div id="reportAD_ORGID"></div>
                 </select></td>
-              <td class="TitleCell"><span class="LabelText">Document</span></td>
+              <td class="TitleCell"> <span class="LabelText">Accounting Schema</span></td>
+              <td class="Combo_ContentCell" colspan="2"> <select  name="inpcAcctSchemaId" id="inpcAcctSchemaId" class="ComboKey Combo_TwoCells_width required Combo_focus" required="true" onchange="selectDocument();">
+                 <div id="reportC_ACCTSCHEMA_ID"></div> 
+                </select></td>
+            </tr>
+            <tr>
+              <td colspan="6">
+                <table class="FieldGroup" cellspacing="0" cellpadding="0" border="0">
+                <tbody>
+                  <tr class="FieldGroup_TopMargin"/>
+                  <tr>
+                    <td class="FieldGroupTitle_Left" onclick="displayAdvancedFilters();return false;"><img class="FieldGroupTitle_Left_bg" border="0" src="../../../../../web/images/blank.gif"/></td>
+                    <td class="FieldGroupTitle" onclick="displayAdvancedFilters();return false;" >Advanced Filters</td>
+                    <td class="FieldGroupTitle_Right" onclick="displayAdvancedFilters();return false;"><img class="FieldGroupTitle_Right_bg" border="0" src="../../../../../web/images/blank.gif"/></td>
+                    <td class="FieldGroupContent"/>
+                  </tr>
+                  <tr class="FieldGroup_BottomMargin"/>
+                </tbody>
+                </table>
+              </td>
+            </tr>
+            <tr id=advancedFiltersrow1>
+             <td class="TitleCell"><span class="LabelText">Document</span></td>
               <td class="Combo_ContentCell" colspan="2"> <select  name="inpDocument" id="inpDocument" class="Combo Combo_TwoCells_width">
                   <option value=""> <div id="reportDocument"></div></option>
                 </select></td>
-            </tr>
-            <tr>
-              <td class="TitleCell"> <span class="LabelText">Accounting Schema</span></td>
-              <td class="Combo_ContentCell" colspan="2"> <select  name="inpcAcctSchemaId" id="inpcAcctSchemaId" class="Combo Combo_TwoCells_width">
-                  <option value=""> <div id="reportC_ACCTSCHEMA_ID"></div></option>
-                </select></td>
-            </tr>
-            <tr>
-              <td colspan="6">
-                <table class="FieldGroup" cellspacing="0" cellpadding="0" border="0">
-                <tbody>
-                  <tr class="FieldGroup_TopMargin"/>
-                  <tr>
-                    <td class="FieldGroupTitle_Left"><img class="FieldGroupTitle_Left_bg" border="0" src="../../../../../web/images/blank.gif"/></td>
-                    <td class="FieldGroupTitle">Type</td>
-                    <td class="FieldGroupTitle_Right"><img class="FieldGroupTitle_Right_bg" border="0" src="../../../../../web/images/blank.gif"/></td>
-                    <td class="FieldGroupContent"/>
-                  </tr>
-                  <tr class="FieldGroup_BottomMargin"/>
-                </tbody>
-                </table>
+              <td class="TitleCell"><span class="LabelText">Initial Balance</span></td>
+              <td class="TextBox_ContentCell">
+                <input dojoType="openbravo:RealNumberTextbox" class="TextBox_OneCell_width" type="text" name="inpInitialBalance"
+                       id="paramInitialBalance" size="10" maxlength="10" value="" outputformat="euroEdition"></input>
+                <script>djConfig.searchIds.push("paramInitialBalance");</script>
               </td>
             </tr>
-        <tr>
-          <td class="TitleCell"><span class="LabelText">Show Regular Entries</span></td>
-          <td class="Radio_Check_ContentCell"><input TYPE="checkbox" id="paramShowRegular" name="inpShowRegular" value="Y"/></td>
-          <td class="ContentCell"></td>
-          <td class="TitleCell"><span class="LabelText">Show P&L Closing Entries</span></td>
-          <td class="Radio_Check_ContentCell"><input TYPE="checkbox" id="paramShowReg" name="inpShowReg" value="Y"/></td>
-        </tr>
-        <tr>
-          <td class="TitleCell"><span class="LabelText">Show Opening Entries</span></td>
-          <td class="Radio_Check_ContentCell"><input TYPE="checkbox" id="paramShowOpening" name="inpShowOpening" value="Y"/></td>
-          <td class="ContentCell"></td>
-          <td class="TitleCell"><span class="LabelText">Show Closing Entries</span></td>
-          <td class="Radio_Check_ContentCell"><input TYPE="checkbox" id="paramShowClosing" name="inpShowClosing" value="Y"/></td>
-	    </tr>
-            <tr>
-              <td colspan="6">
-                <table class="FieldGroup" cellspacing="0" cellpadding="0" border="0">
-                <tbody>
-                  <tr class="FieldGroup_TopMargin"/>
-                  <tr>
-                    <td class="FieldGroupTitle_Left"><img class="FieldGroupTitle_Left_bg" border="0" src="../../../../../web/images/blank.gif"/></td>
-                    <td class="FieldGroupTitle">Printing</td>
-                    <td class="FieldGroupTitle_Right"><img class="FieldGroupTitle_Right_bg" border="0" src="../../../../../web/images/blank.gif"/></td>
-                    <td class="FieldGroupContent"/>
-                  </tr>
-                  <tr class="FieldGroup_BottomMargin"/>
-                </tbody>
-                </table>
-              </td>
-            </tr>
-            <tr>
+             <tr id=advancedFiltersrow2>
               <td class="TitleCell"><span class="LabelText">Initial Page Number</span></td>
               <td class="TextBox_ContentCell"> <input dojoType="openbravo:Textbox"  class="dojoValidateValid TextBox_OneCell_width" type="text" name="inpPageNo" id="paramPageNo" size="10" maxlength="10" value=""></input><script>djConfig.searchIds.push("paramPageNo");</script>
               </td>
@@ -392,17 +445,26 @@ function onloadFunctions() {
                 <script>djConfig.searchIds.push("paramEntryNo");</script>
               </td>
             </tr>
-            <tr>
-              <td class="TitleCell"><span class="LabelText">Initial Balance</span></td>
-              <td class="TextBox_ContentCell">
-                <input dojoType="openbravo:RealNumberTextbox" class="TextBox_OneCell_width" type="text" name="inpInitialBalance"
-                       id="paramInitialBalance" size="10" maxlength="10" value="" outputformat="euroEdition"></input>
-                <script>djConfig.searchIds.push("paramInitialBalance");</script>
-              </td>
-              <td class="ContentCell"></td>
-              <td class="TitleCell"><span class="LabelText">Show Entry Description</span></td>
-              <td class="Radio_Check_ContentCell"><input TYPE="checkbox" id="paramShowDescription" name="inpShowDescription" value="Y"/></td>
-            </tr>
+            
+        <tr id=advancedFiltersrow3>
+          <td class="TitleCell"><span class="LabelText">Show Regular Entries</span></td>
+          <td class="Radio_Check_ContentCell"><input TYPE="checkbox" id="paramShowRegular" name="inpShowRegular" value="Y"/></td>
+          <td class="ContentCell"></td>
+          <td class="TitleCell"><span class="LabelText">Show P&L Closing Entries</span></td>
+          <td class="Radio_Check_ContentCell"><input TYPE="checkbox" id="paramShowReg" name="inpShowReg" value="Y"/></td>
+        </tr>
+        <tr id=advancedFiltersrow4>
+          <td class="TitleCell"><span class="LabelText">Show Opening Entries</span></td>
+          <td class="Radio_Check_ContentCell"><input TYPE="checkbox" id="paramShowOpening" name="inpShowOpening" value="Y"/></td>
+          <td class="ContentCell"></td>
+          <td class="TitleCell"><span class="LabelText">Show Closing Entries</span></td>
+          <td class="Radio_Check_ContentCell"><input TYPE="checkbox" id="paramShowClosing" name="inpShowClosing" value="Y"/></td>
+        </tr>
+        <tr id=advancedFiltersrow5>
+          <td class="TitleCell"><span class="LabelText">Show Entry Description</span></td>
+          <td class="Radio_Check_ContentCell"><input TYPE="checkbox" id="paramShowDescription" name="inpShowDescription" value="Y"/></td>
+          <td class="ContentCell"></td>
+        </tr>
             <tr>
               <td colspan="6">
                 <table class="FieldGroup" cellspacing="0" cellpadding="0" border="0">
@@ -410,7 +472,7 @@ function onloadFunctions() {
                   <tr class="FieldGroup_TopMargin"/>
                   <tr>
                     <td class="FieldGroupTitle_Left"><img class="FieldGroupTitle_Left_bg" border="0" src="../../../../../web/images/blank.gif"/></td>
-                    <td class="FieldGroupTitle">View Results</td>
+                    <td class="FieldGroupTitle">View Results&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
                     <td class="FieldGroupTitle_Right"><img class="FieldGroupTitle_Right_bg" border="0" src="../../../../../web/images/blank.gif"/></td>
                     <td class="FieldGroupContent"/>
                   </tr>
@@ -419,9 +481,9 @@ function onloadFunctions() {
                 </table>
               </td>
             </tr>
+            <tr><td>&nbsp</td></tr>
             <tr>
-              <td class="TitleCell"></td>
-              <td class="Button_CenterAlign_ContentCell">
+              <td>
                 <div>
                   <button type="button" 
                     id="buttonHTML" 
@@ -439,7 +501,7 @@ function onloadFunctions() {
                     <table class="Button">
                       <tr>
                         <td class="Button_left"><img class="Button_Icon Button_Icon_html" alt="View Results in a New Window" title="View Results in a New Window" src="../../../../../web/images/blank.gif" border="0" /></td>
-                        <td class="Button_text">HTML Format</td>
+                        <td class="Button_text">Search</td>
                         <td class="Button_right"></td>
                       </tr>
                     </table>
@@ -453,49 +515,61 @@ function onloadFunctions() {
               <td class="ContentCell"></td>
             </tr>
           </table>
+          <div id="secTable">
           <table class="Main_Client_TableEdition">
             <tr>
               <td colspan="6">
-
+              <table cellspacing="0" cellpadding="0" width="100%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;"> 
+                    
+                      <tr class="DataGrid_Body_Row">
+                        <th width="5%" class="DataGrid_Header_Cell"  style="text-align:left;">Entry</th>
+                        <th width="10%" class="DataGrid_Header_Cell" style="text-align:left;">Date</th>
+                        <th width="5%" class="DataGrid_Header_Cell" style="text-align:left;">Detail</th>
+                        <th width="10%" class="DataGrid_Header_Cell" style="text-align:left;">Document</th>
+                        <th width="10%" class="DataGrid_Header_Cell" style="text-align:left;">Account No.</th>
+                        <th width="25%" class="DataGrid_Header_Cell" style="text-align:left;">Name</th>
+                        <th width="10%" class="DataGrid_Header_Cell_Amount" style="text-align:right;">Debit</th>
+                        <th width="10%"  class="DataGrid_Header_Cell_Amount" style="text-align:right;">Credit</th>
+                      </tr>
+                     
                 <div style="height:25px;" />
                 <div id="sectionSchema"> 
                 <div id="sectionDateAcct"> 
                   <div id="sectionJournal"> 
-                    <table cellspacing="0" cellpadding="0" width="100%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;">
-                      <tr class="DataGrid_Body_Row">
-                        <th class="DataGrid_Header_Cell"> <a href="#" onclick="openJournalEntry('ww', 'xx');return false;" onmouseover="window.status='General Ledger Journal';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldId"> 
-                          Journal Entry&nbsp;<span id="functionCalculateOrderJournal">xx123</span><!--span id="functionCalculateOrderJournalWithInitial">xx123</span--></a>
-                          <input type="hidden" name="inpordenJournal" id="functionOrderJournal" value=""></input>
-                        </th>
-						<th width="57%" class="DataGrid_Header_Cell">Accounting Schema&nbsp;<span id="fieldSchemaName">xxSchema Name</span></th>
-                        <th width="14%" class="DataGrid_Header_Cell">Date&nbsp;<span id="fieldDateacct">xx12/12/2003</span></th>
-                        <th width="8%" class="DataGrid_Header_Cell"> <a href="#" onclick="openTabToDetail('yy/xx');return false;" onmouseover="window.status='General Ledger Journal';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldIdentifier"> 
-                          Detail</a></th>
-                      </tr>
-                      <tr class="DataGrid_Body_Row">
-                        <th width="15%" class="DataGrid_Header_Cell">Account No.</th>
-                        <th width="57%" class="DataGrid_Header_Cell">NAME</th>
-                        <th width="14%" class="DataGrid_Header_Cell_Amount">DEBIT</th>
-                        <th width="6%" class="DataGrid_Header_Cell_Amount">CREDIT</th>
-                      </tr>
+                  <input type="hidden" name="inpordenJournal" id="functionOrderJournal" value=""></input>
                       <div id="sectionDetail"> 
-                        <tr class="DataGrid_Body_Row DataGrid_Body_Row_yy" id="funcEvenOddRow1xx">
-                          <td width="15%"  id="fieldValue" class="DataGrid_Body_Cell">XX12345</td>
-                          <td width="57%"  id="fieldName" class="DataGrid_Body_Cell">Accounts receivable - Trade</td>
-                          <td width="14%" id="fieldAmtacctdr" class="DataGrid_Body_Cell_Amount">xx14500.34</td>
-                          <td width="14%"  id="fieldAmtacctcr" class="DataGrid_Body_Cell_Amount">xx14500.34</td>
+                        <tr class="DataGrid_Body_Row DataGrid_Body_Row_yy" id="funcEvenOddRow1xx">                 
+                         <td width="5%" class="DataGrid_Body_Cell" ><span id="fieldEntry" style="xx"> 
+                         <a href="#" onclick="openJournalEntry('ww', 'xx');return false;" 
+                          onmouseover="window.status='General Ledger Journal';return true;" onmouseout="window.status='';
+                          return true;" class="LabelLink" id="fieldId"><span id="functionCalculateOrderJournal"></span></a>
+                         </span>
+                         </td>
+                          <td width="10%"class="DataGrid_Body_Cell"> <span id="fieldDateacct" style="xx">xx12/12/2003</span></td>
+                          <td width="8%" class="DataGrid_Body_Cell"> <span id="fieldDetail" style="xx">
+                          <a href="#" onclick="openTabToDetail('yy/xx');return false;" 
+                          onmouseover="window.status='General Ledger Journal';return true;" 
+                          onmouseout="window.status='';return true;" class="LabelLink" id="fieldIdentifier"> 
+                          Detail</a></span></td>
+                          <td width="10%"  class="DataGrid_Body_Cell"><span id="fieldDocName" style="xx">docName</span></td> 
+                          <td width="15%"  class="DataGrid_Body_Cell" style="text-align:left;"><span id="fieldValue"><span/></td>
+                          <td width="25%"  id="fieldName" class="DataGrid_Body_Cell">Accounts receivable - Trade</td>
+                          <td width="10%"  id="fieldAmtacctdr" class="DataGrid_Body_Cell_Amount">xx14500.34</td>
+                          <td width="10%"  id="fieldAmtacctcr" class="DataGrid_Body_Cell_Amount">xx14500.34</td>
                         </tr>
                       </div>
+                        <tr>
+                          <td colspan="8">&nbsp;<td/>
+                        </tr>
                     </table>
                   <div style="height:15px;" />
                   </div>
                 </div>
                 </div>
-
-
               </td>
             </tr>
           </table>
+          </div>
           <!-- USER CONTROLS -->
         </div>
         <table width="100%" border="0" cellspacing="0" cellpadding="0" class="Menu_ContentPane_Bottom" id="tdbottomSeparator">

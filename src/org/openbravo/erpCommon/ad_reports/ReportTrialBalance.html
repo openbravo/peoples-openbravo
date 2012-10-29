@@ -52,8 +52,8 @@
 
 function imprimir()
 {
-	openPDFFiltered("ReportTrialBalance.html?Command=PDF","PDF");
-	return true;
+    openPDFFiltered("ReportTrialBalance.html?Command=PDF","PDF");
+    return true;
 }
 </script>
 <script language="JavaScript" type="text/javascript">
@@ -71,6 +71,20 @@ function displayLogic() {
     displayLogicElement('Filter3', false);
     displayLogicElement('Filter4', false);
   }
+}
+
+function displayAdvancedFilters(){
+    if (advancedFiltersrow1.style.display == 'none') {
+        displayLogicElement('advancedFiltersrow1', true);
+        displayLogicElement('advancedFiltersrow2', true);
+        displayLogicElement('AcctFromTo', true);
+    }
+    else{
+        displayLogicElement('advancedFiltersrow1', false);
+        displayLogicElement('advancedFiltersrow2', false);
+        displayLogicElement('AcctFromTo', false);
+      
+    }    
 }
 
 function onloadFunctions() {
@@ -116,14 +130,15 @@ function callback(paramXMLParticular, XMLHttpRequestObj) {
   if (getReadyStateHandler(XMLHttpRequestObj)) {
     try {
       if (XMLHttpRequestObj.responseText) strText = XMLHttpRequestObj.responseText;
-	} catch (e) {
+    } catch (e) {
+    	console.log(e);
     }
-	if (paramXMLParticular!=null && paramXMLParticular.length>0) {
-	  id = paramXMLParticular[0];
-	  imageId = paramXMLParticular[1];
-	}
-	addRows(strText,id);
-	showHideLayer(id, imageId);
+    if (paramXMLParticular!=null && paramXMLParticular.length>0) {
+      id = paramXMLParticular[0];
+      imageId = paramXMLParticular[1];
+    }
+    addRows(strText,id);
+    showHideLayer(id, imageId);
   }
   return true;
 }
@@ -132,12 +147,12 @@ function showHideLayer(id, imageId) {
   var obj = getReference(imageId);
   if (obj!=null) {
     if (obj.className == "datawarehouseopen") {
-	  obj.className = "datawarehouseclose";
-	  showHideRows(id, "none");
-	} else {
-	  obj.className = "datawarehouseopen";
-	  showHideRows(id, "");
-	}
+      obj.className = "datawarehouseclose";
+      showHideRows(id, "none");
+    } else {
+      obj.className = "datawarehouseopen";
+      showHideRows(id, "");
+    }
   }
 }
 
@@ -165,15 +180,11 @@ function addRows(htmlText, id) {
     var newTD5 = document.createElement('TD');
     newTD5.innerHTML = jsonTable.rows[i].td5;
     newTD5.className = jsonTable.config.classAmount;
-    var newTD6 = document.createElement('TD');
-    newTD6.innerHTML = "";
-    newTD6.className = jsonTable.config.classDefault;
     elem.appendChild(newTD1);
     elem.appendChild(newTD2);
     elem.appendChild(newTD3);
     elem.appendChild(newTD4);
     elem.appendChild(newTD5);
-    elem.appendChild(newTD6);
   }
   }
 }
@@ -184,8 +195,8 @@ function showHideRows(id, showHide) {
   var txt = '';
   while (fila != undefined) {
     i++;
-	fila.style.display = showHide;
-	fila = document.getElementById('funcEvenOddRow2'+id+'_'+i);
+    fila.style.display = showHide;
+    fila = document.getElementById('funcEvenOddRow2'+id+'_'+i);
   }
 }
 
@@ -193,6 +204,7 @@ function updateData(CommandValue, identifier) {
   var frm = document.frmMain;
   frm.inpcAccountId.value = identifier;
   var obj = getReference("buttonTree" + identifier);
+  showHideFilters(identifier);
   if (obj!=null && obj.className == "datawarehouseclose") {
     var paramXMLReq = new Array(identifier, 'buttonTree' + identifier);
     return submitXmlHttpRequest(callback, frm, CommandValue, "ReportTrialBalance.html", false, null, paramXMLReq);
@@ -206,115 +218,123 @@ function showHideFilters(identifier) {
   if (obj!=null) {
     if (obj.className == "datawarehouseopen") {
       obj.className = "datawarehouseclose";
+    } else {
+      obj.className = "datawarehouseopen";
+    }
+  }
+}
+
+function showFilters() {
+    if (Filter2.style.display == 'none') { 
+      displayLogicElement('Filter2', true);
+      displayLogicElement('Filter3', true);
+      displayLogicElement('Filter4', true);    
+    } else {      
       displayLogicElement('Filter2', false);
       displayLogicElement('Filter3', false);
       displayLogicElement('Filter4', false);
-    } else {
-      obj.className = "datawarehouseopen";
-      displayLogicElement('Filter2', true);
-      displayLogicElement('Filter3', true);
-      displayLogicElement('Filter4', true);
     }
-  }
+   
 }
 </script>
 
 <script language="JavaScript" type="text/javascript">
-	function onLoadDo(){
-		this.windowTables = new Array(
-		  new windowTableId('client', 'buttonHTML')
-		);
-		setWindowTableParentElement();
-		this.tabsTables = new Array(
-		  new tabTableId('tdtopTabs')
-		);
-		setTabTableParentElement();
-		enableShortcuts('edition');
-		setBrowserAutoComplete(false);
+function onLoadDo(){
+  this.windowTables = new Array(
+    new windowTableId('client', 'buttonHTML')
+  );
+  setWindowTableParentElement();
+  this.tabsTables = new Array(
+    new tabTableId('tdtopTabs')
+  );
+  setTabTableParentElement();
+  enableShortcuts('edition');
+  setBrowserAutoComplete(false);
 
-		var selectedGroupBy = document.getElementById("paramSelectedGroupBy").value;
-	    var groupby = document.getElementById("inpGroupBy");
-	    for (i=0;i<groupby.length;i++){
-	      if (groupby[i].value == selectedGroupBy)
-	        groupby[i].selected = true;
-	    }
+  var selectedGroupBy = document.getElementById("paramSelectedGroupBy").value;
+  var groupby = document.getElementById("inpGroupBy");
+  for (i=0;i<groupby.length;i++){
+    if (groupby[i].value == selectedGroupBy)
+      groupby[i].selected = true;
+  }
 
-	    try {
-	        onloadFunctions();
-	    } catch (e) {}
-		resizeArea();
-		updateMenuIcon('buttonMenu');
+  try {
+    onloadFunctions();
+  } catch (e) {}
+  resizeArea();
+  updateMenuIcon('buttonMenu');
 
-		setWindowElementFocus('firstElement');
-	}
+  setWindowElementFocus('firstElement');
+  displayAdvancedFilters();
+}
 
-	function onResizeDo(){
-		resizeArea();
-	}
+function onResizeDo(){
+  resizeArea();
+}
 
-	function openTabToGeneralLedgerReport(procId, recordId){
-		var frm = document.frmMain;
-		markCheckedAllElements(frm.inpcBPartnerId_IN);
-		markCheckedAllElements(frm.inpcProjectId_IN);
-		markCheckedAllElements(frm.inpmProductId_IN);
+function openTabToGeneralLedgerReport(procId, recordId){
+  var frm = document.frmMain;
+  markCheckedAllElements(frm.inpcBPartnerId_IN);
+  markCheckedAllElements(frm.inpcProjectId_IN);
+  markCheckedAllElements(frm.inpmProductId_IN);
 
-		var myframe = getFrame('LayoutMDI') || top.opener;
-	    if (myframe) {      
-	        myframe.OB.RemoteCallManager.call('org.openbravo.client.application.ComputeTranslatedNameActionHandler', {}, {'processId': procId}, 
-	        function(response, data, request){
-	            myframe.OB.Layout.ViewManager.openView('OBClassicWindow', {
-	                command: 'FIND',
-	                icon: '[SKINIMG]../../org.openbravo.client.application/images/application-menu/iconReport.png',
-	                id: procId,
-	                obManualURL: '/ad_reports/ReportGeneralLedger.html?inpDateFrom=' + frm.inpDateFrom.value 
-	                		+ '&inpDateTo=' + frm.inpDateTo.value + '&inpOrg=' + frm.inpOrg.value + '&inpcAcctSchemaId=' 
-	                		+ frm.inpcAcctSchemaId.value + '&inpcElementValueIdFrom=' + recordId + '&inpcElementValueIdTo=' + frm.inpcElementValueIdTo.value,
-	                processId: procId,
-	                tabTitle: data.processTitle,
-	                type: 'report',
-	                viewId: 'OBClassicWindow'
-	            });                        
-	        });
-	    }
-	}
-	function openTabToReportTrialBalanceDetails(procId, recordId){
-        var frm = document.frmMain;
-        var bPartner = frm.inpcBPartnerId_IN.value, mProduct = frm.inpmProductId_IN.value, c_Project = frm.inpcProjectId_IN.value;
-        markCheckedAllElements(frm.inpcBPartnerId_IN);
-        markCheckedAllElements(frm.inpcProjectId_IN);
-        markCheckedAllElements(frm.inpmProductId_IN);
+  var myframe = getFrame('LayoutMDI') || top.opener;
+  if (myframe) {      
+    myframe.OB.RemoteCallManager.call('org.openbravo.client.application.ComputeTranslatedNameActionHandler', {}, {'processId': procId}, 
+    function(response, data, request){
+      myframe.OB.Layout.ViewManager.openView('OBClassicWindow', {
+        command: 'FIND',
+        icon: '[SKINIMG]../../org.openbravo.client.application/images/application-menu/iconReport.png',
+        id: procId,
+        obManualURL: '/ad_reports/ReportGeneralLedger.html?inpDateFrom=' + frm.inpDateFrom.value 
+                            + '&inpDateTo=' + frm.inpDateTo.value + '&inpOrg=' + frm.inpOrg.value + '&inpcAcctSchemaId=' 
+                            + frm.inpcAcctSchemaId.value + '&inpcElementValueIdFrom=' + recordId + '&inpcElementValueIdTo=' + recordId,
+        processId: procId,
+        tabTitle: data.processTitle,
+        type: 'report',
+        viewId: 'OBClassicWindow'
+      });                        
+    });
+  }
+}
+function openTabToReportTrialBalanceDetails(procId, recordId){
+  var frm = document.frmMain;
+  var bPartner = frm.inpcBPartnerId_IN.value, mProduct = frm.inpmProductId_IN.value, c_Project = frm.inpcProjectId_IN.value;
+  markCheckedAllElements(frm.inpcBPartnerId_IN);
+  markCheckedAllElements(frm.inpcProjectId_IN);
+  markCheckedAllElements(frm.inpmProductId_IN);
         
-        var manualURL = '/ad_reports/ReportTrialBalanceDetail.html?inpDateFrom=' + frm.inpDateFrom.value 
+  var manualURL = '/ad_reports/ReportTrialBalanceDetail.html?inpDateFrom=' + frm.inpDateFrom.value 
         + '&inpDateTo=' + frm.inpDateTo.value + '&inpOrg=' + frm.inpOrg.value + '&inpLevel=' + frm.inpLevel.value
         + '&inpcAccountId=' + recordId + '&inpcAcctSchemaId=' + frm.inpcAcctSchemaId.value;
-        if (bPartner.length == 0){
-        	manualURL.concat('&inpcBPartnerId_IN=' + bPartner);
-        }
-        if (mProduct.length == 0){
-            manualURL.concat('&inpcBPartnerId_IN=' + mProduct);
-        }
-        if (c_Project.length == 0){
-            manualURL.concat('&inpcBPartnerId_IN=' + c_Project);
-        }
+  if (bPartner.length == 0){
+    manualURL.concat('&inpcBPartnerId_IN=' + bPartner);
+  }
+  if (mProduct.length == 0){
+    manualURL.concat('&inpcBPartnerId_IN=' + mProduct);
+  }
+  if (c_Project.length == 0){
+    manualURL.concat('&inpcBPartnerId_IN=' + c_Project);
+  }
 
-        var myframe = getFrame('LayoutMDI') || top.opener;
-        if (myframe) {      
-            myframe.OB.RemoteCallManager.call('org.openbravo.client.application.ComputeTranslatedNameActionHandler', {}, {'processId': procId}, 
-            function(response, data, request){
-                myframe.OB.Layout.ViewManager.openView('OBClassicWindow', {
-                    command: 'DEFAULT',
-                    icon: '[SKINIMG]../../org.openbravo.client.application/images/application-menu/iconReport.png',
-                    id: procId,
-                    obManualURL: manualURL,
-                    processId: procId,
-                    tabTitle: data.processTitle,
-                    type: 'report',
-                    viewId: 'OBClassicWindow'
-                });                        
-            });
-        }
-    }
-	
+  var myframe = getFrame('LayoutMDI') || top.opener;
+  if (myframe) {      
+    myframe.OB.RemoteCallManager.call('org.openbravo.client.application.ComputeTranslatedNameActionHandler', {}, {'processId': procId}, 
+    function(response, data, request){
+      myframe.OB.Layout.ViewManager.openView('OBClassicWindow', {
+        command: 'DEFAULT',
+        icon: '[SKINIMG]../../org.openbravo.client.application/images/application-menu/iconReport.png',
+        id: procId,
+        obManualURL: manualURL,
+        processId: procId,
+        tabTitle: data.processTitle,
+        type: 'report',
+        viewId: 'OBClassicWindow'
+      });                        
+    });
+  }
+}
+    
 </script>
 </head>
     <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">
@@ -458,7 +478,7 @@ function showHideFilters(identifier) {
                   <tr class="FieldGroup_TopMargin"/>
                   <tr>
                     <td class="FieldGroupTitle_Left"><img class="FieldGroupTitle_Left_bg" border="0" src="../../../../../web/images/blank.gif"/></td>
-                    <td class="FieldGroupTitle">Primary Filters</td>
+                    <td class="FieldGroupTitle">Primary Filters&nbsp;&nbsp;&nbsp;&nbsp;</td>
                     <td class="FieldGroupTitle_Right"><img class="FieldGroupTitle_Right_bg" border="0" src="../../../../../web/images/blank.gif"/></td>
                     <td class="FieldGroupContent"/>
                   </tr>
@@ -468,14 +488,17 @@ function showHideFilters(identifier) {
               </td>
             </tr>
             <tr>
-              <td class="TitleCell"><span class="LabelText">From Date</span></td>
+              <td class="TitleCell"><span class="LabelText">From</span></td>
               <td class="TextBox_btn_ContentCell">
                 <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                   <tr>
                     <td class="TextBox_ContentCell">
+                     <table style="border: 0px none; border-collapse: collapse;">
+                        <tr><td style="padding-top: 0px;">
                       <input dojoType="openbravo:DateTextbox" lowerThan="paramDateTo" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width required" required="true" type="text" name="inpDateFrom" id="paramDateFrom" size="10" maxlength="10" value="" onkeyup="autoCompleteDate(this.textbox, this.displayFormat);return true;"></input><script>djConfig.searchIds.push("paramDateFrom");</script>
-                    </td>
-                    <td class="FieldButton_bg">
+                    </td></tr>
+                    </table>
+                     <td class="FieldButton_ContentCell">
                       <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="showCalendar('frmMain.inpDateFrom', document.frmMain.inpDateFrom.value, false);return false;">
                       <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calendar';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
                         <tr>
@@ -489,15 +512,18 @@ function showHideFilters(identifier) {
                   </tr>
                 </table>
              </td>
-             <td class="TitleCell"></td>            
-              <td class="TitleCell"><span class="LabelText">To Date</span></td>
+              <td class="TitleCell"></td>            
+              <td class="TitleCell"><span class="LabelText">To</span></td>
               <td class="TextBox_btn_ContentCell">
                 <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                   <tr>
                     <td class="TextBox_ContentCell">
+                    <table style="border: 0px none; border-collapse: collapse;">
+                        <tr><td style="padding-top: 0px;">
                       <input dojoType="openbravo:DateTextbox" greaterThan="paramDateFrom" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width required" required="true" type="text" name="inpDateTo" id="paramDateTo" size="10" maxlength="10" value="" onkeyup="autoCompleteDate(this.textbox, this.displayFormat);return true;"></input><script>djConfig.searchIds.push("paramDateTo");</script>
-                    </td>
-                    <td class="FieldButton_bg">
+                    </td></tr>
+                    </table>
+                    <td class="FieldButton_ContentCell">
                       <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="showCalendar('frmMain.inpDateTo', document.frmMain.inpDateTo.value, false);return false;" >
                       <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calendar';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
                         <tr>
@@ -511,39 +537,54 @@ function showHideFilters(identifier) {
                   </tr>
                 </table>
               </td>
-              <td class="TitleCell"/>
-              <td class="TitleCell"/>
+              <td class="TitleCell"/></td>
             </tr>
             <tr>
               <td class="TitleCell"><span class="LabelText">Organization</span></td>
               <td class="Combo_ContentCell">
                 <select  name="inpOrg" id="inpOrg" class="ComboKey Combo_TwoCells_width" required="true">
-                  <option value=""> <div id="reportAD_ORGID"></div></option>
+                 <div id="reportAD_ORGID"></div>
                 </select></td>
+              <td class="TitleCell"/></td>
+              <td class="TitleCell"><span class="LabelText">Accounting Schema</span></td>
+              <td class="Combo_ContentCell" colspan="2"> <select name="inpcAcctSchemaId" id="inpcAcctSchemaId" class="ComboKey Combo_TwoCells_width" required="true">
+                  <div id="reportC_ACCTSCHEMA_ID"></div>
+                </select>
+              </td>            
             </tr>
             <tr>
-              <td class="TitleCell"> <span class="LabelText">Accounting Schema</span></td>
-              <td class="Combo_ContentCell" colspan="2"> <select name="inpcAcctSchemaId" id="inpcAcctSchemaId" class="ComboKey Combo_TwoCells_width" required="true">
-                  <option value=""> <div id="reportC_ACCTSCHEMA_ID"></div></option>
-                </select>
+              <td colspan="6">
+                <table class="FieldGroup" cellspacing="0" cellpadding="0" border="0">
+                <tbody>
+                  <tr class="FieldGroup_TopMargin"/>
+                  <tr>
+                    <td class="FieldGroupTitle_Left" onclick="displayAdvancedFilters();return false;"><img class="FieldGroupTitle_Left_bg" border="0" src="../../../../../web/images/blank.gif"/></td>
+                    <td class="FieldGroupTitle" onclick="displayAdvancedFilters();return false;" >Advanced Filters</td>
+                    <td class="FieldGroupTitle_Right" onclick="displayAdvancedFilters();return false;"><img class="FieldGroupTitle_Right_bg" border="0" src="../../../../../web/images/blank.gif"/></td>
+                    <td class="FieldGroupContent"/>
+                  </tr>
+                  <tr class="FieldGroup_BottomMargin"/>
+                </tbody>
+                </table>
               </td>
+            </tr>
+            <tr id=advancedFiltersrow1> 
               <td class="TitleCell"><span class="LabelText">Account Level</span></td>
               <td class="Combo_ContentCell"> 
                 <select  name="inpLevel" id="inpLevel" class="ComboKey Combo_OneCell_width" required="true" onchange="displayLogic(); return true;">
-                  <option value=""> <div id="reportLevel"></div></option>
+                  <div id="reportLevel"></div>
                 </select></td>
-              <td class="ContentCell"></td>
-            </tr>
-            <tr>
-            <td class="TitleCell"><span class="LabelText">Initial Page Number</span></td>
-              <td class="TextBox_ContentCell" colspan="2"> <input dojoType="openbravo:Textbox"  class="dojoValidateValid TextBox_OneCell_width" type="text" name="inpPageNo" id="paramPageNo" size="10" maxlength="10" value=""></input><script>djConfig.searchIds.push("paramPageNo");</script>
+                <td class="TitleCell"/></td>
+              <td class="TitleCell"><span class="LabelText">Initial Page Number</span></td>
+              <td class="TextBox_ContentCell"> <input dojoType="openbravo:Textbox"  class="dojoValidateValid TextBox_OneCell_width" type="text" name="inpPageNo" id="paramPageNo" size="10" maxlength="10" value=""></input><script>djConfig.searchIds.push("paramPageNo");</script>
               </td>
+              <td class="TitleCell"/></td>
             </tr>
-	    <tr>
-              <td class="TitleCell"><span class="LabelText">Opening Entry Amount to Initial Balance</span></td>
-              <td class="Radio_Check_ContentCell"><input name="inpNotInitialBalance" type="checkbox" id="fieldNotInitialBalance" value="Y"></input></td>
+            <tr id=advancedFiltersrow2>
+              <td width="30%" class="TitleCell"><span class="LabelText">Opening Entry Amount to Initial Balance</span></td>
+              <td width="70%" class="Radio_Check_ContentCell"><input name="inpNotInitialBalance" type="checkbox" id="fieldNotInitialBalance" value="Y" checked></input></td>
             </tr>
-            <tr id="AcctFromTo">
+            <tr id="AcctFromTo"> 
               <td class="TitleCell"><span class="LabelText">From Account</span></td>
               <td class="TextBox_btn_ContentCell" colspan="2">
                 <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
@@ -589,29 +630,22 @@ function showHideFilters(identifier) {
                 </table>
               </td>
             </tr>
-           
             <tr id="Filter1">
               <td colspan="6">
                 <table class="FieldGroup" cellspacing="0" cellpadding="0" border="0">
                 <tbody>
                   <tr class="FieldGroup_TopMargin"/>
                   <tr>
-                    <td>
-                      <a id="expandFilters" onmouseout="window.status='';return true;" onmouseover="window.status='Open';return true;" onclick="showHideFilters('buttonTreeFilters'); return false;" href="#">
-                        <span class="datawarehouseopen" id="buttonTreeFilters"/>
-                      </a>
-                    </td>
-                    <td class="FieldGroupTitle_Left"><img class="FieldGroupTitle_Left_bg" border="0" src="../../../../../web/images/blank.gif"/></td>
-                    <td class="FieldGroupTitle">Dimensions</td>
-                    <td class="FieldGroupTitle_Right"><img class="FieldGroupTitle_Right_bg" border="0" src="../../../../../web/images/blank.gif"/></td>
+                    <td class="FieldGroupTitle_Left" onclick="showFilters();return false;"><img class="FieldGroupTitle_Left_bg" border="0" src="../../../../../web/images/blank.gif"/></td>
+                    <td class="FieldGroupTitle"  onclick="showFilters();return false;">Dimensions&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                    <td class="FieldGroupTitle_Right" onclick="showFilters();return false;"><img class="FieldGroupTitle_Right_bg" border="0" src="../../../../../web/images/blank.gif"/></td>
                     <td class="FieldGroupContent"/>
                   </tr>
                   <tr class="FieldGroup_BottomMargin"/>
                 </tbody>
                 </table>
               </td>
-            </tr>
-            
+            </tr>         
             <tr id="Filter2">
               <td class="TitleCell"><span class="LabelText">Business Partner</span></td>
                 <td class="List_ContentCell" colspan="2">
@@ -913,7 +947,7 @@ function showHideFilters(identifier) {
                   <tr class="FieldGroup_TopMargin"/>
                   <tr>
                     <td class="FieldGroupTitle_Left"><img class="FieldGroupTitle_Left_bg" border="0" src="../../../../../web/images/blank.gif"/></td>
-                    <td class="FieldGroupTitle">View Results</td>
+                    <td class="FieldGroupTitle">View Results&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
                     <td class="FieldGroupTitle_Right"><img class="FieldGroupTitle_Right_bg" border="0" src="../../../../../web/images/blank.gif"/></td>
                     <td class="FieldGroupContent"/>
                   </tr>
@@ -922,10 +956,9 @@ function showHideFilters(identifier) {
                 </table>
               </td>
             </tr>
-
+            <tr><td>&nbsp;</td></tr>
             <tr>
-              <td class="TitleCell"></td>
-              <td class="Button_CenterAlign_ContentCell">
+              <td>
                 <div>
                   <button type="button" 
                     id="buttonHTML" 
@@ -968,47 +1001,47 @@ function showHideFilters(identifier) {
                 <!-- Section with grid results -->
                 <div id="sectionGridView">
                   <table cellspacing="0" cellpadding="0" width="100%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;">
-                  <tr class="DataGrid_Body_Row"> 
-                      <th height="17" colspan="7" class="DataGrid_Header_Cell">Balance</th> 
+                    <tr class="DataGrid_Body_Row">
+                      <th width="392" colspan="2" class="DataGrid_Header_Cell"></th>
+                      <th width="116" class="DataGrid_Header_Cell">Balance As Of</th>
+                      <th width="232" colspan="2" class="DataGrid_Header_Cell">Activity</th>
+                      <th width="116" class="DataGrid_Header_Cell">Balance As Of</th>
                     </tr>
                     <tr class="DataGrid_Body_Row">
-                      <th width="90" class="DataGrid_Header_Cell">Account Code</th>
-                      <th width="280" class="DataGrid_Header_Cell">Description</th>
-                      <th width="105" class="DataGrid_Header_Cell">Initial Balance</th>
-                      <th width="105" class="DataGrid_Header_Cell">Debit Period</th>
-                      <th width="105" class="DataGrid_Header_Cell">Credit Period</th>
-                      <th width="105" class="DataGrid_Header_Cell">Final Balance</th>
-                      <th width="70"  class="DataGrid_Header_Cell">Detail</th>
+                      <th width="101" class="DataGrid_Header_Cell" style="text-align:left;">Account No.</th>
+                      <th width="291" class="DataGrid_Header_Cell" style="text-align:left;"> Name </th>
+                      <th width="116" class="DataGrid_Header_Cell"> <span id="paramDate_From">xx12/12/2003</span></th>
+                      <th width="116" class="DataGrid_Header_Cell">Debit</th>
+                      <th width="116" class="DataGrid_Header_Cell">Credit</th>
+                      <th width="116" class="DataGrid_Header_Cell"><span id="paramDate_To">xx12/12/2003</span></th>
+                     
                     </tr>
                     <div id="sectionDiscard">
                     <div id="sectionDetail">
                       <tr class="DataGrid_Body_Row DataGrid_Body_Row_yy" id="funcEvenOddRow1xx">
-                        <td width="90" class="DataGrid_Body_Cell">
-                            <span id="showExpand" style="display: table-cell; display: -moz-inline-box;"><a href="#" onclick="updateData('OPEN', 'hhqq');return false;" onMouseOver="window.status='Open';return true;" onMouseOut="window.status='';return true;" id="expandButton">
-                              <span id="buttonTreemmm" class="datawarehouseclose"></span>
-                            </a></span>
+                        <td width="90" class="DataGrid_Body_Cell">     
                             <a href="#" onclick="openTabToGeneralLedgerReport('800001', 'xx');return false;" onmouseover="window.status='General Ledger';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldId1">
                               <span id="fieldAccount">xx70000</span>
                             </a>
                             <span id="fieldDescAccount">xx600</span>
+                            <span id="showExpand" style="display: table-cell; display: -moz-inline-box;"><a href="#" onclick="updateData('OPEN', 'hhqq');return false;" onMouseOver="window.status='Open';return true;" onMouseOut="window.status='';return true;" id="expandButton">
+                              <span id="buttonTreemmm" class="datawarehouseclose"></span>
+                            </a></span>
                         </td>
                         <td width="280" id="fieldAccountName" class="DataGrid_Body_Cell">xxChecking Unallocated Receipts</td>
-                        <td width="105" id="fieldSaldoInicial" class="DataGrid_Body_Cell_Amount">xx14500.34</td>
-                        <td width="105" id="fieldAmtacctdr" class="DataGrid_Body_Cell_Amount">xx14500.34</td>
-                        <td width="105" id="fieldAmtacctcr" class="DataGrid_Body_Cell_Amount">xx14500.34</td>
-                        <td width="105" id="fieldSaldoFinal" class="DataGrid_Body_Cell_Amount">xx14500.34</td>
-                        <td width="70" class="DataGrid_Body_Cell">
-                          <a href="#" onclick="validate(); openTabToReportTrialBalanceDetails('800091', 'xx');return false;" onmouseover="window.status='General Ledger';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldId2">Detail</a>
-                        </td>
+                        <td width="116" id="fieldSaldoInicial" class="DataGrid_Body_Cell_Amount">xx14500.34</td>
+                        <td width="116" id="fieldAmtacctdr" class="DataGrid_Body_Cell_Amount">xx14500.34</td>
+                        <td width="116" id="fieldAmtacctcr" class="DataGrid_Body_Cell_Amount">xx14500.34</td>
+                        <td width="116" id="fieldSaldoFinal" class="DataGrid_Body_Cell_Amount">xx14500.34</td>
                       </tr>
                     </div>
                     <tr class="DataGrid_Body_Row"> 
-                      <th colspan="2" class="DataGrid_Header_Cell">Total</th>
-                      <th width="105" id="fieldTotalSaldoInicial" class="DataGrid_Header_Cell_Amount">xx14500.34</th>
-                      <th width="105" id="fieldTotalAmtacctdr"  class="DataGrid_Header_Cell_Amount">xx14500.34</th>
-                      <th width="105" id="fieldTotalAmtacctcr"  class="DataGrid_Header_Cell_Amount">xx14500.34</th>
-                      <th width="105" id="fieldTotalSaldoFinal" class="DataGrid_Header_Cell_Amount">xx14500.34</th>
-                      <th width="70" class="DataGrid_Header_Cell"></th>
+                      <th  class="DataGrid_Header_Cell"></th>
+                      <th  class="DataGrid_Header_Cell" style="text-align:left;">Totals</th>
+                      <th width="116" id="fieldTotalSaldoInicial" class="DataGrid_Header_Cell_Amount" style= "text-align:right;">xx14500.34</th>
+                      <th width="116" id="fieldTotalAmtacctdr"  class="DataGrid_Header_Cell_Amount" style= "text-align:right;">xx14500.34</th>
+                      <th width="116" id="fieldTotalAmtacctcr"  class="DataGrid_Header_Cell_Amount" style= "text-align:right;">xx14500.34</th>
+                      <th width="116" id="fieldTotalSaldoFinal" class="DataGrid_Header_Cell_Amount" style= "text-align:right;">xx14500.34</th>
                     </tr>
                   </table>
                   </div>

@@ -583,6 +583,8 @@ public class ToolBar {
       removeReadOnly();
     if (uiPattern.equals("SR")) // single record
       removeSingleRecord();
+    if (uiPattern.equals("ED")) // edit or delete only record
+      removeEditOrDeleteOnlyRecord();
 
     changeAuditTrailVisibility();
   }
@@ -1049,6 +1051,11 @@ public class ToolBar {
     removeElement("SAVE_NEXT");
     removeElement("DELETE");
     removeElement("DELETE_RELATION");
+  }
+
+  private void removeEditOrDeleteOnlyRecord() {
+    removeElement("NEW");
+    removeElement("SAVE_NEW");
   }
 
   private String transformElementsToString(HTMLElement element, Vector<String> vecLastType,

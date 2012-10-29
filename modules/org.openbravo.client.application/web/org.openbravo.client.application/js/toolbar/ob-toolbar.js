@@ -120,7 +120,7 @@ isc.OBToolbar.addClassProperties({
     updateState: function () {
       var view = this.view,
           selectedRecords = view.viewGrid.getSelectedRecords();
-      this.setDisabled(view.isShowingForm || view.readOnly || view.singleRecord || !view.hasValidState() || (selectedRecords && selectedRecords.length > 1));
+      this.setDisabled(view.viewGrid.isGrouped || view.isShowingForm || view.readOnly || view.editOrDeleteOnly || view.singleRecord || !view.hasValidState() || (selectedRecords && selectedRecords.length > 1));
     },
     keyboardShortcutId: 'ToolBar_NewRow'
   },
@@ -135,9 +135,9 @@ isc.OBToolbar.addClassProperties({
       var view = this.view,
           form = view.viewForm;
       if (view.isShowingForm) {
-        this.setDisabled(form.isSaving || view.readOnly || view.singleRecord || !view.hasValidState());
+        this.setDisabled(form.isSaving || view.readOnly || view.singleRecord || !view.hasValidState() || view.editOrDeleteOnly);
       } else {
-        this.setDisabled(view.readOnly || view.singleRecord || !view.hasValidState());
+        this.setDisabled(view.readOnly || view.singleRecord || !view.hasValidState() || view.editOrDeleteOnly);
       }
     },
     keyboardShortcutId: 'ToolBar_NewDoc'
@@ -172,9 +172,9 @@ isc.OBToolbar.addClassProperties({
         }
       }
       if (view.isShowingForm) {
-        this.setDisabled(form.isSaving || form.readOnly || view.singleRecord || !view.hasValidState() || form.isNew);
+        this.setDisabled(form.isSaving || form.readOnly || view.singleRecord || !view.hasValidState() || form.isNew || (view.standardWindow.allowDelete === 'N'));
       } else {
-        this.setDisabled(view.readOnly || view.singleRecord || !view.hasValidState() || !grid.getSelectedRecords() || grid.getSelectedRecords().length === 0);
+        this.setDisabled(view.readOnly || view.singleRecord || !view.hasValidState() || !grid.getSelectedRecords() || grid.getSelectedRecords().length === 0 || (view.standardWindow.allowDelete === 'N'));
       }
     },
     keyboardShortcutId: 'ToolBar_Eliminate'
@@ -233,7 +233,7 @@ isc.OBToolbar.addClassProperties({
     buttonType: 'export',
     prompt: OB.I18N.getLabel('OBUIAPP_ExportGrid'),
     updateState: function () {
-      this.setDisabled(this.view.isShowingForm || this.view.viewGrid.getTotalRows() === 0 || OB.PropertyStore.get("ExportToCsv", this.view.standardWindow.id) === 'N');
+      this.setDisabled(this.view.isShowingForm || this.view.viewGrid.getTotalRows() === 0 || OB.PropertyStore.get("ExportToCsv", this.view.standardWindow.windowId) === 'N');
     },
     keyboardShortcutId: 'ToolBar_Export'
   },
@@ -360,6 +360,10 @@ isc.OBToolbar.addClassProperties({
       }
       this.resetBaseStyle();
       if (this.view.viewForm.readOnly && !this.view.attachmentExists) {
+        this.setDisabled(true);
+      }
+      if (this.view.standardWindow.allowAttachment === 'N') {
+        this.view.viewForm.enableAttachmentsSection(false);
         this.setDisabled(true);
       }
     },

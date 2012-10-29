@@ -47,6 +47,7 @@ public class QuickLaunchDataSource extends ReadOnlyDataSourceService {
   public static final String OPTION_TYPE_TAB = "tab";
   public static final String OPTION_SINGLE_RECORD = "singleRecord";
   public static final String OPTION_READ_ONLY = "readOnly";
+  public static final String OPTION_EDIT_OR_DELETE_ONLY = "editOrDeleteOnly";
   public static final String PROCESS_ID = "processId";
   public static final String WINDOW_ID = "windowId";
   public static final String FORM_ID = "formId";
@@ -105,6 +106,7 @@ public class QuickLaunchDataSource extends ReadOnlyDataSourceService {
           data.put(WINDOW_ID, menuOption.getMenu().getWindow().getId());
           data.put(OPTION_SINGLE_RECORD, menuOption.isSingleRecord());
           data.put(OPTION_READ_ONLY, menuOption.isReadOnly());
+          data.put(OPTION_EDIT_OR_DELETE_ONLY, menuOption.isEditOrDeleteOnly());
         } else if (menuOption.isProcess()) {
           data.put(OPTION_TYPE, "process");
           data.put(PROCESS_ID, menuOption.getMenu().getProcess().getId());

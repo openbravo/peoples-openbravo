@@ -335,7 +335,9 @@ public class CostingRuleProcess implements Process {
     select.append(" from " + MaterialTransaction.ENTITY_NAME + " as trx");
     select.append("    join trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " as loc");
     select.append(" where trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
-    select.append("   and trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " < :date");
+    if (date != null) {
+      select.append("   and trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " < :date");
+    }
     select.append(" group by trx." + MaterialTransaction.PROPERTY_PRODUCT + ".id");
     select.append(", trx." + MaterialTransaction.PROPERTY_ATTRIBUTESETVALUE + ".id");
     select.append(", trx." + MaterialTransaction.PROPERTY_UOM + ".id");
@@ -354,13 +356,19 @@ public class CostingRuleProcess implements Process {
 
     Query stockLinesQry = OBDal.getInstance().getSession().createQuery(select.toString());
     stockLinesQry.setParameterList("orgs", childOrgs);
-    stockLinesQry.setDate("date", date);
+    if (date != null) {
+      stockLinesQry.setDate("date", date);
+    }
     stockLinesQry.setFetchSize(1000);
     ScrollableResults stockLines = stockLinesQry.scroll(ScrollMode.FORWARD_ONLY);
     return stockLines;
   }
 
   private CostingRuleInit createCostingRuleInitLine(CostingRule rule, String warehouseId, Date date) {
+    Date localDate = date;
+    if (localDate == null) {
+      localDate = new Date();
+    }
     String clientId = (String) DalUtil.getId(rule.getClient());
     String orgId = (String) DalUtil.getId(rule.getOrganization());
     CostingRuleInit cri = OBProvider.getInstance().get(CostingRuleInit.class);
@@ -380,7 +388,7 @@ public class CostingRuleProcess implements Process {
     closeInv.setName(OBMessageUtils.messageBD("CostCloseInventory"));
     closeInv.setWarehouse((Warehouse) OBDal.getInstance().getProxy(Warehouse.ENTITY_NAME,
         warehouseId));
-    closeInv.setMovementDate(date);
+    closeInv.setMovementDate(localDate);
     cri.setCloseInventory(closeInv);
 
     InventoryCount initInv = OBProvider.getInstance().get(InventoryCount.class);
@@ -390,7 +398,7 @@ public class CostingRuleProcess implements Process {
     initInv.setName(OBMessageUtils.messageBD("CostInitInventory"));
     initInv.setWarehouse((Warehouse) OBDal.getInstance().getProxy(Warehouse.ENTITY_NAME,
         warehouseId));
-    initInv.setMovementDate(date);
+    initInv.setMovementDate(localDate);
     cri.setInitInventory(initInv);
     OBDal.getInstance().save(rule);
     OBDal.getInstance().save(closeInv);

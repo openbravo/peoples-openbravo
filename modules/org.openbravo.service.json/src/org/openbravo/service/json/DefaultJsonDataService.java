@@ -29,9 +29,13 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.ScrollableResults;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.model.Entity;
+import org.openbravo.base.model.ModelProvider;
+import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.util.Check;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.service.json.JsonToDataConverter.JsonConversionError;
@@ -131,7 +135,88 @@ public class DefaultJsonDataService implements JsonDataService {
         queryService = createSetQueryService(parameters, false);
         queryService.setEntityName(entityName);
 
-        bobs = queryService.list();
+        if (parameters.containsKey(JsonConstants.SUMMARY_PARAMETER)) {
+          final JSONObject singleResult = new JSONObject();
+          if (queryService.getSummaryFields().size() == 1) {
+            singleResult.put(queryService.getSummaryFields().get(0), queryService.buildOBQuery()
+                .createQuery().uniqueResult());
+          } else {
+            final Object[] os = (Object[]) queryService.buildOBQuery().createQuery().uniqueResult();
+            int i = 0;
+            if (os != null && os.length > 0) {
+              for (String key : queryService.getSummaryFields()) {
+                singleResult.put(key, os[i++]);
+              }
+            }
+          }
+          singleResult.put("isGridSummary", true);
+
+          jsonResponse.put(JsonConstants.RESPONSE_DATA,
+              new JSONArray(Collections.singleton(singleResult)));
+          jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
+          jsonResult.put(JsonConstants.RESPONSE_RESPONSE, jsonResponse);
+          jsonResponse.put(JsonConstants.RESPONSE_STARTROW, 0);
+          jsonResponse.put(JsonConstants.RESPONSE_ENDROW, 1);
+          jsonResponse.put(JsonConstants.RESPONSE_TOTALROWS, 1);
+          return jsonResult.toString();
+        } else if (parameters.containsKey(JsonConstants.DISTINCT_PARAMETER)) {
+          // when distinct an array of values is returned
+          // the first value is the BaseObObject the other values
+          // are part of the order by and such and can be ignored
+          final String distinct = parameters.get(JsonConstants.DISTINCT_PARAMETER);
+          final Property distinctProperty = DalUtil.getPropertyFromPath(ModelProvider.getInstance()
+              .getEntity(entityName), distinct);
+          final Entity distinctEntity = distinctProperty.getTargetEntity();
+          final List<Property> properties = new ArrayList<Property>();
+          properties.addAll(distinctEntity.getIdProperties());
+          properties.addAll(distinctEntity.getIdentifierProperties());
+
+          bobs = new ArrayList<BaseOBObject>();
+
+          List<List<Property>> cache = new ArrayList<List<Property>>();
+          for (Object o : queryService.buildOBQuery().createQuery().list()) {
+            final Object[] os = (Object[]) o;
+            if (os[0] == null) {
+              // the null value is also returned, ignore those
+              continue;
+            }
+
+            if (cache.size() == 0) {
+              for (int i = 0; i < os.length; i++) {
+                cache.add(null);
+              }
+            }
+
+            // create a BaseOBObject and fill the id/identifier properties
+            final BaseOBObject bob = (BaseOBObject) OBProvider.getInstance().get(
+                distinctEntity.getName());
+            int i = 0;
+            for (Property property : properties) {
+              // the query contains the identifier and other properties for
+              // one level deeper!
+              if (property.getTargetEntity() != null) {
+                final BaseOBObject refBob = (BaseOBObject) OBProvider.getInstance().get(
+                    property.getTargetEntity().getName());
+                final List<Property> nextIdentifierProps;
+                if (cache.get(i) != null) {
+                  nextIdentifierProps = cache.get(i);
+                } else {
+                  nextIdentifierProps = JsonUtils.getIdentifierSet(property);
+                  cache.set(i, nextIdentifierProps);
+                }
+                for (Property nextIdentifierProp : nextIdentifierProps) {
+                  refBob.setValue(nextIdentifierProp.getName(), os[i++]);
+                }
+                bob.setValue(property.getName(), refBob);
+              } else {
+                bob.setValue(property.getName(), os[i++]);
+              }
+            }
+            bobs.add(bob);
+          }
+        } else {
+          bobs = queryService.list();
+        }
 
         if (preventCountOperation) {
           count = bobs.size() + startRow;
@@ -163,6 +248,8 @@ public class DefaultJsonDataService implements JsonDataService {
       final DataToJsonConverter toJsonConverter = OBProvider.getInstance().get(
           DataToJsonConverter.class);
       toJsonConverter.setAdditionalProperties(JsonUtils.getAdditionalProperties(parameters));
+      toJsonConverter.setSelectedProperties(parameters
+          .get(JsonConstants.SELECTEDPROPERTIES_PARAMETER));
       final List<JSONObject> jsonObjects = toJsonConverter.toJsonObjects(bobs);
 
       addWritableAttribute(jsonObjects);
@@ -273,8 +360,20 @@ public class DefaultJsonDataService implements JsonDataService {
       orderBy = parameters.get(JsonConstants.ORDERBY_PARAMETER);
     }
 
-    // Always append id to the orderby to make a predictable sorting
-    orderBy += (orderBy.isEmpty() ? "" : ",") + "id";
+    if (parameters.get(JsonConstants.SUMMARY_PARAMETER) != null
+        && parameters.get(JsonConstants.SUMMARY_PARAMETER).trim().length() > 0) {
+      queryService.setSummarySettings(parameters.get(JsonConstants.SUMMARY_PARAMETER));
+    } else if (parameters.get(JsonConstants.DISTINCT_PARAMETER) != null
+        && parameters.get(JsonConstants.DISTINCT_PARAMETER).trim().length() > 0) {
+      queryService.setDistinct(parameters.get(JsonConstants.DISTINCT_PARAMETER).trim());
+      // sortby the distinct's identifier
+      orderBy = queryService.getDistinct() + DalUtil.DOT + JsonConstants.IDENTIFIER + ","
+          + queryService.getDistinct() + DalUtil.DOT + JsonConstants.ID;
+    } else {
+      // Always append id to the orderby to make a predictable sorting
+      orderBy += (orderBy.isEmpty() ? "" : ",") + "id";
+    }
+
     queryService.setOrderBy(orderBy);
 
     // compute a new startrow if the targetrecordid was passed in

@@ -31,7 +31,9 @@
     v_NextNo      			           VARCHAR2(32);
     v_ControlNo 	 	               NUMBER;
     v_P_Revenue_Acct    		       VARCHAR2(32);
+    v_P_Def_Revenue_Acct    		   VARCHAR2(32);
     v_P_Expense_Acct    		       VARCHAR2(32);
+    v_P_Def_Expense_Acct    		   VARCHAR2(32);
     v_P_Asset_Acct    			       VARCHAR2(32);
     v_P_COGS_Acct    			         VARCHAR2(32);
     v_P_PurchasePriceVariance_Acct VARCHAR2(32);
@@ -82,7 +84,7 @@ BEGIN
   FOR Cur_Defaults IN (
 	SELECT  distinct AD_IsOrgIncluded(:new.AD_ORG_ID, a.AD_Org_ID, :new.AD_Client_ID), 
   a.ad_sequence_pr_id,a.isprnewaccount,a.acct_length,a.subacct_length, d.ad_client_id, 
-  d.p_revenue_acct, d.p_expense_acct, d.p_asset_acct, d.p_cogs_acct, d.P_PurchasePriceVariance_Acct, d.P_InvoicePriceVariance_Acct,
+  d.p_revenue_acct, d.p_def_revenue_acct, d.p_expense_acct, d.p_def_expense_acct, d.p_asset_acct, d.p_cogs_acct, d.P_PurchasePriceVariance_Acct, d.P_InvoicePriceVariance_Acct,
   d.P_TradeDiscountRec_Acct, d.P_TradeDiscountGrant_Acct, d.P_COGS_Return_Acct, d.P_Revenue_Return_Acct, a.createdby, a.updatedby, a.C_AcctSchema_ID, d.ISACTIVE
   FROM  M_Product_Category_Acct d, ad_Org_AcctSchema a
 	WHERE  d.M_Product_Category_ID=:new.M_Product_Category_ID
@@ -106,9 +108,13 @@ BEGIN
             -- Retrieving the expense account number.
             AD_Sequence_Doc(v_seq_name, Cur_Defaults.AD_Client_ID, 'Y', v_Sequence_No);
             c_validcombination_clone(Cur_Defaults.P_Expense_Acct, v_Sequence_No, :new.Name, Cur_Defaults.acct_length, Cur_Defaults.subacct_length, v_P_Expense_Acct);
+            c_validcombination_clone(Cur_Defaults.P_Def_Expense_Acct, v_Sequence_No, :new.Name, Cur_Defaults.acct_length, Cur_Defaults.subacct_length, v_P_Def_Expense_Acct);
             
              -- Retrieving the revenue account number.
             c_validcombination_clone(Cur_Defaults.P_Revenue_Acct, v_Sequence_No, :new.Name, Cur_Defaults.acct_length, Cur_Defaults.subacct_length, v_P_Revenue_Acct);
+            
+             -- Retrieving the revenue account number.
+            c_validcombination_clone(Cur_Defaults.P_Def_Revenue_Acct, v_Sequence_No, :new.Name, Cur_Defaults.acct_length, Cur_Defaults.subacct_length, v_P_Def_Revenue_Acct);
             
             -- Retrieving the asset account number.
             c_validcombination_clone(Cur_Defaults.P_Asset_Acct, v_Sequence_No, :new.Name, Cur_Defaults.acct_length, Cur_Defaults.subacct_length, v_P_Asset_Acct);
@@ -138,14 +144,14 @@ BEGIN
             INSERT INTO M_Product_Acct
             (M_Product_Acct_ID, M_Product_ID, C_AcctSchema_ID,
             AD_Client_ID, AD_Org_ID, IsActive, Created, CreatedBy, Updated, UpdatedBy,
-            P_Revenue_Acct, P_Expense_Acct, P_Asset_Acct, P_COGS_Acct,
+            P_Revenue_Acct, P_Def_Revenue_Acct, P_Expense_Acct, P_Def_Expense_Acct, P_Asset_Acct, P_COGS_Acct,
             P_PurchasePriceVariance_Acct, P_InvoicePriceVariance_Acct,
             P_TradeDiscountRec_Acct, P_TradeDiscountGrant_Acct,
             P_COGS_Return_Acct, P_Revenue_Return_Acct)
             VALUES
             (get_uuid(), :new.M_Product_ID, Cur_Defaults.C_AcctSchema_ID,
             :new.AD_Client_ID, :new.AD_ORG_ID, Cur_Defaults.ISACTIVE, now(), :new.CreatedBy, now(), :new.UpdatedBy,
-            v_P_Revenue_Acct, v_P_Expense_Acct, v_P_Asset_Acct, v_P_COGS_Acct,
+            v_P_Revenue_Acct, v_P_Def_Revenue_Acct, v_P_Expense_Acct, v_P_Def_Expense_Acct, v_P_Asset_Acct, v_P_COGS_Acct,
             v_P_PurchasePriceVariance_Acct, v_P_InvoicePriceVariance_Acct,
             v_P_TradeDiscountRec_Acct, v_P_TradeDiscountGrant_Acct,
             v_P_COGS_Return_Acct, v_P_Revenue_Return_Acct); 
@@ -155,14 +161,14 @@ BEGIN
             INSERT INTO M_Product_Acct
             (M_Product_Acct_ID, M_Product_ID, C_AcctSchema_ID,
             AD_Client_ID, AD_Org_ID, IsActive, Created, CreatedBy, Updated, UpdatedBy,
-            P_Revenue_Acct, P_Expense_Acct, P_Asset_Acct, P_COGS_Acct,
+            P_Revenue_Acct, P_Def_Revenue_Acct, P_Expense_Acct, P_Def_Expense_Acct, P_Asset_Acct, P_COGS_Acct,
             P_PurchasePriceVariance_Acct, P_InvoicePriceVariance_Acct,
             P_TradeDiscountRec_Acct, P_TradeDiscountGrant_Acct,
-	    P_COGS_Return_Acct, P_Revenue_Return_Acct)
+	    			P_COGS_Return_Acct, P_Revenue_Return_Acct)
             VALUES
 			      (get_uuid(), :new.M_Product_ID, Cur_Defaults.C_AcctSchema_ID,
 			      :new.AD_Client_ID, :new.AD_ORG_ID, Cur_Defaults.ISACTIVE, now(), :new.CreatedBy, now(), :new.UpdatedBy,
-			      Cur_Defaults.P_Revenue_Acct, Cur_Defaults.P_Expense_Acct, Cur_Defaults.P_Asset_Acct, Cur_Defaults.P_COGS_Acct,
+			      Cur_Defaults.P_Revenue_Acct, Cur_Defaults.P_Def_Revenue_Acct, Cur_Defaults.P_Expense_Acct, Cur_Defaults.P_Def_Expense_Acct, Cur_Defaults.P_Asset_Acct, Cur_Defaults.P_COGS_Acct,
             Cur_Defaults.P_PurchasePriceVariance_Acct, Cur_Defaults.P_InvoicePriceVariance_Acct,
             Cur_Defaults.P_TradeDiscountRec_Acct, Cur_Defaults.P_TradeDiscountGrant_Acct, 
             Cur_Defaults.P_COGS_Return_Acct, Cur_Defaults.P_Revenue_Return_Acct);

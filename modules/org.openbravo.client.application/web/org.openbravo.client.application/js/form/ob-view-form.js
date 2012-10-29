@@ -1437,7 +1437,7 @@ OB.ViewFormProperties = {
       if (status === isc.RPCResponse.STATUS_SUCCESS && recordIndex === -1) {
         var visibleRows = view.viewGrid.body.getVisibleRows();
         if (visibleRows[0] !== -1) {
-          view.viewGrid.data.insertCacheData(data, visibleRows[0]);
+          view.viewGrid.addToCacheData(data, visibleRows[0]);
           recordIndex = visibleRows[0];
         }
       }

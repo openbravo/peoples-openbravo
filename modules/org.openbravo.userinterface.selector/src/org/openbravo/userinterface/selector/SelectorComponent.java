@@ -801,8 +801,8 @@ public class SelectorComponent extends BaseTemplateComponent {
     public String getFilterEditorProperties() {
       if (getUIDefinition() != null) {
         if (getUIDefinition() instanceof FKComboUIDefinition && isSelectorItem) {
-          return ", filterOperator: 'equals', filterOnKeypress: true, canFilter:true, required: false, filterEditorType: 'OBSelectorFilterSelectItem', filterEditorProperties: {entity: '"
-              + getEntityName() + "', displayField: '" + JsonConstants.IDENTIFIER + "'}";
+          return ", canFilter:true, required: false, filterEditorType: 'OBSelectorFilterSelectItem', filterEditorProperties: {entity: '"
+              + getEntityName() + "'}";
         }
         return getUIDefinition().getFilterEditorProperties(null);
       }

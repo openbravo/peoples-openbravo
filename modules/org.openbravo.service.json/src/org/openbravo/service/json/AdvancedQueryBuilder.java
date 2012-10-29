@@ -59,6 +59,10 @@ import org.openbravo.service.db.DalConnectionProvider;
  */
 public class AdvancedQueryBuilder {
 
+  private static final String CRITERIA_KEY = "criteria";
+  private static final String VALUE_KEY = "value";
+  private static final String FIELD_NAME_KEY = "fieldName";
+  private static final String OPERATOR_KEY = "operator";
   private static final String ALIAS_PREFIX = "alias_";
   private static final String JOIN_ALIAS_PREFIX = "join_";
   private static final char ESCAPE_CHAR = '|';
@@ -123,6 +127,8 @@ public class AdvancedQueryBuilder {
   private List<JoinDefinition> joinDefinitions = new ArrayList<JoinDefinition>();
   private String orderBy;
 
+  private List<String> selectClauseParts = new ArrayList<String>();
+
   private String orderByClause = null;
   private String whereClause = null;
   private String joinClause = null;
@@ -169,7 +175,7 @@ public class AdvancedQueryBuilder {
     Check.isNotNull(entity, "Entity must be set");
 
     // parse the criteria themselves
-    if (criteria.has("operator")) {
+    if (criteria.has(OPERATOR_KEY)) {
       try {
         whereClause = parseCriteria(criteria);
       } catch (JSONException e) {
@@ -283,23 +289,41 @@ public class AdvancedQueryBuilder {
   }
 
   private boolean hasOrAndOperator(JSONObject jsonCriteria) throws JSONException {
-    if (!jsonCriteria.has("operator")) {
+    if (!jsonCriteria.has(OPERATOR_KEY)) {
       return false;
     }
-    return OPERATOR_OR.equals(jsonCriteria.get("operator"))
-        || OPERATOR_AND.equals(jsonCriteria.get("operator"));
+    return OPERATOR_OR.equals(jsonCriteria.get(OPERATOR_KEY))
+        || OPERATOR_AND.equals(jsonCriteria.get(OPERATOR_KEY));
   }
 
   private String parseSingleClause(JSONObject jsonCriteria) throws JSONException {
-    String operator = jsonCriteria.getString("operator");
+    String operator = jsonCriteria.getString(OPERATOR_KEY);
 
     if (operator.equals(OPERATOR_BETWEEN) || operator.equals(OPERATOR_BETWEENINCLUSIVE)
         || operator.equals(OPERATOR_IBETWEEN) || operator.equals(OPERATOR_IBETWEENINCLUSIVE)) {
       return parseBetween(jsonCriteria, operator, true);
     }
 
-    String fieldName = jsonCriteria.getString("fieldName");
-    Object value = jsonCriteria.has("value") ? jsonCriteria.get("value") : null;
+    String fieldName = jsonCriteria.getString(FIELD_NAME_KEY);
+    Object value = jsonCriteria.has(VALUE_KEY) ? jsonCriteria.get(VALUE_KEY) : null;
+
+    // translate to a OR for each value
+    if (value instanceof JSONArray) {
+      final JSONArray jsonArray = (JSONArray) value;
+      final JSONObject advancedCriteria = new JSONObject();
+      advancedCriteria.put(OPERATOR_KEY, OPERATOR_OR);
+      final JSONArray subCriteria = new JSONArray();
+      for (int i = 0; i < jsonArray.length(); i++) {
+        final JSONObject subCriterion = new JSONObject();
+        subCriterion.put(OPERATOR_KEY, operator);
+        subCriterion.put(FIELD_NAME_KEY, fieldName);
+        subCriterion.put(VALUE_KEY, jsonArray.get(i));
+        subCriteria.put(i, subCriterion);
+      }
+      advancedCriteria.put(CRITERIA_KEY, subCriteria);
+      return parseAdvancedCriteria(advancedCriteria);
+    }
+
     // Retrieves the UTC time zone offset of the client
     if (jsonCriteria.has("minutesTimezoneOffset")) {
       int clientMinutesTimezoneOffset = Integer.parseInt(jsonCriteria.get("minutesTimezoneOffset")
@@ -347,7 +371,7 @@ public class AdvancedQueryBuilder {
 
   private String parseBetween(JSONObject jsonCriteria, String operator, boolean inclusive)
       throws JSONException {
-    final String fieldName = jsonCriteria.getString("fieldName");
+    final String fieldName = jsonCriteria.getString(FIELD_NAME_KEY);
     final Object start = jsonCriteria.get("start");
     final Object end = jsonCriteria.get("end");
     final String leftClause = parseSimpleClause(fieldName, getBetweenOperator(operator, false),
@@ -542,6 +566,8 @@ public class AdvancedQueryBuilder {
       clause = alias;
     }
 
+    localValue = unEscapeOperator(localValue);
+
     if (!property.isPrimitive()) {
       // an in parameter use it...
       if (localValue.toString().contains(JsonConstants.IN_PARAMETER_SEPARATOR)) {
@@ -588,12 +614,6 @@ public class AdvancedQueryBuilder {
       return value;
     }
 
-    // a FK. Old selectors is an special key, though they are not primitive they should be treated
-    // as text
-    if (!property.isPrimitive() && !(property.getDomainType() instanceof SearchDomainType)) {
-      return value;
-    }
-
     if (isLike(operator)) {
       if (operator.equals(OPERATOR_CONTAINS) || operator.equals(OPERATOR_NOTCONTAINS)
           || operator.equals(OPERATOR_INOTCONTAINS) || operator.equals(OPERATOR_ICONTAINS)
@@ -618,6 +638,12 @@ public class AdvancedQueryBuilder {
     }
 
     if (property.getDomainType() instanceof SearchDomainType) {
+      return value;
+    }
+
+    // a FK. Old selectors is an special key, though they are not primitive they should be treated
+    // as text
+    if (!property.isPrimitive() && !(property.getDomainType() instanceof SearchDomainType)) {
       return value;
     }
 
@@ -664,6 +690,19 @@ public class AdvancedQueryBuilder {
     return value;
   }
 
+  @SuppressWarnings("unchecked")
+  private <T> T unEscapeOperator(T val) {
+    if (val == null || !(val instanceof String)) {
+      return val;
+    }
+    String localVal = (String) val;
+    localVal = localVal.replace("\\and", "and");
+    localVal = localVal.replace("\\or", "or");
+    localVal = localVal.replace("\\AND", "AND");
+    localVal = localVal.replace("\\OR", "OR");
+    return (T) localVal;
+  }
+
   private boolean isGreaterOperator(String operator) {
     return operator != null
         && (operator.equals(OPERATOR_GREATERTHAN) || operator.equals(OPERATOR_GREATEROREQUAL)
@@ -689,10 +728,15 @@ public class AdvancedQueryBuilder {
     final List<Property> identifierProperties = property.getEntity().getIdentifierProperties();
     Check.isTrue(identifierProperties.contains(property), "Property " + property
         + " not part of identifier of " + property.getEntity());
-    final String prefix;
+    String prefix;
     final int index = leftWherePart.lastIndexOf(DalUtil.DOT);
     if (key.equals(JsonConstants.IDENTIFIER)) {
       prefix = getMainAlias() + DalUtil.DOT;
+    } else if (key.endsWith(JsonConstants.IDENTIFIER)) {
+      final String propPath = key.substring(0, key.indexOf(JsonConstants.IDENTIFIER) - 1);
+      final String join = resolveJoins(JsonUtils.getPropertiesOnPath(getEntity(), propPath),
+          propPath);
+      prefix = join + DalUtil.DOT;
     } else if (index == -1) {
       prefix = "";
     } else {
@@ -703,20 +747,20 @@ public class AdvancedQueryBuilder {
   }
 
   private String parseAdvancedCriteria(JSONObject advancedCriteria) throws JSONException {
-    final String operator = advancedCriteria.getString("operator");
+    final String operator = advancedCriteria.getString(OPERATOR_KEY);
     if (operator.equals(OPERATOR_NOT)) {
-      final String clause = parseStructuredClause(advancedCriteria.getJSONArray("criteria"), "or");
+      final String clause = parseStructuredClause(advancedCriteria.getJSONArray(CRITERIA_KEY), "or");
       if (clause != null) {
         return " not(" + clause + ")";
       }
       return null;
     }
     if (operator.equals(OPERATOR_AND)) {
-      return parseStructuredClause(advancedCriteria.getJSONArray("criteria"), "and");
+      return parseStructuredClause(advancedCriteria.getJSONArray(CRITERIA_KEY), "and");
     }
     if (operator.equals(OPERATOR_OR)) {
       orNesting++;
-      final String value = parseStructuredClause(advancedCriteria.getJSONArray("criteria"), "or");
+      final String value = parseStructuredClause(advancedCriteria.getJSONArray(CRITERIA_KEY), "or");
       orNesting--;
       return value;
     }
@@ -727,8 +771,8 @@ public class AdvancedQueryBuilder {
     final StringBuilder sb = new StringBuilder();
     for (int i = 0; i < clauses.length(); i++) {
       final JSONObject clause = clauses.getJSONObject(i);
-      if (clause.has("value") && clause.get("value") != null
-          && clause.getString("value").equals("")) {
+      if (clause.has(VALUE_KEY) && clause.get(VALUE_KEY) != null
+          && clause.getString(VALUE_KEY).equals("")) {
         continue;
       }
       final String clauseString = parseCriteria(clause);
@@ -1145,7 +1189,6 @@ public class AdvancedQueryBuilder {
               + prefix.substring(0, prefix.lastIndexOf('.')) + " and t.language.language='"
               + OBContext.getOBContext().getLanguage().getLanguage() + "')), to_char(" + prefix
               + prop.getName() + "), '')");
-
         } else {
           sb.append("COALESCE(to_char(" + prefix + prop.getName() + "),'')");
         }
@@ -1206,7 +1249,7 @@ public class AdvancedQueryBuilder {
 
   // Resolves the list of properties against existing join definitions
   // creates new join definitions when necessary
-  private String resolveJoins(List<Property> props, String originalPath) {
+  public String resolveJoins(List<Property> props, String originalPath) {
     String alias = getMainAlias();
     if (alias == null) {
       return originalPath;
@@ -1265,6 +1308,17 @@ public class AdvancedQueryBuilder {
       return checkAlias.equals(ownerAlias) && checkProperty == property;
     }
 
+    public String getPropertyPath() {
+      if (ownerAlias != null) {
+        for (JoinDefinition jd : AdvancedQueryBuilder.this.joinDefinitions) {
+          if (jd.getJoinAlias().equals(ownerAlias)) {
+            return jd.getPropertyPath() + DalUtil.DOT + property.getName();
+          }
+        }
+      }
+      return property.getName();
+    }
+
     public String getJoinStatement() {
       if (orNesting > 0) {
         return " left outer join " + (fetchJoin ? "fetch " : "")
@@ -1295,6 +1349,10 @@ public class AdvancedQueryBuilder {
 
     public void setFetchJoin(boolean fetchJoin) {
       this.fetchJoin = fetchJoin;
+    }
+
+    public Property getProperty() {
+      return property;
     }
   }
 
@@ -1359,6 +1417,45 @@ public class AdvancedQueryBuilder {
     orderByClause = null;
     joinDefinitions.clear();
     typedParameters.clear();
+  }
+
+  public void addSelectFunctionPart(String function, String field) {
+    String localField = field;
+    final List<Property> properties = JsonUtils.getPropertiesOnPath(getEntity(), localField);
+    localField = resolveJoins(properties, localField);
+    if (properties.size() > 0) {
+      final Property lastProperty = properties.get(properties.size() - 1);
+      if (lastProperty.getTargetEntity() != null) {
+        final StringBuilder sb = new StringBuilder();
+        for (Property identifierProperty : lastProperty.getTargetEntity().getIdentifierProperties()) {
+          if (sb.length() > 0) {
+            sb.append(" + ");
+          }
+          sb.append(localField + "." + identifierProperty.getName());
+        }
+        localField = sb.toString();
+      }
+    }
+    selectClauseParts.add(function + "(" + localField + ")");
+  }
+
+  public void addSelectClausePart(String selectClausePart) {
+    String localSelectClausePart = selectClausePart;
+    final List<Property> properties = JsonUtils.getPropertiesOnPath(getEntity(),
+        localSelectClausePart);
+    localSelectClausePart = resolveJoins(properties, localSelectClausePart);
+    selectClauseParts.add(localSelectClausePart);
+  }
+
+  public String getSelectClause() {
+    final StringBuilder sb = new StringBuilder();
+    for (String selectClausePart : selectClauseParts) {
+      if (sb.length() > 0) {
+        sb.append(", ");
+      }
+      sb.append(selectClausePart);
+    }
+    return sb.toString();
   }
 
   public void setAdditionalProperties(List<String> additionalProperties) {

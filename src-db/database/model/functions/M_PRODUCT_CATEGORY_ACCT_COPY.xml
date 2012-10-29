@@ -25,7 +25,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2008 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2012 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -111,8 +111,10 @@
       -- Update existing Products
       UPDATE M_Product_Acct
         SET P_Revenue_Acct=Cur_Acct.P_Revenue_Acct,
+        P_Def_Revenue_Acct=Cur_Acct.P_Def_Revenue_Acct,
         P_Revenue_Return_Acct=Cur_Acct.P_Revenue_Return_Acct,
         P_Expense_Acct=Cur_Acct.P_Expense_Acct,
+        P_Def_Expense_Acct=Cur_Acct.P_Def_Expense_Acct,
         P_Asset_Acct=Cur_Acct.P_Asset_Acct,
         P_CoGs_Acct=Cur_Acct.P_CoGs_Acct,
         P_CoGs_Return_Acct=Cur_Acct.P_CoGs_Return_Acct,
@@ -138,14 +140,14 @@
         (
           M_Product_Acct_ID, M_Product_ID, C_AcctSchema_ID, AD_Client_ID, AD_Org_ID,
           IsActive, Created, CreatedBy, Updated,
-          UpdatedBy, P_Revenue_Acct, P_Revenue_Return_Acct, P_Expense_Acct, P_Asset_Acct,
+          UpdatedBy, P_Revenue_Acct, P_Def_Revenue_Acct, P_Revenue_Return_Acct, P_Expense_Acct, P_Def_Expense_Acct,P_Asset_Acct,
           P_CoGs_Acct, P_CoGs_Return_Acct, P_PurchasePriceVariance_Acct, P_InvoicePriceVariance_Acct, P_TradeDiscountRec_Acct,
           P_TradeDiscountGrant_Acct
         )
       SELECT get_uuid(), p.M_Product_ID,
         Cur_Acct.C_AcctSchema_ID, p.AD_Client_ID, p.AD_Org_ID, 'Y',
         now(), '0', now(), '0',
-        Cur_Acct.P_Revenue_Acct, Cur_Acct.P_Revenue_Return_Acct, Cur_Acct.P_Expense_Acct, Cur_Acct.P_Asset_Acct, Cur_Acct.P_CoGs_Acct, Cur_Acct.P_CoGs_Return_Acct,
+        Cur_Acct.P_Revenue_Acct, Cur_Acct.P_Def_Revenue_Acct, Cur_Acct.P_Revenue_Return_Acct, Cur_Acct.P_Expense_Acct, Cur_Acct.P_Def_Expense_Acct, Cur_Acct.P_Asset_Acct, Cur_Acct.P_CoGs_Acct, Cur_Acct.P_CoGs_Return_Acct,
         Cur_Acct.P_PurchasePriceVariance_Acct, Cur_Acct.P_InvoicePriceVariance_Acct, Cur_Acct.P_TradeDiscountRec_Acct, Cur_Acct.P_TradeDiscountGrant_Acct
       FROM M_Product p
       WHERE p.M_Product_Category_ID=Cur_Acct.M_Product_Category_ID
