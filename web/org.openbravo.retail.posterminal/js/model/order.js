@@ -585,11 +585,6 @@
     addPayment: function (payment) {
       var i, max, p;
 
-      if (OB.DEC.compare(this.getTotal()) === 0) {
-        alert(OB.I18N.getLabel('OBPOS_MsgPaymentAmountZero'));
-        return;
-      }
-
       if (!OB.DEC.isNumber(payment.get('amount'))) {
         alert(OB.I18N.getLabel('OBPOS_MsgPaymentAmountError'));
         return;
