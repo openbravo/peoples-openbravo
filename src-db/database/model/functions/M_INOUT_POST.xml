@@ -56,12 +56,12 @@
   v_is_tr_allow AD_OrgType.IsTransactionsAllowed%TYPE;
   v_DateAcct DATE;
   v_isacctle AD_OrgType.IsAcctLegalEntity%TYPE;
-  v_org_bule_id AD_Org.AD_Org_ID%TYPE;
+  V_Org_Bule_Id Ad_Org.Ad_Org_Id%Type;
+  Cur_InOut M_INOUT%ROWTYPE;
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
     --
-    Cur_InOut RECORD;
     Cur_InOutLine RECORD;
     Cur_Order RECORD;
     --
@@ -90,8 +90,17 @@
     v_OrderID_old VARCHAR2(32);
     Cur_MILines RECORD;
     FINISH_PROCESS BOOLEAN:=false;
+    Next_InOut BOOLEAN:=FALSE;
     v_Aux NUMBER;
     v_ProductName M_Product.name%TYPE;
+ 
+  CURSOR Cur_InOutAll IS
+  SELECT * FROM M_INOUT
+  WHERE DocAction = 'CO' and IsActive = 'Y' FOR UPDATE;
+  CURSOR Cur_InOutOne (InOut_ID VARCHAR) IS
+  SELECT * FROM M_INOUT
+  WHERE M_InOut_ID = InOut_ID and IsActive = 'Y' FOR UPDATE;
+
   BEGIN
     IF(p_PInstance_ID IS NOT NULL) THEN
       --  Update AD_PInstance
@@ -273,30 +282,45 @@
           RAISE_APPLICATION_ERROR(-20000, '@PeriodNotAvailable@');
         END IF;
       END IF;  
-  
-        FOR Cur_InOut IN
-          (SELECT *
-          FROM M_INOUT
-          WHERE(M_InOut_ID=v_Record_ID
-            OR(v_Record_ID IS NULL
-            AND DocAction='CO'))
-            AND IsActive='Y'  FOR UPDATE
-          )
-        LOOP
-          DBMS_OUTPUT.PUT_LINE('Shipment_ID=' || Cur_InOut.M_InOut_ID || ', Doc=' || Cur_InOut.DocumentNo || ', Status=' || Cur_InOut.DocStatus || ', Action=' || Cur_InOut.DocAction) ;
-          v_ResultStr:='HeaderLoop';
-          /**
-          * Shipment not processed
-          */
-          IF(Cur_InOut.Processed='N' AND Cur_InOut.DocStatus='DR' AND Cur_InOut.DocAction='CO') THEN
-            -- For all active shipment lines
-            v_ResultStr:='HeaderLoop-1';
-            SELECT COUNT(*) INTO v_Aux
-        FROM M_InOutLine
-        WHERE M_InOut_ID = v_Record_ID;
-        IF v_Aux=0 THEN
-        RAISE_APPLICATION_ERROR(-20000, '@ReceiptWithoutLines@');
-        END IF;
+
+      IF (v_Record_ID IS NOT NULL) THEN
+	OPEN Cur_InOutOne(v_Record_ID);
+      ELSE
+        OPEN Cur_InOutAll;
+      END IF;
+
+      Loop
+
+	IF v_Record_ID IS NOT NULL THEN
+	  FETCH Cur_InOutOne INTO Cur_InOut;
+	  IF (Cur_InOutOne%NOTFOUND) THEN -- mandatory
+	    CLOSE Cur_InOutOne;
+	    DBMS_OUTPUT.PUT_LINE('- No M_InOut -') ;
+	    EXIT;
+	  END IF;
+	ELSE
+	  FETCH Cur_InOutAll INTO Cur_InOut;
+	  IF (Cur_InOutAll%NOTFOUND) THEN -- mandatory
+	    CLOSE Cur_InOutAll;
+	    DBMS_OUTPUT.PUT_LINE('- No M_InOut -') ;
+	    Exit;
+	  END IF;
+	END IF;
+
+        DBMS_OUTPUT.PUT_LINE('Shipment_ID=' || Cur_InOut.M_InOut_ID || ', Doc=' || Cur_InOut.DocumentNo || ', Status=' || Cur_InOut.DocStatus || ', Action=' || Cur_InOut.DocAction) ;
+        v_ResultStr:='HeaderLoop';
+        /**
+        * Shipment not processed
+        */
+        IF(Cur_InOut.Processed='N' AND Cur_InOut.DocStatus='DR' AND Cur_InOut.DocAction='CO') THEN
+          -- For all active shipment lines
+          v_ResultStr:='HeaderLoop-1';
+          SELECT COUNT(*) INTO v_Aux
+          FROM M_InOutLine
+          WHERE M_InOut_ID = v_Record_ID;
+          IF v_Aux=0 THEN
+            RAISE_APPLICATION_ERROR(-20000, '@ReceiptWithoutLines@');
+          END IF;
           FOR Cur_InOutLine IN
             (SELECT *
             FROM M_INOUTLINE
@@ -729,7 +753,6 @@
             WHERE ad_ep_instance_id = v_ep_instance;
           END;
         END IF;
-
       END LOOP; -- InOut Header
       /**
       * Transaction End
