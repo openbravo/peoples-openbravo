@@ -117,7 +117,8 @@ BEGIN
        from c_invoiceline_offer
       where c_invoiceline_id = Cur_Order.id;
       if (v_count > 0) then
-        if (Cur_Order.from_order is not null) then
+        if (Cur_Order.from_order is null) then
+          -- Invoice: reset to original prices in case invoice is not coming fom an order
 					if (v_taxIncluded = 'Y') then
 						update c_invoiceline
 							 set gross_unit_price = grosspricestd,
