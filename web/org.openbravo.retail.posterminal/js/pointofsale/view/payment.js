@@ -55,6 +55,10 @@ enyo.kind({
             tag: 'span',
             name: 'exactlbl',
             content: OB.I18N.getLabel('OBPOS_PaymentsExact')
+          }, {
+            tag: 'span',
+            name: 'donezerolbl',
+            content: OB.I18N.getLabel('OBPOS_MsgPaymentAmountZero')
           }]
         }, {
           style: 'overflow:auto; width: 100%;',
@@ -120,6 +124,7 @@ enyo.kind({
       this.$.overpayment.hide();
       this.$.overpaymentlbl.hide();
     }
+
     if (paymentstatus.done) {
       this.$.totalpending.hide();
       this.$.totalpendinglbl.hide();
@@ -142,9 +147,16 @@ enyo.kind({
     }
 
     if (paymentstatus.done && !paymentstatus.change && !paymentstatus.overpayment) {
-      this.$.exactlbl.show();
+      if (this.receipt.getGross() === 0) {
+        this.$.exactlbl.hide();
+        this.$.donezerolbl.show();
+      } else {
+        this.$.donezerolbl.hide();
+        this.$.exactlbl.show();
+      }
     } else {
       this.$.exactlbl.hide();
+      this.$.donezerolbl.hide();
     }
   }
 });
