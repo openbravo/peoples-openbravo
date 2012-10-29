@@ -440,7 +440,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
         data = ReportGeneralLedgerJournalData.selectDirect(this, "ACCTDESCRIPTION",
             Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
             Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"), strTable,
-            strRecord, initRecordNumber, intRecordRangePredefined);
+            strRecord, vars.getLanguage(), initRecordNumber, intRecordRangePredefined);
         if (data != null && data.length > 0)
           strPosition = ReportGeneralLedgerJournalData.selectCountDirect(this,
               Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
@@ -451,7 +451,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
       data = ReportGeneralLedgerJournalData.selectDirect(this, "ACCTDESCRIPTION",
           Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
           Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"), strTable,
-          strRecord);
+          strRecord, vars.getLanguage());
       if (data != null && data.length > 0)
         strPosition = ReportGeneralLedgerJournalData.selectCountDirect(this,
             Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
@@ -461,7 +461,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
       data = ReportGeneralLedgerJournalData.selectDirect2(this, "ACCTDESCRIPTION",
           Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
           Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
-          strFactAcctGroupId);
+          strFactAcctGroupId, vars.getLanguage());
       if (data != null && data.length > 0)
         strPosition = ReportGeneralLedgerJournalData.selectCountDirect2(this,
             Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
@@ -613,7 +613,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
           ("".equals(strShowDescription)) ? "ACCTDESCRIPTION" : "DESCRIPTION",
           Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
           Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
-          strFactAcctGroupId);
+          strFactAcctGroupId, vars.getLanguage());
 
     } else if (strRecord.equals("")) {
       String strCheck = buildCheck(strShowClosing, strShowReg, strShowOpening, strShowRegular);
@@ -628,7 +628,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
           ("".equals(strShowDescription)) ? "ACCTDESCRIPTION" : "DESCRIPTION",
           Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
           Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"), strTable,
-          strRecord);
+          strRecord, vars.getLanguage());
 
     String strSubtitle = (Utility.messageBD(this, "LegalEntity", vars.getLanguage()) + ": ")
         + ReportGeneralLedgerJournalData.selectCompany(this, vars.getClient()) + "\n";
