@@ -32,6 +32,7 @@ import org.openbravo.base.VariablesBase;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -158,8 +159,12 @@ public class GoogleAuthServlet extends HttpBaseServlet {
         vars.setSessionValue("#LOGGINGIN", "Y");
       }
 
-      resp.sendRedirect(strDireccion + "/security/Menu.html");
-
+      if (Utility.isMobileBrowser(req)
+          && KernelUtils.getInstance().isModulePresent(Utility.OB_MOBILE_JAVAPACKAGE)) {
+        resp.sendRedirect("../web/org.openbravo.client.mobile/");
+      } else {
+        resp.sendRedirect(strDireccion + "/security/Menu.html");
+      }
     } catch (Exception e) {
       log.error("Error processing return of Google Auth Service:" + e.getMessage(), e);
       this.getServletContext().getRequestDispatcher(loginPageURL).forward(req, resp);
