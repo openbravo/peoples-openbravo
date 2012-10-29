@@ -72,6 +72,9 @@
       <foreign-key foreignTable="AD_CLIENT" name="AD_MODULE_DEPENDENCY_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="AD_MODULE" name="AD_MODULE_DEPENDENCY_AD_DEPEND">
+        <reference local="AD_DEPENDENT_MODULE_ID" foreign="AD_MODULE_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_MODULE" name="AD_MODULE_DEPENDENCY_AD_MODULE" onDelete="cascade">
         <reference local="AD_MODULE_ID" foreign="AD_MODULE_ID"/>
       </foreign-key>
