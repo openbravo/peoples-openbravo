@@ -507,6 +507,20 @@
       }
     },
     
+    updatePrices: function() {
+      this.get('lines').each(function(line){
+        var successCallbackPrices = function(dataPrices, line){
+          console.log('found price!!!: '+dataPrices[0].get('listPrice'));
+          this.setPrice(line, dataPrices[0].get('listPrice'));
+        }
+        criteria = {
+          'priceListVersion': OB.POS.modelterminal.get('pricelistversion').id,
+          'product': line.get('product').get('id')
+        };
+        OB.Dal.find(OB.Model.ProductPrice, criteria, successCallbackPrices, errorCallback, line);
+      });
+    },
+    
     createQuotation: function() {
       if (OB.POS.modelterminal.hasPermission('OBPOS_receipt.quotation')) {
         this.set('isQuotation', true);
@@ -515,12 +529,15 @@
       }
     },
 
-    createOrderFromQuotation: function(){
+    createOrderFromQuotation: function(updatePrices){
       this.set('id',null);
       this.set('isQuotation', false);
       this.set('documentType', OB.POS.modelterminal.get('terminal').documentType);
       this.set('hasbeenpaid', 'N');
       this.save();
+      if(updatePrices){
+        this.updatePrices();
+      }
       OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationCreatedOrder'));
     },
     reactivateQuotation: function(){

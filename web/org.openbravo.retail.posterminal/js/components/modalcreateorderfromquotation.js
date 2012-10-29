@@ -27,25 +27,39 @@ enyo.kind({
     onCreateOrderFromQuotation: ''
   },
   tap: function () {
+    var checked = this.parent.children[0].checked;
+    this.doCreateOrderFromQuotation();
     $('#modalCreateOrderFromQuotation').modal('hide');
-    this.doSomething();
   }
 });
 
 
+enyo.kind({
+  name: 'OB.UI.updateprices',
+  kind: 'OB.UI.CheckboxButton',
+  classes: 'modal-dialog-btn-check',
+  checked: true,
+  content: OB.I18N.getLabel('OBPOS_QuotationUpdatePrices')
+});
 
 enyo.kind({
   kind: 'OB.UI.ModalAction',
   name: 'OB.UI.ModalCreateOrderFromQuotation',
   myId: 'modalCreateOrderFromQuotation',
   bodyContent: {
-    content: OB.I18N.getLabel('OBPOS_QuotationUpdatePrices')
   },
   bodyButtons: {
     components: [{
+      kind: 'OB.UI.updateprices',
+      myId: 'updatePricesCheck'
+    },{
       kind: 'OB.OBPOSPointOfSale.UI.Modals.btnModalCreateOrderAccept'
     }, {
       kind: 'OB.OBPOSPointOfSale.UI.Modals.btnModalCreateOrderCancel'
     }]
+  },
+  init: function(model){
+    var receipt = model.get('order');
+    this.theQuotation = receipt;
   }
 });
