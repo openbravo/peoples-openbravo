@@ -83,6 +83,12 @@ public class AccountTree {
           Utility.getContext(conn, vars, "#User_Client", "AccountTree"));
       resultantAccounts = calculateTree(forms, elementValueParent, new Vector<Object>());
     }
+    for (AccountTreeData account : resultantAccounts) {
+      if ("C".equals(account.accountsign)) {
+        account.qty = new BigDecimal(account.qty).negate().toString();
+        account.qtyRef = new BigDecimal(account.qtyRef).negate().toString();
+      }
+    }
   }
 
   /**
@@ -114,7 +120,6 @@ public class AccountTree {
     // Loading tree with new amounts, applying signs (Debit or Credit) and
     // setting the account level (1, 2, 3,...)
     resultantAccounts = updateTreeQuantitiesSign(null, 0, "D");
-
     if (resultantAccounts != null && resultantAccounts.length > 0) {
       // Array of accounts with its operands.
       // Calculating forms for every elements
@@ -133,6 +138,12 @@ public class AccountTree {
 
       resultantAccounts = new AccountTreeData[vec.size()];
       vec.copyInto(resultantAccounts);
+    }
+    for (AccountTreeData account : resultantAccounts) {
+      if ("C".equals(account.accountsign)) {
+        account.qty = new BigDecimal(account.qty).negate().toString();
+        account.qtyRef = new BigDecimal(account.qtyRef).negate().toString();
+      }
     }
   }
 
@@ -198,10 +209,6 @@ public class AccountTree {
       return element;
     for (int i = 0; i < accounts.length; i++) {
       if (accounts[i].id.equals(element.id)) {
-        if (isDebitCredit.equals("C")) {
-          accounts[i].qty = accounts[i].qtycredit;
-          accounts[i].qtyRef = accounts[i].qtycreditRef;
-        }
         element.qtyOperation = accounts[i].qty;
         element.qtyOperationRef = accounts[i].qtyRef;
         BigDecimal bdQty = new BigDecimal(element.qtyOperation);
@@ -217,15 +224,15 @@ public class AccountTree {
   }
 
   /**
-   * This method updates al the Quantitie's signs of the tree. Is used by the constructor to
-   * initializa the element's quantities. Also initializes the level of each account
+   * This method updates all the Quantitie's signs of the tree. Is used by the constructor to
+   * initialize the element's quantities. Also initializes the level of each account
    * 
    * @param indice
    *          String with the index from which to start updating.
    * @param level
    *          Integer with the level of the elements.
    * @param isDebitCredit
-   *          String with the is debit or credit value of the trunk.
+   *          String with the is Debit or Credit value of the trunk.
    * @return Array of AccountTreeData with the updated tree.
    */
   private AccountTreeData[] updateTreeQuantitiesSign(String indice, int level, String isDebitCredit) {

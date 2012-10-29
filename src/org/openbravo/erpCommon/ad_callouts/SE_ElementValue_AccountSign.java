@@ -20,19 +20,50 @@ package org.openbravo.erpCommon.ad_callouts;
 
 import javax.servlet.ServletException;
 
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.financialmgmt.accounting.coa.AcctSchema;
+import org.openbravo.model.financialmgmt.accounting.coa.Element;
+
 public class SE_ElementValue_AccountSign extends SimpleCallout {
 
   private static final long serialVersionUID = 1L;
 
   @Override
   protected void execute(CalloutInfo info) throws ServletException {
+    final String ACCOUNTSIGN_CREDIT = "C";
+    final String ACCOUNTSIGN_DEBIT = "D";
+    final String ACCOUNTTYPE_ASSET = "A";
+    final String ACCOUNTTYPE_LIABILITY = "L";
+    final String ACCOUNTTYPE_EQUITY = "O";
+    final String ACCOUNTTYPE_REVENUE = "R";
+    final String ACCOUNTTYPE_EXPENSE = "E";
 
     final String strAccountType = info.getStringParameter("inpaccounttype", null);
-
-    if (strAccountType.equals("A")) {
-      info.addResult("inpaccountsign", "D");
+    boolean centrallyMaintained = false;
+    final String strElementId = info.getStringParameter("inpcElementId", null);
+    Element element = OBDal.getInstance().get(Element.class, strElementId);
+    if (element.getFinancialMgmtAcctSchemaElementList().size() == 1) {
+      centrallyMaintained = element.getFinancialMgmtAcctSchemaElementList().get(0)
+          .getAccountingSchema().isCentralMaintenance();
+    }
+    if (!centrallyMaintained) {
+      if (strAccountType.equals(ACCOUNTTYPE_ASSET) || strAccountType.equals(ACCOUNTTYPE_EXPENSE)) {
+        info.addResult("inpaccountsign", ACCOUNTSIGN_DEBIT);
+      } else {
+        info.addResult("inpaccountsign", ACCOUNTSIGN_CREDIT);
+      }
     } else {
-      info.addResult("inpaccountsign", "C");
+      AcctSchema as = element.getFinancialMgmtAcctSchemaElementList().get(0).getAccountingSchema();
+      if ((strAccountType.equals(ACCOUNTTYPE_ASSET) && as.isAssetPositive())
+          || (strAccountType.equals(ACCOUNTTYPE_EXPENSE) && as.isExpensePositive())
+          || (strAccountType.equals(ACCOUNTTYPE_LIABILITY) && !as.isLiabilityPositive())
+          || (strAccountType.equals(ACCOUNTTYPE_EQUITY) && !as.isEquityPositive())
+          || (strAccountType.equals(ACCOUNTTYPE_REVENUE) && !as.isRevenuePositive())) {
+        info.addResult("inpaccountsign", ACCOUNTSIGN_DEBIT);
+      } else {
+        info.addResult("inpaccountsign", ACCOUNTSIGN_CREDIT);
+      }
+
     }
   }
 }

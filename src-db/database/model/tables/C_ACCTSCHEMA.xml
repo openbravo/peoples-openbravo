@@ -97,6 +97,30 @@
         <default><![CDATA[Y]]></default>
         <onCreateDefault><![CDATA['Y']]></onCreateDefault>
       </column>
+      <column name="ISCENTRALLYMAINTAINED" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
+      </column>
+      <column name="ISASSETPOSITIVE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="ISLIABILITYPOSITIVE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="ISEQUITYPOSITIVE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="ISREVENUEPOSITIVE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="ISEXPENSEPOSITIVE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="AD_CLIENT_C_ACCTSCHEMA">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -113,6 +137,12 @@
         <unique-column name="AD_CLIENT_ID"/>
         <unique-column name="NAME"/>
       </unique>
+      <check name="C_ACCTSCH_ASSETPOSITIVE_CHK"><![CDATA[ISASSETPOSITIVE IN ('Y', 'N')]]></check>
+      <check name="C_ACCTSCH_CENTRMAINTAINED_CHK"><![CDATA[ISCENTRALLYMAINTAINED IN ('Y', 'N')]]></check>
+      <check name="C_ACCTSCH_EQUITYPOSITIVE_CHK"><![CDATA[ISEQUITYPOSITIVE IN ('Y', 'N')]]></check>
+      <check name="C_ACCTSCH_EXPENSEPOSITIVE_CHK"><![CDATA[ISEXPENSEPOSITIVE IN ('Y', 'N')]]></check>
+      <check name="C_ACCTSCH_LIABPOSITIVE_CHK"><![CDATA[ISLIABILITYPOSITIVE IN ('Y', 'N')]]></check>
+      <check name="C_ACCTSCH_REVENPOSITIVE_CHK"><![CDATA[ISREVENUEPOSITIVE IN ('Y', 'N')]]></check>
       <check name="C_ACCTSCHEMA_AUTOPERIODCON_CHK"><![CDATA[AUTOPERIODCONTROL IN ('Y', 'N')]]></check>
       <check name="C_ACCTSCHEMA_HASALIAS_CHK"><![CDATA[HASALIAS IN ('Y', 'N')]]></check>
       <check name="C_ACCTSCHEMA_HASCOMBINATIO_CHK"><![CDATA[HASCOMBINATION IN ('Y', 'N')]]></check>

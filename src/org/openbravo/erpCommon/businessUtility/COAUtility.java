@@ -127,7 +127,7 @@ public class COAUtility {
     String strElementName = client.getName();
 
     if (organization != null) {
-      strElementName = organization.getName() + " " + strAccountString;
+      strElementName = organization.getName();
     }
 
     // Initial Organization Setup do NOT create calendar
