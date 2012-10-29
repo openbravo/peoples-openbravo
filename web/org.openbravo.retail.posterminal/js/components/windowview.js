@@ -80,7 +80,7 @@ enyo.kind({
 
     enyo.forEach(this.popups, function (dialog) {
       if (dialog.windowClass === this.kindName) {
-        this.createComponent(dialog, {
+        this.createComponent(dialog.dialog, {
           owner: dialogContainer
         });
       }
