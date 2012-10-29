@@ -57,7 +57,6 @@
 
     calculateGross: function () {
       this.set('gross', OB.DEC.mul(this.get('qty'), this.get('price')));
-      this.trigger('calculategross');
     },
 
     getGross: function () {
@@ -160,6 +159,7 @@
         this.set('payment', attributes.payment);
         this.set('change', attributes.change);
         this.set('gross', attributes.gross);
+        this.trigger('calculategross');
         this.set('net', attributes.net);
         this.set('taxes', attributes.taxes);
         this.set('hasbeenpaid', attributes.hasbeenpaid);
@@ -213,6 +213,7 @@
         return OB.DEC.add(memo, e.getGross());
       }, OB.DEC.Zero);
       this.set('gross', gross);
+      this.trigger('calculategross');
     },
 
     getGross: function () {
@@ -280,6 +281,7 @@
       this.set('payment', OB.DEC.Zero);
       this.set('change', OB.DEC.Zero);
       this.set('gross', OB.DEC.Zero);
+      this.trigger('calculategross');
       this.set('hasbeenpaid', 'N');
       this.set('isbeingprocessed', 'N');
       this.set('description', '');
@@ -309,6 +311,7 @@
         }
       });
 
+      this.trigger('calculategross');
       this.trigger('change');
       this.trigger('clear');
     },
@@ -742,6 +745,7 @@
       bp._identifier = model.businessPartner;
       order.set('bp', new Backbone.Model(bp));
       order.set('gross', model.totalamount);
+      order.trigger('calculategross');
       order.set('salesRepresentative$_identifier', model.salesrepresentative);
 
       _.each(model.receiptLines, function (iter) {
