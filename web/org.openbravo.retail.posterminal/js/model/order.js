@@ -508,16 +508,18 @@
     },
     
     updatePrices: function() {
+      var order = this;
       this.get('lines').each(function(line){
         var successCallbackPrices = function(dataPrices, line){
-          console.log('found price!!!: '+dataPrices[0].get('listPrice'));
-          this.setPrice(line, dataPrices[0].get('listPrice'));
+          dataPrices.each(function(price){
+            order.setPrice(line, price.get('listPrice'));
+          });
         }
         criteria = {
           'priceListVersion': OB.POS.modelterminal.get('pricelistversion').id,
           'product': line.get('product').get('id')
         };
-        OB.Dal.find(OB.Model.ProductPrice, criteria, successCallbackPrices, errorCallback, line);
+        OB.Dal.find(OB.Model.ProductPrice, criteria, successCallbackPrices, function(){console.error(args);}, line);
       });
     },
     

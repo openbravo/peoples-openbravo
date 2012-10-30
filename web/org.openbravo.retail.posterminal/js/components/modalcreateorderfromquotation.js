@@ -28,7 +28,7 @@ enyo.kind({
   },
   tap: function () {
     var checked = this.parent.children[0].checked;
-    this.doCreateOrderFromQuotation();
+    this.parent.parent.parent.parent.parent.theQuotation.createOrderFromQuotation(checked);
     $('#modalCreateOrderFromQuotation').modal('hide');
   }
 });
