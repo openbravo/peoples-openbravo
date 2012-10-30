@@ -985,10 +985,11 @@ public class AdvancedQueryBuilder {
       int index = localWhereClause.toLowerCase().indexOf(key.toLowerCase());
       if (index != -1) {
         while (index != -1) {
+          final Object value = filterParameters.get(key);
           // substitute all occurrences of paramater
           localWhereClause = localWhereClause.substring(0, index) + getTypedParameterAlias() + " "
               + localWhereClause.substring(index + key.length());
-          typedParameters.add(filterParameters.get(key));
+          typedParameters.add("null".equals(value) ? null : value);
           index = localWhereClause.toLowerCase().indexOf(key.toLowerCase());
         }
       }
