@@ -24,10 +24,10 @@ import java.util.ArrayList;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.TreeUtility;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.financialmgmt.accounting.Budget;
 import org.openbravo.model.financialmgmt.accounting.BudgetLine;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.service.db.DalBaseProcess;
@@ -61,137 +61,147 @@ public class UpdateActuals extends DalBaseProcess {
       String user2 = null;
 
       // Gets the budget lines
-      OBQuery<BudgetLine> budgetLines = OBDal.getInstance().createQuery(BudgetLine.class,
-          "budget='" + cBudgetId + "'");
-      if (budgetLines.count() > 0) {
-        for (BudgetLine budgetLine : budgetLines.list()) {
-          activity = (budgetLine.getActivity() != null) ? budgetLine.getActivity().getId() : null;
-          accountingSchema = (budgetLine.getAccountingSchema() != null) ? budgetLine
-              .getAccountingSchema().getId() : null;
-          asset = (budgetLine.getAsset() != null) ? budgetLine.getAsset().getId() : null;
-          businessPartner = (budgetLine.getBusinessPartner() != null) ? budgetLine
-              .getBusinessPartner().getId() : null;
-          businessPartnerCategory = (budgetLine.getBusinessPartnerCategory() != null) ? budgetLine
-              .getBusinessPartnerCategory().getId() : null;
-          costcenter = (budgetLine.getCostcenter() != null) ? budgetLine.getCostcenter().getId()
-              : null;
-          account = (budgetLine.getAccountElement() != null) ? budgetLine.getAccountElement()
-              .getId() : null;
-          accountSign = (budgetLine.getAccountElement() != null) ? budgetLine.getAccountElement()
-              .getAccountSign() : null;
-          period = (budgetLine.getPeriod() != null) ? budgetLine.getPeriod().getId() : null;
-          product = (budgetLine.getProduct() != null) ? budgetLine.getProduct().getId() : null;
-          productCategory = (budgetLine.getProductCategory() != null) ? budgetLine
-              .getProductCategory().getId() : null;
-          project = (budgetLine.getProject() != null) ? budgetLine.getProject().getId() : null;
-          salesCampaign = (budgetLine.getSalesCampaign() != null) ? budgetLine.getSalesCampaign()
-              .getId() : null;
-          salesRegion = (budgetLine.getSalesRegion() != null) ? budgetLine.getSalesRegion().getId()
-              : null;
-          user1 = (budgetLine.getStDimension() != null) ? budgetLine.getStDimension().getId()
-              : null;
-          user2 = (budgetLine.getNdDimension() != null) ? budgetLine.getNdDimension().getId()
-              : null;
+      // OBQuery<BudgetLine> budgetLines = OBDal.getInstance().createQuery(BudgetLine.class,
+      // "budget='" + cBudgetId + "'");
+      Budget myBudget = OBDal.getInstance().get(Budget.class, cBudgetId);
+      for (BudgetLine budgetLine : myBudget.getFinancialMgmtBudgetLineList()) {
+        activity = (budgetLine.getActivity() != null) ? budgetLine.getActivity().getId() : "";
+        accountingSchema = (budgetLine.getAccountingSchema() != null) ? budgetLine
+            .getAccountingSchema().getId() : "";
+        asset = (budgetLine.getAsset() != null) ? budgetLine.getAsset().getId() : "";
+        businessPartner = (budgetLine.getBusinessPartner() != null) ? budgetLine
+            .getBusinessPartner().getId() : "";
+        businessPartnerCategory = (budgetLine.getBusinessPartnerCategory() != null) ? budgetLine
+            .getBusinessPartnerCategory().getId() : "";
+        costcenter = (budgetLine.getCostcenter() != null) ? budgetLine.getCostcenter().getId() : "";
+        account = (budgetLine.getAccountElement() != null) ? budgetLine.getAccountElement().getId()
+            : "";
+        accountSign = (budgetLine.getAccountElement() != null) ? budgetLine.getAccountElement()
+            .getAccountSign() : "";
+        period = (budgetLine.getPeriod() != null) ? budgetLine.getPeriod().getId() : "";
+        product = (budgetLine.getProduct() != null) ? budgetLine.getProduct().getId() : "";
+        productCategory = (budgetLine.getProductCategory() != null) ? budgetLine
+            .getProductCategory().getId() : "";
+        project = (budgetLine.getProject() != null) ? budgetLine.getProject().getId() : "";
+        salesCampaign = (budgetLine.getSalesCampaign() != null) ? budgetLine.getSalesCampaign()
+            .getId() : "";
+        salesRegion = (budgetLine.getSalesRegion() != null) ? budgetLine.getSalesRegion().getId()
+            : "";
+        user1 = (budgetLine.getStDimension() != null) ? budgetLine.getStDimension().getId() : "";
+        user2 = (budgetLine.getNdDimension() != null) ? budgetLine.getNdDimension().getId() : "";
 
-          // get the natural tree
-          TreeUtility treeUtility = new TreeUtility();
-          String activityNaturalTree = activity != null ? Utility.arrayListToString(
-              (new ArrayList<String>(treeUtility.getNaturalTree(activity, "AY"))), true) : activity;
-          String productCategoryNaturalTree = productCategory != null ? Utility.arrayListToString(
-              (new ArrayList<String>(treeUtility.getNaturalTree(productCategory, "PC"))), true)
-              : productCategory;
-          String assetNaturalTree = asset != null ? Utility.arrayListToString(
-              (new ArrayList<String>(treeUtility.getNaturalTree(asset, "AS"))), true) : asset;
-          String costcenterNaturalTree = costcenter != null ? Utility.arrayListToString(
-              (new ArrayList<String>(treeUtility.getNaturalTree(costcenter, "CC"))), true)
-              : costcenter;
-          String accountNaturalTree = account != null ? Utility.arrayListToString(
-              (new ArrayList<String>(treeUtility.getNaturalTree(account, "EV"))), true) : account;
-          String projectNaturalTree = project != null ? Utility.arrayListToString(
-              new ArrayList<String>(treeUtility.getNaturalTree(project, "PJ")), true) : project;
-          String campaignNaturalTree = salesCampaign != null ? Utility.arrayListToString(
-              new ArrayList<String>(treeUtility.getNaturalTree(salesCampaign, "MC")), true)
-              : salesCampaign;
-          String regionNaturalTree = salesRegion != null ? Utility.arrayListToString(
-              new ArrayList<String>(treeUtility.getNaturalTree(salesRegion, "SR")), true)
-              : salesRegion;
-          String user1NaturalTree = user1 != null ? Utility.arrayListToString(
-              (new ArrayList<String>(treeUtility.getNaturalTree(user1, "U1"))), true) : user1;
-          String user2NaturalTree = user2 != null ? Utility.arrayListToString(
-              (new ArrayList<String>(treeUtility.getNaturalTree(user2, "U2"))), true) : user2;
+        // get the natural tree
+        TreeUtility treeUtility = new TreeUtility();
+        String activityNaturalTree = activity != null ? Utility.arrayListToString(
+            (new ArrayList<String>(treeUtility.getNaturalTree(activity, "AY"))), true) : activity;
+        String productCategoryNaturalTree = productCategory != null ? Utility.arrayListToString(
+            (new ArrayList<String>(treeUtility.getNaturalTree(productCategory, "PC"))), true)
+            : productCategory;
+        String assetNaturalTree = asset != null ? Utility.arrayListToString((new ArrayList<String>(
+            treeUtility.getNaturalTree(asset, "AS"))), true) : asset;
+        String costcenterNaturalTree = costcenter != null ? Utility.arrayListToString(
+            (new ArrayList<String>(treeUtility.getNaturalTree(costcenter, "CC"))), true)
+            : costcenter;
+        String accountNaturalTree = account != null ? Utility.arrayListToString(
+            (new ArrayList<String>(treeUtility.getNaturalTree(account, "EV"))), true) : account;
+        String projectNaturalTree = project != null ? Utility.arrayListToString(
+            new ArrayList<String>(treeUtility.getNaturalTree(project, "PJ")), true) : project;
+        String campaignNaturalTree = salesCampaign != null ? Utility.arrayListToString(
+            new ArrayList<String>(treeUtility.getNaturalTree(salesCampaign, "MC")), true)
+            : salesCampaign;
+        String regionNaturalTree = salesRegion != null ? Utility.arrayListToString(
+            new ArrayList<String>(treeUtility.getNaturalTree(salesRegion, "SR")), true)
+            : salesRegion;
+        String user1NaturalTree = user1 != null ? Utility.arrayListToString((new ArrayList<String>(
+            treeUtility.getNaturalTree(user1, "U1"))), true) : user1;
+        String user2NaturalTree = user2 != null ? Utility.arrayListToString((new ArrayList<String>(
+            treeUtility.getNaturalTree(user2, "U2"))), true) : user2;
 
-          StringBuilder queryString = new StringBuilder();
-          queryString.append("select SUM(e.credit) as credit,");
-          queryString.append(" SUM(e.debit) as debit");
-          queryString.append(" from FinancialMgmtAccountingFact e where");
-          queryString.append(" e.activity.id"
-              + ((activity != null) ? " in (" + activityNaturalTree + ")" : " is NULL"));
-          queryString.append(" and e.accountingSchema.id=:accountingSchema");
-          queryString.append(" and e.asset.id"
-              + ((asset != null) ? " in (" + assetNaturalTree + ")" : " is NULL"));
-          queryString
-              .append(" and e.businessPartner.id"
-                  + ((businessPartner != null) ? " = :businessPartner"
-                      : ((businessPartnerCategory != null) ? " in (select id from BusinessPartner where businessPartnerCategory.id=:businessPartnerCategory)"
-                          : " is NULL")));
-          queryString.append((costcenter != null) ? " and e.costcenter.id in ("
-              + costcenterNaturalTree + ")" : " and e.costcenter is NULL");
-          queryString.append(" and e.account.id in (" + accountNaturalTree + ")");
-          queryString.append(" and e.period.id" + ((period != null) ? "=:period" : " is NULL"));
-          queryString
-              .append(" and e.product.id"
-                  + ((product != null) ? "=:product"
-                      : (productCategory != null) ? " in (select id from Product where productCategory.id in ("
-                          + productCategoryNaturalTree + "))"
-                          : " is NULL"));
-          queryString.append(" and e.project.id"
-              + ((project != null) ? " in (" + projectNaturalTree + ")" : " is NULL"));
-          queryString.append(" and e.salesCampaign.id"
-              + ((salesCampaign != null) ? " in (" + campaignNaturalTree + ")" : " is NULL"));
-          queryString.append(" and e.salesRegion.id"
-              + ((salesRegion != null) ? " in (" + regionNaturalTree + ")" : " is NULL"));
-          queryString.append(" and e.stDimension.id"
-              + ((user1 != null) ? " in (" + user1NaturalTree + ")" : " is NULL"));
-          queryString.append(" and e.ndDimension.id"
-              + ((user2 != null) ? " in (" + user2NaturalTree + ")" : " is NULL"));
+        StringBuilder queryString = new StringBuilder();
+        queryString.append("select SUM(e.credit) as credit,");
+        queryString.append(" SUM(e.debit) as debit");
+        queryString.append(" from FinancialMgmtAccountingFact e where");
+        queryString.append(" e.client.id='").append(myBudget.getClient().getId()).append("'");
 
-          Query query = OBDal.getInstance().getSession().createQuery(queryString.toString());
-          query.setReadOnly(true);
-          query.setString("accountingSchema", accountingSchema);
-          if (businessPartner != null)
-            query.setString("businessPartner", businessPartner);
-          else if (businessPartnerCategory != null)
-            query.setString("businessPartnerCategory", businessPartnerCategory);
-          if (period != null)
-            query.setString("period", period);
-          if (product != null)
-            query.setString("product", product);
-
-          log4j.debug("Query String" + query.getQueryString());
-          log4j.debug("Query size:" + query.list().size());
-
-          BigDecimal credit = new BigDecimal(0);
-          BigDecimal debit = new BigDecimal(0);
-          for (Object obj : query.list()) {
-            if (obj != null) {
-              Object[] row = (Object[]) obj;
-              credit = (BigDecimal) ((row[0] != null) ? row[0] : new BigDecimal(0));
-              debit = (BigDecimal) ((row[1] != null) ? row[1] : new BigDecimal(0));
-            }
-          }
-
-          if (("N").equals(accountSign)) {
-            budgetLine.setActualAmount(debit.subtract(credit));
-          } else {
-            budgetLine.setActualAmount(credit.subtract(debit));
-          }
-
-          msg.setType("Success");
-          msg.setTitle("Success");
-          msg.setMessage("Actual Amount = " + budgetLine.getActualAmount());
-          bundle.setResult(msg);
+        if (!"".equals(activity)) {
+          queryString.append(" and e.activity.id in (" + activityNaturalTree + ")");
         }
+        queryString.append(" and e.accountingSchema.id=:accountingSchema");
+        if (!"".equals(asset)) {
+          queryString.append(" and e.asset.id in (" + assetNaturalTree + ")");
+        }
+        if (!"".equals(businessPartner)) {
+          queryString.append(" and e.businessPartner.id = :businessPartner");
+        } else if (!"".equals(businessPartnerCategory)) {
+          queryString
+              .append(" and exists (select 1 from BusinessPartner bp where e.businessPartner.id = bp.id and businessPartnerCategory.id=:businessPartnerCategory)");
+        }
+        if (!"".equals(costcenter)) {
+          queryString.append(" and e.costcenter.id in (" + costcenterNaturalTree + ")");
+        }
+        queryString.append(" and e.account.id in (" + accountNaturalTree + ")");
+        if (!"".equals(period)) {
+          queryString.append(" and e.period.id=:period");
+        }
+        if (!"".equals(product)) {
+          queryString.append(" and e.product.id=:product");
+        } else if (!"".equals(productCategory)) {
+          queryString
+              .append(" and exists (select 1 from Product p where e.product.id = p.id and productCategory.id in ("
+                  + productCategoryNaturalTree + ")");
+        }
+        if (!"".equals(project)) {
+          queryString.append(" and e.project.id in (" + projectNaturalTree + ")");
+        }
+        if (!"".equals(salesCampaign)) {
+          queryString.append(" and e.salesCampaign.id in (" + campaignNaturalTree + ")");
+        }
+        if (!"".equals(salesRegion)) {
+          queryString.append(" and e.salesRegion.id in (" + regionNaturalTree + ")");
+        }
+        if (!"".equals(user1)) {
+          queryString.append(" and e.stDimension.id in (" + user1NaturalTree + ")");
+        }
+        if (!"".equals(user1)) {
+          queryString.append(" and e.ndDimension.id in (" + user2NaturalTree + ")");
+        }
+        Query query = OBDal.getInstance().getSession().createQuery(queryString.toString());
+        query.setReadOnly(true);
+        query.setString("accountingSchema", accountingSchema);
+        if (!"".equals(businessPartner))
+          query.setString("businessPartner", businessPartner);
+        else if (!"".equals(businessPartnerCategory))
+          query.setString("businessPartnerCategory", businessPartnerCategory);
+        if (!"".equals(period))
+          query.setString("period", period);
+        if (!"".equals(product))
+          query.setString("product", product);
+
+        log4j.debug("Query String" + query.getQueryString());
+        log4j.debug("Query size:" + query.list().size());
+
+        BigDecimal credit = new BigDecimal(0);
+        BigDecimal debit = new BigDecimal(0);
+        for (Object obj : query.list()) {
+          if (obj != null) {
+            Object[] row = (Object[]) obj;
+            credit = (BigDecimal) ((row[0] != null) ? row[0] : new BigDecimal(0));
+            debit = (BigDecimal) ((row[1] != null) ? row[1] : new BigDecimal(0));
+          }
+        }
+
+        if (("D").equals(accountSign)) {
+          budgetLine.setActualAmount(debit.subtract(credit));
+        } else {
+          budgetLine.setActualAmount(credit.subtract(debit));
+        }
+
+        msg.setType("Success");
+        msg.setTitle("Success");
+        msg.setMessage("Actual Amount = " + budgetLine.getActualAmount());
+        bundle.setResult(msg);
       }
+
     } catch (Exception e) {
       msg.setType("Error");
       msg.setTitle("Error");
