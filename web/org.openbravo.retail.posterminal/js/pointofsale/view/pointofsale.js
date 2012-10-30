@@ -270,7 +270,7 @@ enyo.kind({
         }
         changedModel.get('currentWindow').params.caller = changedModel.previousAttributes().currentWindow.name;
         if (this.$[changedModel.previousAttributes().currentWindow.name].mainBeforeClose) {
-          this.$[changedModel.previousAttributes().currentWindow.name].mainBeforeClose(changedModel.get('currentWindow').name);  
+          this.$[changedModel.previousAttributes().currentWindow.name].mainBeforeClose(changedModel.get('currentWindow').name);
         }
         if (this.$[changedModel.get('currentWindow').name].mainBeforeSetShowing) {
           showNewSubWindow = this.$[changedModel.get('currentWindow').name].mainBeforeSetShowing(changedModel.get('currentWindow').params);

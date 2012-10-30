@@ -22,7 +22,7 @@ enyo.kind({
     }
     if (args.navigateOnClose) {
       this.navigateOnClose = args.navigateOnClose;
-    }else{
+    } else {
       this.navigateOnClose = this.defaultNavigateOnClose;
     }
     if (this.beforeSetShowing) {
