@@ -12,6 +12,12 @@
 (function () {
 
 
+  var dbSize = 50 * 1024 * 1024,
+      undef, wsql = window.openDatabase !== undef,
+      db = (wsql && window.openDatabase('WEBPOS', '', 'Openbravo Web POS', dbSize)),
+      OP;
+  OB.POS.databaseVersion = '0.3';
+  
   function dropTable(db, sql) {
     db.transaction(function (tx) {
       tx.executeSql(sql, {}, function () {
@@ -21,12 +27,7 @@
       });
     });
   }
-
-  var dbSize = 50 * 1024 * 1024,
-      undef, wsql = window.openDatabase !== undef,
-      db = (wsql && window.openDatabase('WEBPOS', '', 'Openbravo Web POS', dbSize)),
-      OP;
-  OB.POS.databaseVersion = '0.2';
+  
   db.changeVersion(db.version, OB.POS.databaseVersion, function (t) {
     var model, modelObj;
     if (db.version === OB.POS.databaseVersion) {
