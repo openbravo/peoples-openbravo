@@ -35,9 +35,11 @@ import org.openbravo.model.ad.utility.TreeNode;
 public class TreeUtility {
   private static Logger log4j = Logger.getLogger(TreeUtility.class);
 
+  private Map<String, Set<String>> childTrees = new HashMap<String, Set<String>>();
+  private Map<String, Set<String>> naturalTrees = new HashMap<String, Set<String>>();
+
   public Set<String> getNaturalTree(String nodeId, String treeType) {
-    Map<String, Set<String>> naturalTrees = new HashMap<String, Set<String>>();
-    initialize(naturalTrees, treeType);
+    initialize(treeType);
     Set<String> result;
     if (naturalTrees.get(nodeId) == null) {
       result = new HashSet<String>();
@@ -49,7 +51,34 @@ public class TreeUtility {
     return result;
   }
 
-  private void initialize(Map<String, Set<String>> naturalTrees, String treeType) {
+  public Set<String> getChildTree(String nodeId, String treeType, boolean includeNode) {
+    initialize(treeType);
+    Set<String> childNode = this.getChildNode(nodeId, treeType);
+    Set<String> result = new HashSet<String>();
+
+    if (includeNode)
+      result.add(nodeId);
+
+    while (!childNode.isEmpty()) {
+      for (String co : childNode) {
+        result.add(co);
+        childNode = this.getChildTree(co, treeType, false);
+        result.addAll(childNode);
+      }
+    }
+    return result;
+  }
+
+  public Set<String> getChildNode(String nodeId, String treeType) {
+    initialize(treeType);
+    if (childTrees.get(nodeId) == null) {
+      return new HashSet<String>();
+    } else {
+      return new HashSet<String>(childTrees.get(nodeId));
+    }
+  }
+
+  private void initialize(String treeType) {
 
     final String clientId = OBContext.getOBContext().getCurrentClient().getId();
     final String qryStr = "select t from " + Tree.class.getName() + " t where treetype='"
@@ -85,6 +114,7 @@ public class TreeUtility {
         Set<String> os = new HashSet<String>();
         for (Node o : on.getChildren())
           os.add(o.getTreeNode().getNode());
+        childTrees.put(on.getTreeNode().getNode(), os);
       }
     }
   }

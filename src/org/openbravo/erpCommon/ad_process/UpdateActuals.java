@@ -23,6 +23,7 @@ import java.util.ArrayList;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.TreeUtility;
@@ -92,78 +93,82 @@ public class UpdateActuals extends DalBaseProcess {
 
         // get the natural tree
         TreeUtility treeUtility = new TreeUtility();
-        String activityNaturalTree = activity != null ? Utility.arrayListToString(
-            (new ArrayList<String>(treeUtility.getNaturalTree(activity, "AY"))), true) : activity;
-        String productCategoryNaturalTree = productCategory != null ? Utility.arrayListToString(
-            (new ArrayList<String>(treeUtility.getNaturalTree(productCategory, "PC"))), true)
+        String activityTree = activity != null ? Utility.arrayListToString((new ArrayList<String>(
+            treeUtility.getChildTree(activity, "AY", true))), true) : activity;
+        String productCategoryTree = productCategory != null ? Utility.arrayListToString(
+            (new ArrayList<String>(treeUtility.getChildTree(productCategory, "PC", true))), true)
             : productCategory;
-        String assetNaturalTree = asset != null ? Utility.arrayListToString((new ArrayList<String>(
-            treeUtility.getNaturalTree(asset, "AS"))), true) : asset;
-        String costcenterNaturalTree = costcenter != null ? Utility.arrayListToString(
-            (new ArrayList<String>(treeUtility.getNaturalTree(costcenter, "CC"))), true)
+        String assetTree = asset != null ? Utility.arrayListToString((new ArrayList<String>(
+            treeUtility.getChildTree(asset, "AS", true))), true) : asset;
+        String costcenterTree = costcenter != null ? Utility.arrayListToString(
+            (new ArrayList<String>(treeUtility.getChildTree(costcenter, "CC", true))), true)
             : costcenter;
-        String accountNaturalTree = account != null ? Utility.arrayListToString(
-            (new ArrayList<String>(treeUtility.getNaturalTree(account, "EV"))), true) : account;
-        String projectNaturalTree = project != null ? Utility.arrayListToString(
-            new ArrayList<String>(treeUtility.getNaturalTree(project, "PJ")), true) : project;
-        String campaignNaturalTree = salesCampaign != null ? Utility.arrayListToString(
-            new ArrayList<String>(treeUtility.getNaturalTree(salesCampaign, "MC")), true)
+        String accountTree = account != null ? Utility.arrayListToString((new ArrayList<String>(
+            treeUtility.getChildTree(account, "EV", true))), true) : account;
+        String projectTree = project != null ? Utility.arrayListToString(new ArrayList<String>(
+            treeUtility.getChildTree(project, "PJ", true)), true) : project;
+        String campaignTree = salesCampaign != null ? Utility.arrayListToString(
+            new ArrayList<String>(treeUtility.getChildTree(salesCampaign, "MC", true)), true)
             : salesCampaign;
-        String regionNaturalTree = salesRegion != null ? Utility.arrayListToString(
-            new ArrayList<String>(treeUtility.getNaturalTree(salesRegion, "SR")), true)
-            : salesRegion;
-        String user1NaturalTree = user1 != null ? Utility.arrayListToString((new ArrayList<String>(
-            treeUtility.getNaturalTree(user1, "U1"))), true) : user1;
-        String user2NaturalTree = user2 != null ? Utility.arrayListToString((new ArrayList<String>(
-            treeUtility.getNaturalTree(user2, "U2"))), true) : user2;
+        String regionTree = salesRegion != null ? Utility.arrayListToString(new ArrayList<String>(
+            treeUtility.getChildTree(salesRegion, "SR", true)), true) : salesRegion;
+        String user1Tree = user1 != null ? Utility.arrayListToString((new ArrayList<String>(
+            treeUtility.getChildTree(user1, "U1", true))), true) : user1;
+        String user2Tree = user2 != null ? Utility.arrayListToString((new ArrayList<String>(
+            treeUtility.getChildTree(user2, "U2", true))), true) : user2;
+
+        final String orgId = myBudget.getOrganization().getId();
+        ArrayList<String> organizationList = new ArrayList<String>(OBContext.getOBContext()
+            .getOrganizationStructureProvider().getChildTree(orgId, true));
+        String OrgTreeList = Utility.arrayListToString(organizationList, true);
 
         StringBuilder queryString = new StringBuilder();
         queryString.append("select SUM(e.credit) as credit,");
         queryString.append(" SUM(e.debit) as debit");
         queryString.append(" from FinancialMgmtAccountingFact e where");
         queryString.append(" e.client.id='").append(myBudget.getClient().getId()).append("'");
+        queryString.append(" and e.organization.id in (").append(OrgTreeList).append(")");
 
         if (!"".equals(activity)) {
-          queryString.append(" and e.activity.id in (" + activityNaturalTree + ")");
+          queryString.append(" and e.activity.id in (").append(activityTree).append(")");
         }
         queryString.append(" and e.accountingSchema.id=:accountingSchema");
         if (!"".equals(asset)) {
-          queryString.append(" and e.asset.id in (" + assetNaturalTree + ")");
+          queryString.append(" and e.asset.id in (").append(assetTree).append(")");
         }
         if (!"".equals(businessPartner)) {
           queryString.append(" and e.businessPartner.id = :businessPartner");
         } else if (!"".equals(businessPartnerCategory)) {
           queryString
-              .append(" and exists (select 1 from BusinessPartner bp where e.businessPartner.id = bp.id and businessPartnerCategory.id=:businessPartnerCategory)");
+              .append(" and exists (select 1 from BusinessPartner bp where businessPartnerCategory.id=:businessPartnerCategory)");
         }
         if (!"".equals(costcenter)) {
-          queryString.append(" and e.costcenter.id in (" + costcenterNaturalTree + ")");
+          queryString.append(" and e.costcenter.id in (").append(costcenterTree).append(")");
         }
-        queryString.append(" and e.account.id in (" + accountNaturalTree + ")");
+        queryString.append(" and e.account.id in (").append(accountTree).append(")");
         if (!"".equals(period)) {
           queryString.append(" and e.period.id=:period");
         }
         if (!"".equals(product)) {
           queryString.append(" and e.product.id=:product");
         } else if (!"".equals(productCategory)) {
-          queryString
-              .append(" and exists (select 1 from Product p where e.product.id = p.id and productCategory.id in ("
-                  + productCategoryNaturalTree + ")");
+          queryString.append(" and exists (select 1 from Product p where productCategory.id in (")
+              .append(productCategoryTree).append("))");
         }
         if (!"".equals(project)) {
-          queryString.append(" and e.project.id in (" + projectNaturalTree + ")");
+          queryString.append(" and e.project.id in (").append(projectTree).append(")");
         }
         if (!"".equals(salesCampaign)) {
-          queryString.append(" and e.salesCampaign.id in (" + campaignNaturalTree + ")");
+          queryString.append(" and e.salesCampaign.id in (").append(campaignTree).append(")");
         }
         if (!"".equals(salesRegion)) {
-          queryString.append(" and e.salesRegion.id in (" + regionNaturalTree + ")");
+          queryString.append(" and e.salesRegion.id in (").append(regionTree).append(")");
         }
         if (!"".equals(user1)) {
-          queryString.append(" and e.stDimension.id in (" + user1NaturalTree + ")");
+          queryString.append(" and e.stDimension.id in (").append(user1Tree).append(")");
         }
         if (!"".equals(user1)) {
-          queryString.append(" and e.ndDimension.id in (" + user2NaturalTree + ")");
+          queryString.append(" and e.ndDimension.id in (").append(user2Tree).append(")");
         }
         Query query = OBDal.getInstance().getSession().createQuery(queryString.toString());
         query.setReadOnly(true);
