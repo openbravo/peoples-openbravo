@@ -722,7 +722,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--132-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--132-->  <NAME><![CDATA[Element Value]]></NAME>
 <!--132-->  <DESCRIPTION><![CDATA[Add and edit elements and edit elements tree structures.]]></DESCRIPTION>
-<!--132-->  <HELP><![CDATA[Element value tab is a list of the account tree elements of a given chart of accounts.]]></HELP>
+<!--132-->  <HELP><![CDATA[Element value tab list every chart of account element from the chart of accounts headings to the sub-accounts.]]></HELP>
 <!--132-->  <AD_TABLE_ID><![CDATA[188]]></AD_TABLE_ID>
 <!--132-->  <AD_WINDOW_ID><![CDATA[118]]></AD_WINDOW_ID>
 <!--132-->  <SEQNO><![CDATA[20]]></SEQNO>
@@ -969,7 +969,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--153-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--153-->  <NAME><![CDATA[Element]]></NAME>
 <!--153-->  <DESCRIPTION><![CDATA[Create account elements structures to be used in the accounting  schema.]]></DESCRIPTION>
-<!--153-->  <HELP><![CDATA[Account Tree window allows to review and maintain imported chart of accounts and to create new ones if needed.]]></HELP>
+<!--153-->  <HELP><![CDATA[The account tree window allows to review and maintain the chart of accounts imported through a chart of accounts module as well as to create new ones from scratch.]]></HELP>
 <!--153-->  <AD_TABLE_ID><![CDATA[142]]></AD_TABLE_ID>
 <!--153-->  <AD_WINDOW_ID><![CDATA[118]]></AD_WINDOW_ID>
 <!--153-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -2012,7 +2012,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--207-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--207-->  <NAME><![CDATA[Combination]]></NAME>
 <!--207-->  <DESCRIPTION><![CDATA[Create and edit customized accounts to be used for reporting purposes.]]></DESCRIPTION>
-<!--207-->  <HELP><![CDATA[Openbravo allows to create as many account combinations as required for a given organization and accounting schema.]]></HELP>
+<!--207-->  <HELP><![CDATA[The Account Combination window allows to review the accounts of an accounting schema. ]]></HELP>
 <!--207-->  <AD_TABLE_ID><![CDATA[176]]></AD_TABLE_ID>
 <!--207-->  <AD_WINDOW_ID><![CDATA[153]]></AD_WINDOW_ID>
 <!--207-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -2889,7 +2889,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--252-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--252-->  <NAME><![CDATA[Defaults]]></NAME>
 <!--252-->  <DESCRIPTION><![CDATA[Add and edit detailed G/L accounts to be used by default in the application.]]></DESCRIPTION>
-<!--252-->  <HELP><![CDATA[Default tab allows to maintain or to add a complete set of default accounts to be used while posting certain transactions types.]]></HELP>
+<!--252-->  <HELP><![CDATA[Defaults tab allows to maintain or to add a set of default accounts to use while posting a certain type of transactions.]]></HELP>
 <!--252-->  <AD_TABLE_ID><![CDATA[315]]></AD_TABLE_ID>
 <!--252-->  <AD_WINDOW_ID><![CDATA[125]]></AD_WINDOW_ID>
 <!--252-->  <SEQNO><![CDATA[40]]></SEQNO>
@@ -6640,7 +6640,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800019-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800019-->  <NAME><![CDATA[Customized Elements]]></NAME>
 <!--800019-->  <DESCRIPTION><![CDATA[Edit elements and add or subtract them according to your needs.]]></DESCRIPTION>
-<!--800019-->  <HELP><![CDATA[Customized elements tab allows to introduce basic operations between account tree elements.]]></HELP>
+<!--800019-->  <HELP><![CDATA[The customized elements tab allows to introduce basic operations between the chart of accounts elements.]]></HELP>
 <!--800019-->  <AD_TABLE_ID><![CDATA[800015]]></AD_TABLE_ID>
 <!--800019-->  <AD_WINDOW_ID><![CDATA[118]]></AD_WINDOW_ID>
 <!--800019-->  <SEQNO><![CDATA[25]]></SEQNO>
@@ -11797,7 +11797,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--1007400000-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1007400000-->  <NAME><![CDATA[Documents]]></NAME>
 <!--1007400000-->  <DESCRIPTION><![CDATA[Add documents to allow/avoid negative entries]]></DESCRIPTION>
-<!--1007400000-->  <HELP><![CDATA[Documents tab allows to define which document types within a table type allow negative posting at document level and whether they use a different accounting process than the default one based on a given accounting template.]]></HELP>
+<!--1007400000-->  <HELP><![CDATA[Documents tab allows to define which document types of a table allow negative posting and if they use a different accounting process than the default one based on a given accounting template.]]></HELP>
 <!--1007400000-->  <AD_TABLE_ID><![CDATA[1007400000]]></AD_TABLE_ID>
 <!--1007400000-->  <AD_WINDOW_ID><![CDATA[125]]></AD_WINDOW_ID>
 <!--1007400000-->  <SEQNO><![CDATA[27]]></SEQNO>

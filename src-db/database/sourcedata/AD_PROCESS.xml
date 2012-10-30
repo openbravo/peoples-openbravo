@@ -2495,7 +2495,7 @@ The ledger accounting entries created by the Fiscal Year closing process are:
 <!--800039-->  <VALUE><![CDATA[ReportTrialBalance]]></VALUE>
 <!--800039-->  <NAME><![CDATA[Trial Balance]]></NAME>
 <!--800039-->  <DESCRIPTION><![CDATA[Trial Balance Report]]></DESCRIPTION>
-<!--800039-->  <HELP><![CDATA[Trial Balance Report shows totalized debit balances and credit balances to confirm that total debits equals total credits. ]]></HELP>
+<!--800039-->  <HELP><![CDATA[A trial balance is a list indicating the balances of every ledger account at a given point in time. ]]></HELP>
 <!--800039-->  <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
 <!--800039-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--800039-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
