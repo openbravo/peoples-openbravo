@@ -58,27 +58,6 @@
     <Parameter name="mProductId"/>
   </SqlMethod>
 
-
-  <SqlMethod name="getOffersPriceInvoice" type="preparedStatement" return="String" default="0">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      SELECT ROUND(M_GET_OFFERS_PRICE(TO_DATE(?),?,?,TO_NUMBER(?), TO_NUMBER(?), ?),
-                    (SELECT PRICEPRECISION 
-                       FROM C_CURRENCY C,
-                            C_INVOICE  I 
-                      WHERE C.C_CURRENCY_ID = I.C_CURRENCY_ID
-                        AND I.C_INVOICE_ID  = ?)) AS TOTAL FROM DUAL
-    </Sql>
-    <Parameter name="dateordered"/>
-    <Parameter name="cBpartnerId"/>
-    <Parameter name="mProductId"/>
-    <Parameter name="pricestd"/>
-    <Parameter name="qty"/>
-    <Parameter name="pricelist"/>
-    <Parameter name="invoiceid"/>
-    
-  </SqlMethod>
-
   <SqlMethod name="getOrgLocationId" type="preparedStatement" return="String" default="0">
     <SqlMethodComment></SqlMethodComment>
     <Sql>

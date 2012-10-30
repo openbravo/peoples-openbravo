@@ -19,7 +19,8 @@
 
 package org.openbravo.erpCommon.ad_process;
 
-import java.sql.PreparedStatement;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.openbravo.dal.core.OBContext;
@@ -28,8 +29,8 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.scheduling.ProcessBundle;
+import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.service.db.DalBaseProcess;
-import org.openbravo.service.db.DalConnectionProvider;
 
 public class CalculatePromotions extends DalBaseProcess {
   final private static Logger log = Logger.getLogger(CalculatePromotions.class);
@@ -37,7 +38,6 @@ public class CalculatePromotions extends DalBaseProcess {
   @Override
   protected void doExecute(ProcessBundle bundle) throws Exception {
     OBContext.setAdminMode();
-    PreparedStatement ps = null;
     try {
       final String tabId = (String) bundle.getParams().get("tabId");
       String tableName = OBDal.getInstance().get(Tab.class, tabId).getTable().getDBTableName();
@@ -49,21 +49,13 @@ public class CalculatePromotions extends DalBaseProcess {
       }
 
       final String id = (String) bundle.getParams().get(tableName + "_ID");
-      DalConnectionProvider conn = new DalConnectionProvider(false);
-      String st;
-      if (conn.getRDBMS().equals("ORACLE")) {
-        st = "CALL ";
-      } else {
-        st = "SELECT ";
-      }
-      st += "M_PROMOTION_CALCULATE(?, ?, ?)";
 
-      ps = conn.getPreparedStatement(st);
-      ps.setString(1, type);
-      ps.setString(2, id);
-      ps.setString(3, OBContext.getOBContext().getUser().getId());
-
-      ps.execute();
+      List<Object> parameters = new ArrayList<Object>();
+      parameters.add(type);
+      parameters.add(id);
+      parameters.add(OBContext.getOBContext().getUser().getId());
+      CallStoredProcedure.getInstance()
+          .call("M_PROMOTION_CALCULATE", parameters, null, true, false);
 
       final OBError msg = new OBError();
       msg.setType("Success");
@@ -77,12 +69,6 @@ public class CalculatePromotions extends DalBaseProcess {
       msg.setMessage(e.getMessage());
       msg.setTitle("Error occurred");
       bundle.setResult(msg);
-    } finally {
-      if (ps != null) {
-        ps.close();
-      }
-      OBContext.restorePreviousMode();
     }
   }
-
 }

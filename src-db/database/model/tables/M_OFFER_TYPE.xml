@@ -55,7 +55,7 @@
       <foreign-key foreignTable="AD_ORG" name="M_OFFERTYPE_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_MODULE" name="M_OFFERTYPE_MODULE">
+      <foreign-key foreignTable="AD_MODULE" name="M_OFFERTYPE_MODULE" onDelete="cascade">
         <reference local="AD_MODULE_ID" foreign="AD_MODULE_ID"/>
       </foreign-key>
       <check name="M_OFFERTYPE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
