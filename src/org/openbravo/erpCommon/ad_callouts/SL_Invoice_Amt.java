@@ -114,7 +114,7 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
     if (log4j.isDebugEnabled())
       log4j.debug("taxRate: " + taxRate);
 
-    BigDecimal qtyInvoice, priceActual, LineNetAmt, priceLimit, priceStd, taxBaseAmt;
+    BigDecimal qtyInvoice, priceActual, lineNetAmt, priceLimit, priceStd, taxBaseAmt;
 
     qtyInvoice = (!Utility.isBigDecimal(strQtyInvoice) ? ZERO : new BigDecimal(strQtyInvoice));
     priceStd = (!Utility.isBigDecimal(strPriceStd) ? ZERO : new BigDecimal(strPriceStd));
@@ -122,7 +122,7 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
         .setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
     priceLimit = (!Utility.isBigDecimal(strPriceLimit) ? ZERO : (new BigDecimal(strPriceLimit)))
         .setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
-    LineNetAmt = (!Utility.isBigDecimal(strLineNetAmt) ? ZERO : new BigDecimal(strLineNetAmt));
+    lineNetAmt = (!Utility.isBigDecimal(strLineNetAmt) ? ZERO : new BigDecimal(strLineNetAmt));
     taxBaseAmt = (strTaxBaseAmt.equals("") ? ZERO : (new BigDecimal(strTaxBaseAmt))).setScale(
         PricePrecision, BigDecimal.ROUND_HALF_UP);
     StringBuffer resultado = new StringBuffer();
@@ -130,27 +130,23 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
     resultado.append("var calloutName='SL_Invoice_Amt';\n\n");
     resultado.append("var respuesta = new Array(");
 
-    SLOrderProductData[] dataInvoice = SLOrderProductData.selectInvoice(this, strInvoiceId);
-
     if (strChanged.equals("inplinenetamt")) {
       if (qtyInvoice.compareTo(BigDecimal.ZERO) == 0) {
         priceActual = BigDecimal.ZERO;
       } else {
-        priceActual = LineNetAmt.divide(qtyInvoice, PricePrecision, BigDecimal.ROUND_HALF_UP);
+        priceActual = lineNetAmt.divide(qtyInvoice, PricePrecision, BigDecimal.ROUND_HALF_UP);
       }
     }
-    if (priceActual.compareTo(BigDecimal.ZERO) == 0)
-      LineNetAmt = BigDecimal.ZERO;
+    if (priceActual.compareTo(BigDecimal.ZERO) == 0) {
+      lineNetAmt = BigDecimal.ZERO;
+    }
     // If unit price (actual price) changes, recalculates standard price
     // (std price) applying price adjustments (offers) if any
     if (strChanged.equals("inppriceactual") || strChanged.equals("inplinenetamt")) {
       if (log4j.isDebugEnabled())
         log4j.debug("priceActual:" + Double.toString(priceActual.doubleValue()));
-      priceStd = new BigDecimal(SLOrderProductData.getOffersStdPriceInvoice(this,
-          dataInvoice[0].cBpartnerId, priceActual.toString(), strProduct,
-          dataInvoice[0].dateinvoiced, qtyInvoice.toString(), dataInvoice[0].mPricelistId,
-          dataInvoice[0].id));
-      resultado.append("new Array(\"inppricestd\", " + priceStd.toString() + "),");
+
+      resultado.append("new Array(\"inppricestd\", " + priceActual.toString() + "),");
       resultado.append("new Array(\"inptaxbaseamt\", " + priceActual.multiply(qtyInvoice) + "),");
     }
 
@@ -160,20 +156,15 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
       if (log4j.isDebugEnabled())
         log4j.debug("strPriceList: " + strPriceList.replace("\"", "") + " product:" + strProduct
             + " qty:" + qtyInvoice.toString());
-      priceActual = new BigDecimal(SLOrderProductData.getOffersPriceInvoice(this,
-          dataInvoice[0].dateinvoiced, dataInvoice[0].cBpartnerId, strProduct, priceStd.toString(),
-          qtyInvoice.toString(), dataInvoice[0].mPricelistId, dataInvoice[0].id));
-      if (priceActual.scale() > PricePrecision)
-        priceActual = priceActual.setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
       // invoiced qty multiply with gross price
       BigDecimal grossAmount = new BigDecimal(strGrossUnitPrice.trim()).multiply(new BigDecimal(
           strQtyInvoice.trim()));
       resultado.append("new Array(\"inplineGrossAmount\", " + grossAmount.toString() + "),");
     }
     // if taxRate field is changed
-    if (strChanged.equals("inpcTaxId")
-        && (OBDal.getInstance().get(Invoice.class, strInvoiceId).getPriceList()
-            .isPriceIncludesTax())) {
+    if (strChanged.equals("inpgrossUnitPrice")
+        || (strChanged.equals("inpcTaxId") && (OBDal.getInstance().get(Invoice.class, strInvoiceId)
+            .getPriceList().isPriceIncludesTax()))) {
       BigDecimal grossUnitPrice = new BigDecimal(strGrossUnitPrice.trim());
       BigDecimal grossAmount = grossUnitPrice.multiply(qtyInvoice);
       BigDecimal netUnitPrice = FinancialUtils.calculateNetFromGross(strTaxId, grossAmount,
@@ -181,29 +172,21 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
       priceActual = netUnitPrice;
       priceStd = netUnitPrice;
 
+      resultado.append("new Array(\"inpgrosspricestd\", " + grossUnitPrice.toString() + "),");
+
       resultado.append("new Array(\"inppriceactual\"," + netUnitPrice.toString() + "),");
-      resultado.append("new Array(\"inppricelist\", " + netUnitPrice.toString() + "),");
       resultado.append("new Array(\"inppricelimit\", " + netUnitPrice.toString() + "),");
       resultado.append("new Array(\"inppricestd\", " + netUnitPrice.toString() + "),");
-    }
-    // if taxinclusive field is changed then modify net unit price and gross price
-    if (strChanged.equals("inpgrossUnitPrice")) {
-      BigDecimal grossUnitPrice = new BigDecimal(strGrossUnitPrice.trim());
-      BigDecimal grossAmount = grossUnitPrice.multiply(qtyInvoice);
-      final BigDecimal netUnitPrice = FinancialUtils.calculateNetFromGross(strTaxId, grossAmount,
-          PricePrecision, taxBaseAmt, qtyInvoice);
-      priceActual = netUnitPrice;
-      priceStd = netUnitPrice;
 
-      resultado.append("new Array(\"inplineGrossAmount\"," + grossAmount.toString() + "),");
-      resultado.append("new Array(\"inppriceactual\"," + netUnitPrice.toString() + "),");
-      resultado.append("new Array(\"inppricelist\"," + netUnitPrice.toString() + "),");
-      resultado.append("new Array(\"inppricelimit\", " + netUnitPrice.toString() + "),");
-      resultado.append("new Array(\"inppricestd\"," + netUnitPrice.toString() + "),");
+      // if taxinclusive field is changed then modify net unit price and gross price
+      if (strChanged.equals("inpgrossUnitPrice")) {
+        resultado.append("new Array(\"inplineGrossAmount\"," + grossAmount.toString() + "),");
+      }
     }
+
     if (!strChanged.equals("inplinenetamt"))
       // Net amount of a line equals quantity x unit price (actual price)
-      LineNetAmt = qtyInvoice.multiply(priceActual);
+      lineNetAmt = qtyInvoice.multiply(priceActual);
 
     if (strChanged.equals("inplinenetamt")) {
       DecimalFormat priceEditionFmt = Utility.getFormat(vars, "priceEdition");
@@ -213,7 +196,7 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
               priceActual.setScale(priceEditionFmt.getMaximumFractionDigits(),
                   BigDecimal.ROUND_HALF_UP)).setScale(euroEditionFmt.getMaximumFractionDigits(),
               BigDecimal.ROUND_HALF_UP);
-      if (!LineNetAmt
+      if (!lineNetAmt
           .setScale(priceEditionFmt.getMaximumFractionDigits(), BigDecimal.ROUND_HALF_UP).equals(
               CalculatedLineNetAmt)) {
         StringBuffer strMessage = new StringBuffer(Utility.messageBD(this,
@@ -228,8 +211,8 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
       }
     }
 
-    if (LineNetAmt.scale() > StdPrecision)
-      LineNetAmt = LineNetAmt.setScale(StdPrecision, BigDecimal.ROUND_HALF_UP);
+    if (lineNetAmt.scale() > StdPrecision)
+      lineNetAmt = lineNetAmt.setScale(StdPrecision, BigDecimal.ROUND_HALF_UP);
 
     // Check price limit
     if (enforcedLimit) {
@@ -238,12 +221,12 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
             + FormatUtilities.replaceJS(Utility.messageBD(this, "UnderLimitPrice",
                 vars.getLanguage())) + "\"), ");
     }
-    BigDecimal taxAmt = ((LineNetAmt.multiply(taxRate)).divide(new BigDecimal("100"), 12,
+    BigDecimal taxAmt = ((lineNetAmt.multiply(taxRate)).divide(new BigDecimal("100"), 12,
         BigDecimal.ROUND_HALF_EVEN)).setScale(taxScale, BigDecimal.ROUND_HALF_UP);
 
-    if (!strChanged.equals("inplinenetamt") || LineNetAmt.compareTo(BigDecimal.ZERO) == 0)
-      resultado.append("new Array(\"inplinenetamt\", " + LineNetAmt.toString() + "),");
-    resultado.append("new Array(\"inptaxbaseamt\", " + LineNetAmt.toString() + "),");
+    if (!strChanged.equals("inplinenetamt") || lineNetAmt.compareTo(BigDecimal.ZERO) == 0)
+      resultado.append("new Array(\"inplinenetamt\", " + lineNetAmt.toString() + "),");
+    resultado.append("new Array(\"inptaxbaseamt\", " + lineNetAmt.toString() + "),");
     resultado.append("new Array(\"inptaxamt\", " + taxAmt.toPlainString() + "),");
     resultado.append("new Array(\"inppriceactual\", " + priceActual.toString() + ")");
     resultado.append(");");

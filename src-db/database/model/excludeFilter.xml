@@ -64,4 +64,5 @@
     <excludedFunction name="AD_GET_RDBMS"/>
     <excludedFunction name="AD_CREATE_AUDIT_TRIGGERS"/>
     <excludedFunction name="TEMP_FINDINARRAY"/>
+    <excludedFunction name="AD_EXECUTE_FUNCTION"/>
   </vector>

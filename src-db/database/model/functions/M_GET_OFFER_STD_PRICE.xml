@@ -23,39 +23,13 @@
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
-  v_Price    NUMBER;
-  v_Fixed    NUMBER;
-  v_AddAmt   NUMBER;
-  v_Discount NUMBER;
+/*
+DEPRECATED!
+This function should not be used. Promotions are calcualted by M_Promotion_Calculate
+when posting orders/invoices.
+*/
 BEGIN
-  v_Price := p_PriceActual;
-
-  IF v_Price IS NULL THEN
-    v_Price := 0;
-  END IF;
-
-  IF p_Offer_ID IS NOT NULL THEN
-    SELECT FIXED,
-      COALESCE(ADDAMT, 0),
-      COALESCE(DISCOUNT, 0)
-    INTO  v_Fixed,
-      v_AddAmt,
-      v_Discount
-    FROM M_OFFER
-    WHERE M_OFFER_ID = p_Offer_ID;
-
-    IF v_Fixed IS NOT NULL THEN
-      v_Price := v_Fixed;
-    ELSIF (v_Discount = 100) THEN
-      v_Price := v_AddAmt;
-    ELSE
-      v_Price := v_AddAmt + (p_PriceActual/(1-v_Discount/100));
-    END IF;
-  END IF;
-  RETURN v_Price;
-EXCEPTION
-WHEN OTHERS THEN
-  RETURN NULL;
+  return p_PriceActual;
 END M_GET_OFFER_STD_PRICE
 ]]></body>
     </function>

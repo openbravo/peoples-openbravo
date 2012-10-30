@@ -57,6 +57,14 @@
         <default><![CDATA[0]]></default>
         <onCreateDefault/>
       </column>
+      <column name="TOTALAMT" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="DISPLAYEDTOTALAMT" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="C_ORDERLINE_OFFER_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -69,5 +77,8 @@
       <foreign-key foreignTable="M_OFFER" name="C_ORDERLINE_OFFER_M_OFFER">
         <reference local="M_OFFER_ID" foreign="M_OFFER_ID"/>
       </foreign-key>
+      <index name="C_ORDERLINEOFFER_LINE_IDX" unique="false">
+        <index-column name="C_ORDERLINE_ID"/>
+      </index>
     </table>
   </database>
