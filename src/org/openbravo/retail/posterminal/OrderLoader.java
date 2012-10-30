@@ -179,7 +179,8 @@ public class OrderLoader extends JSONProcessSimple {
     TriggerHandler.getInstance().disable();
     boolean isQuotation = jsonorder.has("isQuotation") && jsonorder.getBoolean("isQuotation");
     try {
-      if (jsonorder.has("oldId") && jsonorder.has("isQuotation") && jsonorder.getBoolean("isQuotation")) {
+      if (jsonorder.has("oldId") && !jsonorder.getString("oldId").equals("null")
+          && jsonorder.has("isQuotation") && jsonorder.getBoolean("isQuotation")) {
         deleteOldDocument(jsonorder);
       }
 
@@ -197,6 +198,12 @@ public class OrderLoader extends JSONProcessSimple {
       ArrayList<OrderLine> lineReferences = new ArrayList<OrderLine>();
       JSONArray orderlines = jsonorder.getJSONArray("lines");
       createOrderLines(order, jsonorder, orderlines, lineReferences);
+
+      if (jsonorder.has("oldId")
+          && (!jsonorder.has("isQuotation") || !jsonorder.getBoolean("isQuotation"))) {
+        // This order comes from a quotation, we need to associate both
+        associateOrderToQuotation(jsonorder, order);
+      }
 
       long t113 = System.currentTimeMillis();
       if (createShipment) {
@@ -256,6 +263,19 @@ public class OrderLoader extends JSONProcessSimple {
         + "; Process Payments:" + (System.currentTimeMillis() - t4));
 
     return successMessage(jsonorder);
+  }
+
+  protected void associateOrderToQuotation(JSONObject jsonorder, Order order) throws JSONException {
+    String quotationId = jsonorder.getString("oldId");
+    Order quotation = OBDal.getInstance().get(Order.class, quotationId);
+    order.setQuotation(quotation);
+    List<OrderLine> orderLines = order.getOrderLineList();
+    List<OrderLine> quotationLines = quotation.getOrderLineList();
+    for (int i = 0; (i < orderLines.size() && i < quotationLines.size()); i++) {
+      orderLines.get(i).setQuotationLine(quotationLines.get(i));
+    }
+    quotation.setDocumentStatus("CA");
+
   }
 
   protected JSONObject successMessage(JSONObject jsonorder) throws Exception {
@@ -583,7 +603,7 @@ public class OrderLoader extends JSONProcessSimple {
 
     order.setSalesTransaction(true);
     if (jsonorder.getBoolean("isQuotation")) {
-      order.setDocumentStatus("CO"); // should be UE, not yet because of dal validation
+      order.setDocumentStatus("UE");
     } else {
       order.setDocumentStatus("CO");
     }

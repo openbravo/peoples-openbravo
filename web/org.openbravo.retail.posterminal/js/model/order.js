@@ -142,6 +142,7 @@
         this.set('orderType', attributes.orderType); // 0: Sales order, 1: Return order
         this.set('generateInvoice', attributes.generateInvoice);
         this.set('isQuotation', attributes.isQuotation);
+        this.set('oldId', attributes.oldId);
         this.set('priceList', attributes.priceList);
         this.set('currency', attributes.currency);
         this.set('currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, attributes['currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER]);
@@ -263,6 +264,7 @@
       this.set('orderType', 0); // 0: Sales order, 1: Return order
       this.set('generateInvoice', false);
       this.set('isQuotation', false);
+      this.set('oldId', null);
       this.set('priceList', null);
       this.set('currency', null);
       this.set('currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, null);
@@ -735,6 +737,7 @@ alert('reject!!')
       order.set('orderType', 0); // 0: Sales order, 1: Return order
       order.set('generateInvoice', false);
       order.set('isQuotation', false);
+      order.set('oldId', null);
       order.set('session', OB.POS.modelterminal.get('session'));
       order.set('priceList', OB.POS.modelterminal.get('terminal').priceList);
       order.set('currency', OB.POS.modelterminal.get('terminal').currency);
@@ -766,6 +769,7 @@ alert('reject!!')
       order.set('documentNo', model.documentNo);
       if(model.isQuotation){
         order.set('isQuotation', true);
+        order.set('oldId', order.orderid);
       }else{
         order.set('isEditable', false);
         order.set('isPaid', true);
