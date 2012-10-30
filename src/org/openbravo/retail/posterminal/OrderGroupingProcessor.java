@@ -193,6 +193,7 @@ public class OrderGroupingProcessor {
         FIN_PaymentSchedule.class);
     paymentScheduleInvoice.setCurrency(invoice.getCurrency());
     paymentScheduleInvoice.setInvoice(invoice);
+    paymentScheduleInvoice.setOrganization(invoice.getOrganization());
     paymentScheduleInvoice.setFinPaymentmethod(invoice.getPaymentMethod());
     paymentScheduleInvoice.setAmount(BigDecimal.ZERO);
     paymentScheduleInvoice.setOutstandingAmount(BigDecimal.ZERO);
@@ -214,6 +215,7 @@ public class OrderGroupingProcessor {
         Fin_OrigPaymentSchedule.class);
     origPaymentSchedule.setCurrency(invoice.getCurrency());
     origPaymentSchedule.setInvoice(invoice);
+    origPaymentSchedule.setOrganization(invoice.getOrganization());
     origPaymentSchedule.setPaymentMethod(invoice.getPaymentMethod());
     origPaymentSchedule.setAmount(BigDecimal.ZERO);
     origPaymentSchedule.setDueDate(invoice.getOrderDate());
@@ -329,6 +331,7 @@ public class OrderGroupingProcessor {
     invoice.setPartnerAddress(bp.getBusinessPartnerLocationList().get(0));
     invoice.setCurrency(firstLine.getCurrency());
     invoice.setDocumentNo(null);
+    invoice.setOrganization(terminal.getOrganization());
     invoice.setSalesTransaction(true);
     invoice.setDocumentStatus("CO");
     invoice.setDocumentAction("RE");
@@ -357,6 +360,7 @@ public class OrderGroupingProcessor {
     invoice.setCurrency(firstLine.getCurrency());
     invoice.setDocumentNo(null);
     invoice.setSalesTransaction(true);
+    invoice.setOrganization(terminal.getOrganization());
     invoice.setDocumentStatus("CO");
     invoice.setDocumentAction("RE");
     invoice.setAPRMProcessinvoice("RE");
