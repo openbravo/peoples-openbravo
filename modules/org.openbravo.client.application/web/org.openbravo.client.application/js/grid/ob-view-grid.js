@@ -220,6 +220,17 @@ isc.OBViewGrid.addProperties({
       }
     },
 
+    // always return false otherwise sc switches to local mode
+    // which does not work correctly for when doing inserts in form mode
+    // at that point the grid.data.allRows is being used which results 
+    // in mismatches with grid.data.localData, returning false here
+    // prevents allRows from being used. In our case we never really
+    // want to have all rows cached locally as we do all filtering
+    // server side.
+    allRowsCached: function () {
+      return false;
+    },
+
     transformData: function (newData, dsResponse) {
       var i, length, timeFields;
 
