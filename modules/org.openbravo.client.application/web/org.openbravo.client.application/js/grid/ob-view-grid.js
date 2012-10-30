@@ -1452,7 +1452,7 @@ isc.OBViewGrid.addProperties({
   dataArrived: function (startRow, endRow) {
     // do this now, to replace the loading message
     // TODO: add dynamic part of readonly (via setWindowSettings: see issue 17441)
-    if (this.uiPattern === 'SR' || this.uiPattern === 'RO' || this.uiPattern !== 'ED') {
+    if (this.uiPattern === 'SR' || this.uiPattern === 'RO' || this.uiPattern === 'ED') {
       this.noDataEmptyMessage = '<span class="' + this.emptyMessageStyle + '">' + OB.I18N.getLabel('OBUIAPP_NoDataInGrid') + '</span>';
     } else {
       this.noDataEmptyMessage = '<span class="' + this.emptyMessageStyle + '">' + OB.I18N.getLabel('OBUIAPP_GridNoRecords') + '</span>' + '<span onclick="this.onclick = new Function(); setTimeout(function() { window[\'' + this.ID + '\'].view.newRow(); }, 50); return false;" class="' + this.emptyMessageLinkStyle + '">' + OB.I18N.getLabel('OBUIAPP_GridCreateOne') + '</span>';
