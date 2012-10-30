@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global B,_,Backbone,localStorage */
+/*global B,_,moment,Backbone,localStorage */
 
 (function () {
   // Sales.OrderLine Model
@@ -294,6 +294,7 @@
     clearWith: function (_order) {
       var me = this,
           undf;
+      this.set('isPaid', _order.get('isPaid'));
       _.each(_.keys(_order.attributes), function (key) {
         if (_order.get(key) !== undf) {
           if (_order.get(key) === null) {
@@ -758,7 +759,7 @@
         me.lines.add(newline);
       });
       order.set('lines', me.lines);
-      order.set('orderDate', model.orderDate.toString().substring(0, 10));
+      order.set('orderDate', moment(model.orderDate.toString(), "YYYY-MM-DD").toDate());
       //order.set('payments', model.receiptPayments);
       payments = new PaymentLineList();
       _.each(model.receiptPayments, function (iter) {

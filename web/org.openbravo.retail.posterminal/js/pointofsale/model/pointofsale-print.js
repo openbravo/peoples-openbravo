@@ -18,7 +18,7 @@
 
       this.templateopendrawer = new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.OpenDrawer);
       this.templatereceipt = new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.ReceiptTemplate);
-      this.templateclosedreceipt = new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.ClosedReceiptTemplate);
+      this.templateclosedreceipt = new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.ReceiptClosedTemplate);
       this.templateinvoice = new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.ReceiptTemplateInvoice);
       this.templatereturn = new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.ReceiptTemplateReturn);
       this.templatereturninvoice = new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.ReceiptTemplateReturnInvoice);
@@ -38,10 +38,18 @@
         template = this.templateinvoice;
       }
     } else {
-      if (receipt.get('orderType') === 1) {
-        template = this.templatereturn;
+      if (receipt.get('isPaid')) {
+        if (receipt.get('orderType') === 1) {
+          template = this.templatereturn;
+        } else {
+          template = this.templateclosedreceipt;
+        }
       } else {
-        template = this.templatereceipt;
+        if (receipt.get('orderType') === 1) {
+          template = this.templatereturn;
+        } else {
+          template = this.templatereceipt;
+        }
       }
     }
 
@@ -95,7 +103,7 @@
 
   OB.OBPOSPointOfSale.Print.Receipt = PrintReceipt;
   OB.OBPOSPointOfSale.Print.ReceiptTemplate = 'res/printreceipt.xml';
-  OB.OBPOSPointOfSale.Print.ReceiptTemplate = 'res/printclosedreceipt.xml';
+  OB.OBPOSPointOfSale.Print.ReceiptClosedTemplate = 'res/printclosedreceipt.xml';
   OB.OBPOSPointOfSale.Print.ReceiptTemplateInvoice = 'res/printinvoice.xml';
   OB.OBPOSPointOfSale.Print.ReceiptTemplateReturn = 'res/printreturn.xml';
   OB.OBPOSPointOfSale.Print.ReceiptTemplateReturnInvoice = 'res/printreturninvoice.xml';
