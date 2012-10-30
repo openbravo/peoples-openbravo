@@ -68,7 +68,7 @@
       <text align ="right" length="10"><%= OB.I18N.formatCurrency(OB.DEC.add(0,depositsdrops.origAmount)) %></text>
     </line>
     <%
-    total = OB.DEC.add(total, depositsdrops.amount);
+    total = OB.DEC.add(total, depositsdrops.origAmount);
     if(depositsdrops.amount!==depositsdrops.origAmount){
       %>
      <line>
