@@ -134,7 +134,7 @@ public class CashCloseReport extends JSONProcessSimple {
     BigDecimal totalDrops = BigDecimal.ZERO;
     BigDecimal totalDeposits = BigDecimal.ZERO;
 
-    String hqlDropsDeposits = "select trans.description, trans.paymentAmount, trans.depositAmount , c_currency_rate(payment.financialAccount.currency, payment.obposApplications.organization.currency, null, null) as rate, payment.financialAccount.currency.iSOCode as isocode "
+    String hqlDropsDeposits = "select trans.description, trans.paymentAmount, trans.depositAmount , c_currency_rate(payment.financialAccount.currency, payment.obposApplications.organization.currency, null, null, payment.obposApplications.client.id, payment.obposApplications.organization.id) as rate, payment.financialAccount.currency.iSOCode as isocode "
         + "from org.openbravo.retail.posterminal.OBPOSAppPayment as payment, org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction as trans "
         + "where (trans.gLItem=payment.paymentMethod.gLItemForDrops or trans.gLItem=payment.paymentMethod.gLItemForDeposits) and trans.reconciliation is null "
         + "and payment.obposApplications=? and trans.account=payment.financialAccount";
@@ -161,13 +161,13 @@ public class CashCloseReport extends JSONProcessSimple {
       dropDeposit.put("isocode", objdropdeposit[4]);
     }
 
-    String hqlSalesDeposits = "select obpay.commercialName, sum(trans.depositAmount), c_currency_rate(obpay.financialAccount.currency, obpay.obposApplications.organization.currency, null, null) as rate, obpay.financialAccount.currency.iSOCode as isocode"
+    String hqlSalesDeposits = "select obpay.commercialName, sum(trans.depositAmount), c_currency_rate(obpay.financialAccount.currency, obpay.obposApplications.organization.currency, null, null, obpay.obposApplications.client.id, obpay.obposApplications.organization.id) as rate, obpay.financialAccount.currency.iSOCode as isocode"
         + " from org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction as trans "
         + "inner join trans.finPayment as pay, "
         + "org.openbravo.retail.posterminal.OBPOSAppPayment as obpay "
         + "where pay.account=obpay.financialAccount and trans.gLItem is null "
         + "and trans.reconciliation is null and obpay.obposApplications.id=? "
-        + "group by obpay.commercialName, obpay.financialAccount.currency, obpay.obposApplications.organization.currency, obpay.financialAccount.currency.iSOCode";
+        + "group by obpay.commercialName, obpay.financialAccount.currency, obpay.obposApplications.organization.currency, obpay.financialAccount.currency.iSOCode, obpay.obposApplications.client.id, obpay.obposApplications.organization.id";
 
     Query salesDepositsQuery = OBDal.getInstance().getSession().createQuery(hqlSalesDeposits);
     salesDepositsQuery.setString(0, posTerminalId);
@@ -184,13 +184,13 @@ public class CashCloseReport extends JSONProcessSimple {
           (String) obja[2]))).setScale(2, BigDecimal.ROUND_HALF_EVEN));
     }
 
-    String hqlReturnsDrop = "select obpay.commercialName, sum(trans.paymentAmount), c_currency_rate(obpay.financialAccount.currency, obpay.obposApplications.organization.currency, null, null) as rate, obpay.financialAccount.currency.iSOCode as isocode"
+    String hqlReturnsDrop = "select obpay.commercialName, sum(trans.paymentAmount), c_currency_rate(obpay.financialAccount.currency, obpay.obposApplications.organization.currency, null, null, obpay.obposApplications.client.id, obpay.obposApplications.organization.id) as rate, obpay.financialAccount.currency.iSOCode as isocode"
         + " from org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction as trans "
         + "inner join trans.finPayment as pay, "
         + "org.openbravo.retail.posterminal.OBPOSAppPayment as obpay "
         + "where pay.account=obpay.financialAccount and trans.gLItem is null "
         + "and trans.reconciliation is null and obpay.obposApplications.id=? "
-        + "group by obpay.commercialName, obpay.financialAccount.currency, obpay.obposApplications.organization.currency, obpay.financialAccount.currency.iSOCode";
+        + "group by obpay.commercialName, obpay.financialAccount.currency, obpay.obposApplications.organization.currency, obpay.financialAccount.currency.iSOCode, obpay.obposApplications.client.id, obpay.obposApplications.organization.id";
 
     Query returnDropsQuery = OBDal.getInstance().getSession().createQuery(hqlReturnsDrop);
     returnDropsQuery.setString(0, posTerminalId);
