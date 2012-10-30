@@ -743,10 +743,10 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
               data[i].saldoInicial = (new BigDecimal(dataIB[k].saldoInicial).add(parcialInicial))
                   .toPlainString();
             } else {
-              data[i].amtacctdr = (new BigDecimal(dataIB[k].amtacctdr).add(parcialDR))
-                  .toPlainString();
-              data[i].amtacctcr = (new BigDecimal(dataIB[k].amtacctcr).add(parcialCR))
-                  .toPlainString();
+              data[i].amtacctdr = (new BigDecimal(dataIB[k].amtacctdr).add(parcialDR)
+                  .add(new BigDecimal(data[i].amtacctdr))).toPlainString();
+              data[i].amtacctcr = (new BigDecimal(dataIB[k].amtacctcr).add(parcialCR)
+                  .add(new BigDecimal(data[i].amtacctcr))).toPlainString();
             }
             data[i].saldoFinal = (new BigDecimal(dataIB[k].saldoInicial).add(parcialDR)
                 .subtract(parcialCR)).toPlainString();
