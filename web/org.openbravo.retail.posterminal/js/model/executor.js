@@ -10,19 +10,22 @@
 
 /**
  * OB.Model.Executor provides a mechanism to execute actions synchronously even each of
- * these actions are not synchronous.
+ * these actions are not synchronous. It is managed with two queues: one for events and 
+ * another one for actions. Each event has a series of actions to be executed synchronously,
+ * when all actions in the event are finished, next event is started.
  */
+
 OB.Model.Executor = Backbone.Model.extend({
   defaults: {
     executing: false
   },
 
-  initialize: function() {
+  initialize: function () {
     var eventQueue = new Backbone.Collection();
     this.set('eventQueue', eventQueue);
     this.set('actionQueue', new Backbone.Collection());
 
-    eventQueue.on('add', function() {
+    eventQueue.on('add', function () {
       if (!this.get('executing')) {
         // Adding an event to an empty queue, firing it
         this.nextEvent();
@@ -30,14 +33,14 @@ OB.Model.Executor = Backbone.Model.extend({
     }, this);
   },
 
-  addEvent: function(event, replaceExistent) {
+  addEvent: function (event, replaceExistent) {
     var evtQueue = this.get('eventQueue'),
         currentEvt, actionQueue;
     if (replaceExistent && evtQueue) {
       currentEvt = this.get('currentEvent');
       evtQueue.where({
         id: event.get('id')
-      }).forEach(function(evt) {
+      }).forEach(function (evt) {
         if (currentEvt === evt) {
           this.set('eventQueue');
           actionQueue.remove(actionQueue.models);
@@ -46,14 +49,14 @@ OB.Model.Executor = Backbone.Model.extend({
       }, this);
     }
 
-    event.on('finish', function() {
+    event.on('finish', function () {
       window.console.log('event execution time', (new Date().getTime()) - event.get('start'));
     });
 
     evtQueue.add(event);
   },
 
-  nextEvent: function() {
+  nextEvent: function () {
     var evt = this.get('eventQueue').shift(),
         previousEvt = this.get('currentEvent');
     if (previousEvt) {
@@ -63,7 +66,7 @@ OB.Model.Executor = Backbone.Model.extend({
       this.set('executing', true);
       this.set('currentEvent', evt);
       evt.set('start', new Date().getTime());
-      evt.on('actionsCreated', function() {
+      evt.on('actionsCreated', function () {
         this.preAction(evt);
         this.nextAction(evt);
       }, this);
@@ -74,11 +77,11 @@ OB.Model.Executor = Backbone.Model.extend({
     }
   },
 
-  preAction: function(event) {
+  preAction: function (event) {
     // actions executed before the actions for the event
   },
 
-  nextAction: function(event) {
+  nextAction: function (event) {
     var action = this.get('actionQueue').shift();
     if (action) {
       action.get('action').call(this, action.get('args'), event);
@@ -89,11 +92,11 @@ OB.Model.Executor = Backbone.Model.extend({
     }
   },
 
-  postAction: function(event) {
+  postAction: function (event) {
     // actions executed after all actions for the event have been executed
   },
 
-  createActions: function(event) {
+  createActions: function (event) {
     // To be implemented by subclasses. It should populate actionQueue with the
     // series of actions to be executed for this event. Note each of the actions
     // is in charge of synchronization by invoking nextAction method.
@@ -101,7 +104,7 @@ OB.Model.Executor = Backbone.Model.extend({
 });
 
 OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
-  createActions: function(evt) {
+  createActions: function (evt) {
     var line = evt.get('line'),
         receipt = evt.get('receipt'),
         bpId = receipt.get('bp').id,
@@ -121,18 +124,18 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
       params: [bpId, bpId, bpId, bpId, productId, productId, productId, productId]
     };
 
-    OB.Dal.find(OB.Model.Discount, criteria, function(d) {
-      d.forEach(function(disc) {
+    OB.Dal.find(OB.Model.Discount, criteria, function (d) {
+      d.forEach(function (disc) {
         actionQueue.add({
           action: me.applyRule,
           args: disc
         });
       });
       evt.trigger('actionsCreated');
-    }, function() {});
+    }, function () {});
   },
 
-  applyRule: function(disc, evt) {
+  applyRule: function (disc, evt) {
     var receipt = evt.get('receipt'),
         line = evt.get('line'),
         rule = OB.Model.Discounts.discountRules[disc.get('discountType')],
@@ -146,7 +149,7 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
       if (rule.async) {
         // waiting listener to trigger completed to move to next action
         ruleListener = new Backbone.Model();
-        ruleListener.on('completed', function(obj) {
+        ruleListener.on('completed', function (obj) {
           if (obj && obj.alerts) {
             OB.UTIL.showAlert.display(obj.alerts);
           }
@@ -168,7 +171,7 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
     }
   },
 
-  preAction: function(evt) {
+  preAction: function (evt) {
     var line = evt.get('line');
 
     line.set({
@@ -179,7 +182,7 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
 
   },
 
-  postAction: function(evt) {
+  postAction: function (evt) {
     evt.get('receipt').calculateGross();
   }
 });
