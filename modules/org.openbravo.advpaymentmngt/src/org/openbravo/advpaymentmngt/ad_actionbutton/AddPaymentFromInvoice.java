@@ -33,7 +33,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.process.FIN_AddPayment;
@@ -637,37 +636,6 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
     out.println(processOprtionsComboHtml.replaceAll("\"", "\\'"));
 
     out.close();
-  }
-
-  /**
-   * Returns the list of the reference list for payment process
-   * 
-   * @param refId
-   *          . Indicates the Id of the reference.
-   * @param deposit
-   *          . Indicates whether the method is being executed for deposit of withdrawn.
-   * @return. Returns the list of process actions.
-   */
-  private List processActionWithDepositWithdrawn(String refId, boolean deposit) {
-    try {
-      OBContext.setAdminMode(true);
-      StringBuilder hql = new StringBuilder();
-      hql.append("select l ");
-      hql.append("from ADReference r ");
-      hql.append("  left join r.aDListList l ");
-      hql.append("where r.id = '").append(refId).append("' ");
-      hql.append("  and lower(l.name) like '%").append((deposit == true) ? "deposit" : "withdrawn")
-          .append("%'");
-
-      final Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
-
-      return query.list();
-    } catch (Exception e) {
-      return null;
-    } finally {
-      OBContext.restorePreviousMode();
-    }
-
   }
 
   private BigDecimal findExchangeRate(VariablesSecureApp vars, Currency paymentCurrency,
