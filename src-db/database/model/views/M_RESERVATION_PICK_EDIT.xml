@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+  <database name="VIEW M_RESERVATION_PICK_EDIT">
+    <view name="M_RESERVATION_PICK_EDIT"><![CDATA[SELECT COALESCE(rssd.m_reservation_stock_id, sd.m_storage_detail_id) AS m_reservation_pick_edit_id,
+      COALESCE(rssd.ad_client_id, sd.ad_client_id) as ad_client_id, COALESCE(rssd.ad_org_id, '0') as ad_org_id, 'Y' as ISACTIVE,
+      sd.updated, sd.updatedby, sd.created, sd.createdby,
+      CASE WHEN rssd.m_reservation_stock_id IS NULL THEN 'N' ELSE 'Y' END AS ob_selected, rssd.m_reservation_stock_id,
+  loc.m_warehouse_id, sd.m_locator_id, sd.m_attributesetinstance_id, null as c_orderline_id, sd.qtyonhand as availableqty,
+  CASE WHEN rssd.m_reservation_stock_id IS NULL THEN 0 ELSE (select coalesce(sum(rs.quantity), 0)
+             from m_reservation_stock rs JOIN m_reservation r ON rs.m_reservation_id = r.m_reservation_id
+             where rs.m_reservation_stock_id <> rssd.m_reservation_stock_id
+               and r.res_status <> 'CL'
+               and r.m_product_id = rssd.m_product_id
+               and r.c_uom_id = rssd.c_uom_id
+               and coalesce(rs.m_attributesetinstance_id, '0') = coalesce(rssd.m_attributesetinstance_id, '0')
+               and rs.m_locator_id = rssd.m_locator_id) END as reservedinothers,
+  rssd.quantity, rssd.releasedqty, rssd.isallocated, sd.m_product_id, sd.c_uom_id
+FROM m_storage_detail sd
+  JOIN m_locator loc ON sd.m_locator_id = loc.m_locator_id
+  LEFT JOIN (select rs.m_reservation_stock_id, r.m_reservation_id, r.m_product_id, r.c_uom_id,
+                    rs.m_attributesetinstance_id, rs.m_locator_id, rs.quantity, rs.releasedqty, rs.isallocated,
+                    rs.ad_client_id, rs.ad_org_id
+             from m_reservation_stock rs JOIN m_reservation r ON rs.m_reservation_id = r.m_reservation_id
+             ) rssd
+             ON rssd.m_locator_id = sd.m_locator_id 
+                AND COALESCE(rssd.m_attributesetinstance_id, '0') = COALESCE(sd.m_attributesetinstance_id, '0')
+                AND rssd.m_product_id = sd.m_product_id
+                AND rssd.c_uom_id = sd.c_uom_id
+WHERE sd.m_product_uom_id IS NULL
+UNION ALL
+SELECT COALESCE(rs.m_reservation_stock_id, ol.c_orderline_id) AS m_reservation_pick_edit,
+      COALESCE(rs.ad_client_id, ol.ad_client_id) as ad_client_id, COALESCE(rs.ad_org_id, ol.ad_org_id) as ad_org_id, 'Y' as ISACTIVE,
+      ol.updated, ol.updatedby, ol.created, ol.createdby,
+      CASE WHEN rs.m_reservation_stock_id IS NULL THEN 'N' ELSE 'Y' END AS ob_selected, rs.m_reservation_stock_id,
+  null as m_warehouse_id, null as m_locator_id, ol.m_attributesetinstance_id, ol.c_orderline_id, ol.qtyordered as availableqty,
+  CASE WHEN rs.m_reservation_stock_id IS NULL THEN 0 ELSE (select coalesce(sum(rsaux.quantity), 0)
+             from m_reservation_stock rsaux JOIN m_reservation raux ON rsaux.m_reservation_id = raux.m_reservation_id
+             where rsaux.m_reservation_stock_id != rs.m_reservation_stock_id
+               and raux.res_status != 'CL'
+               and rsaux.c_orderline_id = ol.c_orderline_id) END as reservedinothers,
+  rs.quantity, rs.releasedqty, rs.isallocated, ol.m_product_id, ol.c_uom_id
+FROM c_orderline ol
+    JOIN c_order o ON o.c_order_id = ol.c_order_id AND o.issotrx = 'N' AND o.docstatus = 'CO'
+    JOIN c_doctype dt ON o.c_doctype_id = dt.c_doctype_id AND dt.isreturn = 'N'
+    LEFT JOIN (
+        SELECT sum(mp.qty) as qty, mp.c_orderline_id
+        FROM m_matchpo mp
+        WHERE mp.m_inoutline_id IS NOT NULL
+        GROUP BY c_orderline_id
+      ) del ON ol.c_orderline_id = del.c_orderline_id
+    LEFT JOIN m_reservation_stock rs ON rs.c_orderline_id = ol.c_orderline_id
+    LEFT JOIN m_reservation r ON r.m_reservation_id = rs.m_reservation_id
+WHERE ol.qtyordered > 0
+  AND ol.qtyordered > COALESCE(del.qty, 0)]]></view>
+  </database>

@@ -70,7 +70,7 @@ import org.openbravo.model.materialmgmt.cost.TransactionCost;
 import org.openbravo.model.materialmgmt.transaction.InventoryCount;
 import org.openbravo.model.materialmgmt.transaction.InventoryCountLine;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
-import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
+import org.openbravo.model.materialmgmt.transaction.ReservationStock;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.scheduling.Process;
 import org.openbravo.scheduling.ProcessBundle;
@@ -439,7 +439,7 @@ public class CostingMigrationProcess implements Process {
         + " < 0 then -tc." + TransactionCost.PROPERTY_COST);
     select.append("     else tc." + TransactionCost.PROPERTY_COST + " end ) as cost,");
     select.append("  tc." + TransactionCost.PROPERTY_CURRENCY + ".id as currency,");
-    select.append("  coalesce(sr." + ShipmentInOut.PROPERTY_ACCOUNTINGDATE + ", trx."
+    select.append("  coalesce(sr." + ReservationStock.PROPERTY_ACCOUNTINGDATE + ", trx."
         + MaterialTransaction.PROPERTY_MOVEMENTDATE + ") as mdate,");
     select.append("  sum(trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + ") as stock");
 
@@ -454,7 +454,7 @@ public class CostingMigrationProcess implements Process {
     select.append("   and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
     select.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
     select.append(" group by tc." + TransactionCost.PROPERTY_CURRENCY + ",");
-    select.append("   coalesce(sr." + ShipmentInOut.PROPERTY_ACCOUNTINGDATE + ", trx."
+    select.append("   coalesce(sr." + ReservationStock.PROPERTY_ACCOUNTINGDATE + ", trx."
         + MaterialTransaction.PROPERTY_MOVEMENTDATE + ")");
 
     Query trxQry = OBDal.getInstance().getSession().createQuery(select.toString());

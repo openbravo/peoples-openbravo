@@ -89,6 +89,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="MANAGERESERVATION_PE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="M_ATTRIBUTESETINSTANCE" name="M_RESERVATION_ATTRSETINSTANCE">
         <reference local="M_ATTRIBUTESETINSTANCE_ID" foreign="M_ATTRIBUTESETINSTANCE_ID"/>
       </foreign-key>

@@ -33,7 +33,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.order.OrderLine;
-import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
+import org.openbravo.model.materialmgmt.transaction.ReservationStock;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 
 /**
@@ -53,7 +53,7 @@ public class RMShipmentPickEditLines extends BaseProcessActionHandler {
       jsonRequest = new JSONObject(content);
       log.debug(jsonRequest);
       final String strInOutId = jsonRequest.getString("inpmInoutId");
-      ShipmentInOut inOut = OBDal.getInstance().get(ShipmentInOut.class, strInOutId);
+      ReservationStock inOut = OBDal.getInstance().get(ReservationStock.class, strInOutId);
       if (cleanInOutLines(inOut)) {
         createInOutLines(jsonRequest);
       }
@@ -66,7 +66,7 @@ public class RMShipmentPickEditLines extends BaseProcessActionHandler {
     return jsonRequest;
   }
 
-  private boolean cleanInOutLines(ShipmentInOut inOut) {
+  private boolean cleanInOutLines(ReservationStock inOut) {
     if (inOut == null) {
       return false;
     } else if (inOut.getMaterialMgmtShipmentInOutLineList().isEmpty()) {
@@ -94,7 +94,7 @@ public class RMShipmentPickEditLines extends BaseProcessActionHandler {
       return;
     }
     final String strInOutId = jsonRequest.getString("inpmInoutId");
-    ShipmentInOut inOut = OBDal.getInstance().get(ShipmentInOut.class, strInOutId);
+    ReservationStock inOut = OBDal.getInstance().get(ReservationStock.class, strInOutId);
     TreeSet<String> rmVendorRefs = new TreeSet<String>();
     for (long i = 0; i < selectedLines.length(); i++) {
       JSONObject selectedLine = selectedLines.getJSONObject((int) i);
