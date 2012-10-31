@@ -192,8 +192,6 @@ public class PaidReceipts extends JSONProcessSimple {
       paidReceipt.put("receiptTaxes", jsonListTaxes);
 
       respArray.put(paidReceipt);
-
-      System.out.println(paidReceipt.toString(1));
     }
 
     JSONObject result = new JSONObject();
