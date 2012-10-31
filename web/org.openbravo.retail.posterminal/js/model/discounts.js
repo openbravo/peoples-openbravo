@@ -14,6 +14,10 @@ OB.Model.Discounts = {
   executor: new OB.Model.DiscountsExecutor(),
   applyPromotions: function(receipt, line) {
     var lines;
+    if (receipt && !receipt.get('isEditable')) {
+      return;
+    }
+ 
     if (line) {
       this.executor.addEvent(new Backbone.Model({id: line.cid, receipt:receipt, line:line}), true);
     } else {

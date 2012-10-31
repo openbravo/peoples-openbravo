@@ -32,6 +32,7 @@
         this.set('price', attributes.price);
         this.set('priceList', attributes.priceList);
         this.set('gross', attributes.gross);
+        this.set('promotions', attributes.promotions);
         if (attributes.product && attributes.product.price) {
           this.set('grossListPrice', attributes.product.price.standardPrice);
         }
@@ -142,6 +143,7 @@
         // Makes sure that the id is copied
         orderId = attributes.id;
         attributes = JSON.parse(attributes.json);
+        console.log('json', attributes);
         attributes.id = orderId;
       }
 
@@ -221,7 +223,7 @@
     adjustPrices: function () {
       // Apply calculated discounts and promotions to price and gross prices
       // so ERP saves them in the proper place
-      this.get('lines').each(function(line) {
+      this.get('lines').each(function (line) {
         var price = line.get('price'),
             gross = line.get('gross'),
             totalDiscount = 0,
@@ -244,7 +246,7 @@
 
         // Calculate prices after promotions
         base = line.get('price');
-        _.forEach(line.get('promotions') || [], function(discount) {
+        _.forEach(line.get('promotions') || [], function (discount) {
           var discountAmt = discount.actualAmt || discount.amt || 0;
           discount.basePrice = base;
           discount.unitDiscount = OB.DEC.div(discountAmt, line.get('qty'));
@@ -276,7 +278,7 @@
       var gross = this.get('lines').reduce(function (memo, e) {
         var grossLine = e.getGross();
         if (e.get('promotions')) {
-          grossLine = e.get('promotions').reduce(function(memo, e) {
+          grossLine = e.get('promotions').reduce(function (memo, e) {
             return OB.DEC.sub(memo, e.actualAmt || e.amt || 0);
           }, grossLine);
         }
@@ -365,8 +367,13 @@
       var me = this,
           undf;
       this.set('isPaid', _order.get('isPaid'));
+      if (!_order.get('isEditable')) {
+        // keeping it no editable as much as possible, to prevent
+        // modifications to trigger editable events incorrectly
+        this.set('isEditable', _order.get('isEditable'));
+      }
       _.each(_.keys(_order.attributes), function (key) {
-        if (_order.get(key) !== undf) {
+        if (key !== 'isEditable' && _order.get(key) !== undf) {
           if (_order.get(key) === null) {
             me.set(key, null);
           } else if (_order.get(key).at) {
@@ -381,7 +388,7 @@
           }
         }
       });
-
+      this.set('isEditable', _order.get('isEditable'));
       this.trigger('calculategross');
       this.trigger('change');
       this.trigger('clear');
@@ -563,7 +570,7 @@
       this.save();
     },
 
-    removePromotion: function(line, rule) {
+    removePromotion: function (line, rule) {
       var promotions = line.get('promotions'),
           ruleId = rule.id,
           removed = false,
@@ -588,9 +595,9 @@
 
         // Recalculate promotions for all lines affected by this same rule,
         // because this rule could have prevented other ones to be applied
-        this.get('lines').forEach(function(ln) {
+        this.get('lines').forEach(function (ln) {
           if (ln.get('promotionCandidates')) {
-            ln.get('promotionCandidates').forEach(function(candidateRule) {
+            ln.get('promotionCandidates').forEach(function (candidateRule) {
               if (candidateRule === ruleId) {
                 OB.Model.Discounts.applyPromotions(this, line);
               }
@@ -657,7 +664,7 @@
       }
     },
 
-    shouldApplyPromotions: function() {
+    shouldApplyPromotions: function () {
       // Do not apply promotions in return tickets
       return this.get('orderType') !== 1;
     },
@@ -940,7 +947,6 @@
         }
       });
       order.set('taxes', taxes);
-
       return order;
     },
 

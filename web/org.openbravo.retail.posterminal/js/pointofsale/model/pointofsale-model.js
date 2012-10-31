@@ -160,10 +160,16 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
     }, this);
 
     receipt.get('lines').on('remove', function () {
+      if (!receipt.get('isEditable')) {
+        return;
+      }
       OB.Model.Discounts.applyPromotions(receipt);
     });
 
     receipt.on('change:bp', function (line) {
+      if (!receipt.get('isEditable')) {
+        return;
+      }
       OB.Model.Discounts.applyPromotions(receipt);
     }, this);
   }
