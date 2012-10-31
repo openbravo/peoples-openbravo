@@ -132,6 +132,7 @@ public class CashCloseProcessor {
 
     FIN_Reconciliation reconciliation = OBProvider.getInstance().get(FIN_Reconciliation.class);
     reconciliation.setAccount(account);
+    reconciliation.setOrganization(posTerminal.getOrganization());
     reconciliation.setDocumentNo(null);
     reconciliation.setDocumentType(posTerminal.getObposTerminaltype()
         .getDocumentTypeForReconciliations());

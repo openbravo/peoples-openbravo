@@ -21,6 +21,6 @@ public class Payments extends ProcessHQLQuery {
 
   @Override
   protected String getQuery(JSONObject jsonsent) throws JSONException {
-    return "select p as payment, p.paymentMethod as paymentMethod, c_currency_rate(p.financialAccount.currency, p.obposApplications.organization.currency, null, null) as rate, c_currency_rate(p.obposApplications.organization.currency, p.financialAccount.currency, null, null) as mulrate, p.financialAccount.currency.iSOCode as isocode from OBPOS_App_Payment as p where p.obposApplications.id = :pos and p.$readableCriteria order by p.line, p.commercialName";
+    return "select p as payment, p.paymentMethod as paymentMethod, c_currency_rate(p.financialAccount.currency, p.obposApplications.organization.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id) as rate, c_currency_rate(p.obposApplications.organization.currency, p.financialAccount.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id) as mulrate, p.financialAccount.currency.iSOCode as isocode from OBPOS_App_Payment as p where p.obposApplications.id = :pos and p.$readableCriteria order by p.line, p.commercialName";
   }
 }

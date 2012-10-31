@@ -96,10 +96,10 @@ enyo.kind({
   }],
   create: function () {
     this.inherited(arguments);
-    if (this.model.get('orderDate') instanceof Date) {
-      this.$.time.setContent(OB.I18N.formatHour(this.model.get('orderDate')));
+    if (this.model.get('isPaid')) {
+      this.$.time.setContent(OB.I18N.formatDate(this.model.get('orderDate')));
     } else {
-      this.$.time.setContent(this.model.get('orderDate'));
+      this.$.time.setContent(OB.I18N.formatHour(this.model.get('orderDate')));
     }
     this.$.orderNo.setContent(this.model.get('documentNo'));
     this.$.bp.setContent(this.model.get('bp').get('_identifier'));

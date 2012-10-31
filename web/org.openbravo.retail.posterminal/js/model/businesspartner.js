@@ -17,7 +17,7 @@
     entityName: 'BusinessPartner',
     source: 'org.openbravo.retail.posterminal.master.BusinessPartner',
     dataLimit: 300,
-    properties: ['id', 'searchKey', 'name', 'description', 'taxID', 'taxCategory', 'paymentMethod', 'paymentTerms', 'invoiceTerms', 'locId', 'locName', 'postalCode', 'cityName', 'phone', 'email', 'businessPartnerCategory', '_identifier', '_idx'],
+    properties: ['id', 'searchKey', 'name', 'description', 'taxID', 'taxCategory', 'paymentMethod', 'paymentTerms', 'priceList', 'invoiceTerms', 'locId', 'locName', 'postalCode', 'cityName', 'phone', 'email', 'businessPartnerCategory', '_identifier', '_idx'],
     propertyMap: {
       'id': 'c_bpartner_id',
       'searchKey': 'value',
@@ -27,6 +27,7 @@
       'taxCategory': 'so_bp_taxcategory_id',
       'paymentMethod': 'FIN_Paymentmethod_ID',
       'paymentTerms': 'c_paymentterm_id',
+      'priceList': 'm_pricelist_id',
       'invoiceTerms': 'invoicerule',
       'locId': 'c_bpartnerlocation_id',
       'locName': 'c_bpartnerlocation_name',
@@ -38,9 +39,9 @@
       '_identifier': '_identifier',
       '_idx': '_idx'
     },
-    createStatement: 'CREATE TABLE IF NOT EXISTS c_bpartner (c_bpartner_id TEXT PRIMARY KEY , value TEXT , name TEXT , description TEXT , taxID TEXT , so_bp_taxcategory_id TEXT, FIN_Paymentmethod_ID TEXT, c_paymentterm_id TEXT, invoicerule TEXT, c_bpartnerlocation_id TEXT , c_bpartnerlocation_name TEXT, postalCode TEXT, cityName TEXT, phone TEXT, email TEXT, c_bp_group_id TEXT, _identifier TEXT , _idx NUMERIC)',
+    createStatement: 'CREATE TABLE IF NOT EXISTS c_bpartner (c_bpartner_id TEXT PRIMARY KEY, value TEXT , name TEXT , description TEXT , taxID TEXT , so_bp_taxcategory_id TEXT, FIN_Paymentmethod_ID TEXT, c_paymentterm_id TEXT, m_pricelist_id TEXT,invoicerule TEXT, c_bpartnerlocation_id TEXT , c_bpartnerlocation_name TEXT , postalCode TEXT, cityName TEXT, phone TEXT, email TEXT, c_bp_group_id TEXT, _identifier TEXT , _idx NUMERIC)',
     dropStatement: 'DROP TABLE IF EXISTS c_bpartner',
-    insertStatement: 'INSERT INTO c_bpartner(c_bpartner_id, value, name, description, taxID, so_bp_taxcategory_id, FIN_Paymentmethod_ID, c_paymentterm_id, invoicerule, c_bpartnerlocation_id, c_bpartnerlocation_name, postalCode, cityName, phone, email, c_bp_group_id, _identifier, _idx)  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+    insertStatement: 'INSERT INTO c_bpartner(c_bpartner_id, value, name, description, taxID, so_bp_taxcategory_id, FIN_Paymentmethod_ID, c_paymentterm_id, m_pricelist_id, invoicerule, c_bpartnerlocation_id, c_bpartnerlocation_name, postalCode, cityName, phone, email, c_bp_group_id, _identifier, _idx)  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
     updateStatement: '',
     saveCustomer: function (silent) {
       var nameLength, newSk;
@@ -111,6 +112,7 @@
         this.set('businessPartnerCategory', OB.POS.modelterminal.get('terminal').defaultbp_bpcategory);
         this.set('paymentTerms', OB.POS.modelterminal.get('terminal').defaultbp_paymentterm);
         this.set('invoiceTerms', OB.POS.modelterminal.get('terminal').defaultbp_invoiceterm);
+        this.set('priceList', OB.POS.modelterminal.get('pricelist').id);
         this.set('country', OB.POS.modelterminal.get('terminal').defaultbp_bpcountry);
         this.set('client', OB.POS.modelterminal.get('terminal').client);
         this.set('organization', OB.POS.modelterminal.get('terminal').defaultbp_bporg);
