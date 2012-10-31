@@ -88,6 +88,11 @@ public class ReservationUtils {
     return obmessage;
   }
 
+  /**
+   * Function to reserve given stock or purchase order line. Available types are:<br>
+   * - 'SD': p_stock_id represents a m_storage_detail_id reserves stock in the warehouse.<br>
+   * - 'PO': p_stock_id represents a c_orderline_id of a pending to receipt purchase order line.
+   */
   public static ReservationStock reserveStockManual(Reservation reservation, String strType,
       String strStockId, BigDecimal quantity) throws OBException {
 
