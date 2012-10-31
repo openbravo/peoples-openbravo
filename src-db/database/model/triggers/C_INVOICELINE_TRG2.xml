@@ -67,7 +67,7 @@ ELSE
   v_ID:=:NEW.C_INVOICE_ID;
 END IF;
  
- IF INSERTING OR v_Insert THEN
+ IF INSERTING OR UPDATING THEN
    SELECT C_BPartner_ID, dateInvoiced, priceprecision, i.M_PriceList_ID,p.istaxincluded
     INTO v_BPartner_ID, v_DateInvoiced, v_Precision, v_PriceList_ID, v_istaxincluded
      FROM C_INVOICE i
