@@ -270,7 +270,7 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
       String strFinancialAccountId = vars.getRequiredStringParameter("inpFinancialAccount");
       String strOrgId = vars.getRequiredStringParameter("inpadOrgId");
       boolean isReceipt = vars.getRequiredStringParameter("isReceipt").equals("Y");
-      refreshProcessOptions(response, strPaymentMethodId, strFinancialAccountId, strOrgId,
+      refreshProcessOptions(response, vars, strPaymentMethodId, strFinancialAccountId, strOrgId,
           isReceipt);
     }
 
@@ -595,9 +595,9 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
     out.close();
   }
 
-  private void refreshProcessOptions(HttpServletResponse response, String strPaymentMethod,
-      String strFinancialAccountId, String strOrgId, boolean isReceipt) throws IOException,
-      ServletException {
+  private void refreshProcessOptions(HttpServletResponse response, VariablesSecureApp vars,
+      String strPaymentMethod, String strFinancialAccountId, String strOrgId, boolean isReceipt)
+      throws IOException, ServletException {
     log4j.debug("Callout: Financial Account has changed to" + strFinancialAccountId);
 
     FIN_PaymentMethod paymentMethod = OBDal.getInstance().get(FIN_PaymentMethod.class,
@@ -614,48 +614,22 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
       }
     }
     String processOprtionsComboHtml = null;
-    if (isReceipt) {
-      if (finAccPaymentMethod.isAutomaticDeposit()) {
-        // 1 option: Process.
-        processOprtionsComboHtml = FIN_Utility.getOptionsList(
-            processActionWithDepositWithdrawn("F903F726B41A49D3860243101CEEBA25", true), null,
-            true, true);
 
-      } else {
-        // 2 options: Process or Process and Deposit.
-        try {
-          OBContext.setAdminMode(true);
-          org.openbravo.model.ad.domain.Reference reference = OBDal.getInstance().get(
-              org.openbravo.model.ad.domain.Reference.class, "F903F726B41A49D3860243101CEEBA25");
-          processOprtionsComboHtml = FIN_Utility.getOptionsList(reference.getADListList(), null,
-              true, true);
-        } catch (Exception e) {
+    boolean forcedFinancialAccountTransaction = finAccPaymentMethod.isAutomaticDeposit()
+        || finAccPaymentMethod.isAutomaticWithdrawn();
 
-        } finally {
-          OBContext.restorePreviousMode();
-        }
-      }
-    } else {
-      if (finAccPaymentMethod.isAutomaticWithdrawn()) {
-        // 1 option: Process.
-        processOprtionsComboHtml = FIN_Utility.getOptionsList(
-            processActionWithDepositWithdrawn("F15C13A199A748F1B0B00E985A64C036", false), null,
-            true, true);
+    try {
+      ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
+          (isReceipt ? "F903F726B41A49D3860243101CEEBA25" : "F15C13A199A748F1B0B00E985A64C036"),
+          forcedFinancialAccountTransaction ? "29010995FD39439D97A5C0CE8CE27D70" : "",
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "AddPaymentFromInvoice"),
+          Utility.getContext(this, vars, "#User_Client", "AddPaymentFromInvoice"), 0);
+      Utility.fillSQLParameters(this, vars, null, comboTableData, "AddPaymentFromInvoice", "");
+      FieldProvider[] properOptions = comboTableData.select(false);
+      processOprtionsComboHtml = FIN_Utility.getOptionsListFromFieldProvider(properOptions, null,
+          true);
+    } catch (Exception e) {
 
-      } else {
-        // 2 Options: Process or Process and Withdrawn
-        try {
-          OBContext.setAdminMode(true);
-          org.openbravo.model.ad.domain.Reference reference = OBDal.getInstance().get(
-              org.openbravo.model.ad.domain.Reference.class, "F15C13A199A748F1B0B00E985A64C036");
-          processOprtionsComboHtml = FIN_Utility.getOptionsList(reference.getADListList(), null,
-              true, true);
-        } catch (Exception e) {
-
-        } finally {
-          OBContext.restorePreviousMode();
-        }
-      }
     }
 
     response.setContentType("text/html; charset=UTF-8");
@@ -759,5 +733,4 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
     }
     return false;
   }
-
 }
