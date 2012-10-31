@@ -226,8 +226,13 @@ public class DalMappingGenerator implements OBSingleton {
       sb.append(TAB2 + "<one-to-one name=\"" + name + "\"");
       sb.append(" constrained=\"true\"");
     } else {
-      sb.append(TAB2 + "<many-to-one name=\"" + p.getName() + "\" column=\"" + p.getColumnName()
-          + "\""); // cascade=\
+      sb.append(TAB2 + "<many-to-one name=\"" + p.getName() + "\" ");
+      if (p.getSqlLogic() != null) {
+        sb.append("formula=\"" + processSqlLogic(p.getSqlLogic()) + "\"");
+      } else {
+        sb.append("column=\"" + p.getColumnName() + "\"");
+      }
+      // cascade=\
       // "save-update\"
       if (p.isMandatory()) {
         sb.append(" not-null=\"true\"");

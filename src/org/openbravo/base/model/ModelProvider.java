@@ -709,6 +709,11 @@ public class ModelProvider implements OBSingleton {
           continue;
         }
 
+        // don't create a parent reference for these
+        if (p.getSqlLogic() != null) {
+          continue;
+        }
+
         if (p.getReferencedProperty() == null) {
           // Log message in case referenced property is null, this will cause a NPE, which is not
           // solved but at least relevant info is shown to fix it in AD

@@ -29,6 +29,7 @@ import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Preferences;
@@ -50,7 +51,14 @@ public class Login extends HttpBaseServlet {
 
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
+
+    if (Utility.isMobileBrowser(request)
+        && KernelUtils.getInstance().isModulePresent(Utility.OB_MOBILE_JAVAPACKAGE)) {
+      response.sendRedirect("../web/org.openbravo.client.mobile/");
+      return;
+    }
+
+    final VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("LOGIN")) {
       log4j.debug("Command: Login");

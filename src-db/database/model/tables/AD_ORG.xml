@@ -69,11 +69,18 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="C_ACCTSCHEMA_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="AD_ORG_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORGTYPE" name="AD_ORG_AD_ORGTYPE">
         <reference local="AD_ORGTYPE_ID" foreign="AD_ORGTYPE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_ACCTSCHEMA" name="AD_ORG_C_ACCTSCHEMA_">
+        <reference local="C_ACCTSCHEMA_ID" foreign="C_ACCTSCHEMA_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_CALENDAR" name="AD_ORG_C_CALENDAR">
         <reference local="C_CALENDAR_ID" foreign="C_CALENDAR_ID"/>

@@ -115,18 +115,12 @@ public class SL_Invoice_Product extends HttpSecureAppServlet {
         log4j.debug("get Offers date: " + dataInvoice[0].dateinvoiced + " partner:"
             + dataInvoice[0].cBpartnerId + " prod:" + strMProductID + " std:"
             + strPriceStd.replace("\"", ""));
-      strPriceActual = SLOrderProductData.getOffersPriceInvoice(this, dataInvoice[0].dateinvoiced,
-          dataInvoice[0].cBpartnerId, strMProductID, strPriceStd.replace("\"", ""), strQty,
-          dataInvoice[0].mPricelistId, dataInvoice[0].id);
-      if (log4j.isDebugEnabled())
-        log4j.debug("get Offers price:" + strPriceActual);
 
       dataInvoice = null;
     }
     StringBuffer resultado = new StringBuffer();
 
-    if (strPriceActual.equals(""))
-      strPriceActual = strPriceStd;
+    strPriceActual = strPriceStd;
 
     resultado.append("var calloutName='SL_Invoice_Product';\n\n");
     resultado.append("var respuesta = new Array(");
@@ -191,8 +185,7 @@ public class SL_Invoice_Product extends HttpSecureAppServlet {
       if (inv.isSalesTransaction() && !"".equals(strMProductID)) {
         Product product = OBDal.getInstance().get(Product.class, strMProductID);
         if (product.isDeferredRevenue()) {
-          resultado.append(", new Array(\"inpisdeferredrevenue\", \""
-              + (product.isDeferredRevenue() ? "Y" : "N") + "\")");
+          resultado.append(", new Array(\"inpisdeferredrevenue\", \"Y\")");
           resultado.append(", new Array(\"inprevplantype\", \"" + product.getRevenuePlanType()
               + "\")");
           resultado.append(", new Array(\"inpperiodnumber\", \"" + product.getPeriodNumber()
@@ -211,8 +204,7 @@ public class SL_Invoice_Product extends HttpSecureAppServlet {
         resultado.append(", new Array(\"inprevplantype\", \"\")");
         resultado.append(", new Array(\"inpperiodnumber\", \"\")");
         if (product.isDeferredexpense()) {
-          resultado.append(", new Array(\"inpisdeferredexpense\", \""
-              + (product.isDeferredexpense() ? "Y" : "N") + "\")");
+          resultado.append(", new Array(\"inpisdeferredexpense\", \"Y\")");
           resultado.append(", new Array(\"inpexpplantype\", \"" + product.getExpplantype() + "\")");
           resultado.append(", new Array(\"inpperiodnumberExp\", \"" + product.getPeriodnumberExp()
               + "\")");

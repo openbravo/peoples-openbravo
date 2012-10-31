@@ -137,6 +137,7 @@ function unMatchLine(bankStatementLineId, isChecked) {
     document.getElementById("inpFinancialTransactionId_" + bankStatementLineId).value = "";
     document.getElementById("inpMatchStyle_" + bankStatementLineId).style.backgroundColor = "white";
     document.getElementById("inpMatchingType_" + bankStatementLineId).value = "";
+    document.getElementById("inpExecuteMatching").value = "N";
     sendActionToServer("UNMATCH");
   }
   else {
@@ -351,6 +352,7 @@ function splitCallback(paramXMLParticular, XMLHttpRequestObj) {
   <input type="hidden" name="inpfinFinancialAccountId" value="" id="fieldfinFinancialAccountId"/>
   <input type="hidden" name="inpfinReconciliationId" value="" id="fieldfinReconciliationId"/>
   <input type="hidden" name="inpdateto" value="" id="fieldDateTo"/>
+  <input type="hidden" name="inpExecuteMatching" id="inpExecuteMatching" value="Y"/>
   <input type="hidden" name="inpFinBankStatementLineId" value=""/>
   <input type="hidden" name="inpSelectedFindTransactionId" value=""/>
   <input type="hidden" name="isFirstLoad" value="true"/>

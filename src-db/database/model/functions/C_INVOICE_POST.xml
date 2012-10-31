@@ -60,6 +60,7 @@
   Cur_lineqty RECORD;
   Cur_InvoiceTax RECORD;
   Cur_TaxMAct RECORD;
+  Cur_Offer RECORD;
 
   -- Record Info
   v_Client_ID VARCHAR2(32);
@@ -543,6 +544,7 @@ BEGIN --BODY
           FROM C_INVOICE
           WHERE C_Invoice_ID=v_Record_ID;
 
+        
         --  Delete C_Invoice_Discounts inserted by the trigger
         DELETE FROM C_INVOICE_DISCOUNT WHERE C_Invoice_ID=v_RInvoice_ID;
         --  Insert discounts as in the reversed invoice
@@ -628,6 +630,25 @@ BEGIN --BODY
 
             END LOOP; -- Create Reversal Accounting Dimensions
 
+					-- Add promotions
+					FOR Cur_Offer IN 
+						(SELECT *
+						 FROM C_INVOICELINE_OFFER
+						 WHERE c_InvoiceLine_ID = Cur_InvoiceLine.c_InvoiceLine_ID
+						) LOOP
+						INSERT INTO C_INVOICELINE_OFFER
+						(c_invoiceline_offer_id, ad_client_id, ad_org_id,                         
+						 isactive, createdby, updatedby,           
+						 c_invoiceline_id, line, m_offer_id,          
+						 priceoffer, priceoffergross, amtoffer, 
+						 totalamt, displayedtotalamt)
+						 values
+						(get_uuid(), Cur_Offer.AD_Client_ID, Cur_Offer.AD_Org_ID,
+						 'Y', v_UpdatedBy, v_UpdatedBy,
+						 v_NextNo, Cur_Offer.line, Cur_Offer.m_offer_id,
+						 Cur_Offer.priceoffer, Cur_Offer.priceoffergross, Cur_Offer.amtoffer,
+						 Cur_Offer.totalamt, Cur_Offer.displayedtotalamt);
+					END LOOP;
         END LOOP; -- Create Reversal Invoice Lines
 
         -- Check if there is any manually added tax
@@ -1151,6 +1172,13 @@ BEGIN --BODY
     END;
   END IF;--FINISH_PROCESS
   IF (NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
+     /**************************************************************************
+      * Calculate promotions                                                   
+      *************************************************************************/
+      IF (v_DocAction = 'CO') THEN
+         M_PROMOTION_CALCULATE('I', v_Record_ID, v_UpdatedBy);
+      END IF;
+
     /**************************************************************************
      * Calculate Discounts
      *************************************************************************/

@@ -32,6 +32,12 @@
     <PARAMETER id="paramMainDate" name="dateDisplayFormat" attribute="saveformat" replace="yy"/>
     <PARAMETER id="paramDepositAmount" name="depositAmount" attribute="value" format="euroEdition"/>
     <PARAMETER id="paramPaymentAmount" name="paymentAmount" attribute="value" format="euroEdition"/>
+    <PARAMETER id="C_Glitem_ID" name="GLItemID" attribute="value"/>
+    <PARAMETER id="C_Glitem_ID" name="GLItemName" attribute="identifier"/>
+    <PARAMETER id="paramGLItemDescription" name="GLItemDescription"/>
+    <PARAMETER id="paramFeeDescription" name="FeeDescription"/>
+    <PARAMETER id="C_BPartner_ID" name="BPartnerID" attribute="value"/>
+    <PARAMETER id="C_BPartner_ID" name="BPartnerName" attribute="identifier"/>
     <PARAMETER id="paramDepositAmountGLItem" name="depositAmountGLItem" attribute="value" format="euroEdition"/>
     <PARAMETER id="paramPaymentAmountGLItem" name="paymentAmountGLItem" attribute="value" format="euroEdition"/>
     <PARAMETER id="paramDateFrom" name="dateDisplayFormat" attribute="displayformat" replace="xx"/>
@@ -57,8 +63,11 @@
     <PARAMETER id="paramDocument" name="document"/>
     
     <!-- Transaction Type -->
-    <PARAMETER id="paramTransactionType" name="transactionType" attribute="value"/>
-    
+    <PARAMETER id="paramTransactionType" name="transactionType"/>
+      <SUBREPORT id="reportTransactionType" name="reportTransactionType" report="org/openbravo/erpCommon/reference/List">
+        <ARGUMENT name="parameterListSelected" withId="paramTransactionType"/>
+      </SUBREPORT>
+
     <DISCARD id="discard"/>
     
 </REPORT>

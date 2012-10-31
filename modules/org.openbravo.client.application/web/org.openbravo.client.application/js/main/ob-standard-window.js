@@ -55,6 +55,10 @@ isc.OBStandardWindow.addProperties({
   // in the window
   dirtyEditForm: null,
 
+  allowDelete: 'Y',
+
+  allowAttachment: 'Y',
+
   initWidget: function () {
     var me = this,
         callback;
@@ -91,6 +95,8 @@ isc.OBStandardWindow.addProperties({
       this.viewProperties.allowDefaultEditMode = false;
     }
     this.viewState = OB.PropertyStore.get('OBUIAPP_GridConfiguration', this.windowId);
+    this.allowDelete = OB.PropertyStore.get("AllowDelete", this.windowId);
+    this.allowAttachment = OB.PropertyStore.get("AllowAttachment", this.windowId);
     this.view = isc.OBStandardView.create(this.viewProperties);
     this.addView(this.view);
     this.windowLayout.addMember(this.view);
@@ -211,7 +217,7 @@ isc.OBStandardWindow.addProperties({
           if (prevFocusedItem) {
             var myInterval;
             myInterval = setInterval(function () {
-              if (prevFocusedItem === isc.EH.getFocusCanvas()) {
+              if (me.children && prevFocusedItem === isc.EH.getFocusCanvas()) {
                 if (me.children[3] && me.children[3].items[0] && me.children[3].items[0].firstFocusedItem) {
                   me.children[3].items[0].firstFocusedItem.focus();
                 } else {

@@ -131,9 +131,13 @@ isc.OBSelectorPopupWindow.addProperties({
         if (this.targetRecordId) {
           record = this.data.find(this.selector.valueField, this.targetRecordId);
           rowNum = this.getRecordIndex(record);
-          this.scrollToRow(rowNum);
           this.selectSingleRecord(record);
+          // give grid time to draw
+          this.fireOnPause('scrollRecordIntoView', this.scrollRecordIntoView, [rowNum, true], this);
           delete this.targetRecordId;
+        } else if (this.data.lengthIsKnown() && this.data.getLength() === 1) {
+          // only one record, select that one straight away
+          this.selectSingleRecord(0);
         } else {
           this.selectSingleRecord(null);
         }

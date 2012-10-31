@@ -45,6 +45,7 @@
     <PARAMETER id="paramExpectedConverted" name="expectedConverted" attribute="value" format="euroEdition"/>
     <PARAMETER id="paramActualConverted" name="actualConverted" attribute="value" format="euroEdition" default="0"/>
     <PARAMETER id="C_Bpartner_ID" name="businessPartner" attribute="value"/>
+    <PARAMETER id="C_Bpartner_ID" name="businessPartnerName" attribute="identifier"/>
     <PARAMETER id="paramCredit" name="credit" attribute="value" format="euroEdition"/>
     <PARAMETER id="fieldReceipt" name="isReceipt" attribute="value"/>
     <PARAMETER id="fieldIsSoTrx" name="isSoTrx" attribute="value"/>

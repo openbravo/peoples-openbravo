@@ -172,9 +172,9 @@ isc.OBToolbar.addClassProperties({
         }
       }
       if (view.isShowingForm) {
-        this.setDisabled(form.isSaving || form.readOnly || view.singleRecord || !view.hasValidState() || form.isNew || OB.PropertyStore.get("AllowDelete", this.view.standardWindow.windowId) === 'N');
+        this.setDisabled(form.isSaving || form.readOnly || view.singleRecord || !view.hasValidState() || form.isNew || (view.standardWindow.allowDelete === 'N'));
       } else {
-        this.setDisabled(view.readOnly || view.singleRecord || !view.hasValidState() || !grid.getSelectedRecords() || grid.getSelectedRecords().length === 0 || OB.PropertyStore.get("AllowDelete", this.view.standardWindow.windowId) === 'N');
+        this.setDisabled(view.readOnly || view.singleRecord || !view.hasValidState() || !grid.getSelectedRecords() || grid.getSelectedRecords().length === 0 || (view.standardWindow.allowDelete === 'N'));
       }
     },
     keyboardShortcutId: 'ToolBar_Eliminate'
@@ -362,7 +362,7 @@ isc.OBToolbar.addClassProperties({
       if (this.view.viewForm.readOnly && !this.view.attachmentExists) {
         this.setDisabled(true);
       }
-      if (OB.PropertyStore.get("AllowAttachment", this.view.standardWindow.windowId) === 'N') {
+      if (this.view.standardWindow.allowAttachment === 'N') {
         this.view.viewForm.enableAttachmentsSection(false);
         this.setDisabled(true);
       }

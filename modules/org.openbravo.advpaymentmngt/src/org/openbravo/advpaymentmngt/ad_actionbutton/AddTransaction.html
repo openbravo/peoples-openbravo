@@ -143,6 +143,7 @@ function showHideLayers() {
     displayLogicElement('client_middle', true);
     autoDisplayLogicDimensions(false);
     loadGrid();
+    resizeAreaCreateFrom();
   } else if (opt == 'GL') {
     displayLogicElement('FeeSection1', false);
     displayLogicElement('FeeSection2', false);
@@ -336,7 +337,6 @@ function reloadWindowGrid() {
       onloadFunctions();
     } catch (e) {}
     showHideLayers();
-    resizeAreaCreateFrom();
   }
 
   function onResizeDo(){
@@ -538,13 +538,11 @@ function reloadWindowGrid() {
               <!-- <td class="Combo_ContentCell" colspan="2"><select name="inpTransactionType" id="paramTransactionType" class="dojoValidateValid required Combo Combo_TwoCells_width">
                 <div id="reportTransactionType"></div></select>
               </td> -->
-              <td class="Combo_ContentCell" colspan="2">
-                <select id="paramTransactionType" name="inpTransactionType" class="ComboKey Combo_TwoCells_width required" onchange="showHideLayers();">
-                  <option value="P" selected="selected">Payment In/Out</option>
-                  <option value="GL">GL Item</option>
-                  <option value="F">Fee</option>
-                </select>
-              </td>
+              <td class="Combo_ContentCell"> 
+                <select  name="inpTransactionType" id="inpTransactionType" class="ComboKey Combo_TwoCells_width required" required="true" onchange="showHideLayers(); return true;">
+                  <option value=""> <div id="reportTransactionType"></div></option>
+                </select></td>
+
               <td class="TitleCell"><span class="LabelText">Transaction Date</span></td>
               <td class="TextBox_btn_ContentCell">
                 <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
@@ -729,7 +727,7 @@ function reloadWindowGrid() {
                   <tr>
                     <td style="padding-top: 0px;">
                       <script>var sc_C_Glitem_ID = null;</script>
-                      <input type="hidden" name="inpGLItemId" id="C_Glitem_ID" value="" onreset="sc_C_Glitem_ID.resetSelector();" onchange="openbravo.Utilities.updateSmartClientComponentValue(this, sc_C_Glitem_ID.selectorField);"></input>
+                      <input type="hidden" name="inpGLItemId" id="C_Glitem_ID" value="" identifier="" onreset="sc_C_Glitem_ID.resetSelector();" onchange="openbravo.Utilities.updateSmartClientComponentValue(this, sc_C_Glitem_ID.selectorField);"></input>
                       <script id="selectorLink" src="../org.openbravo.client.kernel/OBUISEL_Selector/9FAD469CE4414A25974CF45C0AD22D35?columnName=C_Glitem_ID&disabled=false&CssSize=TwoCells&DisplayLength=45.0&required=true"></script>
                     </td>
                   </tr>
@@ -877,7 +875,7 @@ function reloadWindowGrid() {
                   <tr>
                     <td style="padding-top: 0px;">
                       <script>var sc_C_BPartner_ID = null;</script>
-                      <input type="hidden" name="inpCBPartnerId" id="C_BPartner_ID" value="" onreset="sc_C_BPartner_ID.resetSelector();" onchange="openbravo.Utilities.updateSmartClientComponentValue(this, sc_C_BPartner_ID.selectorField);"></input>
+                      <input type="hidden" name="inpCBPartnerId" identifier="" id="C_BPartner_ID" value="" onreset="sc_C_BPartner_ID.resetSelector();" onchange="openbravo.Utilities.updateSmartClientComponentValue(this, sc_C_BPartner_ID.selectorField);"></input>
                       <script id="selectorLink" src="../org.openbravo.client.kernel/OBUISEL_Selector/A98899B1C75A4F4EBD3414F1B654EFAB?columnName=C_BPartner_ID&disabled=false&CssSize=TwoCells&DisplayLength=45.0&required=false"></script>
                     </td>
                   </tr>

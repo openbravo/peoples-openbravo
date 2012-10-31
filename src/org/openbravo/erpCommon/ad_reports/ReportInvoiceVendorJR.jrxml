@@ -555,7 +555,7 @@
 					<textElement textAlignment="Center">
 						<font pdfFontName="Helvetica-Bold" size="8"/>
 					</textElement>
-				<text><![CDATA[Price	]]></text>
+				<text><![CDATA[Price]]></text>
 				</staticText>
 				<line direction="TopDown">
 					<reportElement
@@ -587,7 +587,7 @@
 					<textElement textAlignment="Right">
 						<font pdfFontName="Helvetica-Bold" size="8"/>
 					</textElement>
-				<text><![CDATA[Price	]]></text>
+				<text><![CDATA[Price]]></text>
 				</staticText>
 				<staticText>
 					<reportElement
