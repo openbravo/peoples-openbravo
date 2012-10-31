@@ -181,15 +181,15 @@ function loadGridList() {
       OB.APRM.AOOI_bp !== document.getElementById('C_BPartner_ID').value ||
       OB.APRM.AOOI_dt !== document.getElementById('paramDocumentType').value ||
       OB.APRM.AOOI_pm !== document.getElementById('paramAlternativePaymentMethod').checked ||
-      OB.APRM.AOOI_ddf !== document.getElementById('paramDueDateFrom').value ||
-      OB.APRM.AOOI_ddt !== document.getElementById('paramDueDateTo').value ||
+      OB.APRM.AOOI_ddf !== document.getElementById('paramExpectedDateFrom').value ||
+      OB.APRM.AOOI_ddt !== document.getElementById('paramExpectedDateTo').value ||
       OB.APRM.AOOI_cu !== document.getElementById('paramCurrencyId').value)
   {
     OB.APRM.AOOI_bp = document.getElementById('C_BPartner_ID').value;
     OB.APRM.AOOI_dt = document.getElementById('paramDocumentType').value;
     OB.APRM.AOOI_pm = document.getElementById('paramAlternativePaymentMethod').checked;
-    OB.APRM.AOOI_ddf = document.getElementById('paramDueDateFrom').value;
-    OB.APRM.AOOI_ddt = document.getElementById('paramDueDateTo').value;
+    OB.APRM.AOOI_ddf = document.getElementById('paramExpectedDateFrom').value;
+    OB.APRM.AOOI_ddt = document.getElementById('paramExpectedDateTo').value;
     OB.APRM.AOOI_cu = document.getElementById('paramCurrencyId').value;
 
     try {
@@ -564,10 +564,10 @@ function setGLItemMode(toGLItem){
   displayLogicElement('GLItemSelectorLbl', toGLItem);
   displayLogicElement('GLItemSelector', toGLItem);
   
-  displayLogicElement('DueDateFromLbl', !toGLItem);
-  displayLogicElement('DueDateFrom', !toGLItem);
-  displayLogicElement('DueDateToLbl', !toGLItem);
-  displayLogicElement('DueDateTo', !toGLItem);
+  displayLogicElement('ExpectedDateFromLbl', !toGLItem);
+  displayLogicElement('ExpectedDateFrom', !toGLItem);
+  displayLogicElement('ExpectedDateToLbl', !toGLItem);
+  displayLogicElement('ExpectedDateTo', !toGLItem);
   displayLogicElement('gridPayment', !toGLItem);
   displayLogicElement('totalGLItems', !toGLItem);
   displayLogicElement('inpAlternativeLabel', !toGLItem);
@@ -1138,25 +1138,40 @@ function closeProcessPayment() {
                   <option value="G">GL Items</option>
                 </select>
               </td>
-              <td class="TitleCell" id="DueDateFromLbl" colspan="2"><span class="LabelText">Due Date From</span></td>
-              <td class="TextBox_btn_ContentCell" id="DueDateFrom">
+              <td class="TitleCell" id="ExpectedDateFromLbl" colspan="2"><span class="LabelText">Expected Date From</span></td>
+              <td class="TextBox_btn_ContentCell" id="ExpectedDateFrom">
                 <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                   <tr>
                     <td class="TextBox_ContentCell">
                       <table style="border: 0px none; border-collapse: collapse;">
                         <tr><td style="padding-top: 0px;">
-                          <input type="text" id="paramDueDateFrom" class="dojoValidateValid TextBox_btn_OneCell_width" value="" maxlength="10" name="inpDueDateFrom" onkeyup="autoCompleteDate(this);" onkeydown="changeToEditingMode('onkeydown');" onkeypress="changeToEditingMode('onkeypress');" oncut="changeToEditingMode('oncut');" onpaste="changeToEditingMode('onpaste');" oncontextmenu="changeToEditingMode('oncontextmenu');" onblur="expandDateYear(this.id);" onchange="validateDateTextBox(this.id); validateDate(this); return true;" displayFormat="xx" saveFormat="xx"></input>
+                          <input type="text" 
+                          id="paramExpectedDateFrom" 
+                          class="dojoValidateValid TextBox_btn_OneCell_width" 
+                          value="" 
+                          maxlength="10" 
+                          name="inpExpectedDateFrom" 
+                          onkeyup="autoCompleteDate(this);" 
+                          onkeydown="changeToEditingMode('onkeydown');" 
+                          onkeypress="changeToEditingMode('onkeypress');" 
+                          oncut="changeToEditingMode('oncut');" 
+                          onpaste="changeToEditingMode('onpaste');" 
+                          oncontextmenu="changeToEditingMode('oncontextmenu');" 
+                          onblur="expandDateYear(this.id);" 
+                          onchange="validateDateTextBox(this.id); validateDate(this); return true;" 
+                          displayFormat="xx" 
+                          saveFormat="xx"></input>
                         </td></tr>
                       </table>
-                      <span id="paramDueDateFrominvalidSpan" style="display: none;" class="TextBox_MsgContainer_span">
+                      <span id="paramExpectedDateFrominvalidSpan" style="display: none;" class="TextBox_MsgContainer_span">
                         <table class="TextBox_MsgContainer_table">
                           <tbody><tr class="TextBox_MsgContainer_tr"><td class="TextBox_MsgContainer_td"><div class="TextBox_MsgContainer_div"></div></td><td></td></tr>
-                          <tr><td class="invalid" colspan="2"><div name="invalidText" id="paramDueDateFrominvalidSpanText" class="TextBox_MsgContainer_div2">* The value entered is not valid.</div></td></tr>
+                          <tr><td class="invalid" colspan="2"><div name="invalidText" id="paramExpectedDateFrominvalidSpanText" class="TextBox_MsgContainer_div2">* The value entered is not valid.</div></td></tr>
                         </tbody></table>
                       </span>
                     </td>
                     <td class="FieldButton_ContentCell">
-                      <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="showCalendar('frmMain.inpDueDateFrom', document.frmMain.inpDueDateFrom.value, false);return false;">
+                      <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="showCalendar('frmMain.inpExpectedDateFrom', document.frmMain.inpExepctedDateFrom.value, false);return false;">
                         <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calendar';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
                           <tr>
                             <td class="FieldButton_bg">
@@ -1188,25 +1203,25 @@ function closeProcessPayment() {
               <span class="Radio_Check_ContentCell Checkbox_container_NOT_Focused"><input type="checkbox" name="inpAlternativePaymentMethod" value="Y" id="paramAlternativePaymentMethod" onclick="loadGridList()"></input></span>
               </td>
               <td class="TitleCell"></td>
-              <td class="TitleCell" id="DueDateToLbl"><span class="LabelText">Due Date To</span></td>
-              <td class="TextBox_btn_ContentCell" id="DueDateTo">
+              <td class="TitleCell" id="ExpectedDateToLbl"><span class="LabelText">Expected Date To</span></td>
+              <td class="TextBox_btn_ContentCell" id="ExpectedDateTo">
                 <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                   <tr>
                     <td class="TextBox_ContentCell">
                       <table style="border: 0px none; border-collapse: collapse;">
                         <tr><td style="padding-top: 0px;">
-                          <input type="text" id="paramDueDateTo" class="dojoValidateValid TextBox_btn_OneCell_width" value="" maxlength="10" name="inpDueDateTo" onkeyup="autoCompleteDate(this);" onkeydown="changeToEditingMode('onkeydown');" onkeypress="changeToEditingMode('onkeypress');" oncut="changeToEditingMode('oncut');" onpaste="changeToEditingMode('onpaste');" oncontextmenu="changeToEditingMode('oncontextmenu');" onblur="expandDateYear(this.id);" onchange="validateDateTextBox(this.id); validateDate(this);return true;" displayFormat="xx" saveFormat="xx"></input>
+                          <input type="text" id="paramExpectedDateTo" class="dojoValidateValid TextBox_btn_OneCell_width" value="" maxlength="10" name="inpExpectedDateTo" onkeyup="autoCompleteDate(this);" onkeydown="changeToEditingMode('onkeydown');" onkeypress="changeToEditingMode('onkeypress');" oncut="changeToEditingMode('oncut');" onpaste="changeToEditingMode('onpaste');" oncontextmenu="changeToEditingMode('oncontextmenu');" onblur="expandDateYear(this.id);" onchange="validateDateTextBox(this.id); validateDate(this);return true;" displayFormat="xx" saveFormat="xx"></input>
                           </td></tr>
                       </table>
-                      <span id="paramDueDateToinvalidSpan" style="display: none;" class="TextBox_MsgContainer_span">
+                      <span id="paramExpectedDateToinvalidSpan" style="display: none;" class="TextBox_MsgContainer_span">
                         <table class="TextBox_MsgContainer_table">
                           <tbody><tr class="TextBox_MsgContainer_tr"><td class="TextBox_MsgContainer_td"><div class="TextBox_MsgContainer_div"></div></td><td></td></tr>
-                          <tr><td class="invalid" colspan="2"><div name="invalidText" id="paramDueDateToinvalidSpanText" class="TextBox_MsgContainer_div2">* The value entered is not valid.</div></td></tr>
+                          <tr><td class="invalid" colspan="2"><div name="invalidText" id="paramExpectedDateToinvalidSpanText" class="TextBox_MsgContainer_div2">* The value entered is not valid.</div></td></tr>
                         </tbody></table>
                       </span>
                     </td>
                     <td class="FieldButton_ContentCell">
-                      <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="showCalendar('frmMain.inpDueDateTo', document.frmMain.inpDueDateTo.value, false);return false;">
+                      <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="showCalendar('frmMain.inpExpectedDateTo', document.frmMain.inpExpectedDateTo.value, false);return false;">
                         <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calendar';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
                           <tr>
                             <td class="FieldButton_bg">
@@ -1474,7 +1489,7 @@ function closeProcessPayment() {
                         <th class="DataGrid_Header_Cell" width="120"><span name="lblP" id="lblPPIN">Purchase Invoice No.</span><span name="lblR" id="lblRSIN">Sales Invoice No.</span></th>
                         <th class="DataGrid_Header_Cell" width="100" id="bpGridColumn">Business Partner</th>
                         <th class="DataGrid_Header_Cell" width="100">Payment Method</th>
-                        <th class="DataGrid_Header_Cell" width="70">Due Date</th>
+                        <th class="DataGrid_Header_Cell" width="70">Expected Date</th>
                         <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="100">Invoiced Amount</th>
                         <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="100">Expected Amount</th>
                         <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="100">Outstanding Amount</th>
