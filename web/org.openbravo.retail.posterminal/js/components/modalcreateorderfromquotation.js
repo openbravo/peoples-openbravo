@@ -27,7 +27,7 @@ enyo.kind({
     onCreateOrderFromQuotation: ''
   },
   tap: function () {
-    var checked = this.parent.children[0].checked;
+    var checked = !this.parent.children[0].checked;
     this.parent.parent.parent.parent.parent.theQuotation.createOrderFromQuotation(checked);
     $('#modalCreateOrderFromQuotation').modal('hide');
   }
