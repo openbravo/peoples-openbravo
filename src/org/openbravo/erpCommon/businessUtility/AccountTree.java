@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2011 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2012 Openbravo S.L.U.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.businessUtility;
@@ -23,8 +23,10 @@ import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.financialmgmt.accounting.coa.ElementValue;
 
 /**
  * @author Fernando Iriazabal
@@ -547,17 +549,24 @@ public class AccountTree {
             resultantAccounts[i].svcresetref = "Y";
           resultantAccounts[i].calculated = "Y";
         }
-        vec.addElement(resultantAccounts[i]);
-        if (dataChilds != null && dataChilds.length > 0) {
-          for (int j = 0; j < dataChilds.length; j++)
-            vec.addElement(dataChilds[j]);
-        }
         if (applysign) {
           total = total.add(new BigDecimal(resultantAccounts[i].qty));
           totalRef = totalRef.add(new BigDecimal(resultantAccounts[i].qtyRef));
         } else {
           total = total.add(new BigDecimal(resultantAccounts[i].qtyOperation));
           totalRef = totalRef.add(new BigDecimal(resultantAccounts[i].qtyOperationRef));
+        }
+        // If the element is not active and it has balance != 0 it must be shown otherwise, it must
+        // not.
+        ElementValue ev = OBDal.getInstance().get(ElementValue.class, resultantAccounts[i].id);
+        BigDecimal t = new BigDecimal(resultantAccounts[i].qtyOperation);
+        if (ev.isActive() || (total.compareTo(BigDecimal.ZERO) != 0)
+            || (t.compareTo(BigDecimal.ZERO) != 0)) {
+          vec.addElement(resultantAccounts[i]);
+          if (dataChilds != null && dataChilds.length > 0) {
+            for (int j = 0; j < dataChilds.length; j++)
+              vec.addElement(dataChilds[j]);
+          }
         }
       }
     }

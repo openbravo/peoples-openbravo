@@ -12,7 +12,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2011 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2012 Openbravo S.L.U.
  ******************************************************************************
 -->
 
@@ -29,7 +29,6 @@
         0 as QTYCREDIT, 0 as QTYCREDIT_REF, m.ShowValueCond, m.ElementLevel, m.Value, 'N' AS CALCULATED, 'N' AS SVCRESET, 'N' AS SVCRESETREF, m.isalwaysshown
         FROM AD_TreeNode tn, C_ElementValue m
         WHERE tn.IsActive='Y' 
-        AND m.isActive='Y' 
         AND tn.Node_ID = m.C_ElementValue_ID 
         AND tn.AD_Tree_ID = ? 
         ORDER BY COALESCE(tn.Parent_ID, '-1'), tn.SeqNo
@@ -48,7 +47,6 @@
                                                               and mt.AD_Language = ? ,
               AD_TreeNode tn
         WHERE tn.IsActive='Y' 
-        AND m.isActive='Y' 
         AND tn.Node_ID = m.C_ElementValue_ID 
         AND tn.AD_Tree_ID = ? 
         ORDER BY COALESCE(tn.Parent_ID, '-1'), tn.SeqNo 
@@ -65,8 +63,7 @@
         SELECT m.C_ElementValue_ID as id, (COALESCE(f.AMTACCTDR,0) - COALESCE(f.AMTACCTCR, 0)) AS qty, 
         (COALESCE(f.AMTACCTCR,0) - COALESCE(f.AMTACCTDR, 0)) AS qtyCredit, 0 as qty_ref, 0 as qtyCredit_ref
                 FROM C_ElementValue m, Fact_Acct f, C_Period p, C_Year y 
-                WHERE m.isActive='Y' 
-                AND m.AD_Org_ID IN ('1') 
+                WHERE m.AD_Org_ID IN ('1') 
                 AND m.AD_Client_ID IN ('1') 
                 AND 1=1 
                 AND f.FACTACCTTYPE <> 'R'
@@ -80,8 +77,7 @@
         SELECT m.C_ElementValue_ID as id, 0 AS QTY, 0 as qtyCredit, (COALESCE(f.AMTACCTDR,0) - COALESCE(f.AMTACCTCR, 0)) AS qty_ref, 
                 (COALESCE(f.AMTACCTCR,0) - COALESCE(f.AMTACCTDR, 0)) AS qtyCredit_ref 
                 FROM C_ElementValue m, Fact_Acct f, C_Period p, C_Year y 
-                WHERE m.isActive='Y' 
-                AND m.AD_Org_ID IN('2') 
+                WHERE m.AD_Org_ID IN('2') 
                 AND m.AD_Client_ID IN('2') 
                 AND 2=2 
                 AND f.FACTACCTTYPE <> 'R'
