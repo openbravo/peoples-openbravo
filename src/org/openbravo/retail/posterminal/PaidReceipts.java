@@ -33,8 +33,8 @@ public class PaidReceipts extends JSONProcessSimple {
     String organization = json.getString("organization");
 
     String hqlPaidReceipts = "select ord.id as id, ord.documentNo as documentNo, ord.orderDate as orderDate, "
-        + "ord.businessPartner.name as businessPartner, ord.grandTotalAmount as totalamount,  ord.salesRepresentative.name as salesRepresentative,  ord.documentType.name as documenttype, "
-        + "ord.id as orderid, ord.warehouse.id as warehouse, ord.currency.iSOCode as currency, ord.obposApplications.name as posterminalidentifier from Order as ord where ord.client=? and ord.organization=? and ord.obposApplications is not null";
+        + "ord.businessPartner.id as businessPartner, ord.grandTotalAmount as totalamount,  ord.salesRepresentative.name as salesRepresentative_identifier,  ord.documentType.name as documenttype, "
+        + "ord.id as orderid, ord.warehouse.id as warehouse, ord.currency.iSOCode as currency, ord.obposApplications.name as posterminalidentifier, ord.businessPartner.name as businessPartner_identifier, ord.currency.id as currency, ord.priceList.id as priceList, ord.salesRepresentative.id as salesRepresentative from Order as ord where ord.client=? and ord.organization=? and ord.obposApplications is not null";
     if (!json.getString("filterText").isEmpty()) {
       hqlPaidReceipts += " and (ord.documentNo like '%" + json.getString("filterText")
           + "%' or upper(ord.businessPartner.name) like upper('%" + json.getString("filterText")
@@ -60,12 +60,16 @@ public class PaidReceipts extends JSONProcessSimple {
       paidReceipt.put("orderDate", (objpaidReceipts[2]));
       paidReceipt.put("businessPartner", objpaidReceipts[3]);
       paidReceipt.put("totalamount", objpaidReceipts[4]);
-      paidReceipt.put("salesrepresentative", objpaidReceipts[5]);
+      paidReceipt.put("salesrepresentative_identifier", objpaidReceipts[5]);
       paidReceipt.put("documenttype", objpaidReceipts[6]);
       paidReceipt.put("orderid", objpaidReceipts[7]);
       paidReceipt.put("warehouse", objpaidReceipts[8]);
-      paidReceipt.put("currency", objpaidReceipts[9]);
+      paidReceipt.put("currency_identifier", objpaidReceipts[9]);
       paidReceipt.put("posterminalidentifier", objpaidReceipts[10]);
+      paidReceipt.put("businessPartner_identifier", objpaidReceipts[11]);
+      paidReceipt.put("currency", objpaidReceipts[12]);
+      paidReceipt.put("priceList", objpaidReceipts[13]);
+      paidReceipt.put("salesRepresentative", objpaidReceipts[14]);
       paidReceipt.put("organization", json.getString("organization"));
       paidReceipt.put("posterminal", json.getString("pos"));
       paidReceipt.put("client", json.getString("client"));

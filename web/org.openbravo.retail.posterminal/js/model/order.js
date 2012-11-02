@@ -761,15 +761,16 @@ alert('reject!!')
       return order;
     },
 
-    newPaidReceipt: function(model) {
-      var order = new Order(),
+    newPaidReceipt: function(model, callback) {
+      var order = new Order(), lines,
           me = this,
-          documentseq, documentseqstr, bp, newline, lines, prod, payments, curPayment, taxes;
-      this.lines = new Backbone.Collection();
+          documentseq, documentseqstr, bp, newline, lines, prod, payments, curPayment, taxes, bpId,
+          numberOfLines = model.receiptLines.length;
+      lines = new Backbone.Collection();
       order.set('documentNo', model.documentNo);
       if(model.isQuotation){
         order.set('isQuotation', true);
-        order.set('oldId', order.orderid);
+        order.set('oldId', model.orderid);
       }else{
         order.set('isEditable', false);
         order.set('isPaid', true);
@@ -781,32 +782,42 @@ alert('reject!!')
       order.set('posTerminal', model.posterminal);
       order.set('posTerminal$_identifier', model.posterminalidentifier);
       order.set('warehouse', model.warehouse);
-      order.set('currency$_identifier', model.currency);
+      order.set('currency', model.currency);
+      order.set('priceList', model.pricelist);
+      order.set('salesRepresentative', model.salesRepresentative);
+      order.set('currency$_identifier', model.currency_identifier);
       order.set('isbeingprocessed', 'N');
       order.set('hasbeenpaid', 'Y');
 
 
-      bp = {};
-      bp._identifier = model.businessPartner;
-      order.set('bp', new Backbone.Model(bp));
+      bpId = model.businessPartner;
+      OB.Dal.get(OB.Model.BusinessPartner, bpId, function(bp){
+        order.set('bp', bp); 
+      }, function(){console.error(args);})
       order.set('gross', model.totalamount);
-      order.set('salesRepresentative$_identifier', model.salesrepresentative);
+      order.set('salesRepresentative$_identifier', model.salesrepresentative_identifier);
 
       _.each(model.receiptLines, function(iter) {
-        prod = new OB.Model.Product();
-        prod.set('_identifier', iter.name);
-        newline = new OrderLine({
-          product: prod,
-          uOM: iter.uOM,
-          qty: OB.DEC.number(iter.quantity),
-          price: OB.DEC.number(iter.unitPrice),
-          priceList: OB.DEC.number(iter.unitPrice)
-        });
-        newline.set('gross', iter.linegrossamount);
-        // add the created line
-        me.lines.add(newline);
+        
+        OB.Dal.get(OB.Model.Product, iter.id, function(prod){
+          newline = new OrderLine({
+            product: prod,
+            uOM: iter.uOM,
+            qty: OB.DEC.number(iter.quantity),
+            price: OB.DEC.number(iter.unitPrice),
+            priceList: OB.DEC.number(iter.unitPrice)
+          });
+          newline.set('gross', iter.linegrossamount);
+          newline.set('grossListPrice', iter.unitPrice);
+          // add the created line
+          lines.add(newline);
+          numberOfLines--;
+          if(numberOfLines === 0){
+            order.set('lines', lines);
+            callback(order);
+          }
+        })
       });
-      order.set('lines', me.lines);
       order.set('orderDate', model.orderDate.toString().substring(0, 10));
       //order.set('payments', model.receiptPayments);
       payments = new PaymentLineList();
@@ -834,8 +845,6 @@ alert('reject!!')
         }
       });
       order.set('taxes', taxes);
-
-      return order;
     },
 
     addNewOrder: function() {

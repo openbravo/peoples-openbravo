@@ -205,7 +205,9 @@ enyo.kind({
     }, function(data) {
       if (data) {
         _.each(data, function(iter){
-          me.prsList.add(me.model.get('orderList').newPaidReceipt(iter));
+        	me.model.get('orderList').newPaidReceipt(iter, function(order){
+              me.prsList.add(order);
+        	});
         });
       } else {
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorDropDep'));
