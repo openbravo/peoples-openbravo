@@ -25,6 +25,7 @@ import java.util.Map;
 import javax.servlet.ServletException;
 
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -35,6 +36,7 @@ import org.openbravo.model.ad.ui.Process;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.materialmgmt.onhandquantity.Reservation;
 import org.openbravo.model.materialmgmt.onhandquantity.ReservationStock;
+import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
 import org.openbravo.service.db.CallProcess;
 import org.openbravo.service.db.DalConnectionProvider;
 
@@ -89,17 +91,27 @@ public class ReservationUtils {
   }
 
   /**
-   * Function to reserve given stock or purchase order line. Available types are:<br>
-   * - 'SD': p_stock_id represents a m_storage_detail_id reserves stock in the warehouse.<br>
-   * - 'PO': p_stock_id represents a c_orderline_id of a pending to receipt purchase order line.
+   * Function to reserve given stock or purchase order line. Available OBObject are:<br>
+   * - StorageDetail: reserves stock in the warehouse.<br>
+   * - OrderLine: reserves stock pending to receipt purchase order line.
    */
-  public static ReservationStock reserveStockManual(Reservation reservation, String strType,
-      String strStockId, BigDecimal quantity) throws OBException {
+  public static ReservationStock reserveStockManual(Reservation reservation, BaseOBObject obObject,
+      BigDecimal quantity) throws OBException {
+
+    String strType = "";
+
+    if (obObject instanceof OrderLine) {
+      strType = "PO";
+    } else if (obObject instanceof StorageDetail) {
+      strType = "SD";
+    } else {
+      throw new OBException("@notValidReservationType@");
+    }
 
     CSResponse cs = null;
     try {
       cs = ReservationUtilsData.reserveStockManual(OBDal.getInstance().getConnection(false),
-          new DalConnectionProvider(), reservation.getId(), strType, strStockId,
+          new DalConnectionProvider(), reservation.getId(), strType, obObject.getId().toString(),
           quantity.toString(), (String) DalUtil.getId(OBContext.getOBContext().getUser()));
     } catch (ServletException e) {
       throw new OBException(e.getMessage());
