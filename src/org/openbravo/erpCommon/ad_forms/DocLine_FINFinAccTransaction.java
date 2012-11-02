@@ -33,6 +33,7 @@ public class DocLine_FINFinAccTransaction extends DocLine {
   String isPrepayment = "";
   String finPaymentId = "";
   String WriteOffAmt = "";
+  boolean isPrepaymentAgainstInvoice = false;
   Invoice invoice = null;
 
   public String getcGlItemId() {
@@ -89,6 +90,21 @@ public class DocLine_FINFinAccTransaction extends DocLine {
    */
   public void setIsPrepayment(String isPrepayment) {
     this.isPrepayment = isPrepayment;
+  }
+
+  /**
+   * @return the isPrepaymentAgainstInvoice
+   */
+  public boolean isPrepaymentAgainstInvoice() {
+    return isPrepaymentAgainstInvoice;
+  }
+
+  /**
+   * @param isPrepaymentAgainstInvoice
+   *          the isPrepaymentAgainstInvoice to set
+   */
+  public void setPrepaymentAgainstInvoice(boolean isPrepaymentAgainstInvoice) {
+    this.isPrepaymentAgainstInvoice = isPrepaymentAgainstInvoice;
   }
 
   /**

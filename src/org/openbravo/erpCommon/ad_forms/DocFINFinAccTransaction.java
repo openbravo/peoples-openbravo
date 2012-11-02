@@ -40,6 +40,7 @@ import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
+import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.currency.Currency;
@@ -53,6 +54,7 @@ import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentMethod;
+import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment_Credit;
 import org.openbravo.model.financialmgmt.payment.FinAccPaymentMethod;
 import org.openbravo.service.db.DalConnectionProvider;
@@ -138,6 +140,11 @@ public class DocFINFinAccTransaction extends AcctServer {
             .toString());
         FieldProviderFactory.setField(data[i], "isprepayment",
             paymentDetails.get(i).isPrepayment() ? "Y" : "N");
+        // Check if payment against invoice is in a previous date than invoice accounting date
+        boolean isPaymentDatePriorToInvoiceDate = isPaymentDatePriorToInvoiceDate(paymentDetails
+            .get(i));
+        FieldProviderFactory.setField(data[i], "isPaymentDatePriorToInvoiceDate",
+            isPaymentDatePriorToInvoiceDate ? "Y" : "N");
         FieldProviderFactory.setField(data[i], "WriteOffAmt", paymentDetails.get(i)
             .getWriteoffAmount().toString());
         FieldProviderFactory.setField(data[i], "cGlItemId",
@@ -314,6 +321,8 @@ public class DocFINFinAccTransaction extends AcctServer {
         docLine.setAmount(data[i].getField("Amount"));
         docLine.setWriteOffAmt(data[i].getField("WriteOffAmt"));
         docLine.setAmount(data[i].getField("Amount"));
+        docLine.setPrepaymentAgainstInvoice("Y".equals(data[i]
+            .getField("isPaymentDatePriorToInvoiceDate")) ? true : false);
         docLine.loadAttributes(data[i], this);
         list.add(docLine);
       } finally {
@@ -477,10 +486,36 @@ public class DocFINFinAccTransaction extends AcctServer {
               line,
               getAccountBPartner(
                   (line.m_C_BPartner_ID == null || line.m_C_BPartner_ID.equals("")) ? this.C_BPartner_ID
-                      : line.m_C_BPartner_ID, as, isReceipt, isPrepayment, conn), paymentCurrency
-                  .getId(), (isReceipt ? "" : bpAmountConverted.toString()),
+                      : line.m_C_BPartner_ID, as, isReceipt,
+                  (isPrepayment || line.isPrepaymentAgainstInvoice) ? true : false, conn),
+              paymentCurrency.getId(), (isReceipt ? "" : bpAmountConverted.toString()),
               (isReceipt ? bpAmountConverted.toString() : ""), Fact_Acct_Group_ID,
               nextSeqNo(SeqNo), DocumentType, conn);
+          // If payment date is prior to invoice date book invoice as a pre-payment not as a regular
+          // Receivable/Payable
+          if (line.isPrepaymentAgainstInvoice()) {
+            String Fact_Acct_Group_ID2 = SequenceIdData.getUUID();
+            DocLine line2 = new DocLine(DocumentType, Record_ID, line.m_TrxLine_ID);
+            line2.copyInfo(line);
+            line2.m_DateAcct = OBDateUtils.formatDate(invoice.getAccountingDate());
+            fact.createLine(
+                line2,
+                getAccountBPartner((line2.m_C_BPartner_ID == null || line2.m_C_BPartner_ID
+                    .equals("")) ? this.C_BPartner_ID : line2.m_C_BPartner_ID, as, isReceipt,
+                    false, conn), paymentCurrency.getId(),
+                (isReceipt ? "" : bpAmountConverted.toString()),
+                (isReceipt ? bpAmountConverted.toString() : ""), Fact_Acct_Group_ID2,
+                nextSeqNo(SeqNo), DocumentType, conn);
+            fact.createLine(
+                line2,
+                getAccountBPartner((line2.m_C_BPartner_ID == null || line2.m_C_BPartner_ID
+                    .equals("")) ? this.C_BPartner_ID : line2.m_C_BPartner_ID, as, isReceipt, true,
+                    conn), paymentCurrency.getId(),
+                (!isReceipt ? "" : bpAmountConverted.toString()),
+                (!isReceipt ? bpAmountConverted.toString() : ""), Fact_Acct_Group_ID2,
+                nextSeqNo(SeqNo), DocumentType, conn);
+          }
+
         }
       }
       // Pre-payment is consumed when Used Credit Amount not equals Zero. When consuming Credit no
@@ -1105,6 +1140,21 @@ public class DocFINFinAccTransaction extends AcctServer {
       e.printStackTrace();
     }
     return acct;
+  }
+
+  boolean isPaymentDatePriorToInvoiceDate(FIN_PaymentDetail paymentDetail) {
+    List<FIN_PaymentScheduleDetail> schedDetails = paymentDetail.getFINPaymentScheduleDetailList();
+    if (schedDetails.size() == 0) {
+      return false;
+    } else {
+      if (schedDetails.get(0).getInvoicePaymentSchedule() != null
+          && schedDetails.get(0).getInvoicePaymentSchedule().getInvoice().getAccountingDate()
+              .after(paymentDetail.getFinPayment().getPaymentDate())) {
+        return true;
+      } else {
+        return false;
+      }
+    }
   }
 
 }

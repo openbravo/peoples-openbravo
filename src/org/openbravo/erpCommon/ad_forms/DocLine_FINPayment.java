@@ -31,6 +31,7 @@ public class DocLine_FINPayment extends DocLine {
   String isReceipt = "";
   String C_GLItem_ID = "";
   String isPrepayment = "";
+  boolean isPrepaymentAgainstInvoice = false;
   Invoice invoice = null;
   Order order = null;
 
@@ -78,6 +79,21 @@ public class DocLine_FINPayment extends DocLine {
    */
   public String getIsPrepayment() {
     return isPrepayment;
+  }
+
+  /**
+   * @return the isPrepaymentAgainstInvoice
+   */
+  public boolean isPrepaymentAgainstInvoice() {
+    return isPrepaymentAgainstInvoice;
+  }
+
+  /**
+   * @param isPrepaymentAgainstInvoice
+   *          the isPrepaymentAgainstInvoice to set
+   */
+  public void setPrepaymentAgainstInvoice(boolean isPrepaymentAgainstInvoice) {
+    this.isPrepaymentAgainstInvoice = isPrepaymentAgainstInvoice;
   }
 
   /**
