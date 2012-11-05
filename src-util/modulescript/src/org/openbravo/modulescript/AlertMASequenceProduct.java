@@ -24,7 +24,7 @@ import org.openbravo.database.ConnectionProvider;
 
 public class AlertMASequenceProduct extends ModuleScript {
 
-  final static private String ALERT_RULE_SQL = "select ma_sequenceproduct_id as referencekey_id, ad_column_identifier('MA_SequenceProduct', ma_sequenceproduct_id, 'en_US'), 0 as ad_role_id, null as ad_user_id, 'Deprecated Unique Attribute in use. Set the Warehouse rule' as description, 'Y' as isactive, ad_org_id, ad_client_id, now() as created, 0 as createdBy, now() as updated, 0 as updatedBy ,  ma_sequenceproduct_id as record_id  from ma_sequenceproduct where uniqueattconsum = 'Y' and m_warehouse_rule_id IS NULL";
+  final static private String ALERT_RULE_SQL = "select ma_sequenceproduct_id as referencekey_id, ad_column_identifier('MA_SequenceProduct', ma_sequenceproduct_id, 'en_US') as record_id , 0 as ad_role_id, null as ad_user_id, 'Deprecated Unique Attribute in use. Set the Warehouse rule' as description, 'Y' as isactive, ad_org_id, ad_client_id, now() as created, 0 as createdBy, now() as updated, 0 as updatedBy  from ma_sequenceproduct where uniqueattconsum = 'Y' and m_warehouse_rule_id IS NULL";
   final static private String PSECUENCE_WINDOW = "800051";
   final static private String PSECUENCE_TAB = "800110";
   final static private String ALERT_RULE="Deprecated Unique Attribute in use. Set the Warehouse rule";
@@ -32,7 +32,7 @@ public class AlertMASequenceProduct extends ModuleScript {
   public void execute() {
     try {
       ConnectionProvider cp = getConnectionProvider();
-      if (!AlertMASequenceProductData.existsAlertRuleAnyClient(cp, ALERT_RULE)) {
+      if (!AlertMASequenceProductData.existsAlertRule(cp, ALERT_RULE,null)) {
         AlertMASequenceProductData[] data = AlertMASequenceProductData.select(cp);
         for (AlertMASequenceProductData seqproduct : data) {
           createAlert(cp, seqproduct);
