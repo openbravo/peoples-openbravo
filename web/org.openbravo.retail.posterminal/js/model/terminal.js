@@ -682,32 +682,40 @@ OB.Model.Terminal = Backbone.Model.extend({
     OB.Dal.find(OB.Model.DocumentSequence, {
       'posSearchKey': OB.POS.modelterminal.get('terminal').searchKey
     }, function(documentsequence) {
-      var lastInternalDocumentSequence, max;
+      var lastInternalDocumentSequence, lastInternalQuotationSequence, max, maxquote;
       if (documentsequence && documentsequence.length > 0) {
         lastInternalDocumentSequence = documentsequence.at(0).get('documentSequence');
+        lastInternalQuotationSequence = documentsequence.at(0).get('quotationDocumentSequence');
         // Compares the persisted document number with the fetched from the server
         if (lastInternalDocumentSequence > OB.POS.modelterminal.get('terminal').lastDocumentNumber) {
           max = lastInternalDocumentSequence;
         } else {
           max = OB.POS.modelterminal.get('terminal').lastDocumentNumber;
         }
+        if (lastInternalQuotationSequence > OB.POS.modelterminal.get('terminal').lastQuotationDocumentNumber) {
+          maxquote = lastInternalQuotationSequence;
+        } else {
+          maxquote = OB.POS.modelterminal.get('terminal').lastQuotationDocumentNumber;
+        }
         // Compares the maximum with the document number of the paid pending orders
-        me.compareDocSeqWithPendingOrdersAndSave(max);
+        me.compareDocSeqWithPendingOrdersAndSave(max, maxquote);
       } else {
         max = OB.POS.modelterminal.get('terminal').lastDocumentNumber;
+        maxquote = OB.POS.modelterminal.get('terminal').lastQuotationDocumentNumber;
         // Compares the maximum with the document number of the paid pending orders
-        me.compareDocSeqWithPendingOrdersAndSave(max);
+        me.compareDocSeqWithPendingOrdersAndSave(max, maxquote);
       }
 
     }, function() {
-      var max = OB.POS.modelterminal.get('terminal').lastDocumentNumber;
+      var max = OB.POS.modelterminal.get('terminal').lastDocumentNumber,
+        maxquote = OB.POS.modelterminal.get('terminal').lastQuotationDocumentNumber;
       // Compares the maximum with the document number of the paid pending orders
-      me.compareDocSeqWithPendingOrdersAndSave(max);
+      me.compareDocSeqWithPendingOrdersAndSave(max, maxquote);
     });
   },
 
-  compareDocSeqWithPendingOrdersAndSave: function(maxDocumentSequence) {
-    var me = this;
+  compareDocSeqWithPendingOrdersAndSave: function(maxDocumentSequence, maxQuotationDocumentSequence) {
+    var me = this, orderDocNo, quotationDocNo;
     // compare the last document number returned from the ERP with
     // the last document number of the unprocessed pending lines (if any)
     OB.Dal.find(OB.Model.Order, {}, function(fetchedOrderList) {
@@ -715,22 +723,28 @@ OB.Model.Terminal = Backbone.Model.extend({
       if (!fetchedOrderList || fetchedOrderList.length === 0) {
         // There are no pending orders, the initial document sequence
         // will be the one fetched from the database
-        me.saveDocumentSequenceAndGo(maxDocumentSequence);
+        me.saveDocumentSequenceAndGo(maxDocumentSequence, maxQuotationDocumentSequence);
       } else {
         // There are pending orders. The document sequence will be set
         // to the maximum of the pending order document sequence and the
         // document sequence retrieved from the server
         maxDocumentSequencePendingOrders = me.getMaxDocumentSequenceFromPendingOrders(fetchedOrderList.models);
-        if (maxDocumentSequencePendingOrders > maxDocumentSequence) {
-          me.saveDocumentSequenceAndGo(maxDocumentSequencePendingOrders);
+        if (maxDocumentSequencePendingOrders.orderDocNo > maxDocumentSequence) {
+          orderDocNo = maxDocumentSequencePendingOrders.orderDocNo;
         } else {
-          me.saveDocumentSequenceAndGo(maxDocumentSequence);
+          orderDocNo = maxDocumentSequence;
         }
+        if (maxDocumentSequencePendingOrders.quotationDocNo > maxQuotationDocumentSequence) {
+          quotationDocNo = maxDocumentSequencePendingOrders.quotationDocNo;
+        } else {
+          quotationDocNo = maxQuotationDocumentSequence;
+        }
+        me.saveDocumentSequenceAndGo(orderDocNo, quotationDocNo);
       }
     }, function() {
       // If c_order does not exist yet, go with the sequence
       // number fetched from the server
-      me.saveDocumentSequenceAndGo(maxDocumentSequence);
+      me.saveDocumentSequenceAndGo(maxDocumentSequence, maxQuotationDocumentSequence);
     });
   },
 
@@ -738,19 +752,30 @@ OB.Model.Terminal = Backbone.Model.extend({
     var nPreviousOrders = pendingOrders.length,
         maxDocumentSequence = OB.POS.modelterminal.get('terminal').lastDocumentNumber,
         posDocumentNoPrefix = OB.POS.modelterminal.get('terminal').docNoPrefix,
+        maxQuotationDocumentSequence = OB.POS.modelterminal.get('terminal').lastQuotationDocumentNumber,
+        posQuotationDocumentNoPrefix = OB.POS.modelterminal.get('terminal').docQuotationNoPrefix,
         orderCompleteDocumentNo, orderDocumentSequence, i;
     for (i = 0; i < nPreviousOrders; i++) {
       orderCompleteDocumentNo = pendingOrders[i].get('documentNo');
-      orderDocumentSequence = parseInt(orderCompleteDocumentNo.substr(posDocumentNoPrefix.length + 1), 10);
-      if (orderDocumentSequence > maxDocumentSequence) {
-        maxDocumentSequence = orderDocumentSequence;
+      if(!pendingOrders[i].get('isQuotation')){
+        orderDocumentSequence = parseInt(orderCompleteDocumentNo.substr(posDocumentNoPrefix.length + 1), 10);
+        if (orderDocumentSequence > maxDocumentSequence) {
+          maxDocumentSequence = orderDocumentSequence;
+        }
+      }else{
+        orderDocumentSequence = parseInt(orderCompleteDocumentNo.substr(posQuotationDocumentNoPrefix.length + 1), 10);
+        if (orderDocumentSequence > maxQuotationDocumentSequence) {
+          maxQuotationDocumentSequence = orderDocumentSequence;
+        }
       }
     }
-    return maxDocumentSequence;
+    return {orderDocNo: maxDocumentSequence,
+      quotationDocNo: maxQuotationDocumentSequence};
   },
 
-  saveDocumentSequenceAndGo: function(documentSequence) {
+  saveDocumentSequenceAndGo: function(documentSequence, quotationDocumentSequence) {
     this.set('documentsequence', documentSequence);
+    this.set('quotationDocumentSequence', quotationDocumentSequence);
     this.triggerReady();
   },
 
@@ -758,6 +783,7 @@ OB.Model.Terminal = Backbone.Model.extend({
     var me = this,
         modelterminal = OB.POS.modelterminal,
         documentSequence = modelterminal.get('documentsequence'),
+        quotationDocumentSequence = modelterminal.get('quotationDocumentSequence'),
         criteria = {
         'posSearchKey': OB.POS.modelterminal.get('terminal').searchKey
         };
@@ -768,13 +794,15 @@ OB.Model.Terminal = Backbone.Model.extend({
         docSeq = documentSequenceList.models[0];
         // There exists already a document sequence, update it
         docSeq.set('documentSequence', documentSequence);
+        docSeq.set('quotationDocumentSequence', quotationDocumentSequence);
       } else {
         // There is not a document sequence for the pos, create it
         docSeq = new OB.Model.DocumentSequence();
         docSeq.set('posSearchKey', OB.POS.modelterminal.get('terminal').searchKey);
         docSeq.set('documentSequence', documentSequence);
+        docSeq.set('quotationDocumentSequence', quotationDocumentSequence);
       }
-      OB.Dal.save(docSeq, null, null);
+      OB.Dal.save(docSeq, null, function(){console.error(arguments);});
     });
   },
 

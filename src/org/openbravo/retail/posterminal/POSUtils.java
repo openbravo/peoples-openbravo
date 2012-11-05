@@ -186,12 +186,13 @@ public class POSUtils {
     return null;
   }
 
-  public static int getLastDocumentNumberForPOS(String searchKey) {
+  public static int getLastDocumentNumberForPOS(String searchKey, String documentTypeId) {
     OBPOSApplications POSTerminal = POSUtils.getTerminal(searchKey);
 
     OBQuery<Order> obqOrders = OBDal.getInstance().createQuery(Order.class,
-        "em_obpos_applications_id = :value");
+        "em_obpos_applications_id = :value and documentType.id=:documentTypeId");
     obqOrders.setNamedParameter("value", POSTerminal.getId());
+    obqOrders.setNamedParameter("documentTypeId", documentTypeId);
 
     ScrollableResults POSOrders = obqOrders.scroll(ScrollMode.FORWARD_ONLY);
     int maxNumber = 0;

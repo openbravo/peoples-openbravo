@@ -11,6 +11,7 @@ package org.openbravo.retail.posterminal.term;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.dal.core.DalUtil;
+import org.openbravo.retail.posterminal.OBPOSApplications;
 import org.openbravo.retail.posterminal.POSUtils;
 import org.openbravo.retail.posterminal.ProcessHQLQuery;
 import org.openbravo.service.json.JsonConstants;
@@ -26,7 +27,14 @@ public class Terminal extends ProcessHQLQuery {
   protected String getQuery(JSONObject jsonsent) throws JSONException {
     String POSSearchKey = jsonsent.getJSONObject("parameters").getJSONObject("terminal")
         .getString("value");
-    int lastDocumentNumber = POSUtils.getLastDocumentNumberForPOS(POSSearchKey);
+    OBPOSApplications pOSTerminal = POSUtils.getTerminal(POSSearchKey);
+    int lastDocumentNumber = POSUtils.getLastDocumentNumberForPOS(POSSearchKey, pOSTerminal
+        .getObposTerminaltype().getDocumentType().getId());
+    int lastQuotationDocumentNumber = 0;
+    if (pOSTerminal.getObposTerminaltype().getDocumentTypeForQuotations() != null) {
+      lastQuotationDocumentNumber = POSUtils.getLastDocumentNumberForPOS(POSSearchKey, pOSTerminal
+          .getObposTerminaltype().getDocumentTypeForQuotations().getId());
+    }
     final org.openbravo.model.pricing.pricelist.PriceList pricesList = POSUtils
         .getPriceListByTerminal(POSSearchKey);
 
@@ -59,9 +67,12 @@ public class Terminal extends ProcessHQLQuery {
         + ", pos.organization.obretcoDbpOrgid.id as defaultbp_bporg "
         + ", pos.organization.obretcoMWarehouse.id as warehouse "
         + ", pos.orderdocnoPrefix as docNoPrefix "
+        + ", pos.quotationdocnoPrefix as quotationDocNoPrefix "
         + ", "
         + lastDocumentNumber
-        + " as lastDocumentNumber, pos.obposTerminaltype.minutestorefreshdatatotal as minutestorefreshdatatotal, "
+        + " as lastDocumentNumber, "
+        + lastQuotationDocumentNumber
+        + " as lastQuotationDocumentNumber, pos.obposTerminaltype.minutestorefreshdatatotal as minutestorefreshdatatotal, "
         + " pos.obposTerminaltype.minutestorefreshdatainc as minutestorefreshdatainc"
         + " from OBPOS_Applications AS pos left join pos.obposTerminaltype.documentTypeForQuotations as quot where pos.$readableCriteria and pos.searchKey = :terminal";
   }

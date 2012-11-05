@@ -199,7 +199,7 @@ public class OrderLoader extends JSONProcessSimple {
       JSONArray orderlines = jsonorder.getJSONArray("lines");
       createOrderLines(order, jsonorder, orderlines, lineReferences);
 
-      if (jsonorder.has("oldId")
+      if (jsonorder.has("oldId") && !jsonorder.getString("oldId").equals("null")
           && (!jsonorder.has("isQuotation") || !jsonorder.getBoolean("isQuotation"))) {
         // This order comes from a quotation, we need to associate both
         associateOrderToQuotation(jsonorder, order);

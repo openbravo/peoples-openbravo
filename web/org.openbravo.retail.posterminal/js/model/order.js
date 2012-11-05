@@ -534,10 +534,16 @@
     },
 
     createOrderFromQuotation: function(updatePrices){
+      var documentseq;
       this.set('id',null);
       this.set('isQuotation', false);
       this.set('documentType', OB.POS.modelterminal.get('terminal').documentType);
       this.set('hasbeenpaid', 'N');
+      this.set('orderDate', new Date());
+      documentseq = OB.POS.modelterminal.get('documentsequence') + 1;
+      documentseqstr = OB.UTIL.padNumber(documentseq, 5);
+      OB.POS.modelterminal.set('documentsequence', documentseq);
+      this.set('documentNo', OB.POS.modelterminal.get('terminal').docNoPrefix + '/' + documentseqstr);
       this.save();
       if(updatePrices){
         this.updatePrices();
@@ -861,10 +867,15 @@ alert('reject!!')
     },
 
     addNewQuotation: function() {
+      var documentseq;
       this.saveCurrent();
       this.current = this.newOrder();
       this.current.set('isQuotation', true);
       this.current.set('documentType', OB.POS.modelterminal.get('terminal').documentTypeForQuotations);
+      documentseq = OB.POS.modelterminal.get('quotationDocumentSequence') + 1;
+      documentseqstr = OB.UTIL.padNumber(documentseq, 5);
+      OB.POS.modelterminal.set('quotationDocumentSequence', documentseq);
+      this.current.set('documentNo', OB.POS.modelterminal.get('terminal').quotationDocNoPrefix + '/' + documentseqstr);
       this.add(this.current);
       this.loadCurrent();
     },
