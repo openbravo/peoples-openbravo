@@ -38,23 +38,11 @@
        FROM AD_ALERTRULE
        WHERE NAME = ?
          AND ISACTIVE = 'Y'
-         AND AD_CLIENT_ID = ?
+         AND 1=1      
       ]]>
     </Sql>
     <Parameter name="alertRule"/>
-    <Parameter name="client"/>
-  </SqlMethod>
-  
-    <SqlMethod name="existsAlertRuleAnyClient" type="preparedStatement" return="boolean">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql><![CDATA[
-       SELECT COUNT(*) AS EXISTING
-       FROM AD_ALERTRULE
-       WHERE NAME = ?
-         AND ISACTIVE = 'Y'
-      ]]>
-    </Sql>
-    <Parameter name="alertRule"/>
+    <Parameter name="client" optional="true" after="AND 1=1"><![CDATA[ AND AD_CLIENT_ID = ?]]></Parameter>
   </SqlMethod>
   
   <SqlMethod name="existsAlert" type="preparedStatement" return="boolean">
