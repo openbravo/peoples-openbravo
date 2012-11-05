@@ -217,6 +217,10 @@
         <default><![CDATA[0]]></default>
         <onCreateDefault/>
       </column>
+      <column name="M_WAREHOUSE_RULE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="C_ORDERLINE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -276,6 +280,9 @@
       </foreign-key>
       <foreign-key foreignTable="C_ORDERLINE" name="C_ORDERLINE_SOPOREF">
         <reference local="REF_ORDERLINE_ID" foreign="C_ORDERLINE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_WAREHOUSE_RULE" name="C_ORDERLINE_WAREHOUSERULE">
+        <reference local="M_WAREHOUSE_RULE_ID" foreign="M_WAREHOUSE_RULE_ID"/>
       </foreign-key>
       <index name="C_ORDERLINE_C_RETURN_REASON" unique="false">
         <index-column name="C_RETURN_REASON_ID"/>

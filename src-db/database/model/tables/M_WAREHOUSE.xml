@@ -73,6 +73,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="M_WAREHOUSE_RULE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="C_LOCATION" name="C_LOCATION_WAREHOUSE">
         <reference local="C_LOCATION_ID" foreign="C_LOCATION_ID"/>
       </foreign-key>
@@ -84,6 +88,9 @@
       </foreign-key>
       <foreign-key foreignTable="M_LOCATOR" name="M_WAREHOUSE_RETURNLOCATOR">
         <reference local="M_RETURNLOCATOR_ID" foreign="M_LOCATOR_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_WAREHOUSE_RULE" name="M_WAREHOUSE_WHRULE">
+        <reference local="M_WAREHOUSE_RULE_ID" foreign="M_WAREHOUSE_RULE_ID"/>
       </foreign-key>
       <unique name="M_WAREHOUSE_NAME">
         <unique-column name="AD_CLIENT_ID"/>
