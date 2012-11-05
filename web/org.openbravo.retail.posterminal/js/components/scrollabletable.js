@@ -1,5 +1,3 @@
-/*global _, Backbone, $, enyo */
-
 /*
  ************************************************************************************
  * Copyright (C) 2012 Openbravo S.L.U.
@@ -8,6 +6,8 @@
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
+
+/*global _, Backbone, $, enyo */
 
 enyo.kind({
   name: 'OB.UI.ScrollableTableHeader',
@@ -48,7 +48,7 @@ enyo.kind({
   }, {
     name: 'tempty'
   }],
-  create: function() {
+  create: function () {
     var tableName = this.name || '';
 
     this.inherited(arguments);
@@ -65,11 +65,11 @@ enyo.kind({
     if (this.collection) {
       this.collectionChanged(null);
     }
-    
+
     this.$.tlimit.setContent(OB.I18N.getLabel('OBPOS_DataLimitReached'));
   },
 
-  collectionChanged: function(oldCollection) {
+  collectionChanged: function (oldCollection) {
     this.selected = null;
 
     if (this.renderHeader && this.$.theader.getComponents().length === 0) {
@@ -92,7 +92,7 @@ enyo.kind({
       return;
     }
 
-    this.collection.on('selected', function(model) {
+    this.collection.on('selected', function (model) {
       if (!model && this.listStyle) {
         if (this.selected) {
           this.selected.addRemoveClass('selected', false);
@@ -101,7 +101,7 @@ enyo.kind({
       }
     }, this);
 
-    this.collection.on('add', function(model, prop, options) {
+    this.collection.on('add', function (model, prop, options) {
 
       this.$.tempty.hide();
       this.$.tbody.show();
@@ -119,9 +119,9 @@ enyo.kind({
       this.getScrollArea().scrollToControl(this.$.tbody.getComponents()[options.index]);
     }, this);
 
-    this.collection.on('remove', function(model, prop, options) {
+    this.collection.on('remove', function (model, prop, options) {
       var index = options.index,
-      indexToPoint = index-1;
+          indexToPoint = index - 1;
 
       this.$.tbody.getComponents()[index].destroy(); // controlAtIndex ?
       if (index >= this.collection.length) {
@@ -137,17 +137,17 @@ enyo.kind({
       if (this.collection.length === 0) {
         this.$.tbody.hide();
         this.$.tempty.show();
-      }else{
+      } else {
         //Put scroller in the previous item of deleted one
         //Issue 0021835 except when the deleted is the first one.
-        if (indexToPoint < 0){
+        if (indexToPoint < 0) {
           indexToPoint = 0;
         }
         this.getScrollArea().scrollToControl(this.$.tbody.getComponents()[indexToPoint]);
       }
     }, this);
 
-    this.collection.on('reset', function(a, b, c) {
+    this.collection.on('reset', function (a, b, c) {
       var modelsel, dataLimit;
 
       this.$.tlimit.hide();
@@ -163,10 +163,10 @@ enyo.kind({
       } else {
         this.$.tempty.hide();
         this.$.tbody.show();
-        this.collection.each(function(model) {
+        this.collection.each(function (model) {
           this._addModelToCollection(model);
         }, this);
-        
+
         dataLimit = this.collection.at(0).dataLimit;
         if (dataLimit && dataLimit <= this.collection.length) {
           this.$.tlimit.show();
@@ -182,7 +182,7 @@ enyo.kind({
       }
     }, this);
 
-    this.collection.on('info', function(info) {
+    this.collection.on('info', function (info) {
       if (info) {
         this.$.tinfo.setContent(OB.I18N.getLabel(info));
         this.$.tinfo.show();
@@ -194,16 +194,16 @@ enyo.kind({
     // XXX: Reseting to show the collection if registered with data
     this.collection.trigger('reset');
   },
-  getScrollArea: function(){
+  getScrollArea: function () {
     return this.$.scrollArea;
   },
-  getHeader: function(){
+  getHeader: function () {
     var tableName = this.name || '';
-    if(this.$.theader.getComponents()){
-      if (this.$.theader.getComponents().length > 0){
-        if (this.$.theader.getComponents().length === 1){
+    if (this.$.theader.getComponents()) {
+      if (this.$.theader.getComponents().length > 0) {
+        if (this.$.theader.getComponents().length === 1) {
           return this.$.theader.getComponents()[0];
-        }else{
+        } else {
           //developers help
           throw enyo.format('Each scrolleable table ahould have only one component as header', tableName);
         }
@@ -211,7 +211,7 @@ enyo.kind({
     }
     return null;
   },
-  _addModelToCollection: function(model, index) {
+  _addModelToCollection: function (model, index) {
     var tr = this.$.tbody.createComponent({
       tag: 'li'
     });
@@ -222,7 +222,7 @@ enyo.kind({
 
     tr.render();
 
-    model.on('change', function() {
+    model.on('change', function () {
       tr.destroyComponents();
       tr.createComponent({
         kind: this.renderLine,
@@ -230,7 +230,7 @@ enyo.kind({
       }).render();
     }, this);
 
-    model.on('selected', function() {
+    model.on('selected', function () {
       if (this.listStyle) {
         if (this.selected) {
           this.selected.addRemoveClass('selected', false);

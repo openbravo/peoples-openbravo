@@ -18,12 +18,12 @@
   var roundingmode = BigDecimal.prototype.ROUND_HALF_EVEN;
 
   var toBigDecimal = function (a) {
-    return new BigDecimal(a.toString());
-  };
+      return new BigDecimal(a.toString());
+      };
 
   var toNumber = function (big) {
-    return parseFloat(big.setScale(scale, roundingmode).toString(), 10);
-  };
+      return parseFloat(big.setScale(scale, roundingmode).toString(), 10);
+      };
 
   OB.DEC.Zero = toNumber(BigDecimal.prototype.ZERO);
   OB.DEC.One = toNumber(BigDecimal.prototype.ONE);
@@ -31,7 +31,7 @@
   OB.DEC.scale = scale;
 
   OB.DEC.isNumber = function (a) {
-    return typeof(a) === 'number' && !isNaN(a);
+    return typeof (a) === 'number' && !isNaN(a);
   };
 
   OB.DEC.add = function (a, b) {
@@ -61,6 +61,14 @@
   OB.DEC.setContext = function (s, r) {
     scale = s;
     roundingmode = r;
+  };
+
+  OB.DEC.toBigDecimal = function (a) {
+    return toBigDecimal(a);
+  };
+
+  OB.DEC.toNumber = function (a) {
+    return toNumber(a);
   };
 
 }());

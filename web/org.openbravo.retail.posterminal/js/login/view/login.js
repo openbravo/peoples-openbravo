@@ -51,27 +51,33 @@
       }
 
       OB.Dal.initCache(OB.Model.User, [], null, null);
-      OB.Dal.find(OB.Model.User, {'name': this.user},
-        function(users) {
-          var user;
-          if(users.models.length !== 0 ) {
-            user = users.models[0];
-            OB.Dal.find(OB.Model.Session, {'user': user.get('id')},
-                    function(sessions) {
-                      var session;
-                      if(sessions.models.length !== 0 ) {
-                        session=sessions.models[0];
-                        if(session.get('active')==='Y'){
-                          me.$.bottomIcon.applyStyle('background-image', 'url(img/iconAwayUser.png)');
-                        }else{
-                          me.$.bottomIcon.applyStyle('background-image', 'url(img/iconOfflineUser.png)');
-                        }
-                      }
-            },function() {window.console.error(arguments);});
-          }
-      },function() {window.console.error(arguments);});
-      
-      
+      OB.Dal.find(OB.Model.User, {
+        'name': this.user
+      }, function (users) {
+        var user;
+        if (users.models.length !== 0) {
+          user = users.models[0];
+          OB.Dal.find(OB.Model.Session, {
+            'user': user.get('id')
+          }, function (sessions) {
+            var session;
+            if (sessions.models.length !== 0) {
+              session = sessions.models[0];
+              if (session.get('active') === 'Y') {
+                me.$.bottomIcon.applyStyle('background-image', 'url(img/iconAwayUser.png)');
+              } else {
+                me.$.bottomIcon.applyStyle('background-image', 'url(img/iconOfflineUser.png)');
+              }
+            }
+          }, function () {
+            window.console.error(arguments);
+          });
+        }
+      }, function () {
+        window.console.error(arguments);
+      });
+
+
       if (this.user) {
         this.$.bottomText.setContent(this.user);
       }
@@ -102,14 +108,13 @@
     name: 'OB.OBPOSLogin.UI.Login',
     tag: 'section',
     components: [{
-	  myId: 'DatabaseDialog',
-	  kind: 'OB.UI.ModalInfo',
-	  header: OB.I18N.getLabel('OBPOS_DatabaseVersionChange'),
-	  bodyContent: {
-	    content: OB.I18N.getLabel('OBPOS_DatabaseVersionChangeLong')
-	  }
-    },
-    {
+      myId: 'DatabaseDialog',
+      kind: 'OB.UI.ModalInfo',
+      header: OB.I18N.getLabel('OBPOS_DatabaseVersionChange'),
+      bodyContent: {
+        content: OB.I18N.getLabel('OBPOS_DatabaseVersionChangeLong')
+      }
+    }, {
       classes: 'login-header-row',
       components: [{
         name: 'loginHeaderCompany',
@@ -143,7 +148,7 @@
                   kind: 'enyo.Input',
                   type: 'text',
                   name: 'username',
-                  classes: 'login-inputs-username',
+                  classes: 'input login-inputs-username',
                   onkeydown: 'handleEnterKeyDown'
                 }]
               }]
@@ -154,7 +159,7 @@
                   kind: 'enyo.Input',
                   type: 'password',
                   name: 'password',
-                  classes: 'login-inputs-password',
+                  classes: 'input login-inputs-password',
                   onkeydown: 'handleEnterKeyDown'
                 }]
               }]
@@ -225,7 +230,7 @@
       this.$.LoginBrowserNotSupported_P1_Lbl.setContent(OB.I18N.getLabel('OBPOS_LoginBrowserNotSupported_P1'));
       this.$.LoginBrowserNotSupported_P2_Lbl.setContent(OB.I18N.getLabel('OBPOS_LoginBrowserNotSupported_P2', ['Chrome, Safari, Safari (iOS)', 'Android']));
       this.$.LoginBrowserNotSupported_P3_Lbl.setContent(OB.I18N.getLabel('OBPOS_LoginBrowserNotSupported_P3'));
-      
+
       this.postRenderActions();
     },
 
@@ -260,7 +265,7 @@
 
     setCompanyLogo: function (inSender, jsonCompanyLogo) {
       var logoUrl = [];
-      if(!jsonCompanyLogo.response){
+      if (!jsonCompanyLogo.response) {
         return;
       }
       jsonCompanyLogo = jsonCompanyLogo.response[0].data;
@@ -278,18 +283,19 @@
           connected = [],
           target = this.$.loginUserContainer,
           i, me = this;
-      if(!jsonImgData.response){
-          OB.Dal.find(OB.Model.User, {},
-            function(users) {
-            var i, user, session;
-            for(i=0;i<users.models.length;i++ ) {
-              user = users.models[i];
-              name.push(user.get('name'));
-              userName.push(user.get('name'));
-              connected.push(false);
-            }
-            me.renderUserButtons(name, userName, image, connected, target);
-          },function() {window.console.error(arguments);});
+      if (!jsonImgData.response) {
+        OB.Dal.find(OB.Model.User, {}, function (users) {
+          var i, user, session;
+          for (i = 0; i < users.models.length; i++) {
+            user = users.models[i];
+            name.push(user.get('name'));
+            userName.push(user.get('name'));
+            connected.push(false);
+          }
+          me.renderUserButtons(name, userName, image, connected, target);
+        }, function () {
+          window.console.error(arguments);
+        });
         return true;
       }
       jsonImgData = jsonImgData.response[0].data;
@@ -301,8 +307,8 @@
       });
       this.renderUserButtons(name, userName, image, connected, target);
     },
-    
-    renderUserButtons: function(name, userName, image, connected, target){
+
+    renderUserButtons: function (name, userName, image, connected, target) {
       var i;
       for (i = 0; i < name.length; i++) {
         target.createComponent({

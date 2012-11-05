@@ -19,7 +19,7 @@
     properties: [
 <#list data.properties as property>
   <#if property.columnName??>
-     '${property.name}'<#if property_has_next>,</#if>
+     '${property.name}',
   </#if>
 </#list>
      '_identifier',
@@ -28,7 +28,7 @@
     propertyMap: {
 <#list data.properties as property>
   <#if property.columnName??>
-     '${property.name}': '${property.columnName?lower_case}'<#if property_has_next>,</#if>
+     '${property.name}': '${property.columnName?lower_case}',
   </#if>
 </#list>
      '_identifier': '_identifier',

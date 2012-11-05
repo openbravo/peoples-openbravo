@@ -15,8 +15,13 @@ import org.openbravo.retail.posterminal.ProcessHQLQuery;
 public class CashMgmtPayments extends ProcessHQLQuery {
 
   @Override
+  protected boolean isAdminMode() {
+    return true;
+  }
+
+  @Override
   protected String getQuery(JSONObject jsonsent) throws JSONException {
-    return "select p as payment, p.paymentMethod.allowdeposits as allowdeposits, p.paymentMethod.allowdrops as allowdrops, c_currency_rate(p.financialAccount.currency, p.obposApplications.organization.currency, null, null) as rate, p.financialAccount.currency.iSOCode as isocode from OBPOS_App_Payment as p "
+    return "select p as payment, p.paymentMethod.allowdeposits as allowdeposits, p.paymentMethod.allowdrops as allowdrops, c_currency_rate(p.financialAccount.currency, p.obposApplications.organization.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id) as rate, p.financialAccount.currency.iSOCode as isocode from OBPOS_App_Payment as p "
         + "where obposApplications.id = :pos and (p.paymentMethod.allowdeposits=true or p.paymentMethod.allowdrops=true) order by p.commercialName";
   }
 }

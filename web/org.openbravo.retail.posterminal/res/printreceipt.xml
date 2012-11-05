@@ -40,24 +40,39 @@
     <line></line>
     <line>
       <text align ="left" length="21"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LineItem'))%></text>
-      <text align ="center" length="5">#</text>
-      <text align ="left" length="8"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LinePrice'))%></text>
-      <text align ="left" length="8"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LineTotal'))%></text>
+      <text align ="right" length="5">#</text>
+      <text align ="right" length="8"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LinePrice'))%></text>
+      <text align ="right" length="8"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LineTotal'))%></text>
     </line>
     <line>
       <text>------------------------------------------</text>
     </line>
     <% 
-      var lines = order.get('lines');
+      var lines = order.get('lines'), line, promotions;
       for (var i = 0; i < lines.length; i++) {
+        line = lines.at(i);
     %>
       <line>
-        <text align ="left" length="21"><%= lines.at(i).get('product').get('_identifier') %></text>
-        <text align ="center" length="5"><%= lines.at(i).printQty() %></text>
-        <text align ="left" length="8"><%= lines.at(i).printPrice() %></text>
-        <text align ="left" length="8"><%= lines.at(i).printGross() %></text>
+        <text align ="left" length="21"><%= line.get('product').get('_identifier') %></text>
+        <text align ="right" length="5"><%= line.printQty() %></text>
+        <text align ="right" length="8"><%= line.printPrice() %></text>
+        <text align ="right" length="8"><%= line.printGross() %></text>
       </line>
     <%
+        promotions = line.get('promotions');
+        if (promotions){
+          promotions.forEach(function(p) {
+            if (!p.hidden) {
+            %>
+          <line>
+            <text align="left" length="2">--</text>
+            <text align="left" length="32"><%= p.name %></text>
+            <text align="right" length="8"><%= OB.I18N.formatCurrency(-p.amt) %></text>
+          </line>
+          <%
+            }
+          });
+        }
       }
     %>
     <line></line>

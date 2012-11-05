@@ -36,9 +36,11 @@ import org.openbravo.model.ad.access.OrderLineTax;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.invoice.InvoiceLine;
+import org.openbravo.model.common.invoice.InvoiceLineOffer;
 import org.openbravo.model.common.invoice.InvoiceTax;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
+import org.openbravo.model.common.order.OrderLineOffer;
 import org.openbravo.model.financialmgmt.payment.FIN_OrigPaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
@@ -193,6 +195,7 @@ public class OrderGroupingProcessor {
         FIN_PaymentSchedule.class);
     paymentScheduleInvoice.setCurrency(invoice.getCurrency());
     paymentScheduleInvoice.setInvoice(invoice);
+    paymentScheduleInvoice.setOrganization(invoice.getOrganization());
     paymentScheduleInvoice.setFinPaymentmethod(invoice.getPaymentMethod());
     paymentScheduleInvoice.setAmount(BigDecimal.ZERO);
     paymentScheduleInvoice.setOutstandingAmount(BigDecimal.ZERO);
@@ -214,6 +217,7 @@ public class OrderGroupingProcessor {
         Fin_OrigPaymentSchedule.class);
     origPaymentSchedule.setCurrency(invoice.getCurrency());
     origPaymentSchedule.setInvoice(invoice);
+    origPaymentSchedule.setOrganization(invoice.getOrganization());
     origPaymentSchedule.setPaymentMethod(invoice.getPaymentMethod());
     origPaymentSchedule.setAmount(BigDecimal.ZERO);
     origPaymentSchedule.setDueDate(invoice.getOrderDate());
@@ -291,6 +295,16 @@ public class OrderGroupingProcessor {
 
     orderLine.setInvoicedQuantity(orderLine.getOrderedQuantity());
 
+    // Promotions. Loading all together as there shoudn't be many promotions per line
+    List<OrderLineOffer> promotions = orderLine.getOrderLineOfferList();
+    for (OrderLineOffer orderLinePromotion : promotions) {
+      InvoiceLineOffer promotion = OBProvider.getInstance().get(InvoiceLineOffer.class);
+      copyObject(orderLinePromotion, promotion);
+
+      promotion.setInvoiceLine(invoiceLine);
+      invoiceLine.getInvoiceLineOfferList().add(promotion);
+    }
+
     return invoiceLine;
   }
 
@@ -329,6 +343,7 @@ public class OrderGroupingProcessor {
     invoice.setPartnerAddress(bp.getBusinessPartnerLocationList().get(0));
     invoice.setCurrency(firstLine.getCurrency());
     invoice.setDocumentNo(null);
+    invoice.setOrganization(terminal.getOrganization());
     invoice.setSalesTransaction(true);
     invoice.setDocumentStatus("CO");
     invoice.setDocumentAction("RE");
@@ -357,6 +372,7 @@ public class OrderGroupingProcessor {
     invoice.setCurrency(firstLine.getCurrency());
     invoice.setDocumentNo(null);
     invoice.setSalesTransaction(true);
+    invoice.setOrganization(terminal.getOrganization());
     invoice.setDocumentStatus("CO");
     invoice.setDocumentAction("RE");
     invoice.setAPRMProcessinvoice("RE");
@@ -402,6 +418,17 @@ public class OrderGroupingProcessor {
 
     paymentSchedule.setPaidAmount(paymentSchedule.getAmount());
     origPaymentSchedule.setAmount(paymentSchedule.getAmount());
+
+    // Update customer credit
+
+    BigDecimal total = invoice.getGrandTotalAmount();
+
+    if (!invoice.getCurrency().equals(invoice.getBusinessPartner().getPriceList().getCurrency())) {
+      // We need to convert the total taking into account the currency difference
+      total = OrderLoader.convertCurrencyInvoice(invoice);
+    }
+    invoice.getBusinessPartner().setCreditUsed(
+        invoice.getBusinessPartner().getCreditUsed().add(total));
 
     OBDal.getInstance().flush();
     log.debug("Finishing invoice: " + (System.currentTimeMillis() - tf));

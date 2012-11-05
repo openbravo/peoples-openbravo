@@ -1,5 +1,3 @@
-/*global enyo */
-
 /*
  ************************************************************************************
  * Copyright (C) 2012 Openbravo S.L.U.
@@ -8,6 +6,8 @@
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
+
+/*global enyo */
 
 enyo.kind({
   name: 'OB.UI.SearchProductHeader',
@@ -58,7 +58,7 @@ enyo.kind({
         style: 'width: 100%',
         renderHeader: enyo.kind({
           kind: 'enyo.Option',
-          initComponents: function() {
+          initComponents: function () {
             this.inherited(arguments);
             this.setValue('__all__');
             this.setContent(OB.I18N.getLabel('OBPOS_SearchAllCategories'));
@@ -66,7 +66,7 @@ enyo.kind({
         }),
         renderLine: enyo.kind({
           kind: 'enyo.Option',
-          initComponents: function() {
+          initComponents: function () {
             this.inherited(arguments);
             this.setValue(this.model.get('id'));
             this.setContent(this.model.get('_identifier'));
@@ -76,16 +76,16 @@ enyo.kind({
       }]
     }]
   }],
-  setHeaderCollection: function(valueToSet){
+  setHeaderCollection: function (valueToSet) {
     this.$.productcategory.setCollection(valueToSet);
   },
-  searchAction: function() {
+  searchAction: function () {
     this.doSearchAction({
       productCat: this.$.productcategory.getValue(),
       productName: this.$.productname.getValue()
     });
   },
-  clearAction: function() {
+  clearAction: function () {
     this.$.productname.setValue('');
     this.$.productcategory.setSelected(0);
     this.doClearAction();
@@ -118,7 +118,7 @@ enyo.kind({
             components: [{
               kind: 'OB.UI.ScrollableTable',
               name: 'products',
-              scrollAreaMaxHeight: '500px',
+              scrollAreaMaxHeight: '482px',
               renderHeader: 'OB.UI.SearchProductHeader',
               renderEmpty: 'OB.UI.RenderEmpty',
               renderLine: 'OB.UI.RenderProduct'
@@ -128,7 +128,7 @@ enyo.kind({
       }]
     }]
   }],
-  init: function() {
+  init: function () {
     var me = this;
     this.inherited(arguments);
     this.categories = new OB.Collection.ProductCategoryList();
@@ -150,7 +150,7 @@ enyo.kind({
       }
     }
 
-    this.products.on('click', function(model) {
+    this.products.on('click', function (model) {
       this.doAddProduct({
         product: model
       });
@@ -158,29 +158,29 @@ enyo.kind({
 
     OB.Dal.find(OB.Model.ProductCategory, null, successCallbackCategories, errorCallback, this);
   },
-  receiptChanged: function() {
-    this.receipt.on('clear', function() {
+  receiptChanged: function () {
+    this.receipt.on('clear', function () {
       this.$.products.$.theader.$.searchProductHeader.$.productname.setContent('');
       this.$.products.$.theader.$.searchProductHeader.$.productcategory.setContent('');
       //A filter should be set before show products. -> Big data!!
       //this.products.exec({priceListVersion: OB.POS.modelterminal.get('pricelistversion').id, product: {}});
     }, this);
   },
-  clearAction: function(inSender, params) {
+  clearAction: function (inSender, params) {
     this.products.reset();
   },
-  searchAction: function(inSender, params) {
+  searchAction: function (inSender, params) {
     var criteria = {},
         me = this;
 
     function successCallbackPrices(dataPrices, dataProducts) {
       if (dataPrices) {
-        enyo.forEach(dataPrices.models, function(currentPrice) {
+        enyo.forEach(dataPrices.models, function (currentPrice) {
           if (dataProducts.get(currentPrice.get('product'))) {
             dataProducts.get(currentPrice.get('product')).set('price', currentPrice);
           }
         });
-        enyo.forEach(dataProducts.models, function(currentProd) {
+        enyo.forEach(dataProducts.models, function (currentProd) {
           if (currentProd.get('price') === undefined) {
             var price = new OB.Model.ProductPrice({
               'standardPrice': 0
@@ -191,7 +191,7 @@ enyo.kind({
         });
       } else {
         OB.UTIL.showWarning("OBDAL No prices found for products");
-        enyo.forEach(dataProducts.models, function(currentProd) {
+        enyo.forEach(dataProducts.models, function (currentProd) {
           var price = new OB.Model.ProductPrice({
             'standardPrice': 0
           });

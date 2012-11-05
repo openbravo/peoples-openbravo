@@ -45,14 +45,11 @@ enyo.kind({
     }, {
       classes: 'span6',
       components: [{
-        classes: 'span6',
-        components: [{
-          kind: 'OB.OBPOSCashUp.UI.CashUpInfo',
-          name: 'cashUpInfo'
-        }, {
-          kind: 'OB.OBPOSCashUp.UI.CashUpKeyboard',
-          name: 'cashUpKeyboard'
-        }]
+        kind: 'OB.OBPOSCashUp.UI.CashUpInfo',
+        name: 'cashUpInfo'
+      }, {
+        kind: 'OB.OBPOSCashUp.UI.CashUpKeyboard',
+        name: 'cashUpKeyboard'
       }]
     }, {
       kind: 'OB.UI.ModalCancel',
@@ -71,20 +68,20 @@ enyo.kind({
       myId: 'modalPendingToProcess'
     }]
   }],
-  init: function() {
+  init: function () {
     this.inherited(arguments);
 
     this.$.cashUpInfo.setModel(this.model);
 
     //step 0
-    this.model.on('change:pendingOrdersToProcess', function(model) {
+    this.model.on('change:pendingOrdersToProcess', function (model) {
       $('#modalprocessreceipts').modal('show');
     }, this);
 
 
     // Pending Orders - Step 1
     this.$.listPendingReceipts.setCollection(this.model.get('orderlist'));
-    this.model.get('orderlist').on('all', function() {
+    this.model.get('orderlist').on('all', function () {
       this.$.cashUpInfo.refresh();
     }, this);
 
@@ -94,28 +91,28 @@ enyo.kind({
     this.$.listPaymentMethods.$.diference.setTotal(OB.DEC.sub(0, this.model.get('totalExpected')));
     this.$.cashUpKeyboard.setPayments(this.model.getData('DataCloseCashPaymentMethod'));
 
-    this.model.on('change:totalCounted', function() {
+    this.model.on('change:totalCounted', function () {
       this.$.listPaymentMethods.$.diference.setTotal(OB.DEC.sub(this.model.get('totalCounted'), this.model.get('totalExpected')));
       this.model.set("totalDifference", OB.DEC.sub(this.model.get('totalCounted'), this.model.get('totalExpected')));
       this.waterfall('onAnyCounted');
       this.refresh();
     }, this);
 
-    this.model.on('change:step', function(model) {
+    this.model.on('change:step', function (model) {
       this.refresh();
     }, this);
 
     // Cash to keep - Step 3.
     this.$.cashToKeep.setPaymentToKeep(this.model.get('paymentList').at(this.model.get('stepOfStep3')));
 
-    this.model.on('change:stepOfStep3', function(model) {
+    this.model.on('change:stepOfStep3', function (model) {
       this.$.cashToKeep.disableSelection();
       this.$.cashToKeep.setPaymentToKeep(this.model.get('paymentList').at(this.model.get('stepOfStep3')));
       this.refresh();
     }, this);
-    this.model.get('paymentList').at(this.model.get('stepOfStep3')).on('change:foreignCounted', function(){
+    this.model.get('paymentList').at(this.model.get('stepOfStep3')).on('change:foreignCounted', function () {
       this.$.cashToKeep.$.formkeep.renderBody(this.model.get('paymentList').at(this.model.get('stepOfStep3')));
-    },this);
+    }, this);
     // Cash Up Report - Step 4
     //this data doesn't changes
     this.$.postPrintClose.setModel(this.model.get('cashUpReport').at(0));
@@ -123,22 +120,22 @@ enyo.kind({
     //This data changed when money is counted
     //difference is calculated after counted
     this.$.postPrintClose.setSummary(this.model.getCountCashSummary());
-    this.model.on('change:totalDifference', function(model) {
+    this.model.on('change:totalDifference', function (model) {
       this.$.postPrintClose.setSummary(this.model.getCountCashSummary());
     }, this);
 
     //finished
-    this.model.on('change:finished', function() {
+    this.model.on('change:finished', function () {
       $('#modalFinished').modal('show');
     }, this);
     //finishedWrongly
-    this.model.on('change:finishedWrongly', function() {
+    this.model.on('change:finishedWrongly', function () {
       $('#modalFinishedWrongly').modal('show');
     }, this);
 
     this.refresh();
   },
-  refresh: function() {
+  refresh: function () {
     this.$.listPendingReceipts.setShowing(this.model.showPendingOrdersList());
     this.$.listPaymentMethods.setShowing(this.model.showPaymentMethodList());
     this.$.cashToKeep.setShowing(this.model.showCashToKeep());
@@ -147,7 +144,7 @@ enyo.kind({
 
     this.$.cashUpInfo.refresh();
   },
-  changeStep: function(inSender, inEvent) {
+  changeStep: function (inSender, inEvent) {
     var nextStep, nextStepOfStep3;
     if (this.model.get('step') === 4 && inEvent.originator.stepCount > 0) {
       //send cash up to the server
@@ -222,14 +219,14 @@ enyo.kind({
       }
     }
   },
-  countAllOK: function(inSender, inEvent) {
+  countAllOK: function (inSender, inEvent) {
     this.model.countAll();
     this.$.cashUpInfo.refresh();
   },
-  lineEditCount: function(sender, event) {
+  lineEditCount: function (sender, event) {
     this.$.cashUpKeyboard.setStatus(event.originator.model.get('_id'));
   },
-  paymentMethodKept: function(inSender, event) {
+  paymentMethodKept: function (inSender, event) {
     var validationResult = this.model.validateCashKeep(event.qtyToKeep);
     if (validationResult.result) {
       this.model.get('paymentList').at(this.model.get('stepOfStep3')).set('qtyToKeep', event.qtyToKeep);
@@ -238,7 +235,7 @@ enyo.kind({
     }
     this.$.cashUpInfo.refresh();
   },
-  resetQtyToKeep: function(inSender, event) {
+  resetQtyToKeep: function (inSender, event) {
     this.model.get('paymentList').at(this.model.get('stepOfStep3')).set('qtyToKeep', null);
     this.$.cashUpInfo.refresh();
   }

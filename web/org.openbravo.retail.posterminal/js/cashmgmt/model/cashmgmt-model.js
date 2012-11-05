@@ -1,5 +1,3 @@
-/*global OB, Backbone */
-
 /*
  ************************************************************************************
  * Copyright (C) 2012 Openbravo S.L.U.
@@ -9,6 +7,7 @@
  ************************************************************************************
  */
 
+/*global OB, Backbone */
 
 OB.OBPOSCashMgmt = OB.OBPOSCashMgmt || {};
 OB.OBPOSCashMgmt.Model = OB.OBPOSCashMgmt.Model || {};
@@ -43,18 +42,19 @@ OB.OBPOSCashMgmt.Model.DepositEvents = Backbone.Model.extend({
 // Window model
 OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
   models: [OB.OBPOSCashMgmt.Model.DepositsDrops, OB.OBPOSCashMgmt.Model.CashMgmtPaymentMethod, OB.OBPOSCashMgmt.Model.DropEvents, OB.OBPOSCashMgmt.Model.DepositEvents],
-  init: function() {
+  init: function () {
     var depList = this.getData('DataDepositsDrops');
 
     this.depsdropstosend = new Backbone.Collection();
 
-    this.depsdropstosend.on('paymentDone', function(model, p) {
+    this.depsdropstosend.on('paymentDone', function (model, p) {
       // Payment done locally, saving it in local list
-      var deposits, error = false, tmp;
+      var deposits, error = false,
+          tmp;
 
-      depList.each(function(dep) {
+      depList.each(function (dep) {
         if (p.destinationKey === dep.get('paySearchKey')) {
-          error = (p.type === 'drop' && OB.DEC.sub(dep.get('total'), OB.DEC.mul(p.amount,p.rate)) < 0);
+          error = (p.type === 'drop' && OB.DEC.sub(dep.get('total'), OB.DEC.mul(p.amount, p.rate)) < 0);
           deposits = dep.get('listdepositsdrops');
           tmp = dep;
         }
@@ -72,7 +72,7 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
         name: p.destinationKey,
         user: OB.POS.modelterminal.get('context').user._identifier,
         time: new Date(),
-        origAmount: OB.DEC.mul(p.amount,p.rate),
+        origAmount: OB.DEC.mul(p.amount, p.rate),
         isocode: p.isocode
       };
 
@@ -94,13 +94,13 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
         reasonId: model.get('id'),
         user: OB.POS.modelterminal.get('context').user._identifier,
         time: new Date().toString().substring(16, 21),
-        origAmount: OB.DEC.mul(p.amount,p.rate),
+        origAmount: OB.DEC.mul(p.amount, p.rate),
         isocode: p.isocode
       });
       tmp.trigger('change');
     }, this);
 
-    this.depsdropstosend.on('makeDeposits', function() {
+    this.depsdropstosend.on('makeDeposits', function () {
       // Done button has been clicked
       var process = new OB.DS.Process('org.openbravo.retail.posterminal.ProcessCashMgmt'),
           me = this;
@@ -116,7 +116,7 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
       // Sending drops/deposits to backend
       process.exec({
         depsdropstosend: this.depsdropstosend.toJSON()
-      }, function(data, message) {
+      }, function (data, message) {
         if (data && data.exception) {
           OB.UTIL.showLoading(false);
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorDropDep'));
@@ -128,7 +128,7 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
         }
       });
     }, this);
-    
+
     this.printCashMgmt = new OB.OBPOSCashMgmt.Print.CashMgmt();
   }
 });

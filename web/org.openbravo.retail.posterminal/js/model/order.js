@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global B,_,Backbone,localStorage */
+/*global B,_,moment,Backbone,localStorage */
 
 (function() {
   // Sales.OrderLine Model
@@ -32,6 +32,7 @@
         this.set('price', attributes.price);
         this.set('priceList', attributes.priceList);
         this.set('gross', attributes.gross);
+        this.set('promotions', attributes.promotions);
         if (attributes.product && attributes.product.price) {
           this.set('grossListPrice', attributes.product.price.standardPrice);
         }
@@ -42,8 +43,8 @@
       return this.get('qty').toString();
     },
 
-    printPrice: function() {
-      return OB.I18N.formatCurrency(this.get('price'));
+    printPrice: function () {
+      return OB.I18N.formatCurrency(this.get('_price') || this.get('price'));
     },
 
     printDiscount: function() {
@@ -63,8 +64,21 @@
       return this.get('gross');
     },
 
-    printGross: function() {
-      return OB.I18N.formatCurrency(this.getGross());
+    printGross: function () {
+      return OB.I18N.formatCurrency(this.get('_gross') || this.getGross());
+    },
+
+    stopApplyingPromotions: function () {
+      var promotions = this.get('promotions'),
+          i;
+      if (this.get('promotions')) {
+        for (i = 0; i < promotions.length; i++) {
+          if (!promotions[i].applyNext) {
+            return true;
+          }
+        }
+      }
+      return false;
     }
   });
 
@@ -161,6 +175,7 @@
         this.set('payment', attributes.payment);
         this.set('change', attributes.change);
         this.set('gross', attributes.gross);
+        this.trigger('calculategross');
         this.set('net', attributes.net);
         this.set('taxes', attributes.taxes);
         this.set('hasbeenpaid', attributes.hasbeenpaid);
@@ -201,6 +216,56 @@
       this.save();
     },
 
+    prepareToSend: function (callback) {
+      this.adjustPrices();
+      this.calculateTaxes(callback);
+    },
+
+    adjustPrices: function () {
+      // Apply calculated discounts and promotions to price and gross prices
+      // so ERP saves them in the proper place
+      this.get('lines').each(function (line) {
+        var price = line.get('price'),
+            gross = line.get('gross'),
+            totalDiscount = 0,
+            grossListPrice, grossUnitPrice, discountPercentage, base;
+
+        // Calculate inline discount: discount applied before promotions
+        if (line.get('priceList') !== price) {
+          grossListPrice = new BigDecimal(line.get('priceList').toString());
+          grossUnitPrice = new BigDecimal(price.toString());
+          discountPercentage = grossListPrice.subtract(grossUnitPrice).multiply(new BigDecimal('100')).divide(grossListPrice, 2, BigDecimal.prototype.ROUND_HALF_EVEN);
+          discountPercentage = parseFloat(discountPercentage.setScale(2, BigDecimal.prototype.ROUND_HALF_EVEN).toString(), 10);
+        } else {
+          discountPercentage = OB.DEC.Zero;
+        }
+        line.set({
+          discountPercentage: discountPercentage
+        }, {
+          silent: true
+        });
+
+        // Calculate prices after promotions
+        base = line.get('price');
+        _.forEach(line.get('promotions') || [], function (discount) {
+          var discountAmt = discount.actualAmt || discount.amt || 0;
+          discount.basePrice = base;
+          discount.unitDiscount = OB.DEC.div(discountAmt, line.get('qty'));
+          totalDiscount = OB.DEC.add(totalDiscount, discountAmt);
+          base = OB.DEC.sub(base, totalDiscount);
+        }, this);
+
+        gross = OB.DEC.sub(gross, totalDiscount);
+        price = OB.DEC.div(gross, line.get('qty'));
+
+        line.set({
+          grossUnitPrice: price,
+          lineGrossAmount: gross
+        }, {
+          silent: true
+        });
+      }, this);
+    },
     getTotal: function() {
       return this.getGross();
     },
@@ -209,11 +274,18 @@
       return OB.I18N.formatCurrency(this.getTotal());
     },
 
-    calculateGross: function() {
-      var gross = this.get('lines').reduce(function(memo, e) {
-        return OB.DEC.add(memo, e.getGross());
+    calculateGross: function () {
+      var gross = this.get('lines').reduce(function (memo, e) {
+        var grossLine = e.getGross();
+        if (e.get('promotions')) {
+          grossLine = e.get('promotions').reduce(function (memo, e) {
+            return OB.DEC.sub(memo, e.actualAmt || e.amt || 0);
+          }, grossLine);
+        }
+        return OB.DEC.add(memo, grossLine);
       }, OB.DEC.Zero);
       this.set('gross', gross);
+      this.trigger('calculategross');
     },
 
     getGross: function() {
@@ -240,7 +312,7 @@
       var total = this.getTotal();
       var pay = this.getPayment();
       return {
-        'done': (OB.DEC.compare(total) > 0 && OB.DEC.compare(OB.DEC.sub(pay, total)) >= 0),
+        'done': (this.get('lines').length > 0 && OB.DEC.compare(total) >= 0 && OB.DEC.compare(OB.DEC.sub(pay, total)) >= 0),
         'total': OB.I18N.formatCurrency(total),
         'pending': OB.DEC.compare(OB.DEC.sub(pay, total)) >= 0 ? OB.I18N.formatCurrency(OB.DEC.Zero) : OB.I18N.formatCurrency(OB.DEC.sub(total, pay)),
         'change': OB.DEC.compare(this.getChange()) > 0 ? OB.I18N.formatCurrency(this.getChange()) : null,
@@ -283,6 +355,7 @@
       this.set('payment', OB.DEC.Zero);
       this.set('change', OB.DEC.Zero);
       this.set('gross', OB.DEC.Zero);
+      this.trigger('calculategross');
       this.set('hasbeenpaid', 'N');
       this.set('isbeingprocessed', 'N');
       this.set('description', '');
@@ -295,8 +368,14 @@
     clearWith: function(_order) {
       var me = this,
           undf;
-      _.each(_.keys(_order.attributes), function(key) {
-        if (_order.get(key) !== undf) {
+      this.set('isPaid', _order.get('isPaid'));
+      if (!_order.get('isEditable')) {
+        // keeping it no editable as much as possible, to prevent
+        // modifications to trigger editable events incorrectly
+        this.set('isEditable', _order.get('isEditable'));
+      }
+      _.each(_.keys(_order.attributes), function (key) {
+        if (key !== 'isEditable' && _order.get(key) !== undf) {
           if (_order.get(key) === null) {
             me.set(key, null);
           } else if (_order.get(key).at) {
@@ -311,7 +390,8 @@
           }
         }
       });
-
+      this.set('isEditable', _order.get('isEditable'));
+      this.trigger('calculategross');
       this.trigger('change');
       this.trigger('clear');
     },
@@ -335,11 +415,14 @@
       if (OB.DEC.isNumber(qty)) {
         var oldqty = line.get('qty');
         if (OB.DEC.compare(qty) > 0) {
+          if (line.get('product').get('groupProduct') === false) {
+            this.addProduct(line.get('product'));
+            return true;
+          } else {
           var me = this;
           // sets the new quantity
           line.set('qty', qty);
           line.calculateGross();
-          this.calculateGross();
           // sets the undo action
           this.set('undo', {
             text: text || OB.I18N.getLabel('OBPOS_SetUnits', [line.get('qty'), line.get('product').get('_identifier')]),
@@ -348,10 +431,10 @@
             undo: function() {
               line.set('qty', oldqty);
               line.calculateGross();
-              me.calculateGross();
               me.set('undo', null);
             }
           });
+          }
         } else {
           this.deleteLine(line);
         }
@@ -369,7 +452,6 @@
           // sets the new price
           line.set('price', price);
           line.calculateGross();
-          this.calculateGross();
           // sets the undo action
           this.set('undo', {
             text: OB.I18N.getLabel('OBPOS_SetPrice', [line.printPrice(), line.get('product').get('_identifier')]),
@@ -378,7 +460,6 @@
             undo: function() {
               line.set('price', oldprice);
               line.calculateGross();
-              me.calculateGross();
               me.set('undo', null);
             }
           });
@@ -399,7 +480,6 @@
       var index = this.get('lines').indexOf(line);
       // remove the line
       this.get('lines').remove(line);
-      this.calculateGross();
       // set the undo action
       this.set('undo', {
         text: OB.I18N.getLabel('OBPOS_DeleteLine', [line.get('qty'), line.get('product').get('_identifier')]),
@@ -433,12 +513,16 @@
           }
         });
       } else {
-        var line = this.get('lines').find(function(l) {
-          return l.get('product').id === p.id;
-        });
-        if (line) {
-          this.addUnit(line);
-          line.trigger('selected', line);
+        if (p.get('groupProduct')) {
+          var line = this.get('lines').find(function (l) {
+            return l.get('product').id === p.id;
+          });
+          if (line) {
+            this.addUnit(line);
+            line.trigger('selected', line);
+          } else {
+            this.createLine(p, 1);
+          }
         } else {
           this.createLine(p, 1);
         }
@@ -446,7 +530,90 @@
       this.save();
     },
 
-    createLine: function(p, units) {
+    addPromotion: function (line, rule, discount) {
+      var promotions = line.get('promotions') || [],
+          disc = {},
+          i, replaced = false;
+
+      disc.name = discount.name || rule.get('printName') || rule.get('name');
+      disc.ruleId = rule.id;
+      disc.amt = discount.amt;
+      disc.actualAmt = discount.actualAmt;
+
+      disc.hidden = discount.hidden === true || (discount.actualAmt && !disc.amt);
+
+      if (disc.hidden) {
+        disc.displayedTotalAmount = 0;
+      } else {
+        disc.displayedTotalAmount = disc.amt || discount.actualAmt;
+      }
+
+      disc.applyNext = rule.get('applyNext');
+      disc._idx = rule.get('_idx');
+
+      for (i = 0; i < promotions.length; i++) {
+        if (disc._idx < promotions[i]._idx) {
+          // Trying to apply promotions in incorrect order: recalculate whole line again
+          OB.Model.Discounts.applyPromotions(this, line);
+          return;
+        }
+      }
+
+      for (i = 0; i < promotions.length; i++) {
+        if (promotions[i].ruleId === rule.id) {
+          promotions[i] = disc;
+          replaced = true;
+          break;
+        }
+      }
+
+      if (!replaced) {
+        promotions.push(disc);
+      }
+
+      line.set('promotions', promotions);
+      line.trigger('change');
+      this.save();
+    },
+
+    removePromotion: function (line, rule) {
+      var promotions = line.get('promotions'),
+          ruleId = rule.id,
+          removed = false,
+          res = [],
+          i;
+      if (!promotions) {
+        return;
+      }
+
+      for (i = 0; i < promotions.length; i++) {
+        if (promotions[i].ruleId === rule.id) {
+          removed = true;
+        } else {
+          res.push(promotions[i]);
+        }
+      }
+
+      if (removed) {
+        line.set('promotions', res);
+        line.trigger('change');
+        this.save();
+
+        // Recalculate promotions for all lines affected by this same rule,
+        // because this rule could have prevented other ones to be applied
+        this.get('lines').forEach(function (ln) {
+          if (ln.get('promotionCandidates')) {
+            ln.get('promotionCandidates').forEach(function (candidateRule) {
+              if (candidateRule === ruleId) {
+                OB.Model.Discounts.applyPromotions(this, line);
+              }
+            }, this);
+          }
+        }, this);
+      }
+    },
+
+    createLine: function (p, units) {
       var me = this;
       var newline = new OrderLine({
         product: p,
@@ -459,14 +626,12 @@
 
       // add the created line
       this.get('lines').add(newline);
-      this.calculateGross();
       // set the undo action
       this.set('undo', {
         text: OB.I18N.getLabel('OBPOS_AddLine', [newline.get('qty'), newline.get('product').get('_identifier')]),
         line: newline,
         undo: function() {
           me.get('lines').remove(newline);
-          me.calculateGross();
           me.set('undo', null);
         }
       });
@@ -499,7 +664,15 @@
         this.set('documentType', OB.POS.modelterminal.get('terminal').documentTypeForReturns);
         this.set('orderType', 1); // 0: Sales order, 1: Return order
         this.save();
+
+        // remove promotions
+        OB.Model.Discounts.applyPromotions(this);
       }
+    },
+
+    shouldApplyPromotions: function () {
+      // Do not apply promotions in return tickets
+      return this.get('orderType') !== 1;
     },
 
     setOrderInvoice: function() {
@@ -629,11 +802,6 @@ alert('reject!!')
     addPayment: function(payment) {
       var i, max, p;
 
-      if (OB.DEC.compare(this.getTotal()) === 0) {
-        alert(OB.I18N.getLabel('OBPOS_MsgPaymentAmountZero'));
-        return;
-      }
-
       if (!OB.DEC.isNumber(payment.get('amount'))) {
         alert(OB.I18N.getLabel('OBPOS_MsgPaymentAmountError'));
         return;
@@ -733,7 +901,7 @@ alert('reject!!')
     newOrder: function() {
       var order = new Order(),
           me = this,
-          documentseq, documentseqstr;
+          documentseq, documentseqstr; 
 
       order.set('client', OB.POS.modelterminal.get('terminal').client);
       order.set('organization', OB.POS.modelterminal.get('terminal').organization);
@@ -801,6 +969,7 @@ alert('reject!!')
         order.set('bp', bp); 
       }, function(){console.error(args);})
       order.set('gross', model.totalamount);
+      order.trigger('calculategross');
       order.set('salesRepresentative$_identifier', model.salesrepresentative_identifier);
 
       _.each(model.receiptLines, function(iter) {
@@ -811,7 +980,8 @@ alert('reject!!')
             uOM: iter.uOM,
             qty: OB.DEC.number(iter.quantity),
             price: OB.DEC.number(iter.unitPrice),
-            priceList: OB.DEC.number(iter.unitPrice)
+            priceList: OB.DEC.number(iter.unitPrice),
+            promotions: iter.promotions
           });
           newline.set('gross', iter.linegrossamount);
           newline.set('grossListPrice', iter.unitPrice);
@@ -824,7 +994,7 @@ alert('reject!!')
           }
         })
       });
-      order.set('orderDate', model.orderDate.toString().substring(0, 10));
+      order.set('orderDate', moment(model.orderDate.toString(), "YYYY-MM-DD").toDate());
       //order.set('payments', model.receiptPayments);
       payments = new PaymentLineList();
       _.each(model.receiptPayments, function(iter) {

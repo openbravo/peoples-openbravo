@@ -16,7 +16,7 @@ enyo.kind({
     onmouseout: 'mouseOverOut'
   },
   //TODO: support windows 7  setTimeout(function() { me.$el.removeClass('btn-down'); }, 125);
-  mouseOverOut: function(sender, event) {
+  mouseOverOut: function (sender, event) {
 
     this.addRemoveClass('btn-over', event.type === 'mouseover');
   }
@@ -64,7 +64,7 @@ enyo.kind({
         content: '&times;'
       }]
     }, {
-      tag: 'h3',
+      style: 'line-height: 27px; font-size: 18px; font-weight: bold;',
       name: 'divheader'
     }]
   }, {
@@ -73,7 +73,7 @@ enyo.kind({
     classes: 'modal-header'
   }],
   //TODO: maxheight: null,
-  initComponents: function() {
+  initComponents: function () {
     this.inherited(arguments);
     if (this.modalClass) {
       this.addClass(this.modalClass);
@@ -87,13 +87,13 @@ enyo.kind({
     this.$.body.createComponent(this.body);
   },
 
-  render: function() {
+  render: function () {
     this.inherited(arguments);
     OB.UTIL.adjustModalPosition($(this.node));
     OB.UTIL.focusInModal($(this.node));
   },
 
-  makeId: function() {
+  makeId: function () {
     return this.myId || this.inherited(arguments);
   }
 });
@@ -101,7 +101,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.RenderEmpty',
   style: 'border-bottom: 1px solid #cccccc; padding: 20px; text-align: center; font-weight: bold; font-size: 30px; color: #cccccc',
-  initComponents: function() {
+  initComponents: function () {
     this.inherited(arguments);
     this.setContent(this.label || OB.I18N.getLabel('OBPOS_SearchNoResults'));
   }
@@ -113,7 +113,7 @@ enyo.kind({
   kind: 'OB.UI.Button',
   classes: 'btnselect',
 
-  tap: function() {
+  tap: function () {
     this.model.trigger('selected', this.model);
     this.model.trigger('click', this.model);
     $('#' + this.id).parents('.modal').filter(':first').modal('hide');
@@ -128,7 +128,7 @@ enyo.kind({
     href: '#modalCancel',
     'data-toggle': 'modal'
   },
-  initComponents: function() {
+  initComponents: function () {
     this.inherited(arguments);
     this.setContent(this.label || OB.I18N.getLabel('OBPOS_LblCancel'));
   }
@@ -139,7 +139,7 @@ enyo.kind({
   tag: 'button',
   classes: 'btn btn-radio',
   style: 'padding: 0px 0px 0px 40px; margin: 10px;',
-  initComponents: function() {
+  initComponents: function () {
     this.inherited(arguments);
   }
 });
@@ -151,7 +151,7 @@ enyo.kind({
   name: 'OB.UI.ToolbarButton',
   kind: 'OB.UI.RegularButton',
   classes: 'btnlink-toolbar',
-  initComponents: function() {
+  initComponents: function () {
     this.inherited(arguments);
     if (this.icon) {
       this.addClass(this.icon);
@@ -164,7 +164,7 @@ enyo.kind({
   tag: 'button',
   classes: 'btn-check',
   checked: false,
-  tap: function() {
+  tap: function () {
     this.checked = !this.checked;
     this.addRemoveClass('active', this.checked);
   }
@@ -175,14 +175,9 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.Button',
   name: 'OB.UI.ButtonTab',
-  attributes: {
-    'data-toggle': 'tab'
-  },
-  tabPanel: '#',
-  initComponents: function() {
+  initComponents: function () {
     this.inherited(arguments);
     this.addClass('btnlink btnlink-gray');
-    this.setAttribute('href', this.tabPanel);
     if (this.label) {
       this.createComponent({
         name: 'lbl',
@@ -203,16 +198,19 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ToolbarButtonTab',
   kind: 'OB.UI.ButtonTab',
-  attributes: {
-    'data-toggle': 'tab'
-  },
   events: {
     onTabChange: ''
   },
-  initComponents: function() {
+  initComponents: function () {
     this.inherited(arguments);
     this.addClass('btnlink-toolbar');
   }
+});
+
+
+enyo.kind({
+  name: 'OB.UI.TabPane',
+  classes: 'postab-pane'
 });
 
 
@@ -224,10 +222,10 @@ enyo.kind({
   style: 'display:none',
   bodyContentClass: 'modal-dialog-content-text',
   bodyButtonsClass: 'modal-dialog-content-buttons-container',
-  showDialog: function(){
+  showDialog: function () {
     $('#' + this.myId).modal('show');
   },
-  hideDialog: function(){
+  hideDialog: function () {
     $('#' + this.myId).modal('hide');
   },
   components: [{
@@ -248,7 +246,6 @@ enyo.kind({
       }]
     }, {
       name: 'header',
-      tag: 'h3',
       classes: 'modal-dialog-header-text'
     }, {
       tag: 'div',
@@ -263,24 +260,30 @@ enyo.kind({
       }]
     }]
   }],
-  rendered: function(){
+  rendered: function () {
     this.inherited(arguments);
-    
-    if (this.executeOnShown){
-      $('#' + this.myId).on('shown', {dialog: this}, this.executeOnShown);
+
+    if (this.executeOnShown) {
+      $('#' + this.myId).on('shown', {
+        dialog: this
+      }, this.executeOnShown);
     }
-    if (this.executeOnShow){
-      $('#' + this.myId).on('show', {dialog: this}, this.executeOnShow);
+    if (this.executeOnShow) {
+      $('#' + this.myId).on('show', {
+        dialog: this
+      }, this.executeOnShow);
     }
-    if (this.executeOnHide){
-      $('#' + this.myId).on('hide', {dialog: this}, this.executeOnHide);
+    if (this.executeOnHide) {
+      $('#' + this.myId).on('hide', {
+        dialog: this
+      }, this.executeOnHide);
     }
   },
-  
-  initComponents: function() {
+
+  initComponents: function () {
     this.inherited(arguments);
     this.$.header.setContent(this.header);
-    
+
     this.$.bodyParent.setStyle('max-height: ' + this.maxheight + ';');
 
     this.$.bodyContent.setClasses(this.bodyContentClass);
@@ -290,12 +293,12 @@ enyo.kind({
     this.$.bodyButtons.createComponent(this.bodyButtons);
   },
 
-  render: function() {
+  render: function () {
     this.inherited(arguments);
     OB.UTIL.adjustModalPosition($(this.node));
     OB.UTIL.focusInModal($(this.node));
   },
-  makeId: function() {
+  makeId: function () {
     return this.myId || this.inherited(arguments);
   }
 });
@@ -318,7 +321,7 @@ enyo.kind({
       href: '#'
     }
   }],
-  initComponents: function() {
+  initComponents: function () {
     this.inherited(arguments);
     this.$.lbl.setContent(this.label);
     if (this.permission && !OB.POS.modelterminal.hasPermission(this.permission)) {
@@ -336,11 +339,11 @@ enyo.kind({
       kind: 'OB.UI.AcceptDialogButton'
     }]
   },
-  show: function() {
+  show: function () {
     $('#' + this.myId).modal('show');
   },
   closeOnAcceptButton: true,
-  initComponents: function() {
+  initComponents: function () {
     this.inherited(arguments);
     this.$.bodyButtons.$.acceptDialogButton.dialogContainer = this;
 
@@ -352,7 +355,7 @@ enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   content: OB.I18N.getLabel('OBPOS_LblOk'),
   classes: 'btnlink btnlink-gray modal-dialog-content-button',
-  tap: function() {
+  tap: function () {
     if (this.dialogContainer.acceptCallback) {
       this.dialogContainer.acceptCallback();
     }
@@ -360,4 +363,14 @@ enyo.kind({
       $('#' + this.dialogContainer.getId()).modal('hide');
     }
   }
+});
+
+enyo.kind({
+  kind: 'OB.UI.Button',
+  name: 'OB.UI.CancelDialogButton',
+  attributes: {
+    'data-dismiss': 'modal'
+  },
+  classes: 'btnlink btnlink-gray modal-dialog-content-button',
+  content: OB.I18N.getLabel('OBPOS_LblCancel')
 });

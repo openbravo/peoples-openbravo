@@ -8,12 +8,58 @@
  */
 
 body {
+  margin: 0;
+  padding: 0;
+  line-height: 18px;
   font-family: "Segoe UI", "Lucida Sans", Helvetica, Arial, sans-serif;
   font-size: 16px;
 }
+
 input, button, select, textarea {
   font-family: "Segoe UI", "Lucida Sans", Helvetica, Arial, sans-serif;
   font-size: 16px;
+}
+
+input.error {
+  background-color: rgba(255, 0, 0);
+  background-color: rgba(255, 0, 0, 0.5);
+}
+
+button {
+  line-height: 18px;
+}
+
+ul {
+  list-style: none;
+  list-style-position: outside;
+  -webkit-margin-before: 0px;
+  -webkit-margin-after: 0px;
+  -webkit-margin-start: 0px;
+  -webkit-margin-end: 0px;
+  -webkit-padding-start: 0px;
+}
+
+/*subwindows*/
+div.subwindow {
+  background-color: #FFFFFF;
+}
+
+div.subwindowheadertext {
+  line-height: 27px;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+div.subwindow .subwindowheader {
+  padding: 9px 15px;  
+}
+
+div.subwindow .subwindowheadertext {
+
+}
+
+div.subwindow .subwindowheader .close>span:first-child {
+  font-size: 150%;
 }
 
 /*used by enyo.Scroller*/
@@ -88,11 +134,19 @@ input, button, select, textarea {
 .combo {
   height: 40px;
   background-color: white;
+  padding: 4px;
+  margin-bottom: 9px;
+  color: #555;
+  border: 1px solid #CCC;
 }
 
 .input {
   height: 30px;
   background-color: white;
+  padding: 4px;
+  margin-bottom: 9px;
+  color: #555;
+  border: 1px solid #CCC;
 }
 
 .POSLoadingCenteredBox {
@@ -122,6 +176,102 @@ input, button, select, textarea {
   height: 16px;
   margin: 0px auto;
   background-image: url('../img/loading-bar.gif');
+}
+
+.dropdown-menu {
+  display: none;
+}
+
+.hide {
+  display: none;
+}
+
+.row::before, .row::after {
+  display: table;
+  content: "";
+}
+
+.row-fluid::before, .row-fluid::after {
+  display: table;
+  content: "";
+}
+
+.pos-container {
+  margin: 0 auto;
+  max-width: 1200px;
+  padding: 0px 30px;
+}
+
+.postab-content {
+  width: 100%;
+}
+
+.postab-pane {
+  display: none;
+}
+
+.postab-pane.active {
+  display: block;
+}
+
+.span1 {
+  float: left;
+  width: 8.33%
+}
+
+.span2 {
+  float: left;
+  width: 16.66%
+}
+
+.span3 {
+  float: left;
+  width: 25%
+}
+
+.span4 {
+  float: left;
+  width: 33.33%
+}
+
+.span5 {
+  float: left;
+  width: 41.66%
+}
+
+.span6 {
+  float: left;
+  width: 50%
+}
+
+.span7 {
+  float: left;
+  width: 58.33%
+}
+
+.span8 {
+  float: left;
+  width: 66.66%
+}
+
+.span9 {
+  float: left;
+  width: 75%
+}
+
+.span10 {
+  float: left;
+  width: 83.33%
+}
+
+.span11 {
+  float: left;
+  width: 91.66%
+}
+
+.span12 {
+  float: left;
+  width: 100%
 }
 
 .btnlink-toolbar:after {
@@ -310,6 +460,7 @@ button.btnselect {
   background-color: #ffffff;
   position: relative;
   border: none;
+  margin: 0px;
   padding: 8px 10px 8px 10px;
   text-decoration: none;
   text-align: left;
@@ -391,6 +542,9 @@ div.btnlink {
 }
 .btn-icon-delete {
   background-image: url('../img/iconDelete.png');
+}
+.btn-icon-delete.paidticket {
+  background-image: url('../img/iconClearPaidTicket.png');
 }
 .btn-icon-print {
   background-image: url('../img/iconPrint.png');
@@ -607,7 +761,8 @@ div.modal-dialog-body {
   text-align: center;
 }
 
-h3.modal-dialog-header-text {
+div.modal-dialog-header-text {
+  line-height: 27px;
   text-align: center;
   font-size: 225%;
   font-weight: bold;
@@ -671,15 +826,15 @@ button.modal-dialog-content-button {
 }
 
 .hiddenInput {
-	 height: 1px;
-	 width: 1px;
-	 margin: 0px;
-	 padding: 0px;
-	 cursor: default;
-	 color: transparent;
-	 background-color: transparent;
-	 border: transparent;
-	 outline: none;
+   height: 1px;
+   width: 1px;
+   margin: 0px;
+   padding: 0px;
+   cursor: default;
+   color: transparent;
+   background-color: transparent;
+   border: transparent;
+   outline: none;
 }
 
 button.btnlink-left-toolbar {

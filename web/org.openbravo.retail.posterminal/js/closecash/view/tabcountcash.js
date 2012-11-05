@@ -1,5 +1,3 @@
-/*global enyo */
-
 /*
  ************************************************************************************
  * Copyright (C) 2012 Openbravo S.L.U.
@@ -9,10 +7,12 @@
  ************************************************************************************
  */
 
+/*global enyo */
+
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.RenderPaymentsLine',
   events: {
-	onLineEditCount:''  
+    onLineEditCount: ''
   },
   components: [{
     components: [{
@@ -57,32 +57,32 @@ enyo.kind({
       }]
     }]
   }],
-  create: function() {
+  create: function () {
     this.inherited(arguments);
     this.$.name.setContent(this.model.get('name'));
-    if(this.model.get('rate') && this.model.get('rate')!=='1'){
-      this.$.foreignExpected.setContent('('+OB.I18N.formatCurrency(this.model.get('foreignExpected'))+' '+ this.model.get('isocode') +')');
+    if (this.model.get('rate') && this.model.get('rate') !== '1') {
+      this.$.foreignExpected.setContent('(' + OB.I18N.formatCurrency(this.model.get('foreignExpected')) + ' ' + this.model.get('isocode') + ')');
       this.$.foreignExpected.show();
     }
     this.$.expected.setContent(OB.I18N.formatCurrency(OB.DEC.add(0, this.model.get('expected'))));
   },
-  render: function() {
+  render: function () {
     var udfn, counted, foreignCounted;
     this.inherited(arguments);
     counted = this.model.get('counted');
     if (counted !== null && counted !== udfn) {
       this.$.counted.setContent(OB.I18N.formatCurrency(OB.DEC.add(0, counted)));
       this.$.counted.show();
-      if(this.model.get('rate') && this.model.get('rate')!=='1'){
-        this.$.foreignCounted.setContent('('+OB.I18N.formatCurrency(this.model.get('foreignCounted'))+' '+this.model.get('isocode')+')');
+      if (this.model.get('rate') && this.model.get('rate') !== '1') {
+        this.$.foreignCounted.setContent('(' + OB.I18N.formatCurrency(this.model.get('foreignCounted')) + ' ' + this.model.get('isocode') + ')');
       }
       this.$.buttonOk.hide();
     }
   },
-  lineEdit: function() {
+  lineEdit: function () {
     this.doLineEditCount();
   },
-  lineOK: function(inSender, inEvent) {
+  lineOK: function (inSender, inEvent) {
     this.model.set('counted', this.model.get('expected'));
     this.model.set('foreignCounted', this.model.get('foreignExpected'));
   }
@@ -94,10 +94,10 @@ enyo.kind({
   published: {
     total: OB.DEC.Zero
   },
-  create: function() {
+  create: function () {
     this.inherited(arguments);
   },
-  totalChanged: function(oldValue) {
+  totalChanged: function (oldValue) {
     // console.log('totalC');
     this.setContent(OB.I18N.formatCurrency(this.total));
     if (OB.DEC.compare(this.total) < 0) {
@@ -212,11 +212,11 @@ enyo.kind({
       }]
     }]
   }],
-  setCollection: function(col) {
+  setCollection: function (col) {
     this.$.paymentsList.setCollection(col);
   },
-  anyCounted: function() {
-    this.$.buttonAllOk.applyStyle('visibility','hidden'); //hiding in this way to keep the space
+  anyCounted: function () {
+    this.$.buttonAllOk.applyStyle('visibility', 'hidden'); //hiding in this way to keep the space
   }
 
 });

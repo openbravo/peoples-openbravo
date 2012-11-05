@@ -154,8 +154,10 @@ enyo.kind({
   tap: function() {
     this.doChangeSubWindow({
       newWindow: {
-        name: 'subWindow_customers',
-        params: []
+        name: 'customerAdvancedSearch',
+        params: {
+          navigateOnClose: 'mainSubWindow'
+        }
       }
     });
   }

@@ -154,7 +154,7 @@ public class CashMgmtDepositsDrops extends JSONProcessSimple {
               totalNetAmount.add(totalSalesTax).subtract(
                   totalReturnsAmount.add(totalReturnsTax.abs())));
 
-      String hqlDropsDeposits = "select trans.description, trans.paymentAmount, trans.depositAmount, trans.createdBy.name, trans.transactionDate as date, c_currency_rate(payment.financialAccount.currency, payment.obposApplications.organization.currency, null, null) as rate, payment.financialAccount.currency.iSOCode as isocode "
+      String hqlDropsDeposits = "select trans.description, trans.paymentAmount, trans.depositAmount, trans.createdBy.name, trans.transactionDate as date, c_currency_rate(payment.financialAccount.currency, payment.obposApplications.organization.currency, null, null, payment.obposApplications.client.id, payment.obposApplications.organization.id) as rate, payment.financialAccount.currency.iSOCode as isocode "
           + "from org.openbravo.retail.posterminal.OBPOSAppPayment as payment, org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction as trans "
           + "where (trans.gLItem=payment.paymentMethod.gLItemForDrops or trans.gLItem=payment.paymentMethod.gLItemForDeposits) and trans.reconciliation is null "
           + "and payment.id=? and trans.account=payment.financialAccount order by trans.transactionDate asc";

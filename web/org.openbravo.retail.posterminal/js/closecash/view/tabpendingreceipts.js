@@ -1,5 +1,3 @@
-/*global enyo */
-
 /*
  ************************************************************************************
  * Copyright (C) 2012 Openbravo S.L.U.
@@ -9,12 +7,14 @@
  ************************************************************************************
  */
 
+/*global enyo */
+
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.ButtonVoid',
   kind: 'OB.UI.SmallButton',
   classes: 'btnlink-gray',
   style: 'min-width: 70px; margin: 2px 5px 2px 5px;',
-  content: OB.I18N.getLabel('OBUIAPP_Delete')
+  content: OB.I18N.getLabel('OBPOS_Delete')
 });
 
 enyo.kind({

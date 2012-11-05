@@ -22,20 +22,21 @@ enyo.kind({
       kind: 'OB.UI.Button',
       classes: 'btnlink btnlink-gray modal-dialog-content-button',
       content: OB.I18N.getLabel('OBPOS_LblOk'),
-      tap: function() {
+      tap: function () {
         window.location = window.location.pathname + '?terminal=' + window.encodeURIComponent(OB.POS.paramTerminal);
       }
     }, {
       kind: 'OB.UI.Button',
       classes: 'btnlink btnlink-gray modal-dialog-content-button',
       content: OB.I18N.getLabel('OBPOS_LblCancel'),
-      tap: function() {
+      tap: function () {
         $('#' + this.parent.parent.parent.parent.parent.getId()).modal('hide');
         OB.POS.navigate('retail.pointofsale');
       }
     }]
-  }, initComponents: function(){
-	  this.inherited(arguments);
-	 
+  },
+  initComponents: function () {
+    this.inherited(arguments);
+
   }
 });

@@ -40,7 +40,7 @@ enyo.kind({
     classes: 'btnlink btnlink-gray modal-dialog-content-button',
     style: 'float: right;',
     content: 'OK',
-    tap: function() {
+    tap: function () {
       this.owner.receipt.addPayment(new OB.Model.PaymentLine({
         'kind': this.owner.key,
         'name': this.owner.paymentType,
@@ -50,7 +50,7 @@ enyo.kind({
       $('#modalp').modal('hide');
     }
   }],
-  initComponents: function() {
+  initComponents: function () {
     this.inherited(arguments);
     this.$.paymenttype.setContent(this.paymentType);
     this.$.paymentamount.setContent(OB.I18N.formatCurrency(this.paymentAmount));

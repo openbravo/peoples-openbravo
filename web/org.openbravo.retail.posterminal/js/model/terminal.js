@@ -109,13 +109,21 @@ OB.Model.Terminal = Backbone.Model.extend({
       $LAB.setGlobalDefaults({
         AppendTo: 'body'
       });
-      if(!OB.POS.modelterminal.get('connectedToERP')){
-          OB.Format = JSON.parse(me.usermodel.get('formatInfo'));
-          OB.POS.cleanWindows();
-          $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=FinancialMgmtTaxRate&modelName=TaxRate&source=org.openbravo.retail.posterminal.master.TaxRate');
-          $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingProductPrice&modelName=ProductPrice&source=org.openbravo.retail.posterminal.master.ProductPrice');
-          $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/StaticResources?_appName=WebPOS');
-          return;
+      if (!OB.POS.modelterminal.get('connectedToERP')) {
+        OB.Format = JSON.parse(me.usermodel.get('formatInfo'));
+        OB.POS.cleanWindows();
+        $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=FinancialMgmtTaxRate&modelName=TaxRate&source=org.openbravo.retail.posterminal.master.TaxRate');
+        $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingProductPrice&modelName=ProductPrice&source=org.openbravo.retail.posterminal.master.ProductPrice');
+
+        //Models for discounts and promotions
+        $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustment&modelName=Discount&source=org.openbravo.retail.posterminal.master.Discount');
+        $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustmentBusinessPartner&modelName=DiscountFilterBusinessPartner&source=org.openbravo.retail.posterminal.master.DiscountFilterBusinessPartner');
+        $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustmentBusinessPartnerGroup&modelName=DiscountFilterBusinessPartnerGroup&source=org.openbravo.retail.posterminal.master.DiscountFilterBusinessPartnerGroup');
+        $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustmentProduct&modelName=DiscountFilterProduct&source=org.openbravo.retail.posterminal.master.DiscountFilterProduct');
+        $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustmentProductCategory&modelName=DiscountFilterProductCategory&source=org.openbravo.retail.posterminal.master.DiscountFilterProductCategory');
+
+        $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/StaticResources?_appName=WebPOS');
+        return;
       }
       $LAB.script('../../org.openbravo.client.kernel/OBCLKER_Kernel/Application').wait(function() {
         var newFormat = OB.Format;
@@ -132,6 +140,14 @@ OB.Model.Terminal = Backbone.Model.extend({
         $LAB.script('js/i18n.js').wait(function() {
           $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=FinancialMgmtTaxRate&modelName=TaxRate&source=org.openbravo.retail.posterminal.master.TaxRate');
           $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingProductPrice&modelName=ProductPrice&source=org.openbravo.retail.posterminal.master.ProductPrice');
+
+          //Models for discounts and promotions
+          $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustment&modelName=Discount&source=org.openbravo.retail.posterminal.master.Discount');
+          $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustmentBusinessPartner&modelName=DiscountFilterBusinessPartner&source=org.openbravo.retail.posterminal.master.DiscountFilterBusinessPartner');
+          $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustmentBusinessPartnerGroup&modelName=DiscountFilterBusinessPartnerGroup&source=org.openbravo.retail.posterminal.master.DiscountFilterBusinessPartnerGroup');
+          $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustmentProduct&modelName=DiscountFilterProduct&source=org.openbravo.retail.posterminal.master.DiscountFilterProduct');
+          $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustmentProductCategory&modelName=DiscountFilterProductCategory&source=org.openbravo.retail.posterminal.master.DiscountFilterProductCategory');
+
           $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/StaticResources?_appName=WebPOS');
         });
       });
@@ -274,64 +290,71 @@ OB.Model.Terminal = Backbone.Model.extend({
     });
   },
 
-  updateSession: function(user) {
-    OB.Dal.find(OB.Model.Session, {'user': user.get('id')},
-        function(sessions) {
-          var session;
-          if(sessions.models.length === 0){
-            session=new OB.Model.Session();
-            session.set('user', user.get('id'));
-            session.set('terminal', OB.POS.paramTerminal);
-            session.set('active', 'Y');
-            OB.Dal.save(session, function(){
-            }, function() {
-              window.console.error(arguments);
-            });
-          }else{
-            session=sessions.models[0];
-            session.set('active', 'Y');
-            OB.Dal.save(session, function(){
-            }, function() {
-              window.console.error(arguments);
-            });
-          }
-          OB.POS.modelterminal.set('session', session.get('id'));
-        },
-    function(){window.console.error(arguments);});
-  },
-  
-  closeSession: function() {
-    var sessionId = OB.POS.modelterminal.get('session');
-    OB.Dal.get(OB.Model.Session, sessionId, 
-      function(session){
-        session.set('active','N');
-        OB.Dal.save(session, function(){
-          //All pending to be paid orders will be removed on logout
-            OB.Dal.find(OB.Model.Order, {'session': session.get('id'), 'hasbeenpaid':'N'},
-              function(orders) {
-                var i,j, order, orderlines, orderline,
-                errorFunc = function(){ window.console.error(arguments);};
-                var triggerLogoutFunc = function(){OB.POS.modelterminal.triggerLogout();};
-                if(orders.models.length===0){
-                  //If there are no orders to remove, a logout is triggered
-                  OB.POS.modelterminal.triggerLogout();
-                }
-                for(i=0;i<orders.models.length;i++) {
-                  order = orders.models[i];
-                  OB.Dal.removeAll(OB.Model.Order, {'order':order.get('id')}, null,errorFunc);
-                  //Logout will only be triggered after last order
-                  OB.Dal.remove(order, i<orders.models.length-1?null:triggerLogoutFunc,
-                    errorFunc);
-                }
-              },function() {window.console.error(arguments);});
-        }, function() {
+  updateSession: function (user) {
+    OB.Dal.find(OB.Model.Session, {
+      'user': user.get('id')
+    }, function (sessions) {
+      var session;
+      if (sessions.models.length === 0) {
+        session = new OB.Model.Session();
+        session.set('user', user.get('id'));
+        session.set('terminal', OB.POS.paramTerminal);
+        session.set('active', 'Y');
+        OB.Dal.save(session, function () {}, function () {
           window.console.error(arguments);
         });
-      },function(){
+      } else {
+        session = sessions.models[0];
+        session.set('active', 'Y');
+        OB.Dal.save(session, function () {}, function () {
+          window.console.error(arguments);
+        });
+      }
+      OB.POS.modelterminal.set('session', session.get('id'));
+    }, function () {
       window.console.error(arguments);
     });
   },
-  
+
+  closeSession: function () {
+    var sessionId = OB.POS.modelterminal.get('session');
+    OB.Dal.get(OB.Model.Session, sessionId, function (session) {
+      session.set('active', 'N');
+      OB.Dal.save(session, function () {
+        //All pending to be paid orders will be removed on logout
+        OB.Dal.find(OB.Model.Order, {
+          'session': session.get('id'),
+          'hasbeenpaid': 'N'
+        }, function (orders) {
+          var i, j, order, orderlines, orderline, errorFunc = function () {
+              window.console.error(arguments);
+              };
+          var triggerLogoutFunc = function () {
+              OB.POS.modelterminal.triggerLogout();
+              };
+          if (orders.models.length === 0) {
+            //If there are no orders to remove, a logout is triggered
+            OB.POS.modelterminal.triggerLogout();
+          }
+          for (i = 0; i < orders.models.length; i++) {
+            order = orders.models[i];
+            OB.Dal.removeAll(OB.Model.Order, {
+              'order': order.get('id')
+            }, null, errorFunc);
+            //Logout will only be triggered after last order
+            OB.Dal.remove(order, i < orders.models.length - 1 ? null : triggerLogoutFunc, errorFunc);
+          }
+        }, function () {
+          window.console.error(arguments);
+        });
+      }, function () {
+        window.console.error(arguments);
+      });
+    }, function () {
+      window.console.error(arguments);
+    });
+  },
+
   generate_sha1: function (theString) {
     return CryptoJS.enc.Hex.stringify(CryptoJS.SHA1(theString));
   },
@@ -361,76 +384,87 @@ OB.Model.Terminal = Backbone.Model.extend({
 
     if (OB.POS.modelterminal.get('connectedToERP')) {
 
-    $.ajax({
-      url: '../../org.openbravo.retail.posterminal/POSLoginHandler',
-      data: {
-        'user': user,
-        'password': password,
-        'terminal': OB.POS.paramTerminal,
-        'Command': 'DEFAULT',
-        'IsAjaxCall': 1
-      },
-      type: 'POST',
-      success: function(data, textStatus, jqXHR) {
-        var pos, baseUrl;
-        if (data && data.showMessage) {
-          me.triggerLoginFail(401, mode, data);
-          return;
-        }
-        //          pos = location.pathname.indexOf('login.jsp');
-        //          baseUrl = window.location.pathname.substring(0, pos);
-        //          window.location = baseUrl + OB.POS.hrefWindow(OB.POS.paramWindow);
-
-        OB.POS.modelterminal.set('orgUserId', data.userId);
-        me.setUserModelOnline();
-        
-        OB.POS.navigate('main', {
-          trigger: true
-        });
-      },
-      error: function(jqXHR, textStatus, errorThrown) {
-        me.triggerLoginFail(jqXHR.status, mode);
-      }
-    });
-    }else{
-        OB.POS.modelterminal.set('windowRegistered', undefined);
-        OB.Dal.find(OB.Model.User, {'name': me.user},
-          function(users) {
-            var user;
-            if(users.models.length === 0 ) {
-                OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_OfflineUserNotRegistered'));
-            }else{
-              if(users.models[0].get('password') === me.generate_sha1(me.password+users.models[0].get('created'))){
-                me.usermodel = users.models[0];
-                me.updateSession(me.usermodel);
-                OB.POS.navigate('main', {
-                  trigger: true
-                });
-              } else{
-                  OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_OfflinePasswordNotCorrect'));
-                  OB.POS.navigate('login');
-              }
-            }
-          }, 
-          function() {
+      $.ajax({
+        url: '../../org.openbravo.retail.posterminal/POSLoginHandler',
+        data: {
+          'user': user,
+          'password': password,
+          'terminal': OB.POS.paramTerminal,
+          'Command': 'DEFAULT',
+          'IsAjaxCall': 1
+        },
+        type: 'POST',
+        success: function (data, textStatus, jqXHR) {
+          var pos, baseUrl;
+          if (data && data.showMessage) {
+            me.triggerLoginFail(401, mode, data);
+            return;
           }
-        );
-    }   
-  }, 
-  
-  setUserModelOnline: function(triggerTerminalLoaded) {
-	  var me = this;
-      var trigger = triggerTerminalLoaded;
-      OB.Dal.initCache(OB.Model.User, [], null, null);
-      OB.Dal.initCache(OB.Model.Session, [], null, null);
-	  OB.Dal.find(OB.Model.User, {'name': me.user},
-      function(users) {
-        var user, session, date, savedPass;
-        if(users.models.length === 0 ) {
-          date= new Date().toString();
-          user = new OB.Model.User();
-          user.set('name', me.user);
-          savedPass = me.generate_sha1(me.password+date);
+          //          pos = location.pathname.indexOf('login.jsp');
+          //          baseUrl = window.location.pathname.substring(0, pos);
+          //          window.location = baseUrl + OB.POS.hrefWindow(OB.POS.paramWindow);
+          OB.POS.modelterminal.set('orgUserId', data.userId);
+          me.setUserModelOnline();
+
+          OB.POS.navigate('main', {
+            trigger: true
+          });
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+          me.triggerLoginFail(jqXHR.status, mode);
+        }
+      });
+    } else {
+      OB.POS.modelterminal.set('windowRegistered', undefined);
+      OB.Dal.find(OB.Model.User, {
+        'name': me.user
+      }, function (users) {
+        var user;
+        if (users.models.length === 0) {
+          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_OfflineUserNotRegistered'));
+        } else {
+          if (users.models[0].get('password') === me.generate_sha1(me.password + users.models[0].get('created'))) {
+            me.usermodel = users.models[0];
+            me.updateSession(me.usermodel);
+            OB.POS.navigate('main', {
+              trigger: true
+            });
+          } else {
+            OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_OfflinePasswordNotCorrect'));
+            OB.POS.navigate('login');
+          }
+        }
+      }, function () {});
+    }
+  },
+
+  setUserModelOnline: function (triggerTerminalLoaded) {
+    var me = this;
+    var trigger = triggerTerminalLoaded;
+    OB.Dal.initCache(OB.Model.User, [], null, null);
+    OB.Dal.initCache(OB.Model.Session, [], null, null);
+    OB.Dal.find(OB.Model.User, {
+      'name': me.user
+    }, function (users) {
+      var user, session, date, savedPass;
+      if (users.models.length === 0) {
+        date = new Date().toString();
+        user = new OB.Model.User();
+        user.set('name', me.user);
+        savedPass = me.generate_sha1(me.password + date);
+        user.set('password', savedPass);
+        user.set('created', date);
+        OB.Dal.save(user, function () {}, function () {
+          window.console.error(arguments);
+        });
+        me.usermodel = user;
+      } else {
+        user = users.models[0];
+        me.usermodel = user;
+        if (me.password) {
+          //The password will only be recomputed in case it was properly entered
+          //(that is, if the call comes from the login page directly)
+          savedPass = me.generate_sha1(me.password + user.get('created'));
           user.set('password', savedPass);
           user.set('created', date);
           OB.Dal.save(user, function(){
@@ -452,15 +486,17 @@ OB.Model.Terminal = Backbone.Model.extend({
             window.console.error(arguments);
           });
         }
-        me.updateSession(user);
-        if(trigger){
-          me.trigger('terminal.loaded');
-        }
-      }, 
-      function() {
-        window.console.error(arguments);
+        OB.Dal.save(user, function () {}, function () {
+          window.console.error(arguments);
+        });
       }
-    );
+      me.updateSession(user);
+      if (trigger) {
+        me.trigger('terminal.loaded');
+      }
+    }, function () {
+      window.console.error(arguments);
+    });
   },
 
   logout: function() {
@@ -544,6 +580,7 @@ OB.Model.Terminal = Backbone.Model.extend({
 	  
     // reset all application state.
     $(window).off('keypress');
+    $(window).off('keydown');
     //  this.set('terminal', null);
     this.set('payments', null);
     this.set('context', null);

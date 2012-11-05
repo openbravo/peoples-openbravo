@@ -27,7 +27,7 @@ enyo.kind({
       kind: 'OB.UI.Button',
       classes: 'btnlink btnlink-gray modal-dialog-content-button',
       content: OB.I18N.getLabel('OBPOS_LblOk'),
-      tap: function() {
+      tap: function () {
         $('#modalCancel').modal('hide');
         OB.POS.navigate('retail.pointofsale');
       }
@@ -42,10 +42,8 @@ enyo.kind({
     }]
   },
 
-  makeId: function() {
+  makeId: function () {
     // ensure id is fixed
     return 'modalCancel';
   }
 });
-
-

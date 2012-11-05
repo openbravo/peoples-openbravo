@@ -36,16 +36,16 @@ enyo.kind({
                 kind: 'OB.UI.SmallButton',
                 content: OB.I18N.getLabel('OBPOS_ButtonDelete'),
                 classes: 'btnlink-orange',
-                tap: function() {
+                tap: function () {
                   this.owner.doDeleteLine({
                     line: this.owner.line
                   });
                 },
-                init: function(model){
+                init: function (model) {
                   this.model = model;
-                  this.model.get('order').on('change:isPaid', function(newValue){
-                    if (newValue){
-                      if(newValue.get('isPaid') === true){
+                  this.model.get('order').on('change:isPaid', function (newValue) {
+                    if (newValue) {
+                      if (newValue.get('isPaid') === true) {
                         this.setShowing(false);
                         return;
                       }
@@ -53,20 +53,20 @@ enyo.kind({
                     this.setShowing(true);
                   }, this);
                 }
-              },{
+              }, {
                 kind: 'OB.UI.SmallButton',
-                content: 'Description',
+                content: OB.I18N.getLabel('OBPOS_LblDescription'),
                 classes: 'btnlink-orange',
-                tap: function() {
+                tap: function () {
                   this.owner.doEditLine({
                     line: this.owner.line
                   });
                 },
-                init: function(model){
+                init: function (model) {
                   this.model = model;
-                  this.model.get('order').on('change:isPaid', function(newValue){
-                    if (newValue){
-                      if(newValue.get('isPaid') === true){
+                  this.model.get('order').on('change:isPaid', function (newValue) {
+                    if (newValue) {
+                      if (newValue.get('isPaid') === true) {
                         this.setShowing(false);
                         return;
                       }
@@ -165,12 +165,12 @@ enyo.kind({
     }]
   }],
 
-  receiptChanged: function() {
+  receiptChanged: function () {
     this.inherited(arguments);
 
     this.line = null;
 
-    this.receipt.get('lines').on('selected', function(line) {
+    this.receipt.get('lines').on('selected', function (line) {
       if (this.line) {
         this.line.off('change', this.render);
       }
@@ -182,7 +182,7 @@ enyo.kind({
     }, this);
   },
 
-  render: function() {
+  render: function () {
     this.inherited(arguments);
 
     if (this.line) {

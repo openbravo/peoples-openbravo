@@ -55,6 +55,10 @@ enyo.kind({
             tag: 'span',
             name: 'exactlbl',
             content: OB.I18N.getLabel('OBPOS_PaymentsExact')
+          }, {
+            tag: 'span',
+            name: 'donezerolbl',
+            content: OB.I18N.getLabel('OBPOS_MsgPaymentAmountZero')
           }]
         }, {
           style: 'overflow:auto; width: 100%;',
@@ -92,17 +96,17 @@ enyo.kind({
     }]
   }],
 
-  receiptChanged: function() {
+  receiptChanged: function () {
     this.$.payments.setCollection(this.receipt.get('payments'));
 
-    this.receipt.on('change:payment change:change change:gross', function() {
+    this.receipt.on('change:payment change:change calculategross', function () {
       this.updatePending();
     }, this);
     this.updatePending();
   },
 
 
-  updatePending: function() {
+  updatePending: function () {
     var paymentstatus = this.receipt.getPaymentStatus();
     if (paymentstatus.change) {
       this.$.change.setContent(paymentstatus.change);
@@ -120,6 +124,7 @@ enyo.kind({
       this.$.overpayment.hide();
       this.$.overpaymentlbl.hide();
     }
+
     if (paymentstatus.done) {
       this.$.totalpending.hide();
       this.$.totalpendinglbl.hide();
@@ -129,9 +134,9 @@ enyo.kind({
       this.$.totalpending.show();
       this.$.totalpendinglbl.show();
       this.$.doneaction.hide();
-      if(this.$.doneButton.drawerpreference){
+      if (this.$.doneButton.drawerpreference) {
         this.$.doneButton.setContent(OB.I18N.getLabel('OBPOS_LblOpen'));
-        this.$.doneButton.drawerOpened=false;
+        this.$.doneButton.drawerOpened = false;
       }
     }
 
@@ -142,9 +147,16 @@ enyo.kind({
     }
 
     if (paymentstatus.done && !paymentstatus.change && !paymentstatus.overpayment) {
-      this.$.exactlbl.show();
+      if (this.receipt.getGross() === 0) {
+        this.$.exactlbl.hide();
+        this.$.donezerolbl.show();
+      } else {
+        this.$.donezerolbl.hide();
+        this.$.exactlbl.show();
+      }
     } else {
       this.$.exactlbl.hide();
+      this.$.donezerolbl.hide();
     }
   }
 });
@@ -154,31 +166,31 @@ enyo.kind({
   kind: 'OB.UI.RegularButton',
   content: OB.I18N.getLabel('OBPOS_LblDone'),
   drawerOpened: true,
-  init: function (){
+  init: function () {
     this.drawerpreference = OB.POS.modelterminal.get('terminal').drawerpreference;
-    if(this.drawerpreference){
-      this.drawerOpened= false;
+    if (this.drawerpreference) {
+      this.drawerOpened = false;
       this.setContent(OB.I18N.getLabel('OBPOS_LblOpen'));
-    }else{
-      this.drawerOpened= true;
+    } else {
+      this.drawerOpened = true;
       this.setContent(OB.I18N.getLabel('OBPOS_LblDone'));
     }
   },
-  tap: function() {
-    if(this.drawerpreference){
-      if(this.drawerOpened){
-      this.owner.receipt.trigger('paymentDone');
-      this.drawerOpened= false;
-      this.setContent(OB.I18N.getLabel('OBPOS_LblOpen'));
-      }else{
-      this.owner.receipt.trigger('openDrawer');
-      this.drawerOpened= true;
-      this.setContent(OB.I18N.getLabel('OBPOS_LblDone'));
+  tap: function () {
+    if (this.drawerpreference) {
+      if (this.drawerOpened) {
+        this.owner.receipt.trigger('paymentDone');
+        this.drawerOpened = false;
+        this.setContent(OB.I18N.getLabel('OBPOS_LblOpen'));
+      } else {
+        this.owner.receipt.trigger('openDrawer');
+        this.drawerOpened = true;
+        this.setContent(OB.I18N.getLabel('OBPOS_LblDone'));
       }
-   }else{
-     this.owner.receipt.trigger('paymentDone');
-     this.owner.receipt.trigger('openDrawer');
-   }
+    } else {
+      this.owner.receipt.trigger('paymentDone');
+      this.owner.receipt.trigger('openDrawer');
+    }
   }
 });
 
@@ -190,7 +202,7 @@ enyo.kind({
   kind: 'OB.UI.RegularButton',
   classes: 'btn-icon-small btn-icon-check btnlink-green',
   style: 'width: 69px',
-  tap: function() {
+  tap: function () {
     this.doExactPayment();
   }
 });
@@ -221,11 +233,11 @@ enyo.kind({
       style: 'clear: both;'
     }]
   }],
-  initComponents: function() {
+  initComponents: function () {
     this.inherited(arguments);
     this.$.name.setContent(OB.POS.modelterminal.getPaymentName(this.model.get('kind')));
     this.$.amount.setContent(this.model.printAmount());
-    if (this.model.get('rate') && this.model.get('rate')!=='1') {
+    if (this.model.get('rate') && this.model.get('rate') !== '1') {
       this.$.foreignAmount.setContent(this.model.printForeignAmount());
     } else {
       this.$.foreignAmount.setContent('');
@@ -245,7 +257,7 @@ enyo.kind({
   },
   kind: 'OB.UI.SmallButton',
   classes: 'btnlink-darkgray btnlink-payment-clear btn-icon-small btn-icon-clearPayment',
-  tap: function() {
+  tap: function () {
     this.doRemovePayment({
       payment: this.owner.model
     });

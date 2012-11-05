@@ -15,16 +15,16 @@ OB.OBPOSPointOfSale.UI = OB.OBPOSPointOfSale.UI || {};
 
 //Window model
 OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
-  models: [OB.Model.TaxRate, OB.Model.Product, OB.Model.ProductPrice, OB.Model.ProductCategory, OB.Model.BusinessPartner, OB.Model.Order, OB.Model.DocumentSequence, OB.Model.ChangedBusinessPartners],
+  models: [OB.Model.TaxRate, OB.Model.Product, OB.Model.ProductPrice, OB.Model.ProductCategory, OB.Model.BusinessPartner, OB.Model.Order, OB.Model.DocumentSequence, OB.Model.ChangedBusinessPartners, OB.Model.Discount, OB.Model.DiscountFilterBusinessPartner, OB.Model.DiscountFilterBusinessPartnerGroup, OB.Model.DiscountFilterProduct, OB.Model.DiscountFilterProductCategory],
 
-  loadUnpaidOrders: function() {
+  loadUnpaidOrders: function () {
     // Shows a modal window with the orders pending to be paid
     var orderlist = this.get('orderList'),
         criteria = {
         'hasbeenpaid': 'N',
         'session': OB.POS.modelterminal.get('session')
         };
-    OB.Dal.find(OB.Model.Order, criteria, function(ordersNotPaid) { //OB.Dal.find success
+    OB.Dal.find(OB.Model.Order, criteria, function (ordersNotPaid) { //OB.Dal.find success
       var currentOrder = {},
           loadOrderStr;
       if (!ordersNotPaid || ordersNotPaid.length === 0) {
@@ -38,16 +38,16 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
         currentOrder = ordersNotPaid.models[0];
         orderlist.load(currentOrder);
         loadOrderStr = OB.I18N.getLabel('OBPOS_Order') + currentOrder.get('documentNo') + OB.I18N.getLabel('OBPOS_Loaded');
-        OB.UTIL.showAlert.display(loadOrderStr, OB.I18N.getLabel('OBUIAPP_Info'));
+        OB.UTIL.showAlert.display(loadOrderStr, OB.I18N.getLabel('OBPOS_Info'));
       }
-    }, function() { //OB.Dal.find error
+    }, function () { //OB.Dal.find error
       // If there is an error fetching the pending orders,
       // add an initial empty order
       orderlist.addNewOrder();
     });
   },
 
-  processPaidOrders: function() {
+  processPaidOrders: function () {
     // Processes the paid, unprocessed orders
     var orderlist = this.get('orderList'),
         me = this,
@@ -55,50 +55,52 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
         hasbeenpaid: 'Y'
         };
     if (OB.POS.modelterminal.get('connectedToERP')) {
-      OB.Dal.find(OB.Model.Order, criteria, function(ordersPaidNotProcessed) { //OB.Dal.find success
+      OB.Dal.find(OB.Model.Order, criteria, function (ordersPaidNotProcessed) { //OB.Dal.find success
         var successCallback, errorCallback;
         if (!ordersPaidNotProcessed || ordersPaidNotProcessed.length === 0) {
           return;
         }
-        ordersPaidNotProcessed.each(function(order) {
-            order.set('isbeingretriggered', 'Y');
+        ordersPaidNotProcessed.each(function (order) {
+          order.set('isbeingretriggered', 'Y');
         });
-        successCallback = function() {
+        successCallback = function () {
           $('.alert:contains("' + OB.I18N.getLabel('OBPOS_ProcessPendingOrders') + '")').alert('close');
           OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgSuccessProcessOrder'));
         };
-        errorCallback = function() {
+        errorCallback = function () {
           $('.alert:contains("' + OB.I18N.getLabel('OBPOS_ProcessPendingOrders') + '")').alert('close');
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorProcessOrder'));
         };
-        OB.UTIL.showAlert.display(OB.I18N.getLabel('OBPOS_ProcessPendingOrders'), OB.I18N.getLabel('OBUIAPP_Info'));
+        OB.UTIL.showAlert.display(OB.I18N.getLabel('OBPOS_ProcessPendingOrders'), OB.I18N.getLabel('OBPOS_Info'));
         OB.UTIL.processOrders(me, ordersPaidNotProcessed, successCallback, errorCallback);
       });
     }
   },
 
-  processChangedCustomers: function() {
+  processChangedCustomers: function () {
     // Processes the customers who has been changed
     var me = this;
 
     if (OB.POS.modelterminal.get('connectedToERP')) {
-      OB.Dal.find(OB.Model.ChangedBusinessPartners, null, function(customersChangedNotProcessed) { //OB.Dal.find success
+      OB.Dal.find(OB.Model.ChangedBusinessPartners, null, function (customersChangedNotProcessed) { //OB.Dal.find success
         var successCallback, errorCallback;
         if (!customersChangedNotProcessed || customersChangedNotProcessed.length === 0) {
           me.processPaidOrders();
           me.loadUnpaidOrders();
           return;
         }
-        successCallback = function() {
-          OB.UTIL.showSuccess('Changed customers have been processed correctly');
+        successCallback = function () {
+          OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_pendigDataOfCustomersProcessed'));
+
           me.processPaidOrders();
           me.loadUnpaidOrders();
         };
-        errorCallback = function() {
-          OB.UTIL.showSuccess('ERROR processing changed customers');
+        errorCallback = function () {
+          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorProcessingCustomersPendingData'));
+          me.processPaidOrders();
+          me.loadUnpaidOrders();
         };
-        OB.UTIL.showAlert.display('Processing changed customers');
-        customersChangedNotProcessed.each(function(cus) {
+        customersChangedNotProcessed.each(function (cus) {
           cus.set('json', enyo.json.parse(cus.get('json')));
         });
         OB.UTIL.processCustomers(customersChangedNotProcessed, successCallback, errorCallback);
@@ -106,7 +108,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
     }
   },
 
-  init: function() {
+  init: function () {
     var receipt = new OB.Model.Order(),
         discounts, ordersave, customersave, taxes, orderList, hwManager, ViewManager;
 
@@ -117,7 +119,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
           params: []
         }
       },
-      initialize: function() {}
+      initialize: function () {}
     });
     this.set('order', receipt);
     orderList = new OB.Collection.OrderList(receipt);
@@ -134,19 +136,41 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
     OB.POS.modelterminal.saveDocumentSequenceInDB();
     this.processChangedCustomers();
 
-    receipt.on('paymentDone', function() {
-      receipt.calculateTaxes(function() {
+    receipt.on('paymentDone', function () {
+      receipt.prepareToSend(function () {
         receipt.trigger('closed');
         receipt.trigger('print'); // to guaranty execution order
         orderList.deleteCurrent();
       });
     }, this);
 
-    receipt.on('openDrawer', function() {
+    receipt.on('openDrawer', function () {
       receipt.trigger('popenDrawer');
     }, this);
-    
+
     this.printReceipt = new OB.OBPOSPointOfSale.Print.Receipt(receipt);
     this.printLine = new OB.OBPOSPointOfSale.Print.ReceiptLine(receipt);
+
+    // Listening events that cause a discount recalculation
+    receipt.get('lines').on('add change:qty change:price', function (line) {
+      if (!receipt.get('isEditable')) {
+        return;
+      }
+      OB.Model.Discounts.applyPromotions(receipt, line);
+    }, this);
+
+    receipt.get('lines').on('remove', function () {
+      if (!receipt.get('isEditable')) {
+        return;
+      }
+      OB.Model.Discounts.applyPromotions(receipt);
+    });
+
+    receipt.on('change:bp', function (line) {
+      if (!receipt.get('isEditable')) {
+        return;
+      }
+      OB.Model.Discounts.applyPromotions(receipt);
+    }, this);
   }
 });

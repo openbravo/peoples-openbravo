@@ -17,17 +17,17 @@ enyo.kind({
   attributes: {
     style: 'float:left; padding: 15px 15px 5px 10px; font-weight: bold; color: #6CB33F;'
   },
-  initComponents: function() {},
-  renderData: function(docNo) {
-    if(this.order.get('orderDate') instanceof Date){
+  initComponents: function () {},
+  renderData: function (docNo) {
+    if (this.order.get('orderDate') instanceof Date) {
       this.setContent(OB.I18N.formatHour(this.order.get('orderDate')) + ' - ' + docNo);
-    }else{
+    } else {
       this.setContent(this.order.get('orderDate') + ' - ' + docNo);
     }
   },
-  orderChanged: function(oldValue) {
+  orderChanged: function (oldValue) {
     this.renderData(this.order.get('documentNo'));
-    this.order.on('change:documentNo', function(model) {
+    this.order.on('change:documentNo', function (model) {
       this.renderData(model.get('documentNo'));
     }, this);
   }

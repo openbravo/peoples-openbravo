@@ -1,4 +1,3 @@
-/*global OB, Backbone, enyo */
 /*
  ************************************************************************************
  * Copyright (C) 2012 Openbravo S.L.U.
@@ -8,6 +7,7 @@
  ************************************************************************************
  */
 
+/*global OB, Backbone, enyo */
 
 //Renders a modal popup with a list of reasons for drops/deposits
 enyo.kind({
@@ -19,7 +19,7 @@ enyo.kind({
     kind: 'OB.OBPOSCashMgmt.UI.ListEvents'
   },
 
-  init: function() {
+  init: function () {
     this.$.body.$.listEvents.init();
   }
 });
@@ -41,7 +41,7 @@ enyo.kind({
     }]
   }],
 
-  init: function() {
+  init: function () {
     this.$.eventList.setCollection(this.owner.owner.owner.model.getData(this.owner.owner.type));
   }
 });
@@ -57,7 +57,7 @@ enyo.kind({
 
   }],
 
-  create: function() {
+  create: function () {
     this.inherited(arguments);
     this.$.line.setContent(this.model.get('name'));
   }

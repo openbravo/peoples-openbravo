@@ -14,11 +14,11 @@ enyo.kind({
   published: {
     onlineState: null
   },
-  onlineStateChanged: function(){
-    if (this.onlineState){
+  onlineStateChanged: function () {
+    if (this.onlineState) {
       this.$.onlineLabel.setContent(OB.I18N.getLabel('OBPOS_Online'));
       this.$.onlineImg.setAttribute('style', 'display: inline-block; width: 20px; color: transparent; background-image: url(\'./img/iconOnline.png\'); background-repeat: no-repeat; background-position: 2px 3px;');
-    }else{
+    } else {
       this.$.onlineLabel.setContent(OB.I18N.getLabel('OBPOS_Offline'));
       this.$.onlineImg.setAttribute('style', 'display: inline-block; width: 20px; color: transparent; background-image: url(\'./img/iconOffline.png\'); background-repeat: no-repeat; background-position: 2px 3px;');
     }
@@ -32,23 +32,23 @@ enyo.kind({
   }, {
     name: 'onlineLabel',
     tag: 'span',
-    content: ''//is set later, in onlineStateChanged function.
+    content: '' //is set later, in onlineStateChanged function.
   }]
 });
 
 // Container for the whole POS application
 enyo.kind({
   name: 'OB.UI.Terminal',
-  classes: 'container',
+  classes: 'pos-container',
   components: [{
     classes: 'section',
     name: 'topsection',
     components: [{
       classes: 'row',
-      style: 'height: 50px; vertical-align: middle; display: table-cell;',
+      style: 'height: 50px; vertical-align: middle;',
       components: [{
         classes: 'span12',
-        style: 'color: white; font-size: 16px;',
+        style: 'padding: 10px 0px 0px 0px; color: white; font-size: 16px;',
         components: [{
           name: 'onlineContainer',
           style: 'display: inline-block; vertical-align: middle; margin: 3px 0px 0px 0px;',
@@ -130,26 +130,26 @@ enyo.kind({
             }]
           }]
         }],
-        makeId: function() {
+        makeId: function () {
           return 'containerLoading';
         }
       }, {
-        makeId: function() {
+        makeId: function () {
           return 'containerWindow';
         },
         name: 'containerWindow'
       }]
     }]
   }, {
-    makeId: function() {
+    makeId: function () {
       return 'alertContainer';
     }
   }],
-  initComponents: function() {
+  initComponents: function () {
     //this.terminal = terminal;
     this.inherited(arguments);
 
-    this.terminal.on('change:context', function() {
+    this.terminal.on('change:context', function () {
       var ctx = this.terminal.get('context');
       if (ctx) {
         this.$.loggeduser.setContent(ctx.user._identifier);
@@ -166,21 +166,21 @@ enyo.kind({
       }
     }, this);
 
-    this.terminal.on('change:connectedToERP', function(model){
+    this.terminal.on('change:connectedToERP', function (model) {
       this.$.onlineviewer.setOnlineState(model.get('connectedToERP'));
-      if(OB.POS.modelterminal.get('loggedOffline')!==undefined){
-        if(OB.POS.modelterminal.get('connectedToERP')){
+      if (OB.POS.modelterminal.get('loggedOffline') !== undefined) {
+        if (OB.POS.modelterminal.get('connectedToERP')) {
           OB.POS.terminal.$.dialogsContainer.createComponent({
             kind: 'OB.UI.ModalOnline'
           }).render();
           $('#modalOnline').modal('show');
-        }else{
+        } else {
           OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_OfflineModeWarning'));
         }
       }
     }, this);
-    
-    this.terminal.on('change:terminal change:bplocation change:location change:pricelist change:pricelistversion', function() {
+
+    this.terminal.on('change:terminal change:bplocation change:location change:pricelist change:pricelistversion', function () {
       var name = '';
       var clientname = '';
       var orgname = '';
@@ -216,7 +216,7 @@ enyo.kind({
 
     }, this);
   },
-  makeId: function() {
+  makeId: function () {
     return 'container';
   }
 });
@@ -261,7 +261,7 @@ enyo.kind({
       kind: 'OB.UI.MenuAction',
       label: 'Profile',
       //TODO: OB.I18N.getLabel('OBPOS_LblProfile'),
-      tap: function() {
+      tap: function () {
         $('#profileDialog').modal('show');
       }
     }, {
@@ -270,21 +270,21 @@ enyo.kind({
       kind: 'OB.UI.MenuAction',
       allowHtml: true,
       label: 'Lock screen <span style="padding-left:190px">0\u21B5</span>',
-      tap: function() {
-       OB.POS.lock();
+      tap: function () {
+        OB.POS.lock();
       }
     }, {
       kind: 'OB.UI.MenuAction',
       label: 'End session',
       //TODO: OB.I18N.getLabel('OBPOS_LblProfile'),
-      tap: function() {
+      tap: function () {
         $('#logoutDialog').modal('show');
       }
     }, {
       style: 'height: 5px;'
     }]
   }],
-  initComponents: function() {
+  initComponents: function () {
     this.inherited(arguments);
     this.$.username.setContent(this.username);
     this.$.role.setContent(this.role);
@@ -339,7 +339,7 @@ enyo.kind({
       style: 'font-weight: bold; margin: 0px 0px 0px 5px;'
     }]
   }],
-  initComponents: function() {
+  initComponents: function () {
     this.inherited(arguments);
     this.$.clientLbl.setContent(OB.I18N.getLabel('OBPOS_CompanyClient'));
     this.$.clientName.setContent(this.clientName);

@@ -7,9 +7,7 @@
  ************************************************************************************
  */
 
-//jslint
 /*global Backbone, _ */
-
 
 (function () {
 
@@ -19,49 +17,33 @@
     entityName: 'BusinessPartner',
     source: 'org.openbravo.retail.posterminal.master.BusinessPartner',
     dataLimit: 300,
-    properties: [
-     'id',
-     'searchKey',
-     'name',
-     'description',
-     'taxId',
-     'taxCategory',
-     'paymentMethod',
-     'paymentTerms',
-     'invoiceTerms',
-     'locId',
-     'locName',
-     'postalcode',
-     'city',
-     'phone',
-     'email',
-     '_identifier',
-     '_idx'
-    ],
+    properties: ['id', 'searchKey', 'name', 'description', 'taxID', 'taxCategory', 'paymentMethod', 'paymentTerms', 'priceList', 'invoiceTerms', 'locId', 'locName', 'postalCode', 'cityName', 'phone', 'email', 'businessPartnerCategory', '_identifier', '_idx'],
     propertyMap: {
-     'id': 'c_bpartner_id',
-     'searchKey': 'value',
-     'name': 'name',
-     'description': 'description',
-     'taxId': 'taxID',
-     'taxCategory': 'so_bp_taxcategory_id',
-     'paymentMethod': 'FIN_Paymentmethod_ID',
-     'paymentTerms': 'c_paymentterm_id',
-     'invoiceTerms': 'invoicerule',
-     'locId': 'c_bpartnerlocation_id',
-     'locName': 'c_bpartnerlocation_name',
-     'postalcode': 'postalcode',
-     'city': 'city',
-     'phone': 'phone',
-     'email': 'email',
-     '_identifier': '_identifier',
-     '_idx': '_idx'
+      'id': 'c_bpartner_id',
+      'searchKey': 'value',
+      'name': 'name',
+      'description': 'description',
+      'taxID': 'taxID',
+      'taxCategory': 'so_bp_taxcategory_id',
+      'paymentMethod': 'FIN_Paymentmethod_ID',
+      'paymentTerms': 'c_paymentterm_id',
+      'priceList': 'm_pricelist_id',
+      'invoiceTerms': 'invoicerule',
+      'locId': 'c_bpartnerlocation_id',
+      'locName': 'c_bpartnerlocation_name',
+      'postalCode': 'postalCode',
+      'cityName': 'cityName',
+      'phone': 'phone',
+      'email': 'email',
+      'businessPartnerCategory': 'C_BP_Group_ID',
+      '_identifier': '_identifier',
+      '_idx': '_idx'
     },
-    createStatement: 'CREATE TABLE IF NOT EXISTS c_bpartner (c_bpartner_id TEXT PRIMARY KEY , value TEXT , name TEXT , description TEXT , taxID TEXT , so_bp_taxcategory_id TEXT, FIN_Paymentmethod_ID TEXT, c_paymentterm_id TEXT, invoicerule TEXT, c_bpartnerlocation_id TEXT , c_bpartnerlocation_name TEXT , postalcode TEXT, city TEXT, phone TEXT, email TEXT, _identifier TEXT , _idx NUMERIC)',
+    createStatement: 'CREATE TABLE IF NOT EXISTS c_bpartner (c_bpartner_id TEXT PRIMARY KEY, value TEXT , name TEXT , description TEXT , taxID TEXT , so_bp_taxcategory_id TEXT, FIN_Paymentmethod_ID TEXT, c_paymentterm_id TEXT, m_pricelist_id TEXT,invoicerule TEXT, c_bpartnerlocation_id TEXT , c_bpartnerlocation_name TEXT , postalCode TEXT, cityName TEXT, phone TEXT, email TEXT, c_bp_group_id TEXT, _identifier TEXT , _idx NUMERIC)',
     dropStatement: 'DROP TABLE IF EXISTS c_bpartner',
-    insertStatement: 'INSERT INTO c_bpartner(c_bpartner_id, value, name, description, taxID, so_bp_taxcategory_id, FIN_Paymentmethod_ID, c_paymentterm_id, invoicerule, c_bpartnerlocation_id, c_bpartnerlocation_name, postalcode, city, phone, email, _identifier, _idx)  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+    insertStatement: 'INSERT INTO c_bpartner(c_bpartner_id, value, name, description, taxID, so_bp_taxcategory_id, FIN_Paymentmethod_ID, c_paymentterm_id, m_pricelist_id, invoicerule, c_bpartnerlocation_id, c_bpartnerlocation_name, postalCode, cityName, phone, email, c_bp_group_id, _identifier, _idx)  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
     updateStatement: '',
-    saveCustomer: function(silent) {
+    saveCustomer: function (silent) {
       var nameLength, newSk;
 
       if (!this.get("name")) {
@@ -89,13 +71,13 @@
       //datacustomersave will catch this event and save this locally with changed = 'Y'
       //Then it will try to send to the backend
     },
-    loadById: function(CusId, userCallback) {
+    loadById: function (CusId, userCallback) {
       //search data in local DB and load it to this
       var me = this,
           criteria = {
           id: CusId
           };
-      OB.Dal.find(OB.Model.BusinessPartner, criteria, function(customerCol) { //OB.Dal.find success
+      OB.Dal.find(OB.Model.BusinessPartner, criteria, function (customerCol) { //OB.Dal.find success
         var successCallback, errorCallback;
         if (!customerCol || customerCol.length === 0) {
           me.clearModelWith(null);
@@ -106,13 +88,17 @@
         }
       });
     },
-    loadByModel: function(cusToLoad) {
+    loadByModel: function (cusToLoad) {
       //copy data from model to this
     },
-    newCustomer: function() {
+    newCustomer: function () {
+      //set values of new attrs in bp model 
+      //this values will be copied to the created one
+      //in the next instruction
+      this.trigger('beforeChangeCustomerForNewOne', this);
       this.clearModelWith(null);
     },
-    clearModelWith: function(cusToLoad) {
+    clearModelWith: function (cusToLoad) {
       var me = this,
           undf;
       if (cusToLoad === null) {
@@ -120,31 +106,32 @@
         this.set('searchKey', null);
         this.set('name', null);
         this.set('description', null);
-        this.set('taxId', null);
+        this.set('taxID', null);
         this.set('taxCategory', null);
         this.set('paymentMethod', OB.POS.modelterminal.get('terminal').defaultbp_paymentmethod);
         this.set('businessPartnerCategory', OB.POS.modelterminal.get('terminal').defaultbp_bpcategory);
         this.set('paymentTerms', OB.POS.modelterminal.get('terminal').defaultbp_paymentterm);
         this.set('invoiceTerms', OB.POS.modelterminal.get('terminal').defaultbp_invoiceterm);
+        this.set('priceList', OB.POS.modelterminal.get('pricelist').id);
         this.set('country', OB.POS.modelterminal.get('terminal').defaultbp_bpcountry);
         this.set('client', OB.POS.modelterminal.get('terminal').client);
         this.set('organization', OB.POS.modelterminal.get('terminal').defaultbp_bporg);
         this.set('locId', null);
         this.set('locName', null);
         this.set('_identifier', null);
-        this.set('postalcode', null);
-        this.set('city', null);
+        this.set('postalCode', null);
+        this.set('cityName', null);
         this.set('phone', null);
         this.set('email', null);
       } else {
-        _.each(_.keys(cusToLoad.attributes), function(key) {
+        _.each(_.keys(cusToLoad.attributes), function (key) {
           if (cusToLoad.get(key) !== undf) {
             if (cusToLoad.get(key) === null) {
               me.set(key, null);
             } else if (cusToLoad.get(key).at) {
               //collection
               me.get(key).reset();
-              cusToLoad.get(key).forEach(function(elem) {
+              cusToLoad.get(key).forEach(function (elem) {
                 me.get(key).add(elem);
               });
             } else {
@@ -155,10 +142,10 @@
         });
       }
     },
-    loadByJSON: function(obj) {
+    loadByJSON: function (obj) {
       var me = this,
           undf;
-      _.each(_.keys(me.attributes), function(key) {
+      _.each(_.keys(me.attributes), function (key) {
         if (obj[key] !== undf) {
           if (obj[key] === null) {
             me.set(key, null);
@@ -168,7 +155,7 @@
         }
       });
     },
-    serializeToJSON: function() {
+    serializeToJSON: function () {
       return JSON.parse(JSON.stringify(this.toJSON()));
     }
   });

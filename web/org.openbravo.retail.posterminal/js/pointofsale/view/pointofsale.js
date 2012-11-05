@@ -9,6 +9,8 @@
  ************************************************************************************
  */
 
+/*global OB, enyo, $, confirm */
+
 // Point of sale main window view
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.PointOfSale',
@@ -45,180 +47,27 @@ enyo.kind({
   components: [{
     name: 'otherSubWindowsContainer',
     components: [{
-      style: 'background-color: #FFFFFF;',
-      name: 'subWindow_customers',
-      beforeSetShowing: function(value, params) {
-        this.setShowing(value);
-      },
-      showing: false,
-      components: [{
-        tag: 'div',
-        style: 'padding: 9px 15px;',
-        components: [{
-          tag: 'a',
-          classes: 'close',
-          components: [{
-            tag: 'span',
-            style: 'font-size: 150%',
-            allowHtml: true,
-            content: '&times;'
-          }],
-          tap: function() {
-            this.model.get('subWindowManager').set('currentWindow', {
-              name: 'mainSubWindow',
-              params: []
-            });
-          },
-          init: function(model) {
-            this.model = model;
-          }
-        }, {
-          tag: 'h3',
-          name: 'divheaderCustomerAdvancedSearch',
-          content: OB.I18N.getLabel('OBPOS_TitleCustomerAdvancedSearch')
-        }]
-      }, {
-        kind: 'OB.UI.ListCustomers'
-      }]
-    }]
-  }, {
-    name: 'NewCustomerSubWindowsContainer',
-    components: [{
-      kind: 'OB.UI.ModalConfigurationRequiredForCreateCustomers'
+      kind: 'OB.OBPOSPointOfSale.UI.customers.ModalConfigurationRequiredForCreateCustomers'
     }, {
-      style: 'background-color: #FFFFFF;',
-      name: 'subWindow_new_customer',
-      beforeSetShowing: function(value, params) {
-        this.setShowing(value);
-        this.waterfall('onSetCustomer', {
-          customer: params.businessPartner,
-          callerWindow: params.callerWindow
-        });
-      },
-      showing: false,
-      components: [{
-        tag: 'div',
-        style: 'padding: 9px 15px;',
-        components: [{
-          tag: 'a',
-          classes: 'close',
-          components: [{
-            tag: 'span',
-            style: 'font-size: 150%',
-            allowHtml: true,
-            content: '&times;'
-          }],
-          tap: function() {
-            this.model.get('subWindowManager').set('currentWindow', {
-              name: 'subWindow_customers',
-              params: []
-            });
-          },
-          init: function(model) {
-            this.model = model;
-          }
-        }, {
-          tag: 'h3',
-          name: 'divheaderCustomerEditNew',
-          content: OB.I18N.getLabel('OBPOS_TitleEditNewCustomer')
-        }]
-      }, {
-        name: 'OB.UI.NewCustomerWindowImpl',
-        kind: 'OB.UI.NewCustomerWindow',
-        windowHeader: 'OB.UI.NewCustomerWindowHeader',
-        newAttributes: [{
-          kind: 'OB.UI.CustomerTextProperty',
-          name: 'customerName',
-          modelProperty: 'name',
-          label: OB.I18N.getLabel('OBPOS_LblName')
-        }, {
-          kind: 'OB.UI.CustomerTextProperty',
-          name: 'customerLocName',
-          modelProperty: 'locName',
-          label: OB.I18N.getLabel('OBPOS_LblAddress')
-        }, {
-          kind: 'OB.UI.CustomerTextProperty',
-          name: 'customerPostalCode',
-          modelProperty: 'postalcode',
-          label: OB.I18N.getLabel('OBPOS_LblPostalCode')
-        }, {
-          kind: 'OB.UI.CustomerTextProperty',
-          name: 'customerCity',
-          modelProperty: 'city',
-          label: OB.I18N.getLabel('OBPOS_LblCity')
-        }, {
-          kind: 'OB.UI.CustomerTextProperty',
-          name: 'customerPhone',
-          modelProperty: 'phone',
-          label: OB.I18N.getLabel('OBPOS_LblPhone')
-        }, {
-          kind: 'OB.UI.CustomerTextProperty',
-          name: 'customerEmail',
-          modelProperty: 'email',
-          label: OB.I18N.getLabel('OBPOS_LblEmail')
-        }]
-      }]
-    }]
-  }, {
-    name: 'EditCustomerSubWindowsContainer',
-    components: [{
-      style: 'background-color: #FFFFFF;',
-      name: 'subWindow_edit_customer',
-      beforeSetShowing: function(value, params) {
-        this.setShowing(value);
-        this.waterfall('onSetCustomer', {
-          customer: params.businessPartner
-        });
-      },
-      showing: false,
-      components: [{
-        name: 'OB.UI.EditCustomerWindowImpl',
-        kind: 'OB.UI.NewCustomerWindow',
-        windowHeader: 'OB.UI.EditCustomerWindowHeader',
-        newAttributes: [{
-          kind: 'OB.UI.CustomerTextProperty',
-          name: 'customerName',
-          modelProperty: 'name',
-          label: OB.I18N.getLabel('OBPOS_LblName'),
-          readOnly: true
-        }, {
-          kind: 'OB.UI.CustomerTextProperty',
-          name: 'customerLocName',
-          modelProperty: 'locName',
-          label: OB.I18N.getLabel('OBPOS_LblAddress'),
-          readOnly: true
-        }, {
-          kind: 'OB.UI.CustomerTextProperty',
-          name: 'customerPostalCode',
-          modelProperty: 'postalcode',
-          label: OB.I18N.getLabel('OBPOS_LblPostalCode'),
-          readOnly: true
-        }, {
-          kind: 'OB.UI.CustomerTextProperty',
-          name: 'customerCity',
-          modelProperty: 'city',
-          label: OB.I18N.getLabel('OBPOS_LblCity'),
-          readOnly: true
-        }, {
-          kind: 'OB.UI.CustomerTextProperty',
-          name: 'customerPhone',
-          modelProperty: 'phone',
-          label: OB.I18N.getLabel('OBPOS_LblPhone'),
-          readOnly: true
-        }, {
-          kind: 'OB.UI.CustomerTextProperty',
-          name: 'customerEmail',
-          modelProperty: 'email',
-          label: OB.I18N.getLabel('OBPOS_LblEmail'),
-          readOnly: true
-        }]
-      }]
+      kind: 'OB.OBPOSPointOfSale.UI.customers.cas',
+      name: 'customerAdvancedSearch'
+    }, {
+      kind: 'OB.OBPOSPointOfSale.UI.customers.newcustomer',
+      name: 'customerCreateAndEdit'
+    }, {
+      kind: 'OB.OBPOSPointOfSale.UI.customers.editcustomer',
+      name: 'customerView'
     }]
   }, {
     name: 'mainSubWindow',
+    isMainSubWindow: true,
     components: [{
       kind: 'OB.UI.ModalDeleteReceipt'
-    },{
+    }, {
+      kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalClosePaidReceipt'
+    }, {
+      kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalProductCannotBeGroup'
+    }, {
       kind: 'OB.UI.Modalnoteditableorder'
     },{
       kind: 'OB.UI.ModalBusinessPartners'
@@ -363,7 +212,10 @@ enyo.kind({
     this.model.get('orderList').saveCurrent();
     return true;
   },
-  tabChange: function(sender, event) {
+  tabChange: function (sender, event) {
+    this.waterfall('onTabButtonTap', {
+      tabPanel: event.tabPanel
+    });
     this.waterfall('onChangeEditMode', {
       edit: event.edit
     });
@@ -434,27 +286,51 @@ enyo.kind({
     this.model.get('orderList').saveCurrent();
     return true;
   },
-  beforeSetShowing: function(value, params) {
-    this.setShowing(value);
-  },
-  init: function() {
+  init: function () {
     var receipt, receiptList;
     this.inherited(arguments);
     receipt = this.model.get('order');
     receiptList = this.model.get('orderList');
-    this.model.get('subWindowManager').on('change:currentWindow', function(changedModel) {
-      //TODO backbone route
-      if (this.$[changedModel.get('currentWindow').name]) {
-        this.$[changedModel.previousAttributes().currentWindow.name].setShowing(false);
-        if (this.$[changedModel.get('currentWindow').name].beforeSetShowing) {
-          this.$[changedModel.get('currentWindow').name].beforeSetShowing(true, changedModel.get('currentWindow').params);
-        } else {
-          this.$[changedModel.get('currentWindow').name].setShowing(true);
-        }
-      } else {
-        this.model.get('subWindowManager').set('currentWindow', changedModel.previousAttributes().currentWindow, {
+    this.model.get('subWindowManager').on('change:currentWindow', function (changedModel) {
+
+      function restorePreviousState(swManager, changedModel) {
+        swManager.set('currentWindow', changedModel.previousAttributes().currentWindow, {
           silent: true
         });
+      }
+
+      //TODO backbone route
+      var showNewSubWindow = false;
+      if (this.$[changedModel.get('currentWindow').name]) {
+        if (!changedModel.get('currentWindow').params) {
+          changedModel.get('currentWindow').params = {};
+        }
+        changedModel.get('currentWindow').params.caller = changedModel.previousAttributes().currentWindow.name;
+        if (this.$[changedModel.previousAttributes().currentWindow.name].mainBeforeClose) {
+          this.$[changedModel.previousAttributes().currentWindow.name].mainBeforeClose(changedModel.get('currentWindow').name);
+        }
+        if (this.$[changedModel.get('currentWindow').name].mainBeforeSetShowing) {
+          showNewSubWindow = this.$[changedModel.get('currentWindow').name].mainBeforeSetShowing(changedModel.get('currentWindow').params);
+          if (showNewSubWindow) {
+            this.$[changedModel.previousAttributes().currentWindow.name].setShowing(false);
+            this.$[changedModel.get('currentWindow').name].setShowing(true);
+          } else {
+            restorePreviousState(this.model.get('subWindowManager'), changedModel);
+          }
+        } else {
+          if (this.$[changedModel.get('currentWindow').name].isMainSubWindow) {
+            this.$[changedModel.previousAttributes().currentWindow.name].setShowing(false);
+            this.$[changedModel.get('currentWindow').name].setShowing(true);
+          } else {
+            //developers helps
+            //console.log("Error! A subwindow must inherits from OB.UI.subwindow -> restore previous state");
+            restorePreviousState(this.model.get('subWindowManager'), changedModel);
+          }
+        }
+      } else {
+        //developers helps
+        //console.log("The subwindow to navigate doesn't exists -> restore previous state");
+        restorePreviousState(this.model.get('subWindowManager'), changedModel);
       }
     }, this);
     this.$.receiptview.setOrder(receipt);

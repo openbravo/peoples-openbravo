@@ -1,5 +1,3 @@
-/*global B, _ , Backbone, localStorage */
-
 /*
  ************************************************************************************
  * Copyright (C) 2012 Openbravo S.L.U.
@@ -8,6 +6,8 @@
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
+
+/*global B, _ , Backbone, localStorage */
 
 (function () {
 
