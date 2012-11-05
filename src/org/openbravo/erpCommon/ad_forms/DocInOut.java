@@ -44,7 +44,7 @@ import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
-import org.openbravo.model.materialmgmt.transaction.ReservationStock;
+import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 
 public class DocInOut extends AcctServer {
@@ -451,7 +451,7 @@ public class DocInOut extends AcctServer {
   public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {
     try {
       DocLineInOutData[] data = DocLineInOutData.select(conn, Record_ID);
-      ReservationStock inOut = OBDal.getInstance().get(ReservationStock.class, strRecordId);
+      ShipmentInOut inOut = OBDal.getInstance().get(ShipmentInOut.class, strRecordId);
       String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
           .getProperty("dateFormat.java");
       SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
