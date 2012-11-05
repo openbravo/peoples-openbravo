@@ -72,6 +72,22 @@
     --
     v_LineNo NUMBER:=0;
     v_count NUMBER:=0;
+    
+    v_isdeferredrevenue M_Product.IsDeferredRevenue%TYPE;
+    v_revplantype M_Product.RevPlanType%TYPE;
+    v_periodnumber M_Product.periodnumber%TYPE;
+    v_defaultperiod M_Product.defaultperiod%TYPE;
+ 
+    v_isdeferredexpense M_Product.IsDeferredExpense%TYPE;
+    v_expplantype M_Product.ExpPlanType%TYPE;
+    v_periodnumber_exp M_Product.periodnumber_exp%TYPE;
+    v_defaultperiod_exp M_Product.defaultperiod_exp%TYPE;
+
+    v_isdeferred_inv C_InvoiceLine.IsDeferred%TYPE;
+    v_defplantype_inv C_InvoiceLine.DefPlanType%TYPE;
+    v_periodnumber_inv C_InvoiceLine.periodnumber%TYPE;
+    v_period_inv C_InvoiceLine.c_period_id%TYPE;
+   
     Cur_OrderLine_ISOPEN BOOLEAN:=false;
     Cur_InOutLine_ISOPEN BOOLEAN:=false;
     v_AD_Client_ID VARCHAR2(32);
@@ -501,6 +517,39 @@
                     v_LineNo:=v_LineNo + 10;
                     DBMS_OUTPUT.PUT_LINE('    Line ' || ptr_ol.Line || '  Qty=' || v_Qty) ;
                     v_ResultStr:='CreateInvoiceLine from Order';
+	                  IF(ptr_ol.M_Product_ID IS NOT NULL) THEN
+											SELECT REVPLANTYPE, ISDEFERREDREVENUE, PERIODNUMBER, DEFAULTPERIOD,
+											EXPPLANTYPE, ISDEFERREDEXPENSE, PERIODNUMBER_EXP, DEFAULTPERIOD_EXP
+											INTO v_revplantype, v_isdeferredrevenue, v_periodnumber, v_defaultperiod,
+											v_expplantype, v_isdeferredexpense, v_periodnumber_exp, v_defaultperiod_exp
+											FROM M_PRODUCT
+											WHERE M_PRODUCT_ID = ptr_ol.M_Product_ID;
+											IF(Cur_Order.IsSOTrx = 'Y') THEN
+												v_period_inv:= c_get_default_period(p_Invoice_ID, v_defaultperiod);
+												IF(v_period_inv IS NOT NULL AND v_isdeferredrevenue = 'Y') THEN
+													v_isdeferred_inv := v_isdeferredrevenue;
+													v_defplantype_inv := v_revplantype;
+													v_periodnumber_inv := v_periodnumber;
+											  ELSE
+											  	v_period_inv := NULL;
+													v_isdeferred_inv := 'N';
+													v_defplantype_inv := NULL;
+													v_periodnumber_inv := NULL;
+												END IF;
+											ELSE
+												v_period_inv:= c_get_default_period(p_Invoice_ID, v_defaultperiod_exp);
+												IF(v_period_inv IS NOT NULL AND v_isdeferredexpense = 'Y') THEN
+													v_isdeferred_inv := v_isdeferredexpense;
+													v_defplantype_inv := v_expplantype;
+													v_periodnumber_inv := v_periodnumber_exp;
+											  ELSE
+											  	v_period_inv := NULL;
+													v_isdeferred_inv := 'N';
+													v_defplantype_inv := NULL;
+													v_periodnumber_inv := NULL;
+												END IF;
+											END IF;
+	                  END IF;
                     INSERT
                     INTO C_INVOICELINE
                       (
@@ -514,7 +563,8 @@
                         QuantityOrder, M_Product_Uom_ID, PriceStd,
                         m_attributesetinstance_id, taxbaseamt,
                         gross_unit_price, line_gross_amount,
-                        grosspricestd, grosspricelist
+                        grosspricestd, grosspricelist,
+                        isdeferred, defplantype, periodnumber, c_period_id                        
                       )
                       VALUES
                       (
@@ -528,7 +578,8 @@
                         v_QtyOrder, ptr_ol.M_Product_Uom_ID, ptr_ol.PriceStd,
                         ptr_ol.m_attributesetinstance_id, ptr_ol.taxbaseamt,
                         ptr_ol.gross_unit_price, C_Currency_Round(v_Qty*ptr_ol.gross_unit_price, Cur_Order.C_Currency_ID, NULL),
-                        COALESCE(ptr_ol.grosspricestd,0), COALESCE(ptr_ol.grosspricelist,0)
+                        COALESCE(ptr_ol.grosspricestd,0), COALESCE(ptr_ol.grosspricelist,0),
+                        v_isdeferred_inv, v_defplantype_inv, v_periodnumber_inv, v_period_inv
                       )
                       ;
                   END IF;--Next_O_Line
@@ -555,6 +606,40 @@
                     v_LineNo:=v_LineNo + 10;
                     DBMS_OUTPUT.PUT_LINE('    Line ' || ptr_sl.Line || '  Qty=' || ptr_sl.MovementQty) ;
                     v_ResultStr:='CreateInvoiceLine from Shipment';
+                    IF(ptr_sl.M_Product_ID IS NOT NULL) THEN
+											SELECT REVPLANTYPE, ISDEFERREDREVENUE, PERIODNUMBER, DEFAULTPERIOD,
+											EXPPLANTYPE, ISDEFERREDEXPENSE, PERIODNUMBER_EXP, DEFAULTPERIOD_EXP
+											INTO v_revplantype, v_isdeferredrevenue, v_periodnumber, v_defaultperiod,
+											v_expplantype, v_isdeferredexpense, v_periodnumber_exp, v_defaultperiod_exp
+											FROM M_PRODUCT
+											WHERE M_PRODUCT_ID = ptr_sl.M_Product_ID;
+											IF(Cur_Order.IsSOTrx = 'Y') THEN
+												v_period_inv:= c_get_default_period(p_Invoice_ID, v_defaultperiod);
+												IF(v_period_inv IS NOT NULL AND v_isdeferredrevenue = 'Y') THEN
+													v_isdeferred_inv := v_isdeferredrevenue;
+													v_defplantype_inv := v_revplantype;
+													v_periodnumber_inv := v_periodnumber;
+											  ELSE
+											  	v_period_inv := NULL;
+													v_isdeferred_inv := 'N';
+													v_defplantype_inv := NULL;
+													v_periodnumber_inv := NULL;
+												END IF;
+											ELSE
+												v_period_inv:= c_get_default_period(p_Invoice_ID, v_defaultperiod_exp);
+												IF(v_period_inv IS NOT NULL AND v_isdeferredexpense = 'Y') THEN
+													v_isdeferred_inv := v_isdeferredexpense;
+													v_defplantype_inv := v_expplantype;
+													v_periodnumber_inv := v_periodnumber_exp;
+											  ELSE
+											  	v_period_inv := NULL;
+													v_isdeferred_inv := 'N';
+													v_defplantype_inv := NULL;
+													v_periodnumber_inv := NULL;
+												END IF;
+											END IF;
+	                  END IF;
+
                     INSERT
                     INTO C_INVOICELINE
                       (
@@ -568,7 +653,8 @@
                         QuantityOrder, M_Product_Uom_ID, PriceStd,
                         m_attributesetinstance_id, taxbaseamt,
                         gross_unit_price, line_gross_amount,
-                        grosspricestd, grosspricelist
+                        grosspricestd, grosspricelist,
+                        isdeferred, defplantype, periodnumber, c_period_id
                       )
                       VALUES
                       (
@@ -582,7 +668,8 @@
                         ptr_sl.QuantityOrder, ptr_sl.M_Product_Uom_ID, ptr_sl.PriceStd,
                         ptr_sl.m_attributesetinstance_id, ptr_sl.taxbaseamt,
                         ptr_sl.gross_unit_price, C_Currency_Round(ptr_sl.MovementQty*ptr_sl.gross_unit_price, Cur_Order.C_Currency_ID, NULL),
-                        COALESCE(ptr_sl.grosspricestd,0), COALESCE(ptr_sl.grosspricelist,0)
+                        COALESCE(ptr_sl.grosspricestd,0), COALESCE(ptr_sl.grosspricelist,0),
+                        v_isdeferred_inv, v_defplantype_inv, v_periodnumber_inv, v_period_inv
                       )
                       ;
                   END IF;--Next_S_Line
@@ -1054,6 +1141,39 @@
                 v_LineNo:=v_LineNo + 10;
                 DBMS_OUTPUT.PUT_LINE('    SumLine ' || Cur_InvoiceSchedule.Line || '  Qty=' || Cur_InvoiceSchedule.MovementQty) ;
                 v_ResultStr:='CreateInvoiceLine_Sum';
+                IF(Cur_InvoiceSchedule.M_Product_ID IS NOT NULL) THEN
+									SELECT REVPLANTYPE, ISDEFERREDREVENUE, PERIODNUMBER, DEFAULTPERIOD,
+									EXPPLANTYPE, ISDEFERREDEXPENSE, PERIODNUMBER_EXP, DEFAULTPERIOD_EXP
+									INTO v_revplantype, v_isdeferredrevenue, v_periodnumber, v_defaultperiod,
+									v_expplantype, v_isdeferredexpense, v_periodnumber_exp, v_defaultperiod_exp
+									FROM M_PRODUCT
+									WHERE M_PRODUCT_ID = Cur_InvoiceSchedule.M_Product_ID;
+									IF(Cur_Order.IsSOTrx = 'Y') THEN
+										v_period_inv:= c_get_default_period(p_Invoice_ID, v_defaultperiod);
+										IF(v_period_inv IS NOT NULL AND v_isdeferredrevenue = 'Y') THEN
+											v_isdeferred_inv := v_isdeferredrevenue;
+											v_defplantype_inv := v_revplantype;
+											v_periodnumber_inv := v_periodnumber;
+									  ELSE
+									  	v_period_inv := NULL;
+											v_isdeferred_inv := 'N';
+											v_defplantype_inv := NULL;
+											v_periodnumber_inv := NULL;
+										END IF;
+									ELSE
+										v_period_inv:= c_get_default_period(p_Invoice_ID, v_defaultperiod_exp);
+										IF(v_period_inv IS NOT NULL AND v_isdeferredexpense = 'Y') THEN
+											v_isdeferred_inv := v_isdeferredexpense;
+											v_defplantype_inv := v_expplantype;
+											v_periodnumber_inv := v_periodnumber_exp;
+									  ELSE
+									  	v_period_inv := NULL;
+											v_isdeferred_inv := 'N';
+											v_defplantype_inv := NULL;
+											v_periodnumber_inv := NULL;
+										END IF;
+									END IF;
+                END IF;
                 INSERT
                 INTO C_INVOICELINE
                   (
@@ -1067,7 +1187,8 @@
                     QuantityOrder, M_Product_Uom_ID, PriceStd,
                     m_attributesetinstance_id, taxbaseamt,
                     gross_unit_price, line_gross_amount,
-                    grosspricestd, grosspricelist
+                    grosspricestd, grosspricelist,
+                    isdeferred, defplantype, periodnumber, c_period_id
                   )
                   VALUES
                   (
@@ -1081,7 +1202,8 @@
                     Cur_InvoiceSchedule.QuantityOrder, Cur_InvoiceSchedule.M_Product_Uom_ID, Cur_InvoiceSchedule.PriceStd,
                     Cur_InvoiceSchedule.m_attributesetinstance_id, Cur_InvoiceSchedule.taxbaseamt,
                     Cur_InvoiceSchedule.gross_unit_price, C_Currency_Round(Cur_InvoiceSchedule.MovementQty*Cur_InvoiceSchedule.gross_unit_price, Cur_InvoiceSchedule.C_Currency_ID, NULL),
-                    COALESCE(Cur_InvoiceSchedule.grosspricestd,0), COALESCE(Cur_InvoiceSchedule.grosspricelist,0)
+                    COALESCE(Cur_InvoiceSchedule.grosspricestd,0), COALESCE(Cur_InvoiceSchedule.grosspricelist,0),
+                    v_isdeferred_inv, v_defplantype_inv, v_periodnumber_inv, v_period_inv
                   )
                   ;
                 v_DateOrdered:=COALESCE(Cur_InvoiceSchedule.movementDate, COALESCE(Cur_InvoiceSchedule.DateOrdered, now())) ;

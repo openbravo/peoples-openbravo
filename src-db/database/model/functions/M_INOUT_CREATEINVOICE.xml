@@ -40,6 +40,17 @@
     Cur_Parameter RECORD;
     -- Parameter Variables
     v_M_PriceList_Version_ID VARCHAR2(32);
+ 
+    v_isdeferredexpense M_Product.IsDeferredExpense%TYPE;
+    v_expplantype M_Product.ExpPlanType%TYPE;
+    v_periodnumber_exp M_Product.periodnumber_exp%TYPE;
+    v_defaultperiod_exp M_Product.defaultperiod_exp%TYPE;
+
+    v_isdeferred_inv C_InvoiceLine.IsDeferred%TYPE;
+    v_defplantype_inv C_InvoiceLine.DefPlanType%TYPE;
+    v_periodnumber_inv C_InvoiceLine.periodnumber%TYPE;
+    v_period_inv C_InvoiceLine.c_period_id%TYPE;
+    
   BEGIN
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Processing ' || p_PInstance_ID) ;
@@ -307,10 +318,22 @@
             END IF;
             -- Get UOM + Tax -- VERY simplified, but should work in most cases
             v_ResultStr:='NoUOM+Tax';
-            SELECT C_UOM_ID
-            INTO v_C_UOM_ID
+            SELECT C_UOM_ID, EXPPLANTYPE, ISDEFERREDEXPENSE, PERIODNUMBER_EXP, DEFAULTPERIOD_EXP
+            INTO v_C_UOM_ID, v_expplantype, v_isdeferredexpense, v_periodnumber_exp, v_defaultperiod_exp
             FROM M_PRODUCT
             WHERE M_Product_ID=CUR_ShipmentLines.M_Product_ID;
+
+						v_period_inv:= c_get_default_period(v_Invoice_ID, v_defaultperiod_exp);
+						IF(v_period_inv IS NOT NULL AND v_isdeferredexpense = 'Y') THEN
+							v_isdeferred_inv := v_isdeferredexpense;
+							v_defplantype_inv := v_expplantype;
+							v_periodnumber_inv := v_periodnumber_exp;
+					  ELSE
+					  	v_period_inv := NULL;
+							v_isdeferred_inv := 'N';
+							v_defplantype_inv := NULL;
+							v_periodnumber_inv := NULL;
+						END IF;
             -- v_UOM_ID, v_Tax_ID
             v_ResultStr:='InsertInvoiceLine';
             Ad_Sequence_Next('C_InvoiceLine', CUR_Shipment.C_Order_ID, v_NextNo) ;
@@ -325,7 +348,8 @@
                 ChargeAmt, C_UOM_ID,
                 C_Tax_ID,  --MODIFIED BY F.IRIAZABAL
                 QuantityOrder, M_Product_Uom_ID, PriceStd, taxbaseamt,
-                gross_unit_price, line_gross_amount
+                gross_unit_price, line_gross_amount,
+                isdeferred, defplantype, periodnumber, c_period_id
               )
               VALUES
               (
@@ -337,7 +361,8 @@
                 0, v_C_UOM_ID,
                 v_C_Tax_ID,  --MODIFIED BY F.IRIAZABAL
                 CUR_ShipmentLines.QuantityOrder, CUR_ShipmentLines.M_Product_Uom_ID, v_PriceActual,v_taxBaseAmt,
-                v_gross_unit_price, v_line_gross_amount
+                v_gross_unit_price, v_line_gross_amount,
+                v_isdeferred_inv, v_defplantype_inv, v_periodnumber_inv, v_period_inv
               )
               ;
             v_TotalNet:=v_TotalNet + v_LineNetAmt;

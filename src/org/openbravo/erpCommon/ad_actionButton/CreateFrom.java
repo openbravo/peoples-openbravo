@@ -23,6 +23,7 @@ import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.StringTokenizer;
 
 import javax.servlet.ServletConfig;
@@ -39,6 +40,7 @@ import org.openbravo.database.SessionInfo;
 import org.openbravo.erpCommon.businessUtility.Tax;
 import org.openbravo.erpCommon.businessUtility.Tree;
 import org.openbravo.erpCommon.businessUtility.TreeData;
+import org.openbravo.erpCommon.utility.AccDefUtility;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SequenceIdData;
@@ -263,29 +265,34 @@ public class CreateFrom extends HttpSecureAppServlet {
       String strDateInvoiced, String strBPartnerLocation, String strPriceList, String strBPartner,
       String strStatementDate, String strBankAccount, String strOrg, String strIsreceipt)
       throws IOException, ServletException {
-    if (strTableId.equals("392")) { // C_BankStatement
-      printPageBank(response, vars, strPath, strKey, strTableId, strProcessId, strWindowId,
-          strTabName, strStatementDate, strBankAccount);
-    } else if (strTableId.equals("318")) { // C_Invoice
-      printPageInvoice(response, vars, strPath, strKey, strTableId, strProcessId, strWindowId,
-          strTabName, strDateInvoiced, strBPartnerLocation, strPriceList, strBPartner);
-    } else if (strTableId.equals("319")) { // M_InOut
-      printPageShipment(response, vars, strPath, strKey, strTableId, strProcessId, strWindowId,
-          strTabName, strBPartner);
-    } else if (strTableId.equals("426")) { // C_PaySelection
-      printPagePay(response, vars, strPath, strKey, strTableId, strProcessId, strWindowId,
-          strTabName, strBPartner);
-    } else if (strTableId.equals("800019")) { // C_Settlement
-      printPageSettlement(response, vars, strPath, strKey, strTableId, strProcessId, strWindowId,
-          strTabName, strBPartner);
-    } else if (strTableId.equals("800176")) { // C_DP_Management
-      printPageDPManagement(response, vars, strPath, strKey, strTableId, strProcessId, strWindowId,
-          strTabName, strBPartner);
-    } else if (strTableId.equals("800179")) { // C_Remittance
-      printPageCRemittance(response, vars, strPath, strKey, strTableId, strProcessId, strWindowId,
-          strTabName, strBPartner, strOrg, strIsreceipt);
-    } else {
-      pageError(response);
+    OBContext.setAdminMode();
+    try {
+      if (strTableId.equals("392")) { // C_BankStatement
+        printPageBank(response, vars, strPath, strKey, strTableId, strProcessId, strWindowId,
+            strTabName, strStatementDate, strBankAccount);
+      } else if (strTableId.equals("318")) { // C_Invoice
+        printPageInvoice(response, vars, strPath, strKey, strTableId, strProcessId, strWindowId,
+            strTabName, strDateInvoiced, strBPartnerLocation, strPriceList, strBPartner);
+      } else if (strTableId.equals("319")) { // M_InOut
+        printPageShipment(response, vars, strPath, strKey, strTableId, strProcessId, strWindowId,
+            strTabName, strBPartner);
+      } else if (strTableId.equals("426")) { // C_PaySelection
+        printPagePay(response, vars, strPath, strKey, strTableId, strProcessId, strWindowId,
+            strTabName, strBPartner);
+      } else if (strTableId.equals("800019")) { // C_Settlement
+        printPageSettlement(response, vars, strPath, strKey, strTableId, strProcessId, strWindowId,
+            strTabName, strBPartner);
+      } else if (strTableId.equals("800176")) { // C_DP_Management
+        printPageDPManagement(response, vars, strPath, strKey, strTableId, strProcessId,
+            strWindowId, strTabName, strBPartner);
+      } else if (strTableId.equals("800179")) { // C_Remittance
+        printPageCRemittance(response, vars, strPath, strKey, strTableId, strProcessId,
+            strWindowId, strTabName, strBPartner, strOrg, strIsreceipt);
+      } else {
+        pageError(response);
+      }
+    } finally {
+      OBContext.restorePreviousMode();
     }
   }
 
@@ -1339,22 +1346,27 @@ public class CreateFrom extends HttpSecureAppServlet {
 
   OBError saveMethod(VariablesSecureApp vars, String strKey, String strTableId,
       String strProcessId, String strWindowId) throws IOException, ServletException {
-    if (strTableId.equals("392"))
-      return saveBank(vars, strKey, strTableId, strProcessId);
-    else if (strTableId.equals("318"))
-      return saveInvoice(vars, strKey, strTableId, strProcessId, strWindowId);
-    else if (strTableId.equals("319"))
-      return saveShipment(vars, strKey, strTableId, strProcessId, strWindowId);
-    else if (strTableId.equals("426"))
-      return savePay(vars, strKey, strTableId, strProcessId);
-    else if (strTableId.equals("800019"))
-      return saveSettlement(vars, strKey, strTableId, strProcessId);
-    else if (strTableId.equals("800176"))
-      return saveDPManagement(vars, strKey, strTableId, strProcessId);
-    else if (strTableId.equals("800179"))
-      return saveCRemittance(vars, strKey, strTableId, strProcessId);
-    else
-      return null;
+    OBContext.setAdminMode();
+    try {
+      if (strTableId.equals("392"))
+        return saveBank(vars, strKey, strTableId, strProcessId);
+      else if (strTableId.equals("318"))
+        return saveInvoice(vars, strKey, strTableId, strProcessId, strWindowId);
+      else if (strTableId.equals("319"))
+        return saveShipment(vars, strKey, strTableId, strProcessId, strWindowId);
+      else if (strTableId.equals("426"))
+        return savePay(vars, strKey, strTableId, strProcessId);
+      else if (strTableId.equals("800019"))
+        return saveSettlement(vars, strKey, strTableId, strProcessId);
+      else if (strTableId.equals("800176"))
+        return saveDPManagement(vars, strKey, strTableId, strProcessId);
+      else if (strTableId.equals("800179"))
+        return saveCRemittance(vars, strKey, strTableId, strProcessId);
+      else
+        return null;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
   protected OBError saveBank(VariablesSecureApp vars, String strKey, String strTableId,
@@ -1572,13 +1584,30 @@ public class CreateFrom extends HttpSecureAppServlet {
                 BigDecimal.ROUND_HALF_EVEN)).setScale(curPrecision, BigDecimal.ROUND_HALF_UP);
             try {
               final String strOrg2 = vars.getGlobalVariable("inpadOrgId", "CreateFrom|adOrgId", "");
+              // Calculate Acc and Def Plan from Product
+              String isDeferred = "N";
+              HashMap<String, String> accDefPlanData = AccDefUtility
+                  .getDeferredPlanForInvoiceProduct(strKey, data[i].mProductId);
+              String planType = accDefPlanData.get("planType");
+              String periodNumber = accDefPlanData.get("periodNumber");
+              String startingPeriodId = accDefPlanData.get("startingPeriodId");
+              boolean isSOTRX = "Y".equals(isSOTrx);
+              if (!"".equals(planType) && !"".equals(periodNumber) && !"".equals(startingPeriodId)) {
+                isDeferred = "Y";
+              } else {
+                planType = "";
+                periodNumber = "";
+                startingPeriodId = "";
+              }
+
               CreateFromInvoiceData.insert(conn, this, strSequence, strKey, vars.getClient(),
                   strOrg2, vars.getUser(), data[i].cOrderlineId, data[i].mInoutlineId,
                   data[i].description, data[i].mProductId, data[i].cUomId, data[i].id, priceList,
                   priceActual, priceLimit, lineNetAmt.toString(), C_Tax_ID, taxAmt.toPlainString(),
                   data[i].quantityorder, data[i].mProductUomId, data[i].mAttributesetinstanceId,
                   priceStd, lineNetAmt.toString(), priceGross, grossAmt.toString(),
-                  priceListGross.toString(), priceStdGross.toString());
+                  priceListGross.toString(), priceStdGross.toString(), isDeferred, planType,
+                  periodNumber, startingPeriodId);
             } catch (final ServletException ex) {
               myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
               releaseRollbackConnection(conn);

@@ -50,6 +50,17 @@ TYPE RECORD IS REF CURSOR;
  v_IsDiscountPrinted    CHAR(1);
  v_CommissionName VARCHAR(60);
  v_countNoCost NUMBER(10);
+    
+	v_isdeferredexpense M_Product.IsDeferredExpense%TYPE;
+	v_expplantype M_Product.ExpPlanType%TYPE;
+	v_periodnumber_exp M_Product.periodnumber_exp%TYPE;
+	v_defaultperiod_exp M_Product.defaultperiod_exp%TYPE;
+
+	v_isdeferred_inv C_InvoiceLine.IsDeferred%TYPE;
+	v_defplantype_inv C_InvoiceLine.DefPlanType%TYPE;
+	v_periodnumber_inv C_InvoiceLine.periodnumber%TYPE;
+	v_period_inv C_InvoiceLine.c_period_id%TYPE;
+
   FINISH_PROCESS BOOLEAN := false;
 BEGIN
     --  Update AD_PInstance
@@ -175,6 +186,25 @@ BEGIN
    0, 0,
    v_M_PriceList_ID, NULL, NULL, NULL);
 
+
+    IF(v_Product_ID IS NOT NULL) THEN
+			SELECT EXPPLANTYPE, ISDEFERREDEXPENSE, PERIODNUMBER_EXP, DEFAULTPERIOD_EXP
+			INTO v_expplantype, v_isdeferredexpense, v_periodnumber_exp, v_defaultperiod_exp
+			FROM M_PRODUCT
+			WHERE M_PRODUCT_ID = v_Product_ID;
+
+			v_period_inv:= c_get_default_period(v_C_Invoice_ID, v_defaultperiod_exp);
+			IF(v_period_inv IS NOT NULL AND v_isdeferredexpense = 'Y') THEN
+				v_isdeferred_inv := v_isdeferredexpense;
+				v_defplantype_inv := v_expplantype;
+				v_periodnumber_inv := v_periodnumber_exp;
+		  ELSE
+		  	v_period_inv := NULL;
+				v_isdeferred_inv := 'N';
+				v_defplantype_inv := NULL;
+				v_periodnumber_inv := NULL;
+			END IF;
+    END IF;
   -- One line with Total (TODO: Tax, UOM)
   v_Tax_ID := C_Gettax (v_Product_ID,CUR_ComRun.Updated,CUR_ComRun.AD_Org_ID,NULL,v_C_BPartner_Location_ID,v_C_BPartner_Location_ID,NULL,'N');
 
@@ -189,7 +219,8 @@ BEGIN
    C_Charge_ID, ChargeAmt, C_UOM_ID, C_Tax_ID
    --MODIFIED BY F.IRIAZABAL
    , QUANTITYORDER, M_PRODUCT_UOM_ID,
-   PriceStd, M_Offer_ID)
+   PriceStd, M_Offer_ID,
+   isdeferred, defplantype, periodnumber, c_period_id)
   VALUES
    (v_NextNo,
    CUR_ComRun.AD_Client_ID, CUR_ComRun.AD_Org_ID, 'Y', now(), '0', now(), '0',
@@ -199,7 +230,8 @@ BEGIN
    NULL, 0, v_UOM_ID, v_Tax_ID
    --MODIFIED BY F.IRIAZABAL
    , NULL, NULL,
-   CUR_ComRun.GrandTotal, NULL);
+   CUR_ComRun.GrandTotal, NULL,
+   v_isdeferred_inv, v_defplantype_inv, v_periodnumber_inv, v_period_inv);
 
   UPDATE C_CommissionRun
   SET C_Invoice_ID = v_C_Invoice_ID

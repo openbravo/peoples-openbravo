@@ -35,6 +35,7 @@ import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.businessUtility.PAttributeSet;
 import org.openbravo.erpCommon.businessUtility.PAttributeSetData;
 import org.openbravo.erpCommon.businessUtility.Tax;
+import org.openbravo.erpCommon.utility.AccDefUtility;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.enterprise.Organization;
@@ -182,46 +183,58 @@ public class SL_Invoice_Product extends HttpSecureAppServlet {
     }
     if (!"".equals(strCInvoiceID)) {
       Invoice inv = OBDal.getInstance().get(Invoice.class, strCInvoiceID);
-      if (inv.isSalesTransaction() && !"".equals(strMProductID)) {
-        Product product = OBDal.getInstance().get(Product.class, strMProductID);
-        if (product.isDeferredRevenue()) {
-          resultado.append(", new Array(\"inpisdeferredrevenue\", \"Y\")");
-          resultado.append(", new Array(\"inprevplantype\", \"" + product.getRevenuePlanType()
-              + "\")");
-          resultado.append(", new Array(\"inpperiodnumber\", \"" + product.getPeriodNumber()
-              + "\")");
-        } else {
-          resultado.append(", new Array(\"inpisdeferredrevenue\", \"N\")");
-          resultado.append(", new Array(\"inprevplantype\", \"\")");
-          resultado.append(", new Array(\"inpperiodnumber\", \"\")");
+      final String CURRENT_MONTH = "C";
+      final String NEXT_MONTH = "N";
+      // Set empty values
+      String isdeferred = "N";
+      String defplantype = "";
+      String periodnumber = "";
+      String cPeriodId = "";
+      try {
+        if (inv.isSalesTransaction() && !"".equals(strMProductID)) {
+          Product product = OBDal.getInstance().get(Product.class, strMProductID);
+          if (product.isDeferredRevenue()) {
+            isdeferred = "Y";
+            defplantype = product.getRevenuePlanType();
+            periodnumber = product.getPeriodNumber().toString();
+            if (CURRENT_MONTH.equals(product.getDefaultPeriod())) {
+              cPeriodId = AccDefUtility.getCurrentPeriod(inv.getAccountingDate(),
+                  AccDefUtility.getCalendar(inv.getOrganization())).getId();
+            } else if (NEXT_MONTH.equals(product.getDefaultPeriod())) {
+              cPeriodId = AccDefUtility.getNextPeriod(
+                  AccDefUtility.getCurrentPeriod(inv.getAccountingDate(),
+                      AccDefUtility.getCalendar(inv.getOrganization()))).getId();
+            }
+          }
+        } else if (!inv.isSalesTransaction() && !"".equals(strMProductID)) {
+          Product product = OBDal.getInstance().get(Product.class, strMProductID);
+          if (product.isDeferredexpense()) {
+            isdeferred = "Y";
+            defplantype = product.getExpplantype();
+            periodnumber = product.getPeriodnumberExp().toString();
+            if (CURRENT_MONTH.equals(product.getDefaultPeriodExpense())) {
+              cPeriodId = AccDefUtility.getCurrentPeriod(inv.getAccountingDate(),
+                  AccDefUtility.getCalendar(inv.getOrganization())).getId();
+            } else if (NEXT_MONTH.equals(product.getDefaultPeriodExpense())) {
+              cPeriodId = AccDefUtility.getNextPeriod(
+                  AccDefUtility.getCurrentPeriod(inv.getAccountingDate(),
+                      AccDefUtility.getCalendar(inv.getOrganization()))).getId();
+            }
+          }
         }
-        resultado.append(", new Array(\"inpisdeferredexpense\", \"N\")");
-        resultado.append(", new Array(\"inpexpplantype\", \"\")");
-        resultado.append(", new Array(\"inpperiodnumberExp\", \"\")");
-      } else if (!inv.isSalesTransaction() && !"".equals(strMProductID)) {
-        Product product = OBDal.getInstance().get(Product.class, strMProductID);
-        resultado.append(", new Array(\"inpisdeferredrevenue\", \"N\")");
-        resultado.append(", new Array(\"inprevplantype\", \"\")");
-        resultado.append(", new Array(\"inpperiodnumber\", \"\")");
-        if (product.isDeferredexpense()) {
-          resultado.append(", new Array(\"inpisdeferredexpense\", \"Y\")");
-          resultado.append(", new Array(\"inpexpplantype\", \"" + product.getExpplantype() + "\")");
-          resultado.append(", new Array(\"inpperiodnumberExp\", \"" + product.getPeriodnumberExp()
-              + "\")");
-        } else {
-          resultado.append(", new Array(\"inpisdeferredexpense\", \"N\")");
-          resultado.append(", new Array(\"inpexpplantype\", \"\")");
-          resultado.append(", new Array(\"inpperiodnumberExp\", \"\")");
-        }
-      } else {
-        resultado.append(", new Array(\"inpisdeferredrevenue\", \"N\")");
-        resultado.append(", new Array(\"inprevplantype\", \"\")");
-        resultado.append(", new Array(\"inpperiodnumber\", \"\")");
-
-        resultado.append(", new Array(\"inpisdeferredexpense\", \"N\")");
-        resultado.append(", new Array(\"inpexpplantype\", \"\")");
-        resultado.append(", new Array(\"inpperiodnumberExp\", \"\")");
+      } catch (Exception e) {
+        isdeferred = "N";
+        defplantype = "";
+        periodnumber = "";
+        cPeriodId = "";
+        log4j.error("Error calculating Accruals and Deferrals Plan");
       }
+      // Set values
+      resultado.append(", new Array(\"inpisdeferred\", \"" + isdeferred + "\")");
+      resultado.append(", new Array(\"inpdefplantype\", \"" + defplantype + "\")");
+      resultado.append(", new Array(\"inpperiodnumber\", \"" + periodnumber + "\")");
+      resultado.append(", new Array(\"inpcPeriodId\", \"" + cPeriodId + "\")");
+
     }
     resultado.append(", new Array(\"inpmProductUomId\", ");
     // if (strUOM.startsWith("\""))
@@ -263,4 +276,5 @@ public class SL_Invoice_Product extends HttpSecureAppServlet {
     out.println(xmlDocument.print());
     out.close();
   }
+
 }

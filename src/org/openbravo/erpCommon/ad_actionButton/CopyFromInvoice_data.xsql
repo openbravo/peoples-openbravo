@@ -64,14 +64,16 @@
             QTYINVOICED, PRICELIST, PRICEACTUAL, PRICELIMIT, LINENETAMT, C_CHARGE_ID, CHARGEAMT, C_UOM_ID, C_TAX_ID, 
             S_RESOURCEASSIGNMENT_ID, TAXAMT, M_ATTRIBUTESETINSTANCE_ID, ISDESCRIPTION, QUANTITYORDER, M_PRODUCT_UOM_ID, 
             PRICESTD, ACCOUNT_ID,FINANCIAL_INVOICE_LINE,
-            gross_unit_price, line_gross_amount, grosspricelist, grosspricestd
+            gross_unit_price, line_gross_amount, grosspricelist, grosspricestd,
+            isdeferred, revplantype, periodnumber, c_period_id
         )
         SELECT ?, ?, ?, ?, 'Y', now(), ?, now(), ?,
         (SELECT COALESCE(MAX(LINE),0)+10 FROM C_InvoiceLine WHERE C_Invoice_ID = ?), DESCRIPTION, M_PRODUCT_ID, 
         QTYINVOICED, TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), C_CHARGE_ID, CHARGEAMT, C_UOM_ID, ?, 
         S_RESOURCEASSIGNMENT_ID, TAXAMT, M_ATTRIBUTESETINSTANCE_ID, ISDESCRIPTION, QUANTITYORDER, M_PRODUCT_UOM_ID, 
         PRICESTD, ACCOUNT_ID,FINANCIAL_INVOICE_LINE,
-        TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?)
+        TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?),
+        isdeferred, revplantype, periodnumber, c_period_id        
         FROM C_INVOICELINE 
         WHERE C_INVOICELINE_ID = ? 
       ]]>

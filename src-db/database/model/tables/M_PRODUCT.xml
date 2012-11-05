@@ -309,6 +309,14 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="DEFAULTPERIOD" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="DEFAULTPERIOD_EXP" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MPRODUCT">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
@@ -387,13 +395,13 @@
       <check name="M_PRODUCT_ENFORCE_ATTRIBUT_CHK"><![CDATA[ENFORCE_ATTRIBUTE IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ISBOM_CHECK"><![CDATA[ISBOM IN ('Y', 'N')]]></check>
-      <check name="M_PRODUCT_ISEXPDEFCOMPLETE_CHK"><![CDATA[(ISDEFERREDEXPENSE = 'N') OR (((ISDEFERREDEXPENSE = 'Y') AND (EXPPLANTYPE IS NOT NULL)) AND (PERIODNUMBER_EXP IS NOT NULL))]]></check>
+      <check name="M_PRODUCT_ISEXPDEFCOMPLETE_CHK"><![CDATA[(ISDEFERREDEXPENSE = 'N') OR ((((ISDEFERREDEXPENSE = 'Y') AND (EXPPLANTYPE IS NOT NULL)) AND (DEFAULTPERIOD_EXP IS NOT NULL)) AND (PERIODNUMBER_EXP IS NOT NULL))]]></check>
       <check name="M_PRODUCT_ISEXPDEFERRED_CHK"><![CDATA[ISDEFERREDEXPENSE IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ISINVOICEPRINTDE_CHK"><![CDATA[ISINVOICEPRINTDETAILS IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ISPICKLISTPRINTD_CHK"><![CDATA[ISPICKLISTPRINTDETAILS IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ISPURCHASED_CHECK"><![CDATA[ISPURCHASED IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ISQTYVAR_CHECK"><![CDATA[ISQUANTITYVARIABLE IN ('Y', 'N')]]></check>
-      <check name="M_PRODUCT_ISREVDEFCOMPLETE_CHK"><![CDATA[(ISDEFERREDREVENUE = 'N') OR (((ISDEFERREDREVENUE = 'Y') AND (REVPLANTYPE IS NOT NULL)) AND (PERIODNUMBER IS NOT NULL))]]></check>
+      <check name="M_PRODUCT_ISREVDEFCOMPLETE_CHK"><![CDATA[(ISDEFERREDREVENUE = 'N') OR ((((ISDEFERREDREVENUE = 'Y') AND (REVPLANTYPE IS NOT NULL)) AND (DEFAULTPERIOD IS NOT NULL)) AND (PERIODNUMBER IS NOT NULL))]]></check>
       <check name="M_PRODUCT_ISREVDEFERRED_CHK"><![CDATA[ISDEFERREDREVENUE IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ISSOLD_CHECK"><![CDATA[ISSOLD IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ISSTOCKED_CHECK"><![CDATA[ISSTOCKED IN ('Y', 'N')]]></check>

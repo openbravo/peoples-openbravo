@@ -53,6 +53,21 @@
     CUR_SCALES RECORD;
     CUR_INVOICE RECORD;
     FINISH_PROCESS BOOLEAN:=FALSE;
+    
+    v_isdeferredrevenue M_Product.IsDeferredRevenue%TYPE;
+    v_revplantype M_Product.RevPlanType%TYPE;
+    v_periodnumber M_Product.periodnumber%TYPE;
+    v_defaultperiod M_Product.defaultperiod%TYPE;
+ 
+    v_isdeferredexpense M_Product.IsDeferredExpense%TYPE;
+    v_expplantype M_Product.ExpPlanType%TYPE;
+    v_periodnumber_exp M_Product.periodnumber_exp%TYPE;
+    v_defaultperiod_exp M_Product.defaultperiod_exp%TYPE;
+
+    v_isdeferred_inv C_InvoiceLine.IsDeferred%TYPE;
+    v_defplantype_inv C_InvoiceLine.DefPlanType%TYPE;
+    v_periodnumber_inv C_InvoiceLine.periodnumber%TYPE;
+    v_period_inv C_InvoiceLine.c_period_id%TYPE;
   BEGIN
     -- PROCESS PARAMETERS
     --  UPDATE AD_PINSTANCE
@@ -395,6 +410,39 @@
             v_Record_ID, v_invoiceId, v_seqno)
           ;
       END IF;
+      IF(CUR_INVOICE.M_PRODUCT_ID IS NOT NULL) THEN
+				SELECT REVPLANTYPE, ISDEFERREDREVENUE, PERIODNUMBER, DEFAULTPERIOD,
+				EXPPLANTYPE, ISDEFERREDEXPENSE, PERIODNUMBER_EXP, DEFAULTPERIOD_EXP
+				INTO v_revplantype, v_isdeferredrevenue, v_periodnumber, v_defaultperiod,
+				v_expplantype, v_isdeferredexpense, v_periodnumber_exp, v_defaultperiod_exp
+				FROM M_PRODUCT
+				WHERE M_PRODUCT_ID = CUR_INVOICE.M_PRODUCT_ID;
+				IF(CUR_INVOICE.ISSOTRX = 'Y') THEN
+					v_period_inv:= c_get_default_period(v_invoiceId, v_defaultperiod);
+					IF(v_period_inv IS NOT NULL AND v_isdeferredrevenue = 'Y') THEN
+						v_isdeferred_inv := v_isdeferredrevenue;
+						v_defplantype_inv := v_revplantype;
+						v_periodnumber_inv := v_periodnumber;
+				  ELSE
+				  	v_period_inv := NULL;
+						v_isdeferred_inv := 'N';
+						v_defplantype_inv := NULL;
+						v_periodnumber_inv := NULL;
+					END IF;
+				ELSE
+					v_period_inv:= c_get_default_period(v_invoiceId, v_defaultperiod_exp);
+					IF(v_period_inv IS NOT NULL AND v_isdeferredexpense = 'Y') THEN
+						v_isdeferred_inv := v_isdeferredexpense;
+						v_defplantype_inv := v_expplantype;
+						v_periodnumber_inv := v_periodnumber_exp;
+				  ELSE
+				  	v_period_inv := NULL;
+						v_isdeferred_inv := 'N';
+						v_defplantype_inv := NULL;
+						v_periodnumber_inv := NULL;
+					END IF;
+				END IF;
+      END IF;
       AD_SEQUENCE_NEXT('C_InvoiceLine', CUR_INVOICE.AD_CLIENT_ID, v_invoicelineId) ;
       v_description:='('||CUR_INVOICE.TOTALLINES||'*'||'('||v_Discount||'/100)) - '||COALESCE(CUR_INVOICE.RAPPELINVOICED, 0) ;
       v_line:=v_line + 10;
@@ -408,7 +456,8 @@
           PRICEACTUAL, PRICELIMIT, LINENETAMT, C_CHARGE_ID,
           CHARGEAMT, C_UOM_ID, C_TAX_ID, S_RESOURCEASSIGNMENT_ID,
           TAXAMT, M_ATTRIBUTESETINSTANCE_ID, ISDESCRIPTION,
-          QUANTITYORDER, M_PRODUCT_UOM_ID, PRICESTD, M_OFFER_ID
+          QUANTITYORDER, M_PRODUCT_UOM_ID, PRICESTD, M_OFFER_ID,
+          ISDEFERRED, DEFPLANTYPE, PERIODNUMBER, C_PERIOD_ID
         )
         VALUES
         (
@@ -419,7 +468,8 @@
           0, 0, CUR_INVOICE.LINENET, NULL,
           0, CUR_INVOICE.C_UOM_ID, CUR_INVOICE.C_TAX_ID, NULL,
           0, NULL, 'N',
-          NULL, NULL, 0, NULL
+          NULL, NULL, 0, NULL,
+          v_isdeferred_inv, v_defplantype_inv, v_periodnumber_inv, v_period_inv
         )
         ;	
     END LOOP;
