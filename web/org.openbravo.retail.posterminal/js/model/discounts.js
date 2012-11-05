@@ -12,28 +12,32 @@
 OB.Model.Discounts = {
   discountRules: {},
   executor: new OB.Model.DiscountsExecutor(),
-  applyPromotions: function(receipt, line) {
+  applyPromotions: function (receipt, line) {
     var lines;
     if (receipt && !receipt.get('isEditable')) {
       return;
     }
- 
+
     if (line) {
-      this.executor.addEvent(new Backbone.Model({id: line.cid, receipt:receipt, line:line}), true);
+      this.executor.addEvent(new Backbone.Model({
+        id: line.cid,
+        receipt: receipt,
+        line: line
+      }), true);
     } else {
-      lines =receipt.get('lines');
-      if (lines.length === 0){
+      lines = receipt.get('lines');
+      if (lines.length === 0) {
         // Removing last line, recalculate total
         receipt.calculateGross();
       } else {
-        lines.forEach(function(l){
+        lines.forEach(function (l) {
           this.applyPromotions(receipt, l);
         }, this);
       }
     }
   },
 
-  registerRule: function(name, rule) {
+  registerRule: function (name, rule) {
     this.discountRules[name] = rule;
   },
 
@@ -107,7 +111,7 @@ OB.Model.Discounts = {
 // Price Adjustment
 OB.Model.Discounts.registerRule('5D4BAF6BB86D4D2C9ED3D5A6FC051579', {
   async: false,
-  implementation: function(discountRule, receipt, line) {
+  implementation: function (discountRule, receipt, line) {
     var linePrice, discountedLinePrice, qty = line.get('qty'),
         minQty = discountRule.get('minQuantity'),
         maxQty = discountRule.get('maxQuantity');

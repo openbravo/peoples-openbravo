@@ -35,7 +35,7 @@
       'cityName': 'cityName',
       'phone': 'phone',
       'email': 'email',
-      'businessPartnerCategory':'C_BP_Group_ID',
+      'businessPartnerCategory': 'C_BP_Group_ID',
       '_identifier': '_identifier',
       '_idx': '_idx'
     },

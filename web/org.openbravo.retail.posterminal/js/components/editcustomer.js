@@ -8,6 +8,7 @@
  */
 
 /*global B, Backbone, $, _, enyo */
+
 enyo.kind({
   name: 'OB.UI.CustomerPropertyLine',
   components: [{
@@ -19,7 +20,7 @@ enyo.kind({
   }, {
     style: 'clear: both'
   }],
-  initComponents: function() {
+  initComponents: function () {
     this.inherited(arguments);
     this.$.newAttribute.createComponent(this.newAttribute);
     this.$.labelLine.content = this.newAttribute.label;
@@ -39,7 +40,7 @@ enyo.kind({
   events: {
     onSaveProperty: ''
   },
-  loadValue: function(sender, event) {
+  loadValue: function (sender, event) {
     if (event.customer !== undefined) {
       if (event.customer.get(this.modelProperty) !== undefined) {
         this.setValue(event.customer.get(this.modelProperty));
@@ -48,10 +49,10 @@ enyo.kind({
       this.setValue('');
     }
   },
-  saveChange: function(sender, event) {
+  saveChange: function (sender, event) {
     event.customer.set(this.modelProperty, this.getValue());
   },
-  initComponents: function() {
+  initComponents: function () {
     if (this.readOnly) {
       this.setAttribute('readonly', 'readonly');
     }
@@ -67,7 +68,7 @@ enyo.kind({
   events: {
     onSaveCustomer: ''
   },
-  tap: function() {
+  tap: function () {
     this.doSaveCustomer();
   }
 });
@@ -96,11 +97,11 @@ enyo.kind({
           handlers: {
             onSetCustomer: 'setCustomer'
           },
-          setCustomer: function(sender, event) {
+          setCustomer: function (sender, event) {
             this.customer = event.customer;
             this.callerWindow = event.callerWindow;
           },
-          tap: function() {
+          tap: function () {
             this.model.get('subWindowManager').set('currentWindow', {
               name: this.callerWindow,
               params: {
@@ -108,14 +109,14 @@ enyo.kind({
               }
             });
           },
-          init: function(model) {
+          init: function (model) {
             this.model = model;
           }
         }]
       }]
     }]
   }],
-  searchAction: function() {
+  searchAction: function () {
     this.doSearchAction({
       bpName: this.$.filterText.getValue()
     });
@@ -134,10 +135,10 @@ enyo.kind({
   events: {
     onChangeBusinessPartner: ''
   },
-  setCustomer: function(sender, event) {
+  setCustomer: function (sender, event) {
     this.customer = event.customer;
   },
-  tap: function() {
+  tap: function () {
     this.model.get('subWindowManager').set('currentWindow', {
       name: 'mainSubWindow',
       params: []
@@ -146,7 +147,7 @@ enyo.kind({
       businessPartner: this.customer
     });
   },
-  init: function(model) {
+  init: function (model) {
     this.model = model;
   }
 });
@@ -168,13 +169,13 @@ enyo.kind({
         allowHtml: true,
         content: '&times;'
       }],
-      tap: function() {
+      tap: function () {
         this.model.get('subWindowManager').set('currentWindow', {
           name: 'subWindow_customers',
           params: []
         });
       },
-      init: function(model) {
+      init: function (model) {
         this.model = model;
       }
     }]
@@ -192,10 +193,10 @@ enyo.kind({
           style: 'width: 100px; margin: 0px 5px 8px 19px;',
           classes: 'btnlink-orange btnlink btnlink-small',
           content: OB.I18N.getLabel('OBPOS_LblEdit'),
-          setCustomer: function(sender, event) {
+          setCustomer: function (sender, event) {
             this.customer = event.customer;
           },
-          tap: function() {
+          tap: function () {
             this.model.get('subWindowManager').set('currentWindow', {
               name: 'subWindow_new_customer',
               params: {
@@ -204,7 +205,7 @@ enyo.kind({
               }
             });
           },
-          init: function(model) {
+          init: function (model) {
             this.model = model;
           }
         }]
@@ -216,7 +217,7 @@ enyo.kind({
       }]
     }]
   }],
-  searchAction: function() {
+  searchAction: function () {
     this.doSearchAction({
       bpName: this.$.filterText.getValue()
     });
@@ -236,14 +237,14 @@ enyo.kind({
   }, {
     name: 'customerAttributes'
   }],
-  setCustomer: function(sender, event) {
+  setCustomer: function (sender, event) {
     this.customer = event.customer;
     this.callerWindow = event.callerWindow;
     this.waterfall('onLoadValue', {
       customer: this.customer
     });
   },
-  saveCustomer: function(sender, event) {
+  saveCustomer: function (sender, event) {
     var me = this,
         subWindowManager = this.model.get('subWindowManager');
 
@@ -272,7 +273,7 @@ enyo.kind({
         customer: this.model.get('customer')
       });
     } else {
-      this.model.get('customer').loadById(this.customer.get('id'), function(customer) {
+      this.model.get('customer').loadById(this.customer.get('id'), function (customer) {
         getCustomerValues({
           customer: customer
         });
@@ -283,13 +284,13 @@ enyo.kind({
       });
     }
   },
-  initComponents: function() {
+  initComponents: function () {
     this.inherited(arguments);
     this.$.headerButtons.createComponent({
       kind: this.windowHeader
     });
     this.attributeContainer = this.$.customerAttributes;
-    enyo.forEach(this.newAttributes, function(natt) {
+    enyo.forEach(this.newAttributes, function (natt) {
       this.$.customerAttributes.createComponent({
         kind: 'OB.UI.CustomerPropertyLine',
         name: 'line_' + natt.name,
@@ -297,7 +298,7 @@ enyo.kind({
       });
     }, this);
   },
-  init: function(model) {
+  init: function (model) {
     this.model = model;
   }
 });

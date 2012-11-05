@@ -46,7 +46,7 @@ enyo.kind({
     this.$.price.setContent(this.model.printPrice());
     this.$.gross.setContent(this.model.printGross());
     if (this.model.get('promotions')) {
-      enyo.forEach(this.model.get('promotions'), function(d) {
+      enyo.forEach(this.model.get('promotions'), function (d) {
         if (d.hidden) {
           // continue
           return;

@@ -17,7 +17,7 @@
       db = (wsql && window.openDatabase('WEBPOS', '', 'Openbravo Web POS', dbSize)),
       OP;
   OB.POS.databaseVersion = '0.3';
-  
+
   function dropTable(db, sql) {
     db.transaction(function (tx) {
       tx.executeSql(sql, {}, function () {
@@ -27,7 +27,7 @@
       });
     });
   }
-  
+
   db.changeVersion(db.version, OB.POS.databaseVersion, function (t) {
     var model, modelObj;
     if (db.version === OB.POS.databaseVersion) {
@@ -154,9 +154,9 @@
     if (db) {
       // websql
       if (whereClause && whereClause._whereClause) {
-        whereClause.sql = ' '+whereClause._whereClause;
+        whereClause.sql = ' ' + whereClause._whereClause;
       } else {
-    	whereClause = getWhereClause(whereClause, propertyMap);
+        whereClause = getWhereClause(whereClause, propertyMap);
       }
       sql = sql + whereClause.sql;
       params = whereClause.params;

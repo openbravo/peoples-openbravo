@@ -10,7 +10,7 @@
 
 /**
  * OB.Model.Executor provides a mechanism to execute actions synchronously even each of
- * these actions are not synchronous. It is managed with two queues: one for events and 
+ * these actions are not synchronous. It is managed with two queues: one for events and
  * another one for actions. Each event has a series of actions to be executed synchronously,
  * when all actions in the event are finished, next event is started.
  */
