@@ -13624,7 +13624,7 @@ Order closed: All the products agreed have been delivered.]]></HELP>
 <!--800169-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800169-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800169-->  <COLUMNNAME><![CDATA[C_Discount_ID]]></COLUMNNAME>
-<!--800169-->  <NAME><![CDATA[Discount]]></NAME>
+<!--800169-->  <NAME><![CDATA[Basic Discount]]></NAME>
 <!--800169-->  <PRINTNAME><![CDATA[C_Discount_ID]]></PRINTNAME>
 <!--800169-->  <DESCRIPTION><![CDATA[The percentage price reduction based on the list price.]]></DESCRIPTION>
 <!--800169-->  <HELP><![CDATA[Discount applicable to prices.]]></HELP>

@@ -2580,8 +2580,8 @@
 <!--800096-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800096-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800096-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800096-->  <NAME><![CDATA[Discount]]></NAME>
-<!--800096-->  <DESCRIPTION><![CDATA[Create and edit product price percentage discounts.]]></DESCRIPTION>
+<!--800096-->  <NAME><![CDATA[Basic Discount]]></NAME>
+<!--800096-->  <DESCRIPTION><![CDATA[Create and edit product price percentage Basic Discounts.]]></DESCRIPTION>
 <!--800096-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--800096-->  <ACTION><![CDATA[W]]></ACTION>
 <!--800096-->  <AD_WINDOW_ID><![CDATA[800017]]></AD_WINDOW_ID>

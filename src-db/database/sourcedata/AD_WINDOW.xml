@@ -1711,9 +1711,9 @@
 <!--800017-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800017-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800017-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800017-->  <NAME><![CDATA[Discount]]></NAME>
-<!--800017-->  <DESCRIPTION><![CDATA[Create and edit product price percentage discounts.]]></DESCRIPTION>
-<!--800017-->  <HELP><![CDATA[A discount is a deduction from the total amount of an order or an invoice.]]></HELP>
+<!--800017-->  <NAME><![CDATA[Basic Discount]]></NAME>
+<!--800017-->  <DESCRIPTION><![CDATA[Create and edit product price percentage Basic Discounts.]]></DESCRIPTION>
+<!--800017-->  <HELP><![CDATA[A Basic Discount is a deduction from the total amount of an order or an invoice.]]></HELP>
 <!--800017-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800017-->  <ISSOTRX><![CDATA[N]]></ISSOTRX>
 <!--800017-->  <PROCESSING><![CDATA[N]]></PROCESSING>
