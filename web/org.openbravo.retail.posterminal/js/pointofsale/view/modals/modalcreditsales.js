@@ -58,8 +58,6 @@ enyo.kind({
 	  var pendingQty = e.data.dialog.container.model.get('order').getPending();
 	  var bpName = e.data.dialog.container.model.get('order').get('bp').get('_identifier');
 	  e.data.dialog.$.bodyContent.children[0].setContent(OB.I18N.getLabel('OBPOS_enoughCreditBody', [pendingQty, bpName]));
-	    //delete e.data.dialog.totalStock;
-	    //delete e.data.dialog.neededStock;
   }
 });
 
@@ -73,10 +71,6 @@ enyo.kind({
   bodyContent: {
 	  tag: 'div',
 	  content: OB.I18N.getLabel('OBPOS_notEnoughCreditBody')
-  },
-  executeOnShow: function (e) {
-	  var bpName = e.data.dialog.container.model.get('order').get('bp').get('_identifier');
-	  e.data.dialog.$.bodyContent.children[0].setContent(OB.I18N.getLabel('OBPOS_notEnoughCreditBody', [bpName, bpName]));
   }
 });
 

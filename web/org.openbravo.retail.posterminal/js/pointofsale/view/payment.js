@@ -285,17 +285,17 @@ enyo.kind({
 
 enyo.kind({
 	  name: 'OB.OBPOSPointOfSale.UI.CreditButton',
-	  kind: 'OB.UI.RegularButton',
+	  kind: 'OB.UI.SmallButton',
 	  content: OB.I18N.getLabel('OBPOS_LblCreditSales'),
-	  classes: 'btnlink-green',
-	  style: 'width: 120px',
+	  classes: 'btn-icon-small btnlink-green',
+	  style: 'width: 120px; float: right; margin: 0px',
 	  permission: 'OBPOS_receipt.creditsales',
 	  init: function (model) {
 		    this.model = model;
 	  },
 	  tap: function() {
-		  var creditButton = this;
 		  if (OB.POS.modelterminal.get('connectedToERP')) {
+			  //this.setContent(OB.I18N.getLabel('OBPOS_LblLoading'));
 			  process = new OB.DS.Process('org.openbravo.retail.posterminal.CheckBusinessPartnerCredit');
 		  	  process.exec({
 		           businessPartnerId: this.model.get('order').get('bp').get('id'),
@@ -303,13 +303,17 @@ enyo.kind({
 		      }, function (data) {
 		          if (data) {
 		              if (data.enoughCredit){
-		            	  creditButton.actualCredit = data.actualCredit;
 		            	  $('#modalEnoughCredit').modal('show');
+		            	  //this.setContent(OB.I18N.getLabel('OBPOS_LblCreditSales'));
 		              } else {
+		            	  var bpName = data.bpName;
+		            	  var actualCredit = data.actualCredit;
 		            	  $('#modalNotEnoughCredit').modal('show');
+		            	  //this.setContent(OB.I18N.getLabel('OBPOS_LblCreditSales'));
+		            	  OB.UI.UTILS.domIdEnyoReference['modalNotEnoughCredit'].$.bodyContent.children[0].setContent(OB.I18N.getLabel('OBPOS_notEnoughCreditBody', [bpName, actualCredit]));
 		              }	
 		          } else {
-		              OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorDropDep'));
+		              OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorCreditSales'));
 		          }
 		      });
 		  } else {
