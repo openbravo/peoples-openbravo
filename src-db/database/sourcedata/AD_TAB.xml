@@ -7608,9 +7608,9 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800079-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800079-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800079-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800079-->  <NAME><![CDATA[Promotions and Discounts]]></NAME>
+<!--800079-->  <NAME><![CDATA[Discounts and Promotions]]></NAME>
 <!--800079-->  <DESCRIPTION><![CDATA[Definition of Discounts and Promotions]]></DESCRIPTION>
-<!--800079-->  <HELP><![CDATA[Defines the Promotion/Discount main caracteristiques such as Discount Type, how it is filtered and actual discount information based on type.]]></HELP>
+<!--800079-->  <HELP><![CDATA[Defines the Discounts and Promotions main characteristics such as Discount Type, how it is filtered and actual discount information based on type.]]></HELP>
 <!--800079-->  <AD_TABLE_ID><![CDATA[800062]]></AD_TABLE_ID>
 <!--800079-->  <AD_WINDOW_ID><![CDATA[800028]]></AD_WINDOW_ID>
 <!--800079-->  <SEQNO><![CDATA[0]]></SEQNO>
@@ -10126,9 +10126,9 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800221-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800221-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800221-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800221-->  <NAME><![CDATA[Promotions and Discounts]]></NAME>
-<!--800221-->  <DESCRIPTION><![CDATA[View applied Promotions and Discounts for each order line.]]></DESCRIPTION>
-<!--800221-->  <HELP><![CDATA[View applied Promotions and Discounts for each order line.]]></HELP>
+<!--800221-->  <NAME><![CDATA[Discounts and Promotions]]></NAME>
+<!--800221-->  <DESCRIPTION><![CDATA[View applied Discounts and Promotions for each line.]]></DESCRIPTION>
+<!--800221-->  <HELP><![CDATA[View applied Discounts and Promotions for each line.]]></HELP>
 <!--800221-->  <AD_TABLE_ID><![CDATA[800185]]></AD_TABLE_ID>
 <!--800221-->  <AD_WINDOW_ID><![CDATA[181]]></AD_WINDOW_ID>
 <!--800221-->  <SEQNO><![CDATA[25]]></SEQNO>
@@ -10156,9 +10156,9 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800222-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800222-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800222-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800222-->  <NAME><![CDATA[Promotions and Discounts]]></NAME>
-<!--800222-->  <DESCRIPTION><![CDATA[View applied price adjustments for each order line.]]></DESCRIPTION>
-<!--800222-->  <HELP><![CDATA[View applied Promotions and Discounts for each order line.]]></HELP>
+<!--800222-->  <NAME><![CDATA[Discounts and Promotions]]></NAME>
+<!--800222-->  <DESCRIPTION><![CDATA[View applied Discounts and Promotions for each line.]]></DESCRIPTION>
+<!--800222-->  <HELP><![CDATA[View applied Discounts and Promotions for each line.]]></HELP>
 <!--800222-->  <AD_TABLE_ID><![CDATA[800185]]></AD_TABLE_ID>
 <!--800222-->  <AD_WINDOW_ID><![CDATA[143]]></AD_WINDOW_ID>
 <!--800222-->  <SEQNO><![CDATA[25]]></SEQNO>
@@ -10184,9 +10184,9 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800223-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800223-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800223-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800223-->  <NAME><![CDATA[Promotions and Discounts]]></NAME>
-<!--800223-->  <DESCRIPTION><![CDATA[View applied price adjustments for each order line.]]></DESCRIPTION>
-<!--800223-->  <HELP><![CDATA[View applied Promotions and Discounts for each order line.]]></HELP>
+<!--800223-->  <NAME><![CDATA[Discounts and Promotions]]></NAME>
+<!--800223-->  <DESCRIPTION><![CDATA[View applied Discounts and Promotions for each line.]]></DESCRIPTION>
+<!--800223-->  <HELP><![CDATA[View applied Discounts and Promotions for each line.]]></HELP>
 <!--800223-->  <AD_TABLE_ID><![CDATA[800186]]></AD_TABLE_ID>
 <!--800223-->  <AD_WINDOW_ID><![CDATA[167]]></AD_WINDOW_ID>
 <!--800223-->  <SEQNO><![CDATA[25]]></SEQNO>
@@ -10212,9 +10212,9 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800224-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800224-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800224-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800224-->  <NAME><![CDATA[Promotions and Discounts]]></NAME>
-<!--800224-->  <DESCRIPTION><![CDATA[View applied price adjustments for each order line.]]></DESCRIPTION>
-<!--800224-->  <HELP><![CDATA[View applied Promotions and Discounts for each invoice line.]]></HELP>
+<!--800224-->  <NAME><![CDATA[Discounts and Promotions]]></NAME>
+<!--800224-->  <DESCRIPTION><![CDATA[View applied Discounts and Promotions for each line.]]></DESCRIPTION>
+<!--800224-->  <HELP><![CDATA[View applied Discounts and Promotions for each line.]]></HELP>
 <!--800224-->  <AD_TABLE_ID><![CDATA[800186]]></AD_TABLE_ID>
 <!--800224-->  <AD_WINDOW_ID><![CDATA[183]]></AD_WINDOW_ID>
 <!--800224-->  <SEQNO><![CDATA[25]]></SEQNO>
@@ -13227,7 +13227,9 @@ You can also select if transactions are allowed or not for this organization typ
 <!--79C291C04E5C48B2BB3A4779E44C1291-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--79C291C04E5C48B2BB3A4779E44C1291-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--79C291C04E5C48B2BB3A4779E44C1291-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--79C291C04E5C48B2BB3A4779E44C1291-->  <NAME><![CDATA[Promotion Type]]></NAME>
+<!--79C291C04E5C48B2BB3A4779E44C1291-->  <NAME><![CDATA[Discounts and Promotions Types]]></NAME>
+<!--79C291C04E5C48B2BB3A4779E44C1291-->  <DESCRIPTION><![CDATA[Discounts and Promotions Types]]></DESCRIPTION>
+<!--79C291C04E5C48B2BB3A4779E44C1291-->  <HELP><![CDATA[Types define how Discounts and Promotions  behave. Modules can add new types by providing implementation for them.]]></HELP>
 <!--79C291C04E5C48B2BB3A4779E44C1291-->  <AD_TABLE_ID><![CDATA[4E9F9B0D69AC4BC2874FD2B80B948704]]></AD_TABLE_ID>
 <!--79C291C04E5C48B2BB3A4779E44C1291-->  <AD_WINDOW_ID><![CDATA[9153155013C843839F88E9940B976148]]></AD_WINDOW_ID>
 <!--79C291C04E5C48B2BB3A4779E44C1291-->  <SEQNO><![CDATA[10]]></SEQNO>

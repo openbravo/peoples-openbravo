@@ -8802,7 +8802,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--4E9F9B0D69AC4BC2874FD2B80B948704-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--4E9F9B0D69AC4BC2874FD2B80B948704-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--4E9F9B0D69AC4BC2874FD2B80B948704-->  <NAME><![CDATA[PromotionType]]></NAME>
-<!--4E9F9B0D69AC4BC2874FD2B80B948704-->  <HELP><![CDATA[Promotions and discounts functionality allows to apply different rules to order/invoice lines to adjust pricing. Each of different possible types of these promotions is defined here.]]></HELP>
+<!--4E9F9B0D69AC4BC2874FD2B80B948704-->  <HELP><![CDATA[Types define how Discounts and Promotions  behave. Modules can add new types by providing implementation for them.]]></HELP>
 <!--4E9F9B0D69AC4BC2874FD2B80B948704-->  <TABLENAME><![CDATA[M_Offer_Type]]></TABLENAME>
 <!--4E9F9B0D69AC4BC2874FD2B80B948704-->  <CLASSNAME><![CDATA[PromotionType]]></CLASSNAME>
 <!--4E9F9B0D69AC4BC2874FD2B80B948704-->  <ISVIEW><![CDATA[N]]></ISVIEW>

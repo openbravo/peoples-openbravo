@@ -1813,9 +1813,9 @@
 <!--800028-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800028-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800028-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800028-->  <NAME><![CDATA[Promotions and Discounts]]></NAME>
-<!--800028-->  <DESCRIPTION><![CDATA[Definition of Promotions and Discounts]]></DESCRIPTION>
-<!--800028-->  <HELP><![CDATA[Definition of Promotions and Discounts. Discounts and Promotions is a mechanism that allows to adjust prices based on different rules. External modules can extend this definition by providing additional rules (Discount Types) implementations.]]></HELP>
+<!--800028-->  <NAME><![CDATA[Discounts and Promotions]]></NAME>
+<!--800028-->  <DESCRIPTION><![CDATA[Definition of Discounts and Promotions]]></DESCRIPTION>
+<!--800028-->  <HELP><![CDATA[Discounts and Promotions is a mechanism that allows to adjust prices based on different rules. External modules can extend this definition by providing additional rules (Discount Types) implementations.]]></HELP>
 <!--800028-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800028-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--800028-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -2861,7 +2861,9 @@ You can also select if transactions are allowed or not for this organization typ
 <!--9153155013C843839F88E9940B976148-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--9153155013C843839F88E9940B976148-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--9153155013C843839F88E9940B976148-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--9153155013C843839F88E9940B976148-->  <NAME><![CDATA[Promotion Type]]></NAME>
+<!--9153155013C843839F88E9940B976148-->  <NAME><![CDATA[Discounts and Promotions Types]]></NAME>
+<!--9153155013C843839F88E9940B976148-->  <DESCRIPTION><![CDATA[Discounts and Promotions Types]]></DESCRIPTION>
+<!--9153155013C843839F88E9940B976148-->  <HELP><![CDATA[Discounts and Promotions Types ]]></HELP>
 <!--9153155013C843839F88E9940B976148-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--9153155013C843839F88E9940B976148-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--9153155013C843839F88E9940B976148-->  <PROCESSING><![CDATA[N]]></PROCESSING>
