@@ -32,10 +32,11 @@ public class AlertMASequenceProduct extends ModuleScript {
   public void execute() {
     try {
       ConnectionProvider cp = getConnectionProvider();
-      
-      AlertMASequenceProductData[] data = AlertMASequenceProductData.select(cp);
-      for (AlertMASequenceProductData seqproduct : data) {
-        createAlert(cp, seqproduct);
+      if (!AlertMASequenceProductData.existsAlertRuleAnyClient(cp, ALERT_RULE)) {
+        AlertMASequenceProductData[] data = AlertMASequenceProductData.select(cp);
+        for (AlertMASequenceProductData seqproduct : data) {
+          createAlert(cp, seqproduct);
+        } 
       }
       
     } catch (Exception e) {
