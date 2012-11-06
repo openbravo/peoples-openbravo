@@ -424,7 +424,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
         vars.setSessionValue(PREVIOUS_RANGE_OLD, vars.getSessionValue(PREVIOUS_RANGE));
         vars.setSessionValue(PREVIOUS_RANGE,
             String.valueOf(intRecordRangeUsed) + "," + vars.getSessionValue(PREVIOUS_RANGE));
-        data = ReportGeneralLedgerJournalData.select(this, "ACCTDESCRIPTION",
+        data = ReportGeneralLedgerJournalData.select(this,
             Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
             Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
             strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strDocument,
@@ -437,7 +437,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
               strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strDocument,
               strcAcctSchemaId, strOrgFamily, strCheck, data[0].dateacct, data[0].identifier);
       } else {
-        data = ReportGeneralLedgerJournalData.selectDirect(this, "ACCTDESCRIPTION",
+        data = ReportGeneralLedgerJournalData.selectDirect(this,
             Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
             Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"), strTable,
             strRecord, vars.getLanguage(), initRecordNumber, intRecordRangePredefined);
@@ -448,7 +448,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
               strTable, strRecord, data[0].dateacct, data[0].identifier);
       }
     } else if (vars.commandIn("DIRECT")) {
-      data = ReportGeneralLedgerJournalData.selectDirect(this, "ACCTDESCRIPTION",
+      data = ReportGeneralLedgerJournalData.selectDirect(this,
           Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
           Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"), strTable,
           strRecord, vars.getLanguage());
@@ -458,7 +458,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
             Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"), strTable,
             strRecord, data[0].dateacct, data[0].identifier);
     } else if (vars.commandIn("DIRECT2")) {
-      data = ReportGeneralLedgerJournalData.selectDirect2(this, "ACCTDESCRIPTION",
+      data = ReportGeneralLedgerJournalData.selectDirect2(this,
           Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
           Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
           strFactAcctGroupId, vars.getLanguage());
@@ -610,7 +610,6 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
     String strOrgFamily = getFamily(strTreeOrg, strOrg);
     if (!strFactAcctGroupId.equals("")) {
       data = ReportGeneralLedgerJournalData.selectDirect2(this,
-          ("".equals(strShowDescription)) ? "ACCTDESCRIPTION" : "DESCRIPTION",
           Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
           Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
           strFactAcctGroupId, vars.getLanguage());
@@ -618,14 +617,12 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
     } else if (strRecord.equals("")) {
       String strCheck = buildCheck(strShowClosing, strShowReg, strShowOpening, strShowRegular);
       data = ReportGeneralLedgerJournalData.select(this,
-          ("".equals(strShowDescription)) ? "ACCTDESCRIPTION" : "DESCRIPTION",
           Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
           Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"), strDateFrom,
           DateTimeData.nDaysAfter(this, strDateTo, "1"), strDocument, strcAcctSchemaId,
           strOrgFamily, strCheck, vars.getLanguage());
     } else
       data = ReportGeneralLedgerJournalData.selectDirect(this,
-          ("".equals(strShowDescription)) ? "ACCTDESCRIPTION" : "DESCRIPTION",
           Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
           Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"), strTable,
           strRecord, vars.getLanguage());
@@ -661,6 +658,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
     }
 
     HashMap<String, Object> parameters = new HashMap<String, Object>();
+    parameters.put("ShowDescription", strShowDescription);
     parameters.put("Subtitle", strSubtitle);
     parameters.put("PageNo", strPageNo);
     parameters.put("InitialBalance", new BigDecimal(strInitialBalance));
