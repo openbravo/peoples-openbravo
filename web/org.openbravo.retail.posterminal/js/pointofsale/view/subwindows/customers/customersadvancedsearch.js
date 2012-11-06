@@ -343,7 +343,7 @@ enyo.kind({
 
     if (filter && filter !== '') {
       for (i = 0; i < splitFilter.length; i++) {
-        criteria._identifier = {
+        criteria._filter = {
           operator: _operator,
           value: splitFilter[i]
         };

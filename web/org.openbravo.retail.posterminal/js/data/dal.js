@@ -16,7 +16,7 @@
       undef, wsql = window.openDatabase !== undef,
       db = (wsql && window.openDatabase('WEBPOS', '', 'Openbravo Web POS', dbSize)),
       OP;
-  OB.POS.databaseVersion = '0.3';
+  OB.POS.databaseVersion = '0.4';
 
   function dropTable(db, sql) {
     db.transaction(function (tx) {
@@ -142,6 +142,7 @@
     return res;
   }
 
+
   function find(model, whereClause, success, error, args) {
     var tableName = model.prototype.tableName,
         propertyMap = model.prototype.propertyMap,
@@ -198,7 +199,7 @@
         sql = '',
         params = null,
         firstParam = true,
-        uuid, propertyName;
+        uuid, propertyName, filterVal;
 
     forceInsert = forceInsert || false;
 
@@ -225,11 +226,19 @@
             sql = sql + ', ';
           }
 
-
           sql = sql + modelProto.propertyMap[propertyName] + ' = ? ';
 
           params.push(model.get(propertyName));
         });
+
+        if (modelProto.propertiesFilter) {
+          filterVal = '';
+          _.each(modelProto.propertiesFilter, function (prop) {
+            filterVal = filterVal + '###' + model.get(prop);
+          });
+          sql = sql + ', _filter = ? ';
+          params.push(filterVal);
+        }
 
         sql = sql + ' WHERE ' + tableName + '_id = ?';
         params.push(model.get('id'));
@@ -251,6 +260,15 @@
           }
           params.push(model.get(property) === undefined ? null : model.get(property));
         });
+
+        if (modelProto.propertiesFilter) {
+          filterVal = '';
+          _.each(modelProto.propertiesFilter, function (prop) {
+            filterVal = filterVal + '###' + model.get(prop);
+          });
+          params.push(filterVal);
+        }
+
         //console.log(params.length);
       }
 
@@ -361,7 +379,7 @@
         db.transaction(function (tx) {
           var props = model.prototype.properties,
               propMap = model.prototype.propertyMap,
-              values, _idx = 0,
+              filterVal, values, _idx = 0,
               updateRecord = function (tx, model, values) {
               tx.executeSql("DELETE FROM " + model.prototype.tableName + " WHERE " + model.prototype.propertyMap.id + "=?", [values[0]], function () {
                 tx.executeSql(model.prototype.insertStatement, values, null, error);
@@ -377,6 +395,15 @@
               }
               values.push(item[propName]);
             });
+
+            if (model.prototype.propertiesFilter) {
+              filterVal = '';
+              _.each(model.prototype.propertiesFilter, function (prop) {
+                filterVal = filterVal + '###' + item[prop];
+              });
+              values.push(filterVal);
+            }
+
             values.push(_idx);
             if (incremental) {
               updateRecord(tx, model, values);

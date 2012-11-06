@@ -255,7 +255,7 @@ enyo.kind({
 
     var criteria = {};
     if (filter && filter !== '') {
-      criteria._identifier = {
+      criteria._filter = {
         operator: OB.Dal.CONTAINS,
         value: filter
       };
