@@ -370,6 +370,7 @@
                       WHERE c_orderline_id = cur_inoutline.c_orderline_id
                         AND m_locator_id = cur_inoutline.m_locator_id
                         AND m_reservation_id = cur_reserve_stock.m_reservation_id
+                        AND isallocated = 'Y'
                         AND COALESCE(m_attributesetinstance_id, '0') = COALESCE(Cur_InOutLine.M_AttributeSetInstance_ID, '0');
                     -- UPDATE EXISTING PRERESERVED STOCK TO DECREASE RESERVED QTY
                     UPDATE m_reservation_stock
@@ -390,7 +391,7 @@
                         get_uuid(), cur_reserve_stock.ad_client_id, cur_reserve_stock.ad_org_id, 'Y',
                         now(), v_user, now(), v_user,
                         cur_reserve_stock.m_reservation_id, cur_inoutline.m_attributesetinstance_id, cur_inoutline.m_locator_id, cur_inoutline.c_orderline_id,
-                        v_qtyaux, 0, 'N'
+                        v_qtyaux, 0, 'Y'
                       );
                     END IF;
                     v_pendingqty := v_pendingqty - v_qtyaux;
