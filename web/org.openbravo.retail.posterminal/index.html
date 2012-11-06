@@ -81,7 +81,7 @@
                 window.applicationCache.swapCache();
                 window.location.reload();
               } else {
-                $('#DatabaseDialog').modal('show');
+                OB.POS.terminal.$.containerWindow.$.LoginWindow.$.DatabaseDialog.show();
               }
             }, function () {
               window.console.error(arguments);

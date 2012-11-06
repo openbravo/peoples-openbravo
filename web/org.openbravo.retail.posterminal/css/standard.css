@@ -18,6 +18,7 @@ body {
 input, button, select, textarea {
   font-family: "Segoe UI", "Lucida Sans", Helvetica, Arial, sans-serif;
   font-size: 16px;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 
 input.error {
