@@ -12,7 +12,6 @@
 enyo.kind({
   kind: 'OB.UI.ModalAction',
   name: 'OB.UI.ModalOnline',
-  myId: 'modalOnline',
   header: OB.I18N.getLabel('OBPOS_Online'),
   bodyContent: {
     content: OB.I18N.getLabel('OBPOS_OnlineConnectionHasReturned')
@@ -23,6 +22,7 @@ enyo.kind({
       classes: 'btnlink btnlink-gray modal-dialog-content-button',
       content: OB.I18N.getLabel('OBPOS_LblOk'),
       tap: function () {
+        OB.POS.terminal.$.dialogsContainer.$.modalOnline.hide();
         window.location = window.location.pathname + '?terminal=' + window.encodeURIComponent(OB.POS.paramTerminal);
       }
     }, {
@@ -30,13 +30,12 @@ enyo.kind({
       classes: 'btnlink btnlink-gray modal-dialog-content-button',
       content: OB.I18N.getLabel('OBPOS_LblCancel'),
       tap: function () {
-        $('#' + this.parent.parent.parent.parent.parent.getId()).modal('hide');
+        OB.POS.terminal.$.dialogsContainer.$.modalOnline.hide();
         OB.POS.navigate('retail.pointofsale');
       }
     }]
   },
   initComponents: function () {
     this.inherited(arguments);
-
   }
 });

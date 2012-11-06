@@ -74,8 +74,8 @@ enyo.kind({
   classes: 'subwindowheader',
   components: [{
     name: "closebutton",
-    tag: 'a',
-    classes: 'close',
+    tag: 'div',
+    classes: 'subwindow-closebutton',
     components: [{
       tag: 'span',
       allowHtml: true,

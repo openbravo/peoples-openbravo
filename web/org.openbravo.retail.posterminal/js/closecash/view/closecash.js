@@ -22,6 +22,9 @@ enyo.kind({
     onPaymentMethodKept: 'paymentMethodKept',
     onResetQtyToKeep: 'resetQtyToKeep'
   },
+  events: {
+    onShowPopup: ''
+  },
   components: [{
     classes: 'row',
     components: [{
@@ -56,16 +59,13 @@ enyo.kind({
       name: 'modalCancel'
     }, {
       kind: 'OB.OBPOSCashUp.UI.modalFinished',
-      name: 'modalFinished',
-      myId: 'modalFinished'
+      name: 'modalFinished'
     }, {
       kind: 'OB.OBPOSCashUp.UI.modalFinishedWrongly',
-      name: 'modalFinishedWrongly',
-      myId: 'modalFinishedWrongly'
+      name: 'modalFinishedWrongly'
     }, {
       kind: 'OB.OBPOSCashUp.UI.modalPendingToProcess',
-      name: 'modalPendingToProcess',
-      myId: 'modalPendingToProcess'
+      name: 'modalPendingToProcess'
     }]
   }],
   init: function () {
@@ -75,7 +75,9 @@ enyo.kind({
 
     //step 0
     this.model.on('change:pendingOrdersToProcess', function (model) {
-      $('#modalprocessreceipts').modal('show');
+      this.doShowPopup({
+        popup: 'modalprocessreceipts'
+      });
     }, this);
 
 
@@ -126,18 +128,14 @@ enyo.kind({
 
     //finished
     this.model.on('change:finished', function () {
-      $("#modalFinished").modal({
-        show: true,
-        backdrop: 'static',
-        keyboard: false
+      this.doShowPopup({
+        popup: 'modalFinished'
       });
     }, this);
     //finishedWrongly
     this.model.on('change:finishedWrongly', function () {
-      $("#modalFinishedWrongly").modal({
-        show: true,
-        backdrop: 'static',
-        keyboard: false
+      this.doShowPopup({
+        popup: 'modalFinishedWrongly'
       });
     }, this);
 

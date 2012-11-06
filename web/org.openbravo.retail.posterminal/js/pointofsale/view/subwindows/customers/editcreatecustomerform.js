@@ -12,8 +12,10 @@
 enyo.kind({
   kind: 'OB.UI.subwindow',
   name: 'OB.OBPOSPointOfSale.UI.customers.newcustomer',
+  events: {
+    onShowPopup: ''
+  },
   beforeSetShowing: function (params) {
-
     if (OB.POS.modelterminal.get('terminal').defaultbp_paymentmethod !== null && OB.POS.modelterminal.get('terminal').defaultbp_bpcategory !== null && OB.POS.modelterminal.get('terminal').defaultbp_paymentterm !== null && OB.POS.modelterminal.get('terminal').defaultbp_invoiceterm !== null && OB.POS.modelterminal.get('terminal').defaultbp_bpcountry !== null && OB.POS.modelterminal.get('terminal').defaultbp_bporg !== null) {
 
       this.waterfall('onSetCustomer', {
@@ -22,7 +24,9 @@ enyo.kind({
       //show
       return true;
     } else {
-      $('#modalConfigurationRequiredForCreateNewCustomers').modal("show");
+      this.doShowPopup({
+        popup: 'modalConfigurationRequiredForCreateNewCustomers'
+      });
       //not show
       return false;
     }

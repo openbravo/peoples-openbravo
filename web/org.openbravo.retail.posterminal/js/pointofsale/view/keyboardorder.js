@@ -17,6 +17,9 @@ enyo.kind({
   published: {
     receipt: null
   },
+  events: {
+    onShowPopup: ''
+  },
   sideBarEnabled: true,
 
   receiptChanged: function () {
@@ -30,15 +33,20 @@ enyo.kind({
     }, this);
   },
   initComponents: function () {
+    var me = this;
     this.addCommand('line:qty', {
       action: function (keyboard, txt) {
         if (keyboard.receipt.get('isEditable') === false) {
-          $("#modalNotEditableOrder").modal("show");
+          me.doShowPopup({
+            popup: 'modalNotEditableOrder'
+          });
           return true;
         }
         if (keyboard.line) {
           if (keyboard.line.get('product').get('groupProduct') === false) {
-            $("#modalProductCannotBeGroup").modal("show");
+            me.doShowPopup({
+              popup: 'modalProductCannotBeGroup'
+            });
             return true;
           }
           keyboard.receipt.setUnit(keyboard.line, OB.I18N.parseNumber(txt));
@@ -51,7 +59,9 @@ enyo.kind({
       permission: 'OBPOS_order.changePrice',
       action: function (keyboard, txt) {
         if (keyboard.receipt.get('isEditable') === false) {
-          $("#modalNotEditableOrder").modal("show");
+          me.doShowPopup({
+            popup: 'modalNotEditableOrder'
+          });
           return true;
         }
         if (keyboard.line) {
@@ -64,7 +74,9 @@ enyo.kind({
       permission: 'OBPOS_order.discount',
       action: function (keyboard, txt) {
         if (keyboard.receipt.get('isEditable') === false) {
-          $("#modalNotEditableOrder").modal("show");
+          me.doShowPopup({
+            popup: 'modalNotEditableOrder'
+          });
           return true;
         }
         if (keyboard.line) {
@@ -77,12 +89,16 @@ enyo.kind({
       stateless: true,
       action: function (keyboard, txt) {
         if (keyboard.receipt.get('isEditable') === false) {
-          $("#modalNotEditableOrder").modal("show");
+          me.doShowPopup({
+            popup: 'modalNotEditableOrder'
+          });
           return true;
         }
         if (keyboard.line) {
           if (keyboard.line.get('product').get('groupProduct') === false) {
-            $("#modalProductCannotBeGroup").modal("show");
+            me.doShowPopup({
+              popup: 'modalProductCannotBeGroup'
+            });
             return true;
           }
           keyboard.receipt.addUnit(keyboard.line, OB.I18N.parseNumber(txt));
@@ -94,7 +110,9 @@ enyo.kind({
       stateless: true,
       action: function (keyboard, txt) {
         if (keyboard.receipt.get('isEditable') === false) {
-          $("#modalNotEditableOrder").modal("show");
+          me.doShowPopup({
+            popup: 'modalNotEditableOrder'
+          });
           return true;
         }
         if (keyboard.line) {
@@ -120,10 +138,15 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.AbstractBarcodeActionHandler',
   kind: enyo.Object,
+  events: {
+    onShowPopup: ''
+  },
 
   action: function (keyboard, txt) {
     if (keyboard.receipt.get('isEditable') === false) {
-      $("#modalNotEditableOrder").modal("show");
+      this.doShowPopup({
+        popup: 'modalNotEditableOrder'
+      });
       return true;
     }
     var me = this;

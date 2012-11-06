@@ -134,10 +134,46 @@ enyo.kind({
           return 'containerLoading';
         }
       }, {
+        name: 'containerWindow',
         makeId: function () {
           return 'containerWindow';
         },
-        name: 'containerWindow'
+        handlers: {
+          onShowPopup: 'showPopupHandler',
+          onHidePopup: 'hidePopupHandler'
+        },
+        showPopupHandler: function (inSender, inEvent) {
+          if (inEvent.popup) {
+            this.showPopup(inEvent.popup);
+          }
+        },
+        showPopup: function (popupName) {
+          var componentsArray = this.getComponents(),
+              i;
+          for (i = 0; i < componentsArray.length; i++) {
+            if (componentsArray[i].$[popupName]) {
+              componentsArray[i].$[popupName].show();
+              break;
+            }
+          }
+          return true;
+        },
+        hidePopupHandler: function (inSender, inEvent) {
+          if (inEvent.popup) {
+            this.hidePopup(inEvent.popup);
+          }
+        },
+        hidePopup: function (popupName) {
+          var componentsArray = this.getComponents(),
+              i;
+          for (i = 0; i < componentsArray.length; i++) {
+            if (componentsArray[i].$[popupName]) {
+              componentsArray[i].$[popupName].hide();
+              break;
+            }
+          }
+          return true;
+        }
       }]
     }]
   }, {
@@ -170,10 +206,13 @@ enyo.kind({
       this.$.onlineviewer.setOnlineState(model.get('connectedToERP'));
       if (OB.POS.modelterminal.get('loggedOffline') !== undefined) {
         if (OB.POS.modelterminal.get('connectedToERP')) {
-          OB.POS.terminal.$.dialogsContainer.createComponent({
-            kind: 'OB.UI.ModalOnline'
-          }).render();
-          $('#modalOnline').modal('show');
+          if (!OB.POS.terminal.$.dialogsContainer.$.modalOnline) {
+            OB.POS.terminal.$.dialogsContainer.createComponent({
+              kind: 'OB.UI.ModalOnline',
+              name: 'modalOnline'
+            }).render();
+          }
+          OB.POS.terminal.$.dialogsContainer.$.modalOnline.show();
         } else {
           OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_OfflineModeWarning'));
         }

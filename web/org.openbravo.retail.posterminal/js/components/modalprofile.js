@@ -12,9 +12,8 @@
 enyo.kind({
   name: 'OB.UI.ModalProfile',
   kind: 'OB.UI.ModalAction',
-  myId: 'profileDialog',
   header: OB.I18N.getLabel('OBPOS_ProfileDialogTitle'),
-  bodyContentClass: 'modal-dialog-content-profile',
+  //bodyContentClass: 'modal-dialog-content-profile',
   bodyContent: {
     style: 'height: 127px; background-color: #ffffff;',
     components: [{
@@ -86,7 +85,7 @@ enyo.kind({
       }, {
         style: 'border: 1px solid #F0F0F0; float: left;',
         components: [{
-          classes: 'modal-dialog-profile-combo',
+          classes: 'modal-dialog-profile-checkbox',
           components: [{
             kind: 'OB.UI.CheckboxButton',
             name: 'defaultBox',
@@ -194,7 +193,10 @@ enyo.kind({
   kind: 'OB.UI.Button',
   content: OB.I18N.getLabel('OBPOS_LblCancel'),
   classes: 'btnlink btnlink-gray modal-dialog-content-button',
-  attributes: {
-    'data-dismiss': 'modal'
+  events: {
+    onHideThisPopup: ''
+  },
+  tap: function () {
+    this.doHideThisPopup();
   }
 });

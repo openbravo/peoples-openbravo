@@ -88,10 +88,12 @@
     modelterminal.load();
     modelterminal.on('ready', function () {
       OB.POS.terminal.$.dialogsContainer.createComponent({
-        kind: 'OB.UI.ModalLogout'
+        kind: 'OB.UI.ModalLogout',
+        name: 'logoutDialog'
       }).render();
       OB.POS.terminal.$.dialogsContainer.createComponent({
-        kind: 'OB.UI.ModalProfile'
+        kind: 'OB.UI.ModalProfile',
+        name: 'profileDialog'
       }).render();
     });
 

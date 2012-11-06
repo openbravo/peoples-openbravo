@@ -16,6 +16,5 @@ enyo.kind({
   bodyContent: {
     tag: 'div',
     content: OB.I18N.getLabel('OBPOS_modalNoEditableBody')
-  },
-  myId: 'modalNotEditableOrder'
+  }
 });

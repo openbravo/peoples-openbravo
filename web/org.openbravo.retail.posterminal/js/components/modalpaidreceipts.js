@@ -182,6 +182,13 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ListPRsLine',
   kind: 'OB.UI.SelectButton',
+  events: {
+    onHideThisPopup: ''
+  },
+  tap: function () {
+    this.inherited(arguments);
+    this.doHideThisPopup();
+  },
   components: [{
     name: 'line',
     style: 'line-height: 23px;',
@@ -267,8 +274,8 @@ enyo.kind({
 /*Modal definiton*/
 enyo.kind({
   name: 'OB.UI.ModalPaidReceipts',
-  myId: 'modalPaidReceipts',
   kind: 'OB.UI.Modal',
+  topPosition: '125px',
   modalClass: 'modal',
   headerClass: 'modal-header',
   bodyClass: 'modal-header',

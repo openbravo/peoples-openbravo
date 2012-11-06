@@ -17,9 +17,13 @@ enyo.kind({
   published: {
     order: null
   },
-  attributes: {
-    'data-toggle': 'modal',
-    'href': '#modalcustomer'
+  events: {
+    onShowPopup: ''
+  },
+  tap: function () {
+    this.doShowPopup({
+      popup: 'modalcustomer'
+    });
   },
   initComponents: function () {},
   renderCustomer: function (newCustomer) {
@@ -50,14 +54,12 @@ enyo.kind({
   kind: 'OB.UI.Button',
   name: 'OB.UI.NewCustomerWindowButton',
   events: {
-    onChangeSubWindow: ''
+    onChangeSubWindow: '',
+    onHideThisPopup: ''
   },
   style: 'width: 150px; margin: 0px 5px 8px 19px;',
   classes: 'btnlink-yellow btnlink btnlink-small',
   content: OB.I18N.getLabel('OBPOS_LblNewCustomer'),
-  attributes: {
-    'data-dismiss': 'modal'
-  },
   handlers: {
     onSetModel: 'setModel'
   },
@@ -73,6 +75,7 @@ enyo.kind({
         }
       }
     });
+    this.doHideThisPopup();
   }
 });
 
@@ -82,14 +85,14 @@ enyo.kind({
   style: 'width: 170px; margin: 0px 0px 8px 5px;',
   classes: 'btnlink-yellow btnlink btnlink-small',
   content: OB.I18N.getLabel('OBPOS_LblAdvancedSearch'),
-  attributes: {
-    'data-dismiss': 'modal'
-  },
   handlers: {
     onSetModel: 'setModel'
   },
   setModel: function (sender, event) {
     this.model = event.model;
+  },
+  events: {
+    onHideThisPopup: ''
   },
   tap: function () {
     this.model.get('subWindowManager').set('currentWindow', {
@@ -98,6 +101,7 @@ enyo.kind({
         caller: 'mainSubWindow'
       }
     });
+    this.doHideThisPopup();
   }
 });
 
@@ -197,6 +201,13 @@ enyo.kind({
       style: 'clear: both;'
     }]
   }],
+  events: {
+    onHideThisPopup: ''
+  },
+  tap: function () {
+    this.inherited(arguments);
+    this.doHideThisPopup();
+  },
   create: function () {
     this.inherited(arguments);
     this.$.identifier.setContent(this.model.get('_identifier'));
@@ -279,11 +290,11 @@ enyo.kind({
 /*Modal definiton*/
 enyo.kind({
   name: 'OB.UI.ModalBusinessPartners',
-  myId: 'modalcustomer',
+  topPosition: '125px',
   kind: 'OB.UI.Modal',
   modalClass: 'modal',
-  headerClass: 'modal-header',
-  bodyClass: 'modal-header',
+  //headerClass: 'modal-header',
+  //bodyClass: 'modal-header',
   header: OB.I18N.getLabel('OBPOS_LblAssignCustomer'),
   body: {
     kind: 'OB.UI.ListBps'

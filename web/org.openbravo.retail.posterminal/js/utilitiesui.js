@@ -130,28 +130,3 @@ OB.UTIL.focusInModal = function (modalObj) {
     return true;
   });
 };
-
-/* Twitter Bootstrap is not able to position in a good way a modal popup based on the 'left' and 'top' css parameters.
- * This function fixes it */
-OB.UTIL.adjustModalPosition = function (modalObj) {
-  modalObj.on('shown', function (e) {
-    function getCSSPosition(element, type) {
-      var position = element.css(type);
-      if (position && position.indexOf('%') !== -1) {
-        position = position.replace('%', '');
-        position = parseInt(position, 10);
-        position = position / 100;
-      } else {
-        position = 0.5;
-      }
-      return position;
-    }
-
-    var modal = $(this),
-        leftPosition = getCSSPosition(modal, 'left'),
-        topPosition = getCSSPosition(modal, 'top');
-    modal.css('margin-top', (modal.outerHeight() * topPosition) * -1).css('margin-left', (modal.outerWidth() * leftPosition) * -1);
-
-    return true;
-  });
-};

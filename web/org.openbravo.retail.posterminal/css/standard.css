@@ -26,6 +26,7 @@ input.error {
 }
 
 button {
+  margin: 0;
   line-height: 18px;
 }
 
@@ -58,9 +59,21 @@ div.subwindow .subwindowheadertext {
 
 }
 
-div.subwindow .subwindowheader .close>span:first-child {
-  font-size: 150%;
+div.subwindow-closebutton {
+  cursor: pointer;
+  float: right;
+  font-size: 30px;
+  font-weight: bold;
+  line-height: 18px;
+  color: black;
+  text-shadow: 0 1px 0 white;
+  opacity: 0.2;
 }
+
+div.subwindow-closebutton:hover {
+  opacity: 0.5;
+}
+
 
 /*used by enyo.Scroller*/
 .enyo-scroller {
@@ -345,6 +358,10 @@ button.btnkeyboard-minus:active {
   background-color: #f8941d;
 }
 
+button.btnlink > span {
+  display: block;
+}
+
 button.btnlink {
   display: inline-block;
   font-weight: 600;
@@ -356,6 +373,7 @@ button.btnlink {
   color: white;
   cursor: pointer;
   margin: 10px;
+  opacity: 0.999; /* Instead of "1" to avoid strange displacement effect in buttons on hover effect */
 }
 
 button.btnlink-toolbar {
@@ -366,12 +384,13 @@ button.btnlink-toolbar {
   font-weight: normal;
 }
 
-button.btnlink.btn-over {
+button.btnlink.btn-over,
+button.btnlink:hover {
   opacity: 0.75;
 }
 button.btnlink.btn-down,
 button.btnlink:active {
-  opacity: 1;
+  opacity: 0.999; /* Instead of "1" to avoid strange displacement effect in buttons on hover effect */
   background-color: #cccccc;
 }
 button.btnlink:disabled {
@@ -744,11 +763,51 @@ div.clock-date {
   margin: 0px 10px 15px 10px;
 }
 
+
+div.modal-header {
+  display: inline-table;
+  width: 100%;
+  border-bottom: 1px solid #EEE;
+  padding: 3px 10px 7px 10px;
+}
+
+div.modal-body {
+  display: inline-table;
+  width: 100%;
+  padding: 3px 10px 7px 10px;
+}
+
+div.modal-closebutton {
+  cursor: pointer;
+  float: right;
+  font-size: 20px;
+  font-weight: bold;
+  line-height: 18px;
+  color: black;
+  text-shadow: 0 1px 0 white;
+  opacity: 0.2;
+}
+
+div.modal-closebutton:hover {
+  opacity: 0.5;
+}
+
+div.modal {
+  color: #333;
+  overflow: auto;
+  width: 560px;
+  background: white;
+  -webkit-border-radius: 0px;
+  -moz-border-radius: 0px;
+  border-radius: 0px;
+}
+
 div.modal-dialog {
   background: #6cb33f;
   -webkit-border-radius: 0px;
   -moz-border-radius: 0px;
   border-radius: 0px;
+  padding: 3px;
 }
 
 div.modal-dialog-header {
@@ -777,7 +836,6 @@ div.modal-dialog-content-profile {
   font-size: 20px;
   line-height: 30px;
   color: white;
-  margin: 15px 50px 10px 50px;
 }
 
 div.modal-dialog-content-text > div > br {
@@ -810,6 +868,15 @@ button.modal-dialog-content-button {
   width: 343px;
   margin: 0px;
   background-color: white;
+  padding: 4px;
+  border: 1px solid #CCC;
+}
+
+.modal-dialog-profile-checkbox {
+  height: 40px;
+  width: 343px;
+  margin: 0px;
+  background-color: white;
 }
 
 .modal-dialog-receipt-properties-text {
@@ -823,6 +890,8 @@ button.modal-dialog-content-button {
   height: 38px;
   width: 340px;
   background-position: 10px center;
+  cursor: pointer;
+  vertical-align: middle;
 }
 
 .hiddenInput {
