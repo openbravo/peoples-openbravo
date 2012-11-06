@@ -168,6 +168,7 @@
       AND F.AD_ORG_ID IN('1')
       AND 1=1
       AND f.C_ACCTSCHEMA_ID = SC.C_ACCTSCHEMA_ID
+      AND f.C_ACCTSCHEMA_ID = ?
       GROUP BY f.C_ACCTSCHEMA_ID, SC.NAME, F.AD_TABLE_ID, F.DATEACCT, F.ACCTDESCRIPTION, F.DESCRIPTION, F.ACCTVALUE, F.DOCBASETYPE, F.RECORD_ID, 
       F.FACT_ACCT_GROUP_ID, F.ACCOUNT_ID,F.FACTACCTTYPE,
       (CASE F.AMTACCTDR WHEN 0 THEN (CASE SIGN(F.AMTACCTCR) WHEN -1 THEN 1 ELSE 2 END) ELSE (CASE SIGN(F.AMTACCTDR) WHEN -1 THEN 3 ELSE 4 END) END), F.AD_CLIENT_ID
@@ -184,6 +185,7 @@
     <Parameter name="record" optional="true" after="AND 1=1"><![CDATA[ AND f.record_Id = ?]]></Parameter>   
     <Parameter name="table" optional="true" after="AND 1=1"><![CDATA[ AND f.ad_table_ID = ?]]></Parameter>
     <Parameter name="record" optional="true" after="AND 1=1"><![CDATA[ AND f.record_ID = ?]]></Parameter>
+    <Parameter name="cAcctshemaId"></Parameter>
     <Parameter name="paramLanguage"></Parameter>
   </SqlMethod>
   <SqlMethod name="selectCountDirect" type="preparedStatement" return="string" default="0">

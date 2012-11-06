@@ -127,21 +127,41 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
           "ReportGeneralLedgerJournal|ShowDescription", "");
       printPageDataSheet(response, vars, strDateFrom, strDateTo, strDocument, strOrg, strTable,
           strRecord, "", strcAcctSchemaId, strShowClosing, strShowReg, strShowOpening, strPageNo,
-          strEntryNo, strInitialBalance, strShowDescription, strShowRegular);
+          strEntryNo, strInitialBalance, strShowDescription, strShowRegular, "", "");
     } else if (vars.commandIn("DIRECT")) {
       String strTable = vars.getGlobalVariable("inpTable", "ReportGeneralLedgerJournal|Table");
       String strRecord = vars.getGlobalVariable("inpRecord", "ReportGeneralLedgerJournal|Record");
+      String strAccSchemas = vars.getGlobalVariable("inpAccSchemas",
+          "ReportGeneralLedgerJournal|AccSchemas");
+      String paramschemas = vars.getStringParameter("inpParamschemas");
+      String strPosted = vars.getStringParameter("posted");
+      if (strPosted == "") {
+        if (paramschemas != "") {
+          strAccSchemas = paramschemas;
+        }
+      }
+
+      String[] accSchemas = strAccSchemas.split(",");
+      String strcAcctSchemaId = accSchemas[0];
+      String schemas = "";
+      for (int i = 1; i < accSchemas.length; i++) {
+        if (i + 1 == accSchemas.length) {
+          schemas = schemas + accSchemas[i];
+        } else {
+          schemas = schemas + accSchemas[i] + ",";
+        }
+      }
       setHistoryCommand(request, "DIRECT");
       vars.setSessionValue("ReportGeneralLedgerJournal.initRecordNumber", "0");
-      printPageDataSheet(response, vars, "", "", "", "", strTable, strRecord, "", "", "", "", "",
-          "1", "1", "0", "", "Y");
+      printPageDataSheet(response, vars, "", "", "", "", strTable, strRecord, "", strcAcctSchemaId,
+          "", "", "", "1", "1", "0", "", "Y", schemas, strPosted);
     } else if (vars.commandIn("DIRECT2")) {
       String strFactAcctGroupId = vars.getGlobalVariable("inpFactAcctGroupId",
           "ReportGeneralLedgerJournal|FactAcctGroupId");
       setHistoryCommand(request, "DIRECT2");
       vars.setSessionValue("ReportGeneralLedgerJournal.initRecordNumber", "0");
       printPageDataSheet(response, vars, "", "", "", "", "", "", strFactAcctGroupId, "", "", "",
-          "", "1", "1", "0", "", "Y");
+          "", "1", "1", "0", "", "Y", "", "");
     } else if (vars.commandIn("FIND")) {
       String strcAcctSchemaId = vars.getRequestGlobalVariable("inpcAcctSchemaId",
           "ReportGeneralLedger|cAcctSchemaId");
@@ -198,7 +218,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
         vars.setSessionValue("ReportGeneralLedgerJournal|ShowDescription", "N");
       printPageDataSheet(response, vars, strDateFrom, strDateTo, strDocument, strOrg, "", "", "",
           strcAcctSchemaId, strShowClosing, strShowReg, strShowOpening, strPageNo, strEntryNo,
-          strInitialBalance, strShowDescription, strShowRegular);
+          strInitialBalance, strShowDescription, strShowRegular, "", "");
     } else if (vars.commandIn("PDF", "XLS")) {
       if (log4j.isDebugEnabled())
         log4j.debug("PDF");
@@ -339,8 +359,8 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
       String strDateFrom, String strDateTo, String strDocument, String strOrg, String strTable,
       String strRecord, String strFactAcctGroupId, String strcAcctSchemaId, String strShowClosing,
       String strShowReg, String strShowOpening, String strPageNo, String strEntryNo,
-      String strInitialBalance, String strShowDescription, String strShowRegular)
-      throws IOException, ServletException {
+      String strInitialBalance, String strShowDescription, String strShowRegular, String accShemas,
+      String strPosted) throws IOException, ServletException {
     String strRecordRange = Utility.getContext(this, vars, "#RecordRange",
         "ReportGeneralLedgerJournal");
     int intRecordRangePredefined = (strRecordRange.equals("") ? 0 : Integer
@@ -440,7 +460,9 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
         data = ReportGeneralLedgerJournalData.selectDirect(this,
             Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
             Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"), strTable,
-            strRecord, vars.getLanguage(), initRecordNumber, intRecordRangePredefined);
+            strRecord, strcAcctSchemaId, vars.getLanguage(), initRecordNumber,
+            intRecordRangePredefined);
+
         if (data != null && data.length > 0)
           strPosition = ReportGeneralLedgerJournalData.selectCountDirect(this,
               Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
@@ -451,7 +473,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
       data = ReportGeneralLedgerJournalData.selectDirect(this,
           Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
           Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"), strTable,
-          strRecord, vars.getLanguage());
+          strRecord, strcAcctSchemaId, vars.getLanguage());
       if (data != null && data.length > 0)
         strPosition = ReportGeneralLedgerJournalData.selectCountDirect(this,
             Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
@@ -540,6 +562,8 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
     xmlDocument.setParameter("calendar", vars.getLanguage().substring(0, 2));
     xmlDocument.setParameter("document", strDocument);
     xmlDocument.setParameter("cAcctschemaId", strcAcctSchemaId);
+    xmlDocument.setParameter("cAcctschemas", accShemas);
+    xmlDocument.setParameter("posted", strPosted);
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_ORG_ID", "",
@@ -625,7 +649,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
       data = ReportGeneralLedgerJournalData.selectDirect(this,
           Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
           Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"), strTable,
-          strRecord, vars.getLanguage());
+          strRecord, strcAcctSchemaId, vars.getLanguage());
 
     String strSubtitle = (Utility.messageBD(this, "LegalEntity", vars.getLanguage()) + ": ")
         + ReportGeneralLedgerJournalData.selectCompany(this, vars.getClient()) + "\n";

@@ -44,6 +44,8 @@
   <PARAMETER id="inpRecord" name="paramRecord" attribute="value" default=""/>
   <PARAMETER id="inpTable" name="paramTable" attribute="value" default=""/>
   <PARAMETER id="paramC_ACCTSCHEMA_ID" name="cAcctschemaId"/>
+  <PARAMETER id="inpParamschemas" name="cAcctschemas" attribute="value" default=""/>
+  <PARAMETER id="posted" name="posted" attribute="value" default=""/>
   <PARAMETER id="paramPageNo" name="inpPageNo" attribute="value" default="1"/>
   <PARAMETER id="paramEntryNo" name="inpEntryNo" attribute="value" default="1"/>
   <PARAMETER id="paramInitialBalance" name="inpInitialBalance" format="euroEdition" attribute="value" default="0"/>
@@ -53,7 +55,8 @@
   <PARAMETER id="paramShowReg" name="showReg" boolean="checked" withId="fieldCheck"/>
   <PARAMETER id="paramShowOpening" name="showOpening" boolean="checked" withId="fieldCheck"/>
   <PARAMETER id="paramShowDescription" name="showDescription" boolean="checked" withId="fieldCheck"/>
-
+  <PARAMETER id="paramDocument" name="document"/>
+ 
   <PARAMETER id="jsDisablePreviousNext" name="jsDisablePreviousNext" default=""/>
 
   <SUBREPORT id="reportDocument" name="reportDocument" report="org/openbravo/erpCommon/reference/List">
