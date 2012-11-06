@@ -213,12 +213,12 @@ enyo.kind({
     var receipt = this.model.get('order');
     if (receipt.get('isQuotation')) {
       if (receipt.get('hasbeenpaid') !== 'Y') {
-        receipt.calculateTaxes(function () {
+        receipt.prepareToSend(function () {
           receipt.trigger('closed');
           receipt.trigger('scan');
         });
       } else {
-        receipt.calculateTaxes(function () {
+        receipt.prepareToSend(function () {
           receipt.trigger('scan');
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_QuotationClosed'));
         });

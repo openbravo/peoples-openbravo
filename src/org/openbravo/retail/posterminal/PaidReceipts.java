@@ -113,6 +113,7 @@ public class PaidReceipts extends JSONProcessSimple {
           JSONObject jsonPromo = new JSONObject();
           String name = promotion.getPriceAdjustment().getPrintName() != null ? promotion
               .getPriceAdjustment().getPrintName() : promotion.getPriceAdjustment().getName();
+          jsonPromo.put("ruleId", promotion.getPriceAdjustment().getId());
           jsonPromo.put("name", name);
           jsonPromo.put("amt", displayedAmount);
           jsonPromo.put("actualAmt", promotion.getTotalAmount());

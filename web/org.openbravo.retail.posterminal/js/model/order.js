@@ -715,6 +715,7 @@
       this.set('isQuotation', false);
       this.set('documentType', OB.POS.modelterminal.get('terminal').documentType);
       this.set('hasbeenpaid', 'N');
+      this.set('isEditable', true);
       this.set('orderDate', new Date());
       documentseq = OB.POS.modelterminal.get('documentsequence') + 1;
       documentseqstr = OB.UTIL.padNumber(documentseq, 5);
@@ -723,6 +724,7 @@
       this.save();
       if (updatePrices) {
         this.updatePrices();
+        OB.Model.Discounts.applyPromotions(this);
       }
       OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationCreatedOrder'));
     },
@@ -948,9 +950,9 @@
         order.set('isQuotation', true);
         order.set('oldId', model.orderid);
       } else {
-        order.set('isEditable', false);
         order.set('isPaid', true);
       }
+      order.set('isEditable', false);
       order.set('id', model.orderid);
       order.set('client', model.client);
       order.set('documentType', model.documenttype);

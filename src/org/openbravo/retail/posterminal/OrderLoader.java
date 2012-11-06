@@ -627,18 +627,8 @@ public class OrderLoader extends JSONProcessSimple {
       orderline.setLineNetAmount(BigDecimal.valueOf(jsonOrderLine.getDouble("net")));
       orderline.setListPrice(orderline.getUnitPrice());
 
-      orderline.setLineGrossAmount(BigDecimal.valueOf(jsonOrderLine.getDouble("gross")));
-
       // shipment is created, so all is delivered
       orderline.setDeliveredQuantity(orderline.getOrderedQuantity());
-
-      BigDecimal discount = BigDecimal.ZERO;
-      if (!orderline.getGrossListPrice().equals(orderline.getGrossUnitPrice())) {
-        discount = orderline.getGrossListPrice().subtract(orderline.getGrossUnitPrice())
-            .multiply(new BigDecimal("100"))
-            .divide(orderline.getGrossListPrice(), 2, BigDecimal.ROUND_HALF_EVEN);
-      }
-      orderline.setDiscount(discount);
 
       lineReferences.add(orderline);
       orderline.setLineNo((long) ((i + 1) * 10));
