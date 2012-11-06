@@ -113,6 +113,10 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
+      <column name="C_DOCTYPEORDER_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_SEQUENCE" name="AD_SEQUENCE_DOCTYPEDOC">
         <reference local="DOCNOSEQUENCE_ID" foreign="AD_SEQUENCE_ID"/>
       </foreign-key>
@@ -130,6 +134,9 @@
       </foreign-key>
       <foreign-key foreignTable="C_DOCTYPE" name="C_DOCTYPE_C_DOCTYPEINVOICE">
         <reference local="C_DOCTYPEINVOICE_ID" foreign="C_DOCTYPE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_DOCTYPE" name="C_DOCTYPE_C_DOCTYPEORDER">
+        <reference local="C_DOCTYPEORDER_ID" foreign="C_DOCTYPE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_DOCTYPE" name="C_DOCTYPE_C_DOCTYPESHIPMENT">
         <reference local="C_DOCTYPESHIPMENT_ID" foreign="C_DOCTYPE_ID"/>

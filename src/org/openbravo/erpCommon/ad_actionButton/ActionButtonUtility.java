@@ -22,11 +22,13 @@ import java.util.Vector;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.SQLReturnObject;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.ui.Tab;
 
 public class ActionButtonUtility {
   static Logger log4j = Logger.getLogger(ActionButtonUtility.class);
@@ -42,6 +44,13 @@ public class ActionButtonUtility {
       String strDocAction, String strReference, String strDocStatus, String strProcessing,
       String strTable, String tabId) {
     FieldProvider[] ld = null;
+    boolean isQuotation = false;
+    String windowId = "";
+    if (tabId != null) {
+      Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+      windowId = tab.getWindow().getId();
+    }
+
     if (log4j.isDebugEnabled())
       log4j.debug("DocAction - generating combo elements for table: " + strTable
           + " - actual status: " + strDocStatus);
@@ -53,6 +62,9 @@ public class ActionButtonUtility {
       Utility.fillSQLParameters(conn, vars, null, comboTableData, "ActionButtonUtility", "");
       ld = comboTableData.select(false);
       comboTableData = null;
+      isQuotation = "Y".equals(vars.getGlobalVariable("inpisQuotation", windowId + "|isQuotation",
+          "N"));
+
     } catch (Exception e) {
       return null;
     }
@@ -75,7 +87,7 @@ public class ActionButtonUtility {
       } else if (strDocStatus.equals("DR") || strDocStatus.equals("IP")) {
         data1.setData("ID", "CO");
         v.addElement(data1);
-        if (!strTable.equals("319") && !strTable.equals("800212")) {
+        if (!strTable.equals("319") && !strTable.equals("800212") && !isQuotation) {
           data1 = new SQLReturnObject();
           data1.setData("ID", "VO");
           v.addElement(data1);
@@ -88,11 +100,19 @@ public class ActionButtonUtility {
         v.addElement(data1);
       }
       data1 = new SQLReturnObject();
-      if (strTable.equals("259")) { // C_Order
+      if (strTable.equals("259") && !isQuotation) { // C_Order
         if (strDocStatus.equals("DR")) {
           data1.setData("ID", "PR");
           v.addElement(data1);
         } else if (strDocStatus.equals("CO")) {
+          data1.setData("ID", "RE");
+          v.addElement(data1);
+        }
+      } else if (strTable.equals("259") && isQuotation) { // Quotations (C_Order)
+        if (strDocStatus.equals("UE")) {
+          data1.setData("ID", "RJ");
+          v.addElement(data1);
+          data1 = new SQLReturnObject();
           data1.setData("ID", "RE");
           v.addElement(data1);
         }

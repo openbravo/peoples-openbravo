@@ -110,6 +110,7 @@
   v_DiscountExist NUMBER;
   v_gross_unit_price NUMBER;
   v_line_gross_amount NUMBER;
+  v_reject_reason VARCHAR(32);
   BEGIN
     IF (p_PInstance_ID IS NOT NULL) THEN
       --  Update AD_PInstance
@@ -166,18 +167,31 @@
     SELECT name INTO v_Org_Name FROM AD_ORG WHERE ad_org_id = v_Org_ID;
     DBMS_OUTPUT.PUT_LINE('DocAction=' || v_DocAction || ', DocStatus=' || v_DocStatus || ', DocType_ID=' || v_DocType_ID || ', DocTypeTarget_ID=' || v_DocTypeTarget_ID || ', DocSubTypeSO=' || v_DocSubTypeSO) ;
 
-    /**
-    * Check if order has lines
-    */
-    IF (v_DocAction = 'CO') THEN
-      SELECT COUNT(*)
-        INTO v_Aux
-       FROM C_ORDERLINE
-       WHERE C_ORDER_ID = v_Record_ID;
-       IF v_Aux=0 THEN
-         RAISE_APPLICATION_ERROR(-20000, '@OrderWithoutLines@');
-       END IF;
-    END IF;
+		/** 
+		* Quotations
+		*/
+		IF (v_DocSubTypeSOTarget = 'OB'AND v_DocAction = 'RJ') THEN
+		  SELECT c_reject_reason_id
+		  INTO v_reject_reason
+		  FROM C_ORDER
+		  WHERE C_Order_ID=v_Record_ID;
+		  IF v_reject_reason IS NULL THEN
+		  	RAISE_APPLICATION_ERROR(-20000, '@NoRejectReason@') ;
+			END IF;
+			UPDATE C_ORDER
+        SET DocStatus='CJ',
+            DocAction='--',
+            Processed='Y',
+            Updated=now(),
+            UpdatedBy=v_User
+        WHERE C_Order_ID=v_Record_ID;
+				IF (p_PInstance_ID IS NOT NULL) THEN
+      		--  Update AD_PInstance
+      		DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished - ' || v_Message) ;
+      	 AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', v_Result, v_Message) ;
+    		END IF;
+    		RETURN;
+	  END IF;
 
     /**
     * Order Closed, Voided or Reversed - No action possible
@@ -1359,6 +1373,15 @@
       IF (v_DocAction IN('CO', 'CL', 'VO') AND v_DocSubTypeSO IS NULL) THEN
         UPDATE C_ORDER
         SET DocStatus='CO',
+            DocAction='--',
+            Processed='Y',
+            Updated=now(),
+            UpdatedBy=v_User
+        WHERE C_Order_ID=v_Record_ID;
+      END IF;
+      IF (v_DocAction IN('CO') AND v_DocSubTypeSO IN('OB')) THEN
+        UPDATE C_ORDER
+        SET DocStatus='UE',
             DocAction='--',
             Processed='Y',
             Updated=now(),
