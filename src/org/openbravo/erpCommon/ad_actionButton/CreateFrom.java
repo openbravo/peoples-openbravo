@@ -583,6 +583,11 @@ public class CreateFrom extends HttpSecureAppServlet {
         xmlDocument.setParameter("messageType", myMessage.getType());
         xmlDocument.setParameter("messageTitle", myMessage.getTitle());
         xmlDocument.setParameter("messageMessage", myMessage.getMessage());
+      } else {
+        xmlDocument.setParameter("messageType", "Info");
+        xmlDocument.setParameter("messageTitle", "Information");
+        xmlDocument.setParameter("messageMessage",
+            Utility.messageBD(this, "CreateFromMatchPOQtys", vars.getLanguage()));
       }
     }
 
