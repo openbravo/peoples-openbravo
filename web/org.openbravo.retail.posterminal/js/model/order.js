@@ -9,7 +9,7 @@
 
 /*global B,_,moment,Backbone,localStorage */
 
-(function() {
+(function () {
   // Sales.OrderLine Model
   var OrderLine = Backbone.Model.extend({
     defaults: {
@@ -23,7 +23,7 @@
       description: ''
     },
 
-    initialize: function(attributes) {
+    initialize: function (attributes) {
       if (attributes && attributes.product) {
         this.set('product', new OB.Model.Product(attributes.product));
         this.set('productidentifier', attributes.productidentifier);
@@ -39,7 +39,7 @@
       }
     },
 
-    printQty: function() {
+    printQty: function () {
       return this.get('qty').toString();
     },
 
@@ -47,7 +47,7 @@
       return OB.I18N.formatCurrency(this.get('_price') || this.get('price'));
     },
 
-    printDiscount: function() {
+    printDiscount: function () {
       var d = OB.DEC.sub(this.get('priceList'), this.get('price'));
       if (OB.DEC.compare(d) === 0) {
         return '';
@@ -56,11 +56,11 @@
       }
     },
 
-    calculateGross: function() {
+    calculateGross: function () {
       this.set('gross', OB.DEC.mul(this.get('qty'), this.get('price')));
     },
 
-    getGross: function() {
+    getGross: function () {
       return this.get('gross');
     },
 
@@ -94,14 +94,14 @@
       'origAmount': OB.DEC.Zero,
       'paid': OB.DEC.Zero // amount - change...
     },
-    printAmount: function() {
+    printAmount: function () {
       if (this.get('rate')) {
         return OB.I18N.formatCurrency(OB.DEC.mul(this.get('amount'), this.get('rate')));
       } else {
         return OB.I18N.formatCurrency(this.get('amount'));
       }
     },
-    printForeignAmount: function() {
+    printForeignAmount: function () {
       return '(' + OB.I18N.formatCurrency(this.get('amount')) + ' ' + this.get('isocode') + ')';
     }
   });
@@ -136,7 +136,7 @@
     insertStatement: 'INSERT INTO c_order(c_order_id, json, ad_session_id, hasbeenpaid, isbeingprocessed) VALUES (?,?,?,?,?)',
     local: true,
     _id: 'modelorder',
-    initialize: function(attributes) {
+    initialize: function (attributes) {
       var orderId;
       if (attributes && attributes.id && attributes.json) {
         // The attributes of the order are stored in attributes.json
@@ -185,7 +185,7 @@
         this.set('sendEmail', attributes.sendEmail);
         this.set('isPaid', attributes.isPaid);
         this.set('isEditable', attributes.isEditable);
-        _.each(_.keys(attributes), function(key) {
+        _.each(_.keys(attributes), function (key) {
           if (!this.has(key)) {
             this.set(key, attributes[key]);
           }
@@ -195,7 +195,7 @@
       }
     },
 
-    save: function() {
+    save: function () {
       var undoCopy;
       if (this.attributes.json) {
         delete this.attributes.json; // Needed to avoid recursive inclusions of itself !!!
@@ -203,13 +203,13 @@
       undoCopy = this.get('undo');
       this.unset('undo');
       this.set('json', JSON.stringify(this.toJSON()));
-      OB.Dal.save(this, function() {}, function() {
+      OB.Dal.save(this, function () {}, function () {
         window.console.error(arguments);
       });
       this.set('undo', undoCopy);
     },
 
-    calculateTaxes: function(callback) {
+    calculateTaxes: function (callback) {
       if (callback) {
         callback();
       }
@@ -266,11 +266,11 @@
         });
       }, this);
     },
-    getTotal: function() {
+    getTotal: function () {
       return this.getGross();
     },
 
-    printTotal: function() {
+    printTotal: function () {
       return OB.I18N.formatCurrency(this.getTotal());
     },
 
@@ -288,27 +288,27 @@
       this.trigger('calculategross');
     },
 
-    getGross: function() {
+    getGross: function () {
       return this.get('gross');
     },
 
-    printGross: function() {
+    printGross: function () {
       return OB.I18N.formatCurrency(this.getGross());
     },
 
-    getPayment: function() {
+    getPayment: function () {
       return this.get('payment');
     },
 
-    getChange: function() {
+    getChange: function () {
       return this.get('change');
     },
 
-    getPending: function() {
+    getPending: function () {
       return OB.DEC.sub(this.getTotal(), this.getPayment());
     },
 
-    getPaymentStatus: function() {
+    getPaymentStatus: function () {
       var total = this.getTotal();
       var pay = this.getPayment();
       return {
@@ -320,13 +320,13 @@
       };
     },
 
-    clear: function() {
+    clear: function () {
       this.clearOrderAttributes();
       this.trigger('change');
       this.trigger('clear');
     },
 
-    clearOrderAttributes: function() {
+    clearOrderAttributes: function () {
       this.set('id', null);
       this.set('client', null);
       this.set('organization', null);
@@ -365,7 +365,7 @@
       this.set('isEditable', true);
     },
 
-    clearWith: function(_order) {
+    clearWith: function (_order) {
       var me = this,
           undf;
       this.set('isPaid', _order.get('isPaid'));
@@ -381,7 +381,7 @@
           } else if (_order.get(key).at) {
             //collection
             me.get(key).reset();
-            _order.get(key).forEach(function(elem) {
+            _order.get(key).forEach(function (elem) {
               me.get(key).add(elem);
             });
           } else {
@@ -396,21 +396,21 @@
       this.trigger('clear');
     },
 
-    removeUnit: function(line, qty) {
+    removeUnit: function (line, qty) {
       if (!OB.DEC.isNumber(qty)) {
         qty = OB.DEC.One;
       }
       this.setUnit(line, OB.DEC.sub(line.get('qty'), qty), OB.I18N.getLabel('OBPOS_RemoveUnits', [qty, line.get('product').get('_identifier')]));
     },
 
-    addUnit: function(line, qty) {
+    addUnit: function (line, qty) {
       if (!OB.DEC.isNumber(qty)) {
         qty = OB.DEC.One;
       }
       this.setUnit(line, OB.DEC.add(line.get('qty'), qty), OB.I18N.getLabel('OBPOS_AddUnits', [qty, line.get('product').get('_identifier')]));
     },
 
-    setUnit: function(line, qty, text) {
+    setUnit: function (line, qty, text) {
 
       if (OB.DEC.isNumber(qty)) {
         var oldqty = line.get('qty');
@@ -419,21 +419,21 @@
             this.addProduct(line.get('product'));
             return true;
           } else {
-          var me = this;
-          // sets the new quantity
-          line.set('qty', qty);
-          line.calculateGross();
-          // sets the undo action
-          this.set('undo', {
-            text: text || OB.I18N.getLabel('OBPOS_SetUnits', [line.get('qty'), line.get('product').get('_identifier')]),
-            oldqty: oldqty,
-            line: line,
-            undo: function() {
-              line.set('qty', oldqty);
-              line.calculateGross();
-              me.set('undo', null);
-            }
-          });
+            var me = this;
+            // sets the new quantity
+            line.set('qty', qty);
+            line.calculateGross();
+            // sets the undo action
+            this.set('undo', {
+              text: text || OB.I18N.getLabel('OBPOS_SetUnits', [line.get('qty'), line.get('product').get('_identifier')]),
+              oldqty: oldqty,
+              line: line,
+              undo: function () {
+                line.set('qty', oldqty);
+                line.calculateGross();
+                me.set('undo', null);
+              }
+            });
           }
         } else {
           this.deleteLine(line);
@@ -443,7 +443,7 @@
       }
     },
 
-    setPrice: function(line, price) {
+    setPrice: function (line, price) {
 
       if (OB.DEC.isNumber(price)) {
         var oldprice = line.get('price');
@@ -457,7 +457,7 @@
             text: OB.I18N.getLabel('OBPOS_SetPrice', [line.printPrice(), line.get('product').get('_identifier')]),
             oldprice: oldprice,
             line: line,
-            undo: function() {
+            undo: function () {
               line.set('price', oldprice);
               line.calculateGross();
               me.set('undo', null);
@@ -469,13 +469,13 @@
       this.save();
     },
 
-    setLineProperty: function(line, property, value) {
+    setLineProperty: function (line, property, value) {
       var me = this;
       var index = this.get('lines').indexOf(line);
       this.get('lines').at(index).set(property, value);
     },
 
-    deleteLine: function(line) {
+    deleteLine: function (line) {
       var me = this;
       var index = this.get('lines').indexOf(line);
       // remove the line
@@ -484,7 +484,7 @@
       this.set('undo', {
         text: OB.I18N.getLabel('OBPOS_DeleteLine', [line.get('qty'), line.get('product').get('_identifier')]),
         line: line,
-        undo: function() {
+        undo: function () {
           me.get('lines').add(line, {
             at: index
           });
@@ -496,14 +496,14 @@
       this.save();
     },
 
-    addProduct: function(p) {
+    addProduct: function (p) {
       var me = this;
-      if(me.get('isQuotation') && me.get('hasbeenpaid')==='Y'){
-        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_QuotationClosed'));
-        return;
+      if (me.get('isQuotation') && me.get('hasbeenpaid') === 'Y') {
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_QuotationClosed')); 
+        return;
       }
       if (p.get('obposScale')) {
-        OB.POS.hwserver.getWeight(function(data) {
+        OB.POS.hwserver.getWeight(function (data) {
           if (data.exception) {
             alert(data.exception.message);
           } else if (data.result === 0) {
@@ -630,7 +630,7 @@
       this.set('undo', {
         text: OB.I18N.getLabel('OBPOS_AddLine', [newline.get('qty'), newline.get('product').get('_identifier')]),
         line: newline,
-        undo: function() {
+        undo: function () {
           me.get('lines').remove(newline);
           me.set('undo', null);
         }
@@ -638,7 +638,7 @@
       this.adjustPayment();
     },
 
-    setBPandBPLoc: function(businessPartner, showNotif, saveChange) {
+    setBPandBPLoc: function (businessPartner, showNotif, saveChange) {
       var me = this,
           undef;
       var oldbp = this.get('bp');
@@ -648,7 +648,7 @@
         this.set('undo', {
           text: businessPartner ? OB.I18N.getLabel('OBPOS_SetBP', [businessPartner.get('_identifier')]) : OB.I18N.getLabel('OBPOS_ResetBP'),
           bp: businessPartner,
-          undo: function() {
+          undo: function () {
             me.set('bp', oldbp);
             me.set('undo', null);
           }
@@ -659,7 +659,7 @@
       }
     },
 
-    setOrderTypeReturn: function() {
+    setOrderTypeReturn: function () {
       if (OB.POS.modelterminal.hasPermission('OBPOS_receipt.return')) {
         this.set('documentType', OB.POS.modelterminal.get('terminal').documentTypeForReturns);
         this.set('orderType', 1); // 0: Sales order, 1: Return order
@@ -675,30 +675,33 @@
       return this.get('orderType') !== 1;
     },
 
-    setOrderInvoice: function() {
+    setOrderInvoice: function () {
       if (OB.POS.modelterminal.hasPermission('OBPOS_receipt.invoice')) {
         this.set('generateInvoice', true);
         this.save();
       }
     },
-    
-    updatePrices: function() {
+
+    updatePrices: function () {
       var order = this;
-      this.get('lines').each(function(line){
-        var successCallbackPrices = function(dataPrices, line){
-          dataPrices.each(function(price){
-            order.setPrice(line, price.get('listPrice'));
-          });
-        }
+      this.get('lines').each(function (line) {
+        var successCallbackPrices = function (dataPrices, line) {
+            dataPrices.each(function (price) {
+              order.setPrice(line, price.get('listPrice'));
+            });
+            }
+            
         criteria = {
           'priceListVersion': OB.POS.modelterminal.get('pricelistversion').id,
           'product': line.get('product').get('id')
         };
-        OB.Dal.find(OB.Model.ProductPrice, criteria, successCallbackPrices, function(){console.error(args);}, line);
+        OB.Dal.find(OB.Model.ProductPrice, criteria, successCallbackPrices, function () {
+          console.error(args);
+        }, line);
       });
     },
-    
-    createQuotation: function() {
+
+    createQuotation: function () {
       if (OB.POS.modelterminal.hasPermission('OBPOS_receipt.quotation')) {
         this.set('isQuotation', true);
         this.set('documentType', OB.POS.modelterminal.get('terminal').documentTypeForQuotations);
@@ -706,9 +709,9 @@
       }
     },
 
-    createOrderFromQuotation: function(updatePrices){
+    createOrderFromQuotation: function (updatePrices) {
       var documentseq;
-      this.set('id',null);
+      this.set('id', null);
       this.set('isQuotation', false);
       this.set('documentType', OB.POS.modelterminal.get('terminal').documentType);
       this.set('hasbeenpaid', 'N');
@@ -718,28 +721,28 @@
       OB.POS.modelterminal.set('documentsequence', documentseq);
       this.set('documentNo', OB.POS.modelterminal.get('terminal').docNoPrefix + '/' + documentseqstr);
       this.save();
-      if(updatePrices){
+      if (updatePrices) {
         this.updatePrices();
       }
       OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationCreatedOrder'));
     },
-    reactivateQuotation: function(){
+    reactivateQuotation: function () {
       this.set('hasbeenpaid', 'N');
       this.save();
     },
 
-    rejectQuotation: function(){
-alert('reject!!')
+    rejectQuotation: function () {
+      alert('reject!!')
     },
 
-    resetOrderInvoice: function() {
+    resetOrderInvoice: function () {
       if (OB.POS.modelterminal.hasPermission('OBPOS_receipt.invoice')) {
         this.set('generateInvoice', false);
         this.save();
       }
     },
 
-    adjustPayment: function() {
+    adjustPayment: function () {
       var i, max, p;
       var payments = this.get('payments');
       var total = this.getTotal();
@@ -799,7 +802,7 @@ alert('reject!!')
       }
     },
 
-    addPayment: function(payment) {
+    addPayment: function (payment) {
       var i, max, p;
 
       if (!OB.DEC.isNumber(payment.get('amount'))) {
@@ -833,14 +836,14 @@ alert('reject!!')
       this.adjustPayment();
     },
 
-    removePayment: function(payment) {
+    removePayment: function (payment) {
       var payments = this.get('payments');
       payments.remove(payment);
       this.adjustPayment();
       this.save();
     },
 
-    serializeToJSON: function() {
+    serializeToJSON: function () {
       // this.toJSON() generates a collection instance for members like "lines"
       // We need a plain array object
       var jsonorder = JSON.parse(JSON.stringify(this.toJSON()));
@@ -849,7 +852,7 @@ alert('reject!!')
       delete jsonorder.undo;
       delete jsonorder.json;
 
-      _.forEach(jsonorder.lines, function(item) {
+      _.forEach(jsonorder.lines, function (item) {
         delete item.product.img;
       });
 
@@ -859,16 +862,16 @@ alert('reject!!')
         jsonorder.change = -jsonorder.change;
         jsonorder.payment = -jsonorder.payment;
         jsonorder.net = -jsonorder.net;
-        _.forEach(jsonorder.lines, function(item) {
+        _.forEach(jsonorder.lines, function (item) {
           item.gross = -item.gross;
           item.net = -item.net;
           item.qty = -item.qty;
         });
-        _.forEach(jsonorder.payments, function(item) {
+        _.forEach(jsonorder.payments, function (item) {
           item.amount = -item.amount;
           item.paid = -item.paid;
         });
-        _.forEach(jsonorder.taxes, function(item) {
+        _.forEach(jsonorder.taxes, function (item) {
           item.amount = -item.amount;
           item.net = -item.net;
         });
@@ -877,7 +880,7 @@ alert('reject!!')
       return jsonorder;
     },
 
-    setProperty: function(_property, _value) {
+    setProperty: function (_property, _value) {
       this.set(_property, _value);
       this.save();
     }
@@ -886,7 +889,7 @@ alert('reject!!')
   var OrderList = Backbone.Collection.extend({
     model: Order,
 
-    constructor: function(modelOrder) {
+    constructor: function (modelOrder) {
       if (modelOrder) {
         //this._id = 'modelorderlist';
         this.modelorder = modelOrder;
@@ -894,14 +897,14 @@ alert('reject!!')
       Backbone.Collection.prototype.constructor.call(this);
     },
 
-    initialize: function() {
+    initialize: function () {
       this.current = null;
     },
 
-    newOrder: function() {
+    newOrder: function () {
       var order = new Order(),
           me = this,
-          documentseq, documentseqstr; 
+          documentseq, documentseqstr;
 
       order.set('client', OB.POS.modelterminal.get('terminal').client);
       order.set('organization', OB.POS.modelterminal.get('terminal').organization);
@@ -935,17 +938,16 @@ alert('reject!!')
       return order;
     },
 
-    newPaidReceipt: function(model, callback) {
-      var order = new Order(), lines,
-          me = this,
-          documentseq, documentseqstr, bp, newline, lines, prod, payments, curPayment, taxes, bpId,
-          numberOfLines = model.receiptLines.length;
+    newPaidReceipt: function (model, callback) {
+      var order = new Order(),
+          lines, me = this,
+          documentseq, documentseqstr, bp, newline, lines, prod, payments, curPayment, taxes, bpId, numberOfLines = model.receiptLines.length;
       lines = new Backbone.Collection();
       order.set('documentNo', model.documentNo);
-      if(model.isQuotation){
+      if (model.isQuotation) {
         order.set('isQuotation', true);
         order.set('oldId', model.orderid);
-      }else{
+      } else {
         order.set('isEditable', false);
         order.set('isPaid', true);
       }
@@ -965,16 +967,18 @@ alert('reject!!')
 
 
       bpId = model.businessPartner;
-      OB.Dal.get(OB.Model.BusinessPartner, bpId, function(bp){
-        order.set('bp', bp); 
-      }, function(){console.error(args);})
+      OB.Dal.get(OB.Model.BusinessPartner, bpId, function (bp) {
+        order.set('bp', bp);
+      }, function () {
+        console.error(args);
+      })
       order.set('gross', model.totalamount);
       order.trigger('calculategross');
       order.set('salesRepresentative$_identifier', model.salesrepresentative_identifier);
 
-      _.each(model.receiptLines, function(iter) {
-        
-        OB.Dal.get(OB.Model.Product, iter.id, function(prod){
+      _.each(model.receiptLines, function (iter) {
+
+        OB.Dal.get(OB.Model.Product, iter.id, function (prod) {
           newline = new OrderLine({
             product: prod,
             uOM: iter.uOM,
@@ -988,7 +992,7 @@ alert('reject!!')
           // add the created line
           lines.add(newline);
           numberOfLines--;
-          if(numberOfLines === 0){
+          if (numberOfLines === 0) {
             order.set('lines', lines);
             callback(order);
           }
@@ -997,7 +1001,7 @@ alert('reject!!')
       order.set('orderDate', moment(model.orderDate.toString(), "YYYY-MM-DD").toDate());
       //order.set('payments', model.receiptPayments);
       payments = new PaymentLineList();
-      _.each(model.receiptPayments, function(iter) {
+      _.each(model.receiptPayments, function (iter) {
         var paymentProp;
         curPayment = new PaymentLine();
         for (paymentProp in iter) {
@@ -1011,7 +1015,7 @@ alert('reject!!')
 
 
       taxes = {};
-      _.each(model.receiptTaxes, function(iter) {
+      _.each(model.receiptTaxes, function (iter) {
         var taxProp;
         taxes[iter.taxid] = {};
         for (taxProp in iter) {
@@ -1023,20 +1027,20 @@ alert('reject!!')
       order.set('taxes', taxes);
     },
 
-    addNewOrder: function() {
+    addNewOrder: function () {
       this.saveCurrent();
       this.current = this.newOrder();
       this.add(this.current);
       this.loadCurrent(true);
     },
-    addPaidReceipt: function(model) {
+    addPaidReceipt: function (model) {
       this.saveCurrent();
       this.current = model;
       this.add(this.current);
       this.loadCurrent(true);
     },
 
-    addNewQuotation: function() {
+    addNewQuotation: function () {
       var documentseq;
       this.saveCurrent();
       this.current = this.newOrder();
@@ -1050,13 +1054,13 @@ alert('reject!!')
       this.loadCurrent();
     },
 
-    deleteCurrent: function() {
+    deleteCurrent: function () {
       var isNew = false;
 
       function deleteCurrentFromDatabase(orderToDelete) {
-        OB.Dal.remove(orderToDelete, function() {
+        OB.Dal.remove(orderToDelete, function () {
           return true;
-        }, function() {
+        }, function () {
           OB.UTIL.showError('Error removing');
         });
       }
@@ -1074,7 +1078,7 @@ alert('reject!!')
       }
     },
 
-    load: function(model) {
+    load: function (model) {
       // Workaround to prevent the pending receipts moder window from remaining open
       // when the current receipt is selected from the list
       if (model && this.current && model.get('documentNo') === this.current.get('documentNo')) {
@@ -1084,12 +1088,12 @@ alert('reject!!')
       this.current = model;
       this.loadCurrent();
     },
-    saveCurrent: function() {
+    saveCurrent: function () {
       if (this.current) {
         this.current.clearWith(this.modelorder);
       }
     },
-    loadCurrent: function(isNew) {
+    loadCurrent: function (isNew) {
       if (this.current) {
         if (isNew) {
           //set values of new attrs in current, 

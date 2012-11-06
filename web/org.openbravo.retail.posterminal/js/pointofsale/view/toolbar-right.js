@@ -59,7 +59,7 @@ enyo.kind({
   },
   initComponents: function () {
     this.inherited(arguments);
-    enyo.forEach(this.buttons, function(btn) {
+    enyo.forEach(this.buttons, function (btn) {
       this.$.toolbar.createComponent({
         kind: 'OB.OBPOSPointOfSale.UI.RightToolbarButton',
         button: btn
@@ -133,7 +133,7 @@ enyo.kind({
       style: 'margin: 0px 5px 0px 5px;'
     }
   }],
-  initComponents: function() {
+  initComponents: function () {
     this.inherited(arguments);
     if (this.button.containerCssClass) {
       this.setClassAttribute(this.button.containerCssClass);
@@ -153,7 +153,7 @@ enyo.kind({
   events: {
     onTabChange: ''
   },
-  tap: function() {
+  tap: function () {
     this.doTabChange({
       tabPanel: this.tabPanel,
       keyboard: 'toolbarscan',
@@ -170,7 +170,7 @@ enyo.kind({
   },
   tabPanel: '#catalog',
   label: OB.I18N.getLabel('OBPOS_LblBrowse'),
-  tap: function() {
+  tap: function () {
     this.doTabChange({
       tabPanel: this.tabPanel,
       keyboard: false,
@@ -187,14 +187,14 @@ enyo.kind({
   events: {
     onTabChange: ''
   },
-  tap: function() {
+  tap: function () {
     this.doTabChange({
       tabPanel: this.tabPanel,
       keyboard: false,
       edit: false
     });
   },
-  initComponents: function() {
+  initComponents: function () {
     this.inherited(arguments);
   }
 });
@@ -209,18 +209,18 @@ enyo.kind({
   events: {
     onTabChange: ''
   },
-  tap: function() {
+  tap: function () {
     var receipt = this.model.get('order');
-    if(receipt.get('isQuotation')){
-      if(receipt.get('hasbeenpaid')!=='Y'){
-        receipt.calculateTaxes(function() {
+    if (receipt.get('isQuotation')) {
+      if (receipt.get('hasbeenpaid') !== 'Y') {
+        receipt.calculateTaxes(function () {
           receipt.trigger('closed');
-          receipt.trigger('scan'); 
+          receipt.trigger('scan');
         });
-      }else{
-        receipt.calculateTaxes(function() {
-        receipt.trigger('scan'); 
-        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_QuotationClosed'));
+      } else {
+        receipt.calculateTaxes(function () {
+          receipt.trigger('scan');
+          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_QuotationClosed'));
         });
       }
       return;
@@ -247,19 +247,19 @@ enyo.kind({
       name: 'totalPrinter'
     }]
   }],
-  initComponents: function() {
+  initComponents: function () {
     this.inherited(arguments);
     this.removeClass('btnlink-gray');
   },
-  init: function(model){
+  init: function (model) {
     this.model = model
   },
-  renderTotal: function(sender, event) {
+  renderTotal: function (sender, event) {
     this.$.totalPrinter.renderTotal(event.newTotal);
   },
-  init: function(model) {
+  init: function (model) {
     this.model = model;
-    this.model.get('order').on('change:isEditable', function(newValue) {
+    this.model.get('order').on('change:isEditable', function (newValue) {
       if (newValue) {
         if (newValue.get('isEditable') === false) {
           this.tabPanel = null;
@@ -286,7 +286,7 @@ enyo.kind({
   events: {
     onTabChange: ''
   },
-  tap: function() {
+  tap: function () {
     this.doTabChange({
       tabPanel: this.tabPanel,
       keyboard: 'toolbarscan',

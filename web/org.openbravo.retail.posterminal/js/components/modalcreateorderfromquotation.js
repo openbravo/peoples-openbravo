@@ -46,19 +46,18 @@ enyo.kind({
   kind: 'OB.UI.ModalAction',
   name: 'OB.UI.ModalCreateOrderFromQuotation',
   myId: 'modalCreateOrderFromQuotation',
-  bodyContent: {
-  },
+  bodyContent: {},
   bodyButtons: {
     components: [{
       kind: 'OB.UI.updateprices',
       myId: 'updatePricesCheck'
-    },{
+    }, {
       kind: 'OB.OBPOSPointOfSale.UI.Modals.btnModalCreateOrderAccept'
     }, {
       kind: 'OB.OBPOSPointOfSale.UI.Modals.btnModalCreateOrderCancel'
     }]
   },
-  init: function(model){
+  init: function (model) {
     var receipt = model.get('order');
     this.theQuotation = receipt;
   }

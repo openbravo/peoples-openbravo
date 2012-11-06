@@ -30,7 +30,7 @@ enyo.kind({
           style: 'width:100%',
           classes: 'input',
           name: 'filterText',
-//          onchange: 'searchUsingBpsFilter',
+          //          onchange: 'searchUsingBpsFilter',
           attributes: {
             'x-webkit-speech': 'x-webkit-speech'
           }
@@ -62,10 +62,9 @@ enyo.kind({
           ontap: 'clearAction'
         }]
       }]
-    },
-    {
+    }, {
       style: 'display: table;',
-      components: [ {
+      components: [{
         style: 'display: table-cell;',
         components: [{
           tag: 'h4',
@@ -80,9 +79,9 @@ enyo.kind({
           style: 'width 200px; margin: 0px 0px 2px 65px;'
         }]
       }]
-    },{
+    }, {
       style: 'display: table;',
-      components: [ {
+      components: [{
         style: 'display: table-cell;',
         components: [{
           kind: 'enyo.Input',
@@ -91,24 +90,22 @@ enyo.kind({
           type: 'text',
           style: 'width: 100px;  margin: 0px 0px 8px 5px;'
         }]
-      },
-      {
+      }, {
         style: 'display: table-cell;',
         components: [{
           tag: 'h4',
           content: 'yyyy-mm-dd',
           style: 'width: 100px; color:gray;  margin: 0px 0px 8px 5px;'
         }]
-      },
-      {
+      }, {
         kind: 'enyo.Input',
         name: 'endDate',
         size: '10',
         type: 'text',
         style: 'width: 100px;  margin: 0px 0px 8px 50px;'
-      },{
+      }, {
         style: 'display: table-cell;',
-        components: [  {
+        components: [{
           tag: 'h4',
           content: 'yyyy-mm-dd',
           style: 'width: 100px; color:gray;  margin: 0px 0px 8px 5px;'
@@ -137,7 +134,7 @@ enyo.kind({
     this.$.endDate.setValue('');
     this.doClearAction();
   },
-  searchAction: function() {
+  searchAction: function () {
     var params = this.parent.parent.parent.parent.parent.parent.parent.parent.params;
     var startDate, endDate, startDateValidated = true,
         endDateValidated = true;
@@ -169,8 +166,8 @@ enyo.kind({
       this.$.endDate.removeClass("error");
     }
     this.filters = {
-      documentType: params.isQuotation?(OB.POS.modelterminal.get('terminal').documentTypeForQuotations):(OB.POS.modelterminal.get('terminal').documentType),
-      isQuotation: params.isQuotation?true:false,
+      documentType: params.isQuotation ? (OB.POS.modelterminal.get('terminal').documentTypeForQuotations) : (OB.POS.modelterminal.get('terminal').documentType),
+      isQuotation: params.isQuotation ? true : false,
       filterText: this.$.filterText.getValue(),
       startDate: this.$.startDate.getValue(),
       endDate: this.$.endDate.getValue(),
@@ -200,9 +197,9 @@ enyo.kind({
       style: 'clear: both;'
     }]
   }],
-  create: function() {
+  create: function () {
     this.inherited(arguments);
-    this.$.topLine.setContent(this.model.get('documentNo')+' - '+this.model.get('bp').get('_identifier'));
+    this.$.topLine.setContent(this.model.get('documentNo') + ' - ' + this.model.get('bp').get('_identifier'));
     this.$.bottonLine.setContent(this.model.get('gross'));
   }
 });
@@ -236,22 +233,22 @@ enyo.kind({
       }]
     }]
   }],
-  clearAction: function(inSender, inEvent) {
+  clearAction: function (inSender, inEvent) {
     this.prsList.reset();
     return true;
   },
-  searchAction: function(inSender, inEvent) {
+  searchAction: function (inSender, inEvent) {
     var me = this,
         process = new OB.DS.Process('org.openbravo.retail.posterminal.PaidReceipts');
     this.clearAction();
     process.exec({
       filters: inEvent.filters
-    }, function(data) {
+    }, function (data) {
       if (data) {
-        _.each(data, function(iter){
-        	me.model.get('orderList').newPaidReceipt(iter, function(order){
-              me.prsList.add(order);
-        	});
+        _.each(data, function (iter) {
+          me.model.get('orderList').newPaidReceipt(iter, function (order) {
+            me.prsList.add(order);
+          });
         });
       } else {
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorDropDep'));
@@ -260,11 +257,11 @@ enyo.kind({
     return true;
   },
   prsList: null,
-  init: function(model) {
+  init: function (model) {
     this.model = model;
     this.prsList = new Backbone.Collection();
     this.$.prslistitemprinter.setCollection(this.prsList);
-    this.prsList.on('click', function(model) {
+    this.prsList.on('click', function (model) {
       this.doChangePaidReceipt({
         newPaidReceipt: model
       });
@@ -281,11 +278,11 @@ enyo.kind({
   headerClass: 'modal-header',
   bodyClass: 'modal-header',
   header: OB.I18N.getLabel('OBPOS_LblPaidReceipts'),
-  published:{
+  published: {
     params: null
   },
-  changedParams: function(value){
-    
+  changedParams: function (value) {
+
   },
   body: {
     kind: 'OB.UI.ListPRs'
@@ -293,11 +290,11 @@ enyo.kind({
   handlers: {
     onChangePaidReceipt: 'changePaidReceipt'
   },
-  changePaidReceipt: function(inSender, inEvent) {
+  changePaidReceipt: function (inSender, inEvent) {
     this.model.get('orderList').addPaidReceipt(inEvent.newPaidReceipt);
     return true;
   },
-  init: function(model) {
+  init: function (model) {
     this.model = model;
   }
 });

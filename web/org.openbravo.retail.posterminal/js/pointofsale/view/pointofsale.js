@@ -69,7 +69,7 @@ enyo.kind({
       kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalProductCannotBeGroup'
     }, {
       kind: 'OB.UI.Modalnoteditableorder'
-    },{
+    }, {
       kind: 'OB.UI.ModalBusinessPartners'
     }, {
       kind: 'OB.UI.ModalPaidReceipts',
@@ -107,40 +107,44 @@ enyo.kind({
       }]
     }]
   }],
-  printReceipt: function() {
+  printReceipt: function () {
 
     if (OB.POS.modelterminal.hasPermission('OBPOS_print.receipt')) {
       var receipt = this.model.get('order');
-      if(receipt.get("isPaid")){
+      if (receipt.get("isPaid")) {
         receipt.trigger('print');
         return;
       }
-      receipt.calculateTaxes(function() {
+      receipt.calculateTaxes(function () {
         receipt.trigger('print');
       });
     }
   },
- paidReceipts: function(inSender, inEvent) {
-   this.$.paidReceiptsView.setParams({isQuotation: false});
+  paidReceipts: function (inSender, inEvent) {
+    this.$.paidReceiptsView.setParams({
+      isQuotation: false
+    });
     $('#modalPaidReceipts').modal('show');
     return true;
   },
-  
-  quotations: function(inSender, inEvent) {
-    this.$.paidReceiptsView.setParams({isQuotation: true});
+
+  quotations: function (inSender, inEvent) {
+    this.$.paidReceiptsView.setParams({
+      isQuotation: true
+    });
     $('#modalPaidReceipts').modal('show');
   },
-  
-  backOffice: function(inSender, inEvent) {
+
+  backOffice: function (inSender, inEvent) {
     if (inEvent.url) {
       window.open(inEvent.url, '_blank');
     }
   },
-  addNewOrder: function(inSender, inEvent) {
+  addNewOrder: function (inSender, inEvent) {
     this.model.get('orderList').addNewOrder();
     return true;
   },
-  deleteCurrentOrder: function() {
+  deleteCurrentOrder: function () {
     if (this.model.get('order').get('id')) {
       this.model.get('orderList').saveCurrent();
       OB.Dal.remove(this.model.get('orderList').current, null, null);
@@ -148,8 +152,8 @@ enyo.kind({
     this.model.get('orderList').deleteCurrent();
     return true;
   },
-  addProductToOrder: function(inSender, inEvent) {
-    if(this.model.get('order').get('isEditable') === false){
+  addProductToOrder: function (inSender, inEvent) {
+    if (this.model.get('order').get('isEditable') === false) {
       $("#modalNotEditableOrder").modal("show");
       return true;
     }
@@ -157,8 +161,8 @@ enyo.kind({
     this.model.get('orderList').saveCurrent();
     return true;
   },
-  changeBusinessPartner: function(inSender, inEvent) {
-    if(this.model.get('order').get('isEditable') === false){
+  changeBusinessPartner: function (inSender, inEvent) {
+    if (this.model.get('order').get('isEditable') === false) {
       $("#modalNotEditableOrder").modal("show");
       return true;
     }
@@ -166,8 +170,8 @@ enyo.kind({
     this.model.get('orderList').saveCurrent();
     return true;
   },
-  receiptToInvoice: function() {
-    if(this.model.get('order').get('isEditable') === false){
+  receiptToInvoice: function () {
+    if (this.model.get('order').get('isEditable') === false) {
       $("#modalNotEditableOrder").modal("show");
       return true;
     }
@@ -175,27 +179,27 @@ enyo.kind({
     this.model.get('orderList').saveCurrent();
     return true;
   },
-  createQuotation: function(){
+  createQuotation: function () {
     this.model.get('orderList').addNewQuotation();
     return true;
   },
-  createOrderFromQuotation: function(){
+  createOrderFromQuotation: function () {
     this.model.get('order').createOrderFromQuotation();
     this.model.get('orderList').saveCurrent();
     return true;
   },
-  reactivateQuotation: function(){
+  reactivateQuotation: function () {
     this.model.get('order').reactivateQuotation();
     this.model.get('orderList').saveCurrent();
     return true;
   },
-  rejectQuotation: function(){
+  rejectQuotation: function () {
     this.model.get('order').rejectQuotation();
     this.model.get('orderList').saveCurrent();
     return true;
   },
-  showReturnText: function(inSender, inEvent) {
-    if(this.model.get('order').get('isEditable') === false){
+  showReturnText: function (inSender, inEvent) {
+    if (this.model.get('order').get('isEditable') === false) {
       $("#modalNotEditableOrder").modal("show");
       return true;
     }
@@ -203,8 +207,8 @@ enyo.kind({
     this.model.get('orderList').saveCurrent();
     return true;
   },
-  cancelReceiptToInvoice: function(inSender, inEvent) {
-    if(this.model.get('order').get('isEditable') === false){
+  cancelReceiptToInvoice: function (inSender, inEvent) {
+    if (this.model.get('order').get('isEditable') === false) {
       $("#modalNotEditableOrder").modal("show");
       return true;
     }
@@ -225,8 +229,8 @@ enyo.kind({
       this.$.keyboard.hide();
     }
   },
-  deleteLine: function(sender, event) {
-    if(this.model.get('order').get('isEditable') === false){
+  deleteLine: function (sender, event) {
+    if (this.model.get('order').get('isEditable') === false) {
       $("#modalNotEditableOrder").modal("show");
       return true;
     }
@@ -237,35 +241,35 @@ enyo.kind({
       receipt.trigger('scan');
     }
   },
-  editLine: function(sender, event) {
-    if(this.model.get('order').get('isEditable') === false){
+  editLine: function (sender, event) {
+    if (this.model.get('order').get('isEditable') === false) {
       $("#modalNotEditableOrder").modal("show");
       return true;
     }
     $("#receiptLinesPropertiesDialog").modal('show');
   },
-  exactPayment: function(sender, event) {
+  exactPayment: function (sender, event) {
     this.$.keyboard.execStatelessCommand('cashexact');
   },
-  changeCurrentOrder: function(inSender, inEvent) {
+  changeCurrentOrder: function (inSender, inEvent) {
     this.model.get('orderList').load(inEvent.newCurrentOrder);
     return true;
   },
-  removePayment: function(sender, event) {
+  removePayment: function (sender, event) {
     if (this.model.get('paymentData') && !confirm(OB.I18N.getLabel('OBPOS_MsgConfirmRemovePayment'))) {
       return;
     }
     this.model.get('order').removePayment(event.payment);
   },
-  changeSubWindow: function(sender, event) {
+  changeSubWindow: function (sender, event) {
     this.model.get('subWindowManager').set('currentWindow', event.newWindow);
   },
-  showModalReceiptProperties: function(inSender, inEvent) {
+  showModalReceiptProperties: function (inSender, inEvent) {
     $('#receiptPropertiesDialog').modal('show');
     return true;
   },
-  setProperty: function(inSender, inEvent) {
-    if(this.model.get('order').get('isEditable') === false){
+  setProperty: function (inSender, inEvent) {
+    if (this.model.get('order').get('isEditable') === false) {
       $("#modalNotEditableOrder").modal("show");
       return true;
     }
@@ -273,8 +277,8 @@ enyo.kind({
     this.model.get('orderList').saveCurrent();
     return true;
   },
-  setLineProperty: function(inSender, inEvent) {
-    if(this.model.get('order').get('isEditable') === false){
+  setLineProperty: function (inSender, inEvent) {
+    if (this.model.get('order').get('isEditable') === false) {
       $("#modalNotEditableOrder").modal("show");
       return true;
     }
@@ -339,7 +343,7 @@ enyo.kind({
     this.$.keyboard.setReceipt(receipt);
     this.$.rightToolbar.setReceipt(receipt);
   },
-  initComponents: function() {
+  initComponents: function () {
     this.inherited(arguments);
   }
 });

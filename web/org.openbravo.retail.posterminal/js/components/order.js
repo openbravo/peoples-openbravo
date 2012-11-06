@@ -18,7 +18,7 @@ enyo.kind({
   tag: 'button',
   style: 'width: 50px;',
   classes: 'btnlink-white btnlink-payment-clear btn-icon-small btn-icon-check',
-  tap: function() {
+  tap: function () {
     this.doCancelReceiptToInvoice();
   }
 });
@@ -98,37 +98,37 @@ enyo.kind({
       }]
     }]
   }],
-  renderTotal: function(newTotal) {
+  renderTotal: function (newTotal) {
     this.$.totalgross.setContent(OB.I18N.formatCurrency(newTotal));
   },
-  initComponents: function() {
+  initComponents: function () {
     this.inherited(arguments);
   },
-  orderChanged: function(oldValue) {
+  orderChanged: function (oldValue) {
     this.renderTotal(this.order.getTotal());
     this.$.listOrderLines.setCollection(this.order.get('lines'));
-    this.order.on('change:gross', function(model) {
+    this.order.on('change:gross', function (model) {
       this.renderTotal(model.getTotal());
     }, this);
-    this.order.on('change:orderType', function(model) {
+    this.order.on('change:orderType', function (model) {
       if (model.get('orderType') === 1) {
         this.$.divreturn.show();
       } else {
         this.$.divreturn.hide();
       }
     }, this);
-    this.order.on('change:generateInvoice', function(model) {
+    this.order.on('change:generateInvoice', function (model) {
       if (model.get('generateInvoice')) {
         this.$.divbtninvoice.show();
       } else {
         this.$.divbtninvoice.hide();
       }
     }, this);
-    this.order.on('change:isQuotation', function(model) {
+    this.order.on('change:isQuotation', function (model) {
       if (model.get('isQuotation')) {
         this.$.divbtnquotation.show();
         this.$.listOrderLines.children[4].children[0].setContent(OB.I18N.getLabel('OBPOS_QuotationNew'))
-        if (model.get('hasbeenpaid')==='Y') {
+        if (model.get('hasbeenpaid') === 'Y') {
           this.$.divbtnquotation.setContent(OB.I18N.getLabel('OBPOS_QuotationUnderEvaluation'));
         } else {
           this.$.divbtnquotation.setContent(OB.I18N.getLabel('OBPOS_QuotationDraft'));
@@ -138,19 +138,19 @@ enyo.kind({
         this.$.listOrderLines.children[4].children[0].setContent(OB.I18N.getLabel('OBPOS_ReceiptNew'))
       }
     }, this);
-    this.order.on('change:hasbeenpaid', function(model) {
-      if (model.get('isQuotation') && model.get('hasbeenpaid')==='Y') {
+    this.order.on('change:hasbeenpaid', function (model) {
+      if (model.get('isQuotation') && model.get('hasbeenpaid') === 'Y') {
         this.$.divbtnquotation.setContent(OB.I18N.getLabel('OBPOS_QuotationUnderEvaluation'));
-      } else if(model.get('isQuotation') && model.get('hasbeenpaid')==='N'){
+      } else if (model.get('isQuotation') && model.get('hasbeenpaid') === 'N') {
         this.$.divbtnquotation.setContent(OB.I18N.getLabel('OBPOS_QuotationDraft'));
       }
     }, this);
-    this.order.on('change:isPaid', function(model) {
-        if (model.get('isPaid') === true) {
-          this.$.divispaid.show();
-        } else {
-          this.$.divispaid.hide();
-        }
+    this.order.on('change:isPaid', function (model) {
+      if (model.get('isPaid') === true) {
+        this.$.divispaid.show();
+      } else {
+        this.$.divispaid.hide();
+      }
     }, this);
   }
 });
