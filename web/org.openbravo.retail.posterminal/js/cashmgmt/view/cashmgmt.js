@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, enyo */
+/*global OB, enyo, $ */
 
 // Cash Management main window view
 enyo.kind({
@@ -49,6 +49,14 @@ enyo.kind({
 
       }, {
         kind: OB.UI.ModalCancel
+      }, {
+        kind: 'OB.OBPOSCashMgmt.UI.modalFinished',
+        name: 'modalFinishedMgmt',
+        myId: 'modalFinishedMgmt'
+      }, {
+        kind: 'OB.OBPOSCashMgmt.UI.modalFinishedWrongly',
+        name: 'modalFinishedWronglyMgmt',
+        myId: 'modalFinishedWronglyMgmt'
       }]
     }]
   }],
@@ -68,6 +76,23 @@ enyo.kind({
     dropEvent.on('click', function (model) {
       this.model.depsdropstosend.trigger('paymentDone', model, this.currentPayment);
       delete this.currentPayment;
+    }, this);
+
+    //finished
+    this.model.on('change:finished', function () {
+      $("#modalFinishedMgmt").modal({
+        show: true,
+        backdrop: 'static',
+        keyboard: false
+      });
+    }, this);
+    //finishedWrongly
+    this.model.on('change:finishedWrongly', function () {
+      $("#modalFinishedWronglyMgmt").modal({
+        show: true,
+        backdrop: 'static',
+        keyboard: false
+      });
     }, this);
   }
 });

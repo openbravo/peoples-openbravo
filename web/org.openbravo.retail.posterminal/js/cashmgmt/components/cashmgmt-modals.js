@@ -11,10 +11,10 @@
 
 enyo.kind({
   kind: 'OB.UI.ModalAction',
-  name: 'OB.OBPOSCashUp.UI.modalFinished',
-  header: OB.I18N.getLabel('OBPOS_LblGoodjob'),
+  name: 'OB.OBPOSCashMgmt.UI.modalFinished',
+  header: OB.I18N.getLabel('OBPOS_LblDone'),
   bodyContent: {
-    content: OB.I18N.getLabel('OBPOS_FinishCloseDialog')
+    content: OB.I18N.getLabel('OBPOS_FinishCashMgmtDialog')
   },
   bodyButtons: {
     tag: 'div',
@@ -35,10 +35,10 @@ enyo.kind({
 
 enyo.kind({
   kind: 'OB.UI.ModalAction',
-  name: 'OB.OBPOSCashUp.UI.modalFinishedWrongly',
-  header: OB.I18N.getLabel('OBPOS_CashUpWronglyHeader'),
+  name: 'OB.OBPOSCashMgmt.UI.modalFinishedWrongly',
+  header: OB.I18N.getLabel('OBPOS_CashMgmtWronglyHeader'),
   bodyContent: {
-    content: OB.I18N.getLabel('OBPOS_CashUpWrongly')
+    content: OB.I18N.getLabel('OBPOS_CashMgmtWrongly')
   },
   bodyButtons: {
     tag: 'div',
@@ -54,34 +54,5 @@ enyo.kind({
   },
   executeOnHide: function () {
     OB.POS.navigate('retail.pointofsale');
-  }
-});
-
-enyo.kind({
-  kind: 'OB.UI.ModalAction',
-  name: 'OB.OBPOSCashUp.UI.modalPendingToProcess',
-  header: OB.I18N.getLabel('OBPOS_LblReceiptsToProcess'),
-  bodyContent: {
-    content: OB.I18N.getLabel('OBPOS_MsgReceiptsProcess')
-  },
-  bodyButtons: {
-    tag: 'div',
-    components: [{
-      kind: 'OB.UI.Button',
-      classes: 'btnlink btnlink-gray modal-dialog-content-button',
-      content: OB.I18N.getLabel('OBPOS_LblOk'),
-      tap: function () {
-        //continue with orders which have been paid.
-        $('#' + this.parent.parent.parent.parent.parent.getId()).modal('hide');
-      }
-    }, {
-      kind: 'OB.UI.Button',
-      classes: 'btnlink btnlink-gray modal-dialog-content-button',
-      content: OB.I18N.getLabel('OBPOS_LblCancel'),
-      tap: function () {
-        $('#' + this.parent.parent.parent.parent.parent.getId()).modal('hide');
-        OB.POS.navigate('retail.pointofsale');
-      }
-    }]
   }
 });

@@ -126,11 +126,19 @@ enyo.kind({
 
     //finished
     this.model.on('change:finished', function () {
-      $('#modalFinished').modal('show');
+      $("#modalFinished").modal({
+        show: true,
+        backdrop: 'static',
+        keyboard: false
+      });
     }, this);
     //finishedWrongly
     this.model.on('change:finishedWrongly', function () {
-      $('#modalFinishedWrongly').modal('show');
+      $("#modalFinishedWrongly").modal({
+        show: true,
+        backdrop: 'static',
+        keyboard: false
+      });
     }, this);
 
     this.refresh();

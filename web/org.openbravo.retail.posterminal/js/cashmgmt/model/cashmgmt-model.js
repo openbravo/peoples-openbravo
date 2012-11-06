@@ -43,7 +43,9 @@ OB.OBPOSCashMgmt.Model.DepositEvents = Backbone.Model.extend({
 OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
   models: [OB.OBPOSCashMgmt.Model.DepositsDrops, OB.OBPOSCashMgmt.Model.CashMgmtPaymentMethod, OB.OBPOSCashMgmt.Model.DropEvents, OB.OBPOSCashMgmt.Model.DepositEvents],
   init: function () {
-    var depList = this.getData('DataDepositsDrops');
+
+    var depList = this.getData('DataDepositsDrops'),
+        me = this;
 
     this.depsdropstosend = new Backbone.Collection();
 
@@ -105,8 +107,6 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
       var process = new OB.DS.Process('org.openbravo.retail.posterminal.ProcessCashMgmt'),
           me = this;
 
-      OB.UTIL.showLoading(true);
-
       if (this.depsdropstosend.length === 0) {
         // Nothing to do go to main window
         OB.POS.navigate('retail.pointofsale');
@@ -118,13 +118,12 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
         depsdropstosend: this.depsdropstosend.toJSON()
       }, function (data, message) {
         if (data && data.exception) {
-          OB.UTIL.showLoading(false);
-          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorDropDep'));
+          me.set("finishedWrongly", true);
         } else {
           if (OB.POS.modelterminal.hasPermission('OBPOS_print.cashmanagement')) {
             me.printCashMgmt.print(me.depsdropstosend.toJSON());
           }
-          OB.POS.navigate('retail.pointofsale');
+          me.set("finished", true);
         }
       });
     }, this);
