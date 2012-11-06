@@ -291,11 +291,6 @@ div.subwindow-closebutton:hover {
   clear: both;
 }
 
-a.btn-dropdown {
-  color: white;
-  cursor: pointer;
-  text-decoration: none;
-}
 
 .btnkeyboard-num {
   font-size: 24px !important;
@@ -510,16 +505,58 @@ li.selected > button.btnselect-orderline.btnselect-orderline-edit:hover {
   color: black;
 }
 
-.dropdown-menu li > a:hover,
-.dropdown-menu .active > a,
-.dropdown-menu .active > a:hover {
-  background-color : #e1e1e1;
-  color: black;
+
+button.btn-dropdown {
+  color: white;
+  cursor: pointer;
+  text-decoration: none;
+  background: none;
+  padding: 0px;
+  border: 0px;
+  border-radius: 0px;
+  box-shadow: none;
 }
 
-.dropdown-menu {
-  padding: 0px;
+button.btn-dropdown:active,
+button.btn-dropdown.active {
+  border: 0px;
+  background: rgba(0, 0, 0, 0.3);
+  box-shadow: none;
 }
+
+div.dropdown {
+  padding: 0px;
+  background-image: none;
+  background-color: white;
+  border-radius: 0px;
+  color: black;
+  min-width: 165px;
+}
+
+div.dropdown:hover {
+  background-image: none;
+  background-color: white;
+}
+
+div.dropdown-menuitem {
+  cursor: pointer;
+}
+
+div.dropdown-menuitem:hover {
+  background-color: #E1E1E1;
+}
+
+.dropdown-menudivider,
+.dropdown-menudivider:hover {
+  margin: 6px 0px;
+  padding: 0px;
+  border-bottom: 1px solid #E5E5E5;
+}
+
+div.dropdown-clientdata {
+  min-width: 350px;
+}
+
 
 div.btnlink {
   display: inline-block;

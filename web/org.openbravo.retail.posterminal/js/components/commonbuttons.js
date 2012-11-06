@@ -311,6 +311,7 @@ enyo.kind({
 
   initComponents: function () {
     this.inherited(arguments);
+
     this.$.header.setContent(this.header);
 
     this.$.bodyParent.setStyle('max-height: ' + this.maxheight + ';');
@@ -329,17 +330,13 @@ enyo.kind({
 });
 
 enyo.kind({
-  tag: 'li',
   name: 'OB.UI.MenuAction',
   permission: null,
   components: [{
     name: 'lbl',
-    tag: 'a',
     allowHtml: true,
-    style: 'padding: 12px 15px 12px 15px;',
-    attributes: {
-      href: '#'
-    }
+    style: 'padding: 12px 5px 12px 15px;',
+    classes: 'dropdown-menuitem'
   }],
   initComponents: function () {
     this.inherited(arguments);
