@@ -662,10 +662,11 @@ div.btnlink {
   background-image: url('../img/checkbox-on.png');
 }
 
-.btn-radio,
-.btn-radio:hover,
-.btn-radio:active,
-.btn-radio.active {
+div.btn-radio,
+div.btn-radio:hover,
+div.btn-radio:active,
+div.btn-radio.active {
+  width: auto;
   height: 29px;
   border: none;
   font-size: 16px;
@@ -679,7 +680,7 @@ div.btnlink {
   background-image: url('../img/radio-off.png');
 }
 
-.btn-radio.active {
+div.btn-radio.active {
   background-image: url('../img/radio-on.png');
 }
 

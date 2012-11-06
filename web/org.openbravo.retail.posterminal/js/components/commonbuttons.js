@@ -193,9 +193,24 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.RadioButton',
-  tag: 'button',
+  kind: "onyx.Checkbox",
   classes: 'btn btn-radio',
   style: 'padding: 0px 0px 0px 40px; margin: 10px;',
+  activeRadio: function () {
+    this.addClass('active');
+    this.setChecked(true);
+  },
+  disableRadio: function () {
+    this.setNodeProperty('checked', false);
+    this.setAttribute('checked', '');
+    this.removeClass('active');
+    this.active = false;
+    this.checked = false;
+  },
+  tap: function () {
+    this.inherited(arguments);
+    this.activeRadio();
+  },
   initComponents: function () {
     this.inherited(arguments);
   }
