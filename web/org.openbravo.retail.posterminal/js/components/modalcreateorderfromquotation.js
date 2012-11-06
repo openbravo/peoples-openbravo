@@ -43,7 +43,6 @@ enyo.kind({
   init: function () {
     this.checked = true;
     this.addRemoveClass('active', this.checked);
-    console.log(this.checked);
   }
 });
 
