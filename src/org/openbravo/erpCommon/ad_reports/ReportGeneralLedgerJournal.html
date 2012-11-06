@@ -153,7 +153,7 @@ function callback(paramXMLParticular, XMLHttpRequestObj) {
         }
       }
 
- function openTabJournalEntriesReport(rid) {
+ function openTabJournalEntriesReport(rid,name) {
      var myframe = getFrame('LayoutMDI') || top.opener;
      if (myframe) {      
          myframe.OB.RemoteCallManager.call('org.openbravo.client.application.ComputeTranslatedNameActionHandler', {}, {'processId': '800000'}, 
@@ -165,22 +165,42 @@ function callback(paramXMLParticular, XMLHttpRequestObj) {
                        obManualURL: '/ad_reports/ReportGeneralLedgerJournal.html?inpParamschemas=' + rid,
                        processId: '800000',
                        addToRecents:'no',
-                       tabTitle: data.processTitle,
+                       tabTitle: data.processTitle + " - " + name,
                        type: 'report',
                        viewId: 'OBClassicWindow'
                    });                        
          });
+
      }
  }
  
  function openTabWhenPost() {
      var frm = document.frmMain;
-     if (frm.posted.value==='Y'){        
-         var aux=frm.inpParamschemas.value;
-         var rid=aux.split(',');
+     var aux=frm.inpParamschemas.value;       
+     var rid=aux.split(','); 
+     if(rid){
+         var myframe = getFrame('LayoutMDI') || top.opener;
+         var tabSet = myframe.OB.MainView.TabSet;
+         var tabref = tabSet.tabs[tabSet.selectedTab];
+         var tab = tabSet.getTab(tabref.ID);
+         var title = tab.title;
+         tab.prompt = title;
+         tab.showPrompt = true;
+         tab.hoverWidth = 150;
+         title = myframe.OB.Utilities.truncTitle(title);
+         tabSet.setTabTitle(tab, title);
+     }
+     if (frm.posted.value==='Y'){       
          for (i=0;i<rid.length;i++){
-             if (rid[i]!==""){
-             openTabJournalEntriesReport(rid[i]) ;
+             if (rid[i]!==""){           
+                 var d = {
+                   Command: 'GETNAME',
+                   glId: rid[i]
+                 };
+                 myframe.OB.RemoteCallManager.call('org.openbravo.client.application.window.GetNameGeneralLedger', {}, d, function (response, data, request) {
+                     openTabJournalEntriesReport(data.id,data.name) ;
+                     
+                 });
            }
          }       
      }   
@@ -620,6 +640,7 @@ function callback(paramXMLParticular, XMLHttpRequestObj) {
   <input type="hidden" name="inprecordId"></input>
   <input type="hidden" name="inpadTableId"></input>
   <input type="hidden" name="inpAccSchemas"></input>
+  <input type="hidden" name="inpSchemaNames"></input>
   <input type="hidden" name="inpdocbasetype"></input>
 </form>
 </body>
