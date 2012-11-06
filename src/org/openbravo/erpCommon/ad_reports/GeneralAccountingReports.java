@@ -196,6 +196,8 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
           }
         }
       }
+      // Income summary amount is calculated and included in the balance sheet data
+      String strIncomeSummary = GeneralAccountingReportsData.incomesummary(this, strcAcctSchemaId);
 
       for (int i = 0; i < strGroups.length; i++) {
         // All account tree is obtained
@@ -213,9 +215,6 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
             Tree.getMembers(this, strTreeOrg, strOrg), strYear + strYearsToClose, strDateFromRef,
             DateTimeData.nDaysAfter(this, strDateToRef, "1"), strYearRef + strYearsToCloseRef);
         {
-          // Income summary amount is calculated and included in the balance sheet data
-          String strIncomeSummary = GeneralAccountingReportsData.incomesummary(this,
-              strcAcctSchemaId);
           if (log4j.isDebugEnabled())
             log4j.debug("*********** strIncomeSummary: " + strIncomeSummary);
           String strISyear = processIncomeSummary(strDateFrom,
@@ -329,9 +328,9 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
         found = true;
         BigDecimal isYear = new BigDecimal(strISyear);
         BigDecimal isYearRef = new BigDecimal(strISyearRef);
-        data[i].qty = (new BigDecimal(data[i].qty).add(isYear)).toPlainString();
+        data[i].qty = (new BigDecimal(data[i].qty).subtract(isYear)).toPlainString();
         data[i].qtycredit = (new BigDecimal(data[i].qtycredit).add(isYear)).toPlainString();
-        data[i].qtyRef = (new BigDecimal(data[i].qtyRef).add(isYearRef)).toPlainString();
+        data[i].qtyRef = (new BigDecimal(data[i].qtyRef).subtract(isYearRef)).toPlainString();
         data[i].qtycreditRef = (new BigDecimal(data[i].qtycreditRef).add(isYearRef))
             .toPlainString();
       }
@@ -340,9 +339,9 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
     if (!found) {
       data2[data2.length - 1] = new AccountTreeData();
       data2[data2.length - 1].id = strIncomeSummary;
-      data2[data2.length - 1].qty = strISyear;
+      data2[data2.length - 1].qty = new BigDecimal(strISyear).negate().toPlainString();
       data2[data2.length - 1].qtycredit = strISyear;
-      data2[data2.length - 1].qtyRef = strISyearRef;
+      data2[data2.length - 1].qtyRef = new BigDecimal(strISyearRef).negate().toPlainString();
       data2[data2.length - 1].qtycreditRef = strISyearRef;
     } else
       return data;

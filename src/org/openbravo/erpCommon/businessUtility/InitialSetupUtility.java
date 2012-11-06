@@ -933,6 +933,7 @@ public class InitialSetupUtility {
     newAcctSchema.setGAAP(gAAP);
     newAcctSchema.setCostingMethod(costingMethod);
     newAcctSchema.setUseAccountAlias(hasAlias);
+    newAcctSchema.setCentralMaintenance(false);
     OBDal.getInstance().save(newAcctSchema);
     OBDal.getInstance().flush();
     return newAcctSchema;

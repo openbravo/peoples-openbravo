@@ -43,11 +43,6 @@ BEGIN --BODY
     FROM c_invoicetax
     WHERE c_invoice_id = p_invoice_id
       AND recalculate = 'Y';
-  ELSE
-    v_current_gross_amt := p_totallines;
-    UPDATE c_invoice
-    SET grandtotal = p_totallines
-    WHERE c_invoice_id = p_invoice_id;
   END IF;
   
   IF (p_grandtotal <> v_current_gross_amt) THEN

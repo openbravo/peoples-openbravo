@@ -33,7 +33,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.process.FIN_AddPayment;
@@ -96,8 +95,8 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
       String strOrgId = vars.getRequestGlobalVariable("inpadOrgId", "");
       String strCurrencyId = vars.getRequestGlobalVariable("inpCurrencyId", "");
       String strInvoiceId = vars.getRequestGlobalVariable("inpcInvoiceId", "");
-      String strDueDateFrom = vars.getStringParameter("inpDueDateFrom", "");
-      String strDueDateTo = vars.getStringParameter("inpDueDateTo", "");
+      String strExpectedDateFrom = vars.getStringParameter("inpExpectedDateFrom", "");
+      String strExpectedDateTo = vars.getStringParameter("inpExpectedDateTo", "");
       String strDocumentType = vars.getStringParameter("inpDocumentType", "");
       String strSelectedPaymentDetails = vars.getInStringParameter("inpScheduledPaymentDetailId",
           IsIDFilter.instance);
@@ -106,8 +105,8 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
       boolean isReceipt = vars.getRequiredStringParameter("isReceipt").equals("Y");
 
       printGrid(response, vars, strBPfromInvoiceId, strCurrencyId, strInvoiceId, strOrgId,
-          strDueDateFrom, strDueDateTo, strDocumentType, strSelectedPaymentDetails, isReceipt,
-          showAlternativePM);
+          strExpectedDateFrom, strExpectedDateTo, strDocumentType, strSelectedPaymentDetails,
+          isReceipt, showAlternativePM);
 
     } else if (vars.commandIn("PAYMENTMETHOD")) {
       String strFinancialAccountId = vars.getRequestGlobalVariable("inpFinancialAccount", "");
@@ -270,7 +269,7 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
       String strFinancialAccountId = vars.getRequiredStringParameter("inpFinancialAccount");
       String strOrgId = vars.getRequiredStringParameter("inpadOrgId");
       boolean isReceipt = vars.getRequiredStringParameter("isReceipt").equals("Y");
-      refreshProcessOptions(response, strPaymentMethodId, strFinancialAccountId, strOrgId,
+      refreshProcessOptions(response, vars, strPaymentMethodId, strFinancialAccountId, strOrgId,
           isReceipt);
     }
 
@@ -464,7 +463,7 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
 
   private void printGrid(HttpServletResponse response, VariablesSecureApp vars,
       String strBusinessPartnerId, String strCurrencyId, String strInvoiceId, String strOrgId,
-      String strDueDateFrom, String strDueDateTo, String strDocumentType,
+      String strExpectedDateFrom, String strExpectedDateTo, String strDocumentType,
       String strSelectedPaymentDetails, boolean isReceipt, boolean showAlternativePM)
       throws IOException, ServletException {
 
@@ -488,10 +487,11 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
     final List<FIN_PaymentScheduleDetail> filteredScheduledPaymentDetails = dao
         .getFilteredScheduledPaymentDetails(dao.getObject(Organization.class, strOrgId),
             dao.getObject(BusinessPartner.class, strBusinessPartnerId),
-            dao.getObject(Currency.class, strCurrencyId), FIN_Utility.getDate(strDueDateFrom),
-            FIN_Utility.getDate(DateTimeData.nDaysAfter(this, strDueDateTo, "1")), strDocumentType,
-            showAlternativePM ? null : inv.getPaymentMethod(), selectedScheduledPaymentDetails,
-            isReceipt);
+            dao.getObject(Currency.class, strCurrencyId), null, null,
+            FIN_Utility.getDate(strExpectedDateFrom),
+            FIN_Utility.getDate(DateTimeData.nDaysAfter(this, strExpectedDateTo, "1")), null, null,
+            strDocumentType, "", showAlternativePM ? null : inv.getPaymentMethod(),
+            selectedScheduledPaymentDetails, isReceipt);
 
     final FieldProvider[] data = FIN_AddPayment.getShownScheduledPaymentDetails(vars,
         selectedScheduledPaymentDetails, filteredScheduledPaymentDetails, false, null);
@@ -595,9 +595,9 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
     out.close();
   }
 
-  private void refreshProcessOptions(HttpServletResponse response, String strPaymentMethod,
-      String strFinancialAccountId, String strOrgId, boolean isReceipt) throws IOException,
-      ServletException {
+  private void refreshProcessOptions(HttpServletResponse response, VariablesSecureApp vars,
+      String strPaymentMethod, String strFinancialAccountId, String strOrgId, boolean isReceipt)
+      throws IOException, ServletException {
     log4j.debug("Callout: Financial Account has changed to" + strFinancialAccountId);
 
     FIN_PaymentMethod paymentMethod = OBDal.getInstance().get(FIN_PaymentMethod.class,
@@ -614,48 +614,22 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
       }
     }
     String processOprtionsComboHtml = null;
-    if (isReceipt) {
-      if (finAccPaymentMethod.isAutomaticDeposit()) {
-        // 1 option: Process.
-        processOprtionsComboHtml = FIN_Utility.getOptionsList(
-            processActionWithDepositWithdrawn("F903F726B41A49D3860243101CEEBA25", true), null,
-            true, true);
 
-      } else {
-        // 2 options: Process or Process and Deposit.
-        try {
-          OBContext.setAdminMode(true);
-          org.openbravo.model.ad.domain.Reference reference = OBDal.getInstance().get(
-              org.openbravo.model.ad.domain.Reference.class, "F903F726B41A49D3860243101CEEBA25");
-          processOprtionsComboHtml = FIN_Utility.getOptionsList(reference.getADListList(), null,
-              true, true);
-        } catch (Exception e) {
+    boolean forcedFinancialAccountTransaction = finAccPaymentMethod.isAutomaticDeposit()
+        || finAccPaymentMethod.isAutomaticWithdrawn();
 
-        } finally {
-          OBContext.restorePreviousMode();
-        }
-      }
-    } else {
-      if (finAccPaymentMethod.isAutomaticWithdrawn()) {
-        // 1 option: Process.
-        processOprtionsComboHtml = FIN_Utility.getOptionsList(
-            processActionWithDepositWithdrawn("F15C13A199A748F1B0B00E985A64C036", false), null,
-            true, true);
+    try {
+      ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
+          (isReceipt ? "F903F726B41A49D3860243101CEEBA25" : "F15C13A199A748F1B0B00E985A64C036"),
+          forcedFinancialAccountTransaction ? "29010995FD39439D97A5C0CE8CE27D70" : "",
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "AddPaymentFromInvoice"),
+          Utility.getContext(this, vars, "#User_Client", "AddPaymentFromInvoice"), 0);
+      Utility.fillSQLParameters(this, vars, null, comboTableData, "AddPaymentFromInvoice", "");
+      FieldProvider[] properOptions = comboTableData.select(false);
+      processOprtionsComboHtml = FIN_Utility.getOptionsListFromFieldProvider(properOptions, null,
+          true);
+    } catch (Exception e) {
 
-      } else {
-        // 2 Options: Process or Process and Withdrawn
-        try {
-          OBContext.setAdminMode(true);
-          org.openbravo.model.ad.domain.Reference reference = OBDal.getInstance().get(
-              org.openbravo.model.ad.domain.Reference.class, "F15C13A199A748F1B0B00E985A64C036");
-          processOprtionsComboHtml = FIN_Utility.getOptionsList(reference.getADListList(), null,
-              true, true);
-        } catch (Exception e) {
-
-        } finally {
-          OBContext.restorePreviousMode();
-        }
-      }
     }
 
     response.setContentType("text/html; charset=UTF-8");
@@ -663,37 +637,6 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
     out.println(processOprtionsComboHtml.replaceAll("\"", "\\'"));
 
     out.close();
-  }
-
-  /**
-   * Returns the list of the reference list for payment process
-   * 
-   * @param refId
-   *          . Indicates the Id of the reference.
-   * @param deposit
-   *          . Indicates whether the method is being executed for deposit of withdrawn.
-   * @return. Returns the list of process actions.
-   */
-  private List processActionWithDepositWithdrawn(String refId, boolean deposit) {
-    try {
-      OBContext.setAdminMode(true);
-      StringBuilder hql = new StringBuilder();
-      hql.append("select l ");
-      hql.append("from ADReference r ");
-      hql.append("  left join r.aDListList l ");
-      hql.append("where r.id = '").append(refId).append("' ");
-      hql.append("  and lower(l.name) like '%").append((deposit == true) ? "deposit" : "withdrawn")
-          .append("%'");
-
-      final Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
-
-      return query.list();
-    } catch (Exception e) {
-      return null;
-    } finally {
-      OBContext.restorePreviousMode();
-    }
-
   }
 
   private BigDecimal findExchangeRate(VariablesSecureApp vars, Currency paymentCurrency,
@@ -718,7 +661,7 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
     empty.put("finScheduledPaymentId", "");
     empty.put("salesOrderNr", "");
     empty.put("salesInvoiceNr", "");
-    empty.put("dueDate", "");
+    empty.put("expectedDate", "");
     empty.put("invoicedAmount", "");
     empty.put("expectedAmount", "");
     empty.put("paymentAmount", "");
@@ -759,5 +702,4 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
     }
     return false;
   }
-
 }

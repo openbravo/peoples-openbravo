@@ -296,7 +296,7 @@
             DECLARE
               v_pinstance_result AD_PInstance.result%TYPE;
               v_pinstance_msg AD_PInstance.errormsg%TYPE;
-              v_UniqueAttConsum CHAR(1);
+              v_warehouse_rule_id VARCHAR2(32);
             BEGIN
               v_AD_Pinstance_ID := GET_UUID();
               INSERT INTO AD_PINSTANCE (
@@ -318,16 +318,14 @@
               AD_PINSTANCE_PARA_INSERT(v_AD_Pinstance_ID, '70', 'TableId', '325', null, null, null, null, null);
               AD_PINSTANCE_PARA_INSERT(v_AD_Pinstance_ID, '80', 'LineNo', null, null, v_PlanLine, null, null, null);
               AD_PINSTANCE_PARA_INSERT(v_AD_Pinstance_ID, '90', 'ProcessID', '800105', null, null, null, null, null);
+              AD_PINSTANCE_PARA_INSERT(v_AD_Pinstance_ID, '100', 'Quantity', null, null, v_DoneQuantity*Cur_WRPUsed.MovementQty, null, null, null);
               
-              SELECT COALESCE(SP.UNIQUEATTCONSUM, 'N')
-                INTO v_UniqueAttConsum
-              FROM MA_WRPHASEPRODUCT WRPP
-                      LEFT JOIN MA_SEQUENCEPRODUCT SP ON WRPP.MA_SEQUENCEPRODUCT_ID = SP.MA_SEQUENCEPRODUCT_ID
-              WHERE MA_WRPHASEPRODUCT_ID = Cur_WRPUsed.MA_WRPhaseProduct_ID;
-              IF (v_UniqueAttConsum='Y') THEN 
-                AD_PINSTANCE_PARA_INSERT(v_AD_Pinstance_ID, '100', 'UniqueAttribute', v_UniqueAttConsum, null, null, null, null, null);
-                AD_PINSTANCE_PARA_INSERT(v_AD_Pinstance_ID, '110', 'Quantity', null, null, v_DoneQuantity*Cur_WRPUsed.MovementQty, null, null, null);
-              END IF;
+              SELECT COALESCE(wrpp.m_warehouse_rule_id, sp.m_warehouse_rule_id) INTO v_warehouse_rule_id
+              FROM ma_wrphaseproduct wrpp
+                  JOIN ma_sequenceproduct sp ON wrpp.ma_sequenceproduct_id = sp.ma_sequenceproduct_id
+              WHERE wrpp.ma_wrphaseproduct_id = cur_wrpused.ma_wrphaseproduct_id;
+              AD_PINSTANCE_PARA_INSERT(v_AD_Pinstance_ID, '110', 'M_Warehouse_Rule_ID', v_warehouse_rule_id, null, null, null, null, null);
+
               M_GET_STOCK(v_AD_Pinstance_ID, 'N');
               -- Check result
               SELECT result, errormsg

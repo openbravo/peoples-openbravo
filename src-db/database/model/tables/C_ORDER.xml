@@ -301,6 +301,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="CALCULATE_PROMOTIONS" primaryKey="false" required="false" type="VARCHAR" size="1" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <column name="C_COSTCENTER_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>

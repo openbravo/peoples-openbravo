@@ -257,6 +257,10 @@ function updateEndingBalance() {
 function saveTransactionLineStatus(isChecked, transLineId) {
   document.frmMain.inpCurrentTransIdSelected.value = transLineId;
   document.frmMain.inpIsCurrentTransSelected.value = isChecked;
+  document.frmMain.inpClearAll.disabled = true;
+  document.getElementById('buttonSave').disabled = true;
+  document.getElementById('buttonProcess').disabled = true;
+  document.getElementById('buttonCancel').disabled = true;
   try {
     var url = "../org.openbravo.advpaymentmngt.ad_actionbutton/Reconciliation.html";
     var paramXMLReq = null;
@@ -272,6 +276,10 @@ function callBackLineStatus(paramXMLParticular, XMLHttpRequestObj) {
     try {
       if (XMLHttpRequestObj.responseText) {
         strText = XMLHttpRequestObj.responseText;
+        document.frmMain.inpClearAll.disabled = false;
+        document.getElementById('buttonSave').disabled = false;
+        document.getElementById('buttonProcess').disabled = false;
+        document.getElementById('buttonCancel').disabled = false;
       } else {
       }
     } catch (e) {

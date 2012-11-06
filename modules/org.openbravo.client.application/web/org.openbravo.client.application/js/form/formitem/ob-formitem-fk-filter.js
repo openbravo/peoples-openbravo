@@ -134,11 +134,22 @@ isc.OBFKFilterTextItem.addProperties({
 
     this.Super('init', arguments);
 
+    // don't validate for FK filtering, any value is allowed
+    this.validators = [];
+
     // listen to data arrival in the grid
     // if data arrived we have to reload also
     this.observe(grid, "dataArrived", "observer.setForceReload()");
 
     this.multipleValueSeparator = ' or ';
+  },
+
+  destroy: function () {
+    var grid = this.form && this.form.grid && this.form.grid.sourceWidget;
+    if (grid) {
+      this.ignore(grid, 'dataArrived');
+    }
+    return this.Super('destroy', arguments);
   },
 
   // note: can't override changed as it is used by the filter editor 

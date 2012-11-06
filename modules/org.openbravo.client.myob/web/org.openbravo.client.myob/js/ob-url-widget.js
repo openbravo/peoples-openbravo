@@ -32,6 +32,10 @@ isc.defineClass('OBUrlWidget', isc.OBWidget).addProperties({
       this.contentSource = document.location.protocol + this.contentSource.substring(this.contentSource.indexOf('//'));
     }
 
+    if (this.contentSource.indexOf('google.com/calendar') !== -1) {
+      this.contentSource = this.contentSource.replace("account", OB.User.email);
+    }
+
     return isc.HTMLFlow.create({
       contentsType: 'page',
       contentsURL: this.contentSource,

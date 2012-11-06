@@ -1043,25 +1043,25 @@ function callBackProperOption(paramXMLParticular, XMLHttpRequestObj) {
                </select>
              </td>
              <td></td>
-             <td class="TitleCell"><span class="LabelText">Due Date From</span></td>
+             <td class="TitleCell"><span class="LabelText">Expected Date From</span></td>
              <td class="TextBox_btn_ContentCell">
                 <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                   <tr>
                     <td class="TextBox_ContentCell">
                     <table style="border: 0px none; border-collapse: collapse;">
                         <tr><td style="padding-top: 0px;">
-                          <input type="text" id="paramDueDateFrom" class="dojoValidateValid TextBox_btn_OneCell_width" value="" maxlength="10" name="inpDueDateFrom" onkeyup="autoCompleteDate(this);" onkeydown="changeToEditingMode('onkeydown');" onkeypress="changeToEditingMode('onkeypress');" oncut="changeToEditingMode('oncut');" onpaste="changeToEditingMode('onpaste');" oncontextmenu="changeToEditingMode('oncontextmenu');" onblur="expandDateYear(this.id);" onchange="validateDateTextBox(this.id); validateDate(this);return true;" displayFormat="xx" saveFormat="yy"></input>
+                          <input type="text" id="paramExpectedDateFrom" class="dojoValidateValid TextBox_btn_OneCell_width" value="" maxlength="10" name="inpExpectedDateFrom" onkeyup="autoCompleteDate(this);" onkeydown="changeToEditingMode('onkeydown');" onkeypress="changeToEditingMode('onkeypress');" oncut="changeToEditingMode('oncut');" onpaste="changeToEditingMode('onpaste');" oncontextmenu="changeToEditingMode('oncontextmenu');" onblur="expandDateYear(this.id);" onchange="validateDateTextBox(this.id); validateDate(this);return true;" displayFormat="xx" saveFormat="yy"></input>
                         </td></tr>
                       </table>
-                      <span id="paramDueDateFrominvalidSpan" style="display: none;" class="TextBox_MsgContainer_span">
+                      <span id="paramExpectedDateFrominvalidSpan" style="display: none;" class="TextBox_MsgContainer_span">
                         <table class="TextBox_MsgContainer_table">
                           <tbody><tr class="TextBox_MsgContainer_tr"><td class="TextBox_MsgContainer_td"><div class="TextBox_MsgContainer_div"></div></td><td></td></tr>
-                          <tr><td class="invalid" colspan="2"><div name="invalidText" id="paramDueDateFrominvalidSpanText" class="TextBox_MsgContainer_div2">* The value entered is not valid.</div></td></tr>
+                          <tr><td class="invalid" colspan="2"><div name="invalidText" id="paramExpectedDateFrominvalidSpanText" class="TextBox_MsgContainer_div2">* The value entered is not valid.</div></td></tr>
                         </tbody></table>
                       </span>
                     </td>
                     <td class="FieldButton_ContentCell">
-                      <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="showCalendar('frmMain.inpDueDateFrom', document.frmMain.inpDueDateFrom.value, false);return false;">
+                      <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="showCalendar('frmMain.inpExpectedDateFrom', document.frmMain.inpExpectedDateFrom.value, false);return false;">
                         <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calendar';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
                           <tr>
                             <td class="FieldButton_bg">
@@ -1082,25 +1082,25 @@ function callBackProperOption(paramXMLParticular, XMLHttpRequestObj) {
                 <span class="Radio_Check_ContentCell Checkbox_container_NOT_Focused"><input type="checkbox" name="inpAlternativePaymentMethod" value="Y" id="paramAlternativePaymentMethod" onclick="loadGridList()"></input></span>                
               </td>
               <td></td>
-              <td class="TitleCell"><span class="LabelText">Due Date To</span></td>
+              <td class="TitleCell"><span class="LabelText">Expected Date To</span></td>
               <td class="TextBox_btn_ContentCell">
                 <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                   <tr>
                     <td class="TextBox_ContentCell">
                      <table style="border: 0px none; border-collapse: collapse;">
                          <tr><td style="padding-top: 0px;">
-                           <input type="text" id="paramDueDateTo" class="dojoValidateValid TextBox_btn_OneCell_width" value="" maxlength="10" name="inpDueDateTo" onkeyup="autoCompleteDate(this);" onkeydown="changeToEditingMode('onkeydown');" onkeypress="changeToEditingMode('onkeypress');" oncut="changeToEditingMode('oncut');" onpaste="changeToEditingMode('onpaste');" oncontextmenu="changeToEditingMode('oncontextmenu');" onblur="expandDateYear(this.id);" onchange="validateDateTextBox(this.id); validateDate(this);return true;" displayFormat="xx" saveFormat="yy"></input>
+                           <input type="text" id="paramExpectedDateTo" class="dojoValidateValid TextBox_btn_OneCell_width" value="" maxlength="10" name="inpExpectedDateTo" onkeyup="autoCompleteDate(this);" onkeydown="changeToEditingMode('onkeydown');" onkeypress="changeToEditingMode('onkeypress');" oncut="changeToEditingMode('oncut');" onpaste="changeToEditingMode('onpaste');" oncontextmenu="changeToEditingMode('oncontextmenu');" onblur="expandDateYear(this.id);" onchange="validateDateTextBox(this.id); validateDate(this);return true;" displayFormat="xx" saveFormat="yy"></input>
                          </td></tr>
                        </table>
-                       <span id="paramDueDateToinvalidSpan" style="display: none;" class="TextBox_MsgContainer_span">
+                       <span id="paramExpectedDateToinvalidSpan" style="display: none;" class="TextBox_MsgContainer_span">
                          <table class="TextBox_MsgContainer_table">
                            <tbody><tr class="TextBox_MsgContainer_tr"><td class="TextBox_MsgContainer_td"><div class="TextBox_MsgContainer_div"></div></td><td></td></tr>
-                           <tr><td class="invalid" colspan="2"><div name="invalidText" id="paramDueDateToinvalidSpanText" class="TextBox_MsgContainer_div2">* The value entered is not valid.</div></td></tr>
+                           <tr><td class="invalid" colspan="2"><div name="invalidText" id="paramExpectedDateToinvalidSpanText" class="TextBox_MsgContainer_div2">* The value entered is not valid.</div></td></tr>
                          </tbody></table>
                        </span>
                     </td>
                     <td class="FieldButton_ContentCell">
-                       <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="showCalendar('frmMain.inpDueDateTo', document.frmMain.inpDueDateTo.value, false);return false;">
+                       <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="showCalendar('frmMain.inpExpectedDateTo', document.frmMain.inpExpectedDateTo.value, false);return false;">
                          <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calendar';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
                            <tr>
                              <td class="FieldButton_bg">
@@ -1140,7 +1140,7 @@ function callBackProperOption(paramXMLParticular, XMLHttpRequestObj) {
                         <th class="DataGrid_Header_Cell" width="120"><span name="lblP" id="lblPPON">Purchase Order No.</span><span name="lblR" id="lblRSON">Sales Order No.</span></th>
                         <th class="DataGrid_Header_Cell" width="120"><span name="lblP" id="lblPPIN">Purchase Invoice No.</span><span name="lblR" id="lblRSIN">Sales Invoice No.</span></th>
                         <th class="DataGrid_Header_Cell" width="100">Payment Method</th>
-                        <th class="DataGrid_Header_Cell" width="70">Due Date</th>
+                        <th class="DataGrid_Header_Cell" width="70">Expected Date</th>
                         <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="100">Invoiced Amount</th>
                         <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="100">Expected Amount</th>
                         <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="100">Outstanding Amount</th>

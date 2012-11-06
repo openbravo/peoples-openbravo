@@ -25,37 +25,11 @@
 ************************************************************************/
 /*
 DEPRECATED!
-This function should not be used. Use instead M_Get_Offers_Price.
+This function should not be used. Promotions are calcualted by M_Promotion_Calculate
+when posting orders/invoices.
 */
-  v_Price    NUMBER;
-  v_Fixed    NUMBER;
-  v_AddAmt   NUMBER;
-  v_Discount NUMBER;
 BEGIN
-  v_Price := p_PriceStd;
-  IF v_Price IS NULL THEN
-    v_Price := 0;
-  END IF;
-  IF p_Offer_ID IS NOT NULL THEN
-    SELECT FIXED,
-      COALESCE(ADDAMT, 0),
-      COALESCE(DISCOUNT, 0)
-    INTO  v_Fixed,
-      v_AddAmt,
-      v_Discount
-    FROM M_OFFER
-    WHERE M_OFFER_ID = p_Offer_ID
-    AND ISACTIVE = 'Y';
-    IF v_Fixed IS NOT NULL THEN
-      v_Price := v_Fixed;
-    ELSE
-      v_Price :=(p_PriceStd - v_AddAmt) *(1 - v_Discount/100) ;
-    END IF;
-  END IF;
-  RETURN v_Price;
-EXCEPTION
-WHEN OTHERS THEN
-  RETURN NULL;
+  return p_pricestd;
 END M_GET_OFFER_PRICE
 ]]></body>
     </function>

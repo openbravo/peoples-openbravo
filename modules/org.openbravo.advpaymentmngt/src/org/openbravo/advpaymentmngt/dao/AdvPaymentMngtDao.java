@@ -126,7 +126,7 @@ public class AdvPaymentMngtDao {
       whereClause.append(" order by psd.");
       whereClause.append(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE);
       whereClause.append(".");
-      whereClause.append(FIN_PaymentSchedule.PROPERTY_DUEDATE);
+      whereClause.append(FIN_PaymentSchedule.PROPERTY_EXPECTEDDATE);
       whereClause.append(", psd.");
       whereClause.append(FIN_PaymentScheduleDetail.PROPERTY_AMOUNT);
       final OBQuery<FIN_PaymentScheduleDetail> obqPSD = OBDal.getInstance().createQuery(
@@ -161,7 +161,7 @@ public class AdvPaymentMngtDao {
       whereClause.append(" order by psd.");
       whereClause.append(FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE);
       whereClause.append(".");
-      whereClause.append(FIN_PaymentSchedule.PROPERTY_DUEDATE);
+      whereClause.append(FIN_PaymentSchedule.PROPERTY_EXPECTEDDATE);
       whereClause.append(", psd.");
       whereClause.append(FIN_PaymentScheduleDetail.PROPERTY_AMOUNT);
       final OBQuery<FIN_PaymentScheduleDetail> obqPSD = OBDal.getInstance().createQuery(
@@ -189,14 +189,37 @@ public class AdvPaymentMngtDao {
       String strTransactionType, String strDocumentNo, FIN_PaymentMethod paymentMethod,
       List<FIN_PaymentScheduleDetail> selectedScheduledPaymentDetails, boolean isReceipt) {
     return getFilteredScheduledPaymentDetails(organization, businessPartner, currency, dueDateFrom,
-        dueDateTo, null, null, strTransactionType, "", paymentMethod,
-        selectedScheduledPaymentDetails, isReceipt, "", "");
+        dueDateTo, null, null, transactionDateFrom, transactionDateTo, strTransactionType, "",
+        paymentMethod, selectedScheduledPaymentDetails, isReceipt, "", "");
   }
 
   public List<FIN_PaymentScheduleDetail> getFilteredScheduledPaymentDetails(
       Organization organization, BusinessPartner businessPartner, Currency currency,
       Date dueDateFrom, Date dueDateTo, Date transactionDateFrom, Date transactionDateTo,
       String strTransactionType, String strDocumentNo, FIN_PaymentMethod paymentMethod,
+      List<FIN_PaymentScheduleDetail> selectedScheduledPaymentDetails, boolean isReceipt,
+      String strAmountFrom, String strAmountTo) {
+    return getFilteredScheduledPaymentDetails(organization, businessPartner, currency, dueDateFrom,
+        dueDateTo, null, null, transactionDateFrom, transactionDateTo, strTransactionType, "",
+        paymentMethod, selectedScheduledPaymentDetails, isReceipt, strAmountFrom, strAmountTo);
+  }
+
+  public List<FIN_PaymentScheduleDetail> getFilteredScheduledPaymentDetails(
+      Organization organization, BusinessPartner businessPartner, Currency currency,
+      Date dueDateFrom, Date dueDateTo, Date expectedDateFrom, Date expectedDateTo,
+      Date transactionDateFrom, Date transactionDateTo, String strTransactionType,
+      String strDocumentNo, FIN_PaymentMethod paymentMethod,
+      List<FIN_PaymentScheduleDetail> selectedScheduledPaymentDetails, boolean isReceipt) {
+    return getFilteredScheduledPaymentDetails(organization, businessPartner, currency, dueDateFrom,
+        dueDateTo, expectedDateFrom, expectedDateTo, null, null, strTransactionType, "",
+        paymentMethod, selectedScheduledPaymentDetails, isReceipt, "", "");
+  }
+
+  public List<FIN_PaymentScheduleDetail> getFilteredScheduledPaymentDetails(
+      Organization organization, BusinessPartner businessPartner, Currency currency,
+      Date dueDateFrom, Date dueDateTo, Date expectedDateFrom, Date expectedDateTo,
+      Date transactionDateFrom, Date transactionDateTo, String strTransactionType,
+      String strDocumentNo, FIN_PaymentMethod paymentMethod,
       List<FIN_PaymentScheduleDetail> selectedScheduledPaymentDetails, boolean isReceipt,
       String strAmountFrom, String strAmountTo) {
 
@@ -397,6 +420,25 @@ public class AdvPaymentMngtDao {
         parameters.add(dueDateTo);
       }
 
+      // expecteddateFrom
+      if (expectedDateFrom != null) {
+        whereClause.append(" and COALESCE(ips.");
+        whereClause.append(FIN_PaymentSchedule.PROPERTY_EXPECTEDDATE);
+        whereClause.append(", ops.");
+        whereClause.append(FIN_PaymentSchedule.PROPERTY_EXPECTEDDATE);
+        whereClause.append(") >= ?");
+        parameters.add(expectedDateFrom);
+      }
+      // expecteddateTo
+      if (expectedDateTo != null) {
+        whereClause.append(" and COALESCE(ips.");
+        whereClause.append(FIN_PaymentSchedule.PROPERTY_EXPECTEDDATE);
+        whereClause.append(", ops.");
+        whereClause.append(FIN_PaymentSchedule.PROPERTY_EXPECTEDDATE);
+        whereClause.append(") < ?");
+        parameters.add(expectedDateTo);
+      }
+
       // TODO: Add order to show first scheduled payments from invoices and later scheduled payments
       // from not invoiced orders.
       whereClause.append(" order by");
@@ -407,9 +449,9 @@ public class AdvPaymentMngtDao {
       whereClause.append(")");
       whereClause.append(", ");
       whereClause.append(" COALESCE(ips.");
-      whereClause.append(FIN_PaymentSchedule.PROPERTY_DUEDATE);
+      whereClause.append(FIN_PaymentSchedule.PROPERTY_EXPECTEDDATE);
       whereClause.append(", ops.");
-      whereClause.append(FIN_PaymentSchedule.PROPERTY_DUEDATE);
+      whereClause.append(FIN_PaymentSchedule.PROPERTY_EXPECTEDDATE);
       whereClause.append(")");
       whereClause.append(", COALESCE(inv.");
       whereClause.append(Invoice.PROPERTY_DOCUMENTNO);
@@ -582,7 +624,7 @@ public class AdvPaymentMngtDao {
     ps.setOrder(order);
     ps.setCurrency(invoice.getCurrency());
     ps.setDueDate(dueDate);
-    ps.setOrigDueDate(dueDate);
+    ps.setExpectedDate(dueDate);
     ps.setFinPaymentmethod(paymentMethod);
     ps.setOutstandingAmount(amount);
     ps.setPaidAmount(BigDecimal.ZERO);

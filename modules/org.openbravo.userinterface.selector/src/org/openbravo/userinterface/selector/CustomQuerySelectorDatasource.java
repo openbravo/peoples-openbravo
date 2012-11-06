@@ -176,7 +176,9 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
     final String orgs = getOrgs(parameters.get(JsonConstants.ORG_PARAMETER));
     if (StringUtils.isNotEmpty(orgs)) {
       additionalFilter.append(NEW_FILTER_CLAUSE);
-      additionalFilter.append(entityAlias + ".organization in (" + orgs + ")");
+      additionalFilter.append(entityAlias
+          + (sel.getTable().getName().equals("Organization") ? ".id in (" + orgs + ")"
+              : ".organization in (" + orgs + ")"));
     }
     additionalFilter.append(getDefaultFilterExpression(sel, parameters));
 

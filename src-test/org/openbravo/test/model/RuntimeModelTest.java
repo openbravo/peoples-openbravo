@@ -236,7 +236,8 @@ public class RuntimeModelTest extends BaseTest {
         if (c.isParent() && !c.getReference().getId().equals(Reference.TABLE)
             && !c.getReference().getId().equals(Reference.TABLEDIR)
             && !c.getReference().getId().equals(Reference.SEARCH)
-            && !c.getReference().getId().equals(Reference.PRODUCT_ATTRIBUTE)) {
+            && !c.getReference().getId().equals(Reference.PRODUCT_ATTRIBUTE)
+            && !c.getReference().getId().equals("95E2A8B50A254B2AAE6774B8C2F28120")) {
           columns.add(t.getTableName() + " - " + c.getColumnName());
         }
       }

@@ -43,6 +43,7 @@ import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
+import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.currency.Currency;
@@ -61,6 +62,7 @@ import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
+import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment_Credit;
 import org.openbravo.model.financialmgmt.payment.FIN_Reconciliation;
 import org.openbravo.model.financialmgmt.payment.FinAccPaymentMethod;
@@ -198,6 +200,11 @@ public class DocFINReconciliation extends AcctServer {
             .toString());
         FieldProviderFactory.setField(data[i], "isprepayment",
             paymentDetails.get(i).isPrepayment() ? "Y" : "N");
+        // Check if payment against invoice is in a previous date than invoice accounting date
+        boolean isPaymentDatePriorToInvoiceDate = isPaymentDatePriorToInvoiceDate(paymentDetails
+            .get(i));
+        FieldProviderFactory.setField(data[i], "isPaymentDatePriorToInvoiceDate",
+            isPaymentDatePriorToInvoiceDate ? "Y" : "N");
         FieldProviderFactory.setField(data[i], "WriteOffAmt", paymentDetails.get(i)
             .getWriteoffAmount().toString());
         FieldProviderFactory.setField(data[i], "cGlItemId",
@@ -750,6 +757,7 @@ public class DocFINReconciliation extends AcctServer {
       FIN_PaymentDetail paymentDetail, AcctSchema as, ConnectionProvider conn, Fact fact,
       String Fact_Acct_Group_ID) throws ServletException {
     boolean isPrepayment = paymentDetail.isPrepayment();
+    boolean isPaymentDatePriorToInvoiceDate = isPaymentDatePriorToInvoiceDate(paymentDetail);
     boolean isReceipt = paymentDetail.getFinPayment().isReceipt();
     BigDecimal bpAmount = paymentDetail.getAmount();
     Currency paymentCurrency = paymentDetail.getFinPayment().getCurrency();
@@ -810,10 +818,28 @@ public class DocFINReconciliation extends AcctServer {
             TABLEID_Payment, paymentDetail.getFinPayment().getId(), paymentCurrency.getId(),
             as.m_C_Currency_ID, line, as, fact, Fact_Acct_Group_ID, nextSeqNo(SeqNo), conn);
       }
-      fact.createLine(line, getAccountBPartner(bpartnerId, as, isReceipt, isPrepayment, conn),
-          paymentCurrency.getId(), !isReceipt ? bpAmountConverted.toString() : "",
-          isReceipt ? bpAmountConverted.toString() : "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-          DocumentType, line.m_DateAcct, null, conn);
+      fact.createLine(
+          line,
+          getAccountBPartner(bpartnerId, as, isReceipt,
+              (isPrepayment || isPaymentDatePriorToInvoiceDate), conn), paymentCurrency.getId(),
+          !isReceipt ? bpAmountConverted.toString() : "", isReceipt ? bpAmountConverted.toString()
+              : "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, line.m_DateAcct, null, conn);
+      // If payment date is prior to invoice date book invoice as a pre-payment not as a regular
+      // Receivable/Payable
+      if (isPaymentDatePriorToInvoiceDate) {
+        String Fact_Acct_Group_ID2 = SequenceIdData.getUUID();
+        DocLine line2 = new DocLine(DocumentType, Record_ID, line.m_TrxLine_ID);
+        line2.copyInfo(line);
+        line2.m_DateAcct = OBDateUtils.formatDate(invoice.getAccountingDate());
+        fact.createLine(line2, getAccountBPartner(bpartnerId, as, isReceipt, false, conn),
+            paymentCurrency.getId(), !isReceipt ? bpAmountConverted.toString() : "",
+            isReceipt ? bpAmountConverted.toString() : "", Fact_Acct_Group_ID2, nextSeqNo(SeqNo),
+            DocumentType, line2.m_DateAcct, null, conn);
+        fact.createLine(line2, getAccountBPartner(bpartnerId, as, isReceipt, true, conn),
+            paymentCurrency.getId(), isReceipt ? bpAmountConverted.toString() : "",
+            !isReceipt ? bpAmountConverted.toString() : "", Fact_Acct_Group_ID2, nextSeqNo(SeqNo),
+            DocumentType, line2.m_DateAcct, null, conn);
+      }
     }
 
     SeqNo = "0";
@@ -1542,4 +1568,20 @@ public class DocFINReconciliation extends AcctServer {
     }
     return acct;
   }
+
+  boolean isPaymentDatePriorToInvoiceDate(FIN_PaymentDetail paymentDetail) {
+    List<FIN_PaymentScheduleDetail> schedDetails = paymentDetail.getFINPaymentScheduleDetailList();
+    if (schedDetails.size() == 0) {
+      return false;
+    } else {
+      if (schedDetails.get(0).getInvoicePaymentSchedule() != null
+          && schedDetails.get(0).getInvoicePaymentSchedule().getInvoice().getAccountingDate()
+              .after(paymentDetail.getFinPayment().getPaymentDate())) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  }
+
 }

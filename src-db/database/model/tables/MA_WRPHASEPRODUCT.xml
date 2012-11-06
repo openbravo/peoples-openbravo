@@ -73,6 +73,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="M_WAREHOUSE_RULE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MAWRPHASEPRODUCT">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
@@ -93,6 +97,9 @@
       </foreign-key>
       <foreign-key foreignTable="MA_WRPHASE" name="MA_WRPHASEPRODUCT_MA_WRPHASE">
         <reference local="MA_WRPHASE_ID" foreign="MA_WRPHASE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_WAREHOUSE_RULE" name="MA_WRPPHASERODUCT_WHRULE">
+        <reference local="M_WAREHOUSE_RULE_ID" foreign="M_WAREHOUSE_RULE_ID"/>
       </foreign-key>
       <index name="MA_WRPHASEPRODUCT_PROD_PHASE" unique="false">
         <index-column name="M_PRODUCT_ID"/>

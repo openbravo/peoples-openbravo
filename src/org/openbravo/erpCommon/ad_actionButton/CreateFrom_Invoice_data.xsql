@@ -642,10 +642,12 @@
         C_OrderLine_ID,M_InOutLine_ID, Line,Description, M_Product_ID,
         C_UOM_ID,QtyInvoiced, PriceList,
         PriceActual,PriceLimit, LineNetAmt,
-        ChargeAmt,C_Tax_ID, taxamt, QuantityOrder, M_Product_UOM_ID,
+        ChargeAmt,C_Tax_ID, taxamt , QuantityOrder, M_Product_UOM_ID,
         M_Attributesetinstance_ID, PriceStd, taxbaseamt, excludeforwithholding,
         gross_unit_price, line_gross_amount, grosspricelist, grosspricestd,
-        a_asset_id, c_project_id, c_costcenter_id, c_user1_id, c_user2_id)
+        isdeferred, defplantype, periodnumber, c_period_id,
+        a_asset_id, c_project_id, c_costcenter_id, c_user1_id, c_user2_id
+        )
       VALUES 
         (?, ?, ?, ?, 'Y', 
          now(), ?, now(), ?, 
@@ -655,7 +657,9 @@
          0, ?, TO_NUMBER(?), TO_NUMBER(?), ?, 
          ?, TO_NUMBER(?), TO_NUMBER(?), 'N',
          TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?),
+         ?, ?, TO_NUMBER(?), ?,
          ?, ?, ?, ?, ?)
+         )
     </Sql>
     <Parameter name="cInvoicelineId"/>
     <Parameter name="cInvoiceId"/>
@@ -685,6 +689,10 @@
     <Parameter name="grossAmount"/>
     <Parameter name="priceListGross"/>
     <Parameter name="priceStdGross"/>
+    <Parameter name="isDeferredRevenue"/>
+    <Parameter name="revplantype"/>
+    <Parameter name="periodnumber"/>
+    <Parameter name="cPeriodId"/>
     <Parameter name="aAssetId"/>
     <Parameter name="cProjectId"/>
     <Parameter name="cCostcenterId"/>

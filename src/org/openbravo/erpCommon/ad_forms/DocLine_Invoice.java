@@ -37,37 +37,29 @@ public class DocLine_Invoice extends DocLine {
   /** Discount Amount */
   private String m_DiscountAmt = "0";
   // Accruals and Deferrals info:
-  /** Is Deferred Revenue */
-  private boolean m_IsDeferredRevenue = false;
-  /** Revenue Plan type */
-  private String m_RevPlanType = "";
+  /** Is Deferred */
+  private boolean m_IsDeferred = false;
+  /** Deferred Plan type */
+  private String m_DefPlanType = "";
   /** Period Number */
   private int m_PeriodNumber = 0;
   /** Starting Date */
   private String m_StatingPeriodId = "";
-  /** Is Deferred Expense */
-  private boolean m_IsDeferredExpense = false;
-  /** Expense Plan type */
-  private String m_ExpPlanType = "";
-  /** Period Number */
-  private int m_PeriodNumberExp = 0;
-  /** Starting Date */
-  private String m_StatingPeriodExpId = "";
 
-  public boolean isDeferredRevenue() {
-    return m_IsDeferredRevenue;
+  public boolean isDeferred() {
+    return m_IsDeferred;
   }
 
-  public void setIsDeferredRevenue(boolean m_IsDeferredRevenue) {
-    this.m_IsDeferredRevenue = m_IsDeferredRevenue;
+  public void setIsDeferred(boolean m_IsDeferred) {
+    this.m_IsDeferred = m_IsDeferred;
   }
 
-  public String getRevPlanType() {
-    return m_RevPlanType;
+  public String getDefPlanType() {
+    return m_DefPlanType;
   }
 
-  public void setRevPlanType(String m_RevPlanType) {
-    this.m_RevPlanType = m_RevPlanType;
+  public void setDefPlanType(String m_RevPlanType) {
+    this.m_DefPlanType = m_RevPlanType;
   }
 
   public int getPeriodNumber() {
@@ -84,38 +76,6 @@ public class DocLine_Invoice extends DocLine {
 
   public void setStartingPeriodId(String m_StartingPeriodId) {
     this.m_StatingPeriodId = m_StartingPeriodId;
-  }
-
-  public boolean isDeferredExpense() {
-    return m_IsDeferredExpense;
-  }
-
-  public void setIsDeferredExpense(boolean m_IsDeferredExpense) {
-    this.m_IsDeferredExpense = m_IsDeferredExpense;
-  }
-
-  public String getExpPlanType() {
-    return m_ExpPlanType;
-  }
-
-  public void setExpPlanType(String m_ExpPlanType) {
-    this.m_ExpPlanType = m_ExpPlanType;
-  }
-
-  public int getPeriodNumberExp() {
-    return m_PeriodNumberExp;
-  }
-
-  public void setPeriodNumbeExp(int m_PeriodNumberExp) {
-    this.m_PeriodNumberExp = m_PeriodNumberExp;
-  }
-
-  public String getStartingPeriodExpId() {
-    return m_StatingPeriodExpId;
-  }
-
-  public void setStartingPeriodExpId(String m_StartingPeriodExpId) {
-    this.m_StatingPeriodExpId = m_StartingPeriodExpId;
   }
 
   public void setAmount(String LineNetAmt, String PriceList, String Qty) {

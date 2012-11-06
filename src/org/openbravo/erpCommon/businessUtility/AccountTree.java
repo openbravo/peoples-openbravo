@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2011 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2012 Openbravo S.L.U.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.businessUtility;
@@ -23,8 +23,10 @@ import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.financialmgmt.accounting.coa.ElementValue;
 
 /**
  * @author Fernando Iriazabal
@@ -81,6 +83,12 @@ public class AccountTree {
           Utility.getContext(conn, vars, "#User_Client", "AccountTree"));
       resultantAccounts = calculateTree(forms, elementValueParent, new Vector<Object>());
     }
+    for (AccountTreeData account : resultantAccounts) {
+      if ("C".equals(account.accountsign)) {
+        account.qty = new BigDecimal(account.qty).negate().toString();
+        account.qtyRef = new BigDecimal(account.qtyRef).negate().toString();
+      }
+    }
   }
 
   /**
@@ -112,7 +120,6 @@ public class AccountTree {
     // Loading tree with new amounts, applying signs (Debit or Credit) and
     // setting the account level (1, 2, 3,...)
     resultantAccounts = updateTreeQuantitiesSign(null, 0, "D");
-
     if (resultantAccounts != null && resultantAccounts.length > 0) {
       // Array of accounts with its operands.
       // Calculating forms for every elements
@@ -131,6 +138,12 @@ public class AccountTree {
 
       resultantAccounts = new AccountTreeData[vec.size()];
       vec.copyInto(resultantAccounts);
+    }
+    for (AccountTreeData account : resultantAccounts) {
+      if ("C".equals(account.accountsign)) {
+        account.qty = new BigDecimal(account.qty).negate().toString();
+        account.qtyRef = new BigDecimal(account.qtyRef).negate().toString();
+      }
     }
   }
 
@@ -196,10 +209,6 @@ public class AccountTree {
       return element;
     for (int i = 0; i < accounts.length; i++) {
       if (accounts[i].id.equals(element.id)) {
-        if (isDebitCredit.equals("C")) {
-          accounts[i].qty = accounts[i].qtycredit;
-          accounts[i].qtyRef = accounts[i].qtycreditRef;
-        }
         element.qtyOperation = accounts[i].qty;
         element.qtyOperationRef = accounts[i].qtyRef;
         BigDecimal bdQty = new BigDecimal(element.qtyOperation);
@@ -215,15 +224,15 @@ public class AccountTree {
   }
 
   /**
-   * This method updates al the Quantitie's signs of the tree. Is used by the constructor to
-   * initializa the element's quantities. Also initializes the level of each account
+   * This method updates all the Quantitie's signs of the tree. Is used by the constructor to
+   * initialize the element's quantities. Also initializes the level of each account
    * 
    * @param indice
    *          String with the index from which to start updating.
    * @param level
    *          Integer with the level of the elements.
    * @param isDebitCredit
-   *          String with the is debit or credit value of the trunk.
+   *          String with the is Debit or Credit value of the trunk.
    * @return Array of AccountTreeData with the updated tree.
    */
   private AccountTreeData[] updateTreeQuantitiesSign(String indice, int level, String isDebitCredit) {
@@ -547,17 +556,24 @@ public class AccountTree {
             resultantAccounts[i].svcresetref = "Y";
           resultantAccounts[i].calculated = "Y";
         }
-        vec.addElement(resultantAccounts[i]);
-        if (dataChilds != null && dataChilds.length > 0) {
-          for (int j = 0; j < dataChilds.length; j++)
-            vec.addElement(dataChilds[j]);
-        }
         if (applysign) {
           total = total.add(new BigDecimal(resultantAccounts[i].qty));
           totalRef = totalRef.add(new BigDecimal(resultantAccounts[i].qtyRef));
         } else {
           total = total.add(new BigDecimal(resultantAccounts[i].qtyOperation));
           totalRef = totalRef.add(new BigDecimal(resultantAccounts[i].qtyOperationRef));
+        }
+        // If the element is not active and it has balance != 0 it must be shown otherwise, it must
+        // not.
+        ElementValue ev = OBDal.getInstance().get(ElementValue.class, resultantAccounts[i].id);
+        BigDecimal t = new BigDecimal(resultantAccounts[i].qtyOperation);
+        if (ev.isActive() || (total.compareTo(BigDecimal.ZERO) != 0)
+            || (t.compareTo(BigDecimal.ZERO) != 0)) {
+          vec.addElement(resultantAccounts[i]);
+          if (dataChilds != null && dataChilds.length > 0) {
+            for (int j = 0; j < dataChilds.length; j++)
+              vec.addElement(dataChilds[j]);
+          }
         }
       }
     }

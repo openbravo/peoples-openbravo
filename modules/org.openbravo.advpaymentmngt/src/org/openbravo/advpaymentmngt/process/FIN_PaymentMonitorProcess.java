@@ -234,7 +234,7 @@ public class FIN_PaymentMonitorProcess extends DalBaseProcess {
           paid = paid.add(psd.getAmount().add(psd.getWriteoffAmount()));
           // If an amount has been paid, let's check if any amount was paid late
           Date paymentDate = psd.getPaymentDetails().getFinPayment().getPaymentDate();
-          Date dueDate = psd.getInvoicePaymentSchedule().getOrigDueDate();
+          Date dueDate = psd.getInvoicePaymentSchedule().getDueDate();
           if (paymentDate.after(dueDate)) {
             overdue = overdue.add(psd.getAmount());
           }
@@ -259,7 +259,7 @@ public class FIN_PaymentMonitorProcess extends DalBaseProcess {
         OBDal.getInstance().save(paymentSchedule);
       }
 
-      if (paymentSchedule.getOrigDueDate().before(new Date())
+      if (paymentSchedule.getDueDate().before(new Date())
           && paymentSchedule.getOutstandingAmount() != BigDecimal.ZERO) {
         overdueAmt = overdueAmt.add(paymentSchedule.getOutstandingAmount());
       }
@@ -285,7 +285,7 @@ public class FIN_PaymentMonitorProcess extends DalBaseProcess {
     }
     obc.add(Restrictions.eq(FIN_PaymentSchedule.PROPERTY_INVOICE, invoice));
     obc.add(Restrictions.ne(FIN_PaymentSchedule.PROPERTY_OUTSTANDINGAMOUNT, BigDecimal.ZERO));
-    obc.setProjection(Projections.min(FIN_PaymentSchedule.PROPERTY_ORIGDUEDATE));
+    obc.setProjection(Projections.min(FIN_PaymentSchedule.PROPERTY_DUEDATE));
     Object o = obc.list().get(0);
     if (o != null) {
       return (FIN_Utility.getDaysToDue((Date) o));

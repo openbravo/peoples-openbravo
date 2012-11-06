@@ -510,7 +510,7 @@ public class InitialOrgSetup {
       OBContext.setAdminMode(true);
       obResult = coaUtility.createAccounting(vars, istrFileCoA, partner, product, project,
           campaign, salesRegion,
-          InitialSetupUtility.getTranslatedColumnName(language, "Account_ID"), "US", "A",
+          InitialSetupUtility.getTranslatedColumnName(language, "C_Element_ID"), "US", "A",
           InitialSetupUtility.getTranslatedColumnName(language, "C_Calendar_ID"),
           InitialSetupUtility.getCurrency(strCurrency));
       if (!obResult.getType().equals(OKTYPE))

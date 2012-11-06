@@ -451,33 +451,87 @@
       /**
       * Close Order - prepare
       */
-      IF (v_DocAction='CL') THEN
-        -- Cancel undelivered Items
-        IF (v_isSoTrx='Y') THEN --Sales orders
-          UPDATE C_ORDERLINE
-          SET QtyOrdered=(CASE WHEN (qtyinvoiced = 0) THEN QtyDelivered ELSE 
-				(CASE WHEN (QtyDelivered = 0) THEN qtyinvoiced ELSE 
-					(CASE WHEN (QtyDelivered < 0 AND qtyinvoiced < 0) THEN LEAST(QtyDelivered, qtyinvoiced) ELSE GREATEST(QtyDelivered, qtyinvoiced) END) END) END),
-              --MODIFIED BY P.SAROBE
-              linenetamt=(CASE WHEN (qtyinvoiced = 0) THEN QtyDelivered ELSE 
-				(CASE WHEN (QtyDelivered = 0) THEN qtyinvoiced ELSE 
-					(CASE WHEN (QtyDelivered < 0 AND qtyinvoiced < 0) THEN LEAST(QtyDelivered, qtyinvoiced) ELSE GREATEST(QtyDelivered, qtyinvoiced) END) END) END) * priceactual,
-              QuantityOrder= CASE WHEN M_PRODUCT_UOM_ID IS NULL THEN QuantityOrder
-                             ELSE (c_uom_convert((CASE WHEN (qtyinvoiced = 0) THEN QtyDelivered ELSE 
-				(CASE WHEN (QtyDelivered = 0) THEN qtyinvoiced ELSE 
-					(CASE WHEN (QtyDelivered < 0 AND qtyinvoiced < 0) THEN LEAST(QtyDelivered, qtyinvoiced) ELSE GREATEST(QtyDelivered, qtyinvoiced) END) END) END), C_UOM_ID, (SELECT UOM.C_UOM_ID FROM M_PRODUCT_UOM UOM WHERE UOM.M_PRODUCT_UOM_ID=C_ORDERLINE.M_PRODUCT_UOM_ID),'Y')) END,
-              Updated=now()
-          WHERE C_Order_ID=v_Record_ID
-            AND QtyOrdered <> (SELECT (CASE WHEN (qtyinvoiced = 0) THEN QtyDelivered ELSE 
-				(CASE WHEN (QtyDelivered = 0) THEN qtyinvoiced ELSE 
+      DECLARE
+          Cur_Inventory RECORD;
+          v_QtyOrdered NUMBER;
+          v_QuantityOrder NUMBER;
+          v_linenetamt NUMBER;
+          v_ProductUOM M_PRODUCT_UOM.C_UOM_ID%TYPE;
+      BEGIN
+
+        -- When closing the order it calculates the difference between the ordered and received/delivered quantities ant it
+        -- updates the m_storage_pending.
+        IF (v_DocAction='CL') THEN
+          -- Cancel undelivered Items
+          IF (v_isSoTrx='Y') THEN --Sales orders
+            FOR Cur_Inventory IN (
+              SELECT QtyInvoiced, QtyDelivered ,QtyOrdered, QuantityOrder, priceactual,
+	      
+	      C_ORDERLINE_ID AS ID,
+	      M_Product_ID,
+	      M_Warehouse_ID,
+	      M_AttributeSetInstance_ID,
+	      C_UOM_ID,
+	      M_PRODUCT_UOM_ID,
+          C_Currency_ID
+	      FROM C_ORDERLINE
+	      WHERE C_Order_ID=v_Record_ID
+                AND QtyOrdered <> (SELECT (CASE WHEN (qtyinvoiced = 0) THEN QtyDelivered ELSE 
+			  	    (CASE WHEN (QtyDelivered = 0) THEN qtyinvoiced ELSE 
 					(CASE WHEN (QtyDelivered < 0 AND qtyinvoiced < 0) THEN LEAST(QtyDelivered, qtyinvoiced) ELSE GREATEST(QtyDelivered, qtyinvoiced) END) END) END)
-                             FROM C_ORDERLINE COL
-                             WHERE COL.C_ORDERLINE_ID = C_ORDERLINE.C_ORDERLINE_ID);
-          -- For Purchase orders, M_MatchPO table used. Notice that only delivered lines(C_Invoiceline_Id is null) using
-        ELSE
-          UPDATE C_ORDERLINE
-          SET QTYORDERED=COALESCE((
-                  SELECT (CASE WHEN (SUM(CASE WHEN M_MATCHPO.M_INOUTLINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END) = 0) 
+                                  FROM C_ORDERLINE COL
+                                  WHERE COL.C_ORDERLINE_ID = C_ORDERLINE.C_ORDERLINE_ID)
+            )
+            LOOP
+              v_QtyOrdered := CASE WHEN (Cur_Inventory.QtyDelivered < 0) THEN LEAST(Cur_Inventory.QtyDelivered, Cur_Inventory.QtyInvoiced) ELSE GREATEST(Cur_Inventory.QtyDelivered, Cur_Inventory.QtyInvoiced) END;
+              v_linenetamt := ROUND((CASE WHEN (Cur_Inventory.QtyDelivered < 0) THEN LEAST(Cur_Inventory.QtyDelivered, Cur_Inventory.QtyInvoiced) ELSE GREATEST(Cur_Inventory.QtyDelivered, Cur_Inventory.QtyInvoiced) END) * Cur_Inventory.priceactual,
+                    C_GET_CURRENCY_PRECISION(Cur_Inventory.C_Currency_ID, 'A'));
+              SELECT MAX(UOM.C_UOM_ID)
+              INTO v_ProductUOM
+              FROM M_PRODUCT_UOM UOM 
+              WHERE UOM.M_PRODUCT_UOM_ID=Cur_Inventory.M_PRODUCT_UOM_ID;
+              v_QuantityOrder := CASE WHEN Cur_Inventory.M_PRODUCT_UOM_ID IS NULL THEN Cur_Inventory.QuantityOrder
+                                ELSE (c_uom_convert((CASE WHEN (Cur_Inventory.QtyDelivered < 0) THEN LEAST(Cur_Inventory.QtyDelivered, Cur_Inventory.QtyInvoiced) ELSE GREATEST(Cur_Inventory.QtyDelivered, Cur_Inventory.QtyInvoiced) END),
+                    Cur_Inventory.C_UOM_ID, v_ProductUOM,'Y')) END;
+
+              IF (Cur_Inventory.QtyOrdered <> v_QtyOrdered) THEN
+                M_UPDATE_STORAGE_PENDING(v_Client_ID, v_Org_ID, v_UpdatedBy, Cur_Inventory.M_Product_ID, Cur_Inventory.M_Warehouse_ID, Cur_Inventory.M_AttributeSetInstance_ID,
+                Cur_Inventory.C_UOM_ID, Cur_Inventory.M_PRODUCT_UOM_ID, -(Cur_Inventory.QtyOrdered - v_QtyOrdered), -(Cur_Inventory.QuantityOrder - v_QuantityOrder), 0, null);
+              END IF;
+
+              -- UPDATE C_ORDERLINE
+              UPDATE C_ORDERLINE
+              SET QtyOrdered=v_QtyOrdered,
+                linenetamt=v_linenetamt,
+                QuantityOrder=v_QuantityOrder,
+                Updated=now()
+              WHERE C_ORDERLINE_ID = Cur_Inventory.ID;
+            END LOOP;
+            -- For Purchase orders, M_MatchPO table used. Notice that only delivered lines(C_Invoiceline_Id is null) using
+          ELSE
+            FOR Cur_Inventory IN (
+              SELECT 
+                COALESCE((SELECT SUM(CASE WHEN M_MATCHPO.M_INOUTLINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END)
+                FROM M_MATCHPO
+                WHERE M_MATCHPO.C_ORDERLINE_ID=C_ORDERLINE.C_ORDERLINE_ID), 0) AS QtyDelivered,
+		COALESCE((SELECT   SUM(CASE WHEN M_MATCHPO.C_INVOICELINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END)
+                FROM M_MATCHPO
+                WHERE M_MATCHPO.C_ORDERLINE_ID=C_ORDERLINE.C_ORDERLINE_ID), 0) AS QtyInvoiced,
+                QtyOrdered,
+                QuantityOrder,
+		priceactual,
+		linenetamt,
+                C_ORDERLINE_ID AS ID,
+	        M_Product_ID,
+	        M_Warehouse_ID,
+	        M_AttributeSetInstance_ID,
+	        C_UOM_ID,
+	        M_PRODUCT_UOM_ID,
+	        C_Currency_ID
+              FROM C_ORDERLINE
+              WHERE C_ORDERLINE.C_ORDER_ID=v_Record_ID
+                AND qtyordered <> COALESCE((
+                    SELECT (CASE WHEN (SUM(CASE WHEN M_MATCHPO.M_INOUTLINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END) = 0) 
 				THEN SUM(CASE WHEN M_MATCHPO.C_INVOICELINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END) ELSE 
 					(CASE WHEN (SUM(CASE WHEN M_MATCHPO.C_INVOICELINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END) = 0) 
 						THEN SUM(CASE WHEN M_MATCHPO.M_INOUTLINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END)  
@@ -486,56 +540,40 @@
 							ELSE GREATEST(SUM(CASE WHEN M_MATCHPO.M_INOUTLINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END),SUM(CASE WHEN M_MATCHPO.C_INVOICELINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END)) END) 
 					END)
 				END)
-                  FROM M_MATCHPO
-                  WHERE M_MATCHPO.C_ORDERLINE_ID=C_ORDERLINE.C_ORDERLINE_ID
-                  ), 0),
-              QuantityOrder=CASE WHEN M_PRODUCT_UOM_ID IS NULL THEN QuantityOrder
-                             ELSE c_uom_convert(COALESCE((
-                  SELECT (CASE WHEN (SUM(CASE WHEN M_MATCHPO.M_INOUTLINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END) = 0) 
-				THEN SUM(CASE WHEN M_MATCHPO.C_INVOICELINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END) ELSE 
-					(CASE WHEN (SUM(CASE WHEN M_MATCHPO.C_INVOICELINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END) = 0) 
-						THEN SUM(CASE WHEN M_MATCHPO.M_INOUTLINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END)  
-						ELSE (CASE WHEN (SUM(CASE WHEN M_MATCHPO.M_INOUTLINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END) < 0 AND SUM(CASE WHEN M_MATCHPO.C_INVOICELINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END) < 0)  
-							THEN LEAST(SUM(CASE WHEN M_MATCHPO.M_INOUTLINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END),SUM(CASE WHEN M_MATCHPO.C_INVOICELINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END)) 
-							ELSE GREATEST(SUM(CASE WHEN M_MATCHPO.M_INOUTLINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END),SUM(CASE WHEN M_MATCHPO.C_INVOICELINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END)) END) 
-					END)
-				END)
-                  FROM M_MATCHPO
-                  WHERE M_MATCHPO.C_ORDERLINE_ID=C_ORDERLINE.C_ORDERLINE_ID
-                  ), 0),C_UOM_ID,(SELECT UOM.C_UOM_ID FROM M_PRODUCT_UOM UOM WHERE UOM.M_PRODUCT_UOM_ID=C_ORDERLINE.M_PRODUCT_UOM_ID),'Y') END,
-              Updated=now(),
-              linenetamt=COALESCE((
-                  SELECT (CASE WHEN (SUM(CASE WHEN M_MATCHPO.M_INOUTLINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END) = 0) 
-				THEN SUM(CASE WHEN M_MATCHPO.C_INVOICELINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END) ELSE 
-					(CASE WHEN (SUM(CASE WHEN M_MATCHPO.C_INVOICELINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END) = 0) 
-						THEN SUM(CASE WHEN M_MATCHPO.M_INOUTLINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END)  
-						ELSE (CASE WHEN (SUM(CASE WHEN M_MATCHPO.M_INOUTLINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END) < 0 AND SUM(CASE WHEN M_MATCHPO.C_INVOICELINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END) < 0)  
-							THEN LEAST(SUM(CASE WHEN M_MATCHPO.M_INOUTLINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END),SUM(CASE WHEN M_MATCHPO.C_INVOICELINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END)) 
-							ELSE GREATEST(SUM(CASE WHEN M_MATCHPO.M_INOUTLINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END),SUM(CASE WHEN M_MATCHPO.C_INVOICELINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END)) END) 
-					END)
-				END)
-                  FROM M_MATCHPO
-                  WHERE M_MATCHPO.C_ORDERLINE_ID=C_ORDERLINE.C_ORDERLINE_ID
-                  ), 0)*priceactual
-          WHERE C_ORDERLINE.C_ORDER_ID=v_Record_ID
-            AND qtyordered <> COALESCE((
-                  SELECT (CASE WHEN (SUM(CASE WHEN M_MATCHPO.M_INOUTLINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END) = 0) 
-				THEN SUM(CASE WHEN M_MATCHPO.C_INVOICELINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END) ELSE 
-					(CASE WHEN (SUM(CASE WHEN M_MATCHPO.C_INVOICELINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END) = 0) 
-						THEN SUM(CASE WHEN M_MATCHPO.M_INOUTLINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END)  
-						ELSE (CASE WHEN (SUM(CASE WHEN M_MATCHPO.M_INOUTLINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END) < 0 AND SUM(CASE WHEN M_MATCHPO.C_INVOICELINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END) < 0)  
-							THEN LEAST(SUM(CASE WHEN M_MATCHPO.M_INOUTLINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END),SUM(CASE WHEN M_MATCHPO.C_INVOICELINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END)) 
-							ELSE GREATEST(SUM(CASE WHEN M_MATCHPO.M_INOUTLINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END),SUM(CASE WHEN M_MATCHPO.C_INVOICELINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END)) END) 
-					END)
-				END)
-                  FROM M_MATCHPO
-                  WHERE M_MATCHPO.C_ORDERLINE_ID=C_ORDERLINE.C_ORDERLINE_ID
-                  ), 0);
+                    FROM M_MATCHPO
+                    WHERE M_MATCHPO.C_ORDERLINE_ID=C_ORDERLINE.C_ORDERLINE_ID
+                    ), 0)
+            )
+            LOOP
+              v_QtyOrdered := COALESCE(CASE WHEN (Cur_Inventory.QtyDelivered < 0) THEN LEAST(Cur_Inventory.QtyDelivered, Cur_Inventory.QtyInvoiced) ELSE GREATEST(Cur_Inventory.QtyDelivered, Cur_Inventory.QtyInvoiced) END, 0);
+              v_linenetamt := ROUND(COALESCE((CASE WHEN (Cur_Inventory.QtyDelivered < 0) THEN LEAST(Cur_Inventory.QtyDelivered, Cur_Inventory.QtyInvoiced) ELSE GREATEST(Cur_Inventory.QtyDelivered, Cur_Inventory.QtyInvoiced) END), 0) * Cur_Inventory.priceactual,
+                    C_GET_CURRENCY_PRECISION(Cur_Inventory.C_Currency_ID, 'A'));
+              SELECT MAX(UOM.C_UOM_ID)
+              INTO v_ProductUOM
+              FROM M_PRODUCT_UOM UOM 
+              WHERE UOM.M_PRODUCT_UOM_ID=Cur_Inventory.M_PRODUCT_UOM_ID;
+              v_QuantityOrder := CASE WHEN Cur_Inventory.M_PRODUCT_UOM_ID IS NULL THEN Cur_Inventory.QuantityOrder
+                                ELSE (COALESCE(c_uom_convert((CASE WHEN (Cur_Inventory.QtyDelivered < 0) THEN LEAST(Cur_Inventory.QtyDelivered, Cur_Inventory.QtyInvoiced) ELSE GREATEST(Cur_Inventory.QtyDelivered, Cur_Inventory.QtyInvoiced) END),
+                    Cur_Inventory.C_UOM_ID, v_ProductUOM,'Y'), 0)) END;
+              IF (Cur_Inventory.QtyOrdered <> v_QtyOrdered) THEN
+                M_UPDATE_STORAGE_PENDING(v_Client_ID, v_Org_ID, v_UpdatedBy, Cur_Inventory.M_Product_ID, Cur_Inventory.M_Warehouse_ID, Cur_Inventory.M_AttributeSetInstance_ID,
+                Cur_Inventory.C_UOM_ID, Cur_Inventory.M_PRODUCT_UOM_ID, 0, null, -(Cur_Inventory.QtyOrdered - v_QtyOrdered), -(Cur_Inventory.QuantityOrder - v_QuantityOrder));
+              END IF;
+
+              -- UPDATE C_ORDERLINE
+              UPDATE C_ORDERLINE
+              SET QtyOrdered=v_QtyOrdered,
+                linenetamt=v_linenetamt,
+                QuantityOrder=v_QuantityOrder,
+                Updated=now()
+              WHERE C_ORDERLINE_ID = Cur_Inventory.ID;
+            END LOOP;
+          END IF;
+          -- if there is no change, the tax calculation, etc. is not needed.
+          -- potential problem, if posted (i.e. encumbered) for full amount
+          -- and the rest then cancelled out.
         END IF;
-        -- if there is no change, the tax calculation, etc. is not needed.
-        -- potential problem, if posted (i.e. encumbered) for full amount
-        -- and the rest then cancelled out.
-      END IF;
+      END;
 
       /**
       *Update Product purchasing Plan Table
@@ -616,6 +654,13 @@
         IF (v_count > 0) THEN
           RAISE_APPLICATION_ERROR(-20000, '@NotCorrectOrgBpartnerOrder@') ;
         END IF;
+      END IF;
+
+     /**************************************************************************
+      * Calculate promotions                                                   
+      *************************************************************************/
+      IF (v_DocAction = 'CO' AND v_isreturndoctype = 'N') THEN
+         M_PROMOTION_CALCULATE('O', v_Record_ID, v_User);
       END IF;
 
      /**************************************************************************
@@ -972,83 +1017,86 @@
     /**************************************************************************
       * Always check and (un) Reserve Inventory  (counterpart: M_InOut_Post)
       *************************************************************************/
-      DECLARE
-        Cur_ResLine RECORD;
+      IF (v_DocAction<>'CL') THEN
+        DECLARE
+          Cur_ResLine RECORD;
 
-        v_QtySO       NUMBER; -- Reserved
-        v_QtyOrderSO  NUMBER;
-        v_QtyPO       NUMBER; -- Ordered
-        v_QtyOrderPO  NUMBER;
-      BEGIN
-        v_ResultStr := 'ReserveInventory';
-        -- For all lines needing reservation
-        FOR Cur_ResLine IN (SELECT l.M_Warehouse_ID, l.M_Product_ID, l.M_AttributeSetInstance_ID, l.C_OrderLine_ID,
-              -- Target Level = 0 if DirectShip='Y' or Binding='N'
-              (CASE l.DirectShip WHEN 'Y' THEN 0 ELSE (CASE v_IsBinding WHEN 'N' THEN 0 ELSE l.QtyOrdered END) END)
-               -l.QtyReserved-l.QtyDelivered AS Qty, l.QUANTITYORDER,
-              l.QtyReserved, l.QtyDelivered, l.DatePromised, l.C_UOM_ID,
-              l.M_PRODUCT_UOM_ID
-            FROM C_ORDERLINE l, M_PRODUCT p
-            WHERE l.C_Order_ID=v_Record_ID
-              -- Reserve Products (not: services, null products) --
-              AND l.M_Product_ID=p.M_Product_ID
-              AND p.IsStocked='Y' AND p.ProductType='I'
-              -- Target Level = 0 if DirectShip='Y' or Binding='N'
-              AND (CASE l.DirectShip WHEN 'Y' THEN 0 ELSE (CASE v_IsBinding WHEN 'N' THEN 0 ELSE l.QtyOrdered END)END)
-              -l.QtyReserved-l.QtyDelivered <> 0
-            FOR UPDATE)
-        LOOP
-          -- Qty corrected for SO/PO
-          IF (v_DocSubTypeSO IS NOT NULL) THEN
-            v_QtySO   := Cur_ResLine.Qty;
-            v_QtyOrderSO := NULL;
-            IF (Cur_ResLine.QtyReserved = 0 AND Cur_ResLine.QtyDelivered = 0) THEN
-              v_QtyOrderSO := Cur_ResLine.QuantityOrder;
-            ELSIF (Cur_ResLine.M_Product_UOM_ID IS NOT NULL) THEN
-              v_QtyOrderSO := C_Uom_Convert(v_QtySO, Cur_ResLine.C_UOM_ID, Cur_ResLine.M_Product_UOM_ID, 'Y');
+          v_QtySO       NUMBER; -- Reserved
+          v_QtyOrderSO  NUMBER;
+          v_QtyPO       NUMBER; -- Ordered
+          v_QtyOrderPO  NUMBER;
+        BEGIN
+          v_ResultStr := 'ReserveInventory';
+          -- For all lines needing reservation
+          FOR Cur_ResLine IN (SELECT l.M_Warehouse_ID, l.M_Product_ID, l.M_AttributeSetInstance_ID, l.C_OrderLine_ID,
+                -- Target Level = 0 if DirectShip='Y' or Binding='N'
+                (CASE l.DirectShip WHEN 'Y' THEN 0 ELSE (CASE v_IsBinding WHEN 'N' THEN 0 ELSE l.QtyOrdered END) END)
+                 -l.QtyReserved-l.QtyDelivered AS Qty, l.QUANTITYORDER,
+                l.QtyReserved, l.QtyDelivered, l.DatePromised, l.C_UOM_ID,
+                l.M_PRODUCT_UOM_ID
+              FROM C_ORDERLINE l, M_PRODUCT p
+              WHERE l.C_Order_ID=v_Record_ID
+                -- Reserve Products (not: services, null products) --
+                AND l.M_Product_ID=p.M_Product_ID
+                AND p.IsStocked='Y' AND p.ProductType='I'
+                -- Target Level = 0 if DirectShip='Y' or Binding='N'
+                AND (CASE l.DirectShip WHEN 'Y' THEN 0 ELSE (CASE v_IsBinding WHEN 'N' THEN 0 ELSE l.QtyOrdered END)END)
+                -l.QtyReserved-l.QtyDelivered <> 0
+              FOR UPDATE)
+          LOOP
+          
+            -- Qty corrected for SO/PO
+            IF (v_DocSubTypeSO IS NOT NULL) THEN
+              v_QtySO   := Cur_ResLine.Qty;
+              v_QtyOrderSO := NULL;
+              IF (Cur_ResLine.QtyReserved = 0 AND Cur_ResLine.QtyDelivered = 0) THEN
+                v_QtyOrderSO := Cur_ResLine.QuantityOrder;
+              ELSIF (Cur_ResLine.M_Product_UOM_ID IS NOT NULL) THEN
+                v_QtyOrderSO := C_Uom_Convert(v_QtySO, Cur_ResLine.C_UOM_ID, Cur_ResLine.M_Product_UOM_ID, 'Y');
+              END IF;
+              v_QtyPO   := 0;
+              v_QtyOrderPO := NULL;
+            ELSE -- PO
+              v_QtySO := 0;
+              v_QtyOrderSO := NULL;
+              v_QtyPO := Cur_ResLine.Qty;
+              v_QtyOrderPO := NULL;
+              IF (Cur_ResLine.QtyReserved = 0 AND Cur_ResLine.QtyDelivered = 0) THEN
+                v_QtyOrderPO := Cur_ResLine.QuantityOrder;
+              ELSIF (Cur_ResLine.M_Product_UOM_ID IS NOT NULL) THEN
+                v_QtyOrderPO := C_Uom_Convert(v_QtyPO, Cur_ResLine.C_UOM_ID, Cur_ResLine.M_Product_UOM_ID, 'Y');
+              END IF;
             END IF;
-            v_QtyPO   := 0;
-            v_QtyOrderPO := NULL;
-          ELSE -- PO
-            v_QtySO := 0;
-            v_QtyOrderSO := NULL;
-            v_QtyPO := Cur_ResLine.Qty;
-            v_QtyOrderPO := NULL;
-            IF (Cur_ResLine.QtyReserved = 0 AND Cur_ResLine.QtyDelivered = 0) THEN
-              v_QtyOrderPO := Cur_ResLine.QuantityOrder;
-            ELSIF (Cur_ResLine.M_Product_UOM_ID IS NOT NULL) THEN
-              v_QtyOrderPO := C_Uom_Convert(v_QtyPO, Cur_ResLine.C_UOM_ID, Cur_ResLine.M_Product_UOM_ID, 'Y');
+            IF (v_DocStatus<>'IP' OR v_DocAction<>'CO') THEN
+              M_UPDATE_STORAGE_PENDING(v_Client_ID, v_Org_ID, v_UpdatedBy, Cur_ResLine.M_Product_ID, Cur_ResLine.M_Warehouse_ID, Cur_ResLine.M_AttributeSetInstance_ID,
+              Cur_ResLine.C_UOM_ID, Cur_ResLine.M_PRODUCT_UOM_ID, v_QtySO, v_QtyOrderSO, v_QtyPO, v_QtyOrderPO);
             END IF;
-          END IF;
-          IF (v_DocStatus<>'IP' OR v_DocAction<>'CO') THEN
-            M_UPDATE_STORAGE_PENDING(v_Client_ID, v_Org_ID, v_UpdatedBy, Cur_ResLine.M_Product_ID, Cur_ResLine.M_Warehouse_ID, Cur_ResLine.M_AttributeSetInstance_ID,
-            Cur_ResLine.C_UOM_ID, Cur_ResLine.M_PRODUCT_UOM_ID, v_QtySO, v_QtyOrderSO, v_QtyPO, v_QtyOrderPO);
-          END IF;
-          DBMS_OUTPUT.PUT_LINE('Reserved Warehouse=' || Cur_ResLine.M_Warehouse_ID || ', Product=' || Cur_ResLine.M_Product_ID || ', Attrib=' || Cur_ResLine.M_AttributeSetInstance_ID || ', Qty=' || v_QtySO || '/' || v_QtyPO);
+            DBMS_OUTPUT.PUT_LINE('Reserved Warehouse=' || Cur_ResLine.M_Warehouse_ID || ', Product=' || Cur_ResLine.M_Product_ID || ', Attrib=' || Cur_ResLine.M_AttributeSetInstance_ID || ', Qty=' || v_QtySO || '/' || v_QtyPO);
 
-          -- Update Order Line
-          IF (v_DocSubTypeSO IS NOT NULL) THEN
-            UPDATE C_ORDERLINE
-            SET QtyReserved = QtyReserved + v_QtySO
-            WHERE C_OrderLine_ID = Cur_ResLine.C_OrderLine_ID;
-          END IF;
-          rowcount:=SQL%ROWCOUNT;
-          IF (rowcount <> 1) THEN
-            IF (p_PInstance_ID IS NOT NULL) THEN
-              ROLLBACK;
-              v_ResultStr := 'LockingOrder';
-              UPDATE C_ORDER
-              SET Processing = 'N',
-              Updated=now(),
-              UpdatedBy=v_User
-              WHERE C_Order_ID = v_Record_ID;
-              RAISE NO_DATA_FOUND;
-              COMMIT;
+            -- Update Order Line
+            IF (v_DocSubTypeSO IS NOT NULL) THEN
+              UPDATE C_ORDERLINE
+              SET QtyReserved = QtyReserved + v_QtySO
+              WHERE C_OrderLine_ID = Cur_ResLine.C_OrderLine_ID;
             END IF;
-            RAISE_APPLICATION_ERROR(-20000, '@20011@');
-          END IF;
-        END LOOP; -- For all lines needing reservation
-      END; -- Reserve Inventory
+             rowcount:=SQL%ROWCOUNT;
+            IF (rowcount <> 1) THEN
+              IF (p_PInstance_ID IS NOT NULL) THEN
+                ROLLBACK;
+                v_ResultStr := 'LockingOrder';
+                UPDATE C_ORDER
+                SET Processing = 'N',
+                Updated=now(),
+                UpdatedBy=v_User
+                WHERE C_Order_ID = v_Record_ID;
+                RAISE NO_DATA_FOUND;
+                COMMIT;
+              END IF;
+              RAISE_APPLICATION_ERROR(-20000, '@20011@');
+            END IF;
+          END LOOP; -- For all lines needing reservation
+        END;
+      END IF; -- Reserve Inventory
 
      /**************************************************************************
       * Calculate Taxes and Totals

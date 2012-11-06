@@ -220,6 +220,17 @@ isc.OBViewGrid.addProperties({
       }
     },
 
+    // always return false otherwise sc switches to local mode
+    // which does not work correctly for when doing inserts in form mode
+    // at that point the grid.data.allRows is being used which results 
+    // in mismatches with grid.data.localData, returning false here
+    // prevents allRows from being used. In our case we never really
+    // want to have all rows cached locally as we do all filtering
+    // server side.
+    allRowsCached: function () {
+      return false;
+    },
+
     transformData: function (newData, dsResponse) {
       var i, length, timeFields;
 
@@ -731,6 +742,11 @@ isc.OBViewGrid.addProperties({
     var i, field, fields = this.getFields(),
         editorProperties, len = fields.length,
         ds, dataSources = [];
+
+    if (this.getDataSource()) {
+      // will get destroyed in the super class then
+      this.getDataSource().potentiallyShared = false;
+    }
 
     for (i = 0; i < len; i++) {
       field = fields[i];
@@ -1447,7 +1463,7 @@ isc.OBViewGrid.addProperties({
   dataArrived: function (startRow, endRow) {
     // do this now, to replace the loading message
     // TODO: add dynamic part of readonly (via setWindowSettings: see issue 17441)
-    if (this.uiPattern === 'SR' || this.uiPattern === 'RO' || this.uiPattern !== 'ED') {
+    if (this.uiPattern === 'SR' || this.uiPattern === 'RO' || this.uiPattern === 'ED') {
       this.noDataEmptyMessage = '<span class="' + this.emptyMessageStyle + '">' + OB.I18N.getLabel('OBUIAPP_NoDataInGrid') + '</span>';
     } else {
       this.noDataEmptyMessage = '<span class="' + this.emptyMessageStyle + '">' + OB.I18N.getLabel('OBUIAPP_GridNoRecords') + '</span>' + '<span onclick="this.onclick = new Function(); setTimeout(function() { window[\'' + this.ID + '\'].view.newRow(); }, 50); return false;" class="' + this.emptyMessageLinkStyle + '">' + OB.I18N.getLabel('OBUIAPP_GridCreateOne') + '</span>';

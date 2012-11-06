@@ -217,7 +217,7 @@ isc.OBStandardWindow.addProperties({
           if (prevFocusedItem) {
             var myInterval;
             myInterval = setInterval(function () {
-              if (prevFocusedItem === isc.EH.getFocusCanvas()) {
+              if (me.children && prevFocusedItem === isc.EH.getFocusCanvas()) {
                 if (me.children[3] && me.children[3].items[0] && me.children[3].items[0].firstFocusedItem) {
                   me.children[3].items[0].firstFocusedItem.focus();
                 } else {

@@ -93,12 +93,32 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="M_OFFER_TYPE_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default><![CDATA[5D4BAF6BB86D4D2C9ED3D5A6FC051579]]></default>
+        <onCreateDefault><![CDATA['5D4BAF6BB86D4D2C9ED3D5A6FC051579']]></onCreateDefault>
+      </column>
+      <column name="APPLY_NEXT" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="PRINT_NAME" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="ORG_SELECTION" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault><![CDATA['Y']]></onCreateDefault>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="M_OFFER_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="M_OFFER_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="M_OFFER_TYPE" name="M_OFFER_OFFERTYPE">
+        <reference local="M_OFFER_TYPE_ID" foreign="M_OFFER_TYPE_ID"/>
+      </foreign-key>
       <check name="M_OFFER_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="M_OFFER_NEXT_CHECK"><![CDATA[APPLY_NEXT IN ('Y', 'N')]]></check>
     </table>
   </database>

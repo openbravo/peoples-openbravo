@@ -182,8 +182,9 @@ public class SelectExpectedPayments extends HttpSecureAppServlet {
     // filtered scheduled payments list
     final List<FIN_PaymentScheduleDetail> filteredScheduledPaymentDetails = dao
         .getFilteredScheduledPaymentDetails(paymentProposal.getOrganization(),
-            paymentProposal.getBusinessPartner(), paymentProposal.getCurrency(), null, dueDate,
-            "B", showAlternativePM ? null : paymentProposal.getPaymentMethod(),
+            paymentProposal.getBusinessPartner(), paymentProposal.getCurrency(), null, null, null,
+            dueDate, null, null, "B", "",
+            showAlternativePM ? null : paymentProposal.getPaymentMethod(),
             selectedScheduledPaymentDetails, paymentProposal.isReceipt());
 
     final FieldProvider[] data = FIN_AddPayment.getShownScheduledPaymentDetails(vars,
@@ -275,7 +276,7 @@ public class SelectExpectedPayments extends HttpSecureAppServlet {
     empty.put("finScheduledPaymentId", "");
     empty.put("salesOrderNr", "");
     empty.put("salesInvoiceNr", "");
-    empty.put("dueDate", "");
+    empty.put("expectedDate", "");
     empty.put("invoicedAmount", "");
     empty.put("expectedAmount", "");
     empty.put("paymentAmount", "");

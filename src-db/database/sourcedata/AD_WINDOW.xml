@@ -281,7 +281,7 @@
 <!--118-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--118-->  <NAME><![CDATA[Account Tree]]></NAME>
 <!--118-->  <DESCRIPTION><![CDATA[Create and edit account elements and add them to your defined chart of accounts or account trees.]]></DESCRIPTION>
-<!--118-->  <HELP><![CDATA[An account tree or chart of accounts is a list of the accounts available to post  entries which can be structured in a way to get meaningful financial reports such as Balance Sheet and P&L.]]></HELP>
+<!--118-->  <HELP><![CDATA[An account tree is the way Openbravo captures the chart of accounts of an Organization. The chart of accounts is a list of the accounts used in an organization's general ledger.]]></HELP>
 <!--118-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--118-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--118-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -727,7 +727,7 @@
 <!--153-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--153-->  <NAME><![CDATA[Account Combination]]></NAME>
 <!--153-->  <DESCRIPTION><![CDATA[Create accounting combinations to be used in Openbravo's accounting process.]]></DESCRIPTION>
-<!--153-->  <HELP><![CDATA[An account combination gathers a set of accounting dimensions.]]></HELP>
+<!--153-->  <HELP><![CDATA[An account combination is an account (subaccount) of a given accounting schema associated to a given organization. ]]></HELP>
 <!--153-->  <WINDOWTYPE><![CDATA[Q]]></WINDOWTYPE>
 <!--153-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--153-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -1711,9 +1711,9 @@
 <!--800017-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800017-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800017-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800017-->  <NAME><![CDATA[Discount]]></NAME>
-<!--800017-->  <DESCRIPTION><![CDATA[Create and edit product price percentage discounts.]]></DESCRIPTION>
-<!--800017-->  <HELP><![CDATA[A discount is a deduction from the total amount of an order or an invoice.]]></HELP>
+<!--800017-->  <NAME><![CDATA[Basic Discount]]></NAME>
+<!--800017-->  <DESCRIPTION><![CDATA[Create and edit product price percentage Basic Discounts.]]></DESCRIPTION>
+<!--800017-->  <HELP><![CDATA[A Basic Discount is a deduction from the total amount of an order or an invoice.]]></HELP>
 <!--800017-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800017-->  <ISSOTRX><![CDATA[N]]></ISSOTRX>
 <!--800017-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -1813,9 +1813,9 @@
 <!--800028-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800028-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800028-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800028-->  <NAME><![CDATA[Price Adjustments]]></NAME>
-<!--800028-->  <DESCRIPTION><![CDATA[Create and edit price adjustments to be applied to business partners, products, or price lists.]]></DESCRIPTION>
-<!--800028-->  <HELP><![CDATA[Create and edit price adjustments to be applied to business partners, products, or price lists.]]></HELP>
+<!--800028-->  <NAME><![CDATA[Discounts and Promotions]]></NAME>
+<!--800028-->  <DESCRIPTION><![CDATA[Definition of Discounts and Promotions]]></DESCRIPTION>
+<!--800028-->  <HELP><![CDATA[Discounts and Promotions is a mechanism that allows to adjust prices based on different rules. External modules can extend this definition by providing additional rules (Discount Types) implementations.]]></HELP>
 <!--800028-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800028-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--800028-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -2873,6 +2873,23 @@ You can also select if transactions are allowed or not for this organization typ
 <!--79FC23AB84F04384B4B7CCCADCDD2942-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
 <!--79FC23AB84F04384B4B7CCCADCDD2942--></AD_WINDOW>
 
+<!--9153155013C843839F88E9940B976148--><AD_WINDOW>
+<!--9153155013C843839F88E9940B976148-->  <AD_WINDOW_ID><![CDATA[9153155013C843839F88E9940B976148]]></AD_WINDOW_ID>
+<!--9153155013C843839F88E9940B976148-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--9153155013C843839F88E9940B976148-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--9153155013C843839F88E9940B976148-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--9153155013C843839F88E9940B976148-->  <NAME><![CDATA[Discounts and Promotions Types]]></NAME>
+<!--9153155013C843839F88E9940B976148-->  <DESCRIPTION><![CDATA[Discounts and Promotions Types]]></DESCRIPTION>
+<!--9153155013C843839F88E9940B976148-->  <HELP><![CDATA[Discounts and Promotions Types ]]></HELP>
+<!--9153155013C843839F88E9940B976148-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
+<!--9153155013C843839F88E9940B976148-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
+<!--9153155013C843839F88E9940B976148-->  <PROCESSING><![CDATA[N]]></PROCESSING>
+<!--9153155013C843839F88E9940B976148-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
+<!--9153155013C843839F88E9940B976148-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--9153155013C843839F88E9940B976148-->  <ISTHREADSAFE><![CDATA[Y]]></ISTHREADSAFE>
+<!--9153155013C843839F88E9940B976148-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
+<!--9153155013C843839F88E9940B976148--></AD_WINDOW>
+
 <!--929DA14E43E94D4E97863133D930D769--><AD_WINDOW>
 <!--929DA14E43E94D4E97863133D930D769-->  <AD_WINDOW_ID><![CDATA[929DA14E43E94D4E97863133D930D769]]></AD_WINDOW_ID>
 <!--929DA14E43E94D4E97863133D930D769-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -3092,7 +3109,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--E56E701CCBA14B8BA480CBDE37C50D7A-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--E56E701CCBA14B8BA480CBDE37C50D7A-->  <NAME><![CDATA[Open/Close Period Control]]></NAME>
 <!--E56E701CCBA14B8BA480CBDE37C50D7A-->  <DESCRIPTION><![CDATA[Open or close periods for the allowed organizations]]></DESCRIPTION>
-<!--E56E701CCBA14B8BA480CBDE37C50D7A-->  <HELP><![CDATA[Open/Close Period Control allows to open, close or permanently close accounting period/s of a year which belongs to a calendar linked to a "legal entity with accounting" organization type.<br>Legal entities with accounting are the organization types for which Period Control is enabled.]]></HELP>
+<!--E56E701CCBA14B8BA480CBDE37C50D7A-->  <HELP><![CDATA[Open/Close Period Control allows to open, close or permanently close the accounting period/s of a year.  This process is enabled to Organizations for which "Period Control" feature is enabled.]]></HELP>
 <!--E56E701CCBA14B8BA480CBDE37C50D7A-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--E56E701CCBA14B8BA480CBDE37C50D7A-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--E56E701CCBA14B8BA480CBDE37C50D7A-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -3118,6 +3135,22 @@ You can also select if transactions are allowed or not for this organization typ
 <!--EF3E837705944F4DBF398D683D36ACE0-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
 <!--EF3E837705944F4DBF398D683D36ACE0-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
 <!--EF3E837705944F4DBF398D683D36ACE0--></AD_WINDOW>
+
+<!--FC404D2406A9491CBD905D0D38F04846--><AD_WINDOW>
+<!--FC404D2406A9491CBD905D0D38F04846-->  <AD_WINDOW_ID><![CDATA[FC404D2406A9491CBD905D0D38F04846]]></AD_WINDOW_ID>
+<!--FC404D2406A9491CBD905D0D38F04846-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--FC404D2406A9491CBD905D0D38F04846-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--FC404D2406A9491CBD905D0D38F04846-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--FC404D2406A9491CBD905D0D38F04846-->  <NAME><![CDATA[Warehouse Rules]]></NAME>
+<!--FC404D2406A9491CBD905D0D38F04846-->  <HELP><![CDATA[Warehouse Rules definition]]></HELP>
+<!--FC404D2406A9491CBD905D0D38F04846-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
+<!--FC404D2406A9491CBD905D0D38F04846-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
+<!--FC404D2406A9491CBD905D0D38F04846-->  <PROCESSING><![CDATA[N]]></PROCESSING>
+<!--FC404D2406A9491CBD905D0D38F04846-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
+<!--FC404D2406A9491CBD905D0D38F04846-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--FC404D2406A9491CBD905D0D38F04846-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
+<!--FC404D2406A9491CBD905D0D38F04846-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
+<!--FC404D2406A9491CBD905D0D38F04846--></AD_WINDOW>
 
 <!--FEB8679CAA0D47E5978F10E22566FCEA--><AD_WINDOW>
 <!--FEB8679CAA0D47E5978F10E22566FCEA-->  <AD_WINDOW_ID><![CDATA[FEB8679CAA0D47E5978F10E22566FCEA]]></AD_WINDOW_ID>

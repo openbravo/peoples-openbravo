@@ -53,6 +53,9 @@
       <foreign-key foreignTable="AD_ORG" name="M_OFFER_BPARTNER_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <index name="M_OFFERBP_OFFER_IDX" unique="false">
+        <index-column name="M_OFFER_ID"/>
+      </index>
       <unique name="M_OFFER_BPARTNER_UNIQUE">
         <unique-column name="C_BPARTNER_ID"/>
         <unique-column name="M_OFFER_ID"/>

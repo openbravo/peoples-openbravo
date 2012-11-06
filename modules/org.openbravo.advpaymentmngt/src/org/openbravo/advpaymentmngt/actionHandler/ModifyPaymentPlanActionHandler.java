@@ -336,12 +336,13 @@ public class ModifyPaymentPlanActionHandler extends BaseProcessActionHandler {
       // 3) New row is created
       BigDecimal outstanding = new BigDecimal(modifiedGridRow.getString("outstanding"));
       Date dueDate = getJSDate(modifiedGridRow.getString("dueDate"));
+      Date expectedDate = getJSDate(modifiedGridRow.getString("expectedDate"));
       FIN_PaymentMethod pm = OBDal.getInstance().get(FIN_PaymentMethod.class,
           modifiedGridRow.getString("paymentMethod"));
       invoicePS.setOutstandingAmount(outstanding);
       invoicePS.setAmount(invoicePS.getPaidAmount().add(outstanding));
       invoicePS.setDueDate(dueDate);
-      invoicePS.setOrigDueDate(dueDate);
+      invoicePS.setExpectedDate(expectedDate);
       invoicePS.setFinPaymentmethod(pm);
       OBDal.getInstance().save(invoicePS);
       lPSsToReturn.add(invoicePS);
@@ -396,9 +397,11 @@ public class ModifyPaymentPlanActionHandler extends BaseProcessActionHandler {
       FIN_PaymentMethod paymentMethod = OBDal.getInstance().get(FIN_PaymentMethod.class,
           jo.getString("paymentMethod"));
       String dueDate = jo.getString("dueDate");
+      String expectedDate = jo.getString("expectedDate");
       FIN_PaymentSchedule invoicePS = dao.getNewPaymentSchedule(invoice.getClient(),
           invoice.getOrganization(), invoice, null, invoice.getCurrency(), getJSDate(dueDate),
           paymentMethod, outstanding);
+      invoicePS.setExpectedDate(getJSDate(expectedDate));
       lToReturn.add(invoicePS);
     }
     OBDal.getInstance().flush();
@@ -574,6 +577,9 @@ public class ModifyPaymentPlanActionHandler extends BaseProcessActionHandler {
       return true;
     }
     if (!getJSDate(jsonObject.getString("dueDate")).equals(ps.getDueDate())) {
+      return true;
+    }
+    if (!getJSDate(jsonObject.getString("expectedDate")).equals(ps.getExpectedDate())) {
       return true;
     }
     return false;

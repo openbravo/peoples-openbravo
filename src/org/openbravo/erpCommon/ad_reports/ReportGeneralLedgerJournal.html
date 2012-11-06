@@ -98,14 +98,12 @@ function displayAdvancedFilters(){
         displayLogicElement('advancedFiltersrow2', true);
         displayLogicElement('advancedFiltersrow3', true);
         displayLogicElement('advancedFiltersrow4', true);
-        displayLogicElement('advancedFiltersrow5', true);
     }
     else{
         displayLogicElement('advancedFiltersrow1', false);
         displayLogicElement('advancedFiltersrow2', false);
         displayLogicElement('advancedFiltersrow3', false);
         displayLogicElement('advancedFiltersrow4', false);
-        displayLogicElement('advancedFiltersrow5', false);
     }    
 }
 
@@ -426,41 +424,33 @@ function callback(paramXMLParticular, XMLHttpRequestObj) {
               <td class="Combo_ContentCell" colspan="2"> <select  name="inpDocument" id="inpDocument" class="Combo Combo_TwoCells_width">
                   <option value=""> <div id="reportDocument"></div></option>
                 </select></td>
-              <td class="TitleCell"><span class="LabelText">Initial Balance</span></td>
-              <td class="TextBox_ContentCell">
-                <input dojoType="openbravo:RealNumberTextbox" class="TextBox_OneCell_width" type="text" name="inpInitialBalance"
-                       id="paramInitialBalance" size="10" maxlength="10" value="" outputformat="euroEdition"></input>
-                <script>djConfig.searchIds.push("paramInitialBalance");</script>
-              </td>
-            </tr>
-             <tr id=advancedFiltersrow2>
-              <td class="TitleCell"><span class="LabelText">Initial Page Number</span></td>
+                 <td class="TitleCell"><span class="LabelText">Initial Page Number</span></td>
               <td class="TextBox_ContentCell"> <input dojoType="openbravo:Textbox"  class="dojoValidateValid TextBox_OneCell_width" type="text" name="inpPageNo" id="paramPageNo" size="10" maxlength="10" value=""></input><script>djConfig.searchIds.push("paramPageNo");</script>
               </td>
-              <td class="ContentCell"></td>
+            </tr>
+             <tr id=advancedFiltersrow2>              
               <td class="TitleCell"><span class="LabelText">Initial Entry Number</span></td>
               <td class="TextBox_ContentCell">
                 <input dojoType="openbravo:Textbox" class="dojoValidateValid TextBox_OneCell_width" type="text" name="inpEntryNo"
                        id="paramEntryNo" size="10" maxlength="10" value=""></input>
                 <script>djConfig.searchIds.push("paramEntryNo");</script>
               </td>
+              <td class="ContentCell"></td>
+              <td class="TitleCell"><span class="LabelText">Show Regular Entries</span></td>
+            <td class="Radio_Check_ContentCell"><input TYPE="checkbox" id="paramShowRegular" name="inpShowRegular" value="Y"/></td>
             </tr>
             
-        <tr id=advancedFiltersrow3>
-          <td class="TitleCell"><span class="LabelText">Show Regular Entries</span></td>
-          <td class="Radio_Check_ContentCell"><input TYPE="checkbox" id="paramShowRegular" name="inpShowRegular" value="Y"/></td>
-          <td class="ContentCell"></td>
+        <tr id=advancedFiltersrow3>      
           <td class="TitleCell"><span class="LabelText">Show P&L Closing Entries</span></td>
           <td class="Radio_Check_ContentCell"><input TYPE="checkbox" id="paramShowReg" name="inpShowReg" value="Y"/></td>
-        </tr>
-        <tr id=advancedFiltersrow4>
-          <td class="TitleCell"><span class="LabelText">Show Opening Entries</span></td>
-          <td class="Radio_Check_ContentCell"><input TYPE="checkbox" id="paramShowOpening" name="inpShowOpening" value="Y"/></td>
           <td class="ContentCell"></td>
+           <td class="TitleCell"><span class="LabelText">Show Opening Entries</span></td>
+          <td class="Radio_Check_ContentCell"><input TYPE="checkbox" id="paramShowOpening" name="inpShowOpening" value="Y"/></td>
+        </tr>
+        <tr id=advancedFiltersrow4>          
           <td class="TitleCell"><span class="LabelText">Show Closing Entries</span></td>
           <td class="Radio_Check_ContentCell"><input TYPE="checkbox" id="paramShowClosing" name="inpShowClosing" value="Y"/></td>
-        </tr>
-        <tr id=advancedFiltersrow5>
+          <td class="ContentCell"></td>
           <td class="TitleCell"><span class="LabelText">Show Entry Description</span></td>
           <td class="Radio_Check_ContentCell"><input TYPE="checkbox" id="paramShowDescription" name="inpShowDescription" value="Y"/></td>
           <td class="ContentCell"></td>

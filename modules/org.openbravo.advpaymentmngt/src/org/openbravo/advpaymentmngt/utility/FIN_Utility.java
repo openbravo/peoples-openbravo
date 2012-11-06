@@ -548,6 +548,23 @@ public class FIN_Utility {
     return strOptions.toString();
   }
 
+  public static <T extends BaseOBObject> String getOptionsListFromFieldProvider(
+      FieldProvider[] fieldProvider, String selectedValue, boolean isMandatory) {
+    StringBuilder strOptions = new StringBuilder();
+    if (!isMandatory)
+      strOptions.append("<option value=\"\"></option>");
+
+    for (int i = 0; i < fieldProvider.length; i++) {
+      strOptions.append("<option value=\"").append(fieldProvider[i].getField("ID")).append("\"");
+      if (fieldProvider[i].getField("ID").equals(selectedValue))
+        strOptions.append(" selected=\"selected\"");
+      strOptions.append(">");
+      strOptions.append(escape(fieldProvider[i].getField("NAME")));
+      strOptions.append("</option>");
+    }
+    return strOptions.toString();
+  }
+
   /**
    * Method to replace special characters to print properly in an html. Changes are: ">" to "&gt"
    * and "<" to "&lt"

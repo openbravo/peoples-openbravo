@@ -14,7 +14,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2008 Openbravo SLU
+* All portions are Copyright (C) 2001-2012 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -66,18 +66,8 @@ IF (DELETING) THEN
 ELSE
   v_ID:=:NEW.C_INVOICE_ID;
 END IF;
-
- IF UPDATING THEN
-  IF (    (COALESCE(:NEW.M_Product_ID,'0') != COALESCE(:OLD.M_Product_ID,'0'))
-    OR (COALESCE(:NEW.PriceActual,0) != COALESCE(:OLD.PriceActual,0))
-    OR (COALESCE(:NEW.QtyInvoiced,0) != COALESCE(:OLD.QtyInvoiced,0))) THEN
-  DELETE FROM C_INVOICELINE_OFFER
-   WHERE C_InvoiceLine_ID = :NEW.C_InvoiceLine_ID;
-   v_Insert := TRUE;
-   END IF;
- END IF;
  
- IF INSERTING OR v_Insert THEN
+ IF INSERTING OR UPDATING THEN
    SELECT C_BPartner_ID, dateInvoiced, priceprecision, i.M_PriceList_ID,p.istaxincluded
     INTO v_BPartner_ID, v_DateInvoiced, v_Precision, v_PriceList_ID, v_istaxincluded
      FROM C_INVOICE i
@@ -96,124 +86,6 @@ END IF;
         v_newgrossamt := :new.line_gross_amount;
      END IF;
    END IF;
-
- 
-   --Get the new "std" price from the Actual price (if actual price is the std price they will be equal)
-   v_Price := :NEW.PriceActual;
-    FOR Cur_Offer IN (SELECT M_OFFER_ID
-         FROM M_OFFER
-         WHERE v_DateInvoiced BETWEEN DATEFROM AND COALESCE(DATETO,TO_DATE('31-12-9999','DD-MM-YYYY'))
-   AND IsActive = 'Y'
-   AND (:NEW.QtyInvoiced >= COALESCE(Qty_From,0) OR Qty_From IS NULL)
-   AND (:NEW.QtyInvoiced <= COALESCE(Qty_To,0) OR Qty_To IS NULL)
-   AND ((PRICELIST_SELECTION='Y' AND NOT EXISTS (SELECT 1 FROM M_OFFER_PRICELIST
-           WHERE M_OFFER_ID=M_OFFER.M_OFFER_ID
-           AND M_PRICELIST_ID = v_PriceList_ID))
-     OR (PRICELIST_SELECTION='N' AND EXISTS(SELECT 1 FROM M_OFFER_PRICELIST
-            WHERE M_OFFER_ID = M_OFFER.M_OFFER_ID
-            AND M_PRICELIST_ID = v_PriceList_ID)))
-         AND ((BPARTNER_SELECTION='Y' AND NOT EXISTS (SELECT 1 FROM M_OFFER_BPARTNER
-           WHERE M_OFFER_ID=M_OFFER.M_OFFER_ID
-           AND C_BPARTNER_ID = v_BPartner_ID))
-         OR (BPARTNER_SELECTION='N' AND EXISTS(SELECT 1 FROM M_OFFER_BPARTNER
-            WHERE M_OFFER_ID = M_OFFER.M_OFFER_ID
-            AND C_BPARTNER_ID = v_BPartner_ID)))
-         AND ((BP_GROUP_SELECTION='Y' AND NOT EXISTS (SELECT 1 FROM C_BPARTNER B, M_OFFER_BP_GROUP OB
-           WHERE OB.M_OFFER_ID = M_OFFER.M_OFFER_ID
-           AND B.C_BPARTNER_ID = v_BPartner_ID
-           AND OB.C_BP_GROUP_ID = B.C_BP_GROUP_ID))
-         OR (BP_GROUP_SELECTION='N' AND EXISTS (SELECT 1 FROM C_BPARTNER B, M_OFFER_BP_GROUP OB
-           WHERE OB.M_OFFER_ID = M_OFFER.M_OFFER_ID
-           AND B.C_BPARTNER_ID = v_BPartner_ID
-           AND OB.C_BP_GROUP_ID = B.C_BP_GROUP_ID)))
-         AND ((PRODUCT_SELECTION='Y' AND NOT EXISTS (SELECT 1 FROM M_OFFER_PRODUCT
-           WHERE M_OFFER_ID = M_OFFER.M_OFFER_ID
-           AND M_PRODUCT_ID = :NEW.M_PRODUCT_ID))
-         OR (PRODUCT_SELECTION='N' AND EXISTS (SELECT 1 FROM M_OFFER_PRODUCT
-            WHERE M_OFFER_ID = M_OFFER.M_OFFER_ID
-            AND M_PRODUCT_ID = :NEW.M_PRODUCT_ID)))
-         AND ((PROD_CAT_SELECTION='Y' AND NOT EXISTS (SELECT 1 FROM M_PRODUCT P, M_OFFER_PROD_CAT OP
-           WHERE OP.M_OFFER_ID = M_OFFER.M_OFFER_ID
-           AND P.M_PRODUCT_ID = :NEW.M_PRODUCT_ID
-           AND OP.M_PRODUCT_CATEGORY_ID = P.M_PRODUCT_CATEGORY_ID))
-         OR (PROD_CAT_SELECTION='N' AND EXISTS (SELECT 1 FROM M_PRODUCT P, M_OFFER_PROD_CAT OP
-           WHERE OP.M_OFFER_ID = M_OFFER.M_OFFER_ID
-           AND P.M_PRODUCT_ID = :NEW.M_PRODUCT_ID
-           AND OP.M_PRODUCT_CATEGORY_ID = P.M_PRODUCT_CATEGORY_ID)))
-         ORDER BY PRIORITY DESC, M_OFFER_ID) LOOP
-    v_Price := M_Get_Offer_Std_Price(Cur_Offer.M_Offer_ID, v_Price);
-   END LOOP;
-
-   FOR Cur_Offer IN (SELECT M_OFFER_ID
-    FROM M_OFFER
-    WHERE v_DateInvoiced BETWEEN DATEFROM AND COALESCE(DATETO,TO_DATE('31-12-9999','DD-MM-YYYY'))
- AND IsActive = 'Y'
- AND (:NEW.QtyInvoiced >= COALESCE(Qty_From,0) OR Qty_From IS NULL)
-   AND (:NEW.QtyInvoiced <= COALESCE(Qty_To,0) OR Qty_To IS NULL)
-   AND ((PRICELIST_SELECTION='Y' AND NOT EXISTS (SELECT 1 FROM M_OFFER_PRICELIST
-           WHERE M_OFFER_ID=M_OFFER.M_OFFER_ID
-           AND M_PRICELIST_ID = v_PriceList_ID))
-     OR (PRICELIST_SELECTION='N' AND EXISTS(SELECT 1 FROM M_OFFER_PRICELIST
-            WHERE M_OFFER_ID = M_OFFER.M_OFFER_ID
-            AND M_PRICELIST_ID = v_PriceList_ID)))
-    AND ((BPARTNER_SELECTION='Y' AND NOT EXISTS (SELECT 1 FROM M_OFFER_BPARTNER
-      WHERE M_OFFER_ID=M_OFFER.M_OFFER_ID
-      AND C_BPARTNER_ID = v_BPartner_ID))
-    OR (BPARTNER_SELECTION='N' AND EXISTS(SELECT 1 FROM M_OFFER_BPARTNER
-       WHERE M_OFFER_ID = M_OFFER.M_OFFER_ID
-       AND C_BPARTNER_ID = v_BPartner_ID)))
-    AND ((BP_GROUP_SELECTION='Y' AND NOT EXISTS (SELECT 1 FROM C_BPARTNER B, M_OFFER_BP_GROUP OB
-      WHERE OB.M_OFFER_ID = M_OFFER.M_OFFER_ID
-      AND B.C_BPARTNER_ID = v_BPartner_ID
-      AND OB.C_BP_GROUP_ID = B.C_BP_GROUP_ID))
-    OR (BP_GROUP_SELECTION='N' AND EXISTS (SELECT 1 FROM C_BPARTNER B, M_OFFER_BP_GROUP OB
-      WHERE OB.M_OFFER_ID = M_OFFER.M_OFFER_ID
-      AND B.C_BPARTNER_ID = v_BPartner_ID
-      AND OB.C_BP_GROUP_ID = B.C_BP_GROUP_ID)))
-    AND ((PRODUCT_SELECTION='Y' AND NOT EXISTS (SELECT 1 FROM M_OFFER_PRODUCT
-      WHERE M_OFFER_ID = M_OFFER.M_OFFER_ID
-      AND M_PRODUCT_ID = :NEW.M_PRODUCT_ID))
-    OR (PRODUCT_SELECTION='N' AND EXISTS (SELECT 1 FROM M_OFFER_PRODUCT
-       WHERE M_OFFER_ID = M_OFFER.M_OFFER_ID
-       AND M_PRODUCT_ID = :NEW.M_PRODUCT_ID)))
-    AND ((PROD_CAT_SELECTION='Y' AND NOT EXISTS (SELECT 1 FROM M_PRODUCT P, M_OFFER_PROD_CAT OP
-      WHERE OP.M_OFFER_ID = M_OFFER.M_OFFER_ID
-      AND P.M_PRODUCT_ID = :NEW.M_PRODUCT_ID
-      AND OP.M_PRODUCT_CATEGORY_ID = P.M_PRODUCT_CATEGORY_ID))
-    OR (PROD_CAT_SELECTION='N' AND EXISTS (SELECT 1 FROM M_PRODUCT P, M_OFFER_PROD_CAT OP
-      WHERE OP.M_OFFER_ID = M_OFFER.M_OFFER_ID
-      AND P.M_PRODUCT_ID = :NEW.M_PRODUCT_ID
-      AND OP.M_PRODUCT_CATEGORY_ID = P.M_PRODUCT_CATEGORY_ID)))
-    ORDER BY PRIORITY, M_OFFER_ID DESC) LOOP
-   Ad_Sequence_Next('C_InvoiceLine_Offer', :NEW.AD_Client_ID, v_InvoiceLine_Offer_ID);
-   v_lineno := v_lineno + 10;
-   v_PriceNew := M_Get_Offer_Price(Cur_Offer.M_Offer_ID, v_Price);
-   v_Amt := v_Price - v_PriceNew;
-   v_pricecancelAD := 'N';
-	IF(:NEW.C_ORDERLINE_ID IS NOT NULL) THEN
-	  	SELECT o.issotrx,ol.CancelPriceAD into v_Issotrx,v_pricecancelAD FROM C_ORDER o,C_ORDERLINE ol WHERE ol.C_ORDERLINE_ID = :NEW.C_ORDERLINE_ID AND o.C_ORDER_ID = ol.C_ORDER_ID;
-		IF((v_Issotrx = 'Y' AND v_pricecancelAD <> 'Y') OR v_Issotrx = 'N') THEN
-		   INSERT INTO C_INVOICELINE_OFFER
-		       (C_INVOICELINE_OFFER_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE,
-		      CREATED, CREATEDBY, UPDATED, UPDATEDBY,
-		      C_INVOICELINE_ID, LINE, M_OFFER_ID, PRICEOFFER, AMTOFFER)
-		   VALUES
-		       (v_InvoiceLine_Offer_ID, :NEW.AD_Client_ID, :NEW.AD_Org_ID, :NEW.IsActive,
-		      now(),:NEW.CreatedBy, now(),:NEW.UpdatedBy,
-		     :NEW.C_InvoiceLine_ID, v_lineno, Cur_Offer.M_Offer_Id, ROUND(v_Price,v_Precision), ROUND(v_Amt, v_Precision));
-	     END IF;
-    ELSE
-    	INSERT INTO C_INVOICELINE_OFFER
-       (C_INVOICELINE_OFFER_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE,
-      CREATED, CREATEDBY, UPDATED, UPDATEDBY,
-      C_INVOICELINE_ID, LINE, M_OFFER_ID, PRICEOFFER, AMTOFFER)
-   	VALUES
-       (v_InvoiceLine_Offer_ID, :NEW.AD_Client_ID, :NEW.AD_Org_ID, :NEW.IsActive,
-      now(),:NEW.CreatedBy, now(),:NEW.UpdatedBy,
-     :NEW.C_InvoiceLine_ID, v_lineno, Cur_Offer.M_Offer_Id, ROUND(v_Price,v_Precision), ROUND(v_Amt, v_Precision));
-    END IF;
-    v_Price := v_PriceNew;
-  END LOOP;
  END IF;
 
   /**************************************************************************

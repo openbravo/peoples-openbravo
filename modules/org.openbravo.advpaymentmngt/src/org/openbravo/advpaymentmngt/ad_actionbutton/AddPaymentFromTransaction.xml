@@ -57,11 +57,11 @@
     <PARAMETER id="paramPaymentDate" name="dateDisplayFormat" attribute="displayformat" replace="xx"/>
     <PARAMETER id="paramPaymentDate" name="dateDisplayFormat" attribute="saveformat" replace="yy"/>
     
-    <PARAMETER id="paramDueDateFrom" name="dateDisplayFormat" attribute="displayformat" replace="xx"/>
-    <PARAMETER id="paramDueDateFrom" name="dateDisplayFormat" attribute="saveformat" replace="yy"/>
+    <PARAMETER id="paramExpectedDateFrom" name="dateDisplayFormat" attribute="displayformat" replace="xx"/>
+    <PARAMETER id="paramExpectedDateFrom" name="dateDisplayFormat" attribute="saveformat" replace="yy"/>
     
-    <PARAMETER id="paramDueDateTo" name="dateDisplayFormat" attribute="displayformat" replace="xx"/>
-    <PARAMETER id="paramDueDateTo" name="dateDisplayFormat" attribute="saveformat" replace="yy"/>
+    <PARAMETER id="paramExpectedDateTo" name="dateDisplayFormat" attribute="displayformat" replace="xx"/>
+    <PARAMETER id="paramExpectedDateTo" name="dateDisplayFormat" attribute="saveformat" replace="yy"/>
     
     <PARAMETER id="paramTransDateFrom" name="dateDisplayFormat" attribute="displayformat" replace="xx"/>
     <PARAMETER id="paramTransDateFrom" name="dateDisplayFormat" attribute="saveformat" replace="yy"/>

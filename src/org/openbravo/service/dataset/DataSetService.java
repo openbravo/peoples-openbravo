@@ -264,7 +264,8 @@ public class DataSetService implements OBSingleton {
         if (parameters != null) {
           for (final String name : parameters.keySet()) {
             if (whereClause.indexOf(":" + name) != -1) {
-              existingParams.put(name, parameters.get(name));
+              final Object value = parameters.get(name);
+              existingParams.put(name, "null".equals(value) ? null : value);
             }
           }
         }
@@ -325,7 +326,8 @@ public class DataSetService implements OBSingleton {
     final Map<String, Object> existingParams = new HashMap<String, Object>();
     for (final String name : parameters.keySet()) {
       if (whereClause.indexOf(":" + name) != -1) {
-        existingParams.put(name, parameters.get(name));
+        final Object value = parameters.get(name);
+        existingParams.put(name, "null".equals(value) ? null : value);
       }
     }
     if (moduleId != null && whereClause != null) {

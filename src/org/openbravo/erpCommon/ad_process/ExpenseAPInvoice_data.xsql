@@ -398,8 +398,9 @@
           , LineNetAmt, S_ResourceAssignment_ID, PriceStd, PriceLimit
           , M_Offer_ID, M_AttributeSetInstance_ID, TaxAmt, IsActive
           , ChargeAmt, C_Projectline_ID, C_Invoice_Discount_ID, C_InvoiceLine_ID
-          , IsDescription, created, createdby, updated, 
-          updatedBy)
+          , IsDescription, created, createdby, updated, updatedBy,
+            isdeferred, defplantype, periodnumber, c_period_id
+            )
         VALUES (
           (?),  (?), (?), (?)
           , TO_NUMBER(?), (?), (?), (?)
@@ -409,8 +410,9 @@
           , TO_NUMBER(?), (?),  TO_NUMBER(?), TO_NUMBER(?)
           , (?), (?), TO_NUMBER(?), (?)
           , TO_NUMBER(?), (?), (?) , (?)
-          , (?), now(), ?, now(), 
-          (?))
+          , (?), now(), ?, now(), (?),
+            (?), (?), TO_NUMBER(?), (?)
+          )
 ]]></Sql>
 <Parameter name="adClientId"></Parameter>
 <Parameter name="adOrgId"></Parameter>
@@ -443,6 +445,10 @@
 <Parameter name="isdescription"></Parameter>
 <Parameter name="createdby"></Parameter>
 <Parameter name="updatedby"></Parameter>
+<Parameter name="isDeferredRevenue"/>
+<Parameter name="revplantype"/>
+<Parameter name="periodnumber"/>
+<Parameter name="cPeriodId"/>
 </SqlMethod>
 
 <SqlMethod name="insertInvoicelineAcctdimension" type="preparedStatement" connection="true" return="rowCount">

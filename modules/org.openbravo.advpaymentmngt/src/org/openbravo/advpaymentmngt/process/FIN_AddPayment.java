@@ -764,6 +764,12 @@ public class FIN_AddPayment {
         if (FIN_PaymentScheduleDetails[i].getInvoicePaymentSchedule() != null) {
           FieldProviderFactory.setField(
               data[i],
+              "expectedDate",
+              dateFormater.format(
+                  FIN_PaymentScheduleDetails[i].getInvoicePaymentSchedule().getExpectedDate())
+                  .toString());
+          FieldProviderFactory.setField(
+              data[i],
               "dueDate",
               dateFormater.format(
                   FIN_PaymentScheduleDetails[i].getInvoicePaymentSchedule().getDueDate())
@@ -806,6 +812,12 @@ public class FIN_AddPayment {
                 .getInvoicePaymentSchedule().getFINPaymentPriority().getColor());
           }
         } else {
+          FieldProviderFactory.setField(
+              data[i],
+              "expectedDate",
+              dateFormater.format(
+                  FIN_PaymentScheduleDetails[i].getOrderPaymentSchedule().getExpectedDate())
+                  .toString());
           FieldProviderFactory.setField(
               data[i],
               "dueDate",

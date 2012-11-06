@@ -60,6 +60,7 @@
   Cur_lineqty RECORD;
   Cur_InvoiceTax RECORD;
   Cur_TaxMAct RECORD;
+  Cur_Offer RECORD;
 
   -- Record Info
   v_Client_ID VARCHAR2(32);
@@ -156,6 +157,12 @@
   v_gross_unit_price NUMBER;
   v_line_gross_amount NUMBER;
   v_Isquantityvariable CHAR(1);
+  
+  v_isdeferred_inv C_InvoiceLine.IsDeferred%TYPE;
+  v_defplantype_inv C_InvoiceLine.DefPlanType%TYPE;
+  v_periodnumber_inv C_InvoiceLine.periodnumber%TYPE;
+  v_period_inv C_InvoiceLine.c_period_id%TYPE;
+
     
 BEGIN
   IF (p_PInstance_ID IS NOT NULL) THEN
@@ -548,6 +555,7 @@ BEGIN --BODY
           FROM C_INVOICE
           WHERE C_Invoice_ID=v_Record_ID;
 
+        
         --  Delete C_Invoice_Discounts inserted by the trigger
         DELETE FROM C_INVOICE_DISCOUNT WHERE C_Invoice_ID=v_RInvoice_ID;
         --  Insert discounts as in the reversed invoice
@@ -590,7 +598,8 @@ BEGIN --BODY
               PriceActual, LineNetAmt, C_Charge_ID, ChargeAmt,
               C_UOM_ID, C_Tax_ID, PriceStd, 
               Financial_Invoice_Line, Account_ID,Taxbaseamt,
-              gross_unit_price, line_gross_amount)
+              gross_unit_price, line_gross_amount,
+              isdeferred, defplantype, periodnumber, c_period_id)
             VALUES
             (
               v_NextNo, Cur_InvoiceLine.AD_Client_ID, Cur_InvoiceLine.AD_Org_ID, 'Y',
@@ -600,7 +609,8 @@ BEGIN --BODY
               Cur_InvoiceLine.PriceActual, Cur_InvoiceLine.LineNetAmt * -1, Cur_InvoiceLine.C_Charge_ID, Cur_InvoiceLine.ChargeAmt * -1,
               Cur_InvoiceLine.C_UOM_ID, Cur_InvoiceLine.C_Tax_ID, Cur_InvoiceLine.PriceStd, 
               Cur_InvoiceLine.Financial_Invoice_Line, Cur_InvoiceLine.Account_ID,Cur_InvoiceLine.Taxbaseamt * -1,
-              Cur_InvoiceLine.gross_unit_price, Cur_InvoiceLine.line_gross_amount * -1
+              Cur_InvoiceLine.gross_unit_price, Cur_InvoiceLine.line_gross_amount * -1,
+              Cur_InvoiceLine.isdeferred, Cur_InvoiceLine.defplantype, Cur_InvoiceLine.periodnumber, Cur_InvoiceLine.c_period_id
             );
           INSERT INTO M_MATCHINV
             (M_MATCHINV_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY,
@@ -633,6 +643,25 @@ BEGIN --BODY
 
             END LOOP; -- Create Reversal Accounting Dimensions
 
+					-- Add promotions
+					FOR Cur_Offer IN 
+						(SELECT *
+						 FROM C_INVOICELINE_OFFER
+						 WHERE c_InvoiceLine_ID = Cur_InvoiceLine.c_InvoiceLine_ID
+						) LOOP
+						INSERT INTO C_INVOICELINE_OFFER
+						(c_invoiceline_offer_id, ad_client_id, ad_org_id,                         
+						 isactive, createdby, updatedby,           
+						 c_invoiceline_id, line, m_offer_id,          
+						 priceoffer, priceoffergross, amtoffer, 
+						 totalamt, displayedtotalamt)
+						 values
+						(get_uuid(), Cur_Offer.AD_Client_ID, Cur_Offer.AD_Org_ID,
+						 'Y', v_UpdatedBy, v_UpdatedBy,
+						 v_NextNo, Cur_Offer.line, Cur_Offer.m_offer_id,
+						 Cur_Offer.priceoffer, Cur_Offer.priceoffergross, Cur_Offer.amtoffer,
+						 Cur_Offer.totalamt, Cur_Offer.displayedtotalamt);
+					END LOOP;
         END LOOP; -- Create Reversal Invoice Lines
 
         -- Check if there is any manually added tax
@@ -1076,7 +1105,9 @@ BEGIN --BODY
           v_ChargeAmt:=CUR_BOM_Line.ChargeAmt;
           -- Create New Lines
           FOR CUR_BOM IN
-            (SELECT b.M_ProductBOM_ID, p.C_UOM_ID, b.BOMQty, b.Description
+            (SELECT b.M_ProductBOM_ID, p.C_UOM_ID, b.BOMQty, b.Description,
+							revplantype, isdeferredrevenue, periodnumber, defaultperiod,
+							expplantype, isdeferredexpense, periodnumber_exp, defaultperiod_exp
              FROM M_PRODUCT_BOM b, M_PRODUCT p
              WHERE b.M_Product_ID=CUR_BOM_Line.M_Product_ID
                AND b.M_ProductBOM_ID=p.M_Product_ID
@@ -1112,6 +1143,33 @@ BEGIN --BODY
                 */
             -- M_BOM_PriceStd(CUR_BOM.M_ProductBOM_ID, PriceList_Version_ID), v_Offer_ID);
             -- One Time variables
+                IF(CUR_BOM.M_ProductBOM_ID IS NOT NULL) THEN
+									IF(v_IsSOTrx = 'Y') THEN
+										v_period_inv:= c_get_default_period(CUR_BOM_Line.C_Invoice_ID, CUR_BOM.defaultperiod);
+										IF(v_period_inv IS NOT NULL AND CUR_BOM.isdeferredrevenue = 'Y') THEN
+											v_isdeferred_inv := CUR_BOM.isdeferredrevenue;
+											v_defplantype_inv := CUR_BOM.revplantype;
+											v_periodnumber_inv := CUR_BOM.periodnumber;
+									  ELSE
+									  	v_period_inv := NULL;
+											v_isdeferred_inv := 'N';
+											v_defplantype_inv := NULL;
+											v_periodnumber_inv := NULL;
+										END IF;
+									ELSE
+										v_period_inv:= c_get_default_period(CUR_BOM_Line.C_Invoice_ID, CUR_BOM.defaultperiod_exp);
+										IF(v_period_inv IS NOT NULL AND CUR_BOM.isdeferredexpense = 'Y') THEN
+											v_isdeferred_inv := CUR_BOM.isdeferredexpense;
+											v_defplantype_inv := CUR_BOM.expplantype;
+											v_periodnumber_inv := CUR_BOM.periodnumber_exp;
+									  ELSE
+									  	v_period_inv := NULL;
+											v_isdeferred_inv := 'N';
+											v_defplantype_inv := NULL;
+											v_periodnumber_inv := NULL;
+										END IF;
+									END IF;
+                END IF;
             INSERT INTO C_INVOICELINE
               (
                C_InvoiceLine_ID, AD_Client_ID, AD_Org_ID, IsActive,
@@ -1120,7 +1178,8 @@ BEGIN --BODY
                C_UOM_ID, QtyInvoiced, PriceList,
                PriceActual,
                PriceLimit, LineNetAmt, C_Charge_ID, ChargeAmt,
-               C_Tax_ID, PriceStd
+               C_Tax_ID, PriceStd,
+               isdeferred, defplantype, periodnumber, c_period_id
               )
               VALUES
               (
@@ -1131,7 +1190,8 @@ BEGIN --BODY
                M_Get_Offers_Price(v_DateInvoiced, v_BPartner_ID, CUR_BOM.M_ProductBOM_ID, M_BOM_PriceStd(CUR_BOM.M_ProductBOM_ID, v_PriceList_Version_ID),CUR_BOM_Line.QtyInvoiced*CUR_BOM.BOMQty, v_PriceList_ID),
                M_BOM_PriceLimit(CUR_BOM.M_ProductBOM_ID, v_PriceList_Version_ID),
                M_Get_Offers_Price(v_DateInvoiced, v_BPartner_ID, CUR_BOM.M_ProductBOM_ID, M_BOM_PriceStd(CUR_BOM.M_ProductBOM_ID, v_PriceList_Version_ID),CUR_BOM_Line.QtyInvoiced*CUR_BOM.BOMQty, v_PriceList_ID) * CUR_BOM_Line.QtyInvoiced*CUR_BOM.BOMQty, CUR_BOM_Line.C_Charge_ID, v_ChargeAmt,
-               CUR_BOM_Line.C_Tax_ID, M_BOM_PriceStd(CUR_BOM.M_ProductBOM_ID, v_PriceList_Version_ID)
+               CUR_BOM_Line.C_Tax_ID, M_BOM_PriceStd(CUR_BOM.M_ProductBOM_ID, v_PriceList_Version_ID),
+               v_isdeferred_inv, v_defplantype_inv, v_periodnumber_inv, v_period_inv
               );
             v_ChargeAmt:=0;
           END LOOP; -- Create New Lines
@@ -1156,6 +1216,13 @@ BEGIN --BODY
     END;
   END IF;--FINISH_PROCESS
   IF (NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
+     /**************************************************************************
+      * Calculate promotions                                                   
+      *************************************************************************/
+      IF (v_DocAction = 'CO') THEN
+         M_PROMOTION_CALCULATE('I', v_Record_ID, v_UpdatedBy);
+      END IF;
+
     /**************************************************************************
      * Calculate Discounts
      *************************************************************************/
@@ -1170,7 +1237,9 @@ BEGIN --BODY
     WHERE i.C_INVOICE_ID = v_Record_ID AND i.C_CURRENCY_ID = c.C_CURRENCY_ID;
     FOR Cur_CInvoiceDiscount IN
       (SELECT C_INVOICE_DISCOUNT.C_INVOICE_DISCOUNT_ID, C_DISCOUNT.DISCOUNT, C_DISCOUNT.M_PRODUCT_ID, C_DISCOUNT.NAME,
-           C_INVOICE_DISCOUNT.CASCADE, C_DISCOUNT.C_DISCOUNT_ID, M_PRODUCT.C_UOM_ID
+           C_INVOICE_DISCOUNT.CASCADE, C_DISCOUNT.C_DISCOUNT_ID, M_PRODUCT.C_UOM_ID,
+           REVPLANTYPE, ISDEFERREDREVENUE, PERIODNUMBER, DEFAULTPERIOD,
+					EXPPLANTYPE, ISDEFERREDEXPENSE, PERIODNUMBER_EXP, DEFAULTPERIOD_EXP
        FROM C_INVOICE_DISCOUNT, C_DISCOUNT, M_PRODUCT
        WHERE C_INVOICE_DISCOUNT.C_DISCOUNT_ID=C_DISCOUNT.C_DISCOUNT_ID
          AND C_DISCOUNT.M_PRODUCT_ID=M_PRODUCT.M_PRODUCT_ID
@@ -1208,6 +1277,33 @@ BEGIN --BODY
           v_gross_unit_price:= 0;
           v_line_gross_amount:= 0;
         END IF;
+        IF(Cur_CInvoiceDiscount.M_PRODUCT_ID IS NOT NULL) THEN
+					IF(v_IsSOTrx = 'Y') THEN
+						v_period_inv:= c_get_default_period(v_Record_ID, Cur_CInvoiceDiscount.defaultperiod);
+						IF(v_period_inv IS NOT NULL AND Cur_CInvoiceDiscount.isdeferredrevenue = 'Y') THEN
+							v_isdeferred_inv := Cur_CInvoiceDiscount.isdeferredrevenue;
+							v_defplantype_inv := Cur_CInvoiceDiscount.revplantype;
+							v_periodnumber_inv := Cur_CInvoiceDiscount.periodnumber;
+					  ELSE
+					  	v_period_inv := NULL;
+							v_isdeferred_inv := 'N';
+							v_defplantype_inv := NULL;
+							v_periodnumber_inv := NULL;
+						END IF;
+					ELSE
+						v_period_inv:= c_get_default_period(v_Record_ID, Cur_CInvoiceDiscount.defaultperiod_exp);
+						IF(v_period_inv IS NOT NULL AND Cur_CInvoiceDiscount.isdeferredexpense = 'Y') THEN
+							v_isdeferred_inv := Cur_CInvoiceDiscount.isdeferredexpense;
+							v_defplantype_inv := Cur_CInvoiceDiscount.expplantype;
+							v_periodnumber_inv := Cur_CInvoiceDiscount.periodnumber_exp;
+					  ELSE
+					  	v_period_inv := NULL;
+							v_isdeferred_inv := 'N';
+							v_defplantype_inv := NULL;
+							v_periodnumber_inv := NULL;
+						END IF;
+					END IF;
+        END IF;        
         v_InvoiceLineSeqNo:=10 + v_InvoiceLineSeqNo;
         v_InvoiceLine:=get_uuid();
         INSERT INTO C_INVOICELINE
@@ -1220,7 +1316,8 @@ BEGIN --BODY
            CHARGEAMT, C_UOM_ID, C_TAX_ID, S_RESOURCEASSIGNMENT_ID,
            TAXAMT, M_ATTRIBUTESETINSTANCE_ID, ISDESCRIPTION,
            QUANTITYORDER, M_PRODUCT_UOM_ID, PRICESTD,
-           GROSS_UNIT_PRICE, LINE_GROSS_AMOUNT
+           GROSS_UNIT_PRICE, LINE_GROSS_AMOUNT,
+           ISDEFERRED, DEFPLANTYPE, PERIODNUMBER, C_PERIOD_ID
           )
           VALUES
           (
@@ -1232,7 +1329,8 @@ BEGIN --BODY
            0, Cur_CInvoiceDiscount.C_UOM_ID, Cur_TaxDiscount.C_TAX_ID, NULL,
            NULL, NULL, 'N' ,
            NULL, NULL, v_Discount,
-           ROUND(v_gross_unit_price, v_precision), ROUND(v_line_gross_amount, v_precision)
+           ROUND(v_gross_unit_price, v_precision), ROUND(v_line_gross_amount, v_precision),
+           v_isdeferred_inv, v_defplantype_inv, v_periodnumber_inv, v_period_inv
           );
         --v_InvoiceDiscount:=Ad_Sequence_Nextno('C_InvoiceLine');
         UPDATE C_INVOICELINE

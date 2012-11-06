@@ -1139,7 +1139,7 @@ isc.OBPersonalizeFormLayout.addProperties({
   // sets information about the current personalization record
   // in the status bar
   setStatusBarInformation: function () {
-    this.toolBar.updateButtonState();
+    this.toolBar.updateButtonState(false, false, true);
 
     var statusBarFields = null,
         barFieldValues = [],

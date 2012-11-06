@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.sql.Connection;
+import java.util.HashMap;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -34,6 +35,7 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.ad_actionButton.ActionButtonDefaultData;
 import org.openbravo.erpCommon.businessUtility.Tax;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
+import org.openbravo.erpCommon.utility.AccDefUtility;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
@@ -312,6 +314,22 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
           if (log4j.isDebugEnabled())
             log4j.debug("*****************+client: "
                 + (data[i].invoiceprice.equals("") ? dataPrice[0].pricestd : data[i].invoiceprice));
+          // Calculate Acc and Def Plan from Product
+          String isDeferred = "N";
+          HashMap<String, String> accDefPlanData = AccDefUtility.getDeferredPlanForInvoiceProduct(
+              strcInvoiceId, data[i].mProductId);
+          String planType = accDefPlanData.get("planType");
+          String periodNumber = accDefPlanData.get("periodNumber");
+          String startingPeriodId = accDefPlanData.get("startingPeriodId");
+          // As it is a Expense invoice:
+          boolean isSOTRX = false;
+          if (!"".equals(planType) && !"".equals(periodNumber) && !"".equals(startingPeriodId)) {
+            isDeferred = "Y";
+          } else {
+            planType = "";
+            periodNumber = "";
+            startingPeriodId = "";
+          }
           // Catch database error message
           try {
             ExpenseAPInvoiceData.insertLine(conn, this, data[i].adClientId, data[i].adOrgId,
@@ -320,7 +338,8 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
                 strPricestd, strPricelist, strcTaxID,
                 (new BigDecimal(strPricestd).multiply(qty)).toPlainString(), "", strPricestd,
                 strPricelimit, "", "", "", "Y", "0", "", "", strcInvoiceLineId, "N",
-                vars.getUser(), vars.getUser());
+                vars.getUser(), vars.getUser(), isDeferred, planType, periodNumber,
+                startingPeriodId);
           } catch (ServletException ex) {
             myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
             releaseRollbackConnection(conn);
