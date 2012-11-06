@@ -50,7 +50,9 @@ OB.Reservation.QuantityValidate = function(item, validator, value, record) {
   }
   for (i = 0; i < selectedRecordsLength; i++) {
     editedRecord = isc.addProperties({}, selectedRecords[i], item.grid.getEditedRecord(selectedRecords[i]));
-    reservedQty = reservedQty.add(new BigDecimal(String(editedRecord.quantity)));
+    if (isc.isA.Number(editedRecord.quantity)) {
+      reservedQty = reservedQty.add(new BigDecimal(String(editedRecord.quantity)));
+    }
   }
   if (reservedQty.compareTo(totalQty) > 0) {
     return false;
