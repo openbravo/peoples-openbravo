@@ -346,6 +346,63 @@
                 ELSIF (v_aux = 1) THEN
                   M_RESERVATION_CONSUMPTION(v_reservation_id, cur_inoutline.m_locator_id, cur_inoutline.m_attributesetinstance_id, cur_inoutline.movementqty, v_user, v_result, v_message);
                 END IF;
+              ELSIF (cur_inout.issotrx = 'N') THEN
+                -- Manage pre-reserves
+                DECLARE
+                  cur_reserve_stock RECORD;
+                  v_pendingqty NUMBER;
+                  v_qtyaux NUMBER;
+                  v_res_stock_id VARCHAR2(32);
+                BEGIN
+                  v_pendingqty := v_qty;
+                  FOR cur_reserve_stock IN (
+                      SELECT rs.*
+                      FROM m_reservation_stock rs JOIN m_reservation r ON rs.m_reservation_id = r.m_reservation_id
+                      WHERE rs.c_orderline_id = cur_inoutline.c_orderline_id
+                        AND rs.quantity <> COALESCE(rs.releasedqty, 0)
+                        AND rs.m_locator_id IS NULL
+                        AND r.res_status != 'CL'
+                  ) LOOP
+                    v_qtyaux := LEAST(cur_reserve_stock.quantity - COALESCE(cur_reserve_stock.releasedqty, 0), v_pendingqty);
+                    -- Check if exists a reserved stock for the same orderline, attributes and locator in the reservation
+                    SELECT count(*), max(m_reservation_stock_id) INTO v_aux, v_res_stock_id
+                    FROM m_reservation_stock
+                      WHERE c_orderline_id = cur_inoutline.c_orderline_id
+                        AND m_locator_id = cur_inoutline.m_locator_id
+                        AND m_reservation_id = cur_reserve_stock.m_reservation_id
+                        AND COALESCE(m_attributesetinstance_id, '0') = COALESCE(Cur_InOutLine.M_AttributeSetInstance_ID, '0');
+                    -- UPDATE EXISTING PRERESERVED STOCK TO DECREASE RESERVED QTY
+                    UPDATE m_reservation_stock
+                    SET quantity = quantity - v_qtyaux
+                    WHERE m_reservation_stock_id = cur_reserve_stock.m_reservation_stock_id;
+                    -- INSERT OR UPDATE RESERVED STOCK BY SAME QUANTITY
+                    IF (v_aux > 0) THEN
+                      UPDATE m_reservation_stock
+                      SET quantity = quantity + v_qtyaux
+                      WHERE m_reservation_stock_id = v_res_stock_id;
+                    ELSE
+                      INSERT INTO m_reservation_stock(
+                        m_reservation_stock_id, ad_client_id, ad_org_id, isactive,
+                        created, createdby, updated, updatedby,
+                        m_reservation_id, m_attributesetinstance_id, m_locator_id, c_orderline_id,
+                        quantity, releasedqty, isallocated
+                      ) VALUES (
+                        get_uuid(), cur_reserve_stock.ad_client_id, cur_reserve_stock.ad_org_id, 'Y',
+                        now(), v_user, now(), v_user,
+                        cur_reserve_stock.m_reservation_id, cur_inoutline.m_attributesetinstance_id, cur_inoutline.m_locator_id, cur_inoutline.c_orderline_id,
+                        v_qtyaux, 0, 'N'
+                      );
+                    END IF;
+                    v_pendingqty := v_pendingqty - v_qtyaux;
+                    IF (v_pendingqty <= 0) THEN
+                      EXIT;
+                    END IF;
+                  END LOOP;
+                  DELETE FROM m_reservation_stock
+                  WHERE c_orderline_id = cur_inoutline.c_orderline_id
+                    AND quantity = 0
+                    AND COALESCE(releasedqty, 0) = 0;
+                END;
               END IF;
               
               v_ResultStr:='CreateTransaction';
