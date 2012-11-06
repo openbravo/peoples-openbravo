@@ -168,7 +168,7 @@ enyo.kind({
   events: {
     onTabChange: ''
   },
-  tabPanel: '#catalog',
+  tabPanel: 'catalog',
   label: OB.I18N.getLabel('OBPOS_LblBrowse'),
   tap: function () {
     this.doTabChange({
