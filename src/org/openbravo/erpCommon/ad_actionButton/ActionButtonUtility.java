@@ -22,6 +22,7 @@ import java.util.Vector;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
@@ -48,7 +49,7 @@ public class ActionButtonUtility {
     String windowId = "";
     if (tabId != null) {
       Tab tab = OBDal.getInstance().get(Tab.class, tabId);
-      windowId = tab.getWindow().getId();
+      windowId = DalUtil.getId(tab.getWindow()).toString();
     }
 
     if (log4j.isDebugEnabled())

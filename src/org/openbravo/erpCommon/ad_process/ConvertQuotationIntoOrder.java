@@ -58,6 +58,8 @@ import org.openbravo.service.db.DalBaseProcess;
 import org.openbravo.service.db.DalConnectionProvider;
 
 public class ConvertQuotationIntoOrder extends DalBaseProcess {
+
+  @Override
   public void doExecute(ProcessBundle bundle) throws Exception {
 
     String dateFormatString = OBPropertiesProvider.getInstance().getOpenbravoProperties()
@@ -256,7 +258,7 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
       OrderLine objCloneOrdLine, TaxRate lineTax) {
 
     String strPriceVersionId = getPriceListVersion(objOrder.getPriceList().getId(), objOrder
-        .getClient().getId());
+        .getClient().getId(), objCloneOrder.getOrderDate());
     BigDecimal bdPriceList = getPriceList(ordLine.getProduct().getId(), strPriceVersionId);
     BigDecimal bdPriceStd = getPriceStd(ordLine.getProduct().getId(), strPriceVersionId);
 
@@ -330,15 +332,17 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
   /**
    * Get the Current version of a price list
    */
-  private String getPriceListVersion(String priceList, String clientId) {
+  private String getPriceListVersion(String priceList, String clientId, Date orderDate) {
     try {
       String whereClause = " as plv left outer join plv.priceList pl where pl.active='Y' and plv.active='Y' and "
-          + " pl.id = :priceList and plv.client.id = :clientId order by plv.validFromDate desc";
+          + " pl.id = :priceList and plv.client.id = :clientId and plv.validFromDate<= :orderDate  order by plv.validFromDate desc";
 
       OBQuery<PriceListVersion> ppriceListVersion = OBDal.getInstance().createQuery(
           PriceListVersion.class, whereClause);
       ppriceListVersion.setNamedParameter("priceList", priceList);
       ppriceListVersion.setNamedParameter("clientId", clientId);
+      ppriceListVersion.setNamedParameter("orderDate", orderDate);
+      ppriceListVersion.setMaxResult(1);
 
       if (!ppriceListVersion.list().isEmpty()) {
         return ppriceListVersion.list().get(0).getId();
