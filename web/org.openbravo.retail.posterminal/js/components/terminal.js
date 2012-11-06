@@ -174,9 +174,7 @@ enyo.kind({
       }]
     }]
   }, {
-    makeId: function () {
-      return 'alertContainer';
-    }
+    name: 'alertContainer'
   }],
   initComponents: function () {
     //this.terminal = terminal;

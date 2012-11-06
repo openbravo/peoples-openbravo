@@ -191,8 +191,67 @@ div.subwindow-closebutton:hover {
   background-image: url('../img/loading-bar.gif');
 }
 
-.dropdown-menu {
-  display: none;
+.alert {
+  position: absolute;
+  right: 35px;
+  top: 5px;
+
+  padding: 8px 35px 8px 14px;
+  margin-bottom: 18px;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+  background-color: white;
+  border: 1px solid;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+}
+
+.alert-warning {
+  background-color: #FCF8E3;
+  border-color: #FBEED5;
+  color: #C09853;
+}
+
+.alert-danger,
+.alert-error {
+  background-color: #F2DEDE;
+  border-color: #EED3D7;
+  color: #B94A48;
+}
+
+.alert-success {
+  background-color: #DFF0D8;
+  border-color: #D6E9C6;
+  color: #468847;
+}
+
+.alert-closebutton {
+  cursor: pointer;
+  float: right;
+  font-size: 20px;
+  font-weight: bold;
+  line-height: 18px;
+  color: black;
+  text-shadow: 0 1px 0 white;
+  opacity: 0.2;
+  position: relative;
+  top: -2px;
+  right: -21px;
+  line-height: 18px;
+}
+
+.alert-closebutton:hover {
+  opacity: 0.5;
+}
+
+.alert-fade {
+  -webkit-transition: opacity .15s linear;
+  transition: opacity .15s linear;
+  opacity: 0;
+}
+
+.alert-fade.alert-fade-in {
+  opacity: 1;
 }
 
 .hide {

@@ -45,12 +45,12 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UTIL.showAlert',
-  style: 'position:absolute; right:35px; top: 5px',
+  classes: 'alert alert-fade',
   components: [{
     tag: 'button',
-    classes: 'close',
-    attributes: {
-      'data-dismiss': 'alert'
+    classes: 'alert-closebutton',
+    tap: function () {
+      this.owner.hide()
     },
     allowHtml: true,
     content: '&times;'
@@ -62,25 +62,37 @@ enyo.kind({
   }],
   statics: {
     display: function (txt, title, type) {
-      var alert = new(enyo.kind({
+      var componentsArray = OB.POS.terminal.$.alertContainer.getComponents(),
+          i;
+      // To erase first previous shown alert
+      for (i = 0; i < componentsArray.length; i++) {
+        componentsArray[i].destroy();
+      }
+      OB.POS.terminal.$.alertContainer.createComponent({
         kind: 'OB.UTIL.showAlert',
         title: title,
         txt: txt,
         type: type
-      }))();
-      alert.renderInto(enyo.dom.byId('alertContainer'));
+      }).render();
       return alert;
     }
   },
 
   initComponents: function () {
+    var me = this;
     this.inherited(arguments);
     this.$.title.setContent(this.title);
     this.$.txt.setContent(this.txt);
-    this.addClass('alert fade in ' + this.type);
+    if (!this.type) {
+      this.type = 'alert-warning';
+    }
+    this.addClass(this.type);
+    setTimeout(function () {
+      me.addClass('alert-fade-in');
+    }, 1);
 
     setTimeout(function () {
-      $('.alert').alert('close');
+      me.hide();
     }, 5000);
   }
 });
@@ -108,7 +120,7 @@ OB.UTIL.showSuccess = function (s) {
 };
 
 OB.UTIL.showWarning = function (s) {
-  OB.UTIL.showAlert.display(s, OB.I18N.getLabel('OBPOS_LblWarning'), '');
+  OB.UTIL.showAlert.display(s, OB.I18N.getLabel('OBPOS_LblWarning'), 'alert-warning');
 };
 
 OB.UTIL.showStatus = function (s) {
