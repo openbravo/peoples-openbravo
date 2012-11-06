@@ -27,7 +27,7 @@ enyo.kind({
     onCreateOrderFromQuotation: ''
   },
   tap: function () {
-    var checked = !this.parent.children[0].checked;
+    var checked = !this.parent.children[1].children[0].checked;
     this.parent.parent.parent.parent.parent.theQuotation.createOrderFromQuotation(checked);
     $('#modalCreateOrderFromQuotation').modal('hide');
   }
@@ -38,8 +38,13 @@ enyo.kind({
   name: 'OB.UI.updateprices',
   kind: 'OB.UI.CheckboxButton',
   classes: 'modal-dialog-btn-check',
-  checked: true,
-  content: OB.I18N.getLabel('OBPOS_QuotationUpdatePrices')
+  checked: false,
+  content: OB.I18N.getLabel('OBPOS_QuotationUpdatePrices'),
+  init: function () {
+    this.checked = true;
+    this.addRemoveClass('active', this.checked);
+    console.log(this.checked);
+  }
 });
 
 enyo.kind({
@@ -48,10 +53,13 @@ enyo.kind({
   myId: 'modalCreateOrderFromQuotation',
   bodyContent: {},
   bodyButtons: {
-    components: [{
-      kind: 'OB.UI.updateprices',
-      myId: 'updatePricesCheck'
-    }, {
+    components: [{style: 'height: 40px; width: 127px; float:left;'},{
+        style: 'height: 40px; width: 50px; background-color: #ffffff; float:left',
+        components: [{
+        kind: 'OB.UI.updateprices',
+        myId: 'updatePricesCheck'
+      }]
+    }, {style: 'clear: both;'},{
       kind: 'OB.OBPOSPointOfSale.UI.Modals.btnModalCreateOrderAccept'
     }, {
       kind: 'OB.OBPOSPointOfSale.UI.Modals.btnModalCreateOrderCancel'
