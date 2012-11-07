@@ -134,10 +134,10 @@ enyo.kind({
     }
   },
   paidReceipts: function (inSender, inEvent) {
-    this.$.paidReceiptsView.setParams({
+    this.$.modalPaidReceipts.setParams({
       isQuotation: false
     });
-    this.$.paidReceiptsView.waterfall('onClearAction');
+    this.$.modalPaidReceipts.waterfall('onClearAction');
     this.doShowPopup({
       popup: 'modalPaidReceipts'
     });
@@ -145,10 +145,10 @@ enyo.kind({
   },
 
   quotations: function (inSender, inEvent) {
-    this.$.paidReceiptsView.setParams({
+    this.$.modalPaidReceipts.setParams({
       isQuotation: true
     });
-    this.$.paidReceiptsView.waterfall('onClearAction');
+    this.$.modalPaidReceipts.waterfall('onClearAction');
     this.doShowPopup({
       popup: 'modalPaidReceipts'
     });
