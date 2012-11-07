@@ -78,14 +78,20 @@ enyo.kind({
   },
   openLocalStockModal: function () {
     if (this.leftSubWindow.localStockModel) {
-      this.doShowPopup({popup: 'modalLocalStock', args: this.leftSubWindow.localStockModel});
+      this.doShowPopup({
+        popup: 'modalLocalStock',
+        args: this.leftSubWindow.localStockModel
+      });
     }
     return true;
   },
   openOtherStoresStockModal: function () {
     if (this.leftSubWindow.otherStoresStockModel) {
-      if(this.leftSubWindow.otherStoresStockModel.qty > 0){
-        this.doShowPopup({popup: 'modalStockInOtherStores', args: this.leftSubWindow.otherStoresStockModel});  
+      if (this.leftSubWindow.otherStoresStockModel.qty > 0) {
+        this.doShowPopup({
+          popup: 'modalStockInOtherStores',
+          args: this.leftSubWindow.otherStoresStockModel
+        });
       }
     }
     return true;
