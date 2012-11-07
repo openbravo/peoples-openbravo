@@ -14,8 +14,11 @@ enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.Modals.btnModalCreateOrderCancel',
   classes: 'btnlink btnlink-gray modal-dialog-content-button',
   content: OB.I18N.getLabel('OBPOS_LblCancel'),
+  events: {
+    onHideThisPopup: ''
+  },
   tap: function () {
-    $('#modalCreateOrderFromQuotation').modal('hide');
+    this.doHideThisPopup();
   }
 });
 enyo.kind({
@@ -24,12 +27,13 @@ enyo.kind({
   classes: 'btnlink btnlink-gray modal-dialog-content-button',
   content: OB.I18N.getLabel('OBPOS_CreateOrderFromQuotation'),
   events: {
-    onCreateOrderFromQuotation: ''
+    onCreateOrderFromQuotation: '',
+    onHideThisPopup: ''
   },
   tap: function () {
     var checked = !this.parent.children[1].children[0].checked;
     this.parent.parent.parent.parent.parent.theQuotation.createOrderFromQuotation(checked);
-    $('#modalCreateOrderFromQuotation').modal('hide');
+    this.doHideThisPopup();
   }
 });
 

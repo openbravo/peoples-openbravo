@@ -21,6 +21,7 @@ enyo.kind({
     onReceiptToInvoice: 'receiptToInvoice',
     onCreateQuotation: 'createQuotation',
     onCreateOrderFromQuotation: 'createOrderFromQuotation',
+    onShowCreateOrderPopup: 'showCreateOrderPopup',
     onReactivateQuotation: 'reactivateQuotation',
     onRejectQuotation: 'rejectQuotation',
     onQuotations: 'quotations',
@@ -208,6 +209,13 @@ enyo.kind({
     this.model.get('orderList').addNewQuotation();
     return true;
   },
+  
+  showCreateOrderPopup: function() {
+    this.doShowPopup({
+      popup: 'modalCreateOrderFromQuotation'
+    });
+  },
+  
   createOrderFromQuotation: function () {
     this.model.get('order').createOrderFromQuotation();
     this.model.get('orderList').saveCurrent();

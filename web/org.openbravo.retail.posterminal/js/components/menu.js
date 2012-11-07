@@ -227,11 +227,11 @@ enyo.kind({
   kind: 'OB.UI.MenuAction',
   permission: 'OBPOS_receipt.createorderfromquotation',
   events: {
-    onCreateOrderFromQuotation: ''
+    onShowCreateOrderPopup: ''
   },
   label: OB.I18N.getLabel('OBPOS_CreateOrderFromQuotation'),
   tap: function () {
-    $('#modalCreateOrderFromQuotation').modal('show');
+    this.doShowCreateOrderPopup();
   },
   updateVisibility: function (model) {
     if (model.get('isQuotation') && model.get('hasbeenpaid') === 'Y') {
