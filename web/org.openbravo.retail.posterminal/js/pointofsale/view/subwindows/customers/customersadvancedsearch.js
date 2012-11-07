@@ -38,8 +38,8 @@ enyo.kind({
     return true;
   },
   defaultNavigateOnClose: 'mainSubWindow',
-  onEnterTap: function(e, action){
-    if (action){
+  onEnterTap: function (e, action) {
+    if (action) {
       this.waterfall(action);
     } else {
       this.waterfall('onSearchActionByEnter');

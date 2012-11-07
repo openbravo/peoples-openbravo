@@ -93,7 +93,7 @@ enyo.kind({
     }, {
       kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalConfigurationRequiredForCrossStore',
       name: 'modalConfigurationRequiredForCrossStore'
-    },{
+    }, {
       kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalStockInStore',
       name: 'modalLocalStock'
     }, {

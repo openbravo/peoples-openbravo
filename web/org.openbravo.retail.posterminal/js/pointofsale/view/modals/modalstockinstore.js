@@ -27,7 +27,7 @@ enyo.kind({
   executeOnHide: function () {
     this.stockInfo = null;
   },
-  executeOnShow: function(args){
+  executeOnShow: function (args) {
     this.setStockInfo(args);
   },
   stockInfoChanged: function (oldValue) {

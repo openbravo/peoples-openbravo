@@ -31,7 +31,7 @@ enyo.kind({
   name: 'OB.UI.LogoutDialogCancel',
   kind: 'OB.UI.Button',
   content: OB.I18N.getLabel('OBPOS_LblCancel'),
-  attributes:{
+  attributes: {
     'onEnterTap': 'hide'
   },
   classes: 'btnlink btnlink-gray modal-dialog-content-button',
