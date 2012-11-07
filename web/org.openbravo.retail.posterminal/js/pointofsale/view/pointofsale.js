@@ -124,6 +124,7 @@ enyo.kind({
     this.$.paidReceiptsView.setParams({
       isQuotation: false
     });
+    this.$.paidReceiptsView.waterfall('onClearAction');
     $('#modalPaidReceipts').modal('show');
     return true;
   },
@@ -132,6 +133,9 @@ enyo.kind({
     this.$.paidReceiptsView.setParams({
       isQuotation: true
     });
+    console.log('m',this.$.paidReceiptsView);
+    
+    this.$.paidReceiptsView.waterfall('onClearAction');
     $('#modalPaidReceipts').modal('show');
   },
 

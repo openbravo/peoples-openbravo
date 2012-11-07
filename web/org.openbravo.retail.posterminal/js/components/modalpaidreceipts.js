@@ -210,7 +210,7 @@ enyo.kind({
   classes: 'row-fluid',
   handlers: {
     onSearchAction: 'searchAction',
-    onClearAction: 'clearAction'
+    onClearAction: 'clearAction',
   },
   events: {
     onChangePaidReceipt: ''
