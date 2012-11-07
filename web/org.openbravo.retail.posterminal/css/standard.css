@@ -382,7 +382,8 @@ button.btnkeyboard-inactive:active {
   color: black;
 }
 
-button.btnkeyboard.btn-over {
+button.btnkeyboard.btn-over,
+button.btnkeyboard:hover {
   opacity: 0.75;
 }
 
