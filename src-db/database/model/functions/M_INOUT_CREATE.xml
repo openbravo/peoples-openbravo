@@ -441,6 +441,9 @@ BEGIN --BODY
                   IF (v_pinstance_result = 0) THEN
                     -- Error on m_get_stock
                     RAISE_APPLICATION_ERROR(-20000, v_pinstance_msg);
+                  ELSIF (v_pinstance_result = 2) THEN
+                    v_result := 2;
+                    v_message := v_message || v_pinstance_msg;
                   END IF;
                 END; -- End Call M_GET_STOCK
                 
