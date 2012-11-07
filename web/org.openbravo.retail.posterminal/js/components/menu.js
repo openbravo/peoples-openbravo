@@ -207,7 +207,7 @@ enyo.kind({
   label: OB.I18N.getLabel('OBPOS_CreateQuotation'),
   tap: function () {
     this.parent.hide(); // Manual dropdown menu closure
-    if (OB.POS.modelterminal.get('terminal').documentTypeForQuotations) {
+    if (OB.POS.modelterminal.get('terminal').terminalType.documentTypeForQuotations) {
       this.doCreateQuotation();
     } else {
       OB.UTIL.showError(OB.I18N.getLabel('OBPOS_QuotationNoDocType'));

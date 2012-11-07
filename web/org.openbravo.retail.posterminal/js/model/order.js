@@ -704,7 +704,7 @@
     createQuotation: function () {
       if (OB.POS.modelterminal.hasPermission('OBPOS_receipt.quotation')) {
         this.set('isQuotation', true);
-        this.set('documentType', OB.POS.modelterminal.get('terminal').documentTypeForQuotations);
+        this.set('documentType', OB.POS.modelterminal.get('terminal').terminalType.documentTypeForQuotations);
         this.save();
       }
     },
@@ -713,7 +713,7 @@
       var documentseq;
       this.set('id', null);
       this.set('isQuotation', false);
-      this.set('documentType', OB.POS.modelterminal.get('terminal').documentType);
+      this.set('documentType', OB.POS.modelterminal.get('terminal').terminalType.documentType);
       this.set('hasbeenpaid', 'N');
       this.set('isEditable', true);
       this.set('orderDate', new Date());
@@ -1048,7 +1048,7 @@
       this.saveCurrent();
       this.current = this.newOrder();
       this.current.set('isQuotation', true);
-      this.current.set('documentType', OB.POS.modelterminal.get('terminal').documentTypeForQuotations);
+      this.current.set('documentType', OB.POS.modelterminal.get('terminal').terminalType.documentTypeForQuotations);
       documentseq = OB.POS.modelterminal.get('quotationDocumentSequence') + 1;
       documentseqstr = OB.UTIL.padNumber(documentseq, 5);
       OB.POS.modelterminal.set('quotationDocumentSequence', documentseq);

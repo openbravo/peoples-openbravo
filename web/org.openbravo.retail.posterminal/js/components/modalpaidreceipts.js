@@ -173,7 +173,7 @@ enyo.kind({
       this.$.endDate.removeClass("error");
     }
     this.filters = {
-      documentType: params.isQuotation ? (OB.POS.modelterminal.get('terminal').documentTypeForQuotations) : (OB.POS.modelterminal.get('terminal').documentType),
+      documentType: params.isQuotation ? (OB.POS.modelterminal.get('terminal').terminalType.documentTypeForQuotations) : (OB.POS.modelterminal.get('terminal').terminalType.documentType),
       isQuotation: params.isQuotation ? true : false,
       filterText: this.$.filterText.getValue(),
       startDate: this.$.startDate.getValue(),
