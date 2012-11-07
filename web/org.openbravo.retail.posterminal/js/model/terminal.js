@@ -223,8 +223,8 @@ OB.Model.Terminal = Backbone.Model.extend({
     OB.POS.windowObjs.push(windowp);
 
 
-    minTotalRefresh = OB.POS.modelterminal.get('terminal').minutestorefreshdatatotal * 60 * 1000;
-    minIncRefresh = OB.POS.modelterminal.get('terminal').minutestorefreshdatainc * 60 * 1000;
+    minTotalRefresh = OB.POS.modelterminal.get('terminal').terminalType.minutestorefreshdatatotal * 60 * 1000;
+    minIncRefresh = OB.POS.modelterminal.get('terminal').terminalType.minutestorefreshdatainc * 60 * 1000;
     lastTotalRefresh = window.localStorage.getItem('POSLastTotalRefresh');
     lastIncRefresh = window.localStorage.getItem('POSLastIncRefresh');
     if ((!minTotalRefresh && !minIncRefresh) || (!lastTotalRefresh && !lastIncRefresh)) {
@@ -822,7 +822,7 @@ OB.Model.Terminal = Backbone.Model.extend({
           window.console.error(arguments);
         });
       }
-      minIncRefresh = OB.POS.modelterminal.get('terminal').minutestorefreshdatainc * 60 * 1000;
+      minIncRefresh = OB.POS.modelterminal.get('terminal').terminalType.minutestorefreshdatainc * 60 * 1000;
       if (minIncRefresh) {
         loadModelsIncFunc = function () {
           console.log('Performing incremental masterdata refresh');

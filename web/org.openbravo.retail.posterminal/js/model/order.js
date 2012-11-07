@@ -654,7 +654,7 @@
 
     setOrderTypeReturn: function () {
       if (OB.POS.modelterminal.hasPermission('OBPOS_receipt.return')) {
-        this.set('documentType', OB.POS.modelterminal.get('terminal').documentTypeForReturns);
+        this.set('documentType', OB.POS.modelterminal.get('terminal').terminalType.documentTypeForReturns);
         this.set('orderType', 1); // 0: Sales order, 1: Return order
         this.save();
 
@@ -850,7 +850,7 @@
       order.set('organization', OB.POS.modelterminal.get('terminal').organization);
       order.set('createdBy', OB.POS.modelterminal.get('orgUserId'));
       order.set('updatedBy', OB.POS.modelterminal.get('orgUserId'));
-      order.set('documentType', OB.POS.modelterminal.get('terminal').documentType);
+      order.set('documentType', OB.POS.modelterminal.get('terminal').terminalType.documentType);
       order.set('orderType', 0); // 0: Sales order, 1: Return order
       order.set('generateInvoice', false);
       order.set('session', OB.POS.modelterminal.get('session'));

@@ -35,7 +35,7 @@ public class Terminal extends ProcessHQLQuery {
         + getIdentifierAlias("organization")
         + ", pos.client.id as client, pos.client.name as "
         + getIdentifierAlias("client")
-        + ", pos.hardwareurl as hardwareurl, pos.scaleurl as scaleurl, pos.obposTerminaltype.openDrawer as drawerpreference, "
+        + ", pos.hardwareurl as hardwareurl, pos.scaleurl as scaleurl, "
         + "'"
         + pricesList.getId()
         + "' as priceList, '"
@@ -45,10 +45,6 @@ public class Terminal extends ProcessHQLQuery {
         + pricesList.getCurrency().getIdentifier()
         + "' as "
         + getIdentifierAlias("currency")
-        + ", pos.obposTerminaltype.documentType.id as documentType, pos.obposTerminaltype.documentType.name as "
-        + getIdentifierAlias("documentType")
-        + ", pos.obposTerminaltype.documentTypeForReturns.id as documentTypeForReturns, pos.obposTerminaltype.documentTypeForReturns.name as "
-        + getIdentifierAlias("documentTypeForReturns")
         + ", pos.organization.obretcoDbpIrulesid as defaultbp_invoiceterm "
         + ", pos.organization.obretcoDbpPtermid.id as defaultbp_paymentterm "
         + ", pos.organization.obretcoDbpPmethodid.id as defaultbp_paymentmethod "
@@ -60,9 +56,9 @@ public class Terminal extends ProcessHQLQuery {
         + ", pos.orderdocnoPrefix as docNoPrefix "
         + ", "
         + lastDocumentNumber
-        + " as lastDocumentNumber, pos.obposTerminaltype.minutestorefreshdatatotal as minutestorefreshdatatotal, "
-        + " pos.obposTerminaltype.minutestorefreshdatainc as minutestorefreshdatainc"
-        + " from OBPOS_Applications AS pos where pos.$readableCriteria and searchKey = :terminal";
+        + " as lastDocumentNumber"
+        + ", postype as terminalType"
+        + " from OBPOS_Applications AS pos, OBPOS_TerminalType as postype where pos.$readableCriteria and pos.searchKey = :terminal";
   }
 
   private String getIdentifierAlias(String propertyName) {
