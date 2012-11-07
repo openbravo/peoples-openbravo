@@ -10,7 +10,8 @@
 /*global enyo, $ */
 enyo.kind({
   name: 'OB.UI.Button',
-  kind: 'enyo.Button'/*, Removed to investigate if btn-over/btn-down are still needed due to enyo/onyx adoption
+  kind: 'enyo.Button'
+/*, Removed to investigate if btn-over/btn-down are still needed due to enyo/onyx adoption
   handlers: {
     onmouseover: 'mouseOverOut',
     onmouseout: 'mouseOverOut'
