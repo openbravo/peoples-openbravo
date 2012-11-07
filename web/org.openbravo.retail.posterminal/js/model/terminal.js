@@ -223,8 +223,8 @@ OB.Model.Terminal = Backbone.Model.extend({
     OB.POS.windowObjs.push(windowp);
 
 
-    minTotalRefresh = OB.POS.modelterminal.get('terminal').minutestorefreshdatatotal * 60 * 1000;
-    minIncRefresh = OB.POS.modelterminal.get('terminal').minutestorefreshdatainc * 60 * 1000;
+    minTotalRefresh = OB.POS.modelterminal.get('terminal').terminalType.minutestorefreshdatatotal * 60 * 1000;
+    minIncRefresh = OB.POS.modelterminal.get('terminal').terminalType.minutestorefreshdatainc * 60 * 1000;
     lastTotalRefresh = window.localStorage.getItem('POSLastTotalRefresh');
     lastIncRefresh = window.localStorage.getItem('POSLastIncRefresh');
     if ((!minTotalRefresh && !minIncRefresh) || (!lastTotalRefresh && !lastIncRefresh)) {
@@ -607,6 +607,7 @@ OB.Model.Terminal = Backbone.Model.extend({
         me.loadBP();
         me.loadLocation();
         me.loadPriceList();
+        me.loadWarehouses();
         me.loadPriceListVersion();
         me.loadCurrency();
         me.setDocumentSequence();
@@ -679,6 +680,22 @@ OB.Model.Terminal = Backbone.Model.extend({
     }, function (data) {
       if (data[0]) {
         me.set('pricelist', data[0]);
+      }
+    });
+  },
+
+  loadWarehouses: function () {
+    var me = this;
+    new OB.DS.Request('org.openbravo.retail.posterminal.term.Warehouses').exec({
+      organization: this.get('terminal').organization
+    }, function (data) {
+      if (data && data.exception) {
+        //MP17
+        me.set('warehouses', []);
+        me.triggerReady();
+      } else {
+        me.set('warehouses', data);
+        me.triggerReady();
       }
     });
   },
@@ -846,7 +863,7 @@ OB.Model.Terminal = Backbone.Model.extend({
 
   triggerReady: function () {
     var undef, loadModelsIncFunc, loadModelsTotalFunc, minTotalRefresh, minIncRefresh;
-    if (this.get('payments') && this.get('pricelistversion') && this.get('currency') && this.get('context') && this.get('permissions') && (this.get('documentsequence') !== undef || this.get('documentsequence') === 0) && this.get('windowRegistered') !== undef) {
+    if (this.get('payments') && this.get('pricelistversion') && this.get('warehouses') && this.get('currency') && this.get('context') && this.get('permissions') && (this.get('documentsequence') !== undef || this.get('documentsequence') === 0) && this.get('windowRegistered') !== undef) {
       OB.POS.modelterminal.loggingIn = false;
       if (OB.POS.modelterminal.get('connectedToERP')) {
         //In online mode, we save the terminal information in the local db
@@ -855,7 +872,7 @@ OB.Model.Terminal = Backbone.Model.extend({
           window.console.error(arguments);
         });
       }
-      minIncRefresh = OB.POS.modelterminal.get('terminal').minutestorefreshdatainc * 60 * 1000;
+      minIncRefresh = OB.POS.modelterminal.get('terminal').terminalType.minutestorefreshdatainc * 60 * 1000;
       if (minIncRefresh) {
         loadModelsIncFunc = function () {
           console.log('Performing incremental masterdata refresh');

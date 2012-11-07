@@ -167,7 +167,7 @@ enyo.kind({
   content: OB.I18N.getLabel('OBPOS_LblDone'),
   drawerOpened: true,
   init: function () {
-    this.drawerpreference = OB.POS.modelterminal.get('terminal').drawerpreference;
+    this.drawerpreference = OB.POS.modelterminal.get('terminal').terminalType.openDrawer;
     if (this.drawerpreference) {
       this.drawerOpened = false;
       this.setContent(OB.I18N.getLabel('OBPOS_LblOpen'));

@@ -17,6 +17,8 @@ enyo.kind({
   tag: 'section',
   handlers: {
     onAddProduct: 'addProductToOrder',
+    onViewProductDetails: 'viewProductDetails',
+    onCloseProductDetailsView: 'showOrder',
     onCancelReceiptToInvoice: 'cancelReceiptToInvoice',
     onReceiptToInvoice: 'receiptToInvoice',
     onCreateQuotation: 'createQuotation',
@@ -40,6 +42,8 @@ enyo.kind({
     onBackOffice: 'backOffice',
     onPaidReceipts: 'paidReceipts',
     onChangeSubWindow: 'changeSubWindow',
+    onShowLeftSubWindow: 'showLeftSubWindow',
+    onCloseLeftSubWindow: 'showOrder',
     onSetProperty: 'setProperty',
     onSetLineProperty: 'setLineProperty',
     onSetReceiptsList: 'setReceiptsList',
@@ -100,6 +104,15 @@ enyo.kind({
       kind: 'OB.UI.ModalReceiptLinesPropertiesImpl',
       name: "receiptLinesPropertiesDialog"
     }, {
+      kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalConfigurationRequiredForCrossStore',
+      name: 'modalConfigurationRequiredForCrossStore'
+    }, {
+      kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalStockInStore',
+      name: 'modalLocalStock'
+    }, {
+      kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalStockInOtherStores',
+      name: 'modalStockInOtherStores'
+    }, {
       classes: 'row',
       style: 'margin-bottom: 5px;',
       components: [{
@@ -113,6 +126,12 @@ enyo.kind({
       components: [{
         kind: 'OB.OBPOSPointOfSale.UI.ReceiptView',
         name: 'receiptview'
+      }, {
+        name: 'leftSubWindowsContainer',
+        components: [{
+          kind: 'OB.OBPOSPointOfSale.UI.ProductDetailsView',
+          name: 'productdetailsview'
+        }]
       }, {
         classes: 'span6',
         components: [{
@@ -183,8 +202,65 @@ enyo.kind({
       });
       return true;
     }
+    if (inEvent.ignoreStockTab) {
+      this.showOrder(inSender, inEvent);
+    } else {
+      if (inEvent.product.get('showstock') && OB.POS.modelterminal.get('connectedToERP')) {
+        inEvent.leftSubWindow = OB.OBPOSPointOfSale.UICustomization.stockLeftSubWindow;
+        this.showLeftSubWindow(inSender, inEvent);
+        return true;
+      } else {
+        this.showOrder(inSender, inEvent);
+      }
+    }
+
     this.model.get('order').addProduct(inEvent.product);
     this.model.get('orderList').saveCurrent();
+    return true;
+  },
+  showOrder: function (inSender, inEvent) {
+    var allHidden = true;
+    enyo.forEach(this.$.leftSubWindowsContainer.getControls(), function (component) {
+      if (component.showing === true) {
+        if (component.mainBeforeSetHidden) {
+          if (!component.mainBeforeSetHidden(inEvent)) {
+            allHidden = false;
+            return false;
+          } else {
+            component.setShowing(false);
+          }
+        }
+      }
+    }, this);
+    if (allHidden) {
+      this.$.receiptview.setShowing(true);
+    }
+  },
+  showLeftSubWindow: function (inSender, inEvent) {
+    if (this.$[inEvent.leftSubWindow]) {
+      if (this.$[inEvent.leftSubWindow].mainBeforeSetShowing) {
+        var allHidden = true;
+        enyo.forEach(this.$.leftSubWindowsContainer.getControls(), function (component) {
+          if (component.showing === true) {
+            if (component.mainBeforeSetHidden) {
+              if (!component.mainBeforeSetHidden(inEvent)) {
+                allHidden = false;
+                return false;
+              }
+            }
+          }
+        }, this);
+        if (this.$[inEvent.leftSubWindow].mainBeforeSetShowing(inEvent) && allHidden) {
+          this.$.receiptview.setShowing(false);
+          this.$[inEvent.leftSubWindow].setShowing(true);
+        }
+      }
+    }
+  },
+  viewProductDetails: function (inSender, inEvent) {
+    this.$.receiptview.applyStyle('display', 'none');
+    this.$.productdetailsview.updateProduct(inEvent.product);
+    this.$.productdetailsview.applyStyle('display', 'inline');
     return true;
   },
   changeBusinessPartner: function (inSender, inEvent) {
@@ -418,6 +494,9 @@ enyo.kind({
     this.inherited(arguments);
   }
 });
+
+OB.OBPOSPointOfSale.UICustomization = OB.OBPOSPointOfSale.UICustomization || {};
+OB.OBPOSPointOfSale.UICustomization.stockLeftSubWindow = 'productdetailsview';
 
 OB.POS.registerWindow({
   windowClass: OB.OBPOSPointOfSale.UI.PointOfSale,

@@ -99,6 +99,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/modalonline",
         "components/modalcancel",
         "components/subwindow",
+        "components/leftsubwindow",
         "components/windowview",
         "components/modalreceiptproperties",
         "components/modalreceiptlineproperties",
@@ -134,8 +135,11 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         // Point of sale
         "pointofsale/model/pointofsale-print",
         "pointofsale/model/pointofsale-model",
+        "pointofsale/model/localstock",
+        "pointofsale/model/otherstoresstock",
         "pointofsale/view/pointofsale",
         "pointofsale/view/ps-receiptview",
+        "pointofsale/view/ps-productdetailsview",
         "pointofsale/view/toolbar-left",
         "pointofsale/view/toolbar-right",
         "pointofsale/view/scan",
@@ -149,8 +153,11 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "pointofsale/view/subwindows/customers/editcreatecustomerform",
         "pointofsale/view/subwindows/customers/customerdetailview",
         // Point of sale modals
+        "pointofsale/view/modals/modalstockinstore",
+        "pointofsale/view/modals/modalstockinotherstore",
         "pointofsale/view/modals/modalconfirmclosepaidticket",
         "pointofsale/view/modals/modalproductcannotbegroup",
+        "pointofsale/view/modals/modalwarehousesrequired",
 
         // Cash Management window
         "cashmgmt/model/cashmgmt-print", "cashmgmt/model/cashmgmt-model",

@@ -22,7 +22,8 @@ enyo.kind({
         style: 'display: inline-block;'
       }, {
         name: 'rightIcon'
-      }]
+      }],
+      ontap: 'onButtonTap'
     }, {
       kind: 'onyx.Menu',
       classes: 'dropdown',
@@ -32,6 +33,11 @@ enyo.kind({
       floating: true
     }]
   }],
+  onButtonTap: function () {
+    if (this.$.toolbarButton.hasClass('btn-over')) {
+      this.$.toolbarButton.removeClass('btn-over');
+    }
+  },
   initComponents: function () {
     this.inherited(arguments);
     if (this.icon) {

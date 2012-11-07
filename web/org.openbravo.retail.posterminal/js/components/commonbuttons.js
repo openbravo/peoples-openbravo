@@ -10,7 +10,7 @@
 /*global enyo, $ */
 enyo.kind({
   name: 'OB.UI.Button',
-  kind: 'enyo.Button',
+  kind: 'enyo.Button'/*, Removed to investigate if btn-over/btn-down are still needed due to enyo/onyx adoption
   handlers: {
     onmouseover: 'mouseOverOut',
     onmouseout: 'mouseOverOut'
@@ -18,7 +18,7 @@ enyo.kind({
   //TODO: support windows 7  setTimeout(function() { me.$el.removeClass('btn-down'); }, 125);
   mouseOverOut: function (sender, event) {
     this.addRemoveClass('btn-over', event.type === 'mouseover');
-  }
+  }*/
 });
 
 enyo.kind({
@@ -51,11 +51,11 @@ enyo.kind({
   handlers: {
     onHideThisPopup: 'hide'
   },
-  show: function () {
+  show: function (args) {
     this.inherited(arguments);
     OB.UTIL.focusInModal($(this.hasNode()));
     if (this.executeOnShow) {
-      this.executeOnShow();
+      this.executeOnShow(args);
     }
   },
   hide: function () {

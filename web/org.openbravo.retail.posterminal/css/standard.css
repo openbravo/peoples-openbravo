@@ -22,7 +22,7 @@ input, button, select, textarea {
 }
 
 input.error {
-  background-color: rgba(255, 0, 0);
+  background-color: rgb(255, 0, 0);
   background-color: rgba(255, 0, 0, 0.5);
 }
 
@@ -382,7 +382,8 @@ button.btnkeyboard-inactive:active {
   color: black;
 }
 
-button.btnkeyboard.btn-over {
+button.btnkeyboard.btn-over,
+button.btnkeyboard:hover {
   opacity: 0.75;
 }
 
@@ -527,6 +528,9 @@ button.btnlink-cashup-ok {
   width: 70px;
 }
 
+button.error {
+  background-color: #ff0000;
+}
 
 button.btnselect {
   display: block;

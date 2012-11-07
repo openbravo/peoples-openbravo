@@ -266,7 +266,7 @@ enyo.kind({
       if (dataBps && dataBps.length > 0) {
         me.bpsList.reset(dataBps.models);
       } else {
-        me.bps.reset();
+        me.bpsList.reset();
       }
     }
 
