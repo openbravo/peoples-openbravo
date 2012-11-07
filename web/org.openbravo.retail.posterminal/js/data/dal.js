@@ -234,7 +234,7 @@
         if (modelProto.propertiesFilter) {
           filterVal = '';
           _.each(modelProto.propertiesFilter, function (prop) {
-            filterVal = filterVal + '###' + model.get(prop);
+            filterVal = filterVal + model.get(prop) + '###';
           });
           sql = sql + ', _filter = ? ';
           params.push(filterVal);
@@ -264,7 +264,7 @@
         if (modelProto.propertiesFilter) {
           filterVal = '';
           _.each(modelProto.propertiesFilter, function (prop) {
-            filterVal = filterVal + '###' + model.get(prop);
+            filterVal = filterVal + model.get(prop) + '###';
           });
           params.push(filterVal);
         }
@@ -399,7 +399,7 @@
             if (model.prototype.propertiesFilter) {
               filterVal = '';
               _.each(model.prototype.propertiesFilter, function (prop) {
-                filterVal = filterVal + '###' + item[prop];
+                filterVal = filterVal + item[prop] + '###';
               });
               values.push(filterVal);
             }
