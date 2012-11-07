@@ -65,6 +65,11 @@ enyo.kind({
 
       enyo.forEach(view.getComponents(), function (child) {
         OB.UI.WindowView.destroyModels(child);
+        if (child.getId()) {
+          if (OB.UI.UTILS.domIdEnyoReference[child.getId()]) {
+            delete OB.UI.UTILS.domIdEnyoReference[child.getId()];
+          }
+        }
       });
     }
   },

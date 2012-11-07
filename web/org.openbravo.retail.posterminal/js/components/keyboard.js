@@ -380,6 +380,7 @@ enyo.kind({
     //Special case to manage the dot (.) pressing in the numeric keypad (only can be managed using keydown)
     $(window).off('keydown');
     $(window).keydown(function (e) {
+      var handled = false;
       if (window.fixFocus()) {
         if (OB.Format.defaultDecimalSymbol !== '.') {
           if (e.keyCode === 110) { //Numeric keypad dot (.)
@@ -390,6 +391,62 @@ enyo.kind({
         }
         if (e.keyCode === 8) { //del key
           me.keyPressed('del');
+        }
+        if (e.keyCode === 13) { //intro key
+          if ($('.modal:visible, .subwindow:visible').length > 0) {
+            //A modal is opened -> try to call to onEnterTap function of dialog.
+            if (OB.UI.UTILS) {
+              if ($('.modal:visible').length > 0) {
+                if (OB.UI.UTILS.domIdEnyoReference[$('.modal:visible').attr('id')]) {
+                  if (OB.UI.UTILS.domIdEnyoReference[$('.modal:visible').attr('id')].enterTap) {
+                    handled = OB.UI.UTILS.domIdEnyoReference[$('.modal:visible').attr('id')].enterTap(e, $('#' + e.srcElement.id).attr('onEnterTap'));
+                    if (handled) {
+                      return false;
+                    }
+                  }
+                }
+              } else if ($('.subwindow:visible').length > 0) {
+                //priority of subwindows is less than modals, because a modal can appear on a subwindow
+                if (OB.UI.UTILS.domIdEnyoReference[$('.subwindow:visible').attr('id')]) {
+                  if (OB.UI.UTILS.domIdEnyoReference[$('.subwindow:visible').attr('id')].enterTap) {
+                    handled = OB.UI.UTILS.domIdEnyoReference[$('.subwindow:visible').attr('id')].enterTap(e, $('#' + e.srcElement.id).attr('onEnterTap'));
+                    if (handled) {
+                      return false;
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      } else {
+        if (e.keyCode === 13) {
+          if ($('.modal:visible, .subwindow:visible').length > 0) {
+            //Intro key pressed and modal popup is opned -> try to call onEnterTap of dialog
+            //A modal is opened -> try to call to onEnterTap function of dialog.
+            if (OB.UI.UTILS) {
+              if ($('.modal:visible').length > 0) {
+                if (OB.UI.UTILS.domIdEnyoReference[$('.modal:visible').attr('id')]) {
+                  if (OB.UI.UTILS.domIdEnyoReference[$('.modal:visible').attr('id')].enterTap) {
+                    handled = OB.UI.UTILS.domIdEnyoReference[$('.modal:visible').attr('id')].enterTap(e, $('#' + e.srcElement.id).attr('onEnterTap'));
+                    if (handled) {
+                      return false;
+                    }
+                  }
+                }
+              } else if ($('.subwindow:visible').length > 0) {
+                //priority of subwindows is less than modals, because a modal can appear on a subwindow
+                if (OB.UI.UTILS.domIdEnyoReference[$('.subwindow:visible').attr('id')]) {
+                  if (OB.UI.UTILS.domIdEnyoReference[$('.subwindow:visible').attr('id')].enterTap) {
+                    handled = OB.UI.UTILS.domIdEnyoReference[$('.subwindow:visible').attr('id')].enterTap(e, $('#' + e.srcElement.id).attr('onEnterTap'));
+                    if (handled) {
+                      return false;
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
       }
       return true;
@@ -408,12 +465,16 @@ enyo.kind({
   keyPressed: function (key) {
     var t;
     if (key.match(/^([0-9]|\.|,| |[a-z]|[A-Z])$/)) {
-      t = this.$.editbox.getContent();
-      this.$.editbox.setContent(t + key);
+      if ($('.modal:visible, .subwindow:visible').length === 0) {
+        t = this.$.editbox.getContent();
+        this.$.editbox.setContent(t + key);
+      }
     } else if (key === 'del') {
-      t = this.$.editbox.getContent();
-      if (t.length > 0) {
-        this.$.editbox.setContent(t.substring(0, t.length - 1));
+      if ($('.modal:visible, .subwindow:visible').length === 0) {
+        t = this.$.editbox.getContent();
+        if (t.length > 0) {
+          this.$.editbox.setContent(t.substring(0, t.length - 1));
+        }
       }
     } else {
       this.doCommandFired({

@@ -133,12 +133,10 @@ OB.UTIL.showError = function (s) {
 };
 
 /* This will automatically set the focus in the first focusable item in the modal popup */
-OB.UTIL.focusInModal = function (modalObj) {
-  modalObj.on('shown', function (e) {
-    var firstFocusableItem = $(this).find('input,select,button').filter(':visible:enabled:first');
-    if (firstFocusableItem) {
-      firstFocusableItem.focus();
-    }
-    return true;
-  });
+OB.UTIL.focusInModal = function (jqModal) {
+  var firstFocusableItem = jqModal.find('input,select,button').filter(':visible:enabled:first');
+  if (firstFocusableItem) {
+    firstFocusableItem.focus();
+  }
+  return true;
 };

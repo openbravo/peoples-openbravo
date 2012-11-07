@@ -53,15 +53,41 @@ enyo.kind({
   },
   show: function () {
     this.inherited(arguments);
+    OB.UTIL.focusInModal($(this.hasNode()));
     if (this.executeOnShow) {
       this.executeOnShow();
     }
   },
   hide: function () {
     this.inherited(arguments);
+    $("#focuskeeper").focus();
     if (this.executeOnHide) {
       this.executeOnHide();
     }
+  },
+  rendered: function () {
+    this.inherited(arguments);
+    if (OB.UI.UTILS.domIdEnyoReference) {
+      if (this.getId()) {
+        OB.UI.UTILS.domIdEnyoReference[this.getId()] = this;
+      }
+    }
+  },
+  enterTap: function (e, action) {
+    if (this.applyButton) {
+      this.applyButton.tap(e, {
+        keyboardEnter: true
+      });
+    } else if (action) {
+      if (action === 'hide') {
+        this.hide();
+      } else {
+        if (this.onEnterTap) {
+          return this.onEnterTap(e, action);
+        }
+      }
+    }
+    return true;
   },
   updatePosition: function () {
     // Improve of enyo "updatePosition" function to proper manage of % and absolute top and left positions
@@ -323,7 +349,14 @@ enyo.kind({
       }]
     }]
   }],
-
+  rendered: function () {
+    this.inherited(arguments);
+    enyo.forEach(this.$.bodyButtons.getComponents(), function (control) {
+      if (control.isApplyButton) {
+        this.applyButton = control;
+      }
+    }, this);
+  },
   initComponents: function () {
     this.inherited(arguments);
 
@@ -405,6 +438,9 @@ enyo.kind({
   name: 'OB.UI.CancelDialogButton',
   classes: 'btnlink btnlink-gray modal-dialog-content-button',
   content: OB.I18N.getLabel('OBPOS_LblCancel'),
+  attributes: {
+    'onEnterTap': 'hide'
+  },
   events: {
     onHideThisPopup: ''
   },

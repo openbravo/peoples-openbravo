@@ -11,7 +11,8 @@
 
 (function () {
   var modelterminal = OB.POS.modelterminal;
-
+  OB.UI.UTILS = {};
+  OB.UI.UTILS.domIdEnyoReference = {};
   // alert all errors
   window.onerror = function (e) {
     if (typeof (e) === 'string') {
