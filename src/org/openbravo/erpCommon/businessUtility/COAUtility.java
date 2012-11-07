@@ -76,6 +76,7 @@ public class COAUtility {
   private StringBuffer strLog = new StringBuffer();
   private Calendar calendar;
   private Element element;
+  private AcctSchema acctSchema = null;
   private static final Logger log4j = Logger.getLogger(COAUtility.class);
 
   public COAUtility(Client clientProvided, Tree treeAccountProvided) {
@@ -151,6 +152,13 @@ public class COAUtility {
       return obeResult;
     log4j.debug("createAccounting() - Element correctly inserted");
 
+    log4j.debug("createAccounting() - Inserting accounting schema (general ledger)");
+    obeResult = insertAccountingSchema(strGAAPProvided, strCostingMethodProvided, currency,
+        hasBPartner, hasProduct, hasProject, hasMCampaign, hasSRegion);
+    if (!obeResult.getType().equals(strMessageOk))
+      return obeResult;
+    log4j.debug("createAccounting() - Accounting schema (general ledger) correctly inserted");
+
     log4j.debug("createAccounting() - Inserting accounts from file");
     obeResult = insertElementValues(vars, fileCoA);
     if (!obeResult.getType().equals(strMessageOk))
@@ -159,9 +167,8 @@ public class COAUtility {
     // Not meaningful message, but set to keep backwards compatibility
     logEvent("@C_ElementValue_ID@ #");
 
-    log4j.debug("createAccounting() - Inserting accounting schema (general ledger)");
-    obeResult = insertAccountingSchema(strGAAPProvided, strCostingMethodProvided, currency,
-        hasBPartner, hasProduct, hasProject, hasMCampaign, hasSRegion);
+    log4j.debug("createAccounting() - Inserting accounting schema (general ledger and defaults)");
+    obeResult = insertAccountingSchemaGLDefaults(acctSchema);
     if (!obeResult.getType().equals(strMessageOk))
       return obeResult;
     log4j.debug("createAccounting() - Accounting schema (general ledger) correctly inserted");
@@ -238,7 +245,6 @@ public class COAUtility {
         + " " + strGAAP + "/" + strCostingMethod + "/" + currency.getDescription();
     log4j.debug("insertAccountingSchema() - Creating accounting schema (general ledger) "
         + strAcctSchemaName);
-    AcctSchema acctSchema = null;
     try {
       acctSchema = InitialSetupUtility.insertAcctSchema(client, organization, currency,
           strAcctSchemaName, strGAAP, strCostingMethod, true);
@@ -395,6 +401,14 @@ public class COAUtility {
     }
     log4j.debug("insertAccountingSchema() - All acct.schema elements correctly inserted."
         + " Inserting acct.schema gl account combinations");
+
+    return obeResult;
+  }
+
+  private OBError insertAccountingSchemaGLDefaults(AcctSchema acctSchema) {
+    OBError obeResult = new OBError();
+    obeResult.setType(strMessageOk);
+
     AcctSchemaGL acctSchGL;
     try {
       acctSchGL = InitialSetupUtility.insertAcctSchemaGL(defaultElementValues, acctSchema);
@@ -443,6 +457,7 @@ public class COAUtility {
       }
     }
     return obeResult;
+
   }
 
   private COAData[] parseCOA(VariablesBase vars, InputStream instFile) throws IOException {
