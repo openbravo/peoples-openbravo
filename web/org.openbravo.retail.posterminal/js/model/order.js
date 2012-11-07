@@ -685,16 +685,16 @@
     updatePrices: function () {
       var order = this;
       this.get('lines').each(function (line) {
-        var successCallbackPrices = function (dataPrices, line) {
-            dataPrices.each(function (price) {
-              order.setPrice(line, price.get('listPrice'));
-            });
-            }
-            
-        criteria = {
+        var successCallbackPrices, criteria = {
           'priceListVersion': OB.POS.modelterminal.get('pricelistversion').id,
           'product': line.get('product').get('id')
         };
+        successCallbackPrices = function (dataPrices, line) {
+          dataPrices.each(function (price) {
+            order.setPrice(line, price.get('listPrice'));
+          });
+        };
+
         OB.Dal.find(OB.Model.ProductPrice, criteria, successCallbackPrices, function () {
           console.error(args);
         }, line);
