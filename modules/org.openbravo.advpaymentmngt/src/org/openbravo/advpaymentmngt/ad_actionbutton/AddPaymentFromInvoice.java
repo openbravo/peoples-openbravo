@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s): Enterprise Intelligence Systems (http://www.eintel.com.au).
  *************************************************************************
@@ -421,6 +421,15 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
       BigDecimal exchangeRate = findExchangeRate(vars, paymentCurrency, financialAccountCurrency,
           new Date(), OBDal.getInstance().get(Organization.class, strOrgId),
           conversionRatePrecision);
+
+      if (exchangeRate == null) {
+        final OBError myMessage = Utility.translateError(this, vars, vars.getLanguage(),
+            Utility.messageBD(this, "NoCurrencyConversion", vars.getLanguage()));
+        vars.setMessage(strTabId, myMessage);
+        printPageClosePopUp(response, vars);
+        return;
+      }
+
       xmlDocument.setParameter("exchangeRate", exchangeRate.toPlainString());
 
     } finally {
