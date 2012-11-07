@@ -102,6 +102,9 @@ enyo.kind({
             onSetCustomer: 'setCustomer'
           },
           style: 'width: 100px; margin: 0px 5px 8px 19px;',
+          attributes: {
+            'focus-on-open': 'true'
+          },
           classes: 'btnlink-orange btnlink btnlink-small',
           content: OB.I18N.getLabel('OBPOS_LblEdit'),
           setCustomer: function (sender, event) {

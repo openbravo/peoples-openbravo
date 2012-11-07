@@ -18,7 +18,7 @@ enyo.kind({
   },
   components: [{
     kind: 'OB.UI.ReceiptsCounterButton',
-    name: 'receiptsCounterButton',
+    name: 'receiptsCounterButton'
   }],
   events: {
     onSetReceiptsList: ''

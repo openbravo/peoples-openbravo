@@ -149,6 +149,7 @@ enyo.kind({
   kind: 'OB.UI.Button',
   isActive: true,
   content: OB.I18N.getLabel('OBPOS_LblApply'),
+  isApplyButton: true,
   classes: 'btnlink btnlink-gray modal-dialog-content-button',
   tap: function () {
     if (!this.isActive) {
@@ -193,6 +194,9 @@ enyo.kind({
   kind: 'OB.UI.Button',
   content: OB.I18N.getLabel('OBPOS_LblCancel'),
   classes: 'btnlink btnlink-gray modal-dialog-content-button',
+  attributes: {
+    'onEnterTap': 'hide'
+  },
   events: {
     onHideThisPopup: ''
   },

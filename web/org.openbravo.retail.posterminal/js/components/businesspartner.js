@@ -112,6 +112,9 @@ enyo.kind({
     onSearchAction: '',
     onClearAction: ''
   },
+  handlers: {
+    onSearchActionByKey: 'searchAction'
+  },
   components: [{
     style: 'padding: 10px;',
     components: [{
@@ -148,6 +151,9 @@ enyo.kind({
           kind: 'OB.UI.Button',
           style: 'width: 100px; margin: 0px 0px 8px 5px;',
           classes: 'btnlink-yellow btnlink btnlink-small',
+          attributes: {
+            'onEnterTap': 'onClearAction'
+          },
           components: [{
             classes: 'btn-icon-small btn-icon-clear'
           }, {
@@ -293,6 +299,15 @@ enyo.kind({
   topPosition: '125px',
   kind: 'OB.UI.Modal',
   modalClass: 'modal',
+  onEnterTap: function (args, action) {
+    if (action) {
+      this.waterfall(action);
+      return true;
+    } else {
+      this.waterfall("onSearchActionByKey");
+      return true;
+    }
+  },
   //headerClass: 'modal-header',
   //bodyClass: 'modal-header',
   header: OB.I18N.getLabel('OBPOS_LblAssignCustomer'),

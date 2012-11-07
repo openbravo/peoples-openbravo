@@ -143,7 +143,6 @@
         // Makes sure that the id is copied
         orderId = attributes.id;
         attributes = JSON.parse(attributes.json);
-        console.log('json', attributes);
         attributes.id = orderId;
       }
 

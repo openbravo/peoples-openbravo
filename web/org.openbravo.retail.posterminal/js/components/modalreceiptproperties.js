@@ -74,6 +74,7 @@ enyo.kind({
   name: 'OB.UI.ReceiptPropertiesDialogApply',
   content: OB.I18N.getLabel('OBPOS_LblApply'),
   classes: 'btnlink btnlink-gray modal-dialog-content-button',
+  isApplyButton: true,
   events: {
     onApplyChanges: '',
     onHideThisPopup: ''
@@ -89,6 +90,9 @@ enyo.kind({
   kind: 'OB.UI.Button',
   content: OB.I18N.getLabel('OBPOS_LblCancel'),
   classes: 'btnlink btnlink-gray modal-dialog-content-button',
+  attributes: {
+    'onEnterTap': 'hide'
+  },
   events: {
     onHideThisPopup: ''
   },

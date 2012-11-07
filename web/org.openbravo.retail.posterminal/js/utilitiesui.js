@@ -50,7 +50,7 @@ enyo.kind({
     tag: 'button',
     classes: 'alert-closebutton',
     tap: function () {
-      this.owner.hide()
+      this.owner.hide();
     },
     allowHtml: true,
     content: '&times;'

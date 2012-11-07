@@ -21,6 +21,7 @@ enyo.kind({
       kind: 'OB.UI.Button',
       classes: 'btnlink btnlink-gray modal-dialog-content-button',
       content: OB.I18N.getLabel('OBPOS_LblOk'),
+      isApplyButton: true,
       tap: function () {
         OB.POS.terminal.$.dialogsContainer.$.modalOnline.hide();
         window.location = window.location.pathname + '?terminal=' + window.encodeURIComponent(OB.POS.paramTerminal);
@@ -29,6 +30,9 @@ enyo.kind({
       kind: 'OB.UI.Button',
       classes: 'btnlink btnlink-gray modal-dialog-content-button',
       content: OB.I18N.getLabel('OBPOS_LblCancel'),
+      attributes: {
+        'onEnterTap': 'hide'
+      },
       tap: function () {
         OB.POS.terminal.$.dialogsContainer.$.modalOnline.hide();
         OB.POS.navigate('retail.pointofsale');

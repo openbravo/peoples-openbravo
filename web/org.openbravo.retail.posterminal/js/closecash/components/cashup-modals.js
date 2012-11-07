@@ -33,6 +33,7 @@ enyo.kind({
   name: 'OB.OBPOSCashUp.UI.modalFinished_OkButton',
   classes: 'btnlink btnlink-gray modal-dialog-content-button',
   content: OB.I18N.getLabel('OBPOS_LblOk'),
+  isApplyButton: true,
   events: {
     onHideThisPopup: ''
   },
@@ -66,6 +67,7 @@ enyo.kind({
   name: 'OB.OBPOSCashUp.UI.modalFinishedWrongly_OkButton',
   classes: 'btnlink btnlink-gray modal-dialog-content-button',
   content: OB.I18N.getLabel('OBPOS_LblOk'),
+  isApplyButton: true,
   events: {
     onHideThisPopup: ''
   },
@@ -99,6 +101,7 @@ enyo.kind({
   name: 'OB.OBPOSCashUp.UI.modalPendingToProcess_OkButton',
   classes: 'btnlink btnlink-gray modal-dialog-content-button',
   content: OB.I18N.getLabel('OBPOS_LblOk'),
+  isApplyButton: true,
   events: {
     onHideThisPopup: ''
   },
@@ -112,6 +115,10 @@ enyo.kind({
   name: 'OB.OBPOSCashUp.UI.modalPendingToProcess_CancelButton',
   classes: 'btnlink btnlink-gray modal-dialog-content-button',
   content: OB.I18N.getLabel('OBPOS_LblCancel'),
+  attributes: {
+    //TODO
+    'onEnterTap': 'hide'
+  },
   events: {
     onHideThisPopup: ''
   },

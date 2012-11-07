@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global enyo */
+/*global enyo $ */
 
 enyo.kind({
   name: 'OB.UI.subwindow',
@@ -17,6 +17,7 @@ enyo.kind({
   classes: 'subwindow',
   showing: false,
   mainBeforeSetShowing: function (args) {
+    var valueToReturn = true;
     if (args.caller) {
       this.caller = args.caller;
     }
@@ -26,18 +27,30 @@ enyo.kind({
       this.navigateOnClose = this.defaultNavigateOnClose;
     }
     if (this.beforeSetShowing) {
-      return this.beforeSetShowing(args);
+      valueToReturn = this.beforeSetShowing(args);
     }
-    return true;
+
+    if (valueToReturn) {
+      $(this.hasNode()).find('[focus-on-open="true"]').filter(':first').focus();
+    }
+    return valueToReturn;
+  },
+  mainAfterShow: function (args) {
+    $(this.hasNode()).find('[focus-on-open="true"]').filter(':first').focus();
+    if (this.afterShow) {
+      this.afterShow(args);
+    }
   },
   mainBeforeClose: function (dest) {
+    var valueToReturn = true;
     if (dest) {
       this.lastLeaveTo = dest;
     }
     if (this.beforeClose) {
-      return this.beforeClose(dest);
+      valueToReturn = this.beforeClose(dest);
     }
-    return true;
+
+    return valueToReturn;
   },
   header: {},
   body: {},
@@ -57,6 +70,13 @@ enyo.kind({
       subWin.relComponentsWithSubWindow(child, subWin);
       child.subWindow = subWin;
     });
+  },
+  rendered: function () {
+    if (OB.UI.UTILS.domIdEnyoReference) {
+      if (this.getId()) {
+        OB.UI.UTILS.domIdEnyoReference[this.getId()] = this;
+      }
+    }
   },
   initComponents: function () {
     this.inherited(arguments);

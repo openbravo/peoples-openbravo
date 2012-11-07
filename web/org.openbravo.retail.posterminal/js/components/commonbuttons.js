@@ -74,24 +74,30 @@ enyo.kind({
     }
   },
   enterTap: function (e, action) {
+    if (action) {
+      if (action === 'hide') {
+        this.hide();
+        return true;
+      }
+    }
+
+    if (this.onEnterTap) {
+      this.onEnterTap(e, action);
+      return true;
+    }
+
     if (this.applyButton) {
       this.applyButton.tap(e, {
         keyboardEnter: true
       });
-    } else if (action) {
-      if (action === 'hide') {
-        this.hide();
-      } else {
-        if (this.onEnterTap) {
-          return this.onEnterTap(e, action);
-        }
-      }
+      return true;
     }
-    return true;
+
+    return false;
   },
   updatePosition: function () {
     // Improve of enyo "updatePosition" function to proper manage of % and absolute top and left positions
-    var top, left, t = this.getBounds();;
+    var top, left, t = this.getBounds();
     if (this.topPosition) {
       top = this.topPosition.toString();
     } else if (this.centered) {

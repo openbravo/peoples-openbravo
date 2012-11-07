@@ -36,6 +36,7 @@ enyo.kind({
   name: 'OB.UI.ModalCancel_OkButton',
   classes: 'btnlink btnlink-gray modal-dialog-content-button',
   content: OB.I18N.getLabel('OBPOS_LblOk'),
+  isApplyButton: true,
   popup: 'modalCancel',
   events: {
     onHideThisPopup: ''
@@ -51,6 +52,9 @@ enyo.kind({
   name: 'OB.UI.ModalCancel_CancelButton',
   classes: 'btnlink btnlink-gray modal-dialog-content-button',
   content: OB.I18N.getLabel('OBPOS_LblCancel'),
+  attributes: {
+    'onEnterTap': 'hide'
+  },
   popup: 'modalCancel',
   events: {
     onHideThisPopup: ''

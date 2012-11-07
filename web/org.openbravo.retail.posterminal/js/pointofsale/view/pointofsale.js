@@ -305,33 +305,41 @@ enyo.kind({
         });
       }
 
-      //TODO backbone route
-      var showNewSubWindow = false;
+      var showNewSubWindow = false,
+          currentWindowClosed = true;
       if (this.$[changedModel.get('currentWindow').name]) {
         if (!changedModel.get('currentWindow').params) {
           changedModel.get('currentWindow').params = {};
         }
         changedModel.get('currentWindow').params.caller = changedModel.previousAttributes().currentWindow.name;
         if (this.$[changedModel.previousAttributes().currentWindow.name].mainBeforeClose) {
-          this.$[changedModel.previousAttributes().currentWindow.name].mainBeforeClose(changedModel.get('currentWindow').name);
+          currentWindowClosed = this.$[changedModel.previousAttributes().currentWindow.name].mainBeforeClose(changedModel.get('currentWindow').name);
         }
-        if (this.$[changedModel.get('currentWindow').name].mainBeforeSetShowing) {
-          showNewSubWindow = this.$[changedModel.get('currentWindow').name].mainBeforeSetShowing(changedModel.get('currentWindow').params);
-          if (showNewSubWindow) {
-            this.$[changedModel.previousAttributes().currentWindow.name].setShowing(false);
-            this.$[changedModel.get('currentWindow').name].setShowing(true);
+        if (currentWindowClosed) {
+          if (this.$[changedModel.get('currentWindow').name].mainBeforeSetShowing) {
+            showNewSubWindow = this.$[changedModel.get('currentWindow').name].mainBeforeSetShowing(changedModel.get('currentWindow').params);
+            if (showNewSubWindow) {
+              this.$[changedModel.previousAttributes().currentWindow.name].setShowing(false);
+              this.$[changedModel.get('currentWindow').name].setShowing(true);
+              if (this.$[changedModel.get('currentWindow').name].mainAfterShow) {
+                this.$[changedModel.get('currentWindow').name].mainAfterShow();
+              }
+            } else {
+              restorePreviousState(this.model.get('subWindowManager'), changedModel);
+            }
           } else {
-            restorePreviousState(this.model.get('subWindowManager'), changedModel);
+            if (this.$[changedModel.get('currentWindow').name].isMainSubWindow) {
+              this.$[changedModel.previousAttributes().currentWindow.name].setShowing(false);
+              this.$[changedModel.get('currentWindow').name].setShowing(true);
+              $("#focuskeeper").focus();
+            } else {
+              //developers helps
+              //console.log("Error! A subwindow must inherits from OB.UI.subwindow -> restore previous state");
+              restorePreviousState(this.model.get('subWindowManager'), changedModel);
+            }
           }
         } else {
-          if (this.$[changedModel.get('currentWindow').name].isMainSubWindow) {
-            this.$[changedModel.previousAttributes().currentWindow.name].setShowing(false);
-            this.$[changedModel.get('currentWindow').name].setShowing(true);
-          } else {
-            //developers helps
-            //console.log("Error! A subwindow must inherits from OB.UI.subwindow -> restore previous state");
-            restorePreviousState(this.model.get('subWindowManager'), changedModel);
-          }
+          restorePreviousState(this.model.get('subWindowManager'), changedModel);
         }
       } else {
         //developers helps
