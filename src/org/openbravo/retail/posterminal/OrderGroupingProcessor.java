@@ -178,6 +178,10 @@ public class OrderGroupingProcessor {
       if (lineno % 500 == 0) {
         OBDal.getInstance().flush();
         OBDal.getInstance().getSession().clear();
+        paymentSchedule = OBDal.getInstance().get(FIN_PaymentSchedule.class,
+            paymentSchedule.getId());
+        origPaymentSchedule = OBDal.getInstance().get(Fin_OrigPaymentSchedule.class,
+            origPaymentSchedule.getId());
       }
     }
     finishInvoice(invoice, totalNetAmount, invoiceTaxes, paymentSchedule, origPaymentSchedule);
