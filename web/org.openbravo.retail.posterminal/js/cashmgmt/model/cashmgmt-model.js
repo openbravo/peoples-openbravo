@@ -107,6 +107,8 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
       var process = new OB.DS.Process('org.openbravo.retail.posterminal.ProcessCashMgmt'),
           me = this;
 
+      OB.UTIL.showLoading(true);
+
       if (this.depsdropstosend.length === 0) {
         // Nothing to do go to main window
         OB.POS.navigate('retail.pointofsale');
@@ -118,11 +120,13 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
         depsdropstosend: this.depsdropstosend.toJSON()
       }, function (data, message) {
         if (data && data.exception) {
+          OB.UTIL.showLoading(false);
           me.set("finishedWrongly", true);
         } else {
           if (OB.POS.modelterminal.hasPermission('OBPOS_print.cashmanagement')) {
             me.printCashMgmt.print(me.depsdropstosend.toJSON());
           }
+          OB.UTIL.showLoading(false);
           me.set("finished", true);
         }
       });

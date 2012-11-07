@@ -254,6 +254,8 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
         server = new OB.DS.Process('org.openbravo.retail.posterminal.ProcessCashClose'),
         me = this;
 
+    OB.UTIL.showLoading(true);
+
     //Create the data that server expects
     _.each(this.get('paymentList').models, function (curModel) {
       var cashCloseInfo = {
@@ -279,9 +281,11 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
     //ready to send to the server
     server.exec(objToSend, function (data) {
       if (data.error) {
+        OB.UTIL.showLoading(false);
         me.set("finishedWrongly", true);
       } else {
         // console.log("cash up processed correctly. -> show modal");
+        OB.UTIL.showLoading(false);
         me.set("finished", true); //$('#modalFinishClose').modal('show');
       }
     });
