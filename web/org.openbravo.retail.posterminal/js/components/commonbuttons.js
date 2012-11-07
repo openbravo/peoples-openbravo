@@ -51,11 +51,11 @@ enyo.kind({
   handlers: {
     onHideThisPopup: 'hide'
   },
-  show: function () {
+  show: function (args) {
     this.inherited(arguments);
     OB.UTIL.focusInModal($(this.hasNode()));
     if (this.executeOnShow) {
-      this.executeOnShow();
+      this.executeOnShow(args);
     }
   },
   hide: function () {
