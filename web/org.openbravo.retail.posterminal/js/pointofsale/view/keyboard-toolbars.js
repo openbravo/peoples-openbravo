@@ -27,14 +27,13 @@ OB.OBPOSPointOfSale.UI.ToolbarScan = {
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ToolbarPayment',
-  components: [{
-    name: 'modalpayment',
-    kind: 'OB.UI.ModalPayment'
-  }],
   published: {
     receipt: null
   },
   toolbarName: 'toolbarpayment',
+  events: {
+    onShowPopup: ''
+  },
   pay: function (amount, key, name, paymentMethod, rate, mulrate, isocode) {
     if (OB.DEC.compare(amount) > 0) {
 
@@ -48,7 +47,20 @@ enyo.kind({
       }
 
       if (provider) {
-        this.$.modalpayment.show(this.receipt, provider, key, name, paymentMethod, amount, rate, mulrate, isocode);
+        this.doShowPopup({
+          popup: 'modalpayment',
+          args: {
+            'receipt': this.receipt,
+            'provider': provider,
+            'key': key,
+            'name': name,
+            'paymentMethod': paymentMethod,
+            'amount': amount,
+            'rate': rate,
+            'mulrate': mulrate,
+            'isocode': isocode
+          }
+        });
       } else {
         this.receipt.addPayment(new OB.Model.PaymentLine({
           'kind': key,
