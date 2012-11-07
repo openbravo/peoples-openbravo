@@ -8,8 +8,7 @@ ${data.network}
 CACHE:
 # Libs
 ../../web/org.openbravo.client.kernel/js/BigDecimal-all-1.0.1.min.js
-../../web/org.openbravo.retail.posterminal/js/libs/less/less-1.3.0.min.js  
-../../web/org.openbravo.client.kernel/js/LAB.min.js  
+../../web/org.openbravo.client.kernel/js/LAB.min.js
 ../../web/org.openbravo.retail.posterminal/js/libs/jquery-1.7.2.js
 ../../web/org.openbravo.retail.posterminal/js/libs/underscore-1.3.3.js
 ../../web/org.openbravo.retail.posterminal/js/libs/backbone-0.9.2.js
@@ -17,6 +16,7 @@ CACHE:
 ../../web/org.openbravo.retail.posterminal/js/libs/sha1-min.js
 ../../web/org.openbravo.retail.posterminal/js/libs/mbp-helper.js
 ../../web/org.openbravo.retail.posterminal/js/libs/enyo.js
+../../web/org.openbravo.retail.posterminal/js/libs/onyx/onyx.js
 
 # Boot code 
 ../../web/org.openbravo.client.application/js/utilities/ob-utilities-date.js
