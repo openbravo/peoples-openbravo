@@ -12,7 +12,6 @@
 enyo.kind({
   name: 'OB.UI.ModalReceiptLinesProperties',
   kind: 'OB.UI.ModalAction',
-  myId: 'receiptLinesPropertiesDialog',
   handlers: {
     onApplyChanges: 'applyChanges'
   },
@@ -42,7 +41,6 @@ enyo.kind({
     });
   },
   applyChanges: function (sender, event) {
-    $('#' + this.myId).modal('hide');
     this.waterfall('onApplyChange', {
       orderline: this.currentLine
     });

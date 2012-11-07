@@ -14,12 +14,14 @@ enyo.kind({
   kind: 'OB.UI.RadioButton',
   style: 'padding-top: 0px; padding-right: 0px; padding-bottom: 0px; padding-left: 40px; margin-top: 10px; margin-right: 10px; margin-bottom: 10px; margin-left: 10px;',
   components: [{
-    name: 'lbl'
+    name: 'lbl',
+    style: 'padding: 5px 0px 0px 0px;'
   }],
   events: {
     onPaymentMethodKept: ''
   },
   tap: function () {
+    this.inherited(arguments);
     this.doPaymentMethodKept({
       qtyToKeep: this.qtyToKeep
     });
@@ -45,11 +47,9 @@ enyo.kind({
     onResetQtyToKeep: ''
   },
   components: [{
+    kind: "Group",
     name: 'RadioGroup',
     classes: 'btn-group',
-    attributes: {
-      'data-toggle': 'buttons-radio'
-    },
     components: [{
       name: 'keepfixedamount',
       showing: false,
@@ -142,6 +142,11 @@ enyo.kind({
           },
           renderFixedAmount: function (modelToDraw) {
             var udfn, cnted;
+            this.$.keepfixedamount.disableRadio();
+            this.$.allowmoveeverything.disableRadio();
+            this.$.allowdontmove.disableRadio();
+            this.$.allowvariableamount.disableRadio();
+
             if (modelToDraw.get('foreignCounted')) {
               cnted = modelToDraw.get('foreignCounted');
             } else {
@@ -166,6 +171,10 @@ enyo.kind({
             }
           },
           renderBody: function (modelToDraw) {
+            this.$.keepfixedamount.disableRadio();
+            this.$.allowmoveeverything.disableRadio();
+            this.$.allowdontmove.disableRadio();
+            this.$.allowvariableamount.disableRadio();
 
             var paymentMethod = modelToDraw.get('paymentMethod');
             this.disableControls();

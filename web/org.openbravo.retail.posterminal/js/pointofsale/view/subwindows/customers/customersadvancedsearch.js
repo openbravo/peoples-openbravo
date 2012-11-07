@@ -35,8 +35,17 @@ enyo.kind({
         cleanResults: true
       });
     }
+    return true;
   },
   defaultNavigateOnClose: 'mainSubWindow',
+  onEnterTap: function(e, action){
+    if (action){
+      this.waterfall(action);
+    } else {
+      this.waterfall('onSearchActionByEnter');
+    }
+    return true;
+  },
   header: {
     kind: 'OB.OBPOSPointOfSale.UI.customers.casheader'
   },
@@ -54,6 +63,10 @@ enyo.kind({
     onSearchAction: '',
     onClearAction: ''
   },
+  handlers: {
+    onSearchActionByEnter: 'searchAction',
+    onClearActionByEnter: 'clearAction'
+  },
   components: [{
     style: 'padding: 10px; 10px; 0px; 10px;',
     components: [{
@@ -68,7 +81,8 @@ enyo.kind({
           name: 'filterText',
           onchange: 'searchUsingBpsFilter',
           attributes: {
-            'x-webkit-speech': 'x-webkit-speech'
+            'x-webkit-speech': 'x-webkit-speech',
+            'focus-on-open': 'true'
           }
         }]
       }, {
@@ -90,6 +104,9 @@ enyo.kind({
           kind: 'OB.UI.Button',
           style: 'width: 100px; margin: 0px 0px 8px 5px;',
           classes: 'btnlink-yellow btnlink btnlink-small',
+          attributes: {
+            'onEnterTap': 'onClearActionByEnter'
+          },
           components: [{
             classes: 'btn-icon-small btn-icon-clear'
           }, {
@@ -343,7 +360,7 @@ enyo.kind({
 
     if (filter && filter !== '') {
       for (i = 0; i < splitFilter.length; i++) {
-        criteria._identifier = {
+        criteria._filter = {
           operator: _operator,
           value: splitFilter[i]
         };

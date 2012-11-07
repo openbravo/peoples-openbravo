@@ -12,7 +12,6 @@
 enyo.kind({
   name: 'OB.UI.ModalReceiptProperties',
   kind: 'OB.UI.ModalAction',
-  myId: 'receiptPropertiesDialog',
   handlers: {
     onApplyChanges: 'applyChanges'
   },
@@ -42,7 +41,6 @@ enyo.kind({
     });
   },
   applyChanges: function (sender, event) {
-    $('#' + this.myId).modal('hide');
     this.waterfall('onApplyChange', {});
   },
   initComponents: function () {
@@ -76,11 +74,14 @@ enyo.kind({
   name: 'OB.UI.ReceiptPropertiesDialogApply',
   content: OB.I18N.getLabel('OBPOS_LblApply'),
   classes: 'btnlink btnlink-gray modal-dialog-content-button',
+  isApplyButton: true,
   events: {
-    onApplyChanges: ''
+    onApplyChanges: '',
+    onHideThisPopup: ''
   },
   tap: function () {
     this.doApplyChanges();
+    this.doHideThisPopup();
   }
 });
 
@@ -90,7 +91,13 @@ enyo.kind({
   content: OB.I18N.getLabel('OBPOS_LblCancel'),
   classes: 'btnlink btnlink-gray modal-dialog-content-button',
   attributes: {
-    'data-dismiss': 'modal'
+    'onEnterTap': 'hide'
+  },
+  events: {
+    onHideThisPopup: ''
+  },
+  tap: function () {
+    this.doHideThisPopup();
   }
 });
 

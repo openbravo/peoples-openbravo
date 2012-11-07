@@ -11,7 +11,8 @@
 
 (function () {
   var modelterminal = OB.POS.modelterminal;
-
+  OB.UI.UTILS = {};
+  OB.UI.UTILS.domIdEnyoReference = {};
   // alert all errors
   window.onerror = function (e) {
     if (typeof (e) === 'string') {
@@ -88,10 +89,12 @@
     modelterminal.load();
     modelterminal.on('ready', function () {
       OB.POS.terminal.$.dialogsContainer.createComponent({
-        kind: 'OB.UI.ModalLogout'
+        kind: 'OB.UI.ModalLogout',
+        name: 'logoutDialog'
       }).render();
       OB.POS.terminal.$.dialogsContainer.createComponent({
-        kind: 'OB.UI.ModalProfile'
+        kind: 'OB.UI.ModalProfile',
+        name: 'profileDialog'
       }).render();
     });
 

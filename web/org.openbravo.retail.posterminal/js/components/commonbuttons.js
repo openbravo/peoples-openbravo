@@ -17,7 +17,6 @@ enyo.kind({
   },
   //TODO: support windows 7  setTimeout(function() { me.$el.removeClass('btn-down'); }, 125);
   mouseOverOut: function (sender, event) {
-
     this.addRemoveClass('btn-over', event.type === 'mouseover');
   }
 });
@@ -44,21 +43,114 @@ enyo.kind({
 });
 
 enyo.kind({
+  name: 'OB.UI.Popup',
+  kind: "onyx.Popup",
+  centered: true,
+  floating: true,
+  scrim: true,
+  handlers: {
+    onHideThisPopup: 'hide'
+  },
+  show: function () {
+    this.inherited(arguments);
+    OB.UTIL.focusInModal($(this.hasNode()));
+    if (this.executeOnShow) {
+      this.executeOnShow();
+    }
+  },
+  hide: function () {
+    this.inherited(arguments);
+    $("#focuskeeper").focus();
+    if (this.executeOnHide) {
+      this.executeOnHide();
+    }
+  },
+  rendered: function () {
+    this.inherited(arguments);
+    if (OB.UI.UTILS.domIdEnyoReference) {
+      if (this.getId()) {
+        OB.UI.UTILS.domIdEnyoReference[this.getId()] = this;
+      }
+    }
+  },
+  enterTap: function (e, action) {
+    if (action) {
+      if (action === 'hide') {
+        this.hide();
+        return true;
+      }
+    }
+
+    if (this.onEnterTap) {
+      this.onEnterTap(e, action);
+      return true;
+    }
+
+    if (this.applyButton) {
+      this.applyButton.tap(e, {
+        keyboardEnter: true
+      });
+      return true;
+    }
+
+    return false;
+  },
+  updatePosition: function () {
+    // Improve of enyo "updatePosition" function to proper manage of % and absolute top and left positions
+    var top, left, t = this.getBounds();
+    if (this.topPosition) {
+      top = this.topPosition.toString();
+    } else if (this.centered) {
+      top = '50%';
+    } else {
+      top = '0';
+    }
+    if (top.indexOf('px') !== -1) {
+      top = top.replace('px', '');
+    }
+
+    if (this.leftPosition) {
+      left = this.leftPosition.toString();
+    } else if (this.centered) {
+      left = '50%';
+    } else {
+      left = '0';
+    }
+    if (left.indexOf('px') !== -1) {
+      left = left.replace('px', '');
+    }
+
+    if (top.indexOf('%') !== -1) {
+      this.addStyles('top: ' + top);
+      this.addStyles('margin-top: -' + Math.max(t.height / 2, 0).toString() + 'px;');
+    } else {
+      this.addStyles('top: ' + top + 'px');
+    }
+
+    if (left.indexOf('%') !== -1) {
+      this.addStyles('left: ' + left);
+      this.addStyles('margin-left: -' + Math.max(t.width / 2, 0).toString() + 'px;');
+    } else {
+      this.addStyles('left: ' + left + 'px');
+    }
+
+    return true;
+  }
+});
+
+enyo.kind({
   name: 'OB.UI.Modal',
-  tag: 'div',
-  classes: 'modal hide fade',
-  style: 'display: none;',
+  kind: "OB.UI.Popup",
+  classes: 'modal',
   components: [{
     tag: 'div',
     classes: 'modal-header',
     components: [{
-      tag: 'a',
-      classes: 'close',
-      attributes: {
-        'data-dismiss': 'modal'
-      },
+      tag: 'div',
+      classes: 'modal-closebutton',
       components: [{
         tag: 'span',
+        ontap: 'hide',
         style: 'font-size: 150%',
         allowHtml: true,
         content: '&times;'
@@ -70,7 +162,7 @@ enyo.kind({
   }, {
     tag: 'div',
     name: 'body',
-    classes: 'modal-header'
+    classes: 'modal-body'
   }],
   //TODO: maxheight: null,
   initComponents: function () {
@@ -89,12 +181,7 @@ enyo.kind({
 
   render: function () {
     this.inherited(arguments);
-    OB.UTIL.adjustModalPosition($(this.node));
     OB.UTIL.focusInModal($(this.node));
-  },
-
-  makeId: function () {
-    return this.myId || this.inherited(arguments);
   }
 });
 
@@ -112,11 +199,9 @@ enyo.kind({
   name: 'OB.UI.SelectButton',
   kind: 'OB.UI.Button',
   classes: 'btnselect',
-
   tap: function () {
     this.model.trigger('selected', this.model);
     this.model.trigger('click', this.model);
-    $('#' + this.id).parents('.modal').filter(':first').modal('hide');
   }
 });
 
@@ -124,9 +209,13 @@ enyo.kind({
   name: 'OB.UI.CancelButton',
   kind: 'OB.UI.SmallButton',
   classes: 'btnlink-white btnlink-fontgray',
-  attributes: {
-    href: '#modalCancel',
-    'data-toggle': 'modal'
+  events: {
+    onShowPopup: ''
+  },
+  tap: function () {
+    this.doShowPopup({
+      popup: 'modalCancel'
+    });
   },
   initComponents: function () {
     this.inherited(arguments);
@@ -136,9 +225,24 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.RadioButton',
-  tag: 'button',
+  kind: "onyx.Checkbox",
   classes: 'btn btn-radio',
   style: 'padding: 0px 0px 0px 40px; margin: 10px;',
+  activeRadio: function () {
+    this.addClass('active');
+    this.setChecked(true);
+  },
+  disableRadio: function () {
+    this.setNodeProperty('checked', false);
+    this.setAttribute('checked', '');
+    this.removeClass('active');
+    this.active = false;
+    this.checked = false;
+  },
+  tap: function () {
+    this.inherited(arguments);
+    this.activeRadio();
+  },
   initComponents: function () {
     this.inherited(arguments);
   }
@@ -217,29 +321,20 @@ enyo.kind({
 enyo.kind({
   //TODO: maxheight, 
   name: 'OB.UI.ModalAction',
-  tag: 'div',
-  classes: 'modal hide fade modal-dialog',
-  style: 'display:none',
+  kind: "OB.UI.Popup",
+  classes: 'modal modal-dialog',
   bodyContentClass: 'modal-dialog-content-text',
   bodyButtonsClass: 'modal-dialog-content-buttons-container',
-  showDialog: function () {
-    $('#' + this.myId).modal('show');
-  },
-  hideDialog: function () {
-    $('#' + this.myId).modal('hide');
-  },
   components: [{
     tag: 'div',
     classes: 'modal-header modal-dialog-header',
     components: [{
       name: 'headerCloseButton',
-      tag: 'a',
-      classes: 'close',
-      attributes: {
-        'data-dismiss': 'modal'
-      },
+      tag: 'div',
+      classes: 'modal-closebutton',
       components: [{
         tag: 'span',
+        ontap: 'hide',
         style: 'font-size: 150%',
         allowHtml: true,
         content: '&times'
@@ -262,26 +357,15 @@ enyo.kind({
   }],
   rendered: function () {
     this.inherited(arguments);
-
-    if (this.executeOnShown) {
-      $('#' + this.myId).on('shown', {
-        dialog: this
-      }, this.executeOnShown);
-    }
-    if (this.executeOnShow) {
-      $('#' + this.myId).on('show', {
-        dialog: this
-      }, this.executeOnShow);
-    }
-    if (this.executeOnHide) {
-      $('#' + this.myId).on('hide', {
-        dialog: this
-      }, this.executeOnHide);
-    }
+    enyo.forEach(this.$.bodyButtons.getComponents(), function (control) {
+      if (control.isApplyButton) {
+        this.applyButton = control;
+      }
+    }, this);
   },
-
   initComponents: function () {
     this.inherited(arguments);
+
     this.$.header.setContent(this.header);
 
     this.$.bodyParent.setStyle('max-height: ' + this.maxheight + ';');
@@ -291,15 +375,6 @@ enyo.kind({
 
     this.$.bodyButtons.setClasses(this.bodyButtonsClass);
     this.$.bodyButtons.createComponent(this.bodyButtons);
-  },
-
-  render: function () {
-    this.inherited(arguments);
-    OB.UTIL.adjustModalPosition($(this.node));
-    OB.UTIL.focusInModal($(this.node));
-  },
-  makeId: function () {
-    return this.myId || this.inherited(arguments);
   }
 });
 
@@ -309,17 +384,13 @@ enyo.kind({
 });
 
 enyo.kind({
-  tag: 'li',
   name: 'OB.UI.MenuAction',
   permission: null,
   components: [{
     name: 'lbl',
-    tag: 'a',
     allowHtml: true,
-    style: 'padding: 12px 15px 12px 15px;',
-    attributes: {
-      href: '#'
-    }
+    style: 'padding: 12px 5px 12px 15px;',
+    classes: 'dropdown-menuitem'
   }],
   initComponents: function () {
     this.inherited(arguments);
@@ -339,8 +410,8 @@ enyo.kind({
       kind: 'OB.UI.AcceptDialogButton'
     }]
   },
-  show: function () {
-    $('#' + this.myId).modal('show');
+  events: {
+    onShowPopup: ''
   },
   closeOnAcceptButton: true,
   initComponents: function () {
@@ -355,12 +426,15 @@ enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   content: OB.I18N.getLabel('OBPOS_LblOk'),
   classes: 'btnlink btnlink-gray modal-dialog-content-button',
+  events: {
+    onHideThisPopup: ''
+  },
   tap: function () {
     if (this.dialogContainer.acceptCallback) {
       this.dialogContainer.acceptCallback();
     }
     if (this.dialogContainer.closeOnAcceptButton) {
-      $('#' + this.dialogContainer.getId()).modal('hide');
+      this.doHideThisPopup();
     }
   }
 });
@@ -368,9 +442,15 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.Button',
   name: 'OB.UI.CancelDialogButton',
-  attributes: {
-    'data-dismiss': 'modal'
-  },
   classes: 'btnlink btnlink-gray modal-dialog-content-button',
-  content: OB.I18N.getLabel('OBPOS_LblCancel')
+  content: OB.I18N.getLabel('OBPOS_LblCancel'),
+  attributes: {
+    'onEnterTap': 'hide'
+  },
+  events: {
+    onHideThisPopup: ''
+  },
+  tap: function () {
+    this.doHideThisPopup();
+  }
 });

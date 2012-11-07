@@ -59,44 +59,41 @@ enyo.kind({
             name: 'terminal',
             style: 'display: inline-block; margin-left: 50px;'
           }, {
-            classes: 'dropdown',
+            kind: 'onyx.MenuDecorator',
             style: 'display: inline-block; margin-left: 50px;',
             components: [{
-              tag: 'a',
               name: 'yourcompany',
-              classes: 'btn-dropdown dropdown-toggle',
-              attributes: {
-                href: '#',
-                'data-toggle': 'dropdown'
-              }
+              classes: 'btn-dropdown'
             }, {
-              classes: 'dropdown-menu',
-              style: 'color: black; width: 350px;',
+              kind: 'onyx.Menu',
+              classes: 'dropdown dropdown-clientdata',
+              maxHeight: 600,
+              scrolling: false,
+              floating: true,
               components: [{
-                style: 'height: 60px; background: no-repeat center center url(\'../../utility/ShowImageLogo?logo=yourcompanymenu\');'
+                style: 'height: 60px; padding: 0px; background: no-repeat center center url(\'../../utility/ShowImageLogo?logo=yourcompanymenu\');'
               }, {
                 name: 'yourcompanyproperties',
-                style: 'display: block; padding: 10px; float: left; background-color: #FFF899; line-height: 23px;'
-
-              }, {
-                style: 'clear: both;'
+                style: 'width: 330px; display: block; padding: 10px; background-color: #FFF899; line-height: 23px;'
               }]
             }]
           }, {
+            kind: 'onyx.MenuDecorator',
             style: 'display: inline-block; margin-left: 50px;',
-            classes: 'dropdown',
             components: [{
-              tag: 'a',
               name: 'loggeduser',
-              classes: 'btn-dropdown dropdown-toggle',
-              attributes: {
-                'data-toggle': 'dropdown',
-                href: '#'
-              }
+              classes: 'btn-dropdown'
             }, {
-              name: 'loggeduserproperties',
-              classes: 'dropdown-menu',
-              style: 'color: black; padding: 0px; width: 350px;'
+              kind: 'onyx.Menu',
+              classes: 'dropdown dropdown-clientdata',
+              maxHeight: 600,
+              scrolling: false,
+              floating: true,
+              components: [{
+                name: 'loggeduserproperties',
+                classes: 'dropdown',
+                style: 'color: black; padding: 0px; width: 350px;'
+              }]
             }]
           }]
 
@@ -134,16 +131,50 @@ enyo.kind({
           return 'containerLoading';
         }
       }, {
+        name: 'containerWindow',
         makeId: function () {
           return 'containerWindow';
         },
-        name: 'containerWindow'
+        handlers: {
+          onShowPopup: 'showPopupHandler',
+          onHidePopup: 'hidePopupHandler'
+        },
+        showPopupHandler: function (inSender, inEvent) {
+          if (inEvent.popup) {
+            this.showPopup(inEvent.popup);
+          }
+        },
+        showPopup: function (popupName) {
+          var componentsArray = this.getComponents(),
+              i;
+          for (i = 0; i < componentsArray.length; i++) {
+            if (componentsArray[i].$[popupName]) {
+              componentsArray[i].$[popupName].show();
+              break;
+            }
+          }
+          return true;
+        },
+        hidePopupHandler: function (inSender, inEvent) {
+          if (inEvent.popup) {
+            this.hidePopup(inEvent.popup);
+          }
+        },
+        hidePopup: function (popupName) {
+          var componentsArray = this.getComponents(),
+              i;
+          for (i = 0; i < componentsArray.length; i++) {
+            if (componentsArray[i].$[popupName]) {
+              componentsArray[i].$[popupName].hide();
+              break;
+            }
+          }
+          return true;
+        }
       }]
     }]
   }, {
-    makeId: function () {
-      return 'alertContainer';
-    }
+    name: 'alertContainer'
   }],
   initComponents: function () {
     //this.terminal = terminal;
@@ -170,10 +201,13 @@ enyo.kind({
       this.$.onlineviewer.setOnlineState(model.get('connectedToERP'));
       if (OB.POS.modelterminal.get('loggedOffline') !== undefined) {
         if (OB.POS.modelterminal.get('connectedToERP')) {
-          OB.POS.terminal.$.dialogsContainer.createComponent({
-            kind: 'OB.UI.ModalOnline'
-          }).render();
-          $('#modalOnline').modal('show');
+          if (!OB.POS.terminal.$.dialogsContainer.$.modalOnline) {
+            OB.POS.terminal.$.dialogsContainer.createComponent({
+              kind: 'OB.UI.ModalOnline',
+              name: 'modalOnline'
+            }).render();
+          }
+          OB.POS.terminal.$.dialogsContainer.$.modalOnline.show();
         } else {
           OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_OfflineModeWarning'));
         }
@@ -223,6 +257,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.Terminal.UserWidget',
+  style: 'width: 100%',
   components: [{
     style: 'height: 60px; background-color: #FFF899;',
     components: [{
@@ -262,7 +297,8 @@ enyo.kind({
       label: 'Profile',
       //TODO: OB.I18N.getLabel('OBPOS_LblProfile'),
       tap: function () {
-        $('#profileDialog').modal('show');
+        this.owner.owner.parent.hide(); // Manual dropdown menu closure
+        OB.POS.terminal.$.dialogsContainer.$.profileDialog.show();
       }
     }, {
       style: 'height: 5px;'
@@ -271,14 +307,18 @@ enyo.kind({
       allowHtml: true,
       label: 'Lock screen <span style="padding-left:190px">0\u21B5</span>',
       tap: function () {
+        this.owner.owner.parent.hide(); // Manual dropdown menu closure
         OB.POS.lock();
       }
+    }, {
+      style: 'height: 5px;'
     }, {
       kind: 'OB.UI.MenuAction',
       label: 'End session',
       //TODO: OB.I18N.getLabel('OBPOS_LblProfile'),
       tap: function () {
-        $('#logoutDialog').modal('show');
+        this.owner.owner.parent.hide(); // Manual dropdown menu closure
+        OB.POS.terminal.$.dialogsContainer.$.logoutDialog.show();
       }
     }, {
       style: 'height: 5px;'

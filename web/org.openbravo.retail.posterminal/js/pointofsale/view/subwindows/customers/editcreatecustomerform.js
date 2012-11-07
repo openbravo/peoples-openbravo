@@ -12,8 +12,10 @@
 enyo.kind({
   kind: 'OB.UI.subwindow',
   name: 'OB.OBPOSPointOfSale.UI.customers.newcustomer',
+  events: {
+    onShowPopup: ''
+  },
   beforeSetShowing: function (params) {
-
     if (OB.POS.modelterminal.get('terminal').defaultbp_paymentmethod !== null && OB.POS.modelterminal.get('terminal').defaultbp_bpcategory !== null && OB.POS.modelterminal.get('terminal').defaultbp_paymentterm !== null && OB.POS.modelterminal.get('terminal').defaultbp_invoiceterm !== null && OB.POS.modelterminal.get('terminal').defaultbp_bpcountry !== null && OB.POS.modelterminal.get('terminal').defaultbp_bporg !== null) {
 
       this.waterfall('onSetCustomer', {
@@ -22,7 +24,9 @@ enyo.kind({
       //show
       return true;
     } else {
-      $('#modalConfigurationRequiredForCreateNewCustomers').modal("show");
+      this.doShowPopup({
+        popup: 'modalConfigurationRequiredForCreateNewCustomers'
+      });
       //not show
       return false;
     }
@@ -69,6 +73,9 @@ enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.customers.newcustomersave',
   style: 'width: 100px; margin: 0px 5px 8px 19px;',
   classes: 'btnlink btnlink-small',
+  attributes: {
+    'focus-on-open': 'true'
+  },
   content: OB.I18N.getLabel('OBPOS_LblSave'),
   events: {
     onSaveCustomer: ''

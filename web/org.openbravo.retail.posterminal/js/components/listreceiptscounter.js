@@ -17,35 +17,26 @@ enyo.kind({
     orderList: null
   },
   components: [{
-    tag: 'button',
-    classes: 'btnlink btnlink-gray',
-    style: 'position: relative; overflow: hidden; margin:0px; padding:0px; height:50px; width: 50px;',
-    attributes: {
-      href: '#modalreceipts',
-      'data-toggle': 'modal'
-    },
-    components: [{
-      style: 'position: absolute; top: -35px; right:-35px; background: #404040; height:70px; width: 70px; -webkit-transform: rotate(45deg); -moz-transform: rotate(45deg); -ms-transform: rotate(45deg); -transform: rotate(45deg);'
-    }, {
-      name: 'counter',
-      style: 'position: absolute; top: 0px; right:0px; padding-top: 5px; padding-right: 10px; font-weight: bold; color: white;'
-    }]
-  }, {
-    kind: 'OB.UI.ModalReceipts',
-    name: 'modalreceipts'
+    kind: 'OB.UI.ReceiptsCounterButton',
+    name: 'receiptsCounterButton'
   }],
+  events: {
+    onSetReceiptsList: ''
+  },
   renderNrItems: function (nrItems) {
     if (nrItems > 1) {
-      this.$.counter.setContent(nrItems - 1);
+      this.$.receiptsCounterButton.$.counter.setContent(nrItems - 1);
       this.show();
     } else {
-      this.$.counter.setContent('');
+      this.$.receiptsCounterButton.$.counter.setContent('');
       this.hide();
     }
   },
   orderListChanged: function (oldValue) {
     var me = this;
-    this.$.modalreceipts.setReceiptsList(this.orderList);
+    this.doSetReceiptsList({
+      orderList: this.orderList
+    });
     this.renderNrItems(this.orderList.length);
     this.orderList.on('all', function (model) {
       me.renderNrItems(me.orderList.length);
@@ -54,4 +45,26 @@ enyo.kind({
   initComponents: function () {
     this.inherited(arguments);
   }
+});
+
+
+enyo.kind({
+  name: 'OB.UI.ReceiptsCounterButton',
+  tag: 'button',
+  classes: 'btnlink btnlink-gray',
+  style: 'position: relative; overflow: hidden; margin:0px; padding:0px; height:50px; width: 50px;',
+  events: {
+    onShowPopup: ''
+  },
+  tap: function () {
+    this.doShowPopup({
+      popup: 'modalreceipts'
+    });
+  },
+  components: [{
+    style: 'position: absolute; top: -35px; right:-35px; background: #404040; height:70px; width: 70px; -webkit-transform: rotate(45deg); -moz-transform: rotate(45deg); -ms-transform: rotate(45deg); -transform: rotate(45deg);'
+  }, {
+    name: 'counter',
+    style: 'position: absolute; top: 0px; right:0px; padding-top: 5px; padding-right: 10px; font-weight: bold; color: white;'
+  }]
 });

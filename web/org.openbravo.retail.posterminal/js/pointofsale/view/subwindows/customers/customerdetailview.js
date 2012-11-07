@@ -12,6 +12,9 @@
 enyo.kind({
   kind: 'OB.UI.subwindow',
   name: 'OB.OBPOSPointOfSale.UI.customers.editcustomer',
+  events: {
+    onShowPopup: ''
+  },
   beforeSetShowing: function (params) {
     if (OB.POS.modelterminal.get('terminal').defaultbp_paymentmethod !== null && OB.POS.modelterminal.get('terminal').defaultbp_bpcategory !== null && OB.POS.modelterminal.get('terminal').defaultbp_paymentterm !== null && OB.POS.modelterminal.get('terminal').defaultbp_invoiceterm !== null && OB.POS.modelterminal.get('terminal').defaultbp_bpcountry !== null && OB.POS.modelterminal.get('terminal').defaultbp_bporg !== null) {
 
@@ -21,7 +24,9 @@ enyo.kind({
 
       return true;
     } else {
-      $('#modalConfigurationRequiredForCreateNewCustomers').modal("show");
+      this.doShowPopup({
+        popup: 'modalConfigurationRequiredForCreateNewCustomers'
+      });
       return false;
     }
   },
@@ -97,6 +102,9 @@ enyo.kind({
             onSetCustomer: 'setCustomer'
           },
           style: 'width: 100px; margin: 0px 5px 8px 19px;',
+          attributes: {
+            'focus-on-open': 'true'
+          },
           classes: 'btnlink-orange btnlink btnlink-small',
           content: OB.I18N.getLabel('OBPOS_LblEdit'),
           setCustomer: function (sender, event) {

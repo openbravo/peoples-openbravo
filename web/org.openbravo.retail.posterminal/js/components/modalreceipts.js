@@ -11,14 +11,14 @@
 
 enyo.kind({
   name: 'OB.UI.ModalReceipts',
-  myId: 'modalreceipts',
+  topPosition: '125px',
   published: {
     receiptsList: null
   },
   kind: 'OB.UI.Modal',
   modalClass: 'modal',
-  headerClass: 'modal-header',
-  bodyClass: 'modal-header',
+  //headerClass: 'modal-header',
+  //bodyClass: 'modal-header',
   header: OB.I18N.getLabel('OBPOS_LblAssignReceipt'),
   body: {
     kind: 'OB.UI.ListReceipts',
@@ -65,9 +65,16 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ListReceiptLine',
   kind: 'OB.UI.SelectButton',
+  events: {
+    onHideThisPopup: ''
+  },
+  tap: function () {
+    this.inherited(arguments);
+    this.doHideThisPopup();
+  },
   components: [{
     name: 'line',
-    style: 'line-height: 23px;',
+    style: 'line-height: 23px; width: 100%;',
     components: [{
       components: [{
         style: 'float: left; width: 15%',
@@ -112,7 +119,6 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ModalAction',
   name: 'OB.UI.ModalDeleteReceipt',
-  myId: 'modalConfirmReceiptDelete',
   header: OB.I18N.getLabel('OBPOS_ConfirmDeletion'),
   bodyContent: {
     content: OB.I18N.getLabel('OBPOS_MsgConfirmDelete') + '\n' + OB.I18N.getLabel('OBPOS_cannotBeUndone')
@@ -129,13 +135,15 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.Button',
   name: 'OB.UI.btnModalApplyDelete',
+  isApplyButton: true,
   classes: 'btnlink btnlink-gray modal-dialog-content-button',
   content: OB.I18N.getLabel('OBPOS_LblYesDelete'),
   events: {
-    onDeleteOrder: ''
+    onDeleteOrder: '',
+    onHideThisPopup: ''
   },
   tap: function () {
-    $('#modalConfirmReceiptDelete').modal('hide');
+    this.doHideThisPopup();
     this.doDeleteOrder();
   }
 });
@@ -143,9 +151,15 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.Button',
   name: 'OB.UI.btnModalCancelDelete',
-  attributes: {
-    'data-dismiss': 'modal'
-  },
   classes: 'btnlink btnlink-gray modal-dialog-content-button',
-  content: OB.I18N.getLabel('OBPOS_LblCancel')
+  content: OB.I18N.getLabel('OBPOS_LblCancel'),
+  attributes: {
+    'onEnterTap': 'hide'
+  },
+  events: {
+    onHideThisPopup: ''
+  },
+  tap: function () {
+    this.doHideThisPopup();
+  }
 });

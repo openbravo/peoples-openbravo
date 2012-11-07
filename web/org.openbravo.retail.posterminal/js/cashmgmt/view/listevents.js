@@ -51,11 +51,18 @@ enyo.kind({
   name: 'OB.OBPOSCashMgmt.UI.ListEventLine',
   kind: 'OB.UI.SelectButton',
   style: 'background-color:#dddddd;  border: 1px solid #ffffff;',
+  events: {
+    onHideThisPopup: ''
+  },
   components: [{
     name: 'line',
     style: 'padding: 1px 0px 1px 5px;'
 
   }],
+  tap: function () {
+    this.inherited(arguments);
+    this.doHideThisPopup();
+  },
 
   create: function () {
     this.inherited(arguments);

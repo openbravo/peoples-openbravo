@@ -16,8 +16,7 @@ enyo.kind({
   bodyContent: {
     tag: 'div',
     content: OB.I18N.getLabel('OBPOS_configurationNeededToCreateCustomers')
-  },
-  myId: 'modalConfigurationRequiredForCreateNewCustomers'
+  }
 });
 
 enyo.kind({

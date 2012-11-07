@@ -13,7 +13,11 @@
 enyo.kind({
   name: 'OB.OBPOSCashMgmt.UI.CashMgmtKeyboard',
   kind: 'OB.UI.Keyboard',
+  events: {
+    onShowPopup: ''
+  },
   getPayment: function (id, key, name, identifier, type, rate, isocode) {
+    var me = this;
     return {
       permission: key,
       action: function (keyboard, txt) {
@@ -28,9 +32,13 @@ enyo.kind({
         };
 
         if (type === 'drop') {
-          $('#modaldropevents').modal('show');
+          me.doShowPopup({
+            popup: 'modaldropevents'
+          });
         } else {
-          $('#modaldepositevents').modal('show');
+          me.doShowPopup({
+            popup: 'modaldepositevents'
+          });
         }
       }
     };

@@ -108,8 +108,8 @@
     name: 'OB.OBPOSLogin.UI.Login',
     tag: 'section',
     components: [{
-      myId: 'DatabaseDialog',
       kind: 'OB.UI.ModalInfo',
+      name: 'DatabaseDialog',
       header: OB.I18N.getLabel('OBPOS_DatabaseVersionChange'),
       bodyContent: {
         content: OB.I18N.getLabel('OBPOS_DatabaseVersionChangeLong')

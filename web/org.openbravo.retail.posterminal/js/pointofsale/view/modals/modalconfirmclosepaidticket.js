@@ -14,11 +14,13 @@ enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.Modals.btnModalApplyClosePaidTicket',
   classes: 'btnlink btnlink-gray modal-dialog-content-button',
   content: OB.I18N.getLabel('OBPOS_acceptClosePaidTicket'),
+  isApplyButton: true,
   events: {
-    onDeleteOrder: ''
+    onDeleteOrder: '',
+    onHideThisPopup: ''
   },
   tap: function () {
-    $('#modalConfirmClosePaidTicket').modal('hide');
+    this.doHideThisPopup();
     this.doDeleteOrder();
   }
 });
@@ -28,7 +30,6 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ModalAction',
   name: 'OB.OBPOSPointOfSale.UI.Modals.ModalClosePaidReceipt',
-  myId: 'modalConfirmClosePaidTicket',
   header: OB.I18N.getLabel('OBPOS_confirmClosePaidTicketHeader'),
   bodyContent: {
     content: OB.I18N.getLabel('OBPOS_closePaidTicketMessage')

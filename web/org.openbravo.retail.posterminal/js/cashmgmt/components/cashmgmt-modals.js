@@ -11,51 +11,61 @@
 
 enyo.kind({
   kind: 'OB.UI.ModalAction',
-  name: 'OB.UI.ModalCancel',
-  popup: 'modalCancel',
-
-  header: OB.I18N.getLabel('OBPOS_LblCancel'),
+  name: 'OB.OBPOSCashMgmt.UI.modalFinished',
+  header: OB.I18N.getLabel('OBPOS_LblDone'),
   bodyContent: {
-    tag: 'div',
-    content: OB.I18N.getLabel('OBPOS_ProcessCancelDialog')
+    content: OB.I18N.getLabel('OBPOS_FinishCashMgmtDialog')
   },
   bodyButtons: {
     tag: 'div',
     components: [{
       //OK button
-      kind: 'OB.UI.ModalCancel_OkButton'
-    }, {
-      //Cancel button	
-      kind: 'OB.UI.ModalCancel_CancelButton'
+      kind: 'OB.OBPOSCashMgmt.UI.modalFinished_OkButton'
     }]
-  }
-});
-
-enyo.kind({
-  kind: 'OB.UI.Button',
-  name: 'OB.UI.ModalCancel_OkButton',
-  classes: 'btnlink btnlink-gray modal-dialog-content-button',
-  content: OB.I18N.getLabel('OBPOS_LblOk'),
-  isApplyButton: true,
-  popup: 'modalCancel',
-  events: {
-    onHideThisPopup: ''
   },
-  tap: function () {
-    this.doHideThisPopup();
+  executeOnHide: function () {
     OB.POS.navigate('retail.pointofsale');
   }
 });
 
 enyo.kind({
   kind: 'OB.UI.Button',
-  name: 'OB.UI.ModalCancel_CancelButton',
+  name: 'OB.OBPOSCashMgmt.UI.modalFinished_OkButton',
   classes: 'btnlink btnlink-gray modal-dialog-content-button',
-  content: OB.I18N.getLabel('OBPOS_LblCancel'),
-  attributes: {
-    'onEnterTap': 'hide'
+  content: OB.I18N.getLabel('OBPOS_LblOk'),
+  events: {
+    onHideThisPopup: ''
   },
-  popup: 'modalCancel',
+  tap: function () {
+    this.doHideThisPopup();
+  }
+});
+
+
+enyo.kind({
+  kind: 'OB.UI.ModalAction',
+  name: 'OB.OBPOSCashMgmt.UI.modalFinishedWrongly',
+  header: OB.I18N.getLabel('OBPOS_CashMgmtWronglyHeader'),
+  bodyContent: {
+    content: OB.I18N.getLabel('OBPOS_CashMgmtWrongly')
+  },
+  bodyButtons: {
+    tag: 'div',
+    components: [{
+      //OK button
+      kind: 'OB.OBPOSCashMgmt.UI.modalFinishedWrongly_OkButton'
+    }]
+  },
+  executeOnHide: function () {
+    OB.POS.navigate('retail.pointofsale');
+  }
+});
+
+enyo.kind({
+  kind: 'OB.UI.Button',
+  name: 'OB.OBPOSCashMgmt.UI.modalFinishedWrongly_OkButton',
+  classes: 'btnlink btnlink-gray modal-dialog-content-button',
+  content: OB.I18N.getLabel('OBPOS_LblOk'),
   events: {
     onHideThisPopup: ''
   },

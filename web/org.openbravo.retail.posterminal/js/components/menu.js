@@ -10,30 +10,27 @@
 /*global enyo */
 
 enyo.kind({
-  name: 'OB.UI.ToolbarMenuButton',
-  kind: 'OB.UI.ToolbarButton',
-  attributes: {
-    'data-toggle': 'dropdown'
-  }
-});
-
-enyo.kind({
   name: 'OB.UI.ToolbarMenu',
-  classes: 'dropdown',
-  style: 'display: inline-block; width: 100%;',
   components: [{
-    kind: 'OB.UI.ToolbarMenuButton',
+    kind: 'onyx.MenuDecorator',
     components: [{
-      name: 'leftIcon'
+      kind: 'OB.UI.ToolbarButton',
+      components: [{
+        name: 'leftIcon'
+      }, {
+        tag: 'span',
+        style: 'display: inline-block;'
+      }, {
+        name: 'rightIcon'
+      }]
     }, {
-      tag: 'span'
-    }, {
-      name: 'rightIcon'
+      kind: 'onyx.Menu',
+      classes: 'dropdown',
+      name: 'menu',
+      maxHeight: 600,
+      scrolling: false,
+      floating: true
     }]
-  }, {
-    tag: 'ul',
-    classes: 'dropdown-menu',
-    name: 'menu'
   }],
   initComponents: function () {
     this.inherited(arguments);
@@ -59,6 +56,7 @@ enyo.kind({
   },
   label: OB.I18N.getLabel('OBPOS_LblReturn'),
   tap: function () {
+    this.parent.hide(); // Manual dropdown menu closure
     this.doShowReturnText();
   },
   init: function (model) {
@@ -93,6 +91,7 @@ enyo.kind({
   },
   label: OB.I18N.getLabel('OBPOS_LblProperties'),
   tap: function () {
+    this.parent.hide(); // Manual dropdown menu closure
     this.doShowReceiptProperties();
   },
   init: function (model) {
@@ -118,6 +117,7 @@ enyo.kind({
   },
   label: OB.I18N.getLabel('OBPOS_LblInvoice'),
   tap: function () {
+    this.parent.hide(); // Manual dropdown menu closure
     this.doReceiptToInvoice();
   },
   init: function (model) {
@@ -152,6 +152,7 @@ enyo.kind({
   },
   label: 'Customers',
   tap: function () {
+    this.parent.hide(); // Manual dropdown menu closure
     this.doChangeSubWindow({
       newWindow: {
         name: 'customerAdvancedSearch',
@@ -172,6 +173,7 @@ enyo.kind({
   },
   label: OB.I18N.getLabel('OBPOS_LblPrintReceipt'),
   tap: function () {
+    this.parent.hide(); // Manual dropdown menu closure
     if (OB.POS.modelterminal.hasPermission(this.permission)) {
       this.doPrintReceipt();
     }
@@ -314,8 +316,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.MenuSeparator',
-  tag: 'li',
-  classes: 'divider'
+  classes: 'dropdown-menudivider'
 });
 
 enyo.kind({
@@ -327,6 +328,7 @@ enyo.kind({
   },
   label: OB.I18N.getLabel('OBPOS_LblPaidReceipts'),
   tap: function () {
+    this.parent.hide(); // Manual dropdown menu closure
     if (!OB.POS.modelterminal.get('connectedToERP')) {
       OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OfflineWindowRequiresOnline'));
       return;
@@ -367,6 +369,7 @@ enyo.kind({
   },
   label: OB.I18N.getLabel('OBPOS_LblOpenbravoWorkspace'),
   tap: function () {
+    this.parent.hide(); // Manual dropdown menu closure
     if (OB.POS.modelterminal.hasPermission(this.permission)) {
       this.doBackOffice({
         url: this.url
@@ -445,32 +448,11 @@ enyo.kind({
   }
 });
 
-
 enyo.kind({
-  name: 'OB.UI.MenuSeparator',
-  tag: 'li',
-  classes: 'divider'
-});
-
-enyo.kind({
+  kind: 'OB.UI.MenuAction',
   name: 'OB.UI.MenuItem',
-  tag: 'li',
-  components: [{
-    tag: 'a',
-    name: 'item',
-    style: 'padding-bottom: 10px;padding-left: 15px; padding-right: 15px;padding-top: 10px;',
-    attributes: {
-      href: '#'
-    }
-  }],
-  initComponents: function () {
-    this.inherited(arguments);
-    this.$.item.setContent(this.label);
-    if (!OB.POS.modelterminal.hasPermission(this.route)) {
-      this.$.item.setStyle('color: #cccccc; padding-bottom: 10px;padding-left: 15px; padding-right: 15px;padding-top: 10px;');
-    }
-  },
   tap: function () {
+    this.parent.hide(); // Manual dropdown menu closure
     if (OB.POS.modelterminal.isWindowOnline(this.route) === true) {
       if (!OB.POS.modelterminal.get('connectedToERP')) {
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OfflineWindowRequiresOnline'));

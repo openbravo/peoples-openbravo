@@ -12,7 +12,6 @@
 enyo.kind({
   name: 'OB.UI.ModalLogout',
   kind: 'OB.UI.ModalAction',
-  myId: 'logoutDialog',
   header: OB.I18N.getLabel('OBPOS_LogoutDialogLogout'),
   bodyContent: {
     content: OB.I18N.getLabel('OBPOS_LogoutDialogText')
@@ -23,24 +22,38 @@ enyo.kind({
     },
     //,{ kind: 'OB.UI.LogoutDialogLock' //Disabled until feature be ready}
     {
-      //Cancel button	
-      kind: 'OB.UI.Button',
-      classes: 'btnlink btnlink-gray modal-dialog-content-button',
-      attributes: {
-        'data-dismiss': 'modal'
-      },
-      content: OB.I18N.getLabel('OBPOS_LblCancel')
+      kind: 'OB.UI.LogoutDialogCancel'
     }]
+  }
+});
+
+enyo.kind({
+  name: 'OB.UI.LogoutDialogCancel',
+  kind: 'OB.UI.Button',
+  content: OB.I18N.getLabel('OBPOS_LblCancel'),
+  attributes:{
+    'onEnterTap': 'hide'
+  },
+  classes: 'btnlink btnlink-gray modal-dialog-content-button',
+  events: {
+    onHideThisPopup: ''
+  },
+  tap: function () {
+    this.doHideThisPopup();
   }
 });
 
 enyo.kind({
   name: 'OB.UI.LogoutDialogLogout',
   kind: 'OB.UI.Button',
+  isApplyButton: true,
   content: OB.I18N.getLabel('OBPOS_LogoutDialogLogout'),
   classes: 'btnlink btnlink-gray modal-dialog-content-button',
+  events: {
+    onHideThisPopup: ''
+  },
   tap: function () {
-    $('#logoutDialog').modal('hide');
+    this.doHideThisPopup();
     OB.POS.logout();
   }
 });
@@ -50,8 +63,11 @@ enyo.kind({
   kind: 'OB.UI.Button',
   content: OB.I18N.getLabel('OBPOS_LogoutDialogLock'),
   classes: 'btnlink btnlink-gray modal-dialog-content-button',
+  events: {
+    onHideThisPopup: ''
+  },
   tap: function () {
-    $('#logoutDialog').modal('hide');
+    this.doHideThisPopup();
     OB.POS.lock();
   }
 });

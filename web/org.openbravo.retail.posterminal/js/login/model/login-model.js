@@ -137,6 +137,9 @@
     IDENTIFIER: '_identifier'
   };
 
+  OB.UI.UTILS = {};
+  OB.UI.UTILS.domIdEnyoReference = {};
+
   OB.Format = window.OB.Format || {};
 
   OB.I18N = window.OB.I18N || {};

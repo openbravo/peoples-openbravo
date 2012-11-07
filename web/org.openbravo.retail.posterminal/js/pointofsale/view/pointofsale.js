@@ -1,5 +1,3 @@
-/*global OB, enyo, $, confirm */
-
 /*
  ************************************************************************************
  * Copyright (C) 2012 Openbravo S.L.U.
@@ -42,12 +40,17 @@ enyo.kind({
     onChangeSubWindow: 'changeSubWindow',
     onSetProperty: 'setProperty',
     onSetLineProperty: 'setLineProperty',
+    onSetReceiptsList: 'setReceiptsList',
     onShowReceiptProperties: 'showModalReceiptProperties'
+  },
+  events: {
+    onShowPopup: ''
   },
   components: [{
     name: 'otherSubWindowsContainer',
     components: [{
-      kind: 'OB.OBPOSPointOfSale.UI.customers.ModalConfigurationRequiredForCreateCustomers'
+      kind: 'OB.OBPOSPointOfSale.UI.customers.ModalConfigurationRequiredForCreateCustomers',
+      name: 'modalConfigurationRequiredForCreateNewCustomers'
     }, {
       kind: 'OB.OBPOSPointOfSale.UI.customers.cas',
       name: 'customerAdvancedSearch'
@@ -62,25 +65,35 @@ enyo.kind({
     name: 'mainSubWindow',
     isMainSubWindow: true,
     components: [{
-      kind: 'OB.UI.ModalDeleteReceipt'
+      kind: 'OB.UI.ModalDeleteReceipt',
+      name: 'modalConfirmReceiptDelete'
     }, {
-      kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalClosePaidReceipt'
+      kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalClosePaidReceipt',
+      name: 'modalConfirmClosePaidTicket'
     }, {
-      kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalProductCannotBeGroup'
+      kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalProductCannotBeGroup',
+      name: 'modalProductCannotBeGroup'
     }, {
-      kind: 'OB.UI.Modalnoteditableorder'
+      kind: 'OB.UI.Modalnoteditableorder',
+      name: 'modalNotEditableOrder'
     }, {
-      kind: 'OB.UI.ModalBusinessPartners'
+      kind: 'OB.UI.ModalBusinessPartners',
+      name: "modalcustomer"
+    }, {
+      kind: 'OB.UI.ModalReceipts',
+      name: 'modalreceipts'
     }, {
       kind: 'OB.UI.ModalPaidReceipts',
-      name: 'paidReceiptsView'
-    }, {
+      name: 'modalPaidReceipts'
+    },  {
       kind: 'OB.UI.ModalCreateOrderFromQuotation',
       name: 'modalCreateOrderFromQuotation'
     }, {
-      kind: 'OB.UI.ModalReceiptPropertiesImpl'
+      kind: 'OB.UI.ModalReceiptPropertiesImpl',
+      name: 'receiptPropertiesDialog'
     }, {
-      kind: 'OB.UI.ModalReceiptLinesPropertiesImpl'
+      kind: 'OB.UI.ModalReceiptLinesPropertiesImpl',
+      name: "receiptLinesPropertiesDialog"
     }, {
       classes: 'row',
       style: 'margin-bottom: 5px;',
@@ -125,7 +138,9 @@ enyo.kind({
       isQuotation: false
     });
     this.$.paidReceiptsView.waterfall('onClearAction');
-    $('#modalPaidReceipts').modal('show');
+    this.doShowPopup({
+      popup: 'modalPaidReceipts'
+    });
     return true;
   },
 
@@ -133,10 +148,10 @@ enyo.kind({
     this.$.paidReceiptsView.setParams({
       isQuotation: true
     });
-    console.log('m',this.$.paidReceiptsView);
-    
     this.$.paidReceiptsView.waterfall('onClearAction');
-    $('#modalPaidReceipts').modal('show');
+    this.doShowPopup({
+      popup: 'modalPaidReceipts'
+    });
   },
 
   backOffice: function (inSender, inEvent) {
@@ -158,7 +173,9 @@ enyo.kind({
   },
   addProductToOrder: function (inSender, inEvent) {
     if (this.model.get('order').get('isEditable') === false) {
-      $("#modalNotEditableOrder").modal("show");
+      this.doShowPopup({
+        popup: 'modalNotEditableOrder'
+      });
       return true;
     }
     this.model.get('order').addProduct(inEvent.product);
@@ -167,7 +184,9 @@ enyo.kind({
   },
   changeBusinessPartner: function (inSender, inEvent) {
     if (this.model.get('order').get('isEditable') === false) {
-      $("#modalNotEditableOrder").modal("show");
+      this.doShowPopup({
+        popup: 'modalNotEditableOrder'
+      });
       return true;
     }
     this.model.get('order').setBPandBPLoc(inEvent.businessPartner, false, true);
@@ -176,7 +195,9 @@ enyo.kind({
   },
   receiptToInvoice: function () {
     if (this.model.get('order').get('isEditable') === false) {
-      $("#modalNotEditableOrder").modal("show");
+      this.doShowPopup({
+        popup: 'modalNotEditableOrder'
+      });
       return true;
     }
     this.model.get('order').setOrderInvoice();
@@ -204,7 +225,9 @@ enyo.kind({
   },
   showReturnText: function (inSender, inEvent) {
     if (this.model.get('order').get('isEditable') === false) {
-      $("#modalNotEditableOrder").modal("show");
+      this.doShowPopup({
+        popup: 'modalNotEditableOrder'
+      });
       return true;
     }
     this.model.get('order').setOrderTypeReturn();
@@ -213,7 +236,9 @@ enyo.kind({
   },
   cancelReceiptToInvoice: function (inSender, inEvent) {
     if (this.model.get('order').get('isEditable') === false) {
-      $("#modalNotEditableOrder").modal("show");
+      this.doShowPopup({
+        popup: 'modalNotEditableOrder'
+      });
       return true;
     }
     this.model.get('order').resetOrderInvoice();
@@ -235,7 +260,9 @@ enyo.kind({
   },
   deleteLine: function (sender, event) {
     if (this.model.get('order').get('isEditable') === false) {
-      $("#modalNotEditableOrder").modal("show");
+      this.doShowPopup({
+        popup: 'modalNotEditableOrder'
+      });
       return true;
     }
     var line = event.line,
@@ -247,10 +274,14 @@ enyo.kind({
   },
   editLine: function (sender, event) {
     if (this.model.get('order').get('isEditable') === false) {
-      $("#modalNotEditableOrder").modal("show");
+      this.doShowPopup({
+        popup: 'modalNotEditableOrder'
+      });
       return true;
     }
-    $("#receiptLinesPropertiesDialog").modal('show');
+    this.doShowPopup({
+      popup: 'receiptLinesPropertiesDialog'
+    });
   },
   exactPayment: function (sender, event) {
     this.$.keyboard.execStatelessCommand('cashexact');
@@ -268,13 +299,20 @@ enyo.kind({
   changeSubWindow: function (sender, event) {
     this.model.get('subWindowManager').set('currentWindow', event.newWindow);
   },
+  setReceiptsList: function (inSender, inEvent) {
+    this.$.modalreceipts.setReceiptsList(inEvent.orderList);
+  },
   showModalReceiptProperties: function (inSender, inEvent) {
-    $('#receiptPropertiesDialog').modal('show');
+    this.doShowPopup({
+      popup: 'receiptPropertiesDialog'
+    });
     return true;
   },
   setProperty: function (inSender, inEvent) {
     if (this.model.get('order').get('isEditable') === false) {
-      $("#modalNotEditableOrder").modal("show");
+      this.doShowPopup({
+        popup: 'modalNotEditableOrder'
+      });
       return true;
     }
     this.model.get('order').setProperty(inEvent.property, inEvent.value);
@@ -283,7 +321,9 @@ enyo.kind({
   },
   setLineProperty: function (inSender, inEvent) {
     if (this.model.get('order').get('isEditable') === false) {
-      $("#modalNotEditableOrder").modal("show");
+      this.doShowPopup({
+        popup: 'modalNotEditableOrder'
+      });
       return true;
     }
     var line = inEvent.line,
@@ -307,33 +347,41 @@ enyo.kind({
         });
       }
 
-      //TODO backbone route
-      var showNewSubWindow = false;
+      var showNewSubWindow = false,
+          currentWindowClosed = true;
       if (this.$[changedModel.get('currentWindow').name]) {
         if (!changedModel.get('currentWindow').params) {
           changedModel.get('currentWindow').params = {};
         }
         changedModel.get('currentWindow').params.caller = changedModel.previousAttributes().currentWindow.name;
         if (this.$[changedModel.previousAttributes().currentWindow.name].mainBeforeClose) {
-          this.$[changedModel.previousAttributes().currentWindow.name].mainBeforeClose(changedModel.get('currentWindow').name);
+          currentWindowClosed = this.$[changedModel.previousAttributes().currentWindow.name].mainBeforeClose(changedModel.get('currentWindow').name);
         }
-        if (this.$[changedModel.get('currentWindow').name].mainBeforeSetShowing) {
-          showNewSubWindow = this.$[changedModel.get('currentWindow').name].mainBeforeSetShowing(changedModel.get('currentWindow').params);
-          if (showNewSubWindow) {
-            this.$[changedModel.previousAttributes().currentWindow.name].setShowing(false);
-            this.$[changedModel.get('currentWindow').name].setShowing(true);
+        if (currentWindowClosed) {
+          if (this.$[changedModel.get('currentWindow').name].mainBeforeSetShowing) {
+            showNewSubWindow = this.$[changedModel.get('currentWindow').name].mainBeforeSetShowing(changedModel.get('currentWindow').params);
+            if (showNewSubWindow) {
+              this.$[changedModel.previousAttributes().currentWindow.name].setShowing(false);
+              this.$[changedModel.get('currentWindow').name].setShowing(true);
+              if (this.$[changedModel.get('currentWindow').name].mainAfterShow) {
+                this.$[changedModel.get('currentWindow').name].mainAfterShow();
+              }
+            } else {
+              restorePreviousState(this.model.get('subWindowManager'), changedModel);
+            }
           } else {
-            restorePreviousState(this.model.get('subWindowManager'), changedModel);
+            if (this.$[changedModel.get('currentWindow').name].isMainSubWindow) {
+              this.$[changedModel.previousAttributes().currentWindow.name].setShowing(false);
+              this.$[changedModel.get('currentWindow').name].setShowing(true);
+              $("#focuskeeper").focus();
+            } else {
+              //developers helps
+              //console.log("Error! A subwindow must inherits from OB.UI.subwindow -> restore previous state");
+              restorePreviousState(this.model.get('subWindowManager'), changedModel);
+            }
           }
         } else {
-          if (this.$[changedModel.get('currentWindow').name].isMainSubWindow) {
-            this.$[changedModel.previousAttributes().currentWindow.name].setShowing(false);
-            this.$[changedModel.get('currentWindow').name].setShowing(true);
-          } else {
-            //developers helps
-            //console.log("Error! A subwindow must inherits from OB.UI.subwindow -> restore previous state");
-            restorePreviousState(this.model.get('subWindowManager'), changedModel);
-          }
+          restorePreviousState(this.model.get('subWindowManager'), changedModel);
         }
       } else {
         //developers helps
