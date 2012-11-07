@@ -590,6 +590,7 @@ OB.Model.Terminal = Backbone.Model.extend({
         me.loadBP();
         me.loadLocation();
         me.loadPriceList();
+        me.loadWarehouses();
         me.loadPriceListVersion();
         me.loadCurrency();
         me.setDocumentSequence();
@@ -662,6 +663,22 @@ OB.Model.Terminal = Backbone.Model.extend({
     }, function (data) {
       if (data[0]) {
         me.set('pricelist', data[0]);
+      }
+    });
+  },
+
+  loadWarehouses: function () {
+    var me = this;
+    new OB.DS.Request('org.openbravo.retail.posterminal.term.Warehouses').exec({
+      organization: this.get('terminal').organization
+    }, function (data) {
+      if (data && data.exception) {
+        //MP17
+        me.set('warehouses', []);
+        me.triggerReady();
+      } else {
+        me.set('warehouses', data);
+        me.triggerReady();
       }
     });
   },
@@ -796,7 +813,7 @@ OB.Model.Terminal = Backbone.Model.extend({
 
   triggerReady: function () {
     var undef, loadModelsIncFunc, loadModelsTotalFunc, minTotalRefresh, minIncRefresh;
-    if (this.get('payments') && this.get('pricelistversion') && this.get('currency') && this.get('context') && this.get('permissions') && (this.get('documentsequence') !== undef || this.get('documentsequence') === 0) && this.get('windowRegistered') !== undef) {
+    if (this.get('payments') && this.get('pricelistversion') && this.get('warehouses') && this.get('currency') && this.get('context') && this.get('permissions') && (this.get('documentsequence') !== undef || this.get('documentsequence') === 0) && this.get('windowRegistered') !== undef) {
       OB.POS.modelterminal.loggingIn = false;
       if (OB.POS.modelterminal.get('connectedToERP')) {
         //In online mode, we save the terminal information in the local db

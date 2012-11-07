@@ -26,8 +26,10 @@ public class Product extends ProcessHQLQuery {
 
     if (productList != null) {
       return "select pli.product.id as id, pli.product.name as _identifier, pli.product.taxCategory.id as taxCategory, "
-          + "pli.product.productCategory.id as productCategory, pli.product.obposScale as obposScale, pli.product.uOM.id as uOM, pli.product.uPCEAN as uPCEAN, img.bindaryData as img "
-          + ", pli.product.obposGroupedproduct as groupProduct " 
+          + "pli.product.productCategory.id as productCategory, pli.product.obposScale as obposScale, pli.product.uOM.id as uOM, pli.product.uOM.symbol as uOMsymbol, pli.product.uPCEAN as uPCEAN, img.bindaryData as img "
+          + ", pli.product.description as description "
+          + ", pli.product.obposGroupedproduct as groupProduct "
+          + ", pli.product.obposShowstock as showStock "
           + "FROM OBRETCO_Prol_Product as pli left outer join pli.product.image img, "
           + "PricingProductPrice ppp, "
           + "PricingPriceListVersion pplv "

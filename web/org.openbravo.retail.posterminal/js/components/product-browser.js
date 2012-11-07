@@ -119,7 +119,8 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ListProducts',
   events: {
-    onAddProduct: ''
+    onAddProduct: '',
+    onShowLeftSubWindow: ''
   },
   components: [{
     kind: 'OB.UI.ScrollableTable',

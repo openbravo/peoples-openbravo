@@ -17,24 +17,27 @@
     entityName: 'Product',
     source: 'org.openbravo.retail.posterminal.master.Product',
     dataLimit: 300,
-    properties: ['id', 'uPCEAN', 'uOM', 'productCategory', 'taxCategory', 'img', 'obposScale', 'groupProduct', '_identifier', '_idx'],
+    properties: ['id', 'uPCEAN', 'uOM', 'uOMsymbol', 'productCategory', 'taxCategory', 'img', 'description', 'obposScale', 'groupProduct', 'showstock', '_identifier', '_idx'],
     propertiesFilter: ['_identifier', 'uPCEAN'],
     propertyMap: {
       'id': 'm_product_id',
       'uPCEAN': 'upc',
       'uOM': 'c_uom_id',
+      'uOMsymbol': 'c_uom_symbol',
       'productCategory': 'm_product_category_id',
       'taxCategory': 'c_taxcategory_id',
       'img': 'img',
+      'description': 'description',
       'obposScale': 'em_obpos_scale',
       'groupProduct': 'em_obpos_groupedproduct',
+      'showstock': 'em_obpos_showstock',
       '_identifier': '_identifier',
       '_filter': '_filter',
       '_idx': '_idx'
     },
-    createStatement: 'CREATE TABLE IF NOT EXISTS m_product (m_product_id TEXT PRIMARY KEY , upc TEXT, c_uom_id TEXT, m_product_category_id TEXT, c_taxcategory_id TEXT, img TEXT, em_obpos_scale TEXT, em_obpos_groupedproduct TEXT, _identifier TEXT, _filter TEXT, _idx NUMERIC)',
+    createStatement: 'CREATE TABLE IF NOT EXISTS m_product (m_product_id TEXT PRIMARY KEY , upc TEXT, c_uom_id TEXT, c_uom_symbol TEXT, m_product_category_id TEXT, c_taxcategory_id TEXT, img TEXT, description TEXT, em_obpos_scale TEXT, em_obpos_groupedproduct TEXT, em_obpos_showstock TEXT, _identifier TEXT, _filter TEXT, _idx NUMERIC)',
     dropStatement: 'DROP TABLE IF EXISTS m_product',
-    insertStatement: 'INSERT INTO m_product(m_product_id, upc, c_uom_id, m_product_category_id, c_taxcategory_id, img, em_obpos_scale, em_obpos_groupedproduct, _identifier, _filter, _idx)  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+    insertStatement: 'INSERT INTO m_product(m_product_id, upc, c_uom_id, c_uom_symbol, m_product_category_id, c_taxcategory_id, img, description, em_obpos_scale, em_obpos_groupedproduct, em_obpos_showstock, _identifier, _filter, _idx)  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
     updateStatement: ''
   });
 
