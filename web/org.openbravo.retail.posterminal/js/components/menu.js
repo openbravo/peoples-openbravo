@@ -288,11 +288,11 @@ enyo.kind({
   kind: 'OB.UI.MenuAction',
   permission: 'OBPOS_receipt.reactivatequotation',
   events: {
-    onReactivateQuotation: ''
+    onShowReactivateQuotation: ''
   },
   label: OB.I18N.getLabel('OBPOS_ReactivateQuotation'),
   tap: function () {
-    this.doReactivateQuotation();
+    this.doShowReactivateQuotation();
   },
   updateVisibility: function (model) {
     if (model.get('isQuotation') && model.get('hasbeenpaid') === 'Y') {

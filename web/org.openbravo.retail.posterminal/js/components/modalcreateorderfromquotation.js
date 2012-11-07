@@ -56,13 +56,17 @@ enyo.kind({
   myId: 'modalCreateOrderFromQuotation',
   bodyContent: {},
   bodyButtons: {
-    components: [{style: 'height: 40px; width: 127px; float:left;'},{
-        style: 'height: 40px; width: 50px; background-color: #ffffff; float:left',
-        components: [{
+    components: [{
+      style: 'height: 40px; width: 127px; float:left;'
+    }, {
+      style: 'height: 40px; width: 50px; background-color: #ffffff; float:left',
+      components: [{
         kind: 'OB.UI.updateprices',
         myId: 'updatePricesCheck'
       }]
-    }, {style: 'clear: both;'},{
+    }, {
+      style: 'clear: both;'
+    }, {
       kind: 'OB.OBPOSPointOfSale.UI.Modals.btnModalCreateOrderAccept'
     }, {
       kind: 'OB.OBPOSPointOfSale.UI.Modals.btnModalCreateOrderCancel'

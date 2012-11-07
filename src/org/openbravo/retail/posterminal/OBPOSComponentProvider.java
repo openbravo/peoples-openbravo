@@ -129,6 +129,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/modalpaidreceipts",
         // Quotations
         "components/modalcreateorderfromquotation",
+        "components/modalreactivatequotation",
 
         // Point of sale
         "pointofsale/model/pointofsale-print",

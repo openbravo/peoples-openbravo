@@ -691,6 +691,8 @@
             });
             }
             
+            
+            
         criteria = {
           'priceListVersion': OB.POS.modelterminal.get('pricelistversion').id,
           'product': line.get('product').get('id')

@@ -23,6 +23,7 @@ enyo.kind({
     onCreateOrderFromQuotation: 'createOrderFromQuotation',
     onShowCreateOrderPopup: 'showCreateOrderPopup',
     onReactivateQuotation: 'reactivateQuotation',
+    onShowReactivateQuotation: 'showReactivateQuotation',
     onRejectQuotation: 'rejectQuotation',
     onQuotations: 'quotations',
     onShowReturnText: 'showReturnText',
@@ -86,9 +87,12 @@ enyo.kind({
     }, {
       kind: 'OB.UI.ModalPaidReceipts',
       name: 'modalPaidReceipts'
-    },  {
+    }, {
       kind: 'OB.UI.ModalCreateOrderFromQuotation',
       name: 'modalCreateOrderFromQuotation'
+    }, {
+      kind: 'OB.UI.ModalReactivateQuotation',
+      name: 'modalReactivateQuotation'
     }, {
       kind: 'OB.UI.ModalReceiptPropertiesImpl',
       name: 'receiptPropertiesDialog'
@@ -209,18 +213,25 @@ enyo.kind({
     this.model.get('orderList').addNewQuotation();
     return true;
   },
-  
-  showCreateOrderPopup: function() {
+
+  showCreateOrderPopup: function () {
     this.doShowPopup({
       popup: 'modalCreateOrderFromQuotation'
     });
   },
-  
+
   createOrderFromQuotation: function () {
     this.model.get('order').createOrderFromQuotation();
     this.model.get('orderList').saveCurrent();
     return true;
   },
+
+  showReactivateQuotation: function () {
+    this.doShowPopup({
+      popup: 'modalReactivateQuotation'
+    });
+  },
+
   reactivateQuotation: function () {
     this.model.get('order').reactivateQuotation();
     this.model.get('orderList').saveCurrent();
