@@ -200,6 +200,7 @@ enyo.kind({
   },
   label: OB.I18N.getLabel('OBPOS_CreateQuotation'),
   tap: function () {
+    this.parent.hide(); // Manual dropdown menu closure
     if (OB.POS.modelterminal.get('terminal').documentTypeForQuotations) {
       this.doCreateQuotation();
     } else {
@@ -231,6 +232,7 @@ enyo.kind({
   },
   label: OB.I18N.getLabel('OBPOS_CreateOrderFromQuotation'),
   tap: function () {
+    this.parent.hide(); // Manual dropdown menu closure
     this.doShowCreateOrderPopup();
   },
   updateVisibility: function (model) {
@@ -262,6 +264,7 @@ enyo.kind({
   },
   label: OB.I18N.getLabel('OBPOS_RejectQuotation'),
   tap: function () {
+    this.parent.hide(); // Manual dropdown menu closure
     this.doRejectQuotation();
   },
   updateVisibility: function (model) {
@@ -292,6 +295,7 @@ enyo.kind({
   },
   label: OB.I18N.getLabel('OBPOS_ReactivateQuotation'),
   tap: function () {
+    this.parent.hide(); // Manual dropdown menu closure
     this.doShowReactivateQuotation();
   },
   updateVisibility: function (model) {
@@ -349,6 +353,7 @@ enyo.kind({
   },
   label: OB.I18N.getLabel('OBPOS_Quotations'),
   tap: function () {
+    this.parent.hide(); // Manual dropdown menu closure
     if (!OB.POS.modelterminal.get('connectedToERP')) {
       OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OfflineWindowRequiresOnline'));
       return;
