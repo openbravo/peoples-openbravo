@@ -691,8 +691,6 @@
             });
             }
             
-            
-            
         criteria = {
           'priceListVersion': OB.POS.modelterminal.get('pricelistversion').id,
           'product': line.get('product').get('id')
@@ -732,6 +730,7 @@
     },
     reactivateQuotation: function () {
       this.set('hasbeenpaid', 'N');
+      this.set('isEditable', true);
       this.save();
     },
 
