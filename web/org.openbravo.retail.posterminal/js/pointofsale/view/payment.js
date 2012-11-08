@@ -298,6 +298,7 @@ enyo.kind({
   },
   tap: function () {
     var process = new OB.DS.Process('org.openbravo.retail.posterminal.CheckBusinessPartnerCredit');
+    var me = this;
     if (OB.POS.modelterminal.get('connectedToERP')) {
       //this.setContent(OB.I18N.getLabel('OBPOS_LblLoading'));
       process.exec({
@@ -306,12 +307,12 @@ enyo.kind({
       }, function (data) {
         if (data) {
           if (data.enoughCredit) {
-            this.doShowPopup({popup: 'modalEnoughCredit'});
+            me.doShowPopup({popup: 'modalEnoughCredit', args: {order: me.model.get('order')}});
             //this.setContent(OB.I18N.getLabel('OBPOS_LblCreditSales'));
           } else {
             var bpName = data.bpName;
             var actualCredit = data.actualCredit;
-            this.doShowPopup({popup: 'modalNotEnoughCredit', args: {popupLabel: OB.I18N.getLabel('OBPOS_notEnoughCreditBody', [bpName, actualCredit])}});
+            me.doShowPopup({popup: 'modalNotEnoughCredit', args: {bpName: bpName, actualCredit: actualCredit}});
             //this.setContent(OB.I18N.getLabel('OBPOS_LblCreditSales'));
             //OB.UI.UTILS.domIdEnyoReference['modalNotEnoughCredit'].$.bodyContent.children[0].setContent();
           }
@@ -320,14 +321,16 @@ enyo.kind({
         }
       });
     } else {
+      var actualCredit;
       var creditLimit = this.model.get('order').get('bp').get('creditLimit');
       var creditUsed = this.model.get('order').get('bp').get('creditUsed');
       var totalPending = this.model.get('order').getPending();
       if ((creditLimit + creditUsed) >= totalPending) {
-        this.doShowPopup({popup: 'modalEnoughCredit'});
+        this.doShowPopup({popup: 'modalEnoughCredit', args: {order: this.model.get('order')}});
         //$('#modalEnoughCredit').modal('show');
       } else {
-        this.doShowPopup({popup: 'modalNotEnoughCredit', args: {popupLabel: null}});
+        actualCredit = creditLimit + creditUsed;
+        this.doShowPopup({popup: 'modalNotEnoughCredit', args: {bpName: this.model.get('order').get('bp'), actualCredit: actualCredit}});
         //$('#modalNotEnoughCredit').modal('show');
       }
     }

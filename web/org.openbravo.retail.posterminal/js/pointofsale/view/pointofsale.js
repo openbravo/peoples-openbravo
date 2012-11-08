@@ -113,10 +113,10 @@ enyo.kind({
       kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalStockInOtherStores',
       name: 'modalStockInOtherStores'
     }, {
-      kind: 'OBPOS.UI.modalEnoughCredit',
+      kind: 'OB.OBPOSPointOfSale.UI.Modals.modalEnoughCredit',
       name: 'modalEnoughCredit'
     }, {
-      kind: 'OBPOS.UI.modalNotEnoughCredit',
+      kind: 'OB.OBPOSPointOfSale.UI.Modals.modalNotEnoughCredit',
       name: 'modalNotEnoughCredit'
     }, {
       classes: 'row',
