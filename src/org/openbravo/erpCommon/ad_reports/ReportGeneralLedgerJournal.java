@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -343,8 +344,10 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
     } else if (vars.commandIn("DOC")) {
       String org = vars.getStringParameter("inpOrg");
       String accSchema = vars.getStringParameter("inpcAcctSchemaId");
-      List<DocumentType> doctype = getDocuments(org, accSchema);
-      String combobox = getJSONComboBox(doctype, null, false);
+      String strDocument = vars.getRequestGlobalVariable("inpDocument",
+          "ReportGeneralLedgerJournal|Document");
+      Set<String> docbasetypes = getDocuments(org, accSchema);
+      String combobox = getJSONComboBox(docbasetypes, strDocument, false, vars);
 
       response.setContentType("text/html; charset=UTF-8");
       PrintWriter out = response.getWriter();
@@ -721,8 +724,8 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
     return strCheck;
   }
 
-  private <T extends BaseOBObject> String getJSONComboBox(List<T> obObjectList,
-      String selectedValue, boolean isMandatory) {
+  private <T extends BaseOBObject> String getJSONComboBox(Set<String> docbseTypes,
+      String selectedValue, boolean isMandatory, VariablesSecureApp vars) {
 
     JSONObject json = new JSONObject();
     JSONArray select = new JSONArray();
@@ -737,11 +740,11 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
         select.put(i, attr);
         i++;
       }
-      for (T ob : obObjectList) {
+      for (String dbt : docbseTypes) {
         attr = new HashMap<String, String>();
-        attr.put("value", ob.getId().toString());
-        attr.put("selected", (ob.getId().equals(selectedValue)) ? "true" : "false");
-        attr.put("text", ob.getIdentifier());
+        attr.put("value", dbt);
+        attr.put("selected", (dbt.equals(selectedValue)) ? "true" : "false");
+        attr.put("text", Utility.getListValueName("C_DocType DocBaseType", dbt, vars.getLanguage()));
         select.put(i, attr);
         json.put("optionlist", select);
         i++;
@@ -755,7 +758,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
     return json.toString();
   }
 
-  public static List<DocumentType> getDocuments(String org, String accSchema) {
+  public static Set<String> getDocuments(String org, String accSchema) {
 
     final StringBuilder whereClause = new StringBuilder();
     final List<Object> parameters = new ArrayList<Object>();
@@ -783,11 +786,16 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
       whereClause.append(" in (" + Utility.getInStrSet(orgStrct) + ")");
       whereClause.append(" and ca." + AcctSchemaTable.PROPERTY_ORGANIZATION + ".id");
       whereClause.append(" in (" + Utility.getInStrSet(orgStrct) + ")");
+      whereClause.append(" order by cd." + DocumentType.PROPERTY_DOCUMENTCATEGORY);
       final OBQuery<DocumentType> obqDt = OBDal.getInstance().createQuery(DocumentType.class,
           whereClause.toString());
       obqDt.setParameters(parameters);
       obqDt.setFilterOnReadableOrganization(false);
-      return obqDt.list();
+      TreeSet<String> docBaseTypes = new TreeSet<String>();
+      for (DocumentType doc : obqDt.list()) {
+        docBaseTypes.add(doc.getDocumentCategory());
+      }
+      return docBaseTypes;
 
     } finally {
       OBContext.restorePreviousMode();
