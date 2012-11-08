@@ -425,39 +425,41 @@ isc.OBStandardWindow.addProperties({
         tab = data.tabs[t];
         view = this.getView(tab.tabId);
         disabledFields = [];
-        for (i = 0; i < view.viewForm.getFields().length; i++) {
-          field = view.viewForm.getFields()[i];
-          if (tab.fields[field.name] !== undefined) {
-            field.updatable = tab.fields[field.name];
-            field.disabled = !tab.fields[field.name];
-            if (!tab.fields[field.name]) {
-              disabledFields.push(field.name);
+        if (view !== null) {
+          for (i = 0; i < view.viewForm.getFields().length; i++) {
+            field = view.viewForm.getFields()[i];
+            if (tab.fields[field.name] !== undefined) {
+              field.updatable = tab.fields[field.name];
+              field.disabled = !tab.fields[field.name];
+              if (!tab.fields[field.name]) {
+                disabledFields.push(field.name);
+              }
             }
           }
-        }
-        view.disabledFields = disabledFields;
-        for (i = 0; i < view.viewGrid.getFields().length; i++) {
-          field = view.viewGrid.getFields()[i];
-          if (tab.fields[field.name] !== undefined) {
-            field.editorProperties.updatable = tab.fields[field.name];
-            field.editorProperties.disabled = !tab.fields[field.name];
+          view.disabledFields = disabledFields;
+          for (i = 0; i < view.viewGrid.getFields().length; i++) {
+            field = view.viewGrid.getFields()[i];
+            if (tab.fields[field.name] !== undefined) {
+              field.editorProperties.updatable = tab.fields[field.name];
+              field.editorProperties.disabled = !tab.fields[field.name];
+            }
           }
-        }
-        for (i = 0; i < view.toolBar.rightMembers.length; i++) {
-          button = view.toolBar.rightMembers[i];
-          if (tab.tabId === button.contextView.tabId && button.property && !tab.fields[button.property]) {
-            button.readOnlyIf = alwaysReadOnly;
-            // looking for this button in subtabs
-            for (st = 0; st < this.views.length; st++) {
-              stView = this.views[st];
-              if (stView === view) {
-                continue;
-              }
-              for (stBtns = 0; stBtns < stView.toolBar.rightMembers.length; stBtns++) {
-                stBtn = stView.toolBar.rightMembers[stBtns];
-                if (stBtn.contextView === button.contextView && stBtn.property && !tab.fields[stBtn.property]) {
-                  stBtn.readOnlyIf = alwaysReadOnly;
-                  break;
+          for (i = 0; i < view.toolBar.rightMembers.length; i++) {
+            button = view.toolBar.rightMembers[i];
+            if (tab.tabId === button.contextView.tabId && button.property && !tab.fields[button.property]) {
+              button.readOnlyIf = alwaysReadOnly;
+              // looking for this button in subtabs
+              for (st = 0; st < this.views.length; st++) {
+                stView = this.views[st];
+                if (stView === view) {
+                  continue;
+                }
+                for (stBtns = 0; stBtns < stView.toolBar.rightMembers.length; stBtns++) {
+                  stBtn = stView.toolBar.rightMembers[stBtns];
+                  if (stBtn.contextView === button.contextView && stBtn.property && !tab.fields[stBtn.property]) {
+                    stBtn.readOnlyIf = alwaysReadOnly;
+                    break;
+                  }
                 }
               }
             }
