@@ -24,6 +24,8 @@ import java.util.Map;
 
 import javax.servlet.ServletException;
 
+import jxl.common.Logger;
+
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.DalUtil;
@@ -44,16 +46,21 @@ public class ReservationUtils {
   String returnValue;
   String exito;
 
+  private static final Logger log4j = Logger.getLogger(ReservationUtils.class);
+
   public static Reservation createReserveFromSalesOrderLine(OrderLine soLine, boolean doProcess)
       throws OBException {
     if (!soLine.getSalesOrder().isSalesTransaction()) {
-      throw new OBException("@cannotReservePurchaseOrder@");
+      log4j.error("ReservationUtils: @cannotReservePurchaseOrder@");
+      throw new OBException(OBMessageUtils.messageBD("@cannotReservePurchaseOrder@"));
     }
     if (soLine.getOrderedQuantity().subtract(soLine.getDeliveredQuantity())
         .compareTo(BigDecimal.ZERO) == 0) {
-      throw new OBException("@cannotReserveDeliveredSalesOrderLine@");
+      log4j.error("ReservationUtils: @cannotReserveDeliveredSalesOrderLine@");
+      throw new OBException(OBMessageUtils.messageBD("@cannotReserveDeliveredSalesOrderLine@"));
     }
 
+    OBDal.getInstance().flush();
     CSResponse cs = null;
     try {
       cs = ReservationUtilsData.createReserveFromSalesOrderLine(
@@ -70,12 +77,15 @@ public class ReservationUtils {
   }
 
   public static OBError reserveStockAuto(Reservation reservation) throws OBException {
+
+    OBDal.getInstance().flush();
     CSResponse cs = null;
     try {
       cs = ReservationUtilsData.reserveStockAuto(OBDal.getInstance().getConnection(false),
           new DalConnectionProvider(), reservation.getId(),
           (String) DalUtil.getId(OBContext.getOBContext().getUser()));
     } catch (ServletException e) {
+      log4j.error("ReservationUtils Error: ", e);
       throw new OBException(e.getMessage());
     }
 
@@ -105,15 +115,18 @@ public class ReservationUtils {
     } else if (obObject instanceof StorageDetail) {
       strType = "SD";
     } else {
+      log4j.error("ReservationUtils: @notValidReservationType@");
       throw new OBException("@notValidReservationType@");
     }
 
+    OBDal.getInstance().flush();
     CSResponse cs = null;
     try {
       cs = ReservationUtilsData.reserveStockManual(OBDal.getInstance().getConnection(false),
           new DalConnectionProvider(), reservation.getId(), strType, obObject.getId().toString(),
           quantity.toString(), (String) DalUtil.getId(OBContext.getOBContext().getUser()));
     } catch (ServletException e) {
+      log4j.error("ReservationUtils Error: ", e);
       throw new OBException(e.getMessage());
     }
 
