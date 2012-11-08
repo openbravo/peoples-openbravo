@@ -90,6 +90,8 @@
       AD_REF_LIST_V AR
       WHERE AR.VALUE=AA.DOCBASETYPE
       AND AD_LANGUAGE=?
+      AND AR.AD_REFERENCE_ID = '183'
+      ORDER BY SCHEMA_NAME
       ]]></Sql>
     <Parameter name="descriptionType" type="replace" optional="true" after="F.ACCTVALUE AS VALUE, F." text="ACCTDESCRIPTION"/>
     <Parameter name="adUserClient" type="replace" optional="true" after="WHERE F.AD_CLIENT_ID IN (" text="'1'"/>
