@@ -7,6 +7,8 @@
  ************************************************************************************
  */
 
+/*global enyo */
+
 enyo.kind({
   kind: 'OB.UI.ModalAction',
   name: 'OBPOS.UI.modalEnoughCredit',
@@ -25,7 +27,15 @@ enyo.kind({
         this.model = model;
       },
       tap: function () {
-        $('#modalEnoughCredit').modal('hide');
+        function success(tx) {
+          window.console.log(tx);
+        }
+
+        function error(tx) {
+          window.console.error(tx);
+        }
+        
+        this.hide();
         this.model.get('order').trigger('paymentDone');
         this.model.get('order').trigger('openDrawer');
         if (!OB.POS.modelterminal.get('connectedToERP')) {
@@ -33,14 +43,6 @@ enyo.kind({
           var bpCreditUsed = this.model.get('order').get('bp').get('creditUsed');
           var totalPending = this.model.get('order').getPending();
           bp.set('creditUsed', bpCreditUsed - totalPending);
-
-          function success(tx) {
-            window.console.log(tx);
-          }
-
-          function error(tx) {
-            window.console.error(tx);
-          }
           OB.Dal.save(bp, success, error);
         }
       }

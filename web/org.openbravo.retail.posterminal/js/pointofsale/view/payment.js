@@ -297,9 +297,9 @@ enyo.kind({
     this.model = model;
   },
   tap: function () {
+    var process = new OB.DS.Process('org.openbravo.retail.posterminal.CheckBusinessPartnerCredit');
     if (OB.POS.modelterminal.get('connectedToERP')) {
       //this.setContent(OB.I18N.getLabel('OBPOS_LblLoading'));
-      process = new OB.DS.Process('org.openbravo.retail.posterminal.CheckBusinessPartnerCredit');
       process.exec({
         businessPartnerId: this.model.get('order').get('bp').get('id'),
         totalPending: this.model.get('order').getPending()
@@ -311,7 +311,7 @@ enyo.kind({
           } else {
             var bpName = data.bpName;
             var actualCredit = data.actualCredit;
-            this.doShowPopup({popup: 'modalNotEnoughCredit', {popupLabel: OB.I18N.getLabel('OBPOS_notEnoughCreditBody', [bpName, actualCredit])}});
+            this.doShowPopup({popup: 'modalNotEnoughCredit', args: {popupLabel: OB.I18N.getLabel('OBPOS_notEnoughCreditBody', [bpName, actualCredit])}});
             //this.setContent(OB.I18N.getLabel('OBPOS_LblCreditSales'));
             //OB.UI.UTILS.domIdEnyoReference['modalNotEnoughCredit'].$.bodyContent.children[0].setContent();
           }
@@ -324,10 +324,10 @@ enyo.kind({
       var creditUsed = this.model.get('order').get('bp').get('creditUsed');
       var totalPending = this.model.get('order').getPending();
       if ((creditLimit + creditUsed) >= totalPending) {
-        this.doShowPopup({popup: 'modalEnoughCredit');
+        this.doShowPopup({popup: 'modalEnoughCredit'});
         //$('#modalEnoughCredit').modal('show');
       } else {
-        this.doShowPopup({popup: 'modalNotEnoughCredit', {popupLabel: null}});
+        this.doShowPopup({popup: 'modalNotEnoughCredit', args: {popupLabel: null}});
         //$('#modalNotEnoughCredit').modal('show');
       }
     }
