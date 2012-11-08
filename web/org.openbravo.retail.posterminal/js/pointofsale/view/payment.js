@@ -59,6 +59,9 @@ enyo.kind({
             tag: 'span',
             name: 'donezerolbl',
             content: OB.I18N.getLabel('OBPOS_MsgPaymentAmountZero')
+          }, {
+        	name: 'creditsalesaction',
+        	kind: 'OB.OBPOSPointOfSale.UI.CreditButton'
           }]
         }, {
           style: 'overflow:auto; width: 100%;',
@@ -99,7 +102,7 @@ enyo.kind({
   receiptChanged: function () {
     this.$.payments.setCollection(this.receipt.get('payments'));
 
-    this.receipt.on('change:payment change:change calculategross', function () {
+    this.receipt.on('change:payment change:change calculategross change:bp', function () {
       this.updatePending();
     }, this);
     this.updatePending();
@@ -129,6 +132,7 @@ enyo.kind({
       this.$.totalpending.hide();
       this.$.totalpendinglbl.hide();
       this.$.doneaction.show();
+      this.$.creditsalesaction.hide();
     } else {
       this.$.totalpending.setContent(paymentstatus.pending);
       this.$.totalpending.show();
@@ -138,12 +142,27 @@ enyo.kind({
         this.$.doneButton.setContent(OB.I18N.getLabel('OBPOS_LblOpen'));
         this.$.doneButton.drawerOpened = false;
       }
+      if (OB.POS.modelterminal.get('terminal').allowpayoncredit && this.receipt.get('bp')) {
+    	  if (this.receipt.get('bp').get('creditLimit') > 0) {
+    		  this.$.creditsalesaction.show();
+    	  } else {
+    		  this.$.creditsalesaction.hide();
+    	  } 
+      }
     }
 
     if (paymentstatus.done || this.receipt.getGross() === 0) {
       this.$.exactaction.hide();
+      this.$.creditsalesaction.hide();
     } else {
       this.$.exactaction.show();
+      if (OB.POS.modelterminal.get('terminal').allowpayoncredit && this.receipt.get('bp')) {
+    	  if (this.receipt.get('bp').get('creditLimit') > 0) {
+    		  this.$.creditsalesaction.show();
+    	  } else {
+    		  this.$.creditsalesaction.hide();
+    	  }
+      }
     }
 
     if (paymentstatus.done && !paymentstatus.change && !paymentstatus.overpayment) {
@@ -263,3 +282,60 @@ enyo.kind({
     });
   }
 });
+
+enyo.kind({
+	  name: 'OB.OBPOSPointOfSale.UI.CreditButton',
+	  kind: 'OB.UI.RegularButton',
+	  content: OB.I18N.getLabel('OBPOS_LblCreditSales'),
+	  classes: 'btnlink-green',
+	  style: 'width: 120px',
+	  permission: 'OBPOS_receipt.creditsales',
+	  init: function (model) {
+		    this.model = model;
+	  },
+	  tap: function() {
+		  var creditButton = this;
+		  if (OB.POS.modelterminal.get('connectedToERP')) {
+			  process = new OB.DS.Process('org.openbravo.retail.posterminal.CheckBusinessPartnerCredit');
+		  	  process.exec({
+		           businessPartnerId: this.model.get('order').get('bp').get('id'),
+		  	       totalPending: this.model.get('order').getPending() 
+		      }, function (data) {
+		          if (data) {
+		              if (data.enoughCredit){
+		            	  creditButton.actualCredit = data.actualCredit;
+		            	  $('#modalEnoughCredit').modal('show');
+		              } else {
+		            	  $('#modalNotEnoughCredit').modal('show');
+		              }	
+		          } else {
+		              OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorDropDep'));
+		          }
+		      });
+		  } else {
+			  var creditLimit = this.model.get('order').get('bp').get('creditLimit');
+			  var creditUsed = this.model.get('order').get('bp').get('creditUsed');
+			  var totalPending =  this.model.get('order').getPending();
+			  if ((creditLimit + creditUsed) >= totalPending) {
+				  $('#modalEnoughCredit').modal('show');
+			  } else {
+				  $('#modalNotEnoughCredit').modal('show');
+			  }
+		  }
+		  
+//		if(this.drawerpreference){
+//		  if(this.drawerOpened){
+//		  this.owner.receipt.trigger('paymentDone');
+//	      this.drawerOpened= false;
+//	      this.setContent(OB.I18N.getLabel('OBPOS_LblOpen'));
+//	    }else{
+//	      this.owner.receipt.trigger('openDrawer');
+//	      this.drawerOpened= true;
+//	      this.setContent(OB.I18N.getLabel('OBPOS_LblDone'));
+//	      }
+//	   }else{
+//	     this.owner.receipt.trigger('paymentDone');
+//	     this.owner.receipt.trigger('openDrawer');
+//	   }
+	  }
+	});

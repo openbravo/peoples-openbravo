@@ -64,6 +64,7 @@ public class Terminal extends ProcessHQLQuery {
         + ", pos.organization.obretcoMWarehouse.id as warehouse "
         + ", pos.orderdocnoPrefix as docNoPrefix "
         + ", pos.quotationdocnoPrefix as quotationDocNoPrefix "
+        + ", pos.obposTerminaltype.allowpayoncredit as allowpayoncredit "
         + ", "
         + lastDocumentNumber
         + " as lastDocumentNumber, "
