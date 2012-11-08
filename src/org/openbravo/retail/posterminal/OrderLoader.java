@@ -395,7 +395,8 @@ public class OrderLoader extends JSONProcessSimple {
 
       // Discounts & Promotions
       if (orderlines.getJSONObject(i).has("promotions")
-          && orderlines.getJSONObject(i).get("promotions") != null) {
+          && !orderlines.getJSONObject(i).isNull("promotions")
+          && !orderlines.getJSONObject(i).getString("promotions").equals("null")) {
         JSONArray jsonPromotions = orderlines.getJSONObject(i).getJSONArray("promotions");
         for (int p = 0; p < jsonPromotions.length(); p++) {
           JSONObject jsonPromotion = jsonPromotions.getJSONObject(p);
