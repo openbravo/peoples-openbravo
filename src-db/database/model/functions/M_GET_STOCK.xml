@@ -152,11 +152,13 @@ BEGIN --BODY
     INSERT INTO m_stock_proposed (
         m_stock_proposed_id, ad_client_id, ad_org_id, isactive, 
         created , createdby, updated, updatedby,
-        ad_pinstance_id, priority, m_storage_detail_id, quantity, qtyorder
+        ad_pinstance_id, priority, m_storage_detail_id, quantity, qtyorder,
+        isfinal
     ) VALUES (
         get_uuid(), v_ClientID, v_OrgID, 'Y',
         now(), v_AD_User_ID, now(), v_AD_User_ID,
-        pinstance_id, v_Count, Cur_Stock.M_STORAGE_DETAIL_ID, Cur_Stock.Qty, Cur_Stock.qtyorder
+        pinstance_id, v_Count, Cur_Stock.M_STORAGE_DETAIL_ID, Cur_Stock.Qty, Cur_Stock.qtyorder,
+        'Y'
     );
     v_Count:=v_Count+1;
   END LOOP;
@@ -184,11 +186,13 @@ BEGIN --BODY
     INSERT INTO m_stock_proposed (
         m_stock_proposed_id, ad_client_id, ad_org_id, isactive, 
         created , createdby, updated, updatedby,
-        ad_pinstance_id, priority, m_storage_detail_id, quantity, qtyorder
+        ad_pinstance_id, priority, m_storage_detail_id, quantity, qtyorder,
+        isfinal
     ) VALUES (
         get_uuid(), v_ClientID, v_OrgID, 'Y',
         now(), v_AD_User_ID, now(), v_AD_User_ID,
-        pinstance_id, v_Count, Cur_Stock.M_STORAGE_DETAIL_ID, Cur_Stock.Qty, Cur_Stock.QtyOrder
+        pinstance_id, v_Count, Cur_Stock.M_STORAGE_DETAIL_ID, Cur_Stock.Qty, Cur_Stock.QtyOrder,
+        'Y'
     );
     v_Count:=v_Count+1;
   END LOOP;
@@ -224,39 +228,86 @@ BEGIN --BODY
     END;
   END IF;
   
-  -- Apply stock rules
+  -- Apply stock rules only if a quantity is given
+  IF (v_Quantity IS NULL) THEN
+    RETURN;
+  END IF;
   DECLARE
     v_sql VARCHAR2(2000);
     v_applyrule CHAR(1);
+    v_finalqty NUMBER;
+    v_totalqty NUMBER;
+    v_availableqty NUMBER;
+    v_qtyaux NUMBER:=v_quantity;
+    v_AuxResult NUMBER;
+    v_AuxMessage VARCHAR2(2000):='';
+    v_productname M_PRODUCT.NAME%TYPE;
   BEGIN
+    SELECT SUM(quantity) INTO v_availableqty
+    FROM m_stock_proposed
+    WHERE ad_pinstance_id = pinstance_id;
+
     FOR cur_warehouse IN (
-        SELECT l.m_warehouse_id, wr.procedurename, wr.m_warehouse_rule_id
+        SELECT l.m_warehouse_id, wr.procedurename, wr.m_warehouse_rule_id, MAX(sp.priority) AS priority, w.name
         FROM m_stock_proposed sp
             JOIN m_storage_detail sd ON sp.m_storage_detail_id = sd.m_storage_detail_id
             JOIN m_locator l ON sd.m_locator_id = l.m_locator_id
             JOIN m_warehouse w ON l.m_warehouse_id = w.m_warehouse_id
-            JOIN m_warehouse_rule wr ON wr.m_warehouse_rule_id = COALESCE(v_warehouse_rule_id, w.m_warehouse_rule_id)
+            LEFT JOIN m_warehouse_rule wr ON wr.m_warehouse_rule_id = COALESCE(v_warehouse_rule_id, w.m_warehouse_rule_id)
         WHERE ad_pinstance_id = pinstance_id
-        GROUP BY l.m_warehouse_id, wr.m_warehouse_rule_id, wr.procedurename
+        GROUP BY l.m_warehouse_id, wr.m_warehouse_rule_id, wr.procedurename, w.name
         ORDER BY MIN(sp.priority)
     ) LOOP
-      IF (AD_GET_RDBMS() = 'ORACLE') THEN
-        v_Sql := 'CALL ' || cur_warehouse.procedurename || '('''||pinstance_id||''', '''||cur_warehouse.m_warehouse_id||''')';
-      ELSE
-        v_Sql := 'SELECT ' || cur_warehouse.procedurename || '('''||pinstance_id||''', '''||cur_warehouse.m_warehouse_id||''') FROM DUAL';
+      IF (cur_warehouse.procedurename IS NOT NULL) THEN
+        AD_UPDATE_PINSTANCE(PInstance_ID, NULL, 'N', 1, '', p_calledfromapp) ;
+        IF (AD_GET_RDBMS() = 'ORACLE') THEN
+          v_Sql := 'CALL ' || cur_warehouse.procedurename || '('''||pinstance_id||''', '''||cur_warehouse.m_warehouse_id||''')';
+        ELSE
+          v_Sql := 'SELECT ' || cur_warehouse.procedurename || '('''||pinstance_id||''', '''||cur_warehouse.m_warehouse_id||''') FROM DUAL';
+        END IF;
+        BEGIN
+          EXECUTE IMMEDIATE v_Sql;
+        EXCEPTION WHEN OTHERS THEN
+          DBMS_OUTPUT.PUT_LINE('ERROR EXECUTING STOCK RULE PROCEDURE');
+        END;
+        SELECT result, errormsg INTO v_auxresult, v_auxmessage
+        FROM ad_pinstance
+        WHERE ad_pinstance_id = pinstance_id;
+        v_message := v_message || ' ' || cur_warehouse.name || ': ' || COALESCE(v_auxmessage, '@Success@');
       END IF;
-      BEGIN
-        EXECUTE IMMEDIATE v_Sql;
-      EXCEPTION WHEN OTHERS THEN
-        DBMS_OUTPUT.PUT_LINE('ERROR EXECUTING STOCK RULE PROCEDURE');
-      END;
-      SELECT result, errormsg INTO v_result, v_message
-      FROM ad_pinstance
-      WHERE ad_pinstance_id = pinstance_id;
-      IF (v_result = 0) THEN
-        RAISE_APPLICATION_ERROR(-20000, v_message);
+      -- Check if there is enough final quantity.
+      SELECT COALESCE(SUM(quantity), 0) INTO v_finalqty
+      FROM m_stock_proposed
+      WHERE ad_pinstance_id = pinstance_id
+        AND priority <= cur_warehouse.priority
+        AND isfinal = 'Y';
+      v_qtyaux := v_qtyaux - v_finalqty;
+      IF (v_qtyaux <= 0) THEN
+        DELETE FROM m_stock_proposed
+        WHERE ad_pinstance_id = pinstance_id
+          AND (priority > cur_warehouse.priority
+              OR isfinal = 'N');
+        EXIT;
       END IF;
+      
     END LOOP;
+    SELECT SUM(CASE isfinal WHEN 'Y' THEN quantity ELSE 0 END), SUM(quantity)
+      INTO v_finalqty, v_totalqty
+    FROM m_stock_proposed
+    WHERE ad_pinstance_id = pinstance_id;
+    IF (v_totalqty < v_quantity AND v_availableqty >= v_quantity) THEN
+      IF (v_message IS NULL OR v_message = '') THEN
+        SELECT name INTO v_productname
+        FROM m_product
+        WHERE m_product_id = v_productid;
+        v_message := '@NotEnoughStockedDueWHRule@';
+      END IF;
+      RAISE_APPLICATION_ERROR(-20000, v_message);
+    END IF;
+    IF (v_totalqty > v_finalqty) THEN
+      -- IF these quantities are different there is some proposed stock with the isFinal flag = 'N'
+      v_result := 2;
+    END IF;
   END;
 
   --  Update AD_PInstance
