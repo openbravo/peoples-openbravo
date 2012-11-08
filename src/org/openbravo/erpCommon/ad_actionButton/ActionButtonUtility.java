@@ -23,6 +23,7 @@ import java.util.Vector;
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.DalUtil;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
@@ -48,8 +49,13 @@ public class ActionButtonUtility {
     boolean isQuotation = false;
     String windowId = "";
     if (tabId != null) {
-      Tab tab = OBDal.getInstance().get(Tab.class, tabId);
-      windowId = DalUtil.getId(tab.getWindow()).toString();
+      OBContext.setAdminMode(true);
+      try {
+        Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+        windowId = DalUtil.getId(tab.getWindow()).toString();
+      } finally {
+        OBContext.restorePreviousMode();
+      }
     }
 
     if (log4j.isDebugEnabled())
