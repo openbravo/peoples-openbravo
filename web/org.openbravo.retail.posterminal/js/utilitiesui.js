@@ -74,7 +74,7 @@ enyo.kind({
         txt: txt,
         type: type
       }).render();
-      return alert;
+      return OB.POS.terminal.$.alertContainer.getComponents()[0];
     }
   },
 
