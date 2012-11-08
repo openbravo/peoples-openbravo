@@ -481,10 +481,10 @@ public class OrderLoader extends JSONProcessSimple {
     // Same currency, no conversion required
     if (jsonorder.getLong("orderType") == 1) {
       invoice.getBusinessPartner().setCreditUsed(
-          invoice.getBusinessPartner().getCreditUsed().add(total));
+          invoice.getBusinessPartner().getCreditUsed().subtract(total));
     } else {
       invoice.getBusinessPartner().setCreditUsed(
-          invoice.getBusinessPartner().getCreditUsed().subtract(total));
+          invoice.getBusinessPartner().getCreditUsed().add(total));
     }
 
   }
