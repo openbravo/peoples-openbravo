@@ -87,7 +87,7 @@
       <foreign-key foreignTable="C_DOCTYPE" name="OBPOS_TERTYPELICATIONS_RECON">
         <reference local="C_DOCTYPERECON_ID" foreign="C_DOCTYPE_ID"/>
       </foreign-key>
-      <index name="FKI_OBPOS_DOCTYPE_QUOT_ID" unique="false">
+      <index name="OBPOS_DOCTYPE_QUOT_ID" unique="false">
         <index-column name="C_DOCTYPEQUOT_ID"/>
       </index>
       <check name="OBPOS_TERTYPE_GROUPORD_CHK"><![CDATA[GROUPINGORDERS IN ('Y', 'N')]]></check>
