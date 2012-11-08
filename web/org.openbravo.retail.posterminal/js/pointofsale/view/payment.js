@@ -290,6 +290,9 @@ enyo.kind({
   classes: 'btn-icon-small btnlink-green',
   style: 'width: 120px; float: right; margin: 0px',
   permission: 'OBPOS_receipt.creditsales',
+  events: {
+    onShowPopup: ''
+  },
   init: function (model) {
     this.model = model;
   },
@@ -303,14 +306,14 @@ enyo.kind({
       }, function (data) {
         if (data) {
           if (data.enoughCredit) {
-            $('#modalEnoughCredit').modal('show');
+            this.doShowPopup({popup: 'modalEnoughCredit'});
             //this.setContent(OB.I18N.getLabel('OBPOS_LblCreditSales'));
           } else {
             var bpName = data.bpName;
             var actualCredit = data.actualCredit;
-            $('#modalNotEnoughCredit').modal('show');
+            this.doShowPopup({popup: 'modalNotEnoughCredit', {popupLabel: OB.I18N.getLabel('OBPOS_notEnoughCreditBody', [bpName, actualCredit])}});
             //this.setContent(OB.I18N.getLabel('OBPOS_LblCreditSales'));
-            OB.UI.UTILS.domIdEnyoReference['modalNotEnoughCredit'].$.bodyContent.children[0].setContent(OB.I18N.getLabel('OBPOS_notEnoughCreditBody', [bpName, actualCredit]));
+            //OB.UI.UTILS.domIdEnyoReference['modalNotEnoughCredit'].$.bodyContent.children[0].setContent();
           }
         } else {
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorCreditSales'));
@@ -321,9 +324,11 @@ enyo.kind({
       var creditUsed = this.model.get('order').get('bp').get('creditUsed');
       var totalPending = this.model.get('order').getPending();
       if ((creditLimit + creditUsed) >= totalPending) {
-        $('#modalEnoughCredit').modal('show');
+        this.doShowPopup({popup: 'modalEnoughCredit');
+        //$('#modalEnoughCredit').modal('show');
       } else {
-        $('#modalNotEnoughCredit').modal('show');
+        this.doShowPopup({popup: 'modalNotEnoughCredit', {popupLabel: null}});
+        //$('#modalNotEnoughCredit').modal('show');
       }
     }
 

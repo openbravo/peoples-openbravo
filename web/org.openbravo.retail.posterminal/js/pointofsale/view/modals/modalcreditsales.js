@@ -10,7 +10,6 @@
 enyo.kind({
   kind: 'OB.UI.ModalAction',
   name: 'OBPOS.UI.modalEnoughCredit',
-  myId: 'modalEnoughCredit',
   header: OB.I18N.getLabel('OBPOS_enoughCreditHeader'),
   bodyContent: {
     content: OB.I18N.getLabel('OBPOS_enoughCreditBody')
@@ -65,20 +64,21 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ModalInfo',
   name: 'OBPOS.UI.modalNotEnoughCredit',
-  myId: 'modalNotEnoughCredit',
   style: 'background-color: #EBA001;',
   header: OB.I18N.getLabel('OBPOS_notEnoughCreditHeader'),
   isApplyButton: true,
+  defaultLabel: OB.I18N.getLabel('OBPOS_notEnoughCreditBody'),
+  executeOnShow: function(args){
+    if (args.popupLabel){
+      debugger;
+      this.$.bodyContent.$.popupmessage.setContent(this.defaultLabel);
+    } else {
+      debugger;
+      this.$.bodyContent.$.popupmessage.setContent(this.defaultLabel);
+    }
+  },
   bodyContent: {
-    tag: 'div',
+    name: 'popupmessage',
     content: OB.I18N.getLabel('OBPOS_notEnoughCreditBody')
   }
-});
-
-OB.UI.WindowView.registerPopup('OB.OBPOSPointOfSale.UI.PointOfSale', {
-  kind: 'OBPOS.UI.modalEnoughCredit'
-});
-
-OB.UI.WindowView.registerPopup('OB.OBPOSPointOfSale.UI.PointOfSale', {
-  kind: 'OBPOS.UI.modalNotEnoughCredit'
 });
