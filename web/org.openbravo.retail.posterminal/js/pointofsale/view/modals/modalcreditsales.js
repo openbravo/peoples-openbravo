@@ -67,14 +67,12 @@ enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.OBPOSPointOfSale.UI.Modals.modalEnoughCredit.Components.cancel_button',
   events: {
-    onHidePopup: ''
+    onHideThisPopup: ''
   },
   content: OB.I18N.getLabel('OBPOS_LblCancel'),
   classes: 'btnlink btnlink-gray modal-dialog-content-button',
   tap: function () {
-    this.doHidePopup({
-      popup: 'modalEnoughCredit'
-    });
+    this.doHideThisPopup();
   }
 });
 
