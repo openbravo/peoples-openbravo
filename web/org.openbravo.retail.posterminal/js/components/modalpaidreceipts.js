@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global B, Backbone, $, _, enyo */
+/*global B, Backbone, $, _, moment, enyo */
 
 
 /*header of scrollable table*/
