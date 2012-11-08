@@ -157,15 +157,15 @@ enyo.kind({
         },
         hidePopupHandler: function (inSender, inEvent) {
           if (inEvent.popup) {
-            this.hidePopup(inEvent.popup);
+            this.hidePopup(inEvent.popup, inEvent.args);
           }
         },
-        hidePopup: function (popupName) {
+        hidePopup: function (popupName, args) {
           var componentsArray = this.getComponents(),
               i;
           for (i = 0; i < componentsArray.length; i++) {
             if (componentsArray[i].$[popupName]) {
-              componentsArray[i].$[popupName].hide();
+              componentsArray[i].$[popupName].hide(args);
               break;
             }
           }

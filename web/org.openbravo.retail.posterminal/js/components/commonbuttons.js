@@ -40,6 +40,9 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ModalDialogButton',
   kind: 'OB.UI.RegularButton',
+  events: {
+    onHideThisPopup: ''
+  },
   classes: 'btnlink-gray modal-dialog-button'
 });
 
@@ -50,7 +53,7 @@ enyo.kind({
   floating: true,
   scrim: true,
   handlers: {
-    onHideThisPopup: 'hide'
+    onHideThisPopup: 'hideFromInside'
   },
   show: function (args) {
     this.inherited(arguments);
@@ -59,11 +62,14 @@ enyo.kind({
       this.executeOnShow(args);
     }
   },
-  hide: function () {
+  hideFromInside: function (inSender, inEvent) {
+    this.hide(inEvent.args);
+  },
+  hide: function (args) {
     this.inherited(arguments);
     $("#focuskeeper").focus();
     if (this.executeOnHide) {
-      this.executeOnHide();
+      this.executeOnHide(args);
     }
   },
   rendered: function () {
