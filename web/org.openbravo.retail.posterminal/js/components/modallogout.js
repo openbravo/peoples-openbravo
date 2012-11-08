@@ -34,7 +34,7 @@ enyo.kind({
   attributes: {
     'onEnterTap': 'hide'
   },
-  classes: 'btnlink btnlink-gray modal-dialog-content-button',
+  classes: 'btnlink btnlink-gray modal-dialog-button',
   events: {
     onHideThisPopup: ''
   },
@@ -48,7 +48,7 @@ enyo.kind({
   kind: 'OB.UI.Button',
   isApplyButton: true,
   content: OB.I18N.getLabel('OBPOS_LogoutDialogLogout'),
-  classes: 'btnlink btnlink-gray modal-dialog-content-button',
+  classes: 'btnlink btnlink-gray modal-dialog-button',
   events: {
     onHideThisPopup: ''
   },
@@ -62,7 +62,7 @@ enyo.kind({
   name: 'OB.UI.LogoutDialogLock',
   kind: 'OB.UI.Button',
   content: OB.I18N.getLabel('OBPOS_LogoutDialogLock'),
-  classes: 'btnlink btnlink-gray modal-dialog-content-button',
+  classes: 'btnlink btnlink-gray modal-dialog-button',
   events: {
     onHideThisPopup: ''
   },

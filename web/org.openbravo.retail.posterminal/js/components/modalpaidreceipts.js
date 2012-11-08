@@ -297,9 +297,6 @@ enyo.kind({
     }
   },
   topPosition: '125px',
-  modalClass: 'modal',
-  headerClass: 'modal-header',
-  bodyClass: 'modal-header',
   header: OB.I18N.getLabel('OBPOS_LblPaidReceipts'),
   published: {
     params: null

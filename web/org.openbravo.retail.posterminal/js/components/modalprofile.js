@@ -13,7 +13,6 @@ enyo.kind({
   name: 'OB.UI.ModalProfile',
   kind: 'OB.UI.ModalAction',
   header: OB.I18N.getLabel('OBPOS_ProfileDialogTitle'),
-  //bodyContentClass: 'modal-dialog-content-profile',
   bodyContent: {
     style: 'height: 127px; background-color: #ffffff;',
     components: [{
@@ -150,7 +149,7 @@ enyo.kind({
   isActive: true,
   content: OB.I18N.getLabel('OBPOS_LblApply'),
   isApplyButton: true,
-  classes: 'btnlink btnlink-gray modal-dialog-content-button',
+  classes: 'btnlink btnlink-gray modal-dialog-button',
   tap: function () {
     if (!this.isActive) {
       return;
@@ -193,7 +192,7 @@ enyo.kind({
   name: 'OB.UI.ProfileDialogCancel',
   kind: 'OB.UI.Button',
   content: OB.I18N.getLabel('OBPOS_LblCancel'),
-  classes: 'btnlink btnlink-gray modal-dialog-content-button',
+  classes: 'btnlink btnlink-gray modal-dialog-button',
   attributes: {
     'onEnterTap': 'hide'
   },

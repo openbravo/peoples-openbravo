@@ -16,9 +16,6 @@ enyo.kind({
     stockInfo: null
   },
   kind: 'OB.UI.Modal',
-  modalClass: 'modal',
-  headerClass: 'modal-header',
-  bodyClass: 'modal-header',
   header: '',
   body: {
     kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalStockInStore.Components.ListStockInStore',

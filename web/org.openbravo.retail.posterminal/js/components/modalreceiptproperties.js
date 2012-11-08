@@ -16,7 +16,6 @@ enyo.kind({
     onApplyChanges: 'applyChanges'
   },
   header: OB.I18N.getLabel('OBPOS_ReceiptPropertiesDialogTitle'),
-  bodyContentClass: 'modal-dialog-content-receipt-properties',
   bodyContent: {
     kind: 'Scroller',
     maxHeight: '225px',
@@ -73,7 +72,7 @@ enyo.kind({
   kind: 'OB.UI.Button',
   name: 'OB.UI.ReceiptPropertiesDialogApply',
   content: OB.I18N.getLabel('OBPOS_LblApply'),
-  classes: 'btnlink btnlink-gray modal-dialog-content-button',
+  classes: 'btnlink btnlink-gray modal-dialog-button',
   isApplyButton: true,
   events: {
     onApplyChanges: '',
@@ -89,7 +88,7 @@ enyo.kind({
   name: 'OB.UI.ReceiptPropertiesDialogCancel',
   kind: 'OB.UI.Button',
   content: OB.I18N.getLabel('OBPOS_LblCancel'),
-  classes: 'btnlink btnlink-gray modal-dialog-content-button',
+  classes: 'btnlink btnlink-gray modal-dialog-button',
   attributes: {
     'onEnterTap': 'hide'
   },
@@ -131,7 +130,7 @@ enyo.kind({
   kind: 'enyo.Input',
   type: 'text',
   classes: 'input',
-  style: 'width: 335px; height: 32px;',
+  style: 'width: 392px;',
   handlers: {
     onLoadValue: 'loadValue',
     onApplyChange: 'applyChange'

@@ -12,7 +12,7 @@
 enyo.kind({
   kind: 'OB.UI.Button',
   name: 'OB.OBPOSPointOfSale.UI.Modals.btnModalReactivateQuotationCancel',
-  classes: 'btnlink btnlink-gray modal-dialog-content-button',
+  classes: 'btnlink btnlink-gray modal-dialog-button',
   content: OB.I18N.getLabel('OBPOS_LblCancel'),
   events: {
     onHideThisPopup: ''
@@ -24,7 +24,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.Button',
   name: 'OB.OBPOSPointOfSale.UI.Modals.btnModalReactivateQuotationAccept',
-  classes: 'btnlink btnlink-gray modal-dialog-content-button',
+  classes: 'btnlink btnlink-gray modal-dialog-button',
   content: OB.I18N.getLabel('OBPOS_LblOk'),
   events: {
     onReactivateQuotation: '',

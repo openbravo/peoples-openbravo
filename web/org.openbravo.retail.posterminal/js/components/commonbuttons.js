@@ -40,7 +40,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ModalDialogButton',
   kind: 'OB.UI.RegularButton',
-  classes: 'btnlink-gray modal-dialog-content-button'
+  classes: 'btnlink-gray modal-dialog-button'
 });
 
 enyo.kind({
@@ -140,6 +140,7 @@ enyo.kind({
 });
 
 enyo.kind({
+  //TODO: maxheight
   name: 'OB.UI.Modal',
   kind: "OB.UI.Popup",
   classes: 'modal',
@@ -148,31 +149,29 @@ enyo.kind({
     classes: 'modal-header',
     components: [{
       tag: 'div',
-      classes: 'modal-closebutton',
+      classes: 'modal-header-closebutton',
       components: [{
         tag: 'span',
         ontap: 'hide',
-        style: 'font-size: 150%',
         allowHtml: true,
         content: '&times;'
       }]
     }, {
-      style: 'line-height: 27px; font-size: 18px; font-weight: bold;',
-      name: 'divheader'
+      name: 'header',
+      classes: 'modal-header-text'
     }]
   }, {
     tag: 'div',
     name: 'body',
     classes: 'modal-body'
   }],
-  //TODO: maxheight: null,
   initComponents: function () {
     this.inherited(arguments);
     if (this.modalClass) {
       this.addClass(this.modalClass);
     }
 
-    this.$.divheader.setContent(this.header);
+    this.$.header.setContent(this.header);
 
     if (this.bodyClass) {
       this.$.body.addClass(this.bodyClass);
@@ -320,40 +319,39 @@ enyo.kind({
 
 
 enyo.kind({
-  //TODO: maxheight, 
+  //TODO: maxheight
   name: 'OB.UI.ModalAction',
   kind: "OB.UI.Popup",
-  classes: 'modal modal-dialog',
-  bodyContentClass: 'modal-dialog-content-text',
-  bodyButtonsClass: 'modal-dialog-content-buttons-container',
+  classes: 'modal-dialog',
+  bodyContentClass: 'modal-dialog-body-content',
+  bodyButtonsClass: 'modal-dialog-body-buttons',
   components: [{
     tag: 'div',
-    classes: 'modal-header modal-dialog-header',
+    classes: 'modal-dialog-header',
     components: [{
       name: 'headerCloseButton',
       tag: 'div',
-      classes: 'modal-closebutton',
+      classes: 'modal-dialog-header-closebutton',
       components: [{
         tag: 'span',
         ontap: 'hide',
-        style: 'font-size: 150%',
         allowHtml: true,
         content: '&times'
       }]
     }, {
       name: 'header',
       classes: 'modal-dialog-header-text'
+    }]
+  }, {
+    tag: 'div',
+    classes: 'modal-dialog-body',
+    name: 'bodyParent',
+    components: [{
+      tag: 'div',
+      name: 'bodyContent'
     }, {
       tag: 'div',
-      classes: 'modal-body modal-dialog-body',
-      name: 'bodyParent',
-      components: [{
-        tag: 'div',
-        name: 'bodyContent'
-      }, {
-        tag: 'div',
-        name: 'bodyButtons'
-      }]
+      name: 'bodyButtons'
     }]
   }],
   rendered: function () {
@@ -369,7 +367,9 @@ enyo.kind({
 
     this.$.header.setContent(this.header);
 
-    this.$.bodyParent.setStyle('max-height: ' + this.maxheight + ';');
+    if (this.maxheight) {
+      this.$.bodyParent.setStyle('max-height: ' + this.maxheight + ';');
+    }
 
     this.$.bodyContent.setClasses(this.bodyContentClass);
     this.$.bodyContent.createComponent(this.bodyContent);
@@ -426,7 +426,7 @@ enyo.kind({
   name: 'OB.UI.AcceptDialogButton',
   kind: 'OB.UI.ModalDialogButton',
   content: OB.I18N.getLabel('OBPOS_LblOk'),
-  classes: 'btnlink btnlink-gray modal-dialog-content-button',
+  classes: 'btnlink btnlink-gray modal-dialog-button',
   events: {
     onHideThisPopup: ''
   },
@@ -443,7 +443,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.Button',
   name: 'OB.UI.CancelDialogButton',
-  classes: 'btnlink btnlink-gray modal-dialog-content-button',
+  classes: 'btnlink btnlink-gray modal-dialog-button',
   content: OB.I18N.getLabel('OBPOS_LblCancel'),
   attributes: {
     'onEnterTap': 'hide'

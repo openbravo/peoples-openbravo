@@ -48,7 +48,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.Button',
   name: 'OB.UI.MockPayment_OkButton',
-  classes: 'btnlink btnlink-gray modal-dialog-content-button',
+  classes: 'btnlink btnlink-gray modal-dialog-button',
   style: 'float: right;',
   content: OB.I18N.getLabel('OBPOS_LblOk'),
   isApplyButton: true,

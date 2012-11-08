@@ -298,7 +298,6 @@ enyo.kind({
   name: 'OB.UI.ModalBusinessPartners',
   topPosition: '125px',
   kind: 'OB.UI.Modal',
-  modalClass: 'modal',
   onEnterTap: function (args, action) {
     if (action) {
       this.waterfall(action);
@@ -308,8 +307,6 @@ enyo.kind({
       return true;
     }
   },
-  //headerClass: 'modal-header',
-  //bodyClass: 'modal-header',
   header: OB.I18N.getLabel('OBPOS_LblAssignCustomer'),
   body: {
     kind: 'OB.UI.ListBps'

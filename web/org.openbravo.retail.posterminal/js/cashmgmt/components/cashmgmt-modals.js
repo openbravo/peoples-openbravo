@@ -31,7 +31,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.Button',
   name: 'OB.OBPOSCashMgmt.UI.modalFinished_OkButton',
-  classes: 'btnlink btnlink-gray modal-dialog-content-button',
+  classes: 'btnlink btnlink-gray modal-dialog-button',
   content: OB.I18N.getLabel('OBPOS_LblOk'),
   events: {
     onHideThisPopup: ''
@@ -64,7 +64,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.Button',
   name: 'OB.OBPOSCashMgmt.UI.modalFinishedWrongly_OkButton',
-  classes: 'btnlink btnlink-gray modal-dialog-content-button',
+  classes: 'btnlink btnlink-gray modal-dialog-button',
   content: OB.I18N.getLabel('OBPOS_LblOk'),
   events: {
     onHideThisPopup: ''

@@ -16,7 +16,6 @@ enyo.kind({
     onApplyChanges: 'applyChanges'
   },
   header: OB.I18N.getLabel('OBPOS_ReceiptPropertiesDialogTitle'),
-  bodyContentClass: 'modal-dialog-content-receipt-properties',
   bodyContent: {
     kind: 'Scroller',
     maxHeight: '225px',

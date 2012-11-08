@@ -19,7 +19,7 @@ enyo.kind({
   bodyButtons: {
     components: [{
       kind: 'OB.UI.Button',
-      classes: 'btnlink btnlink-gray modal-dialog-content-button',
+      classes: 'btnlink btnlink-gray modal-dialog-button',
       content: OB.I18N.getLabel('OBPOS_LblOk'),
       isApplyButton: true,
       tap: function () {
@@ -28,7 +28,7 @@ enyo.kind({
       }
     }, {
       kind: 'OB.UI.Button',
-      classes: 'btnlink btnlink-gray modal-dialog-content-button',
+      classes: 'btnlink btnlink-gray modal-dialog-button',
       content: OB.I18N.getLabel('OBPOS_LblCancel'),
       attributes: {
         'onEnterTap': 'hide'

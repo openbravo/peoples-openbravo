@@ -11,14 +11,11 @@
 
 enyo.kind({
   name: 'OB.UI.ModalReceipts',
+  kind: 'OB.UI.Modal',
   topPosition: '125px',
   published: {
     receiptsList: null
   },
-  kind: 'OB.UI.Modal',
-  modalClass: 'modal',
-  //headerClass: 'modal-header',
-  //bodyClass: 'modal-header',
   header: OB.I18N.getLabel('OBPOS_LblAssignReceipt'),
   body: {
     kind: 'OB.UI.ListReceipts',
@@ -136,7 +133,7 @@ enyo.kind({
   kind: 'OB.UI.Button',
   name: 'OB.UI.btnModalApplyDelete',
   isApplyButton: true,
-  classes: 'btnlink btnlink-gray modal-dialog-content-button',
+  classes: 'btnlink btnlink-gray modal-dialog-button',
   content: OB.I18N.getLabel('OBPOS_LblYesDelete'),
   events: {
     onDeleteOrder: '',
@@ -151,7 +148,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.Button',
   name: 'OB.UI.btnModalCancelDelete',
-  classes: 'btnlink btnlink-gray modal-dialog-content-button',
+  classes: 'btnlink btnlink-gray modal-dialog-button',
   content: OB.I18N.getLabel('OBPOS_LblCancel'),
   attributes: {
     'onEnterTap': 'hide'
