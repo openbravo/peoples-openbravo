@@ -60,8 +60,8 @@ enyo.kind({
             name: 'donezerolbl',
             content: OB.I18N.getLabel('OBPOS_MsgPaymentAmountZero')
           }, {
-        	name: 'creditsalesaction',
-        	kind: 'OB.OBPOSPointOfSale.UI.CreditButton'
+            name: 'creditsalesaction',
+            kind: 'OB.OBPOSPointOfSale.UI.CreditButton'
           }]
         }, {
           style: 'overflow:auto; width: 100%;',
@@ -143,11 +143,11 @@ enyo.kind({
         this.$.doneButton.drawerOpened = false;
       }
       if (OB.POS.modelterminal.get('terminal').allowpayoncredit && this.receipt.get('bp')) {
-    	  if (this.receipt.get('bp').get('creditLimit') > 0) {
-    		  this.$.creditsalesaction.show();
-    	  } else {
-    		  this.$.creditsalesaction.hide();
-    	  } 
+        if (this.receipt.get('bp').get('creditLimit') > 0) {
+          this.$.creditsalesaction.show();
+        } else {
+          this.$.creditsalesaction.hide();
+        }
       }
     }
 
@@ -157,11 +157,11 @@ enyo.kind({
     } else {
       this.$.exactaction.show();
       if (OB.POS.modelterminal.get('terminal').allowpayoncredit && this.receipt.get('bp')) {
-    	  if (this.receipt.get('bp').get('creditLimit') > 0) {
-    		  this.$.creditsalesaction.show();
-    	  } else {
-    		  this.$.creditsalesaction.hide();
-    	  }
+        if (this.receipt.get('bp').get('creditLimit') > 0) {
+          this.$.creditsalesaction.show();
+        } else {
+          this.$.creditsalesaction.hide();
+        }
       }
     }
 
@@ -284,62 +284,62 @@ enyo.kind({
 });
 
 enyo.kind({
-	  name: 'OB.OBPOSPointOfSale.UI.CreditButton',
-	  kind: 'OB.UI.SmallButton',
-	  content: OB.I18N.getLabel('OBPOS_LblCreditSales'),
-	  classes: 'btn-icon-small btnlink-green',
-	  style: 'width: 120px; float: right; margin: 0px',
-	  permission: 'OBPOS_receipt.creditsales',
-	  init: function (model) {
-		    this.model = model;
-	  },
-	  tap: function() {
-		  if (OB.POS.modelterminal.get('connectedToERP')) {
-			  //this.setContent(OB.I18N.getLabel('OBPOS_LblLoading'));
-			  process = new OB.DS.Process('org.openbravo.retail.posterminal.CheckBusinessPartnerCredit');
-		  	  process.exec({
-		           businessPartnerId: this.model.get('order').get('bp').get('id'),
-		  	       totalPending: this.model.get('order').getPending() 
-		      }, function (data) {
-		          if (data) {
-		              if (data.enoughCredit){
-		            	  $('#modalEnoughCredit').modal('show');
-		            	  //this.setContent(OB.I18N.getLabel('OBPOS_LblCreditSales'));
-		              } else {
-		            	  var bpName = data.bpName;
-		            	  var actualCredit = data.actualCredit;
-		            	  $('#modalNotEnoughCredit').modal('show');
-		            	  //this.setContent(OB.I18N.getLabel('OBPOS_LblCreditSales'));
-		            	  OB.UI.UTILS.domIdEnyoReference['modalNotEnoughCredit'].$.bodyContent.children[0].setContent(OB.I18N.getLabel('OBPOS_notEnoughCreditBody', [bpName, actualCredit]));
-		              }	
-		          } else {
-		              OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorCreditSales'));
-		          }
-		      });
-		  } else {
-			  var creditLimit = this.model.get('order').get('bp').get('creditLimit');
-			  var creditUsed = this.model.get('order').get('bp').get('creditUsed');
-			  var totalPending =  this.model.get('order').getPending();
-			  if ((creditLimit + creditUsed) >= totalPending) {
-				  $('#modalEnoughCredit').modal('show');
-			  } else {
-				  $('#modalNotEnoughCredit').modal('show');
-			  }
-		  }
-		  
-//		if(this.drawerpreference){
-//		  if(this.drawerOpened){
-//		  this.owner.receipt.trigger('paymentDone');
-//	      this.drawerOpened= false;
-//	      this.setContent(OB.I18N.getLabel('OBPOS_LblOpen'));
-//	    }else{
-//	      this.owner.receipt.trigger('openDrawer');
-//	      this.drawerOpened= true;
-//	      this.setContent(OB.I18N.getLabel('OBPOS_LblDone'));
-//	      }
-//	   }else{
-//	     this.owner.receipt.trigger('paymentDone');
-//	     this.owner.receipt.trigger('openDrawer');
-//	   }
-	  }
-	});
+  name: 'OB.OBPOSPointOfSale.UI.CreditButton',
+  kind: 'OB.UI.SmallButton',
+  content: OB.I18N.getLabel('OBPOS_LblCreditSales'),
+  classes: 'btn-icon-small btnlink-green',
+  style: 'width: 120px; float: right; margin: 0px',
+  permission: 'OBPOS_receipt.creditsales',
+  init: function (model) {
+    this.model = model;
+  },
+  tap: function () {
+    if (OB.POS.modelterminal.get('connectedToERP')) {
+      //this.setContent(OB.I18N.getLabel('OBPOS_LblLoading'));
+      process = new OB.DS.Process('org.openbravo.retail.posterminal.CheckBusinessPartnerCredit');
+      process.exec({
+        businessPartnerId: this.model.get('order').get('bp').get('id'),
+        totalPending: this.model.get('order').getPending()
+      }, function (data) {
+        if (data) {
+          if (data.enoughCredit) {
+            $('#modalEnoughCredit').modal('show');
+            //this.setContent(OB.I18N.getLabel('OBPOS_LblCreditSales'));
+          } else {
+            var bpName = data.bpName;
+            var actualCredit = data.actualCredit;
+            $('#modalNotEnoughCredit').modal('show');
+            //this.setContent(OB.I18N.getLabel('OBPOS_LblCreditSales'));
+            OB.UI.UTILS.domIdEnyoReference['modalNotEnoughCredit'].$.bodyContent.children[0].setContent(OB.I18N.getLabel('OBPOS_notEnoughCreditBody', [bpName, actualCredit]));
+          }
+        } else {
+          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorCreditSales'));
+        }
+      });
+    } else {
+      var creditLimit = this.model.get('order').get('bp').get('creditLimit');
+      var creditUsed = this.model.get('order').get('bp').get('creditUsed');
+      var totalPending = this.model.get('order').getPending();
+      if ((creditLimit + creditUsed) >= totalPending) {
+        $('#modalEnoughCredit').modal('show');
+      } else {
+        $('#modalNotEnoughCredit').modal('show');
+      }
+    }
+
+    //		if(this.drawerpreference){
+    //		  if(this.drawerOpened){
+    //		  this.owner.receipt.trigger('paymentDone');
+    //	      this.drawerOpened= false;
+    //	      this.setContent(OB.I18N.getLabel('OBPOS_LblOpen'));
+    //	    }else{
+    //	      this.owner.receipt.trigger('openDrawer');
+    //	      this.drawerOpened= true;
+    //	      this.setContent(OB.I18N.getLabel('OBPOS_LblDone'));
+    //	      }
+    //	   }else{
+    //	     this.owner.receipt.trigger('paymentDone');
+    //	     this.owner.receipt.trigger('openDrawer');
+    //	   }
+  }
+});
