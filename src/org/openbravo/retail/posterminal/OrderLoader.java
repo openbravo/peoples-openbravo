@@ -18,6 +18,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 
@@ -27,6 +28,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.process.FIN_AddPayment;
 import org.openbravo.advpaymentmngt.process.FIN_PaymentProcess;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
@@ -41,6 +43,7 @@ import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.TriggerHandler;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.ad_forms.AcctServer;
@@ -48,6 +51,8 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.InvoiceLineTax;
 import org.openbravo.model.ad.access.OrderLineTax;
+import org.openbravo.model.ad.process.ProcessInstance;
+import org.openbravo.model.ad.ui.Process;
 import org.openbravo.model.common.businesspartner.Location;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Locator;
@@ -69,11 +74,12 @@ import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.Fin_OrigPaymentSchedule;
 import org.openbravo.model.financialmgmt.payment.PaymentTerm;
 import org.openbravo.model.financialmgmt.tax.TaxRate;
-import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
+import org.openbravo.model.materialmgmt.onhandquantity.StockProposed;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.scheduling.ProcessBundle;
+import org.openbravo.service.db.CallProcess;
 import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
@@ -525,28 +531,44 @@ public class OrderLoader extends JSONProcessSimple {
       BigDecimal pendingQty = orderLine.getOrderedQuantity();
 
       if (pendingQty.compareTo(BigDecimal.ZERO) > 0) {
-        // Returns have qty<0
-        // In case of standard sales (no return), take bins with product ordered by prio. Using same
-        // logic as in M_InOut_Create PL code
-        hqlWhereClause = " as t, Locator as l" + " where t.product = :product"
-            + "   and t.uOM = :uom" + "   and l.warehouse = :warehouse" + "   and t.storageBin = l"
-            + "   and l.active = true" + "   and coalesce(t.quantityOnHand,0)>0"
-            + " order by l.relativePriority, t.creationDate";
+        // The M_GetStock function is used
+        Process process = (Process) OBDal.getInstance().get(Process.class,
+            "FF80818132C964E30132C9747257002E");
+        Map<String, Object> parameters = new HashMap<String, Object>();
+        parameters.put("AD_Client_ID", OBContext.getOBContext().getCurrentClient().getId());
+        parameters.put("AD_Org_ID", OBContext.getOBContext().getCurrentOrganization().getId());
+        parameters.put("M_Product_ID",
+            orderLine.getProduct() == null ? null : (String) DalUtil.getId(orderLine.getProduct()));
+        parameters.put("C_Uom_ID",
+            orderLine.getUOM() == null ? null : (String) DalUtil.getId(orderLine.getUOM()));
+        parameters.put("M_Product_Uom_ID", orderLine.getOrderUOM() == null ? null
+            : (String) DalUtil.getId(orderLine.getOrderUOM()));
+        parameters.put("M_AttributesetInstance_ID", orderLine.getAttributeSetValue() == null ? null
+            : (String) DalUtil.getId(orderLine.getAttributeSetValue()));
+        parameters.put("Quantity", pendingQty);
+        parameters.put("ProcessID", "118");
+        if (orderLine.getEntity().hasProperty("warehouseRule")
+            && orderLine.get("warehouseRule") != null) {
+          parameters.put("M_Warehouse_Rule_ID",
+              (String) DalUtil.getId(orderLine.get("warehouseRule")));
+        }
 
-        OBQuery<StorageDetail> query = OBDal.getInstance().createQuery(StorageDetail.class,
-            hqlWhereClause);
-        query.setNamedParameter("product", orderLine.getProduct());
-        query.setNamedParameter("uom", orderLine.getUOM());
-        query.setNamedParameter("warehouse", order.getWarehouse());
+        ProcessInstance pInstance = CallProcess.getInstance()
+            .callProcess(process, null, parameters);
 
-        ScrollableResults bins = query.scroll(ScrollMode.FORWARD_ONLY);
+        OBCriteria<StockProposed> stockProposed = OBDal.getInstance().createCriteria(
+            StockProposed.class);
+        stockProposed.add(Restrictions.eq(StockProposed.PROPERTY_PROCESSINSTANCE, pInstance));
+        stockProposed.addOrderBy(StockProposed.PROPERTY_PRIORITY, true);
+
+        ScrollableResults bins = stockProposed.scroll(ScrollMode.FORWARD_ONLY);
         while (pendingQty.compareTo(BigDecimal.ZERO) > 0 && bins.next()) {
           // TODO: Can we safely clear session here?
-          StorageDetail storage = (StorageDetail) bins.get(0);
+          StockProposed stock = (StockProposed) bins.get(0);
           BigDecimal qty;
 
-          if (pendingQty.compareTo(storage.getQuantityOnHand()) > 0) {
-            qty = storage.getQuantityOnHand();
+          if (pendingQty.compareTo(new BigDecimal(stock.getQuantity())) > 0) {
+            qty = new BigDecimal(stock.getQuantity());
             pendingQty = pendingQty.subtract(qty);
           } else {
             qty = pendingQty;
@@ -554,7 +576,7 @@ public class OrderLoader extends JSONProcessSimple {
           }
           lineNo += 10;
           addShipemntline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine,
-              jsonorder, lineNo, qty, storage.getStorageBin());
+              jsonorder, lineNo, qty, stock.getStorageDetail().getStorageBin());
         }
       }
 
