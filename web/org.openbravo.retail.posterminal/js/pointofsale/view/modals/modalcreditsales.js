@@ -39,7 +39,7 @@ enyo.kind({
   },
   content: OB.I18N.getLabel('OBPOS_LblUseCredit'),
   isApplyButton: true,
-  classes: 'btnlink btnlink-gray modal-dialog-content-button',
+  classes: 'btnlink btnlink-gray modal-dialog-button',
   init: function (model) {
     this.model = model;
   },
@@ -70,7 +70,7 @@ enyo.kind({
     onHideThisPopup: ''
   },
   content: OB.I18N.getLabel('OBPOS_LblCancel'),
-  classes: 'btnlink btnlink-gray modal-dialog-content-button',
+  classes: 'btnlink btnlink-gray modal-dialog-button',
   tap: function () {
     this.doHideThisPopup();
   }
