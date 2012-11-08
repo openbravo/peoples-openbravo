@@ -77,17 +77,9 @@ enyo.kind({
   init: function () {
     //Modularity
     //Add new dialogs
-    var customDialogsContainerName = this.name + "_customDialogsContainer",
-        dialogContainer;
-    dialogContainer = this.createComponent({
-      name: customDialogsContainerName
-    });
-
     enyo.forEach(this.popups, function (dialog) {
       if (dialog.windowClass === this.kindName) {
-        this.createComponent(dialog.dialog, {
-          owner: dialogContainer
-        });
+        this.createComponent(dialog.dialog);
       }
     }, this);
 
