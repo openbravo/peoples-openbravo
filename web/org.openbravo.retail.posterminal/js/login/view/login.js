@@ -98,9 +98,9 @@
   enyo.kind({
     kind: 'enyo.Ajax',
     name: 'OB.OBPOSLogin.UI.LoginRequest',
-    url: "../../org.openbravo.retail.posterminal.service.loginutils",
-    method: "GET",
-    handleAs: "json",
+    url: '../../org.openbravo.retail.posterminal.service.loginutils',
+    method: 'GET',
+    handleAs: 'json',
     contentType: 'application/json;charset=utf-8'
   });
 

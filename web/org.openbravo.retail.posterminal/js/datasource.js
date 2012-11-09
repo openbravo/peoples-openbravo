@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global B,$,Backbone,_ */
+/*global B, $, Backbone, _, enyo */
 
 (function () {
 
@@ -16,11 +16,11 @@
 
   OB.DS.MAXSIZE = 100;
 
-  function serviceSuccess(data, textStatus, jqXHR, callback) {
-    if (data._entityname) {
-      callback([data]);
+  function serviceSuccess(inResponse, callback) {
+    if (inResponse._entityname) {
+      callback([inResponse]);
     } else {
-      var response = data.response;
+      var response = inResponse.response;
       var status = response.status;
       if (status === 0) {
         if (response.data && response.data.length > 0) {
@@ -43,19 +43,19 @@
     }
   }
 
-  function serviceError(jqXHR, textStatus, errorThrown, callback, callbackError) {
+  function serviceError(inResponse, callback, callbackError) {
     if (callbackError) {
       callbackError({
         exception: {
-          message: (errorThrown ? errorThrown : OB.I18N.getLabel('OBPOS_MsgApplicationServerNotAvailable')),
-          status: jqXHR.status
+          message: OB.I18N.getLabel('OBPOS_MsgApplicationServerNotAvailable'),
+          status: inResponse
         }
       });
     } else {
       callback({
         exception: {
-          message: (errorThrown ? errorThrown : OB.I18N.getLabel('OBPOS_MsgApplicationServerNotAvailable')),
-          status: jqXHR.status
+          message: OB.I18N.getLabel('OBPOS_MsgApplicationServerNotAvailable'),
+          status: inResponse
         }
       });
     }
@@ -65,39 +65,43 @@
     if (async !== false) {
       async = true;
     }
-    $.ajax({
+    var ajaxRequest = new enyo.Ajax({
       url: '../../org.openbravo.retail.posterminal.service.jsonrest/' + source,
+      cacheBust: false,
+      sync: !async,
+      method: 'POST',
+      handleAs: 'json',
       contentType: 'application/json;charset=utf-8',
-      async: async,
-      dataType: 'json',
-      type: 'POST',
       data: JSON.stringify(dataparams),
-      success: function (data, textStatus, jqXHR) {
-        serviceSuccess(data, textStatus, jqXHR, callback);
+      success: function (inSender, inResponse) {
+        serviceSuccess(inResponse, callback);
       },
-      error: function (jqXHR, textStatus, errorThrown) {
-        serviceError(jqXHR, textStatus, errorThrown, callback, callbackError);
+      fail: function (inSender, inResponse) {
+        serviceError(inResponse, callback, callbackError);
       }
     });
+    ajaxRequest.go(ajaxRequest.data).response('success').error('fail');
   }
 
   function serviceGET(source, dataparams, callback, callbackError, async) {
     if (async !== false) {
       async = true;
     }
-    $.ajax({
+    var ajaxRequest = new enyo.Ajax({
       url: '../../org.openbravo.retail.posterminal.service.jsonrest/' + source + '/' + encodeURI(JSON.stringify(dataparams)),
+      cacheBust: false,
+      sync: !async,
+      method: 'GET',
+      handleAs: 'json',
       contentType: 'application/json;charset=utf-8',
-      async: async,
-      dataType: 'json',
-      type: 'GET',
-      success: function (data, textStatus, jqXHR) {
-        serviceSuccess(data, textStatus, jqXHR, callback);
+      success: function (inSender, inResponse) {
+        serviceSuccess(inResponse, callback);
       },
-      error: function (jqXHR, textStatus, errorThrown) {
-        serviceError(jqXHR, textStatus, errorThrown, callback, callbackError);
+      fail: function (inSender, inResponse) {
+        serviceError(inResponse, callback, callbackError);
       }
     });
+    ajaxRequest.go().response('success').error('fail');
   }
 
   // Process object
@@ -343,14 +347,16 @@
   OB.DS.HWServer.prototype.getWeight = function (callback) {
     if (this.scaleurl) {
       var me = this;
-      $.ajax({
+      var ajaxRequest = new enyo.Ajax({
         url: me.scaleurl,
-        dataType: 'json',
-        type: 'GET',
-        success: function (data, textStatus, jqXHR) {
-          callback(data);
+        cacheBust: false,
+        method: 'GET',
+        handleAs: 'json',
+        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+        success: function (inSender, inResponse) {
+          callback(inResponse);
         },
-        error: function (jqXHR, textStatus, errorThrown) {
+        fail: function (inSender, inResponse) {
           if (callback) {
             callback({
               exception: {
@@ -361,6 +367,7 @@
           }
         }
       });
+      ajaxRequest.go().response('success').error('fail');
     } else {
       callback({
         result: 1
@@ -383,18 +390,19 @@
   OB.DS.HWServer.prototype._print = function (templatedata, params, callback) {
     if (this.url) {
       var me = this;
-      $.ajax({
+      var ajaxRequest = new enyo.Ajax({
         url: me.url,
+        cacheBust: false,
+        method: 'POST',
+        handleAs: 'json',
         contentType: 'application/xml;charset=utf-8',
-        dataType: 'json',
-        type: 'POST',
         data: params ? _.template(templatedata, params) : templatedata,
-        success: function (data, textStatus, jqXHR) {
+        success: function (inSender, inResponse) {
           if (callback) {
-            callback(data);
+            callback(inResponse);
           }
         },
-        error: function (jqXHR, textStatus, errorThrown) {
+        fail: function (inSender, inResponse) {
           if (callback) {
             callback({
               exception: {
@@ -406,6 +414,7 @@
           }
         }
       });
+      ajaxRequest.go(ajaxRequest.data).response('success').error('fail');
     }
   };
 }());

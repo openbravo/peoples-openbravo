@@ -165,26 +165,29 @@ enyo.kind({
         'default': isDefault,
         'defaultRoleProperty': 'oBPOSDefaultPOSRole'
         };
+
     window.localStorage.setItem('POSlanguageId', newLanguageId);
-    $.ajax({
+    var ajaxRequest = new enyo.Ajax({
       url: actionURL,
-      type: 'POST',
+      cacheBust: false,
+      method: 'POST',
+      handleAs: 'json',
       contentType: 'application/json;charset=utf-8',
-      dataType: 'json',
       data: JSON.stringify(postData),
-      success: function (data, textStatus, jqXHR) {
-        if (data.result === 'success') {
+      success: function (inSender, inResponse) {
+        if (inResponse.result === 'success') {
           window.location.reload();
         } else {
-          OB.UTIL.showError(data.result);
+          OB.UTIL.showError(inResponse.result);
         }
         this.isActive = true;
       },
-      error: function (jqXHR, textStatus, errorThrown) {
-        OB.UTIL.showError(errorThrown);
+      fail: function (inSender, inResponse) {
+        OB.UTIL.showError(inResponse);
         this.isActive = true;
       }
     });
+    ajaxRequest.go(ajaxRequest.data).response('success').error('fail');
   }
 });
 

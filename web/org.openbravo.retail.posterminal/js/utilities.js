@@ -47,17 +47,20 @@
   };
 
   OB.UTIL.loadResource = function (res, callback, context) {
-    $.ajax({
+    var ajaxRequest = new enyo.Ajax({
       url: res,
-      dataType: 'text',
-      type: 'GET',
-      success: function (data, textStatus, jqXHR) {
-        callback.call(context || this, data);
+      cacheBust: false,
+      method: 'GET',
+      handleAs: 'text',
+      contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+      success: function (inSender, inResponse) {
+        callback.call(context || this, inResponse);
       },
-      error: function (jqXHR, textStatus, errorThrown) {
+      fail: function (inSender, inResponse) {
         callback.call(context || this);
       }
     });
+    ajaxRequest.go().response('success').error('fail');
   };
 
   OB.UTIL.queueStatus = function (queue) {
@@ -188,30 +191,29 @@
     var ajaxParams, currentlyConnected = OB.POS.modelterminal.get('connectedToERP');
     if (navigator.onLine) {
       // It can be a false positive, make sure with the ping
-      ajaxParams = {
-        async: true,
-        cache: false,
-        context: $("#status"),
-        dataType: "json",
-        error: function (req, status, ex) {
-          if (currentlyConnected !== false) {
-            if (OB.POS.modelterminal) {
-              OB.POS.modelterminal.triggerOffLine();
-            }
-          }
-        },
-        success: function (data, status, req) {
+      var ajaxRequest = new enyo.Ajax({
+        url: '../../security/SessionActive?id=0',
+        cacheBust: true,
+        timeout: 5000,
+        method: 'GET',
+        handleAs: 'json',
+        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+        success: function (inSender, inResponse) {
           if (currentlyConnected !== true) {
             if (OB.POS.modelterminal) {
               OB.POS.modelterminal.triggerOnLine();
             }
           }
         },
-        timeout: 5000,
-        type: "GET",
-        url: "../../security/SessionActive?id=0"
-      };
-      $.ajax(ajaxParams);
+        fail: function (inSender, inResponse) {
+          if (currentlyConnected !== false) {
+            if (OB.POS.modelterminal) {
+              OB.POS.modelterminal.triggerOffLine();
+            }
+          }
+        }
+      });
+      ajaxRequest.go().response('success').error('fail');
     } else {
       if (currentlyConnected) {
         if (OB.POS.modelterminal) {

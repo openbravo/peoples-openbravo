@@ -382,8 +382,11 @@ OB.Model.Terminal = Backbone.Model.extend({
     //}
     if (OB.POS.modelterminal.get('connectedToERP')) {
 
-      $.ajax({
+      var ajaxRequest = new enyo.Ajax({
         url: '../../org.openbravo.retail.posterminal/POSLoginHandler',
+        cacheBust: false,
+        method: 'POST',
+        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
         data: {
           'user': user,
           'password': password,
@@ -391,27 +394,27 @@ OB.Model.Terminal = Backbone.Model.extend({
           'Command': 'DEFAULT',
           'IsAjaxCall': 1
         },
-        type: 'POST',
-        success: function (data, textStatus, jqXHR) {
+        success: function (inSender, inResponse) {
           var pos, baseUrl;
-          if (data && data.showMessage) {
-            me.triggerLoginFail(401, mode, data);
+          if (inResponse && inResponse.showMessage) {
+            me.triggerLoginFail(401, mode, inResponse);
             return;
           }
           //          pos = location.pathname.indexOf('login.jsp');
           //          baseUrl = window.location.pathname.substring(0, pos);
           //          window.location = baseUrl + OB.POS.hrefWindow(OB.POS.paramWindow);
-          OB.POS.modelterminal.set('orgUserId', data.userId);
+          OB.POS.modelterminal.set('orgUserId', inResponse.userId);
           me.setUserModelOnline();
 
           OB.POS.navigate('main', {
             trigger: true
           });
         },
-        error: function (jqXHR, textStatus, errorThrown) {
-          me.triggerLoginFail(jqXHR.status, mode);
+        fail: function (inSender, inResponse) {
+          me.triggerLoginFail(inResponse, mode);
         }
       });
+      ajaxRequest.go(ajaxRequest.data).response('success').error('fail');
     } else {
       OB.POS.modelterminal.set('windowRegistered', undefined);
       OB.Dal.find(OB.Model.User, {
@@ -508,19 +511,20 @@ OB.Model.Terminal = Backbone.Model.extend({
     this.set('currency', null);
     this.set('currencyPrecision', null);
 
-
-    $.ajax({
+    var ajaxRequest = new enyo.Ajax({
       url: '../../org.openbravo.retail.posterminal.service.logout',
+      cacheBust: false,
+      method: 'GET',
+      handleAs: 'json',
       contentType: 'application/json;charset=utf-8',
-      dataType: 'json',
-      type: 'GET',
-      success: function (data, textStatus, jqXHR) {
+      success: function (inSender, inResponse) {
         me.closeSession();
       },
-      error: function (jqXHR, textStatus, errorThrown) {
+      fail: function (inSender, inResponse) {
         me.closeSession();
       }
     });
+    ajaxRequest.go().response('success').error('fail');
   },
 
   lock: function () {
@@ -536,18 +540,20 @@ OB.Model.Terminal = Backbone.Model.extend({
     this.set('currency', null);
     this.set('currencyPrecision', null);
 
-    $.ajax({
+    var ajaxRequest = new enyo.Ajax({
       url: '../../org.openbravo.retail.posterminal.service.logout',
+      cacheBust: false,
+      method: 'GET',
+      handleAs: 'json',
       contentType: 'application/json;charset=utf-8',
-      dataType: 'json',
-      type: 'GET',
-      success: function (data, textStatus, jqXHR) {
+      success: function (inSender, inResponse) {
         me.triggerLogout();
       },
-      error: function (jqXHR, textStatus, errorThrown) {
+      fail: function (inSender, inResponse) {
         me.triggerLogout();
       }
     });
+    ajaxRequest.go().response('success').error('fail');
   },
 
   load: function () {
