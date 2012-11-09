@@ -198,7 +198,7 @@ public class POSUtils {
     ScrollableResults POSOrders = obqOrders.scroll(ScrollMode.FORWARD_ONLY);
     int maxNumber = 0;
     int i = 0;
-    int prefixLength = prefix.length() + 1;
+    int prefixLength = prefix == null ? 1 : prefix.length() + 1;
     while (POSOrders.next()) {
       Order order = (Order) POSOrders.get(0);
       String documentNo = order.getDocumentNo();

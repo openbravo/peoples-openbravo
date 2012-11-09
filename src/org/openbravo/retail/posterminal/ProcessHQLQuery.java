@@ -110,6 +110,8 @@ public abstract class ProcessHQLQuery implements JSONProcess {
       JSONRowConverter.addJSONExceptionFields(w, e);
     } catch (JSONException e) {
       JSONRowConverter.addJSONExceptionFields(w, e);
+    } catch (Exception e) {
+      JSONRowConverter.addJSONExceptionFields(w, e);
     } finally {
       if (isAdminMode()) {
         OBContext.restorePreviousMode();
