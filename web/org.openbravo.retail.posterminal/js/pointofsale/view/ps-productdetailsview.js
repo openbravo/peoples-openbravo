@@ -108,7 +108,7 @@ enyo.kind({
     components: [{
       name: 'warehouseToGet',
       allowHtml: true,
-      style: 'line-height: 20px; font-size: 20px; padding: 10px; background-color: orange; color: black;'
+      style: 'line-height: 20px; font-size: 20px; padding: 10px; color: black;'
     }]
   }, {
     style: 'height: 80px;  padding: 10px;',
