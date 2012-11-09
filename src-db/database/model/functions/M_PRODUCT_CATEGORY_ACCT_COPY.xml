@@ -45,6 +45,7 @@
     --
     v_M_Product_Category_ID VARCHAR2(32);
     v_C_Acctschema_ID VARCHAR2(32);
+    v_AcctSchemaOrgId VARCHAR2(32);
     -- Product Category is unique to Client
     Cur_Acct RECORD;
     --
@@ -108,6 +109,12 @@
 	    OR AD_IsOrgIncluded(M_Product_Category_Acct.AD_Org_ID, oa.AD_Org_ID, M_Product_Category_Acct.AD_Client_ID)<>-1))	
       )
     LOOP
+
+      SELECT Ad_Org_ID
+      INTO v_AcctSchemaOrgId
+      FROM C_AcctSchema
+      WHERE C_AcctSchema_ID = Cur_Acct.C_AcctSchema_ID;
+
       -- Update existing Products
       UPDATE M_Product_Acct
         SET P_Revenue_Acct=Cur_Acct.P_Revenue_Acct,
@@ -130,6 +137,7 @@
         FROM M_Product p
         WHERE p.M_Product_ID=M_Product_Acct.M_Product_ID
           AND p.M_Product_Category_ID=Cur_Acct.M_Product_Category_ID
+          AND Ad_Org_IsInNaturalTree(p.Ad_Org_ID,v_AcctSchemaOrgId, p.AD_Client_ID) = 'Y'
         )
         ;
       rowcount:=SQL%ROWCOUNT;
@@ -151,6 +159,7 @@
         Cur_Acct.P_PurchasePriceVariance_Acct, Cur_Acct.P_InvoicePriceVariance_Acct, Cur_Acct.P_TradeDiscountRec_Acct, Cur_Acct.P_TradeDiscountGrant_Acct
       FROM M_Product p
       WHERE p.M_Product_Category_ID=Cur_Acct.M_Product_Category_ID
+      AND Ad_Org_IsInNaturalTree(p.Ad_Org_ID,v_AcctSchemaOrgId, p.AD_Client_ID) = 'Y'
         AND NOT EXISTS
         (SELECT *
         FROM M_Product_Acct pa
