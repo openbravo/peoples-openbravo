@@ -29,14 +29,10 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.LogoutDialogCancel',
-  kind: 'OB.UI.Button',
+  kind: 'OB.UI.ModalDialogButton',
   content: OB.I18N.getLabel('OBPOS_LblCancel'),
   attributes: {
     'onEnterTap': 'hide'
-  },
-  classes: 'btnlink btnlink-gray modal-dialog-button',
-  events: {
-    onHideThisPopup: ''
   },
   tap: function () {
     this.doHideThisPopup();
@@ -45,13 +41,9 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.LogoutDialogLogout',
-  kind: 'OB.UI.Button',
+  kind: 'OB.UI.ModalDialogButton',
   isApplyButton: true,
   content: OB.I18N.getLabel('OBPOS_LogoutDialogLogout'),
-  classes: 'btnlink btnlink-gray modal-dialog-button',
-  events: {
-    onHideThisPopup: ''
-  },
   tap: function () {
     this.doHideThisPopup();
     OB.POS.logout();
