@@ -198,6 +198,7 @@ public class OrderGroupingProcessor {
     paymentScheduleInvoice.setAmount(BigDecimal.ZERO);
     paymentScheduleInvoice.setOutstandingAmount(BigDecimal.ZERO);
     paymentScheduleInvoice.setDueDate(new Date());
+    paymentScheduleInvoice.setExpectedDate(new Date());
     if (ModelProvider.getInstance().getEntity(FIN_PaymentSchedule.class).hasProperty("origDueDate")) {
       // This property is checked and set this way to force compatibility with both MP13, MP14
       // and
