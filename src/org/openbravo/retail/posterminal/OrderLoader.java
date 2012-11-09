@@ -677,7 +677,6 @@ public class OrderLoader extends JSONProcessSimple {
       // Sept 2012 -> gross because outstanding is not allowed in Openbravo Web POS
       paymentSchedule.setOutstandingAmount(BigDecimal.valueOf(jsonorder.getDouble("gross")));
       paymentSchedule.setDueDate(order.getOrderDate());
-      paymentSchedule.setExpectedDate(order.getOrderDate());
       if (ModelProvider.getInstance().getEntity(FIN_PaymentSchedule.class)
           .hasProperty("origDueDate")) {
         // This property is checked and set this way to force compatibility with both MP13, MP14 and
@@ -696,7 +695,6 @@ public class OrderLoader extends JSONProcessSimple {
         paymentScheduleInvoice.setAmount(amt);
         paymentScheduleInvoice.setOutstandingAmount(amt);
         paymentScheduleInvoice.setDueDate(order.getOrderDate());
-        paymentScheduleInvoice.setExpectedDate(order.getOrderDate());
         if (ModelProvider.getInstance().getEntity(FIN_PaymentSchedule.class)
             .hasProperty("origDueDate")) {
           // This property is checked and set this way to force compatibility with both MP13, MP14
