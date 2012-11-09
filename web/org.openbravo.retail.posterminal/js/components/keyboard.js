@@ -393,13 +393,13 @@ enyo.kind({
           me.keyPressed('del');
         }
         if (e.keyCode === 13) { //intro key
-          if ($('.modal:visible, .subwindow:visible').length > 0) {
+          if ($('.enyo-popup:visible, .subwindow:visible').length > 0) {
             //A modal is opened -> try to call to onEnterTap function of dialog.
             if (OB.UI.UTILS) {
-              if ($('.modal:visible').length > 0) {
-                if (OB.UI.UTILS.domIdEnyoReference[$('.modal:visible').attr('id')]) {
-                  if (OB.UI.UTILS.domIdEnyoReference[$('.modal:visible').attr('id')].enterTap) {
-                    handled = OB.UI.UTILS.domIdEnyoReference[$('.modal:visible').attr('id')].enterTap(e, $('#' + e.srcElement.id).attr('onEnterTap'));
+              if ($('.enyo-popup:visible').length > 0) {
+                if (OB.UI.UTILS.domIdEnyoReference[$('.enyo-popup:visible').attr('id')]) {
+                  if (OB.UI.UTILS.domIdEnyoReference[$('.enyo-popup:visible').attr('id')].enterTap) {
+                    handled = OB.UI.UTILS.domIdEnyoReference[$('.enyo-popup:visible').attr('id')].enterTap(e, $('#' + e.srcElement.id).attr('onEnterTap'));
                     if (handled) {
                       return false;
                     }
@@ -421,14 +421,14 @@ enyo.kind({
         }
       } else {
         if (e.keyCode === 13) {
-          if ($('.modal:visible, .subwindow:visible').length > 0) {
+          if ($('.enyo-popup:visible, .subwindow:visible').length > 0) {
             //Intro key pressed and modal popup is opned -> try to call onEnterTap of dialog
             //A modal is opened -> try to call to onEnterTap function of dialog.
             if (OB.UI.UTILS) {
-              if ($('.modal:visible').length > 0) {
-                if (OB.UI.UTILS.domIdEnyoReference[$('.modal:visible').attr('id')]) {
-                  if (OB.UI.UTILS.domIdEnyoReference[$('.modal:visible').attr('id')].enterTap) {
-                    handled = OB.UI.UTILS.domIdEnyoReference[$('.modal:visible').attr('id')].enterTap(e, $('#' + e.srcElement.id).attr('onEnterTap'));
+              if ($('.enyo-popup:visible').length > 0) {
+                if (OB.UI.UTILS.domIdEnyoReference[$('.enyo-popup:visible').attr('id')]) {
+                  if (OB.UI.UTILS.domIdEnyoReference[$('.enyo-popup:visible').attr('id')].enterTap) {
+                    handled = OB.UI.UTILS.domIdEnyoReference[$('.enyo-popup:visible').attr('id')].enterTap(e, $('#' + e.srcElement.id).attr('onEnterTap'));
                     if (handled) {
                       return false;
                     }
@@ -465,12 +465,12 @@ enyo.kind({
   keyPressed: function (key) {
     var t;
     if (key.match(/^([0-9]|\.|,| |[a-z]|[A-Z])$/)) {
-      if ($('.modal:visible, .subwindow:visible').length === 0) {
+      if ($('.enyo-popup:visible, .subwindow:visible').length === 0) {
         t = this.$.editbox.getContent();
         this.$.editbox.setContent(t + key);
       }
     } else if (key === 'del') {
-      if ($('.modal:visible, .subwindow:visible').length === 0) {
+      if ($('.enyo-popup:visible, .subwindow:visible').length === 0) {
         t = this.$.editbox.getContent();
         if (t.length > 0) {
           this.$.editbox.setContent(t.substring(0, t.length - 1));

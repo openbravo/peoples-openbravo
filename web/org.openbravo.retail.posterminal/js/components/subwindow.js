@@ -52,6 +52,12 @@ enyo.kind({
 
     return valueToReturn;
   },
+  enterTap: function (e, action) {
+    if (this.onEnterTap) {
+      return this.onEnterTap(e, action);
+    }
+    return false;
+  },
   header: {},
   body: {},
   goBack: function () {
