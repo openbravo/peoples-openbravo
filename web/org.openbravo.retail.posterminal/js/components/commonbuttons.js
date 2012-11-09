@@ -55,11 +55,21 @@ enyo.kind({
   handlers: {
     onHideThisPopup: 'hideFromInside'
   },
+  _addArgsToComponent: function(args){
+    if (args){
+      this.args = this.args || {};
+      _.each(args, function (arg, key) {
+        this.args[key] = arg;
+      }, this); 
+    }
+  },
   show: function (args) {
     this.inherited(arguments);
     OB.UTIL.focusInModal($(this.hasNode()));
+    this.args = {}; //reset;
+    this._addArgsToComponent(args);
     if (this.executeOnShow) {
-      this.executeOnShow(args);
+      this.executeOnShow();
     }
   },
   hideFromInside: function (inSender, inEvent) {
@@ -68,8 +78,9 @@ enyo.kind({
   hide: function (args) {
     this.inherited(arguments);
     $("#focuskeeper").focus();
+    this._addArgsToComponent(args);
     if (this.executeOnHide) {
-      this.executeOnHide(args);
+      this.executeOnHide();
     }
   },
   rendered: function () {
