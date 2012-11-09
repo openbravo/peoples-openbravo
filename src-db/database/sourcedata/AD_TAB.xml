@@ -6640,7 +6640,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800019-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800019-->  <NAME><![CDATA[Customized Elements]]></NAME>
 <!--800019-->  <DESCRIPTION><![CDATA[Edit elements and add or subtract them according to your needs.]]></DESCRIPTION>
-<!--800019-->  <HELP><![CDATA[The customized elements tab allows to introduce basic operations between the chart of accounts elements.]]></HELP>
+<!--800019-->  <HELP><![CDATA[The customized elements tab allows to get an account tree element as a combination of a given list of existing elements.]]></HELP>
 <!--800019-->  <AD_TABLE_ID><![CDATA[800015]]></AD_TABLE_ID>
 <!--800019-->  <AD_WINDOW_ID><![CDATA[118]]></AD_WINDOW_ID>
 <!--800019-->  <SEQNO><![CDATA[25]]></SEQNO>

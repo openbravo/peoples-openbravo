@@ -1190,7 +1190,7 @@ NOTE: You will not be able to close the fiscal year if you close all its periods
 <!--176-->  <VALUE><![CDATA[Fact_Acct_Reset DELETE]]></VALUE>
 <!--176-->  <NAME><![CDATA[Reset Accounting]]></NAME>
 <!--176-->  <DESCRIPTION><![CDATA[Reset Accounting Entries]]></DESCRIPTION>
-<!--176-->  <HELP><![CDATA[Reset accounting allows to delete the accounting of an organization. Accounting can be later on re-created by using the "Accounting Server Process" or the "GL Posting by DB Tables" massive posting.  ]]></HELP>
+<!--176-->  <HELP><![CDATA[The reset accounting process allows to totally or partially delete the accounting of an organization. The organization's accounting can be later on re-created by using the "Accounting Server Process" or the "GL Posting by DB Tables" massive posting.  ]]></HELP>
 <!--176-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--176-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--176-->  <PROCEDURENAME><![CDATA[Fact_Acct_Reset]]></PROCEDURENAME>
