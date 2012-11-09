@@ -113,6 +113,14 @@ OB.Model.Terminal = Backbone.Model.extend({
         OB.POS.cleanWindows();
         $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=FinancialMgmtTaxRate&modelName=TaxRate&source=org.openbravo.retail.posterminal.master.TaxRate');
         $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingProductPrice&modelName=ProductPrice&source=org.openbravo.retail.posterminal.master.ProductPrice');
+
+        //Models for discounts and promotions
+        $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustment&modelName=Discount&source=org.openbravo.retail.posterminal.master.Discount');
+        $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustmentBusinessPartner&modelName=DiscountFilterBusinessPartner&source=org.openbravo.retail.posterminal.master.DiscountFilterBusinessPartner');
+        $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustmentBusinessPartnerGroup&modelName=DiscountFilterBusinessPartnerGroup&source=org.openbravo.retail.posterminal.master.DiscountFilterBusinessPartnerGroup');
+        $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustmentProduct&modelName=DiscountFilterProduct&source=org.openbravo.retail.posterminal.master.DiscountFilterProduct');
+        $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustmentProductCategory&modelName=DiscountFilterProductCategory&source=org.openbravo.retail.posterminal.master.DiscountFilterProductCategory');
+
         $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/StaticResources?_appName=WebPOS');
         return;
       }
@@ -130,6 +138,14 @@ OB.Model.Terminal = Backbone.Model.extend({
         $LAB.script('js/i18n.js').wait(function () {
           $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=FinancialMgmtTaxRate&modelName=TaxRate&source=org.openbravo.retail.posterminal.master.TaxRate');
           $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingProductPrice&modelName=ProductPrice&source=org.openbravo.retail.posterminal.master.ProductPrice');
+
+          //Models for discounts and promotions
+          $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustment&modelName=Discount&source=org.openbravo.retail.posterminal.master.Discount');
+          $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustmentBusinessPartner&modelName=DiscountFilterBusinessPartner&source=org.openbravo.retail.posterminal.master.DiscountFilterBusinessPartner');
+          $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustmentBusinessPartnerGroup&modelName=DiscountFilterBusinessPartnerGroup&source=org.openbravo.retail.posterminal.master.DiscountFilterBusinessPartnerGroup');
+          $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustmentProduct&modelName=DiscountFilterProduct&source=org.openbravo.retail.posterminal.master.DiscountFilterProduct');
+          $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustmentProductCategory&modelName=DiscountFilterProductCategory&source=org.openbravo.retail.posterminal.master.DiscountFilterProductCategory');
+
           $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/StaticResources?_appName=WebPOS');
         });
       });
@@ -207,8 +223,8 @@ OB.Model.Terminal = Backbone.Model.extend({
     OB.POS.windowObjs.push(windowp);
 
 
-    minTotalRefresh = OB.POS.modelterminal.get('terminal').minutestorefreshdatatotal * 60 * 1000;
-    minIncRefresh = OB.POS.modelterminal.get('terminal').minutestorefreshdatainc * 60 * 1000;
+    minTotalRefresh = OB.POS.modelterminal.get('terminal').terminalType.minutestorefreshdatatotal * 60 * 1000;
+    minIncRefresh = OB.POS.modelterminal.get('terminal').terminalType.minutestorefreshdatainc * 60 * 1000;
     lastTotalRefresh = window.localStorage.getItem('POSLastTotalRefresh');
     lastIncRefresh = window.localStorage.getItem('POSLastIncRefresh');
     if ((!minTotalRefresh && !minIncRefresh) || (!lastTotalRefresh && !lastIncRefresh)) {
@@ -448,6 +464,23 @@ OB.Model.Terminal = Backbone.Model.extend({
           //(that is, if the call comes from the login page directly)
           savedPass = me.generate_sha1(me.password + user.get('created'));
           user.set('password', savedPass);
+          user.set('created', date);
+          OB.Dal.save(user, function () {}, function () {
+            window.console.error(arguments);
+          });
+          me.usermodel = user;
+        } else {
+          user = users.models[0];
+          me.usermodel = user;
+          if (me.password) {
+            //The password will only be recomputed in case it was properly entered
+            //(that is, if the call comes from the login page directly)
+            savedPass = me.generate_sha1(me.password + user.get('created'));
+            user.set('password', savedPass);
+          }
+          OB.Dal.save(user, function () {}, function () {
+            window.console.error(arguments);
+          });
         }
         OB.Dal.save(user, function () {}, function () {
           window.console.error(arguments);
@@ -574,6 +607,7 @@ OB.Model.Terminal = Backbone.Model.extend({
         me.loadBP();
         me.loadLocation();
         me.loadPriceList();
+        me.loadWarehouses();
         me.loadPriceListVersion();
         me.loadCurrency();
         me.setDocumentSequence();
@@ -650,6 +684,22 @@ OB.Model.Terminal = Backbone.Model.extend({
     });
   },
 
+  loadWarehouses: function () {
+    var me = this;
+    new OB.DS.Request('org.openbravo.retail.posterminal.term.Warehouses').exec({
+      organization: this.get('terminal').organization
+    }, function (data) {
+      if (data && data.exception) {
+        //MP17
+        me.set('warehouses', []);
+        me.triggerReady();
+      } else {
+        me.set('warehouses', data);
+        me.triggerReady();
+      }
+    });
+  },
+
   loadPriceListVersion: function () {
     var me = this;
     new OB.DS.Request('org.openbravo.retail.posterminal.term.PriceListVersion').exec({
@@ -682,32 +732,41 @@ OB.Model.Terminal = Backbone.Model.extend({
     OB.Dal.find(OB.Model.DocumentSequence, {
       'posSearchKey': OB.POS.modelterminal.get('terminal').searchKey
     }, function (documentsequence) {
-      var lastInternalDocumentSequence, max;
+      var lastInternalDocumentSequence, lastInternalQuotationSequence, max, maxquote;
       if (documentsequence && documentsequence.length > 0) {
         lastInternalDocumentSequence = documentsequence.at(0).get('documentSequence');
+        lastInternalQuotationSequence = documentsequence.at(0).get('quotationDocumentSequence');
         // Compares the persisted document number with the fetched from the server
         if (lastInternalDocumentSequence > OB.POS.modelterminal.get('terminal').lastDocumentNumber) {
           max = lastInternalDocumentSequence;
         } else {
           max = OB.POS.modelterminal.get('terminal').lastDocumentNumber;
         }
+        if (lastInternalQuotationSequence > OB.POS.modelterminal.get('terminal').lastQuotationDocumentNumber) {
+          maxquote = lastInternalQuotationSequence;
+        } else {
+          maxquote = OB.POS.modelterminal.get('terminal').lastQuotationDocumentNumber;
+        }
         // Compares the maximum with the document number of the paid pending orders
-        me.compareDocSeqWithPendingOrdersAndSave(max);
+        me.compareDocSeqWithPendingOrdersAndSave(max, maxquote);
       } else {
         max = OB.POS.modelterminal.get('terminal').lastDocumentNumber;
+        maxquote = OB.POS.modelterminal.get('terminal').lastQuotationDocumentNumber;
         // Compares the maximum with the document number of the paid pending orders
-        me.compareDocSeqWithPendingOrdersAndSave(max);
+        me.compareDocSeqWithPendingOrdersAndSave(max, maxquote);
       }
 
     }, function () {
-      var max = OB.POS.modelterminal.get('terminal').lastDocumentNumber;
+      var max = OB.POS.modelterminal.get('terminal').lastDocumentNumber,
+          maxquote = OB.POS.modelterminal.get('terminal').lastQuotationDocumentNumber;
       // Compares the maximum with the document number of the paid pending orders
-      me.compareDocSeqWithPendingOrdersAndSave(max);
+      me.compareDocSeqWithPendingOrdersAndSave(max, maxquote);
     });
   },
 
-  compareDocSeqWithPendingOrdersAndSave: function (maxDocumentSequence) {
-    var me = this;
+  compareDocSeqWithPendingOrdersAndSave: function (maxDocumentSequence, maxQuotationDocumentSequence) {
+    var me = this,
+        orderDocNo, quotationDocNo;
     // compare the last document number returned from the ERP with
     // the last document number of the unprocessed pending lines (if any)
     OB.Dal.find(OB.Model.Order, {}, function (fetchedOrderList) {
@@ -715,22 +774,28 @@ OB.Model.Terminal = Backbone.Model.extend({
       if (!fetchedOrderList || fetchedOrderList.length === 0) {
         // There are no pending orders, the initial document sequence
         // will be the one fetched from the database
-        me.saveDocumentSequenceAndGo(maxDocumentSequence);
+        me.saveDocumentSequenceAndGo(maxDocumentSequence, maxQuotationDocumentSequence);
       } else {
         // There are pending orders. The document sequence will be set
         // to the maximum of the pending order document sequence and the
         // document sequence retrieved from the server
         maxDocumentSequencePendingOrders = me.getMaxDocumentSequenceFromPendingOrders(fetchedOrderList.models);
-        if (maxDocumentSequencePendingOrders > maxDocumentSequence) {
-          me.saveDocumentSequenceAndGo(maxDocumentSequencePendingOrders);
+        if (maxDocumentSequencePendingOrders.orderDocNo > maxDocumentSequence) {
+          orderDocNo = maxDocumentSequencePendingOrders.orderDocNo;
         } else {
-          me.saveDocumentSequenceAndGo(maxDocumentSequence);
+          orderDocNo = maxDocumentSequence;
         }
+        if (maxDocumentSequencePendingOrders.quotationDocNo > maxQuotationDocumentSequence) {
+          quotationDocNo = maxDocumentSequencePendingOrders.quotationDocNo;
+        } else {
+          quotationDocNo = maxQuotationDocumentSequence;
+        }
+        me.saveDocumentSequenceAndGo(orderDocNo, quotationDocNo);
       }
     }, function () {
       // If c_order does not exist yet, go with the sequence
       // number fetched from the server
-      me.saveDocumentSequenceAndGo(maxDocumentSequence);
+      me.saveDocumentSequenceAndGo(maxDocumentSequence, maxQuotationDocumentSequence);
     });
   },
 
@@ -738,19 +803,32 @@ OB.Model.Terminal = Backbone.Model.extend({
     var nPreviousOrders = pendingOrders.length,
         maxDocumentSequence = OB.POS.modelterminal.get('terminal').lastDocumentNumber,
         posDocumentNoPrefix = OB.POS.modelterminal.get('terminal').docNoPrefix,
+        maxQuotationDocumentSequence = OB.POS.modelterminal.get('terminal').lastQuotationDocumentNumber,
+        posQuotationDocumentNoPrefix = OB.POS.modelterminal.get('terminal').docQuotationNoPrefix,
         orderCompleteDocumentNo, orderDocumentSequence, i;
     for (i = 0; i < nPreviousOrders; i++) {
       orderCompleteDocumentNo = pendingOrders[i].get('documentNo');
-      orderDocumentSequence = parseInt(orderCompleteDocumentNo.substr(posDocumentNoPrefix.length + 1), 10);
-      if (orderDocumentSequence > maxDocumentSequence) {
-        maxDocumentSequence = orderDocumentSequence;
+      if (!pendingOrders[i].get('isQuotation')) {
+        orderDocumentSequence = parseInt(orderCompleteDocumentNo.substr(posDocumentNoPrefix.length + 1), 10);
+        if (orderDocumentSequence > maxDocumentSequence) {
+          maxDocumentSequence = orderDocumentSequence;
+        }
+      } else {
+        orderDocumentSequence = parseInt(orderCompleteDocumentNo.substr(posQuotationDocumentNoPrefix.length + 1), 10);
+        if (orderDocumentSequence > maxQuotationDocumentSequence) {
+          maxQuotationDocumentSequence = orderDocumentSequence;
+        }
       }
     }
-    return maxDocumentSequence;
+    return {
+      orderDocNo: maxDocumentSequence,
+      quotationDocNo: maxQuotationDocumentSequence
+    };
   },
 
-  saveDocumentSequenceAndGo: function (documentSequence) {
+  saveDocumentSequenceAndGo: function (documentSequence, quotationDocumentSequence) {
     this.set('documentsequence', documentSequence);
+    this.set('quotationDocumentSequence', quotationDocumentSequence);
     this.triggerReady();
   },
 
@@ -758,6 +836,7 @@ OB.Model.Terminal = Backbone.Model.extend({
     var me = this,
         modelterminal = OB.POS.modelterminal,
         documentSequence = modelterminal.get('documentsequence'),
+        quotationDocumentSequence = modelterminal.get('quotationDocumentSequence'),
         criteria = {
         'posSearchKey': OB.POS.modelterminal.get('terminal').searchKey
         };
@@ -768,19 +847,23 @@ OB.Model.Terminal = Backbone.Model.extend({
         docSeq = documentSequenceList.models[0];
         // There exists already a document sequence, update it
         docSeq.set('documentSequence', documentSequence);
+        docSeq.set('quotationDocumentSequence', quotationDocumentSequence);
       } else {
         // There is not a document sequence for the pos, create it
         docSeq = new OB.Model.DocumentSequence();
         docSeq.set('posSearchKey', OB.POS.modelterminal.get('terminal').searchKey);
         docSeq.set('documentSequence', documentSequence);
+        docSeq.set('quotationDocumentSequence', quotationDocumentSequence);
       }
-      OB.Dal.save(docSeq, null, null);
+      OB.Dal.save(docSeq, null, function () {
+        console.error(arguments);
+      });
     });
   },
 
   triggerReady: function () {
     var undef, loadModelsIncFunc, loadModelsTotalFunc, minTotalRefresh, minIncRefresh;
-    if (this.get('payments') && this.get('pricelistversion') && this.get('currency') && this.get('context') && this.get('permissions') && (this.get('documentsequence') !== undef || this.get('documentsequence') === 0) && this.get('windowRegistered') !== undef) {
+    if (this.get('payments') && this.get('pricelistversion') && this.get('warehouses') && this.get('currency') && this.get('context') && this.get('permissions') && (this.get('documentsequence') !== undef || this.get('documentsequence') === 0) && this.get('windowRegistered') !== undef) {
       OB.POS.modelterminal.loggingIn = false;
       if (OB.POS.modelterminal.get('connectedToERP')) {
         //In online mode, we save the terminal information in the local db
@@ -789,7 +872,7 @@ OB.Model.Terminal = Backbone.Model.extend({
           window.console.error(arguments);
         });
       }
-      minIncRefresh = OB.POS.modelterminal.get('terminal').minutestorefreshdatainc * 60 * 1000;
+      minIncRefresh = OB.POS.modelterminal.get('terminal').terminalType.minutestorefreshdatainc * 60 * 1000;
       if (minIncRefresh) {
         loadModelsIncFunc = function () {
           console.log('Performing incremental masterdata refresh');

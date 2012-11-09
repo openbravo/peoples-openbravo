@@ -947,22 +947,25 @@ document.cookie = r;
 
 enyo.xhr = {
 request: function(e) {
-var t = this.getXMLHttpRequest(e.url), n = e.method || "GET", r = "sync" in e ? !e.sync : !0;
-e.username ? t.open(n, enyo.path.rewrite(e.url), r, e.username, e.password) : t.open(n, enyo.path.rewrite(e.url), r), enyo.mixin(t, e.xhrFields), this.makeReadyStateHandler(t, e.callback);
+var t = this.getXMLHttpRequest(e.url), n = e.method || "GET", r = !e.sync;
+e.username ? t.open(n, enyo.path.rewrite(e.url), r, e.username, e.password) : t.open(n, enyo.path.rewrite(e.url), r), enyo.mixin(t, e.xhrFields), e.callback && this.makeReadyStateHandler(t, e.callback);
 if (e.headers) for (var i in e.headers) t.setRequestHeader(i, e.headers[i]);
-return typeof t.overrideMimeType == "function" && e.mimeType && t.overrideMimeType(e.mimeType), t.send(e.body || null), r || t.onreadystatechange(t), t;
+return typeof t.overrideMimeType == "function" && e.mimeType && t.overrideMimeType(e.mimeType), t.send(e.body || null), !r && e.callback && t.onreadystatechange(t), t;
+},
+cancel: function(e) {
+e.onload && (e.onload = null), e.onreadystatechange && (e.onreadystatechange = null), e.abort && e.abort();
 },
 makeReadyStateHandler: function(e, t) {
 window.XDomainRequest && e instanceof XDomainRequest && (e.onload = function() {
-t && t.apply(null, [ e.responseText, e ]);
+t.apply(null, [ e.responseText, e ]);
 }), e.onreadystatechange = function() {
-e.readyState == 4 && t && t.apply(null, [ e.responseText, e ]);
+e.readyState == 4 && t.apply(null, [ e.responseText, e ]);
 };
 },
 inOrigin: function(e) {
 var t = document.createElement("a"), n = !1;
 t.href = e;
-if (t.protocol === ":" || t.protocol === window.location.protocol && t.hostname === window.location.hostname && t.port === (window.location.port || "80")) n = !0;
+if (t.protocol === ":" || t.protocol === window.location.protocol && t.hostname === window.location.hostname && t.port === (window.location.port || (window.location.protocol === "https:" ? "443" : "80"))) n = !0;
 return n;
 },
 getXMLHttpRequest: function(e) {
@@ -971,12 +974,6 @@ if (window.XDomainRequest && !this.inOrigin(e) && !/^file:\/\//.test(window.loca
 } catch (t) {}
 try {
 return new XMLHttpRequest;
-} catch (t) {}
-try {
-return new ActiveXObject("Msxml2.XMLHTTP");
-} catch (t) {}
-try {
-return new ActiveXObject("Microsoft.XMLHTTP");
 } catch (t) {}
 return null;
 }
@@ -1015,7 +1012,9 @@ request: function(e) {
 var t = this.url.split("?"), n = t.shift() || "", r = t.length ? t.join("?").split("&") : [], i = enyo.isString(e) ? e : enyo.Ajax.objectToQuery(e);
 this.method == "GET" && (i && (r.push(i), i = null), this.cacheBust && !/^file:/i.test(n) && r.push(Math.random()));
 var s = r.length ? [ n, r.join("&") ].join("?") : n, o = {};
-this.method != "GET" && (o["Content-Type"] = this.contentType), enyo.mixin(o, this.headers), this.xhr = enyo.xhr.request({
+this.method != "GET" && (o["Content-Type"] = this.contentType), enyo.mixin(o, this.headers);
+try {
+this.xhr = enyo.xhr.request({
 url: s,
 method: this.method,
 callback: enyo.bind(this, "receive"),
@@ -1027,15 +1026,26 @@ password: this.password,
 xhrFields: this.xhrFields,
 mimeType: this.mimeType
 });
+} catch (u) {
+this.fail(u);
+}
 },
 receive: function(e, t) {
-this.destroyed || (this.isFailure(t) ? this.fail(t.status) : this.respond(this.xhrToResponse(t)));
+!this.failed && !this.destroyed && (this.isFailure(t) ? this.fail(t.status) : this.respond(this.xhrToResponse(t)));
+},
+fail: function(e) {
+this.xhr && (enyo.xhr.cancel(this.xhr), this.xhr = null), this.inherited(arguments);
 },
 xhrToResponse: function(e) {
 if (e) return this[(this.handleAs || "text") + "Handler"](e);
 },
 isFailure: function(e) {
-return e.status !== 0 && (e.status < 200 || e.status >= 300);
+try {
+var t = "";
+return typeof e.responseText == "string" && (t = e.responseText), e.status === 0 && t === "" ? !0 : e.status !== 0 && (e.status < 200 || e.status >= 300);
+} catch (n) {
+return !0;
+}
 },
 xmlHandler: function(e) {
 return e.responseXML;
@@ -1048,7 +1058,7 @@ var t = e.responseText;
 try {
 return t && enyo.json.parse(t);
 } catch (n) {
-return console.warn("Ajax request set to handleAs JSON but data was not in JSON format"), t;
+return enyo.warn("Ajax request set to handleAs JSON but data was not in JSON format"), t;
 }
 },
 statics: {
@@ -1631,8 +1641,12 @@ platform: "android",
 regex: /Android (\d+)/
 }, {
 platform: "android",
-regex: /Silk\//,
+regex: /Silk\/1./,
 forceVersion: 2
+}, {
+platform: "android",
+regex: /Silk\/2./,
+forceVersion: 4
 }, {
 platform: "ie",
 regex: /MSIE (\d+)/
@@ -1648,6 +1662,12 @@ regex: /Version\/(\d+)[.\d]+\s+Safari/
 }, {
 platform: "chrome",
 regex: /Chrome\/(\d+)[.\d]+/
+}, {
+platform: "androidFirefox",
+regex: /Android;.*Firefox\/(\d+)/
+}, {
+platform: "firefox",
+regex: /Firefox\/(\d+)/
 } ];
 for (var r = 0, i, s, o; i = n[r]; r++) {
 s = i.regex.exec(e);
@@ -2081,7 +2101,7 @@ e.events = n, e.events.touchstart(t);
 var n = {
 _touchCount: 0,
 touchstart: function(t) {
-enyo.job.stop("resetGestureEvents"), this._touchCount++, this.excludedTarget = null;
+enyo.job.stop("resetGestureEvents"), this._touchCount += t.changedTouches.length, this.excludedTarget = null;
 var n = this.makeEvent(t);
 e.down(n), n = this.makeEvent(t), this.overEvent = n, e.over(n);
 },
@@ -2093,13 +2113,13 @@ var r = this.makeEvent(t);
 e.move(r), enyo.bodyIsFitting && t.preventDefault(), this.overEvent && this.overEvent.target != r.target && (this.overEvent.relatedTarget = r.target, r.relatedTarget = this.overEvent.target, e.out(this.overEvent), e.over(r)), this.overEvent = r;
 },
 touchend: function(n) {
-e.up(this.makeEvent(n)), e.out(this.overEvent), this._touchCount--, this._touchCount === 0 && enyo.job("resetGestureEvents", function() {
+e.up(this.makeEvent(n)), e.out(this.overEvent), this._touchCount -= n.changedTouches.length, enyo.platform.chrome && this._touchCount === 0 && enyo.job("resetGestureEvents", function() {
 e.events = t;
 }, 10);
 },
 makeEvent: function(e) {
 var t = enyo.clone(e.changedTouches[0]);
-return t.srcEvent = e, t.target = this.findTarget(t.clientX, t.clientY), t.which = 1, t;
+return t.srcEvent = e, t.target = this.findTarget(t), t.which = 1, t;
 },
 calcNodeOffset: function(e) {
 if (e.getBoundingClientRect) {
@@ -2112,8 +2132,8 @@ height: t.height
 };
 }
 },
-findTarget: function(e, t) {
-return document.elementFromPoint(e, t);
+findTarget: function(e) {
+return document.elementFromPoint(e.clientX, e.clientY);
 },
 findTargetTraverse: function(e, t, n) {
 var r = e || document.body, i = this.calcNodeOffset(r);
@@ -2132,14 +2152,10 @@ return r;
 connect: function() {
 enyo.forEach([ "ontouchstart", "ontouchmove", "ontouchend", "ongesturestart", "ongesturechange", "ongestureend" ], function(e) {
 document[e] = enyo.dispatch;
-});
-if (enyo.platform.androidChrome <= 18) {
-var e = window.devicePixelRatio;
-this.findTarget = function(t, n) {
-return document.elementFromPoint(t * e, n * e);
-};
-} else document.elementFromPoint || (this.findTarget = function(e, t) {
-return this.findTargetTraverse(null, e, t);
+}), enyo.platform.androidChrome <= 18 ? this.findTarget = function(e) {
+return document.elementFromPoint(e.screenX, e.screenY);
+} : document.elementFromPoint || (this.findTarget = function(e) {
+return this.findTargetTraverse(null, e.clientX, e.clientY);
 });
 }
 };
@@ -2595,7 +2611,8 @@ published: {
 vertical: "default",
 horizontal: "default",
 thumb: !0,
-scrim: !1
+scrim: !1,
+dragDuringGesture: !0
 },
 events: {
 onShouldDrag: ""
@@ -2729,6 +2746,7 @@ if (this.isScrolling() && !this.isOverscrolling()) return this.$.scrollMath.stop
 },
 move: function(e, t) {},
 dragstart: function(e, t) {
+if (!this.dragDuringGesture && t.srcEvent.touches && t.srcEvent.touches.length > 1) return !0;
 this.doShouldDrag(t), this.dragging = t.dragger == this || !t.dragger && t.boundaryDragger == this;
 if (this.dragging) {
 t.preventDefault(), this.syncScrollMath(), this.$.scrollMath.startDrag(t);
@@ -2924,6 +2942,12 @@ statics: {
 osInfo: [ {
 os: "android",
 version: 3
+}, {
+os: "androidChrome",
+version: 18
+}, {
+os: "androidFirefox",
+version: 16
 }, {
 os: "ios",
 version: 5

@@ -45,12 +45,12 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UTIL.showAlert',
-  style: 'position:absolute; right:35px; top: 5px',
+  classes: 'alert alert-fade',
   components: [{
     tag: 'button',
-    classes: 'close',
-    attributes: {
-      'data-dismiss': 'alert'
+    classes: 'alert-closebutton',
+    tap: function () {
+      this.owner.hide();
     },
     allowHtml: true,
     content: '&times;'
@@ -62,25 +62,37 @@ enyo.kind({
   }],
   statics: {
     display: function (txt, title, type) {
-      var alert = new(enyo.kind({
+      var componentsArray = OB.POS.terminal.$.alertContainer.getComponents(),
+          i;
+      // To erase first previous shown alert
+      for (i = 0; i < componentsArray.length; i++) {
+        componentsArray[i].destroy();
+      }
+      OB.POS.terminal.$.alertContainer.createComponent({
         kind: 'OB.UTIL.showAlert',
         title: title,
         txt: txt,
         type: type
-      }))();
-      alert.renderInto(enyo.dom.byId('alertContainer'));
-      return alert;
+      }).render();
+      return OB.POS.terminal.$.alertContainer.getComponents()[0];
     }
   },
 
   initComponents: function () {
+    var me = this;
     this.inherited(arguments);
     this.$.title.setContent(this.title);
     this.$.txt.setContent(this.txt);
-    this.addClass('alert fade in ' + this.type);
+    if (!this.type) {
+      this.type = 'alert-warning';
+    }
+    this.addClass(this.type);
+    setTimeout(function () {
+      me.addClass('alert-fade-in');
+    }, 1);
 
     setTimeout(function () {
-      $('.alert').alert('close');
+      me.hide();
     }, 5000);
   }
 });
@@ -108,7 +120,7 @@ OB.UTIL.showSuccess = function (s) {
 };
 
 OB.UTIL.showWarning = function (s) {
-  OB.UTIL.showAlert.display(s, OB.I18N.getLabel('OBPOS_LblWarning'), '');
+  OB.UTIL.showAlert.display(s, OB.I18N.getLabel('OBPOS_LblWarning'), 'alert-warning');
 };
 
 OB.UTIL.showStatus = function (s) {
@@ -121,37 +133,10 @@ OB.UTIL.showError = function (s) {
 };
 
 /* This will automatically set the focus in the first focusable item in the modal popup */
-OB.UTIL.focusInModal = function (modalObj) {
-  modalObj.on('shown', function (e) {
-    var firstFocusableItem = $(this).find('input,select,button').filter(':visible:enabled:first');
-    if (firstFocusableItem) {
-      firstFocusableItem.focus();
-    }
-    return true;
-  });
-};
-
-/* Twitter Bootstrap is not able to position in a good way a modal popup based on the 'left' and 'top' css parameters.
- * This function fixes it */
-OB.UTIL.adjustModalPosition = function (modalObj) {
-  modalObj.on('shown', function (e) {
-    function getCSSPosition(element, type) {
-      var position = element.css(type);
-      if (position && position.indexOf('%') !== -1) {
-        position = position.replace('%', '');
-        position = parseInt(position, 10);
-        position = position / 100;
-      } else {
-        position = 0.5;
-      }
-      return position;
-    }
-
-    var modal = $(this),
-        leftPosition = getCSSPosition(modal, 'left'),
-        topPosition = getCSSPosition(modal, 'top');
-    modal.css('margin-top', (modal.outerHeight() * topPosition) * -1).css('margin-left', (modal.outerWidth() * leftPosition) * -1);
-
-    return true;
-  });
+OB.UTIL.focusInModal = function (jqModal) {
+  var firstFocusableItem = jqModal.find('input,select,button').filter(':visible:enabled:first');
+  if (firstFocusableItem) {
+    firstFocusableItem.focus();
+  }
+  return true;
 };

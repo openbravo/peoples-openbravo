@@ -32,6 +32,7 @@
         this.set('price', attributes.price);
         this.set('priceList', attributes.priceList);
         this.set('gross', attributes.gross);
+        this.set('promotions', attributes.promotions);
         if (attributes.product && attributes.product.price) {
           this.set('grossListPrice', attributes.product.price.standardPrice);
         }
@@ -43,7 +44,7 @@
     },
 
     printPrice: function () {
-      return OB.I18N.formatCurrency(this.get('price'));
+      return OB.I18N.formatCurrency(this.get('_price') || this.get('price'));
     },
 
     printDiscount: function () {
@@ -64,7 +65,20 @@
     },
 
     printGross: function () {
-      return OB.I18N.formatCurrency(this.getGross());
+      return OB.I18N.formatCurrency(this.get('_gross') || this.getGross());
+    },
+
+    stopApplyingPromotions: function () {
+      var promotions = this.get('promotions'),
+          i;
+      if (this.get('promotions')) {
+        for (i = 0; i < promotions.length; i++) {
+          if (!promotions[i].applyNext) {
+            return true;
+          }
+        }
+      }
+      return false;
     }
   });
 
@@ -141,6 +155,8 @@
         this.set('updatedBy', attributes.updatedBy);
         this.set('orderType', attributes.orderType); // 0: Sales order, 1: Return order
         this.set('generateInvoice', attributes.generateInvoice);
+        this.set('isQuotation', attributes.isQuotation);
+        this.set('oldId', attributes.oldId);
         this.set('priceList', attributes.priceList);
         this.set('currency', attributes.currency);
         this.set('currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, attributes['currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER]);
@@ -200,6 +216,56 @@
       this.save();
     },
 
+    prepareToSend: function (callback) {
+      this.adjustPrices();
+      this.calculateTaxes(callback);
+    },
+
+    adjustPrices: function () {
+      // Apply calculated discounts and promotions to price and gross prices
+      // so ERP saves them in the proper place
+      this.get('lines').each(function (line) {
+        var price = line.get('price'),
+            gross = line.get('gross'),
+            totalDiscount = 0,
+            grossListPrice, grossUnitPrice, discountPercentage, base;
+
+        // Calculate inline discount: discount applied before promotions
+        if (line.get('priceList') !== price) {
+          grossListPrice = new BigDecimal(line.get('priceList').toString());
+          grossUnitPrice = new BigDecimal(price.toString());
+          discountPercentage = grossListPrice.subtract(grossUnitPrice).multiply(new BigDecimal('100')).divide(grossListPrice, 2, BigDecimal.prototype.ROUND_HALF_EVEN);
+          discountPercentage = parseFloat(discountPercentage.setScale(2, BigDecimal.prototype.ROUND_HALF_EVEN).toString(), 10);
+        } else {
+          discountPercentage = OB.DEC.Zero;
+        }
+        line.set({
+          discountPercentage: discountPercentage
+        }, {
+          silent: true
+        });
+
+        // Calculate prices after promotions
+        base = line.get('price');
+        _.forEach(line.get('promotions') || [], function (discount) {
+          var discountAmt = discount.actualAmt || discount.amt || 0;
+          discount.basePrice = base;
+          discount.unitDiscount = OB.DEC.div(discountAmt, line.get('qty'));
+          totalDiscount = OB.DEC.add(totalDiscount, discountAmt);
+          base = OB.DEC.sub(base, totalDiscount);
+        }, this);
+
+        gross = OB.DEC.sub(gross, totalDiscount);
+        price = OB.DEC.div(gross, line.get('qty'));
+
+        line.set({
+          grossUnitPrice: price,
+          lineGrossAmount: gross
+        }, {
+          silent: true
+        });
+      }, this);
+    },
     getTotal: function () {
       return this.getGross();
     },
@@ -210,7 +276,13 @@
 
     calculateGross: function () {
       var gross = this.get('lines').reduce(function (memo, e) {
-        return OB.DEC.add(memo, e.getGross());
+        var grossLine = e.getGross();
+        if (e.get('promotions')) {
+          grossLine = e.get('promotions').reduce(function (memo, e) {
+            return OB.DEC.sub(memo, e.actualAmt || e.amt || 0);
+          }, grossLine);
+        }
+        return OB.DEC.add(memo, grossLine);
       }, OB.DEC.Zero);
       this.set('gross', gross);
       this.trigger('calculategross');
@@ -263,6 +335,8 @@
       this.set('documentType', null);
       this.set('orderType', 0); // 0: Sales order, 1: Return order
       this.set('generateInvoice', false);
+      this.set('isQuotation', false);
+      this.set('oldId', null);
       this.set('priceList', null);
       this.set('currency', null);
       this.set('currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, null);
@@ -295,8 +369,13 @@
       var me = this,
           undf;
       this.set('isPaid', _order.get('isPaid'));
+      if (!_order.get('isEditable')) {
+        // keeping it no editable as much as possible, to prevent
+        // modifications to trigger editable events incorrectly
+        this.set('isEditable', _order.get('isEditable'));
+      }
       _.each(_.keys(_order.attributes), function (key) {
-        if (_order.get(key) !== undf) {
+        if (key !== 'isEditable' && _order.get(key) !== undf) {
           if (_order.get(key) === null) {
             me.set(key, null);
           } else if (_order.get(key).at) {
@@ -311,7 +390,7 @@
           }
         }
       });
-
+      this.set('isEditable', _order.get('isEditable'));
       this.trigger('calculategross');
       this.trigger('change');
       this.trigger('clear');
@@ -344,7 +423,6 @@
             // sets the new quantity
             line.set('qty', qty);
             line.calculateGross();
-            this.calculateGross();
             // sets the undo action
             this.set('undo', {
               text: text || OB.I18N.getLabel('OBPOS_SetUnits', [line.get('qty'), line.get('product').get('_identifier')]),
@@ -353,7 +431,6 @@
               undo: function () {
                 line.set('qty', oldqty);
                 line.calculateGross();
-                me.calculateGross();
                 me.set('undo', null);
               }
             });
@@ -375,7 +452,6 @@
           // sets the new price
           line.set('price', price);
           line.calculateGross();
-          this.calculateGross();
           // sets the undo action
           this.set('undo', {
             text: OB.I18N.getLabel('OBPOS_SetPrice', [line.printPrice(), line.get('product').get('_identifier')]),
@@ -384,7 +460,6 @@
             undo: function () {
               line.set('price', oldprice);
               line.calculateGross();
-              me.calculateGross();
               me.set('undo', null);
             }
           });
@@ -405,7 +480,6 @@
       var index = this.get('lines').indexOf(line);
       // remove the line
       this.get('lines').remove(line);
-      this.calculateGross();
       // set the undo action
       this.set('undo', {
         text: OB.I18N.getLabel('OBPOS_DeleteLine', [line.get('qty'), line.get('product').get('_identifier')]),
@@ -424,6 +498,10 @@
 
     addProduct: function (p) {
       var me = this;
+      if (me.get('isQuotation') && me.get('hasbeenpaid') === 'Y') {
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_QuotationClosed')); 
+        return;
+      }
       if (p.get('obposScale')) {
         OB.POS.hwserver.getWeight(function (data) {
           if (data.exception) {
@@ -446,11 +524,93 @@
             this.createLine(p, 1);
           }
         } else {
-          //TODO avoid set qty for ticket line
           this.createLine(p, 1);
         }
       }
       this.save();
+    },
+
+    addPromotion: function (line, rule, discount) {
+      var promotions = line.get('promotions') || [],
+          disc = {},
+          i, replaced = false;
+
+      disc.name = discount.name || rule.get('printName') || rule.get('name');
+      disc.ruleId = rule.id;
+      disc.amt = discount.amt;
+      disc.actualAmt = discount.actualAmt;
+
+      disc.hidden = discount.hidden === true || (discount.actualAmt && !disc.amt);
+
+      if (disc.hidden) {
+        disc.displayedTotalAmount = 0;
+      } else {
+        disc.displayedTotalAmount = disc.amt || discount.actualAmt;
+      }
+
+      disc.applyNext = rule.get('applyNext');
+      disc._idx = rule.get('_idx');
+
+      for (i = 0; i < promotions.length; i++) {
+        if (disc._idx < promotions[i]._idx) {
+          // Trying to apply promotions in incorrect order: recalculate whole line again
+          OB.Model.Discounts.applyPromotions(this, line);
+          return;
+        }
+      }
+
+      for (i = 0; i < promotions.length; i++) {
+        if (promotions[i].ruleId === rule.id) {
+          promotions[i] = disc;
+          replaced = true;
+          break;
+        }
+      }
+
+      if (!replaced) {
+        promotions.push(disc);
+      }
+
+      line.set('promotions', promotions);
+      line.trigger('change');
+      this.save();
+    },
+
+    removePromotion: function (line, rule) {
+      var promotions = line.get('promotions'),
+          ruleId = rule.id,
+          removed = false,
+          res = [],
+          i;
+      if (!promotions) {
+        return;
+      }
+
+      for (i = 0; i < promotions.length; i++) {
+        if (promotions[i].ruleId === rule.id) {
+          removed = true;
+        } else {
+          res.push(promotions[i]);
+        }
+      }
+
+      if (removed) {
+        line.set('promotions', res);
+        line.trigger('change');
+        this.save();
+
+        // Recalculate promotions for all lines affected by this same rule,
+        // because this rule could have prevented other ones to be applied
+        this.get('lines').forEach(function (ln) {
+          if (ln.get('promotionCandidates')) {
+            ln.get('promotionCandidates').forEach(function (candidateRule) {
+              if (candidateRule === ruleId) {
+                OB.Model.Discounts.applyPromotions(this, line);
+              }
+            }, this);
+          }
+        }, this);
+      }
     },
 
     createLine: function (p, units) {
@@ -466,14 +626,12 @@
 
       // add the created line
       this.get('lines').add(newline);
-      this.calculateGross();
       // set the undo action
       this.set('undo', {
         text: OB.I18N.getLabel('OBPOS_AddLine', [newline.get('qty'), newline.get('product').get('_identifier')]),
         line: newline,
         undo: function () {
           me.get('lines').remove(newline);
-          me.calculateGross();
           me.set('undo', null);
         }
       });
@@ -503,10 +661,18 @@
 
     setOrderTypeReturn: function () {
       if (OB.POS.modelterminal.hasPermission('OBPOS_receipt.return')) {
-        this.set('documentType', OB.POS.modelterminal.get('terminal').documentTypeForReturns);
+        this.set('documentType', OB.POS.modelterminal.get('terminal').terminalType.documentTypeForReturns);
         this.set('orderType', 1); // 0: Sales order, 1: Return order
         this.save();
+
+        // remove promotions
+        OB.Model.Discounts.applyPromotions(this);
       }
+    },
+
+    shouldApplyPromotions: function () {
+      // Do not apply promotions in return tickets
+      return this.get('orderType') !== 1;
     },
 
     setOrderInvoice: function () {
@@ -514,6 +680,62 @@
         this.set('generateInvoice', true);
         this.save();
       }
+    },
+
+    updatePrices: function () {
+      var order = this;
+      this.get('lines').each(function (line) {
+        var successCallbackPrices, criteria = {
+          'priceListVersion': OB.POS.modelterminal.get('pricelistversion').id,
+          'product': line.get('product').get('id')
+        };
+        successCallbackPrices = function (dataPrices, line) {
+          dataPrices.each(function (price) {
+            order.setPrice(line, price.get('listPrice'));
+          });
+        };
+
+        OB.Dal.find(OB.Model.ProductPrice, criteria, successCallbackPrices, function () {
+          console.error(args);
+        }, line);
+      });
+    },
+
+    createQuotation: function () {
+      if (OB.POS.modelterminal.hasPermission('OBPOS_receipt.quotation')) {
+        this.set('isQuotation', true);
+        this.set('documentType', OB.POS.modelterminal.get('terminal').terminalType.documentTypeForQuotations);
+        this.save();
+      }
+    },
+
+    createOrderFromQuotation: function (updatePrices) {
+      var documentseq;
+      this.set('id', null);
+      this.set('isQuotation', false);
+      this.set('documentType', OB.POS.modelterminal.get('terminal').terminalType.documentType);
+      this.set('hasbeenpaid', 'N');
+      this.set('isEditable', true);
+      this.set('orderDate', new Date());
+      documentseq = OB.POS.modelterminal.get('documentsequence') + 1;
+      documentseqstr = OB.UTIL.padNumber(documentseq, 5);
+      OB.POS.modelterminal.set('documentsequence', documentseq);
+      this.set('documentNo', OB.POS.modelterminal.get('terminal').docNoPrefix + '/' + documentseqstr);
+      this.save();
+      if (updatePrices) {
+        this.updatePrices();
+        OB.Model.Discounts.applyPromotions(this);
+      }
+      OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationCreatedOrder'));
+    },
+    reactivateQuotation: function () {
+      this.set('hasbeenpaid', 'N');
+      this.set('isEditable', true);
+      this.save();
+    },
+
+    rejectQuotation: function () {
+      alert('reject!!')
     },
 
     resetOrderInvoice: function () {
@@ -691,9 +913,11 @@
       order.set('organization', OB.POS.modelterminal.get('terminal').organization);
       order.set('createdBy', OB.POS.modelterminal.get('orgUserId'));
       order.set('updatedBy', OB.POS.modelterminal.get('orgUserId'));
-      order.set('documentType', OB.POS.modelterminal.get('terminal').documentType);
+      order.set('documentType', OB.POS.modelterminal.get('terminal').terminalType.documentType);
       order.set('orderType', 0); // 0: Sales order, 1: Return order
       order.set('generateInvoice', false);
+      order.set('isQuotation', false);
+      order.set('oldId', null);
       order.set('session', OB.POS.modelterminal.get('session'));
       order.set('priceList', OB.POS.modelterminal.get('terminal').priceList);
       order.set('currency', OB.POS.modelterminal.get('terminal').currency);
@@ -717,13 +941,18 @@
       return order;
     },
 
-    newPaidReceipt: function (model) {
+    newPaidReceipt: function (model, callback) {
       var order = new Order(),
-          me = this,
-          documentseq, documentseqstr, bp, newline, lines, prod, payments, curPayment, taxes;
-      this.lines = new Backbone.Collection();
+          lines, me = this,
+          documentseq, documentseqstr, bp, newline, lines, prod, payments, curPayment, taxes, bpId, numberOfLines = model.receiptLines.length;
+      lines = new Backbone.Collection();
       order.set('documentNo', model.documentNo);
-      order.set('isPaid', true);
+      if (model.isQuotation) {
+        order.set('isQuotation', true);
+        order.set('oldId', model.orderid);
+      } else {
+        order.set('isPaid', true);
+      }
       order.set('isEditable', false);
       order.set('id', model.orderid);
       order.set('client', model.client);
@@ -732,33 +961,46 @@
       order.set('posTerminal', model.posterminal);
       order.set('posTerminal$_identifier', model.posterminalidentifier);
       order.set('warehouse', model.warehouse);
-      order.set('currency$_identifier', model.currency);
+      order.set('currency', model.currency);
+      order.set('priceList', model.pricelist);
+      order.set('salesRepresentative', model.salesRepresentative);
+      order.set('currency$_identifier', model.currency_identifier);
       order.set('isbeingprocessed', 'N');
       order.set('hasbeenpaid', 'Y');
 
 
-      bp = {};
-      bp._identifier = model.businessPartner;
-      order.set('bp', new Backbone.Model(bp));
+      bpId = model.businessPartner;
+      OB.Dal.get(OB.Model.BusinessPartner, bpId, function (bp) {
+        order.set('bp', bp);
+      }, function () {
+        console.error(args);
+      })
       order.set('gross', model.totalamount);
       order.trigger('calculategross');
-      order.set('salesRepresentative$_identifier', model.salesrepresentative);
+      order.set('salesRepresentative$_identifier', model.salesrepresentative_identifier);
 
       _.each(model.receiptLines, function (iter) {
-        prod = new OB.Model.Product();
-        prod.set('_identifier', iter.name);
-        newline = new OrderLine({
-          product: prod,
-          uOM: iter.uOM,
-          qty: OB.DEC.number(iter.quantity),
-          price: OB.DEC.number(iter.unitPrice),
-          priceList: OB.DEC.number(iter.unitPrice)
-        });
-        newline.set('gross', iter.linegrossamount);
-        // add the created line
-        me.lines.add(newline);
+
+        OB.Dal.get(OB.Model.Product, iter.id, function (prod) {
+          newline = new OrderLine({
+            product: prod,
+            uOM: iter.uOM,
+            qty: OB.DEC.number(iter.quantity),
+            price: OB.DEC.number(iter.unitPrice),
+            priceList: OB.DEC.number(iter.unitPrice),
+            promotions: iter.promotions
+          });
+          newline.set('gross', iter.linegrossamount);
+          newline.set('grossListPrice', iter.unitPrice);
+          // add the created line
+          lines.add(newline);
+          numberOfLines--;
+          if (numberOfLines === 0) {
+            order.set('lines', lines);
+            callback(order);
+          }
+        })
       });
-      order.set('lines', me.lines);
       order.set('orderDate', moment(model.orderDate.toString(), "YYYY-MM-DD").toDate());
       //order.set('payments', model.receiptPayments);
       payments = new PaymentLineList();
@@ -786,8 +1028,6 @@
         }
       });
       order.set('taxes', taxes);
-
-      return order;
     },
 
     addNewOrder: function () {
@@ -801,6 +1041,20 @@
       this.current = model;
       this.add(this.current);
       this.loadCurrent(true);
+    },
+
+    addNewQuotation: function () {
+      var documentseq;
+      this.saveCurrent();
+      this.current = this.newOrder();
+      this.current.set('isQuotation', true);
+      this.current.set('documentType', OB.POS.modelterminal.get('terminal').terminalType.documentTypeForQuotations);
+      documentseq = OB.POS.modelterminal.get('quotationDocumentSequence') + 1;
+      documentseqstr = OB.UTIL.padNumber(documentseq, 5);
+      OB.POS.modelterminal.set('quotationDocumentSequence', documentseq);
+      this.current.set('documentNo', OB.POS.modelterminal.get('terminal').quotationDocNoPrefix + '/' + documentseqstr);
+      this.add(this.current);
+      this.loadCurrent();
     },
 
     deleteCurrent: function () {

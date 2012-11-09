@@ -14,9 +14,11 @@ import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 
@@ -26,12 +28,14 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.process.FIN_AddPayment;
 import org.openbravo.advpaymentmngt.process.FIN_PaymentProcess;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
+import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.structure.BaseOBObject;
@@ -39,6 +43,7 @@ import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.TriggerHandler;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.ad_forms.AcctServer;
@@ -46,15 +51,19 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.InvoiceLineTax;
 import org.openbravo.model.ad.access.OrderLineTax;
+import org.openbravo.model.ad.process.ProcessInstance;
+import org.openbravo.model.ad.ui.Process;
 import org.openbravo.model.common.businesspartner.Location;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.invoice.InvoiceLine;
+import org.openbravo.model.common.invoice.InvoiceLineOffer;
 import org.openbravo.model.common.invoice.InvoiceTax;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
+import org.openbravo.model.common.order.OrderLineOffer;
 import org.openbravo.model.common.order.OrderTax;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_OrigPaymentScheduleDetail;
@@ -65,14 +74,16 @@ import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.Fin_OrigPaymentSchedule;
 import org.openbravo.model.financialmgmt.payment.PaymentTerm;
 import org.openbravo.model.financialmgmt.tax.TaxRate;
-import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
+import org.openbravo.model.materialmgmt.onhandquantity.StockProposed;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.scheduling.ProcessBundle;
+import org.openbravo.service.db.CallProcess;
 import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
+import org.openbravo.service.json.JsonToDataConverter;
 
 public class OrderLoader extends JSONProcessSimple {
 
@@ -87,7 +98,6 @@ public class OrderLoader extends JSONProcessSimple {
 
   @Override
   public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {
-
     Object jsonorder = jsonsent.get("order");
 
     JSONArray array = null;
@@ -129,6 +139,7 @@ public class OrderLoader extends JSONProcessSimple {
           }
           log.info("Total order time: " + (System.currentTimeMillis() - t1));
         } catch (Exception e) {
+          e.printStackTrace();
           // Creation of the order failed. We will now store the order in the import errors table
           OBDal.getInstance().rollbackAndClose();
           if (TriggerHandler.getInstance().isDisabled()) {
@@ -140,6 +151,8 @@ public class OrderLoader extends JSONProcessSimple {
           errorEntry.setJsoninfo(jsonorder.toString());
           OBDal.getInstance().save(errorEntry);
           OBDal.getInstance().flush();
+
+          log.error("Error while loading order", e);
           try {
             OBDal.getInstance().getConnection().commit();
           } catch (SQLException e1) {
@@ -176,10 +189,17 @@ public class OrderLoader extends JSONProcessSimple {
     Invoice invoice = null;
     boolean sendEmail = false;
     TriggerHandler.getInstance().disable();
+    boolean isQuotation = jsonorder.has("isQuotation") && jsonorder.getBoolean("isQuotation");
     try {
+      if (jsonorder.has("oldId") && !jsonorder.getString("oldId").equals("null")
+          && jsonorder.has("isQuotation") && jsonorder.getBoolean("isQuotation")) {
+        deleteOldDocument(jsonorder);
+      }
+
       t1 = System.currentTimeMillis();
-      boolean createInvoice = (jsonorder.has("generateInvoice") && jsonorder
-          .getBoolean("generateInvoice"));
+      boolean createInvoice = !isQuotation
+          && (jsonorder.has("generateInvoice") && jsonorder.getBoolean("generateInvoice"));
+      boolean createShipment = !isQuotation;
       sendEmail = (jsonorder.has("sendEmail") && jsonorder.getBoolean("sendEmail"));
       // Order header
       order = OBProvider.getInstance().get(Order.class);
@@ -191,14 +211,21 @@ public class OrderLoader extends JSONProcessSimple {
       JSONArray orderlines = jsonorder.getJSONArray("lines");
       createOrderLines(order, jsonorder, orderlines, lineReferences);
 
-      long t113 = System.currentTimeMillis();
-      // Shipment header
-      shipment = OBProvider.getInstance().get(ShipmentInOut.class);
-      createShipment(shipment, order, jsonorder);
+      if (jsonorder.has("oldId") && !jsonorder.getString("oldId").equals("null")
+          && (!jsonorder.has("isQuotation") || !jsonorder.getBoolean("isQuotation"))) {
+        // This order comes from a quotation, we need to associate both
+        associateOrderToQuotation(jsonorder, order);
+      }
 
-      long t114 = System.currentTimeMillis();
-      // Shipment lines
-      createShipmentLines(shipment, order, jsonorder, orderlines, lineReferences);
+      long t113 = System.currentTimeMillis();
+      if (createShipment) {
+        // Shipment header
+        shipment = OBProvider.getInstance().get(ShipmentInOut.class);
+        createShipment(shipment, order, jsonorder);
+
+        // Shipment lines
+        createShipmentLines(shipment, order, jsonorder, orderlines, lineReferences);
+      }
       long t115 = System.currentTimeMillis();
       if (createInvoice) {
         // Invoice header
@@ -210,7 +237,9 @@ public class OrderLoader extends JSONProcessSimple {
       }
       t11 = System.currentTimeMillis();
       OBDal.getInstance().save(order);
-      OBDal.getInstance().save(shipment);
+      if (shipment != null) {
+        OBDal.getInstance().save(shipment);
+      }
       if (invoice != null) {
         OBDal.getInstance().save(invoice);
       }
@@ -218,8 +247,7 @@ public class OrderLoader extends JSONProcessSimple {
       OBDal.getInstance().flush();
       t3 = System.currentTimeMillis();
       log.debug("Creation of bobs. Order: " + (t112 - t111) + "; Orderlines: " + (t113 - t112)
-          + "; Shipment: " + (t114 - t113) + "; Shipmentlines: " + (t115 - t114) + "; Invoice: "
-          + (t11 - t115));
+          + "; Shipment: " + (t115 - t113) + "; Invoice: " + (t11 - t115));
 
     } finally {
       TriggerHandler.getInstance().enable();
@@ -227,18 +255,19 @@ public class OrderLoader extends JSONProcessSimple {
 
     long t4 = System.currentTimeMillis();
 
-    // Payment
-    JSONObject paymentResponse = handlePayments(jsonorder, order, invoice);
-    if (paymentResponse != null) {
-      return paymentResponse;
-    }
+    if (!isQuotation) {
+      // Payment
+      JSONObject paymentResponse = handlePayments(jsonorder, order, invoice);
+      if (paymentResponse != null) {
+        return paymentResponse;
+      }
 
-    // Stock manipulation
-    handleStock(shipment);
-
-    // Send email
-    if (sendEmail) {
-      EmailSender emailSender = new EmailSender(order.getId(), jsonorder);
+      // Stock manipulation
+      handleStock(shipment);
+      // Send email
+      if (sendEmail) {
+        EmailSender emailSender = new EmailSender(order.getId(), jsonorder);
+      }
     }
 
     log.info("Initial flush: " + (t1 - t0) + "; Generate bobs:" + (t11 - t1) + "; Save bobs:"
@@ -248,14 +277,31 @@ public class OrderLoader extends JSONProcessSimple {
     return successMessage(jsonorder);
   }
 
+  protected void associateOrderToQuotation(JSONObject jsonorder, Order order) throws JSONException {
+    String quotationId = jsonorder.getString("oldId");
+    Order quotation = OBDal.getInstance().get(Order.class, quotationId);
+    order.setQuotation(quotation);
+    List<OrderLine> orderLines = order.getOrderLineList();
+    List<OrderLine> quotationLines = quotation.getOrderLineList();
+    for (int i = 0; (i < orderLines.size() && i < quotationLines.size()); i++) {
+      orderLines.get(i).setQuotationLine(quotationLines.get(i));
+    }
+    quotation.setDocumentStatus("CA");
+
+  }
+
   protected JSONObject successMessage(JSONObject jsonorder) throws Exception {
     final JSONObject jsonResponse = new JSONObject();
 
     jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
     jsonResponse.put("result", "0");
-    jsonResponse.put("data", jsonorder);
-
     return jsonResponse;
+  }
+
+  protected void deleteOldDocument(JSONObject jsonorder) throws JSONException {
+    Order oldOrder = OBDal.getInstance().get(Order.class, jsonorder.getString("oldId"));
+    OBDal.getInstance().remove(oldOrder);
+    OBDal.getInstance().flush();
   }
 
   protected boolean verifyOrderExistance(JSONObject jsonorder) throws Exception {
@@ -325,6 +371,7 @@ public class OrderLoader extends JSONProcessSimple {
 
   protected void createInvoiceLines(Invoice invoice, Order order, JSONObject jsonorder,
       JSONArray orderlines, ArrayList<OrderLine> lineReferences) throws JSONException {
+    Entity promotionLineEntity = ModelProvider.getInstance().getEntity(OrderLineOffer.class);
 
     for (int i = 0; i < orderlines.length(); i++) {
       InvoiceLine line = OBProvider.getInstance().get(InvoiceLine.class);
@@ -351,6 +398,32 @@ public class OrderLoader extends JSONProcessSimple {
       tax.setInvoiceLine(line);
       line.getInvoiceLineTaxList().add(tax);
       invoice.getInvoiceLineTaxList().add(tax);
+
+      // Discounts & Promotions
+      if (orderlines.getJSONObject(i).has("promotions")
+          && !orderlines.getJSONObject(i).isNull("promotions")
+          && !orderlines.getJSONObject(i).getString("promotions").equals("null")) {
+        JSONArray jsonPromotions = orderlines.getJSONObject(i).getJSONArray("promotions");
+        for (int p = 0; p < jsonPromotions.length(); p++) {
+          JSONObject jsonPromotion = jsonPromotions.getJSONObject(p);
+          boolean hasActualAmt = jsonPromotion.has("actualAmt");
+          if (hasActualAmt && jsonPromotion.getDouble("actualAmt") == 0) {
+            continue;
+          }
+
+          InvoiceLineOffer promotion = OBProvider.getInstance().get(InvoiceLineOffer.class);
+          JSONPropertyToEntity.fillBobFromJSON(promotionLineEntity, promotion, jsonPromotion);
+
+          if (hasActualAmt) {
+            promotion.setTotalAmount(BigDecimal.valueOf(jsonPromotion.getDouble("actualAmt")));
+          } else {
+            promotion.setTotalAmount(BigDecimal.valueOf(jsonPromotion.getDouble("amt")));
+          }
+          promotion.setLineNo((long) ((p + 1) * 10));
+          promotion.setInvoiceLine(line);
+          line.getInvoiceLineOfferList().add(promotion);
+        }
+      }
     }
 
   }
@@ -414,10 +487,10 @@ public class OrderLoader extends JSONProcessSimple {
     // Same currency, no conversion required
     if (jsonorder.getLong("orderType") == 1) {
       invoice.getBusinessPartner().setCreditUsed(
-          invoice.getBusinessPartner().getCreditUsed().add(total));
+          invoice.getBusinessPartner().getCreditUsed().subtract(total));
     } else {
       invoice.getBusinessPartner().setCreditUsed(
-          invoice.getBusinessPartner().getCreditUsed().subtract(total));
+          invoice.getBusinessPartner().getCreditUsed().add(total));
     }
 
   }
@@ -458,28 +531,44 @@ public class OrderLoader extends JSONProcessSimple {
       BigDecimal pendingQty = orderLine.getOrderedQuantity();
 
       if (pendingQty.compareTo(BigDecimal.ZERO) > 0) {
-        // Returns have qty<0
-        // In case of standard sales (no return), take bins with product ordered by prio. Using same
-        // logic as in M_InOut_Create PL code
-        hqlWhereClause = " as t, Locator as l" + " where t.product = :product"
-            + "   and t.uOM = :uom" + "   and l.warehouse = :warehouse" + "   and t.storageBin = l"
-            + "   and l.active = true" + "   and coalesce(t.quantityOnHand,0)>0"
-            + " order by l.relativePriority, t.creationDate";
+        // The M_GetStock function is used
+        Process process = (Process) OBDal.getInstance().get(Process.class,
+            "FF80818132C964E30132C9747257002E");
+        Map<String, Object> parameters = new HashMap<String, Object>();
+        parameters.put("AD_Client_ID", OBContext.getOBContext().getCurrentClient().getId());
+        parameters.put("AD_Org_ID", OBContext.getOBContext().getCurrentOrganization().getId());
+        parameters.put("M_Product_ID",
+            orderLine.getProduct() == null ? null : (String) DalUtil.getId(orderLine.getProduct()));
+        parameters.put("C_Uom_ID",
+            orderLine.getUOM() == null ? null : (String) DalUtil.getId(orderLine.getUOM()));
+        parameters.put("M_Product_Uom_ID", orderLine.getOrderUOM() == null ? null
+            : (String) DalUtil.getId(orderLine.getOrderUOM()));
+        parameters.put("M_AttributesetInstance_ID", orderLine.getAttributeSetValue() == null ? null
+            : (String) DalUtil.getId(orderLine.getAttributeSetValue()));
+        parameters.put("Quantity", pendingQty);
+        parameters.put("ProcessID", "118");
+        if (orderLine.getEntity().hasProperty("warehouseRule")
+            && orderLine.get("warehouseRule") != null) {
+          parameters.put("M_Warehouse_Rule_ID",
+              (String) DalUtil.getId(orderLine.get("warehouseRule")));
+        }
 
-        OBQuery<StorageDetail> query = OBDal.getInstance().createQuery(StorageDetail.class,
-            hqlWhereClause);
-        query.setNamedParameter("product", orderLine.getProduct());
-        query.setNamedParameter("uom", orderLine.getUOM());
-        query.setNamedParameter("warehouse", order.getWarehouse());
+        ProcessInstance pInstance = CallProcess.getInstance()
+            .callProcess(process, null, parameters);
 
-        ScrollableResults bins = query.scroll(ScrollMode.FORWARD_ONLY);
+        OBCriteria<StockProposed> stockProposed = OBDal.getInstance().createCriteria(
+            StockProposed.class);
+        stockProposed.add(Restrictions.eq(StockProposed.PROPERTY_PROCESSINSTANCE, pInstance));
+        stockProposed.addOrderBy(StockProposed.PROPERTY_PRIORITY, true);
+
+        ScrollableResults bins = stockProposed.scroll(ScrollMode.FORWARD_ONLY);
         while (pendingQty.compareTo(BigDecimal.ZERO) > 0 && bins.next()) {
           // TODO: Can we safely clear session here?
-          StorageDetail storage = (StorageDetail) bins.get(0);
+          StockProposed stock = (StockProposed) bins.get(0);
           BigDecimal qty;
 
-          if (pendingQty.compareTo(storage.getQuantityOnHand()) > 0) {
-            qty = storage.getQuantityOnHand();
+          if (pendingQty.compareTo(new BigDecimal(stock.getQuantity())) > 0) {
+            qty = new BigDecimal(stock.getQuantity());
             pendingQty = pendingQty.subtract(qty);
           } else {
             qty = pendingQty;
@@ -487,7 +576,7 @@ public class OrderLoader extends JSONProcessSimple {
           }
           lineNo += 10;
           addShipemntline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine,
-              jsonorder, lineNo, qty, storage.getStorageBin());
+              jsonorder, lineNo, qty, stock.getStorageDetail().getStorageBin());
         }
       }
 
@@ -544,10 +633,12 @@ public class OrderLoader extends JSONProcessSimple {
 
   protected void createOrderLines(Order order, JSONObject jsonorder, JSONArray orderlines,
       ArrayList<OrderLine> lineReferences) throws JSONException {
+    Entity orderLineEntity = ModelProvider.getInstance().getEntity(OrderLine.class);
+    Entity promotionLineEntity = ModelProvider.getInstance().getEntity(OrderLineOffer.class);
+
     for (int i = 0; i < orderlines.length(); i++) {
 
       OrderLine orderline = OBProvider.getInstance().get(OrderLine.class);
-      Entity orderLineEntity = ModelProvider.getInstance().getEntity(OrderLine.class);
       JSONObject jsonOrderLine = orderlines.getJSONObject(i);
 
       JSONPropertyToEntity.fillBobFromJSON(ModelProvider.getInstance().getEntity(OrderLine.class),
@@ -559,18 +650,8 @@ public class OrderLoader extends JSONProcessSimple {
       orderline.setLineNetAmount(BigDecimal.valueOf(jsonOrderLine.getDouble("net")));
       orderline.setListPrice(orderline.getUnitPrice());
 
-      orderline.setLineGrossAmount(BigDecimal.valueOf(jsonOrderLine.getDouble("gross")));
-
       // shipment is created, so all is delivered
       orderline.setDeliveredQuantity(orderline.getOrderedQuantity());
-
-      BigDecimal discount = BigDecimal.ZERO;
-      if (!orderline.getGrossListPrice().equals(orderline.getGrossUnitPrice())) {
-        discount = orderline.getGrossListPrice().subtract(orderline.getGrossUnitPrice())
-            .multiply(new BigDecimal("100"))
-            .divide(orderline.getGrossListPrice(), 2, BigDecimal.ROUND_HALF_EVEN);
-      }
-      orderline.setDiscount(discount);
 
       lineReferences.add(orderline);
       orderline.setLineNo((long) ((i + 1) * 10));
@@ -586,12 +667,38 @@ public class OrderLoader extends JSONProcessSimple {
       orderline.getOrderLineTaxList().add(tax);
       order.getOrderLineTaxList().add(tax);
 
+      // Discounts & Promotions
+      if (jsonOrderLine.has("promotions") && !jsonOrderLine.isNull("promotions")
+          && !jsonOrderLine.getString("promotions").equals("null")) {
+        JSONArray jsonPromotions = jsonOrderLine.getJSONArray("promotions");
+        for (int p = 0; p < jsonPromotions.length(); p++) {
+          JSONObject jsonPromotion = jsonPromotions.getJSONObject(p);
+          boolean hasActualAmt = jsonPromotion.has("actualAmt");
+          if (hasActualAmt && jsonPromotion.getDouble("actualAmt") == 0) {
+            continue;
+          }
+
+          OrderLineOffer promotion = OBProvider.getInstance().get(OrderLineOffer.class);
+          JSONPropertyToEntity.fillBobFromJSON(promotionLineEntity, promotion, jsonPromotion);
+
+          if (hasActualAmt) {
+            promotion.setTotalAmount(BigDecimal.valueOf(jsonPromotion.getDouble("actualAmt")));
+          } else {
+            promotion.setTotalAmount(BigDecimal.valueOf(jsonPromotion.getDouble("amt")));
+          }
+          promotion.setLineNo((long) ((p + 1) * 10));
+          promotion.setSalesOrderLine(orderline);
+          orderline.getOrderLineOfferList().add(promotion);
+        }
+      }
     }
   }
 
   protected void createOrder(Order order, JSONObject jsonorder) throws JSONException {
     Entity orderEntity = ModelProvider.getInstance().getEntity(Order.class);
     JSONPropertyToEntity.fillBobFromJSON(orderEntity, order, jsonorder);
+    order.setNewOBObject(true);
+    order.setId(jsonorder.getString("id"));
 
     order.setTransactionDocument((DocumentType) OBDal.getInstance().getProxy("DocumentType",
         jsonorder.getString("documentType")));
@@ -609,7 +716,11 @@ public class OrderLoader extends JSONProcessSimple {
     order.setSummedLineAmount(BigDecimal.valueOf(jsonorder.getDouble("net")));
 
     order.setSalesTransaction(true);
-    order.setDocumentStatus("CO");
+    if (jsonorder.getBoolean("isQuotation")) {
+      order.setDocumentStatus("UE");
+    } else {
+      order.setDocumentStatus("CO");
+    }
     order.setDocumentAction("--");
     order.setProcessed(true);
     order.setProcessNow(false);
@@ -677,6 +788,7 @@ public class OrderLoader extends JSONProcessSimple {
       // Sept 2012 -> gross because outstanding is not allowed in Openbravo Web POS
       paymentSchedule.setOutstandingAmount(BigDecimal.valueOf(jsonorder.getDouble("gross")));
       paymentSchedule.setDueDate(order.getOrderDate());
+      paymentSchedule.setExpectedDate(order.getOrderDate());
       if (ModelProvider.getInstance().getEntity(FIN_PaymentSchedule.class)
           .hasProperty("origDueDate")) {
         // This property is checked and set this way to force compatibility with both MP13, MP14 and
@@ -695,6 +807,7 @@ public class OrderLoader extends JSONProcessSimple {
         paymentScheduleInvoice.setAmount(amt);
         paymentScheduleInvoice.setOutstandingAmount(amt);
         paymentScheduleInvoice.setDueDate(order.getOrderDate());
+        paymentScheduleInvoice.setExpectedDate(order.getOrderDate());
         if (ModelProvider.getInstance().getEntity(FIN_PaymentSchedule.class)
             .hasProperty("origDueDate")) {
           // This property is checked and set this way to force compatibility with both MP13, MP14
@@ -850,9 +963,78 @@ public class OrderLoader extends JSONProcessSimple {
 
   }
 
+  protected void fillBobFromJSON(Entity entity, BaseOBObject bob, JSONObject json)
+      throws JSONException {
+    @SuppressWarnings("unchecked")
+    Iterator<String> keys = json.keys();
+    while (keys.hasNext()) {
+      String key = keys.next();
+      if (key.equals("id")) {
+        continue;
+      }
+      String oldKey = key;
+      if (entity.hasProperty(key)) {
+        log.debug("Found property: " + key + " in entity " + entity.getName());
+      } else {
+        key = getEquivalentKey(key);
+        if (key == null) {
+          log.debug("Did not find property: " + oldKey);
+          continue;
+        } else {
+          if (entity.hasProperty(key)) {
+            log.debug("Found equivalent key: " + key);
+          } else {
+            log.debug("Did not find property: " + oldKey);
+            continue;
+          }
+        }
+      }
+
+      Property p = entity.getProperty(key);
+      Object value = json.get(oldKey);
+      if (p.isPrimitive()) {
+        if (p.isDate()) {
+          bob.set(p.getName(),
+              (Date) JsonToDataConverter.convertJsonToPropertyValue(PropertyByType.DATE, value));
+        } else if (p.isNumericType()) {
+          value = json.getString(oldKey);
+          bob.set(key, new BigDecimal((String) value));
+        } else {
+          bob.set(p.getName(), value);
+        }
+      } else {
+        Property refProp = p.getReferencedProperty();
+        Entity refEntity = refProp.getEntity();
+        if (value instanceof JSONObject) {
+          value = ((JSONObject) value).getString("id");
+        }
+        BaseOBObject refBob = OBDal.getInstance().getProxy(refEntity.getName(), value.toString());
+        bob.set(p.getName(), refBob);
+      }
+
+    }
+  }
+
   public static String getErrorMessage(Exception e) {
     StringWriter sb = new StringWriter();
     e.printStackTrace(new PrintWriter(sb));
     return sb.toString();
+  }
+
+  private static String getEquivalentKey(String key) {
+    if (key.equals("bp")) {
+      return "businessPartner";
+    } else if (key.equals("bploc")) {
+      return "partnerAddress";
+    } else if (key.equals("qty")) {
+      return "orderedQuantity";
+    } else if (key.equals("price")) {
+      return "grossUnitPrice";
+    } else if (key.equals("posTerminal")) {
+      return "obposApplications";
+    } else if (key.equals("pricenet")) {
+      return "unitPrice";
+    }
+    return null;
   }
 }

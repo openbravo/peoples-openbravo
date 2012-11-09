@@ -7,7 +7,8 @@
  ************************************************************************************
  */
 
-/*global B, Backbone, moment, $, _, enyo */
+/*global B, Backbone, $, _, moment, enyo */
+
 
 /*header of scrollable table*/
 enyo.kind({
@@ -16,6 +17,10 @@ enyo.kind({
   events: {
     onSearchAction: '',
     onClearAction: ''
+  },
+  handlers: {
+    onSearchActionByKey: 'searchAction',
+    onClearActionByKey: 'clearAction'
   },
   components: [{
     style: 'padding: 10px;',
@@ -53,6 +58,9 @@ enyo.kind({
           kind: 'OB.UI.Button',
           style: 'width: 100px; margin: 0px 0px 8px 5px;',
           classes: 'btnlink-yellow btnlink btnlink-small',
+          attributes: {
+            'onEnterTap': 'onClearActionByKey'
+          },
           components: [{
             classes: 'btn-icon-small btn-icon-clear'
           }, {
@@ -134,6 +142,7 @@ enyo.kind({
     this.doClearAction();
   },
   searchAction: function () {
+    var params = this.parent.parent.parent.parent.parent.parent.parent.parent.params;
     var startDate, endDate, startDateValidated = true,
         endDateValidated = true;
     startDate = this.$.startDate.getValue();
@@ -163,9 +172,10 @@ enyo.kind({
       this.$.startDate.removeClass("error");
       this.$.endDate.removeClass("error");
     }
-
     this.filters = {
-      documentNo: this.$.filterText.getValue(),
+      documentType: params.isQuotation ? (OB.POS.modelterminal.get('terminal').terminalType.documentTypeForQuotations) : (OB.POS.modelterminal.get('terminal').terminalType.documentType),
+      isQuotation: params.isQuotation ? true : false,
+      filterText: this.$.filterText.getValue(),
       startDate: this.$.startDate.getValue(),
       endDate: this.$.endDate.getValue(),
       pos: OB.POS.modelterminal.get('terminal').id,
@@ -182,6 +192,13 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ListPRsLine',
   kind: 'OB.UI.SelectButton',
+  events: {
+    onHideThisPopup: ''
+  },
+  tap: function () {
+    this.inherited(arguments);
+    this.doHideThisPopup();
+  },
   components: [{
     name: 'line',
     style: 'line-height: 23px;',
@@ -207,7 +224,7 @@ enyo.kind({
   classes: 'row-fluid',
   handlers: {
     onSearchAction: 'searchAction',
-    onClearAction: 'clearAction'
+    onClearAction: 'clearAction',
   },
   events: {
     onChangePaidReceipt: ''
@@ -243,7 +260,9 @@ enyo.kind({
     }, function (data) {
       if (data) {
         _.each(data, function (iter) {
-          me.prsList.add(me.model.get('orderList').newPaidReceipt(iter));
+          me.model.get('orderList').newPaidReceipt(iter, function (order) {
+            me.prsList.add(order);
+          });
         });
       } else {
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorDropDep'));
@@ -267,12 +286,24 @@ enyo.kind({
 /*Modal definiton*/
 enyo.kind({
   name: 'OB.UI.ModalPaidReceipts',
-  myId: 'modalPaidReceipts',
   kind: 'OB.UI.Modal',
-  modalClass: 'modal',
-  headerClass: 'modal-header',
-  bodyClass: 'modal-header',
+  onEnterTap: function (args, action) {
+    if (action) {
+      this.waterfall(action);
+      return true;
+    } else {
+      this.waterfall("onSearchActionByKey");
+      return true;
+    }
+  },
+  topPosition: '125px',
   header: OB.I18N.getLabel('OBPOS_LblPaidReceipts'),
+  published: {
+    params: null
+  },
+  changedParams: function (value) {
+
+  },
   body: {
     kind: 'OB.UI.ListPRs'
   },

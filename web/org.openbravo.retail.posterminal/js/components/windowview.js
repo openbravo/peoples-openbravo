@@ -65,6 +65,11 @@ enyo.kind({
 
       enyo.forEach(view.getComponents(), function (child) {
         OB.UI.WindowView.destroyModels(child);
+        if (child.getId()) {
+          if (OB.UI.UTILS.domIdEnyoReference[child.getId()]) {
+            delete OB.UI.UTILS.domIdEnyoReference[child.getId()];
+          }
+        }
       });
     }
   },
@@ -72,17 +77,9 @@ enyo.kind({
   init: function () {
     //Modularity
     //Add new dialogs
-    var customDialogsContainerName = this.name + "_customDialogsContainer",
-        dialogContainer;
-    dialogContainer = this.createComponent({
-      name: customDialogsContainerName
-    });
-
     enyo.forEach(this.popups, function (dialog) {
       if (dialog.windowClass === this.kindName) {
-        this.createComponent(dialog.dialog, {
-          owner: dialogContainer
-        });
+        this.createComponent(dialog.dialog);
       }
     }, this);
 

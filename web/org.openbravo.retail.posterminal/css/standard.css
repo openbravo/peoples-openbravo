@@ -18,14 +18,16 @@ body {
 input, button, select, textarea {
   font-family: "Segoe UI", "Lucida Sans", Helvetica, Arial, sans-serif;
   font-size: 16px;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 
 input.error {
-  background-color: rgba(255, 0, 0);
+  background-color: rgb(255, 0, 0);
   background-color: rgba(255, 0, 0, 0.5);
 }
 
 button {
+  margin: 0;
   line-height: 18px;
 }
 
@@ -58,9 +60,21 @@ div.subwindow .subwindowheadertext {
 
 }
 
-div.subwindow .subwindowheader .close>span:first-child {
-  font-size: 150%;
+div.subwindow-closebutton {
+  cursor: pointer;
+  float: right;
+  font-size: 30px;
+  font-weight: bold;
+  line-height: 18px;
+  color: black;
+  text-shadow: 0 1px 0 white;
+  opacity: 0.2;
 }
+
+div.subwindow-closebutton:hover {
+  opacity: 0.5;
+}
+
 
 /*used by enyo.Scroller*/
 .enyo-scroller {
@@ -178,8 +192,67 @@ div.subwindow .subwindowheader .close>span:first-child {
   background-image: url('../img/loading-bar.gif');
 }
 
-.dropdown-menu {
-  display: none;
+.alert {
+  position: absolute;
+  right: 35px;
+  top: 5px;
+
+  padding: 8px 35px 8px 14px;
+  margin-bottom: 18px;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+  background-color: white;
+  border: 1px solid;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+}
+
+.alert-warning {
+  background-color: #FCF8E3;
+  border-color: #FBEED5;
+  color: #C09853;
+}
+
+.alert-danger,
+.alert-error {
+  background-color: #F2DEDE;
+  border-color: #EED3D7;
+  color: #B94A48;
+}
+
+.alert-success {
+  background-color: #DFF0D8;
+  border-color: #D6E9C6;
+  color: #468847;
+}
+
+.alert-closebutton {
+  cursor: pointer;
+  float: right;
+  font-size: 20px;
+  font-weight: bold;
+  line-height: 18px;
+  color: black;
+  text-shadow: 0 1px 0 white;
+  opacity: 0.2;
+  position: relative;
+  top: -2px;
+  right: -21px;
+  line-height: 18px;
+}
+
+.alert-closebutton:hover {
+  opacity: 0.5;
+}
+
+.alert-fade {
+  -webkit-transition: opacity .15s linear;
+  transition: opacity .15s linear;
+  opacity: 0;
+}
+
+.alert-fade.alert-fade-in {
+  opacity: 1;
 }
 
 .hide {
@@ -278,11 +351,6 @@ div.subwindow .subwindowheader .close>span:first-child {
   clear: both;
 }
 
-a.btn-dropdown {
-  color: white;
-  cursor: pointer;
-  text-decoration: none;
-}
 
 .btnkeyboard-num {
   font-size: 24px !important;
@@ -314,7 +382,8 @@ button.btnkeyboard-inactive:active {
   color: black;
 }
 
-button.btnkeyboard.btn-over {
+button.btnkeyboard.btn-over,
+button.btnkeyboard:hover {
   opacity: 0.75;
 }
 
@@ -345,6 +414,10 @@ button.btnkeyboard-minus:active {
   background-color: #f8941d;
 }
 
+button.btnlink > span {
+  display: block;
+}
+
 button.btnlink {
   display: inline-block;
   font-weight: 600;
@@ -356,6 +429,7 @@ button.btnlink {
   color: white;
   cursor: pointer;
   margin: 10px;
+  opacity: 0.999; /* Instead of "1" to avoid strange displacement effect in buttons on hover effect */
 }
 
 button.btnlink-toolbar {
@@ -366,12 +440,13 @@ button.btnlink-toolbar {
   font-weight: normal;
 }
 
-button.btnlink.btn-over {
+button.btnlink.btn-over,
+button.btnlink:hover {
   opacity: 0.75;
 }
 button.btnlink.btn-down,
 button.btnlink:active {
-  opacity: 1;
+  opacity: 0.999; /* Instead of "1" to avoid strange displacement effect in buttons on hover effect */
   background-color: #cccccc;
 }
 button.btnlink:disabled {
@@ -453,6 +528,9 @@ button.btnlink-cashup-ok {
   width: 70px;
 }
 
+button.error {
+  background-color: #ff0000;
+}
 
 button.btnselect {
   display: block;
@@ -491,16 +569,58 @@ li.selected > button.btnselect-orderline.btnselect-orderline-edit:hover {
   color: black;
 }
 
-.dropdown-menu li > a:hover,
-.dropdown-menu .active > a,
-.dropdown-menu .active > a:hover {
-  background-color : #e1e1e1;
-  color: black;
+
+button.btn-dropdown {
+  color: white;
+  cursor: pointer;
+  text-decoration: none;
+  background: none;
+  padding: 0px;
+  border: 0px;
+  border-radius: 0px;
+  box-shadow: none;
 }
 
-.dropdown-menu {
-  padding: 0px;
+button.btn-dropdown:active,
+button.btn-dropdown.active {
+  border: 0px;
+  background: rgba(0, 0, 0, 0.3);
+  box-shadow: none;
 }
+
+div.dropdown {
+  padding: 0px;
+  background-image: none;
+  background-color: white;
+  border-radius: 0px;
+  color: black;
+  min-width: 165px;
+}
+
+div.dropdown:hover {
+  background-image: none;
+  background-color: white;
+}
+
+div.dropdown-menuitem {
+  cursor: pointer;
+}
+
+div.dropdown-menuitem:hover {
+  background-color: #E1E1E1;
+}
+
+.dropdown-menudivider,
+.dropdown-menudivider:hover {
+  margin: 6px 0px;
+  padding: 0px;
+  border-bottom: 1px solid #E5E5E5;
+}
+
+div.dropdown-clientdata {
+  min-width: 350px;
+}
+
 
 div.btnlink {
   display: inline-block;
@@ -606,10 +726,11 @@ div.btnlink {
   background-image: url('../img/checkbox-on.png');
 }
 
-.btn-radio,
-.btn-radio:hover,
-.btn-radio:active,
-.btn-radio.active {
+div.btn-radio,
+div.btn-radio:hover,
+div.btn-radio:active,
+div.btn-radio.active {
+  width: auto;
   height: 29px;
   border: none;
   font-size: 16px;
@@ -623,7 +744,7 @@ div.btnlink {
   background-image: url('../img/radio-off.png');
 }
 
-.btn-radio.active {
+div.btn-radio.active {
   background-image: url('../img/radio-on.png');
 }
 
@@ -744,85 +865,149 @@ div.clock-date {
   margin: 0px 10px 15px 10px;
 }
 
+div.modal {
+  color: #333;
+  overflow: auto;
+  width: 560px;
+  background: white;
+  padding: 6px;
+  -webkit-border-radius: 0px;
+  -moz-border-radius: 0px;
+  border-radius: 0px;
+}
+
+div.modal-header {
+  display: block;
+  width: 100%;
+  border-bottom: 1px solid #EEE;
+  padding: 3px 0px 7px 0px;
+}
+
+div.modal-header-text {
+  line-height: 27px;
+  font-size: 18px;
+  font-weight: bold;
+  margin: 0px 10px 0px 10px;
+}
+
+div.modal-header-closebutton {
+  cursor: pointer;
+  float: right;
+  padding: 0px 8px 0px 0px;
+  font-size: 30px;
+  font-weight: bold;
+  line-height: 18px;
+  color: black;
+  text-shadow: 0 1px 0 white;
+  opacity: 0.2;
+}
+
+div.modal-header-closebutton:hover {
+  opacity: 0.5;
+}
+
+div.modal-body {
+  width: 100%;
+}
+
 div.modal-dialog {
+  color: #333;
+  overflow: auto;
+  width: 560px;
   background: #6cb33f;
+  padding: 0px;
   -webkit-border-radius: 0px;
   -moz-border-radius: 0px;
   border-radius: 0px;
 }
 
 div.modal-dialog-header {
+  display: block;
+  width: 100%;
   border: none;
-  padding: 9px 10px 20px 10px;
+  padding: 9px 0px 20px 0px;
+}
+
+div.modal-dialog-header-text {
+  line-height: normal;
+  text-align: center;
+  font-size: 225%;
+  font-weight: bold;
+  color: white;
+  margin: 0px 10px 0px 10px;
+}
+
+div.modal-dialog-header-closebutton {
+  cursor: pointer;
+  float: right;
+  padding: 0px 8px 0px 0px;
+  font-size: 30px;
+  font-weight: bold;
+  line-height: 18px;
+  color: black;
+  text-shadow: 0 1px 0 white;
+  opacity: 0.2;
+}
+div.modal-dialog-header-closebutton:hover {
+  opacity: 0.5;
 }
 
 div.modal-dialog-body {
+  width: 100%;
   padding: 0px;
   text-align: center;
 }
 
-div.modal-dialog-header-text {
-  line-height: 27px;
-  text-align: center;
-  font-size: 225%;
-  font-weight: bold;
-  padding-top: 10px;
-  color: white;
-}
-
-div.modal-dialog-content-receipt-properties,
-div.modal-dialog-content-text,
-div.modal-dialog-content-profile {
+div.modal-dialog-body-content {
   text-align: center;
   font-size: 20px;
   line-height: 30px;
   color: white;
-  margin: 15px 50px 10px 50px;
 }
 
-div.modal-dialog-content-text > div > br {
+div.modal-dialog-body-content > div > br {
   line-height: 50px;
 }
 
-div.modal-dialog-content-profile {
-  margin: 0px;
-}
-
-div.modal-dialog-content-receipt-properties {
-  margin: 0px;
-}
-
-div.modal-dialog-content-buttons-container {
+div.modal-dialog-body-buttons {
   padding: 30px 0px 30px 0px;
 }
 
-button.modal-dialog-content-button {
+button.modal-dialog-content-button, /* For backward compatibility */
+button.modal-dialog-button {
   text-decoration: none;
   background-color: white;
   color: #72B446;
   min-width: 115px;
- /* padding: 8px 0px 10px 0px;
-  margin: 0px 20px 0px 20px;*/
 }
 
 .modal-dialog-profile-combo {
   height: 40px;
-  width: 343px;
+  width: 400px;
+  margin: 0px;
+  background-color: white;
+  padding: 4px;
+  border: 1px solid #CCC;
+}
+
+.modal-dialog-profile-checkbox {
+  height: 40px;
   margin: 0px;
   background-color: white;
 }
 
 .modal-dialog-receipt-properties-text {
   height: 40px;
-  width: 343px;
   margin: 0px;
   background-color: white;
 }
 
 .modal-dialog-btn-check {
   height: 38px;
-  width: 340px;
+  width: 400px;
   background-position: 10px center;
+  cursor: pointer;
+  vertical-align: middle;
 }
 
 .hiddenInput {

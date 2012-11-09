@@ -90,12 +90,24 @@ public class JSONPropertyToEntity {
     } else if (key.equals("qty")) {
       return "orderedQuantity";
     } else if (key.equals("price")) {
-      return "grossUnitPrice";
+      return "baseGrossUnitPrice";
     } else if (key.equals("posTerminal")) {
       return "obposApplications";
     } else if (key.equals("pricenet")) {
       return "unitPrice";
+    } else if (key.equals("discountPercentage")) {
+      return "discount";
     }
+
+    // Mappings for promotions
+    else if (key.equals("ruleId")) {
+      return "priceAdjustment";
+    } else if (key.equals("basePrice")) {
+      return "baseGrossUnitPrice";
+    } else if (key.equals("unitDiscount")) {
+      return "priceAdjustmentAmt";
+    }
+
     return null;
   }
 }

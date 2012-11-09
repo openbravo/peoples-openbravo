@@ -102,7 +102,7 @@ public class ApplicationCacheComponent extends BaseTemplateComponent {
   }
 
   public List<String> getImageFileList() {
-    final String[] extensions = { "png" };
+    final String[] extensions = { "png", "gif" };
     return transformPath(getFileList(extensions));
   }
 

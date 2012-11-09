@@ -20,16 +20,28 @@ enyo.kind({
     tag: 'div',
     components: [{
       //OK button
-      kind: 'OB.UI.Button',
-      classes: 'btnlink btnlink-gray modal-dialog-content-button',
-      content: OB.I18N.getLabel('OBPOS_LblOk'),
-      tap: function () {
-        $('#' + this.parent.parent.parent.parent.parent.getId()).modal('hide');
-        OB.POS.navigate('retail.pointofsale');
-      }
+      kind: 'OB.OBPOSCashUp.UI.modalFinished_OkButton'
     }]
+  },
+  executeOnHide: function () {
+    OB.POS.navigate('retail.pointofsale');
   }
 });
+
+enyo.kind({
+  kind: 'OB.UI.Button',
+  name: 'OB.OBPOSCashUp.UI.modalFinished_OkButton',
+  classes: 'btnlink btnlink-gray modal-dialog-button',
+  content: OB.I18N.getLabel('OBPOS_LblOk'),
+  isApplyButton: true,
+  events: {
+    onHideThisPopup: ''
+  },
+  tap: function () {
+    this.doHideThisPopup();
+  }
+});
+
 
 enyo.kind({
   kind: 'OB.UI.ModalAction',
@@ -42,15 +54,28 @@ enyo.kind({
     tag: 'div',
     components: [{
       //OK button
-      kind: 'OB.UI.Button',
-      classes: 'btnlink btnlink-gray modal-dialog-content-button',
-      content: OB.I18N.getLabel('OBPOS_LblOk'),
-      tap: function () {
-        $('#' + this.parent.parent.parent.parent.parent.getId()).modal('hide');
-      }
+      kind: 'OB.OBPOSCashUp.UI.modalFinishedWrongly_OkButton'
     }]
+  },
+  executeOnHide: function () {
+    OB.POS.navigate('retail.pointofsale');
   }
 });
+
+enyo.kind({
+  kind: 'OB.UI.Button',
+  name: 'OB.OBPOSCashUp.UI.modalFinishedWrongly_OkButton',
+  classes: 'btnlink btnlink-gray modal-dialog-button',
+  content: OB.I18N.getLabel('OBPOS_LblOk'),
+  isApplyButton: true,
+  events: {
+    onHideThisPopup: ''
+  },
+  tap: function () {
+    this.doHideThisPopup();
+  }
+});
+
 
 enyo.kind({
   kind: 'OB.UI.ModalAction',
@@ -62,21 +87,43 @@ enyo.kind({
   bodyButtons: {
     tag: 'div',
     components: [{
-      kind: 'OB.UI.Button',
-      classes: 'btnlink btnlink-gray modal-dialog-content-button',
-      content: OB.I18N.getLabel('OBPOS_LblOk'),
-      tap: function () {
-        //continue with orders which have been paid.
-        $('#' + this.parent.parent.parent.parent.parent.getId()).modal('hide');
-      }
+      //OK button
+      kind: 'OB.OBPOSCashUp.UI.modalPendingToProcess_OkButton'
     }, {
-      kind: 'OB.UI.Button',
-      classes: 'btnlink btnlink-gray modal-dialog-content-button',
-      content: OB.I18N.getLabel('OBPOS_LblCancel'),
-      tap: function () {
-        $('#' + this.parent.parent.parent.parent.parent.getId()).modal('hide');
-        OB.POS.navigate('retail.pointofsale');
-      }
+      //Cancel button
+      kind: 'OB.OBPOSCashUp.UI.modalPendingToProcess_CancelButton'
     }]
+  }
+});
+
+enyo.kind({
+  kind: 'OB.UI.Button',
+  name: 'OB.OBPOSCashUp.UI.modalPendingToProcess_OkButton',
+  classes: 'btnlink btnlink-gray modal-dialog-button',
+  content: OB.I18N.getLabel('OBPOS_LblOk'),
+  isApplyButton: true,
+  events: {
+    onHideThisPopup: ''
+  },
+  tap: function () {
+    this.doHideThisPopup();
+  }
+});
+
+enyo.kind({
+  kind: 'OB.UI.Button',
+  name: 'OB.OBPOSCashUp.UI.modalPendingToProcess_CancelButton',
+  classes: 'btnlink btnlink-gray modal-dialog-button',
+  content: OB.I18N.getLabel('OBPOS_LblCancel'),
+  attributes: {
+    //TODO
+    'onEnterTap': 'hide'
+  },
+  events: {
+    onHideThisPopup: ''
+  },
+  tap: function () {
+    this.doHideThisPopup();
+    OB.POS.navigate('retail.pointofsale');
   }
 });

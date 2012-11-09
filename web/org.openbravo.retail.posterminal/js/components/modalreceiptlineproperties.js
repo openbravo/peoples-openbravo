@@ -12,12 +12,10 @@
 enyo.kind({
   name: 'OB.UI.ModalReceiptLinesProperties',
   kind: 'OB.UI.ModalAction',
-  myId: 'receiptLinesPropertiesDialog',
   handlers: {
     onApplyChanges: 'applyChanges'
   },
   header: OB.I18N.getLabel('OBPOS_ReceiptPropertiesDialogTitle'),
-  bodyContentClass: 'modal-dialog-content-receipt-properties',
   bodyContent: {
     kind: 'Scroller',
     maxHeight: '225px',
@@ -42,7 +40,6 @@ enyo.kind({
     });
   },
   applyChanges: function (sender, event) {
-    $('#' + this.myId).modal('hide');
     this.waterfall('onApplyChange', {
       orderline: this.currentLine
     });

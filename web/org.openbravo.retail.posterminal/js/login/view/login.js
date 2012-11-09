@@ -108,8 +108,8 @@
     name: 'OB.OBPOSLogin.UI.Login',
     tag: 'section',
     components: [{
-      myId: 'DatabaseDialog',
       kind: 'OB.UI.ModalInfo',
+      name: 'DatabaseDialog',
       header: OB.I18N.getLabel('OBPOS_DatabaseVersionChange'),
       bodyContent: {
         content: OB.I18N.getLabel('OBPOS_DatabaseVersionChangeLong')
@@ -124,14 +124,14 @@
       }]
     }, {
       components: [{
-        style: 'float: left; width: 50%;',
+        classes: 'span6',
         components: [{
           name: 'loginUserContainer',
           classes: 'login-user-container',
           content: ['.']
         }]
       }, {
-        style: 'float: left; width: 50%;',
+        classes: 'span6',
         components: [{
           classes: 'login-inputs-container',
           components: [{
@@ -165,16 +165,18 @@
               }]
             }, {
               components: [{
-                style: 'float: left; width: 33%; color: transparent;',
+                classes: 'span4',
+                style: 'color: transparent;',
                 content: ['.']
               }, {
-                style: 'float: left; width: 33%; margin: 20px 0px 0px 0px; text-align: center;',
+                classes: 'span4',
+                style: 'margin: 20px 0px 0px 0px; text-align: center;',
                 components: [{
                   kind: 'OB.OBPOSLogin.UI.LoginButton',
                   ontap: 'loginButtonAction'
                 }]
               }, {
-                style: 'float: left; width: 33%;',
+                classes: 'span4',
                 components: [{
                   kind: 'OB.UI.Clock',
                   classes: 'login-clock'
@@ -191,7 +193,7 @@
               }]
             }, {
               components: [{
-                style: 'float: left; width: 66%',
+                classes: 'span8',
                 components: [{
                   name: 'LoginBrowserNotSupported_P1_Lbl',
                   classes: 'login-browsernotsupported-content'
@@ -203,7 +205,8 @@
                   classes: 'login-browsernotsupported-content'
                 }]
               }, {
-                style: 'float: left; width: 33%; padding: 78px 0px 0px 0px',
+                classes: 'span4',
+                style: 'padding: 78px 0px 0px 0px',
                 components: [{
                   kind: 'OB.UI.Clock',
                   classes: 'login-clock'

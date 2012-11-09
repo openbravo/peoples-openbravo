@@ -63,4 +63,12 @@
     roundingmode = r;
   };
 
+  OB.DEC.toBigDecimal = function (a) {
+    return toBigDecimal(a);
+  };
+
+  OB.DEC.toNumber = function (a) {
+    return toNumber(a);
+  };
+
 }());

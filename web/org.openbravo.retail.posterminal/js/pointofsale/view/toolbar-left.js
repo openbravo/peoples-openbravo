@@ -62,11 +62,18 @@ enyo.kind({
   name: 'OB.UI.ButtonDelete',
   kind: 'OB.UI.ToolbarButton',
   icon: 'btn-icon btn-icon-delete',
+  events: {
+    onShowPopup: ''
+  },
   tap: function () {
     if (this.model.get('order').get('isPaid')) {
-      $('#modalConfirmClosePaidTicket').modal('show');
+      this.doShowPopup({
+        popup: 'modalConfirmClosePaidTicket'
+      });
     } else {
-      $('#modalConfirmReceiptDelete').modal('show');
+      this.doShowPopup({
+        popup: 'modalConfirmReceiptDelete'
+      });
     }
   },
   init: function (model) {

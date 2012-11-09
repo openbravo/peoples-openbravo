@@ -81,6 +81,7 @@ enyo.kind({
           style: 'padding: 0px 0px 0px 25px; width:100%; line-height: 140%;',
           components: [{
             classes: 'row-fluid',
+            style: 'clear: both;',
             components: [{
               classes: 'span4',
               content: OB.I18N.getLabel('OBPOS_LineDescription')
@@ -93,6 +94,7 @@ enyo.kind({
             }]
           }, {
             classes: 'row-fluid',
+            style: 'clear: both;',
             components: [{
               classes: 'span4',
               content: OB.I18N.getLabel('OBPOS_LineQuantity')
@@ -105,6 +107,7 @@ enyo.kind({
             }]
           }, {
             classes: 'row-fluid',
+            style: 'clear: both;',
             components: [{
               classes: 'span4',
               content: OB.I18N.getLabel('OBPOS_LinePrice')
@@ -117,6 +120,7 @@ enyo.kind({
             }]
           }, {
             classes: 'row-fluid',
+            style: 'clear: both;',
             components: [{
               classes: 'span4',
               content: OB.I18N.getLabel('OBPOS_LineDiscount')
@@ -129,6 +133,7 @@ enyo.kind({
             }]
           }, {
             classes: 'row-fluid',
+            style: 'clear: both;',
             components: [{
               classes: 'span4',
               content: OB.I18N.getLabel('OBPOS_LineTotal')

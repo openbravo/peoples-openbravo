@@ -210,6 +210,21 @@ enyo.kind({
     onTabChange: ''
   },
   tap: function () {
+    var receipt = this.model.get('order');
+    if (receipt.get('isQuotation')) {
+      if (receipt.get('hasbeenpaid') !== 'Y') {
+        receipt.prepareToSend(function () {
+          receipt.trigger('closed');
+          receipt.trigger('scan');
+        });
+      } else {
+        receipt.prepareToSend(function () {
+          receipt.trigger('scan');
+          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_QuotationClosed'));
+        });
+      }
+      return;
+    }
     if (this.model.get('order').get('isEditable') === false) {
       return true;
     }
@@ -235,6 +250,9 @@ enyo.kind({
   initComponents: function () {
     this.inherited(arguments);
     this.removeClass('btnlink-gray');
+  },
+  init: function (model) {
+    this.model = model
   },
   renderTotal: function (sender, event) {
     this.$.totalPrinter.renderTotal(event.newTotal);

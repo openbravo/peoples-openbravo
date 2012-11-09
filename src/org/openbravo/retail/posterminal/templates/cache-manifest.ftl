@@ -8,20 +8,15 @@ ${data.network}
 CACHE:
 # Libs
 ../../web/org.openbravo.client.kernel/js/BigDecimal-all-1.0.1.min.js
-../../web/org.openbravo.retail.posterminal/js/libs/less/less-1.3.0.min.js  
-../../web/org.openbravo.client.kernel/js/LAB.min.js  
+../../web/org.openbravo.client.kernel/js/LAB.min.js
 ../../web/org.openbravo.retail.posterminal/js/libs/jquery-1.7.2.js
 ../../web/org.openbravo.retail.posterminal/js/libs/underscore-1.3.3.js
 ../../web/org.openbravo.retail.posterminal/js/libs/backbone-0.9.2.js
 ../../web/org.openbravo.retail.posterminal/js/libs/core-min.js
 ../../web/org.openbravo.retail.posterminal/js/libs/sha1-min.js
-../../web/org.openbravo.retail.posterminal/js/libs/bootstrap/js/bootstrap-tab.js
-../../web/org.openbravo.retail.posterminal/js/libs/bootstrap/js/bootstrap-dropdown.js
-../../web/org.openbravo.retail.posterminal/js/libs/bootstrap/js/bootstrap-modal.js
-../../web/org.openbravo.retail.posterminal/js/libs/bootstrap/js/bootstrap-alert.js
-../../web/org.openbravo.retail.posterminal/js/libs/bootstrap/js/bootstrap-button.js
 ../../web/org.openbravo.retail.posterminal/js/libs/mbp-helper.js
 ../../web/org.openbravo.retail.posterminal/js/libs/enyo.js
+../../web/org.openbravo.retail.posterminal/js/libs/onyx/onyx.js
 
 # Boot code 
 ../../web/org.openbravo.client.application/js/utilities/ob-utilities-date.js
@@ -46,6 +41,13 @@ CACHE:
 ../../web/org.openbravo.retail.posterminal/js/model/order.js
 ../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=FinancialMgmtTaxRate&modelName=TaxRate&source=org.openbravo.retail.posterminal.master.TaxRate
 ../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingProductPrice&modelName=ProductPrice&source=org.openbravo.retail.posterminal.master.ProductPrice
+
+../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustment&modelName=Discount&source=org.openbravo.retail.posterminal.master.Discount
+../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustmentBusinessPartner&modelName=DiscountFilterBusinessPartner&source=org.openbravo.retail.posterminal.master.DiscountFilterBusinessPartner
+../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustmentBusinessPartnerGroup&modelName=DiscountFilterBusinessPartnerGroup&source=org.openbravo.retail.posterminal.master.DiscountFilterBusinessPartnerGroup
+../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustmentProduct&modelName=DiscountFilterProduct&source=org.openbravo.retail.posterminal.master.DiscountFilterProduct
+../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustmentProductCategory&modelName=DiscountFilterProductCategory&source=org.openbravo.retail.posterminal.master.DiscountFilterProductCategory
+
 ../../web/org.openbravo.retail.posterminal/res/printline.xml
 ../../web/org.openbravo.retail.posterminal/res/printreceipt.xml
 #eee

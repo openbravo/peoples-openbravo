@@ -36,9 +36,11 @@ import org.openbravo.model.ad.access.OrderLineTax;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.invoice.InvoiceLine;
+import org.openbravo.model.common.invoice.InvoiceLineOffer;
 import org.openbravo.model.common.invoice.InvoiceTax;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
+import org.openbravo.model.common.order.OrderLineOffer;
 import org.openbravo.model.financialmgmt.payment.FIN_OrigPaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
@@ -176,6 +178,10 @@ public class OrderGroupingProcessor {
       if (lineno % 500 == 0) {
         OBDal.getInstance().flush();
         OBDal.getInstance().getSession().clear();
+        paymentSchedule = OBDal.getInstance().get(FIN_PaymentSchedule.class,
+            paymentSchedule.getId());
+        origPaymentSchedule = OBDal.getInstance().get(Fin_OrigPaymentSchedule.class,
+            origPaymentSchedule.getId());
       }
     }
     finishInvoice(invoice, totalNetAmount, invoiceTaxes, paymentSchedule, origPaymentSchedule);
@@ -198,6 +204,7 @@ public class OrderGroupingProcessor {
     paymentScheduleInvoice.setAmount(BigDecimal.ZERO);
     paymentScheduleInvoice.setOutstandingAmount(BigDecimal.ZERO);
     paymentScheduleInvoice.setDueDate(new Date());
+    paymentScheduleInvoice.setExpectedDate(new Date());
     if (ModelProvider.getInstance().getEntity(FIN_PaymentSchedule.class).hasProperty("origDueDate")) {
       // This property is checked and set this way to force compatibility with both MP13, MP14
       // and
@@ -292,6 +299,16 @@ public class OrderGroupingProcessor {
     invoiceLine.setGoodsShipmentLine(getShipmentLine(orderLine));
 
     orderLine.setInvoicedQuantity(orderLine.getOrderedQuantity());
+
+    // Promotions. Loading all together as there shoudn't be many promotions per line
+    List<OrderLineOffer> promotions = orderLine.getOrderLineOfferList();
+    for (OrderLineOffer orderLinePromotion : promotions) {
+      InvoiceLineOffer promotion = OBProvider.getInstance().get(InvoiceLineOffer.class);
+      copyObject(orderLinePromotion, promotion);
+
+      promotion.setInvoiceLine(invoiceLine);
+      invoiceLine.getInvoiceLineOfferList().add(promotion);
+    }
 
     return invoiceLine;
   }

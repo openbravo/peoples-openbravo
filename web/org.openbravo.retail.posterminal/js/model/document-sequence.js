@@ -16,20 +16,22 @@
     entityName: '',
     source: '',
     local: true,
-    properties: ['id', 'posSearchKey', 'documentSequence'],
+    properties: ['id', 'posSearchKey', 'documentSequence', 'quotationDocumentSequence'],
     propertyMap: {
       'id': 'c_document_sequence_id',
       'posSearchKey': 'pos_search_key',
-      'documentSequence': 'document_sequence'
+      'documentSequence': 'document_sequence',
+      'quotationDocumentSequence': 'quotation_document_sequence'
     },
 
     defaults: {
-      documentSequence: 0
+      documentSequence: 0,
+      quotationDocumentSequence: 0
     },
 
-    createStatement: 'CREATE TABLE IF NOT EXISTS c_document_sequence (c_document_sequence_id TEXT PRIMARY KEY, pos_search_key TEXT, document_sequence NUMBER)',
+    createStatement: 'CREATE TABLE IF NOT EXISTS c_document_sequence (c_document_sequence_id TEXT PRIMARY KEY, pos_search_key TEXT, document_sequence NUMBER, quotation_document_sequence NUMBER)',
     dropStatement: 'DROP TABLE IF EXISTS c_document_sequence',
-    insertStatement: 'INSERT INTO c_document_sequence(c_document_sequence_id, pos_search_key, document_sequence) VALUES (?,?,?)'
+    insertStatement: 'INSERT INTO c_document_sequence(c_document_sequence_id, pos_search_key, document_sequence, quotation_document_sequence) VALUES (?,?,?,?)'
   });
 
   var DocumentSequenceList = Backbone.Collection.extend({

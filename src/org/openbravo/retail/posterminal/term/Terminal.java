@@ -11,6 +11,7 @@ package org.openbravo.retail.posterminal.term;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.dal.core.DalUtil;
+import org.openbravo.retail.posterminal.OBPOSApplications;
 import org.openbravo.retail.posterminal.POSUtils;
 import org.openbravo.retail.posterminal.ProcessHQLQuery;
 import org.openbravo.service.json.JsonConstants;
@@ -26,7 +27,15 @@ public class Terminal extends ProcessHQLQuery {
   protected String getQuery(JSONObject jsonsent) throws JSONException {
     String POSSearchKey = jsonsent.getJSONObject("parameters").getJSONObject("terminal")
         .getString("value");
-    int lastDocumentNumber = POSUtils.getLastDocumentNumberForPOS(POSSearchKey);
+    OBPOSApplications pOSTerminal = POSUtils.getTerminal(POSSearchKey);
+    int lastDocumentNumber = POSUtils.getLastDocumentNumberForPOS(POSSearchKey, pOSTerminal
+        .getObposTerminaltype().getDocumentType().getId(), pOSTerminal.getOrderdocnoPrefix());
+    int lastQuotationDocumentNumber = 0;
+    if (pOSTerminal.getObposTerminaltype().getDocumentTypeForQuotations() != null) {
+      lastQuotationDocumentNumber = POSUtils.getLastDocumentNumberForPOS(POSSearchKey, pOSTerminal
+          .getObposTerminaltype().getDocumentTypeForQuotations().getId(),
+          pOSTerminal.getQuotationdocnoPrefix());
+    }
     final org.openbravo.model.pricing.pricelist.PriceList pricesList = POSUtils
         .getPriceListByTerminal(POSSearchKey);
 
@@ -35,7 +44,7 @@ public class Terminal extends ProcessHQLQuery {
         + getIdentifierAlias("organization")
         + ", pos.client.id as client, pos.client.name as "
         + getIdentifierAlias("client")
-        + ", pos.hardwareurl as hardwareurl, pos.scaleurl as scaleurl, pos.obposTerminaltype.openDrawer as drawerpreference, "
+        + ", pos.hardwareurl as hardwareurl, pos.scaleurl as scaleurl, "
         + "'"
         + pricesList.getId()
         + "' as priceList, '"
@@ -45,10 +54,6 @@ public class Terminal extends ProcessHQLQuery {
         + pricesList.getCurrency().getIdentifier()
         + "' as "
         + getIdentifierAlias("currency")
-        + ", pos.obposTerminaltype.documentType.id as documentType, pos.obposTerminaltype.documentType.name as "
-        + getIdentifierAlias("documentType")
-        + ", pos.obposTerminaltype.documentTypeForReturns.id as documentTypeForReturns, pos.obposTerminaltype.documentTypeForReturns.name as "
-        + getIdentifierAlias("documentTypeForReturns")
         + ", pos.organization.obretcoDbpIrulesid as defaultbp_invoiceterm "
         + ", pos.organization.obretcoDbpPtermid.id as defaultbp_paymentterm "
         + ", pos.organization.obretcoDbpPmethodid.id as defaultbp_paymentmethod "
@@ -58,11 +63,14 @@ public class Terminal extends ProcessHQLQuery {
         + ", pos.organization.obretcoShowtaxid as bp_showtaxid "
         + ", pos.organization.obretcoMWarehouse.id as warehouse "
         + ", pos.orderdocnoPrefix as docNoPrefix "
+        + ", pos.quotationdocnoPrefix as quotationDocNoPrefix "
+        + ", pos.obposTerminaltype.allowpayoncredit as allowpayoncredit "
         + ", "
         + lastDocumentNumber
-        + " as lastDocumentNumber, pos.obposTerminaltype.minutestorefreshdatatotal as minutestorefreshdatatotal, "
-        + " pos.obposTerminaltype.minutestorefreshdatainc as minutestorefreshdatainc"
-        + " from OBPOS_Applications AS pos where pos.$readableCriteria and searchKey = :terminal";
+        + " as lastDocumentNumber, "
+        + lastQuotationDocumentNumber
+        + " as lastQuotationDocumentNumber, postype as terminalType"
+        + " from OBPOS_Applications AS pos, OBPOS_TerminalType as postype where pos.$readableCriteria and pos.searchKey = :terminal";
   }
 
   private String getIdentifierAlias(String propertyName) {

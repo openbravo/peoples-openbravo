@@ -221,7 +221,7 @@ enyo.kind({
     }
 
     if (params.productName) {
-      criteria._identifier = {
+      criteria._filter = {
         operator: OB.Dal.CONTAINS,
         value: params.productName
       };

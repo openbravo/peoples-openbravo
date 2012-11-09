@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, enyo */
+/*global OB, enyo, $ */
 
 // Cash Management main window view
 enyo.kind({
@@ -15,6 +15,9 @@ enyo.kind({
   kind: 'OB.UI.WindowView',
   windowmodel: OB.OBPOSCashMgmt.Model.CashManagement,
   tag: 'section',
+  events: {
+    onShowPopup: ''
+  },
   components: [{
     classes: 'row',
     components: [
@@ -39,16 +42,22 @@ enyo.kind({
       components: [{
         kind: 'OB.OBPOSCashMgmt.UI.ModalDepositEvents',
         header: OB.I18N.getLabel('OBPOS_SelectDepositDestinations'),
-        myId: 'modaldepositevents',
+        name: 'modaldepositevents',
         type: 'DataDepositEvents'
       }, {
         kind: 'OB.OBPOSCashMgmt.UI.ModalDepositEvents',
         header: OB.I18N.getLabel('OBPOS_SelectDropDestinations'),
-        myId: 'modaldropevents',
+        name: 'modaldropevents',
         type: 'DataDropEvents'
-
       }, {
-        kind: OB.UI.ModalCancel
+        kind: OB.UI.ModalCancel,
+        name: 'modalCancel'
+      }, {
+        kind: 'OB.OBPOSCashMgmt.UI.modalFinished',
+        name: 'modalFinishedMgmt'
+      }, {
+        kind: 'OB.OBPOSCashMgmt.UI.modalFinishedWrongly',
+        name: 'modalFinishedWronglyMgmt'
       }]
     }]
   }],
@@ -68,6 +77,19 @@ enyo.kind({
     dropEvent.on('click', function (model) {
       this.model.depsdropstosend.trigger('paymentDone', model, this.currentPayment);
       delete this.currentPayment;
+    }, this);
+
+    //finished
+    this.model.on('change:finished', function () {
+      this.doShowPopup({
+        popup: 'modalFinishedMgmt'
+      });
+    }, this);
+    //finishedWrongly
+    this.model.on('change:finishedWrongly', function () {
+      this.doShowPopup({
+        popup: 'modalFinishedWronglyMgmt'
+      });
     }, this);
   }
 });

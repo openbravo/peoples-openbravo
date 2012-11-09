@@ -36,23 +36,32 @@ enyo.kind({
       }]
     }]
   }, {
-    kind: 'OB.UI.Button',
-    classes: 'btnlink btnlink-gray modal-dialog-content-button',
-    style: 'float: right;',
-    content: 'OK',
-    tap: function () {
-      this.owner.receipt.addPayment(new OB.Model.PaymentLine({
-        'kind': this.owner.key,
-        'name': this.owner.paymentType,
-        'amount': this.owner.paymentAmount
-      }));
-
-      $('#modalp').modal('hide');
-    }
+    kind: 'OB.UI.MockPayment_OkButton'
   }],
   initComponents: function () {
     this.inherited(arguments);
     this.$.paymenttype.setContent(this.paymentType);
     this.$.paymentamount.setContent(OB.I18N.formatCurrency(this.paymentAmount));
+  }
+});
+
+enyo.kind({
+  kind: 'OB.UI.Button',
+  name: 'OB.UI.MockPayment_OkButton',
+  classes: 'btnlink btnlink-gray modal-dialog-button',
+  style: 'float: right;',
+  content: OB.I18N.getLabel('OBPOS_LblOk'),
+  isApplyButton: true,
+  events: {
+    onHideThisPopup: ''
+  },
+  tap: function () {
+    this.owner.receipt.addPayment(new OB.Model.PaymentLine({
+      'kind': this.owner.key,
+      'name': this.owner.paymentType,
+      'amount': this.owner.paymentAmount
+    }));
+
+    this.doHideThisPopup();
   }
 });

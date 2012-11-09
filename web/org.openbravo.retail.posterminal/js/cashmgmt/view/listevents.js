@@ -13,8 +13,7 @@
 enyo.kind({
   name: 'OB.OBPOSCashMgmt.UI.ModalDepositEvents',
   kind: 'OB.UI.Modal',
-  modalClass: 'modal-dialog',
-  bodyClass: 'modal-dialog-body',
+  topPosition: '125px',
   body: {
     kind: 'OB.OBPOSCashMgmt.UI.ListEvents'
   },
@@ -35,6 +34,7 @@ enyo.kind({
         //tableview
         name: 'eventList',
         kind: 'OB.UI.Table',
+        style: 'overflow: auto; max-height: 600px',
         renderLine: 'OB.OBPOSCashMgmt.UI.ListEventLine',
         renderEmpty: 'OB.UI.RenderEmpty'
       }]
@@ -50,12 +50,19 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSCashMgmt.UI.ListEventLine',
   kind: 'OB.UI.SelectButton',
-  style: 'background-color:#dddddd;  border: 1px solid #ffffff;',
+  style: 'height: 60px; background-color: #dddddd; border: 1px solid #ffffff;',
+  events: {
+    onHideThisPopup: ''
+  },
   components: [{
     name: 'line',
     style: 'padding: 1px 0px 1px 5px;'
 
   }],
+  tap: function () {
+    this.inherited(arguments);
+    this.doHideThisPopup();
+  },
 
   create: function () {
     this.inherited(arguments);

@@ -47,11 +47,11 @@
               rate = new BigDecimal(String(taxRate.get('rate')));
               rate = rate.divide(new BigDecimal('100'), 20, BigDecimal.prototype.ROUND_UNNECESSARY);
 
-              pricenet = OB.DEC.div(element.get('price'), rate.add(new BigDecimal('1')));
+              pricenet = OB.DEC.div(element.get('grossUnitPrice') || element.get('price'), rate.add(new BigDecimal('1')));
 
               net = OB.DEC.mul(pricenet, element.get('qty'));
-              amount = OB.DEC.sub(element.get('gross'), net);
-              gross = element.get('gross');
+              gross = element.get('lineGrossAmount') || element.get('gross');
+              amount = OB.DEC.sub(gross, net);
 
               element.set('tax', taxId);
               element.set('taxAmount', amount);

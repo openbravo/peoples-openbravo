@@ -12,9 +12,8 @@
 enyo.kind({
   kind: 'OB.UI.ModalAction',
   name: 'OB.UI.ModalCancel',
-  attributes: {
-    id: 'modalCancel'
-  },
+  popup: 'modalCancel',
+
   header: OB.I18N.getLabel('OBPOS_LblCancel'),
   bodyContent: {
     tag: 'div',
@@ -24,26 +23,43 @@ enyo.kind({
     tag: 'div',
     components: [{
       //OK button
-      kind: 'OB.UI.Button',
-      classes: 'btnlink btnlink-gray modal-dialog-content-button',
-      content: OB.I18N.getLabel('OBPOS_LblOk'),
-      tap: function () {
-        $('#modalCancel').modal('hide');
-        OB.POS.navigate('retail.pointofsale');
-      }
+      kind: 'OB.UI.ModalCancel_OkButton'
     }, {
       //Cancel button	
-      kind: 'OB.UI.Button',
-      classes: 'btnlink btnlink-gray modal-dialog-content-button',
-      attributes: {
-        'data-dismiss': 'modal'
-      },
-      content: OB.I18N.getLabel('OBPOS_LblCancel')
+      kind: 'OB.UI.ModalCancel_CancelButton'
     }]
-  },
+  }
+});
 
-  makeId: function () {
-    // ensure id is fixed
-    return 'modalCancel';
+enyo.kind({
+  kind: 'OB.UI.Button',
+  name: 'OB.UI.ModalCancel_OkButton',
+  classes: 'btnlink btnlink-gray modal-dialog-button',
+  content: OB.I18N.getLabel('OBPOS_LblOk'),
+  isApplyButton: true,
+  popup: 'modalCancel',
+  events: {
+    onHideThisPopup: ''
+  },
+  tap: function () {
+    this.doHideThisPopup();
+    OB.POS.navigate('retail.pointofsale');
+  }
+});
+
+enyo.kind({
+  kind: 'OB.UI.Button',
+  name: 'OB.UI.ModalCancel_CancelButton',
+  classes: 'btnlink btnlink-gray modal-dialog-button',
+  content: OB.I18N.getLabel('OBPOS_LblCancel'),
+  attributes: {
+    'onEnterTap': 'hide'
+  },
+  popup: 'modalCancel',
+  events: {
+    onHideThisPopup: ''
+  },
+  tap: function () {
+    this.doHideThisPopup();
   }
 });

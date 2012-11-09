@@ -17,8 +17,17 @@ enyo.kind({
   tag: 'section',
   handlers: {
     onAddProduct: 'addProductToOrder',
+    onViewProductDetails: 'viewProductDetails',
+    onCloseProductDetailsView: 'showOrder',
     onCancelReceiptToInvoice: 'cancelReceiptToInvoice',
     onReceiptToInvoice: 'receiptToInvoice',
+    onCreateQuotation: 'createQuotation',
+    onCreateOrderFromQuotation: 'createOrderFromQuotation',
+    onShowCreateOrderPopup: 'showCreateOrderPopup',
+    onReactivateQuotation: 'reactivateQuotation',
+    onShowReactivateQuotation: 'showReactivateQuotation',
+    onRejectQuotation: 'rejectQuotation',
+    onQuotations: 'quotations',
     onShowReturnText: 'showReturnText',
     onAddNewOrder: 'addNewOrder',
     onDeleteOrder: 'deleteCurrentOrder',
@@ -33,14 +42,21 @@ enyo.kind({
     onBackOffice: 'backOffice',
     onPaidReceipts: 'paidReceipts',
     onChangeSubWindow: 'changeSubWindow',
+    onShowLeftSubWindow: 'showLeftSubWindow',
+    onCloseLeftSubWindow: 'showOrder',
     onSetProperty: 'setProperty',
     onSetLineProperty: 'setLineProperty',
+    onSetReceiptsList: 'setReceiptsList',
     onShowReceiptProperties: 'showModalReceiptProperties'
+  },
+  events: {
+    onShowPopup: ''
   },
   components: [{
     name: 'otherSubWindowsContainer',
     components: [{
-      kind: 'OB.OBPOSPointOfSale.UI.customers.ModalConfigurationRequiredForCreateCustomers'
+      kind: 'OB.OBPOSPointOfSale.UI.customers.ModalConfigurationRequiredForCreateCustomers',
+      name: 'modalConfigurationRequiredForCreateNewCustomers'
     }, {
       kind: 'OB.OBPOSPointOfSale.UI.customers.cas',
       name: 'customerAdvancedSearch'
@@ -55,21 +71,53 @@ enyo.kind({
     name: 'mainSubWindow',
     isMainSubWindow: true,
     components: [{
-      kind: 'OB.UI.ModalDeleteReceipt'
+      kind: 'OB.UI.ModalDeleteReceipt',
+      name: 'modalConfirmReceiptDelete'
     }, {
-      kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalClosePaidReceipt'
+      kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalClosePaidReceipt',
+      name: 'modalConfirmClosePaidTicket'
     }, {
-      kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalProductCannotBeGroup'
+      kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalProductCannotBeGroup',
+      name: 'modalProductCannotBeGroup'
     }, {
-      kind: 'OB.UI.Modalnoteditableorder'
+      kind: 'OB.UI.Modalnoteditableorder',
+      name: 'modalNotEditableOrder'
     }, {
-      kind: 'OB.UI.ModalBusinessPartners'
+      kind: 'OB.UI.ModalBusinessPartners',
+      name: "modalcustomer"
     }, {
-      kind: 'OB.UI.ModalPaidReceipts'
+      kind: 'OB.UI.ModalReceipts',
+      name: 'modalreceipts'
     }, {
-      kind: 'OB.UI.ModalReceiptPropertiesImpl'
+      kind: 'OB.UI.ModalPaidReceipts',
+      name: 'modalPaidReceipts'
     }, {
-      kind: 'OB.UI.ModalReceiptLinesPropertiesImpl'
+      kind: 'OB.UI.ModalCreateOrderFromQuotation',
+      name: 'modalCreateOrderFromQuotation'
+    }, {
+      kind: 'OB.UI.ModalReactivateQuotation',
+      name: 'modalReactivateQuotation'
+    }, {
+      kind: 'OB.UI.ModalReceiptPropertiesImpl',
+      name: 'receiptPropertiesDialog'
+    }, {
+      kind: 'OB.UI.ModalReceiptLinesPropertiesImpl',
+      name: "receiptLinesPropertiesDialog"
+    }, {
+      kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalConfigurationRequiredForCrossStore',
+      name: 'modalConfigurationRequiredForCrossStore'
+    }, {
+      kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalStockInStore',
+      name: 'modalLocalStock'
+    }, {
+      kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalStockInOtherStores',
+      name: 'modalStockInOtherStores'
+    }, {
+      kind: 'OB.OBPOSPointOfSale.UI.Modals.modalEnoughCredit',
+      name: 'modalEnoughCredit'
+    }, {
+      kind: 'OB.OBPOSPointOfSale.UI.Modals.modalNotEnoughCredit',
+      name: 'modalNotEnoughCredit'
     }, {
       classes: 'row',
       style: 'margin-bottom: 5px;',
@@ -84,6 +132,12 @@ enyo.kind({
       components: [{
         kind: 'OB.OBPOSPointOfSale.UI.ReceiptView',
         name: 'receiptview'
+      }, {
+        name: 'leftSubWindowsContainer',
+        components: [{
+          kind: 'OB.OBPOSPointOfSale.UI.ProductDetailsView',
+          name: 'productdetailsview'
+        }]
       }, {
         classes: 'span6',
         components: [{
@@ -110,9 +164,26 @@ enyo.kind({
     }
   },
   paidReceipts: function (inSender, inEvent) {
-    $('#modalPaidReceipts').modal('show');
+    this.$.modalPaidReceipts.setParams({
+      isQuotation: false
+    });
+    this.$.modalPaidReceipts.waterfall('onClearAction');
+    this.doShowPopup({
+      popup: 'modalPaidReceipts'
+    });
     return true;
   },
+
+  quotations: function (inSender, inEvent) {
+    this.$.modalPaidReceipts.setParams({
+      isQuotation: true
+    });
+    this.$.modalPaidReceipts.waterfall('onClearAction');
+    this.doShowPopup({
+      popup: 'modalPaidReceipts'
+    });
+  },
+
   backOffice: function (inSender, inEvent) {
     if (inEvent.url) {
       window.open(inEvent.url, '_blank');
@@ -132,16 +203,77 @@ enyo.kind({
   },
   addProductToOrder: function (inSender, inEvent) {
     if (this.model.get('order').get('isEditable') === false) {
-      $("#modalNotEditableOrder").modal("show");
+      this.doShowPopup({
+        popup: 'modalNotEditableOrder'
+      });
       return true;
     }
+    if (inEvent.ignoreStockTab) {
+      this.showOrder(inSender, inEvent);
+    } else {
+      if (inEvent.product.get('showstock') && OB.POS.modelterminal.get('connectedToERP')) {
+        inEvent.leftSubWindow = OB.OBPOSPointOfSale.UICustomization.stockLeftSubWindow;
+        this.showLeftSubWindow(inSender, inEvent);
+        return true;
+      } else {
+        this.showOrder(inSender, inEvent);
+      }
+    }
+
     this.model.get('order').addProduct(inEvent.product);
     this.model.get('orderList').saveCurrent();
     return true;
   },
+  showOrder: function (inSender, inEvent) {
+    var allHidden = true;
+    enyo.forEach(this.$.leftSubWindowsContainer.getControls(), function (component) {
+      if (component.showing === true) {
+        if (component.mainBeforeSetHidden) {
+          if (!component.mainBeforeSetHidden(inEvent)) {
+            allHidden = false;
+            return false;
+          } else {
+            component.setShowing(false);
+          }
+        }
+      }
+    }, this);
+    if (allHidden) {
+      this.$.receiptview.setShowing(true);
+    }
+  },
+  showLeftSubWindow: function (inSender, inEvent) {
+    if (this.$[inEvent.leftSubWindow]) {
+      if (this.$[inEvent.leftSubWindow].mainBeforeSetShowing) {
+        var allHidden = true;
+        enyo.forEach(this.$.leftSubWindowsContainer.getControls(), function (component) {
+          if (component.showing === true) {
+            if (component.mainBeforeSetHidden) {
+              if (!component.mainBeforeSetHidden(inEvent)) {
+                allHidden = false;
+                return false;
+              }
+            }
+          }
+        }, this);
+        if (this.$[inEvent.leftSubWindow].mainBeforeSetShowing(inEvent) && allHidden) {
+          this.$.receiptview.setShowing(false);
+          this.$[inEvent.leftSubWindow].setShowing(true);
+        }
+      }
+    }
+  },
+  viewProductDetails: function (inSender, inEvent) {
+    this.$.receiptview.applyStyle('display', 'none');
+    this.$.productdetailsview.updateProduct(inEvent.product);
+    this.$.productdetailsview.applyStyle('display', 'inline');
+    return true;
+  },
   changeBusinessPartner: function (inSender, inEvent) {
     if (this.model.get('order').get('isEditable') === false) {
-      $("#modalNotEditableOrder").modal("show");
+      this.doShowPopup({
+        popup: 'modalNotEditableOrder'
+      });
       return true;
     }
     this.model.get('order').setBPandBPLoc(inEvent.businessPartner, false, true);
@@ -150,16 +282,53 @@ enyo.kind({
   },
   receiptToInvoice: function () {
     if (this.model.get('order').get('isEditable') === false) {
-      $("#modalNotEditableOrder").modal("show");
+      this.doShowPopup({
+        popup: 'modalNotEditableOrder'
+      });
       return true;
     }
     this.model.get('order').setOrderInvoice();
     this.model.get('orderList').saveCurrent();
     return true;
   },
+  createQuotation: function () {
+    this.model.get('orderList').addNewQuotation();
+    return true;
+  },
+
+  showCreateOrderPopup: function () {
+    this.doShowPopup({
+      popup: 'modalCreateOrderFromQuotation'
+    });
+  },
+
+  createOrderFromQuotation: function () {
+    this.model.get('order').createOrderFromQuotation();
+    this.model.get('orderList').saveCurrent();
+    return true;
+  },
+
+  showReactivateQuotation: function () {
+    this.doShowPopup({
+      popup: 'modalReactivateQuotation'
+    });
+  },
+
+  reactivateQuotation: function () {
+    this.model.get('order').reactivateQuotation();
+    this.model.get('orderList').saveCurrent();
+    return true;
+  },
+  rejectQuotation: function () {
+    this.model.get('order').rejectQuotation();
+    this.model.get('orderList').saveCurrent();
+    return true;
+  },
   showReturnText: function (inSender, inEvent) {
     if (this.model.get('order').get('isEditable') === false) {
-      $("#modalNotEditableOrder").modal("show");
+      this.doShowPopup({
+        popup: 'modalNotEditableOrder'
+      });
       return true;
     }
     this.model.get('order').setOrderTypeReturn();
@@ -168,7 +337,9 @@ enyo.kind({
   },
   cancelReceiptToInvoice: function (inSender, inEvent) {
     if (this.model.get('order').get('isEditable') === false) {
-      $("#modalNotEditableOrder").modal("show");
+      this.doShowPopup({
+        popup: 'modalNotEditableOrder'
+      });
       return true;
     }
     this.model.get('order').resetOrderInvoice();
@@ -190,7 +361,9 @@ enyo.kind({
   },
   deleteLine: function (sender, event) {
     if (this.model.get('order').get('isEditable') === false) {
-      $("#modalNotEditableOrder").modal("show");
+      this.doShowPopup({
+        popup: 'modalNotEditableOrder'
+      });
       return true;
     }
     var line = event.line,
@@ -202,10 +375,14 @@ enyo.kind({
   },
   editLine: function (sender, event) {
     if (this.model.get('order').get('isEditable') === false) {
-      $("#modalNotEditableOrder").modal("show");
+      this.doShowPopup({
+        popup: 'modalNotEditableOrder'
+      });
       return true;
     }
-    $("#receiptLinesPropertiesDialog").modal('show');
+    this.doShowPopup({
+      popup: 'receiptLinesPropertiesDialog'
+    });
   },
   exactPayment: function (sender, event) {
     this.$.keyboard.execStatelessCommand('cashexact');
@@ -223,13 +400,20 @@ enyo.kind({
   changeSubWindow: function (sender, event) {
     this.model.get('subWindowManager').set('currentWindow', event.newWindow);
   },
+  setReceiptsList: function (inSender, inEvent) {
+    this.$.modalreceipts.setReceiptsList(inEvent.orderList);
+  },
   showModalReceiptProperties: function (inSender, inEvent) {
-    $('#receiptPropertiesDialog').modal('show');
+    this.doShowPopup({
+      popup: 'receiptPropertiesDialog'
+    });
     return true;
   },
   setProperty: function (inSender, inEvent) {
     if (this.model.get('order').get('isEditable') === false) {
-      $("#modalNotEditableOrder").modal("show");
+      this.doShowPopup({
+        popup: 'modalNotEditableOrder'
+      });
       return true;
     }
     this.model.get('order').setProperty(inEvent.property, inEvent.value);
@@ -238,7 +422,9 @@ enyo.kind({
   },
   setLineProperty: function (inSender, inEvent) {
     if (this.model.get('order').get('isEditable') === false) {
-      $("#modalNotEditableOrder").modal("show");
+      this.doShowPopup({
+        popup: 'modalNotEditableOrder'
+      });
       return true;
     }
     var line = inEvent.line,
@@ -262,33 +448,41 @@ enyo.kind({
         });
       }
 
-      //TODO backbone route
-      var showNewSubWindow = false;
+      var showNewSubWindow = false,
+          currentWindowClosed = true;
       if (this.$[changedModel.get('currentWindow').name]) {
         if (!changedModel.get('currentWindow').params) {
           changedModel.get('currentWindow').params = {};
         }
         changedModel.get('currentWindow').params.caller = changedModel.previousAttributes().currentWindow.name;
         if (this.$[changedModel.previousAttributes().currentWindow.name].mainBeforeClose) {
-          this.$[changedModel.previousAttributes().currentWindow.name].mainBeforeClose(changedModel.get('currentWindow').name);
+          currentWindowClosed = this.$[changedModel.previousAttributes().currentWindow.name].mainBeforeClose(changedModel.get('currentWindow').name);
         }
-        if (this.$[changedModel.get('currentWindow').name].mainBeforeSetShowing) {
-          showNewSubWindow = this.$[changedModel.get('currentWindow').name].mainBeforeSetShowing(changedModel.get('currentWindow').params);
-          if (showNewSubWindow) {
-            this.$[changedModel.previousAttributes().currentWindow.name].setShowing(false);
-            this.$[changedModel.get('currentWindow').name].setShowing(true);
+        if (currentWindowClosed) {
+          if (this.$[changedModel.get('currentWindow').name].mainBeforeSetShowing) {
+            showNewSubWindow = this.$[changedModel.get('currentWindow').name].mainBeforeSetShowing(changedModel.get('currentWindow').params);
+            if (showNewSubWindow) {
+              this.$[changedModel.previousAttributes().currentWindow.name].setShowing(false);
+              this.$[changedModel.get('currentWindow').name].setShowing(true);
+              if (this.$[changedModel.get('currentWindow').name].mainAfterShow) {
+                this.$[changedModel.get('currentWindow').name].mainAfterShow();
+              }
+            } else {
+              restorePreviousState(this.model.get('subWindowManager'), changedModel);
+            }
           } else {
-            restorePreviousState(this.model.get('subWindowManager'), changedModel);
+            if (this.$[changedModel.get('currentWindow').name].isMainSubWindow) {
+              this.$[changedModel.previousAttributes().currentWindow.name].setShowing(false);
+              this.$[changedModel.get('currentWindow').name].setShowing(true);
+              $("#focuskeeper").focus();
+            } else {
+              //developers helps
+              //console.log("Error! A subwindow must inherits from OB.UI.subwindow -> restore previous state");
+              restorePreviousState(this.model.get('subWindowManager'), changedModel);
+            }
           }
         } else {
-          if (this.$[changedModel.get('currentWindow').name].isMainSubWindow) {
-            this.$[changedModel.previousAttributes().currentWindow.name].setShowing(false);
-            this.$[changedModel.get('currentWindow').name].setShowing(true);
-          } else {
-            //developers helps
-            //console.log("Error! A subwindow must inherits from OB.UI.subwindow -> restore previous state");
-            restorePreviousState(this.model.get('subWindowManager'), changedModel);
-          }
+          restorePreviousState(this.model.get('subWindowManager'), changedModel);
         }
       } else {
         //developers helps
@@ -306,6 +500,9 @@ enyo.kind({
     this.inherited(arguments);
   }
 });
+
+OB.OBPOSPointOfSale.UICustomization = OB.OBPOSPointOfSale.UICustomization || {};
+OB.OBPOSPointOfSale.UICustomization.stockLeftSubWindow = 'productdetailsview';
 
 OB.POS.registerWindow({
   windowClass: OB.OBPOSPointOfSale.UI.PointOfSale,

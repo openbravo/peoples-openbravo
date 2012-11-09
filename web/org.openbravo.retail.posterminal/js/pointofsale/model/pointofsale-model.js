@@ -15,7 +15,7 @@ OB.OBPOSPointOfSale.UI = OB.OBPOSPointOfSale.UI || {};
 
 //Window model
 OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
-  models: [OB.Model.TaxRate, OB.Model.Product, OB.Model.ProductPrice, OB.Model.ProductCategory, OB.Model.BusinessPartner, OB.Model.Order, OB.Model.DocumentSequence, OB.Model.ChangedBusinessPartners],
+  models: [OB.Model.TaxRate, OB.Model.Product, OB.Model.ProductPrice, OB.Model.ProductCategory, OB.Model.BusinessPartner, OB.Model.Order, OB.Model.DocumentSequence, OB.Model.ChangedBusinessPartners, OB.Model.Discount, OB.Model.DiscountFilterBusinessPartner, OB.Model.DiscountFilterBusinessPartnerGroup, OB.Model.DiscountFilterProduct, OB.Model.DiscountFilterProductCategory],
 
   loadUnpaidOrders: function () {
     // Shows a modal window with the orders pending to be paid
@@ -64,11 +64,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
           order.set('isbeingretriggered', 'Y');
         });
         successCallback = function () {
-          $('.alert:contains("' + OB.I18N.getLabel('OBPOS_ProcessPendingOrders') + '")').alert('close');
           OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgSuccessProcessOrder'));
         };
         errorCallback = function () {
-          $('.alert:contains("' + OB.I18N.getLabel('OBPOS_ProcessPendingOrders') + '")').alert('close');
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorProcessOrder'));
         };
         OB.UTIL.showAlert.display(OB.I18N.getLabel('OBPOS_ProcessPendingOrders'), OB.I18N.getLabel('OBPOS_Info'));
@@ -137,7 +135,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
     this.processChangedCustomers();
 
     receipt.on('paymentDone', function () {
-      receipt.calculateTaxes(function () {
+      receipt.prepareToSend(function () {
         receipt.trigger('closed');
         receipt.trigger('print'); // to guaranty execution order
         orderList.deleteCurrent();
@@ -150,5 +148,27 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
 
     this.printReceipt = new OB.OBPOSPointOfSale.Print.Receipt(receipt);
     this.printLine = new OB.OBPOSPointOfSale.Print.ReceiptLine(receipt);
+
+    // Listening events that cause a discount recalculation
+    receipt.get('lines').on('add change:qty change:price', function (line) {
+      if (!receipt.get('isEditable')) {
+        return;
+      }
+      OB.Model.Discounts.applyPromotions(receipt, line);
+    }, this);
+
+    receipt.get('lines').on('remove', function () {
+      if (!receipt.get('isEditable')) {
+        return;
+      }
+      OB.Model.Discounts.applyPromotions(receipt);
+    });
+
+    receipt.on('change:bp', function (line) {
+      if (!receipt.get('isEditable')) {
+        return;
+      }
+      OB.Model.Discounts.applyPromotions(receipt);
+    }, this);
   }
 });

@@ -89,6 +89,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "model/terminal",
         "model/user",
         "model/changedbusinesspartners",
+        "model/executor",
         "components/commonbuttons",
         "components/table",
         "components/scrollabletable",
@@ -98,6 +99,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/modalonline",
         "components/modalcancel",
         "components/subwindow",
+        "components/leftsubwindow",
         "components/windowview",
         "components/modalreceiptproperties",
         "components/modalreceiptlineproperties",
@@ -126,12 +128,18 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/menu",
         // Old Tickets
         "components/modalpaidreceipts",
+        // Quotations
+        "components/modalcreateorderfromquotation",
+        "components/modalreactivatequotation",
 
         // Point of sale
         "pointofsale/model/pointofsale-print",
         "pointofsale/model/pointofsale-model",
+        "pointofsale/model/localstock",
+        "pointofsale/model/otherstoresstock",
         "pointofsale/view/pointofsale",
         "pointofsale/view/ps-receiptview",
+        "pointofsale/view/ps-productdetailsview",
         "pointofsale/view/toolbar-left",
         "pointofsale/view/toolbar-right",
         "pointofsale/view/scan",
@@ -145,8 +153,12 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "pointofsale/view/subwindows/customers/editcreatecustomerform",
         "pointofsale/view/subwindows/customers/customerdetailview",
         // Point of sale modals
+        "pointofsale/view/modals/modalstockinstore",
+        "pointofsale/view/modals/modalstockinotherstore",
         "pointofsale/view/modals/modalconfirmclosepaidticket",
         "pointofsale/view/modals/modalproductcannotbegroup",
+        "pointofsale/view/modals/modalwarehousesrequired",
+        "pointofsale/view/modals/modalcreditsales",
 
         // Cash Management window
         "cashmgmt/model/cashmgmt-print", "cashmgmt/model/cashmgmt-model",
@@ -156,6 +168,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "cashmgmt/view/cashmgmtinfo",
         "cashmgmt/view/listdepositsdrops",
         "cashmgmt/view/cashmgmt",
+
+        "cashmgmt/components/cashmgmt-modals",
 
         // Cash Up window
         "closecash/model/cashup-print", "closecash/model/cashup-model", "closecash/view/closecash",
@@ -168,8 +182,12 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         // Core resources
         "../../org.openbravo.client.application/js/utilities/ob-utilities-number",
         "../../org.openbravo.client.application/js/utilities/ob-utilities-date",
+
         // Payment providers
-        "components/mockpayments" };
+        "components/mockpayments",
+
+        // Discounts
+        "model/discounts" };
 
     for (String resource : resourceDependency) {
       globalResources.add(createComponentResource(ComponentResourceType.Static, prefix + resource

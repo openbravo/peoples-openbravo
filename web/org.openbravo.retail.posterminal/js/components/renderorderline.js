@@ -45,6 +45,28 @@ enyo.kind({
     this.$.quantity.setContent(this.model.printQty());
     this.$.price.setContent(this.model.printPrice());
     this.$.gross.setContent(this.model.printGross());
+    if (this.model.get('promotions')) {
+      enyo.forEach(this.model.get('promotions'), function (d) {
+        if (d.hidden) {
+          // continue
+          return;
+        }
+        this.createComponent({
+          components: [{
+            content: '-- ' + d.name,
+            attributes: {
+              style: 'float: left; width: 80%;'
+            }
+          }, {
+            content: OB.I18N.formatCurrency(-d.amt),
+            attributes: {
+              style: 'float: right; width: 20%; text-align: right;'
+            }
+          }]
+        });
+      }, this);
+
+    }
   },
   changeEditMode: function (sender, event) {
     this.addRemoveClass('btnselect-orderline-edit', event.edit);
