@@ -307,12 +307,23 @@ enyo.kind({
       }, function (data) {
         if (data) {
           if (data.enoughCredit) {
-            me.doShowPopup({popup: 'modalEnoughCredit', args: {order: me.model.get('order')}});
+            me.doShowPopup({
+              popup: 'modalEnoughCredit',
+              args: {
+                order: me.model.get('order')
+              }
+            });
             //this.setContent(OB.I18N.getLabel('OBPOS_LblCreditSales'));
           } else {
             var bpName = data.bpName;
             var actualCredit = data.actualCredit;
-            me.doShowPopup({popup: 'modalNotEnoughCredit', args: {bpName: bpName, actualCredit: actualCredit}});
+            me.doShowPopup({
+              popup: 'modalNotEnoughCredit',
+              args: {
+                bpName: bpName,
+                actualCredit: actualCredit
+              }
+            });
             //this.setContent(OB.I18N.getLabel('OBPOS_LblCreditSales'));
             //OB.UI.UTILS.domIdEnyoReference['modalNotEnoughCredit'].$.bodyContent.children[0].setContent();
           }
@@ -326,11 +337,22 @@ enyo.kind({
       var creditUsed = this.model.get('order').get('bp').get('creditUsed');
       var totalPending = this.model.get('order').getPending();
       if ((creditLimit + creditUsed) >= totalPending) {
-        this.doShowPopup({popup: 'modalEnoughCredit', args: {order: this.model.get('order')}});
+        this.doShowPopup({
+          popup: 'modalEnoughCredit',
+          args: {
+            order: this.model.get('order')
+          }
+        });
         //$('#modalEnoughCredit').modal('show');
       } else {
         actualCredit = creditLimit + creditUsed;
-        this.doShowPopup({popup: 'modalNotEnoughCredit', args: {bpName: this.model.get('order').get('bp'), actualCredit: actualCredit}});
+        this.doShowPopup({
+          popup: 'modalNotEnoughCredit',
+          args: {
+            bpName: this.model.get('order').get('bp'),
+            actualCredit: actualCredit
+          }
+        });
         //$('#modalNotEnoughCredit').modal('show');
       }
     }
