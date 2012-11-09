@@ -30,8 +30,7 @@ public class BusinessPartner extends ProcessHQLQuery {
         + "bpl.businessPartner.creditLimit as creditLimit, "
         + "bpl.businessPartner.creditUsed as creditUsed "
         + "FROM BusinessPartnerLocation AS bpl left outer join bpl.businessPartner.aDUserList AS ulist "
-        + "WHERE (bpl.$incrementalUpdateCriteria) AND ("
-        + "(bpl.id = '"
+        + "WHERE (bpl.$incrementalUpdateCriteria) AND (" + "(bpl.id = '"
         + org.getObretcoCBpLocation().getId()
         + "')"
         + " OR "
@@ -44,6 +43,26 @@ public class BusinessPartner extends ProcessHQLQuery {
         + "bpl.$readableClientCriteria AND "
         + "bpl.$naturalOrgCriteria "
         + "))"
+        // This section is added to prevent more than one row for each business partner from being
+        // selected (check issues 22249 and 22256)
+        + " AND bpl.id in (SELECT max(bpl2.id)"
+        + "FROM BusinessPartnerLocation AS bpl2 "
+        + "WHERE (bpl2.$incrementalUpdateCriteria) AND ("
+        + "(bpl2.id = '"
+        + org.getObretcoCBpLocation().getId()
+        + "')"
+        + " OR "
+        + "(bpl2.businessPartner.id <> '"
+        + org.getObretcoCBpartner().getId()
+        + "' AND "
+        + "bpl2.invoiceToAddress = true AND "
+        + "bpl2.businessPartner.customer = true AND "
+        + "bpl2.$readableClientCriteria AND "
+        + "bpl2.$naturalOrgCriteria "
+        + ")) GROUP BY bpl2.businessPartner.id)"
+        + " AND ulist.id in (select max(ulist2.id) from ADUser as ulist2 where ulist2.businessPartner is not null group by ulist2.businessPartner)"
+        // Here the section to prevent the same business partner from being selected more than once
+        // ends
         + "GROUP BY bpl.businessPartner.id, bpl.businessPartner.name, bpl.businessPartner.name, bpl.businessPartner.searchKey, bpl.businessPartner.description, bpl.businessPartner.taxID, bpl.businessPartner.sOBPTaxCategory.id, bpl.businessPartner.priceList.id, bpl.businessPartner.paymentMethod.id, bpl.businessPartner.paymentTerms.id, bpl.businessPartner.invoiceTerms, bpl.id, ulist.email, ulist.id, ulist.phone,bpl.locationAddress.cityName, bpl.locationAddress.postalCode, bpl.businessPartner.businessPartnerCategory.id, bpl.businessPartner.creditLimit, bpl.businessPartner.creditUsed "
         + "ORDER BY bpl.businessPartner.name";
     // probar los casos con varias loc para un mismo BP
