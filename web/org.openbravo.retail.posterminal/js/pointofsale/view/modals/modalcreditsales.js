@@ -24,9 +24,9 @@ enyo.kind({
       kind: 'OB.OBPOSPointOfSale.UI.Modals.modalEnoughCredit.Components.cancel_button'
     }]
   },
-  executeOnShow: function (args) {
-    var pendingQty = args.order.getPending();
-    var bpName = args.order.get('bp').get('_identifier');
+  executeOnShow: function () {
+    var pendingQty = this.args.order.getPending();
+    var bpName = this.args.order.get('bp').get('_identifier');
     this.$.bodyContent.$.popupmessage.setContent(OB.I18N.getLabel('OBPOS_enoughCreditBody', [pendingQty, bpName]));
   }
 });
@@ -82,9 +82,9 @@ enyo.kind({
   style: 'background-color: #EBA001;',
   header: OB.I18N.getLabel('OBPOS_notEnoughCreditHeader'),
   isApplyButton: true,
-  executeOnShow: function (args) {
-    if (args) {
-      this.$.bodyContent.$.popupmessage.setContent(OB.I18N.getLabel('OBPOS_notEnoughCreditBody', [args.bpName, args.actualCredit]));
+  executeOnShow: function () {
+    if (this.args) {
+      this.$.bodyContent.$.popupmessage.setContent(OB.I18N.getLabel('OBPOS_notEnoughCreditBody', [this.args.bpName, this.args.actualCredit]));
     }
   },
   bodyContent: {

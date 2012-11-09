@@ -16,24 +16,24 @@ enyo.kind({
   maxheight: '600px',
   bodyContent: {},
   bodyButtons: {},
-  executeOnShow: function (args) {
+  executeOnShow: function () {
 
-    if (args.receipt.get('orderType') === 0) {
-      this.$.header.setContent(OB.I18N.getLabel('OBPOS_LblModalPayment', [OB.I18N.formatCurrency(args.amount)]));
+    if (this.args.receipt.get('orderType') === 0) {
+      this.$.header.setContent(OB.I18N.getLabel('OBPOS_LblModalPayment', [OB.I18N.formatCurrency(this.args.amount)]));
     } else if (receipt.get('orderType') === 1) {
-      this.$.header.setContent(OB.I18N.getLabel('OBPOS_LblModalReturn', [OB.I18N.formatCurrency(args.amount)]));
+      this.$.header.setContent(OB.I18N.getLabel('OBPOS_LblModalReturn', [OB.I18N.formatCurrency(this.args.amount)]));
     } else {
       this.$.header.setContent('');
     }
 
     this.$.bodyContent.destroyComponents();
     this.$.bodyContent.createComponent({
-      kind: args.provider,
-      paymentMethod: args.paymentMethod,
-      paymentType: args.name,
-      paymentAmount: args.amount,
-      key: args.key,
-      receipt: args.receipt
+      kind: this.args.provider,
+      paymentMethod: this.args.paymentMethod,
+      paymentType: this.args.name,
+      paymentAmount: this.args.amount,
+      key: this.args.key,
+      receipt: this.args.receipt
     }).render();
   }
 });
