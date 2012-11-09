@@ -369,6 +369,7 @@
         WHERE i.DocStatus IN ('CL','CO')
         AND i.AD_Client_ID IN ('1')
         AND i.AD_Org_ID IN ('1')
+        AND i.IsSOTrx='Y'
         AND i.C_BPartner_ID = ?
         AND EXISTS (SELECT 1                      
                 FROM C_INVOICELINE l LEFT JOIN M_INOUTLINE MI ON l.M_INOUTLINE_ID = MI.M_INOUTLINE_ID                        
