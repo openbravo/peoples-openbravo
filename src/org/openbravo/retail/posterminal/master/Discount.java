@@ -13,6 +13,7 @@ import java.util.Date;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.retail.posterminal.POSUtils;
 import org.openbravo.retail.posterminal.ProcessHQLQuery;
 import org.openbravo.service.json.JsonUtils;
@@ -25,12 +26,13 @@ public class Discount extends ProcessHQLQuery {
   }
 
   protected String getPromotionsHQL(JSONObject jsonsent) throws JSONException {
-    String orgId = jsonsent.getString("organization");
+    String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
+
     String priceListId = POSUtils.getPriceListByOrgId(orgId).getId();
 
     String hql = "from PricingAdjustment p ";
     hql += "where active = true ";
-    hql += "and client.id = '" + jsonsent.getString("client") + "' ";
+    hql += "and client.id = '" + OBContext.getOBContext().getCurrentClient().getId() + "' ";
     hql += "and (endingDate is null or endingDate>:today) ";
 
     // price list
