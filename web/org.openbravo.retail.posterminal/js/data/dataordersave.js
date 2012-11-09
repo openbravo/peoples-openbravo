@@ -59,7 +59,7 @@
           }, null);
         }
       }, function () {
-        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgReceiptNotSaved', [docno]));
+        //We do nothing: we don't need to alert the user, as the order is still present in the database, so it will be resent as soon as the user logs in again
       });
     }, this);
   };
