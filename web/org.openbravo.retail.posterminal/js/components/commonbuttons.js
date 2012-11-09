@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global enyo, $ */
+/*global enyo, _, $ */
 enyo.kind({
   name: 'OB.UI.Button',
   kind: 'enyo.Button'
@@ -55,12 +55,12 @@ enyo.kind({
   handlers: {
     onHideThisPopup: 'hideFromInside'
   },
-  _addArgsToComponent: function(args){
-    if (args){
+  _addArgsToComponent: function (args) {
+    if (args) {
       this.args = this.args || {};
       _.each(args, function (arg, key) {
         this.args[key] = arg;
-      }, this); 
+      }, this);
     }
   },
   show: function (args) {
