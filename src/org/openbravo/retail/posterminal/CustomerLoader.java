@@ -9,7 +9,6 @@
 package org.openbravo.retail.posterminal;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 import javax.servlet.ServletException;
 
@@ -17,13 +16,11 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.businesspartner.Location;
@@ -197,17 +194,14 @@ public class CustomerLoader extends JSONProcessSimple {
       throws JSONException {
     Entity userEntity = ModelProvider.getInstance().getEntity(
         org.openbravo.model.ad.access.User.class);
-    final OBCriteria<org.openbravo.model.ad.access.User> criteria = OBDal.getInstance()
-        .createCriteria(org.openbravo.model.ad.access.User.class);
-    criteria.add(Restrictions.eq("businessPartner.id", jsonCustomer.getString("id")));
-    criteria.addOrderBy("name", false);
-    final List<org.openbravo.model.ad.access.User> colUsers = criteria.list();
-    if (colUsers.size() > 0) {
+    final org.openbravo.model.ad.access.User user = OBDal.getInstance().get(
+        org.openbravo.model.ad.access.User.class, jsonCustomer.getString("contactId"));
+    if (user != null) {
 
-      JSONPropertyToEntity.fillBobFromJSON(userEntity, colUsers.get(0), jsonCustomer);
+      JSONPropertyToEntity.fillBobFromJSON(userEntity, user, jsonCustomer);
 
       // Contact exist > modify it
-      OBDal.getInstance().save(colUsers.get(0));
+      OBDal.getInstance().save(user);
     } else {
       // Contact doesn't exists > create it - create user linked to BP
       final org.openbravo.model.ad.access.User usr = OBProvider.getInstance().get(
@@ -215,10 +209,20 @@ public class CustomerLoader extends JSONProcessSimple {
 
       JSONPropertyToEntity.fillBobFromJSON(userEntity, usr, jsonCustomer);
 
+      if (jsonCustomer.has("contactId")) {
+        usr.setId(jsonCustomer.getString("contactId"));
+      } else {
+        String errorMessage = "Business partner user ID is a mandatory field to create a new customer from Web Pos";
+        log.error(errorMessage);
+        throw new OBException(errorMessage, null);
+      }
+
       usr.setUsername(jsonCustomer.getString("name").trim());
       usr.setFirstName(jsonCustomer.getString("name").trim());
 
       usr.setBusinessPartner(customer);
+
+      usr.setNewOBObject(true);
 
       OBDal.getInstance().save(usr);
     }
@@ -229,13 +233,11 @@ public class CustomerLoader extends JSONProcessSimple {
     Entity locationEntity = ModelProvider.getInstance().getEntity(Location.class);
     Entity baseLocationEntity = ModelProvider.getInstance().getEntity(
         org.openbravo.model.common.geography.Location.class);
-    final OBCriteria<Location> criteria = OBDal.getInstance().createCriteria(Location.class);
-    criteria.add(Restrictions.eq("businessPartner.id", jsonCustomer.getString("id")));
-    criteria.addOrderBy("name", false);
-    final List<Location> colLocations = criteria.list();
-    if (colLocations != null && colLocations.size() > 0) {
+    final Location location = OBDal.getInstance().get(Location.class,
+        jsonCustomer.getString("locId"));
+    if (location != null) {
       // location exist > modify it
-      final org.openbravo.model.common.geography.Location rootLocation = colLocations.get(0)
+      final org.openbravo.model.common.geography.Location rootLocation = location
           .getLocationAddress();
 
       JSONPropertyToEntity.fillBobFromJSON(baseLocationEntity, rootLocation, jsonCustomer);

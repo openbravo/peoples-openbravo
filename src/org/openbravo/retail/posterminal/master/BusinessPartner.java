@@ -24,6 +24,7 @@ public class BusinessPartner extends ProcessHQLQuery {
         + "bpl.businessPartner.sOBPTaxCategory.id as taxCategory, bpl.businessPartner.priceList.id as priceList, "
         + "bpl.businessPartner.paymentMethod.id as paymentMethod, bpl.businessPartner.paymentTerms.id as paymentTerms, "
         + "bpl.businessPartner.invoiceTerms as invoiceTerms, bpl.id as locId, max(bpl.name) as locName, ulist.email as email, "
+        + "ulist.id as contactId, "
         + "ulist.phone as phone, bpl.locationAddress.cityName as cityName, bpl.locationAddress.postalCode as postalCode, "
         + "bpl.businessPartner.businessPartnerCategory.id as businessPartnerCategory, "
         + "bpl.businessPartner.creditLimit as creditLimit, "
@@ -43,7 +44,7 @@ public class BusinessPartner extends ProcessHQLQuery {
         + "bpl.$readableClientCriteria AND "
         + "bpl.$naturalOrgCriteria "
         + "))"
-        + "GROUP BY bpl.businessPartner.id, bpl.businessPartner.name, bpl.businessPartner.name, bpl.businessPartner.searchKey, bpl.businessPartner.description, bpl.businessPartner.taxID, bpl.businessPartner.sOBPTaxCategory.id, bpl.businessPartner.priceList.id, bpl.businessPartner.paymentMethod.id, bpl.businessPartner.paymentTerms.id, bpl.businessPartner.invoiceTerms, bpl.id, ulist.email, ulist.phone,bpl.locationAddress.cityName, bpl.locationAddress.postalCode, bpl.businessPartner.businessPartnerCategory.id, bpl.businessPartner.creditLimit, bpl.businessPartner.creditUsed "
+        + "GROUP BY bpl.businessPartner.id, bpl.businessPartner.name, bpl.businessPartner.name, bpl.businessPartner.searchKey, bpl.businessPartner.description, bpl.businessPartner.taxID, bpl.businessPartner.sOBPTaxCategory.id, bpl.businessPartner.priceList.id, bpl.businessPartner.paymentMethod.id, bpl.businessPartner.paymentTerms.id, bpl.businessPartner.invoiceTerms, bpl.id, ulist.email, ulist.id, ulist.phone,bpl.locationAddress.cityName, bpl.locationAddress.postalCode, bpl.businessPartner.businessPartnerCategory.id, bpl.businessPartner.creditLimit, bpl.businessPartner.creditUsed "
         + "ORDER BY bpl.businessPartner.name";
     // probar los casos con varias loc para un mismo BP
     // return "select bp as BusinessPartner, loc as BusinessPartnerLocation "
