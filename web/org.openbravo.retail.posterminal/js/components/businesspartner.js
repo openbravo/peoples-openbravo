@@ -307,6 +307,9 @@ enyo.kind({
       return true;
     }
   },
+  executeOnHide: function () {
+    this.$.body.$.listBps.$.bpslistitemprinter.$.theader.$.modalBpScrollableHeader.clearAction();
+  },
   header: OB.I18N.getLabel('OBPOS_LblAssignCustomer'),
   body: {
     kind: 'OB.UI.ListBps'
