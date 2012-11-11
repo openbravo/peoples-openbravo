@@ -26,7 +26,6 @@
     // We are Logged !!!
     $(window).off('keypress');
     $(window).off('keydown');
-    $('#logoutlink').css('visibility', 'visible');
 
     function searchCurrentBP() {
       function errorCallback(tx, error) {
@@ -77,7 +76,6 @@
     modelterminal.off('loginfail');
     $(window).off('keypress');
     $(window).off('keydown');
-    $('#logoutlink').css('visibility', 'hidden');
 
     // Redirect to login window
     localStorage.setItem('target-window', window.location.href);
@@ -96,17 +94,6 @@
         kind: 'OB.UI.ModalProfile',
         name: 'profileDialog'
       }).render();
-    });
-
-
-
-
-    modelterminal.on('online', function () {
-      OB.UTIL.setConnectivityLabel('Online');
-    });
-
-    modelterminal.on('offline', function () {
-      OB.UTIL.setConnectivityLabel('Offline');
     });
 
     OB.UTIL.checkConnectivityStatus(); //Initial check;

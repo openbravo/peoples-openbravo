@@ -286,7 +286,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
       } else {
         // console.log("cash up processed correctly. -> show modal");
         OB.UTIL.showLoading(false);
-        me.set("finished", true); //$('#modalFinishClose').modal('show');
+        me.set("finished", true);
       }
     });
   },

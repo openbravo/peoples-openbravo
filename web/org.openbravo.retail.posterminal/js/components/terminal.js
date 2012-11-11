@@ -27,7 +27,7 @@ enyo.kind({
   components: [{
     name: 'onlineImg',
     tag: 'span',
-    style: 'display: inline-block; width: 20px; color: transparent; background-image: url(\'./img/iconOnline.png\'); background-repeat: no-repeat; background-position: 2px 3px;',
+    style: 'display: inline-block; width: 20px; color: transparent; background-image: url(\'./img/iconOffline.png\'); background-repeat: no-repeat; background-position: 2px 3px;',
     content: '.'
   }, {
     name: 'onlineLabel',
@@ -126,15 +126,9 @@ enyo.kind({
               classes: 'POSLoadingProgressBarImg'
             }]
           }]
-        }],
-        makeId: function () {
-          return 'containerLoading';
-        }
+        }]
       }, {
         name: 'containerWindow',
-        makeId: function () {
-          return 'containerWindow';
-        },
         handlers: {
           onShowPopup: 'showPopupHandler',
           onHidePopup: 'hidePopupHandler'
@@ -249,9 +243,6 @@ enyo.kind({
       }).render();
 
     }, this);
-  },
-  makeId: function () {
-    return 'container';
   }
 });
 

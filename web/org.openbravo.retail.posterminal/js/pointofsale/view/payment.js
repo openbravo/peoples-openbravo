@@ -343,7 +343,6 @@ enyo.kind({
             order: this.model.get('order')
           }
         });
-        //$('#modalEnoughCredit').modal('show');
       } else {
         actualCredit = creditLimit + creditUsed;
         this.doShowPopup({
@@ -353,7 +352,6 @@ enyo.kind({
             actualCredit: actualCredit
           }
         });
-        //$('#modalNotEnoughCredit').modal('show');
       }
     }
 

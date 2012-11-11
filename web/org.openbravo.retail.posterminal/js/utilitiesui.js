@@ -107,11 +107,11 @@ OB.UTIL.isSupportedBrowser = function () {
 
 OB.UTIL.showLoading = function (value) {
   if (value) {
-    $('#containerLoading').css('display', '');
-    $('#containerWindow').css('display', 'none');
+    OB.POS.terminal.$.containerWindow.hide();
+    OB.POS.terminal.$.containerLoading.show();
   } else {
-    $('#containerLoading').css('display', 'none');
-    $('#containerWindow').css('display', '');
+    OB.POS.terminal.$.containerLoading.hide();
+    OB.POS.terminal.$.containerWindow.show();
   }
 };
 

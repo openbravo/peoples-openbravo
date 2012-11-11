@@ -77,7 +77,7 @@ enyo.kind({
   },
   hide: function (args) {
     this.inherited(arguments);
-    $("#focuskeeper").focus();
+    enyo.dom.byId('focuskeeper').focus();
     this._addArgsToComponent(args);
     if (this.executeOnHide) {
       this.executeOnHide();

@@ -134,7 +134,11 @@ enyo.kind({
           disableControls: function () {
             //remove selected RButtons
             //reset UI and model.
-            $('#' + this.getId()).find('button').removeClass('active');
+            this.$.keepfixedamount.disableRadio();
+            this.$.allowmoveeverything.disableRadio();
+            this.$.allowdontmove.disableRadio();
+            this.$.allowvariableamount.disableRadio();
+
             this.$.variableInput.setValue('');
             this.doResetQtyToKeep({
               qtyToKeep: null
@@ -142,10 +146,6 @@ enyo.kind({
           },
           renderFixedAmount: function (modelToDraw) {
             var udfn, cnted;
-            this.$.keepfixedamount.disableRadio();
-            this.$.allowmoveeverything.disableRadio();
-            this.$.allowdontmove.disableRadio();
-            this.$.allowvariableamount.disableRadio();
 
             if (modelToDraw.get('foreignCounted')) {
               cnted = modelToDraw.get('foreignCounted');
@@ -171,11 +171,6 @@ enyo.kind({
             }
           },
           renderBody: function (modelToDraw) {
-            this.$.keepfixedamount.disableRadio();
-            this.$.allowmoveeverything.disableRadio();
-            this.$.allowdontmove.disableRadio();
-            this.$.allowvariableamount.disableRadio();
-
             var paymentMethod = modelToDraw.get('paymentMethod');
             this.disableControls();
             //draw

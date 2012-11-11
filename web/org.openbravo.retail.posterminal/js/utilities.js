@@ -223,19 +223,6 @@
     }
   };
 
-  OB.UTIL.setConnectivityLabel = function (status) {
-    var label = OB.I18N.getLabel('OBPOS_' + status);
-    if (label.indexOf('OBPOS_' + status) === -1) { // If the *good* label is ready (can be retrieved), set the label
-      $($('#online > span')[0]).css('background-image', 'url("./img/icon' + status + '.png")');
-      $($('#online > span')[1]).text(label);
-      $($('#online')[0]).css('visibility', 'visible');
-    } else { // else, retry after 300ms
-      setTimeout(function () {
-        OB.UTIL.setConnectivityLabel(status);
-      }, 300);
-    }
-  };
-
   OB.UTIL.updateDocumentSequenceInDB = function (documentNo) {
     var docSeqModel, criteria = {
       'posSearchKey': OB.POS.modelterminal.get('terminal').searchKey

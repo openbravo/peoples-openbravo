@@ -206,7 +206,6 @@ enyo.kind({
           }
 
           if (contentInModel !== undefined) {
-            $('#' + this.id).text(contentInModel);
             this.content = contentInModel;
           }
         }

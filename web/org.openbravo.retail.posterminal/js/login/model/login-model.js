@@ -209,14 +209,6 @@
     //    }
     //
     //    preRenderActions();
-    OB.POS.modelterminal.on('online', function () {
-      OB.UTIL.setConnectivityLabel('Online');
-    });
-
-    OB.POS.modelterminal.on('offline', function () {
-      OB.UTIL.setConnectivityLabel('Offline');
-    });
-
   });
 
 }());
