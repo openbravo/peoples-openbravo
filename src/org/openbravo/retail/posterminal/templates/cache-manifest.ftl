@@ -14,7 +14,6 @@ CACHE:
 ../../web/org.openbravo.retail.posterminal/js/libs/backbone-0.9.2.js
 ../../web/org.openbravo.retail.posterminal/js/libs/core-min.js
 ../../web/org.openbravo.retail.posterminal/js/libs/sha1-min.js
-../../web/org.openbravo.retail.posterminal/js/libs/mbp-helper.js
 ../../web/org.openbravo.retail.posterminal/js/libs/enyo.js
 ../../web/org.openbravo.retail.posterminal/js/libs/onyx/onyx.js
 
