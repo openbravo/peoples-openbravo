@@ -98,7 +98,7 @@ enyo.kind({
 });
 
 OB.UTIL.isSupportedBrowser = function () {
-  if ($.browser.webkit && window.openDatabase) { //If the browser is not supported, show message and finish.
+  if (navigator.userAgent.toLowerCase().indexOf('webkit') !== -1 && window.openDatabase) { //If the browser is not supported, show message and finish.
     return true;
   } else {
     return false;
