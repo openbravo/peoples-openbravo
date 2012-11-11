@@ -182,27 +182,30 @@
     //      c.trigger('domready');
     //    }
     //    function preRenderActions() {
-    //      $.ajax({
+    //      var ajaxRequest = new enyo.Ajax({
     //        url: '../../org.openbravo.retail.posterminal.service.loginutils',
+    //        cacheBust: false,
+    //        method: 'GET',
+    //        handleAs: 'json',
     //        contentType: 'application/json;charset=utf-8',
-    //        dataType: 'json',
     //        data: {
     //          command: 'preRenderActions',
     //          terminalName: OB.POS.paramTerminal
     //        },
-    //        error: function (jqXHR, textStatus, errorThrown) {
-    //          OB.UTIL.showError(errorThrown + ": " + this.url);
-    //        },
-    //        success: function (data, textStatus, jqXHR) {
-    //          OB.I18N.labels = data.response[0].data[1];
-    //          OB.Format = data.response[0].data[2];
-    //          if ((data.response[0].data[0].strClient) !== 'none') {
+    //        success: function (inSender, inResponse) {
+    //          OB.I18N.labels = inResponse.response[0].data[1];
+    //          OB.Format = inResponse.response[0].data[2];
+    //          if ((inResponse.response[0].data[0].strClient) !== 'none') {
     //            renderLoginPage();
     //          } else {
     //            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_NO_POS_TERMINAL_TITLE',[OB.POS.paramTerminal]));
     //          }
+    //        },
+    //        fail: function (inSender, inResponse) {
+    //          OB.UTIL.showError(inResponse + ": " + this.url);
     //        }
     //      });
+    //      ajaxRequest.go(ajaxRequest.data).response('success').error('fail');
     //    }
     //
     //    preRenderActions();

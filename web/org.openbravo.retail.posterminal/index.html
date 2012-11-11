@@ -134,33 +134,27 @@
         }
       };
 
-      $.ajax({
+      var ajaxRequest = new enyo.Ajax({
         url: '../../org.openbravo.retail.posterminal.service.loginutils',
+        cacheBust: false,
+        method: 'GET',
+        handleAs: 'json',
         contentType: 'application/json;charset=utf-8',
-        dataType: 'json',
         data: {
           command: 'preRenderActions',
           terminalName: OB.POS.paramTerminal
         },
-        error: function (jqXHR, textStatus, errorThrown) {
-          // we are likely offline. Attempt to navigate to the login page
-          OB.I18N.labels = JSON.parse(window.localStorage.getItem('I18NLabels'));
-          OB.Format = JSON.parse(window.localStorage.getItem('WebPOSFormat'));
-          OB.UTIL.showLoading(false);
-          renderPOS();
-          OB.POS.navigate('login');
-        },
-        success: function (data, textStatus, jqXHR) {
-          OB.I18N.labels = data.response[0].data[1];
-          OB.Format = data.response[0].data[2];
+        success: function (inSender, inResponse) {
+          OB.I18N.labels = inResponse.response[0].data[1];
+          OB.Format = inResponse.response[0].data[2];
           window.localStorage.setItem('I18NLabels', JSON.stringify(OB.I18N.labels));
           window.localStorage.setItem('WebPOSFormat', JSON.stringify(OB.Format));
 
           renderPOS();
-          if ((data.response[0].data[0].strClient) !== 'none') {
-            new OB.DS.Request('org.openbravo.retail.posterminal.term.Context').exec({}, function (data) {
-              if (data && !data.exception) {
-                OB.POS.modelterminal.user = data[0].user.username;
+          if ((inResponse.response[0].data[0].strClient) !== 'none') {
+            new OB.DS.Request('org.openbravo.retail.posterminal.term.Context').exec({}, function (inResponse) {
+              if (inResponse && !inResponse.exception) {
+                OB.POS.modelterminal.user = inResponse[0].user.username;
                 OB.POS.navigate('main');
               } else {
                 OB.POS.navigate('login');
@@ -172,8 +166,17 @@
             OB.UTIL.showError(OB.I18N.getLabel('OBPOS_NO_POS_TERMINAL_TITLE', [OB.POS.paramTerminal]));
           }
           OB.UTIL.showLoading(false);
+        },
+        fail: function (inSender, inResponse) {
+          // we are likely offline. Attempt to navigate to the login page
+          OB.I18N.labels = JSON.parse(window.localStorage.getItem('I18NLabels'));
+          OB.Format = JSON.parse(window.localStorage.getItem('WebPOSFormat'));
+          OB.UTIL.showLoading(false);
+          renderPOS();
+          OB.POS.navigate('login');
         }
       });
+      ajaxRequest.go(ajaxRequest.data).response('success').error('fail');
       //} else {
       //  OB.UTIL.showLoading(false);
       //  OB.POS.navigate('login');
