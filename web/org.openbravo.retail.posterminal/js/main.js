@@ -10,7 +10,9 @@
 /*global B, $, _, Backbone, window, confirm, OB, localStorage */
 
 (function () {
-  var modelterminal = OB.POS.modelterminal;
+  var modelterminal = OB.POS.modelterminal,
+      executeWhenDOMReady;
+
   OB.UI.UTILS = {};
   OB.UI.UTILS.domIdEnyoReference = {};
   // alert all errors
@@ -82,28 +84,34 @@
     window.location = window.location.pathname + '?terminal=' + window.encodeURIComponent(OB.POS.paramTerminal);
   });
 
-  $(document).ready(function () {
+  executeWhenDOMReady = function () {
+    if (document.readyState === "interactive" || document.readyState === "complete") {
+      modelterminal.load();
+      modelterminal.on('ready', function () {
+        OB.POS.terminal.$.dialogsContainer.createComponent({
+          kind: 'OB.UI.ModalLogout',
+          name: 'logoutDialog'
+        }).render();
+        OB.POS.terminal.$.dialogsContainer.createComponent({
+          kind: 'OB.UI.ModalProfile',
+          name: 'profileDialog'
+        }).render();
+      });
 
-    modelterminal.load();
-    modelterminal.on('ready', function () {
-      OB.POS.terminal.$.dialogsContainer.createComponent({
-        kind: 'OB.UI.ModalLogout',
-        name: 'logoutDialog'
-      }).render();
-      OB.POS.terminal.$.dialogsContainer.createComponent({
-        kind: 'OB.UI.ModalProfile',
-        name: 'profileDialog'
-      }).render();
-    });
+      OB.UTIL.checkConnectivityStatus(); //Initial check;
+      setInterval(OB.UTIL.checkConnectivityStatus, 5000);
 
-    OB.UTIL.checkConnectivityStatus(); //Initial check;
-    setInterval(OB.UTIL.checkConnectivityStatus, 5000);
-
-    $(window).on('beforeunload', function () {
-      if (!OB.POS.modelterminal.get('connectedToERP')) {
-        return OB.I18N.getLabel('OBPOS_ShouldNotCloseWindow');
-      }
-    });
-  });
+      window.onbeforeunload = function () {
+        if (!OB.POS.modelterminal.get('connectedToERP')) {
+          return OB.I18N.getLabel('OBPOS_ShouldNotCloseWindow');
+        }
+      };
+    } else {
+      setTimeout(function () {
+        executeWhenDOMReady();
+      }, 50);
+    }
+  }
+  executeWhenDOMReady();
 
 }());

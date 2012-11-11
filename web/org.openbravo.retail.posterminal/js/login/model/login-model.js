@@ -10,6 +10,7 @@
 /*global B, $, _, Backbone, window, confirm */
 
 (function () {
+  var executeWhenDOMReady;
 
   function triggerReady(models) {
     if (models._LoadOnline && OB.UTIL.queueStatus(models._LoadQueue || {})) {
@@ -170,45 +171,17 @@
     return label;
   };
 
-  $(document).ready(function () {
-
-    OB.POS.modelterminal.off('loginfail');
-    $(window).off('keypress');
-    $(window).off('keydown');
-
-    //    function renderLoginPage() {
-    //      var c = _.extend({}, Backbone.Events);
-    //      $("#containerWindow").empty().append((new OB.COMP.Login(c)).$el);
-    //      c.trigger('domready');
-    //    }
-    //    function preRenderActions() {
-    //      var ajaxRequest = new enyo.Ajax({
-    //        url: '../../org.openbravo.retail.posterminal.service.loginutils',
-    //        cacheBust: false,
-    //        method: 'GET',
-    //        handleAs: 'json',
-    //        contentType: 'application/json;charset=utf-8',
-    //        data: {
-    //          command: 'preRenderActions',
-    //          terminalName: OB.POS.paramTerminal
-    //        },
-    //        success: function (inSender, inResponse) {
-    //          OB.I18N.labels = inResponse.response[0].data[1];
-    //          OB.Format = inResponse.response[0].data[2];
-    //          if ((inResponse.response[0].data[0].strClient) !== 'none') {
-    //            renderLoginPage();
-    //          } else {
-    //            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_NO_POS_TERMINAL_TITLE',[OB.POS.paramTerminal]));
-    //          }
-    //        },
-    //        fail: function (inSender, inResponse) {
-    //          OB.UTIL.showError(inResponse + ": " + this.url);
-    //        }
-    //      });
-    //      ajaxRequest.go(ajaxRequest.data).response('success').error('fail');
-    //    }
-    //
-    //    preRenderActions();
-  });
+  executeWhenDOMReady = function () {
+    if (document.readyState === "interactive" || document.readyState === "complete") {
+      OB.POS.modelterminal.off('loginfail');
+      $(window).off('keypress');
+      $(window).off('keydown');
+    } else {
+      setTimeout(function () {
+        executeWhenDOMReady();
+      }, 50);
+    }
+  }
+  executeWhenDOMReady();
 
 }());
