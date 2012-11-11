@@ -114,23 +114,6 @@
         setInterval(OB.UTIL.checkConnectivityStatus, 5000);
 
         var locationwarning = true;
-        var focuskeeper = $('<input id="focuskeeper" style="position: fixed; top: -1000px; left: -1000px;" type="text"/>');
-        $("body").append(focuskeeper);
-        $("body").focusin(function () {
-          locationwarning = false;
-        });
-        $("body").focusout(function () {
-          locationwarning = true;
-        });
-
-        window.fixFocus = function () {
-          if (locationwarning) {
-            focuskeeper.focus();
-          }
-          var t = document.activeElement.tagName;
-          var id = document.activeElement.id;
-          return (id === 'focuskeeper' || (t !== 'INPUT' && t !== 'SELECT' && t !== 'TEXTAREA')); // process key
-        }
       };
 
       var ajaxRequest = new enyo.Ajax({

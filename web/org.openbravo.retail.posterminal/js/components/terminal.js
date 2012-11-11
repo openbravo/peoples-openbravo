@@ -169,6 +169,11 @@ enyo.kind({
     }]
   }, {
     name: 'alertContainer'
+  }, {
+    kind: 'enyo.Input',
+    name: 'focusKeeper',
+    type: 'text',
+    style: 'position: fixed; top: -1000px; left: -1000px;'
   }],
   initComponents: function () {
     //this.terminal = terminal;

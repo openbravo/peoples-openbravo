@@ -132,6 +132,17 @@ OB.UTIL.showError = function (s) {
   OB.UTIL.showAlert.display(s, OB.I18N.getLabel('OBPOS_LblError'), 'alert-error');
 };
 
+OB.UTIL.fixFocus = function () {
+  var t = document.activeElement.tagName;
+  if (t !== 'INPUT' && t !== 'SELECT' && t !== 'TEXTAREA') {
+    OB.POS.terminal.$.focusKeeper.focus();
+  }
+  var activeElement_id = document.activeElement.id;
+  var focusKeeper_id = OB.POS.terminal.$.focusKeeper.getId();
+
+  return (activeElement_id === focusKeeper_id || (t !== 'INPUT' && t !== 'SELECT' && t !== 'TEXTAREA')); // process key
+};
+
 /* This will automatically set the focus in the first focusable item in the modal popup */
 OB.UTIL.focusInModal = function (jqModal) {
   var firstFocusableItem = jqModal.find('input,select,button').filter(':visible:enabled:first');

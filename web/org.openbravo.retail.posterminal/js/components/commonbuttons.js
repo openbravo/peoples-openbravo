@@ -77,7 +77,7 @@ enyo.kind({
   },
   hide: function (args) {
     this.inherited(arguments);
-    enyo.dom.byId('focuskeeper').focus();
+    OB.POS.terminal.$.focusKeeper.focus();
     this._addArgsToComponent(args);
     if (this.executeOnHide) {
       this.executeOnHide();

@@ -381,7 +381,7 @@ enyo.kind({
     $(window).off('keydown');
     $(window).keydown(function (e) {
       var handled = false;
-      if (window.fixFocus()) {
+      if (OB.UTIL.fixFocus()) {
         if (OB.Format.defaultDecimalSymbol !== '.') {
           if (e.keyCode === 110) { //Numeric keypad dot (.)
             me.keyPressed(OB.Format.defaultDecimalSymbol);
@@ -454,7 +454,7 @@ enyo.kind({
 
     $(window).off('keypress');
     $(window).keypress(function (e) {
-      if (window.fixFocus()) {
+      if (OB.UTIL.fixFocus()) {
         if (e.which !== 46 || OB.Format.defaultDecimalSymbol === '.') { //Any keypress except any kind of dot (.)
           me.keyPressed(String.fromCharCode(e.which));
         }

@@ -474,7 +474,7 @@ enyo.kind({
             if (this.$[changedModel.get('currentWindow').name].isMainSubWindow) {
               this.$[changedModel.previousAttributes().currentWindow.name].setShowing(false);
               this.$[changedModel.get('currentWindow').name].setShowing(true);
-              enyo.dom.byId('focuskeeper').focus();
+              OB.POS.terminal.$.focusKeeper.focus();
             } else {
               //developers helps
               //console.log("Error! A subwindow must inherits from OB.UI.subwindow -> restore previous state");
