@@ -174,7 +174,7 @@ enyo.kind({
       if (data && data.exception) {
         me.bodyComponent.$.stockHere.setContent(OB.I18N.getLabel('OBPOS_stockCannotBeRetrieved'));
         me.bodyComponent.$.stockHere.addClass("error");
-      } else if (data.product === me.product.get('id')) {
+      } else if (data.product === me.product.get('id') && me.showing) {
         if (data.qty || data.qty === 0) {
           data.product = me.product;
           me.localStockModel = new OB.OBPOSPointOfSale.UsedModels.LocalStock(data);
@@ -198,7 +198,7 @@ enyo.kind({
       if (data && data.exception) {
         me.bodyComponent.$.stockOthers.setContent(OB.I18N.getLabel('OBPOS_stockCannotBeRetrieved'));
         me.bodyComponent.$.stockOthers.addClass("error");
-      } else if (data.product === me.product.get('id')) {
+      } else if (data.product === me.product.get('id') && me.showing) {
         if (data.qty || data.qty === 0) {
           data.product = me.product;
           me.otherStoresStockModel = new OB.OBPOSPointOfSale.UsedModels.OtherStoresWarehousesStock(data);
