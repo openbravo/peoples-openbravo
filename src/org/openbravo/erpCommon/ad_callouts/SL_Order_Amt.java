@@ -240,13 +240,22 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
           isGrossUnitPriceChanged = true;
           resultado.append("new Array(\"inpgrosspricestd\", " + grossUnitPrice.toString() + "),");
           resultado.append("new Array(\"inpgrossUnitPrice\", " + grossUnitPrice.toString() + "),");
-        } else {
-          // checks if rounded discount has changed
-          priceStd = baseUnitPrice;
 
-          resultado.append("new Array(\"inppriceactual\", " + priceStd.toString() + "),");
-          resultado.append("new Array(\"inppricestd\", " + priceStd.toString() + "),");
+          // set also net prices
+          BigDecimal grossAmount = grossUnitPrice.multiply(qtyOrdered).setScale(stdPrecision,
+              RoundingMode.HALF_UP);
+
+          final BigDecimal netUnitPrice = FinancialUtils.calculateNetFromGross(strTaxId,
+              grossAmount, pricePrecision, taxBaseAmt, qtyOrdered);
+
+          priceActual = netUnitPrice;
+          priceStd = netUnitPrice;
+        } else {
+          priceStd = baseUnitPrice;
+          priceActual = baseUnitPrice;
         }
+        resultado.append("new Array(\"inppriceactual\", " + priceStd.toString() + "),");
+        resultado.append("new Array(\"inppricestd\", " + priceStd.toString() + "),");
       }
     }
 
