@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -316,6 +316,7 @@
         FROM C_INVOICELINE l left join M_INOUTLINE mi on l.M_INOUTLINE_ID = mi.M_INOUTLINE_ID,
         C_INVOICE i, C_UOM uom,  M_PRODUCT p
         WHERE i.C_INVOICE_ID = l.C_INVOICE_ID 
+        AND i.DocStatus IN ('CL','CO')
         AND i.AD_Client_ID IN ('1') 
         AND i.AD_Org_ID IN ('1') 
         AND l.C_UOM_ID=uom.C_UOM_ID 
@@ -365,7 +366,8 @@
       <![CDATA[
         SELECT i.C_Invoice_ID AS ID, Ad_Column_Identifier(TO_CHAR('C_Invoice'), TO_CHAR(i.C_Invoice_ID), TO_CHAR(?)) AS NAME
         FROM C_INVOICE i JOIN C_DOCTYPE dt ON i.c_doctype_id = dt.c_doctype_id AND dt.isreturn='N'
-        WHERE i.AD_Client_ID IN ('1') 
+        WHERE i.DocStatus IN ('CL','CO')
+        AND i.AD_Client_ID IN ('1')
         AND i.AD_Org_ID IN ('1')
         AND i.C_BPartner_ID = ?
         AND EXISTS (SELECT 1                      
