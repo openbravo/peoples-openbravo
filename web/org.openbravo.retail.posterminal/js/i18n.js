@@ -16,7 +16,7 @@
   OB.I18N = window.OB.I18N || {};
 
   OB.I18N.formatCurrency = function (number) {
-    var maskNumeric = OB.Format.formats.priceRelation,
+    var maskNumeric = OB.Format.formats.priceInform,
         decSeparator = OB.Format.defaultDecimalSymbol,
         groupSeparator = OB.Format.defaultGroupingSymbol,
         groupInterval = OB.Format.defaultGroupingSize;
