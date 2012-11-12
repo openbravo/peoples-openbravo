@@ -208,7 +208,9 @@ enyo.kind({
   tap: function () {
     this.parent.hide(); // Manual dropdown menu closure
     if (OB.POS.modelterminal.get('terminal').terminalType.documentTypeForQuotations) {
-      this.doCreateQuotation();
+      if (OB.POS.modelterminal.hasPermission(this.permission)) {
+        this.doCreateQuotation();
+      }
     } else {
       OB.UTIL.showError(OB.I18N.getLabel('OBPOS_QuotationNoDocType'));
     }
@@ -238,10 +240,12 @@ enyo.kind({
   },
   label: OB.I18N.getLabel('OBPOS_CreateOrderFromQuotation'),
   tap: function () {
-    this.parent.hide(); // Manual dropdown menu closure
-    this.doShowPopup({
-      popup: 'modalCreateOrderFromQuotation'
-    });
+    if (OB.POS.modelterminal.hasPermission(this.permission)) {
+      this.parent.hide(); // Manual dropdown menu closure
+      this.doShowPopup({
+        popup: 'modalCreateOrderFromQuotation'
+      });
+    }
   },
   updateVisibility: function (model) {
     if (model.get('isQuotation') && model.get('hasbeenpaid') === 'Y') {
@@ -273,7 +277,9 @@ enyo.kind({
   label: OB.I18N.getLabel('OBPOS_RejectQuotation'),
   tap: function () {
     this.parent.hide(); // Manual dropdown menu closure
-    this.doRejectQuotation();
+    if (OB.POS.modelterminal.hasPermission(this.permission)) {
+      this.doRejectQuotation();
+    }
   },
   updateVisibility: function (model) {
     if (model.get('isQuotation') && model.get('hasbeenpaid') === 'Y') {
@@ -304,7 +310,9 @@ enyo.kind({
   label: OB.I18N.getLabel('OBPOS_ReactivateQuotation'),
   tap: function () {
     this.parent.hide(); // Manual dropdown menu closure
-    this.doShowReactivateQuotation();
+    if (OB.POS.modelterminal.hasPermission(this.permission)) {
+      this.doShowReactivateQuotation();
+    }
   },
   updateVisibility: function (model) {
     if (model.get('isQuotation') && model.get('hasbeenpaid') === 'Y') {
