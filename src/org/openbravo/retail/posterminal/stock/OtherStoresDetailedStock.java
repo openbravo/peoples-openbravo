@@ -19,11 +19,12 @@ import org.openbravo.retail.posterminal.JSONProcessSimple;
 public class OtherStoresDetailedStock extends JSONProcessSimple {
   @Override
   public JSONObject exec(JSONObject jsonData) throws JSONException, ServletException {
+    String orgId, prodId;
     OBContext.setAdminMode(true);
     JSONArray responseArray = new JSONArray();
     BigDecimal totalQtyCounter = BigDecimal.ZERO;
     try {
-      String orgId, prodId;
+
       orgId = jsonData.getString("organization");
       prodId = jsonData.getString("product");
 
@@ -103,6 +104,7 @@ public class OtherStoresDetailedStock extends JSONProcessSimple {
     }
 
     JSONObject preFinalResult = new JSONObject();
+    preFinalResult.put("product", prodId);
     preFinalResult.put("qty", totalQtyCounter);
     preFinalResult.put("organizations", responseArray);
 

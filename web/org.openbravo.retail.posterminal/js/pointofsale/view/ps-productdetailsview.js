@@ -174,14 +174,16 @@ enyo.kind({
       if (data && data.exception) {
         me.bodyComponent.$.stockHere.setContent(OB.I18N.getLabel('OBPOS_stockCannotBeRetrieved'));
         me.bodyComponent.$.stockHere.addClass("error");
-      } else if (data.qty || data.qty === 0) {
-        data.product = me.product;
-        me.localStockModel = new OB.OBPOSPointOfSale.UsedModels.LocalStock(data);
-        if (me.localStockModel.get('warehouses').at(0)) {
-          me.loadDefaultWarehouseData(me.localStockModel.getWarehouseById(OB.POS.modelterminal.get('warehouses')[0].warehouseid));
+      } else if (data.product === me.product.get('id')) {
+        if (data.qty || data.qty === 0) {
+          data.product = me.product;
+          me.localStockModel = new OB.OBPOSPointOfSale.UsedModels.LocalStock(data);
+          if (me.localStockModel.get('warehouses').at(0)) {
+            me.loadDefaultWarehouseData(me.localStockModel.getWarehouseById(OB.POS.modelterminal.get('warehouses')[0].warehouseid));
+          }
+          me.bodyComponent.$.stockHere.removeClass("error");
+          me.bodyComponent.$.stockHere.setContent(OB.I18N.getLabel('OBPOS_storeStock') + data.qty);
         }
-        me.bodyComponent.$.stockHere.removeClass("error");
-        me.bodyComponent.$.stockHere.setContent(OB.I18N.getLabel('OBPOS_storeStock') + data.qty);
       }
     });
   },
@@ -196,11 +198,13 @@ enyo.kind({
       if (data && data.exception) {
         me.bodyComponent.$.stockOthers.setContent(OB.I18N.getLabel('OBPOS_stockCannotBeRetrieved'));
         me.bodyComponent.$.stockOthers.addClass("error");
-      } else if (data.qty || data.qty === 0) {
-        data.product = me.product;
-        me.otherStoresStockModel = new OB.OBPOSPointOfSale.UsedModels.OtherStoresWarehousesStock(data);
-        me.bodyComponent.$.stockOthers.removeClass("error");
-        me.bodyComponent.$.stockOthers.setContent(OB.I18N.getLabel('OBPOS_otherStoresStock') + data.qty);
+      } else if (data.product === me.product.get('id')) {
+        if (data.qty || data.qty === 0) {
+          data.product = me.product;
+          me.otherStoresStockModel = new OB.OBPOSPointOfSale.UsedModels.OtherStoresWarehousesStock(data);
+          me.bodyComponent.$.stockOthers.removeClass("error");
+          me.bodyComponent.$.stockOthers.setContent(OB.I18N.getLabel('OBPOS_otherStoresStock') + data.qty);
+        }
       }
     });
   },
