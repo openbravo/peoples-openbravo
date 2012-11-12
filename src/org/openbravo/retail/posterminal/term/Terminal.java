@@ -70,7 +70,7 @@ public class Terminal extends ProcessHQLQuery {
         + " as lastDocumentNumber, "
         + lastQuotationDocumentNumber
         + " as lastQuotationDocumentNumber, postype as terminalType"
-        + " from OBPOS_Applications AS pos, OBPOS_TerminalType as postype where pos.$readableCriteria and pos.searchKey = :terminal";
+        + " from OBPOS_Applications AS pos inner join pos.obposTerminaltype as postype where pos.$readableCriteria and pos.searchKey = :terminal";
   }
 
   private String getIdentifierAlias(String propertyName) {
