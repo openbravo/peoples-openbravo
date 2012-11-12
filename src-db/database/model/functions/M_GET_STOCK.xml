@@ -213,7 +213,7 @@ BEGIN --BODY
                 AND rs.m_locator_id IS NOT NULL
                 AND rs.m_locator_id = COALESCE(v_locatorid, rs.m_locator_id)
                 AND COALESCE(rs.m_attributesetinstance_id, '0') = COALESCE(v_attributesetinstanceid, rs.m_attributesetinstance_id, '0')
-                AND r.res_status <> 'CL'
+                AND r.res_status NOT IN ('CL', 'DR')
                 AND ((v_reservation_id IS NOT NULL AND rs.isallocated = 'Y')
                     OR v_reservation_id IS NULL)
               GROUP BY r.m_product_id, r.c_uom_id, rs.m_locator_id, COALESCE(rs.m_attributesetinstance_id, '0')
