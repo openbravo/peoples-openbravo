@@ -447,7 +447,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
         vars.setSessionValue(PREVIOUS_RANGE_OLD, vars.getSessionValue(PREVIOUS_RANGE));
         vars.setSessionValue(PREVIOUS_RANGE,
             String.valueOf(intRecordRangeUsed) + "," + vars.getSessionValue(PREVIOUS_RANGE));
-        data = ReportGeneralLedgerJournalData.select(this,
+        data = ReportGeneralLedgerJournalData.select(this, "'N'",
             Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
             Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
             strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strDocument,
@@ -643,9 +643,9 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
 
     } else if (strRecord.equals("")) {
       String strCheck = buildCheck(strShowClosing, strShowReg, strShowOpening, strShowRegular);
-      data = ReportGeneralLedgerJournalData.select(this,
-          Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
-          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"), strDateFrom,
+      data = ReportGeneralLedgerJournalData.select(this, "Y".equals(strShowDescription) ? "'Y'"
+          : "'N'", Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), Utility
+          .getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"), strDateFrom,
           DateTimeData.nDaysAfter(this, strDateTo, "1"), strDocument, strcAcctSchemaId,
           strOrgFamily, strCheck, vars.getLanguage());
     } else
