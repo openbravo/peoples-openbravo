@@ -38,6 +38,8 @@
   v_resstatus       VARCHAR2(60);
   v_newstatus       VARCHAR2(60);
   v_newaction       VARCHAR2(60);
+  v_orderline_id    VARCHAR2(32);
+  v_count           NUMBER;
 
 TYPE RECORD IS REF CURSOR;
   Cur_Parameter RECORD;
@@ -71,8 +73,8 @@ BEGIN
   END IF;
 
 BEGIN
-  SELECT res_status
-    INTO v_resstatus
+  SELECT res_status, c_orderline_id
+    INTO v_resstatus, v_orderline_id
   FROM m_reservation
   WHERE m_reservation_id = v_reservation_id;
   
@@ -83,9 +85,19 @@ BEGIN
     IF (v_resstatus != 'DR') THEN
       RAISE_APPLICATION_ERROR(-20000, '@ActionNotSupported@');
     END IF;
+    IF (v_orderline_id IS NOT NULL) THEN
+      SELECT count(*) INTO v_count
+      FROM m_reservation
+      WHERE c_orderline_id = v_orderline_id
+        AND res_status != 'CL'
+        AND m_reservation_id != v_reservation_id;
+      IF (v_count > 0) THEN
+        RAISE_APPLICATION_ERROR(-20000, '@SOLineWithMoreThanOneOpenReservation@');
+      END IF;
+    END IF;
+
     v_newstatus := 'CO';
     v_newaction := 'HO';
-    
     -- ADD RESERVED STOCK
     M_RESERVE_STOCK_AUTO(v_reservation_id, v_user_id, v_message);
 

@@ -72,34 +72,32 @@ BEGIN
     v_ResultStr := 'Purchase mrp';
 
     FOR Cur_PlanProduct IN (
-        SELECT MRP_RUN_PURCHASELINE.M_PRODUCT_ID, M_PRODUCT.NAME AS PRODUCTNAME,
-          COALESCE(M_PRODUCT_PO.CAPACITY, M_PRODUCT_ORG.CAPACITY, M_PRODUCT.CAPACITY) AS CAPACITY,
-          COALESCE(M_PRODUCT_PO.DELIVERYTIME_PROMISED, M_PRODUCT_ORG.DELAYMIN, M_PRODUCT.DELAYMIN, 0) AS DELAYMIN,
-          COALESCE(M_PRODUCT_PO.QTYTYPE, M_PRODUCT_ORG.QTYTYPE, M_PRODUCT_ORG.QTYTYPE, 'E') AS qtytype,
-          COALESCE(M_PRODUCT_PO.ORDER_MIN, M_PRODUCT_ORG.QTYMIN, M_PRODUCT_ORG.QTYMIN, 0) AS qtymin,
-          COALESCE(M_PRODUCT_PO.QTYSTD, M_PRODUCT_ORG.QTYSTD, M_PRODUCT_ORG.QTYSTD, 1) AS qtystd,
-          M_PRODUCT_PO.C_BPARTNER_ID AS vendor_ID
-        FROM MRP_RUN_PURCHASELINE, M_PRODUCT_PO,
-             M_PRODUCT LEFT JOIN M_PRODUCT_ORG ON M_PRODUCT.M_PRODUCT_ID = M_PRODUCT_ORG.M_PRODUCT_ID,
-             (SELECT MAX(C_BPARTNER_ID) AS C_BPARTNER_ID, M_PRODUCT_ID
-              FROM M_PRODUCT_PO
-              WHERE ISCURRENTVENDOR = 'Y'
-                AND (p_Vendor_ID IS NULL OR M_PRODUCT_PO.C_BPARTNER_ID = p_Vendor_ID)
-                AND M_PRODUCT_PO.DISCONTINUED = 'N'
-              GROUP BY M_PRODUCT_ID) PRODUCT_PO --CASE WITH MORE THAN ONE DEFAULT VENDOR
-        WHERE MRP_RUN_PURCHASE_ID = p_Run_ID
-          AND M_PRODUCT.M_PRODUCT_ID = M_PRODUCT_PO.M_PRODUCT_ID
-          AND M_PRODUCT.M_PRODUCT_ID = MRP_RUN_PURCHASELINE.M_PRODUCT_ID
-          AND MRP_RUN_PURCHASELINE.AD_ORG_ID = M_PRODUCT_ORG.AD_ORG_ID
-          AND PRODUCT_PO.C_BPARTNER_ID = M_PRODUCT_PO.C_BPARTNER_ID
-          AND PRODUCT_PO.M_PRODUCT_ID = M_PRODUCT_PO.M_PRODUCT_ID
-          AND M_PRODUCT.ISPURCHASED = 'Y'
-      GROUP BY MRP_RUN_PURCHASELINE.M_PRODUCT_ID, M_PRODUCT.NAME, M_PRODUCT_PO.CAPACITY, M_PRODUCT_ORG.CAPACITY, M_PRODUCT.CAPACITY,
-        M_PRODUCT_PO.DELIVERYTIME_PROMISED, M_PRODUCT_ORG.DELAYMIN, M_PRODUCT.DELAYMIN,
-        M_PRODUCT_PO.QTYTYPE, M_PRODUCT_ORG.QTYTYPE, M_PRODUCT_ORG.QTYTYPE,
-        M_PRODUCT_PO.ORDER_MIN, M_PRODUCT_ORG.QTYMIN, M_PRODUCT_ORG.QTYMIN,
-        M_PRODUCT_PO.QTYSTD, M_PRODUCT_ORG.QTYSTD, M_PRODUCT_ORG.QTYSTD, M_PRODUCT_PO.C_BPARTNER_ID --CASE WITH MORE THAN ONE DEFAULT VENDOR
-      ) LOOP
+        SELECT rpl.m_product_id, p.name AS productname,
+            COALESCE(ppo.capacity, porg.capacity, p.capacity) AS capacity,
+            COALESCE(ppo.deliverytime_promised, porg.delaymin, p.delaymin, 0) AS delaymin,
+            COALESCE(ppo.qtytype, porg.qtytype, 'E') AS qtytype,
+            COALESCE(ppo.order_min, porg.qtymin,0) AS qtymin,
+            COALESCE(ppo.qtystd, porg.qtystd, 1) AS qtystd,
+            ppo.c_bpartner_id AS vendor_id
+        FROM mrp_run_purchaseline rpl
+              JOIN m_product p ON p.m_product_id = rpl.m_product_id AND p.ispurchased = 'Y'
+              JOIN m_product_org porg ON p.m_product_id = porg.m_product_id AND rpl.ad_org_id = porg.ad_org_id
+              JOIN (SELECT MAX(m_product_po_id) AS m_product_po_id, m_product_id
+                    FROM m_product_po
+                    WHERE iscurrentvendor = 'Y'
+                      AND (p_vendor_id IS NULL OR m_product_po.c_bpartner_id = p_vendor_id)
+                      AND m_product_po.discontinued = 'N'
+                    GROUP BY m_product_id
+                  ) maxppo ON maxppo.m_product_id = p.m_product_id --CASE WITH MORE THAN ONE DEFAULT VENDOR
+              LEFT JOIN m_product_po prefppo ON prefppo.discontinued = 'N' AND porg.m_product_po_id = prefppo.m_product_po_id
+              JOIN m_product_po ppo ON COALESCE(prefppo.m_product_po_id, maxppo.m_product_po_id) = ppo.m_product_po_id
+        WHERE mrp_run_purchase_id = p_run_id
+        GROUP BY rpl.m_product_id, p.name, ppo.capacity, porg.capacity, p.capacity,
+            ppo.deliverytime_promised, porg.delaymin, p.delaymin,
+            ppo.qtytype, porg.qtytype, 
+            ppo.order_min, porg.qtymin,
+            ppo.qtystd, porg.qtystd, ppo.c_bpartner_id --CASE WITH MORE THAN ONE DEFAULT VENDOR
+    ) LOOP
       v_stock := 0;
       v_neededqty_old := NULL;
       v_planneddate_old := NULL;

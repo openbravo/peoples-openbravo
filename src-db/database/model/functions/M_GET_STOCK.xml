@@ -35,6 +35,7 @@
   Cur_Stock RECORD;
   Cur_MStock RECORD;
   cur_warehouse RECORD;
+  cur_allocated RECORD;
 
   -- Parameter Variables
   v_Quantity NUMBER(10);
@@ -54,6 +55,7 @@
   v_LineNo NUMBER;
   v_Count NUMBER:=1;
   v_ProcessID VARCHAR2(32) ;
+  v_Reservation_ID VARCHAR2(32);
   
 BEGIN
   --  Update AD_PInstance
@@ -119,11 +121,38 @@ BEGIN --BODY
     ELSIF (Cur_Parameter.ParameterName = 'ProcessID') THEN
       v_ProcessID:=Cur_Parameter.P_String;
       DBMS_OUTPUT.PUT_LINE(' ProcessID=' || v_ProcessID);
+    ELSIF (Cur_Parameter.ParameterName = 'M_Reservation_ID') THEN
+      v_reservation_id:=Cur_Parameter.P_String;
+      DBMS_OUTPUT.PUT_LINE(' M_Reservation_ID=' || v_reservation_id);
     ELSE
       DBMS_OUTPUT.PUT_LINE('*** Unknown Parameter=' || Cur_Parameter.ParameterName) ;
     END IF;
   END LOOP; -- Get Parameter
   DBMS_OUTPUT.PUT_LINE('  Record_ID=' || v_Record_ID) ;
+
+  IF (v_reservation_id IS NOT NULL) THEN
+    -- If a reservation is given first consume allocated stock.
+    FOR cur_allocated IN (
+        SELECT *
+        FROM m_reservation_stock
+        WHERE m_reservation_id = v_reservation_id
+          AND isallocated = 'Y'
+          AND quantity > 0
+          AND quantity <> COALESCE(releasedqty, 0)
+          AND m_locator_id IS NOT NULL
+    ) LOOP
+      INSERT INTO m_stock_proposed (
+          m_stock_proposed_id, ad_client_id, ad_org_id, isactive, 
+          created , createdby, updated, updatedby,
+          ad_pinstance_id, priority, m_storage_detail_id, quantity, qtyorder
+      ) VALUES (
+          get_uuid(), v_ClientID, v_OrgID, 'Y',
+          now(), v_AD_User_ID, now(), v_AD_User_ID,
+          pinstance_id, v_Count, cur_allocated.m_storage_detail_id, cur_allocated.quantity - COALESCE(cur_allocated.releasedqty, 0), null
+      );
+      v_Count:=v_Count+1;
+    END LOOP;
+  END IF;
 
   -- Insert Values from Auxiliar STOCK
   FOR Cur_Stock IN (
@@ -165,7 +194,8 @@ BEGIN --BODY
 
   -- Insert Values from Storage Detail
   FOR Cur_Stock  IN (
-      SELECT t.m_storage_detail_id, COALESCE(t.qtyonhand, 0) AS qty, t.qtyorderonhand AS qtyorder, l.priorityno, t.UPDATED AS lastupdated
+      SELECT t.m_storage_detail_id, COALESCE(t.qtyonhand - COALESCE(res.reservedqty, 0), 0) AS qty, t.qtyorderonhand AS qtyorder, l.priorityno, t.UPDATED AS lastupdated,
+      t.qtyonhand, COALESCE(res.reservedqty, 0) as reservedqty
       FROM m_storage_detail t 
           JOIN m_locator l ON t.m_locator_id=l.m_locator_id
           JOIN m_warehouse w ON l.m_warehouse_id = w.m_warehouse_id
@@ -173,6 +203,24 @@ BEGIN --BODY
           LEFT JOIN m_attributesetinstance asi ON t.m_attributesetinstance_id = asi.m_attributesetinstance_id
           LEFT JOIN m_product_uom pu ON t.m_product_uom_id = pu.m_product_uom_id
           LEFT JOIN c_uom u ON pu.c_uom_id = u.c_uom_id
+          LEFT JOIN (
+              SELECT r.m_product_id, r.c_uom_id, rs.m_locator_id, COALESCE(rs.m_attributesetinstance_id, '0') as m_attributesetinstance_id,
+                  SUM(rs.quantity - COALESCE(rs.releasedqty, 0)) AS reservedqty
+              FROM m_reservation r
+                  JOIN m_reservation_stock rs ON r.m_reservation_id = rs.m_reservation_id
+              WHERE r.m_product_id = v_productid
+                AND r.c_uom_id = COALESCE(v_uomid, r.c_uom_id)
+                AND rs.m_locator_id IS NOT NULL
+                AND rs.m_locator_id = COALESCE(v_locatorid, rs.m_locator_id)
+                AND COALESCE(rs.m_attributesetinstance_id, '0') = COALESCE(v_attributesetinstanceid, rs.m_attributesetinstance_id, '0')
+                AND r.res_status <> 'CL'
+                AND ((v_reservation_id IS NOT NULL AND rs.isallocated = 'Y')
+                    OR v_reservation_id IS NULL)
+              GROUP BY r.m_product_id, r.c_uom_id, rs.m_locator_id, COALESCE(rs.m_attributesetinstance_id, '0')
+            ) res ON t.m_product_id = res.m_product_id
+                      AND t.c_uom_id = res.c_uom_id
+                      AND COALESCE(t.m_attributesetinstance_id, '0') = res.m_attributesetinstance_id
+                      AND t.m_locator_id = res.m_locator_id
       WHERE t.m_product_id=v_productid
         AND COALESCE(t.c_uom_id, '-1') = COALESCE(v_uomid, t.c_uom_id, '-1')
         AND COALESCE(t.m_product_uom_id, '-1') = COALESCE(v_productuomid, t.m_product_uom_id, '-1')
@@ -181,20 +229,23 @@ BEGIN --BODY
         AND COALESCE(w.m_warehouse_id, '-1') = COALESCE(v_warehouseid, w.m_warehouse_id, '-1')
         AND ow.ad_org_id = v_orgid
         AND COALESCE(t.qtyonhand, 0)>0
+        AND t.qtyonhand - COALESCE(res.reservedqty, 0) > 0
       ORDER BY CASE w.m_warehouse_id WHEN COALESCE(v_PriorityWarehouseID, '-1') THEN 0 ELSE 1 END, ow.priority, l.priorityno, asi.created, t.created
   ) LOOP
-    INSERT INTO m_stock_proposed (
-        m_stock_proposed_id, ad_client_id, ad_org_id, isactive, 
-        created , createdby, updated, updatedby,
-        ad_pinstance_id, priority, m_storage_detail_id, quantity, qtyorder,
-        isfinal
-    ) VALUES (
-        get_uuid(), v_ClientID, v_OrgID, 'Y',
-        now(), v_AD_User_ID, now(), v_AD_User_ID,
-        pinstance_id, v_Count, Cur_Stock.M_STORAGE_DETAIL_ID, Cur_Stock.Qty, Cur_Stock.QtyOrder,
-        'Y'
-    );
-    v_Count:=v_Count+1;
+    IF (cur_stock.qtyonhand > cur_stock.reservedqty) THEN
+      INSERT INTO m_stock_proposed (
+          m_stock_proposed_id, ad_client_id, ad_org_id, isactive, 
+          created , createdby, updated, updatedby,
+          ad_pinstance_id, priority, m_storage_detail_id, quantity, qtyorder,
+          isfinal
+      ) VALUES (
+          get_uuid(), v_ClientID, v_OrgID, 'Y',
+          now(), v_AD_User_ID, now(), v_AD_User_ID,
+          pinstance_id, v_Count, Cur_Stock.M_STORAGE_DETAIL_ID, Cur_Stock.Qty, Cur_Stock.QtyOrder,
+          'Y'
+      );
+      v_Count:=v_Count+1;
+    END IF;
   END LOOP;
 
   --M_Get_Stock - Finish Process Extension Point
