@@ -186,8 +186,7 @@ public class POSUtils {
     return null;
   }
 
-  public static int getLastDocumentNumberForPOS(String searchKey, String documentTypeId,
-      String prefix) {
+  public static int getLastDocumentNumberForPOS(String searchKey, String documentTypeId) {
     OBPOSApplications POSTerminal = POSUtils.getTerminal(searchKey);
 
     OBQuery<Order> obqOrders = OBDal.getInstance().createQuery(Order.class,
@@ -198,12 +197,11 @@ public class POSUtils {
     ScrollableResults POSOrders = obqOrders.scroll(ScrollMode.FORWARD_ONLY);
     int maxNumber = 0;
     int i = 0;
-    int prefixLength = prefix == null ? 1 : prefix.length() + 1;
     while (POSOrders.next()) {
       Order order = (Order) POSOrders.get(0);
       String documentNo = order.getDocumentNo();
       // documentNo = prefix + '/' + number
-      String onlyNumber = documentNo.substring(prefixLength);
+      String onlyNumber = documentNo.split("/")[1];
       try {
         int number = Integer.parseInt(onlyNumber);
         if (number > maxNumber) {

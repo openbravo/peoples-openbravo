@@ -29,12 +29,11 @@ public class Terminal extends ProcessHQLQuery {
         .getString("value");
     OBPOSApplications pOSTerminal = POSUtils.getTerminal(POSSearchKey);
     int lastDocumentNumber = POSUtils.getLastDocumentNumberForPOS(POSSearchKey, pOSTerminal
-        .getObposTerminaltype().getDocumentType().getId(), pOSTerminal.getOrderdocnoPrefix());
+        .getObposTerminaltype().getDocumentType().getId());
     int lastQuotationDocumentNumber = 0;
     if (pOSTerminal.getObposTerminaltype().getDocumentTypeForQuotations() != null) {
       lastQuotationDocumentNumber = POSUtils.getLastDocumentNumberForPOS(POSSearchKey, pOSTerminal
-          .getObposTerminaltype().getDocumentTypeForQuotations().getId(),
-          pOSTerminal.getQuotationdocnoPrefix());
+          .getObposTerminaltype().getDocumentTypeForQuotations().getId());
     }
     final org.openbravo.model.pricing.pricelist.PriceList pricesList = POSUtils
         .getPriceListByTerminal(POSSearchKey);
