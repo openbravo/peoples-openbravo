@@ -24,12 +24,12 @@ enyo.kind({
   executeOnHide: function () {
     this.stockInfo = null;
   },
-  executeOnShow: function (args) {
-    this.setStockInfo(args);
+  executeOnShow: function () {
+    this.setStockInfo(this.args.stockInfo);
   },
   stockInfoChanged: function (oldValue) {
     if (this.stockInfo) {
-      this.$.divheader.setContent(this.stockInfo.get('product').get('_identifier') + ' (' + this.stockInfo.get('product').get('uOMsymbol') + ')');
+      this.$.header.setContent(this.stockInfo.get('product').get('_identifier') + ' (' + this.stockInfo.get('product').get('uOMsymbol') + ')');
       this.$.body.$.stockDetailList.setStockValuesPerWarehouse(this.stockInfo.get('warehouses'));
     } else {
       this.$.body.$.stockDetailList.setStockValuesPerWarehouse(null);
