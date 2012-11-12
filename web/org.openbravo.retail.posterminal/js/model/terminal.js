@@ -60,12 +60,6 @@ OB.Model.Terminal = Backbone.Model.extend({
 
   initialize: function () {
     var me = this;
-    $(window).bind('online', function () {
-      OB.UTIL.checkConnectivityStatus();
-    });
-    $(window).bind('offline', function () {
-      OB.UTIL.checkConnectivityStatus();
-    });
 
     this.router = new OB.Router();
 
@@ -902,14 +896,12 @@ OB.Model.Terminal = Backbone.Model.extend({
   triggerOnLine: function () {
     if (!OB.POS.modelterminal.loggingIn) {
       this.set('connectedToERP', true);
-      this.trigger('online');
     }
   },
 
   triggerOffLine: function () {
     if (!OB.POS.modelterminal.loggingIn) {
       this.set('connectedToERP', false);
-      this.trigger('offline');
     }
   },
 
