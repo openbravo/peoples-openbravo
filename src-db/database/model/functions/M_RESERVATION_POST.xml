@@ -40,6 +40,8 @@
   v_newaction       VARCHAR2(60);
   v_orderline_id    VARCHAR2(32);
   v_count           NUMBER;
+  v_quantity        NUMBER;
+  v_reservedqty     NUMBER;
 
 TYPE RECORD IS REF CURSOR;
   Cur_Parameter RECORD;
@@ -73,8 +75,8 @@ BEGIN
   END IF;
 
 BEGIN
-  SELECT res_status, c_orderline_id
-    INTO v_resstatus, v_orderline_id
+  SELECT res_status, c_orderline_id, quantity, reservedqty
+    INTO v_resstatus, v_orderline_id, v_quantity, v_reservedqty
   FROM m_reservation
   WHERE m_reservation_id = v_reservation_id;
   
@@ -82,24 +84,52 @@ BEGIN
   /*
     Reservation Complete Process
   */
-    IF (v_resstatus != 'DR') THEN
-      RAISE_APPLICATION_ERROR(-20000, '@ActionNotSupported@');
-    END IF;
-    IF (v_orderline_id IS NOT NULL) THEN
-      SELECT count(*) INTO v_count
-      FROM m_reservation
-      WHERE c_orderline_id = v_orderline_id
-        AND res_status != 'CL'
-        AND m_reservation_id != v_reservation_id;
-      IF (v_count > 0) THEN
-        RAISE_APPLICATION_ERROR(-20000, '@SOLineWithMoreThanOneOpenReservation@');
+    DECLARE
+      v_sales_order_id        VARCHAR2(32);
+      v_linecount             NUMBER;
+      v_creservedcount        NUMBER;
+      v_preservedcount        NUMBER;
+    BEGIN
+      IF (v_resstatus != 'DR') THEN
+        RAISE_APPLICATION_ERROR(-20000, '@ActionNotSupported@');
       END IF;
-    END IF;
-
-    v_newstatus := 'CO';
-    v_newaction := 'HO';
-    -- ADD RESERVED STOCK
-    M_RESERVE_STOCK_AUTO(v_reservation_id, v_user_id, v_message);
+      IF (v_orderline_id IS NOT NULL) THEN
+        SELECT count(*) INTO v_count
+        FROM m_reservation
+        WHERE c_orderline_id = v_orderline_id
+          AND res_status != 'CL'
+          AND m_reservation_id != v_reservation_id;
+        IF (v_count > 0) THEN
+          RAISE_APPLICATION_ERROR(-20000, '@SOLineWithMoreThanOneOpenReservation@');
+        END IF;
+  
+        UPDATE c_orderline
+        SET so_res_status = CASE WHEN v_quantity = v_reservedqty THEN 'CR'
+                                 ELSE 'PR'
+                            END
+        WHERE c_orderline_id = v_orderline_id;
+  
+        SELECT c_order_id INTO v_sales_order_id
+        FROM c_orderline
+        WHERE c_orderline_id = v_orderline_id;
+        SELECT COUNT(*), SUM(CASE so_res_status WHEN 'CR' THEN 1 ELSE 0 END), SUM(CASE so_res_status WHEN 'PR' THEN 1 ELSE 0 END)
+          INTO v_linecount, v_creservedcount, v_preservedcount
+        FROM c_orderline
+        WHERE c_order_id = v_sales_order_id;
+  
+        UPDATE c_order
+        SET so_res_status = CASE WHEN v_linecount = v_creservedcount THEN 'CR'
+                                 WHEN v_creservedcount + v_preservedcount > 0 THEN 'PR'
+                                 ELSE 'NR'
+                            END
+        WHERE c_order_id = v_sales_order_id;
+      END IF;
+  
+      v_newstatus := 'CO';
+      v_newaction := 'HO';
+      -- ADD RESERVED STOCK
+      M_RESERVE_STOCK_AUTO(v_reservation_id, v_user_id, v_message);
+    END;
 
   ELSIF (v_resaction = 'HO') THEN
   /*
@@ -126,11 +156,36 @@ BEGIN
   /*
     Reservation Reactivate Process
   */
-    IF (v_resstatus != 'CO') THEN
-      RAISE_APPLICATION_ERROR(-20000, '@ActionNotSupported@');
-    END IF;
-    v_newstatus := 'DR';
-    v_newaction := 'PR';
+    DECLARE
+      v_sales_order_id        VARCHAR2(32);
+      v_reservedcount         NUMBER;
+    BEGIN
+
+      IF (v_resstatus != 'CO') THEN
+        RAISE_APPLICATION_ERROR(-20000, '@ActionNotSupported@');
+      END IF;
+
+      UPDATE c_orderline
+      SET so_res_status = 'NR'
+      WHERE c_orderline_id = v_orderline_id;
+
+      SELECT c_order_id INTO v_sales_order_id
+      FROM c_orderline
+      WHERE c_orderline_id = v_orderline_id;
+      SELECT COUNT(*) INTO v_reservedcount
+      FROM c_orderline
+      WHERE c_order_id = v_sales_order_id
+        AND so_res_status <> 'NR';
+
+      UPDATE c_order
+      SET so_res_status = CASE WHEN v_reservedcount > 0 THEN 'PR'
+                               ELSE 'NR'
+                          END
+      WHERE c_order_id = v_sales_order_id;
+
+      v_newstatus := 'DR';
+      v_newaction := 'PR';
+    END;
   
   ELSIF (v_resaction = 'CL') THEN
   /*
