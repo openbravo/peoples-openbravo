@@ -53,11 +53,11 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="CB_EXPENSE_ACCT" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+      <column name="CB_EXPENSE_ACCT" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="CB_RECEIPT_ACCT" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+      <column name="CB_RECEIPT_ACCT" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
