@@ -804,8 +804,9 @@ public class OrderLoader extends JSONProcessSimple {
         paymentScheduleInvoice.setCurrency(order.getCurrency());
         paymentScheduleInvoice.setInvoice(invoice);
         paymentScheduleInvoice.setFinPaymentmethod(order.getBusinessPartner().getPaymentMethod());
-        paymentScheduleInvoice.setAmount(amt);
-        paymentScheduleInvoice.setOutstandingAmount(amt);
+        paymentScheduleInvoice.setAmount(BigDecimal.valueOf(jsonorder.getDouble("gross")));
+        paymentScheduleInvoice
+            .setOutstandingAmount(BigDecimal.valueOf(jsonorder.getDouble("gross")));
         paymentScheduleInvoice.setDueDate(order.getOrderDate());
         paymentScheduleInvoice.setExpectedDate(order.getOrderDate());
         if (ModelProvider.getInstance().getEntity(FIN_PaymentSchedule.class)
@@ -869,14 +870,15 @@ public class OrderLoader extends JSONProcessSimple {
       if (amount.signum() == 0) {
         return;
       }
-      if (writeoffAmt.signum() != 0) {
+      if (writeoffAmt.signum() == 1) {
+        // there was an overpayment, we need to take into account the writeoffamt
         amount = amount.subtract(writeoffAmt);
       }
 
       FIN_PaymentScheduleDetail paymentScheduleDetail = OBProvider.getInstance().get(
           FIN_PaymentScheduleDetail.class);
       paymentScheduleDetail.setOrderPaymentSchedule(paymentSchedule);
-      paymentScheduleDetail.setAmount(amount);
+      paymentScheduleDetail.setAmount(order.getGrandTotalAmount());
       paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList().add(
           paymentScheduleDetail);
 
@@ -924,7 +926,7 @@ public class OrderLoader extends JSONProcessSimple {
           order.getBusinessPartner(), paymentType.getPaymentMethod().getPaymentMethod(), account,
           amount.toString(), order.getOrderDate(), order.getOrganization(), null, detail,
           paymentAmount, false, false, order.getCurrency(), mulrate, origAmount);
-      if (writeoffAmt.signum() != 0) {
+      if (writeoffAmt.signum() == 1) {
         FIN_AddPayment.saveGLItem(finPayment, writeoffAmt, paymentType.getPaymentMethod()
             .getGlitemWriteoff());
       }
