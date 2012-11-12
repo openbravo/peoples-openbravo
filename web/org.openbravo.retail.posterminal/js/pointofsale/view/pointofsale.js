@@ -296,12 +296,6 @@ enyo.kind({
     return true;
   },
 
-  showCreateOrderPopup: function () {
-    this.doShowPopup({
-      popup: 'modalCreateOrderFromQuotation'
-    });
-  },
-
   createOrderFromQuotation: function () {
     this.model.get('order').createOrderFromQuotation();
     this.model.get('orderList').saveCurrent();

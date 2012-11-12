@@ -32,7 +32,7 @@ enyo.kind({
   },
   tap: function () {
     var checked = !this.parent.children[1].children[0].checked;
-    this.parent.parent.parent.parent.parent.theQuotation.createOrderFromQuotation(checked);
+    this.parent.parent.parent.parent.theQuotation.createOrderFromQuotation(checked);
     this.doHideThisPopup();
   }
 });

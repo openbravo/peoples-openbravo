@@ -234,12 +234,14 @@ enyo.kind({
   kind: 'OB.UI.MenuAction',
   permission: 'OBPOS_receipt.createorderfromquotation',
   events: {
-    onShowCreateOrderPopup: ''
+    onShowPopup: ''
   },
   label: OB.I18N.getLabel('OBPOS_CreateOrderFromQuotation'),
   tap: function () {
     this.parent.hide(); // Manual dropdown menu closure
-    this.doShowCreateOrderPopup();
+    this.doShowPopup({
+      popup: 'modalCreateOrderFromQuotation'
+    });
   },
   updateVisibility: function (model) {
     if (model.get('isQuotation') && model.get('hasbeenpaid') === 'Y') {
@@ -349,7 +351,6 @@ enyo.kind({
   }
 });
 
-
 enyo.kind({
   name: 'OB.UI.MenuQuotations',
   kind: 'OB.UI.MenuAction',
@@ -431,7 +432,6 @@ enyo.kind({
     this.menuEntries.push({
       kind: 'OB.UI.MenuCreateOrderFromQuotation'
     });
-
 
     this.menuEntries.push({
       kind: 'OB.UI.MenuQuotation'
