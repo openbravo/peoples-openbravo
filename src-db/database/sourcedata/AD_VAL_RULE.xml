@@ -279,7 +279,8 @@ AND (COALESCE(@isReturnMaterial@, 'N') = C_DocType.IsReturn OR COALESCE(@isDocum
 <!--133-->  <TYPE><![CDATA[S]]></TYPE>
 <!--133-->  <CODE><![CDATA[C_DocType.DocBaseType IN ('SOO', 'POO') AND C_DocType.IsSOTrx='@IsSOTrx@'
 AND (AD_ISORGINCLUDED(@AD_Org_ID@,C_DocType.AD_Org_ID, @#AD_Client_ID@) <> '-1' OR COALESCE(@AD_Org_ID@,'-1')='-1')
-AND COALESCE(@isReturnMaterial@, 'N') = C_DocType.IsReturn]]></CODE>
+AND COALESCE(@isReturnMaterial@, 'N') = C_DocType.IsReturn
+AND ((@isQuotation@='Y' AND docsubtypeso like 'OB') OR ((@isQuotation@='N' OR @isQuotation@ is null) AND (docsubtypeso is null OR docsubtypeso not like 'OB')))]]></CODE>
 <!--133-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--133--></AD_VAL_RULE>
 

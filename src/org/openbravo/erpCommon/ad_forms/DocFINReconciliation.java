@@ -204,7 +204,7 @@ public class DocFINReconciliation extends AcctServer {
         boolean isPaymentDatePriorToInvoiceDate = isPaymentDatePriorToInvoiceDate(paymentDetails
             .get(i));
         FieldProviderFactory.setField(data[i], "isPaymentDatePriorToInvoiceDate",
-            isPaymentDatePriorToInvoiceDate ? "Y" : "N");
+            isPaymentDatePriorToInvoiceDate && !paymentDetails.get(i).isPrepayment() ? "Y" : "N");
         FieldProviderFactory.setField(data[i], "WriteOffAmt", paymentDetails.get(i)
             .getWriteoffAmount().toString());
         FieldProviderFactory.setField(data[i], "cGlItemId",
@@ -757,7 +757,8 @@ public class DocFINReconciliation extends AcctServer {
       FIN_PaymentDetail paymentDetail, AcctSchema as, ConnectionProvider conn, Fact fact,
       String Fact_Acct_Group_ID) throws ServletException {
     boolean isPrepayment = paymentDetail.isPrepayment();
-    boolean isPaymentDatePriorToInvoiceDate = isPaymentDatePriorToInvoiceDate(paymentDetail);
+    boolean isPaymentDatePriorToInvoiceDate = isPaymentDatePriorToInvoiceDate(paymentDetail)
+        && !paymentDetail.isPrepayment();
     boolean isReceipt = paymentDetail.getFinPayment().isReceipt();
     BigDecimal bpAmount = paymentDetail.getAmount();
     Currency paymentCurrency = paymentDetail.getFinPayment().getCurrency();

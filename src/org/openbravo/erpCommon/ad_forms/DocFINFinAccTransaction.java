@@ -144,7 +144,7 @@ public class DocFINFinAccTransaction extends AcctServer {
         boolean isPaymentDatePriorToInvoiceDate = isPaymentDatePriorToInvoiceDate(paymentDetails
             .get(i));
         FieldProviderFactory.setField(data[i], "isPaymentDatePriorToInvoiceDate",
-            isPaymentDatePriorToInvoiceDate ? "Y" : "N");
+            isPaymentDatePriorToInvoiceDate && !paymentDetails.get(i).isPrepayment() ? "Y" : "N");
         FieldProviderFactory.setField(data[i], "WriteOffAmt", paymentDetails.get(i)
             .getWriteoffAmount().toString());
         FieldProviderFactory.setField(data[i], "cGlItemId",

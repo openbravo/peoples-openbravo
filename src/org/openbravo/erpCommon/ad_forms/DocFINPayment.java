@@ -130,7 +130,7 @@ public class DocFINPayment extends AcctServer {
             paymentDetails.get(i).isPrepayment() ? "Y" : (isPaymentDatePriorToInvoiceDate ? "Y"
                 : "N"));
         FieldProviderFactory.setField(data[i], "isPaymentDatePriorToInvoiceDate",
-            isPaymentDatePriorToInvoiceDate ? "Y" : "N");
+            isPaymentDatePriorToInvoiceDate && !paymentDetails.get(i).isPrepayment() ? "Y" : "N");
         FieldProviderFactory.setField(data[i], "cProjectId", paymentDetails.get(i)
             .getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule() != null
             && paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)

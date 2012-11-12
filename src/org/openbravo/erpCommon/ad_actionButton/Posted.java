@@ -111,9 +111,37 @@ public class Posted extends HttpSecureAppServlet {
             } finally {
               OBContext.restorePreviousMode();
             }
-            printPageClosePopUp(response, vars, strDireccion
-                + "/ad_reports/ReportGeneralLedgerJournal.html?Command=DIRECT&inpTable="
-                + strTableId + "&inpRecord=" + strKey + "&inpOrg=" + data[0].org, title);
+            PostedData[] data2 = null;
+            data2 = PostedData.selectAccSchemas(this, "ACCTDESCRIPTION",
+                Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
+                Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
+                strTableId, strKey, vars.getLanguage());
+
+            String accSchemas = "";
+            String schemaNames = "";
+            for (int i = 0; i < data2.length; i++) {
+
+              if (i + 1 == data2.length) {
+                accSchemas = accSchemas + data2[i].schemaId;
+                schemaNames = schemaNames + data2[i].schemaName;
+              } else {
+                accSchemas = accSchemas + data2[i].schemaId + ",";
+                schemaNames = schemaNames + data2[i].schemaName;
+              }
+            }
+
+            if (data2.length == 1) {
+              printPageClosePopUp(response, vars, strDireccion
+                  + "/ad_reports/ReportGeneralLedgerJournal.html?Command=DIRECT&inpTable="
+                  + strTableId + "&inpRecord=" + strKey + "&inpOrg=" + data[0].org
+                  + "&inpAccSchemas=" + accSchemas + "&posted=Y", title);
+            } else {
+              printPageClosePopUp(response, vars, strDireccion
+                  + "/ad_reports/ReportGeneralLedgerJournal.html?Command=DIRECT&inpTable="
+                  + strTableId + "&inpRecord=" + strKey + "&inpOrg=" + data[0].org
+                  + "&inpAccSchemas=" + accSchemas + "&posted=Y", title + " - "
+                  + data2[0].schemaName);
+            }
           }
         }
       } else {
@@ -143,9 +171,37 @@ public class Posted extends HttpSecureAppServlet {
             } finally {
               OBContext.restorePreviousMode();
             }
-            printPageClosePopUp(response, vars, strDireccion
-                + "/ad_reports/ReportGeneralLedgerJournal.html?Command=DIRECT&inpTable="
-                + strTableId + "&inpRecord=" + strKey + "&inpOrg=" + data[0].org, title);
+            PostedData[] data2 = null;
+            data2 = PostedData.selectAccSchemas(this, "ACCTDESCRIPTION",
+                Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
+                Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
+                strTableId, strKey, vars.getLanguage());
+
+            String accSchemas = "";
+            String schemaNames = "";
+            for (int i = 0; i < data2.length; i++) {
+
+              if (i + 1 == data2.length) {
+                accSchemas = accSchemas + data2[i].schemaId;
+                schemaNames = schemaNames + data2[i].schemaName;
+              } else {
+                accSchemas = accSchemas + data2[i].schemaId + ",";
+                schemaNames = schemaNames + data2[i].schemaName;
+              }
+            }
+
+            if (data2.length == 1) {
+              printPageClosePopUp(response, vars, strDireccion
+                  + "/ad_reports/ReportGeneralLedgerJournal.html?Command=DIRECT&inpTable="
+                  + strTableId + "&inpRecord=" + strKey + "&inpOrg=" + data[0].org
+                  + "&inpAccSchemas=" + accSchemas + "&posted=Y", title);
+            } else {
+              printPageClosePopUp(response, vars, strDireccion
+                  + "/ad_reports/ReportGeneralLedgerJournal.html?Command=DIRECT&inpTable="
+                  + strTableId + "&inpRecord=" + strKey + "&inpOrg=" + data[0].org
+                  + "&inpAccSchemas=" + accSchemas + "&posted=Y", title + " - "
+                  + data2[0].schemaName);
+            }
           }
         } else {
           if (log4j.isDebugEnabled())

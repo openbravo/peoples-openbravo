@@ -309,6 +309,22 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="CONVERTQUOTATION" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="C_REJECT_REASON_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="VALIDUNTIL" primaryKey="false" required="false" type="TIMESTAMP" size="7" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="QUOTATION_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="C_DOCTYPE" name="C_DOCTYPE_CORDER">
         <reference local="C_DOCTYPE_ID" foreign="C_DOCTYPE_ID"/>
       </foreign-key>
@@ -395,6 +411,12 @@
       </foreign-key>
       <foreign-key foreignTable="M_WAREHOUSE" name="C_ORDER_M_WAREHOUSE">
         <reference local="M_WAREHOUSE_ID" foreign="M_WAREHOUSE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_ORDER" name="C_ORDER_QUOTATION">
+        <reference local="QUOTATION_ID" foreign="C_ORDER_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_REJECT_REASON" name="C_ORDER_REJECT_REASON">
+        <reference local="C_REJECT_REASON_ID" foreign="C_REJECT_REASON_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_USER" name="C_ORDER_SALESREP">
         <reference local="SALESREP_ID" foreign="AD_USER_ID"/>

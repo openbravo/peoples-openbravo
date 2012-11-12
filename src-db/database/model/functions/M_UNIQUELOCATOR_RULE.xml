@@ -80,10 +80,15 @@ BEGIN
                                     AND sd.m_locator_id <> COALESCE(v_selectedlocatorid, '-1')
                                     AND l.m_warehouse_id = p_warehouse_id);
   ELSE
-    SELECT name INTO v_productname
-    FROM m_product
-    WHERE m_product_id = v_productid;
-    v_Message := '@Product@: ' || v_productname ||'. @NotEnoughLocatorUniqueStock@';
+    UPDATE m_stock_proposed
+    SET isfinal = 'N'
+    WHERE m_stock_proposed_id IN (SELECT m_stock_proposed_id
+                                  FROM m_stock_proposed ms
+                                      JOIN m_storage_detail sd ON ms.m_storage_detail_id = sd.m_storage_detail_id
+                                      JOIN m_locator l ON sd.m_locator_id = l.m_locator_id
+                                  WHERE ms.ad_pinstance_id = pinstance_id
+                                    AND l.m_warehouse_id = p_warehouse_id);
+    v_Message := '@NotEnoughLocatorUniqueStock@';
     AD_UPDATE_PINSTANCE(PInstance_ID, NULL, 'N', 2, v_Message, 'N');
     RETURN;
   END IF;

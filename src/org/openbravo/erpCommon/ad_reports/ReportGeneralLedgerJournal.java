@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -127,21 +128,41 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
           "ReportGeneralLedgerJournal|ShowDescription", "");
       printPageDataSheet(response, vars, strDateFrom, strDateTo, strDocument, strOrg, strTable,
           strRecord, "", strcAcctSchemaId, strShowClosing, strShowReg, strShowOpening, strPageNo,
-          strEntryNo, strInitialBalance, strShowDescription, strShowRegular);
+          strEntryNo, strInitialBalance, strShowDescription, strShowRegular, "", "");
     } else if (vars.commandIn("DIRECT")) {
       String strTable = vars.getGlobalVariable("inpTable", "ReportGeneralLedgerJournal|Table");
       String strRecord = vars.getGlobalVariable("inpRecord", "ReportGeneralLedgerJournal|Record");
+      String strAccSchemas = vars.getGlobalVariable("inpAccSchemas",
+          "ReportGeneralLedgerJournal|AccSchemas");
+      String paramschemas = vars.getStringParameter("inpParamschemas");
+      String strPosted = vars.getStringParameter("posted");
+      if (strPosted == "") {
+        if (paramschemas != "") {
+          strAccSchemas = paramschemas;
+        }
+      }
+
+      String[] accSchemas = strAccSchemas.split(",");
+      String strcAcctSchemaId = accSchemas[0];
+      String schemas = "";
+      for (int i = 1; i < accSchemas.length; i++) {
+        if (i + 1 == accSchemas.length) {
+          schemas = schemas + accSchemas[i];
+        } else {
+          schemas = schemas + accSchemas[i] + ",";
+        }
+      }
       setHistoryCommand(request, "DIRECT");
       vars.setSessionValue("ReportGeneralLedgerJournal.initRecordNumber", "0");
-      printPageDataSheet(response, vars, "", "", "", "", strTable, strRecord, "", "", "", "", "",
-          "1", "1", "0", "", "Y");
+      printPageDataSheet(response, vars, "", "", "", "", strTable, strRecord, "", strcAcctSchemaId,
+          "", "", "", "1", "1", "0", "", "Y", schemas, strPosted);
     } else if (vars.commandIn("DIRECT2")) {
       String strFactAcctGroupId = vars.getGlobalVariable("inpFactAcctGroupId",
           "ReportGeneralLedgerJournal|FactAcctGroupId");
       setHistoryCommand(request, "DIRECT2");
       vars.setSessionValue("ReportGeneralLedgerJournal.initRecordNumber", "0");
       printPageDataSheet(response, vars, "", "", "", "", "", "", strFactAcctGroupId, "", "", "",
-          "", "1", "1", "0", "", "Y");
+          "", "1", "1", "0", "", "Y", "", "");
     } else if (vars.commandIn("FIND")) {
       String strcAcctSchemaId = vars.getRequestGlobalVariable("inpcAcctSchemaId",
           "ReportGeneralLedger|cAcctSchemaId");
@@ -198,7 +219,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
         vars.setSessionValue("ReportGeneralLedgerJournal|ShowDescription", "N");
       printPageDataSheet(response, vars, strDateFrom, strDateTo, strDocument, strOrg, "", "", "",
           strcAcctSchemaId, strShowClosing, strShowReg, strShowOpening, strPageNo, strEntryNo,
-          strInitialBalance, strShowDescription, strShowRegular);
+          strInitialBalance, strShowDescription, strShowRegular, "", "");
     } else if (vars.commandIn("PDF", "XLS")) {
       if (log4j.isDebugEnabled())
         log4j.debug("PDF");
@@ -323,8 +344,10 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
     } else if (vars.commandIn("DOC")) {
       String org = vars.getStringParameter("inpOrg");
       String accSchema = vars.getStringParameter("inpcAcctSchemaId");
-      List<DocumentType> doctype = getDocuments(org, accSchema);
-      String combobox = getJSONComboBox(doctype, null, false);
+      String strDocument = vars.getRequestGlobalVariable("inpDocument",
+          "ReportGeneralLedgerJournal|Document");
+      Set<String> docbasetypes = getDocuments(org, accSchema);
+      String combobox = getJSONComboBox(docbasetypes, strDocument, false, vars);
 
       response.setContentType("text/html; charset=UTF-8");
       PrintWriter out = response.getWriter();
@@ -339,8 +362,8 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
       String strDateFrom, String strDateTo, String strDocument, String strOrg, String strTable,
       String strRecord, String strFactAcctGroupId, String strcAcctSchemaId, String strShowClosing,
       String strShowReg, String strShowOpening, String strPageNo, String strEntryNo,
-      String strInitialBalance, String strShowDescription, String strShowRegular)
-      throws IOException, ServletException {
+      String strInitialBalance, String strShowDescription, String strShowRegular, String accShemas,
+      String strPosted) throws IOException, ServletException {
     String strRecordRange = Utility.getContext(this, vars, "#RecordRange",
         "ReportGeneralLedgerJournal");
     int intRecordRangePredefined = (strRecordRange.equals("") ? 0 : Integer
@@ -424,7 +447,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
         vars.setSessionValue(PREVIOUS_RANGE_OLD, vars.getSessionValue(PREVIOUS_RANGE));
         vars.setSessionValue(PREVIOUS_RANGE,
             String.valueOf(intRecordRangeUsed) + "," + vars.getSessionValue(PREVIOUS_RANGE));
-        data = ReportGeneralLedgerJournalData.select(this, "ACCTDESCRIPTION",
+        data = ReportGeneralLedgerJournalData.select(this,
             Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
             Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
             strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strDocument,
@@ -437,10 +460,12 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
               strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strDocument,
               strcAcctSchemaId, strOrgFamily, strCheck, data[0].dateacct, data[0].identifier);
       } else {
-        data = ReportGeneralLedgerJournalData.selectDirect(this, "ACCTDESCRIPTION",
+        data = ReportGeneralLedgerJournalData.selectDirect(this,
             Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
             Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"), strTable,
-            strRecord, initRecordNumber, intRecordRangePredefined);
+            strRecord, strcAcctSchemaId, vars.getLanguage(), initRecordNumber,
+            intRecordRangePredefined);
+
         if (data != null && data.length > 0)
           strPosition = ReportGeneralLedgerJournalData.selectCountDirect(this,
               Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
@@ -448,20 +473,20 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
               strTable, strRecord, data[0].dateacct, data[0].identifier);
       }
     } else if (vars.commandIn("DIRECT")) {
-      data = ReportGeneralLedgerJournalData.selectDirect(this, "ACCTDESCRIPTION",
+      data = ReportGeneralLedgerJournalData.selectDirect(this,
           Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
           Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"), strTable,
-          strRecord);
+          strRecord, strcAcctSchemaId, vars.getLanguage());
       if (data != null && data.length > 0)
         strPosition = ReportGeneralLedgerJournalData.selectCountDirect(this,
             Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
             Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"), strTable,
             strRecord, data[0].dateacct, data[0].identifier);
     } else if (vars.commandIn("DIRECT2")) {
-      data = ReportGeneralLedgerJournalData.selectDirect2(this, "ACCTDESCRIPTION",
+      data = ReportGeneralLedgerJournalData.selectDirect2(this,
           Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
           Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
-          strFactAcctGroupId);
+          strFactAcctGroupId, vars.getLanguage());
       if (data != null && data.length > 0)
         strPosition = ReportGeneralLedgerJournalData.selectCountDirect2(this,
             Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
@@ -540,6 +565,8 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
     xmlDocument.setParameter("calendar", vars.getLanguage().substring(0, 2));
     xmlDocument.setParameter("document", strDocument);
     xmlDocument.setParameter("cAcctschemaId", strcAcctSchemaId);
+    xmlDocument.setParameter("cAcctschemas", accShemas);
+    xmlDocument.setParameter("posted", strPosted);
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_ORG_ID", "",
@@ -610,25 +637,22 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
     String strOrgFamily = getFamily(strTreeOrg, strOrg);
     if (!strFactAcctGroupId.equals("")) {
       data = ReportGeneralLedgerJournalData.selectDirect2(this,
-          ("".equals(strShowDescription)) ? "ACCTDESCRIPTION" : "DESCRIPTION",
           Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
           Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
-          strFactAcctGroupId);
+          strFactAcctGroupId, vars.getLanguage());
 
     } else if (strRecord.equals("")) {
       String strCheck = buildCheck(strShowClosing, strShowReg, strShowOpening, strShowRegular);
       data = ReportGeneralLedgerJournalData.select(this,
-          ("".equals(strShowDescription)) ? "ACCTDESCRIPTION" : "DESCRIPTION",
           Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
           Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"), strDateFrom,
           DateTimeData.nDaysAfter(this, strDateTo, "1"), strDocument, strcAcctSchemaId,
           strOrgFamily, strCheck, vars.getLanguage());
     } else
       data = ReportGeneralLedgerJournalData.selectDirect(this,
-          ("".equals(strShowDescription)) ? "ACCTDESCRIPTION" : "DESCRIPTION",
           Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
           Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"), strTable,
-          strRecord);
+          strRecord, strcAcctSchemaId, vars.getLanguage());
 
     String strSubtitle = (Utility.messageBD(this, "LegalEntity", vars.getLanguage()) + ": ")
         + ReportGeneralLedgerJournalData.selectCompany(this, vars.getClient()) + "\n";
@@ -661,6 +685,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
     }
 
     HashMap<String, Object> parameters = new HashMap<String, Object>();
+    parameters.put("ShowDescription", strShowDescription);
     parameters.put("Subtitle", strSubtitle);
     parameters.put("PageNo", strPageNo);
     parameters.put("InitialBalance", new BigDecimal(strInitialBalance));
@@ -699,8 +724,8 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
     return strCheck;
   }
 
-  private <T extends BaseOBObject> String getJSONComboBox(List<T> obObjectList,
-      String selectedValue, boolean isMandatory) {
+  private <T extends BaseOBObject> String getJSONComboBox(Set<String> docbseTypes,
+      String selectedValue, boolean isMandatory, VariablesSecureApp vars) {
 
     JSONObject json = new JSONObject();
     JSONArray select = new JSONArray();
@@ -715,11 +740,11 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
         select.put(i, attr);
         i++;
       }
-      for (T ob : obObjectList) {
+      for (String dbt : docbseTypes) {
         attr = new HashMap<String, String>();
-        attr.put("value", ob.getId().toString());
-        attr.put("selected", (ob.getId().equals(selectedValue)) ? "true" : "false");
-        attr.put("text", ob.getIdentifier());
+        attr.put("value", dbt);
+        attr.put("selected", (dbt.equals(selectedValue)) ? "true" : "false");
+        attr.put("text", Utility.getListValueName("C_DocType DocBaseType", dbt, vars.getLanguage()));
         select.put(i, attr);
         json.put("optionlist", select);
         i++;
@@ -733,7 +758,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
     return json.toString();
   }
 
-  public static List<DocumentType> getDocuments(String org, String accSchema) {
+  public static Set<String> getDocuments(String org, String accSchema) {
 
     final StringBuilder whereClause = new StringBuilder();
     final List<Object> parameters = new ArrayList<Object>();
@@ -761,11 +786,16 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
       whereClause.append(" in (" + Utility.getInStrSet(orgStrct) + ")");
       whereClause.append(" and ca." + AcctSchemaTable.PROPERTY_ORGANIZATION + ".id");
       whereClause.append(" in (" + Utility.getInStrSet(orgStrct) + ")");
+      whereClause.append(" order by cd." + DocumentType.PROPERTY_DOCUMENTCATEGORY);
       final OBQuery<DocumentType> obqDt = OBDal.getInstance().createQuery(DocumentType.class,
           whereClause.toString());
       obqDt.setParameters(parameters);
       obqDt.setFilterOnReadableOrganization(false);
-      return obqDt.list();
+      TreeSet<String> docBaseTypes = new TreeSet<String>();
+      for (DocumentType doc : obqDt.list()) {
+        docBaseTypes.add(doc.getDocumentCategory());
+      }
+      return docBaseTypes;
 
     } finally {
       OBContext.restorePreviousMode();

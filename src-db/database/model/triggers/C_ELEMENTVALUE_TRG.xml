@@ -151,7 +151,7 @@ BEGIN
 		      SET Updated=now(), isactive = 'N' 		          
 		      WHERE Account_ID=:new.C_ElementValue_ID;
      END IF;         
-     IF(:old.elementlevel <> 'S' and :new.elementlevel = 'S') THEN
+     IF(:new.elementlevel = 'S') THEN
         SELECT COUNT(*)
         INTO v_Count
         FROM C_VALIDCOMBINATION

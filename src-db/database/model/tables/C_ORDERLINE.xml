@@ -233,6 +233,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="QUOTATIONLINE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <column name="C_USER2_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
@@ -309,6 +313,9 @@
       </foreign-key>
       <foreign-key foreignTable="M_WAREHOUSE" name="C_ORDERLINE_M_WAREHOUSE">
         <reference local="M_WAREHOUSE_ID" foreign="M_WAREHOUSE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_ORDERLINE" name="C_ORDERLINE_QUOTATION">
+        <reference local="QUOTATIONLINE_ID" foreign="C_ORDERLINE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="S_RESOURCEASSIGNMENT" name="C_ORDERLINE_S_RESOURCEASSIGNME">
         <reference local="S_RESOURCEASSIGNMENT_ID" foreign="S_RESOURCEASSIGNMENT_ID"/>
