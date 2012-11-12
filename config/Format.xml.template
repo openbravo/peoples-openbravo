@@ -31,7 +31,7 @@
    <Number name="euroExcel"
        decimal="." grouping="," formatOutput="#,##0.##" formatInternal="#0.00" />
    <Number name="priceInform"
-       decimal="." grouping="," formatOutput="#,##0.##" formatInternal="#0.00" />
+       decimal="." grouping="," formatOutput="#,##0.00" formatInternal="#0.00" />
    <Number name="priceRelation"
        decimal="." grouping="," formatOutput="#,##0.00" formatInternal="#0.00" />
    <Number name="priceEdition"
