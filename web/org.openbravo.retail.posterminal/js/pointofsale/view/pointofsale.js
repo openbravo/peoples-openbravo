@@ -104,6 +104,9 @@ enyo.kind({
       kind: 'OB.UI.ModalReceiptLinesPropertiesImpl',
       name: "receiptLinesPropertiesDialog"
     }, {
+      kind: 'OB.UI.ModalPayment',
+      name: "modalpayment"
+    }, {
       kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalConfigurationRequiredForCrossStore',
       name: 'modalConfigurationRequiredForCrossStore'
     }, {
