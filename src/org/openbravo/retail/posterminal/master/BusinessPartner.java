@@ -60,7 +60,7 @@ public class BusinessPartner extends ProcessHQLQuery {
         + "bpl2.$readableClientCriteria AND "
         + "bpl2.$naturalOrgCriteria "
         + ")) GROUP BY bpl2.businessPartner.id)"
-        + " AND ulist.id in (select max(ulist2.id) from ADUser as ulist2 where ulist2.businessPartner is not null group by ulist2.businessPartner)"
+        + " AND (ulist is null or ulist.id in (select max(ulist2.id) from ADUser as ulist2 where ulist2.businessPartner is not null group by ulist2.businessPartner))"
         // Here the section to prevent the same business partner from being selected more than once
         // ends
         + "GROUP BY bpl.businessPartner.id, bpl.businessPartner.name, bpl.businessPartner.name, bpl.businessPartner.searchKey, bpl.businessPartner.description, bpl.businessPartner.taxID, bpl.businessPartner.sOBPTaxCategory.id, bpl.businessPartner.priceList.id, bpl.businessPartner.paymentMethod.id, bpl.businessPartner.paymentTerms.id, bpl.businessPartner.invoiceTerms, bpl.id, ulist.email, ulist.id, ulist.phone,bpl.locationAddress.cityName, bpl.locationAddress.postalCode, bpl.businessPartner.businessPartnerCategory.id, bpl.businessPartner.creditLimit, bpl.businessPartner.creditUsed "
