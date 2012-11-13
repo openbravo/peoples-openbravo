@@ -834,11 +834,12 @@ public class OrderLoader extends JSONProcessSimple {
           }
         }
         if (paymentType == null) {
-          final JSONObject jsonResponse = new JSONObject();
-          jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_FAILURE);
-          jsonResponse.put(JsonConstants.RESPONSE_ERRORMESSAGE, "The POS terminal with id "
-              + posTerminalId + " didn't have a payment defined with name: " + paymentTypeName);
-          return jsonResponse;
+          @SuppressWarnings("unchecked")
+          Class<PaymentProcessor> paymentclazz = (Class<PaymentProcessor>) Class
+              .forName(paymentTypeName);
+          PaymentProcessor paymentinst = paymentclazz.newInstance();
+          paymentinst.process(payment, order, invoice, i == (payments.length() - 1) ? writeoffAmt
+              : BigDecimal.ZERO);
         } else {
           processPayments(paymentSchedule, paymentScheduleInvoice, order, invoice, paymentType,
               payment, i == (payments.length() - 1) ? writeoffAmt : BigDecimal.ZERO);

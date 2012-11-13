@@ -813,11 +813,6 @@
         return;
       }
 
-      if (!OB.POS.modelterminal.hasPayment(payment.get('kind'))) {
-        alert(OB.I18N.getLabel('OBPOS_MsgPaymentTypeError'));
-        return;
-      }
-
       var payments = this.get('payments');
 
       if (!payment.get('paymentData')) {

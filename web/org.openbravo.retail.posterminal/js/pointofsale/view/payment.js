@@ -254,17 +254,21 @@ enyo.kind({
   }],
   initComponents: function () {
     this.inherited(arguments);
-    this.$.name.setContent(OB.POS.modelterminal.getPaymentName(this.model.get('kind')));
+    this.$.name.setContent(OB.POS.modelterminal.getPaymentName(this.model.get('kind')) || this.model.get('name'));
     this.$.amount.setContent(this.model.printAmount());
     if (this.model.get('rate') && this.model.get('rate') !== '1') {
       this.$.foreignAmount.setContent(this.model.printForeignAmount());
     } else {
       this.$.foreignAmount.setContent('');
     }
-    if (this.model.get('paymentData')) {
-      this.$.info.setContent(this.model.get('paymentData').Name);
+    if (this.model.get('description')) {
+      this.$.info.setContent(this.model.get('description'));
     } else {
-      this.$.info.setContent('');
+      if (this.model.get('paymentData')) {
+        this.$.info.setContent(this.model.get('paymentData').Name);
+      } else {
+        this.$.info.setContent('');
+      }
     }
   }
 });

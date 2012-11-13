@@ -27,6 +27,7 @@ OB.OBPOSPointOfSale.UI.ToolbarScan = {
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ToolbarPayment',
+  sideButtons: [],
   published: {
     receipt: null
   },
@@ -47,7 +48,7 @@ enyo.kind({
       }
 
       if (provider) {
-        this.doShowPopup({
+        this.modalpayment({
           popup: 'modalpayment',
           args: {
             'receipt': this.receipt,
@@ -112,7 +113,11 @@ enyo.kind({
       });
     }, this);
 
-    for (i = payments.length - 1; i < 4; i++) {
+    enyo.forEach(this.sideButtons, function (sidebutton) {
+      this.createComponent(sidebutton);
+    }, this);
+
+    for (i = payments.length + this.sideButtons.length - 1; i < 4; i++) {
       this.createComponent({
         kind: 'OB.UI.BtnSide',
         btn: {}
@@ -175,3 +180,26 @@ enyo.kind({
     this.setLabel(this.keyboard.state.get('keypadNextLabel'));
   }
 });
+
+//OB.OBPOSPointOfSale.UI.ToolbarPayment.prototype.sideButtons.push({
+//  kind: 'OB.UI.BtnSide',
+//  btn: {
+//    command: 'PaymentProcessorEmpty',
+//    label: 'Test',
+//    permission: 'org.openbravo.retail.posterminal.PaymentProcessorEmpty',
+//    definition: {
+//      permission: 'org.openbravo.retail.posterminal.PaymentProcessorEmpty',
+//      stateless: false,
+//      action: function (keyboard, txt) {
+//        var amount = OB.DEC.number(OB.I18N.parseNumber(txt));
+//        amount = _.isNaN(amount) ? keyboard.receipt.getPending() : amount;        
+//        keyboard.receipt.addPayment(new OB.Model.PaymentLine({
+//          'kind': 'org.openbravo.retail.posterminal.PaymentProcessorEmpty',
+//          'name': 'Test',
+//          'description': 'Description',
+//          'amount': amount
+//        }));
+//      }
+//    }
+//  }  
+//});
