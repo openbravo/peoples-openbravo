@@ -45,6 +45,31 @@ public class CashMgmtDepositsDrops extends JSONProcessSimple {
       OBContext.restorePreviousMode();
     }
     JSONArray result = new JSONArray();
+    JSONArray paysArray = new JSONArray();
+
+    // Payments
+    String hqlPays = "select sum(scheduleDetail.paymentDetails.finPayment.amount),  scheduleDetail.paymentDetails.finPayment.account.id "
+        + "from FIN_Payment_ScheduleDetail as scheduleDetail "
+        + " where scheduleDetail.orderPaymentSchedule.order.id in (select ord.id from Order as ord,  "
+        + "org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail as det join det.orderPaymentSchedule as sched "
+        + "inner join det.paymentDetails as sdet inner join sdet.finPayment as pay, "
+        + "org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction as trans "
+        + "where trans.reconciliation is null and (ord.documentType.id=? or ord.documentType.id=?)"
+        + " and sched.order=ord and trans.finPayment=pay )"
+        + " group by scheduleDetail.paymentDetails.finPayment.account.id";
+
+    Query paysQuery = OBDal.getInstance().getSession().createQuery(hqlPays);
+    paysQuery.setString(0,
+        (String) DalUtil.getId(terminal.getObposTerminaltype().getDocumentType()));
+    paysQuery.setString(1,
+        (String) DalUtil.getId(terminal.getObposTerminaltype().getDocumentTypeForReturns()));
+    for (Object pObj : paysQuery.list()) {
+      Object[] objpays = (Object[]) pObj;
+      JSONObject paysResult = new JSONObject();
+      paysResult.put("amount", objpays[0]);
+      paysResult.put("account", objpays[1]);
+      paysArray.put(paysResult);
+    }
 
     // Payment types
     String hqlPayments = "select p.id, p.searchKey, p.financialAccount.id , p.financialAccount.currentBalance, p.commercialName, p.paymentMethod.allowdeposits as allowdeposits, p.paymentMethod.allowdrops as allowdrops from OBPOS_App_Payment as p "
@@ -77,82 +102,15 @@ public class CashMgmtDepositsDrops extends JSONProcessSimple {
       }
       paymentResult.put("startingCash", startingCash);
 
-      // Total sales computation
-      String hqlTaxes = "select ordertax.tax.id, ordertax.tax.name, sum(ordertax.taxAmount) from OrderTax as ordertax "
-          + "join ordertax.salesOrder as ord,  "
-          + "org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail as det join det.orderPaymentSchedule as sched "
-          + "inner join det.paymentDetails as sdet "
-          + "inner join sdet.finPayment as pay, "
-          + "org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction as trans "
-          + "where trans.reconciliation is null and ord.documentType.id=? "
-          + "and trans.account.id=?"
-          + " and sched.order=ord and trans.finPayment=pay "
-          + "group by ordertax.tax.id, ordertax.tax.name";
-
-      Query salesTaxesQuery = OBDal.getInstance().getSession().createQuery(hqlTaxes);
-      salesTaxesQuery.setString(0,
-          (String) DalUtil.getId(terminal.getObposTerminaltype().getDocumentType()));
-      salesTaxesQuery.setString(1, objpayments[2].toString());
-      JSONArray salesTaxes = new JSONArray();
-      BigDecimal totalSalesTax = BigDecimal.ZERO;
-      for (Object obj : salesTaxesQuery.list()) {
-        Object[] sales = (Object[]) obj;
-        JSONObject salesTax = new JSONObject();
-        salesTax.put("taxId", sales[0]);
-        salesTax.put("taxName", sales[1]);
-        salesTax.put("taxAmount", sales[2]);
-        salesTaxes.put(salesTax);
-        totalSalesTax = totalSalesTax.add((BigDecimal) sales[2]);
+      BigDecimal totalTendered = new BigDecimal(0);
+      for (int i = 0; i < paysArray.length(); i++) {
+        JSONObject pay = (JSONObject) paysArray.get(i);
+        if (objpayments[2].equals(pay.get("account"))) {
+          totalTendered = (BigDecimal) pay.get("amount");
+          break;
+        }
       }
-
-      String hqlSales = "select sum(ord.summedLineAmount) from Order as ord,  "
-          + "org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail as det join det.orderPaymentSchedule as sched "
-          + "inner join det.paymentDetails as sdet inner join sdet.finPayment as pay, "
-          + "org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction as trans "
-          + "where trans.reconciliation is null and ord.documentType.id=? "
-          + "and trans.account.id=?" + " and sched.order=ord and trans.finPayment=pay ";
-
-      Query salesQuery = OBDal.getInstance().getSession().createQuery(hqlSales);
-      salesQuery.setString(0,
-          (String) DalUtil.getId(terminal.getObposTerminaltype().getDocumentType()));
-      salesQuery.setString(1, objpayments[2].toString());
-      BigDecimal totalNetAmount = (BigDecimal) salesQuery.uniqueResult();
-      if (totalNetAmount == null) {
-        totalNetAmount = BigDecimal.ZERO;
-      }
-
-      Query returnTaxesQuery = OBDal.getInstance().getSession().createQuery(hqlTaxes);
-      returnTaxesQuery.setString(0,
-          (String) DalUtil.getId(terminal.getObposTerminaltype().getDocumentTypeForReturns()));
-      returnTaxesQuery.setString(1, objpayments[2].toString());
-      JSONArray returnTaxes = new JSONArray();
-      BigDecimal totalReturnsTax = BigDecimal.ZERO;
-      for (Object obj : returnTaxesQuery.list()) {
-        Object[] returns = (Object[]) obj;
-        JSONObject returnTax = new JSONObject();
-        returnTax.put("taxId", returns[0]);
-        returnTax.put("taxName", returns[1]);
-        returnTax.put("taxAmount", ((BigDecimal) returns[2]).abs());
-        returnTaxes.put(returnTax);
-        totalReturnsTax = totalReturnsTax.add(((BigDecimal) returns[2]).abs());
-      }
-
-      Query returnsQuery = OBDal.getInstance().getSession().createQuery(hqlSales);
-      returnsQuery.setString(0,
-          (String) DalUtil.getId(terminal.getObposTerminaltype().getDocumentTypeForReturns()));
-      returnsQuery.setString(1, objpayments[2].toString());
-      BigDecimal totalReturnsAmount = (BigDecimal) returnsQuery.uniqueResult();
-      if (totalReturnsAmount == null) {
-        totalReturnsAmount = BigDecimal.ZERO;
-      } else {
-        totalReturnsAmount = totalReturnsAmount.abs();
-      }
-
-      paymentResult
-          .put(
-              "totalTendered",
-              totalNetAmount.add(totalSalesTax).subtract(
-                  totalReturnsAmount.add(totalReturnsTax.abs())));
+      paymentResult.put("totalTendered", totalTendered);
 
       String hqlDropsDeposits = "select trans.description, trans.paymentAmount, trans.depositAmount, trans.createdBy.name, trans.transactionDate as date, c_currency_rate(payment.financialAccount.currency, payment.obposApplications.organization.currency, null, null, payment.obposApplications.client.id, payment.obposApplications.organization.id) as rate, payment.financialAccount.currency.iSOCode as isocode "
           + "from org.openbravo.retail.posterminal.OBPOSAppPayment as payment, org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction as trans "
