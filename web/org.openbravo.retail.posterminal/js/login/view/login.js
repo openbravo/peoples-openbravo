@@ -347,17 +347,17 @@
         this.$.password.focus();
       }, this);
 
-      new OB.OBPOSLogin.UI.LoginRequest().response(this, 'setCompanyLogo').go({
-        command: 'companyLogo',
-        terminalName: OB.POS.paramTerminal
-      });
-
       if (!OB.UTIL.isSupportedBrowser()) { //If the browser is not supported, show message and finish.
         this.$.loginInputs.setStyle('display: none');
         this.$.loginBrowserNotSupported.setStyle('display: block');
         OB.UTIL.showLoading(false);
         return true;
       }
+
+      new OB.OBPOSLogin.UI.LoginRequest().response(this, 'setCompanyLogo').go({
+        command: 'companyLogo',
+        terminalName: OB.POS.paramTerminal
+      });
 
       new OB.OBPOSLogin.UI.LoginRequest().response(this, 'setUserImages').go({
         command: 'userImages',
