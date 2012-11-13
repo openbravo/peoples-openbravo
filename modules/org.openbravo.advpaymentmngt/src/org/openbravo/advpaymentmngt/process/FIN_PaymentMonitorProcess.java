@@ -35,12 +35,14 @@ import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.ad_forms.AcctServer;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.PropertyNotFoundException;
 import org.openbravo.model.ad.domain.Preference;
+import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.financialmgmt.payment.DebtPayment;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
@@ -80,12 +82,25 @@ public class FIN_PaymentMonitorProcess extends DalBaseProcess {
 
     try {
       int counter = 0;
-      final OBCriteria<Invoice> obc = OBDal.getInstance().createCriteria(Invoice.class);
-      obc.add(Restrictions.eq(Invoice.PROPERTY_PROCESSED, true));
-      obc.add(Restrictions.or(
-          Restrictions.or(Restrictions.eq(Invoice.PROPERTY_PAYMENTCOMPLETE, false),
-              Restrictions.ne(Invoice.PROPERTY_OUTSTANDINGAMOUNT, BigDecimal.ZERO)),
-          Restrictions.isNull(Invoice.PROPERTY_FINALSETTLEMENTDATE)));
+      final Module migration = OBDal.getInstance().get(Module.class,
+          "4BD3D4B262B048518FE62496EF09D549");
+
+      StringBuilder whereClause = new StringBuilder();
+      whereClause.append(" as i");
+      whereClause.append("   left join i.fINPaymentScheduleList fps");
+      whereClause.append(" where i.processed=true");
+      whereClause.append(" and (i.paymentComplete=false");
+      whereClause.append(" or i.outstandingAmount <> 0");
+      if (migration != null) {
+        whereClause.append("  or (i.finalSettlementDate is null");
+        whereClause.append(" and fps.id is not null");
+        whereClause.append(" and i.aprmtIsmigrated = 'N'))");
+      } else {
+        whereClause.append(" or i.finalSettlementDate is null)");
+      }
+
+      final OBQuery<Invoice> obc = OBDal.getInstance().createQuery(Invoice.class,
+          whereClause.toString());
 
       // For Background process execution at system level
       if (OBContext.getOBContext().isInAdministratorMode()) {
