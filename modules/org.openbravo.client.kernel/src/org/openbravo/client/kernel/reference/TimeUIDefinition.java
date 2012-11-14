@@ -55,10 +55,13 @@ public class TimeUIDefinition extends UIDefinition {
 
   @Override
   public synchronized String convertToClassicString(Object value) {
-    if (value == null) {
+    if (value == null || value == "") {
       return "";
     }
-    return value.toString();
+    String timestamp = value.toString();
+    timestamp = timestamp.substring(timestamp.indexOf(" ") + 1);
+    StringBuffer convertedValue = convertUtcToLocalTime(timestamp);
+    return convertedValue.toString();
   }
 
   private SimpleDateFormat getClassicFormat() {
@@ -76,6 +79,33 @@ public class TimeUIDefinition extends UIDefinition {
     return classicFormat;
   }
 
+  /*
+   * createFromClassicString has been called with an UTC date, it expects a date in local time,so
+   * the time is going to be converted to local time, and going to be passed to
+   * createFromClassicString
+   */
+  private StringBuffer convertUtcToLocalTime(String value) {
+    StringBuffer localTimeColumnValue = null;
+    try {
+      Date UTCDate = getClassicFormat().parse(value);
+      Calendar now = Calendar.getInstance();
+
+      Calendar calendar = Calendar.getInstance();
+      calendar.setTime(UTCDate);
+      calendar.set(Calendar.DATE, now.get(Calendar.DATE));
+      calendar.set(Calendar.MONTH, now.get(Calendar.MONTH));
+      calendar.set(Calendar.YEAR, now.get(Calendar.YEAR));
+
+      int gmtMillisecondOffset = (now.get(Calendar.ZONE_OFFSET) + now.get(Calendar.DST_OFFSET));
+      calendar.add(Calendar.MILLISECOND, gmtMillisecondOffset);
+      localTimeColumnValue = getClassicFormat().format(calendar.getTime(), new StringBuffer(),
+          new FieldPosition(0));
+    } catch (ParseException e) {
+      throw new OBException("Exception when parsing date ", e);
+    }
+    return localTimeColumnValue;
+  }
+
   // getFieldProperties has to be overridden because depending on the value of getValueFromSession,
   // time fields have to be converted from localTime to UTC before sending the to the client
   @Override
@@ -91,30 +121,12 @@ public class TimeUIDefinition extends UIDefinition {
           // If the date is empty, it does not have to be converted
           return result;
         }
-        // createFromClassicString has been called with an UTC date, it expects a date in local
-        // time,
-        // so the time is going to be converted to local time, and going to be passed to
-        // createFromClassicString
-        Date UTCDate = getClassicFormat().parse(columnValue);
-        Calendar now = Calendar.getInstance();
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(UTCDate);
-        calendar.set(Calendar.DATE, now.get(Calendar.DATE));
-        calendar.set(Calendar.MONTH, now.get(Calendar.MONTH));
-        calendar.set(Calendar.YEAR, now.get(Calendar.YEAR));
-
-        int gmtMillisecondOffset = (now.get(Calendar.ZONE_OFFSET) + now.get(Calendar.DST_OFFSET));
-        calendar.add(Calendar.MILLISECOND, gmtMillisecondOffset);
-        StringBuffer localTimeColumnValue = getClassicFormat().format(calendar.getTime(),
-            new StringBuffer(), new FieldPosition(0));
+        StringBuffer localTimeColumnValue = convertUtcToLocalTime(columnValue);
         jsnobject.put("value", createFromClassicString(localTimeColumnValue.toString()));
         jsnobject.put("classicValue", localTimeColumnValue.toString());
         return jsnobject.toString();
       }
     } catch (JSONException e) {
-      throw new OBException("Exception when parsing date ", e);
-    } catch (ParseException e) {
       throw new OBException("Exception when parsing date ", e);
     }
     return result;
