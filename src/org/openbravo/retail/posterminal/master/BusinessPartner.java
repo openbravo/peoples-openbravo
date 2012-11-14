@@ -19,7 +19,7 @@ public class BusinessPartner extends ProcessHQLQuery {
   @Override
   protected String getQuery(JSONObject jsonsent) throws JSONException {
     Organization org = POSUtils.getOrganization(jsonsent.getString("organization"));
-    return "SELECT bpl.businessPartner.id as id, bpl.businessPartner.name as name, bpl.businessPartner.name as _identifier, "
+    return "SELECT bpl.businessPartner.id as id, bpl.businessPartner.organization.id as bporg, bpl.businessPartner.name as name, bpl.businessPartner.name as _identifier, "
         + "bpl.businessPartner.searchKey as searchKey, bpl.businessPartner.description as description, bpl.businessPartner.taxID as taxID, "
         + "bpl.businessPartner.sOBPTaxCategory.id as taxCategory, bpl.businessPartner.priceList.id as priceList, "
         + "bpl.businessPartner.paymentMethod.id as paymentMethod, bpl.businessPartner.paymentTerms.id as paymentTerms, "
@@ -63,7 +63,7 @@ public class BusinessPartner extends ProcessHQLQuery {
         + " AND (ulist is null or ulist.id in (select max(ulist2.id) from ADUser as ulist2 where ulist2.businessPartner is not null group by ulist2.businessPartner))"
         // Here the section to prevent the same business partner from being selected more than once
         // ends
-        + "GROUP BY bpl.businessPartner.id, bpl.businessPartner.name, bpl.businessPartner.name, bpl.businessPartner.searchKey, bpl.businessPartner.description, bpl.businessPartner.taxID, bpl.businessPartner.sOBPTaxCategory.id, bpl.businessPartner.priceList.id, bpl.businessPartner.paymentMethod.id, bpl.businessPartner.paymentTerms.id, bpl.businessPartner.invoiceTerms, bpl.id, ulist.email, ulist.id, ulist.phone,bpl.locationAddress.cityName, bpl.locationAddress.postalCode, bpl.businessPartner.businessPartnerCategory.id, bpl.businessPartner.creditLimit, bpl.businessPartner.creditUsed "
+        + "GROUP BY bpl.businessPartner.id, bpl.businessPartner.organization.id, bpl.businessPartner.name, bpl.businessPartner.name, bpl.businessPartner.searchKey, bpl.businessPartner.description, bpl.businessPartner.taxID, bpl.businessPartner.sOBPTaxCategory.id, bpl.businessPartner.priceList.id, bpl.businessPartner.paymentMethod.id, bpl.businessPartner.paymentTerms.id, bpl.businessPartner.invoiceTerms, bpl.id, ulist.email, ulist.id, ulist.phone,bpl.locationAddress.cityName, bpl.locationAddress.postalCode, bpl.businessPartner.businessPartnerCategory.id, bpl.businessPartner.creditLimit, bpl.businessPartner.creditUsed "
         + "ORDER BY bpl.businessPartner.name";
     // probar los casos con varias loc para un mismo BP
     // return "select bp as BusinessPartner, loc as BusinessPartnerLocation "

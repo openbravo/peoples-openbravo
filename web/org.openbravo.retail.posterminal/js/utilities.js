@@ -245,4 +245,22 @@
     });
   };
 
+  OB.UTIL.isWritableOrganization = function (orgId) {
+    if (OB.POS.modelterminal.get('writableOrganizations')) {
+      var result = false;
+      result = _.find(OB.POS.modelterminal.get('writableOrganizations'), function (curOrg) {
+        if (orgId === curOrg) {
+          return true;
+        }
+      });
+      if (result === true) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
+  }
+
 }());

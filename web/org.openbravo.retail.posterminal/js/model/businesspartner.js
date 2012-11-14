@@ -17,10 +17,11 @@
     entityName: 'BusinessPartner',
     source: 'org.openbravo.retail.posterminal.master.BusinessPartner',
     dataLimit: 300,
-    properties: ['id', 'searchKey', 'name', 'description', 'taxID', 'taxCategory', 'paymentMethod', 'paymentTerms', 'priceList', 'invoiceTerms', 'locId', 'locName', 'postalCode', 'cityName', 'contactId', 'phone', 'email', 'businessPartnerCategory', 'creditLimit', 'creditUsed', '_identifier', '_idx'],
+    properties: ['id', 'bporg', 'searchKey', 'name', 'description', 'taxID', 'taxCategory', 'paymentMethod', 'paymentTerms', 'priceList', 'invoiceTerms', 'locId', 'locName', 'postalCode', 'cityName', 'contactId', 'phone', 'email', 'businessPartnerCategory', 'creditLimit', 'creditUsed', '_identifier', '_idx'],
     propertiesFilter: ['_identifier', 'taxID', 'email', 'phone'],
     propertyMap: {
       'id': 'c_bpartner_id',
+      'bporg': 'ad_org_id',
       'searchKey': 'value',
       'name': 'name',
       'description': 'description',
@@ -44,9 +45,9 @@
       '_filter': '_filter',
       '_idx': '_idx'
     },
-    createStatement: 'CREATE TABLE IF NOT EXISTS c_bpartner (c_bpartner_id TEXT PRIMARY KEY, value TEXT , name TEXT , description TEXT , taxID TEXT , so_bp_taxcategory_id TEXT, FIN_Paymentmethod_ID TEXT, c_paymentterm_id TEXT, m_pricelist_id TEXT,invoicerule TEXT, c_bpartnerlocation_id TEXT , c_bpartnerlocation_name TEXT , postalCode TEXT, cityName TEXT, ad_user_id TEXT, phone TEXT, email TEXT, c_bp_group_id TEXT, creditLimit NUMERIC, creditUsed NUMERIC, _identifier TEXT, _filter TEXT, _idx NUMERIC)',
+    createStatement: 'CREATE TABLE IF NOT EXISTS c_bpartner (c_bpartner_id TEXT PRIMARY KEY, ad_org_id TEXT, value TEXT , name TEXT , description TEXT , taxID TEXT , so_bp_taxcategory_id TEXT, FIN_Paymentmethod_ID TEXT, c_paymentterm_id TEXT, m_pricelist_id TEXT,invoicerule TEXT, c_bpartnerlocation_id TEXT , c_bpartnerlocation_name TEXT , postalCode TEXT, cityName TEXT, ad_user_id TEXT, phone TEXT, email TEXT, c_bp_group_id TEXT, creditLimit NUMERIC, creditUsed NUMERIC, _identifier TEXT, _filter TEXT, _idx NUMERIC)',
     dropStatement: 'DROP TABLE IF EXISTS c_bpartner',
-    insertStatement: 'INSERT INTO c_bpartner(c_bpartner_id, value, name, description, taxID, so_bp_taxcategory_id, FIN_Paymentmethod_ID, c_paymentterm_id, m_pricelist_id, invoicerule, c_bpartnerlocation_id, c_bpartnerlocation_name, postalCode, cityName, ad_user_id, phone, email, c_bp_group_id, creditLimit, creditUsed, _identifier, _filter, _idx)  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+    insertStatement: 'INSERT INTO c_bpartner(c_bpartner_id, ad_org_id, value, name, description, taxID, so_bp_taxcategory_id, FIN_Paymentmethod_ID, c_paymentterm_id, m_pricelist_id, invoicerule, c_bpartnerlocation_id, c_bpartnerlocation_name, postalCode, cityName, ad_user_id, phone, email, c_bp_group_id, creditLimit, creditUsed, _identifier, _filter, _idx)  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
     updateStatement: '',
     saveCustomer: function (silent) {
       var nameLength, newSk;

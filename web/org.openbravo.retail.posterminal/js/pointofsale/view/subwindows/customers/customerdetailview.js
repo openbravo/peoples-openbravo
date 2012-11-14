@@ -109,16 +109,25 @@ enyo.kind({
           content: OB.I18N.getLabel('OBPOS_LblEdit'),
           setCustomer: function (sender, event) {
             this.customer = event.customer;
+            if (!OB.UTIL.isWritableOrganization(this.customer.get('bporg'))) {
+              this.disabled = true;
+              this.setAttribute("disabled", "disabled");
+            } else {
+              this.disabled = false;
+              this.setAttribute("disabled", null);
+            }
           },
           tap: function () {
-            var sw = this.subWindow;
-            this.model.get('subWindowManager').set('currentWindow', {
-              name: 'customerCreateAndEdit',
-              params: {
-                businessPartner: this.customer,
-                navigateOnClose: sw.getName()
-              }
-            });
+            if(this.disabled === false){
+              var sw = this.subWindow;
+              this.model.get('subWindowManager').set('currentWindow', {
+                name: 'customerCreateAndEdit',
+                params: {
+                  businessPartner: this.customer,
+                  navigateOnClose: sw.getName()
+                }
+              });
+            }
           },
           init: function (model) {
             this.model = model;
