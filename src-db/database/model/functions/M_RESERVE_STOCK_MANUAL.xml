@@ -42,6 +42,7 @@
 *   - 'PO': p_stock_id represents a c_orderline_id of a pending to receipt purchase order line.
 **************/
   v_reservation_stock_ID    VARCHAR2(32) := get_uuid();
+  v_aux_rs_id               VARCHAR2(32);
   v_client_id               VARCHAR2(32);
   v_org_id                  VARCHAR2(32);
   v_locator_id              VARCHAR2(32);
@@ -71,12 +72,30 @@ BEGIN
       INTO v_locator_id, v_asi_id
     FROM m_storage_detail
     WHERE m_storage_detail_id = p_stock_id;
+    SELECT max(m_reservation_stock_id) INTO v_aux_rs_id
+    FROM m_reservation_stock
+    WHERE m_reservation_id = p_reservation_id
+      AND m_locator_id = v_locator_id
+      AND m_attributesetinstance_id = v_asi_id
+      AND isallocated = 'N';
   ELSIF (p_type_id = 'PO') THEN
     v_poline_id := p_stock_id;
+    SELECT max(m_reservation_stock_id) INTO v_aux_rs_id
+    FROM m_reservation_stock
+    WHERE m_reservation_id = p_reservation_id
+      AND c_orderline_id = v_poline_id
+      AND isallocated = 'N';
   ELSE
     RAISE_APPLICATION_ERROR(-20000, '@UnsupportedReservationType@');
   END IF;
 
+  IF (v_aux_rs_id IS NOT NULL) THEN
+    UPDATE m_reservation_stock
+    SET quantity = quantity + p_qty
+    WHERE m_reservation_stock_id = v_aux_rs_id;
+    p_reservation_stock_id := v_aux_rs_id;
+    RETURN;
+  END IF;
   INSERT INTO m_reservation_stock(
     m_reservation_stock_id, ad_client_id, ad_org_id, isactive,
     created, createdby, updated, updatedby,
