@@ -28,12 +28,19 @@ OB.Reservation.QuantityValidate = function(item, validator, value, record) {
       releasedQty = isc.isA.Number(record.released) ? new BigDecimal(String(record.released)) : BigDecimal.prototype.ZERO,
       quantity = null,
       reservedQty = BigDecimal.prototype.ZERO,
-      totalQty = new BigDecimal(String(item.grid.view.parentWindow.activeView.getContextInfo().inpquantity)),
-      totalReleased = isc.isA.Number(item.grid.view.parentWindow.activeView.getContextInfo().inpreleasedqty) ? new BigDecimal(String(item.grid.view.parentWindow.activeView.getContextInfo().inpreleasedqty)) : BigDecimal.prototype.ZERO,
+      totalQty = BigDecimal.prototype.ZERO,
+      totalReleased = BigDecimal.prototype.ZERO,
       selectedRecords = item.grid.getSelectedRecords(),
       selectedRecordsLength = selectedRecords.length,
       editedRecord = null,
       i;
+  if (item.grid.view.parentWindow.activeView.getContextInfo().inpTableId === '260') {
+    totalQty = new BigDecimal(String(item.grid.view.parentWindow.activeView.getContextInfo().inpqtyordered));
+    totalReleased = isc.isA.Number(item.grid.view.parentWindow.activeView.getContextInfo().inpqtydelivered) ? new BigDecimal(String(item.grid.view.parentWindow.activeView.getContextInfo().inpqtydelivered)) : BigDecimal.prototype.ZERO;
+  } else {
+    totalQty = new BigDecimal(String(item.grid.view.parentWindow.activeView.getContextInfo().inpquantity));
+    totalReleased = isc.isA.Number(item.grid.view.parentWindow.activeView.getContextInfo().inpreleasedqty) ? new BigDecimal(String(item.grid.view.parentWindow.activeView.getContextInfo().inpreleasedqty)) : BigDecimal.prototype.ZERO;
+  }
 
   if (!isc.isA.Number(value)) {
     return false;

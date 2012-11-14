@@ -14644,20 +14644,21 @@ AND (e.orderNo IS NULL OR e.priceIncludesTax = (SELECT priceIncludesTax FROM Pri
 <!--DAA5BFA2BF2B475E9BFEFF9CF721F09A-->  <HQLWHERECLAUSE><![CDATA[e IN (SELECT r FROM ReservationManualPickEdit as r 
                       LEFT JOIN r.reservationStock as rs
                       LEFT JOIN rs.reservation as res
+                      LEFT JOIN res.salesOrderLine as sol
                       LEFT JOIN r.warehouse as wh
                       LEFT JOIN r.storageBin as sb
                       LEFT JOIN r.attributeSetValue as asi
-      WHERE (rs IS NOT NULL AND res.id = @MaterialMgmtReservation.id@)
+      WHERE (rs IS NOT NULL AND (res.id = @MaterialMgmtReservation.id@ OR sol.id = @OrderLine.id@))
         OR (rs IS NULL
-          AND r.product.id = @MaterialMgmtReservation.product@
-          AND r.uOM.id = @MaterialMgmtReservation.uOM@
+          AND r.product.id = COALESCE(@MaterialMgmtReservation.product@, @OrderLine.product@)
+          AND r.uOM.id = COALESCE(@MaterialMgmtReservation.uOM@, @OrderLine.uOM@)
           AND (sb IS NULL  OR ( wh.id = COALESCE(@MaterialMgmtReservation.warehouse@, wh.id)
                    AND wh IN (SELECT o.warehouse FROM OrganizationWarehouse o
-                                       WHERE o.organization.id = @MaterialMgmtReservation.organization@)
+                                       WHERE o.organization.id = COALESCE(@MaterialMgmtReservation.organization@, @Order.organization@))
                    AND COALESCE(sb.id, '') = COALESCE(@MaterialMgmtReservation.storageBin@, sb.id, '')))
           AND COALESCE(asi.id, '0') = COALESCE(@MaterialMgmtReservation.attributeSetValue@, asi.id, '0')
           AND r.availableQty > 0))]]></HQLWHERECLAUSE>
-<!--DAA5BFA2BF2B475E9BFEFF9CF721F09A-->  <HQLORDERBYCLAUSE><![CDATA[obSelected DESC, salesOrderLine DESC]]></HQLORDERBYCLAUSE>
+<!--DAA5BFA2BF2B475E9BFEFF9CF721F09A-->  <HQLORDERBYCLAUSE><![CDATA[obSelected DESC, e.salesOrderLine DESC]]></HQLORDERBYCLAUSE>
 <!--DAA5BFA2BF2B475E9BFEFF9CF721F09A-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--DAA5BFA2BF2B475E9BFEFF9CF721F09A-->  <EM_OBUIAPP_CAN_ADD><![CDATA[N]]></EM_OBUIAPP_CAN_ADD>
 <!--DAA5BFA2BF2B475E9BFEFF9CF721F09A-->  <EM_OBUIAPP_CAN_DELETE><![CDATA[N]]></EM_OBUIAPP_CAN_DELETE>

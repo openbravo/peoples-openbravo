@@ -158,4 +158,22 @@ public class ReservationUtils {
     return OBMessageUtils.getProcessInstanceMessage(pinstance);
   }
 
+  /**
+   * Returns a non closed reservation from given Sales Order Line. If no reservation exists it
+   * creates a new one in draft status.
+   * 
+   * @param salesOrderLine
+   *          Sales Order Line owner of the reservation.
+   * @return a Reservation related to the Sales Order Line
+   */
+  public static Reservation getReservationFromOrder(OrderLine salesOrderLine) {
+    OBDal.getInstance().refresh(salesOrderLine);
+    for (Reservation res : salesOrderLine.getMaterialMgmtReservationList()) {
+      if (res.getRESStatus() != "CL") {
+        return res;
+      }
+    }
+    return ReservationUtils.createReserveFromSalesOrderLine(salesOrderLine, false);
+  }
+
 }

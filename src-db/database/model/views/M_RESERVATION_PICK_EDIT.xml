@@ -10,11 +10,11 @@ WHEN rssd.m_reservation_stock_id IS NULL THEN 0
 ELSE (SELECT COALESCE(sum(rs.quantity), 0) AS "coalesce"
 FROM m_reservation_stock rs
 JOIN m_reservation r ON rs.m_reservation_id = r.m_reservation_id
-WHERE rs.m_reservation_stock_id <> rssd.m_reservation_stock_id AND r.res_status <> 'CL' AND r.m_product_id = rssd.m_product_id AND r.c_uom_id = rssd.c_uom_id AND COALESCE(rs.m_attributesetinstance_id, '0') = COALESCE(rssd.m_attributesetinstance_id, '0') AND rs.m_locator_id = rssd.m_locator_id)
-END AS reservedinothers, rssd.quantity, rssd.releasedqty, rssd.isallocated, sd.m_product_id, sd.c_uom_id
+WHERE rs.m_reservation_stock_id <> rssd.m_reservation_stock_id AND r.res_status NOT IN ('CL', 'DR') AND r.m_product_id = rssd.m_product_id AND r.c_uom_id = rssd.c_uom_id AND COALESCE(rs.m_attributesetinstance_id, '0') = COALESCE(rssd.m_attributesetinstance_id, '0') AND rs.m_locator_id = rssd.m_locator_id)
+END AS reservedinothers, rssd.quantity, rssd.releasedqty, rssd.isallocated, sd.m_product_id, sd.c_uom_id, rssd.c_orderline_id as sales_orderline_id
 FROM m_storage_detail sd
 JOIN m_locator loc ON sd.m_locator_id = loc.m_locator_id
-LEFT JOIN (SELECT rs.m_reservation_stock_id, r.m_reservation_id, r.m_product_id, r.c_uom_id, rs.m_attributesetinstance_id, rs.m_locator_id, rs.quantity, rs.releasedqty, rs.isallocated, rs.ad_client_id, rs.ad_org_id
+LEFT JOIN (SELECT rs.m_reservation_stock_id, r.m_reservation_id, r.m_product_id, r.c_uom_id, rs.m_attributesetinstance_id, rs.m_locator_id, rs.quantity, rs.releasedqty, rs.isallocated, rs.ad_client_id, rs.ad_org_id, r.c_orderline_id
 FROM m_reservation_stock rs
 JOIN m_reservation r ON rs.m_reservation_id = r.m_reservation_id) rssd ON rssd.m_locator_id = sd.m_locator_id AND COALESCE(rssd.m_attributesetinstance_id, '0') = COALESCE(sd.m_attributesetinstance_id, '0') AND rssd.m_product_id = sd.m_product_id AND rssd.c_uom_id = sd.c_uom_id
 WHERE sd.m_product_uom_id IS NULL
@@ -29,8 +29,8 @@ WHEN rs.m_reservation_stock_id IS NULL THEN 0
 ELSE (SELECT COALESCE(sum(rsaux.quantity), 0) AS "coalesce"
 FROM m_reservation_stock rsaux
 JOIN m_reservation raux ON rsaux.m_reservation_id = raux.m_reservation_id
-WHERE rsaux.m_reservation_stock_id <> rs.m_reservation_stock_id AND raux.res_status <> 'CL' AND rsaux.c_orderline_id = ol.c_orderline_id)
-END AS reservedinothers, rs.quantity, rs.releasedqty, rs.isallocated, ol.m_product_id, ol.c_uom_id
+WHERE rsaux.m_reservation_stock_id <> rs.m_reservation_stock_id AND raux.res_status NOT IN ('CL', 'DR') AND rsaux.c_orderline_id = ol.c_orderline_id)
+END AS reservedinothers, rs.quantity, rs.releasedqty, rs.isallocated, ol.m_product_id, ol.c_uom_id, r.c_orderline_id as sales_orderline_id
 FROM c_orderline ol
 JOIN c_order o ON o.c_order_id = ol.c_order_id AND o.issotrx = 'N' AND o.docstatus = 'CO'
 JOIN c_doctype dt ON o.c_doctype_id = dt.c_doctype_id AND dt.isreturn = 'N'

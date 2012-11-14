@@ -33,6 +33,7 @@ import org.openbravo.client.application.process.BaseProcessActionHandler;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.materialmgmt.ReservationUtils;
 import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.plm.AttributeSetInstance;
@@ -48,6 +49,8 @@ import org.openbravo.service.db.DbUtility;
  */
 public class ManageReservationActionHandler extends BaseProcessActionHandler {
   private static Logger log = Logger.getLogger(ManageReservationActionHandler.class);
+  final String strOrderLineTableId = "260";
+  final String strReservationsTableId = "77264B07BB0E4FA483A07FB40C2E0FE0";
 
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {
@@ -56,17 +59,32 @@ public class ManageReservationActionHandler extends BaseProcessActionHandler {
     try {
       jsonRequest = new JSONObject(content);
       log.debug(jsonRequest);
-      final String strReservationId = jsonRequest.getString("M_Reservation_ID");
-      Reservation reservation = OBDal.getInstance().get(Reservation.class, strReservationId);
+      final String strTableId = jsonRequest.getString("inpTableId");
+      boolean processReservation = false;
+
+      Reservation reservation = null;
+      if (strTableId.equals(strReservationsTableId)) {
+        final String strReservationId = jsonRequest.getString("M_Reservation_ID");
+        reservation = OBDal.getInstance().get(Reservation.class, strReservationId);
+      } else if (strTableId.equals(strOrderLineTableId)) {
+        final String strOrderLineId = jsonRequest.getString("C_OrderLine_ID");
+        final OrderLine sol = OBDal.getInstance().get(OrderLine.class, strOrderLineId);
+        reservation = ReservationUtils.getReservationFromOrder(sol);
+
+        processReservation = reservation.getRESStatus().equals("DR");
+      }
       if (reservation != null) {
-        // FIXME: Replace with OBDao method when handler y merged with latest pi.
+        // FIXME: Replace with OBDao method when handler is merged with latest pi.
         // List<String> idList = OBDao.getIDListFromOBObject(reservation
         // .getMaterialMgmtReservationStockList());
         List<String> idList = new ArrayList<String>();
         for (ReservationStock resStock : reservation.getMaterialMgmtReservationStockList()) {
           idList.add(resStock.getId());
         }
-        manageReservedStockLines(jsonRequest, idList);
+        manageReservedStockLines(jsonRequest, reservation, idList);
+      }
+      if (processReservation) {
+        ReservationUtils.processReserve(reservation, "PR");
       }
 
     } catch (Exception e) {
@@ -91,11 +109,9 @@ public class ManageReservationActionHandler extends BaseProcessActionHandler {
     return jsonRequest;
   }
 
-  private void manageReservedStockLines(JSONObject jsonRequest, List<String> idList)
-      throws JSONException {
+  private void manageReservedStockLines(JSONObject jsonRequest, Reservation reservation,
+      List<String> idList) throws JSONException {
     JSONArray selectedLines = jsonRequest.getJSONArray("_selection");
-    final String strReservationId = jsonRequest.getString("M_Reservation_ID");
-    Reservation reservation = OBDal.getInstance().get(Reservation.class, strReservationId);
     // if no lines selected don't do anything.
     if (selectedLines.length() == 0) {
       removeNonSelectedLines(idList, reservation);
@@ -133,8 +149,8 @@ public class ManageReservationActionHandler extends BaseProcessActionHandler {
             AttributeSetInstance.ENTITY_NAME, strASIId));
       }
       final String strOrderLineId = selectedLine.get(
-          ReservationManualPickEdit.PROPERTY_SALESORDERLINE).equals(null) ? "" : selectedLine
-          .getString(ReservationManualPickEdit.PROPERTY_SALESORDERLINE);
+          ReservationManualPickEdit.PROPERTY_PURCHASEORDERLINE).equals(null) ? "" : selectedLine
+          .getString(ReservationManualPickEdit.PROPERTY_PURCHASEORDERLINE);
       if (StringUtils.isNotBlank(strOrderLineId)) {
         resStock.setSalesOrderLine((OrderLine) OBDal.getInstance().getProxy(OrderLine.ENTITY_NAME,
             strOrderLineId));

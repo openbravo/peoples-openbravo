@@ -36,7 +36,6 @@ import org.openbravo.materialmgmt.ReservationUtils;
 import org.openbravo.model.ad.process.ProcessInstance;
 import org.openbravo.model.ad.ui.Process;
 import org.openbravo.model.common.order.Order;
-import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.materialmgmt.onhandquantity.Reservation;
 import org.openbravo.model.mrp.PurchasingRun;
 import org.openbravo.model.mrp.PurchasingRunLine;
@@ -131,7 +130,8 @@ public class MRPPurchaseCreateReservations extends DalBaseProcess {
         currentStock = currentStock.subtract(consumedQuantity);
         quantity = quantity.subtract(consumedQuantity);
         if (isSalesOrderLine) {
-          Reservation reservation = getReservation(outgoingLine.getSalesOrderLine());
+          Reservation reservation = ReservationUtils.getReservationFromOrder(outgoingLine
+              .getSalesOrderLine());
           if (reservation.getReservedQty().compareTo(reservation.getQuantity()) == -1) {
             if (incomingLine.getTransactionType().equals("PP")
                 && incomingLine.getSalesOrderLine() != null) {
@@ -188,16 +188,6 @@ public class MRPPurchaseCreateReservations extends DalBaseProcess {
     soQry.setNamedParameter("purchaserun", mrpPurchaseRun.getId());
     soQry.setFetchSize(1000);
     return soQry.scroll(ScrollMode.FORWARD_ONLY);
-  }
-
-  private Reservation getReservation(OrderLine salesOrderLine) {
-    OBDal.getInstance().refresh(salesOrderLine);
-    for (Reservation res : salesOrderLine.getMaterialMgmtReservationList()) {
-      if (res.getRESStatus() != "CL") {
-        return res;
-      }
-    }
-    return ReservationUtils.createReserveFromSalesOrderLine(salesOrderLine, false);
   }
 
   private void processOrder(Order salesOrder) throws OBException {
