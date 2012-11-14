@@ -212,7 +212,7 @@ BEGIN --BODY
             o.C_Project_ID, o.C_Activity_ID, o.C_Campaign_ID, o.AD_OrgTrx_ID,
             o.User1_ID, o.User2_ID, o.DeliveryViaRule, o.M_Shipper_ID,
             o.C_Charge_ID, o.ChargeAmt, o.PriorityRule, o.SALESREP_ID,
-            d.DocSubTypeSO,
+            d.DocSubTypeSO, o.A_Asset_ID, o.C_CostCenter_ID,
             o.DELIVERY_LOCATION_ID -- Added by Rafa Roda to include delivery location
         FROM C_ORDER o
             JOIN C_DOCTYPE d ON o.C_DOCTYPE_ID = d.C_DOCTYPE_ID
@@ -246,7 +246,7 @@ BEGIN --BODY
              o.C_Project_ID, o.C_Activity_ID, o.C_Campaign_ID, o.AD_OrgTrx_ID,
              o.User1_ID, o.User2_ID, o.DeliveryViaRule, o.M_Shipper_ID,
              o.C_Charge_ID, o.ChargeAmt, o.PriorityRule, o.SALESREP_ID,
-             d.DocSubTypeSO,
+             d.DocSubTypeSO, o.A_Asset_ID, o.C_CostCenter_ID,
              o.DELIVERY_LOCATION_ID -- Added by Rafa Roda to include delivery location
         ORDER BY o.PriorityRule,o.DocumentNo
     ) LOOP
@@ -315,7 +315,7 @@ BEGIN --BODY
             C_Campaign_ID, AD_OrgTrx_ID, User1_ID, User2_ID,
             DeliveryViaRule, M_Shipper_ID, C_Charge_ID, ChargeAmt,
             PriorityRule, DocStatus, DocAction, Processing,
-            Processed, SALESREP_ID,
+            Processed, SALESREP_ID, A_Asset_ID, C_CostCenter_ID,
             DELIVERY_LOCATION_ID -- Added by Rafa Roda to include delivery location
         ) VALUES (
             p_InOut_ID, Cur_Order.C_Order_ID, Cur_Order.IsSOTrx, Cur_Order.AD_Client_ID,
@@ -328,7 +328,7 @@ BEGIN --BODY
             Cur_Order.C_Campaign_ID, Cur_Order.AD_OrgTrx_ID, Cur_Order.User1_ID, Cur_Order.User2_ID,
             Cur_Order.DeliveryViaRule, Cur_Order.M_Shipper_ID, Cur_Order.C_Charge_ID, Cur_Order.ChargeAmt,
             Cur_Order.PriorityRule, 'DR', 'CO', 'N',
-            'N', Cur_Order.SALESREP_ID,
+            'N', Cur_Order.SALESREP_ID,Cur_Order.A_Asset_ID, Cur_Order.C_CostCenter_ID,
             Cur_Order.DELIVERY_LOCATION_ID -- Added by Rafa Roda to include delivery location
         );
 
@@ -483,7 +483,9 @@ BEGIN --BODY
                         C_UOM_ID, M_Locator_ID, MovementQty, Description,
                         IsInvoiced,
                         --MODIFIED BY F.IRIAZABAL
-                        QuantityOrder, M_Product_Uom_ID, M_AttributeSetInstance_ID)
+                        QuantityOrder, M_Product_Uom_ID, M_AttributeSetInstance_ID,
+                        C_Project_ID, A_Asset_ID, 
+                        C_CostCenter_ID, User1_ID, User2_ID)
                       VALUES
                         (v_NextNo, v_lines, p_InOut_ID, ol.C_OrderLine_ID,
                         ol.AD_Client_ID, ol.AD_Org_ID, 'Y', now(),
@@ -491,7 +493,9 @@ BEGIN --BODY
                         v_storage.C_UOM_ID, v_storage.M_Locator_ID, v_LocatorQty, ol.Description,
                         'N',
                         --MODIFIED BY F.IRIAZABAL
-                        v_ActualQty, v_storage.M_PRODUCT_UOM_ID, v_storage.M_AttributeSetInstance_ID);
+                        v_ActualQty, v_storage.M_PRODUCT_UOM_ID, v_storage.M_AttributeSetInstance_ID,
+                        coalesce(ol.C_Project_ID, Cur_Order.C_Project_ID), coalesce(ol.A_Asset_ID, Cur_Order.A_Asset_ID), 
+                        coalesce(ol.C_CostCenter_ID, Cur_Order.C_CostCenter_ID), coalesce(ol.User1_ID, Cur_Order.User1_ID), coalesce(ol.User2_ID, Cur_Order.User2_ID));
                       v_lines:=v_lines + 10;
                       v_lines_per_orderline:= v_lines_per_orderline + 10;
                       DBMS_OUTPUT.PUT_LINE('v_lines' || v_lines) ;
