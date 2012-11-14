@@ -48,7 +48,7 @@ enyo.kind({
       }
 
       if (provider) {
-        this.modalpayment({
+        this.doShowPopup({
           popup: 'modalpayment',
           args: {
             'receipt': this.receipt,
