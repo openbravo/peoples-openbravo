@@ -180,26 +180,3 @@ enyo.kind({
     this.setLabel(this.keyboard.state.get('keypadNextLabel'));
   }
 });
-
-//OB.OBPOSPointOfSale.UI.ToolbarPayment.prototype.sideButtons.push({
-//  kind: 'OB.UI.BtnSide',
-//  btn: {
-//    command: 'PaymentProcessorEmpty',
-//    label: 'Test',
-//    permission: 'org.openbravo.retail.posterminal.PaymentProcessorEmpty',
-//    definition: {
-//      permission: 'org.openbravo.retail.posterminal.PaymentProcessorEmpty',
-//      stateless: false,
-//      action: function (keyboard, txt) {
-//        var amount = OB.DEC.number(OB.I18N.parseNumber(txt));
-//        amount = _.isNaN(amount) ? keyboard.receipt.getPending() : amount;        
-//        keyboard.receipt.addPayment(new OB.Model.PaymentLine({
-//          'kind': 'org.openbravo.retail.posterminal.PaymentProcessorEmpty',
-//          'name': 'Test',
-//          'description': 'Description',
-//          'amount': amount
-//        }));
-//      }
-//    }
-//  }  
-//});
