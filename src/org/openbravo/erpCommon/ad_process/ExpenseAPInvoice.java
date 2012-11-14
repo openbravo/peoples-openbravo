@@ -44,6 +44,7 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class ExpenseAPInvoice extends HttpSecureAppServlet {
@@ -119,7 +120,7 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
 
     Connection conn = null;
     try {
-      conn = this.getTransactionConnection();
+      conn = new DalConnectionProvider(false).getConnection();
 
       ExpenseAPInvoiceData[] data = ExpenseAPInvoiceData.select(this,
           Utility.getContext(this, vars, "#User_Client", "ExpenseAPInvoice"),
