@@ -381,6 +381,7 @@ Usually, company's internal identifiers for various records (products, customers
 <!--3D1D6078EFA04ED68A07B6F7A6E8EBD5-->  <NAME><![CDATA[Search Key]]></NAME>
 <!--3D1D6078EFA04ED68A07B6F7A6E8EBD5-->  <DESCRIPTION><![CDATA[A fast method for finding a particular record.]]></DESCRIPTION>
 <!--3D1D6078EFA04ED68A07B6F7A6E8EBD5-->  <HELP><![CDATA[A search key allows for a fast method of finding a particular record. If you leave the search key empty, the system automatically creates a numeric number originating from a document sequence defined in the  "Document Sequence" window. The sequence naming convention follows a rule "DocumentNo_TableName", where TableName is the actual name of the database table (e.g. C_Order).
+
 Usually, company's internal identifiers for various records (products, customers, etc) are stored here.]]></HELP>
 <!--3D1D6078EFA04ED68A07B6F7A6E8EBD5-->  <PROPERTY><![CDATA[searchKey]]></PROPERTY>
 <!--3D1D6078EFA04ED68A07B6F7A6E8EBD5-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
