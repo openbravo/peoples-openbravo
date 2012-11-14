@@ -219,8 +219,8 @@ enyo.kind({
     onExactPayment: ''
   },
   kind: 'OB.UI.RegularButton',
-  classes: 'btn-icon-small btn-icon-check btnlink-green',
-  style: 'width: 69px',
+  classes: 'btn-icon-adaptative btn-icon-check btnlink-green',
+  style: 'width: 73px',
   tap: function () {
     this.doExactPayment();
   }

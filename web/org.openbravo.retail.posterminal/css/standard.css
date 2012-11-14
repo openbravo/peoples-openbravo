@@ -654,6 +654,11 @@ div.btnlink {
   background-position: center center;
   background-color: transparent;
 }
+.btn-icon-adaptative {
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-color: transparent;
+}
 .btn-icon-workspace {
   background-image: url('../img/iconWorkspace.png');
 }
