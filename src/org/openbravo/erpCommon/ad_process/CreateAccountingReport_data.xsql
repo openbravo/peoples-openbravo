@@ -38,6 +38,7 @@
           FROM FACT_ACCT
           WHERE FACT_ACCT.AD_CLIENT_ID IN ('1')
           AND FACT_ACCT.AD_ORG_ID IN ('1')
+          AND FACT_ACCT.ACCOUNT_ID IN ('1')
           AND 1=1) A on AR.C_ACCTSCHEMA_ID = A.C_ACCTSCHEMA_ID,
           AD_TREE, AD_TREENODE
           WHERE AD_TREE.AD_TREE_ID = AD_TREENODE.AD_TREE_ID
@@ -55,9 +56,9 @@
     <Parameter name="level"/>
     <Parameter name="adClientId" optional="true" type="replace" after="FACT_ACCT.AD_CLIENT_ID IN (" text="'1'"/>
     <Parameter name="adOrgId" optional="true" type="replace" after="AND FACT_ACCT.AD_ORG_ID IN (" text="'1'"/>
++    <Parameter name="accountId" optional="true" type="replace" after="FACT_ACCT.ACCOUNT_ID IN (" text="'1'"/>
     <Parameter name="periodFrom" optional="true" after="AND 1=1"><![CDATA[ AND FACT_ACCT.DATEACCT >= TO_DATE(?)]]></Parameter>
     <Parameter name="periodTo" optional="true" after="AND 1=1"><![CDATA[ AND FACT_ACCT.DATEACCT < TO_DATE(?)]]></Parameter>
-    <Parameter name="accountId" optional="true" after="AND 1=1"><![CDATA[ AND FACT_ACCT.ACCOUNT_ID = ?]]></Parameter>
     <Parameter name="acctschema" optional="true" after="AND 1=1"><![CDATA[ AND FACT_ACCT.C_ACCTSCHEMA_ID = ?]]></Parameter>
     <Parameter name="adAccountingElementId"/>
   </SqlMethod>
@@ -81,6 +82,7 @@
         FROM FACT_ACCT
         WHERE FACT_ACCT.AD_CLIENT_ID IN ('1')
           AND FACT_ACCT.AD_ORG_ID IN ('1')
+          AND FACT_ACCT.ACCOUNT_ID IN ('1')
           AND 1=1
           AND FACT_ACCT.FACTACCTTYPE = 'O') A on AR.C_ACCTSCHEMA_ID = A.C_ACCTSCHEMA_ID,
         AD_TREE, AD_TREENODE
@@ -99,9 +101,9 @@
     <Parameter name="level"/>
     <Parameter name="adClientId" optional="true" type="replace" after="FACT_ACCT.AD_CLIENT_ID IN (" text="'1'"/>
     <Parameter name="adOrgId" optional="true" type="replace" after="AND FACT_ACCT.AD_ORG_ID IN (" text="'1'"/>
+    <Parameter name="accountId" optional="true" type="replace" after="FACT_ACCT.ACCOUNT_ID IN (" text="'1'"/>
     <Parameter name="periodFrom" optional="true" after="AND 1=1"><![CDATA[ AND FACT_ACCT.DATEACCT >= TO_DATE(?)]]></Parameter>
     <Parameter name="periodTo" optional="true" after="AND 1=1"><![CDATA[ AND FACT_ACCT.DATEACCT < TO_DATE(?)]]></Parameter>
-    <Parameter name="accountId" optional="true" after="AND 1=1"><![CDATA[ AND FACT_ACCT.ACCOUNT_ID = ?]]></Parameter>
     <Parameter name="acctschema" optional="true" after="AND 1=1"><![CDATA[ AND FACT_ACCT.C_ACCTSCHEMA_ID = ?]]></Parameter>
     <Parameter name="adAccountingElementId"/>
   </SqlMethod>
