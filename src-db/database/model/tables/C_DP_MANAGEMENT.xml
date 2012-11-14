@@ -114,11 +114,11 @@
       <foreign-key foreignTable="C_PROJECT" name="C_DP_MANAGEMENT_C_PROJECT">
         <reference local="C_PROJECT_ID" foreign="C_PROJECT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_USER1" name="C_DP_MANAGEMENT_C_USER1">
-        <reference local="USER1_ID" foreign="C_USER1_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="C_USER2" name="C_DP_MANAGEMENT_C_USER2">
         <reference local="USER2_ID" foreign="C_USER2_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="USER1" name="C_DP_MANAGEMENT_USER1">
+        <reference local="USER1_ID" foreign="USER1_ID"/>
       </foreign-key>
     </table>
   </database>

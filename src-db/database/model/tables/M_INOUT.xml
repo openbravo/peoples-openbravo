@@ -304,9 +304,6 @@
       <foreign-key foreignTable="C_PROJECT" name="M_INOUT_C_PROJECT">
         <reference local="C_PROJECT_ID" foreign="C_PROJECT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_USER1" name="M_INOUT_C_USER1">
-        <reference local="USER1_ID" foreign="C_USER1_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="C_USER2" name="M_INOUT_C_USER2">
         <reference local="USER2_ID" foreign="C_USER2_ID"/>
       </foreign-key>
@@ -324,6 +321,9 @@
       </foreign-key>
       <foreign-key foreignTable="AD_USER" name="M_INOUT_SALESREP">
         <reference local="SALESREP_ID" foreign="AD_USER_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="USER1" name="M_INOUT_USER1">
+        <reference local="USER1_ID" foreign="USER1_ID"/>
       </foreign-key>
       <index name="M_INOUT_BPARTNER" unique="false">
         <index-column name="C_BPARTNER_ID"/>

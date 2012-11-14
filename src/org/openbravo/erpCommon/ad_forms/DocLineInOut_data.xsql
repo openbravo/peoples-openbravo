@@ -28,7 +28,7 @@
       <![CDATA[
           SELECT COALESCE(A.AD_ORG_ID,IO.AD_ORG_ID) AS AD_ORG_ID, IO.M_PRODUCT_ID, IO.LINE, IO.DESCRIPTION,
           IO.C_UOM_ID, IO.M_INOUTLINE_ID, COALESCE(A.Quantity, IO.MOVEMENTQTY) as MOVEMENTQTY, IO.M_LOCATOR_ID,
-          A.C_Campaign_ID, COALESCE(A.C_Project_Id, IO.C_Project_Id) AS C_Project_Id, COALESCE(A.C_User1_ID, IO.C_User1_ID) AS user1Id,
+          A.C_Campaign_ID, COALESCE(A.C_Project_Id, IO.C_Project_Id) AS C_Project_Id, COALESCE(A.User1_ID, IO.User1_ID) AS user1Id,
           COALESCE(A.C_User2_ID, IO.C_User2_ID) AS user2Id, COALESCE(A.C_Costcenter_ID, IO.C_Costcenter_ID) AS C_Costcenter_ID,
           COALESCE(A.A_Asset_ID,IO.A_Asset_ID) AS A_Asset_ID, COALESCE(A.C_BPartner_ID, IO.C_BPartner_ID) AS C_BPartner_ID, A.C_Activity_ID
           FROM M_InOutLine IO left join M_InOutLine_AcctDimension A ON IO.M_InOutLine_ID = A.M_InOutLine_ID

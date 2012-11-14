@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-  <database name="TRIGGER C_USER1_TRG">
-    <trigger name="C_USER1_TRG" table="C_USER1" fires="after" insert="true" update="true" delete="true" foreach="row">
+  <database name="TRIGGER USER1_TRG">
+    <trigger name="USER1_TRG" table="USER1" fires="after" insert="true" update="true" delete="true" foreach="row">
       <body><![CDATA[
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
@@ -48,7 +48,7 @@ BEGIN
       (
         get_uuid(), :new.AD_Client_ID, :new.AD_Org_ID, :new.IsActive,
         :new.Created, :new.CreatedBy, :new.Updated,
-        :new.UpdatedBy, v_Tree_ID, :new.C_User1_ID,
+        :new.UpdatedBy, v_Tree_ID, :new.User1_ID,
         '0',(
         CASE :new.IsSummary
           WHEN 'Y'
@@ -69,7 +69,7 @@ BEGIN
     SELECT COUNT(*) 
     INTO v_count 
     FROM AD_TREENODE 
-    WHERE parent_id=:old.C_User1_ID
+    WHERE parent_id=:old.User1_ID
     AND AD_TREE_ID=v_Tree_ID;
 
     IF(v_count>0) THEN
@@ -80,9 +80,9 @@ BEGIN
     FROM AD_TREENODE
     WHERE AD_CLIENT_ID=:old.AD_Client_ID
     AND AD_Tree_ID=v_Tree_ID
-    AND Node_ID=:old.C_User1_ID;
+    AND Node_ID=:old.User1_ID;
   END IF;
-END C_USER1_TRG
+END USER1_TRG
 ]]></body>
     </trigger>
   </database>

@@ -332,8 +332,8 @@
       <foreign-key foreignTable="AD_USER" name="C_INVOICE_SALESREP">
         <reference local="SALESREP_ID" foreign="AD_USER_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_USER1" name="C_INVOICE_USER1">
-        <reference local="USER1_ID" foreign="C_USER1_ID"/>
+      <foreign-key foreignTable="USER1" name="C_INVOICE_USER1">
+        <reference local="USER1_ID" foreign="USER1_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_USER2" name="C_INVOICE_USER2">
         <reference local="USER2_ID" foreign="C_USER2_ID"/>

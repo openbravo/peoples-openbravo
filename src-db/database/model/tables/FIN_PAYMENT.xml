@@ -174,8 +174,8 @@
       <foreign-key foreignTable="FIN_PAYMENT" name="FIN_PAYMENT_REVERSED">
         <reference local="FIN_REV_PAYMENT_ID" foreign="FIN_PAYMENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_USER1" name="FIN_PAYMENT_USER1">
-        <reference local="USER1_ID" foreign="C_USER1_ID"/>
+      <foreign-key foreignTable="USER1" name="FIN_PAYMENT_USER1">
+        <reference local="USER1_ID" foreign="USER1_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_USER2" name="FIN_PAYMENT_USER2">
         <reference local="USER2_ID" foreign="C_USER2_ID"/>

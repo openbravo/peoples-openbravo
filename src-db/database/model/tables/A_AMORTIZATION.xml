@@ -111,8 +111,8 @@
       <foreign-key foreignTable="AD_ORG" name="A_AMORTIZATION_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_USER1" name="A_AMORTIZATION_USER1">
-        <reference local="USER1_ID" foreign="C_USER1_ID"/>
+      <foreign-key foreignTable="USER1" name="A_AMORTIZATION_USER1">
+        <reference local="USER1_ID" foreign="USER1_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_USER2" name="A_AMORTIZATION_USER2">
         <reference local="USER2_ID" foreign="C_USER2_ID"/>

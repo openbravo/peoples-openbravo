@@ -49,7 +49,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="C_USER1_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+      <column name="USER1_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -101,8 +101,8 @@
       <foreign-key foreignTable="M_PRODUCT" name="A_AMORTLINE_ACCTD_PRODUCT">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_USER1" name="A_AMORTLINE_ACCTD_USER1">
-        <reference local="C_USER1_ID" foreign="C_USER1_ID"/>
+      <foreign-key foreignTable="USER1" name="A_AMORTLINE_ACCTD_USER1">
+        <reference local="USER1_ID" foreign="USER1_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_USER2" name="A_AMORTLINE_ACCTD_USER2">
         <reference local="C_USER2_ID" foreign="C_USER2_ID"/>

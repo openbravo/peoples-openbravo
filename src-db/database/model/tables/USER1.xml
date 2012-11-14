@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-  <database name="TABLE C_USER1">
-    <table name="C_USER1" primaryKey="C_USER1_KEY">
-      <column name="C_USER1_ID" primaryKey="true" required="true" type="VARCHAR" size="32" autoIncrement="false">
+  <database name="TABLE USER1">
+    <table name="USER1" primaryKey="USER1_KEY">
+      <column name="USER1_ID" primaryKey="true" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -49,17 +49,17 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="C_USER1_AD_CLIENT">
+      <foreign-key foreignTable="AD_CLIENT" name="USER1_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="C_USER1_AD_ORG">
+      <foreign-key foreignTable="AD_ORG" name="USER1_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <unique name="C_USER1_VALUE">
+      <unique name="USER1_VALUE">
         <unique-column name="AD_CLIENT_ID"/>
         <unique-column name="VALUE"/>
       </unique>
-      <check name="C_USER1_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="C_USER1_ISSUMMARY_CHK"><![CDATA[ISSUMMARY IN ('Y', 'N')]]></check>
+      <check name="USER1_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="USER1_ISSUMMARY_CHK"><![CDATA[ISSUMMARY IN ('Y', 'N')]]></check>
     </table>
   </database>

@@ -140,8 +140,8 @@
       <foreign-key foreignTable="M_PRODUCT" name="C_VALIDCOMBINATION_M_PRODUCT">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_USER1" name="C_VALIDCOMBINATION_USER1">
-        <reference local="USER1_ID" foreign="C_USER1_ID"/>
+      <foreign-key foreignTable="USER1" name="C_VALIDCOMBINATION_USER1">
+        <reference local="USER1_ID" foreign="USER1_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_USER2" name="C_VALIDCOMBINATION_USER2">
         <reference local="USER2_ID" foreign="C_USER2_ID"/>
