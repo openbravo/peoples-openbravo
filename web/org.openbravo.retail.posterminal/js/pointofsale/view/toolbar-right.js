@@ -251,9 +251,6 @@ enyo.kind({
     this.inherited(arguments);
     this.removeClass('btnlink-gray');
   },
-  init: function (model) {
-    this.model = model
-  },
   renderTotal: function (sender, event) {
     this.$.totalPrinter.renderTotal(event.newTotal);
   },

@@ -20,7 +20,7 @@ enyo.kind({
 
     if (this.args.receipt.get('orderType') === 0) {
       this.$.header.setContent(OB.I18N.getLabel('OBPOS_LblModalPayment', [OB.I18N.formatCurrency(this.args.amount)]));
-    } else if (receipt.get('orderType') === 1) {
+    } else if (this.args.receipt.get('orderType') === 1) {
       this.$.header.setContent(OB.I18N.getLabel('OBPOS_LblModalReturn', [OB.I18N.formatCurrency(this.args.amount)]));
     } else {
       this.$.header.setContent('');

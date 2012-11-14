@@ -111,7 +111,7 @@
         executeWhenDOMReady();
       }, 50);
     }
-  }
+  };
   executeWhenDOMReady();
 
 }());

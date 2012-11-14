@@ -12,7 +12,7 @@
 (function () {
   // Because of problems with module dependencies, it is possible this object to already
   // be defined with some rules.
-  var alreadyDefinedRules = OB && OB.Model && OB.Model.Discounts && OB.Model.Discounts.discountRules || {};
+  var alreadyDefinedRules = (OB && OB.Model && OB.Model.Discounts && OB.Model.Discounts.discountRules) || {};
 
   OB.Model.Discounts = {
     discountRules: alreadyDefinedRules,

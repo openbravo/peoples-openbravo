@@ -499,7 +499,7 @@
     addProduct: function (p) {
       var me = this;
       if (me.get('isQuotation') && me.get('hasbeenpaid') === 'Y') {
-        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_QuotationClosed')); 
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_QuotationClosed'));
         return;
       }
       if (p.get('obposScale')) {
@@ -696,7 +696,7 @@
         };
 
         OB.Dal.find(OB.Model.ProductPrice, criteria, successCallbackPrices, function () {
-          console.error(args);
+          // TODO: Report error properly.
         }, line);
       });
     },
@@ -710,7 +710,7 @@
     },
 
     createOrderFromQuotation: function (updatePrices) {
-      var documentseq;
+      var documentseq, documentseqstr;
       this.set('id', null);
       this.set('isQuotation', false);
       this.set('documentType', OB.POS.modelterminal.get('terminal').terminalType.documentType);
@@ -735,7 +735,7 @@
     },
 
     rejectQuotation: function () {
-      alert('reject!!')
+      alert('reject!!');
     },
 
     resetOrderInvoice: function () {
@@ -939,7 +939,7 @@
     newPaidReceipt: function (model, callback) {
       var order = new Order(),
           lines, me = this,
-          documentseq, documentseqstr, bp, newline, lines, prod, payments, curPayment, taxes, bpId, numberOfLines = model.receiptLines.length;
+          documentseq, documentseqstr, bp, newline, prod, payments, curPayment, taxes, bpId, numberOfLines = model.receiptLines.length;
       lines = new Backbone.Collection();
       order.set('documentNo', model.documentNo);
       if (model.isQuotation) {
@@ -968,8 +968,8 @@
       OB.Dal.get(OB.Model.BusinessPartner, bpId, function (bp) {
         order.set('bp', bp);
       }, function () {
-        console.error(args);
-      })
+        // TODO: Report errors properly
+      });
       order.set('gross', model.totalamount);
       order.trigger('calculategross');
       order.set('salesRepresentative$_identifier', model.salesrepresentative_identifier);
@@ -994,7 +994,7 @@
             order.set('lines', lines);
             callback(order);
           }
-        })
+        });
       });
       order.set('orderDate', moment(model.orderDate.toString(), "YYYY-MM-DD").toDate());
       //order.set('payments', model.receiptPayments);
@@ -1039,7 +1039,7 @@
     },
 
     addNewQuotation: function () {
-      var documentseq;
+      var documentseq, documentseqstr;
       this.saveCurrent();
       this.current = this.newOrder();
       this.current.set('isQuotation', true);

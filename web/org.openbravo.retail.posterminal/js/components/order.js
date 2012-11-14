@@ -127,7 +127,7 @@ enyo.kind({
     this.order.on('change:isQuotation', function (model) {
       if (model.get('isQuotation')) {
         this.$.divbtnquotation.show();
-        this.$.listOrderLines.children[4].children[0].setContent(OB.I18N.getLabel('OBPOS_QuotationNew'))
+        this.$.listOrderLines.children[4].children[0].setContent(OB.I18N.getLabel('OBPOS_QuotationNew'));
         if (model.get('hasbeenpaid') === 'Y') {
           this.$.divbtnquotation.setContent(OB.I18N.getLabel('OBPOS_QuotationUnderEvaluation'));
         } else {
@@ -135,7 +135,7 @@ enyo.kind({
         }
       } else {
         this.$.divbtnquotation.hide();
-        this.$.listOrderLines.children[4].children[0].setContent(OB.I18N.getLabel('OBPOS_ReceiptNew'))
+        this.$.listOrderLines.children[4].children[0].setContent(OB.I18N.getLabel('OBPOS_ReceiptNew'));
       }
     }, this);
     this.order.on('change:hasbeenpaid', function (model) {
