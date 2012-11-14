@@ -63,7 +63,7 @@ class WindowTreeUtility {
       TreeType = "CC";
     else if (keyColumnName.equals("User1_ID"))
       TreeType = "U1";
-    else if (keyColumnName.equals("C_User2_ID"))
+    else if (keyColumnName.equals("User2_ID"))
       TreeType = "U2";
     else if (keyColumnName.equals("M_BOM_ID"))
       TreeType = "BB";

@@ -385,9 +385,6 @@
       <foreign-key foreignTable="C_RETURN_REASON" name="C_ORDER_C_RETURN_REASON">
         <reference local="C_RETURN_REASON_ID" foreign="C_RETURN_REASON_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_USER2" name="C_ORDER_C_USER2">
-        <reference local="USER2_ID" foreign="C_USER2_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="C_BPARTNER" name="C_ORDER_DROPSHIP_BPARTNER">
         <reference local="DROPSHIP_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
       </foreign-key>
@@ -420,6 +417,9 @@
       </foreign-key>
       <foreign-key foreignTable="USER1" name="C_ORDER_USER1">
         <reference local="USER1_ID" foreign="USER1_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="USER2" name="C_ORDER_USER2">
+        <reference local="USER2_ID" foreign="USER2_ID"/>
       </foreign-key>
       <foreign-key foreignTable="FIN_PAYMENT_PRIORITY" name="FIN_ORDER_PAYMENT_PRIORITY">
         <reference local="FIN_PAYMENT_PRIORITY_ID" foreign="FIN_PAYMENT_PRIORITY_ID"/>

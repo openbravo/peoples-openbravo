@@ -177,8 +177,8 @@
       <foreign-key foreignTable="USER1" name="FIN_PAYMENT_USER1">
         <reference local="USER1_ID" foreign="USER1_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_USER2" name="FIN_PAYMENT_USER2">
-        <reference local="USER2_ID" foreign="C_USER2_ID"/>
+      <foreign-key foreignTable="USER2" name="FIN_PAYMENT_USER2">
+        <reference local="USER2_ID" foreign="USER2_ID"/>
       </foreign-key>
       <check name="FIN_PAYMENT_BP_CREDIT_CHECK"><![CDATA[((C_BPARTNER_ID IS NULL) AND (COALESCE(GENERATED_CREDIT, 0) = 0)) OR (C_BPARTNER_ID IS NOT NULL)]]></check>
       <check name="FIN_PAYMENT_CREATE_ALGORIT_CHK"><![CDATA[CREATEDBYALGORITHM IN ('Y', 'N')]]></check>

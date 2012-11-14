@@ -123,11 +123,11 @@
       <foreign-key foreignTable="C_PROJECT" name="M_PRODUCTION_C_PROJECT">
         <reference local="C_PROJECT_ID" foreign="C_PROJECT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_USER2" name="M_PRODUCTION_C_USER2">
-        <reference local="USER2_ID" foreign="C_USER2_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="USER1" name="M_PRODUCTION_USER1">
         <reference local="USER1_ID" foreign="USER1_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="USER2" name="M_PRODUCTION_USER2">
+        <reference local="USER2_ID" foreign="USER2_ID"/>
       </foreign-key>
       <check name="M_PRODUCTION_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="M_PRODUCTION_ISCREATED_CHECK"><![CDATA[ISCREATED IN ('Y', 'N')]]></check>

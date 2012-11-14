@@ -53,7 +53,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="C_USER2_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+      <column name="USER2_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -104,8 +104,8 @@
       <foreign-key foreignTable="USER1" name="C_ORDERLINE_ACCTD_USER1">
         <reference local="USER1_ID" foreign="USER1_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_USER2" name="C_ORDERLINE_ACCTD_USER2">
-        <reference local="C_USER2_ID" foreign="C_USER2_ID"/>
+      <foreign-key foreignTable="USER2" name="C_ORDERLINE_ACCTD_USER2">
+        <reference local="USER2_ID" foreign="USER2_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="C_ORDERLINE_ACCTDIMENSION_A1">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>

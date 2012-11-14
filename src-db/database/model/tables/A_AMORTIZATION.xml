@@ -114,8 +114,8 @@
       <foreign-key foreignTable="USER1" name="A_AMORTIZATION_USER1">
         <reference local="USER1_ID" foreign="USER1_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_USER2" name="A_AMORTIZATION_USER2">
-        <reference local="USER2_ID" foreign="C_USER2_ID"/>
+      <foreign-key foreignTable="USER2" name="A_AMORTIZATION_USER2">
+        <reference local="USER2_ID" foreign="USER2_ID"/>
       </foreign-key>
       <check name="A_AMORTIZATION_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>

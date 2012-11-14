@@ -134,10 +134,10 @@
    <SqlMethod name="selectUser2" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        SELECT tn.Node_ID,tn.Parent_ID,tn.SeqNo, u2.C_User2_ID AS ID, u2.Name, u2.Description, u2.IsSummary 
+        SELECT tn.Node_ID,tn.Parent_ID,tn.SeqNo, u2.User2_ID AS ID, u2.Name, u2.Description, u2.IsSummary 
         FROM AD_TreeNode tn, 
-          C_User2 u2
-        WHERE tn.Node_ID = u2.C_User2_ID 
+          User2 u2
+        WHERE tn.Node_ID = u2.User2_ID 
         AND tn.AD_Tree_ID = ? 
         ORDER BY COALESCE(tn.Parent_ID, '-1'), tn.SeqNo
       </Sql>

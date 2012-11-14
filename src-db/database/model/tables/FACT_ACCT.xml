@@ -273,8 +273,8 @@
       <foreign-key foreignTable="USER1" name="FACT_ACCT_USER1">
         <reference local="USER1_ID" foreign="USER1_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_USER2" name="FACT_ACCT_USER2">
-        <reference local="USER2_ID" foreign="C_USER2_ID"/>
+      <foreign-key foreignTable="USER2" name="FACT_ACCT_USER2">
+        <reference local="USER2_ID" foreign="USER2_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_PRODUCT" name="M_PRODUCT_FACT_ACCT">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>

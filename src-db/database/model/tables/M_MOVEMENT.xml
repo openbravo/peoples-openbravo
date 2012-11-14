@@ -107,11 +107,11 @@
       <foreign-key foreignTable="C_PROJECT" name="M_MOVEMENT_C_PROJECT">
         <reference local="C_PROJECT_ID" foreign="C_PROJECT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_USER2" name="M_MOVEMENT_C_USER2">
-        <reference local="USER2_ID" foreign="C_USER2_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="USER1" name="M_MOVEMENT_USER1">
         <reference local="USER1_ID" foreign="USER1_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="USER2" name="M_MOVEMENT_USER2">
+        <reference local="USER2_ID" foreign="USER2_ID"/>
       </foreign-key>
       <check name="M_MOVEMENT_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="M_MOVEMENT_MOVE_FROMTO_LOC_CHK"><![CDATA[MOVE_FROMTO_LOCATOR IN ('Y', 'N')]]></check>
