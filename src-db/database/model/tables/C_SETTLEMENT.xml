@@ -150,6 +150,12 @@
       <foreign-key foreignTable="C_PROJECT" name="C_SETTLEMENT_C_PROJECT">
         <reference local="C_PROJECT_ID" foreign="C_PROJECT_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="C_USER1" name="C_SETTLEMENT_C_USER1">
+        <reference local="USER1_ID" foreign="C_USER1_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_USER2" name="C_SETTLEMENT_C_USER2">
+        <reference local="USER2_ID" foreign="C_USER2_ID"/>
+      </foreign-key>
       <index name="C_SETTLEMENT_UPDATED" unique="false">
         <index-column name="UPDATED"/>
       </index>

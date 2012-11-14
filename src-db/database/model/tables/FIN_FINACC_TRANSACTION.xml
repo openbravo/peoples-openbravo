@@ -178,6 +178,12 @@
       <foreign-key foreignTable="C_PROJECT" name="FIN_FINACC_TRANS_PROJECT">
         <reference local="C_PROJECT_ID" foreign="C_PROJECT_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="C_USER1" name="FIN_FINACC_TRANS_USER1">
+        <reference local="USER1_ID" foreign="C_USER1_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_USER2" name="FIN_FINACC_TRANS_USER2">
+        <reference local="USER2_ID" foreign="C_USER2_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="FIN_FINANCIAL_ACCOUNT" name="FIN_FINANCIAL_TRANSACTION">
         <reference local="FIN_FINANCIAL_ACCOUNT_ID" foreign="FIN_FINANCIAL_ACCOUNT_ID"/>
       </foreign-key>

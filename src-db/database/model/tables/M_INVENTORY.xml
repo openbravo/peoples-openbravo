@@ -114,6 +114,12 @@
       <foreign-key foreignTable="M_WAREHOUSE" name="M_INVENTORY_M_WAREHOUSE">
         <reference local="M_WAREHOUSE_ID" foreign="M_WAREHOUSE_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="C_USER1" name="M_INVENTORY_USER1">
+        <reference local="USER1_ID" foreign="C_USER1_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_USER2" name="M_INVENTORY_USER2">
+        <reference local="USER2_ID" foreign="C_USER2_ID"/>
+      </foreign-key>
       <check name="M_INVENTORY_GENERATELIST_CHK"><![CDATA[GENERATELIST IN ('Y', 'N')]]></check>
       <check name="M_INVENTORY_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="M_INVENTORY_PROCESSED_CHECK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
