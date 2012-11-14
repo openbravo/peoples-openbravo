@@ -67,7 +67,11 @@ BEGIN
    FROM M_Storage_Pending s
    WHERE s.M_Product_ID=:new.M_Product_ID) A;
    IF (v_ControlNo <> 0) THEN
-    RAISE_APPLICATION_ERROR(-20000, '@20400@');
+    IF (COALESCE(:new.m_attributeset_id,'null') <> COALESCE(:old.m_attributeset_id,'null')) THEN
+      RAISE_APPLICATION_ERROR(-20000, '@20633@');
+    ELSE
+      RAISE_APPLICATION_ERROR(-20000, '@20400@');
+    END IF;
    END IF;
   END IF;
 	
