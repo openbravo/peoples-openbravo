@@ -62,6 +62,7 @@ import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentMethod;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.FinAccPaymentMethod;
+import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -170,6 +171,7 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
       String strOrgId = vars.getRequiredStringParameter("inpadOrgId");
       String strDifferenceAction = "";
       String strDifference = vars.getNumericParameter("inpDifference", "0");
+      boolean isUseCredit = vars.getStringParameter("inpUseCredit").equals("Y");
       BigDecimal refundAmount = BigDecimal.ZERO;
       if (!strDifference.equals("0")) {
         refundAmount = new BigDecimal(strDifference);
@@ -182,69 +184,86 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
           "1"));
       BigDecimal convertedAmount = new BigDecimal(vars.getRequiredNumericParameter(
           "inpActualConverted", strPaymentAmount));
+      BusinessPartner businessPartner = OBDal.getInstance().get(BusinessPartner.class,
+          strReceivedFromId);
+      PriceList priceList = isReceipt ? businessPartner.getPriceList() : businessPartner
+          .getPurchasePricelist();
       OBError message = null;
       // FIXME: added to access the FIN_PaymentSchedule and FIN_PaymentScheduleDetail tables to be
       // removed when new security implementation is done
       OBContext.setAdminMode();
       try {
+        if (isUseCredit
+            && !paymentCurrencyId
+                .equals((priceList != null) ? priceList.getCurrency().getId() : "")) {
+          String errorMsg = String.format(
+              Utility.parseTranslation(this, vars, vars.getLanguage(), "@APRM_CreditCurrency@"),
+              priceList != null ? priceList.getCurrency().getISOCode() : Utility.parseTranslation(
+                  this, vars, vars.getLanguage(), "@APRM_CreditNoPricelistCurrency@"));
+          message = new OBError();
+          message.setType("Error");
+          message.setTitle("Error");
+          message.setMessage(errorMsg);
+        } else {
 
-        List<FIN_PaymentScheduleDetail> selectedPaymentDetails = FIN_Utility.getOBObjectList(
-            FIN_PaymentScheduleDetail.class, strSelectedScheduledPaymentDetailIds);
-        HashMap<String, BigDecimal> selectedPaymentDetailAmounts = FIN_AddPayment
-            .getSelectedPaymentDetailsAndAmount(vars, selectedPaymentDetails);
+          List<FIN_PaymentScheduleDetail> selectedPaymentDetails = FIN_Utility.getOBObjectList(
+              FIN_PaymentScheduleDetail.class, strSelectedScheduledPaymentDetailIds);
+          HashMap<String, BigDecimal> selectedPaymentDetailAmounts = FIN_AddPayment
+              .getSelectedPaymentDetailsAndAmount(vars, selectedPaymentDetails);
 
-        final List<Object> parameters = new ArrayList<Object>();
-        parameters.add(vars.getClient());
-        parameters.add(strOrgId);
-        parameters.add((isReceipt ? "ARR" : "APP"));
-        // parameters.add(null);
-        String strDocTypeId = (String) CallStoredProcedure.getInstance().call("AD_GET_DOCTYPE",
-            parameters, null);
+          final List<Object> parameters = new ArrayList<Object>();
+          parameters.add(vars.getClient());
+          parameters.add(strOrgId);
+          parameters.add((isReceipt ? "ARR" : "APP"));
+          // parameters.add(null);
+          String strDocTypeId = (String) CallStoredProcedure.getInstance().call("AD_GET_DOCTYPE",
+              parameters, null);
 
-        if (strPaymentDocumentNo.startsWith("<")) {
-          // get DocumentNo
-          strPaymentDocumentNo = Utility.getDocumentNo(this, vars, "AddPaymentFromInvoice",
-              "FIN_Payment", strDocTypeId, strDocTypeId, false, true);
-        }
+          if (strPaymentDocumentNo.startsWith("<")) {
+            // get DocumentNo
+            strPaymentDocumentNo = Utility.getDocumentNo(this, vars, "AddPaymentFromInvoice",
+                "FIN_Payment", strDocTypeId, strDocTypeId, false, true);
+          }
 
-        FIN_Payment payment = FIN_AddPayment.savePayment(null, isReceipt,
-            dao.getObject(DocumentType.class, strDocTypeId), strPaymentDocumentNo,
-            dao.getObject(BusinessPartner.class, strReceivedFromId),
-            dao.getObject(FIN_PaymentMethod.class, strPaymentMethodId),
-            dao.getObject(FIN_FinancialAccount.class, strFinancialAccountId), strPaymentAmount,
-            FIN_Utility.getDate(strPaymentDate), dao.getObject(Organization.class, strOrgId),
-            strReferenceNo, selectedPaymentDetails, selectedPaymentDetailAmounts,
-            strDifferenceAction.equals("writeoff"), strDifferenceAction.equals("refund"),
-            dao.getObject(Currency.class, paymentCurrencyId), exchangeRate, convertedAmount);
+          FIN_Payment payment = FIN_AddPayment.savePayment(null, isReceipt,
+              dao.getObject(DocumentType.class, strDocTypeId), strPaymentDocumentNo,
+              dao.getObject(BusinessPartner.class, strReceivedFromId),
+              dao.getObject(FIN_PaymentMethod.class, strPaymentMethodId),
+              dao.getObject(FIN_FinancialAccount.class, strFinancialAccountId), strPaymentAmount,
+              FIN_Utility.getDate(strPaymentDate), dao.getObject(Organization.class, strOrgId),
+              strReferenceNo, selectedPaymentDetails, selectedPaymentDetailAmounts,
+              strDifferenceAction.equals("writeoff"), strDifferenceAction.equals("refund"),
+              dao.getObject(Currency.class, paymentCurrencyId), exchangeRate, convertedAmount);
 
-        if (strAction.equals("PRP") || strAction.equals("PPP") || strAction.equals("PRD")
-            || strAction.equals("PPW")) {
+          if (strAction.equals("PRP") || strAction.equals("PPP") || strAction.equals("PRD")
+              || strAction.equals("PPW")) {
 
-          message = FIN_AddPayment.processPayment(vars, this,
-              (strAction.equals("PRP") || strAction.equals("PPP")) ? "P" : "D", payment);
-          String strNewPaymentMessage = Utility.parseTranslation(this, vars, vars.getLanguage(),
-              "@PaymentCreated@" + " " + payment.getDocumentNo()) + ".";
-          message.setMessage(strNewPaymentMessage + " " + message.getMessage());
-          if (strDifferenceAction.equals("refund")) {
-            Boolean newPayment = !payment.getFINPaymentDetailList().isEmpty();
-            FIN_Payment refundPayment = FIN_AddPayment.createRefundPayment(this, vars, payment,
-                refundAmount.negate(), exchangeRate);
-            OBError auxMessage = FIN_AddPayment.processPayment(vars, this,
-                (strAction.equals("PRP") || strAction.equals("PPP")) ? "P" : "D", refundPayment);
-            if (newPayment) {
-              final String strNewRefundPaymentMessage = Utility
-                  .parseTranslation(this, vars, vars.getLanguage(), "@APRM_RefundPayment@" + ": "
-                      + refundPayment.getDocumentNo())
-                  + ".";
-              message.setMessage(strNewRefundPaymentMessage + " " + message.getMessage());
-              if (payment.getGeneratedCredit().compareTo(BigDecimal.ZERO) != 0) {
-                payment
-                    .setDescription(payment.getDescription() + strNewRefundPaymentMessage + "\n");
-                OBDal.getInstance().save(payment);
-                OBDal.getInstance().flush();
+            message = FIN_AddPayment.processPayment(vars, this,
+                (strAction.equals("PRP") || strAction.equals("PPP")) ? "P" : "D", payment);
+            String strNewPaymentMessage = Utility.parseTranslation(this, vars, vars.getLanguage(),
+                "@PaymentCreated@" + " " + payment.getDocumentNo()) + ".";
+            message.setMessage(strNewPaymentMessage + " " + message.getMessage());
+            if (strDifferenceAction.equals("refund")) {
+              Boolean newPayment = !payment.getFINPaymentDetailList().isEmpty();
+              FIN_Payment refundPayment = FIN_AddPayment.createRefundPayment(this, vars, payment,
+                  refundAmount.negate(), exchangeRate);
+              OBError auxMessage = FIN_AddPayment.processPayment(vars, this,
+                  (strAction.equals("PRP") || strAction.equals("PPP")) ? "P" : "D", refundPayment);
+              if (newPayment) {
+                final String strNewRefundPaymentMessage = Utility.parseTranslation(this, vars,
+                    vars.getLanguage(),
+                    "@APRM_RefundPayment@" + ": " + refundPayment.getDocumentNo())
+                    + ".";
+                message.setMessage(strNewRefundPaymentMessage + " " + message.getMessage());
+                if (payment.getGeneratedCredit().compareTo(BigDecimal.ZERO) != 0) {
+                  payment.setDescription(payment.getDescription() + strNewRefundPaymentMessage
+                      + "\n");
+                  OBDal.getInstance().save(payment);
+                  OBDal.getInstance().flush();
+                }
+              } else {
+                message = auxMessage;
               }
-            } else {
-              message = auxMessage;
             }
           }
         }
