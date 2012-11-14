@@ -55,8 +55,7 @@ public class AcctSchemaEventHandler extends EntityPersistenceEventObserver {
     return entities;
   }
 
-  public void onUpdate(@Observes
-  EntityUpdateEvent event) {
+  public void onUpdate(@Observes EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -198,7 +197,7 @@ public class AcctSchemaEventHandler extends EntityPersistenceEventObserver {
     } else if (ACCOUNTTYPE_EXPENSE.equals(accountType) && !expensePositive) {
       return true;
     } else if (ACCOUNTTYPE_REVENUE.equals(accountType) && !revenuePositive) {
-      return true;
+      return false;
     }
     return false;
 
