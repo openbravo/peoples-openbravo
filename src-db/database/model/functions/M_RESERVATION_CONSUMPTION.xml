@@ -39,6 +39,7 @@
 * Contributor(s):  ______________________________________.
 ************************************************************************/
 
+  v_ResultStr VARCHAR2(2000):='';
   v_pendingtorelease    NUMBER;
   v_warehouse_id        VARCHAR2(32);
   v_product_id          VARCHAR2(32);
@@ -76,7 +77,7 @@ BEGIN
   FROM m_reservation r
       LEFT JOIN m_reservation_stock alloc ON r.m_reservation_id = alloc.m_reservation_id AND alloc.isallocated = 'Y'
   WHERE r.m_reservation_id = p_reservation_id
-  GROUP BY r.m_product_id, r.c_uom_id, r.reservedqty, r.releasedqty, r.quantity,
+  GROUP BY r.m_product_id, r.c_uom_id, r.reservedqty, COALESCE(r.releasedqty,0), r.quantity,
       r.m_warehouse_id, r.m_locator_id, r.m_attributesetinstance_id, r.res_status;
   v_this_noalloc := v_this_reservedqty - v_this_allocated;
 
@@ -89,7 +90,7 @@ BEGIN
   FROM m_storage_detail sd
     JOIN m_locator loc ON sd.m_locator_id = loc.m_locator_id
     LEFT JOIN  (
-        SELECT SUM(rs.quantity - rs.releasedqty) AS reservedstock
+        SELECT SUM(rs.quantity - COALESCE(rs.releasedqty,0)) AS reservedstock
         FROM m_reservation_stock rs
           JOIN m_reservation r ON rs.m_reservation_id = r.m_reservation_id
         WHERE r.m_product_id = v_product_id
@@ -117,16 +118,18 @@ BEGIN
     p_message := '@MoreQuantityToReleaseThanPending@';
   END IF;
   -- Release stock reserved in the reservation.
+  v_ResultStr := 'Release reserved stock';
   FOR cur_reserved_stock IN (
-      SELECT quantity - releasedqty AS reservedqty, m_reservation_stock_id, isallocated
+      SELECT quantity - COALESCE(releasedqty,0) AS reservedqty, m_reservation_stock_id, isallocated
       FROM m_reservation_stock
       WHERE m_locator_id = p_locator_id
         AND COALESCE(m_attributesetinstance_id, '0') = COALESCE(p_attributesetinstance_id, '0')
+        AND m_reservation_id = p_reservation_id
       ORDER BY CASE isallocated WHEN 'Y' THEN 0 ELSE 1 END
   ) LOOP
     v_qtytorelease := LEAST(cur_reserved_stock.reservedqty, v_pendingtorelease);
     UPDATE m_reservation_stock
-    SET releasedqty = releasedqty + v_qtytorelease,
+    SET releasedqty = COALESCE(releasedqty,0) + v_qtytorelease,
         updated = now(),
         updatedby = p_user_id
     WHERE m_reservation_stock_id = cur_reserved_stock.m_reservation_stock_id;
@@ -148,6 +151,7 @@ BEGIN
   END IF;
   
   -- If exists not reserved stock reserve in current reservation.
+  v_ResultStr := 'Reserve and release available stock';
   IF (v_notreservedstock >= 0) THEN
     -- Reserve available stock
     v_qtytorelease := LEAST(v_notreservedstock, v_pendingtorelease);
@@ -160,7 +164,7 @@ BEGIN
           FROM m_reservation_stock
           WHERE m_reservation_id = p_reservation_id
             AND isallocated = 'N'
-            AND quantity != releasedqty
+            AND quantity != COALESCE(releasedqty,0)
       ) LOOP
         v_qtytounreserve_aux := LEAST(v_qtytounreserve, cur_reserved_stock.reservedqty);
         UPDATE m_reservation_stock
@@ -181,7 +185,7 @@ BEGIN
     v_this_noalloc := v_this_noalloc + v_qtytorelease;
     -- Release reserved stock
     UPDATE m_reservation_stock
-    SET releasedqty = releasedqty + v_qtytorelease,
+    SET releasedqty = COALESCE(releasedqty,0) + v_qtytorelease,
         updated = now(),
         updatedby = p_user_id
     WHERE m_reservation_stock_id = v_res_stock_id;
@@ -197,8 +201,9 @@ BEGIN
   END IF;
 
   -- Finally take other reservation's not allocated stock.
+  v_ResultStr := 'Reserve other reservations stock';
   FOR cur_not_allocated_stock IN (
-      SELECT r.m_reservation_id, rs.quantity, rs.releasedqty, rs.m_reservation_stock_id, r.reservedqty, r.quantity as quantitytoreserve,
+      SELECT r.m_reservation_id, rs.quantity, COALESCE(rs.releasedqty,0) as releasedqty, rs.m_reservation_stock_id, r.reservedqty, r.quantity as quantitytoreserve,
              r.ad_client_id, r.ad_org_id, r.m_product_id, r.c_uom_id, r.m_attributesetinstance_id, r.m_locator_id, r.m_warehouse_id,
              r.c_orderline_id
       FROM m_reservation_stock rs
@@ -210,7 +215,7 @@ BEGIN
         AND COALESCE(rs.m_attributesetinstance_id, '0') = COALESCE(p_attributesetinstance_id, '0')
         AND rs.isallocated = 'N'
         AND r.res_status NOT IN ('HO', 'CL', 'DR')
-        AND rs.quantity != rs.releasedqty
+        AND rs.quantity != COALESCE(rs.releasedqty,0)
   ) LOOP
     v_qtytorelease := LEAST(v_pendingtorelease, cur_not_allocated_stock.quantity - cur_not_allocated_stock.releasedqty);
     
@@ -222,7 +227,7 @@ BEGIN
           FROM m_reservation_stock
           WHERE m_reservation_id = p_reservation_id
             AND isallocated = 'N'
-            AND quantity != releasedqty
+            AND quantity != COALESCE(releasedqty,0)
       ) LOOP
         v_qtytounreserve_aux := LEAST(v_qtytounreserve, cur_reserved_stock.reservedqty);
         UPDATE m_reservation_stock
@@ -309,7 +314,7 @@ BEGIN
     ELSE
       --Not enough available stock has been able to reallocate using new stock, undo reallocation.
       UPDATE m_reservation_stock
-      SET releasedqty = releasedqty - v_qtytorelease,
+      SET releasedqty = COALESCE(releasedqty,0) - v_qtytorelease,
           quantity = quantity - v_qtytorelease,
           updated = now(),
           updatedby = p_user_id
@@ -330,6 +335,12 @@ BEGIN
   IF (v_pendingtorelease > 0) THEN
     RAISE_APPLICATION_ERROR(-20000, '@CannotConsumeAllStock@');
   END IF;
+EXCEPTION
+WHEN OTHERS THEN
+  DBMS_OUTPUT.PUT_LINE(v_ResultStr) ;
+  v_ResultStr:= '@ERROR=' || SQLERRM;
+  DBMS_OUTPUT.PUT_LINE(v_ResultStr) ;
+  RAISE;
 END M_RESERVATION_CONSUMPTION
 ]]></body>
     </function>
