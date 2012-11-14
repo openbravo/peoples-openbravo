@@ -275,6 +275,9 @@ public class CustomerLoader extends JSONProcessSimple {
         newLocation.setName(jsonCustomer.getString("locName"));
       }
 
+      // don't set phone of location, the phone is set in contact
+      newLocation.setPhone(null);
+
       newLocation.setBusinessPartner(customer);
       newLocation.setLocationAddress(rootLocation);
       newLocation.setNewOBObject(true);
