@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -308,7 +308,7 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
                   data[0].cChargeId, data[0].chargeamt, data[0].priorityrule, "N", "N",
                   data[0].adUserId, data[0].salesrepId, data[0].adOrgtrxId, data[0].cProjectId,
                   data[0].cCampaignId, data[0].cActivityId, data[0].user1Id, data[0].user2Id, "N",
-                  "N", "N");
+                  "N", "N", data[0].cCostcenterId, data[0].aAssetId);
             } catch (ServletException ex) {
               myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
               releaseRollbackConnection(conn);
@@ -328,7 +328,8 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
                 dataLine[0].description, strmInoutId, strOrderlineId, strLocator,
                 dataLine[0].mProductId, dataLine[0].cUomId, strQtyordered, "N",
                 dataLine[0].mAttributesetinstanceId, "N", dataLine[0].quantityorder,
-                dataLine[0].mProductUomId);
+                dataLine[0].mProductUomId, dataLine[0].cProjectId, dataLine[0].user1Id,
+                dataLine[0].user2Id, dataLine[0].cCostcenterId, dataLine[0].aAssetId);
           } catch (ServletException ex) {
             myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
             releaseRollbackConnection(conn);
