@@ -944,14 +944,14 @@
       var order = new Order(),
           lines, me = this,
           documentseq, documentseqstr, bp, newline, prod, payments, curPayment, taxes, bpId, numberOfLines = model.receiptLines.length;
-      
+
       // Call orderLoader plugings to adjust remote model to local model first 
       // ej: sales on credit: Add a new payment if total payment < total receipt
       // ej: gift cards: Add a new payment for each gift card discount
       _.each(OB.Model.modelLoaders, function (f) {
         f(model);
       });
-      
+
       lines = new Backbone.Collection();
       order.set('documentNo', model.documentNo);
       if (model.isQuotation) {
@@ -1035,7 +1035,7 @@
         }
       });
       order.set('taxes', taxes);
-      
+
 
     },
 
@@ -1129,6 +1129,6 @@
   window.OB.Collection.PaymentLineList = PaymentLineList;
   window.OB.Model.Order = Order;
   window.OB.Collection.OrderList = OrderList;
-  
+
   window.OB.Model.modelLoaders = [];
 }());

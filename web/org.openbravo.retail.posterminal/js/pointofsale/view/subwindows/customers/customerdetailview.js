@@ -118,7 +118,7 @@ enyo.kind({
             }
           },
           tap: function () {
-            if(this.disabled === false){
+            if (this.disabled === false) {
               var sw = this.subWindow;
               this.model.get('subWindowManager').set('currentWindow', {
                 name: 'customerCreateAndEdit',
