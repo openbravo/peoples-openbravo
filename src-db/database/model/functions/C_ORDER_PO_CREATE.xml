@@ -135,6 +135,10 @@
             so.C_Campaign_ID,
             so.C_Project_ID, 
             so.C_Activity_ID,
+            so.A_Asset_ID,
+            so.C_Costcenter_ID,
+            so.User1_ID,
+            so.User2_ID,
             po.C_BPartner_ID,
             v.PO_PaymentTerm_ID,
             v.PaymentRulePO,
@@ -176,6 +180,10 @@
             so.C_Campaign_ID,
             so.C_Project_ID,
             so.C_Activity_ID,
+            so.A_Asset_ID,
+            so.C_Costcenter_ID,
+            so.User1_ID,
+            so.User2_ID,
             po.C_BPartner_ID,
             v.PO_PaymentTerm_ID,
             v.PaymentRulePO,
@@ -287,7 +295,8 @@
               M_Shipper_ID, C_Charge_ID, ChargeAmt, PriorityRule,
               TotalLines, GrandTotal,
               M_WareHouse_ID, M_PriceList_ID, IsTaxIncluded,
-              C_Campaign_ID, C_Project_ID, C_Activity_ID, Posted
+              C_Campaign_ID, C_Project_ID, C_Activity_ID, Posted,
+              A_Asset_ID, C_Costcenter_ID, User1_ID, User2_ID
             )
             VALUES
             (
@@ -307,7 +316,8 @@
               -- M_WareHouse_ID, M_PriceList_ID, IsTaxIncluded,
               Cur_SO.M_WareHouse_ID, Cur_SO.M_PriceList_ID, 'N',
               -- C_Campaign_ID, C_Project_ID, C_Activity_ID, Posted, C_Payment_ID, C_CashLine_ID)
-              Cur_SO.C_Campaign_ID, Cur_SO.C_Project_ID, Cur_SO.C_Activity_ID, 'N'
+              Cur_SO.C_Campaign_ID, Cur_SO.C_Project_ID, Cur_SO.C_Activity_ID, 'N',
+              Cur_SO.A_Asset_ID, Cur_SO.C_Costcenter_ID, Cur_SO.User1_ID, Cur_SO.User2_ID
             )
             ;
           v_ResultStr:='InsertPOrderLine';
@@ -331,7 +341,12 @@
               pp.PriceLimit  --MODIFIED BY F.IRIAZABAL
               ,
               sol.QUANTITYORDER,
-              sol.M_PRODUCT_UOM_ID
+              sol.M_PRODUCT_UOM_ID,
+              COALESCE(sol.C_Project_ID, so.C_Project_ID) AS C_Project_ID,
+              COALESCE(sol.C_Costcenter_ID, so.C_Costcenter_ID) AS C_Costcenter_ID,
+              COALESCE(sol.A_Asset_ID, so.A_Asset_ID) AS A_Asset_ID,
+              COALESCE(sol.User1_ID, so.User1_ID) AS User1_ID,
+              COALESCE(sol.User2_ID, so.User2_ID) AS User2_ID
             FROM C_ORDERLINE sol
             INNER JOIN C_ORDER so
               ON(sol.C_Order_ID=so.C_Order_ID)
@@ -374,7 +389,8 @@
                 Discount, FreightAmt, C_Charge_ID, ChargeAmt,
                 C_Tax_ID, S_ResourceAssignment_ID,
                 Ref_OrderLine_ID,  --MODIFIED BY F.IRIAZABAL
-                QuantityOrder, M_Product_UOM_ID, PriceStd, M_Offer_ID
+                QuantityOrder, M_Product_UOM_ID, PriceStd, M_Offer_ID,
+                C_Project_ID, C_Costcenter_ID, A_Asset_ID, User1_ID, User2_ID
               )
               VALUES
               (
@@ -389,7 +405,8 @@
                 NULL, 0, NULL, 0,
                 v_C_Tax_ID, NULL,
                 Cur_SOL.C_OrderLine_ID,  --MODIFIED BY F.IRIAZABAL
-                Cur_SOL.QUANTITYORDER, Cur_SOL.M_PRODUCT_UOM_ID, Cur_SOL.PriceStd, NULL
+                Cur_SOL.QUANTITYORDER, Cur_SOL.M_PRODUCT_UOM_ID, Cur_SOL.PriceStd, NULL,
+                Cur_SOL.C_Project_ID, Cur_SOL.C_Costcenter_ID, Cur_SOL.A_Asset_ID, Cur_SOL.User1_ID, Cur_SOL.User2_ID
               )
               ;
             --
