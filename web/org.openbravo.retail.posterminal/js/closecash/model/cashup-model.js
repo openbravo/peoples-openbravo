@@ -274,10 +274,6 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
       objToSend.cashCloseInfo.push(cashCloseInfo);
     }, this);
 
-    if (OB.POS.modelterminal.hasPermission('OBPOS_print.cashup')) {
-      this.printCashUp.print(this.get('cashUpReport').at(0), this.getCountCashSummary());
-    }
-
     //ready to send to the server
     server.exec(objToSend, function (data) {
       if (data.error) {
@@ -287,6 +283,9 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
         // console.log("cash up processed correctly. -> show modal");
         OB.UTIL.showLoading(false);
         me.set("finished", true);
+        if (OB.POS.modelterminal.hasPermission('OBPOS_print.cashup')) {
+          me.printCashUp.print(me.get('cashUpReport').at(0), me.getCountCashSummary());
+        }
       }
     });
   },
