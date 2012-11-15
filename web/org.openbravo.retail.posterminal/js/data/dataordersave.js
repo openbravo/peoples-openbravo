@@ -24,6 +24,11 @@
           json = this.receipt.serializeToJSON(),
           receiptId = this.receipt.get('id');
 
+      if (this.receipt.get('isbeingprocessed') === 'Y') {
+        //The receipt has already been sent, it should not be sent again
+        return;
+      }
+
       this.receipt.set('hasbeenpaid', 'Y');
 
       OB.UTIL.updateDocumentSequenceInDB(docno);
