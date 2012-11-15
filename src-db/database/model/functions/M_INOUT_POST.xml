@@ -599,6 +599,7 @@
               M_Warehouse_ID, POReference, DateOrdered, DeliveryRule,
               FreightCostRule, FreightAmt, C_Project_ID, C_Activity_ID,
               C_Campaign_ID, AD_OrgTrx_ID, User1_ID, User2_ID,
+              C_Costcenter_ID, A_Asset_ID,
               DeliveryViaRule, M_Shipper_ID, C_Charge_ID, ChargeAmt,
               PriorityRule, DocStatus, DocAction, Processing,
               Processed, ISLOGISTIC, salesrep_id
@@ -613,6 +614,7 @@
               Cur_InOut.M_Warehouse_ID, Cur_InOut.POReference, Cur_InOut.DateOrdered, Cur_InOut.DeliveryRule,
               Cur_InOut.FreightCostRule, Cur_InOut.FreightAmt * -1, Cur_InOut.C_Project_ID, Cur_InOut.C_Activity_ID,
               Cur_InOut.C_Campaign_ID, Cur_InOut.AD_OrgTrx_ID, Cur_InOut.User1_ID, Cur_InOut.User2_ID,
+              Cur_InOut.C_Costcenter_ID, Cur_InOut.A_Asset_ID,
               Cur_InOut.DeliveryViaRule, Cur_InOut.M_Shipper_ID, Cur_InOut.C_Charge_ID, Cur_InOut.ChargeAmt * -1,
               Cur_InOut.PriorityRule, 'DR', 'CO', 'N',
                'N', Cur_InOut.islogistic, Cur_InOut.salesrep_id
@@ -638,7 +640,8 @@
                 M_AttributeSetInstance_ID, C_UOM_ID, M_Locator_ID, MovementQty,
                 Description, IsInvoiced,  --MODIFIED BY F.IRIAZABAL
                 QuantityOrder, M_Product_UOM_ID, IsDescription,
-                canceled_inoutline_id
+                canceled_inoutline_id, A_Asset_ID, C_Project_ID, C_BPartner_ID,
+                User1_ID, User2_ID, C_CostCenter_ID
               )
               VALUES
               (
@@ -648,7 +651,8 @@
                 Cur_InOutLine.M_AttributeSetInstance_ID, Cur_InOutLine.C_UOM_ID, Cur_InOutLine.M_Locator_ID, Cur_InOutLine.MovementQty * -1,
                  '*R*: ' || COALESCE(TO_CHAR(Cur_InOutLine.Description), ''), Cur_InOutLine.IsInvoiced, --MODIFIED BY F.IRIAZABAL
                 Cur_InOutLine.QuantityOrder * -1, Cur_InOutLine.M_PRODUCT_UOM_ID, Cur_InOutLine.IsDescription,
-                Cur_InOutLine.M_InOutLine_ID
+                Cur_InOutLine.M_InOutLine_ID, Cur_InOutLine.A_Asset_ID, Cur_InOutLine.C_Project_ID, Cur_InOutLine.C_BPartner_ID,
+                Cur_InOutLine.User1_ID, Cur_InOutLine.User2_ID, Cur_InOutLine.C_CostCenter_ID
               )
               ;
             INSERT INTO M_MATCHINV
