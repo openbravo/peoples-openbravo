@@ -52,6 +52,7 @@ enyo.kind({
           return;
         }
         this.createComponent({
+          style: 'display: block;',
           components: [{
             content: '-- ' + d.name,
             attributes: {
@@ -62,6 +63,8 @@ enyo.kind({
             attributes: {
               style: 'float: right; width: 20%; text-align: right;'
             }
+          }, {
+            style: 'clear: both;'
           }]
         });
       }, this);
