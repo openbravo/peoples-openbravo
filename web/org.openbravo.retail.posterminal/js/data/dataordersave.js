@@ -19,10 +19,11 @@
     this.receipt = model.get('order');
 
     this.receipt.on('closed', function () {
-      var me = this,
+      var me = this,  
           docno = this.receipt.get('documentNo'),
           json = this.receipt.serializeToJSON(),
-          receiptId = this.receipt.get('id');
+          receiptId = this.receipt.get('id'), creationDate = new Date(),
+          creationDateTransformed = new Date(creationDate.getUTCFullYear(), creationDate.getUTCMonth(), creationDate.getUTCDate(),  creationDate.getUTCHours(), creationDate.getUTCMinutes(), creationDate.getUTCSeconds());
 
       if (this.receipt.get('isbeingprocessed') === 'Y') {
         //The receipt has already been sent, it should not be sent again
@@ -40,6 +41,8 @@
       if (OB.POS.modelterminal.get('connectedToERP')) {
         this.receipt.set('isbeingprocessed', 'Y');
       }
+      this.receipt.set('creationDate', creationDateTransformed);
+      this.receipt.set('updated', creationDateTransformed);
 
       OB.Dal.save(this.receipt, function () {
         if (OB.POS.modelterminal.get('connectedToERP')) {

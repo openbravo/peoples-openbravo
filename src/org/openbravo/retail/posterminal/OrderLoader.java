@@ -245,6 +245,7 @@ public class OrderLoader extends JSONProcessSimple {
       }
       t2 = System.currentTimeMillis();
       OBDal.getInstance().flush();
+      updateAuditInfo(order, jsonorder);
       t3 = System.currentTimeMillis();
       log.debug("Creation of bobs. Order: " + (t112 - t111) + "; Orderlines: " + (t113 - t112)
           + "; Shipment: " + (t115 - t113) + "; Invoice: " + (t11 - t115));
@@ -275,6 +276,13 @@ public class OrderLoader extends JSONProcessSimple {
         + "; Process Payments:" + (System.currentTimeMillis() - t4));
 
     return successMessage(jsonorder);
+  }
+
+  private void updateAuditInfo(Order order, JSONObject jsonorder) throws JSONException {
+    String strValue = (String) jsonorder.getString("creationDate");
+    String transformedDate = strValue.subSequence(0, strValue.lastIndexOf(".")) + "+0000";
+    order.set("creationDate", (Date) JsonToDataConverter.convertJsonToPropertyValue(
+        PropertyByType.DATETIME, transformedDate));
   }
 
   protected void associateOrderToQuotation(JSONObject jsonorder, Order order) throws JSONException {
