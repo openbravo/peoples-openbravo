@@ -70,7 +70,8 @@ enyo.kind({
             components: [{
               style: 'margin: 2px 0px 0px 0px; border-bottom: 1px solid #cccccc;'
             }, {
-              kind: 'OB.UI.Table',
+              kind: 'OB.UI.ScrollableTable',
+              scrollAreaMaxHeight: '160px',
               name: 'payments',
               renderEmpty: enyo.kind({
                 style: 'height: 36px'
@@ -233,18 +234,18 @@ enyo.kind({
     style: 'color:white;',
     components: [{
       name: 'name',
-      style: 'float: left; width: 15%; padding: 5px 0px 0px 0px;'
-    }, {
-      name: 'info',
       style: 'float: left; width: 20%; padding: 5px 0px 0px 0px;'
     }, {
+      name: 'info',
+      style: 'float: left; width: 15%; padding: 5px 0px 0px 0px;'
+    }, {
       name: 'foreignAmount',
-      style: 'float: left; width: 25%; padding: 5px 0px 0px 0px; text-align: right;'
+      style: 'float: left; width: 20%; padding: 5px 0px 0px 0px; text-align: right;'
     }, {
       name: 'amount',
       style: 'float: left; width: 25%; padding: 5px 0px 0px 0px; text-align: right;'
     }, {
-      style: 'float: left; width: 15%; text-align: right;',
+      style: 'float: left; width: 20%; text-align: right;',
       components: [{
         kind: 'OB.OBPOSPointOfSale.UI.RemovePayment'
       }]
