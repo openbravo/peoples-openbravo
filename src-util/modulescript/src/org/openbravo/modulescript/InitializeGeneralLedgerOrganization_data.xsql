@@ -23,7 +23,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        select (select ad_org_acctschema.c_acctschema_id
+        select (select min(ad_org_acctschema.c_acctschema_id)
         from ad_org_acctschema 
         where ad_org.ad_org_id = ad_org_acctschema.ad_org_id
         and ad_org_acctschema.isactive = 'Y'
