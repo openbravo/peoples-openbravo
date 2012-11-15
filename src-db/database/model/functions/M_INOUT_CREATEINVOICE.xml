@@ -243,7 +243,7 @@
               C_Currency_ID, PaymentRule, C_Charge_ID, ChargeAmt,
               TotalLines, GrandTotal, M_PriceList_ID, C_Campaign_ID,
               C_Project_ID, C_Activity_ID, AD_OrgTrx_ID, User1_ID,
-              User2_ID, fin_paymentmethod_id
+              User2_ID, fin_paymentmethod_id, a_asset_id ,c_costcenter_id
             )
             VALUES
             (
@@ -258,7 +258,7 @@
               v_C_Currency_ID, v_PaymentRule, NULL, 0,
               0, 0, v_M_PriceList_ID, CUR_Shipment.C_Campaign_ID,
               CUR_Shipment.C_Project_ID, CUR_Shipment.C_Activity_ID, CUR_Shipment.AD_OrgTrx_ID, CUR_Shipment.User1_ID,
-              CUR_Shipment.User2_ID, v_fin_paymentmethod_id
+              CUR_Shipment.User2_ID, v_fin_paymentmethod_id, CUR_Shipment.a_asset_id, CUR_Shipment.c_costcenter_id
             )
             ;
           -- Lines
@@ -349,7 +349,8 @@
                 C_Tax_ID,  --MODIFIED BY F.IRIAZABAL
                 QuantityOrder, M_Product_Uom_ID, PriceStd, taxbaseamt,
                 gross_unit_price, line_gross_amount,
-                isdeferred, defplantype, periodnumber, c_period_id
+                isdeferred, defplantype, periodnumber, c_period_id,c_bpartner_id, 
+                c_project_id, c_costcenter_id, user1_id, user2_id, a_asset_id 
               )
               VALUES
               (
@@ -362,7 +363,10 @@
                 v_C_Tax_ID,  --MODIFIED BY F.IRIAZABAL
                 CUR_ShipmentLines.QuantityOrder, CUR_ShipmentLines.M_Product_Uom_ID, v_PriceActual,v_taxBaseAmt,
                 v_gross_unit_price, v_line_gross_amount,
-                v_isdeferred_inv, v_defplantype_inv, v_periodnumber_inv, v_period_inv
+                v_isdeferred_inv, v_defplantype_inv, v_periodnumber_inv, v_period_inv,
+                coalesce(CUR_ShipmentLines.c_bpartner_id,CUR_Shipment.c_bpartner_id ), coalesce(CUR_ShipmentLines.c_project_id,CUR_Shipment.c_project_id ),
+                coalesce(CUR_ShipmentLines.c_costcenter_id,CUR_Shipment.c_costcenter_id ), coalesce(CUR_ShipmentLines.user1_id, CUR_Shipment.user1_id),
+                coalesce(CUR_ShipmentLines.user2_id, CUR_Shipment.user2_id), coalesce(CUR_ShipmentLines.a_asset_id ,CUR_Shipment.a_asset_id )
               )
               ;
             v_TotalNet:=v_TotalNet + v_LineNetAmt;
