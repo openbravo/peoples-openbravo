@@ -65,19 +65,23 @@ public class CashCloseProcessor {
 
         BigDecimal reconciliationTotal = BigDecimal.valueOf(cashCloseObj.getDouble("expected"))
             .add(difference);
-        BigDecimal amountToKeep = BigDecimal.valueOf(cashCloseObj.getJSONObject("paymentMethod")
-            .getDouble("amountToKeep"));
-        origReconciliationTotal = origReconciliationTotal.subtract(amountToKeep);
+        if (!cashCloseObj.getJSONObject("paymentMethod").isNull("amountToKeep")
+            && BigDecimal.valueOf(
+                cashCloseObj.getJSONObject("paymentMethod").getDouble("amountToKeep")).compareTo(
+                new BigDecimal(0)) != 0) {
+
+          BigDecimal amountToKeep = BigDecimal.valueOf(cashCloseObj.getJSONObject("paymentMethod")
+              .getDouble("amountToKeep"));
+          origReconciliationTotal = origReconciliationTotal.subtract(amountToKeep);
+          reconciliationTotal = reconciliationTotal.subtract(amountToKeep);
+        }
 
         FIN_FinaccTransaction paymentTransaction = createTotalTransferTransactionPayment(
             posTerminal, reconciliation, paymentType, origReconciliationTotal);
-
         OBDal.getInstance().save(paymentTransaction);
 
-        reconciliationTotal = reconciliationTotal.subtract(amountToKeep);
         FIN_FinaccTransaction depositTransaction = createTotalTransferTransactionDeposit(
             posTerminal, reconciliation, paymentType, reconciliationTotal);
-
         OBDal.getInstance().save(depositTransaction);
 
       }
