@@ -658,7 +658,7 @@
          ?, TO_NUMBER(?), TO_NUMBER(?), 'N',
          TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?),
          ?, ?, TO_NUMBER(?), ?,
-         ?, ?, ?, ?, ?)
+         ?, ?, ?, ?, ?
          )
     </Sql>
     <Parameter name="cInvoicelineId"/>
