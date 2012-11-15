@@ -309,6 +309,8 @@ enyo.kind({
         // Statefull commands: quantity, price, discounts, payments ...
         if (txt && this.status === '') { // Short cut: type + action
           this.execCommand(this.commands[cmd], txt);
+        } else if (this.status === cmd && txt) {
+          this.execCommand(this.commands[cmd], txt);
         } else if (this.status === cmd) { // Reset status
           this.setStatus('');
         } else {
