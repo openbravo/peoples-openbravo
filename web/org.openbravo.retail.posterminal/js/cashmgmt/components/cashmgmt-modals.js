@@ -29,13 +29,9 @@ enyo.kind({
 });
 
 enyo.kind({
-  kind: 'OB.UI.Button',
+  kind: 'OB.UI.ModalDialogButton',
   name: 'OB.OBPOSCashMgmt.UI.modalFinished_OkButton',
-  classes: 'btnlink btnlink-gray modal-dialog-button',
   content: OB.I18N.getLabel('OBPOS_LblOk'),
-  events: {
-    onHideThisPopup: ''
-  },
   tap: function () {
     this.doHideThisPopup();
   }
@@ -62,13 +58,9 @@ enyo.kind({
 });
 
 enyo.kind({
-  kind: 'OB.UI.Button',
+  kind: 'OB.UI.ModalDialogButton',
   name: 'OB.OBPOSCashMgmt.UI.modalFinishedWrongly_OkButton',
-  classes: 'btnlink btnlink-gray modal-dialog-button',
   content: OB.I18N.getLabel('OBPOS_LblOk'),
-  events: {
-    onHideThisPopup: ''
-  },
   tap: function () {
     this.doHideThisPopup();
   }

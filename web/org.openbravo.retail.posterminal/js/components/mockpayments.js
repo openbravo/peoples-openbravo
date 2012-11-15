@@ -46,15 +46,11 @@ enyo.kind({
 });
 
 enyo.kind({
-  kind: 'OB.UI.Button',
+  kind: 'OB.UI.ModalDialogButton',
   name: 'OB.UI.MockPayment_OkButton',
-  classes: 'btnlink btnlink-gray modal-dialog-button',
   style: 'float: right;',
   content: OB.I18N.getLabel('OBPOS_LblOk'),
   isApplyButton: true,
-  events: {
-    onHideThisPopup: ''
-  },
   tap: function () {
     this.owner.receipt.addPayment(new OB.Model.PaymentLine({
       'kind': this.owner.key,

@@ -458,15 +458,11 @@ enyo.kind({
 });
 
 enyo.kind({
-  kind: 'OB.UI.Button',
+  kind: 'OB.UI.ModalDialogButton',
   name: 'OB.UI.CancelDialogButton',
-  classes: 'btnlink btnlink-gray modal-dialog-button',
   content: OB.I18N.getLabel('OBPOS_LblCancel'),
   attributes: {
     'onEnterTap': 'hide'
-  },
-  events: {
-    onHideThisPopup: ''
   },
   tap: function () {
     this.doHideThisPopup();

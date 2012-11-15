@@ -10,14 +10,12 @@
 /*global B, Backbone, $, _, enyo */
 
 enyo.kind({
-  kind: 'OB.UI.Button',
+  kind: 'OB.UI.ModalDialogButton',
   name: 'OB.OBPOSPointOfSale.UI.Modals.btnModalApplyClosePaidTicket',
-  classes: 'btnlink btnlink-gray modal-dialog-button',
   content: OB.I18N.getLabel('OBPOS_acceptClosePaidTicket'),
   isApplyButton: true,
   events: {
-    onDeleteOrder: '',
-    onHideThisPopup: ''
+    onDeleteOrder: ''
   },
   tap: function () {
     this.doHideThisPopup();

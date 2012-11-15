@@ -29,14 +29,10 @@ enyo.kind({
 });
 
 enyo.kind({
-  kind: 'OB.UI.Button',
+  kind: 'OB.UI.ModalDialogButton',
   name: 'OB.OBPOSCashUp.UI.modalFinished_OkButton',
-  classes: 'btnlink btnlink-gray modal-dialog-button',
   content: OB.I18N.getLabel('OBPOS_LblOk'),
   isApplyButton: true,
-  events: {
-    onHideThisPopup: ''
-  },
   tap: function () {
     this.doHideThisPopup();
   }
@@ -63,14 +59,10 @@ enyo.kind({
 });
 
 enyo.kind({
-  kind: 'OB.UI.Button',
+  kind: 'OB.UI.ModalDialogButton',
   name: 'OB.OBPOSCashUp.UI.modalFinishedWrongly_OkButton',
-  classes: 'btnlink btnlink-gray modal-dialog-button',
   content: OB.I18N.getLabel('OBPOS_LblOk'),
   isApplyButton: true,
-  events: {
-    onHideThisPopup: ''
-  },
   tap: function () {
     this.doHideThisPopup();
   }
@@ -97,30 +89,22 @@ enyo.kind({
 });
 
 enyo.kind({
-  kind: 'OB.UI.Button',
+  kind: 'OB.UI.ModalDialogButton',
   name: 'OB.OBPOSCashUp.UI.modalPendingToProcess_OkButton',
-  classes: 'btnlink btnlink-gray modal-dialog-button',
   content: OB.I18N.getLabel('OBPOS_LblOk'),
   isApplyButton: true,
-  events: {
-    onHideThisPopup: ''
-  },
   tap: function () {
     this.doHideThisPopup();
   }
 });
 
 enyo.kind({
-  kind: 'OB.UI.Button',
+  kind: 'OB.UI.ModalDialogButton',
   name: 'OB.OBPOSCashUp.UI.modalPendingToProcess_CancelButton',
-  classes: 'btnlink btnlink-gray modal-dialog-button',
   content: OB.I18N.getLabel('OBPOS_LblCancel'),
   attributes: {
     //TODO
     'onEnterTap': 'hide'
-  },
-  events: {
-    onHideThisPopup: ''
   },
   tap: function () {
     this.doHideThisPopup();

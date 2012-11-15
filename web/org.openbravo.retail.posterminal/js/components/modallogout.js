@@ -51,13 +51,9 @@ enyo.kind({
 });
 
 enyo.kind({
+  kind: 'OB.UI.ModalDialogButton',
   name: 'OB.UI.LogoutDialogLock',
-  kind: 'OB.UI.Button',
   content: OB.I18N.getLabel('OBPOS_LogoutDialogLock'),
-  classes: 'btnlink btnlink-gray modal-dialog-button',
-  events: {
-    onHideThisPopup: ''
-  },
   tap: function () {
     this.doHideThisPopup();
     OB.POS.lock();

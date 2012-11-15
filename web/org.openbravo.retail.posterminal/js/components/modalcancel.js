@@ -32,15 +32,11 @@ enyo.kind({
 });
 
 enyo.kind({
-  kind: 'OB.UI.Button',
+  kind: 'OB.UI.ModalDialogButton',
   name: 'OB.UI.ModalCancel_OkButton',
-  classes: 'btnlink btnlink-gray modal-dialog-button',
   content: OB.I18N.getLabel('OBPOS_LblOk'),
   isApplyButton: true,
   popup: 'modalCancel',
-  events: {
-    onHideThisPopup: ''
-  },
   tap: function () {
     this.doHideThisPopup();
     OB.POS.navigate('retail.pointofsale');
@@ -48,17 +44,13 @@ enyo.kind({
 });
 
 enyo.kind({
-  kind: 'OB.UI.Button',
+  kind: 'OB.UI.ModalDialogButton',
   name: 'OB.UI.ModalCancel_CancelButton',
-  classes: 'btnlink btnlink-gray modal-dialog-button',
   content: OB.I18N.getLabel('OBPOS_LblCancel'),
   attributes: {
     'onEnterTap': 'hide'
   },
   popup: 'modalCancel',
-  events: {
-    onHideThisPopup: ''
-  },
   tap: function () {
     this.doHideThisPopup();
   }

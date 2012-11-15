@@ -34,12 +34,8 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.OBPOSPointOfSale.UI.Modals.modalEnoughCredit.Components.apply_button',
-  events: {
-    onHidePopup: ''
-  },
   content: OB.I18N.getLabel('OBPOS_LblUseCredit'),
   isApplyButton: true,
-  classes: 'btnlink btnlink-gray modal-dialog-button',
   init: function (model) {
     this.model = model;
   },
@@ -66,11 +62,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.OBPOSPointOfSale.UI.Modals.modalEnoughCredit.Components.cancel_button',
-  events: {
-    onHideThisPopup: ''
-  },
   content: OB.I18N.getLabel('OBPOS_LblCancel'),
-  classes: 'btnlink btnlink-gray modal-dialog-button',
   tap: function () {
     this.doHideThisPopup();
   }

@@ -10,25 +10,19 @@
 /*global B, Backbone, $, _, enyo */
 
 enyo.kind({
-  kind: 'OB.UI.Button',
+  kind: 'OB.UI.ModalDialogButton',
   name: 'OB.OBPOSPointOfSale.UI.Modals.btnModalCreateOrderCancel',
-  classes: 'btnlink btnlink-gray modal-dialog-button',
   content: OB.I18N.getLabel('OBPOS_LblCancel'),
-  events: {
-    onHideThisPopup: ''
-  },
   tap: function () {
     this.doHideThisPopup();
   }
 });
 enyo.kind({
-  kind: 'OB.UI.Button',
+  kind: 'OB.UI.ModalDialogButton',
   name: 'OB.OBPOSPointOfSale.UI.Modals.btnModalCreateOrderAccept',
-  classes: 'btnlink btnlink-gray modal-dialog-button',
   content: OB.I18N.getLabel('OBPOS_CreateOrderFromQuotation'),
   events: {
-    onCreateOrderFromQuotation: '',
-    onHideThisPopup: ''
+    onCreateOrderFromQuotation: ''
   },
   tap: function () {
     var checked = !this.parent.children[1].children[0].checked;

@@ -130,14 +130,12 @@ enyo.kind({
 });
 
 enyo.kind({
-  kind: 'OB.UI.Button',
+  kind: 'OB.UI.ModalDialogButton',
   name: 'OB.UI.btnModalApplyDelete',
   isApplyButton: true,
-  classes: 'btnlink btnlink-gray modal-dialog-button',
   content: OB.I18N.getLabel('OBPOS_LblYesDelete'),
   events: {
-    onDeleteOrder: '',
-    onHideThisPopup: ''
+    onDeleteOrder: ''
   },
   tap: function () {
     this.doHideThisPopup();
@@ -146,15 +144,11 @@ enyo.kind({
 });
 
 enyo.kind({
-  kind: 'OB.UI.Button',
+  kind: 'OB.UI.ModalDialogButton',
   name: 'OB.UI.btnModalCancelDelete',
-  classes: 'btnlink btnlink-gray modal-dialog-button',
   content: OB.I18N.getLabel('OBPOS_LblCancel'),
   attributes: {
     'onEnterTap': 'hide'
-  },
-  events: {
-    onHideThisPopup: ''
   },
   tap: function () {
     this.doHideThisPopup();

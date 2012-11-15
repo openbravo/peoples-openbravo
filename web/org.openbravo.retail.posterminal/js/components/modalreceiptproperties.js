@@ -69,14 +69,12 @@ enyo.kind({
 
 
 enyo.kind({
-  kind: 'OB.UI.Button',
+  kind: 'OB.UI.ModalDialogButton',
   name: 'OB.UI.ReceiptPropertiesDialogApply',
   content: OB.I18N.getLabel('OBPOS_LblApply'),
-  classes: 'btnlink btnlink-gray modal-dialog-button',
   isApplyButton: true,
   events: {
-    onApplyChanges: '',
-    onHideThisPopup: ''
+    onApplyChanges: ''
   },
   tap: function () {
     this.doApplyChanges();
@@ -85,15 +83,11 @@ enyo.kind({
 });
 
 enyo.kind({
+  kind: 'OB.UI.ModalDialogButton',
   name: 'OB.UI.ReceiptPropertiesDialogCancel',
-  kind: 'OB.UI.Button',
   content: OB.I18N.getLabel('OBPOS_LblCancel'),
-  classes: 'btnlink btnlink-gray modal-dialog-button',
   attributes: {
     'onEnterTap': 'hide'
-  },
-  events: {
-    onHideThisPopup: ''
   },
   tap: function () {
     this.doHideThisPopup();
