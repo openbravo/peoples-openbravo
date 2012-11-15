@@ -65,15 +65,17 @@
             S_RESOURCEASSIGNMENT_ID, TAXAMT, M_ATTRIBUTESETINSTANCE_ID, ISDESCRIPTION, QUANTITYORDER, M_PRODUCT_UOM_ID, 
             PRICESTD, ACCOUNT_ID,FINANCIAL_INVOICE_LINE,
             gross_unit_price, line_gross_amount, grosspricelist, grosspricestd,
-            isdeferred, defplantype, periodnumber, c_period_id
+            isdeferred, defplantype, periodnumber, c_period_id,
+            C_PROJECT_ID, A_ASSET_ID, C_COSTCENTER_ID, USER1_ID, USER2_ID
         )
-        SELECT ?, ?, ?, ?, 'Y', now(), ?, now(), ?,
+        SELECT ?, ?, ?, AD_ORG_ID, 'Y', now(), ?, now(), ?,
         (SELECT COALESCE(MAX(LINE),0)+10 FROM C_InvoiceLine WHERE C_Invoice_ID = ?), DESCRIPTION, M_PRODUCT_ID, 
         QTYINVOICED, TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), C_CHARGE_ID, CHARGEAMT, C_UOM_ID, ?, 
         S_RESOURCEASSIGNMENT_ID, TAXAMT, M_ATTRIBUTESETINSTANCE_ID, ISDESCRIPTION, QUANTITYORDER, M_PRODUCT_UOM_ID, 
         PRICESTD, ACCOUNT_ID,FINANCIAL_INVOICE_LINE,
         TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?),
-        isdeferred, defplantype, periodnumber, c_period_id
+        isdeferred, defplantype, periodnumber, c_period_id,
+        C_PROJECT_ID, A_ASSET_ID, C_COSTCENTER_ID, USER1_ID, USER2_ID
         FROM C_INVOICELINE 
         WHERE C_INVOICELINE_ID = ? 
       ]]>
@@ -81,7 +83,6 @@
     <Parameter name="cNewInvoiceId"/>
     <Parameter name="cInvoiceId"/>
     <Parameter name="adClientId"/>
-    <Parameter name="adOrgId"/>
     <Parameter name="adUserId"/>
     <Parameter name="adUserId"/>
     <Parameter name="cInvoiceId"/>
@@ -102,13 +103,13 @@
       <![CDATA[
         INSERT INTO C_INVOICELINE_ACCTDIMENSION(C_INVOICELINE_ACCTDIMENSION_ID, AD_CLIENT_ID, AD_ORG_ID,
         ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, C_INVOICELINE_ID, AMT, C_PROJECT_ID, C_CAMPAIGN_ID,
-        USER1_ID, USER2_ID)
-        SELECT GET_UUID(), ?, ?, 'Y', NOW(), ?, NOW(), ?, ?, AMT, C_PROJECT_ID, C_CAMPAIGN_ID, USER1_ID, USER2_ID
+        USER1_ID, USER2_ID, C_ACTIVITY_ID, C_COSTCENTER_ID, C_BPARTNER_ID, M_PRODUCT_ID)
+        SELECT GET_UUID(), ?, AD_ORG_ID, 'Y', NOW(), ?, NOW(), ?, ?, AMT, C_PROJECT_ID, C_CAMPAIGN_ID, USER1_ID, USER2_ID, 
+        C_ACTIVITY_ID, C_COSTCENTER_ID, C_BPARTNER_ID, M_PRODUCT_ID
         FROM C_INVOICELINE_ACCTDIMENSION WHERE C_INVOICELINE_ID = ? AND ISACTIVE='Y'
       ]]>
     </Sql>
     <Parameter name="adClientId"/>
-    <Parameter name="adOrgId"/>
     <Parameter name="adUserId"/>
     <Parameter name="adUserId"/>
     <Parameter name="cNewInvoicelineId"/>

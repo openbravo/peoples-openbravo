@@ -117,6 +117,7 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
           String strInvPriceList = "";
           String strBPartnerId = "";
           String strmProductId = "";
+          
           BigDecimal priceActual, priceStd, priceList, priceLimit, priceGross, priceListGross, priceStdGross;
           priceActual = priceStd = priceList = priceLimit = priceGross = priceListGross = priceStdGross = BigDecimal.ZERO;
           BigDecimal lineNetAmt, lineGrossAmt;
@@ -202,16 +203,15 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
             throwTaxNotFoundException(data[i].accountId, data[i].productId,
                 dataInvoice[0].cBpartnerLocationId);
           }
-
           CopyFromInvoiceData.insert(conn, this, strSequence, strKey, dataInvoice[0].adClientId,
-              dataInvoice[0].adOrgId, vars.getUser(), priceList.toString(), priceActual.toString(),
+              vars.getUser(), priceList.toString(), priceActual.toString(),
               priceLimit.toString(), lineNetAmt.toString(), strCTaxID, priceGross.toString(),
               lineGrossAmt.toString(), priceListGross.toString(),
               priceStdGross.toString(), data[i].cInvoicelineId);
 
           // Copy accounting dimensions
           CopyFromInvoiceData.insertAcctDimension(conn, this, dataInvoice[0].adClientId,
-              dataInvoice[0].adOrgId, vars.getUser(), strSequence, data[i].cInvoicelineId);
+              vars.getUser(), strSequence, data[i].cInvoicelineId);
         } catch (ServletException ex) {
           myError = OBMessageUtils.translateError(this, vars, vars.getLanguage(), ex.getMessage());
           releaseRollbackConnection(conn);
