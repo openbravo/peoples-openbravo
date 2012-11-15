@@ -265,7 +265,12 @@
         MAX(IL.C_UOM_ID) AS C_UOM_ID,
         IL.C_TAX_ID,
         TO_NUMBER(NULL) AS RAPPELINVOICED,
-        (-v_Discount) *SUM(IL.LINENETAMT) /100 AS LINENET --    SUM(IL.LINENETAMT)
+        (-v_Discount) *SUM(IL.LINENETAMT) /100 AS LINENET, --    SUM(IL.LINENETAMT)
+        COALESCE(IL.C_PROJECT_ID, I.C_PROJECT_ID) AS C_PROJECT_ID,
+        COALESCE(IL.USER1_ID, I.USER1_ID) AS USER1_ID,
+        COALESCE(IL.USER2_ID, I.USER2_ID) AS USER2_ID,
+        COALESCE(IL.C_COSTCENTER_ID, I.C_COSTCENTER_ID) AS C_COSTCENTER_ID,
+        COALESCE(IL.A_ASSET_ID, I.A_ASSET_ID) AS A_ASSET_ID
       FROM C_INVOICE I,
         C_INVOICELINE IL,
         M_RAPPEL_BPARTNER RP,
@@ -321,7 +326,12 @@
         IL.M_PRODUCT_ID,
         RP.ISSOTRX,
         RP.C_BPARTNER_ID,
-        IL.C_TAX_ID
+        IL.C_TAX_ID,
+        COALESCE(IL.C_PROJECT_ID, I.C_PROJECT_ID),
+        COALESCE(IL.USER1_ID, I.USER1_ID),
+        COALESCE(IL.USER2_ID, I.USER2_ID),
+        COALESCE(IL.C_COSTCENTER_ID, I.C_COSTCENTER_ID),
+        COALESCE(IL.A_ASSET_ID, I.A_ASSET_ID)
       )
     LOOP
       IF(v_invoiceId IS NULL) THEN
@@ -370,7 +380,7 @@
             C_CAMPAIGN_ID, C_PROJECT_ID, C_ACTIVITY_ID,
             CREATEFROM, GENERATETO, AD_USER_ID,
             COPYFROM, ISSELFSERVICE, AD_ORGTRX_ID, USER1_ID,
-            USER2_ID
+            USER2_ID, C_COSTCENTER_ID, A_ASSET_ID
           )
           VALUES
           (
@@ -387,7 +397,7 @@
             NULL, NULL, NULL,
              'N', 'N', v_AD_User_ID,
              'N', 'N', NULL, NULL,
-            NULL
+            NULL, NULL, NULL
           )
           ;
         AD_SEQUENCE_NEXT('M_Rappel_Invoice', CUR_INVOICE.AD_CLIENT_ID, v_rappelInvoiceId) ;
@@ -457,7 +467,9 @@
           CHARGEAMT, C_UOM_ID, C_TAX_ID, S_RESOURCEASSIGNMENT_ID,
           TAXAMT, M_ATTRIBUTESETINSTANCE_ID, ISDESCRIPTION,
           QUANTITYORDER, M_PRODUCT_UOM_ID, PRICESTD, M_OFFER_ID,
-          ISDEFERRED, DEFPLANTYPE, PERIODNUMBER, C_PERIOD_ID
+          ISDEFERRED, DEFPLANTYPE, PERIODNUMBER, C_PERIOD_ID,
+          C_PROJECT_ID, USER1_ID, USER2_ID,
+          C_COSTCENTER_ID, A_ASSET_ID
         )
         VALUES
         (
@@ -469,7 +481,9 @@
           0, CUR_INVOICE.C_UOM_ID, CUR_INVOICE.C_TAX_ID, NULL,
           0, NULL, 'N',
           NULL, NULL, 0, NULL,
-          v_isdeferred_inv, v_defplantype_inv, v_periodnumber_inv, v_period_inv
+          v_isdeferred_inv, v_defplantype_inv, v_periodnumber_inv, v_period_inv,
+          CUR_INVOICE.c_project_id, CUR_INVOICE.user1_id, CUR_INVOICE.user2_id,
+          CUR_INVOICE.c_costcenter_id, CUR_INVOICE.a_asset_id
         )
         ;	
     END LOOP;
