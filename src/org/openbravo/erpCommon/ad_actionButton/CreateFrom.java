@@ -1810,7 +1810,7 @@ public class CreateFrom extends HttpSecureAppServlet {
                       CreateFromShipmentData.isInvoiced(conn, this, data[i].cInvoicelineId),
                       (qtyIsNegative ? "-" + total : total), data[i].mProductUomId,
                       strmAttributesetinstanceId, data[i].aAssetId, data[i].cProjectId,
-                      data[i].cCostcenterId, data[i].user1Id, data[i].user2Id);
+                      data[i].cCostcenterId, data[i].user1Id, data[i].user2Id,data[i].cBpartnerId);
 
                   if (strType.equals("INVOICE") && !data[i].cInvoicelineId.isEmpty()) {
                     CreateFromShipmentData.insertInvoiceAcctDimension(conn, this, strSequence,
@@ -1841,7 +1841,7 @@ public class CreateFrom extends HttpSecureAppServlet {
                     CreateFromShipmentData.isInvoiced(conn, this, data[i].cInvoicelineId),
                     strQuantityorder, strProductUomId, strmAttributesetinstanceId,
                     data[i].aAssetId, data[i].cProjectId, data[i].cCostcenterId, data[i].user1Id,
-                    data[i].user2Id);
+                    data[i].user2Id,data[i].cBpartnerId);
 
                 if (strType.equals("INVOICE") && !data[i].cInvoicelineId.isEmpty()) {
                   CreateFromShipmentData.insertInvoiceAcctDimension(conn, this, strSequence,
@@ -2015,7 +2015,7 @@ public class CreateFrom extends HttpSecureAppServlet {
                       CreateFromShipmentData.isInvoiced(conn, this, data[i].cInvoicelineId),
                       (qtyIsNegative ? "-" + total : total), data[i].mProductUomId,
                       data[i].mAttributesetinstanceId, data[i].aAssetId, data[i].cProjectId,
-                      data[i].cCostcenterId, data[i].user1Id, data[i].user2Id);
+                      data[i].cCostcenterId, data[i].user1Id, data[i].user2Id,data[i].cBpartnerId);
 
                   if (strType.equals("INVOICE") && !data[i].cInvoicelineId.isEmpty()) {
                     CreateFromShipmentData.insertInvoiceAcctDimension(conn, this, strSequence,
@@ -2047,7 +2047,7 @@ public class CreateFrom extends HttpSecureAppServlet {
                     CreateFromShipmentData.isInvoiced(conn, this, data[i].cInvoicelineId),
                     data[i].quantityorder, data[i].mProductUomId, data[i].mAttributesetinstanceId,
                     data[i].aAssetId, data[i].cProjectId, data[i].cCostcenterId, data[i].user1Id,
-                    data[i].user2Id);
+                    data[i].user2Id,data[i].cBpartnerId);
 
                 if (strType.equals("INVOICE") && !data[i].cInvoicelineId.isEmpty()) {
                   CreateFromShipmentData.insertInvoiceAcctDimension(conn, this, strSequence,
