@@ -41,7 +41,8 @@
   v_rate NUMBER;
   v_isSummary CHAR(1);
   xTaxAmt NUMBER:=0;
-  
+  v_reservation_id    VARCHAR2(32);
+  v_prereservedqty    NUMBER;
     
 BEGIN
     
@@ -73,6 +74,24 @@ IF (UPDATING) THEN
   ELSIF (:old.QtyInvoiced <> 0) THEN
    RAISE_APPLICATION_ERROR(-20000, '@20202@' || ' ' || :old.QtyInvoiced);
   END IF;
+  -- Check if reservation exists to delete it first.
+  SELECT issotrx INTO v_IsSOTrx
+  FROM c_order
+  WHERE c_order_id = :old.c_order_id;
+  IF (v_issotrx = 'Y') THEN
+    SELECT m_reservation_id INTO v_reservation_id
+    FROM m_reservation
+    WHERE c_orderline_id = :OLD.c_orderline_id;
+    IF (v_reservation_id IS NOT NULL) THEN
+      DELETE FROM m_reservation_stock
+      WHERE m_reservation_id = v_reservation_id;
+      DELETE FROM m_reservation
+      WHERE m_reservation_id = v_reservation_id;
+    END IF;
+  ELSE
+    DELETE FROM m_reservation_stock
+    WHERE c_orderline_id = :OLD.c_orderline_id;
+  END IF;
  ELSIF (UPDATING) THEN
    SELECT issotrx INTO v_IsSOTrx
    FROM c_order
@@ -93,6 +112,29 @@ IF (UPDATING) THEN
        END IF;
      END IF;
    END IF;
+  IF (COALESCE(:old.qtyOrdered,0) <> COALESCE(:NEW.qtyOrdered,0)) THEN
+    IF (v_issotrx = 'Y') THEN
+      -- Check if reservation exists to update quantity if orderedqty has changed.
+      SELECT m_reservation_id INTO v_reservation_id
+      FROM m_reservation
+      WHERE c_orderline_id = :OLD.c_orderline_id;
+      IF (v_reservation_id IS NOT NULL) THEN
+        UPDATE m_reservation
+        SET quantity = :NEW.qtyordered
+        WHERE m_reservation_id = v_reservation_id;
+      END IF;
+    ELSE
+      -- Check that prereserved qty is lower than new quantity
+      SELECT SUM(rs.quantity) INTO v_prereservedqty
+      FROM m_reservation_stock rs
+          JOIN m_reservation r ON rs.m_reservation_id = r.m_reservation_id
+      WHERE r.res_status NOT IN ('DR', 'CL')
+        AND rs.c_orderline_id = :NEW.c_orderline_id;
+      IF (COALESCE(v_prereservedqty, 0) > :NEW.qtyordered) THEN
+        RAISE_APPLICATION_ERROR(-20000, '@MorePrereservedQtyThanOrdered@');
+      END IF;
+    END IF;
+  END IF;
  END IF;
 
  -- Get ID
