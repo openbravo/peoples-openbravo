@@ -29,7 +29,14 @@
     createStatement: 'CREATE TABLE IF NOT EXISTS m_product_category (m_product_category_id TEXT PRIMARY KEY , value TEXT , name TEXT , ad_image_id TEXT , _identifier TEXT , _idx NUMERIC)',
     dropStatement: 'DROP TABLE IF EXISTS m_product_category',
     insertStatement: 'INSERT INTO m_product_category(m_product_category_id, value, name, ad_image_id, _identifier, _idx)  VALUES (?, ?, ?, ?, ?, ?)',
-    updateStatement: ''
+    updateStatement: '',
+    createBestSellerCategory: function () {
+      this.set('id', 'OBPOS_bestsellercategory');
+      this.set('searchKey', 'bestseller');
+      this.set('name', OB.I18N.getLabel('OBPOS_bestSellerCategory'));
+      this.set('img', 'iconBestSellers');
+      this.set('_identifier', this.get('name'));
+    }
   });
 
   var ProductCategoryList = Backbone.Collection.extend({

@@ -30,6 +30,7 @@ public class Product extends ProcessHQLQuery {
           + ", pli.product.description as description "
           + ", pli.product.obposGroupedproduct as groupProduct "
           + ", pli.product.obposShowstock as showstock "
+          + ", pli.bestseller as bestseller "
           + "FROM OBRETCO_Prol_Product as pli left outer join pli.product.image img, "
           + "PricingProductPrice ppp, "
           + "PricingPriceListVersion pplv "

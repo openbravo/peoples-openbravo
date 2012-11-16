@@ -37,7 +37,16 @@ enyo.kind({
   },
 
   imgChanged: function () {
-    var url = (this.img) ? 'data:' + this.contentType + ';base64,' + this.img : this['default'];
+    var url;
+    if (this.img) {
+      if (this.img === 'iconBestSellers') {
+        url = 'img/iconBestSellers.png';
+      } else {
+        url = 'data:' + this.contentType + ';base64,' + this.img;
+      }
+    } else {
+      url = this['default'];
+    }
     this.$.image.applyStyle('background', '#ffffff url(' + url + ') center center no-repeat');
     this.$.image.applyStyle('background-size', 'contain');
   }
