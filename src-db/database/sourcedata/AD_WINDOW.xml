@@ -366,7 +366,7 @@
 <!--125-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--125-->  <NAME><![CDATA[General Ledger Configuration]]></NAME>
 <!--125-->  <DESCRIPTION><![CDATA[Create and edit general ledger including dimensions and default accounts.]]></DESCRIPTION>
-<!--125-->  <HELP><![CDATA[Accounting configuration.]]></HELP>
+<!--125-->  <HELP><![CDATA[The general ledger configuration drives the way that the organization's financial transactions are going to be posted to the ledger.]]></HELP>
 <!--125-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--125-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--125-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -435,7 +435,7 @@
 <!--132-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--132-->  <NAME><![CDATA[G/L Journal]]></NAME>
 <!--132-->  <DESCRIPTION><![CDATA[Create and edit manual G/L journal entries.]]></DESCRIPTION>
-<!--132-->  <HELP><![CDATA[General Ledger journals allow to manually enter and post accounting entries including "opening" balance accounts ones.]]></HELP>
+<!--132-->  <HELP><![CDATA[A G/L (General Ledger) journal allows to post journal entries to the ledger.]]></HELP>
 <!--132-->  <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
 <!--132-->  <ISSOTRX><![CDATA[N]]></ISSOTRX>
 <!--132-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -727,7 +727,7 @@
 <!--153-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--153-->  <NAME><![CDATA[Account Combination]]></NAME>
 <!--153-->  <DESCRIPTION><![CDATA[Create accounting combinations to be used in Openbravo's accounting process.]]></DESCRIPTION>
-<!--153-->  <HELP><![CDATA[An account combination is an account (subaccount) of a given accounting schema associated to a given organization. ]]></HELP>
+<!--153-->  <HELP><![CDATA[An account combination is an Organization's General Ledger account.]]></HELP>
 <!--153-->  <WINDOWTYPE><![CDATA[Q]]></WINDOWTYPE>
 <!--153-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--153-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -761,7 +761,7 @@
 <!--162-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--162-->  <NAME><![CDATA[Accounting Transaction Details]]></NAME>
 <!--162-->  <DESCRIPTION><![CDATA[View detailed general ledger entries for a specified time period.]]></DESCRIPTION>
-<!--162-->  <HELP><![CDATA[Openbravo has an integrated accounting system that combines financial and analytical accounting. Each accounting type exploits a set of accounting dimensions.]]></HELP>
+<!--162-->  <HELP><![CDATA[The accounting transaction details window is a detailed list of every ledger entry of a general ledger.]]></HELP>
 <!--162-->  <WINDOWTYPE><![CDATA[Q]]></WINDOWTYPE>
 <!--162-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--162-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -2751,7 +2751,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--3E945A9102144C16BD211D211089C2DF-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--3E945A9102144C16BD211D211089C2DF-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--3E945A9102144C16BD211D211089C2DF-->  <NAME><![CDATA[Costing Rules]]></NAME>
-<!--3E945A9102144C16BD211D211089C2DF-->  <HELP><![CDATA[Costing Rules are rules to be applied during cost calculation. Each rule has a valid from date and sets the costing algorithm to be used and the dimensions that are desired to apply.]]></HELP>
+<!--3E945A9102144C16BD211D211089C2DF-->  <HELP><![CDATA[A costing rule is applied during cost calculation. Each rule needs to have a costing algorithm and a valid from date. Costing rules can also be defined in a way that the costs are calculated by warehouse.]]></HELP>
 <!--3E945A9102144C16BD211D211089C2DF-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--3E945A9102144C16BD211D211089C2DF-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--3E945A9102144C16BD211D211089C2DF-->  <PROCESSING><![CDATA[N]]></PROCESSING>

@@ -1106,7 +1106,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--159-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--159-->  <NAME><![CDATA[Batch]]></NAME>
 <!--159-->  <DESCRIPTION><![CDATA[Create G/L Journal batches in order to group journals of similar characteristics.. Each batch may have many journals.]]></DESCRIPTION>
-<!--159-->  <HELP><![CDATA[A General Ledger journal batch can group journals of similar characteristics which can all be processed at the same time.]]></HELP>
+<!--159-->  <HELP><![CDATA[A G/L journal batch allows to group G/L journals of similar characteristics which can all be processed at the same time.]]></HELP>
 <!--159-->  <AD_TABLE_ID><![CDATA[225]]></AD_TABLE_ID>
 <!--159-->  <AD_WINDOW_ID><![CDATA[132]]></AD_WINDOW_ID>
 <!--159-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -1133,7 +1133,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--160-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--160-->  <NAME><![CDATA[Header]]></NAME>
 <!--160-->  <DESCRIPTION><![CDATA[Create G/L Journals for specified fiscal periods.]]></DESCRIPTION>
-<!--160-->  <HELP><![CDATA[A General Ledger journal header can include several journals which can contain several journal lines.]]></HELP>
+<!--160-->  <HELP><![CDATA[A G/L journal header can include journals which can contain several journal lines.]]></HELP>
 <!--160-->  <AD_TABLE_ID><![CDATA[224]]></AD_TABLE_ID>
 <!--160-->  <AD_WINDOW_ID><![CDATA[132]]></AD_WINDOW_ID>
 <!--160-->  <SEQNO><![CDATA[20]]></SEQNO>
@@ -1160,7 +1160,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--161-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--161-->  <NAME><![CDATA[Lines]]></NAME>
 <!--161-->  <DESCRIPTION><![CDATA[Add G/L Journal lines. Each line corresponds to one G/L Journal entry.]]></DESCRIPTION>
-<!--161-->  <HELP><![CDATA[General Ledger journal lines tab allows to enter as many ledger entries as required for a given General Ledger journal.]]></HELP>
+<!--161-->  <HELP><![CDATA[The lines tab allows to enter the journal entries of a G/L journal.]]></HELP>
 <!--161-->  <AD_TABLE_ID><![CDATA[226]]></AD_TABLE_ID>
 <!--161-->  <AD_WINDOW_ID><![CDATA[132]]></AD_WINDOW_ID>
 <!--161-->  <SEQNO><![CDATA[30]]></SEQNO>
@@ -1793,7 +1793,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--199-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--199-->  <NAME><![CDATA[General Ledger Configuration]]></NAME>
 <!--199-->  <DESCRIPTION><![CDATA[Create multiple general ledger]]></DESCRIPTION>
-<!--199-->  <HELP><![CDATA[General Ledger window allows to review and maintain imported accounting schemas and to create new ones if needed.]]></HELP>
+<!--199-->  <HELP><![CDATA[The General Ledger Configuration window allows to review and maintain defaulted general ledger configurations and to create new ones if needed.]]></HELP>
 <!--199-->  <AD_TABLE_ID><![CDATA[265]]></AD_TABLE_ID>
 <!--199-->  <AD_WINDOW_ID><![CDATA[125]]></AD_WINDOW_ID>
 <!--199-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -1821,7 +1821,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--200-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--200-->  <NAME><![CDATA[General Accounts]]></NAME>
 <!--200-->  <DESCRIPTION><![CDATA[Add and edit G/L accounts to be used by default in the application.]]></DESCRIPTION>
-<!--200-->  <HELP><![CDATA[General accounts tab allows you to define accounts to be used in balancing entries and posting fiscal close. ]]></HELP>
+<!--200-->  <HELP><![CDATA[General accounts tab allows you to define the accounts to be used in balancing entries and in the end-year closing process.]]></HELP>
 <!--200-->  <AD_TABLE_ID><![CDATA[266]]></AD_TABLE_ID>
 <!--200-->  <AD_WINDOW_ID><![CDATA[125]]></AD_WINDOW_ID>
 <!--200-->  <SEQNO><![CDATA[30]]></SEQNO>
@@ -2012,7 +2012,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--207-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--207-->  <NAME><![CDATA[Combination]]></NAME>
 <!--207-->  <DESCRIPTION><![CDATA[Create and edit customized accounts to be used for reporting purposes.]]></DESCRIPTION>
-<!--207-->  <HELP><![CDATA[The Account Combination window allows to review the accounts of an accounting schema. ]]></HELP>
+<!--207-->  <HELP><![CDATA[The Account Combination window allows to review the Organization's General Ledger accounts.]]></HELP>
 <!--207-->  <AD_TABLE_ID><![CDATA[176]]></AD_TABLE_ID>
 <!--207-->  <AD_WINDOW_ID><![CDATA[153]]></AD_WINDOW_ID>
 <!--207-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -2066,7 +2066,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--210-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--210-->  <NAME><![CDATA[Accounting]]></NAME>
 <!--210-->  <DESCRIPTION><![CDATA[Create and edit G/L accounts to be used in transactions including a selected product.]]></DESCRIPTION>
-<!--210-->  <HELP><![CDATA[Accounting tab allows to configure the ledger accounts to be used while posting product related transactions such as product purchase or sales. ]]></HELP>
+<!--210-->  <HELP><![CDATA[Accounting tab allows to configure the ledger accounts to be used while posting product related transactions such as product purchase or sales to the general ledger.]]></HELP>
 <!--210-->  <AD_TABLE_ID><![CDATA[273]]></AD_TABLE_ID>
 <!--210-->  <AD_WINDOW_ID><![CDATA[140]]></AD_WINDOW_ID>
 <!--210-->  <SEQNO><![CDATA[30]]></SEQNO>
@@ -2120,7 +2120,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--212-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--212-->  <NAME><![CDATA[Customer Accounting]]></NAME>
 <!--212-->  <DESCRIPTION><![CDATA[Create and edit G/L accounts to be used in transactions including a selected customer.]]></DESCRIPTION>
-<!--212-->  <HELP><![CDATA[Customer accounting tab allows you to configure the ledger accounts to be used while posting customer related transactions such as customer receivables and customer advances.]]></HELP>
+<!--212-->  <HELP><![CDATA[Customer accounting tab allows you to configure the ledger accounts to be used while posting customer related transactions such as customer receivables and customer advances to the general ledger.]]></HELP>
 <!--212-->  <AD_TABLE_ID><![CDATA[183]]></AD_TABLE_ID>
 <!--212-->  <AD_WINDOW_ID><![CDATA[123]]></AD_WINDOW_ID>
 <!--212-->  <SEQNO><![CDATA[30]]></SEQNO>
@@ -2148,7 +2148,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--213-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--213-->  <NAME><![CDATA[Vendor Accounting]]></NAME>
 <!--213-->  <DESCRIPTION><![CDATA[Create and edit G/L accounts to be used in transactions including a selected vendor.]]></DESCRIPTION>
-<!--213-->  <HELP><![CDATA[Vendor accounting tab allows you to configure the ledger accounts to be used while posting vendor related transactions such as vendor liabilities and vendor advanced payments.]]></HELP>
+<!--213-->  <HELP><![CDATA[Vendor accounting tab allows you to configure the ledger accounts to be used while posting vendor related transactions such as vendor liabilities and vendor advanced payments to the general ledger.]]></HELP>
 <!--213-->  <AD_TABLE_ID><![CDATA[185]]></AD_TABLE_ID>
 <!--213-->  <AD_WINDOW_ID><![CDATA[123]]></AD_WINDOW_ID>
 <!--213-->  <SEQNO><![CDATA[50]]></SEQNO>
@@ -2230,7 +2230,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--217-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--217-->  <NAME><![CDATA[Dimension]]></NAME>
 <!--217-->  <DESCRIPTION><![CDATA[Holds the list of dimensions enabled by this ledger.]]></DESCRIPTION>
-<!--217-->  <HELP><![CDATA[Definition of dimensions to be used by the system. There are two mandatory dimensions by default: Organization and Account. Any other dimension can be as well enabled here so that they appear in transactional windows.]]></HELP>
+<!--217-->  <HELP><![CDATA[Dimension tab allows to configure the general ledger dimensions. There are two mandatory dimensions by default: the Organization and the Account.  Any other dimension such as Project or Sales Region can be as well enabled here so that they appear in transactional windows.]]></HELP>
 <!--217-->  <AD_TABLE_ID><![CDATA[279]]></AD_TABLE_ID>
 <!--217-->  <AD_WINDOW_ID><![CDATA[125]]></AD_WINDOW_ID>
 <!--217-->  <SEQNO><![CDATA[20]]></SEQNO>
@@ -2700,7 +2700,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--242-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--242-->  <NAME><![CDATA[Header]]></NAME>
 <!--242-->  <DESCRIPTION><![CDATA[View detailed general ledger entries for a specified time period.]]></DESCRIPTION>
-<!--242-->  <HELP><![CDATA[Accounting transaction details report is a view of every accounting transaction posted in Openbravo. This view shows the accounting dimension values of every accounting transaction.]]></HELP>
+<!--242-->  <HELP><![CDATA[This report list every transaction posted to the ledger by showing every accounting dimension specified.]]></HELP>
 <!--242-->  <AD_TABLE_ID><![CDATA[270]]></AD_TABLE_ID>
 <!--242-->  <AD_WINDOW_ID><![CDATA[162]]></AD_WINDOW_ID>
 <!--242-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -4057,7 +4057,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--333-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--333-->  <NAME><![CDATA[Accounting]]></NAME>
 <!--333-->  <DESCRIPTION><![CDATA[Create and edit G/L accounts to be used in transactions including a selected tax rate.]]></DESCRIPTION>
-<!--333-->  <HELP><![CDATA[Accounting tab allows to configure the ledger account to be used while posting tax rate transactions for a given accounting schema.]]></HELP>
+<!--333-->  <HELP><![CDATA[Accounting tab allows to configure the account to be used while posting tax rate transactions to the general ledger.]]></HELP>
 <!--333-->  <AD_TABLE_ID><![CDATA[399]]></AD_TABLE_ID>
 <!--333-->  <AD_WINDOW_ID><![CDATA[137]]></AD_WINDOW_ID>
 <!--333-->  <SEQNO><![CDATA[30]]></SEQNO>
@@ -6875,7 +6875,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800033-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800033-->  <NAME><![CDATA[G/L Item]]></NAME>
 <!--800033-->  <DESCRIPTION><![CDATA[Create and edit accounting items to be used in manual settlements.]]></DESCRIPTION>
-<!--800033-->  <HELP><![CDATA[G/L Item window allows to create as many account items as required for an organization and a given accounting schema. ]]></HELP>
+<!--800033-->  <HELP><![CDATA[G/L Item window allows to create as many account items as required for an organization and general ledger.]]></HELP>
 <!--800033-->  <AD_TABLE_ID><![CDATA[800022]]></AD_TABLE_ID>
 <!--800033-->  <AD_WINDOW_ID><![CDATA[800007]]></AD_WINDOW_ID>
 <!--800033-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -6903,7 +6903,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800034-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800034-->  <NAME><![CDATA[Accounting]]></NAME>
 <!--800034-->  <DESCRIPTION><![CDATA[Create an account number for the G/L item in order to manage the General Ledger Accounting.]]></DESCRIPTION>
-<!--800034-->  <HELP><![CDATA[Account items are directly related to the debit and credit accounts to be used while posting.]]></HELP>
+<!--800034-->  <HELP><![CDATA[Account items are directly related to the debit and credit accounts to be used while posting them.]]></HELP>
 <!--800034-->  <AD_TABLE_ID><![CDATA[800023]]></AD_TABLE_ID>
 <!--800034-->  <AD_WINDOW_ID><![CDATA[800007]]></AD_WINDOW_ID>
 <!--800034-->  <SEQNO><![CDATA[20]]></SEQNO>
@@ -7016,7 +7016,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800041-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800041-->  <NAME><![CDATA[Active Tables]]></NAME>
 <!--800041-->  <DESCRIPTION><![CDATA[Add and edit DB tables to be included in accounting processes.]]></DESCRIPTION>
-<!--800041-->  <HELP><![CDATA[Account schema tables allows to define which tables and therefore transactions generate accounting and which ones not. ]]></HELP>
+<!--800041-->  <HELP><![CDATA[Active Tables tab allows to define which tables and therefore transactions are going to be post to the ledger and which ones not. ]]></HELP>
 <!--800041-->  <AD_TABLE_ID><![CDATA[800027]]></AD_TABLE_ID>
 <!--800041-->  <AD_WINDOW_ID><![CDATA[125]]></AD_WINDOW_ID>
 <!--800041-->  <SEQNO><![CDATA[25]]></SEQNO>
@@ -12754,7 +12754,7 @@ The corresponding tables have then the following setting:
 <!--4F9E1C27F7F040C58C5CA2E6FD5B26CB-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--4F9E1C27F7F040C58C5CA2E6FD5B26CB-->  <NAME><![CDATA[Process]]></NAME>
 <!--4F9E1C27F7F040C58C5CA2E6FD5B26CB-->  <DESCRIPTION><![CDATA[Process to be launched at posting time]]></DESCRIPTION>
-<!--4F9E1C27F7F040C58C5CA2E6FD5B26CB-->  <HELP><![CDATA[It is possible to assign additional accounting process to be run after the standar one for a given accounting schema.]]></HELP>
+<!--4F9E1C27F7F040C58C5CA2E6FD5B26CB-->  <HELP><![CDATA[It is possible to assign additional accounting process to be run after the standard one for a given general ledger configuration]]></HELP>
 <!--4F9E1C27F7F040C58C5CA2E6FD5B26CB-->  <AD_TABLE_ID><![CDATA[443DD9B88BF2443982C61C8EFB07C64D]]></AD_TABLE_ID>
 <!--4F9E1C27F7F040C58C5CA2E6FD5B26CB-->  <AD_WINDOW_ID><![CDATA[125]]></AD_WINDOW_ID>
 <!--4F9E1C27F7F040C58C5CA2E6FD5B26CB-->  <SEQNO><![CDATA[28]]></SEQNO>
@@ -13109,7 +13109,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--6868B706DA8340158DE353A6C252A564-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--6868B706DA8340158DE353A6C252A564-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--6868B706DA8340158DE353A6C252A564-->  <NAME><![CDATA[Costing Rule]]></NAME>
-<!--6868B706DA8340158DE353A6C252A564-->  <HELP><![CDATA[Definition of the rules. ]]></HELP>
+<!--6868B706DA8340158DE353A6C252A564-->  <HELP><![CDATA[The costing rule window allows to define and validate costing rules. ]]></HELP>
 <!--6868B706DA8340158DE353A6C252A564-->  <AD_TABLE_ID><![CDATA[3CF4E9CC4AD94D63BE9DF1822E5B4239]]></AD_TABLE_ID>
 <!--6868B706DA8340158DE353A6C252A564-->  <AD_WINDOW_ID><![CDATA[3E945A9102144C16BD211D211089C2DF]]></AD_WINDOW_ID>
 <!--6868B706DA8340158DE353A6C252A564-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -15203,7 +15203,7 @@ AND @MaterialMgmtShipmentInOut.businessPartner@ = e.orderLine.salesOrder.busines
 <!--FF808181308EA4230130901AB2C60090-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--FF808181308EA4230130901AB2C60090-->  <NAME><![CDATA[Exchange rates]]></NAME>
 <!--FF808181308EA4230130901AB2C60090-->  <DESCRIPTION><![CDATA[In this tab the user can define another currency conversion rate for this document different than Openbravo systema exchange rate.]]></DESCRIPTION>
-<!--FF808181308EA4230130901AB2C60090-->  <HELP><![CDATA[An exchange rate between the "transaction currency" and the "Organization accounting schema" currency/currencies can be enter in this tab. ]]></HELP>
+<!--FF808181308EA4230130901AB2C60090-->  <HELP><![CDATA[The exchange rate tab allows to enter an exchange rate between the organization's general ledger currency and the currency of the transaction.]]></HELP>
 <!--FF808181308EA4230130901AB2C60090-->  <AD_TABLE_ID><![CDATA[FF808181308EA42301308FB5F7BC0049]]></AD_TABLE_ID>
 <!--FF808181308EA4230130901AB2C60090-->  <AD_WINDOW_ID><![CDATA[183]]></AD_WINDOW_ID>
 <!--FF808181308EA4230130901AB2C60090-->  <SEQNO><![CDATA[90]]></SEQNO>
