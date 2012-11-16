@@ -200,13 +200,20 @@ enyo.kind({
       this.$.onlineviewer.setOnlineState(model.get('connectedToERP'));
       if (OB.POS.modelterminal.get('loggedOffline') !== undefined) {
         if (OB.POS.modelterminal.get('connectedToERP')) {
-          if (!OB.POS.terminal.$.dialogsContainer.$.modalOnline) {
-            OB.POS.terminal.$.dialogsContainer.createComponent({
-              kind: 'OB.UI.ModalOnline',
-              name: 'modalOnline'
-            }).render();
-          }
-          OB.POS.terminal.$.dialogsContainer.$.modalOnline.show();
+          //We will do an additional request to verify whether the connection is still active or not
+          new OB.DS.Request('org.openbravo.retail.posterminal.term.Context').exec({}, function (inResponse) {
+            if (inResponse && !inResponse.exception) {
+              //The session is fine, we don't need to warn the user
+            } else {
+              if (!OB.POS.terminal.$.dialogsContainer.$.modalOnline) {
+                OB.POS.terminal.$.dialogsContainer.createComponent({
+                  kind: 'OB.UI.ModalOnline',
+                  name: 'modalOnline'
+                }).render();
+              }
+              OB.POS.terminal.$.dialogsContainer.$.modalOnline.show();
+            }
+          });
         } else {
           OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_OfflineModeWarning'));
         }
