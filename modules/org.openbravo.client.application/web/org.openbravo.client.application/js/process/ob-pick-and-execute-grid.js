@@ -130,26 +130,28 @@ isc.OBPickAndExecuteGrid.addProperties({
   // so that the combo shows the correct value without 
   // loading it from the backend
   rowEditorEnter: function (record, editValues, rowNum) {
-    var i = 0,
-        editRecord = this.getEditedRecord(rowNum),
-        gridFld, identifier, formFld, value, form = this.getEditForm();
+    if (this.view.actionHandler !== "org.openbravo.advpaymentmngt.actionHandler.ModifyPaymentPlanActionHandler") {
+      var i = 0,
+          editRecord = this.getEditedRecord(rowNum),
+          gridFld, identifier, formFld, value, form = this.getEditForm();
 
-    if (editRecord) {
-      // go through the fields and set the edit values
-      for (i = 0; i < this.getFields().length; i++) {
-        gridFld = this.getFields()[i];
-        formFld = form.getField(gridFld.name);
-        value = editRecord[gridFld.name];
-        identifier = editRecord[gridFld.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER];
-        if (formFld && value && identifier) {
-          if (formFld.setEntry) {
-            formFld.setEntry(value, identifier);
-          } else {
-            if (!formFld.valueMap) {
-              formFld.valueMap = {};
+      if (editRecord) {
+        // go through the fields and set the edit values
+        for (i = 0; i < this.getFields().length; i++) {
+          gridFld = this.getFields()[i];
+          formFld = form.getField(gridFld.name);
+          value = editRecord[gridFld.name];
+          identifier = editRecord[gridFld.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER];
+          if (formFld && value && identifier) {
+            if (formFld.setEntry) {
+              formFld.setEntry(value, identifier);
+            } else {
+              if (!formFld.valueMap) {
+                formFld.valueMap = {};
+              }
+              formFld.valueMap[value] = identifier;
+              form.setValue(formFld, value);
             }
-            formFld.valueMap[value] = identifier;
-            form.setValue(formFld, value);
           }
         }
       }
@@ -461,7 +463,11 @@ isc.OBPickAndExecuteGrid.addProperties({
     // retrieve the initial values only if a new row has been selected
     // see issue https://issues.openbravo.com/view.php?id=20653
     if (newRow) {
-      this.retrieveInitialValues(rowNum, colNum, newCell, newRow, suppressFocus);
+      if (this.view.actionHandler === "org.openbravo.advpaymentmngt.actionHandler.ModifyPaymentPlanActionHandler") {
+        this.retrieveInitialValues(rowNum, colNum, false, false, suppressFocus);
+      } else {
+        this.retrieveInitialValues(rowNum, colNum, newCell, newRow, suppressFocus);
+      }
     }
     this.Super('showInlineEditor', arguments);
   },
