@@ -229,6 +229,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="MANAGE_PRERESERVATION" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="C_ORDERLINE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
