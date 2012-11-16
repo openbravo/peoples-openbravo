@@ -64,13 +64,16 @@ enyo.kind({
     }
   },
   show: function (args) {
-    OB.UTIL.focusInModal($(this.hasNode()));
     this.args = {}; //reset;
     this._addArgsToComponent(args);
     if (this.executeOnShow) {
       this.executeOnShow();
     }
     this.inherited(arguments);
+    OB.UTIL.focusInModal($(this.hasNode()));
+    if (this.executeOnShown) {
+      this.executeOnShown();
+    }
   },
   hideFromInside: function (inSender, inEvent) {
     this.hide(inEvent.args);
