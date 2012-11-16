@@ -28,16 +28,11 @@ OB.Reservation.QuantityValidate = function(item, validator, value, record) {
       releasedQty = isc.isA.Number(record.released) ? new BigDecimal(String(record.released)) : BigDecimal.prototype.ZERO,
       quantity = null,
       reservedQty = BigDecimal.prototype.ZERO,
-      totalQty = BigDecimal.prototype.ZERO,
+      totalQty = isc.isA.Number(record.reservationQuantity) ? new BigDecimal(String(record.reservationQuantity)) : BigDecimal.prototype.ZERO,
       selectedRecords = item.grid.getSelectedRecords(),
       selectedRecordsLength = selectedRecords.length,
       editedRecord = null,
       i;
-  if (item.grid.view.parentWindow.activeView.getContextInfo().inpTableId === '260') {
-    totalQty = new BigDecimal(String(item.grid.view.parentWindow.activeView.getContextInfo().inpqtyordered));
-  } else {
-    totalQty = new BigDecimal(String(item.grid.view.parentWindow.activeView.getContextInfo().inpquantity));
-  }
 
   if (!isc.isA.Number(value)) {
     return false;
