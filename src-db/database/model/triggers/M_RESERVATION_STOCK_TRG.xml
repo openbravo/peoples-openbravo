@@ -22,6 +22,7 @@
   v_reservedqtydiff NUMBER:=0;
   v_releasedqtydiff NUMBER:=0;
   v_reservation_id      VARCHAR2(32);
+  v_resstatus       VARCHAR2(60);
 BEGIN
   IF (AD_isTriggerEnabled()='N') THEN
     RETURN;
@@ -31,12 +32,24 @@ BEGIN
     v_reservedqtydiff := COALESCE(:NEW.quantity, 0);
     v_releasedqtydiff := COALESCE(:NEW.releasedqty, 0);
     v_reservation_id := :NEW.m_reservation_id;
+    IF (:NEW.releasedqty > :NEW.quantity) THEN
+      RAISE_APPLICATION_ERROR(-20000, '@CannotReleasedMoreReserved@');
+    END IF;
   END IF;
 
   IF (UPDATING OR DELETING) THEN
     v_reservedqtydiff := v_reservedqtydiff - COALESCE(:OLD.quantity, 0);
     v_releasedqtydiff := v_releasedqtydiff - COALESCE(:OLD.releasedqty, 0);
     v_reservation_id := :OLD.m_reservation_id;
+  END IF;
+  
+  IF (DELETING) THEN
+    SELECT res_status INTO v_resstatus
+    FROM m_reservation
+    WHERE m_reservation_id = :OLD.m_reservation_id;
+    IF (:OLD.releasedqty <> 0) THEN
+      RAISE_APPLICATION_ERROR(-20000, '@CannotDeleteReleasedReservation@');
+    END IF;
   END IF;
 
   UPDATE m_reservation

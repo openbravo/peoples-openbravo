@@ -55,24 +55,10 @@ BEGIN
   END IF;
 
   IF (DELETING) THEN
-    IF (:OLD.res_status NOT IN ('DR', 'CL') AND :OLD.c_orderline_id IS NOT NULL) THEN
-      UPDATE c_orderline
-      SET so_res_status = 'NR'
-      WHERE c_orderline_id = :OLD.c_orderline_id;
-
-      SELECT c_order_id INTO v_sales_order_id
-      FROM c_orderline
-      WHERE c_orderline_id = :OLD.c_orderline_id;
-      SELECT COUNT(*) INTO v_reservedcount
-      FROM c_orderline
-      WHERE c_order_id = v_sales_order_id
-        AND so_res_status <> 'NR';
-
-      UPDATE c_order
-      SET so_res_status = CASE WHEN v_reservedcount > 0 THEN 'PR'
-                               ELSE 'NR'
-                          END
-      WHERE c_order_id = v_sales_order_id;
+    IF (:OLD.res_status != 'DR') THEN
+      RAISE_APPLICATION_ERROR(-20000, '@DocumentProcessed@');
+    ELSIF (:OLD.releasedqty <> 0) THEN
+      RAISE_APPLICATION_ERROR(-20000, '@CannotDeleteReleasedReservation@');
     END IF;
   END IF;
 END M_RESERVATION_TRG
