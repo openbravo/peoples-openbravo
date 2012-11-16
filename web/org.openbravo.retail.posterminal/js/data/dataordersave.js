@@ -36,14 +36,13 @@
       OB.UTIL.updateDocumentSequenceInDB(docno);
 
       delete this.receipt.attributes.json;
+      this.receipt.set('created', creationDate.getTime());
       this.receipt.set('json', JSON.stringify(this.receipt.toJSON()));
 
       // The order will not be processed if the navigator is offline
       if (OB.POS.modelterminal.get('connectedToERP')) {
         this.receipt.set('isbeingprocessed', 'Y');
       }
-      this.receipt.set('creationDate', creationDateTransformed);
-      this.receipt.set('updated', creationDateTransformed);
 
       OB.Dal.save(this.receipt, function () {
         if (OB.POS.modelterminal.get('connectedToERP')) {
