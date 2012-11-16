@@ -324,7 +324,7 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
               strOrderlineId);
           try {
             MaterialReceiptPendingLinesData.insert(conn, this, strSequenceLine, vars.getClient(),
-                data[0].adOrgId, "Y", vars.getUser(), vars.getUser(), String.valueOf(line),
+                dataLine[0].adOrgId, "Y", vars.getUser(), vars.getUser(), String.valueOf(line),
                 dataLine[0].description, strmInoutId, strOrderlineId, strLocator,
                 dataLine[0].mProductId, dataLine[0].cUomId, strQtyordered, "N",
                 dataLine[0].mAttributesetinstanceId, "N", dataLine[0].quantityorder,
