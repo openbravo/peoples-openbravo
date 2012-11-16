@@ -36,6 +36,7 @@
       OB.UTIL.updateDocumentSequenceInDB(docno);
 
       delete this.receipt.attributes.json;
+      this.receipt.set('timezoneOffset', creationDate.getTimezoneOffset());
       this.receipt.set('created', creationDate.getTime());
       this.receipt.set('json', JSON.stringify(this.receipt.toJSON()));
 

@@ -27,6 +27,11 @@ public class JSONPropertyToEntity {
 
   public static void fillBobFromJSON(Entity entity, BaseOBObject bob, JSONObject json)
       throws JSONException {
+    JSONPropertyToEntity.fillBobFromJSON(entity, bob, json, 0L);
+  }
+
+  public static void fillBobFromJSON(Entity entity, BaseOBObject bob, JSONObject json,
+      Long dateOffset) throws JSONException {
     @SuppressWarnings("unchecked")
     Iterator<String> keys = json.keys();
     while (keys.hasNext()) {
@@ -61,8 +66,12 @@ public class JSONPropertyToEntity {
       }
       if (p.isPrimitive()) {
         if (p.isDate()) {
-          bob.set(p.getName(),
-              (Date) JsonToDataConverter.convertJsonToPropertyValue(PropertyByType.DATE, value));
+          Date date = (Date) JsonToDataConverter.convertJsonToPropertyValue(
+              PropertyByType.DATETIME,
+              ((String) value).subSequence(0, ((String) value).lastIndexOf(".")) + "+0000");
+          // date is the date in UTC, we need to convert it to the date in the original time zone
+          date.setTime(date.getTime() - dateOffset * 60 * 1000);
+          bob.set(p.getName(), date);
         } else if (p.isDatetime()) {
           String strValue = (String) value;
           String transformedValue = (String) strValue.subSequence(0, strValue.lastIndexOf("."))

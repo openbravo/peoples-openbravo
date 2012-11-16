@@ -386,9 +386,11 @@ public class OrderLoader extends JSONProcessSimple {
     for (int i = 0; i < orderlines.length(); i++) {
       InvoiceLine line = OBProvider.getInstance().get(InvoiceLine.class);
       Entity inlineEntity = ModelProvider.getInstance().getEntity(InvoiceLine.class);
-      JSONPropertyToEntity.fillBobFromJSON(inlineEntity, line, orderlines.getJSONObject(i));
+      JSONPropertyToEntity.fillBobFromJSON(inlineEntity, line, orderlines.getJSONObject(i),
+          jsonorder.getLong("timezoneOffset"));
       JSONPropertyToEntity.fillBobFromJSON(
-          ModelProvider.getInstance().getEntity(InvoiceLine.class), line, jsonorder);
+          ModelProvider.getInstance().getEntity(InvoiceLine.class), line, jsonorder,
+          jsonorder.getLong("timezoneOffset"));
       line.setLineNo((long) ((i + 1) * 10));
       line.setLineNetAmount(BigDecimal.valueOf(orderlines.getJSONObject(i).getDouble("net")));
       BigDecimal qty = lineReferences.get(i).getOrderedQuantity();
@@ -422,7 +424,8 @@ public class OrderLoader extends JSONProcessSimple {
           }
 
           InvoiceLineOffer promotion = OBProvider.getInstance().get(InvoiceLineOffer.class);
-          JSONPropertyToEntity.fillBobFromJSON(promotionLineEntity, promotion, jsonPromotion);
+          JSONPropertyToEntity.fillBobFromJSON(promotionLineEntity, promotion, jsonPromotion,
+              jsonorder.getLong("timezoneOffset"));
 
           if (hasActualAmt) {
             promotion.setTotalAmount(BigDecimal.valueOf(jsonPromotion.getDouble("actualAmt")));
@@ -441,7 +444,8 @@ public class OrderLoader extends JSONProcessSimple {
   protected void createInvoice(Invoice invoice, Order order, JSONObject jsonorder)
       throws JSONException {
     Entity invoiceEntity = ModelProvider.getInstance().getEntity(Invoice.class);
-    JSONPropertyToEntity.fillBobFromJSON(invoiceEntity, invoice, jsonorder);
+    JSONPropertyToEntity.fillBobFromJSON(invoiceEntity, invoice, jsonorder,
+        jsonorder.getLong("timezoneOffset"));
 
     invoice.setDocumentNo(null);
     invoice
@@ -608,9 +612,11 @@ public class OrderLoader extends JSONProcessSimple {
       BigDecimal qty, Locator bin) throws JSONException {
     ShipmentInOutLine line = OBProvider.getInstance().get(ShipmentInOutLine.class);
 
-    JSONPropertyToEntity.fillBobFromJSON(shplineentity, line, jsonOrderLine);
+    JSONPropertyToEntity.fillBobFromJSON(shplineentity, line, jsonOrderLine,
+        jsonorder.getLong("timezoneOffset"));
     JSONPropertyToEntity.fillBobFromJSON(
-        ModelProvider.getInstance().getEntity(ShipmentInOutLine.class), line, jsonorder);
+        ModelProvider.getInstance().getEntity(ShipmentInOutLine.class), line, jsonorder,
+        jsonorder.getLong("timezoneOffset"));
     line.setLineNo(lineNo);
     line.setShipmentReceipt(shipment);
     line.setSalesOrderLine(orderLine);
@@ -623,7 +629,8 @@ public class OrderLoader extends JSONProcessSimple {
   protected void createShipment(ShipmentInOut shipment, Order order, JSONObject jsonorder)
       throws JSONException {
     Entity shpEntity = ModelProvider.getInstance().getEntity(ShipmentInOut.class);
-    JSONPropertyToEntity.fillBobFromJSON(shpEntity, shipment, jsonorder);
+    JSONPropertyToEntity.fillBobFromJSON(shpEntity, shipment, jsonorder,
+        jsonorder.getLong("timezoneOffset"));
     shipment.setDocumentNo(null);
     shipment
         .setDocumentType(getShipmentDocumentType((String) DalUtil.getId(order.getDocumentType())));
@@ -652,8 +659,9 @@ public class OrderLoader extends JSONProcessSimple {
       JSONObject jsonOrderLine = orderlines.getJSONObject(i);
 
       JSONPropertyToEntity.fillBobFromJSON(ModelProvider.getInstance().getEntity(OrderLine.class),
-          orderline, jsonorder);
-      JSONPropertyToEntity.fillBobFromJSON(orderLineEntity, orderline, jsonOrderLine);
+          orderline, jsonorder, jsonorder.getLong("timezoneOffset"));
+      JSONPropertyToEntity.fillBobFromJSON(orderLineEntity, orderline, jsonOrderLine,
+          jsonorder.getLong("timezoneOffset"));
 
       orderline.setActive(true);
       orderline.setSalesOrder(order);
@@ -689,7 +697,8 @@ public class OrderLoader extends JSONProcessSimple {
           }
 
           OrderLineOffer promotion = OBProvider.getInstance().get(OrderLineOffer.class);
-          JSONPropertyToEntity.fillBobFromJSON(promotionLineEntity, promotion, jsonPromotion);
+          JSONPropertyToEntity.fillBobFromJSON(promotionLineEntity, promotion, jsonPromotion,
+              jsonorder.getLong("timezoneOffset"));
 
           if (hasActualAmt) {
             promotion.setTotalAmount(BigDecimal.valueOf(jsonPromotion.getDouble("actualAmt")));
@@ -706,7 +715,8 @@ public class OrderLoader extends JSONProcessSimple {
 
   protected void createOrder(Order order, JSONObject jsonorder) throws JSONException {
     Entity orderEntity = ModelProvider.getInstance().getEntity(Order.class);
-    JSONPropertyToEntity.fillBobFromJSON(orderEntity, order, jsonorder);
+    JSONPropertyToEntity.fillBobFromJSON(orderEntity, order, jsonorder,
+        jsonorder.getLong("timezoneOffset"));
     order.setNewOBObject(true);
     order.setId(jsonorder.getString("id"));
 
