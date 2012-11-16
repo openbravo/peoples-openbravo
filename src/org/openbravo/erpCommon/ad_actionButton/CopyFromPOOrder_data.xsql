@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,7 +29,8 @@
         '' AS QTYORDERED, '' AS QUANTITYORDER, '' AS M_PRODUCT_UOM_ID,
         '' as stdprecision, '' as priceprecision, '' as enforcepricelimit, '' as pricelist, '' as pricelimit, '' as validfrom,
         '' AS DESCRIPTION, '' AS PRICESTD, '' AS M_OFFER_ID, '' as orderline, O.DATEPROMISED AS DATEPROMISED, O.DATEORDERED AS DATEORDERED,
-        O.ISSOTRX AS ISSOTRX, '' AS M_ATTRIBUTESETINSTANCE_ID 
+        O.ISSOTRX AS ISSOTRX, '' AS M_ATTRIBUTESETINSTANCE_ID, '' as USER1_ID, '' as USER2_ID,
+        '' as C_COSTCENTER_ID, '' as A_ASSET_ID
         FROM C_ORDER O LEFT JOIN C_ORDERLINE OL ON O.C_ORDER_ID = OL.C_ORDER_ID
         WHERE O.C_ORDER_ID = ?
         GROUP BY O.C_BPARTNER_ID, O.C_BPARTNER_LOCATION_ID, O.M_WAREHOUSE_ID, O.C_CURRENCY_ID, O.C_PROJECT_ID,
@@ -42,11 +43,18 @@
     <SqlMethodComment>select de las lineas</SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT C_ORDERLINE_ID as orderline, C_UOM_ID, M_PRODUCT_ID, QTYORDERED, QUANTITYORDER,
-        M_PRODUCT_UOM_ID, DESCRIPTION, C_CURRENCY_ID, M_ATTRIBUTESETINSTANCE_ID
-        FROM C_ORDERLINE
-        WHERE C_ORDER_ID = ?
-        ORDER BY LINE ASC
+        SELECT OL.C_ORDERLINE_ID as orderline, OL.C_UOM_ID, OL.M_PRODUCT_ID, OL.QTYORDERED, OL.QUANTITYORDER,
+        OL.M_PRODUCT_UOM_ID, OL.DESCRIPTION, OL.C_CURRENCY_ID, OL.M_ATTRIBUTESETINSTANCE_ID,
+        OL.AD_ORG_ID,
+        COALESCE(OL.C_PROJECT_ID, O.C_PROJECT_ID) AS C_PROJECT_ID,
+        COALESCE(OL.USER1_ID, O.USER1_ID) AS USER1_ID,
+        COALESCE(OL.USER2_ID, O.USER2_ID) AS USER2_ID,
+        COALESCE(OL.C_COSTCENTER_ID, O.C_COSTCENTER_ID) AS C_COSTCENTER_ID,
+        COALESCE(OL.A_ASSET_ID, O.A_ASSET_ID) AS A_ASSET_ID
+        FROM C_ORDERLINE OL, C_ORDER O
+        WHERE OL.C_ORDER_ID = ?
+              AND OL.C_ORDER_ID = O.C_ORDER_ID
+        ORDER BY OL.LINE ASC
       ]]>
     </Sql>
     <Parameter name="cOrderLineId"/>
@@ -62,7 +70,8 @@
         M_WAREHOUSE_ID, C_UOM_ID, QTYORDERED, QUANTITYORDER, QTYINVOICED, QTYDELIVERED, QTYRESERVED, 
         C_CURRENCY_ID, PRICELIST, PRICEACTUAL, 
         PRICELIMIT, C_TAX_ID, DISCOUNT, M_PRODUCT_UOM_ID, PRICESTD, M_OFFER_ID, REF_ORDERLINE_ID, M_ATTRIBUTESETINSTANCE_ID,
-          GROSSPRICELIST, GROSS_UNIT_PRICE, LINE_GROSS_AMOUNT, grosspricestd) 
+          GROSSPRICELIST, GROSS_UNIT_PRICE, LINE_GROSS_AMOUNT, grosspricestd,
+          C_PROJECT_ID, USER1_ID, USER2_ID, C_COSTCENTER_ID, A_ASSET_ID) 
         VALUES 
           (?,?,?,TO_DATE(NOW()),?,TO_DATE(NOW()),?,
            ?,TO_NUMBER(?),?,?,
@@ -70,7 +79,8 @@
            ?,?,TO_NUMBER(?),TO_NUMBER(?),0,0,0,
            ?,TO_NUMBER(?),M_GET_OFFERS_PRICE(TO_DATE(now()), ?, ?, TO_NUMBER(?), TO_NUMBER(?), ?),
            TO_NUMBER(?),?,TO_NUMBER(?),?,TO_NUMBER(?),M_GET_OFFER(TO_DATE(now()), ?, ?),?,?,
-           TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?), TO_NUMBER(?))
+           TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?), TO_NUMBER(?),
+           ?, ?, ?, ?, ?)
       ]]>
     </Sql>
     <Parameter name="cOrderlineId"/>
@@ -110,6 +120,11 @@
     <Parameter name="grossprice"/>
     <Parameter name="grossAmount"/>
     <Parameter name="grossBaseUnitPrice"/>
+    <Parameter name="cProjectId"/>
+    <Parameter name="user1Id"/>
+    <Parameter name="user2Id"/>
+    <Parameter name="cCostcenterId"/>
+    <Parameter name="aAssetId"/>
   </SqlMethod>
   <SqlMethod name="cBPartnerLocationId" type="preparedStatement" return="string">
     <SqlMethodComment>Names of the columns of the fields of a tab</SqlMethodComment>
