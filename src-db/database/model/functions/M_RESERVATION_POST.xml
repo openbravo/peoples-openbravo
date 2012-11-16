@@ -125,11 +125,34 @@ BEGIN
         RAISE_APPLICATION_ERROR(-20000, '@NotEnoughAvailableStock@ : ' || cur_not_available.locatorName || ' - ' || cur_not_available.attributeName);
       END LOOP;
       
+      -- Check that prereserved quantity is equal all lower than ordered quantity
+      FOR cur_not_available IN (
+          SELECT AD_COLUMN_IDENTIFIER('C_Orderline', rs.c_orderline_id, 'en_US') as orderline
+          FROM m_reservation_stock rs
+              JOIN c_orderline ol ON rs.c_orderline_id = ol.c_orderline_id
+              LEFT JOIN (
+                  -- If reservation is closed consider only converted reservations as prereserve.
+                  SELECT SUM(CASE r.res_status
+                             WHEN 'CL' THEN CASE WHEN rs2.m_locator_id IS NULL THEN 0
+                                            ELSE rs2.quantity END
+                             ELSE rs2.quantity END) as qty, rs2.c_orderline_id
+                  FROM m_reservation_stock rs2
+                      JOIN m_reservation r ON rs2.m_reservation_id = r.m_reservation_id
+                  WHERE rs2.c_orderline_id IS NOT NULL
+                    AND r.res_status NOT IN ('DR')
+                  GROUP BY rs2.c_orderline_id
+                ) pre ON rs.c_orderline_id = pre.c_orderline_id
+          WHERE rs.m_reservation_id = v_reservation_id
+            AND rs.c_orderline_id IS NOT NULL
+            AND ol.qtyordered < rs.quantity + COALESCE(pre.qty, 0)
+      ) LOOP
+        RAISE_APPLICATION_ERROR(-20000, '@MorePrereservedQtyThanOrdered@ '||cur_not_available.orderline);
+      END LOOP;
+      
       IF (v_orderline_id IS NOT NULL) THEN
         SELECT count(*) INTO v_count
         FROM m_reservation
         WHERE c_orderline_id = v_orderline_id
-          AND res_status != 'CL'
           AND m_reservation_id != v_reservation_id;
         IF (v_count > 0) THEN
           RAISE_APPLICATION_ERROR(-20000, '@SOLineWithMoreThanOneOpenReservation@');
@@ -193,7 +216,7 @@ BEGIN
       v_reservedcount         NUMBER;
     BEGIN
 
-      IF (v_resstatus != 'CO') THEN
+      IF (v_resstatus NOT IN ('CO', 'CL')) THEN
         RAISE_APPLICATION_ERROR(-20000, '@ActionNotSupported@');
       END IF;
 
@@ -227,7 +250,7 @@ BEGIN
       RAISE_APPLICATION_ERROR(-20000, '@ActionNotSupported@');
     END IF;
     v_newstatus := 'CL';
-    v_newaction := 'CL';
+    v_newaction := 'RE';
 
   ELSE
     RAISE_APPLICATION_ERROR(-20000, '@UnsupportedResAction@');
