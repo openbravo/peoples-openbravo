@@ -156,15 +156,16 @@ BEGIN
     -- Reserve available stock
     v_qtytorelease := LEAST(v_notreservedstock, v_pendingtorelease);
 
-    IF (v_qtytorelease > COALESCE(v_this_notreserved, 0)) THEN
-      --The new reserved stock is higher than the pending quantity to reserve, other reserved stock must be unreserved.
-      v_qtytounreserve := v_qtytorelease - COALESCE(v_this_notreserved, 0);
+    v_qtytounreserve := LEAST(v_qtytorelease, v_this_noalloc);
+    IF (v_qtytounreserve > 0) THEN
+      --If exists not allocated stock it has to be unreserved before reserving the new one.
       FOR cur_reserved_stock IN (
           SELECT m_reservation_stock_id, quantity - COALESCE(releasedqty, 0) AS reservedqty
           FROM m_reservation_stock
           WHERE m_reservation_id = p_reservation_id
             AND isallocated = 'N'
             AND quantity != COALESCE(releasedqty,0)
+          ORDER BY quantity - COALESCE(releasedqty,0)
       ) LOOP
         v_qtytounreserve_aux := LEAST(v_qtytounreserve, cur_reserved_stock.reservedqty);
         UPDATE m_reservation_stock
