@@ -169,9 +169,7 @@ public class ReservationUtils {
   public static Reservation getReservationFromOrder(OrderLine salesOrderLine) {
     OBDal.getInstance().refresh(salesOrderLine);
     for (Reservation res : salesOrderLine.getMaterialMgmtReservationList()) {
-      if (res.getRESStatus() != "CL") {
-        return res;
-      }
+      return res;
     }
     return ReservationUtils.createReserveFromSalesOrderLine(salesOrderLine, false);
   }

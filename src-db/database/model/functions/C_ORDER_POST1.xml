@@ -1063,10 +1063,11 @@
                   M_RESERVE_STOCK_AUTO(v_reservation_id, v_user, v_reservedqty);
                 END IF;
               END IF;
-            ELSIF (cur_orderline.create_reservation = 'CR') THEN
-              M_CREATE_RESERVE_FROM_SOL(cur_orderline.c_orderline_id, 'N', v_user, v_reservation_id);
             ELSIF (cur_orderline.create_reservation = 'CRP') THEN
               M_CREATE_RESERVE_FROM_SOL(cur_orderline.c_orderline_id, 'Y', v_user, v_reservation_id);
+            ELSE -- Always create reservation in draft status
+--            ELSIF (cur_orderline.create_reservation = 'CR') THEN
+              M_CREATE_RESERVE_FROM_SOL(cur_orderline.c_orderline_id, 'N', v_user, v_reservation_id);
             END IF;
           END LOOP;
         END IF;
