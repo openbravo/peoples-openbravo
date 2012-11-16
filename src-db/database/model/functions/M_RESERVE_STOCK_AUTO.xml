@@ -117,6 +117,7 @@ BEGIN
     SELECT *
     FROM m_stock_proposed
     WHERE ad_pinstance_id = v_pinstance_id
+    ORDER BY priority
   ) LOOP
     v_qty := LEAST(cur_stock.quantity, v_pendingqty);
     M_RESERVE_STOCK_MANUAL(p_reservation_id, 'SD', cur_stock.m_storage_detail_id, v_qty, p_user_id, v_dummy);
