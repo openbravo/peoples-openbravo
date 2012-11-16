@@ -59,7 +59,7 @@ public class ManagePrereservationActionHandler extends BaseProcessActionHandler 
       jsonRequest = new JSONObject(content);
       log.debug(jsonRequest);
 
-      final String strPOLId = jsonRequest.getString("C_OrderLine_ID");
+      final String strPOLId = jsonRequest.getString("inpcOrderlineId");
       final OrderLine pol = OBDal.getInstance().get(OrderLine.class, strPOLId);
 
       if (pol != null) {
