@@ -137,6 +137,17 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="A_ASSET_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="C_COSTCENTER_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <foreign-key foreignTable="A_ASSET" name="GL_JOURNALLINE_A_ASSET">
+        <reference local="A_ASSET_ID" foreign="A_ASSET_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_CLIENT" name="GL_JOURNALLINE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -151,6 +162,9 @@
       </foreign-key>
       <foreign-key foreignTable="C_CAMPAIGN" name="GL_JOURNALLINE_C_CAMPAIGN">
         <reference local="C_CAMPAIGN_ID" foreign="C_CAMPAIGN_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_COSTCENTER" name="GL_JOURNALLINE_C_COSTCENTER">
+        <reference local="C_COSTCENTER_ID" foreign="C_COSTCENTER_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_CURRENCY" name="GL_JOURNALLINE_C_CURRENCY">
         <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
