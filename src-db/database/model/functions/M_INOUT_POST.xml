@@ -339,13 +339,44 @@
                 SELECT count(*), max(m_reservation_id)
                   INTO v_aux, v_reservation_id
                 FROM m_reservation
-                WHERE c_orderline_id = cur_inoutline.c_orderline_id
-                  AND res_status != 'CL';
+                WHERE c_orderline_id = cur_inoutline.c_orderline_id;
                 IF (v_aux > 1) THEN
                   RAISE_APPLICATION_ERROR(-20000, '@SOLineWithMoreThanOneOpenReservation@');
                 ELSIF (v_aux = 1) THEN
                   M_RESERVATION_CONSUMPTION(v_reservation_id, cur_inoutline.m_locator_id, cur_inoutline.m_attributesetinstance_id, cur_inoutline.movementqty, v_user, v_result, v_message);
                 END IF;
+              ELSIF (cur_inout.issotrx = 'Y' AND cur_inoutline.c_orderline_id IS NOT NULL AND v_qty > 0 AND cur_inoutline.canceled_inoutline_id IS NOT NULL) THEN
+                -- Undo reservation
+                DECLARE
+                  cur_released_stock RECORD;
+                  v_qtyaux NUMBER;
+                  v_undoqty NUMBER;
+                BEGIN
+                  SELECT count(*), max(m_reservation_id)
+                    INTO v_aux, v_reservation_id
+                  FROM m_reservation
+                  WHERE c_orderline_id = cur_inoutline.c_orderline_id;
+                  IF (v_aux > 1) THEN
+                    RAISE_APPLICATION_ERROR(-20000, '@SOLineWithMoreThanOneOpenReservation@');
+                  ELSIF (v_aux = 1) THEN
+                    v_qtyaux := v_qty;
+                    FOR cur_released_stock IN (
+                        SELECT m_reservation_stock_id, quantity, releasedqty
+                        FROM m_reservation_stock
+                        WHERE m_locator_id = cur_inoutline.m_locator_id
+                          AND COALESCE(m_attributesetinstance_id, '0') = COALESCE(cur_inoutline.m_attributesetinstance_id, '0')
+                          AND m_reservation_id = v_reservation_id
+                          AND COALESCE(releasedqty, 0) > 0
+                        ORDER BY CASE isallocated WHEN 'N' THEN 0 ELSE 1 END
+                    ) LOOP
+                      v_undoqty := LEAST(v_qtyaux, cur_released_stock.releasedqty);
+                      UPDATE m_reservation_stock
+                      SET releasedqty = releasedqty - v_undoqty
+                      WHERE m_reservation_stock_id = cur_released_stock.m_reservation_stock_id;
+                      v_qtyaux := v_qtyaux - v_undoqty;
+                    END LOOP;
+                  END IF;
+                END;
               ELSIF (cur_inout.issotrx = 'N') THEN
                 -- Manage pre-reserves
                 DECLARE
