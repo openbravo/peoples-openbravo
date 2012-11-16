@@ -253,6 +253,7 @@
     FOR CUR_INVOICE IN
       (SELECT I.AD_CLIENT_ID,
         I.AD_ORG_ID,
+        IL.AD_ORG_ID AS LINE_ORG,
         IL.M_PRODUCT_ID,
         RP.ISSOTRX,
         RP.C_BPARTNER_ID,
@@ -323,6 +324,7 @@
         AND RP.M_RAPPEL_BPARTNER_ID=v_Record_ID
       GROUP BY I.AD_CLIENT_ID,
         I.AD_ORG_ID,
+        IL.AD_ORG_ID,
         IL.M_PRODUCT_ID,
         RP.ISSOTRX,
         RP.C_BPARTNER_ID,
@@ -473,7 +475,7 @@
         )
         VALUES
         (
-          v_invoicelineId, CUR_INVOICE.AD_CLIENT_ID, CUR_INVOICE.AD_ORG_ID, 'Y',
+          v_invoicelineId, CUR_INVOICE.AD_CLIENT_ID, CUR_INVOICE.LINE_ORG, 'Y',
           now(), v_AD_User_ID, now(), v_AD_User_ID,
           v_invoiceId, NULL, NULL, v_line,
           v_description, CUR_INVOICE.M_PRODUCT_ID, 0, 0,
