@@ -44,6 +44,8 @@ ul {
 /*subwindows*/
 div.subwindow {
   background-color: #FFFFFF;
+  position: relative;
+  z-index: auto;
 }
 
 div.subwindowheadertext {

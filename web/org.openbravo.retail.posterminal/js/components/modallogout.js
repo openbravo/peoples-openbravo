@@ -31,9 +31,6 @@ enyo.kind({
   name: 'OB.UI.LogoutDialogCancel',
   kind: 'OB.UI.ModalDialogButton',
   content: OB.I18N.getLabel('OBPOS_LblCancel'),
-  attributes: {
-    'onEnterTap': 'hide'
-  },
   tap: function () {
     this.doHideThisPopup();
   }
@@ -42,7 +39,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.LogoutDialogLogout',
   kind: 'OB.UI.ModalDialogButton',
-  isApplyButton: true,
+  isDefaultAction: true,
   content: OB.I18N.getLabel('OBPOS_LogoutDialogLogout'),
   tap: function () {
     this.doHideThisPopup();

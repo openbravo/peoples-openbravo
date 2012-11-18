@@ -19,7 +19,6 @@ enyo.kind({
   destroy: function () {
     this.buttons = null;
     this.commands = null;
-    $(window).unbind('keypress');
     this.inherited(arguments);
   },
   tag: 'div',
@@ -215,8 +214,94 @@ enyo.kind({
   },
 
   handlers: {
+    onGlobalKeydown: 'globalKeydownHandler',
+    onGlobalKeypress: 'globalKeypressHandler',
     onCommandFired: 'commandHandler',
     onRegisterButton: 'registerButton'
+  },
+
+  isPhysicalKeyboardAllowed: function (inEvent) {
+    var tagName, targetId = 'x',
+        focusKeeperId = 'y';
+    if (inEvent && inEvent.target && inEvent.target.tagName) {
+      tagName = inEvent.target.tagName;
+    }
+    if (inEvent.target && inEvent.target.id) {
+      targetId = inEvent.target.id;
+    }
+    if (OB.POS.terminal.$.focusKeeper && OB.POS.terminal.$.focusKeeper.id) {
+      focusKeeperId = OB.POS.terminal.$.focusKeeper.id;
+    }
+
+    if (inEvent.altGraphKey || inEvent.altKey || inEvent.ctrlKey) {
+      return false;
+    } else if (OB.POS.terminal && (OB.POS.terminal.openedPopup || OB.POS.terminal.openedSubwindow)) {
+      return false;
+    } else if ((tagName === 'INPUT' && targetId !== focusKeeperId) || tagName === 'SELECT' || tagName === 'TEXTAREA') {
+      return false;
+    } else {
+      return true;
+    }
+  },
+
+  globalKeydownHandler: function (inSender, inEvent) {
+    inEvent = inEvent.keyboardEvent;
+    if (!this.isPhysicalKeyboardAllowed(inEvent)) {
+      return;
+    }
+    if (inEvent.keyCode === 8) { //del key
+      OB.POS.terminal.$.focusKeeper.focus(); //Hack to avoid event propagation and result in a browser "go back" shortcut
+      this.writeCharacter('del');
+    } else if (OB.Format.defaultDecimalSymbol !== '.') {
+      if (inEvent.keyCode === 110) { //Numeric keypad dot (.)
+        this.writeCharacter(OB.Format.defaultDecimalSymbol);
+      } else if (inEvent.keyCode === 190) { //Character keyboard dot (.)
+        this.writeCharacter('.');
+      }
+    }
+  },
+
+  globalKeypressHandler: function (inSender, inEvent) {
+    var txt;
+    inEvent = inEvent.keyboardEvent;
+    if (!this.isPhysicalKeyboardAllowed(inEvent)) {
+      return;
+    }
+    if (inEvent.which === 13 && this.$.editbox.getContent()) { //Handle ENTER key if there is something in the display
+      txt = this.getString();
+
+      if (this.defaultcommand) {
+        this.execCommand(this.commands[this.defaultcommand], txt);
+      } else {
+        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NoDefaultActionDefined'));
+      }
+    } else if (inEvent.which !== 46 || OB.Format.defaultDecimalSymbol === '.') { //Any keypress except any kind of dot (.)
+      this.writeCharacter(String.fromCharCode(inEvent.which));
+    }
+  },
+
+  virtualKeypressHandler: function (key) {
+    var t;
+    if (key.match(/^([0-9]|\.|,| |[a-z]|[A-Z])$/) || (key === 'del')) {
+      this.writeCharacter(key);
+    } else {
+      this.doCommandFired({
+        key: key
+      });
+    }
+  },
+
+  writeCharacter: function (character) {
+    var t;
+    if (character.match(/^([0-9]|\.|,| |[a-z]|[A-Z])$/)) {
+      t = this.$.editbox.getContent();
+      this.$.editbox.setContent(t + character);
+    } else if (character === 'del') {
+      t = this.$.editbox.getContent();
+      if (t.length > 0) {
+        this.$.editbox.setContent(t.substring(0, t.length - 1));
+      }
+    }
   },
 
   setStatus: function (newstatus) {
@@ -275,15 +360,7 @@ enyo.kind({
         cmd = event.key;
 
 
-    if (this.$.editbox.getContent() && cmd === String.fromCharCode(13)) {
-      txt = this.getString();
-
-      if (this.defaultcommand) {
-        this.execCommand(this.commands[this.defaultcommand], txt);
-      } else {
-        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NoDefaultActionDefined'));
-      }
-    } else if (cmd === 'OK') {
+    if (cmd === 'OK') {
       txt = this.getString();
 
       if (txt === '0' && this.status === '') {
@@ -343,7 +420,7 @@ enyo.kind({
 
     if (button.command) {
       button.$.button.tap = function () {
-        me.keyPressed(button.command);
+        me.virtualKeypressHandler(button.command);
       };
 
       this.addButton(button.command, button.$.button);
@@ -377,112 +454,6 @@ enyo.kind({
 
     this.addKeypad('OB.UI.KeypadBasic');
     this.showKeypad('basic');
-
-
-    //Special case to manage the dot (.) pressing in the numeric keypad (only can be managed using keydown)
-    $(window).off('keydown');
-    $(window).keydown(function (e) {
-      var handled = false;
-      if (OB.UTIL.fixFocus()) {
-        if (OB.Format.defaultDecimalSymbol !== '.') {
-          if (e.keyCode === 110) { //Numeric keypad dot (.)
-            me.keyPressed(OB.Format.defaultDecimalSymbol);
-          } else if (e.keyCode === 190) { //Character keyboard dot (.)
-            me.keyPressed('.');
-          }
-        }
-        if (e.keyCode === 8) { //del key
-          me.keyPressed('del');
-        }
-        if (e.keyCode === 13) { //intro key
-          if ($('.enyo-popup:visible, .subwindow:visible').length > 0) {
-            //A modal is opened -> try to call to onEnterTap function of dialog.
-            if (OB.UI.UTILS) {
-              if ($('.enyo-popup:visible').length > 0) {
-                if (OB.UI.UTILS.domIdEnyoReference[$('.enyo-popup:visible').attr('id')]) {
-                  if (OB.UI.UTILS.domIdEnyoReference[$('.enyo-popup:visible').attr('id')].enterTap) {
-                    handled = OB.UI.UTILS.domIdEnyoReference[$('.enyo-popup:visible').attr('id')].enterTap(e, $('#' + e.srcElement.id).attr('onEnterTap'));
-                    if (handled) {
-                      return false;
-                    }
-                  }
-                }
-              } else if ($('.subwindow:visible').length > 0) {
-                //priority of subwindows is less than modals, because a modal can appear on a subwindow
-                if (OB.UI.UTILS.domIdEnyoReference[$('.subwindow:visible').attr('id')]) {
-                  if (OB.UI.UTILS.domIdEnyoReference[$('.subwindow:visible').attr('id')].enterTap) {
-                    handled = OB.UI.UTILS.domIdEnyoReference[$('.subwindow:visible').attr('id')].enterTap(e, $('#' + e.srcElement.id).attr('onEnterTap'));
-                    if (handled) {
-                      return false;
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      } else {
-        if (e.keyCode === 13) {
-          if ($('.enyo-popup:visible, .subwindow:visible').length > 0) {
-            //Intro key pressed and modal popup is opned -> try to call onEnterTap of dialog
-            //A modal is opened -> try to call to onEnterTap function of dialog.
-            if (OB.UI.UTILS) {
-              if ($('.enyo-popup:visible').length > 0) {
-                if (OB.UI.UTILS.domIdEnyoReference[$('.enyo-popup:visible').attr('id')]) {
-                  if (OB.UI.UTILS.domIdEnyoReference[$('.enyo-popup:visible').attr('id')].enterTap) {
-                    handled = OB.UI.UTILS.domIdEnyoReference[$('.enyo-popup:visible').attr('id')].enterTap(e, $('#' + e.srcElement.id).attr('onEnterTap'));
-                    if (handled) {
-                      return false;
-                    }
-                  }
-                }
-              } else if ($('.subwindow:visible').length > 0) {
-                //priority of subwindows is less than modals, because a modal can appear on a subwindow
-                if (OB.UI.UTILS.domIdEnyoReference[$('.subwindow:visible').attr('id')]) {
-                  if (OB.UI.UTILS.domIdEnyoReference[$('.subwindow:visible').attr('id')].enterTap) {
-                    handled = OB.UI.UTILS.domIdEnyoReference[$('.subwindow:visible').attr('id')].enterTap(e, $('#' + e.srcElement.id).attr('onEnterTap'));
-                    if (handled) {
-                      return false;
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-      return true;
-    });
-
-    $(window).off('keypress');
-    $(window).keypress(function (e) {
-      if (OB.UTIL.fixFocus()) {
-        if (e.which !== 46 || OB.Format.defaultDecimalSymbol === '.') { //Any keypress except any kind of dot (.)
-          me.keyPressed(String.fromCharCode(e.which));
-        }
-      }
-    });
-  },
-
-  keyPressed: function (key) {
-    var t;
-    if (key.match(/^([0-9]|\.|,| |[a-z]|[A-Z])$/)) {
-      if ($('.enyo-popup:visible, .subwindow:visible').length === 0) {
-        t = this.$.editbox.getContent();
-        this.$.editbox.setContent(t + key);
-      }
-    } else if (key === 'del') {
-      if ($('.enyo-popup:visible, .subwindow:visible').length === 0) {
-        t = this.$.editbox.getContent();
-        if (t.length > 0) {
-          this.$.editbox.setContent(t.substring(0, t.length - 1));
-        }
-      }
-    } else {
-      this.doCommandFired({
-        key: key
-      });
-    }
   },
 
   addToolbar: function (newToolbar) {

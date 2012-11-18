@@ -13,7 +13,7 @@ enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.OBPOSPointOfSale.UI.Modals.btnModalApplyClosePaidTicket',
   content: OB.I18N.getLabel('OBPOS_acceptClosePaidTicket'),
-  isApplyButton: true,
+  isDefaultAction: true,
   events: {
     onDeleteOrder: ''
   },

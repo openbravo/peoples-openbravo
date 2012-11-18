@@ -253,7 +253,7 @@
       if (inEvent && inEvent.keyCode === 13) {
         this.loginButtonAction();
       }
-      return true;
+      return false;
     },
 
     loginButtonAction: function () {

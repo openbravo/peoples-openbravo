@@ -18,10 +18,6 @@ enyo.kind({
     onSearchAction: '',
     onClearAction: ''
   },
-  handlers: {
-    onSearchActionByKey: 'searchAction',
-    onClearActionByKey: 'clearAction'
-  },
   components: [{
     style: 'padding: 10px;',
     components: [{
@@ -45,6 +41,7 @@ enyo.kind({
           kind: 'OB.UI.Button',
           style: 'width: 100px; margin: 0px 5px 8px 19px;',
           classes: 'btnlink-gray btnlink btnlink-small',
+          isDefaultAction: true,
           components: [{
             classes: 'btn-icon-small btn-icon-search'
           }, {
@@ -58,9 +55,6 @@ enyo.kind({
           kind: 'OB.UI.Button',
           style: 'width: 100px; margin: 0px 0px 8px 5px;',
           classes: 'btnlink-yellow btnlink btnlink-small',
-          attributes: {
-            'onEnterTap': 'onClearActionByKey'
-          },
           components: [{
             classes: 'btn-icon-small btn-icon-clear'
           }, {
@@ -287,15 +281,6 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ModalPaidReceipts',
   kind: 'OB.UI.Modal',
-  onEnterTap: function (args, action) {
-    if (action) {
-      this.waterfall(action);
-      return true;
-    } else {
-      this.waterfall("onSearchActionByKey");
-      return true;
-    }
-  },
   topPosition: '125px',
   header: OB.I18N.getLabel('OBPOS_LblPaidReceipts'),
   published: {

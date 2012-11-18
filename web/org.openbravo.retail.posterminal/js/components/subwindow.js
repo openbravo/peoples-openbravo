@@ -11,11 +11,88 @@
 
 enyo.kind({
   name: 'OB.UI.subwindow',
+  kind: 'enyo.Popup',
+
+  modal: false,
+  autoDismiss: false,
+  floating: false,
+
   events: {
     onChangeSubWindow: ''
   },
   classes: 'subwindow',
   showing: false,
+  handlers: {
+    onkeydown: 'keydownHandler'
+  },
+  keydownHandler: function (inSender, inEvent) {
+    if (inEvent.keyCode === 27 && this.showing) { //Handle ESC key to hide the popup
+      //TODO: Improve the way the "close" action is defined
+      this.$.subWindowHeader.getComponents()[0].onTapCloseButton();
+      return true;
+    } else if (inEvent.keyCode === 13 && this.defaultActionButton) { //Handle ENTER key to execute the default action (if exists)
+      this.defaultActionButton.executeTapAction();
+      return true;
+    } else {
+      return false;
+    }
+  },
+  showingChanged: function () {
+    this.inherited(arguments);
+    if (this.showing) {
+      OB.POS.terminal.openedSubwindow = this;
+      this.setDefaultActionButton();
+    } else {
+      OB.POS.terminal.openedSubwindow = null;
+    }
+  },
+  focusInPopup: function () {
+    var allChildsArray = OB.UTIL.getAllChildsSorted(this),
+        isFirstFocusableElementObtained = false,
+        tagName, element, i;
+    for (i = 0; i < allChildsArray.length; i++) {
+      if (allChildsArray[i].hasNode() && allChildsArray[i].hasNode().tagName) {
+        tagName = allChildsArray[i].hasNode().tagName.toUpperCase();
+      } else {
+        tagName = '';
+      }
+      if ((tagName === 'INPUT' || tagName === 'SELECT' || tagName === 'TEXTAREA' || tagName === 'BUTTON') && allChildsArray[i].showing && !isFirstFocusableElementObtained) {
+        element = allChildsArray[i];
+        isFirstFocusableElementObtained = true;
+      } else if (allChildsArray[i].isFirstFocus) {
+        element = allChildsArray[i];
+        break;
+      }
+    }
+    if (element) {
+      element.focus();
+    }
+    return true;
+  },
+  setDefaultActionButton: function (element) {
+    var allChildsArray, tagName, i;
+    if (element) {
+      allChildsArray = [element];
+    } else {
+      allChildsArray = OB.UTIL.getAllChildsSorted(this);
+    }
+
+    for (i = 0; i < allChildsArray.length; i++) {
+      if (allChildsArray[i].hasNode() && allChildsArray[i].hasNode().tagName) {
+        tagName = allChildsArray[i].hasNode().tagName.toUpperCase();
+      } else {
+        tagName = '';
+      }
+      if (tagName === 'BUTTON' && allChildsArray[i].isDefaultAction) {
+        element = allChildsArray[i];
+        break;
+      }
+    }
+    if (element) {
+      this.defaultActionButton = element;
+    }
+    return true;
+  },
   mainBeforeSetShowing: function (args) {
     var valueToReturn = true;
     if (args.caller) {
@@ -31,12 +108,12 @@ enyo.kind({
     }
 
     if (valueToReturn) {
-      $(this.hasNode()).find('[focus-on-open="true"]').filter(':first').focus();
+      this.focusInPopup();
     }
     return valueToReturn;
   },
   mainAfterShow: function (args) {
-    $(this.hasNode()).find('[focus-on-open="true"]').filter(':first').focus();
+    this.focusInPopup();
     if (this.afterShow) {
       this.afterShow(args);
     }
@@ -51,12 +128,6 @@ enyo.kind({
     }
 
     return valueToReturn;
-  },
-  enterTap: function (e, action) {
-    if (this.onEnterTap) {
-      return this.onEnterTap(e, action);
-    }
-    return false;
   },
   header: {},
   body: {},
@@ -76,13 +147,6 @@ enyo.kind({
       subWin.relComponentsWithSubWindow(child, subWin);
       child.subWindow = subWin;
     });
-  },
-  rendered: function () {
-    if (OB.UI.UTILS.domIdEnyoReference) {
-      if (this.getId()) {
-        OB.UI.UTILS.domIdEnyoReference[this.getId()] = this;
-      }
-    }
   },
   initComponents: function () {
     this.inherited(arguments);

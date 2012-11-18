@@ -35,7 +35,7 @@ enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.UI.ModalCancel_OkButton',
   content: OB.I18N.getLabel('OBPOS_LblOk'),
-  isApplyButton: true,
+  isDefaultAction: true,
   popup: 'modalCancel',
   tap: function () {
     this.doHideThisPopup();
@@ -47,9 +47,6 @@ enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.UI.ModalCancel_CancelButton',
   content: OB.I18N.getLabel('OBPOS_LblCancel'),
-  attributes: {
-    'onEnterTap': 'hide'
-  },
   popup: 'modalCancel',
   tap: function () {
     this.doHideThisPopup();

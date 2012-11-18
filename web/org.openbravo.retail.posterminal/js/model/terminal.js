@@ -271,6 +271,7 @@ OB.Model.Terminal = Backbone.Model.extend({
     this.on('window:ready', function (w) {
       OB.POS.terminal.$.containerWindow.render();
       OB.UTIL.showLoading(false);
+      //enyo.dispatcher.capture(OB.POS.terminal, false);
     }, this);
 
     windowClass = OB.POS.windows.where({
@@ -575,9 +576,7 @@ OB.Model.Terminal = Backbone.Model.extend({
     }
 
     // reset all application state.
-    $(window).off('keypress');
-    $(window).off('keydown');
-    //  this.set('terminal', null);
+    //this.set('terminal', null);
     this.set('payments', null);
     this.set('context', null);
     this.set('permissions', null);

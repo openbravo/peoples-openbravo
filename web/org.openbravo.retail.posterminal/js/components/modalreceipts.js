@@ -132,7 +132,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.UI.btnModalApplyDelete',
-  isApplyButton: true,
+  isDefaultAction: true,
   content: OB.I18N.getLabel('OBPOS_LblYesDelete'),
   events: {
     onDeleteOrder: ''
@@ -147,9 +147,6 @@ enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.UI.btnModalCancelDelete',
   content: OB.I18N.getLabel('OBPOS_LblCancel'),
-  attributes: {
-    'onEnterTap': 'hide'
-  },
   tap: function () {
     this.doHideThisPopup();
   }

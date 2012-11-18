@@ -15,7 +15,6 @@ enyo.kind({
   events: {
     onCancelReceiptToInvoice: ''
   },
-  tag: 'button',
   style: 'width: 50px;',
   classes: 'btnlink-white btnlink-payment-clear btn-icon-small btn-icon-check',
   tap: function () {

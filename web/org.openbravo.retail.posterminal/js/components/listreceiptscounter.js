@@ -50,7 +50,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.ReceiptsCounterButton',
-  tag: 'button',
+  kind: 'OB.UI.Button',
   classes: 'btnlink btnlink-gray',
   style: 'position: relative; overflow: hidden; margin:0px; padding:0px; height:50px; width: 50px;',
   events: {

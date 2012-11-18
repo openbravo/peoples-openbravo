@@ -13,8 +13,6 @@
   var modelterminal = OB.POS.modelterminal,
       executeWhenDOMReady;
 
-  OB.UI.UTILS = {};
-  OB.UI.UTILS.domIdEnyoReference = {};
   // alert all errors
   window.onerror = function (e) {
     if (typeof (e) === 'string') {
@@ -26,8 +24,6 @@
     var webwindow, terminal = OB.POS.modelterminal.get('terminal');
 
     // We are Logged !!!
-    $(window).off('keypress');
-    $(window).off('keydown');
 
     function searchCurrentBP() {
       function errorCallback(tx, error) {
@@ -76,8 +72,6 @@
 
     // Logged out. go to login window
     modelterminal.off('loginfail');
-    $(window).off('keypress');
-    $(window).off('keydown');
 
     // Redirect to login window
     localStorage.setItem('target-window', window.location.href);

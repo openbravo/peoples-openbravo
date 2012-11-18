@@ -73,9 +73,6 @@ enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.customers.newcustomersave',
   style: 'width: 100px; margin: 0px 5px 8px 19px;',
   classes: 'btnlink btnlink-small',
-  attributes: {
-    'focus-on-open': 'true'
-  },
   content: OB.I18N.getLabel('OBPOS_LblSave'),
   events: {
     onSaveCustomer: ''

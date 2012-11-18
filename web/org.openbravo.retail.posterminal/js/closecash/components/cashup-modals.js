@@ -32,7 +32,7 @@ enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.OBPOSCashUp.UI.modalFinished_OkButton',
   content: OB.I18N.getLabel('OBPOS_LblOk'),
-  isApplyButton: true,
+  isDefaultAction: true,
   tap: function () {
     this.doHideThisPopup();
   }
@@ -62,7 +62,7 @@ enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.OBPOSCashUp.UI.modalFinishedWrongly_OkButton',
   content: OB.I18N.getLabel('OBPOS_LblOk'),
-  isApplyButton: true,
+  isDefaultAction: true,
   tap: function () {
     this.doHideThisPopup();
   }
@@ -92,7 +92,7 @@ enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.OBPOSCashUp.UI.modalPendingToProcess_OkButton',
   content: OB.I18N.getLabel('OBPOS_LblOk'),
-  isApplyButton: true,
+  isDefaultAction: true,
   tap: function () {
     this.doHideThisPopup();
   }
@@ -102,10 +102,6 @@ enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.OBPOSCashUp.UI.modalPendingToProcess_CancelButton',
   content: OB.I18N.getLabel('OBPOS_LblCancel'),
-  attributes: {
-    //TODO
-    'onEnterTap': 'hide'
-  },
   tap: function () {
     this.doHideThisPopup();
     OB.POS.navigate('retail.pointofsale');

@@ -35,7 +35,7 @@ enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.OBPOSPointOfSale.UI.Modals.modalEnoughCredit.Components.apply_button',
   content: OB.I18N.getLabel('OBPOS_LblUseCredit'),
-  isApplyButton: true,
+  isDefaultAction: true,
   init: function (model) {
     this.model = model;
   },
@@ -73,7 +73,7 @@ enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.Modals.modalNotEnoughCredit',
   style: 'background-color: #EBA001;',
   header: OB.I18N.getLabel('OBPOS_notEnoughCreditHeader'),
-  isApplyButton: true,
+  isDefaultAction: true,
   executeOnShow: function () {
     if (this.args) {
       this.$.bodyContent.$.popupmessage.setContent(OB.I18N.getLabel('OBPOS_notEnoughCreditBody', [this.args.bpName, this.args.actualCredit]));

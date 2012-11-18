@@ -39,6 +39,12 @@ enyo.kind({
 // Container for the whole POS application
 enyo.kind({
   name: 'OB.UI.Terminal',
+  handlers: {
+    // To ensure that events are being listened/handled at least by OB.UI.Terminal in case the focus is in an INPUT
+    // because if it is the case, 'keydownHandler' and 'keypressHandler' are not called (even with 'enyo.Signals' in place)
+    onkeydown: 'keydownHandler',
+    onkeypress: 'keypressHandler'
+  },
   classes: 'pos-container',
   components: [{
     classes: 'section',
@@ -170,11 +176,27 @@ enyo.kind({
   }, {
     name: 'alertContainer'
   }, {
+    // To globaly handle keypress and keydown events
+    kind: enyo.Signals,
+    onkeydown: "keydownHandler",
+    onkeypress: "keypressHandler"
+  }, {
     kind: 'enyo.Input',
     name: 'focusKeeper',
     type: 'text',
     style: 'position: fixed; top: -1000px; left: -1000px;'
   }],
+  keydownHandler: function (inSender, inEvent) {
+    this.waterfall('onGlobalKeydown', {
+      keyboardEvent: inEvent
+    });
+  },
+  keypressHandler: function (inSender, inEvent) {
+    this.waterfall('onGlobalKeypress', {
+      keyboardEvent: inEvent
+    });
+  },
+
   initComponents: function () {
     //this.terminal = terminal;
     this.inherited(arguments);

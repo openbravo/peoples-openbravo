@@ -67,6 +67,7 @@ enyo.kind({
     this.model = event.model;
   },
   tap: function (model) {
+    this.doHideThisPopup();
     this.doChangeSubWindow({
       newWindow: {
         name: 'customerCreateAndEdit',
@@ -75,7 +76,6 @@ enyo.kind({
         }
       }
     });
-    this.doHideThisPopup();
   }
 });
 
@@ -138,6 +138,7 @@ enyo.kind({
           kind: 'OB.UI.Button',
           style: 'width: 100px; margin: 0px 5px 8px 19px;',
           classes: 'btnlink-gray btnlink btnlink-small',
+          isDefaultAction: true,
           components: [{
             classes: 'btn-icon-small btn-icon-search'
           }, {
@@ -151,9 +152,6 @@ enyo.kind({
           kind: 'OB.UI.Button',
           style: 'width: 100px; margin: 0px 0px 8px 5px;',
           classes: 'btnlink-yellow btnlink btnlink-small',
-          attributes: {
-            'onEnterTap': 'onClearAction'
-          },
           components: [{
             classes: 'btn-icon-small btn-icon-clear'
           }, {
@@ -298,15 +296,6 @@ enyo.kind({
   name: 'OB.UI.ModalBusinessPartners',
   topPosition: '125px',
   kind: 'OB.UI.Modal',
-  onEnterTap: function (args, action) {
-    if (action) {
-      this.waterfall(action);
-      return true;
-    } else {
-      this.waterfall("onSearchActionByKey");
-      return true;
-    }
-  },
   executeOnHide: function () {
     this.$.body.$.listBps.$.bpslistitemprinter.$.theader.$.modalBpScrollableHeader.clearAction();
   },

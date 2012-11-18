@@ -148,7 +148,7 @@ enyo.kind({
   name: 'OB.UI.ProfileDialogApply',
   isActive: true,
   content: OB.I18N.getLabel('OBPOS_LblApply'),
-  isApplyButton: true,
+  isDefaultAction: true,
   tap: function () {
     if (!this.isActive) {
       return;
@@ -194,9 +194,6 @@ enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.UI.ProfileDialogCancel',
   content: OB.I18N.getLabel('OBPOS_LblCancel'),
-  attributes: {
-    'onEnterTap': 'hide'
-  },
   tap: function () {
     this.doHideThisPopup();
   }

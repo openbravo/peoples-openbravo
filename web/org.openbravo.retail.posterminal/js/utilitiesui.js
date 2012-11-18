@@ -56,7 +56,7 @@ enyo.kind({
   name: 'OB.UTIL.showAlert',
   classes: 'alert alert-fade',
   components: [{
-    tag: 'button',
+    kind: 'OB.UI.Button',
     classes: 'alert-closebutton',
     tap: function () {
       this.owner.hide();
@@ -141,22 +141,21 @@ OB.UTIL.showError = function (s) {
   OB.UTIL.showAlert.display(s, OB.I18N.getLabel('OBPOS_LblError'), 'alert-error');
 };
 
-OB.UTIL.fixFocus = function () {
-  var t = document.activeElement.tagName;
-  if (t !== 'INPUT' && t !== 'SELECT' && t !== 'TEXTAREA') {
-    OB.POS.terminal.$.focusKeeper.focus();
+// This funtion returns an array of Enyo components (the object and its children) sorted
+// in the same way it they are rendered in the html
+OB.UTIL.getAllChildsSorted = function (component, result) {
+  var i;
+  if (Object.prototype.toString.call(component) !== '[object Array]') {
+    component = [component];
   }
-  var activeElement_id = document.activeElement.id;
-  var focusKeeper_id = OB.POS.terminal.$.focusKeeper.getId();
-
-  return (activeElement_id === focusKeeper_id || (t !== 'INPUT' && t !== 'SELECT' && t !== 'TEXTAREA')); // process key
-};
-
-/* This will automatically set the focus in the first focusable item in the modal popup */
-OB.UTIL.focusInModal = function (jqModal) {
-  var firstFocusableItem = jqModal.find('input,select,button').filter(':visible:enabled:first');
-  if (firstFocusableItem) {
-    firstFocusableItem.focus();
+  if (!result) {
+    result = [];
   }
-  return true;
+  for (i = 0; i < component.length; i++) {
+    result.push(component[i]);
+    if (typeof component[i].children !== 'undefined' && component[i].children.length !== 0) {
+      result = OB.UTIL.getAllChildsSorted(component[i].children, result);
+    }
+  }
+  return result;
 };

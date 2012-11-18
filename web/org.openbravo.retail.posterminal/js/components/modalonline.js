@@ -20,7 +20,7 @@ enyo.kind({
     components: [{
       kind: 'OB.UI.ModalDialogButton',
       content: OB.I18N.getLabel('OBPOS_LblOk'),
-      isApplyButton: true,
+      isDefaultAction: true,
       tap: function () {
         OB.POS.terminal.$.dialogsContainer.$.modalOnline.hide();
         window.location = window.location.pathname + '?terminal=' + window.encodeURIComponent(OB.POS.paramTerminal);
@@ -28,9 +28,6 @@ enyo.kind({
     }, {
       kind: 'OB.UI.ModalDialogButton',
       content: OB.I18N.getLabel('OBPOS_LblCancel'),
-      attributes: {
-        'onEnterTap': 'hide'
-      },
       tap: function () {
         OB.POS.terminal.$.dialogsContainer.$.modalOnline.hide();
         OB.POS.navigate('retail.pointofsale');

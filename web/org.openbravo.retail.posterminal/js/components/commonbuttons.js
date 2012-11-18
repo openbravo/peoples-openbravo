@@ -10,7 +10,30 @@
 /*global enyo, _, $ */
 enyo.kind({
   name: 'OB.UI.Button',
-  kind: 'enyo.Button'
+  kind: 'enyo.Button',
+  handlers: {
+    onkeydown: 'keydownHandler'
+  },
+  keydownHandler: function (inSender, inEvent) {
+    var keyCode = inEvent.keyCode;
+    if (keyCode === 13 || keyCode === 32) { //Handle ENTER and SPACE keys in buttons
+      this.executeTapAction();
+      return true;
+    }
+    return false;
+  },
+  executeTapAction: function () {
+    if (this && this.ontap && this.owner && this.owner[this.ontap]) {
+      this.owner[this.ontap]();
+    } else {
+      this.tap();
+    }
+  },
+  focus: function () { // Enyo doesn't have "focus" function in buttons, so it has to be implemented
+    if (this.hasNode()) {
+      this.hasNode().focus();
+    }
+  }
 /*, Removed to investigate if btn-over/btn-down are still needed due to enyo/onyx adoption
   handlers: {
     onmouseover: 'mouseOverOut',
@@ -53,7 +76,19 @@ enyo.kind({
   floating: true,
   scrim: true,
   handlers: {
+    onkeydown: 'keydownHandler',
     onHideThisPopup: 'hideFromInside'
+  },
+  keydownHandler: function (inSender, inEvent) {
+    if (inEvent.keyCode === 27 && this.showing) { //Handle ESC key to hide the popup
+      this.hide();
+      return true;
+    } else if (inEvent.keyCode === 13 && this.defaultActionButton) { //Handle ENTER key to execute the default action (if exists)
+      this.defaultActionButton.executeTapAction();
+      return true;
+    } else {
+      return false;
+    }
   },
   _addArgsToComponent: function (args) {
     if (args) {
@@ -63,6 +98,14 @@ enyo.kind({
       }, this);
     }
   },
+  showingChanged: function () {
+    this.inherited(arguments);
+    if (this.showing) {
+      OB.POS.terminal.openedPopup = this;
+    } else {
+      OB.POS.terminal.openedPopup = null;
+    }
+  },
   show: function (args) {
     this.args = {}; //reset;
     this._addArgsToComponent(args);
@@ -70,7 +113,8 @@ enyo.kind({
       this.executeOnShow();
     }
     this.inherited(arguments);
-    OB.UTIL.focusInModal($(this.hasNode()));
+    this.setDefaultActionButton();
+    this.focusInPopup();
     if (this.executeOnShown) {
       this.executeOnShown();
     }
@@ -86,37 +130,58 @@ enyo.kind({
       this.executeOnHide();
     }
   },
-  rendered: function () {
-    this.inherited(arguments);
-    if (OB.UI.UTILS.domIdEnyoReference) {
-      if (this.getId()) {
-        OB.UI.UTILS.domIdEnyoReference[this.getId()] = this;
+  focusInPopup: function () {
+    var allChildsArray = OB.UTIL.getAllChildsSorted(this),
+        isFirstFocusableElementObtained = false,
+        tagName, element, i;
+    for (i = 0; i < allChildsArray.length; i++) {
+      if (allChildsArray[i].hasNode() && allChildsArray[i].hasNode().tagName) {
+        tagName = allChildsArray[i].hasNode().tagName.toUpperCase();
+      } else {
+        tagName = '';
+      }
+      if ((tagName === 'INPUT' || tagName === 'SELECT' || tagName === 'TEXTAREA' || tagName === 'BUTTON') && allChildsArray[i].showing && !isFirstFocusableElementObtained) {
+        element = allChildsArray[i];
+        isFirstFocusableElementObtained = true;
+      } else if (allChildsArray[i].isFirstFocus) {
+        element = allChildsArray[i];
+        break;
       }
     }
+    if (element) {
+      element.focus();
+    }
+    return true;
   },
-  enterTap: function (e, action) {
-    if (action) {
-      if (action === 'hide') {
-        this.hide();
-        return true;
+  setDefaultActionButton: function (element) {
+    var allChildsArray, tagName, i;
+    if (element) {
+      allChildsArray = [element];
+    } else {
+      allChildsArray = OB.UTIL.getAllChildsSorted(this);
+    }
+
+    for (i = 0; i < allChildsArray.length; i++) {
+      if (allChildsArray[i].hasNode() && allChildsArray[i].hasNode().tagName) {
+        tagName = allChildsArray[i].hasNode().tagName.toUpperCase();
+      } else {
+        tagName = '';
+      }
+      if (tagName === 'BUTTON' && allChildsArray[i].isDefaultAction) {
+        element = allChildsArray[i];
+        break;
       }
     }
-
-    if (this.onEnterTap) {
-      this.onEnterTap(e, action);
-      return true;
+    if (element) {
+      this.defaultActionButton = element;
     }
-
-    if (this.applyButton) {
-      this.applyButton.tap(e, {
-        keyboardEnter: true
-      });
-      return true;
-    }
-
-    return false;
+    return true;
   },
   updatePosition: function () {
+    if (!this.centered || !this.floating) {
+      this.inherited(arguments);
+      return true;
+    }
     // Improve of enyo "updatePosition" function to proper manage of % and absolute top and left positions
     var top, left, t = this.getBounds();
     if (this.topPosition) {
@@ -197,11 +262,6 @@ enyo.kind({
       this.$.body.addClass(this.bodyClass);
     }
     this.$.body.createComponent(this.body);
-  },
-
-  render: function () {
-    this.inherited(arguments);
-    OB.UTIL.focusInModal($(this.node));
   }
 });
 
@@ -285,7 +345,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.CheckboxButton',
-  tag: 'button',
+  kind: 'OB.UI.Button',
   classes: 'btn-check',
   checked: false,
   tap: function () {
@@ -374,14 +434,6 @@ enyo.kind({
       name: 'bodyButtons'
     }]
   }],
-  rendered: function () {
-    this.inherited(arguments);
-    enyo.forEach(this.$.bodyButtons.getComponents(), function (control) {
-      if (control.isApplyButton) {
-        this.applyButton = control;
-      }
-    }, this);
-  },
   initComponents: function () {
     this.inherited(arguments);
 
@@ -464,9 +516,6 @@ enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.UI.CancelDialogButton',
   content: OB.I18N.getLabel('OBPOS_LblCancel'),
-  attributes: {
-    'onEnterTap': 'hide'
-  },
   tap: function () {
     this.doHideThisPopup();
   }
