@@ -286,6 +286,13 @@ enyo.kind({
     this.model.get('orderList').addPaidReceipt(inEvent.newPaidReceipt);
     return true;
   },
+  executeOnShow: function () {
+    if (this.params.isQuotation) {
+      this.$.header.setContent(OB.I18N.getLabel('OBPOS_Quotations'));
+    } else {
+      this.$.header.setContent(OB.I18N.getLabel('OBPOS_LblPaidReceipts'));
+    }
+  },
   init: function (model) {
     this.model = model;
   }
