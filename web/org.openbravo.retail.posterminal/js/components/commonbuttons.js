@@ -454,7 +454,12 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.SearchInput',
-  kind: 'enyo.Input'
+  kind: 'enyo.Input',
+  type: 'text',
+  classes: 'input',
+  attributes: {
+    'x-webkit-speech': 'x-webkit-speech'
+  }
 });
 
 enyo.kind({
