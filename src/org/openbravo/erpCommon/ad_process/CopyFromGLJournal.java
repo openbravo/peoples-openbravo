@@ -105,7 +105,9 @@ public class CopyFromGLJournal extends HttpSecureAppServlet {
               "CO", data[i].isapproved, data[i].isprinted, data[i].description,
               data[i].postingtype, data[i].glCategoryId, data[i].datedoc, data[i].dateacct,
               data[i].cPeriodId, data[i].cCurrencyId, data[i].currencyratetype,
-              data[i].currencyrate, strKey, data[i].controlamt, strDocumentNo, "N", "N", "N") == 0)
+              data[i].currencyrate, strKey, data[i].controlamt, strDocumentNo, "N", "N", "N",
+              data[i].user1Id,data[i].user2Id, data[i].cCampaignId, data[i].cProjectId,
+              data[i].aAssetId, data[i].cCostcenterId, data[i].cBpartnerId , data[i].mProductId  ) == 0)
             log4j.warn("Save: GLJournal record " + i + " not inserted. Sequence = " + strSequence);
         } catch (ServletException ex) {
           myError = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
@@ -125,7 +127,8 @@ public class CopyFromGLJournal extends HttpSecureAppServlet {
                 dataLines[j].amtacctcr, dataLines[j].cUomId, dataLines[j].qty,
                 dataLines[j].cValidcombinationId, dataLines[j].user1Id, dataLines[j].user2Id,
                 dataLines[j].cCampaignId, dataLines[j].cProjectId, dataLines[j].cActivityId,
-                dataLines[j].cSalesregionId, dataLines[j].mProductId, dataLines[j].cBpartnerId) == 0)
+                dataLines[j].cSalesregionId, dataLines[j].mProductId, dataLines[j].cBpartnerId,
+                dataLines[j].aAssetId,dataLines[j].cCostcenterId) == 0)
               log4j.warn("Save: GLJournalLine record " + j + " not inserted. Sequence = "
                   + strLineSequence);
           } catch (ServletException ex) {
