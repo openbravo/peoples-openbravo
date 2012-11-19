@@ -8,6 +8,9 @@
  */
 package org.openbravo.retail.posterminal.term;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.retail.posterminal.ProcessHQLQuery;
@@ -20,10 +23,11 @@ public class Warehouses extends ProcessHQLQuery {
   }
 
   @Override
-  protected String getQuery(JSONObject jsonsent) throws JSONException {
+  protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
 
-    return "select ow.warehouse.id as warehouseid, ow.warehouse.name as warehousename, ow.priority as priority "
-        + "from OrganizationWarehouse as ow where ow.$readableCriteria and ow.organization.id = :organization "
-        + "order by priority asc";
+    return Arrays
+        .asList(new String[] { "select ow.warehouse.id as warehouseid, ow.warehouse.name as warehousename, ow.priority as priority "
+            + "from OrganizationWarehouse as ow where ow.$readableCriteria and ow.organization.id = :organization "
+            + "order by priority asc" });
   }
 }

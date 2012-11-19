@@ -153,16 +153,14 @@ public class JSONRowConverter {
     }
   }
 
-  public static void buildResponse(Writer w, Scroll listdata, String[] aliases) throws IOException {
+  public static int buildResponse(Writer w, Scroll listdata, String[] aliases) throws IOException,
+      JSONException {
 
     final JSONRowConverter converter = new JSONRowConverter(aliases);
 
-    final int startRow = 0;
     int rows = 0;
-    Throwable t = null;
 
     try {
-      w.write("\"data\":[");
       while (listdata.next()) {
         if (rows > 0) {
           w.write(',');
@@ -170,34 +168,37 @@ public class JSONRowConverter {
         w.write(converter.convert(listdata.get()).toString());
         rows++;
       }
-    } catch (JSONException e) {
-      t = e;
     } finally {
       listdata.close();
-      w.write("],");
-      if (t == null) {
-        // Add success fields
-        w.write("\"");
-        w.write(JsonConstants.RESPONSE_STARTROW);
-        w.write("\":");
-        w.write(Integer.toString(startRow));
-        w.write(",\"");
-        w.write(JsonConstants.RESPONSE_ENDROW);
-        w.write("\":");
-        w.write(Integer.toString(rows > 0 ? rows + startRow - 1 : 0));
-        w.write(",\"");
-        if (rows == 0) {
-          w.write(JsonConstants.RESPONSE_TOTALROWS);
-          w.write("\":0,\"");
-        }
-        w.write(JsonConstants.RESPONSE_STATUS);
-        w.write("\":");
-        w.write(Integer.toString(JsonConstants.RPCREQUEST_STATUS_SUCCESS));
-        w.write(",\"lastUpdated\":" + (new Date()).getTime());
-      } else {
-        JSONRowConverter.addJSONExceptionFields(w, t);
-      }
     }
+    return rows;
+  }
+
+  public static void startResponse(Writer w) throws IOException {
+    w.write("\"data\":[");
+  }
+
+  public static void endResponse(Writer w, int rows) throws IOException {
+    final int startRow = 0;
+    w.write("],");
+    // Add success fields
+    w.write("\"");
+    w.write(JsonConstants.RESPONSE_STARTROW);
+    w.write("\":");
+    w.write(Integer.toString(startRow));
+    w.write(",\"");
+    w.write(JsonConstants.RESPONSE_ENDROW);
+    w.write("\":");
+    w.write(Integer.toString(rows > 0 ? rows + startRow - 1 : 0));
+    w.write(",\"");
+    if (rows == 0) {
+      w.write(JsonConstants.RESPONSE_TOTALROWS);
+      w.write("\":0,\"");
+    }
+    w.write(JsonConstants.RESPONSE_STATUS);
+    w.write("\":");
+    w.write(Integer.toString(JsonConstants.RPCREQUEST_STATUS_SUCCESS));
+    w.write(",\"lastUpdated\":" + (new Date()).getTime());
   }
 
   public static void addJSONExceptionFields(Writer w, Throwable throwable) {

@@ -8,6 +8,9 @@
  */
 package org.openbravo.retail.posterminal.term;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.retail.posterminal.ProcessHQLQuery;
@@ -15,7 +18,8 @@ import org.openbravo.retail.posterminal.ProcessHQLQuery;
 public class PriceList extends ProcessHQLQuery {
 
   @Override
-  protected String getQuery(JSONObject jsonsent) throws JSONException {
-    return "from PricingPriceList where id =:pricelist and $readableCriteria";
+  protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
+    return Arrays
+        .asList(new String[] { "from PricingPriceList where id =:pricelist and $readableCriteria" });
   }
 }

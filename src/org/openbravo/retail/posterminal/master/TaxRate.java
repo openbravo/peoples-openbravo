@@ -8,6 +8,9 @@
  */
 package org.openbravo.retail.posterminal.master;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.model.common.enterprise.OrganizationInformation;
@@ -25,7 +28,7 @@ public class TaxRate extends ProcessHQLQuery {
   }
 
   @Override
-  protected String getQuery(JSONObject jsonsent) throws JSONException {
+  protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
 
     final OBPOSApplications posDetail = POSUtils.getTerminalById(jsonsent.getString("pos"));
 
@@ -71,6 +74,6 @@ public class TaxRate extends ProcessHQLQuery {
     }
     hql = hql + "and $readableCriteria order by validFromDate desc ";
 
-    return hql;
+    return Arrays.asList(new String[] { hql });
   }
 }

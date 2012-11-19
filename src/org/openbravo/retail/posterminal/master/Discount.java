@@ -8,8 +8,10 @@
  */
 package org.openbravo.retail.posterminal.master;
 
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -69,7 +71,7 @@ public class Discount extends ProcessHQLQuery {
   }
 
   @Override
-  protected String getQuery(JSONObject jsonsent) throws JSONException {
+  protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
     JSONObject today = new JSONObject();
     JSONObject value = new JSONObject();
     value.put("type", "DATE");
@@ -82,9 +84,10 @@ public class Discount extends ProcessHQLQuery {
     return prepareQuery(jsonsent);
   }
 
-  protected String prepareQuery(JSONObject jsonsent) throws JSONException {
+  protected List<String> prepareQuery(JSONObject jsonsent) throws JSONException {
     String hql = getPromotionsHQL(jsonsent);
     hql += "order by priority, id";
-    return hql;
+
+    return Arrays.asList(new String[] { hql });
   }
 }

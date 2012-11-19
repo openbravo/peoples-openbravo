@@ -8,6 +8,9 @@
  */
 package org.openbravo.retail.posterminal.term;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.retail.posterminal.ProcessHQLQuery;
@@ -15,9 +18,11 @@ import org.openbravo.retail.posterminal.ProcessHQLQuery;
 public class CashMgmtDepositEvents extends ProcessHQLQuery {
 
   @Override
-  protected String getQuery(JSONObject jsonsent) throws JSONException {
-    return "select c.id as id, c.name as name from OBRETCO_CashManagementEvents c "
-        + "where c.organization.id='" + jsonsent.getString("organization")
-        + "' and c.eventtype like '%IN%'";
+  protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
+    return Arrays
+        .asList(new String[] { "select c.id as id, c.name as name from OBRETCO_CashManagementEvents c "
+            + "where c.organization.id='"
+            + jsonsent.getString("organization")
+            + "' and c.eventtype like '%IN%'" });
   }
 }

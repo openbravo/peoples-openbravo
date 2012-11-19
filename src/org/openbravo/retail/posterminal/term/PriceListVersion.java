@@ -8,6 +8,9 @@
  */
 package org.openbravo.retail.posterminal.term;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.retail.posterminal.ProcessHQLQuery;
@@ -15,10 +18,11 @@ import org.openbravo.retail.posterminal.ProcessHQLQuery;
 public class PriceListVersion extends ProcessHQLQuery {
 
   @Override
-  protected String getQuery(JSONObject jsonsent) throws JSONException {
-    return "select plv.id AS id "
-        + "from PricingPriceListVersion AS plv "
-        + "where plv.$readableCriteria and plv.priceList.id =:pricelist and plv.validFromDate = (select max(pplv.validFromDate) "
-        + "from PricingPriceListVersion as pplv where pplv.priceList.id = :pricelist)";
+  protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
+    return Arrays
+        .asList(new String[] { "select plv.id AS id "
+            + "from PricingPriceListVersion AS plv "
+            + "where plv.$readableCriteria and plv.priceList.id =:pricelist and plv.validFromDate = (select max(pplv.validFromDate) "
+            + "from PricingPriceListVersion as pplv where pplv.priceList.id = :pricelist)" });
   }
 }

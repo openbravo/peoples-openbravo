@@ -18,10 +18,10 @@ import java.util.List;
 
 import javax.servlet.ServletException;
 
+import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
-import org.hibernate.QueryException;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
@@ -31,7 +31,9 @@ import org.openbravo.service.json.JsonToDataConverter;
 
 public abstract class ProcessHQLQuery implements JSONProcess {
 
-  protected abstract String getQuery(JSONObject jsonsent) throws JSONException;
+  protected abstract List<String> getQuery(JSONObject jsonsent) throws JSONException;
+
+  private final static Logger log = Logger.getLogger(ProcessHQLQuery.class);
 
   protected boolean isAdminMode() {
     return false;
@@ -50,67 +52,72 @@ public abstract class ProcessHQLQuery implements JSONProcess {
           && !jsonsent.get("lastUpdated").equals("undefined") ? jsonsent.getLong("lastUpdated")
           : null;
 
-      SimpleQueryBuilder querybuilder = new SimpleQueryBuilder(getQuery(jsonsent),
-          jsonsent.optString("client"), jsonsent.optString("organization"),
-          lastUpdated != null ? new Date(lastUpdated) : null);
+      int totalRows = 0;
+      JSONRowConverter.startResponse(w);
+      for (String hqlQuery : getQuery(jsonsent)) {
 
-      final Session session = OBDal.getInstance().getSession();
-      final Query query = session.createQuery(querybuilder.getHQLQuery());
+        SimpleQueryBuilder querybuilder = new SimpleQueryBuilder(hqlQuery,
+            jsonsent.optString("client"), jsonsent.optString("organization"),
+            lastUpdated != null ? new Date(lastUpdated) : null);
 
-      List<String> queryParams = new ArrayList<String>(Arrays.asList(query.getNamedParameters()));
+        final Session session = OBDal.getInstance().getSession();
+        final Query query = session.createQuery(querybuilder.getHQLQuery());
 
-      if (jsonsent.has("parameters")) {
-        JSONObject jsonparams = jsonsent.getJSONObject("parameters");
-        Iterator<?> it = jsonparams.keys();
-        while (it.hasNext()) {
-          String key = (String) it.next();
-          if (!queryParams.contains(key)) {
-            continue;
-          }
-          queryParams.remove(key);
+        List<String> queryParams = new ArrayList<String>(Arrays.asList(query.getNamedParameters()));
 
-          Object value = jsonparams.get(key);
-          if (value instanceof JSONObject) {
-            JSONObject jsonvalue = (JSONObject) value;
-            query.setParameter(
-                key,
-                JsonToDataConverter.convertJsonToPropertyValue(
-                    PropertyByType.get(jsonvalue.getString("type")), jsonvalue.get("value")));
-          } else {
-            query.setParameter(key,
-                JsonToDataConverter.convertJsonToPropertyValue(PropertyByType.infer(value), value));
-          }
-        }
-      }
+        if (jsonsent.has("parameters")) {
+          JSONObject jsonparams = jsonsent.getJSONObject("parameters");
+          Iterator<?> it = jsonparams.keys();
+          while (it.hasNext()) {
+            String key = (String) it.next();
+            if (!queryParams.contains(key)) {
+              continue;
+            }
+            queryParams.remove(key);
 
-      // XXX: for standard params (client, org, pos), no need to add as extra
-      if (!queryParams.isEmpty()) {
-        for (String param : queryParams) {
-          if (jsonsent.has(param)) {
-            Object value = jsonsent.get(param);
+            Object value = jsonparams.get(key);
             if (value instanceof JSONObject) {
               JSONObject jsonvalue = (JSONObject) value;
               query.setParameter(
-                  param,
+                  key,
                   JsonToDataConverter.convertJsonToPropertyValue(
                       PropertyByType.get(jsonvalue.getString("type")), jsonvalue.get("value")));
             } else {
-              query.setParameter(param, JsonToDataConverter.convertJsonToPropertyValue(
+              query.setParameter(key, JsonToDataConverter.convertJsonToPropertyValue(
                   PropertyByType.infer(value), value));
             }
           }
         }
+
+        // XXX: for standard params (client, org, pos), no need to add as extra
+        if (!queryParams.isEmpty()) {
+          for (String param : queryParams) {
+            if (jsonsent.has(param)) {
+              Object value = jsonsent.get(param);
+              if (value instanceof JSONObject) {
+                JSONObject jsonvalue = (JSONObject) value;
+                query.setParameter(
+                    param,
+                    JsonToDataConverter.convertJsonToPropertyValue(
+                        PropertyByType.get(jsonvalue.getString("type")), jsonvalue.get("value")));
+              } else {
+                query.setParameter(param, JsonToDataConverter.convertJsonToPropertyValue(
+                    PropertyByType.infer(value), value));
+              }
+            }
+          }
+        }
+
+        ScrollableResults listdata = query.scroll(ScrollMode.FORWARD_ONLY);
+        String[] aliases = query.getReturnAliases();
+
+        totalRows += JSONRowConverter.buildResponse(w, Scroll.create(listdata), aliases);
       }
 
-      ScrollableResults listdata = query.scroll(ScrollMode.FORWARD_ONLY);
-      String[] aliases = query.getReturnAliases();
+      JSONRowConverter.endResponse(w, totalRows);
 
-      JSONRowConverter.buildResponse(w, Scroll.create(listdata), aliases);
-    } catch (QueryException e) {
-      JSONRowConverter.addJSONExceptionFields(w, e);
-    } catch (JSONException e) {
-      JSONRowConverter.addJSONExceptionFields(w, e);
     } catch (Exception e) {
+      log.error("Error when generating query", e);
       JSONRowConverter.addJSONExceptionFields(w, e);
     } finally {
       if (isAdminMode()) {

@@ -8,6 +8,9 @@
  */
 package org.openbravo.retail.posterminal.term;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.retail.posterminal.ProcessHQLQuery;
@@ -20,7 +23,8 @@ public class Location extends ProcessHQLQuery {
   }
 
   @Override
-  protected String getQuery(JSONObject jsonsent) throws JSONException {
-    return "from Location where id = (select min(locationAddress) from OrganizationInformation where organization.id = :org and $readableCriteria)";
+  protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
+    return Arrays
+        .asList(new String[] { "from Location where id = (select min(locationAddress) from OrganizationInformation where organization.id = :org and $readableCriteria)" });
   }
 }
