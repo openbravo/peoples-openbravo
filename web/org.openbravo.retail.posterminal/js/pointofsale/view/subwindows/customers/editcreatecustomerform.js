@@ -141,6 +141,7 @@ enyo.kind({
     kind: 'OB.UI.CustomerTextProperty',
     name: 'customerName',
     modelProperty: 'name',
+    isFirstFocus: true,
     label: OB.I18N.getLabel('OBPOS_LblName')
   }, {
     kind: 'OB.UI.CustomerTextProperty',
