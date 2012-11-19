@@ -363,8 +363,16 @@
           WHERE c_orderline_id IN (select c_orderline_id
                                    from c_orderline
                                    where c_order_id = v_Record_id);
-
         END;
+        /**
+        *  Manage Stock Reservations
+        */
+        UPDATE c_orderline
+        SET so_res_status = NULL
+        WHERE c_order_id = v_Record_id;
+        UPDATE c_order
+        SET so_res_status = NULL
+        WHERE c_order_id = v_record_id;
         --ADDED BY P.SAROBE but to be deprecated 26052007
         SELECT MAX(C_CASHLINE_ID)
           INTO v_CashLine_ID
@@ -975,7 +983,7 @@
         END LOOP; -- For all lines needing reservation
       END; -- Reserve Inventory
      /**************************************************************************
-      * Reservations management.
+      * Stock Reservations management.
       *************************************************************************/
       DECLARE
         v_reservation_id      VARCHAR2(32);
@@ -986,6 +994,9 @@
         v_pendingtounreserve  NUMBER;
         v_qtyaux              NUMBER;
         v_res_status          M_RESERVATION.RES_STATUS%TYPE;
+        v_linecount           NUMBER;
+        v_creservedcount      NUMBER;
+        v_preservedcount      NUMBER;
         
         cur_res_stock         RECORD;
       BEGIN
@@ -1002,8 +1013,7 @@
             SELECT count(*), max(m_reservation_id)
               INTO v_aux, v_reservation_id
             FROM m_reservation
-            WHERE c_orderline_id = cur_orderline.c_orderline_id
-              AND res_status != 'CL';
+            WHERE c_orderline_id = cur_orderline.c_orderline_id;
             IF (v_aux > 1) THEN
               RAISE_APPLICATION_ERROR(-20000, '@SOLineWithMoreThanOneOpenReservation@');
             ELSIF (v_aux = 1) THEN
@@ -1063,6 +1073,13 @@
                   M_RESERVE_STOCK_AUTO(v_reservation_id, v_user, v_reservedqty);
                 END IF;
               END IF;
+              
+              -- Initialize so_res_status
+              UPDATE c_orderline
+              SET so_res_status = CASE WHEN cur_orderline.qtyordered = v_reservedqty THEN 'CR'
+                                       ELSE 'PR'
+                                  END
+              WHERE c_orderline_id = cur_orderline.c_orderline_id;
             ELSIF (cur_orderline.create_reservation = 'CRP') THEN
               M_CREATE_RESERVE_FROM_SOL(cur_orderline.c_orderline_id, 'Y', v_user, v_reservation_id);
             ELSE -- Always create reservation in draft status
@@ -1070,6 +1087,20 @@
               M_CREATE_RESERVE_FROM_SOL(cur_orderline.c_orderline_id, 'N', v_user, v_reservation_id);
             END IF;
           END LOOP;
+          SELECT COUNT(*), SUM(CASE ol.so_res_status WHEN 'CR' THEN 1 ELSE 0 END), SUM(CASE ol.so_res_status WHEN 'PR' THEN 1 ELSE 0 END)
+            INTO v_linecount, v_creservedcount, v_preservedcount
+          FROM c_orderline ol
+              JOIN m_product p ON ol.m_product_id = p.m_product_id
+          WHERE ol.c_order_id = v_record_id
+            AND ol.qtyordered > 0
+            AND p.isstocked = 'Y'
+            AND p.producttype = 'I';
+          UPDATE c_order
+          SET so_res_status = CASE WHEN v_linecount = v_creservedcount THEN 'CR'
+                                   WHEN v_creservedcount + v_preservedcount > 0 THEN 'PR'
+                                   ELSE 'NR'
+                              END
+          WHERE c_order_id = v_record_id;
         END IF;
       END;
 

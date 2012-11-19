@@ -21,8 +21,8 @@
 ************************************************************************/
   v_sales_order_id      VARCHAR2(32);
   v_linecount           NUMBER;
-  v_creservedcount        NUMBER;
-  v_preservedcount        NUMBER;
+  v_creservedcount      NUMBER;
+  v_preservedcount      NUMBER;
   v_reservedcount       NUMBER;
 BEGIN
   IF (AD_isTriggerEnabled()='N') THEN
@@ -42,9 +42,13 @@ BEGIN
       WHERE c_orderline_id = :NEW.c_orderline_id;
       SELECT COUNT(*), SUM(CASE so_res_status WHEN 'CR' THEN 1 ELSE 0 END), SUM(CASE so_res_status WHEN 'PR' THEN 1 ELSE 0 END)
         INTO v_linecount, v_creservedcount, v_preservedcount
-      FROM c_orderline
-      WHERE c_order_id = v_sales_order_id;
-
+      FROM c_orderline ol
+          JOIN m_product p ON ol.m_product_id = p.m_product_id
+      WHERE ol.c_order_id = v_sales_order_id
+        AND ol.qtyordered > 0
+        AND p.isstocked = 'Y'
+        AND p.producttype = 'I';
+  
       UPDATE c_order
       SET so_res_status = CASE WHEN v_linecount = v_creservedcount THEN 'CR'
                                WHEN v_creservedcount + v_preservedcount > 0 THEN 'PR'
