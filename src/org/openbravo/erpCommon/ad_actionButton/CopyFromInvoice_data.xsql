@@ -68,16 +68,21 @@
             isdeferred, defplantype, periodnumber, c_period_id,
             C_PROJECT_ID, A_ASSET_ID, C_COSTCENTER_ID, USER1_ID, USER2_ID
         )
-        SELECT ?, ?, ?, AD_ORG_ID, 'Y', now(), ?, now(), ?,
-        (SELECT COALESCE(MAX(LINE),0)+10 FROM C_InvoiceLine WHERE C_Invoice_ID = ?), DESCRIPTION, M_PRODUCT_ID, 
-        QTYINVOICED, TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), C_CHARGE_ID, CHARGEAMT, C_UOM_ID, ?, 
-        S_RESOURCEASSIGNMENT_ID, TAXAMT, M_ATTRIBUTESETINSTANCE_ID, ISDESCRIPTION, QUANTITYORDER, M_PRODUCT_UOM_ID, 
-        PRICESTD, ACCOUNT_ID,FINANCIAL_INVOICE_LINE,
+        SELECT ?, ?, ?, l.AD_ORG_ID, 'Y', now(), ?, now(), ?,
+        (SELECT COALESCE(MAX(LINE),0)+10 FROM C_InvoiceLine WHERE C_Invoice_ID = ?), l.DESCRIPTION, l.M_PRODUCT_ID,
+        l.QTYINVOICED, TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), l.C_CHARGE_ID, l.CHARGEAMT, l.C_UOM_ID, ?,
+        l.S_RESOURCEASSIGNMENT_ID, l.TAXAMT, l.M_ATTRIBUTESETINSTANCE_ID, l.ISDESCRIPTION, l.QUANTITYORDER, l.M_PRODUCT_UOM_ID,
+        l.PRICESTD, l.ACCOUNT_ID,l.FINANCIAL_INVOICE_LINE,
         TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?),
-        isdeferred, defplantype, periodnumber, c_period_id,
-        C_PROJECT_ID, A_ASSET_ID, C_COSTCENTER_ID, USER1_ID, USER2_ID
-        FROM C_INVOICELINE 
+        l.isdeferred, l.defplantype, l.periodnumber, l.c_period_id,
+        COALESCE(l.C_Project_ID, inv.C_Project_ID) AS C_Project_ID,
+        COALESCE(l.A_Asset_ID, inv.A_Asset_ID) AS A_Asset_ID,
+        COALESCE(l.C_Costcenter_ID, inv.C_Costcenter_ID) AS C_Costcenter_ID,
+        COALESCE(l.User1_ID, inv.User1_ID) AS User1_ID,
+        COALESCE(l.User2_ID, inv.User2_ID) AS User2_ID
+        FROM C_INVOICELINE l, C_Invoice inv
         WHERE C_INVOICELINE_ID = ? 
+        AND l.C_Invoice_ID = inv.C_Invoice_ID
       ]]>
     </Sql>
     <Parameter name="cNewInvoiceId"/>
