@@ -816,7 +816,7 @@ OB.Model.Terminal = Backbone.Model.extend({
         maxDocumentSequence = OB.POS.modelterminal.get('terminal').lastDocumentNumber,
         posDocumentNoPrefix = OB.POS.modelterminal.get('terminal').docNoPrefix,
         maxQuotationDocumentSequence = OB.POS.modelterminal.get('terminal').lastQuotationDocumentNumber,
-        posQuotationDocumentNoPrefix = OB.POS.modelterminal.get('terminal').docQuotationNoPrefix,
+        posQuotationDocumentNoPrefix = OB.POS.modelterminal.get('terminal').quotationDocNoPrefix,
         orderCompleteDocumentNo, orderDocumentSequence, i;
     for (i = 0; i < nPreviousOrders; i++) {
       orderCompleteDocumentNo = pendingOrders[i].get('documentNo');
