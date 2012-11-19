@@ -56,7 +56,6 @@
   v_this_allocated      NUMBER;
   v_this_noalloc        NUMBER;
   v_notreservedstock    NUMBER;
-  v_reservedbyothers    NUMBER;
   v_qtytorelease        NUMBER;
   v_qtytounreserve      NUMBER;
   v_qtytounreserve_aux  NUMBER;
@@ -103,7 +102,6 @@ BEGIN
     AND sd.c_uom_id = v_uom_id
     AND COALESCE(sd.m_attributesetinstance_id, '0') = COALESCE(p_attributesetinstance_id, '0')
     AND sd.m_locator_id = p_locator_id;
-
 
   IF (COALESCE(v_dim_warehouse_id, v_warehouse_id) != v_warehouse_id
       OR COALESCE(v_dim_locator_id, p_locator_id) != p_locator_id
@@ -152,7 +150,7 @@ BEGIN
   
   -- If exists not reserved stock reserve in current reservation.
   v_ResultStr := 'Reserve and release available stock';
-  IF (v_notreservedstock >= 0) THEN
+  IF (v_notreservedstock > 0) THEN
     -- Reserve available stock
     v_qtytorelease := LEAST(v_notreservedstock, v_pendingtorelease);
 
@@ -197,6 +195,10 @@ BEGIN
     v_pendingtorelease := v_pendingtorelease - v_qtytorelease;
     IF (v_pendingtorelease = 0) THEN
       -- Stock completely released from the reservation
+      DELETE FROM m_reservation_stock
+      WHERE m_reservation_id = p_reservation_id
+        AND quantity = 0;
+
       RETURN;
     END IF;
   END IF;
@@ -247,10 +249,14 @@ BEGIN
     UPDATE m_reservation_stock
     SET quantity = quantity - v_qtytorelease
     WHERE m_reservation_stock_id = cur_not_allocated_stock.m_reservation_stock_id;
+    DELETE FROM m_reservation_stock
+    WHERE quantity = 0
+      AND m_reservation_stock_id = cur_not_allocated_stock.m_reservation_stock_id;
+
     M_RESERVE_STOCK_MANUAL(p_reservation_id, 'SD', v_storage_detail_id, v_qtytorelease, p_user_id, v_res_stock_id);
     v_this_notreserved := v_this_notreserved - v_qtytorelease;
     v_this_noalloc := v_this_noalloc + v_qtytorelease;
-    
+
     -- Call get stock to check availability
     DECLARE
       v_pinstance_result      AD_PInstance.result%TYPE;
@@ -307,21 +313,34 @@ BEGIN
     IF (v_availablestock >= v_qtytorelease) THEN
       M_RESERVE_STOCK_AUTO(cur_not_allocated_stock.m_reservation_id, p_user_id, v_newreservedqty);
 
+      -- Release reserved stock
+      UPDATE m_reservation_stock
+      SET releasedqty = COALESCE(releasedqty,0) + v_qtytorelease,
+          updated = now(),
+          updatedby = p_user_id
+      WHERE m_reservation_stock_id = v_res_stock_id;
+
+      v_this_releasedqty := v_this_releasedqty + v_qtytorelease;
+      v_this_noalloc := v_this_noalloc - v_qtytorelease;
+  
       v_pendingtorelease := v_pendingtorelease - v_qtytorelease;
       IF (v_pendingtorelease = 0) THEN
         -- Stock completely released from the reservation
+        DELETE FROM m_reservation_stock
+        WHERE m_reservation_id = p_reservation_id
+          AND quantity = 0;
+
         RETURN;
       END IF;
     ELSE
       --Not enough available stock has been able to reallocate using new stock, undo reallocation.
+      v_this_notreserved := v_this_notreserved + v_qtytorelease;
+      v_this_noalloc := v_this_noalloc - v_qtytorelease;
       UPDATE m_reservation_stock
-      SET releasedqty = COALESCE(releasedqty,0) - v_qtytorelease,
-          quantity = quantity - v_qtytorelease,
+      SET quantity = COALESCE(quantity,0) - v_qtytorelease,
           updated = now(),
           updatedby = p_user_id
       WHERE m_reservation_stock_id = v_res_stock_id;
-      v_this_notreserved := v_this_notreserved + v_qtytorelease;
-      v_this_noalloc := v_this_noalloc - v_qtytorelease;
 
       UPDATE m_reservation_stock
       SET quantity = quantity + v_qtytorelease
