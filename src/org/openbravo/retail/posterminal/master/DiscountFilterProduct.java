@@ -8,19 +8,22 @@
  */
 package org.openbravo.retail.posterminal.master;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
 public class DiscountFilterProduct extends Discount {
 
   @Override
-  protected String prepareQuery(JSONObject jsonsent) throws JSONException {
+  protected List<String> prepareQuery(JSONObject jsonsent) throws JSONException {
 
     String hql = "from PricingAdjustmentProduct ap where active = true";
 
     hql += " and exists (select 1 " + getPromotionsHQL(jsonsent);
     hql += "              and ap.priceAdjustment = p)";
 
-    return hql;
+    return Arrays.asList(new String[] { hql });
   }
 }
