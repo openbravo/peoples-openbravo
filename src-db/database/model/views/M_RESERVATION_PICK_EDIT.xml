@@ -6,7 +6,7 @@ FROM c_orderline ol
 JOIN c_order o ON o.c_order_id = ol.c_order_id AND o.issotrx = 'Y' AND o.docstatus = 'CO'
 WHERE ol.qtyordered <> ol.qtydelivered) sol
 FULL JOIN m_reservation r ON r.c_orderline_id = sol.c_orderline_id
-LEFT JOIN (SELECT sd.m_product_id, sd.c_uom_id, sd.m_locator_id, l.m_warehouse_id, COALESCE(sd.m_attributesetinstance_id, '0') AS m_attributesetinstance_id, sum(res.quantity) AS resqty, sd.qtyonhand AS availableqty, sd.m_storage_detail_id, NULL AS c_orderline_id, NULL AS ad_org_id
+JOIN (SELECT sd.m_product_id, sd.c_uom_id, sd.m_locator_id, l.m_warehouse_id, COALESCE(sd.m_attributesetinstance_id, '0') AS m_attributesetinstance_id, sum(res.quantity) AS resqty, sd.qtyonhand AS availableqty, sd.m_storage_detail_id, NULL AS c_orderline_id, NULL AS ad_org_id
 FROM m_storage_detail sd
 JOIN m_locator l ON sd.m_locator_id = l.m_locator_id
 LEFT JOIN (SELECT rs.quantity, COALESCE(rs.m_attributesetinstance_id, '0') AS m_attributesetinstance_id, rs.m_locator_id, r.m_product_id, r.c_uom_id
