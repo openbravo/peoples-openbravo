@@ -103,7 +103,16 @@ enyo.kind({
       if (this.receipt.get('isEditable') === false) {
         this.manualTap('edit');
       } else {
-        this.manualTap('scan');
+        if (OB.POS.modelterminal.get('terminal').defaultwebpostab) {
+          if (OB.POS.modelterminal.get('terminal').defaultwebpostab !== '') {
+            this.manualTap(OB.POS.modelterminal.get('terminal').defaultwebpostab);
+          } else {
+            this.manualTap('scan');
+          }
+        } else {
+          this.manualTap('scan');
+        }
+
       }
     }, this);
 

@@ -47,6 +47,9 @@ public class PaidReceipts extends JSONProcessSimple {
     if (!json.getString("documentType").isEmpty()) {
       hqlPaidReceipts += " and ord.documentType.id='" + json.getString("documentType") + "'";
     }
+    if (!json.getString("docstatus").isEmpty() && !json.getString("docstatus").equals("null")) {
+      hqlPaidReceipts += " and ord.documentStatus='" + json.getString("docstatus") + "'";
+    }
     if (!json.getString("startDate").isEmpty()) {
       hqlPaidReceipts += " and ord.orderDate >='" + json.getString("startDate") + "'";
     }

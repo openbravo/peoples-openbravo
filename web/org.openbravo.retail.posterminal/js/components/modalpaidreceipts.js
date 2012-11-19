@@ -168,6 +168,7 @@ enyo.kind({
     }
     this.filters = {
       documentType: params.isQuotation ? (OB.POS.modelterminal.get('terminal').terminalType.documentTypeForQuotations) : (OB.POS.modelterminal.get('terminal').terminalType.documentType),
+      docstatus: params.isQuotation ? 'UE' : null,
       isQuotation: params.isQuotation ? true : false,
       filterText: this.$.filterText.getValue(),
       startDate: this.$.startDate.getValue(),
