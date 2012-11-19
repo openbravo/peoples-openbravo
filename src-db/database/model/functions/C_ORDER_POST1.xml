@@ -1049,6 +1049,7 @@
                         updated = now(),
                         updatedby = v_user
                     WHERE m_reservation_stock_id = cur_res_stock.m_reservation_stock_id;
+                    v_reservedqty := v_reservedqty - v_qtyaux;
                     v_pendingtounreserve := v_pendingtounreserve - v_qtyaux;
                     IF (v_pendingtounreserve = 0) THEN
                       EXIT;
@@ -1060,7 +1061,7 @@
                   -- Delete reservation lines with quantity zero.
                   DELETE FROM m_reservation_stock
                   WHERE quantity = 0
-                    AND releasedqty = 0
+                    AND COALESCE(releasedqty, 0) = 0
                     AND m_reservation_id = v_reservation_id;
                 END IF;
                 UPDATE m_reservation
