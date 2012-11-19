@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2012 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -174,13 +174,15 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
           strcInvoiceIdOld = ExpenseAPInvoiceData.selectInvoiceHeaderNoProject(conn, this,
               data[i].adClientId, data[i].adOrgId, strDateInvoiced, data[i].cBpartnerId,
               strBPCCurrencyId, data[i].cActivityId, data[i].cCampaignId, strcBpartnerLocationId,
-              strPaymentRule, strPaymentMethodId, strPaymentterm);
+              strPaymentRule, strPaymentMethodId, strPaymentterm, data[i].cCostcenterId,
+              data[i].aAssetId, data[i].user1Id, data[i].user2Id);
 
         } else {
           strcInvoiceIdOld = ExpenseAPInvoiceData.selectInvoiceHeader(conn, this,
               data[i].adClientId, data[i].adOrgId, strDateInvoiced, data[i].cBpartnerId,
               strBPCCurrencyId, data[i].cProjectId, data[i].cActivityId, data[i].cCampaignId,
-              strcBpartnerLocationId, strPaymentRule, strPaymentMethodId, strPaymentterm);
+              strcBpartnerLocationId, strPaymentRule, strPaymentMethodId, strPaymentterm,
+              data[i].cCostcenterId, data[i].aAssetId, data[i].user1Id, data[i].user2Id);
         }
 
         if (strcInvoiceIdOld.equals("")) {
@@ -199,8 +201,9 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
                 docTargetType, strDateInvoiced, strDateInvoiced, data[i].cBpartnerId,
                 strcBpartnerLocationId, "", strPricelistId, strBPCCurrencyId, strSalesrepId, "N",
                 "", "", strPaymentRule, strPaymentMethodId, strPaymentterm, "N", "N",
-                data[i].cProjectId, data[i].cActivityId, data[i].cCampaignId, vars.getOrg(), "",
-                "", "0", "0", "DR", strDocType, "N", "CO", "N", vars.getUser(), vars.getUser());
+                data[i].cProjectId, data[i].cActivityId, data[i].cCampaignId, vars.getOrg(),
+                data[i].user1Id, data[i].user2Id, "0", "0", "DR", strDocType, "N", "CO", "N",
+                vars.getUser(), vars.getUser(), data[i].cCostcenterId, data[i].aAssetId);
           } catch (ServletException ex) {
             myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
             releaseRollbackConnection(conn);
@@ -339,7 +342,8 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
                 (new BigDecimal(strPricestd).multiply(qty)).toPlainString(), "", strPricestd,
                 strPricelimit, "", "", "", "Y", "0", "", "", strcInvoiceLineId, "N",
                 vars.getUser(), vars.getUser(), isDeferred, planType, periodNumber,
-                startingPeriodId);
+                startingPeriodId, data[i].cProjectId, data[i].cCostcenterId, data[i].aAssetId,
+                data[i].user1Id, data[i].user2Id);
           } catch (ServletException ex) {
             myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
             releaseRollbackConnection(conn);
@@ -366,7 +370,8 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
           // requirements
           ExpenseAPInvoiceData[] dataAcctdimension = ExpenseAPInvoiceData.selectAcctdimension(conn,
               this, data[i].adClientId, data[i].adOrgId, strcInvoiceLineId, data[i].cProjectId,
-              data[i].cCampaignId);
+              data[i].cCampaignId, data[i].cCostcenterId, data[i].aAssetId, data[i].user1Id,
+              data[i].user2Id);
           int StdPrecision = Integer.valueOf(strStdPrecision).intValue();
           if (dataAcctdimension == null || dataAcctdimension.length == 0) {
             String strcInvoicelineAcctdimension = SequenceIdData.getUUID();
@@ -377,7 +382,8 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
               ExpenseAPInvoiceData.insertInvoicelineAcctdimension(conn, this,
                   strcInvoicelineAcctdimension, data[i].adClientId, data[i].adOrgId, "Y",
                   vars.getUser(), vars.getUser(), strcInvoiceLineId, roundPriceStd.toPlainString(),
-                  data[i].cProjectId, data[i].cCampaignId, "", "");
+                  data[i].cProjectId, data[i].cCampaignId, data[i].user1Id, data[i].user2Id,
+                  data[i].cCostcenterId, data[i].aAssetId);
             } catch (ServletException ex) {
               myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
               releaseRollbackConnection(conn);
