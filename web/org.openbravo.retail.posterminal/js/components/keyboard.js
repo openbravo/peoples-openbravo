@@ -245,38 +245,35 @@ enyo.kind({
   },
 
   globalKeydownHandler: function (inSender, inEvent) {
-    inEvent = inEvent.keyboardEvent;
-    if (!this.isPhysicalKeyboardAllowed(inEvent)) {
+    var keyCode = inEvent.keyboardEvent.keyCode;
+    if (!this.isPhysicalKeyboardAllowed(inEvent.keyboardEvent)) {
       return;
     }
-    if (inEvent.keyCode === 8) { //del key
+    if (keyCode === 8) { //Handle BACKSPACE key
       OB.POS.terminal.$.focusKeeper.focus(); //Hack to avoid event propagation and result in a browser "go back" shortcut
       this.writeCharacter('del');
     } else if (OB.Format.defaultDecimalSymbol !== '.') {
-      if (inEvent.keyCode === 110) { //Numeric keypad dot (.)
+      if (keyCode === 110) { //Handle numeric keypad dot (.)
         this.writeCharacter(OB.Format.defaultDecimalSymbol);
-      } else if (inEvent.keyCode === 190) { //Character keyboard dot (.)
+      } else if (keyCode === 190) { //Handle keyboard dot (.) character
         this.writeCharacter('.');
       }
     }
   },
 
   globalKeypressHandler: function (inSender, inEvent) {
-    var txt;
-    inEvent = inEvent.keyboardEvent;
-    if (!this.isPhysicalKeyboardAllowed(inEvent)) {
+    var which = inEvent.keyboardEvent.which;
+    if (!this.isPhysicalKeyboardAllowed(inEvent.keyboardEvent)) {
       return;
     }
-    if (inEvent.which === 13 && this.$.editbox.getContent()) { //Handle ENTER key if there is something in the display
-      txt = this.getString();
-
+    if (which === 13 && this.$.editbox.getContent()) { //Handle ENTER key if there is something in the display
       if (this.defaultcommand) {
-        this.execCommand(this.commands[this.defaultcommand], txt);
+        this.execCommand(this.commands[this.defaultcommand], this.getString());
       } else {
         OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NoDefaultActionDefined'));
       }
-    } else if (inEvent.which !== 46 || OB.Format.defaultDecimalSymbol === '.') { //Any keypress except any kind of dot (.)
-      this.writeCharacter(String.fromCharCode(inEvent.which));
+    } else if (which !== 46 || OB.Format.defaultDecimalSymbol === '.') { //Handle any keypress except any kind of dot (.)
+      this.writeCharacter(String.fromCharCode(which));
     }
   },
 

@@ -26,11 +26,12 @@ enyo.kind({
     onkeydown: 'keydownHandler'
   },
   keydownHandler: function (inSender, inEvent) {
-    if (inEvent.keyCode === 27 && this.showing) { //Handle ESC key to hide the popup
+    var keyCode = inEvent.keyCode;
+    if (keyCode === 27 && this.showing) { //Handle ESC key to hide the popup
       //TODO: Improve the way the "close" action is defined
       this.$.subWindowHeader.getComponents()[0].onTapCloseButton();
       return true;
-    } else if (inEvent.keyCode === 13 && this.defaultActionButton) { //Handle ENTER key to execute the default action (if exists)
+    } else if (keyCode === 13 && this.defaultActionButton) { //Handle ENTER key to execute the default action (if exists)
       this.defaultActionButton.executeTapAction();
       return true;
     } else {

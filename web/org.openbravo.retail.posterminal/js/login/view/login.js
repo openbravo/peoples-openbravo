@@ -149,7 +149,7 @@
                   type: 'text',
                   name: 'username',
                   classes: 'input login-inputs-username',
-                  onkeydown: 'handleEnterKeyDown'
+                  onkeydown: 'inputKeydownHandler'
                 }]
               }]
             }, {
@@ -160,7 +160,7 @@
                   type: 'password',
                   name: 'password',
                   classes: 'input login-inputs-password',
-                  onkeydown: 'handleEnterKeyDown'
+                  onkeydown: 'inputKeydownHandler'
                 }]
               }]
             }, {
@@ -249,9 +249,11 @@
       return true;
     },
 
-    handleEnterKeyDown: function (inSender, inEvent) {
-      if (inEvent && inEvent.keyCode === 13) {
+    inputKeydownHandler: function (inSender, inEvent) {
+      var keyCode = inEvent.keyCode;
+      if (keyCode === 13) { //Handle ENTER key
         this.loginButtonAction();
+        return true;
       }
       return false;
     },
