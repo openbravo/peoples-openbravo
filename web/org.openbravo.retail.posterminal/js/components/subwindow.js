@@ -161,7 +161,7 @@ enyo.kind({
 });
 
 enyo.kind({
-  name: 'OB.UI.Subwindowheader',
+  name: 'OB.UI.SubwindowHeader',
   classes: 'subwindowheader',
   components: [{
     name: "closebutton",

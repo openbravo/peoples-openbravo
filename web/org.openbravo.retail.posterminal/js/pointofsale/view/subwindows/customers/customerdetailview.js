@@ -32,7 +32,7 @@ enyo.kind({
   },
   defaultNavigateOnClose: 'customerAdvancedSearch',
   header: {
-    kind: 'OB.UI.Subwindowheader',
+    kind: 'OB.UI.SubwindowHeader',
     headermessage: OB.I18N.getLabel('OBPOS_TitleViewCustomer'),
     onTapCloseButton: function () {
       var subWindow = this.subWindow;
