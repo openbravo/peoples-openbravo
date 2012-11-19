@@ -157,6 +157,11 @@ public class ManageReservationActionHandler extends BaseProcessActionHandler {
             strOrderLineId));
       }
 
+      final Boolean isAllocated = selectedLine.getString(
+          ReservationManualPickEdit.PROPERTY_ALLOCATED).equals(null) ? false : selectedLine
+          .getBoolean(ReservationManualPickEdit.PROPERTY_ALLOCATED);
+      resStock.setAllocated(isAllocated == true);
+
       final BigDecimal qty = new BigDecimal(
           selectedLine.getString(ReservationManualPickEdit.PROPERTY_QUANTITY));
       resStock.setQuantity(qty);
