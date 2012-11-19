@@ -397,7 +397,7 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
       }
       // Delete last 2 characters: ", "
       if (sortByClause.length() > 0) {
-        sortByClause.delete(sortByClause.length() - 3, sortByClause.length() - 1);
+        sortByClause.delete(sortByClause.length() - 2, sortByClause.length() - 1);
       }
     }
     String result = "";
