@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2010 Openbravo SLU
+ * All portions are Copyright (C) 2001-2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,9 +28,17 @@
     <Sql>
       <![CDATA[
         SELECT E.AD_CLIENT_ID, E.AD_ORG_ID, EL.C_BPARTNER_ID, BP.NAME AS BPNAME, E.M_WAREHOUSE_ID, TO_CHAR(E.DATEREPORT) AS DATEREPORT,
-        TO_CHAR(EL.DATEEXPENSE) AS DATEEXPENSE, EL.C_PROJECT_ID, EL.C_ACTIVITY_ID, EL.C_CAMPAIGN_ID, EL.LINE,
+        TO_CHAR(EL.DATEEXPENSE) AS DATEEXPENSE, EL.LINE,
         EL.M_PRODUCT_ID, EL.S_RESOURCEASSIGNMENT_ID, EL.C_UOM_ID, EL.QTY, EL.DESCRIPTION, EL.NOTE, EL.INVOICEPRICE,
         COALESCE(BP.M_PRICELIST_ID, E.M_PRICELIST_ID) AS M_PRICELIST_ID, E.DOCUMENTNO, EL.S_TIMEEXPENSELINE_ID, EL.C_CURRENCY_ID,
+        E.C_PROJECT_ID, E.USER1_ID, E.USER2_ID, E.C_COSTCENTER_ID, E.A_ASSET_ID,
+        EL.AD_ORG_ID AS LINE_ORG,
+        EL.C_CAMPAIGN_ID AS LINE_C_CAMPAIGN_ID,
+        COALESCE(EL.C_PROJECT_ID, E.C_PROJECT_ID) AS LINE_C_PROJECT_ID,
+        COALESCE(EL.USER1_ID, E.USER1_ID) AS LINE_USER1_ID,
+        COALESCE(EL.USER2_ID, E.USER2_ID) AS LINE_USER2_ID,
+        COALESCE(EL.C_COSTCENTER_ID, E.C_COSTCENTER_ID) AS LINE_C_COSTCENTER_ID,
+        COALESCE(EL.A_ASSET_ID, E.A_ASSET_ID) AS LINE_A_ASSET_ID,
         '' AS DATEORDERED, '' AS DATEPROMISED, '' AS C_BPARTNER_LOCATION_ID, '' AS PROCESSING,
         '' AS STDPRECISION, '' AS PRICEPRECISION, '' AS VALIDFROM, '' AS PRICESTD, '' AS PRICELIST, '' AS PRICELIMIT
         FROM S_TIMEEXPENSELINE EL left join  S_RESOURCEASSIGNMENT RA on EL.S_RESOURCEASSIGNMENT_ID=RA.S_RESOURCEASSIGNMENT_ID,
@@ -100,7 +108,8 @@
            C_CURRENCY_ID, PAYMENTRULE, FIN_PAYMENTMETHOD_ID, C_PAYMENTTERM_ID,
            INVOICERULE, DELIVERYRULE, FREIGHTCOSTRULE,
            DELIVERYVIARULE, M_WAREHOUSE_ID, M_PRICELIST_ID,
-           C_PROJECT_ID, C_ACTIVITY_ID, C_CAMPAIGN_ID, PRIORITYRULE)
+           C_PROJECT_ID, C_ACTIVITY_ID, C_CAMPAIGN_ID, PRIORITYRULE,
+           USER1_ID, USER2_ID, C_COSTCENTER_ID, A_ASSET_ID)
         VALUES
           (?,?,?,
            now(),?,now(),?,
@@ -111,7 +120,8 @@
            ?,?,?,?,
            ?,?,?,
            ?,?,?,
-           ?,?,?,'5')
+           ?,?,?,'5',
+           ?,?,?,?)
       ]]>
     </Sql>
     <Parameter name="cOrderId"/>
@@ -144,6 +154,10 @@
     <Parameter name="cProjectId"/>
     <Parameter name="cActivityId"/>
     <Parameter name="cCampaignId"/>
+    <Parameter name="user1Id"/>
+    <Parameter name="user2Id"/>
+    <Parameter name="cCostcenterId"/>
+    <Parameter name="aAssetId"/>
   </SqlMethod>
   <SqlMethod name="insertCOrderline" type="preparedStatement" connection="true" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
@@ -158,7 +172,8 @@
            C_UOM_ID, QTYORDERED, C_CURRENCY_ID,
            PRICELIST, PRICEACTUAL, PRICELIMIT,
            C_TAX_ID, S_RESOURCEASSIGNMENT_ID, DISCOUNT,
-           PRICESTD, LINENETAMT)
+           PRICESTD, LINENETAMT,
+           C_PROJECT_ID, USER1_ID, USER2_ID, C_COSTCENTER_ID, A_ASSET_ID)
         VALUES
           (?,?,?,
            now(),?,now(),?,
@@ -168,7 +183,8 @@
            ?,TO_NUMBER(?),?,
            TO_NUMBER(?), M_GET_OFFERS_PRICE(to_date(?),?,?,TO_NUMBER(?),TO_NUMBER(?),?),TO_NUMBER(?),
            ?, ?,TO_NUMBER(?),
-           TO_NUMBER(?), (to_number(?) * to_number(?)))
+           TO_NUMBER(?), (to_number(?) * to_number(?)),
+           ?, ?, ?, ?, ?)
       ]]>
     </Sql>
     <Parameter name="cOrderlineId"/>
@@ -202,6 +218,11 @@
     <Parameter name="priceactual"/>
     <Parameter name="qtyordered"/>
     <Parameter name="priceactual"/>
+    <Parameter name="cProjectId"/>
+    <Parameter name="user1Id"/>
+    <Parameter name="user2Id"/>
+    <Parameter name="cCostcenterId"/>
+    <Parameter name="aAssetId"/>
   </SqlMethod>
   <SqlMethod name="cDoctypeTarget" type="preparedStatement" connection="true" return="string" default="">
     <SqlMethodComment></SqlMethodComment>

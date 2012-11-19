@@ -300,8 +300,9 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
                   : data1[0].invoicerule, data1[0].deliveryrule.equals("") ? "A"
                   : data1[0].deliveryrule, "I", data1[0].deliveryviarule.equals("") ? "D"
                   : data1[0].deliveryviarule, data.mWarehouseId.equals("") ? vars.getWarehouse()
-                  : data.mWarehouseId, data.mPricelistId, data.cProjectId, data.cActivityId,
-              data.cCampaignId);
+                  : data.mWarehouseId, data.mPricelistId, data.cProjectId, null, null,
+              data.user1Id, data.user2Id, data.cCostcenterId, data.aAssetId);
+          // Do not inherit activity and campaign dimensions from expense line to sales order header
           myMessage.setType("Success");
           myMessage.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
           myMessage.setMessage(Utility.messageBD(this, "SalesOrderDocumentno", vars.getLanguage())
@@ -454,7 +455,9 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
                   : data.mWarehouseId,
               data.cUomId.equals("") ? Utility.getContext(this, vars, "#C_UOM_ID", "ExpenseSOrder")
                   : data.cUomId, data.qty, strBPCCurrencyId, pricelist, priceactual,
-              data.mPricelistId, pricelimit, strCTaxID, data.sResourceassignmentId, strDiscount);
+              data.mPricelistId, pricelimit, strCTaxID, data.sResourceassignmentId, strDiscount,
+              data.lineCProjectId, data.lineUser1Id, data.lineUser2Id, data.lineCCostcenterId,
+              data.lineAAssetId);
 
           // Updates expense line with the sales order line ID
           ExpenseSOrderData.updateTimeExpenseLine(conn, this, strCOrderlineID,
