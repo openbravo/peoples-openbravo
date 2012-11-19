@@ -133,22 +133,30 @@ BEGIN --BODY
   IF (v_reservation_id IS NOT NULL) THEN
     -- If a reservation is given first consume allocated stock.
     FOR cur_allocated IN (
-        SELECT *
-        FROM m_reservation_stock
-        WHERE m_reservation_id = v_reservation_id
-          AND isallocated = 'Y'
-          AND quantity > 0
-          AND quantity <> COALESCE(releasedqty, 0)
-          AND m_locator_id IS NOT NULL
+        SELECT rs.quantity, rs.releasedqty, sd.m_storage_detail_id
+        FROM m_reservation_stock rs
+            JOIN m_reservation r ON rs.m_reservation_id = r.m_reservation_id
+            JOIN m_storage_detail sd ON sd.m_product_id = r.m_product_id
+                                        AND sd.c_uom_id = r.c_uom_id
+                                        AND sd.m_product_uom_id IS NULL
+                                        AND sd.m_locator_id = rs.m_locator_id
+                                        AND COALESCE(sd.m_attributesetinstance_id, '0') = COALESCE(rs.m_attributesetinstance_id, '0')
+        WHERE r.m_reservation_id = v_reservation_id
+          AND rs.isallocated = 'Y'
+          AND rs.quantity > 0
+          AND rs.quantity <> COALESCE(rs.releasedqty, 0)
+          AND rs.m_locator_id IS NOT NULL
     ) LOOP
       INSERT INTO m_stock_proposed (
           m_stock_proposed_id, ad_client_id, ad_org_id, isactive, 
           created , createdby, updated, updatedby,
-          ad_pinstance_id, priority, m_storage_detail_id, quantity, qtyorder
+          ad_pinstance_id, priority, m_storage_detail_id, quantity, qtyorder,
+          isfinal
       ) VALUES (
           get_uuid(), v_ClientID, v_OrgID, 'Y',
           now(), v_AD_User_ID, now(), v_AD_User_ID,
-          pinstance_id, v_Count, cur_allocated.m_storage_detail_id, cur_allocated.quantity - COALESCE(cur_allocated.releasedqty, 0), null
+          pinstance_id, v_Count, cur_allocated.m_storage_detail_id, cur_allocated.quantity - COALESCE(cur_allocated.releasedqty, 0), null,
+          'Y'
       );
       v_Count:=v_Count+1;
     END LOOP;
