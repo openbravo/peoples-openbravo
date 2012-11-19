@@ -12,7 +12,7 @@
 //Modal pop up
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.customers.cas',
-  kind: 'OB.UI.subwindow',
+  kind: 'OB.UI.Subwindow',
   events: {
     onSearchAction: ''
   },

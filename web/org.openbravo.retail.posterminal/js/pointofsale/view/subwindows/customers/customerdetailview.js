@@ -10,7 +10,7 @@
 /*global enyo, $*/
 
 enyo.kind({
-  kind: 'OB.UI.subwindow',
+  kind: 'OB.UI.Subwindow',
   name: 'OB.OBPOSPointOfSale.UI.customers.editcustomer',
   events: {
     onShowPopup: ''

@@ -10,7 +10,7 @@
 /*global enyo $ */
 
 enyo.kind({
-  name: 'OB.UI.subwindow',
+  name: 'OB.UI.Subwindow',
   kind: 'enyo.Popup',
 
   modal: false,
