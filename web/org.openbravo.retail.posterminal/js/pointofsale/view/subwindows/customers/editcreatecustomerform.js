@@ -33,7 +33,7 @@ enyo.kind({
   },
   defaultNavigateOnClose: 'customerView',
   header: {
-    kind: 'OB.UI.subwindowheader',
+    kind: 'OB.UI.Subwindowheader',
     headermessage: OB.I18N.getLabel('OBPOS_TitleEditNewCustomer'),
     handlers: {
       onSetCustomer: 'setCustomer'

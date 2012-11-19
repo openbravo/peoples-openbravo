@@ -382,7 +382,7 @@ enyo.kind({
 
 //header
 enyo.kind({
-  kind: 'OB.UI.subwindowheader',
+  kind: 'OB.UI.Subwindowheader',
   name: 'OB.OBPOSPointOfSale.UI.customers.casheader',
   onTapCloseButton: function () {
     var subWindow = this.subWindow;
