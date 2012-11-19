@@ -536,7 +536,9 @@ BEGIN --BODY
                     C_UOM_ID, M_Locator_ID, MovementQty, Description,
                     IsInvoiced,
                     --MODIFIED BY F.IRIAZABAL   ,
-                    QuantityOrder, M_Product_Uom_ID, M_AttributeSetInstance_ID)
+                    QuantityOrder, M_Product_Uom_ID, M_AttributeSetInstance_ID,
+                    C_Project_ID, A_Asset_ID, 
+                    C_CostCenter_ID, User1_ID, User2_ID)
                   VALUES
                     (v_NextNo, v_lines, p_InOut_ID, ol.C_OrderLine_ID,
                     ol.AD_Client_ID, ol.AD_Org_ID, 'Y', now(),
@@ -544,7 +546,9 @@ BEGIN --BODY
                     ol.C_UOM_ID, v_Locator_ID, v_Qty, ol.Description,
                     'N',
                     --MODIFIED BY F.IRIAZABAL
-                    v_ActualQty, ol.M_PRODUCT_UOM_ID, ol.M_AttributeSetInstance_ID);
+                    v_ActualQty, ol.M_PRODUCT_UOM_ID, ol.M_AttributeSetInstance_ID,
+                    coalesce(ol.C_Project_ID, Cur_Order.C_Project_ID), coalesce(ol.A_Asset_ID, Cur_Order.A_Asset_ID), 
+                    coalesce(ol.C_CostCenter_ID, Cur_Order.C_CostCenter_ID), coalesce(ol.User1_ID, Cur_Order.User1_ID), coalesce(ol.User2_ID, Cur_Order.User2_ID));
                   v_lines:=v_lines + 10;
                 ELSIF (v_qty <> 0) THEN
                   IF (cur_order.deliveryrule = 'O') THEN
@@ -589,7 +593,9 @@ BEGIN --BODY
                   C_UOM_ID, M_Locator_ID, MovementQty, Description,
                   IsInvoiced,
                   --MODIFIED BY F.IRIAZABAL
-                  QuantityOrder, M_Product_Uom_ID, M_AttributeSetInstance_ID)
+                  QuantityOrder, M_Product_Uom_ID, M_AttributeSetInstance_ID,
+                  C_Project_ID, A_Asset_ID, 
+                  C_CostCenter_ID, User1_ID, User2_ID)
                 VALUES
                   (v_NextNo, v_lines, p_InOut_ID, ol.C_OrderLine_ID,
                   ol.AD_Client_ID, ol.AD_Org_ID, 'Y', now(),
@@ -597,7 +603,9 @@ BEGIN --BODY
                   ol.C_UOM_ID, NULL, v_Qty, ol.Description,
                   'N',
                   --MODIFIED BY F.IRIAZABAL
-                  v_QtyOrder, ol.M_PRODUCT_UOM_ID, ol.M_ATTRIBUTESETINSTANCE_ID);
+                  v_QtyOrder, ol.M_PRODUCT_UOM_ID, ol.M_ATTRIBUTESETINSTANCE_ID,
+                  coalesce(ol.C_Project_ID, Cur_Order.C_Project_ID), coalesce(ol.A_Asset_ID, Cur_Order.A_Asset_ID), 
+                  coalesce(ol.C_CostCenter_ID, Cur_Order.C_CostCenter_ID), coalesce(ol.User1_ID, Cur_Order.User1_ID), coalesce(ol.User2_ID, Cur_Order.User2_ID));
                 v_lines:=v_lines + 10;
               END IF;
             END IF;--Next_Line
@@ -754,7 +762,9 @@ BEGIN --BODY
           FreightAmt,
           DeliveryViaRule, M_Shipper_ID, C_Charge_ID, ChargeAmt,
           PriorityRule,
-          DocStatus, DocAction, Processing, Processed
+          DocStatus, DocAction, Processing, Processed,
+          C_Project_ID, A_Asset_ID, 
+          C_CostCenter_ID, User1_ID, User2_ID
         ) VALUES (
           p_InOut_ID, NULL, Cur_Invoice.IsSoTrx, Cur_Invoice.C_Invoice_ID,
           Cur_Invoice.AD_Client_ID, Cur_Invoice.AD_Org_ID, 'Y', now(),
@@ -768,7 +778,9 @@ BEGIN --BODY
           0, -- Freight included
           'P', NULL, Cur_Invoice.C_Charge_ID, Cur_Invoice.ChargeAmt,
           '3', -- PickUp, High Priority
-          'DR', 'CO', 'N', 'N'
+          'DR', 'CO', 'N', 'N',
+          Cur_Invoice.C_Project_ID, Cur_Invoice.A_Asset_ID,
+          Cur_Invoice.C_CostCenter_ID, Cur_Invoice.User1_ID, Cur_Invoice.User2_ID
         );
 
         -- Lines
@@ -788,7 +800,10 @@ BEGIN --BODY
             C_UOM_ID, M_Locator_ID, MovementQty, Description,
             IsInvoiced,
             --MODIFIED BY F.IRIAZABAL
-            QuantityOrder, M_Product_Uom_ID, M_AttributeSetInstance_ID
+            QuantityOrder, M_Product_Uom_ID, M_AttributeSetInstance_ID,
+            C_Project_ID, A_Asset_ID, 
+            C_CostCenter_ID, User1_ID,
+            User2_ID
           ) VALUES (
             v_NextNo, Cur_Lines.Line, p_InOut_ID, Cur_Lines.C_OrderLine_ID,
             Cur_Lines.AD_Client_ID, Cur_Lines.AD_Org_ID, 'Y', now(),
@@ -796,7 +811,10 @@ BEGIN --BODY
             Cur_Lines.C_UOM_ID, p_Locator_ID, Cur_Lines.QtyInvoiced, Cur_Lines.Description,
             'Y',
             --MODIFIED BY F.IRIAZABAL
-            Cur_Lines.QuantityOrder, Cur_Lines.M_Product_Uom_ID, Cur_Lines.M_ATTRIBUTESETINSTANCE_ID
+            Cur_Lines.QuantityOrder, Cur_Lines.M_Product_Uom_ID, Cur_Lines.M_ATTRIBUTESETINSTANCE_ID,
+            coalesce(Cur_Lines.C_Project_ID, Cur_Invoice.C_Project_ID), coalesce(Cur_Lines.A_Asset_ID, Cur_Invoice.A_Asset_ID), 
+            coalesce(Cur_Lines.C_CostCenter_ID, Cur_Invoice.C_CostCenter_ID), coalesce(Cur_Lines.User1_ID, Cur_Invoice.User1_ID),
+            coalesce(Cur_Lines.User2_ID, Cur_Invoice.User2_ID)
           );
           UPDATE C_INVOICELINE
           SET M_INOUTLINE_ID=v_NextNo,
