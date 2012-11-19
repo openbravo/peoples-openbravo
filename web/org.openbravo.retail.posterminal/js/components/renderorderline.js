@@ -71,8 +71,8 @@ enyo.kind({
 
     }
   },
-  changeEditMode: function (sender, event) {
-    this.addRemoveClass('btnselect-orderline-edit', event.edit);
+  changeEditMode: function (inSender, inEvent) {
+    this.addRemoveClass('btnselect-orderline-edit', inEvent.edit);
   }
 
 });

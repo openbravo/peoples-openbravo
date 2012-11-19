@@ -65,8 +65,8 @@ enyo.kind({
   events: {
     onChangeBusinessPartner: ''
   },
-  setCustomer: function (sender, event) {
-    this.customer = event.customer;
+  setCustomer: function (inSender, inEvent) {
+    this.customer = inEvent.customer;
   },
   tap: function () {
     var sw = this.subWindow;
@@ -104,8 +104,8 @@ enyo.kind({
           style: 'width: 100px; margin: 0px 5px 8px 19px;',
           classes: 'btnlink-orange btnlink btnlink-small',
           content: OB.I18N.getLabel('OBPOS_LblEdit'),
-          setCustomer: function (sender, event) {
-            this.customer = event.customer;
+          setCustomer: function (inSender, inEvent) {
+            this.customer = inEvent.customer;
             if (!OB.UTIL.isWritableOrganization(this.customer.get('bporg'))) {
               this.disabled = true;
               this.setAttribute("disabled", "disabled");

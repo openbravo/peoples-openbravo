@@ -355,9 +355,9 @@ enyo.kind({
     this.setStatus('');
   },
 
-  commandHandler: function (sender, event) {
+  commandHandler: function (inSender, inEvent) {
     var txt, me = this,
-        cmd = event.key;
+        cmd = inEvent.key;
 
 
     if (cmd === 'OK') {
@@ -399,9 +399,9 @@ enyo.kind({
     }
   },
 
-  registerButton: function (sender, event) {
+  registerButton: function (inSender, inEvent) {
     var me = this,
-        button = event.originator;
+        button = inEvent.originator;
     if (button.command) {
       if (button.definition) {
         this.addCommand(button.command, button.definition);

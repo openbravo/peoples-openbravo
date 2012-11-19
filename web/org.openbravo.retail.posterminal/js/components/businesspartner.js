@@ -63,8 +63,8 @@ enyo.kind({
   handlers: {
     onSetModel: 'setModel'
   },
-  setModel: function (sender, event) {
-    this.model = event.model;
+  setModel: function (inSender, inEvent) {
+    this.model = inEvent.model;
   },
   tap: function (model) {
     this.doHideThisPopup();
@@ -88,8 +88,8 @@ enyo.kind({
   handlers: {
     onSetModel: 'setModel'
   },
-  setModel: function (sender, event) {
-    this.model = event.model;
+  setModel: function (inSender, inEvent) {
+    this.model = inEvent.model;
   },
   events: {
     onHideThisPopup: ''

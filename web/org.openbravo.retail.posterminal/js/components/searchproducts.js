@@ -166,10 +166,10 @@ enyo.kind({
       //this.products.exec({priceListVersion: OB.POS.modelterminal.get('pricelistversion').id, product: {}});
     }, this);
   },
-  clearAction: function (inSender, params) {
+  clearAction: function (inSender, inEvent) {
     this.products.reset();
   },
-  searchAction: function (inSender, params) {
+  searchAction: function (inSender, inEvent) {
     var criteria = {},
         me = this;
 
@@ -220,14 +220,14 @@ enyo.kind({
       }
     }
 
-    if (params.productName) {
+    if (inEvent.productName) {
       criteria._filter = {
         operator: OB.Dal.CONTAINS,
-        value: params.productName
+        value: inEvent.productName
       };
     }
-    if (params.productCat && params.productCat !== '__all__') {
-      criteria.productCategory = params.productCat;
+    if (inEvent.productCat && inEvent.productCat !== '__all__') {
+      criteria.productCategory = inEvent.productCat;
     }
     OB.Dal.find(OB.Model.Product, criteria, successCallbackProducts, errorCallback);
   }

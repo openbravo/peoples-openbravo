@@ -39,7 +39,7 @@ enyo.kind({
       modelProperty: mProperty
     });
   },
-  applyChanges: function (sender, event) {
+  applyChanges: function (inSender, inEvent) {
     this.waterfall('onApplyChange', {
       orderline: this.currentLine
     });

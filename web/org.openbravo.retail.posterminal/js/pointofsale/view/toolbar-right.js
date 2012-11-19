@@ -22,9 +22,9 @@ enyo.kind({
     classes: 'unstyled nav-pos row-fluid',
     name: 'toolbar'
   }],
-  tabButtonTapHandler: function (sender, event) {
-    if (event.tabPanel) {
-      this.setTabButtonActive(event.tabPanel);
+  tabButtonTapHandler: function (inSender, inEvent) {
+    if (inEvent.tabPanel) {
+      this.setTabButtonActive(inEvent.tabPanel);
     }
   },
   setTabButtonActive: function (tabName) {
@@ -251,8 +251,8 @@ enyo.kind({
     this.inherited(arguments);
     this.removeClass('btnlink-gray');
   },
-  renderTotal: function (sender, event) {
-    this.$.totalPrinter.renderTotal(event.newTotal);
+  renderTotal: function (inSender, inEvent) {
+    this.$.totalPrinter.renderTotal(inEvent.newTotal);
   },
   init: function (model) {
     this.model = model;
@@ -320,9 +320,9 @@ enyo.kind({
     kind: 'OB.OBPOSPointOfSale.UI.TabEditLine',
     name: 'edit'
   }],
-  tabButtonTapHandler: function (sender, event) {
-    if (event.tabPanel) {
-      this.showPane(event.tabPanel);
+  tabButtonTapHandler: function (inSender, inEvent) {
+    if (inEvent.tabPanel) {
+      this.showPane(inEvent.tabPanel);
     }
   },
   showPane: function (tabName) {

@@ -229,19 +229,19 @@ enyo.kind({
     this.model.countAll();
     this.$.cashUpInfo.refresh();
   },
-  lineEditCount: function (sender, event) {
-    this.$.cashUpKeyboard.setStatus(event.originator.model.get('_id'));
+  lineEditCount: function (inSender, inEvent) {
+    this.$.cashUpKeyboard.setStatus(inEvent.originator.model.get('_id'));
   },
-  paymentMethodKept: function (inSender, event) {
-    var validationResult = this.model.validateCashKeep(event.qtyToKeep);
+  paymentMethodKept: function (inSender, inEvent) {
+    var validationResult = this.model.validateCashKeep(inEvent.qtyToKeep);
     if (validationResult.result) {
-      this.model.get('paymentList').at(this.model.get('stepOfStep3')).set('qtyToKeep', event.qtyToKeep);
+      this.model.get('paymentList').at(this.model.get('stepOfStep3')).set('qtyToKeep', inEvent.qtyToKeep);
     } else {
       OB.UTIL.showWarning(validationResult.message);
     }
     this.$.cashUpInfo.refresh();
   },
-  resetQtyToKeep: function (inSender, event) {
+  resetQtyToKeep: function (inSender, inEvent) {
     this.model.get('paymentList').at(this.model.get('stepOfStep3')).set('qtyToKeep', null);
     this.$.cashUpInfo.refresh();
   }

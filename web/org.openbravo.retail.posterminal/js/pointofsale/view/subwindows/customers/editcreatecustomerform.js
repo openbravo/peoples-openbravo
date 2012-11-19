@@ -38,8 +38,8 @@ enyo.kind({
     handlers: {
       onSetCustomer: 'setCustomer'
     },
-    setCustomer: function (sender, event) {
-      this.customer = event.customer;
+    setCustomer: function (inSender, inEvent) {
+      this.customer = inEvent.customer;
     },
     onTapCloseButton: function () {
       var subWindow = this.subWindow;
@@ -102,8 +102,8 @@ enyo.kind({
           handlers: {
             onSetCustomer: 'setCustomer'
           },
-          setCustomer: function (sender, event) {
-            this.customer = event.customer;
+          setCustomer: function (inSender, inEvent) {
+            this.customer = inEvent.customer;
           },
           tap: function () {
             var subWindow = this.subWindow;

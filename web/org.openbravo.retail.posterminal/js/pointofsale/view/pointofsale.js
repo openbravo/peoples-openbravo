@@ -343,34 +343,34 @@ enyo.kind({
     this.model.get('orderList').saveCurrent();
     return true;
   },
-  tabChange: function (sender, event) {
+  tabChange: function (inSender, inEvent) {
     this.waterfall('onTabButtonTap', {
-      tabPanel: event.tabPanel
+      tabPanel: inEvent.tabPanel
     });
     this.waterfall('onChangeEditMode', {
-      edit: event.edit
+      edit: inEvent.edit
     });
-    if (event.keyboard) {
-      this.$.keyboard.showToolbar(event.keyboard);
+    if (inEvent.keyboard) {
+      this.$.keyboard.showToolbar(inEvent.keyboard);
     } else {
       this.$.keyboard.hide();
     }
   },
-  deleteLine: function (sender, event) {
+  deleteLine: function (inSender, inEvent) {
     if (this.model.get('order').get('isEditable') === false) {
       this.doShowPopup({
         popup: 'modalNotEditableOrder'
       });
       return true;
     }
-    var line = event.line,
+    var line = inEvent.line,
         receipt = this.model.get('order');
     if (line && receipt) {
       receipt.deleteLine(line);
       receipt.trigger('scan');
     }
   },
-  editLine: function (sender, event) {
+  editLine: function (inSender, inEvent) {
     if (this.model.get('order').get('isEditable') === false) {
       this.doShowPopup({
         popup: 'modalNotEditableOrder'
@@ -381,21 +381,21 @@ enyo.kind({
       popup: 'receiptLinesPropertiesDialog'
     });
   },
-  exactPayment: function (sender, event) {
+  exactPayment: function (inSender, inEvent) {
     this.$.keyboard.execStatelessCommand('cashexact');
   },
   changeCurrentOrder: function (inSender, inEvent) {
     this.model.get('orderList').load(inEvent.newCurrentOrder);
     return true;
   },
-  removePayment: function (sender, event) {
+  removePayment: function (inSender, inEvent) {
     if (this.model.get('paymentData') && !confirm(OB.I18N.getLabel('OBPOS_MsgConfirmRemovePayment'))) {
       return;
     }
-    this.model.get('order').removePayment(event.payment);
+    this.model.get('order').removePayment(inEvent.payment);
   },
-  changeSubWindow: function (sender, event) {
-    this.model.get('subWindowManager').set('currentWindow', event.newWindow);
+  changeSubWindow: function (inSender, inEvent) {
+    this.model.get('subWindowManager').set('currentWindow', inEvent.newWindow);
   },
   setReceiptsList: function (inSender, inEvent) {
     this.$.modalreceipts.setReceiptsList(inEvent.orderList);

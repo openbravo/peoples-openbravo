@@ -266,12 +266,13 @@
       }
     },
 
-    setCompanyLogo: function (inSender, jsonCompanyLogo) {
-      var logoUrl = [];
-      if (!jsonCompanyLogo.response) {
+    setCompanyLogo: function (inSender, inResponse) {
+      var logoUrl = [],
+          jsonCompanyLogo;
+      if (!inResponse.response) {
         return;
       }
-      jsonCompanyLogo = jsonCompanyLogo.response[0].data;
+      jsonCompanyLogo = inResponse.response[0].data;
       enyo.forEach(jsonCompanyLogo, function (v) {
         logoUrl.push(v.logoUrl);
       });
@@ -279,14 +280,15 @@
       return true;
     },
 
-    setUserImages: function (inSender, jsonImgData) {
+    setUserImages: function (inSender, inResponse) {
       var name = [],
           userName = [],
           image = [],
           connected = [],
           target = this.$.loginUserContainer,
-          i, me = this;
-      if (!jsonImgData.response) {
+          me = this,
+          jsonImgData, i;
+      if (!inResponse.response) {
         OB.Dal.find(OB.Model.User, {}, function (users) {
           var i, user, session;
           for (i = 0; i < users.models.length; i++) {
@@ -301,7 +303,7 @@
         });
         return true;
       }
-      jsonImgData = jsonImgData.response[0].data;
+      jsonImgData = inResponse.response[0].data;
       enyo.forEach(jsonImgData, function (v) {
         name.push(v.name);
         userName.push(v.userName);

@@ -39,7 +39,7 @@ enyo.kind({
       modelProperty: mProperty
     });
   },
-  applyChanges: function (sender, event) {
+  applyChanges: function (inSender, inEvent) {
     this.waterfall('onApplyChange', {});
   },
   initComponents: function () {
@@ -130,17 +130,17 @@ enyo.kind({
     onSetProperty: '',
     onSetLineProperty: ''
   },
-  loadValue: function (sender, event) {
-    if (this.modelProperty === event.modelProperty) {
-      if (event.order.get(this.modelProperty) !== undefined) {
-        this.setValue(event.order.get(this.modelProperty));
+  loadValue: function (inSender, inEvent) {
+    if (this.modelProperty === inEvent.modelProperty) {
+      if (inEvent.order.get(this.modelProperty) !== undefined) {
+        this.setValue(inEvent.order.get(this.modelProperty));
       }
     }
   },
-  applyChange: function (sender, event) {
-    if (event.orderline) {
+  applyChange: function (inSender, inEvent) {
+    if (inEvent.orderline) {
       this.doSetLineProperty({
-        line: event.orderline,
+        line: inEvent.orderline,
         property: this.modelProperty,
         value: this.getValue()
       });
@@ -171,11 +171,11 @@ enyo.kind({
     onSetProperty: '',
     onSetLineProperty: ''
   },
-  loadValue: function (sender, event) {
+  loadValue: function (inSender, inEvent) {
     var i, splitResult, contentProperty, contentInModel;
-    if (this.modelProperty === event.modelProperty) {
-      if (event.order.get(this.modelProperty) !== undefined) {
-        this.checked = event.order.get(this.modelProperty);
+    if (this.modelProperty === inEvent.modelProperty) {
+      if (inEvent.order.get(this.modelProperty) !== undefined) {
+        this.checked = inEvent.order.get(this.modelProperty);
       }
 
       if (this.checked) {
@@ -190,8 +190,8 @@ enyo.kind({
       if (splitResult.length > 0) {
         contentProperty = splitResult[0];
 
-        if (contentProperty === event.modelProperty) {
-          contentInModel = event.order;
+        if (contentProperty === inEvent.modelProperty) {
+          contentInModel = inEvent.order;
           for (i = 0; i < splitResult.length; i++) {
             contentInModel = contentInModel.get(splitResult[i]);
           }
@@ -204,10 +204,10 @@ enyo.kind({
     }
 
   },
-  applyChange: function (sender, event) {
-    if (event.orderline) {
+  applyChange: function (inSender, inEvent) {
+    if (inEvent.orderline) {
       this.doSetLineProperty({
-        line: event.orderline,
+        line: inEvent.orderline,
         property: this.modelProperty,
         value: this.checked
       });

@@ -58,17 +58,17 @@ enyo.kind({
   events: {
     onSaveProperty: ''
   },
-  loadValue: function (sender, event) {
-    if (event.customer !== undefined) {
-      if (event.customer.get(this.modelProperty) !== undefined) {
-        this.setValue(event.customer.get(this.modelProperty));
+  loadValue: function (inSender, inEvent) {
+    if (inEvent.customer !== undefined) {
+      if (inEvent.customer.get(this.modelProperty) !== undefined) {
+        this.setValue(inEvent.customer.get(this.modelProperty));
       }
     } else {
       this.setValue('');
     }
   },
-  saveChange: function (sender, event) {
-    event.customer.set(this.modelProperty, this.getValue());
+  saveChange: function (inSender, inEvent) {
+    inEvent.customer.set(this.modelProperty, this.getValue());
   },
   initComponents: function () {
     if (this.readOnly) {
@@ -89,13 +89,13 @@ enyo.kind({
   }, {
     name: 'customerAttributes'
   }],
-  setCustomer: function (sender, event) {
-    this.customer = event.customer;
+  setCustomer: function (inSender, inEvent) {
+    this.customer = inEvent.customer;
     this.waterfall('onLoadValue', {
       customer: this.customer
     });
   },
-  saveCustomer: function (sender, event) {
+  saveCustomer: function (inSender, inEvent) {
     var me = this,
         sw = me.subWindow;
 

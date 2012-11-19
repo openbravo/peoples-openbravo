@@ -40,8 +40,8 @@ enyo.kind({
     onmouseout: 'mouseOverOut'
   },
   //TODO: support windows 7  setTimeout(function() { me.$el.removeClass('btn-down'); }, 125);
-  mouseOverOut: function (sender, event) {
-    this.addRemoveClass('btn-over', event.type === 'mouseover');
+  mouseOverOut: function (inSender, inEvent) {
+    this.addRemoveClass('btn-over', inEvent.type === 'mouseover');
   }*/
 });
 
