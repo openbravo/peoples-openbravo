@@ -199,10 +199,12 @@ public class DocMatchInv extends AcctServer {
     }
     BigDecimal trxCost = transaction.getTransactionCost();
     // Cost is retrieved from the transaction and if it does not exist It calls the old way
+    // The precision of the divide is set to 10 because the rounding is needed to avoid exceptions.
+    // The rounding itself is not needed because it is done some lines later.
     BigDecimal bdCost = CostingStatus.getInstance().isMigrated() ? trxCost.divide(
-        transaction.getMovementQuantity(), costCurrency.getCostingPrecision().intValue(),
-        RoundingMode.HALF_UP) : new BigDecimal(DocMatchInvData.selectProductAverageCost(conn,
-        data[0].getField("M_Product_Id"), data[0].getField("orderAcctDate")));
+        transaction.getMovementQuantity(), 10, RoundingMode.HALF_UP) : new BigDecimal(
+        DocMatchInvData.selectProductAverageCost(conn, data[0].getField("M_Product_Id"),
+            data[0].getField("orderAcctDate")));
     Long scale = costCurrency.getStandardPrecision();
     BigDecimal bdQty = new BigDecimal(data[0].getField("Qty"));
     bdCost = bdCost.multiply(bdQty).setScale(scale.intValue(), RoundingMode.HALF_UP);
