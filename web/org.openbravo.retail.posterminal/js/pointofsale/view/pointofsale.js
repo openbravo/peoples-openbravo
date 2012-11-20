@@ -214,13 +214,18 @@ enyo.kind({
     if (inEvent.ignoreStockTab) {
       this.showOrder(inSender, inEvent);
     } else {
-      if (inEvent.product.get('showstock') && OB.POS.modelterminal.get('connectedToERP')) {
+      if (inEvent.product.get('showstock') && !inEvent.product.get('ispack') && OB.POS.modelterminal.get('connectedToERP')) {
         inEvent.leftSubWindow = OB.OBPOSPointOfSale.UICustomization.stockLeftSubWindow;
         this.showLeftSubWindow(inSender, inEvent);
         return true;
       } else {
         this.showOrder(inSender, inEvent);
       }
+    }
+
+    if (inEvent.product.get('ispack')) {
+      OB.Model.Discounts.discountRules[inEvent.product.get('productCategory')].addProductToOrder(this.model.get('order'), inEvent.product);
+      return true;
     }
 
     this.model.get('order').addProduct(inEvent.product);
