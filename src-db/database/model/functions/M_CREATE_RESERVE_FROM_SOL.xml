@@ -52,7 +52,7 @@ BEGIN
     RAISE_APPLICATION_ERROR(-20000,'@cannotReservePurchaseOrder@');
   END IF;
   IF (v_qtyordered < 0) THEN
-    RAISE_APPLICATION_ERROR(-20000,'@cannotReservePurchaseOrder@');
+    RAISE_APPLICATION_ERROR(-20000,'@cannotReserveNegativeOrders@');
   END IF;
   IF (v_qtyordered - v_qtydelivered <= 0) THEN
     RAISE_APPLICATION_ERROR(-20000,'@cannotReserveDeliveredSalesOrderLine@');
