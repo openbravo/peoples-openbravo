@@ -141,6 +141,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="C_COSTCENTER_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="FIN_AD_CLIENT_PAYMENTS">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -164,6 +168,9 @@
       </foreign-key>
       <foreign-key foreignTable="C_CAMPAIGN" name="FIN_PAYMENT_CAMPAIGN">
         <reference local="C_CAMPAIGN_ID" foreign="C_CAMPAIGN_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_COSTCENTER" name="FIN_PAYMENT_COSTCENTER">
+        <reference local="C_COSTCENTER_ID" foreign="C_COSTCENTER_ID"/>
       </foreign-key>
       <foreign-key foreignTable="FIN_PAYMENTMETHOD" name="FIN_PAYMENT_PAYMENT_METHOD">
         <reference local="FIN_PAYMENTMETHOD_ID" foreign="FIN_PAYMENTMETHOD_ID"/>

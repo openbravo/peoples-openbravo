@@ -89,6 +89,14 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="C_COSTCENTER_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="A_ASSET_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="M_MOVEMENT_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -98,6 +106,9 @@
       <foreign-key foreignTable="AD_ORG" name="M_MOVEMENT_AD_ORGTRX">
         <reference local="AD_ORGTRX_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="A_ASSET" name="M_MOVEMENT_ASSET">
+        <reference local="A_ASSET_ID" foreign="A_ASSET_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="C_ACTIVITY" name="M_MOVEMENT_C_ACTIVITY">
         <reference local="C_ACTIVITY_ID" foreign="C_ACTIVITY_ID"/>
       </foreign-key>
@@ -106,6 +117,9 @@
       </foreign-key>
       <foreign-key foreignTable="C_PROJECT" name="M_MOVEMENT_C_PROJECT">
         <reference local="C_PROJECT_ID" foreign="C_PROJECT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_COSTCENTER" name="M_MOVEMENT_COSTCENTER">
+        <reference local="C_COSTCENTER_ID" foreign="C_COSTCENTER_ID"/>
       </foreign-key>
       <foreign-key foreignTable="USER1" name="M_MOVEMENT_USER1">
         <reference local="USER1_ID" foreign="USER1_ID"/>
