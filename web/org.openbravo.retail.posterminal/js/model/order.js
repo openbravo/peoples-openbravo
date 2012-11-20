@@ -968,18 +968,22 @@
         f(model);
       });
 
+      //model.set('id', null);
       lines = new Backbone.Collection();
       order.set('documentNo', model.documentNo);
       if (model.isQuotation) {
         order.set('isQuotation', true);
         order.set('oldId', model.orderid);
+        order.set('id', null);
+        order.set('documentType', OB.POS.modelterminal.get('terminal').terminalType.documentTypeForQuotations);
+
       } else {
         order.set('isPaid', true);
+        order.set('id', model.orderid);
+        order.set('documentType', model.documenttype);
       }
       order.set('isEditable', false);
-      order.set('id', model.orderid);
       order.set('client', model.client);
-      order.set('documentType', model.documenttype);
       order.set('organization', model.organization);
       order.set('posTerminal', model.posterminal);
       order.set('posTerminal$_identifier', model.posterminalidentifier);
@@ -990,6 +994,7 @@
       order.set('currency$_identifier', model.currency_identifier);
       order.set('isbeingprocessed', 'N');
       order.set('hasbeenpaid', 'Y');
+      order.set('json', JSON.stringify(order.toJSON()));
 
 
       bpId = model.businessPartner;
