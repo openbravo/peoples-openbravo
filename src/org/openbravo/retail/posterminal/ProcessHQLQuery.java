@@ -111,15 +111,11 @@ public abstract class ProcessHQLQuery implements JSONProcess {
 
         ScrollableResults listdata = query.scroll(ScrollMode.FORWARD_ONLY);
         String[] aliases = query.getReturnAliases();
-        if (!firstQuery) {
-          w.write(",");
-        }
-        int rowsInQuery = JSONRowConverter.buildResponse(w, Scroll.create(listdata), aliases);
-        if (rowsInQuery == 0 && !firstQuery) {
-          w.write("{}");
-        }
+
+        totalRows += JSONRowConverter
+            .buildResponse(w, Scroll.create(listdata), aliases, firstQuery);
         firstQuery = false;
-        totalRows += rowsInQuery;
+
       }
 
       JSONRowConverter.endResponse(w, totalRows);
