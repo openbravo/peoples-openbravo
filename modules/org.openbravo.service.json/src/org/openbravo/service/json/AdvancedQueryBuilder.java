@@ -136,9 +136,11 @@ public class AdvancedQueryBuilder {
   // keeps track if during parsing the criteria one or more or's are encountered.
   private int orNesting = 0;
 
-  private int minutesTimeZoneDiff = 0;
+  private int UTCServerMinutesTimeZoneDiff = 0;
+  private int clientUTCMinutesTimeZoneDiff = 0;
 
   private SimpleDateFormat simpleDateFormat = JsonUtils.createDateFormat();
+  private SimpleDateFormat simpleDateTimeFormat = JsonUtils.createJSTimeFormat();
 
   // join associated entities
   private boolean joinAssociatedEntities = false;
@@ -333,7 +335,8 @@ public class AdvancedQueryBuilder {
       int serverMinutesTimezoneOffset = (now.get(Calendar.ZONE_OFFSET) + now
           .get(Calendar.DST_OFFSET)) / (1000 * 60);
       // Obtains the time zone offset between the server and the client
-      minutesTimeZoneDiff = serverMinutesTimezoneOffset - clientMinutesTimezoneOffset;
+      clientUTCMinutesTimeZoneDiff = clientMinutesTimezoneOffset;
+      UTCServerMinutesTimeZoneDiff = serverMinutesTimezoneOffset;
     }
 
     if (operator.equals(OPERATOR_ISNULL) || operator.equals(OPERATOR_NOTNULL)) {
@@ -664,9 +667,18 @@ public class AdvancedQueryBuilder {
       }
     } else if (Date.class.isAssignableFrom(property.getPrimitiveObjectType())) {
       try {
-        final Date date = simpleDateFormat.parse(value.toString());
+        Date date = null;
+        if (property.isDatetime()) {
+          date = simpleDateTimeFormat.parse(value.toString());
+        }
+        if (property.isDate()) {
+          date = simpleDateFormat.parse(value.toString());
+        }
+
         final Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
+        // Applies the time zone offset difference of the client
+        calendar.add(Calendar.MINUTE, clientUTCMinutesTimeZoneDiff);
         // move the date to the beginning of the day
         if (isGreaterOperator(operator)) {
           calendar.set(Calendar.HOUR, 0);
@@ -680,8 +692,8 @@ public class AdvancedQueryBuilder {
           calendar.set(Calendar.SECOND, 59);
           calendar.set(Calendar.MILLISECOND, 999);
         }
-        // Applies the time zone offset difference between the client and the server
-        calendar.add(Calendar.MINUTE, minutesTimeZoneDiff);
+        // Applies the time zone offset difference of the server
+        calendar.add(Calendar.MINUTE, -UTCServerMinutesTimeZoneDiff);
         return calendar.getTime();
       } catch (Exception e) {
         throw new IllegalArgumentException(e);
