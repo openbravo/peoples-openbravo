@@ -37,6 +37,23 @@ public class ProductPrice extends ProcessHQLQuery {
             + POSUtils.getPriceListByOrgId(jsonsent.getString("organization")).getId()
             + "' and ppl.id = plv.priceList.id  and "
             + "plv.validFromDate = (select max(pplv.validFromDate) from PricingPriceListVersion as pplv where pplv.priceList.id = ppl.id))");
+
+    prices
+        .add("select plvv.priceList.id as id, plvv.id as priceListVersion, p.id as product, p.obdiscPrice as listPrice, p.obdiscPrice as standardPrice, p.obdiscPrice as listPrice, p.obdiscPrice as priceLimit, "//
+            + "'0' as cost, p.name as _identifier "//
+            + "from PricingAdjustment p, PricingPriceListVersion plvv " //
+            + "where p.discountType.obposIsCategory = true "//
+            + "   and p.discountType.active = true " //
+            + "   and p.active = true"//
+            + "   and plvv.id in "
+            + "   (select plv.id from PricingPriceList as ppl, PricingPriceListVersion as plv "
+            + "    where ppl.id = '"
+            + POSUtils.getPriceListByOrgId(jsonsent.getString("organization")).getId()
+            + "'    and ppl.id = plv.priceList.id  and "
+            + "     plv.validFromDate = (select max(pplv.validFromDate) from PricingPriceListVersion as pplv where pplv.priceList.id = ppl.id))"
+            + "   and p.$readableClientCriteria"//
+            + "   and (p.$incrementalUpdateCriteria) "//
+        );
     return prices;
   }
 }
