@@ -28,31 +28,12 @@
     * Description:
     * - Update Journal Totals
     ************************************************************************/
-    v_ID VARCHAR2(32);
-  v_RO NUMBER;
     
 BEGIN
     
     IF AD_isTriggerEnabled()='N' THEN RETURN;
     END IF;
-
-
-  -- Get ID
-  IF(UPDATING OR INSERTING) THEN
-    v_ID:=:new.GL_Journal_ID;
-  ELSE
-    v_ID:=:old.GL_Journal_ID;
-  END IF;
-  -- ReadOnly Check
-  SELECT COUNT(*)
-  INTO v_RO
-  FROM GL_Journal
-  WHERE GL_Journal_ID=v_ID
-    AND(Processed='Y'
-    OR Posted='Y') ;
-  IF(v_RO > 0) THEN
-    RAISE_APPLICATION_ERROR(-20000, '@20501@') ;
-  END IF;
+    
   -- Subtract Old Amount
   IF(UPDATING OR DELETING) THEN
     IF(:old.IsActive='Y') THEN
