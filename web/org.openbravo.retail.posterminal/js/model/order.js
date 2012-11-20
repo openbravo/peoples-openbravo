@@ -39,6 +39,10 @@
       }
     },
 
+    getQty: function () {
+      return this.get('qty');
+    },
+
     printQty: function () {
       return this.get('qty').toString();
     },
@@ -174,6 +178,7 @@
         this.set('payments', new PaymentLineList().reset(attributes.payments));
         this.set('payment', attributes.payment);
         this.set('change', attributes.change);
+        this.set('qty', attributes.qty);
         this.set('gross', attributes.gross);
         this.trigger('calculategross');
         this.set('net', attributes.net);
@@ -289,7 +294,17 @@
         return OB.DEC.add(memo, grossLine);
       }, OB.DEC.Zero);
       this.set('gross', gross);
+      //total qty
+      var qty = this.get('lines').reduce(function (memo, e) {
+        var qtyLine = e.getQty();
+        return OB.DEC.add(memo, qtyLine);
+      }, OB.DEC.Zero);
+      this.set('qty', qty);
       this.trigger('calculategross');
+    },
+
+    getQty: function () {
+      return this.get('qty');
     },
 
     getGross: function () {
@@ -358,6 +373,7 @@
       this.set('payments', this.get('payments') ? this.get('payments').reset() : new PaymentLineList());
       this.set('payment', OB.DEC.Zero);
       this.set('change', OB.DEC.Zero);
+      this.set('qty', OB.DEC.Zero);
       this.set('gross', OB.DEC.Zero);
       this.trigger('calculategross');
       this.set('hasbeenpaid', 'N');

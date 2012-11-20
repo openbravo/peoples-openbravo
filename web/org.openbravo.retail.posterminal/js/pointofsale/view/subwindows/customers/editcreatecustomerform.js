@@ -10,7 +10,7 @@
 /*global enyo, $ */
 
 enyo.kind({
-  kind: 'OB.UI.subwindow',
+  kind: 'OB.UI.Subwindow',
   name: 'OB.OBPOSPointOfSale.UI.customers.newcustomer',
   events: {
     onShowPopup: ''
@@ -33,7 +33,7 @@ enyo.kind({
   },
   defaultNavigateOnClose: 'customerView',
   header: {
-    kind: 'OB.UI.subwindowheader',
+    kind: 'OB.UI.SubwindowHeader',
     headermessage: OB.I18N.getLabel('OBPOS_TitleEditNewCustomer'),
     handlers: {
       onSetCustomer: 'setCustomer'
@@ -141,6 +141,7 @@ enyo.kind({
     kind: 'OB.UI.CustomerTextProperty',
     name: 'customerName',
     modelProperty: 'name',
+    isFirstFocus: true,
     label: OB.I18N.getLabel('OBPOS_LblName')
   }, {
     kind: 'OB.UI.CustomerTextProperty',

@@ -272,6 +272,10 @@ enyo.kind({
       } else {
         OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NoDefaultActionDefined'));
       }
+    } else if (which === 43 || which === 45) { //Handle + and - keys
+      this.doCommandFired({
+        key: String.fromCharCode(which)
+      });
     } else if (which !== 46 || OB.Format.defaultDecimalSymbol === '.') { //Handle any keypress except any kind of dot (.)
       this.writeCharacter(String.fromCharCode(which));
     }

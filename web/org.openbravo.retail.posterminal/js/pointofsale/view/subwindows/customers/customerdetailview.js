@@ -10,7 +10,7 @@
 /*global enyo, $*/
 
 enyo.kind({
-  kind: 'OB.UI.subwindow',
+  kind: 'OB.UI.Subwindow',
   name: 'OB.OBPOSPointOfSale.UI.customers.editcustomer',
   events: {
     onShowPopup: ''
@@ -32,7 +32,7 @@ enyo.kind({
   },
   defaultNavigateOnClose: 'customerAdvancedSearch',
   header: {
-    kind: 'OB.UI.subwindowheader',
+    kind: 'OB.UI.SubwindowHeader',
     headermessage: OB.I18N.getLabel('OBPOS_TitleViewCustomer'),
     onTapCloseButton: function () {
       var subWindow = this.subWindow;

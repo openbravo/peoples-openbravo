@@ -25,42 +25,26 @@ enyo.kind({
       components: [{
         style: 'display: table-cell; width: 100%;',
         components: [{
-          kind: 'enyo.Input',
-          type: 'text',
-          style: 'width:100%',
-          classes: 'input',
+          kind: 'OB.UI.SearchInput',
           name: 'filterText',
-          //          onchange: 'searchUsingBpsFilter',
-          attributes: {
-            'x-webkit-speech': 'x-webkit-speech'
-          }
+          style: 'width: 100%',
+          onchange: 'searchAction'
         }]
       }, {
         style: 'display: table-cell;',
         components: [{
-          kind: 'OB.UI.Button',
+          kind: 'OB.UI.SmallButton',
+          classes: 'btnlink-gray btn-icon-small btn-icon-clear',
           style: 'width: 100px; margin: 0px 5px 8px 19px;',
-          classes: 'btnlink-gray btnlink btnlink-small',
-          isDefaultAction: true,
-          components: [{
-            classes: 'btn-icon-small btn-icon-search'
-          }, {
-            tag: 'span'
-          }],
-          ontap: 'searchAction'
+          ontap: 'clearAction'
         }]
       }, {
         style: 'display: table-cell;',
         components: [{
-          kind: 'OB.UI.Button',
+          kind: 'OB.UI.SmallButton',
+          classes: 'btnlink-yellow btn-icon-small btn-icon-search',
           style: 'width: 100px; margin: 0px 0px 8px 5px;',
-          classes: 'btnlink-yellow btnlink btnlink-small',
-          components: [{
-            classes: 'btn-icon-small btn-icon-clear'
-          }, {
-            tag: 'span'
-          }],
-          ontap: 'clearAction'
+          ontap: 'searchAction'
         }]
       }]
     }, {
@@ -89,7 +73,8 @@ enyo.kind({
           name: 'startDate',
           size: '10',
           type: 'text',
-          style: 'width: 100px;  margin: 0px 0px 8px 5px;'
+          style: 'width: 100px;  margin: 0px 0px 8px 5px;',
+          onchange: 'searchAction'
         }]
       }, {
         style: 'display: table-cell;',
@@ -103,7 +88,8 @@ enyo.kind({
         name: 'endDate',
         size: '10',
         type: 'text',
-        style: 'width: 100px;  margin: 0px 0px 8px 50px;'
+        style: 'width: 100px;  margin: 0px 0px 8px 50px;',
+        onchange: 'searchAction'
       }, {
         style: 'display: table-cell;',
         components: [{
@@ -299,6 +285,13 @@ enyo.kind({
   changePaidReceipt: function (inSender, inEvent) {
     this.model.get('orderList').addPaidReceipt(inEvent.newPaidReceipt);
     return true;
+  },
+  executeOnShow: function () {
+    if (this.params.isQuotation) {
+      this.$.header.setContent(OB.I18N.getLabel('OBPOS_Quotations'));
+    } else {
+      this.$.header.setContent(OB.I18N.getLabel('OBPOS_LblPaidReceipts'));
+    }
   },
   init: function (model) {
     this.model = model;

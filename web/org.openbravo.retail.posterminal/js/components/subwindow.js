@@ -10,7 +10,7 @@
 /*global enyo $ */
 
 enyo.kind({
-  name: 'OB.UI.subwindow',
+  name: 'OB.UI.Subwindow',
   kind: 'enyo.Popup',
 
   modal: false,
@@ -161,7 +161,7 @@ enyo.kind({
 });
 
 enyo.kind({
-  name: 'OB.UI.subwindowheader',
+  name: 'OB.UI.SubwindowHeader',
   classes: 'subwindowheader',
   components: [{
     name: "closebutton",

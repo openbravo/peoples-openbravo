@@ -59,11 +59,14 @@ enyo.kind({
       components: [{
         style: 'position: relative; padding: 10px;',
         components: [{
-          style: 'float: left; width: 80%;',
+          style: 'float: left; width: 40%;',
           content: OB.I18N.getLabel('OBPOS_LblTotal')
         }, {
-          name: 'totalgross',
+          name: 'totalqty',
           style: 'float: left; width: 20%; text-align:right; font-weight:bold;'
+        }, {
+          name: 'totalgross',
+          style: 'float: left; width: 40%; text-align:right; font-weight:bold;'
         }, {
           style: 'clear: both;'
         }]
@@ -100,14 +103,21 @@ enyo.kind({
   renderTotal: function (newTotal) {
     this.$.totalgross.setContent(OB.I18N.formatCurrency(newTotal));
   },
+  renderQty: function (newQty) {
+    this.$.totalqty.setContent(newQty);
+  },
   initComponents: function () {
     this.inherited(arguments);
   },
   orderChanged: function (oldValue) {
     this.renderTotal(this.order.getTotal());
+    this.renderQty(this.order.getQty());
     this.$.listOrderLines.setCollection(this.order.get('lines'));
     this.order.on('change:gross', function (model) {
       this.renderTotal(model.getTotal());
+    }, this);
+    this.order.on('change:qty', function (model) {
+      this.renderQty(model.getQty());
     }, this);
     this.order.on('change:orderType', function (model) {
       if (model.get('orderType') === 1) {

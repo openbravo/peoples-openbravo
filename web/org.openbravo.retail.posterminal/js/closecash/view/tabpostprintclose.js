@@ -129,6 +129,9 @@ enyo.kind({
     } else if (this.rate && this.rate !== '1' && (this.type === 'deposits' || this.type === 'drops')) {
       this.$.foreignItemQty.setContent('(' + OB.I18N.formatCurrency(this.value) + ' ' + this.isocode + ')');
       this.$.itemQty.setContent(OB.I18N.formatCurrency(OB.DEC.mul(this.value, this.rate)));
+    } else if (this.rate && this.rate !== '1' && this.type === 'startings') {
+      this.$.foreignItemQty.setContent('(' + OB.I18N.formatCurrency(this.value) + ' ' + this.isocode + ')');
+      this.$.itemQty.setContent(OB.I18N.formatCurrency(OB.DEC.mul(this.value, this.rate)));
     } else {
       this.$.foreignItemQty.setContent('');
     }
@@ -267,6 +270,28 @@ enyo.kind({
   }],
   setCollection: function (col) {
     this.$.deposits.setCollection(col);
+  }
+});
+
+enyo.kind({
+  kind: 'OB.OBPOSCashUp.UI.ppc_table',
+  name: 'OB.OBPOSCashUp.UI.ppc_startingsTable',
+  components: [{
+    kind: 'OB.OBPOSCashUp.UI.ppc_collectionLines',
+    name: 'startings',
+    lblProperty: 'description',
+    qtyProperty: 'amount',
+    typeProperty: 'startings'
+  }, {
+    kind: 'OB.OBPOSCashUp.UI.ppc_totalsLine',
+    name: 'totalstartings',
+    label: OB.I18N.getLabel('OBPOS_LblTotalStarting')
+  }, {
+    kind: 'OB.OBPOSCashUp.UI.ppc_lineSeparator',
+    name: 'separator'
+  }],
+  setCollection: function (col) {
+    this.$.startings.setCollection(col);
   }
 });
 
@@ -413,6 +438,9 @@ enyo.kind({
         }]
       }, {
         components: [{
+          kind: 'OB.OBPOSCashUp.UI.ppc_startingsTable',
+          name: 'startingsTable'
+        }, {
           kind: 'OB.OBPOSCashUp.UI.ppc_cashDropsTable',
           name: 'dropsTable'
         }, {
@@ -476,6 +504,9 @@ enyo.kind({
     this.$.returns.setValue('totalreturns', this.model.get('grossReturns'));
 
     this.$.totaltransactions.setValue('totaltransactionsline', this.model.get('totalRetailTransactions'));
+
+    this.$.startingsTable.setCollection(this.model.get('startings'));
+    this.$.startingsTable.setValue('totalstartings', this.model.get('totalStartings'));
 
     this.$.dropsTable.setCollection(this.model.get('drops'));
     this.$.dropsTable.setValue('totaldrops', this.model.get('totalDrops'));

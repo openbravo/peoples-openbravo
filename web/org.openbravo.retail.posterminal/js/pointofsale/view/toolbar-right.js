@@ -99,7 +99,7 @@ enyo.kind({
   receiptChanged: function () {
     var totalPrinterComponent;
 
-    this.receipt.on('clear scan', function () {
+    this.receipt.on('clear', function () {
       if (this.receipt.get('isEditable') === false) {
         this.manualTap('edit');
       } else {
@@ -114,6 +114,10 @@ enyo.kind({
         }
 
       }
+    }, this);
+
+    this.receipt.on('scan', function () {
+      this.manualTap('scan');
     }, this);
 
     this.receipt.get('lines').on('click', function () {

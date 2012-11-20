@@ -25,10 +25,6 @@ enyo.kind({
         components: [{
           kind: 'OB.UI.SearchInput',
           name: 'productname',
-          classes: 'input',
-          attributes: {
-            'x-webkit-speech': 'x-webkit-speech'
-          },
           style: 'width: 100%;',
           onchange: 'searchAction'
         }]

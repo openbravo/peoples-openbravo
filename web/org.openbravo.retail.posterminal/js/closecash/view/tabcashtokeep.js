@@ -83,7 +83,7 @@ enyo.kind({
           style: 'vertical-align: middle; display: table-cell; ',
           content: OB.I18N.getLabel('OBPOS_LblOther')
         }, {
-          kind: 'OB.UI.SearchInput',
+          kind: 'enyo.Input',
           name: 'variableInput',
           tap: function () {
             return true;

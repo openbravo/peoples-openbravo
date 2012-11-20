@@ -12,7 +12,7 @@
 //Modal pop up
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.customers.cas',
-  kind: 'OB.UI.subwindow',
+  kind: 'OB.UI.Subwindow',
   events: {
     onSearchAction: ''
   },
@@ -62,43 +62,27 @@ enyo.kind({
       components: [{
         style: 'display: table-cell; width: 100%;',
         components: [{
-          kind: 'enyo.Input',
-          type: 'text',
-          style: 'width:100%',
-          classes: 'input',
+          kind: 'OB.UI.SearchInput',
           name: 'filterText',
-          onchange: 'searchUsingBpsFilter',
-          isFirstFocus: true,
-          attributes: {
-            'x-webkit-speech': 'x-webkit-speech'
-          }
+          style: 'width: 100%',
+          onchange: 'searchAction',
+          isFirstFocus: true
         }]
       }, {
         style: 'display: table-cell;',
         components: [{
-          kind: 'OB.UI.Button',
+          kind: 'OB.UI.SmallButton',
+          classes: 'btnlink-gray btn-icon-small btn-icon-clear',
           style: 'width: 100px; margin: 0px 5px 8px 19px;',
-          classes: 'btnlink-gray btnlink btnlink-small',
-          isDefaultAction: true,
-          components: [{
-            classes: 'btn-icon-small btn-icon-search'
-          }, {
-            tag: 'span'
-          }],
-          ontap: 'searchAction'
+          ontap: 'clearAction'
         }]
       }, {
         style: 'display: table-cell;',
         components: [{
-          kind: 'OB.UI.Button',
+          kind: 'OB.UI.SmallButton',
+          classes: 'btnlink-yellow btn-icon-small btn-icon-search',
           style: 'width: 100px; margin: 0px 0px 8px 5px;',
-          classes: 'btnlink-yellow btnlink btnlink-small',
-          components: [{
-            classes: 'btn-icon-small btn-icon-clear'
-          }, {
-            tag: 'span'
-          }],
-          ontap: 'clearAction'
+          ontap: 'searchAction'
         }]
       }]
     }]
@@ -382,7 +366,7 @@ enyo.kind({
 
 //header
 enyo.kind({
-  kind: 'OB.UI.subwindowheader',
+  kind: 'OB.UI.SubwindowHeader',
   name: 'OB.OBPOSPointOfSale.UI.customers.casheader',
   onTapCloseButton: function () {
     var subWindow = this.subWindow;
