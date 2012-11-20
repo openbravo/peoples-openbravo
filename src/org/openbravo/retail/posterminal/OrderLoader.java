@@ -408,6 +408,7 @@ public class OrderLoader extends JSONProcessSimple {
       tax.setTaxAmount(BigDecimal.valueOf(orderlines.getJSONObject(i).getDouble("taxAmount")));
       tax.setInvoice(invoice);
       tax.setInvoiceLine(line);
+      tax.setRecalculate(true);
       line.getInvoiceLineTaxList().add(tax);
       invoice.getInvoiceLineTaxList().add(tax);
 
@@ -488,6 +489,7 @@ public class OrderLoader extends JSONProcessSimple {
       invoiceTax.setTaxAmount(BigDecimal.valueOf(jsonOrderTax.getDouble("amount")));
       invoiceTax.setInvoice(invoice);
       invoiceTax.setLineNo((long) ((i + 1) * 10));
+      invoiceTax.setRecalculate(true);
       i++;
       invoice.getInvoiceTaxList().add(invoiceTax);
     }
