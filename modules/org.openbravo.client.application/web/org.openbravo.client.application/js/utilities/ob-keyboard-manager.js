@@ -347,17 +347,6 @@
   // Initialize KeyboardManager object
   keyboardMgr = O.KeyboardManager = new KeyboardManager();
 
-  // To avoid default browser behavior that makes "Backspace" key go to previous html page
-  O.KeyboardManager.Shortcuts.set('Canvas_Avoid_Backspace', 'Canvas', function () {
-    if (document.activeElement && (document.activeElement.tagName.toLowerCase() === 'div' || document.activeElement.tagName.toLowerCase() === 'body')) {
-      return false;
-    } else {
-      return true;
-    }
-  }, null, {
-    "key": "Backspace"
-  });
-
   // To fix issue https://issues.openbravo.com/view.php?id=21786
   isc.ComboBoxItem.getPrototype()._originalKeyDown = isc.ComboBoxItem.getPrototype().keyDown;
   isc.ComboBoxItem.getPrototype().keyDown = function () {
