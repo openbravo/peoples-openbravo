@@ -8,7 +8,7 @@
  */
 package org.openbravo.retail.posterminal.master;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.codehaus.jettison.json.JSONException;
@@ -25,8 +25,9 @@ public class ProductPrice extends ProcessHQLQuery {
 
   @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
-    return Arrays
-        .asList(new String[] { "select pricingProductPrice.id as id, pricingProductPrice.priceListVersion.id as priceListVersion, pricingProductPrice.product.id as product, "
+    List<String> prices = new ArrayList<String>();
+    prices
+        .add("select pricingProductPrice.id as id, pricingProductPrice.priceListVersion.id as priceListVersion, pricingProductPrice.product.id as product, "
             + " pricingProductPrice.listPrice as listPrice, pricingProductPrice.standardPrice as standardPrice, pricingProductPrice.priceLimit as priceLimit, "
             + "pricingProductPrice.cost as cost, pricingProductPrice.product.name||' - '||pricingProductPrice.priceListVersion.priceList.name as _identifier"
             + " from PricingProductPrice as pricingProductPrice where "
@@ -35,6 +36,7 @@ public class ProductPrice extends ProcessHQLQuery {
             + "where ppl.id = '"
             + POSUtils.getPriceListByOrgId(jsonsent.getString("organization")).getId()
             + "' and ppl.id = plv.priceList.id  and "
-            + "plv.validFromDate = (select max(pplv.validFromDate) from PricingPriceListVersion as pplv where pplv.priceList.id = ppl.id))" });
+            + "plv.validFromDate = (select max(pplv.validFromDate) from PricingPriceListVersion as pplv where pplv.priceList.id = ppl.id))");
+    return prices;
   }
 }

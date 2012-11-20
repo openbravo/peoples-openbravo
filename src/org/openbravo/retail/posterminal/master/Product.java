@@ -8,7 +8,7 @@
  */
 package org.openbravo.retail.posterminal.master;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.codehaus.jettison.json.JSONException;
@@ -27,37 +27,55 @@ public class Product extends ProcessHQLQuery {
 
     final PriceList priceList = POSUtils.getPriceListByOrgId(jsonsent.getString("organization"));
 
-    if (productList != null) {
-      return Arrays
-          .asList(new String[] { "select pli.product.id as id, pli.product.name as _identifier, pli.product.taxCategory.id as taxCategory, "
-              + "pli.product.productCategory.id as productCategory, pli.product.obposScale as obposScale, pli.product.uOM.id as uOM, pli.product.uOM.symbol as uOMsymbol, pli.product.uPCEAN as uPCEAN, img.bindaryData as img "
-              + ", pli.product.description as description "
-              + ", pli.product.obposGroupedproduct as groupProduct "
-              + ", pli.product.obposShowstock as showstock "
-              + ", pli.bestseller as bestseller "
-              + "FROM OBRETCO_Prol_Product as pli left outer join pli.product.image img, "
-              + "PricingProductPrice ppp, "
-              + "PricingPriceListVersion pplv "
-              + "WHERE (pli.obretcoProductlist = '"
-              + productList.getId()
-              + "') "
-              + "AND ("
-              + "pplv.priceList.id = '"
-              + priceList.getId()
-              + "' AND "
-              + "pplv.validFromDate = (select max(a.validFromDate) "
-              + "  FROM PricingPriceListVersion a "
-              + "  WHERE a.priceList.id = '"
-              + priceList.getId()
-              + "')"
-              + ") AND ("
-              + "ppp.priceListVersion.id = pplv.id"
-              + ") AND ("
-              + "pli.product.id = ppp.product.id"
-              + ") AND "
-              + "(pli.product.$incrementalUpdateCriteria) order by pli.product.name" });
-    } else {
+    if (productList == null) {
       throw new JSONException("Product list not found");
     }
+
+    List<String> products = new ArrayList<String>();
+
+    // regular products
+    products
+        .add("select pli.product.id as id, pli.product.name as _identifier, pli.product.taxCategory.id as taxCategory, "
+            + "pli.product.productCategory.id as productCategory, pli.product.obposScale as obposScale, pli.product.uOM.id as uOM, pli.product.uOM.symbol as uOMsymbol, pli.product.uPCEAN as uPCEAN, img.bindaryData as img "
+            + ", pli.product.description as description "
+            + ", pli.product.obposGroupedproduct as groupProduct "
+            + ", pli.product.obposShowstock as showstock "
+            + ", pli.bestseller as bestseller "
+            + "FROM OBRETCO_Prol_Product as pli left outer join pli.product.image img, "
+            + "PricingProductPrice ppp, "
+            + "PricingPriceListVersion pplv "
+            + "WHERE (pli.obretcoProductlist = '"
+            + productList.getId()
+            + "') "
+            + "AND ("
+            + "pplv.priceList.id = '"
+            + priceList.getId()
+            + "' AND "
+            + "pplv.validFromDate = (select max(a.validFromDate) "
+            + "  FROM PricingPriceListVersion a "
+            + "  WHERE a.priceList.id = '"
+            + priceList.getId()
+            + "')"
+            + ") AND ("
+            + "ppp.priceListVersion.id = pplv.id"
+            + ") AND ("
+            + "pli.product.id = ppp.product.id"
+            + ") AND "
+            + "(pli.product.$incrementalUpdateCriteria) order by pli.product.name");
+
+    // discounts which type is defined as category
+
+    // TODO: img, UPC
+    products.add("select p.id as id, p.name as _identifier, p.discountType.id as productCategory"//
+        + "  from PricingAdjustment p " //
+        + " where p.discountType.obposIsCategory = true "//
+        + "   and p.discountType.active = true " //
+        + "   and p.active = true"//
+        + "   and p.$readableClientCriteria"//
+        + "   and ($incrementalUpdateCriteria) "//
+    );
+
+    return products;
+
   }
 }

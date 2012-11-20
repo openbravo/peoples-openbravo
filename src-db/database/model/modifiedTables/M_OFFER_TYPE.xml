@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+  <database name="MODIFIED TABLE M_OFFER_TYPE">
+    <table name="M_OFFER_TYPE" primaryKey="M_OFFERTYPE_KEY">
+      <column name="EM_OBPOS_ISCATEGORY" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
+      </column>
+      <check name="EM_OBPOS_CATEG_CHECK"><![CDATA[EM_OBPOS_ISCATEGORY IN ('Y', 'N')]]></check>
+    </table>
+  </database>
