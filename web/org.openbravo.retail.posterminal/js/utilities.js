@@ -73,6 +73,33 @@
     }, true);
   };
 
+  OB.UTIL.processPaidOrders = function (model) {
+    // Processes the paid, unprocessed orders
+    var me = this,
+        criteria = {
+        hasbeenpaid: 'Y'
+        };
+    if (OB.POS.modelterminal.get('connectedToERP')) {
+      OB.Dal.find(OB.Model.Order, criteria, function (ordersPaidNotProcessed) { //OB.Dal.find success
+        var successCallback, errorCallback;
+        if (!ordersPaidNotProcessed || ordersPaidNotProcessed.length === 0) {
+          return;
+        }
+        ordersPaidNotProcessed.each(function (order) {
+          order.set('isbeingretriggered', 'Y');
+        });
+        successCallback = function () {
+          OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgSuccessProcessOrder'));
+        };
+        errorCallback = function () {
+          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorProcessOrder'));
+        };
+        OB.UTIL.showAlert.display(OB.I18N.getLabel('OBPOS_ProcessPendingOrders'), OB.I18N.getLabel('OBPOS_Info'));
+        OB.UTIL.processOrders(model, ordersPaidNotProcessed, successCallback, errorCallback);
+      });
+    }
+  };
+
   OB.UTIL.processOrderClass = 'org.openbravo.retail.posterminal.OrderLoader';
 
   OB.UTIL.processOrders = function (model, orders, successCallback, errorCallback) {
@@ -99,7 +126,9 @@
         } else {
           // Orders have been processed, delete them
           orders.each(function (order) {
-            model.get('orderList').remove(order);
+            if (model) {
+              model.get('orderList').remove(order);
+            }
             OB.Dal.remove(order, null, function (tx, err) {
               OB.UTIL.showError(err);
             });
