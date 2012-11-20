@@ -485,8 +485,6 @@
           });
         }
         this.adjustPayment();
-        //temp workaround
-        this.calculateGross();
       }
       this.save();
     },
