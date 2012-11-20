@@ -35,12 +35,12 @@ BEGIN
       WHERE EXISTS (SELECT 1
                     FROM m_reservation r
                         JOIN m_reservation_stock rs ON r.m_reservation_id = rs.m_reservation_id
-                    WHERE r.res_status <> 'CL'
+                    WHERE r.res_status NOT IN ('CL', 'DR')
                       AND r.m_product_id = :NEW.m_product_id
                       AND r.c_uom_id = :NEW.c_uom_id
                       AND COALESCE(rs.m_attributesetinstance_id, '0') = :NEW.m_attributesetinstance_id
                       AND rs.m_locator_id = :NEW.m_locator_id);
-      IF (v_count > 1) THEN
+      IF (v_count > 0) THEN
         SELECT COALESCE(sum(rs.quantity - COALESCE(rs.releasedqty,0)), 0), sd.qtyonhand
           INTO v_reserved, v_onhand
         FROM m_reservation_stock rs
@@ -50,7 +50,7 @@ BEGIN
                                         AND COALESCE(rs.m_attributesetinstance_id, '0') = COALESCE(sd.m_attributesetinstance_id, '0')
                                         AND rs.m_locator_id = sd.m_locator_id
                                         AND sd.m_product_uom_id IS NULL
-        WHERE r.res_status <> 'CL'
+        WHERE r.res_status NOT IN ('CL', 'DR')
           AND r.m_product_id = :NEW.m_product_id
           AND r.c_uom_id = :NEW.c_uom_id
           AND COALESCE(rs.m_attributesetinstance_id, '0') = :NEW.m_attributesetinstance_id
