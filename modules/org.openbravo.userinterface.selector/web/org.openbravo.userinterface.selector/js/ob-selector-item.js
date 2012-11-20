@@ -407,10 +407,6 @@ isc.OBSelectorItem.addProperties({
     if (!newValue) {
       this.setValueFromRecord(null);
     }
-    // Refreshing the display manually value because when we remove the whole word
-    // and type a new value the cursor moved before the first letter
-    // when display logic is present. Refer https://issues.openbravo.com/view.php?id=21882
-    this.refreshDisplayValue();
   },
 
   setPickListWidth: function () {
