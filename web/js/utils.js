@@ -1490,6 +1490,21 @@ function keyControl(pushedKey) {
     return true;
   }
 
+  // To avoid BACKSPACE ("go back" browser shortcut) propagation
+  if (pressedKeyCode === 8 && !pushedKey.ctrlKey && !pushedKey.altKey && !pushedKey.shiftKey) {
+    if (document.activeElement && document.activeElement.tagName.toLowerCase() !== 'input' && document.activeElement.tagName.toLowerCase() !== 'textarea') {
+      return false;
+    } else if (document.activeElement &&
+      document.activeElement.tagName.toLowerCase() === 'input' &&
+      (document.activeElement.type.toLowerCase() === 'button' ||
+      document.activeElement.type.toLowerCase() === 'checkbox' ||
+      document.activeElement.type.toLowerCase() === 'radio' ||
+      document.activeElement.type.toLowerCase() === 'file' ||
+      document.activeElement.type.toLowerCase() === 'submit')) {
+      return false;
+    }
+  }
+
   var keyCode = pushedKey.keyCode ? pushedKey.keyCode : pushedKey.which ? pushedKey.which : pushedKey.charCode;
   if (isKeyboardLocked==false) {
     var keyTarget = pushedKey.target ? pushedKey.target: pushedKey.srcElement;

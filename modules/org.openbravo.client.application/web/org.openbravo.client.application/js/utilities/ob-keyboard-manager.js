@@ -365,6 +365,10 @@
     return response;
   };
 
+  O.KeyboardManager.Shortcuts.origWindowOnKeyDown = null;
+  O.KeyboardManager.Shortcuts.origWindowOnKeyUp = null;
+  O.KeyboardManager.Shortcuts.isOrigWindowOnKeyDownSet = false;
+
   /* isc.Page.setEvent('keyPress', 'OB.KeyboardManager.Shortcuts.monitor('Canvas')'); // Discart due to Chrome event propagation problems http://forums.smartclient.com/showthread.php?p=65578 */
   isc.Canvas.getPrototype()._originalKeyDown = isc.Canvas.getPrototype().keyDown;
   isc.Canvas.getPrototype().keyDown = function () {
@@ -375,6 +379,38 @@
     },
         response;
 
+    // Special case to avoid "BACKSPACE" key resulting in a browser shortcut that performs a browser history "Go back".
+    // Issue: https://issues.openbravo.com/view.php?id=21776
+    if (isc.EH.getKey() === 'Backspace' && !isc.EH.ctrlKeyDown() && !isc.EH.altKeyDown() && !isc.EH.shiftKeyDown()) {
+      if (!O.KeyboardManager.Shortcuts.isOrigWindowOnKeyDownSet) {
+        var avoidBackspace, restoreOriginals;
+
+        O.KeyboardManager.Shortcuts.isOrigWindowOnKeyDownSet = true;
+        O.KeyboardManager.Shortcuts.origWindowOnKeyDown = window.onkeydown;
+        O.KeyboardManager.Shortcuts.origWindowOnKeyUp = window.onkeyup;
+
+        avoidBackspace = function (e) {
+          if (e.keyCode === 8) {
+            if (document.activeElement && (document.activeElement.tagName.toLowerCase() === 'div' || document.activeElement.tagName.toLowerCase() === 'body')) {
+              return false;
+            } else {
+              return true;
+            }
+          } else {
+            return true;
+          }
+        };
+
+        restoreOriginals = function (e) {
+          window.onkeydown = O.KeyboardManager.Shortcuts.origWindowOnKeyDown;
+          window.onkeyup = O.KeyboardManager.Shortcuts.origWindowOnKeyUp;
+          O.KeyboardManager.Shortcuts.isOrigWindowOnKeyDownSet = false;
+        };
+
+        window.onkeydown = avoidBackspace;
+        window.onkeyup = restoreOriginals;
+      }
+    }
     if (isc.Event.getKey() === 'Space') {
       OB.KeyboardManager.Shortcuts.isSpacePressed = true;
     }
