@@ -35,7 +35,7 @@
           '' AS ISDESCRIPTION, '' AS QUANTITYORDER, '' AS M_PRODUCT_UOM_ID,
           '' AS C_CAMPAIGN_ID, '' AS C_PROJECT_ID,
           '' AS USER1_ID, '' AS USER2_ID, '' AS GLITEM_CREDIT_ACCT,
-          '' AS GLITEM_DEBIT_ACCT, '' AS INOUTPROJECT, '' AS C_INVOICE_ID
+          '' AS GLITEM_DEBIT_ACCT, '' AS INOUTPROJECT, '' AS C_INVOICE_ID, '' AS ISSOTRX
         FROM DUAL
       ]]>
     </Sql>
@@ -72,7 +72,7 @@
   <SqlMethod name="selectInvoiceData" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
-      SELECT L.LINENETAMT, I.C_CURRENCY_ID, I.DATEACCT
+      SELECT L.LINENETAMT, I.C_CURRENCY_ID, I.DATEACCT, I.ISSOTRX, I.C_INVOICE_ID
       FROM C_INVOICELINE L, C_INVOICE I
       WHERE L.AD_CLIENT_ID = ?
         AND L.C_INVOICELINE_ID = ?

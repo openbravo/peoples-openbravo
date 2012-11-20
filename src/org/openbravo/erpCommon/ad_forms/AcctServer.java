@@ -2163,13 +2163,21 @@ public abstract class AcctServer {
   // return amt;
   // }
 
+  public BigDecimal convertAmount(BigDecimal _amount, boolean isReceipt, String dateAcct,
+      String table_ID, String record_ID, String currencyIDFrom, String currencyIDTo, DocLine line,
+      AcctSchema as, Fact fact, String Fact_Acct_Group_ID, String seqNo, ConnectionProvider conn)
+      throws ServletException {
+    return convertAmount(_amount, isReceipt, dateAcct, table_ID, record_ID, currencyIDFrom,
+        currencyIDTo, line, as, fact, Fact_Acct_Group_ID, seqNo, conn, true);
+  }
+
   /*
    * Returns an amount without applying currency precision for rounding purposes
    */
   public BigDecimal convertAmount(BigDecimal _amount, boolean isReceipt, String dateAcct,
       String table_ID, String record_ID, String currencyIDFrom, String currencyIDTo, DocLine line,
-      AcctSchema as, Fact fact, String Fact_Acct_Group_ID, String seqNo, ConnectionProvider conn)
-      throws ServletException {
+      AcctSchema as, Fact fact, String Fact_Acct_Group_ID, String seqNo, ConnectionProvider conn,
+      boolean bookDifferences) throws ServletException {
     BigDecimal amtDiff = BigDecimal.ZERO;
     if (_amount == null || _amount.compareTo(BigDecimal.ZERO) == 0) {
       return _amount;
@@ -2261,15 +2269,19 @@ public abstract class AcctServer {
     Currency currencyTo = OBDal.getInstance().get(Currency.class, currencyIDTo);
     amtDiff = amtDiff.setScale(currencyTo.getStandardPrecision().intValue(),
         BigDecimal.ROUND_HALF_EVEN);
-    if ((!isReceipt && amtDiff.compareTo(BigDecimal.ZERO) == 1)
-        || (isReceipt && amtDiff.compareTo(BigDecimal.ZERO) == -1)) {
-      fact.createLine(line, getAccount(AcctServer.ACCTTYPE_ConvertGainDefaultAmt, as, conn),
-          currencyIDTo, "", amtDiff.abs().toString(), Fact_Acct_Group_ID, seqNo, DocumentType, conn);
-    } else if (amtDiff.compareTo(BigDecimal.ZERO) != 0) {
-      fact.createLine(line, getAccount(AcctServer.ACCTTYPE_ConvertChargeDefaultAmt, as, conn),
-          currencyIDTo, amtDiff.abs().toString(), "", Fact_Acct_Group_ID, seqNo, DocumentType, conn);
-    } else {
-      return amtFromSourcecurrency;
+    if (bookDifferences) {
+      if ((!isReceipt && amtDiff.compareTo(BigDecimal.ZERO) == 1)
+          || (isReceipt && amtDiff.compareTo(BigDecimal.ZERO) == -1)) {
+        fact.createLine(line, getAccount(AcctServer.ACCTTYPE_ConvertGainDefaultAmt, as, conn),
+            currencyIDTo, "", amtDiff.abs().toString(), Fact_Acct_Group_ID, seqNo, DocumentType,
+            conn);
+      } else if (amtDiff.compareTo(BigDecimal.ZERO) != 0) {
+        fact.createLine(line, getAccount(AcctServer.ACCTTYPE_ConvertChargeDefaultAmt, as, conn),
+            currencyIDTo, amtDiff.abs().toString(), "", Fact_Acct_Group_ID, seqNo, DocumentType,
+            conn);
+      } else {
+        return amtFromSourcecurrency;
+      }
     }
     if (log4j.isDebugEnabled())
       log4j.debug("Amt from: " + amtFrom + "[" + currencyIDFrom + "]" + " Amt to: " + amtTo + "["
