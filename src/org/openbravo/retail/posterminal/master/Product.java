@@ -41,6 +41,7 @@ public class Product extends ProcessHQLQuery {
             + ", pli.product.obposGroupedproduct as groupProduct "
             + ", pli.product.obposShowstock as showstock "
             + ", pli.bestseller as bestseller "
+            + ", 'false' as ispack "
             + "FROM OBRETCO_Prol_Product as pli left outer join pli.product.image img, "
             + "PricingProductPrice ppp, "
             + "PricingPriceListVersion pplv "
@@ -66,14 +67,15 @@ public class Product extends ProcessHQLQuery {
     // discounts which type is defined as category
 
     // TODO: img, UPC
-    products.add("select p.id as id, p.name as _identifier, p.discountType.id as productCategory"//
-        + "  from PricingAdjustment p " //
-        + " where p.discountType.obposIsCategory = true "//
-        + "   and p.discountType.active = true " //
-        + "   and p.active = true"//
-        + "   and p.$readableClientCriteria"//
-        + "   and ($incrementalUpdateCriteria) "//
-    );
+    products
+        .add("select p.id as id, p.name as _identifier, p.discountType.id as productCategory, 'true' as ispack"//
+            + "  from PricingAdjustment p " //
+            + " where p.discountType.obposIsCategory = true "//
+            + "   and p.discountType.active = true " //
+            + "   and p.active = true"//
+            + "   and p.$readableClientCriteria"//
+            + "   and ($incrementalUpdateCriteria) "//
+        );
 
     return products;
 
