@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="VIEW M_PRERESERVATION_PICK_EDIT">
-    <view name="M_PRERESERVATION_PICK_EDIT"><![CDATA[SELECT COALESCE(res.m_reservation_stock_id, (sol.c_orderline_id || pol.c_orderline_id)) AS m_prereservation_pick_edit_id, pol.ad_client_id, pol.ad_org_id, pol.createdby, pol.created, pol.updated, pol.updatedby, 'Y' AS isactive, pol.c_orderline_id AS purchase_orderline_id, sol.c_orderline_id AS sales_orderline_id, so.documentno, sol.line, so.dateordered, so.datepromised, pol.qtyordered AS purchasedqty, del.qty AS receivedqty, res.quantity AS reservedqty, res.m_reservation_stock_id, 
+    <view name="M_PRERESERVATION_PICK_EDIT"><![CDATA[SELECT COALESCE(res.m_reservation_stock_id, (sol.c_orderline_id || pol.c_orderline_id)) AS m_prereservation_pick_edit_id, pol.ad_client_id, pol.ad_org_id, pol.createdby, pol.created, pol.updated, pol.updatedby, to_char('Y') AS isactive, pol.c_orderline_id AS purchase_orderline_id, sol.c_orderline_id AS sales_orderline_id, so.documentno, sol.line, so.dateordered, so.datepromised, pol.qtyordered AS purchasedqty, del.qty AS receivedqty, res.quantity AS reservedqty, res.m_reservation_stock_id, 
 CASE
 WHEN res.m_reservation_stock_id IS NULL THEN 'N'
 ELSE 'Y'
