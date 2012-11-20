@@ -67,7 +67,14 @@ public class Category extends ProcessHQLQuery {
             + "where obposIsCategory = true "//
             + "  and active = true "//
             + "  and pt.$readableClientCriteria" //
-            + "  and ($incrementalUpdateCriteria)");
+            + "  and ($incrementalUpdateCriteria)"//
+            + " and exists (select 1"//
+            + "  from PricingAdjustment p " //
+            + " where  p.discountType.active = true " //
+            + "   and p.active = true"//
+            + " and p.discountType = pt)"
+
+        );
 
     return hqlQueries;
   }
