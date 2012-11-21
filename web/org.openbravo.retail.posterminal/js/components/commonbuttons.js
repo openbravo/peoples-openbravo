@@ -81,7 +81,7 @@ enyo.kind({
   },
   keydownHandler: function (inSender, inEvent) {
     var keyCode = inEvent.keyCode;
-    if (keyCode === 27 && this.showing) { //Handle ESC key to hide the popup
+    if (keyCode === 27 && this.showing && this.autoDismiss) { //Handle ESC key to hide the popup
       this.hide();
       return true;
     } else if (keyCode === 13 && this.defaultActionButton) { //Handle ENTER key to execute the default action (if exists)
