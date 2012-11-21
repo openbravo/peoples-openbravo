@@ -18,6 +18,8 @@
  */
 package org.openbravo.client.kernel.reference;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -156,4 +158,10 @@ public class DateUIDefinition extends UIDefinition {
   public String getCellAlign() {
     return "left";
   }
+
+  public String getValueFromSQLDefault(ResultSet rs) throws SQLException {
+    Date date = rs.getDate(1);
+    return getClassicFormat().format(date);
+  }
+
 }
