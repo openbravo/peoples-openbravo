@@ -524,8 +524,12 @@
       this.save();
     },
 
-    addProduct: function (p, qty) {
+    addProduct: function (p, qty, options) {
       var me = this;
+      if (p.get('ispack')) {
+        OB.Model.Discounts.discountRules[p.get('productCategory')].addProductToOrder(this, p);
+        return;
+      }
       qty = qty || 1;
       if (me.get('isQuotation') && me.get('hasbeenpaid') === 'Y') {
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_QuotationClosed'));
@@ -542,14 +546,14 @@
           }
         });
       } else {
-        if (p.get('groupProduct')) {
+        if (p.get('groupProduct') || (options && options.packId)) {
           var affectedByPack, line = this.get('lines').find(function (l) {
             if (l.get('product').id === p.id) {
               affectedByPack = l.isAffectedByPack();
               if (!affectedByPack) {
                 return true;
-              } else if (p.get('packId') === affectedByPack.ruleId) {
-                return true;
+              } else if (options && options.packId === affectedByPack.ruleId) {
+                  return true;
               }
             }
           });

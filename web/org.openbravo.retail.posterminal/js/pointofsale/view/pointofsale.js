@@ -223,12 +223,7 @@ enyo.kind({
       }
     }
 
-    if (inEvent.product.get('ispack')) {
-      OB.Model.Discounts.discountRules[inEvent.product.get('productCategory')].addProductToOrder(this.model.get('order'), inEvent.product);
-      return true;
-    }
-
-    this.model.get('order').addProduct(inEvent.product);
+    this.model.get('order').addProduct(inEvent.product, inEvent.qty);
     this.model.get('orderList').saveCurrent();
     return true;
   },
