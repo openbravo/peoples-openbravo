@@ -72,6 +72,14 @@
       return OB.I18N.formatCurrency(this.get('_gross') || this.getGross());
     },
 
+    isAffectedByPack: function () {
+      return _.find(this.get('promotions'), function (promotion) {
+        if (promotion.pack) {
+          return true;
+        }
+      }, this);
+    },
+
     stopApplyingPromotions: function () {
       var promotions = this.get('promotions'),
           i;
@@ -516,8 +524,9 @@
       this.save();
     },
 
-    addProduct: function (p) {
+    addProduct: function (p, qty) {
       var me = this;
+      qty = qty || 1;
       if (me.get('isQuotation') && me.get('hasbeenpaid') === 'Y') {
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_QuotationClosed'));
         return;
@@ -534,17 +543,24 @@
         });
       } else {
         if (p.get('groupProduct')) {
-          var line = this.get('lines').find(function (l) {
-            return l.get('product').id === p.id;
+          var affectedByPack, line = this.get('lines').find(function (l) {
+            if (l.get('product').id === p.id) {
+              affectedByPack = l.isAffectedByPack();
+              if (!affectedByPack) {
+                return true;
+              } else if (p.get('packId') === affectedByPack.ruleId) {
+                return true;
+              }
+            }
           });
           if (line) {
-            this.addUnit(line);
+            this.addUnit(line, qty);
             line.trigger('selected', line);
           } else {
-            this.createLine(p, 1);
+            this.createLine(p, qty);
           }
         } else {
-          this.createLine(p, 1);
+          this.createLine(p, qty);
         }
       }
       this.save();
