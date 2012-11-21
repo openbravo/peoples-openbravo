@@ -1,12 +1,12 @@
 CACHE MANIFEST
 
-# Version: ${data.version}
-
 NETWORK:
 ${data.network}
 
+<#if data.notInDevelopment>
+# Version: ${data.version}
 CACHE:
-# Libs
+# Libs 
 ../../web/org.openbravo.client.kernel/js/BigDecimal-all-1.0.1.min.js
 ../../web/org.openbravo.client.kernel/js/LAB.min.js
 ../../web/org.openbravo.retail.posterminal/js/libs/jquery-1.7.2.js
@@ -63,3 +63,5 @@ ${cssFile}
 # Generated file
 ../../org.openbravo.client.kernel/OBPOS_Main/StaticResources?_appName=WebPOS
 ../../web/js/gen/${data.fileName}.js
+
+</#if>
