@@ -319,7 +319,7 @@ BEGIN
     v_pendingtorelease := v_pendingtorelease - v_qtytorelease;
     IF (v_pendingtorelease = 0) THEN
       -- Stock completely released from the reservation
-      RETURN;
+      EXIT;
     END IF;
   END LOOP;
   
