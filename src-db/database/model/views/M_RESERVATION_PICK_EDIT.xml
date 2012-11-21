@@ -26,7 +26,7 @@ JOIN m_reservation r ON rs.m_reservation_id = r.m_reservation_id
 WHERE (r.res_status NOT IN ('CL', 'DR')) AND rs.c_orderline_id IS NOT NULL
 GROUP BY rs.c_orderline_id) res ON res.c_orderline_id = ol.c_orderline_id
 GROUP BY ol.c_orderline_id, ol.m_product_id, ol.c_uom_id, COALESCE(ol.m_attributesetinstance_id, '0'), ol.qtyordered, COALESCE(res.qty, 0), ol.ad_org_id
-HAVING ol.qtyordered <> COALESCE(sum(mp.qty), 0)) stock ON stock.m_storage_detail_id IS NOT NULL AND stock.m_product_id = COALESCE(r.m_product_id, sol.m_product_id) AND stock.c_uom_id = COALESCE(r.c_uom_id, sol.c_uom_id) AND (stock.m_warehouse_id IN (SELECT ow.m_warehouse_id
+HAVING ol.qtyordered <> COALESCE(sum(mp.qty), 0)) stock ON stock.m_storage_detail_id IS NOT NULL AND stock.m_product_id = COALESCE(r.m_product_id, sol.m_product_id) AND stock.c_uom_id = COALESCE(r.c_uom_id, sol.c_uom_id) AND stock.m_attributesetinstance_id = COALESCE(r.m_attributesetinstance_id, stock.m_attributesetinstance_id) AND stock.m_locator_id = COALESCE(r.m_locator_id, stock.m_locator_id) AND stock.m_warehouse_id = COALESCE(r.m_warehouse_id, stock.m_warehouse_id) AND (stock.m_warehouse_id IN (SELECT ow.m_warehouse_id
 FROM ad_org_warehouse ow
 WHERE ow.ad_org_id = COALESCE(r.ad_org_id, sol.ad_org_id))) AND NOT (EXISTS (SELECT 1
 FROM m_reservation_stock rs
