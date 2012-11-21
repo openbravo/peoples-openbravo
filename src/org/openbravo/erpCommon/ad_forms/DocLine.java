@@ -168,6 +168,7 @@ public class DocLine {
     m_C_LocTo_ID = source.m_C_LocTo_ID;
     m_User1_ID = source.m_User1_ID;
     m_User2_ID = source.m_User2_ID;
+    m_C_Costcenter_ID = source.m_C_Costcenter_ID;
     // Line, Description, Currency
     m_Line = source.m_Line;
     m_description = source.m_description;
