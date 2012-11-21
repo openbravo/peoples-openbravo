@@ -9,7 +9,7 @@ FULL JOIN m_reservation r ON r.c_orderline_id = sol.c_orderline_id
 JOIN (SELECT sd.m_product_id, sd.c_uom_id, sd.m_locator_id, l.m_warehouse_id, COALESCE(sd.m_attributesetinstance_id, '0') AS m_attributesetinstance_id, sum(res.quantity) AS resqty, sd.qtyonhand AS availableqty, sd.m_storage_detail_id, NULL AS c_orderline_id, NULL AS ad_org_id
 FROM m_storage_detail sd
 JOIN m_locator l ON sd.m_locator_id = l.m_locator_id
-LEFT JOIN (SELECT rs.quantity, COALESCE(rs.m_attributesetinstance_id, '0') AS m_attributesetinstance_id, rs.m_locator_id, r.m_product_id, r.c_uom_id
+LEFT JOIN (SELECT rs.quantity - COALESCE(rs.releasedqty, 0) AS quantity, COALESCE(rs.m_attributesetinstance_id, '0') AS m_attributesetinstance_id, rs.m_locator_id, r.m_product_id, r.c_uom_id
 FROM m_reservation_stock rs
 JOIN m_reservation r ON rs.m_reservation_id = r.m_reservation_id
 WHERE r.res_status NOT IN ('CL', 'DR')) res ON res.m_product_id = sd.m_product_id AND res.c_uom_id = sd.c_uom_id AND res.m_attributesetinstance_id = COALESCE(sd.m_attributesetinstance_id, '0') AND res.m_locator_id = sd.m_locator_id
@@ -20,7 +20,7 @@ SELECT ol.m_product_id, ol.c_uom_id, NULL AS m_locator_id, NULL AS m_warehouse_i
 FROM c_orderline ol
 JOIN c_order o ON o.c_order_id = ol.c_order_id AND o.issotrx = 'N' AND o.docstatus = 'CO'
 LEFT JOIN m_matchpo mp ON mp.c_orderline_id = ol.c_orderline_id AND mp.m_inoutline_id IS NOT NULL
-LEFT JOIN (SELECT rs.c_orderline_id, sum(rs.quantity) AS qty
+LEFT JOIN (SELECT rs.c_orderline_id, sum(rs.quantity - COALESCE(rs.releasedqty, 0)) AS qty
 FROM m_reservation_stock rs
 JOIN m_reservation r ON rs.m_reservation_id = r.m_reservation_id
 WHERE (r.res_status NOT IN ('CL', 'DR')) AND rs.c_orderline_id IS NOT NULL
