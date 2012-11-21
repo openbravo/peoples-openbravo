@@ -185,8 +185,9 @@ public abstract class UIDefinition {
           ArrayList<String> params = new ArrayList<String>();
           String sql = parseSQL(defaultS, params);
           int indP = 1;
+          PreparedStatement ps = null;
           try {
-            PreparedStatement ps = OBDal.getInstance().getConnection(false).prepareStatement(sql);
+            ps = OBDal.getInstance().getConnection(false).prepareStatement(sql);
             for (String parameter : params) {
               String value = "";
               if (parameter.substring(0, 1).equals("#")) {
@@ -211,6 +212,12 @@ public abstract class UIDefinition {
           } catch (Exception e) {
             log.error("Error computing default value for field " + field.getName() + " of tab "
                 + field.getTab().getName(), e);
+          } finally {
+            try {
+              ps.close();
+            } catch (SQLException e) {
+              // won't happen
+            }
           }
         }
       }
