@@ -211,6 +211,7 @@ BEGIN --BODY
           LEFT JOIN m_attributesetinstance asi ON t.m_attributesetinstance_id = asi.m_attributesetinstance_id
           LEFT JOIN m_product_uom pu ON t.m_product_uom_id = pu.m_product_uom_id
           LEFT JOIN c_uom u ON pu.c_uom_id = u.c_uom_id
+          LEFT JOIN m_reservation r ON r.m_reservation_id = v_reservation_id
           LEFT JOIN (
               SELECT r.m_product_id, r.c_uom_id, rs.m_locator_id, COALESCE(rs.m_attributesetinstance_id, '0') as m_attributesetinstance_id,
                   SUM(rs.quantity - COALESCE(rs.releasedqty, 0)) AS reservedqty
@@ -238,6 +239,9 @@ BEGIN --BODY
         AND ow.ad_org_id = v_orgid
         AND COALESCE(t.qtyonhand, 0)>0
         AND t.qtyonhand - COALESCE(res.reservedqty, 0) > 0
+        AND w.m_warehouse_id = COALESCE(r.m_warehouse_id, w.m_warehouse_id)
+        AND l.m_locator_id = COALESCE(r.m_locator_id, l.m_locator_id)
+        AND asi.m_attributesetinstance_id = COALESCE(r.m_attributesetinstance_id, asi.m_attributesetinstance_id)
       ORDER BY CASE w.m_warehouse_id WHEN COALESCE(v_PriorityWarehouseID, '-1') THEN 0 ELSE 1 END, ow.priority, l.priorityno, asi.created, t.created
   ) LOOP
     IF (cur_stock.qtyonhand > cur_stock.reservedqty) THEN
