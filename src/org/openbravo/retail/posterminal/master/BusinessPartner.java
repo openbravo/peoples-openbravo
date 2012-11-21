@@ -34,7 +34,8 @@ public class BusinessPartner extends ProcessHQLQuery {
             + "bpl.businessPartner.creditLimit as creditLimit, "
             + "bpl.businessPartner.creditUsed as creditUsed "
             + "FROM BusinessPartnerLocation AS bpl left outer join bpl.businessPartner.aDUserList AS ulist "
-            + "WHERE (bpl.$incrementalUpdateCriteria) AND (" + "(bpl.id = '"
+            + "WHERE (bpl.$incrementalUpdateCriteria) AND bpl.businessPartner.active=true AND ("
+            + "(bpl.id = '"
             + org.getObretcoCBpLocation().getId()
             + "')"
             + " OR "
