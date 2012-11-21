@@ -559,6 +559,7 @@
       disc.ruleId = rule.id;
       disc.amt = discount.amt;
       disc.actualAmt = discount.actualAmt;
+      disc.pack = discount.pack;
 
       disc.hidden = discount.hidden === true || (discount.actualAmt && !disc.amt);
 
