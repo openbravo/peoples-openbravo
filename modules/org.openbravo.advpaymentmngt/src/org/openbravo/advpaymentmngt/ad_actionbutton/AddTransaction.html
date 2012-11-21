@@ -258,6 +258,7 @@ function submitThisPage(strCommand) {
   if (validate()) {
     setProcessingMode('popup', true);
     submitCommandForm(strCommand, false, null, '../org.openbravo.advpaymentmngt.ad_actionbutton/AddTransaction.html');
+    disableButtonProcess();
     return true;
   }
   return true;
@@ -1200,7 +1201,7 @@ function reloadWindowGrid() {
                   <button type="button" 
                     id="buttonProcess"
                     class="ButtonLink" 
-                    onclick="submitThisPage('SAVE'); disableButtonProcess();return false;"
+                    onclick="submitThisPage('SAVE');return false;"
                     onfocus="buttonEvent('onfocus', this); window.status='Create'; return true;"
                     onblur="buttonEvent('onblur', this);"
                     onkeyup="buttonEvent('onkeyup', this);"
