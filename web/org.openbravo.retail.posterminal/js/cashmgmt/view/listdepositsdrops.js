@@ -126,7 +126,11 @@ enyo.kind({
       style: 'border-bottom: 1px solid #cccccc;',
       components: [{
         name: 'startingCashPayName',
-        style: 'padding: 6px 20px 6px 10px;  float: left; width: 70%'
+        style: 'padding: 6px 20px 6px 10px;  float: left; width: 61%'
+      }, {
+        name: 'startingCashForeignAmnt',
+        style: 'text-align:right; padding: 6px 0px 6px 10px; float: left; width: 15%',
+        content: ''
       }, {
         name: 'startingCashAmnt',
         style: 'text-align:right; padding: 6px 20px 6px 10px; float: right;'
@@ -184,7 +188,7 @@ enyo.kind({
         total;
 
     this.inherited(arguments);
-    total = OB.DEC.add(OB.DEC.add(this.model.get('startingCash'), this.model.get('totalTendered')), _.reduce(transactionsArray, function (accum, trx) {
+    total = OB.DEC.add(OB.DEC.add(OB.DEC.mul(this.model.get('startingCash'), this.model.get('rate')), this.model.get('totalTendered')), _.reduce(transactionsArray, function (accum, trx) {
       if (trx.origAmount) {
         if (trx.deposit !== 0) {
           return accum + trx.origAmount;
@@ -204,7 +208,10 @@ enyo.kind({
     this.$.theList.setCollection(transactionsCollection);
 
     this.$.startingCashPayName.setContent(OB.I18N.getLabel('OBPOS_LblStarting') + ' ' + this.model.get('payName'));
-    this.$.startingCashAmnt.setContent(OB.I18N.formatCurrency(OB.DEC.add(0, this.model.get('startingCash'))));
+    this.$.startingCashAmnt.setContent(OB.I18N.formatCurrency(OB.DEC.add(0, OB.DEC.mul(this.model.get('startingCash'), this.model.get('rate')))));
+    if (this.model.get('startingCash') && this.model.get('rate') && this.model.get('rate') !== '1') {
+      this.$.startingCashForeignAmnt.setContent('(' + OB.I18N.formatCurrency(OB.DEC.add(0, this.model.get('startingCash'))) + ' ' + this.model.get('isocode') + ')');
+    }
     this.$.tenderedLbl.setContent(OB.I18N.getLabel('OBPOS_LblTotalTendered') + ' ' + this.model.get('payName'));
     this.$.tenderedAmnt.setContent(OB.I18N.formatCurrency(OB.DEC.add(0, this.model.get('totalTendered'))));
     this.$.availableLbl.setContent(OB.I18N.getLabel('OBPOS_LblNewAvailableIn') + ' ' + this.model.get('payName'));
