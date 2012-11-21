@@ -241,14 +241,14 @@ BEGIN --BODY
                         GROUP BY c_orderline_id) matchpo ON ol.c_orderline_id = matchpo.c_orderline_id
               JOIN m_warehouse w ON ol.m_warehouse_id = w.m_warehouse_id
               -- Sales order reservation
-              LEFT JOIN m_reservation res ON res.c_orderline_id = ol.c_orderline_id AND res.res_status <> 'CL'
+              LEFT JOIN m_reservation res ON res.c_orderline_id = ol.c_orderline_id AND res.res_status NOT IN ('CL', 'DR')
               -- Prereserved purchase orders
               LEFT JOIN (
                   SELECT rs.c_orderline_id, SUM(rs.quantity - COALESCE(rs.releasedqty, 0)) AS reservedqty
                   FROM m_reservation r
                       JOIN m_reservation_stock rs ON r.m_reservation_id = rs.m_reservation_id
                   WHERE rs.c_orderline_id IS NOT NULL
-                    AND r.res_status <> 'CL'
+                    AND r.res_status NOT IN ('CL', 'DR')
                   GROUP BY rs.c_orderline_id 
               ) preres ON preres.c_orderline_id = ol.c_orderline_id
          WHERE o.processed = 'Y'
