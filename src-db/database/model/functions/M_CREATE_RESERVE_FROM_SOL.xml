@@ -40,11 +40,12 @@
   v_qtydelivered      NUMBER;
   v_issotrx           CHAR(1);
   v_reservation_id    VARCHAR2(32) := get_uuid();
+  v_attributesetinstance_id VARCHAR2(32);
 BEGIN
   SELECT ol.m_product_id, ol.c_uom_id, ol.qtyordered, ol.qtydelivered, o.issotrx,
-         ol.ad_client_id, ol.ad_org_id
+         ol.ad_client_id, ol.ad_org_id, ol.m_attributesetinstance_id
     INTO v_product_id, v_uom_id, v_qtyordered, v_qtydelivered, v_issotrx,
-         v_client_id, v_org_id
+         v_client_id, v_org_id, v_attributesetinstance_id
   FROM c_orderline ol JOIN c_order o ON ol.c_order_id = o.c_order_id
   WHERE ol.c_orderline_id = p_orderline_id;
 
@@ -63,13 +64,13 @@ BEGIN
     created, createdby, updated, updatedby,
     c_orderline_id,
     m_product_id, c_uom_id, quantity, reservedqty, releasedqty,
-    res_status, res_process
+    res_status, res_process, m_attributesetinstance_id
   ) VALUES (
     v_reservation_id, v_client_id, v_org_id, 'Y',
     now(), p_user_id, now(), p_user_id,
     p_orderline_id,
     v_product_id, v_uom_id, v_qtyordered, 0, v_qtydelivered,
-    'DR', 'CO'
+    'DR', 'CO', v_attributesetinstance_id
   );
 
   IF (p_process_reserve = 'Y') THEN
