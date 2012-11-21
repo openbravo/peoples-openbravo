@@ -74,7 +74,7 @@ BEGIN
         OR (COALESCE(:NEW.User1_ID,'0')<>COALESCE(:OLD.User1_ID,'0'))
         OR (COALESCE(:NEW.User2_ID,'0')<>COALESCE(:OLD.User2_ID,'0'))))
       THEN
-        RAISE_APPLICATION_ERROR(-20000, '@20501@');              
+        RAISE_APPLICATION_ERROR(-20000, '@20501@');
       ELSIF (:NEW.Line<>:OLD.Line
         OR :NEW.IsTimeReport<>:OLD.IsTimeReport
         OR :NEW.ISInvoiced<>:OLD.ISInvoiced
