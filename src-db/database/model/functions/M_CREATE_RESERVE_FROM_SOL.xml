@@ -41,6 +41,11 @@
   v_issotrx           CHAR(1);
   v_reservation_id    VARCHAR2(32) := get_uuid();
   v_attributesetinstance_id VARCHAR2(32);
+  v_res_stock_id      VARCHAR2(32);
+  
+  TYPE RECORD IS REF CURSOR;
+  cur_shipments       RECORD;
+
 BEGIN
   SELECT ol.m_product_id, ol.c_uom_id, ol.qtyordered, ol.qtydelivered, o.issotrx,
          ol.ad_client_id, ol.ad_org_id, ol.m_attributesetinstance_id
@@ -72,6 +77,24 @@ BEGIN
     v_product_id, v_uom_id, v_qtyordered, 0, v_qtydelivered,
     'DR', 'CO', v_attributesetinstance_id
   );
+  
+  FOR cur_shipments IN (
+      SELECT sd.m_storage_detail_id, iol.movementqty
+      FROM m_inoutline iol
+        JOIN m_inout io ON iol.m_inout_id = io.m_inout_id
+        JOIN m_storage_detail sd ON sd.m_product_id = iol.m_product_id
+                                    AND sd.c_uom_id = iol.c_uom_id
+                                    AND sd.m_product_uom_id IS NULL
+                                    AND sd.m_locator_id = iol.m_locator_id
+                                    AND COALESCE(sd.m_attributesetinstance_id, '0') = COALESCE(iol.m_attributesetinstance_id, '0')
+      WHERE iol.c_orderline_id = p_orderline_id
+        AND io.docstatus = 'CO'
+  ) LOOP
+    M_RESERVE_STOCK_MANUAL(v_reservation_id, 'SD', cur_shipments.m_storage_detail_id, cur_shipments.movementqty, p_user_id, v_res_stock_id);
+    UPDATE m_reservation_stock
+    SET releasedqty = COALESCE(releasedqty, 0) + cur_shipments.movementqty
+    WHERE m_reservation_stock_id = v_res_stock_id;
+  END LOOP;
 
   IF (p_process_reserve = 'Y') THEN
     M_RESERVATION_POST(null, v_reservation_id, 'PR', p_user_id);
