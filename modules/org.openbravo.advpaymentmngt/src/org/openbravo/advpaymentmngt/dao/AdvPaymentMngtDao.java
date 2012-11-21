@@ -759,7 +759,7 @@ public class AdvPaymentMngtDao {
       ABCActivity activity, String transactionType, Date statementDate) {
     return getNewFinancialTransaction(organization, account, line, payment, description,
         accountingDate, glItem, status, depositAmount, paymentAmount, project, campaing, activity,
-        transactionType, statementDate, null, null, null);
+        transactionType, statementDate, null, null, null, null, null, null);
   }
 
   public FIN_FinaccTransaction getNewFinancialTransaction(Organization organization,
@@ -791,6 +791,7 @@ public class AdvPaymentMngtDao {
     finTrans.setActivity(activity);
     finTrans.setTransactionType(transactionType);
     finTrans.setTransactionDate(statementDate);
+
     if (paymentCurrency != null && !paymentCurrency.equals(finTrans.getCurrency())) {
       finTrans.setForeignCurrency(paymentCurrency);
       finTrans.setForeignConversionRate(convertRate);
@@ -810,6 +811,22 @@ public class AdvPaymentMngtDao {
       String transactionType, Date statementDate, Currency paymentCurrency, BigDecimal convertRate,
       BigDecimal sourceAmount, BusinessPartner businessPartner, Product product,
       SalesRegion salesRegion) {
+
+    final FIN_FinaccTransaction finTrans = getNewFinancialTransaction(organization, account, line,
+        payment, description, accountingDate, glItem, status, depositAmount, paymentAmount,
+        project, campaing, activity, transactionType, statementDate, paymentCurrency, convertRate,
+        sourceAmount, businessPartner, product, salesRegion, null, null, null);
+
+    return finTrans;
+  }
+
+  public FIN_FinaccTransaction getNewFinancialTransaction(Organization organization,
+      FIN_FinancialAccount account, Long line, FIN_Payment payment, String description,
+      Date accountingDate, GLItem glItem, String status, BigDecimal depositAmount,
+      BigDecimal paymentAmount, Project project, Campaign campaing, ABCActivity activity,
+      String transactionType, Date statementDate, Currency paymentCurrency, BigDecimal convertRate,
+      BigDecimal sourceAmount, BusinessPartner businessPartner, Product product,
+      SalesRegion salesRegion, UserDimension1 user1, UserDimension2 user2, Costcenter costcenter) {
     final FIN_FinaccTransaction finTrans = getNewFinancialTransaction(organization, account, line,
         payment, description, accountingDate, glItem, status, depositAmount, paymentAmount,
         project, campaing, activity, transactionType, statementDate, paymentCurrency, convertRate,
@@ -817,6 +834,9 @@ public class AdvPaymentMngtDao {
     finTrans.setBusinessPartner(businessPartner);
     finTrans.setProduct(product);
     finTrans.setSalesRegion(salesRegion);
+    finTrans.setCostCenter(costcenter);
+    finTrans.setStDimension(user1);
+    finTrans.setNdDimension(user2);
 
     OBDal.getInstance().save(finTrans);
     OBDal.getInstance().flush();

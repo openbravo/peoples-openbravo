@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -55,6 +55,9 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.plm.Product;
+import org.openbravo.model.financialmgmt.accounting.Costcenter;
+import org.openbravo.model.financialmgmt.accounting.UserDimension1;
+import org.openbravo.model.financialmgmt.accounting.UserDimension2;
 import org.openbravo.model.financialmgmt.gl.GLItem;
 import org.openbravo.model.financialmgmt.payment.FIN_BankStatementLine;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
@@ -201,6 +204,16 @@ public class AddTransaction extends HttpSecureAppServlet {
         final String strElement_MC = vars.getStringParameter("inpCampaignId", IsIDFilter.instance);
         final Campaign campaign = OBDal.getInstance().get(Campaign.class, strElement_MC);
 
+        final String strElement_U1 = vars.getStringParameter("inpUser1ID", IsIDFilter.instance);
+        final UserDimension1 user1 = OBDal.getInstance().get(UserDimension1.class, strElement_U1);
+
+        final String strElement_U2 = vars.getStringParameter("inpUser2ID", IsIDFilter.instance);
+        final UserDimension2 user2 = OBDal.getInstance().get(UserDimension2.class, strElement_U2);
+
+        final String strElement_CC = vars.getStringParameter("inpCCostcenterId",
+            IsIDFilter.instance);
+        final Costcenter costcenter = OBDal.getInstance().get(Costcenter.class, strElement_CC);
+
         BigDecimal glItemDepositAmt = new BigDecimal(strGLItemDepositAmount);
         BigDecimal glItemPaymentAmt = new BigDecimal(strGLItemPaymentAmount);
 
@@ -217,7 +230,7 @@ public class AddTransaction extends HttpSecureAppServlet {
             FIN_Utility.getDate(strTransactionDate), glItem, isReceipt ? "RDNC" : "PWNC",
             glItemDepositAmt, glItemPaymentAmt, project, campaign, activity, isReceipt ? "BPD"
                 : "BPW", FIN_Utility.getDate(strTransactionDate), null, null, null,
-            businessPartner, product, salesRegion);
+            businessPartner, product, salesRegion, user1, user2, costcenter);
         OBError processTransactionError = processTransaction(vars, this, "P", finTrans);
         if (processTransactionError != null && "Error".equals(processTransactionError.getType())) {
           throw new OBException(processTransactionError.getMessage());
@@ -357,12 +370,18 @@ public class AddTransaction extends HttpSecureAppServlet {
     final String strElement_AY = Utility.getContext(this, vars, "$Element_AY", strWindowId);
     final String strElement_SR = Utility.getContext(this, vars, "$Element_SR", strWindowId);
     final String strElement_MC = Utility.getContext(this, vars, "$Element_MC", strWindowId);
+    final String strElement_U1 = Utility.getContext(this, vars, "$Element_U1", strWindowId);
+    final String strElement_U2 = Utility.getContext(this, vars, "$Element_U2", strWindowId);
+    // final String strElement_CC = Utility.getContext(this, vars, "$Element_CC", strWindowId);
     xmlDocument.setParameter("strElement_BP", strElement_BP);
     xmlDocument.setParameter("strElement_PR", strElement_PR);
     xmlDocument.setParameter("strElement_PJ", strElement_PJ);
     xmlDocument.setParameter("strElement_AY", strElement_AY);
     xmlDocument.setParameter("strElement_SR", strElement_SR);
     xmlDocument.setParameter("strElement_MC", strElement_MC);
+    xmlDocument.setParameter("strElement_U1", strElement_U1);
+    xmlDocument.setParameter("strElement_U2", strElement_U2);
+    // xmlDocument.setParameter("strElement_CC", strElement_CC);
 
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
