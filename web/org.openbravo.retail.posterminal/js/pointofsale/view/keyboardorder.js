@@ -18,7 +18,8 @@ enyo.kind({
     receipt: null
   },
   events: {
-    onShowPopup: ''
+    onShowPopup: '',
+    onAddProduct: ''
   },
   sideBarEnabled: true,
 
