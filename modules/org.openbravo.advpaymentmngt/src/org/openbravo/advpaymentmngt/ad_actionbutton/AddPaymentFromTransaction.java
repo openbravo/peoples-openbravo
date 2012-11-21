@@ -61,6 +61,9 @@ import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.plm.Product;
+import org.openbravo.model.financialmgmt.accounting.Costcenter;
+import org.openbravo.model.financialmgmt.accounting.UserDimension1;
+import org.openbravo.model.financialmgmt.accounting.UserDimension2;
 import org.openbravo.model.financialmgmt.gl.GLItem;
 import org.openbravo.model.financialmgmt.payment.FIN_BankStatementLine;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
@@ -71,7 +74,6 @@ import org.openbravo.model.financialmgmt.payment.FinAccPaymentMethod;
 import org.openbravo.model.marketing.Campaign;
 import org.openbravo.model.materialmgmt.cost.ABCActivity;
 import org.openbravo.model.project.Project;
-import org.openbravo.model.sales.SalesRegion;
 import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -276,17 +278,25 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
             checkID(strElement_AY);
             final ABCActivity activity = dao.getObject(ABCActivity.class, strElement_AY);
 
-            final String strElement_SR = glItem.getString("cSalesRegionDim");
-            checkID(strElement_SR);
-            final SalesRegion salesRegion = dao.getObject(SalesRegion.class, strElement_SR);
+            final String strElement_CC = glItem.getString("cCostcenterDim");
+            checkID(strElement_CC);
+            final Costcenter costCenter = dao.getObject(Costcenter.class, strElement_CC);
 
             final String strElement_MC = glItem.getString("cCampaignDim");
             checkID(strElement_MC);
             final Campaign campaign = dao.getObject(Campaign.class, strElement_MC);
 
+            final String strElement_U1 = glItem.getString("user1Dim");
+            checkID(strElement_U1);
+            final UserDimension1 user1 = dao.getObject(UserDimension1.class, strElement_U1);
+
+            final String strElement_U2 = glItem.getString("user2Dim");
+            checkID(strElement_U2);
+            final UserDimension2 user2 = dao.getObject(UserDimension2.class, strElement_U2);
+
             FIN_AddPayment.saveGLItem(payment, glItemAmt, dao.getObject(GLItem.class, strGLItemId),
-                businessPartner, product, project, campaign, activity, salesRegion, null, null,
-                null);
+                businessPartner, product, project, campaign, activity, null, costCenter, user1,
+                user2);
           }
         }
         payment = FIN_AddPayment.savePayment(payment, isReceipt, null, null, null, null, null,
@@ -524,14 +534,18 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
     final String strElement_PR = Utility.getContext(this, vars, "$Element_PR", strWindowId);
     final String strElement_PJ = Utility.getContext(this, vars, "$Element_PJ", strWindowId);
     final String strElement_AY = Utility.getContext(this, vars, "$Element_AY", strWindowId);
-    final String strElement_SR = Utility.getContext(this, vars, "$Element_SR", strWindowId);
+    final String strElement_CC = "Y";
     final String strElement_MC = Utility.getContext(this, vars, "$Element_MC", strWindowId);
+    final String strElement_U1 = Utility.getContext(this, vars, "$Element_U1", strWindowId);
+    final String strElement_U2 = Utility.getContext(this, vars, "$Element_U2", strWindowId);
     xmlDocument.setParameter("strElement_BP", strElement_BP);
     xmlDocument.setParameter("strElement_PR", strElement_PR);
     xmlDocument.setParameter("strElement_PJ", strElement_PJ);
     xmlDocument.setParameter("strElement_AY", strElement_AY);
-    xmlDocument.setParameter("strElement_SR", strElement_SR);
+    xmlDocument.setParameter("strElement_CC", strElement_CC);
     xmlDocument.setParameter("strElement_MC", strElement_MC);
+    xmlDocument.setParameter("strElement_U1", strElement_U1);
+    xmlDocument.setParameter("strElement_U2", strElement_U2);
 
     // Not allow to change exchange rate and amount
     final String strNotAllowExchange = Utility.getContext(this, vars, "NotAllowChangeExchange",
