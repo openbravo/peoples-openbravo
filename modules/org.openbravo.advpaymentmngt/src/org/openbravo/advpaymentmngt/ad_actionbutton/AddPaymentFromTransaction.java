@@ -276,7 +276,7 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
             checkID(strElement_AY);
             final ABCActivity activity = dao.getObject(ABCActivity.class, strElement_AY);
 
-            final String strElement_SR = glItem.getString("cSalesregionDim");
+            final String strElement_SR = glItem.getString("cSalesRegionDim");
             checkID(strElement_SR);
             final SalesRegion salesRegion = dao.getObject(SalesRegion.class, strElement_SR);
 
@@ -285,7 +285,8 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
             final Campaign campaign = dao.getObject(Campaign.class, strElement_MC);
 
             FIN_AddPayment.saveGLItem(payment, glItemAmt, dao.getObject(GLItem.class, strGLItemId),
-                businessPartner, product, project, campaign, activity, salesRegion);
+                businessPartner, product, project, campaign, activity, salesRegion, null, null,
+                null);
           }
         }
         payment = FIN_AddPayment.savePayment(payment, isReceipt, null, null, null, null, null,

@@ -65,8 +65,10 @@
     <PARAMETER id="paramStrElement_PR" name="strElement_PR" attribute="value"/>
     <PARAMETER id="paramStrElement_PJ" name="strElement_PJ" attribute="value"/>
     <PARAMETER id="paramStrElement_AY" name="strElement_AY" attribute="value"/>
-    <PARAMETER id="paramStrElement_SR" name="strElement_SR" attribute="value"/>
-    <PARAMETER id="paramStrElement_MC" name="strElement_MC" attribute="value"/>   
+    <PARAMETER id="paramStrElement_CC" name="strElement_CC" attribute="value"/>
+    <PARAMETER id="paramStrElement_MC" name="strElement_MC" attribute="value"/>
+    <PARAMETER id="paramStrElement_U1" name="strElement_U1" attribute="value"/>
+    <PARAMETER id="paramStrElement_U2" name="strElement_U2" attribute="value"/>
 
     <PARAMETER id="paramGLItems" name="glItems" attribute="value" default=""/>
     

@@ -59,6 +59,9 @@ import org.openbravo.model.common.enterprise.OrganizationInformation;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.plm.Product;
+import org.openbravo.model.financialmgmt.accounting.Costcenter;
+import org.openbravo.model.financialmgmt.accounting.UserDimension1;
+import org.openbravo.model.financialmgmt.accounting.UserDimension2;
 import org.openbravo.model.financialmgmt.gl.GLItem;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
@@ -595,11 +598,18 @@ public class AdvPaymentMngtDao {
    *          accounting dimension
    * @param salesRegion
    *          accounting dimension
+   * @param costCenter
+   *          accounting dimension
+   * @param user1
+   *          accounting dimension
+   * @param user2
+   *          accounting dimension
    * @return
    */
   public FIN_PaymentScheduleDetail getNewPaymentScheduleDetail(Organization organization,
       BigDecimal amount, BusinessPartner businessPartner, Product product, Project project,
-      Campaign campaign, ABCActivity activity, SalesRegion salesRegion) {
+      Campaign campaign, ABCActivity activity, SalesRegion salesRegion, Costcenter costCenter,
+      UserDimension1 user1, UserDimension2 user2) {
     final FIN_PaymentScheduleDetail psd = getNewPaymentScheduleDetail(organization, amount);
     psd.setBusinessPartner(businessPartner);
     psd.setProduct(product);
@@ -607,6 +617,9 @@ public class AdvPaymentMngtDao {
     psd.setSalesCampaign(campaign);
     psd.setActivity(activity);
     psd.setSalesRegion(salesRegion);
+    psd.setCostCenter(costCenter);
+    psd.setStDimension(user1);
+    psd.setNdDimension(user2);
     return psd;
   }
 
