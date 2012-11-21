@@ -39,7 +39,7 @@ public class ProductPrice extends ProcessHQLQuery {
             + "plv.validFromDate = (select max(pplv.validFromDate) from PricingPriceListVersion as pplv where pplv.priceList.id = ppl.id))");
 
     prices
-        .add("select plvv.priceList.id as id, plvv.id as priceListVersion, p.id as product, p.obdiscPrice as listPrice, p.obdiscPrice as standardPrice, p.obdiscPrice as listPrice, p.obdiscPrice as priceLimit, "//
+        .add("select p.id as id, plvv.id as priceListVersion, p.id as product, p.obdiscPrice as listPrice, p.obdiscPrice as standardPrice, p.obdiscPrice as listPrice, p.obdiscPrice as priceLimit, "//
             + "'0' as cost, p.name as _identifier "//
             + "from PricingAdjustment p, PricingPriceListVersion plvv " //
             + "where p.discountType.obposIsCategory = true "//
