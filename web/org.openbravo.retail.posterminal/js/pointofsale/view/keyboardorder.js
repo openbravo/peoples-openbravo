@@ -18,7 +18,8 @@ enyo.kind({
     receipt: null
   },
   events: {
-    onShowPopup: ''
+    onShowPopup: '',
+    onAddProduct: ''
   },
   sideBarEnabled: true,
 
@@ -49,7 +50,7 @@ enyo.kind({
             });
             return true;
           }
-          keyboard.receipt.setUnit(keyboard.line, OB.I18N.parseNumber(txt));
+          me.doAddProduct({product: keyboard.line.get('product'), qty: OB.I18N.parseNumber(txt)});
           keyboard.receipt.trigger('scan');
         }
       }
@@ -101,7 +102,7 @@ enyo.kind({
             });
             return true;
           }
-          keyboard.receipt.addUnit(keyboard.line, OB.I18N.parseNumber(txt));
+          me.doAddProduct({product: keyboard.line.get('product'), qty: OB.I18N.parseNumber(txt)});
           keyboard.receipt.trigger('scan');
         }
       }
@@ -138,13 +139,9 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.AbstractBarcodeActionHandler',
   kind: enyo.Object,
-  events: {
-    onShowPopup: ''
-  },
-
   action: function (keyboard, txt) {
     if (keyboard.receipt.get('isEditable') === false) {
-      this.doShowPopup({
+      keyboard.doShowPopup({
         popup: 'modalNotEditableOrder'
       });
       return true;
@@ -152,7 +149,7 @@ enyo.kind({
     var me = this;
 
     this.findProductByBarcode(txt, function (product) {
-      me.addProductToReceipt(keyboard.receipt, product);
+      me.addProductToReceipt(keyboard, product);
     });
   },
 
@@ -209,9 +206,9 @@ enyo.kind({
     OB.Dal.find(OB.Model.Product, criteria, successCallbackProducts, errorCallback);
   },
 
-  addProductToReceipt: function (receipt, product) {
-    receipt.addProduct(product);
-    receipt.trigger('scan');
+  addProductToReceipt: function (keyboard, product) {
+    keyboard.doAddProduct({product: product});
+    keyboard.receipt.trigger('scan');
   }
 });
 
