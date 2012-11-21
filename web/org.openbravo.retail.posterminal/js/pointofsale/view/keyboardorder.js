@@ -138,13 +138,10 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.AbstractBarcodeActionHandler',
   kind: enyo.Object,
-  events: {
-    onShowPopup: ''
-  },
 
   action: function (keyboard, txt) {
     if (keyboard.receipt.get('isEditable') === false) {
-      this.doShowPopup({
+      keyboard.doShowPopup({
         popup: 'modalNotEditableOrder'
       });
       return true;
@@ -152,7 +149,7 @@ enyo.kind({
     var me = this;
 
     this.findProductByBarcode(txt, function (product) {
-      me.addProductToReceipt(keyboard.receipt, product);
+      me.addProductToReceipt(keyboard, product);
     });
   },
 
@@ -209,9 +206,11 @@ enyo.kind({
     OB.Dal.find(OB.Model.Product, criteria, successCallbackProducts, errorCallback);
   },
 
-  addProductToReceipt: function (receipt, product) {
-    receipt.addProduct(product);
-    receipt.trigger('scan');
+  addProductToReceipt: function (keyboard, product) {
+    keyboard.doAddProduct({
+      product: product
+    });
+    keyboard.receipt.trigger('scan');
   }
 });
 
