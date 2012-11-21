@@ -240,11 +240,15 @@ public class JSONRowConverter {
         w.write(obError.getType());
         w.write("\",\"title\":\"");
         w.write(obError.getTitle());
+        w.write("\",\"className\":\"");
+        w.write(localThrowable.getClass().getName());
         w.write("\"");
       } else {
         w.write("\"message\":\"");
         w.write(localThrowable.getMessage());
         w.write("\",\"messageType\":\"");
+        w.write("Exception");
+        w.write("\",\"className\":\"");
         w.write(localThrowable.getClass().getName());
         w.write("\"");
       }

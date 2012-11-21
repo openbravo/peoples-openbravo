@@ -20,6 +20,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
@@ -95,6 +98,10 @@ public class OrderLoader extends JSONProcessSimple {
   private static final Logger log = Logger.getLogger(OrderLoader.class);
 
   private static final BigDecimal NEGATIVE_ONE = new BigDecimal(-1);
+
+  @Inject
+  @Any
+  private Instance<OrderLoaderHook> orderProcesses;
 
   @Override
   public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {
@@ -268,6 +275,12 @@ public class OrderLoader extends JSONProcessSimple {
       // Send email
       if (sendEmail) {
         EmailSender emailSender = new EmailSender(order.getId(), jsonorder);
+      }
+
+      // Call all OrderProcess injected.
+      for (Iterator<OrderLoaderHook> procIter = orderProcesses.iterator(); procIter.hasNext();) {
+        OrderLoaderHook proc = procIter.next();
+        proc.exec(order, shipment, invoice);
       }
     }
 

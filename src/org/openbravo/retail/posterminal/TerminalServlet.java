@@ -19,6 +19,7 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.service.json.JsonUtils;
 import org.openbravo.service.web.InvalidRequestException;
 import org.openbravo.service.web.WebServiceUtil;
@@ -149,14 +150,8 @@ public class TerminalServlet extends WebServiceAuthenticatedServlet {
   private void execClassName(Writer w, Class<? extends JSONProcess> process, JSONObject jsonsent)
       throws IOException, ServletException {
 
-    try {
-      JSONProcess proc = process.newInstance();
-      proc.exec(w, jsonsent);
-    } catch (InstantiationException e) {
-      JSONRowConverter.addJSONExceptionFields(w, e);
-    } catch (IllegalAccessException e) {
-      JSONRowConverter.addJSONExceptionFields(w, e);
-    }
+    JSONProcess proc = WeldUtils.getInstanceFromStaticBeanManager(process);
+    proc.exec(w, jsonsent);
   }
 
   private String[] checkSetParameters(HttpServletRequest request, HttpServletResponse response)
