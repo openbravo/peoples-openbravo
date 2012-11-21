@@ -75,8 +75,8 @@ public class Discount extends ProcessHQLQuery {
       // Hack: currency is defined in discounts module, check if it is present not to fail the query
       // other case
       PriceAdjustment.class.getField("PROPERTY_OBDISCCCURRENCY");
-      hql += " and (obdiscCurrency.id is null or ";
-      hql += "     obdiscCurrency.id = '" + priceList.getCurrency().getId() + "'";
+      hql += " and (oBDISCCCurrency is null or ";
+      hql += "     oBDISCCCurrency.id = '" + priceList.getCurrency().getId() + "')";
     } catch (Exception e) {
       // ignore, the module column is not present: don't include it in the query
     }
