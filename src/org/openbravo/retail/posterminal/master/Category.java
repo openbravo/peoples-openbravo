@@ -61,19 +61,17 @@ public class Category extends ProcessHQLQuery {
 
     // Discounts marked as category
     hqlQueries
-        .add("select pt.id as id, pt.commercialName as searchKey, pt.commercialName as name, pt.obposImage.bindaryData as img, pt.commercialName as _identifier"// TODO:
-            + " from PromotionType pt " //
-            + "where obposIsCategory = true "//
-            + "  and active = true "//
+        .add("select pt.id as id, pt.commercialName as searchKey, pt.commercialName as name, img.bindaryData as img, pt.commercialName as _identifier"
+            + " from PromotionType as pt left outer join pt.obposImage img " //
+            + "where pt.obposIsCategory = true "//
+            + "  and pt.active = true "//
             + "  and pt.$readableClientCriteria" //
-            + "  and ($incrementalUpdateCriteria)"//
-            + " and exists (select 1"//
-            + "  from PricingAdjustment p " //
-            + " where  p.discountType.active = true " //
-            + "   and p.active = true"//
-            + " and p.discountType = pt)"
-
-        );
+            + "  and (pt.$incrementalUpdateCriteria)"//
+            + "  and exists (select 1"//
+            + "                from PricingAdjustment p " //
+            + "               where p.discountType.active = true " //
+            + "                 and p.active = true"//
+            + "                 and p.discountType = pt)");
 
     return hqlQueries;
   }
