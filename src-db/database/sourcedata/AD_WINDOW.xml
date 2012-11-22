@@ -1847,7 +1847,7 @@
 <!--800030-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800030-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800030-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800030-->  <NAME><![CDATA[Cost Center]]></NAME>
+<!--800030-->  <NAME><![CDATA[Manufacturing Cost Center]]></NAME>
 <!--800030-->  <DESCRIPTION><![CDATA[Create and edit cost centers related to production to sum up charges associated with a specific transaction.]]></DESCRIPTION>
 <!--800030-->  <HELP><![CDATA[Create and edit cost centers related to production to sum up charges associated with a specific transaction.]]></HELP>
 <!--800030-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
@@ -2876,7 +2876,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--79FC23AB84F04384B4B7CCCADCDD2942-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--79FC23AB84F04384B4B7CCCADCDD2942-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--79FC23AB84F04384B4B7CCCADCDD2942-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--79FC23AB84F04384B4B7CCCADCDD2942-->  <NAME><![CDATA[Cost Center1]]></NAME>
+<!--79FC23AB84F04384B4B7CCCADCDD2942-->  <NAME><![CDATA[Cost Center]]></NAME>
 <!--79FC23AB84F04384B4B7CCCADCDD2942-->  <DESCRIPTION><![CDATA[Tracks the cost of running a company. ]]></DESCRIPTION>
 <!--79FC23AB84F04384B4B7CCCADCDD2942-->  <HELP><![CDATA[Tracks the costs that does not produce direct profit and adds to the cost of running a company. ]]></HELP>
 <!--79FC23AB84F04384B4B7CCCADCDD2942-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
