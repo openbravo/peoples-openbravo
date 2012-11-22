@@ -26,6 +26,7 @@ OB.Reservation = OB.Reservation || {};
 OB.Reservation.QuantityValidate = function(item, validator, value, record) {
   var availableQty = isc.isA.Number(record.availableQty) ? new BigDecimal(String(record.availableQty)) : BigDecimal.prototype.ZERO,
       releasedQty = isc.isA.Number(record.released) ? new BigDecimal(String(record.released)) : BigDecimal.prototype.ZERO,
+      reservedinothersQty = isc.isA.Number(record.reservedinothers) ? new BigDecimal(String(record.reservedinothers)) : BigDecimal.prototype.ZERO,
       quantity = null,
       reservedQty = BigDecimal.prototype.ZERO,
       totalQty = isc.isA.Number(record.reservationQuantity) ? new BigDecimal(String(record.reservationQuantity)) : BigDecimal.prototype.ZERO,
@@ -41,8 +42,8 @@ OB.Reservation.QuantityValidate = function(item, validator, value, record) {
     return false;
   }
   quantity = new BigDecimal(String(value));
-  if (quantity.compareTo(availableQty) > 0) {
-    isc.warn(OB.I18N.getLabel('OBUIAPP_Res_MoreQtyThanAvailable', [record.availableQty]));
+  if (quantity.compareTo(availableQty.subtract(reservedinothersQty)) > 0) {
+    isc.warn(OB.I18N.getLabel('OBUIAPP_Res_MoreQtyThanAvailable', [availableQty.subtract(reservedinothersQty).toString()]));
     return false;
   }
   if (quantity.compareTo(releasedQty) < 0) {
@@ -61,13 +62,6 @@ OB.Reservation.QuantityValidate = function(item, validator, value, record) {
   }
   // get reservation quantity and released quantity to check totals
   return true;
-};
-
-OB.Reservation.ManageStockSelectionChange = function (grid, record, state) {
-  var releasedQty = isc.isA.Number(record.released) ? new BigDecimal(String(record.released)) : BigDecimal.prototype.ZERO;
-  if (!state && releasedQty.compareTo(BigDecimal.prototype.ZERO) > 0) {
-    state = true;
-  }
 };
 
 OB.Reservation.PrereservationQuantityValidate = function(item, validator, value, record) {
