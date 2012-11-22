@@ -226,7 +226,8 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
               message = FIN_AddPayment.processPayment(vars, this,
                   (strAction.equals("PRP") || strAction.equals("PPP")) ? "P" : "D", payment);
             }
-            if (strDifferenceAction.equals("refund")) {
+            if (strDifferenceAction.equals("refund")
+                && !"Error".equalsIgnoreCase(message.getType())) {
               Boolean newPayment = !payment.getFINPaymentDetailList().isEmpty();
               FIN_Payment refundPayment = FIN_AddPayment.createRefundPayment(this, vars, payment,
                   refundAmount.negate(), exchangeRate);
