@@ -1053,8 +1053,8 @@ public class AdvancedQueryBuilder {
     }
 
     // make sure that the join clauses are computed
-    getWhereClause();
     getOrderByClause();
+    getWhereClause();
 
     final StringBuilder sb = new StringBuilder();
     if (getMainAlias() != null) {
@@ -1229,13 +1229,22 @@ public class AdvancedQueryBuilder {
     String properties[] = value.split("\\.");
     if (properties.length > 2) {
       for (JoinDefinition join : joinDefinitions) {
-        if (compare.contains("join")) {
-          if (properties[0].equalsIgnoreCase(join.ownerAlias)) {
-            return join.joinAlias + DalUtil.DOT + properties[properties.length - 1];
+        if (compare.startsWith(getMainAlias())) {
+          if (compare.equalsIgnoreCase(getMainAlias() + DalUtil.DOT + join.property.toString())) {
+            query = join.joinAlias + DalUtil.DOT + properties[properties.length - 1];
           }
+
         } else {
-          if (compare.equalsIgnoreCase(getMainAlias() + DalUtil.DOT + join.property)) {
-            return join.joinAlias + DalUtil.DOT + properties[properties.length - 1];
+          String joinStatement = join.getJoinStatement();
+          String[] joinElement = joinStatement.split("as");
+          if (joinElement[0] != null) {
+            String entities[] = joinElement[0].split(" ");
+            if (entities[entities.length - 1] != null) {
+              String entityToCompare = entities[entities.length - 1];
+              if (compare.equalsIgnoreCase(entityToCompare)) {
+                query = join.joinAlias + DalUtil.DOT + properties[properties.length - 1];
+              }
+            }
           }
         }
       }
