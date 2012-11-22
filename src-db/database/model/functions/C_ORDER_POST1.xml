@@ -1014,6 +1014,10 @@
               INTO v_aux, v_reservation_id
             FROM m_reservation
             WHERE c_orderline_id = cur_orderline.c_orderline_id;
+            -- Initialize so_res_status
+            UPDATE c_orderline
+            SET so_res_status = 'NR'
+            WHERE c_orderline_id = cur_orderline.c_orderline_id;
             IF (v_aux > 1) THEN
               RAISE_APPLICATION_ERROR(-20000, '@SOLineWithMoreThanOneOpenReservation@');
             ELSIF (v_aux = 1) THEN
@@ -1075,12 +1079,14 @@
                 END IF;
               END IF;
               
-              -- Initialize so_res_status
-              UPDATE c_orderline
-              SET so_res_status = CASE WHEN cur_orderline.qtyordered = v_reservedqty THEN 'CR'
-                                       ELSE 'PR'
-                                  END
-              WHERE c_orderline_id = cur_orderline.c_orderline_id;
+              IF (v_res_status <> 'DR') THEN
+                -- Update so_res_status
+                UPDATE c_orderline
+                SET so_res_status = CASE WHEN cur_orderline.qtyordered = v_reservedqty THEN 'CR'
+                                         ELSE 'PR'
+                                    END
+                WHERE c_orderline_id = cur_orderline.c_orderline_id;
+              END IF;
             ELSIF (cur_orderline.create_reservation = 'CRP') THEN
               M_CREATE_RESERVE_FROM_SOL(cur_orderline.c_orderline_id, 'Y', v_user, v_reservation_id);
             ELSIF (cur_orderline.create_reservation = 'CR') THEN

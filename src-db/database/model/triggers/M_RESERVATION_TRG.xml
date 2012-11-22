@@ -64,6 +64,30 @@ BEGIN
     ELSIF (:OLD.releasedqty <> 0) THEN
       RAISE_APPLICATION_ERROR(-20000, '@CannotDeleteReleasedReservation@');
     END IF;
+    IF (:OLD.c_orderline_id IS NOT NULL) THEN
+      UPDATE c_orderline
+      SET so_res_status = 'NR'
+      WHERE c_orderline_id = :NEW.c_orderline_id;
+
+      SELECT c_order_id INTO v_sales_order_id
+      FROM c_orderline
+      WHERE c_orderline_id = :NEW.c_orderline_id;
+      SELECT COUNT(*), SUM(CASE so_res_status WHEN 'CR' THEN 1 ELSE 0 END), SUM(CASE so_res_status WHEN 'PR' THEN 1 ELSE 0 END)
+        INTO v_linecount, v_creservedcount, v_preservedcount
+      FROM c_orderline ol
+          JOIN m_product p ON ol.m_product_id = p.m_product_id
+      WHERE ol.c_order_id = v_sales_order_id
+        AND ol.qtyordered > 0
+        AND p.isstocked = 'Y'
+        AND p.producttype = 'I';
+  
+      UPDATE c_order
+      SET so_res_status = CASE WHEN v_linecount = v_creservedcount THEN 'CR'
+                               WHEN v_creservedcount + v_preservedcount > 0 THEN 'PR'
+                               ELSE 'NR'
+                          END
+      WHERE c_order_id = v_sales_order_id;
+    END IF;
   END IF;
 END M_RESERVATION_TRG
 ]]></body>
