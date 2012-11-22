@@ -72,7 +72,7 @@ enyo.kind({
       this.currentLine = lineSelected;
       if (lineSelected) {
         diff = this.propertycomponents;
-        for (att in this.propertycomponents) {
+        for (att in diff) {
           if (diff.hasOwnProperty(att)) {
             this.loadValue(att, diff[att]);
           }
