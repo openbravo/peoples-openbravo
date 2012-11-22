@@ -33,11 +33,17 @@ enyo.kind({
       kind: 'OB.UI.ReceiptPropertiesDialogCancel'
     }]
   },
-  loadValue: function (mProperty) {
+  loadValue: function (mProperty, component) {
     this.waterfall('onLoadValue', {
       order: this.currentLine,
       modelProperty: mProperty
     });
+    // Make it visible or not...
+    if (component.showProperty) {
+      component.showProperty(this.currentLine, function (value) {
+        component.owner.owner.setShowing(value);
+      });
+    } // else make it visible...
   },
   applyChanges: function (inSender, inEvent) {
     this.waterfall('onApplyChange', {
@@ -47,12 +53,16 @@ enyo.kind({
   initComponents: function () {
     this.inherited(arguments);
     this.attributeContainer = this.$.bodyContent.$.attributes;
+
+    this.propertycomponents = {};
+
     enyo.forEach(this.newAttributes, function (natt) {
-      this.$.bodyContent.$.attributes.createComponent({
+      var editline = this.$.bodyContent.$.attributes.createComponent({
         kind: 'OB.UI.PropertyEditLine',
         name: 'line_' + natt.name,
         newAttribute: natt
       });
+      this.propertycomponents[natt.modelProperty] = editline.propertycomponent;
     }, this);
   },
   init: function (model) {
@@ -61,10 +71,10 @@ enyo.kind({
       var diff, att;
       this.currentLine = lineSelected;
       if (lineSelected) {
-        diff = lineSelected.attributes;
-        for (att in diff) {
+        diff = this.propertycomponents;
+        for (att in this.propertycomponents) {
           if (diff.hasOwnProperty(att)) {
-            this.loadValue(att);
+            this.loadValue(att, diff[att]);
           }
         }
       }

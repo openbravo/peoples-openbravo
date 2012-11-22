@@ -111,7 +111,7 @@ enyo.kind({
   }],
   initComponents: function () {
     this.inherited(arguments);
-    this.$.newAttribute.createComponent(this.newAttribute);
+    this.propertycomponent = this.$.newAttribute.createComponent(this.newAttribute);
     this.$.labelLine.content = this.newAttribute.label;
   }
 });
@@ -132,8 +132,10 @@ enyo.kind({
   },
   loadValue: function (inSender, inEvent) {
     if (this.modelProperty === inEvent.modelProperty) {
-      if (inEvent.order.get(this.modelProperty) !== undefined) {
+      if (inEvent.order.get(this.modelProperty)) {
         this.setValue(inEvent.order.get(this.modelProperty));
+      } else {
+        this.setValue('');
       }
     }
   },
