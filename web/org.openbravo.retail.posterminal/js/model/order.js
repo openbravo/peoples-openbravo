@@ -884,6 +884,7 @@
           item.gross = -item.gross;
           item.net = -item.net;
           item.qty = -item.qty;
+          item.taxAmount = -item.taxAmount;
         });
         _.forEach(jsonorder.payments, function (item) {
           item.amount = -item.amount;
