@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, enyo, $, confirm */
+/*global OB, Backbone, enyo, $, confirm */
 
 // Point of sale main window view
 enyo.kind({
@@ -153,6 +153,7 @@ enyo.kind({
       }]
     }]
   }],
+  classModel: new Backbone.Model(),
   printReceipt: function () {
 
     if (OB.POS.modelterminal.hasPermission('OBPOS_print.receipt')) {
@@ -487,6 +488,12 @@ enyo.kind({
         restorePreviousState(this.model.get('subWindowManager'), changedModel);
       }
     }, this);
+
+    // show properties when needed...
+    receipt.get('lines').on('created', function (line) {
+      this.classModel.trigger('createdLine', this, line);
+    }, this);
+
     this.$.receiptview.setOrder(receipt);
     this.$.receiptview.setOrderList(receiptList);
     this.$.toolbarpane.setModel(this.model);

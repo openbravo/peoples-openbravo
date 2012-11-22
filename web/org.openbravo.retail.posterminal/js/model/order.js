@@ -646,6 +646,7 @@
 
       // add the created line
       this.get('lines').add(newline);
+      newline.trigger('created', newline);
       // set the undo action
       this.set('undo', {
         text: OB.I18N.getLabel('OBPOS_AddLine', [newline.get('qty'), newline.get('product').get('_identifier')]),
