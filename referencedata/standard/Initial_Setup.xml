@@ -975,6 +975,31 @@
     <return>false</return>
     <documentTypeForOrder xsi:nil="true"/>
   </DocumentType>
+  <DocumentType id="97CE9DBF550E44588D68C4F6FC94C497" identifier="Doubtful Debt">
+    <id>97CE9DBF550E44588D68C4F6FC94C497</id>
+    <active>true</active>
+    <name>Doubtful Debt</name>
+    <printText>Doubtful Debt</printText>
+    <description xsi:nil="true"/>
+    <documentCategory>DDB</documentCategory>
+    <salesTransaction>true</salesTransaction>
+    <sOSubType xsi:nil="true"/>
+    <documentTypeForShipment xsi:nil="true"/>
+    <documentTypeForInvoice xsi:nil="true"/>
+    <sequencedDocument>true</sequencedDocument>
+    <documentSequence id="0D807104264740CBB7CAA1D20EF60342" entity-name="ADSequence" identifier="Doubtful Debt Sequence"/>
+    <gLCategory id="745A2B441A2644DF934D1B1E462292E9" entity-name="FinancialMgmtGLCategory" identifier="None"/>
+    <comments xsi:nil="true"/>
+    <default>false</default>
+    <numberOfCopies>1</numberOfCopies>
+    <table id="30721072789F410E9606D2235CB2A226" entity-name="ADTable" identifier="FIN_Doubtful_Debt"/>
+    <filterByOrganization>false</filterByOrganization>
+    <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
+    <reversal>false</reversal>
+    <return>false</return>
+    <documentTypeForOrder xsi:nil="true"/>
+  </DocumentType>
   <DocumentType id="9883CB89E41E496D987D8838C3CE0DC7" identifier="Matched Purchase Orders">
     <id>9883CB89E41E496D987D8838C3CE0DC7</id>
     <active>true</active>
@@ -1334,6 +1359,18 @@
     <autoNumbering>true</autoNumbering>
     <incrementBy>1</incrementBy>
     <startingNo>600000</startingNo>
+    <usedForRecordID>false</usedForRecordID>
+    <restartSequenceEveryYear>false</restartSequenceEveryYear>
+  </ADSequence>
+  <ADSequence id="0D807104264740CBB7CAA1D20EF60342" identifier="Doubtful Debt Sequence">
+    <id>0D807104264740CBB7CAA1D20EF60342</id>
+    <active>true</active>
+    <name>Doubtful Debt Sequence</name>
+    <description>Doubtful Debt Sequence</description>
+    <valueFormat xsi:nil="true"/>
+    <autoNumbering>true</autoNumbering>
+    <incrementBy>1</incrementBy>
+    <startingNo>1000000</startingNo>
     <usedForRecordID>false</usedForRecordID>
     <restartSequenceEveryYear>false</restartSequenceEveryYear>
   </ADSequence>

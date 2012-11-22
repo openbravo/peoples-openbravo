@@ -839,6 +839,14 @@ BEGIN
       IF (v_count <> 0) THEN
         RAISE_APPLICATION_ERROR(-20000, '@APRM_InvoiceWithUnprocessedProposal@' || ' ' || v_documentno);
       END IF;
+      -- Doubtful Debt Validation
+      SELECT COUNT(*), max(dd.documentno) INTO v_count, v_documentno
+      FROM fin_payment_schedule ps join fin_doubtful_debt dd on (dd.fin_payment_schedule_id = ps.fin_payment_schedule_id)
+            AND ps.c_invoice_id = p_record_id;
+      IF (v_count <> 0) THEN
+        RAISE_APPLICATION_ERROR(-20000, '@APRM_InvoiceWithDoubtfulDebt@' || ' ' || v_documentno);
+      END IF;
+      
       v_delete_paymentplan := TRUE;
 
       -- Revert the bp used credit amount

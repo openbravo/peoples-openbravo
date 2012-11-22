@@ -187,6 +187,9 @@ public class FIN_AddPayment {
             // update detail with the new value
             List<FIN_PaymentScheduleDetail> outStandingPSDs = getOutstandingPSDs(paymentScheduleDetail);
             BigDecimal difference = paymentScheduleDetail.getAmount().subtract(paymentDetailAmount);
+            // Assume doubtful debt is always positive
+            BigDecimal debtAmountDifferenceAbs = paymentScheduleDetail.getDebtAmount().subtract(
+                paymentDetailAmount);
             if (outStandingPSDs.size() == 0) {
               if (!isWriteoff) {
                 // No outstanding PSD exists so one needs to be created for the difference
@@ -211,6 +214,9 @@ public class FIN_AddPayment {
                   // update existing PD with difference
                   outStandingPSDs.get(0).setAmount(
                       outStandingPSDs.get(0).getAmount().add(difference));
+                  outStandingPSDs.get(0).setDebtAmount(
+                      debtAmountDifferenceAbs.signum() >= 0 ? debtAmountDifferenceAbs
+                          : BigDecimal.ZERO);
                   OBDal.getInstance().save(outStandingPSDs.get(0));
                 }
               } else {
@@ -224,6 +230,9 @@ public class FIN_AddPayment {
               }
             }
             paymentScheduleDetail.setAmount(paymentDetailAmount);
+            paymentScheduleDetail
+                .setDebtAmount(debtAmountDifferenceAbs.signum() >= 0 ? paymentDetailAmount
+                    : paymentScheduleDetail.getDebtAmount());
             OBDal.getInstance().save(paymentScheduleDetail);
             paymentScheduleDetail.getPaymentDetails().setAmount(paymentDetailAmount);
             OBDal.getInstance().save(paymentScheduleDetail.getPaymentDetails());
@@ -247,13 +256,21 @@ public class FIN_AddPayment {
           }
           BigDecimal amountDifference = paymentScheduleDetail.getAmount().subtract(
               paymentDetailAmount);
+          // Debt Payment
+          BigDecimal debtAmountDifference = paymentScheduleDetail.getDebtAmount().subtract(
+              paymentDetailAmount);
           if (amountDifference.compareTo(BigDecimal.ZERO) != 0) {
             if (!isWriteoff) {
-              dao.duplicateScheduleDetail(paymentScheduleDetail, amountDifference);
+              dao.duplicateScheduleDetail(paymentScheduleDetail, amountDifference,
+                  debtAmountDifference.signum() > 0 ? debtAmountDifference : BigDecimal.ZERO);
               amountDifference = BigDecimal.ZERO;
-            } else
+            } else {
               paymentScheduleDetail.setWriteoffAmount(amountDifference);
+            }
             paymentScheduleDetail.setAmount(paymentDetailAmount);
+            paymentScheduleDetail
+                .setDebtAmount(debtAmountDifference.signum() > 0 ? paymentDetailAmount
+                    : paymentScheduleDetail.getDebtAmount());
           }
           assignedAmount = assignedAmount.add(paymentDetailAmount);
           dao.getNewPaymentDetail(payment, paymentScheduleDetail, paymentDetailAmount,
@@ -944,6 +961,7 @@ public class FIN_AddPayment {
       final List<String> removedPDSIds = new ArrayList<String>();
       for (FIN_PaymentScheduleDetail psdToRemove : psdFilter.list()) {
         psd.setAmount(psd.getAmount().add(psdToRemove.getAmount()));
+        psd.setDebtAmount(psd.getDebtAmount().add(psdToRemove.getDebtAmount()));
         // TODO: Set 0 as default value for writeoffamt column in FIN_Payment_ScheduleDetail table
         BigDecimal sum1 = (psd.getWriteoffAmount() == null) ? BigDecimal.ZERO : psd
             .getWriteoffAmount();

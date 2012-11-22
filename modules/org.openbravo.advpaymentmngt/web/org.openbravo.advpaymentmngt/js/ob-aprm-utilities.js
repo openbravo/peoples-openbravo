@@ -188,3 +188,20 @@ OB.APRM.deleteRow = function (grid, rowNum, record) {
   }
   return true;
 };
+
+OB.APRM.validateDoubtfulDebtPickAndEdit = function (item, validator, value, record) {
+  if (!isc.isA.Number(record.doubtfulDebtAmount)) {
+    isc.warn(OB.I18N.getLabel('APRM_NotValidNumber'));
+    return false;
+  }
+
+  var outstanding = new BigDecimal(String(record.outstandingamt)),
+      amount = new BigDecimal(String(record.doubtfulDebtAmount));
+
+  if (outstanding.abs().compareTo(amount.abs()) < 0) {
+    isc.warn(OB.I18N.getLabel('APRM_DoubtfulDebtMoreAmountThanOutstanding'));
+    return false;
+  }
+
+  return true;
+};
