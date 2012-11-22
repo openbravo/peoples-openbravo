@@ -43,7 +43,7 @@ OB.Reservation.QuantityValidate = function(item, validator, value, record) {
   }
   quantity = new BigDecimal(String(value));
   if (quantity.compareTo(availableQty.subtract(reservedinothersQty)) > 0) {
-    isc.warn(OB.I18N.getLabel('OBUIAPP_Res_MoreQtyThanAvailable', [availableQty.subtract(reservedinothersQty).toString()]));
+    isc.warn(OB.I18N.getLabel('OBUIAPP_Res_MoreQtyThanAvailable', [record.availableQty, record.reservedinothers]));
     return false;
   }
   if (quantity.compareTo(releasedQty) < 0) {
@@ -89,7 +89,7 @@ OB.Reservation.PrereservationQuantityValidate = function(item, validator, value,
   reservedQty = new BigDecimal(String(value));
   solTotalReserved = reservedQty.add(otherReservedQty);
   if (solTotalReserved.compareTo(orderedQuantity) > 0) {
-    isc.warn(OB.I18N.getLabel('OBUIAPP_Res_MoreThanOrderedQty', [solTotalReserved.toString()]));
+    isc.warn(OB.I18N.getLabel('OBUIAPP_Res_MoreThanOrderedQty', [record.orderedQuantity, record.otherReservedQty]));
     return false;
   }
 
