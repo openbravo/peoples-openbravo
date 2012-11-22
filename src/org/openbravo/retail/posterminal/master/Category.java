@@ -61,8 +61,7 @@ public class Category extends ProcessHQLQuery {
 
     // Discounts marked as category
     hqlQueries
-        .add("select pt.id as id, pt.commercialName as searchKey, pt.commercialName as name, pt.commercialName as _identifier"// TODO:
-        // images
+        .add("select pt.id as id, pt.commercialName as searchKey, pt.commercialName as name, pt.obposImage.bindaryData as img, pt.commercialName as _identifier"// TODO:
             + " from PromotionType pt " //
             + "where obposIsCategory = true "//
             + "  and active = true "//

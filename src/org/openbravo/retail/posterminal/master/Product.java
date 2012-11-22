@@ -65,16 +65,14 @@ public class Product extends ProcessHQLQuery {
             + "(pli.product.$incrementalUpdateCriteria) order by pli.product.name");
 
     // discounts which type is defined as category
-
-    // TODO: img, UPC
     products
-        .add("select p.id as id, p.name as _identifier, p.discountType.id as productCategory, 'true' as ispack"//
-            + "  from PricingAdjustment p " //
+        .add("select p.id as id, p.name as _identifier, p.discountType.id as productCategory, p.obdiscUpc as uPCEAN, img.bindaryData as img, 'true' as ispack"//
+            + "  from PricingAdjustment as p left outer join p.obdiscImage img" //
             + " where p.discountType.obposIsCategory = true "//
             + "   and p.discountType.active = true " //
             + "   and p.active = true"//
             + "   and p.$readableClientCriteria"//
-            + "   and ($incrementalUpdateCriteria) "//
+            + "   and (p.$incrementalUpdateCriteria) "//
         );
 
     return products;
