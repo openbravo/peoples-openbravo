@@ -67,11 +67,11 @@ BEGIN
     IF (:OLD.c_orderline_id IS NOT NULL) THEN
       UPDATE c_orderline
       SET so_res_status = 'NR'
-      WHERE c_orderline_id = :NEW.c_orderline_id;
+      WHERE c_orderline_id = :OLD.c_orderline_id;
 
       SELECT c_order_id INTO v_sales_order_id
       FROM c_orderline
-      WHERE c_orderline_id = :NEW.c_orderline_id;
+      WHERE c_orderline_id = :OLD.c_orderline_id;
       SELECT COUNT(*), SUM(CASE so_res_status WHEN 'CR' THEN 1 ELSE 0 END), SUM(CASE so_res_status WHEN 'PR' THEN 1 ELSE 0 END)
         INTO v_linecount, v_creservedcount, v_preservedcount
       FROM c_orderline ol
