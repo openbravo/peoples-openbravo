@@ -160,7 +160,8 @@ BEGIN
   
         UPDATE c_orderline
         SET so_res_status = CASE WHEN v_quantity = v_reservedqty THEN 'CR'
-                                 ELSE 'PR'
+                                 WHEN v_reservedqty > 0 THEN 'PR'
+                                 ELSE 'NR'
                             END
         WHERE c_orderline_id = v_orderline_id;
   
@@ -179,11 +180,11 @@ BEGIN
                             END
         WHERE c_order_id = v_sales_order_id;
       END IF;
-  
-      v_newstatus := 'CO';
-      v_newaction := 'HO';
       -- ADD RESERVED STOCK
       M_RESERVE_STOCK_AUTO(v_reservation_id, v_user_id, v_message);
+
+      v_newstatus := 'CO';
+      v_newaction := 'HO';
     END;
 
   ELSIF (v_resaction = 'HO') THEN

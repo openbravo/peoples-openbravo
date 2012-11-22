@@ -211,7 +211,7 @@ BEGIN --BODY
           LEFT JOIN m_attributesetinstance asi ON t.m_attributesetinstance_id = asi.m_attributesetinstance_id
           LEFT JOIN m_product_uom pu ON t.m_product_uom_id = pu.m_product_uom_id
           LEFT JOIN c_uom u ON pu.c_uom_id = u.c_uom_id
-          LEFT JOIN m_reservation r ON r.m_reservation_id = v_reservation_id
+          LEFT JOIN m_reservation r ON r.m_reservation_id = v_reservation_id AND r.m_product_id = t.m_product_id AND r.c_uom_id = t.c_uom_id
           LEFT JOIN (
               SELECT r.m_product_id, r.c_uom_id, rs.m_locator_id, COALESCE(rs.m_attributesetinstance_id, '0') as m_attributesetinstance_id,
                   SUM(rs.quantity - COALESCE(rs.releasedqty, 0)) AS reservedqty
