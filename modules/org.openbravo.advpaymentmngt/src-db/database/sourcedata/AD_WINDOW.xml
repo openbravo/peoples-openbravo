@@ -7,7 +7,7 @@
 <!--6EFB8443A1C64F3D926CE42A0E40631C-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--6EFB8443A1C64F3D926CE42A0E40631C-->  <NAME><![CDATA[Purchase Invoice Payment Plan]]></NAME>
 <!--6EFB8443A1C64F3D926CE42A0E40631C-->  <DESCRIPTION><![CDATA[Displays all Invoice Payment Plans for purchase transactions which are not fully paid]]></DESCRIPTION>
-<!--6EFB8443A1C64F3D926CE42A0E40631C-->  <HELP><![CDATA[Displays all Invoice Payment Plans for purchase transactions which are not fully paid]]></HELP>
+<!--6EFB8443A1C64F3D926CE42A0E40631C-->  <HELP><![CDATA[The purchase invoice payment plan window displays all the purchase invoice payment plans which are not fully paid. ]]></HELP>
 <!--6EFB8443A1C64F3D926CE42A0E40631C-->  <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
 <!--6EFB8443A1C64F3D926CE42A0E40631C-->  <ISSOTRX><![CDATA[N]]></ISSOTRX>
 <!--6EFB8443A1C64F3D926CE42A0E40631C-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -70,7 +70,7 @@
 <!--FC6A51DF5F32451987C0C84D7B338B94-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--FC6A51DF5F32451987C0C84D7B338B94-->  <NAME><![CDATA[Sales Invoice Payment Plan]]></NAME>
 <!--FC6A51DF5F32451987C0C84D7B338B94-->  <DESCRIPTION><![CDATA[Displays all Invoice Payment Plans for sales transactions which are not fully paid]]></DESCRIPTION>
-<!--FC6A51DF5F32451987C0C84D7B338B94-->  <HELP><![CDATA[Displays all Invoice Payment Plans for sales transactions which are not fully paid]]></HELP>
+<!--FC6A51DF5F32451987C0C84D7B338B94-->  <HELP><![CDATA[The sales invoice payment plan window displays all the sales invoice payment plans which are not fully paid. ]]></HELP>
 <!--FC6A51DF5F32451987C0C84D7B338B94-->  <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
 <!--FC6A51DF5F32451987C0C84D7B338B94-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--FC6A51DF5F32451987C0C84D7B338B94-->  <PROCESSING><![CDATA[N]]></PROCESSING>

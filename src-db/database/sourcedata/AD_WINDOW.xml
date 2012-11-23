@@ -590,7 +590,7 @@
 <!--143-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--143-->  <NAME><![CDATA[Sales Order]]></NAME>
 <!--143-->  <DESCRIPTION><![CDATA[Create orders tracking product sales to customers.]]></DESCRIPTION>
-<!--143-->  <HELP><![CDATA[Create orders tracking product sales to customers.]]></HELP>
+<!--143-->  <HELP><![CDATA[A sales order is a document that specifies products and/or services ordered by a specific business partner (customer), as well as the price and terms and conditions. ]]></HELP>
 <!--143-->  <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
 <!--143-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--143-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -812,7 +812,7 @@
 <!--167-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--167-->  <NAME><![CDATA[Sales Invoice]]></NAME>
 <!--167-->  <DESCRIPTION><![CDATA[Create and edit sales invoices for your customers.]]></DESCRIPTION>
-<!--167-->  <HELP><![CDATA[Create and edit sales invoices for your customers.]]></HELP>
+<!--167-->  <HELP><![CDATA[Sales invoice window allows to issue and manage customer's invoices.]]></HELP>
 <!--167-->  <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
 <!--167-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--167-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -913,7 +913,7 @@
 <!--183-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--183-->  <NAME><![CDATA[Purchase Invoice]]></NAME>
 <!--183-->  <DESCRIPTION><![CDATA[Purchase invoice window allows to register and manage suppliers invoices.]]></DESCRIPTION>
-<!--183-->  <HELP><![CDATA[Purchase invoice window allows to register and manage suppliers invoices.]]></HELP>
+<!--183-->  <HELP><![CDATA[Purchase invoice window allows to register and manage supplier's invoices.]]></HELP>
 <!--183-->  <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
 <!--183-->  <ISSOTRX><![CDATA[N]]></ISSOTRX>
 <!--183-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -2641,7 +2641,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--1B7B3BB7FEAF41ED8D9727AB98779D3C-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1B7B3BB7FEAF41ED8D9727AB98779D3C-->  <NAME><![CDATA[Payment Proposal]]></NAME>
 <!--1B7B3BB7FEAF41ED8D9727AB98779D3C-->  <DESCRIPTION><![CDATA[Generates a payment proposal for a selected payment method based on a criteria.]]></DESCRIPTION>
-<!--1B7B3BB7FEAF41ED8D9727AB98779D3C-->  <HELP><![CDATA[A mechanism by which a user can make payment by selecting scheduled payment events for a particular payment method by due date. The system "proposes" what should be paid based on the selection criteria provided by the user.]]></HELP>
+<!--1B7B3BB7FEAF41ED8D9727AB98779D3C-->  <HELP><![CDATA[The payment proposal is a tool that helps the user to make payments by selecting the documents related to a given payment method or scheduled to be paid before a given due date. The system proposes what should be paid based on the selection criteria provided by the user.]]></HELP>
 <!--1B7B3BB7FEAF41ED8D9727AB98779D3C-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--1B7B3BB7FEAF41ED8D9727AB98779D3C-->  <ISSOTRX><![CDATA[N]]></ISSOTRX>
 <!--1B7B3BB7FEAF41ED8D9727AB98779D3C-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -2862,6 +2862,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--6F8F913FA60F4CBD93DC1D3AA696E76E-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--6F8F913FA60F4CBD93DC1D3AA696E76E-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--6F8F913FA60F4CBD93DC1D3AA696E76E-->  <NAME><![CDATA[Payment Out]]></NAME>
+<!--6F8F913FA60F4CBD93DC1D3AA696E76E-->  <HELP><![CDATA[Supplier's payments and prepayments can be made and manage in the payment out window.]]></HELP>
 <!--6F8F913FA60F4CBD93DC1D3AA696E76E-->  <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
 <!--6F8F913FA60F4CBD93DC1D3AA696E76E-->  <ISSOTRX><![CDATA[N]]></ISSOTRX>
 <!--6F8F913FA60F4CBD93DC1D3AA696E76E-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -3071,7 +3072,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--E547CE89D4C04429B6340FFA44E70716-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--E547CE89D4C04429B6340FFA44E70716-->  <NAME><![CDATA[Payment In]]></NAME>
 <!--E547CE89D4C04429B6340FFA44E70716-->  <DESCRIPTION><![CDATA[Window to manage the payments done by customers ]]></DESCRIPTION>
-<!--E547CE89D4C04429B6340FFA44E70716-->  <HELP><![CDATA[Window to manage the payments done by customers]]></HELP>
+<!--E547CE89D4C04429B6340FFA44E70716-->  <HELP><![CDATA[Customer's payments and prepayments received can be recorded and managed in the payment in window.]]></HELP>
 <!--E547CE89D4C04429B6340FFA44E70716-->  <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
 <!--E547CE89D4C04429B6340FFA44E70716-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--E547CE89D4C04429B6340FFA44E70716-->  <PROCESSING><![CDATA[N]]></PROCESSING>
