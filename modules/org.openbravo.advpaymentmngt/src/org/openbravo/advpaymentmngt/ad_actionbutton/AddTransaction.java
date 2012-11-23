@@ -364,11 +364,8 @@ public class AddTransaction extends HttpSecureAppServlet {
     }
     xmlDocument.setParameter("transactionType", transactionType);
     // Accounting Dimensions
-    String Utility.getContext(this, vars, "$Element_SR", strWindowId);
-    
-    displayAcctDimensions(vars, String dim, String doc, String level)
-    
-    final String strElement_BP = Utility.getContext(this, vars, , strWindowId);
+
+    final String strElement_BP = Utility.getContext(this, vars, "$Element_BP", strWindowId);
     final String strElement_PR = Utility.getContext(this, vars, "$Element_PR", strWindowId);
     final String strElement_PJ = Utility.getContext(this, vars, "$Element_PJ", strWindowId);
     final String strElement_AY = Utility.getContext(this, vars, "$Element_AY", strWindowId);
@@ -377,7 +374,7 @@ public class AddTransaction extends HttpSecureAppServlet {
     final String strElement_U1 = Utility.getContext(this, vars, "$Element_U1", strWindowId);
     final String strElement_U2 = Utility.getContext(this, vars, "$Element_U2", strWindowId);
     final String strElement_CC = Utility.getContext(this, vars, "$Element_CC", strWindowId);
-    
+
     xmlDocument.setParameter("strElement_BP", strElement_BP);
     xmlDocument.setParameter("strElement_PR", strElement_PR);
     xmlDocument.setParameter("strElement_PJ", strElement_PJ);
