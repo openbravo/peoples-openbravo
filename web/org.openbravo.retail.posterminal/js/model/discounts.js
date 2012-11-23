@@ -42,6 +42,24 @@
       }
     },
 
+    addManualPromotion: function (receipt, lines, promotion) {
+      var rule = OB.Model.Discounts.discountRules[promotion.discountType];
+      if (!rule || !rule.addManual) {
+        window.console.warn('No manual implemetation for rule ' + promotion.discountType);
+        return;
+      }
+
+      lines.forEach(function (line) {
+        if (promotion.override) {
+          line.set('promotions', null);
+        }
+        rule.addManual(receipt, line, promotion);
+      });
+
+      // Recalculate all promotions again
+      OB.Model.Discounts.applyPromotions(receipt);
+    },
+
     registerRule: function (name, rule) {
       this.discountRules[name] = rule;
     },
@@ -110,7 +128,9 @@
     + " WHERE OP.M_OFFER_ID = M_OFFER.M_OFFER_ID" //
     + "   AND P.M_PRODUCT_ID = ?" //
     + "   AND OP.M_PRODUCT_CATEGORY_ID = P.M_PRODUCT_CATEGORY_ID" //
-    + " )))" //
+    + " ))) " //
+    // TODO: Discretionary discounts, don't check them by id
+    + " AND M_OFFER_TYPE_ID NOT IN ('D1D193305A6443B09B299259493B272A', '20E4EC27397344309A2185097392D964', '7B49D8CC4E084A75B7CB4D85A6A3A578', '8338556C0FBF45249512DB343FEFD280')"
   };
 
   // Price Adjustment

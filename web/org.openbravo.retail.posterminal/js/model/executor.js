@@ -6,7 +6,7 @@
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
-/*global Backbone */
+/*global Backbone,console*/
 
 /**
  * OB.Model.Executor provides a mechanism to execute actions synchronously even each of
@@ -132,7 +132,9 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
         });
       });
       evt.trigger('actionsCreated');
-    }, function () {});
+    }, function () {
+      console.error('Error getting promotions', arguments)
+    });
   },
 
   applyRule: function (disc, evt) {
@@ -172,17 +174,49 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
   },
 
   preAction: function (evt) {
-    var line = evt.get('line');
+    var line = evt.get('line'),
+        manualPromotions, appliedPromotions, i;
+
+    // Keep discretionary discounts to be applied afterfwards
+    appliedPromotions = line.get('promotions');
+    if (appliedPromotions) {
+      for (i = 0; i < appliedPromotions.length; i++) {
+        if (appliedPromotions[i].manual) {
+          if (appliedPromotions[i].override) {
+            // only one overriding line allowed, keep it and exit
+            return;
+          } else {
+            manualPromotions = manualPromotions || [];
+            manualPromotions.push(appliedPromotions[i]);
+          }
+        }
+      }
+    }
 
     line.set({
       promotions: null,
       discountedLinePrice: null,
-      promotionCandidates: null
+      promotionCandidates: null,
+      manualPromotions: manualPromotions
     });
-
   },
 
   postAction: function (evt) {
+    var line = evt.get('line'),
+        promotions = line.get('promotions'),
+        i, rule;
+
+    if (promotions) {
+      for (i = 0; i < promotions.length; i++) {
+        if (promotions[i].manual) {
+          rule = OB.Model.Discounts.discountRules[promotions[i].discountType];
+          if (rule && rule.recalculate) {
+            rule.recalculate(line, promotions[i]);
+          }
+        }
+      }
+    }
+
     evt.get('receipt').calculateGross();
   }
 });

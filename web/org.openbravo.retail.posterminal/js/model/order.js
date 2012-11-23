@@ -88,6 +88,9 @@
           if (!promotions[i].applyNext) {
             return true;
           }
+          if (promotions[i].manual && promotions[i].override) {
+            return true;
+          }
         }
       }
       return false;
@@ -553,7 +556,7 @@
               if (!affectedByPack) {
                 return true;
               } else if (options && options.packId === affectedByPack.ruleId) {
-                  return true;
+                return true;
               }
             }
           });
@@ -574,12 +577,12 @@
       var promotions = line.get('promotions') || [],
           disc = {},
           i, replaced = false;
-
       disc.name = discount.name || rule.get('printName') || rule.get('name');
       disc.ruleId = rule.id;
       disc.amt = discount.amt;
       disc.actualAmt = discount.actualAmt;
       disc.pack = discount.pack;
+      disc.discountType = rule.get('discountType');
 
       disc.hidden = discount.hidden === true || (discount.actualAmt && !disc.amt);
 
@@ -593,7 +596,7 @@
       disc._idx = rule.get('_idx');
 
       for (i = 0; i < promotions.length; i++) {
-        if (disc._idx < promotions[i]._idx) {
+        if (disc._idx !== -1 && disc._idx < promotions[i]._idx) {
           // Trying to apply promotions in incorrect order: recalculate whole line again
           OB.Model.Discounts.applyPromotions(this, line);
           return;
