@@ -583,6 +583,8 @@
       disc.actualAmt = discount.actualAmt;
       disc.pack = discount.pack;
       disc.discountType = rule.get('discountType');
+      disc.manual = discount.manual;
+      disc.override = discount.override;
 
       disc.hidden = discount.hidden === true || (discount.actualAmt && !disc.amt);
 
