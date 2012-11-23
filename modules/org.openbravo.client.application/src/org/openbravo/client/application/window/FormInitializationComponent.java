@@ -422,7 +422,7 @@ public class FormInitializationComponent extends BaseActionHandler {
           // This session attributes could be a preference
           if (field.getDisplayLogic() != null && field.isDisplayed() && field.isActive()) {
             final DynamicExpressionParser parser = new DynamicExpressionParser(
-                field.getDisplayLogic(), tab, cachedStructures);
+                field.getDisplayLogic(), tab, cachedStructures, field);
             setSessionAttributesFromParserResult(parser, sessionAttributesMap, tab.getWindow()
                 .getId());
           }

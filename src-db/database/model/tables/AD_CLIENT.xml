@@ -77,6 +77,106 @@
         <default/>
         <onCreateDefault><![CDATA[CASE WHEN AD_CLIENT_ID = '0' THEN '102' ELSE (SELECT C_ACCTSCHEMA.C_CURRENCY_ID FROM C_ACCTSCHEMA, AD_CLIENTINFO WHERE AD_CLIENTINFO.C_ACCTSCHEMA1_ID = C_ACCTSCHEMA.C_ACCTSCHEMA_ID AND AD_CLIENT.AD_CLIENT_ID = AD_CLIENTINFO.AD_CLIENT_ID) END]]></onCreateDefault>
       </column>
+      <column name="ACCTDIM_CENTRALLY_MAINTAINED" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="PROJECT_ACCTDIM_ISENABLE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="PROJECT_ACCTDIM_HEADER" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="PROJECT_ACCTDIM_LINES" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="PROJECT_ACCTDIM_BREAKDOWN" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="BPARTNER_ACCTDIM_ISENABLE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="BPARTNER_ACCTDIM_HEADER" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="BPARTNER_ACCTDIM_LINES" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="BPARTNER_ACCTDIM_BREAKDOWN" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="PRODUCT_ACCTDIM_ISENABLE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="PRODUCT_ACCTDIM_HEADER" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="PRODUCT_ACCTDIM_LINES" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="PRODUCT_ACCTDIM_BREAKDOWN" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="COSTCENTER_ACCTDIM_HEADER" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="COSTCENTER_ACCTDIM_LINES" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="COSTCENTER_ACCTDIM_BREAKDOWN" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="USER1_ACCTDIM_ISENABLE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="USER1_ACCTDIM_HEADER" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="USER1_ACCTDIM_LINES" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="USER1_ACCTDIM_BREAKDOWN" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="USER2_ACCTDIM_ISENABLE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="USER2_ACCTDIM_HEADER" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="USER2_ACCTDIM_LINES" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="USER2_ACCTDIM_BREAKDOWN" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="COSTCENTER_ACCTDIM_ISENABLE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="AD_CLIENT_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -92,6 +192,31 @@
       <unique name="AD_CLIENT_NAME">
         <unique-column name="NAME"/>
       </unique>
+      <check name="AD_CLIENT_BP_BD_CHCK"><![CDATA[BPARTNER_ACCTDIM_BREAKDOWN IN ('Y', 'N')]]></check>
+      <check name="AD_CLIENT_BP_DIM_CHCK"><![CDATA[BPARTNER_ACCTDIM_ISENABLE IN ('Y', 'N')]]></check>
+      <check name="AD_CLIENT_BP_H_CHCK"><![CDATA[BPARTNER_ACCTDIM_HEADER IN ('Y', 'N')]]></check>
+      <check name="AD_CLIENT_BP_L_CHCK"><![CDATA[BPARTNER_ACCTDIM_LINES IN ('Y', 'N')]]></check>
+      <check name="AD_CLIENT_CCENTER_BD_CHCK"><![CDATA[COSTCENTER_ACCTDIM_BREAKDOWN IN ('Y', 'N')]]></check>
+      <check name="AD_CLIENT_CCENTER_CHCK"><![CDATA[COSTCENTER_ACCTDIM_ISENABLE IN ('Y', 'N')]]></check>
+      <check name="AD_CLIENT_CCENTER_H_CHCK"><![CDATA[COSTCENTER_ACCTDIM_HEADER IN ('Y', 'N')]]></check>
+      <check name="AD_CLIENT_CCENTER_L_CHCK"><![CDATA[COSTCENTER_ACCTDIM_LINES IN ('Y', 'N')]]></check>
+      <check name="AD_CLIENT_CENTMAINT_CHCK"><![CDATA[ACCTDIM_CENTRALLY_MAINTAINED IN ('Y', 'N')]]></check>
       <check name="AD_CLIENT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="AD_CLIENT_PRODUCT_BD_CHCK"><![CDATA[PRODUCT_ACCTDIM_BREAKDOWN IN ('Y', 'N')]]></check>
+      <check name="AD_CLIENT_PRODUCT_DIM_CHCK"><![CDATA[PRODUCT_ACCTDIM_ISENABLE IN ('Y', 'N')]]></check>
+      <check name="AD_CLIENT_PRODUCT_H_CHCK"><![CDATA[PRODUCT_ACCTDIM_HEADER IN ('Y', 'N')]]></check>
+      <check name="AD_CLIENT_PRODUCT_L_CHCK"><![CDATA[PRODUCT_ACCTDIM_LINES IN ('Y', 'N')]]></check>
+      <check name="AD_CLIENT_PROJECT_BD_CHCK"><![CDATA[PROJECT_ACCTDIM_BREAKDOWN IN ('Y', 'N')]]></check>
+      <check name="AD_CLIENT_PROJECT_DIM_CHCK"><![CDATA[PROJECT_ACCTDIM_ISENABLE IN ('Y', 'N')]]></check>
+      <check name="AD_CLIENT_PROJECT_H_CHCK"><![CDATA[PROJECT_ACCTDIM_HEADER IN ('Y', 'N')]]></check>
+      <check name="AD_CLIENT_PROJECT_L_CHCK"><![CDATA[PROJECT_ACCTDIM_LINES IN ('Y', 'N')]]></check>
+      <check name="AD_CLIENT_USER1_BD_CHCK"><![CDATA[USER1_ACCTDIM_BREAKDOWN IN ('Y', 'N')]]></check>
+      <check name="AD_CLIENT_USER1_DIM_CHCK"><![CDATA[USER1_ACCTDIM_ISENABLE IN ('Y', 'N')]]></check>
+      <check name="AD_CLIENT_USER1_H_CHCK"><![CDATA[USER1_ACCTDIM_HEADER IN ('Y', 'N')]]></check>
+      <check name="AD_CLIENT_USER1_L_CHCK"><![CDATA[USER1_ACCTDIM_LINES IN ('Y', 'N')]]></check>
+      <check name="AD_CLIENT_USER2_BD_CHCK"><![CDATA[USER2_ACCTDIM_BREAKDOWN IN ('Y', 'N')]]></check>
+      <check name="AD_CLIENT_USER2_DIM_CHCK"><![CDATA[USER2_ACCTDIM_ISENABLE IN ('Y', 'N')]]></check>
+      <check name="AD_CLIENT_USER2_H_CHCK"><![CDATA[USER2_ACCTDIM_HEADER IN ('Y', 'N')]]></check>
+      <check name="AD_CLIENT_USER2_L_CHCK"><![CDATA[USER2_ACCTDIM_LINES IN ('Y', 'N')]]></check>
     </table>
   </database>

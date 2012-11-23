@@ -32,6 +32,7 @@ import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.client.kernel.reference.UIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.client.kernel.reference.YesNoUIDefinition;
+import org.openbravo.erpCommon.utility.DimensionDisplayUtility;
 import org.openbravo.model.ad.ui.AuxiliaryInput;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
@@ -68,12 +69,20 @@ public class DynamicExpressionParser {
 
   private String code;
   private Tab tab;
+  private Field field;
   private StringBuffer jsCode;
   private ApplicationDictionaryCachedStructures cachedStructures;
 
   public DynamicExpressionParser(String code, Tab tab) {
     this.code = code;
     this.tab = tab;
+    parse();
+  }
+
+  public DynamicExpressionParser(String code, Tab tab, Field field) {
+    this.code = code;
+    this.tab = tab;
+    this.field = field;
     parse();
   }
 
@@ -85,14 +94,32 @@ public class DynamicExpressionParser {
     parse();
   }
 
+  public DynamicExpressionParser(String code, Tab tab,
+      ApplicationDictionaryCachedStructures cachedStructures, Field field) {
+    this.cachedStructures = cachedStructures;
+    this.code = code;
+    this.tab = tab;
+    this.field = field;
+    parse();
+  }
+
   /*
    * Note: This method was partially copied from WadUtility.
    */
   public void parse() {
+    jsCode = new StringBuffer();
+
+    // Handle accounting dimensions special display logic
+    if (DimensionDisplayUtility.DIM_DISPLAYLOGIC.equals(code)) {
+      String parsedDisplay = DimensionDisplayUtility.computeAccountingDimensionDisplayLogic(
+          this.field, this.tab);
+      jsCode.append(parsedDisplay);
+      return;
+    }
+
     StringTokenizer st = new StringTokenizer(code, "|&", true);
     String token, token2;
     String strAux;
-    jsCode = new StringBuffer();
     while (st.hasMoreTokens()) {
       strAux = st.nextToken().trim();
       int i[] = getFirstElement(UNIONS, strAux);

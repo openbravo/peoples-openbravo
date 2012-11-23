@@ -250,7 +250,8 @@ public class OBViewTab extends BaseTemplateComponent {
     if (parentProperty != null) {
       return parentProperty;
     }
-    if (tab.getTable().getId().equals(parentTabComponent.getTab().getTable().getId()) && ("RO".equals(tab.getUIPattern()) || "SR".equals(tab.getUIPattern()))) {
+    if (tab.getTable().getId().equals(parentTabComponent.getTab().getTable().getId())
+        && ("RO".equals(tab.getUIPattern()) || "SR".equals(tab.getUIPattern()))) {
       parentProperty = getEntity().getIdProperties().get(0).getName();
     } else {
       parentProperty = ApplicationUtils.getParentProperty(tab, parentTabComponent.getTab());
@@ -609,7 +610,7 @@ public class OBViewTab extends BaseTemplateComponent {
       // Display Logic
       if (fld.getDisplayLogic() != null) {
         final DynamicExpressionParser parser = new DynamicExpressionParser(fld.getDisplayLogic(),
-            tab);
+            tab, fld);
         showIf = parser.getJSExpression();
         if (parser.getSessionAttributes().size() > 0) {
           sessionLogic = true;

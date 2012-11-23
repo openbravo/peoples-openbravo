@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2011 Openbravo S.L.U.
+ * Copyright (C) 2001-2012 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -12,6 +12,7 @@
 package org.openbravo.base.secureApp;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 
@@ -23,9 +24,11 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.erpCommon.utility.DimensionDisplayUtility;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.RoleOrganization;
 import org.openbravo.model.ad.domain.Preference;
+import org.openbravo.model.ad.system.Client;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.utils.FormatUtilities;
 
@@ -175,6 +178,7 @@ public class LoginUtils {
 
     // variable to save organization currency
     AttributeData[] orgCurrency;
+    Client client = null;
 
     // Check session options
     if (!validUserRole(conn, strUserAuth, strRol) || !validRoleClient(conn, strRol, strCliente)
@@ -207,7 +211,7 @@ public class LoginUtils {
     // has no read-access to i.e. AD_OrgType
     OBContext.setAdminMode();
     try {
-
+      client = OBDal.getInstance().get(Client.class, strCliente);
       OrgTree tree = new OrgTree(conn, strCliente);
       vars.setSessionObject("#CompleteOrgTree", tree);
       OrgTree accessibleTree = tree.getAccessibleTree(conn, strRol);
@@ -255,8 +259,21 @@ public class LoginUtils {
                 Utility.getContext(conn, vars, "#User_Client", "LoginHandler"),
                 Utility.getContext(conn, vars, "#User_Org", "LoginHandler")));
         vars.setSessionValue("$HasAlias", attr[0].hasalias);
-        for (int i = 0; i < attr.length; i++)
-          vars.setSessionValue("$Element_" + attr[i].elementtype, "Y");
+
+        // Compute accounting dimensions visibility session variables
+        vars.setSessionValue(DimensionDisplayUtility.IsAcctDimCentrally,
+            client.isAcctdimCentrallyMaintained() ? "Y" : "N");
+        if (client.isAcctdimCentrallyMaintained()) {
+          Map<String, String> acctDimMap = DimensionDisplayUtility
+              .getAccountingDimensionConfiguration(client);
+          for (Map.Entry<String, String> entry : acctDimMap.entrySet()) {
+            vars.setSessionValue(entry.getKey(), entry.getValue());
+          }
+        } else {
+          for (int i = 0; i < attr.length; i++) {
+            vars.setSessionValue("$Element_" + attr[i].elementtype, "Y");
+          }
+        }
       }
       attr = null;
 
