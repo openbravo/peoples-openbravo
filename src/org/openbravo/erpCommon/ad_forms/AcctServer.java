@@ -324,6 +324,7 @@ public abstract class AcctServer {
   public static final String DIM_CostCenter = "CC";
   public static final String DIM_User1 = "U1";
   public static final String DIM_User2 = "U2";
+  public static final String IsAcctDimCentrally = "$IsAcctDimCentrally";
 
   // Reference (to find SalesRegion from BPartner)
   public String BP_C_SalesRegion_ID = ""; // set in FactLine
@@ -2597,5 +2598,16 @@ public abstract class AcctServer {
       OBContext.restorePreviousMode();
     }
     return false;
+  }
+
+  public static String displayAcctDimensions(String centrally, String dim, String doc, String level) {
+    String var = "";
+
+    if (centrally.equals("N")) {
+      var = "$Element_" + dim;
+    } else {
+      var = "$Element_" + dim + "_" + doc + "_" + level;
+    }
+    return var;
   }
 }
