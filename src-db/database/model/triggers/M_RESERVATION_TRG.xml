@@ -24,9 +24,23 @@
   v_creservedcount      NUMBER;
   v_preservedcount      NUMBER;
   v_reservedcount       NUMBER;
+  v_count               NUMBER;
+  v_dummy               VARCHAR2(2000);
 BEGIN
   IF (AD_isTriggerEnabled()='N') THEN
     RETURN;
+  END IF;
+  
+  IF (INSERTING) THEN
+    SELECT COUNT(1) INTO v_count
+    FROM ad_preference
+    WHERE property = 'StockReservations';
+    IF (v_count > 1) THEN
+      v_dummy := AD_GET_PREFERENCE_VALUE('StockReservations', 'Y', :NEW.ad_client_id, :NEW.ad_org_id, NULL, NULL, NULL);
+    ELSIF (v_count = 0) THEN
+      RAISE_APPLICATION_ERROR(-20000, 'ReservationsNotEnabled');
+    END IF;
+
   END IF;
 
   IF (INSERTING OR UPDATING) THEN
