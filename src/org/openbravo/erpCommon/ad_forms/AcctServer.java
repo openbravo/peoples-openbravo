@@ -314,6 +314,17 @@ public abstract class AcctServer {
   /** GL Accounts */
   public static final String ACCTTYPE_PPVOffset = "60";
 
+  /** Accounting Dimensions **/
+  public static final String DIM_Header = "H";
+  public static final String DIM_Lines = "L";
+  public static final String DIM_BreakDown = "BD";
+  public static final String DIM_Project = "PJ";
+  public static final String DIM_BPartner = "BP";
+  public static final String DIM_Product = "PR";
+  public static final String DIM_CostCenter = "CC";
+  public static final String DIM_User1 = "U1";
+  public static final String DIM_User2 = "U2";
+
   // Reference (to find SalesRegion from BPartner)
   public String BP_C_SalesRegion_ID = ""; // set in FactLine
 
