@@ -86,6 +86,8 @@ BEGIN
         COALESCE(:NEW.Isexternalservice , '.') != COALESCE(:OLD.Isexternalservice , '.') OR
         COALESCE(:NEW.Service_Source , '.') != COALESCE(:OLD.Service_Source , '.') OR
         COALESCE(:NEW.AD_Module_ID , '.') != COALESCE(:OLD.AD_Module_ID , '.') OR
+        COALESCE(:NEW.UIPattern , '.') != COALESCE(:OLD.UIPattern , '.') OR
+        COALESCE(:NEW.IsAdvancedFeature , '.') != COALESCE(:OLD.IsAdvancedFeature , '.') OR
         1=2) THEN
       RAISE_APPLICATION_ERROR(-20000, '@20532@');
     END IF;

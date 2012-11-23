@@ -145,7 +145,7 @@ public class CreateRegFactAcct extends HttpSecureAppServlet {
           String strRegOut = processButtonReg(conn, vars, strKey, windowId, dataOrgs[i].org,
               strRegId, acctSchema[j].id, strDivideUpId, retainedEarningAccount);
           String strCloseOut = createClosing ? processButtonClose(conn, vars, strKey, windowId,
-              dataOrgs[i].org, strCloseId, strOpenId, acctSchema[j].id) : "Success";
+              dataOrgs[i].org, strCloseId, strOpenId, acctSchema[j].id, strDivideUpId) : "Success";
           if (!createClosing) {
             strCloseId = "";
             strOpenId = "";
@@ -213,10 +213,10 @@ public class CreateRegFactAcct extends HttpSecureAppServlet {
     // Inserts income summary statement
     CreateRegFactAcctData.insertSelect(conn, this, vars.getClient(), stradOrgId, vars.getUser(),
         CreateRegFactAcctData.getEndDate(this, strPediodId), strPediodId, currency,
-        Fact_Acct_Group_ID, "10", "R", strRegEntry, strKey, "'E'", strAcctSchema);
+        Fact_Acct_Group_ID, "10", "R", strRegEntry, strKey, "'E'", strAcctSchema, "");
     CreateRegFactAcctData.insertSelect(conn, this, vars.getClient(), stradOrgId, vars.getUser(),
         CreateRegFactAcctData.getEndDate(this, strPediodId), strPediodId, currency,
-        Fact_Acct_Group_ID, "20", "R", strRegEntry, strKey, "'R'", strAcctSchema);
+        Fact_Acct_Group_ID, "20", "R", strRegEntry, strKey, "'R'", strAcctSchema, "");
     CreateRegFactAcctData[] account = CreateRegFactAcctData.incomesummary(this, strAcctSchema);
     if (ExpenseAmtDr.add(RevenueAmtDr).subtract(RevenueAmtCr).subtract(ExpenseAmtCr).signum() > 0) {
       Fact_Acct_ID = SequenceIdData.getUUID();
@@ -320,7 +320,7 @@ public class CreateRegFactAcct extends HttpSecureAppServlet {
 
   private synchronized String processButtonClose(Connection conn, VariablesSecureApp vars,
       String strKey, String windowId, String stradOrgId, String strCloseID, String strOpenID,
-      String strAcctSchema) throws ServletException {
+      String strAcctSchema, String strDivideUpId) throws ServletException {
     String Fact_Acct_Group_ID = strCloseID;
     String strPediodId = CreateRegFactAcctData.getLastPeriod(this, strKey);
     String newPeriod = CreateRegFactAcctData.getNextPeriod(this, strPediodId);
@@ -337,18 +337,22 @@ public class CreateRegFactAcct extends HttpSecureAppServlet {
 
     String currency = CreateRegFactAcctData.cCurrencyId(this, strAcctSchema);
 
-    CreateRegFactAcctData.insertSelect(conn, this, vars.getClient(), stradOrgId, vars.getUser(),
-        CreateRegFactAcctData.getEndDate(this, strPediodId), strPediodId, currency,
-        Fact_Acct_Group_ID, "20", "C", strClosingEntry, strKey, "'A'", strAcctSchema);
+    CreateRegFactAcctData
+        .insertSelect(conn, this, vars.getClient(), stradOrgId, vars.getUser(),
+            CreateRegFactAcctData.getEndDate(this, strPediodId), strPediodId, currency,
+            Fact_Acct_Group_ID, "20", "C", strClosingEntry, strKey, "'A'", strAcctSchema,
+            strDivideUpId);
 
     CreateRegFactAcctData.insertSelect(conn, this, vars.getClient(), stradOrgId, vars.getUser(),
         CreateRegFactAcctData.getEndDate(this, strPediodId), strPediodId, currency,
-        Fact_Acct_Group_ID, "10", "C", strClosingEntry, strKey, "'L','O'", strAcctSchema);
+        Fact_Acct_Group_ID, "10", "C", strClosingEntry, strKey, "'L','O'", strAcctSchema,
+        strDivideUpId);
 
     String Fact_Acct_Group_ID2 = strOpenID;
     CreateRegFactAcctData.insertSelectOpening(conn, this, vars.getClient(), stradOrgId,
         vars.getUser(), CreateRegFactAcctData.getStartDate(this, newPeriod), newPeriod, currency,
-        Fact_Acct_Group_ID2, "20", "O", strOpeningEntry, strKey, "'A','L','O'", strAcctSchema);
+        Fact_Acct_Group_ID2, "20", "O", strOpeningEntry, strKey, "'A','L','O'", strAcctSchema,
+        strDivideUpId);
 
     return "Success";
   }

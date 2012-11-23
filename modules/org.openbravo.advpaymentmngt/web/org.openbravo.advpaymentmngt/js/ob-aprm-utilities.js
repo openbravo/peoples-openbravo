@@ -96,6 +96,51 @@ OB.APRM.validateModifyPaymentPlanAmounts = function (item, validator, value, rec
   return true;
 };
 
+OB.APRM.selectionChangePaymentProposalPickAndEdit = function (grid, record, state) {
+  if (state) {
+    var paidamount = new BigDecimal(String(record.payment));
+
+    if (paidamount.compareTo(new BigDecimal('0')) === 0) {
+      record.payment = record.outstanding;
+      record.difference = Number(new BigDecimal('0'));
+    }
+  }
+};
+
+OB.APRM.validatePaymentProposalPickAndEdit = function (item, validator, value, record) {
+
+  if (!isc.isA.Number(record.payment)) {
+    isc.warn(OB.I18N.getLabel('APRM_NotValidNumber'));
+    return false;
+  }
+
+  var i, row, allRows = item.grid.data,
+      outstanding = new BigDecimal(String(record.outstanding)),
+      paidamount = new BigDecimal(String(record.payment));
+
+  if (outstanding.abs().compareTo(paidamount.abs()) < 0) {
+    isc.warn(OB.I18N.getLabel('APRM_MoreAmountThanOutstanding'));
+    return false;
+  }
+
+  for (i = 0; i < allRows.size(); i++) {
+    if (record.id === allRows.get(i).id) {
+      row = allRows.get(i);
+      break;
+    }
+  }
+
+  // When possible to capture on change event, move this code to another method
+  if (row) {
+    row.difference = Number(outstanding.subtract(paidamount));
+    row.payment = Number(record.payment);
+  } else {
+    return false;
+  }
+
+  return true;
+};
+
 OB.APRM.addNew = function (grid) {
   var selectedRecord = grid.view.parentWindow.views[0].getParentRecord();
   var returnObject = isc.addProperties({}, grid.data[0]);

@@ -60,7 +60,6 @@ import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.financialmgmt.gl.GLItem;
-import org.openbravo.model.financialmgmt.payment.FIN_OrigPaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
@@ -95,8 +94,8 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
       }
       String strOrgId = vars.getRequestGlobalVariable("inpadOrgId", "");
       String strPaymentId = vars.getRequestGlobalVariable("inpfinPaymentId", "");
-      String strDueDateFrom = vars.getStringParameter("inpDueDateFrom", "");
-      String strDueDateTo = vars.getStringParameter("inpDueDateTo", "");
+      String strExpectedDateFrom = vars.getStringParameter("inpExpectedDateFrom", "");
+      String strExpectedDateTo = vars.getStringParameter("inpExpectedDateTo", "");
       String strDocumentType = vars.getStringParameter("inpDocumentType", "");
       String strSelectedPaymentDetails = vars.getInStringParameter("inpScheduledPaymentDetailId",
           "", null);
@@ -104,8 +103,9 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
       Boolean showAlternativePM = "Y".equals(vars.getStringParameter("inpAlternativePaymentMethod",
           filterYesNo));
 
-      printGrid(response, vars, strBusinessPartnerId, strPaymentId, strOrgId, strDueDateFrom,
-          strDueDateTo, strDocumentType, strSelectedPaymentDetails, isReceipt, showAlternativePM);
+      printGrid(response, vars, strBusinessPartnerId, strPaymentId, strOrgId, strExpectedDateFrom,
+          strExpectedDateTo, strDocumentType, strSelectedPaymentDetails, isReceipt,
+          showAlternativePM);
     } else if (vars.commandIn("SAVE") || vars.commandIn("SAVEANDPROCESS")) {
       boolean isReceipt = vars.getRequiredStringParameter("isReceipt").equals("Y");
       String strAction = null;
@@ -295,7 +295,6 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
                 psd, false);
             newOutstanding.setPaymentDetails(null);
             newOutstanding.setWriteoffAmount(BigDecimal.ZERO);
-            newOutstanding.setFINOrigPaymentScheduleDetailList(null);
             OBDal.getInstance().save(newOutstanding);
             toRemovePDs.add(pd.getId());
           } else {
@@ -321,21 +320,6 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
             pd.getFINPaymentScheduleDetailList().get(0).getId());
         pd.getFINPaymentScheduleDetailList().remove(psd);
         OBDal.getInstance().save(pd);
-        psd.setFINOrigPaymentScheduleDetailList(null);
-        OBDal.getInstance().save(psd);
-        ArrayList<String> opsdToRemove = new ArrayList<String>();
-        OBCriteria<FIN_OrigPaymentScheduleDetail> opsds = OBDal.getInstance().createCriteria(
-            FIN_OrigPaymentScheduleDetail.class);
-        opsds.add(Restrictions
-            .eq(FIN_OrigPaymentScheduleDetail.PROPERTY_PAYMENTSCHEDULEDETAIL, psd));
-        for (FIN_OrigPaymentScheduleDetail opsd : opsds.list()) {
-          opsdToRemove.add(opsd.getId());
-        }
-        for (String id : opsdToRemove) {
-          FIN_OrigPaymentScheduleDetail opsd = OBDal.getInstance().get(
-              FIN_OrigPaymentScheduleDetail.class, id);
-          OBDal.getInstance().remove(opsd);
-        }
         OBDal.getInstance().remove(psd);
       }
       payment.getFINPaymentDetailList().remove(pd);
@@ -541,9 +525,10 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
   }
 
   private void printGrid(HttpServletResponse response, VariablesSecureApp vars,
-      String strBusinessPartnerId, String strPaymentId, String strOrgId, String strDueDateFrom,
-      String strDueDateTo, String strDocumentType, String strSelectedPaymentDetails,
-      boolean isReceipt, boolean showAlternativePM) throws IOException, ServletException {
+      String strBusinessPartnerId, String strPaymentId, String strOrgId,
+      String strExpectedDateFrom, String strExpectedDateTo, String strDocumentType,
+      String strSelectedPaymentDetails, boolean isReceipt, boolean showAlternativePM)
+      throws IOException, ServletException {
 
     log4j.debug("Output: Grid with pending payments");
     dao = new AdvPaymentMngtDao();
@@ -585,10 +570,10 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
     final List<FIN_PaymentScheduleDetail> filteredScheduledPaymentDetails = dao
         .getFilteredScheduledPaymentDetails(dao.getObject(Organization.class, strOrgId),
             dao.getObject(BusinessPartner.class, strBusinessPartnerId), payment.getCurrency(),
-            FIN_Utility.getDate(strDueDateFrom),
-            FIN_Utility.getDate(DateTimeData.nDaysAfter(this, strDueDateTo, "1")), strDocumentType,
-            showAlternativePM ? null : payment.getPaymentMethod(), selectedScheduledPaymentDetails,
-            isReceipt);
+            null, null, FIN_Utility.getDate(strExpectedDateFrom),
+            FIN_Utility.getDate(DateTimeData.nDaysAfter(this, strExpectedDateTo, "1")), null, null,
+            strDocumentType, "", showAlternativePM ? null : payment.getPaymentMethod(),
+            selectedScheduledPaymentDetails, isReceipt);
     // Remove related outstanding schedule details related to those ones being edited as amount will
     // be later added to storedScheduledPaymentDetails
     for (FIN_PaymentScheduleDetail psd : storedScheduledPaymentDetails) {
@@ -640,7 +625,7 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
     empty.put("finScheduledPaymentId", "");
     empty.put("salesOrderNr", "");
     empty.put("salesInvoiceNr", "");
-    empty.put("dueDate", "");
+    empty.put("expectedDate", "");
     empty.put("invoicedAmount", "");
     empty.put("expectedAmount", "");
     empty.put("paymentAmount", "");

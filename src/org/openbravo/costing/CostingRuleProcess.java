@@ -115,6 +115,7 @@ public class CostingRuleProcess implements Process {
                 .getCostingPrecision().intValue(), RoundingMode.HALF_UP);
 
             trx.setCostCalculated(true);
+            trx.setCostingStatus("CC");
             trx.setTransactionCost(trxCost);
             OBDal.getInstance().save(trx);
             InventoryCountLine initICL = getInitIcl(cri.getInitInventory(), icl);

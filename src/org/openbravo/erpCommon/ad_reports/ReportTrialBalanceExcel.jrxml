@@ -390,7 +390,7 @@
 				</textElement>
 				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{SALDO_INICIAL}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement key="textField" x="630" y="0" width="200" height="13">
 					<printWhenExpression><![CDATA[$P{SHOWDIMENSIONS}]]></printWhenExpression>
 				</reportElement>

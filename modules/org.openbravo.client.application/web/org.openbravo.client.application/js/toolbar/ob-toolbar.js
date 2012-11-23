@@ -621,8 +621,18 @@ isc.OBToolbar.addProperties({
   // NOTE: new buttons should implement the updateState method.
   //
   updateButtonState: function (noSetSession, changeEvent) {
-    var me = this;
+    var me = this,
+        isActiveTab = false;
+    if (this.view && this.view.activeBar && this.view.activeBar.styleName === 'OBViewActive') {
+      isActiveTab = true;
+    }
     this.fireOnPause('updateButtonState', function () {
+      //Temporary hack to fix issue https://issues.openbravo.com/view.php?id=20825
+      if ((me.view.tabId === '160' || me.view.tabId === 'FF8080812F213146012F2135BC25000E') && isActiveTab) { //corner case: 160 --> G/L Journal and  FF8080812F213146012F2135BC25000E --> Transaction  (Financial Account child)
+        setTimeout(function () {
+          me.pausedUpdateButtonState(noSetSession, changeEvent);
+        }, 1000);
+      }
       me.pausedUpdateButtonState(noSetSession, changeEvent);
     });
   },

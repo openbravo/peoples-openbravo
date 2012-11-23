@@ -476,7 +476,7 @@ OB.ViewFormProperties = {
       // autofocus will do it for us
       return;
     }
-    
+
     if (focusItem && focusItem.isFocusable()) {
       focusItem.focusInItem();
       this.view.lastFocusedItem = focusItem;
@@ -715,6 +715,13 @@ OB.ViewFormProperties = {
         sessionAttributes = data.sessionAttributes,
         editValues, item, section, retHiddenInputs = data.hiddenInputs;
 
+
+    // apparently sometimes an empty string is returned
+    if (calloutMessages && calloutMessages.length > 0 && calloutMessages[calloutMessages.length - 1].text !== '') {
+      // TODO: check as what type should call out messages be displayed
+      this.view.messageBar.setMessage(isc.OBMessageBar[calloutMessages[calloutMessages.length - 1].severity], null, calloutMessages[calloutMessages.length - 1].text);
+    }
+
     // edit row has changed when returning, don't update the form anymore
     if (this.grid && gridEditInformation && this.grid.getEditRow() !== gridEditInformation.editRow) {
       if (columnValues) {
@@ -763,12 +770,6 @@ OB.ViewFormProperties = {
       } else if (request.params.MODE === 'EDIT') {
         this.noteSection.setNoteCount(0);
       }
-    }
-
-    // apparently sometimes an empty string is returned
-    if (calloutMessages && calloutMessages.length > 0 && calloutMessages[calloutMessages.length - 1].text !== '') {
-      // TODO: check as what type should call out messages be displayed
-      this.view.messageBar.setMessage(isc.OBMessageBar[calloutMessages[calloutMessages.length - 1].severity], null, calloutMessages[calloutMessages.length - 1].text);
     }
     if (auxInputs) {
       for (prop in auxInputs) {
@@ -881,7 +882,7 @@ OB.ViewFormProperties = {
     var previousAllItemsDisabled = this.allItemsDisabled || false,
         i, length;
     this.allItemsDisabled = state;
-    
+
     if (previousAllItemsDisabled !== this.allItemsDisabled) {
       if (this.getFocusItem()) {
         if (this.allItemsDisabled) {
@@ -1386,7 +1387,9 @@ OB.ViewFormProperties = {
     form.isSaving = true;
 
     // remove the error message if any
-    this.view.messageBar.hide();
+    if (this.view.messageBar.type === isc.OBMessageBar.TYPE_ERROR) {
+      this.view.messageBar.hide();
+    }
 
     callback = function (resp, data, req) {
       var index1, index2, view = form.view,
@@ -1561,7 +1564,7 @@ OB.ViewFormProperties = {
       this.delayCall('focusInNextItem', [currentItemName], 100);
       return;
     }
-    
+
     this.computeFocusItem(this.getField(currentItemName));
     if (this.getFocusItem()) {
       this.getFocusItem().focusInItem();

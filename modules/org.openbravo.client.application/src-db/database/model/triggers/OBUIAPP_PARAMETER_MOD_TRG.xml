@@ -83,6 +83,7 @@ BEGIN
             COALESCE(:NEW.isfixed , '.') != COALESCE(:OLD.isfixed , '.') OR
             COALESCE(:NEW.fixedvalue , '.') != COALESCE(:OLD.fixedvalue , '.') OR
             COALESCE(:NEW.em_obkmo_widget_class_id , '.') != COALESCE(:OLD.em_obkmo_widget_class_id , '.') OR
+            COALESCE(:NEW.EvaluateFixedValue , '.') != COALESCE(:OLD.EvaluateFixedValue , '.') OR
             1=2) THEN
             RAISE_APPLICATION_ERROR(-20000, '@20532@');
         END IF;

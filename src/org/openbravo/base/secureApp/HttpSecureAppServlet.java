@@ -1218,8 +1218,14 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
           jasperPrint = JasperFillManager.fillReport(jasperReport, designParameters, con);
         }
       } catch (final Exception e) {
-        throw new ServletException(e.getCause() instanceof SQLException ? e.getCause().getMessage()
-            : e.getMessage(), e);
+        Throwable t = e.getCause().getCause();
+        if (t != null) {
+          throw new ServletException((t instanceof SQLException && t.getMessage().contains(
+              "@NoConversionRate@")) ? t.getMessage() : e.getMessage(), e);
+        } else {
+          throw new ServletException(e.getCause() instanceof SQLException ? e.getCause()
+              .getMessage() : e.getMessage(), e);
+        }
       } finally {
         releaseRollbackConnection(con);
       }

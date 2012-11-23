@@ -95,6 +95,11 @@ BEGIN
         COALESCE(:NEW.FilterClause , '.') != COALESCE(:OLD.FilterClause , '.') OR
         COALESCE(:NEW.EditReference , '.') != COALESCE(:OLD.EditReference , '.') OR
         COALESCE(:NEW.AD_Module_ID , '.') != COALESCE(:OLD.AD_Module_ID , '.') OR
+        COALESCE(:NEW.UIPattern , '.') != COALESCE(:OLD.UIPattern , '.') OR
+        COALESCE(:NEW.HQLWhereClause , '.') != COALESCE(:OLD.HQLWhereClause , '.') OR
+        COALESCE(:NEW.HQLOrderByClause , '.') != COALESCE(:OLD.HQLOrderByClause , '.') OR
+        COALESCE(:NEW.HQLFilterClause , '.') != COALESCE(:OLD.HQLFilterClause , '.') OR
+        COALESCE(:NEW.FilterName , '.') != COALESCE(:OLD.FilterName , '.') OR
         1=2) THEN
       RAISE_APPLICATION_ERROR(-20000, '@20532@');
     END IF;

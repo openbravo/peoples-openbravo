@@ -48,7 +48,7 @@ public abstract class DalBaseProcess implements Process {
   public void execute(ProcessBundle bundle) throws Exception {
     final ProcessContext processContext = bundle.getContext();
 
-    boolean errorOccured = true;
+    boolean errorOccured = false;
     final OBContext currentOBContext = OBContext.getOBContext();
     try {
       String userId = processContext.getUser();
@@ -62,7 +62,10 @@ public abstract class DalBaseProcess implements Process {
 
       OBContext.setOBContext(userId, roleId, clientId, orgId, lang);
       doExecute(bundle);
-      errorOccured = false;
+    } catch (Exception e) {
+      errorOccured = true;
+      log.error("The process " + bundle.getProcessClass().getName() + " has thrown an exception. ",
+          e);
     } finally {
       if (errorOccured) {
         if (bundle.getCloseConnection()) {

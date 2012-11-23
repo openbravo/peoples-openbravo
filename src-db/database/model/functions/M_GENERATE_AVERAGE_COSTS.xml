@@ -150,6 +150,16 @@
       END IF;
     END IF;
 
+      SELECT GREATEST(MAX(enddate),v_MinDateCosting) as ENDDATE
+      INTO v_MinDateCosting 
+      FROM (SELECT enddate + 1 as ENDDATE
+            FROM c_periodcontrol cpc JOIN c_period cp ON cpc.c_period_id = cp.c_period_id  
+            WHERE (periodstatus='C' OR periodstatus='P') AND cp.ad_client_id = v_Client
+            GROUP BY enddate,cp.c_period_id
+            HAVING NOT EXISTS (SELECT 1 FROM c_periodcontrol pc 
+                               WHERE c_period_id=cp.c_period_id AND periodstatus='O')
+            ) periodClosed;
+	
     v_CheckResultStr := '';
    IF (NOT v_doNothing) THEN
     SELECT MAX(MOVEMENTDATE) INTO v_Date FROM M_MOVEMENT WHERE AD_CLIENT_ID=v_Client AND POSTED='Y';
@@ -311,7 +321,8 @@
         AND ISMANUAL='N'
         AND COSTTYPE='AV'
         AND ISPRODUCTION = 'N'
-        AND AD_CLIENT_ID = v_Client;
+        AND AD_CLIENT_ID = v_Client
+        AND DATEFROM > v_MinDateCosting;
       v_rowcount:=SQL%ROWCOUNT;
       v_Deleted:=v_Deleted + v_rowcount;
       v_rowcount:=SQL%ROWCOUNT;
@@ -350,6 +361,7 @@
         AND M_INOUTLINE.MOVEMENTQTY>0
         AND M_INOUT.DOCSTATUS <> 'DR' AND M_INOUT.DOCSTATUS <> 'RE' AND M_INOUT.DOCSTATUS <> 'VO'
         AND M_INOUT.AD_CLIENT_ID = v_Client
+        AND M_INOUT.MOVEMENTDATE >= v_MinDateCosting
         AND NOT EXISTS
         (SELECT 1 FROM M_COSTING WHERE M_INOUTLINE_ID=M_INOUTLINE.M_INOUTLINE_ID)
       ORDER BY M_PRODUCT.M_PRODUCT_ID, M_INOUT.MOVEMENTDATE, M_INOUTLINE.MOVEMENTQTY DESC

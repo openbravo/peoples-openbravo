@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  Enterprise Intelligence Systems (http://www.eintel.com.au).
  *************************************************************************
@@ -36,11 +36,12 @@
     <PARAMETER id="paramPaymentMethod" name="paymentMethod" attribute="value"/>
     <PARAMETER id="paramExpectedPayment" name="expectedPayment" attribute="value" format="euroEdition"/>
     <PARAMETER id="paramActualPayment" name="actualPayment" attribute="value" format="euroEdition" default="0"/>
+    <PARAMETER id="paramOrigActualPayment" name="origActualPayment" attribute="value" format="euroEdition" default="0"/>
     <PARAMETER id="paramAmountFrom" name="amountFrom" attribute="value" format="euroEdition" default=""/>
     <PARAMETER id="paramAmountTo" name="amountTo" attribute="value" format="euroEdition" default=""/>
     <PARAMETER id="paramFinancialAccountCurrencyId" name="financialAccountCurrencyId" attribute="value"/>
     <PARAMETER id="paramFinancialAccountCurrencyPrecision" name="financialAccountCurrencyPrecision" attribute="value"/>
-    <PARAMETER id="paramExchangeRate" name="exchangeRate" attribute="value" format="generalQtyEdition"/>
+    <PARAMETER id="paramExchangeRate" name="exchangeRate" attribute="value" format="generalQtyRelation"/>
     <PARAMETER id="paramExpectedConverted" name="expectedConverted" attribute="value" format="euroEdition"/>
     <PARAMETER id="paramActualConverted" name="actualConverted" attribute="value" format="euroEdition" default="0"/>
     <PARAMETER id="C_Bpartner_ID" name="businessPartner" attribute="value"/>
@@ -55,11 +56,11 @@
     <PARAMETER id="paramPaymentDate" name="dateDisplayFormat" attribute="displayformat" replace="xx"/>
     <PARAMETER id="paramPaymentDate" name="dateDisplayFormat" attribute="saveformat" replace="yy"/>
     
-    <PARAMETER id="paramDueDateFrom" name="dateDisplayFormat" attribute="displayformat" replace="xx"/>
-    <PARAMETER id="paramDueDateFrom" name="dateDisplayFormat" attribute="saveformat" replace="yy"/>
+    <PARAMETER id="paramExpectedDateFrom" name="dateDisplayFormat" attribute="displayformat" replace="xx"/>
+    <PARAMETER id="paramExpectedDateFrom" name="dateDisplayFormat" attribute="saveformat" replace="yy"/>
     
-    <PARAMETER id="paramDueDateTo" name="dateDisplayFormat" attribute="displayformat" replace="xx"/>
-    <PARAMETER id="paramDueDateTo" name="dateDisplayFormat" attribute="saveformat" replace="yy"/>
+    <PARAMETER id="paramExpectedDateTo" name="dateDisplayFormat" attribute="displayformat" replace="xx"/>
+    <PARAMETER id="paramExpectedDateTo" name="dateDisplayFormat" attribute="saveformat" replace="yy"/>
     
     <PARAMETER id="paramTransDateFrom" name="dateDisplayFormat" attribute="displayformat" replace="xx"/>
     <PARAMETER id="paramTransDateFrom" name="dateDisplayFormat" attribute="saveformat" replace="yy"/>

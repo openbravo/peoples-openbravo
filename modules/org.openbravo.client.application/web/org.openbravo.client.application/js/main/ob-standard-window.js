@@ -288,8 +288,8 @@ isc.OBStandardWindow.addProperties({
         tab = data.tabs[t];
         view = this.getView(tab.tabId);
         disabledFields = [];
-        for (i = 0; i < view.viewForm.fields.length; i++) {
-          field = view.viewForm.fields[i];
+        for (i = 0; i < view.viewForm.getFields().length; i++) {
+          field = view.viewForm.getFields()[i];
           if (tab.fields[field.name] !== undefined) {
             field.updatable = tab.fields[field.name];
             field.disabled = !tab.fields[field.name];
@@ -299,8 +299,8 @@ isc.OBStandardWindow.addProperties({
           }
         }
         view.disabledFields = disabledFields;
-        for (i = 0; i < view.viewGrid.fields.length; i++) {
-          field = view.viewGrid.fields[i];
+        for (i = 0; i < view.viewGrid.getFields().length; i++) {
+          field = view.viewGrid.getFields()[i];
           if (tab.fields[field.name] !== undefined) {
             field.editorProperties.updatable = tab.fields[field.name];
             field.editorProperties.disabled = !tab.fields[field.name];
@@ -410,7 +410,7 @@ isc.OBStandardWindow.addProperties({
         return 1;
       });
     }
-    
+
     // restore focus as the focusitem may have been hidden now
     // https://issues.openbravo.com/view.php?id=21249
     this.setFocusInView();

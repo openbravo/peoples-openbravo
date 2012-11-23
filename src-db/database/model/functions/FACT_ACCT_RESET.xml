@@ -246,7 +246,9 @@
               AND AD_ISORGINCLUDED(FACT_ACCT.ad_org_id, v_AD_Org_ID, FACT_ACCT.ad_client_id)<>-1
                 AND NOT EXISTS
                     (SELECT 1
-                    FROM C_YEAR, C_PERIOD, C_PERIODCONTROL, AD_Org, FACT_ACCT fa_aux
+                    FROM C_YEAR, C_PERIOD, C_PERIODCONTROL, AD_Org, (SELECT fa.DATEACCT, fa.DOCBASETYPE, fa.ad_client_id, fa.record_id
+									FROM FACT_ACCT fa 
+									WHERE fa.ad_table_id = Cur_Tables.AD_Table_ID) fa_aux
                     WHERE C_YEAR.c_year_id=C_PERIOD.c_year_id
                       AND C_PERIOD.c_period_id=C_PERIODCONTROL.c_period_id
                       AND C_YEAR.c_calendar_id=AD_Org.c_calendar_id
@@ -255,10 +257,9 @@
                       AND C_PERIODCONTROL.periodstatus<>'O'
                       AND fa_aux.DATEACCT>=C_PERIOD.StartDate
                       AND fa_aux.DATEACCT<C_PERIOD.EndDate + 1
-                      AND fa_aux.AD_TABLE_ID = FACT_ACCT.AD_TABLE_ID
-                      AND fa_aux.RECORD_ID = FACT_ACCT.RECORD_ID
                       AND C_PeriodControl.AD_Org_ID=AD_Org.AD_Org_ID
                       AND C_PeriodControl.AD_Org_ID=v_AD_Org_CalOwner
+                      AND fa_aux.record_id = FACT_ACCT.RECORD_ID
                     )
                 AND Record_ID=(
                       CASE COALESCE(v_Record_ID, '0') WHEN '0' THEN Record_ID ELSE v_Record_ID

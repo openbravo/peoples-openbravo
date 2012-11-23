@@ -400,6 +400,7 @@ public class CostingMigrationProcess implements Process {
       }
       trx.setTransactionCost(trxCost);
       trx.setCostCalculated(true);
+      trx.setCostingStatus("CC");
       OBDal.getInstance().save(trx);
       Currency legalEntityCur = FinancialUtils.getLegalEntityCurrency(trx.getOrganization());
       BigDecimal cost = trxCost.divide(trx.getMovementQuantity().abs(), costPrecision,
@@ -598,6 +599,7 @@ public class CostingMigrationProcess implements Process {
 
       trx.setCurrency(cost.getCurrency());
       trx.setCostCalculated(true);
+      trx.setCostingStatus("CC");
 
       if ((i % 100) == 0) {
         OBDal.getInstance().flush();
@@ -641,6 +643,7 @@ public class CostingMigrationProcess implements Process {
       trx.setTransactionCost(BigDecimal.ZERO);
       trx.setCurrency((Currency) OBDal.getInstance().getProxy(Currency.ENTITY_NAME, curId));
       trx.setCostCalculated(true);
+      trx.setCostingStatus("CC");
       OBDal.getInstance().save(trx);
 
       if ((i % 100) == 0) {

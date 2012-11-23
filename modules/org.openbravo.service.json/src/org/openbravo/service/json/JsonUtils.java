@@ -336,7 +336,7 @@ public class JsonUtils {
             final JSONObject criteriaJSONObject = new JSONObject(criteriaStr);
             if (criteriaJSONObject.has("fieldName")) {
               final String fieldName = criteriaJSONObject.getString("fieldName");
-              if (!fieldName.startsWith("_")) {
+              if (!fieldName.startsWith("_") || fieldName.equals(JsonConstants.IDENTIFIER)) {
                 criteriaObjects.add(criteriaJSONObject);
               }
             } else {

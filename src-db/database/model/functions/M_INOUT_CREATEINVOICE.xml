@@ -19,7 +19,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2008 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2012 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -86,12 +86,17 @@
       v_C_Currency_ID VARCHAR2(32) ;
       v_M_PriceList_ID VARCHAR2(32) ;
       v_FIN_PaymentMethod_ID VARCHAR2(32) ;
+      v_istaxincluded CHAR(1);
       --
       v_C_UOM_ID VARCHAR2(32) ;
       v_C_Tax_ID VARCHAR2(32) ;
       v_PriceList NUMBER;
       v_PriceActual NUMBER;
       v_PriceLimit NUMBER;
+      v_gross_unit_price NUMBER;
+      v_line_gross_amount NUMBER;
+      v_priceprecision NUMBER;
+      v_stdprecision NUMBER;
       --
       v_taxBaseAmt NUMBER;
       v_LineNetAmt NUMBER;
@@ -170,17 +175,19 @@
           IF(CUR_Shipment.C_Order_ID IS NOT NULL) THEN
             v_ResultStr:='GetCurrencyInfo-Order';
             SELECT C_Currency_ID,
-              M_PriceList_ID, FIN_PaymentMethod_ID
+              M_PriceList_ID, FIN_PaymentMethod_ID,
+              istaxincluded
             INTO v_C_Currency_ID,
-              v_M_PriceList_ID, v_FIN_PaymentMethod_ID
+              v_M_PriceList_ID, v_FIN_PaymentMethod_ID,
+              v_istaxincluded
             FROM C_ORDER
             WHERE C_Order_ID=CUR_Shipment.C_Order_ID;
           ELSE
             v_ResultStr:='GetCurrencyInfo-PL';
             SELECT pl.C_Currency_ID,
-              pl.M_PriceList_ID
+              pl.M_PriceList_ID, pl.istaxincluded
             INTO v_C_Currency_ID,
-              v_M_PriceList_ID
+              v_M_PriceList_ID, v_istaxincluded
             FROM M_PRICELIST pl,
               M_PRICELIST_VERSION plv
             WHERE pl.M_PriceList_ID=plv.M_PriceList_ID
@@ -189,7 +196,12 @@
             FROM c_bpartner
             WHERE c_bpartner_id = CUR_Shipment.C_BPartner_ID;
           END IF;
-          --
+          
+          SELECT PricePrecision, stdprecision
+            INTO v_priceprecision, v_stdprecision
+          FROM C_CURRENCY
+          WHERE C_CURRENCY_ID = v_C_Currency_ID;
+          
           v_ResultStr:='GetDocTypeInfo';
           v_DocType_ID:=Ad_Get_Doctype(CUR_Shipment.AD_Client_ID, CUR_Shipment.AD_Org_ID, 'API') ;
           --
@@ -249,11 +261,15 @@
                 COALESCE(MAX(PriceActual), 0),
                 COALESCE(MAX(PriceLimit), 0),
                 COALESCE(MAX(CUR_ShipmentLines.movementqty*priceactual),0),
+                COALESCE(MAX(gross_unit_price), 0),
+                COALESCE(MAX(line_gross_amount), 0),
                 MAX(c_tax_id)
               INTO v_PriceList,
                 v_PriceActual,
                 v_PriceLimit,
                 v_LineNetAmt,
+                v_gross_unit_price,
+                v_line_gross_amount,
                 v_c_Tax_ID
               FROM C_ORDERLINE
               WHERE C_OrderLine_ID=CUR_ShipmentLines.C_OrderLine_ID;
@@ -277,8 +293,15 @@
               WHERE M_Product_ID=CUR_ShipmentLines.M_Product_ID
                 AND M_PriceList_Version_ID=v_M_PriceList_Version_ID;
               v_C_Tax_ID:=C_Gettax(CUR_ShipmentLines.M_Product_ID, CUR_Shipment.MovementDate, CUR_Shipment.AD_Org_ID, CUR_Shipment.M_Warehouse_ID, CUR_Shipment.C_BPartner_Location_ID, CUR_Shipment.C_BPartner_Location_ID, CUR_Shipment.C_Project_ID, 'N') ;
-             v_PriceActual:=M_Get_Offers_Price(now(), CUR_Shipment.C_BPartner_ID, CUR_ShipmentLines.M_Product_ID, v_PriceActual, CUR_ShipmentLines.MovementQty, v_M_PriceList_ID);
-            v_LineNetAmt:=ROUND(M_Get_Offers_Price(now(), CUR_Shipment.C_BPartner_ID, CUR_ShipmentLines.M_Product_ID, v_PriceActual, CUR_ShipmentLines.MovementQty, v_M_PriceList_ID) *CUR_ShipmentLines.MovementQty, 2) ;
+              IF (v_istaxincluded = 'Y') THEN
+                v_gross_unit_price:= v_PriceActual;
+                v_line_gross_amount:= ROUND(v_gross_unit_price * CUR_ShipmentLines.MovementQty, v_stdprecision);
+                v_PriceActual:= C_GET_NET_PRICE_FROM_GROSS(v_C_Tax_ID, v_PriceActual, 0, v_priceprecision, 1);
+                v_LineNetAmt:= ROUND(v_PriceActual * CUR_ShipmentLines.MovementQty, v_stdprecision);
+              ELSE
+                v_PriceActual:=M_Get_Offers_Price(now(), CUR_Shipment.C_BPartner_ID, CUR_ShipmentLines.M_Product_ID, v_PriceActual, CUR_ShipmentLines.MovementQty, v_M_PriceList_ID);
+                v_LineNetAmt:=ROUND(M_Get_Offers_Price(now(), CUR_Shipment.C_BPartner_ID, CUR_ShipmentLines.M_Product_ID, v_PriceActual, CUR_ShipmentLines.MovementQty, v_M_PriceList_ID) *CUR_ShipmentLines.MovementQty, v_stdprecision) ;
+              END IF;
             END IF;
             -- Get UOM + Tax -- VERY simplified, but should work in most cases
             v_ResultStr:='NoUOM+Tax';
@@ -299,7 +322,8 @@
                 PriceActual, PriceLimit, LineNetAmt, C_Charge_ID,
                 ChargeAmt, C_UOM_ID,
                 C_Tax_ID,  --MODIFIED BY F.IRIAZABAL
-                QuantityOrder, M_Product_Uom_ID, PriceStd, taxbaseamt
+                QuantityOrder, M_Product_Uom_ID, PriceStd, taxbaseamt,
+                gross_unit_price, line_gross_amount
               )
               VALUES
               (
@@ -310,7 +334,8 @@
                 v_PriceActual, v_PriceLimit, v_LineNetAmt, NULL,
                 0, v_C_UOM_ID,
                 v_C_Tax_ID,  --MODIFIED BY F.IRIAZABAL
-                CUR_ShipmentLines.QuantityOrder, CUR_ShipmentLines.M_Product_Uom_ID, v_PriceActual,v_taxBaseAmt
+                CUR_ShipmentLines.QuantityOrder, CUR_ShipmentLines.M_Product_Uom_ID, v_PriceActual,v_taxBaseAmt,
+                v_gross_unit_price, v_line_gross_amount
               )
               ;
             v_TotalNet:=v_TotalNet + v_LineNetAmt;

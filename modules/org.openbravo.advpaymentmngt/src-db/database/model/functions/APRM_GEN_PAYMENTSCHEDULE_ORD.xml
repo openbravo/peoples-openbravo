@@ -119,7 +119,7 @@ BEGIN
         fin_payment_schedule_id, ad_client_id, ad_org_id, isactive,
         created, createdby, updated, updatedby,
         c_invoice_id, c_currency_id, c_order_id,
-        fin_paymentmethod_id, amount, duedate,
+        fin_paymentmethod_id, amount, duedate, expecteddate,
         outstandingamt, fin_payment_priority_id
        )
       VALUES
@@ -127,7 +127,7 @@ BEGIN
         v_payment_schedule_order, v_Client_ID, v_Org_ID, 'Y',
         now(), p_user, now(), p_user,
         null, v_currency_id, p_record_id,
-        v_paymentmethod_id, v_grandtotal, v_orderdate,
+        v_paymentmethod_id, v_grandtotal, v_orderdate, v_orderdate,
         v_grandtotal, v_PaymentPriority
       );
 

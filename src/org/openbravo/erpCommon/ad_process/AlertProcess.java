@@ -20,17 +20,24 @@
 package org.openbravo.erpCommon.ad_process;
 
 import java.io.File;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Vector;
 
 import javax.servlet.ServletException;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.data.UtilSql;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
@@ -89,6 +96,114 @@ public class AlertProcess implements Process {
     }
   }
 
+  private static AlertProcessData[] selectAlert(ConnectionProvider connectionProvider,
+      String alertRule) throws ServletException {
+    String alertRuleSQL = (alertRule == null || alertRule.equals("")) ? "" : alertRule;
+    String strSql = "SELECT * FROM (" + alertRuleSQL + ") AAA";
+
+    String dateTimeFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+        .getProperty("dateTimeFormat.java");
+
+    ResultSet result;
+    Vector<java.lang.Object> vector = new Vector<java.lang.Object>(0);
+    PreparedStatement st = null;
+
+    try {
+      st = connectionProvider.getPreparedStatement(strSql);
+      result = st.executeQuery();
+      while (result.next()) {
+        AlertProcessData objectAlertProcessData = new AlertProcessData();
+        objectAlertProcessData.adClientId = UtilSql.getValue(result, "ad_client_id");
+        objectAlertProcessData.adOrgId = UtilSql.getValue(result, "ad_org_id");
+        objectAlertProcessData.created = UtilSql
+            .getDateTimeValue(result, "created", dateTimeFormat);
+        objectAlertProcessData.createdby = UtilSql.getValue(result, "createdby");
+        objectAlertProcessData.updated = UtilSql.getValue(result, "updated");
+        objectAlertProcessData.updatedby = UtilSql.getValue(result, "updatedby");
+        objectAlertProcessData.recordId = UtilSql.getValue(result, "record_id");
+        objectAlertProcessData.referencekeyId = UtilSql.getValue(result, "referencekey_id");
+        objectAlertProcessData.description = UtilSql.getValue(result, "description");
+        objectAlertProcessData.isactive = UtilSql.getValue(result, "isactive");
+        objectAlertProcessData.adUserId = UtilSql.getValue(result, "ad_user_id");
+        objectAlertProcessData.adRoleId = UtilSql.getValue(result, "ad_role_id");
+        vector.addElement(objectAlertProcessData);
+      }
+      result.close();
+    } catch (SQLException e) {
+      log4j.error("SQL error in query: " + strSql + "Exception:" + e);
+      throw new ServletException("@CODE=" + Integer.toString(e.getErrorCode()) + "@"
+          + e.getMessage());
+    } catch (Exception ex) {
+      log4j.error("Exception in query: " + strSql + "Exception:" + ex);
+      throw new ServletException("@CODE=@" + ex.getMessage());
+    } finally {
+      try {
+        connectionProvider.releasePreparedStatement(st);
+      } catch (Exception ignore) {
+        ignore.printStackTrace();
+      }
+    }
+    AlertProcessData objectAlertProcessData[] = new AlertProcessData[vector.size()];
+    vector.copyInto(objectAlertProcessData);
+    return (objectAlertProcessData);
+  }
+
+  private static int insertAlert(ConnectionProvider connectionProvider, String alertId,
+      String clientId, String orgId, String created, String createdBy, String ruleId,
+      String recordId, String referenceKey, String description, String user, String role)
+      throws ServletException {
+
+    String dateTimeFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+        .getProperty("dateTimeFormat.sql");
+
+    // These fields are foreign keys that might be null
+    String userStr = user.isEmpty() ? null : "\'" + user + "\'";
+    String roleStr = role.isEmpty() ? null : "\'" + role + "\'";
+    String ruleIdStr = ruleId.isEmpty() ? null : "\'" + ruleId + "\'";
+    String recordIdStr = recordId.isEmpty() ? null : "\'" + recordId + "\'";
+    // The date needs to be formated
+    String createdStr = "to_timestamp(\'" + created + "\', \'" + dateTimeFormat + "\')";
+    // These field needs to be escaped
+    String descriptionStr = StringEscapeUtils.escapeSql(description);
+
+    StringBuilder sqlBuilder = new StringBuilder();
+    sqlBuilder.append("INSERT INTO AD_ALERT ");
+    sqlBuilder.append("(AD_ALERT_ID, AD_CLIENT_ID, AD_ORG_ID, ");
+    sqlBuilder.append("ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, ");
+    sqlBuilder.append("AD_ALERTRULE_ID, RECORD_ID, REFERENCEKEY_ID, ");
+    sqlBuilder.append("DESCRIPTION, AD_USER_ID, AD_ROLE_ID, STATUS) ");
+    sqlBuilder.append("VALUES ");
+    sqlBuilder.append("(\'" + alertId + "\', \'" + clientId + "\', \'" + orgId + "\', ");
+    sqlBuilder.append("\'Y\'" + ", " + createdStr + ", \'" + createdBy + "\', " + "now()" + ", "
+        + "\'0\'" + ", ");
+    sqlBuilder.append(ruleIdStr + ", " + recordIdStr + ", \'" + referenceKey + "\', ");
+    sqlBuilder.append("\'" + descriptionStr + "\', " + userStr + ", " + roleStr + ", " + "\'NEW\'"
+        + ")");
+    String strSql = sqlBuilder.toString();
+
+    int updateCount = 0;
+    PreparedStatement st = null;
+
+    try {
+      st = connectionProvider.getPreparedStatement(strSql);
+      updateCount = st.executeUpdate();
+    } catch (SQLException e) {
+      log4j.error("SQL error in query: " + strSql + "Exception:" + e);
+      throw new ServletException("@CODE=" + Integer.toString(e.getErrorCode()) + "@"
+          + e.getMessage());
+    } catch (Exception ex) {
+      log4j.error("Exception in query: " + strSql + "Exception:" + ex);
+      throw new ServletException("@CODE=@" + ex.getMessage());
+    } finally {
+      try {
+        connectionProvider.releasePreparedStatement(st);
+      } catch (Exception ignore) {
+        ignore.printStackTrace();
+      }
+    }
+    return (updateCount);
+  }
+
   /**
    * @param alertRule
    * @param conn
@@ -102,7 +217,7 @@ public class AlertProcess implements Process {
 
     if (!alertRule.sql.equals("")) {
       try {
-        alert = AlertProcessData.selectAlert(conn, alertRule.sql);
+        alert = selectAlert(conn, alertRule.sql);
       } catch (Exception ex) {
         logger.log("Error processing: " + ex.getMessage() + "\n");
         return;
@@ -124,8 +239,8 @@ public class AlertProcess implements Process {
               + alert[i].adClientId + " reference key: " + alert[i].referencekeyId + " created"
               + alert[i].created + "\n");
 
-          AlertProcessData.InsertAlert(conn, adAlertId, alert[i].adClientId, alert[i].adOrgId,
-              alert[i].created, alert[i].createdby, alertRule.adAlertruleId, alert[i].recordId,
+          insertAlert(conn, adAlertId, alert[i].adClientId, alert[i].adOrgId, alert[i].created,
+              alert[i].createdby, alertRule.adAlertruleId, alert[i].recordId,
               alert[i].referencekeyId, alert[i].description, alert[i].adUserId, alert[i].adRoleId);
           insertions++;
 

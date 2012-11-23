@@ -140,10 +140,13 @@ isc.OBListItem.addProperties({
     if (this.valueMap && this.valueMap[value]) {
       return this.valueMap[value];
     }
+
     if (ret === value && this.isDisabled()) {
       return '';
     }
-    if (ret === value) {
+
+    // don't update the valuemap if the value is null or undefined
+    if (ret === value && value) {
       if (!this.valueMap) {
         this.valueMap = {};
         this.valueMap[value] = '';
@@ -153,6 +156,13 @@ isc.OBListItem.addProperties({
       }
     }
     return ret;
+  },
+
+  mapDisplayToValue: function (value) {
+    if (value === '') {
+      return null;
+    }
+    return this.Super('mapDisplayToValue', arguments);
   }
 
 });

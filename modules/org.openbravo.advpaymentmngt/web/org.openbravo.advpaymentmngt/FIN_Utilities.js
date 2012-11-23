@@ -98,8 +98,11 @@ function applyFormat(number) {
  * @type String
  */
 
-function applyFormatJSToOBMasked(number) {
-  return OB.Utilities.Number.JSToOBMasked(number, globalMaskNumeric, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
+function applyFormatJSToOBMasked(number, _globalMaskNumeric) {
+  if (!_globalMaskNumeric) {
+    _globalMaskNumeric = globalMaskNumeric;
+  }
+  return OB.Utilities.Number.JSToOBMasked(number, _globalMaskNumeric, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
 }
 
 function applyFormatOBMaskedToJS(number) {

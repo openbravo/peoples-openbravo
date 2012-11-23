@@ -78,6 +78,7 @@ BEGIN
         COALESCE(:NEW.MODEL_IMPL        ,'.')   != COALESCE(:OLD.MODEL_IMPL        ,'.') OR                                                                                                                                                  
         COALESCE(:NEW.WAD_IMPL          ,'.')   != COALESCE(:OLD.WAD_IMPL          ,'.') OR                                                                                                                                                  
         COALESCE(:NEW.UI_IMPL           ,'.')   != COALESCE(:OLD.UI_IMPL           ,'.') OR
+        COALESCE(:NEW.IsValueDisplayed  ,'.')   != COALESCE(:OLD.IsValueDisplayed  ,'.') OR
         :NEW.ISBASEREFERENCE !=  :OLD.ISBASEREFERENCE        
         ) THEN
       RAISE_APPLICATION_ERROR(-20000, '@20532@');

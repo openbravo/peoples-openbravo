@@ -36,7 +36,6 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.ConstraintViolationException;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.process.FIN_PaymentMonitorProcess;
-import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.application.ApplicationConstants;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
@@ -52,14 +51,11 @@ import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentMethod;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
-import org.openbravo.model.financialmgmt.payment.Fin_OrigPaymentSchedule;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonToDataConverter;
 
 public class ModifyPaymentPlanActionHandler extends BaseProcessActionHandler {
 
-  private final String buttonNewVersion = "newVersion";
-  private final String buttonModifyOriginal = "modifyOriginal";
   private final AdvPaymentMngtDao dao = new AdvPaymentMngtDao();
   private static final Logger log4j = Logger.getLogger(ModifyPaymentPlanActionHandler.class);
 
@@ -69,7 +65,6 @@ public class ModifyPaymentPlanActionHandler extends BaseProcessActionHandler {
    */
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {
     JSONObject jsonRequest = null;
-    boolean modifyOriginal = false;
     try {
       jsonRequest = new JSONObject(content);
       String strInvoiceId = jsonRequest.getString("inpcInvoiceId");
@@ -81,17 +76,10 @@ public class ModifyPaymentPlanActionHandler extends BaseProcessActionHandler {
       List<FIN_PaymentSchedule> databaseRows = new ArrayList<FIN_PaymentSchedule>();
       databaseRows = getDatabaseRows(invoice);
 
-      if (jsonRequest.getString(ApplicationConstants.BUTTON_VALUE).equals(buttonModifyOriginal)) {
-        modifyOriginal = true;
-      } else if (jsonRequest.getString(ApplicationConstants.BUTTON_VALUE).equals(buttonNewVersion)) {
-        modifyOriginal = false;
-      } else {
-        return addMessage(jsonRequest, "@APRM_ButtonNotValid@", "error");
-      }
-
-      if (modifyOriginal && paidAnyAmount(invoice)) {
-        return addMessage(jsonRequest, "@APRM_AlreadyPaidInvoice@", "error");
-      }
+      // TODO:Review if we should allow this option
+      // if (paidAnyAmount(invoice)) {
+      // return addMessage(jsonRequest, "@APRM_AlreadyPaidInvoice@", "error");
+      // }
 
       String errorMsg = validateGridAmounts(gridRows, invoice);
       if (errorMsg != null) {
@@ -119,10 +107,6 @@ public class ModifyPaymentPlanActionHandler extends BaseProcessActionHandler {
       if (!ordersSumsZero(orders, invoice.getFINPaymentScheduleList().get(0))) {
         OBDal.getInstance().rollbackAndClose();
         return addMessage(jsonRequest, "@APRM_AmountNotFullyAllocated@", "error");
-      }
-
-      if (modifyOriginal) {
-        writeOriginalPlan(invoice);
       }
 
       if (!validateInvoiceAmounts(invoice)) {
@@ -338,6 +322,8 @@ public class ModifyPaymentPlanActionHandler extends BaseProcessActionHandler {
           invoicePS));
       obcPSD.add(Restrictions.isNull(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS));
       for (FIN_PaymentScheduleDetail psd : obcPSD.list()) {
+        invoicePS.getFINPaymentScheduleDetailInvoicePaymentScheduleList().remove(psd);
+        OBDal.getInstance().save(invoicePS);
         dao.removePaymentScheduleDetail(psd);
       }
 
@@ -350,11 +336,13 @@ public class ModifyPaymentPlanActionHandler extends BaseProcessActionHandler {
       // 3) New row is created
       BigDecimal outstanding = new BigDecimal(modifiedGridRow.getString("outstanding"));
       Date dueDate = getJSDate(modifiedGridRow.getString("dueDate"));
+      Date expectedDate = getJSDate(modifiedGridRow.getString("expectedDate"));
       FIN_PaymentMethod pm = OBDal.getInstance().get(FIN_PaymentMethod.class,
           modifiedGridRow.getString("paymentMethod"));
       invoicePS.setOutstandingAmount(outstanding);
       invoicePS.setAmount(invoicePS.getPaidAmount().add(outstanding));
       invoicePS.setDueDate(dueDate);
+      invoicePS.setExpectedDate(expectedDate);
       invoicePS.setFinPaymentmethod(pm);
       OBDal.getInstance().save(invoicePS);
       lPSsToReturn.add(invoicePS);
@@ -409,9 +397,11 @@ public class ModifyPaymentPlanActionHandler extends BaseProcessActionHandler {
       FIN_PaymentMethod paymentMethod = OBDal.getInstance().get(FIN_PaymentMethod.class,
           jo.getString("paymentMethod"));
       String dueDate = jo.getString("dueDate");
+      String expectedDate = jo.getString("expectedDate");
       FIN_PaymentSchedule invoicePS = dao.getNewPaymentSchedule(invoice.getClient(),
           invoice.getOrganization(), invoice, null, invoice.getCurrency(), getJSDate(dueDate),
           paymentMethod, outstanding);
+      invoicePS.setExpectedDate(getJSDate(expectedDate));
       lToReturn.add(invoicePS);
     }
     OBDal.getInstance().flush();
@@ -467,8 +457,10 @@ public class ModifyPaymentPlanActionHandler extends BaseProcessActionHandler {
             .getFINPaymentScheduleDetailInvoicePaymentScheduleList();
         for (int indPSD = 0; indPSD < lPSDs.size(); indPSD++) {
           FIN_PaymentScheduleDetail psd = lPSDs.get(indPSD);
-          if (psd.getPaymentDetails() == null)
+          if (psd.getPaymentDetails() == null) {
+            ps.getFINPaymentScheduleDetailInvoicePaymentScheduleList().remove(psd);
             dao.removePaymentScheduleDetail(psd);
+          }
         }
       }
     }
@@ -570,23 +562,6 @@ public class ModifyPaymentPlanActionHandler extends BaseProcessActionHandler {
   }
 
   /**
-   * Returns true in case any amount has been already paid, even if it was paid and then cancelled,
-   * for this invoice
-   * 
-   */
-  private boolean paidAnyAmount(Invoice invoice) {
-    for (FIN_PaymentSchedule ps : invoice.getFINPaymentScheduleList()) {
-      for (FIN_PaymentScheduleDetail psd : ps
-          .getFINPaymentScheduleDetailInvoicePaymentScheduleList()) {
-        if (psd.getAmount().compareTo(BigDecimal.ZERO) != 0 && psd.getPaymentDetails() != null) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-
-  /**
    * Returns true in case the provided Payment Schedule Detail line and JOSN grid line do differ in
    * any value (this means, user modified the original values). If Edit Payment Plan functionality
    * is improved in the future, adding more columns suitable to be modified, this function must take
@@ -604,47 +579,10 @@ public class ModifyPaymentPlanActionHandler extends BaseProcessActionHandler {
     if (!getJSDate(jsonObject.getString("dueDate")).equals(ps.getDueDate())) {
       return true;
     }
+    if (!getJSDate(jsonObject.getString("expectedDate")).equals(ps.getExpectedDate())) {
+      return true;
+    }
     return false;
-  }
-
-  /**
-   * Replaces the original payment plan of a given invoice, with a copy of the actual payment plan
-   * 
-   */
-  private void writeOriginalPlan(Invoice invoice) {
-    List<String> lOPS = new ArrayList<String>();
-    for (Fin_OrigPaymentSchedule ops : invoice.getFinOrigPaymentScheduleList()) {
-      lOPS.add(ops.getId());
-    }
-    invoice.setFinOrigPaymentScheduleList(null);
-    invoice.setFinOrigPaymentSchedVList(null);
-    OBDal.getInstance().save(invoice);
-    for (String id : lOPS) {
-      OBDal.getInstance().remove(OBDal.getInstance().get(Fin_OrigPaymentSchedule.class, id));
-    }
-    OBDal.getInstance().refresh(invoice);
-    for (FIN_PaymentSchedule ps : invoice.getFINPaymentScheduleList())
-      saveOrigPaymentSchedule(ps);
-    OBDal.getInstance().flush();
-  }
-
-  /**
-   * Saves a new original payment schedule line, with same information of a given payment schedule
-   * line
-   * 
-   */
-  private void saveOrigPaymentSchedule(FIN_PaymentSchedule ps) {
-    final Fin_OrigPaymentSchedule ops = OBProvider.getInstance().get(Fin_OrigPaymentSchedule.class);
-    ops.setClient(ps.getClient());
-    ops.setOrganization(ps.getOrganization());
-    ops.setAmount(ps.getAmount());
-    ops.setCurrency(ps.getCurrency());
-    ops.setDueDate(ps.getDueDate());
-    ops.setInvoice(ps.getInvoice());
-    ops.setPaymentMethod(ps.getFinPaymentmethod());
-    ops.setPaymentPriority(ps.getFINPaymentPriority());
-    OBDal.getInstance().save(ops);
-    OBDal.getInstance().flush();
   }
 
   /**

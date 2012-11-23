@@ -52,7 +52,11 @@ public class RMShipmentPickEditLines extends BaseProcessActionHandler {
     try {
       jsonRequest = new JSONObject(content);
       log.debug(jsonRequest);
-      final String strInOutId = jsonRequest.getString("inpmInoutId");
+      // When the focus is NOT in the tab of the button (i.e. any child tab) and the tab does not
+      // contain any record, the inpmInoutId parameter contains "null" string. Use M_InOut_ID
+      // instead because it always contains the id of the selected goods.
+      // Issue 20585: https://issues.openbravo.com/view.php?id=20585
+      final String strInOutId = jsonRequest.getString("M_InOut_ID");
       ShipmentInOut inOut = OBDal.getInstance().get(ShipmentInOut.class, strInOutId);
       if (cleanInOutLines(inOut)) {
         createInOutLines(jsonRequest);
@@ -93,7 +97,7 @@ public class RMShipmentPickEditLines extends BaseProcessActionHandler {
     if (selectedLines.length() == 0) {
       return;
     }
-    final String strInOutId = jsonRequest.getString("inpmInoutId");
+    final String strInOutId = jsonRequest.getString("M_InOut_ID");
     ShipmentInOut inOut = OBDal.getInstance().get(ShipmentInOut.class, strInOutId);
     TreeSet<String> rmVendorRefs = new TreeSet<String>();
     for (long i = 0; i < selectedLines.length(); i++) {

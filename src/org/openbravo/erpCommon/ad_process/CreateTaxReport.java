@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2010 Openbravo SLU
+ * All portions are Copyright (C) 2001-2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -67,7 +67,7 @@ public class CreateTaxReport extends HttpSecureAppServlet {
       String strDateFrom = vars.getGlobalVariable("inpDateFrom", "CreateTaxReport|dateFrom", "");
       String strDateTo = vars.getGlobalVariable("inpDateTo", "CreateTaxReport|dateTo", "");
       String strOrg = vars.getGlobalVariable("inpadOrgId", "CreateTaxReport|orgId", "0");
-      printPagePopUp(response, vars, strTaxReportId, strDateFrom, strDateTo, strOrg);
+      printPagePopUp(request, response, vars, strTaxReportId, strDateFrom, strDateTo, strOrg);
     } else
       pageErrorPopUp(response);
   }
@@ -169,9 +169,9 @@ public class CreateTaxReport extends HttpSecureAppServlet {
     out.close();
   }
 
-  private void printPagePopUp(HttpServletResponse response, VariablesSecureApp vars,
-      String strTaxReportId, String strDateFrom, String strDateTo, String strOrg)
-      throws IOException, ServletException {
+  private void printPagePopUp(HttpServletRequest request, HttpServletResponse response,
+      VariablesSecureApp vars, String strTaxReportId, String strDateFrom, String strDateTo,
+      String strOrg) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: pop up CreateTaxReport");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -190,6 +190,12 @@ public class CreateTaxReport extends HttpSecureAppServlet {
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
+    if (dataTree.length == 0) {
+      advisePopUp(request, response, "WARNING",
+          Utility.messageBD(this, "ProcessStatus-W", vars.getLanguage()),
+          Utility.messageBD(this, "NoDataFound", vars.getLanguage()));
+      return;
+    }
     xmlDocument.setParameter("title", dataTree[0].name);
     xmlDocument.setData("structure", dataTree);
     response.setContentType("text/html; charset=UTF-8");
@@ -277,8 +283,12 @@ public class CreateTaxReport extends HttpSecureAppServlet {
   private CreateTaxReportData[] convertVector(Vector<Object> vectorArray) throws ServletException {
     CreateTaxReportData[] data = new CreateTaxReportData[vectorArray.size()];
     BigDecimal count = BigDecimal.ZERO;
+    Vector<Object> vectorArrayDisplay = new Vector<Object>();
     for (int i = 0; i < vectorArray.size(); i++) {
       data[i] = (CreateTaxReportData) vectorArray.elementAt(i);
+      if (data[i].isshown.equals("Y")) {
+        vectorArrayDisplay.addElement(data[i]);
+      }
     }
     if (log4j.isDebugEnabled())
       log4j.debug("***************************data.length: " + data.length);
@@ -311,7 +321,10 @@ public class CreateTaxReport extends HttpSecureAppServlet {
         count = BigDecimal.ZERO;
       }
     }
-    return data;
+
+    CreateTaxReportData[] dataShown = new CreateTaxReportData[vectorArrayDisplay.size()];
+    vectorArrayDisplay.copyInto(dataShown);
+    return dataShown;
   }
 
   public String getServletInfo() {

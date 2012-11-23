@@ -382,6 +382,8 @@ public class OBViewFieldHandler {
       statusBarFields.add(property.getName());
 
       final OBViewField viewField = new OBViewField();
+      // Prevents the field from being displayed twice: on the status bar and in the form footer
+      field.setDisplayed(false);
       viewField.setField(field);
       viewField.setProperty(property);
       viewField.setRedrawOnChange(false);
