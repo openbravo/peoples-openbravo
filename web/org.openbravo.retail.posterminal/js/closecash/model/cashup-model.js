@@ -35,7 +35,8 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
     totalExpected: OB.DEC.Zero,
     totalCounted: OB.DEC.Zero,
     totalDifference: OB.DEC.Zero,
-    pendingOrdersToProcess: false
+    pendingOrdersToProcess: false,
+    otherInput: OB.DEC.Zero
   },
   init: function () {
     //Check for orders wich are being processed in this moment.
