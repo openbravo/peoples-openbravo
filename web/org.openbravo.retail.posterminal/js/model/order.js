@@ -882,6 +882,7 @@
         jsonorder.payment = -jsonorder.payment;
         jsonorder.net = -jsonorder.net;
         _.forEach(jsonorder.lines, function (item) {
+          item.lineGrossAmount = -item.lineGrossAmount;
           item.gross = -item.gross;
           item.net = -item.net;
           item.qty = -item.qty;
