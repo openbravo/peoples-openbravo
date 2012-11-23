@@ -144,7 +144,7 @@
         END;
         -- We have an Invoice
         IF(v_DocumentNo IS NOT NULL) THEN
-          v_Message:='@ShipmentCreateDocAlreadyExists@ = '  || v_DocumentNo || ' (' || v_Invoice_ID || ')';
+          v_Message:='@ShipmentCreateDocAlreadyExists@ = '  || v_DocumentNo;
           RAISE_APPLICATION_ERROR(-20000, v_Message);
           -- Shipment must be complete
         ELSIF(CUR_Shipment.DocStatus NOT IN('CO', 'CL')) THEN

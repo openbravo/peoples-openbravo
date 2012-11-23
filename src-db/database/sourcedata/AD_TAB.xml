@@ -1106,7 +1106,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--159-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--159-->  <NAME><![CDATA[Batch]]></NAME>
 <!--159-->  <DESCRIPTION><![CDATA[Create G/L Journal batches in order to group journals of similar characteristics.. Each batch may have many journals.]]></DESCRIPTION>
-<!--159-->  <HELP><![CDATA[A General Ledger journal batch can group journals of similar characteristics which can all be processed at the same time.]]></HELP>
+<!--159-->  <HELP><![CDATA[A G/L journal batch allows to group G/L journals of similar characteristics which can all be processed at the same time.]]></HELP>
 <!--159-->  <AD_TABLE_ID><![CDATA[225]]></AD_TABLE_ID>
 <!--159-->  <AD_WINDOW_ID><![CDATA[132]]></AD_WINDOW_ID>
 <!--159-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -1133,7 +1133,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--160-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--160-->  <NAME><![CDATA[Header]]></NAME>
 <!--160-->  <DESCRIPTION><![CDATA[Create G/L Journals for specified fiscal periods.]]></DESCRIPTION>
-<!--160-->  <HELP><![CDATA[A General Ledger journal header can include several journals which can contain several journal lines.]]></HELP>
+<!--160-->  <HELP><![CDATA[A G/L journal header can include journals which can contain several journal lines.]]></HELP>
 <!--160-->  <AD_TABLE_ID><![CDATA[224]]></AD_TABLE_ID>
 <!--160-->  <AD_WINDOW_ID><![CDATA[132]]></AD_WINDOW_ID>
 <!--160-->  <SEQNO><![CDATA[20]]></SEQNO>
@@ -1160,7 +1160,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--161-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--161-->  <NAME><![CDATA[Lines]]></NAME>
 <!--161-->  <DESCRIPTION><![CDATA[Add G/L Journal lines. Each line corresponds to one G/L Journal entry.]]></DESCRIPTION>
-<!--161-->  <HELP><![CDATA[General Ledger journal lines tab allows to enter as many ledger entries as required for a given General Ledger journal.]]></HELP>
+<!--161-->  <HELP><![CDATA[The lines tab allows to enter the journal entries of a G/L journal.]]></HELP>
 <!--161-->  <AD_TABLE_ID><![CDATA[226]]></AD_TABLE_ID>
 <!--161-->  <AD_WINDOW_ID><![CDATA[132]]></AD_WINDOW_ID>
 <!--161-->  <SEQNO><![CDATA[30]]></SEQNO>
@@ -1598,7 +1598,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--186-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--186-->  <NAME><![CDATA[Header]]></NAME>
 <!--186-->  <DESCRIPTION><![CDATA[Create a sales order and process it when ready.]]></DESCRIPTION>
-<!--186-->  <HELP><![CDATA[Create a sales order and process it when ready.]]></HELP>
+<!--186-->  <HELP><![CDATA[The sales order header allows to create a sales order and process it when ready.]]></HELP>
 <!--186-->  <AD_TABLE_ID><![CDATA[259]]></AD_TABLE_ID>
 <!--186-->  <AD_WINDOW_ID><![CDATA[143]]></AD_WINDOW_ID>
 <!--186-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -1628,7 +1628,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--187-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--187-->  <NAME><![CDATA[Lines]]></NAME>
 <!--187-->  <DESCRIPTION><![CDATA[Add products to be included in your sales order.  Each product is added by creating a line.]]></DESCRIPTION>
-<!--187-->  <HELP><![CDATA[Add products to be included in your sales order.  Each product is added by creating a line.]]></HELP>
+<!--187-->  <HELP><![CDATA[Lines tab allows to add the products to be included in your sales order.  Each product is added by creating a line.]]></HELP>
 <!--187-->  <AD_TABLE_ID><![CDATA[260]]></AD_TABLE_ID>
 <!--187-->  <AD_WINDOW_ID><![CDATA[143]]></AD_WINDOW_ID>
 <!--187-->  <SEQNO><![CDATA[20]]></SEQNO>
@@ -1793,7 +1793,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--199-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--199-->  <NAME><![CDATA[General Ledger Configuration]]></NAME>
 <!--199-->  <DESCRIPTION><![CDATA[Create multiple general ledger]]></DESCRIPTION>
-<!--199-->  <HELP><![CDATA[General Ledger window allows to review and maintain imported accounting schemas and to create new ones if needed.]]></HELP>
+<!--199-->  <HELP><![CDATA[The General Ledger Configuration window allows to review and maintain defaulted general ledger configurations and to create new ones if needed.]]></HELP>
 <!--199-->  <AD_TABLE_ID><![CDATA[265]]></AD_TABLE_ID>
 <!--199-->  <AD_WINDOW_ID><![CDATA[125]]></AD_WINDOW_ID>
 <!--199-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -1821,7 +1821,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--200-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--200-->  <NAME><![CDATA[General Accounts]]></NAME>
 <!--200-->  <DESCRIPTION><![CDATA[Add and edit G/L accounts to be used by default in the application.]]></DESCRIPTION>
-<!--200-->  <HELP><![CDATA[General accounts tab allows you to define accounts to be used in balancing entries and posting fiscal close. ]]></HELP>
+<!--200-->  <HELP><![CDATA[General accounts tab allows you to define the accounts to be used in balancing entries and in the end-year closing process.]]></HELP>
 <!--200-->  <AD_TABLE_ID><![CDATA[266]]></AD_TABLE_ID>
 <!--200-->  <AD_WINDOW_ID><![CDATA[125]]></AD_WINDOW_ID>
 <!--200-->  <SEQNO><![CDATA[30]]></SEQNO>
@@ -2012,7 +2012,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--207-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--207-->  <NAME><![CDATA[Combination]]></NAME>
 <!--207-->  <DESCRIPTION><![CDATA[Create and edit customized accounts to be used for reporting purposes.]]></DESCRIPTION>
-<!--207-->  <HELP><![CDATA[The Account Combination window allows to review the accounts of an accounting schema. ]]></HELP>
+<!--207-->  <HELP><![CDATA[The Account Combination window allows to review the Organization's General Ledger accounts.]]></HELP>
 <!--207-->  <AD_TABLE_ID><![CDATA[176]]></AD_TABLE_ID>
 <!--207-->  <AD_WINDOW_ID><![CDATA[153]]></AD_WINDOW_ID>
 <!--207-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -2066,7 +2066,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--210-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--210-->  <NAME><![CDATA[Accounting]]></NAME>
 <!--210-->  <DESCRIPTION><![CDATA[Create and edit G/L accounts to be used in transactions including a selected product.]]></DESCRIPTION>
-<!--210-->  <HELP><![CDATA[Accounting tab allows to configure the ledger accounts to be used while posting product related transactions such as product purchase or sales. ]]></HELP>
+<!--210-->  <HELP><![CDATA[Accounting tab allows to configure the ledger accounts to be used while posting product related transactions such as product purchase or sales to the general ledger.]]></HELP>
 <!--210-->  <AD_TABLE_ID><![CDATA[273]]></AD_TABLE_ID>
 <!--210-->  <AD_WINDOW_ID><![CDATA[140]]></AD_WINDOW_ID>
 <!--210-->  <SEQNO><![CDATA[30]]></SEQNO>
@@ -2120,7 +2120,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--212-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--212-->  <NAME><![CDATA[Customer Accounting]]></NAME>
 <!--212-->  <DESCRIPTION><![CDATA[Create and edit G/L accounts to be used in transactions including a selected customer.]]></DESCRIPTION>
-<!--212-->  <HELP><![CDATA[Customer accounting tab allows you to configure the ledger accounts to be used while posting customer related transactions such as customer receivables and customer advances.]]></HELP>
+<!--212-->  <HELP><![CDATA[Customer accounting tab allows you to configure the ledger accounts to be used while posting customer related transactions such as customer receivables and customer advances to the general ledger.]]></HELP>
 <!--212-->  <AD_TABLE_ID><![CDATA[183]]></AD_TABLE_ID>
 <!--212-->  <AD_WINDOW_ID><![CDATA[123]]></AD_WINDOW_ID>
 <!--212-->  <SEQNO><![CDATA[30]]></SEQNO>
@@ -2148,7 +2148,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--213-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--213-->  <NAME><![CDATA[Vendor Accounting]]></NAME>
 <!--213-->  <DESCRIPTION><![CDATA[Create and edit G/L accounts to be used in transactions including a selected vendor.]]></DESCRIPTION>
-<!--213-->  <HELP><![CDATA[Vendor accounting tab allows you to configure the ledger accounts to be used while posting vendor related transactions such as vendor liabilities and vendor advanced payments.]]></HELP>
+<!--213-->  <HELP><![CDATA[Vendor accounting tab allows you to configure the ledger accounts to be used while posting vendor related transactions such as vendor liabilities and vendor advanced payments to the general ledger.]]></HELP>
 <!--213-->  <AD_TABLE_ID><![CDATA[185]]></AD_TABLE_ID>
 <!--213-->  <AD_WINDOW_ID><![CDATA[123]]></AD_WINDOW_ID>
 <!--213-->  <SEQNO><![CDATA[50]]></SEQNO>
@@ -2230,7 +2230,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--217-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--217-->  <NAME><![CDATA[Dimension]]></NAME>
 <!--217-->  <DESCRIPTION><![CDATA[Holds the list of dimensions enabled by this ledger.]]></DESCRIPTION>
-<!--217-->  <HELP><![CDATA[Definition of dimensions to be used by the system. There are two mandatory dimensions by default: Organization and Account. Any other dimension can be as well enabled here so that they appear in transactional windows.]]></HELP>
+<!--217-->  <HELP><![CDATA[Dimension tab allows to configure the general ledger dimensions. There are two mandatory dimensions by default: the Organization and the Account.  Any other dimension such as Project or Sales Region can be as well enabled here so that they appear in transactional windows.]]></HELP>
 <!--217-->  <AD_TABLE_ID><![CDATA[279]]></AD_TABLE_ID>
 <!--217-->  <AD_WINDOW_ID><![CDATA[125]]></AD_WINDOW_ID>
 <!--217-->  <SEQNO><![CDATA[20]]></SEQNO>
@@ -2700,7 +2700,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--242-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--242-->  <NAME><![CDATA[Header]]></NAME>
 <!--242-->  <DESCRIPTION><![CDATA[View detailed general ledger entries for a specified time period.]]></DESCRIPTION>
-<!--242-->  <HELP><![CDATA[Accounting transaction details report is a view of every accounting transaction posted in Openbravo. This view shows the accounting dimension values of every accounting transaction.]]></HELP>
+<!--242-->  <HELP><![CDATA[This report list every transaction posted to the ledger by showing every accounting dimension specified.]]></HELP>
 <!--242-->  <AD_TABLE_ID><![CDATA[270]]></AD_TABLE_ID>
 <!--242-->  <AD_WINDOW_ID><![CDATA[162]]></AD_WINDOW_ID>
 <!--242-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -3114,7 +3114,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--263-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--263-->  <NAME><![CDATA[Header]]></NAME>
 <!--263-->  <DESCRIPTION><![CDATA[Create and edit customer invoices.]]></DESCRIPTION>
-<!--263-->  <HELP><![CDATA[Create and edit customer invoices.]]></HELP>
+<!--263-->  <HELP><![CDATA[Customer invoices can be registered, booked and managed in the header section of the sales invoice window. ]]></HELP>
 <!--263-->  <AD_TABLE_ID><![CDATA[318]]></AD_TABLE_ID>
 <!--263-->  <AD_WINDOW_ID><![CDATA[167]]></AD_WINDOW_ID>
 <!--263-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -3144,7 +3144,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--270-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--270-->  <NAME><![CDATA[Lines]]></NAME>
 <!--270-->  <DESCRIPTION><![CDATA[Add products to be included in your invoice.  Each product is added by creating a line.]]></DESCRIPTION>
-<!--270-->  <HELP><![CDATA[Add products to be included in your invoice.  Each product is added by creating a line.]]></HELP>
+<!--270-->  <HELP><![CDATA[Once the sales invoice header has been properly filled in and saved each sales invoice line can be registered in this tab one by one.]]></HELP>
 <!--270-->  <AD_TABLE_ID><![CDATA[333]]></AD_TABLE_ID>
 <!--270-->  <AD_WINDOW_ID><![CDATA[167]]></AD_WINDOW_ID>
 <!--270-->  <SEQNO><![CDATA[20]]></SEQNO>
@@ -3171,7 +3171,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--271-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--271-->  <NAME><![CDATA[Tax]]></NAME>
 <!--271-->  <DESCRIPTION><![CDATA[Edit taxes applied to your invoice.]]></DESCRIPTION>
-<!--271-->  <HELP><![CDATA[Edit taxes applied to your invoice.]]></HELP>
+<!--271-->  <HELP><![CDATA[Summarized sales invoice tax related information is shown in this tab. ]]></HELP>
 <!--271-->  <AD_TABLE_ID><![CDATA[334]]></AD_TABLE_ID>
 <!--271-->  <AD_WINDOW_ID><![CDATA[167]]></AD_WINDOW_ID>
 <!--271-->  <SEQNO><![CDATA[30]]></SEQNO>
@@ -3333,7 +3333,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--290-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--290-->  <NAME><![CDATA[Header]]></NAME>
 <!--290-->  <DESCRIPTION><![CDATA[Create and edit a sales invoice.]]></DESCRIPTION>
-<!--290-->  <HELP><![CDATA[Supplier invoices can be registered and booked in the header section of the purchase invoice window.]]></HELP>
+<!--290-->  <HELP><![CDATA[Supplier invoices can be registered, booked and managed in the header section of the purchase invoice window.]]></HELP>
 <!--290-->  <AD_TABLE_ID><![CDATA[318]]></AD_TABLE_ID>
 <!--290-->  <AD_WINDOW_ID><![CDATA[183]]></AD_WINDOW_ID>
 <!--290-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -3363,7 +3363,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--291-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--291-->  <NAME><![CDATA[Lines]]></NAME>
 <!--291-->  <DESCRIPTION><![CDATA[Add products to be included in your invoice.  Each product is added by creating a line.]]></DESCRIPTION>
-<!--291-->  <HELP><![CDATA[Once the purchase invoice header has been properly filled in and saved, each purchase invoice line can be registered in this tab.]]></HELP>
+<!--291-->  <HELP><![CDATA[Once the purchase invoice header has been properly filled in and saved, each purchase invoice line can be registered in this tab one by one.]]></HELP>
 <!--291-->  <AD_TABLE_ID><![CDATA[333]]></AD_TABLE_ID>
 <!--291-->  <AD_WINDOW_ID><![CDATA[183]]></AD_WINDOW_ID>
 <!--291-->  <SEQNO><![CDATA[20]]></SEQNO>
@@ -4057,7 +4057,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--333-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--333-->  <NAME><![CDATA[Accounting]]></NAME>
 <!--333-->  <DESCRIPTION><![CDATA[Create and edit G/L accounts to be used in transactions including a selected tax rate.]]></DESCRIPTION>
-<!--333-->  <HELP><![CDATA[Accounting tab allows to configure the ledger account to be used while posting tax rate transactions for a given accounting schema.]]></HELP>
+<!--333-->  <HELP><![CDATA[Accounting tab allows to configure the account to be used while posting tax rate transactions to the general ledger.]]></HELP>
 <!--333-->  <AD_TABLE_ID><![CDATA[399]]></AD_TABLE_ID>
 <!--333-->  <AD_WINDOW_ID><![CDATA[137]]></AD_WINDOW_ID>
 <!--333-->  <SEQNO><![CDATA[30]]></SEQNO>
@@ -6875,7 +6875,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800033-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800033-->  <NAME><![CDATA[G/L Item]]></NAME>
 <!--800033-->  <DESCRIPTION><![CDATA[Create and edit accounting items to be used in manual settlements.]]></DESCRIPTION>
-<!--800033-->  <HELP><![CDATA[G/L Item window allows to create as many account items as required for an organization and a given accounting schema. ]]></HELP>
+<!--800033-->  <HELP><![CDATA[G/L Item window allows to create as many account items as required for an organization and general ledger.]]></HELP>
 <!--800033-->  <AD_TABLE_ID><![CDATA[800022]]></AD_TABLE_ID>
 <!--800033-->  <AD_WINDOW_ID><![CDATA[800007]]></AD_WINDOW_ID>
 <!--800033-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -6903,7 +6903,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800034-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800034-->  <NAME><![CDATA[Accounting]]></NAME>
 <!--800034-->  <DESCRIPTION><![CDATA[Create an account number for the G/L item in order to manage the General Ledger Accounting.]]></DESCRIPTION>
-<!--800034-->  <HELP><![CDATA[Account items are directly related to the debit and credit accounts to be used while posting.]]></HELP>
+<!--800034-->  <HELP><![CDATA[Account items are directly related to the debit and credit accounts to be used while posting them.]]></HELP>
 <!--800034-->  <AD_TABLE_ID><![CDATA[800023]]></AD_TABLE_ID>
 <!--800034-->  <AD_WINDOW_ID><![CDATA[800007]]></AD_WINDOW_ID>
 <!--800034-->  <SEQNO><![CDATA[20]]></SEQNO>
@@ -7016,7 +7016,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800041-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800041-->  <NAME><![CDATA[Active Tables]]></NAME>
 <!--800041-->  <DESCRIPTION><![CDATA[Add and edit DB tables to be included in accounting processes.]]></DESCRIPTION>
-<!--800041-->  <HELP><![CDATA[Account schema tables allows to define which tables and therefore transactions generate accounting and which ones not. ]]></HELP>
+<!--800041-->  <HELP><![CDATA[Active Tables tab allows to define which tables and therefore transactions are going to be post to the ledger and which ones not. ]]></HELP>
 <!--800041-->  <AD_TABLE_ID><![CDATA[800027]]></AD_TABLE_ID>
 <!--800041-->  <AD_WINDOW_ID><![CDATA[125]]></AD_WINDOW_ID>
 <!--800041-->  <SEQNO><![CDATA[25]]></SEQNO>
@@ -7300,6 +7300,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800059-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800059-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800059-->  <NAME><![CDATA[Basic Discounts]]></NAME>
+<!--800059-->  <HELP><![CDATA[This tab lists information about the discounts automatically applied based on the customer configuration and / or manually entered for the sales invoice. ]]></HELP>
 <!--800059-->  <AD_TABLE_ID><![CDATA[800045]]></AD_TABLE_ID>
 <!--800059-->  <AD_WINDOW_ID><![CDATA[167]]></AD_WINDOW_ID>
 <!--800059-->  <SEQNO><![CDATA[40]]></SEQNO>
@@ -9839,7 +9840,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800211-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800211-->  <NAME><![CDATA[Basic Discounts]]></NAME>
 <!--800211-->  <DESCRIPTION><![CDATA[Vendor discounts]]></DESCRIPTION>
-<!--800211-->  <HELP><![CDATA[Lists information about discounts automatically applied based on the supplier configuration and / or manually entered for the purchase invoice.]]></HELP>
+<!--800211-->  <HELP><![CDATA[This tab lists information about the discounts automatically applied based on the supplier configuration and / or manually entered for the purchase invoice.]]></HELP>
 <!--800211-->  <AD_TABLE_ID><![CDATA[800045]]></AD_TABLE_ID>
 <!--800211-->  <AD_WINDOW_ID><![CDATA[183]]></AD_WINDOW_ID>
 <!--800211-->  <SEQNO><![CDATA[31]]></SEQNO>
@@ -11824,6 +11825,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--1011100000-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1011100000-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1011100000-->  <NAME><![CDATA[Basic Discounts]]></NAME>
+<!--1011100000-->  <HELP><![CDATA[Lists information about discounts automatically applied based on the customer configuration and / or manually entered for the sales order. ]]></HELP>
 <!--1011100000-->  <AD_TABLE_ID><![CDATA[1011100000]]></AD_TABLE_ID>
 <!--1011100000-->  <AD_WINDOW_ID><![CDATA[143]]></AD_WINDOW_ID>
 <!--1011100000-->  <SEQNO><![CDATA[30]]></SEQNO>
@@ -11935,6 +11937,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--07F009753DA647C2AF38697BA9F1B1A0-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--07F009753DA647C2AF38697BA9F1B1A0-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--07F009753DA647C2AF38697BA9F1B1A0-->  <NAME><![CDATA[Lines]]></NAME>
+<!--07F009753DA647C2AF38697BA9F1B1A0-->  <HELP><![CDATA[Lines tab contains a list of the documents to be paid or already paid by the payment.]]></HELP>
 <!--07F009753DA647C2AF38697BA9F1B1A0-->  <AD_TABLE_ID><![CDATA[DC63963AB3F1489BAAB5A9A7EFD1B407]]></AD_TABLE_ID>
 <!--07F009753DA647C2AF38697BA9F1B1A0-->  <AD_WINDOW_ID><![CDATA[6F8F913FA60F4CBD93DC1D3AA696E76E]]></AD_WINDOW_ID>
 <!--07F009753DA647C2AF38697BA9F1B1A0-->  <SEQNO><![CDATA[20]]></SEQNO>
@@ -12048,6 +12051,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--173B46EC4F91406E9B68DCF6464BB308-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--173B46EC4F91406E9B68DCF6464BB308-->  <NAME><![CDATA[Lines]]></NAME>
 <!--173B46EC4F91406E9B68DCF6464BB308-->  <DESCRIPTION><![CDATA[Add new customer payment into the system. ]]></DESCRIPTION>
+<!--173B46EC4F91406E9B68DCF6464BB308-->  <HELP><![CDATA[The lines tab contains a list of the documents paid by the payment.]]></HELP>
 <!--173B46EC4F91406E9B68DCF6464BB308-->  <AD_TABLE_ID><![CDATA[DC63963AB3F1489BAAB5A9A7EFD1B407]]></AD_TABLE_ID>
 <!--173B46EC4F91406E9B68DCF6464BB308-->  <AD_WINDOW_ID><![CDATA[E547CE89D4C04429B6340FFA44E70716]]></AD_WINDOW_ID>
 <!--173B46EC4F91406E9B68DCF6464BB308-->  <SEQNO><![CDATA[20]]></SEQNO>
@@ -12184,7 +12188,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--25C70617A7964B479BDA71197E7E88E9-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--25C70617A7964B479BDA71197E7E88E9-->  <NAME><![CDATA[Line Tax]]></NAME>
 <!--25C70617A7964B479BDA71197E7E88E9-->  <DESCRIPTION><![CDATA[Order Line Tax]]></DESCRIPTION>
-<!--25C70617A7964B479BDA71197E7E88E9-->  <HELP><![CDATA[Taxes related to the order line.]]></HELP>
+<!--25C70617A7964B479BDA71197E7E88E9-->  <HELP><![CDATA[For each sales order line, Openbravo automatically populates the line tax related information in this tab. ]]></HELP>
 <!--25C70617A7964B479BDA71197E7E88E9-->  <AD_TABLE_ID><![CDATA[E42DDB42FF0B4F82B1CF3C711B3F0DC0]]></AD_TABLE_ID>
 <!--25C70617A7964B479BDA71197E7E88E9-->  <AD_WINDOW_ID><![CDATA[143]]></AD_WINDOW_ID>
 <!--25C70617A7964B479BDA71197E7E88E9-->  <SEQNO><![CDATA[27]]></SEQNO>
@@ -12214,7 +12218,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--27456D8A387F4580B30EA784C63831BB-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--27456D8A387F4580B30EA784C63831BB-->  <NAME><![CDATA[Line Tax]]></NAME>
 <!--27456D8A387F4580B30EA784C63831BB-->  <DESCRIPTION><![CDATA[Taxes related to the invoice line]]></DESCRIPTION>
-<!--27456D8A387F4580B30EA784C63831BB-->  <HELP><![CDATA[For each purchase invoice line, Openbravo automatically populates the line tax related information in this tab.]]></HELP>
+<!--27456D8A387F4580B30EA784C63831BB-->  <HELP><![CDATA[Line tax information is automatically populated for each purchase invoice line upon completion of the invoice.]]></HELP>
 <!--27456D8A387F4580B30EA784C63831BB-->  <AD_TABLE_ID><![CDATA[2C75DEA0B5914305B4D789F76FCFD276]]></AD_TABLE_ID>
 <!--27456D8A387F4580B30EA784C63831BB-->  <AD_WINDOW_ID><![CDATA[183]]></AD_WINDOW_ID>
 <!--27456D8A387F4580B30EA784C63831BB-->  <SEQNO><![CDATA[27]]></SEQNO>
@@ -12270,7 +12274,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--28D602B576DF417AB289B4EC94BE2C17-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--28D602B576DF417AB289B4EC94BE2C17-->  <NAME><![CDATA[Reversed Invoices]]></NAME>
 <!--28D602B576DF417AB289B4EC94BE2C17-->  <DESCRIPTION><![CDATA[In this tab the user can define the reversed invoices (if any) associated with the invoice]]></DESCRIPTION>
-<!--28D602B576DF417AB289B4EC94BE2C17-->  <HELP><![CDATA[In this tab the user can define the reversed invoices (if any) associated with the invoice. When the user voids an invoice, the reversed invoice is automatically created, In case of a Credit Memo or a negative invoice, the user must manually create the reversed invoices.]]></HELP>
+<!--28D602B576DF417AB289B4EC94BE2C17-->  <HELP><![CDATA[This tabs allows the user to select the invoices (if any) being reversed by the invoice being created. When the user voids an existing invoice the reverse invoice is automatically created by Openbravo and linked to the original invoice being reversed. In case of creating a Credit Memo or Reverse Sales Invoice which partially voids an existing invoice/s, the user must manually select the invoice/s being reversed in this tab.]]></HELP>
 <!--28D602B576DF417AB289B4EC94BE2C17-->  <AD_TABLE_ID><![CDATA[43393FBD706A441D837C5CBA07D10ABE]]></AD_TABLE_ID>
 <!--28D602B576DF417AB289B4EC94BE2C17-->  <AD_WINDOW_ID><![CDATA[167]]></AD_WINDOW_ID>
 <!--28D602B576DF417AB289B4EC94BE2C17-->  <SEQNO><![CDATA[80]]></SEQNO>
@@ -12358,7 +12362,7 @@ The corresponding tables have then the following setting:
 <!--2C9A8C451DD847FEA493A9CC08AF6822-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--2C9A8C451DD847FEA493A9CC08AF6822-->  <NAME><![CDATA[Line Tax]]></NAME>
 <!--2C9A8C451DD847FEA493A9CC08AF6822-->  <DESCRIPTION><![CDATA[Order Line Tax]]></DESCRIPTION>
-<!--2C9A8C451DD847FEA493A9CC08AF6822-->  <HELP><![CDATA[Taxes related to the order line.]]></HELP>
+<!--2C9A8C451DD847FEA493A9CC08AF6822-->  <HELP><![CDATA[This tab shows the taxes related to the quotation line.]]></HELP>
 <!--2C9A8C451DD847FEA493A9CC08AF6822-->  <AD_TABLE_ID><![CDATA[E42DDB42FF0B4F82B1CF3C711B3F0DC0]]></AD_TABLE_ID>
 <!--2C9A8C451DD847FEA493A9CC08AF6822-->  <AD_WINDOW_ID><![CDATA[6CB5B67ED33F47DFA334079D3EA2340E]]></AD_WINDOW_ID>
 <!--2C9A8C451DD847FEA493A9CC08AF6822-->  <SEQNO><![CDATA[27]]></SEQNO>
@@ -12414,6 +12418,7 @@ The corresponding tables have then the following setting:
 <!--2DD6F1E2CAE0456AA9797A1D627BFF5E-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--2DD6F1E2CAE0456AA9797A1D627BFF5E-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--2DD6F1E2CAE0456AA9797A1D627BFF5E-->  <NAME><![CDATA[Header]]></NAME>
+<!--2DD6F1E2CAE0456AA9797A1D627BFF5E-->  <HELP><![CDATA[The payment proposal window allows to enter a set of selection criteria that help the user to make payments massively.]]></HELP>
 <!--2DD6F1E2CAE0456AA9797A1D627BFF5E-->  <AD_TABLE_ID><![CDATA[B9437A72163445C59A0A585209C8ECE5]]></AD_TABLE_ID>
 <!--2DD6F1E2CAE0456AA9797A1D627BFF5E-->  <AD_WINDOW_ID><![CDATA[1B7B3BB7FEAF41ED8D9727AB98779D3C]]></AD_WINDOW_ID>
 <!--2DD6F1E2CAE0456AA9797A1D627BFF5E-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -12519,7 +12524,7 @@ The corresponding tables have then the following setting:
 <!--387B6179438D4C4CB40769A77F4C304C-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--387B6179438D4C4CB40769A77F4C304C-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--387B6179438D4C4CB40769A77F4C304C-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--387B6179438D4C4CB40769A77F4C304C-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
+<!--387B6179438D4C4CB40769A77F4C304C-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--387B6179438D4C4CB40769A77F4C304C-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--387B6179438D4C4CB40769A77F4C304C-->  <EM_OBUIAPP_CAN_ADD><![CDATA[N]]></EM_OBUIAPP_CAN_ADD>
 <!--387B6179438D4C4CB40769A77F4C304C-->  <EM_OBUIAPP_CAN_DELETE><![CDATA[N]]></EM_OBUIAPP_CAN_DELETE>
@@ -12615,7 +12620,7 @@ The corresponding tables have then the following setting:
 <!--3ED38B380CD849B38F0AC1B52F992C34-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--3ED38B380CD849B38F0AC1B52F992C34-->  <NAME><![CDATA[Reversed Invoices]]></NAME>
 <!--3ED38B380CD849B38F0AC1B52F992C34-->  <DESCRIPTION><![CDATA[In this tab the user can define the reversed invoices (if any) associated with the invoice]]></DESCRIPTION>
-<!--3ED38B380CD849B38F0AC1B52F992C34-->  <HELP><![CDATA[This tab allows you to review or link the purchase invoices reversed or voided.]]></HELP>
+<!--3ED38B380CD849B38F0AC1B52F992C34-->  <HELP><![CDATA[This tabs allows the user to select the invoices (if any) being reversed by the invoice being created. When the user voids an existing invoice the reverse invoice is automatically created by Openbravo and linked to the original invoice being reversed. In case of creating a Credit Memo or Reverse Purchase Invoice which partially voids an existing invoice/s, the user must manually select the invoice/s being reversed in this tab.]]></HELP>
 <!--3ED38B380CD849B38F0AC1B52F992C34-->  <AD_TABLE_ID><![CDATA[43393FBD706A441D837C5CBA07D10ABE]]></AD_TABLE_ID>
 <!--3ED38B380CD849B38F0AC1B52F992C34-->  <AD_WINDOW_ID><![CDATA[183]]></AD_WINDOW_ID>
 <!--3ED38B380CD849B38F0AC1B52F992C34-->  <SEQNO><![CDATA[80]]></SEQNO>
@@ -12864,7 +12869,7 @@ The corresponding tables have then the following setting:
 <!--4F9E1C27F7F040C58C5CA2E6FD5B26CB-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--4F9E1C27F7F040C58C5CA2E6FD5B26CB-->  <NAME><![CDATA[Process]]></NAME>
 <!--4F9E1C27F7F040C58C5CA2E6FD5B26CB-->  <DESCRIPTION><![CDATA[Process to be launched at posting time]]></DESCRIPTION>
-<!--4F9E1C27F7F040C58C5CA2E6FD5B26CB-->  <HELP><![CDATA[It is possible to assign additional accounting process to be run after the standar one for a given accounting schema.]]></HELP>
+<!--4F9E1C27F7F040C58C5CA2E6FD5B26CB-->  <HELP><![CDATA[It is possible to assign additional accounting process to be run after the standard one for a given general ledger configuration]]></HELP>
 <!--4F9E1C27F7F040C58C5CA2E6FD5B26CB-->  <AD_TABLE_ID><![CDATA[443DD9B88BF2443982C61C8EFB07C64D]]></AD_TABLE_ID>
 <!--4F9E1C27F7F040C58C5CA2E6FD5B26CB-->  <AD_WINDOW_ID><![CDATA[125]]></AD_WINDOW_ID>
 <!--4F9E1C27F7F040C58C5CA2E6FD5B26CB-->  <SEQNO><![CDATA[28]]></SEQNO>
@@ -12892,7 +12897,7 @@ The corresponding tables have then the following setting:
 <!--5247D51755AA43F384EBC35006FC2329-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--5247D51755AA43F384EBC35006FC2329-->  <NAME><![CDATA[Line Tax]]></NAME>
 <!--5247D51755AA43F384EBC35006FC2329-->  <DESCRIPTION><![CDATA[Line Tax]]></DESCRIPTION>
-<!--5247D51755AA43F384EBC35006FC2329-->  <HELP><![CDATA[Taxes related to the invoice line.]]></HELP>
+<!--5247D51755AA43F384EBC35006FC2329-->  <HELP><![CDATA[Line tax information is automatically populated for each sales invoice line upon completion of the invoice. ]]></HELP>
 <!--5247D51755AA43F384EBC35006FC2329-->  <AD_TABLE_ID><![CDATA[2C75DEA0B5914305B4D789F76FCFD276]]></AD_TABLE_ID>
 <!--5247D51755AA43F384EBC35006FC2329-->  <AD_WINDOW_ID><![CDATA[167]]></AD_WINDOW_ID>
 <!--5247D51755AA43F384EBC35006FC2329-->  <SEQNO><![CDATA[27]]></SEQNO>
@@ -13103,7 +13108,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--62EB234861174F658093BA10DAFF81FA-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--62EB234861174F658093BA10DAFF81FA-->  <NAME><![CDATA[Tax]]></NAME>
 <!--62EB234861174F658093BA10DAFF81FA-->  <DESCRIPTION><![CDATA[Edit taxes applied to your order.]]></DESCRIPTION>
-<!--62EB234861174F658093BA10DAFF81FA-->  <HELP><![CDATA[Edit taxes applied to your order.]]></HELP>
+<!--62EB234861174F658093BA10DAFF81FA-->  <HELP><![CDATA[Edit the taxes applied to the quotation.]]></HELP>
 <!--62EB234861174F658093BA10DAFF81FA-->  <AD_TABLE_ID><![CDATA[314]]></AD_TABLE_ID>
 <!--62EB234861174F658093BA10DAFF81FA-->  <AD_WINDOW_ID><![CDATA[6CB5B67ED33F47DFA334079D3EA2340E]]></AD_WINDOW_ID>
 <!--62EB234861174F658093BA10DAFF81FA-->  <SEQNO><![CDATA[40]]></SEQNO>
@@ -13247,7 +13252,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--6868B706DA8340158DE353A6C252A564-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--6868B706DA8340158DE353A6C252A564-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--6868B706DA8340158DE353A6C252A564-->  <NAME><![CDATA[Costing Rule]]></NAME>
-<!--6868B706DA8340158DE353A6C252A564-->  <HELP><![CDATA[Definition of the rules. ]]></HELP>
+<!--6868B706DA8340158DE353A6C252A564-->  <HELP><![CDATA[The costing rule window allows to define and validate costing rules. ]]></HELP>
 <!--6868B706DA8340158DE353A6C252A564-->  <AD_TABLE_ID><![CDATA[3CF4E9CC4AD94D63BE9DF1822E5B4239]]></AD_TABLE_ID>
 <!--6868B706DA8340158DE353A6C252A564-->  <AD_WINDOW_ID><![CDATA[3E945A9102144C16BD211D211089C2DF]]></AD_WINDOW_ID>
 <!--6868B706DA8340158DE353A6C252A564-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -13357,7 +13362,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--719D6C8507CA4B27886C0D8A7859B543-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--719D6C8507CA4B27886C0D8A7859B543-->  <NAME><![CDATA[Execution History]]></NAME>
 <!--719D6C8507CA4B27886C0D8A7859B543-->  <DESCRIPTION><![CDATA[Shows information about the history of payment execution attempts.]]></DESCRIPTION>
-<!--719D6C8507CA4B27886C0D8A7859B543-->  <HELP><![CDATA[Shows information about the history of payment execution attempts.]]></HELP>
+<!--719D6C8507CA4B27886C0D8A7859B543-->  <HELP><![CDATA[The execution history tab shows information about the history of the payment execution attempts.]]></HELP>
 <!--719D6C8507CA4B27886C0D8A7859B543-->  <AD_TABLE_ID><![CDATA[A0B24CBC42D34AB4AC0A45BF1480F94F]]></AD_TABLE_ID>
 <!--719D6C8507CA4B27886C0D8A7859B543-->  <AD_WINDOW_ID><![CDATA[6F8F913FA60F4CBD93DC1D3AA696E76E]]></AD_WINDOW_ID>
 <!--719D6C8507CA4B27886C0D8A7859B543-->  <SEQNO><![CDATA[30]]></SEQNO>
@@ -14186,7 +14191,7 @@ AND e.pending <> 0]]></HQLWHERECLAUSE>
 <!--ABD19F77982D41F7A53F7A61948A137D-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--ABD19F77982D41F7A53F7A61948A137D-->  <NAME><![CDATA[Execution History]]></NAME>
 <!--ABD19F77982D41F7A53F7A61948A137D-->  <DESCRIPTION><![CDATA[Shows information about the history of payment execution attempts.]]></DESCRIPTION>
-<!--ABD19F77982D41F7A53F7A61948A137D-->  <HELP><![CDATA[Shows information about the history of payment execution attempts.]]></HELP>
+<!--ABD19F77982D41F7A53F7A61948A137D-->  <HELP><![CDATA[The execution history tab shows information about the history of the payment execution attempts.]]></HELP>
 <!--ABD19F77982D41F7A53F7A61948A137D-->  <AD_TABLE_ID><![CDATA[A0B24CBC42D34AB4AC0A45BF1480F94F]]></AD_TABLE_ID>
 <!--ABD19F77982D41F7A53F7A61948A137D-->  <AD_WINDOW_ID><![CDATA[E547CE89D4C04429B6340FFA44E70716]]></AD_WINDOW_ID>
 <!--ABD19F77982D41F7A53F7A61948A137D-->  <SEQNO><![CDATA[30]]></SEQNO>
@@ -14317,7 +14322,7 @@ AND e.pending <> 0]]></HQLWHERECLAUSE>
 <!--AF4090093D471431E040007F010048A5-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--AF4090093D471431E040007F010048A5-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--AF4090093D471431E040007F010048A5-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--AF4090093D471431E040007F010048A5-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
+<!--AF4090093D471431E040007F010048A5-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--AF4090093D471431E040007F010048A5-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--AF4090093D471431E040007F010048A5-->  <EM_OBUIAPP_CAN_ADD><![CDATA[N]]></EM_OBUIAPP_CAN_ADD>
 <!--AF4090093D471431E040007F010048A5-->  <EM_OBUIAPP_CAN_DELETE><![CDATA[N]]></EM_OBUIAPP_CAN_DELETE>
@@ -14605,6 +14610,7 @@ AND e.pending <> 0]]></HQLWHERECLAUSE>
 <!--C4B6506838E14A349D6717D6856F1B56-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--C4B6506838E14A349D6717D6856F1B56-->  <NAME><![CDATA[Header]]></NAME>
 <!--C4B6506838E14A349D6717D6856F1B56-->  <DESCRIPTION><![CDATA[Add new customer payment into the system.]]></DESCRIPTION>
+<!--C4B6506838E14A349D6717D6856F1B56-->  <HELP><![CDATA[The payment in window allows to record and manage customer's payments received against different types of documents issued by the organization such as orders and invoices. This window also allows to manage the customer's payments already recorded in the sales invoice window.]]></HELP>
 <!--C4B6506838E14A349D6717D6856F1B56-->  <AD_TABLE_ID><![CDATA[D1A97202E832470285C9B1EB026D54E2]]></AD_TABLE_ID>
 <!--C4B6506838E14A349D6717D6856F1B56-->  <AD_WINDOW_ID><![CDATA[E547CE89D4C04429B6340FFA44E70716]]></AD_WINDOW_ID>
 <!--C4B6506838E14A349D6717D6856F1B56-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -14765,7 +14771,7 @@ AND e.pending <> 0]]></HQLWHERECLAUSE>
 <!--C9BD6AF9E06F4BE4B4799D09965481DC-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--C9BD6AF9E06F4BE4B4799D09965481DC-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--C9BD6AF9E06F4BE4B4799D09965481DC-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--C9BD6AF9E06F4BE4B4799D09965481DC-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
+<!--C9BD6AF9E06F4BE4B4799D09965481DC-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--C9BD6AF9E06F4BE4B4799D09965481DC-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--C9BD6AF9E06F4BE4B4799D09965481DC-->  <EM_OBUIAPP_CAN_ADD><![CDATA[N]]></EM_OBUIAPP_CAN_ADD>
 <!--C9BD6AF9E06F4BE4B4799D09965481DC-->  <EM_OBUIAPP_CAN_DELETE><![CDATA[N]]></EM_OBUIAPP_CAN_DELETE>
@@ -14914,7 +14920,7 @@ AND (e.orderNo IS NULL OR e.priceIncludesTax = (SELECT priceIncludesTax FROM Pri
 <!--CF6D6C7B85EB473CB88E757E14D1D022-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--CF6D6C7B85EB473CB88E757E14D1D022-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--CF6D6C7B85EB473CB88E757E14D1D022-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--CF6D6C7B85EB473CB88E757E14D1D022-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
+<!--CF6D6C7B85EB473CB88E757E14D1D022-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--CF6D6C7B85EB473CB88E757E14D1D022-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--CF6D6C7B85EB473CB88E757E14D1D022-->  <EM_OBUIAPP_CAN_ADD><![CDATA[N]]></EM_OBUIAPP_CAN_ADD>
 <!--CF6D6C7B85EB473CB88E757E14D1D022-->  <EM_OBUIAPP_CAN_DELETE><![CDATA[N]]></EM_OBUIAPP_CAN_DELETE>
@@ -15037,6 +15043,7 @@ AND (e.orderNo IS NULL OR e.priceIncludesTax = (SELECT priceIncludesTax FROM Pri
 <!--E13E29EB8CF349BAA3D4CB71873CC896-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--E13E29EB8CF349BAA3D4CB71873CC896-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--E13E29EB8CF349BAA3D4CB71873CC896-->  <NAME><![CDATA[Lines]]></NAME>
+<!--E13E29EB8CF349BAA3D4CB71873CC896-->  <HELP><![CDATA[The lines tab shows the transactions (orders and/or invoices) included in the payment proposal.]]></HELP>
 <!--E13E29EB8CF349BAA3D4CB71873CC896-->  <AD_TABLE_ID><![CDATA[B5FCAD3055044508B4464B6078A711AD]]></AD_TABLE_ID>
 <!--E13E29EB8CF349BAA3D4CB71873CC896-->  <AD_WINDOW_ID><![CDATA[1B7B3BB7FEAF41ED8D9727AB98779D3C]]></AD_WINDOW_ID>
 <!--E13E29EB8CF349BAA3D4CB71873CC896-->  <SEQNO><![CDATA[20]]></SEQNO>
@@ -15091,8 +15098,8 @@ AND (e.orderNo IS NULL OR e.priceIncludesTax = (SELECT priceIncludesTax FROM Pri
 <!--E2F36B4352DA4CA8BE324DC428BEE358-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--E2F36B4352DA4CA8BE324DC428BEE358-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--E2F36B4352DA4CA8BE324DC428BEE358-->  <NAME><![CDATA[Lines]]></NAME>
-<!--E2F36B4352DA4CA8BE324DC428BEE358-->  <DESCRIPTION><![CDATA[Add products to be included in your sales order.  Each product is added by creating a line.]]></DESCRIPTION>
-<!--E2F36B4352DA4CA8BE324DC428BEE358-->  <HELP><![CDATA[Add products to be included in your sales order.  Each product is added by creating a line.]]></HELP>
+<!--E2F36B4352DA4CA8BE324DC428BEE358-->  <DESCRIPTION><![CDATA[Add products to be included in your sales quotation.  Each product can be added by creating a new line.]]></DESCRIPTION>
+<!--E2F36B4352DA4CA8BE324DC428BEE358-->  <HELP><![CDATA[Add products to be included in your sales quotation.  Each product can be added by creating a new line.]]></HELP>
 <!--E2F36B4352DA4CA8BE324DC428BEE358-->  <AD_TABLE_ID><![CDATA[260]]></AD_TABLE_ID>
 <!--E2F36B4352DA4CA8BE324DC428BEE358-->  <AD_WINDOW_ID><![CDATA[6CB5B67ED33F47DFA334079D3EA2340E]]></AD_WINDOW_ID>
 <!--E2F36B4352DA4CA8BE324DC428BEE358-->  <SEQNO><![CDATA[20]]></SEQNO>
@@ -15172,6 +15179,7 @@ AND (e.orderNo IS NULL OR e.priceIncludesTax = (SELECT priceIncludesTax FROM Pri
 <!--F7A52FDAAA0346EFA07D53C125B40404-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--F7A52FDAAA0346EFA07D53C125B40404-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--F7A52FDAAA0346EFA07D53C125B40404-->  <NAME><![CDATA[Header]]></NAME>
+<!--F7A52FDAAA0346EFA07D53C125B40404-->  <HELP><![CDATA[The payment out window allows to make and manage supplier's payments done to settle different types of documents such as orders and invoices. This window also allows to manage the supplier's payments already made in the purchase invoice window.]]></HELP>
 <!--F7A52FDAAA0346EFA07D53C125B40404-->  <AD_TABLE_ID><![CDATA[D1A97202E832470285C9B1EB026D54E2]]></AD_TABLE_ID>
 <!--F7A52FDAAA0346EFA07D53C125B40404-->  <AD_WINDOW_ID><![CDATA[6F8F913FA60F4CBD93DC1D3AA696E76E]]></AD_WINDOW_ID>
 <!--F7A52FDAAA0346EFA07D53C125B40404-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -15204,7 +15212,7 @@ AND (e.orderNo IS NULL OR e.priceIncludesTax = (SELECT priceIncludesTax FROM Pri
 <!--F87F1EB7EB404F1F916EBAFAD1A0A334-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--F87F1EB7EB404F1F916EBAFAD1A0A334-->  <NAME><![CDATA[Header]]></NAME>
 <!--F87F1EB7EB404F1F916EBAFAD1A0A334-->  <DESCRIPTION><![CDATA[Create a sales order and process it when ready.]]></DESCRIPTION>
-<!--F87F1EB7EB404F1F916EBAFAD1A0A334-->  <HELP><![CDATA[Create a sales order and process it when ready.]]></HELP>
+<!--F87F1EB7EB404F1F916EBAFAD1A0A334-->  <HELP><![CDATA[Create a sales quotation and process it when ready.]]></HELP>
 <!--F87F1EB7EB404F1F916EBAFAD1A0A334-->  <AD_TABLE_ID><![CDATA[259]]></AD_TABLE_ID>
 <!--F87F1EB7EB404F1F916EBAFAD1A0A334-->  <AD_WINDOW_ID><![CDATA[6CB5B67ED33F47DFA334079D3EA2340E]]></AD_WINDOW_ID>
 <!--F87F1EB7EB404F1F916EBAFAD1A0A334-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -15479,7 +15487,7 @@ AND @MaterialMgmtShipmentInOut.businessPartner@ = e.orderLine.salesOrder.busines
 <!--FF808181308EA4230130901AB2C60090-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--FF808181308EA4230130901AB2C60090-->  <NAME><![CDATA[Exchange rates]]></NAME>
 <!--FF808181308EA4230130901AB2C60090-->  <DESCRIPTION><![CDATA[In this tab the user can define another currency conversion rate for this document different than Openbravo systema exchange rate.]]></DESCRIPTION>
-<!--FF808181308EA4230130901AB2C60090-->  <HELP><![CDATA[An exchange rate between the "transaction currency" and the "Organization accounting schema" currency/currencies can be enter in this tab. ]]></HELP>
+<!--FF808181308EA4230130901AB2C60090-->  <HELP><![CDATA[The exchange rate tab allows to enter an exchange rate between the organization's general ledger currency and the currency of the supplier's  invoice to be used while posting the invoice to the ledger.]]></HELP>
 <!--FF808181308EA4230130901AB2C60090-->  <AD_TABLE_ID><![CDATA[FF808181308EA42301308FB5F7BC0049]]></AD_TABLE_ID>
 <!--FF808181308EA4230130901AB2C60090-->  <AD_WINDOW_ID><![CDATA[183]]></AD_WINDOW_ID>
 <!--FF808181308EA4230130901AB2C60090-->  <SEQNO><![CDATA[90]]></SEQNO>
@@ -15507,7 +15515,7 @@ AND @MaterialMgmtShipmentInOut.businessPartner@ = e.orderLine.salesOrder.busines
 <!--FF808181308EA4230130901D313D00A5-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--FF808181308EA4230130901D313D00A5-->  <NAME><![CDATA[Exchange rates]]></NAME>
 <!--FF808181308EA4230130901D313D00A5-->  <DESCRIPTION><![CDATA[In this tab the user can define another currency conversion rate for this document different than Openbravo systema exchange rate.]]></DESCRIPTION>
-<!--FF808181308EA4230130901D313D00A5-->  <HELP><![CDATA[In this tab the user can define another currency conversion rate for this document different than Openbravo systema exchange rate.]]></HELP>
+<!--FF808181308EA4230130901D313D00A5-->  <HELP><![CDATA[The exchange rate tab allows to enter an exchange rate between the organization's general ledger currency and the currency of the customer's invoice to be used while posting the invoice to the ledger.]]></HELP>
 <!--FF808181308EA4230130901D313D00A5-->  <AD_TABLE_ID><![CDATA[FF808181308EA42301308FB5F7BC0049]]></AD_TABLE_ID>
 <!--FF808181308EA4230130901D313D00A5-->  <AD_WINDOW_ID><![CDATA[167]]></AD_WINDOW_ID>
 <!--FF808181308EA4230130901D313D00A5-->  <SEQNO><![CDATA[90]]></SEQNO>
@@ -15535,7 +15543,7 @@ AND @MaterialMgmtShipmentInOut.businessPartner@ = e.orderLine.salesOrder.busines
 <!--FF808181309036230130905A9AAC0025-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--FF808181309036230130905A9AAC0025-->  <NAME><![CDATA[Exchange rates]]></NAME>
 <!--FF808181309036230130905A9AAC0025-->  <DESCRIPTION><![CDATA[In this tab the user can define another currency conversion rate for this document different than Openbravo systema exchange rate.]]></DESCRIPTION>
-<!--FF808181309036230130905A9AAC0025-->  <HELP><![CDATA[In this tab the user can define another currency conversion rate for this document different than Openbravo systema exchange rate.]]></HELP>
+<!--FF808181309036230130905A9AAC0025-->  <HELP><![CDATA[The exchange rate tab allows to enter an exchange rate between the organization's general ledger currency and the currency of the payment received to be used while posting the payment to the ledger.]]></HELP>
 <!--FF808181309036230130905A9AAC0025-->  <AD_TABLE_ID><![CDATA[FF808181308EA42301308FB5F7BC0049]]></AD_TABLE_ID>
 <!--FF808181309036230130905A9AAC0025-->  <AD_WINDOW_ID><![CDATA[E547CE89D4C04429B6340FFA44E70716]]></AD_WINDOW_ID>
 <!--FF808181309036230130905A9AAC0025-->  <SEQNO><![CDATA[40]]></SEQNO>
@@ -15563,7 +15571,7 @@ AND @MaterialMgmtShipmentInOut.businessPartner@ = e.orderLine.salesOrder.busines
 <!--FF808181309036230130905C67210034-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--FF808181309036230130905C67210034-->  <NAME><![CDATA[Exchange rates]]></NAME>
 <!--FF808181309036230130905C67210034-->  <DESCRIPTION><![CDATA[In this tab the user can define another currency conversion rate for this document different than Openbravo systema exchange rate.]]></DESCRIPTION>
-<!--FF808181309036230130905C67210034-->  <HELP><![CDATA[In this tab the user can define another currency conversion rate for this document different than Openbravo systema exchange rate.]]></HELP>
+<!--FF808181309036230130905C67210034-->  <HELP><![CDATA[The exchange rate tab allows to enter an exchange rate between the organization's general ledger currency and the currency of the payment made to be used while posting the payment to the ledger.]]></HELP>
 <!--FF808181309036230130905C67210034-->  <AD_TABLE_ID><![CDATA[FF808181308EA42301308FB5F7BC0049]]></AD_TABLE_ID>
 <!--FF808181309036230130905C67210034-->  <AD_WINDOW_ID><![CDATA[6F8F913FA60F4CBD93DC1D3AA696E76E]]></AD_WINDOW_ID>
 <!--FF808181309036230130905C67210034-->  <SEQNO><![CDATA[40]]></SEQNO>
@@ -15646,7 +15654,7 @@ AND @MaterialMgmtShipmentInOut.businessPartner@ = e.orderLine.salesOrder.busines
 <!--FF80818132AF937F0132AFA84F97003A-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--FF80818132AF937F0132AFA84F97003A-->  <NAME><![CDATA[Used Credit Source]]></NAME>
 <!--FF80818132AF937F0132AFA84F97003A-->  <DESCRIPTION><![CDATA[Tracks the places where the credit payment is used]]></DESCRIPTION>
-<!--FF80818132AF937F0132AFA84F97003A-->  <HELP><![CDATA[A credit payment can be used in several payments. This table tracks the places where the credit has been used]]></HELP>
+<!--FF80818132AF937F0132AFA84F97003A-->  <HELP><![CDATA[A credit payment can be used to settle more that one document payment. This table tracks the documents where a credit payment has been used.]]></HELP>
 <!--FF80818132AF937F0132AFA84F97003A-->  <AD_TABLE_ID><![CDATA[FF80818132AF937F0132AF9E94FF0013]]></AD_TABLE_ID>
 <!--FF80818132AF937F0132AFA84F97003A-->  <AD_WINDOW_ID><![CDATA[E547CE89D4C04429B6340FFA44E70716]]></AD_WINDOW_ID>
 <!--FF80818132AF937F0132AFA84F97003A-->  <SEQNO><![CDATA[50]]></SEQNO>
@@ -15674,7 +15682,7 @@ AND @MaterialMgmtShipmentInOut.businessPartner@ = e.orderLine.salesOrder.busines
 <!--FF80818132AFC4050132AFC7F94A000A-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--FF80818132AFC4050132AFC7F94A000A-->  <NAME><![CDATA[Used Credit Source]]></NAME>
 <!--FF80818132AFC4050132AFC7F94A000A-->  <DESCRIPTION><![CDATA[Tracks the places where the credit payment is used]]></DESCRIPTION>
-<!--FF80818132AFC4050132AFC7F94A000A-->  <HELP><![CDATA[A credit payment can be used in several payments. This table tracks the places where the credit has been used]]></HELP>
+<!--FF80818132AFC4050132AFC7F94A000A-->  <HELP><![CDATA[A credit payment can be used to settle more that one document payment. This table tracks the documents where a credit payment has been used]]></HELP>
 <!--FF80818132AFC4050132AFC7F94A000A-->  <AD_TABLE_ID><![CDATA[FF80818132AF937F0132AF9E94FF0013]]></AD_TABLE_ID>
 <!--FF80818132AFC4050132AFC7F94A000A-->  <AD_WINDOW_ID><![CDATA[6F8F913FA60F4CBD93DC1D3AA696E76E]]></AD_WINDOW_ID>
 <!--FF80818132AFC4050132AFC7F94A000A-->  <SEQNO><![CDATA[50]]></SEQNO>

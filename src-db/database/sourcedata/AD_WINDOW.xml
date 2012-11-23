@@ -366,7 +366,7 @@
 <!--125-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--125-->  <NAME><![CDATA[General Ledger Configuration]]></NAME>
 <!--125-->  <DESCRIPTION><![CDATA[Create and edit general ledger including dimensions and default accounts.]]></DESCRIPTION>
-<!--125-->  <HELP><![CDATA[Accounting configuration.]]></HELP>
+<!--125-->  <HELP><![CDATA[The general ledger configuration drives the way that the organization's financial transactions are going to be posted to the ledger.]]></HELP>
 <!--125-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--125-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--125-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -435,7 +435,7 @@
 <!--132-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--132-->  <NAME><![CDATA[G/L Journal]]></NAME>
 <!--132-->  <DESCRIPTION><![CDATA[Create and edit manual G/L journal entries.]]></DESCRIPTION>
-<!--132-->  <HELP><![CDATA[General Ledger journals allow to manually enter and post accounting entries including "opening" balance accounts ones.]]></HELP>
+<!--132-->  <HELP><![CDATA[A G/L (General Ledger) journal allows to post journal entries to the ledger.]]></HELP>
 <!--132-->  <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
 <!--132-->  <ISSOTRX><![CDATA[N]]></ISSOTRX>
 <!--132-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -590,7 +590,7 @@
 <!--143-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--143-->  <NAME><![CDATA[Sales Order]]></NAME>
 <!--143-->  <DESCRIPTION><![CDATA[Create orders tracking product sales to customers.]]></DESCRIPTION>
-<!--143-->  <HELP><![CDATA[Create orders tracking product sales to customers.]]></HELP>
+<!--143-->  <HELP><![CDATA[A sales order is a document that specifies products and/or services ordered by a specific business partner (customer), as well as the price and terms and conditions. ]]></HELP>
 <!--143-->  <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
 <!--143-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--143-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -727,7 +727,7 @@
 <!--153-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--153-->  <NAME><![CDATA[Account Combination]]></NAME>
 <!--153-->  <DESCRIPTION><![CDATA[Create accounting combinations to be used in Openbravo's accounting process.]]></DESCRIPTION>
-<!--153-->  <HELP><![CDATA[An account combination is an account (subaccount) of a given accounting schema associated to a given organization. ]]></HELP>
+<!--153-->  <HELP><![CDATA[An account combination is an Organization's General Ledger account.]]></HELP>
 <!--153-->  <WINDOWTYPE><![CDATA[Q]]></WINDOWTYPE>
 <!--153-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--153-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -761,7 +761,7 @@
 <!--162-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--162-->  <NAME><![CDATA[Accounting Transaction Details]]></NAME>
 <!--162-->  <DESCRIPTION><![CDATA[View detailed general ledger entries for a specified time period.]]></DESCRIPTION>
-<!--162-->  <HELP><![CDATA[Openbravo has an integrated accounting system that combines financial and analytical accounting. Each accounting type exploits a set of accounting dimensions.]]></HELP>
+<!--162-->  <HELP><![CDATA[The accounting transaction details window is a detailed list of every ledger entry of a general ledger.]]></HELP>
 <!--162-->  <WINDOWTYPE><![CDATA[Q]]></WINDOWTYPE>
 <!--162-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--162-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -812,7 +812,7 @@
 <!--167-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--167-->  <NAME><![CDATA[Sales Invoice]]></NAME>
 <!--167-->  <DESCRIPTION><![CDATA[Create and edit sales invoices for your customers.]]></DESCRIPTION>
-<!--167-->  <HELP><![CDATA[Create and edit sales invoices for your customers.]]></HELP>
+<!--167-->  <HELP><![CDATA[Sales invoice window allows to issue and manage customer's invoices.]]></HELP>
 <!--167-->  <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
 <!--167-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--167-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -913,7 +913,7 @@
 <!--183-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--183-->  <NAME><![CDATA[Purchase Invoice]]></NAME>
 <!--183-->  <DESCRIPTION><![CDATA[Purchase invoice window allows to register and manage suppliers invoices.]]></DESCRIPTION>
-<!--183-->  <HELP><![CDATA[Purchase invoice window allows to register and manage suppliers invoices.]]></HELP>
+<!--183-->  <HELP><![CDATA[Purchase invoice window allows to register and manage supplier's invoices.]]></HELP>
 <!--183-->  <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
 <!--183-->  <ISSOTRX><![CDATA[N]]></ISSOTRX>
 <!--183-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -2641,7 +2641,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--1B7B3BB7FEAF41ED8D9727AB98779D3C-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1B7B3BB7FEAF41ED8D9727AB98779D3C-->  <NAME><![CDATA[Payment Proposal]]></NAME>
 <!--1B7B3BB7FEAF41ED8D9727AB98779D3C-->  <DESCRIPTION><![CDATA[Generates a payment proposal for a selected payment method based on a criteria.]]></DESCRIPTION>
-<!--1B7B3BB7FEAF41ED8D9727AB98779D3C-->  <HELP><![CDATA[A mechanism by which a user can make payment by selecting scheduled payment events for a particular payment method by due date. The system "proposes" what should be paid based on the selection criteria provided by the user.]]></HELP>
+<!--1B7B3BB7FEAF41ED8D9727AB98779D3C-->  <HELP><![CDATA[The payment proposal is a tool that helps the user to make payments by selecting the documents related to a given payment method or scheduled to be paid before a given due date. The system proposes what should be paid based on the selection criteria provided by the user.]]></HELP>
 <!--1B7B3BB7FEAF41ED8D9727AB98779D3C-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--1B7B3BB7FEAF41ED8D9727AB98779D3C-->  <ISSOTRX><![CDATA[N]]></ISSOTRX>
 <!--1B7B3BB7FEAF41ED8D9727AB98779D3C-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -2751,7 +2751,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--3E945A9102144C16BD211D211089C2DF-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--3E945A9102144C16BD211D211089C2DF-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--3E945A9102144C16BD211D211089C2DF-->  <NAME><![CDATA[Costing Rules]]></NAME>
-<!--3E945A9102144C16BD211D211089C2DF-->  <HELP><![CDATA[Costing Rules are rules to be applied during cost calculation. Each rule has a valid from date and sets the costing algorithm to be used and the dimensions that are desired to apply.]]></HELP>
+<!--3E945A9102144C16BD211D211089C2DF-->  <HELP><![CDATA[A costing rule is applied during cost calculation. Each rule needs to have a costing algorithm and a valid from date. Costing rules can also be defined in a way that the costs are calculated by warehouse.]]></HELP>
 <!--3E945A9102144C16BD211D211089C2DF-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--3E945A9102144C16BD211D211089C2DF-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--3E945A9102144C16BD211D211089C2DF-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -2862,6 +2862,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--6F8F913FA60F4CBD93DC1D3AA696E76E-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--6F8F913FA60F4CBD93DC1D3AA696E76E-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--6F8F913FA60F4CBD93DC1D3AA696E76E-->  <NAME><![CDATA[Payment Out]]></NAME>
+<!--6F8F913FA60F4CBD93DC1D3AA696E76E-->  <HELP><![CDATA[Supplier's payments and prepayments can be made and manage in the payment out window.]]></HELP>
 <!--6F8F913FA60F4CBD93DC1D3AA696E76E-->  <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
 <!--6F8F913FA60F4CBD93DC1D3AA696E76E-->  <ISSOTRX><![CDATA[N]]></ISSOTRX>
 <!--6F8F913FA60F4CBD93DC1D3AA696E76E-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -3122,7 +3123,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--E547CE89D4C04429B6340FFA44E70716-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--E547CE89D4C04429B6340FFA44E70716-->  <NAME><![CDATA[Payment In]]></NAME>
 <!--E547CE89D4C04429B6340FFA44E70716-->  <DESCRIPTION><![CDATA[Window to manage the payments done by customers ]]></DESCRIPTION>
-<!--E547CE89D4C04429B6340FFA44E70716-->  <HELP><![CDATA[Window to manage the payments done by customers]]></HELP>
+<!--E547CE89D4C04429B6340FFA44E70716-->  <HELP><![CDATA[Customer's payments and prepayments received can be recorded and managed in the payment in window.]]></HELP>
 <!--E547CE89D4C04429B6340FFA44E70716-->  <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
 <!--E547CE89D4C04429B6340FFA44E70716-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--E547CE89D4C04429B6340FFA44E70716-->  <PROCESSING><![CDATA[N]]></PROCESSING>

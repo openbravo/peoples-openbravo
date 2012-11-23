@@ -470,6 +470,7 @@
           v_QtyOrdered NUMBER;
           v_QuantityOrder NUMBER;
           v_linenetamt NUMBER;
+          v_linegrossamt NUMBER;
           v_ProductUOM M_PRODUCT_UOM.C_UOM_ID%TYPE;
       BEGIN
 
@@ -479,7 +480,7 @@
           -- Cancel undelivered Items
           IF (v_isSoTrx='Y') THEN --Sales orders
             FOR Cur_Inventory IN (
-              SELECT QtyInvoiced, QtyDelivered ,QtyOrdered, QuantityOrder, priceactual,
+              SELECT QtyInvoiced, QtyDelivered ,QtyOrdered, QuantityOrder, priceactual, gross_unit_price,
 	      
 	      C_ORDERLINE_ID AS ID,
 	      M_Product_ID,
@@ -498,8 +499,8 @@
             )
             LOOP
               v_QtyOrdered := CASE WHEN (Cur_Inventory.QtyDelivered < 0) THEN LEAST(Cur_Inventory.QtyDelivered, Cur_Inventory.QtyInvoiced) ELSE GREATEST(Cur_Inventory.QtyDelivered, Cur_Inventory.QtyInvoiced) END;
-              v_linenetamt := ROUND((CASE WHEN (Cur_Inventory.QtyDelivered < 0) THEN LEAST(Cur_Inventory.QtyDelivered, Cur_Inventory.QtyInvoiced) ELSE GREATEST(Cur_Inventory.QtyDelivered, Cur_Inventory.QtyInvoiced) END) * Cur_Inventory.priceactual,
-                    C_GET_CURRENCY_PRECISION(Cur_Inventory.C_Currency_ID, 'A'));
+              v_linenetamt := ROUND(v_QtyOrdered * Cur_Inventory.priceactual, C_GET_CURRENCY_PRECISION(Cur_Inventory.C_Currency_ID, 'A'));
+              v_linegrossamt := ROUND(v_QtyOrdered * Cur_Inventory.gross_unit_price, C_GET_CURRENCY_PRECISION(Cur_Inventory.C_Currency_ID, 'A'));
               SELECT MAX(UOM.C_UOM_ID)
               INTO v_ProductUOM
               FROM M_PRODUCT_UOM UOM 
@@ -517,6 +518,7 @@
               UPDATE C_ORDERLINE
               SET QtyOrdered=v_QtyOrdered,
                 linenetamt=v_linenetamt,
+                line_gross_amount=v_linegrossamt,
                 QuantityOrder=v_QuantityOrder,
                 Updated=now()
               WHERE C_ORDERLINE_ID = Cur_Inventory.ID;
@@ -534,6 +536,7 @@
                 QtyOrdered,
                 QuantityOrder,
 		priceactual,
+		gross_unit_price,
 		linenetamt,
                 C_ORDERLINE_ID AS ID,
 	        M_Product_ID,
@@ -560,8 +563,8 @@
             )
             LOOP
               v_QtyOrdered := COALESCE(CASE WHEN (Cur_Inventory.QtyDelivered < 0) THEN LEAST(Cur_Inventory.QtyDelivered, Cur_Inventory.QtyInvoiced) ELSE GREATEST(Cur_Inventory.QtyDelivered, Cur_Inventory.QtyInvoiced) END, 0);
-              v_linenetamt := ROUND(COALESCE((CASE WHEN (Cur_Inventory.QtyDelivered < 0) THEN LEAST(Cur_Inventory.QtyDelivered, Cur_Inventory.QtyInvoiced) ELSE GREATEST(Cur_Inventory.QtyDelivered, Cur_Inventory.QtyInvoiced) END), 0) * Cur_Inventory.priceactual,
-                    C_GET_CURRENCY_PRECISION(Cur_Inventory.C_Currency_ID, 'A'));
+              v_linenetamt := ROUND(COALESCE(v_QtyOrdered, 0) * Cur_Inventory.priceactual, C_GET_CURRENCY_PRECISION(Cur_Inventory.C_Currency_ID, 'A'));
+              v_linegrossamt := ROUND(COALESCE(v_QtyOrdered, 0) * Cur_Inventory.gross_unit_price, C_GET_CURRENCY_PRECISION(Cur_Inventory.C_Currency_ID, 'A'));
               SELECT MAX(UOM.C_UOM_ID)
               INTO v_ProductUOM
               FROM M_PRODUCT_UOM UOM 
@@ -578,6 +581,7 @@
               UPDATE C_ORDERLINE
               SET QtyOrdered=v_QtyOrdered,
                 linenetamt=v_linenetamt,
+                line_gross_amount=v_linegrossamt,
                 QuantityOrder=v_QuantityOrder,
                 Updated=now()
               WHERE C_ORDERLINE_ID = Cur_Inventory.ID;

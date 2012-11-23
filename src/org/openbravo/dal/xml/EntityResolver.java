@@ -24,6 +24,7 @@ import static org.openbravo.model.common.enterprise.Organization.PROPERTY_CLIENT
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -418,6 +419,7 @@ public class EntityResolver implements OBNotSingleton {
 
   private List<RefDataLoaded> getRefLoadedsUsingSql(String id, Entity entity, String orgId,
       boolean filterByClient) {
+    PreparedStatement ps = null;
     try {
       String st = "Select specific_id, generic_id, ad_client_id, ad_org_id from ad_ref_data_loaded where ad_client_id in ('"
           + client.getId()
@@ -425,7 +427,7 @@ public class EntityResolver implements OBNotSingleton {
           + id
           + "' and ad_table_id='"
           + entity.getTableId() + "'";
-      PreparedStatement ps = new DalConnectionProvider(false).getPreparedStatement(st);
+      ps = new DalConnectionProvider(false).getPreparedStatement(st);
       ps.execute();
       ResultSet rs = ps.getResultSet();
       List<RefDataLoaded> refDataLoadeds = new ArrayList<EntityResolver.RefDataLoaded>();
@@ -440,6 +442,12 @@ public class EntityResolver implements OBNotSingleton {
       return refDataLoadeds;
     } catch (Exception e) {
       throw new OBException("Error while accessing the ad_ref_data_loaded table", e);
+    } finally {
+      try {
+        ps.close();
+      } catch (SQLException se) {
+        // won't happen
+      }
     }
   }
 

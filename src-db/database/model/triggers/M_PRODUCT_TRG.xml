@@ -57,7 +57,7 @@ BEGIN
   
  -- Do not allow to de-activate products with OnHand Qty
  -- or Change the attribute set
-  IF ((:new.IsActive='N' AND :old.IsActive='Y') OR (COALESCE(:new.m_attributeset_id,'null') <> COALESCE(:old.m_attributeset_id,'null'))) THEN
+  IF ((:new.IsActive='N' AND :old.IsActive='Y') OR (COALESCE(:new.m_attributeset_id,'null') <> COALESCE(:old.m_attributeset_id,'null')) OR (COALESCE(:new.c_uom_id,'null') <> COALESCE(:old.c_uom_id,'null'))) THEN
    SELECT  COALESCE(SUM(QtyOnHand)+SUM(QtyReserved)*.111+SUM(QtyOrdered)*999, 0) INTO v_ControlNo
    FROM (SELECT QtyOnHand, 0 AS QtyReserved, 0 AS QtyOrdered
    FROM M_Storage_Detail s
@@ -67,7 +67,13 @@ BEGIN
    FROM M_Storage_Pending s
    WHERE s.M_Product_ID=:new.M_Product_ID) A;
    IF (v_ControlNo <> 0) THEN
-    RAISE_APPLICATION_ERROR(-20000, '@20400@');
+    IF (COALESCE(:new.m_attributeset_id,'null') <> COALESCE(:old.m_attributeset_id,'null')) THEN
+      RAISE_APPLICATION_ERROR(-20000, '@20633@');
+    ELSIF (COALESCE(:new.c_uom_id,'null') <> COALESCE(:old.c_uom_id,'null')) THEN
+      RAISE_APPLICATION_ERROR(-20000, '@20634@');
+    ELSE
+      RAISE_APPLICATION_ERROR(-20000, '@20400@');
+    END IF;
    END IF;
   END IF;
 	

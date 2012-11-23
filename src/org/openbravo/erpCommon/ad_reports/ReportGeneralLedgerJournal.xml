@@ -48,7 +48,6 @@
   <PARAMETER id="posted" name="posted" attribute="value" default=""/>
   <PARAMETER id="paramPageNo" name="inpPageNo" attribute="value" default="1"/>
   <PARAMETER id="paramEntryNo" name="inpEntryNo" attribute="value" default="1"/>
-  <PARAMETER id="paramInitialBalance" name="inpInitialBalance" format="euroEdition" attribute="value" default="0"/>
   <PARAMETER id="fieldCheck" name="check" default="Y"/>
   <PARAMETER id="paramShowRegular" name="showRegular" boolean="checked" withId="fieldCheck"/>
   <PARAMETER id="paramShowClosing" name="showClosing" boolean="checked" withId="fieldCheck"/>

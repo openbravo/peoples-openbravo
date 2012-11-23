@@ -197,8 +197,8 @@
               v_PercentageGeneral:=v_AMORTIZATIONPERCENTAGE;
               v_UseLifeYears:=ceil(100/v_PercentageGeneral) ;
             else
-              --  v_PercentageGeneral := 100 / v_USELIFEYEARS;
-              v_PercentageGeneral:=((v_AMORTIZATIONVALUEAMT-v_DEPRECIATEDPREVIOUSAMT-v_depreciatedPlan) *100/v_AMORTIZATIONVALUEAMT) /(v_USELIFEYEARS-v_DepreciatedLines) ;
+              v_PercentageGeneral := (100-(v_depreciatedPlan*100/(v_AMORTIZATIONVALUEAMT-v_DEPRECIATEDPREVIOUSAMT))) / (v_USELIFEYEARS-v_DepreciatedLines);
+              --v_PercentageGeneral:=((v_AMORTIZATIONVALUEAMT-v_DEPRECIATEDPREVIOUSAMT-v_depreciatedPlan) *100/v_AMORTIZATIONVALUEAMT) /(v_USELIFEYEARS-v_DepreciatedLines) ;
               SELECT to_number(TO_DATE(ADD_MONTHS(v_AMORTIZATIONSTARTDATE, 12*v_USELIFEYEARS)) - v_AMORTIZATIONSTARTDATE)
               INTO v_TOTAL_DAYS
               FROM DUAL;
@@ -260,7 +260,7 @@
                 v_PERCENTAGE:=100 - v_PERCENTAGE;
                 finish:=true;
               ELSE
-                v_AMOUNT:=(v_AMORTIZATIONVALUEAMT+ v_DEPRECIATEDPREVIOUSAMT) *v_PERCENTAGE/100;
+                v_AMOUNT:=(v_AMORTIZATIONVALUEAMT) *v_PERCENTAGE/100;
               END IF;  
               if v_percentage>0 then
                 Ad_Sequence_Next('A_Amortizationline', '1000000', v_AMORTIZATIONLINE) ;
