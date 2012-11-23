@@ -594,8 +594,12 @@
         disc.displayedTotalAmount = disc.amt || discount.actualAmt;
       }
 
+      if (discount.percentage) {
+        disc.percentage = discount.percentage;
+      }
+
       disc.applyNext = rule.get('applyNext');
-      disc._idx = rule.get('_idx');
+      disc._idx = discount._idx || rule.get('_idx');
 
       for (i = 0; i < promotions.length; i++) {
         if (disc._idx !== -1 && disc._idx < promotions[i]._idx) {

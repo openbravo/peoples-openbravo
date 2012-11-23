@@ -175,22 +175,26 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
 
   preAction: function (evt) {
     var line = evt.get('line'),
-        manualPromotions, appliedPromotions, i;
+        manualPromotions, appliedPromotions, override = false;
 
     // Keep discretionary discounts to be applied afterfwards
     appliedPromotions = line.get('promotions');
     if (appliedPromotions) {
-      for (i = 0; i < appliedPromotions.length; i++) {
-        if (appliedPromotions[i].manual) {
-          if (appliedPromotions[i].override) {
+      _.forEach(appliedPromotions, function (promotion) {
+        if (promotion.manual) {
+          if (promotion.override) {
             // only one overriding line allowed, keep it and exit
-            return;
+            override = true;
           } else {
             manualPromotions = manualPromotions || [];
-            manualPromotions.push(appliedPromotions[i]);
+            manualPromotions.push(promotion);
           }
         }
-      }
+      });
+    }
+
+    if (override) {
+      return;
     }
 
     line.set({
@@ -203,18 +207,27 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
 
   postAction: function (evt) {
     var line = evt.get('line'),
-        promotions = line.get('promotions'),
-        i, rule;
+        promotions, rule, manualPromotions;
 
+    promotions = line.get('promotions') || [];
+    manualPromotions = line.get('manualPromotions');
+    if (manualPromotions) {
+      _.forEach(manualPromotions, function (p) {
+        promotions.push(p);
+      });
+      line.set('manualPromotions', null);
+    }
+
+    line.set('promotions', promotions);
     if (promotions) {
-      for (i = 0; i < promotions.length; i++) {
-        if (promotions[i].manual) {
-          rule = OB.Model.Discounts.discountRules[promotions[i].discountType];
+      _.forEach(promotions, function (promotion) {
+        if (promotion.manual) {
+          rule = OB.Model.Discounts.discountRules[promotion.discountType];
           if (rule && rule.recalculate) {
-            rule.recalculate(line, promotions[i]);
+            rule.recalculate(line, promotion);
           }
         }
-      }
+      });
     }
 
     evt.get('receipt').calculateGross();

@@ -43,14 +43,14 @@
     },
 
     addManualPromotion: function (receipt, lines, promotion) {
-      var rule = OB.Model.Discounts.discountRules[promotion.discountType];
+      var rule = OB.Model.Discounts.discountRules[promotion.rule.get('discountType')];
       if (!rule || !rule.addManual) {
         window.console.warn('No manual implemetation for rule ' + promotion.discountType);
         return;
       }
 
       lines.forEach(function (line) {
-        if (promotion.override) {
+        if (promotion.definition.override) {
           line.set('promotions', null);
         }
         rule.addManual(receipt, line, promotion);
