@@ -37,6 +37,15 @@ import org.openbravo.scheduling.ProcessContext;
  */
 public abstract class DalBaseProcess implements Process {
   private static final Logger log = Logger.getLogger(DalBaseProcess.class);
+  private boolean doCommit = true;
+
+  public boolean isDoCommit() {
+    return doCommit;
+  }
+
+  public void setDoCommit(boolean doCommit) {
+    this.doCommit = doCommit;
+  }
 
   /**
    * Is called by the process scheduler. The execute method sets the usercontext and does
@@ -75,10 +84,12 @@ public abstract class DalBaseProcess implements Process {
         }
 
       } else {
-        if (bundle.getCloseConnection()) {
-          OBDal.getInstance().commitAndClose();
-        } else {
-          bundle.getConnection().releaseCommitConnection(bundle.getConnection().getConnection());
+        if (isDoCommit()) {
+          if (bundle.getCloseConnection()) {
+            OBDal.getInstance().commitAndClose();
+          } else {
+            bundle.getConnection().releaseCommitConnection(bundle.getConnection().getConnection());
+          }
         }
 
       }

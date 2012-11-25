@@ -1362,7 +1362,6 @@ NOTE: You will not be able to close the fiscal year if you close all its periods
 <!--188-->  <HELP><![CDATA[Process Batch]]></HELP>
 <!--188-->  <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
 <!--188-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--188-->  <PROCEDURENAME><![CDATA[GL_JournalBatch_Post]]></PROCEDURENAME>
 <!--188-->  <ISREPORT><![CDATA[N]]></ISREPORT>
 <!--188-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
 <!--188-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
