@@ -189,7 +189,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.OBPOSPointOfSale.UI.Discounts.btnDiscountsApply',
-  style: 'color: orange;',
+  style: 'color: orange; font-weight: bold;',
   content: OB.I18N.getLabel('OBPOS_LblApply'),
   events: {
     onApplyDiscounts: ''
@@ -223,7 +223,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.Discounts.btnDiscountsCancel',
   kind: 'OB.UI.ModalDialogButton',
-  style: 'color: orange;',
+  style: 'color: orange; font-weight: bold;',
   events: {
     onDiscountsClose: ''
   },
