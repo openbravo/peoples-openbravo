@@ -88,9 +88,6 @@
           if (!promotions[i].applyNext) {
             return true;
           }
-          if (promotions[i].manual && promotions[i].override) {
-            return true;
-          }
         }
       }
       return false;
@@ -584,8 +581,7 @@
       disc.pack = discount.pack;
       disc.discountType = rule.get('discountType');
       disc.manual = discount.manual;
-      disc.override = discount.override;
-      disc.userAmt = discount.userAmt; 
+      disc.userAmt = discount.userAmt;
 
       disc.hidden = discount.hidden === true || (discount.actualAmt && !disc.amt);
 
@@ -599,7 +595,11 @@
         disc.percentage = discount.percentage;
       }
 
-      disc.applyNext = rule.get('applyNext');
+      if (typeof discount.applyNext !== 'undefined') {
+        disc.applyNext = discount.applyNext;
+      } else {
+        disc.applyNext = rule.get('applyNext');
+      }
       disc._idx = discount._idx || rule.get('_idx');
 
       for (i = 0; i < promotions.length; i++) {

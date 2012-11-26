@@ -202,7 +202,7 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
 
         definition: {
           userAmt: promo.userAmt,
-          override: promo.override
+          applyNext: promo.applyNext
         },
         alreadyCalculated: true // to prevent loops
       };

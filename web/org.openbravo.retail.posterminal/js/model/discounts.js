@@ -50,9 +50,6 @@
       }
 
       lines.forEach(function (line) {
-        if (promotion.definition.override) {
-          line.set('promotions', null);
-        }
         rule.addManual(receipt, line, promotion);
       });
 
