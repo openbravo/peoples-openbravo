@@ -608,6 +608,12 @@ div.dropdown-menuitem {
   cursor: pointer;
 }
 
+.disabled > div.dropdown-menuitem,
+.disabled > div.dropdown-menuitem:hover{
+  background-color: #EBEBEB;
+  cursor: default;
+}
+
 div.dropdown-menuitem:hover {
   background-color: #E1E1E1;
 }

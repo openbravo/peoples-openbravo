@@ -221,42 +221,43 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.MenuDiscounts',
   kind: 'OB.UI.MenuAction',
-  //TODO
-  permission: 'OBPOS_receipt.createorderfromquotation',
+  permission: 'OBPOS_retail.advDiscounts',
   events: {
     onDiscountsMode: ''
   },
   //TODO
   label: 'Ticket discounts',
   tap: function () {
-    this.parent.hide(); // Manual dropdown menu closure
-    this.doDiscountsMode({
-      tabPanel: 'edit',
-      keyboard: 'toolbardiscounts',
-      edit: false,
-      options: {
-        discounts: true
-      }
-    });
+    if (!this.isDisabled){
+      this.parent.hide(); // Manual dropdown menu closure
+      this.doDiscountsMode({
+        tabPanel: 'edit',
+        keyboard: 'toolbardiscounts',
+        edit: false,
+        options: {
+          discounts: true
+        }
+      }); 
+    }
   },
   init: function (model) {
     var me = this;
     this.receipt = model.get('order');
-    this.hide();
+    me.setDisabled(true);
     this.receipt.get('lines').on('all', function () {
       if (this.receipt.get('lines').length > 0) {
-        //        OB.Dal.find(OB.Model.Discount, {
-        //          _whereClause: "where m_offer_type_id in ('D1D193305A6443B09B299259493B272A', '20E4EC27397344309A2185097392D964', '7B49D8CC4E084A75B7CB4D85A6A3A578', '8338556C0FBF45249512DB343FEFD280')"
-        //        }, function (promos) {
-        //          if (promos.length > 0) {
-        //            me.show();
-        //          }
-        //        }, function () {
-        //          me.hide();
-        //        });
-        this.show();
+        OB.Dal.find(OB.Model.Discount, {
+          _whereClause: "where m_offer_type_id in ('D1D193305A6443B09B299259493B272A', '20E4EC27397344309A2185097392D964', '7B49D8CC4E084A75B7CB4D85A6A3A578', '8338556C0FBF45249512DB343FEFD280')"
+        }, function (promos) {
+          if (promos.length > 0) {
+            me.setDisabled(false);
+          }
+        }, function () {
+          me.setDisabled(true);
+        });
+        me.setDisabled(false);
       } else {
-        this.hide();
+        me.setDisabled(true);
       }
     }, this);
   }

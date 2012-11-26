@@ -20,15 +20,120 @@ enyo.kind({
     onDisableKeyboard: '',
     onDiscountsModeKeyboard: ''
   },
+  style: 'position:relative; background-color: orange; background-size: cover; color: white; height: 200px; margin: 5px; padding: 5px',
+  components: [{
+    components: [{
+      style: 'border: 1px solid #F0F0F0; background-color: #E2E2E2; color: black; width: 150px; height: 40px; float: left; text-align: right;',
+      components: [{
+        style: 'padding: 5px 8px 0px 0px; font-size: 15px;',
+        content: OB.I18N.getLabel('OBPOS_LineDiscount')
+      }]
+    }, {
+      style: 'border: 1px solid #F0F0F0; float: left;',
+      components: [{
+        kind: 'OB.UI.List',
+        name: 'discountsList',
+        tag: 'select',
+        onchange: 'discountChanged',
+        classes: 'modal-dialog-profile-combo',
+        renderEmpty: enyo.Control,
+        renderLine: enyo.kind({
+          kind: 'enyo.Option',
+          initComponents: function () {
+            this.setValue(this.model.get('id'));
+            this.setContent(this.model.get('_identifier'));
+            this.setContent(this.model.get('_identifier'));
+
+          }
+        })
+      }]
+    }]
+  }, {
+    style: 'clear: both'
+  }, {
+    components: [{
+      style: 'border: 1px solid #F0F0F0; background-color: #E2E2E2; color: black; width: 150px; height: 40px; float: left; text-align: right;',
+      components: [{
+        style: 'padding: 5px 8px 0px 0px; font-size: 15px;',
+        content: OB.I18N.getLabel('OBPOS_overridePromotions')
+      }]
+    }, {
+      style: 'border: 1px solid #F0F0F0; float: left;',
+      components: [{
+        classes: 'modal-dialog-profile-checkbox',
+        components: [{
+          kind: 'OB.OBPOSPointOfSale.UI.Discounts.btnCheckOverride',
+          name: 'checkOverride',
+          classes: 'modal-dialog-btn-check'
+        }]
+      }]
+    }]
+  }, {
+    style: 'clear: both'
+  }, {
+    components: [{
+      style: 'border: 1px solid #F0F0F0; background-color: #E2E2E2; color: black; width: 150px; height: 40px; float: left; text-align: right;',
+      components: [{
+        style: 'padding: 5px 8px 0px 0px; font-size: 15px;',
+        content: OB.I18N.getLabel('OBPOS_applyToAllLines')
+      }]
+    }, {
+      style: 'border: 1px solid #F0F0F0; float: left;',
+      components: [{
+        classes: 'modal-dialog-profile-checkbox',
+        components: [{
+          kind: 'OB.OBPOSPointOfSale.UI.Discounts.btnCheckAll',
+          name: 'checkSelectAll',
+          classes: 'modal-dialog-btn-check'
+        }]
+      }]
+    }]
+  }, {
+    style: 'clear: both'
+  }, {
+    style: 'padding: 10px;',
+    components: [{
+      style: 'text-align: center;',
+      components: [{
+        kind: 'OB.OBPOSPointOfSale.UI.Discounts.btnDiscountsApply',
+      }, {
+        kind: 'OB.OBPOSPointOfSale.UI.Discounts.btnDiscountsCancel',
+      }]
+    }]
+  }],
+  show: function () {
+    var me = this;
+    me.discounts.reset();
+    //load discounts
+    OB.Dal.find(OB.Model.Discount, {
+      _whereClause: "where m_offer_type_id in ('D1D193305A6443B09B299259493B272A', '20E4EC27397344309A2185097392D964', '7B49D8CC4E084A75B7CB4D85A6A3A578', '8338556C0FBF45249512DB343FEFD280')"
+    }, function (promos) {
+      me.discounts.reset(promos.models);
+      //set the keyboard for selected discount 
+      me.discountChanged({}, {
+        originator: me.$.discountsList
+      });
+    }, function () {
+      //show an error in combo
+      var tr;
+      me.discounts.reset();
+      tr = me.$.discountsList.createComponent({
+        kind: 'enyo.Option',
+        text: OB.I18N.getLabel('OBPOS_errorGettingDiscounts'),
+        value: 'error',
+        initComponents: function () {
+          this.setValue(this.value);
+          this.setContent(this.text);
+        }
+      });
+      tr.render();
+    });
+    this.inherited(arguments);
+  },
   disableKeyboard: function () {
     this.doDiscountsModeKeyboard({
       status: true,
       writable: false
-    });
-  },
-  discountsMode: function () {
-    this.doDiscountsModeKeyboard({
-      status: false
     });
   },
   enableKeyboard: function () {
@@ -40,29 +145,29 @@ enyo.kind({
   discountQtyChanged: function (inSender, inEvent) {
     this.$.qtyToDiscount.setContent(inEvent.qty);
   },
-  style: 'position:relative; background-color: orange; background-size: cover; color: white; height: 200px; margin: 5px; padding: 5px',
-  content: 'discounts',
-  components: [{
-    name: 'qtyToDiscount',
-  }, {
-    content: 'disc mode',
-    ontap: 'discountsMode'
-  }, {
-    content: 'disable',
-    ontap: 'disableKeyboard'
-  }, {
-    content: 'enable',
-    ontap: 'enableKeyboard'
-  }, {
-    kind: 'OB.OBPOSPointOfSale.UI.Discounts.btnCheckAll',
-    name: 'checkSelectAll'
-  }, {
-    components: [{
-      kind: 'OB.OBPOSPointOfSale.UI.Discounts.btnDiscountsApply',
-    }, {
-      kind: 'OB.OBPOSPointOfSale.UI.Discounts.btnDiscountsCancel',
-    }]
-  }],
+  initComponents: function () {
+    var discountsModel = Backbone.Collection.extend({
+      model: OB.Model.Discounts
+    });
+    this.inherited(arguments);
+
+    this.discounts = new discountsModel();
+    this.$.discountsList.setCollection(this.discounts);
+  },
+  discountChanged: function (inSender, inEvent) {
+    var selectedDiscount = inEvent.originator.collection.find(function (discount) {
+      if (discount.get('id') === inEvent.originator.getValue()) {
+        return true;
+      }
+    }, this);
+    if (selectedDiscount.get('discountType') === "8338556C0FBF45249512DB343FEFD280" || selectedDiscount.get('discountType') === "7B49D8CC4E084A75B7CB4D85A6A3A578") {
+      //no keyboard
+      this.disableKeyboard();
+    } else {
+      //enable keyboard
+      this.enableKeyboard();
+    }
+  },
   closingDiscounts: function (inSender, inEvent) {
     this.$.checkSelectAll.unCheck();
     this.doDiscountsModeFinished({
@@ -82,9 +187,10 @@ enyo.kind({
 });
 
 enyo.kind({
-  kind: 'OB.UI.Button',
+  kind: 'OB.UI.ModalDialogButton',
   name: 'OB.OBPOSPointOfSale.UI.Discounts.btnDiscountsApply',
-  content: 'apply',
+  style: 'color: orange;',
+  content: OB.I18N.getLabel('OBPOS_LblApply'),
   events: {
     onApplyDiscounts: ''
   },
@@ -109,12 +215,19 @@ enyo.kind({
 });
 
 enyo.kind({
+  kind: 'OB.UI.CheckboxButton',
+  name: 'OB.OBPOSPointOfSale.UI.Discounts.btnCheckOverride',
+  checked: false
+});
+
+enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.Discounts.btnDiscountsCancel',
+  kind: 'OB.UI.ModalDialogButton',
+  style: 'color: orange;',
   events: {
     onDiscountsClose: ''
   },
-  kind: 'OB.UI.Button',
-  content: 'cancel',
+  content: OB.I18N.getLabel('OBPOS_LblCancel'),
   tap: function () {
     this.doDiscountsClose();
   }

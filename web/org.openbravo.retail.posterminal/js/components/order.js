@@ -142,7 +142,6 @@ enyo.kind({
     }
   },
   allTicketLinesChecked: function (inSender, inEvent) {
-    debugger;
     if (inEvent.status) {
       this.order.get('lines').trigger('checkAll');
     } else {
