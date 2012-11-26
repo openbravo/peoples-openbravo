@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global enyo, Backbone*/
+/*global enyo, Backbone, _*/
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.Discounts',
   handlers: {
@@ -42,8 +42,15 @@ enyo.kind({
           initComponents: function () {
             this.setValue(this.model.get('id'));
             this.setContent(this.model.get('_identifier'));
-            this.setContent(this.model.get('_identifier'));
-
+            this.originalText = this.model.get('_identifier');
+            if (this.model.get('discountType') === 'D1D193305A6443B09B299259493B272A' || this.model.get('discountType') === '20E4EC27397344309A2185097392D964') {
+              this.requiresQty = true;
+              if (this.model.get('discountType') === '20E4EC27397344309A2185097392D964') {
+                this.units = '%';
+              } else {
+                this.units = OB.POS.modelterminal.get('terminal').currency$_identifier;
+              }
+            }
           }
         })
       }]
@@ -142,8 +149,17 @@ enyo.kind({
       writable: true
     });
   },
+  _searchSelectedComponent: function (selectedId) {
+    return _.find(this.$.discountsList.getComponents(), function (comp) {
+      if (comp.getValue() === selectedId) {
+        return true;
+      }
+    }, this);
+  },
   discountQtyChanged: function (inSender, inEvent) {
-    this.$.qtyToDiscount.setContent(inEvent.qty);
+    var comp = this._searchSelectedComponent(this.$.discountsList.getValue());
+    comp.setContent(comp.originalText + ' - ' + inEvent.qty + ' ' + comp.units);
+    comp.amt = inEvent.qty;
   },
   initComponents: function () {
     var discountsModel = Backbone.Collection.extend({
@@ -180,9 +196,25 @@ enyo.kind({
     });
   },
   applyDiscounts: function (inSender, inEvent) {
-    //get discount
-    //apply to order
+    var promotionToAplly = {},
+        comp = this._searchSelectedComponent(this.$.discountsList.getValue());
+    promotionToAplly.rule = comp.model;
+    promotionToAplly.definition = {};
+    promotionToAplly.definition.userAmt = comp.amt;
+    promotionToAplly.definition.applyNext = !this.$.checkOverride.checked;
+
+    if (comp.requiresQty && !comp.amt) {
+      console.log('error -> this discount requires a qty');
+      return true;
+    }
+
+    //TODO Get selected lines
+    OB.Model.Discounts.addManualPromotion(this.order, this.order.get('lines'), promotionToAplly);
+
     this.closingDiscounts();
+  },
+  init: function (model) {
+    this.order = model.get('order');
   }
 });
 
