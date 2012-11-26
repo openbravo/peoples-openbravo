@@ -93,6 +93,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="MANAGE_PRERESERVATION" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="M_CONDITION_GOODS" name="M_CONDITION_GOODS">
         <reference local="M_CONDITION_GOODS_ID" foreign="M_CONDITION_GOODS_ID"/>
       </foreign-key>

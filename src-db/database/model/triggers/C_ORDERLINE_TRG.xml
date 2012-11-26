@@ -41,7 +41,8 @@
   v_rate NUMBER;
   v_isSummary CHAR(1);
   xTaxAmt NUMBER:=0;
-  
+  v_reservation_id    VARCHAR2(32);
+  v_prereservedqty    NUMBER;
     
 BEGIN
     
@@ -72,6 +73,27 @@ IF (UPDATING) THEN
    RAISE_APPLICATION_ERROR(-20000, '@20201@' || ' ' || :old.QtyDelivered);
   ELSIF (:old.QtyInvoiced <> 0) THEN
    RAISE_APPLICATION_ERROR(-20000, '@20202@' || ' ' || :old.QtyInvoiced);
+  END IF;
+  -- Check if reservation exists to delete it first.
+  SELECT issotrx INTO v_IsSOTrx
+  FROM c_order
+  WHERE c_order_id = :old.c_order_id;
+  IF (v_issotrx = 'Y') THEN
+    SELECT count(*) INTO v_count
+    FROM m_reservation 
+    WHERE c_orderline_id = :OLD.c_orderline_id;
+    IF (v_count > 0) THEN
+      SELECT m_reservation_id INTO v_reservation_id
+      FROM m_reservation
+      WHERE c_orderline_id = :OLD.c_orderline_id;
+      DELETE FROM m_reservation_stock
+      WHERE m_reservation_id = v_reservation_id;
+      DELETE FROM m_reservation
+      WHERE m_reservation_id = v_reservation_id;
+    END IF;
+  ELSE
+    DELETE FROM m_reservation_stock
+    WHERE c_orderline_id = :OLD.c_orderline_id;
   END IF;
  ELSIF (UPDATING) THEN
    SELECT issotrx INTO v_IsSOTrx
