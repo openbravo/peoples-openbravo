@@ -228,7 +228,7 @@ enyo.kind({
   //TODO
   label: 'Ticket discounts',
   tap: function () {
-    if (!this.isDisabled){
+    if (!this.isDisabled) {
       this.parent.hide(); // Manual dropdown menu closure
       this.doDiscountsMode({
         tabPanel: 'edit',
@@ -237,7 +237,7 @@ enyo.kind({
         options: {
           discounts: true
         }
-      }); 
+      });
     }
   },
   init: function (model) {
@@ -461,7 +461,7 @@ enyo.kind({
     this.menuEntries.push({
       kind: 'OB.UI.MenuSeparator'
     });
-    
+
     this.menuEntries.push({
       kind: 'OB.UI.MenuDiscounts'
     });
@@ -469,7 +469,7 @@ enyo.kind({
     this.menuEntries.push({
       kind: 'OB.UI.MenuSeparator'
     });
-    
+
     this.menuEntries.push({
       kind: 'OB.UI.MenuReactivateQuotation'
     });
@@ -485,7 +485,7 @@ enyo.kind({
     this.menuEntries.push({
       kind: 'OB.UI.MenuQuotation'
     });
-    
+
     this.menuEntries.push({
       kind: 'OB.UI.MenuSeparator'
     });

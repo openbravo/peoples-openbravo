@@ -490,8 +490,8 @@ enyo.kind({
     style: 'padding: 12px 5px 12px 15px;',
     classes: 'dropdown-menuitem'
   }],
-  setDisabled: function(value){
-    if (value){
+  setDisabled: function (value) {
+    if (value) {
       this.addClass('disabled');
     } else {
       this.removeClass('disabled');
