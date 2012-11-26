@@ -190,6 +190,7 @@
         this.set('sendEmail', attributes.sendEmail);
         this.set('isPaid', attributes.isPaid);
         this.set('isEditable', attributes.isEditable);
+        this.set('openDrawer', attributes.openDrawer);
         _.each(_.keys(attributes), function (key) {
           if (!this.has(key)) {
             this.set(key, attributes[key]);
@@ -383,6 +384,7 @@
       this.set('sendEmail', false);
       this.set('isPaid', false);
       this.set('isEditable', true);
+      this.set('openDrawer', false);
     },
 
     clearWith: function (_order) {
@@ -851,6 +853,9 @@
           }
         }
       }
+      if (payment.get('openDrawer')) {
+        this.set('openDrawer', payment.get('openDrawer'));
+      }
       payments.add(payment);
       this.adjustPayment();
     },
@@ -858,6 +863,9 @@
     removePayment: function (payment) {
       var payments = this.get('payments');
       payments.remove(payment);
+      if (payment.get('openDrawer')) {
+        this.set('openDrawer', false);
+      }
       this.adjustPayment();
       this.save();
     },
@@ -956,6 +964,7 @@
       order.set('bp', OB.POS.modelterminal.get('businessPartner'));
       order.set('print', true);
       order.set('sendEmail', false);
+      order.set('openDrawer', false);
       return order;
     },
 

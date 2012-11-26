@@ -69,7 +69,8 @@ enyo.kind({
           'amount': amount,
           'rate': rate,
           'mulrate': mulrate,
-          'isocode': isocode
+          'isocode': isocode,
+          'openDrawer': paymentMethod.openDrawer
         }));
       }
     }
