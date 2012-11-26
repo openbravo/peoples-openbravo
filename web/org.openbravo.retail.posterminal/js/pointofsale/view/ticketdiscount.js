@@ -23,9 +23,9 @@ enyo.kind({
   style: 'position:relative; background-color: orange; background-size: cover; color: white; height: 200px; margin: 5px; padding: 5px',
   components: [{
     components: [{
-      style: 'border: 1px solid #F0F0F0; background-color: #E2E2E2; color: black; width: 150px; height: 40px; float: left; text-align: right;',
+      style: 'border: 1px solid #F0F0F0; background-color: #E2E2E2; color: black; width: 170px; height: 40px; float: left; text-align: left',
       components: [{
-        style: 'padding: 5px 8px 0px 0px; font-size: 15px;',
+        style: 'padding: 5px 8px 0px 3px;',
         content: OB.I18N.getLabel('OBPOS_LineDiscount')
       }]
     }, {
@@ -52,9 +52,9 @@ enyo.kind({
     style: 'clear: both'
   }, {
     components: [{
-      style: 'border: 1px solid #F0F0F0; background-color: #E2E2E2; color: black; width: 150px; height: 40px; float: left; text-align: right;',
+      style: 'border: 1px solid #F0F0F0; background-color: #E2E2E2; color: black; width: 170px; height: 40px; float: left; text-align: left',
       components: [{
-        style: 'padding: 5px 8px 0px 0px; font-size: 15px;',
+        style: 'padding: 5px 8px 0px 3px;',
         content: OB.I18N.getLabel('OBPOS_overridePromotions')
       }]
     }, {
@@ -72,9 +72,9 @@ enyo.kind({
     style: 'clear: both'
   }, {
     components: [{
-      style: 'border: 1px solid #F0F0F0; background-color: #E2E2E2; color: black; width: 150px; height: 40px; float: left; text-align: right;',
+      style: 'border: 1px solid #F0F0F0; background-color: #E2E2E2; color: black; width: 170px; height: 40px; float: left;  text-align: left',
       components: [{
-        style: 'padding: 5px 8px 0px 0px; font-size: 15px;',
+        style: 'padding: 5px 8px 0px 3px;',
         content: OB.I18N.getLabel('OBPOS_applyToAllLines')
       }]
     }, {
