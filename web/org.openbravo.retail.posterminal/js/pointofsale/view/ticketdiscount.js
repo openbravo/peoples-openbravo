@@ -11,92 +11,100 @@
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.Discounts',
   handlers: {
-    onApllyDiscounts: 'applyDiscounts',
+    onApplyDiscounts: 'applyDiscounts',
     onDiscountsClose: 'closingDiscounts',
-    onDiscountQtyChanged: 'discountQtyChanged'
+    onDiscountQtyChanged: 'discountQtyChanged',
+    onCheckedTicketLine: 'ticketLineChecked'
   },
   events: {
     onDiscountsModeFinished: '',
     onDisableKeyboard: '',
     onDiscountsModeKeyboard: ''
   },
+  checkedLines: [],
   style: 'position:relative; background-color: orange; background-size: cover; color: white; height: 200px; margin: 5px; padding: 5px',
   components: [{
+    kind: 'Scroller',
+    maxHeight: '130px',
+    thumb: true,
+    horizontal: 'hidden',
     components: [{
-      style: 'border: 1px solid #F0F0F0; background-color: #E2E2E2; color: black; width: 170px; height: 40px; float: left; text-align: left',
       components: [{
-        style: 'padding: 5px 8px 0px 3px;',
-        content: OB.I18N.getLabel('OBPOS_LineDiscount')
-      }]
-    }, {
-      style: 'border: 1px solid #F0F0F0; float: left;',
-      components: [{
-        kind: 'OB.UI.List',
-        name: 'discountsList',
-        tag: 'select',
-        onchange: 'discountChanged',
-        classes: 'modal-dialog-profile-combo',
-        renderEmpty: enyo.Control,
-        renderLine: enyo.kind({
-          kind: 'enyo.Option',
-          initComponents: function () {
-            this.setValue(this.model.get('id'));
-            this.setContent(this.model.get('_identifier'));
-            this.originalText = this.model.get('_identifier');
-            if (this.model.get('discountType') === 'D1D193305A6443B09B299259493B272A' || this.model.get('discountType') === '20E4EC27397344309A2185097392D964') {
-              this.requiresQty = true;
-              if (this.model.get('discountType') === '20E4EC27397344309A2185097392D964') {
-                this.units = '%';
-              } else {
-                this.units = OB.POS.modelterminal.get('terminal').currency$_identifier;
+        style: 'border: 1px solid #F0F0F0; background-color: #E2E2E2; color: black; width: 170px; height: 40px; float: left; text-align: left',
+        components: [{
+          style: 'padding: 5px 8px 0px 3px;',
+          content: OB.I18N.getLabel('OBPOS_LineDiscount')
+        }]
+      }, {
+        style: 'border: 1px solid #F0F0F0; float: left;',
+        components: [{
+          kind: 'OB.UI.List',
+          name: 'discountsList',
+          tag: 'select',
+          onchange: 'discountChanged',
+          classes: 'modal-dialog-profile-combo',
+          renderEmpty: enyo.Control,
+          renderLine: enyo.kind({
+            kind: 'enyo.Option',
+            initComponents: function () {
+              this.setValue(this.model.get('id'));
+              this.setContent(this.model.get('_identifier'));
+              this.originalText = this.model.get('_identifier');
+              if (this.model.get('discountType') === 'D1D193305A6443B09B299259493B272A' || this.model.get('discountType') === '20E4EC27397344309A2185097392D964') {
+                this.requiresQty = true;
+                if (this.model.get('discountType') === '20E4EC27397344309A2185097392D964') {
+                  this.units = '%';
+                } else {
+                  this.units = OB.POS.modelterminal.get('terminal').currency$_identifier;
+                }
               }
             }
-          }
-        })
-      }]
-    }]
-  }, {
-    style: 'clear: both'
-  }, {
-    components: [{
-      style: 'border: 1px solid #F0F0F0; background-color: #E2E2E2; color: black; width: 170px; height: 40px; float: left; text-align: left',
-      components: [{
-        style: 'padding: 5px 8px 0px 3px;',
-        content: OB.I18N.getLabel('OBPOS_overridePromotions')
-      }]
-    }, {
-      style: 'border: 1px solid #F0F0F0; float: left;',
-      components: [{
-        classes: 'modal-dialog-profile-checkbox',
-        components: [{
-          kind: 'OB.OBPOSPointOfSale.UI.Discounts.btnCheckOverride',
-          name: 'checkOverride',
-          classes: 'modal-dialog-btn-check'
+          })
         }]
       }]
-    }]
-  }, {
-    style: 'clear: both'
-  }, {
-    components: [{
-      style: 'border: 1px solid #F0F0F0; background-color: #E2E2E2; color: black; width: 170px; height: 40px; float: left;  text-align: left',
-      components: [{
-        style: 'padding: 5px 8px 0px 3px;',
-        content: OB.I18N.getLabel('OBPOS_applyToAllLines')
-      }]
     }, {
-      style: 'border: 1px solid #F0F0F0; float: left;',
+      style: 'clear: both'
+    }, {
       components: [{
-        classes: 'modal-dialog-profile-checkbox',
+        style: 'border: 1px solid #F0F0F0; background-color: #E2E2E2; color: black; width: 170px; height: 40px; float: left; text-align: left',
         components: [{
-          kind: 'OB.OBPOSPointOfSale.UI.Discounts.btnCheckAll',
-          name: 'checkSelectAll',
-          classes: 'modal-dialog-btn-check'
+          style: 'padding: 5px 8px 0px 3px;',
+          content: OB.I18N.getLabel('OBPOS_overridePromotions')
+        }]
+      }, {
+        style: 'border: 1px solid #F0F0F0; float: left;',
+        components: [{
+          classes: 'modal-dialog-profile-checkbox',
+          components: [{
+            kind: 'OB.OBPOSPointOfSale.UI.Discounts.btnCheckOverride',
+            name: 'checkOverride',
+            classes: 'modal-dialog-btn-check'
+          }]
         }]
       }]
+    }, {
+      style: 'clear: both'
+    }, {
+      components: [{
+        style: 'border: 1px solid #F0F0F0; background-color: #E2E2E2; color: black; width: 170px; height: 40px; float: left;  text-align: left',
+        components: [{
+          style: 'padding: 5px 8px 0px 3px;',
+          content: OB.I18N.getLabel('OBPOS_applyToAllLines')
+        }]
+      }, {
+        style: 'border: 1px solid #F0F0F0; float: left;',
+        components: [{
+          classes: 'modal-dialog-profile-checkbox',
+          components: [{
+            kind: 'OB.OBPOSPointOfSale.UI.Discounts.btnCheckAll',
+            name: 'checkSelectAll',
+            classes: 'modal-dialog-btn-check'
+          }]
+        }]
+      }]
+    }, {
+      style: 'clear: both'
     }]
-  }, {
-    style: 'clear: both'
   }, {
     style: 'padding: 10px;',
     components: [{
@@ -170,6 +178,14 @@ enyo.kind({
     this.discounts = new discountsModel();
     this.$.discountsList.setCollection(this.discounts);
   },
+  ticketLineChecked: function (inSender, inEvent) {
+    if (inEvent.allChecked) {
+      this.$.checkSelectAll.check();
+    } else {
+      this.$.checkSelectAll.unCheck();
+    }
+    this.checkedLines = inEvent.checkedLines;
+  },
   discountChanged: function (inSender, inEvent) {
     var selectedDiscount = inEvent.originator.collection.find(function (discount) {
       if (discount.get('id') === inEvent.originator.getValue()) {
@@ -197,19 +213,24 @@ enyo.kind({
   },
   applyDiscounts: function (inSender, inEvent) {
     var promotionToAplly = {},
-        comp = this._searchSelectedComponent(this.$.discountsList.getValue());
+        comp = this._searchSelectedComponent(this.$.discountsList.getValue()),
+        orderLinesCollection = new OB.Collection.OrderLineList();
     promotionToAplly.rule = comp.model;
     promotionToAplly.definition = {};
     promotionToAplly.definition.userAmt = comp.amt;
     promotionToAplly.definition.applyNext = !this.$.checkOverride.checked;
 
     if (comp.requiresQty && !comp.amt) {
+      //Show a modal pop up with the error
       console.log('error -> this discount requires a qty');
       return true;
     }
 
-    //TODO Get selected lines
-    OB.Model.Discounts.addManualPromotion(this.order, this.order.get('lines'), promotionToAplly);
+    _.each(this.checkedLines, function (line) {
+      orderLinesCollection.add(line);
+    });
+
+    OB.Model.Discounts.addManualPromotion(this.order, orderLinesCollection, promotionToAplly);
 
     this.closingDiscounts();
   },

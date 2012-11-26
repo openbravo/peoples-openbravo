@@ -17,6 +17,9 @@ enyo.kind({
     onChangeEditMode: 'changeEditMode',
     onCheckBoxBehaviorForTicketLine: 'checkBoxForTicketLines'
   },
+  events: {
+    onLineChecked: ''
+  },
   components: [{
     name: 'checkBoxColumn',
     kind: 'OB.UI.CheckboxButton',

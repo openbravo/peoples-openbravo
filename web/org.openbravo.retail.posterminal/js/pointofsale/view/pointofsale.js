@@ -55,7 +55,8 @@ enyo.kind({
     onDisableKeyboard: 'keyboardDisabled',
     onDiscountsModeKeyboard: 'keyboardOnDiscountsMode',
     onCheckAllTicketLines: 'allTicketLinesChecked',
-    onSetDiscountQty: 'discountQtyChanged'
+    onSetDiscountQty: 'discountQtyChanged',
+    onLineChecked: 'checkedLine'
   },
   events: {
     onShowPopup: ''
@@ -350,6 +351,12 @@ enyo.kind({
     this.model.get('order').resetOrderInvoice();
     this.model.get('orderList').saveCurrent();
     return true;
+  },
+  checkedLine: function (inSender, inEvent) {
+    if (inEvent.originator.kind === 'OB.UI.RenderOrderLine'){
+      this.waterfall('onCheckedTicketLine', inEvent);
+      return true; 
+    }
   },
   discountQtyChanged: function (inSender, inEvent) {
     this.waterfall('onDiscountQtyChanged', inEvent);

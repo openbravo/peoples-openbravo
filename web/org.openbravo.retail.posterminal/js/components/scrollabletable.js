@@ -266,25 +266,67 @@ enyo.kind({
       } else if (this.listStyle === 'checkboxlist') {
         var components = tr.getComponents();
         if (components.length === 1) {
-          components[0].$.checkBoxColumn.toggle();
+          if (components[0].$.checkBoxColumn.checked) {
+            model.trigger('uncheck', model);
+          } else {
+            model.trigger('check', model);
+          }
         }
       }
     }, this);
 
     model.on('check', function () {
       if (this.listStyle === 'checkboxlist') {
-        var components = tr.getComponents();
+        var components = tr.getComponents(),
+            allChecked = null,
+            checkedLines = [];
+
         if (components.length === 1) {
           components[0].$.checkBoxColumn.check();
+          tr.checked = true;
+
+          _.each(tr.getParent().getComponents(), function (comp) {
+            if (comp.checked) {
+              checkedLines.push(comp.getComponents()[0].model);
+              if (allChecked !== false) {
+                allChecked = true;
+              }
+            } else {
+              allChecked = false;
+            }
+          });
+
+          components[0].doLineChecked({
+            action: 'check',
+            line: model,
+            checkedLines: checkedLines,
+            allChecked: allChecked
+          });
         }
       }
     }, this);
 
     model.on('uncheck', function () {
       if (this.listStyle === 'checkboxlist') {
-        var components = tr.getComponents();
+        var components = tr.getComponents(),
+            checkedLines = [];
+
         if (components.length === 1) {
           components[0].$.checkBoxColumn.unCheck();
+          tr.checked = false;
+
+          _.each(tr.getParent().getComponents(), function (comp) {
+            if (comp.checked) {
+              checkedLines.push(comp.getComponents()[0].model);
+            }
+          });
+
+          components[0].doLineChecked({
+            action: 'uncheck',
+            line: model,
+            checkedLines: checkedLines,
+            allChecked: false
+          });
         }
       }
     }, this);
