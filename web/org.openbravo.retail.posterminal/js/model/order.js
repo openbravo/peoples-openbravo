@@ -575,7 +575,7 @@
           disc = {},
           i, replaced = false;
       disc.name = discount.name || rule.get('printName') || rule.get('name');
-      disc.ruleId = rule.id;
+      disc.ruleId = rule.id || rule.get('ruleId');
       disc.amt = discount.amt;
       disc.actualAmt = discount.actualAmt;
       disc.pack = discount.pack;
