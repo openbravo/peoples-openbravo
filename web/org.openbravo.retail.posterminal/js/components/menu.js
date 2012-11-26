@@ -461,6 +461,15 @@ enyo.kind({
     this.menuEntries.push({
       kind: 'OB.UI.MenuSeparator'
     });
+    
+    this.menuEntries.push({
+      kind: 'OB.UI.MenuDiscounts'
+    });
+
+    this.menuEntries.push({
+      kind: 'OB.UI.MenuSeparator'
+    });
+    
     this.menuEntries.push({
       kind: 'OB.UI.MenuReactivateQuotation'
     });
@@ -476,11 +485,7 @@ enyo.kind({
     this.menuEntries.push({
       kind: 'OB.UI.MenuQuotation'
     });
-
-    this.menuEntries.push({
-      kind: 'OB.UI.MenuDiscounts'
-    });
-
+    
     this.menuEntries.push({
       kind: 'OB.UI.MenuSeparator'
     });

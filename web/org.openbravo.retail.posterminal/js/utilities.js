@@ -261,6 +261,6 @@
     } else {
       return false;
     }
-  }
+  };
 
 }());

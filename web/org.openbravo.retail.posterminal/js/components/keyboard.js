@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global enyo, $, Backbone */
+/*global enyo, $, Backbone, _ */
 
 enyo.kind({
   name: 'OB.UI.Keyboard',

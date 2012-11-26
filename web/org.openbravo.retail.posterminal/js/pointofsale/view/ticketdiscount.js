@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global enyo */
+/*global enyo, Backbone*/
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.Discounts',
   handlers: {
@@ -95,9 +95,9 @@ enyo.kind({
     components: [{
       style: 'text-align: center;',
       components: [{
-        kind: 'OB.OBPOSPointOfSale.UI.Discounts.btnDiscountsApply',
+        kind: 'OB.OBPOSPointOfSale.UI.Discounts.btnDiscountsApply'
       }, {
-        kind: 'OB.OBPOSPointOfSale.UI.Discounts.btnDiscountsCancel',
+        kind: 'OB.OBPOSPointOfSale.UI.Discounts.btnDiscountsCancel'
       }]
     }]
   }],

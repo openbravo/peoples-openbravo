@@ -266,7 +266,7 @@ enyo.kind({
       } else if (this.listStyle === 'checkboxlist') {
         var components = tr.getComponents();
         if (components.length === 1) {
-          components[0].$['checkBoxColumn'].toggle();
+          components[0].$.checkBoxColumn.toggle();
         }
       }
     }, this);
@@ -275,7 +275,7 @@ enyo.kind({
       if (this.listStyle === 'checkboxlist') {
         var components = tr.getComponents();
         if (components.length === 1) {
-          components[0].$['checkBoxColumn'].check();
+          components[0].$.checkBoxColumn.check();
         }
       }
     }, this);
@@ -284,7 +284,7 @@ enyo.kind({
       if (this.listStyle === 'checkboxlist') {
         var components = tr.getComponents();
         if (components.length === 1) {
-          components[0].$['checkBoxColumn'].unCheck();
+          components[0].$.checkBoxColumn.unCheck();
         }
       }
     }, this);
