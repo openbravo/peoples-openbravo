@@ -175,61 +175,42 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
 
   preAction: function (evt) {
     var line = evt.get('line'),
-        manualPromotions, appliedPromotions, override = false;
+        order = evt.get('receipt'),
+        manualPromotions = [],
+        appliedPromotions;
 
-    // Keep discretionary discounts to be applied afterfwards
+    // Keep discretionary discounts at the beginning, recalculate them based on 
+    // new info in line
     appliedPromotions = line.get('promotions');
     if (appliedPromotions) {
       _.forEach(appliedPromotions, function (promotion) {
         if (promotion.manual) {
-          if (promotion.override) {
-            // only one overriding line allowed, keep it and exit
-            override = true;
-          } else {
-            manualPromotions = manualPromotions || [];
-            manualPromotions.push(promotion);
-          }
+          manualPromotions.push(promotion);
         }
       });
-    }
-
-    if (override) {
-      return;
     }
 
     line.set({
       promotions: null,
       discountedLinePrice: null,
-      promotionCandidates: null,
-      manualPromotions: manualPromotions
+      promotionCandidates: null
+    });
+
+    _.forEach(manualPromotions, function (promo) {
+      var promotion = {
+        rule: new Backbone.Model(promo),
+
+        definition: {
+          userAmt: promo.userAmt,
+          override: promo.override
+        },
+        alreadyCalculated: true // to prevent loops
+      };
+      OB.Model.Discounts.addManualPromotion(order, [line], promotion);
     });
   },
 
   postAction: function (evt) {
-    var line = evt.get('line'),
-        promotions, rule, manualPromotions;
-
-    promotions = line.get('promotions') || [];
-    manualPromotions = line.get('manualPromotions');
-    if (manualPromotions) {
-      _.forEach(manualPromotions, function (p) {
-        promotions.push(p);
-      });
-      line.set('manualPromotions', null);
-    }
-
-    line.set('promotions', promotions);
-    if (promotions) {
-      _.forEach(promotions, function (promotion) {
-        if (promotion.manual) {
-          rule = OB.Model.Discounts.discountRules[promotion.discountType];
-          if (rule && rule.recalculate) {
-            rule.recalculate(line, promotion);
-          }
-        }
-      });
-    }
-
     evt.get('receipt').calculateGross();
   }
 });

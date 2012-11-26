@@ -43,7 +43,7 @@
     },
 
     addManualPromotion: function (receipt, lines, promotion) {
-      var rule = OB.Model.Discounts.discountRules[promotion.rule.get('discountType')];
+      var rule = OB.Model.Discounts.discountRules[promotion.rule.get ? promotion.rule.get('discountType') : promotion.rule.discountType];
       if (!rule || !rule.addManual) {
         window.console.warn('No manual implemetation for rule ' + promotion.discountType);
         return;
@@ -56,8 +56,10 @@
         rule.addManual(receipt, line, promotion);
       });
 
-      // Recalculate all promotions again
-      OB.Model.Discounts.applyPromotions(receipt);
+      if (!promotion.alreadyCalculated) {
+        // Recalculate all promotions again
+        OB.Model.Discounts.applyPromotions(receipt);
+      }
     },
 
     registerRule: function (name, rule) {
