@@ -124,7 +124,7 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
         String strCTaxID = Tax.get(new DalConnectionProvider(false), ordLine.getProduct().getId(),
             dateFormat.format(new Date()), ordLine.getOrganization().getId(), ordLine
                 .getWarehouse().getId(), ordLine.getSalesOrder().getInvoiceAddress().getId(),
-            ordLine.getSalesOrder().getInvoiceAddress().getId(), strProjectID, true);
+            ordLine.getSalesOrder().getPartnerAddress().getId(), strProjectID, true);
         TaxRate lineTax = OBDal.getInstance().get(TaxRate.class, strCTaxID);
         objCloneOrdLine.setTax(lineTax);
 
