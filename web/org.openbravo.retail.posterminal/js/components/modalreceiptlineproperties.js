@@ -50,10 +50,18 @@ enyo.kind({
     diff = this.propertycomponents;
     for (att in diff) {
       if (diff.hasOwnProperty(att)) {
-        result = result && diff[att].applyValue(this.currentLine);
+        if (diff[att].owner.owner.getShowing()) {
+          result = result && diff[att].applyValue(this.currentLine);
+        }
       }
     }
-    return true;
+    return result;
+  },
+  validationMessage: function (args) {
+    this.owner.doShowPopup({
+      popup: 'modalValidateAction',
+      args: args
+    });      
   },
   initComponents: function () {
     this.inherited(arguments);
@@ -68,6 +76,7 @@ enyo.kind({
         newAttribute: natt
       });
       this.propertycomponents[natt.modelProperty] = editline.propertycomponent;
+      this.propertycomponents[natt.modelProperty].propertiesDialog = this;
     }, this);
   },
   init: function (model) {
@@ -98,3 +107,19 @@ enyo.kind({
     label: OB.I18N.getLabel('OBPOS_LblDescription')
   }]
 });
+
+enyo.kind({
+  kind: 'OB.UI.ModalInfo',
+  name: 'OB.UI.ValidateAction',
+  header: '',
+  isDefaultAction: true,
+  bodyContent: {
+    name : 'message',
+    content: ''
+  },
+  executeOnShow: function () {
+    this.$.header.setContent(this.args.header);
+    this.$.bodyContent.$.message.setContent(this.args.message);
+  }
+});
+

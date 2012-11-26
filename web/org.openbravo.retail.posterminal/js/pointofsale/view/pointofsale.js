@@ -121,7 +121,10 @@ enyo.kind({
     }, {
       kind: 'OB.OBPOSPointOfSale.UI.Modals.modalNotEnoughCredit',
       name: 'modalNotEnoughCredit'
-    }, {
+     }, {
+      kind: 'OB.UI.ValidateAction',
+      name: 'modalValidateAction'
+     }, {
       classes: 'row',
       style: 'margin-bottom: 5px;',
       components: [{
