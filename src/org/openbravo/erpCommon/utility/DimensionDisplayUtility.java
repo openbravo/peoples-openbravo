@@ -76,6 +76,7 @@ public class DimensionDisplayUtility {
   private static Map<String, String> columnDimensionMap = null;
 
   private static void initialize() {
+    columnDimensionMap = new HashMap<String, String>();
     columnDimensionMap.put("C_PROJECT_ID", DIM_Project);
     columnDimensionMap.put("C_BPARTNER_ID", DIM_BPartner);
     columnDimensionMap.put("M_PRODUCT_ID", DIM_Product);
