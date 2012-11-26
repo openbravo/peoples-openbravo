@@ -352,8 +352,19 @@ enyo.kind({
   tap: function () {
     this.checked = !this.checked;
     this.addRemoveClass('active', this.checked);
+  },
+  toggle: function () {
+    this.checked = !this.checked;
+    this.addRemoveClass('active', this.checked);
+  },
+  check: function () {
+    this.addClass('active');
+    this.checked = true;
+  },
+  unCheck: function () {
+    this.removeClass('active');
+    this.checked = false;
   }
-
 });
 
 // Order list
@@ -395,7 +406,15 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.TabPane',
-  classes: 'postab-pane'
+  classes: 'postab-pane',
+  executeOnShow: function (params) {
+    var components = this.getComponents();
+    if (components.length > 0) {
+      if (this.$[components[0].getName()].executeOnShow) {
+        this.$[components[0].getName()].executeOnShow(params);
+      }
+    }
+  }
 });
 
 

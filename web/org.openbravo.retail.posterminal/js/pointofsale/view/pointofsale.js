@@ -47,7 +47,15 @@ enyo.kind({
     onSetProperty: 'setProperty',
     onSetLineProperty: 'setLineProperty',
     onSetReceiptsList: 'setReceiptsList',
-    onShowReceiptProperties: 'showModalReceiptProperties'
+    onShowReceiptProperties: 'showModalReceiptProperties',
+    onDiscountsMode: 'discountsMode',
+    onDiscountsModeFinished: 'discountsModeFinished',
+    onDisableLeftToolbar: 'leftToolbarDisabled',
+    onDisableBPSelection: 'BPSelectionDisabled',
+    onDisableKeyboard: 'keyboardDisabled',
+    onDiscountsModeKeyboard: 'keyboardOnDiscountsMode',
+    onCheckAllTicketLines: 'allTicketLinesChecked',
+    onSetDiscountQty: 'discountQtyChanged'
   },
   events: {
     onShowPopup: ''
@@ -343,9 +351,50 @@ enyo.kind({
     this.model.get('orderList').saveCurrent();
     return true;
   },
+  discountQtyChanged: function (inSender, inEvent) {
+    this.waterfall('onDiscountQtyChanged', inEvent);
+  },
+  keyboardOnDiscountsMode: function (inSender, inEvent) {
+    this.waterfall('onKeyboardOnDiscountsMode', inEvent);
+  },
+  keyboardDisabled: function (inSender, inEvent) {
+    this.waterfall('onKeyboardDisabled', inEvent);
+  },
+  allTicketLinesChecked: function (inSender, inEvent) {
+    this.waterfall('onAllTicketLinesChecked', inEvent);
+  },
+  leftToolbarDisabled: function (inSender, inEvent) {
+    this.waterfall('onLeftToolbarDisabled', inEvent);
+  },
+  rightToolbarDisabled: function (inSender, inEvent) {
+    this.waterfall('onRightToolbarDisabled', inEvent);
+  },
+  BPSelectionDisabled: function (inSender, inEvent) {
+    this.waterfall('onBPSelectionDisabled', inEvent);
+  },
+  discountsMode: function (inSender, inEvent) {
+    this.tabChange(inSender, inEvent);
+    this.leftToolbarDisabled(inSender, {
+      status: true
+    });
+    this.rightToolbarDisabled(inSender, {
+      status: true
+    });
+    this.BPSelectionDisabled(inSender, {
+      status: true
+    });
+    this.keyboardOnDiscountsMode(inSender, {
+      status: true
+    });
+    this.waterfall('onCheckBoxBehaviorForTicketLine', {
+      status: true
+    });
+  },
   tabChange: function (inSender, inEvent) {
+
     this.waterfall('onTabButtonTap', {
-      tabPanel: inEvent.tabPanel
+      tabPanel: inEvent.tabPanel,
+      options: inEvent.options
     });
     this.waterfall('onChangeEditMode', {
       edit: inEvent.edit
@@ -355,6 +404,36 @@ enyo.kind({
     } else {
       this.$.keyboard.hide();
     }
+
+  },
+  discountsModeFinished: function (inSender, inEvent) {
+    this.leftToolbarDisabled(inSender, {
+      status: false
+    });
+    this.keyboardOnDiscountsMode(inSender, {
+      status: false
+    });
+    this.rightToolbarDisabled(inSender, {
+      status: false
+    });
+
+    this.keyboardDisabled(inSender, {
+      status: false
+    });
+
+    this.BPSelectionDisabled(inSender, {
+      status: false
+    });
+
+    this.waterfall('onCheckBoxBehaviorForTicketLine', {
+      status: false
+    });
+
+    this.allTicketLinesChecked(inSender, {
+      status: false
+    });
+
+    this.tabChange(inSender, inEvent);
   },
   deleteLine: function (inSender, inEvent) {
     if (this.model.get('order').get('isEditable') === false) {

@@ -52,6 +52,13 @@ enyo.kind({
   events: {
     onAddNewOrder: ''
   },
+  handlers: {
+    onLeftToolbarDisabled: 'disabledButton'
+  },
+  disabledButton: function (inSender, inEvent) {
+    this.isEnabled = !inEvent.status;
+    this.setDisabled(inEvent.status);
+  },
   tap: function () {
     this.doAddNewOrder();
   }
@@ -64,6 +71,13 @@ enyo.kind({
   icon: 'btn-icon btn-icon-delete',
   events: {
     onShowPopup: ''
+  },
+  handlers: {
+    onLeftToolbarDisabled: 'disabledButton'
+  },
+  disabledButton: function (inSender, inEvent) {
+    this.isEnabled = !inEvent.status;
+    this.setDisabled(inEvent.status);
   },
   tap: function () {
     if (this.model.get('order').get('isPaid')) {
@@ -85,6 +99,36 @@ enyo.kind({
       }
       this.removeClass('paidticket');
     }, this);
+  }
+});
+
+enyo.kind({
+  name: 'OB.UI.ButtonContextMenu',
+  kind: 'OB.UI.ToolbarButton',
+  icon: 'btn-icon btn-icon-menu',
+  handlers: {
+    onLeftToolbarDisabled: 'disabledButton'
+  },
+  disabledButton: function (inSender, inEvent) {
+    this.setDisabled(inEvent.status);
+  },
+  components: [{
+    name: 'leftIcon'
+  }, {
+    tag: 'span',
+    style: 'display: inline-block;'
+  }, {
+    name: 'rightIcon'
+  }],
+  ontap: 'onButtonTap',
+  initComponents: function () {
+    this.inherited(arguments);
+    if (this.icon) {
+      this.$.leftIcon.addClass(this.icon);
+    }
+    if (this.iconright) {
+      this.$.rightIcon.addClass(this.iconright);
+    }
   }
 });
 

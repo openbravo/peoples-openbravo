@@ -10,6 +10,44 @@
 /*global enyo */
 
 enyo.kind({
+  name: 'OB.UI.TotalReceiptLine',
+  handlers: {
+    onCheckBoxBehaviorForTicketLine: 'checkBoxForTicketLines'
+  },
+  style: 'position: relative; padding: 10px;',
+  components: [{
+    name: 'lblTotal',
+    style: 'float: left; width: 40%;',
+    content: OB.I18N.getLabel('OBPOS_LblTotal')
+  }, {
+    name: 'totalqty',
+    style: 'float: left; width: 20%; text-align:right; font-weight:bold;'
+  }, {
+    name: 'totalgross',
+    style: 'float: left; width: 40%; text-align:right; font-weight:bold;'
+  }, {
+    style: 'clear: both;'
+  }],
+  renderTotal: function (newTotal) {
+    this.$.totalgross.setContent(OB.I18N.formatCurrency(newTotal));
+  },
+  renderQty: function (newQty) {
+    this.$.totalqty.setContent(newQty);
+  },
+  checkBoxForTicketLines: function (inSender, inEvent) {
+    if (inEvent.status) {
+      this.$.lblTotal.hasNode().style.width = '48%';
+      this.$.totalqty.hasNode().style.width = '16%';
+      this.$.totalgross.hasNode().style.width = '36%';
+    } else {
+      this.$.lblTotal.hasNode().style.width = '40%';
+      this.$.totalqty.hasNode().style.width = '20%';
+      this.$.totalgross.hasNode().style.width = '40%';
+    }
+  }
+});
+
+enyo.kind({
   kind: 'OB.UI.SmallButton',
   name: 'OB.UI.BtnReceiptToInvoice',
   events: {
@@ -43,6 +81,10 @@ enyo.kind({
   published: {
     order: null
   },
+  handlers: {
+    onCheckBoxBehaviorForTicketLine: 'checkBoxBehavior',
+    onAllTicketLinesChecked: 'allTicketLinesChecked'
+  },
   components: [{
     kind: 'OB.UI.ScrollableTable',
     name: 'listOrderLines',
@@ -57,19 +99,8 @@ enyo.kind({
     components: [{
       tag: 'li',
       components: [{
-        style: 'position: relative; padding: 10px;',
-        components: [{
-          style: 'float: left; width: 40%;',
-          content: OB.I18N.getLabel('OBPOS_LblTotal')
-        }, {
-          name: 'totalqty',
-          style: 'float: left; width: 20%; text-align:right; font-weight:bold;'
-        }, {
-          name: 'totalgross',
-          style: 'float: left; width: 40%; text-align:right; font-weight:bold;'
-        }, {
-          style: 'clear: both;'
-        }]
+        kind: 'OB.UI.TotalReceiptLine',
+        name: 'totalReceiptLine'
       }]
     }, {
       tag: 'li',
@@ -100,24 +131,33 @@ enyo.kind({
       }]
     }]
   }],
-  renderTotal: function (newTotal) {
-    this.$.totalgross.setContent(OB.I18N.formatCurrency(newTotal));
-  },
-  renderQty: function (newQty) {
-    this.$.totalqty.setContent(newQty);
-  },
   initComponents: function () {
     this.inherited(arguments);
   },
+  checkBoxBehavior: function (inSender, inEvent) {
+    if (inEvent.status) {
+      this.$.listOrderLines.setListStyle('checkboxlist');
+    } else {
+      this.$.listOrderLines.setListStyle('edit');
+    }
+  },
+  allTicketLinesChecked: function (inSender, inEvent) {
+    debugger;
+    if (inEvent.status) {
+      this.order.get('lines').trigger('checkAll');
+    } else {
+      this.order.get('lines').trigger('unCheckAll');
+    }
+  },
   orderChanged: function (oldValue) {
-    this.renderTotal(this.order.getTotal());
-    this.renderQty(this.order.getQty());
+    this.$.totalReceiptLine.renderTotal(this.order.getTotal());
+    this.$.totalReceiptLine.renderQty(this.order.getQty());
     this.$.listOrderLines.setCollection(this.order.get('lines'));
     this.order.on('change:gross', function (model) {
-      this.renderTotal(model.getTotal());
+      this.$.totalReceiptLine.renderTotal(model.getTotal());
     }, this);
     this.order.on('change:qty', function (model) {
-      this.renderQty(model.getQty());
+      this.$.totalReceiptLine.renderQty(model.getQty());
     }, this);
     this.order.on('change:orderType', function (model) {
       if (model.get('orderType') === 1) {

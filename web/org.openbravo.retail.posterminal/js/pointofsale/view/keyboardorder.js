@@ -19,7 +19,48 @@ enyo.kind({
   },
   events: {
     onShowPopup: '',
-    onAddProduct: ''
+    onAddProduct: '',
+    onSetDiscountQty: ''
+  },
+  discountsMode: false,
+  handlers: {
+    onKeyboardOnDiscountsMode: 'keyboardOnDiscountsMode'
+  },
+  keyboardOnDiscountsMode: function (inSender, inEvent) {
+    if (!inEvent.status) {
+      //exit from discounts
+      this.discountsMode = false;
+      this.buttons['line:dto'].removeClass('btnactive');
+      this.keyboardDisabled(inSender, {
+        status: false
+      });
+    } else {
+      this.discountsMode = true;
+      if (inEvent.writable) {
+        //enable keyboard
+        this.keyboardDisabled(inSender, {
+          status: false
+        });
+        //disable commands except line:dto
+        this.buttons['+'].setDisabled(inEvent.status);
+        this.buttons['-'].setDisabled(inEvent.status);
+        this.buttons['line:price'].setDisabled(inEvent.status);
+        this.buttons['line:qty'].setDisabled(inEvent.status);
+        //css
+        this.buttons['+'].addClass('btnkeyboard-inactive');
+        this.buttons['-'].addClass('btnkeyboard-inactive');
+        this.buttons['line:price'].addClass('btnkeyboard-inactive');
+        this.buttons['line:qty'].addClass('btnkeyboard-inactive');
+        //button as active
+        this.buttons['line:dto'].addClass('btnactive');
+      } else {
+        this.buttons['line:dto'].removeClass('btnactive');
+        this.keyboardDisabled(inSender, {
+          status: true
+        });
+        return true;
+      }
+    }
   },
   sideBarEnabled: true,
 
@@ -50,7 +91,10 @@ enyo.kind({
             });
             return true;
           }
-          me.doAddProduct({product: keyboard.line.get('product'), qty: OB.I18N.parseNumber(txt)});
+          me.doAddProduct({
+            product: keyboard.line.get('product'),
+            qty: OB.I18N.parseNumber(txt)
+          });
           keyboard.receipt.trigger('scan');
         }
       }
@@ -74,6 +118,12 @@ enyo.kind({
     this.addCommand('line:dto', {
       permission: 'OBPOS_order.discount',
       action: function (keyboard, txt) {
+        if (keyboard.discountsMode) {
+          me.doSetDiscountQty({
+            qty: OB.I18N.parseNumber(txt)
+          });
+          return true;
+        }
         if (keyboard.receipt.get('isEditable') === false) {
           me.doShowPopup({
             popup: 'modalNotEditableOrder'
@@ -102,7 +152,10 @@ enyo.kind({
             });
             return true;
           }
-          me.doAddProduct({product: keyboard.line.get('product'), qty: OB.I18N.parseNumber(txt)});
+          me.doAddProduct({
+            product: keyboard.line.get('product'),
+            qty: OB.I18N.parseNumber(txt)
+          });
           keyboard.receipt.trigger('scan');
         }
       }
@@ -132,6 +185,7 @@ enyo.kind({
 
     this.addToolbarComponent('OB.OBPOSPointOfSale.UI.ToolbarPayment');
     this.addToolbar(OB.OBPOSPointOfSale.UI.ToolbarScan);
+    this.addToolbar(OB.OBPOSPointOfSale.UI.ToolbarDiscounts);
   }
 });
 
@@ -207,7 +261,9 @@ enyo.kind({
   },
 
   addProductToReceipt: function (keyboard, product) {
-    keyboard.doAddProduct({product: product});
+    keyboard.doAddProduct({
+      product: product
+    });
     keyboard.receipt.trigger('scan');
   }
 });

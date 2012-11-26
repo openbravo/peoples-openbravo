@@ -20,7 +20,8 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ScrollableTable',
   published: {
-    collection: null
+    collection: null,
+    listStyle: null
   },
   components: [{
     name: 'theader'
@@ -69,6 +70,12 @@ enyo.kind({
     this.$.tlimit.setContent(OB.I18N.getLabel('OBPOS_DataLimitReached'));
   },
 
+  listStyleChanged: function (oldSTyle) {
+    if (this.listStyle === 'checkboxlist') {
+      this.collection.trigger('unSelectAll');
+    }
+  },
+
   collectionChanged: function (oldCollection) {
     this.selected = null;
 
@@ -93,12 +100,30 @@ enyo.kind({
     }
 
     this.collection.on('selected', function (model) {
-      if (!model && this.listStyle) {
+      if (!model && this.listStyle && this.listStyle !== 'checkboxlist') {
         if (this.selected) {
           this.selected.addRemoveClass('selected', false);
         }
         this.selected = null;
       }
+    }, this);
+
+    this.collection.on('unSelectAll', function (col) {
+      this.collection.each(function (model) {
+        model.trigger('unselected');
+      });
+    }, this);
+
+    this.collection.on('checkAll', function (col) {
+      this.collection.each(function (model) {
+        model.trigger('check');
+      });
+    }, this);
+
+    this.collection.on('unCheckAll', function (col) {
+      this.collection.each(function (model) {
+        model.trigger('uncheck');
+      });
     }, this);
 
     this.collection.on('add', function (model, prop, options) {
@@ -231,14 +256,45 @@ enyo.kind({
     }, this);
 
     model.on('selected', function () {
-      if (this.listStyle) {
+      if (this.listStyle && this.listStyle !== 'checkboxlist') {
         if (this.selected) {
           this.selected.addRemoveClass('selected', false);
         }
         this.selected = tr;
         this.selected.addRemoveClass('selected', true);
         // FIXME: OB.UTIL.makeElemVisible(this.node, this.selected);
+      } else if (this.listStyle === 'checkboxlist') {
+        var components = tr.getComponents();
+        if (components.length === 1) {
+          components[0].$['checkBoxColumn'].toggle();
+        }
       }
+    }, this);
+
+    model.on('check', function () {
+      if (this.listStyle === 'checkboxlist') {
+        var components = tr.getComponents();
+        if (components.length === 1) {
+          components[0].$['checkBoxColumn'].check();
+        }
+      }
+    }, this);
+
+    model.on('uncheck', function () {
+      if (this.listStyle === 'checkboxlist') {
+        var components = tr.getComponents();
+        if (components.length === 1) {
+          components[0].$['checkBoxColumn'].unCheck();
+        }
+      }
+    }, this);
+
+    model.on('unselected', function () {
+      if (this.selected) {
+        this.selected.removeClass('selected', false);
+      }
+      // FIXME: OB.UTIL.makeElemVisible(this.node, this.selected);
+      this.selected = null;
     }, this);
   }
 });

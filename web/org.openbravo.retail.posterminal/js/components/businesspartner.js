@@ -20,10 +20,18 @@ enyo.kind({
   events: {
     onShowPopup: ''
   },
+  handlers: {
+    onBPSelectionDisabled: 'buttonDisabled'
+  },
+  buttonDisabled: function (inSender, inEvent) {
+    this.setDisabled(inEvent.status);
+  },
   tap: function () {
-    this.doShowPopup({
-      popup: 'modalcustomer'
-    });
+    if (!this.disabled) {
+      this.doShowPopup({
+        popup: 'modalcustomer'
+      });
+    }
   },
   initComponents: function () {},
   renderCustomer: function (newCustomer) {

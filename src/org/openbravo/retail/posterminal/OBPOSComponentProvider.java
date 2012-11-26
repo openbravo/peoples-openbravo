@@ -145,6 +145,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "pointofsale/view/scan",
         "pointofsale/view/editline",
         "pointofsale/view/payment",
+        "pointofsale/view/ticketdiscount",
         "pointofsale/view/keyboard-toolbars",
         "pointofsale/view/keyboardorder",
         // Point of sale subwindows
