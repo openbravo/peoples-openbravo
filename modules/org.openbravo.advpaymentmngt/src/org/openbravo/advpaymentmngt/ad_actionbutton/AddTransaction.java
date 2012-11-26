@@ -48,8 +48,10 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.ad_forms.AcctServer;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.DateTimeData;
+import org.openbravo.erpCommon.utility.DimensionDisplayUtility;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
@@ -363,17 +365,32 @@ public class AddTransaction extends HttpSecureAppServlet {
       throw new ServletException(ex);
     }
     xmlDocument.setParameter("transactionType", transactionType);
-    // Accounting Dimensions
 
-    final String strElement_BP = Utility.getContext(this, vars, "$Element_BP", strWindowId);
-    final String strElement_PR = Utility.getContext(this, vars, "$Element_PR", strWindowId);
-    final String strElement_PJ = Utility.getContext(this, vars, "$Element_PJ", strWindowId);
+    // Accounting Dimensions
+    final String strCentrally = Utility.getContext(this, vars,
+        DimensionDisplayUtility.IsAcctDimCentrally, strWindowId);
+
+    final String strElement_BP = Utility.getContext(this, vars, DimensionDisplayUtility
+        .displayAcctDimensions(strCentrally, DimensionDisplayUtility.DIM_BPartner,
+            AcctServer.DOCTYPE_FinAccTransaction, DimensionDisplayUtility.DIM_Header), strWindowId);
+    final String strElement_PR = Utility.getContext(this, vars, DimensionDisplayUtility
+        .displayAcctDimensions(strCentrally, DimensionDisplayUtility.DIM_Product,
+            AcctServer.DOCTYPE_FinAccTransaction, DimensionDisplayUtility.DIM_Header), strWindowId);
+    final String strElement_PJ = Utility.getContext(this, vars, DimensionDisplayUtility
+        .displayAcctDimensions(strCentrally, DimensionDisplayUtility.DIM_Project,
+            AcctServer.DOCTYPE_FinAccTransaction, DimensionDisplayUtility.DIM_Header), strWindowId);
     final String strElement_AY = Utility.getContext(this, vars, "$Element_AY", strWindowId);
     final String strElement_SR = Utility.getContext(this, vars, "$Element_SR", strWindowId);
     final String strElement_MC = Utility.getContext(this, vars, "$Element_MC", strWindowId);
-    final String strElement_U1 = Utility.getContext(this, vars, "$Element_U1", strWindowId);
-    final String strElement_U2 = Utility.getContext(this, vars, "$Element_U2", strWindowId);
-    final String strElement_CC = Utility.getContext(this, vars, "$Element_CC", strWindowId);
+    final String strElement_U1 = Utility.getContext(this, vars, DimensionDisplayUtility
+        .displayAcctDimensions(strCentrally, DimensionDisplayUtility.DIM_User1,
+            AcctServer.DOCTYPE_FinAccTransaction, DimensionDisplayUtility.DIM_Header), strWindowId);
+    final String strElement_U2 = Utility.getContext(this, vars, DimensionDisplayUtility
+        .displayAcctDimensions(strCentrally, DimensionDisplayUtility.DIM_User2,
+            AcctServer.DOCTYPE_FinAccTransaction, DimensionDisplayUtility.DIM_Header), strWindowId);
+    final String strElement_CC = Utility.getContext(this, vars, DimensionDisplayUtility
+        .displayAcctDimensions(strCentrally, DimensionDisplayUtility.DIM_CostCenter,
+            AcctServer.DOCTYPE_FinAccTransaction, DimensionDisplayUtility.DIM_Header), strWindowId);
 
     xmlDocument.setParameter("strElement_BP", strElement_BP);
     xmlDocument.setParameter("strElement_PR", strElement_PR);
