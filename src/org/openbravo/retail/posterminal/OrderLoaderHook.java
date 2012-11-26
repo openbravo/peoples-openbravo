@@ -9,13 +9,15 @@
 
 package org.openbravo.retail.posterminal;
 
+import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 
 public interface OrderLoaderHook {
   
-  public void exec(Order order, ShipmentInOut shipment, Invoice invoice) throws Exception;
+  public void exec(JSONObject jsonorder, Order order, ShipmentInOut shipment, Invoice invoice)
+      throws Exception;
 }
 
 // Example of a hook:
@@ -29,7 +31,8 @@ public interface OrderLoaderHook {
 // public class OrderLoaderHookTest implements OrderLoaderHook {
 //
 // @Override
-// public void exec(Order order, ShipmentInOut shipment, Invoice invoice) throws Exception {
+// public void exec(JSONObject jsonorder, Order order, ShipmentInOut shipment, Invoice invoice)
+// throws Exception {
 // // TODO Auto-generated method stub
 // System.out.println("somebody is calling me");
 // }

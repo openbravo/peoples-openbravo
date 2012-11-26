@@ -41,6 +41,7 @@ enyo.kind({
   },
   applyChanges: function (inSender, inEvent) {
     this.waterfall('onApplyChange', {});
+    return true;
   },
   initComponents: function () {
     this.inherited(arguments);
@@ -77,8 +78,9 @@ enyo.kind({
     onApplyChanges: ''
   },
   tap: function () {
-    this.doApplyChanges();
-    this.doHideThisPopup();
+    if (this.doApplyChanges()) {
+      this.doHideThisPopup();
+    }
   }
 });
 
@@ -140,9 +142,12 @@ enyo.kind({
     }
   },
   applyChange: function (inSender, inEvent) {
-    if (inEvent.orderline) {
+    return this.applyValue(inEvent.orderline);
+  },
+  applyValue: function (orderline) {
+    if (orderline) {
       this.doSetLineProperty({
-        line: inEvent.orderline,
+        line: orderline,
         property: this.modelProperty,
         value: this.getValue()
       });
@@ -152,6 +157,7 @@ enyo.kind({
         value: this.getValue()
       });
     }
+    return true;
   },
   initComponents: function () {
     if (this.readOnly) {

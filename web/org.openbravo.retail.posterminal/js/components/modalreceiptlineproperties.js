@@ -46,9 +46,14 @@ enyo.kind({
     } // else make it visible...
   },
   applyChanges: function (inSender, inEvent) {
-    this.waterfall('onApplyChange', {
-      orderline: this.currentLine
-    });
+    var diff, att, result = true;
+    diff = this.propertycomponents;
+    for (att in diff) {
+      if (diff.hasOwnProperty(att)) {
+        result = result && diff[att].applyValue(this.currentLine);
+      }
+    }
+    return true;
   },
   initComponents: function () {
     this.inherited(arguments);

@@ -280,7 +280,7 @@ public class OrderLoader extends JSONProcessSimple {
       // Call all OrderProcess injected.
       for (Iterator<OrderLoaderHook> procIter = orderProcesses.iterator(); procIter.hasNext();) {
         OrderLoaderHook proc = procIter.next();
-        proc.exec(order, shipment, invoice);
+        proc.exec(jsonorder, order, shipment, invoice);
       }
     }
 
