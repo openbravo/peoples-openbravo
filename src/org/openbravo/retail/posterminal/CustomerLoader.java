@@ -56,7 +56,7 @@ public class CustomerLoader extends JSONProcessSimple {
   public JSONObject saveCustomer(JSONArray jsonarray) throws JSONException {
     boolean error = false;
     Exception errorException = null;
-    OBContext.setAdminMode(true);
+    OBContext.setAdminMode(false);
     try {
       for (int i = 0; i < jsonarray.length(); i++) {
         JSONObject jsonCustomer = jsonarray.getJSONObject(i);
