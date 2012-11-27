@@ -60,7 +60,6 @@ enyo.kind({
     onOrderSelectionDisabled: 'orderDisabled'
   },
   orderDisabled: function (inSender, inEvent) {
-    debugger;
     this.setDisabled(inEvent.status);
     this.addRemoveClass('disabled', inEvent.status);
   },
