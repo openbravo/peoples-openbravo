@@ -1,0 +1,483 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SLU
+ * All portions are Copyright (C) 2012 Openbravo SLU
+ * All Rights Reserved.
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+<SqlClass name="InitializeAcctDimensionsInClientData" package="org.openbravo.modulescript">
+  <SqlClassComment></SqlClassComment>
+   <SqlMethod name="select" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        select '' as ismandatory
+        from dual
+      ]]>
+    </Sql>
+  </SqlMethod>
+   <SqlMethod name="isExecuted" type="preparedStatement" return="boolean">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT count(*) as exist
+        FROM DUAL
+        WHERE EXISTS (SELECT 1 FROM ad_preference
+                      WHERE attribute = 'DimensionDisplayConfigured' and value='N')
+      ]]>
+    </Sql>
+  </SqlMethod>
+  <SqlMethod name="updatePreferencetest" type="preparedStatement" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        update ad_preference set value='Y' WHERE attribute = 'DimensionDisplayConfigured'
+      ]]>
+    </Sql>
+  </SqlMethod>
+  
+  <SqlMethod name="selectbph" type="preparedStatement"  return="string">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        select max(ismandatory) as ismandatory from
+        (select ismandatory from ad_dimension_mapping 
+        where dimension = 'BP'
+        and documentlevel = 'H'
+        order by ismandatory desc) a
+      ]]>
+    </Sql>
+  </SqlMethod>
+  <SqlMethod name="initializebph" type="preparedStatement" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        update ad_client set bpartner_acctdim_header = ? , 
+        bpartner_acctdim_isenable = case when ? = 'Y' then ? else bpartner_acctdim_isenable end 
+      ]]>
+    </Sql>
+    <Parameter name="ismandatory"/>
+    <Parameter name="ismandatory"/>
+    <Parameter name="ismandatory"/>
+  </SqlMethod>
+  <SqlMethod name="selectbpl" type="preparedStatement"  return="string">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        select max(ismandatory) as ismandatory from
+        (select ismandatory from ad_dimension_mapping 
+        where dimension = 'BP'
+        and documentlevel = 'L'
+        order by ismandatory desc) a
+      ]]>
+    </Sql>
+  </SqlMethod>
+  <SqlMethod name="initializebpl" type="preparedStatement" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        update ad_client set bpartner_acctdim_lines = ? , 
+        bpartner_acctdim_isenable = case when ? = 'Y' then ? else bpartner_acctdim_isenable end 
+      ]]>
+    </Sql>
+    <Parameter name="ismandatory"/>
+    <Parameter name="ismandatory"/>
+    <Parameter name="ismandatory"/>
+  </SqlMethod>
+  <SqlMethod name="selectbpbd" type="preparedStatement"  return="string">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        select max(ismandatory) as ismandatory from
+        (select ismandatory from ad_dimension_mapping 
+        where dimension = 'BP'
+        and documentlevel = 'BD'
+        order by ismandatory desc) a
+      ]]>
+    </Sql>
+  </SqlMethod>
+  <SqlMethod name="initializebpbd" type="preparedStatement" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        update ad_client set bpartner_acctdim_breakdown = ? , 
+        bpartner_acctdim_isenable = case when ? = 'Y' then ? else bpartner_acctdim_isenable end 
+      ]]>
+    </Sql>
+    <Parameter name="ismandatory"/>
+    <Parameter name="ismandatory"/>
+    <Parameter name="ismandatory"/>
+  </SqlMethod>
+  <SqlMethod name="selectprh" type="preparedStatement"  return="string">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        select max(ismandatory) as ismandatory from
+        (select ismandatory from ad_dimension_mapping 
+        where dimension = 'PR'
+        and documentlevel = 'H'
+        order by ismandatory desc) a
+      ]]>
+    </Sql>
+  </SqlMethod>
+  <SqlMethod name="initializeprh" type="preparedStatement" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        update ad_client set product_acctdim_header = ? , 
+        product_acctdim_isenable = case when ? = 'Y' then ? else product_acctdim_isenable end 
+      ]]>
+    </Sql>
+    <Parameter name="ismandatory"/>
+    <Parameter name="ismandatory"/>
+    <Parameter name="ismandatory"/>
+  </SqlMethod>
+  <SqlMethod name="selectprl" type="preparedStatement"  return="string">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        select max(ismandatory) as ismandatory from
+        (select ismandatory from ad_dimension_mapping 
+        where dimension = 'PR'
+        and documentlevel = 'L'
+        order by ismandatory desc) a
+      ]]>
+    </Sql>
+  </SqlMethod>
+  <SqlMethod name="initializeprl" type="preparedStatement" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        update ad_client set product_acctdim_lines = ? , 
+        product_acctdim_isenable = case when ? = 'Y' then ? else product_acctdim_isenable end 
+      ]]>
+    </Sql>
+    <Parameter name="ismandatory"/>
+    <Parameter name="ismandatory"/>
+    <Parameter name="ismandatory"/>
+  </SqlMethod>
+  <SqlMethod name="selectprbd" type="preparedStatement" return="string">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        select max(ismandatory) as ismandatory from
+        (select ismandatory from ad_dimension_mapping 
+        where dimension = 'PR'
+        and documentlevel = 'BD'
+        order by ismandatory desc) a
+      ]]>
+    </Sql>
+  </SqlMethod>
+  <SqlMethod name="initializeprbd" type="preparedStatement" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        update ad_client set product_acctdim_breakdown = ? , 
+        product_acctdim_isenable = case when ? = 'Y' then ? else product_acctdim_isenable end 
+      ]]>
+    </Sql>
+    <Parameter name="ismandatory"/>
+    <Parameter name="ismandatory"/>
+    <Parameter name="ismandatory"/>
+  </SqlMethod>
+  <SqlMethod name="selectpjh" type="preparedStatement"  return="string">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        select max(ismandatory) as ismandatory from
+        (select ismandatory from ad_dimension_mapping 
+        where dimension = 'PJ'
+        and documentlevel = 'H'
+        order by ismandatory desc) a
+      ]]>
+    </Sql>
+  </SqlMethod>
+  <SqlMethod name="initializepjh" type="preparedStatement" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        update ad_client set project_acctdim_header = ? , 
+        project_acctdim_isenable = case when ? = 'Y' then ? else project_acctdim_isenable end 
+      ]]>
+    </Sql>
+    <Parameter name="ismandatory"/>
+    <Parameter name="ismandatory"/>
+    <Parameter name="ismandatory"/>
+  </SqlMethod>
+  <SqlMethod name="selectpjl" type="preparedStatement"  return="string">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        select max(ismandatory) as ismandatory from
+        (select ismandatory from ad_dimension_mapping 
+        where dimension = 'PJ'
+        and documentlevel = 'L'
+        order by ismandatory desc) a
+      ]]>
+    </Sql>
+  </SqlMethod>
+  <SqlMethod name="initializepjl" type="preparedStatement" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        update ad_client set project_acctdim_lines = ? , 
+        project_acctdim_isenable = case when ? = 'Y' then ? else project_acctdim_isenable end 
+      ]]>
+    </Sql>
+    <Parameter name="ismandatory"/>
+    <Parameter name="ismandatory"/>
+    <Parameter name="ismandatory"/>
+  </SqlMethod>
+  <SqlMethod name="selectpjbd" type="preparedStatement"  return="string">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        select max(ismandatory) as ismandatory from
+        (select ismandatory from ad_dimension_mapping 
+        where dimension = 'PJ'
+        and documentlevel = 'BD'
+        order by ismandatory desc) a
+      ]]>
+    </Sql>
+  </SqlMethod>
+  <SqlMethod name="initializepjbd" type="preparedStatement" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        update ad_client set project_acctdim_breakdown= ? , 
+        project_acctdim_isenable = case when ? = 'Y' then ? else project_acctdim_isenable end 
+      ]]>
+    </Sql>
+    <Parameter name="ismandatory"/>
+    <Parameter name="ismandatory"/>
+    <Parameter name="ismandatory"/>
+  </SqlMethod>
+  <SqlMethod name="selectcch" type="preparedStatement"  return="string">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        select max(ismandatory) as ismandatory from
+        (select ismandatory from ad_dimension_mapping 
+        where dimension = 'CC'
+        and documentlevel = 'H'
+        order by ismandatory desc) a
+      ]]>
+    </Sql>
+  </SqlMethod>
+  <SqlMethod name="initializecch" type="preparedStatement" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        update ad_client set costcenter_acctdim_header= ? , 
+        costcenter_acctdim_isenable = case when ? = 'Y' then ? else costcenter_acctdim_isenable end 
+      ]]>
+    </Sql>
+    <Parameter name="ismandatory"/>
+    <Parameter name="ismandatory"/>
+    <Parameter name="ismandatory"/>
+  </SqlMethod>
+  <SqlMethod name="selectccl" type="preparedStatement"  return="string">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        select max(ismandatory) as ismandatory from
+        (select ismandatory from ad_dimension_mapping 
+        where dimension = 'CC'
+        and documentlevel = 'L'
+        order by ismandatory desc) a
+      ]]>
+    </Sql>
+  </SqlMethod>
+  <SqlMethod name="initializeccl" type="preparedStatement" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        update ad_client set costcenter_acctdim_lines= ? , 
+        costcenter_acctdim_isenable = case when ? = 'Y' then ? else costcenter_acctdim_isenable end 
+      ]]>
+    </Sql>
+    <Parameter name="ismandatory"/>
+    <Parameter name="ismandatory"/>
+    <Parameter name="ismandatory"/>
+  </SqlMethod>
+  <SqlMethod name="selectccbd" type="preparedStatement"  return="string">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        select max(ismandatory) as ismandatory from
+        (select ismandatory from ad_dimension_mapping 
+        where dimension = 'CC'
+        and documentlevel = 'BD'
+        order by ismandatory desc) a
+      ]]>
+    </Sql>
+  </SqlMethod>
+  <SqlMethod name="initializeccbd" type="preparedStatement" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        update ad_client set costcenter_acctdim_breakdown= ? , 
+        costcenter_acctdim_isenable = case when ? = 'Y' then ? else costcenter_acctdim_isenable end 
+      ]]>
+    </Sql>
+    <Parameter name="ismandatory"/>
+    <Parameter name="ismandatory"/>
+    <Parameter name="ismandatory"/>
+  </SqlMethod>
+  <SqlMethod name="selectu1h" type="preparedStatement"  return="string">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        select max(ismandatory) as ismandatory from
+        (select ismandatory from ad_dimension_mapping 
+        where dimension = 'U1'
+        and documentlevel = 'H'
+        order by ismandatory desc) a
+      ]]>
+    </Sql>
+  </SqlMethod>
+  <SqlMethod name="initializeu1h" type="preparedStatement" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        update ad_client set user1_acctdim_header= ? , 
+        user1_acctdim_isenable = case when ? = 'Y' then ? else user1_acctdim_isenable end 
+      ]]>
+    </Sql>
+    <Parameter name="ismandatory"/>
+    <Parameter name="ismandatory"/>
+    <Parameter name="ismandatory"/>
+  </SqlMethod>
+  <SqlMethod name="selectu1l" type="preparedStatement"  return="string">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        select max(ismandatory) as ismandatory from
+        (select ismandatory from ad_dimension_mapping 
+        where dimension = 'U1'
+        and documentlevel = 'L'
+        order by ismandatory desc) a
+      ]]>
+    </Sql>
+  </SqlMethod>
+  <SqlMethod name="initializeu1l" type="preparedStatement" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        update ad_client set user1_acctdim_lines= ? , 
+        user1_acctdim_isenable = case when ? = 'Y' then ? else user1_acctdim_isenable end 
+      ]]>
+    </Sql>
+    <Parameter name="ismandatory"/>
+    <Parameter name="ismandatory"/>
+    <Parameter name="ismandatory"/>
+  </SqlMethod>
+  <SqlMethod name="selectu1bd" type="preparedStatement"  return="string">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        select max(ismandatory) as ismandatory from
+        (select ismandatory from ad_dimension_mapping 
+        where dimension = 'U1'
+        and documentlevel = 'BD'
+        order by ismandatory desc) a
+      ]]>
+    </Sql>
+  </SqlMethod>
+  <SqlMethod name="initializeu1bd" type="preparedStatement" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        update ad_client set user1_acctdim_breakdown= ? , 
+        user1_acctdim_isenable = case when ? = 'Y' then ? else user1_acctdim_isenable end 
+      ]]>
+    </Sql>
+    <Parameter name="ismandatory"/>
+    <Parameter name="ismandatory"/>
+    <Parameter name="ismandatory"/>
+  </SqlMethod>
+  <SqlMethod name="selectu2h" type="preparedStatement"  return="string">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        select max(ismandatory) as ismandatory from
+        (select ismandatory from ad_dimension_mapping 
+        where dimension = 'U2'
+        and documentlevel = 'H'
+        order by ismandatory desc) a
+      ]]>
+    </Sql>
+  </SqlMethod>
+  <SqlMethod name="initializeu2h" type="preparedStatement" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        update ad_client set user2_acctdim_header= ? , 
+        user2_acctdim_isenable = case when ? = 'Y' then ? else user2_acctdim_isenable end 
+      ]]>
+    </Sql>
+    <Parameter name="ismandatory"/>
+    <Parameter name="ismandatory"/>
+    <Parameter name="ismandatory"/>
+  </SqlMethod>
+  <SqlMethod name="selectu2l" type="preparedStatement"  return="string">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        select max(ismandatory) as ismandatory from
+        (select ismandatory from ad_dimension_mapping 
+        where dimension = 'U2'
+        and documentlevel = 'L'
+        order by ismandatory desc) a
+      ]]>
+    </Sql>
+  </SqlMethod>
+  <SqlMethod name="initializeu2l" type="preparedStatement" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        update ad_client set user2_acctdim_lines= ? , 
+        user2_acctdim_isenable = case when ? = 'Y' then ? else user2_acctdim_isenable end 
+      ]]>
+    </Sql>
+    <Parameter name="ismandatory"/>
+    <Parameter name="ismandatory"/>
+    <Parameter name="ismandatory"/>
+  </SqlMethod>
+  <SqlMethod name="selectu2bd" type="preparedStatement"  return="string">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        select max(ismandatory) as ismandatory from
+        (select ismandatory from ad_dimension_mapping 
+        where dimension = 'U2'
+        and documentlevel = 'BD'
+        order by ismandatory desc) a
+      ]]>
+    </Sql>
+  </SqlMethod>
+  <SqlMethod name="initializeu2bd" type="preparedStatement" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        update ad_client set user2_acctdim_breakdown= ? , 
+        user2_acctdim_isenable = case when ? = 'Y' then ? else user2_acctdim_isenable end 
+      ]]>
+    </Sql>
+    <Parameter name="ismandatory"/>
+    <Parameter name="ismandatory"/>
+    <Parameter name="ismandatory"/>
+  </SqlMethod>
+</SqlClass>
