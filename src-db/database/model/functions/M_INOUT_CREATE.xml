@@ -60,7 +60,6 @@
   v_ResultStr VARCHAR2(2000):='';
   v_result NUMBER(1):=1;
   v_PostResult NUMBER;
-  v_stdPrecision NUMBER:=2;
   v_logLines NUMBER:=0;
   v_isWholeLog BOOLEAN := true;
   v_Message VARCHAR2(2000):='';
@@ -355,8 +354,7 @@ BEGIN --BODY
             --MODIFIED BY F.IRIAZABAL
             v_QtyOrder:=0;
             IF (ol.M_Product_UOM_ID IS NOT NULL) THEN
-              SELECT M_PRODUCT_UOM.C_UOM_ID, C_UOM.stdprecision
-                INTO v_ProductUOM, v_stdPrecision
+              SELECT M_PRODUCT_UOM.C_UOM_ID INTO v_ProductUOM
               FROM M_PRODUCT_UOM, C_UOM
               WHERE M_PRODUCT_UOM.C_UOM_ID=C_UOM.C_UOM_ID
                 AND M_Product_UOM_ID=ol.M_Product_UOM_ID;
@@ -405,6 +403,7 @@ BEGIN --BODY
                   v_pinstance_result AD_PInstance.result%TYPE;
                   v_pinstance_msg AD_PInstance.errormsg%TYPE;
                   v_warehouse_rule_id VARCHAR2(32);
+                  v_reservation_id VARCHAR2(32);
                 BEGIN
                   v_pinstance_id := get_uuid();
                   INSERT INTO ad_pinstance (
@@ -431,6 +430,21 @@ BEGIN --BODY
                   FROM c_orderline
                   WHERE c_orderline_id = ol.c_orderline_id;
                   AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '100', 'M_Warehouse_Rule_ID', v_warehouse_rule_id, null, null, null, null, null);
+
+                  SELECT count(*) INTO v_count
+                  FROM m_reservation
+                  WHERE res_status != 'CL'
+                    AND c_orderline_id = ol.c_orderline_id;
+                  IF (v_count > 0) THEN
+                    IF (v_count > 1) THEN
+                      RAISE_APPLICATION_ERROR(-20000, '@SOLineWithMoreThanOneOpenReservation@');
+                    END IF;
+                    SELECT MAX(m_reservation_id) INTO v_reservation_id
+                    FROM m_reservation
+                    WHERE res_status != 'CL'
+                      AND c_orderline_id = ol.c_orderline_id;
+                    AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '110', 'M_Reservation_ID', v_reservation_id, null, null, null, null, null);
+                  END IF;
 
                   M_GET_STOCK(v_pinstance_ID, 'N');
                   -- Check result

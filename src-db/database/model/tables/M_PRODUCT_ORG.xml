@@ -81,6 +81,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="M_PRODUCT_PO_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="MRP_PLANNINGMETHOD" name="M_PRDCT_RG_MRP_PLNNNGMTHD">
         <reference local="MRP_PLANNINGMETHOD_ID" foreign="MRP_PLANNINGMETHOD_ID"/>
       </foreign-key>
@@ -98,6 +102,9 @@
       </foreign-key>
       <foreign-key foreignTable="MRP_PLANNER" name="M_PRODUCT_ORG_MRP_PLANNER">
         <reference local="MRP_PLANNER_ID" foreign="MRP_PLANNER_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_PRODUCT_PO" name="M_PRODUCT_ORG_PRODUCTPO">
+        <reference local="M_PRODUCT_PO_ID" foreign="M_PRODUCT_PO_ID"/>
       </foreign-key>
       <unique name="M_PRODUCT_ORG_ORG_PRODUCT_UN">
         <unique-column name="AD_ORG_ID"/>

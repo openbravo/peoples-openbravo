@@ -82,11 +82,12 @@ BEGIN --BODY
   FOR Cur_Product IN (SELECT p.m_product_id,
                       COALESCE(po.stockmin, p.stockmin, 0) AS stockmin,
                       COALESCE(po.mrp_planningmethod_id, p.mrp_planningmethod_id) AS mrp_planningmethod_id
-                      FROM m_product p LEFT JOIN m_product_org po ON p.m_product_id = po.m_product_id
-                                                                     AND po.ad_org_id = p_org_id
+                      FROM m_product p 
+                            JOIN m_product_org po ON p.m_product_id = po.m_product_id AND po.ad_org_id = p_org_id
                       WHERE (p_product_id IS NULL OR p.m_product_id = p_product_id)
                         AND (p_product_category_id IS NULL OR p.m_product_category_id = p_product_category_id)
                         AND (p_planner_id IS NULL OR COALESCE(po.mrp_planner_id, p.mrp_planner_id) = p_planner_id)
+                        AND po.mrp_planningmethod_id IS NOT NULL
                         AND AD_ISORGINCLUDED(p_org_id, p.ad_org_id, p_client_id) > -1
                         AND p.ad_client_id = p_client_id
                         AND ((p_production = 'Y' AND p.ispurchased = 'N') OR (p_production = 'N' AND p.ispurchased = 'Y'))
@@ -97,10 +98,12 @@ BEGIN --BODY
                                         FROM m_product_po
                                         WHERE m_product_po.m_product_id = p.m_product_id
                                           AND m_product_po.c_bpartner_id = p_vendor_id
-                                          AND m_product_po.iscurrentvendor = 'Y'
                                           AND m_product_po.isactive = 'Y'
-                                          AND m_product_po.discontinued = 'N'
-                                        )))
+                                          AND (m_product_po.iscurrentvendor = 'Y'
+                                               OR COALESCE(po.m_product_po_id, m_product_po_id) = m_product_po_id
+                                              )
+                                          AND m_product_po.discontinued = 'N')
+                             ))
                         AND (p_bpartner_id IS NULL
                              OR EXISTS (SELECT 1
                                         FROM c_order o, c_orderline ol
@@ -213,14 +216,9 @@ BEGIN --BODY
       END IF;
     END; -- End Call M_GET_STOCK
 
-    SELECT COALESCE(SUM(quantity),0) INTO v_QtyOnHand
+    SELECT COALESCE(SUM(sp.quantity),0) INTO v_QtyOnHand
     FROM m_stock_proposed sp
-        JOIN m_storage_detail sd ON sp.m_storage_detail_id = sd.m_storage_detail_id
-        JOIN m_locator l ON sd.m_locator_id = l.m_locator_id
-        JOIN m_warehouse w ON l.m_warehouse_id = w.m_warehouse_id
-    WHERE ad_pinstance_id = v_ad_pinstance_id
-      -- Only stock of warehouses in p_org_id and its childs.
-      AND AD_ISORGINCLUDED(w.ad_org_id, p_org_id, w.ad_client_id) <> -1;
+    WHERE sp.aD_pinstance_id = v_ad_pinstance_id;
 
     v_ResultStr := 'Inserting stock lines product: ' || Cur_Product.M_Product_ID;
     MRP_RUN_INSERTLINES(p_client_id, p_org_id, p_user_id, p_run, cur_product.m_product_id, (-1 * cur_product.stockmin), 0, NULL, 'MS', 'Y', NULL, NULL, NULL, NULL, NULL, p_planningdate, NULL, p_production, (CASE WHEN cur_product.stockmin > 0 THEN 'N' ELSE 'Y' END), NULL, v_aux_id);
@@ -231,7 +229,7 @@ BEGIN --BODY
         SELECT MRP_CHECK_PLANNINGMETHOD(cur_product.mrp_planningmethod_id,
                                         (CASE o.issotrx WHEN 'Y' THEN 'SO' ELSE 'PO' END),
                                         TO_NUMBER(COALESCE(ol.datepromised, ol.dateordered, o.dateordered) - p_planningdate), p_timehorizon) AS weighting,
-              (ol.qtyordered - COALESCE(ol.qtydelivered, 0) - COALESCE(matchpo.qty,0)) AS qty,
+              (ol.qtyordered - COALESCE(ol.qtydelivered, 0) - COALESCE(matchpo.qty,0) - COALESCE(preres.reservedqty, 0) - (COALESCE(res.reservedqty,0) - COALESCE(res.releasedqty, 0))) AS qty,
               ol.c_orderline_id, GREATEST(COALESCE(ol.datepromised, ol.dateordered, o.dateordered), p_planningdate) AS planningdate,
               COALESCE(ol.dateordered, o.dateordered) AS dateordered,
               o.issotrx
@@ -242,12 +240,25 @@ BEGIN --BODY
                         WHERE m_inoutline_id IS NOT NULL
                         GROUP BY c_orderline_id) matchpo ON ol.c_orderline_id = matchpo.c_orderline_id
               JOIN m_warehouse w ON ol.m_warehouse_id = w.m_warehouse_id
+              -- Sales order reservation
+              LEFT JOIN m_reservation res ON res.c_orderline_id = ol.c_orderline_id AND res.res_status NOT IN ('CL', 'DR')
+              -- Prereserved purchase orders
+              LEFT JOIN (
+                  SELECT rs.c_orderline_id, SUM(rs.quantity - COALESCE(rs.releasedqty, 0)) AS reservedqty
+                  FROM m_reservation r
+                      JOIN m_reservation_stock rs ON r.m_reservation_id = rs.m_reservation_id
+                  WHERE rs.c_orderline_id IS NOT NULL
+                    AND r.res_status NOT IN ('CL', 'DR')
+                  GROUP BY rs.c_orderline_id 
+              ) preres ON preres.c_orderline_id = ol.c_orderline_id
          WHERE o.processed = 'Y'
            AND ol.qtyordered <> (COALESCE(ol.qtydelivered,0) + COALESCE(matchpo.qty,0))
            AND ol.m_product_id = cur_product.m_product_id
            AND MRP_CHECK_PLANNINGMETHOD(cur_product.mrp_planningmethod_id,
                                        (CASE o.issotrx WHEN 'Y' THEN 'SO' ELSE 'PO' END),
                                        to_number(COALESCE(ol.datepromised, ol.dateordered, o.dateordered) - p_planningdate), p_timehorizon) <> -1
+           AND ((o.issotrx = 'N' AND ol.qtyordered - COALESCE(matchpo.qty,0) > COALESCE(preres.reservedqty, 0))
+               OR (o.issotrx = 'Y' AND ol.qtyordered - COALESCE(ol.qtydelivered, 0) > COALESCE(res.reservedqty,0) - COALESCE(res.releasedqty, 0)))
            AND AD_ISORGINCLUDED(o.ad_org_id, p_org_id, p_client_id) > -1
            -- Only orders of warehouses in p_org_id and its childs
            AND AD_ISORGINCLUDED(w.ad_org_id, p_org_id, p_client_id) > -1

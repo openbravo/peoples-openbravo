@@ -1,0 +1,288 @@
+<?xml version="1.0"?>
+  <database name="FUNCTION M_RESERVATION_POST">
+    <function name="M_RESERVATION_POST" type="NULL">
+      <parameter name="p_pinstance_id" type="VARCHAR" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_reservation_id" type="VARCHAR" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_resaction" type="VARCHAR" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_user_id" type="VARCHAR" mode="in">
+        <default/>
+      </parameter>
+      <body><![CDATA[/*************************************************************************
+* The contents of this file are subject to the Openbravo  Public  License
+* Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
+* Version 1.1  with a permitted attribution clause; you may not  use this
+* file except in compliance with the License. You  may  obtain  a copy of
+* the License at http://www.openbravo.com/legal/license.html
+* Software distributed under the License  is  distributed  on  an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+* License for the specific  language  governing  rights  and  limitations
+* under the License.
+* The Original Code is Openbravo ERP.
+* The Initial Developer of the Original Code is Openbravo SLU
+* All portions are Copyright (C) 2012 Openbravo SLU
+* All Rights Reserved.
+* Contributor(s):  ______________________________________.
+************************************************************************/
+  v_ResultStr       VARCHAR2(2000):='';
+  v_Message         VARCHAR2(2000):='';
+  v_reservation_id  VARCHAR2(32);
+  v_user_id         VARCHAR2(32);
+  v_Result NUMBER:=1; --  Success
+  v_resaction       VARCHAR2(60);
+  v_resstatus       VARCHAR2(60);
+  v_newstatus       VARCHAR2(60);
+  v_newaction       VARCHAR2(60);
+  v_orderline_id    VARCHAR2(32);
+  v_product_id      VARCHAR2(32);
+  v_uom_id          VARCHAR2(32);
+  v_count           NUMBER;
+  v_quantity        NUMBER;
+  v_reservedqty     NUMBER;
+
+TYPE RECORD IS REF CURSOR;
+  Cur_Parameter RECORD;
+
+BEGIN
+  IF (p_PInstance_ID IS NOT NULL) THEN
+    --  Update AD_PInstance
+    DBMS_OUTPUT.PUT_LINE('Updating PInstance - Processing ' || p_pinstance_id) ;
+    v_ResultStr:='PInstanceNotFound';
+    AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'Y', NULL, NULL) ;
+    --  Get Parameters
+    v_ResultStr:='ReadingParameters';
+    FOR Cur_Parameter IN (
+        SELECT i.record_id, i.ad_user_id, p.parametername, p.p_string, p.p_number, p.p_date
+        FROM ad_pinstance i
+            LEFT JOIN ad_pinstance_para p ON i.ad_pinstance_id=p.ad_pinstance_id
+        WHERE i.ad_pinstance_id=p_pinstance_id
+        ORDER BY p.seqno
+    ) LOOP
+      IF (cur_parameter.parametername = 'RES_Action') THEN
+        v_resaction := cur_parameter.p_string;
+      END IF;
+      v_reservation_id := cur_parameter.record_id;
+      v_user_id := cur_parameter.ad_user_id;
+    END LOOP; --  Get Parameter
+    DBMS_OUTPUT.PUT_LINE('  v_Record_ID=' || v_reservation_id) ;
+  ELSE
+    v_reservation_id := p_reservation_id;
+    v_resaction := p_resaction;
+    v_user_id := p_user_id;
+  END IF;
+
+BEGIN
+  SELECT res_status, c_orderline_id, quantity, reservedqty,
+        m_product_id, c_uom_id
+    INTO v_resstatus, v_orderline_id, v_quantity, v_reservedqty,
+        v_product_id, v_uom_id
+  FROM m_reservation
+  WHERE m_reservation_id = v_reservation_id;
+  
+  IF (v_resaction = 'PR') THEN
+  /*
+    Reservation Complete Process
+  */
+    DECLARE
+      v_sales_order_id        VARCHAR2(32);
+      cur_not_available       RECORD;
+      v_linecount             NUMBER;
+      v_creservedcount        NUMBER;
+      v_preservedcount        NUMBER;
+    BEGIN
+      IF (v_resstatus != 'DR') THEN
+        RAISE_APPLICATION_ERROR(-20000, '@ActionNotSupported@');
+      END IF;
+      -- Check that stock is still available
+      FOR cur_not_available IN (
+        SELECT AD_COLUMN_IDENTIFIER('M_Locator', rs.m_locator_id, 'en_US') as locatorName,
+               asi.description AS attributeName
+        FROM m_reservation_stock rs
+            JOIN m_attributesetinstance asi ON COALESCE(rs.m_attributesetinstance_id, '0') = asi.m_attributesetinstance_id
+            LEFT JOIN m_storage_detail sd ON sd.m_product_id = v_product_id
+                                             AND sd.c_uom_id = v_uom_id
+                                             AND sd.m_product_uom_id IS NULL
+                                             AND COALESCE(sd.m_attributesetinstance_id, '0') = COALESCE(rs.m_attributesetinstance_id, '0')
+                                             AND sd.m_locator_id = rs.m_locator_id
+            LEFT JOIN (
+                    SELECT SUM(rs2.quantity - COALESCE(rs2.releasedqty,0)) AS reservedstock, rs2.m_locator_id, COALESCE(rs2.m_attributesetinstance_id,'0') AS m_attributesetinstance_id
+                    FROM m_reservation_stock rs2
+                      JOIN m_reservation r ON rs2.m_reservation_id = r.m_reservation_id
+                    WHERE r.m_product_id = v_product_id
+                      AND r.res_status NOT IN ('CL', 'DR')
+                      AND r.c_uom_id = v_uom_id
+                    GROUP BY rs2.m_locator_id, COALESCE(rs2.m_attributesetinstance_id,'0')
+                  ) other ON rs.m_locator_id = other.m_locator_id
+                             AND COALESCE(rs.m_attributesetinstance_id, '0') = COALESCE(other.m_attributesetinstance_id, '0')
+        WHERE rs.quantity - COALESCE(rs.releasedqty, 0) > COALESCE(sd.qtyonhand, 0) - COALESCE(other.reservedstock, 0)
+          AND rs.m_reservation_id = v_reservation_id
+      ) LOOP
+        RAISE_APPLICATION_ERROR(-20000, '@NotEnoughAvailableStock@ : ' || cur_not_available.locatorName || ' - ' || cur_not_available.attributeName);
+      END LOOP;
+      
+      -- Check that prereserved quantity is equal all lower than ordered quantity
+      FOR cur_not_available IN (
+          SELECT AD_COLUMN_IDENTIFIER('C_Orderline', rs.c_orderline_id, 'en_US') as orderline
+          FROM m_reservation_stock rs
+              JOIN c_orderline ol ON rs.c_orderline_id = ol.c_orderline_id
+              LEFT JOIN (
+                  -- If reservation is closed consider only converted reservations as prereserve.
+                  SELECT SUM(CASE r.res_status
+                             WHEN 'CL' THEN CASE WHEN rs2.m_locator_id IS NULL THEN 0
+                                            ELSE rs2.quantity END
+                             ELSE rs2.quantity END) as qty, rs2.c_orderline_id
+                  FROM m_reservation_stock rs2
+                      JOIN m_reservation r ON rs2.m_reservation_id = r.m_reservation_id
+                  WHERE rs2.c_orderline_id IS NOT NULL
+                    AND r.res_status NOT IN ('DR')
+                  GROUP BY rs2.c_orderline_id
+                ) pre ON rs.c_orderline_id = pre.c_orderline_id
+          WHERE rs.m_reservation_id = v_reservation_id
+            AND rs.c_orderline_id IS NOT NULL
+            AND ol.qtyordered < rs.quantity + COALESCE(pre.qty, 0)
+      ) LOOP
+        RAISE_APPLICATION_ERROR(-20000, '@MorePrereservedQtyThanOrdered@ '||cur_not_available.orderline);
+      END LOOP;
+      
+      IF (v_orderline_id IS NOT NULL) THEN
+        SELECT count(*) INTO v_count
+        FROM m_reservation
+        WHERE c_orderline_id = v_orderline_id
+          AND m_reservation_id != v_reservation_id;
+        IF (v_count > 0) THEN
+          RAISE_APPLICATION_ERROR(-20000, '@SOLineWithMoreThanOneOpenReservation@');
+        END IF;
+  
+        UPDATE c_orderline
+        SET so_res_status = CASE WHEN v_quantity = v_reservedqty THEN 'CR'
+                                 WHEN v_reservedqty > 0 THEN 'PR'
+                                 ELSE 'NR'
+                            END
+        WHERE c_orderline_id = v_orderline_id;
+  
+        SELECT c_order_id INTO v_sales_order_id
+        FROM c_orderline
+        WHERE c_orderline_id = v_orderline_id;
+        SELECT COUNT(*), SUM(CASE so_res_status WHEN 'CR' THEN 1 ELSE 0 END), SUM(CASE so_res_status WHEN 'PR' THEN 1 ELSE 0 END)
+          INTO v_linecount, v_creservedcount, v_preservedcount
+        FROM c_orderline
+        WHERE c_order_id = v_sales_order_id;
+  
+        UPDATE c_order
+        SET so_res_status = CASE WHEN v_linecount = v_creservedcount THEN 'CR'
+                                 WHEN v_creservedcount + v_preservedcount > 0 THEN 'PR'
+                                 ELSE 'NR'
+                            END
+        WHERE c_order_id = v_sales_order_id;
+      END IF;
+      -- ADD RESERVED STOCK
+      M_RESERVE_STOCK_AUTO(v_reservation_id, v_user_id, v_message);
+
+      v_newstatus := 'CO';
+      v_newaction := 'HO';
+    END;
+
+  ELSIF (v_resaction = 'HO') THEN
+  /*
+    Reservation Hold Process
+  */
+    IF (v_resstatus != 'CO') THEN
+      RAISE_APPLICATION_ERROR(-20000, '@ActionNotSupported@');
+    END IF;
+    v_newstatus := 'HO';
+    v_newaction := 'UNHO';
+  
+  
+  ELSIF (v_resaction = 'UNHO') THEN
+  /*
+    Reservation Un-Hold Process
+  */
+    IF (v_resstatus != 'HO') THEN
+      RAISE_APPLICATION_ERROR(-20000, '@ActionNotSupported@');
+    END IF;
+    v_newstatus := 'CO';
+    v_newaction := 'HO';
+
+  ELSIF (v_resaction = 'RE') THEN
+  /*
+    Reservation Reactivate Process
+  */
+    DECLARE
+      v_sales_order_id        VARCHAR2(32);
+      v_reservedcount         NUMBER;
+    BEGIN
+
+      IF (v_resstatus NOT IN ('CO', 'CL')) THEN
+        RAISE_APPLICATION_ERROR(-20000, '@ActionNotSupported@');
+      END IF;
+
+      UPDATE c_orderline
+      SET so_res_status = 'NR'
+      WHERE c_orderline_id = v_orderline_id;
+
+      SELECT c_order_id INTO v_sales_order_id
+      FROM c_orderline
+      WHERE c_orderline_id = v_orderline_id;
+      SELECT COUNT(*) INTO v_reservedcount
+      FROM c_orderline
+      WHERE c_order_id = v_sales_order_id
+        AND so_res_status <> 'NR';
+
+      UPDATE c_order
+      SET so_res_status = CASE WHEN v_reservedcount > 0 THEN 'PR'
+                               ELSE 'NR'
+                          END
+      WHERE c_order_id = v_sales_order_id;
+
+      v_newstatus := 'DR';
+      v_newaction := 'PR';
+    END;
+  
+  ELSIF (v_resaction = 'CL') THEN
+  /*
+    Reservation Close Process
+  */
+    IF (v_resstatus != 'CO' AND v_resstatus != 'HO') THEN
+      RAISE_APPLICATION_ERROR(-20000, '@ActionNotSupported@');
+    END IF;
+    v_newstatus := 'CL';
+    v_newaction := 'RE';
+
+  ELSE
+    RAISE_APPLICATION_ERROR(-20000, '@UnsupportedResAction@');
+  END IF;
+
+  UPDATE m_reservation
+  SET res_status = v_newstatus,
+      res_process = v_newaction,
+      updated = now(),
+      updatedby = v_user_id
+  WHERE m_reservation_id = v_reservation_id;
+
+  IF (p_pinstance_id IS NOT NULL) THEN
+    DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
+    AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', v_Result, v_Message) ;
+    DBMS_OUTPUT.PUT_LINE('--<<M_Reservation_Post finished>> ' || v_Message) ;
+  END IF;
+  RETURN;
+END; --BODY
+EXCEPTION
+WHEN OTHERS THEN
+  v_ResultStr:= '@ERROR=' || SQLERRM;
+  DBMS_OUTPUT.PUT_LINE(v_ResultStr) ;
+  IF (p_pinstance_id IS NOT NULL) THEN
+    ROLLBACK;
+    AD_UPDATE_PINSTANCE(p_pinstance_id, NULL, 'N', 0, v_ResultStr) ;
+  ELSE
+    RAISE;
+  END IF;
+  RETURN;
+END M_RESERVATION_POST
+]]></body>
+    </function>
+  </database>
