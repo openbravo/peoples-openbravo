@@ -6,7 +6,7 @@
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
-/*global Backbone,console*/
+/*global Backbone,console,_*/
 
 /**
  * OB.Model.Executor provides a mechanism to execute actions synchronously even each of
@@ -133,7 +133,7 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
       });
       evt.trigger('actionsCreated');
     }, function () {
-      console.error('Error getting promotions', arguments)
+      console.error('Error getting promotions', arguments);
     });
   },
 
