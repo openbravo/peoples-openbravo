@@ -52,6 +52,7 @@ enyo.kind({
     onDiscountsModeFinished: 'discountsModeFinished',
     onDisableLeftToolbar: 'leftToolbarDisabled',
     onDisableBPSelection: 'BPSelectionDisabled',
+    onDisableOrderSelection: 'orderSelectionDisabled',
     onDisableKeyboard: 'keyboardDisabled',
     onDiscountsModeKeyboard: 'keyboardOnDiscountsMode',
     onCheckAllTicketLines: 'allTicketLinesChecked',
@@ -130,7 +131,7 @@ enyo.kind({
     }, {
       kind: 'OB.OBPOSPointOfSale.UI.Modals.modalNotEnoughCredit',
       name: 'modalNotEnoughCredit'
-     }, {
+    }, {
       kind: 'OB.UI.ValidateAction',
       name: 'modalValidateAction'
     }, {
@@ -386,6 +387,9 @@ enyo.kind({
   BPSelectionDisabled: function (inSender, inEvent) {
     this.waterfall('onBPSelectionDisabled', inEvent);
   },
+  orderSelectionDisabled: function (inSender, inEvent) {
+    this.waterfall('onOrderSelectionDisabled', inEvent);
+  },
   discountsMode: function (inSender, inEvent) {
     this.tabChange(inSender, inEvent);
     this.leftToolbarDisabled(inSender, {
@@ -395,6 +399,9 @@ enyo.kind({
       status: true
     });
     this.BPSelectionDisabled(inSender, {
+      status: true
+    });
+    this.orderSelectionDisabled(inSender, {
       status: true
     });
     this.keyboardOnDiscountsMode(inSender, {
@@ -436,6 +443,10 @@ enyo.kind({
     });
 
     this.BPSelectionDisabled(inSender, {
+      status: false
+    });
+
+    this.orderSelectionDisabled(inSender, {
       status: false
     });
 

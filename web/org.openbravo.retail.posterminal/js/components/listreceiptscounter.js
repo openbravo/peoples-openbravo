@@ -56,10 +56,20 @@ enyo.kind({
   events: {
     onShowPopup: ''
   },
+  handlers: {
+    onOrderSelectionDisabled: 'orderDisabled'
+  },
+  orderDisabled: function (inSender, inEvent) {
+    debugger;
+    this.setDisabled(inEvent.status);
+    this.addRemoveClass('disabled', inEvent.status);
+  },
   tap: function () {
-    this.doShowPopup({
-      popup: 'modalreceipts'
-    });
+    if (!this.disabled) {
+      this.doShowPopup({
+        popup: 'modalreceipts'
+      });
+    }
   },
   components: [{
     style: 'position: absolute; top: -35px; right:-35px; background: #404040; height:70px; width: 70px; -webkit-transform: rotate(45deg); -moz-transform: rotate(45deg); -ms-transform: rotate(45deg); -transform: rotate(45deg);'
