@@ -49,16 +49,41 @@ enyo.kind({
             kind: 'enyo.Option',
             initComponents: function () {
               this.setValue(this.model.get('id'));
-              this.setContent(this.model.get('_identifier'));
               this.originalText = this.model.get('_identifier');
               if (this.model.get('discountType') === 'D1D193305A6443B09B299259493B272A' || this.model.get('discountType') === '20E4EC27397344309A2185097392D964') {
+                //variable
                 this.requiresQty = true;
                 if (this.model.get('discountType') === '20E4EC27397344309A2185097392D964') {
+                  //variable porcentaje
                   this.units = '%';
-                } else {
+                  if (this.model.get('obdiscPercentage')) {
+                    this.amt = this.model.get('obdiscPercentage');
+                  }
+                } else if (this.model.get('discountType') === 'D1D193305A6443B09B299259493B272A') {
+                  //variable qty
                   this.units = OB.POS.modelterminal.get('terminal').currency$_identifier;
+                  if (this.model.get('obdiscAmt')) {
+                    this.amt = this.model.get('obdiscAmt');
+                  }
+                }
+              } else {
+                //fixed
+                this.requiresQty = false;
+                if (this.model.get('discountType') === '8338556C0FBF45249512DB343FEFD280') {
+                  //fixed percentage
+                  this.units = '%';
+                  if (this.model.get('obdiscPercentage')) {
+                    this.amt = this.model.get('obdiscPercentage');
+                  }
+                } else if (this.model.get('discountType') === '7B49D8CC4E084A75B7CB4D85A6A3A578') {
+                  //fixed amount
+                  this.units = OB.POS.modelterminal.get('terminal').currency$_identifier;
+                  if (this.model.get('obdiscAmt')) {
+                    this.amt = this.model.get('obdiscAmt');
+                  }
                 }
               }
+              this.setContent(this.originalText + ' - ' + this.amt + ' ' + this.units);
             }
           })
         }]
@@ -193,9 +218,7 @@ enyo.kind({
         return true;
       }
     }, this);
-    debugger;
     if (selectedDiscount.get('discountType') === "8338556C0FBF45249512DB343FEFD280" || selectedDiscount.get('discountType') === "7B49D8CC4E084A75B7CB4D85A6A3A578") {
-      //no keyboard
       this.disableKeyboard();
     } else {
       //enable keyboard
