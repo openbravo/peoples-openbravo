@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global enyo, $, Backbone */
+/*global enyo, $, Backbone, _ */
 
 enyo.kind({
   name: 'OB.UI.Keyboard',
@@ -218,8 +218,10 @@ enyo.kind({
     onGlobalKeydown: 'globalKeydownHandler',
     onGlobalKeypress: 'globalKeypressHandler',
     onCommandFired: 'commandHandler',
-    onRegisterButton: 'registerButton'
+    onRegisterButton: 'registerButton',
+    onKeyboardDisabled: 'keyboardDisabled'
   },
+  isEnabled: true,
 
   isPhysicalKeyboardAllowed: function (inEvent) {
     var tagName, targetId = 'x',
@@ -242,6 +244,25 @@ enyo.kind({
       return false;
     } else {
       return true;
+    }
+  },
+  keyboardDisabled: function (inSender, inEvent) {
+    if (inEvent.status) {
+      _.each(this.buttons, function (btn) {
+        if (!btn.hasClass('btnkeyboard-inactive')) {
+          btn.setDisabled(true);
+          btn.addClass('btnkeyboard-inactive');
+        }
+      });
+      this.isEnabled = false;
+    } else {
+      _.each(this.buttons, function (btn) {
+        if (btn.disabled) {
+          btn.setDisabled(false);
+          btn.removeClass('btnkeyboard-inactive');
+        }
+      });
+      this.isEnabled = true;
     }
   },
 
@@ -295,7 +316,7 @@ enyo.kind({
 
   writeCharacter: function (character) {
     var t;
-    if (character.match(/^([0-9]|\.|,| |[a-z]|[A-Z])$/)) {
+    if (character.match(/^([0-9]|\.|,| |[a-z]|[A-Z])$/) && this.isEnabled) {
       t = this.$.editbox.getContent();
       this.$.editbox.setContent(t + character);
     } else if (character === 'del') {

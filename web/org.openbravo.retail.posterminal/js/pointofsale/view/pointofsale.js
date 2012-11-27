@@ -47,7 +47,17 @@ enyo.kind({
     onSetProperty: 'setProperty',
     onSetLineProperty: 'setLineProperty',
     onSetReceiptsList: 'setReceiptsList',
-    onShowReceiptProperties: 'showModalReceiptProperties'
+    onShowReceiptProperties: 'showModalReceiptProperties',
+    onDiscountsMode: 'discountsMode',
+    onDiscountsModeFinished: 'discountsModeFinished',
+    onDisableLeftToolbar: 'leftToolbarDisabled',
+    onDisableBPSelection: 'BPSelectionDisabled',
+    onDisableOrderSelection: 'orderSelectionDisabled',
+    onDisableKeyboard: 'keyboardDisabled',
+    onDiscountsModeKeyboard: 'keyboardOnDiscountsMode',
+    onCheckAllTicketLines: 'allTicketLinesChecked',
+    onSetDiscountQty: 'discountQtyChanged',
+    onLineChecked: 'checkedLine'
   },
   events: {
     onShowPopup: ''
@@ -121,10 +131,16 @@ enyo.kind({
     }, {
       kind: 'OB.OBPOSPointOfSale.UI.Modals.modalNotEnoughCredit',
       name: 'modalNotEnoughCredit'
-     }, {
+    }, {
       kind: 'OB.UI.ValidateAction',
       name: 'modalValidateAction'
-     }, {
+    }, {
+      kind: 'OB.OBPOSPointOfSale.UI.Modals.modalDiscountNeedQty',
+      name: 'modalDiscountNeedQty'
+    }, {
+      kind: 'OB.OBPOSPointOfSale.UI.Modals.modalNotValidValueForDiscount',
+      name: 'modalNotValidValueForDiscount'
+    }, {
       classes: 'row',
       style: 'margin-bottom: 5px;',
       components: [{
@@ -218,7 +234,7 @@ enyo.kind({
     if (inEvent.ignoreStockTab) {
       this.showOrder(inSender, inEvent);
     } else {
-      if (inEvent.product.get('showstock') && OB.POS.modelterminal.get('connectedToERP')) {
+      if (inEvent.product.get('showstock') && !inEvent.product.get('ispack') && OB.POS.modelterminal.get('connectedToERP')) {
         inEvent.leftSubWindow = OB.OBPOSPointOfSale.UICustomization.stockLeftSubWindow;
         this.showLeftSubWindow(inSender, inEvent);
         return true;
@@ -227,7 +243,7 @@ enyo.kind({
       }
     }
 
-    this.model.get('order').addProduct(inEvent.product);
+    this.model.get('order').addProduct(inEvent.product, inEvent.qty);
     this.model.get('orderList').saveCurrent();
     return true;
   },
@@ -347,9 +363,62 @@ enyo.kind({
     this.model.get('orderList').saveCurrent();
     return true;
   },
+  checkedLine: function (inSender, inEvent) {
+    if (inEvent.originator.kind === 'OB.UI.RenderOrderLine') {
+      this.waterfall('onCheckedTicketLine', inEvent);
+      return true;
+    }
+  },
+  discountQtyChanged: function (inSender, inEvent) {
+    this.waterfall('onDiscountQtyChanged', inEvent);
+  },
+  keyboardOnDiscountsMode: function (inSender, inEvent) {
+    this.waterfall('onKeyboardOnDiscountsMode', inEvent);
+  },
+  keyboardDisabled: function (inSender, inEvent) {
+    this.waterfall('onKeyboardDisabled', inEvent);
+  },
+  allTicketLinesChecked: function (inSender, inEvent) {
+    this.waterfall('onAllTicketLinesChecked', inEvent);
+  },
+  leftToolbarDisabled: function (inSender, inEvent) {
+    this.waterfall('onLeftToolbarDisabled', inEvent);
+  },
+  rightToolbarDisabled: function (inSender, inEvent) {
+    this.waterfall('onRightToolbarDisabled', inEvent);
+  },
+  BPSelectionDisabled: function (inSender, inEvent) {
+    this.waterfall('onBPSelectionDisabled', inEvent);
+  },
+  orderSelectionDisabled: function (inSender, inEvent) {
+    this.waterfall('onOrderSelectionDisabled', inEvent);
+  },
+  discountsMode: function (inSender, inEvent) {
+    this.leftToolbarDisabled(inSender, {
+      status: true
+    });
+    this.rightToolbarDisabled(inSender, {
+      status: true
+    });
+    this.BPSelectionDisabled(inSender, {
+      status: true
+    });
+    this.orderSelectionDisabled(inSender, {
+      status: true
+    });
+    this.keyboardOnDiscountsMode(inSender, {
+      status: true
+    });
+    this.waterfall('onCheckBoxBehaviorForTicketLine', {
+      status: true
+    });
+    this.tabChange(inSender, inEvent);
+  },
   tabChange: function (inSender, inEvent) {
+
     this.waterfall('onTabButtonTap', {
-      tabPanel: inEvent.tabPanel
+      tabPanel: inEvent.tabPanel,
+      options: inEvent.options
     });
     this.waterfall('onChangeEditMode', {
       edit: inEvent.edit
@@ -359,6 +428,40 @@ enyo.kind({
     } else {
       this.$.keyboard.hide();
     }
+
+  },
+  discountsModeFinished: function (inSender, inEvent) {
+    this.leftToolbarDisabled(inSender, {
+      status: false
+    });
+    this.keyboardOnDiscountsMode(inSender, {
+      status: false
+    });
+    this.rightToolbarDisabled(inSender, {
+      status: false
+    });
+
+    this.keyboardDisabled(inSender, {
+      status: false
+    });
+
+    this.BPSelectionDisabled(inSender, {
+      status: false
+    });
+
+    this.orderSelectionDisabled(inSender, {
+      status: false
+    });
+
+    this.waterfall('onCheckBoxBehaviorForTicketLine', {
+      status: false
+    });
+
+    this.allTicketLinesChecked(inSender, {
+      status: false
+    });
+
+    this.tabChange(inSender, inEvent);
   },
   deleteLine: function (inSender, inEvent) {
     if (this.model.get('order').get('isEditable') === false) {

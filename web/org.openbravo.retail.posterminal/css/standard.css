@@ -451,8 +451,11 @@ button.btnlink:active {
   opacity: 0.999; /* Instead of "1" to avoid strange displacement effect in buttons on hover effect */
   background-color: #cccccc;
 }
-button.btnlink:disabled {
+button.btnlink:disabled,
+button.btnlink[disabled=true]:hover{
   background-color: #cccccc;
+  opacity: 1;
+  cursor: default;
 }
 button.btnlink-small {
   display: inline-block;
@@ -606,6 +609,12 @@ div.dropdown:hover {
 
 div.dropdown-menuitem {
   cursor: pointer;
+}
+
+.disabled > div.dropdown-menuitem,
+.disabled > div.dropdown-menuitem:hover{
+  background-color: #EBEBEB;
+  cursor: default;
 }
 
 div.dropdown-menuitem:hover {

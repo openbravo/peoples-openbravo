@@ -153,15 +153,17 @@ public class JSONRowConverter {
     }
   }
 
-  public static int buildResponse(Writer w, Scroll listdata, String[] aliases) throws IOException,
-      JSONException {
+  public static int buildResponse(Writer w, Scroll listdata, String[] aliases, boolean firstQuery)
+      throws IOException, JSONException {
 
     final JSONRowConverter converter = new JSONRowConverter(aliases);
 
     int rows = 0;
-
     try {
       while (listdata.next()) {
+        if (rows == 0 && !firstQuery) {
+          w.write(",");
+        }
         if (rows > 0) {
           w.write(',');
         }

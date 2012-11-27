@@ -72,6 +72,14 @@
       return OB.I18N.formatCurrency(this.get('_gross') || this.getGross());
     },
 
+    isAffectedByPack: function () {
+      return _.find(this.get('promotions'), function (promotion) {
+        if (promotion.pack) {
+          return true;
+        }
+      }, this);
+    },
+
     stopApplyingPromotions: function () {
       var promotions = this.get('promotions'),
           i;
@@ -518,8 +526,13 @@
       this.save();
     },
 
-    addProduct: function (p) {
+    addProduct: function (p, qty, options) {
       var me = this;
+      if (p.get('ispack')) {
+        OB.Model.Discounts.discountRules[p.get('productCategory')].addProductToOrder(this, p);
+        return;
+      }
+      qty = qty || 1;
       if (me.get('isQuotation') && me.get('hasbeenpaid') === 'Y') {
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_QuotationClosed'));
         return;
@@ -535,18 +548,25 @@
           }
         });
       } else {
-        if (p.get('groupProduct')) {
-          var line = this.get('lines').find(function (l) {
-            return l.get('product').id === p.id;
+        if (p.get('groupProduct') || (options && options.packId)) {
+          var affectedByPack, line = this.get('lines').find(function (l) {
+            if (l.get('product').id === p.id) {
+              affectedByPack = l.isAffectedByPack();
+              if (!affectedByPack) {
+                return true;
+              } else if (options && options.packId === affectedByPack.ruleId) {
+                return true;
+              }
+            }
           });
           if (line) {
-            this.addUnit(line);
+            this.addUnit(line, qty);
             line.trigger('selected', line);
           } else {
-            this.createLine(p, 1);
+            this.createLine(p, qty);
           }
         } else {
-          this.createLine(p, 1);
+          this.createLine(p, qty);
         }
       }
       this.save();
@@ -556,11 +576,14 @@
       var promotions = line.get('promotions') || [],
           disc = {},
           i, replaced = false;
-
       disc.name = discount.name || rule.get('printName') || rule.get('name');
-      disc.ruleId = rule.id;
+      disc.ruleId = rule.id || rule.get('ruleId');
       disc.amt = discount.amt;
       disc.actualAmt = discount.actualAmt;
+      disc.pack = discount.pack;
+      disc.discountType = rule.get('discountType');
+      disc.manual = discount.manual;
+      disc.userAmt = discount.userAmt;
 
       disc.hidden = discount.hidden === true || (discount.actualAmt && !disc.amt);
 
@@ -570,11 +593,19 @@
         disc.displayedTotalAmount = disc.amt || discount.actualAmt;
       }
 
-      disc.applyNext = rule.get('applyNext');
-      disc._idx = rule.get('_idx');
+      if (discount.percentage) {
+        disc.percentage = discount.percentage;
+      }
+
+      if (typeof discount.applyNext !== 'undefined') {
+        disc.applyNext = discount.applyNext;
+      } else {
+        disc.applyNext = rule.get('applyNext');
+      }
+      disc._idx = discount._idx || rule.get('_idx');
 
       for (i = 0; i < promotions.length; i++) {
-        if (disc._idx < promotions[i]._idx) {
+        if (disc._idx !== -1 && disc._idx < promotions[i]._idx) {
           // Trying to apply promotions in incorrect order: recalculate whole line again
           OB.Model.Discounts.applyPromotions(this, line);
           return;

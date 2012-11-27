@@ -16,6 +16,8 @@ import java.util.List;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.model.pricing.priceadjustment.PriceAdjustment;
+import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.retail.posterminal.POSUtils;
 import org.openbravo.retail.posterminal.ProcessHQLQuery;
 import org.openbravo.service.json.JsonUtils;
@@ -30,7 +32,8 @@ public class Discount extends ProcessHQLQuery {
   protected String getPromotionsHQL(JSONObject jsonsent) throws JSONException {
     String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
 
-    String priceListId = POSUtils.getPriceListByOrgId(orgId).getId();
+    PriceList priceList = POSUtils.getPriceListByOrgId(orgId);
+    String priceListId = priceList.getId();
 
     String hql = "from PricingAdjustment p ";
     hql += "where active = true ";
@@ -66,6 +69,17 @@ public class Discount extends ProcessHQLQuery {
     hql += "          and o.priceAdjustment = p";
     hql += "          and o.organization.id ='" + orgId + "')) ";
     hql += "    ) ";
+
+    // Rules with currency can be only applied if the price list has the same currency
+    try {
+      // Hack: currency is defined in discounts module, check if it is present not to fail the query
+      // other case
+      PriceAdjustment.class.getField("PROPERTY_OBDISCCCURRENCY");
+      hql += " and (oBDISCCCurrency is null or ";
+      hql += "     oBDISCCCurrency.id = '" + priceList.getCurrency().getId() + "')";
+    } catch (Exception e) {
+      // ignore, the module column is not present: don't include it in the query
+    }
 
     return hql;
   }

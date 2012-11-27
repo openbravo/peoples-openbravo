@@ -24,6 +24,17 @@ OB.OBPOSPointOfSale.UI.ToolbarScan = {
   }
 };
 
+OB.OBPOSPointOfSale.UI.ToolbarDiscounts = {
+  name: 'toolbardiscounts',
+  buttons: [],
+  shown: function () {
+    var keyboard = this.owner.owner;
+    keyboard.showKeypad('basic');
+    keyboard.showSidepad('sideenabled');
+    keyboard.defaultcommand = 'line:dto';
+  }
+};
+
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ToolbarPayment',

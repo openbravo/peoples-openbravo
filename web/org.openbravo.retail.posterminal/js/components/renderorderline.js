@@ -14,9 +14,20 @@ enyo.kind({
   name: 'OB.UI.RenderOrderLine',
   classes: 'btnselect-orderline',
   handlers: {
-    onChangeEditMode: 'changeEditMode'
+    onChangeEditMode: 'changeEditMode',
+    onCheckBoxBehaviorForTicketLine: 'checkBoxForTicketLines'
+  },
+  events: {
+    onLineChecked: ''
   },
   components: [{
+    name: 'checkBoxColumn',
+    kind: 'OB.UI.CheckboxButton',
+    tap: function () {
+
+    },
+    style: 'float: left; width: 10%;'
+  }, {
     name: 'product',
     attributes: {
       style: 'float: left; width: 40%;'
@@ -41,6 +52,7 @@ enyo.kind({
   }],
   initComponents: function () {
     this.inherited(arguments);
+    this.$.checkBoxColumn.hide();
     this.$.product.setContent(this.model.get('product').get('_identifier'));
     this.$.quantity.setContent(this.model.printQty());
     this.$.price.setContent(this.model.printPrice());
@@ -73,6 +85,23 @@ enyo.kind({
   },
   changeEditMode: function (inSender, inEvent) {
     this.addRemoveClass('btnselect-orderline-edit', inEvent.edit);
+  },
+  checkBoxForTicketLines: function (inSender, inEvent) {
+    if (inEvent.status) {
+      this.$.gross.hasNode().style.width = '18%';
+      this.$.quantity.hasNode().style.width = '16%';
+      this.$.price.hasNode().style.width = '18%';
+      this.$.product.hasNode().style.width = '38%';
+      this.$.checkBoxColumn.show();
+      this.changeEditMode(this, inEvent.status);
+    } else {
+      this.$.gross.hasNode().style.width = '20%';
+      this.$.quantity.hasNode().style.width = '20%';
+      this.$.price.hasNode().style.width = '20%';
+      this.$.product.hasNode().style.width = '40%';
+      this.$.checkBoxColumn.hide();
+      this.changeEditMode(this, false);
+    }
   }
 
 });

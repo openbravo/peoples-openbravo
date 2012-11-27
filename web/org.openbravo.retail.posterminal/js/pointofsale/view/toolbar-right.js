@@ -38,7 +38,7 @@ enyo.kind({
       }
     }
   },
-  manualTap: function (tabName) {
+  manualTap: function (tabName, options) {
     var tab;
 
     function getButtonByName(name, me) {
@@ -54,8 +54,9 @@ enyo.kind({
 
     tab = getButtonByName(tabName, this);
     if (tab) {
-      tab.tap();
+      tab.tap(options);
     }
+
   },
   initComponents: function () {
     this.inherited(arguments);
@@ -116,8 +117,8 @@ enyo.kind({
       }
     }, this);
 
-    this.receipt.on('scan', function () {
-      this.manualTap('scan');
+    this.receipt.on('scan', function (params) {
+      this.manualTap('scan', params);
     }, this);
 
     this.receipt.get('lines').on('click', function () {
@@ -166,12 +167,22 @@ enyo.kind({
   events: {
     onTabChange: ''
   },
-  tap: function () {
-    this.doTabChange({
-      tabPanel: this.tabPanel,
-      keyboard: 'toolbarscan',
-      edit: false
-    });
+  handlers: {
+    onRightToolbarDisabled: 'disabledButton'
+  },
+  disabledButton: function (inSender, inEvent) {
+    this.isEnabled = !inEvent.status;
+    this.setDisabled(inEvent.status);
+  },
+  tap: function (options) {
+    if (!this.disabled) {
+      this.doTabChange({
+        tabPanel: this.tabPanel,
+        keyboard: 'toolbarscan',
+        edit: false,
+        options: options
+      });
+    }
   }
 });
 
@@ -181,14 +192,23 @@ enyo.kind({
   events: {
     onTabChange: ''
   },
+  handlers: {
+    onRightToolbarDisabled: 'disabledButton'
+  },
+  disabledButton: function (inSender, inEvent) {
+    this.isEnabled = !inEvent.status;
+    this.setDisabled(inEvent.status);
+  },
   tabPanel: 'catalog',
   label: OB.I18N.getLabel('OBPOS_LblBrowse'),
   tap: function () {
-    this.doTabChange({
-      tabPanel: this.tabPanel,
-      keyboard: false,
-      edit: false
-    });
+    if (!this.disabled) {
+      this.doTabChange({
+        tabPanel: this.tabPanel,
+        keyboard: false,
+        edit: false
+      });
+    }
   }
 });
 
@@ -197,15 +217,24 @@ enyo.kind({
   kind: 'OB.UI.ToolbarButtonTab',
   tabPanel: 'search',
   label: OB.I18N.getLabel('OBPOS_LblSearch'),
+  handlers: {
+    onRightToolbarDisabled: 'disabledButton'
+  },
+  disabledButton: function (inSender, inEvent) {
+    this.isEnabled = !inEvent.status;
+    this.setDisabled(inEvent.status);
+  },
   events: {
     onTabChange: ''
   },
   tap: function () {
-    this.doTabChange({
-      tabPanel: this.tabPanel,
-      keyboard: false,
-      edit: false
-    });
+    if (this.disabled === false) {
+      this.doTabChange({
+        tabPanel: this.tabPanel,
+        keyboard: false,
+        edit: false
+      });
+    }
   },
   initComponents: function () {
     this.inherited(arguments);
@@ -217,35 +246,42 @@ enyo.kind({
   kind: 'OB.UI.ToolbarButtonTab',
   tabPanel: 'payment',
   handlers: {
-    onChangeTotal: 'renderTotal'
+    onChangeTotal: 'renderTotal',
+    onRightToolbarDisabled: 'disabledButton'
+  },
+  disabledButton: function (inSender, inEvent) {
+    this.isEnabled = !inEvent.status;
+    this.setDisabled(inEvent.status);
   },
   events: {
     onTabChange: ''
   },
   tap: function () {
-    var receipt = this.model.get('order');
-    if (receipt.get('isQuotation')) {
-      if (receipt.get('hasbeenpaid') !== 'Y') {
-        receipt.prepareToSend(function () {
-          receipt.trigger('closed');
-          receipt.trigger('scan');
-        });
-      } else {
-        receipt.prepareToSend(function () {
-          receipt.trigger('scan');
-          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_QuotationClosed'));
-        });
+    if (this.disabled === false) {
+      var receipt = this.model.get('order');
+      if (receipt.get('isQuotation')) {
+        if (receipt.get('hasbeenpaid') !== 'Y') {
+          receipt.prepareToSend(function () {
+            receipt.trigger('closed');
+            receipt.trigger('scan');
+          });
+        } else {
+          receipt.prepareToSend(function () {
+            receipt.trigger('scan');
+            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_QuotationClosed'));
+          });
+        }
+        return;
       }
-      return;
+      if (this.model.get('order').get('isEditable') === false) {
+        return true;
+      }
+      this.doTabChange({
+        tabPanel: this.tabPanel,
+        keyboard: 'toolbarpayment',
+        edit: false
+      });
     }
-    if (this.model.get('order').get('isEditable') === false) {
-      return true;
-    }
-    this.doTabChange({
-      tabPanel: this.tabPanel,
-      keyboard: 'toolbarpayment',
-      edit: false
-    });
   },
   attributes: {
     style: 'text-align: center; font-size: 30px;'
@@ -296,12 +332,20 @@ enyo.kind({
   events: {
     onTabChange: ''
   },
+  handlers: {
+    onRightToolbarDisabled: 'disabledButton'
+  },
+  disabledButton: function (inSender, inEvent) {
+    this.setDisabled(inEvent.status);
+  },
   tap: function () {
-    this.doTabChange({
-      tabPanel: this.tabPanel,
-      keyboard: 'toolbarscan',
-      edit: true
-    });
+    if (!this.disabled) {
+      this.doTabChange({
+        tabPanel: this.tabPanel,
+        keyboard: 'toolbarscan',
+        edit: true
+      });
+    }
   }
 });
 
@@ -314,6 +358,7 @@ enyo.kind({
     model: null
   },
   classes: 'postab-content',
+
   handlers: {
     onTabButtonTap: 'tabButtonTapHandler'
   },
@@ -335,16 +380,19 @@ enyo.kind({
   }],
   tabButtonTapHandler: function (inSender, inEvent) {
     if (inEvent.tabPanel) {
-      this.showPane(inEvent.tabPanel);
+      this.showPane(inEvent.tabPanel, inEvent.options);
     }
   },
-  showPane: function (tabName) {
+  showPane: function (tabName, options) {
     var paneArray = this.getComponents(),
         i;
 
     for (i = 0; i < paneArray.length; i++) {
       paneArray[i].removeClass('active');
       if (paneArray[i].name === tabName) {
+        if (paneArray[i].executeOnShow) {
+          paneArray[i].executeOnShow(options);
+        }
         paneArray[i].addClass('active');
       }
     }

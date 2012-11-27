@@ -6,7 +6,7 @@
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
-/*global Backbone */
+/*global Backbone,console,_*/
 
 /**
  * OB.Model.Executor provides a mechanism to execute actions synchronously even each of
@@ -132,7 +132,9 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
         });
       });
       evt.trigger('actionsCreated');
-    }, function () {});
+    }, function () {
+      console.error('Error getting promotions', arguments);
+    });
   },
 
   applyRule: function (disc, evt) {
@@ -172,7 +174,21 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
   },
 
   preAction: function (evt) {
-    var line = evt.get('line');
+    var line = evt.get('line'),
+        order = evt.get('receipt'),
+        manualPromotions = [],
+        appliedPromotions;
+
+    // Keep discretionary discounts at the beginning, recalculate them based on 
+    // new info in line
+    appliedPromotions = line.get('promotions');
+    if (appliedPromotions) {
+      _.forEach(appliedPromotions, function (promotion) {
+        if (promotion.manual) {
+          manualPromotions.push(promotion);
+        }
+      });
+    }
 
     line.set({
       promotions: null,
@@ -180,6 +196,18 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
       promotionCandidates: null
     });
 
+    _.forEach(manualPromotions, function (promo) {
+      var promotion = {
+        rule: new Backbone.Model(promo),
+
+        definition: {
+          userAmt: promo.userAmt,
+          applyNext: promo.applyNext
+        },
+        alreadyCalculated: true // to prevent loops
+      };
+      OB.Model.Discounts.addManualPromotion(order, [line], promotion);
+    });
   },
 
   postAction: function (evt) {

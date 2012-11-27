@@ -88,6 +88,17 @@ enyo.kind({
       OB.UTIL.showError("OBDAL error: " + error);
     }
 
+    function successCallbackBestSellerProducts(products, context) {
+      if (products && products.length > 0) {
+        var virtualBestSellerCateg = new OB.Model.ProductCategory();
+        virtualBestSellerCateg.createBestSellerCategory();
+        context.categories.add(virtualBestSellerCateg, {
+          at: 0
+        });
+      }
+      context.me.categories.reset(context.categories.models);
+    }
+
     function successCallbackCategories(dataCategories, me) {
       var bestSellerCriteria, context;
       if (dataCategories && dataCategories.length > 0) {
@@ -103,17 +114,6 @@ enyo.kind({
       } else {
         me.categories.reset();
       }
-    }
-
-    function successCallbackBestSellerProducts(products, context) {
-      if (products && products.length > 0) {
-        var virtualBestSellerCateg = new OB.Model.ProductCategory();
-        virtualBestSellerCateg.createBestSellerCategory();
-        context.categories.add(virtualBestSellerCateg, {
-          at: 0
-        });
-      }
-      context.me.categories.reset(context.categories.models);
     }
 
     OB.Dal.find(OB.Model.ProductCategory, null, successCallbackCategories, errorCallback, this);
@@ -213,7 +213,7 @@ enyo.kind({
       if (category.get('id') === 'OBPOS_bestsellercategory') {
         criteria = {
           'bestseller': 'true'
-        }
+        };
       } else {
         criteria = {
           'productCategory': category.get('id')

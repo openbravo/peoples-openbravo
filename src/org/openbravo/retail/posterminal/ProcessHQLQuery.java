@@ -54,6 +54,7 @@ public abstract class ProcessHQLQuery implements JSONProcess {
 
       int totalRows = 0;
       JSONRowConverter.startResponse(w);
+      boolean firstQuery = true;
       for (String hqlQuery : getQuery(jsonsent)) {
 
         SimpleQueryBuilder querybuilder = new SimpleQueryBuilder(hqlQuery,
@@ -111,7 +112,10 @@ public abstract class ProcessHQLQuery implements JSONProcess {
         ScrollableResults listdata = query.scroll(ScrollMode.FORWARD_ONLY);
         String[] aliases = query.getReturnAliases();
 
-        totalRows += JSONRowConverter.buildResponse(w, Scroll.create(listdata), aliases);
+        totalRows += JSONRowConverter
+            .buildResponse(w, Scroll.create(listdata), aliases, firstQuery);
+        firstQuery = false;
+
       }
 
       JSONRowConverter.endResponse(w, totalRows);

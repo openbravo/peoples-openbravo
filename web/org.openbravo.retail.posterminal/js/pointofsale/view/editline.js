@@ -8,7 +8,6 @@
  */
 
 /*global enyo */
-
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.EditLine',
   published: {
@@ -18,7 +17,43 @@ enyo.kind({
     onDeleteLine: '',
     onEditLine: ''
   },
+  handlers: {
+    onCheckBoxBehaviorForTicketLine: 'checkBoxBehavior'
+  },
+  checkBoxBehavior: function (inSender, inEvent) {
+    if (inEvent.status) {
+      this.line = null;
+      //WARN! When off is done the components which are listening to this event
+      //are removed. Because of it, the callback for the selected event are saved
+      //and then recovered.
+      this.selectedCallbacks = this.receipt.get('lines')._callbacks.selected;
+      this.receipt.get('lines').off('selected');
+      this.render();
+    } else {
+      //WARN! recover the callbacks for the selected events
+      this.receipt.get('lines')._callbacks.selected = this.selectedCallbacks;
+
+      if (this.receipt.get('lines').length > 0) {
+        var line = this.receipt.get('lines').at(0);
+        line.trigger('selected', line);
+      }
+    }
+  },
+  executeOnShow: function (args) {
+    if (args && args.discounts) {
+      this.$.defaultEdit.hide();
+      this.$.discountsEdit.show();
+      return;
+    }
+    this.$.defaultEdit.show();
+    this.$.discountsEdit.hide();
+  },
   components: [{
+    kind: 'OB.OBPOSPointOfSale.UI.Discounts',
+    showing: false,
+    name: 'discountsEdit'
+  }, {
+    name: 'defaultEdit',
     style: 'background-color: #ffffff; color: black; height: 200px; margin: 5px; padding: 5px',
     components: [{
       name: 'msgedit',
@@ -169,22 +204,22 @@ enyo.kind({
       }]
     }]
   }],
-
+  selectedListener: function (line) {
+    if (this.line) {
+      this.line.off('change', this.render);
+    }
+    this.line = line;
+    if (this.line) {
+      this.line.on('change', this.render, this);
+    }
+    this.render();
+  },
   receiptChanged: function () {
     this.inherited(arguments);
 
     this.line = null;
 
-    this.receipt.get('lines').on('selected', function (line) {
-      if (this.line) {
-        this.line.off('change', this.render);
-      }
-      this.line = line;
-      if (this.line) {
-        this.line.on('change', this.render, this);
-      }
-      this.render();
-    }, this);
+    this.receipt.get('lines').on('selected', this.selectedListener, this);
   },
 
   render: function () {
