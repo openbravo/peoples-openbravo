@@ -123,7 +123,6 @@ public class DimensionDisplayUtility {
    *          Field.
    * @return Display logic (JavaScript) for the given field.
    */
-  @SuppressWarnings("unchecked")
   public static String computeAccountingDimensionDisplayLogic(Tab tab, Field field) {
     // Example
     // (context.$IsAcctDimCentrally === 'N' && context.$Element_U2 === 'Y') ||
@@ -176,6 +175,7 @@ public class DimensionDisplayUtility {
       final Query queryLevel = session.createQuery(hql.toString());
       queryLevel.setParameter(0, tableId);
       queryLevel.setParameter(1, dimension);
+      @SuppressWarnings("unchecked")
       List<String> levelList = queryLevel.list();
       int size = levelList.size();
       if (size == 0) {
@@ -417,11 +417,56 @@ public class DimensionDisplayUtility {
           sessionVariables.add(ELEMENT + "_" + dimension + "_" + doc + "_" + level);
         }
       }
-
+    } catch (Exception e) {
+      log4j.error("Not possible to load session variables for tab: " + tab.getId(), e);
+      return new ArrayList<String>();
     } finally {
       OBContext.restorePreviousMode();
     }
     return sessionVariables;
   }
 
+  /**
+   * Calculates the session variables for computing the read only logic in accounting dimension
+   * configuration in client window. Any mandatory combination (defined in ad_dimension_mapping
+   * table) is read only.
+   * 
+   * @return Map containing all the read only session variables for accounting dimension that are
+   *         configurable in client window and with corresponding value ('Y', 'N').
+   */
+  public static Map<String, String> getReadOnlyLogicSessionVariables() {
+    Map<String, String> sessionVariablesMap = new HashMap<String, String>();
+    try {
+      OBContext.setAdminMode(true);
+      StringBuilder hql = new StringBuilder();
+      final Session session = OBDal.getInstance().getSession();
+      hql.append(" select   dm." + DimensionMapping.PROPERTY_ACCOUNTINGDIMENSION + ", ");
+      hql.append("          dm." + DimensionMapping.PROPERTY_LEVEL + ", ");
+      hql.append("          dm." + DimensionMapping.PROPERTY_ISMANDATORY);
+      hql.append(" from " + DimensionMapping.ENTITY_NAME + " as dm ");
+      hql.append(" group by dm." + DimensionMapping.PROPERTY_ACCOUNTINGDIMENSION + ", ");
+      hql.append("          dm." + DimensionMapping.PROPERTY_LEVEL + ", ");
+      hql.append("          dm." + DimensionMapping.PROPERTY_ISMANDATORY);
+
+      final Query queryRO = session.createQuery(hql.toString());
+      @SuppressWarnings("unchecked")
+      List<Object[]> readOnlyList = queryRO.list();
+
+      for (Object[] ro : readOnlyList) {
+        String dim = (String) ro[0];
+        String level = (String) ro[1];
+        boolean isMandatory = (Boolean) ro[2];
+        sessionVariablesMap.put("$RO_" + dim + "_" + level, isMandatory ? "Y" : "N");
+      }
+    } catch (Exception e) {
+      log4j
+          .error(
+              "Not possible to load session variables for read only logic based on dimension mapping table",
+              e);
+      return new HashMap<String, String>();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    return sessionVariablesMap;
+  }
 }

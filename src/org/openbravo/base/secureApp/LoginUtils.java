@@ -278,6 +278,14 @@ public class LoginUtils {
         for (int i = 0; i < attr.length; i++) {
           vars.setSessionValue("$Element_" + attr[i].elementtype, "Y");
         }
+
+        // Load session variables for computing read only logic in Client window
+        //
+        Map<String, String> readOnlySessionVariableMap = DimensionDisplayUtility
+            .getReadOnlyLogicSessionVariables();
+        for (Map.Entry<String, String> entry : readOnlySessionVariableMap.entrySet()) {
+          vars.setSessionValue(entry.getKey(), entry.getValue());
+        }
       }
       attr = null;
 
