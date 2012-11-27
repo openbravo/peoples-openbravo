@@ -104,9 +104,12 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
           dao.createAPRMReadyPreference();
         }
 
+        boolean orgLegalWithAccounting = FIN_Utility.periodControlOpened(payment.TABLE_NAME,
+            payment.getId(), payment.TABLE_NAME + "_ID", "LE");
         if (!FIN_Utility.isPeriodOpen(payment.getClient().getId(), payment.getDocumentType()
             .getDocumentCategory(), payment.getOrganization().getId(), OBDateUtils
-            .formatDate(payment.getPaymentDate()))) {
+            .formatDate(payment.getPaymentDate()))
+            && orgLegalWithAccounting) {
           msg.setType("Error");
           msg.setTitle(Utility.messageBD(conProvider, "Error", language));
           msg.setMessage(Utility.parseTranslation(conProvider, vars, language,

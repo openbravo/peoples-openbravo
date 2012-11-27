@@ -68,14 +68,18 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
           // ***********************
           // Process Transaction
           // ***********************
+          boolean orgLegalWithAccounting = FIN_Utility.periodControlOpened(transaction.TABLE_NAME,
+              transaction.getId(), transaction.TABLE_NAME + "_ID", "LE");
           if (!FIN_Utility.isPeriodOpen(transaction.getClient().getId(),
               AcctServer.DOCTYPE_FinAccTransaction, transaction.getOrganization().getId(),
-              OBDateUtils.formatDate(transaction.getDateAcct()))) {
+              OBDateUtils.formatDate(transaction.getDateAcct()))
+              && orgLegalWithAccounting) {
             msg.setType("Error");
             msg.setTitle(Utility.messageBD(conProvider, "Error", language));
             msg.setMessage(Utility.parseTranslation(conProvider, vars, language,
                 "@PeriodNotAvailable@"));
             bundle.setResult(msg);
+            OBDal.getInstance().rollbackAndClose();
             return;
           }
           final FIN_FinancialAccount financialAccount = transaction.getAccount();
