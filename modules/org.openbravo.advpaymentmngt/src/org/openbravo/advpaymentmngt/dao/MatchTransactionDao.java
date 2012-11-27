@@ -291,6 +291,54 @@ public class MatchTransactionDao {
   }
 
   public static List<FIN_FinaccTransaction> getMatchingFinancialTransaction(
+      String strFinancialAccountId, Date transactionDate, String strReference, BigDecimal amount,
+      List<FIN_FinaccTransaction> excluded) {
+    final StringBuilder whereClause = new StringBuilder();
+    final List<Object> parameters = new ArrayList<Object>();
+    List<FIN_FinaccTransaction> result = null;
+    OBContext.setAdminMode();
+    try {
+      whereClause.append(" as ft ");
+      whereClause.append(" where ft.").append(FIN_FinaccTransaction.PROPERTY_ACCOUNT);
+      whereClause.append(".id = '").append(strFinancialAccountId).append("'");
+      whereClause.append("   and ft.").append(FIN_FinaccTransaction.PROPERTY_RECONCILIATION);
+      whereClause.append(" is null");
+      whereClause.append("   and ft.").append(FIN_FinaccTransaction.PROPERTY_STATUS);
+      whereClause.append(" <> 'RPPC' ");
+      whereClause.append("   and (ft.").append(FIN_FinaccTransaction.PROPERTY_DEPOSITAMOUNT);
+      whereClause.append(" - ").append(FIN_FinaccTransaction.PROPERTY_PAYMENTAMOUNT).append(")");
+      whereClause.append(" = ?");
+      parameters.add(amount);
+      if (transactionDate != null) {
+        whereClause.append("   and ft.").append(FIN_FinaccTransaction.PROPERTY_TRANSACTIONDATE);
+        whereClause.append(" = ?");
+        parameters.add(transactionDate);
+      }
+
+      if (!"".equals(strReference) && !"**".equals(strReference)) {
+        whereClause.append("   and (ft.").append(FIN_FinaccTransaction.PROPERTY_FINPAYMENT);
+        whereClause.append(".").append(FIN_Payment.PROPERTY_REFERENCENO);
+        whereClause.append(" = ?");
+        parameters.add(strReference);
+        whereClause.append("   or ft.").append(FIN_FinaccTransaction.PROPERTY_FINPAYMENT);
+        whereClause.append(".").append(FIN_Payment.PROPERTY_DOCUMENTNO);
+        whereClause.append(" = ?)");
+        parameters.add(strReference);
+      }
+
+      final OBQuery<FIN_FinaccTransaction> obData = OBDal.getInstance().createQuery(
+          FIN_FinaccTransaction.class, whereClause.toString());
+      obData.setParameters(parameters);
+
+      result = obData.list();
+      result.removeAll(excluded);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    return result;
+  }
+
+  public static List<FIN_FinaccTransaction> getMatchingFinancialTransaction(
       String strFinancialAccountId, String strReference, BigDecimal amount, String strBpartner,
       List<FIN_FinaccTransaction> excluded) {
     return getMatchingFinancialTransaction(strFinancialAccountId, null, strReference, amount,
