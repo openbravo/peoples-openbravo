@@ -279,8 +279,8 @@ public class LoginUtils {
           vars.setSessionValue("$Element_" + attr[i].elementtype, "Y");
         }
 
-        // Load session variables for computing read only logic in Client window
-        //
+        // Load session variables for computing read only logic for accounting dimension
+        // configuration in in Client window
         Map<String, String> readOnlySessionVariableMap = DimensionDisplayUtility
             .getReadOnlyLogicSessionVariables();
         for (Map.Entry<String, String> entry : readOnlySessionVariableMap.entrySet()) {
