@@ -394,7 +394,6 @@ enyo.kind({
     this.waterfall('onOrderSelectionDisabled', inEvent);
   },
   discountsMode: function (inSender, inEvent) {
-    this.tabChange(inSender, inEvent);
     this.leftToolbarDisabled(inSender, {
       status: true
     });
@@ -413,6 +412,7 @@ enyo.kind({
     this.waterfall('onCheckBoxBehaviorForTicketLine', {
       status: true
     });
+    this.tabChange(inSender, inEvent);
   },
   tabChange: function (inSender, inEvent) {
 
