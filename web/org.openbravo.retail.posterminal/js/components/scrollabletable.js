@@ -240,12 +240,13 @@ enyo.kind({
     var tr = this.$.tbody.createComponent({
       tag: 'li'
     });
+
+    tr.render();
+
     tr.createComponent({
       kind: this.renderLine,
       model: model
-    });
-
-    tr.render();
+    }).render();
 
     model.on('change', function () {
       tr.destroyComponents();
