@@ -41,6 +41,7 @@ enyo.kind({
   },
   applyChanges: function (inSender, inEvent) {
     this.waterfall('onApplyChange', {});
+    return true;
   },
   initComponents: function () {
     this.inherited(arguments);
@@ -77,8 +78,9 @@ enyo.kind({
     onApplyChanges: ''
   },
   tap: function () {
-    this.doApplyChanges();
-    this.doHideThisPopup();
+    if (this.doApplyChanges()) {
+      this.doHideThisPopup();
+    }
   }
 });
 
@@ -111,7 +113,7 @@ enyo.kind({
   }],
   initComponents: function () {
     this.inherited(arguments);
-    this.$.newAttribute.createComponent(this.newAttribute);
+    this.propertycomponent = this.$.newAttribute.createComponent(this.newAttribute);
     this.$.labelLine.content = this.newAttribute.label;
   }
 });
@@ -132,15 +134,20 @@ enyo.kind({
   },
   loadValue: function (inSender, inEvent) {
     if (this.modelProperty === inEvent.modelProperty) {
-      if (inEvent.order.get(this.modelProperty) !== undefined) {
+      if (inEvent.order.get(this.modelProperty)) {
         this.setValue(inEvent.order.get(this.modelProperty));
+      } else {
+        this.setValue('');
       }
     }
   },
   applyChange: function (inSender, inEvent) {
-    if (inEvent.orderline) {
+    return this.applyValue(inEvent.orderline);
+  },
+  applyValue: function (orderline) {
+    if (orderline) {
       this.doSetLineProperty({
-        line: inEvent.orderline,
+        line: orderline,
         property: this.modelProperty,
         value: this.getValue()
       });
@@ -150,6 +157,7 @@ enyo.kind({
         value: this.getValue()
       });
     }
+    return true;
   },
   initComponents: function () {
     if (this.readOnly) {

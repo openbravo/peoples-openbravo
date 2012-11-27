@@ -20,10 +20,12 @@ enyo.kind({
     onCountAllOK: 'countAllOK',
     onLineEditCount: 'lineEditCount',
     onPaymentMethodKept: 'paymentMethodKept',
-    onResetQtyToKeep: 'resetQtyToKeep'
+    onResetQtyToKeep: 'resetQtyToKeep',
+    onHoldActiveCmd: 'holdActiveCmd'
   },
   events: {
-    onShowPopup: ''
+    onShowPopup: '',
+    onChangeOption: ''
   },
   components: [{
     classes: 'row',
@@ -146,8 +148,15 @@ enyo.kind({
     this.$.listPaymentMethods.setShowing(this.model.showPaymentMethodList());
     this.$.cashToKeep.setShowing(this.model.showCashToKeep());
     this.$.postPrintClose.setShowing(this.model.showPostPrintClose());
-    this.$.cashUpKeyboard.showToolbar(this.model.showPaymentMethodList() ? 'toolbarcountcash' : 'toolbarempty');
-
+    if (this.model.showPaymentMethodList()) {
+      this.$.cashUpKeyboard.showToolbar('toolbarcountcash');
+    } else {
+      if (this.model.get('paymentList').at(this.model.get('stepOfStep3')).get('paymentMethod').allowvariableamount) {
+        this.$.cashUpKeyboard.showToolbar('toolbarother');
+      } else {
+        this.$.cashUpKeyboard.showToolbar('toolbarempty');
+      }
+    }
     this.$.cashUpInfo.refresh();
   },
   changeStep: function (inSender, inEvent) {
@@ -240,10 +249,16 @@ enyo.kind({
       OB.UTIL.showWarning(validationResult.message);
     }
     this.$.cashUpInfo.refresh();
+    this.$.cashUpKeyboard.setStatus(inEvent.name);
   },
   resetQtyToKeep: function (inSender, inEvent) {
     this.model.get('paymentList').at(this.model.get('stepOfStep3')).set('qtyToKeep', null);
     this.$.cashUpInfo.refresh();
+  },
+  holdActiveCmd: function (inSender, inEvent) {
+    this.waterfall('onChangeOption', {
+      cmd: inEvent.cmd
+    });
   }
 });
 

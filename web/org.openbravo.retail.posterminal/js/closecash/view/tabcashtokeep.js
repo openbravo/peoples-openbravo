@@ -23,7 +23,8 @@ enyo.kind({
   tap: function () {
     this.inherited(arguments);
     this.doPaymentMethodKept({
-      qtyToKeep: this.qtyToKeep
+      qtyToKeep: this.qtyToKeep,
+      name: this.name
     });
   },
   render: function (content) {
@@ -45,6 +46,15 @@ enyo.kind({
   style: 'background-color: #ffffff; color: black;',
   events: {
     onResetQtyToKeep: ''
+  },
+  init: function (model) {
+    this.model = model;
+    var me = this;
+    this.model.on('change:otherInput', function () {
+      me.$.variableInput.setContent(me.model.get('otherInput'));
+      me.$.allowvariableamount.setQtyToKeep(me.model.get('otherInput'));
+      me.$.allowvariableamount.tap();
+    }, this);
   },
   components: [{
     kind: "Group",
@@ -83,26 +93,13 @@ enyo.kind({
           style: 'vertical-align: middle; display: table-cell; ',
           content: OB.I18N.getLabel('OBPOS_LblOther')
         }, {
-          kind: 'enyo.Input',
           name: 'variableInput',
-          tap: function () {
-            return true;
-          },
-          onkeyup: 'tri',
-          type: 'text',
-          style: 'width: 90px; vertical-align: middle; margin-top: 0px; margin-right: 0px; margin-bottom: 0px; margin-left: 10px; display: inline-block; '
+          style: 'width: 90px; vertical-align: middle; margin-top: 0px; margin-right: 0px; margin-bottom: 1px; margin-left: 10px; display: inline-block; ',
+          content: OB.DEC.Zero
         }]
       }]
     }]
-  }],
-  tri: function () {
-    var value = this.$.variableInput.getValue();
-    if (value === '') {
-      value = 0;
-    }
-    this.$.allowvariableamount.setQtyToKeep(value);
-    this.$.allowvariableamount.tap();
-  }
+  }]
 });
 
 enyo.kind({
@@ -131,6 +128,12 @@ enyo.kind({
         }, {
           kind: 'OB.OBPOSCashUp.UI.KeepDetails',
           name: 'formkeep',
+          handlers: {
+            onChangeOption: 'changeOption'
+          },
+          changeOption: function (inSender, inEvent) {
+            this.$.allowvariableamount.tap();
+          },
           disableControls: function () {
             //remove selected RButtons
             //reset UI and model.
@@ -139,7 +142,7 @@ enyo.kind({
             this.$.allowdontmove.disableRadio();
             this.$.allowvariableamount.disableRadio();
 
-            this.$.variableInput.setValue('');
+            this.$.variableInput.setContent('');
             this.doResetQtyToKeep({
               qtyToKeep: null
             });

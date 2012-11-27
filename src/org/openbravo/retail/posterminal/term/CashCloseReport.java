@@ -133,8 +133,8 @@ public class CashCloseReport extends JSONProcessSimple {
     JSONArray startings = new JSONArray();
     BigDecimal totalStartings = BigDecimal.ZERO;
     // Payment types
-    String hqlPayments = "select p.financialAccount.id , p.financialAccount.currentBalance, p.commercialName,  c_currency_rate(p.financialAccount.currency, p.obposApplications.organization.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id) as rate from OBPOS_App_Payment as p "
-        + "where obposApplications.id = ? group by  p.commercialName, p.financialAccount.currency, p.financialAccount, p.financialAccount.currentBalance, p.obposApplications.organization.currency, p.obposApplications.client.id, p.obposApplications.organization.id "
+    String hqlPayments = "select p.financialAccount.id , p.financialAccount.currentBalance, p.commercialName,  c_currency_rate(p.financialAccount.currency, p.obposApplications.organization.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id) as rate, p.financialAccount.currency.iSOCode as isocode from OBPOS_App_Payment as p "
+        + "where obposApplications.id = ? group by  p.commercialName, p.financialAccount.currency, p.financialAccount, p.financialAccount.currentBalance, p.obposApplications.organization.currency, p.obposApplications.client.id, p.obposApplications.organization.id, p.financialAccount.currency.iSOCode "
         + " order by p.commercialName";
     Query paymentsQuery = OBDal.getInstance().getSession().createQuery(hqlPayments);
     paymentsQuery.setString(0, posTerminalId);
@@ -164,6 +164,8 @@ public class CashCloseReport extends JSONProcessSimple {
         jsonStarting.put("description",
             OBMessageUtils.getI18NMessage("OBPOS_LblStarting", new String[] {}) + " "
                 + objpayments[2]);
+        jsonStarting.put("rate", objpayments[3]);
+        jsonStarting.put("isocode", objpayments[4]);
         startings.put(jsonStarting);
       }
     }

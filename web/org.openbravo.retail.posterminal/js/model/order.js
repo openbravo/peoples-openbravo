@@ -198,6 +198,7 @@
         this.set('sendEmail', attributes.sendEmail);
         this.set('isPaid', attributes.isPaid);
         this.set('isEditable', attributes.isEditable);
+        this.set('openDrawer', attributes.openDrawer);
         _.each(_.keys(attributes), function (key) {
           if (!this.has(key)) {
             this.set(key, attributes[key]);
@@ -391,6 +392,7 @@
       this.set('sendEmail', false);
       this.set('isPaid', false);
       this.set('isEditable', true);
+      this.set('openDrawer', false);
     },
 
     clearWith: function (_order) {
@@ -677,6 +679,7 @@
 
       // add the created line
       this.get('lines').add(newline);
+      newline.trigger('created', newline);
       // set the undo action
       this.set('undo', {
         text: OB.I18N.getLabel('OBPOS_AddLine', [newline.get('qty'), newline.get('product').get('_identifier')]),
@@ -881,6 +884,9 @@
           }
         }
       }
+      if (payment.get('openDrawer')) {
+        this.set('openDrawer', payment.get('openDrawer'));
+      }
       payments.add(payment);
       this.adjustPayment();
     },
@@ -888,6 +894,9 @@
     removePayment: function (payment) {
       var payments = this.get('payments');
       payments.remove(payment);
+      if (payment.get('openDrawer')) {
+        this.set('openDrawer', false);
+      }
       this.adjustPayment();
       this.save();
     },
@@ -912,9 +921,11 @@
         jsonorder.payment = -jsonorder.payment;
         jsonorder.net = -jsonorder.net;
         _.forEach(jsonorder.lines, function (item) {
+          item.lineGrossAmount = -item.lineGrossAmount;
           item.gross = -item.gross;
           item.net = -item.net;
           item.qty = -item.qty;
+          item.taxAmount = -item.taxAmount;
         });
         _.forEach(jsonorder.payments, function (item) {
           item.amount = -item.amount;
@@ -984,6 +995,7 @@
       order.set('bp', OB.POS.modelterminal.get('businessPartner'));
       order.set('print', true);
       order.set('sendEmail', false);
+      order.set('openDrawer', false);
       return order;
     },
 
@@ -999,18 +1011,22 @@
         f(model);
       });
 
+      //model.set('id', null);
       lines = new Backbone.Collection();
       order.set('documentNo', model.documentNo);
       if (model.isQuotation) {
         order.set('isQuotation', true);
         order.set('oldId', model.orderid);
+        order.set('id', null);
+        order.set('documentType', OB.POS.modelterminal.get('terminal').terminalType.documentTypeForQuotations);
+
       } else {
         order.set('isPaid', true);
+        order.set('id', model.orderid);
+        order.set('documentType', model.documenttype);
       }
       order.set('isEditable', false);
-      order.set('id', model.orderid);
       order.set('client', model.client);
-      order.set('documentType', model.documenttype);
       order.set('organization', model.organization);
       order.set('posTerminal', model.posterminal);
       order.set('posTerminal$_identifier', model.posterminalidentifier);
@@ -1021,6 +1037,7 @@
       order.set('currency$_identifier', model.currency_identifier);
       order.set('isbeingprocessed', 'N');
       order.set('hasbeenpaid', 'Y');
+      order.set('json', JSON.stringify(order.toJSON()));
 
 
       bpId = model.businessPartner;

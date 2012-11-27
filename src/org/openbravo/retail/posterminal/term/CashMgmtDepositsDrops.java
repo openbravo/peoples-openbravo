@@ -72,7 +72,7 @@ public class CashMgmtDepositsDrops extends JSONProcessSimple {
     }
 
     // Payment types
-    String hqlPayments = "select p.id, p.searchKey, p.financialAccount.id , p.financialAccount.currentBalance, p.commercialName, p.paymentMethod.allowdeposits as allowdeposits, p.paymentMethod.allowdrops as allowdrops from OBPOS_App_Payment as p "
+    String hqlPayments = "select p.id, p.searchKey, p.financialAccount.id , p.financialAccount.currentBalance, p.commercialName, p.paymentMethod.allowdeposits as allowdeposits, p.paymentMethod.allowdrops as allowdrops, c_currency_rate(p.financialAccount.currency, p.obposApplications.organization.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id) as rate, p.financialAccount.currency.iSOCode as isocode from OBPOS_App_Payment as p "
         + "where obposApplications.id = ? and (p.paymentMethod.allowdeposits=true or p.paymentMethod.allowdrops=true) order by p.commercialName";
     Query paymentsQuery = OBDal.getInstance().getSession().createQuery(hqlPayments);
     paymentsQuery.setString(0, posTerminalId);
@@ -101,6 +101,8 @@ public class CashMgmtDepositsDrops extends JSONProcessSimple {
             .subtract((BigDecimal) objstartingCash[1]));
       }
       paymentResult.put("startingCash", startingCash);
+      paymentResult.put("rate", objpayments[7]);
+      paymentResult.put("isocode", objpayments[8]);
 
       BigDecimal totalTendered = new BigDecimal(0);
       for (int i = 0; i < paysArray.length(); i++) {

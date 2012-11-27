@@ -283,6 +283,7 @@ public class OrderGroupingProcessor {
       tax.setTax(orgTax.getTax());
       tax.setTaxableAmount(orgTax.getTaxableAmount());
       tax.setTaxAmount(orgTax.getTaxAmount());
+      tax.setRecalculate(true);
       taxes.add(tax);
     }
     return taxes;
@@ -407,6 +408,7 @@ public class OrderGroupingProcessor {
     BigDecimal grossamount = totalNetAmount;
     for (String taxId : invoiceTaxes.keySet()) {
       InvoiceTax tax = invoiceTaxes.get(taxId);
+      tax.setRecalculate(true);
       tax.setInvoice(invoice);
       invoice.getInvoiceTaxList().add(tax);
       OBDal.getInstance().save(tax);

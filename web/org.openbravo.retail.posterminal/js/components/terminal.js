@@ -227,7 +227,7 @@ enyo.kind({
             if (inResponse && !inResponse.exception) {
               //The session is fine, we don't need to warn the user
               //but we will attempt to send all pending orders automatically
-              OB.POS.terminal.children[0].children[1].children[1].children[0].model.processChangedCustomers();
+              OB.UTIL.processPaidOrders(null);
             } else {
               if (!OB.POS.terminal.$.dialogsContainer.$.modalOnline) {
                 OB.POS.terminal.$.dialogsContainer.createComponent({

@@ -186,15 +186,18 @@ enyo.kind({
   kind: 'OB.UI.RegularButton',
   content: OB.I18N.getLabel('OBPOS_LblDone'),
   drawerOpened: true,
-  init: function () {
-    this.drawerpreference = OB.POS.modelterminal.get('terminal').terminalType.openDrawer;
-    if (this.drawerpreference) {
-      this.drawerOpened = false;
-      this.setContent(OB.I18N.getLabel('OBPOS_LblOpen'));
-    } else {
-      this.drawerOpened = true;
-      this.setContent(OB.I18N.getLabel('OBPOS_LblDone'));
-    }
+  init: function (model) {
+    this.model = model;
+    this.model.get('order').on('change:openDrawer', function (){
+      this.drawerpreference = this.model.get('order').get('openDrawer');
+      if (this.drawerpreference) {
+        this.drawerOpened = false;
+        this.setContent(OB.I18N.getLabel('OBPOS_LblOpen'));
+      } else {
+        this.drawerOpened = true;
+        this.setContent(OB.I18N.getLabel('OBPOS_LblDone'));
+      }
+    }, this);
   },
   tap: function () {
     if (this.drawerpreference) {

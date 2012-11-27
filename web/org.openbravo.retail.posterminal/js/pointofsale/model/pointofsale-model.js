@@ -47,34 +47,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
     });
   },
 
-  processPaidOrders: function () {
-    // Processes the paid, unprocessed orders
-    var orderlist = this.get('orderList'),
-        me = this,
-        criteria = {
-        hasbeenpaid: 'Y'
-        };
-    if (OB.POS.modelterminal.get('connectedToERP')) {
-      OB.Dal.find(OB.Model.Order, criteria, function (ordersPaidNotProcessed) { //OB.Dal.find success
-        var successCallback, errorCallback;
-        if (!ordersPaidNotProcessed || ordersPaidNotProcessed.length === 0) {
-          return;
-        }
-        ordersPaidNotProcessed.each(function (order) {
-          order.set('isbeingretriggered', 'Y');
-        });
-        successCallback = function () {
-          OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgSuccessProcessOrder'));
-        };
-        errorCallback = function () {
-          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorProcessOrder'));
-        };
-        OB.UTIL.showAlert.display(OB.I18N.getLabel('OBPOS_ProcessPendingOrders'), OB.I18N.getLabel('OBPOS_Info'));
-        OB.UTIL.processOrders(me, ordersPaidNotProcessed, successCallback, errorCallback);
-      });
-    }
-  },
-
   processChangedCustomers: function () {
     // Processes the customers who has been changed
     var me = this;
@@ -83,19 +55,19 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
       OB.Dal.find(OB.Model.ChangedBusinessPartners, null, function (customersChangedNotProcessed) { //OB.Dal.find success
         var successCallback, errorCallback;
         if (!customersChangedNotProcessed || customersChangedNotProcessed.length === 0) {
-          me.processPaidOrders();
+          OB.UTIL.processPaidOrders(me);
           me.loadUnpaidOrders();
           return;
         }
         successCallback = function () {
           OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_pendigDataOfCustomersProcessed'));
 
-          me.processPaidOrders();
+          OB.UTIL.processPaidOrders(me);
           me.loadUnpaidOrders();
         };
         errorCallback = function () {
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorProcessingCustomersPendingData'));
-          me.processPaidOrders();
+          OB.UTIL.processPaidOrders(me);
           me.loadUnpaidOrders();
         };
         customersChangedNotProcessed.each(function (cus) {

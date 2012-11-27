@@ -54,6 +54,7 @@
               if (model.get('order') && model.get('order').get('isQuotation')) {
                 model.get('order').set('oldId', model.get('order').get('id'));
                 model.get('order').set('id', null);
+                model.get('order').set('isbeingprocessed', 'N');
                 OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationSaved', [docno]));
               } else {
                 OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgReceiptSaved', [docno]));

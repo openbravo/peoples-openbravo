@@ -16,12 +16,27 @@ enyo.kind({
   },
   kind: 'OB.UI.Keyboard',
 
-  init: function () {
+  init: function (model) {
+    this.model = model;
+    var me = this;
     this.inherited(arguments);
 
     this.addToolbar({
       name: 'toolbarempty',
       buttons: []
+    });
+    this.addToolbar({
+      name: 'toolbarother',
+      buttons: [{
+        command: 'allowvariableamount',
+        definition: {
+          action: function (keyboard, amt) {
+            me.model.set('otherInput', amt);
+          }
+        },
+        label: OB.I18N.getLabel('OBPOS_LblOther'),
+        holdActive: true
+      }]
     });
 
     this.showToolbar('toolbarempty');

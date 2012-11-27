@@ -42,23 +42,35 @@ public class OBPOSStaticResorcesComponent extends BaseComponent {
   private Instance<StaticResourceComponent> rc;
 
   public String generate() {
-    String filePath = GEN_TARGET_LOCATION + "/" + getStaticResourceFileName() + ".js";
+    String filePath = "";
+    String tempFilePath;
+    File finalFile;
+
     final ServletContext context = (ServletContext) getParameters().get(
         KernelConstants.SERVLET_CONTEXT);
-    File finalFile = new File(context.getRealPath(filePath));
-    if (finalFile.exists() && !isDevelopment()) {
-      return "$LAB.script('" + getContextUrl() + filePath + "');";
+    filePath = GEN_TARGET_LOCATION + "/" + getStaticResourceFileName() + ".js";
+    if (!isDevelopment()) {
+      finalFile = new File(context.getRealPath(filePath));
+      if (finalFile.exists()) {
+        return "$LAB.script('" + getContextUrl() + filePath + "');";
+      }
     }
     StaticResourceComponent sr = rc.get();
-
     sr.setParameters(getParameters());
-    String tempFilePath = sr.getStaticResourceFileName();
-    File tempFile = new File(context.getRealPath(GEN_TARGET_LOCATION + "/" + tempFilePath + ".js"));
-    try {
-      finalFile.createNewFile();
-      FileUtility.copyFile(tempFile, finalFile);
-    } catch (Exception e) {
-      throw new OBException("There was a problem when generating the static resources file", e);
+    tempFilePath = sr.getStaticResourceFileName();
+    if (isDevelopment()) {
+      filePath = GEN_TARGET_LOCATION + "/" + tempFilePath + ".js";
+    } else {
+      finalFile = new File(context.getRealPath(filePath));
+
+      File tempFile = new File(
+          context.getRealPath(GEN_TARGET_LOCATION + "/" + tempFilePath + ".js"));
+      try {
+        finalFile.createNewFile();
+        FileUtility.copyFile(tempFile, finalFile);
+      } catch (Exception e) {
+        throw new OBException("There was a problem when generating the static resources file", e);
+      }
     }
 
     return "$LAB.script('" + getContextUrl() + filePath + "');";
@@ -79,7 +91,7 @@ public class OBPOSStaticResorcesComponent extends BaseComponent {
     return DigestUtils.md5Hex(versionString.toString());
   }
 
-  private boolean isDevelopment() {
+  public static boolean isDevelopment() {
     for (Module module : KernelUtils.getInstance().getModulesOrderedByDependency()) {
       if (module.isInDevelopment()) {
         return true;

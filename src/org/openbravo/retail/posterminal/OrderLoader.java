@@ -20,6 +20,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
@@ -95,6 +98,10 @@ public class OrderLoader extends JSONProcessSimple {
   private static final Logger log = Logger.getLogger(OrderLoader.class);
 
   private static final BigDecimal NEGATIVE_ONE = new BigDecimal(-1);
+
+  @Inject
+  @Any
+  private Instance<OrderLoaderHook> orderProcesses;
 
   @Override
   public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {
@@ -269,6 +276,12 @@ public class OrderLoader extends JSONProcessSimple {
       if (sendEmail) {
         EmailSender emailSender = new EmailSender(order.getId(), jsonorder);
       }
+
+      // Call all OrderProcess injected.
+      for (Iterator<OrderLoaderHook> procIter = orderProcesses.iterator(); procIter.hasNext();) {
+        OrderLoaderHook proc = procIter.next();
+        proc.exec(jsonorder, order, shipment, invoice);
+      }
     }
 
     log.info("Initial flush: " + (t1 - t0) + "; Generate bobs:" + (t11 - t1) + "; Save bobs:"
@@ -408,6 +421,7 @@ public class OrderLoader extends JSONProcessSimple {
       tax.setTaxAmount(BigDecimal.valueOf(orderlines.getJSONObject(i).getDouble("taxAmount")));
       tax.setInvoice(invoice);
       tax.setInvoiceLine(line);
+      tax.setRecalculate(true);
       line.getInvoiceLineTaxList().add(tax);
       invoice.getInvoiceLineTaxList().add(tax);
 
@@ -488,6 +502,7 @@ public class OrderLoader extends JSONProcessSimple {
       invoiceTax.setTaxAmount(BigDecimal.valueOf(jsonOrderTax.getDouble("amount")));
       invoiceTax.setInvoice(invoice);
       invoiceTax.setLineNo((long) ((i + 1) * 10));
+      invoiceTax.setRecalculate(true);
       i++;
       invoice.getInvoiceTaxList().add(invoiceTax);
     }

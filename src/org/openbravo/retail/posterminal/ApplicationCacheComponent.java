@@ -113,7 +113,6 @@ public class ApplicationCacheComponent extends BaseTemplateComponent {
 
   private List<String> getFileList(String[] extensions) {
 
-
     final String relativePath = PATH_PREFIX + getModulePackageName();
 
     List<String> fileList = new ArrayList<String>();
@@ -131,6 +130,10 @@ public class ApplicationCacheComponent extends BaseTemplateComponent {
 
   public String getFileName() {
     return OBPOSStaticResorcesComponent.getStaticResourceFileName();
+  }
+
+  public boolean getNotInDevelopment() {
+    return !OBPOSStaticResorcesComponent.isDevelopment();
   }
 
   @Override

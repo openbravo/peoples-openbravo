@@ -19,7 +19,7 @@ enyo.kind({
   bodyButtons: {
     components: [{
       kind: 'OB.UI.ModalDialogButton',
-      content: OB.I18N.getLabel('OBPOS_LblOk'),
+      content: OB.I18N.getLabel('OBPOS_LblLoginAgain'),
       isDefaultAction: true,
       tap: function () {
         OB.POS.terminal.$.dialogsContainer.$.modalOnline.hide();

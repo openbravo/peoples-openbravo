@@ -210,7 +210,8 @@ enyo.kind({
 
   events: {
     onCommandFired: '',
-    onStatusChanged: ''
+    onStatusChanged: '',
+    onHoldActiveCmd: ''
   },
 
   handlers: {
@@ -381,7 +382,6 @@ enyo.kind({
     var txt, me = this,
         cmd = inEvent.key;
 
-
     if (cmd === 'OK') {
       txt = this.getString();
 
@@ -397,7 +397,9 @@ enyo.kind({
         }
       } else if (txt && this.status !== '') {
         this.execCommand(this.commands[this.status], txt);
-        this.setStatus('');
+        if (!this.buttons[this.status].owner.holdActive) {
+          this.setStatus('');
+        }
       }
     } else if (this.commands[cmd]) {
       txt = this.getString();
@@ -415,6 +417,11 @@ enyo.kind({
         } else {
           this.setStatus(cmd);
         }
+      }
+      if (this.buttons[cmd].owner.holdActive) {
+        this.doHoldActiveCmd({
+          cmd: cmd
+        });
       }
     } else {
       OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NoActionDefined'));
@@ -615,7 +622,8 @@ enyo.kind({
       command: this.btn.command,
       permission: this.btn.permission,
       definition: this.btn.definition,
-      classButtonActive: this.btn.classButtonActive || 'btnactive-green'
+      classButtonActive: this.btn.classButtonActive || 'btnactive-green',
+      holdActive: this.btn.holdActive
     });
   }
 });
