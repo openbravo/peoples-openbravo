@@ -69,5 +69,10 @@
       <foreign-key foreignTable="AD_MODULE" name="AD_DIMENSION_MAPPING_MODULE">
         <reference local="AD_MODULE_ID" foreign="AD_MODULE_ID"/>
       </foreign-key>
+      <unique name="AD_DIMENSION_MAPPING_UNIQUE">
+        <unique-column name="DIMENSION"/>
+        <unique-column name="DOCBASETYPE"/>
+        <unique-column name="AD_TABLE_ID"/>
+      </unique>
     </table>
   </database>
