@@ -75,6 +75,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
         });
         OB.UTIL.processCustomers(customersChangedNotProcessed, successCallback, errorCallback);
       });
+    } else {
+      //We are offline. We continue the normal flow
+      me.loadUnpaidOrders();
     }
   },
 

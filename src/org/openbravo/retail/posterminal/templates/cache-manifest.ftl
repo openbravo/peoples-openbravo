@@ -12,6 +12,7 @@ CACHE:
 ../../web/org.openbravo.retail.posterminal/js/libs/jquery-1.7.2.js
 ../../web/org.openbravo.retail.posterminal/js/libs/underscore-1.3.3.js
 ../../web/org.openbravo.retail.posterminal/js/libs/backbone-0.9.2.js
+../../web/org.openbravo.retail.posterminal/js/libs/moment-1.7.2.min.js
 ../../web/org.openbravo.retail.posterminal/js/libs/core-min.js
 ../../web/org.openbravo.retail.posterminal/js/libs/sha1-min.js
 ../../web/org.openbravo.retail.posterminal/js/libs/enyo.js
