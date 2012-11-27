@@ -140,7 +140,8 @@ enyo.kind({
     components: [{
       style: 'text-align: center;',
       components: [{
-        kind: 'OB.OBPOSPointOfSale.UI.Discounts.btnDiscountsApply'
+        kind: 'OB.OBPOSPointOfSale.UI.Discounts.btnDiscountsApply',
+        name: 'btnApply'
       }, {
         kind: 'OB.OBPOSPointOfSale.UI.Discounts.btnDiscountsCancel'
       }]
@@ -215,6 +216,11 @@ enyo.kind({
       this.$.checkSelectAll.unCheck();
     }
     this.checkedLines = inEvent.checkedLines;
+    if (this.checkedLines.length > 0) {
+      this.$.btnApply.setDisabled(false);
+    } else {
+      this.$.btnApply.setDisabled(true);
+    }
   },
   discountChanged: function (inSender, inEvent) {
     var selectedDiscount = inEvent.originator.collection.find(function (discount) {
@@ -280,6 +286,10 @@ enyo.kind({
   },
   tap: function () {
     this.doApplyDiscounts();
+  },
+  initComponents: function () {
+    this.inherited(arguments);
+    this.setDisabled(true);
   }
 });
 
