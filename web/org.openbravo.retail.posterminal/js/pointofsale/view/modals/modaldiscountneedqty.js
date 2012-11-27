@@ -17,3 +17,12 @@ enyo.kind({
     content: OB.I18N.getLabel('OBPOS_discountNeedsQty_body')
   }
 });
+
+enyo.kind({
+  name: 'OB.OBPOSPointOfSale.UI.Modals.modalNotValidValueForDiscount',
+  kind: 'OB.UI.ModalInfo',
+  header: OB.I18N.getLabel('OBPOS_modalNotValidValueForDiscount_header'),
+  bodyContent: {
+    content: OB.I18N.getLabel('OBPOS_modalNotValidValueForDiscount_body')
+  }
+});

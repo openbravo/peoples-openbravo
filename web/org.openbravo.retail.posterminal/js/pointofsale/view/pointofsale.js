@@ -138,6 +138,9 @@ enyo.kind({
       kind: 'OB.OBPOSPointOfSale.UI.Modals.modalDiscountNeedQty',
       name: 'modalDiscountNeedQty'
     }, {
+      kind: 'OB.OBPOSPointOfSale.UI.Modals.modalNotValidValueForDiscount',
+      name: 'modalNotValidValueForDiscount'
+    }, {
       classes: 'row',
       style: 'margin-bottom: 5px;',
       components: [{

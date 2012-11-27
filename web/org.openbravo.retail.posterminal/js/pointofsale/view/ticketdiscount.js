@@ -196,7 +196,19 @@ enyo.kind({
     }, this);
   },
   discountQtyChanged: function (inSender, inEvent) {
+    if (!OB.DEC.isNumber(inEvent.qty)) {
+      this.doShowPopup({
+        popup: 'modalNotValidValueForDiscount'
+      });
+      return;
+    }
     var comp = this._searchSelectedComponent(this.$.discountsList.getValue());
+    if (comp.units === '%' && OB.DEC.toBigDecimal(inEvent.qty) > 100) {
+      this.doShowPopup({
+        popup: 'modalNotValidValueForDiscount'
+      });
+      return;
+    }
     comp.setContent(comp.originalText + ' - ' + inEvent.qty + ' ' + comp.units);
     comp.amt = inEvent.qty;
   },
