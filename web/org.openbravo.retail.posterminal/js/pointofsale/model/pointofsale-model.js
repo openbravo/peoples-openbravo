@@ -125,7 +125,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
     this.printLine = new OB.OBPOSPointOfSale.Print.ReceiptLine(receipt);
 
     // Listening events that cause a discount recalculation
-    receipt.get('lines').on('add change:qty change:price', function (line) {
+    receipt.get('lines').on('add change:qty change:gross', function (line) {
       if (!receipt.get('isEditable')) {
         return;
       }
