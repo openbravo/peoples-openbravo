@@ -19,7 +19,8 @@ enyo.kind({
   events: {
     onDiscountsModeFinished: '',
     onDisableKeyboard: '',
-    onDiscountsModeKeyboard: ''
+    onDiscountsModeKeyboard: '',
+    onShowPopup: ''
   },
   checkedLines: [],
   style: 'position:relative; background-color: orange; background-size: cover; color: white; height: 200px; margin: 5px; padding: 5px',
@@ -192,6 +193,7 @@ enyo.kind({
         return true;
       }
     }, this);
+    debugger;
     if (selectedDiscount.get('discountType') === "8338556C0FBF45249512DB343FEFD280" || selectedDiscount.get('discountType') === "7B49D8CC4E084A75B7CB4D85A6A3A578") {
       //no keyboard
       this.disableKeyboard();
@@ -222,7 +224,9 @@ enyo.kind({
 
     if (comp.requiresQty && !comp.amt) {
       //Show a modal pop up with the error
-      console.log('error -> this discount requires a qty');
+      this.doShowPopup({
+        popup: 'modalDiscountNeedQty'
+      });
       return true;
     }
 

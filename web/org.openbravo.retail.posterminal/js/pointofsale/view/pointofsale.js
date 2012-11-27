@@ -131,6 +131,9 @@ enyo.kind({
       kind: 'OB.OBPOSPointOfSale.UI.Modals.modalNotEnoughCredit',
       name: 'modalNotEnoughCredit'
     }, {
+      kind: 'OB.OBPOSPointOfSale.UI.Modals.modalDiscountNeedQty',
+      name: 'modalDiscountNeedQty'
+    }, {
       classes: 'row',
       style: 'margin-bottom: 5px;',
       components: [{
@@ -353,9 +356,9 @@ enyo.kind({
     return true;
   },
   checkedLine: function (inSender, inEvent) {
-    if (inEvent.originator.kind === 'OB.UI.RenderOrderLine'){
+    if (inEvent.originator.kind === 'OB.UI.RenderOrderLine') {
       this.waterfall('onCheckedTicketLine', inEvent);
-      return true; 
+      return true;
     }
   },
   discountQtyChanged: function (inSender, inEvent) {
