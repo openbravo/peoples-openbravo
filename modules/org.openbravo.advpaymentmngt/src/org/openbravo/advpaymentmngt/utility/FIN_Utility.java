@@ -1100,4 +1100,21 @@ public class FIN_Utility {
       return true;
     }
   }
+
+  public static boolean periodControlOpened(String tableName, String recordId, String idColumnName,
+      String orgType) {
+    final Session session = OBDal.getInstance().getSession();
+
+    List<Object> parameters = new ArrayList<Object>();
+    parameters.add(tableName);
+    parameters.add(recordId);
+    parameters.add(idColumnName);
+    parameters.add(orgType);
+    Object result = CallStoredProcedure.getInstance().call("ad_get_doc_le_bu", parameters, null,
+        false, true);
+
+    Organization org = OBDal.getInstance().get(Organization.class, (String) result);
+
+    return org.getOrganizationType().isLegalEntityWithAccounting();
+  }
 }
