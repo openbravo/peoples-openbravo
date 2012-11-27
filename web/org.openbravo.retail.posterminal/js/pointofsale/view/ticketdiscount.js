@@ -83,7 +83,11 @@ enyo.kind({
                   }
                 }
               }
-              this.setContent(this.originalText + ' - ' + this.amt + ' ' + this.units);
+              if (this.amt) {
+                this.setContent(this.originalText + ' - ' + this.amt + ' ' + this.units);
+              } else {
+                this.setContent(this.originalText);
+              }
             }
           })
         }]
