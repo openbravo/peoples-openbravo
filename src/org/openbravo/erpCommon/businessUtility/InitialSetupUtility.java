@@ -139,6 +139,8 @@ public class InitialSetupUtility {
     newClient.setName(strClientName);
     newClient.setDescription(strClientName);
     newClient.setNewOBObject(true);
+    // Accounting dimension display enabled
+    newClient.setAcctdimCentrallyMaintained(true);
     OBDal.getInstance().save(newClient);
     OBDal.getInstance().flush();
     return newClient;

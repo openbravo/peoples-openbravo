@@ -179,6 +179,7 @@ public class LoginUtils {
     // variable to save organization currency
     AttributeData[] orgCurrency;
     Client client = null;
+    boolean isAccountingDimensionConfigCentrally = false;
 
     // Check session options
     if (!validUserRole(conn, strUserAuth, strRol) || !validRoleClient(conn, strRol, strCliente)
@@ -212,6 +213,7 @@ public class LoginUtils {
     OBContext.setAdminMode();
     try {
       client = OBDal.getInstance().get(Client.class, strCliente);
+      isAccountingDimensionConfigCentrally = client.isAcctdimCentrallyMaintained();
       OrgTree tree = new OrgTree(conn, strCliente);
       vars.setSessionObject("#CompleteOrgTree", tree);
       OrgTree accessibleTree = tree.getAccessibleTree(conn, strRol);
@@ -261,18 +263,20 @@ public class LoginUtils {
         vars.setSessionValue("$HasAlias", attr[0].hasalias);
 
         // Compute accounting dimensions visibility session variables
+        // Project, Business Partner, Product, Cost Center, User1, User2
         vars.setSessionValue(DimensionDisplayUtility.IsAcctDimCentrally,
-            client.isAcctdimCentrallyMaintained() ? "Y" : "N");
-        if (client.isAcctdimCentrallyMaintained()) {
+            isAccountingDimensionConfigCentrally ? "Y" : "N");
+        if (isAccountingDimensionConfigCentrally) {
           Map<String, String> acctDimMap = DimensionDisplayUtility
               .getAccountingDimensionConfiguration(client);
           for (Map.Entry<String, String> entry : acctDimMap.entrySet()) {
             vars.setSessionValue(entry.getKey(), entry.getValue());
           }
-        } else {
-          for (int i = 0; i < attr.length; i++) {
-            vars.setSessionValue("$Element_" + attr[i].elementtype, "Y");
-          }
+        }
+        // Load also old accounting dimension visibility session variables
+        // Some of the dimensions still use old behavior: Activity, Sales Campaign, Asset
+        for (int i = 0; i < attr.length; i++) {
+          vars.setSessionValue("$Element_" + attr[i].elementtype, "Y");
         }
       }
       attr = null;

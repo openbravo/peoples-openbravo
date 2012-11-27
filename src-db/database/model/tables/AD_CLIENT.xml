@@ -78,7 +78,7 @@
         <onCreateDefault><![CDATA[CASE WHEN AD_CLIENT_ID = '0' THEN '102' ELSE (SELECT C_ACCTSCHEMA.C_CURRENCY_ID FROM C_ACCTSCHEMA, AD_CLIENTINFO WHERE AD_CLIENTINFO.C_ACCTSCHEMA1_ID = C_ACCTSCHEMA.C_ACCTSCHEMA_ID AND AD_CLIENT.AD_CLIENT_ID = AD_CLIENTINFO.AD_CLIENT_ID) END]]></onCreateDefault>
       </column>
       <column name="ACCTDIM_CENTRALLY_MAINTAINED" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[Y]]></default>
+        <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
       <column name="PROJECT_ACCTDIM_ISENABLE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">

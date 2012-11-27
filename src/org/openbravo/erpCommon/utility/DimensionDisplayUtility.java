@@ -19,15 +19,20 @@
 
 package org.openbravo.erpCommon.utility;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.access.ADClientAcctDimension;
 import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.ad.system.Client;
+import org.openbravo.model.ad.system.DimensionMapping;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
 
@@ -45,6 +50,9 @@ public class DimensionDisplayUtility {
   public static final String DIM_CostCenter = "CC";
   public static final String DIM_User1 = "U1";
   public static final String DIM_User2 = "U2";
+  public static final String DIM_Campaign = "MC";
+  public static final String DIM_Activity = "AY";
+  public static final String DIM_Asset = "AS";
 
   /** Document Base Types with accounting dimensions **/
   public static final String ARProFormaInvoice = "ARF";
@@ -73,6 +81,11 @@ public class DimensionDisplayUtility {
   /** Document Base Type auxiliary input **/
   public static final String DIM_AUXILIAR_INPUT = "DOCBASETYPE";
 
+  public static final String DOCBASETYPES_REFERENCE = "FBC599C796664DD49AD002C61DAFF813";
+  public static final String DIMENSIONS_REFERENCE = "181";
+  public static final String LEVELS_REFERENCE = "3DDC9BFFE43342C4826EC65E97D40586";
+  public static final String ELEMENT = "$Element";
+
   private static Map<String, String> columnDimensionMap = null;
 
   private static void initialize() {
@@ -83,6 +96,11 @@ public class DimensionDisplayUtility {
     columnDimensionMap.put("C_COSTCENTER_ID", DIM_CostCenter);
     columnDimensionMap.put("USER1_ID", DIM_User1);
     columnDimensionMap.put("USER2_ID", DIM_User2);
+
+    // The following dimensions are not configurable from Client window
+    columnDimensionMap.put("C_CAMPAIGN_ID", DIM_Campaign);
+    columnDimensionMap.put("C_ACTIVITY_ID", DIM_Activity);
+    columnDimensionMap.put("A_ASSET_ID", DIM_Asset);
   }
 
   public static String displayAcctDimensions(String centrally, String dimemsion,
@@ -96,44 +114,90 @@ public class DimensionDisplayUtility {
     return var;
   }
 
-  public static String computeAccountingDimensionDisplayLogic(Field field, Tab tab) {
+  /**
+   * Compute the JavaScript code to embed in the tab definition for computing the display logic.
+   * 
+   * @param tab
+   *          Tab.
+   * @param field
+   *          Field.
+   * @return Display logic (JavaScript) for the given field.
+   */
+  @SuppressWarnings("unchecked")
+  public static String computeAccountingDimensionDisplayLogic(Tab tab, Field field) {
     // Example
     // (context.$IsAcctDimCentrally === 'N' && context.$Element_U2 === 'Y') ||
-    // (context.$IsAcctDimCentrally === 'Y' && context['$Element_U2_ +
-    // OB.Utilities.getValue(currentValues, 'DOCBASETYPE') + _H'] === 'Y')
-    String displayLogic = "(context."
+    // (context.$IsAcctDimCentrally === 'Y' && context['$Element_U2_' +
+    // OB.Utilities.getValue(currentValues, 'DOCBASETYPE') '+ _H'] === 'Y')
+    String displayLogicPart1 = "(context." + IsAcctDimCentrally
+        + " === 'N' && context.$Element_%s === 'Y')";
+    String displayLogicPart2 = " || (context."
         + IsAcctDimCentrally
-        + " === 'N' && context.$Element_%s === 'Y') || (context."
-        + IsAcctDimCentrally
-        + " === 'Y' && context['$Element_%s_ + OB.Utilities.getValue(currentValues, \"%s\") + _%s'] === 'Y')";
+        + " === 'Y' && context['$Element_%s_' + OB.Utilities.getValue(currentValues, \"%s\") + '_%s'] === 'Y')";
 
     try {
       OBContext.setAdminMode(true);
       if (columnDimensionMap == null) {
         initialize();
       }
+      final String tableId = tab.getTable().getId();
       String columnName = "";
       if (field.getColumn() != null) {
         columnName = field.getColumn().getDBColumnName();
       } else {
+        log4j.error("Field (" + field.getId() + " | " + field.getName()
+            + ") not linked to any column.");
         return "";
       }
       String dimension = columnDimensionMap.get(columnName.toUpperCase());
       if (dimension == null) {
+        log4j.error("Field (" + field.getId() + " | " + field.getName()
+            + ") not mapping any dimension.");
         return "";
       }
-      // TODO Get level from new AD_DIMENSION table
-      int tabLevel = tab.getTabLevel().intValue();
-      String level = tabLevel == 0 ? DIM_Header : (tabLevel == 1 ? DIM_Lines
-          : (tabLevel == 2 ? DIM_BreakDown : ""));
-      displayLogic = String.format(displayLogic, dimension, dimension, DIM_AUXILIAR_INPUT, level);
+
+      // Create the old accounting dimension visibility if {Campaign, Activity, Asset} fields
+      // have @ACCT_DIMENSION_DISPLAY@ display logic.
+      if (dimension.equals(DIM_Campaign) || dimension.equals(DIM_Activity)
+          || dimension.equals(DIM_Asset)) {
+        log4j
+            .error(field.getName()
+                + " field contains @ACCT_DIMENSION_DISPLAY@ display logic but is not supported. Change it.");
+        return String.format(displayLogicPart1, dimension);
+      }
+
+      // Get the corresponding level for the table
+      StringBuilder hql = new StringBuilder();
+      final Session session = OBDal.getInstance().getSession();
+      hql.append(" select distinct dm." + DimensionMapping.PROPERTY_LEVEL);
+      hql.append(" from " + DimensionMapping.ENTITY_NAME + " as dm ");
+      hql.append(" where dm." + DimensionMapping.PROPERTY_TABLE + ".id = ? ");
+      hql.append("       and dm." + DimensionMapping.PROPERTY_ACCOUNTINGDIMENSION + " = ? ");
+      final Query queryLevel = session.createQuery(hql.toString());
+      queryLevel.setParameter(0, tableId);
+      queryLevel.setParameter(1, dimension);
+      List<String> levelList = queryLevel.list();
+      int size = levelList.size();
+      if (size == 0) {
+        log4j.error("Same table (" + tableId + ") does not map with any levels.");
+      }
+      if (size > 1) {
+        log4j.error("Same table (" + tableId + ") mapping with " + size + " levels.");
+      }
+      for (String l : levelList) {
+        // The same table can only map with one level
+        return String.format(displayLogicPart1 + displayLogicPart2, dimension, dimension,
+            DIM_AUXILIAR_INPUT, l);
+      }
+
     } catch (Exception e) {
-      log4j.error("Not possible to compute display logic.", e);
+      log4j.error("Not possible to compute display logic for field " + field.getId(), e);
       return "";
     } finally {
       OBContext.restorePreviousMode();
     }
-    return displayLogic;
+
+    return "";
   }
 
   /**
@@ -141,21 +205,18 @@ public class DimensionDisplayUtility {
    * 
    * @param client
    *          Client.
-   * @return Map containing all the accounting dimension visilibity session variables and the
+   * @return Map containing all the accounting dimension visibility session variables and the
    *         corresponding value ('Y', 'N')
    */
   public static Map<String, String> getAccountingDimensionConfiguration(Client client) {
-    final String DIMENSIONS_REF = "181";
-    final String DOCBASETYPES_REF = "FBC599C796664DD49AD002C61DAFF813";
-    final String ELEMENT = "$Element";
-    final String[] LEVELS = new String[] { DIM_Header, DIM_Lines, DIM_BreakDown };
     Map<String, String> sessionMap = new HashMap<String, String>();
     String aux = "";
 
     try {
       OBContext.setAdminMode(true);
-      Reference dimRef = OBDal.getInstance().get(Reference.class, DIMENSIONS_REF);
-      Reference docBaseTypeRef = OBDal.getInstance().get(Reference.class, DOCBASETYPES_REF);
+      Reference dimRef = OBDal.getInstance().get(Reference.class, DIMENSIONS_REFERENCE);
+      Reference docBaseTypeRef = OBDal.getInstance().get(Reference.class, DOCBASETYPES_REFERENCE);
+      Reference levelsRef = OBDal.getInstance().get(Reference.class, LEVELS_REFERENCE);
 
       String isDisplayed = null;
       Map<String, String> clientAcctDimensionCache = new HashMap<String, String>();
@@ -170,20 +231,22 @@ public class DimensionDisplayUtility {
 
       for (org.openbravo.model.ad.domain.List dim : dimRef.getADListList()) {
         for (org.openbravo.model.ad.domain.List doc : docBaseTypeRef.getADListList()) {
-          for (String level : LEVELS) {
+          for (org.openbravo.model.ad.domain.List level : levelsRef.getADListList()) {
             String docValue = doc.getSearchKey();
             String dimValue = dim.getSearchKey();
-            aux = ELEMENT + "_" + dimValue + "_" + docValue + "_" + level;
+            String levelValue = level.getSearchKey();
+            aux = ELEMENT + "_" + dimValue + "_" + docValue + "_" + levelValue;
 
             if (DIM_Project.equals(dimValue)) {
               if (client.isProjectAcctdimIsenable()) {
-                isDisplayed = clientAcctDimensionCache.get(dimValue + "_" + docValue + "_" + level);
+                isDisplayed = clientAcctDimensionCache.get(dimValue + "_" + docValue + "_"
+                    + levelValue);
                 if (isDisplayed == null) {
-                  if (DIM_Header.equals(level)) {
+                  if (DIM_Header.equals(levelValue)) {
                     isDisplayed = client.isProjectAcctdimHeader() ? "Y" : "N";
-                  } else if (DIM_Lines.equals(level)) {
+                  } else if (DIM_Lines.equals(levelValue)) {
                     isDisplayed = client.isProjectAcctdimLines() ? "Y" : "N";
-                  } else if (DIM_BreakDown.equals(level)) {
+                  } else if (DIM_BreakDown.equals(levelValue)) {
                     isDisplayed = client.isProjectAcctdimBreakdown() ? "Y" : "N";
                   }
                 }
@@ -192,13 +255,14 @@ public class DimensionDisplayUtility {
               }
             } else if (DIM_BPartner.equals(dimValue)) {
               if (client.isBpartnerAcctdimIsenable()) {
-                isDisplayed = clientAcctDimensionCache.get(dimValue + "_" + docValue + "_" + level);
+                isDisplayed = clientAcctDimensionCache.get(dimValue + "_" + docValue + "_"
+                    + levelValue);
                 if (isDisplayed == null) {
-                  if (DIM_Header.equals(level)) {
+                  if (DIM_Header.equals(levelValue)) {
                     isDisplayed = client.isBpartnerAcctdimHeader() ? "Y" : "N";
-                  } else if (DIM_Lines.equals(level)) {
+                  } else if (DIM_Lines.equals(levelValue)) {
                     isDisplayed = client.isBpartnerAcctdimLines() ? "Y" : "N";
-                  } else if (DIM_BreakDown.equals(level)) {
+                  } else if (DIM_BreakDown.equals(levelValue)) {
                     isDisplayed = client.isBpartnerAcctdimBreakdown() ? "Y" : "N";
                   }
                 }
@@ -207,13 +271,14 @@ public class DimensionDisplayUtility {
               }
             } else if (DIM_Product.equals(dimValue)) {
               if (client.isProductAcctdimIsenable()) {
-                isDisplayed = clientAcctDimensionCache.get(dimValue + "_" + docValue + "_" + level);
+                isDisplayed = clientAcctDimensionCache.get(dimValue + "_" + docValue + "_"
+                    + levelValue);
                 if (isDisplayed == null) {
-                  if (DIM_Header.equals(level)) {
+                  if (DIM_Header.equals(levelValue)) {
                     isDisplayed = client.isProductAcctdimHeader() ? "Y" : "N";
-                  } else if (DIM_Lines.equals(level)) {
+                  } else if (DIM_Lines.equals(levelValue)) {
                     isDisplayed = client.isProductAcctdimLines() ? "Y" : "N";
-                  } else if (DIM_BreakDown.equals(level)) {
+                  } else if (DIM_BreakDown.equals(levelValue)) {
                     isDisplayed = client.isProductAcctdimBreakdown() ? "Y" : "N";
                   }
                 }
@@ -222,13 +287,14 @@ public class DimensionDisplayUtility {
               }
             } else if (DIM_CostCenter.equals(dimValue)) {
               if (client.isCostcenterAcctdimIsenable()) {
-                isDisplayed = clientAcctDimensionCache.get(dimValue + "_" + docValue + "_" + level);
+                isDisplayed = clientAcctDimensionCache.get(dimValue + "_" + docValue + "_"
+                    + levelValue);
                 if (isDisplayed == null) {
-                  if (DIM_Header.equals(level)) {
+                  if (DIM_Header.equals(levelValue)) {
                     isDisplayed = client.isCostcenterAcctdimHeader() ? "Y" : "N";
-                  } else if (DIM_Lines.equals(level)) {
+                  } else if (DIM_Lines.equals(levelValue)) {
                     isDisplayed = client.isCostcenterAcctdimLines() ? "Y" : "N";
-                  } else if (DIM_BreakDown.equals(level)) {
+                  } else if (DIM_BreakDown.equals(levelValue)) {
                     isDisplayed = client.isCostcenterAcctdimBreakdown() ? "Y" : "N";
                   }
                 }
@@ -237,13 +303,14 @@ public class DimensionDisplayUtility {
               }
             } else if (DIM_User1.equals(dimValue)) {
               if (client.isUser1AcctdimIsenable()) {
-                isDisplayed = clientAcctDimensionCache.get(dimValue + "_" + docValue + "" + level);
+                isDisplayed = clientAcctDimensionCache.get(dimValue + "_" + docValue + ""
+                    + levelValue);
                 if (isDisplayed == null) {
-                  if (DIM_Header.equals(level)) {
+                  if (DIM_Header.equals(levelValue)) {
                     isDisplayed = client.isUser1AcctdimHeader() ? "Y" : "N";
-                  } else if (DIM_Lines.equals(level)) {
+                  } else if (DIM_Lines.equals(levelValue)) {
                     isDisplayed = client.isUser1AcctdimHeader() ? "Y" : "N";
-                  } else if (DIM_BreakDown.equals(level)) {
+                  } else if (DIM_BreakDown.equals(levelValue)) {
                     isDisplayed = client.isUser1AcctdimHeader() ? "Y" : "N";
                   }
                 }
@@ -252,13 +319,14 @@ public class DimensionDisplayUtility {
               }
             } else if (DIM_User2.equals(dimValue)) {
               if (client.isUser2AcctdimIsenable()) {
-                isDisplayed = clientAcctDimensionCache.get(dimValue + "_" + docValue + "" + level);
+                isDisplayed = clientAcctDimensionCache.get(dimValue + "_" + docValue + ""
+                    + levelValue);
                 if (isDisplayed == null) {
-                  if (DIM_Header.equals(level)) {
+                  if (DIM_Header.equals(levelValue)) {
                     isDisplayed = client.isUser2AcctdimHeader() ? "Y" : "N";
-                  } else if (DIM_Lines.equals(level)) {
+                  } else if (DIM_Lines.equals(levelValue)) {
                     isDisplayed = client.isUser2AcctdimLines() ? "Y" : "N";
-                  } else if (DIM_BreakDown.equals(level)) {
+                  } else if (DIM_BreakDown.equals(levelValue)) {
                     isDisplayed = client.isUser2AcctdimBreakdown() ? "Y" : "N";
                   }
                 }
@@ -283,4 +351,77 @@ public class DimensionDisplayUtility {
     }
     return sessionMap;
   }
+
+  /**
+   * Calculates the list of session variables that will be used for computing the display logic of
+   * the field.
+   * 
+   * @param tab
+   *          Tab.
+   * @param field
+   *          Field.
+   * @return List of session variables required for computing the display logic of the field.
+   */
+  @SuppressWarnings("unchecked")
+  public static List<String> getRequiredSessionVariablesForTab(Tab tab, Field field) {
+    List<String> sessionVariables = new ArrayList<String>();
+    if (columnDimensionMap == null) {
+      initialize();
+    }
+
+    try {
+      OBContext.setAdminMode(true);
+      final String tableId = tab.getTable().getId();
+      if (field.getColumn() == null) {
+        log4j.error("Field (" + field.getId() + " | " + field.getName()
+            + ") not linked to any column.");
+        return sessionVariables;
+      }
+      final String columnName = field.getColumn().getDBColumnName();
+      String dimension = columnDimensionMap.get(columnName.toUpperCase());
+      if (dimension == null) {
+        log4j.error("Field (" + field.getId() + " | " + field.getName()
+            + ") not mapping any dimension.");
+        return sessionVariables;
+      }
+
+      // Load always IsAcctDimCentrally global variable
+      sessionVariables.add(IsAcctDimCentrally);
+
+      // Load old accounting dimension visibility session variable
+      // It is required for all the accounting dimension fields
+      sessionVariables.add(ELEMENT + "_" + dimension);
+
+      // Load new accounting dimension visibility session variable
+      StringBuilder hql = new StringBuilder();
+      final Session session = OBDal.getInstance().getSession();
+      hql.append(" select distinct dm.%s ");
+      hql.append(" from " + DimensionMapping.ENTITY_NAME + " as dm ");
+      hql.append(" where dm." + DimensionMapping.PROPERTY_TABLE + ".id = ? ");
+      hql.append("       and dm." + DimensionMapping.PROPERTY_ACCOUNTINGDIMENSION + " = ? ");
+
+      final Query queryDoc = session.createQuery(String.format(hql.toString(),
+          DimensionMapping.PROPERTY_DOCUMENTCATEGORY));
+      queryDoc.setParameter(0, tableId);
+      queryDoc.setParameter(1, dimension);
+      List<String> docBaseTypeList = queryDoc.list();
+
+      final Query queryLevel = session.createQuery(String.format(hql.toString(),
+          DimensionMapping.PROPERTY_LEVEL));
+      queryLevel.setParameter(0, tableId);
+      queryLevel.setParameter(1, dimension);
+      List<String> levelList = queryLevel.list();
+
+      for (String doc : docBaseTypeList) {
+        for (String level : levelList) {
+          sessionVariables.add(ELEMENT + "_" + dimension + "_" + doc + "_" + level);
+        }
+      }
+
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    return sessionVariables;
+  }
+
 }
