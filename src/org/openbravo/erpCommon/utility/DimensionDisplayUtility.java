@@ -442,11 +442,10 @@ public class DimensionDisplayUtility {
       final Session session = OBDal.getInstance().getSession();
       hql.append(" select   dm." + DimensionMapping.PROPERTY_ACCOUNTINGDIMENSION + ", ");
       hql.append("          dm." + DimensionMapping.PROPERTY_LEVEL + ", ");
-      hql.append("          dm." + DimensionMapping.PROPERTY_ISMANDATORY);
+      hql.append("          max(dm." + DimensionMapping.PROPERTY_ISMANDATORY + ")");
       hql.append(" from " + DimensionMapping.ENTITY_NAME + " as dm ");
       hql.append(" group by dm." + DimensionMapping.PROPERTY_ACCOUNTINGDIMENSION + ", ");
-      hql.append("          dm." + DimensionMapping.PROPERTY_LEVEL + ", ");
-      hql.append("          dm." + DimensionMapping.PROPERTY_ISMANDATORY);
+      hql.append("          dm." + DimensionMapping.PROPERTY_LEVEL);
 
       final Query queryRO = session.createQuery(hql.toString());
       @SuppressWarnings("unchecked")
