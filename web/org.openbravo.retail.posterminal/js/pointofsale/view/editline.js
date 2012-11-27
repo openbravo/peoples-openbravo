@@ -23,10 +23,16 @@ enyo.kind({
   checkBoxBehavior: function (inSender, inEvent) {
     if (inEvent.status) {
       this.line = null;
+      //WARN! When off is done the components which are listening to this event
+      //are removed. Because of it, the callback for the selected event are saved
+      //and then recovered.
+      this.selectedCallbacks = this.receipt.get('lines')._callbacks.selected;
       this.receipt.get('lines').off('selected');
       this.render();
     } else {
-      this.receipt.get('lines').on('selected', this.selectedListener, this);
+      //WARN! recover the callbacks for the selected events
+      this.receipt.get('lines')._callbacks.selected = this.selectedCallbacks;
+
       if (this.receipt.get('lines').length > 0) {
         var line = this.receipt.get('lines').at(0);
         line.trigger('selected', line);
