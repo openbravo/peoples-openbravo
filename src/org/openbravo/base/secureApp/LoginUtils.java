@@ -262,32 +262,32 @@ public class LoginUtils {
                 Utility.getContext(conn, vars, "#User_Org", "LoginHandler")));
         vars.setSessionValue("$HasAlias", attr[0].hasalias);
 
-        // Compute accounting dimensions visibility session variables
-        // Project, Business Partner, Product, Cost Center, User1, User2
-        vars.setSessionValue(DimensionDisplayUtility.IsAcctDimCentrally,
-            isAccountingDimensionConfigCentrally ? "Y" : "N");
-        if (isAccountingDimensionConfigCentrally) {
-          Map<String, String> acctDimMap = DimensionDisplayUtility
-              .getAccountingDimensionConfiguration(client);
-          for (Map.Entry<String, String> entry : acctDimMap.entrySet()) {
-            vars.setSessionValue(entry.getKey(), entry.getValue());
-          }
-        }
         // Load also old accounting dimension visibility session variables
         // Some of the dimensions still use old behavior: Activity, Sales Campaign, Asset
         for (int i = 0; i < attr.length; i++) {
           vars.setSessionValue("$Element_" + attr[i].elementtype, "Y");
         }
+      }
+      attr = null;
 
-        // Load session variables for computing read only logic for accounting dimension
-        // configuration in in Client window
-        Map<String, String> readOnlySessionVariableMap = DimensionDisplayUtility
-            .getReadOnlyLogicSessionVariables();
-        for (Map.Entry<String, String> entry : readOnlySessionVariableMap.entrySet()) {
+      // Compute accounting dimensions visibility session variables
+      // Project, Business Partner, Product, Cost Center, User1, User2
+      vars.setSessionValue(DimensionDisplayUtility.IsAcctDimCentrally,
+          isAccountingDimensionConfigCentrally ? "Y" : "N");
+      if (isAccountingDimensionConfigCentrally) {
+        Map<String, String> acctDimMap = DimensionDisplayUtility
+            .getAccountingDimensionConfiguration(client);
+        for (Map.Entry<String, String> entry : acctDimMap.entrySet()) {
           vars.setSessionValue(entry.getKey(), entry.getValue());
         }
       }
-      attr = null;
+      // Load session variables for computing read only logic for accounting dimension
+      // configuration in in Client window
+      Map<String, String> readOnlySessionVariableMap = DimensionDisplayUtility
+          .getReadOnlyLogicSessionVariables();
+      for (Map.Entry<String, String> entry : readOnlySessionVariableMap.entrySet()) {
+        vars.setSessionValue(entry.getKey(), entry.getValue());
+      }
 
       List<Preference> preferences = Preferences.getAllPreferences(strCliente, strOrg, strUserAuth,
           strRol);
