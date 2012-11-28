@@ -44,9 +44,7 @@ enyo.kind({
       OB.UTIL.showError("OBDAL error: " + tx);
     }
 
-    this.doHidePopup({
-      popup: 'modalEnoughCredit'
-    });
+    this.doHideThisPopup();
     this.model.get('order').trigger('paymentDone');
     this.model.get('order').trigger('openDrawer');
     if (!OB.POS.modelterminal.get('connectedToERP')) {
