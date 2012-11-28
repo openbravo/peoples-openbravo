@@ -79,6 +79,8 @@ class WindowTreeUtility {
       TreeType = "TR";
     else if (keyColumnName.equals("A_Asset_ID"))
       TreeType = "AS";
+    else if (keyColumnName.equals("Obre_Resource_Category_ID"))
+      TreeType = "OBRE_RC";
     else
       TreeType = "";
     if (TreeType.equals(""))
@@ -151,6 +153,9 @@ class WindowTreeUtility {
       data = WindowTreeData.selectTaxReport(conn, strEditable, strParentID, strNodeId, TreeID);
     else if (TreeType.equals("AS"))
       data = WindowTreeData.selectAsset(conn, strEditable, strParentID, strNodeId, TreeID);
+    else if (TreeType.equals("OBRE_RC"))
+      data = WindowTreeData.selectOBRE_ResouceCategory(conn, "OBRE_Resource_Category_ID",
+          "OBRE_Resource_Category", TreeID);
 
     return data;
   }

@@ -7,8 +7,8 @@
 <!--100-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--100-->  <VALUE><![CDATA[C_Periods Create Year]]></VALUE>
 <!--100-->  <NAME><![CDATA[Create Periods]]></NAME>
-<!--100-->  <DESCRIPTION><![CDATA[Create 12 standard calendar periods (Jan-Dec)]]></DESCRIPTION>
-<!--100-->  <HELP><![CDATA[Create 12 standard calendar periods (Jan-Dec)]]></HELP>
+<!--100-->  <DESCRIPTION><![CDATA[Create 12 standard calendar periods (Jan-Dec) and an optional 13th period]]></DESCRIPTION>
+<!--100-->  <HELP><![CDATA[Create 12 standard calendar periods (Jan-Dec) and an optional 13th period for adjustments]]></HELP>
 <!--100-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--100-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--100-->  <PROCEDURENAME><![CDATA[C_YearPeriods]]></PROCEDURENAME>

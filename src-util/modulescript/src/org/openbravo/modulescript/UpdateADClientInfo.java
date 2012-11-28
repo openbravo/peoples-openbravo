@@ -43,6 +43,8 @@ public class UpdateADClientInfo extends ModuleScript {
       createTreeAndUpdateClientInfo(cp, "User Dimension 1", "U1", "AD_TREE_USER1_ID");
       // User Defined Dimension 2 Tree
       createTreeAndUpdateClientInfo(cp, "User Dimension 2", "U2", "AD_TREE_USER2_ID");
+      // Resource Category tree
+      createTreeAndUpdateClientInfo(cp, "Resource Category", "OBRE_RC", "AD_TREE_OBRE_RESOURCE_CATEGORY");
 
       // Insert Missing Treenodes for Assets
       UpdateADClientInfoData.insertMissingTreeNodes(cp, "AS", "A_ASSET");

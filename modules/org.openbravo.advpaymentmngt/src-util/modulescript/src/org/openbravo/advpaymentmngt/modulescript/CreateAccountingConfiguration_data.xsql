@@ -63,6 +63,7 @@
       where ad_reference_id = '183'
       and ad_ref_list.isactive='Y'
       and c_period.c_year_id = c_year.c_year_id
+      and c_period.periodtype <> 'A'
       and c_calendar_id = (select c_calendar_id from ad_org
             where ad_org_id = ad_org_getcalendarowner(a.ad_org_id))
       and not exists (select 1 from c_periodcontrol

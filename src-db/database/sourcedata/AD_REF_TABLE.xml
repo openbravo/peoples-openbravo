@@ -805,6 +805,7 @@ WHERE C_BPartner.C_BPartner_ID=po.C_BPartner_ID)]]></WHERECLAUSE>
 <!--275-->  <AD_KEY><![CDATA[837]]></AD_KEY>
 <!--275-->  <AD_DISPLAY><![CDATA[482]]></AD_DISPLAY>
 <!--275-->  <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
+<!--275-->  <WHERECLAUSE><![CDATA[periodtype = 'S']]></WHERECLAUSE>
 <!--275-->  <ORDERBYCLAUSE><![CDATA[C_Period.StartDate]]></ORDERBYCLAUSE>
 <!--275--></AD_REF_TABLE>
 

@@ -48,6 +48,7 @@ BEGIN
                                                   and ad_org.ad_org_id = ad_org_getcalendarowner(o.AD_ORG_ID))
                           ) a
        WHERE AD_Reference_ID='183'
+       AND VALUE = (CASE WHEN :new.PeriodType = 'S' THEN VALUE ELSE 'GLJ' END)
        ORDER BY 1)
     LOOP
       AD_Sequence_Next('C_PeriodControl', :new.AD_Client_ID, v_NextNo) ;

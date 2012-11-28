@@ -55,14 +55,14 @@ public class AccDefUtility {
     obc.createAlias(Period.PROPERTY_YEAR, "y");
     obc.add(Restrictions.eq("y." + Year.PROPERTY_CALENDAR, fiscalCalendar));
     obc.add(Restrictions.ge(Period.PROPERTY_ENDINGDATE, date));
-    obc.add(Restrictions.ge(Period.PROPERTY_ENDINGDATE, date));
+    obc.add(Restrictions.ne(Period.PROPERTY_PERIODTYPE, "A"));
     obc.add(Restrictions.le(Period.PROPERTY_STARTINGDATE, date));
     obc.addOrderBy(Period.PROPERTY_PERIODNO, false);
     obc.setFilterOnReadableOrganization(false);
     obc.setFilterOnReadableClients(false);
     List<Period> periods = obc.list();
     if (periods.size() == 0) {
-      log4j.error("SL_Invoice_Product - No period defined for invoice date");
+      log4j.error("AccDefUtility - No period defined for invoice date");
       return null;
     } else {
       return periods.get(0);
@@ -72,6 +72,7 @@ public class AccDefUtility {
   public static Period getNextPeriod(Period period) {
     OBCriteria<Period> obc = OBDal.getInstance().createCriteria(Period.class);
     obc.add(Restrictions.eq(Period.PROPERTY_YEAR, period.getYear()));
+    obc.add(Restrictions.ne(Period.PROPERTY_PERIODTYPE, "A"));
     obc.addOrderBy(Period.PROPERTY_PERIODNO, false);
     obc.setFilterOnReadableOrganization(false);
     obc.setFilterOnReadableClients(false);
@@ -92,12 +93,13 @@ public class AccDefUtility {
   public static Period getFirstPeriodOfNextYear(Year year) {
     OBCriteria<Period> obc = OBDal.getInstance().createCriteria(Period.class);
     obc.add(Restrictions.eq(Period.PROPERTY_YEAR, getNextYear(year)));
+    obc.add(Restrictions.ne(Period.PROPERTY_PERIODTYPE, "A"));
     obc.addOrderBy(Period.PROPERTY_PERIODNO, true);
     obc.setFilterOnReadableOrganization(false);
     obc.setFilterOnReadableClients(false);
     List<Period> periods = obc.list();
     if (periods.size() == 0) {
-      throw new OBException("SL_Invoice_Product - Error getting next year period");
+      throw new OBException("AccDefUtility - Error getting next year period");
     }
     return periods.get(0);
   }
@@ -110,7 +112,7 @@ public class AccDefUtility {
     obc.setFilterOnReadableClients(false);
     Year targetYear = null;
     if (year.equals(obc.list().get(0))) {
-      throw new OBException("SL_Invoice_Product - Error getting next year period");
+      throw new OBException("AccDefUtility - Error getting next year period");
     }
     for (Year y : obc.list()) {
       if (y == year) {
