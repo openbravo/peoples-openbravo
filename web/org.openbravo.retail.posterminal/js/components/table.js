@@ -70,6 +70,11 @@ enyo.kind({
   published: {
     collection: null
   },
+  focus: function () {
+    if (this.hasNode()) {
+      this.hasNode().focus();
+    }
+  },
   create: function () {
     var listName = this.name || '';
 
