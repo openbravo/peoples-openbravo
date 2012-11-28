@@ -236,6 +236,22 @@
         <Parameter name="nodeId" optional="true" after="WHERE " text="tn.Node_ID = ? AND "/>
         <Parameter name="adTreeId"/>
    </SqlMethod>
+   <SqlMethod name="selectOBRE_ResouceCategory" type="preparedStatement" return="multiple">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        SELECT tn.Node_ID,tn.Parent_ID,tn.SeqNo, a.A_Asset_ID AS ID, 
+        a.Name,a.Description,a.IsSummary 
+        FROM AD_TreeNode tn, A_Asset a
+        WHERE 1=1 
+        AND tn.Node_ID = a.A_Asset_ID 
+        AND tn.AD_Tree_ID = ? 
+        ORDER BY COALESCE(tn.Parent_ID, '-1'), tn.SeqNo
+      </Sql>
+        <Parameter name="columnname" optional="false" type="replace" after="tn.SeqNo, a." text="A_Asset_ID"/>
+        <Parameter name="tablename" optional="false" type="replace" after="AD_TreeNode tn, " text="A_Asset"/>
+        <Parameter name="columnname" optional="false" type="replace" after="AND tn.Node_ID = a." text="A_Asset_ID"/>      
+        <Parameter name="adTreeId"/>
+   </SqlMethod>
    <SqlMethod name="selectTreeID" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>

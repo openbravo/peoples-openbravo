@@ -68,11 +68,12 @@ public class InitialClientSetup {
   private static final String STRTREETYPECAMPAIGN = "MC";
   private static final String STRTREETYPEASSET = "AS";
   private static final String STRTREETYPEPRODUCTCATEGORY = "PC";
+  private static final String STRTREETYPEOBRE_RESOURCECATEGORY = "OBRE_RC";
   private static final String STRSEPARATOR = "*****************************************************";
   private static final String STRCLIENTNAMESUFFIX = " Admin";
   private boolean bAccountingCreated = false;
   private Tree treeOrg, treeBPartner, treeProject, treeSalesRegion, treeProduct, treeAccount,
-      treeMenu, treeCampaign, treeAsset, treeProductCategory;
+      treeMenu, treeCampaign, treeAsset, treeProductCategory, treeOBRE_ResourceCategory;
   private Client client;
   private Role role;
   private Currency currency;
@@ -347,6 +348,9 @@ public class InitialClientSetup {
     } else if (strTreeType.endsWith(STRTREETYPEPRODUCTCATEGORY)) {
       treeProductCategory = tree;
       return;
+    } else if (strTreeType.endsWith(STRTREETYPEOBRE_RESOURCECATEGORY)) {
+      treeOBRE_ResourceCategory = tree;
+      return;
     }
   }
 
@@ -354,7 +358,8 @@ public class InitialClientSetup {
     log4j.debug("insertClientInfo() - Starting the creation of client information.");
     if (client == null || treeMenu == null || treeOrg == null || treeBPartner == null
         || treeProject == null || treeSalesRegion == null || treeProduct == null
-        || treeCampaign == null || treeAsset == null || treeProductCategory == null) {
+        || treeCampaign == null || treeAsset == null || treeProductCategory == null
+        || treeOBRE_ResourceCategory == null) {
       return logErrorAndRollback("@CreateClientFailed@",
           "insertClientInfo() - ERROR - Required information is not present. "
               + "Please check that client and trees where correctly created.");
@@ -371,6 +376,7 @@ public class InitialClientSetup {
       } else {
         clientInfo.setPrimaryTreeAsset(treeAsset);
         clientInfo.setPrimaryTreeProductCategory(treeProductCategory);
+        clientInfo.setPrimaryTreeResourceCategory(treeOBRE_ResourceCategory);
       }
     } catch (Exception e) {
       return logErrorAndRollback("@CreateClientFailed@",

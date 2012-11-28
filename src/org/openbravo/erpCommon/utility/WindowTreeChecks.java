@@ -142,6 +142,8 @@ class WindowTreeChecks {
       result = "";
     } else if (TreeType.equals("AS")) { // Asset
       result = "";
+    } else if (TreeType.equals("OBRE_RC")) { // OBRE_Resource Category
+      result = "";
     } else
       result = WindowTreeChecksClient.checkChanges(conn, vars, tabId, topNodeId, nodeId, isChild,
           TreeType, key);

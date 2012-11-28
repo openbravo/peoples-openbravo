@@ -37,7 +37,9 @@ public class UpdateADClientInfo extends ModuleScript {
       createTreeAndUpdateClientInfo(cp, "Asset", "AS", "AD_TREE_ASSET_ID");
       // Product Category tree
       updateClientInfo(cp, "AD_TREE_PRODUCT_CATEGORY_ID", "PC");
-
+      // Resource Category tree
+      createTreeAndUpdateClientInfo(cp, "Resource Category", "OBRE_RC", "AD_TREE_OBRE_RESOURCE_CATEGORY");
+      
       // Insert Missing Treenodes for Assets
       UpdateADClientInfoData.insertMissingTreeNodes(cp, "AS", "A_ASSET");
       // Insert Missing Treenodes for Product Categories
