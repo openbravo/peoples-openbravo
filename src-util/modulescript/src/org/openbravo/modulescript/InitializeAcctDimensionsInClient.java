@@ -31,9 +31,8 @@ public class InitializeAcctDimensionsInClient extends ModuleScript {
 
     try {
       ConnectionProvider cp = getConnectionProvider();
-      boolean execute= InitializeAcctDimensionsInClientData.isExecuted(cp);
-      if (execute){
-        System.out.println("in");
+      boolean isInitialized= InitializeAcctDimensionsInClientData.isExecuted(cp);
+      if (!isInitialized){
       //Business Partner
       String ismandatory = InitializeAcctDimensionsInClientData.selectbph(cp);
       InitializeAcctDimensionsInClientData.initializebph(cp,ismandatory);     
@@ -82,11 +81,9 @@ public class InitializeAcctDimensionsInClient extends ModuleScript {
       ismandatory = InitializeAcctDimensionsInClientData.selectu2bd(cp);
       InitializeAcctDimensionsInClientData.initializeu2bd(cp,ismandatory);  
       
-      int a = InitializeAcctDimensionsInClientData.updatePreferencetest(cp);
-      System.out.println("updated: " + a);
+      InitializeAcctDimensionsInClientData.createPreference(cp);
       }
-      
-      
+     
     } catch (Exception e) {
       handleError(e);
     }

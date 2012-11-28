@@ -23,7 +23,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        select '' as ismandatory
+        select '' as ismandatory , '' as exist
         from dual
       ]]>
     </Sql>
@@ -35,19 +35,26 @@
         SELECT count(*) as exist
         FROM DUAL
         WHERE EXISTS (SELECT 1 FROM ad_preference
-                      WHERE attribute = 'DimensionDisplayConfigured' and value='N')
+                      WHERE attribute = 'DimensionDisplayConfigured')
       ]]>
     </Sql>
   </SqlMethod>
-  <SqlMethod name="updatePreferencetest" type="preparedStatement" return="rowCount">
+   <SqlMethod name="createPreference" type="preparedStatement" return="rowcount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        update ad_preference set value='Y' WHERE attribute = 'DimensionDisplayConfigured'
+        INSERT INTO ad_preference (
+          ad_preference_id, ad_client_id, ad_org_id, isactive,
+          createdby, created, updatedby, updated,
+          attribute
+        ) VALUES (
+          get_uuid(), '0', '0', 'Y',
+          '0', NOW(), '0', NOW(),
+          'DimensionDisplayConfigured'
+        )
       ]]>
     </Sql>
-  </SqlMethod>
-  
+  </SqlMethod>  
   <SqlMethod name="selectbph" type="preparedStatement"  return="string">
     <SqlMethodComment></SqlMethodComment>
     <Sql>

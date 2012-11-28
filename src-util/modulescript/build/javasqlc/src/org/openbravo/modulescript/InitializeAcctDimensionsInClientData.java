@@ -16,6 +16,7 @@ class InitializeAcctDimensionsInClientData implements FieldProvider {
 static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.class);
   private String InitRecordNumber="0";
   public String ismandatory;
+  public String exist;
 
   public String getInitRecordNumber() {
     return InitRecordNumber;
@@ -24,6 +25,8 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
   public String getField(String fieldName) {
     if (fieldName.equalsIgnoreCase("ismandatory"))
       return ismandatory;
+    else if (fieldName.equalsIgnoreCase("exist"))
+      return exist;
    else {
      log4j.debug("Field does not exist: " + fieldName);
      return null;
@@ -37,7 +40,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
   public static InitializeAcctDimensionsInClientData[] select(ConnectionProvider connectionProvider, int firstRegister, int numberRegisters)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
-      "        select '' as ismandatory" +
+      "        select '' as ismandatory , '' as exist" +
       "        from dual";
 
     ResultSet result;
@@ -59,6 +62,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
         countRecord++;
         InitializeAcctDimensionsInClientData objectInitializeAcctDimensionsInClientData = new InitializeAcctDimensionsInClientData();
         objectInitializeAcctDimensionsInClientData.ismandatory = UtilSql.getValue(result, "ismandatory");
+        objectInitializeAcctDimensionsInClientData.exist = UtilSql.getValue(result, "exist");
         objectInitializeAcctDimensionsInClientData.InitRecordNumber = Integer.toString(firstRegister);
         vector.addElement(objectInitializeAcctDimensionsInClientData);
         if (countRecord >= numberRegisters && numberRegisters != 0) {
@@ -90,7 +94,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
       "        SELECT count(*) as exist" +
       "        FROM DUAL" +
       "        WHERE EXISTS (SELECT 1 FROM ad_preference" +
-      "                      WHERE attribute = 'DimensionDisplayConfigured' and value='N')";
+      "                      WHERE attribute = 'DimensionDisplayConfigured')";
 
     ResultSet result;
     boolean boolReturn = false;
@@ -120,10 +124,18 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     return(boolReturn);
   }
 
-  public static int updatePreferencetest(ConnectionProvider connectionProvider)    throws ServletException {
+  public static int createPreference(ConnectionProvider connectionProvider)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
-      "        update ad_preference set value='Y' WHERE attribute = 'DimensionDisplayConfigured'";
+      "        INSERT INTO ad_preference (" +
+      "          ad_preference_id, ad_client_id, ad_org_id, isactive," +
+      "          createdby, created, updatedby, updated," +
+      "          attribute" +
+      "        ) VALUES (" +
+      "          get_uuid(), '0', '0', 'Y'," +
+      "          '0', NOW(), '0', NOW()," +
+      "          'DimensionDisplayConfigured'" +
+      "        )";
 
     int updateCount = 0;
     PreparedStatement st = null;
