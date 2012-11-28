@@ -33,54 +33,7 @@ public class InitializeAcctDimensionsInClient extends ModuleScript {
       ConnectionProvider cp = getConnectionProvider();
       boolean isInitialized= InitializeAcctDimensionsInClientData.isExecuted(cp);
       if (!isInitialized){
-      //Business Partner
-      String ismandatory = InitializeAcctDimensionsInClientData.selectbph(cp);
-      InitializeAcctDimensionsInClientData.initializebph(cp,ismandatory);     
-      ismandatory = InitializeAcctDimensionsInClientData.selectbpl(cp);
-      InitializeAcctDimensionsInClientData.initializebpl(cp,ismandatory);   
-      ismandatory = InitializeAcctDimensionsInClientData.selectbpbd(cp);
-      InitializeAcctDimensionsInClientData.initializebpbd(cp,ismandatory);   
-      
-      //Product
-      ismandatory = InitializeAcctDimensionsInClientData.selectprh(cp);
-      InitializeAcctDimensionsInClientData.initializeprh(cp,ismandatory);     
-      ismandatory = InitializeAcctDimensionsInClientData.selectprl(cp);
-      InitializeAcctDimensionsInClientData.initializeprl(cp,ismandatory);   
-      ismandatory = InitializeAcctDimensionsInClientData.selectprbd(cp);
-      InitializeAcctDimensionsInClientData.initializeprbd(cp,ismandatory);  
-      
-      //Project
-      ismandatory = InitializeAcctDimensionsInClientData.selectpjh(cp);
-      InitializeAcctDimensionsInClientData.initializepjh(cp,ismandatory);     
-      ismandatory = InitializeAcctDimensionsInClientData.selectpjl(cp);
-      InitializeAcctDimensionsInClientData.initializepjl(cp,ismandatory);   
-      ismandatory = InitializeAcctDimensionsInClientData.selectpjbd(cp);
-      InitializeAcctDimensionsInClientData.initializepjbd(cp,ismandatory);  
-     
-      //Cost Center
-      ismandatory = InitializeAcctDimensionsInClientData.selectcch(cp);
-      InitializeAcctDimensionsInClientData.initializecch(cp,ismandatory);     
-      ismandatory = InitializeAcctDimensionsInClientData.selectccl(cp);
-      InitializeAcctDimensionsInClientData.initializeccl(cp,ismandatory);   
-      ismandatory = InitializeAcctDimensionsInClientData.selectccbd(cp);
-      InitializeAcctDimensionsInClientData.initializeccbd(cp,ismandatory);  
-     
-      //User 1
-      ismandatory = InitializeAcctDimensionsInClientData.selectu1h(cp);
-      InitializeAcctDimensionsInClientData.initializeu1h(cp,ismandatory);     
-      ismandatory = InitializeAcctDimensionsInClientData.selectu1l(cp);
-      InitializeAcctDimensionsInClientData.initializeu1l(cp,ismandatory);   
-      ismandatory = InitializeAcctDimensionsInClientData.selectu1bd(cp);
-      InitializeAcctDimensionsInClientData.initializeu1bd(cp,ismandatory);  
-      
-      //User 2
-      ismandatory = InitializeAcctDimensionsInClientData.selectu2h(cp);
-      InitializeAcctDimensionsInClientData.initializeu2h(cp,ismandatory);     
-      ismandatory = InitializeAcctDimensionsInClientData.selectu2l(cp);
-      InitializeAcctDimensionsInClientData.initializeu2l(cp,ismandatory);   
-      ismandatory = InitializeAcctDimensionsInClientData.selectu2bd(cp);
-      InitializeAcctDimensionsInClientData.initializeu2bd(cp,ismandatory);  
-      
+      InitializeAcctDimensionsInClientData.updateDimClient(cp);
       InitializeAcctDimensionsInClientData.createPreference(cp);
       }
      
