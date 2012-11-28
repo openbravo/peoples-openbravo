@@ -31,12 +31,16 @@ public class Terminal extends ProcessHQLQuery {
     String POSSearchKey = jsonsent.getJSONObject("parameters").getJSONObject("terminal")
         .getString("value");
     OBPOSApplications pOSTerminal = POSUtils.getTerminal(POSSearchKey);
+
+    // saving quotations doc id to prevent session to be lost in getLastDocumentNumberForPOS
+    String quotationsDocTypeId = pOSTerminal.getObposTerminaltype().getDocumentTypeForQuotations() == null ? null
+        : pOSTerminal.getObposTerminaltype().getDocumentTypeForQuotations().getId();
     int lastDocumentNumber = POSUtils.getLastDocumentNumberForPOS(POSSearchKey, pOSTerminal
         .getObposTerminaltype().getDocumentType().getId());
     int lastQuotationDocumentNumber = 0;
-    if (pOSTerminal.getObposTerminaltype().getDocumentTypeForQuotations() != null) {
-      lastQuotationDocumentNumber = POSUtils.getLastDocumentNumberForPOS(POSSearchKey, pOSTerminal
-          .getObposTerminaltype().getDocumentTypeForQuotations().getId());
+    if (quotationsDocTypeId != null) {
+      lastQuotationDocumentNumber = POSUtils.getLastDocumentNumberForPOS(POSSearchKey,
+          quotationsDocTypeId);
     }
     final org.openbravo.model.pricing.pricelist.PriceList pricesList = POSUtils
         .getPriceListByTerminal(POSSearchKey);
@@ -68,7 +72,7 @@ public class Terminal extends ProcessHQLQuery {
             + ", pos.orderdocnoPrefix as docNoPrefix "
             + ", pos.quotationdocnoPrefix as quotationDocNoPrefix "
             + ", pos.obposTerminaltype.allowpayoncredit as allowpayoncredit "
-            + ", pos.defaultwebpostab as defaultwebpostab "            
+            + ", pos.defaultwebpostab as defaultwebpostab "
             + ", "
             + lastDocumentNumber
             + " as lastDocumentNumber, "
