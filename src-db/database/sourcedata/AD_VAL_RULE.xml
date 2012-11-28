@@ -2014,7 +2014,7 @@ OR
 <!--E0541EB2493547BC934F5EFA044AB668-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--E0541EB2493547BC934F5EFA044AB668-->  <NAME><![CDATA[C_Period - Org Calendar Period]]></NAME>
 <!--E0541EB2493547BC934F5EFA044AB668-->  <TYPE><![CDATA[S]]></TYPE>
-<!--E0541EB2493547BC934F5EFA044AB668-->  <CODE><![CDATA[ exists (select 1 from c_year where c_period.c_year_id = c_year.c_year_id and (select c_calendar_id from ad_org where ad_org_id = ad_org_getcalendarowner (@AD_Org_ID@)) = c_year.c_calendar_id)]]></CODE>
+<!--E0541EB2493547BC934F5EFA044AB668-->  <CODE><![CDATA[ exists (select 1 from c_year where c_period.c_year_id = c_year.c_year_id and (select c_calendar_id from ad_org where ad_org_id = ad_org_getcalendarowner (@AD_Org_ID@)) = c_year.c_calendar_id) and periodtype = 'S']]></CODE>
 <!--E0541EB2493547BC934F5EFA044AB668-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--E0541EB2493547BC934F5EFA044AB668--></AD_VAL_RULE>
 

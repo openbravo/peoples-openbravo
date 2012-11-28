@@ -72,6 +72,7 @@ public class DocGLJournal extends AcctServer {
 
     m_PostingType = data[0].getField("PostingType");
     m_IsOpening = data[0].getField("isopening");
+    C_Period_ID = isperiodOpen(conn, data[0].getField("period"));
 
     // Contained Objects
     p_lines = loadLines(conn);
@@ -268,6 +269,23 @@ public class DocGLJournal extends AcctServer {
       return false;
     }
     return true;
+  }
+
+  private String isperiodOpen(ConnectionProvider conn, String periodId) {
+    if ("".equals(periodId)) {
+      return "";
+    }
+    try {
+      DocGLJournalData[] data = DocGLJournalData.periodOpen(conn, periodId);
+      if (data != null && data.length > 0) {
+        return periodId;
+      } else {
+        return "";
+      }
+    } catch (ServletException e) {
+      e.printStackTrace();
+      return "";
+    }
   }
 
   public String getServletInfo() {

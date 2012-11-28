@@ -965,6 +965,9 @@ public class FactLine {
 
   public String setC_Period_ID(AcctServer m_docVO, String strDateAcct, ConnectionProvider conn) {
     AcctServerData[] data = null;
+    if ("GLJ".equals(m_docVO.DocumentType)) {
+      return m_docVO.C_Period_ID;
+    }
     try {
       data = AcctServerData.periodOpen(conn, m_docVO.AD_Client_ID, m_docVO.DocumentType,
           m_docVO.AD_Org_ID, strDateAcct);

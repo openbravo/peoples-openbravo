@@ -21,21 +21,18 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
-import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.utility.AccDefUtility;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.model.financialmgmt.calendar.Period;
-import org.openbravo.model.financialmgmt.calendar.Year;
 
 public class DocInvoice extends AcctServer {
   private static final long serialVersionUID = 1L;
@@ -816,7 +813,18 @@ public class DocInvoice extends AcctServer {
             i == periodNumber ? amount.subtract(total).toString() : periodAmount.toString());
         plan.add(hm);
       }
-      period = getNextPeriod(period);
+      period = AccDefUtility.getNextPeriod(period);
+      try {
+        AcctServerData[] data = AcctServerData.periodOpen(connectionProvider, AD_Client_ID,
+            DocumentType, AD_Org_ID, OBDateUtils.formatDate(period.getEndingDate()));
+        if ("".equals(data[0].period)) {
+          setStatus(STATUS_PeriodClosed);
+          throw new IllegalStateException("DocInvoice - Error getting next year period");
+        }
+      } catch (ServletException e) {
+        log4j.warn("DocInvoice - Error checking period open.", e);
+        e.printStackTrace();
+      }
       date = period.getEndingDate();
       total = total.add(periodAmount);
       i++;
@@ -854,71 +862,6 @@ public class DocInvoice extends AcctServer {
       Fact_Acct_Group_ID = SequenceIdData.getUUID();
     }
     return amount.toString();
-  }
-
-  private Period getNextPeriod(Period period) {
-    OBCriteria<Period> obc = OBDal.getInstance().createCriteria(Period.class);
-    obc.add(Restrictions.eq(Period.PROPERTY_YEAR, period.getYear()));
-    obc.addOrderBy(Period.PROPERTY_PERIODNO, false);
-    obc.setFilterOnReadableOrganization(false);
-    obc.setFilterOnReadableClients(false);
-    Period targetPeriod = null;
-    if (period.equals(obc.list().get(0))) {
-      targetPeriod = getFirstPeriodOfNextYear(period.getYear());
-    } else {
-      for (Period p : obc.list()) {
-        if (p == period) {
-          return targetPeriod;
-        }
-        targetPeriod = p;
-      }
-    }
-    try {
-      AcctServerData[] data = AcctServerData.periodOpen(connectionProvider, AD_Client_ID,
-          DocumentType, AD_Org_ID, OBDateUtils.formatDate(targetPeriod.getEndingDate()));
-      if ("".equals(data[0].period)) {
-        setStatus(STATUS_PeriodClosed);
-        throw new IllegalStateException("DocInvoice - Error getting next year period");
-      }
-    } catch (ServletException e) {
-      log4j.warn("DocInvoice - Error checking period open.", e);
-      e.printStackTrace();
-    }
-    return targetPeriod;
-  }
-
-  private Period getFirstPeriodOfNextYear(Year year) {
-    OBCriteria<Period> obc = OBDal.getInstance().createCriteria(Period.class);
-    obc.add(Restrictions.eq(Period.PROPERTY_YEAR, getNextYear(year)));
-    obc.addOrderBy(Period.PROPERTY_PERIODNO, true);
-    obc.setFilterOnReadableOrganization(false);
-    obc.setFilterOnReadableClients(false);
-    List<Period> periods = obc.list();
-    if (periods.size() == 0) {
-      setStatus(STATUS_PeriodClosed);
-      throw new IllegalStateException("DocInvoice - Error getting next year period");
-    }
-    return periods.get(0);
-  }
-
-  private Year getNextYear(Year year) {
-    OBCriteria<Year> obc = OBDal.getInstance().createCriteria(Year.class);
-    obc.add(Restrictions.eq(Year.PROPERTY_CALENDAR, year.getCalendar()));
-    obc.addOrderBy(Year.PROPERTY_FISCALYEAR, false);
-    obc.setFilterOnReadableOrganization(false);
-    obc.setFilterOnReadableClients(false);
-    Year targetYear = null;
-    if (year.equals(obc.list().get(0))) {
-      setStatus(STATUS_PeriodClosed);
-      throw new IllegalStateException("DocInvoice - Error getting next year");
-    }
-    for (Year y : obc.list()) {
-      if (y == year) {
-        return targetYear;
-      }
-      targetYear = y;
-    }
-    return targetYear;
   }
 
   /**

@@ -19,7 +19,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2009 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2012 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -47,6 +47,7 @@
     v_User_ID VARCHAR2(32);
     v_year_num NUMBER;
     v_language VARCHAR2(6);
+    v_createAdjustment VARCHAR(1):='N';
   BEGIN
     --  Update AD_PInstance
     --  DBMS_OUTPUT.PUT_LINE('Updating PInstance - Processing');
@@ -71,6 +72,8 @@
       IF Cur_Parameter.ParameterName = 'AD_LANGUAGE_ID' THEN
         SELECT AD_LANGUAGE INTO v_language FROM AD_LANGUAGE WHERE AD_LANGUAGE_ID = Cur_Parameter.P_String;
         v_language := COALESCE(v_language, 'en_US');
+      ELSIF Cur_Parameter.ParameterName = 'CREATEADJUSTMENT' THEN 
+        v_createAdjustment := Cur_Parameter.P_String;
       END IF;
       v_Year_ID:=Cur_Parameter.Record_ID;
     END LOOP; -- Get Parameter
@@ -145,6 +148,24 @@
         DBMS_OUTPUT.PUT_LINE('Month Added') ;
       END IF;
     END LOOP;
+    IF(v_createAdjustment = 'Y') THEN 
+			AD_Sequence_Next('C_Period', v_Year_ID, v_NextNo) ;
+			INSERT
+			INTO C_Period
+				(
+				C_Period_ID, AD_Client_ID, AD_Org_ID, IsActive,
+				Created, CreatedBy, Updated, UpdatedBy,
+				C_Year_ID, PeriodNo, StartDate, PeriodType,
+				Name
+				)
+			VALUES
+			(
+				v_NextNo, v_Client_ID, v_Org_ID, 'Y',
+				now(), v_User_ID, now(), v_User_ID,
+				v_Year_ID, 13, TO_DATE(ADD_MONTHS(v_StartDate, 12))-1, 'A',
+				ad_message_get2('13thPeriod', v_language) || ' - ' || SUBSTR(v_Year_Str,3,2)
+			);
+    END IF;
     --  Update AD_PInstance
     --<<END_PROCEDURE>>
     --  DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished');

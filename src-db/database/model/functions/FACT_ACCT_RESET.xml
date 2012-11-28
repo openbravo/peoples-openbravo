@@ -135,13 +135,17 @@
             Cur_Fact_Records RECORD;
           BEGIN
             FOR Cur_Fact_Records IN
-              (SELECT DATEACCT, DOCBASETYPE, C_DOCTYPE_ID
+              (SELECT DATEACCT, DOCBASETYPE, C_DOCTYPE_ID, C_PERIOD_ID
                FROM FACT_ACCT
                WHERE AD_TABLE_ID=v_AD_Table_ID
                AND Record_ID = v_Record_ID
               )
             LOOP
-              v_available_period:=C_CHK_OPEN_PERIOD(v_AD_Org_ID, Cur_Fact_Records.DATEACCT, Cur_Fact_Records.DOCBASETYPE, Cur_Fact_Records.C_DOCTYPE_ID);
+              IF(Cur_Fact_Records.DOCBASETYPE = 'GLJ') THEN 
+								v_available_period:=C_CHK_OPEN_PERIOD_GLJ(v_AD_Org_ID, Cur_Fact_Records.C_PERIOD_ID);
+              ELSE
+              	v_available_period:=C_CHK_OPEN_PERIOD(v_AD_Org_ID, Cur_Fact_Records.DATEACCT, Cur_Fact_Records.DOCBASETYPE, Cur_Fact_Records.C_DOCTYPE_ID);
+              END IF;
               IF (v_available_period<>1) THEN
                 RAISE_APPLICATION_ERROR(-20000, '@PeriodClosedForUnPosting@');
               END IF;
@@ -255,8 +259,8 @@
                       AND AD_Org.ad_client_id=fa_aux.AD_CLIENT_ID
                       AND C_PERIODCONTROL.docbasetype=fa_aux.DOCBASETYPE
                       AND C_PERIODCONTROL.periodstatus<>'O'
-                      AND fa_aux.DATEACCT>=C_PERIOD.StartDate
-                      AND fa_aux.DATEACCT<C_PERIOD.EndDate + 1
+                      AND ((fa_aux.DATEACCT>=C_PERIOD.StartDate AND fa_aux.DATEACCT<C_PERIOD.EndDate + 1 AND fa_aux.DOCBASETYPE <> 'GLJ') 
+                      		OR (fa_aux.DOCBASETYPE = 'GLJ' AND C_PERIOD.C_PERIOD_ID = FACT_ACCT.C_PERIOD_ID))
                       AND C_PeriodControl.AD_Org_ID=AD_Org.AD_Org_ID
                       AND C_PeriodControl.AD_Org_ID=v_AD_Org_CalOwner
                       AND fa_aux.record_id = FACT_ACCT.RECORD_ID

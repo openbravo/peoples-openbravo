@@ -112,7 +112,7 @@ BEGIN
               WHERE C_PERIODCONTROL.C_PERIOD_ID=C_PERIOD.C_PERIOD_ID 
               AND C_PERIOD.C_Year_ID=p_Year
               AND C_PERIODCONTROL.AD_Org_ID=p_Organization
-              AND C_PERIOD.EndDate<=(SELECT EndDate FROM C_PERIOD WHERE C_Period.C_Period_ID=p_PeriodNO)
+              AND C_PERIOD.periodno<=(SELECT periodno FROM C_PERIOD WHERE C_Period.C_Period_ID=p_PeriodNO)
               AND C_PERIODCONTROL.DocBaseType LIKE COALESCE(p_DocBaseType, '%')
             )
           LOOP
@@ -132,7 +132,7 @@ BEGIN
               AND C_PERIODCONTROL.AD_Org_ID IN (SELECT AD_Org_ID
                                                 FROM AD_Org 
                                                 WHERE AD_ISORGINCLUDED(ad_org.ad_org_id, p_Organization, ad_org.ad_client_id)<>-1)
-              AND C_PERIOD.EndDate<=(SELECT EndDate FROM C_PERIOD WHERE C_Period.C_Period_ID=p_PeriodNO)
+              AND C_PERIOD.periodno<=(SELECT periodno FROM C_PERIOD WHERE C_Period.C_Period_ID=p_PeriodNO)
               AND C_PERIODCONTROL.DocBaseType LIKE COALESCE(p_DocBaseType, '%')
             )
           LOOP
@@ -169,7 +169,7 @@ BEGIN
               AND C_PERIODCONTROL.AD_Org_ID IN (SELECT AD_Org_ID
                                                 FROM AD_Org 
                                                 WHERE AD_ISORGINCLUDED(ad_org.ad_org_id, p_Organization, ad_org.ad_client_id)<>-1)
-              AND C_PERIOD.EndDate<=(SELECT EndDate FROM C_PERIOD WHERE C_Period.C_Period_ID=p_PeriodNO)
+              AND C_PERIOD.periodno<=(SELECT periodno FROM C_PERIOD WHERE C_Period.C_Period_ID=p_PeriodNO)
               AND C_PERIODCONTROL.DocBaseType LIKE COALESCE(p_DocBaseType, '%')
             )
           LOOP
@@ -198,7 +198,7 @@ BEGIN
               WHERE C_PERIODCONTROL.C_PERIOD_ID=C_PERIOD.C_PERIOD_ID 
               AND C_PERIOD.C_Year_ID=p_Year
               AND C_PERIODCONTROL.AD_Org_ID=p_Organization
-              AND C_PERIOD.EndDate<=(SELECT EndDate FROM C_PERIOD WHERE C_Period.C_Period_ID=p_PeriodNO)
+              AND C_PERIOD.periodno<=(SELECT periodno FROM C_PERIOD WHERE C_Period.C_Period_ID=p_PeriodNO)
               AND C_PERIODCONTROL.DocBaseType LIKE COALESCE(p_DocBaseType, '%')
             )
           LOOP
@@ -221,7 +221,7 @@ BEGIN
               AND C_PERIODCONTROL.AD_Org_ID IN (SELECT AD_Org_ID
                                                 FROM AD_Org 
                                                 WHERE AD_ISORGINCLUDED(ad_org.ad_org_id, p_Organization, ad_org.ad_client_id)<>-1)
-              AND C_PERIOD.EndDate<=(SELECT EndDate FROM C_PERIOD WHERE C_Period.C_Period_ID=p_PeriodNO)
+              AND C_PERIOD.periodno<=(SELECT periodno FROM C_PERIOD WHERE C_Period.C_Period_ID=p_PeriodNO)
               AND C_PERIODCONTROL.DocBaseType LIKE COALESCE(p_DocBaseType, '%')
             )
           LOOP
@@ -235,7 +235,7 @@ BEGIN
               WHERE C_PERIODCONTROL.C_PERIOD_ID=C_PERIOD.C_PERIOD_ID 
               AND C_PERIOD.C_Year_ID=p_Year
               AND C_PERIODCONTROL.AD_Org_ID=p_Organization
-              AND C_PERIOD.EndDate<=(SELECT EndDate FROM C_PERIOD WHERE C_Period.C_Period_ID=p_PeriodNO)
+              AND C_PERIOD.periodno<=(SELECT periodno FROM C_PERIOD WHERE C_Period.C_Period_ID=p_PeriodNO)
               AND C_PERIODCONTROL.DocBaseType LIKE COALESCE(p_DocBaseType, '%')
             )
           LOOP

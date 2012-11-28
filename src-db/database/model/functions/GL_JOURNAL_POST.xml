@@ -40,6 +40,7 @@
   v_Record_ID VARCHAR2(32);
   v_AD_User_ID VARCHAR2(32);
   v_AD_Org_ID VARCHAR2(32);
+  v_C_Period_ID VARCHAR2(32);
   v_DateAcct DATE;
   v_DocType_ID VARCHAR2(32);
   v_BatchOrg_ID VARCHAR2(32);
@@ -104,11 +105,13 @@
     SELECT DocStatus,
       DocAction,
       Processing,
-      Posted, AD_Org_ID, DateAcct, C_DocType_ID
+      Posted, AD_Org_ID, DateAcct, C_DocType_ID,
+      C_Period_ID
     INTO v_DocStatus,
       v_DocAction,
       v_Processing,
-      v_Posted, v_AD_Org_ID, v_DateAcct, v_DocType_ID
+      v_Posted, v_AD_Org_ID, v_DateAcct, v_DocType_ID,
+      v_C_Period_ID
     FROM GL_Journal
     WHERE GL_Journal_ID=v_Record_ID  FOR UPDATE;
     /**
@@ -267,7 +270,7 @@
       AND AD_Org.AD_Org_ID=v_org_bule_id;
       
       IF (v_isacctle='Y') THEN     	
-        SELECT C_CHK_OPEN_PERIOD(v_AD_Org_ID, v_DateAcct, NULL, v_DocType_ID) 
+        SELECT C_CHK_OPEN_PERIOD_GLJ(v_AD_Org_ID, v_C_Period_ID) 
         INTO v_available_period
         FROM DUAL;
         
