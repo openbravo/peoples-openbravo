@@ -735,7 +735,7 @@ WHERE ((IsAcctLegalEntity<>'N' or IsLegalEntity<>'Y') or (o.C_ACCTSCHEMA_ID is n
 <!--09BF7886BE7846C3B870F354B8301159-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--09BF7886BE7846C3B870F354B8301159-->  <AD_TAB_ID><![CDATA[186]]></AD_TAB_ID>
 <!--09BF7886BE7846C3B870F354B8301159-->  <NAME><![CDATA[DOCBASETYPE]]></NAME>
-<!--09BF7886BE7846C3B870F354B8301159-->  <CODE><![CDATA[@SQL=select max(docbasetype) from c_doctype where c_doctype_id = @c_doctype_id@]]></CODE>
+<!--09BF7886BE7846C3B870F354B8301159-->  <CODE><![CDATA[@SQL=select max(docbasetype) from c_doctype where c_doctype_id = @c_doctypetarget_id@]]></CODE>
 <!--09BF7886BE7846C3B870F354B8301159-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--09BF7886BE7846C3B870F354B8301159--></AD_AUXILIARINPUT>
 
@@ -893,7 +893,7 @@ AND ol.c_order_id = @C_Order_ID@]]></CODE>
 <!--17F5DEA4A5254BDDA77560A7D67667B6-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--17F5DEA4A5254BDDA77560A7D67667B6-->  <AD_TAB_ID><![CDATA[294]]></AD_TAB_ID>
 <!--17F5DEA4A5254BDDA77560A7D67667B6-->  <NAME><![CDATA[DOCBASETYPE]]></NAME>
-<!--17F5DEA4A5254BDDA77560A7D67667B6-->  <CODE><![CDATA[@SQL=select max(docbasetype) from c_doctype where c_doctype_id = @c_doctype_id@]]></CODE>
+<!--17F5DEA4A5254BDDA77560A7D67667B6-->  <CODE><![CDATA[@SQL=select max(docbasetype) from c_doctype where c_doctype_id = @c_doctypetarget_id@]]></CODE>
 <!--17F5DEA4A5254BDDA77560A7D67667B6-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--17F5DEA4A5254BDDA77560A7D67667B6--></AD_AUXILIARINPUT>
 
@@ -1039,7 +1039,7 @@ AND ol.c_order_id = @C_Order_ID@]]></CODE>
 <!--29AB487A0544464C8498B3A9D2201BE3-->  <CODE><![CDATA[@SQL=select max(dt.docbasetype) from c_orderline_acctdimension olacct 
                            join c_orderline ol on (olacct.c_orderline_id=ol.c_orderline_id)
                            join c_order ord on (ol.c_order_id=ord.c_order_id)
-                           join c_doctype dt on (ord.c_doctype_id = dt.c_doctype_id)
+                           join c_doctype dt on (ord.c_doctypetarget_id = dt.c_doctype_id)
                           where ord.c_order_id = @c_order_id@]]></CODE>
 <!--29AB487A0544464C8498B3A9D2201BE3-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--29AB487A0544464C8498B3A9D2201BE3--></AD_AUXILIARINPUT>
@@ -1128,7 +1128,7 @@ AND ol.c_order_id = @C_Order_ID@]]></CODE>
 <!--2F68ED80A1824966845A6CED4A2B5B45-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--2F68ED80A1824966845A6CED4A2B5B45-->  <AD_TAB_ID><![CDATA[187]]></AD_TAB_ID>
 <!--2F68ED80A1824966845A6CED4A2B5B45-->  <NAME><![CDATA[DOCBASETYPE]]></NAME>
-<!--2F68ED80A1824966845A6CED4A2B5B45-->  <CODE><![CDATA[@SQL=select max(dt.docbasetype) from c_order ord join c_doctype dt on (ord.c_doctype_id = dt.c_doctype_id)
+<!--2F68ED80A1824966845A6CED4A2B5B45-->  <CODE><![CDATA[@SQL=select max(dt.docbasetype) from c_order ord join c_doctype dt on (ord.c_doctypetarget_id = dt.c_doctype_id)
 where ord.c_order_id = @c_order_id@]]></CODE>
 <!--2F68ED80A1824966845A6CED4A2B5B45-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--2F68ED80A1824966845A6CED4A2B5B45--></AD_AUXILIARINPUT>
@@ -1220,7 +1220,7 @@ where ord.c_order_id = @c_order_id@]]></CODE>
 <!--3752F4D586254CA0BAA6CE2AA8E6137F-->  <CODE><![CDATA[@SQL=select max(dt.docbasetype) from c_orderline_acctdimension olacct 
                            join c_orderline ol on (olacct.c_orderline_id=ol.c_orderline_id)
                            join c_order ord on (ol.c_order_id=ord.c_order_id)
-                           join c_doctype dt on (ord.c_doctype_id = dt.c_doctype_id)
+                           join c_doctype dt on (ord.c_doctypetarget_id = dt.c_doctype_id)
                           where ord.c_order_id = @c_order_id@]]></CODE>
 <!--3752F4D586254CA0BAA6CE2AA8E6137F-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--3752F4D586254CA0BAA6CE2AA8E6137F--></AD_AUXILIARINPUT>
@@ -1246,7 +1246,7 @@ where ord.c_order_id = @c_order_id@]]></CODE>
 <!--396DA37927A34D009819599FB5F5F8B0-->  <CODE><![CDATA[@SQL=select max(dt.docbasetype) from c_invoiceline_acctdimension ilacct 
                            join c_invoiceline il on (ilacct.c_invoiceline_id=il.c_invoiceline_id)
                            join c_invoice inv on (il.c_invoice_id=inv.c_invoice_id)
-                           join c_doctype dt on (inv.c_doctype_id = dt.c_doctype_id)
+                           join c_doctype dt on (inv.c_doctypetarget_id = dt.c_doctype_id)
 			 where inv.c_invoice_id = @c_invoice_id@]]></CODE>
 <!--396DA37927A34D009819599FB5F5F8B0-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--396DA37927A34D009819599FB5F5F8B0--></AD_AUXILIARINPUT>
@@ -1749,7 +1749,7 @@ WHERE MA_MAINTENANCE_ID = @MA_MAINTENANCE_ID@]]></CODE>
 <!--68CD2AFDCEAB45ADB0690B33067B7940-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--68CD2AFDCEAB45ADB0690B33067B7940-->  <AD_TAB_ID><![CDATA[290]]></AD_TAB_ID>
 <!--68CD2AFDCEAB45ADB0690B33067B7940-->  <NAME><![CDATA[DOCBASETYPE]]></NAME>
-<!--68CD2AFDCEAB45ADB0690B33067B7940-->  <CODE><![CDATA[@SQL=select max(docbasetype) from c_doctype where c_doctype_id = @c_doctype_id@]]></CODE>
+<!--68CD2AFDCEAB45ADB0690B33067B7940-->  <CODE><![CDATA[@SQL=select max(docbasetype) from c_doctype where c_doctype_id = @c_doctypetarget_id@]]></CODE>
 <!--68CD2AFDCEAB45ADB0690B33067B7940-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--68CD2AFDCEAB45ADB0690B33067B7940--></AD_AUXILIARINPUT>
 
@@ -1826,7 +1826,7 @@ WHERE MA_MAINTENANCE_ID = @MA_MAINTENANCE_ID@]]></CODE>
 <!--7A6DD0A1AF304BE288BBFBE305EA1227-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--7A6DD0A1AF304BE288BBFBE305EA1227-->  <AD_TAB_ID><![CDATA[263]]></AD_TAB_ID>
 <!--7A6DD0A1AF304BE288BBFBE305EA1227-->  <NAME><![CDATA[DOCBASETYPE]]></NAME>
-<!--7A6DD0A1AF304BE288BBFBE305EA1227-->  <CODE><![CDATA[@SQL=select max(docbasetype) from c_doctype where c_doctype_id = @c_doctype_id@]]></CODE>
+<!--7A6DD0A1AF304BE288BBFBE305EA1227-->  <CODE><![CDATA[@SQL=select max(docbasetype) from c_doctype where c_doctype_id = @c_doctypetarget_id@]]></CODE>
 <!--7A6DD0A1AF304BE288BBFBE305EA1227-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--7A6DD0A1AF304BE288BBFBE305EA1227--></AD_AUXILIARINPUT>
 
@@ -1928,7 +1928,7 @@ AND C_ACCTSCHEMA_ID IS NOT NULL]]></CODE>
 <!--861880FCEE6846A1B6BF4E129EDAF3DD-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--861880FCEE6846A1B6BF4E129EDAF3DD-->  <AD_TAB_ID><![CDATA[291]]></AD_TAB_ID>
 <!--861880FCEE6846A1B6BF4E129EDAF3DD-->  <NAME><![CDATA[DOCBASETYPE]]></NAME>
-<!--861880FCEE6846A1B6BF4E129EDAF3DD-->  <CODE><![CDATA[@SQL=select max(dt.docbasetype) from c_invoice inv join c_doctype dt on (inv.c_doctype_id = dt.c_doctype_id)
+<!--861880FCEE6846A1B6BF4E129EDAF3DD-->  <CODE><![CDATA[@SQL=select max(dt.docbasetype) from c_invoice inv join c_doctype dt on (inv.c_doctypetarget_id = dt.c_doctype_id)
 where inv.c_invoice_id = @c_invoice_id@]]></CODE>
 <!--861880FCEE6846A1B6BF4E129EDAF3DD-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--861880FCEE6846A1B6BF4E129EDAF3DD--></AD_AUXILIARINPUT>
@@ -2072,7 +2072,7 @@ where inv.c_invoice_id = @c_invoice_id@]]></CODE>
 <!--9E0F5BB107EE463B8E4F18395952D8F2-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--9E0F5BB107EE463B8E4F18395952D8F2-->  <AD_TAB_ID><![CDATA[293]]></AD_TAB_ID>
 <!--9E0F5BB107EE463B8E4F18395952D8F2-->  <NAME><![CDATA[DOCBASETYPE]]></NAME>
-<!--9E0F5BB107EE463B8E4F18395952D8F2-->  <CODE><![CDATA[@SQL=select max(dt.docbasetype) from c_order ord join c_doctype dt on (ord.c_doctype_id = dt.c_doctype_id)
+<!--9E0F5BB107EE463B8E4F18395952D8F2-->  <CODE><![CDATA[@SQL=select max(dt.docbasetype) from c_order ord join c_doctype dt on (ord.c_doctypetarget_id = dt.c_doctype_id)
 where ord.c_order_id = @c_order_id@]]></CODE>
 <!--9E0F5BB107EE463B8E4F18395952D8F2-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--9E0F5BB107EE463B8E4F18395952D8F2--></AD_AUXILIARINPUT>
@@ -2349,7 +2349,7 @@ where io.m_inout_id = @m_inout_id@]]></CODE>
 <!--B727417F9385474AB816BA585B1DAD74-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--B727417F9385474AB816BA585B1DAD74-->  <AD_TAB_ID><![CDATA[270]]></AD_TAB_ID>
 <!--B727417F9385474AB816BA585B1DAD74-->  <NAME><![CDATA[DOCBASETYPE]]></NAME>
-<!--B727417F9385474AB816BA585B1DAD74-->  <CODE><![CDATA[@SQL=select max(dt.docbasetype) from c_invoice inv join c_doctype dt on (inv.c_doctype_id = dt.c_doctype_id)
+<!--B727417F9385474AB816BA585B1DAD74-->  <CODE><![CDATA[@SQL=select max(dt.docbasetype) from c_invoice inv join c_doctype dt on (inv.c_doctypetarget_id = dt.c_doctype_id)
 where inv.c_invoice_id = @c_invoice_id@]]></CODE>
 <!--B727417F9385474AB816BA585B1DAD74-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--B727417F9385474AB816BA585B1DAD74--></AD_AUXILIARINPUT>
