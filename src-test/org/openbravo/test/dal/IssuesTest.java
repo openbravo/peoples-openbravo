@@ -77,6 +77,7 @@ import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.invoice.InvoiceLine;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.plm.Product;
+import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.service.db.CallProcess;
 import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.service.db.DalConnectionProvider;
@@ -759,13 +760,16 @@ public class IssuesTest extends BaseTest {
   public void test20733() {
     setTestUserContext();
     DataEntityQueryService service = new DataEntityQueryService();
-    service.setEntityName(Order.ENTITY_NAME);
+    // Order entity: exceeded oracle maximum columns limit in select statement (No more data to read
+    // from socket)
+    // Change the entity to FIN_Payment.
+    service.setEntityName(FIN_Payment.ENTITY_NAME);
     service.setJoinAssociatedEntities(true);
     service.setCriteria(new JSONObject());
     DataToJsonConverter converter = new DataToJsonConverter();
     for (BaseOBObject bob : service.list()) {
-      final Order order = (Order) bob;
-      converter.toJsonObjects(Collections.singletonList((BaseOBObject) order));
+      final FIN_Payment payment = (FIN_Payment) bob;
+      converter.toJsonObjects(Collections.singletonList((BaseOBObject) payment));
     }
   }
 
