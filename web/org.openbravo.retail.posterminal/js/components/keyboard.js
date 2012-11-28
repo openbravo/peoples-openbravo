@@ -290,7 +290,7 @@ enyo.kind({
     }
     if (which === 13 && this.$.editbox.getContent()) { //Handle ENTER key if there is something in the display
       if (this.defaultcommand) {
-        this.execCommand(this.commands[this.defaultcommand], this.getString());
+        this.execCommand(this.defaultcommand, this.getString());
       } else {
         OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NoDefaultActionDefined'));
       }
@@ -353,7 +353,8 @@ enyo.kind({
     }
   },
 
-  execCommand: function (cmddefinition, txt) {
+  execCommand: function (cmd, txt) {
+    var cmddefinition = this.commands[cmd];
     if (!cmddefinition.permission || OB.POS.modelterminal.hasPermission(cmddefinition.permission)) {
       cmddefinition.action(this, txt);
     }
@@ -391,12 +392,12 @@ enyo.kind({
 
       if (txt && this.status === '') {
         if (this.defaultcommand) {
-          this.execCommand(this.commands[this.defaultcommand], txt);
+          this.execCommand(this.defaultcommand, txt);
         } else {
           OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NoDefaultActionDefined'));
         }
       } else if (txt && this.status !== '') {
-        this.execCommand(this.commands[this.status], txt);
+        this.execCommand(this.status, txt);
         if (this.buttons[this.status] && !this.buttons[this.status].owner.holdActive) {
           this.setStatus('');
         }
@@ -409,9 +410,9 @@ enyo.kind({
       } else {
         // Statefull commands: quantity, price, discounts, payments ...
         if (txt && this.status === '') { // Short cut: type + action
-          this.execCommand(this.commands[cmd], txt);
+          this.execCommand(cmd, txt);
         } else if (this.status === cmd && txt) {
-          this.execCommand(this.commands[cmd], txt);
+          this.execCommand(cmd, txt);
         } else if (this.status === cmd) { // Reset status
           this.setStatus('');
         } else {

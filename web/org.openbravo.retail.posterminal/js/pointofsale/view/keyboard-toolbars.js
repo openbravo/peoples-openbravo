@@ -143,13 +143,19 @@ enyo.kind({
 
     this.owner.owner.addCommand('cashexact', {
       action: function (keyboard, txt) {
-        var exactpayment = allpayments[keyboard.status] || defaultpayment,
-            amount = me.receipt.getPending();
-        if (exactpayment.rate && exactpayment.rate !== '1') {
-          amount = OB.DEC.div(me.receipt.getPending(), exactpayment.rate);
-        }
-        if (amount > 0 && exactpayment && OB.POS.modelterminal.hasPermission(exactpayment.payment.searchKey)) {
-          me.pay(amount, exactpayment.payment.searchKey, exactpayment.payment._identifier, exactpayment.paymentMethod, exactpayment.rate, exactpayment.mulrate, exactpayment.isocode);
+        if (keyboard.status && !allpayments[keyboard.status]) {
+          // Is not a payment, so continue with the default path...
+          keyboard.execCommand(keyboard.status, String(me.receipt.getPending()));
+        } else {
+          // It is a payment...
+          var exactpayment = allpayments[keyboard.status] || defaultpayment,
+              amount = me.receipt.getPending();
+          if (exactpayment.rate && exactpayment.rate !== '1') {
+            amount = OB.DEC.div(me.receipt.getPending(), exactpayment.rate);
+          }
+          if (amount > 0 && exactpayment && OB.POS.modelterminal.hasPermission(exactpayment.payment.searchKey)) {
+            me.pay(amount, exactpayment.payment.searchKey, exactpayment.payment._identifier, exactpayment.paymentMethod, exactpayment.rate, exactpayment.mulrate, exactpayment.isocode);
+          }
         }
       }
     });
