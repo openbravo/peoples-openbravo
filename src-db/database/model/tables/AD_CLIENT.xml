@@ -177,6 +177,22 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
+      <column name="ORG_ACCTDIM_ISENABLE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="ORG_ACCTDIM_HEADER" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="ORG_ACCTDIM_LINES" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="ORG_ACCTDIM_BREAKDOWN" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="AD_CLIENT_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -202,6 +218,10 @@
       <check name="AD_CLIENT_CCENTER_L_CHCK"><![CDATA[COSTCENTER_ACCTDIM_LINES IN ('Y', 'N')]]></check>
       <check name="AD_CLIENT_CENTMAINT_CHCK"><![CDATA[ACCTDIM_CENTRALLY_MAINTAINED IN ('Y', 'N')]]></check>
       <check name="AD_CLIENT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="AD_CLIENT_ORG_BD_CHCK"><![CDATA[ORG_ACCTDIM_BREAKDOWN IN ('Y', 'N')]]></check>
+      <check name="AD_CLIENT_ORG_DIM_CHCK"><![CDATA[ORG_ACCTDIM_ISENABLE IN ('Y', 'N')]]></check>
+      <check name="AD_CLIENT_ORG_H_CHCK"><![CDATA[ORG_ACCTDIM_HEADER IN ('Y', 'N')]]></check>
+      <check name="AD_CLIENT_ORG_L_CHCK"><![CDATA[ORG_ACCTDIM_LINES IN ('Y', 'N')]]></check>
       <check name="AD_CLIENT_PRODUCT_BD_CHCK"><![CDATA[PRODUCT_ACCTDIM_BREAKDOWN IN ('Y', 'N')]]></check>
       <check name="AD_CLIENT_PRODUCT_DIM_CHCK"><![CDATA[PRODUCT_ACCTDIM_ISENABLE IN ('Y', 'N')]]></check>
       <check name="AD_CLIENT_PRODUCT_H_CHCK"><![CDATA[PRODUCT_ACCTDIM_HEADER IN ('Y', 'N')]]></check>
