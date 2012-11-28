@@ -78,11 +78,13 @@ public class SE_DimensionDocBaseType extends SimpleCallout {
 
   }
 
-  List<DimensionMapping> getMapping(String docbaseType, String dimension, String level) {
+  private List<DimensionMapping> getMapping(String docbaseType, String dimension, String level) {
     OBCriteria<DimensionMapping> odm = OBDal.getInstance().createCriteria(DimensionMapping.class);
     odm.add(Restrictions.eq(DimensionMapping.PROPERTY_DOCUMENTCATEGORY, docbaseType));
     odm.add(Restrictions.eq(DimensionMapping.PROPERTY_ACCOUNTINGDIMENSION, dimension));
     odm.add(Restrictions.eq(DimensionMapping.PROPERTY_LEVEL, level));
+    odm.setFilterOnReadableClients(false);
+    odm.setFilterOnReadableOrganization(false);
     return odm.list();
   }
 

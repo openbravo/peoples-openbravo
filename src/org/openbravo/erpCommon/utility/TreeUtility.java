@@ -33,7 +33,7 @@ import org.openbravo.model.ad.utility.Tree;
 import org.openbravo.model.ad.utility.TreeNode;
 
 public class TreeUtility {
-  private static Logger log4j = Logger.getLogger(TreeUtility.class);
+  private static final Logger log4j = Logger.getLogger(TreeUtility.class);
 
   private Map<String, Set<String>> childTrees = new HashMap<String, Set<String>>();
   private Map<String, Set<String>> naturalTrees = new HashMap<String, Set<String>>();

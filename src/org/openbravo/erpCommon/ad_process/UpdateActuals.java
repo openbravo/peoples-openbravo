@@ -34,7 +34,7 @@ import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.service.db.DalBaseProcess;
 
 public class UpdateActuals extends DalBaseProcess {
-  private static Logger log4j = Logger.getLogger(UpdateActuals.class);
+  private static final Logger log4j = Logger.getLogger(UpdateActuals.class);
 
   @Override
   protected void doExecute(ProcessBundle bundle) throws Exception {
@@ -62,8 +62,6 @@ public class UpdateActuals extends DalBaseProcess {
       String user2 = null;
 
       // Gets the budget lines
-      // OBQuery<BudgetLine> budgetLines = OBDal.getInstance().createQuery(BudgetLine.class,
-      // "budget='" + cBudgetId + "'");
       Budget myBudget = OBDal.getInstance().get(Budget.class, cBudgetId);
       for (BudgetLine budgetLine : myBudget.getFinancialMgmtBudgetLineList()) {
         activity = (budgetLine.getActivity() != null) ? budgetLine.getActivity().getId() : "";
@@ -183,7 +181,6 @@ public class UpdateActuals extends DalBaseProcess {
           query.setString("product", product);
 
         log4j.debug("Query String" + query.getQueryString());
-        log4j.debug("Query size:" + query.list().size());
 
         BigDecimal credit = new BigDecimal(0);
         BigDecimal debit = new BigDecimal(0);
