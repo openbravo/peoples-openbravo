@@ -27,7 +27,10 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
+import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.access.ADClientAcctDimension;
 import org.openbravo.model.ad.domain.Reference;
@@ -35,6 +38,7 @@ import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.system.DimensionMapping;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
+import org.openbravo.model.common.enterprise.Organization;
 
 public class DimensionDisplayUtility {
 
@@ -44,6 +48,7 @@ public class DimensionDisplayUtility {
   public static final String DIM_Header = "H";
   public static final String DIM_Lines = "L";
   public static final String DIM_BreakDown = "BD";
+  public static final String DIM_Organization = "OO";
   public static final String DIM_Project = "PJ";
   public static final String DIM_BPartner = "BP";
   public static final String DIM_Product = "PR";
@@ -90,6 +95,7 @@ public class DimensionDisplayUtility {
 
   private static void initialize() {
     columnDimensionMap = new HashMap<String, String>();
+    columnDimensionMap.put("AD_ORG_ID", DIM_Organization);
     columnDimensionMap.put("C_PROJECT_ID", DIM_Project);
     columnDimensionMap.put("C_BPARTNER_ID", DIM_BPartner);
     columnDimensionMap.put("M_PRODUCT_ID", DIM_Product);
@@ -237,7 +243,23 @@ public class DimensionDisplayUtility {
             String levelValue = level.getSearchKey();
             aux = ELEMENT + "_" + dimValue + "_" + docValue + "_" + levelValue;
 
-            if (DIM_Project.equals(dimValue)) {
+            if (DIM_Organization.equals(dimValue)) {
+              if (client.isOrgAcctdimIsenable()) {
+                isDisplayed = clientAcctDimensionCache.get(dimValue + "_" + docValue + "_"
+                    + levelValue);
+                if (isDisplayed == null) {
+                  if (DIM_Header.equals(levelValue)) {
+                    isDisplayed = client.isOrgAcctdimHeader() ? "Y" : "N";
+                  } else if (DIM_Lines.equals(levelValue)) {
+                    isDisplayed = client.isOrgAcctdimLines() ? "Y" : "N";
+                  } else if (DIM_BreakDown.equals(levelValue)) {
+                    isDisplayed = client.isOrgAcctdimBreakdown() ? "Y" : "N";
+                  }
+                }
+              } else {
+                isDisplayed = "N";
+              }
+            } else if (DIM_Project.equals(dimValue)) {
               if (client.isProjectAcctdimIsenable()) {
                 isDisplayed = clientAcctDimensionCache.get(dimValue + "_" + docValue + "_"
                     + levelValue);
@@ -467,5 +489,63 @@ public class DimensionDisplayUtility {
       OBContext.restorePreviousMode();
     }
     return sessionVariablesMap;
+  }
+
+  @SuppressWarnings("unchecked")
+  public static List<Object[]> getGroupDimensionMapping(List<String> dimensionList) {
+    try {
+      OBContext.setAdminMode(true);
+      StringBuilder hql = new StringBuilder();
+      final Session session = OBDal.getInstance().getSession();
+      hql.append(" select   dm." + DimensionMapping.PROPERTY_ACCOUNTINGDIMENSION + ", ");
+      hql.append("          dm." + DimensionMapping.PROPERTY_DOCUMENTCATEGORY);
+      hql.append(" from " + DimensionMapping.ENTITY_NAME + " as dm ");
+      hql.append(" where dm." + DimensionMapping.PROPERTY_ACCOUNTINGDIMENSION
+          + " IN (:dimensionList) ");
+      hql.append(" group by dm." + DimensionMapping.PROPERTY_ACCOUNTINGDIMENSION + ", ");
+      hql.append("          dm." + DimensionMapping.PROPERTY_DOCUMENTCATEGORY);
+
+      final Query q = session.createQuery(hql.toString());
+      q.setParameterList("dimensionList", dimensionList);
+      return q.list();
+
+    } catch (Exception e) {
+      log4j.error("Error on getGroupDimensionMapping", e);
+      return new ArrayList<Object[]>();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  public static List<DimensionMapping> getDimensionMappingList(String dimension,
+      String documentBaseType, String level) {
+    OBCriteria<DimensionMapping> obc = OBDal.getInstance().createCriteria(DimensionMapping.class);
+    obc.setFilterOnReadableClients(false);
+    obc.setFilterOnReadableOrganization(false);
+    if (dimension != null) {
+      obc.add(Restrictions.eq(DimensionMapping.PROPERTY_ACCOUNTINGDIMENSION, dimension));
+    }
+    if (documentBaseType != null) {
+      obc.add(Restrictions.eq(DimensionMapping.PROPERTY_DOCUMENTCATEGORY, documentBaseType));
+    }
+    if (level != null) {
+      obc.add(Restrictions.eq(DimensionMapping.PROPERTY_LEVEL, level));
+    }
+    return obc.list();
+  }
+
+  public static ADClientAcctDimension createNewDimensionMapping(Client client, Organization org,
+      String dimension, String documentBaseType, boolean showInHeader, boolean showInLines,
+      boolean showInBreakDown) {
+    final ADClientAcctDimension cad = OBProvider.getInstance().get(ADClientAcctDimension.class);
+    cad.setClient(client);
+    cad.setOrganization(org);
+    cad.setDimension(dimension);
+    cad.setDocBaseType(documentBaseType);
+    cad.setShowInHeader(showInHeader);
+    cad.setShowInLines(showInLines);
+    cad.setShowInBreakdown(showInBreakDown);
+    OBDal.getInstance().save(cad);
+    return cad;
   }
 }
