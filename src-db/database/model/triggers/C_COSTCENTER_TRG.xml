@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="TRIGGER C_COSTCENTER_TRG">
-    <trigger name="C_COSTCENTER_TRG" table="C_COSTCENTER" fires="after" insert="true" update="true" delete="true" foreach="row">
+    <trigger name="C_COSTCENTER_TRG" table="C_COSTCENTER" fires="after" insert="true" update="false" delete="true" foreach="row">
       <body><![CDATA[
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License

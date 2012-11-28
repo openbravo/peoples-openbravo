@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="TRIGGER USER2_TRG">
-    <trigger name="USER2_TRG" table="USER2" fires="after" insert="true" update="true" delete="true" foreach="row">
+    <trigger name="USER2_TRG" table="USER2" fires="after" insert="true" update="false" delete="true" foreach="row">
       <body><![CDATA[
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
