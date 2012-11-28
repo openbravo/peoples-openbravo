@@ -92,7 +92,7 @@
       <foreign-key foreignTable="C_CAMPAIGN" name="C_ORDERLINE_ACCTD_FK_CAMP">
         <reference local="C_CAMPAIGN_ID" foreign="C_CAMPAIGN_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ORDERLINE" name="C_ORDERLINE_ACCTD_FK_INVLINE">
+      <foreign-key foreignTable="C_ORDERLINE" name="C_ORDERLINE_ACCTD_FK_ORDLINE">
         <reference local="C_ORDERLINE_ID" foreign="C_ORDERLINE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_PROJECT" name="C_ORDERLINE_ACCTD_FK_PROJECT">
@@ -113,5 +113,8 @@
       <foreign-key foreignTable="AD_CLIENT" name="C_ORDERLINE_ACCTDIMENSION_AD">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
+      <index name="C_ORDLINE_ACCTDIM_ORDLINE" unique="false">
+        <index-column name="C_ORDERLINE_ID"/>
+      </index>
     </table>
   </database>
