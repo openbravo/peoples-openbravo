@@ -73,7 +73,7 @@
             ad_tree_id, ad_client_id, ad_org_id, created, createdby, updated, 
             updatedby, isactive, name, description, treetype, isallnodes)
       VALUES (?, ?, '0', now(), '0', now(), 
-            '0', 'Y', ?, ?, ?, 'Y')
+            '0', 'Y', SUBSTR(?, 1, 60), ?, SUBSTR(?, 1, 60), 'Y')
       ]]></Sql>
     <Parameter name="treeId"/>
     <Parameter name="clientId"/>
