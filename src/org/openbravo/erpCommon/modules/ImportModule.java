@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -1902,19 +1902,7 @@ public class ImportModule {
    * 
    */
   private File[] getCore() {
-    ArrayList<File> core = new ArrayList<File>();
-    core.add(new File(obDir + "/build.xml"));
-    core.add(new File(obDir + "/legal"));
-    core.add(new File(obDir + "/lib"));
-    core.add(new File(obDir + "/src-core"));
-    core.add(new File(obDir + "/src-db"));
-    core.add(new File(obDir + "/src-gen"));
-    core.add(new File(obDir + "/src-trl"));
-    core.add(new File(obDir + "/src-wad"));
-    core.add(new File(obDir + "/src"));
-    core.add(new File(obDir + "/web"));
-    core.add(new File(obDir + "/src-test"));
-    core.add(new File(obDir + "/src-util"));
+    List<File> core = ModuleUtiltiy.getCore(obDir);
     File[] module = new File[core.size()];
     return core.toArray(module);
   }
