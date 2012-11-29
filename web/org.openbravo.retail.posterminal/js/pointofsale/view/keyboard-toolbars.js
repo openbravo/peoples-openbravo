@@ -145,7 +145,7 @@ enyo.kind({
       action: function (keyboard, txt) {
         if (keyboard.status && !allpayments[keyboard.status]) {
           // Is not a payment, so continue with the default path...
-          keyboard.execCommand(keyboard.status, String(me.receipt.getPending()));
+          keyboard.execCommand(keyboard.status, null);
         } else {
           // It is a payment...
           var exactpayment = allpayments[keyboard.status] || defaultpayment,
