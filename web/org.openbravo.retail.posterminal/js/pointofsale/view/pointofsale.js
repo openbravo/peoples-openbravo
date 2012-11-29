@@ -599,6 +599,9 @@ enyo.kind({
     receipt.get('lines').on('created', function (line) {
       this.classModel.trigger('createdLine', this, line);
     }, this);
+    receipt.get('lines').on('removed', function (line) {
+      this.classModel.trigger('removedLine', this, line);
+    }, this);
 
     this.$.receiptview.setOrder(receipt);
     this.$.receiptview.setOrderList(receiptList);

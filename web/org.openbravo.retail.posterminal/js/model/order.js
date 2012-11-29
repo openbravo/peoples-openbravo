@@ -508,6 +508,10 @@
     deleteLine: function (line) {
       var me = this;
       var index = this.get('lines').indexOf(line);
+
+      // trigger
+      line.trigger('removed', line);
+
       // remove the line
       this.get('lines').remove(line);
       // set the undo action
