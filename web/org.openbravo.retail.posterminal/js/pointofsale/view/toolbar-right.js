@@ -309,14 +309,12 @@ enyo.kind({
       if (newValue) {
         if (newValue.get('isEditable') === false) {
           this.tabPanel = null;
-          this.setAttribute('disabled', 'disabled');
-          this.disabled = true;
+          this.setDisabled(true);
           return;
         }
       }
       this.tabPanel = 'payment';
-      this.setAttribute('disabled', null);
-      this.disabled = true;
+      this.setDisabled(false);
     }, this);
   }
 });
