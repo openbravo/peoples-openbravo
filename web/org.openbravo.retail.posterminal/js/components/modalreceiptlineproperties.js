@@ -61,7 +61,7 @@ enyo.kind({
     this.owner.doShowPopup({
       popup: 'modalValidateAction',
       args: args
-    });      
+    });
   },
   initComponents: function () {
     this.inherited(arguments);
@@ -114,7 +114,7 @@ enyo.kind({
   header: '',
   isDefaultAction: true,
   bodyContent: {
-    name : 'message',
+    name: 'message',
     content: ''
   },
   executeOnShow: function () {
@@ -122,4 +122,3 @@ enyo.kind({
     this.$.bodyContent.$.message.setContent(this.args.message);
   }
 });
-

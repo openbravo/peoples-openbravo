@@ -188,7 +188,7 @@ enyo.kind({
   drawerOpened: true,
   init: function (model) {
     this.model = model;
-    this.model.get('order').on('change:openDrawer', function (){
+    this.model.get('order').on('change:openDrawer', function () {
       this.drawerpreference = this.model.get('order').get('openDrawer');
       if (this.drawerpreference) {
         this.drawerOpened = false;
