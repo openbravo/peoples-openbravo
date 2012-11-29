@@ -164,7 +164,8 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     String strSql = "";
     strSql = strSql + 
       "        update ad_client set product_acctdim_lines = 'Y' , bpartner_acctdim_header='Y' , " +
-      "        bpartner_acctdim_lines='Y', product_acctdim_isenable = 'Y' , bpartner_acctdim_isenable='Y' ";
+      "        bpartner_acctdim_lines='Y', product_acctdim_isenable = 'Y' , bpartner_acctdim_isenable='Y'," +
+      "        org_acctdim_isenable = 'Y', org_acctdim_header = 'Y' ";
 
     int updateCount = 0;
     PreparedStatement st = null;
