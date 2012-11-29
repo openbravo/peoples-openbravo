@@ -23,7 +23,7 @@ OB.Reservation = OB.Reservation || {};
  * Check that entered quantity to reserve is available in the selected record
  * and that total reserved quantity is below the needed quantity
  */
-OB.Reservation.QuantityValidate = function(item, validator, value, record) {
+OB.Reservation.QuantityValidate = function (item, validator, value, record) {
   var availableQty = isc.isA.Number(record.availableQty) ? new BigDecimal(String(record.availableQty)) : BigDecimal.prototype.ZERO,
       releasedQty = isc.isA.Number(record.released) ? new BigDecimal(String(record.released)) : BigDecimal.prototype.ZERO,
       reservedinothersQty = isc.isA.Number(record.reservedinothers) ? new BigDecimal(String(record.reservedinothers)) : BigDecimal.prototype.ZERO,
@@ -64,7 +64,7 @@ OB.Reservation.QuantityValidate = function(item, validator, value, record) {
   return true;
 };
 
-OB.Reservation.PrereservationQuantityValidate = function(item, validator, value, record) {
+OB.Reservation.PrereservationQuantityValidate = function (item, validator, value, record) {
   var reservedQty = isc.isA.Number(record.reservedQty) ? new BigDecimal(String(record.reservedQty)) : BigDecimal.prototype.ZERO,
       purchasedQty = isc.isA.Number(record.purchasedQty) ? new BigDecimal(String(record.purchasedQty)) : BigDecimal.prototype.ZERO,
       receivedQty = isc.isA.Number(record.receivedQty) ? new BigDecimal(String(record.receivedQty)) : BigDecimal.prototype.ZERO,
@@ -99,7 +99,7 @@ OB.Reservation.PrereservationQuantityValidate = function(item, validator, value,
       totalQty = totalQty.add(new BigDecimal(String(editedRecord.reservedQty)));
     }
   }
-  if (totalQty.compareTo(pendingQty) > 0 ) {
+  if (totalQty.compareTo(pendingQty) > 0) {
     isc.warn(OB.I18N.getLabel('OBUIAPP_Res_MoreThanPendingQty', [solTotalReserved.toString()]));
     return false;
   }
