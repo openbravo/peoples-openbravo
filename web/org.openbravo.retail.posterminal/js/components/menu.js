@@ -222,6 +222,7 @@ enyo.kind({
   name: 'OB.UI.MenuDiscounts',
   kind: 'OB.UI.MenuAction',
   permission: 'OBPOS_retail.advDiscounts',
+  relatedPermission: 'OBPOS_order.discount',
   events: {
     onDiscountsMode: ''
   },
@@ -243,7 +244,12 @@ enyo.kind({
   init: function (model) {
     var me = this;
     this.receipt = model.get('order');
+    //set disabled until ticket has lines
     me.setDisabled(true);
+    if (!OB.POS.modelterminal.hasPermission(this.permission) || !OB.POS.modelterminal.hasPermission(this.relatedPermission)) {
+      //no permissions, never will be enabled
+      return;
+    }
     this.receipt.get('lines').on('all', function () {
       if (this.receipt.get('lines').length > 0) {
         OB.Dal.find(OB.Model.Discount, {

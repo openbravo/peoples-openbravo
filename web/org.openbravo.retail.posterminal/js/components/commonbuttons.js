@@ -503,7 +503,7 @@ enyo.kind({
     this.inherited(arguments);
     this.$.lbl.setContent(this.label);
     if (this.permission && !OB.POS.modelterminal.hasPermission(this.permission)) {
-      this.$.lbl.setStyle('color: #cccccc; padding: 12px 15px 12px 15px;');
+      this.setDisabled(true);
     }
   }
 });
