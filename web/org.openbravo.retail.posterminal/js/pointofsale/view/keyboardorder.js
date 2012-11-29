@@ -30,7 +30,10 @@ enyo.kind({
     if (!inEvent.status) {
       //exit from discounts
       this.discountsMode = false;
-      this.buttons['line:dto'].removeClass('btnactive');
+      if (this.buttons['line:dto']) {
+        this.buttons['line:dto'].removeClass('btnactive');
+      }
+
       this.keyboardDisabled(inSender, {
         status: false
       });
@@ -42,19 +45,46 @@ enyo.kind({
           status: false
         });
         //disable commands except line:dto
-        this.buttons['+'].setDisabled(inEvent.status);
-        this.buttons['-'].setDisabled(inEvent.status);
-        this.buttons['line:price'].setDisabled(inEvent.status);
-        this.buttons['line:qty'].setDisabled(inEvent.status);
+        if (this.buttons['+']) {
+          this.buttons['+'].setDisabled(inEvent.status);
+        }
+
+        if (this.buttons['-']) {
+          this.buttons['-'].setDisabled(inEvent.status);
+        }
+
+        if (this.buttons['line:price']) {
+          this.buttons['line:price'].setDisabled(inEvent.status);
+        }
+        if (this.buttons['line:qty']) {
+          this.buttons['line:qty'].setDisabled(inEvent.status);
+        }
+
         //css
-        this.buttons['+'].addClass('btnkeyboard-inactive');
-        this.buttons['-'].addClass('btnkeyboard-inactive');
-        this.buttons['line:price'].addClass('btnkeyboard-inactive');
-        this.buttons['line:qty'].addClass('btnkeyboard-inactive');
+        if (this.buttons['+']) {
+          this.buttons['+'].addClass('btnkeyboard-inactive');
+        }
+
+        if (this.buttons['-']) {
+          this.buttons['-'].addClass('btnkeyboard-inactive');
+        }
+
+        if (this.buttons['line:price']) {
+          this.buttons['line:price'].addClass('btnkeyboard-inactive');
+        }
+        if (this.buttons['line:qty']) {
+          this.buttons['line:qty'].addClass('btnkeyboard-inactive');
+        }
+
         //button as active
-        this.buttons['line:dto'].addClass('btnactive');
+        if (this.buttons['line:dto']) {
+          this.buttons['line:dto'].addClass('btnactive');
+        }
       } else {
-        this.buttons['line:dto'].removeClass('btnactive');
+        if (this.buttons['line:dto']) {
+          this.buttons['line:dto'].removeClass('btnactive');
+        }
+
         this.keyboardDisabled(inSender, {
           status: true
         });
