@@ -11881,7 +11881,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--01F5E95D71544D428E1B9004B05D0298-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--01F5E95D71544D428E1B9004B05D0298-->  <NAME><![CDATA[Payment Method]]></NAME>
 <!--01F5E95D71544D428E1B9004B05D0298-->  <DESCRIPTION><![CDATA[Shows all payment methods related to the given financial account.]]></DESCRIPTION>
-<!--01F5E95D71544D428E1B9004B05D0298-->  <HELP><![CDATA[Shows all payment methods related to the financial account as well as their configuration in terms of payment in/out management and accounting.]]></HELP>
+<!--01F5E95D71544D428E1B9004B05D0298-->  <HELP><![CDATA[This tab lists all the payment methods related to the financial account as well as their configuration in terms of payment management and accounting.]]></HELP>
 <!--01F5E95D71544D428E1B9004B05D0298-->  <AD_TABLE_ID><![CDATA[AC389EBD8A774AAE8223A77F692983D8]]></AD_TABLE_ID>
 <!--01F5E95D71544D428E1B9004B05D0298-->  <AD_WINDOW_ID><![CDATA[94EAA455D2644E04AB25D93BE5157B6D]]></AD_WINDOW_ID>
 <!--01F5E95D71544D428E1B9004B05D0298-->  <SEQNO><![CDATA[29]]></SEQNO>
@@ -12194,6 +12194,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--2845D761A8394468BD3BA4710AA888D4-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--2845D761A8394468BD3BA4710AA888D4-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--2845D761A8394468BD3BA4710AA888D4-->  <NAME><![CDATA[Account]]></NAME>
+<!--2845D761A8394468BD3BA4710AA888D4-->  <HELP><![CDATA[The financial account window contains essential financial account information such as the bank account number. It also allows to perform a set of actions or processes such as to add deposit or withdrawal transactions or to import and match a bank statement.]]></HELP>
 <!--2845D761A8394468BD3BA4710AA888D4-->  <AD_TABLE_ID><![CDATA[B129E53BC0E747879F7BA17F0AECEC32]]></AD_TABLE_ID>
 <!--2845D761A8394468BD3BA4710AA888D4-->  <AD_WINDOW_ID><![CDATA[94EAA455D2644E04AB25D93BE5157B6D]]></AD_WINDOW_ID>
 <!--2845D761A8394468BD3BA4710AA888D4-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -13451,6 +13452,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--7F5E8E4C55914138A358F5087B532B59-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--7F5E8E4C55914138A358F5087B532B59-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--7F5E8E4C55914138A358F5087B532B59-->  <NAME><![CDATA[Bank Statement Lines]]></NAME>
+<!--7F5E8E4C55914138A358F5087B532B59-->  <HELP><![CDATA[This tab list all the lines of a given bank statement.]]></HELP>
 <!--7F5E8E4C55914138A358F5087B532B59-->  <AD_TABLE_ID><![CDATA[84203CBEBDA349C38319C0E549751546]]></AD_TABLE_ID>
 <!--7F5E8E4C55914138A358F5087B532B59-->  <AD_WINDOW_ID><![CDATA[94EAA455D2644E04AB25D93BE5157B6D]]></AD_WINDOW_ID>
 <!--7F5E8E4C55914138A358F5087B532B59-->  <SEQNO><![CDATA[40]]></SEQNO>
@@ -13557,7 +13559,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--8391062D5C6A47EA94A83A304AD720BE-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--8391062D5C6A47EA94A83A304AD720BE-->  <NAME><![CDATA[Accounting Configuration]]></NAME>
 <!--8391062D5C6A47EA94A83A304AD720BE-->  <DESCRIPTION><![CDATA[Relation of accounts used for the given financial account]]></DESCRIPTION>
-<!--8391062D5C6A47EA94A83A304AD720BE-->  <HELP><![CDATA[The accounting configuration tab is used to define the ledger accounts to use while accounting bank transactions such as bank fees as well as payment transactions such as Receipts and Deposit, Payments and Widhdrawals and Reconciliations.]]></HELP>
+<!--8391062D5C6A47EA94A83A304AD720BE-->  <HELP><![CDATA[The accounting configuration tab is used to define the accounts of a General Ledger to use while posting transactions such as bank fee transactions or in transit payments.]]></HELP>
 <!--8391062D5C6A47EA94A83A304AD720BE-->  <AD_TABLE_ID><![CDATA[6F98C7AB59D3410CB828DB25D638DE2C]]></AD_TABLE_ID>
 <!--8391062D5C6A47EA94A83A304AD720BE-->  <AD_WINDOW_ID><![CDATA[94EAA455D2644E04AB25D93BE5157B6D]]></AD_WINDOW_ID>
 <!--8391062D5C6A47EA94A83A304AD720BE-->  <SEQNO><![CDATA[27]]></SEQNO>
@@ -14475,6 +14477,7 @@ AND e.pending <> 0]]></HQLWHERECLAUSE>
 <!--C56E698100314ABBBBD3A89626CA551C-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--C56E698100314ABBBBD3A89626CA551C-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--C56E698100314ABBBBD3A89626CA551C-->  <NAME><![CDATA[Imported Bank Statements]]></NAME>
+<!--C56E698100314ABBBBD3A89626CA551C-->  <HELP><![CDATA[The tab lists the imported bank statement files as well as the ones created manually.]]></HELP>
 <!--C56E698100314ABBBBD3A89626CA551C-->  <AD_TABLE_ID><![CDATA[D4C23A17190649E7B78F55A05AF3438C]]></AD_TABLE_ID>
 <!--C56E698100314ABBBBD3A89626CA551C-->  <AD_WINDOW_ID><![CDATA[94EAA455D2644E04AB25D93BE5157B6D]]></AD_WINDOW_ID>
 <!--C56E698100314ABBBBD3A89626CA551C-->  <SEQNO><![CDATA[30]]></SEQNO>
@@ -15486,7 +15489,7 @@ AND @MaterialMgmtShipmentInOut.businessPartner@ = e.orderLine.salesOrder.busines
 <!--FF808181309036230130905FCB450044-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--FF808181309036230130905FCB450044-->  <NAME><![CDATA[Exchange rates]]></NAME>
 <!--FF808181309036230130905FCB450044-->  <DESCRIPTION><![CDATA[In this tab the user can define another currency conversion rate for this document different than Openbravo systema exchange rate.]]></DESCRIPTION>
-<!--FF808181309036230130905FCB450044-->  <HELP><![CDATA[This tab allows to define a currency conversion rate to be used while posting the financial account transaction. ]]></HELP>
+<!--FF808181309036230130905FCB450044-->  <HELP><![CDATA[This tab allows to define an exchange rate to use while posting the financial account transaction to the ledger whenever the currency of the financial account is not the same as the general ledger currency.]]></HELP>
 <!--FF808181309036230130905FCB450044-->  <AD_TABLE_ID><![CDATA[FF808181308EA42301308FB5F7BC0049]]></AD_TABLE_ID>
 <!--FF808181309036230130905FCB450044-->  <AD_WINDOW_ID><![CDATA[94EAA455D2644E04AB25D93BE5157B6D]]></AD_WINDOW_ID>
 <!--FF808181309036230130905FCB450044-->  <SEQNO><![CDATA[25]]></SEQNO>

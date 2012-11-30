@@ -2925,6 +2925,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--94EAA455D2644E04AB25D93BE5157B6D-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--94EAA455D2644E04AB25D93BE5157B6D-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--94EAA455D2644E04AB25D93BE5157B6D-->  <NAME><![CDATA[Financial Account]]></NAME>
+<!--94EAA455D2644E04AB25D93BE5157B6D-->  <HELP><![CDATA[A Financial Account represents an account at a financial institution such as a bank account, a credit card issuer, an electronic payment service, as well as a cash or petty cash register. ]]></HELP>
 <!--94EAA455D2644E04AB25D93BE5157B6D-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--94EAA455D2644E04AB25D93BE5157B6D-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--94EAA455D2644E04AB25D93BE5157B6D-->  <PROCESSING><![CDATA[N]]></PROCESSING>
