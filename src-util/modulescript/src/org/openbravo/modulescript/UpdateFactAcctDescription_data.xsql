@@ -24,9 +24,21 @@
     <Sql>
       <![CDATA[
          SELECT count(1) as total
-         FROM fact_acct fa LEFT JOIN c_elementvalue ev ON fa.account_id = ev.c_elementvalue_id
-         WHERE (fa.acctdescription is null
-                OR (fa.acctdescription is not null and fa.acctdescription <> ev.name))
+         FROM DUAL
+         WHERE EXISTS (SELECT 1 FROM fact_acct fa LEFT JOIN c_elementvalue ev ON fa.account_id = ev.c_elementvalue_id
+                       WHERE (fa.acctdescription is null
+                              OR (fa.acctdescription is not null and fa.acctdescription <> ev.name)))
+      ]]>
+    </Sql>
+  </SqlMethod>
+    <SqlMethod name="isDescrUpdated" type="preparedStatement" return="boolean">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT count(*) as exist
+        FROM DUAL
+        WHERE EXISTS (SELECT 1 FROM ad_preference
+                      WHERE attribute = 'Descr_Updated')
       ]]>
     </Sql>
   </SqlMethod>
@@ -41,6 +53,22 @@
                FROM fact_acct fa LEFT JOIN c_elementvalue ev ON fa.account_id = ev.c_elementvalue_id
                WHERE (fa.acctdescription is null
                OR (fa.acctdescription is not null and fa.acctdescription <> ev.name)))
+      ]]>
+    </Sql>
+  </SqlMethod>
+    <SqlMethod name="createPreference" type="preparedStatement" return="rowcount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        INSERT INTO ad_preference (
+          ad_preference_id, ad_client_id, ad_org_id, isactive,
+          createdby, created, updatedby, updated,
+          attribute
+        ) VALUES (
+          get_uuid(), '0', '0', 'Y',
+          '0', NOW(), '0', NOW(),
+          'Descr_Updated'
+        )
       ]]>
     </Sql>
   </SqlMethod>

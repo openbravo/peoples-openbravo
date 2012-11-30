@@ -28,8 +28,13 @@ public class UpdateFactAcctDescription extends ModuleScript{
   public void execute() {
     try {
       ConnectionProvider cp = getConnectionProvider();
-      if(UpdateFactAcctDescriptionData.needsUpdate(cp))
-        UpdateFactAcctDescriptionData.updateFactAcctDescription(cp);
+      // If the preference does not exist in the database yet the modulescript must be executed.
+      boolean isDescrUpdated = UpdateFactAcctDescriptionData.isDescrUpdated(cp);
+      if (!isDescrUpdated){
+        if(UpdateFactAcctDescriptionData.needsUpdate(cp))
+          UpdateFactAcctDescriptionData.updateFactAcctDescription(cp);
+        UpdateFactAcctDescriptionData.createPreference(cp);
+      }
     } catch(Exception e){
       handleError(e);
     }
