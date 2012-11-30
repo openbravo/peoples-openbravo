@@ -33,8 +33,64 @@ public class InitializeAcctDimensionsInClient extends ModuleScript {
       ConnectionProvider cp = getConnectionProvider();
       boolean isInitialized= InitializeAcctDimensionsInClientData.isExecuted(cp);
       if (!isInitialized){
-      InitializeAcctDimensionsInClientData.updateDimClient(cp);
-      InitializeAcctDimensionsInClientData.createPreference(cp);
+        for (InitializeAcctDimensionsInClientData client : InitializeAcctDimensionsInClientData
+            .getClients(cp)) {
+      InitializeAcctDimensionsInClientData.updateDimClient(cp);  
+      InitializeAcctDimensionsInClientData.updatebpari(cp, client.adClientId);
+      InitializeAcctDimensionsInClientData.updatebparirm(cp, client.adClientId);
+      InitializeAcctDimensionsInClientData.updatebpesh(cp, client.adClientId);
+      InitializeAcctDimensionsInClientData.updatebpmmr(cp, client.adClientId);
+      InitializeAcctDimensionsInClientData.updatebpsoo(cp, client.adClientId);
+      InitializeAcctDimensionsInClientData.updatebpmms(cp, client.adClientId);
+      InitializeAcctDimensionsInClientData.updatebparr(cp, client.adClientId);
+      InitializeAcctDimensionsInClientData.updatebpapc(cp, client.adClientId);
+      InitializeAcctDimensionsInClientData.updatebpfat(cp, client.adClientId);
+      InitializeAcctDimensionsInClientData.updatebpapp(cp, client.adClientId);
+      InitializeAcctDimensionsInClientData.updatebparf(cp, client.adClientId);
+      InitializeAcctDimensionsInClientData.updatebparc(cp, client.adClientId);
+      InitializeAcctDimensionsInClientData.updatebpbgt(cp, client.adClientId);
+      InitializeAcctDimensionsInClientData.updatebpamz(cp, client.adClientId);  
+      InitializeAcctDimensionsInClientData.updatebpapi(cp, client.adClientId);
+      InitializeAcctDimensionsInClientData.updatebpglj(cp, client.adClientId);
+      InitializeAcctDimensionsInClientData.updatepresh(cp, client.adClientId);
+      InitializeAcctDimensionsInClientData.updateprarirm(cp, client.adClientId);
+      InitializeAcctDimensionsInClientData.updateprapi(cp, client.adClientId);  
+      InitializeAcctDimensionsInClientData.updateprglj(cp, client.adClientId);
+      InitializeAcctDimensionsInClientData.updatepramz(cp, client.adClientId);      
+      InitializeAcctDimensionsInClientData.updateprarc(cp, client.adClientId);
+      InitializeAcctDimensionsInClientData.updateprarf(cp, client.adClientId);
+      InitializeAcctDimensionsInClientData.updateprbgt(cp, client.adClientId); 
+      InitializeAcctDimensionsInClientData.updateprapp(cp, client.adClientId);
+      InitializeAcctDimensionsInClientData.updateprfat(cp, client.adClientId);
+      InitializeAcctDimensionsInClientData.updateprapc(cp, client.adClientId);
+      InitializeAcctDimensionsInClientData.updateprpoo(cp, client.adClientId);   
+      InitializeAcctDimensionsInClientData.updateprmms(cp, client.adClientId);
+      InitializeAcctDimensionsInClientData.updateprarr(cp, client.adClientId);
+      InitializeAcctDimensionsInClientData.updateprsoo(cp, client.adClientId);
+      InitializeAcctDimensionsInClientData.updateprmmr(cp, client.adClientId);   
+      InitializeAcctDimensionsInClientData.updateprmmi(cp, client.adClientId);    
+      InitializeAcctDimensionsInClientData.updateooamz(cp, client.adClientId);
+      InitializeAcctDimensionsInClientData.updateooapc(cp, client.adClientId);      
+      InitializeAcctDimensionsInClientData.updateooapi(cp, client.adClientId);     
+      InitializeAcctDimensionsInClientData.updateooapp(cp, client.adClientId);
+      InitializeAcctDimensionsInClientData.updateooarc(cp, client.adClientId); 
+      InitializeAcctDimensionsInClientData.updateooarf(cp, client.adClientId);
+      InitializeAcctDimensionsInClientData.updateooari(cp, client.adClientId);
+      InitializeAcctDimensionsInClientData.updateooarirm(cp, client.adClientId);
+      InitializeAcctDimensionsInClientData.updateooarr(cp, client.adClientId);        
+      InitializeAcctDimensionsInClientData.updateoobgt(cp, client.adClientId);
+      InitializeAcctDimensionsInClientData.updateooesh(cp, client.adClientId);
+      InitializeAcctDimensionsInClientData.updateooglj(cp, client.adClientId);
+      InitializeAcctDimensionsInClientData.updateoommi(cp, client.adClientId);   
+      InitializeAcctDimensionsInClientData.updateoommm(cp, client.adClientId);      
+      InitializeAcctDimensionsInClientData.updateoommr(cp, client.adClientId);
+      InitializeAcctDimensionsInClientData.updateoomms(cp, client.adClientId);
+      InitializeAcctDimensionsInClientData.updateoopoo(cp, client.adClientId);
+      InitializeAcctDimensionsInClientData.updateoorec(cp, client.adClientId);   
+      InitializeAcctDimensionsInClientData.updateoosoo(cp, client.adClientId); 
+      
+      InitializeAcctDimensionsInClientData.createPreference(cp,client.adClientId);
+        }
       }
      
     } catch (Exception e) {

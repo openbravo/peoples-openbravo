@@ -17,6 +17,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
   private String InitRecordNumber="0";
   public String ismandatory;
   public String exist;
+  public String adClientId;
 
   public String getInitRecordNumber() {
     return InitRecordNumber;
@@ -27,6 +28,8 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
       return ismandatory;
     else if (fieldName.equalsIgnoreCase("exist"))
       return exist;
+    else if (fieldName.equalsIgnoreCase("ad_client_id") || fieldName.equals("adClientId"))
+      return adClientId;
    else {
      log4j.debug("Field does not exist: " + fieldName);
      return null;
@@ -40,7 +43,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
   public static InitializeAcctDimensionsInClientData[] select(ConnectionProvider connectionProvider, int firstRegister, int numberRegisters)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
-      "        select '' as ismandatory , '' as exist" +
+      "        select '' as ismandatory , '' as exist, '' as ad_client_id" +
       "        from dual";
 
     ResultSet result;
