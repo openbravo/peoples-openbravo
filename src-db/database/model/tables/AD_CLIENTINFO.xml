@@ -171,6 +171,9 @@
       <foreign-key foreignTable="AD_TREE" name="AD_CLIENTINFO_AD_TREE_MENU">
         <reference local="AD_TREE_MENU_ID" foreign="AD_TREE_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="AD_TREE" name="AD_CLIENTINFO_AD_TREE_OBRECAT">
+        <reference local="AD_TREE_OBRE_RESOURCE_CATEGORY" foreign="AD_TREE_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_TREE" name="AD_CLIENTINFO_AD_TREE_ORG">
         <reference local="AD_TREE_ORG_ID" foreign="AD_TREE_ID"/>
       </foreign-key>
