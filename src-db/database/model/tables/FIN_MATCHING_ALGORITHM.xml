@@ -63,9 +63,9 @@
       <foreign-key foreignTable="AD_ORG" name="FIN_MATCHING_ALGORITHM_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <check name="BPNAME_CHK"><![CDATA[MATCHBPNAME IN ('Y', 'N')]]></check>
-      <check name="FIN_MATCH_ALGORITHM_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="REFERENCE_CHK"><![CDATA[MATCHREFERENCE IN ('Y', 'N')]]></check>
-      <check name="TRANSACTIONDATE_CHK"><![CDATA[MATCHTRANSACTIONDATE IN ('Y', 'N')]]></check>
+      <check name="FIN_MATCHING_ALGORITHM_BPN_CHK"><![CDATA[MATCHBPNAME IN ('Y', 'N')]]></check>
+      <check name="FIN_MATCHING_ALGORITHM_ISA_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="FIN_MATCHING_ALGORITHM_REF_CHK"><![CDATA[MATCHREFERENCE IN ('Y', 'N')]]></check>
+      <check name="FIN_MATCHING_ALGORITHM_TRN_CHK"><![CDATA[MATCHTRANSACTIONDATE IN ('Y', 'N')]]></check>
     </table>
   </database>
