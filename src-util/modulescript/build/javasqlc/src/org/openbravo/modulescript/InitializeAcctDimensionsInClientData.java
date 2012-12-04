@@ -200,7 +200,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     String strSql = "";
     strSql = strSql + 
       "        INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
-      "values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'BP', 'ARI', 'Y', 'N', 'N');";
+      "values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'BP', 'ARI', 'Y', 'N', 'N')";
 
     int updateCount = 0;
     PreparedStatement st = null;
@@ -231,7 +231,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     String strSql = "";
     strSql = strSql + 
       "      INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
-      "values (get_uuid(),?, '0', 'Y', now(), '0', now(), '0', 'BP', 'ARI_RM', 'Y', 'N', 'N');";
+      "values (get_uuid(),?, '0', 'Y', now(), '0', now(), '0', 'BP', 'ARI_RM', 'Y', 'N', 'N')";
 
     int updateCount = 0;
     PreparedStatement st = null;
@@ -262,7 +262,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     String strSql = "";
     strSql = strSql + 
       "     INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
-      "values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'BP', 'ESH', 'Y', 'Y', 'N');";
+      "values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'BP', 'ESH', 'Y', 'Y', 'N')";
 
     int updateCount = 0;
     PreparedStatement st = null;
@@ -293,7 +293,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
-      "values (get_uuid(),? , '0', 'Y', now(), '0', now(), '0', 'BP', 'MMR', 'Y', 'N', 'N');";
+      "values (get_uuid(),? , '0', 'Y', now(), '0', now(), '0', 'BP', 'MMR', 'Y', 'N', 'N')";
 
     int updateCount = 0;
     PreparedStatement st = null;
@@ -324,7 +324,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     String strSql = "";
     strSql = strSql + 
       "    INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
-      "values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'BP', 'SOO', 'Y', 'N', 'N');";
+      "values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'BP', 'SOO', 'Y', 'N', 'N')";
 
     int updateCount = 0;
     PreparedStatement st = null;
@@ -355,7 +355,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     String strSql = "";
     strSql = strSql + 
       "   INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
-      "values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'BP', 'MMS', 'Y', 'N', 'N');";
+      "values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'BP', 'MMS', 'Y', 'N', 'N')";
 
     int updateCount = 0;
     PreparedStatement st = null;
@@ -386,7 +386,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     String strSql = "";
     strSql = strSql + 
       "   INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
-      "values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'BP', 'ARR', 'N', 'Y', 'N');";
+      "values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'BP', 'ARR', 'N', 'Y', 'N')";
 
     int updateCount = 0;
     PreparedStatement st = null;
@@ -417,7 +417,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     String strSql = "";
     strSql = strSql + 
       "  INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
-      "values (get_uuid(),? , '0', 'Y', now(), '0', now(), '0', 'BP', 'APC', 'Y', 'N', 'N');";
+      "values (get_uuid(),? , '0', 'Y', now(), '0', now(), '0', 'BP', 'APC', 'Y', 'N', 'N')";
 
     int updateCount = 0;
     PreparedStatement st = null;
@@ -448,7 +448,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     String strSql = "";
     strSql = strSql + 
       "  INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
-      "values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'BP', 'FAT', 'Y', 'N', 'N');";
+      "values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'BP', 'FAT', 'Y', 'N', 'N')";
 
     int updateCount = 0;
     PreparedStatement st = null;
@@ -479,7 +479,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     String strSql = "";
     strSql = strSql + 
       "  INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
-      "values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'BP', 'APP', 'N', 'Y', 'N');";
+      "values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'BP', 'APP', 'N', 'Y', 'N')";
 
     int updateCount = 0;
     PreparedStatement st = null;
@@ -510,7 +510,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
-      "values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'BP', 'ARF', 'Y', 'N', 'N');";
+      "values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'BP', 'ARF', 'Y', 'N', 'N')";
 
     int updateCount = 0;
     PreparedStatement st = null;
@@ -541,7 +541,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
-      "values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'BP', 'ARC', 'Y', 'N', 'N');";
+      "values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'BP', 'ARC', 'Y', 'N', 'N')";
 
     int updateCount = 0;
     PreparedStatement st = null;
@@ -572,7 +572,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
-      "values (get_uuid(), ?, '0', 'Y', now(), '0', now(), '0', 'BP', 'BGT', 'N', 'N', 'N');";
+      "values (get_uuid(), ?, '0', 'Y', now(), '0', now(), '0', 'BP', 'BGT', 'N', 'N', 'N')";
 
     int updateCount = 0;
     PreparedStatement st = null;
@@ -603,7 +603,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
-      "values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'BP', 'AMZ', 'N', 'N', 'N');";
+      "values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'BP', 'AMZ', 'N', 'N', 'N')";
 
     int updateCount = 0;
     PreparedStatement st = null;
@@ -634,7 +634,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
-      "values (get_uuid(),? , '0', 'Y', now(), '0', now(), '0', 'BP', 'API', 'Y', 'N', 'N');";
+      "values (get_uuid(),? , '0', 'Y', now(), '0', now(), '0', 'BP', 'API', 'Y', 'N', 'N')";
 
     int updateCount = 0;
     PreparedStatement st = null;
@@ -665,7 +665,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
-      "values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'BP', 'GLJ', 'N', 'N', 'N');";
+      "values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'BP', 'GLJ', 'N', 'N', 'N')";
 
     int updateCount = 0;
     PreparedStatement st = null;
@@ -696,7 +696,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
-      "values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'PR', 'ESH', 'N', 'Y', 'N');";
+      "values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'PR', 'ESH', 'N', 'Y', 'N')";
 
     int updateCount = 0;
     PreparedStatement st = null;
@@ -727,7 +727,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
-      "values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'PR', 'ARI_RM', 'N', 'N', 'N');";
+      "values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'PR', 'ARI_RM', 'N', 'N', 'N')";
 
     int updateCount = 0;
     PreparedStatement st = null;
@@ -758,7 +758,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
-      "values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'PR', 'ARI', 'N', 'N', 'N');";
+      "values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'PR', 'ARI', 'N', 'N', 'N')";
 
     int updateCount = 0;
     PreparedStatement st = null;
@@ -789,7 +789,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
-      "values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'PR', 'API', 'N', 'N', 'N');";
+      "values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'PR', 'API', 'N', 'N', 'N')";
 
     int updateCount = 0;
     PreparedStatement st = null;
@@ -820,7 +820,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
-      "values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'PR', 'GLJ', 'N', 'N', 'N');";
+      "values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'PR', 'GLJ', 'N', 'N', 'N')";
 
     int updateCount = 0;
     PreparedStatement st = null;
@@ -851,7 +851,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
-      "values (get_uuid(),? , '0', 'Y', now(), '0', now(), '0', 'PR', 'AMZ', 'N', 'N', 'N');";
+      "values (get_uuid(),? , '0', 'Y', now(), '0', now(), '0', 'PR', 'AMZ', 'N', 'N', 'N')";
 
     int updateCount = 0;
     PreparedStatement st = null;
@@ -882,7 +882,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
-      "values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'PR', 'ARC', 'N', 'N', 'N');";
+      "values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'PR', 'ARC', 'N', 'N', 'N')";
 
     int updateCount = 0;
     PreparedStatement st = null;
@@ -913,7 +913,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
-      "values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'PR', 'ARF', 'N', 'N', 'N');";
+      "values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'PR', 'ARF', 'N', 'N', 'N')";
 
     int updateCount = 0;
     PreparedStatement st = null;
@@ -944,7 +944,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
-      "values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'PR', 'BGT', 'N', 'N', 'N');";
+      "values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'PR', 'BGT', 'N', 'N', 'N')";
 
     int updateCount = 0;
     PreparedStatement st = null;
@@ -975,7 +975,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
-      "values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'PR', 'APP', 'N', 'N', 'N');";
+      "values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'PR', 'APP', 'N', 'N', 'N')";
 
     int updateCount = 0;
     PreparedStatement st = null;
@@ -1006,7 +1006,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
-      "values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'PR', 'FAT', 'N', 'N', 'N');";
+      "values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'PR', 'FAT', 'N', 'N', 'N')";
 
     int updateCount = 0;
     PreparedStatement st = null;
@@ -1037,7 +1037,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
-      "values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'PR', 'APC', 'N', 'N', 'N');";
+      "values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'PR', 'APC', 'N', 'N', 'N')";
 
     int updateCount = 0;
     PreparedStatement st = null;
@@ -1068,7 +1068,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
-      "values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'PR', 'POO', 'N', 'Y', 'N');";
+      "values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'PR', 'POO', 'N', 'Y', 'N')";
 
     int updateCount = 0;
     PreparedStatement st = null;
@@ -1099,7 +1099,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
-      "values (get_uuid(),? , '0', 'Y', now(), '0', now(), '0', 'PR', 'MMS', 'N', 'N', 'N');";
+      "values (get_uuid(),? , '0', 'Y', now(), '0', now(), '0', 'PR', 'MMS', 'N', 'N', 'N')";
 
     int updateCount = 0;
     PreparedStatement st = null;
@@ -1130,7 +1130,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
-      "values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'PR', 'ARR', 'N', 'N', 'N');";
+      "values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'PR', 'ARR', 'N', 'N', 'N')";
 
     int updateCount = 0;
     PreparedStatement st = null;
@@ -1161,7 +1161,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
-      "values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'PR', 'SOO', 'N', 'Y', 'N');";
+      "values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'PR', 'SOO', 'N', 'Y', 'N')";
 
     int updateCount = 0;
     PreparedStatement st = null;
@@ -1192,7 +1192,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
-      "values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'PR', 'MMR', 'N', 'N', 'N');";
+      "values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'PR', 'MMR', 'N', 'N', 'N')";
 
     int updateCount = 0;
     PreparedStatement st = null;
@@ -1223,7 +1223,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
-      "values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'PR', 'MMI', 'N', 'Y', 'N');";
+      "values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'PR', 'MMI', 'N', 'Y', 'N')";
 
     int updateCount = 0;
     PreparedStatement st = null;
@@ -1309,7 +1309,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
-      "values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'OO', 'AMZ', 'Y', 'N', 'N');";
+      "values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'OO', 'AMZ', 'Y', 'N', 'N')";
 
     int updateCount = 0;
     PreparedStatement st = null;
@@ -1340,7 +1340,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
-      "values (get_uuid(), ?  , '0', 'Y', now(), '0', now(), '0', 'OO', 'APC', 'Y', 'N', 'N');";
+      "values (get_uuid(), ?  , '0', 'Y', now(), '0', now(), '0', 'OO', 'APC', 'Y', 'N', 'N')";
 
     int updateCount = 0;
     PreparedStatement st = null;
@@ -1371,7 +1371,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
-      "values (get_uuid(), ?  , '0', 'Y', now(), '0', now(), '0', 'OO', 'API', 'Y', 'N', 'N');";
+      "values (get_uuid(), ?  , '0', 'Y', now(), '0', now(), '0', 'OO', 'API', 'Y', 'N', 'N')";
 
     int updateCount = 0;
     PreparedStatement st = null;
@@ -1402,7 +1402,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
-      "values (get_uuid(), ?  , '0', 'Y', now(), '0', now(), '0', 'OO', 'APP', 'Y', 'N', 'N');";
+      "values (get_uuid(), ?  , '0', 'Y', now(), '0', now(), '0', 'OO', 'APP', 'Y', 'N', 'N')";
 
     int updateCount = 0;
     PreparedStatement st = null;
@@ -1433,7 +1433,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
-      "values (get_uuid(), ?  , '0', 'Y', now(), '0', now(), '0', 'OO', 'ARC', 'Y', 'N', 'N');";
+      "values (get_uuid(), ?  , '0', 'Y', now(), '0', now(), '0', 'OO', 'ARC', 'Y', 'N', 'N')";
 
     int updateCount = 0;
     PreparedStatement st = null;
@@ -1464,7 +1464,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
-      "values (get_uuid(), ?  , '0', 'Y', now(), '0', now(), '0', 'OO', 'ARF', 'Y', 'N', 'N');";
+      "values (get_uuid(), ?  , '0', 'Y', now(), '0', now(), '0', 'OO', 'ARF', 'Y', 'N', 'N')";
 
     int updateCount = 0;
     PreparedStatement st = null;
@@ -1495,7 +1495,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
-      "values (get_uuid(), ?  , '0', 'Y', now(), '0', now(), '0', 'OO', 'ARI', 'Y', 'N', 'N');";
+      "values (get_uuid(), ?  , '0', 'Y', now(), '0', now(), '0', 'OO', 'ARI', 'Y', 'N', 'N')";
 
     int updateCount = 0;
     PreparedStatement st = null;
@@ -1526,7 +1526,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
-      "values (get_uuid(), ?  , '0', 'Y', now(), '0', now(), '0', 'OO', 'ARI_RM', 'Y', 'N', 'N');";
+      "values (get_uuid(), ?  , '0', 'Y', now(), '0', now(), '0', 'OO', 'ARI_RM', 'Y', 'N', 'N')";
 
     int updateCount = 0;
     PreparedStatement st = null;
@@ -1557,7 +1557,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
-      "values (get_uuid(), ?  , '0', 'Y', now(), '0', now(), '0', 'OO', 'ARR', 'Y', 'N', 'N');";
+      "values (get_uuid(), ?  , '0', 'Y', now(), '0', now(), '0', 'OO', 'ARR', 'Y', 'N', 'N')";
 
     int updateCount = 0;
     PreparedStatement st = null;
@@ -1588,7 +1588,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
-      "values (get_uuid(), ?  , '0', 'Y', now(), '0', now(), '0', 'OO', 'BGT', 'Y', 'N', 'N');";
+      "values (get_uuid(), ?  , '0', 'Y', now(), '0', now(), '0', 'OO', 'BGT', 'Y', 'N', 'N')";
 
     int updateCount = 0;
     PreparedStatement st = null;
@@ -1619,7 +1619,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
-      "values (get_uuid(), ?  , '0', 'Y', now(), '0', now(), '0', 'OO', 'ESH', 'Y', 'N', 'N');";
+      "values (get_uuid(), ?  , '0', 'Y', now(), '0', now(), '0', 'OO', 'ESH', 'Y', 'N', 'N')";
 
     int updateCount = 0;
     PreparedStatement st = null;
@@ -1650,7 +1650,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
-      "values (get_uuid(), ?  , '0', 'Y', now(), '0', now(), '0', 'OO', 'GLJ', 'Y', 'N', 'N');";
+      "values (get_uuid(), ?  , '0', 'Y', now(), '0', now(), '0', 'OO', 'GLJ', 'Y', 'N', 'N')";
 
     int updateCount = 0;
     PreparedStatement st = null;
@@ -1681,7 +1681,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
-      "values (get_uuid(), ?  , '0', 'Y', now(), '0', now(), '0', 'OO', 'MMI', 'Y', 'N', 'N');";
+      "values (get_uuid(), ?  , '0', 'Y', now(), '0', now(), '0', 'OO', 'MMI', 'Y', 'N', 'N')";
 
     int updateCount = 0;
     PreparedStatement st = null;
@@ -1712,7 +1712,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
-      "values (get_uuid(), ?  , '0', 'Y', now(), '0', now(), '0', 'OO', 'MMM', 'Y', 'N', 'N');";
+      "values (get_uuid(), ?  , '0', 'Y', now(), '0', now(), '0', 'OO', 'MMM', 'Y', 'N', 'N')";
 
     int updateCount = 0;
     PreparedStatement st = null;
@@ -1743,7 +1743,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
-      "values (get_uuid(), ?  , '0', 'Y', now(), '0', now(), '0', 'OO', 'MMR', 'Y', 'N', 'N');";
+      "values (get_uuid(), ?  , '0', 'Y', now(), '0', now(), '0', 'OO', 'MMR', 'Y', 'N', 'N')";
 
     int updateCount = 0;
     PreparedStatement st = null;
@@ -1774,7 +1774,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
-      "values (get_uuid(), ?  , '0', 'Y', now(), '0', now(), '0', 'OO', 'MMS', 'Y', 'N', 'N');";
+      "values (get_uuid(), ?  , '0', 'Y', now(), '0', now(), '0', 'OO', 'MMS', 'Y', 'N', 'N')";
 
     int updateCount = 0;
     PreparedStatement st = null;
@@ -1805,7 +1805,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
-      "values (get_uuid(), ?  , '0', 'Y', now(), '0', now(), '0', 'OO', 'POO', 'Y', 'N', 'N');";
+      "values (get_uuid(), ?  , '0', 'Y', now(), '0', now(), '0', 'OO', 'POO', 'Y', 'N', 'N')";
 
     int updateCount = 0;
     PreparedStatement st = null;
@@ -1836,7 +1836,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
-      "values (get_uuid(), ?  , '0', 'Y', now(), '0', now(), '0', 'OO', 'REC', 'Y', 'N', 'N');";
+      "values (get_uuid(), ?  , '0', 'Y', now(), '0', now(), '0', 'OO', 'REC', 'Y', 'N', 'N')";
 
     int updateCount = 0;
     PreparedStatement st = null;
@@ -1867,7 +1867,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
-      "values (get_uuid(), ?  , '0', 'Y', now(), '0', now(), '0', 'OO', 'SOO', 'Y', 'N', 'N');";
+      "values (get_uuid(), ?  , '0', 'Y', now(), '0', now(), '0', 'OO', 'SOO', 'Y', 'N', 'N')";
 
     int updateCount = 0;
     PreparedStatement st = null;
