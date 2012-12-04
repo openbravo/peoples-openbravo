@@ -30,10 +30,7 @@ enyo.kind({
     if (!inEvent.status) {
       //exit from discounts
       this.discountsMode = false;
-      if (this.buttons['line:dto']) {
-        this.buttons['line:dto'].removeClass('btnactive');
-      }
-
+      this.buttons['line:dto'].removeClass('btnactive');
       this.keyboardDisabled(inSender, {
         status: false
       });
@@ -45,46 +42,19 @@ enyo.kind({
           status: false
         });
         //disable commands except line:dto
-        if (this.buttons['+']) {
-          this.buttons['+'].setDisabled(inEvent.status);
-        }
-
-        if (this.buttons['-']) {
-          this.buttons['-'].setDisabled(inEvent.status);
-        }
-
-        if (this.buttons['line:price']) {
-          this.buttons['line:price'].setDisabled(inEvent.status);
-        }
-        if (this.buttons['line:qty']) {
-          this.buttons['line:qty'].setDisabled(inEvent.status);
-        }
-
+        this.buttons['+'].setDisabled(inEvent.status);
+        this.buttons['-'].setDisabled(inEvent.status);
+        this.buttons['line:price'].setDisabled(inEvent.status);
+        this.buttons['line:qty'].setDisabled(inEvent.status);
         //css
-        if (this.buttons['+']) {
-          this.buttons['+'].addClass('btnkeyboard-inactive');
-        }
-
-        if (this.buttons['-']) {
-          this.buttons['-'].addClass('btnkeyboard-inactive');
-        }
-
-        if (this.buttons['line:price']) {
-          this.buttons['line:price'].addClass('btnkeyboard-inactive');
-        }
-        if (this.buttons['line:qty']) {
-          this.buttons['line:qty'].addClass('btnkeyboard-inactive');
-        }
-
+        this.buttons['+'].addClass('btnkeyboard-inactive');
+        this.buttons['-'].addClass('btnkeyboard-inactive');
+        this.buttons['line:price'].addClass('btnkeyboard-inactive');
+        this.buttons['line:qty'].addClass('btnkeyboard-inactive');
         //button as active
-        if (this.buttons['line:dto']) {
-          this.buttons['line:dto'].addClass('btnactive');
-        }
+        this.buttons['line:dto'].addClass('btnactive');
       } else {
-        if (this.buttons['line:dto']) {
-          this.buttons['line:dto'].removeClass('btnactive');
-        }
-
+        this.buttons['line:dto'].removeClass('btnactive');
         this.keyboardDisabled(inSender, {
           status: true
         });
@@ -106,8 +76,8 @@ enyo.kind({
   },
   initComponents: function () {
     var me = this;
-    this.addCommand('line:qty', {
-      action: function (keyboard, txt) {
+
+    var actionAddProduct = function (keyboard, value) {
         if (keyboard.receipt.get('isEditable') === false) {
           me.doShowPopup({
             popup: 'modalNotEditableOrder'
@@ -123,9 +93,39 @@ enyo.kind({
           }
           me.doAddProduct({
             product: keyboard.line.get('product'),
-            qty: OB.I18N.parseNumber(txt)
+            qty: value
           });
           keyboard.receipt.trigger('scan');
+        }
+        };
+
+    var actionRemoveProduct = function (keyboard, value) {
+        if (keyboard.receipt.get('isEditable') === false) {
+          me.doShowPopup({
+            popup: 'modalNotEditableOrder'
+          });
+          return true;
+        }
+        if (keyboard.line) {
+          keyboard.receipt.removeUnit(keyboard.line, value);
+          keyboard.receipt.trigger('scan');
+        }
+        };
+
+    this.addCommand('line:qty', {
+      action: function (keyboard, txt) {
+        var value = OB.I18N.parseNumber(txt)
+        if (value || value === 0) {
+          value = value - keyboard.line.get('qty');
+          if (value > 0) {
+            actionAddProduct(keyboard, value);
+          } else if (value < 0) {
+            actionRemoveProduct(keyboard, -value);
+          } else {
+            me.doDeleteLine({
+              line: keyboard.line
+            });
+          }
         }
       }
     });
@@ -145,6 +145,7 @@ enyo.kind({
         }
       }
     });
+
     this.addCommand('line:dto', {
       permission: 'OBPOS_order.discount',
       action: function (keyboard, txt) {
@@ -169,40 +170,13 @@ enyo.kind({
     this.addCommand('+', {
       stateless: true,
       action: function (keyboard, txt) {
-        if (keyboard.receipt.get('isEditable') === false) {
-          me.doShowPopup({
-            popup: 'modalNotEditableOrder'
-          });
-          return true;
-        }
-        if (keyboard.line) {
-          if (keyboard.line.get('product').get('groupProduct') === false) {
-            me.doShowPopup({
-              popup: 'modalProductCannotBeGroup'
-            });
-            return true;
-          }
-          me.doAddProduct({
-            product: keyboard.line.get('product'),
-            qty: OB.I18N.parseNumber(txt)
-          });
-          keyboard.receipt.trigger('scan');
-        }
+        actionAddProduct(keyboard, OB.I18N.parseNumber(txt));
       }
     });
     this.addCommand('-', {
       stateless: true,
       action: function (keyboard, txt) {
-        if (keyboard.receipt.get('isEditable') === false) {
-          me.doShowPopup({
-            popup: 'modalNotEditableOrder'
-          });
-          return true;
-        }
-        if (keyboard.line) {
-          keyboard.receipt.removeUnit(keyboard.line, OB.I18N.parseNumber(txt));
-          keyboard.receipt.trigger('scan');
-        }
+        actionRemoveProduct(keyboard, OB.I18N.parseNumber(txt));
       }
     });
 
