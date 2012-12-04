@@ -89,7 +89,15 @@ public class SE_DimensionDocBaseType extends SimpleCallout {
   }
 
   private String getValue(Client client, String level, String dimension) {
-    if (DimensionDisplayUtility.DIM_BPartner.equals(dimension)) {
+    if (DimensionDisplayUtility.DIM_Organization.equals(dimension)) {
+      if (DimensionDisplayUtility.DIM_Header.equals(level)) {
+        return client.isOrgAcctdimHeader() ? "Y" : "N";
+      } else if (DimensionDisplayUtility.DIM_Lines.equals(level)) {
+        return client.isOrgAcctdimLines() ? "Y" : "N";
+      } else {
+        return client.isOrgAcctdimBreakdown() ? "Y" : "N";
+      }
+    } else if (DimensionDisplayUtility.DIM_BPartner.equals(dimension)) {
       if (DimensionDisplayUtility.DIM_Header.equals(level)) {
         return client.isBpartnerAcctdimHeader() ? "Y" : "N";
       } else if (DimensionDisplayUtility.DIM_Lines.equals(level)) {
