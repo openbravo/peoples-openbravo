@@ -1108,6 +1108,10 @@ export.database: exports database structure and data to xml files.
   </target>
   
   
+  <target name="load.logoimages.forked">
+    <ant dir="${base.src}" target="load.logoimages.forked" inheritAll="true" inheritRefs="true" />
+  </target>
+
   <target name="load.logoimages">
     <ant dir="${base.src}" target="load.logoimages" inheritAll="true" inheritRefs="true" />
   </target>
