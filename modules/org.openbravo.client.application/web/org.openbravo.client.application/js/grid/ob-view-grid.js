@@ -2611,6 +2611,7 @@ isc.OBViewGrid.addProperties({
       this.view.messageBar.hide();
     }
     this.view.refreshParentRecord();
+    this.refreshGrid();
     this.refreshRow(rowNum);
   },
 
