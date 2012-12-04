@@ -116,8 +116,8 @@ build.war: build a war file in the lib directory.
     </taskdef>
     <validateModules userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" type="module" moduleJavaPackage="${module}"/>
   </target>
-  
-  <target name="load.logoimages">
+
+  <target name="load.logoimages.forked">
     <taskdef name="imageloading" classname="org.openbravo.erpCommon.utility.ImageToDatabaseLoader">
       <classpath refid="project.class.path" />
     </taskdef>
@@ -126,6 +126,13 @@ build.war: build a war file in the lib directory.
       propertyNames="yourCompanyLoginImage,yourItServiceLoginImage,yourCompanyMenuImage,yourCompanyBigImage,yourCompanyDocumentImage"/>
   </target>
 
+  <target name="load.logoimages">
+    <java classname="org.openbravo.erpCommon.utility.ImageToDatabaseLoader" fork="true" maxmemory="${build.maxmemory}" failonerror="true">
+      <arg line="'${base.src}'" />
+      <classpath refid="apply.module.runtime.classpath" />
+    </java>
+  </target>
+  
   <target name="trl.clean" if="translation">
     <java classname="org.openbravo.translate.Translate" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
       <arg line="clean '${base.config}/Openbravo.properties'" />
