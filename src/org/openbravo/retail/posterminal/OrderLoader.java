@@ -894,12 +894,11 @@ public class OrderLoader extends JSONProcessSimple {
     try {
       BigDecimal amount = BigDecimal.valueOf(payment.getDouble("paid"));
       BigDecimal origAmount = amount;
-      if (payment.has("rate")) {
-        origAmount = BigDecimal.valueOf(payment.getDouble("amount"));
-      }
       BigDecimal mulrate = new BigDecimal(1);
-      if (payment.has("mulrate")) {
+      // FIXME: Conversion should be only in one direction: (USD-->EUR)
+      if (payment.has("mulrate") && payment.getDouble("mulrate") != 1) {
         mulrate = BigDecimal.valueOf(payment.getDouble("mulrate"));
+        origAmount = amount.multiply(BigDecimal.valueOf(payment.getDouble("mulrate")));
       }
 
       // writeoffAmt.divide(BigDecimal.valueOf(payment.getDouble("rate")));
