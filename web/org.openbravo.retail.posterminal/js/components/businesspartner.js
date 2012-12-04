@@ -103,13 +103,13 @@ enyo.kind({
     onHideThisPopup: ''
   },
   tap: function () {
+    this.doHideThisPopup();
     this.model.get('subWindowManager').set('currentWindow', {
       name: 'customerAdvancedSearch',
       params: {
         caller: 'mainSubWindow'
       }
     });
-    this.doHideThisPopup();
   }
 });
 
