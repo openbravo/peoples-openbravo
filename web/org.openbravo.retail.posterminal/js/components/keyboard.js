@@ -397,7 +397,7 @@ enyo.kind({
         }
       } else if (txt && this.status !== '') {
         this.execCommand(this.commands[this.status], txt);
-        if (!this.buttons[this.status].owner.holdActive) {
+        if (this.buttons[this.status] && !this.buttons[this.status].owner.holdActive) {
           this.setStatus('');
         }
       }
@@ -418,7 +418,7 @@ enyo.kind({
           this.setStatus(cmd);
         }
       }
-      if (this.buttons[cmd].owner.holdActive) {
+      if (this.buttons[this.status] && this.buttons[cmd].owner.holdActive) {
         this.doHoldActiveCmd({
           cmd: cmd
         });
