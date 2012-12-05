@@ -241,10 +241,10 @@
              and t.isActive='Y'
              and tb.isActive='Y'
              and tb.ad_table_id = t.ad_table_id
-             and ( (TO_NUMBER(t.accessLevel)=4 and instr(trim(r.userLevel),'S')!=0)
-                or (TO_NUMBER(t.accessLevel)=1 and instr(trim(r.userLevel),'O')!=0)
-                or (TO_NUMBER(t.accessLevel)=3 and (instr(trim(r.userLevel),'C')!=0 or instr(trim(r.userLevel),'O')!=0))
-                or (TO_NUMBER(t.accessLevel)=6 and (instr(trim(r.userLevel),'S')!=0 or instr(trim(r.userLevel),'C')!=0))
+             and ( (TO_NUMBER(t.accessLevel)=4 and instr(r.userLevel,'S')!=0)
+                or (TO_NUMBER(t.accessLevel)=1 and instr(r.userLevel,'O')!=0)
+                or (TO_NUMBER(t.accessLevel)=3 and (instr(r.userLevel,'C')!=0 or instr(r.userLevel,'O')!=0))
+                or (TO_NUMBER(t.accessLevel)=6 and (instr(r.userLevel,'S')!=0 or instr(r.userLevel,'C')!=0))
                 )
              and not exists (select 1
                               from ad_table_access ta
