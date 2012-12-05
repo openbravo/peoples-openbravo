@@ -97,7 +97,7 @@ public class FIN_AddPaymentFromJournal extends DalBaseProcess {
         parameters.add(journalId);
         final String procedureName = "gl_journal_post";
         CallStoredProcedure mm = CallStoredProcedure.getInstance();
-        mm.call(procedureName, parameters, null, false);
+        mm.call(procedureName, parameters, null, false, false);
       } catch (Exception e) {
         OBDal.getInstance().rollbackAndClose();
         throw new OBException(e.getCause().getMessage());
@@ -146,11 +146,8 @@ public class FIN_AddPaymentFromJournal extends DalBaseProcess {
       if (cont > 0) {
         msg.setMessage(" @FIN_NumberOfPayments@: " + cont);
       }
-
-      OBDal.getInstance().commitAndClose();
-
       bundle.setResult(msg);
-
+      OBDal.getInstance().commitAndClose();
     } catch (final OBException e) {
       final OBError msg = new OBError();
       msg.setType("Error");
