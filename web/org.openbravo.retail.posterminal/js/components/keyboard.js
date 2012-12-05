@@ -418,7 +418,7 @@ enyo.kind({
           this.setStatus(cmd);
         }
       }
-      if (this.buttons[this.status] && this.buttons[cmd].owner.holdActive) {
+      if (this.buttons[cmd] && this.buttons[cmd].owner.holdActive) {
         this.doHoldActiveCmd({
           cmd: cmd
         });
