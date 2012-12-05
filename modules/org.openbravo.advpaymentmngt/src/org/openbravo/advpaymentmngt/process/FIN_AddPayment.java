@@ -488,6 +488,42 @@ public class FIN_AddPayment {
   }
 
   /**
+   * It adds to the Payment a new Payment Detail with the given GL Item, amount and accounting
+   * dimensions
+   * 
+   * @param payment
+   *          Payment where the new Payment Detail needs to be added.
+   * @param glitemAmount
+   *          Amount of the new Payment Detail.
+   * @param glitem
+   *          GLItem to be set in the new Payment Detail.
+   * @param businessPartner
+   *          accounting dimension
+   * @param product
+   *          accounting dimension
+   * @param project
+   *          accounting dimension
+   * @param campaign
+   *          accounting dimension
+   * @param activity
+   *          accounting dimension
+   * @param salesRegion
+   *          accounting dimension
+   * @param costCenter
+   *          accounting dimension
+   * @param user1
+   *          accounting dimension
+   * @param user2
+   *          accounting dimension
+   */
+  public static void saveGLItem(FIN_Payment payment, BigDecimal glitemAmount, GLItem glitem,
+      BusinessPartner businessPartner, Product product, Project project, Campaign campaign,
+      ABCActivity activity, SalesRegion salesRegion) {
+    saveGLItem(payment, glitemAmount, glitem, businessPartner, product, project, campaign,
+        activity, salesRegion, null, null, null);
+  }
+
+  /**
    * Removes the Payment Detail from the Payment when the Detail is related to a GLItem
    * 
    * @param payment

@@ -624,6 +624,32 @@ public class AdvPaymentMngtDao {
   }
 
   /**
+   * Returns a new FIN_PaymentScheduleDetail for the given accounting dimensions
+   * 
+   * @param organization
+   * @param amount
+   * @param businessPartner
+   *          accounting dimension
+   * @param product
+   *          accounting dimension
+   * @param project
+   *          accounting dimension
+   * @param campaign
+   *          accounting dimension
+   * @param activity
+   *          accounting dimension
+   * @param salesRegion
+   *          accounting dimension
+   * @return
+   */
+  public FIN_PaymentScheduleDetail getNewPaymentScheduleDetail(Organization organization,
+      BigDecimal amount, BusinessPartner businessPartner, Product product, Project project,
+      Campaign campaign, ABCActivity activity, SalesRegion salesRegion) {
+    return getNewPaymentScheduleDetail(organization, amount, businessPartner, product, project,
+        campaign, activity, salesRegion, null, null, null);
+  }
+
+  /**
    * Creates a new payment schedule
    * 
    */
