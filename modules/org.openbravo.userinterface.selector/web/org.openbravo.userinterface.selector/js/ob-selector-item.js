@@ -512,7 +512,9 @@ isc.OBSelectorItem.addProperties({
     }
 
     // only jump to the next field if the value has really been set
-    if (currentValue && this.form.focusInNextItem) {
+    // do not jump to the next field if the event has been triggered by the Tab key,
+    // to prevent a field from being skipped (see https://issues.openbravo.com/view.php?id=21419)
+    if (currentValue && this.form.focusInNextItem && isc.EH.getKeyName() !== 'Tab') {
       this.form.focusInNextItem(this.name);
     }
   },
