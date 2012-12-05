@@ -290,12 +290,16 @@
         WHERE 1=1 
         AND tn.Node_ID = a.A_Asset_ID 
         AND tn.AD_Tree_ID = ? 
+        AND 2=2 
         ORDER BY COALESCE(tn.Parent_ID, '-1'), tn.SeqNo
       </Sql>
         <Parameter name="columnname" optional="false" type="replace" after="tn.SeqNo, a." text="A_Asset_ID"/>
         <Parameter name="tablename" optional="false" type="replace" after="AD_TreeNode tn, " text="A_Asset"/>
-        <Parameter name="columnname" optional="false" type="replace" after="AND tn.Node_ID = a." text="A_Asset_ID"/>      
+        <Parameter name="columnname" optional="false" type="replace" after="AND tn.Node_ID = a." text="A_Asset_ID"/>
         <Parameter name="adTreeId"/>
+        <Parameter name="editable" optional="true" type="none" after="AND 2=2 " text="AND tn.IsActive='Y' AND a.isActive='Y' "/>
+        <Parameter name="parentId" optional="true" after="AND 2=2 " text="AND tn.Parent_ID = ? "/>
+        <Parameter name="nodeId" optional="true" after="AND 2=2 " text="AND tn.Node_ID = ? "/>
    </SqlMethod>
    <SqlMethod name="selectTreeID" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>

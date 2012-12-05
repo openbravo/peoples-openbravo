@@ -155,7 +155,7 @@ class WindowTreeUtility {
       data = WindowTreeData.selectAsset(conn, strEditable, strParentID, strNodeId, TreeID);
     else if (TreeType.equals("OBRE_RC"))
       data = WindowTreeData.selectOBRE_ResouceCategory(conn, "OBRE_Resource_Category_ID",
-          "OBRE_Resource_Category", TreeID);
+          "OBRE_Resource_Category", TreeID, strEditable, strParentID, strNodeId);
 
     return data;
   }
