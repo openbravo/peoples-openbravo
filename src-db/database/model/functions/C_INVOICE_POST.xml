@@ -642,11 +642,11 @@ BEGIN --BODY
                     
             INSERT INTO C_INVOICELINE_ACCTDIMENSION(
             c_invoiceline_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, c_invoiceline_id, 
-            amt, c_project_id, c_campaign_id, user1_id, user2_id, c_costcenter_id, a_activity_id, c_campaign_id, c_bpartner_id, m_product_id) 
+            amt, c_project_id, c_campaign_id, user1_id, user2_id, c_costcenter_id, c_activity_id, c_bpartner_id, m_product_id) 
             values(
             get_uuid(), Cur_InvoiceLineAcctDim.ad_client_id, Cur_InvoiceLineAcctDim.ad_org_id, Cur_InvoiceLineAcctDim.isactive, now(), v_UpdatedBy, now(), v_UpdatedBy, v_NextNo,
             Cur_InvoiceLineAcctDim.amt * -1, Cur_InvoiceLineAcctDim.c_project_id, Cur_InvoiceLineAcctDim.c_campaign_id, Cur_InvoiceLineAcctDim.user1_id, Cur_InvoiceLineAcctDim.user2_id, 
-            Cur_InvoiceLineAcctDim.c_costcenter_id, Cur_InvoiceLineAcctDim.a_activity_id, Cur_InvoiceLineAcctDim.c_campaign_id, Cur_InvoiceLineAcctDim.c_bpartner_id, Cur_InvoiceLineAcctDim.m_product_id);
+            Cur_InvoiceLineAcctDim.c_costcenter_id, Cur_InvoiceLineAcctDim.c_activity_id, Cur_InvoiceLineAcctDim.c_bpartner_id, Cur_InvoiceLineAcctDim.m_product_id);
 
             END LOOP; -- Create Reversal Accounting Dimensions
 
