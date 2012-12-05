@@ -29,10 +29,12 @@ public class UniqueValidCombination extends ModuleScript {
   public void execute() {
     try {
       ConnectionProvider cp = getConnectionProvider();
-      if(UniqueValidCombinationData.selectDuplicates(cp)){
+      if(UniqueValidCombinationData.selectMissingValidCombination(cp)){
         UniqueValidCombinationData.updateJournalLineDimensions(cp);
         UniqueValidCombinationData.updateValidCombinationDeactivate(cp);
-        UniqueValidCombinationData.updateValidCombinationDeactivateDuplicated(cp);
+        if(UniqueValidCombinationData.selectDuplicates(cp)){
+          UniqueValidCombinationData.updateValidCombinationDeactivateDuplicated(cp);
+        }
         UniqueValidCombinationData.insertValidCombinations(cp);
       }
       
