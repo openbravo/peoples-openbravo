@@ -919,29 +919,31 @@ public class Wad extends DefaultHandler {
       String prefix = "/" + ("0".equals(tab.windowmodule) ? "" : tab.windowpackage)
           + tab.windowname + "/" + tab.tabname + ("0".equals(tab.tabmodule) ? "" : tab.tabid);
 
+      WadData mapping2 = new WadData();
+      mapping2.name = "W" + tab.tabid;
+      mapping2.classname = prefix + "_Edition.html";
+      mappings.add(mapping2);
+
       if (onlyJavaNeeded) {
         // Keeping mapping to *_Edition.html because it is the mapping used for processes but
         // skipping the rest
-        WadData mapping2 = new WadData();
-        mapping2.name = "W" + tab.tabid;
-        mapping2.classname = prefix + "_Edition.html";
-        mappings.add(mapping2);
-      } else {
-        WadData mapping = new WadData();
-        mapping.name = "W" + tab.tabid;
-        mapping.classname = prefix + "_Relation.html";
-        mappings.add(mapping);
-
-        WadData mapping3 = new WadData();
-        mapping3.name = "W" + tab.tabid;
-        mapping3.classname = prefix + "_Excel.xls";
-        mappings.add(mapping3);
-
-        WadData mapping4 = new WadData();
-        mapping4.name = "WR" + tab.tabid;
-        mapping4.classname = "/ad_callouts/ComboReloads" + tab.tabid + ".html";
-        mappings.add(mapping4);
+        continue;
       }
+
+      WadData mapping = new WadData();
+      mapping.name = "W" + tab.tabid;
+      mapping.classname = prefix + "_Relation.html";
+      mappings.add(mapping);
+
+      WadData mapping3 = new WadData();
+      mapping3.name = "W" + tab.tabid;
+      mapping3.classname = prefix + "_Excel.xls";
+      mappings.add(mapping3);
+
+      WadData mapping4 = new WadData();
+      mapping4.name = "WR" + tab.tabid;
+      mapping4.classname = "/ad_callouts/ComboReloads" + tab.tabid + ".html";
+      mappings.add(mapping4);
     }
     return mappings.toArray(new WadData[mappings.size()]);
   }
