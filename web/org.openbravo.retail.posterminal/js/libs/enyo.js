@@ -2101,7 +2101,7 @@ e.events = n, e.events.touchstart(t);
 var n = {
 _touchCount: 0,
 touchstart: function(t) {
-enyo.job.stop("resetGestureEvents"), this._touchCount += t.changedTouches.length, this.excludedTarget = null;
+this._touchCount += t.changedTouches.length, this.excludedTarget = null;
 var n = this.makeEvent(t);
 e.down(n), n = this.makeEvent(t), this.overEvent = n, e.over(n);
 },
@@ -2112,10 +2112,11 @@ this.excludedTarget = n && n.dragInfo && n.dragInfo.node;
 var r = this.makeEvent(t);
 e.move(r), enyo.bodyIsFitting && t.preventDefault(), this.overEvent && this.overEvent.target != r.target && (this.overEvent.relatedTarget = r.target, r.relatedTarget = this.overEvent.target, e.out(this.overEvent), e.over(r)), this.overEvent = r;
 },
-touchend: function(n) {
-e.up(this.makeEvent(n)), e.out(this.overEvent), this._touchCount -= n.changedTouches.length, enyo.platform.chrome && this._touchCount === 0 && enyo.job("resetGestureEvents", function() {
-e.events = t;
-}, 10);
+touchend: function(t) {
+e.up(this.makeEvent(t)), e.out(this.overEvent), this._touchCount -= t.changedTouches.length;
+},
+mouseup: function(n) {
+this._touchCount === 0 && (this.sawMousedown = !1, e.events = t);
 },
 makeEvent: function(e) {
 var t = enyo.clone(e.changedTouches[0]);
