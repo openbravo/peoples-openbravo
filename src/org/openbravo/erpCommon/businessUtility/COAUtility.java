@@ -216,8 +216,9 @@ public class COAUtility {
       try {
         obeResult = insertElementValuesInDB(coa);
         if (!obeResult.getType().equals(strMessageOk)) {
-          OBDal.getInstance().flush();
           return obeResult;
+        } else {
+          OBDal.getInstance().flush();
         }
       } catch (Exception e) {
         return logError(

@@ -1366,6 +1366,8 @@ public class InitialSetupUtility {
       OBCriteria<AccountingCombination> obc = OBDal.getInstance().createCriteria(
           AccountingCombination.class);
       obc.add(Restrictions.eq(AccountingCombination.PROPERTY_ACCOUNT, elementValue));
+      obc.setFilterOnReadableClients(false);
+      obc.setFilterOnReadableOrganization(false);
       List<AccountingCombination> combinations = obc.list();
 
       if (combinations.size() == 0) {
