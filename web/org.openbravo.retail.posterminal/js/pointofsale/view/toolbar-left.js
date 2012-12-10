@@ -93,7 +93,7 @@ enyo.kind({
   init: function (model) {
     this.model = model;
     this.model.get('order').on('change:isPaid change:isQuotation change:hasbeenpaid', function (changedModel) {
-      if (changedModel.get('isPaid') || (changedModel.get('isQuotation') && changedModel.get('hasbeenpaid')==='Y')) {
+      if (changedModel.get('isPaid') || (changedModel.get('isQuotation') && changedModel.get('hasbeenpaid') === 'Y')) {
         this.addClass('paidticket');
         return;
       }
