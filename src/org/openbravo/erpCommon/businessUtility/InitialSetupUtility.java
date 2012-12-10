@@ -1472,24 +1472,39 @@ public class InitialSetupUtility {
       ElementValue elementValue, AcctSchema acctSchema, Boolean isFullyQualified) {
     Organization organization;
     if (orgProvided == null) {
-      if ((organization = getZeroOrg()) == null)
+      if ((organization = getZeroOrg()) == null) {
         return null;
-    } else
+      }
+    } else {
       organization = orgProvided;
+    }
+    OBContext.setAdminMode(false);
+    try {
+      OBCriteria<AccountingCombination> obc = OBDal.getInstance().createCriteria(
+          AccountingCombination.class);
+      obc.add(Restrictions.eq(AccountingCombination.PROPERTY_ACCOUNT, elementValue));
+      List<AccountingCombination> combinations = obc.list();
 
-    final AccountingCombination newAcctComb = OBProvider.getInstance().get(
-        AccountingCombination.class);
+      if (combinations.size() == 0) {
+        final AccountingCombination newAcctComb = OBProvider.getInstance().get(
+            AccountingCombination.class);
 
-    newAcctComb.setClient(client);
-    newAcctComb.setOrganization(organization);
-    newAcctComb.setAccount(elementValue);
-    newAcctComb.setAccountingSchema(acctSchema);
-    newAcctComb.setOrganization(elementValue.getOrganization());
-    newAcctComb.setFullyQualified(isFullyQualified);
+        newAcctComb.setClient(client);
+        newAcctComb.setOrganization(organization);
+        newAcctComb.setAccount(elementValue);
+        newAcctComb.setAccountingSchema(acctSchema);
+        newAcctComb.setOrganization(elementValue.getOrganization());
+        newAcctComb.setFullyQualified(isFullyQualified);
 
-    OBDal.getInstance().save(newAcctComb);
-    OBDal.getInstance().flush();
-    return newAcctComb;
+        OBDal.getInstance().save(newAcctComb);
+        OBDal.getInstance().flush();
+        return newAcctComb;
+      } else {
+        return combinations.get(0);
+      }
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
   /**
