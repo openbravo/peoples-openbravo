@@ -42,7 +42,7 @@ import org.openbravo.model.common.enterprise.Organization;
 
 public class DimensionDisplayUtility {
 
-  public static final Logger log4j = Logger.getLogger(DimensionDisplayUtility.class);
+  private static final Logger log4j = Logger.getLogger(DimensionDisplayUtility.class);
 
   /** Accounting Dimensions **/
   public static final String DIM_Header = "H";
