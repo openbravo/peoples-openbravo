@@ -53,11 +53,25 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="TYPEOFDATA" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="OBPOS_APPLICATIONS_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="OBPOS_ERRORS_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="OBPOS_ERRORS_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="OBPOS_APPLICATIONS" name="OBPOS_ERRORS_POSTERMINAL">
+        <reference local="OBPOS_APPLICATIONS_ID" foreign="OBPOS_APPLICATIONS_ID"/>
+      </foreign-key>
+      <index name="FKI_OBPOS_ERRORS_POSTERMINAL" unique="false">
+        <index-column name="OBPOS_APPLICATIONS_ID"/>
+      </index>
     </table>
   </database>
