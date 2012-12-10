@@ -331,9 +331,9 @@ public class DimensionDisplayUtility {
                   if (DIM_Header.equals(levelValue)) {
                     isDisplayed = client.isUser1AcctdimHeader() ? "Y" : "N";
                   } else if (DIM_Lines.equals(levelValue)) {
-                    isDisplayed = client.isUser1AcctdimHeader() ? "Y" : "N";
+                    isDisplayed = client.isUser1AcctdimLines() ? "Y" : "N";
                   } else if (DIM_BreakDown.equals(levelValue)) {
-                    isDisplayed = client.isUser1AcctdimHeader() ? "Y" : "N";
+                    isDisplayed = client.isUser1AcctdimBreakdown() ? "Y" : "N";
                   }
                 }
               } else {
