@@ -195,11 +195,15 @@ isc.OBPickAndExecuteView.addProperties({
     }
   },
 
-  closeClick: function (refresh, message) {
+  closeClick: function (refresh, message, responseActions) {
     var window = this.parentWindow;
 
     if (message) {
       this.buttonOwnerView.messageBar.setMessage(message.severity, message.text);
+    }
+
+    if (responseActions) {
+      OB.Utilities.Action.executeJSON(responseActions);
     }
 
     this.buttonOwnerView.setAsActiveView();
