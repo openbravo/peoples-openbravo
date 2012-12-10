@@ -9,6 +9,7 @@
 package org.openbravo.retail.posterminal;
 
 import java.math.BigDecimal;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 
@@ -66,12 +67,15 @@ public class JSONPropertyToEntity {
       }
       if (p.isPrimitive()) {
         if (p.isDate()) {
-          Date date = (Date) JsonToDataConverter.convertJsonToPropertyValue(
+          Date serverDate = (Date) JsonToDataConverter.convertJsonToPropertyValue(
               PropertyByType.DATETIME,
-              ((String) value).subSequence(0, ((String) value).lastIndexOf(".")) + "+0000");
-          // date is the date in UTC, we need to convert it to the date in the original time zone
-          date.setTime(date.getTime() - dateOffset * 60 * 1000);
-          bob.set(p.getName(), date);
+              ((String) value).subSequence(0, ((String) value).lastIndexOf(".")));
+          // date is the date in the server timezone, we need to convert it to the date in the
+          // original time zone
+          Date dateUTC = convertToUTC(serverDate);
+          Date clientDate = new Date();
+          clientDate.setTime(dateUTC.getTime() - dateOffset * 60 * 1000);
+          bob.set(p.getName(), stripTime(clientDate));
         } else if (p.isDatetime()) {
           String strValue = (String) value;
           String transformedValue = (String) strValue.subSequence(0, strValue.lastIndexOf("."))
@@ -95,6 +99,29 @@ public class JSONPropertyToEntity {
       }
 
     }
+  }
+
+  private static Date convertToUTC(Date localTime) {
+    Calendar now = Calendar.getInstance();
+    Calendar calendar = Calendar.getInstance();
+    calendar.setTime(localTime);
+    calendar.set(Calendar.DATE, now.get(Calendar.DATE));
+    calendar.set(Calendar.MONTH, now.get(Calendar.MONTH));
+    calendar.set(Calendar.YEAR, now.get(Calendar.YEAR));
+
+    int gmtMillisecondOffset = (now.get(Calendar.ZONE_OFFSET) + now.get(Calendar.DST_OFFSET));
+    calendar.add(Calendar.MILLISECOND, -gmtMillisecondOffset);
+
+    return calendar.getTime();
+  }
+
+  private static Date stripTime(Date dateWithTime) {
+    Calendar calendar = Calendar.getInstance();
+    calendar.setTime(dateWithTime);
+    calendar.set(Calendar.HOUR_OF_DAY, 0);
+    calendar.set(Calendar.MINUTE, 0);
+    calendar.set(Calendar.SECOND, 0);
+    return calendar.getTime();
   }
 
   private static String getEquivalentKey(String key) {
