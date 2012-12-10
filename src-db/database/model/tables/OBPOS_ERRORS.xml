@@ -70,8 +70,5 @@
       <foreign-key foreignTable="OBPOS_APPLICATIONS" name="OBPOS_ERRORS_POSTERMINAL">
         <reference local="OBPOS_APPLICATIONS_ID" foreign="OBPOS_APPLICATIONS_ID"/>
       </foreign-key>
-      <index name="FKI_OBPOS_ERRORS_POSTERMINAL" unique="false">
-        <index-column name="OBPOS_APPLICATIONS_ID"/>
-      </index>
     </table>
   </database>
