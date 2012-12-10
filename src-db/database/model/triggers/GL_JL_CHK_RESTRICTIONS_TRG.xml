@@ -69,7 +69,7 @@ BEGIN
       OR(COALESCE(:OLD.A_Asset_ID, '0') <> COALESCE(:NEW.A_Asset_ID, '0'))
       OR(COALESCE(:OLD.C_Costcenter_ID, '0') <> COALESCE(:NEW.C_Costcenter_ID, '0')))) 
     THEN
-      DBMS_OUTPUT.PUT_LINE( 'Iside post loop');
+      DBMS_OUTPUT.PUT_LINE( 'Inside post loop');
       RAISE_APPLICATION_ERROR(-20000, '@20501@') ;
     END IF;
   END IF;

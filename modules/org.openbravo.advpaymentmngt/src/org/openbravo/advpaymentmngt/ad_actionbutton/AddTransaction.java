@@ -400,7 +400,7 @@ public class AddTransaction extends HttpSecureAppServlet {
     xmlDocument.setParameter("strElement_MC", strElement_MC);
     xmlDocument.setParameter("strElement_U1", strElement_U1);
     xmlDocument.setParameter("strElement_U2", strElement_U2);
-    // xmlDocument.setParameter("strElement_CC", strElement_CC);
+    xmlDocument.setParameter("strElement_CC", strElement_CC);
 
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();

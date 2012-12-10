@@ -38,6 +38,13 @@ public class TreeUtility {
   private Map<String, Set<String>> childTrees = new HashMap<String, Set<String>>();
   private Map<String, Set<String>> naturalTrees = new HashMap<String, Set<String>>();
 
+  /**
+   * Gets Natural tree for the given node
+   * 
+   * @param nodeId
+   * @param treeType
+   * @return
+   */
   public Set<String> getNaturalTree(String nodeId, String treeType) {
     initialize(treeType);
     Set<String> result;
@@ -51,6 +58,14 @@ public class TreeUtility {
     return result;
   }
 
+  /**
+   * Gets the Child tree for the given node, including optionally given node
+   * 
+   * @param nodeId
+   * @param treeType
+   * @param includeNode
+   * @return
+   */
   public Set<String> getChildTree(String nodeId, String treeType, boolean includeNode) {
     initialize(treeType);
     Set<String> childNode = this.getChildNode(nodeId, treeType);
@@ -69,6 +84,13 @@ public class TreeUtility {
     return result;
   }
 
+  /**
+   * Gets Child node in the tree
+   * 
+   * @param nodeId
+   * @param treeType
+   * @return
+   */
   public Set<String> getChildNode(String nodeId, String treeType) {
     initialize(treeType);
     if (childTrees.get(nodeId) == null) {

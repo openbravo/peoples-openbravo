@@ -14657,7 +14657,7 @@ Do you want to enable the Heartbeat?]]></MSGTEXT>
 <!--0BA839D8B467422AB19C8E1B3B033051-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--0BA839D8B467422AB19C8E1B3B033051-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--0BA839D8B467422AB19C8E1B3B033051-->  <VALUE><![CDATA[NotCorrectOrgLines]]></VALUE>
-<!--0BA839D8B467422AB19C8E1B3B033051-->  <MSGTEXT><![CDATA[The organization of the  lines  is different and does not depend on the organization associated with the header.]]></MSGTEXT>
+<!--0BA839D8B467422AB19C8E1B3B033051-->  <MSGTEXT><![CDATA[The organization of the lines is different and does not depend on the organization associated with the header.]]></MSGTEXT>
 <!--0BA839D8B467422AB19C8E1B3B033051-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--0BA839D8B467422AB19C8E1B3B033051-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--0BA839D8B467422AB19C8E1B3B033051--></AD_MESSAGE>

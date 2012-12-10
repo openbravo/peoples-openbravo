@@ -182,8 +182,8 @@ public class UpdateActuals extends DalBaseProcess {
 
         log4j.debug("Query String" + query.getQueryString());
 
-        BigDecimal credit = new BigDecimal(0);
-        BigDecimal debit = new BigDecimal(0);
+        BigDecimal credit = BigDecimal.ZERO;
+        BigDecimal debit = BigDecimal.ZERO;
         for (Object obj : query.list()) {
           if (obj != null) {
             Object[] row = (Object[]) obj;
@@ -208,7 +208,6 @@ public class UpdateActuals extends DalBaseProcess {
       msg.setType("Error");
       msg.setTitle("Error");
       msg.setMessage(e.toString());
-
       bundle.setResult(msg);
       OBDal.getInstance().rollbackAndClose();
     } finally {

@@ -213,7 +213,7 @@
       <foreign-key foreignTable="C_WITHHOLDING" name="GL_JOURNALLINE_C_WITHHOLDING">
         <reference local="C_WITHHOLDING_ID" foreign="C_WITHHOLDING_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="FIN_FINANCIAL_ACCOUNT" name="GL_JOURNALLINE_FINACC" onDelete="setnull">
+      <foreign-key foreignTable="FIN_FINANCIAL_ACCOUNT" name="GL_JOURNALLINE_FINACC">
         <reference local="FIN_FINANCIAL_ACCOUNT_ID" foreign="FIN_FINANCIAL_ACCOUNT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="GL_JOURNAL" name="GL_JOURNALLINE_GL_JOURNAL">
@@ -225,7 +225,7 @@
       <foreign-key foreignTable="FIN_PAYMENT" name="GL_JOURNALLINE_PAYMENT" onDelete="setnull">
         <reference local="FIN_PAYMENT_ID" foreign="FIN_PAYMENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="FIN_PAYMENTMETHOD" name="GL_JOURNALLINE_PAYMETHOD" onDelete="setnull">
+      <foreign-key foreignTable="FIN_PAYMENTMETHOD" name="GL_JOURNALLINE_PAYMETHOD">
         <reference local="FIN_PAYMENTMETHOD_ID" foreign="FIN_PAYMENTMETHOD_ID"/>
       </foreign-key>
       <foreign-key foreignTable="USER1" name="GL_JOURNALLINE_USER1">

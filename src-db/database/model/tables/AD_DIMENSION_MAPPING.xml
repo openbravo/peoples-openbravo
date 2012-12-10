@@ -69,6 +69,7 @@
       <foreign-key foreignTable="AD_MODULE" name="AD_DIMENSION_MAPPING_MODULE">
         <reference local="AD_MODULE_ID" foreign="AD_MODULE_ID"/>
       </foreign-key>
+      <check name="AD_DIM_MAP_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <unique name="AD_DIMENSION_MAPPING_UNIQUE">
         <unique-column name="DIMENSION"/>
         <unique-column name="DOCBASETYPE"/>
