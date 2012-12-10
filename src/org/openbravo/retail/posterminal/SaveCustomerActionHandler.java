@@ -21,8 +21,8 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.service.db.DalConnectionProvider;
 
-public class SaveOrderActionHandler extends BaseActionHandler {
-  private static final Logger log = Logger.getLogger(SaveOrderActionHandler.class);
+public class SaveCustomerActionHandler extends BaseActionHandler {
+  private static final Logger log = Logger.getLogger(SaveCustomerActionHandler.class);
 
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String content) {
@@ -39,10 +39,10 @@ public class SaveOrderActionHandler extends BaseActionHandler {
       try {
         errorId = errorIds.getString(i);
         OBPOSErrors error = OBDal.getInstance().get(OBPOSErrors.class, errorId);
-        JSONObject jsonorder = new JSONObject(error.getJsoninfo());
-        posTerminalId = jsonorder.getString("posTerminal");
-        OrderLoader loader = new OrderLoader();
-        loader.saveOrder(jsonorder);
+        JSONObject jsonCustomer = new JSONObject(error.getJsoninfo());
+        posTerminalId = jsonCustomer.getString("posTerminal");
+        CustomerLoader loader = new CustomerLoader();
+        loader.saveCustomer(jsonCustomer);
         error.setOrderstatus("Y");
         OBDal.getInstance().flush();
         OBDal.getInstance().commitAndClose();
@@ -55,7 +55,7 @@ public class SaveOrderActionHandler extends BaseActionHandler {
         }
         OBPOSErrors error = OBDal.getInstance().get(OBPOSErrors.class, errorId);
         error.setError(OrderLoader.getErrorMessage(e1));
-        error.setTypeofdata("order");
+        error.setTypeofdata("customer");
         error.setObposApplications(OBDal.getInstance().get(OBPOSApplications.class, posTerminalId));
         OBDal.getInstance().flush();
         OBDal.getInstance().commitAndClose();
@@ -66,7 +66,8 @@ public class SaveOrderActionHandler extends BaseActionHandler {
       JSONObject result = new JSONObject();
       try {
         result.put("message", Utility.messageBD(new DalConnectionProvider(false),
-            "OBPOS_ErrorWhileSaving", RequestContext.get().getVariablesSecureApp().getLanguage()));
+            "OBPOS_ErrorWhileSavingCustomer", RequestContext.get().getVariablesSecureApp()
+                .getLanguage()));
       } catch (JSONException e) {
         // won't happen
       }
@@ -75,7 +76,7 @@ public class SaveOrderActionHandler extends BaseActionHandler {
       JSONObject result = new JSONObject();
       try {
         result.put("message", Utility.messageBD(new DalConnectionProvider(false),
-            "OBPOS_OrderSavedSuccesfully", RequestContext.get().getVariablesSecureApp()
+            "OBPOS_CustomerSavedSuccesfully", RequestContext.get().getVariablesSecureApp()
                 .getLanguage()));
       } catch (JSONException e) {
         // won't happen

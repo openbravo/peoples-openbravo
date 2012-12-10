@@ -132,6 +132,7 @@ public class OrderLoader extends JSONProcessSimple {
       for (int i = 0; i < jsonarray.length(); i++) {
         long t1 = System.currentTimeMillis();
         JSONObject jsonorder = jsonarray.getJSONObject(i);
+        String posTerminalId = jsonorder.getString("posTerminal");
         try {
           JSONObject result = saveOrder(jsonorder);
           if (!result.get(JsonConstants.RESPONSE_STATUS).equals(
@@ -156,6 +157,9 @@ public class OrderLoader extends JSONProcessSimple {
           errorEntry.setError(getErrorMessage(e));
           errorEntry.setOrderstatus("N");
           errorEntry.setJsoninfo(jsonorder.toString());
+          errorEntry.setTypeofdata("order");
+          errorEntry.setObposApplications(OBDal.getInstance().get(OBPOSApplications.class,
+              posTerminalId));
           OBDal.getInstance().save(errorEntry);
           OBDal.getInstance().flush();
 

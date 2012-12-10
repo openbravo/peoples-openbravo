@@ -15,20 +15,38 @@
 
   OB.OBPOS.Errors.saveOrder = function (params, view) {
     var selectedRecords = view.view.viewGrid.getSelectedRecords();
-    var i, requestParams;
-    var ids = [];
+    var i, requestOrderParams, requestBPParams;
+    var orderIds = [];
+    var customerIds = [];
     for (i = 0; i < selectedRecords.length; i++) {
-      ids.push(selectedRecords[i].id);
+      if (selectedRecords[i].typeofdata) {
+        if (selectedRecords[i].id && selectedRecords[i].typeofdata === 'BP') {
+          customerIds.push(selectedRecords[i].id);
+        } else if (selectedRecords[i].id && selectedRecords[i].typeofdata === 'order') {
+          orderIds.push(selectedRecords[i].id);
+        }
+      } else {
+        orderIds.push(selectedRecords[i].id);
+      }
     }
     var callback = function (response, data, request) {
         isc.say(data.message);
         params.button.closeProcessPopup();
         };
 
-    requestParams = {
-      recordIds: ids
-    };
-    OB.RemoteCallManager.call('org.openbravo.retail.posterminal.SaveOrderActionHandler', ids, requestParams, callback);
+    if (orderIds.length > 0) {
+      requestOrderParams = {
+        recordIds: orderIds
+      };
+      OB.RemoteCallManager.call('org.openbravo.retail.posterminal.SaveOrderActionHandler', orderIds, requestOrderParams, callback);
+    }
+
+    if (customerIds.length > 0) {
+      requestBPParams = {
+        recordIds: customerIds
+      };
+      OB.RemoteCallManager.call('org.openbravo.retail.posterminal.SaveCustomerActionHandler', customerIds, requestBPParams, callback);
+    }
   };
   OB.OBPOS.Errors.clearError = function (params, view) {
     var selectedRecords = view.view.viewGrid.getSelectedRecords();
