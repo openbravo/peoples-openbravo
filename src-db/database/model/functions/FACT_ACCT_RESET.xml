@@ -252,9 +252,7 @@
                     (SELECT 1
                     FROM C_YEAR, C_PERIOD, C_PERIODCONTROL, AD_Org, (SELECT fa.DATEACCT, fa.DOCBASETYPE, fa.ad_client_id, fa.record_id
 									FROM FACT_ACCT fa 
-									WHERE fa.ad_table_id = Cur_Tables.AD_Table_ID
-									AND (v_Record_ID IS NULL OR fa.record_id = v_Record_ID)
-									) fa_aux
+									WHERE fa.ad_table_id = Cur_Tables.AD_Table_ID) fa_aux
                     WHERE C_YEAR.c_year_id=C_PERIOD.c_year_id
                       AND C_PERIOD.c_period_id=C_PERIODCONTROL.c_period_id
                       AND C_YEAR.c_calendar_id=AD_Org.c_calendar_id
@@ -265,7 +263,7 @@
                       		OR (fa_aux.DOCBASETYPE = 'GLJ' AND C_PERIOD.C_PERIOD_ID = FACT_ACCT.C_PERIOD_ID))
                       AND C_PeriodControl.AD_Org_ID=AD_Org.AD_Org_ID
                       AND C_PeriodControl.AD_Org_ID=v_AD_Org_CalOwner
-                     AND (v_Record_ID IS NULL OR fa_aux.record_id = FACT_ACCT.RECORD_ID)
+                      AND fa_aux.record_id = FACT_ACCT.RECORD_ID
                     )
                 AND Record_ID=(
                       CASE COALESCE(v_Record_ID, '0') WHEN '0' THEN Record_ID ELSE v_Record_ID
