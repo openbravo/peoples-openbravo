@@ -243,7 +243,7 @@
           return true;
         }
       });
-      if (result === true) {
+      if (result) {
         return true;
       } else {
         return false;
