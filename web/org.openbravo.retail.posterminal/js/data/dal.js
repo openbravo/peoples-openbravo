@@ -266,7 +266,8 @@
           _.each(modelProto.propertiesFilter, function (prop) {
             filterVal = filterVal + model.get(prop) + '###';
           });
-          params.push(filterVal);
+          //Include in the last position but before _idx
+          params.splice(params.length - 1, 0, filterVal);
         }
 
         //console.log(params.length);
