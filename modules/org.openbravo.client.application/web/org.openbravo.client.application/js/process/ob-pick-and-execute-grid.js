@@ -100,6 +100,7 @@ isc.OBPickAndExecuteGrid.addProperties({
 
     // required to show the funnel icon and to work
     this.filterClause = this.gridProperties.filterClause;
+    // FIXME
     if (this.filterClause && this.gridProperties.filterName) {
       this.view.messageBar.setMessage(isc.OBMessageBar.TYPE_INFO, '<div><div class="' + OB.Styles.MessageBar.leftMsgContainerStyle + '">' + this.gridProperties.filterName + '<br/>' + OB.I18N.getLabel('OBUIAPP_ClearFilters') + '</div></div>', ' ');
       this.view.messageBar.hasFilterMessage = true;
@@ -118,6 +119,7 @@ isc.OBPickAndExecuteGrid.addProperties({
 
     OB.TestRegistry.register('org.openbravo.client.application.process.pickandexecute.Grid', this);
 
+    // FIXME:---
     this.editFormProperties = {
       view: this.view.parentWindow.activeView
     };
@@ -290,6 +292,7 @@ isc.OBPickAndExecuteGrid.addProperties({
   },
 
   getOrgParameter: function () {
+	  // FIXME
     var view = this.view.parentWindow.activeView,
         context, i;
 
@@ -316,10 +319,11 @@ isc.OBPickAndExecuteGrid.addProperties({
 
   getFetchRequestParams: function (params) {
     var props = this.gridProperties || {},
+    // FIXME
         view = this.view.parentWindow.activeView;
 
     params = params || {};
-
+// FIXME
     isc.addProperties(params, view.getContextInfo(true, false));
 
     params[OB.Constants.ORG_PARAMETER] = this.getOrgParameter();

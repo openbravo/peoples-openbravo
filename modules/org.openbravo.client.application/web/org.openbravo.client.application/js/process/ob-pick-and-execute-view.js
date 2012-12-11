@@ -44,41 +44,7 @@ isc.OBPickAndExecuteView.addProperties({
   gridFields: [],
 
   initWidget: function () {
-
-    var view = this,
-        okButton, newButton, cancelButton, i, buttonLayout = [];
-
-    function actionClick() {
-      view.messageBar.hide();
-      if (view.validate()) {
-        view.doProcess(this._buttonValue);
-      } else {
-        // If the messageBar is visible, it means that it has been set due to a custom validation inside view.validate()
-        // so we don't want to overwrite it with the generic OBUIAPP_ErrorInFields message
-        if (!view.messageBar.isVisible()) {
-          view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_ErrorInFields'));
-        }
-      }
-    }
-
-    this.messageBar = isc.OBMessageBar.create({
-      visibility: 'hidden',
-      view: this
-    });
-
-    okButton = isc.OBFormButton.create({
-      title: OB.I18N.getLabel('OBUIAPP_Done'),
-      _buttonValue: 'DONE',
-      click: actionClick
-    });
-    this.firstFocusedItem = okButton;
-
-    cancelButton = isc.OBFormButton.create({
-      title: OB.I18N.getLabel('OBUISC_Dialog.CANCEL_BUTTON_TITLE'),
-      click: function () {
-        view.closeClick();
-      }
-    });
+    var newButton, i, view = this.view;
 
     this.prepareGridFields(this.viewProperties.fields);
 
@@ -98,7 +64,7 @@ isc.OBPickAndExecuteView.addProperties({
     this.dataSource.potentiallyShared = true;
 
     this.viewGrid = isc.OBPickAndExecuteGrid.create({
-      view: this,
+      view: this.view,
       fields: this.gridFields,
       height: '*',
       cellHeight: OB.Styles.Process.PickAndExecute.gridCellHeight,
@@ -112,39 +78,6 @@ isc.OBPickAndExecuteView.addProperties({
       neverValidate: (this.viewProperties.allowDelete || this.viewProperties.allowAdd ? true : false),
       showGridSummary: this.showGridSummary
     });
-
-    buttonLayout.push(isc.LayoutSpacer.create({}));
-
-    if (this.buttons && !isc.isA.emptyObject(this.buttons)) {
-      for (i in this.buttons) {
-        if (this.buttons.hasOwnProperty(i)) {
-
-          newButton = isc.OBFormButton.create({
-            title: this.buttons[i],
-            _buttonValue: i,
-            click: actionClick
-          });
-          buttonLayout.push(newButton);
-          OB.TestRegistry.register('org.openbravo.client.application.process.pickandexecute.button.' + i, newButton);
-
-
-          // pushing a spacer
-          buttonLayout.push(isc.LayoutSpacer.create({
-            width: 32
-          }));
-        }
-      }
-    } else {
-      buttonLayout.push(okButton);
-      OB.TestRegistry.register('org.openbravo.client.application.process.pickandexecute.button.ok', okButton);
-      buttonLayout.push(isc.LayoutSpacer.create({
-        width: 32
-      }));
-    }
-
-    buttonLayout.push(cancelButton);
-    buttonLayout.push(isc.LayoutSpacer.create({}));
-    OB.TestRegistry.register('org.openbravo.client.application.process.pickandexecute.button.cancel', cancelButton);
 
 
     if (this.viewProperties.allowAdd) {
@@ -162,25 +95,13 @@ isc.OBPickAndExecuteView.addProperties({
     }
     OB.TestRegistry.register('org.openbravo.client.application.process.pickandexecute.button.addnew', this.addNewButton);
 
-    this.members = [this.messageBar, this.viewGrid, isc.HLayout.create({
+    this.members = [ this.viewGrid, isc.HLayout.create({
       height: 1,
       overflow: 'visible',
       align: OB.Styles.Process.PickAndExecute.addNewButtonAlign,
       width: '100%',
       visibility: (this.addNewButton ? 'visible' : 'hidden'),
       members: (this.addNewButton ? [this.addNewButton] : [])
-    }), isc.HLayout.create({
-      align: 'center',
-      width: '100%',
-      height: OB.Styles.Process.PickAndExecute.buttonLayoutHeight,
-      members: [isc.HLayout.create({
-        width: 1,
-        overflow: 'visible',
-        styleName: this.buttonBarStyleName,
-        height: this.buttonBarHeight,
-        defaultLayoutAlign: 'center',
-        members: buttonLayout
-      })]
     })];
 
     this.Super('initWidget', arguments);
@@ -193,29 +114,6 @@ isc.OBPickAndExecuteView.addProperties({
     } else {
       this.viewGrid.fetchData();
     }
-  },
-
-  closeClick: function (refresh, message, responseActions) {
-    var window = this.parentWindow;
-
-    if (message) {
-      this.buttonOwnerView.messageBar.setMessage(message.severity, message.text);
-    }
-
-    if (responseActions) {
-      OB.Utilities.Action.executeJSON(responseActions);
-    }
-
-    this.buttonOwnerView.setAsActiveView();
-
-    if (refresh) {
-      window.refresh();
-    }
-
-    this.closeClick = function () {
-      return true;
-    }; // To avoid loop when "Super call"
-    this.parentElement.parentElement.closeClick(); // Super call
   },
 
   prepareGridFields: function (fields) {
@@ -311,46 +209,5 @@ isc.OBPickAndExecuteView.addProperties({
   },
 
   // dummy required by OBStandardView.prepareGridFields
-  setFieldFormProperties: function () {},
-
-  validate: function () {
-    var viewGrid = this.viewGrid;
-
-    viewGrid.endEditing();
-    return !viewGrid.hasErrors();
-  },
-
-  doProcess: function (btnValue) {
-    var i, tmp, view = this,
-        grid = view.viewGrid,
-        activeView = view.parentWindow && view.parentWindow.activeView,
-        allProperties = this.sourceView.getContextInfo(false, true, false, true) || {},
-        selection = grid.getSelectedRecords() || [],
-        len = selection.length,
-        allRows = grid.data.allRows || grid.data;
-
-    allProperties._selection = [];
-    allProperties._allRows = [];
-    allProperties._buttonValue = btnValue || 'DONE';
-
-    for (i = 0; i < len; i++) {
-      tmp = isc.addProperties({}, selection[i], grid.getEditedRecord(selection[i]));
-      allProperties._selection.push(tmp);
-    }
-
-
-    len = (allRows && allRows.length) || 0;
-
-    for (i = 0; i < len; i++) {
-      tmp = isc.addProperties({}, allRows[i], grid.getEditedRecord(allRows[i]));
-      allProperties._allRows.push(tmp);
-    }
-
-    OB.RemoteCallManager.call(this.actionHandler, allProperties, {
-      processId: this.processId,
-      windowId: this.windowId
-    }, function (rpcResponse, data, rpcRequest) {
-      view.closeClick(true, (data && data.message));
-    });
-  }
+  setFieldFormProperties: function () {}
 });
