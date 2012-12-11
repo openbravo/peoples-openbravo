@@ -335,8 +335,16 @@ isc.OBViewGrid.addProperties({
 
       getCellValue: function (record, recordNum, fieldNum, gridBody) {
         var field = this.getField(fieldNum),
-            func = this.getGridSummaryFunction(field),
+            gridField, func = this.parentElement.getGridSummaryFunction(field),
             value = record && field ? (field.displayField ? record[field.displayField] : record[field.name]) : null;
+
+        // get the summary function from the main grid
+        if (!func) {
+          delete field.summaryFunction;
+        } else {
+          field.summaryFunction = func;
+        }
+
         // handle count much simpler than smartclient does
         // so no extra titles or formatting
         if (record && func === 'count' && value >= 0) {
@@ -573,7 +581,7 @@ isc.OBViewGrid.addProperties({
     } else if (this.showGridSummary) {
       noSummaryFunction = true;
       for (i = 0; i < this.getFields().length; i++) {
-        if (this.summaryFunction) {
+        if (this.getFields()[i].summaryFunction) {
           noSummaryFunction = false;
           break;
         }
