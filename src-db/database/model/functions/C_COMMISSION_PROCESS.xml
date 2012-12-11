@@ -271,11 +271,19 @@
             || 'FROM C_Invoice h JOIN C_InvoiceLine l ON h.C_Invoice_ID = l.C_Invoice_ID'
             || '    JOIN c_doctype dt ON h.c_doctype_id = dt.c_doctype_id ';
           END IF;
+          IF (v_BasisStatus='F') THEN
+            v_Cmd:= v_Cmd || ' left join fin_payment_sched_inv_v psv ON psv.C_Invoice_ID = h.C_Invoice_ID ';
+          END IF;
           v_Cmd := v_Cmd || ' WHERE h.DocStatus IN (''CL'',''CO'')'
           || ' AND h.ISSOTRX = ''Y'''
-          || ' AND h.AD_Client_ID = '':1'''
-          || ' AND h.DateInvoiced >= to_date('':2'')'
-          || ' AND h.DateInvoiced < to_date('':3'') +1';
+          || ' AND h.AD_Client_ID = '':1''';
+          IF (v_BasisStatus='F') THEN
+            v_Cmd:= v_Cmd || ' AND psv.LastPayment >= to_date('':2'')'
+            || ' AND psv.LastPayment < to_date('':3'') +1';
+          ELSE
+            v_Cmd:= v_Cmd || ' AND h.DateInvoiced >= to_date('':2'')'
+            || ' AND h.DateInvoiced < to_date('':3'') +1';
+          END IF;
         -- Order Basis
         ELSE
           IF(v_ListDetails='Y') THEN
