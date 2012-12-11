@@ -18,7 +18,6 @@
     var i, requestOrderParams, requestBPParams;
     var orderIds = [];
     var customerIds = [];
-    var curCallbacks = 0;
     for (i = 0; i < selectedRecords.length; i++) {
       if (selectedRecords[i].typeofdata) {
         if (selectedRecords[i].id && selectedRecords[i].typeofdata === 'BP') {
@@ -30,10 +29,20 @@
         orderIds.push(selectedRecords[i].id);
       }
     }
-    var callback = function (response, data, request) {
+
+    var callbackOrders = function (response, data, request) {
         isc.say(data.message);
-        curCallbacks -= 1;
-        if (curCallbacks === 0) {
+        params.button.closeProcessPopup();
+        };
+
+    var callbackBP = function (response, data, request) {
+        isc.say(data.message);
+        if (orderIds.length > 0) {
+          requestOrderParams = {
+            recordIds: orderIds
+          };
+          OB.RemoteCallManager.call('org.openbravo.retail.posterminal.SaveOrderActionHandler', orderIds, requestOrderParams, callbackOrders);
+        } else {
           params.button.closeProcessPopup();
         }
         };
@@ -42,16 +51,13 @@
       requestBPParams = {
         recordIds: customerIds
       };
-      curCallbacks += 1;
-      OB.RemoteCallManager.call('org.openbravo.retail.posterminal.SaveCustomerActionHandler', customerIds, requestBPParams, callback);
-    }
-
-    if (orderIds.length > 0) {
+      //callback will process orders
+      OB.RemoteCallManager.call('org.openbravo.retail.posterminal.SaveCustomerActionHandler', customerIds, requestBPParams, callbackBP);
+    } else if (orderIds.length > 0) {
       requestOrderParams = {
         recordIds: orderIds
       };
-      curCallbacks += 1;
-      OB.RemoteCallManager.call('org.openbravo.retail.posterminal.SaveOrderActionHandler', orderIds, requestOrderParams, callback);
+      OB.RemoteCallManager.call('org.openbravo.retail.posterminal.SaveOrderActionHandler', orderIds, requestOrderParams, callbackOrders);
     }
   };
   OB.OBPOS.Errors.clearError = function (params, view) {
