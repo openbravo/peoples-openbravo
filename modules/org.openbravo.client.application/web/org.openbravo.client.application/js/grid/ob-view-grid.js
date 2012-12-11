@@ -369,7 +369,7 @@ isc.OBViewGrid.addProperties({
     this.editFormDefaults = isc.addProperties({}, isc.clone(OB.ViewFormProperties), this.editFormDefaults);
 
     // added for showing counts in the filtereditor row
-    this.checkboxFieldDefaults = isc.addProperties(this.checkboxFieldDefaults, {
+    this.checkboxFieldProperties = isc.addProperties(this.checkboxFieldProperties | {}, {
       canFilter: true,
       // frozen is much nicer, but check out this forum discussion:
       // http://forums.smartclient.com/showthread.php?p=57581
