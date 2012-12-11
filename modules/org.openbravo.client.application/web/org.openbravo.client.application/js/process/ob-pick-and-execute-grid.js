@@ -107,7 +107,7 @@ isc.OBPickAndExecuteGrid.addProperties({
 
     this.orderByClause = this.gridProperties.orderByClause;
 
-    this.checkboxFieldProperties = isc.addProperties(this.checkboxFieldProperties | {}, {
+    this.checkboxFieldProperties = isc.addProperties({}, this.checkboxFieldProperties | {}, {
       canFilter: true,
       frozen: true,
       canFreeze: true,
