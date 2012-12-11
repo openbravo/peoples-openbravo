@@ -106,7 +106,7 @@ enyo.kind({
           content: OB.I18N.getLabel('OBPOS_LblEdit'),
           setCustomer: function (inSender, inEvent) {
             this.customer = inEvent.customer;
-            if (!OB.UTIL.isWritableOrganization(this.customer.get('bporg'))) {
+            if (!OB.UTIL.isWritableOrganization(this.customer.get('organization'))) {
               this.disabled = true;
               this.setAttribute("disabled", "disabled");
             } else {

@@ -17,11 +17,11 @@
     entityName: 'BusinessPartner',
     source: 'org.openbravo.retail.posterminal.master.BusinessPartner',
     dataLimit: 300,
-    properties: ['id', 'bporg', 'searchKey', 'name', 'description', 'taxID', 'taxCategory', 'paymentMethod', 'paymentTerms', 'priceList', 'invoiceTerms', 'locId', 'locName', 'postalCode', 'cityName', 'contactId', 'phone', 'email', 'businessPartnerCategory', 'creditLimit', 'creditUsed', '_identifier', '_idx'],
+    properties: ['id', 'organization', 'searchKey', 'name', 'description', 'taxID', 'taxCategory', 'paymentMethod', 'paymentTerms', 'priceList', 'invoiceTerms', 'locId', 'locName', 'postalCode', 'cityName', 'contactId', 'phone', 'email', 'businessPartnerCategory', 'creditLimit', 'creditUsed', '_identifier', '_idx'],
     propertiesFilter: ['_identifier', 'taxID', 'email', 'phone'],
     propertyMap: {
       'id': 'c_bpartner_id',
-      'bporg': 'ad_org_id',
+      'organization': 'ad_org_id',
       'searchKey': 'value',
       'name': 'name',
       'description': 'description',

@@ -23,7 +23,7 @@ public class BusinessPartner extends ProcessHQLQuery {
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
     Organization org = POSUtils.getOrganization(jsonsent.getString("organization"));
     return Arrays
-        .asList(new String[] { "SELECT bpl.businessPartner.id as id, bpl.businessPartner.organization.id as bporg, bpl.businessPartner.name as name, bpl.businessPartner.name as _identifier, "
+        .asList(new String[] { "SELECT bpl.businessPartner.id as id, bpl.businessPartner.organization.id as organization, bpl.businessPartner.name as name, bpl.businessPartner.name as _identifier, "
             + "bpl.businessPartner.searchKey as searchKey, bpl.businessPartner.description as description, bpl.businessPartner.taxID as taxID, "
             + "bpl.businessPartner.sOBPTaxCategory.id as taxCategory, bpl.businessPartner.priceList.id as priceList, "
             + "bpl.businessPartner.paymentMethod.id as paymentMethod, bpl.businessPartner.paymentTerms.id as paymentTerms, "
