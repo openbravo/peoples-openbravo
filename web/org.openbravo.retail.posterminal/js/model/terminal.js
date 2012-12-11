@@ -567,7 +567,7 @@ OB.Model.Terminal = Backbone.Model.extend({
       this.set('pricelist', termInfo.pricelist);
       this.set('pricelistversion', termInfo.pricelistversion);
       this.set('warehouses', termInfo.warehouses);
-      this.set('writableOrganizations', termInfo.writableOrganizations)
+      this.set('writableOrganizations', termInfo.writableOrganizations);
       this.set('currency', termInfo.currency);
       this.set('currencyPrecision', termInfo.currencyPrecision);
       this.set('orgUserId', termInfo.orgUserId);

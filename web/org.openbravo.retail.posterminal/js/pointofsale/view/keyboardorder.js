@@ -144,7 +144,7 @@ enyo.kind({
 
     this.addCommand('line:qty', {
       action: function (keyboard, txt) {
-        var value = OB.I18N.parseNumber(txt)
+        var value = OB.I18N.parseNumber(txt);
         if (value || value === 0) {
           value = value - keyboard.line.get('qty');
           if (value > 0) {
