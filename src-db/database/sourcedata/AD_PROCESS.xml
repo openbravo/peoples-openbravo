@@ -2281,7 +2281,7 @@ NOTE: You will not be able to close the fiscal year if you close all its periods
 <!--800023-->  <VALUE><![CDATA[ReportTaxInvoiceJR]]></VALUE>
 <!--800023-->  <NAME><![CDATA[Invoice Taxes Report]]></NAME>
 <!--800023-->  <DESCRIPTION><![CDATA[Report Tax Invoice]]></DESCRIPTION>
-<!--800023-->  <HELP><![CDATA[Report Tax Invoice]]></HELP>
+<!--800023-->  <HELP><![CDATA[The invoice taxes report provides invoice tax related information per each tax rate.]]></HELP>
 <!--800023-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--800023-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--800023-->  <ISREPORT><![CDATA[Y]]></ISREPORT>

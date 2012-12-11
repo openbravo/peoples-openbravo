@@ -20,7 +20,7 @@
 <!--FE9623C32FE749DD803ED7C64CCD7405-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--FE9623C32FE749DD803ED7C64CCD7405-->  <NAME><![CDATA[Payment Execution]]></NAME>
 <!--FE9623C32FE749DD803ED7C64CCD7405-->  <DESCRIPTION><![CDATA[This window allows payment execution management for payments in status "awaiting execution".]]></DESCRIPTION>
-<!--FE9623C32FE749DD803ED7C64CCD7405-->  <HELP><![CDATA[Using this form users can manage deferred payment executions as well as payments that failed during execution (paper jam, any problem occurred due to connection). Some filtering options are provided (payment method, financial account, payment proposal, executed flag) and a grid is displayed with the payments to be executed. Once the set of payments is selected and execute button is pressed, system will prompt user for input parameters.]]></HELP>
+<!--FE9623C32FE749DD803ED7C64CCD7405-->  <HELP><![CDATA[Payment Execution form allows to massively execute deferred payments in an "Awaiting Execution" status.]]></HELP>
 <!--FE9623C32FE749DD803ED7C64CCD7405-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--FE9623C32FE749DD803ED7C64CCD7405-->  <CLASSNAME><![CDATA[org.openbravo.advpaymentmngt.ad_forms.BatchPaymentExecution]]></CLASSNAME>
 <!--FE9623C32FE749DD803ED7C64CCD7405-->  <AD_MODULE_ID><![CDATA[A918E3331C404B889D69AA9BFAFB23AC]]></AD_MODULE_ID>
