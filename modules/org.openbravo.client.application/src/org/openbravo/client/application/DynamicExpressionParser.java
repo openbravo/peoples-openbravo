@@ -150,7 +150,6 @@ public class DynamicExpressionParser {
       }
       String parsedDisplay = DimensionDisplayUtility.computeAccountingDimensionDisplayLogic(
           this.tab, this.field);
-      parsedDisplay = "(" + parsedDisplay + ")";
       jsCode = new StringBuffer(jsCode.toString().replace(DimensionDisplayUtility.DIM_DISPLAYLOGIC,
           parsedDisplay));
     }
