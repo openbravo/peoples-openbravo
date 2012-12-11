@@ -78,7 +78,7 @@ public class CustomerLoader extends JSONProcessSimple {
         } catch (Exception e) {
           // Creation of the customer failed. We will now store the customer in the import errors
           // table
-          e.printStackTrace();
+          log.error("An error happened when processing a customer: ", e);
           OBDal.getInstance().rollbackAndClose();
 
           OBPOSErrors errorEntry = OBProvider.getInstance().get(OBPOSErrors.class);
@@ -105,31 +105,11 @@ public class CustomerLoader extends JSONProcessSimple {
     JSONObject jsonResponse = new JSONObject();
     if (error) {
       jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_FAILURE);
-      // final JSONObject jsonError = new JSONObject();
-      // jsonError.put("message", errorException.getMessage());
-      // jsonError.put("type", errorException.getClass().getName());
-      // jsonResponse.put(JsonConstants.RESPONSE_ERROR, jsonError);
       jsonResponse.put("result", "0");
     } else {
       jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
       jsonResponse.put("result", "0");
     }
-
-    // OBDal.getInstance().getConnection().commit();
-    // OBDal.getInstance().getSession().clear();
-    // } catch (Exception e) {
-    // OBDal.getInstance().rollbackAndClose();
-    // error = true;
-    // errorException = e;
-    // } finally {
-    // OBContext.restorePreviousMode();
-    // }
-    // JSONObject jsonResponse = new JSONObject();
-    // if (error) {
-    //
-    // } else {
-    //
-    // }
     return jsonResponse;
   }
 

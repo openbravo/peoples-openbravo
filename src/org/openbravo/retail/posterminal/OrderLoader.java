@@ -147,7 +147,7 @@ public class OrderLoader extends JSONProcessSimple {
           }
           log.info("Total order time: " + (System.currentTimeMillis() - t1));
         } catch (Exception e) {
-          e.printStackTrace();
+          log.error("An error happened when processing an order: ", e);
           // Creation of the order failed. We will now store the order in the import errors table
           OBDal.getInstance().rollbackAndClose();
           if (TriggerHandler.getInstance().isDisabled()) {
