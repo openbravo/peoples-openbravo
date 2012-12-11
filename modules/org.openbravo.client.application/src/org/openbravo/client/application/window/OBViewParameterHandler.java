@@ -83,6 +83,22 @@ public class OBViewParameterHandler {
       // tabComponent.setUniqueString(uniqueString); //XXX: ???
       return tabComponent.generate();
     }
+
+    public String getParameterProperties() {
+      String jsonString = uiDefinition.getParameterProperties(parameter).trim();
+      if (jsonString == null || jsonString.trim().length() == 0) {
+        return "";
+      }
+      // strip the first and last { }
+      if (jsonString.startsWith("{") && jsonString.endsWith("}")) {
+        // note -2 is done because the first substring takes of 1 already
+        return jsonString.substring(1).substring(0, jsonString.length() - 2) + ",";
+      } else if (jsonString.equals("{}")) {
+        return "";
+      }
+      // be lenient just return the string as it is...
+      return jsonString + (jsonString.trim().endsWith(",") ? "" : ",");
+    }
   }
 
   public void setParamWindow(ParameterWindowComponent parameterWindowComponent) {

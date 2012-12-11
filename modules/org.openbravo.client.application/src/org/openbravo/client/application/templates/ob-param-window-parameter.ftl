@@ -26,5 +26,6 @@
     title: '${param.title?js_string}',
     name: '${param.name?js_string}',
     width: '*'
+    ${param.parameterProperties}
 }
 </#macro>

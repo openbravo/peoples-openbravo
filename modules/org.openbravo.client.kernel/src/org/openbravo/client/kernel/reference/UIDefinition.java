@@ -40,6 +40,7 @@ import org.openbravo.base.model.domaintype.DomainType;
 import org.openbravo.base.model.domaintype.PrimitiveDomainType;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.weld.WeldUtils;
+import org.openbravo.client.application.Parameter;
 import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.client.kernel.RequestContext;
@@ -368,6 +369,10 @@ public abstract class UIDefinition {
     return "";
   }
 
+  public String getParameterProperties(Parameter parameter) {
+    return "";
+  }
+
   /**
    * Computes properties to initialize and set the field in a Smartclient grid cell when it is being
    * edited. This can be the default value or the sets of values in the valuemap.
@@ -617,4 +622,5 @@ public abstract class UIDefinition {
   protected boolean getSafeBoolean(Boolean value) {
     return value != null && value;
   }
+
 }
