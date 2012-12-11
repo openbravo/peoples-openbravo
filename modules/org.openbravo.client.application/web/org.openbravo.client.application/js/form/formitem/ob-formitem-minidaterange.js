@@ -104,8 +104,8 @@ isc.RelativeDateItem.addProperties({
 
   blur: function () {
     var blurValue = this.blurValue(),
-        newBlurValue = '', jsValue,
-        digitRegExp = new RegExp('^\\d+$', 'gm'),
+        newBlurValue = '',
+        jsValue, digitRegExp = new RegExp('^\\d+$', 'gm'),
         newValue, i;
 
     if (!this.areDateItemPropertiesSet) {
@@ -241,7 +241,7 @@ isc.OBDateRangeDialog.addProperties({
 // MiniDateRangeItem to make it editable.
 isc.ClassFactory.defineClass('OBMiniDateRangeItem', isc.OBTextItem);
 
-isc.OBMiniDateRangeItem.addProperties(OB.DateItemProperties, {
+isc.OBMiniDateRangeItem.addProperties({}, OB.DateItemProperties, {
   validateOnExit: false,
   showPickerIcon: false,
   filterOnKeypress: false,
