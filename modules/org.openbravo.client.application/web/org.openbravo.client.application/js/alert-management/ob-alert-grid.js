@@ -105,7 +105,7 @@ isc.OBAlertGrid.addProperties({
 
   initWidget: function () {
     // added for showing counts in the filtereditor row
-    this.checkboxFieldDefaults = isc.addProperties(this.checkboxFieldDefaults, {
+    this.checkboxFieldProperties = isc.addProperties(this.checkboxFieldProperties || {}, {
       canFilter: true,
       //frozen: true, /* Removed due to issue https://issues.openbravo.com/view.php?id=17611 */
       canFreeze: true,
