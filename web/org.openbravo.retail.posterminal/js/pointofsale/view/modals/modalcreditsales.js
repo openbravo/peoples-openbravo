@@ -51,7 +51,7 @@ enyo.kind({
       var bp = this.model.get('order').get('bp');
       var bpCreditUsed = this.model.get('order').get('bp').get('creditUsed');
       var totalPending = this.model.get('order').getPending();
-      bp.set('creditUsed', bpCreditUsed - totalPending);
+      bp.set('creditUsed', bpCreditUsed + totalPending);
       OB.Dal.save(bp, null, error);
     }
   }

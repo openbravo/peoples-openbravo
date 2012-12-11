@@ -32,7 +32,7 @@ public class CheckBusinessPartnerCredit extends JSONProcessSimple {
         businessPartnerId);
     BigDecimal creditLimit = businessPartner.getCreditLimit();
     BigDecimal creditUsed = businessPartner.getCreditUsed();
-    BigDecimal actualCredit = creditLimit.add(creditUsed);
+    BigDecimal actualCredit = creditLimit.subtract(creditUsed);
 
     boolean enoughCredit = false;
 

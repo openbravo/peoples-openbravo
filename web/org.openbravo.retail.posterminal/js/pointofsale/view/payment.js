@@ -344,7 +344,7 @@ enyo.kind({
       var creditLimit = this.model.get('order').get('bp').get('creditLimit');
       var creditUsed = this.model.get('order').get('bp').get('creditUsed');
       var totalPending = this.model.get('order').getPending();
-      if ((creditLimit + creditUsed) >= totalPending) {
+      if ((creditLimit - creditUsed) >= totalPending) {
         this.doShowPopup({
           popup: 'modalEnoughCredit',
           args: {
@@ -352,7 +352,7 @@ enyo.kind({
           }
         });
       } else {
-        actualCredit = creditLimit + creditUsed;
+        actualCredit = creditLimit - creditUsed;
         this.doShowPopup({
           popup: 'modalNotEnoughCredit',
           args: {
