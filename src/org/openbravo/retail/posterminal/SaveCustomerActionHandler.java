@@ -16,6 +16,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.client.kernel.RequestContext;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.TriggerHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.Utility;
@@ -35,32 +36,38 @@ public class SaveCustomerActionHandler extends BaseActionHandler {
     } catch (Exception e) {// won't' happen
     }
     boolean errorb = false;
-    for (int i = 0; i < errorIds.length(); i++) {
-      try {
-        errorId = errorIds.getString(i);
-        OBPOSErrors error = OBDal.getInstance().get(OBPOSErrors.class, errorId);
-        JSONObject jsonCustomer = new JSONObject(error.getJsoninfo());
-        posTerminalId = jsonCustomer.getString("posTerminal");
-        CustomerLoader loader = new CustomerLoader();
-        loader.saveCustomer(jsonCustomer);
-        error.setOrderstatus("Y");
-        OBDal.getInstance().flush();
-        OBDal.getInstance().commitAndClose();
+    try {
+      OBContext.setAdminMode(true);
+      for (int i = 0; i < errorIds.length(); i++) {
+        try {
+          errorId = errorIds.getString(i);
+          OBPOSErrors error = OBDal.getInstance().get(OBPOSErrors.class, errorId);
+          JSONObject jsonCustomer = new JSONObject(error.getJsoninfo());
+          posTerminalId = jsonCustomer.getString("posTerminal");
+          CustomerLoader loader = new CustomerLoader();
+          loader.saveCustomer(jsonCustomer);
+          error.setOrderstatus("Y");
+          OBDal.getInstance().flush();
+          OBDal.getInstance().commitAndClose();
 
-      } catch (Exception e1) {
-        errorb = true;
-        OBDal.getInstance().rollbackAndClose();
-        if (TriggerHandler.getInstance().isDisabled()) {
-          TriggerHandler.getInstance().enable();
+        } catch (Exception e1) {
+          errorb = true;
+          OBDal.getInstance().rollbackAndClose();
+          if (TriggerHandler.getInstance().isDisabled()) {
+            TriggerHandler.getInstance().enable();
+          }
+          OBPOSErrors error = OBDal.getInstance().get(OBPOSErrors.class, errorId);
+          error.setError(OrderLoader.getErrorMessage(e1));
+          error.setTypeofdata("BP");
+          error.setObposApplications(OBDal.getInstance()
+              .get(OBPOSApplications.class, posTerminalId));
+          OBDal.getInstance().flush();
+          OBDal.getInstance().commitAndClose();
+          log.error("Error while generating the JSON object", e1);
         }
-        OBPOSErrors error = OBDal.getInstance().get(OBPOSErrors.class, errorId);
-        error.setError(OrderLoader.getErrorMessage(e1));
-        error.setTypeofdata("customer");
-        error.setObposApplications(OBDal.getInstance().get(OBPOSApplications.class, posTerminalId));
-        OBDal.getInstance().flush();
-        OBDal.getInstance().commitAndClose();
-        log.error("Error while generating the JSON object", e1);
       }
+    } finally {
+      OBContext.restorePreviousMode();
     }
     if (errorb) {
       JSONObject result = new JSONObject();
@@ -76,7 +83,7 @@ public class SaveCustomerActionHandler extends BaseActionHandler {
       JSONObject result = new JSONObject();
       try {
         result.put("message", Utility.messageBD(new DalConnectionProvider(false),
-            "OBPOS_CustomerSavedSuccesfully", RequestContext.get().getVariablesSecureApp()
+            "OBPOS_CustomerSavedSuccessfully", RequestContext.get().getVariablesSecureApp()
                 .getLanguage()));
       } catch (JSONException e) {
         // won't happen

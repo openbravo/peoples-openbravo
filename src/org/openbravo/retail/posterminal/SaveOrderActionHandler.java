@@ -14,8 +14,10 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.client.kernel.RequestContext;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.TriggerHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.Utility;
@@ -35,33 +37,41 @@ public class SaveOrderActionHandler extends BaseActionHandler {
     } catch (Exception e) {// won't' happen
     }
     boolean errorb = false;
-    for (int i = 0; i < errorIds.length(); i++) {
-      try {
-        errorId = errorIds.getString(i);
-        OBPOSErrors error = OBDal.getInstance().get(OBPOSErrors.class, errorId);
-        JSONObject jsonorder = new JSONObject(error.getJsoninfo());
-        posTerminalId = jsonorder.getString("posTerminal");
-        OrderLoader loader = new OrderLoader();
-        loader.saveOrder(jsonorder);
-        error.setOrderstatus("Y");
-        OBDal.getInstance().flush();
-        OBDal.getInstance().commitAndClose();
+    try {
+      OBContext.setAdminMode(true);
 
-      } catch (Exception e1) {
-        errorb = true;
-        OBDal.getInstance().rollbackAndClose();
-        if (TriggerHandler.getInstance().isDisabled()) {
-          TriggerHandler.getInstance().enable();
+      for (int i = 0; i < errorIds.length(); i++) {
+        try {
+          errorId = errorIds.getString(i);
+          OBPOSErrors error = OBDal.getInstance().get(OBPOSErrors.class, errorId);
+          JSONObject jsonorder = new JSONObject(error.getJsoninfo());
+          posTerminalId = jsonorder.getString("posTerminal");
+          OrderLoader loader = WeldUtils.getInstanceFromStaticBeanManager(OrderLoader.class);
+          loader.saveOrder(jsonorder);
+          error.setOrderstatus("Y");
+          OBDal.getInstance().flush();
+          OBDal.getInstance().commitAndClose();
+
+        } catch (Exception e1) {
+          errorb = true;
+          OBDal.getInstance().rollbackAndClose();
+          if (TriggerHandler.getInstance().isDisabled()) {
+            TriggerHandler.getInstance().enable();
+          }
+          OBPOSErrors error = OBDal.getInstance().get(OBPOSErrors.class, errorId);
+          error.setError(OrderLoader.getErrorMessage(e1));
+          error.setTypeofdata("order");
+          error.setObposApplications(OBDal.getInstance()
+              .get(OBPOSApplications.class, posTerminalId));
+          OBDal.getInstance().flush();
+          OBDal.getInstance().commitAndClose();
+          log.error("Error while generating the JSON object", e1);
         }
-        OBPOSErrors error = OBDal.getInstance().get(OBPOSErrors.class, errorId);
-        error.setError(OrderLoader.getErrorMessage(e1));
-        error.setTypeofdata("order");
-        error.setObposApplications(OBDal.getInstance().get(OBPOSApplications.class, posTerminalId));
-        OBDal.getInstance().flush();
-        OBDal.getInstance().commitAndClose();
-        log.error("Error while generating the JSON object", e1);
       }
+    } finally {
+      OBContext.restorePreviousMode();
     }
+
     if (errorb) {
       JSONObject result = new JSONObject();
       try {
@@ -75,7 +85,7 @@ public class SaveOrderActionHandler extends BaseActionHandler {
       JSONObject result = new JSONObject();
       try {
         result.put("message", Utility.messageBD(new DalConnectionProvider(false),
-            "OBPOS_OrderSavedSuccesfully", RequestContext.get().getVariablesSecureApp()
+            "OBPOS_OrderSavedSuccessfully", RequestContext.get().getVariablesSecureApp()
                 .getLanguage()));
       } catch (JSONException e) {
         // won't happen
