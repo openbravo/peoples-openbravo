@@ -18,6 +18,7 @@
     var i, requestOrderParams, requestBPParams;
     var orderIds = [];
     var customerIds = [];
+    var curCallbacks = 0;
     for (i = 0; i < selectedRecords.length; i++) {
       if (selectedRecords[i].typeofdata) {
         if (selectedRecords[i].id && selectedRecords[i].typeofdata === 'BP') {
@@ -31,21 +32,26 @@
     }
     var callback = function (response, data, request) {
         isc.say(data.message);
-        params.button.closeProcessPopup();
+        curCallbacks -= 1;
+        if (curCallbacks === 0) {
+          params.button.closeProcessPopup();
+        }
         };
-
-    if (orderIds.length > 0) {
-      requestOrderParams = {
-        recordIds: orderIds
-      };
-      OB.RemoteCallManager.call('org.openbravo.retail.posterminal.SaveOrderActionHandler', orderIds, requestOrderParams, callback);
-    }
 
     if (customerIds.length > 0) {
       requestBPParams = {
         recordIds: customerIds
       };
+      curCallbacks += 1;
       OB.RemoteCallManager.call('org.openbravo.retail.posterminal.SaveCustomerActionHandler', customerIds, requestBPParams, callback);
+    }
+
+    if (orderIds.length > 0) {
+      requestOrderParams = {
+        recordIds: orderIds
+      };
+      curCallbacks += 1;
+      OB.RemoteCallManager.call('org.openbravo.retail.posterminal.SaveOrderActionHandler', orderIds, requestOrderParams, callback);
     }
   };
   OB.OBPOS.Errors.clearError = function (params, view) {
