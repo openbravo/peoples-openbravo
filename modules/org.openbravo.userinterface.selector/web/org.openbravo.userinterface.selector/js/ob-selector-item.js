@@ -95,8 +95,12 @@ isc.OBSelectorPopupWindow.addProperties({
 
       getFetchRequestParams: function (params) {
         params = params || {};
-        // on purpose not sending the third boolean param
-        isc.addProperties(params, this.selector.form.view.getContextInfo(false, true));
+        // on purpose not passing the third boolean param
+        if (this.selector && this.selector.form && this.selector.form.view && this.selector.form.view.getContextInfo) {
+          isc.addProperties(params, this.selector.form.view.getContextInfo(false, true));
+        } else if (this.view && this.view.sourceView && this.view.sourceView.getContextInfo) {
+          isc.addProperties(params, this.view.sourceView.getContextInfo(false, true));
+        }
 
         // also adds the special ORG parameter
         if (params.inpadOrgId) {
@@ -254,8 +258,12 @@ isc.OBSelectorPopupWindow.addProperties({
       '_selectorDefinitionId': this.selectorDefinitionId || this.selector.selectorDefinitionId
     };
 
-    // purposely not passing the third boolean param
-    isc.addProperties(data, this.selector.form.view.getContextInfo(false, true));
+    // on purpose not passing the third boolean param
+    if (this.selector && this.selector.form && this.selector.form.view && this.selector.form.view.getContextInfo) {
+      isc.addProperties(data, this.selector.form.view.getContextInfo(false, true));
+    } else if (this.view && this.view.sourceView && this.view.sourceView.getContextInfo) {
+      isc.addProperties(data, this.view.sourceView.getContextInfo(false, true));
+    }
 
     callback = function (resp, data, req) {
       selectorWindow.fetchDefaultsCallback(resp, data, req);
@@ -524,8 +532,14 @@ isc.OBSelectorItem.addProperties({
     var i, j, outFields = this.outFields,
         form = this.form,
         grid = this.grid,
-        item, value, fields = form.fields || grid.fields,
-        numberFormat;
+        item, value, fields, numberFormat;
+
+    if ((!form || (form && !form.fields)) && (!grid || (grid && !grid.fields))) {
+      // not handling out fields
+      return;
+    }
+
+    fields = form.fields || grid.fields;
     for (i in outFields) {
       if (outFields.hasOwnProperty(i)) {
         if (outFields[i].suffix) {
@@ -610,9 +624,13 @@ isc.OBSelectorItem.addProperties({
     requestProperties.params[isc.OBViewGrid.NO_COUNT_PARAMETER] = 'true';
 
     // on purpose not passing the third boolean param
-    isc.addProperties(requestProperties.params, this.form.view.getContextInfo(false, true));
+    if (this.form && this.form.view && this.form.getContextInfo) {
+      isc.addProperties(requestProperties.params, this.form.view.getContextInfo(false, true));
+    } else if (this.view && this.view.sourceView && this.view.sourceView.getContextInfo) {
+      isc.addProperties(requestProperties.params, this.view.sourceView.getContextInfo(false, true));
+    }
 
-    if (this.form.view.standardWindow) {
+    if (this.form && this.form.view && this.form.view.standardWindow) {
       isc.addProperties(requestProperties.params, {
         windowId: this.form.view.standardWindow.windowId,
         tabId: this.form.view.tabId,
@@ -628,7 +646,7 @@ isc.OBSelectorItem.addProperties({
     if (this.form.getFocusItem() !== this && !this.form.view.isShowingForm && this.getEnteredValue() === '' && this.savedEnteredValue) {
       this.setElementValue(this.savedEnteredValue);
       delete this.savedEnteredValue;
-    } else if (this.form.view.isShowingForm && this.getEnteredValue() === '' && this.savedEnteredValue) {
+    } else if (this.form && this.form.view && this.form.view.isShowingForm && this.getEnteredValue() === '' && this.savedEnteredValue) {
       this.setElementValue(this.savedEnteredValue);
       delete this.savedEnteredValue;
     }
