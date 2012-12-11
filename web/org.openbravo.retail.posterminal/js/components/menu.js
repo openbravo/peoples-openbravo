@@ -438,6 +438,7 @@ enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.StandardMenu',
   kind: 'OB.UI.ToolbarMenu',
   icon: 'btn-icon btn-icon-menu',
+  externalEntries: [],
   initComponents: function () {
     // dynamically generating the menu
     this.menuEntries = [];
@@ -462,6 +463,9 @@ enyo.kind({
     this.menuEntries.push({
       kind: 'OB.UI.MenuQuotations'
     });
+
+    this.menuEntries = this.menuEntries.concat(this.externalEntries);
+
     this.menuEntries.push({
       kind: 'OB.UI.MenuSeparator'
     });
