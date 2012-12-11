@@ -28,6 +28,7 @@
 
       bpToSave.set('isbeingprocessed', 'N');
       if (customerId) {
+        this.customer.set('posTerminal', OB.POS.modelterminal.get('terminal').id);
         bpToSave.set('json', JSON.stringify(this.customer.serializeToJSON()));
         bpToSave.set('c_bpartner_id', this.customer.get('id'));
       } else {
@@ -38,6 +39,7 @@
       OB.Dal.save(this.customer, function () {
         //OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_customerSavedSuccessfullyLocally',[me.customer.get('_identifier')]));
         if (isNew) {
+          me.customer.set('posTerminal', OB.POS.modelterminal.get('terminal').id);
           bpToSave.set('json', JSON.stringify(me.customer.serializeToJSON()));
           bpToSave.set('c_bpartner_id', me.customer.get('id'));
         }
