@@ -104,7 +104,7 @@ isc.RelativeDateItem.addProperties({
 
   blur: function () {
     var blurValue = this.blurValue(),
-        newBlurValue = '',
+        newBlurValue = '', jsValue,
         digitRegExp = new RegExp('^\\d+$', 'gm'),
         newValue, i;
 
@@ -124,7 +124,12 @@ isc.RelativeDateItem.addProperties({
     if (digitRegExp.test(newBlurValue)) {
       newValue = this.parseValue();
       if (newValue) {
-        this.setValue(OB.Utilities.Date.OBToJS(newValue, this.dateFormat));
+        jsValue = OB.Utilities.Date.OBToJS(newValue, this.dateFormat);
+        // if jsValue == null then this is an illegal date, will be 
+        // caught later
+        if (jsValue) {
+          this.setValue(jsValue);
+        }
       }
     }
 

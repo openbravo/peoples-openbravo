@@ -151,6 +151,12 @@ OB.Utilities.Date.OBToJS = function (OBDate, dateFormat) {
 
   fullYear = parseInt(fullYear, 10);
   JSDate.setFullYear(fullYear, month - 1, day);
+
+  //  https://issues.openbravo.com/view.php?id=22505
+  if (day !== JSDate.getDate()) {
+    return null;
+  }
+
   JSDate.setHours(hours);
   JSDate.setMinutes(minutes);
   JSDate.setSeconds(seconds);
