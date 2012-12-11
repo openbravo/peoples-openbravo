@@ -8,7 +8,10 @@
  */
 package org.openbravo.retail.posterminal;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.math.BigDecimal;
+import java.sql.SQLException;
 
 import javax.servlet.ServletException;
 
@@ -55,66 +58,98 @@ public class CustomerLoader extends JSONProcessSimple {
 
   public JSONObject saveCustomer(JSONArray jsonarray) throws JSONException {
     boolean error = false;
-    Exception errorException = null;
     OBContext.setAdminMode(false);
     try {
       for (int i = 0; i < jsonarray.length(); i++) {
         JSONObject jsonCustomer = jsonarray.getJSONObject(i);
-        JSONObject result = saveCustomer(jsonCustomer);
-        if (!result.get(JsonConstants.RESPONSE_STATUS).equals(
-            JsonConstants.RPCREQUEST_STATUS_SUCCESS)) {
-          log.error("There was an error importing customer: " + jsonCustomer.toString());
-          error = true;
-        }
-        if (i % 1 == 0) {
+        String posTerminalId = jsonCustomer.getString("posTerminal");
+        try {
+          JSONObject result = saveCustomer(jsonCustomer);
+          if (!result.get(JsonConstants.RESPONSE_STATUS).equals(
+              JsonConstants.RPCREQUEST_STATUS_SUCCESS)) {
+            log.error("There was an error importing order: " + jsonCustomer.toString());
+            error = true;
+          }
+          if (i % 1 == 0) {
+            OBDal.getInstance().flush();
+            OBDal.getInstance().getConnection().commit();
+            OBDal.getInstance().getSession().clear();
+          }
+        } catch (Exception e) {
+          // Creation of the customer failed. We will now store the customer in the import errors
+          // table
+          e.printStackTrace();
+          OBDal.getInstance().rollbackAndClose();
+
+          OBPOSErrors errorEntry = OBProvider.getInstance().get(OBPOSErrors.class);
+          errorEntry.setError(getErrorMessage(e));
+          errorEntry.setOrderstatus("N");
+          errorEntry.setJsoninfo(jsonCustomer.toString());
+          errorEntry.setTypeofdata("BP");
+          errorEntry.setObposApplications(OBDal.getInstance().get(OBPOSApplications.class,
+              posTerminalId));
+          OBDal.getInstance().save(errorEntry);
           OBDal.getInstance().flush();
+
+          log.error("Error while loading customer", e);
+          try {
+            OBDal.getInstance().getConnection().commit();
+          } catch (SQLException e1) {
+            // this won't happen
+          }
         }
       }
-      OBDal.getInstance().getConnection().commit();
-      OBDal.getInstance().getSession().clear();
-    } catch (Exception e) {
-      OBDal.getInstance().rollbackAndClose();
-      error = true;
-      errorException = e;
     } finally {
       OBContext.restorePreviousMode();
     }
     JSONObject jsonResponse = new JSONObject();
     if (error) {
       jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_FAILURE);
-      final JSONObject jsonError = new JSONObject();
-      jsonError.put("message", errorException.getMessage());
-      jsonError.put("type", errorException.getClass().getName());
-      jsonResponse.put(JsonConstants.RESPONSE_ERROR, jsonError);
+      // final JSONObject jsonError = new JSONObject();
+      // jsonError.put("message", errorException.getMessage());
+      // jsonError.put("type", errorException.getClass().getName());
+      // jsonResponse.put(JsonConstants.RESPONSE_ERROR, jsonError);
+      jsonResponse.put("result", "0");
     } else {
       jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
       jsonResponse.put("result", "0");
     }
+
+    // OBDal.getInstance().getConnection().commit();
+    // OBDal.getInstance().getSession().clear();
+    // } catch (Exception e) {
+    // OBDal.getInstance().rollbackAndClose();
+    // error = true;
+    // errorException = e;
+    // } finally {
+    // OBContext.restorePreviousMode();
+    // }
+    // JSONObject jsonResponse = new JSONObject();
+    // if (error) {
+    //
+    // } else {
+    //
+    // }
     return jsonResponse;
   }
 
   public JSONObject saveCustomer(JSONObject jsoncustomer) throws Exception {
     BusinessPartner customer = null;
 
-    try {
-      customer = getCustomer(jsoncustomer.getString("id"));
-      if (customer.getId() == null) {
-        customer = createBPartner(jsoncustomer);
-      } else {
-        customer = editBPartner(customer, jsoncustomer);
-      }
-
-      editLocation(customer, jsoncustomer);
-      editBPartnerContact(customer, jsoncustomer);
-      OBDal.getInstance().flush();
-    } catch (Exception e) {
-      throw e;
+    customer = getCustomer(jsoncustomer.getString("id"));
+    if (customer.getId() == null) {
+      customer = createBPartner(jsoncustomer);
+    } else {
+      customer = editBPartner(customer, jsoncustomer);
     }
+
+    editLocation(customer, jsoncustomer);
+    editBPartnerContact(customer, jsoncustomer);
+    OBDal.getInstance().flush();
 
     final JSONObject jsonResponse = new JSONObject();
     jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
     jsonResponse.put("result", "0");
-    jsonResponse.put("data", jsoncustomer);
 
     return jsonResponse;
   }
@@ -283,5 +318,11 @@ public class CustomerLoader extends JSONProcessSimple {
       newLocation.setNewOBObject(true);
       OBDal.getInstance().save(newLocation);
     }
+  }
+
+  public static String getErrorMessage(Exception e) {
+    StringWriter sb = new StringWriter();
+    e.printStackTrace(new PrintWriter(sb));
+    return sb.toString();
   }
 }
