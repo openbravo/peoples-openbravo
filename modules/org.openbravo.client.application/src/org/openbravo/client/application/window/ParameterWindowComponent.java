@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -23,25 +23,28 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.apache.log4j.Logger;
+import org.openbravo.client.application.ApplicationConstants;
+import org.openbravo.client.application.Process;
 import org.openbravo.client.kernel.BaseTemplateComponent;
 import org.openbravo.client.kernel.KernelConstants;
 import org.openbravo.client.kernel.Template;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.obps.ActivationKey.FeatureRestriction;
-import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
 
 /**
- * The component which takes care of creating a class for a specific Openbravo window.
+ * The component which takes care of creating a class for a specific paramter window.
  * 
- * @author mtaal
+ * @author alostale
  */
-public class StandardWindowComponent extends BaseTemplateComponent {
-  private static final Logger log = Logger.getLogger(StandardWindowComponent.class);
-  private static final String DEFAULT_TEMPLATE_ID = "ADD5EF45333C458098286D0E639B3290";
+public class ParameterWindowComponent extends BaseTemplateComponent {
+  private static final Logger log = Logger.getLogger(ParameterWindowComponent.class);
+  private static final String DEFAULT_TEMPLATE_ID = "FF80818132F916130132F9357DE10016";
 
   protected static final Map<String, String> TEMPLATE_MAP = new HashMap<String, String>();
 
@@ -50,9 +53,12 @@ public class StandardWindowComponent extends BaseTemplateComponent {
   private Boolean inDevelopment = null;
   private String uniqueString = "" + System.currentTimeMillis();
   private List<String> processViews = new ArrayList<String>();
+  private Process process;
+
+  @Inject
+  private OBViewParameterHandler paramHandler;
 
   protected Template getComponentTemplate() {
-
     return OBDal.getInstance().get(Template.class, DEFAULT_TEMPLATE_ID);
   }
 
@@ -60,9 +66,9 @@ public class StandardWindowComponent extends BaseTemplateComponent {
     // see the ViewComponent#correctViewId
     // changes made in this if statement should also be done in that method
     if (isIndevelopment()) {
-      return KernelConstants.ID_PREFIX + window.getId() + KernelConstants.ID_PREFIX + uniqueString;
+      return KernelConstants.ID_PREFIX + process.getId() + KernelConstants.ID_PREFIX + uniqueString;
     }
-    return KernelConstants.ID_PREFIX + getWindowId();
+    return KernelConstants.ID_PREFIX + process.getId();
   }
 
   public void setUniqueString(String uniqueString) {
@@ -76,26 +82,12 @@ public class StandardWindowComponent extends BaseTemplateComponent {
 
     // check window, tabs and fields
     inDevelopment = Boolean.FALSE;
-    if (window.getModule().isInDevelopment() && window.getModule().isEnabled()) {
+    if (process.getModule().isInDevelopment() && process.getModule().isEnabled()) {
       inDevelopment = Boolean.TRUE;
-    } else {
-      for (Tab tab : window.getADTabList()) {
-        if (tab.isActive() && tab.getModule().isInDevelopment() && tab.getModule().isEnabled()) {
-          inDevelopment = Boolean.TRUE;
-          break;
-        }
-        for (Field field : tab.getADFieldList()) {
-          if (field.isActive() && field.getModule().isInDevelopment()
-              && field.getModule().isEnabled()) {
-            inDevelopment = Boolean.TRUE;
-            break;
-          }
-        }
-        if (inDevelopment) {
-          break;
-        }
-      }
     }
+    // TODO: remove this
+    inDevelopment = Boolean.TRUE;
+
     return inDevelopment;
   }
 
@@ -110,32 +102,33 @@ public class StandardWindowComponent extends BaseTemplateComponent {
   }
 
   public String getWindowId() {
-    return getWindow().getId();
+    return process.getId();
   }
 
   public String getThreadSafe() {
-    final Boolean value = getWindow().isThreadsafe();
-    if (value != null) {
-      return value.toString();
-    }
-    return "false";
+    // final Boolean value = getWindow().isThreadsafe();
+    // if (value != null) {
+    // return value.toString();
+    // }
+    return "true";
   }
 
-  public Window getWindow() {
-    return window;
-  }
-
-  public void setWindow(Window window) {
-    this.window = window;
-  }
+  // public Window getWindow() {
+  // return window;
+  // }
+  //
+  // public void setWindow(Window window) {
+  // this.window = window;
+  // }
 
   public OBViewTab getRootTabComponent() {
     if (rootTabComponent != null) {
       return rootTabComponent;
     }
+    processParameter();
 
     final List<OBViewTab> tempTabs = new ArrayList<OBViewTab>();
-    for (Tab tab : getWindow().getADTabList()) {
+    for (Tab tab : window.getADTabList()) {
       // NOTE: grid sequence and field sequence tabs do not have any fields defined!
       if (!tab.isActive()
           || tab.getADFieldList().isEmpty()
@@ -182,8 +175,8 @@ public class StandardWindowComponent extends BaseTemplateComponent {
       if (tabComponent.getParentTabComponent() == null) {
         if (rootTabComponent != null) {
           // warn for a special case, multiple root tab components
-          log.warn("Window " + window.getName() + " " + window.getId()
-              + " has more than on tab on level 0, choosing an arbitrary root tab");
+          // log.warn("Window " + window.getName() + " " + window.getId()
+          // + " has more than on tab on level 0, choosing an arbitrary root tab");
           rootTabComponent.addChildTabComponent(tabComponent);
         } else {
           rootTabComponent = tabComponent;
@@ -198,5 +191,32 @@ public class StandardWindowComponent extends BaseTemplateComponent {
 
   public List<String> getProcessViews() {
     return processViews;
+  }
+
+  public void setProcess(org.openbravo.client.application.Process process) {
+    this.process = process;
+    paramHandler.setProcess(process);
+    paramHandler.setParamWindow(this);
+  }
+
+  private void processParameter() {
+    System.out.println("pp");
+    for (org.openbravo.client.application.Parameter p : process.getOBUIAPPParameterList()) {
+      if (p.getReference().getId().equals(ApplicationConstants.WINDOW_REFERENCE_ID)) {
+        if (p.getReferenceSearchKey().getOBUIAPPRefWindowList().size() == 0
+            || p.getReferenceSearchKey().getOBUIAPPRefWindowList().get(0).getWindow() == null) {
+          // log.error(String.format(AD_DEF_ERROR, p.getId(), "Window", "window"));
+          System.out.println("oooo");
+        } else {
+          this.window = p.getReferenceSearchKey().getOBUIAPPRefWindowList().get(0).getWindow();
+        }
+        return;
+      }
+    }
+
+  }
+
+  public OBViewParameterHandler getParamHandler() {
+    return paramHandler;
   }
 }

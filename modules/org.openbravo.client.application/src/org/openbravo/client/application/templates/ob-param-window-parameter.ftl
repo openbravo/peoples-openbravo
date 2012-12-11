@@ -12,34 +12,19 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011 Openbravo SLU
+ * All portions are Copyright (C) 2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
 */
+
 -->
 
-/*jslint*/
-
-isc.ClassFactory.defineClass('${data.windowClientClassName?js_string}', isc.OBParameterWindowView).addProperties({
-    windowId: '${data.windowId?js_string}',
-    viewProperties: {
-      windowId: '${data.windowId?js_string}', 
-      fields: [
-    <#list data.paramHandler.parameters as param>
-      <#if param.grid>
-      {
-        isGrid: true,
-        viewProperties: {
-          ${param.tabView}
-        }
-      }
-      <#if param_has_next>,</#if>
-      <#else>
-      <@createParameter param/><#if param_has_next>,</#if>
-      </#if>
-    </#list>    
-    ],
-    }
-});
-
+<#macro createParameter param>
+{
+    type: '${param.type}',
+    title: '${param.title?js_string}',
+    name: '${param.name?js_string}',
+    width: '*'
+}
+</#macro>

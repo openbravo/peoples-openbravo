@@ -1,0 +1,91 @@
+package org.openbravo.client.application.window;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+import org.openbravo.client.application.Parameter;
+import org.openbravo.client.application.Process;
+import org.openbravo.client.kernel.reference.UIDefinition;
+import org.openbravo.client.kernel.reference.UIDefinitionController;
+import org.openbravo.model.ad.ui.Tab;
+import org.openbravo.model.ad.ui.Window;
+
+public class OBViewParameterHandler {
+  private static final Logger log = Logger.getLogger(OBViewParameterHandler.class);
+  private Process process;
+  private ParameterWindowComponent paramWindow;
+
+  public void setProcess(Process process) {
+    this.process = process;
+  }
+
+  public List<OBViewParameter> getParameters() {
+    List<OBViewParameter> params = new ArrayList<OBViewParameterHandler.OBViewParameter>();
+    for (Parameter param : process.getOBUIAPPParameterList()) {
+      if (param.isActive()) {
+        params.add(new OBViewParameter(param));
+      }
+    }
+    return params;
+  }
+
+  public class OBViewParameter {
+    UIDefinition uiDefinition;
+    Parameter parameter;
+
+    public OBViewParameter(Parameter param) {
+      // TODO Auto-generated constructor stub
+      uiDefinition = UIDefinitionController.getInstance().getUIDefinition(param.getReference());
+      parameter = param;
+    }
+
+    public String getType() {
+      return uiDefinition != null ? uiDefinition.getName() : "--";
+    }
+
+    public String getTitle() {
+      // TODO: trl
+      return parameter.getName();
+    }
+
+    public String getName() {
+      // TODO: camelcase??
+      return parameter.getDBColumnName();
+    }
+
+    public boolean isGrid() {
+      return parameter.getReferenceSearchKey() != null
+          && parameter.getReferenceSearchKey().getOBUIAPPRefWindowList().size() > 0;
+    }
+
+    public String getTabView() {
+      Window window;
+
+      if (parameter.getReferenceSearchKey().getOBUIAPPRefWindowList().size() == 0
+          || parameter.getReferenceSearchKey().getOBUIAPPRefWindowList().get(0).getWindow() == null) {
+        // log.error(String.format(AD_DEF_ERROR, p.getId(), "Window", "window"));
+        System.out.println("oooo");
+        return null;
+      } else {
+        window = parameter.getReferenceSearchKey().getOBUIAPPRefWindowList().get(0).getWindow();
+      }
+
+      if (window.getADTabList().isEmpty()) {
+        log.error("Window definition " + window.getName() + " has no tabs");
+        return null;
+      }
+
+      Tab tab = window.getADTabList().get(0);
+
+      final OBViewTab tabComponent = paramWindow.createComponent(OBViewTab.class);
+      tabComponent.setTab(tab);
+      // tabComponent.setUniqueString(uniqueString); //XXX: ???
+      return tabComponent.generate();
+    }
+  }
+
+  public void setParamWindow(ParameterWindowComponent parameterWindowComponent) {
+    this.paramWindow = parameterWindowComponent;
+  }
+}
