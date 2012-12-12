@@ -54,6 +54,10 @@ public class OBViewParameterHandler {
       return parameter.getDBColumnName();
     }
 
+    public boolean isRequired() {
+      return parameter.isMandatory();
+    }
+
     public boolean isGrid() {
       return parameter.getReferenceSearchKey() != null
           && parameter.getReferenceSearchKey().getOBUIAPPRefWindowList().size() > 0;

@@ -25,7 +25,8 @@
     type: '${param.type}',
     title: '${param.title?js_string}',
     name: '${param.name?js_string}',
-    width: '*'
+    width: '*',
+    required: ${param.required?string}
     ${param.parameterProperties}
 }
 </#macro>
