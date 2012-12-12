@@ -226,4 +226,12 @@ public class ParameterWindowComponent extends BaseTemplateComponent {
   public OBViewParameterHandler getParamHandler() {
     return paramHandler;
   }
+
+  public String getActionHandler() {
+    return process.getJavaClassName();
+  }
+
+  public String getProcessId() {
+    return process.getId();
+  }
 }
