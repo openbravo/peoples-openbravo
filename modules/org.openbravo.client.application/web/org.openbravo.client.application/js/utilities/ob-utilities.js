@@ -177,7 +177,7 @@ OB.Utilities.uploadFinished = function (target, data) {
 OB.Utilities.currentUploader = null;
 // ** {{{OB.Utilities.createLoadingLayout}}} **
 // Creates a layout with the loading image.
-OB.Utilities.createLoadingLayout = function () {
+OB.Utilities.createLoadingLayout = function (label) {
   var mainLayout = isc.HLayout.create({
     styleName: OB.Styles.LoadingPrompt.mainLayoutStyleName,
     width: '100%',
@@ -191,9 +191,12 @@ OB.Utilities.createLoadingLayout = function () {
     membersMargin: 0,
     overflow: 'visible'
   });
+  if (!label) {
+    label = OB.I18N.getLabel('OBUIAPP_LOADING');
+  }
   mainLayout.addMember(loadingLayout);
   loadingLayout.addMember(isc.Label.create({
-    contents: OB.I18N.getLabel('OBUIAPP_LOADING'),
+    contents: label,
     styleName: OB.Styles.LoadingPrompt.loadingTextStyleName,
     width: 1,
     overflow: 'visible'

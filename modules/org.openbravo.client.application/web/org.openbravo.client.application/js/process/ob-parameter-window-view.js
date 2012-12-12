@@ -171,8 +171,7 @@ isc.OBParameterWindowView.addProperties({
 
     if (this.popup) {
       this.firstFocusedItem = okButton;
-
-      this.members.push(isc.HLayout.create({
+      this.popupButtons = isc.HLayout.create({
         align: 'center',
         width: '100%',
         height: OB.Styles.Process.PickAndExecute.buttonLayoutHeight,
@@ -184,7 +183,8 @@ isc.OBParameterWindowView.addProperties({
           defaultLayoutAlign: 'center',
           members: buttonLayout
         })]
-      }));
+      });
+      this.members.push(this.popupButtons);
       this.closeClick = function () {
         this.closeClick = function () {
           return true;
@@ -192,13 +192,15 @@ isc.OBParameterWindowView.addProperties({
         this.parentElement.parentElement.closeClick(); // Super call
       };
     }
-
+    this.loading = OB.Utilities.createLoadingLayout(OB.I18N.getLabel('OBUIAPP_PROCESSING'));
+    this.loading.hide();
+    this.members.push(this.loading);
     this.Super('initWidget', arguments);
   },
 
   handleResponse: function (refresh, message, responseActions) {
     var window = this.parentWindow;
-
+    this.showProcessing(false);
     if (message) {
       if (this.popup) {
         this.buttonOwnerView.messageBar.setMessage(message.severity, message.text);
@@ -238,11 +240,44 @@ isc.OBParameterWindowView.addProperties({
     return !viewGrid.hasErrors();
   },
 
+  showProcessing: function (processing) {
+    var i;
+    if (processing) {
+      if (this.theForm) {
+        this.theForm.hide();
+      }
+      if (this.grid) {
+        this.grid.hide();
+      }
+      if (this.popupButtons) {
+        this.popupButtons.hide();
+      }
+
+      if (this.toolBarLayout) {
+        for (i = 0; i < this.toolBarLayout.children.length; i++) {
+          if (this.toolBarLayout.children[i].hide) {
+            this.toolBarLayout.children[i].hide();
+          }
+        }
+      }
+
+      this.loading.show();
+    } else {
+      if (this.theForm) {
+        this.theForm.show();
+      }
+      if (this.grid) {
+        this.grid.show();
+      }
+      this.loading.hide();
+    }
+  },
   doProcess: function (btnValue) {
     var i, tmp, view = this,
         grid, allProperties = (this.sourceView && this.sourceView.getContextInfo(false, true, false, true)) || {},
         selection, len, allRows, params;
     // activeView = view.parentWindow && view.parentWindow.activeView,  ???.
+    this.showProcessing(true);
     if (this.grid) {
       // TODO: Support for multiple grids
       grid = this.grid.viewGrid;
