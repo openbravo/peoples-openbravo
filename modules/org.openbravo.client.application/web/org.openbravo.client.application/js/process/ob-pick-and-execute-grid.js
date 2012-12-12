@@ -100,7 +100,6 @@ isc.OBPickAndExecuteGrid.addProperties({
 
     // required to show the funnel icon and to work
     this.filterClause = this.gridProperties.filterClause;
-    // FIXME
     if (this.filterClause && this.gridProperties.filterName) {
       this.view.messageBar.setMessage(isc.OBMessageBar.TYPE_INFO, '<div><div class="' + OB.Styles.MessageBar.leftMsgContainerStyle + '">' + this.gridProperties.filterName + '<br/>' + OB.I18N.getLabel('OBUIAPP_ClearFilters') + '</div></div>', ' ');
       this.view.messageBar.hasFilterMessage = true;
@@ -292,18 +291,18 @@ isc.OBPickAndExecuteGrid.addProperties({
   },
 
   getOrgParameter: function () {
-	  // FIXME
-    var view = this.view.parentWindow.activeView,
+    var view = this.view && this.view.parentWindow && this.view.parentWindow.activeView,
         context, i;
 
-    context = view.getContextInfo(true, false);
+    if (view) {
+      context = view.getContextInfo(true, false);
 
-    for (i in context) {
-      if (context.hasOwnProperty(i) && i.indexOf('organization') !== -1) {
-        return context[i];
+      for (i in context) {
+        if (context.hasOwnProperty(i) && i.indexOf('organization') !== -1) {
+          return context[i];
+        }
       }
     }
-
     return null;
   },
 
@@ -319,12 +318,12 @@ isc.OBPickAndExecuteGrid.addProperties({
 
   getFetchRequestParams: function (params) {
     var props = this.gridProperties || {},
-    // FIXME
-        view = this.view.parentWindow.activeView;
+        view = this.view && this.view.parentWindow && this.view.parentWindow.activeView;
 
     params = params || {};
-// FIXME
-    isc.addProperties(params, view.getContextInfo(true, false));
+    if (view) {
+      isc.addProperties(params, view.getContextInfo(true, false));
+    }
 
     params[OB.Constants.ORG_PARAMETER] = this.getOrgParameter();
 
@@ -414,11 +413,16 @@ isc.OBPickAndExecuteGrid.addProperties({
   },
 
   getContextInfo: function (rowNum) {
-    var contextInfo = isc.addProperties({}, this.view.parentWindow.activeView.getContextInfo(false, true, false, true)),
-        record = isc.addProperties({}, this.getRecord(rowNum), this.getEditValues(rowNum)),
-        fields = this.view.viewProperties.fields,
-        len = fields.length,
-        fld, i, value, undef, type;
+    var view = this.view && this.view.parentWindow && this.view.parentWindow.activeView,
+        contextInfo, record, fields, len, fld, i, value, undef, type;
+
+    if (!view) {
+      return;
+    }
+    contextInfo = isc.addProperties({}, this.view.parentWindow.activeView.getContextInfo(false, true, false, true));
+    record = isc.addProperties({}, this.getRecord(rowNum), this.getEditValues(rowNum));
+    fields = this.view.viewProperties.fields;
+    len = fields.length;
 
     for (i = 0; i < len; i++) {
       fld = fields[i];
