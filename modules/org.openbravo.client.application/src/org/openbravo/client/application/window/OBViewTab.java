@@ -475,6 +475,7 @@ public class OBViewTab extends BaseTemplateComponent {
       processWindow.setParameters(getParameters());
       processWindow.setUniqueString(uniqueString);
       processWindow.setProcess(f.column.getOBUIAPPProcess());
+      processWindow.setPoup(true);
       // processWindow.setWindow(OBDal.getInstance().get(Window.class, f.getWindowId()));
       views.append(processWindow.generate()).append("\n");
     }

@@ -20,11 +20,15 @@
 -->
 
 /*jslint*/
+<#if !data.popup>
+OB.Layout.ViewManager.loadedWindowClassName = 'processDefinition${data.windowClientClassName?js_string}';
+</#if>
 
-isc.ClassFactory.defineClass('${data.windowClientClassName?js_string}', isc.OBParameterWindowView).addProperties({
+isc.ClassFactory.defineClass('<#if !data.popup>processDefinition</#if>${data.windowClientClassName?js_string}', isc.OBParameterWindowView).addProperties({
     windowId: '${data.windowId?js_string}',
     viewProperties: {
       windowId: '${data.windowId?js_string}', 
+      popup: ${data.popup?string}, 
       fields: [
     <#list data.paramHandler.parameters as param>
       <#if param.grid>

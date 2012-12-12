@@ -63,7 +63,8 @@ public class ComponentGenerator {
     OBContext.setAdminMode();
     try {
       final String originalResult = component.generate();
-      if (component.isJavaScriptComponent() && component.isInDevelopment()) {
+      // TODO: fixme
+      if (false && component.isJavaScriptComponent() && component.isInDevelopment()) {
         if (originalResult.contains(KernelConstants.JSLINT_DIRECTIVE)) {
           final String errors = JSLintChecker.getInstance().check(
               component.getModule().getName() + "." + component.getId(), originalResult);
@@ -74,7 +75,7 @@ public class ComponentGenerator {
         }
       }
       final String compressedResult;
-      if (component.isJavaScriptComponent() && !component.isInDevelopment()) {
+      if (false && component.isJavaScriptComponent() && !component.isInDevelopment()) {
         compressedResult = JSCompressor.getInstance().compress(originalResult);
       } else {
         compressedResult = originalResult;

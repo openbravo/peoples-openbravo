@@ -57,6 +57,7 @@ public class ParameterWindowComponent extends BaseTemplateComponent {
 
   @Inject
   private OBViewParameterHandler paramHandler;
+  private boolean popup;
 
   protected Template getComponentTemplate() {
     return OBDal.getInstance().get(Template.class, DEFAULT_TEMPLATE_ID);
@@ -99,6 +100,14 @@ public class ParameterWindowComponent extends BaseTemplateComponent {
 
   public String getTabView() {
     return getRootTabComponent().generate();
+  }
+
+  public boolean isPopup() {
+    return this.popup;
+  }
+
+  public void setPoup(boolean popup) {
+    this.popup = popup;
   }
 
   public String getWindowId() {
@@ -200,7 +209,6 @@ public class ParameterWindowComponent extends BaseTemplateComponent {
   }
 
   private void processParameter() {
-    System.out.println("pp");
     for (org.openbravo.client.application.Parameter p : process.getOBUIAPPParameterList()) {
       if (p.getReference().getId().equals(ApplicationConstants.WINDOW_REFERENCE_ID)) {
         if (p.getReferenceSearchKey().getOBUIAPPRefWindowList().size() == 0
@@ -213,7 +221,6 @@ public class ParameterWindowComponent extends BaseTemplateComponent {
         return;
       }
     }
-
   }
 
   public OBViewParameterHandler getParamHandler() {

@@ -121,7 +121,7 @@ isc.OBPickAndExecuteGrid.addProperties({
 
     // FIXME:---
     this.editFormProperties = {
-      view: this.view.parentWindow.activeView
+      //view: this.view.parentWindow.activeView
     };
 
     this.Super('initWidget', arguments);

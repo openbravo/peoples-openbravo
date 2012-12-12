@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -60,7 +60,7 @@ public class MenuManager implements Serializable {
   private static final long serialVersionUID = 1L;
 
   public static enum MenuEntryType {
-    Window, Process, ProcessManual, Report, Form, External, Summary, View
+    Window, Process, ProcessManual, Report, Form, External, Summary, View, ProcessDefinition
   };
 
   private MenuOption cachedMenu;
@@ -83,6 +83,7 @@ public class MenuManager implements Serializable {
         linkWindows();
         linkProcesses();
         linkForms();
+        linkProcessDefinition();
 
         removeInvisibleNodes();
         removeInaccessibleNodes();
@@ -272,6 +273,20 @@ public class MenuManager implements Serializable {
           menuOption.setType(MenuEntryType.Process);
           menuOption.setId("/ad_actionButton/ActionButton_Responser.html");
         }
+      }
+    }
+  }
+
+  private void linkProcessDefinition() {
+    OBCriteria<Process> q = OBDal.getInstance().createCriteria(
+        org.openbravo.client.application.Process.class);
+    q.list();
+    // force load
+
+    for (MenuOption menuOption : menuOptions) {
+      if (menuOption.getMenu() != null
+          && menuOption.getMenu().getOBUIAPPProcessDefinition() != null) {
+        menuOption.setType(MenuEntryType.ProcessDefinition);
       }
     }
   }
@@ -615,6 +630,10 @@ public class MenuManager implements Serializable {
 
     public boolean isForm() {
       return getType().equals(MenuEntryType.Form);
+    }
+
+    public boolean isProcessDefinition() {
+      return getType().equals(MenuEntryType.ProcessDefinition);
     }
 
     public boolean isExternal() {
