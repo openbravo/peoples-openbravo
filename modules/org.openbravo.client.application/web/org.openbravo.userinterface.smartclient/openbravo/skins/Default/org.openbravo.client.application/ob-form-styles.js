@@ -421,7 +421,8 @@ isc.RelativeDateItem.changeDefaults('quantityFieldDefaults', {
   cellStyle: 'OBFormField',
   titleStyle: 'OBFormFieldLabel',
   textBoxStyle: 'OBFormFieldSelectInput',
-  controlStyle: 'OBFormFieldSelectControl'
+  controlStyle: 'OBFormFieldSelectControl',
+  width: 65
 });
 
 isc.RelativeDateItem.changeDefaults('valueFieldDefaults', {
