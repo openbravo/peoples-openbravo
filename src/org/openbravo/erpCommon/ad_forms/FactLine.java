@@ -446,7 +446,7 @@ public class FactLine {
     // should not happen - consequence is potentially screwed Org segment
     // balancing
     if (!m_AD_Org_ID.equals(""))
-      log4jFactLine.warn("setM_Locator_ID - Organization already calculated");
+      log4jFactLine.debug("setM_Locator_ID - Organization already calculated");
   } // setM_Locator_ID
 
   public String getM_AmtAcctDr() {

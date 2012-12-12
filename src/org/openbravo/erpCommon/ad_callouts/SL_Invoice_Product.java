@@ -169,9 +169,10 @@ public class SL_Invoice_Product extends HttpSecureAppServlet {
       resultado.append("new Array(\"inpattrsetvaluetype\", \"\"),\n");
     }
     String strHasSecondaryUOM = SLOrderProductData.hasSecondaryUOM(this, strMProductID);
-    resultado.append("new Array(\"inphasseconduom\", " + strHasSecondaryUOM + "),\n");
-    resultado.append("new Array(\"inpcCurrencyId\", "
-        + (strCurrency.equals("") ? "\"\"" : strCurrency) + ")");
+    resultado.append("new Array(\"inphasseconduom\", " + strHasSecondaryUOM + ")");
+    if (!"".equals(strCurrency)) {
+      resultado.append(",\n new Array(\"inpcCurrencyId\", " + strCurrency + ")");
+    }
 
     SLInvoiceTaxData[] data = SLInvoiceTaxData.select(this, strCInvoiceID);
     if (data != null && data.length > 0) {

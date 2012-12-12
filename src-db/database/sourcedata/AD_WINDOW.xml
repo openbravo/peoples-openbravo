@@ -262,7 +262,7 @@
 <!--117-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--117-->  <NAME><![CDATA[Fiscal Calendar]]></NAME>
 <!--117-->  <DESCRIPTION><![CDATA[Create multiple fiscal calendars and periods for accounting purposes.]]></DESCRIPTION>
-<!--117-->  <HELP><![CDATA["Legal entities with accounting" organization types must have a fiscal calendar assigned while rest of organization types inherit it from it.<br>A  calendar contains years and the accounting periods of each year required to get an accurate organization accounting practice.
+<!--117-->  <HELP><![CDATA["Legal entities with accounting" organization types must have a fiscal calendar assigned while rest of organization types can inherit it from its parent.<br>A  calendar contains years and the accounting periods of each year required to get an accurate organization's accounting practice.
 
 ]]></HELP>
 <!--117-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
@@ -2494,7 +2494,7 @@
 <!--1002100003-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1002100003-->  <NAME><![CDATA[Tax Register Type]]></NAME>
 <!--1002100003-->  <DESCRIPTION><![CDATA[Tax Register Type]]></DESCRIPTION>
-<!--1002100003-->  <HELP><![CDATA[Type of Tax Register]]></HELP>
+<!--1002100003-->  <HELP><![CDATA[A tax register type is used to collect all the tax rates of a type to take into account while calculating the total tax amount of a given tax register type within a period of time.]]></HELP>
 <!--1002100003-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--1002100003-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--1002100003-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -2511,7 +2511,7 @@
 <!--1002100004-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1002100004-->  <NAME><![CDATA[Tax Payment]]></NAME>
 <!--1002100004-->  <DESCRIPTION><![CDATA[Tax Payment/Tax Register]]></DESCRIPTION>
-<!--1002100004-->  <HELP><![CDATA[Tax Payment where put the payment of tax and in where tax register is recorded .]]></HELP>
+<!--1002100004-->  <HELP><![CDATA[The "Tax Payment" process helps to calculate the amount of taxes to be paid to or received from the tax authority.]]></HELP>
 <!--1002100004-->  <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
 <!--1002100004-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--1002100004-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -2672,6 +2672,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--24DDE1DDF13942D78B6D6F216979E56A-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--24DDE1DDF13942D78B6D6F216979E56A-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--24DDE1DDF13942D78B6D6F216979E56A-->  <NAME><![CDATA[Execution Process]]></NAME>
+<!--24DDE1DDF13942D78B6D6F216979E56A-->  <HELP><![CDATA[Some payments types require an additional activity to be executed upon completion of the payment.]]></HELP>
 <!--24DDE1DDF13942D78B6D6F216979E56A-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--24DDE1DDF13942D78B6D6F216979E56A-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--24DDE1DDF13942D78B6D6F216979E56A-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -2829,6 +2830,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--557A0AA1D0D745F9A61557C05483072C-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--557A0AA1D0D745F9A61557C05483072C-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--557A0AA1D0D745F9A61557C05483072C-->  <NAME><![CDATA[Bank File Format]]></NAME>
+<!--557A0AA1D0D745F9A61557C05483072C-->  <HELP><![CDATA[Openbravo allows to import a bank statement file on an organization's financial account if a bank file format is confgured for the organization.]]></HELP>
 <!--557A0AA1D0D745F9A61557C05483072C-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--557A0AA1D0D745F9A61557C05483072C-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--557A0AA1D0D745F9A61557C05483072C-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -3054,7 +3056,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--AFE6BDF360C44B99ACA6FB5E9F51EA45-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--AFE6BDF360C44B99ACA6FB5E9F51EA45-->  <NAME><![CDATA[Payment Run]]></NAME>
 <!--AFE6BDF360C44B99ACA6FB5E9F51EA45-->  <DESCRIPTION><![CDATA[This window shows all the group of payments executed together.]]></DESCRIPTION>
-<!--AFE6BDF360C44B99ACA6FB5E9F51EA45-->  <HELP><![CDATA[Each payment run will group all the payment executed together. It is possible to check the status and result of the payment run as well as the result and message of every single payment inside the payment run.]]></HELP>
+<!--AFE6BDF360C44B99ACA6FB5E9F51EA45-->  <HELP><![CDATA[The payment run window is a read-only window which shows relevant information of each payment run executed within an organization.]]></HELP>
 <!--AFE6BDF360C44B99ACA6FB5E9F51EA45-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--AFE6BDF360C44B99ACA6FB5E9F51EA45-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--AFE6BDF360C44B99ACA6FB5E9F51EA45-->  <PROCESSING><![CDATA[N]]></PROCESSING>

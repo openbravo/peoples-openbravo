@@ -109,19 +109,6 @@ public class DynamicExpressionParser {
   public void parse() {
     jsCode = new StringBuffer();
 
-    // Handle accounting dimensions special display logic
-    if (DimensionDisplayUtility.DIM_DISPLAYLOGIC.equals(code)) {
-      List<String> sessionVariablesToLoad = DimensionDisplayUtility
-          .getRequiredSessionVariablesForTab(this.tab, this.field);
-      for (String sv : sessionVariablesToLoad) {
-        sessionAttributesInExpression.add(sv);
-      }
-      String parsedDisplay = DimensionDisplayUtility.computeAccountingDimensionDisplayLogic(
-          this.tab, this.field);
-      jsCode.append(parsedDisplay);
-      return;
-    }
-
     StringTokenizer st = new StringTokenizer(code, "|&", true);
     String token, token2;
     String strAux;
@@ -154,6 +141,22 @@ public class DynamicExpressionParser {
           leftPart.text.contains("currentValues"), leftPart.isBoolean);
       jsCode.append(rightPart.text);
     }
+    // Handle accounting dimensions special display logic
+    if (jsCode.toString().contains(DimensionDisplayUtility.DIM_DISPLAYLOGIC)) {
+      List<String> sessionVariablesToLoad = DimensionDisplayUtility
+          .getRequiredSessionVariablesForTab(this.tab, this.field);
+      for (String sv : sessionVariablesToLoad) {
+        sessionAttributesInExpression.add(sv);
+      }
+      String parsedDisplay = DimensionDisplayUtility.computeAccountingDimensionDisplayLogic(
+          this.tab, this.field);
+      if (!"".equals(parsedDisplay)) {
+        parsedDisplay = "(" + parsedDisplay + ")";
+      }
+      jsCode = new StringBuffer(jsCode.toString().replace(DimensionDisplayUtility.DIM_DISPLAYLOGIC,
+          parsedDisplay));
+    }
+
   }
 
   /**

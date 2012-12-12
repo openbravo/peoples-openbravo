@@ -42,7 +42,7 @@ import org.openbravo.model.common.enterprise.Organization;
 
 public class DimensionDisplayUtility {
 
-  public static final Logger log4j = Logger.getLogger(DimensionDisplayUtility.class);
+  private static final Logger log4j = Logger.getLogger(DimensionDisplayUtility.class);
 
   /** Accounting Dimensions **/
   public static final String DIM_Header = "H";
@@ -82,7 +82,7 @@ public class DimensionDisplayUtility {
   /** Session variable **/
   public static final String IsAcctDimCentrally = "$IsAcctDimCentrally";
   /** Display logic for accounting dimensions **/
-  public static final String DIM_DISPLAYLOGIC = "@ACCT_DIMENSION_DISPLAY@";
+  public static final String DIM_DISPLAYLOGIC = "context.ACCT_DIMENSION_DISPLAY";
   /** Document Base Type auxiliary input **/
   public static final String DIM_AUXILIAR_INPUT = "DOCBASETYPE";
 

@@ -614,7 +614,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--128-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--128-->  <NAME><![CDATA[Calendar]]></NAME>
 <!--128-->  <DESCRIPTION><![CDATA[Create multiple fiscal calendars to be used by one or all your organizations.]]></DESCRIPTION>
-<!--128-->  <HELP><![CDATA[Calendar window allows to create and maintain as many fiscal calendars as required.]]></HELP>
+<!--128-->  <HELP><![CDATA[The fiscal calendar window allows to create and maintain the organization's fiscal calendar.]]></HELP>
 <!--128-->  <AD_TABLE_ID><![CDATA[139]]></AD_TABLE_ID>
 <!--128-->  <AD_WINDOW_ID><![CDATA[117]]></AD_WINDOW_ID>
 <!--128-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -641,7 +641,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--129-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--129-->  <NAME><![CDATA[Year]]></NAME>
 <!--129-->  <DESCRIPTION><![CDATA[Create fiscal years with the possibility of automatically adding fiscal periods.]]></DESCRIPTION>
-<!--129-->  <HELP><![CDATA[Year tab allows to create as many fiscal years as required within a calendar. ]]></HELP>
+<!--129-->  <HELP><![CDATA[Year tab allows to create as many fiscal years as required within a fiscal calendar. ]]></HELP>
 <!--129-->  <AD_TABLE_ID><![CDATA[177]]></AD_TABLE_ID>
 <!--129-->  <AD_WINDOW_ID><![CDATA[117]]></AD_WINDOW_ID>
 <!--129-->  <SEQNO><![CDATA[20]]></SEQNO>
@@ -668,7 +668,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--130-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--130-->  <NAME><![CDATA[Period]]></NAME>
 <!--130-->  <DESCRIPTION><![CDATA[Create and edit fiscal periods according to your needs, as well as open/close selected periods.]]></DESCRIPTION>
-<!--130-->  <HELP><![CDATA[The accounting periods belonging to a year can be created manually and/or automatically by running the process "Create Periods".]]></HELP>
+<!--130-->  <HELP><![CDATA[The period tab lists all the periods of a year.]]></HELP>
 <!--130-->  <AD_TABLE_ID><![CDATA[145]]></AD_TABLE_ID>
 <!--130-->  <AD_WINDOW_ID><![CDATA[117]]></AD_WINDOW_ID>
 <!--130-->  <SEQNO><![CDATA[30]]></SEQNO>
@@ -11464,7 +11464,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--1002100009-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1002100009-->  <NAME><![CDATA[Header]]></NAME>
 <!--1002100009-->  <DESCRIPTION><![CDATA[Header of Tax Register Type]]></DESCRIPTION>
-<!--1002100009-->  <HELP><![CDATA[Header of Tax Register Type]]></HELP>
+<!--1002100009-->  <HELP><![CDATA[The tax register type window allows to create tax register types.]]></HELP>
 <!--1002100009-->  <AD_TABLE_ID><![CDATA[1002100000]]></AD_TABLE_ID>
 <!--1002100009-->  <AD_WINDOW_ID><![CDATA[1002100003]]></AD_WINDOW_ID>
 <!--1002100009-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -11492,7 +11492,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--1002100010-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1002100010-->  <NAME><![CDATA[Lines]]></NAME>
 <!--1002100010-->  <DESCRIPTION><![CDATA[Lines of Type of Tax Register]]></DESCRIPTION>
-<!--1002100010-->  <HELP><![CDATA[Lines of Type of Tax Register]]></HELP>
+<!--1002100010-->  <HELP><![CDATA[The lines tab allows to associate tax rates to the tax register type.]]></HELP>
 <!--1002100010-->  <AD_TABLE_ID><![CDATA[1002100001]]></AD_TABLE_ID>
 <!--1002100010-->  <AD_WINDOW_ID><![CDATA[1002100003]]></AD_WINDOW_ID>
 <!--1002100010-->  <SEQNO><![CDATA[20]]></SEQNO>
@@ -11520,7 +11520,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--1002100011-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1002100011-->  <NAME><![CDATA[Header]]></NAME>
 <!--1002100011-->  <DESCRIPTION><![CDATA[Payment of Tax]]></DESCRIPTION>
-<!--1002100011-->  <HELP><![CDATA[Payment of Tax]]></HELP>
+<!--1002100011-->  <HELP><![CDATA[The tax payment window allows to calculate the amount of taxes to be paid to or received from the tax authority within a given period of time. It also allows to generate the corresponding payment to/from the tax authority.]]></HELP>
 <!--1002100011-->  <AD_TABLE_ID><![CDATA[1002100002]]></AD_TABLE_ID>
 <!--1002100011-->  <AD_WINDOW_ID><![CDATA[1002100004]]></AD_WINDOW_ID>
 <!--1002100011-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -11549,7 +11549,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--1002100012-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1002100012-->  <NAME><![CDATA[Tax Register Header]]></NAME>
 <!--1002100012-->  <DESCRIPTION><![CDATA[Tax Register Header]]></DESCRIPTION>
-<!--1002100012-->  <HELP><![CDATA[Tax Register Header]]></HELP>
+<!--1002100012-->  <HELP><![CDATA[Tax Register Header tab allows to see the calculated tax amount per each configured "Tax Register Type".]]></HELP>
 <!--1002100012-->  <AD_TABLE_ID><![CDATA[1002100003]]></AD_TABLE_ID>
 <!--1002100012-->  <AD_WINDOW_ID><![CDATA[1002100004]]></AD_WINDOW_ID>
 <!--1002100012-->  <SEQNO><![CDATA[20]]></SEQNO>
@@ -11578,7 +11578,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--1002100013-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1002100013-->  <NAME><![CDATA[Lines]]></NAME>
 <!--1002100013-->  <DESCRIPTION><![CDATA[Tax Register Lines]]></DESCRIPTION>
-<!--1002100013-->  <HELP><![CDATA[Tax Register Lines]]></HELP>
+<!--1002100013-->  <HELP><![CDATA[The lines tab is a read-only tab which lists all the tax transactions related to the tax rates configured as part of a "Tax Register Type".]]></HELP>
 <!--1002100013-->  <AD_TABLE_ID><![CDATA[1002100004]]></AD_TABLE_ID>
 <!--1002100013-->  <AD_WINDOW_ID><![CDATA[1002100004]]></AD_WINDOW_ID>
 <!--1002100013-->  <SEQNO><![CDATA[30]]></SEQNO>
@@ -11881,7 +11881,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--01F5E95D71544D428E1B9004B05D0298-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--01F5E95D71544D428E1B9004B05D0298-->  <NAME><![CDATA[Payment Method]]></NAME>
 <!--01F5E95D71544D428E1B9004B05D0298-->  <DESCRIPTION><![CDATA[Shows all payment methods related to the given financial account.]]></DESCRIPTION>
-<!--01F5E95D71544D428E1B9004B05D0298-->  <HELP><![CDATA[This tab lists all the payment methods related to the financial account as well as their configuration in terms of payment management and accounting.]]></HELP>
+<!--01F5E95D71544D428E1B9004B05D0298-->  <HELP><![CDATA[This tab lists all the payment methods assigned to the financial account. A payment can either be deposited in or withdrawn from the financial account if the payment method used is assigned to the financial account.]]></HELP>
 <!--01F5E95D71544D428E1B9004B05D0298-->  <AD_TABLE_ID><![CDATA[AC389EBD8A774AAE8223A77F692983D8]]></AD_TABLE_ID>
 <!--01F5E95D71544D428E1B9004B05D0298-->  <AD_WINDOW_ID><![CDATA[94EAA455D2644E04AB25D93BE5157B6D]]></AD_WINDOW_ID>
 <!--01F5E95D71544D428E1B9004B05D0298-->  <SEQNO><![CDATA[29]]></SEQNO>
@@ -11909,7 +11909,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--0675F934EA9E40C799826AABC47CD837-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--0675F934EA9E40C799826AABC47CD837-->  <NAME><![CDATA[Payments]]></NAME>
 <!--0675F934EA9E40C799826AABC47CD837-->  <DESCRIPTION><![CDATA[Shows all the payments that belong to a payment run.]]></DESCRIPTION>
-<!--0675F934EA9E40C799826AABC47CD837-->  <HELP><![CDATA[Shows all the payments that belong to a payment run.]]></HELP>
+<!--0675F934EA9E40C799826AABC47CD837-->  <HELP><![CDATA[The payment tab list the payments executed in a payment run.]]></HELP>
 <!--0675F934EA9E40C799826AABC47CD837-->  <AD_TABLE_ID><![CDATA[572E3DF0309B4990A436EC697E6D63E8]]></AD_TABLE_ID>
 <!--0675F934EA9E40C799826AABC47CD837-->  <AD_WINDOW_ID><![CDATA[AFE6BDF360C44B99ACA6FB5E9F51EA45]]></AD_WINDOW_ID>
 <!--0675F934EA9E40C799826AABC47CD837-->  <SEQNO><![CDATA[20]]></SEQNO>
@@ -12248,7 +12248,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--2845D761A8394468BD3BA4710AA888D4-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--2845D761A8394468BD3BA4710AA888D4-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--2845D761A8394468BD3BA4710AA888D4-->  <NAME><![CDATA[Account]]></NAME>
-<!--2845D761A8394468BD3BA4710AA888D4-->  <HELP><![CDATA[The financial account window contains essential financial account information such as the bank account number. It also allows to perform a set of actions or processes such as to add deposit or withdrawal transactions or to import and match a bank statement.]]></HELP>
+<!--2845D761A8394468BD3BA4710AA888D4-->  <HELP><![CDATA[The financial account window contains essential information such as the bank account number and allows to perform a set of processes such as to add deposit or withdrawal transactions to the financial account or to import and match a bank statement file.]]></HELP>
 <!--2845D761A8394468BD3BA4710AA888D4-->  <AD_TABLE_ID><![CDATA[B129E53BC0E747879F7BA17F0AECEC32]]></AD_TABLE_ID>
 <!--2845D761A8394468BD3BA4710AA888D4-->  <AD_WINDOW_ID><![CDATA[94EAA455D2644E04AB25D93BE5157B6D]]></AD_WINDOW_ID>
 <!--2845D761A8394468BD3BA4710AA888D4-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -12526,7 +12526,7 @@ The corresponding tables have then the following setting:
 <!--387B6179438D4C4CB40769A77F4C304C-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--387B6179438D4C4CB40769A77F4C304C-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--387B6179438D4C4CB40769A77F4C304C-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--387B6179438D4C4CB40769A77F4C304C-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--387B6179438D4C4CB40769A77F4C304C-->  <UIPATTERN><![CDATA[SR]]></UIPATTERN>
 <!--387B6179438D4C4CB40769A77F4C304C-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--387B6179438D4C4CB40769A77F4C304C-->  <EM_OBUIAPP_CAN_ADD><![CDATA[N]]></EM_OBUIAPP_CAN_ADD>
 <!--387B6179438D4C4CB40769A77F4C304C-->  <EM_OBUIAPP_CAN_DELETE><![CDATA[N]]></EM_OBUIAPP_CAN_DELETE>
@@ -12729,6 +12729,7 @@ The corresponding tables have then the following setting:
 <!--449063A42EFD4B80A0A6D415684C8BC4-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--449063A42EFD4B80A0A6D415684C8BC4-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--449063A42EFD4B80A0A6D415684C8BC4-->  <NAME><![CDATA[Process]]></NAME>
+<!--449063A42EFD4B80A0A6D415684C8BC4-->  <HELP><![CDATA[The execution process window lists the available execution processes.]]></HELP>
 <!--449063A42EFD4B80A0A6D415684C8BC4-->  <AD_TABLE_ID><![CDATA[BC14382F18E5471694063D1D35C5C3D4]]></AD_TABLE_ID>
 <!--449063A42EFD4B80A0A6D415684C8BC4-->  <AD_WINDOW_ID><![CDATA[24DDE1DDF13942D78B6D6F216979E56A]]></AD_WINDOW_ID>
 <!--449063A42EFD4B80A0A6D415684C8BC4-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -12755,6 +12756,7 @@ The corresponding tables have then the following setting:
 <!--4764AA8524BC4D3DAA9A86181C778595-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--4764AA8524BC4D3DAA9A86181C778595-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--4764AA8524BC4D3DAA9A86181C778595-->  <NAME><![CDATA[Matching Algorithm]]></NAME>
+<!--4764AA8524BC4D3DAA9A86181C778595-->  <HELP><![CDATA[The matching algorithm window lists and allows to configure the algorithm/s to use while matching up bank statement lines with financial account transactions. ]]></HELP>
 <!--4764AA8524BC4D3DAA9A86181C778595-->  <AD_TABLE_ID><![CDATA[8EABE4230116400FA30CAF1A57BBC579]]></AD_TABLE_ID>
 <!--4764AA8524BC4D3DAA9A86181C778595-->  <AD_WINDOW_ID><![CDATA[D1D0C603DFC0423099D897A0DB388AC2]]></AD_WINDOW_ID>
 <!--4764AA8524BC4D3DAA9A86181C778595-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -13670,7 +13672,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--7F5E8E4C55914138A358F5087B532B59-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--7F5E8E4C55914138A358F5087B532B59-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--7F5E8E4C55914138A358F5087B532B59-->  <NAME><![CDATA[Bank Statement Lines]]></NAME>
-<!--7F5E8E4C55914138A358F5087B532B59-->  <HELP><![CDATA[This tab list all the lines of a given bank statement.]]></HELP>
+<!--7F5E8E4C55914138A358F5087B532B59-->  <HELP><![CDATA[This tab list all the lines of a bank statement.]]></HELP>
 <!--7F5E8E4C55914138A358F5087B532B59-->  <AD_TABLE_ID><![CDATA[84203CBEBDA349C38319C0E549751546]]></AD_TABLE_ID>
 <!--7F5E8E4C55914138A358F5087B532B59-->  <AD_WINDOW_ID><![CDATA[94EAA455D2644E04AB25D93BE5157B6D]]></AD_WINDOW_ID>
 <!--7F5E8E4C55914138A358F5087B532B59-->  <SEQNO><![CDATA[40]]></SEQNO>
@@ -13777,7 +13779,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--8391062D5C6A47EA94A83A304AD720BE-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--8391062D5C6A47EA94A83A304AD720BE-->  <NAME><![CDATA[Accounting Configuration]]></NAME>
 <!--8391062D5C6A47EA94A83A304AD720BE-->  <DESCRIPTION><![CDATA[Relation of accounts used for the given financial account]]></DESCRIPTION>
-<!--8391062D5C6A47EA94A83A304AD720BE-->  <HELP><![CDATA[The accounting configuration tab is used to define the accounts of a General Ledger to use while posting transactions such as bank fee transactions or in transit payments.]]></HELP>
+<!--8391062D5C6A47EA94A83A304AD720BE-->  <HELP><![CDATA[The accounting configuration tab is used to define the accounts of a General Ledger to use while posting transactions such as a bank fee or a deposit.]]></HELP>
 <!--8391062D5C6A47EA94A83A304AD720BE-->  <AD_TABLE_ID><![CDATA[6F98C7AB59D3410CB828DB25D638DE2C]]></AD_TABLE_ID>
 <!--8391062D5C6A47EA94A83A304AD720BE-->  <AD_WINDOW_ID><![CDATA[94EAA455D2644E04AB25D93BE5157B6D]]></AD_WINDOW_ID>
 <!--8391062D5C6A47EA94A83A304AD720BE-->  <SEQNO><![CDATA[27]]></SEQNO>
@@ -14403,7 +14405,7 @@ AND e.pending <> 0]]></HQLWHERECLAUSE>
 <!--AF4090093D471431E040007F010048A5-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--AF4090093D471431E040007F010048A5-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--AF4090093D471431E040007F010048A5-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--AF4090093D471431E040007F010048A5-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--AF4090093D471431E040007F010048A5-->  <UIPATTERN><![CDATA[SR]]></UIPATTERN>
 <!--AF4090093D471431E040007F010048A5-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--AF4090093D471431E040007F010048A5-->  <EM_OBUIAPP_CAN_ADD><![CDATA[N]]></EM_OBUIAPP_CAN_ADD>
 <!--AF4090093D471431E040007F010048A5-->  <EM_OBUIAPP_CAN_DELETE><![CDATA[N]]></EM_OBUIAPP_CAN_DELETE>
@@ -14751,7 +14753,7 @@ AND e.pending <> 0]]></HQLWHERECLAUSE>
 <!--C56E698100314ABBBBD3A89626CA551C-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--C56E698100314ABBBBD3A89626CA551C-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--C56E698100314ABBBBD3A89626CA551C-->  <NAME><![CDATA[Imported Bank Statements]]></NAME>
-<!--C56E698100314ABBBBD3A89626CA551C-->  <HELP><![CDATA[The tab lists the imported bank statement files as well as the ones created manually.]]></HELP>
+<!--C56E698100314ABBBBD3A89626CA551C-->  <HELP><![CDATA[The tab lists the imported bank statement files as well as the bank statements created manually.]]></HELP>
 <!--C56E698100314ABBBBD3A89626CA551C-->  <AD_TABLE_ID><![CDATA[D4C23A17190649E7B78F55A05AF3438C]]></AD_TABLE_ID>
 <!--C56E698100314ABBBBD3A89626CA551C-->  <AD_WINDOW_ID><![CDATA[94EAA455D2644E04AB25D93BE5157B6D]]></AD_WINDOW_ID>
 <!--C56E698100314ABBBBD3A89626CA551C-->  <SEQNO><![CDATA[30]]></SEQNO>
@@ -14781,7 +14783,7 @@ AND e.pending <> 0]]></HQLWHERECLAUSE>
 <!--C65BA4DF317D46CDA72EF9414A3A23ED-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--C65BA4DF317D46CDA72EF9414A3A23ED-->  <NAME><![CDATA[Payment Run]]></NAME>
 <!--C65BA4DF317D46CDA72EF9414A3A23ED-->  <DESCRIPTION><![CDATA[This tab shows all the group of payments executed together.]]></DESCRIPTION>
-<!--C65BA4DF317D46CDA72EF9414A3A23ED-->  <HELP><![CDATA[This tab shows all the group of payments executed together.]]></HELP>
+<!--C65BA4DF317D46CDA72EF9414A3A23ED-->  <HELP><![CDATA[The execution date and the execution status of each payment run is shown in this window among other relevant data such as the source of the execution.]]></HELP>
 <!--C65BA4DF317D46CDA72EF9414A3A23ED-->  <AD_TABLE_ID><![CDATA[470C83DA538B43CAB6C18590AED9CFA7]]></AD_TABLE_ID>
 <!--C65BA4DF317D46CDA72EF9414A3A23ED-->  <AD_WINDOW_ID><![CDATA[AFE6BDF360C44B99ACA6FB5E9F51EA45]]></AD_WINDOW_ID>
 <!--C65BA4DF317D46CDA72EF9414A3A23ED-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -14853,7 +14855,7 @@ AND e.pending <> 0]]></HQLWHERECLAUSE>
 <!--C9BD6AF9E06F4BE4B4799D09965481DC-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--C9BD6AF9E06F4BE4B4799D09965481DC-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--C9BD6AF9E06F4BE4B4799D09965481DC-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--C9BD6AF9E06F4BE4B4799D09965481DC-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--C9BD6AF9E06F4BE4B4799D09965481DC-->  <UIPATTERN><![CDATA[SR]]></UIPATTERN>
 <!--C9BD6AF9E06F4BE4B4799D09965481DC-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--C9BD6AF9E06F4BE4B4799D09965481DC-->  <EM_OBUIAPP_CAN_ADD><![CDATA[N]]></EM_OBUIAPP_CAN_ADD>
 <!--C9BD6AF9E06F4BE4B4799D09965481DC-->  <EM_OBUIAPP_CAN_DELETE><![CDATA[N]]></EM_OBUIAPP_CAN_DELETE>
@@ -15002,7 +15004,7 @@ AND (e.orderNo IS NULL OR e.priceIncludesTax = (SELECT priceIncludesTax FROM Pri
 <!--CF6D6C7B85EB473CB88E757E14D1D022-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--CF6D6C7B85EB473CB88E757E14D1D022-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--CF6D6C7B85EB473CB88E757E14D1D022-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--CF6D6C7B85EB473CB88E757E14D1D022-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--CF6D6C7B85EB473CB88E757E14D1D022-->  <UIPATTERN><![CDATA[SR]]></UIPATTERN>
 <!--CF6D6C7B85EB473CB88E757E14D1D022-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--CF6D6C7B85EB473CB88E757E14D1D022-->  <EM_OBUIAPP_CAN_ADD><![CDATA[N]]></EM_OBUIAPP_CAN_ADD>
 <!--CF6D6C7B85EB473CB88E757E14D1D022-->  <EM_OBUIAPP_CAN_DELETE><![CDATA[N]]></EM_OBUIAPP_CAN_DELETE>
@@ -15016,7 +15018,7 @@ AND (e.orderNo IS NULL OR e.priceIncludesTax = (SELECT priceIncludesTax FROM Pri
 <!--D144E28320BF40A5B5E5E3C5B92D10E9-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--D144E28320BF40A5B5E5E3C5B92D10E9-->  <NAME><![CDATA[Parameters]]></NAME>
 <!--D144E28320BF40A5B5E5E3C5B92D10E9-->  <DESCRIPTION><![CDATA[Parameters used for the execution process associated for all the payments that belong to the payment run.]]></DESCRIPTION>
-<!--D144E28320BF40A5B5E5E3C5B92D10E9-->  <HELP><![CDATA[Parameters used for the execution process associated for all the payments that belong to the payment run.]]></HELP>
+<!--D144E28320BF40A5B5E5E3C5B92D10E9-->  <HELP><![CDATA[The parameters tab shows the value of the payment execution process parameter/s.]]></HELP>
 <!--D144E28320BF40A5B5E5E3C5B92D10E9-->  <AD_TABLE_ID><![CDATA[2858AEA8CF5D4D05ABAFFA7745E416FE]]></AD_TABLE_ID>
 <!--D144E28320BF40A5B5E5E3C5B92D10E9-->  <AD_WINDOW_ID><![CDATA[AFE6BDF360C44B99ACA6FB5E9F51EA45]]></AD_WINDOW_ID>
 <!--D144E28320BF40A5B5E5E3C5B92D10E9-->  <SEQNO><![CDATA[30]]></SEQNO>
@@ -15154,6 +15156,7 @@ AND (e.orderNo IS NULL OR e.priceIncludesTax = (SELECT priceIncludesTax FROM Pri
 <!--DB9FB0EB697C4501B84A2B60E8456FDB-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--DB9FB0EB697C4501B84A2B60E8456FDB-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--DB9FB0EB697C4501B84A2B60E8456FDB-->  <NAME><![CDATA[Parameter]]></NAME>
+<!--DB9FB0EB697C4501B84A2B60E8456FDB-->  <HELP><![CDATA[The parameter tab allows to configure the additional activity to execute upon completion of a payment. For instance to record a check number.]]></HELP>
 <!--DB9FB0EB697C4501B84A2B60E8456FDB-->  <AD_TABLE_ID><![CDATA[E0B03BC2225F4BCB8734D65B73CCE8DB]]></AD_TABLE_ID>
 <!--DB9FB0EB697C4501B84A2B60E8456FDB-->  <AD_WINDOW_ID><![CDATA[24DDE1DDF13942D78B6D6F216979E56A]]></AD_WINDOW_ID>
 <!--DB9FB0EB697C4501B84A2B60E8456FDB-->  <SEQNO><![CDATA[20]]></SEQNO>
@@ -15458,6 +15461,7 @@ AND (e.orderNo IS NULL OR e.priceIncludesTax = (SELECT priceIncludesTax FROM Pri
 <!--FBC60525011346D6B026D7F8C68199B4-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--FBC60525011346D6B026D7F8C68199B4-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--FBC60525011346D6B026D7F8C68199B4-->  <NAME><![CDATA[Bank File Format]]></NAME>
+<!--FBC60525011346D6B026D7F8C68199B4-->  <HELP><![CDATA[The bank file format window lists the bank file format modules installed for an organization.]]></HELP>
 <!--FBC60525011346D6B026D7F8C68199B4-->  <AD_TABLE_ID><![CDATA[C5CE6AA13D39401882789016B4E9233C]]></AD_TABLE_ID>
 <!--FBC60525011346D6B026D7F8C68199B4-->  <AD_WINDOW_ID><![CDATA[557A0AA1D0D745F9A61557C05483072C]]></AD_WINDOW_ID>
 <!--FBC60525011346D6B026D7F8C68199B4-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -15901,6 +15905,7 @@ AND @MaterialMgmtShipmentInOut.businessPartner@ = e.orderLine.salesOrder.busines
 <!--FFA978C976384149AF6F11364957EA4C-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--FFA978C976384149AF6F11364957EA4C-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--FFA978C976384149AF6F11364957EA4C-->  <NAME><![CDATA[Exceptions]]></NAME>
+<!--FFA978C976384149AF6F11364957EA4C-->  <HELP><![CDATA[The exceptions tab allows to specify text to exclude while matching therefore it is not taken into account while matching. ]]></HELP>
 <!--FFA978C976384149AF6F11364957EA4C-->  <AD_TABLE_ID><![CDATA[66AED72572944ACB9BED8B132EC89A07]]></AD_TABLE_ID>
 <!--FFA978C976384149AF6F11364957EA4C-->  <AD_WINDOW_ID><![CDATA[557A0AA1D0D745F9A61557C05483072C]]></AD_WINDOW_ID>
 <!--FFA978C976384149AF6F11364957EA4C-->  <SEQNO><![CDATA[20]]></SEQNO>

@@ -215,8 +215,11 @@ public class COAUtility {
     if (coa != null && coa.length != 0) {
       try {
         obeResult = insertElementValuesInDB(coa);
-        if (!obeResult.getType().equals(strMessageOk))
+        if (!obeResult.getType().equals(strMessageOk)) {
           return obeResult;
+        } else {
+          OBDal.getInstance().flush();
+        }
       } catch (Exception e) {
         return logError(
             "@CreateAccountingFailed@",

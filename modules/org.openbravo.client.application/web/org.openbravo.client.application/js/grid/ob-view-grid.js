@@ -335,8 +335,16 @@ isc.OBViewGrid.addProperties({
 
       getCellValue: function (record, recordNum, fieldNum, gridBody) {
         var field = this.getField(fieldNum),
-            func = this.getGridSummaryFunction(field),
+            gridField, func = this.parentElement.getGridSummaryFunction(field),
             value = record && field ? (field.displayField ? record[field.displayField] : record[field.name]) : null;
+
+        // get the summary function from the main grid
+        if (!func) {
+          delete field.summaryFunction;
+        } else {
+          field.summaryFunction = func;
+        }
+
         // handle count much simpler than smartclient does
         // so no extra titles or formatting
         if (record && func === 'count' && value >= 0) {
@@ -361,7 +369,7 @@ isc.OBViewGrid.addProperties({
     this.editFormDefaults = isc.addProperties({}, isc.clone(OB.ViewFormProperties), this.editFormDefaults);
 
     // added for showing counts in the filtereditor row
-    this.checkboxFieldDefaults = isc.addProperties(this.checkboxFieldDefaults, {
+    this.checkboxFieldProperties = isc.addProperties({}, this.checkboxFieldProperties | {}, {
       canFilter: true,
       // frozen is much nicer, but check out this forum discussion:
       // http://forums.smartclient.com/showthread.php?p=57581
@@ -573,7 +581,7 @@ isc.OBViewGrid.addProperties({
     } else if (this.showGridSummary) {
       noSummaryFunction = true;
       for (i = 0; i < this.getFields().length; i++) {
-        if (this.summaryFunction) {
+        if (this.getFields()[i].summaryFunction) {
           noSummaryFunction = false;
           break;
         }
