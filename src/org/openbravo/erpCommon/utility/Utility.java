@@ -85,6 +85,9 @@ import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.model.ad.utility.Image;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.common.enterprise.OrganizationInformation;
+import org.openbravo.model.common.geography.Country;
+import org.openbravo.model.common.geography.Location;
 import org.openbravo.uiTranslation.TranslationHandler;
 import org.openbravo.utils.FileUtility;
 import org.openbravo.utils.FormatUtilities;
@@ -2499,5 +2502,63 @@ public class Utility {
   public static boolean isMobileBrowser(HttpServletRequest request) {
     final String ua = request.getHeader("User-Agent").toLowerCase();
     return (ua.matches(MOBILE_VENDORS) || ua.substring(0, 4).matches(MOBILE_VERSION));
+  }
+
+  /**
+   * Gets the date format for the organization country.
+   * 
+   * 
+   * @return date with the country format string applied. In case is not defined, a default format
+   *         is applied
+   */
+  public static String applyCountryDateFormat(Date date, String orgid) {
+    try {
+      OBContext.setAdminMode(true);
+      Organization organization = (Organization) OBDal.getInstance().get(Organization.ENTITY_NAME,
+          orgid);
+      List<OrganizationInformation> orgInfoList = organization.getOrganizationInformationList();
+      OrganizationInformation orginfo = orgInfoList.get(0);
+      Location location = orginfo.getLocationAddress();
+      Country country = location.getCountry();
+      String dateFormat = (country.getDateformat() == null) ? "dd-MM-yyyy" : country
+          .getDateformat();
+      SimpleDateFormat df = new SimpleDateFormat(dateFormat);
+      return df.format(date);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  /**
+   * Gets the number format for the organization country.
+   * 
+   * 
+   * @return DecimalFormat for the number representation defined for the country.
+   */
+  public static DecimalFormat getCountryNumberFormat(String orgid,
+      DecimalFormat defaultDecimalFormat) {
+    try {
+      OBContext.setAdminMode(true);
+      Organization organization = (Organization) OBDal.getInstance().get(Organization.ENTITY_NAME,
+          orgid);
+      List<OrganizationInformation> orgInfoList = organization.getOrganizationInformationList();
+      OrganizationInformation orginfo = orgInfoList.get(0);
+      Location location = orginfo.getLocationAddress();
+      Country country = location.getCountry();
+      if (country.getNumericmask() != null) {
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+        if (country.getDecimalseparator() != null)
+          symbols.setDecimalSeparator(country.getDecimalseparator().equals("C") ? ',' : '.');
+        if (country.getGroupingseparator() != null)
+          symbols.setGroupingSeparator(country.getGroupingseparator().equals("C") ? ',' : '.');
+        DecimalFormat numberFormat = new DecimalFormat(country.getNumericmask());
+        numberFormat.setDecimalFormatSymbols(symbols);
+        return numberFormat;
+      } else {
+        return defaultDecimalFormat;
+      }
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 }
