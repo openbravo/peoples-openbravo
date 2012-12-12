@@ -64,6 +64,10 @@ public abstract class ProcessHQLQuery implements JSONProcess {
         final Session session = OBDal.getInstance().getSession();
         final Query query = session.createQuery(querybuilder.getHQLQuery());
 
+        if (jsonsent.has("_limit")) {
+          query.setMaxResults(jsonsent.getInt("_limit"));
+        }
+
         List<String> queryParams = new ArrayList<String>(Arrays.asList(query.getNamedParameters()));
 
         if (jsonsent.has("parameters")) {
