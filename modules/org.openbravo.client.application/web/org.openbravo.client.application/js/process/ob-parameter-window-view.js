@@ -49,6 +49,85 @@ isc.OBParameterWindowView.addProperties({
         buttonLayout = [],
         okButton, newButton, cancelButton, view = this;
 
+    // Buttons
+
+    function actionClick() {
+      view.messageBar.hide();
+      if (view.validate()) {
+        view.doProcess(this._buttonValue);
+      } else {
+        // If the messageBar is visible, it means that it has been set due to a custom validation inside view.validate()
+        // so we don't want to overwrite it with the generic OBUIAPP_ErrorInFields message
+        if (!view.messageBar.isVisible()) {
+          view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_ErrorInFields'));
+        }
+      }
+    }
+
+    okButton = isc.OBFormButton.create({
+      title: OB.I18N.getLabel('OBUIAPP_Done'),
+      realTitle: '',
+      _buttonValue: 'DONE',
+      click: actionClick
+    });
+
+    cancelButton = isc.OBFormButton.create({
+      title: OB.I18N.getLabel('OBUISC_Dialog.CANCEL_BUTTON_TITLE'),
+      realTitle: '',
+      click: function () {
+        view.closeClick();
+      }
+    });
+    if (this.popup) {
+      buttonLayout.push(isc.LayoutSpacer.create({}));
+    }
+
+    if (this.buttons && !isc.isA.emptyObject(this.buttons)) {
+      for (i in this.buttons) {
+        if (this.buttons.hasOwnProperty(i)) {
+
+          newButton = isc.OBFormButton.create({
+            title: this.buttons[i],
+            realTitle: '',
+            _buttonValue: i,
+            click: actionClick
+          });
+          buttonLayout.push(newButton);
+          OB.TestRegistry.register('org.openbravo.client.application.process.pickandexecute.button.' + i, newButton);
+
+          // pushing a spacer
+          if (this.popup) {
+            buttonLayout.push(isc.LayoutSpacer.create({
+              width: 32
+            }));
+          }
+        }
+      }
+    } else {
+      buttonLayout.push(okButton);
+      OB.TestRegistry.register('org.openbravo.client.application.process.pickandexecute.button.ok', okButton);
+      if (this.popup) {
+        buttonLayout.push(isc.LayoutSpacer.create({
+          width: 32
+        }));
+      }
+    }
+
+    if (this.popup) {
+      buttonLayout.push(cancelButton);
+      buttonLayout.push(isc.LayoutSpacer.create({}));
+    }
+
+    if (!this.popup) {
+      this.toolBarLayout = isc.OBToolbar.create({
+        view: this,
+        leftMembers: [{}],
+        rightMembers: buttonLayout
+      });
+      // this.toolBarLayout.addMems(buttonLayout);
+      this.members.push(this.toolBarLayout);
+    }
+
     // Message bar
     this.messageBar = isc.OBMessageBar.create({
       visibility: 'hidden',
@@ -90,81 +169,23 @@ isc.OBParameterWindowView.addProperties({
     }
 
 
-    // Buttons
+    if (this.popup) {
+      this.firstFocusedItem = okButton;
 
-    function actionClick() {
-      view.messageBar.hide();
-      if (view.validate()) {
-        view.doProcess(this._buttonValue);
-      } else {
-        // If the messageBar is visible, it means that it has been set due to a custom validation inside view.validate()
-        // so we don't want to overwrite it with the generic OBUIAPP_ErrorInFields message
-        if (!view.messageBar.isVisible()) {
-          view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_ErrorInFields'));
-        }
-      }
-    }
-
-    okButton = isc.OBFormButton.create({
-      title: OB.I18N.getLabel('OBUIAPP_Done'),
-      _buttonValue: 'DONE',
-      click: actionClick
-    });
-    this.firstFocusedItem = okButton;
-
-    cancelButton = isc.OBFormButton.create({
-      title: OB.I18N.getLabel('OBUISC_Dialog.CANCEL_BUTTON_TITLE'),
-      click: function () {
-        view.closeClick();
-      }
-    });
-
-    buttonLayout.push(isc.LayoutSpacer.create({}));
-
-    if (this.buttons && !isc.isA.emptyObject(this.buttons)) {
-      for (i in this.buttons) {
-        if (this.buttons.hasOwnProperty(i)) {
-
-          newButton = isc.OBFormButton.create({
-            title: this.buttons[i],
-            _buttonValue: i,
-            click: actionClick
-          });
-          buttonLayout.push(newButton);
-          OB.TestRegistry.register('org.openbravo.client.application.process.pickandexecute.button.' + i, newButton);
-
-
-          // pushing a spacer
-          buttonLayout.push(isc.LayoutSpacer.create({
-            width: 32
-          }));
-        }
-      }
-    } else {
-      buttonLayout.push(okButton);
-      OB.TestRegistry.register('org.openbravo.client.application.process.pickandexecute.button.ok', okButton);
-      buttonLayout.push(isc.LayoutSpacer.create({
-        width: 32
+      this.members.push(isc.HLayout.create({
+        align: 'center',
+        width: '100%',
+        height: OB.Styles.Process.PickAndExecute.buttonLayoutHeight,
+        members: [isc.HLayout.create({
+          width: 1,
+          overflow: 'visible',
+          styleName: this.buttonBarStyleName,
+          height: this.buttonBarHeight,
+          defaultLayoutAlign: 'center',
+          members: buttonLayout
+        })]
       }));
     }
-
-    buttonLayout.push(cancelButton);
-    buttonLayout.push(isc.LayoutSpacer.create({}));
-
-    this.members.push(isc.HLayout.create({
-      align: 'center',
-      width: '100%',
-      height: OB.Styles.Process.PickAndExecute.buttonLayoutHeight,
-      members: [isc.HLayout.create({
-        width: 1,
-        overflow: 'visible',
-        styleName: this.buttonBarStyleName,
-        height: this.buttonBarHeight,
-        defaultLayoutAlign: 'center',
-        members: buttonLayout
-      })]
-    }));
-
 
     this.Super('initWidget', arguments);
 
@@ -172,6 +193,13 @@ isc.OBParameterWindowView.addProperties({
 
   closeClick: function (refresh, message, responseActions) {
     var window = this.parentWindow;
+
+    if (!this.popup) {
+      // TODO: handle close after execution
+      // not working...
+      this.Super('closeClick', arguments);
+      return;
+    }
 
     if (message) {
       this.buttonOwnerView.messageBar.setMessage(message.severity, message.text);
@@ -210,14 +238,9 @@ isc.OBParameterWindowView.addProperties({
 
   doProcess: function (btnValue) {
     var i, tmp, view = this,
-        grid,
-        
-        // activeView = view.parentWindow && view.parentWindow.activeView,  ???
-        allProperties = this.sourceView.getContextInfo(false, true, false, true) || {},
-        
-        //???
+        grid, allProperties = (this.sourceView && this.sourceView.getContextInfo(false, true, false, true)) || {},
         selection, len, allRows, params;
-
+    // activeView = view.parentWindow && view.parentWindow.activeView,  ???.
     if (this.grid) {
       // TODO: Support for multiple grids
       grid = this.grid.viewGrid;
@@ -226,13 +249,11 @@ isc.OBParameterWindowView.addProperties({
       allRows = grid.data.allRows || grid.data;
       allProperties._selection = [];
       allProperties._allRows = [];
-      allProperties._buttonValue = btnValue || 'DONE';
 
       for (i = 0; i < len; i++) {
         tmp = isc.addProperties({}, selection[i], grid.getEditedRecord(selection[i]));
         allProperties._selection.push(tmp);
       }
-
 
       len = (allRows && allRows.length) || 0;
 
@@ -241,6 +262,8 @@ isc.OBParameterWindowView.addProperties({
         allProperties._allRows.push(tmp);
       }
     }
+
+    allProperties._buttonValue = btnValue || 'DONE';
 
     allProperties._params = [];
     if (this.theForm && this.theForm.getItems) {
