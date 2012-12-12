@@ -185,46 +185,48 @@ isc.OBParameterWindowView.addProperties({
           members: buttonLayout
         })]
       }));
+      this.closeClick = function () {
+        this.closeClick = function () {
+          return true;
+        }; // To avoid loop when "Super call"
+        this.parentElement.parentElement.closeClick(); // Super call
+      };
     }
 
     this.Super('initWidget', arguments);
-
   },
 
-  closeClick: function (refresh, message, responseActions) {
+  handleResponse: function (refresh, message, responseActions) {
     var window = this.parentWindow;
 
-    if (!this.popup) {
-      // TODO: handle close after execution
-      // not working...
-      this.Super('closeClick', arguments);
-      return;
-    }
-
     if (message) {
-      this.buttonOwnerView.messageBar.setMessage(message.severity, message.text);
+      if (this.popup) {
+        this.buttonOwnerView.messageBar.setMessage(message.severity, message.text);
+      } else {
+        this.messageBar.setMessage(message.severity, message.text);
+      }
     }
 
     if (responseActions) {
       OB.Utilities.Action.executeJSON(responseActions);
     }
 
-    this.buttonOwnerView.setAsActiveView();
+    if (this.popup) {
+      this.buttonOwnerView.setAsActiveView();
 
-    if (refresh) {
-      window.refresh();
+      if (refresh) {
+        window.refresh();
+      }
+
+      this.closeClick = function () {
+        return true;
+      }; // To avoid loop when "Super call"
+      this.parentElement.parentElement.closeClick(); // Super call
     }
-
-    this.closeClick = function () {
-      return true;
-    }; // To avoid loop when "Super call"
-    this.parentElement.parentElement.closeClick(); // Super call
   },
-
 
   // dummy required by OBStandardView.prepareGridFields
   setFieldFormProperties: function () {},
-
 
   validate: function () {
     if (!this.grid) {
@@ -280,7 +282,7 @@ isc.OBParameterWindowView.addProperties({
       processId: this.processId,
       windowId: this.windowId
     }, function (rpcResponse, data, rpcRequest) {
-      view.closeClick(true, (data && data.message));
+      view.handleResponse(true, (data && data.message));
     });
   }
 });
