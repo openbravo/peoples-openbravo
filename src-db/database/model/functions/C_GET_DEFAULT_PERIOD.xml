@@ -50,6 +50,7 @@ begin
 		FROM C_PERIOD, C_YEAR
 		WHERE C_PERIOD.C_YEAR_ID = C_YEAR.C_YEAR_ID
 		AND C_CALENDAR_ID = v_calendar_id
+		AND PERIODTYPE <> 'A'
 		AND STARTDATE<=trunc(v_dateAcct)
 		AND ENDDATE>=trunc(v_dateAcct);
 
@@ -62,7 +63,8 @@ begin
 				FROM C_PERIOD, C_YEAR
 				WHERE C_PERIOD.C_YEAR_ID = C_YEAR.C_YEAR_ID
 				AND C_CALENDAR_ID = v_calendar_id
-				AND STARTDATE<=(trunc(v_endDate) +1)
+		    AND PERIODTYPE <> 'A'				
+		    AND STARTDATE<=(trunc(v_endDate) +1)
 				AND ENDDATE>=(trunc(v_endDate) +1);
 		
 		    RETURN v_period_id;

@@ -145,6 +145,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="C_COSTCENTER_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="FIN_AD_CLIENT_TRANSACTION">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -169,6 +173,9 @@
       <foreign-key foreignTable="C_CAMPAIGN" name="FIN_FINACC_TRANS_CAMPAIGN">
         <reference local="C_CAMPAIGN_ID" foreign="C_CAMPAIGN_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="C_COSTCENTER" name="FIN_FINACC_TRANS_COSTCENTER">
+        <reference local="C_COSTCENTER_ID" foreign="C_COSTCENTER_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="FIN_RECONCILIATION" name="FIN_FINACC_TRANS_FIN_RECONCILE">
         <reference local="FIN_RECONCILIATION_ID" foreign="FIN_RECONCILIATION_ID"/>
       </foreign-key>
@@ -177,6 +184,12 @@
       </foreign-key>
       <foreign-key foreignTable="C_PROJECT" name="FIN_FINACC_TRANS_PROJECT">
         <reference local="C_PROJECT_ID" foreign="C_PROJECT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="USER1" name="FIN_FINACC_TRANS_USER1">
+        <reference local="USER1_ID" foreign="USER1_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="USER2" name="FIN_FINACC_TRANS_USER2">
+        <reference local="USER2_ID" foreign="USER2_ID"/>
       </foreign-key>
       <foreign-key foreignTable="FIN_FINANCIAL_ACCOUNT" name="FIN_FINANCIAL_TRANSACTION">
         <reference local="FIN_FINANCIAL_ACCOUNT_ID" foreign="FIN_FINANCIAL_ACCOUNT_ID"/>

@@ -59,6 +59,12 @@ class WindowTreeUtility {
       TreeType = "PJ";
     else if (keyColumnName.equals("M_Product_Category_ID"))
       TreeType = "PC";
+    else if (keyColumnName.equals("C_Costcenter_ID"))
+      TreeType = "CC";
+    else if (keyColumnName.equals("User1_ID"))
+      TreeType = "U1";
+    else if (keyColumnName.equals("User2_ID"))
+      TreeType = "U2";
     else if (keyColumnName.equals("M_BOM_ID"))
       TreeType = "BB";
     else if (keyColumnName.equals("C_SalesRegion_ID"))
@@ -73,6 +79,8 @@ class WindowTreeUtility {
       TreeType = "TR";
     else if (keyColumnName.equals("A_Asset_ID"))
       TreeType = "AS";
+    else if (keyColumnName.equals("Obre_Resource_Category_ID"))
+      TreeType = "OBRE_RC";
     else
       TreeType = "";
     if (TreeType.equals(""))
@@ -117,6 +125,12 @@ class WindowTreeUtility {
     else if (TreeType.equals("PC"))
       data = WindowTreeData
           .selectProductCategory(conn, strEditable, strParentID, strNodeId, TreeID);
+    else if (TreeType.equals("CC"))
+      data = WindowTreeData.selectCostcenter(conn, strEditable, strParentID, strNodeId, TreeID);
+    else if (TreeType.equals("U1"))
+      data = WindowTreeData.selectUser1(conn, strEditable, strParentID, strNodeId, TreeID);
+    else if (TreeType.equals("U2"))
+      data = WindowTreeData.selectUser2(conn, strEditable, strParentID, strNodeId, TreeID);
     else if (TreeType.equals("BB"))
       data = WindowTreeData.selectBOM(conn, strEditable, strParentID, strNodeId, TreeID);
     else if (TreeType.equals("EV")) {
@@ -139,6 +153,9 @@ class WindowTreeUtility {
       data = WindowTreeData.selectTaxReport(conn, strEditable, strParentID, strNodeId, TreeID);
     else if (TreeType.equals("AS"))
       data = WindowTreeData.selectAsset(conn, strEditable, strParentID, strNodeId, TreeID);
+    else if (TreeType.equals("OBRE_RC"))
+      data = WindowTreeData.selectOBRE_ResouceCategory(conn, "OBRE_Resource_Category_ID",
+          "OBRE_Resource_Category", TreeID, strEditable, strParentID, strNodeId);
 
     return data;
   }

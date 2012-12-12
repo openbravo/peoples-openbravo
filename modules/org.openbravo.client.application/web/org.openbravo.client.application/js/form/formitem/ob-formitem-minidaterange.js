@@ -105,7 +105,7 @@ isc.RelativeDateItem.addProperties({
   blur: function () {
     var blurValue = this.blurValue(),
         newBlurValue = '',
-        digitRegExp = new RegExp('^\\d+$', 'gm'),
+        jsValue, digitRegExp = new RegExp('^\\d+$', 'gm'),
         newValue, i;
 
     if (!this.areDateItemPropertiesSet) {
@@ -124,7 +124,12 @@ isc.RelativeDateItem.addProperties({
     if (digitRegExp.test(newBlurValue)) {
       newValue = this.parseValue();
       if (newValue) {
-        this.setValue(OB.Utilities.Date.OBToJS(newValue, this.dateFormat));
+        jsValue = OB.Utilities.Date.OBToJS(newValue, this.dateFormat);
+        // if jsValue == null then this is an illegal date, will be 
+        // caught later
+        if (jsValue) {
+          this.setValue(jsValue);
+        }
       }
     }
 
@@ -236,7 +241,7 @@ isc.OBDateRangeDialog.addProperties({
 // MiniDateRangeItem to make it editable.
 isc.ClassFactory.defineClass('OBMiniDateRangeItem', isc.OBTextItem);
 
-isc.OBMiniDateRangeItem.addProperties(OB.DateItemProperties, {
+isc.OBMiniDateRangeItem.addProperties({}, OB.DateItemProperties, {
   validateOnExit: false,
   showPickerIcon: false,
   filterOnKeypress: false,

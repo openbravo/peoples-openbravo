@@ -440,6 +440,7 @@
                   DateOrdered, IsDiscountPrinted, C_Currency_ID, PaymentRule,
                   C_Charge_ID, ChargeAmt, IsSelfService, TotalLines,
                   GrandTotal, M_PriceList_ID, C_Campaign_ID, C_Project_ID,
+                  C_CostCenter_ID, A_Asset_ID,
                   C_Activity_ID, AD_OrgTrx_ID, User1_ID, User2_ID, fin_paymentmethod_id
                 )
                 VALUES
@@ -454,8 +455,9 @@
                   Cur_Order.C_PaymentTerm_ID, Cur_Order.C_BPartner_ID, Cur_Order.BillTo_ID, Cur_Order.AD_User_ID,
                   Cur_Order.POReference, Cur_Order.DateOrdered, Cur_Order.IsDiscountPrinted, Cur_Order.C_Currency_ID,
                   Cur_Order.PaymentRule, Cur_Order.C_Charge_ID, Cur_Order.ChargeAmt, Cur_Order.IsSelfService,
-                  0, 0, Cur_Order.M_PriceList_ID, Cur_Order.C_Campaign_ID,
-                  Cur_Order.C_Project_ID, Cur_Order.C_Activity_ID, Cur_Order.AD_OrgTrx_ID, Cur_Order.User1_ID,
+                  0, 0, Cur_Order.M_PriceList_ID, Cur_Order.C_Campaign_ID, Cur_Order.C_Project_ID,
+                  Cur_Order.C_CostCenter_ID, Cur_Order.A_Asset_ID, 
+                  Cur_Order.C_Activity_ID, Cur_Order.AD_OrgTrx_ID, Cur_Order.User1_ID,
                   Cur_Order.User2_ID, Cur_Order.fin_paymentmethod_id
                 )
                 ;
@@ -770,10 +772,17 @@
                 COALESCE(o.M_PriceList_ID, bp.M_PriceList_ID) AS M_PriceList_ID,
                 o.C_Campaign_ID,
                 o.C_Project_ID,
+                ol.C_Project_ID as line_C_Project_ID,
                 o.C_Activity_ID,
                 o.AD_OrgTrx_ID,
                 o.User1_ID,
+                ol.User1_ID as line_User1_ID,
                 o.User2_ID,
+                ol.User2_ID as line_User2_ID,
+                o.C_CostCenter_ID,
+                ol.C_CostCenter_ID as line_C_CostCenter_ID,
+                o.A_Asset_ID,
+                ol.A_Asset_ID as line_A_Asset_ID,
                 bp.C_InvoiceSchedule_ID,
                 o.InvoiceRule,
                 RPAD(bp.InvoiceGrouping, 15, '0') AS InvoiceGrouping,
@@ -1073,6 +1082,7 @@
                       PaymentRule, C_Charge_ID, ChargeAmt, IsSelfService,
                       TotalLines, GrandTotal, M_PriceList_ID, C_Campaign_ID,
                       C_Project_ID, C_Activity_ID, AD_OrgTrx_ID, User1_ID,
+                      C_CostCenter_ID, A_Asset_ID, 
                       User2_ID, fin_paymentmethod_id
                     )
                     VALUES
@@ -1089,6 +1099,7 @@
                       Cur_InvoiceSchedule.PaymentRule, NULL, 0, 'N',
                       0, 0, Cur_InvoiceSchedule.M_PriceList_ID, Cur_InvoiceSchedule.C_Campaign_ID,
                       Cur_InvoiceSchedule.C_Project_ID, Cur_InvoiceSchedule.C_Activity_ID, Cur_InvoiceSchedule.AD_OrgTrx_ID, Cur_InvoiceSchedule.User1_ID,
+                      Cur_InvoiceSchedule.C_CostCenter_ID, Cur_InvoiceSchedule.A_Asset_ID, 
                       Cur_InvoiceSchedule.User2_ID, Cur_InvoiceSchedule.fin_paymentmethod_id
                     )
                     ;
@@ -1172,7 +1183,9 @@
                     m_attributesetinstance_id, taxbaseamt,
                     gross_unit_price, line_gross_amount,
                     grosspricestd, grosspricelist,
-                    isdeferred, defplantype, periodnumber, c_period_id
+                    isdeferred, defplantype, periodnumber, c_period_id,
+                    c_project_id, c_costcenter_id, a_asset_id,
+                    user1_id, user2_id
                   )
                   VALUES
                   (
@@ -1187,7 +1200,9 @@
                     Cur_InvoiceSchedule.m_attributesetinstance_id, Cur_InvoiceSchedule.taxbaseamt,
                     Cur_InvoiceSchedule.gross_unit_price, C_Currency_Round(Cur_InvoiceSchedule.MovementQty*Cur_InvoiceSchedule.gross_unit_price, Cur_InvoiceSchedule.C_Currency_ID, NULL),
                     COALESCE(Cur_InvoiceSchedule.grosspricestd,0), COALESCE(Cur_InvoiceSchedule.grosspricelist,0),
-                    v_isdeferred_inv, v_defplantype_inv, v_periodnumber_inv, v_period_inv
+                    v_isdeferred_inv, v_defplantype_inv, v_periodnumber_inv, v_period_inv,
+                    coalesce(Cur_InvoiceSchedule.line_c_project_id, Cur_InvoiceSchedule.c_project_id), coalesce(Cur_InvoiceSchedule.line_c_costcenter_id, Cur_InvoiceSchedule.c_costcenter_id), coalesce(Cur_InvoiceSchedule.line_a_asset_id,Cur_InvoiceSchedule.a_asset_id),
+                    coalesce(Cur_InvoiceSchedule.line_user1_id, Cur_InvoiceSchedule.user1_id), coalesce(Cur_InvoiceSchedule.line_user2_id, Cur_InvoiceSchedule.user2_id)
                   )
                   ;
                 v_DateOrdered:=COALESCE(Cur_InvoiceSchedule.movementDate, COALESCE(Cur_InvoiceSchedule.DateOrdered, now())) ;

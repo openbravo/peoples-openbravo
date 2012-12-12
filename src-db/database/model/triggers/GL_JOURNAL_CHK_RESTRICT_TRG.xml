@@ -42,9 +42,24 @@ BEGIN
     OR(COALESCE(:old.AD_CLIENT_ID, '0') <> COALESCE(:new.AD_CLIENT_ID, '0'))))
     THEN  RAISE_APPLICATION_ERROR(-20000, '@20501@') ;
     END IF;
-  IF(:old.Posted='Y' AND ((COALESCE(:old.DATEACCT, v_DateNull) <> COALESCE(:new.DATEACCT, v_DateNull)) OR(COALESCE(:old.C_ACCTSCHEMA_ID, '0') <> COALESCE(:new.C_ACCTSCHEMA_ID, '0')) OR(COALESCE(:old.GL_CATEGORY_ID, '0') <> COALESCE(:new.GL_CATEGORY_ID, '0')) OR(COALESCE(:old.POSTINGTYPE, '.') <> COALESCE(:new.POSTINGTYPE, '.')))) THEN
-   RAISE_APPLICATION_ERROR(-20000, '@20501@') ;
-  END IF;
+    
+    IF(:old.Posted='Y' 
+      AND ((COALESCE(:old.DATEACCT, v_DateNull) <> COALESCE(:new.DATEACCT, v_DateNull)) 
+      OR(COALESCE(:old.C_ACCTSCHEMA_ID, '0') <> COALESCE(:new.C_ACCTSCHEMA_ID, '0')) 
+      OR(COALESCE(:old.GL_CATEGORY_ID, '0') <> COALESCE(:new.GL_CATEGORY_ID, '0')) 
+      OR(COALESCE(:old.POSTINGTYPE, '.') <> COALESCE(:new.POSTINGTYPE, '.'))
+      OR(COALESCE(:OLD.User1_ID, '0') <> COALESCE(:NEW.User1_ID, '0'))
+      OR(COALESCE(:OLD.User2_ID, '0') <> COALESCE(:NEW.User2_ID, '0'))
+      OR(COALESCE(:OLD.C_Campaign_ID, '0') <> COALESCE(:NEW.C_Campaign_ID, '0'))
+      OR(COALESCE(:OLD.C_Project_ID, '0') <> COALESCE(:NEW.C_Project_ID, '0'))
+      OR(COALESCE(:OLD.A_Asset_ID, '0') <> COALESCE(:NEW.A_Asset_ID, '0'))
+      OR(COALESCE(:OLD.C_Costcenter_ID, '0') <> COALESCE(:NEW.C_Costcenter_ID, '0'))
+      OR(COALESCE(:OLD.C_BPartner_ID, '0') <> COALESCE(:NEW.C_BPartner_ID, '0'))
+      OR(COALESCE(:OLD.M_Product_ID, '0') <> COALESCE(:NEW.M_Product_ID, '0'))
+      )) 
+    THEN
+      RAISE_APPLICATION_ERROR(-20000, '@20501@') ;
+    END IF;
  END IF;
  IF(DELETING) THEN
   IF(:old.Processed='Y') THEN

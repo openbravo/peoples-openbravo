@@ -224,7 +224,7 @@ isc.OBLinkedItemLayout.addProperties({
    * Opens linked item in a new window
    */
   openLinkedItemInNewWindow: function (record) {
-    OB.Utilities.openDirectTab(record.adTabId,record.id,'DEFAULT');
+    OB.Utilities.openDirectTab(record.adTabId, record.id, 'DEFAULT');
   },
 
   /**

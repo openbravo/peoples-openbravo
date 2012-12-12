@@ -33,14 +33,20 @@ Begin
       Where C_Period_Id In (Select Distinct(Cp.C_Period_Id)
       From C_Period Cp 
             Join C_Periodcontrol Cpc On Cpc.C_Period_Id= Cp.C_Period_Id 
-      Where Periodstatus <> 'P'))
+      Where Periodstatus <> 'P'
+      and periodtype = 'S'
+      )
+       )
     Loop
-       Select Count(*) 
+       Select Count(*)
        Into V_COUNT
        From C_Period 
-       Where C_Period_Id <> Cur_Period.C_Period_Id
-       And Ad_Org_Id=Cur_Period.Ad_Org_Id
-       And Ad_Client_Id=Cur_Period.Ad_Client_Id
+       Where  exists (select 1 from c_year y1, c_year y2
+       								where y1.c_year_id = c_period.c_year_id
+       								and y1.c_calendar_id = y2.c_calendar_id
+       								and y2.c_year_id = Cur_Period.C_Year_Id
+       								and c_period.c_period_id <> Cur_Period.c_period_id)
+       and periodtype = 'S'
        And Cur_Period.startdate <= Enddate
        And Cur_Period.Enddate >= Startdate;
        If (V_COUNT > 0) Then

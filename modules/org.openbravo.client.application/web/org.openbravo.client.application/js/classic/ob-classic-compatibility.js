@@ -248,7 +248,7 @@
 
           if (LKS.list[i].execLevel) {
             for (j = 0; j < LKS.list[i].execLevel.length; j++) {
-              if (LKS.list[i].execLevel[j] === 'Canvas' && LKS.list[i].id !== 'Canvas_Avoid_Backspace') {
+              if (LKS.list[i].execLevel[j] === 'Canvas') {
                 isCanvasShortcut = true;
                 break;
               }

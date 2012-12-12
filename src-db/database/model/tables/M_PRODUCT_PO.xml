@@ -73,7 +73,7 @@
         <default><![CDATA[0]]></default>
         <onCreateDefault/>
       </column>
-      <column name="VENDORPRODUCTNO" primaryKey="false" required="true" type="NVARCHAR" size="40" autoIncrement="false">
+      <column name="VENDORPRODUCTNO" primaryKey="false" required="false" type="NVARCHAR" size="40" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -158,10 +158,6 @@
       <unique name="M_PRODUCT_PO_PRODUCT_BPARTN_UN">
         <unique-column name="M_PRODUCT_ID"/>
         <unique-column name="C_BPARTNER_ID"/>
-      </unique>
-      <unique name="M_PRODUCT_PO_VENDORPRODNO">
-        <unique-column name="C_BPARTNER_ID"/>
-        <unique-column name="VENDORPRODUCTNO"/>
       </unique>
       <check name="M_PRODUCT_PO_DISCONTINUED_CHK"><![CDATA[DISCONTINUED IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_PO_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>

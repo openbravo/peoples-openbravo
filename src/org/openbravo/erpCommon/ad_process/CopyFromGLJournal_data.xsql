@@ -37,8 +37,9 @@
         (SELECT GL2.DATEDOC FROM GL_JOURNALBATCH GL2 WHERE GL2.GL_JOURNALBATCH_ID = ?) AS DATEDOC,
         (SELECT GL2.DATEACCT FROM GL_JOURNALBATCH GL2 WHERE GL2.GL_JOURNALBATCH_ID = ?) AS DATEACCT,
         '' AS TOTALDR, '' AS TOTALCR, '' AS PROCESSING, '' AS PROCESSED, '' AS POSTED,
-        (SELECT GL2.AD_ORG_ID FROM GL_JOURNALBATCH GL2 WHERE GL2.GL_JOURNALBATCH_ID = ?) AS AD_ORG_ID,'' AS USER1_ID, '' AS USER2_ID, 
-        '' AS C_CAMPAIGN_ID, '' AS C_PROJECT_ID, '' AS C_ACTIVITY_ID, '' AS C_SALESREGION_ID, '' AS M_PRODUCT_ID, '' AS C_BPARTNER_ID
+        (SELECT GL2.AD_ORG_ID FROM GL_JOURNALBATCH GL2 WHERE GL2.GL_JOURNALBATCH_ID = ?) AS AD_ORG_ID, USER1_ID, USER2_ID, 
+        C_CAMPAIGN_ID,  C_PROJECT_ID, '' AS C_ACTIVITY_ID, '' AS C_SALESREGION_ID,   M_PRODUCT_ID,  C_BPARTNER_ID,
+        A_ASSET_ID, C_COSTCENTER_ID   
         FROM GL_JOURNAL GL
         WHERE GL.GL_JOURNALBATCH_ID = ?
       ]]>
@@ -54,11 +55,15 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT LINE, ISGENERATED, DESCRIPTION, AMTSOURCEDR, AMTSOURCECR, C_CURRENCY_ID, CURRENCYRATETYPE, CURRENCYRATE,
-        AMTACCTDR, AMTACCTCR, C_UOM_ID, QTY, C_VALIDCOMBINATION_ID,USER1_ID, USER2_ID, C_CAMPAIGN_ID, C_PROJECT_ID, C_ACTIVITY_ID, 
-        C_SALESREGION_ID, M_PRODUCT_ID, C_BPARTNER_ID, AD_ORG_ID
-        FROM GL_JOURNALLINE
-        WHERE GL_JOURNAL_ID = ?
+        SELECT LINE, ISGENERATED, gll.DESCRIPTION, AMTSOURCEDR, AMTSOURCECR, gll.C_CURRENCY_ID, gll.CURRENCYRATETYPE, gll.CURRENCYRATE,
+		AMTACCTDR, AMTACCTCR, C_UOM_ID, QTY, C_VALIDCOMBINATION_ID,coalesce(gll.USER1_ID,gl.USER1_ID) as USER1_ID, coalesce(gll.USER2_ID,gl.USER2_ID) as USER2_ID, 
+		coalesce(gll.C_CAMPAIGN_ID, gl.C_CAMPAIGN_ID) as C_CAMPAIGN_ID , coalesce(gll.C_PROJECT_ID,gl.C_PROJECT_ID) as C_PROJECT_ID,  
+		gll.C_ACTIVITY_ID , gll.C_SALESREGION_ID , 
+		coalesce(gll.M_PRODUCT_ID,gl.M_PRODUCT_ID) as M_PRODUCT_ID, coalesce(gll.C_BPARTNER_ID,gl.C_BPARTNER_ID) as C_BPARTNER_ID, 
+		gll.AD_ORG_ID, coalesce(gll.A_ASSET_ID,gl.A_ASSET_ID) as A_ASSET_ID, coalesce(gll.C_COSTCENTER_ID,gl.C_COSTCENTER_ID) as C_COSTCENTER_ID   
+		FROM GL_JOURNALLINE gll, GL_JOURNAL gl
+		WHERE gl.gl_journal_id=gll.gl_journal_id
+        AND gll.GL_JOURNAL_ID = ?
       ]]>
     </Sql>
     <Parameter name="gl_journal_id"/>
@@ -97,11 +102,12 @@
         INSERT INTO GL_JOURNAL (GL_JOURNAL_ID, AD_CLIENT_ID, AD_ORG_ID, CREATED, CREATEDBY, 
         UPDATED, UPDATEDBY, C_ACCTSCHEMA_ID,C_DOCTYPE_ID, DOCSTATUS,DOCACTION, ISAPPROVED, ISPRINTED, 
         DESCRIPTION, POSTINGTYPE, GL_CATEGORY_ID, DATEDOC, DATEACCT,C_PERIOD_ID, C_CURRENCY_ID, 
-        CURRENCYRATETYPE,CURRENCYRATE, GL_JOURNALBATCH_ID, CONTROLAMT, DOCUMENTNO, PROCESSING, PROCESSED, POSTED) 
+        CURRENCYRATETYPE,CURRENCYRATE, GL_JOURNALBATCH_ID, CONTROLAMT, DOCUMENTNO, PROCESSING, PROCESSED, POSTED,
+        USER1_ID, USER2_ID, C_CAMPAIGN_ID, C_PROJECT_ID,   A_ASSET_ID,  C_COSTCENTER_ID, C_BPARTNER_ID, M_PRODUCT_ID) 
         VALUES (?,?,?,now(),?,
         	now(),?,?,?,?,?,?,?,
         	?,?,?,TO_DATE(?),TO_DATE(?),?,?,
-        	?,TO_NUMBER(?),?,TO_NUMBER(?),?,?,?,?)
+        	?,TO_NUMBER(?),?,TO_NUMBER(?),?,?,?,?,?,?,?,?,?,?,?,?)
       ]]>
     </Sql>
     <Parameter name="gl_journal_id"/>
@@ -130,6 +136,14 @@
     <Parameter name="processing"/>
     <Parameter name="processed"/>
     <Parameter name="posted"/>
+    <Parameter name="user1_id"/>
+    <Parameter name="user2_id"/>
+    <Parameter name="c_campaign_id"/>
+    <Parameter name="c_project_id"/>
+    <Parameter name="a_asset_id"/>
+    <Parameter name="c_costcenter_id"/>
+    <Parameter name="c_bpartner_id"/>
+    <Parameter name="m_product_id"/> 
   </SqlMethod>
   <SqlMethod name="insertGLJournalLine" type="preparedStatement" connection="true" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
@@ -138,9 +152,9 @@
         INSERT INTO GL_JOURNALLINE (GL_JOURNALLINE_ID, AD_CLIENT_ID, AD_ORG_ID, CREATED, CREATEDBY, 
         UPDATED, UPDATEDBY, GL_JOURNAL_ID,LINE, ISGENERATED, DESCRIPTION,AMTSOURCEDR, AMTSOURCECR, C_CURRENCY_ID, 
         CURRENCYRATETYPE, CURRENCYRATE, DATEACCT,AMTACCTDR, AMTACCTCR, C_UOM_ID,QTY, C_VALIDCOMBINATION_ID,
-        USER1_ID, USER2_ID, C_CAMPAIGN_ID, C_PROJECT_ID, C_ACTIVITY_ID, C_SALESREGION_ID, M_PRODUCT_ID, C_BPARTNER_ID) 
+        USER1_ID, USER2_ID, C_CAMPAIGN_ID, C_PROJECT_ID, C_ACTIVITY_ID, C_SALESREGION_ID, M_PRODUCT_ID, C_BPARTNER_ID,  A_ASSET_ID,  C_COSTCENTER_ID) 
         VALUES (?,?,?,now(),?,now(),?,?,TO_NUMBER(?),?,?,TO_NUMBER(?),TO_NUMBER(?),?,?,TO_NUMBER(?),now(),TO_NUMBER(?),
-        TO_NUMBER(?),?,TO_NUMBER(?), ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        TO_NUMBER(?),?,TO_NUMBER(?), ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)
       ]]>
     </Sql>
     <Parameter name="gl_journalline_id"/>
@@ -170,5 +184,7 @@
     <Parameter name="c_salesregion_id"/>
     <Parameter name="m_product_id"/>
     <Parameter name="c_bpartner_id"/>
+    <Parameter name="a_asset_id"/>
+    <Parameter name="c_costcenter_id"/>
   </SqlMethod>
 </SqlClass>

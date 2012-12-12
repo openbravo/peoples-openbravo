@@ -207,7 +207,26 @@ function autoDisplayLogicDimensions(isDisplayed) {
   } else {
     displayLogicDimension('c_salesregion_id', false);
   }
-  
+  if (document.frmMain.strElement_U1.value === 'Y' && isDisplayed) {
+        displayLogicDimension('user1_ID', true);
+        displayTitle = true;
+      } else {
+        displayLogicDimension('user1_ID', false);
+      }
+  if (document.frmMain.strElement_U2.value === 'Y' && isDisplayed) {
+      displayLogicDimension('user2_ID', true);
+      displayTitle = true;
+    } else {
+      displayLogicDimension('user2_ID', false);
+    }
+  //costcenter  is not ready
+  if (document.frmMain.strElement_CC.value === 'Y' && isDisplayed) {
+      displayLogicDimension('c_costcenter_id', true);
+      displayTitle = true;
+    } else {
+      displayLogicDimension('c_costcenter_id', false);
+    }
+ 
   if (displayTitle) {
     displayLogicElement('acctDimensionsTitle', true);
   } else {
@@ -239,6 +258,7 @@ function submitThisPage(strCommand) {
   if (validate()) {
     setProcessingMode('popup', true);
     submitCommandForm(strCommand, false, null, '../org.openbravo.advpaymentmngt.ad_actionbutton/AddTransaction.html');
+    disableButtonProcess();
     return true;
   }
   return true;
@@ -361,6 +381,9 @@ function reloadWindowGrid() {
   <input type="hidden" name="strElement_AY" id="paramStrElement_AY" value=""/>
   <input type="hidden" name="strElement_SR" id="paramStrElement_SR" value=""/>
   <input type="hidden" name="strElement_MC" id="paramStrElement_MC" value=""/>
+  <input type="hidden" name="strElement_U1" id="paramStrElement_U1" value=""/>
+  <input type="hidden" name="strElement_U2" id="paramStrElement_U2" value=""/>
+  <input type="hidden" name="strElement_CC" id="paramStrElement_CC" value=""/>
   
   <div class="Popup_ContentPane_CircleLogo">
     <div class="Popup_WindowLogo">
@@ -881,25 +904,9 @@ function reloadWindowGrid() {
                   </tr>
                 </table>
               </td>
-              <!-- Activity Dimension -->
-              <td id="c_activity_id_dim_label" class="TitleCell"><span class="LabelText">Activity</span></td>
-              <td id="c_activity_id_dim_inp" class="TextBox_ContentCell" colspan="1">
-                <table style="border:0px;border-collapse:collapse;">
-                  <tr>
-                    <td style="padding-top: 0px;">
-                      <script>var sc_C_Activity_ID = null;</script>
-                      <input type="hidden" name="inpCActivityId" id="C_Activity_ID" value="" onreset="sc_C_Activity_ID.resetSelector();" onchange="openbravo.Utilities.updateSmartClientComponentValue(this, sc_C_Activity_ID.selectorField);"></input>
-                      <script id="selectorLink" src="../org.openbravo.client.kernel/OBUISEL_Selector/FF808181312D569C01312D8C1EC40036?columnName=C_Activity_ID&disabled=false&CssSize=TwoCells&DisplayLength=45.0&required=false"></script>
-                    </td>
-                  </tr>
-                </table>
-              </td>             
-              <td class="TitleCell"></td>
-            </tr>
-            <tr id="GLItemSection2_Dim">
-              <!-- Product Dimension -->
+                <!-- Product Dimension -->
               <td id="m_product_id_dim_label" class="TitleCell"><span class="LabelText">Product</span></td>
-              <td id="m_product_id_dim_inp" class="TextBox_ContentCell" colspan="2">
+              <td id="m_product_id_dim_inp" class="TextBox_ContentCell" colspan="1">
                 <table style="border:0px;border-collapse:collapse;">
                   <tr>
                     <td style="padding-top: 0px;">
@@ -909,24 +916,11 @@ function reloadWindowGrid() {
                     </td>
                   </tr>
                 </table>
-              </td>
-              <!-- Campaign Dimension -->
-              <td id="c_campaign_id_dim_label" class="TitleCell"><span class="LabelText">Campaign</span></td>
-              <td id="c_campaign_id_dim_inp" class="TextBox_ContentCell" colspan="1">
-                <table style="border:0px;border-collapse:collapse;">
-                  <tr>
-                    <td style="padding-top: 0px;">
-                      <script>var sc_C_Campaign_ID = null;</script>
-                      <input type="hidden" name="inpCampaignId" id="C_Campaign_ID" value="" onreset="sc_C_Campaign_ID.resetSelector();" onchange="openbravo.Utilities.updateSmartClientComponentValue(this, sc_C_Campaign_ID.selectorField);"></input>
-                      <script id="selectorLink" src="../org.openbravo.client.kernel/OBUISEL_Selector/FF808181312D569C01312D8DCCD50045?columnName=C_Campaign_ID&disabled=false&CssSize=TwoCells&DisplayLength=45.0&required=false"></script>
-                    </td>
-                  </tr>
-                </table>
-              </td>
-              <td class="TitleCell"></td>
+              </td> 
+            <td class="TitleCell"></td>
             </tr>
-            <tr id="GLItemSection3_Dim">
-              <!-- Project Dimension -->
+            <tr id="GLItemSection2_Dim">
+               <!-- Project Dimension -->
               <td id="c_project_id_dim_label" class="TitleCell"><span class="LabelText">Project</span></td>
               <td id="c_project_id_dim_inp" class="TextBox_ContentCell" colspan="2">
                 <table style="border:0px;border-collapse:collapse;">
@@ -939,9 +933,83 @@ function reloadWindowGrid() {
                   </tr>
                 </table>
               </td>
+              <!-- Cost center -->
+              <td id="c_costcenter_id_dim_label" class="TitleCell"><span class="LabelText">Cost Center</span></td>
+              <td id="c_costcenter_id_dim_inp" class="TextBox_ContentCell" colspan="1">
+                <table style="border:0px;border-collapse:collapse;">
+                  <tr>
+                    <td style="padding-top: 0px;">
+                      <script>var sc_C_Costcenter_ID = null;</script>
+                      <input type="hidden" name="inpCCostcenterId" id="C_Costcenter_ID" value="" onreset="sc_C_Costcenter_ID.resetSelector();" onchange="openbravo.Utilities.updateSmartClientComponentValue(this, sc_C_Costcenter_ID.selectorField);"></input>
+                      <script id="selectorLink" src="../org.openbravo.client.kernel/OBUISEL_Selector/B8321631F57E463EB617289E936BAF3A?columnName=C_Costcenter_ID&disabled=false&CssSize=TwoCells&DisplayLength=45.0&required=false"></script>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            <td class="TitleCell"></td>
+            </tr>
+            <tr id="GLItemSection3_Dim">
+             <!-- Campaign Dimension -->
+              <td id="c_campaign_id_dim_label" class="TitleCell"><span class="LabelText">Campaign</span></td>
+              <td id="c_campaign_id_dim_inp" class="TextBox_ContentCell" colspan="2">
+                <table style="border:0px;border-collapse:collapse;">
+                  <tr>
+                    <td style="padding-top: 0px;">
+                      <script>var sc_C_Campaign_ID = null;</script>
+                      <input type="hidden" name="inpCampaignId" id="C_Campaign_ID" value="" onreset="sc_C_Campaign_ID.resetSelector();" onchange="openbravo.Utilities.updateSmartClientComponentValue(this, sc_C_Campaign_ID.selectorField);"></input>
+                      <script id="selectorLink" src="../org.openbravo.client.kernel/OBUISEL_Selector/FF808181312D569C01312D8DCCD50045?columnName=C_Campaign_ID&disabled=false&CssSize=TwoCells&DisplayLength=45.0&required=false"></script>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+               <!-- Activity Dimension -->
+              <td id="c_activity_id_dim_label" class="TitleCell"><span class="LabelText">Activity</span></td>
+              <td id="c_activity_id_dim_inp" class="TextBox_ContentCell" colspan="1">
+                <table style="border:0px;border-collapse:collapse;">
+                  <tr>
+                    <td style="padding-top: 0px;">
+                      <script>var sc_C_Activity_ID = null;</script>
+                      <input type="hidden" name="inpCActivityId" id="C_Activity_ID" value="" onreset="sc_C_Activity_ID.resetSelector();" onchange="openbravo.Utilities.updateSmartClientComponentValue(this, sc_C_Activity_ID.selectorField);"></input>
+                      <script id="selectorLink" src="../org.openbravo.client.kernel/OBUISEL_Selector/FF808181312D569C01312D8C1EC40036?columnName=C_Activity_ID&disabled=false&CssSize=TwoCells&DisplayLength=45.0&required=false"></script>
+                    </td>
+                  </tr>
+                </table>
+              </td>             
+             <td class="TitleCell"></td>
+             </tr>
+              <tr id="GLItemSection4_Dim">
+              <!-- User1-->
+              <td id="user1_ID_dim_label" class="TitleCell"><span class="LabelText">1st Dimension</span></td>
+              <td id="user1_ID_dim_inp" class="TextBox_ContentCell" colspan="2">
+                <table style="border:0px;border-collapse:collapse;">
+                  <tr>
+                    <td style="padding-top: 0px;">
+                      <script>var sc_User1_ID = null;</script>
+                      <input type="hidden" name="inpUser1ID" id="User1_ID" value="" onreset="sc_User1_ID.resetSelector();" onchange="openbravo.Utilities.updateSmartClientComponentValue(this, sc_User1_ID.selectorField);"></input>
+                      <script id="selectorLink" src="../org.openbravo.client.kernel/OBUISEL_Selector/814758DD755642E9BF38BD2E5AD713EC?columnName=User1_ID&disabled=false&CssSize=TwoCells&DisplayLength=45.0&required=false"></script>
+                    </td>
+                  </tr>
+                </table>
+              </td> 
+              <!-- User2-->
+              <td id="user2_ID_dim_label" class="TitleCell"><span class="LabelText">2nd Dimension</span></td>
+              <td id="user2_ID_dim_inp" class="TextBox_ContentCell" colspan="1">
+                <table style="border:0px;border-collapse:collapse;">
+                  <tr>
+                    <td style="padding-top: 0px;">
+                      <script>var sc_User2_ID = null;</script>
+                      <input type="hidden" name="inpUser2ID" id="User2_ID" value="" onreset="sc_User2_ID.resetSelector();" onchange="openbravo.Utilities.updateSmartClientComponentValue(this, sc_User2_ID.selectorField);"></input>
+                      <script id="selectorLink" src="../org.openbravo.client.kernel/OBUISEL_Selector/BD1DA40E134A42B9889B529302A96871?columnName=User2_ID&disabled=false&CssSize=TwoCells&DisplayLength=45.0&required=false"></script>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+              <td class="TitleCell"></td> 
+              </tr>
+              <tr id="GLItemSection5_Dim">
               <!-- Sales Region Dimension -->
               <td id="c_salesregion_id_dim_label" class="TitleCell"><span class="LabelText">Sales Region</span></td>
-              <td id="c_salesregion_id_dim_inp" class="TextBox_ContentCell" colspan="1">
+              <td id="c_salesregion_id_dim_inp" class="TextBox_ContentCell" colspan="2">
                 <table style="border:0px;border-collapse:collapse;">
                   <tr>
                     <td style="padding-top: 0px;">
@@ -951,8 +1019,10 @@ function reloadWindowGrid() {
                     </td>
                   </tr>
                 </table>
-              </td>
-              <td class="TitleCell"></td>
+              </td>          
+             <td class="TitleCell"></td>
+             <td class="TitleCell"></td>
+             <td class="TitleCell"></td>
             </tr>                
             <!-- Payment Section START-->
             <tr id="PaymentSection">
@@ -1131,7 +1201,7 @@ function reloadWindowGrid() {
                   <button type="button" 
                     id="buttonProcess"
                     class="ButtonLink" 
-                    onclick="submitThisPage('SAVE'); disableButtonProcess();return false;"
+                    onclick="submitThisPage('SAVE');return false;"
                     onfocus="buttonEvent('onfocus', this); window.status='Create'; return true;"
                     onblur="buttonEvent('onblur', this);"
                     onkeyup="buttonEvent('onkeyup', this);"
@@ -1186,5 +1256,7 @@ function reloadWindowGrid() {
     <!-- Buttons END -->
   </table>
 </form>
+</body>
+</html>
 </body>
 </html>

@@ -216,9 +216,12 @@ public class Reconciliation extends HttpSecureAppServlet {
           return;
         }
 
+        boolean orgLegalWithAccounting = FIN_Utility.periodControlOpened(reconciliation.TABLE_NAME,
+            reconciliation.getId(), reconciliation.TABLE_NAME + "_ID", "LE");
         if (!FIN_Utility.isPeriodOpen(reconciliation.getClient().getId(),
             AcctServer.DOCTYPE_Reconciliation, reconciliation.getOrganization().getId(),
-            strStatementDate)) {
+            strStatementDate)
+            && orgLegalWithAccounting) {
           msg.setType("Error");
           msg.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
           msg.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(),
@@ -229,17 +232,19 @@ public class Reconciliation extends HttpSecureAppServlet {
           return;
         }
 
-        String identifier = linesInNotAvailablePeriod(reconciliation.getId());
-        if (!identifier.equalsIgnoreCase("")) {
-          msg.setType("Error");
-          msg.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
-          msg.setMessage(String.format(
-              Utility.messageBD(this, "APRM_PeriodNotAvailableClearedItem", vars.getLanguage()),
-              identifier));
-          vars.setMessage(strTabId, msg);
-          msg = null;
-          printPageClosePopUpAndRefreshParent(response, vars);
-          return;
+        if (orgLegalWithAccounting) {
+          String identifier = linesInNotAvailablePeriod(reconciliation.getId());
+          if (!identifier.equalsIgnoreCase("")) {
+            msg.setType("Error");
+            msg.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
+            msg.setMessage(String.format(
+                Utility.messageBD(this, "APRM_PeriodNotAvailableClearedItem", vars.getLanguage()),
+                identifier));
+            vars.setMessage(strTabId, msg);
+            msg = null;
+            printPageClosePopUpAndRefreshParent(response, vars);
+            return;
+          }
         }
 
         for (APRM_FinaccTransactionV finacctrxv : reconciliation.getAPRMFinaccTransactionVList()) {

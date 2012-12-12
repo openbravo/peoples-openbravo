@@ -38,6 +38,7 @@
         COALESCE(jl.C_Activity_ID,vc.C_Activity_ID) as C_Activity_ID,
         COALESCE(jl.User1_ID,vc.User1_ID) as User1_ID,
         COALESCE(jl.User2_ID,vc.User2_ID) as User2_ID,
+        jl.C_COSTCENTER_ID, jl.A_ASSET_ID,
         jl.C_DEBT_PAYMENT_ID, jl.C_WithHolding_ID, jl.C_Tax_ID
         FROM C_ValidCombination vc, GL_JournalLine jl , GL_Journal j
         WHERE j.GL_JOURNAL_ID = jl.GL_JOURNAL_ID

@@ -89,7 +89,7 @@
         AmtSourceDR,AmtSourceCR,AmtAcctDR,AmtAcctCR,
         C_UOM_ID,Qty,M_Locator_ID,M_Product_ID,C_BPartner_ID,AD_OrgTrx_ID,C_LocFrom_ID,C_LocTo_ID,C_SalesRegion_ID,
         C_Project_ID,C_Campaign_ID,C_Activity_ID,User1_ID,User2_ID,Description, Fact_Acct_Group_ID, SeqNo, DocBaseType,
-        Record_ID2, A_ASSET_ID, C_WithHolding_ID, C_DocType_ID)
+        Record_ID2, A_ASSET_ID, C_WithHolding_ID, C_DocType_ID, C_Costcenter_ID)
         VALUES
           (?, ?, ?,'Y',now(),?,now(),?,
            ?, ?, ?, ?, TO_DATE(?), TO_DATE(?),
@@ -97,7 +97,7 @@
            ?, ?, ?, ?,
            TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?),
            ?, TO_NUMBER(?), ?,?, ?, ?,?, ?, ?,?, ?, ?,?, ?, ?, ?, TO_NUMBER(?), ?,
-           ?, ?, ?, ?)
+           ?, ?, ?, ?, ?)
      ]]>
      </Sql>
      <Parameter name="m_Fact_Acct_ID"/>
@@ -145,6 +145,7 @@
      <Parameter name="aAssetId"/>
      <Parameter name="cWithholdingId"/>
      <Parameter name="cDocTypeId"/>
+     <Parameter name="cCostcenterId"/>
    </SqlMethod>
   <SqlMethod name="updateFactAcct" type="preparedStatement" connection="true" return="rowCount">
     <SqlMethodComment></SqlMethodComment>

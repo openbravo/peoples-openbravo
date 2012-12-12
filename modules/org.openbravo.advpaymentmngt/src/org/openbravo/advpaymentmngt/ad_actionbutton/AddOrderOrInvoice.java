@@ -50,8 +50,10 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
+import org.openbravo.erpCommon.ad_forms.AcctServer;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.DateTimeData;
+import org.openbravo.erpCommon.utility.DimensionDisplayUtility;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
@@ -59,6 +61,9 @@ import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.plm.Product;
+import org.openbravo.model.financialmgmt.accounting.Costcenter;
+import org.openbravo.model.financialmgmt.accounting.UserDimension1;
+import org.openbravo.model.financialmgmt.accounting.UserDimension2;
 import org.openbravo.model.financialmgmt.gl.GLItem;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
@@ -67,7 +72,6 @@ import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.model.marketing.Campaign;
 import org.openbravo.model.materialmgmt.cost.ABCActivity;
 import org.openbravo.model.project.Project;
-import org.openbravo.model.sales.SalesRegion;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class AddOrderOrInvoice extends HttpSecureAppServlet {
@@ -197,16 +201,25 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
             checkID(strElement_AY);
             final ABCActivity activity = dao.getObject(ABCActivity.class, strElement_AY);
 
-            final String strElement_SR = glItem.getString("cSalesregionDim");
-            checkID(strElement_SR);
-            final SalesRegion salesRegion = dao.getObject(SalesRegion.class, strElement_SR);
+            final String strElement_CC = glItem.getString("cCostcenterDim");
+            checkID(strElement_CC);
+            final Costcenter costCenter = dao.getObject(Costcenter.class, strElement_CC);
 
             final String strElement_MC = glItem.getString("cCampaignDim");
             checkID(strElement_MC);
             final Campaign campaign = dao.getObject(Campaign.class, strElement_MC);
 
+            final String strElement_U1 = glItem.getString("user1Dim");
+            checkID(strElement_U1);
+            final UserDimension1 user1 = dao.getObject(UserDimension1.class, strElement_U1);
+
+            final String strElement_U2 = glItem.getString("user2Dim");
+            checkID(strElement_U2);
+            final UserDimension2 user2 = dao.getObject(UserDimension2.class, strElement_U2);
+
             FIN_AddPayment.saveGLItem(payment, glItemAmt, dao.getObject(GLItem.class, strGLItemId),
-                businessPartner, product, project, campaign, activity, salesRegion);
+                businessPartner, product, project, campaign, activity, null, costCenter, user1,
+                user2);
           }
         }
         FIN_AddPayment.setFinancialTransactionAmountAndRate(payment, exchangeRate, convertedAmount);
@@ -226,7 +239,8 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
               message = FIN_AddPayment.processPayment(vars, this,
                   (strAction.equals("PRP") || strAction.equals("PPP")) ? "P" : "D", payment);
             }
-            if (strDifferenceAction.equals("refund")) {
+            if (strDifferenceAction.equals("refund")
+                && !"Error".equalsIgnoreCase(message.getType())) {
               Boolean newPayment = !payment.getFINPaymentDetailList().isEmpty();
               FIN_Payment refundPayment = FIN_AddPayment.createRefundPayment(this, vars, payment,
                   refundAmount.negate(), exchangeRate);
@@ -443,18 +457,42 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
     }
 
     // Accounting Dimensions
-    final String strElement_BP = Utility.getContext(this, vars, "$Element_BP", strWindowId);
-    final String strElement_PR = Utility.getContext(this, vars, "$Element_PR", strWindowId);
-    final String strElement_PJ = Utility.getContext(this, vars, "$Element_PJ", strWindowId);
+    String doctype;
+    if (payment.isReceipt()) {
+      doctype = AcctServer.DOCTYPE_ARReceipt;
+    } else {
+      doctype = AcctServer.DOCTYPE_APPayment;
+    }
+    final String strCentrally = Utility.getContext(this, vars,
+        DimensionDisplayUtility.IsAcctDimCentrally, strWindowId);
+    final String strElement_BP = Utility.getContext(this, vars, DimensionDisplayUtility
+        .displayAcctDimensions(strCentrally, DimensionDisplayUtility.DIM_BPartner, doctype,
+            DimensionDisplayUtility.DIM_Header), strWindowId);
+    final String strElement_PR = Utility.getContext(this, vars, DimensionDisplayUtility
+        .displayAcctDimensions(strCentrally, DimensionDisplayUtility.DIM_Product, doctype,
+            DimensionDisplayUtility.DIM_Header), strWindowId);
+    final String strElement_PJ = Utility.getContext(this, vars, DimensionDisplayUtility
+        .displayAcctDimensions(strCentrally, DimensionDisplayUtility.DIM_Project, doctype,
+            DimensionDisplayUtility.DIM_Header), strWindowId);
     final String strElement_AY = Utility.getContext(this, vars, "$Element_AY", strWindowId);
-    final String strElement_SR = Utility.getContext(this, vars, "$Element_SR", strWindowId);
+    final String strElement_CC = Utility.getContext(this, vars, DimensionDisplayUtility
+        .displayAcctDimensions(strCentrally, DimensionDisplayUtility.DIM_CostCenter, doctype,
+            DimensionDisplayUtility.DIM_Header), strWindowId);
     final String strElement_MC = Utility.getContext(this, vars, "$Element_MC", strWindowId);
+    final String strElement_U1 = Utility.getContext(this, vars, DimensionDisplayUtility
+        .displayAcctDimensions(strCentrally, DimensionDisplayUtility.DIM_User1, doctype,
+            DimensionDisplayUtility.DIM_Header), strWindowId);
+    final String strElement_U2 = Utility.getContext(this, vars, DimensionDisplayUtility
+        .displayAcctDimensions(strCentrally, DimensionDisplayUtility.DIM_User2, doctype,
+            DimensionDisplayUtility.DIM_Header), strWindowId);
     xmlDocument.setParameter("strElement_BP", strElement_BP);
     xmlDocument.setParameter("strElement_PR", strElement_PR);
     xmlDocument.setParameter("strElement_PJ", strElement_PJ);
     xmlDocument.setParameter("strElement_AY", strElement_AY);
-    xmlDocument.setParameter("strElement_SR", strElement_SR);
+    xmlDocument.setParameter("strElement_CC", strElement_CC);
     xmlDocument.setParameter("strElement_MC", strElement_MC);
+    xmlDocument.setParameter("strElement_U1", strElement_U1);
+    xmlDocument.setParameter("strElement_U2", strElement_U2);
 
     // Add GL Items
     JSONArray addedGLITemsArray = new JSONArray();
@@ -495,21 +533,31 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
             .getId() : "");
         glItem.put("cActivityDimDesc", psdGLItem.getActivity() != null ? psdGLItem.getActivity()
             .getIdentifier() : "");
-        glItem.put("cSalesregionDim", psdGLItem.getSalesRegion() != null ? psdGLItem
-            .getSalesRegion().getId() : "");
-        glItem.put("cSalesregionDimDesc", psdGLItem.getSalesRegion() != null ? psdGLItem
-            .getSalesRegion().getIdentifier() : "");
+        glItem.put("cCostcenterDim", psdGLItem.getCostCenter() != null ? psdGLItem.getCostCenter()
+            .getId() : "");
+        glItem.put("cCostcenterDimDesc", psdGLItem.getCostCenter() != null ? psdGLItem
+            .getCostCenter().getIdentifier() : "");
         glItem.put("cCampaignDim", psdGLItem.getSalesCampaign() != null ? psdGLItem
             .getSalesCampaign().getId() : "");
         glItem.put("cCampaignDimDesc", psdGLItem.getSalesCampaign() != null ? psdGLItem
             .getSalesCampaign().getIdentifier() : "");
+        glItem.put("user1Dim", psdGLItem.getStDimension() != null ? psdGLItem.getStDimension()
+            .getId() : "");
+        glItem.put("user1DimDesc", psdGLItem.getStDimension() != null ? psdGLItem.getStDimension()
+            .getIdentifier() : "");
+        glItem.put("user2Dim", psdGLItem.getNdDimension() != null ? psdGLItem.getNdDimension()
+            .getId() : "");
+        glItem.put("user2DimDesc", psdGLItem.getNdDimension() != null ? psdGLItem.getNdDimension()
+            .getIdentifier() : "");
         // DisplayLogics
         glItem.put("cBpartnerDimDisplayed", strElement_BP);
         glItem.put("mProductDimDisplayed", strElement_PR);
         glItem.put("cProjectDimDisplayed", strElement_PJ);
         glItem.put("cActivityDimDisplayed", strElement_AY);
-        glItem.put("cSalesregionDimDisplayed", strElement_SR);
+        glItem.put("cCostcenterDimDisplayed", strElement_CC);
         glItem.put("cCampaignDimDisplayed", strElement_MC);
+        glItem.put("user1DimDisplayed", strElement_U1);
+        glItem.put("user2DimDisplayed", strElement_U2);
         addedGLITemsArray.put(glItem);
       } catch (JSONException e) {
         log4j.error(e);

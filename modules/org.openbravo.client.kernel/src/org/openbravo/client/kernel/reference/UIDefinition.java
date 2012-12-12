@@ -20,6 +20,7 @@ package org.openbravo.client.kernel.reference;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -134,6 +135,10 @@ public abstract class UIDefinition {
     return "";
   }
 
+  public String getValueFromSQLDefault(ResultSet rs) throws SQLException {
+    return rs.getString(1);
+  }
+
   /**
    * Computes properties to initialize and set the field in a Smartclient form. This can be the
    * default value or the sets of values in the valuemap.
@@ -180,8 +185,9 @@ public abstract class UIDefinition {
           ArrayList<String> params = new ArrayList<String>();
           String sql = parseSQL(defaultS, params);
           int indP = 1;
+          PreparedStatement ps = null;
           try {
-            PreparedStatement ps = OBDal.getInstance().getConnection(false).prepareStatement(sql);
+            ps = OBDal.getInstance().getConnection(false).prepareStatement(sql);
             for (String parameter : params) {
               String value = "";
               if (parameter.substring(0, 1).equals("#")) {
@@ -201,11 +207,17 @@ public abstract class UIDefinition {
             }
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-              columnValue = rs.getString(1);
+              columnValue = getValueFromSQLDefault(rs);
             }
           } catch (Exception e) {
             log.error("Error computing default value for field " + field.getName() + " of tab "
                 + field.getTab().getName(), e);
+          } finally {
+            try {
+              ps.close();
+            } catch (SQLException e) {
+              // won't happen
+            }
           }
         }
       }

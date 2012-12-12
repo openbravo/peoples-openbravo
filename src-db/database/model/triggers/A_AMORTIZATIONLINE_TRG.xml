@@ -67,6 +67,16 @@ BEGIN
   then
       RAISE_APPLICATION_ERROR(-20000, '@20501@') ;
     end if;
+    
+    IF(COALESCE(v_Posted, 'N')='Y'
+      AND ((COALESCE(:OLD.C_Project_ID, '0') <> COALESCE(:NEW.C_Project_ID, '0'))
+      OR (COALESCE(:OLD.C_Costcenter_ID, '0') <> COALESCE(:NEW.C_Costcenter_ID, '0'))
+      OR (COALESCE(:OLD.User1_ID, '0') <> COALESCE(:NEW.User1_ID, '0'))
+      OR (COALESCE(:OLD.User2_ID, '0') <> COALESCE(:NEW.User2_ID, '0'))
+      ))
+    THEN
+      RAISE_APPLICATION_ERROR(-20000,'@20501@') ;
+    END IF;      
  
     IF (:new.A_Asset_ID IS NOT NULL AND :old.AmortizationAmt<>:new.AmortizationAmt) THEN
       v_diffAmortizationAmt:=:new.AmortizationAmt - :old.AmortizationAmt;

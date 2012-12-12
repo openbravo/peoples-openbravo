@@ -102,7 +102,7 @@ function distributeAmount(_amount) {
       outstandingAmount = frm.elements["inpRecordAmt" + scheduledPaymentDetailId].value;
       if (chk[i].checked && keepSelection) {
         if(compare(outstandingAmount, '<', amount) && compare(distributedAmount, '==', outstandingAmount))
-    	  continue;
+          continue;
         else
           amount = add(amount, frm.elements["inpPaymentAmount" + chk[i].value].value);
       }
@@ -216,7 +216,7 @@ function loadGLItemList() {
       glitemCount = OB.APRM.APFT_GLItems.length,
       glitemAmount = 0,
       glitemDescLength = 20, glitemDescCont = "...",
-      cellCount, row, cellGLItemDesc, cellGLITemReceivedInAmt, cellGLITemPaidOutAmt, cellRemoveButton, i, textNode, glAcctDimsDesc, acctDim, cellGLItemDim, cellText;
+      cellCount, row, cellGLItemDesc, cellGLITemReceivedInAmt, cellGLITemPaidOutAmt, cellRemoveButton, i, textNode, glAcctDimsDesc, glAcctDimsDescnext, acctDim, cellGLItemDim, cellText;
 
   setTextContent(table,'');
   if (!OB.APRM.HasGLItems) {
@@ -255,13 +255,15 @@ function loadGLItemList() {
     cellCount = 0;
     
     cellGLItemDesc = row.insertCell(cellCount);
+    cellGLItemDesc.rowSpan = "2";
     textNode = document.createTextNode(OB.APRM.APFT_GLItems[i].glitemDesc);
     cellGLItemDesc.appendChild(textNode);
     cellGLItemDesc.className = 'DataGrid_Body_Cell';
     cellCount++;
     
     // Accounting Dimensions
-    glAcctDimsDesc = ["cBpartnerDimDesc", "cActivityDimDesc", "mProductDimDesc", "cCampaignDimDesc", "cProjectDimDesc", "cSalesregionDimDesc"];
+    glAcctDimsDesc = ["cBpartnerDimDesc", "cActivityDimDesc", "mProductDimDesc", "cCampaignDimDesc"];
+    glAcctDimsDescnext = ["cProjectDimDesc", "cCostcenterDimDesc", "user1DimDesc", "user2DimDesc"];
     for (acctDim = 0; acctDim < glAcctDimsDesc.length; acctDim++) {
       if (OB.APRM.APFT_GLItems[i][glAcctDimsDesc[acctDim]]) {
         cellGLItemDim = row.insertCell(cellCount);
@@ -287,9 +289,11 @@ function loadGLItemList() {
     textNode = document.createTextNode(applyFormatJSToOBMasked(OB.APRM.APFT_GLItems[i].glitemReceivedInAmt));
     cellGLITemReceivedInAmt.appendChild(textNode);
     cellGLITemReceivedInAmt.className = 'DataGrid_Body_Cell_Amount';
+    cellGLITemReceivedInAmt.rowSpan = "2";
     cellCount++;
     
     cellGLITemPaidOutAmt = row.insertCell(cellCount);
+    cellGLITemPaidOutAmt.rowSpan = "2";
     textNode = document.createTextNode(applyFormatJSToOBMasked(OB.APRM.APFT_GLItems[i].glitemPaidOutAmt));
     cellGLITemPaidOutAmt.appendChild(textNode);
     cellGLITemPaidOutAmt.className = 'DataGrid_Body_Cell_Amount';
@@ -301,6 +305,7 @@ function loadGLItemList() {
       glitemAmount = subtract(applyFormatJSToOBMasked(OB.APRM.APFT_GLItems[i].glitemPaidOutAmt), applyFormatJSToOBMasked(OB.APRM.APFT_GLItems[i].glitemReceivedInAmt));
     }
     cellRemoveButton = row.insertCell(cellCount);
+    cellRemoveButton.rowSpan = "2";
     cellText = '<div><button type="button" id="buttonRemoveGLItem"'
         + ' class="ButtonLink_focus" onclick="removeGLItem(' + i + ', ' + applyFormatOBMaskedToJS(glitemAmount) + ');return false;"'
         + ' onfocus="buttonEvent(\'onfocus\', this); window.status=\'OK\'; return true;"'
@@ -316,6 +321,31 @@ function loadGLItemList() {
         + '    <img alt="Remove" title="Remove" src="../web/org.openbravo.advpaymentmngt/images/GLItemGridCancel-xButt.png" id="imgButtonRemove" border="0"/></td>'
         + '  </tr></table></button></div>';
     setTextContent(cellRemoveButton, cellText);
+
+    row = table.insertRow(table.rows.length);
+    row.className = 'DataGrid_Body_Row DataGrid_Body_Row_'+i%2;
+    cellCount = 0;
+
+    for (acctDim = 0; acctDim < glAcctDimsDescnext.length; acctDim++) {
+        if (OB.APRM.APFT_GLItems[i][glAcctDimsDescnext[acctDim]]) {
+            cellGLItemDim = row.insertCell(cellCount);
+            if (OB.APRM.APFT_GLItems[i][glAcctDimsDescnext[acctDim]].length > glitemDescLength + glitemDescCont.length) {
+              textNode = document.createTextNode(OB.APRM.APFT_GLItems[i][glAcctDimsDescnext[acctDim]].slice(0, glitemDescLength) + glitemDescCont);
+            } else {
+              textNode = document.createTextNode(OB.APRM.APFT_GLItems[i][glAcctDimsDescnext[acctDim]]);
+            }
+            cellGLItemDim.appendChild(textNode);
+            cellGLItemDim.className = 'DataGrid_Body_Cell';
+            cellCount++;
+          } else if (OB.APRM.APFT_GLItems[i][glAcctDimsDescnext[acctDim].replace("Desc", "Displayed")]) {
+            // The Acct. Dimen is displayed and the user has left it empty
+            cellGLItemDim = row.insertCell(cellCount);
+            textNode = document.createTextNode("");
+            cellGLItemDim.appendChild(textNode);
+            cellGLItemDim.className = 'DataGrid_Body_Cell';
+            cellCount++;
+          }
+        }
   }
   updateTotal();
 }
@@ -377,9 +407,15 @@ function addGLItem() {
     cProjectDim: frm.inpCProjectId && frm.inpCProjectId.value,
     cProjectDimDesc: sc_C_Project_ID.selectorField.getDisplayValue(),
     cProjectDimDisplayed: frm.strElement_PJ.value,
-    cSalesregionDim: frm.inpCSalesRegionId && frm.inpCSalesRegionId.value,
-    cSalesregionDimDesc: sc_C_SalesRegion_ID.selectorField.getDisplayValue(),
-    cSalesregionDimDisplayed: frm.strElement_SR.value,
+    cCostcenterDim: frm.inpCCostcenterId && frm.inpCCostcenterId.value,
+    cCostcenterDimDesc: sc_C_Costcenter_ID.selectorField.getDisplayValue(),
+    cCostcenterDimDisplayed: frm.strElement_CC.value,
+    user1Dim: frm.inpUser1Id && frm.inpUser1Id.value,
+    user1DimDesc: sc_User1_ID.selectorField.getDisplayValue(),
+    user1DimDisplayed: frm.strElement_U1.value,
+    user2Dim: frm.inpUser2Id && frm.inpUser2Id.value,
+    user2DimDesc: sc_User2_ID.selectorField.getDisplayValue(),
+    user2DimDisplayed: frm.strElement_U2.value,
     glitemReceivedInAmt: OB.Utilities.Number.OBMaskedToJS(frm.inpGLItemReceivedInAmount.value,
                                                           getGlobalDecSeparator(),
                                                           getGlobalGroupSeparator()),
@@ -624,11 +660,23 @@ function autoDisplayLogicDimensions(isDisplayed) {
   } else {
     displayLogicDimension('c_project_id', false);
   }
-  if (document.frmMain.strElement_SR.value === 'Y' && isDisplayed) {
-    displayLogicDimension('c_salesregion_id', true);
+  if (document.frmMain.strElement_CC.value === 'Y' && isDisplayed) {
+    displayLogicDimension('c_costcenter_id', true);
     displayTitle = true;
   } else {
-    displayLogicDimension('c_salesregion_id', false);
+    displayLogicDimension('c_costcenter_id', false);
+  }
+  if (document.frmMain.strElement_U1.value === 'Y' && isDisplayed) {
+    displayLogicDimension('user1_id', true);
+    displayTitle = true;
+  } else {
+    displayLogicDimension('user1_id', false);
+  }
+  if (document.frmMain.strElement_U2.value === 'Y' && isDisplayed) {
+    displayLogicDimension('user2_id', true);
+    displayTitle = true;
+  } else {
+    displayLogicDimension('user2_id', false);
   }
   
   if (displayTitle) {
@@ -775,8 +823,10 @@ function closeProcessPayment() {
   <input type="hidden" name="strElement_PR" id="paramStrElement_PR" value=""/>
   <input type="hidden" name="strElement_PJ" id="paramStrElement_PJ" value=""/>
   <input type="hidden" name="strElement_AY" id="paramStrElement_AY" value=""/>
-  <input type="hidden" name="strElement_SR" id="paramStrElement_SR" value=""/>
+  <input type="hidden" name="strElement_CC" id="paramStrElement_CC" value=""/>
   <input type="hidden" name="strElement_MC" id="paramStrElement_MC" value=""/>
+  <input type="hidden" name="strElement_U1" id="paramStrElement_U1" value=""/>
+  <input type="hidden" name="strElement_U2" id="paramStrElement_U2" value=""/>
   <input type="hidden" name="strNotAllowExchange" id="paramStrNotAllowExchange" value=""/>
   <input type="hidden" name="strWriteOffLimit" id="paramStrWriteOffLimit" value=""/>
   <input type="hidden" name="strtypewriteoff" id="paramStrtypewriteoff" value=""/>
@@ -1416,15 +1466,44 @@ function closeProcessPayment() {
                   </tr>
                 </table>
               </td>
-              <!-- Sales Region Dimension -->
-              <td id="c_salesregion_id_dim_label" class="TitleCell"><span class="LabelText">Sales Region</span></td>
-              <td id="c_salesregion_id_dim_inp" class="TextBox_ContentCell" colspan="1">
+              <!-- Cost center Dimension -->
+              <td id="c_costcenter_id_dim_label" class="TitleCell"><span class="LabelText">Cost Center</span></td>
+              <td id="c_costcenter_id_dim_inp" class="TextBox_ContentCell" colspan="1">
                 <table style="border:0px;border-collapse:collapse;">
                   <tr>
                     <td style="padding-top: 0px;">
-                      <script>var sc_C_SalesRegion_ID = null;</script>
-                      <input type="hidden" name="inpCSalesRegionId" id="C_SalesRegion_ID" value="" onreset="sc_C_SalesRegion_ID.resetSelector();" onchange="openbravo.Utilities.updateSmartClientComponentValue(this, sc_C_SalesRegion_ID.selectorField);"></input>
-                      <script id="selectorLink" src="../org.openbravo.client.kernel/OBUISEL_Selector/FF808181312D569C01312D8EE5430054?columnName=C_SalesRegion_ID&disabled=false&CssSize=TwoCells&DisplayLength=45.0&required=false"></script>
+                      <script>var sc_C_Costcenter_ID = null;</script>
+                      <input type="hidden" name="inpCCostcenterId" id="C_Costcenter_ID" value="" onreset="sc_C_Costcenter_ID.resetSelector();" onchange="openbravo.Utilities.updateSmartClientComponentValue(this, sc_C_Costcenter_ID.selectorField);"></input>
+                      <script id="selectorLink" src="../org.openbravo.client.kernel/OBUISEL_Selector/B8321631F57E463EB617289E936BAF3A?columnName=C_Costcenter_ID&disabled=false&CssSize=TwoCells&DisplayLength=45.0&required=false"></script>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+              <td class="TitleCell"></td>
+            </tr>
+            <tr id="GLItemSection4_Dim">
+              <!-- User1 Dimension -->
+              <td id="user1_id_dim_label" class="TitleCell"><span class="LabelText">1st Dimension</span></td>
+              <td id="user1_id_dim_inp" class="TextBox_ContentCell" colspan="2">
+                <table style="border:0px;border-collapse:collapse;">
+                  <tr>
+                    <td style="padding-top: 0px;">
+                      <script>var sc_User1_ID = null;</script>
+                      <input type="hidden" name="inpUser1Id" id="User1_ID" value="" onreset="sc_User1_ID.resetSelector();" onchange="openbravo.Utilities.updateSmartClientComponentValue(this, sc_User1_ID.selectorField);"></input>
+                      <script id="selectorLink" src="../org.openbravo.client.kernel/OBUISEL_Selector/814758DD755642E9BF38BD2E5AD713EC?columnName=User1_ID&disabled=false&CssSize=TwoCells&DisplayLength=45.0&required=false"></script>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+              <!-- User2 Dimension -->
+              <td id="user2_id_dim_label" class="TitleCell"><span class="LabelText">2nd Dimension</span></td>
+              <td id="user2_id_dim_inp" class="TextBox_ContentCell" colspan="1">
+                <table style="border:0px;border-collapse:collapse;">
+                  <tr>
+                    <td style="padding-top: 0px;">
+                      <script>var sc_User2_ID = null;</script>
+                      <input type="hidden" name="inpUser2Id" id="User2_ID" value="" onreset="sc_User2_ID.resetSelector();" onchange="openbravo.Utilities.updateSmartClientComponentValue(this, sc_User2_ID.selectorField);"></input>
+                      <script id="selectorLink" src="../org.openbravo.client.kernel/OBUISEL_Selector/BD1DA40E134A42B9889B529302A96871?columnName=User2_ID&disabled=false&CssSize=TwoCells&DisplayLength=45.0&required=false"></script>
                     </td>
                   </tr>
                 </table>
@@ -1502,16 +1581,20 @@ function closeProcessPayment() {
                   <table cellspacing="0" cellpadding="0" width="100%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;" id="gridGLItem">
                     <thead>
                       <tr class="DataGrid_Body_Row">
-                        <th class="DataGrid_Header_Cell" width="300">GL Item</th>
+                        <th class="DataGrid_Header_Cell" width="300" rowspan="2">GL Item</th>
                         <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="100" id="c_bpartner_id_th">Business Partner</th>
                         <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="100" id="c_activity_id_th">Activity</th>
                         <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="100" id="m_product_id_th">Product</th>
                         <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="100" id="c_campaign_id_th">Campaign</th>
+                        <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="100" rowspan="2">Received In</th>
+                        <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="100" rowspan="2">Paid Out</th>
+                        <th class="DataGrid_Header_LineNoCell" width="20" rowspan="2"></th>
+                      </tr>
+                      <tr class="DataGrid_Body_Row">
                         <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="100" id="c_project_id_th">Project</th>
-                        <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="100" id="c_salesregion_id_th">Sales Region</th>
-                        <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="100">Received In</th>
-                        <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="100">Paid Out</th>
-                        <th class="DataGrid_Header_LineNoCell" width="20"></th>
+                        <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="100" id="c_costcenter_id_th">Cost Center</th>
+                        <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="100" id="user1_id_th">1st Dimension</th>
+                        <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="100" id="user2_id_th">2nd Dimension</th>
                       </tr>
                     </thead>
                     <tbody id="sectionGLItemGrid">

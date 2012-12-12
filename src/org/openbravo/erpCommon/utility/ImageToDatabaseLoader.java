@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
+import org.openbravo.base.AntExecutor;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -21,6 +23,19 @@ public class ImageToDatabaseLoader extends BaseDalInitializingTask {
   private String imagePaths;
   private String basePath;
   private String propertyNames;
+
+  public static void main(String[] args) {
+    final String srcPath = args[0];
+    final File srcDir = new File(srcPath);
+    final File baseDir = srcDir.getParentFile();
+    try {
+      final AntExecutor antExecutor = new AntExecutor(baseDir.getAbsolutePath());
+      antExecutor.runTask("load.logoimages.forked");
+    } catch (final Exception e) {
+      e.printStackTrace();
+      throw new OBException(e);
+    }
+  }
 
   @Override
   public void doExecute() {

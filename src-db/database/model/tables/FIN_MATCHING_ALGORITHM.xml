@@ -45,12 +45,27 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="MATCHBPNAME" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault><![CDATA['Y']]></onCreateDefault>
+      </column>
+      <column name="MATCHREFERENCE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault><![CDATA['Y']]></onCreateDefault>
+      </column>
+      <column name="MATCHTRANSACTIONDATE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="FIN_MATCH_ALGORITHM_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="FIN_MATCHING_ALGORITHM_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <check name="FIN_MATCH_ALGORITHM_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="FIN_MATCHING_ALGORITHM_BPN_CHK"><![CDATA[MATCHBPNAME IN ('Y', 'N')]]></check>
+      <check name="FIN_MATCHING_ALGORITHM_ISA_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="FIN_MATCHING_ALGORITHM_REF_CHK"><![CDATA[MATCHREFERENCE IN ('Y', 'N')]]></check>
+      <check name="FIN_MATCHING_ALGORITHM_TRN_CHK"><![CDATA[MATCHTRANSACTIONDATE IN ('Y', 'N')]]></check>
     </table>
   </database>

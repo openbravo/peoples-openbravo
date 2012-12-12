@@ -85,6 +85,10 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
+      <column name="CREATE_RESERVATIONS" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="AD_CLIENT_RUN_PURCHASE">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -109,6 +113,7 @@
       <foreign-key foreignTable="C_BPARTNER" name="MRP_RUN_PURCHASE_VENDOR">
         <reference local="VENDOR_ID" foreign="C_BPARTNER_ID"/>
       </foreign-key>
+      <check name="MRP_RUN_PURCHASE"><![CDATA[CREATE_RESERVATIONS IN ('Y', 'N')]]></check>
       <check name="MRP_RUN_PURCHASE_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="MRP_RUN_PURCHASE_LAUNCHPO_CHK"><![CDATA[LAUNCHPO IN ('Y', 'N')]]></check>
       <check name="MRP_RUN_PURCHASE_SIMULATE_CHK"><![CDATA[SIMULATE IN ('Y', 'N')]]></check>

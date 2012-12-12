@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -36,6 +37,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
+import org.openbravo.erpCommon.utility.DimensionDisplayUtility;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.RoleOrganization;
@@ -48,6 +50,7 @@ import org.openbravo.model.ad.module.ADOrgModule;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.system.ClientInformation;
+import org.openbravo.model.ad.system.DimensionMapping;
 import org.openbravo.model.ad.system.Language;
 import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.model.ad.ui.ElementTrl;
@@ -139,7 +142,121 @@ public class InitialSetupUtility {
     newClient.setName(strClientName);
     newClient.setDescription(strClientName);
     newClient.setNewOBObject(true);
-    OBDal.getInstance().save(newClient);
+
+    try {
+      // Accounting dimension display enabled
+      newClient.setAcctdimCentrallyMaintained(true);
+      Map<String, String> readOnlySessionVariableMap = DimensionDisplayUtility
+          .getReadOnlyLogicSessionVariables();
+
+      // Organization
+      newClient.setOrgAcctdimHeader("Y".equals(readOnlySessionVariableMap.get("$RO_"
+          + DimensionDisplayUtility.DIM_Organization + "_" + DimensionDisplayUtility.DIM_Header)));
+      newClient.setOrgAcctdimLines("Y".equals(readOnlySessionVariableMap.get("$RO_"
+          + DimensionDisplayUtility.DIM_Organization + "_" + DimensionDisplayUtility.DIM_Lines)));
+      newClient
+          .setOrgAcctdimBreakdown("Y".equals(readOnlySessionVariableMap.get("$RO_"
+              + DimensionDisplayUtility.DIM_Organization + "_"
+              + DimensionDisplayUtility.DIM_BreakDown)));
+      newClient.setOrgAcctdimIsenable(newClient.isOrgAcctdimHeader()
+          || newClient.isOrgAcctdimLines() || newClient.isOrgAcctdimBreakdown());
+
+      // Business Partner
+      newClient.setBpartnerAcctdimHeader("Y".equals(readOnlySessionVariableMap.get("$RO_"
+          + DimensionDisplayUtility.DIM_BPartner + "_" + DimensionDisplayUtility.DIM_Header)));
+      newClient.setBpartnerAcctdimLines("Y".equals(readOnlySessionVariableMap.get("$RO_"
+          + DimensionDisplayUtility.DIM_BPartner + "_" + DimensionDisplayUtility.DIM_Lines)));
+      newClient.setBpartnerAcctdimBreakdown("Y".equals(readOnlySessionVariableMap.get("$RO_"
+          + DimensionDisplayUtility.DIM_BPartner + "_" + DimensionDisplayUtility.DIM_BreakDown)));
+      newClient.setBpartnerAcctdimIsenable(newClient.isBpartnerAcctdimHeader()
+          || newClient.isBpartnerAcctdimLines() || newClient.isBpartnerAcctdimBreakdown());
+
+      // Product
+      newClient.setProductAcctdimHeader("Y".equals(readOnlySessionVariableMap.get("$RO_"
+          + DimensionDisplayUtility.DIM_Product + "_" + DimensionDisplayUtility.DIM_Header)));
+      newClient.setProductAcctdimLines("Y".equals(readOnlySessionVariableMap.get("$RO_"
+          + DimensionDisplayUtility.DIM_Product + "_" + DimensionDisplayUtility.DIM_Lines)));
+      newClient.setProductAcctdimBreakdown("Y".equals(readOnlySessionVariableMap.get("$RO_"
+          + DimensionDisplayUtility.DIM_Product + "_" + DimensionDisplayUtility.DIM_BreakDown)));
+      newClient.setProductAcctdimIsenable(newClient.isProductAcctdimHeader()
+          || newClient.isProductAcctdimLines() || newClient.isProductAcctdimBreakdown());
+
+      // Project
+      newClient.setProjectAcctdimHeader("Y".equals(readOnlySessionVariableMap.get("$RO_"
+          + DimensionDisplayUtility.DIM_Project + "_" + DimensionDisplayUtility.DIM_Header)));
+      newClient.setProjectAcctdimLines("Y".equals(readOnlySessionVariableMap.get("$RO_"
+          + DimensionDisplayUtility.DIM_Project + "_" + DimensionDisplayUtility.DIM_Lines)));
+      newClient.setProjectAcctdimBreakdown("Y".equals(readOnlySessionVariableMap.get("$RO_"
+          + DimensionDisplayUtility.DIM_Project + "_" + DimensionDisplayUtility.DIM_BreakDown)));
+      newClient.setProjectAcctdimIsenable(newClient.isProjectAcctdimHeader()
+          || newClient.isProjectAcctdimLines() || newClient.isProjectAcctdimBreakdown());
+
+      // Cost Center
+      newClient.setCostcenterAcctdimHeader("Y".equals(readOnlySessionVariableMap.get("$RO_"
+          + DimensionDisplayUtility.DIM_CostCenter + "_" + DimensionDisplayUtility.DIM_Header)));
+      newClient.setCostcenterAcctdimLines("Y".equals(readOnlySessionVariableMap.get("$RO_"
+          + DimensionDisplayUtility.DIM_CostCenter + "_" + DimensionDisplayUtility.DIM_Lines)));
+      newClient.setCostcenterAcctdimBreakdown("Y".equals(readOnlySessionVariableMap.get("$RO_"
+          + DimensionDisplayUtility.DIM_CostCenter + "_" + DimensionDisplayUtility.DIM_BreakDown)));
+      newClient.setCostcenterAcctdimIsenable(newClient.isCostcenterAcctdimHeader()
+          || newClient.isCostcenterAcctdimLines() || newClient.isCostcenterAcctdimBreakdown());
+
+      // User 1
+      newClient.setUser1AcctdimHeader("Y".equals(readOnlySessionVariableMap.get("$RO_"
+          + DimensionDisplayUtility.DIM_User1 + "_" + DimensionDisplayUtility.DIM_Header)));
+      newClient.setUser1AcctdimLines("Y".equals(readOnlySessionVariableMap.get("$RO_"
+          + DimensionDisplayUtility.DIM_User1 + "_" + DimensionDisplayUtility.DIM_Lines)));
+      newClient.setUser1AcctdimBreakdown("Y".equals(readOnlySessionVariableMap.get("$RO_"
+          + DimensionDisplayUtility.DIM_User1 + "_" + DimensionDisplayUtility.DIM_BreakDown)));
+      newClient.setUser1AcctdimIsenable(newClient.isUser1AcctdimHeader()
+          || newClient.isUser1AcctdimLines() || newClient.isUser1AcctdimBreakdown());
+
+      // User 2
+      newClient.setUser2AcctdimHeader("Y".equals(readOnlySessionVariableMap.get("$RO_"
+          + DimensionDisplayUtility.DIM_User2 + "_" + DimensionDisplayUtility.DIM_Header)));
+      newClient.setUser2AcctdimLines("Y".equals(readOnlySessionVariableMap.get("$RO_"
+          + DimensionDisplayUtility.DIM_User2 + "_" + DimensionDisplayUtility.DIM_Lines)));
+      newClient.setUser2AcctdimBreakdown("Y".equals(readOnlySessionVariableMap.get("$RO_"
+          + DimensionDisplayUtility.DIM_User2 + "_" + DimensionDisplayUtility.DIM_BreakDown)));
+      newClient.setUser2AcctdimIsenable(newClient.isUser2AcctdimHeader()
+          || newClient.isUser2AcctdimLines() || newClient.isUser2AcctdimBreakdown());
+
+      OBDal.getInstance().save(newClient);
+      OBDal.getInstance().flush();
+
+      // Client Accounting Dimension configuration
+      List<String> mandatoryDimensionList = new ArrayList<String>();
+      mandatoryDimensionList.add(DimensionDisplayUtility.DIM_Organization);
+      mandatoryDimensionList.add(DimensionDisplayUtility.DIM_BPartner);
+      mandatoryDimensionList.add(DimensionDisplayUtility.DIM_Product);
+      for (Object[] o : DimensionDisplayUtility.getGroupDimensionMapping(mandatoryDimensionList)) {
+        String dimension = (String) o[0];
+        String docBasetType = (String) o[1];
+        boolean showInHeader = false;
+        boolean showInLines = false;
+        boolean showInBreakDown = false;
+        for (DimensionMapping dm : DimensionDisplayUtility.getDimensionMappingList(dimension,
+            docBasetType, null)) {
+          if (!showInHeader) {
+            showInHeader = dm.isMandatory()
+                && DimensionDisplayUtility.DIM_Header.equals(dm.getLevel());
+          }
+          if (!showInLines) {
+            showInLines = dm.isMandatory()
+                && DimensionDisplayUtility.DIM_Lines.equals(dm.getLevel());
+          }
+          if (!showInBreakDown) {
+            showInBreakDown = dm.isMandatory()
+                && DimensionDisplayUtility.DIM_BreakDown.equals(dm.getLevel());
+          }
+        }
+        DimensionDisplayUtility.createNewDimensionMapping(newClient, getZeroOrg(), dimension,
+            docBasetType, showInHeader, showInLines, showInBreakDown);
+      }
+    } catch (Exception e) {
+      log4j.error("Error creating client accounting dimension configuration", e);
+    }
+
     OBDal.getInstance().flush();
     return newClient;
   }
@@ -1355,24 +1472,41 @@ public class InitialSetupUtility {
       ElementValue elementValue, AcctSchema acctSchema, Boolean isFullyQualified) {
     Organization organization;
     if (orgProvided == null) {
-      if ((organization = getZeroOrg()) == null)
+      if ((organization = getZeroOrg()) == null) {
         return null;
-    } else
+      }
+    } else {
       organization = orgProvided;
+    }
+    OBContext.setAdminMode(false);
+    try {
+      OBCriteria<AccountingCombination> obc = OBDal.getInstance().createCriteria(
+          AccountingCombination.class);
+      obc.add(Restrictions.eq(AccountingCombination.PROPERTY_ACCOUNT, elementValue));
+      obc.setFilterOnReadableClients(false);
+      obc.setFilterOnReadableOrganization(false);
+      List<AccountingCombination> combinations = obc.list();
 
-    final AccountingCombination newAcctComb = OBProvider.getInstance().get(
-        AccountingCombination.class);
+      if (combinations.size() == 0) {
+        final AccountingCombination newAcctComb = OBProvider.getInstance().get(
+            AccountingCombination.class);
 
-    newAcctComb.setClient(client);
-    newAcctComb.setOrganization(organization);
-    newAcctComb.setAccount(elementValue);
-    newAcctComb.setAccountingSchema(acctSchema);
-    newAcctComb.setOrganization(elementValue.getOrganization());
-    newAcctComb.setFullyQualified(isFullyQualified);
+        newAcctComb.setClient(client);
+        newAcctComb.setOrganization(organization);
+        newAcctComb.setAccount(elementValue);
+        newAcctComb.setAccountingSchema(acctSchema);
+        newAcctComb.setOrganization(elementValue.getOrganization());
+        newAcctComb.setFullyQualified(isFullyQualified);
 
-    OBDal.getInstance().save(newAcctComb);
-    OBDal.getInstance().flush();
-    return newAcctComb;
+        OBDal.getInstance().save(newAcctComb);
+        OBDal.getInstance().flush();
+        return newAcctComb;
+      } else {
+        return combinations.get(0);
+      }
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
   /**

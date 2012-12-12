@@ -141,6 +141,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="C_COSTCENTER_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="FIN_AD_CLIENT_PAYMENTS">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -165,6 +169,9 @@
       <foreign-key foreignTable="C_CAMPAIGN" name="FIN_PAYMENT_CAMPAIGN">
         <reference local="C_CAMPAIGN_ID" foreign="C_CAMPAIGN_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="C_COSTCENTER" name="FIN_PAYMENT_COSTCENTER">
+        <reference local="C_COSTCENTER_ID" foreign="C_COSTCENTER_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="FIN_PAYMENTMETHOD" name="FIN_PAYMENT_PAYMENT_METHOD">
         <reference local="FIN_PAYMENTMETHOD_ID" foreign="FIN_PAYMENTMETHOD_ID"/>
       </foreign-key>
@@ -173,6 +180,12 @@
       </foreign-key>
       <foreign-key foreignTable="FIN_PAYMENT" name="FIN_PAYMENT_REVERSED">
         <reference local="FIN_REV_PAYMENT_ID" foreign="FIN_PAYMENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="USER1" name="FIN_PAYMENT_USER1">
+        <reference local="USER1_ID" foreign="USER1_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="USER2" name="FIN_PAYMENT_USER2">
+        <reference local="USER2_ID" foreign="USER2_ID"/>
       </foreign-key>
       <check name="FIN_PAYMENT_BP_CREDIT_CHECK"><![CDATA[((C_BPARTNER_ID IS NULL) AND (COALESCE(GENERATED_CREDIT, 0) = 0)) OR (C_BPARTNER_ID IS NOT NULL)]]></check>
       <check name="FIN_PAYMENT_CREATE_ALGORIT_CHK"><![CDATA[CREATEDBYALGORITHM IN ('Y', 'N')]]></check>

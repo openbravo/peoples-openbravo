@@ -245,8 +245,19 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="A_ASSET_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="C_COSTCENTER_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="M_FREIGHTCATEGORY" name="M_FREIGHTCATEGORY_M_INOUT">
         <reference local="M_FREIGHTCATEGORY_ID" foreign="M_FREIGHTCATEGORY_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="A_ASSET" name="M_INOUT_A_ASSET">
+        <reference local="A_ASSET_ID" foreign="A_ASSET_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_CLIENT" name="M_INOUT_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
@@ -278,6 +289,9 @@
       <foreign-key foreignTable="C_CHARGE" name="M_INOUT_C_CHARGE">
         <reference local="C_CHARGE_ID" foreign="C_CHARGE_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="C_COSTCENTER" name="M_INOUT_C_COSTCENTER">
+        <reference local="C_COSTCENTER_ID" foreign="C_COSTCENTER_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="C_DOCTYPE" name="M_INOUT_C_DOCTYPE">
         <reference local="C_DOCTYPE_ID" foreign="C_DOCTYPE_ID"/>
       </foreign-key>
@@ -304,6 +318,12 @@
       </foreign-key>
       <foreign-key foreignTable="AD_USER" name="M_INOUT_SALESREP">
         <reference local="SALESREP_ID" foreign="AD_USER_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="USER1" name="M_INOUT_USER1">
+        <reference local="USER1_ID" foreign="USER1_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="USER2" name="M_INOUT_USER2">
+        <reference local="USER2_ID" foreign="USER2_ID"/>
       </foreign-key>
       <index name="M_INOUT_BPARTNER" unique="false">
         <index-column name="C_BPARTNER_ID"/>

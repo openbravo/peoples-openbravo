@@ -68,11 +68,16 @@ public class InitialClientSetup {
   private static final String STRTREETYPECAMPAIGN = "MC";
   private static final String STRTREETYPEASSET = "AS";
   private static final String STRTREETYPEPRODUCTCATEGORY = "PC";
+  private static final String STRTREETYPECOSTCENTER = "CC";
+  private static final String STRTREETYPEUSERDIMENSION1 = "U1";
+  private static final String STRTREETYPEUSERDIMENSION2 = "U2";
+  private static final String STRTREETYPEOBRE_RESOURCECATEGORY = "OBRE_RC";
   private static final String STRSEPARATOR = "*****************************************************";
   private static final String STRCLIENTNAMESUFFIX = " Admin";
   private boolean bAccountingCreated = false;
   private Tree treeOrg, treeBPartner, treeProject, treeSalesRegion, treeProduct, treeAccount,
-      treeMenu, treeCampaign, treeAsset, treeProductCategory;
+      treeMenu, treeCampaign, treeAsset, treeProductCategory, treeCostcenter, treeUserDimension1,
+      treeUserDimension2, treeOBRE_ResourceCategory;
   private Client client;
   private Role role;
   private Currency currency;
@@ -347,6 +352,18 @@ public class InitialClientSetup {
     } else if (strTreeType.endsWith(STRTREETYPEPRODUCTCATEGORY)) {
       treeProductCategory = tree;
       return;
+    } else if (strTreeType.endsWith(STRTREETYPECOSTCENTER)) {
+      treeCostcenter = tree;
+      return;
+    } else if (strTreeType.endsWith(STRTREETYPEOBRE_RESOURCECATEGORY)) {
+      treeOBRE_ResourceCategory = tree;
+      return;
+    } else if (strTreeType.endsWith(STRTREETYPEUSERDIMENSION1)) {
+      treeUserDimension1 = tree;
+      return;
+    } else if (strTreeType.endsWith(STRTREETYPEUSERDIMENSION2)) {
+      treeUserDimension2 = tree;
+      return;
     }
   }
 
@@ -354,7 +371,9 @@ public class InitialClientSetup {
     log4j.debug("insertClientInfo() - Starting the creation of client information.");
     if (client == null || treeMenu == null || treeOrg == null || treeBPartner == null
         || treeProject == null || treeSalesRegion == null || treeProduct == null
-        || treeCampaign == null || treeAsset == null || treeProductCategory == null) {
+        || treeCampaign == null || treeAsset == null || treeProductCategory == null
+        || treeCostcenter == null || treeUserDimension1 == null || treeUserDimension2 == null
+        || treeOBRE_ResourceCategory == null) {
       return logErrorAndRollback("@CreateClientFailed@",
           "insertClientInfo() - ERROR - Required information is not present. "
               + "Please check that client and trees where correctly created.");
@@ -371,6 +390,10 @@ public class InitialClientSetup {
       } else {
         clientInfo.setPrimaryTreeAsset(treeAsset);
         clientInfo.setPrimaryTreeProductCategory(treeProductCategory);
+        clientInfo.setPrimaryTreeCostCenter(treeCostcenter);
+        clientInfo.setPrimaryUserDimension1(treeUserDimension1);
+        clientInfo.setPrimaryUserDimension2(treeUserDimension2);
+        clientInfo.setPrimaryTreeResourceCategory(treeOBRE_ResourceCategory);
       }
     } catch (Exception e) {
       return logErrorAndRollback("@CreateClientFailed@",

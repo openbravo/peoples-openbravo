@@ -45,6 +45,7 @@
   -- Logistice
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
+  v_Message_aux VARCHAR2(2000):='';
   v_Record_ID VARCHAR2(32);
   v_User VARCHAR2(32);
   v_PUser VARCHAR2(32);
@@ -92,6 +93,7 @@
     FINISH_PROCESS BOOLEAN:=false;
     v_Aux NUMBER;
     v_ProductName M_Product.name%TYPE;
+    v_reservation_id    VARCHAR2(32);
   BEGIN
     IF(p_PInstance_ID IS NOT NULL) THEN
       --  Update AD_PInstance
@@ -226,12 +228,15 @@
     END IF;
         -- Process Shipments
   
-     -- Set org lines like the header
-       UPDATE M_INOUTLINE
-        SET AD_ORG_ID = (SELECT AD_ORG_ID FROM M_INOUT WHERE M_INOUT_ID = v_Record_ID),
-        Updated=now(),
-        UpdatedBy=v_User
-      WHERE M_INOUT_ID = v_Record_ID;
+      SELECT COUNT(*)
+        INTO v_Count
+      FROM M_INOUT IO, M_INOUTLINE IOL
+      WHERE IO.M_INOUT_ID = IOL.M_INOUT_ID
+        AND AD_ISORGINCLUDED(IOL.AD_Org_ID, IO.AD_Org_ID, IO.AD_Client_ID) <> -1
+        AND IO.M_INOUT_ID = v_Record_ID;
+      IF (v_Count=0) THEN
+        RAISE_APPLICATION_ERROR(-20000, '@NotCorrectOrgLines@') ;
+      END IF;
       
       -- Check the header belongs to a organization where transactions are posible and ready to use
       SELECT AD_Org.IsReady, Ad_OrgType.IsTransactionsAllowed
@@ -332,6 +337,109 @@
               AND ProductType='I';
             -- Create Transaction for stocked product
             IF(Cur_InOutLine.M_Product_ID IS NOT NULL AND v_IsStocked=1 AND Cur_InOutLine.IsDescription <> 'Y') THEN
+              IF (cur_inout.issotrx = 'Y' AND cur_inoutline.c_orderline_id IS NOT NULL AND v_qty < 0 AND cur_inoutline.canceled_inoutline_id IS NULL) THEN
+                -- Manage reservations.
+                SELECT count(*), max(m_reservation_id)
+                  INTO v_aux, v_reservation_id
+                FROM m_reservation
+                WHERE c_orderline_id = cur_inoutline.c_orderline_id;
+                IF (v_aux > 1) THEN
+                  RAISE_APPLICATION_ERROR(-20000, '@SOLineWithMoreThanOneOpenReservation@');
+                ELSIF (v_aux = 1) THEN
+                  M_RESERVATION_CONSUMPTION(v_reservation_id, cur_inoutline.m_locator_id, cur_inoutline.m_attributesetinstance_id, cur_inoutline.movementqty, v_user, v_result, v_message);
+                END IF;
+              ELSIF (cur_inout.issotrx = 'Y' AND cur_inoutline.c_orderline_id IS NOT NULL AND v_qty > 0 AND cur_inoutline.canceled_inoutline_id IS NOT NULL) THEN
+                -- Undo reservation
+                DECLARE
+                  cur_released_stock RECORD;
+                  v_qtyaux NUMBER;
+                  v_undoqty NUMBER;
+                BEGIN
+                  SELECT count(*), max(m_reservation_id)
+                    INTO v_aux, v_reservation_id
+                  FROM m_reservation
+                  WHERE c_orderline_id = cur_inoutline.c_orderline_id;
+                  IF (v_aux > 1) THEN
+                    RAISE_APPLICATION_ERROR(-20000, '@SOLineWithMoreThanOneOpenReservation@');
+                  ELSIF (v_aux = 1) THEN
+                    v_qtyaux := v_qty;
+                    FOR cur_released_stock IN (
+                        SELECT m_reservation_stock_id, quantity, releasedqty
+                        FROM m_reservation_stock
+                        WHERE m_locator_id = cur_inoutline.m_locator_id
+                          AND COALESCE(m_attributesetinstance_id, '0') = COALESCE(cur_inoutline.m_attributesetinstance_id, '0')
+                          AND m_reservation_id = v_reservation_id
+                          AND COALESCE(releasedqty, 0) > 0
+                        ORDER BY CASE isallocated WHEN 'N' THEN 0 ELSE 1 END
+                    ) LOOP
+                      v_undoqty := LEAST(v_qtyaux, cur_released_stock.releasedqty);
+                      UPDATE m_reservation_stock
+                      SET releasedqty = releasedqty - v_undoqty
+                      WHERE m_reservation_stock_id = cur_released_stock.m_reservation_stock_id;
+                      v_qtyaux := v_qtyaux - v_undoqty;
+                    END LOOP;
+                  END IF;
+                END;
+              ELSIF (cur_inout.issotrx = 'N') THEN
+                -- Manage pre-reserves
+                DECLARE
+                  cur_reserve_stock RECORD;
+                  v_pendingqty NUMBER;
+                  v_qtyaux NUMBER;
+                  v_res_stock_id VARCHAR2(32);
+                BEGIN
+                  v_pendingqty := v_qty;
+                  FOR cur_reserve_stock IN (
+                      SELECT rs.*
+                      FROM m_reservation_stock rs JOIN m_reservation r ON rs.m_reservation_id = r.m_reservation_id
+                      WHERE rs.c_orderline_id = cur_inoutline.c_orderline_id
+                        AND rs.quantity <> COALESCE(rs.releasedqty, 0)
+                        AND rs.m_locator_id IS NULL
+                        AND r.res_status != 'CL'
+                  ) LOOP
+                    v_qtyaux := LEAST(cur_reserve_stock.quantity - COALESCE(cur_reserve_stock.releasedqty, 0), v_pendingqty);
+                    -- Check if exists a reserved stock for the same orderline, attributes and locator in the reservation
+                    SELECT count(*), max(m_reservation_stock_id) INTO v_aux, v_res_stock_id
+                    FROM m_reservation_stock
+                      WHERE c_orderline_id = cur_inoutline.c_orderline_id
+                        AND m_locator_id = cur_inoutline.m_locator_id
+                        AND m_reservation_id = cur_reserve_stock.m_reservation_id
+                        AND isallocated = 'Y'
+                        AND COALESCE(m_attributesetinstance_id, '0') = COALESCE(Cur_InOutLine.M_AttributeSetInstance_ID, '0');
+                    -- UPDATE EXISTING PRERESERVED STOCK TO DECREASE RESERVED QTY
+                    UPDATE m_reservation_stock
+                    SET quantity = quantity - v_qtyaux
+                    WHERE m_reservation_stock_id = cur_reserve_stock.m_reservation_stock_id;
+                    -- INSERT OR UPDATE RESERVED STOCK BY SAME QUANTITY
+                    IF (v_aux > 0) THEN
+                      UPDATE m_reservation_stock
+                      SET quantity = quantity + v_qtyaux
+                      WHERE m_reservation_stock_id = v_res_stock_id;
+                    ELSE
+                      INSERT INTO m_reservation_stock(
+                        m_reservation_stock_id, ad_client_id, ad_org_id, isactive,
+                        created, createdby, updated, updatedby,
+                        m_reservation_id, m_attributesetinstance_id, m_locator_id, c_orderline_id,
+                        quantity, releasedqty, isallocated
+                      ) VALUES (
+                        get_uuid(), cur_reserve_stock.ad_client_id, cur_reserve_stock.ad_org_id, 'Y',
+                        now(), v_user, now(), v_user,
+                        cur_reserve_stock.m_reservation_id, cur_inoutline.m_attributesetinstance_id, cur_inoutline.m_locator_id, cur_inoutline.c_orderline_id,
+                        v_qtyaux, 0, 'Y'
+                      );
+                    END IF;
+                    v_pendingqty := v_pendingqty - v_qtyaux;
+                    IF (v_pendingqty <= 0) THEN
+                      EXIT;
+                    END IF;
+                  END LOOP;
+                  DELETE FROM m_reservation_stock
+                  WHERE c_orderline_id = cur_inoutline.c_orderline_id
+                    AND quantity = 0
+                    AND COALESCE(releasedqty, 0) = 0;
+                END;
+              END IF;
+              
               v_ResultStr:='CreateTransaction';
               Ad_Sequence_Next('M_Transaction', Cur_InOutLine.AD_Org_ID, v_NextNo) ;
               INSERT
@@ -484,7 +592,7 @@
             END;
           ELSE
             v_ResultStr:='Check delivery rule for sales orders';
-            v_Message:='';
+            v_Message_aux:='';
             v_orderid_old:='0';
             FOR Cur_Order IN 
               (SELECT c_order.deliveryrule, m_inoutline.line, c_order.c_order_id,
@@ -502,20 +610,20 @@
                ORDER BY c_order.c_order_id, c_orderline.line) LOOP
               --Order lines not completely delivered with delivery rule O or L
               IF (v_orderid_old <> cur_order.c_order_id OR cur_order.deliveryrule <> 'O' ) THEN
-                v_Message := COALESCE(v_Message,'') || '@Shipment@' || ' ' || cur_inout.documentno;
-                v_Message := v_Message || ' ' || '@line@' || ' ' || cur_order.line || ': ';
-                v_Message := v_Message || '@SalesOrderDocumentno@' || cur_order.documentno;
+                v_Message_aux := COALESCE(v_Message_aux,'') || '@Shipment@' || ' ' || cur_inout.documentno;
+                v_Message_aux := v_Message_aux || ' ' || '@line@' || ' ' || cur_order.line || ': ';
+                v_Message_aux := v_Message_aux || '@SalesOrderDocumentno@' || cur_order.documentno;
                 IF (cur_order.deliveryrule = 'O') THEN
-                  v_Message := v_Message || ' ' || '@notCompleteDeliveryRuleOrder@' || '<br>';
+                  v_Message_aux := v_Message_aux || ' ' || '@notCompleteDeliveryRuleOrder@' || '<br>';
                 ELSE
-                  v_Message := v_Message || ' ' || '@line@' || ' ' || cur_order.orderline;
-                  v_Message := v_Message || ' ' || '@notCompleteDeliveryRuleLine@' || '<br>';
+                  v_Message_aux := v_Message_aux || ' ' || '@line@' || ' ' || cur_order.orderline;
+                  v_Message_aux := v_Message_aux || ' ' || '@notCompleteDeliveryRuleLine@' || '<br>';
                 END IF;
               END IF;
               v_orderid_old := cur_order.c_order_id;
             END LOOP;
-            IF (v_Message IS NOT NULL AND v_Message <> '') THEN
-              RAISE_APPLICATION_ERROR(-20000, v_message);
+            IF (v_Message_aux IS NOT NULL AND v_Message_aux <> '') THEN
+              RAISE_APPLICATION_ERROR(-20000, v_Message_aux);
             END IF;
           END IF;
           -- Close Shipment
@@ -596,6 +704,7 @@
               M_Warehouse_ID, POReference, DateOrdered, DeliveryRule,
               FreightCostRule, FreightAmt, C_Project_ID, C_Activity_ID,
               C_Campaign_ID, AD_OrgTrx_ID, User1_ID, User2_ID,
+              C_Costcenter_ID, A_Asset_ID,
               DeliveryViaRule, M_Shipper_ID, C_Charge_ID, ChargeAmt,
               PriorityRule, DocStatus, DocAction, Processing,
               Processed, ISLOGISTIC, salesrep_id
@@ -610,6 +719,7 @@
               Cur_InOut.M_Warehouse_ID, Cur_InOut.POReference, Cur_InOut.DateOrdered, Cur_InOut.DeliveryRule,
               Cur_InOut.FreightCostRule, Cur_InOut.FreightAmt * -1, Cur_InOut.C_Project_ID, Cur_InOut.C_Activity_ID,
               Cur_InOut.C_Campaign_ID, Cur_InOut.AD_OrgTrx_ID, Cur_InOut.User1_ID, Cur_InOut.User2_ID,
+              Cur_InOut.C_Costcenter_ID, Cur_InOut.A_Asset_ID,
               Cur_InOut.DeliveryViaRule, Cur_InOut.M_Shipper_ID, Cur_InOut.C_Charge_ID, Cur_InOut.ChargeAmt * -1,
               Cur_InOut.PriorityRule, 'DR', 'CO', 'N',
                'N', Cur_InOut.islogistic, Cur_InOut.salesrep_id
@@ -635,7 +745,8 @@
                 M_AttributeSetInstance_ID, C_UOM_ID, M_Locator_ID, MovementQty,
                 Description, IsInvoiced,  --MODIFIED BY F.IRIAZABAL
                 QuantityOrder, M_Product_UOM_ID, IsDescription,
-                canceled_inoutline_id
+                canceled_inoutline_id, A_Asset_ID, C_Project_ID, C_BPartner_ID,
+                User1_ID, User2_ID, C_CostCenter_ID
               )
               VALUES
               (
@@ -645,7 +756,8 @@
                 Cur_InOutLine.M_AttributeSetInstance_ID, Cur_InOutLine.C_UOM_ID, Cur_InOutLine.M_Locator_ID, Cur_InOutLine.MovementQty * -1,
                  '*R*: ' || COALESCE(TO_CHAR(Cur_InOutLine.Description), ''), Cur_InOutLine.IsInvoiced, --MODIFIED BY F.IRIAZABAL
                 Cur_InOutLine.QuantityOrder * -1, Cur_InOutLine.M_PRODUCT_UOM_ID, Cur_InOutLine.IsDescription,
-                Cur_InOutLine.M_InOutLine_ID
+                Cur_InOutLine.M_InOutLine_ID, Cur_InOutLine.A_Asset_ID, Cur_InOutLine.C_Project_ID, Cur_InOutLine.C_BPartner_ID,
+                Cur_InOutLine.User1_ID, Cur_InOutLine.User2_ID, Cur_InOutLine.C_CostCenter_ID
               )
               ;
             INSERT INTO M_MATCHINV

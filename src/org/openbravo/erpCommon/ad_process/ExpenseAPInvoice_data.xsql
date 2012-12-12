@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2012 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -23,7 +23,13 @@
   <SqlMethod name="select" type="preparedStatement" return="multiple">
     <SqlMethodComment>Select for relation</SqlMethodComment>
     <Sql><![CDATA[
-       SELECT  st.AD_Client_ID, st.AD_Org_ID, st.C_BPartner_ID, to_char(st.DateReport) as datereport, bp.name as bpname, stl.C_Project_ID, stl.C_Activity_ID, stl.C_Campaign_ID, stl.M_Product_ID, p.name as prodname, stl.S_ResourceAssignment_ID, stl.C_UOM_ID, stl.Qty, stl.Description, stl.Note, stl.ExpenseAmt, stl.C_Currency_ID, stl.ConvertedAmt, st.DocumentNo, stl.S_TimeExpenseLine_ID, stl.invoiceprice, to_char(stl.DateExpense) as dateexpense, '' AS Pricestd, '' AS Pricelimit, '' AS Pricelist, '' AS C_INVOICELINE_ID, '' AS QTYINVOICED, '' AS C_INVOICELINE_ACCTDIMENSION_ID, '' AS AMT, '' AS STDPRECISION, '' AS PRICEPRECISION
+        SELECT  st.AD_Client_ID, st.AD_Org_ID, st.C_BPartner_ID, to_char(st.DateReport) as datereport, bp.name as bpname, COALESCE(stl.C_Project_ID, st.C_Project_ID) AS C_Project_ID,
+        stl.C_Activity_ID, stl.C_Campaign_ID, stl.M_Product_ID, p.name as prodname, stl.S_ResourceAssignment_ID, stl.C_UOM_ID,
+        stl.Qty, stl.Description, stl.Note, stl.ExpenseAmt, stl.C_Currency_ID, stl.ConvertedAmt, st.DocumentNo, stl.S_TimeExpenseLine_ID, stl.invoiceprice,
+        to_char(stl.DateExpense) as dateexpense, '' AS Pricestd, '' AS Pricelimit, '' AS Pricelist,
+        '' AS C_INVOICELINE_ID, '' AS QTYINVOICED, '' AS C_INVOICELINE_ACCTDIMENSION_ID, '' AS AMT, '' AS STDPRECISION, '' AS PRICEPRECISION,
+        COALESCE(stl.C_Costcenter_ID, st.C_Costcenter_ID) AS C_Costcenter_ID, COALESCE(stl.A_Asset_ID, st.A_Asset_ID) AS A_Asset_ID,
+        COALESCE(stl.User1_ID, st.User1_ID) AS User1_ID, COALESCE(stl.User2_ID, st.User2_ID) AS User2_ID
         FROM S_TimeExpense st, S_TimeExpenseLine stl, C_BPartner bp, M_Product p
         WHERE st.S_TimeExpense_Id = stl.S_TimeExpense_Id
         AND st.C_BPartner_ID = bp.C_BPartner_ID
@@ -76,6 +82,10 @@
     <Parameter name="paymentrule" optional="true" after="AND C_INVOICE.ISSOTRX = 'N'"><![CDATA[ AND C_INVOICE.PAYMENTRULE = ?]]></Parameter>
     <Parameter name="paymentmethodId" optional="true" after="AND C_INVOICE.ISSOTRX = 'N'"><![CDATA[ AND C_INVOICE.FIN_PAYMENTMETHOD_ID = ?]]></Parameter>
     <Parameter name="cPaymentTermId" optional="true" after="AND C_INVOICE.ISSOTRX = 'N'"><![CDATA[ AND C_INVOICE.C_PAYMENTTERM_ID = ?]]></Parameter>
+    <Parameter name="cCostcenterId" optional="true" after="AND C_INVOICE.ISSOTRX = 'N'"><![CDATA[ AND C_INVOICE.C_COSTCENTER_ID = ?]]></Parameter>
+    <Parameter name="aAssetId" optional="true" after="AND C_INVOICE.ISSOTRX = 'N'"><![CDATA[ AND C_INVOICE.A_ASSET_ID = ?]]></Parameter>
+    <Parameter name="user1Id" optional="true" after="AND C_INVOICE.ISSOTRX = 'N'"><![CDATA[ AND C_INVOICE.USER1_ID = ?]]></Parameter>
+    <Parameter name="user2Id" optional="true" after="AND C_INVOICE.ISSOTRX = 'N'"><![CDATA[ AND C_INVOICE.USER2_ID = ?]]></Parameter>
   </SqlMethod>
   
   <SqlMethod name="selectInvoiceHeaderNoProject" type="preparedStatement" connection="true" return="String" default="">
@@ -105,6 +115,10 @@
     <Parameter name="paymentrule" optional="true" after="AND C_INVOICE.ISSOTRX = 'N'"><![CDATA[ AND C_INVOICE.PAYMENTRULE = ?]]></Parameter>
     <Parameter name="paymentmethodId" optional="true" after="AND C_INVOICE.ISSOTRX = 'N'"><![CDATA[ AND C_INVOICE.FIN_PAYMENTMETHOD_ID = ?]]></Parameter>
     <Parameter name="cPaymentTermId" optional="true" after="AND C_INVOICE.ISSOTRX = 'N'"><![CDATA[ AND C_INVOICE.C_PAYMENTTERM_ID = ?]]></Parameter>
+    <Parameter name="cCostcenterId" optional="true" after="AND C_INVOICE.ISSOTRX = 'N'"><![CDATA[ AND C_INVOICE.C_COSTCENTER_ID = ?]]></Parameter>
+    <Parameter name="aAssetId" optional="true" after="AND C_INVOICE.ISSOTRX = 'N'"><![CDATA[ AND C_INVOICE.A_ASSET_ID = ?]]></Parameter>
+    <Parameter name="user1Id" optional="true" after="AND C_INVOICE.ISSOTRX = 'N'"><![CDATA[ AND C_INVOICE.USER1_ID = ?]]></Parameter>
+    <Parameter name="user2Id" optional="true" after="AND C_INVOICE.ISSOTRX = 'N'"><![CDATA[ AND C_INVOICE.USER2_ID = ?]]></Parameter>
   </SqlMethod>
 
   <SqlMethod name="selectInvoiceLine" type="preparedStatement" connection="true" return="multiple">
@@ -151,6 +165,10 @@
     <Parameter name="cInvoicelineId"/>
     <Parameter name="cProjectId" optional="true" after="AND ISACTIVE = 'Y'"><![CDATA[ AND C_PROJECT_ID = ?]]></Parameter>
     <Parameter name="cCampaignId" optional="true" after="AND ISACTIVE = 'Y'"><![CDATA[ AND C_CAMPAIGN_ID = ?]]></Parameter>
+    <Parameter name="cCostcenterId" optional="true" after="AND ISACTIVE = 'Y'"><![CDATA[ AND C_COSTCENTER_ID = ?]]></Parameter>
+    <Parameter name="aAssetId" optional="true" after="AND ISACTIVE = 'Y'"><![CDATA[ AND A_ASSET_ID = ?]]></Parameter>
+    <Parameter name="user1Id" optional="true" after="AND ISACTIVE = 'Y'"><![CDATA[ AND USER1_ID = ?]]></Parameter>
+    <Parameter name="user2Id" optional="true" after="AND ISACTIVE = 'Y'"><![CDATA[ AND USER2_ID = ?]]></Parameter>
   </SqlMethod>
 
   <SqlMethod name="selectLine" type="preparedStatement" connection="true" return="String" default="10">
@@ -315,8 +333,8 @@
          , GenerateTo, C_Project_ID, C_Activity_ID, C_Campaign_ID
          , AD_OrgTrx_ID, User1_ID, User2_ID, TotalLines
          , GrandTotal, DocStatus, C_DocType_ID, CopyFrom
-         , DocAction, Posted, created, createdby, 
-         updated, updatedBy)
+         , DocAction, Posted, created, createdby
+         , updated, updatedBy, C_Costcenter_ID, A_Asset_ID)
        VALUES (
          (?), (?), TO_DATE(?), (?)
          , (?), (?), (?), (?)
@@ -331,8 +349,8 @@
          , (?), (?), (?), (?)
          , (?), (?), (?), TO_NUMBER(?)
          , TO_NUMBER(?), (?), (?), (?)
-         , (?), (?), now(), (?), 
-         now(), (?))
+         , (?), (?), now(), (?)
+         , now(), (?), (?), (?))
     ]]></Sql>
     
 <Parameter name="cInvoiceId"/>
@@ -384,6 +402,8 @@
 <Parameter name="posted"/>
 <Parameter name="createdby"/>
 <Parameter name="updatedby"/>
+<Parameter name="cCostcenterId"/>
+<Parameter name="aAssetId"/>
 </SqlMethod>
 
  <SqlMethod name="insertLine" type="preparedStatement" connection="true" return="rowCount">
@@ -398,8 +418,9 @@
           , LineNetAmt, S_ResourceAssignment_ID, PriceStd, PriceLimit
           , M_Offer_ID, M_AttributeSetInstance_ID, TaxAmt, IsActive
           , ChargeAmt, C_Projectline_ID, C_Invoice_Discount_ID, C_InvoiceLine_ID
-          , IsDescription, created, createdby, updated, updatedBy,
-            isdeferred, defplantype, periodnumber, c_period_id
+          , IsDescription, created, createdby, updated, updatedBy
+          , isdeferred, defplantype, periodnumber, c_period_id
+          , C_Project_ID, C_Costcenter_ID, A_Asset_ID, User1_ID, User2_ID
             )
         VALUES (
           (?),  (?), (?), (?)
@@ -410,8 +431,9 @@
           , TO_NUMBER(?), (?),  TO_NUMBER(?), TO_NUMBER(?)
           , (?), (?), TO_NUMBER(?), (?)
           , TO_NUMBER(?), (?), (?) , (?)
-          , (?), now(), ?, now(), (?),
-            (?), (?), TO_NUMBER(?), (?)
+          , (?), now(), ?, now(), (?)
+          , (?), (?), TO_NUMBER(?), (?)
+          , (?), (?), (?), (?), (?)
           )
 ]]></Sql>
 <Parameter name="adClientId"></Parameter>
@@ -449,6 +471,11 @@
 <Parameter name="revplantype"/>
 <Parameter name="periodnumber"/>
 <Parameter name="cPeriodId"/>
+<Parameter name="cProjectId"/>
+<Parameter name="cCostcenterId"/>
+<Parameter name="aAssetId"/>
+<Parameter name="user1Id"/>
+<Parameter name="user2Id"/>
 </SqlMethod>
 
 <SqlMethod name="insertInvoicelineAcctdimension" type="preparedStatement" connection="true" return="rowCount">
@@ -458,11 +485,11 @@
         C_INVOICELINE_ACCTDIMENSION_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE
         , CREATED, CREATEDBY, UPDATED, UPDATEDBY
         , C_INVOICELINE_ID, AMT, C_PROJECT_ID, C_CAMPAIGN_ID
-        , USER1_ID, USER2_ID)
+        , USER1_ID, USER2_ID, C_COSTCENTER_ID, A_ASSET_ID)
       VALUES(?, ?, ?, ?
       , now(), ?, now(), ?
       , ?, TO_NUMBER(?), ?, ?
-      , ?, ?)
+      , ?, ?, ?, ?)
       ]]>
     </Sql>
     <Parameter name="cInvoicelineAcctdimension"/>
@@ -477,6 +504,8 @@
     <Parameter name="cCampaignId"/>
     <Parameter name="user1Id"/>
     <Parameter name="user2Id"/>
+    <Parameter name="cCostcenterId"/>
+    <Parameter name="aAssetId"/>
   </SqlMethod>
 
   <SqlMethod name="updateExpense" type="preparedStatement" connection="true" return="rowCount">
@@ -508,12 +537,12 @@
 </SqlMethod>
 <SqlMethod name="selectCurrency" type="preparedStatement" return="String" default="">
 <SqlMethodComment></SqlMethodComment>
-	<Sql><![CDATA[
-		SELECT C_Currency_ID
-		FROM M_PriceList 
-		WHERE M_PriceList_ID = ? 
-	]]></Sql>
- 	<Parameter name="mPricelistId"/>
+    <Sql><![CDATA[
+        SELECT C_Currency_ID
+        FROM M_PriceList 
+        WHERE M_PriceList_ID = ? 
+    ]]></Sql>
+    <Parameter name="mPricelistId"/>
 </SqlMethod>
 <SqlMethod name="selectPrecisions" type="preparedStatement" return="multiple">
    <SqlMethodComment></SqlMethodComment>
@@ -527,17 +556,17 @@
    <Parameter name="cCurrencyId"/>
 </SqlMethod>
 <SqlMethod name="selectConvertedAmt" type="preparedStatement" return="String" default="">
-	<SqlMethodComment></SqlMethodComment>
-	<Sql>
-	  <![CDATA[
-	    select c_currency_convert(TO_NUMBER(?),?,?,TO_DATE(?),null, ?,?) from dual
-	  ]]>
-	 </Sql>
-	 <Parameter name="expenseAmount"/>
-	 <Parameter name="currencyFrom"/>
-	 <Parameter name="currencyTo"/>
-	 <Parameter name="dateExpense"/>
-	 <Parameter name="client"/>
-	 <Parameter name="org"/>
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        select c_currency_convert(TO_NUMBER(?),?,?,TO_DATE(?),null, ?,?) from dual
+      ]]>
+     </Sql>
+     <Parameter name="expenseAmount"/>
+     <Parameter name="currencyFrom"/>
+     <Parameter name="currencyTo"/>
+     <Parameter name="dateExpense"/>
+     <Parameter name="client"/>
+     <Parameter name="org"/>
 </SqlMethod>
 </SqlClass>

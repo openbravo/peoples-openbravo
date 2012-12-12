@@ -110,3 +110,30 @@ isc.OBTruncAddMinusDisplay.addProperties({
     }
   }
 });
+
+isc.defineClass('OBAddPercentageSign', isc.Label);
+
+isc.OBAddPercentageSign.addProperties({
+  wrap: false,
+  height: 1,
+  width: 1,
+  overflow: 'visible',
+
+  setRecord: function (record) {
+    var fld = this.grid.getField(this.fieldName),
+        val = record[this.fieldName];
+    if (fld && fld.type && isc.SimpleType.getType(fld.type).normalDisplayFormatter) {
+      this.showValue(isc.SimpleType.getType(fld.type).normalDisplayFormatter(val), val);
+    } else {
+      this.showValue(String(record[this.fieldName]));
+    }
+  },
+
+  showValue: function (displayValue, dataValue, form, item) {
+    if (!displayValue) {
+      this.setContents('0 %');
+    } else {
+      this.setContents(displayValue + ' %');
+    }
+  }
+});

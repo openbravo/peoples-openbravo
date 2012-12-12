@@ -59,6 +59,9 @@ import org.openbravo.model.common.enterprise.OrganizationInformation;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.plm.Product;
+import org.openbravo.model.financialmgmt.accounting.Costcenter;
+import org.openbravo.model.financialmgmt.accounting.UserDimension1;
+import org.openbravo.model.financialmgmt.accounting.UserDimension2;
 import org.openbravo.model.financialmgmt.gl.GLItem;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
@@ -595,11 +598,18 @@ public class AdvPaymentMngtDao {
    *          accounting dimension
    * @param salesRegion
    *          accounting dimension
+   * @param costCenter
+   *          accounting dimension
+   * @param user1
+   *          accounting dimension
+   * @param user2
+   *          accounting dimension
    * @return
    */
   public FIN_PaymentScheduleDetail getNewPaymentScheduleDetail(Organization organization,
       BigDecimal amount, BusinessPartner businessPartner, Product product, Project project,
-      Campaign campaign, ABCActivity activity, SalesRegion salesRegion) {
+      Campaign campaign, ABCActivity activity, SalesRegion salesRegion, Costcenter costCenter,
+      UserDimension1 user1, UserDimension2 user2) {
     final FIN_PaymentScheduleDetail psd = getNewPaymentScheduleDetail(organization, amount);
     psd.setBusinessPartner(businessPartner);
     psd.setProduct(product);
@@ -607,7 +617,36 @@ public class AdvPaymentMngtDao {
     psd.setSalesCampaign(campaign);
     psd.setActivity(activity);
     psd.setSalesRegion(salesRegion);
+    psd.setCostCenter(costCenter);
+    psd.setStDimension(user1);
+    psd.setNdDimension(user2);
     return psd;
+  }
+
+  /**
+   * Returns a new FIN_PaymentScheduleDetail for the given accounting dimensions
+   * 
+   * @param organization
+   * @param amount
+   * @param businessPartner
+   *          accounting dimension
+   * @param product
+   *          accounting dimension
+   * @param project
+   *          accounting dimension
+   * @param campaign
+   *          accounting dimension
+   * @param activity
+   *          accounting dimension
+   * @param salesRegion
+   *          accounting dimension
+   * @return
+   */
+  public FIN_PaymentScheduleDetail getNewPaymentScheduleDetail(Organization organization,
+      BigDecimal amount, BusinessPartner businessPartner, Product product, Project project,
+      Campaign campaign, ABCActivity activity, SalesRegion salesRegion) {
+    return getNewPaymentScheduleDetail(organization, amount, businessPartner, product, project,
+        campaign, activity, salesRegion, null, null, null);
   }
 
   /**
@@ -746,7 +785,7 @@ public class AdvPaymentMngtDao {
       ABCActivity activity, String transactionType, Date statementDate) {
     return getNewFinancialTransaction(organization, account, line, payment, description,
         accountingDate, glItem, status, depositAmount, paymentAmount, project, campaing, activity,
-        transactionType, statementDate, null, null, null);
+        transactionType, statementDate, null, null, null, null, null, null);
   }
 
   public FIN_FinaccTransaction getNewFinancialTransaction(Organization organization,
@@ -778,6 +817,7 @@ public class AdvPaymentMngtDao {
     finTrans.setActivity(activity);
     finTrans.setTransactionType(transactionType);
     finTrans.setTransactionDate(statementDate);
+
     if (paymentCurrency != null && !paymentCurrency.equals(finTrans.getCurrency())) {
       finTrans.setForeignCurrency(paymentCurrency);
       finTrans.setForeignConversionRate(convertRate);
@@ -797,6 +837,22 @@ public class AdvPaymentMngtDao {
       String transactionType, Date statementDate, Currency paymentCurrency, BigDecimal convertRate,
       BigDecimal sourceAmount, BusinessPartner businessPartner, Product product,
       SalesRegion salesRegion) {
+
+    final FIN_FinaccTransaction finTrans = getNewFinancialTransaction(organization, account, line,
+        payment, description, accountingDate, glItem, status, depositAmount, paymentAmount,
+        project, campaing, activity, transactionType, statementDate, paymentCurrency, convertRate,
+        sourceAmount, businessPartner, product, salesRegion, null, null, null);
+
+    return finTrans;
+  }
+
+  public FIN_FinaccTransaction getNewFinancialTransaction(Organization organization,
+      FIN_FinancialAccount account, Long line, FIN_Payment payment, String description,
+      Date accountingDate, GLItem glItem, String status, BigDecimal depositAmount,
+      BigDecimal paymentAmount, Project project, Campaign campaing, ABCActivity activity,
+      String transactionType, Date statementDate, Currency paymentCurrency, BigDecimal convertRate,
+      BigDecimal sourceAmount, BusinessPartner businessPartner, Product product,
+      SalesRegion salesRegion, UserDimension1 user1, UserDimension2 user2, Costcenter costcenter) {
     final FIN_FinaccTransaction finTrans = getNewFinancialTransaction(organization, account, line,
         payment, description, accountingDate, glItem, status, depositAmount, paymentAmount,
         project, campaing, activity, transactionType, statementDate, paymentCurrency, convertRate,
@@ -804,6 +860,9 @@ public class AdvPaymentMngtDao {
     finTrans.setBusinessPartner(businessPartner);
     finTrans.setProduct(product);
     finTrans.setSalesRegion(salesRegion);
+    finTrans.setCostCenter(costcenter);
+    finTrans.setStDimension(user1);
+    finTrans.setNdDimension(user2);
 
     OBDal.getInstance().save(finTrans);
     OBDal.getInstance().flush();

@@ -85,6 +85,18 @@
         <default><![CDATA[0]]></default>
         <onCreateDefault/>
       </column>
+      <column name="C_COSTCENTER_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="USER1_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="USER2_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="FIN_AD_CLIENT_SCHEDULEDETAIL">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -99,6 +111,9 @@
       </foreign-key>
       <foreign-key foreignTable="FIN_PAYMENT_SCHEDULE" name="FIN_PAYMENT_SCHORD_SCHDETAIL">
         <reference local="FIN_PAYMENT_SCHEDULE_ORDER" foreign="FIN_PAYMENT_SCHEDULE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_COSTCENTER" name="FIN_SCHEDDETAIL_COSTCENTER">
+        <reference local="C_COSTCENTER_ID" foreign="C_COSTCENTER_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_ACTIVITY" name="FIN_SCHEDULEDETAIL_C_ACTIVITY">
         <reference local="C_ACTIVITY_ID" foreign="C_ACTIVITY_ID"/>
@@ -117,6 +132,12 @@
       </foreign-key>
       <foreign-key foreignTable="M_PRODUCT" name="FIN_SCHEDULEDETAIL_M_PRODUCT">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="USER1" name="FIN_SCHEDULEDETAIL_USER1">
+        <reference local="USER1_ID" foreign="USER1_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="USER2" name="FIN_SCHEDULEDETAIL_USER2">
+        <reference local="USER2_ID" foreign="USER2_ID"/>
       </foreign-key>
       <index name="FIN_PAY_SCHEDULEDETAIL_IN" unique="false">
         <index-column name="FIN_PAYMENT_SCHEDULE_INVOICE"/>

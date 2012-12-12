@@ -1121,7 +1121,7 @@ OB.ViewFormProperties = {
 
   // calls setValue and the onchange handling
   setItemValue: function (item, value) {
-    var currentValue, view, isGridItem, completeFieldsLength, i;
+    var currentValue, view, isGridItem, completeFieldsLength, i, undef;
 
     if (isc.isA.String(item)) {
 
@@ -1151,7 +1151,7 @@ OB.ViewFormProperties = {
     currentValue = item.getValue();
 
     // no change go away
-    if (item.compareValues(value, currentValue)) {
+    if (currentValue !== undef && item.compareValues(value, currentValue)) {
       // Force setElemntValue even there is no change to show new possible values
       // in field.valueMap (issue #18957)
       item.setElementValue(item.mapValueToDisplay(value));

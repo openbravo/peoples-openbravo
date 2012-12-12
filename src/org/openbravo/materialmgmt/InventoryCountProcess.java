@@ -9,9 +9,11 @@ import java.util.Map;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
+import org.hibernate.QueryTimeoutException;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.dialect.function.SQLFunction;
 import org.hibernate.dialect.function.StandardSQLFunction;
+import org.hibernate.exception.GenericJDBCException;
 import org.hibernate.impl.SessionFactoryImpl;
 import org.hibernate.impl.SessionImpl;
 import org.hibernate.type.DateType;
@@ -78,6 +80,32 @@ public class InventoryCountProcess implements Process {
 
       bundle.setResult(msg);
 
+      // Postgres wraps the exception into a GenericJDBCException
+    } catch (GenericJDBCException ge) {
+      log4j.error("Exception processing physical inventory", ge);
+      msg.setType("Error");
+      msg.setTitle(OBMessageUtils.messageBD(bundle.getConnection(), "Error", bundle.getContext()
+          .getLanguage()));
+      msg.setMessage(((GenericJDBCException) ge).getSQLException().getMessage());
+      bundle.setResult(msg);
+      OBDal.getInstance().rollbackAndClose();
+      final String recordID = (String) bundle.getParams().get("M_Inventory_ID");
+      final InventoryCount inventory = OBDal.getInstance().get(InventoryCount.class, recordID);
+      inventory.setProcessNow(false);
+      OBDal.getInstance().save(inventory);
+      // Oracle wraps the exception into a QueryTimeoutException
+    } catch (QueryTimeoutException qte) {
+      log4j.error("Exception processing physical inventory", qte);
+      msg.setType("Error");
+      msg.setTitle(OBMessageUtils.messageBD(bundle.getConnection(), "Error", bundle.getContext()
+          .getLanguage()));
+      msg.setMessage(((QueryTimeoutException) qte).getSQLException().getMessage().split("\n")[0]);
+      bundle.setResult(msg);
+      OBDal.getInstance().rollbackAndClose();
+      final String recordID = (String) bundle.getParams().get("M_Inventory_ID");
+      final InventoryCount inventory = OBDal.getInstance().get(InventoryCount.class, recordID);
+      inventory.setProcessNow(false);
+      OBDal.getInstance().save(inventory);
     } catch (final Exception e) {
       log4j.error("Exception processing physical inventory", e);
       msg.setType("Error");

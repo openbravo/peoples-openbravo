@@ -466,11 +466,16 @@ BEGIN --BODY
     END;--FOR  COMMIT
     BEGIN -- FOR COMMIT
 
-      -- Set org lines like the headear
-      UPDATE C_INVOICELINE
-      SET AD_ORG_ID = (SELECT AD_ORG_ID FROM C_INVOICE WHERE C_INVOICE_ID = v_Record_ID),Updated=now(),
-          UpdatedBy=v_UpdatedBy
-      WHERE C_INVOICE_ID = v_Record_ID;
+      SELECT COUNT(*)
+        INTO v_Count
+      FROM C_INVOICE I, C_INVOICELINE IL
+      WHERE I.C_INVOICE_ID = IL.C_INVOICE_ID
+        AND AD_ISORGINCLUDED(IL.AD_Org_ID, I.AD_Org_ID, I.AD_Client_ID) <> -1
+        AND I.C_INVOICE_ID = v_Record_ID;
+      IF (v_Count=0) THEN
+        RAISE_APPLICATION_ERROR(-20000, '@NotCorrectOrgLines@') ;
+      END IF;
+
 
       SELECT COUNT(*) INTO v_Count
       FROM C_INVOICE C,
@@ -521,7 +526,8 @@ BEGIN --BODY
               C_Currency_ID, PaymentRule, C_Charge_ID, ChargeAmt,
               TotalLines, GrandTotal, M_PriceList_ID, C_Campaign_ID,
               C_Project_ID, C_Activity_ID, AD_OrgTrx_ID, User1_ID,
-              User2_ID, fin_paymentmethod_id
+              User2_ID, fin_paymentmethod_id, C_CostCenter_ID,
+              A_Asset_ID
             )
           SELECT v_RInvoice_ID, C_Order_ID, AD_Client_ID, AD_Org_ID,
             IsActive, now(), v_UpdatedBy, now(),
@@ -534,7 +540,8 @@ BEGIN --BODY
             C_Currency_ID, PaymentRule, C_Charge_ID, ChargeAmt * -1,
             TotalLines * -1, GrandTotal * -1, M_PriceList_ID, C_Campaign_ID,
             C_Project_ID, C_Activity_ID, AD_OrgTrx_ID, User1_ID,
-            User2_ID, fin_paymentmethod_id
+            User2_ID, fin_paymentmethod_id, C_CostCenter_ID,
+            A_Asset_ID
           FROM C_INVOICE
           WHERE C_Invoice_ID=v_Record_ID;
         -- Create Reversed invoice relation
@@ -594,7 +601,9 @@ BEGIN --BODY
               C_UOM_ID, C_Tax_ID, PriceStd, 
               Financial_Invoice_Line, Account_ID,Taxbaseamt,
               gross_unit_price, line_gross_amount,
-              isdeferred, defplantype, periodnumber, c_period_id)
+              isdeferred, defplantype, periodnumber, c_period_id,
+              c_bpartner_id, c_project_id, c_projectline_id, a_asset_id,
+              user1_id, user2_id)
             VALUES
             (
               v_NextNo, Cur_InvoiceLine.AD_Client_ID, Cur_InvoiceLine.AD_Org_ID, 'Y',
@@ -605,7 +614,9 @@ BEGIN --BODY
               Cur_InvoiceLine.C_UOM_ID, Cur_InvoiceLine.C_Tax_ID, Cur_InvoiceLine.PriceStd, 
               Cur_InvoiceLine.Financial_Invoice_Line, Cur_InvoiceLine.Account_ID,Cur_InvoiceLine.Taxbaseamt * -1,
               Cur_InvoiceLine.gross_unit_price, Cur_InvoiceLine.line_gross_amount * -1,
-              Cur_InvoiceLine.isdeferred, Cur_InvoiceLine.defplantype, Cur_InvoiceLine.periodnumber, Cur_InvoiceLine.c_period_id
+              Cur_InvoiceLine.isdeferred, Cur_InvoiceLine.defplantype, Cur_InvoiceLine.periodnumber, Cur_InvoiceLine.c_period_id,
+              Cur_InvoiceLine.c_bpartner_id, Cur_InvoiceLine.c_project_id, Cur_InvoiceLine.c_projectline_id, Cur_InvoiceLine.a_asset_id,
+              Cur_InvoiceLine.user1_id, Cur_InvoiceLine.user2_id
             );
           INSERT INTO M_MATCHINV
             (M_MATCHINV_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY,
@@ -631,10 +642,11 @@ BEGIN --BODY
                     
             INSERT INTO C_INVOICELINE_ACCTDIMENSION(
             c_invoiceline_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, c_invoiceline_id, 
-            amt, c_project_id, c_campaign_id, user1_id, user2_id) 
+            amt, c_project_id, c_campaign_id, user1_id, user2_id, c_costcenter_id, c_activity_id, c_bpartner_id, m_product_id) 
             values(
             get_uuid(), Cur_InvoiceLineAcctDim.ad_client_id, Cur_InvoiceLineAcctDim.ad_org_id, Cur_InvoiceLineAcctDim.isactive, now(), v_UpdatedBy, now(), v_UpdatedBy, v_NextNo,
-            Cur_InvoiceLineAcctDim.amt * -1, Cur_InvoiceLineAcctDim.c_project_id, Cur_InvoiceLineAcctDim.c_campaign_id, Cur_InvoiceLineAcctDim.user1_id, Cur_InvoiceLineAcctDim.user2_id);
+            Cur_InvoiceLineAcctDim.amt * -1, Cur_InvoiceLineAcctDim.c_project_id, Cur_InvoiceLineAcctDim.c_campaign_id, Cur_InvoiceLineAcctDim.user1_id, Cur_InvoiceLineAcctDim.user2_id, 
+            Cur_InvoiceLineAcctDim.c_costcenter_id, Cur_InvoiceLineAcctDim.c_activity_id, Cur_InvoiceLineAcctDim.c_bpartner_id, Cur_InvoiceLineAcctDim.m_product_id);
 
             END LOOP; -- Create Reversal Accounting Dimensions
 
@@ -1174,7 +1186,9 @@ BEGIN --BODY
                PriceActual,
                PriceLimit, LineNetAmt, C_Charge_ID, ChargeAmt,
                C_Tax_ID, PriceStd,
-               isdeferred, defplantype, periodnumber, c_period_id
+               isdeferred, defplantype, periodnumber, c_period_id,
+               c_bpartner_id, c_project_id, c_projectline_id, a_asset_id,
+               user1_id, user2_id
               )
               VALUES
               (
@@ -1186,7 +1200,9 @@ BEGIN --BODY
                M_BOM_PriceLimit(CUR_BOM.M_ProductBOM_ID, v_PriceList_Version_ID),
                M_Get_Offers_Price(v_DateInvoiced, v_BPartner_ID, CUR_BOM.M_ProductBOM_ID, M_BOM_PriceStd(CUR_BOM.M_ProductBOM_ID, v_PriceList_Version_ID),CUR_BOM_Line.QtyInvoiced*CUR_BOM.BOMQty, v_PriceList_ID) * CUR_BOM_Line.QtyInvoiced*CUR_BOM.BOMQty, CUR_BOM_Line.C_Charge_ID, v_ChargeAmt,
                CUR_BOM_Line.C_Tax_ID, M_BOM_PriceStd(CUR_BOM.M_ProductBOM_ID, v_PriceList_Version_ID),
-               v_isdeferred_inv, v_defplantype_inv, v_periodnumber_inv, v_period_inv
+               v_isdeferred_inv, v_defplantype_inv, v_periodnumber_inv, v_period_inv,
+               CUR_BOM_Line.c_bpartner_id, CUR_BOM_Line.c_project_id, CUR_BOM_Line.c_projectline_id, CUR_BOM_Line.a_asset_id,
+               CUR_BOM_Line.user1_id, CUR_BOM_Line.user2_id
               );
             v_ChargeAmt:=0;
           END LOOP; -- Create New Lines
@@ -1439,12 +1455,7 @@ BEGIN --BODY
     SET AD_Client_ID=v_Client_ID
     WHERE C_Invoice_ID=v_Record_ID
       AND AD_Client_ID<>v_Client_ID;
-    v_ResultStr:='SyncOwnershipOrg';
-    UPDATE C_INVOICELINE
-    SET AD_Org_ID=v_Org_ID
-    WHERE C_Invoice_ID=v_Record_ID
-      AND C_Charge_ID IS NULL -- sync for products
-      AND AD_Org_ID<>v_Org_ID;
+
   END IF;--FINISH_PROCESS
   IF (NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
     /**************************************************************************

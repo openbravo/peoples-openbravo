@@ -31,6 +31,7 @@
   v_PRODUCTION_ID VARCHAR2(32);
   v_LINE NUMBER;
   v_DateNull DATE := TO_DATE('01-01-1900', 'DD-MM-YYYY');
+  v_DocumentLineNo M_InventoryLine.line%TYPE;
     
 BEGIN
     
@@ -85,7 +86,23 @@ BEGIN
     
 		IF INSERTING THEN
 			IF(COALESCE(v_UOM_ID, '0') <> COALESCE(:NEW.C_UOM_ID, '0')) THEN
-       	RAISE_APPLICATION_ERROR(-20000, '@20111@') ;
+        IF (:new.M_InventoryLine_ID IS NOT NULL) THEN
+	  SELECT line INTO v_DocumentLineNo FROM M_InventoryLine WHERE M_InventoryLine_ID = :new.M_InventoryLine_ID;
+	END IF;
+	IF (:new.M_MovementLine_ID IS NOT NULL) THEN
+	  SELECT line INTO v_DocumentLineNo FROM M_MovementLine WHERE M_MovementLine_ID = :new.M_MovementLine_ID;
+	END IF;
+	IF (:new.M_InOutLine_ID IS NOT NULL) THEN
+	  SELECT line INTO v_DocumentLineNo FROM M_InOutLine WHERE M_InOutLine_ID = :new.M_InOutLine_ID;
+	END IF;
+	IF (:new.M_ProductionLine_ID IS NOT NULL) THEN
+	  SELECT line INTO v_DocumentLineNo FROM M_ProductionLine WHERE M_ProductionLine_ID = :new.M_ProductionLine_ID;
+	END IF;
+	IF (:new.M_Internal_ConsumptionLine_ID IS NOT NULL) THEN
+	  SELECT line INTO v_DocumentLineNo FROM M_Internal_ConsumptionLine WHERE M_Internal_ConsumptionLine_ID = :new.M_Internal_ConsumptionLine_ID;
+	END IF;
+	  
+	RAISE_APPLICATION_ERROR(-20000, '@DocUOMMismatch@' || ' ' || COALESCE(v_DocumentLineNo, 0));
      	END IF;
       IF(v_attributeset_id IS NOT NULL AND (v_AttrSetValueType IS NULL OR v_AttrSetValueType <> 'F') AND v_IsOneAtSetValReq = 'Y' AND COALESCE(:NEW.M_ATTRIBUTESETINSTANCE_ID, '0') = '0') THEN
        	RAISE_APPLICATION_ERROR(-20000, '@20112@' || ' - ' || v_Name) ;

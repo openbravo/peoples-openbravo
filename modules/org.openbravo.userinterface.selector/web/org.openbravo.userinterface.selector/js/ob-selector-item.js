@@ -407,6 +407,8 @@ isc.OBSelectorItem.addProperties({
     if (!newValue) {
       this.setValueFromRecord(null);
     }
+    //Setting the element value again to align the cursor position correctly.
+    this.setElementValue(newValue);
   },
 
   setPickListWidth: function () {
@@ -624,6 +626,9 @@ isc.OBSelectorItem.addProperties({
     }
 
     if (this.form.getFocusItem() !== this && !this.form.view.isShowingForm && this.getEnteredValue() === '' && this.savedEnteredValue) {
+      this.setElementValue(this.savedEnteredValue);
+      delete this.savedEnteredValue;
+    } else if (this.form.view.isShowingForm && this.getEnteredValue() === '' && this.savedEnteredValue) {
       this.setElementValue(this.savedEnteredValue);
       delete this.savedEnteredValue;
     }

@@ -41,31 +41,36 @@ BEGIN
   END IF;
 
   IF(UPDATING) THEN
-    IF((COALESCE(:old.AMTSOURCEDR, 0) <> COALESCE(:NEW.AMTSOURCEDR, 0) OR COALESCE(:old.AMTSOURCECR, 0) <> COALESCE(:NEW.AMTSOURCECR, 0) OR COALESCE(:old.C_CURRENCY_ID, '0') <> COALESCE(:NEW.C_CURRENCY_ID, '0'))) THEN
-      SELECT PROCESSED,
-        POSTED
-      INTO v_Processed,
-        v_Posted
-      FROM GL_JOURNAL
-      WHERE GL_JOURNAL_ID=v_GL_JOURNAL_ID;
-      IF(v_Processed='Y'
-        AND ((COALESCE(:old.LINE, 0) <> COALESCE(:new.LINE, 0))
-        OR (COALESCE(:old.C_DEBT_PAYMENT_ID, '0') <> COALESCE(:new.C_DEBT_PAYMENT_ID, '0'))
-        OR(COALESCE(:old.AMTSOURCEDR, 0) <> COALESCE(:new.AMTSOURCEDR, 0))
-        OR(COALESCE(:old.AMTSOURCECR, 0) <> COALESCE(:new.AMTSOURCECR, 0))
-        OR(COALESCE(:old.C_CURRENCY_ID, '0') <> COALESCE(:new.C_CURRENCY_ID, '0'))
-        OR(COALESCE(:old.C_UOM_ID, '0') <> COALESCE(:new.C_UOM_ID, '0'))
-        OR(COALESCE(:old.AD_ORG_ID, '0') <> COALESCE(:new.AD_ORG_ID, '0'))
-        OR(COALESCE(:old.AD_CLIENT_ID, '0') <> COALESCE(:new.AD_CLIENT_ID, '0')))) THEN
-        RAISE_APPLICATION_ERROR(-20000, '@20501@') ;
-      END IF;
-
-      IF(v_Posted='Y'
-        AND ((COALESCE(:old.C_VALIDCOMBINATION_ID, '0') <> COALESCE(:new.C_VALIDCOMBINATION_ID, '0'))
-        OR(COALESCE(:old.AMTACCTDR, 0) <> COALESCE(:new.AMTACCTDR, 0))
-        OR(COALESCE(:old.AMTACCTCR, 0) <> COALESCE(:new.AMTACCTCR, 0)))) THEN
-        RAISE_APPLICATION_ERROR(-20000, '@20501@') ;
-      END IF;
+    SELECT PROCESSED, POSTED
+    INTO v_Processed, v_Posted
+    FROM GL_JOURNAL
+    WHERE GL_JOURNAL_ID=v_GL_JOURNAL_ID;
+    
+    IF(v_Processed='Y' AND ((COALESCE(:old.LINE, 0) <> COALESCE(:new.LINE, 0))
+      OR (COALESCE(:old.C_DEBT_PAYMENT_ID, '0') <> COALESCE(:new.C_DEBT_PAYMENT_ID, '0'))
+      OR(COALESCE(:old.AMTSOURCEDR, 0) <> COALESCE(:new.AMTSOURCEDR, 0))
+      OR(COALESCE(:old.AMTSOURCECR, 0) <> COALESCE(:new.AMTSOURCECR, 0))
+      OR(COALESCE(:old.C_CURRENCY_ID, '0') <> COALESCE(:new.C_CURRENCY_ID, '0'))
+      OR(COALESCE(:old.C_UOM_ID, '0') <> COALESCE(:new.C_UOM_ID, '0'))
+      OR(COALESCE(:old.AD_CLIENT_ID, '0') <> COALESCE(:new.AD_CLIENT_ID, '0')))) 
+    THEN
+      RAISE_APPLICATION_ERROR(-20000, '@20501@') ;
+    END IF;
+      
+    DBMS_OUTPUT.PUT_LINE('Posted:'||v_Posted);
+    IF(v_Posted='Y'
+      AND ((COALESCE(:old.C_VALIDCOMBINATION_ID, '0') <> COALESCE(:new.C_VALIDCOMBINATION_ID, '0'))
+      OR(COALESCE(:old.AD_ORG_ID, '0') <> COALESCE(:new.AD_ORG_ID, '0'))
+      OR(COALESCE(:old.AMTACCTDR, 0) <> COALESCE(:new.AMTACCTDR, 0))
+      OR(COALESCE(:old.AMTACCTCR, 0) <> COALESCE(:new.AMTACCTCR, 0))
+      OR(COALESCE(:OLD.User1_ID, '0') <> COALESCE(:NEW.User1_ID, '0'))
+      OR(COALESCE(:OLD.User2_ID, '0') <> COALESCE(:NEW.User2_ID, '0'))
+      OR(COALESCE(:OLD.C_Project_ID, '0') <> COALESCE(:NEW.C_Project_ID, '0'))
+      OR(COALESCE(:OLD.A_Asset_ID, '0') <> COALESCE(:NEW.A_Asset_ID, '0'))
+      OR(COALESCE(:OLD.C_Costcenter_ID, '0') <> COALESCE(:NEW.C_Costcenter_ID, '0')))) 
+    THEN
+      DBMS_OUTPUT.PUT_LINE( 'Inside post loop');
+      RAISE_APPLICATION_ERROR(-20000, '@20501@') ;
     END IF;
   END IF;
   IF(DELETING) THEN

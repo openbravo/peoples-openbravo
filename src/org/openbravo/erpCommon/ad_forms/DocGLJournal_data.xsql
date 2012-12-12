@@ -28,7 +28,8 @@
       <![CDATA[
         SELECT G.AD_CLIENT_ID, G.AD_ORG_ID, G.DOCUMENTNO, G.DATEACCT, G.DATEDOC,
         G.C_CURRENCY_ID, G.C_DOCTYPE_ID, G.POSTED, G.POSTINGTYPE, G.ISOPENING,
-        G.C_CAMPAIGN_ID, G.C_PROJECT_ID, G.USER1_ID, G.USER2_ID
+        G.C_CAMPAIGN_ID, G.C_PROJECT_ID, G.USER1_ID, G.USER2_ID, G.C_COSTCENTER_ID,
+        G.C_PERIOD_ID AS PERIOD
         FROM GL_JOURNAL G
         WHERE AD_CLIENT_ID=?
         AND GL_JOURNAL_ID=?
@@ -50,4 +51,18 @@
      <Parameter name="client"/>
      <Parameter name="id"/>
    </SqlMethod>
-   </SqlClass>
+   <SqlMethod name="periodOpen" type="preparedStatement" return="multiple">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+      <![CDATA[
+      select max(c_period.c_period_id) as period
+      from c_period, c_periodcontrol
+      where c_period.c_period_id = c_periodcontrol.c_period_id
+      and c_periodcontrol.docbasetype = 'GLJ'
+      and c_periodcontrol.periodstatus = 'O'
+      and c_periodcontrol.c_period_id = ?
+      ]]>
+      </Sql>
+      <Parameter name="period"/>
+   </SqlMethod>   
+ </SqlClass>

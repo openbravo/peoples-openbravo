@@ -101,6 +101,51 @@
         <Parameter name="nodeId" optional="true" after="WHERE " text="tn.Node_ID = ? AND "/>
         <Parameter name="adTreeId"/>
    </SqlMethod>
+   <SqlMethod name="selectCostcenter" type="preparedStatement" return="multiple">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        SELECT tn.Node_ID,tn.Parent_ID,tn.SeqNo, c.C_Costcenter_ID AS ID, c.Name, c.Description, c.IsSummary 
+        FROM AD_TreeNode tn, 
+          C_Costcenter c
+        WHERE tn.Node_ID = c.C_Costcenter_ID 
+        AND tn.AD_Tree_ID = ? 
+        ORDER BY COALESCE(tn.Parent_ID, '-1'), tn.SeqNo
+      </Sql>
+        <Parameter name="editable" optional="true" type="none" after="WHERE " text="tn.IsActive='Y' AND c.isActive='Y' AND "/>
+        <Parameter name="parentId" optional="true" after="WHERE " text="tn.Parent_ID = ? AND "/>
+        <Parameter name="nodeId" optional="true" after="WHERE " text="tn.Node_ID = ? AND "/>
+        <Parameter name="adTreeId"/>
+   </SqlMethod>
+   <SqlMethod name="selectUser1" type="preparedStatement" return="multiple">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        SELECT tn.Node_ID,tn.Parent_ID,tn.SeqNo, u1.User1_ID AS ID, u1.Name, u1.Description, u1.IsSummary 
+        FROM AD_TreeNode tn, 
+          User1 u1
+        WHERE tn.Node_ID = u1.User1_ID 
+        AND tn.AD_Tree_ID = ? 
+        ORDER BY COALESCE(tn.Parent_ID, '-1'), tn.SeqNo
+      </Sql>
+        <Parameter name="editable" optional="true" type="none" after="WHERE " text="tn.IsActive='Y' AND u1.isActive='Y' AND "/>
+        <Parameter name="parentId" optional="true" after="WHERE " text="tn.Parent_ID = ? AND "/>
+        <Parameter name="nodeId" optional="true" after="WHERE " text="tn.Node_ID = ? AND "/>
+        <Parameter name="adTreeId"/>
+   </SqlMethod>
+   <SqlMethod name="selectUser2" type="preparedStatement" return="multiple">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        SELECT tn.Node_ID,tn.Parent_ID,tn.SeqNo, u2.User2_ID AS ID, u2.Name, u2.Description, u2.IsSummary 
+        FROM AD_TreeNode tn, 
+          User2 u2
+        WHERE tn.Node_ID = u2.User2_ID 
+        AND tn.AD_Tree_ID = ? 
+        ORDER BY COALESCE(tn.Parent_ID, '-1'), tn.SeqNo
+      </Sql>
+        <Parameter name="editable" optional="true" type="none" after="WHERE " text="tn.IsActive='Y' AND u2.isActive='Y' AND "/>
+        <Parameter name="parentId" optional="true" after="WHERE " text="tn.Parent_ID = ? AND "/>
+        <Parameter name="nodeId" optional="true" after="WHERE " text="tn.Node_ID = ? AND "/>
+        <Parameter name="adTreeId"/>
+   </SqlMethod>
    <SqlMethod name="selectBOM" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
@@ -235,6 +280,26 @@
         <Parameter name="parentId" optional="true" after="WHERE " text="tn.Parent_ID = ? AND "/>
         <Parameter name="nodeId" optional="true" after="WHERE " text="tn.Node_ID = ? AND "/>
         <Parameter name="adTreeId"/>
+   </SqlMethod>
+   <SqlMethod name="selectOBRE_ResouceCategory" type="preparedStatement" return="multiple">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        SELECT tn.Node_ID,tn.Parent_ID,tn.SeqNo, a.A_Asset_ID AS ID, 
+        a.Name,a.Description,a.IsSummary 
+        FROM AD_TreeNode tn, A_Asset a
+        WHERE 1=1 
+        AND tn.Node_ID = a.A_Asset_ID 
+        AND tn.AD_Tree_ID = ? 
+        AND 2=2 
+        ORDER BY COALESCE(tn.Parent_ID, '-1'), tn.SeqNo
+      </Sql>
+        <Parameter name="columnname" optional="false" type="replace" after="tn.SeqNo, a." text="A_Asset_ID"/>
+        <Parameter name="tablename" optional="false" type="replace" after="AD_TreeNode tn, " text="A_Asset"/>
+        <Parameter name="columnname" optional="false" type="replace" after="AND tn.Node_ID = a." text="A_Asset_ID"/>
+        <Parameter name="adTreeId"/>
+        <Parameter name="editable" optional="true" type="none" after="AND 2=2 " text="AND tn.IsActive='Y' AND a.isActive='Y' "/>
+        <Parameter name="parentId" optional="true" after="AND 2=2 " text="AND tn.Parent_ID = ? "/>
+        <Parameter name="nodeId" optional="true" after="AND 2=2 " text="AND tn.Node_ID = ? "/>
    </SqlMethod>
    <SqlMethod name="selectTreeID" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>

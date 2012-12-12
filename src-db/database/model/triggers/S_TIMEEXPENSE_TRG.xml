@@ -28,23 +28,29 @@
     
 BEGIN
     
-    IF AD_isTriggerEnabled()='N' THEN RETURN;
+  IF AD_isTriggerEnabled()='N' THEN RETURN;
+  END IF;
+  
+  IF (INSERTING) THEN
+    IF (:NEW.PROCESSED = 'Y') THEN
+      RAISE_APPLICATION_ERROR(-20000, '@20501@');
     END IF;
-
-
-
- IF (INSERTING) THEN
-  IF (:NEW.PROCESSED = 'Y') THEN
-  RAISE_APPLICATION_ERROR(-20000, '@20501@');
- END IF;
- ELSE
-   IF (UPDATING AND :OLD.PROCESSED = 'Y') THEN
-  IF (:NEW.DocumentNo<>:OLD.DocumentNo
-          OR :NEW.C_BPartner_ID<>:OLD.C_BPartner_ID
-          OR :NEW.DATEREPORT<>:OLD.DATEREPORT)
-          OR :NEW.AD_ORG_ID<>:OLD.AD_ORG_ID THEN
-       RAISE_APPLICATION_ERROR(-20000, '@20501@');
-     END IF;
+  ELSE IF (UPDATING) THEN
+    IF (:OLD.PROCESSED = 'Y' AND (:NEW.DocumentNo<>:OLD.DocumentNo
+      OR :NEW.C_BPartner_ID<>:OLD.C_BPartner_ID
+      OR :NEW.DATEREPORT<>:OLD.DATEREPORT
+      OR :NEW.AD_ORG_ID<>:OLD.AD_ORG_ID)) THEN
+        RAISE_APPLICATION_ERROR(-20000, '@20501@');
+    END IF;
+    
+    IF(COALESCE(:OLD.POSTED, 'N')='Y' AND ((COALESCE(:OLD.C_Project_ID, '0') <> COALESCE(:NEW.C_Project_ID, '0'))
+      OR (COALESCE(:OLD.C_Costcenter_ID, '0') <> COALESCE(:NEW.C_Costcenter_ID, '0'))
+      OR (COALESCE(:OLD.A_Asset_ID, '0') <> COALESCE(:NEW.A_Asset_ID, '0'))
+      OR (COALESCE(:OLD.User1_ID, '0') <> COALESCE(:NEW.User1_ID, '0'))
+      OR (COALESCE(:OLD.User2_ID, '0') <> COALESCE(:NEW.User2_ID, '0'))))
+    THEN
+      RAISE_APPLICATION_ERROR(-20000, '@20501@');
+    END IF;
   END IF;
  END IF;
 

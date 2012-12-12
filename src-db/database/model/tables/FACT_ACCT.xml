@@ -197,6 +197,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="C_COSTCENTER_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_FACT_ACCT">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
@@ -248,6 +252,9 @@
       <foreign-key foreignTable="C_CAMPAIGN" name="FACT_ACCT_C_CAMPAIGN">
         <reference local="C_CAMPAIGN_ID" foreign="C_CAMPAIGN_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="C_COSTCENTER" name="FACT_ACCT_C_COSTCENTER">
+        <reference local="C_COSTCENTER_ID" foreign="C_COSTCENTER_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="C_PERIOD" name="FACT_ACCT_C_PERIOD">
         <reference local="C_PERIOD_ID" foreign="C_PERIOD_ID"/>
       </foreign-key>
@@ -262,6 +269,12 @@
       </foreign-key>
       <foreign-key foreignTable="M_LOCATOR" name="FACT_ACCT_M_LOCATOR">
         <reference local="M_LOCATOR_ID" foreign="M_LOCATOR_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="USER1" name="FACT_ACCT_USER1">
+        <reference local="USER1_ID" foreign="USER1_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="USER2" name="FACT_ACCT_USER2">
+        <reference local="USER2_ID" foreign="USER2_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_PRODUCT" name="M_PRODUCT_FACT_ACCT">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>

@@ -120,7 +120,8 @@ public class OBViewFieldHandler {
         continue;
       }
 
-      final DynamicExpressionParser parser = new DynamicExpressionParser(f.getDisplayLogic(), tab);
+      final DynamicExpressionParser parser = new DynamicExpressionParser(f.getDisplayLogic(), tab,
+          f);
       displayLogicMap.put(f, parser.getJSExpression());
 
       log.debug(f.getTab().getId() + " - " + f.getName() + " >>> " + parser.getJSExpression());

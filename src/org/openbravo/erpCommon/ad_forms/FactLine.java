@@ -728,6 +728,16 @@ public class FactLine {
     if (User2_ID == null)
       User2_ID = "";
 
+    String C_Costcenter_ID = "";
+    if (m_docLine != null)
+      C_Costcenter_ID = m_docLine.m_C_Costcenter_ID;
+    if (C_Costcenter_ID == null)
+      C_Costcenter_ID = "";
+    if (C_Costcenter_ID.equals(""))
+      C_Costcenter_ID = m_docVO.C_Costcenter_ID;
+    if (C_Costcenter_ID == null)
+      C_Costcenter_ID = "";
+
     // Description
     StringBuffer description = new StringBuffer();
     description = getDescription(conn, C_BPartner_ID, m_C_AcctSchema_ID, m_AD_Table_ID,
@@ -790,6 +800,7 @@ public class FactLine {
             .debug("FactLine - C_Activity_ID " + C_Activity_ID + " - User1_ID " + User1_ID);
         log4jFactLine.debug("FactLine - User2_ID " + User2_ID + " - description "
             + description.toString());
+        log4jFactLine.debug("FactLine - C_Costcenter_ID " + C_Costcenter_ID);
         log4jFactLine.debug("FactLine - m_Fact_Acct_Group_ID " + m_Fact_Acct_Group_ID
             + " - m_SeqNo " + m_SeqNo);
         log4jFactLine.debug("FactLine - m_DocBaseType " + m_DocBaseType + " - Record_ID2 "
@@ -808,7 +819,8 @@ public class FactLine {
             C_Campaign_ID, C_Activity_ID, User1_ID, User2_ID, description.toString(),
             m_Fact_Acct_Group_ID, m_SeqNo, m_DocBaseType, Record_ID2,
             (m_docLine != null) ? m_docLine.m_A_Asset_ID : "",
-            (m_docLine != null) ? m_docLine.m_C_WithHolding_ID : "", m_docVO.C_DocType_ID);
+            (m_docLine != null) ? m_docLine.m_C_WithHolding_ID : "", m_docVO.C_DocType_ID,
+            C_Costcenter_ID);
         log4jFactLine.debug("FactLine - After insertFactAct");
       }
       if (m_docVO.m_IsOpening.equals("Y"))
@@ -965,6 +977,9 @@ public class FactLine {
 
   public String setC_Period_ID(AcctServer m_docVO, String strDateAcct, ConnectionProvider conn) {
     AcctServerData[] data = null;
+    if ("GLJ".equals(m_docVO.DocumentType)) {
+      return m_docVO.C_Period_ID;
+    }
     try {
       data = AcctServerData.periodOpen(conn, m_docVO.AD_Client_ID, m_docVO.DocumentType,
           m_docVO.AD_Org_ID, strDateAcct);
