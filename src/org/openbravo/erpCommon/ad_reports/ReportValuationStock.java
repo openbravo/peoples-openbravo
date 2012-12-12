@@ -112,8 +112,6 @@ public class ReportValuationStock extends HttpSecureAppServlet {
         Organization legalEntity = OBContext.getOBContext()
             .getOrganizationStructureProvider(wh.getClient().getId())
             .getLegalEntity(wh.getOrganization());
-        String strBaseCurrencyId = (String) DalUtil.getId(FinancialUtils.getLegalEntityCurrency(wh
-            .getOrganization()));
         data = ReportValuationStockData.select(this, vars.getLanguage(), strCurrencyId,
             legalEntity.getId(), DateTimeData.nDaysAfter(this, strDate, "1"), strWarehouse,
             strCategoryProduct);
