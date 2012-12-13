@@ -42,6 +42,7 @@ import org.openbravo.financial.FinancialUtils;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
@@ -309,33 +310,56 @@ public class DocInOut extends AcctServer {
           costCurrency = line.transaction.getCurrency();
         }
         C_Currency_ID = costCurrency.getId();
-        if (CostingStatus.getInstance().isMigrated() && line.transaction != null
-            && !line.transaction.isCostCalculated()) {
-          Map<String, String> parameters = getNotCalculatedCostParameters(line.transaction);
-          setMessageResult(conn, STATUS_NotCalculatedCost, "error", parameters);
-          throw new IllegalStateException();
-        } else if (CostingStatus.getInstance().isMigrated() && line.transaction == null) {
-          // Check default cost existence
-          HashMap<CostDimension, BaseOBObject> costDimensions = CostingUtils.getEmptyDimensions();
-          costDimensions.put(CostDimension.Warehouse, line.getWarehouse());
-          if (!CostingUtils.hasStandardCostDefinition(product, legalEntity, dateAcct,
-              costDimensions)) {
+        String costs = "0";
+        String strCosts = "0";
+        if (product.isBookUsingPurchaseOrderPrice()) {
+          // If the Product is checked as book using PO Price, the Price of the Purchase Order will
+          // be used to create the FactAcct Line
+          ShipmentInOutLine inOutLine = OBDal.getInstance().get(ShipmentInOutLine.class,
+              line.m_TrxLine_ID);
+          OrderLine ol = inOutLine.getSalesOrderLine();
+          if (ol == null) {
+            Map<String, String> parameters = new HashMap<String, String>();
+            parameters.put("product", inOutLine.getProduct().getIdentifier());
+            parameters.put("line", inOutLine.getLineNo().toString());
+            setMessageResult(conn, STATUS_NoRelatedPO, "error", parameters);
+            throw new IllegalStateException();
+          }
+          costs = ol.getUnitPrice().multiply(inOutLine.getMovementQuantity()).toString();
+          BigDecimal b_Costs = new BigDecimal(costs).setScale(new Integer(strScale),
+              RoundingMode.HALF_UP);
+          strCosts = b_Costs.toString();
+        } else {
+          // If the Product is not checked as book using PO Price, the Cost of the
+          // Transaction will be used to create the FactAcct Line
+          if (CostingStatus.getInstance().isMigrated() && line.transaction != null
+              && !line.transaction.isCostCalculated()) {
+            Map<String, String> parameters = getNotCalculatedCostParameters(line.transaction);
+            setMessageResult(conn, STATUS_NotCalculatedCost, "error", parameters);
+            throw new IllegalStateException();
+          } else if (CostingStatus.getInstance().isMigrated() && line.transaction == null) {
+            // Check default cost existence
+            HashMap<CostDimension, BaseOBObject> costDimensions = CostingUtils.getEmptyDimensions();
+            costDimensions.put(CostDimension.Warehouse, line.getWarehouse());
+            if (!CostingUtils.hasStandardCostDefinition(product, legalEntity, dateAcct,
+                costDimensions)) {
+              Map<String, String> parameters = getInvalidCostParameters(product.getIdentifier(),
+                  DateAcct);
+              setMessageResult(conn, STATUS_InvalidCost, "error", parameters);
+              throw new IllegalStateException();
+            }
+          }
+          costs = line.getProductCosts(DateAcct, as, conn, con);
+          BigDecimal b_Costs = new BigDecimal(costs).setScale(new Integer(strScale),
+              RoundingMode.HALF_UP);
+          strCosts = b_Costs.toString();
+          if (b_Costs.compareTo(BigDecimal.ZERO) == 0 && !CostingStatus.getInstance().isMigrated()
+              && DocInOutData.existsCost(conn, DateAcct, line.m_M_Product_ID).equals("0")) {
             Map<String, String> parameters = getInvalidCostParameters(product.getIdentifier(),
                 DateAcct);
             setMessageResult(conn, STATUS_InvalidCost, "error", parameters);
             throw new IllegalStateException();
           }
-        }
-        String costs = line.getProductCosts(DateAcct, as, conn, con);
-        BigDecimal b_Costs = new BigDecimal(costs).setScale(new Integer(strScale),
-            RoundingMode.HALF_UP);
-        String strCosts = b_Costs.toString();
-        if (b_Costs.compareTo(BigDecimal.ZERO) == 0 && !CostingStatus.getInstance().isMigrated()
-            && DocInOutData.existsCost(conn, DateAcct, line.m_M_Product_ID).equals("0")) {
-          Map<String, String> parameters = getInvalidCostParameters(product.getIdentifier(),
-              DateAcct);
-          setMessageResult(conn, STATUS_InvalidCost, "error", parameters);
-          throw new IllegalStateException();
         }
         Account notInvoicedReceiptsAccount = getAccount(AcctServer.ACCTTYPE_NotInvoicedReceipts,
             as, conn);
@@ -470,29 +494,47 @@ public class DocInOut extends AcctServer {
               trx = inOutLine.getMaterialMgmtMaterialTransactionList().get(0);
               trxCost = trx.getTransactionCost();
             } else {
-              // Not stocked item type product. Check standard cost existence.
-              Organization legalEntity = OBContext.getOBContext()
-                  .getOrganizationStructureProvider(AD_Client_ID)
-                  .getLegalEntity(inOut.getOrganization());
-              HashMap<CostDimension, BaseOBObject> costDimensions = CostingUtils
-                  .getEmptyDimensions();
-              if (inOutLine.getStorageBin() == null) {
-                costDimensions.put(CostDimension.Warehouse, inOutLine.getShipmentReceipt()
-                    .getWarehouse());
+              if (inOutLine.getProduct().isBookUsingPurchaseOrderPrice()) {
+                // Not stocked item type product.
+                // If the Product is checked as book using Purchase Order Price, the Price of the PO
+                // will be used to create the FactAcct Line, therefore a related PO must exist
+                OrderLine ol = inOutLine.getSalesOrderLine();
+                if (ol == null) {
+                  Map<String, String> parameters = new HashMap<String, String>();
+                  parameters.put("product", inOutLine.getProduct().getIdentifier());
+                  parameters.put("line", inOutLine.getLineNo().toString());
+                  setMessageResult(conn, STATUS_NoRelatedPO, "error", parameters);
+                  throw new IllegalStateException();
+                }
+                trxCost = ol.getLineNetAmount();
               } else {
-                costDimensions.put(CostDimension.Warehouse, inOutLine.getStorageBin()
-                    .getWarehouse());
-              }
-              if (!CostingUtils.hasStandardCostDefinition(inOutLine.getProduct(), legalEntity,
-                  inOut.getAccountingDate(), costDimensions)) {
-                Map<String, String> parameters = getInvalidCostParameters(inOutLine.getProduct()
-                    .getIdentifier(), DateAcct);
-                setMessageResult(conn, STATUS_InvalidCost, "error", parameters);
-                throw new IllegalStateException();
-              } else {
-                trxCost = CostingUtils.getStandardCost(inOutLine.getProduct(), legalEntity,
-                    inOut.getAccountingDate(), costDimensions, legalEntity.getCurrency()).multiply(
-                    inOutLine.getMovementQuantity());
+                // Not stocked item type product. Check standard cost existence.
+                // If the Product is not checked as book using PO Price, the Cost of the
+                // Transaction will be used to create the FactAcct Line, therefore the Cost of the
+                // Transaction must have been calculated before.
+                Organization legalEntity = OBContext.getOBContext()
+                    .getOrganizationStructureProvider(AD_Client_ID)
+                    .getLegalEntity(inOut.getOrganization());
+                HashMap<CostDimension, BaseOBObject> costDimensions = CostingUtils
+                    .getEmptyDimensions();
+                if (inOutLine.getStorageBin() == null) {
+                  costDimensions.put(CostDimension.Warehouse, inOutLine.getShipmentReceipt()
+                      .getWarehouse());
+                } else {
+                  costDimensions.put(CostDimension.Warehouse, inOutLine.getStorageBin()
+                      .getWarehouse());
+                }
+                if (!CostingUtils.hasStandardCostDefinition(inOutLine.getProduct(), legalEntity,
+                    inOut.getAccountingDate(), costDimensions)) {
+                  Map<String, String> parameters = getInvalidCostParameters(inOutLine.getProduct()
+                      .getIdentifier(), DateAcct);
+                  setMessageResult(conn, STATUS_InvalidCost, "error", parameters);
+                  throw new IllegalStateException();
+                } else {
+                  trxCost = CostingUtils.getStandardCost(inOutLine.getProduct(), legalEntity,
+                      inOut.getAccountingDate(), costDimensions, legalEntity.getCurrency())
+                      .multiply(inOutLine.getMovementQuantity());
+                }
               }
             }
             if (trxCost == null) {
