@@ -23,7 +23,7 @@ public class OBViewParameterHandler {
   public List<OBViewParameter> getParameters() {
     List<OBViewParameter> params = new ArrayList<OBViewParameterHandler.OBViewParameter>();
     for (Parameter param : process.getOBUIAPPParameterList()) {
-      if (param.isActive()) {
+      if (param.isActive() && !param.isFixed()) {
         params.add(new OBViewParameter(param));
       }
     }
@@ -35,7 +35,6 @@ public class OBViewParameterHandler {
     Parameter parameter;
 
     public OBViewParameter(Parameter param) {
-      // TODO Auto-generated constructor stub
       uiDefinition = UIDefinitionController.getInstance().getUIDefinition(param.getReference());
       parameter = param;
     }
