@@ -432,7 +432,15 @@
       <![CDATA[
         SELECT s.M_InOut_ID AS ID, Ad_Column_Identifier(to_char('M_InOut'), to_char(s.M_InOut_ID), to_char(?)) AS NAME,
         s.DocumentNo AS NAMESHIPMENT,
-        l.MovementQty AS QTY, l.C_UOM_ID,uom.UOMSymbol, l.M_Product_ID,Ad_Column_Identifier(to_char('M_Product'), to_char(l.m_product_id), to_char(?))||' '||(CASE WHEN ma.serno IS NOT NULL THEN TO_CHAR('('||' '||ma.serno||' '||')') ELSE TO_CHAR('') END) AS RELATION_NAME, l.M_InOutLine_ID,l.Line,
+        (l.MovementQty - COALESCE((select sum(COALESCE(il.qtyinvoiced, 0))
+                         from m_inoutline iol
+                           left join c_invoiceline il on iol.m_inoutline_id = il.m_inoutline_id
+                           left join c_invoice i on il.c_invoice_id = i.c_invoice_id 
+                         where iol.m_inoutline_id = l.m_inoutline_id
+                           and i.docstatus = 'CO'
+                         group by iol.m_inoutline_id, iol.movementqty
+                         having (iol.movementqty >= 0 AND iol.movementqty > SUM(COALESCE(il.qtyinvoiced, 0)))
+                                 OR (iol.movementqty < 0 AND iol.movementqty < SUM(COALESCE(il.qtyinvoiced, 0))) ), 0)) AS QTY, l.C_UOM_ID,uom.UOMSymbol, l.M_Product_ID,Ad_Column_Identifier(to_char('M_Product'), to_char(l.m_product_id), to_char(?))||' '||(CASE WHEN ma.serno IS NOT NULL THEN TO_CHAR('('||' '||ma.serno||' '||')') ELSE TO_CHAR('') END) AS RELATION_NAME, l.M_InOutLine_ID,l.Line,
         l.M_InOutLine_ID as C_OrderLine_ID,
         COALESCE(l.A_Asset_ID, s.A_Asset_ID) AS A_Asset_ID, COALESCE(l.C_Project_ID, s.C_Project_ID) AS C_Project_ID, 
         COALESCE(l.C_Costcenter_ID, s.C_Costcenter_ID) AS C_Costcenter_ID,
@@ -450,7 +458,14 @@
         AND s.AD_Org_ID IN ('1') 
         AND l.C_UOM_ID=uom.C_UOM_ID 
         AND l.M_Product_ID=p.M_Product_ID 
-        AND l.isinvoiced = 'N' 
+        AND EXISTS (select 1
+                    from m_inoutline iol
+                      left join c_invoiceline il on iol.m_inoutline_id = il.m_inoutline_id
+                      left join c_invoice i on il.c_invoice_id = i.c_invoice_id 
+                    where iol.m_inoutline_id = l.m_inoutline_id
+                    group by iol.m_inoutline_id, iol.movementqty
+                    having (iol.movementqty >= 0 AND iol.movementqty > SUM(COALESCE(CASE WHEN i.docstatus = 'CO' THEN il.qtyinvoiced ELSE 0 END, 0)))
+                            OR (iol.movementqty < 0 AND iol.movementqty < SUM(COALESCE(CASE WHEN i.docstatus = 'CO' THEN il.qtyinvoiced ELSE 0 END, 0))) )
         AND l.M_InOut_ID=?
         AND (l.c_orderline_id is null OR pl.istaxincluded = ?)
         AND (NOT EXISTS (SELECT 1 FROM C_InvoiceLine WHERE C_Invoice_ID = ? AND M_InOutLine_Id = l.M_InOutLine_Id))
@@ -488,8 +503,16 @@
                            left join m_pricelist pl on pl.m_pricelist_id = o.m_pricelist_id
                     WHERE l.M_INOUT_ID = s.M_INOUT_ID
                     AND (l.c_orderline_id is null OR pl.istaxincluded = ?)
-                    AND l.isinvoiced = 'N'
-                    AND (NOT EXISTS (SELECT 1 FROM C_InvoiceLine WHERE C_Invoice_ID = ? AND M_InOutLine_Id = l.M_InOutLine_Id)))
+                    AND EXISTS (SELECT 1
+                                FROM m_inoutline iol
+                                  left join c_invoiceline il ON iol.m_inoutline_id = il.m_inoutline_id
+                                  left join c_invoice i ON il.c_invoice_id = i.c_invoice_id
+                                WHERE  iol.m_inoutline_id = l.m_inoutline_id 
+                                GROUP  BY iol.m_inoutline_id, iol.movementqty
+                                HAVING (iol.movementqty >= 0 AND iol.movementqty > SUM(COALESCE(CASE WHEN i.docstatus = 'CO' THEN il.qtyinvoiced ELSE 0 END, 0)))
+                                        OR (iol.movementqty < 0 AND iol.movementqty < SUM(COALESCE(CASE WHEN i.docstatus = 'CO' THEN il.qtyinvoiced ELSE 0 END, 0))) )
+                    AND (NOT EXISTS (SELECT 1 FROM C_InvoiceLine WHERE C_Invoice_ID = ? AND M_InOutLine_Id = l.M_InOutLine_Id))
+                        )
         AND NOT EXISTS (SELECT 1 FROM C_INVOICE_CANDIDATE_V ic, C_ORDER o 
         WHERE o.C_ORDER_ID = s.C_ORDER_ID
         AND o.C_ORDER_ID = ic.C_ORDER_ID
@@ -510,6 +533,7 @@
     <Parameter name="isTaxIncluded"/>
      <Parameter name="cInvoiceId"/>
   </SqlMethod>
+  
   <SqlMethod name="selectFromShipmentTrl" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
@@ -563,8 +587,16 @@
     <Sql>
       <![CDATA[
         SELECT s.M_InOut_ID AS ID, Ad_Column_Identifier(to_char('M_InOut'), to_char(s.M_InOut_ID), to_char(?)) AS NAME,
-        s.DocumentNo AS NAMESHIPMENT, 
-        l.MovementQty AS QTY, l.C_UOM_ID,COALESCE(uomt.UOMSymbol, uom.UOMSymbol) AS UOMSymbol, 
+        s.DocumentNo AS NAMESHIPMENT,
+        (l.MovementQty - COALESCE((SELECT SUM(COALESCE(il.qtyinvoiced, 0))
+                                  FROM m_inoutline iol
+                                    LEFT JOIN c_invoiceline il ON iol.m_inoutline_id = il.m_inoutline_id
+                                    LEFT JOIN c_invoice i ON il.c_invoice_id = i.c_invoice_id 
+                                  WHERE iol.m_inoutline_id = l.m_inoutline_id
+                                    AND i.docstatus = 'CO'
+                                  GROUP BY iol.m_inoutline_id, iol.movementqty
+                                  HAVING (iol.movementqty >= 0 AND iol.movementqty > SUM(COALESCE(il.qtyinvoiced, 0)))
+                                          OR (iol.movementqty < 0 AND iol.movementqty < SUM(COALESCE(il.qtyinvoiced, 0))) ), 0)) AS QTY, l.C_UOM_ID,COALESCE(uomt.UOMSymbol, uom.UOMSymbol) AS UOMSymbol, 
         l.M_Product_ID,Ad_Column_Identifier(to_char('M_Product'), to_char(l.m_product_id), to_char(?))||' '|| (CASE WHEN ma.serno IS NOT NULL THEN TO_CHAR('('||' '||ma.serno||' '||')') ELSE TO_CHAR('')  END) AS RELATION_NAME, l.M_InOutLine_ID,l.Line, l.M_InOutLine_ID as C_OrderLine_ID, 
         COALESCE(l.A_Asset_ID, s.A_Asset_ID) AS A_Asset_ID, COALESCE(l.C_Project_ID, s.C_Project_ID) AS C_Project_ID, 
         COALESCE(l.C_Costcenter_ID, s.C_Costcenter_ID) AS C_Costcenter_ID,
@@ -584,7 +616,14 @@
         AND s.AD_Org_ID IN ('1') 
         AND l.C_UOM_ID=uom.C_UOM_ID 
         AND l.M_Product_ID=p.M_Product_ID 
-        AND l.isinvoiced = 'N' 
+        AND EXISTS (SELECT 1
+                    FROM m_inoutline iol
+                      LEFT JOIN c_invoiceline il ON iol.m_inoutline_id = il.m_inoutline_id
+                      LEFT JOIN c_invoice i ON il.c_invoice_id = i.c_invoice_id 
+                    WHERE iol.m_inoutline_id = l.m_inoutline_id
+                    GROUP BY iol.m_inoutline_id, iol.movementqty
+                    HAVING (iol.movementqty >= 0 AND iol.movementqty > SUM(COALESCE(CASE WHEN i.docstatus = 'CO' THEN il.qtyinvoiced ELSE 0 END, 0)))
+                            OR (iol.movementqty < 0 AND iol.movementqty < SUM(COALESCE(CASE WHEN i.docstatus = 'CO' THEN il.qtyinvoiced ELSE 0 END, 0))) )
         AND l.M_InOut_ID=? 
         AND (l.c_orderline_id is null OR pl.istaxincluded = ?)
         AND (NOT EXISTS (SELECT 1 FROM C_InvoiceLine WHERE C_Invoice_ID = ? AND M_InOutLine_Id = l.M_InOutLine_Id))
@@ -605,6 +644,7 @@
     <Parameter name="isTaxIncluded"/>
     <Parameter name="cInvoiceId"/>
   </SqlMethod>
+  
   <SqlMethod name="selectFromShipmentUpdate" type="preparedStatement" connection="true" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
@@ -634,7 +674,15 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT l.MovementQty AS ID, l.C_UOM_ID,uom.UOMSymbol, l.M_Product_ID,Ad_Column_Identifier(to_char('M_Product'), to_char(l.m_product_id), to_char(?)) AS NAME, l.M_InOutLine_ID,l.Line,
+        SELECT (l.MovementQty - COALESCE((select sum(COALESCE(il.qtyinvoiced, 0))
+                                           from m_inoutline iol
+                                             left join c_invoiceline il on iol.m_inoutline_id = il.m_inoutline_id
+                                             left join c_invoice i on il.c_invoice_id = i.c_invoice_id 
+                                           where iol.m_inoutline_id = l.m_inoutline_id
+                                             and i.docstatus = 'CO'
+                                           group by iol.m_inoutline_id, iol.movementqty
+                                           having (iol.movementqty >= 0 AND (iol.movementqty > SUM(COALESCE(il.qtyinvoiced, 0)))
+                                                   OR (iol.movementqty < SUM(COALESCE(il.qtyinvoiced, 0))) )), 0)) AS ID, l.C_UOM_ID,uom.UOMSymbol, l.M_Product_ID,Ad_Column_Identifier(to_char('M_Product'), to_char(l.m_product_id), to_char(?)) AS NAME, l.M_InOutLine_ID,l.Line,
         l.C_OrderLine_ID, max(uom.STDPRECISION) as stdprecision, l.Description,l.quantityOrder, l.M_Product_UOM_ID,
         l.M_ATTRIBUTESETINSTANCE_ID, l.ad_org_id,
         COALESCE(l.A_Asset_ID, s.A_Asset_ID) AS A_Asset_ID, COALESCE(l.C_Project_ID, s.C_Project_ID) AS C_Project_ID, 
@@ -644,8 +692,15 @@
         WHERE l.M_InOut_ID = s.M_InOut_ID
         AND l.C_UOM_ID=uom.C_UOM_ID
         AND l.M_Product_ID=p.M_Product_ID 
-        AND l.isinvoiced = 'N' 
-        GROUP BY l.MovementQty,l.C_UOM_ID,uom.UOMSymbol,l.M_Product_ID,p.NAME, l.M_InOutLine_ID,l.Line,l.C_OrderLine_ID, l.Description, l.quantityOrder, l.M_Product_UOM_ID, l.M_ATTRIBUTESETINSTANCE_ID, l.ad_org_id, 
+        AND EXISTS (select 1
+                      from m_inoutline iol
+                        left join c_invoiceline il on iol.m_inoutline_id = il.m_inoutline_id
+                        left join c_invoice i on il.c_invoice_id = i.c_invoice_id 
+                      where iol.m_inoutline_id = l.m_inoutline_id
+                      group by iol.m_inoutline_id, iol.movementqty
+                      having (iol.movementqty >= 0 AND iol.movementqty > SUM(COALESCE(CASE WHEN i.docstatus = 'CO' THEN il.qtyinvoiced ELSE 0 END, 0)))
+                              OR (iol.movementqty < 0 AND iol.movementqty < SUM(COALESCE(CASE WHEN i.docstatus = 'CO' THEN il.qtyinvoiced ELSE 0 END, 0))) )
+        GROUP BY l.MovementQty,l.C_UOM_ID,uom.UOMSymbol,l.M_Product_ID,p.NAME, l.M_InOutLine_ID,l.Line,l.C_OrderLine_ID, l.Description, l.quantityOrder, l.M_Product_UOM_ID, l.M_ATTRIBUTESETINSTANCE_ID, l.ad_org_id, l.m_inout_id,
         COALESCE(l.A_Asset_ID, s.A_Asset_ID), COALESCE(l.C_Project_ID, s.C_Project_ID), COALESCE(l.C_Costcenter_ID, s.C_Costcenter_ID),
         COALESCE(l.User1_ID, s.User1_ID), COALESCE(l.User2_ID, s.User2_ID)
         ORDER BY l.Line
@@ -653,7 +708,7 @@
     </Sql>
     <Field name="rownum" value="count"/>
     <Parameter name="adLanguage"/>
-    <Parameter name="cOrderlineId" optional="true" type="argument" after="AND l.isinvoiced = 'N' " text=" AND l.M_InOutLine_ID IN "/>
+    <Parameter name="cOrderlineId" optional="true" type="argument" after="AND l.M_Product_ID=p.M_Product_ID " text=" AND l.M_InOutLine_ID IN "/>
   </SqlMethod>
   <SqlMethod name="set" type="constant" return="multiple">
       <SqlMethodComment></SqlMethodComment>
