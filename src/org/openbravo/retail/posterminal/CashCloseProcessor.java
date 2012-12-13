@@ -120,7 +120,7 @@ public class CashCloseProcessor {
   }
 
   protected FIN_Reconciliation createReconciliation(JSONObject cashCloseObj,
-      OBPOSApplications posTerminal, FIN_FinancialAccount account) {
+      OBPOSApplications posTerminal, FIN_FinancialAccount account) throws JSONException {
 
     BigDecimal startingBalance;
     OBCriteria<FIN_Reconciliation> reconciliationsForAccount = OBDal.getInstance().createCriteria(
@@ -142,7 +142,8 @@ public class CashCloseProcessor {
         .getDocumentTypeForReconciliations());
     reconciliation.setEndingDate(new Date());
     reconciliation.setTransactionDate(new Date());
-    reconciliation.setEndingBalance(BigDecimal.ZERO);
+    reconciliation.setEndingBalance(BigDecimal.valueOf(cashCloseObj.getJSONObject("paymentMethod")
+        .getDouble("amountToKeep")));
     reconciliation.setStartingbalance(startingBalance);
     reconciliation.setDocumentStatus("CO");
     reconciliation.setProcessNow(false);
