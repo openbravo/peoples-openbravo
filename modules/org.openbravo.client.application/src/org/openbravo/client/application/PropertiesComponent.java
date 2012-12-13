@@ -22,8 +22,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.BaseTemplateComponent;
 import org.openbravo.client.kernel.Template;
@@ -39,6 +39,7 @@ import org.openbravo.model.ad.domain.Preference;
  * @author mtaal
  */
 public class PropertiesComponent extends BaseTemplateComponent {
+  private static final Logger log = Logger.getLogger(PropertiesComponent.class);
 
   /*
    * (non-Javadoc)
@@ -110,8 +111,9 @@ public class PropertiesComponent extends BaseTemplateComponent {
             localProperty.setValue(value);
             isValid = true;
           }
-        } catch (JSONException e) {
+        } catch (Throwable t) {
           // not a valid JSONObject
+          log.error(t.getMessage() + " id: " + localProperty.getId() + " value: " + value, t);
         }
         if (isValid) {
           localProperty.setValue(value);
