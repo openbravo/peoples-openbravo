@@ -93,6 +93,9 @@ enyo.kind({
       kind: 'OB.UI.Modalnoteditableorder',
       name: 'modalNotEditableOrder'
     }, {
+      kind: 'OB.UI.ModalNotEditableLine',
+      name: 'modalNotEditableLine'
+    }, {
       kind: 'OB.UI.ModalBusinessPartners',
       name: "modalcustomer"
     }, {

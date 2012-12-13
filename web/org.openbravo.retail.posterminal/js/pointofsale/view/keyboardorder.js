@@ -26,6 +26,7 @@ enyo.kind({
   handlers: {
     onKeyboardOnDiscountsMode: 'keyboardOnDiscountsMode'
   },
+
   keyboardOnDiscountsMode: function (inSender, inEvent) {
     if (!inEvent.status) {
       //exit from discounts
@@ -114,6 +115,12 @@ enyo.kind({
           });
           return true;
         }
+        if (keyboard.line.get('product').get('isEditableQty') === false) {
+          me.doShowPopup({
+            popup: 'modalNotEditableLine'
+          });
+          return true;
+        }
         if (keyboard.line) {
           if (keyboard.line.get('product').get('groupProduct') === false) {
             me.doShowPopup({
@@ -133,6 +140,12 @@ enyo.kind({
         if (keyboard.receipt.get('isEditable') === false) {
           me.doShowPopup({
             popup: 'modalNotEditableOrder'
+          });
+          return true;
+        }
+        if (keyboard.line.get('product').get('isEditableQty') === false) {
+          me.doShowPopup({
+            popup: 'modalNotEditableLine'
           });
           return true;
         }
@@ -166,6 +179,12 @@ enyo.kind({
         if (keyboard.receipt.get('isEditable') === false) {
           me.doShowPopup({
             popup: 'modalNotEditableOrder'
+          });
+          return true;
+        }
+        if (keyboard.line.get('product').get('isEditablePrice') === false) {
+          me.doShowPopup({
+            popup: 'modalNotEditableLine'
           });
           return true;
         }

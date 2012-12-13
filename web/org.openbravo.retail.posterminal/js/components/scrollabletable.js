@@ -549,8 +549,7 @@ enyo.kind({
     var tr = this.$.tbody.createComponent({
       tag: 'li'
     }).render();
-    tr.createComponent({
-      name: 'renderline',
+    tr.renderline = tr.createComponent({
       kind: this.renderLine,
       model: model
     }).render();
@@ -592,7 +591,7 @@ enyo.kind({
       //refresh components collection, inserting new model...
       // get the models from current components
       for (i = 0; i < components.length; i++) {
-        models[i] = components[i].$.renderline.model;
+        models[i] = components[i].renderline.model;
       }
       this.$.tbody.destroyComponents();
       // rebuild component
