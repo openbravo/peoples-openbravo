@@ -109,6 +109,10 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
+      <column name="PREVENTCONCURRENT" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="AD_PROCESS_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -119,6 +123,7 @@
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
       <check name="AD_PROCESS_ADV_CHCK"><![CDATA[ISADVANCEDFEATURE IN ('Y', 'N')]]></check>
+      <check name="AD_PROCESS_CONCURRENT_CHCK"><![CDATA[PREVENTCONCURRENT IN ('Y', 'N')]]></check>
       <check name="AD_PROCESS_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="AD_PROCESS_ISBACKGROUND_CHK"><![CDATA[ISBACKGROUND IN ('Y', 'N')]]></check>
       <check name="AD_PROCESS_ISDIRECTPRINT_CHK"><![CDATA[ISDIRECTPRINT IN ('Y', 'N')]]></check>
