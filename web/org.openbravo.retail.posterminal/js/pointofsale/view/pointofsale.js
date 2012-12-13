@@ -243,7 +243,7 @@ enyo.kind({
       }
     }
 
-    this.model.get('order').addProduct(inEvent.product, inEvent.qty);
+    this.model.get('order').addProduct(inEvent.product, inEvent.qty, inEvent.options);
     this.model.get('orderList').saveCurrent();
     return true;
   },

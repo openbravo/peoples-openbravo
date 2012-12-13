@@ -548,7 +548,7 @@
           } else if (data.result === 0) {
             alert(OB.I18N.getLabel('OBPOS_WeightZero'));
           } else {
-            me.createLine(p, data.result);
+            me.createLine(p, data.result, options);
           }
         });
       } else {
@@ -567,10 +567,10 @@
             this.addUnit(line, qty);
             line.trigger('selected', line);
           } else {
-            this.createLine(p, qty);
+            this.createLine(p, qty, options);
           }
         } else {
-          this.createLine(p, qty);
+          this.createLine(p, qty, options);
         }
       }
       this.save();
@@ -670,7 +670,7 @@
       }
     },
 
-    createLine: function (p, units) {
+    createLine: function (p, units, options) {
       var me = this;
       var newline = new OrderLine({
         product: p,
@@ -682,7 +682,7 @@
       newline.calculateGross();
 
       // add the created line
-      this.get('lines').add(newline);
+      this.get('lines').add(newline, options);
       newline.trigger('created', newline);
       // set the undo action
       this.set('undo', {
