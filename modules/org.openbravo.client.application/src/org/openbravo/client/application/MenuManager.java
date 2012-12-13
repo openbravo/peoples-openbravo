@@ -277,16 +277,32 @@ public class MenuManager implements Serializable {
     }
   }
 
+  @SuppressWarnings("unchecked")
   private void linkProcessDefinition() {
-    OBCriteria<Process> q = OBDal.getInstance().createCriteria(
-        org.openbravo.client.application.Process.class);
-    q.list();
+    String processHql = "select p " + //
+        " from OBUIAPP_Process p, OBUIAPP_Process_Access pa " + //
+        "where pa.obuiappProcess = p " + //
+        "  and p.active = true " + //
+        "  and pa.active = true " + //
+        "  and pa.role = :role";
+    final Query processQry = OBDal.getInstance().getSession().createQuery(processHql);
+    processQry.setParameter("role", OBContext.getOBContext().getRole());
+    final List<?> list = processQry.list();
     // force load
 
+    final Map<String, MenuOption> menuOptionsProcessId = new HashMap<String, MenuOption>();
     for (MenuOption menuOption : menuOptions) {
       if (menuOption.getMenu() != null
           && menuOption.getMenu().getOBUIAPPProcessDefinition() != null) {
-        menuOption.setType(MenuEntryType.ProcessDefinition);
+        menuOptionsProcessId.put(menuOption.getMenu().getOBUIAPPProcessDefinition().getId(),
+            menuOption);
+      }
+    }
+
+    for (org.openbravo.client.application.Process process : (List<org.openbravo.client.application.Process>) list) {
+      MenuOption option = menuOptionsProcessId.get(process.getId());
+      if (option != null) {
+        option.setType(MenuEntryType.ProcessDefinition);
       }
     }
   }
