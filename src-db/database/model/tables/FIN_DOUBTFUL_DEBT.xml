@@ -97,6 +97,18 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="C_COSTCENTER_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="USER1_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="USER2_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="C_ACTIVITY" name="FIN_DOUBTFUL_DEBT_C_ACTIVITY">
         <reference local="C_ACTIVITY_ID" foreign="C_ACTIVITY_ID"/>
       </foreign-key>
@@ -105,6 +117,9 @@
       </foreign-key>
       <foreign-key foreignTable="C_CAMPAIGN" name="FIN_DOUBTFUL_DEBT_C_CAMPAIGN">
         <reference local="C_CAMPAIGN_ID" foreign="C_CAMPAIGN_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_COSTCENTER" name="FIN_DOUBTFUL_DEBT_C_COSTCENTER">
+        <reference local="C_COSTCENTER_ID" foreign="C_COSTCENTER_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_PROJECT" name="FIN_DOUBTFUL_DEBT_C_PROJECT">
         <reference local="C_PROJECT_ID" foreign="C_PROJECT_ID"/>
@@ -129,6 +144,12 @@
       </foreign-key>
       <foreign-key foreignTable="FIN_PAYMENT_SCHEDULE" name="FIN_DOUBTFUL_DEBT_PAYSCHED" onDelete="cascade">
         <reference local="FIN_PAYMENT_SCHEDULE_ID" foreign="FIN_PAYMENT_SCHEDULE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="USER1" name="FIN_DOUBTFUL_DEBT_USER1">
+        <reference local="USER1_ID" foreign="USER1_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="USER2" name="FIN_DOUBTFUL_DEBT_USER2">
+        <reference local="USER2_ID" foreign="USER2_ID"/>
       </foreign-key>
       <check name="FIN_DOUBTDEBT_RUN_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>

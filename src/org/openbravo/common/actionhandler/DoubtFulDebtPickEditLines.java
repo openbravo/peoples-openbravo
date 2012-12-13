@@ -28,6 +28,7 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
 import org.openbravo.dal.core.OBContext;
@@ -136,16 +137,32 @@ public class DoubtFulDebtPickEditLines extends BaseProcessActionHandler {
           newDoubtfulDebt.setOrganization(doubtfulDebtRun.getOrganization());
           newDoubtfulDebt.setAccountingDate(doubtfulDebtRun.getRundate());
           newDoubtfulDebt.setDescription(doubtfulDebtRun.getDescription());
-          newDoubtfulDebt.setDocumentNo("");
+          // TODO: set document number
+          newDoubtfulDebt.setDocumentNo(FIN_Utility.getDocumentNo(documentType,
+              documentType.getTable() != null ? documentType.getTable().getDBTableName() : ""));
           newDoubtfulDebt.setCurrency(currency);
           newDoubtfulDebt.setFINDoubtfulDebtRun(doubtfulDebtRun);
           newDoubtfulDebt.setDocumentType(documentType);
           newDoubtfulDebt.setFINPaymentSchedule(paymentSchedule);
+          // Dimensions
+          newDoubtfulDebt.setBusinessPartner(paymentSchedule.getInvoice().getBusinessPartner());
+          newDoubtfulDebt.setProject(paymentSchedule.getInvoice().getProject());
+          newDoubtfulDebt.setCostCenter(paymentSchedule.getInvoice().getCostcenter());
+          newDoubtfulDebt.setStDimension(paymentSchedule.getInvoice().getStDimension());
+          newDoubtfulDebt.setNdDimension(paymentSchedule.getInvoice().getNdDimension());
+          newDoubtfulDebt.setSalesCampaign(paymentSchedule.getInvoice().getSalesCampaign());
+          newDoubtfulDebt.setActivity(paymentSchedule.getInvoice().getActivity());
 
           OBDal.getInstance().save(newDoubtfulDebt);
           OBDal.getInstance().save(doubtfulDebtRun);
         }
         newDoubtfulDebt.setAmount(amount);
+        // TODO: Review processing of documents (to implement as well reactivate...
+        // Set processed = Yes
+        newDoubtfulDebt.setProcessed(true);
+        doubtfulDebtRun.setProcessed(true);
+        OBDal.getInstance().save(newDoubtfulDebt);
+        OBDal.getInstance().save(doubtfulDebtRun);
 
         updateDoubtfulDebtScheduleDetails(paymentSchedule, amount);
       }
@@ -201,6 +218,7 @@ public class DoubtFulDebtPickEditLines extends BaseProcessActionHandler {
     parameters.add("DDB");
     String strDocTypeId = (String) CallStoredProcedure.getInstance().call("AD_GET_DOCTYPE",
         parameters, null);
+    // TODO: manage no document type: throw exception
     return OBDal.getInstance().get(DocumentType.class, strDocTypeId);
   }
 }
