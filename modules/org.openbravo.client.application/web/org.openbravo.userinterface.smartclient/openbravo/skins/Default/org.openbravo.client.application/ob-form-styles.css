@@ -48,14 +48,6 @@
  * Form Field Styles 
 =======================================================================*/
 
-.OBLabelCanvasItem,
-.OBLabelCanvasItemDisabled,
-.OBLabelCanvasItemFocused,
-.OBLabelCanvasItemError {
-  font-family: 'lucida sans', sans-serif;
-  padding: 0px 4px 0px 4px;
-}
-
 .OBFormField,
 .OBFormFieldDisabled,
 .OBFormFieldFocused,
