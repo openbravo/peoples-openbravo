@@ -512,7 +512,7 @@ isc.OBNumberFilterItem.addProperties({
   keyPressFilterNumeric: null,
   doBlurLogic: false,
   operator: 'equals',
-  validOperators: ['equals', 'lessThan', 'greaterThan', 'notEqual', 'lessThan', 'lessThanOrEqual', 'greaterThanOrEqual', 'between', 'betweenInclusive', 'isNull', 'isNotNull', 'equalsField', 'notEqualField', 'greaterThanField', 'lessThanField', 'greaterOrEqualField', 'lessOrEqualField'],
+  validOperators: ['equals', 'lessThan', 'greaterThan', 'notEqual', 'lessThan', 'lessOrEqual', 'greaterOrEqual', 'between', 'betweenInclusive', 'isNull', 'isNotNull', 'equalsField', 'notEqualField', 'greaterThanField', 'lessThanField', 'greaterOrEqualField', 'lessOrEqualField'],
 
   // prevent handling of equal symbol in filteritem
   keyDownAction: function (item, form, keyName) {
