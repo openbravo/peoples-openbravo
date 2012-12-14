@@ -585,6 +585,9 @@ isc.OBNumberFilterItem.addProperties({
 
   convertToStringValue: function (value) {
     var type = this.typeInstance;
+    if (isc.isA.String(value) && !isNaN(value)) {
+      value = parseFloat(value);
+    }
     if (!isc.isA.String(value)) {
       // on purpose no grouping symbol
       return OB.Utilities.Number.JSToOBMasked(value, type.maskNumeric, type.decSeparator, null, type.groupInterval);
