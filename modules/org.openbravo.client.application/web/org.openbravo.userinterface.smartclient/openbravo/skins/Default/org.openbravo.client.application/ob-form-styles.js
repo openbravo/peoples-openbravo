@@ -440,7 +440,8 @@ isc.RelativeDateItem.changeDefaults('valueFieldDefaults', {
 isc.RelativeDateItem.changeDefaults('calculatedDateFieldDefaults', {
   canFocus: false,
   disabled: true,
-  showDisabled: false
+  showDisabled: false,
+  width: 85
 });
 
 /* =====================================================================
