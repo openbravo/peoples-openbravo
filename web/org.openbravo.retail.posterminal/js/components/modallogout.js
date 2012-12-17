@@ -43,7 +43,6 @@ enyo.kind({
   content: OB.I18N.getLabel('OBPOS_LogoutDialogLogout'),
   tap: function () {
     this.doHideThisPopup();
-    OB.UTIL.showLoggingOut(true);
     OB.POS.logout();
   }
 });

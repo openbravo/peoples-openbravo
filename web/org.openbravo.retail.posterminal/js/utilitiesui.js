@@ -134,6 +134,16 @@ OB.UTIL.showLoggingOut = function (value) {
   }
 };
 
+OB.UTIL.showLoggingOut = function (value) {
+  if (value) {
+    OB.POS.terminal.$.containerWindow.hide();
+    OB.POS.terminal.$.containerLoggingOut.show();
+  } else {
+    OB.POS.terminal.$.containerLoggingOut.hide();
+    OB.POS.terminal.$.containerWindow.show();
+  }
+};
+
 OB.UTIL.showSuccess = function (s) {
   OB.UTIL.showAlert.display(s, OB.I18N.getLabel('OBPOS_LblSuccess'), 'alert-success');
 };

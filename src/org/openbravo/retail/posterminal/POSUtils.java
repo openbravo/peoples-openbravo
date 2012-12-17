@@ -1,23 +1,21 @@
 package org.openbravo.retail.posterminal;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.hibernate.ScrollMode;
+import org.hibernate.ScrollableResults;
 import org.openbravo.base.exception.OBException;
-import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
-import org.openbravo.database.ConnectionProviderImpl;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.module.ModuleDependency;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.common.order.Order;
 import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.retail.config.OBRETCOProductList;
 
@@ -189,57 +187,36 @@ public class POSUtils {
   }
 
   public static int getLastDocumentNumberForPOS(String searchKey, String documentTypeId) {
-    String curDbms = OBPropertiesProvider.getInstance().getOpenbravoProperties()
-        .getProperty("bbdd.rdbms");
-    String sqlToExecute;
+    OBPOSApplications POSTerminal = POSUtils.getTerminal(searchKey);
 
-    if (curDbms.equals("POSTGRE")) {
-      sqlToExecute = "select max(a.docno) from (select to_number(substring(documentno, '/([0-9]+)$')) docno from c_order where documentno like (select orderdocno_prefix || '/%' from obpos_applications where value = '"
-          + searchKey + "') and c_doctype_id = '" + documentTypeId + "' ) a";
-    } else if (curDbms.equals("ORACLE")) {
-      sqlToExecute = "select max(a.docno) from (select to_number(substr(REGEXP_SUBSTR(documentno, '/([0-9]+)$'), 2)) docno from c_order where documentno like (select CONCAT(orderdocno_prefix , '/%') from obpos_applications where value = '"
-          + searchKey + "') and c_doctype_id = '" + documentTypeId + "' ) a";
-    } else {
-      // unknow DBMS
-      // shouldn't happen
-      log.error("Error getting max documentNo because the DBMS is unknow.");
-      return 0;
-    }
+    OBQuery<Order> obqOrders = OBDal.getInstance().createQuery(Order.class,
+        "em_obpos_applications_id = :value and documentType.id=:documentTypeId");
+    obqOrders.setNamedParameter("value", POSTerminal.getId());
+    obqOrders.setNamedParameter("documentTypeId", documentTypeId);
 
-    int number = 0;
-    ConnectionProviderImpl con = null;
-    Connection connection = null;
-    try {
-      con = new ConnectionProviderImpl(OBPropertiesProvider.getInstance().getOpenbravoProperties());
-      connection = con.getConnection();
-      PreparedStatement ps = connection.prepareStatement(sqlToExecute);
-      ResultSet rs = ps.executeQuery();
-      while (rs.next()) {
-        number = rs.getInt(1);
-      }
-      rs.close();
-      ps.close();
-    } catch (Exception e) {
-      log.error("An error happened while getting max documentNo. Max document number is 0", e);
-      number = 0;
-      // TODO: handle exception
-    } finally {
+    ScrollableResults POSOrders = obqOrders.scroll(ScrollMode.FORWARD_ONLY);
+    int maxNumber = 0;
+    int i = 0;
+    while (POSOrders.next()) {
+      Order order = (Order) POSOrders.get(0);
+      String documentNo = order.getDocumentNo();
+      // documentNo = prefix + '/' + number
+      String onlyNumber = documentNo.split("/")[1];
       try {
-        if (connection != null) {
-          connection.close();
+        int number = Integer.parseInt(onlyNumber);
+        if (number > maxNumber) {
+          maxNumber = number;
         }
-      } catch (Exception e) {
-        // do nothing
+      } catch (NumberFormatException e) {
+        // If the parsed result is not a number (i.e. because the searchKey is a
+        // prefix of another POS searchKey, the result is ignored
       }
-      try {
-        if (con != null) {
-          con.destroy();
-        }
-      } catch (Exception e) {
-        // do nothing
+      i++;
+      if (i % 100 == 0) {
+        OBDal.getInstance().getSession().clear();
       }
     }
-    return number;
+    return maxNumber;
   }
 
   public static String getRetailDependantModuleIds() {

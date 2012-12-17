@@ -151,7 +151,6 @@
             new OB.DS.Request('org.openbravo.retail.posterminal.term.Context').exec({}, function (inResponse) {
               if (inResponse && !inResponse.exception) {
                 OB.POS.modelterminal.user = inResponse[0].user.username;
-                OB.UTIL.showLoading(true);
                 OB.POS.navigate('main');
               } else {
                 OB.POS.navigate('login');

@@ -594,17 +594,27 @@ OB.Model.Terminal = Backbone.Model.extend({
       terminal: OB.POS.paramTerminal
     };
 
-    me.loadPayments();
-    me.loadContext();
-    me.loadPermissions();
-    me.loadBP();
-    me.loadLocation();
-    me.loadPriceList();
-    me.loadWarehouses();
-    me.loadWritableOrganizations();
-    me.loadPriceListVersion();
-    me.loadCurrency();
-    me.setDocumentSequence();
+    new OB.DS.Request('org.openbravo.retail.posterminal.term.Terminal').exec(
+    params, function (data) {
+      if (data.exception) {
+        me.logout();
+      } else if (data[0]) {
+        me.set('terminal', data[0]);
+        me.loadPayments();
+        me.loadContext();
+        me.loadPermissions();
+        me.loadBP();
+        me.loadLocation();
+        me.loadPriceList();
+        me.loadWarehouses();
+        me.loadWritableOrganizations();
+        me.loadPriceListVersion();
+        me.loadCurrency();
+        me.setDocumentSequence();
+      } else {
+        OB.UTIL.showError("Terminal does not exists: " + params.terminal);
+      }
+    });
   },
 
   loadPayments: function () {

@@ -25,6 +25,20 @@
 
     // We are Logged !!!
 
+    function searchCurrentBP() {
+      function errorCallback(tx, error) {
+        OB.UTIL.showError("OBDAL error: " + error);
+      }
+
+      function successCallbackBPs(dataBps) {
+        if (dataBps) {
+          OB.POS.modelterminal.set('businessPartner', dataBps);
+          OB.POS.navigate('retail.pointofsale');
+        }
+      }
+      OB.Dal.get(OB.Model.BusinessPartner, OB.POS.modelterminal.get('businesspartner'), successCallbackBPs, errorCallback);
+    }
+
     // Set Hardware..
     OB.POS.hwserver = new OB.DS.HWServer(terminal.hardwareurl, terminal.scaleurl);
 
@@ -36,7 +50,7 @@
 
     if (webwindow) {
       if (OB.POS.modelterminal.hasPermission(OB.POS.paramWindow)) {
-        OB.POS.navigate('retail.pointofsale');
+        searchCurrentBP();
       } else {
         OB.UTIL.showLoading(false);
         alert(OB.I18N.getLabel('OBPOS_WindowNotPermissions', [OB.POS.paramWindow]));
