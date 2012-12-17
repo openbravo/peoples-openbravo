@@ -277,7 +277,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
 
     //ready to send to the server
     server.exec(objToSend, function (data) {
-      if (data.error) {
+      if (data.error || data.exception) {
         OB.UTIL.showLoading(false);
         me.set("finishedWrongly", true);
       } else {
