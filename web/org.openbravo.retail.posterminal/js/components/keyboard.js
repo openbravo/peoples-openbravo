@@ -191,6 +191,60 @@ enyo.kind({
               }]
             }]
           }, {
+            // right toolbar for ticket discounts
+            tag: 'div',
+            name: 'ticketDiscountsToolbar',
+            components: [{
+              tag: 'div',
+              classes: 'row-fluid',
+              components: [{
+                tag: 'div',
+                classes: 'span6',
+                components: [{
+                  kind: 'OB.UI.ButtonKey'
+                }]
+              }, {
+                tag: 'div',
+                classes: 'span6',
+                components: [{
+                  kind: 'OB.UI.ButtonKey'
+                }]
+              }]
+            }, {
+              tag: 'div',
+              classes: 'row-fluid',
+              components: [{
+                tag: 'div',
+                classes: 'span12',
+                components: [{
+                  kind: 'OB.UI.ButtonKey'
+                }]
+              }]
+            }, {
+              tag: 'div',
+              classes: 'row-fluid',
+              components: [{
+                tag: 'div',
+                classes: 'span12',
+                components: [{
+                  kind: 'OB.UI.ButtonKey'
+                }]
+              }]
+            }, {
+              tag: 'div',
+              classes: 'row-fluid',
+              components: [{
+                tag: 'div',
+                classes: 'span12',
+                components: [{
+                  kind: 'OB.UI.ButtonKey',
+                  label: OB.I18N.getLabel('OBPOS_KbDiscount'),
+                  permission: 'OBPOS_retail.advDiscounts',
+                  command: 'ticket:discount'
+                }]
+              }]
+            }]
+          }, {
             tag: 'div',
             classes: 'row-fluid',
             components: [{
@@ -481,7 +535,9 @@ enyo.kind({
     if (this.sideBarEnabled) {
       this.$.sideenabled.show();
       this.$.sidedisabled.hide();
+      this.$.ticketDiscountsToolbar.hide();
     } else {
+      this.$.ticketDiscountsToolbar.hide();
       this.$.sideenabled.hide();
       this.$.sidedisabled.show();
     }
@@ -613,6 +669,7 @@ enyo.kind({
   showSidepad: function (sidepadname) {
     this.$.sideenabled.hide();
     this.$.sidedisabled.hide();
+    this.$.ticketDiscountsToolbar.hide();
     this.$[sidepadname].show();
   }
 });

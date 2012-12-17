@@ -28,11 +28,16 @@ enyo.kind({
   },
 
   keyboardOnDiscountsMode: function (inSender, inEvent) {
+    if (inEvent.status) {
+      this.showSidepad('ticketDiscountsToolbar');
+    } else {
+      this.showSidepad('sideenabled');
+    }
     if (!inEvent.status) {
       //exit from discounts
       this.discountsMode = false;
-      if (this.buttons['line:dto']) {
-        this.buttons['line:dto'].removeClass('btnactive');
+      if (this.buttons['ticket:discount']) {
+        this.buttons['ticket:discount'].removeClass('btnactive');
       }
 
       this.keyboardDisabled(inSender, {
@@ -45,45 +50,13 @@ enyo.kind({
         this.keyboardDisabled(inSender, {
           status: false
         });
-        //disable commands except line:dto
-        if (this.buttons['+']) {
-          this.buttons['+'].setDisabled(inEvent.status);
-        }
-
-        if (this.buttons['-']) {
-          this.buttons['-'].setDisabled(inEvent.status);
-        }
-
-        if (this.buttons['line:price']) {
-          this.buttons['line:price'].setDisabled(inEvent.status);
-        }
-        if (this.buttons['line:qty']) {
-          this.buttons['line:qty'].setDisabled(inEvent.status);
-        }
-
-        //css
-        if (this.buttons['+']) {
-          this.buttons['+'].addClass('btnkeyboard-inactive');
-        }
-
-        if (this.buttons['-']) {
-          this.buttons['-'].addClass('btnkeyboard-inactive');
-        }
-
-        if (this.buttons['line:price']) {
-          this.buttons['line:price'].addClass('btnkeyboard-inactive');
-        }
-        if (this.buttons['line:qty']) {
-          this.buttons['line:qty'].addClass('btnkeyboard-inactive');
-        }
-
         //button as active
-        if (this.buttons['line:dto']) {
-          this.buttons['line:dto'].addClass('btnactive');
+        if (this.buttons['ticket:discount']) {
+          this.buttons['ticket:discount'].addClass('btnactive');
         }
       } else {
-        if (this.buttons['line:dto']) {
-          this.buttons['line:dto'].removeClass('btnactive');
+        if (this.buttons['ticket:discount']) {
+          this.buttons['ticket:discount'].removeClass('btnactive');
         }
 
         this.keyboardDisabled(inSender, {
@@ -215,6 +188,20 @@ enyo.kind({
         }
       }
     });
+
+    //To be used in the discounts side bar
+    this.addCommand('ticket:discount', {
+      permission: 'OBPOS_retail.advDiscounts',
+      action: function (keyboard, txt) {
+        if (keyboard.discountsMode) {
+          me.doSetDiscountQty({
+            qty: OB.I18N.parseNumber(txt)
+          });
+          return true;
+        }
+      }
+    });
+
     this.addCommand('code', new OB.UI.BarcodeActionHandler());
     this.addCommand('+', {
       stateless: true,

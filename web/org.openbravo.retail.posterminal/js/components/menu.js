@@ -222,7 +222,6 @@ enyo.kind({
   name: 'OB.UI.MenuDiscounts',
   kind: 'OB.UI.MenuAction',
   permission: 'OBPOS_retail.advDiscounts',
-  relatedPermission: 'OBPOS_order.discount',
   events: {
     onDiscountsMode: ''
   },
@@ -246,7 +245,7 @@ enyo.kind({
     this.receipt = model.get('order');
     //set disabled until ticket has lines
     me.setDisabled(true);
-    if (!OB.POS.modelterminal.hasPermission(this.permission) || !OB.POS.modelterminal.hasPermission(this.relatedPermission)) {
+    if (!OB.POS.modelterminal.hasPermission(this.permission)) {
       //no permissions, never will be enabled
       return;
     }
