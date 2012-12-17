@@ -647,6 +647,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
                   OBDal.getInstance().save(outstandingPSD);
                 }
                 paymentScheduleDetail.setWriteoffAmount(BigDecimal.ZERO);
+                paymentScheduleDetail.setDebtAmount(BigDecimal.ZERO);
                 paymentScheduleDetail.getPaymentDetails().setWriteoffAmount(BigDecimal.ZERO);
                 OBDal.getInstance().save(paymentScheduleDetail.getPaymentDetails());
                 OBDal.getInstance().save(paymentScheduleDetail);

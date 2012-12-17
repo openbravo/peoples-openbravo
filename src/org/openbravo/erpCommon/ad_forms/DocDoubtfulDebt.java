@@ -106,7 +106,7 @@ public class DocDoubtfulDebt extends AcctServer {
     String strClassname = "";
     final StringBuilder whereClause = new StringBuilder();
     final Fact fact = new Fact(this, as, Fact.POST_Actual);
-    final String Fact_Acct_Group_ID = SequenceIdData.getUUID();
+    String Fact_Acct_Group_ID = SequenceIdData.getUUID();
 
     try {
       OBContext.setAdminMode();
@@ -159,13 +159,13 @@ public class DocDoubtfulDebt extends AcctServer {
           this.C_Currency_ID, "", bpAmountConverted.toString(), Fact_Acct_Group_ID,
           nextSeqNo(SeqNo), DocumentType, conn);
       // Provision
-      fact.createLine(null, getAccountBPartner(C_BPartner_ID, as, true, false, true, conn),
+      Fact_Acct_Group_ID = SequenceIdData.getUUID();
+      fact.createLine(null, getAccountBPartnerProvision(C_BPartner_ID, true, as, conn),
           this.C_Currency_ID, bpAmountConverted.toString(), "", Fact_Acct_Group_ID,
           nextSeqNo(SeqNo), DocumentType, conn);
-      fact.createLine(null, getAccountBPartner(C_BPartner_ID, as, true, false, false, conn),
+      fact.createLine(null, getAccountBPartnerProvision(C_BPartner_ID, false, as, conn),
           this.C_Currency_ID, "", bpAmountConverted.toString(), Fact_Acct_Group_ID,
           nextSeqNo(SeqNo), DocumentType, conn);
-
     } finally {
       OBContext.restorePreviousMode();
     }

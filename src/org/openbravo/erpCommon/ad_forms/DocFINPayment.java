@@ -116,6 +116,8 @@ public class DocFINPayment extends AcctServer {
             : "");
         FieldProviderFactory.setField(data[i], "Amount", paymentDetails.get(i).getAmount()
             .toString());
+        FieldProviderFactory.setField(data[i], "DoubtFulDebtAmount", paymentDetails.get(i)
+            .getFINPaymentScheduleDetailList().get(0).getDebtAmount().toString());
         FieldProviderFactory.setField(data[i], "WriteOffAmt", paymentDetails.get(i)
             .getWriteoffAmount().toString());
         FieldProviderFactory.setField(data[i], "C_GLItem_ID",
@@ -219,6 +221,7 @@ public class DocFINPayment extends AcctServer {
         docLine.setAmount(data[i].getField("Amount"));
         docLine.setIsPrepayment(data[i].getField("isprepayment"));
         docLine.setWriteOffAmt(data[i].getField("WriteOffAmt"));
+        docLine.setDoubtFulDebtAmount(new BigDecimal(data[i].getField("DoubtFulDebtAmount")));
         docLine.setC_GLItem_ID(data[i].getField("C_GLItem_ID"));
         docLine.setPrepaymentAgainstInvoice("Y".equals(data[i]
             .getField("isPaymentDatePriorToInvoiceDate")) ? true : false);
@@ -315,6 +318,27 @@ public class DocFINPayment extends AcctServer {
             bpAmountConverted = convertAmount(new BigDecimal(bpAmount), !isReceipt, DateAcct,
                 TABLEID_Invoice, invoice.getId(), C_Currency_ID, as.m_C_Currency_ID, line, as,
                 fact, Fact_Acct_Group_ID, nextSeqNo(SeqNo), conn).toString();
+            if (line.getDoubtFulDebtAmount().signum() != 0) {
+              BigDecimal doubtFulDebtAmount = convertAmount(line.getDoubtFulDebtAmount(),
+                  isReceipt, DateAcct, TABLEID_Invoice, invoice.getId(), C_Currency_ID,
+                  as.m_C_Currency_ID, line, as, fact, Fact_Acct_Group_ID, nextSeqNo(SeqNo), conn,
+                  false);
+              fact.createLine(
+                  line,
+                  getAccountBPartner((line.m_C_BPartner_ID == null || line.m_C_BPartner_ID
+                      .equals("")) ? this.C_BPartner_ID : line.m_C_BPartner_ID, as, true, false,
+                      true, conn), strcCurrencyId, "", doubtFulDebtAmount.toString(),
+                  Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+              bpAmountConverted = new BigDecimal(bpAmountConverted).subtract(doubtFulDebtAmount)
+                  .toString();
+              String Fact_Acct_Group_ID2 = SequenceIdData.getUUID();
+              fact.createLine(null, getAccountBPartnerProvision(C_BPartner_ID, false, as, conn),
+                  this.C_Currency_ID, doubtFulDebtAmount.toString(), "", Fact_Acct_Group_ID2,
+                  nextSeqNo(SeqNo), DocumentType, conn);
+              fact.createLine(null, getAccountBPartnerProvision(C_BPartner_ID, true, as, conn),
+                  this.C_Currency_ID, "", doubtFulDebtAmount.toString(), Fact_Acct_Group_ID2,
+                  nextSeqNo(SeqNo), DocumentType, conn);
+            }
           }
           fact.createLine(
               line,
