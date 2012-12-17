@@ -512,7 +512,7 @@ isc.OBNumberFilterItem.addProperties({
   keyPressFilterNumeric: null,
   doBlurLogic: false,
   operator: 'equals',
-  validOperators: ['equals', 'lessThan', 'greaterThan', 'notEqual', 'lessThan', 'lessThanOrEqual', 'greaterThanOrEqual', 'between', 'betweenInclusive', 'isNull', 'isNotNull', 'equalsField', 'notEqualField', 'greaterThanField', 'lessThanField', 'greaterOrEqualField', 'lessOrEqualField'],
+  validOperators: ['equals', 'lessThan', 'greaterThan', 'notEqual', 'lessThan', 'lessOrEqual', 'greaterOrEqual', 'between', 'betweenInclusive', 'isNull', 'isNotNull', 'equalsField', 'notEqualField', 'greaterThanField', 'lessThanField', 'greaterOrEqualField', 'lessOrEqualField'],
 
   // prevent handling of equal symbol in filteritem
   keyDownAction: function (item, form, keyName) {
@@ -585,6 +585,9 @@ isc.OBNumberFilterItem.addProperties({
 
   convertToStringValue: function (value) {
     var type = this.typeInstance;
+    if (isc.isA.String(value) && !isNaN(value)) {
+      value = parseFloat(value);
+    }
     if (!isc.isA.String(value)) {
       // on purpose no grouping symbol
       return OB.Utilities.Number.JSToOBMasked(value, type.maskNumeric, type.decSeparator, null, type.groupInterval);
