@@ -161,13 +161,19 @@ enyo.kind({
     });
   },
   shown: function () {
-    var keyboard = this.owner.owner;
+    var me = this, i, max, p,
+        keyboard = this.owner.owner;
     keyboard.showKeypad('coins');
     keyboard.showSidepad('sidedisabled');
 
-    //TODO: defaulting to cash using its hardcoded value, should be configurable
-    keyboard.defaultcommand = 'OBPOS_payment.cash';
-    keyboard.setStatus('OBPOS_payment.cash');
+    for (i = 0, max = OB.POS.modelterminal.get('payments').length; i < max; i++) {
+      p = OB.POS.modelterminal.get('payments')[i];
+      if (p.paymentMethod.id === OB.POS.modelterminal.get('terminal').terminalType.paymentMethod) {
+        keyboard.defaultcommand = OB.POS.modelterminal.get('payments')[i].payment.searchKey;
+        keyboard.setStatus(OB.POS.modelterminal.get('payments')[i].payment.searchKey);
+        break;
+      }
+    }
   }
 });
 

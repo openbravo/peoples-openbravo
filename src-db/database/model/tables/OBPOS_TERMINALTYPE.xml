@@ -69,8 +69,15 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
+      <column name="OBPOS_APP_PAYMENT_TYPE_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="C_DOCTYPE" name="OBPOS_DOCTYPE_QUOT_ID">
         <reference local="C_DOCTYPEQUOT_ID" foreign="C_DOCTYPE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="OBPOS_APP_PAYMENT_TYPE" name="OBPOS_TERMINALTYPE_PAYTYPE">
+        <reference local="OBPOS_APP_PAYMENT_TYPE_ID" foreign="OBPOS_APP_PAYMENT_TYPE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_CLIENT" name="OBPOS_TERTYPE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
