@@ -31,7 +31,7 @@ enyo.kind({
         command: 'allowvariableamount',
         definition: {
           action: function (keyboard, amt) {
-            me.model.set('otherInput', amt);
+            me.model.set('otherInput', OB.I18N.parseNumber(amt));
           }
         },
         label: OB.I18N.getLabel('OBPOS_LblOther'),
@@ -49,8 +49,9 @@ enyo.kind({
         command: payment.get('_id'),
         definition: {
           action: function (keyboard, amt) {
-            payment.set('foreignCounted', OB.DEC.add(0, amt));
-            payment.set('counted', OB.DEC.mul(amt, payment.get('rate')));
+            var convAmt = OB.I18N.parseNumber(amt);
+            payment.set('foreignCounted', OB.DEC.add(0, convAmt));
+            payment.set('counted', OB.DEC.mul(convAmt, payment.get('rate')));
           }
         },
         label: payment.get('name')

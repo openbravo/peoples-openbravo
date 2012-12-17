@@ -21,6 +21,7 @@ enyo.kind({
     return {
       permission: key,
       action: function (keyboard, txt) {
+        txt = OB.I18N.parseNumber(amt);
         keyboard.owner.currentPayment = {
           id: id,
           amount: txt,
