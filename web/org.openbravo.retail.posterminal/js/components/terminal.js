@@ -125,7 +125,22 @@ enyo.kind({
           classes: 'POSLoadingCenteredBox',
           components: [{
             classes: 'POSLoadingPromptLabel',
-            content: 'Loading...'
+            content: 'Loading...' //OB.I18N.getLabel('OBPOS_LblLoading')
+          }, {
+            classes: 'POSLoadingProgressBar',
+            components: [{
+              classes: 'POSLoadingProgressBarImg'
+            }]
+          }]
+        }]
+      }, {
+        name: 'containerLoggingOut',
+        showing: false,
+        components: [{
+          classes: 'POSLoadingCenteredBox',
+          components: [{
+            classes: 'POSLoadingPromptLabel',
+            content: 'Logging out...' //OB.I18N.getLabel('OBPOS_LblLoggingOut')
           }, {
             classes: 'POSLoadingProgressBar',
             components: [{
