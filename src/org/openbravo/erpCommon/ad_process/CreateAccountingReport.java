@@ -366,24 +366,26 @@ public class CreateAccountingReport extends HttpSecureAppServlet {
     if (initialBalance.equals(""))
       initialBalance = "N";
     String dateInitialYear = CreateAccountingReportData.dateInitialYear(this,
-        Utility.getContext(this, vars, "#User_Org", "CreateAccountingReport"),
-        Utility.getContext(this, vars, "#User_Client", "CreateAccountingReport"), strPeriod);
+        strAccountingReportId, strPeriod);
     dateInitialYear = CreateAccountingReportData.selectFormat(this, dateInitialYear,
         vars.getSqlDateFormat());
     CreateAccountingReportData[] data;
-    String inAccountIds = Utility
-    		        .getInStrSet(getAccountInList(strAccountId, new HashSet<String>()));
+    String inAccountIds = Utility.getInStrSet(getAccountInList(strAccountId));
+    // Add dummy account id if none is found
+    if ("".equals(inAccountIds)) {
+      inAccountIds = "'1'";
+    }
     if (initialBalance.equals("Y")) {
       data = CreateAccountingReportData.selectInitial(this, strParent, String.valueOf(level),
           Utility.getContext(this, vars, "#User_Client", "CreateAccountingReport"),
-          Utility.stringList(strOrg), "".equals(inAccountIds) ? "'1'" : inAccountIds,
-          dateInitialYear, DateTimeData.nDaysAfter(this, dateInitialYear, "1"), strcAcctSchemaId,
+          Utility.stringList(strOrg), inAccountIds, dateInitialYear,
+          DateTimeData.nDaysAfter(this, dateInitialYear, "1"), strcAcctSchemaId,
           strAccountingReportId);
     } else {
       data = CreateAccountingReportData.select(this, strParent, String.valueOf(level),
           Utility.getContext(this, vars, "#User_Client", "CreateAccountingReport"),
-          Utility.stringList(strOrg), "".equals(inAccountIds) ? "'1'" : inAccountIds,
-          strPeriodFrom, strPeriodTo, strcAcctSchemaId, strAccountingReportId);
+          Utility.stringList(strOrg), inAccountIds, strPeriodFrom, strPeriodTo, strcAcctSchemaId,
+          strAccountingReportId);
     }
     if (data == null || data.length == 0)
       data = CreateAccountingReportData.set();
@@ -436,8 +438,9 @@ public class CreateAccountingReport extends HttpSecureAppServlet {
     new_a.toArray(newData);
     return newData;
   }
-  
-   Set<String> getAccountInList(String strAccountId, Set<String> accounts) {
+
+  private Set<String> getAccountInList(String strAccountId) {
+    Set<String> accounts = new HashSet<String>();
     if ("".equals(strAccountId)) {
       return accounts;
     }
@@ -450,7 +453,7 @@ public class CreateAccountingReport extends HttpSecureAppServlet {
     for (TreeNode node : obc.list()) {
       ElementValue nodeAccount = OBDal.getInstance().get(ElementValue.class, node.getNode());
       if (nodeAccount.isSummaryLevel()) {
-        accounts = getAccountInList(node.getNode(), accounts);
+        accounts.addAll(getAccountInList(node.getNode()));
       } else {
         accounts.add(node.getNode());
       }
