@@ -51,6 +51,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.ad_forms.AcctServer;
 import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.InvoiceLineTax;
 import org.openbravo.model.ad.access.OrderLineTax;
@@ -466,6 +467,11 @@ public class OrderLoader extends JSONProcessSimple {
         jsonorder.getLong("timezoneOffset"));
 
     invoice.setDocumentNo(null);
+    String description = jsonorder.has("description") ? jsonorder.getString("description") + "\n"
+        : "";
+    description += OBMessageUtils.getI18NMessage("OBPOS_InvoiceRelatedToOrder", null)
+        + jsonorder.getString("documentNo");
+    invoice.setDescription(description);
     invoice
         .setDocumentType(getInvoiceDocumentType((String) DalUtil.getId(order.getDocumentType())));
     invoice.setTransactionDocument(getInvoiceDocumentType((String) DalUtil.getId(order
