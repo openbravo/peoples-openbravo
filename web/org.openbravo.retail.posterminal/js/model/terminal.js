@@ -106,7 +106,7 @@ OB.Model.Terminal = Backbone.Model.extend({
         OB.Format = JSON.parse(me.usermodel.get('formatInfo'));
         OB.POS.cleanWindows();
         $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=FinancialMgmtTaxRate&modelName=TaxRate&source=org.openbravo.retail.posterminal.master.TaxRate');
-        
+
         //Models for discounts and promotions
         $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustment&modelName=Discount&source=org.openbravo.retail.posterminal.master.Discount');
         $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustmentBusinessPartner&modelName=DiscountFilterBusinessPartner&source=org.openbravo.retail.posterminal.master.DiscountFilterBusinessPartner');
@@ -128,18 +128,17 @@ OB.Model.Terminal = Backbone.Model.extend({
           window.console.error(arguments);
         });
 
-        $LAB.script('js/i18n.js').wait(function () {
-          $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=FinancialMgmtTaxRate&modelName=TaxRate&source=org.openbravo.retail.posterminal.master.TaxRate');
 
-          //Models for discounts and promotions
-          $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustment&modelName=Discount&source=org.openbravo.retail.posterminal.master.Discount');
-          $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustmentBusinessPartner&modelName=DiscountFilterBusinessPartner&source=org.openbravo.retail.posterminal.master.DiscountFilterBusinessPartner');
-          $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustmentBusinessPartnerGroup&modelName=DiscountFilterBusinessPartnerGroup&source=org.openbravo.retail.posterminal.master.DiscountFilterBusinessPartnerGroup');
-          $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustmentProduct&modelName=DiscountFilterProduct&source=org.openbravo.retail.posterminal.master.DiscountFilterProduct');
-          $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustmentProductCategory&modelName=DiscountFilterProductCategory&source=org.openbravo.retail.posterminal.master.DiscountFilterProductCategory');
+        $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=FinancialMgmtTaxRate&modelName=TaxRate&source=org.openbravo.retail.posterminal.master.TaxRate');
 
-          $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/StaticResources?_appName=WebPOS');
-        });
+        //Models for discounts and promotions
+        $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustment&modelName=Discount&source=org.openbravo.retail.posterminal.master.Discount');
+        $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustmentBusinessPartner&modelName=DiscountFilterBusinessPartner&source=org.openbravo.retail.posterminal.master.DiscountFilterBusinessPartner');
+        $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustmentBusinessPartnerGroup&modelName=DiscountFilterBusinessPartnerGroup&source=org.openbravo.retail.posterminal.master.DiscountFilterBusinessPartnerGroup');
+        $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustmentProduct&modelName=DiscountFilterProduct&source=org.openbravo.retail.posterminal.master.DiscountFilterProduct');
+        $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustmentProductCategory&modelName=DiscountFilterProductCategory&source=org.openbravo.retail.posterminal.master.DiscountFilterProductCategory');
+
+        $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/StaticResources?_appName=WebPOS');
       });
     });
     if (OB.POS.modelterminal.get('connectedToERP')) {
