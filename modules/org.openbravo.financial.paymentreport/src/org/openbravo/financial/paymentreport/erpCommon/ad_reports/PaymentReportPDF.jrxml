@@ -3,8 +3,8 @@
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.0"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="48"/>
+	<property name="ireport.x" value="25"/>
+	<property name="ireport.y" value="151"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -288,7 +288,9 @@ FROM DUAL]]>
 		<groupExpression><![CDATA[($P{GROUP_CRIT}.equalsIgnoreCase("APRM_FATS_BPARTNER") ? $F{BPARTNER} :
   ($P{GROUP_CRIT}.equalsIgnoreCase("Project") ? $F{PROJECT} :
     ($P{GROUP_CRIT}.equalsIgnoreCase("FINPR_BPartner_Category") ? $F{BP_GROUP} :
-      ($P{GROUP_CRIT}.equalsIgnoreCase("INS_CURRENCY") ? $F{BASE_CURRENCY} : " "
+      ($P{GROUP_CRIT}.equalsIgnoreCase("INS_CURRENCY") ? $F{TRANS_CURRENCY} :
+        ($P{GROUP_CRIT}.equalsIgnoreCase("ACCS_ACCOUNT_ID_D") ? $F{FINANCIAL_ACCOUNT} :  " "
+        )
       )
     )
   )
@@ -304,7 +306,9 @@ FROM DUAL]]>
 					<textFieldExpression class="java.lang.String"><![CDATA[($P{GROUP_CRIT}.equalsIgnoreCase("APRM_FATS_BPARTNER") ? $F{BPARTNER}.toString() :
   ($P{GROUP_CRIT}.equalsIgnoreCase("Project") ? $F{PROJECT}.toString() :
     ($P{GROUP_CRIT}.equalsIgnoreCase("FINPR_BPartner_Category") ? $F{BP_GROUP}.toString() :
-      ($P{GROUP_CRIT}.equalsIgnoreCase("INS_CURRENCY") ? $F{TRANS_CURRENCY}.toString() : "None"
+      ($P{GROUP_CRIT}.equalsIgnoreCase("INS_CURRENCY") ? $F{TRANS_CURRENCY}.toString() :
+        ($P{GROUP_CRIT}.equalsIgnoreCase("ACCS_ACCOUNT_ID_D") ? $F{FINANCIAL_ACCOUNT}.toString() :  "None"
+        )
       )
     )
   )

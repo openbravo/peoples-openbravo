@@ -814,6 +814,30 @@ function onloadFunctions() {
                       <div>
                         <button type="button" 
                           class="ButtonLink" 
+                          onclick="openServletNewWindow('EDIT_XLS', true, 'ReportShipmentDimensionalAnalyzeJREdition.html', 'ReportShipmentDimensionalAnalyzeJREdition', null, false, '700', '1000', true);return false;" 
+                          onfocus="buttonEvent('onfocus', this); window.status='Export Results to XLS Format'; return true;" 
+                          onblur="buttonEvent('onblur', this);" 
+                          onkeyup="buttonEvent('onkeyup', this);" 
+                          onkeydown="buttonEvent('onkeydown', this);" 
+                          onkeypress="buttonEvent('onkeypress', this);" 
+                          onmouseup="buttonEvent('onmouseup', this);" 
+                          onmousedown="buttonEvent('onmousedown', this);" 
+                          onmouseover="buttonEvent('onmouseover', this); window.status='Export Results to XLS Format'; return true;" 
+                          onmouseout="buttonEvent('onmouseout', this);">
+                          <table class="Button">
+                            <tr>
+                              <td class="Button_left"><img class="Button_Icon Button_Icon_pdf" alt="Export Results to XLS Format" title="Export Results to XLS Format" src="../../../../../web/images/blank.gif" border="0" /></td>
+                              <td class="Button_text">XLS Format</td>
+                              <td class="Button_right"></td>
+                            </tr>
+                          </table>
+                        </button>
+                      </div>
+                    </td>
+                    <td class="Button_LeftAlign_ContentCell" colspan="0">
+                      <div>
+                        <button type="button" 
+                          class="ButtonLink" 
                           onclick="openServletNewWindow('EDIT_PDF', true, 'ReportShipmentDimensionalAnalyzeJREdition.html', 'ReportShipmentDimensionalAnalyzeJREdition', null, false, '700', '1000', true);return false;" 
                           onfocus="buttonEvent('onfocus', this); window.status='Export Results to PDF Format'; return true;" 
                           onblur="buttonEvent('onblur', this);" 
