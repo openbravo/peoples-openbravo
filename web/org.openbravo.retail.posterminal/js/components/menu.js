@@ -49,6 +49,9 @@ enyo.kind({
   },
   label: OB.I18N.getLabel('OBPOS_LblReturn'),
   tap: function () {
+    if (this.disabled) {
+      return true;
+    }
     this.parent.hide(); // Manual dropdown menu closure
     this.doShowReturnText();
   },
@@ -84,6 +87,9 @@ enyo.kind({
   },
   label: OB.I18N.getLabel('OBPOS_LblProperties'),
   tap: function () {
+    if (this.disabled) {
+      return true;
+    }
     this.parent.hide(); // Manual dropdown menu closure
     this.doShowReceiptProperties();
   },
@@ -110,6 +116,9 @@ enyo.kind({
   },
   label: OB.I18N.getLabel('OBPOS_LblInvoice'),
   tap: function () {
+    if (this.disabled) {
+      return true;
+    }
     this.parent.hide(); // Manual dropdown menu closure
     this.doReceiptToInvoice();
   },
@@ -145,6 +154,9 @@ enyo.kind({
   },
   label: 'Customers',
   tap: function () {
+    if (this.disabled) {
+      return true;
+    }
     this.parent.hide(); // Manual dropdown menu closure
     this.doChangeSubWindow({
       newWindow: {
@@ -166,6 +178,9 @@ enyo.kind({
   },
   label: OB.I18N.getLabel('OBPOS_LblPrintReceipt'),
   tap: function () {
+    if (this.disabled) {
+      return true;
+    }
     this.parent.hide(); // Manual dropdown menu closure
     if (OB.POS.modelterminal.hasPermission(this.permission)) {
       this.doPrintReceipt();
@@ -193,6 +208,9 @@ enyo.kind({
   },
   label: OB.I18N.getLabel('OBPOS_CreateQuotation'),
   tap: function () {
+    if (this.disabled) {
+      return true;
+    }
     this.parent.hide(); // Manual dropdown menu closure
     if (OB.POS.modelterminal.get('terminal').terminalType.documentTypeForQuotations) {
       if (OB.POS.modelterminal.hasPermission(this.permission)) {
@@ -275,6 +293,9 @@ enyo.kind({
   },
   label: OB.I18N.getLabel('OBPOS_CreateOrderFromQuotation'),
   tap: function () {
+    if (this.disabled) {
+      return true;
+    }
     if (OB.POS.modelterminal.hasPermission(this.permission)) {
       this.parent.hide(); // Manual dropdown menu closure
       this.doShowPopup({
@@ -311,6 +332,9 @@ enyo.kind({
   },
   label: OB.I18N.getLabel('OBPOS_RejectQuotation'),
   tap: function () {
+    if (this.disabled) {
+      return true;
+    }
     this.parent.hide(); // Manual dropdown menu closure
     if (OB.POS.modelterminal.hasPermission(this.permission)) {
       this.doRejectQuotation();
@@ -344,6 +368,9 @@ enyo.kind({
   },
   label: OB.I18N.getLabel('OBPOS_ReactivateQuotation'),
   tap: function () {
+    if (this.disabled) {
+      return true;
+    }
     this.parent.hide(); // Manual dropdown menu closure
     if (OB.POS.modelterminal.hasPermission(this.permission)) {
       this.doShowReactivateQuotation();
@@ -383,6 +410,9 @@ enyo.kind({
   },
   label: OB.I18N.getLabel('OBPOS_LblPaidReceipts'),
   tap: function () {
+    if (this.disabled) {
+      return true;
+    }
     this.parent.hide(); // Manual dropdown menu closure
     if (!OB.POS.modelterminal.get('connectedToERP')) {
       OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OfflineWindowRequiresOnline'));
@@ -403,6 +433,9 @@ enyo.kind({
   },
   label: OB.I18N.getLabel('OBPOS_Quotations'),
   tap: function () {
+    if (this.disabled) {
+      return true;
+    }
     this.parent.hide(); // Manual dropdown menu closure
     if (!OB.POS.modelterminal.get('connectedToERP')) {
       OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OfflineWindowRequiresOnline'));
@@ -424,6 +457,9 @@ enyo.kind({
   },
   label: OB.I18N.getLabel('OBPOS_LblOpenbravoWorkspace'),
   tap: function () {
+    if (this.disabled) {
+      return true;
+    }
     this.parent.hide(); // Manual dropdown menu closure
     if (OB.POS.modelterminal.hasPermission(this.permission)) {
       this.doBackOffice({
@@ -519,6 +555,9 @@ enyo.kind({
   kind: 'OB.UI.MenuAction',
   name: 'OB.UI.MenuItem',
   tap: function () {
+    if (this.disabled) {
+      return true;
+    }
     this.parent.hide(); // Manual dropdown menu closure
     if (OB.POS.modelterminal.isWindowOnline(this.route) === true) {
       if (!OB.POS.modelterminal.get('connectedToERP')) {

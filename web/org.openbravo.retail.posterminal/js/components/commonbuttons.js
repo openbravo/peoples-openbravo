@@ -492,12 +492,12 @@ enyo.kind({
     classes: 'dropdown-menuitem'
   }],
   setDisabled: function (value) {
+    this.disabled = value;
     if (value) {
       this.addClass('disabled');
     } else {
       this.removeClass('disabled');
     }
-    this.isDisabled = value;
   },
   initComponents: function () {
     this.inherited(arguments);
