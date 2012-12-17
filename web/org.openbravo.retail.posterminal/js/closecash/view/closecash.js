@@ -219,6 +219,7 @@ enyo.kind({
         //if the new step is 2 or 4 we should set the step number
         if (nextStep < 0 || nextStep > this.model.get('paymentList').length - 1) {
           //change the step and not change the substep
+          this.$.postPrintClose.setSummary(this.model.getCountCashSummary());
           this.model.set('step', this.model.get('step') + inEvent.originator.stepCount);
         } else {
           if (this.model.isStep3Needed(nextStep) === false) {

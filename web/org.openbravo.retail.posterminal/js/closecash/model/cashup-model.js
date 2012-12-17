@@ -211,36 +211,71 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
   },
   //Step 4
   getCountCashSummary: function () {
-    var countCashSummary, counter, enumConcepts, enumSummarys, i;
+    var countCashSummary, counter, enumConcepts, enumSecondConcepts, enumSummarys, i, undf, model, value = OB.DEC.Zero,
+        second = OB.DEC.Zero;
     countCashSummary = {
       expectedSummary: [],
       countedSummary: [],
       differenceSummary: [],
+      qtyToKeepSummary: [],
+      qtyToDepoSummary: [],
       totalCounted: this.get('totalCounted'),
       totalExpected: this.get('totalExpected'),
-      totalDifference: this.get('totalDifference')
+      totalDifference: this.get('totalDifference'),
+      totalQtyToKeep: _.reduce(this.get('paymentList').models, function (total, model) {
+        if (model.get('qtyToKeep')) {
+          return OB.DEC.add(total, OB.DEC.mul(model.get('qtyToKeep'), model.get('rate')));
+        } else {
+          return total;
+        }
+      }, 0),
+      totalQtyToDepo: _.reduce(this.get('paymentList').models, function (total, model) {
+        if (model.get('qtyToKeep') !== null && model.get('qtyToKeep') !== undf) {
+          return OB.DEC.add(total, OB.DEC.mul(OB.DEC.sub(model.get('foreignCounted'), model.get('qtyToKeep')), model.get('rate')));
+        } else {
+          return total;
+        }
+      }, 0)
     };
-    enumSummarys = ['expectedSummary', 'countedSummary', 'differenceSummary'];
-    enumConcepts = ['expected', 'counted', 'difference'];
-    for (counter = 0; counter < 3; counter++) {
+    enumSummarys = ['expectedSummary', 'countedSummary', 'differenceSummary', 'qtyToKeepSummary', 'qtyToDepoSummary'];
+    enumConcepts = ['expected', 'counted', 'difference', 'qtyToKeep', 'foreignCounted'];
+    enumSecondConcepts = ['foreignExpected', 'foreignCounted', 'foreignDifference', 'qtyToKeep', 'qtyToKeep'];
+    for (counter = 0; counter < 5; counter++) {
       for (i = 0; i < this.get('paymentList').models.length; i++) {
-        if (!this.get('paymentList').models[i].get(enumConcepts[counter])) {
+        model = this.get('paymentList').models[i];
+        if (!model.get(enumConcepts[counter])) {
           countCashSummary[enumSummarys[counter]].push({
-            name: this.get('paymentList').models[i].get('name'),
+            name: model.get('name'),
             value: 0,
-            foreignExpected: 0,
-            foreignCounted: 0,
-            foreignDifference: 0,
-            isocode: this.get('paymentList').models[i].get('isocode')
+            second: 0,
+            isocode: ''
           });
         } else {
+          switch (enumSummarys[counter]) {
+          case 'qtyToKeepSummary':
+            value = OB.DEC.mul(model.get(enumConcepts[counter]), model.get('rate'));
+            second = model.get(enumSecondConcepts[counter]);
+            break;
+          case 'qtyToDepoSummary':
+            if (model.get(enumSecondConcepts[counter]) !== null && model.get(enumSecondConcepts[counter]) !== undf && model.get('rate') !== '1') {
+              second = OB.DEC.sub(model.get(enumConcepts[counter]), model.get(enumSecondConcepts[counter]));
+            } else {
+              second = OB.DEC.Zero;
+            }
+            if (model.get(enumSecondConcepts[counter]) !== null && model.get(enumSecondConcepts[counter]) !== undf) {
+              value = OB.DEC.mul(OB.DEC.sub(model.get(enumConcepts[counter]), model.get(enumSecondConcepts[counter])), model.get('rate'));
+            }
+
+            break;
+          default:
+            value = model.get(enumConcepts[counter]);
+            second = model.get(enumSecondConcepts[counter]);
+          }
           countCashSummary[enumSummarys[counter]].push({
-            name: this.get('paymentList').models[i].get('name'),
-            value: this.get('paymentList').models[i].get(enumConcepts[counter]),
-            foreignExpected: this.get('paymentList').models[i].get('foreignExpected'),
-            foreignCounted: this.get('paymentList').models[i].get('foreignCounted'),
-            foreignDifference: this.get('paymentList').models[i].get('foreignDifference'),
-            isocode: this.get('paymentList').models[i].get('isocode')
+            name: model.get('name'),
+            value: value,
+            second: second,
+            isocode: model.get('isocode')
           });
         }
       }

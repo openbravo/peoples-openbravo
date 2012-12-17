@@ -83,6 +83,8 @@ enyo.kind({
   label: '',
   value: '',
   classes: 'row-fluid',
+  convertedValues: ['expected', 'counted', 'difference', 'qtyToKeep', 'qtyToDepo'],
+  valuestoConvert: ['deposits', 'drops', 'startings'],
   components: [{
     classes: 'span12',
     components: [{
@@ -120,17 +122,13 @@ enyo.kind({
   render: function () {
     this.$.itemLbl.setContent(this.label);
     this.$.itemQty.setContent(OB.I18N.formatCurrency(this.value));
-    if (this.foreignExpected && this.type === 'expected' && this.foreignExpected !== this.value) {
-      this.$.foreignItemQty.setContent('(' + OB.I18N.formatCurrency(this.foreignExpected) + ' ' + this.isocode + ')');
-    } else if (this.foreignCounted && this.type === 'counted' && this.foreignCounted !== this.value) {
-      this.$.foreignItemQty.setContent('(' + OB.I18N.formatCurrency(this.foreignCounted) + ' ' + this.isocode + ')');
-    } else if (this.foreignDifference && this.type === 'difference' && this.foreignDifference !== this.value) {
-      this.$.foreignItemQty.setContent('(' + OB.I18N.formatCurrency(this.foreignDifference) + ' ' + this.isocode + ')');
-    } else if (this.rate && this.rate !== '1' && (this.type === 'deposits' || this.type === 'drops')) {
-      this.$.foreignItemQty.setContent('(' + OB.I18N.formatCurrency(this.value) + ' ' + this.isocode + ')');
-      this.$.itemQty.setContent(OB.I18N.formatCurrency(OB.DEC.mul(this.value, this.rate)));
-    } else if (this.rate && this.rate !== '1' && this.type === 'startings') {
-      this.$.foreignItemQty.setContent('(' + OB.I18N.formatCurrency(this.value) + ' ' + this.isocode + ')');
+
+    if (this.second && this.second !== this.value && this.convertedValues.indexOf(this.type) != -1) {
+      this.$.foreignItemQty.setContent('(' + OB.I18N.formatCurrency(this.second) + ' ' + this.isocode + ')');
+    } else if (this.rate && this.rate !== '1' && this.valuestoConvert.indexOf(this.type) != -1) {
+      if(this.value){
+        this.$.foreignItemQty.setContent('(' + OB.I18N.formatCurrency(this.value) + ' ' + this.isocode + ')');
+      }
       this.$.itemQty.setContent(OB.I18N.formatCurrency(OB.DEC.mul(this.value, this.rate)));
     } else {
       this.$.foreignItemQty.setContent('');
@@ -142,10 +140,7 @@ enyo.kind({
       this.label = this.model[this.lblProperty];
       this.value = this.model[this.qtyProperty];
       this.type = this.owner.typeProperty;
-      //FIXME
-      this.foreignExpected = this.model.foreignExpected;
-      this.foreignCounted = this.model.foreignCounted;
-      this.foreignDifference = this.model.foreignDifference;
+      this.second = this.model.second;
       this.rate = this.model.rate;
       this.isocode = this.model.isocode;
     }
@@ -361,8 +356,49 @@ enyo.kind({
   }
 });
 
+enyo.kind({
+  kind: 'OB.OBPOSCashUp.UI.ppc_table',
+  name: 'OB.OBPOSCashUp.UI.ppc_cashQtyToKeepTable',
+  components: [{
+    kind: 'OB.OBPOSCashUp.UI.ppc_collectionLines',
+    name: 'qtyToKeepPerPayment',
+    lblProperty: 'name',
+    qtyProperty: 'value',
+    typeProperty: 'qtyToKeep'
+  }, {
+    kind: 'OB.OBPOSCashUp.UI.ppc_totalsLine',
+    name: 'totalqtyToKeep',
+    label: OB.I18N.getLabel('OBPOS_LblTotalQtyToKeep')
+  }, {
+    kind: 'OB.OBPOSCashUp.UI.ppc_lineSeparator',
+    name: 'separator'
+  }],
+  setCollection: function (col) {
+    this.$.qtyToKeepPerPayment.setCollection(col);
+  }
+});
 
-
+enyo.kind({
+  kind: 'OB.OBPOSCashUp.UI.ppc_table',
+  name: 'OB.OBPOSCashUp.UI.ppc_cashQtyToDepoTable',
+  components: [{
+    kind: 'OB.OBPOSCashUp.UI.ppc_collectionLines',
+    name: 'qtyToDepoPerPayment',
+    lblProperty: 'name',
+    qtyProperty: 'value',
+    typeProperty: 'qtyToDepo'
+  }, {
+    kind: 'OB.OBPOSCashUp.UI.ppc_totalsLine',
+    name: 'totalqtyToDepo',
+    label: OB.I18N.getLabel('OBPOS_LblTotalQtyToDepo')
+  }, {
+    kind: 'OB.OBPOSCashUp.UI.ppc_lineSeparator',
+    name: 'separator'
+  }],
+  setCollection: function (col) {
+    this.$.qtyToDepoPerPayment.setCollection(col);
+  }
+});
 
 
 enyo.kind({
@@ -455,6 +491,12 @@ enyo.kind({
         }, {
           kind: 'OB.OBPOSCashUp.UI.ppc_cashDifferenceTable',
           name: 'differenceTable'
+        }, {
+          kind: 'OB.OBPOSCashUp.UI.ppc_cashQtyToKeepTable',
+          name: 'qtyToKeepTable'
+        }, {
+          kind: 'OB.OBPOSCashUp.UI.ppc_cashQtyToDepoTable',
+          name: 'qtyToDepoTable'
         }]
       }, {
         classes: 'row-fluid',
@@ -492,6 +534,12 @@ enyo.kind({
 
     this.$.differenceTable.setCollection(this.summary.differenceSummary);
     this.$.differenceTable.setValue('totaldifference', this.summary.totalDifference);
+
+    this.$.qtyToKeepTable.setCollection(this.summary.qtyToKeepSummary);
+    this.$.qtyToKeepTable.setValue('totalqtyToKeep', this.summary.totalQtyToKeep);
+
+    this.$.qtyToDepoTable.setCollection(this.summary.qtyToDepoSummary);
+    this.$.qtyToDepoTable.setValue('totalqtyToDepo', this.summary.totalQtyToDepo);
   },
   modelChanged: function () {
 
