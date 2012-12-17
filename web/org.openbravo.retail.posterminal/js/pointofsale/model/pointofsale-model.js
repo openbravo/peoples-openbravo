@@ -85,6 +85,23 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
     var receipt = new OB.Model.Order(),
         discounts, ordersave, customersave, taxes, orderList, hwManager, ViewManager;
 
+    function searchCurrentBP() {
+      function errorCallback(tx, error) {
+        OB.UTIL.showError("OBDAL error while getting BP info: " + error);
+      }
+
+      function successCallbackBPs(dataBps) {
+        if (dataBps) {
+          OB.POS.modelterminal.set('businessPartner', dataBps);
+        }
+      }
+      OB.Dal.get(OB.Model.BusinessPartner, OB.POS.modelterminal.get('businesspartner'), successCallbackBPs, errorCallback);
+    }
+
+    //Because in terminal we've the BP id and we want to have the BP model.
+    //In this moment we can ensure data is already loaded in the local database
+    searchCurrentBP();
+
     ViewManager = Backbone.Model.extend({
       defaults: {
         currentWindow: {

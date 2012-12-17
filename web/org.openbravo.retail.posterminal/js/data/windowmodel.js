@@ -25,6 +25,7 @@ OB.Model.WindowModel = Backbone.Model.extend({
       if (this.init) {
         this.init();
       }
+      debugger;
 
       this.trigger('ready');
     }, this);
