@@ -676,8 +676,8 @@
         product: p,
         uOM: p.get('uOM'),
         qty: OB.DEC.number(units),
-        price: OB.DEC.number(p.get('price').get('standardPrice')),
-        priceList: OB.DEC.number(p.get('price').get('standardPrice'))
+        price: OB.DEC.number(p.get('standardPrice')),
+        priceList: OB.DEC.number(p.get('standardPrice'))
       });
       newline.calculateGross();
 
@@ -744,7 +744,6 @@
       var order = this;
       this.get('lines').each(function (line) {
         var successCallbackPrices, criteria = {
-          'priceListVersion': OB.POS.modelterminal.get('pricelistversion').id,
           'product': line.get('product').get('id')
         };
         successCallbackPrices = function (dataPrices, line) {
@@ -753,7 +752,7 @@
           });
         };
 
-        OB.Dal.find(OB.Model.ProductPrice, criteria, successCallbackPrices, function () {
+        OB.Dal.find(OB.Model.Product, criteria, successCallbackPrices, function () {
           // TODO: Report error properly.
         }, line);
       });

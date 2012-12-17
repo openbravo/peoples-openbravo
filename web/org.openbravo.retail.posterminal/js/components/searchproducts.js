@@ -169,35 +169,6 @@ enyo.kind({
     var criteria = {},
         me = this;
 
-    function successCallbackPrices(dataPrices, dataProducts) {
-      if (dataPrices) {
-        enyo.forEach(dataPrices.models, function (currentPrice) {
-          if (dataProducts.get(currentPrice.get('product'))) {
-            dataProducts.get(currentPrice.get('product')).set('price', currentPrice);
-          }
-        });
-        enyo.forEach(dataProducts.models, function (currentProd) {
-          if (currentProd.get('price') === undefined) {
-            var price = new OB.Model.ProductPrice({
-              'standardPrice': 0
-            });
-            dataProducts.get(currentProd.get('id')).set('price', price);
-            OB.UTIL.showWarning("No price found for product " + currentProd.get('_identifier'));
-          }
-        });
-      } else {
-        OB.UTIL.showWarning("OBDAL No prices found for products");
-        enyo.forEach(dataProducts.models, function (currentProd) {
-          var price = new OB.Model.ProductPrice({
-            'standardPrice': 0
-          });
-          currentProd.set('price', price);
-        });
-      }
-      me.products.reset(dataProducts.models);
-      me.products.trigger('reset');
-    }
-
     function errorCallback(tx, error) {
       OB.UTIL.showError("OBDAL error: " + error);
     }
@@ -206,10 +177,8 @@ enyo.kind({
 
     function successCallbackProducts(dataProducts) {
       if (dataProducts && dataProducts.length > 0) {
-        criteria = {
-          'priceListVersion': OB.POS.modelterminal.get('pricelistversion').id
-        };
-        OB.Dal.find(OB.Model.ProductPrice, criteria, successCallbackPrices, errorCallback, dataProducts);
+        me.products.reset(dataProducts.models);
+        me.products.trigger('reset');
       } else {
         OB.UTIL.showWarning("No products found");
         me.products.reset();
