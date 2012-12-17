@@ -14,6 +14,7 @@ import java.util.List;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.dal.core.DalUtil;
+import org.openbravo.retail.config.OBRETCOProductList;
 import org.openbravo.retail.posterminal.OBPOSApplications;
 import org.openbravo.retail.posterminal.POSUtils;
 import org.openbravo.retail.posterminal.ProcessHQLQuery;
@@ -44,6 +45,13 @@ public class Terminal extends ProcessHQLQuery {
     }
     final org.openbravo.model.pricing.pricelist.PriceList pricesList = POSUtils
         .getPriceListByTerminal(POSSearchKey);
+
+    // Check if there is an assortment before continuing
+    final OBRETCOProductList productList = POSUtils.getProductListByOrgId(pOSTerminal
+        .getOrganization().getId());
+    if (productList == null) {
+      throw new JSONException("Product list not found");
+    }
 
     return Arrays
         .asList(new String[] { "select pos.id as id, pos.organization.obretcoCBpartner.id as businessPartner, pos.name as _identifier, pos.searchKey as searchKey, pos.organization.obretcoCBpLocation.id as partnerAddress, "

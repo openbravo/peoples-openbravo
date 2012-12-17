@@ -211,6 +211,7 @@ public class JSONRowConverter {
     }
 
     try {
+      w.write("], ");
       w.write("\"");
       w.write(JsonConstants.RESPONSE_STATUS);
       w.write("\":");
