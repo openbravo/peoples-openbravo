@@ -289,7 +289,11 @@ enyo.kind({
       return;
     }
     if (which === 13 && this.$.editbox.getContent()) { //Handle ENTER key if there is something in the display
-      if (this.defaultcommand) {
+      if (this.$.editbox.getContent() === '0') {
+        this.doCommandFired({
+          key: "OK"
+        });
+      } else if (this.defaultcommand) {
         this.execCommand(this.defaultcommand, this.getString());
       } else {
         OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NoDefaultActionDefined'));
