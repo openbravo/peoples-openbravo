@@ -27,7 +27,6 @@ import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.DalUtil;
-import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.TriggerHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
@@ -86,7 +85,6 @@ public class OrderGroupingProcessor {
     long lineno = 10;
     long taxLineNo = 0;
     TriggerHandler.getInstance().disable();
-    OBContext.setAdminMode(true);
 
     while (orderLines.next()) {
       long t = System.currentTimeMillis();

@@ -25,7 +25,7 @@ public class ProcessCashClose extends JSONProcessSimple {
 
   @Override
   public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {
-    OBContext.setAdminMode(true);
+    OBContext.setAdminMode(false);
     JSONObject jsonResponse = new JSONObject();
     JSONObject jsonData = new JSONObject();
     try {
