@@ -13,7 +13,7 @@
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.KeyboardOrder',
   kind: 'OB.UI.Keyboard',
-  keypads: ['OB.UI.KeypadCoins'],
+  keypads: [],
   published: {
     receipt: null
   },
@@ -219,6 +219,12 @@ enyo.kind({
     // calling super after setting keyboard properties
     this.inherited(arguments);
 
+    // Old Hardcoded keypad for 'OBPOS_payment.cash' and 'Euros'
+    this.addKeypad('OB.UI.KeypadCoins');
+
+    // Add the keypads for each payment method
+    this.initCurrencyKeypads();
+
     _.each(this.keypads, function (keypadname) {
       this.addKeypad(keypadname);
     }, this);
@@ -226,6 +232,24 @@ enyo.kind({
     this.addToolbarComponent('OB.OBPOSPointOfSale.UI.ToolbarPayment');
     this.addToolbar(OB.OBPOSPointOfSale.UI.ToolbarScan);
     this.addToolbar(OB.OBPOSPointOfSale.UI.ToolbarDiscounts);
+  },
+  initCurrencyKeypads: function () {
+
+    _.each(OB.POS.modelterminal.get('payments'), function (payment) {
+      if (payment.paymentMethod.iscash) {
+        OB.Dal.find(OB.Model.CurrencyPanel, {
+          'currency': payment.paymentMethod.currency
+        }, function (datacurrency) {      
+          console.dir(datacurrency);
+          
+          
+          
+          
+        }, function (tx, error) {
+          OB.UTIL.showError("OBDAL error: " + error);
+        });
+      }
+    }, this);
   }
 });
 

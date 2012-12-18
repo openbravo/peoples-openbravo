@@ -121,6 +121,10 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
+      <column name="ISCASH" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="OBPOS_APPPAYTYPE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -168,6 +172,7 @@
       <check name="OBPOS_APP_PAYTYPE_DROPGL_CHK"><![CDATA[(ALLOWDROPS = 'N') OR (C_GLITEM_DROPS_ID IS NOT NULL)]]></check>
       <check name="OBPOS_APP_PAYTYPE_FIXEDAM_CHK"><![CDATA[(KEEPFIXEDAMOUNT = 'N') OR (AMOUNT IS NOT NULL)]]></check>
       <check name="OBPOS_APPPAYTYPE_AUTO_CHK"><![CDATA[AUTOMATEMOVEMENTTOOTHER IN ('Y', 'N')]]></check>
+      <check name="OBPOS_APPPAYTYPE_CASH_CHK"><![CDATA[ISCASH IN ('Y', 'N')]]></check>
       <check name="OBPOS_APPPAYTYPE_DEPOSITS_CHK"><![CDATA[ALLOWDEPOSITS IN ('Y', 'N')]]></check>
       <check name="OBPOS_APPPAYTYPE_DONTMOVE_CHK"><![CDATA[ALLOWDONTMOVE IN ('Y', 'N')]]></check>
       <check name="OBPOS_APPPAYTYPE_DROPS_CHK"><![CDATA[ALLOWDROPS IN ('Y', 'N')]]></check>
