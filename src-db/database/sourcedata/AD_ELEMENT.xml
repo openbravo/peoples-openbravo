@@ -29021,6 +29021,8 @@ By disabling this option standard beats will be sent to HeartBeat server, but no
 <!--B815FE8CA7B84995B966CFAFBB88AC45-->  <COLUMNNAME><![CDATA[Bookusingpoprice]]></COLUMNNAME>
 <!--B815FE8CA7B84995B966CFAFBB88AC45-->  <NAME><![CDATA[Book Using Purchase Order Price]]></NAME>
 <!--B815FE8CA7B84995B966CFAFBB88AC45-->  <PRINTNAME><![CDATA[Book Using Purchase Order Price]]></PRINTNAME>
+<!--B815FE8CA7B84995B966CFAFBB88AC45-->  <DESCRIPTION><![CDATA[When checked, the Purchase Order posting will use the Purchase Order Price instead of the Product Cost.]]></DESCRIPTION>
+<!--B815FE8CA7B84995B966CFAFBB88AC45-->  <HELP><![CDATA[When checked, the Purchase Order posting will use the Purchase Order Price instead of the Product Cost.]]></HELP>
 <!--B815FE8CA7B84995B966CFAFBB88AC45-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--B815FE8CA7B84995B966CFAFBB88AC45-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--B815FE8CA7B84995B966CFAFBB88AC45--></AD_ELEMENT>
