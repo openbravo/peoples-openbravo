@@ -11,6 +11,7 @@ package org.openbravo.retail.posterminal;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -400,6 +401,7 @@ public class OrderLoader extends JSONProcessSimple {
   protected void createInvoiceLines(Invoice invoice, Order order, JSONObject jsonorder,
       JSONArray orderlines, ArrayList<OrderLine> lineReferences) throws JSONException {
     Entity promotionLineEntity = ModelProvider.getInstance().getEntity(OrderLineOffer.class);
+    int stdPrecision = order.getCurrency().getStandardPrecision().intValue();
 
     for (int i = 0; i < orderlines.length(); i++) {
       InvoiceLine line = OBProvider.getInstance().get(InvoiceLine.class);
@@ -410,20 +412,23 @@ public class OrderLoader extends JSONProcessSimple {
           ModelProvider.getInstance().getEntity(InvoiceLine.class), line, jsonorder,
           jsonorder.getLong("timezoneOffset"));
       line.setLineNo((long) ((i + 1) * 10));
-      line.setLineNetAmount(BigDecimal.valueOf(orderlines.getJSONObject(i).getDouble("net")));
+      line.setLineNetAmount(BigDecimal.valueOf(orderlines.getJSONObject(i).getDouble("net"))
+          .setScale(stdPrecision, RoundingMode.HALF_UP));
       BigDecimal qty = lineReferences.get(i).getOrderedQuantity();
       line.setInvoicedQuantity(qty);
       lineReferences.get(i).setInvoicedQuantity(qty);
       line.setInvoice(invoice);
       line.setSalesOrderLine(lineReferences.get(i));
-      line.setGrossAmount(lineReferences.get(i).getLineGrossAmount());
+      line.setGrossAmount(lineReferences.get(i).getLineGrossAmount()
+          .setScale(stdPrecision, RoundingMode.HALF_UP));
       invoice.getInvoiceLineList().add(line);
 
       InvoiceLineTax tax = OBProvider.getInstance().get(InvoiceLineTax.class);
       tax.setLineNo((long) ((i + 1) * 10));
       tax.setTax(line.getTax());
-      tax.setTaxableAmount(line.getLineNetAmount());
-      tax.setTaxAmount(BigDecimal.valueOf(orderlines.getJSONObject(i).getDouble("taxAmount")));
+      tax.setTaxableAmount(line.getLineNetAmount().setScale(stdPrecision, RoundingMode.HALF_UP));
+      tax.setTaxAmount(BigDecimal.valueOf(orderlines.getJSONObject(i).getDouble("taxAmount"))
+          .setScale(stdPrecision, RoundingMode.HALF_UP));
       tax.setInvoice(invoice);
       tax.setInvoiceLine(line);
       tax.setRecalculate(true);
@@ -447,9 +452,11 @@ public class OrderLoader extends JSONProcessSimple {
               jsonorder.getLong("timezoneOffset"));
 
           if (hasActualAmt) {
-            promotion.setTotalAmount(BigDecimal.valueOf(jsonPromotion.getDouble("actualAmt")));
+            promotion.setTotalAmount(BigDecimal.valueOf(jsonPromotion.getDouble("actualAmt"))
+                .setScale(stdPrecision, RoundingMode.HALF_UP));
           } else {
-            promotion.setTotalAmount(BigDecimal.valueOf(jsonPromotion.getDouble("amt")));
+            promotion.setTotalAmount(BigDecimal.valueOf(jsonPromotion.getDouble("amt")).setScale(
+                stdPrecision, RoundingMode.HALF_UP));
           }
           promotion.setLineNo((long) ((p + 1) * 10));
           promotion.setInvoiceLine(line);
@@ -467,6 +474,8 @@ public class OrderLoader extends JSONProcessSimple {
         jsonorder.getLong("timezoneOffset"));
 
     invoice.setDocumentNo(null);
+    int stdPrecision = order.getCurrency().getStandardPrecision().intValue();
+
     String description = jsonorder.has("description") ? jsonorder.getString("description") + "\n"
         : "";
     description += OBMessageUtils.getI18NMessage("OBPOS_InvoiceRelatedToOrder", null)
@@ -490,11 +499,15 @@ public class OrderLoader extends JSONProcessSimple {
         jsonorder.getJSONObject("bp").getString("paymentMethod")));
     invoice.setPaymentTerms((PaymentTerm) OBDal.getInstance().getProxy("FinancialMgmtPaymentTerm",
         jsonorder.getJSONObject("bp").getString("paymentTerms")));
-    invoice.setGrandTotalAmount(BigDecimal.valueOf(jsonorder.getDouble("gross")));
-    invoice.setSummedLineAmount(BigDecimal.valueOf(jsonorder.getDouble("net")));
+    invoice.setGrandTotalAmount(BigDecimal.valueOf(jsonorder.getDouble("gross")).setScale(
+        stdPrecision, RoundingMode.HALF_UP));
+    invoice.setSummedLineAmount(BigDecimal.valueOf(jsonorder.getDouble("net")).setScale(
+        stdPrecision, RoundingMode.HALF_UP));
     invoice.setTotalPaid(BigDecimal.ZERO);
-    invoice.setOutstandingAmount((BigDecimal.valueOf(jsonorder.getDouble("gross"))));
-    invoice.setDueAmount((BigDecimal.valueOf(jsonorder.getDouble("gross"))));
+    invoice.setOutstandingAmount((BigDecimal.valueOf(jsonorder.getDouble("gross"))).setScale(
+        stdPrecision, RoundingMode.HALF_UP));
+    invoice.setDueAmount((BigDecimal.valueOf(jsonorder.getDouble("gross"))).setScale(stdPrecision,
+        RoundingMode.HALF_UP));
 
     // Create invoice tax lines
     JSONObject taxes = jsonorder.getJSONObject("taxes");
@@ -508,8 +521,10 @@ public class OrderLoader extends JSONProcessSimple {
       TaxRate tax = (TaxRate) OBDal.getInstance().getProxy(
           ModelProvider.getInstance().getEntity(TaxRate.class).getName(), taxId);
       invoiceTax.setTax(tax);
-      invoiceTax.setTaxableAmount(BigDecimal.valueOf(jsonOrderTax.getDouble("net")));
-      invoiceTax.setTaxAmount(BigDecimal.valueOf(jsonOrderTax.getDouble("amount")));
+      invoiceTax.setTaxableAmount(BigDecimal.valueOf(jsonOrderTax.getDouble("net")).setScale(
+          stdPrecision, RoundingMode.HALF_UP));
+      invoiceTax.setTaxAmount(BigDecimal.valueOf(jsonOrderTax.getDouble("amount")).setScale(
+          stdPrecision, RoundingMode.HALF_UP));
       invoiceTax.setInvoice(invoice);
       invoiceTax.setLineNo((long) ((i + 1) * 10));
       invoiceTax.setRecalculate(true);
@@ -518,7 +533,7 @@ public class OrderLoader extends JSONProcessSimple {
     }
 
     // Update customer credit
-    BigDecimal total = invoice.getGrandTotalAmount();
+    BigDecimal total = invoice.getGrandTotalAmount().setScale(stdPrecision, RoundingMode.HALF_UP);
 
     if (!invoice.getCurrency().equals(invoice.getBusinessPartner().getPriceList().getCurrency())) {
       total = convertCurrencyInvoice(invoice);
@@ -541,10 +556,10 @@ public class OrderLoader extends JSONProcessSimple {
   }
 
   public static BigDecimal convertCurrencyInvoice(Invoice invoice) {
-
+    int stdPrecision = invoice.getCurrency().getStandardPrecision().intValue();
     List<Object> parameters = new ArrayList<Object>();
     List<Class<?>> types = new ArrayList<Class<?>>();
-    parameters.add(invoice.getGrandTotalAmount());
+    parameters.add(invoice.getGrandTotalAmount().setScale(stdPrecision, RoundingMode.HALF_UP));
     types.add(BigDecimal.class);
     parameters.add(invoice.getCurrency());
     types.add(BaseOBObject.class);
@@ -683,6 +698,7 @@ public class OrderLoader extends JSONProcessSimple {
       ArrayList<OrderLine> lineReferences) throws JSONException {
     Entity orderLineEntity = ModelProvider.getInstance().getEntity(OrderLine.class);
     Entity promotionLineEntity = ModelProvider.getInstance().getEntity(OrderLineOffer.class);
+    int stdPrecision = order.getCurrency().getStandardPrecision().intValue();
 
     for (int i = 0; i < orderlines.length(); i++) {
 
@@ -696,7 +712,8 @@ public class OrderLoader extends JSONProcessSimple {
 
       orderline.setActive(true);
       orderline.setSalesOrder(order);
-      orderline.setLineNetAmount(BigDecimal.valueOf(jsonOrderLine.getDouble("net")));
+      orderline.setLineNetAmount(BigDecimal.valueOf(jsonOrderLine.getDouble("net")).setScale(
+          stdPrecision, RoundingMode.HALF_UP));
       orderline.setListPrice(orderline.getUnitPrice());
 
       // shipment is created, so all is delivered
@@ -709,8 +726,10 @@ public class OrderLoader extends JSONProcessSimple {
       OrderLineTax tax = OBProvider.getInstance().get(OrderLineTax.class);
       tax.setLineNo((long) ((i + 1) * 10));
       tax.setTax(orderline.getTax());
-      tax.setTaxableAmount(orderline.getLineNetAmount());
-      tax.setTaxAmount(BigDecimal.valueOf(orderlines.getJSONObject(i).getDouble("taxAmount")));
+      tax.setTaxableAmount(orderline.getLineNetAmount()
+          .setScale(stdPrecision, RoundingMode.HALF_UP));
+      tax.setTaxAmount(BigDecimal.valueOf(orderlines.getJSONObject(i).getDouble("taxAmount"))
+          .setScale(stdPrecision, RoundingMode.HALF_UP));
       tax.setSalesOrder(order);
       tax.setSalesOrderLine(orderline);
       orderline.getOrderLineTaxList().add(tax);
@@ -732,9 +751,11 @@ public class OrderLoader extends JSONProcessSimple {
               jsonorder.getLong("timezoneOffset"));
 
           if (hasActualAmt) {
-            promotion.setTotalAmount(BigDecimal.valueOf(jsonPromotion.getDouble("actualAmt")));
+            promotion.setTotalAmount(BigDecimal.valueOf(jsonPromotion.getDouble("actualAmt"))
+                .setScale(stdPrecision, RoundingMode.HALF_UP));
           } else {
-            promotion.setTotalAmount(BigDecimal.valueOf(jsonPromotion.getDouble("amt")));
+            promotion.setTotalAmount(BigDecimal.valueOf(jsonPromotion.getDouble("amt")).setScale(
+                stdPrecision, RoundingMode.HALF_UP));
           }
           promotion.setLineNo((long) ((p + 1) * 10));
           promotion.setSalesOrderLine(orderline);
@@ -750,6 +771,7 @@ public class OrderLoader extends JSONProcessSimple {
         jsonorder.getLong("timezoneOffset"));
     order.setNewOBObject(true);
     order.setId(jsonorder.getString("id"));
+    int stdPrecision = order.getCurrency().getStandardPrecision().intValue();
 
     order.setTransactionDocument((DocumentType) OBDal.getInstance().getProxy("DocumentType",
         jsonorder.getString("documentType")));
@@ -763,8 +785,10 @@ public class OrderLoader extends JSONProcessSimple {
     order.setPaymentTerms((PaymentTerm) OBDal.getInstance().getProxy("FinancialMgmtPaymentTerm",
         jsonorder.getJSONObject("bp").getString("paymentTerms")));
     order.setInvoiceTerms(jsonorder.getJSONObject("bp").getString("invoiceTerms"));
-    order.setGrandTotalAmount(BigDecimal.valueOf(jsonorder.getDouble("gross")));
-    order.setSummedLineAmount(BigDecimal.valueOf(jsonorder.getDouble("net")));
+    order.setGrandTotalAmount(BigDecimal.valueOf(jsonorder.getDouble("gross")).setScale(
+        stdPrecision, RoundingMode.HALF_UP));
+    order.setSummedLineAmount(BigDecimal.valueOf(jsonorder.getDouble("net")).setScale(stdPrecision,
+        RoundingMode.HALF_UP));
 
     order.setSalesTransaction(true);
     if (jsonorder.getBoolean("isQuotation")) {
@@ -788,8 +812,10 @@ public class OrderLoader extends JSONProcessSimple {
       TaxRate tax = (TaxRate) OBDal.getInstance().getProxy(
           ModelProvider.getInstance().getEntity(TaxRate.class).getName(), taxId);
       orderTax.setTax(tax);
-      orderTax.setTaxableAmount(BigDecimal.valueOf(jsonOrderTax.getDouble("net")));
-      orderTax.setTaxAmount(BigDecimal.valueOf(jsonOrderTax.getDouble("amount")));
+      orderTax.setTaxableAmount(BigDecimal.valueOf(jsonOrderTax.getDouble("net")).setScale(
+          stdPrecision, RoundingMode.HALF_UP));
+      orderTax.setTaxAmount(BigDecimal.valueOf(jsonOrderTax.getDouble("amount")).setScale(
+          stdPrecision, RoundingMode.HALF_UP));
       orderTax.setSalesOrder(order);
       orderTax.setLineNo((long) ((i + 1) * 10));
       i++;
@@ -835,9 +861,12 @@ public class OrderLoader extends JSONProcessSimple {
       paymentSchedule.setOrder(order);
       paymentSchedule.setFinPaymentmethod(order.getBusinessPartner().getPaymentMethod());
       // paymentSchedule.setPaidAmount(new BigDecimal(0));
-      paymentSchedule.setAmount(BigDecimal.valueOf(jsonorder.getDouble("gross")));
+      int stdPrecision = order.getCurrency().getStandardPrecision().intValue();
+      paymentSchedule.setAmount(BigDecimal.valueOf(jsonorder.getDouble("gross")).setScale(
+          stdPrecision, RoundingMode.HALF_UP));
       // Sept 2012 -> gross because outstanding is not allowed in Openbravo Web POS
-      paymentSchedule.setOutstandingAmount(BigDecimal.valueOf(jsonorder.getDouble("gross")));
+      paymentSchedule.setOutstandingAmount(BigDecimal.valueOf(jsonorder.getDouble("gross"))
+          .setScale(stdPrecision, RoundingMode.HALF_UP));
       paymentSchedule.setDueDate(order.getOrderDate());
       paymentSchedule.setExpectedDate(order.getOrderDate());
       if (ModelProvider.getInstance().getEntity(FIN_PaymentSchedule.class)
@@ -855,9 +884,10 @@ public class OrderLoader extends JSONProcessSimple {
         paymentScheduleInvoice.setCurrency(order.getCurrency());
         paymentScheduleInvoice.setInvoice(invoice);
         paymentScheduleInvoice.setFinPaymentmethod(order.getBusinessPartner().getPaymentMethod());
-        paymentScheduleInvoice.setAmount(BigDecimal.valueOf(jsonorder.getDouble("gross")));
-        paymentScheduleInvoice
-            .setOutstandingAmount(BigDecimal.valueOf(jsonorder.getDouble("gross")));
+        paymentScheduleInvoice.setAmount(BigDecimal.valueOf(jsonorder.getDouble("gross")).setScale(
+            stdPrecision, RoundingMode.HALF_UP));
+        paymentScheduleInvoice.setOutstandingAmount(BigDecimal
+            .valueOf(jsonorder.getDouble("gross")).setScale(stdPrecision, RoundingMode.HALF_UP));
         paymentScheduleInvoice.setDueDate(order.getOrderDate());
         paymentScheduleInvoice.setExpectedDate(order.getOrderDate());
         if (ModelProvider.getInstance().getEntity(FIN_PaymentSchedule.class)
@@ -908,13 +938,16 @@ public class OrderLoader extends JSONProcessSimple {
     long t1 = System.currentTimeMillis();
     OBContext.setAdminMode(true);
     try {
-      BigDecimal amount = BigDecimal.valueOf(payment.getDouble("paid"));
+      int stdPrecision = order.getCurrency().getStandardPrecision().intValue();
+      BigDecimal amount = BigDecimal.valueOf(payment.getDouble("paid")).setScale(stdPrecision,
+          RoundingMode.HALF_UP);
       BigDecimal origAmount = amount;
       BigDecimal mulrate = new BigDecimal(1);
       // FIXME: Conversion should be only in one direction: (USD-->EUR)
       if (payment.has("mulrate") && payment.getDouble("mulrate") != 1) {
         mulrate = BigDecimal.valueOf(payment.getDouble("mulrate"));
-        origAmount = amount.multiply(BigDecimal.valueOf(payment.getDouble("mulrate")));
+        origAmount = amount.multiply(BigDecimal.valueOf(payment.getDouble("mulrate"))).setScale(
+            stdPrecision, RoundingMode.HALF_UP);
       }
 
       // writeoffAmt.divide(BigDecimal.valueOf(payment.getDouble("rate")));
@@ -923,7 +956,7 @@ public class OrderLoader extends JSONProcessSimple {
       }
       if (writeoffAmt.signum() == 1) {
         // there was an overpayment, we need to take into account the writeoffamt
-        amount = amount.subtract(writeoffAmt);
+        amount = amount.subtract(writeoffAmt).setScale(stdPrecision, RoundingMode.HALF_UP);
       }
 
       FIN_PaymentScheduleDetail paymentScheduleDetail = OBProvider.getInstance().get(
@@ -955,7 +988,8 @@ public class OrderLoader extends JSONProcessSimple {
         origDetail.setArchivedPaymentPlan(origPaymentSchedule);
         origDetail.setPaymentScheduleDetail(paymentScheduleDetail);
         origDetail.setAmount(amount);
-        origDetail.setWriteoffAmount(paymentScheduleDetail.getWriteoffAmount());
+        origDetail.setWriteoffAmount(paymentScheduleDetail.getWriteoffAmount().setScale(
+            stdPrecision, RoundingMode.HALF_UP));
 
         OBDal.getInstance().save(origDetail);
 
@@ -982,7 +1016,8 @@ public class OrderLoader extends JSONProcessSimple {
             .getGlitemWriteoff());
       }
       // Update Payment In amount after adding GLItem
-      finPayment.setAmount(BigDecimal.valueOf(payment.getDouble("paid")));
+      finPayment.setAmount(BigDecimal.valueOf(payment.getDouble("paid")).setScale(stdPrecision,
+          RoundingMode.HALF_UP));
       OBDal.getInstance().save(finPayment);
 
       String description = getPaymentDescription();
