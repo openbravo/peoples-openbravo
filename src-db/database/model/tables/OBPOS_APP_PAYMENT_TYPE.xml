@@ -154,9 +154,6 @@
       <foreign-key foreignTable="OBPOS_TERMINALTYPE" name="OBPOS_APPPAYTYPE_TERM">
         <reference local="OBPOS_TERMINALTYPE_ID" foreign="OBPOS_TERMINALTYPE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="OBPOS_TERMINALTYPE" name="OBPOS_APPPAYTYPE_TERTYPE_ID">
-        <reference local="OBPOS_TERMINALTYPE_ID" foreign="OBPOS_TERMINALTYPE_ID"/>
-      </foreign-key>
       <index name="OBPOS_APPPAYTYPE_CURR" unique="false">
         <index-column name="C_CURRENCY_ID"/>
       </index>
