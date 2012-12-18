@@ -108,9 +108,6 @@ enyo.kind({
       valueToReturn = this.beforeSetShowing(args);
     }
 
-    if (valueToReturn) {
-      this.focusInPopup();
-    }
     return valueToReturn;
   },
   mainAfterShow: function (args) {
