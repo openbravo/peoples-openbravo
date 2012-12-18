@@ -629,8 +629,9 @@ enyo.kind({
 
   showKeypad: function (keypadName) {
     var firstLabel = null,
-        foundLabel = false;
-    this.state.set('keypadName', keypadName);
+        foundLabel = false,
+        existsLabel = false;
+
     enyo.forEach(this.$.keypadcontainer.getComponents(), function (pad) {
       if (!firstLabel) {
         firstLabel = pad.label;
@@ -639,7 +640,9 @@ enyo.kind({
         foundLabel = false;
       }
       if (pad.padName === keypadName) {
+        this.state.set('keypadName', keypadName);
         foundLabel = true;
+        existsLabel = true;
         pad.show();
         // Set the right payment status. If needed.
         if (pad.padPayment && this.status !== pad.padPayment) {
@@ -651,6 +654,11 @@ enyo.kind({
     }, this);
     if (foundLabel) {
       this.state.set('keypadNextLabel', firstLabel);
+    }
+
+    // if keypadName does not exists show the 'basic' panel that always exists
+    if (!existsLabel) {
+      this.showKeypad('basic');
     }
   },
 

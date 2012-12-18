@@ -25,6 +25,10 @@ public class Payments extends ProcessHQLQuery {
   @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
     return Arrays
-        .asList(new String[] { "select p as payment, p.paymentMethod as paymentMethod, c_currency_rate(p.financialAccount.currency, p.obposApplications.organization.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id) as rate, c_currency_rate(p.obposApplications.organization.currency, p.financialAccount.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id) as mulrate, p.financialAccount.currency.iSOCode as isocode from OBPOS_App_Payment as p where p.obposApplications.id = :pos and p.$readableCriteria order by p.line, p.commercialName" });
+        .asList(new String[] { "select p as payment, p.paymentMethod as paymentMethod, "
+            + "c_currency_rate(p.financialAccount.currency, p.obposApplications.organization.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id) as rate, c_currency_rate(p.obposApplications.organization.currency, p.financialAccount.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id) as mulrate, "
+            + "p.financialAccount.currency.iSOCode as isocode, "
+            + "p.financialAccount.currency.symbol as symbol "
+            + "from OBPOS_App_Payment as p where p.obposApplications.id = :pos and p.$readableCriteria order by p.line, p.commercialName" });
   }
 }

@@ -106,7 +106,6 @@ OB.Model.Terminal = Backbone.Model.extend({
         OB.Format = JSON.parse(me.usermodel.get('formatInfo'));
         OB.POS.cleanWindows();
         $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=FinancialMgmtTaxRate&modelName=TaxRate&source=org.openbravo.retail.posterminal.master.TaxRate');
-        $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=OBPOS_CurrencyPanel&modelName=CurrencyPanel&source=org.openbravo.retail.posterminal.master.CurrencyPanel');
 
         //Models for discounts and promotions
         $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustment&modelName=Discount&source=org.openbravo.retail.posterminal.master.Discount');
@@ -131,7 +130,6 @@ OB.Model.Terminal = Backbone.Model.extend({
 
 
         $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=FinancialMgmtTaxRate&modelName=TaxRate&source=org.openbravo.retail.posterminal.master.TaxRate');
-        $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=OBPOS_CurrencyPanel&modelName=CurrencyPanel&source=org.openbravo.retail.posterminal.master.CurrencyPanel');
 
         //Models for discounts and promotions
         $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustment&modelName=Discount&source=org.openbravo.retail.posterminal.master.Discount');

@@ -10,9 +10,9 @@
 /*global enyo */
 
 enyo.kind({
-  name: 'OB.UI.KeypadCoins',
+  name: 'OB.UI.KeypadCoinsLegacy',
   label: OB.I18N.getLabel('OBPOS_KeypadCoins'),
-  padName: 'coins',
+  padName: 'Coins-102',
   padPayment: 'OBPOS_payment.cash',
   components: [{
     classes: 'row-fluid',
@@ -170,7 +170,7 @@ enyo.kind({
     btn = this.$.btn;
     btn.setContent(this.label || OB.I18N.formatCoins(this.amount));
     btn.applyStyle('background-color', this.background);
-    btn.applyStyle('border', '10px solid' + (this.bordercolor || this.background));
+    btn.applyStyle('border', '10px solid ' + (this.bordercolor || this.background));
   },
   tap: function () {
 

@@ -219,9 +219,6 @@ enyo.kind({
     // calling super after setting keyboard properties
     this.inherited(arguments);
 
-    // Old Hardcoded keypad for 'OBPOS_payment.cash' and 'Euros'
-    this.addKeypad('OB.UI.KeypadCoins');
-
     // Add the keypads for each payment method
     this.initCurrencyKeypads();
 
@@ -233,19 +230,140 @@ enyo.kind({
     this.addToolbar(OB.OBPOSPointOfSale.UI.ToolbarScan);
     this.addToolbar(OB.OBPOSPointOfSale.UI.ToolbarDiscounts);
   },
+
   initCurrencyKeypads: function () {
+    var me = this;
+    var currenciesManaged = {};
 
     _.each(OB.POS.modelterminal.get('payments'), function (payment) {
-      if (payment.paymentMethod.iscash) {
+      // Is cash method if is checked as iscash or is the legacy hardcoded cash method for euros.
+      if ((payment.paymentMethod.iscash || (payment.payment.searchKey === 'OBPOS_payment.cash' && payment.paymentMethod.currency === '102')) && !currenciesManaged[payment.paymentMethod.currency]) {
+        // register that is already built
+        currenciesManaged[payment.paymentMethod.currency] = true;
+
+        // Build the panel
         OB.Dal.find(OB.Model.CurrencyPanel, {
           'currency': payment.paymentMethod.currency
         }, function (datacurrency) {
-          console.dir(datacurrency);
+          if (datacurrency.length > 0) {
+            me.buildCoinsAndNotesPanel(payment, payment.symbol, datacurrency);
+          } else if (payment.payment.searchKey === 'OBPOS_payment.cash' && payment.paymentMethod.currency === '102') {
+            // Add the legacy keypad if is the legacy hardcoded cash method for euros.
+            me.addKeypad('OB.UI.KeypadCoinsLegacy');
+          }
         }, function (tx, error) {
           OB.UTIL.showError("OBDAL error: " + error);
         });
       }
     }, this);
+  },
+
+  buildCoinsAndNotesButton: function (paymentkey, coin) {
+    if (coin) {
+      return {
+        kind: 'OB.UI.PaymentButton',
+        paymenttype: paymentkey,
+        amount: coin.get('amount'),
+        background: coin.get('backcolor') || '#f3bc9e',
+        bordercolor: coin.get('bordercolor') || coin.get('backcolor') || '#f3bc9e'
+      };
+    } else {
+      return {
+        kind: 'OB.UI.ButtonKey',
+        classButton: 'btnkeyboard-num',
+        label: '',
+        command: 'dummy'
+      };
+    }
+  },
+
+  buildCoinsAndNotesPanel: function (payment, symbol, datacurrency) {
+
+    enyo.kind({
+      name: 'OB.UI.Keypad' + payment.payment.searchKey,
+      label: _.template('<%= symbol %>,<%= symbol %>,<%= symbol %>,...', {
+        symbol: symbol
+      }),
+      padName: 'Coins-' + payment.paymentMethod.currency,
+      padPayment: payment.payment.searchKey,
+      components: [{
+        classes: 'row-fluid',
+        components: [{
+          classes: 'span4',
+          components: [{
+            kind: 'OB.UI.ButtonKey',
+            classButton: 'btnkeyboard-num',
+            label: '/',
+            command: '/'
+          }]
+        }, {
+          classes: 'span4',
+          components: [{
+            kind: 'OB.UI.ButtonKey',
+            classButton: 'btnkeyboard-num',
+            label: '*',
+            command: '*'
+          }]
+        }, {
+          classes: 'span4',
+          components: [{
+            kind: 'OB.UI.ButtonKey',
+            classButton: 'btnkeyboard-num',
+            label: '%',
+            command: '%'
+          }]
+        }]
+      }, {
+        classes: 'row-fluid',
+        components: [{
+          classes: 'span4',
+          components: [this.buildCoinsAndNotesButton(payment.payment.searchKey, datacurrency.at(2))]
+        }, {
+          classes: 'span4',
+          components: [this.buildCoinsAndNotesButton(payment.payment.searchKey, datacurrency.at(1))]
+        }, {
+          classes: 'span4',
+          components: [this.buildCoinsAndNotesButton(payment.payment.searchKey, datacurrency.at(0))]
+        }]
+      }, {
+        classes: 'row-fluid',
+        components: [{
+          classes: 'span4',
+          components: [this.buildCoinsAndNotesButton(payment.payment.searchKey, datacurrency.at(5))]
+        }, {
+          classes: 'span4',
+          components: [this.buildCoinsAndNotesButton(payment.payment.searchKey, datacurrency.at(4))]
+        }, {
+          classes: 'span4',
+          components: [this.buildCoinsAndNotesButton(payment.payment.searchKey, datacurrency.at(3))]
+        }]
+      }, {
+        classes: 'row-fluid',
+        components: [{
+          classes: 'span4',
+          components: [this.buildCoinsAndNotesButton(payment.payment.searchKey, datacurrency.at(8))]
+        }, {
+          classes: 'span4',
+          components: [this.buildCoinsAndNotesButton(payment.payment.searchKey, datacurrency.at(7))]
+        }, {
+          classes: 'span4',
+          components: [this.buildCoinsAndNotesButton(payment.payment.searchKey, datacurrency.at(6))]
+        }]
+      }, {
+        classes: 'row-fluid',
+        components: [{
+          classes: 'span4',
+          components: [this.buildCoinsAndNotesButton(payment.payment.searchKey, datacurrency.at(11))]
+        }, {
+          classes: 'span4',
+          components: [this.buildCoinsAndNotesButton(payment.payment.searchKey, datacurrency.at(10))]
+        }, {
+          classes: 'span4',
+          components: [this.buildCoinsAndNotesButton(payment.payment.searchKey, datacurrency.at(9))]
+        }]
+      }]
+    });
+    this.addKeypad('OB.UI.Keypad' + payment.payment.searchKey);
   }
 });
 

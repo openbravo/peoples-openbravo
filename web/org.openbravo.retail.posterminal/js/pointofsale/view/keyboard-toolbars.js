@@ -163,7 +163,7 @@ enyo.kind({
   shown: function () {
     var me = this,
         i, max, p, keyboard = this.owner.owner;
-    keyboard.showKeypad('coins');
+    keyboard.showKeypad('Coins-' + OB.POS.modelterminal.get('currency').id); // shows the Coins/Notes panel for the terminal currency
     keyboard.showSidepad('sidedisabled');
 
     for (i = 0, max = OB.POS.modelterminal.get('payments').length; i < max; i++) {
