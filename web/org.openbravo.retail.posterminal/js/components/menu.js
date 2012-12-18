@@ -246,7 +246,7 @@ enyo.kind({
   //TODO
   label: 'Ticket discounts',
   tap: function () {
-    if (!this.isDisabled) {
+    if (!this.disabled) {
       this.parent.hide(); // Manual dropdown menu closure
       this.doDiscountsMode({
         tabPanel: 'edit',
