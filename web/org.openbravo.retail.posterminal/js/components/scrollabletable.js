@@ -236,21 +236,47 @@ enyo.kind({
     }
     return null;
   },
+
   _addModelToCollection: function (model, index) {
+    var i, models = [];
+
+    var components = this.$.tbody.getComponents();
+    if (index && index < components.length) {
+      //refresh components collection, inserting new model...
+      // get the models from current components
+      for (i = 0; i < components.length; i++) {
+        models[i] = {
+          renderlinemodel: components[i].renderline.model,
+          checked: components[i].checked
+        };
+      }
+      this.$.tbody.destroyComponents();
+      // rebuild component
+      for (i = 0; i < models.length; i++) {
+        if (i === index) {
+          this._createComponentForModel(model);
+        }
+        this._createComponentForModel(models[i].renderlinemodel, models[i].checked);
+      }
+    } else {
+      // add to the end...
+      this._createComponentForModel(model);
+    }
+  },
+
+  _createComponentForModel: function (model, checked) {
     var tr = this.$.tbody.createComponent({
       tag: 'li'
-    });
-
-    tr.render();
-
-    tr.createComponent({
+    }).render();
+    tr.renderline = tr.createComponent({
       kind: this.renderLine,
       model: model
     }).render();
+    tr.checked = checked;
 
     model.on('change', function () {
       tr.destroyComponents();
-      tr.createComponent({
+      tr.renderline = tr.createComponent({
         kind: this.renderLine,
         model: model
       }).render();
@@ -274,6 +300,14 @@ enyo.kind({
           }
         }
       }
+    }, this);
+
+    model.on('unselected', function () {
+      if (this.selected) {
+        this.selected.removeClass('selected', false);
+      }
+      // FIXME: OB.UTIL.makeElemVisible(this.node, this.selected);
+      this.selected = null;
     }, this);
 
     model.on('check', function () {
@@ -331,13 +365,6 @@ enyo.kind({
         }
       }
     }, this);
-
-    model.on('unselected', function () {
-      if (this.selected) {
-        this.selected.removeClass('selected', false);
-      }
-      // FIXME: OB.UTIL.makeElemVisible(this.node, this.selected);
-      this.selected = null;
-    }, this);
+    return tr;
   }
 });
