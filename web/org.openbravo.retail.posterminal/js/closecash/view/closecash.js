@@ -268,5 +268,6 @@ OB.POS.registerWindow({
   route: 'retail.cashup',
   online: true,
   menuPosition: 20,
-  menuLabel: OB.I18N.getLabel('OBPOS_LblCloseCash')
+  menuLabel: OB.I18N.getLabel('OBPOS_LblCloseCash'),
+  permission: 'OBPOS_retail.cashup'
 });

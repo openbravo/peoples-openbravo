@@ -544,7 +544,8 @@ enyo.kind({
       this.menuEntries.push({
         kind: 'OB.UI.MenuItem',
         label: window.get('menuLabel'),
-        route: window.get('route')
+        route: window.get('route'),
+        permission: window.get('permission')
       });
     }, this);
     this.inherited(arguments);

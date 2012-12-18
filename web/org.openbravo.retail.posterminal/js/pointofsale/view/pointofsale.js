@@ -624,6 +624,7 @@ OB.POS.registerWindow({
   windowClass: OB.OBPOSPointOfSale.UI.PointOfSale,
   route: 'retail.pointofsale',
   menuPosition: null,
+  permission: 'OBPOS_retail.pointofsale',
   // Not to display it in the menu
   menuLabel: 'POS'
 });
