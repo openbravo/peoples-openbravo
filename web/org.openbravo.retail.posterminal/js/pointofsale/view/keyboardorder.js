@@ -239,12 +239,8 @@ enyo.kind({
       if (payment.paymentMethod.iscash) {
         OB.Dal.find(OB.Model.CurrencyPanel, {
           'currency': payment.paymentMethod.currency
-        }, function (datacurrency) {      
+        }, function (datacurrency) {
           console.dir(datacurrency);
-          
-          
-          
-          
         }, function (tx, error) {
           OB.UTIL.showError("OBDAL error: " + error);
         });

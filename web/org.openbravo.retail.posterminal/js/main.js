@@ -24,7 +24,6 @@
     var webwindow, terminal = OB.POS.modelterminal.get('terminal');
 
     // We are Logged !!!
-
     // Set Hardware..
     OB.POS.hwserver = new OB.DS.HWServer(terminal.hardwareurl, terminal.scaleurl);
 

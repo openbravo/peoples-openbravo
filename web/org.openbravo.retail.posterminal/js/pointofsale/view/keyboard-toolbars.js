@@ -161,8 +161,8 @@ enyo.kind({
     });
   },
   shown: function () {
-    var me = this, i, max, p,
-        keyboard = this.owner.owner;
+    var me = this,
+        i, max, p, keyboard = this.owner.owner;
     keyboard.showKeypad('coins');
     keyboard.showSidepad('sidedisabled');
 

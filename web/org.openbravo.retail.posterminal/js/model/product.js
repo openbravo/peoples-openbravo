@@ -17,7 +17,7 @@
     entityName: 'Product',
     source: 'org.openbravo.retail.posterminal.master.Product',
     dataLimit: 300,
-    properties: ['id', 'uPCEAN', 'uOM', 'uOMsymbol', 'productCategory', 'taxCategory', 'img', 'description', 'obposScale', 'groupProduct', 'showstock', 'bestseller', 'ispack', 'listPrice', 'standardPrice', 'priceLimit', 'cost','_identifier', '_idx'],
+    properties: ['id', 'uPCEAN', 'uOM', 'uOMsymbol', 'productCategory', 'taxCategory', 'img', 'description', 'obposScale', 'groupProduct', 'showstock', 'bestseller', 'ispack', 'listPrice', 'standardPrice', 'priceLimit', 'cost', '_identifier', '_idx'],
     propertiesFilter: ['_identifier', 'uPCEAN'],
     propertyMap: {
       'id': 'm_product_id',
@@ -33,10 +33,10 @@
       'showstock': 'em_obpos_showstock',
       'bestseller': 'bestseller',
       'ispack': 'ispack',
-      'listPrice':'listPrice',
-      'standardPrice':'standardPrice',
-      'priceLimit':'priceLimit',
-      'cost':'cost',
+      'listPrice': 'listPrice',
+      'standardPrice': 'standardPrice',
+      'priceLimit': 'priceLimit',
+      'cost': 'cost',
       '_identifier': '_identifier',
       '_filter': '_filter',
       '_idx': '_idx'

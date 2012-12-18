@@ -126,7 +126,7 @@ enyo.kind({
     if (this.second && this.second !== this.value && this.convertedValues.indexOf(this.type) !== -1) {
       this.$.foreignItemQty.setContent('(' + OB.I18N.formatCurrency(this.second) + ' ' + this.isocode + ')');
     } else if (this.rate && this.rate !== '1' && this.valuestoConvert.indexOf(this.type) !== -1) {
-      if(this.value){
+      if (this.value) {
         this.$.foreignItemQty.setContent('(' + OB.I18N.formatCurrency(this.value) + ' ' + this.isocode + ')');
       }
       this.$.itemQty.setContent(OB.I18N.formatCurrency(OB.DEC.mul(this.value, this.rate)));
