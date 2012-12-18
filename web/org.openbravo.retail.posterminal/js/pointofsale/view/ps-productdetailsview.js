@@ -89,14 +89,12 @@ enyo.kind({
   },
   openOtherStoresStockModal: function () {
     if (this.leftSubWindow.otherStoresStockModel) {
-      if (this.leftSubWindow.otherStoresStockModel.get('qty') > 0) {
-        this.doShowPopup({
-          popup: 'modalStockInOtherStores',
-          args: {
-            stockInfo: this.leftSubWindow.otherStoresStockModel
-          }
-        });
-      }
+      this.doShowPopup({
+        popup: 'modalStockInOtherStores',
+        args: {
+          stockInfo: this.leftSubWindow.otherStoresStockModel
+        }
+      });
     }
     return true;
   },

@@ -1,6 +1,8 @@
 package org.openbravo.retail.posterminal.stock;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.ServletException;
 
@@ -23,6 +25,7 @@ public class OtherStoresDetailedStock extends JSONProcessSimple {
     OBContext.setAdminMode(true);
     JSONArray responseArray = new JSONArray();
     BigDecimal totalQtyCounter = BigDecimal.ZERO;
+    List<String> countedWarehouses = new ArrayList<String>();
     try {
 
       orgId = jsonData.getString("organization");
@@ -80,13 +83,16 @@ public class OtherStoresDetailedStock extends JSONProcessSimple {
         }
         JSONObject warehouseInfo = new JSONObject();
         warehouseInfo.put("warehouseid", (String) results.get(2));
+        if (!countedWarehouses.contains((String) results.get(2))) {
+          countedWarehouses.add((String) results.get(2));
+          totalQtyCounter = totalQtyCounter.add((BigDecimal) results.get(4));
+        }
         warehouseInfo.put("warehousename", (String) results.get(3));
         warehouseInfo.put("warehouseqty", ((BigDecimal) results.get(4)).toString());
 
         arrWarehousesInfo.put(warehouseInfo);
 
         qtyCounterPerOrg = qtyCounterPerOrg.add((BigDecimal) results.get(4));
-        totalQtyCounter = totalQtyCounter.add((BigDecimal) results.get(4));
       }
 
       if (resultsAvailable) {
