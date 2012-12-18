@@ -20593,8 +20593,8 @@ When it is active this field will be focused by default when the tab is opened.]
 <!--0131585AC1F246DBAF6B84E53534F5FA-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--0131585AC1F246DBAF6B84E53534F5FA-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--0131585AC1F246DBAF6B84E53534F5FA-->  <COLUMNNAME><![CDATA[AmtAcctCr]]></COLUMNNAME>
-<!--0131585AC1F246DBAF6B84E53534F5FA-->  <NAME><![CDATA[Accounting Schema Currency Credit]]></NAME>
-<!--0131585AC1F246DBAF6B84E53534F5FA-->  <PRINTNAME><![CDATA[Accounting Schema Currency Credit]]></PRINTNAME>
+<!--0131585AC1F246DBAF6B84E53534F5FA-->  <NAME><![CDATA[General Ledger Currency Credit]]></NAME>
+<!--0131585AC1F246DBAF6B84E53534F5FA-->  <PRINTNAME><![CDATA[General Ledger Currency Credit]]></PRINTNAME>
 <!--0131585AC1F246DBAF6B84E53534F5FA-->  <DESCRIPTION><![CDATA[The amount credited to an account, converted to the organization default currency.]]></DESCRIPTION>
 <!--0131585AC1F246DBAF6B84E53534F5FA-->  <HELP><![CDATA[The Account Credit Amount indicates the transaction amount converted to this organization's accounting currency]]></HELP>
 <!--0131585AC1F246DBAF6B84E53534F5FA-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -21196,8 +21196,8 @@ When Never the Balance is always used, when Positive the balance is considered Z
 <!--2EB6010EAA174169880C588220EFE7B8-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--2EB6010EAA174169880C588220EFE7B8-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--2EB6010EAA174169880C588220EFE7B8-->  <COLUMNNAME><![CDATA[AmtAcctDr]]></COLUMNNAME>
-<!--2EB6010EAA174169880C588220EFE7B8-->  <NAME><![CDATA[Accounting Schema Currency Debit]]></NAME>
-<!--2EB6010EAA174169880C588220EFE7B8-->  <PRINTNAME><![CDATA[Accounting Schema Currency Debit]]></PRINTNAME>
+<!--2EB6010EAA174169880C588220EFE7B8-->  <NAME><![CDATA[General Ledger Currency Debit]]></NAME>
+<!--2EB6010EAA174169880C588220EFE7B8-->  <PRINTNAME><![CDATA[General Ledger Currency Debit]]></PRINTNAME>
 <!--2EB6010EAA174169880C588220EFE7B8-->  <DESCRIPTION><![CDATA[The amount debited to an account, converted to the organization default currency.]]></DESCRIPTION>
 <!--2EB6010EAA174169880C588220EFE7B8-->  <HELP><![CDATA[The Account Debit Amount indicates the transaction amount converted to this organization's accounting currency]]></HELP>
 <!--2EB6010EAA174169880C588220EFE7B8-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
