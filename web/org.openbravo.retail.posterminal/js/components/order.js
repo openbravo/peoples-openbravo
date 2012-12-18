@@ -86,7 +86,7 @@ enyo.kind({
     onAllTicketLinesChecked: 'allTicketLinesChecked'
   },
   components: [{
-    kind: 'OB.UI.ScrollableTableList',
+    kind: 'OB.UI.ScrollableTable',
     name: 'listOrderLines',
     scrollAreaMaxHeight: '437px',
     renderLine: 'OB.UI.RenderOrderLine',
