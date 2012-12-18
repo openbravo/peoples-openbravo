@@ -59,8 +59,9 @@ public class ReservationUtils {
     CSResponse cs = null;
     try {
       cs = ReservationUtilsData.createReserveFromSalesOrderLine(
-          OBDal.getInstance().getConnection(false), new DalConnectionProvider(), soLine.getId(),
-          doProcess ? "Y" : "N", (String) DalUtil.getId(OBContext.getOBContext().getUser()));
+          OBDal.getInstance().getConnection(false), new DalConnectionProvider(false),
+          soLine.getId(), doProcess ? "Y" : "N",
+          (String) DalUtil.getId(OBContext.getOBContext().getUser()));
     } catch (ServletException e) {
     }
 
@@ -77,7 +78,7 @@ public class ReservationUtils {
     CSResponse cs = null;
     try {
       cs = ReservationUtilsData.reserveStockAuto(OBDal.getInstance().getConnection(false),
-          new DalConnectionProvider(), reservation.getId(),
+          new DalConnectionProvider(false), reservation.getId(),
           (String) DalUtil.getId(OBContext.getOBContext().getUser()));
     } catch (ServletException e) {
       throw new OBException(DbUtility.getUnderlyingSQLException(e));
@@ -116,8 +117,9 @@ public class ReservationUtils {
     CSResponse cs = null;
     try {
       cs = ReservationUtilsData.reserveStockManual(OBDal.getInstance().getConnection(false),
-          new DalConnectionProvider(), reservation.getId(), strType, obObject.getId().toString(),
-          quantity.toString(), (String) DalUtil.getId(OBContext.getOBContext().getUser()));
+          new DalConnectionProvider(false), reservation.getId(), strType, obObject.getId()
+              .toString(), quantity.toString(), (String) DalUtil.getId(OBContext.getOBContext()
+              .getUser()));
     } catch (ServletException e) {
       throw new OBException(DbUtility.getUnderlyingSQLException(e));
     }
