@@ -123,9 +123,9 @@ enyo.kind({
     this.$.itemLbl.setContent(this.label);
     this.$.itemQty.setContent(OB.I18N.formatCurrency(this.value));
 
-    if (this.second && this.second !== this.value && this.convertedValues.indexOf(this.type) != -1) {
+    if (this.second && this.second !== this.value && this.convertedValues.indexOf(this.type) !== -1) {
       this.$.foreignItemQty.setContent('(' + OB.I18N.formatCurrency(this.second) + ' ' + this.isocode + ')');
-    } else if (this.rate && this.rate !== '1' && this.valuestoConvert.indexOf(this.type) != -1) {
+    } else if (this.rate && this.rate !== '1' && this.valuestoConvert.indexOf(this.type) !== -1) {
       if(this.value){
         this.$.foreignItemQty.setContent('(' + OB.I18N.formatCurrency(this.value) + ' ' + this.isocode + ')');
       }
