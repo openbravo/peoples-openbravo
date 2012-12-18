@@ -35,6 +35,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.sql.Connection;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -2507,6 +2508,10 @@ public class Utility {
   /**
    * Gets the date format for the organization country.
    * 
+   * @param date
+   *          Date to apply the format.
+   * @param orgid
+   *          ID of the organization.
    * 
    * @return date with the country format string applied. In case is not defined, a default format
    *         is applied
@@ -2530,8 +2535,27 @@ public class Utility {
   }
 
   /**
+   * Gets the date format for the organization country.
+   * 
+   * @param timeStamp
+   *          TimeStamp to apply the format.
+   * @param orgid
+   *          ID of the organization.
+   * 
+   * @return date with the country format string applied. In case is not defined, a default format
+   *         is applied
+   */
+  public static String applyCountryDateFormat(Timestamp timeStamp, String orgid) {
+    return applyCountryDateFormat(new Date(timeStamp.getTime()), orgid);
+  }
+
+  /**
    * Gets the number format for the organization country.
    * 
+   * @param orgid
+   *          ID of the organization.
+   * @param defaultDecimalFormat
+   *          Default decimal format.
    * 
    * @return DecimalFormat for the number representation defined for the country.
    */
@@ -2545,16 +2569,19 @@ public class Utility {
       OrganizationInformation orginfo = orgInfoList.get(0);
       Location location = orginfo.getLocationAddress();
       Country country = location.getCountry();
+      DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+      if (country.getDecimalseparator() != null)
+        symbols.setDecimalSeparator(country.getDecimalseparator().equals("C") ? ',' : '.');
+      if (country.getGroupingseparator() != null)
+        symbols.setGroupingSeparator(country.getGroupingseparator().equals("C") ? ',' : '.');
       if (country.getNumericmask() != null) {
-        DecimalFormatSymbols symbols = new DecimalFormatSymbols();
-        if (country.getDecimalseparator() != null)
-          symbols.setDecimalSeparator(country.getDecimalseparator().equals("C") ? ',' : '.');
-        if (country.getGroupingseparator() != null)
-          symbols.setGroupingSeparator(country.getGroupingseparator().equals("C") ? ',' : '.');
         DecimalFormat numberFormat = new DecimalFormat(country.getNumericmask());
         numberFormat.setDecimalFormatSymbols(symbols);
         return numberFormat;
       } else {
+        if (country.getDecimalseparator() != null || country.getNumericmask() != null) {
+          defaultDecimalFormat.setDecimalFormatSymbols(symbols);
+        }
         return defaultDecimalFormat;
       }
     } finally {
