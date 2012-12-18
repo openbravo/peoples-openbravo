@@ -121,6 +121,7 @@ BEGIN
                              AND COALESCE(rs.m_attributesetinstance_id, '0') = COALESCE(other.m_attributesetinstance_id, '0')
         WHERE rs.quantity - COALESCE(rs.releasedqty, 0) > COALESCE(sd.qtyonhand, 0) - COALESCE(other.reservedstock, 0)
           AND rs.m_reservation_id = v_reservation_id
+          AND rs.m_locator_id IS NOT NULL
       ) LOOP
         RAISE_APPLICATION_ERROR(-20000, '@NotEnoughAvailableStock@ : ' || cur_not_available.locatorName || ' - ' || cur_not_available.attributeName);
       END LOOP;

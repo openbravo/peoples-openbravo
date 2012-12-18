@@ -32,6 +32,7 @@ import org.openbravo.base.provider.OBProvider;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.materialmgmt.ReservationUtils;
 import org.openbravo.model.common.enterprise.Locator;
@@ -85,7 +86,13 @@ public class ManageReservationActionHandler extends BaseProcessActionHandler {
         manageReservedStockLines(jsonRequest, reservation, idList);
       }
       if (processReservation) {
-        ReservationUtils.processReserve(reservation, "PR");
+        OBError result = ReservationUtils.processReserve(reservation, "PR");
+        if (result.getType().equals("Error")) {
+          JSONObject errorMessage = new JSONObject();
+          errorMessage.put("severity", result.getType().toLowerCase());
+          errorMessage.put("text", result.getMessage());
+          jsonRequest.put("message", errorMessage);
+        }
       }
 
     } catch (Exception e) {
