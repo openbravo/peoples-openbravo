@@ -153,7 +153,7 @@ AD_ORG.NAME, AD_ORGINFO.TAXID, AD_USER.NAME, C_BPARTNER_LOCATION.PHONE, C_BPARTN
 					<textElement>
 						<font fontName="Arial" size="10" isBold="false"/>
 					</textElement>
-					<textFieldExpression class="java.sql.Timestamp"><![CDATA[$F{movementdate}]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[org.openbravo.erpCommon.utility.Utility.applyCountryDateFormat($F{movementdate},$F{organizationid})]]></textFieldExpression>
 				</textField>
 				<image scaleImage="RetainShape" hAlign="Right" vAlign="Top" isUsingCache="true">
 					<reportElement key="image-1" x="307" y="0" width="176" height="91">
@@ -260,7 +260,7 @@ AD_ORG.NAME, AD_ORGINFO.TAXID, AD_USER.NAME, C_BPARTNER_LOCATION.PHONE, C_BPARTN
 					<subreportParameterExpression><![CDATA[$F{m_inout_id}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="NUMBERFORMAT">
-					<subreportParameterExpression><![CDATA[$P{NUMBERFORMAT}]]></subreportParameterExpression>
+					<subreportParameterExpression><![CDATA[org.openbravo.erpCommon.utility.Utility.getCountryNumberFormat($F{organizationid},$P{NUMBERFORMAT})]]></subreportParameterExpression>
 				</subreportParameter>
 				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 				<subreportExpression class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{SUBREP_Rptm_InOut_Lines}]]></subreportExpression>
