@@ -531,7 +531,6 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.AcceptDialogButton',
   kind: 'OB.UI.ModalDialogButton',
-  content: OB.I18N.getLabel('OBPOS_LblOk'),
   classes: 'btnlink btnlink-gray modal-dialog-button',
   events: {
     onHideThisPopup: ''
@@ -543,14 +542,22 @@ enyo.kind({
     if (this.dialogContainer.closeOnAcceptButton) {
       this.doHideThisPopup();
     }
+  },
+  initComponents: function () {
+    this.setContent(OB.I18N.getLabel('OBPOS_LblOk'));
+    this.inherited(arguments);
   }
 });
 
 enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.UI.CancelDialogButton',
-  content: OB.I18N.getLabel('OBPOS_LblCancel'),
   tap: function () {
     this.doHideThisPopup();
+  },
+  initComponents: function () {
+    this.setContent(OB.I18N.getLabel('OBPOS_LblCancel'));
+    this.inherited(arguments);
+
   }
 });
