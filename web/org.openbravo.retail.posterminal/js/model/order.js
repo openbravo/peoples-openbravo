@@ -130,6 +130,7 @@
     tableName: 'c_order',
     entityName: 'Order',
     source: '',
+    dataLimit: 300,
     properties: ['id', 'json', 'session', 'hasbeenpaid', 'isbeingprocessed'],
     propertyMap: {
       'id': 'c_order_id',

@@ -237,7 +237,8 @@ enyo.kind({
         process = new OB.DS.Process('org.openbravo.retail.posterminal.PaidReceiptsHeader');
     this.clearAction();
     process.exec({
-      filters: inEvent.filters
+      filters: inEvent.filters,
+      _limit: OB.Model.Order.prototype.dataLimit
     }, function (data) {
       if (data) {
         _.each(data, function (iter) {
@@ -261,7 +262,7 @@ enyo.kind({
     this.prsList.on('click', function (model) {
       OB.UTIL.showLoading(true);
       process.exec({
-        orderid: model.get('orderid')
+        orderid: model.get('id')
       }, function (data) {
         OB.UTIL.showLoading(false);
         if (data) {
