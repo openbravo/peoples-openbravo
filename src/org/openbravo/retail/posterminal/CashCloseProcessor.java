@@ -9,6 +9,7 @@
 package org.openbravo.retail.posterminal;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -26,6 +27,7 @@ import org.openbravo.model.financialmgmt.gl.GLItem;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Reconciliation;
+import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.service.json.JsonConstants;
 
 public class CashCloseProcessor {
@@ -59,12 +61,10 @@ public class CashCloseProcessor {
       }
       OBDal.getInstance().save(reconciliation);
 
-      BigDecimal origReconciliationTotal = BigDecimal.valueOf(
-          cashCloseObj.getDouble("foreignExpected")).add(foreignDifference);
-      if (origReconciliationTotal.compareTo(new BigDecimal(0)) != 0) {
+      BigDecimal reconciliationTotal = BigDecimal
+          .valueOf(cashCloseObj.getDouble("foreignExpected")).add(foreignDifference);
+      if (reconciliationTotal.compareTo(new BigDecimal(0)) != 0) {
 
-        BigDecimal reconciliationTotal = BigDecimal.valueOf(cashCloseObj.getDouble("expected"))
-            .add(difference);
         if (!cashCloseObj.getJSONObject("paymentMethod").isNull("amountToKeep")
             && BigDecimal.valueOf(
                 cashCloseObj.getJSONObject("paymentMethod").getDouble("amountToKeep")).compareTo(
@@ -72,12 +72,11 @@ public class CashCloseProcessor {
 
           BigDecimal amountToKeep = BigDecimal.valueOf(cashCloseObj.getJSONObject("paymentMethod")
               .getDouble("amountToKeep"));
-          origReconciliationTotal = origReconciliationTotal.subtract(amountToKeep);
           reconciliationTotal = reconciliationTotal.subtract(amountToKeep);
         }
 
         FIN_FinaccTransaction paymentTransaction = createTotalTransferTransactionPayment(
-            posTerminal, reconciliation, paymentType, origReconciliationTotal);
+            posTerminal, reconciliation, paymentType, reconciliationTotal);
         OBDal.getInstance().save(paymentTransaction);
 
         FIN_FinaccTransaction depositTransaction = createTotalTransferTransactionDeposit(
@@ -211,13 +210,31 @@ public class CashCloseProcessor {
     if (paymentType.getObretcoCmevents() == null) {
       throw new OBException("There is no close event defined for the payment method");
     }
-    FIN_FinancialAccount account = paymentType.getObretcoCmevents().getFinancialAccount();
+    FIN_FinancialAccount accountFrom = paymentType.getFinancialAccount();
+    FIN_FinancialAccount accountTo = paymentType.getObretcoCmevents().getFinancialAccount();
+
+    BigDecimal conversionRate = new BigDecimal(1);
+    if (!accountFrom.getCurrency().getId().equals(accountTo.getCurrency().getId())) {
+      List<Object> parameters = new ArrayList<Object>();
+      parameters.add(accountFrom.getCurrency().getId());
+      parameters.add(accountTo.getCurrency().getId());
+      parameters.add(null);
+      parameters.add(null);
+      parameters.add(terminal.getClient().getId());
+      parameters.add(terminal.getOrganization().getId());
+
+      String procedureName = "C_CURRENCY_RATE";
+      conversionRate = (BigDecimal) CallStoredProcedure.getInstance().call(procedureName,
+          parameters, null);
+    }
+
     FIN_FinaccTransaction transaction = OBProvider.getInstance().get(FIN_FinaccTransaction.class);
-    transaction.setCurrency(account.getCurrency());
-    transaction.setAccount(account);
-    transaction.setLineNo(TransactionsDao.getTransactionMaxLineNo(account) + 10);
+    transaction.setCurrency(accountTo.getCurrency());
+    transaction.setAccount(accountTo);
+    transaction.setLineNo(TransactionsDao.getTransactionMaxLineNo(accountTo) + 10);
     transaction.setGLItem(glItem);
-    transaction.setDepositAmount(reconciliationTotal);
+    transaction.setDepositAmount(reconciliationTotal.multiply(conversionRate).setScale(2,
+        BigDecimal.ROUND_HALF_EVEN));
     transaction.setProcessed(true);
     transaction.setTransactionType("BPW");
     transaction.setStatus("RDNC");
@@ -225,7 +242,7 @@ public class CashCloseProcessor {
     transaction.setDateAcct(new Date());
     transaction.setTransactionDate(new Date());
 
-    account.setCurrentBalance(account.getCurrentBalance().add(reconciliationTotal));
+    accountTo.setCurrentBalance(accountTo.getCurrentBalance().add(reconciliationTotal));
 
     return transaction;
 
