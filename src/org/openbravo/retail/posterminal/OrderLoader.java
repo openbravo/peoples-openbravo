@@ -129,12 +129,18 @@ public class OrderLoader extends JSONProcessSimple {
 
   public JSONObject saveOrder(JSONArray jsonarray) throws JSONException {
     boolean error = false;
+    String currentClient = OBContext.getOBContext().getCurrentClient().getId();
+    String currentOrg = OBContext.getOBContext().getCurrentOrganization().getId();
+    String currentUser = OBContext.getOBContext().getUser().getId();
+    String currentRole = OBContext.getOBContext().getRole().getId();
     OBContext.setAdminMode(true);
     try {
       for (int i = 0; i < jsonarray.length(); i++) {
         long t1 = System.currentTimeMillis();
         JSONObject jsonorder = jsonarray.getJSONObject(i);
         String posTerminalId = jsonorder.getString("posTerminal");
+        OBContext.setOBContext(jsonorder.getString("createdBy"), currentRole,
+            jsonorder.getString("client"), jsonorder.getString("organization"));
         try {
           JSONObject result = saveOrder(jsonorder);
           if (!result.get(JsonConstants.RESPONSE_STATUS).equals(
@@ -176,6 +182,7 @@ public class OrderLoader extends JSONProcessSimple {
       }
 
     } finally {
+      OBContext.setOBContext(currentUser, currentRole, currentClient, currentOrg);
       OBContext.restorePreviousMode();
     }
     JSONObject jsonResponse = new JSONObject();
