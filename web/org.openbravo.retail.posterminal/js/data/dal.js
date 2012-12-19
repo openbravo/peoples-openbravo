@@ -16,7 +16,7 @@
       undef, wsql = window.openDatabase !== undef,
       db = (wsql && window.openDatabase('WEBPOS', '', 'Openbravo Web POS', dbSize)),
       OP;
-  OB.POS.databaseVersion = '0.4';
+  OB.POS.databaseVersion = '0.5';
 
   function dropTable(db, sql) {
     db.transaction(function (tx) {
