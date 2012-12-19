@@ -46,7 +46,7 @@
 	<parameter name="NUMBERFORMAT" class="java.text.NumberFormat" isForPrompting="false"/>
 	<queryString>
 		<![CDATA[SELECT M_PRODUCT.VALUE, M_PRODUCT.NAME, M_REQUISITIONLINE.QTY,  
-       C_UOM.UOMSYMBOL AS UOMSYMBOL, M_REQUISITIONLINE.LINENETAMT,  
+       C_UOM.UOMSYMBOL AS UOMSYMBOL, M_REQUISITIONLINE.LINENETAMT, M_REQUISITIONLINE.AD_ORG_ID AS ORGANIZATIONID,  
        M_REQUISITIONLINE.PRICEACTUAL, M_REQUISITIONLINE.NEEDBYDATE,  
           (CASE WHEN M_ATTRIBUTESETINSTANCE.M_ATTRIBUTESET_ID IS NULL THEN ''  
                 WHEN M_ATTRIBUTESETINSTANCE.M_ATTRIBUTESET_ID='0' THEN ''  
@@ -65,6 +65,7 @@
 	<field name="PRICEACTUAL" class="java.math.BigDecimal"/>
 	<field name="NEEDBYDATE" class="java.util.Date"/>
 	<field name="ATTRIBUTE" class="java.lang.String"/>
+        <field name="ORGANIZATIONID" class="java.lang.String"/>
 	<variable name="AMOUNT_SUM" class="java.math.BigDecimal" resetType="Group" resetGroup="REQUISITION_ID" calculation="Sum">
 		<variableExpression><![CDATA[$F{LINENETAMT}]]></variableExpression>
 	</variable>
@@ -298,7 +299,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Left" verticalAlignment="Top"/>
-				<textFieldExpression class="java.util.Date"><![CDATA[$F{NEEDBYDATE}]]></textFieldExpression>
+                                <textFieldExpression class="java.lang.String"><![CDATA[org.openbravo.erpCommon.utility.Utility.applyCountryDateFormat($F{NEEDBYDATE},$F{ORGANIZATIONID})]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

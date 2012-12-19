@@ -221,17 +221,19 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
 
       boolean loggedOK = false;
 
-      if ("Y".equals(request.getSession().getAttribute("forceLogin"))) {
-        variables.loggingIn = "Y";
-      }
       // NOTE !isLoggingIn assumes that the value of LoggingIn is N, this
       // is done by the fillSessionArguments below
       if (!variables.isLoggingIn()) {
         // log in process is completed, check whether the session in db is still active
         loggedOK = SeguridadData.loggedOK(this, variables.getDBSession());
         if (!loggedOK) {
-          logout(request, response);
-          return;
+          if ("Y".equals(request.getSession().getAttribute("forceLogin"))) {
+            variables.loggingIn = "Y";
+            loggedOK = true;
+          } else {
+            logout(request, response);
+            return;
+          }
         }
       }
 

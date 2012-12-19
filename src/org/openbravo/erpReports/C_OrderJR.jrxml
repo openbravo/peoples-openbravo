@@ -218,7 +218,7 @@ AND C_CURRENCY.C_CURRENCY_ID=C_ORDER.C_CURRENCY_ID]]>
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Right"/>
-					<textFieldExpression class="java.util.Date"><![CDATA[$F{DATEORDERED}]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[org.openbravo.erpCommon.utility.Utility.applyCountryDateFormat($F{DATEORDERED},$F{ORGANIZATIONID})]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="false">
 					<reportElement key="textField-16" x="121" y="168" width="275" height="55" forecolor="#FF0000"/>
@@ -312,7 +312,7 @@ AND C_CURRENCY.C_CURRENCY_ID=C_ORDER.C_CURRENCY_ID]]>
 					<printWhenExpression><![CDATA[$F{ISTAXINCLUDED}.equals("N")]]></printWhenExpression>
 				</reportElement>
 				<subreportParameter name="NUMBERFORMAT">
-					<subreportParameterExpression><![CDATA[$P{NUMBERFORMAT}]]></subreportParameterExpression>
+					<subreportParameterExpression><![CDATA[org.openbravo.erpCommon.utility.Utility.getCountryNumberFormat($F{ORGANIZATIONID},$P{NUMBERFORMAT})]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="LOCALE">
 					<subreportParameterExpression><![CDATA[$P{LOCALE}]]></subreportParameterExpression>
@@ -331,7 +331,7 @@ AND C_CURRENCY.C_CURRENCY_ID=C_ORDER.C_CURRENCY_ID]]>
 					<printWhenExpression><![CDATA[$F{ISTAXINCLUDED}.equals("Y")]]></printWhenExpression>
 				</reportElement>
 				<subreportParameter name="NUMBERFORMAT">
-					<subreportParameterExpression><![CDATA[$P{NUMBERFORMAT}]]></subreportParameterExpression>
+                                       <subreportParameterExpression><![CDATA[org.openbravo.erpCommon.utility.Utility.getCountryNumberFormat($F{ORGANIZATIONID},$P{NUMBERFORMAT})]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="LOCALE">
 					<subreportParameterExpression><![CDATA[$P{LOCALE}]]></subreportParameterExpression>
@@ -352,7 +352,7 @@ AND C_CURRENCY.C_CURRENCY_ID=C_ORDER.C_CURRENCY_ID]]>
 					<printWhenExpression><![CDATA[$F{ISTAXINCLUDED}.equals("Y")]]></printWhenExpression>
 				</reportElement>
 				<subreportParameter name="NUMBERFORMAT">
-					<subreportParameterExpression><![CDATA[$P{NUMBERFORMAT}]]></subreportParameterExpression>
+                                       <subreportParameterExpression><![CDATA[org.openbravo.erpCommon.utility.Utility.getCountryNumberFormat($F{ORGANIZATIONID},$P{NUMBERFORMAT})]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="LOCALE">
 					<subreportParameterExpression><![CDATA[$P{LOCALE}]]></subreportParameterExpression>

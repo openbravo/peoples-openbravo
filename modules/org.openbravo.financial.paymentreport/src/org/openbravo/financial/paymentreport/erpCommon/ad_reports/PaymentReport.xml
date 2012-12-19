@@ -154,6 +154,7 @@
     <FIELD id="fieldTransCurrency">TRANS_CURRENCY</FIELD>
     <FIELD id="fieldBaseAmount" format="euroInform">BASE_AMOUNT</FIELD>
     <FIELD id="fieldBaseCurrency">BASE_CURRENCY</FIELD>
+    <FIELD id="fieldFinAccount">FINANCIAL_ACCOUNT</FIELD>
 
 <!--     Accumulates Base Amount columns values -->
     <FUNCTION id="subtotalBaseAmount" name="SUM" format="euroInform">BASE_AMOUNT</FUNCTION>
@@ -192,6 +193,7 @@
     <FIELD id="fieldTransCurrency2">TRANS_CURRENCY</FIELD>
     <FIELD id="fieldBaseAmount2" format="euroInform">BASE_AMOUNT</FIELD>
     <FIELD id="fieldBaseCurrency2">BASE_CURRENCY</FIELD>
+    <FIELD id="fieldFinAccount2">FINANCIAL_ACCOUNT</FIELD>
     <FIELD id="fieldGroupCritName">GROUP_CRIT_ID</FIELD>
     <FIELD id="fieldGroupCrit">GROUP_CRIT_ID</FIELD>
 
