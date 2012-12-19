@@ -196,6 +196,12 @@ isc.OBParameterWindowView.addProperties({
     this.loading.hide();
     this.members.push(this.loading);
     this.Super('initWidget', arguments);
+
+    OB.RemoteCallManager.call('org.openbravo.client.application.process.DefaultsProcessActionHandler', {}, {
+      processId: this.processId
+    }, function (rpcResponse, data, rpcRequest) {
+      view.handleDefaults(data);
+    });
   },
 
   handleResponse: function (refresh, message, responseActions) {
@@ -319,5 +325,21 @@ isc.OBParameterWindowView.addProperties({
     }, function (rpcResponse, data, rpcRequest) {
       view.handleResponse(true, (data && data.message));
     });
+  },
+
+  handleDefaults: function (defaults) {
+    var i;
+
+    if (!this.theForm) {
+      return;
+    }
+
+    for (i in defaults) {
+      if (defaults.hasOwnProperty(i)) {
+        if (this.theForm.getItem(i)) {
+          this.theForm.getItem(i).setValue(defaults[i]);
+        }
+      }
+    }
   }
 });

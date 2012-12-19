@@ -11,80 +11,57 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.client.application.process;
 
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
-import org.openbravo.base.util.Check;
 import org.openbravo.client.application.Parameter;
 import org.openbravo.client.application.ParameterUtils;
 import org.openbravo.client.application.Process;
-import org.openbravo.client.kernel.BaseActionHandler;
-import org.openbravo.client.kernel.KernelConstants;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 
 /**
  * 
- * @author iperdomo
+ * @author alostale
  */
-public abstract class BaseProcessActionHandler extends BaseActionHandler {
+public class DefaultsProcessActionHandler extends BaseProcessActionHandler {
 
-  private static final Logger log = Logger.getLogger(BaseProcessActionHandler.class);
+  private static final Logger log = Logger.getLogger(DefaultsProcessActionHandler.class);
 
   @Override
-  protected final JSONObject execute(Map<String, Object> parameters, String content) {
-
+  protected final JSONObject doExecute(Map<String, Object> parameters, String content) {
     try {
       OBContext.setAdminMode();
 
       final String processId = (String) parameters.get("processId");
-      Check.isNotNull(processId, "Process ID missing in request");
-
       final Process processDefinition = OBDal.getInstance().get(Process.class, processId);
-      Check.isNotNull(processDefinition, "Not valid process id");
+
+      JSONObject defaults = new JSONObject();
 
       for (Parameter param : processDefinition.getOBUIAPPParameterList()) {
-        if (param.isFixed() && param.isEvaluateFixedValue()) {
-          parameters.put(param.getDBColumnName(),
-              ParameterUtils.getParameterFixedValue(fixRequestMap(parameters), param));
+        if (param.getDefaultValue() != null) {
+          defaults.put(
+              param.getDBColumnName(),
+              ParameterUtils.getJSExpressionResult(fixRequestMap(parameters), null,
+                  param.getDefaultValue()));
         }
       }
-
-      return doExecute(parameters, content);
-
+      log.debug("Defaults for process " + processDefinition + "\n" + defaults.toString());
+      return defaults;
     } catch (Exception e) {
-      log.error("Error trying to execute process request: " + e.getMessage(), e);
+      log.error("Error trying getting defaults for process: " + e.getMessage(), e);
       return new JSONObject();
     } finally {
       OBContext.restorePreviousMode();
     }
   }
 
-  /*
-   * The request map is <String, Object> because includes the HTTP request and HTTP session, is not
-   * required to handle process parameters
-   */
-  protected Map<String, String> fixRequestMap(Map<String, Object> parameters) {
-    final Map<String, String> retval = new HashMap<String, String>();
-    for (Entry<String, Object> entries : parameters.entrySet()) {
-      if (entries.getKey().equals(KernelConstants.HTTP_REQUEST)
-          || entries.getKey().equals(KernelConstants.HTTP_SESSION)) {
-        continue;
-      }
-      retval.put(entries.getKey(), entries.getValue().toString());
-    }
-    return new HashMap<String, String>();
-  }
-
-  protected abstract JSONObject doExecute(Map<String, Object> parameters, String content);
 }
