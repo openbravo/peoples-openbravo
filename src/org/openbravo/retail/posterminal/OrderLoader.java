@@ -832,19 +832,22 @@ public class OrderLoader extends JSONProcessSimple {
 
   protected void handleStock(ShipmentInOut shipment) {
     for (ShipmentInOutLine line : shipment.getMaterialMgmtShipmentInOutLineList()) {
-      MaterialTransaction transaction = OBProvider.getInstance().get(MaterialTransaction.class);
-      transaction.setOrganization(line.getOrganization());
-      transaction.setMovementType(shipment.getMovementType());
-      transaction.setProduct(line.getProduct());
-      transaction.setStorageBin(line.getStorageBin());
-      transaction.setOrderUOM(line.getOrderUOM());
-      transaction.setUOM(line.getUOM());
-      transaction.setOrderQuantity(line.getOrderQuantity());
-      transaction.setMovementQuantity(line.getMovementQuantity().multiply(NEGATIVE_ONE));
-      transaction.setMovementDate(shipment.getMovementDate());
-      transaction.setGoodsShipmentLine(line);
+      if (line.getProduct().getProductType().equals("I") && line.getProduct().isStocked()) {
+        // Stock is changed only for stocked products of type "Item"
+        MaterialTransaction transaction = OBProvider.getInstance().get(MaterialTransaction.class);
+        transaction.setOrganization(line.getOrganization());
+        transaction.setMovementType(shipment.getMovementType());
+        transaction.setProduct(line.getProduct());
+        transaction.setStorageBin(line.getStorageBin());
+        transaction.setOrderUOM(line.getOrderUOM());
+        transaction.setUOM(line.getUOM());
+        transaction.setOrderQuantity(line.getOrderQuantity());
+        transaction.setMovementQuantity(line.getMovementQuantity().multiply(NEGATIVE_ONE));
+        transaction.setMovementDate(shipment.getMovementDate());
+        transaction.setGoodsShipmentLine(line);
 
-      OBDal.getInstance().save(transaction);
+        OBDal.getInstance().save(transaction);
+      }
     }
   }
 
