@@ -27,6 +27,7 @@ isc.OBSelectorPopupWindow.addProperties({
   canDragResize: true,
   dismissOnEscape: true,
   showMaximizeButton: true,
+  multiselect: false,
 
   defaultSelectorGridField: {
     canFreeze: true,
@@ -75,6 +76,7 @@ isc.OBSelectorPopupWindow.addProperties({
     this.selectorGrid = isc.OBGrid.create({
 
       selector: this.selector,
+      selectionAppearance: this.selectionAppearance,
 
       dataProperties: {
         useClientFiltering: false,
@@ -286,7 +288,15 @@ isc.OBSelectorPopupWindow.addProperties({
   },
 
   setValueInField: function () {
-    this.selector.setValueFromRecord(this.selectorGrid.getSelectedRecord(), true);
+    var i, selectedRecords;
+    if (this.multiselect) {
+      selectedRecords = this.selectorGrid.getSelectedRecords();
+      for (i = 0; i < selectedRecords.length; i++) {
+        this.selector.setValueFromRecord(selectedRecords[i], true);
+      }
+    } else {
+      this.selector.setValueFromRecord(this.selectorGrid.getSelectedRecord(), true);
+    }
     this.hide();
   }
 });

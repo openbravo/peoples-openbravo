@@ -76,3 +76,22 @@ isc.OBSelectorLinkItem.addProperties({
     prompt: OB.I18N.getLabel('OBUIAPP_ClearIconPrompt')
   }
 });
+
+//isc.OBMultiSelectorItem.addProperties(isc.addProperties({}, OB.Styles.OBSelectorItem.DefaultComboBox));
+isc.OBMultiSelectorItem.addProperties(isc.addProperties({}, OB.Styles.OBFormField.DefaultComboBox));
+isc.OBMultiSelectorItem.addProperties({
+
+  comboBoxProperties: OB.Styles.OBFormField.DefaultComboBox,
+
+
+  popupIconSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/search_picker.png',
+  popupIconWidth: 21,
+  popupIconHeight: 21,
+  popupIconHspace: 0,
+  buttonDefaults: {
+    iconOrientation: 'left',
+    align: 'left',
+    icon: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/clearField.png'
+  }
+
+});
