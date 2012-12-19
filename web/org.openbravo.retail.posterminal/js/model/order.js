@@ -10,6 +10,7 @@
 /*global B,_,moment,Backbone,localStorage */
 
 (function () {
+
   // Sales.OrderLine Model
   var OrderLine = Backbone.Model.extend({
     defaults: {
@@ -1105,7 +1106,20 @@
 
 
     },
-
+    newDynamicOrder: function (model, callback) {
+      var order = new Backbone.Model(),
+          undf;
+      _.each(_.keys(model), function (key) {
+        if (model[key] !== undf) {
+          if (model[key] === null) {
+            order.set(key, null);
+          } else {
+            order.set(key, model[key]);
+          }
+        }
+      });
+      callback(order);
+    },
     addNewOrder: function () {
       this.saveCurrent();
       this.current = this.newOrder();

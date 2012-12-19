@@ -31,63 +31,51 @@ public class PaidReceipts extends JSONProcessSimple {
 
     JSONArray respArray = new JSONArray();
     OBContext.setAdminMode(true);
-    JSONObject json = jsonsent.getJSONObject("filters");
-    String pos = json.getString("pos");
-    String client = json.getString("client");
-    String organization = json.getString("organization");
+    String orderid = jsonsent.getString("orderid");
 
     String hqlPaidReceipts = "select ord.id as id, ord.documentNo as documentNo, ord.orderDate as orderDate, "
-        + "ord.businessPartner.id as businessPartner, ord.grandTotalAmount as totalamount,  ord.salesRepresentative.name as salesRepresentative_identifier,  ord.documentType.name as documenttype, "
-        + "ord.id as orderid, ord.warehouse.id as warehouse, ord.currency.iSOCode as currency, ord.obposApplications.name as posterminalidentifier, ord.businessPartner.name as businessPartner_identifier, ord.currency.id as currency, ord.priceList.id as priceList, ord.salesRepresentative.id as salesRepresentative from Order as ord where ord.client=? and ord.organization=? and ord.obposApplications is not null";
-    if (!json.getString("filterText").isEmpty()) {
-      hqlPaidReceipts += " and (ord.documentNo like '%" + json.getString("filterText")
-          + "%' or upper(ord.businessPartner.name) like upper('%" + json.getString("filterText")
-          + "%')) ";
-    }
-    if (!json.getString("documentType").isEmpty()) {
-      hqlPaidReceipts += " and ord.documentType.id='" + json.getString("documentType") + "'";
-    }
-    if (!json.getString("docstatus").isEmpty() && !json.getString("docstatus").equals("null")) {
-      hqlPaidReceipts += " and ord.documentStatus='" + json.getString("docstatus") + "'";
-    }
-    if (!json.getString("startDate").isEmpty()) {
-      hqlPaidReceipts += " and ord.orderDate >='" + json.getString("startDate") + "'";
-    }
-    if (!json.getString("endDate").isEmpty()) {
-      hqlPaidReceipts += " and ord.orderDate <='" + json.getString("endDate") + "'";
-    }
+        + "ord.businessPartner.id as businessPartner, ord.grandTotalAmount as totalamount,  "
+        + "ord.salesRepresentative.name as salesRepresentative_identifier,  ord.documentType.name as documenttype, "
+        + "ord.warehouse.id as warehouse, ord.currency.iSOCode as currency, ord.obposApplications.name as posterminalidentifier, "
+        + "ord.businessPartner.name as businessPartner_identifier, ord.currency.id as currency, ord.priceList.id as priceList, "
+        + "ord.salesRepresentative.id as salesRepresentative, ord.organization.id as organization, ord.obposApplications.id as obposApplications, "
+        + "ord.client.id as client, ord.documentType.id as documentTypeId, ord.obposApplications.obposTerminaltype.documentTypeForQuotations.id as docTypeQuotation from Order as ord where ord.id=? and ord.obposApplications is not null";
+
     Query paidReceiptsQuery = OBDal.getInstance().getSession().createQuery(hqlPaidReceipts);
-    paidReceiptsQuery.setString(0, client);
-    paidReceiptsQuery.setString(1, organization);
+    paidReceiptsQuery.setString(0, orderid);
 
     for (Object obj : paidReceiptsQuery.list()) {
       Object[] objpaidReceipts = (Object[]) obj;
       JSONObject paidReceipt = new JSONObject();
+      paidReceipt.put("orderid", objpaidReceipts[0]);
       paidReceipt.put("documentNo", objpaidReceipts[1]);
       paidReceipt.put("orderDate", (objpaidReceipts[2]));
       paidReceipt.put("businessPartner", objpaidReceipts[3]);
       paidReceipt.put("totalamount", objpaidReceipts[4]);
       paidReceipt.put("salesrepresentative_identifier", objpaidReceipts[5]);
       paidReceipt.put("documenttype", objpaidReceipts[6]);
-      paidReceipt.put("orderid", objpaidReceipts[7]);
-      paidReceipt.put("warehouse", objpaidReceipts[8]);
-      paidReceipt.put("currency_identifier", objpaidReceipts[9]);
-      paidReceipt.put("posterminalidentifier", objpaidReceipts[10]);
-      paidReceipt.put("businessPartner_identifier", objpaidReceipts[11]);
-      paidReceipt.put("currency", objpaidReceipts[12]);
-      paidReceipt.put("priceList", objpaidReceipts[13]);
-      paidReceipt.put("salesRepresentative", objpaidReceipts[14]);
-      paidReceipt.put("organization", json.getString("organization"));
-      paidReceipt.put("posterminal", json.getString("pos"));
-      paidReceipt.put("client", json.getString("client"));
-      paidReceipt.put("isQuotation", json.getBoolean("isQuotation"));
+      paidReceipt.put("warehouse", objpaidReceipts[7]);
+      paidReceipt.put("currency_identifier", objpaidReceipts[8]);
+      paidReceipt.put("posterminalidentifier", objpaidReceipts[8]);
+      paidReceipt.put("businessPartner_identifier", objpaidReceipts[10]);
+      paidReceipt.put("currency", objpaidReceipts[11]);
+      paidReceipt.put("priceList", objpaidReceipts[12]);
+      paidReceipt.put("salesRepresentative", objpaidReceipts[13]);
+      paidReceipt.put("organization", objpaidReceipts[14]);
+      paidReceipt.put("posterminal", objpaidReceipts[15]);
+      paidReceipt.put("client", objpaidReceipts[16]);
+      if (objpaidReceipts[18] != null
+          && objpaidReceipts[17].toString().equals(objpaidReceipts[18].toString())) {
+        paidReceipt.put("isQuotation", true);
+      } else {
+        paidReceipt.put("isQuotation", false);
+      }
 
       JSONArray listpaidReceiptsLines = new JSONArray();
       String hqlPaidReceiptsLines = "select ordLine.product.id as id, ordLine.product.name as name, ordLine.product.uOM.id as uOM, ordLine.orderedQuantity as quantity, "
           + "ordLine.baseGrossUnitPrice as unitPrice, ordLine.lineGrossAmount as linegrossamount, ordLine.id as lineId from OrderLine as ordLine where ordLine.salesOrder.id=?";
       Query paidReceiptsLinesQuery = OBDal.getInstance().getSession()
           .createQuery(hqlPaidReceiptsLines);
-      // // paidReceiptsQuery.setString(0, id);
       paidReceiptsLinesQuery.setString(0, (String) objpaidReceipts[0]);
       for (Object objLine : paidReceiptsLinesQuery.list()) {
         Object[] objpaidReceiptsLines = (Object[]) objLine;
@@ -162,7 +150,7 @@ public class PaidReceipts extends JSONProcessSimple {
           + " from OBPOS_App_Payment as p where p.obposApplications.id=? ";
       Query paymentsTypeQuery = OBDal.getInstance().getSession().createQuery(hqlPaymentsType);
       // paidReceiptsQuery.setString(0, id);
-      paymentsTypeQuery.setString(0, pos);
+      paymentsTypeQuery.setString(0, objpaidReceipts[16].toString());
       for (Object objPaymentType : paymentsTypeQuery.list()) {
         Object[] objPaymentsType = (Object[]) objPaymentType;
         JSONObject paymentsType = new JSONObject();

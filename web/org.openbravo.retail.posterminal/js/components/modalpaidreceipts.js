@@ -194,8 +194,8 @@ enyo.kind({
   }],
   create: function () {
     this.inherited(arguments);
-    this.$.topLine.setContent(this.model.get('documentNo') + ' - ' + this.model.get('bp').get('_identifier'));
-    this.$.bottonLine.setContent(this.model.get('gross'));
+    this.$.topLine.setContent(this.model.get('documentNo') + ' - ' + this.model.get('businessPartner'));
+    this.$.bottonLine.setContent(this.model.get('totalamount') + ' (' + this.model.get('orderDate').substring(0, 10) + ') ');
   }
 });
 
@@ -234,14 +234,14 @@ enyo.kind({
   },
   searchAction: function (inSender, inEvent) {
     var me = this,
-        process = new OB.DS.Process('org.openbravo.retail.posterminal.PaidReceipts');
+        process = new OB.DS.Process('org.openbravo.retail.posterminal.PaidReceiptsHeader');
     this.clearAction();
     process.exec({
       filters: inEvent.filters
     }, function (data) {
       if (data) {
         _.each(data, function (iter) {
-          me.model.get('orderList').newPaidReceipt(iter, function (order) {
+          me.model.get('orderList').newDynamicOrder(iter, function (order) {
             me.prsList.add(order);
           });
         });
@@ -253,13 +253,29 @@ enyo.kind({
   },
   prsList: null,
   init: function (model) {
+    var me = this,
+        process = new OB.DS.Process('org.openbravo.retail.posterminal.PaidReceipts');
     this.model = model;
     this.prsList = new Backbone.Collection();
     this.$.prslistitemprinter.setCollection(this.prsList);
     this.prsList.on('click', function (model) {
-      this.doChangePaidReceipt({
-        newPaidReceipt: model
+      OB.UTIL.showLoading(true);
+      process.exec({
+        orderid: model.get('orderid')
+      }, function (data) {
+        OB.UTIL.showLoading(false);
+        if (data) {
+          me.model.get('orderList').newPaidReceipt(data[0], function (order) {
+            me.doChangePaidReceipt({
+              newPaidReceipt: order
+            });
+          });
+        } else {
+          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorDropDep'));
+        }
       });
+      return true;
+
     }, this);
   }
 });
