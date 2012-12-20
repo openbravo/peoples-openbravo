@@ -168,6 +168,10 @@
     return label;
   };
 
+  OB.I18N.hasLabel = function (key, params, object, property) {
+    if (OB.I18N.labels[key]) ? true : false;
+  };
+
   executeWhenDOMReady = function () {
     if (document.readyState === "interactive" || document.readyState === "complete") {
       OB.POS.modelterminal.off('loginfail');

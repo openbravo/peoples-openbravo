@@ -150,7 +150,11 @@ OB.Model.Terminal = Backbone.Model.extend({
         new OB.DS.Request('org.openbravo.retail.posterminal.term.Terminal').exec(params, function (data) {
           if (data.exception) {
             OB.POS.navigate('login');
-            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorLoadingTerminal'));
+            if (OB.I18N.hasLabel(data.exception.message)) {
+              OB.UTIL.showError(OB.I18N.getLabel(data.exception.message));
+            } else {
+              OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorLoadingTerminal'));
+            }
           } else if (data[0]) {
             me.set('terminal', data[0]);
             if (!me.usermodel) {
