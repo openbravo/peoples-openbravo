@@ -121,7 +121,8 @@ enyo.kind({
     onClearAction: ''
   },
   handlers: {
-    onSearchActionByKey: 'searchAction'
+    onSearchActionByKey: 'searchAction',
+    onFiltered: 'searchAction'
   },
   components: [{
     style: 'padding: 10px;',
@@ -130,10 +131,9 @@ enyo.kind({
       components: [{
         style: 'display: table-cell; width: 100%;',
         components: [{
-          kind: 'OB.UI.SearchInput',
+          kind: 'OB.UI.SearchInputAutoFilter',
           name: 'filterText',
-          style: 'width: 100%',
-          onchange: 'searchAction'
+          style: 'width: 100%'
         }]
       }, {
         style: 'display: table-cell;',
@@ -178,6 +178,7 @@ enyo.kind({
     this.doSearchAction({
       bpName: this.$.filterText.getValue()
     });
+    return true;
   }
 });
 

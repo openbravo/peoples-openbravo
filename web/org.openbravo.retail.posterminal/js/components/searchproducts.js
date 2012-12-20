@@ -16,6 +16,9 @@ enyo.kind({
     onSearchAction: '',
     onClearAction: ''
   },
+  handlers: {
+    onFiltered: 'searchAction'
+  },
   components: [{
     style: 'padding: 10px 10px 5px 10px;',
     components: [{
@@ -23,10 +26,9 @@ enyo.kind({
       components: [{
         style: 'display: table-cell; width: 100%;',
         components: [{
-          kind: 'OB.UI.SearchInput',
+          kind: 'OB.UI.SearchInputAutoFilter',
           name: 'productname',
-          style: 'width: 100%;',
-          onchange: 'searchAction'
+          style: 'width: 100%;'
         }]
       }, {
         style: 'display: table-cell;',
@@ -80,6 +82,7 @@ enyo.kind({
       productCat: this.$.productcategory.getValue(),
       productName: this.$.productname.getValue()
     });
+    return true;
   },
   clearAction: function () {
     this.$.productname.setValue('');

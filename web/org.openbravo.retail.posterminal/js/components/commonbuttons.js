@@ -483,6 +483,28 @@ enyo.kind({
 });
 
 enyo.kind({
+  name: 'OB.UI.SearchInputAutoFilter',
+  kind: 'enyo.Input',
+  type: 'text',
+  classes: 'input',
+  attributes: {
+    'x-webkit-speech': 'x-webkit-speech'
+  },
+  events: {
+    onFiltered: ''
+  },
+  input: function () {
+    var temp = this.getValue(),
+        me = this;
+    setTimeout(function () {
+      if (temp === me.getValue()) {
+        me.doFiltered();
+      }
+    }, 750);
+  }
+});
+
+enyo.kind({
   name: 'OB.UI.MenuAction',
   permission: null,
   components: [{
