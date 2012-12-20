@@ -505,20 +505,18 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
           showbpartner = true;
           showproduct = false;
           showProject = false;
-
         } else if (strGroupBy.equals("Product")) {
           showbpartner = false;
           showproduct = true;
           showProject = false;
-
         } else if (strGroupBy.equals("Project")) {
           showbpartner = false;
           showproduct = false;
           showProject = true;
         } else {
-          showbpartner = false;
-          showproduct = false;
-          showProject = false;
+          showbpartner = true;
+          showproduct = true;
+          showProject = true;
         }
       } else {
         data = getDataWhenNotSubAccount(vars, strDateFrom, strDateTo, strOrg, strOrgFamily,
@@ -540,7 +538,9 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
         StringBuilder strSubTitle = new StringBuilder();
 
         strSubTitle.append(Utility.messageBD(this, "LegalEntity", vars.getLanguage()) + ": ");
-        strSubTitle.append(ReportTrialBalanceData.selectCompany(this, vars.getClient()) + "\n");
+        strSubTitle.append(ReportTrialBalanceData.selectCompany(this, vars.getClient())+ " (");
+        strSubTitle.append(Utility.messageBD(this, "ACCS_AD_ORG_ID_D", vars.getLanguage())+": " );
+        strSubTitle.append(ReportTrialBalanceData.selectOrgName(this, strOrg)+ ") \n");
         strSubTitle.append("As of: " + strDateTo);
 
         parameters.put("REPORT_SUBTITLE", strSubTitle.toString());
