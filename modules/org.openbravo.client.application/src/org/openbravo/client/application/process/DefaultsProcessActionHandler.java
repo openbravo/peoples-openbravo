@@ -20,11 +20,14 @@ package org.openbravo.client.application.process;
 
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
+
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.application.Parameter;
 import org.openbravo.client.application.ParameterUtils;
 import org.openbravo.client.application.Process;
+import org.openbravo.client.kernel.KernelConstants;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 
@@ -48,10 +51,9 @@ public class DefaultsProcessActionHandler extends BaseProcessActionHandler {
 
       for (Parameter param : processDefinition.getOBUIAPPParameterList()) {
         if (param.getDefaultValue() != null) {
-          defaults.put(
-              param.getDBColumnName(),
-              ParameterUtils.getJSExpressionResult(fixRequestMap(parameters), null,
-                  param.getDefaultValue()));
+          defaults.put(param.getDBColumnName(), ParameterUtils.getJSExpressionResult(
+              fixRequestMap(parameters),
+              (HttpSession) parameters.get(KernelConstants.HTTP_SESSION), param.getDefaultValue()));
         }
       }
       log.debug("Defaults for process " + processDefinition + "\n" + defaults.toString());
