@@ -39,6 +39,31 @@ public class SimpleQueryBuilder {
     // :activeCriteria
   }
 
+  private static String getClientFilter(Collection<String> clients) {
+
+    StringBuilder clientfilter = new StringBuilder();
+
+    if (clients.size() == 0) {
+      clientfilter.append(" (1=1) ");
+    } else {
+      clientfilter.append(" ($$$$client.id in (");
+      boolean comma = false;
+      for (String s : clients) {
+        if (comma) {
+          clientfilter.append(", ");
+        } else {
+          comma = true;
+        }
+        clientfilter.append("'");
+        clientfilter.append(s);
+        clientfilter.append("'");
+      }
+      clientfilter.append(")) ");
+    }
+
+    return clientfilter.toString();
+  }
+
   private static String getOrgFilter(Collection<String> orgs) {
 
     StringBuilder orgfilter = new StringBuilder();
@@ -113,6 +138,18 @@ public class SimpleQueryBuilder {
     }
   }
 
+  private static class CurrentOrganizationCriteria implements PartBuilder {
+    public String getPart() {
+      return "'" + OBContext.getOBContext().getCurrentOrganization().getId() + "'";
+    }
+  }
+
+  private static class CurrentClientCriteria implements PartBuilder {
+    public String getPart() {
+      return "'" + OBContext.getOBContext().getCurrentClient().getId() + "'";
+    }
+  }
+
   private static class OrganizationCriteria implements PartBuilder {
     public String getPart() {
       return getOrgFilter(Arrays.asList(OBContext.getOBContext().getReadableOrganizations()));
@@ -121,30 +158,7 @@ public class SimpleQueryBuilder {
 
   private static class ClientCriteria implements PartBuilder {
     public String getPart() {
-
-      StringBuilder clientfilter = new StringBuilder();
-
-      final String[] clients = OBContext.getOBContext().getReadableClients();
-
-      if (clients.length == 0) {
-        clientfilter.append(" (1=1) ");
-      } else {
-        clientfilter.append(" ($$$$client.id in (");
-        boolean comma = false;
-        for (String s : clients) {
-          if (comma) {
-            clientfilter.append(", ");
-          } else {
-            comma = true;
-          }
-          clientfilter.append("'");
-          clientfilter.append(s);
-          clientfilter.append("'");
-        }
-        clientfilter.append(")) ");
-      }
-
-      return clientfilter.toString();
+      return getClientFilter(Arrays.asList(OBContext.getOBContext().getReadableClients()));
     }
   }
 
@@ -218,6 +232,8 @@ public class SimpleQueryBuilder {
     newhql = replaceAll(newhql, "$clientCriteria", new ClientCriteria());
 
     newhql = replaceAll(newhql, "$orgCriteria", new OrganizationCriteria());
+    newhql = replaceAll(newhql, "$clientId", new CurrentClientCriteria());
+    newhql = replaceAll(newhql, "$orgId", new CurrentOrganizationCriteria());
     newhql = replaceAll(newhql, "$naturalOrgCriteria", new NaturalOrganizationCriteria(client, org));
     newhql = replaceAll(newhql, "$parentOrgCriteria", new ParentOrganizationCriteria(client, org));
     newhql = replaceAll(newhql, "$childOrgCriteria", new ChildOrganizationCriteria(client, org));

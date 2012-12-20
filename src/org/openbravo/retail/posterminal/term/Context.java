@@ -13,6 +13,7 @@ import java.util.List;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.retail.posterminal.ProcessHQLQuery;
 
 public class Context extends ProcessHQLQuery {
@@ -25,8 +26,11 @@ public class Context extends ProcessHQLQuery {
   @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
     return Arrays
-        .asList(new String[] { "select u as user, img.bindaryData as img, r as role "
-            + "from ADUser u left outer join u.image img, ADRole r "
-            + "where u.id = $userId and u.$readableCriteria and r.id = $roleId and r.$readableCriteria" });
+        .asList(new String[] { "select u as user, img.bindaryData as img, r as role, org as organization, cli as client "
+            + "from ADUser u left outer join u.image img, ADRole r, Organization org, ADClient cli "
+            + "where u.id = $userId and u.$readableCriteria and r.id = $roleId and r.$readableCriteria and org.id ='"
+            + OBContext.getOBContext().getCurrentOrganization().getId()
+            + "' and cli.id = '"
+            + OBContext.getOBContext().getCurrentClient().getId() + "'" });
   }
 }

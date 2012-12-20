@@ -179,6 +179,30 @@
 
   OB.UTIL.checkConnectivityStatus = function () {
     var ajaxParams, currentlyConnected = OB.POS.modelterminal.get('connectedToERP');
+    var oldContext = OB.POS.modelterminal.get('context');
+    if (currentlyConnected && oldContext) {
+      new OB.DS.Request('org.openbravo.retail.posterminal.term.Context').exec({}, function (data) {
+        var newContext;
+        if (data[0]) {
+          newContext = data[0];
+          if (newContext.user.id !== oldContext.user.id || newContext.organization.id !== oldContext.organization.id || newContext.client.id !== oldContext.client.id || newContext.role.id !== oldContext.role.id) {
+            if (!OB.POS.terminal.$.dialogsContainer.$.modalContextChanged) {
+              OB.POS.terminal.$.dialogsContainer.createComponent({
+                kind: 'OB.UI.ModalContextChanged',
+                name: 'modalContextChanged'
+              }).render();
+            }
+            OB.POS.terminal.$.dialogsContainer.$.modalContextChanged.show();
+          }
+        }
+      }, function () {
+        console.error("fail");
+        if (OB.POS.modelterminal) {
+          OB.POS.modelterminal.triggerOffLine();
+        }
+      });
+      return;
+    }
     if (navigator.onLine) {
       // It can be a false positive, make sure with the ping
       var ajaxRequest = new enyo.Ajax({
