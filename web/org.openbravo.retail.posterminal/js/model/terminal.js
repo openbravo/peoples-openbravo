@@ -423,6 +423,7 @@ OB.Model.Terminal = Backbone.Model.extend({
         } else {
           if (users.models[0].get('password') === me.generate_sha1(me.password + users.models[0].get('created'))) {
             me.usermodel = users.models[0];
+            me.set('orgUserId', users.models[0].id);
             me.updateSession(me.usermodel);
             OB.POS.navigate('main', {
               trigger: true
@@ -449,12 +450,13 @@ OB.Model.Terminal = Backbone.Model.extend({
         date = new Date().toString();
         user = new OB.Model.User();
         user.set('name', me.user);
+        user.set('id', OB.POS.modelterminal.get('orgUserId'));
         savedPass = me.generate_sha1(me.password + date);
         user.set('password', savedPass);
         user.set('created', date);
         OB.Dal.save(user, function () {}, function () {
           window.console.error(arguments);
-        });
+        }, true);
         me.usermodel = user;
       } else {
         user = users.models[0];
