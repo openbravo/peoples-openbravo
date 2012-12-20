@@ -1702,12 +1702,12 @@ public abstract class AcctServer {
         obqParameters.setFilterOnReadableOrganization(false);
         final List<CategoryAccounts> customerAccounts = obqParameters.list();
         if (customerAccounts != null && customerAccounts.size() > 0
-            && customerAccounts.get(0).getUnrealizedLossesAcct() != null) {
-          strValidCombination = customerAccounts.get(0).getUnrealizedLossesAcct().getId();
+            && customerAccounts.get(0).getDoubtfulDebtAccount() != null) {
+          strValidCombination = customerAccounts.get(0).getDoubtfulDebtAccount().getId();
         }
         if (strValidCombination.equals("")) {
           Map<String, String> parameters = new HashMap<String, String>();
-          parameters.put("Account", "@UnrealizedLoss@");
+          parameters.put("Account", "@DoubtfulDebt@");
           parameters.put("Entity", bp.getBusinessPartnerCategory().getIdentifier());
           parameters.put(
               "AccountingSchema",
@@ -1786,7 +1786,7 @@ public abstract class AcctServer {
    * 
    * @param BPartnerId
    *          : ID of the Business Partner
-   * @param isProvisionExpense
+   * @param isExpense
    *          : Provision Expense Account. If not it applies to Provision Applied account
    * @param as
    *          : Accounting Schema
@@ -1795,7 +1795,7 @@ public abstract class AcctServer {
    * @return Account
    * @throws ServletException
    */
-  public final Account getAccountBPartnerProvision(String BPartnerId, boolean isProvisionExpense,
+  public final Account getAccountBPartnerBadDebt(String BPartnerId, boolean isExpense,
       AcctSchema as, ConnectionProvider conn) throws ServletException {
 
     String strValidCombination = "";
@@ -1811,21 +1811,19 @@ public abstract class AcctServer {
     obqParameters.setFilterOnReadableClients(false);
     obqParameters.setFilterOnReadableOrganization(false);
     final List<CategoryAccounts> customerAccounts = obqParameters.list();
-    // TODO: Review Accounts
     if (customerAccounts != null && customerAccounts.size() > 0
-        && customerAccounts.get(0).getBadDebtExpenseAccount() != null && isProvisionExpense) {
+        && customerAccounts.get(0).getBadDebtExpenseAccount() != null && isExpense) {
       strValidCombination = customerAccounts.get(0).getBadDebtExpenseAccount().getId();
     } else if (customerAccounts != null && customerAccounts.size() > 0
-        && customerAccounts.get(0).getAllowanceForDoubtfulDebtAccount() != null
-        && !isProvisionExpense) {
-      strValidCombination = customerAccounts.get(0).getAllowanceForDoubtfulDebtAccount().getId();
+        && customerAccounts.get(0).getBadDebtRevenueAccount() != null && !isExpense) {
+      strValidCombination = customerAccounts.get(0).getBadDebtRevenueAccount().getId();
     }
     if (strValidCombination.equals("")) {
       Map<String, String> parameters = new HashMap<String, String>();
-      if (isProvisionExpense) {
+      if (isExpense) {
         parameters.put("Account", "@BadDebtExpenseAccount@");
       } else {
-        parameters.put("Account", "@AllowanceForDoubtfulDebtAccount@");
+        parameters.put("Account", "@BadDebtRevenueAccount@");
       }
       parameters.put("Entity", bp.getBusinessPartnerCategory().getIdentifier());
       parameters.put(
@@ -1838,7 +1836,57 @@ public abstract class AcctServer {
       throw new IllegalStateException();
     }
     return new Account(conn, strValidCombination);
-  } // getAccountBPartnerProvision
+  } // getAccountBPartnerBadDebt
+
+  /**
+   * It gets Account to be used to provision for the selected Business Partner
+   * 
+   * @param BPartnerId
+   *          : ID of the Business Partner
+   * @param isExpense
+   *          : Provision Expense Account. If not it applies to Provision Applied account
+   * @param as
+   *          : Accounting Schema
+   * @param conn
+   *          : Connection Provider
+   * @return Account
+   * @throws ServletException
+   */
+  public final Account getAccountBPartnerAllowanceForDoubtfulDebt(String BPartnerId, AcctSchema as,
+      ConnectionProvider conn) throws ServletException {
+
+    String strValidCombination = "";
+    final StringBuilder whereClause = new StringBuilder();
+    BusinessPartner bp = OBDal.getInstance().get(BusinessPartner.class, BPartnerId);
+    whereClause.append(" as cuscata ");
+    whereClause.append(" where cuscata.businessPartnerCategory.id = '"
+        + bp.getBusinessPartnerCategory().getId() + "'");
+    whereClause.append(" and cuscata.accountingSchema.id = '" + as.m_C_AcctSchema_ID + "'");
+
+    final OBQuery<CategoryAccounts> obqParameters = OBDal.getInstance().createQuery(
+        CategoryAccounts.class, whereClause.toString());
+    obqParameters.setFilterOnReadableClients(false);
+    obqParameters.setFilterOnReadableOrganization(false);
+    final List<CategoryAccounts> customerAccounts = obqParameters.list();
+    if (customerAccounts != null && customerAccounts.size() > 0
+        && customerAccounts.get(0).getAllowanceForDoubtfulDebtAccount() != null) {
+      strValidCombination = customerAccounts.get(0).getAllowanceForDoubtfulDebtAccount().getId();
+    }
+    if (strValidCombination.equals("")) {
+      Map<String, String> parameters = new HashMap<String, String>();
+      parameters.put("Account", "@AllowanceForDoubtfulDebtAccount@");
+      parameters.put("Entity", bp.getBusinessPartnerCategory().getIdentifier());
+      parameters.put(
+          "AccountingSchema",
+          OBDal
+              .getInstance()
+              .get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
+                  as.getC_AcctSchema_ID()).getIdentifier());
+      setMessageResult(conn, STATUS_InvalidAccount, "error", parameters);
+      throw new IllegalStateException();
+    }
+    return new Account(conn, strValidCombination);
+  } // getAccountBPartnerBadDebt
 
   /**
    * Get the account for GL Item

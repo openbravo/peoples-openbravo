@@ -138,6 +138,8 @@ public class DocFINFinAccTransaction extends AcctServer {
             .toString());
         FieldProviderFactory.setField(data[i], "Amount", paymentDetails.get(i).getAmount()
             .toString());
+        FieldProviderFactory.setField(data[i], "DoubtFulDebtAmount", paymentDetails.get(i)
+            .getFINPaymentScheduleDetailList().get(0).getDebtAmount().toString());
         FieldProviderFactory.setField(data[i], "isprepayment",
             paymentDetails.get(i).isPrepayment() ? "Y" : "N");
         // Check if payment against invoice is in a previous date than invoice accounting date
@@ -313,6 +315,7 @@ public class DocFINFinAccTransaction extends AcctServer {
                   .getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule()
                   .getInvoice()
                   : null);
+          docLine.setDoubtFulDebtAmount(new BigDecimal(data[i].getField("DoubtFulDebtAmount")));
         }
         docLine.setIsPrepayment(data[i].getField("isprepayment"));
         docLine.setCGlItemId(data[i].getField("cGlItemId"));
@@ -481,6 +484,27 @@ public class DocFINFinAccTransaction extends AcctServer {
             bpAmountConverted = convertAmount(bpAmountConverted, !isReceipt, DateAcct,
                 TABLEID_Payment, transaction.getFinPayment().getId(), paymentCurrency.getId(),
                 as.m_C_Currency_ID, line, as, fact, Fact_Acct_Group_ID, nextSeqNo(SeqNo), conn);
+          }
+          if (line.getDoubtFulDebtAmount().signum() != 0) {
+            BigDecimal doubtFulDebtAmount = convertAmount(line.getDoubtFulDebtAmount(), isReceipt,
+                DateAcct, TABLEID_Invoice, invoice.getId(), C_Currency_ID, as.m_C_Currency_ID,
+                line, as, fact, Fact_Acct_Group_ID, nextSeqNo(SeqNo), conn, false);
+            fact.createLine(
+                line,
+                getAccountBPartner(
+                    (line.m_C_BPartner_ID == null || line.m_C_BPartner_ID.equals("")) ? this.C_BPartner_ID
+                        : line.m_C_BPartner_ID, as, true, false, true, conn), C_Currency_ID, "",
+                doubtFulDebtAmount.toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
+                conn);
+            bpAmountConverted = bpAmountConverted.subtract(doubtFulDebtAmount);
+            String Fact_Acct_Group_ID2 = SequenceIdData.getUUID();
+            fact.createLine(line,
+                getAccountBPartnerAllowanceForDoubtfulDebt(C_BPartner_ID, as, conn),
+                this.C_Currency_ID, doubtFulDebtAmount.toString(), "", Fact_Acct_Group_ID2,
+                nextSeqNo(SeqNo), DocumentType, conn);
+            fact.createLine(line, getAccountBPartnerBadDebt(C_BPartner_ID, false, as, conn),
+                this.C_Currency_ID, "", doubtFulDebtAmount.toString(), Fact_Acct_Group_ID2,
+                nextSeqNo(SeqNo), DocumentType, conn);
           }
           fact.createLine(
               line,

@@ -12717,9 +12717,11 @@ The corresponding tables have then the following setting:
 <!--3FD616A223E44621806A8573068B6C62-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--3FD616A223E44621806A8573068B6C62-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--3FD616A223E44621806A8573068B6C62-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
-<!--3FD616A223E44621806A8573068B6C62-->  <HQLWHERECLAUSE><![CDATA[(e.obSelected = true and e.fINDoubtfulDebtRun.id = @FIN_DoubtFul_Debt_Run.id@) OR e.obSelected = false]]></HQLWHERECLAUSE>
+<!--3FD616A223E44621806A8573068B6C62-->  <HQLWHERECLAUSE><![CDATA[e.fINDoubtfulDebtRun.id = @FIN_DoubtFul_Debt_Run.id@ OR e.fINDoubtfulDebtRun.id IS NULL OR e.fINDoubtfulDebtRun.id = '']]></HQLWHERECLAUSE>
 <!--3FD616A223E44621806A8573068B6C62-->  <HQLORDERBYCLAUSE><![CDATA[obSelected desc, dueDate, amount, documentno]]></HQLORDERBYCLAUSE>
-<!--3FD616A223E44621806A8573068B6C62-->  <HQLFILTERCLAUSE><![CDATA[(e.obSelected = true and e.fINDoubtfulDebtRun.id = @FIN_DoubtFul_Debt_Run.id@) OR (TO_NUMBER(@FIN_DoubtFul_Debt_Run.Daysoverdue@)<=e.daysOverdue AND (((@FIN_DoubtFul_Debt_Run.businessPartner@ is null OR @FIN_DoubtFul_Debt_Run.businessPartner@ = '') AND (@FIN_DoubtFul_Debt_Run.businessPartnerCategory@ is null OR @FIN_DoubtFul_Debt_Run.businessPartnerCategory@ = '')) OR ((@FIN_DoubtFul_Debt_Run.businessPartner@ is not null and e.businessPartner.id = @FIN_DoubtFul_Debt_Run.businessPartner@) OR (@FIN_DoubtFul_Debt_Run.businessPartnerCategory@ is not null and e.businessPartnerCategory.id = @FIN_DoubtFul_Debt_Run.businessPartnerCategory@))))]]></HQLFILTERCLAUSE>
+<!--3FD616A223E44621806A8573068B6C62-->  <HQLFILTERCLAUSE><![CDATA[e.fINDoubtfulDebtRun.id = @FIN_DoubtFul_Debt_Run.id@ OR (e.fINDoubtfulDebtRun.id IS NULL AND TO_NUMBER(@FIN_DoubtFul_Debt_Run.Daysoverdue@)<=e.daysOverdue 
+AND ((@FIN_DoubtFul_Debt_Run.businessPartner@ is null OR @FIN_DoubtFul_Debt_Run.businessPartner@ = '') OR (@FIN_DoubtFul_Debt_Run.businessPartner@ is not null and e.businessPartner.id = @FIN_DoubtFul_Debt_Run.businessPartner@))
+AND ((@FIN_DoubtFul_Debt_Run.businessPartnerCategory@ is null OR @FIN_DoubtFul_Debt_Run.businessPartnerCategory@ = '') OR (@FIN_DoubtFul_Debt_Run.businessPartnerCategory@ is not null and e.businessPartnerCategory.id = @FIN_DoubtFul_Debt_Run.businessPartnerCategory@)))]]></HQLFILTERCLAUSE>
 <!--3FD616A223E44621806A8573068B6C62-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--3FD616A223E44621806A8573068B6C62-->  <EM_OBUIAPP_CAN_ADD><![CDATA[N]]></EM_OBUIAPP_CAN_ADD>
 <!--3FD616A223E44621806A8573068B6C62-->  <EM_OBUIAPP_CAN_DELETE><![CDATA[N]]></EM_OBUIAPP_CAN_DELETE>
@@ -14104,7 +14106,7 @@ AND e.pending <> 0]]></HQLWHERECLAUSE>
 <!--9D859A2A50F44562AFA21AAF2DF91B8A-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--9D859A2A50F44562AFA21AAF2DF91B8A-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--9D859A2A50F44562AFA21AAF2DF91B8A-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--9D859A2A50F44562AFA21AAF2DF91B8A-->  <UIPATTERN><![CDATA[SR]]></UIPATTERN>
+<!--9D859A2A50F44562AFA21AAF2DF91B8A-->  <UIPATTERN><![CDATA[ED]]></UIPATTERN>
 <!--9D859A2A50F44562AFA21AAF2DF91B8A-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--9D859A2A50F44562AFA21AAF2DF91B8A-->  <EM_OBUIAPP_CAN_ADD><![CDATA[N]]></EM_OBUIAPP_CAN_ADD>
 <!--9D859A2A50F44562AFA21AAF2DF91B8A-->  <EM_OBUIAPP_CAN_DELETE><![CDATA[N]]></EM_OBUIAPP_CAN_DELETE>

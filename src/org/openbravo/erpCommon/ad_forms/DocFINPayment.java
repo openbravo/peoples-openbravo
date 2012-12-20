@@ -332,10 +332,11 @@ public class DocFINPayment extends AcctServer {
               bpAmountConverted = new BigDecimal(bpAmountConverted).subtract(doubtFulDebtAmount)
                   .toString();
               String Fact_Acct_Group_ID2 = SequenceIdData.getUUID();
-              fact.createLine(null, getAccountBPartnerProvision(C_BPartner_ID, false, as, conn),
+              fact.createLine(line,
+                  getAccountBPartnerAllowanceForDoubtfulDebt(C_BPartner_ID, as, conn),
                   this.C_Currency_ID, doubtFulDebtAmount.toString(), "", Fact_Acct_Group_ID2,
                   nextSeqNo(SeqNo), DocumentType, conn);
-              fact.createLine(null, getAccountBPartnerProvision(C_BPartner_ID, true, as, conn),
+              fact.createLine(line, getAccountBPartnerBadDebt(C_BPartner_ID, false, as, conn),
                   this.C_Currency_ID, "", doubtFulDebtAmount.toString(), Fact_Acct_Group_ID2,
                   nextSeqNo(SeqNo), DocumentType, conn);
             }

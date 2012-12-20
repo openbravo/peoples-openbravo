@@ -2881,7 +2881,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--681E982F747A48A6AF328A236A067559-->  <DESCRIPTION><![CDATA[Doubtful debts are those debts which a business or individual is unlikely to be able to collect.]]></DESCRIPTION>
 <!--681E982F747A48A6AF328A236A067559-->  <HELP><![CDATA[The reasons for potential non payment can include disputes over supply, delivery, at the conditioner of item or the appearance of financial stress within a customer's operations. When such a dispute occurs it is prudent to add this debt or portion thereof to the doubtful debt reserve.]]></HELP>
 <!--681E982F747A48A6AF328A236A067559-->  <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
-<!--681E982F747A48A6AF328A236A067559-->  <ISSOTRX><![CDATA[N]]></ISSOTRX>
+<!--681E982F747A48A6AF328A236A067559-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--681E982F747A48A6AF328A236A067559-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--681E982F747A48A6AF328A236A067559-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--681E982F747A48A6AF328A236A067559-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>

@@ -18,6 +18,8 @@
  */
 package org.openbravo.erpCommon.ad_forms;
 
+import java.math.BigDecimal;
+
 import org.apache.log4j.Logger;
 
 public class DocLine_FINReconciliation extends DocLine {
@@ -31,6 +33,7 @@ public class DocLine_FINReconciliation extends DocLine {
   String isPrepayment = "";
   String finPaymentId = "";
   String WriteOffAmt = "";
+  BigDecimal doubtFulDebtAmount = BigDecimal.ZERO;
 
   /**
    * @return the finFinAccTransactionId
@@ -150,6 +153,14 @@ public class DocLine_FINReconciliation extends DocLine {
    */
   public void setCGlItemId(String glItemId) {
     cGlItemId = glItemId;
+  }
+
+  public BigDecimal getDoubtFulDebtAmount() {
+    return doubtFulDebtAmount;
+  }
+
+  public void setDoubtFulDebtAmount(BigDecimal doubtFulDebtAmount) {
+    this.doubtFulDebtAmount = doubtFulDebtAmount;
   }
 
   public DocLine_FINReconciliation(String DocumentType, String TrxHeader_ID, String TrxLine_ID) {

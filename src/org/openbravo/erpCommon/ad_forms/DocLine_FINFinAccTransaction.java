@@ -18,6 +18,8 @@
  */
 package org.openbravo.erpCommon.ad_forms;
 
+import java.math.BigDecimal;
+
 import org.apache.log4j.Logger;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.invoice.Invoice;
@@ -34,6 +36,7 @@ public class DocLine_FINFinAccTransaction extends DocLine {
   String finPaymentId = "";
   String WriteOffAmt = "";
   boolean isPrepaymentAgainstInvoice = false;
+  BigDecimal doubtFulDebtAmount = BigDecimal.ZERO;
   Invoice invoice = null;
 
   public String getcGlItemId() {
@@ -180,6 +183,14 @@ public class DocLine_FINFinAccTransaction extends DocLine {
    */
   public void setCGlItemId(String glItemId) {
     cGlItemId = glItemId;
+  }
+
+  public BigDecimal getDoubtFulDebtAmount() {
+    return doubtFulDebtAmount;
+  }
+
+  public void setDoubtFulDebtAmount(BigDecimal doubtFulDebtAmount) {
+    this.doubtFulDebtAmount = doubtFulDebtAmount;
   }
 
   public DocLine_FINFinAccTransaction(String DocumentType, String TrxHeader_ID, String TrxLine_ID) {

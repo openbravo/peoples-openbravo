@@ -160,10 +160,10 @@ public class DocDoubtfulDebt extends AcctServer {
           nextSeqNo(SeqNo), DocumentType, conn);
       // Provision
       Fact_Acct_Group_ID = SequenceIdData.getUUID();
-      fact.createLine(null, getAccountBPartnerProvision(C_BPartner_ID, true, as, conn),
+      fact.createLine(null, getAccountBPartnerBadDebt(C_BPartner_ID, true, as, conn),
           this.C_Currency_ID, bpAmountConverted.toString(), "", Fact_Acct_Group_ID,
           nextSeqNo(SeqNo), DocumentType, conn);
-      fact.createLine(null, getAccountBPartnerProvision(C_BPartner_ID, false, as, conn),
+      fact.createLine(null, getAccountBPartnerBadDebt(C_BPartner_ID, false, as, conn),
           this.C_Currency_ID, "", bpAmountConverted.toString(), Fact_Acct_Group_ID,
           nextSeqNo(SeqNo), DocumentType, conn);
     } finally {

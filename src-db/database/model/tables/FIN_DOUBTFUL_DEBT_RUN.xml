@@ -62,7 +62,7 @@
         <onCreateDefault/>
       </column>
       <column name="PROCESSED" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[Y]]></default>
+        <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
       <foreign-key foreignTable="C_BPARTNER" name="FIN_DOUBTFUL_DEBT_RUN_BP">
