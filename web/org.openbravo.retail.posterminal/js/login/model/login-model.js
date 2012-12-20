@@ -169,7 +169,7 @@
   };
 
   OB.I18N.hasLabel = function (key, params, object, property) {
-    if (OB.I18N.labels[key]) ? true : false;
+    if (OB.I18N.labels[key] ? true : false);
   };
 
   executeWhenDOMReady = function () {
