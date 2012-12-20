@@ -33,8 +33,6 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBVersion;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.Session;
-import org.openbravo.model.ad.access.User;
-import org.openbravo.model.ad.access.UserRoles;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.system.SystemInformation;
@@ -65,7 +63,7 @@ public class LoginHandler extends HttpBaseServlet {
     final VariablesSecureApp vars = new VariablesSecureApp(req);
 
     // Empty session
-    req.getSession().removeAttribute("#Authenticated_user");
+    vars.removeSessionValue("#Authenticated_user");
     vars.removeSessionValue("#AD_Role_ID");
     vars.setSessionObject("#loggingIn", "Y");
 
@@ -228,21 +226,6 @@ public class LoginHandler extends HttpBaseServlet {
         return;
       case NO_RESTRICTION:
         break;
-      }
-
-      boolean hasNonRestrictedRole = false;
-      User user = OBDal.getInstance().get(User.class, strUserAuth);
-      for (UserRoles userrole : user.getADUserRolesList()) {
-        if (!userrole.getRole().isRestrictbackend()) {
-          hasNonRestrictedRole = true;
-        }
-      }
-      if (!hasNonRestrictedRole) {
-        String msg = Utility.messageBD(myPool, "NON_RESTRICTED_ROLE", vars.getLanguage());
-        String title = Utility.messageBD(myPool, "NON_RESTRICTED_ROLE_TITLE", vars.getLanguage());
-        updateDBSession(sessionId, false, "RESTR");
-        goToRetry(res, vars, msg, title, "Error", action, doRedirect);
-        return;
       }
 
       // Build checks

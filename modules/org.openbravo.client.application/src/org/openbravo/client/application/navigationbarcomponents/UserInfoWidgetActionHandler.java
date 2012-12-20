@@ -308,7 +308,7 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler {
     // "        AND A_U_R.AD_USER_ID = ?" +
     // "        ORDER BY A_R.NAME";
     final OBQuery<UserRoles> rolesQuery = OBDal.getInstance().createQuery(UserRoles.class,
-        " userContact.id=? and role.active=true and role.isrestrictbackend=false");
+        " userContact.id=? and role.active=true");
     rolesQuery.setFilterOnReadableClients(false);
     rolesQuery.setFilterOnReadableOrganization(false);
     rolesQuery.setParameters(Collections.singletonList((Object) OBContext.getOBContext().getUser()
