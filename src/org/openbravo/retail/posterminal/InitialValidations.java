@@ -6,11 +6,9 @@
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
-package org.openbravo.retail.posterminal.term;
+package org.openbravo.retail.posterminal;
 
 import org.codehaus.jettison.json.JSONException;
-import org.openbravo.retail.posterminal.OBPOSApplications;
-import org.openbravo.retail.posterminal.POSUtils;
 
 public class InitialValidations {
 
