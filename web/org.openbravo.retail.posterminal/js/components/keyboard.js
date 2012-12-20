@@ -624,7 +624,7 @@ enyo.kind({
     this.$.keypadcontainer.createComponent({
       kind: keypad,
       keyboard: this
-    }).hide();
+    }).render().hide();
   },
 
   showKeypad: function (keypadName) {

@@ -219,18 +219,20 @@ enyo.kind({
     // calling super after setting keyboard properties
     this.inherited(arguments);
 
-    // Add the keypads for each payment method
-    this.initCurrencyKeypads();
-
-    _.each(this.keypads, function (keypadname) {
-      this.addKeypad(keypadname);
-    }, this);
 
     this.addToolbarComponent('OB.OBPOSPointOfSale.UI.ToolbarPayment');
     this.addToolbar(OB.OBPOSPointOfSale.UI.ToolbarScan);
     this.addToolbar(OB.OBPOSPointOfSale.UI.ToolbarDiscounts);
   },
 
+  init: function () {
+    // Add the keypads for each payment method
+    this.initCurrencyKeypads();
+
+    _.each(this.keypads, function (keypadname) {
+      this.addKeypad(keypadname);
+    }, this);
+  },
   initCurrencyKeypads: function () {
     var me = this;
     var currenciesManaged = {};
@@ -317,49 +319,49 @@ enyo.kind({
         classes: 'row-fluid',
         components: [{
           classes: 'span4',
-          components: [this.buildCoinsAndNotesButton(payment.payment.searchKey, datacurrency.at(2))]
-        }, {
-          classes: 'span4',
-          components: [this.buildCoinsAndNotesButton(payment.payment.searchKey, datacurrency.at(1))]
-        }, {
-          classes: 'span4',
-          components: [this.buildCoinsAndNotesButton(payment.payment.searchKey, datacurrency.at(0))]
-        }]
-      }, {
-        classes: 'row-fluid',
-        components: [{
-          classes: 'span4',
-          components: [this.buildCoinsAndNotesButton(payment.payment.searchKey, datacurrency.at(5))]
-        }, {
-          classes: 'span4',
-          components: [this.buildCoinsAndNotesButton(payment.payment.searchKey, datacurrency.at(4))]
-        }, {
-          classes: 'span4',
-          components: [this.buildCoinsAndNotesButton(payment.payment.searchKey, datacurrency.at(3))]
-        }]
-      }, {
-        classes: 'row-fluid',
-        components: [{
-          classes: 'span4',
-          components: [this.buildCoinsAndNotesButton(payment.payment.searchKey, datacurrency.at(8))]
-        }, {
-          classes: 'span4',
-          components: [this.buildCoinsAndNotesButton(payment.payment.searchKey, datacurrency.at(7))]
-        }, {
-          classes: 'span4',
-          components: [this.buildCoinsAndNotesButton(payment.payment.searchKey, datacurrency.at(6))]
-        }]
-      }, {
-        classes: 'row-fluid',
-        components: [{
-          classes: 'span4',
-          components: [this.buildCoinsAndNotesButton(payment.payment.searchKey, datacurrency.at(11))]
+          components: [this.buildCoinsAndNotesButton(payment.payment.searchKey, datacurrency.at(9))]
         }, {
           classes: 'span4',
           components: [this.buildCoinsAndNotesButton(payment.payment.searchKey, datacurrency.at(10))]
         }, {
           classes: 'span4',
-          components: [this.buildCoinsAndNotesButton(payment.payment.searchKey, datacurrency.at(9))]
+          components: [this.buildCoinsAndNotesButton(payment.payment.searchKey, datacurrency.at(11))]
+        }]
+      }, {
+        classes: 'row-fluid',
+        components: [{
+          classes: 'span4',
+          components: [this.buildCoinsAndNotesButton(payment.payment.searchKey, datacurrency.at(6))]
+        }, {
+          classes: 'span4',
+          components: [this.buildCoinsAndNotesButton(payment.payment.searchKey, datacurrency.at(7))]
+        }, {
+          classes: 'span4',
+          components: [this.buildCoinsAndNotesButton(payment.payment.searchKey, datacurrency.at(8))]
+        }]
+      }, {
+        classes: 'row-fluid',
+        components: [{
+          classes: 'span4',
+          components: [this.buildCoinsAndNotesButton(payment.payment.searchKey, datacurrency.at(3))]
+        }, {
+          classes: 'span4',
+          components: [this.buildCoinsAndNotesButton(payment.payment.searchKey, datacurrency.at(4))]
+        }, {
+          classes: 'span4',
+          components: [this.buildCoinsAndNotesButton(payment.payment.searchKey, datacurrency.at(5))]
+        }]
+      }, {
+        classes: 'row-fluid',
+        components: [{
+          classes: 'span4',
+          components: [this.buildCoinsAndNotesButton(payment.payment.searchKey, datacurrency.at(0))]
+        }, {
+          classes: 'span4',
+          components: [this.buildCoinsAndNotesButton(payment.payment.searchKey, datacurrency.at(1))]
+        }, {
+          classes: 'span4',
+          components: [this.buildCoinsAndNotesButton(payment.payment.searchKey, datacurrency.at(2))]
         }]
       }]
     });
