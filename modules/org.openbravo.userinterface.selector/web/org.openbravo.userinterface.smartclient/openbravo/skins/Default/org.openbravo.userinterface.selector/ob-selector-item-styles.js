@@ -92,6 +92,16 @@ isc.OBMultiSelectorItem.addProperties({
     iconOrientation: 'left',
     align: 'left',
     icon: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/clearField.png'
+  },
+  initStyle: function () {
+    //To adapt the height this code is used because height: '*' doesn't work properly (conflicts with OBSectionItem).
+    var rowSpan = 3;
+    var singleRowHeight = this.getHeight();
+    var multipleRowHeight = singleRowHeight + 24; // 24px = title height + form item padding defined in CSS
+    if (this.rowSpan) {
+      rowSpan = this.rowSpan;
+    }
+    var newHeight = singleRowHeight + (rowSpan - 1) * multipleRowHeight;
+    this.setHeight(newHeight);
   }
-
 });

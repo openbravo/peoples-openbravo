@@ -6,6 +6,7 @@ isc.OBMultiSelectorItem.addProperties({
   popupTextMatchStyle: 'startswith',
   suggestionTextMatchStyle: 'startswith',
   showOptionsFromDataSource: true,
+  rowSpan: 2,
 
   selectionLayout: null,
 
@@ -81,7 +82,10 @@ isc.OBMultiSelectorItem.addProperties({
       _selectorDefinitionId: this.selectorDefinitionId
     };
 
-    return this.Super('init', arguments);
+    this.Super('init', arguments);
+    if (this.initStyle) {
+      this.initStyle();
+    }
   },
 
   setValueFromRecord: function (record, fromPopup) {
@@ -137,7 +141,6 @@ isc.OBMultiSelectorItem.addProperties({
   _createCanvas: function () {
     this.selectionLayout = isc.VStack.create({
       autoDraw: false,
-      height: 150,
       overflow: 'auto',
       members: [],
       animateMembers: true,
