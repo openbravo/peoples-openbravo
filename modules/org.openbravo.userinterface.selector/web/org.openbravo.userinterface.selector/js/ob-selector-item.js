@@ -151,6 +151,68 @@ isc.OBSelectorPopupWindow.addProperties({
       fields: this.selectorGridFields,
       recordDoubleClick: function () {
         selectorWindow.setValueInField();
+      },
+      handleFilterEditorSubmit: function (criteria, context) {
+        var selectedIds, ids = [],
+            crit = {},
+            len, i, c, found;
+        if (!selectorWindow.multiselect) {
+          this.Super('handleFilterEditorSubmit', arguments);
+          return;
+        }
+        selectedIds = selectorWindow.selector.getValue() || [];
+        len = selectedIds.length;
+        for (i = 0; i < len; i++) {
+          ids.push({
+            fieldName: 'id',
+            operator: 'equals',
+            value: selectedIds[i]
+          });
+        }
+
+        if (len > 0) {
+          crit._constructor = 'AdvancedCriteria';
+          crit._OrExpression = true; // trick to get a really _or_ in the backend
+          crit.operator = 'or';
+          crit.criteria = ids;
+
+          c = (criteria && criteria.criteria) || [];
+          found = false;
+
+          for (i = 0; i < c.length; i++) {
+            if (c[i].fieldName && c[i].value !== '') {
+              found = true;
+              break;
+            }
+          }
+
+          if (!found) {
+
+            if (!criteria) {
+              criteria = {
+                _constructor: 'AdvancedCriteria',
+                operator: 'and',
+                criteria: []
+              };
+            }
+
+            // adding an *always true* sentence
+            criteria.criteria.push({
+              fieldName: 'id',
+              operator: 'notNull'
+            });
+          }
+          crit.criteria.push(criteria); // original filter
+        } else {
+          crit = criteria;
+        }
+
+        this.Super('handleFilterEditorSubmit', [crit, context]);
+      },
+      selectionChanged: function (record, state) {
+        record.__selected = state;
+        this.markForRedraw('Selection changed', record, state);
+        this.Super('selectionChanged', arguments);
       }
     });
 
