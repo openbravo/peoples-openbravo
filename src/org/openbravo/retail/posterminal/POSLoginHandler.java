@@ -56,6 +56,7 @@ public class POSLoginHandler extends LoginHandler {
   private static final String WEB_POS_SESSION = "OBPOS_POS";
   private static final String LOGIN_CONCURRENT_USERS_ERROR = "CUR";
   private static final String LOGIN_SOFT_USERS_WARN = "SUR";
+  private static final String LOGIN_RESTRICTED_ROLES_ERROR = "RESTR";
 
   @Override
   public void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException,
@@ -83,8 +84,9 @@ public class POSLoginHandler extends LoginHandler {
         // there's an error in login, discard concurrent users problems
 
         if (session != null
-            && (LOGIN_CONCURRENT_USERS_ERROR.equals(session.getLoginStatus()) || LOGIN_SOFT_USERS_WARN
-                .equals(session.getLoginStatus()))) {
+            && (LOGIN_CONCURRENT_USERS_ERROR.equals(session.getLoginStatus())
+                || LOGIN_SOFT_USERS_WARN.equals(session.getLoginStatus()) || LOGIN_RESTRICTED_ROLES_ERROR
+                  .equals(session.getLoginStatus()))) {
           // no problem continue, mark this session to be POS
         } else {
           // other errors should be rose
@@ -94,7 +96,6 @@ public class POSLoginHandler extends LoginHandler {
           return;
         }
       }
-
       final String userId = (String) req.getSession().getAttribute("#Authenticated_user");
       Role role = getPOSRole(userId);
 
