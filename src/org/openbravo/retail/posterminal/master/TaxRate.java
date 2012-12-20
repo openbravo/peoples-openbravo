@@ -48,7 +48,7 @@ public class TaxRate extends ProcessHQLQuery {
 
     String hql = "from FinancialMgmtTaxRate as financialMgmtTaxRate where "
         + "(financialMgmtTaxRate.$incrementalUpdateCriteria) AND active = true "
-        + "and parentTaxRate is null and salesPurchaseType in ('S', 'B') ";
+        + "and salesPurchaseType in ('S', 'B') ";
 
     if (fromCountry != null) {
       hql = hql + "and (country.id = '" + fromCountry.getId() + "' or country is null) ";

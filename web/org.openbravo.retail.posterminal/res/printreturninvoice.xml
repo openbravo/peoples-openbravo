@@ -141,24 +141,20 @@
       <text align ="left" length="12"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_tck_breakdown'))%></text>
       <text align ="left" length="9"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_tck_base'))%></text>
       <text align ="left" length="9"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_tck_TAX'))%></text>
-      <text align ="left" length="12"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LineTotal'))%></text>
     </line>
     <line>
       <text>------------------------------------------</text>
     </line>
     <%
-      var totNet = 0;
       var totAmount = 0;
       var taxes = order.get('taxes');
       for (var t in taxes) {
-        totNet += taxes[t].net;
         totAmount += taxes[t].amount;
     %>
       <line>
         <text align ="left" length="12"><%= OB.I18N.formatRate(taxes[t].rate) %></text>
         <text align ="left" length="9"><%= OB.I18N.formatCurrency(taxes[t].net) %></text>
         <text align ="left" length="9"><%= OB.I18N.formatCurrency(taxes[t].amount) %></text>
-        <text align ="left" length="12"><%= OB.I18N.formatCurrency(taxes[t].gross) %></text>
       </line>
     <%
       }
@@ -167,10 +163,8 @@
       <text>------------------------------------------</text>
     </line>
     <line>
-      <text align ="left" length="12">Totals</text>
-      <text align ="left" length="9"><%= OB.I18N.formatCurrency(totNet) %></text>
+      <text align ="left" length="21"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_display_total'))%></text>
       <text align ="left" length="9"><%= OB.I18N.formatCurrency(totAmount) %></text>
-      <text align ="left" length="12"><%= order.printGross() %></text>
     </line>
 
     <line>
