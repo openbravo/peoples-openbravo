@@ -44,8 +44,7 @@ public class OBViewParameterHandler {
     }
 
     public String getTitle() {
-      // TODO: trl
-      return parameter.getName();
+      return OBViewUtil.getLabel(parameter, parameter.getOBUIAPPParameterTrlList());
     }
 
     public String getName() {
