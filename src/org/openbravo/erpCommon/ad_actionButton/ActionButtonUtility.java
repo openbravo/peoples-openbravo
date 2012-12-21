@@ -18,6 +18,8 @@
  */
 package org.openbravo.erpCommon.ad_actionButton;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import org.apache.log4j.Logger;
@@ -167,6 +169,15 @@ public class ActionButtonUtility {
         }
         ind1++;
       }
+      // Exclude null values in the array
+      List<SQLReturnObject> result = new ArrayList<SQLReturnObject>();
+      for (SQLReturnObject sqlr : data) {
+        if (sqlr != null) {
+          result.add(sqlr);
+        }
+      }
+      data = result.toArray(new SQLReturnObject[0]);
+
     }
     return data;
   }
