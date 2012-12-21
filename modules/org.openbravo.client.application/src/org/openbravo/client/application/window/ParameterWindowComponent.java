@@ -93,10 +93,6 @@ public class ParameterWindowComponent extends BaseTemplateComponent {
     this.popup = popup;
   }
 
-  public String getWindowId() {
-    return process.getId();
-  }
-
   public String getThreadSafe() {
     // final Boolean value = getWindow().isThreadsafe();
     // if (value != null) {

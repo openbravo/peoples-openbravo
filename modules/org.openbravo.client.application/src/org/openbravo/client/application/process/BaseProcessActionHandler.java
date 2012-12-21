@@ -24,14 +24,21 @@ import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.util.Check;
 import org.openbravo.client.application.Parameter;
 import org.openbravo.client.application.ParameterUtils;
 import org.openbravo.client.application.Process;
+import org.openbravo.client.application.ProcessAccess;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.client.kernel.KernelConstants;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.erpCommon.utility.PropertyException;
+import org.openbravo.model.ad.access.WindowAccess;
+import org.openbravo.model.ad.ui.Window;
 
 /**
  * 
@@ -53,6 +60,18 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
       final Process processDefinition = OBDal.getInstance().get(Process.class, processId);
       Check.isNotNull(processDefinition, "Not valid process id");
 
+      if (!hasAccess(processDefinition, parameters)) {
+        JSONObject jsonRequest = new JSONObject();
+
+        JSONObject err = new JSONObject();
+        err.put("severity", "error");
+        err.put("text", "No access to process " + processDefinition);
+        jsonRequest.put("message", err);
+
+        log.error("No access to process " + processDefinition);
+        return jsonRequest;
+      }
+
       for (Parameter param : processDefinition.getOBUIAPPParameterList()) {
         if (param.isFixed() && param.isEvaluateFixedValue()) {
           parameters.put(param.getDBColumnName(),
@@ -68,6 +87,39 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
     } finally {
       OBContext.restorePreviousMode();
     }
+  }
+
+  private boolean hasAccess(Process processDefinition, Map<String, Object> parameters) {
+    String windowId = (String) parameters.get("windowId");
+    if (windowId != null && !"null".equals(windowId)) {
+      Window window = OBDal.getInstance().get(Window.class, windowId);
+      boolean securedProcess = false;
+      try {
+        securedProcess = "Y".equals(Preferences.getPreferenceValue("SecuredProcess", true,
+            OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
+                .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
+                .getOBContext().getRole(), window));
+      } catch (PropertyException e) {
+        // do nothing, property is not set so securedProcess is false
+      }
+      if (!securedProcess) {
+        // check if window is accessible
+        OBCriteria<WindowAccess> qAccess = OBDal.getInstance().createCriteria(WindowAccess.class);
+        qAccess.add(Restrictions.eq(WindowAccess.PROPERTY_WINDOW, window));
+        qAccess
+            .add(Restrictions.eq(WindowAccess.PROPERTY_ROLE, OBContext.getOBContext().getRole()));
+        return qAccess.count() > 0;
+      }
+    }
+
+    // The process now can be:
+    // * Secured process invoked from window
+    // * Invoked from menu (without window)
+    // In any of these two cases, security is checked based on process access
+    OBCriteria<ProcessAccess> qAccess = OBDal.getInstance().createCriteria(ProcessAccess.class);
+    qAccess.add(Restrictions.eq(ProcessAccess.PROPERTY_OBUIAPPPROCESS, processDefinition));
+    qAccess.add(Restrictions.eq(ProcessAccess.PROPERTY_ROLE, OBContext.getOBContext().getRole()));
+    return qAccess.count() > 0;
   }
 
   /*

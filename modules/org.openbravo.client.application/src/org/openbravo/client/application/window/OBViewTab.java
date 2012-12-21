@@ -560,7 +560,7 @@ public class OBViewTab extends BaseTemplateComponent {
         uiPattern = newProcess.getUIPattern();
         multiRecord = newProcess.isMultiRecord();
 
-        setWindowId(processId);
+        setWindowId(tab.getWindow().getId());
         if ("OBUIAPP_PickAndExecute".equals(uiPattern)) {
           // TODO: modal should be a parameter in the process definition?
           modal = false;

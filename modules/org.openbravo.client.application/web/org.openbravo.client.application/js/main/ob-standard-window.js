@@ -260,8 +260,8 @@ isc.OBStandardWindow.addProperties({
         isc.warn(e.message);
       }
     } else {
-      if (params.windowId) {
-        className = className + params.windowId;
+      if (params.paramWindow) {
+        className = className + params.processId;
         if (len === 3) {
           // keep original classname in case one with timestamp is not present
           originalClassName = className;
@@ -284,7 +284,7 @@ isc.OBStandardWindow.addProperties({
           this.openPopupInTab(this.runningProcess, params.windowTitle, (this.runningProcess.popupWidth ? this.runningProcess.popupWidth : '90%'), (this.runningProcess.popupHeight ? this.runningProcess.popupHeight : '90%'), (this.runningProcess.showMinimizeButton ? this.runningProcess.showMinimizeButton : false), (this.runningProcess.showMaximizeButton ? this.runningProcess.showMaximizeButton : false), true, true);
 
         } else {
-          isc.warn(OB.I18N.getLabel('OBUIAPP_ProcessClassNotFound', [params.windowId]), function () {
+          isc.warn(OB.I18N.getLabel('OBUIAPP_ProcessClassNotFound', [params.processId]), function () {
             return true;
           }, {
             icon: '[SKINIMG]Dialog/error.png',
