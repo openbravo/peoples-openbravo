@@ -56,7 +56,7 @@ isc.OBMultiSelectorItem.addProperties({
         width: OB.Styles.Process.PickAndExecute.pinColumnWidth,
         formatCellValue: function (value, record, rowNum, colNum, grid) {
           if (grid.selector.selectorWindow.selectedIds.contains(record[OB.Constants.ID])) {
-            return '<img class="' + OB.Styles.Process.PickAndExecute.iconPinStyle + '" src="' + OB.Styles.Process.PickAndExecute.iconPinSrc + '" />';
+            return '<img src="' + OB.Styles.Process.PickAndExecute.iconPinSrc + '" />';
           }
           return '';
         },
