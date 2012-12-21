@@ -126,7 +126,8 @@ isc.OBSelectorPopupWindow.addProperties({
       },
 
       dataArrived: function () {
-        var record, rowNum;
+        var record, rowNum, i, j, selectedRecords = [],
+            ds, ids;
         this.Super('dataArrived', arguments);
         // check if a record has been selected, if
         // not take the one
@@ -134,18 +135,32 @@ isc.OBSelectorPopupWindow.addProperties({
         // by doing this when data arrives the selection
         // will show up
         // when the record shows in view
-        if (this.targetRecordId) {
-          record = this.data.find(this.selector.valueField, this.targetRecordId);
-          rowNum = this.getRecordIndex(record);
-          this.selectSingleRecord(record);
-          // give grid time to draw
-          this.fireOnPause('scrollRecordIntoView', this.scrollRecordIntoView, [rowNum, true], this);
-          delete this.targetRecordId;
-        } else if (this.data.lengthIsKnown() && this.data.getLength() === 1) {
-          // only one record, select that one straight away
-          this.selectSingleRecord(0);
+        if (this.selector.selectorWindow.multiselect) {
+          ds = this.data.localData;
+          ids = this.selector.selectorWindow.selectedIds;
+          for (i = 0; i < ids.length; i++) {
+            for (j = 0; j < ds.length; j++) {
+              if (ds[j][OB.Constants.ID] === ids[i]) {
+                selectedRecords.push(ds[j]);
+                break;
+              }
+            }
+          }
+          this.selectRecords(selectedRecords);
         } else {
-          this.selectSingleRecord(null);
+          if (this.targetRecordId) {
+            record = this.data.find(this.selector.valueField, this.targetRecordId);
+            rowNum = this.getRecordIndex(record);
+            this.selectSingleRecord(record);
+            // give grid time to draw
+            this.fireOnPause('scrollRecordIntoView', this.scrollRecordIntoView, [rowNum, true], this);
+            delete this.targetRecordId;
+          } else if (this.data.lengthIsKnown() && this.data.getLength() === 1) {
+            // only one record, select that one straight away
+            this.selectSingleRecord(0);
+          } else {
+            this.selectSingleRecord(null);
+          }
         }
       },
       fields: this.selectorGridFields,
@@ -153,20 +168,20 @@ isc.OBSelectorPopupWindow.addProperties({
         selectorWindow.setValueInField();
       },
       handleFilterEditorSubmit: function (criteria, context) {
-        var selectedIds, ids = [],
+        var ids = [],
             crit = {},
             len, i, c, found;
         if (!selectorWindow.multiselect) {
           this.Super('handleFilterEditorSubmit', arguments);
           return;
         }
-        selectedIds = selectorWindow.selector.getValue() || [];
-        len = selectedIds.length;
+
+        len = this.selector.selectorWindow.selectedIds.length;
         for (i = 0; i < len; i++) {
           ids.push({
             fieldName: 'id',
             operator: 'equals',
-            value: selectedIds[i]
+            value: this.selector.selectorWindow.selectedIds[i]
           });
         }
 
@@ -206,12 +221,18 @@ isc.OBSelectorPopupWindow.addProperties({
         } else {
           crit = criteria;
         }
-
         this.Super('handleFilterEditorSubmit', [crit, context]);
       },
       selectionChanged: function (record, state) {
-        record.__selected = state;
-        this.markForRedraw('Selection changed', record, state);
+        if (this.selector.selectorWindow.selectedIds) {
+          if (state) {
+            this.selector.selectorWindow.selectId(record[OB.Constants.ID]);
+          } else {
+            this.selector.selectorWindow.selectedIds.remove(record[OB.Constants.ID]);
+          }
+          this.markForRedraw('Selection changed');
+        }
+
         this.Super('selectionChanged', arguments);
       }
     });
@@ -350,12 +371,8 @@ isc.OBSelectorPopupWindow.addProperties({
   },
 
   setValueInField: function () {
-    var i, selectedRecords;
     if (this.multiselect) {
-      selectedRecords = this.selectorGrid.getSelectedRecords();
-      for (i = 0; i < selectedRecords.length; i++) {
-        this.selector.setValueFromRecord(selectedRecords[i], true);
-      }
+      this.selector.setSelectedRecords(this.selectorGrid.getSelectedRecords());
     } else {
       this.selector.setValueFromRecord(this.selectorGrid.getSelectedRecord(), true);
     }
