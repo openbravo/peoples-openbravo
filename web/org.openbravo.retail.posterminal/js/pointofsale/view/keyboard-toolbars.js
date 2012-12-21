@@ -109,7 +109,6 @@ enyo.kind({
     payments = OB.POS.modelterminal.get('payments');
 
     enyo.forEach(payments, function (payment) {
-      debugger;
       if (payment.payment.searchKey === 'OBPOS_payment.cash') {
         defaultpayment = payment;
       }
