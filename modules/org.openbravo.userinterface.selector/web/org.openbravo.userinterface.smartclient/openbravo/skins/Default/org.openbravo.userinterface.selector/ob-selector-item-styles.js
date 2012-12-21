@@ -105,3 +105,7 @@ isc.OBMultiSelectorItem.addProperties({
     this.setHeight(newHeight);
   }
 });
+
+isc.OBMultiSelectorSelectorLayout.addProperties({
+  styleName: 'OBFormFieldInput'
+});
