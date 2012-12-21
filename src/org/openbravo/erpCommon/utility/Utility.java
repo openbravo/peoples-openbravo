@@ -2506,6 +2506,24 @@ public class Utility {
   }
 
   /**
+   * Gets the country of the organization.
+   * 
+   * @param orgid
+   *          ID of the organization.
+   * 
+   * @return the country of the organization.
+   * 
+   */
+  public static Country getCountryFromOrgId(String orgid) {
+    Organization organization = (Organization) OBDal.getInstance().get(Organization.ENTITY_NAME,
+        orgid);
+    List<OrganizationInformation> orgInfoList = organization.getOrganizationInformationList();
+    OrganizationInformation orginfo = orgInfoList.get(0);
+    Location location = orginfo.getLocationAddress();
+    return location.getCountry();
+  }
+
+  /**
    * Gets the date format for the organization country.
    * 
    * @param date
@@ -2519,12 +2537,7 @@ public class Utility {
   public static String applyCountryDateFormat(Date date, String orgid) {
     try {
       OBContext.setAdminMode(true);
-      Organization organization = (Organization) OBDal.getInstance().get(Organization.ENTITY_NAME,
-          orgid);
-      List<OrganizationInformation> orgInfoList = organization.getOrganizationInformationList();
-      OrganizationInformation orginfo = orgInfoList.get(0);
-      Location location = orginfo.getLocationAddress();
-      Country country = location.getCountry();
+      Country country = getCountryFromOrgId(orgid);
       String dateFormat = (country.getDateformat() == null) ? "dd-MM-yyyy" : country
           .getDateformat();
       SimpleDateFormat df = new SimpleDateFormat(dateFormat);
@@ -2563,12 +2576,7 @@ public class Utility {
       DecimalFormat defaultDecimalFormat) {
     try {
       OBContext.setAdminMode(true);
-      Organization organization = (Organization) OBDal.getInstance().get(Organization.ENTITY_NAME,
-          orgid);
-      List<OrganizationInformation> orgInfoList = organization.getOrganizationInformationList();
-      OrganizationInformation orginfo = orgInfoList.get(0);
-      Location location = orginfo.getLocationAddress();
-      Country country = location.getCountry();
+      Country country = getCountryFromOrgId(orgid);
       DecimalFormatSymbols symbols = new DecimalFormatSymbols();
       if (country.getDecimalseparator() != null)
         symbols.setDecimalSeparator(country.getDecimalseparator().equals("C") ? ',' : '.');
