@@ -16,19 +16,11 @@ enyo.kind({
     onShowPopup: ''
   },
   beforeSetShowing: function (params) {
-    if (OB.POS.modelterminal.get('terminal').defaultbp_paymentmethod !== null && OB.POS.modelterminal.get('terminal').defaultbp_bpcategory !== null && OB.POS.modelterminal.get('terminal').defaultbp_paymentterm !== null && OB.POS.modelterminal.get('terminal').defaultbp_invoiceterm !== null && OB.POS.modelterminal.get('terminal').defaultbp_bpcountry !== null && OB.POS.modelterminal.get('terminal').defaultbp_bporg !== null) {
+    this.waterfall('onSetCustomer', {
+      customer: params.businessPartner
+    });
 
-      this.waterfall('onSetCustomer', {
-        customer: params.businessPartner
-      });
-
-      return true;
-    } else {
-      this.doShowPopup({
-        popup: 'modalConfigurationRequiredForCreateNewCustomers'
-      });
-      return false;
-    }
+    return true;
   },
   defaultNavigateOnClose: 'customerAdvancedSearch',
   header: {

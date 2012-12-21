@@ -247,6 +247,7 @@ enyo.kind({
         OB.Dal.find(OB.Model.CurrencyPanel, {
           'currency': payment.paymentMethod.currency
         }, function (datacurrency) {
+          debugger;
           if (datacurrency.length > 0) {
             me.buildCoinsAndNotesPanel(payment, payment.symbol, datacurrency);
           } else if (payment.payment.searchKey === 'OBPOS_payment.cash' && payment.paymentMethod.currency === '102') {

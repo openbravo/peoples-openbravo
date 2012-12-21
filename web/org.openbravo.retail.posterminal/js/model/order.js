@@ -824,6 +824,7 @@
           p.set('origAmount', p.get('amount'));
         }
         p.set('paid', p.get('origAmount'));
+        debugger;
         if (p.get('kind') === 'OBPOS_payment.cash') {
           cash = OB.DEC.add(cash, p.get('origAmount'));
           pcash = p;
