@@ -195,14 +195,13 @@ isc.OBSelectorPopupWindow.addProperties({
           found = false;
 
           for (i = 0; i < c.length; i++) {
-            if (c[i].fieldName && c[i].value !== '') {
+            if (c[i].fieldName && c[i].fieldName !== '_selectorDefinitionId' && c[i].value !== '') {
               found = true;
               break;
             }
           }
 
           if (!found) {
-
             if (!criteria) {
               criteria = {
                 _constructor: 'AdvancedCriteria',
