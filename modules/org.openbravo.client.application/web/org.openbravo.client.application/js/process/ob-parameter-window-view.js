@@ -308,14 +308,11 @@ isc.OBParameterWindowView.addProperties({
 
     allProperties._buttonValue = btnValue || 'DONE';
 
-    allProperties._params = [];
+    allProperties._params = {};
     if (this.theForm && this.theForm.getItems) {
       params = this.theForm.getItems();
       for (i = 0; i < params.length; i++) {
-        allProperties._params.push({
-          name: params[i].name,
-          value: params[i].getValue()
-        });
+        allProperties._params[params[i].name] = params[i].getValue();
       }
     }
 
@@ -329,7 +326,6 @@ isc.OBParameterWindowView.addProperties({
 
   handleDefaults: function (defaults) {
     var i;
-
     if (!this.theForm) {
       return;
     }
