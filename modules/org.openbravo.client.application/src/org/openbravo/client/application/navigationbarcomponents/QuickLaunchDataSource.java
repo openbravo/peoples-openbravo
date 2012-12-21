@@ -80,7 +80,7 @@ public class QuickLaunchDataSource extends ReadOnlyDataSourceService {
       final List<MenuOption> menuOptions = menuManager.getSelectableMenuOptions();
       final List<MenuOption> filteredMenuOptions = new ArrayList<MenuOption>();
       String filterOn = parameters.get(JsonConstants.IDENTIFIER);
-      if (filterOn != null) {modules/org.openbravo.userinterface.selector/src-db/database/sourcedata/OBUISEL_SELECTOR_FIELD.xml
+      if (filterOn != null) {
         filterOn = filterOn.toLowerCase().trim();
       }
       for (MenuOption menuOption : menuOptions) {
