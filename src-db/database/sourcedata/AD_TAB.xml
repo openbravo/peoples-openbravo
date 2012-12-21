@@ -1132,7 +1132,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--160-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--160-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--160-->  <NAME><![CDATA[Header]]></NAME>
-<!--160-->  <DESCRIPTION><![CDATA[Create G/L Journals for specified fiscal periods.]]></DESCRIPTION>
+<!--160-->  <DESCRIPTION><![CDATA[A G/L journal header can include journals which can contain several journal lines and even G/L item payment related information.]]></DESCRIPTION>
 <!--160-->  <HELP><![CDATA[A G/L journal header can include journals which can contain several journal lines.]]></HELP>
 <!--160-->  <AD_TABLE_ID><![CDATA[224]]></AD_TABLE_ID>
 <!--160-->  <AD_WINDOW_ID><![CDATA[132]]></AD_WINDOW_ID>
@@ -1160,7 +1160,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--161-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--161-->  <NAME><![CDATA[Lines]]></NAME>
 <!--161-->  <DESCRIPTION><![CDATA[Add G/L Journal lines. Each line corresponds to one G/L Journal entry.]]></DESCRIPTION>
-<!--161-->  <HELP><![CDATA[The lines tab allows to enter the journal entries of a G/L journal.]]></HELP>
+<!--161-->  <HELP><![CDATA[The lines tab allows to enter the journal entries of a G/L journal as well as G/L item payment related information.]]></HELP>
 <!--161-->  <AD_TABLE_ID><![CDATA[226]]></AD_TABLE_ID>
 <!--161-->  <AD_WINDOW_ID><![CDATA[132]]></AD_WINDOW_ID>
 <!--161-->  <SEQNO><![CDATA[30]]></SEQNO>
@@ -2230,7 +2230,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--217-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--217-->  <NAME><![CDATA[Dimension]]></NAME>
 <!--217-->  <DESCRIPTION><![CDATA[Holds the list of dimensions enabled by this ledger.]]></DESCRIPTION>
-<!--217-->  <HELP><![CDATA[Dimension tab allows to configure the general ledger dimensions. There are two mandatory dimensions by default: the Organization and the Account.  Any other dimension such as Project or Sales Region can be as well enabled here so that they appear in transactional windows.]]></HELP>
+<!--217-->  <HELP><![CDATA[Dimension tab allows to configure the organization's general ledger dimensions or to add additional accounting dimensions do not centrally maintained in the client.]]></HELP>
 <!--217-->  <AD_TABLE_ID><![CDATA[279]]></AD_TABLE_ID>
 <!--217-->  <AD_WINDOW_ID><![CDATA[125]]></AD_WINDOW_ID>
 <!--217-->  <SEQNO><![CDATA[20]]></SEQNO>
@@ -12392,8 +12392,8 @@ The corresponding tables have then the following setting:
 <!--2DBFD0E6ACF444D0BDAA29269B80E455-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--2DBFD0E6ACF444D0BDAA29269B80E455-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--2DBFD0E6ACF444D0BDAA29269B80E455-->  <NAME><![CDATA[Cost Center]]></NAME>
-<!--2DBFD0E6ACF444D0BDAA29269B80E455-->  <DESCRIPTION><![CDATA[Tracks the costs that does not produce direct profit and adds to the cost of running a company. ]]></DESCRIPTION>
-<!--2DBFD0E6ACF444D0BDAA29269B80E455-->  <HELP><![CDATA[Tracks the costs that does not produce direct profit and adds to the cost of running a company. ]]></HELP>
+<!--2DBFD0E6ACF444D0BDAA29269B80E455-->  <DESCRIPTION><![CDATA[The Cost Center window allows to create organization's cost centers.]]></DESCRIPTION>
+<!--2DBFD0E6ACF444D0BDAA29269B80E455-->  <HELP><![CDATA[The Cost Center window allows to create organization's cost centers.]]></HELP>
 <!--2DBFD0E6ACF444D0BDAA29269B80E455-->  <AD_TABLE_ID><![CDATA[9072A1C049584DB69E4F42AE20B5CB66]]></AD_TABLE_ID>
 <!--2DBFD0E6ACF444D0BDAA29269B80E455-->  <AD_WINDOW_ID><![CDATA[79FC23AB84F04384B4B7CCCADCDD2942]]></AD_WINDOW_ID>
 <!--2DBFD0E6ACF444D0BDAA29269B80E455-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -12648,6 +12648,8 @@ The corresponding tables have then the following setting:
 <!--3ECCC73F8CC6446E9B11350534813289-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--3ECCC73F8CC6446E9B11350534813289-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--3ECCC73F8CC6446E9B11350534813289-->  <NAME><![CDATA[Dimensions Mapping]]></NAME>
+<!--3ECCC73F8CC6446E9B11350534813289-->  <DESCRIPTION><![CDATA[Define the accounting dimensions that are mandatory for each document category, table and level.]]></DESCRIPTION>
+<!--3ECCC73F8CC6446E9B11350534813289-->  <HELP><![CDATA[Dimensions mapping window allows to create new records for new document categories or new tables.]]></HELP>
 <!--3ECCC73F8CC6446E9B11350534813289-->  <AD_TABLE_ID><![CDATA[BB330BA455C141E2A0CBB151728A46E2]]></AD_TABLE_ID>
 <!--3ECCC73F8CC6446E9B11350534813289-->  <AD_WINDOW_ID><![CDATA[1163E0338E154F41BE0BA413D49821CF]]></AD_WINDOW_ID>
 <!--3ECCC73F8CC6446E9B11350534813289-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -12898,7 +12900,7 @@ The corresponding tables have then the following setting:
 <!--4DE17FC05C3843C4959166BB67967486-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--4DE17FC05C3843C4959166BB67967486-->  <NAME><![CDATA[Open/Close Period Control]]></NAME>
 <!--4DE17FC05C3843C4959166BB67967486-->  <DESCRIPTION><![CDATA[It allows to open or close periods for the allowed organizations]]></DESCRIPTION>
-<!--4DE17FC05C3843C4959166BB67967486-->  <HELP><![CDATA[Accounting periods can be opened, closed or permanently closed.]]></HELP>
+<!--4DE17FC05C3843C4959166BB67967486-->  <HELP><![CDATA[The periods of a year can be opened, closed and permanently closed.]]></HELP>
 <!--4DE17FC05C3843C4959166BB67967486-->  <AD_TABLE_ID><![CDATA[84B117B791D9407187EB929BB2B3DD19]]></AD_TABLE_ID>
 <!--4DE17FC05C3843C4959166BB67967486-->  <AD_WINDOW_ID><![CDATA[E56E701CCBA14B8BA480CBDE37C50D7A]]></AD_WINDOW_ID>
 <!--4DE17FC05C3843C4959166BB67967486-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -13281,8 +13283,8 @@ You can also select if transactions are allowed or not for this organization typ
 <!--671B313575F54538990EC8834C0C4A2B-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--671B313575F54538990EC8834C0C4A2B-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--671B313575F54538990EC8834C0C4A2B-->  <NAME><![CDATA[User Defined Dimension 1]]></NAME>
-<!--671B313575F54538990EC8834C0C4A2B-->  <DESCRIPTION><![CDATA[User Defined Dimension 1]]></DESCRIPTION>
-<!--671B313575F54538990EC8834C0C4A2B-->  <HELP><![CDATA[User Defined Dimension 1]]></HELP>
+<!--671B313575F54538990EC8834C0C4A2B-->  <DESCRIPTION><![CDATA[The User Defined Dimension 1 window allows to create the values of the user defined accounting dimension.]]></DESCRIPTION>
+<!--671B313575F54538990EC8834C0C4A2B-->  <HELP><![CDATA[The User Defined Dimension 1 window allows to create the values of the user defined accounting dimension.]]></HELP>
 <!--671B313575F54538990EC8834C0C4A2B-->  <AD_TABLE_ID><![CDATA[16D0C2D87F744A508861CD957C4D3793]]></AD_TABLE_ID>
 <!--671B313575F54538990EC8834C0C4A2B-->  <AD_WINDOW_ID><![CDATA[929DA14E43E94D4E97863133D930D769]]></AD_WINDOW_ID>
 <!--671B313575F54538990EC8834C0C4A2B-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -13419,6 +13421,8 @@ You can also select if transactions are allowed or not for this organization typ
 <!--6D5D646ABCF64F15A78ECA2C4EA1EA9D-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--6D5D646ABCF64F15A78ECA2C4EA1EA9D-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--6D5D646ABCF64F15A78ECA2C4EA1EA9D-->  <NAME><![CDATA[Dimensions]]></NAME>
+<!--6D5D646ABCF64F15A78ECA2C4EA1EA9D-->  <DESCRIPTION><![CDATA[Define the dimensions that are required for header and lines in each document]]></DESCRIPTION>
+<!--6D5D646ABCF64F15A78ECA2C4EA1EA9D-->  <HELP><![CDATA[Dimensions tab allows to configure whether a given accounting dimension is going to be available in the header and/or in the lines of a given document category or not.]]></HELP>
 <!--6D5D646ABCF64F15A78ECA2C4EA1EA9D-->  <AD_TABLE_ID><![CDATA[C994C3B6AB5A4D2DA0CC2085191CF0EB]]></AD_TABLE_ID>
 <!--6D5D646ABCF64F15A78ECA2C4EA1EA9D-->  <AD_WINDOW_ID><![CDATA[109]]></AD_WINDOW_ID>
 <!--6D5D646ABCF64F15A78ECA2C4EA1EA9D-->  <SEQNO><![CDATA[40]]></SEQNO>
@@ -13943,8 +13947,8 @@ You can also select if transactions are allowed or not for this organization typ
 <!--8BAC66D939B344C2A6702725D75FB079-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--8BAC66D939B344C2A6702725D75FB079-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--8BAC66D939B344C2A6702725D75FB079-->  <NAME><![CDATA[User Defined Dimension 2]]></NAME>
-<!--8BAC66D939B344C2A6702725D75FB079-->  <DESCRIPTION><![CDATA[User Defined Dimension 2]]></DESCRIPTION>
-<!--8BAC66D939B344C2A6702725D75FB079-->  <HELP><![CDATA[User Defined Dimension 2]]></HELP>
+<!--8BAC66D939B344C2A6702725D75FB079-->  <DESCRIPTION><![CDATA[The User Defined Dimension 2 window allows to create the values of the user defined accounting dimension.]]></DESCRIPTION>
+<!--8BAC66D939B344C2A6702725D75FB079-->  <HELP><![CDATA[The User Defined Dimension 2 window allows to create the values of the user defined accounting dimension.]]></HELP>
 <!--8BAC66D939B344C2A6702725D75FB079-->  <AD_TABLE_ID><![CDATA[EADDFEC95B5841D881BBA81A8D942CD2]]></AD_TABLE_ID>
 <!--8BAC66D939B344C2A6702725D75FB079-->  <AD_WINDOW_ID><![CDATA[9F13F7F5BA604C01911589C7E44FAD82]]></AD_WINDOW_ID>
 <!--8BAC66D939B344C2A6702725D75FB079-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -14694,8 +14698,8 @@ AND e.pending <> 0]]></HQLWHERECLAUSE>
 <!--C4B6506838E14A349D6717D6856F1B56-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--C4B6506838E14A349D6717D6856F1B56-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--C4B6506838E14A349D6717D6856F1B56-->  <NAME><![CDATA[Header]]></NAME>
-<!--C4B6506838E14A349D6717D6856F1B56-->  <DESCRIPTION><![CDATA[Add new customer payment into the system.]]></DESCRIPTION>
-<!--C4B6506838E14A349D6717D6856F1B56-->  <HELP><![CDATA[The payment in window allows to record and manage customer's payments received against different types of documents issued by the organization such as orders and invoices. This window also allows to manage the customer's payments already recorded in the sales invoice window.]]></HELP>
+<!--C4B6506838E14A349D6717D6856F1B56-->  <DESCRIPTION><![CDATA[The payment in window allows to record and manage customer's payments received against different types of documents issued by the organization such as orders and invoices. This window also allows to manage the customer's payments already recorded in the s]]></DESCRIPTION>
+<!--C4B6506838E14A349D6717D6856F1B56-->  <HELP><![CDATA[The payment in window allows to record and manage customer's payments received against different types of documents issued by the organization such as orders and invoices. This window also allows to manage the customer's payments already recorded in the sales invoice window same way as the G/L item payments received in a G/L Journal.]]></HELP>
 <!--C4B6506838E14A349D6717D6856F1B56-->  <AD_TABLE_ID><![CDATA[D1A97202E832470285C9B1EB026D54E2]]></AD_TABLE_ID>
 <!--C4B6506838E14A349D6717D6856F1B56-->  <AD_WINDOW_ID><![CDATA[E547CE89D4C04429B6340FFA44E70716]]></AD_WINDOW_ID>
 <!--C4B6506838E14A349D6717D6856F1B56-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -15349,7 +15353,7 @@ AND (e.orderNo IS NULL OR e.priceIncludesTax = (SELECT priceIncludesTax FROM Pri
 <!--F7A52FDAAA0346EFA07D53C125B40404-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--F7A52FDAAA0346EFA07D53C125B40404-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--F7A52FDAAA0346EFA07D53C125B40404-->  <NAME><![CDATA[Header]]></NAME>
-<!--F7A52FDAAA0346EFA07D53C125B40404-->  <HELP><![CDATA[The payment out window allows to make and manage supplier's payments done to settle different types of documents such as orders and invoices. This window also allows to manage the supplier's payments already made in the purchase invoice window.]]></HELP>
+<!--F7A52FDAAA0346EFA07D53C125B40404-->  <HELP><![CDATA[The payment out window allows to make and manage supplier's payments done to settle different types of documents such as orders and invoices. This window also allows to manage the supplier's payments already made in the purchase invoice window same way as the G/L item payments made in a G/L Journal.]]></HELP>
 <!--F7A52FDAAA0346EFA07D53C125B40404-->  <AD_TABLE_ID><![CDATA[D1A97202E832470285C9B1EB026D54E2]]></AD_TABLE_ID>
 <!--F7A52FDAAA0346EFA07D53C125B40404-->  <AD_WINDOW_ID><![CDATA[6F8F913FA60F4CBD93DC1D3AA696E76E]]></AD_WINDOW_ID>
 <!--F7A52FDAAA0346EFA07D53C125B40404-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -15907,7 +15911,7 @@ AND @MaterialMgmtShipmentInOut.businessPartner@ = e.orderLine.salesOrder.busines
 <!--FFA978C976384149AF6F11364957EA4C-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--FFA978C976384149AF6F11364957EA4C-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--FFA978C976384149AF6F11364957EA4C-->  <NAME><![CDATA[Exceptions]]></NAME>
-<!--FFA978C976384149AF6F11364957EA4C-->  <HELP><![CDATA[The exceptions tab allows to specify text to exclude while matching therefore it is not taken into account while matching. ]]></HELP>
+<!--FFA978C976384149AF6F11364957EA4C-->  <HELP><![CDATA[Exceptions can be added to a bank file import format therefore are not taken by the import process.]]></HELP>
 <!--FFA978C976384149AF6F11364957EA4C-->  <AD_TABLE_ID><![CDATA[66AED72572944ACB9BED8B132EC89A07]]></AD_TABLE_ID>
 <!--FFA978C976384149AF6F11364957EA4C-->  <AD_WINDOW_ID><![CDATA[557A0AA1D0D745F9A61557C05483072C]]></AD_WINDOW_ID>
 <!--FFA978C976384149AF6F11364957EA4C-->  <SEQNO><![CDATA[20]]></SEQNO>

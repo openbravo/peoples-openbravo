@@ -160,7 +160,7 @@
 <!--109-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--109-->  <NAME><![CDATA[Client]]></NAME>
 <!--109-->  <DESCRIPTION><![CDATA[Define client characteristics, additional information, and defaults.]]></DESCRIPTION>
-<!--109-->  <HELP><![CDATA[A client is an independent entity composed of at least an enterprise or organization.  A client includes and manages the master data to share among all the organizations which belong to it and groups the transactional data booked in any of the organizations which belong to it.]]></HELP>
+<!--109-->  <HELP><![CDATA[A client is an independent entity composed of at least an organization.  A client can include and manage master data such as users, customers and vendors. That master data is then shared among all the organizations which belong to that client.]]></HELP>
 <!--109-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--109-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--109-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -262,7 +262,7 @@
 <!--117-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--117-->  <NAME><![CDATA[Fiscal Calendar]]></NAME>
 <!--117-->  <DESCRIPTION><![CDATA[Create multiple fiscal calendars and periods for accounting purposes.]]></DESCRIPTION>
-<!--117-->  <HELP><![CDATA["Legal entities with accounting" organization types must have a fiscal calendar assigned while rest of organization types can inherit it from its parent.<br>A  calendar contains years and the accounting periods of each year required to get an accurate organization's accounting practice.
+<!--117-->  <HELP><![CDATA["Legal entities with accounting" organization types must have a fiscal calendar assigned while rest of organization types can inherit it from its parent.<br>A  calendar contains years and the periods of each year required to get an accurate organization's accounting practice.
 
 ]]></HELP>
 <!--117-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
@@ -435,7 +435,7 @@
 <!--132-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--132-->  <NAME><![CDATA[G/L Journal]]></NAME>
 <!--132-->  <DESCRIPTION><![CDATA[Create and edit manual G/L journal entries.]]></DESCRIPTION>
-<!--132-->  <HELP><![CDATA[A G/L (General Ledger) journal allows to post journal entries to the ledger.]]></HELP>
+<!--132-->  <HELP><![CDATA[A G/L (General Ledger) journal allows to post journal entries to the ledger and create G/L item payments.]]></HELP>
 <!--132-->  <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
 <!--132-->  <ISSOTRX><![CDATA[N]]></ISSOTRX>
 <!--132-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -2605,6 +2605,8 @@ By enabling the heartbeat, you consent to the processing of this data and storin
 <!--1163E0338E154F41BE0BA413D49821CF-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1163E0338E154F41BE0BA413D49821CF-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1163E0338E154F41BE0BA413D49821CF-->  <NAME><![CDATA[Dimensions Mapping]]></NAME>
+<!--1163E0338E154F41BE0BA413D49821CF-->  <DESCRIPTION><![CDATA[This window defines at system administrator level  the accounting dimensions that are mandatory for each document category, table and level. ]]></DESCRIPTION>
+<!--1163E0338E154F41BE0BA413D49821CF-->  <HELP><![CDATA[This window defines at system administrator level  the accounting dimensions that are mandatory for each document category, table and level. ]]></HELP>
 <!--1163E0338E154F41BE0BA413D49821CF-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--1163E0338E154F41BE0BA413D49821CF-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--1163E0338E154F41BE0BA413D49821CF-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -2909,7 +2911,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--6F8F913FA60F4CBD93DC1D3AA696E76E-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--6F8F913FA60F4CBD93DC1D3AA696E76E-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--6F8F913FA60F4CBD93DC1D3AA696E76E-->  <NAME><![CDATA[Payment Out]]></NAME>
-<!--6F8F913FA60F4CBD93DC1D3AA696E76E-->  <HELP><![CDATA[Supplier's payments and prepayments can be made and manage in the payment out window.]]></HELP>
+<!--6F8F913FA60F4CBD93DC1D3AA696E76E-->  <HELP><![CDATA[Supplier's payments and prepayments can be made and managed in the payment out window. Same way G/L item payments do not related to orders/invoices can also be managed in this window.]]></HELP>
 <!--6F8F913FA60F4CBD93DC1D3AA696E76E-->  <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
 <!--6F8F913FA60F4CBD93DC1D3AA696E76E-->  <ISSOTRX><![CDATA[N]]></ISSOTRX>
 <!--6F8F913FA60F4CBD93DC1D3AA696E76E-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -2925,8 +2927,8 @@ You can also select if transactions are allowed or not for this organization typ
 <!--79FC23AB84F04384B4B7CCCADCDD2942-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--79FC23AB84F04384B4B7CCCADCDD2942-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--79FC23AB84F04384B4B7CCCADCDD2942-->  <NAME><![CDATA[Cost Center]]></NAME>
-<!--79FC23AB84F04384B4B7CCCADCDD2942-->  <DESCRIPTION><![CDATA[Tracks the cost of running a company. ]]></DESCRIPTION>
-<!--79FC23AB84F04384B4B7CCCADCDD2942-->  <HELP><![CDATA[Tracks the costs that does not produce direct profit and adds to the cost of running a company. ]]></HELP>
+<!--79FC23AB84F04384B4B7CCCADCDD2942-->  <DESCRIPTION><![CDATA[Cost Center is an accounting dimension which can be used while posting documents to the ledger.]]></DESCRIPTION>
+<!--79FC23AB84F04384B4B7CCCADCDD2942-->  <HELP><![CDATA[Cost Center is an accounting dimension which can be used while posting documents to the ledger.]]></HELP>
 <!--79FC23AB84F04384B4B7CCCADCDD2942-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--79FC23AB84F04384B4B7CCCADCDD2942-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--79FC23AB84F04384B4B7CCCADCDD2942-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -2959,8 +2961,8 @@ You can also select if transactions are allowed or not for this organization typ
 <!--929DA14E43E94D4E97863133D930D769-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--929DA14E43E94D4E97863133D930D769-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--929DA14E43E94D4E97863133D930D769-->  <NAME><![CDATA[User Defined Dimension 1]]></NAME>
-<!--929DA14E43E94D4E97863133D930D769-->  <DESCRIPTION><![CDATA[User Defined Dimension 1]]></DESCRIPTION>
-<!--929DA14E43E94D4E97863133D930D769-->  <HELP><![CDATA[User Defined Dimension 1]]></HELP>
+<!--929DA14E43E94D4E97863133D930D769-->  <DESCRIPTION><![CDATA[User Defined Dimension 1 is an accounting dimension which can be customized and used while posting documents to the ledger.]]></DESCRIPTION>
+<!--929DA14E43E94D4E97863133D930D769-->  <HELP><![CDATA[User Defined Dimension 1 is an accounting dimension which can be customized and used while posting documents to the ledger.]]></HELP>
 <!--929DA14E43E94D4E97863133D930D769-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--929DA14E43E94D4E97863133D930D769-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--929DA14E43E94D4E97863133D930D769-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -3007,8 +3009,8 @@ You can also select if transactions are allowed or not for this organization typ
 <!--9F13F7F5BA604C01911589C7E44FAD82-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--9F13F7F5BA604C01911589C7E44FAD82-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--9F13F7F5BA604C01911589C7E44FAD82-->  <NAME><![CDATA[User Defined Dimension 2]]></NAME>
-<!--9F13F7F5BA604C01911589C7E44FAD82-->  <DESCRIPTION><![CDATA[User Defined Dimension 2]]></DESCRIPTION>
-<!--9F13F7F5BA604C01911589C7E44FAD82-->  <HELP><![CDATA[User Defined Dimension 2]]></HELP>
+<!--9F13F7F5BA604C01911589C7E44FAD82-->  <DESCRIPTION><![CDATA[User Defined Dimension 2 is an accounting dimension which can be customized and used while posting documents to the ledger.]]></DESCRIPTION>
+<!--9F13F7F5BA604C01911589C7E44FAD82-->  <HELP><![CDATA[User Defined Dimension 2 is an accounting dimension which can be customized and used while posting documents to the ledger.]]></HELP>
 <!--9F13F7F5BA604C01911589C7E44FAD82-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--9F13F7F5BA604C01911589C7E44FAD82-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--9F13F7F5BA604C01911589C7E44FAD82-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -3186,8 +3188,8 @@ You can also select if transactions are allowed or not for this organization typ
 <!--E547CE89D4C04429B6340FFA44E70716-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--E547CE89D4C04429B6340FFA44E70716-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--E547CE89D4C04429B6340FFA44E70716-->  <NAME><![CDATA[Payment In]]></NAME>
-<!--E547CE89D4C04429B6340FFA44E70716-->  <DESCRIPTION><![CDATA[Window to manage the payments done by customers ]]></DESCRIPTION>
-<!--E547CE89D4C04429B6340FFA44E70716-->  <HELP><![CDATA[Customer's payments and prepayments received can be recorded and managed in the payment in window.]]></HELP>
+<!--E547CE89D4C04429B6340FFA44E70716-->  <DESCRIPTION><![CDATA[Customer's payments and prepayments received can be recorded and managed in the payment in window. Same way G/L item payments do not related to orders/invoices can also be managed in this window.]]></DESCRIPTION>
+<!--E547CE89D4C04429B6340FFA44E70716-->  <HELP><![CDATA[Customer's payments and prepayments received can be recorded and managed in the payment in window. Same way G/L item payments do not related to orders/invoices can also be managed in this window.]]></HELP>
 <!--E547CE89D4C04429B6340FFA44E70716-->  <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
 <!--E547CE89D4C04429B6340FFA44E70716-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--E547CE89D4C04429B6340FFA44E70716-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -3204,7 +3206,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--E56E701CCBA14B8BA480CBDE37C50D7A-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--E56E701CCBA14B8BA480CBDE37C50D7A-->  <NAME><![CDATA[Open/Close Period Control]]></NAME>
 <!--E56E701CCBA14B8BA480CBDE37C50D7A-->  <DESCRIPTION><![CDATA[Open or close periods for the allowed organizations]]></DESCRIPTION>
-<!--E56E701CCBA14B8BA480CBDE37C50D7A-->  <HELP><![CDATA[Open/Close Period Control allows to open, close or permanently close the accounting period/s of a year.  This process is enabled to Organizations for which "Period Control" feature is enabled.]]></HELP>
+<!--E56E701CCBA14B8BA480CBDE37C50D7A-->  <HELP><![CDATA[Open/Close Period Control feature manage the periods of an organization. This feature applies to organizations for which the "Period Control" feature is enabled.]]></HELP>
 <!--E56E701CCBA14B8BA480CBDE37C50D7A-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--E56E701CCBA14B8BA480CBDE37C50D7A-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--E56E701CCBA14B8BA480CBDE37C50D7A-->  <PROCESSING><![CDATA[N]]></PROCESSING>

@@ -5839,12 +5839,19 @@ This process:<br/>
 <!--64B3FF29AC174F4B94538BD0A3CE1CD3-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--64B3FF29AC174F4B94538BD0A3CE1CD3-->  <VALUE><![CDATA[Costing Migration Process]]></VALUE>
 <!--64B3FF29AC174F4B94538BD0A3CE1CD3-->  <NAME><![CDATA[Costing Migration Process]]></NAME>
-<!--64B3FF29AC174F4B94538BD0A3CE1CD3-->  <HELP><![CDATA[The costing migration process initializes the costing engine creating a new costing rule using the average algorithm for each legal entity of the instance. The migration is done in 3 steps:
-<br>1st. Closing and Opening inventories are created for each organization and warehouse with stocked products. The opening inventories are left in draft status. The unit cost is set based on the legacy costs.
-<br>2nd. Users review the opening inventories to set proper quantities and cost and process the inventories.
-<br>3rd. Once all the opening inventories are processed the migration process is launched again to validate all the costing rules.
+<!--64B3FF29AC174F4B94538BD0A3CE1CD3-->  <HELP><![CDATA[The costing migration process initializes the new costing engine.<br><br>
+This process creates a costing rule which uses the "Average" costing algorithm for each legal entity of the instance. <br><br>
+The costing migration process is done in three steps:<br>
 
-<br><br>When the process is finished it is recommended to schedule the Costing Background process to automatically calculate the cost of all material transactions.]]></HELP>
+1st step:<br>
+this process generates the closing and the opening balances of the inventory per each organization and warehouse with stocked products. The opening inventory balances are left in draft status therefore can be reviewed and the unit costs set are based on the "legacy" costs.<br><br>
+
+2nd step:<br>
+the user can review the opening inventories to set up the proper stock and cost if needed. Once done the opening inventories can be processed.<br><br>
+
+3rd step:<br>
+the migration process is launched once again to validate all the costing rules set once all the opening inventories have been processed.<br><br>
+When the process is finished it is recommended to schedule the "Costing Background" process to automatically calculate the cost of all material transactions.]]></HELP>
 <!--64B3FF29AC174F4B94538BD0A3CE1CD3-->  <ACCESSLEVEL><![CDATA[4]]></ACCESSLEVEL>
 <!--64B3FF29AC174F4B94538BD0A3CE1CD3-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--64B3FF29AC174F4B94538BD0A3CE1CD3-->  <ISREPORT><![CDATA[N]]></ISREPORT>
@@ -6336,7 +6343,7 @@ This process:<br/>
 <!--E5BE98DCF4514A18B571F21183B397DD-->  <VALUE><![CDATA[ValuedStockReport]]></VALUE>
 <!--E5BE98DCF4514A18B571F21183B397DD-->  <NAME><![CDATA[Valued Stock Report]]></NAME>
 <!--E5BE98DCF4514A18B571F21183B397DD-->  <DESCRIPTION><![CDATA[Valued Stock Report]]></DESCRIPTION>
-<!--E5BE98DCF4514A18B571F21183B397DD-->  <HELP><![CDATA[Valued Stock Report]]></HELP>
+<!--E5BE98DCF4514A18B571F21183B397DD-->  <HELP><![CDATA[Valued Stock Report shows the stock for a particular warehouse as well as the value of the stock.]]></HELP>
 <!--E5BE98DCF4514A18B571F21183B397DD-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--E5BE98DCF4514A18B571F21183B397DD-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--E5BE98DCF4514A18B571F21183B397DD-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
