@@ -742,6 +742,9 @@ isc.OBStandardWindow.addProperties({
     if (!action) {
       return;
     }
+    if (this.view && this.view.viewForm && this.view.viewForm.isNewRecord()) {
+      this.view.saveRow();
+    }
     OB.Utilities.callAction(action);
   },
 
