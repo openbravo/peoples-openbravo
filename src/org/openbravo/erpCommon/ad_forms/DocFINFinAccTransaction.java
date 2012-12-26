@@ -66,6 +66,7 @@ public class DocFINFinAccTransaction extends AcctServer {
   public static final String TRXTYPE_BankFee = "BF";
   BigDecimal usedCredit = ZERO;
   BigDecimal generatedCredit = ZERO;
+  boolean exeptionPosting = false;
 
   private static final long serialVersionUID = 1L;
   private static final Logger log4j = Logger.getLogger(DocFINFinAccTransaction.class);
@@ -386,9 +387,13 @@ public class DocFINFinAccTransaction extends AcctServer {
       // 3 Scenarios: 1st Bank fee 2nd payment related transaction 3rd glitem transaction
       if (TRXTYPE_BankFee.equals(transaction.getTransactionType()))
         fact = createFactFee(transaction, as, conn, fact);
-      else if (transaction.getFinPayment() != null)
-        fact = createFactPaymentDetails(as, conn, fact);
-      else
+      else if (transaction.getFinPayment() != null) {
+        if (exeptionPosting) {
+          fact = createFactPaymentDetailsDifFinAcct(as, conn, fact);
+        } else {
+          fact = createFactPaymentDetails(as, conn, fact);
+        }
+      } else
         fact = createFactGLItem(as, conn, fact);
     } finally {
       OBContext.restorePreviousMode();
@@ -571,6 +576,159 @@ public class DocFINFinAccTransaction extends AcctServer {
         transaction.getDepositAmount().toString(), transaction.getPaymentAmount().toString(),
         Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
 
+    SeqNo = "0";
+    return fact;
+  }
+
+  public Fact createFactPaymentDetailsDifFinAcct(AcctSchema as, ConnectionProvider conn, Fact fact)
+      throws ServletException {
+    // The Payment FinAcct and Transaction FinAcct are different. To post the transaction
+    // the amount of the payment need to be moved from destiny account of the payment of FinAcct1
+    // to destiny of the payment of the FinAcct2
+    FIN_FinaccTransaction transaction = OBDal.getInstance().get(FIN_FinaccTransaction.class,
+        Record_ID);
+    String Fact_Acct_Group_ID = SequenceIdData.getUUID();
+    boolean isReceipt = transaction.getFinPayment().isReceipt();
+    Currency paymentCurrency = transaction.getFinPayment().getCurrency();
+    if (!getDocumentPaymentConfirmation(transaction.getFinPayment())) {
+      for (int i = 0; p_lines != null && i < p_lines.length; i++) {
+        DocLine_FINFinAccTransaction line = (DocLine_FINFinAccTransaction) p_lines[i];
+        boolean isPrepayment = "Y".equals(line.getIsPrepayment());
+        BigDecimal bpamount = new BigDecimal(line.getAmount());
+        if (!"".equals(line.getWriteOffAmt())
+            && ZERO.compareTo(new BigDecimal(line.getWriteOffAmt())) != 0) {
+          Account account = isReceipt ? getAccountWriteOffBPartner(AcctServer.ACCTTYPE_WriteOff,
+              line.m_C_BPartner_ID, as, conn) : getAccountWriteOffBPartner(
+              AcctServer.ACCTTYPE_WriteOff_Revenue, line.m_C_BPartner_ID, as, conn);
+          if (account == null) {
+            account = isReceipt ? getAccount(AcctServer.ACCTTYPE_WriteOffDefault, as, conn)
+                : getAccount(AcctServer.ACCTTYPE_WriteOffDefault_Revenue, as, conn);
+          }
+          // Write off amount is generated at payment time so conversion is calculated taking into
+          // account conversion at payment date to calculate gains or losses
+          BigDecimal writeOffAmt = convertAmount(new BigDecimal(line.getWriteOffAmt()), isReceipt,
+              DateAcct, TABLEID_Transaction, transaction.getId(), paymentCurrency.getId(),
+              as.m_C_Currency_ID, line, as, fact, Fact_Acct_Group_ID, nextSeqNo(SeqNo), conn);
+          fact.createLine(line, account, paymentCurrency.getId(),
+              (isReceipt ? writeOffAmt.toString() : ""), (isReceipt ? "" : writeOffAmt.toString()),
+              Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+          bpamount = bpamount.add(new BigDecimal(line.getWriteOffAmt()));
+        }
+        if (!"".equals(line.cGlItemId)) {
+          // FIXME Should this be posted taking into account payment date?? Diferences among
+          // currencies
+          fact.createLine(
+              line,
+              getAccountGLItem(OBDal.getInstance().get(GLItem.class, line.getCGlItemId()), as,
+                  isReceipt, conn), paymentCurrency.getId(), isReceipt ? "" : line.getAmount(),
+              isReceipt ? line.getAmount() : "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+              DocumentType, conn);
+        } else {
+          BigDecimal bpAmountConverted = bpamount;
+          Invoice invoice = line.getInvoice();
+          if (!isPrepayment && invoice != null) {
+            // To force opposite posting isReceipt is opposite as well. this is required when
+            // looking backwards
+            bpAmountConverted = convertAmount(bpAmountConverted, !isReceipt, DateAcct,
+                TABLEID_Invoice, invoice.getId(), paymentCurrency.getId(), as.m_C_Currency_ID,
+                line, as, fact, Fact_Acct_Group_ID, nextSeqNo(SeqNo), conn);
+          }
+          if (isPrepayment) {
+            // To force opposite posting isReceipt is opposite as well. this is required when
+            // looking backwards. When prepayments date for event is always date for PAYMENT
+            bpAmountConverted = convertAmount(bpAmountConverted, !isReceipt, DateAcct,
+                TABLEID_Payment, transaction.getFinPayment().getId(), paymentCurrency.getId(),
+                as.m_C_Currency_ID, line, as, fact, Fact_Acct_Group_ID, nextSeqNo(SeqNo), conn);
+          }
+          fact.createLine(
+              line,
+              getAccountBPartner(
+                  (line.m_C_BPartner_ID == null || line.m_C_BPartner_ID.equals("")) ? this.C_BPartner_ID
+                      : line.m_C_BPartner_ID, as, isReceipt,
+                  (isPrepayment || line.isPrepaymentAgainstInvoice) ? true : false, conn),
+              paymentCurrency.getId(), (isReceipt ? "" : bpAmountConverted.toString()),
+              (isReceipt ? bpAmountConverted.toString() : ""), Fact_Acct_Group_ID,
+              nextSeqNo(SeqNo), DocumentType, conn);
+          // If payment date is prior to invoice date book invoice as a pre-payment not as a regular
+          // Receivable/Payable
+          if (line.isPrepaymentAgainstInvoice()) {
+            String Fact_Acct_Group_ID2 = SequenceIdData.getUUID();
+            DocLine line2 = new DocLine(DocumentType, Record_ID, line.m_TrxLine_ID);
+            line2.copyInfo(line);
+            line2.m_DateAcct = OBDateUtils.formatDate(invoice.getAccountingDate());
+            fact.createLine(
+                line2,
+                getAccountBPartner((line2.m_C_BPartner_ID == null || line2.m_C_BPartner_ID
+                    .equals("")) ? this.C_BPartner_ID : line2.m_C_BPartner_ID, as, isReceipt,
+                    false, conn), paymentCurrency.getId(),
+                (isReceipt ? "" : bpAmountConverted.toString()),
+                (isReceipt ? bpAmountConverted.toString() : ""), Fact_Acct_Group_ID2,
+                nextSeqNo(SeqNo), DocumentType, conn);
+            fact.createLine(
+                line2,
+                getAccountBPartner((line2.m_C_BPartner_ID == null || line2.m_C_BPartner_ID
+                    .equals("")) ? this.C_BPartner_ID : line2.m_C_BPartner_ID, as, isReceipt, true,
+                    conn), paymentCurrency.getId(),
+                (!isReceipt ? "" : bpAmountConverted.toString()),
+                (!isReceipt ? bpAmountConverted.toString() : ""), Fact_Acct_Group_ID2,
+                nextSeqNo(SeqNo), DocumentType, conn);
+          }
+
+        }
+      }
+      // Pre-payment is consumed when Used Credit Amount not equals Zero. When consuming Credit no
+      // credit is generated
+      if (transaction.getFinPayment().getUsedCredit().compareTo(ZERO) != 0
+          && transaction.getFinPayment().getGeneratedCredit().compareTo(ZERO) == 0) {
+        List<FIN_Payment_Credit> creditPayments = transaction.getFinPayment()
+            .getFINPaymentCreditList();
+        for (FIN_Payment_Credit creditPayment : creditPayments) {
+          boolean isReceiptPayment = creditPayment.getCreditPaymentUsed().isReceipt();
+          String creditAmountConverted = convertAmount(creditPayment.getAmount(), isReceiptPayment,
+              DateAcct, TABLEID_Payment, creditPayment.getCreditPaymentUsed().getId(),
+              creditPayment.getCreditPaymentUsed().getCurrency().getId(), as.m_C_Currency_ID, null,
+              as, fact, Fact_Acct_Group_ID, nextSeqNo(SeqNo), conn).toString();
+          fact.createLine(null,
+              getAccountBPartner(C_BPartner_ID, as, isReceiptPayment, true, conn), creditPayment
+                  .getCreditPaymentUsed().getCurrency().getId(),
+              (isReceiptPayment ? creditAmountConverted : ""), (isReceiptPayment ? ""
+                  : creditAmountConverted), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
+              conn);
+        }
+        if (creditPayments.isEmpty()) {
+          fact.createLine(
+              null,
+              getAccountBPartner(C_BPartner_ID, as, transaction.getFinPayment().isReceipt(), true,
+                  conn), paymentCurrency.getId(),
+              (transaction.getFinPayment().isReceipt() ? transaction.getFinPayment()
+                  .getUsedCredit().toString() : ""), (transaction.getFinPayment().isReceipt() ? ""
+                  : transaction.getFinPayment().getUsedCredit().toString()), Fact_Acct_Group_ID,
+              nextSeqNo(SeqNo), DocumentType, conn);
+        }
+      }
+    } else {
+      BigDecimal convertedAmount = convertAmount(transaction.getFinPayment().getAmount(),
+          !isReceipt, DateAcct, TABLEID_Payment, transaction.getFinPayment().getId(),
+          paymentCurrency.getId(), as.m_C_Currency_ID, null, as, fact, Fact_Acct_Group_ID,
+          nextSeqNo(SeqNo), conn);
+      fact.createLine(
+          null,
+          getAccountPayment(conn, transaction.getFinPayment().getPaymentMethod(), transaction
+              .getFinPayment().getAccount(), as, transaction.getFinPayment().isReceipt()),
+          paymentCurrency.getId(), !isReceipt ? convertedAmount.toString() : "",
+          isReceipt ? convertedAmount.toString() : "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+          DocumentType, conn);
+
+    }
+    DocLine_FINFinAccTransaction line = new DocLine_FINFinAccTransaction(DocumentType,
+        transaction.getId(), "");
+    line.m_description = transaction.getFinPayment().getDescription();
+    fact.createLine(
+        line,
+        getAccountPayment(conn, transaction.getFinPayment().getPaymentMethod(),
+            transaction.getAccount(), as, transaction.getFinPayment().isReceipt()), C_Currency_ID,
+        transaction.getDepositAmount().toString(), transaction.getPaymentAmount().toString(),
+        Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
     SeqNo = "0";
     return fact;
   }
@@ -772,6 +930,7 @@ public class DocFINFinAccTransaction extends AcctServer {
   public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {
     boolean confirmation = false;
     OBContext.setAdminMode();
+    exeptionPosting = false;
     try {
       FIN_FinaccTransaction transaction = OBDal.getInstance().get(FIN_FinaccTransaction.class,
           strRecordId);
@@ -781,7 +940,8 @@ public class DocFINFinAccTransaction extends AcctServer {
       if (payment != null) {
         OBCriteria<FinAccPaymentMethod> obCriteria = OBDal.getInstance().createCriteria(
             FinAccPaymentMethod.class);
-        obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, payment.getAccount()));
+        obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT,
+            transaction.getAccount()));
         obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD,
             payment.getPaymentMethod()));
         obCriteria.setFilterOnReadableClients(false);
@@ -800,6 +960,14 @@ public class DocFINFinAccTransaction extends AcctServer {
             else if (("CLE").equals(lines.get(0).getUponDepositUse())
                 && account.getClearedPaymentAccount() != null)
               confirmation = true;
+
+            else if (null == (lines.get(0).getUponDepositUse())
+                && null == (lines.get(0).getINUponClearingUse())
+                && transaction.getAccount() != payment.getAccount()
+                && (transaction.getReconciliation() == null)) {
+              confirmation = true;
+              exeptionPosting = true;
+            }
           } else {
             if (("INT").equals(lines.get(0).getUponWithdrawalUse())
                 && account.getFINOutIntransitAcct() != null)
@@ -812,6 +980,7 @@ public class DocFINFinAccTransaction extends AcctServer {
               confirmation = true;
           }
         }
+
       } else {
         for (FIN_FinancialAccountAccounting account : accounts) {
           if (confirmation)
@@ -831,8 +1000,9 @@ public class DocFINFinAccTransaction extends AcctServer {
     } finally {
       OBContext.restorePreviousMode();
     }
-    if (!confirmation)
+    if (!confirmation) {
       setStatus(STATUS_DocumentDisabled);
+    }
     return confirmation;
   }
 

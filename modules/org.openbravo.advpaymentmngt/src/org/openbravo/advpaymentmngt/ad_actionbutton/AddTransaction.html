@@ -131,6 +131,16 @@ function disableButtonProcess(){
     document.getElementById('buttonProcess').disabled='disabled';
 }
 
+function showPaymentSection2(){
+  var doc = document.frmMain.inpDocumentType.value;
+  if (doc == 'RCIN'){
+    displayLogicElement('PaymentSection2', true);
+  } else{
+      displayLogicElement('PaymentSection2', false);  
+  }
+  return loadGrid();
+}
+
 function showHideLayers() {
   var opt = document.frmMain.inpTransactionType.value;
   if (opt == 'P') {
@@ -140,6 +150,7 @@ function showHideLayers() {
     displayLogicElement('GLItemSection2', false);
     displayLogicElement('GLItemSection3', false);
     displayLogicElement('PaymentSection', true);
+    displayLogicElement('PaymentSection2', true);
     displayLogicElement('client_middle', true);
     autoDisplayLogicDimensions(false);
     loadGrid();
@@ -151,6 +162,7 @@ function showHideLayers() {
     displayLogicElement('GLItemSection2', true);
     displayLogicElement('GLItemSection3', true);
     displayLogicElement('PaymentSection', false);
+    displayLogicElement('PaymentSection2', false);
     displayLogicElement('client_middle', false);
     autoDisplayLogicDimensions(true);
   } else if (opt == 'F') {
@@ -160,6 +172,7 @@ function showHideLayers() {
     displayLogicElement('GLItemSection2', false);
     displayLogicElement('GLItemSection3', false);
     displayLogicElement('PaymentSection', false);
+    displayLogicElement('PaymentSection2', false);
     displayLogicElement('client_middle', false);
     autoDisplayLogicDimensions(false);
   }
@@ -219,7 +232,6 @@ function autoDisplayLogicDimensions(isDisplayed) {
     } else {
       displayLogicDimension('user2_ID', false);
     }
-  //costcenter  is not ready
   if (document.frmMain.strElement_CC.value === 'Y' && isDisplayed) {
       displayLogicDimension('c_costcenter_id', true);
       displayTitle = true;
@@ -1028,12 +1040,12 @@ function reloadWindowGrid() {
             <tr id="PaymentSection">
               <td class="TitleCell"><span class="LabelText">Document</span></td>
               <td class="Combo_ContentCell">
-                <select  name="inpDocumentType" id="paramDocumentType" class="Combo Combo_OneCell_width" onchange="loadGrid();return true;">
+                <select  name="inpDocumentType" id="paramDocumentType" class="Combo Combo_OneCell_width" onchange="showPaymentSection2();return true;">
                   <!-- <option value=""><div id="reportDocument"></div></option> -->
                   <option value="RCIN" selected="selected">Received In</option>
                   <option value="PDOUT">Paid Out</option>
                 </select>
-              </td>
+              </td> 
               <td class="TitleCell"><span class="LabelText">From Date</span></td>
               <td class="TextBox_btn_ContentCell">
                 <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
@@ -1097,6 +1109,11 @@ function reloadWindowGrid() {
                 </table>
               </td>
             </tr>
+            <tr id="PaymentSection2">
+            <td class="TitleCell" id="inpAlternativeLabel"><span class="TitleCell LabelText"><label name="lblP" id="lblPShowPaym" for="paramAlternativeFA">Show transactions for alternative financial account</label></span></td>
+             <td class="Radio_Check_ContentCell" id="inpAlternativeChkBox">
+              <span class="Radio_Check_ContentCell Checkbox_container_NOT_Focused"><input type="checkbox" name="inpAlternativeFA" value="Y" id="paramAlternativeFA" onclick="loadGrid()"></input></span>
+            </tr>
             <!-- Payment Section END-->
             
             <tr class="FieldGroup_BottomMargin"></tr>
@@ -1124,6 +1141,7 @@ function reloadWindowGrid() {
                         <th class="DataGrid_Header_LineNoCell DataGrid_Body_Cell_CheckBox" width="25"> 
                           <input type="checkbox" name="inpAllLines" onclick="markAll(document.frmMain.inpPaymentId, this.checked); return true;"/>
                         </th>
+                        <th class="DataGrid_Header_Cell" width="250">Financial Account</th>
                         <th class="DataGrid_Header_Cell" width="250">Payment In/Out</th>
                         <th class="DataGrid_Header_Cell" width="300">Description</th>
                         <th class="DataGrid_Header_Cell" width="70">Date</th>

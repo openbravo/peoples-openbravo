@@ -104,9 +104,10 @@ public class AddTransaction extends HttpSecureAppServlet {
       vars.removeSessionValue("AddPaymentFromTransaction|PaymentId");
       String strFinBankStatementLineId = vars.getStringParameter("inpFinBankStatementLineId", "",
           IsIDFilter.instance);
+      Boolean showAlternativeFA = "Y".equals(vars.getStringParameter("inpAlternativeFA", "N"));
 
       printGrid(response, vars, strFinancialAccountId, strFromDate, strToDate, strIsReceipt,
-          strFinBankStatementLineId, closeAutomatically, paymentWithTransaction);
+          strFinBankStatementLineId, closeAutomatically, paymentWithTransaction, showAlternativeFA);
 
     } else if (vars.commandIn("SAVE")) {
       String strTabId = vars.getGlobalVariable("inpTabId", "AddTransaction|tabId");
@@ -165,12 +166,15 @@ public class AddTransaction extends HttpSecureAppServlet {
             description = p.getDescription().replace("\n", ". ");
           }
 
-          FIN_FinaccTransaction finTrans = dao.getNewFinancialTransaction(p.getOrganization(), p
-              .getAccount(), TransactionsDao.getTransactionMaxLineNo(p.getAccount()) + 10, p,
-              description, FIN_Utility.getDate(strTransactionDate), null, p.isReceipt() ? "RDNC"
-                  : "PWNC", depositAmt, paymentAmt, null, null, null,
-              p.isReceipt() ? "BPD" : "BPW", FIN_Utility.getDate(strTransactionDate), p
-                  .getCurrency(), p.getFinancialTransactionConvertRate(), p.getAmount());
+          FIN_FinaccTransaction finTrans = dao.getNewFinancialTransaction(
+              p.getOrganization(),
+              OBDal.getInstance().get(FIN_FinancialAccount.class, strFinancialAccountId),
+              TransactionsDao.getTransactionMaxLineNo(OBDal.getInstance().get(
+                  FIN_FinancialAccount.class, strFinancialAccountId)) + 10, p, description,
+              FIN_Utility.getDate(strTransactionDate), null, p.isReceipt() ? "RDNC" : "PWNC",
+              depositAmt, paymentAmt, null, null, null, p.isReceipt() ? "BPD" : "BPW",
+              FIN_Utility.getDate(strTransactionDate), p.getCurrency(),
+              p.getFinancialTransactionConvertRate(), p.getAmount());
           OBError processTransactionError = processTransaction(vars, this, "P", finTrans);
           if (processTransactionError != null && "Error".equals(processTransactionError.getType())) {
             throw new OBException(processTransactionError.getMessage());
@@ -410,8 +414,8 @@ public class AddTransaction extends HttpSecureAppServlet {
 
   private void printGrid(HttpServletResponse response, VariablesSecureApp vars,
       String strFinancialAccountId, String strFromDate, String strToDate, boolean isReceipt,
-      String strFinBankStatementLineId, String closeAutomatically, String paymentWithTransaction)
-      throws IOException, ServletException {
+      String strFinBankStatementLineId, String closeAutomatically, String paymentWithTransaction,
+      Boolean showAlternativeFA) throws IOException, ServletException {
     dao = new AdvPaymentMngtDao();
 
     log4j.debug("Output: Grid with transactions not reconciled");
@@ -442,10 +446,14 @@ public class AddTransaction extends HttpSecureAppServlet {
 
     // Payments not deposited/withdrawal
     // Not stored in Fin_Finacc_Transaction table
-    final FieldProvider[] data = dao.getPaymentsNotDeposited(account,
-        FIN_Utility.getDate(strFromDate),
-        FIN_Utility.getDate(DateTimeData.nDaysAfter(this, strToDate, "1")), isReceipt);
-
+    final FieldProvider[] data;
+    if (showAlternativeFA & isReceipt) {
+      data = dao.getAlternativePaymentsNotDeposited(account, FIN_Utility.getDate(strFromDate),
+          FIN_Utility.getDate(DateTimeData.nDaysAfter(this, strToDate, "1")), isReceipt);
+    } else {
+      data = dao.getPaymentsNotDeposited(account, FIN_Utility.getDate(strFromDate),
+          FIN_Utility.getDate(DateTimeData.nDaysAfter(this, strToDate, "1")), isReceipt);
+    }
     xmlDocument.setData("structure", (data == null) ? set() : data);
     JSONObject table = new JSONObject();
     try {
@@ -462,6 +470,7 @@ public class AddTransaction extends HttpSecureAppServlet {
 
   private FieldProvider[] set() throws ServletException {
     HashMap<String, String> empty = new HashMap<String, String>();
+    empty.put("finAcc", "");
     empty.put("paymentId", "");
     empty.put("paymentInfo", "");
     empty.put("paymentDescription", "");
