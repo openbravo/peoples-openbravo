@@ -61,8 +61,8 @@ isc.OBToolbarActionButton.addProperties({
         standardWindow = this.view.standardWindow,
         autosaveButton = this.autosave,
         param, allProperties, sessionProperties, callbackFunction, popupParams;
-
-    if (rowNum && !theView.viewGrid.getSelectedRecord()) {
+    //Modified check from 'rowNum to 'rowNum ! = null' to handle case where rowNum is 0.
+    if (rowNum !== null && !theView.viewGrid.getSelectedRecord()) {
       // Current selection was lost, restore it
       theView.viewGrid.selectRecord(rowNum);
     }
