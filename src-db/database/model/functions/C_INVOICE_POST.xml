@@ -1215,7 +1215,7 @@ BEGIN --BODY
               LineNetAmt=0,
               ChargeAmt=0,
               Description=
-                (SELECT p.NAME || ' ' || C_INVOICELINE.Description
+                (SELECT p.NAME || ' ' || COALESCE(TO_CHAR(C_INVOICELINE.Description), '')
                  FROM M_PRODUCT p
                  WHERE p.M_Product_ID=CUR_BOM_Line.M_Product_ID
                 ),
