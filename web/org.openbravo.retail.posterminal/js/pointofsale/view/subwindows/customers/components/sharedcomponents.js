@@ -119,7 +119,7 @@ enyo.kind({
       } else {
         sw.doChangeSubWindow({
           newWindow: {
-            name: sw.caller,
+            name: 'customerView',
             params: {
               navigateOnClose: 'customerAdvancedSearch',
               businessPartner: params.customer
