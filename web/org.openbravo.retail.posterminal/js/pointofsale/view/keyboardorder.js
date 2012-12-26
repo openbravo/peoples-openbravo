@@ -177,12 +177,6 @@ enyo.kind({
     this.addCommand('line:dto', {
       permission: 'OBPOS_order.discount',
       action: function (keyboard, txt) {
-        if (keyboard.discountsMode) {
-          me.doSetDiscountQty({
-            qty: OB.I18N.parseNumber(txt)
-          });
-          return true;
-        }
         if (keyboard.receipt.get('isEditable') === false) {
           me.doShowPopup({
             popup: 'modalNotEditableOrder'
