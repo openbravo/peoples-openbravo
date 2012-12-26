@@ -112,6 +112,9 @@ OB.ViewFormProperties = {
 
     for (i = 0; i < length; i++) {
       item = this.getItem(this.statusBarFields[i]);
+      if (item.showIf && item.showIf(item, item.getValue(), this, this.getValues()) === false) {
+        continue;
+      }
       title = item.getTitle();
       sourceWindowId = this.view.standardWindow.windowId;
       refColumnName = item.refColumnName;
@@ -1188,6 +1191,11 @@ OB.ViewFormProperties = {
 
     if (item._hasChanged) {
       this.itemChangeActions(item);
+
+      if (!this.isNew) {
+        this.view.statusBar.mode = "EDIT";
+        this.view.statusBar.setContentLabel(this.view.statusBar.editIcon, 'OBUIAPP_Editing', this.getStatusBarFields());
+      }
 
       this.onFieldChanged(item.form, item, item.getValue());
 

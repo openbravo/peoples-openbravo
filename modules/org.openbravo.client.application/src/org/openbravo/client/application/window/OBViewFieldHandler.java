@@ -405,7 +405,14 @@ public class OBViewFieldHandler {
       viewField.setField(field);
       viewField.setProperty(property);
       viewField.setRedrawOnChange(false);
-      viewField.setShowIf("");
+
+      String jsExpression = null;
+      if (field.getDisplayLogic() != null && !field.getDisplayLogic().isEmpty()) {
+        final DynamicExpressionParser parser = new DynamicExpressionParser(field.getDisplayLogic(),
+            tab, field);
+        jsExpression = parser.getJSExpression();
+      }
+      viewField.setShowIf(jsExpression != null ? jsExpression : "");
       viewField.setReadOnlyIf("");
 
       viewFields.add(viewField);
@@ -1319,6 +1326,10 @@ public class OBViewFieldHandler {
       } else {
         return field.isDisplayed() != null && field.isDisplayed();
       }
+    }
+
+    public boolean isStatusBarField() {
+      return field.isShownInStatusBar();
     }
 
     public boolean isShowInitiallyInGrid() {

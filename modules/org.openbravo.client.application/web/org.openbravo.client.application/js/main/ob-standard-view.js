@@ -2127,6 +2127,11 @@ isc.OBStandardView.addProperties({
       fld.alwaysTakeSpace = false;
     }
 
+
+    if (this.statusBarFields.contains(fld.name)) {
+      fld.statusBarField = true;
+    }
+
     if (!fld.width) {
       fld.width = '*';
     }
@@ -2148,8 +2153,7 @@ isc.OBStandardView.addProperties({
         } catch (_exception) {
           isc.warn(_exception + ' ' + _exception.message + ' ' + _exception.stack);
         }
-
-        return !this.hiddenInForm && context && originalShowIfValue;
+        return !(this.hiddenInForm && !this.statusBarField) && context && originalShowIfValue;
       };
     }
     if (fld.type === 'OBAuditSectionItem') {
