@@ -113,6 +113,10 @@ enyo.kind({
             }]
           }]
         }, {
+          kind: 'Scroller',
+          maxHeight: '120px',
+          thumb: true,
+          horizontal: 'hidden',
           style: 'padding: 0px 0px 0px 25px; width:100%; line-height: 140%;',
           components: [{
             classes: 'row-fluid',
