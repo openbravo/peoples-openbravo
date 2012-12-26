@@ -131,7 +131,7 @@ enyo.kind({
     this.addCommand('line:qty', {
       action: function (keyboard, txt) {
         var value = OB.I18N.parseNumber(txt);
-        if (!keyboard.line){
+        if (!keyboard.line) {
           return true;
         }
         if (value || value === 0) {
@@ -140,10 +140,6 @@ enyo.kind({
             actionAddProduct(keyboard, value);
           } else if (value < 0) {
             actionRemoveProduct(keyboard, -value);
-          } else {
-            me.doDeleteLine({
-              line: keyboard.line
-            });
           }
         }
       }
@@ -158,7 +154,7 @@ enyo.kind({
           });
           return true;
         }
-        if (!keyboard.line){
+        if (!keyboard.line) {
           return true;
         }
         if (keyboard.line.get('product').get('isEditablePrice') === false) {
