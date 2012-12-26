@@ -338,17 +338,19 @@ enyo.kind({
   },
 
   globalKeypressHandler: function (inSender, inEvent) {
-    var which = inEvent.keyboardEvent.which;
+    var which = inEvent.keyboardEvent.which,
+        actualStatus = null;
     if (!this.isPhysicalKeyboardAllowed(inEvent.keyboardEvent)) {
       return;
     }
     if (which === 13 && this.$.editbox.getContent()) { //Handle ENTER key if there is something in the display
+      actualStatus = this.getStatus();
       if (this.$.editbox.getContent() === '0') {
         this.doCommandFired({
           key: "OK"
         });
-      } else if (this.defaultcommand) {
-        this.execCommand(this.defaultcommand, this.getString());
+      } else if (actualStatus) {
+        this.execCommand(actualStatus, this.getString());
       } else {
         OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NoDefaultActionDefined'));
       }
@@ -409,6 +411,19 @@ enyo.kind({
     if (btn && (btn.classButtonActive || (btn.owner && btn.owner.classButtonActive))) {
       btn.addClass(btn.classButtonActive || btn.owner.classButtonActive);
     }
+  },
+
+  getStatus: function () {
+    //returns the current status of the keyboard. If the keyboard doesn't have any status then
+    //the function returns the default action for the keyboard.
+    if (this.status) {
+      if (this.status === "") {
+        return this.defaultcommand;
+      } else {
+        return this.status;
+      }
+    }
+    return this.defaultcommand;
   },
 
   execCommand: function (cmd, txt) {
