@@ -131,6 +131,9 @@ enyo.kind({
     this.addCommand('line:qty', {
       action: function (keyboard, txt) {
         var value = OB.I18N.parseNumber(txt);
+        if (!keyboard.line){
+          return true;
+        }
         if (value || value === 0) {
           value = value - keyboard.line.get('qty');
           if (value > 0) {
@@ -153,6 +156,9 @@ enyo.kind({
           me.doShowPopup({
             popup: 'modalNotEditableOrder'
           });
+          return true;
+        }
+        if (!keyboard.line){
           return true;
         }
         if (keyboard.line.get('product').get('isEditablePrice') === false) {
