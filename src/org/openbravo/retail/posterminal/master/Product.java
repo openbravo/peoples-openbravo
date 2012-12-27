@@ -68,7 +68,7 @@ public class Product extends ProcessHQLQuery {
 
     // discounts which type is defined as category
     products
-        .add("select p.id as id, p.name as _identifier, p.discountType.id as productCategory, p.obdiscUpc as uPCEAN, img.bindaryData as img, 'true' as ispack"//
+        .add("select p.id as id, p.name as _identifier, p.discountType.id as productCategory, p.obdiscPrice as listPrice, p.obdiscPrice as standardPrice, p.obdiscUpc as uPCEAN, img.bindaryData as img, 'true' as ispack"//
             + "  from PricingAdjustment as p left outer join p.obdiscImage img" //
             + " where p.discountType.obposIsCategory = true "//
             + "   and p.discountType.active = true " //
