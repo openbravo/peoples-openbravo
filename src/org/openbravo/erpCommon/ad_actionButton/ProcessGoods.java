@@ -126,8 +126,8 @@ public class ProcessGoods extends HttpSecureAppServlet {
           } catch (ParseException pe) {
             voidDate = new Date();
             voidAcctDate = new Date();
-            log4j.error("Not possible to parse the following date: " + strVoidMinoutDate);
-            log4j.error("Not possible to parse the following date: " + strVoidMinoutAcctDate);
+            log4j.error("Not possible to parse the following date: " + strVoidMinoutDate, pe);
+            log4j.error("Not possible to parse the following date: " + strVoidMinoutAcctDate, pe);
           }
           parameters = new HashMap<String, String>();
           parameters.put("voidedDocumentDate", OBDateUtils.formatDate(voidDate, "yyyy-MM-dd"));

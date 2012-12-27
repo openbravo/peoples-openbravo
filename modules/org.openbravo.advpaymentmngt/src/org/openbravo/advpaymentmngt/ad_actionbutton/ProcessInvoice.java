@@ -151,8 +151,8 @@ public class ProcessInvoice extends HttpSecureAppServlet {
           } catch (ParseException pe) {
             voidDate = new Date();
             voidAcctDate = new Date();
-            log4j.error("Not possible to parse the following date: " + strVoidInvoiceDate);
-            log4j.error("Not possible to parse the following date: " + strVoidInvoiceAcctDate);
+            log4j.error("Not possible to parse the following date: " + strVoidInvoiceDate, pe);
+            log4j.error("Not possible to parse the following date: " + strVoidInvoiceAcctDate, pe);
           }
           parameters = new HashMap<String, String>();
           parameters.put("voidedDocumentDate", OBDateUtils.formatDate(voidDate, "yyyy-MM-dd"));
