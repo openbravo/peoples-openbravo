@@ -171,7 +171,7 @@ public class ProcessGoods extends HttpSecureAppServlet {
   void printPageDocAction(HttpServletResponse response, VariablesSecureApp vars,
       String strM_Inout_ID, String strdocaction, String strProcessing, String strdocstatus,
       String stradTableId, String strWindowId) throws IOException, ServletException {
-    log4j.debug("Output: Button process 104");
+    log4j.debug("Output: Button process 109");
     String[] discard = { "newDiscard" };
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
