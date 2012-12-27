@@ -11,7 +11,7 @@
 * under the License. 
 * The Original Code is Openbravo ERP. 
 * The Initial Developer of the Original Code is Openbravo SLU 
-* All portions are Copyright (C) 2001-2011 Openbravo SLU 
+* All portions are Copyright (C) 2001-2012 Openbravo SLU 
 * All Rights Reserved. 
 * Contributor(s):  ______________________________________.
 ************************************************************************
@@ -32,6 +32,9 @@
     <script language="JavaScript" src="../../../../../web/js/appStatus.js" type="text/javascript"></script>
     <script language="JavaScript" src="../../../../../web/js/default/MessageBox.js" type="text/javascript"></script>   
     <script language="JavaScript" src="../../../../../web/js/searchs.js" type="text/javascript"></script>
+    <script language="JavaScript" src="../../../../../web/js/jscalendar/calendar.js" type="text/javascript"></script>
+    <script language="JavaScript" src="../../../../../web/js/jscalendar/lang/calendar-es.js" type="text/javascript" id="fieldCalendar"></script>
+    <script language="JavaScript" src="../../../../../web/js/default/DateTextBox.js" type="text/javascript"></script>
     <script type="text/javascript">
       window.onunload = reloadOpener; // reloads opener on closing
     </script>
@@ -42,59 +45,128 @@
       var arrDocAction = null;
     </script>
     <script language="JavaScript" type="text/javascript">
-      function updateDescription() {
-        if (arrProjectAction==null) {
-          layer("descripcion", "", true);
-        } else {
-          layer("descripcion", searchArray(arrProjectAction, document.frmMain.inpchangedocstatus.options[document.frmMain.inpchangedocstatus.selectedIndex].value, 2), true);
-        }
-        return true;
+    function updateDescription() {
+      applyVoidDateDisplayLogic();
+
+      if (arrProjectAction == null) {
+        layer("descripcion", "", true);
+      } else {
+        layer("descripcion", searchArray(arrProjectAction, document.frmMain.inpchangedocstatus.options[document.frmMain.inpchangedocstatus.selectedIndex].value, 2), true);
       }
 
-      function closeThisPage() {
-        closePage();
-        return true;
-      }
+      return true;
+    }
 
-      function onloadFunctions() {
-      }
+    function closeThisPage() {
+      closePage();
+      return true;
+    }
 
-      function submitThisPage(strCommand) {
-        if (validate()){
-          setProcessingMode('popup', true);
-          submitCommandForm(strCommand, false, null, null);
-        }
-        return true;
+    function onloadFunctions() {}
+
+    function submitThisPage(strCommand) {
+      if (validate()) {
+        setProcessingMode('popup', true);
+        submitCommandForm(strCommand, false, null, null);
       }
+      return true;
+    }
     </script>
 
-	<script language="JavaScript" type="text/javascript">
-	function onLoadDo(){
-	    setProcessingMode('popup', false);
-		this.windowTables = new Array(
-		  new windowTableId('client', 'buttonOK')
-		);
-		setWindowTableParentElement();
-		enableShortcuts('popup');
-		setBrowserAutoComplete(false);
+    <script language="JavaScript" type="text/javascript">
+    function onLoadDo() {
+      setProcessingMode('popup', false);
+      this.windowTables = new Array(
+      new windowTableId('client', 'buttonOK'));
+      setWindowTableParentElement();
+      enableShortcuts('popup');
+      setBrowserAutoComplete(false);
 
-		setWindowElementFocus('firstElement');
-	}
+      setWindowElementFocus('firstElement');
 
-	function onResizeDo(){
-	}
-	
-	function validate(action, form, value) {
-  var frm=document.frmMain;
-  if (inputValue(frm.inpdocaction)==null || inputValue(frm.inpdocaction)=="") {
-    setWindowElementFocus(frm.inpdocaction);
-    showJSMessage(1);
-    return false;
-  }
-  setProcessingMode('popup', true);
-  return true;
-}
-	</script>
+      applyVoidDateDisplayLogic();
+    }
+
+    function onResizeDo() {}
+
+    function validate(action, form, value) {
+      var frm = document.frmMain,
+          purchaseInvoiceWindow = '183',
+          goodsReceiptWindow = '184',
+          displayVoidDates = (frm.inpdocaction.value === 'RC');
+      if (inputValue(frm.inpdocaction) == null || inputValue(frm.inpdocaction) == "") {
+        setWindowElementFocus(frm.inpdocaction);
+        showJSMessage(1);
+        return false;
+      }
+      if ((purchaseInvoiceWindow === frm.inpwindowId.value || goodsReceiptWindow === frm.inpwindowId.value) && displayVoidDates) {
+        if (inputValue(frm.inpVoidedDocumentDate) == null || inputValue(frm.inpVoidedDocumentDate) == "") {
+          setWindowElementFocus(frm.inpVoidedDocumentDate);
+          showJSMessage(1);
+          return false;
+        }
+        if (inputValue(frm.inpVoidedDocumentAcctDate) == null || inputValue(frm.inpVoidedDocumentAcctDate) == "") {
+          setWindowElementFocus(frm.inpVoidedDocumentAcctDate);
+          showJSMessage(1);
+          return false;
+        }
+        if (!isValidDate(frm.inpVoidedDocumentDate.value, frm.inpVoidedDocumentDate.getAttribute("displayformat"))) {
+          setWindowElementFocus(frm.inpVoidedDocumentDate);
+          showJSMessage('InvalidDateFormat');
+          return false;
+        }
+        if (!isValidDate(frm.inpVoidedDocumentAcctDate.value, frm.inpVoidedDocumentAcctDate.getAttribute("displayformat"))) {
+          setWindowElementFocus(frm.inpVoidedDocumentAcctDate);
+          showJSMessage('InvalidDateFormat');
+          return false;
+        }
+        
+        var jsVoidDate = getDate(frm.inpVoidedDocumentDate.value, frm.inpVoidedDocumentDate.getAttribute("displayformat"));
+        var jsVoidAcctDate = getDate(frm.inpVoidedDocumentAcctDate.value, frm.inpVoidedDocumentAcctDate.getAttribute("displayformat"));
+        var jsDocumentOrigVoidDate = getDate(frm.inpDocumentDate.value, frm.inpVoidedDocumentDate.getAttribute("displayformat"));
+        var jsDocumentOrigVoidAcctDate = getDate(frm.inpDocumentAcctDate.value, frm.inpVoidedDocumentAcctDate.getAttribute("displayformat"));
+
+        if (jsVoidDate < jsDocumentOrigVoidDate || jsVoidAcctDate < jsDocumentOrigVoidAcctDate) {
+          setWindowElementFocus(frm.inpVoidedDocumentDate);
+          showJSMessage('InvalidDocumentDates');
+          return false;
+        }
+      }
+      setProcessingMode('popup', true);
+      return true;
+    }
+
+    function getDate( /*String*/ str_datetime, /*String*/ str_datetimeFormat) {
+      var isFourDigits = false;
+      if (str_datetimeFormat.indexOf('YYYY') != -1 || str_datetimeFormat.indexOf('%Y') != -1) {
+        isFourDigits = true;
+      }
+      var str_date = str_datetime.substring(0, (isFourDigits ? 10 : 8));
+      var str_time = str_datetime.substring((isFourDigits ? 11 : 9), str_datetime.length);
+
+      if (str_datetimeFormat.indexOf('%y') != -1 || str_datetimeFormat.indexOf('%Y') != -1) {
+        isFourDigits = false;
+      }
+      var str_dateFormat = str_datetimeFormat.substring(0, (isFourDigits ? 10 : 8));
+      var str_timeFormat = str_datetimeFormat.substring((isFourDigits ? 11 : 9), str_datetimeFormat.length);
+
+      if (str_time == null || str_time == "") str_time = "00:00:00";
+      if (str_timeFormat == null || str_timeFormat == "") str_timeFormat = "HH24:MI:SS";
+
+      return this.getDateTime(str_date, str_dateFormat, str_time, str_timeFormat);
+    }
+
+    function applyVoidDateDisplayLogic() {
+      var frm = document.frmMain,
+          displayVoidDates = (frm.inpdocaction.value === 'RC'),
+          purchaseInvoiceWindow = '183',
+          goodsReceiptWindow = '184',
+          currentWindowId = frm.inpwindowId.value;
+      
+      displayLogicElement('voidedDocumentDateRow', displayVoidDates && (purchaseInvoiceWindow === currentWindowId || goodsReceiptWindow === currentWindowId));
+      displayLogicElement('voidedDocumentDateAcctRow', displayVoidDates && (purchaseInvoiceWindow === currentWindowId || goodsReceiptWindow === currentWindowId));
+    }
+    </script>
 </head>
 
 <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">
@@ -105,7 +177,9 @@
     <input type="hidden" name="inpKey" value="" id="key"></input>
     <input type="hidden" name="inpwindowId" value="" id="window"></input>
     <input type="hidden" name="inpdocstatus" value="" id="docstatus"></input> 
-    <input type="hidden" name="inpprocessing" value="" id="processing"></input> 
+    <input type="hidden" name="inpprocessing" value="" id="processing"></input>
+    <input type="hidden" name="inpDocumentDate" value="" id="documentDate"></input>
+    <input type="hidden" name="inpDocumentAcctDate" value="" id="documentAcctDate"></input> 
 
     <div class="Popup_ContentPane_CircleLogo">
       <div class="Popup_WindowLogo">
@@ -278,6 +352,94 @@
                   </select>
                 </td>
                 <td></td>
+              </tr>
+              
+              <tr id="voidedDocumentDateRow">
+                <td class="TitleCell"><span id="lblVoidedDocumentDate" class="LabelText">Void Date</span></td>
+                <td class="TextBox_btn_ContentCell">
+                  <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
+                    <tr>
+                      <td class="TextBox_ContentCell">
+                        <table style="border: 0px none; border-collapse: collapse;">
+                          <tr><td style="padding-top: 0px;">
+                            <input type="text" id="paramVoidedDocumentDate" name="inpVoidedDocumentDate" onchange="validateDateTextBox(this.id); logChanges(this);return true;" onblur="expandDateYear(this.id);" oncontextmenu="changeToEditingMode('oncontextmenu');" onpaste="changeToEditingMode('onpaste');" oncut="changeToEditingMode('oncut');" onkeypress="changeToEditingMode('onkeypress');" onkeydown="changeToEditingMode('onkeydown');" onkeyup="autoCompleteDate(this);" maxlength="10" value="" required="true" class="dojoValidateValid required TextBox_btn_OneCell_width" displayFormat="xx" saveFormat="yy">
+                          </td></tr>
+                        </table>
+                        <span id="paramVoidedDocumentDateinvalidSpan" style="display: none;" class="TextBox_MsgContainer_span">
+                          <table class="TextBox_MsgContainer_table">
+                            <tbody><tr class="TextBox_MsgContainer_tr"><td class="TextBox_MsgContainer_td"><div class="TextBox_MsgContainer_div"></div></td><td></td></tr>
+                            <tr><td class="invalid" colspan="2"><div name="invalidText" id="paramVoidedDocumentDateinvalidSpanText" class="TextBox_MsgContainer_div2">* The value entered is not valid.</div></td></tr>
+                          </tbody></table>
+                        </span>
+                        <span id="paramVoidedDocumentDatemissingSpan" style="display: none;" class="TextBox_MsgContainer_span">
+                          <table class="TextBox_MsgContainer_table">
+                            <tbody><tr class="TextBox_MsgContainer_tr">
+                              <td class="TextBox_MsgContainer_td"><div class="TextBox_MsgContainer_div"></div></td><td></td>
+                            </tr>
+                            <tr>
+                              <td class="missing" colspan="2"><div name="missingText" id="paramVoidedDocumentDatemissingSpanText" class="TextBox_MsgContainer_div2">* This value is required.</div></td>
+                            </tr>
+                            </tbody></table>
+                        </span>
+                      </td>
+                      <td id="calendarIconVoidedDocumentDate" class="FieldButton_ContentCell">
+                        <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="showCalendar('frmMain.inpVoidedDocumentDate', document.frmMain.inpVoidedDocumentDate.value, false);return false;">
+                          <table class="FieldButton"  onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calendar';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
+                            <tr>
+                              <td class="FieldButton_bg">
+                                <img alt="Calendar" class="FieldButton_Icon FieldButton_Icon_Calendar" title="Calendar" src="../../../../../web/images/blank.gif" border="0"></img>
+                              </td>
+                            </tr>
+                          </table>
+                        </a>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              
+              <tr id="voidedDocumentDateAcctRow">
+                <td class="TitleCell"><span id="lblVoidedDocumentAcctDate" class="LabelText">Void Accounting Date</span></td>
+                <td class="TextBox_btn_ContentCell">
+                  <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
+                    <tr>
+                      <td class="TextBox_ContentCell">
+                        <table style="border: 0px none; border-collapse: collapse;">
+                          <tr><td style="padding-top: 0px;">
+                            <input type="text" id="paramVoidedDocumentAcctDate" name="inpVoidedDocumentAcctDate" onchange="validateDateTextBox(this.id); logChanges(this);return true;" onblur="expandDateYear(this.id);" oncontextmenu="changeToEditingMode('oncontextmenu');" onpaste="changeToEditingMode('onpaste');" oncut="changeToEditingMode('oncut');" onkeypress="changeToEditingMode('onkeypress');" onkeydown="changeToEditingMode('onkeydown');" onkeyup="autoCompleteDate(this);" maxlength="10" value="" required="true" class="dojoValidateValid required TextBox_btn_OneCell_width" displayFormat="xx" saveFormat="yy">
+                          </td></tr>
+                        </table>
+                        <span id="paramVoidedDocumentAcctDateinvalidSpan" style="display: none;" class="TextBox_MsgContainer_span">
+                          <table class="TextBox_MsgContainer_table">
+                            <tbody><tr class="TextBox_MsgContainer_tr"><td class="TextBox_MsgContainer_td"><div class="TextBox_MsgContainer_div"></div></td><td></td></tr>
+                            <tr><td class="invalid" colspan="2"><div name="invalidText" id="paramVoidedDocumentAcctDateinvalidSpanText" class="TextBox_MsgContainer_div2">* The value entered is not valid.</div></td></tr>
+                          </tbody></table>
+                        </span>
+                        <span id="paramVoidedDocumentAcctDatemissingSpan" style="display: none;" class="TextBox_MsgContainer_span">
+                          <table class="TextBox_MsgContainer_table">
+                            <tbody><tr class="TextBox_MsgContainer_tr">
+                              <td class="TextBox_MsgContainer_td"><div class="TextBox_MsgContainer_div"></div></td><td></td>
+                            </tr>
+                            <tr>
+                              <td class="missing" colspan="2"><div name="missingText" id="paramVoidedDocumentAcctDatemissingSpanText" class="TextBox_MsgContainer_div2">* This value is required.</div></td>
+                            </tr>
+                            </tbody></table>
+                        </span>
+                      </td>
+                      <td id="calendarIconVoidedDocumentAcctDate" class="FieldButton_ContentCell">
+                        <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="showCalendar('frmMain.inpVoidedDocumentAcctDate', document.frmMain.inpVoidedDocumentAcctDate.value, false);return false;">
+                          <table class="FieldButton"  onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calendar';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
+                            <tr>
+                              <td class="FieldButton_bg">
+                                <img alt="Calendar" class="FieldButton_Icon FieldButton_Icon_Calendar" title="Calendar" src="../../../../../web/images/blank.gif" border="0"></img>
+                              </td>
+                            </tr>
+                          </table>
+                        </a>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
               </tr>
 
               <tr><td height="20px"></td></tr>

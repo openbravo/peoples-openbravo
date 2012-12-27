@@ -21,11 +21,13 @@ package org.openbravo.advpaymentmngt.ad_actionbutton;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -47,7 +49,9 @@ import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.ad_actionButton.ActionButtonUtility;
 import org.openbravo.erpCommon.ad_forms.AcctServer;
 import org.openbravo.erpCommon.reference.PInstanceProcessData;
+import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
+import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
@@ -69,6 +73,7 @@ public class ProcessInvoice extends HttpSecureAppServlet {
 
   private List<FIN_Payment> creditPayments = new ArrayList<FIN_Payment>();
   private final AdvPaymentMngtDao dao = new AdvPaymentMngtDao();
+  private static final String Purchase_Invoice_Window = "183";
 
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
@@ -115,6 +120,8 @@ public class ProcessInvoice extends HttpSecureAppServlet {
       final String strC_Invoice_ID = vars.getGlobalVariable("inpKey",
           strWindowId + "|C_Invoice_ID", "");
       final String strdocaction = vars.getStringParameter("inpdocaction");
+      final String strVoidInvoiceDate = vars.getStringParameter("inpVoidedDocumentDate");
+      final String strVoidInvoiceAcctDate = vars.getStringParameter("inpVoidedDocumentAcctDate");
       final String strOrg = vars.getGlobalVariable("inpadOrgId", "ProcessInvoice|Org_ID",
           IsIDFilter.instance);
 
@@ -134,8 +141,27 @@ public class ProcessInvoice extends HttpSecureAppServlet {
           OBContext.restorePreviousMode();
         }
 
+        Map<String, String> parameters = null;
+        if (!strVoidInvoiceDate.isEmpty() && !strVoidInvoiceAcctDate.isEmpty()) {
+          Date voidDate = null;
+          Date voidAcctDate = null;
+          try {
+            voidDate = OBDateUtils.getDate(strVoidInvoiceDate);
+            voidAcctDate = OBDateUtils.getDate(strVoidInvoiceAcctDate);
+          } catch (ParseException pe) {
+            voidDate = new Date();
+            voidAcctDate = new Date();
+            log4j.error("Not possible to parse the following date: " + strVoidInvoiceDate);
+            log4j.error("Not possible to parse the following date: " + strVoidInvoiceAcctDate);
+          }
+          parameters = new HashMap<String, String>();
+          parameters.put("voidedDocumentDate", OBDateUtils.formatDate(voidDate, "yyyy-MM-dd"));
+          parameters.put("voidedDocumentAcctDate",
+              OBDateUtils.formatDate(voidAcctDate, "yyyy-MM-dd"));
+        }
+
         final ProcessInstance pinstance = CallProcess.getInstance().call(process, strC_Invoice_ID,
-            null);
+            parameters);
 
         OBDal.getInstance().getSession().refresh(invoice);
         invoice.setAPRMProcessinvoice(invoice.getDocumentAction());
@@ -406,6 +432,7 @@ public class ProcessInvoice extends HttpSecureAppServlet {
     xmlDocument.setParameter("window", strWindowId);
     xmlDocument.setParameter("css", vars.getTheme());
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("dateDisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("processId", "111");
     xmlDocument.setParameter("cancel", Utility.messageBD(this, "Cancel", vars.getLanguage()));
@@ -420,6 +447,17 @@ public class ProcessInvoice extends HttpSecureAppServlet {
     }
 
     xmlDocument.setParameter("docstatus", strdocstatus);
+    if (strWindowId.equals(Purchase_Invoice_Window)) {
+      // VOID action: Reverse sales/purchase invoice by default takes today as document date and
+      // accounting date.
+      xmlDocument.setParameter("voidedDocumentDate", DateTimeData.today(this));
+      xmlDocument.setParameter("voidedDocumentAcctDate", DateTimeData.today(this));
+      Invoice invoice = (Invoice) OBDal.getInstance()
+          .getProxy(Invoice.ENTITY_NAME, strC_Invoice_ID);
+      xmlDocument.setParameter("documentDate", OBDateUtils.formatDate(invoice.getInvoiceDate()));
+      xmlDocument.setParameter("documentAcctDate",
+          OBDateUtils.formatDate(invoice.getAccountingDate()));
+    }
     xmlDocument.setParameter("adTableId", stradTableId);
     xmlDocument.setParameter("processId", "111");
     xmlDocument.setParameter("processDescription", "Process Invoice");

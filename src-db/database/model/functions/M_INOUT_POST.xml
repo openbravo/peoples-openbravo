@@ -94,6 +94,9 @@
     v_Aux NUMBER;
     v_ProductName M_Product.name%TYPE;
     v_reservation_id    VARCHAR2(32);
+    v_voidmovementdate M_Inout.MovementDate%TYPE;
+    v_voiddate_acct M_Inout.DateAcct%TYPE;
+
   BEGIN
     IF(p_PInstance_ID IS NOT NULL) THEN
       --  Update AD_PInstance
@@ -118,6 +121,11 @@
       LOOP
         v_Record_ID:=Cur_Parameter.Record_ID;
         v_User:=Cur_Parameter.AD_User_ID;
+        IF (Cur_Parameter.parametername = 'voidedDocumentDate') THEN
+          v_voidmovementdate := TO_DATE(Cur_Parameter.p_string, 'YYYY-MM-DD');
+        ELSIF (Cur_Parameter.parametername = 'voidedDocumentAcctDate') THEN
+          v_voiddate_acct := TO_DATE(Cur_Parameter.p_string, 'YYYY-MM-DD');
+        END IF;
       END LOOP; -- Get Parameter
       DBMS_OUTPUT.PUT_LINE('  Record_ID=' || v_Record_ID) ;
     ELSE
@@ -811,6 +819,13 @@
           
           -- Post Reversal
           v_ResultStr:='PostReversal';
+          -- Update reversal goods dates
+          IF (v_voidmovementdate IS NOT NULL) THEN
+            UPDATE M_INOUT SET MovementDate = v_voidmovementdate WHERE M_INOUT_ID = v_RInOut_ID;
+          END IF;
+          IF (v_voiddate_acct IS NOT NULL) THEN
+            UPDATE M_INOUT SET DateAcct = v_voiddate_acct WHERE M_INOUT_ID = v_RInOut_ID;
+          END IF;
           M_INOUT_POST(NULL, v_RInOut_ID) ;
           -- Indicate as Reversal Transaction
           v_ResultStr:='IndicateReversal';

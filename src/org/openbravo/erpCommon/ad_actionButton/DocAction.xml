@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -47,6 +47,16 @@
   <PARAMETER id="messageBoxID" name="messageType" attribute="class" replace="yy" default="HIDDEN"/>
   <PARAMETER id="messageBoxIDTitle" name="messageTitle" default=""/>
   <PARAMETER id="messageBoxIDMessage" name="messageMessage" default=""/>
+  
+  <PARAMETER id="paramVoidedDocumentDate" name="voidedDocumentDate" attribute="value"/>
+  <PARAMETER id="paramVoidedDocumentDate" name="dateDisplayFormat" attribute="displayformat" replace="xx"/>
+  <PARAMETER id="paramVoidedDocumentDate" name="dateDisplayFormat" attribute="saveformat" replace="yy"/>
+  <PARAMETER id="paramVoidedDocumentAcctDate" name="voidedDocumentAcctDate" attribute="value"/>
+  <PARAMETER id="paramVoidedDocumentAcctDate" name="dateDisplayFormat" attribute="displayformat" replace="xx"/>
+  <PARAMETER id="paramVoidedDocumentAcctDate" name="dateDisplayFormat" attribute="saveformat" replace="yy"/>
+  <PARAMETER id="documentDate" name="documentDate" attribute="value"/>
+  <PARAMETER id="documentAcctDate" name="documentAcctDate" attribute="value"/>
+  <PARAMETER id="fieldCalendar" name="calendar" attribute="src" replace="es" default="en"/>
 
 	<PARAMETER id="docaction" name="docaction"/>
 	<SUBREPORT id="reportdocaction" name="reportdocaction" report="org/openbravo/erpCommon/reference/List">
