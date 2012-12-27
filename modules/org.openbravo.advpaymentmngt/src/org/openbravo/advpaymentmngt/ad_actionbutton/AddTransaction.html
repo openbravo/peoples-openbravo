@@ -267,14 +267,33 @@ function updateSelectAll(mark) {
 }
 
 function submitThisPage(strCommand) {
-  if (validate()) {
-    setProcessingMode('popup', true);
-    submitCommandForm(strCommand, false, null, '../org.openbravo.advpaymentmngt.ad_actionbutton/AddTransaction.html');
-    disableButtonProcess();
-    return true;
+  var callback=function(paramXMLParticular, XMLHttpRequestObj) {
+      var strText = "";
+      if (getReadyStateHandler(XMLHttpRequestObj)) {
+        try {
+          if (XMLHttpRequestObj.responseText) {
+            strText = XMLHttpRequestObj.responseText;
+            var objson = eval(strText);
+            showJSMessage(objson.text);
+            return false;
+          }else{
+            if (validate() ) {
+              setProcessingMode('popup', true);
+              submitCommandForm(strCommand, false, null, '../org.openbravo.advpaymentmngt.ad_actionbutton/AddTransaction.html');
+              disableButtonProcess();
+              return true;
+            } else {
+              return true;
+            }
+          }
+        } catch (e) {
+      }
+    }
   }
-  return true;
+  var paramXMLReq = null;
+  return submitXmlHttpRequest(callback, document.frmMain, 'PERIOD', '../org.openbravo.advpaymentmngt.ad_actionbutton/AddTransaction.html', false, null, paramXMLReq);
 }
+
 </script>
 <script language="JavaScript" type="text/javascript">
 function loadGrid() {

@@ -56,6 +56,7 @@ import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.financialmgmt.accounting.Costcenter;
 import org.openbravo.model.financialmgmt.accounting.UserDimension1;
@@ -132,6 +133,34 @@ public class AddTransaction extends HttpSecureAppServlet {
           strTransactionType, strGLItemId, strGLItemDepositAmount, strGLItemPaymentAmount,
           strFeeDepositAmount, strFeePaymentAmount, strTransactionDate, strFinBankStatementLineId,
           strGLItemDescription, strFeeDescription);
+    } else if (vars.commandIn("PERIOD")) {
+
+      String strTransactionDate = vars.getStringParameter("inpMainDate", "");
+      String strOrgId = vars.getRequestGlobalVariable("inpadOrgId", "AddTransaction|Org");
+      final Organization org = OBDal.getInstance().get(Organization.class, strOrgId);
+      String strclient = org.getClient().getId();
+      boolean orgLegalWithAccounting = false;
+      if ((org.getOrganizationType().isLegalEntity())
+          || (org.getOrganizationType().isBusinessUnit())) {
+        orgLegalWithAccounting = true;
+      }
+      if ((!FIN_Utility.isPeriodOpen(strclient, AcctServer.DOCTYPE_FinAccTransaction, strOrgId,
+          strTransactionDate)) && orgLegalWithAccounting) {
+        try {
+          JSONObject json = new JSONObject();
+          json.put("text", "PeriodNotAvailable");
+
+          response.setContentType("text/html; charset=UTF-8");
+          PrintWriter out = response.getWriter();
+          out.println("objson = " + json);
+          out.close();
+
+        } catch (JSONException e) {
+
+          e.printStackTrace();
+        }
+
+      }
     }
 
   }
