@@ -997,3 +997,48 @@ OB.Utilities.isUUID = function (object) {
   }
   return (/[A-Fa-f0-9]{32,32}/).test(object);
 };
+
+
+//** {{{ OB.Utilities.getRGBAStringFromOBColor }}} **
+//
+// Returns a string like "rgba(*RedValue*, *GreenValue*, *BlueValue*, *OpacityValue*)" from an OBColor value
+// Parameters:
+//  * {{{color}}} OBColor value
+OB.Utilities.getRGBAStringFromOBColor = function (color) {
+  var rgbaColor = 'rgba(',
+      colorArray, i;
+  if (!color) {
+    return;
+  }
+  colorArray = color.split('-');
+  for (i = 0; i < colorArray.length; i++) {
+    if (i < 3) {
+      rgbaColor += parseInt(colorArray[i], 10);
+      rgbaColor += ',';
+    } else {
+      rgbaColor += parseInt(colorArray[i], 10) / 100;
+    }
+  }
+  rgbaColor += ')';
+  return rgbaColor;
+};
+
+//** {{{ OB.Utilities.getBrightFromOBColor }}} **
+//
+// Returns the bright value (from 0 to 255) from an OBColor value
+// Parameters:
+//  * {{{color}}} OBColor value
+OB.Utilities.getBrightFromOBColor = function (color) {
+  var bright = 0,
+      colorArray;
+  if (!color) {
+    return;
+  }
+  colorArray = color.split('-');
+  bright = bright + parseInt(colorArray[0], 10) * 299;
+  bright = bright + parseInt(colorArray[1], 10) * 587;
+  bright = bright + parseInt(colorArray[2], 10) * 114;
+  bright = bright / 1000;
+  bright = parseInt(bright, 10);
+  return bright;
+};
