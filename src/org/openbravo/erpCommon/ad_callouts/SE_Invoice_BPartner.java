@@ -255,41 +255,37 @@ public class SE_Invoice_BPartner extends HttpSecureAppServlet {
         resultado.append("null");
       resultado.append("\n),");
 
-      try {
-        ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_User_ID",
-            "", "AD_User C_BPartner User/Contacts", Utility.getContext(this, vars,
-                "#AccessibleOrgTree", strWindowId), Utility.getContext(this, vars, "#User_Client",
-                strWindowId), 0);
-        Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, "");
-        tdv = comboTableData.select(false);
-        comboTableData = null;
-      } catch (Exception ex) {
-        throw new ServletException(ex);
-      }
-
+      final BpartnerMiscData[] billingContactData = BpartnerMiscData.selectBillingContact(this,
+          strBPartner, "Y");
       resultado.append("new Array(\"inpadUserId\", ");
-      if (tdv != null && tdv.length > 0) {
+      if (billingContactData != null && billingContactData.length > 0) {
         resultado.append("new Array(");
 
         if (strContact.isEmpty()) {
-          resultado.append("new Array(\"" + tdv[0].getField("id") + "\", \""
-              + FormatUtilities.replaceJS(tdv[0].getField("name")) + "\", \"" + "true" + "\")");
-          if (tdv.length > 1) {
+          resultado.append("new Array(\"" + billingContactData[0].getField("id") + "\", \""
+              + FormatUtilities.replaceJS(billingContactData[0].getField("name")) + "\", \""
+              + (billingContactData.length == 1 ? "true" : "false") + "\")");
+          if (billingContactData.length > 1) {
             resultado.append(",\n");
           }
-          for (int i = 1; i < tdv.length; i++) {
-            resultado.append("new Array(\"" + tdv[i].getField("id") + "\", \""
-                + FormatUtilities.replaceJS(tdv[i].getField("name")) + "\", \"" + "false" + "\")");
-            if (i < tdv.length - 1) {
+          for (int i = 1; i < billingContactData.length; i++) {
+            resultado.append("new Array(\"" + billingContactData[i].getField("id") + "\", \""
+                + FormatUtilities.replaceJS(billingContactData[i].getField("name")) + "\", \""
+                + (billingContactData.length == i ? "false" : "true") + "\")");
+            if (i < billingContactData.length - 1) {
               resultado.append(",\n");
             }
           }
         } else {
-          for (int i = 0; i < tdv.length; i++) {
-            resultado.append("new Array(\"" + tdv[i].getField("id") + "\", \""
-                + FormatUtilities.replaceJS(tdv[i].getField("name")) + "\", \""
-                + (tdv[i].getField("id").equalsIgnoreCase(strContact) ? "true" : "false") + "\")");
-            if (i < tdv.length - 1) {
+          for (int i = 0; i < billingContactData.length; i++) {
+            resultado.append("new Array(\""
+                + billingContactData[i].getField("id")
+                + "\", \""
+                + FormatUtilities.replaceJS(billingContactData[i].getField("name"))
+                + "\", \""
+                + (billingContactData[i].getField("id").equalsIgnoreCase(strContact) ? "true"
+                    : "false") + "\")");
+            if (i < billingContactData.length - 1) {
               resultado.append(",\n");
             }
           }
