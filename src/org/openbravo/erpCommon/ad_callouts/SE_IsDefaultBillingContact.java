@@ -18,8 +18,6 @@
  */
 package org.openbravo.erpCommon.ad_callouts;
 
-import java.util.List;
-
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 
@@ -54,13 +52,13 @@ public class SE_IsDefaultBillingContact extends SimpleCallout {
         final String cbpartnerId = info.getStringParameter("inpcBpartnerId", IsIDFilter.instance);
         final String adUserId = info.getStringParameter("inpadUserId", IsIDFilter.instance);
 
-        OBContext.setAdminMode();
+        OBContext.setAdminMode(true);
         try {
-          final List<User> defaultBillingContacts = getDefaultBillingContacts(cbpartnerId, adUserId);
-          if (defaultBillingContacts != null && defaultBillingContacts.size() > 0) {
+          final User defaultBillingContact = getDefaultBillingContacts(cbpartnerId, adUserId);
+          if (defaultBillingContact != null) {
             final String msg = String.format(
                 OBMessageUtils.messageBD("DuplicatedBillingContactDefaults"),
-                defaultBillingContacts.get(0).getIdentifier());
+                defaultBillingContact.getIdentifier());
             info.addResult("ERROR", msg);
             info.addResult(info.getLastFieldChanged(), "N");
           }
@@ -73,9 +71,8 @@ public class SE_IsDefaultBillingContact extends SimpleCallout {
     }
   }
 
-  protected List<User> getDefaultBillingContacts(final String cbpartnerId,
-      final String currentUserId) {
-    final StringBuffer hql = new StringBuffer();
+  protected User getDefaultBillingContacts(final String cbpartnerId, final String currentUserId) {
+    final StringBuilder hql = new StringBuilder();
     hql.append(" as u ");
     hql.append("  where u.businessPartner.id = :c_bpartner_id ");
     hql.append("  and u.id != :current_user_id");
@@ -85,6 +82,7 @@ public class SE_IsDefaultBillingContact extends SimpleCallout {
     final OBQuery<User> query = OBDal.getInstance().createQuery(User.class, hql.toString());
     query.setNamedParameter("c_bpartner_id", cbpartnerId);
     query.setNamedParameter("current_user_id", currentUserId);
-    return query.list();
+    query.setMaxResult(1);
+    return query.uniqueResult();
   }
 }
