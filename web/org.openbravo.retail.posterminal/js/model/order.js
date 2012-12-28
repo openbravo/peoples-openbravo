@@ -1007,7 +1007,8 @@
     newPaidReceipt: function (model, callback) {
       var order = new Order(),
           lines, me = this,
-          documentseq, documentseqstr, bp, newline, prod, payments, curPayment, taxes, bpId, numberOfLines = model.receiptLines.length;
+          documentseq, documentseqstr, bp, newline, prod, payments, curPayment, taxes, bpId, numberOfLines = model.receiptLines.length,
+          orderQty = 0;
 
       // Call orderLoader plugings to adjust remote model to local model first 
       // ej: sales on credit: Add a new payment if total payment < total receipt
@@ -1071,8 +1072,10 @@
           // add the created line
           lines.add(newline);
           numberOfLines--;
+          orderQty += iter.quantity;
           if (numberOfLines === 0) {
             order.set('lines', lines);
+            order.set('qty', orderQty);
             callback(order);
           }
         });
