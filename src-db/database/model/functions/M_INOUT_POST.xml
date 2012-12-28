@@ -522,19 +522,24 @@
                   AND sl.M_InOut_ID=Cur_InOut.M_InOut_ID
                 )
               LOOP
-              
-								SELECT M_MATCHPO_ID
-								INTO v_MatchPO_ID
+                
+                SELECT count(*) INTO v_count
 								FROM M_MATCHPO
 								WHERE C_ORDERLINE_ID = Cur_SLines.C_OrderLine_ID
-								  AND M_INOUTLINE_ID = Cur_SLines.M_InOutLine_ID;             
+								  AND M_INOUTLINE_ID = Cur_SLines.M_InOutLine_ID;            
 
 								v_Qty:=Cur_SLines.MovementQty;
                 	--IF (ABS(Cur_SLines.MovementQty) > ABS(Cur_SLines.QtyOrdered)) THEN
                 	-- v_Qty := Cur_SLines.QtyOrdered;
                 	--END IF;
 
-								IF (v_MatchPO_ID IS NULL) THEN
+								IF (v_count <> 0) THEN                
+								  SELECT max(M_MATCHPO_ID)
+								  INTO v_MatchPO_ID
+                  FROM M_MATCHPO
+								  WHERE C_ORDERLINE_ID = Cur_SLines.C_OrderLine_ID
+								    AND M_INOUTLINE_ID = Cur_SLines.M_InOutLine_ID; 
+                  
                 	Ad_Sequence_Next('M_MatchPO', Cur_SLines.AD_Org_ID, v_MatchPO_ID) ;
                 	-- The min qty. Modified by Ismael Ciordia
                 	v_ResultStr:='InsertMatchPO ' || v_MatchPO_ID;
