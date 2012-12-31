@@ -101,6 +101,14 @@ isc.OBMultiSelectorItem.addProperties({
           if (!this.selectedIds.contains(id)) {
             this.selectedIds.push(id);
           }
+        },
+        closeClick: function () {
+          var i, records = [];
+          for(i = 0; i < this.origSelection.length; i++) {
+            records.push(this.selectorGrid.data.find(OB.Constants.ID, this.origSelection[i]));
+          }
+          this.selector.setSelectedRecords(records);
+          this.Super('closeClick', arguments);
         }
       });
     }
@@ -168,6 +176,7 @@ isc.OBMultiSelectorItem.addProperties({
       this.selectorWindow.selectorGrid.invalidateCache();
     }
     this.selectorWindow.selectedIds = this.getValue() || [];
+    this.selectorWindow.origSelection = isc.shallowClone(this.selectorWindow.selectedIds);
     this.selectorWindow.open();
   },
 

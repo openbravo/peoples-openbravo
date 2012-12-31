@@ -126,7 +126,7 @@ isc.OBSelectorPopupWindow.addProperties({
       },
 
       dataArrived: function () {
-        var record, rowNum, i, j, selectedRecords = [],
+        var record, rowNum, i, selectedRecords = [],
             ds, ids;
         this.Super('dataArrived', arguments);
         // check if a record has been selected, if
@@ -136,15 +136,10 @@ isc.OBSelectorPopupWindow.addProperties({
         // will show up
         // when the record shows in view
         if (this.selector.selectorWindow.multiselect) {
-          ds = this.data.localData;
+          ds = this.data;
           ids = this.selector.selectorWindow.selectedIds;
           for (i = 0; i < ids.length; i++) {
-            for (j = 0; j < ds.length; j++) {
-              if (ds[j][OB.Constants.ID] === ids[i]) {
-                selectedRecords.push(ds[j]);
-                break;
-              }
-            }
+            selectedRecords.push(ds.find(OB.Constants.ID, ids[i]));
           }
           this.selectRecords(selectedRecords);
         } else {
