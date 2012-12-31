@@ -1915,7 +1915,7 @@ OB.ViewFormProperties = {
       value = item.getValue();
       // Do no check ids, even though they are mandatory they are automatically set DAL before
       // storing the record in the database. See issue https://issues.openbravo.com/view.php?id=21657
-      if (this.isRequired(item) && !this.isID(item) && value !== false && value !== 0 && !value) {
+      if (this.isRequired(item) && (item.displayed !== false) && !this.isID(item) && value !== false && value !== 0 && !value) {
         return false;
       }
     }
