@@ -112,7 +112,7 @@ OB.ViewFormProperties = {
 
     for (i = 0; i < length; i++) {
       item = this.getItem(this.statusBarFields[i]);
-      if (item.showIf && item.showIf(item, item.getValue(), this, this.getValues()) === false) {
+      if (item.statusBarShowIf && item.statusBarShowIf(item, item.getValue(), this, this.getValues()) === false) {
         continue;
       }
       title = item.getTitle();

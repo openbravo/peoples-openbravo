@@ -2119,7 +2119,7 @@ isc.OBStandardView.addProperties({
   },
 
   setFieldFormProperties: function (fld, isGridField) {
-    var onChangeFunction;
+    var onChangeFunction, newShowIf;
 
     if (fld.displayed === false && !isGridField) {
       fld.hiddenInForm = true;
@@ -2137,7 +2137,7 @@ isc.OBStandardView.addProperties({
     }
     if (fld.showIf && !fld.originalShowIf) {
       fld.originalShowIf = fld.showIf;
-      fld.showIf = function (item, value, form, values) {
+      newShowIf = function (item, value, form, values) {
         var currentValues = values || form.view.getCurrentValues(),
             context = form.getCachedContextInfo(),
             originalShowIfValue = false;
@@ -2155,6 +2155,12 @@ isc.OBStandardView.addProperties({
         }
         return !(this.hiddenInForm && !this.statusBarField) && context && originalShowIfValue;
       };
+      if (fld.statusBarField) {
+        fld.showIf = '';
+        fld.statusBarShowIf = newShowIf;
+      } else {
+        fld.showIf = newShowIf;
+      }
     }
     if (fld.type === 'OBAuditSectionItem') {
       var expandAudit = OB.PropertyStore.get('ShowAuditDefault', this.standardProperties.inpwindowId);
