@@ -524,48 +524,47 @@
               LOOP
                 
                 SELECT count(*) INTO v_count
-								FROM M_MATCHPO
-								WHERE C_ORDERLINE_ID = Cur_SLines.C_OrderLine_ID
-								  AND M_INOUTLINE_ID = Cur_SLines.M_InOutLine_ID;            
+                FROM M_MATCHPO
+                WHERE C_ORDERLINE_ID = Cur_SLines.C_OrderLine_ID
+                      AND M_INOUTLINE_ID = Cur_SLines.M_InOutLine_ID;            
 
-								v_Qty:=Cur_SLines.MovementQty;
-                	--IF (ABS(Cur_SLines.MovementQty) > ABS(Cur_SLines.QtyOrdered)) THEN
-                	-- v_Qty := Cur_SLines.QtyOrdered;
-                	--END IF;
+                v_Qty:=Cur_SLines.MovementQty;
+                --IF (ABS(Cur_SLines.MovementQty) > ABS(Cur_SLines.QtyOrdered)) THEN
+                -- v_Qty := Cur_SLines.QtyOrdered;
+                --END IF;
 
-								IF (v_count = 0) THEN                
+                IF (v_count = 0) THEN
+                  Ad_Sequence_Next('M_MatchPO', Cur_SLines.AD_Org_ID, v_MatchPO_ID) ;
+                  -- The min qty. Modified by Ismael Ciordia
+                  v_ResultStr:='InsertMatchPO ' || v_MatchPO_ID;
+                  INSERT
+                  INTO M_MATCHPO
+                    (
+                      M_MatchPO_ID, AD_Client_ID, AD_Org_ID, IsActive,
+                      Created, CreatedBy, Updated, UpdatedBy,
+                      M_InOutLine_ID, C_OrderLine_ID, M_Product_ID, DateTrx,
+                      Qty, Processing, Processed, Posted
+                    )
+                    VALUES
+                    (
+                      v_MatchPO_ID, Cur_SLines.AD_Client_ID, Cur_SLines.AD_Org_ID, 'Y',
+                      now(), v_User, now(), v_User,
+                      Cur_SLines.M_InOutLine_ID, Cur_SLines.C_OrderLine_ID, Cur_SLines.M_Product_ID, now(),
+                      v_Qty, 'N', 'Y', 'N'
+                    )
+                  ;
+                ELSE
+                  SELECT max(M_MATCHPO_ID)
+                  INTO v_MatchPO_ID
+                  FROM M_MATCHPO
+                  WHERE C_ORDERLINE_ID = Cur_SLines.C_OrderLine_ID
+                        AND M_INOUTLINE_ID = Cur_SLines.M_InOutLine_ID;
                   
-                	Ad_Sequence_Next('M_MatchPO', Cur_SLines.AD_Org_ID, v_MatchPO_ID) ;
-                	-- The min qty. Modified by Ismael Ciordia
-                	v_ResultStr:='InsertMatchPO ' || v_MatchPO_ID;
-                	INSERT
-                	INTO M_MATCHPO
-                  	(
-                    	M_MatchPO_ID, AD_Client_ID, AD_Org_ID, IsActive,
-                    	Created, CreatedBy, Updated, UpdatedBy,
-                    	M_InOutLine_ID, C_OrderLine_ID, M_Product_ID, DateTrx,
-                    	Qty, Processing, Processed, Posted
-                  	)
-                  	VALUES
-                  	(
-                    	v_MatchPO_ID, Cur_SLines.AD_Client_ID, Cur_SLines.AD_Org_ID, 'Y',
-                    	now(), v_User, now(), v_User,
-                    	Cur_SLines.M_InOutLine_ID, Cur_SLines.C_OrderLine_ID, Cur_SLines.M_Product_ID, now(),
-                    	v_Qty, 'N', 'Y', 'N'
-                  	)
-                  	;
-                 ELSE
-                       SELECT max(M_MATCHPO_ID)
-                       INTO v_MatchPO_ID
-                       FROM M_MATCHPO
-                       WHERE C_ORDERLINE_ID = Cur_SLines.C_OrderLine_ID
-                            AND M_INOUTLINE_ID = Cur_SLines.M_InOutLine_ID;
-                            
-                	v_ResultStr:='UpdateMatchPO ' || v_MatchPO_ID;
-                	UPDATE M_MATCHPO
-                	SET DateTrx = now(), Qty =v_Qty, Processing = 'N', Processed = 'Y', Posted='N'
-                	WHERE M_MATCHPO_ID = v_MatchPO_ID;
-								 END IF;
+                  v_ResultStr:='UpdateMatchPO ' || v_MatchPO_ID;
+                  UPDATE M_MATCHPO
+                  SET DateTrx = now(), Qty =v_Qty, Processing = 'N', Processed = 'Y', Posted='N'
+                  WHERE M_MATCHPO_ID = v_MatchPO_ID;
+                END IF;
               END LOOP;
               v_ResultStr:='MatchInv';
               FOR Cur_ILines IN
