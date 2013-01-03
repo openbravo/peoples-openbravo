@@ -79,6 +79,7 @@ public class PaymentReportDao {
   private java.util.List<String> bpList;
   private java.util.List<String> bpCategoryList;
   private java.util.List<String> projectList;
+  private java.util.List<String> acctList;
 
   public PaymentReportDao() {
   }
@@ -476,10 +477,13 @@ public class PaymentReportDao {
         hsqlScript.append(", invcur.");
         hsqlScript.append(Currency.PROPERTY_ISOCODE);
         hsqlScript.append("), ");
-      } else if (strGroupCrit.equalsIgnoreCase("ACCS_ACCOUNT_ID_D")) { // REVISAR
-        hsqlScript.append(" coalesce(pay.");
+      } else if (strGroupCrit.equalsIgnoreCase("ACCS_ACCOUNT_ID_D")) {
+        hsqlScript.append(" coalesce(");
+        hsqlScript
+            .append(" (select trans.account.name from FIN_Finacc_Transaction trans left outer join trans.finPayment payment where payment.id=pay.id),");
+        hsqlScript.append(" pay.");
         hsqlScript.append(FIN_Payment.PROPERTY_ACCOUNT);
-        hsqlScript.append(", 'Awaiting Payment'");
+        hsqlScript.append(".name, 'Awaiting Payment'");
         hsqlScript.append("), ");
       }
 
@@ -524,8 +528,12 @@ public class PaymentReportDao {
             hsqlScript.append(")");
           }
           if (strOrdCritList[i].equalsIgnoreCase("ACCS_ACCOUNT_ID_D")) {
-            hsqlScript.append(",  pay.");
+            hsqlScript.append(", coalesce(");
+            hsqlScript
+                .append(" (select trans.account.name from FIN_Finacc_Transaction trans left outer join trans.finPayment payment where payment.id=pay.id),");
+            hsqlScript.append(" pay.");
             hsqlScript.append(FIN_Payment.PROPERTY_ACCOUNT);
+            hsqlScript.append(".name)");
           }
           if (strOrdCritList[i].equalsIgnoreCase("DueDate")) {
             hsqlScript.append(", invps.");
@@ -654,8 +662,12 @@ public class PaymentReportDao {
           // payment yes / no
           FieldProviderFactory.setField(data[i], "PAYMENT_Y_N", "");
           // financialAccount
-          FieldProviderFactory.setField(data[i], "FINANCIAL_ACCOUNT", FIN_PaymentScheduleDetail[i]
-              .getPaymentDetails().getFinPayment().getAccount().getIdentifier());
+          FieldProviderFactory.setField(data[i], "FINANCIAL_ACCOUNT",
+              FIN_PaymentScheduleDetail[i].getPaymentDetails().getFinPayment()
+                  .getFINFinaccTransactionList().size() != 0 ? FIN_PaymentScheduleDetail[i]
+                  .getPaymentDetails().getFinPayment().getFINFinaccTransactionList().get(0)
+                  .getAccount().getName() : FIN_PaymentScheduleDetail[i].getPaymentDetails()
+                  .getFinPayment().getAccount().getName());
           // status
           FieldProviderFactory.setField(data[i], "STATUS",
               translateRefList(FIN_PaymentScheduleDetail[i].getPaymentDetails().getFinPayment()
@@ -985,7 +997,7 @@ public class PaymentReportDao {
         } else if (strGroupCrit.equalsIgnoreCase("ACCS_ACCOUNT_ID_D")) {
           FieldProviderFactory.setField(previousRow, "GROUP_CRIT_ID",
               previousRow.getField("FINANCIAL_ACCOUNT"));
-          FieldProviderFactory.setField(previousRow, "GROUP_CRIT", "Finnancial Account");
+          FieldProviderFactory.setField(previousRow, "GROUP_CRIT", "Financial Account");
         } else {
           FieldProviderFactory.setField(previousRow, "GROUP_CRIT_ID", "");
         }
@@ -1174,7 +1186,7 @@ public class PaymentReportDao {
     FieldProviderFactory.setField(transactionData, "PAYMENT_Y_N", "Display:None");
     // financialAccount
     FieldProviderFactory.setField(transactionData, "FINANCIAL_ACCOUNT", transaction.getAccount()
-        .getIdentifier());
+        .getName());
     // status
     FieldProviderFactory.setField(transactionData, "STATUS",
         translateRefList(transaction.getStatus()));
@@ -1266,7 +1278,7 @@ public class PaymentReportDao {
     } else if (strGroupCrit.equalsIgnoreCase("ACCS_ACCOUNT_ID_D")) {
       FieldProviderFactory.setField(transactionData, "GROUP_CRIT_ID",
           transactionData.getField("FINANCIAL_ACCOUNT"));
-      FieldProviderFactory.setField(transactionData, "GROUP_CRIT", "Finnancial Account");
+      FieldProviderFactory.setField(transactionData, "GROUP_CRIT", "Financial Account");
     } else {
       FieldProviderFactory.setField(transactionData, "GROUP_CRIT_ID", "");
       FieldProviderFactory.setField(transactionData, "GROUP_CRIT", "");
@@ -1345,6 +1357,20 @@ public class PaymentReportDao {
               strProject);
         } else if (transaction.getCurrency().getISOCode().toString()
             .compareTo(data.getField("TRANS_CURRENCY")) < 0) {
+          isBefore = true;
+        }
+      } else if (strGroupCrit.equalsIgnoreCase("ACCS_ACCOUNT_ID_D")) {
+        if (acctList == null) {
+          createAcctList();
+        }
+        int posData = acctList.indexOf(data.getField("FINANCIAL_ACCOUNT"));
+        int pos = acctList.indexOf(transaction.getAccount().getName());
+
+        if (transaction.getAccount().getName().equals(data.getField("FINANCIAL_ACCOUNT"))) {
+          isBefore = isBeforeStatusAndOrder(transaction, data, strOrdCrit, BPName, BPCategory,
+              strProject);
+        } else if ((pos < posData || data.getField("FINANCIAL_ACCOUNT").equals(""))
+            && !transaction.getAccount().getName().equals("")) {
           isBefore = true;
         }
       }
@@ -1432,6 +1458,16 @@ public class PaymentReportDao {
         Date dataDate = FIN_Utility.getDate(data.getField("DUE_DATE"));
         isBefore = isBefore || (transaction.getDateAcct().compareTo(dataDate) < 0);
       }
+      if (strOrdCritList[i].equalsIgnoreCase("ACCS_ACCOUNT_ID_D")) {
+        if (acctList == null) {
+          createAcctList();
+        }
+        int posData = acctList.indexOf(data.getField("FINANCIAL_ACCOUNT"));
+        int pos = acctList.indexOf(transaction.getAccount().getName());
+        isBefore = isBefore
+            || (((pos < posData) || data.getField("FINANCIAL_ACCOUNT").equals("")) && !transaction
+                .getAccount().getName().equals(""));
+      }
       return isBefore;
     } else {
       if (strOrdCritList[i].contains("Project")) {
@@ -1500,7 +1536,22 @@ public class PaymentReportDao {
           isBefore = isBeforeOrder(transaction, data, strOrdCritList, i + 1, BPName, BPCategory,
               strProject);
         }
+      } else if (strOrdCritList[i].equalsIgnoreCase("ACCS_ACCOUNT_ID_D")) {
+        if (acctList == null) {
+          createAcctList();
+        }
+        int posData = acctList.indexOf(data.getField("FINANCIAL_ACCOUNT"));
+        int pos = acctList.indexOf(transaction.getAccount().getName());
+
+        if ((pos < posData || data.getField("FINANCIAL_ACCOUNT").equals(""))
+            && !transaction.getAccount().getName().equals("")) {
+          isBefore = true;
+        } else if (transaction.getAccount().getName().equals(data.getField("FINANCIAL_ACCOUNT"))) {
+          isBefore = isBeforeOrder(transaction, data, strOrdCritList, i + 1, BPName, BPCategory,
+              strProject);
+        }
       }
+
       return isBefore;
     }
   }
@@ -1572,6 +1623,8 @@ public class PaymentReportDao {
       obCriteriaTrans
           .createAlias(FIN_FinaccTransaction.PROPERTY_PROJECT, "p", OBCriteria.LEFT_JOIN);
       obCriteriaTrans.createAlias(FIN_FinaccTransaction.PROPERTY_CURRENCY, "c",
+          OBCriteria.LEFT_JOIN);
+      obCriteriaTrans.createAlias(FIN_FinaccTransaction.PROPERTY_ACCOUNT, "acc",
           OBCriteria.LEFT_JOIN);
       obCriteriaTrans.add(Restrictions.isNull(FIN_FinaccTransaction.PROPERTY_FINPAYMENT));
       obCriteriaTrans.add(Restrictions.in(FIN_FinaccTransaction.PROPERTY_ORGANIZATION,
@@ -1706,7 +1759,7 @@ public class PaymentReportDao {
       } else if (strGroupCrit.equalsIgnoreCase("INS_CURRENCY")) {
         obCriteriaTrans.addOrder(Order.asc("c." + Currency.PROPERTY_ISOCODE));
       } else if (strGroupCrit.equalsIgnoreCase("ACCS_ACCOUNT_ID_D")) {
-        obCriteriaTrans.addOrder(Order.asc(FIN_FinaccTransaction.PROPERTY_ACCOUNT));
+        obCriteriaTrans.addOrder(Order.asc("acc." + FIN_FinancialAccount.PROPERTY_NAME));
       }
 
       obCriteriaTrans.addOrder(Order.asc(FIN_FinaccTransaction.PROPERTY_STATUS));
@@ -1730,7 +1783,7 @@ public class PaymentReportDao {
             obCriteriaTrans.addOrder(Order.asc("c." + Currency.PROPERTY_ISOCODE));
           }
           if (strOrdCritList[i].contains("ACCS_ACCOUNT_ID_D")) {
-            obCriteriaTrans.addOrder(Order.asc(FIN_FinaccTransaction.PROPERTY_ACCOUNT));
+            obCriteriaTrans.addOrder(Order.asc("acc." + FIN_FinancialAccount.PROPERTY_NAME));
           }
           if (strOrdCritList[i].equalsIgnoreCase("DueDate")) {
             obCriteriaTrans.addOrder(Order.asc(FIN_FinaccTransaction.PROPERTY_TRANSACTIONDATE));
@@ -2104,6 +2157,16 @@ public class PaymentReportDao {
     critProject.addOrderBy(Project.PROPERTY_NAME, true);
     for (Project project : critProject.list()) {
       projectList.add(project.getName());
+    }
+  }
+
+  private void createAcctList() {
+    acctList = new ArrayList<String>();
+    OBCriteria<FIN_FinancialAccount> critAcct = OBDal.getInstance().createCriteria(
+        FIN_FinancialAccount.class);
+    critAcct.addOrderBy(FIN_FinancialAccount.PROPERTY_NAME, true);
+    for (FIN_FinancialAccount acct : critAcct.list()) {
+      acctList.add(acct.getName());
     }
   }
 
