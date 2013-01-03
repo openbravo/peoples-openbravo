@@ -34,6 +34,12 @@
         moduleId: '${tabComponent.moduleId}',
     </#if>
     
+    <#if tabComponent.showIf != "" >
+        showTabIf: function(context) {
+                    return (${tabComponent.showIf});
+                },
+    </#if>
+
     <#if tabComponent.defaultEditMode>
     defaultEditMode: ${tabComponent.defaultEditMode?string},
     </#if> 

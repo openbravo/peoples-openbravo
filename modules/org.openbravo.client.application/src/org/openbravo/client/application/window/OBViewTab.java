@@ -514,6 +514,22 @@ public class OBViewTab extends BaseTemplateComponent {
     return "";
   }
 
+  public String getShowIf() {
+
+    String jsExpression = null;
+    if (tab.getDisplayLogic() != null && !tab.getDisplayLogic().isEmpty()) {
+      boolean inpColumnNames = true;
+      final DynamicExpressionParser parser = new DynamicExpressionParser(tab.getDisplayLogic(),
+          tab, inpColumnNames);
+      jsExpression = parser.getJSExpression();
+    }
+    if (jsExpression != null) {
+      return jsExpression;
+    } else {
+      return "";
+    }
+  }
+
   public class ButtonField {
     private static final String AD_DEF_ERROR = "AD definition error: process parameter (%s) is using %s reference without %s";
     private String id;
@@ -894,5 +910,6 @@ public class OBViewTab extends BaseTemplateComponent {
     public boolean getSession() {
       return session;
     }
+
   }
 }

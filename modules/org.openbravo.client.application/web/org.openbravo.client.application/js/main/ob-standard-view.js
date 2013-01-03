@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -210,6 +210,24 @@ isc.OBStandardView.addProperties({
     OB.TestRegistry.register('org.openbravo.client.application.View_' + this.tabId, this);
     OB.TestRegistry.register('org.openbravo.client.application.ViewGrid_' + this.tabId, this.viewGrid);
     OB.TestRegistry.register('org.openbravo.client.application.ViewForm_' + this.tabId, this.viewForm);
+
+    if (this.showTabIf && !this.originalShowTabIf) {
+      this.originalShowTabIf = this.showTabIf;
+      this.showTabIf = function (context) {
+        var originalShowTabIfValue = false;
+
+        try {
+          if (isc.isA.Function(this.originalShowTabIf)) {
+            originalShowTabIfValue = this.originalShowTabIf(context);
+          } else {
+            originalShowTabIfValue = isc.JSON.decode(this.originalShowTabIf);
+          }
+        } catch (_exception) {
+          isc.warn(_exception + ' ' + _exception.message + ' ' + _exception.stack);
+        }
+        return originalShowTabIfValue;
+      };
+    }
 
     if (this.actionToolbarButtons) {
       length = this.actionToolbarButtons.length;
@@ -1270,6 +1288,8 @@ isc.OBStandardView.addProperties({
     var tabViewPane = null,
         i;
 
+    this.updateSubtabVisibility();
+
     // refresh the tabs
     if (this.childTabSet && (differentRecordId || !this.isOpenDirectModeParent)) {
       length = this.childTabSet.tabs.length;
@@ -1285,6 +1305,49 @@ isc.OBStandardView.addProperties({
       }
     }
     delete this.isOpenDirectModeParent;
+  },
+
+  updateSubtabVisibility: function () {
+    var i, length, tabViewPane, activeTab, activeTabNum, activeTabPane, indexFirstNotHiddenTab;
+    if (this.childTabSet) {
+      length = this.childTabSet.tabs.length;
+      for (i = 0; i < length; i++) {
+        tabViewPane = this.childTabSet.tabs[i].pane;
+        if (tabViewPane.showTabIf && !(tabViewPane.showTabIf(tabViewPane.getContextInfo()))) {
+          this.childTabSet.tabBar.members[i].hide();
+          tabViewPane.hidden = true;
+        } else {
+          if (this.childTabSet.visibility === 'hidden') {
+            this.childTabSet.show();
+          }
+          this.childTabSet.tabBar.members[i].show();
+          tabViewPane.hidden = false;
+          tabViewPane.updateSubtabVisibility();
+        }
+      }
+
+      // If the active tab of the tabset is now hidden, another tab has to to be selected
+      // If there are no visible tabs left, maximize the current view
+      activeTab = this.childTabSet.getSelectedTab();
+      activeTabNum = this.childTabSet.getTabNumber(activeTab);
+      activeTabPane = this.childTabSet.getTabPane(activeTab);
+      if (activeTabPane.hidden) {
+        //Look for the first not-hidden tab
+        indexFirstNotHiddenTab = -1;
+        for (i = 0; i < length; i++) {
+          tabViewPane = this.childTabSet.tabs[i].pane;
+          if (!tabViewPane.hidden) {
+            indexFirstNotHiddenTab = i;
+            break;
+          }
+        }
+        if (indexFirstNotHiddenTab !== -1) {
+          this.childTabSet.selectTab(indexFirstNotHiddenTab);
+        } else {
+          this.childTabSet.hide();
+        }
+      }
+    }
   },
 
   // set childs to refresh when they are made visible

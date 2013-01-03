@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -868,7 +868,8 @@ isc.OBStandardWindow.addProperties({
   selectChildTab: function (mainTabSet) {
     var childTabSet = this.activeView.childTabSet;
 
-    if (!childTabSet) {
+    // If all the subtabs are hidden due to its display logic, the child tabset will be hidden
+    if (!childTabSet || childTabSet.visibility === 'hidden') {
       return false;
     }
 
@@ -890,7 +891,7 @@ isc.OBStandardWindow.addProperties({
   // Called from the main app tabset
   // Selects the previous tab of the current selected and active tab (independently of its level)
   selectPreviousTab: function (mainTabSet) {
-    var activeTabSet = this.activeView.parentTabSet;
+    var activeTabSet = this.activeView.parentTabSet, previousTabVisible, previousTabIndex;
     if (!activeTabSet) { // If activeTabSet is null means that we are in the top level
       activeTabSet = mainTabSet;
     }
@@ -898,11 +899,22 @@ isc.OBStandardWindow.addProperties({
         activeTabNum = activeTabSet.getTabNumber(activeTab),
         activeTabPane = activeTabSet.getTabPane(activeTab);
 
-    if ((activeTabNum - 1) < 0) {
+    // Look for the next visible tab
+    previousTabVisible = false;
+    previousTabIndex = activeTabNum - 1;
+    while (previousTabVisible === false && previousTabIndex >= 0) {
+      if (!activeTabSet.tabs[previousTabIndex].pane.hidden) {
+        previousTabVisible = true;
+      } else {
+        previousTabIndex--;
+      }
+    }
+
+    if (!previousTabVisible) {
       return false;
     }
 
-    activeTabSet.selectTab(activeTabNum - 1);
+    activeTabSet.selectTab(previousTabIndex);
 
     // after select the new tab, activeTab related variables are updated
     activeTab = activeTabSet.getSelectedTab();
@@ -920,7 +932,7 @@ isc.OBStandardWindow.addProperties({
   // Called from the main app tabset
   // Selects the next tab of the current selected and active tab (independently of its level)
   selectNextTab: function (mainTabSet) {
-    var activeTabSet = this.activeView.parentTabSet;
+    var activeTabSet = this.activeView.parentTabSet, nextTabVisible, nextTabIndex;
     if (!activeTabSet) { // If activeTabSet is null means that we are in the top level
       activeTabSet = mainTabSet;
     }
@@ -928,11 +940,23 @@ isc.OBStandardWindow.addProperties({
         activeTabNum = activeTabSet.getTabNumber(activeTab),
         activeTabPane = activeTabSet.getTabPane(activeTab);
 
-    if ((activeTabNum + 1) >= activeTabSet.tabs.getLength()) {
-      return false;
-    }
+	// Look for the next visible tab
+	nextTabVisible = false;
+	nextTabIndex = activeTabNum + 1;
+	while (nextTabVisible === false
+			&& nextTabIndex < activeTabSet.tabs.getLength()) {
+		if (!activeTabSet.tabs[nextTabIndex].pane.hidden) {
+			nextTabVisible = true;
+		} else {
+			nextTabIndex++;
+		}
+	}
 
-    activeTabSet.selectTab(activeTabNum + 1);
+	if (!nextTabVisible) {
+		return false;
+	}
+
+	activeTabSet.selectTab(nextTabIndex);
 
     // after select the new tab, activeTab related variables are updated
     activeTab = activeTabSet.getSelectedTab();
