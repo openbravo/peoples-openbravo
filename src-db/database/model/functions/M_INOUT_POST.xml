@@ -235,15 +235,20 @@
       END IF;
     END IF;
         -- Process Shipments
-  
-      SELECT COUNT(*)
-        INTO v_Count
-      FROM M_INOUT IO, M_INOUTLINE IOL
-      WHERE IO.M_INOUT_ID = IOL.M_INOUT_ID
-        AND AD_ISORGINCLUDED(IOL.AD_Org_ID, IO.AD_Org_ID, IO.AD_Client_ID) <> -1
-        AND IO.M_INOUT_ID = v_Record_ID;
-      IF (v_Count=0) THEN
-        RAISE_APPLICATION_ERROR(-20000, '@NotCorrectOrgLines@') ;
+      SELECT COUNT(*) INTO v_Aux
+      FROM M_InOutLine
+      WHERE M_InOut_ID = v_Record_ID;
+
+      IF v_Aux > 0 THEN  
+        SELECT COUNT(*)
+	INTO v_Count
+        FROM M_INOUT IO, M_INOUTLINE IOL
+        WHERE IO.M_INOUT_ID = IOL.M_INOUT_ID
+	AND AD_ISORGINCLUDED(IOL.AD_Org_ID, IO.AD_Org_ID, IO.AD_Client_ID) <> -1
+	AND IO.M_INOUT_ID = v_Record_ID;
+        IF (v_Count=0) THEN
+	  RAISE_APPLICATION_ERROR(-20000, '@NotCorrectOrgLines@') ;
+        END IF;
       END IF;
       
       -- Check the header belongs to a organization where transactions are posible and ready to use
@@ -304,9 +309,7 @@
           IF(Cur_InOut.Processed='N' AND Cur_InOut.DocStatus='DR' AND Cur_InOut.DocAction='CO') THEN
             -- For all active shipment lines
             v_ResultStr:='HeaderLoop-1';
-            SELECT COUNT(*) INTO v_Aux
-        FROM M_InOutLine
-        WHERE M_InOut_ID = v_Record_ID;
+            
         IF v_Aux=0 THEN
         RAISE_APPLICATION_ERROR(-20000, '@ReceiptWithoutLines@');
         END IF;
