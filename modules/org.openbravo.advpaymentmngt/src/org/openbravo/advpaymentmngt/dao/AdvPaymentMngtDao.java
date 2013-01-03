@@ -1305,6 +1305,17 @@ public class AdvPaymentMngtDao {
       whereClause.append(" and p.");
       whereClause.append(FIN_Payment.PROPERTY_STATUS);
       whereClause.append(" IN ('RPR', 'PPM')");
+      whereClause.append(" and p.");
+      whereClause.append(FIN_Payment.PROPERTY_CURRENCY);
+      whereClause.append(".id");
+      whereClause.append(" in ");
+      whereClause.append(" ( select fa.");
+      whereClause.append(FIN_FinancialAccount.PROPERTY_CURRENCY);
+      whereClause.append(".id");
+      whereClause.append(" from ");
+      whereClause.append(" FIN_Financial_Account as fa");
+      whereClause.append(" where fa.id = ? )");
+      parameters.add(account.getId());
       parameters.add(account.getId());
       // IsReceipt
       whereClause.append(" and p.");
