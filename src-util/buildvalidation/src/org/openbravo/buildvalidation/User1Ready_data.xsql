@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SLU
+ * All portions are Copyright (C) 2013 Openbravo SLU
+ * All Rights Reserved.
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+
+
+<SqlClass name="User1ReadyData" package="org.openbravo.buildvalidation">
+   <SqlMethod name="select" type="preparedStatement" return="multiple">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql><![CDATA[
+        SELECT  1 as records
+          FROM dual
+    ]]></Sql>
+   </SqlMethod>
+   <SqlMethod name="tableExists" type="preparedStatement" return="boolean">
+      <SqlMethodComment>Checks if User1 table exists in AD. This table has been added in 3.0MP18</SqlMethodComment>
+      <Sql><![CDATA[
+             select tablename
+             from ad_table
+             where lower(tablename) = 'user1'
+      ]]></Sql>
+   </SqlMethod>
+   <SqlMethod name="countUser1Usage" type="preparedStatement" return="string">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql><![CDATA[
+        SELECT COUNT(1) AS RECORDS
+        FROM DUAL
+        WHERE EXISTS (SELECT 1 FROM A_Amortization WHERE USER1_ID IS NOT NULL OR USER2_ID IS NOT NULL)
+        OR EXISTS (SELECT 1 FROM C_BudgetLine WHERE USER1_ID IS NOT NULL OR USER2_ID IS NOT NULL)
+        OR EXISTS (SELECT 1 FROM C_Cash WHERE USER1_ID IS NOT NULL OR USER2_ID IS NOT NULL)
+        OR EXISTS (SELECT 1 FROM C_DP_Management WHERE USER1_ID IS NOT NULL OR USER2_ID IS NOT NULL)
+        OR EXISTS (SELECT 1 FROM C_Invoice WHERE USER1_ID IS NOT NULL OR USER2_ID IS NOT NULL)
+        OR EXISTS (SELECT 1 FROM C_InvoiceLine_AcctDimension WHERE USER1_ID IS NOT NULL OR USER2_ID IS NOT NULL)
+        OR EXISTS (SELECT 1 FROM C_Order WHERE USER1_ID IS NOT NULL OR USER2_ID IS NOT NULL)
+        OR EXISTS (SELECT 1 FROM C_Settlement WHERE USER1_ID IS NOT NULL OR USER2_ID IS NOT NULL)
+        OR EXISTS (SELECT 1 FROM C_ValidCombination WHERE USER1_ID IS NOT NULL OR USER2_ID IS NOT NULL)
+        OR EXISTS (SELECT 1 FROM FIN_Finacc_Transaction WHERE USER1_ID IS NOT NULL OR USER2_ID IS NOT NULL)
+        OR EXISTS (SELECT 1 FROM FIN_Payment WHERE USER1_ID IS NOT NULL OR USER2_ID IS NOT NULL)
+        OR EXISTS (SELECT 1 FROM Fact_Acct WHERE USER1_ID IS NOT NULL OR USER2_ID IS NOT NULL)
+        OR EXISTS (SELECT 1 FROM GL_Journal WHERE USER1_ID IS NOT NULL OR USER2_ID IS NOT NULL)
+        OR EXISTS (SELECT 1 FROM GL_JournalLine WHERE USER1_ID IS NOT NULL OR USER2_ID IS NOT NULL)
+        OR EXISTS (SELECT 1 FROM M_InOut WHERE USER1_ID IS NOT NULL OR USER2_ID IS NOT NULL)
+        OR EXISTS (SELECT 1 FROM M_Inventory WHERE USER1_ID IS NOT NULL OR USER2_ID IS NOT NULL)
+        OR EXISTS (SELECT 1 FROM M_Movement WHERE USER1_ID IS NOT NULL OR USER2_ID IS NOT NULL)
+        OR EXISTS (SELECT 1 FROM M_Production WHERE USER1_ID IS NOT NULL OR USER2_ID IS NOT NULL)
+      ]]></Sql>
+   </SqlMethod>
+</SqlClass>
