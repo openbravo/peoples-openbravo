@@ -40,6 +40,10 @@
                 },
     </#if>
 
+     <#if tabComponent.preferenceAttributes != "" >
+        sessionAttributes: ${tabComponent.preferenceAttributes},
+    </#if>
+
     <#if tabComponent.defaultEditMode>
     defaultEditMode: ${tabComponent.defaultEditMode?string},
     </#if> 

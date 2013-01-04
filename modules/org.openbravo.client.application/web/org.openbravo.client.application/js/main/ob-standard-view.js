@@ -229,6 +229,13 @@ isc.OBStandardView.addProperties({
       };
     }
 
+    // If the tab comes with session attributes (preference attributes used in the display
+    // logic of the tab, see issue https://issues.openbravo.com/view.php?id=5202), assign them
+    // to the form, so they will be retrieved when getContextInfo() is called for the form
+    if (this.sessionAttributes) {
+      this.viewForm.sessionAttributes = this.sessionAttributes;
+    }
+
     if (this.actionToolbarButtons) {
       length = this.actionToolbarButtons.length;
       for (i = 0; i < length; i++) {
@@ -257,6 +264,9 @@ isc.OBStandardView.addProperties({
     this.Super('initWidget', arguments);
 
     this.toolBar.updateButtonState(true, false, true);
+    
+    // Update the subtab visibility before the tabs are shown to the client
+    this.updateSubtabVisibility();
   },
 
   show: function () {
@@ -1253,6 +1263,10 @@ isc.OBStandardView.addProperties({
       return;
     }
 
+    // Update the tab visibility after a record has been selected and its session
+    // attributes have been updated
+    this.updateSubtabVisibility();
+
     // If the record has been automatically selected because was the only record in the header tab,
     // only select the record if the window has not been opened by clicking on the recent views icon to
     // create a new record
@@ -1288,8 +1302,6 @@ isc.OBStandardView.addProperties({
     var tabViewPane = null,
         i;
 
-    this.updateSubtabVisibility();
-
     // refresh the tabs
     if (this.childTabSet && (differentRecordId || !this.isOpenDirectModeParent)) {
       length = this.childTabSet.tabs.length;
@@ -1313,7 +1325,9 @@ isc.OBStandardView.addProperties({
       length = this.childTabSet.tabs.length;
       for (i = 0; i < length; i++) {
         tabViewPane = this.childTabSet.tabs[i].pane;
-        if (tabViewPane.showTabIf && !(tabViewPane.showTabIf(tabViewPane.getContextInfo()))) {
+        // Calling getContextInfo with (false, true, true) in order to obtain also the value of the
+        // session attributes of the form
+        if (tabViewPane.showTabIf && !(tabViewPane.showTabIf(tabViewPane.getContextInfo(false, true, true)))) {
           this.childTabSet.tabBar.members[i].hide();
           tabViewPane.hidden = true;
         } else {

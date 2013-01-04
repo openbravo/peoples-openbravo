@@ -29,6 +29,8 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -39,6 +41,7 @@ import org.openbravo.client.kernel.BaseTemplateComponent;
 import org.openbravo.client.kernel.Component;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.client.kernel.KernelUtils;
+import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.client.kernel.Template;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.dal.core.DalUtil;
@@ -87,6 +90,8 @@ public class OBViewTab extends BaseTemplateComponent {
   private boolean buttonSessionLogic;
   private boolean isRootTab;
   private String uniqueString = "" + System.currentTimeMillis();
+
+  private Map<String, String> preferenceAttributesMap = new HashMap<String, String>();
 
   @Inject
   private OBViewFieldHandler fieldHandler;
@@ -522,12 +527,42 @@ public class OBViewTab extends BaseTemplateComponent {
       final DynamicExpressionParser parser = new DynamicExpressionParser(tab.getDisplayLogic(),
           tab, inpColumnNames);
       jsExpression = parser.getJSExpression();
+
+      // Retrieves the preference attributes used in the display logic of the tab
+      setPreferenceAttributesFromParserResult(parser, this.getWindowId());
     }
     if (jsExpression != null) {
       return jsExpression;
     } else {
       return "";
     }
+  }
+
+  private void setPreferenceAttributesFromParserResult(DynamicExpressionParser parser,
+      String windowId) {
+    for (String attrName : parser.getSessionAttributes()) {
+      if (!preferenceAttributesMap.containsKey(attrName) && attrName.startsWith("#")) {
+        final String attrValue = Utility.getContext(new DalConnectionProvider(false),
+            RequestContext.get().getVariablesSecureApp(), attrName, windowId);
+        preferenceAttributesMap.put(attrName.replace("#", "_"), attrValue);
+      }
+    }
+  }
+
+  // Returns the preference attributes map in JSON format
+  public String getPreferenceAttributes() {
+    String preferenceAttributes = "";
+    if (!preferenceAttributesMap.isEmpty()) {
+      try {
+        JSONObject preferenceAttributesJSON = new JSONObject();
+        for (String attr : preferenceAttributesMap.keySet()) {
+          preferenceAttributesJSON.put(attr, preferenceAttributesMap.get(attr));
+        }
+        preferenceAttributes = preferenceAttributesJSON.toString();
+      } catch (JSONException e) {
+      }
+    }
+    return preferenceAttributes;
   }
 
   public class ButtonField {

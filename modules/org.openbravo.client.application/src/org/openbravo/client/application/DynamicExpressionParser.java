@@ -312,7 +312,8 @@ public class DynamicExpressionParser {
     // Sometimes (i.e. for the tab display logic, see issue
     // https://issues.openbravo.com/view.php?id=5202),
     // the token needs to be converted to its inp column name
-    if (inpColumnNames) {
+    // Do not convert the name of the preference (preference names starts with '#')
+    if (inpColumnNames && !convertedToken.startsWith("#")) {
       convertedToken = "inp" + Sqlc.TransformaNombreColumna(token);
     }
     sessionAttributesInExpression.add(convertedToken);

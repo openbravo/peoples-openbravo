@@ -406,6 +406,19 @@ public class FormInitializationComponent extends BaseActionHandler {
         // and we add the columns which have a callout
 
         final Map<String, String> sessionAttributesMap = new HashMap<String, String>();
+
+        // Adds to the session attributes the attributes used in
+        // the display logic of the tabs
+        Window w = tab.getWindow();
+        for (Tab aTab : w.getADTabList()) {
+          if (aTab.getDisplayLogic() != null && aTab.isActive()) {
+            final DynamicExpressionParser parser = new DynamicExpressionParser(
+                aTab.getDisplayLogic(), aTab);
+            setSessionAttributesFromParserResult(parser, sessionAttributesMap, tab.getWindow()
+                .getId());
+          }
+        }
+
         for (Field field : getADFieldList(tab.getId())) {
           if (field.getColumn() == null) {
             continue;

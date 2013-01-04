@@ -817,6 +817,9 @@ OB.ViewFormProperties = {
 
     length = this.getFields().length;
 
+    //Updates the visibility of the tabs before they are shown to the client
+    this.view.updateSubtabVisibility();
+
     if (this.validateAfterFicReturn) {
       delete this.validateAfterFicReturn;
       // only validate the fields which have errors or which have changed
