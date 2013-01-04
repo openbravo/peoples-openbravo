@@ -141,8 +141,12 @@ public class CashCloseProcessor {
         .getDocumentTypeForReconciliations());
     reconciliation.setEndingDate(new Date());
     reconciliation.setTransactionDate(new Date());
-    reconciliation.setEndingBalance(BigDecimal.valueOf(cashCloseObj.getJSONObject("paymentMethod")
-        .getDouble("amountToKeep")));
+    if (!cashCloseObj.getJSONObject("paymentMethod").isNull("amountToKeep")) {
+      reconciliation.setEndingBalance(BigDecimal.valueOf(cashCloseObj
+          .getJSONObject("paymentMethod").getDouble("amountToKeep")));
+    } else {
+      reconciliation.setEndingBalance(new BigDecimal(0));
+    }
     reconciliation.setStartingbalance(startingBalance);
     reconciliation.setDocumentStatus("CO");
     reconciliation.setProcessNow(false);
