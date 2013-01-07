@@ -891,7 +891,8 @@ isc.OBStandardWindow.addProperties({
   // Called from the main app tabset
   // Selects the previous tab of the current selected and active tab (independently of its level)
   selectPreviousTab: function (mainTabSet) {
-    var activeTabSet = this.activeView.parentTabSet, previousTabVisible, previousTabIndex;
+    var activeTabSet = this.activeView.parentTabSet,
+        previousTabVisible, previousTabIndex;
     if (!activeTabSet) { // If activeTabSet is null means that we are in the top level
       activeTabSet = mainTabSet;
     }
@@ -932,7 +933,8 @@ isc.OBStandardWindow.addProperties({
   // Called from the main app tabset
   // Selects the next tab of the current selected and active tab (independently of its level)
   selectNextTab: function (mainTabSet) {
-    var activeTabSet = this.activeView.parentTabSet, nextTabVisible, nextTabIndex;
+    var activeTabSet = this.activeView.parentTabSet,
+        nextTabVisible, nextTabIndex;
     if (!activeTabSet) { // If activeTabSet is null means that we are in the top level
       activeTabSet = mainTabSet;
     }
@@ -940,23 +942,22 @@ isc.OBStandardWindow.addProperties({
         activeTabNum = activeTabSet.getTabNumber(activeTab),
         activeTabPane = activeTabSet.getTabPane(activeTab);
 
-	// Look for the next visible tab
-	nextTabVisible = false;
-	nextTabIndex = activeTabNum + 1;
-	while (nextTabVisible === false
-			&& nextTabIndex < activeTabSet.tabs.getLength()) {
-		if (!activeTabSet.tabs[nextTabIndex].pane.hidden) {
-			nextTabVisible = true;
-		} else {
-			nextTabIndex++;
-		}
-	}
+    // Look for the next visible tab
+    nextTabVisible = false;
+    nextTabIndex = activeTabNum + 1;
+    while (nextTabVisible === false && nextTabIndex < activeTabSet.tabs.getLength()) {
+      if (!activeTabSet.tabs[nextTabIndex].pane.hidden) {
+        nextTabVisible = true;
+      } else {
+        nextTabIndex++;
+      }
+    }
 
-	if (!nextTabVisible) {
-		return false;
-	}
+    if (!nextTabVisible) {
+      return false;
+    }
 
-	activeTabSet.selectTab(nextTabIndex);
+    activeTabSet.selectTab(nextTabIndex);
 
     // after select the new tab, activeTab related variables are updated
     activeTab = activeTabSet.getSelectedTab();

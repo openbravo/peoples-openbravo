@@ -264,7 +264,7 @@ isc.OBStandardView.addProperties({
     this.Super('initWidget', arguments);
 
     this.toolBar.updateButtonState(true, false, true);
-    
+
     // Update the subtab visibility before the tabs are shown to the client
     this.updateSubtabVisibility();
   },
