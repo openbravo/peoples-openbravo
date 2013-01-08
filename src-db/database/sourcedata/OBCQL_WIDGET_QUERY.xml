@@ -18,6 +18,7 @@ where q.documentStatus in ('CA', 'CJ')
   and q.organization.id IN (:organizationList)
   and @optional_filters@
 group by q.documentStatus]]></HQL>
+<!--11D052605994493E905FF9A45591D84D-->  <TYPE><![CDATA[HQL]]></TYPE>
 <!--11D052605994493E905FF9A45591D84D--></OBCQL_WIDGET_QUERY>
 
 </data>
