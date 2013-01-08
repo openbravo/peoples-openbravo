@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -38,6 +38,8 @@ import org.openbravo.base.model.domaintype.LongDomainType;
 import org.openbravo.base.model.domaintype.StringDomainType;
 import org.openbravo.base.util.Check;
 import org.openbravo.dal.core.OBContext;
+
+import sun.org.mozilla.javascript.NativeObject;
 
 /**
  * Utility class for Parameters handling
@@ -157,6 +159,11 @@ public class ParameterUtils {
       engine.put("OB", new OBBindings(OBContext.getOBContext(), parameters));
     }
 
-    return engine.eval(expression);
+    Object result = engine.eval(expression);
+    if (result instanceof NativeObject) {
+      // complex js object, convert it into a JSON
+      result = new JSONObject((NativeObject) result);
+    }
+    return result;
   }
 }

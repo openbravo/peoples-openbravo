@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012 Openbravo SLU
+ * All portions are Copyright (C) 2012-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -330,15 +330,25 @@ isc.OBParameterWindowView.addProperties({
   },
 
   handleDefaults: function (defaults) {
-    var i;
+    var i, field, def;
     if (!this.theForm) {
       return;
     }
 
     for (i in defaults) {
       if (defaults.hasOwnProperty(i)) {
-        if (this.theForm.getItem(i)) {
-          this.theForm.getItem(i).setValue(defaults[i]);
+        def = defaults[i];
+        field = this.theForm.getItem(i);
+        if (field) {
+          if (isc.isA.Object(def)) {
+            if (def.identifier && def.value) {
+              field.valueMap = field.valueMap || {};
+              field.valueMap[def.value] = def.identifier;
+              field.setValue(def.value);
+            }
+          } else {
+            field.setValue(def);
+          }
         }
       }
     }
