@@ -109,27 +109,42 @@ enyo.kind({
     }
   },
   show: function (args) {
+    var resp = true;
     this.args = {}; //reset;
     this._addArgsToComponent(args);
     if (this.executeOnShow) {
-      this.executeOnShow();
+      resp = this.executeOnShow();
+      if (_.isUndefined(resp) || _.isNull(resp)) {
+        resp = true;
+      }
     }
-    this.inherited(arguments);
-    this.setDefaultActionButton();
-    this.focusInPopup();
-    if (this.executeOnShown) {
-      this.executeOnShown();
+    if (resp) {
+      this.inherited(arguments);
+      this.setDefaultActionButton();
+      this.focusInPopup();
+      if (this.executeOnShown) {
+        this.executeOnShown();
+      }
     }
   },
   hideFromInside: function (inSender, inEvent) {
     this.hide(inEvent.args);
   },
   hide: function (args) {
-    this.inherited(arguments);
-    OB.POS.terminal.$.focusKeeper.focus();
+    var resp = true;
     this._addArgsToComponent(args);
-    if (this.executeOnHide) {
-      this.executeOnHide();
+    if (this.executeBeforeHide) {
+      resp = this.executeBeforeHide();
+      if (_.isUndefined(resp) || _.isNull(resp)) {
+        resp = true;
+      }
+    }
+    if (resp) {
+      this.inherited(arguments);
+      OB.POS.terminal.$.focusKeeper.focus();
+      if (this.executeOnHide) {
+        this.executeOnHide();
+      }
     }
   },
   focusInPopup: function () {
@@ -566,7 +581,11 @@ enyo.kind({
     }
   },
   initComponents: function () {
-    this.setContent(OB.I18N.getLabel('OBPOS_LblOk'));
+    if (this.label) {
+      this.setContent(this.label);
+    } else {
+      this.setContent(OB.I18N.getLabel('OBPOS_LblOk'));
+    }
     this.inherited(arguments);
   }
 });
