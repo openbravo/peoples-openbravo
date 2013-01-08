@@ -72,13 +72,13 @@ public class DynamicExpressionParser {
   private Tab tab;
   private Field field;
   private StringBuffer jsCode;
-  private boolean inpColumnNames = false;
+  private boolean tabLevelDisplayLogic = false;
   private ApplicationDictionaryCachedStructures cachedStructures;
 
-  public DynamicExpressionParser(String code, Tab tab, boolean inpColumnNames) {
+  public DynamicExpressionParser(String code, Tab tab, boolean tabLevelDisplayLogic) {
     this.code = code;
     this.tab = tab;
-    this.inpColumnNames = inpColumnNames;
+    this.tabLevelDisplayLogic = tabLevelDisplayLogic;
     parse();
   }
 
@@ -146,8 +146,10 @@ public class DynamicExpressionParser {
         jsCode.append(COMPARATIONS[pos[1]][1]);
       }
 
+      // The value might be transformed if the leftPart contains the string 'currentValues'
+      // or if a tab level display logic is being parsed
       DisplayLogicElement rightPart = getDisplayLogicText(token2,
-          leftPart.text.contains("currentValues"), leftPart.isBoolean);
+          leftPart.text.contains("currentValues") || tabLevelDisplayLogic, leftPart.isBoolean);
       jsCode.append(rightPart.text);
     }
     // Handle accounting dimensions special display logic
@@ -309,17 +311,51 @@ public class DynamicExpressionParser {
     }
 
     String convertedToken = token;
+    boolean isBoolean = false;
+
     // Sometimes (i.e. for the tab display logic, see issue
     // https://issues.openbravo.com/view.php?id=5202),
     // the token needs to be converted to its inp column name
     // Do not convert the name of the preference (preference names starts with '#')
-    if (inpColumnNames && !convertedToken.startsWith("#")) {
+    if (tabLevelDisplayLogic && !convertedToken.startsWith("#")) {
+      // Looks if the token is the nome of an ancestors field...
+      Field ancestorField = lookForFieldInAncestorTabs(token);
+      if (ancestorField != null) {
+        UIDefinition uiDef = UIDefinitionController.getInstance().getUIDefinition(
+            ancestorField.getColumn().getId());
+        // ... in that case, the left part is a boolean if that field is a YesNoUIDefinition
+        isBoolean = (uiDef instanceof YesNoUIDefinition);
+      }
       convertedToken = "inp" + Sqlc.TransformaNombreColumna(token);
+
     }
     sessionAttributesInExpression.add(convertedToken);
     return new DisplayLogicElement(TOKEN_PREFIX
         + (convertedToken.startsWith("#") ? convertedToken.replace("#", "_") : convertedToken),
-        false);
+        isBoolean);
+  }
+
+  private Field lookForFieldInAncestorTabs(String fieldName) {
+    Field aField = null;
+    Tab parentTab = KernelUtils.getInstance().getParentTab(tab);
+    while (parentTab != null && aField == null) {
+      aField = searchForFieldInTab(parentTab, fieldName);
+      parentTab = KernelUtils.getInstance().getParentTab(parentTab);
+    }
+    return aField;
+  }
+
+  private Field searchForFieldInTab(Tab tab, String fieldName) {
+    List<Field> fields = tab.getADFieldList();
+    for (Field aField : fields) {
+      if (aField.getColumn() == null) {
+        continue;
+      }
+      if (fieldName.equalsIgnoreCase(aField.getColumn().getDBColumnName())) {
+        return aField;
+      }
+    }
+    return null;
   }
 
   /*
