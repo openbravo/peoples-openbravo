@@ -102,7 +102,7 @@ public class QueryListWidgetProvider extends WidgetProvider {
     if ("HQL".equals(listWidgetType)) {
       datasourceId = DATASOURCEID;
     } else {
-      datasourceId = listWidget.getObserdsDatasource().getId();
+      datasourceId = listWidget.getDatasource().getId();
     }
 
     localParameters.put(WIDGETCLASS_PARAMETER, widget);
