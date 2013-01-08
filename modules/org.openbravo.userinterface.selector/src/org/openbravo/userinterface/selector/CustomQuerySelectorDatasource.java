@@ -74,7 +74,6 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
     final SimpleDateFormat xmlDateFormat = JsonUtils.createDateFormat();
     final SimpleDateFormat xmlDateTimeFormat = JsonUtils.createDateTimeFormat();
     final List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
-
     String selectorId = parameters.get(SelectorConstants.DS_REQUEST_SELECTOR_ID_PARAMETER);
 
     if (StringUtils.isEmpty(selectorId)) {
@@ -100,8 +99,16 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
       if (startRow > 0) {
         selQuery.setFirstResult(startRow);
       }
+
+      // ReadOnlyDataSourceService does not handle endRow setting based on the records. So setting
+      // the MaxResults based on the query list size.
+      int queryListSize = selQuery.list().size();
       if (endRow > startRow) {
-        selQuery.setMaxResults(endRow - startRow + 1);
+        if (queryListSize > endRow) {
+          selQuery.setMaxResults(queryListSize);
+        } else {
+          selQuery.setMaxResults(endRow - startRow + 1);
+        }
       }
 
       for (Object objResult : selQuery.list()) {
