@@ -41,7 +41,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="TYPE" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+      <column name="TYPE" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default><![CDATA[HQL]]></default>
         <onCreateDefault><![CDATA['HQL']]></onCreateDefault>
       </column>
