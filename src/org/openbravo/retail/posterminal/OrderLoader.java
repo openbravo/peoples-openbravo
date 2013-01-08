@@ -70,6 +70,7 @@ import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.order.OrderLineOffer;
 import org.openbravo.model.common.order.OrderTax;
+import org.openbravo.model.common.plm.AttributeSetInstance;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_OrigPaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
@@ -643,7 +644,8 @@ public class OrderLoader extends JSONProcessSimple {
           }
           lineNo += 10;
           addShipemntline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine,
-              jsonorder, lineNo, qty, stock.getStorageDetail().getStorageBin());
+              jsonorder, lineNo, qty, stock.getStorageDetail().getStorageBin(), stock
+                  .getStorageDetail().getAttributeSetValue());
         }
       }
 
@@ -655,14 +657,14 @@ public class OrderLoader extends JSONProcessSimple {
         queryLoc.setMaxResult(1);
         lineNo += 10;
         addShipemntline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine, jsonorder,
-            lineNo, pendingQty, queryLoc.list().get(0));
+            lineNo, pendingQty, queryLoc.list().get(0), null);
       }
     }
   }
 
   private void addShipemntline(ShipmentInOut shipment, Entity shplineentity,
       JSONObject jsonOrderLine, OrderLine orderLine, JSONObject jsonorder, long lineNo,
-      BigDecimal qty, Locator bin) throws JSONException {
+      BigDecimal qty, Locator bin, AttributeSetInstance attributeSetInstance) throws JSONException {
     ShipmentInOutLine line = OBProvider.getInstance().get(ShipmentInOutLine.class);
 
     JSONPropertyToEntity.fillBobFromJSON(shplineentity, line, jsonOrderLine,
@@ -676,6 +678,9 @@ public class OrderLoader extends JSONProcessSimple {
 
     line.setMovementQuantity(qty);
     line.setStorageBin(bin);
+    if (attributeSetInstance != null) {
+      line.setAttributeSetValue(attributeSetInstance);
+    }
     shipment.getMaterialMgmtShipmentInOutLineList().add(line);
   }
 
@@ -847,6 +852,7 @@ public class OrderLoader extends JSONProcessSimple {
         transaction.setMovementQuantity(line.getMovementQuantity().multiply(NEGATIVE_ONE));
         transaction.setMovementDate(shipment.getMovementDate());
         transaction.setGoodsShipmentLine(line);
+        transaction.setAttributeSetValue(line.getAttributeSetValue());
 
         OBDal.getInstance().save(transaction);
       }
