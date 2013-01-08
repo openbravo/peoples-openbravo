@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2012 Openbravo SLU
+ * All portions are Copyright (C) 2011-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -162,13 +162,25 @@ isc.OBSelectorPopupWindow.addProperties({
       recordDoubleClick: function () {
         selectorWindow.setValueInField();
       },
+
       handleFilterEditorSubmit: function (criteria, context) {
         var ids = [],
             crit = {},
-            len, i, c, found;
+            len, i, c, found, fixedCriteria;
         if (!selectorWindow.multiselect) {
           this.Super('handleFilterEditorSubmit', arguments);
           return;
+        }
+
+        if (criteria && criteria.criteria) {
+          fixedCriteria = [];
+          // remove from criteria dummy one created to preserve selected items
+          for (i = 0; i < criteria.criteria.length; i++) {
+            if (!criteria.criteria[i].dummyCriteria && criteria.criteria[i].fieldName !== '_selectorDefinitionId') {
+              fixedCriteria.push(criteria.criteria[i]);
+            }
+          }
+          criteria.criteria = fixedCriteria;
         }
 
         len = this.selector.selectorWindow.selectedIds.length;
@@ -208,7 +220,8 @@ isc.OBSelectorPopupWindow.addProperties({
             // adding an *always true* sentence
             criteria.criteria.push({
               fieldName: 'id',
-              operator: 'notNull'
+              operator: 'notNull',
+              dummyCriteria: true
             });
           }
           crit.criteria.push(criteria); // original filter
