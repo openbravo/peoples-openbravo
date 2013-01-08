@@ -237,13 +237,18 @@ isc.OBParameterWindowView.addProperties({
   setFieldFormProperties: function () {},
 
   validate: function () {
-    if (!this.grid) {
-      return true; //TODO: validate other params
-    }
-    var viewGrid = this.grid.viewGrid;
+    var viewGrid;
 
-    viewGrid.endEditing();
-    return !viewGrid.hasErrors();
+    if (this.theForm) {
+      return this.theForm.validate();
+    }
+
+    if (this.grid) {
+      viewGrid = this.grid.viewGrid;
+
+      viewGrid.endEditing();
+      return !viewGrid.hasErrors();
+    }
   },
 
   showProcessing: function (processing) {
