@@ -1000,3 +1000,120 @@ OB.Utilities.isUUID = function (object) {
   }
   return (/[A-Fa-f0-9]{32,32}/).test(object);
 };
+
+
+//** {{{ OB.Utilities.getRGBAStringFromOBColor }}} **
+//
+// Returns a string like "rgba(*RedValue*, *GreenValue*, *BlueValue*, *OpacityValue*)" from an OBColor value
+// Parameters:
+//  * {{{color}}} OBColor value
+OB.Utilities.getRGBAStringFromOBColor = function (color) {
+  var rgbaColor = 'rgba(',
+      colorArray, i;
+  if (!color) {
+    return;
+  }
+  colorArray = color.split('-');
+  for (i = 0; i < colorArray.length; i++) {
+    if (i < 3) {
+      rgbaColor += parseInt(colorArray[i], 10);
+      rgbaColor += ',';
+    } else {
+      rgbaColor += parseInt(colorArray[i], 10) / 100;
+    }
+  }
+  rgbaColor += ')';
+  return rgbaColor;
+};
+
+//** {{{ OB.Utilities.getBrightFromOBColor }}} **
+//
+// Returns the bright value (from 0 to 255) from an OBColor value
+// Parameters:
+//  * {{{color}}} OBColor value
+OB.Utilities.getBrightFromOBColor = function (color) {
+  var bright = 0,
+      colorArray;
+  if (!color) {
+    return;
+  }
+  colorArray = color.split('-');
+  bright = bright + parseInt(colorArray[0], 10) * 299;
+  bright = bright + parseInt(colorArray[1], 10) * 587;
+  bright = bright + parseInt(colorArray[2], 10) * 114;
+  bright = bright / 1000;
+  bright = parseInt(bright, 10);
+  return bright;
+};
+
+//** {{{ OB.Utilities.generateOBColor }}} **
+//
+// Returns a string with an OBColor
+// Parameters:
+//  * {{{r}}} Red component. From 0 to 255. If not set, a random one will be generated
+//  * {{{g}}} Green component. From 0 to 255. If not set, a random one will be generated
+//  * {{{b}}} Blue component. From 0 to 255. If not set, a random one will be generated
+//  * {{{a}}} Alpha channel (opacity) component. From 0 to 100. If not set, a random one will be generated
+//  * {{{seed}}} Optional seed for the random color generation
+OB.Utilities.generateOBColor = function (r, g, b, a, seed) {
+  var getRandomInt, randomInt, getChannel, obcolor = '';
+  getRandomInt = function (seed) {
+    if (seed === null || typeof seed === 'undefined') {
+      seed = (new Date()).getTime();
+    }
+    seed = seed.toString();
+    seed = seed.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, '0');
+    seed = seed.replace(/[a-j]/g, '1').replace(/[j-t]/g, '2').replace(/[u-z]/g, '3');
+    seed = seed.replace(/[A-J]/g, '4').replace(/[J-T]/g, '4').replace(/[U-Z]/g, '6');
+    seed = seed + seed.length.toString();
+    seed = parseInt(seed, 10);
+
+    return {
+      next: function (min, max) {
+        var randomNum;
+        seed *= 1234;
+        seed += 56;
+        seed *= 7890;
+        randomNum = seed % 10000000000000 / 100000;
+        randomNum = randomNum - Math.floor(randomNum);
+        randomNum = Math.floor(randomNum * (max - min + 1)) + min;
+        return randomNum;
+      }
+    };
+  };
+  randomInt = getRandomInt(seed);
+  getChannel = function (channel, min, max) {
+    var randomValueInt = randomInt.next(min, max);
+    if (channel) {
+      channel = parseInt(channel.toString(), 10);
+    } else {
+      channel = randomValueInt;
+    }
+    if (channel < min) {
+      channel = min;
+    }
+    if (channel > max) {
+      channel = max;
+    }
+    channel = channel.toString();
+    if (channel.length === 2) {
+      channel = '0' + channel;
+    } else if (channel.length === 1) {
+      channel = '00' + channel;
+    }
+    return channel;
+  };
+  r = getChannel(r, 0, 255);
+  obcolor += r;
+  obcolor += '-';
+  g = getChannel(g, 0, 255);
+  obcolor += g;
+  obcolor += '-';
+  b = getChannel(b, 0, 255);
+  obcolor += b;
+  obcolor += '-';
+  a = getChannel(a, 0, 100);
+  obcolor += a;
+
+  return obcolor;
+};

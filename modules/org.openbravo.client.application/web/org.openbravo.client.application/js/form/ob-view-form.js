@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -112,6 +112,9 @@ OB.ViewFormProperties = {
 
     for (i = 0; i < length; i++) {
       item = this.getItem(this.statusBarFields[i]);
+      if (item.statusBarShowIf && item.statusBarShowIf(item, item.getValue(), this, this.getValues()) === false) {
+        continue;
+      }
       title = item.getTitle();
       sourceWindowId = this.view.standardWindow.windowId;
       refColumnName = item.refColumnName;
@@ -814,6 +817,9 @@ OB.ViewFormProperties = {
 
     length = this.getFields().length;
 
+    //Updates the visibility of the tabs before they are shown to the client
+    this.view.updateSubtabVisibility();
+
     if (this.validateAfterFicReturn) {
       delete this.validateAfterFicReturn;
       // only validate the fields which have errors or which have changed
@@ -1188,6 +1194,13 @@ OB.ViewFormProperties = {
 
     if (item._hasChanged) {
       this.itemChangeActions(item);
+
+      this.view.updateSubtabVisibility();
+
+      if (!this.isNew) {
+        this.view.statusBar.mode = "EDIT";
+        this.view.statusBar.setContentLabel(this.view.statusBar.editIcon, 'OBUIAPP_Editing', this.getStatusBarFields());
+      }
 
       this.onFieldChanged(item.form, item, item.getValue());
 
@@ -1915,7 +1928,7 @@ OB.ViewFormProperties = {
       value = item.getValue();
       // Do no check ids, even though they are mandatory they are automatically set DAL before
       // storing the record in the database. See issue https://issues.openbravo.com/view.php?id=21657
-      if (this.isRequired(item) && !this.isID(item) && value !== false && value !== 0 && !value) {
+      if (this.isRequired(item) && (item.displayed !== false) && !this.isID(item) && value !== false && value !== 0 && !value) {
         return false;
       }
     }

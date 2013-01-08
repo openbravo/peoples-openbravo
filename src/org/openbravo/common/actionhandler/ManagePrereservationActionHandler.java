@@ -49,12 +49,12 @@ import org.openbravo.service.db.DbUtility;
  * 
  */
 public class ManagePrereservationActionHandler extends BaseProcessActionHandler {
-  private static Logger log = Logger.getLogger(ManagePrereservationActionHandler.class);
+  private static final Logger log = Logger.getLogger(ManagePrereservationActionHandler.class);
 
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {
     JSONObject jsonRequest = null;
-    OBContext.setAdminMode();
+    OBContext.setAdminMode(true);
     try {
       jsonRequest = new JSONObject(content);
       log.debug(jsonRequest);
@@ -74,7 +74,7 @@ public class ManagePrereservationActionHandler extends BaseProcessActionHandler 
       }
 
     } catch (Exception e) {
-      log.error(e.getMessage(), e);
+      log.error("Error in ManagePrereservation Action Handler", e);
 
       try {
         jsonRequest = new JSONObject();
@@ -103,8 +103,8 @@ public class ManagePrereservationActionHandler extends BaseProcessActionHandler 
       removeNonSelectedLines(idList, pol);
       return;
     }
-    for (long i = 0; i < selectedLines.length(); i++) {
-      JSONObject selectedLine = selectedLines.getJSONObject((int) i);
+    for (int i = 0; i < selectedLines.length(); i++) {
+      JSONObject selectedLine = selectedLines.getJSONObject(i);
       log.debug(selectedLine);
       ReservationStock resStock = null;
       String strReservationStockId = selectedLine.get(

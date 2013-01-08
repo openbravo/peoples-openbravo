@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -211,6 +211,31 @@ isc.OBStandardView.addProperties({
     OB.TestRegistry.register('org.openbravo.client.application.ViewGrid_' + this.tabId, this.viewGrid);
     OB.TestRegistry.register('org.openbravo.client.application.ViewForm_' + this.tabId, this.viewForm);
 
+    if (this.showTabIf && !this.originalShowTabIf) {
+      this.originalShowTabIf = this.showTabIf;
+      this.showTabIf = function (context) {
+        var originalShowTabIfValue = false;
+
+        try {
+          if (isc.isA.Function(this.originalShowTabIf)) {
+            originalShowTabIfValue = this.originalShowTabIf(context);
+          } else {
+            originalShowTabIfValue = isc.JSON.decode(this.originalShowTabIf);
+          }
+        } catch (_exception) {
+          isc.warn(_exception + ' ' + _exception.message + ' ' + _exception.stack);
+        }
+        return originalShowTabIfValue;
+      };
+    }
+
+    // If the tab comes with session attributes (preference attributes used in the display
+    // logic of the tab, see issue https://issues.openbravo.com/view.php?id=5202), assign them
+    // to the form, so they will be retrieved when getContextInfo() is called for the form
+    if (this.sessionAttributes) {
+      this.viewForm.sessionAttributes = this.sessionAttributes;
+    }
+
     if (this.actionToolbarButtons) {
       length = this.actionToolbarButtons.length;
       for (i = 0; i < length; i++) {
@@ -239,6 +264,9 @@ isc.OBStandardView.addProperties({
     this.Super('initWidget', arguments);
 
     this.toolBar.updateButtonState(true, false, true);
+
+    // Update the subtab visibility before the tabs are shown to the client
+    this.updateSubtabVisibility();
   },
 
   show: function () {
@@ -1235,6 +1263,10 @@ isc.OBStandardView.addProperties({
       return;
     }
 
+    // Update the tab visibility after a record has been selected and its session
+    // attributes have been updated
+    this.updateSubtabVisibility();
+
     // If the record has been automatically selected because was the only record in the header tab,
     // only select the record if the window has not been opened by clicking on the recent views icon to
     // create a new record
@@ -1285,6 +1317,51 @@ isc.OBStandardView.addProperties({
       }
     }
     delete this.isOpenDirectModeParent;
+  },
+
+  updateSubtabVisibility: function () {
+    var i, length, tabViewPane, activeTab, activeTabNum, activeTabPane, indexFirstNotHiddenTab;
+    if (this.childTabSet) {
+      length = this.childTabSet.tabs.length;
+      for (i = 0; i < length; i++) {
+        tabViewPane = this.childTabSet.tabs[i].pane;
+        // Calling getContextInfo with (false, true, true) in order to obtain also the value of the
+        // session attributes of the form
+        if (tabViewPane.showTabIf && !(tabViewPane.showTabIf(tabViewPane.getContextInfo(false, true, true)))) {
+          this.childTabSet.tabBar.members[i].hide();
+          tabViewPane.hidden = true;
+        } else {
+          if (this.childTabSet.visibility === 'hidden') {
+            this.childTabSet.show();
+          }
+          this.childTabSet.tabBar.members[i].show();
+          tabViewPane.hidden = false;
+          tabViewPane.updateSubtabVisibility();
+        }
+      }
+
+      // If the active tab of the tabset is now hidden, another tab has to to be selected
+      // If there are no visible tabs left, maximize the current view
+      activeTab = this.childTabSet.getSelectedTab();
+      activeTabNum = this.childTabSet.getTabNumber(activeTab);
+      activeTabPane = this.childTabSet.getTabPane(activeTab);
+      if (activeTabPane.hidden) {
+        //Look for the first not-hidden tab
+        indexFirstNotHiddenTab = -1;
+        for (i = 0; i < length; i++) {
+          tabViewPane = this.childTabSet.tabs[i].pane;
+          if (!tabViewPane.hidden) {
+            indexFirstNotHiddenTab = i;
+            break;
+          }
+        }
+        if (indexFirstNotHiddenTab !== -1) {
+          this.childTabSet.selectTab(indexFirstNotHiddenTab);
+        } else {
+          this.childTabSet.hide();
+        }
+      }
+    }
   },
 
   // set childs to refresh when they are made visible
@@ -2119,7 +2196,7 @@ isc.OBStandardView.addProperties({
   },
 
   setFieldFormProperties: function (fld, isGridField) {
-    var onChangeFunction;
+    var onChangeFunction, newShowIf;
 
     if (fld.displayed === false && !isGridField) {
       fld.hiddenInForm = true;
@@ -2127,12 +2204,17 @@ isc.OBStandardView.addProperties({
       fld.alwaysTakeSpace = false;
     }
 
+
+    if (this.statusBarFields.contains(fld.name)) {
+      fld.statusBarField = true;
+    }
+
     if (!fld.width) {
       fld.width = '*';
     }
     if (fld.showIf && !fld.originalShowIf) {
       fld.originalShowIf = fld.showIf;
-      fld.showIf = function (item, value, form, values) {
+      newShowIf = function (item, value, form, values) {
         var currentValues = values || form.view.getCurrentValues(),
             context = form.getCachedContextInfo(),
             originalShowIfValue = false;
@@ -2148,9 +2230,14 @@ isc.OBStandardView.addProperties({
         } catch (_exception) {
           isc.warn(_exception + ' ' + _exception.message + ' ' + _exception.stack);
         }
-
-        return !this.hiddenInForm && context && originalShowIfValue;
+        return !(this.hiddenInForm && !this.statusBarField) && context && originalShowIfValue;
       };
+      if (fld.statusBarField) {
+        fld.showIf = '';
+        fld.statusBarShowIf = newShowIf;
+      } else {
+        fld.showIf = newShowIf;
+      }
     }
     if (fld.type === 'OBAuditSectionItem') {
       var expandAudit = OB.PropertyStore.get('ShowAuditDefault', this.standardProperties.inpwindowId);

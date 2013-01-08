@@ -44,12 +44,15 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.dialect.function.StandardSQLFunction;
 import org.hibernate.type.StandardBasicTypes;
 import org.junit.Assert;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Reference;
 import org.openbravo.base.model.domaintype.LongDomainType;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.IdentifierProvider;
+import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.DalThreadHandler;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.OBInterceptor;
@@ -78,8 +81,10 @@ import org.openbravo.model.common.invoice.InvoiceLine;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
+import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.service.db.CallProcess;
 import org.openbravo.service.db.CallStoredProcedure;
+import org.openbravo.service.db.DalBaseProcess;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.DataEntityQueryService;
 import org.openbravo.service.json.DataToJsonConverter;
@@ -149,6 +154,9 @@ import org.openbravo.test.base.BaseTest;
  * 
  * https://issues.openbravo.com/view.php?id=21360 DalConnectionProvider: getTransactionConnection()
  * should be equal than ConnectionProviderImpl getTransactionConnection()
+ * 
+ * https://issues.openbravo.com/view.php?id=22235 OBMessageUtils asumes incorrectly that
+ * RequestContext is set
  * 
  * @author mtaal
  * @author iperdomo
@@ -784,4 +792,52 @@ public class IssuesTest extends BaseTest {
     Assert.assertNotSame(otherConnection, yetAnotherConnection);
   }
 
+  public void test22235() throws Exception {
+    final OBContext obContext = OBContext.getOBContext();
+    final VariablesSecureApp vars = new VariablesSecureApp(obContext.getUser().getId(), obContext
+        .getCurrentClient().getId(), obContext.getCurrentOrganization().getId(), obContext
+        .getRole().getId(), obContext.getLanguage().getLanguage());
+    final ProcessBundle processBundle = new ProcessBundle("test", vars);
+    processBundle.setProcessClass(Test22235.class);
+
+    try {
+      RequestContext.get().getVariablesSecureApp();
+      fail();
+    } catch (OBException e) {
+      // fine, should fail at this point
+    }
+
+    final Test22235 test22235 = new Test22235();
+    // default is true
+    Assert.assertTrue(test22235.isErrorOccured());
+    test22235.execute(processBundle);
+    Assert.assertFalse(test22235.isErrorOccured());
+
+    // this should again fail, to ensure everything is cleaned up
+    try {
+      RequestContext.get().getVariablesSecureApp();
+      fail();
+    } catch (OBException e) {
+      // fine, should fail at this point
+    }
+  }
+
+  private static class Test22235 extends DalBaseProcess {
+
+    private boolean errorOccured = true;
+
+    @Override
+    protected void doExecute(ProcessBundle bundle) throws Exception {
+      RequestContext.get().getVariablesSecureApp();
+      errorOccured = false;
+    }
+
+    public boolean isErrorOccured() {
+      return errorOccured;
+    }
+
+    public void setErrorOccured(boolean errorOccured) {
+      this.errorOccured = errorOccured;
+    }
+  }
 }

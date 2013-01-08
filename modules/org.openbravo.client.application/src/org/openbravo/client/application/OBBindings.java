@@ -19,6 +19,7 @@
 package org.openbravo.client.application;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 
@@ -28,6 +29,7 @@ import org.apache.log4j.Logger;
 import org.openbravo.base.util.Check;
 import org.openbravo.base.util.OBClassLoader;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.service.json.JsonUtils;
 
 /**
  * JS - Java binding to use in JavaScript expressions.
@@ -43,6 +45,7 @@ public class OBBindings {
   private HttpSession httpSession;
   private SimpleDateFormat dateFormat = null;
   private SimpleDateFormat dateTimeFormat = null;
+  private SimpleDateFormat jsDateTimeFormat = null;
 
   public OBBindings(OBContext obContext) {
     Check.isNotNull(obContext, "The OBContext parameter cannot be null");
@@ -68,6 +71,8 @@ public class OBBindings {
 
     dateTimeFormat = new SimpleDateFormat(
         (String) httpSession.getAttribute("#AD_JAVADATETIMEFORMAT"));
+
+    jsDateTimeFormat = JsonUtils.createJSTimeFormat();
   }
 
   public OBContext getContext() {
@@ -178,12 +183,28 @@ public class OBBindings {
 
   public Date parseDateTime(String dateTime) {
     try {
-      Date result = dateTimeFormat.parse(dateTime);
+      Date result = convertToLocalTime(jsDateTimeFormat.parse(dateTime));
       return result;
     } catch (Exception e) {
-      log.error("Error parsing string date " + dateTime + " with format: " + dateTimeFormat, e);
+      try {
+        Date result = convertToLocalTime(dateTimeFormat.parse(dateTime));
+        return result;
+      } catch (Exception ex) {
+        log.error("Error parsing string date " + dateTime + " with format: " + dateTimeFormat, e);
+      }
     }
     return null;
+  }
+
+  private static Date convertToLocalTime(Date UTCTime) {
+    Calendar localTime = Calendar.getInstance();
+    localTime.setTime(UTCTime);
+
+    int gmtMillisecondOffset = (localTime.get(Calendar.ZONE_OFFSET) + localTime
+        .get(Calendar.DST_OFFSET));
+    localTime.add(Calendar.MILLISECOND, gmtMillisecondOffset);
+
+    return localTime.getTime();
   }
 
   public String formatDate(Date d, String format) {

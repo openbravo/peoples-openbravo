@@ -136,7 +136,9 @@ isc.OBGrid.addProperties({
 
     response = OB.KeyboardManager.Shortcuts.monitor('OBGrid.filter', this.grid.fieldSourceGrid);
     if (response !== false) {
-      response = this.Super('filterFieldsKeyDown', arguments);
+      if (item.keyDownAction) {
+        return item.keyDownAction(item, form, keyName);
+      }
     }
     return response;
   },

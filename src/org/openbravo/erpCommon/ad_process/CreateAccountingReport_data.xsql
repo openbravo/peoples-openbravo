@@ -23,38 +23,57 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-          SELECT ? AS PARENT, AR.AD_ACCOUNTINGRPT_ELEMENT_ID AS ID, AR.NAME, AR.DESCRIPTION, AR.ISSUMMARY, AR.ISSHOWN,
-          AD_TREENODE.NODE_ID, COALESCE((CASE
-          AR.ISSUMMARY WHEN 'N' THEN      (CASE REPORT_TYPE WHEN 'cc' THEN SUM(A.AMTACCTCR) WHEN 'dd'
-          THEN SUM(A.AMTACCTDR) WHEN 'dc' THEN       SUM(A.AMTACCTDR - A.AMTACCTCR)
-          WHEN 'cd' THEN SUM(A.AMTACCTCR - A.AMTACCTDR) END) ELSE 0 END),0) AS TOTAL, AR.FILTEREDBYORGANIZATION,
-          AR.TEMPORARYFILTERTYPE, '' AS VALUE, ? AS LEVEL_ACCOUNT, (CASE TO_NUMBER(?) WHEN 0 THEN
-          '' ELSE '' END) AS CLASS_ACCOUNT, 'TEXT-INDENT: '||TO_CHAR(TO_NUMBER(?)*10)||'pt' AS CLASS_STYLE,
-          '' AS PADRE
-          FROM AD_ACCOUNTINGRPT_ELEMENT AR left join (SELECT AMTACCTDR, AMTACCTCR, C_ACCTSCHEMA_ID
-          FROM FACT_ACCT
-          WHERE FACT_ACCT.AD_CLIENT_ID IN ('1')
-          AND FACT_ACCT.AD_ORG_ID IN ('1')
-          AND 1=1) A on AR.C_ACCTSCHEMA_ID = A.C_ACCTSCHEMA_ID,
-          AD_TREE, AD_TREENODE
+          SELECT ? AS PARENT, B.ID, B.NAME, B.DESCRIPTION, B.ISSUMMARY, B.ISSHOWN,
+            B.NODE_ID,
+            CASE
+                WHEN B.CONSIDER_ZERO = 'N' AND B.TOTAL < 0 THEN 0
+                WHEN B.CONSIDER_ZERO = 'P' AND B.TOTAL > 0 THEN 0
+                ELSE B.TOTAL
+            END AS TOTAL,
+            B.FILTEREDBYORGANIZATION, B.TEMPORARYFILTERTYPE, '' AS VALUE, ? AS LEVEL_ACCOUNT,
+            '' AS CLASS_ACCOUNT, 'TEXT-INDENT: '||TO_CHAR(TO_NUMBER(?)*10)||'pt' AS CLASS_STYLE,
+            '' AS PADRE
+          FROM (
+            SELECT AR.AD_ACCOUNTINGRPT_ELEMENT_ID AS ID, AR.NAME, AR.DESCRIPTION, AR.ISSUMMARY, AR.ISSHOWN,
+            AD_TREENODE.NODE_ID, AR.FILTEREDBYORGANIZATION, AR.TEMPORARYFILTERTYPE, AR.CONSIDER_ZERO,
+            COALESCE((
+              CASE AR.ISSUMMARY
+                  WHEN 'N' THEN (
+                      CASE REPORT_TYPE
+                          WHEN 'cc' THEN SUM(A.AMTACCTCR)
+                          WHEN 'dd' THEN SUM(A.AMTACCTDR)
+                          WHEN 'dc' THEN SUM(A.AMTACCTDR - A.AMTACCTCR)
+                          WHEN 'cd' THEN SUM(A.AMTACCTCR - A.AMTACCTDR)
+                          WHEN '-c' THEN -SUM(A.AMTACCTCR)
+                          WHEN '-d' THEN -SUM(A.AMTACCTDR)
+                      END)
+                  ELSE 0
+              END), 0) AS TOTAL
+          FROM AD_ACCOUNTINGRPT_ELEMENT AR
+              LEFT JOIN (
+                SELECT AMTACCTDR, AMTACCTCR, C_ACCTSCHEMA_ID
+                FROM FACT_ACCT
+                WHERE FACT_ACCT.AD_CLIENT_ID IN ('1')
+                  AND FACT_ACCT.AD_ORG_ID IN ('1')
+                  AND FACT_ACCT.ACCOUNT_ID IN ('1')
+                  AND 1=1) A on AR.C_ACCTSCHEMA_ID = A.C_ACCTSCHEMA_ID,
+              AD_TREE, AD_TREENODE
           WHERE AD_TREE.AD_TREE_ID = AD_TREENODE.AD_TREE_ID
-          AND AD_TREENODE.NODE_ID = AR.AD_ACCOUNTINGRPT_ELEMENT_ID
-          AND AR.AD_ACCOUNTINGRPT_ELEMENT_ID = ?
-          AND AD_TREE.TREETYPE = 'AR'
+            AND AD_TREENODE.NODE_ID = AR.AD_ACCOUNTINGRPT_ELEMENT_ID
+            AND AR.AD_ACCOUNTINGRPT_ELEMENT_ID = ?
+            AND AD_TREE.TREETYPE = 'AR'
           GROUP BY REPORT_TYPE, AR.AD_ACCOUNTINGRPT_ELEMENT_ID, AR.NAME, AR.DESCRIPTION, AR.ISSUMMARY, AR.ISSHOWN,
-          AD_TREENODE.NODE_ID,
-          AR.FILTEREDBYORGANIZATION, AR.TEMPORARYFILTERTYPE
+            AD_TREENODE.NODE_ID, AR.FILTEREDBYORGANIZATION, AR.TEMPORARYFILTERTYPE, AR.CONSIDER_ZERO) B
       ]]>
     </Sql>
     <Parameter name="parent"/>
     <Parameter name="level"/>
     <Parameter name="level"/>
-    <Parameter name="level"/>
     <Parameter name="adClientId" optional="true" type="replace" after="FACT_ACCT.AD_CLIENT_ID IN (" text="'1'"/>
     <Parameter name="adOrgId" optional="true" type="replace" after="AND FACT_ACCT.AD_ORG_ID IN (" text="'1'"/>
+    <Parameter name="accountId" optional="true" type="replace" after="FACT_ACCT.ACCOUNT_ID IN (" text="'1'"/>
     <Parameter name="periodFrom" optional="true" after="AND 1=1"><![CDATA[ AND FACT_ACCT.DATEACCT >= TO_DATE(?)]]></Parameter>
     <Parameter name="periodTo" optional="true" after="AND 1=1"><![CDATA[ AND FACT_ACCT.DATEACCT < TO_DATE(?)]]></Parameter>
-    <Parameter name="accountId" optional="true" after="AND 1=1"><![CDATA[ AND FACT_ACCT.ACCOUNT_ID = ?]]></Parameter>
     <Parameter name="acctschema" optional="true" after="AND 1=1"><![CDATA[ AND FACT_ACCT.C_ACCTSCHEMA_ID = ?]]></Parameter>
     <Parameter name="adAccountingElementId"/>
   </SqlMethod>
@@ -63,39 +82,59 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-      SELECT ? AS PARENT, AR.AD_ACCOUNTINGRPT_ELEMENT_ID AS ID, AR.NAME, AR.DESCRIPTION, AR.ISSUMMARY, AR.ISSHOWN,
-        AD_TREENODE.NODE_ID, COALESCE((CASE
-        AR.ISSUMMARY WHEN 'N' THEN (CASE REPORT_TYPE WHEN 'cc' THEN SUM(A.AMTACCTCR) WHEN 'dd'
-        THEN SUM(A.AMTACCTDR) WHEN 'dc' THEN SUM(A.AMTACCTDR - A.AMTACCTCR)
-        WHEN 'cd' THEN SUM(A.AMTACCTCR - A.AMTACCTDR) END) ELSE 0 END),0) AS TOTAL, AR.FILTEREDBYORGANIZATION,
-        AR.TEMPORARYFILTERTYPE, '' AS VALUE, ? AS LEVEL_ACCOUNT, (CASE TO_NUMBER(?) WHEN 0 THEN
-        '' ELSE '' END) AS CLASS_ACCOUNT, 'TEXT-INDENT: '||TO_CHAR(TO_NUMBER(?)*10)||'pt' AS CLASS_STYLE,
+      SELECT ? AS PARENT, B.ID, B.NAME, B.DESCRIPTION, B.ISSUMMARY, B.ISSHOWN,
+        B.NODE_ID,
+            CASE
+                WHEN B.CONSIDER_ZERO = 'N' AND B.TOTAL < 0 THEN 0
+                WHEN B.CONSIDER_ZERO = 'P' AND B.TOTAL > 0 THEN 0
+                ELSE B.TOTAL
+            END AS TOTAL, B.FILTEREDBYORGANIZATION,
+        B.TEMPORARYFILTERTYPE, '' AS VALUE, ? AS LEVEL_ACCOUNT, '' AS CLASS_ACCOUNT,
+        'TEXT-INDENT: '||TO_CHAR(TO_NUMBER(?)*10)||'pt' AS CLASS_STYLE,
         '' AS PADRE
-      FROM AD_ACCOUNTINGRPT_ELEMENT AR left join (SELECT AMTACCTDR, AMTACCTCR, C_ACCTSCHEMA_ID
-        FROM FACT_ACCT
-        WHERE FACT_ACCT.AD_CLIENT_ID IN ('1')
-          AND FACT_ACCT.AD_ORG_ID IN ('1')
-          AND 1=1
-          AND FACT_ACCT.FACTACCTTYPE = 'O') A on AR.C_ACCTSCHEMA_ID = A.C_ACCTSCHEMA_ID,
-        AD_TREE, AD_TREENODE
-      WHERE AD_TREE.AD_TREE_ID = AD_TREENODE.AD_TREE_ID
-        AND AD_TREENODE.NODE_ID = AR.AD_ACCOUNTINGRPT_ELEMENT_ID
-        AND AR.AD_ACCOUNTINGRPT_ELEMENT_ID = ?
-        AND AD_TREE.TREETYPE = 'AR'
-      GROUP BY REPORT_TYPE, AR.AD_ACCOUNTINGRPT_ELEMENT_ID, AR.NAME, AR.DESCRIPTION, AR.ISSUMMARY, AR.ISSHOWN,
-        AD_TREENODE.NODE_ID,
-        AR.FILTEREDBYORGANIZATION, AR.TEMPORARYFILTERTYPE
+      FROM (
+        SELECT AR.AD_ACCOUNTINGRPT_ELEMENT_ID AS ID, AR.NAME, AR.DESCRIPTION, AR.ISSUMMARY, AR.ISSHOWN,
+          AD_TREENODE.NODE_ID,
+          COALESCE((
+            CASE AR.ISSUMMARY
+                WHEN 'N' THEN (
+                  CASE REPORT_TYPE
+                      WHEN 'cc' THEN SUM(A.AMTACCTCR)
+                      WHEN 'dd' THEN SUM(A.AMTACCTDR)
+                      WHEN 'dc' THEN SUM(A.AMTACCTDR - A.AMTACCTCR)
+                      WHEN 'cd' THEN SUM(A.AMTACCTCR - A.AMTACCTDR)
+                      WHEN '-c' THEN -SUM(A.AMTACCTCR)
+                      WHEN '-d' THEN -SUM(A.AMTACCTDR)
+                  END)
+                ELSE 0
+            END), 0) AS TOTAL,
+          AR.FILTEREDBYORGANIZATION, AR.TEMPORARYFILTERTYPE, AR.CONSIDER_ZERO
+        FROM AD_ACCOUNTINGRPT_ELEMENT AR
+            LEFT JOIN (
+              SELECT AMTACCTDR, AMTACCTCR, C_ACCTSCHEMA_ID
+              FROM FACT_ACCT
+              WHERE FACT_ACCT.AD_CLIENT_ID IN ('1')
+                AND FACT_ACCT.AD_ORG_ID IN ('1')
+                AND FACT_ACCT.ACCOUNT_ID IN ('1')
+                AND 1=1
+              AND FACT_ACCT.FACTACCTTYPE = 'O') A on AR.C_ACCTSCHEMA_ID = A.C_ACCTSCHEMA_ID,
+            AD_TREE, AD_TREENODE
+        WHERE AD_TREE.AD_TREE_ID = AD_TREENODE.AD_TREE_ID
+          AND AD_TREENODE.NODE_ID = AR.AD_ACCOUNTINGRPT_ELEMENT_ID
+          AND AR.AD_ACCOUNTINGRPT_ELEMENT_ID = ?
+          AND AD_TREE.TREETYPE = 'AR'
+        GROUP BY REPORT_TYPE, AR.AD_ACCOUNTINGRPT_ELEMENT_ID, AR.NAME, AR.DESCRIPTION, AR.ISSUMMARY, AR.ISSHOWN,
+          AD_TREENODE.NODE_ID, AR.FILTEREDBYORGANIZATION, AR.TEMPORARYFILTERTYPE, AR.CONSIDER_ZERO) B
       ]]>
       </Sql>
     <Parameter name="parent"/>
     <Parameter name="level"/>
     <Parameter name="level"/>
-    <Parameter name="level"/>
     <Parameter name="adClientId" optional="true" type="replace" after="FACT_ACCT.AD_CLIENT_ID IN (" text="'1'"/>
     <Parameter name="adOrgId" optional="true" type="replace" after="AND FACT_ACCT.AD_ORG_ID IN (" text="'1'"/>
+    <Parameter name="accountId" optional="true" type="replace" after="FACT_ACCT.ACCOUNT_ID IN (" text="'1'"/>
     <Parameter name="periodFrom" optional="true" after="AND 1=1"><![CDATA[ AND FACT_ACCT.DATEACCT >= TO_DATE(?)]]></Parameter>
     <Parameter name="periodTo" optional="true" after="AND 1=1"><![CDATA[ AND FACT_ACCT.DATEACCT < TO_DATE(?)]]></Parameter>
-    <Parameter name="accountId" optional="true" after="AND 1=1"><![CDATA[ AND FACT_ACCT.ACCOUNT_ID = ?]]></Parameter>
     <Parameter name="acctschema" optional="true" after="AND 1=1"><![CDATA[ AND FACT_ACCT.C_ACCTSCHEMA_ID = ?]]></Parameter>
     <Parameter name="adAccountingElementId"/>
   </SqlMethod>
@@ -315,18 +354,16 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-      SELECT MIN(STARTDATE)
-      FROM C_PERIOD
-      WHERE C_YEAR_ID = (
-        SELECT C_YEAR_ID
-        FROM C_YEAR
-        WHERE AD_ORG_ID IN ('1')
-          AND AD_CLIENT_ID IN ('1')
-          AND YEAR = ?)
+      SELECT MIN(startdate)
+      FROM c_year y
+        JOIN c_calendar cal ON y.c_calendar_id = cal.c_calendar_id
+        JOIN ad_accountingrpt_element accrpt ON cal.ad_org_id = AD_ORG_GETCALENDAROWNER(accrpt.ad_org_id)
+        JOIN c_period p ON p.c_year_id = y.c_year_id
+      WHERE accrpt.ad_accountingrpt_element_id = ?
+        AND y.year = ?
       ]]>
     </Sql>
-    <Parameter name="adOrgClient" type="replace" optional="true" after="WHERE AD_ORG_ID IN (" text="'1'"/>
-    <Parameter name="adUserClient" type="replace" optional="true" after="AND AD_CLIENT_ID IN (" text="'1'"/>
+    <Parameter name="adAccountingrptElement"/>
     <Parameter name="Year"/>
   </SqlMethod>
 

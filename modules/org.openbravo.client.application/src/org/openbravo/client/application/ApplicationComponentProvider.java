@@ -91,6 +91,8 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
         "web/org.openbravo.client.application/js/utilities/ob-utilities-date.js", true));
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/utilities/ob-utilities-number.js", true));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/utilities/ob-utilities-style.js", true));
 
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/utilities/ob-popup.js", false));
@@ -158,6 +160,8 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
         "web/org.openbravo.client.application/js/navbar/ob-application-menu.js", false));
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/main/ob-tab.js", false));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/form/formitem/ob-formitem-calendar.js", true));
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/grid/ob-grid.js", false));
 

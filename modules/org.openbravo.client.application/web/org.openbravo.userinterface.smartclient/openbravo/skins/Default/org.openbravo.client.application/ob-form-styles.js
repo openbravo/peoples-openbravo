@@ -24,6 +24,7 @@
  * 3) SectionItem Button Styles
  * 3) Attachments Styles
  * 4) Image Popup Styles
+ * 5) Calendar Styles
  =======================================================================*/
 
 /* =====================================================================
@@ -284,10 +285,6 @@ isc.OBDateItem.addProperties({
 
 isc.OBDateTimeItem.addProperties(isc.addProperties({}, OB.Styles.OBFormField.DefaultDateInput));
 
-isc.OBTruncAddMinusDisplay.addProperties({
-  baseStyle: 'OBLabelCanvasItem'
-});
-
 isc.OBNumberItem.addProperties({
   cellStyle: 'OBFormField',
   titleStyle: 'OBFormFieldLabel',
@@ -444,7 +441,8 @@ isc.RelativeDateItem.changeDefaults('valueFieldDefaults', {
 isc.RelativeDateItem.changeDefaults('calculatedDateFieldDefaults', {
   canFocus: false,
   disabled: true,
-  showDisabled: false
+  showDisabled: false,
+  width: 85
 });
 
 /* =====================================================================
@@ -564,3 +562,77 @@ isc.OBImageSelector.addProperties({
   width: 450,
   align: 'center'
 });
+
+/* =====================================================================
+  * Calendar Styles
+  =======================================================================*/
+
+isc.OBCalendarTabSet.addProperties({
+  tabBarProperties: {
+    simpleTabBaseStyle: 'OBTabBarButtonMain',
+    paneContainerClassName: 'OBTabSetMainContainer',
+    buttonConstructor: isc.OBTabBarButton,
+
+    buttonProperties: {
+      // prevent the orange hats
+      customState: 'Inactive',
+
+      src: '',
+      capSize: 14,
+      titleStyle: 'OBTabBarButtonMainTitle'
+    }
+  },
+  tabBarPosition: 'top',
+  tabBarAlign: 'left',
+  width: '100%',
+  height: '100%',
+  overflow: 'hidden',
+
+  showTabPicker: false,
+
+  // get rid of the margin around the content of a pane
+  paneMargin: 0,
+  paneContainerMargin: 0,
+  paneContainerPadding: 0,
+  showPaneContainerEdges: false,
+
+  useSimpleTabs: true,
+  tabBarThickness: 30,
+  styleName: 'OBTabSetMain',
+  simpleTabBaseStyle: 'OBTabBarButtonMain',
+  paneContainerClassName: 'OBTabSetMainContainer',
+
+  scrollerSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/tab/tabBarButtonMain_OverflowIcon.png',
+  pickerButtonSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/tab/tabBarButtonMain_OverflowIconPicker.png'
+});
+
+OB.Styles.OBCalendar = {
+  controlsTopMarging: 6,
+  eventWindowStyle: 'OBEventWindow',
+  datePickerButton: {
+    src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/date_control.png',
+    width: 21,
+    height: 21
+  },
+  addEventButton: {
+    src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/add_icon.png',
+    // It doesn't exist yet
+    width: 21,
+    height: 21
+  },
+  previousButton: {
+    src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/statusbar/iconButton-previous.png',
+    width: 20,
+    height: 20
+  },
+  nextButton: {
+    src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/statusbar/iconButton-next.png',
+    width: 20,
+    height: 20
+  },
+  dayView_baseStyle: 'OBCalendarGridCell',
+  weekView_baseStyle: 'OBCalendarGridCell',
+  weekView_headerBaseStyle: 'OBCalendarGridHeaderCell',
+  monthView_baseStyle: 'OBCalendarGridCell',
+  monthView_headerBaseStyle: 'OBCalendarGridHeaderCell'
+};

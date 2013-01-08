@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -1085,7 +1086,17 @@ public class AdvancedQueryBuilder {
     }
     final StringBuilder sb = new StringBuilder();
     boolean firstElement = true;
+    int columnsInDescending = StringUtils.countMatches(orderBy, "-");
+    int totalColumnSeperators = StringUtils.countMatches(orderBy, ",");
+    boolean orderPrimaryKeyInDesc = false;
+    if (columnsInDescending == totalColumnSeperators) {
+      orderPrimaryKeyInDesc = true;
+    }
+
     for (String localOrderBy : orderBy.split(",")) {
+      if (orderPrimaryKeyInDesc && localOrderBy.equals("id")) {
+        localOrderBy = "-".concat(localOrderBy);
+      }
       if (!firstElement) {
         sb.append(",");
       }

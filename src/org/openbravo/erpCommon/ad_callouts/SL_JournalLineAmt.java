@@ -59,7 +59,6 @@ public class SL_JournalLineAmt extends HttpSecureAppServlet {
       String strAmtSourceDr = vars.getNumericParameter("inpamtsourcedr", "0");
       String strAmtSourceCr = vars.getNumericParameter("inpamtsourcecr", "0");
       String strTabId = vars.getStringParameter("inpTabId");
-
       try {
         printPage(response, vars, strGLJournal, strCurrencyRate, strCurrency, strDateAcct,
             strCurrencyRateType, strWindowId, strAmtSourceDr, strAmtSourceCr, strTabId);
@@ -77,8 +76,8 @@ public class SL_JournalLineAmt extends HttpSecureAppServlet {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
-    String strAcctSchema = Utility.getContext(this, vars, "$C_ACCTSCHEMA_ID", strWindowId);
+        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument(); 
+    String strAcctSchema = SLJournalLineAmtData.selectGeneralLedger(this,strGLJournal);
     SLJournalLineAmtData[] data = SLJournalLineAmtData.select(this, strAcctSchema);
     String strPrecision = "2", strTargetCurrencyId = "";
     if (data != null && data.length > 0) {

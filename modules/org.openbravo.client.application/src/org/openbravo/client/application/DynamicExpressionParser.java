@@ -32,6 +32,7 @@ import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.client.kernel.reference.UIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.client.kernel.reference.YesNoUIDefinition;
+import org.openbravo.data.Sqlc;
 import org.openbravo.erpCommon.utility.DimensionDisplayUtility;
 import org.openbravo.model.ad.ui.AuxiliaryInput;
 import org.openbravo.model.ad.ui.Field;
@@ -71,7 +72,15 @@ public class DynamicExpressionParser {
   private Tab tab;
   private Field field;
   private StringBuffer jsCode;
+  private boolean inpColumnNames = false;
   private ApplicationDictionaryCachedStructures cachedStructures;
+
+  public DynamicExpressionParser(String code, Tab tab, boolean inpColumnNames) {
+    this.code = code;
+    this.tab = tab;
+    this.inpColumnNames = inpColumnNames;
+    parse();
+  }
 
   public DynamicExpressionParser(String code, Tab tab) {
     this.code = code;
@@ -298,9 +307,19 @@ public class DynamicExpressionParser {
         return new DisplayLogicElement(TOKEN_PREFIX + auxIn.getName(), false);
       }
     }
-    sessionAttributesInExpression.add(token);
+
+    String convertedToken = token;
+    // Sometimes (i.e. for the tab display logic, see issue
+    // https://issues.openbravo.com/view.php?id=5202),
+    // the token needs to be converted to its inp column name
+    // Do not convert the name of the preference (preference names starts with '#')
+    if (inpColumnNames && !convertedToken.startsWith("#")) {
+      convertedToken = "inp" + Sqlc.TransformaNombreColumna(token);
+    }
+    sessionAttributesInExpression.add(convertedToken);
     return new DisplayLogicElement(TOKEN_PREFIX
-        + (token.startsWith("#") ? token.replace("#", "_") : token), false);
+        + (convertedToken.startsWith("#") ? convertedToken.replace("#", "_") : convertedToken),
+        false);
   }
 
   /*

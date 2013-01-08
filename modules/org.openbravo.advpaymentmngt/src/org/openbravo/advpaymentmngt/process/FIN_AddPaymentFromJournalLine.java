@@ -24,9 +24,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
@@ -68,6 +71,23 @@ public class FIN_AddPaymentFromJournalLine extends DalBaseProcess {
           .compareTo(BigDecimal.ZERO) > 0;
 
       // Check restrictions
+      OBContext.setAdminMode(false);
+      try {
+        final StringBuilder hsqlScript = new StringBuilder();
+        hsqlScript.append("select distinct(o.generalLedger) ");
+        hsqlScript.append("from Organization o ");
+        hsqlScript.append("where ad_isorgincluded('" + journalLine.getOrganization().getId()
+            + "', o.id, o.client) <> -1 ");
+        hsqlScript.append("and o.generalLedger is not null ");
+        final Session session = OBDal.getInstance().getSession();
+        final Query query = session.createQuery(hsqlScript.toString());
+        if (query.list().size() != 1) {
+          throw new OBException("@FIN_NoMultiAccountingAllowed@");
+        }
+      } finally {
+        OBContext.restorePreviousMode();
+      }
+
       if (!journalLine.getCurrency().equals(financialAccount.getCurrency())) {
         throw new OBException("@FIN_NoMultiCurrencyAllowed@");
       }

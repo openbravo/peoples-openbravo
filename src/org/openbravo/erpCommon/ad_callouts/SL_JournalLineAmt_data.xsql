@@ -58,4 +58,12 @@
     <Parameter name="cCurrencyId"/>
     <Parameter name="currencyRateType"/>
   </SqlMethod>
+   <SqlMethod name="selectGeneralLedger" type="preparedStatement" return="String">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+	select c_acctschema_id from gl_journal
+	where gl_journal.gl_journal_id=?
+    </Sql>
+    <Parameter name="GLJournalId"/>
+  </SqlMethod>
 </SqlClass>

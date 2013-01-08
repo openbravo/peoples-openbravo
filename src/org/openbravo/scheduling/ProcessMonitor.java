@@ -28,6 +28,7 @@ import static org.openbravo.scheduling.Process.UNSCHEDULED;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import javax.servlet.ServletException;
 
@@ -36,6 +37,7 @@ import org.openbravo.base.ConfigParameters;
 import org.openbravo.base.ConnectionProviderContextListener;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.SequenceIdData;
+import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.JobListener;
@@ -186,8 +188,61 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
     // Not implemented
   }
 
+  @SuppressWarnings("unchecked")
   public boolean vetoJobExecution(Trigger trigger, JobExecutionContext jec) {
-    // Not implemented
+    JobDataMap jobData = trigger.getJobDataMap();
+    Boolean preventConcurrentExecutions = (Boolean) jobData
+        .get(Process.PREVENT_CONCURRENT_EXECUTIONS);
+    if (preventConcurrentExecutions == null || !preventConcurrentExecutions) {
+      return false;
+    }
+
+    List<JobExecutionContext> jobs;
+    String processName = jobData.getString(Process.PROCESS_NAME);
+    try {
+      jobs = jec.getScheduler().getCurrentlyExecutingJobs();
+    } catch (SchedulerException e) {
+      log.error("Error trying to determine if there are concurrent processes in execution for "
+          + processName + ", executing it anyway", e);
+      return false;
+    }
+
+    // Checking if there is another instance in execution for this process
+    for (JobExecutionContext job : jobs) {
+      if (job.getTrigger().getJobDataMap().get(Process.PROCESS_ID)
+          .equals(trigger.getJobDataMap().get(Process.PROCESS_ID))
+          && !job.getJobInstance().equals(jec.getJobInstance())) {
+        log.info("There's another instance running, so leaving" + processName);
+
+        try {
+          if (!trigger.mayFireAgain()) {
+            // This is last execution of this trigger, so set it as complete
+            ProcessRequestData.update(getConnection(), COMPLETE, trigger.getName());
+          }
+
+          // Create a process run as error
+          final ProcessBundle bundle = (ProcessBundle) jec.getMergedJobDataMap().get(
+              ProcessBundle.KEY);
+          if (bundle == null) {
+            return true;
+          }
+
+          final ProcessContext ctx = bundle.getContext();
+          final String executionId = SequenceIdData.getUUID();
+          ProcessRunData.insert(getConnection(), ctx.getOrganization(), ctx.getClient(),
+              ctx.getUser(), ctx.getUser(), executionId, PROCESSING, null, null, trigger.getName());
+          ProcessRunData.update(getConnection(), ctx.getUser(), ERROR, getDuration(0),
+              "Concurrent attempt to execute", executionId);
+
+        } catch (Exception e) {
+          log.error("Error updating conetext for non executed process due to concurrency "
+              + processName, e);
+        }
+        return true;
+      }
+    }
+
+    log.info("No other instance");
     return false;
   }
 

@@ -974,7 +974,8 @@ public class DocFINReconciliation extends AcctServer {
       if (payment != null) {
         OBCriteria<FinAccPaymentMethod> obCriteria = OBDal.getInstance().createCriteria(
             FinAccPaymentMethod.class);
-        obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, payment.getAccount()));
+        obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT,
+            transaction.getAccount()));
         obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD,
             payment.getPaymentMethod()));
         obCriteria.setFilterOnReadableClients(false);
@@ -1050,8 +1051,8 @@ public class DocFINReconciliation extends AcctServer {
         if (payment != null) {
           OBCriteria<FinAccPaymentMethod> obCriteria = OBDal.getInstance().createCriteria(
               FinAccPaymentMethod.class);
-          obCriteria
-              .add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, payment.getAccount()));
+          obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT,
+              reconciliation.getAccount()));
           obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD,
               payment.getPaymentMethod()));
           obCriteria.setFilterOnReadableClients(false);
@@ -1442,7 +1443,8 @@ public class DocFINReconciliation extends AcctServer {
     try {
       OBCriteria<FinAccPaymentMethod> obCriteria = OBDal.getInstance().createCriteria(
           FinAccPaymentMethod.class);
-      obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, payment.getAccount()));
+      obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, payment
+          .getFINFinaccTransactionList().get(0).getAccount()));
       obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD,
           payment.getPaymentMethod()));
       obCriteria.setFilterOnReadableClients(false);
@@ -1450,8 +1452,8 @@ public class DocFINReconciliation extends AcctServer {
       List<FinAccPaymentMethod> lines = obCriteria.list();
       OBCriteria<FIN_FinancialAccountAccounting> accounts = OBDal.getInstance().createCriteria(
           FIN_FinancialAccountAccounting.class);
-      accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNT,
-          payment.getAccount()));
+      accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNT, payment
+          .getFINFinaccTransactionList().get(0).getAccount()));
       accounts.add(Restrictions.eq(
           FIN_FinancialAccountAccounting.PROPERTY_ACCOUNTINGSCHEMA,
           OBDal.getInstance().get(

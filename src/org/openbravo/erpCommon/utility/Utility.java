@@ -35,6 +35,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.sql.Connection;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -2505,8 +2506,30 @@ public class Utility {
   }
 
   /**
+   * Gets the country of the organization.
+   * 
+   * @param orgid
+   *          ID of the organization.
+   * 
+   * @return the country of the organization.
+   * 
+   */
+  public static Country getCountryFromOrgId(String orgid) {
+    Organization organization = (Organization) OBDal.getInstance().get(Organization.ENTITY_NAME,
+        orgid);
+    List<OrganizationInformation> orgInfoList = organization.getOrganizationInformationList();
+    OrganizationInformation orginfo = orgInfoList.get(0);
+    Location location = orginfo.getLocationAddress();
+    return location.getCountry();
+  }
+
+  /**
    * Gets the date format for the organization country.
    * 
+   * @param date
+   *          Date to apply the format.
+   * @param orgid
+   *          ID of the organization.
    * 
    * @return date with the country format string applied. In case is not defined, a default format
    *         is applied
@@ -2514,12 +2537,7 @@ public class Utility {
   public static String applyCountryDateFormat(Date date, String orgid) {
     try {
       OBContext.setAdminMode(true);
-      Organization organization = (Organization) OBDal.getInstance().get(Organization.ENTITY_NAME,
-          orgid);
-      List<OrganizationInformation> orgInfoList = organization.getOrganizationInformationList();
-      OrganizationInformation orginfo = orgInfoList.get(0);
-      Location location = orginfo.getLocationAddress();
-      Country country = location.getCountry();
+      Country country = getCountryFromOrgId(orgid);
       String dateFormat = (country.getDateformat() == null) ? "dd-MM-yyyy" : country
           .getDateformat();
       SimpleDateFormat df = new SimpleDateFormat(dateFormat);
@@ -2530,8 +2548,27 @@ public class Utility {
   }
 
   /**
+   * Gets the date format for the organization country.
+   * 
+   * @param timeStamp
+   *          TimeStamp to apply the format.
+   * @param orgid
+   *          ID of the organization.
+   * 
+   * @return date with the country format string applied. In case is not defined, a default format
+   *         is applied
+   */
+  public static String applyCountryDateFormat(Timestamp timeStamp, String orgid) {
+    return applyCountryDateFormat(new Date(timeStamp.getTime()), orgid);
+  }
+
+  /**
    * Gets the number format for the organization country.
    * 
+   * @param orgid
+   *          ID of the organization.
+   * @param defaultDecimalFormat
+   *          Default decimal format.
    * 
    * @return DecimalFormat for the number representation defined for the country.
    */
@@ -2539,22 +2576,20 @@ public class Utility {
       DecimalFormat defaultDecimalFormat) {
     try {
       OBContext.setAdminMode(true);
-      Organization organization = (Organization) OBDal.getInstance().get(Organization.ENTITY_NAME,
-          orgid);
-      List<OrganizationInformation> orgInfoList = organization.getOrganizationInformationList();
-      OrganizationInformation orginfo = orgInfoList.get(0);
-      Location location = orginfo.getLocationAddress();
-      Country country = location.getCountry();
+      Country country = getCountryFromOrgId(orgid);
+      DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+      if (country.getDecimalseparator() != null)
+        symbols.setDecimalSeparator(country.getDecimalseparator().equals("C") ? ',' : '.');
+      if (country.getGroupingseparator() != null)
+        symbols.setGroupingSeparator(country.getGroupingseparator().equals("C") ? ',' : '.');
       if (country.getNumericmask() != null) {
-        DecimalFormatSymbols symbols = new DecimalFormatSymbols();
-        if (country.getDecimalseparator() != null)
-          symbols.setDecimalSeparator(country.getDecimalseparator().equals("C") ? ',' : '.');
-        if (country.getGroupingseparator() != null)
-          symbols.setGroupingSeparator(country.getGroupingseparator().equals("C") ? ',' : '.');
         DecimalFormat numberFormat = new DecimalFormat(country.getNumericmask());
         numberFormat.setDecimalFormatSymbols(symbols);
         return numberFormat;
       } else {
+        if (country.getDecimalseparator() != null || country.getNumericmask() != null) {
+          defaultDecimalFormat.setDecimalFormatSymbols(symbols);
+        }
         return defaultDecimalFormat;
       }
     } finally {

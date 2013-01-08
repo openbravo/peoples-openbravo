@@ -83,6 +83,18 @@ public class ReportWarehousePartnerJR extends HttpSecureAppServlet {
       setHistoryCommand(request, "FIND");
       printPageDataHtml(response, vars, strDate, strProductCategory, strmProductId, strX, strY,
           strZ, "pdf");
+    } else if (vars.commandIn("PRINT_XLS")) {
+      String strDate = vars.getGlobalVariable("inpDateFrom", "ReportWarehousePartner|Date");
+      String strProductCategory = vars.getRequestGlobalVariable("inpProductCategory",
+          "ReportWarehousePartnerJR|productCategory");
+      String strmProductId = vars.getRequestInGlobalVariable("inpmProductId_IN",
+          "ReportWarehousePartnerJR|mProductId", IsIDFilter.instance);
+      String strX = vars.getRequestGlobalVariable("inpX", "ReportWarehousePartnerJR|X");
+      String strY = vars.getRequestGlobalVariable("inpY", "ReportWarehousePartnerJR|Y");
+      String strZ = vars.getRequestGlobalVariable("inpZ", "ReportWarehousePartnerJR|Z");
+      setHistoryCommand(request, "FIND");
+      printPageDataHtml(response, vars, strDate, strProductCategory, strmProductId, strX, strY,
+          strZ, "xls");
     } else
       pageError(response);
   }

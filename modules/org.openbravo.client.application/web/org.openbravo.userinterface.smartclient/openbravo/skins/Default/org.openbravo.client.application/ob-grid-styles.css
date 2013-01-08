@@ -437,10 +437,13 @@
 
 /******************************/
 
-.OBGridFormLabel {
-  padding: 0px 4px 0px 4px;
+.OBGridFormLabel,
+.OBGridFormLabelDisabled,
+.OBGridFormLabelFocused,
+.OBGridFormLabelError {
   font-family: arial, sans-serif;
   font-size: 12px;
+  padding: 0px 4px 0px 4px;
 }
 
 .OBGridFormButton,

@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Vector;
 
 import javax.servlet.ServletConfig;
@@ -29,8 +31,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.service.OBCriteria;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.ad_actionButton.ActionButtonDefaultData;
 import org.openbravo.erpCommon.businessUtility.AccountingSchemaMiscData;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
@@ -41,6 +46,8 @@ import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.utility.TreeNode;
+import org.openbravo.model.financialmgmt.accounting.coa.ElementValue;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class CreateAccountingReport extends HttpSecureAppServlet {
@@ -359,21 +366,25 @@ public class CreateAccountingReport extends HttpSecureAppServlet {
     if (initialBalance.equals(""))
       initialBalance = "N";
     String dateInitialYear = CreateAccountingReportData.dateInitialYear(this,
-        Utility.getContext(this, vars, "#User_Org", "CreateAccountingReport"),
-        Utility.getContext(this, vars, "#User_Client", "CreateAccountingReport"), strPeriod);
+        strAccountingReportId, strPeriod);
     dateInitialYear = CreateAccountingReportData.selectFormat(this, dateInitialYear,
         vars.getSqlDateFormat());
     CreateAccountingReportData[] data;
+    String inAccountIds = Utility.getInStrSet(getAccountInList(strAccountId));
+    // Add dummy account id if none is found
+    if ("".equals(inAccountIds)) {
+      inAccountIds = "'1'";
+    }
     if (initialBalance.equals("Y")) {
       data = CreateAccountingReportData.selectInitial(this, strParent, String.valueOf(level),
           Utility.getContext(this, vars, "#User_Client", "CreateAccountingReport"),
-          Utility.stringList(strOrg), dateInitialYear,
-          DateTimeData.nDaysAfter(this, dateInitialYear, "1"), strAccountId, strcAcctSchemaId,
+          Utility.stringList(strOrg), inAccountIds, dateInitialYear,
+          DateTimeData.nDaysAfter(this, dateInitialYear, "1"), strcAcctSchemaId,
           strAccountingReportId);
     } else {
       data = CreateAccountingReportData.select(this, strParent, String.valueOf(level),
           Utility.getContext(this, vars, "#User_Client", "CreateAccountingReport"),
-          Utility.stringList(strOrg), strPeriodFrom, strPeriodTo, strAccountId, strcAcctSchemaId,
+          Utility.stringList(strOrg), inAccountIds, strPeriodFrom, strPeriodTo, strcAcctSchemaId,
           strAccountingReportId);
     }
     if (data == null || data.length == 0)
@@ -426,6 +437,28 @@ public class CreateAccountingReport extends HttpSecureAppServlet {
     CreateAccountingReportData[] newData = new CreateAccountingReportData[new_a.size()];
     new_a.toArray(newData);
     return newData;
+  }
+
+  private Set<String> getAccountInList(String strAccountId) {
+    Set<String> accounts = new HashSet<String>();
+    if ("".equals(strAccountId)) {
+      return accounts;
+    }
+    OBCriteria<TreeNode> obc = OBDal.getInstance().createCriteria(TreeNode.class);
+    obc.add(Restrictions.eq(TreeNode.PROPERTY_REPORTSET, strAccountId));
+    // obc.add(Restrictions.eq(TreeNode.PROPERTY_TREE, tree));
+    obc.setFilterOnReadableClients(false);
+    obc.setFilterOnReadableOrganization(false);
+    accounts.add(strAccountId);
+    for (TreeNode node : obc.list()) {
+      ElementValue nodeAccount = OBDal.getInstance().get(ElementValue.class, node.getNode());
+      if (nodeAccount.isSummaryLevel()) {
+        accounts.addAll(getAccountInList(node.getNode()));
+      } else {
+        accounts.add(node.getNode());
+      }
+    }
+    return accounts;
   }
 
   public String getServletInfo() {
