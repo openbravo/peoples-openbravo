@@ -104,7 +104,7 @@ isc.OBMultiSelectorItem.addProperties({
         },
         closeClick: function () {
           var i, records = [];
-          for(i = 0; i < this.origSelection.length; i++) {
+          for (i = 0; i < this.origSelection.length; i++) {
             records.push(this.selectorGrid.data.find(OB.Constants.ID, this.origSelection[i]));
           }
           this.selector.setSelectedRecords(records);
@@ -133,6 +133,17 @@ isc.OBMultiSelectorItem.addProperties({
     this.selectionLayout.removeMembers(this.selectionLayout.getMembers());
     for (i = 0; i < records.length; i++) {
       this.setValueFromRecord(records[i]);
+    }
+  },
+
+  // set value is invoked by isString default validator causing array to be converted into
+  // a string, let's recover the array
+  setValue: function (value) {
+    if (value) {
+      value = value.split(',');
+      this.storeValue(value);
+    } else {
+      this.Super('setValue', arguments);
     }
   },
 
