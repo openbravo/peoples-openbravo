@@ -28,6 +28,7 @@ enyo.kind({
 
     this.$.bodyContent.destroyComponents();
     this.$.bodyContent.createComponent({
+      mainPopup: this,
       kind: this.args.provider,
       paymentMethod: this.args.paymentMethod,
       paymentType: this.args.name,
