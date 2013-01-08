@@ -30,6 +30,7 @@ import org.openbravo.client.application.Parameter;
 import org.openbravo.client.kernel.Component;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.client.kernel.KernelConstants;
+import org.openbravo.client.myob.WidgetClass;
 import org.openbravo.client.myob.WidgetInstance;
 import org.openbravo.client.myob.WidgetProvider;
 import org.openbravo.service.datasource.DataSourceComponentProvider;
@@ -93,8 +94,19 @@ public class QueryListWidgetProvider extends WidgetProvider {
     final Map<String, Object> localParameters = new HashMap<String, Object>();
     localParameters.putAll(getParameters());
     localParameters.put(DataSourceConstants.DS_ONLY_GENERATE_CREATESTATEMENT, true);
-    localParameters.put(WIDGETCLASS_PARAMETER, getWidgetClass());
-    final Component dsComponent = dataSourceComponentProvider.getComponent(DATASOURCEID,
+
+    WidgetClass widget = getWidgetClass();
+    OBCQL_WidgetQuery listWidget = widget.getOBCQLWidgetQueryList().get(0);
+    String listWidgetType = listWidget.getType();
+    String datasourceId = null;
+    if ("HQL".equals(listWidgetType)) {
+      datasourceId = DATASOURCEID;
+    } else {
+      datasourceId = listWidget.getObserdsDatasource().getId();
+    }
+
+    localParameters.put(WIDGETCLASS_PARAMETER, widget);
+    final Component dsComponent = dataSourceComponentProvider.getComponent(datasourceId,
         localParameters);
     final String dsJavaScript = dsComponent.generate();
     return dsJavaScript;

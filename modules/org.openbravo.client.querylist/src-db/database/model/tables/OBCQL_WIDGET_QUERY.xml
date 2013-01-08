@@ -37,7 +37,15 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="HQL" primaryKey="false" required="true" type="VARCHAR" size="4000" autoIncrement="false">
+      <column name="HQL" primaryKey="false" required="false" type="VARCHAR" size="4000" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="TYPE" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default><![CDATA[HQL]]></default>
+        <onCreateDefault><![CDATA['HQL']]></onCreateDefault>
+      </column>
+      <column name="OBSERDS_DATASOURCE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -47,9 +55,15 @@
       <foreign-key foreignTable="AD_CLIENT" name="OBCQL_WIDGET_QUERY_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="OBSERDS_DATASOURCE" name="OBCQL_WIDGET_QUERY_DS">
+        <reference local="OBSERDS_DATASOURCE_ID" foreign="OBSERDS_DATASOURCE_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="OBCQL_WIDGET_QUERY_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <index name="FKI_OBCQL_WIDGET_QUERY_DS" unique="false">
+        <index-column name="OBSERDS_DATASOURCE_ID"/>
+      </index>
       <check name="OBCQL_WIDGET_QUERY_ACTIVECHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>
