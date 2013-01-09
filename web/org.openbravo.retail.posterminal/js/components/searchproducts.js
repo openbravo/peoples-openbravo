@@ -93,6 +93,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.SearchProduct',
+  style: 'margin: 5px; background-color: #ffffff; color: black; padding: 5px',
   published: {
     receipt: null
   },
@@ -102,6 +103,12 @@ enyo.kind({
   },
   events: {
     onAddProduct: ''
+  },
+  executeOnShow: function () {
+    var me = this;
+    setTimeout(function () {
+      me.$.products.$.theader.$.searchProductHeader.$.productname.focus();
+    }, 200);
   },
   components: [{
     classes: 'row-fluid',
