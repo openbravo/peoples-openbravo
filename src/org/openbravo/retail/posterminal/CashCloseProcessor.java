@@ -21,6 +21,7 @@ import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.dao.TransactionsDao;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.financialmgmt.gl.GLItem;
@@ -32,7 +33,11 @@ import org.openbravo.service.json.JsonConstants;
 
 public class CashCloseProcessor {
 
-  public JSONObject processCashClose(JSONArray cashCloseInfo) throws JSONException {
+  public JSONObject processCashClose(OBPOSApplications posTerminal, JSONArray cashCloseInfo)
+      throws JSONException {
+
+    OBPOSAppCashup cashUp = createCashUp(posTerminal);
+    OBDal.getInstance().save(cashUp);
 
     for (int i = 0; i < cashCloseInfo.length(); i++) {
       JSONObject cashCloseObj = cashCloseInfo.getJSONObject(i);
@@ -48,8 +53,6 @@ public class CashCloseProcessor {
       String paymentTypeId = cashCloseObj.getString("paymentTypeId");
       OBPOSAppPayment paymentType = OBDal.getInstance().get(OBPOSAppPayment.class, paymentTypeId);
 
-      OBPOSApplications posTerminal = paymentType.getObposApplications();
-
       FIN_Reconciliation reconciliation = createReconciliation(cashCloseObj, posTerminal,
           paymentType.getFinancialAccount());
 
@@ -60,6 +63,10 @@ public class CashCloseProcessor {
         OBDal.getInstance().save(diffTransaction);
       }
       OBDal.getInstance().save(reconciliation);
+
+      OBPOSAppCashReconcil recon = createCashUpReconciliation(posTerminal, paymentType,
+          reconciliation, cashUp);
+      OBDal.getInstance().save(recon);
 
       BigDecimal reconciliationTotal = BigDecimal
           .valueOf(cashCloseObj.getDouble("foreignExpected")).add(foreignDifference);
@@ -250,5 +257,24 @@ public class CashCloseProcessor {
 
     return transaction;
 
+  }
+
+  protected OBPOSAppCashup createCashUp(OBPOSApplications posTerminal) {
+    OBPOSAppCashup cashup = OBProvider.getInstance().get(OBPOSAppCashup.class);
+    cashup.setOrganization(posTerminal.getOrganization());
+    cashup.setCashUpDate(new Date());
+    cashup.setPOSTerminal(posTerminal);
+    cashup.setUserContact(OBContext.getOBContext().getUser());
+    return cashup;
+  }
+
+  protected OBPOSAppCashReconcil createCashUpReconciliation(OBPOSApplications posTerminal,
+      OBPOSAppPayment paymentType, FIN_Reconciliation reconciliation, OBPOSAppCashup cashUp) {
+    OBPOSAppCashReconcil recon = OBProvider.getInstance().get(OBPOSAppCashReconcil.class);
+    recon.setOrganization(posTerminal.getOrganization());
+    recon.setPaymentType(paymentType);
+    recon.setReconciliation(reconciliation);
+    recon.setCashUp(cashUp);
+    return recon;
   }
 }
