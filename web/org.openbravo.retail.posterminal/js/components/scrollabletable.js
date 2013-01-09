@@ -241,7 +241,7 @@ enyo.kind({
     var i, models = [];
 
     var components = this.$.tbody.getComponents();
-    if (index && index < components.length) {
+    if (!(_.isUndefined(index)) && !(_.isNull(index)) && index < components.length) {
       //refresh components collection, inserting new model...
       // get the models from current components
       for (i = 0; i < components.length; i++) {
