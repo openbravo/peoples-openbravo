@@ -101,7 +101,7 @@ enyo.kind({
 
   initComponents: function () {
     //TODO: modal payments
-    var i, max, payments, Btn, inst, cont, defaultpayment, allpayments = {},
+    var i, max, payments, Btn, inst, cont, exactdefault, cashdefault, allpayments = {},
         me = this;
 
     this.inherited(arguments);
@@ -109,8 +109,11 @@ enyo.kind({
     payments = OB.POS.modelterminal.get('payments');
 
     enyo.forEach(payments, function (payment) {
-      if (payment.payment.searchKey === 'OBPOS_payment.cash') {
-        defaultpayment = payment;
+      if (payment.paymentMethod.id === OB.POS.modelterminal.get('terminal').terminalType.paymentMethod) {
+        exactdefault = payment;
+      }
+      if (payment.payment.searchKey === OB.POS.modelterminal.get('paymentcash')) {
+        cashdefault = payment;
       }
       allpayments[payment.payment.searchKey] = payment;
 
@@ -124,6 +127,9 @@ enyo.kind({
         }
       });
     }, this);
+
+    // Fallback assign of the payment for the exact command.
+    exactdefault = exactdefault || cashdefault || payments[0];
 
     enyo.forEach(this.sideButtons, function (sidebutton) {
       this.createComponent(sidebutton);
@@ -148,7 +154,7 @@ enyo.kind({
           keyboard.execCommand(keyboard.status, null);
         } else {
           // It is a payment...
-          var exactpayment = allpayments[keyboard.status] || defaultpayment,
+          var exactpayment = allpayments[keyboard.status] || exactdefault,
               amount = me.receipt.getPending();
           if (exactpayment.rate && exactpayment.rate !== '1') {
             amount = OB.DEC.div(me.receipt.getPending(), exactpayment.rate);

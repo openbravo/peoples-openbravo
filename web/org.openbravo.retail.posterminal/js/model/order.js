@@ -824,10 +824,12 @@
           p.set('origAmount', p.get('amount'));
         }
         p.set('paid', p.get('origAmount'));
-        if (p.get('kind') === 'OBPOS_payment.cash') {
+        if (p.get('kind') === OB.POS.modelterminal.get('paymentcash')) {
+          // The default cash method
           cash = OB.DEC.add(cash, p.get('origAmount'));
           pcash = p;
-        } else if (p.get('kind').indexOf('.cash', p.get('kind').length - '.cash'.length) !== -1) {
+        } else if (OB.POS.modelterminal.hasPayment(p.get('kind')) && OB.POS.modelterminal.hasPayment(p.get('kind')).paymentMethod.iscash) {
+          // Another cash method
           origCash = OB.DEC.add(origCash, p.get('origAmount'));
           pcash = p;
         } else {
@@ -838,7 +840,7 @@
       // Calculation of the change....
       //FIXME
       if (pcash) {
-        if (pcash.get('kind') !== 'OBPOS_payment.cash') {
+        if (pcash.get('kind') !== OB.POS.modelterminal.get('paymentcash')) {
           auxCash = origCash;
           prevCash = cash;
         } else {

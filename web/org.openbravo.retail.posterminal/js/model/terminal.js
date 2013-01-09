@@ -362,6 +362,7 @@ OB.Model.Terminal = Backbone.Model.extend({
     me.password = password;
     this.set('terminal', null);
     this.set('payments', null);
+    this.set('paymentcash', null);
     this.set('context', null);
     this.set('permissions', null);
     this.set('businesspartner', null);
@@ -501,6 +502,7 @@ OB.Model.Terminal = Backbone.Model.extend({
     var me = this;
     this.set('terminal', null);
     this.set('payments', null);
+    this.set('paymentcash', null);
     this.set('context', null);
     this.set('permissions', null);
     this.set('bplocation', null);
@@ -530,6 +532,7 @@ OB.Model.Terminal = Backbone.Model.extend({
     var me = this;
     this.set('terminal', null);
     this.set('payments', null);
+    this.set('paymentcash', null);
     this.set('context', null);
     this.set('permissions', null);
     this.set('bplocation', null);
@@ -562,8 +565,9 @@ OB.Model.Terminal = Backbone.Model.extend({
       this.set('payments', termInfo.payments);
       this.paymentnames = {};
       for (i = 0, max = termInfo.payments.length; i < max; i++) {
-        this.paymentnames[termInfo.payments[i].payment.searchKey] = termInfo.payments[i].payment._identifier;
+        this.paymentnames[termInfo.payments[i].payment.searchKey] = termInfo.payments[i];
       }
+      this.set('paymentcash', termInfo.paymentcash);
       this.set('context', termInfo.context);
       this.set('permissions', termInfo.permissions);
       this.set('businesspartner', termInfo.businesspartner);
@@ -584,6 +588,7 @@ OB.Model.Terminal = Backbone.Model.extend({
     // reset all application state.
     //this.set('terminal', null);
     this.set('payments', null);
+    this.set('paymentcash', null);
     this.set('context', null);
     this.set('permissions', null);
     this.set('businesspartner', null);
@@ -619,12 +624,23 @@ OB.Model.Terminal = Backbone.Model.extend({
       pos: this.get('terminal').id
     }, function (data) {
       if (data) {
-        var i, max;
+        var i, max, paymentlegacy, paymentcash, paymentcashcurrency;
         me.set('payments', data);
         me.paymentnames = {};
         for (i = 0, max = data.length; i < max; i++) {
-          me.paymentnames[data[i].payment.searchKey] = data[i].payment._identifier;
+          me.paymentnames[data[i].payment.searchKey] = data[i];
+          if (data[i].payment.searchKey === 'OBPOS_payment.cash') {
+            paymentlegacy = data[i].payment.searchKey;
+          }
+          if (data[i].paymentMethod.iscash) {
+            paymentcash = data[i].payment.searchKey;
+          }
+          if (data[i].paymentMethod.iscash && data[i].paymentMethod.currency === me.get('terminal').currency) {
+            paymentcashcurrency = data[i].payment.searchKey;
+          }
         }
+        // sets the default payment method
+        me.set('paymentcash', paymentcashcurrency || paymentcash || paymentlegacy);
         me.triggerReady();
       }
     });
@@ -927,7 +943,7 @@ OB.Model.Terminal = Backbone.Model.extend({
   },
 
   getPaymentName: function (key) {
-    return this.paymentnames[key];
+    return this.paymentnames[key].payment._identifier;
   },
 
   hasPayment: function (key) {
