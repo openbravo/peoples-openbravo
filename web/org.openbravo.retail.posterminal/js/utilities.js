@@ -196,7 +196,6 @@
           }
         }
       }, function () {
-        console.error("fail");
         if (OB.POS.modelterminal) {
           OB.POS.modelterminal.triggerOffLine();
         }
