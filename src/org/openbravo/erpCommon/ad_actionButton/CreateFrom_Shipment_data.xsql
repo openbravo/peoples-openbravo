@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -56,8 +56,6 @@
         AND l.C_UOM_ID=uom.C_UOM_ID
         AND l.M_Product_ID=p.M_Product_ID
         AND l.C_Order_ID = ? 
-        AND (NOT EXISTS (SELECT 1 FROM M_InOutLine WHERE M_InOut_ID = ? AND C_OrderLine_Id = l.C_OrderLine_Id)
-        OR l.QtyOrdered <> (SELECT SUM(MovementQty) FROM M_InOutLine WHERE C_OrderLine_ID = l.C_OrderLine_ID AND M_InOut_ID = ?))
         GROUP BY o.C_ORDER_ID, o.DocumentNo, o.DateOrdered, o.GrandTotal, l.QtyOrdered,l.qtydelivered, 
         l.C_UOM_ID,uom.UOMSymbol,l.M_Product_ID,p.NAME,l.Line,l.C_OrderLine_ID, l.ad_org_id, l.DESCRIPTION, l.QUANTITYORDER, 
         l.M_PRODUCT_UOM_ID, l.M_ATTRIBUTESETINSTANCE_ID, coalesce(l.a_asset_id,o.a_asset_id), coalesce(l.c_project_id,o.c_project_id), coalesce(l.c_costcenter_id, o.c_costcenter_id),
@@ -72,8 +70,6 @@
     <Parameter name="adUserClient" type="replace" optional="true" after="o.AD_Client_ID IN (" text="'1'"/>
     <Parameter name="adOrgClient" type="replace" optional="true" after="o.AD_Org_ID IN (" text="'1'"/>
     <Parameter name="poId"/>
-    <Parameter name="mInOutId"/>
-    <Parameter name="mInOutId"/>
   </SqlMethod>
   <SqlMethod name="selectFromPOCombo" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
@@ -90,8 +86,6 @@
                       FROM C_ORDERLINE l left join M_MATCHPO m on l.C_OrderLine_ID=m.C_OrderLine_ID
                                                               and  m.M_InOutLine_ID IS NOT NULL
                      WHERE l.C_ORDER_ID = o.C_ORDER_ID 
-                      AND (NOT EXISTS (SELECT 1 FROM M_InOutLine WHERE M_InOut_ID = ? AND C_OrderLine_Id=l.C_OrderLine_Id)
-                      OR l.QtyOrdered <> (SELECT SUM(MovementQty) FROM M_InOutLine WHERE C_OrderLine_ID = l.C_OrderLine_ID AND M_InOut_ID = ?))
                       GROUP BY l.C_OrderLine_ID, l.QtyOrdered 
                       HAVING (l.QtyOrdered-SUM(COALESCE(m.Qty,0))) <> 0)
         ORDER BY NAME
@@ -102,8 +96,6 @@
     <Parameter name="adUserClient" type="replace" optional="true" after="o.AD_Client_ID IN (" text="'1'"/>
     <Parameter name="adOrgClient" type="replace" optional="true" after="o.AD_Org_ID IN (" text="'1'"/>
     <Parameter name="cBpartnerId"/>
-    <Parameter name="mInOutId"/>
-    <Parameter name="mInOutId"/>
   </SqlMethod>
   <SqlMethod name="selectFromPOSOTrx" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
@@ -126,7 +118,6 @@
         AND l.M_Product_ID=p.M_Product_ID 
         AND ic.C_Order_ID = ?
         AND l.QtyOrdered <> COALESCE(l.qtydelivered,0)
-        AND NOT EXISTS (SELECT 1 FROM M_InOutLine WHERE M_InOut_ID = ? AND C_OrderLine_Id = l.C_OrderLine_Id)
         GROUP BY o.C_ORDER_ID, o.DocumentNo, o.DateOrdered, o.GrandTotal, l.QtyOrdered,l.qtydelivered, 
         l.C_UOM_ID,uom.UOMSymbol,l.M_Product_ID,p.NAME,l.Line,l.C_OrderLine_ID, l.ad_org_id, l.DESCRIPTION,
        	coalesce(l.a_asset_id,o.a_asset_id) , coalesce( l.c_project_id,o.c_project_id),coalesce(l.c_costcenter_id,o.c_costcenter_id), 
@@ -140,7 +131,6 @@
     <Parameter name="adUserClient" type="replace" optional="true" after="ic.AD_Client_ID IN (" text="'1'"/>
     <Parameter name="adOrgClient" type="replace" optional="true" after="ic.AD_Org_ID IN (" text="'1'"/>
     <Parameter name="poId"/>
-    <Parameter name="mInOutId"/>
   </SqlMethod>
   <SqlMethod name="selectFromPOSOTrxCombo" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
@@ -152,11 +142,6 @@
         AND ic.AD_Client_ID IN ('1') 
         AND ic.AD_Org_ID IN ('1') 
         AND ic.C_BPartner_ID = ? 
-        AND EXISTS (SELECT 1
-                      FROM C_ORDERLINE l left join M_MATCHPO m on l.C_OrderLine_ID=m.C_OrderLine_ID
-                                                              and  m.M_InOutLine_ID IS NOT NULL
-                     WHERE l.C_ORDER_ID = o.C_ORDER_ID
-                     AND NOT EXISTS (SELECT 1 FROM M_InOutLine WHERE M_InOut_ID = ? AND C_OrderLine_Id = l.C_OrderLine_Id))
         GROUP BY o.C_ORDER_ID, o.DocumentNo, o.DateOrdered, o.GrandTotal 
         ORDER BY NAME
       ]]>
@@ -166,7 +151,6 @@
     <Parameter name="adUserClient" type="replace" optional="true" after="ic.AD_Client_ID IN (" text="'1'"/>
     <Parameter name="adOrgClient" type="replace" optional="true" after="ic.AD_Org_ID IN (" text="'1'"/>
     <Parameter name="cBpartnerId"/>
-    <Parameter name="mInOutId"/>
   </SqlMethod>
   <SqlMethod name="selectFromPOTrl" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
@@ -199,8 +183,6 @@
         AND l.C_UOM_ID=uom.C_UOM_ID 
         AND l.M_Product_ID=p.M_Product_ID
         AND l.C_Order_ID = ? 
-        AND (NOT EXISTS (SELECT 1 FROM M_InOutLine WHERE M_InOut_ID = ? AND C_OrderLine_Id = l.C_OrderLine_Id)
-        OR l.QtyOrdered <> (SELECT SUM(MovementQty) FROM M_InOutLine WHERE C_OrderLine_ID = l.C_OrderLine_ID AND M_InOut_ID = ?))
         GROUP BY o.C_ORDER_ID, o.DocumentNo, o.DateOrdered, o.GrandTotal, l.QtyOrdered,l.qtydelivered, 
         l.C_UOM_ID,uom.UOMSymbol, uomt.UOMSymbol,l.M_Product_ID,p.NAME,l.Line,l.C_OrderLine_ID, l.DESCRIPTION, l.QUANTITYORDER, l.M_PRODUCT_UOM_ID, l.M_ATTRIBUTESETINSTANCE_ID
         HAVING (l.QtyOrdered-SUM(COALESCE(m.Qty,0))) <> 0
@@ -214,8 +196,6 @@
     <Parameter name="adUserClient" type="replace" optional="true" after="o.AD_Client_ID IN (" text="'1'"/>
     <Parameter name="adOrgClient" type="replace" optional="true" after="o.AD_Org_ID IN (" text="'1'"/>
     <Parameter name="poId"/>
-    <Parameter name="mInOutId"/>
-    <Parameter name="mInOutId"/>
   </SqlMethod>
   <SqlMethod name="selectFromPOTrlSOTrx" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
@@ -235,8 +215,6 @@
         AND l.M_Product_ID=p.M_Product_ID 
         AND ic.C_Order_ID = ?
         AND l.QtyOrdered <> COALESCE(l.qtydelivered,0)
-        AND (NOT EXISTS (SELECT 1 FROM M_InOutLine WHERE M_InOut_ID = ? AND C_OrderLine_Id = l.C_OrderLine_Id)
-        OR l.QtyOrdered <> (SELECT SUM(MovementQty) FROM M_InOutLine WHERE C_OrderLine_ID = l.C_OrderLine_ID AND M_InOut_ID = ?))
         GROUP BY o.C_ORDER_ID, o.DocumentNo, o.DateOrdered, o.GrandTotal, l.QtyOrdered,l.qtydelivered, 
         l.C_UOM_ID,uom.UOMSymbol,uomt.UOMSymbol,l.M_Product_ID,p.NAME,l.Line,l.C_OrderLine_ID, l.DESCRIPTION
         ORDER BY NAME, l.Line
@@ -249,8 +227,6 @@
     <Parameter name="adUserClient" type="replace" optional="true" after="ic.AD_Client_ID IN (" text="'1'"/>
     <Parameter name="adOrgClient" type="replace" optional="true" after="ic.AD_Org_ID IN (" text="'1'"/>
     <Parameter name="poId"/>
-    <Parameter name="mInOutId"/>
-    <Parameter name="mInOutId"/>
   </SqlMethod>
   <SqlMethod name="selectFromPOUpdate" type="preparedStatement" connection="true" return="multiple">
     <SqlMethodComment></SqlMethodComment>
@@ -345,8 +321,6 @@
         AND l.C_UOM_ID=uom.C_UOM_ID 
         AND l.M_Product_ID=p.M_Product_ID 
         AND l.C_Invoice_ID = ? 
-        AND (l.M_INOUTLINE_ID IS NULL
-        OR l.QtyInvoiced <> (SELECT SUM(MovementQty) FROM M_InOutLine WHERE M_InOutLine_ID = l.M_InOutLine_ID))
         GROUP BY i.C_Invoice_ID, i.DocumentNo, DateInvoiced, GrandTotal, l.QtyInvoiced, 
         l.C_UOM_ID,uom.UOMSymbol,l.M_Product_ID,p.NAME, l.C_InvoiceLine_ID,l.Line,l.C_OrderLine_ID, l.DESCRIPTION,l.QUANTITYORDER,
         l.M_PRODUCT_UOM_ID,l.M_ATTRIBUTESETINSTANCE_ID,  coalesce(l.a_asset_id,i.a_asset_id), coalesce(l.c_project_id,i.c_project_id), 
@@ -383,7 +357,6 @@
         AND l.C_UOM_ID=uom.C_UOM_ID 
         AND l.M_Product_ID=p.M_Product_ID 
         AND l.C_Invoice_ID = ?
-        AND l.M_InOutLine_ID IS NULL
         GROUP BY i.C_Invoice_ID, i.DocumentNo, DateInvoiced, GrandTotal, l.QtyInvoiced, 
         l.C_UOM_ID,uom.UOMSymbol,l.M_Product_ID,p.NAME, l.C_InvoiceLine_ID,l.Line,l.C_OrderLine_ID, l.DESCRIPTION,
         coalesce(l.a_asset_id,i.a_asset_id), coalesce(l.c_project_id,i.c_project_id),coalesce(l.c_costcenter_id,i.c_costcenter_id), 
@@ -413,8 +386,6 @@
         AND EXISTS (SELECT 1 
                      FROM C_INVOICELINE l left join M_MATCHINV mi on l.C_InvoiceLine_ID=mi.C_InvoiceLine_ID
                       WHERE l.C_INVOICE_ID = i.C_INVOICE_ID 
-                      AND (l.M_INOUTLINE_ID IS NULL
-                      OR l.QtyInvoiced <> (SELECT SUM(MovementQty) FROM M_InOutLine WHERE M_InOutLine_ID = l.M_InOutLine_ID))
                       GROUP BY l.QtyInvoiced, l.C_InvoiceLine_ID 
                       HAVING (l.QtyInvoiced-SUM(COALESCE(mi.Qty,0))) <> 0 ) 
         ORDER BY NAME
@@ -440,7 +411,6 @@
         AND EXISTS (SELECT 1                      
                 FROM C_INVOICELINE l LEFT JOIN M_INOUTLINE MI ON l.M_INOUTLINE_ID = MI.M_INOUTLINE_ID                        
                 WHERE l.C_INVOICE_ID = i.C_INVOICE_ID                
-                AND l.M_INOUTLINE_ID IS NULL
                 GROUP BY l.C_InvoiceLine_ID ,l.QtyInvoiced                
                 HAVING (l.QtyInvoiced-SUM(COALESCE(mi.MOVEMENTQTY,0))) <> 0 ) 
         ORDER BY NAME
@@ -484,8 +454,6 @@
         AND l.C_UOM_ID=uom.C_UOM_ID 
         AND l.M_Product_ID=p.M_Product_ID 
         AND l.C_Invoice_ID = ? 
-        AND (l.M_INOUTLINE_ID IS NULL
-        OR l.QtyInvoiced <> (SELECT SUM(MovementQty) FROM M_InOutLine WHERE M_InOutLine_ID = l.M_InOutLine_ID))
         GROUP BY i.C_Invoice_ID, i.DocumentNo, DateInvoiced, GrandTotal, l.QtyInvoiced, 
         l.C_UOM_ID,uom.UOMSymbol, uomt.UOMSymbol,l.M_Product_ID,p.NAME, l.C_InvoiceLine_ID,l.Line,l.C_OrderLine_ID, 
         l.DESCRIPTION, l.QUANTITYORDER, l.M_PRODUCT_UOM_ID,l.M_ATTRIBUTESETINSTANCE_ID
@@ -714,29 +682,6 @@
     <Parameter name="cInvoiceLineId"/>
     <Parameter name="mInoutlineId"/>
     <Parameter name="cInvoiceId"/>
-  </SqlMethod>
-  <SqlMethod name="insertMatchPO" type="preparedStatement" connection="true" return="rowCount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      INSERT INTO M_MATCHPO
-        (
-        M_MATCHPO_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY,
-        UPDATED, UPDATEDBY, M_INOUTLINE_ID, C_ORDERLINE_ID, M_PRODUCT_ID,
-        DATETRX, QTY, PROCESSING, PROCESSED, POSTED
-        )
-      SELECT
-        GET_UUID(), iol.AD_CLIENT_ID, iol.AD_ORG_ID, 'Y', NOW(), ?,
-        NOW(), ?, iol.M_INOUTLINE_ID, ?, iol.M_PRODUCT_ID,
-        o.DATEACCT, iol.MOVEMENTQTY, 'N', 'Y', 'N'
-      FROM M_INOUTLINE iol, C_ORDER o
-      WHERE iol.M_INOUTLINE_ID=?
-        AND o.C_ORDER_ID=?
-    </Sql>
-    <Parameter name="adUserId"/>
-    <Parameter name="adUserId"/>
-    <Parameter name="cOrderLineId"/>
-    <Parameter name="mInoutlineId"/>
-    <Parameter name="cOrderId"/>
   </SqlMethod>
   <SqlMethod name="selectInvoiceInOut" type="preparedStatement" connection="true" return="string">
     <SqlMethodComment></SqlMethodComment>

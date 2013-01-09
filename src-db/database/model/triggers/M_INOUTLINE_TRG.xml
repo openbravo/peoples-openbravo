@@ -14,7 +14,6 @@
   v_qtyold   NUMBER;
   v_qtyorderold  NUMBER;
   v_MatchInvCount  NUMBER;
-  v_MatchPoCount NUMBER;
   v_STOCKED   NUMBER;
   v_UOM_ID    varchar2(32);
   v_AttrSetValueType M_Product.AttrSetValueType%TYPE;
@@ -35,7 +34,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2010 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2013 Openbravo S.L.U.
  ******************************************************************************/
      
 BEGIN
@@ -131,18 +130,6 @@ BEGIN
        UPDATE M_MATCHINV SET QTY=:NEW.MOVEMENTQTY
        WHERE QTY = :OLD.MOVEMENTQTY
          AND M_INOUTLINE_ID = :NEW.M_INOUTLINE_ID;
-     END IF;
-
-     SELECT COUNT(*) INTO v_MatchPoCount
-     FROM M_MatchPo MO
-     WHERE MO.Qty = :OLD.MovementQty
-     AND MO.M_InOutLine_ID = :NEW.M_InOutLine_ID;
-
-     IF (:OLD.MovementQty <> :NEW.MovementQty AND v_MatchPoCount = 1) THEN
-      UPDATE M_MatchPo
-      SET Qty = :NEW.MovementQty
-      WHERE Qty = :OLD.MovementQty
-      AND M_InOutLine_ID = :NEW.M_InOutLine_ID;
      END IF;
 
  END IF;
