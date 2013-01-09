@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2012 Openbravo SLU
+ * All portions are Copyright (C) 2001-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  Cheli Pineda__________________________.
  ************************************************************************
@@ -1612,8 +1612,8 @@ public class CreateFrom extends HttpSecureAppServlet {
                   data[i].quantityorder, data[i].mProductUomId, data[i].mAttributesetinstanceId,
                   priceStd, lineNetAmt.toString(), priceGross, grossAmt.toString(),
                   priceListGross.toString(), priceStdGross.toString(), isDeferred, planType,
-                  periodNumber, startingPeriodId, 
-                  data[i].aAssetId, data[i].cProjectId, data[i].cCostcenterId, data[i].user1Id, data[i].user2Id);
+                  periodNumber, startingPeriodId, data[i].aAssetId, data[i].cProjectId,
+                  data[i].cCostcenterId, data[i].user1Id, data[i].user2Id);
 
               if (!data[i].mInoutlineId.isEmpty() && strType.equals("SHIPMENT")) {
                 CreateFromInvoiceData.insertShipmentAcctDimension(conn, this, strSequence,
@@ -1815,7 +1815,7 @@ public class CreateFrom extends HttpSecureAppServlet {
                       CreateFromShipmentData.isInvoiced(conn, this, data[i].cInvoicelineId),
                       (qtyIsNegative ? "-" + total : total), data[i].mProductUomId,
                       strmAttributesetinstanceId, data[i].aAssetId, data[i].cProjectId,
-                      data[i].cCostcenterId, data[i].user1Id, data[i].user2Id,data[i].cBpartnerId);
+                      data[i].cCostcenterId, data[i].user1Id, data[i].user2Id, data[i].cBpartnerId);
 
                   if (strType.equals("INVOICE") && !data[i].cInvoicelineId.isEmpty()) {
                     CreateFromShipmentData.insertInvoiceAcctDimension(conn, this, strSequence,
@@ -1846,7 +1846,7 @@ public class CreateFrom extends HttpSecureAppServlet {
                     CreateFromShipmentData.isInvoiced(conn, this, data[i].cInvoicelineId),
                     strQuantityorder, strProductUomId, strmAttributesetinstanceId,
                     data[i].aAssetId, data[i].cProjectId, data[i].cCostcenterId, data[i].user1Id,
-                    data[i].user2Id,data[i].cBpartnerId);
+                    data[i].user2Id, data[i].cBpartnerId);
 
                 if (strType.equals("INVOICE") && !data[i].cInvoicelineId.isEmpty()) {
                   CreateFromShipmentData.insertInvoiceAcctDimension(conn, this, strSequence,
@@ -2021,7 +2021,7 @@ public class CreateFrom extends HttpSecureAppServlet {
                       CreateFromShipmentData.isInvoiced(conn, this, data[i].cInvoicelineId),
                       (qtyIsNegative ? "-" + total : total), data[i].mProductUomId,
                       data[i].mAttributesetinstanceId, data[i].aAssetId, data[i].cProjectId,
-                      data[i].cCostcenterId, data[i].user1Id, data[i].user2Id,data[i].cBpartnerId);
+                      data[i].cCostcenterId, data[i].user1Id, data[i].user2Id, data[i].cBpartnerId);
 
                   if (strType.equals("INVOICE") && !data[i].cInvoicelineId.isEmpty()) {
                     CreateFromShipmentData.insertInvoiceAcctDimension(conn, this, strSequence,
@@ -2053,7 +2053,7 @@ public class CreateFrom extends HttpSecureAppServlet {
                     CreateFromShipmentData.isInvoiced(conn, this, data[i].cInvoicelineId),
                     data[i].quantityorder, data[i].mProductUomId, data[i].mAttributesetinstanceId,
                     data[i].aAssetId, data[i].cProjectId, data[i].cCostcenterId, data[i].user1Id,
-                    data[i].user2Id,data[i].cBpartnerId);
+                    data[i].user2Id, data[i].cBpartnerId);
 
                 if (strType.equals("INVOICE") && !data[i].cInvoicelineId.isEmpty()) {
                   CreateFromShipmentData.insertInvoiceAcctDimension(conn, this, strSequence,
