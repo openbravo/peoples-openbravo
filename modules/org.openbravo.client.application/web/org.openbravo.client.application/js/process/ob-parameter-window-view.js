@@ -325,7 +325,7 @@ isc.OBParameterWindowView.addProperties({
       processId: this.processId,
       windowId: this.windowId
     }, function (rpcResponse, data, rpcRequest) {
-      view.handleResponse(true, (data && data.message));
+      view.handleResponse(true, (data && data.message), (data && data.responseActions));
     });
   },
 
