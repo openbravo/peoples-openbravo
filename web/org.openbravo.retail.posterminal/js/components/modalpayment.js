@@ -44,6 +44,7 @@ enyo.kind({
     }).render();
   },
   initComponents: function (){
+    this.inherited(arguments);
     this.dfAutoDismiss = this.autoDismiss;
     this.dfCloseOnEscKey = this.closeOnEscKey;
   }
