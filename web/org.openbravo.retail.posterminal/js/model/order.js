@@ -777,7 +777,7 @@
       this.set('isEditable', true);
       this.set('orderDate', new Date());
       documentseq = OB.POS.modelterminal.get('documentsequence') + 1;
-      documentseqstr = OB.UTIL.padNumber(documentseq, 5);
+      documentseqstr = OB.UTIL.padNumber(documentseq, 7);
       OB.POS.modelterminal.set('documentsequence', documentseq);
       this.set('documentNo', OB.POS.modelterminal.get('terminal').docNoPrefix + '/' + documentseqstr);
       this.save();
@@ -993,7 +993,7 @@
       order.set('isPaid', false);
 
       documentseq = OB.POS.modelterminal.get('documentsequence') + 1;
-      documentseqstr = OB.UTIL.padNumber(documentseq, 5);
+      documentseqstr = OB.UTIL.padNumber(documentseq, 7);
       OB.POS.modelterminal.set('documentsequence', documentseq);
       order.set('documentNo', OB.POS.modelterminal.get('terminal').docNoPrefix + '/' + documentseqstr);
 
@@ -1144,7 +1144,7 @@
       this.current.set('isQuotation', true);
       this.current.set('documentType', OB.POS.modelterminal.get('terminal').terminalType.documentTypeForQuotations);
       documentseq = OB.POS.modelterminal.get('quotationDocumentSequence') + 1;
-      documentseqstr = OB.UTIL.padNumber(documentseq, 5);
+      documentseqstr = OB.UTIL.padNumber(documentseq, 7);
       OB.POS.modelterminal.set('quotationDocumentSequence', documentseq);
       this.current.set('documentNo', OB.POS.modelterminal.get('terminal').quotationDocNoPrefix + '/' + documentseqstr);
       this.add(this.current);
