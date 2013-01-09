@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2012 Openbravo SLU
+ * All portions are Copyright (C) 2011-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -536,9 +536,11 @@ public class OBViewFieldHandler {
     }
 
     public OBViewFieldAudit(String type, Element element) {
-      name = type;
-      this.element = element;
+      // force reload of element as if it was previously loaded but its children were not touched,
+      // lazy initialization fails
+      this.element = OBDal.getInstance().get(Element.class, element.getId());
 
+      name = type;
       if (type.endsWith("By")) {
         // User search
         refType = "30";
