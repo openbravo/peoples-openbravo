@@ -27,6 +27,12 @@ enyo.kind({
     }
 
     this.$.bodyContent.destroyComponents();
+    //default values to reset changes done by a payment method
+    this.closeOnEscKey = this.dfCloseOnEscKey;
+    this.autoDismiss = this.dfAutoDismiss;
+    this.executeOnShown = null;
+    this.executeBeforeHide = null;
+    this.executeOnHide = null;
     this.$.bodyContent.createComponent({
       mainPopup: this,
       kind: this.args.provider,
@@ -36,5 +42,9 @@ enyo.kind({
       key: this.args.key,
       receipt: this.args.receipt
     }).render();
+  },
+  initComponents: function (){
+    this.dfAutoDismiss = this.autoDismiss;
+    this.dfCloseOnEscKey = this.closeOnEscKey;
   }
 });
