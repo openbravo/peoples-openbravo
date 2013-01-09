@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2013 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -541,7 +541,10 @@ public class OBViewTab extends BaseTemplateComponent {
   private void setPreferenceAttributesFromParserResult(DynamicExpressionParser parser,
       String windowId) {
     for (String attrName : parser.getSessionAttributes()) {
-      if (!preferenceAttributesMap.containsKey(attrName) && attrName.startsWith("#")) {
+      // The value of the Session properties (#sessionPropertyName) and Preferences (name does not
+      // start with inp) can be evaluated before the tab is loaded
+      if (!preferenceAttributesMap.containsKey(attrName)
+          && (attrName.startsWith("#") || !attrName.startsWith("inp"))) {
         final String attrValue = Utility.getContext(new DalConnectionProvider(false),
             RequestContext.get().getVariablesSecureApp(), attrName, windowId);
         preferenceAttributesMap.put(attrName.replace("#", "_"), attrValue);

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011 Openbravo SLU
+ * All portions are Copyright (C) 2011-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -313,20 +313,18 @@ public class DynamicExpressionParser {
     String convertedToken = token;
     boolean isBoolean = false;
 
-    // Sometimes (i.e. for the tab display logic, see issue
-    // https://issues.openbravo.com/view.php?id=5202),
-    // the token needs to be converted to its inp column name
-    // Do not convert the name of the preference (preference names starts with '#')
+    // Session attributes (#sessionAttributeName) must not be converted to the inp format, and they
+    // do not need to be treated as a boolean
     if (tabLevelDisplayLogic && !convertedToken.startsWith("#")) {
-      // Looks if the token is the nome of an ancestors field...
       Field ancestorField = lookForFieldInAncestorTabs(token);
       if (ancestorField != null) {
+        // If the token is the name of an ancestor tab field, it must to converted to its inp format
+        convertedToken = "inp" + Sqlc.TransformaNombreColumna(token);
         UIDefinition uiDef = UIDefinitionController.getInstance().getUIDefinition(
             ancestorField.getColumn().getId());
         // ... in that case, the left part is a boolean if that field is a YesNoUIDefinition
         isBoolean = (uiDef instanceof YesNoUIDefinition);
       }
-      convertedToken = "inp" + Sqlc.TransformaNombreColumna(token);
 
     }
     sessionAttributesInExpression.add(convertedToken);
