@@ -18,16 +18,21 @@
  */
 package org.openbravo.client.application.window;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
+import org.hibernate.criterion.Restrictions;
+import org.openbravo.client.application.Parameter;
 import org.openbravo.client.application.Process;
 import org.openbravo.client.kernel.BaseTemplateComponent;
 import org.openbravo.client.kernel.KernelConstants;
 import org.openbravo.client.kernel.Template;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 
 /**
@@ -118,5 +123,21 @@ public class ParameterWindowComponent extends BaseTemplateComponent {
 
   public String getProcessId() {
     return process.getId();
+  }
+
+  public List<org.openbravo.model.ad.domain.List> getButtonList() {
+    for (Parameter p : process.getOBUIAPPParameterList()) {
+      if (p.isActive() && p.getReference().getId().equals("FF80818132F94B500132F9575619000A")) {
+        OBCriteria<org.openbravo.model.ad.domain.List> qList = OBDal.getInstance().createCriteria(
+            org.openbravo.model.ad.domain.List.class);
+        qList.add(Restrictions.eq(org.openbravo.model.ad.domain.List.PROPERTY_REFERENCE,
+            p.getReferenceSearchKey()));
+        qList.add(Restrictions.eq(org.openbravo.model.ad.domain.List.PROPERTY_ACTIVE, true));
+        qList.addOrderBy(org.openbravo.model.ad.domain.List.PROPERTY_SEQUENCENUMBER, true);
+        qList.addOrderBy(org.openbravo.model.ad.domain.List.PROPERTY_SEARCHKEY, true);
+        return qList.list();
+      }
+    }
+    return new ArrayList<org.openbravo.model.ad.domain.List>();
   }
 }

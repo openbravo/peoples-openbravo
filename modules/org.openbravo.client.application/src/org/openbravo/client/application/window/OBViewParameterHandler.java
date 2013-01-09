@@ -13,6 +13,7 @@ import org.openbravo.model.ad.ui.Window;
 
 public class OBViewParameterHandler {
   private static final Logger log = Logger.getLogger(OBViewParameterHandler.class);
+  private static final String WINDOW_REFERENCE_ID = "FF80818132D8F0F30132D9BC395D0038";
   private Process process;
   private ParameterWindowComponent paramWindow;
 
@@ -23,7 +24,8 @@ public class OBViewParameterHandler {
   public List<OBViewParameter> getParameters() {
     List<OBViewParameter> params = new ArrayList<OBViewParameterHandler.OBViewParameter>();
     for (Parameter param : process.getOBUIAPPParameterList()) {
-      if (param.isActive() && !param.isFixed()) {
+      if (param.isActive()
+          && (!param.isFixed() || param.getReference().getId().equals(WINDOW_REFERENCE_ID))) {
         params.add(new OBViewParameter(param));
       }
     }

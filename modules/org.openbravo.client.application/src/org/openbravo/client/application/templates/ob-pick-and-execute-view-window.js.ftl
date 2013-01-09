@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2012 Openbravo SLU
+ * All portions are Copyright (C) 2011-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,6 +28,10 @@ isc.ClassFactory.defineClass('<#if !data.popup>processDefinition</#if>${data.win
     processId: '${data.processId?js_string}',
     actionHandler: '${data.actionHandler?js_string}',
     popup: ${data.popup?string}, 
+    <#list data.buttonList as button>
+    <#if button_index == 0>buttons:{</#if>
+    '${button.searchKey?js_string}':'${button.name?js_string}'<#if button_has_next>,<#else>},</#if>
+    </#list>
     viewProperties: {
       fields: [
     <#list data.paramHandler.parameters as param>
