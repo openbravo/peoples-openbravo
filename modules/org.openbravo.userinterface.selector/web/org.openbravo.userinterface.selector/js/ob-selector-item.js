@@ -609,7 +609,7 @@ isc.OBSelectorItem.addProperties({
     }
 
     // do not prevent the count operation
-    requestProperties.params[isc.OBViewGrid.NO_COUNT_PARAMETER] = 'true';
+    requestProperties.params[isc.OBViewGrid.NO_COUNT_PARAMETER] = 'false';
 
     // on purpose not passing the third boolean param
     isc.addProperties(requestProperties.params, this.form.view.getContextInfo(false, true));
