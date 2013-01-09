@@ -659,10 +659,14 @@ OB.Model.Terminal = Backbone.Model.extend({
   loadPermissions: function () {
     var me = this;
     new OB.DS.Request('org.openbravo.retail.posterminal.term.RolePreferences').exec({}, function (data) {
-      var i, max, permissions = {};
+      var i, max, separator, permissions = {};
       if (data) {
         for (i = 0, max = data.length; i < max; i++) {
-          permissions[data[i].key] = data[i].value;
+          permissions[data[i].key] = data[i].value; // Add the permission value
+          separator = data[i].key.indexOf('_');
+          if (separator >= 0) {
+            permissions[data[i].key.substring(separator + 1)] = data[i].value; // if key has a DB prefix, add also the permission value without this prefix
+          }
         }
         me.set('permissions', permissions);
         me.triggerReady();
@@ -939,7 +943,7 @@ OB.Model.Terminal = Backbone.Model.extend({
   },
 
   hasPermission: function (p) {
-    return !this.get('context').role.manual || this.get('permissions')[p] || this.get('permissions')['OBPOS_' + p];
+    return !this.get('context').role.manual || this.get('permissions')[p];
   },
 
   getPaymentName: function (key) {
