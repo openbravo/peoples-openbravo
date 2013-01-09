@@ -35,7 +35,7 @@ public class Product extends ProcessHQLQuery {
 
     // regular products
     products
-        .add("select pli.product.id as id, pli.product.name as _identifier, pli.product.taxCategory.id as taxCategory, "
+        .add("select pli.product.id as id, pli.product.searchKey as searchkey, pli.product.name as _identifier, pli.product.taxCategory.id as taxCategory, "
             + "pli.product.productCategory.id as productCategory, pli.product.obposScale as obposScale, pli.product.uOM.id as uOM, pli.product.uOM.symbol as uOMsymbol, pli.product.uPCEAN as uPCEAN, img.bindaryData as img "
             + ", pli.product.description as description "
             + ", pli.product.obposGroupedproduct as groupProduct "
@@ -68,7 +68,7 @@ public class Product extends ProcessHQLQuery {
 
     // discounts which type is defined as category
     products
-        .add("select p.id as id, p.name as _identifier, p.discountType.id as productCategory, p.obdiscPrice as listPrice, p.obdiscPrice as standardPrice, p.obdiscUpc as uPCEAN, img.bindaryData as img, 'true' as ispack"//
+        .add("select p.id as id, p.name as searchkey, p.name as _identifier, p.discountType.id as productCategory, p.obdiscPrice as listPrice, p.obdiscPrice as standardPrice, p.obdiscUpc as uPCEAN, img.bindaryData as img, 'true' as ispack"//
             + "  from PricingAdjustment as p left outer join p.obdiscImage img" //
             + " where p.discountType.obposIsCategory = true "//
             + "   and p.discountType.active = true " //
