@@ -25,7 +25,9 @@ public class OBViewParameterHandler {
     List<OBViewParameter> params = new ArrayList<OBViewParameterHandler.OBViewParameter>();
     for (Parameter param : process.getOBUIAPPParameterList()) {
       if (param.isActive()
-          && (!param.isFixed() || param.getReference().getId().equals(WINDOW_REFERENCE_ID))) {
+          && (!param.isFixed() || param.getReference().getId().equals(WINDOW_REFERENCE_ID))
+          && (!param.getReference().getId()
+              .equals(ParameterWindowComponent.BUTTON_LIST_REFERENCE_ID))) {
         params.add(new OBViewParameter(param));
       }
     }

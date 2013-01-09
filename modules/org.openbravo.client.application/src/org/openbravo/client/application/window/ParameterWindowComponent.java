@@ -45,6 +45,7 @@ public class ParameterWindowComponent extends BaseTemplateComponent {
   private static final String DEFAULT_TEMPLATE_ID = "FF80818132F916130132F9357DE10016";
 
   protected static final Map<String, String> TEMPLATE_MAP = new HashMap<String, String>();
+  static final String BUTTON_LIST_REFERENCE_ID = "FF80818132F94B500132F9575619000A";
 
   private Boolean inDevelopment = null;
   private String uniqueString = "" + System.currentTimeMillis();
@@ -127,7 +128,7 @@ public class ParameterWindowComponent extends BaseTemplateComponent {
 
   public List<org.openbravo.model.ad.domain.List> getButtonList() {
     for (Parameter p : process.getOBUIAPPParameterList()) {
-      if (p.isActive() && p.getReference().getId().equals("FF80818132F94B500132F9575619000A")) {
+      if (p.isActive() && p.getReference().getId().equals(BUTTON_LIST_REFERENCE_ID)) {
         OBCriteria<org.openbravo.model.ad.domain.List> qList = OBDal.getInstance().createCriteria(
             org.openbravo.model.ad.domain.List.class);
         qList.add(Restrictions.eq(org.openbravo.model.ad.domain.List.PROPERTY_REFERENCE,
