@@ -49,7 +49,11 @@ import org.openbravo.service.json.JsonToDataConverter.JsonConversionError;
  * Smartclient <a href="http://www.smartclient.com/docs/7.0rc2/a/b/c/go.html#class..RestDataSource">
  * RestDataSource</a> for more information.
  * 
- * This is a singleton class.
+ * The main usage of this class is through the {@link #getInstance()} method (as a singleton). This
+ * class can however also be extended and instantiated directly.
+ * 
+ * There are several methods to override/implement update and insert hooks, see the pre* and post*
+ * methods.
  * 
  * @author mtaal
  */
@@ -57,6 +61,8 @@ public class DefaultJsonDataService implements JsonDataService {
   private static final Logger log = Logger.getLogger(DefaultJsonDataService.class);
 
   private static final long serialVersionUID = 1L;
+
+  private static final String ADD_FLAG = "_doingAdd";
 
   private static DefaultJsonDataService instance = new DefaultJsonDataService();
 
@@ -259,8 +265,7 @@ public class DefaultJsonDataService implements JsonDataService {
       jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
       jsonResult.put(JsonConstants.RESPONSE_RESPONSE, jsonResponse);
 
-      return jsonResult.toString();
-
+      return doPostAction(parameters, jsonResult.toString(), DataSourceAction.FETCH);
     } catch (Throwable t) {
       log.error(t.getMessage(), t);
       return JsonUtils.convertExceptionToJson(t);
@@ -283,7 +288,15 @@ public class DefaultJsonDataService implements JsonDataService {
       final Object result = scrollableResults.get()[0];
       final JSONObject json = toJsonConverter.toJsonObject((BaseOBObject) result,
           DataResolvingMode.FULL);
+
+      try {
+        doPostFetch(parameters, json);
+      } catch (JSONException e) {
+        throw new OBException(e);
+      }
+
       writer.write(json);
+
       i++;
       // Clear session every 1000 records to prevent huge memory consumption in case of big loops
       if (i % 1000 == 0) {
@@ -456,6 +469,7 @@ public class DefaultJsonDataService implements JsonDataService {
             DataToJsonConverter.class);
         final List<JSONObject> jsonObjects = toJsonConverter.toJsonObjects(Collections
             .singletonList(bob));
+
         final JSONObject jsonResult = new JSONObject();
         final JSONObject jsonResponse = new JSONObject();
         jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
@@ -463,15 +477,21 @@ public class DefaultJsonDataService implements JsonDataService {
         jsonResult.put(JsonConstants.RESPONSE_RESPONSE, jsonResponse);
         OBDal.getInstance().commitAndClose();
 
+        doPreRemove(parameters, jsonObjects.get(0));
+
         // now do the real delete in a separate transaction
         // to prevent side effects that a child can not be deleted
         // from its parent
         // https://issues.openbravo.com/view.php?id=21229
         bob = OBDal.getInstance().get(entityName, id);
         OBDal.getInstance().remove(bob);
+
+        final String result = doPostAction(parameters, jsonResult.toString(),
+            DataSourceAction.REMOVE);
+
         OBDal.getInstance().commitAndClose();
 
-        return jsonResult.toString();
+        return result;
       } catch (Throwable t) {
         return JsonUtils.convertExceptionToJson(t);
       }
@@ -486,6 +506,7 @@ public class DefaultJsonDataService implements JsonDataService {
    * @see org.openbravo.service.json.JsonDataService#add(java.util.Map, java.lang.String)
    */
   public String add(Map<String, String> parameters, String content) {
+    parameters.put(ADD_FLAG, "true");
     return update(parameters, content);
   }
 
@@ -502,7 +523,14 @@ public class DefaultJsonDataService implements JsonDataService {
       final JsonToDataConverter fromJsonConverter = OBProvider.getInstance().get(
           JsonToDataConverter.class);
 
-      final Object jsonContent = getContentAsJSON(content);
+      String localContent = content;
+      if (parameters.containsKey(ADD_FLAG)) {
+        localContent = doPreAction(parameters, content, DataSourceAction.ADD);
+      } else {
+        localContent = doPreAction(parameters, content, DataSourceAction.UPDATE);
+      }
+
+      final Object jsonContent = getContentAsJSON(localContent);
       final List<BaseOBObject> bobs;
       final List<JSONObject> originalData = new ArrayList<JSONObject>();
       if (jsonContent instanceof JSONArray) {
@@ -589,14 +617,23 @@ public class DefaultJsonDataService implements JsonDataService {
             }
           }
         }
-        OBDal.getInstance().commitAndClose();
 
         final JSONObject jsonResult = new JSONObject();
         final JSONObject jsonResponse = new JSONObject();
         jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
         jsonResponse.put(JsonConstants.RESPONSE_DATA, new JSONArray(jsonObjects));
         jsonResult.put(JsonConstants.RESPONSE_RESPONSE, jsonResponse);
-        return jsonResult.toString();
+
+        final String result;
+        if (parameters.containsKey(ADD_FLAG)) {
+          result = doPostAction(parameters, jsonResult.toString(), DataSourceAction.ADD);
+        } else {
+          result = doPostAction(parameters, jsonResult.toString(), DataSourceAction.UPDATE);
+        }
+
+        OBDal.getInstance().commitAndClose();
+
+        return result;
       }
     } catch (Throwable t) {
       Throwable localThrowable = t;
@@ -625,5 +662,173 @@ public class DefaultJsonDataService implements JsonDataService {
 
   public static abstract class QueryResultWriter {
     public abstract void write(JSONObject json);
+  }
+
+  protected String doPreAction(Map<String, String> parameters, String content,
+      DataSourceAction action) {
+    try {
+      final Object contentObject = getContentAsJSON(content);
+      final boolean isArray = contentObject instanceof JSONArray;
+      final JSONArray data;
+      if (isArray) {
+        data = (JSONArray) contentObject;
+      } else {
+        final JSONObject request = new JSONObject(content);
+        data = new JSONArray(Collections.singleton(request.getJSONObject(JsonConstants.DATA)));
+      }
+
+      final JSONArray newData = new JSONArray();
+      for (int i = 0; i < data.length(); i++) {
+        final JSONObject dataElement = data.getJSONObject(i);
+
+        // do the pre thing
+        switch (action) {
+        case UPDATE:
+          doPreUpdate(parameters, dataElement);
+          break;
+        case ADD:
+          doPreInsert(parameters, dataElement);
+          break;
+        case REMOVE:
+          doPreRemove(parameters, dataElement);
+          break;
+        default:
+          throw new OBException("Unsupported action " + action);
+        }
+
+        // and set it in the new array
+        newData.put(dataElement);
+      }
+
+      // return the array directly
+      if (isArray) {
+        return newData.toString();
+      }
+
+      final JSONObject request = new JSONObject(content);
+      request.put(JsonConstants.DATA, newData.getJSONObject(0));
+      return request.toString();
+
+    } catch (JSONException e) {
+      throw new OBException(e);
+    } finally {
+      OBDal.getInstance().flush();
+    }
+  }
+
+  protected String doPostAction(Map<String, String> parameters, String content,
+      DataSourceAction action) {
+
+    OBDal.getInstance().flush();
+
+    try {
+      // this gets the data before the insert, so that it can be used
+      // for preprocessing, for example inserting an order
+      final JSONObject json = new JSONObject(content);
+      final JSONObject response = json.getJSONObject(JsonConstants.RESPONSE_RESPONSE);
+      final JSONArray data = response.getJSONArray(JsonConstants.RESPONSE_DATA);
+      final JSONArray newData = new JSONArray();
+      for (int i = 0; i < data.length(); i++) {
+        final JSONObject dataElement = data.getJSONObject(i);
+
+        // do the pre thing
+        switch (action) {
+        case FETCH:
+          doPostFetch(parameters, dataElement);
+          break;
+        case UPDATE:
+          doPostUpdate(parameters, dataElement);
+          break;
+        case ADD:
+          doPostInsert(parameters, dataElement);
+          break;
+        case REMOVE:
+          doPostRemove(parameters, dataElement);
+          break;
+        default:
+          throw new OBException("Unsupported action " + action);
+        }
+
+        // and set it in the new array
+        newData.put(dataElement);
+      }
+      // update the response with the changes, make it a string
+      response.put(JsonConstants.RESPONSE_DATA, newData);
+      json.put(JsonConstants.RESPONSE_RESPONSE, response);
+      return json.toString();
+    } catch (JSONException e) {
+      throw new OBException(e);
+    }
+  }
+
+  /**
+   * Is called before the actual remove of the object. The toRemove object contains the id and
+   * entity name of the to-be-deleted object.
+   */
+  protected void doPreRemove(Map<String, String> parameters, JSONObject toRemove)
+      throws JSONException {
+
+  }
+
+  /**
+   * Is called after the remove in the database but before the commit. The removed parameter object
+   * can be changed, the changes are sent to the client. This method is called in the same
+   * transaction as the remove action.
+   */
+  protected void doPostRemove(Map<String, String> parameters, JSONObject removed)
+      throws JSONException {
+
+  }
+
+  /**
+   * Is called after fetching an object before the result is sent to the client, the fetched
+   * {@link JSONObject} can be changed. The changes are sent to the client. This method is called in
+   * the same transaction as the main fetch operation.
+   */
+  protected void doPostFetch(Map<String, String> parameters, JSONObject fetched)
+      throws JSONException {
+
+  }
+
+  /**
+   * Is called before an object is inserted. The toInsert {@link JSONObject} can be changed, the
+   * changes are persisted to the database. This method is called in the same transaction as the
+   * insert.
+   */
+  protected void doPreInsert(Map<String, String> parameters, JSONObject toInsert)
+      throws JSONException {
+
+  }
+
+  /**
+   * Is called after the insert action in the same transaction as the insert. The inserted
+   * {@link JSONObject} can be changed, the changes are sent to the client.
+   */
+  protected void doPostInsert(Map<String, String> parameters, JSONObject inserted)
+      throws JSONException {
+    // final String id = inserted.getString(JsonConstants.ID);
+    // final String entityName = inserted.getString(JsonConstants.ENTITYNAME);
+
+  }
+
+  /**
+   * Called before the update of an object. Is called in the same transaction as the main update
+   * operation. Changes to the toUpdate {@link JSONObject} are persisted in the database.
+   */
+  protected void doPreUpdate(Map<String, String> parameters, JSONObject toUpdate)
+      throws JSONException {
+  }
+
+  /**
+   * Called after the updates have been done, within the same transaction as the main update.
+   * Changes to the updated {@link JSONObject} are sent to the client (but not persisted to the
+   * database).
+   */
+  protected void doPostUpdate(Map<String, String> parameters, JSONObject updated)
+      throws JSONException {
+  }
+
+  protected enum DataSourceAction {
+    FETCH, ADD, UPDATE, REMOVE
   }
 }
