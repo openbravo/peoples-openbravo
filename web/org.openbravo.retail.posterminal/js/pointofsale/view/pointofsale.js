@@ -499,7 +499,7 @@ enyo.kind({
     return true;
   },
   removePayment: function (inSender, inEvent) {
-    if (this.model.get('paymentData') && !confirm(OB.I18N.getLabel('OBPOS_MsgConfirmRemovePayment'))) {
+    if (inEvent.payment.get('paymentData') && !confirm(OB.I18N.getLabel('OBPOS_MsgConfirmRemovePayment'))) {
       return;
     }
     this.model.get('order').removePayment(inEvent.payment);
