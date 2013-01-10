@@ -43,7 +43,7 @@ enyo.kind({
       receipt: this.args.receipt
     }).render();
   },
-  initComponents: function (){
+  initComponents: function () {
     this.inherited(arguments);
     this.dfAutoDismiss = this.autoDismiss;
     this.dfCloseOnEscKey = this.closeOnEscKey;

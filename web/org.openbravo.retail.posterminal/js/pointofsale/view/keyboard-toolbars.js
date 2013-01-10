@@ -86,17 +86,21 @@ enyo.kind({
       }
     }
   },
-  getPayment: function (key, name, paymentMethod, rate, mulrate, isocode) {
-    var me = this;
-    return ({
-      'permission': key,
-      'stateless': false,
-      'action': function (keyboard, txt) {
-        var amount = OB.DEC.number(OB.I18N.parseNumber(txt));
-        amount = _.isNaN(amount) ? me.receipt.getPending() : amount;
-        me.pay(amount, key, name, paymentMethod, rate, mulrate, isocode);
+
+  getButtonComponent: function (sidebutton) {
+    return {
+      kind: 'OB.UI.BtnSide',
+      btn: {
+        command: sidebutton.command,
+        label: sidebutton.label,
+        permission: sidebutton.permission,
+        definition: {
+          permission: sidebutton.permission,
+          stateless: sidebutton.stateless,
+          action: sidebutton.action
+        }
       }
-    });
+    };
   },
 
   initComponents: function () {
@@ -117,22 +121,24 @@ enyo.kind({
       }
       allpayments[payment.payment.searchKey] = payment;
 
-      this.createComponent({
-        kind: 'OB.UI.BtnSide',
-        btn: {
-          command: payment.payment.searchKey,
-          label: payment.payment._identifier,
-          permission: payment.payment.searchKey,
-          definition: this.getPayment(payment.payment.searchKey, payment.payment._identifier, payment.paymentMethod, payment.rate, payment.mulrate, payment.isocode)
+      this.createComponent(this.getButtonComponent({
+        command: payment.payment.searchKey,
+        label: payment.payment._identifier,
+        permission: payment.payment.searchKey,
+        stateless: false,
+        action: function (keyboard, txt) {
+          var amount = OB.DEC.number(OB.I18N.parseNumber(txt));
+          amount = _.isNaN(amount) ? me.receipt.getPending() : amount;
+          me.pay(amount, payment.payment.searchKey, payment.payment._identifier, payment.paymentMethod, payment.rate, payment.mulrate, payment.isocode);
         }
-      });
+      }));
     }, this);
 
     // Fallback assign of the payment for the exact command.
     exactdefault = exactdefault || cashdefault || payments[0];
 
     enyo.forEach(this.sideButtons, function (sidebutton) {
-      this.createComponent(sidebutton);
+      this.createComponent(this.getButtonComponent(sidebutton));
     }, this);
 
     for (i = payments.length + this.sideButtons.length - 1; i < 4; i++) {
