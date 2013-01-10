@@ -7,6 +7,7 @@
 <!--1EF87E8E961A4E5BA3B41E1AB772B47C-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1EF87E8E961A4E5BA3B41E1AB772B47C-->  <OBKMO_WIDGET_CLASS_ID><![CDATA[147D825456D54D0486C3D7072531C5C9]]></OBKMO_WIDGET_CLASS_ID>
 <!--1EF87E8E961A4E5BA3B41E1AB772B47C-->  <HQL><![CDATA[select inv.id as invoiceId, inv.documentNo as documentNo,        inv.businessPartner.id as businessPartnerId, inv.businessPartner.name as businessPartnerName,        inv.invoiceDate as invoiceDate, inv.grandTotalAmount as grandTotalAmount,        inv.currency.iSOCode as currency, inv.paymentTerms.name as paymentTerms,        inv.outstandingAmount as outstandingAmount, inv.daysTillDue as daysTillDue,        inv.dueAmount as dueAmount, inv.organization.name as organizationName from Invoice as inv where inv.businessPartner.name like :businessPartnerName       and inv.documentNo like :documentNo       and inv.processed = true       and inv.paymentComplete = false       and inv.salesTransaction = true       and inv.client.id = :client       and inv.organization.id in (:organizationList)       and inv.organization.name like :organizationName       and @optional_filters@ order by inv.invoiceDate]]></HQL>
+<!--1EF87E8E961A4E5BA3B41E1AB772B47C-->  <TYPE><![CDATA[HQL]]></TYPE>
 <!--1EF87E8E961A4E5BA3B41E1AB772B47C--></OBCQL_WIDGET_QUERY>
 
 <!--58BCB96595FA45678CC1423402238309--><OBCQL_WIDGET_QUERY>
@@ -32,6 +33,7 @@ where inv.businessPartner.name like :businessPartnerName
       and inv.organization.name like :organizationName
       and @optional_filters@
 order by inv.invoiceDate]]></HQL>
+<!--58BCB96595FA45678CC1423402238309-->  <TYPE><![CDATA[HQL]]></TYPE>
 <!--58BCB96595FA45678CC1423402238309--></OBCQL_WIDGET_QUERY>
 
 <!--E5A0DC8536134185AC8B1897F15DB816--><OBCQL_WIDGET_QUERY>
@@ -55,6 +57,7 @@ where p.businessPartner.name like :businessPartnerName
       and p.organization.name like :organizationName
       and @optional_filters@
 order by p.paymentDate]]></HQL>
+<!--E5A0DC8536134185AC8B1897F15DB816-->  <TYPE><![CDATA[HQL]]></TYPE>
 <!--E5A0DC8536134185AC8B1897F15DB816--></OBCQL_WIDGET_QUERY>
 
 <!--F5DEE669DD8047FB831A12064BB277BE--><OBCQL_WIDGET_QUERY>
@@ -97,6 +100,7 @@ order by p.paymentDate]]></HQL>
     and ol.salesOrder.organization.name like :organizationName 
     and @optional_filters@ 
   order by ol.salesOrder.scheduledDeliveryDate, ol.salesOrder.documentNo]]></HQL>
+<!--F5DEE669DD8047FB831A12064BB277BE-->  <TYPE><![CDATA[HQL]]></TYPE>
 <!--F5DEE669DD8047FB831A12064BB277BE--></OBCQL_WIDGET_QUERY>
 
 <!--F94AEB4680AD4AD48255071903000A43--><OBCQL_WIDGET_QUERY>
@@ -120,6 +124,7 @@ where p.businessPartner.name like :businessPartnerName
       and p.organization.name like :organizationName
       and @optional_filters@
 order by p.paymentDate]]></HQL>
+<!--F94AEB4680AD4AD48255071903000A43-->  <TYPE><![CDATA[HQL]]></TYPE>
 <!--F94AEB4680AD4AD48255071903000A43--></OBCQL_WIDGET_QUERY>
 
 </data>

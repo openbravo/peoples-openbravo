@@ -15,6 +15,7 @@ and ol.client.id = :client
 and ol.product.name like :pname
 group by product.name, product.uOM.name, product.id, product.uOM.id 
 order by sum(orderedQuantity) desc]]></HQL>
+<!--CFDF8EE593F04CFE9709F5AD19A3A573-->  <TYPE><![CDATA[HQL]]></TYPE>
 <!--CFDF8EE593F04CFE9709F5AD19A3A573--></OBCQL_WIDGET_QUERY>
 
 <!--D2003CD3F9984BF39457BA1F2FFF01C9--><OBCQL_WIDGET_QUERY>
@@ -46,6 +47,7 @@ from
 	and tel.expenseSheet.businessPartner=u.businessPartner
 	and u.id=:user
 order by  tel.expenseSheet.reportDate, tel.expenseSheet.documentNo]]></HQL>
+<!--D2003CD3F9984BF39457BA1F2FFF01C9-->  <TYPE><![CDATA[HQL]]></TYPE>
 <!--D2003CD3F9984BF39457BA1F2FFF01C9--></OBCQL_WIDGET_QUERY>
 
 </data>

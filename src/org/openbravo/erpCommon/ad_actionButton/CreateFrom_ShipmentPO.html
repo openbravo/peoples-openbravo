@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -141,7 +141,9 @@ function checkAllCreateLines(chk, bolCheck)
 
     function checkActual(obj) {
       selectedCheck = selectedRow.id.toString().replace('funcEvenOddRow', 'CheckNum');
-      document.getElementById(selectedCheck).checked = !document.getElementById(selectedCheck).checked;
+      if (document.getElementById(selectedCheck)){
+        document.getElementById(selectedCheck).checked = !document.getElementById(selectedCheck).checked;
+      }
     }
 
     function HoverCell(cell) {
@@ -172,7 +174,7 @@ function checkAllCreateLines(chk, bolCheck)
             }
           }
           i = i + 1;     
-          if(parseInt(currentValue) > parseInt(defaultValue)) {
+          if(formattedNumberOp(currentValue, '>', defaultValue)) {
             invalid = true;
             showJSMessage('InvalidMovementQty');
             break;

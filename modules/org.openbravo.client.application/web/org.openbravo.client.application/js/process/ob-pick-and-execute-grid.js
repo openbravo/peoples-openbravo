@@ -124,7 +124,7 @@ isc.OBPickAndExecuteGrid.addProperties({
 
     // FIXME:---
     this.editFormProperties = {
-      //view: this.view.parentWindow.activeView
+      view: this.view.buttonOwnerView
     };
 
     // set properties defined for the grid
@@ -303,7 +303,7 @@ isc.OBPickAndExecuteGrid.addProperties({
   },
 
   getOrgParameter: function () {
-    var view = this.view && this.view.parentWindow && this.view.parentWindow.activeView,
+    var view = this.view && this.view.buttonOwnerView,
         context, i;
 
     if (view) {
@@ -330,7 +330,7 @@ isc.OBPickAndExecuteGrid.addProperties({
 
   getFetchRequestParams: function (params) {
     var props = this.gridProperties || {},
-        view = this.view && this.view.parentWindow && this.view.parentWindow.activeView;
+        view = this.view && this.view.buttonOwnerView;
 
     params = params || {};
     if (view) {
@@ -425,7 +425,7 @@ isc.OBPickAndExecuteGrid.addProperties({
   },
 
   getContextInfo: function (rowNum) {
-    var view = this.view && this.view.parentWindow && this.view.parentWindow.activeView,
+    var view = this.view && this.view.buttonOwnerView,
         contextInfo, record, fields, len, fld, i, value, undef, type;
 
     if (!view) {
@@ -445,10 +445,10 @@ isc.OBPickAndExecuteGrid.addProperties({
           if (type.createClassicString) {
             contextInfo[fld.inpColumnName] = type.createClassicString(value);
           } else {
-            contextInfo[fld.inpColumnName] = this.view.parentWindow.activeView.convertContextValue(value, fld.type);
+            contextInfo[fld.inpColumnName] = view.convertContextValue(value, fld.type);
           }
         } else {
-          contextInfo[fld.inpColumnName] = this.view.parentWindow.activeView.convertContextValue(value, fld.type);
+          contextInfo[fld.inpColumnName] = view.convertContextValue(value, fld.type);
         }
       }
     }

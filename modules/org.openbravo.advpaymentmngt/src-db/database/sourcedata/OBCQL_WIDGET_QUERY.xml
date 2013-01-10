@@ -9,6 +9,7 @@
 <!--FF80808133186ADD01331B3B733B0011-->  <HQL><![CDATA[select ad_message_get2(m.searchKey, :language) as regType, a.reconciledItems as itemNo, a.reconciledItemsAmount as itemAmt
 from APRM_Rec_Detail_v as a, ADMessage as m
 where a.type = m.searchKey and a.reconciliation.id = :reconciliationId]]></HQL>
+<!--FF80808133186ADD01331B3B733B0011-->  <TYPE><![CDATA[HQL]]></TYPE>
 <!--FF80808133186ADD01331B3B733B0011--></OBCQL_WIDGET_QUERY>
 
 </data>
