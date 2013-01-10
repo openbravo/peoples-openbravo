@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -73,9 +73,13 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
       }
 
       for (Parameter param : processDefinition.getOBUIAPPParameterList()) {
-        if (param.isFixed() && param.isEvaluateFixedValue()) {
-          parameters.put(param.getDBColumnName(),
-              ParameterUtils.getParameterFixedValue(fixRequestMap(parameters), param));
+        if (param.isFixed()) {
+          if (param.isEvaluateFixedValue()) {
+            parameters.put(param.getDBColumnName(),
+                ParameterUtils.getParameterFixedValue(fixRequestMap(parameters), param));
+          } else {
+            parameters.put(param.getDBColumnName(), param.getFixedValue());
+          }
         }
       }
 
