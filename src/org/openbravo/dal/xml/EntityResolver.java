@@ -98,6 +98,11 @@ public class EntityResolver implements OBNotSingleton {
 
   private boolean optionCreateReferencedIfNotFound = true;
 
+  // When the entity resolver is used to apply datasets, it has to look for the translated IDs
+  // When the entity resolver is used from a DAL REST webservice, there is not need to look for the
+  // translated IDs
+  private boolean lookForTranslatedIDs = true;
+
   void clear() {
     data.clear();
     originalIdObjectMapping.clear();
@@ -131,12 +136,16 @@ public class EntityResolver implements OBNotSingleton {
     BaseOBObject result = null;
     // note id can be null if someone did not care to add it in a manual
     // xml file
-    if (id != null) {
-      result = data.get(getKey(entityName, id));
-      if (result != null) {
-        return result;
+    if (lookForTranslatedIDs) {
+      if (id != null) {
+        result = data.get(getKey(entityName, id));
+        if (result != null) {
+          return result;
+        }
+        result = searchInstance(entity, id);
       }
-      result = searchInstance(entity, id);
+    } else {
+      result = OBDal.getInstance().get(entityName, id);
     }
 
     // search using the id if it is a view, note can be wrong as there can
@@ -533,15 +542,10 @@ public class EntityResolver implements OBNotSingleton {
   // a referenced one, otherwise use the naturaltree
   private String[] getOrgIds(String orgId) {
     final String[] searchOrgIds;
-    if (organization != null && orgId.equals(organization.getId())) {
-      searchOrgIds = orgNaturalTree;
+    if (orgId.equals("0")) {
+      searchOrgIds = zeroOrgTree;
     } else {
-      if (organizationStructureProvider != null) {
-        final Set<String> orgs = organizationStructureProvider.getNaturalTree(orgId);
-        searchOrgIds = orgs.toArray(new String[orgs.size()]);
-      } else {
-        searchOrgIds = zeroOrgTree;
-      }
+      searchOrgIds = orgNaturalTree;
     }
     return searchOrgIds;
   }
@@ -598,6 +602,10 @@ public class EntityResolver implements OBNotSingleton {
    */
   public void setOptionCreateReferencedIfNotFound(boolean optionCreateReferencedIfNotFound) {
     this.optionCreateReferencedIfNotFound = optionCreateReferencedIfNotFound;
+  }
+
+  public void setLookForTranslatedIDs(boolean lookForTranslatedIDs) {
+    this.lookForTranslatedIDs = lookForTranslatedIDs;
   }
 
   protected ResolvingMode getResolvingMode() {
