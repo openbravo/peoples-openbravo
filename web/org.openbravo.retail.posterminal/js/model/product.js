@@ -18,7 +18,7 @@
     source: 'org.openbravo.retail.posterminal.master.Product',
     dataLimit: 300,
     properties: ['id', 'searchkey', 'uPCEAN', 'uOM', 'uOMsymbol', 'productCategory', 'taxCategory', 'img', 'description', 'obposScale', 'groupProduct', 'showstock', 'bestseller', 'ispack', 'listPrice', 'standardPrice', 'priceLimit', 'cost', '_identifier', '_idx'],
-    propertiesFilter: ['_identifier', 'searchkey' , 'uPCEAN'],
+    propertiesFilter: ['_identifier', 'searchkey', 'uPCEAN'],
     propertyMap: {
       'id': 'm_product_id',
       'uPCEAN': 'upc',
