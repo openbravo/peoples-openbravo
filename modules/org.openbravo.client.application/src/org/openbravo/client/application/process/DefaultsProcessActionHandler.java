@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012 Openbravo SLU
+ * All portions are Copyright (C) 2012-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -24,12 +24,19 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.base.model.Entity;
+import org.openbravo.base.model.domaintype.DomainType;
+import org.openbravo.base.model.domaintype.ForeignKeyDomainType;
+import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.application.Parameter;
 import org.openbravo.client.application.ParameterUtils;
 import org.openbravo.client.application.Process;
 import org.openbravo.client.kernel.KernelConstants;
+import org.openbravo.client.kernel.reference.UIDefinition;
+import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.domain.Reference;
 
 /**
  * 
@@ -51,9 +58,39 @@ public class DefaultsProcessActionHandler extends BaseProcessActionHandler {
 
       for (Parameter param : processDefinition.getOBUIAPPParameterList()) {
         if (param.getDefaultValue() != null) {
-          defaults.put(param.getDBColumnName(), ParameterUtils.getJSExpressionResult(
-              fixRequestMap(parameters),
-              (HttpSession) parameters.get(KernelConstants.HTTP_SESSION), param.getDefaultValue()));
+
+          Reference reference = param.getReferenceSearchKey();
+          if (reference == null) {
+            reference = param.getReference();
+          }
+
+          UIDefinition uiDefinition = UIDefinitionController.getInstance().getUIDefinition(
+              reference);
+
+          Object defaultValue = ParameterUtils.getJSExpressionResult(fixRequestMap(parameters),
+              (HttpSession) parameters.get(KernelConstants.HTTP_SESSION), param.getDefaultValue());
+
+          DomainType domainType = uiDefinition.getDomainType();
+          if (defaultValue != null && defaultValue instanceof String
+              && domainType instanceof ForeignKeyDomainType) {
+            // default value is ID of a FK, look for the identifier
+            Entity referencedEntity = ((ForeignKeyDomainType) domainType)
+                .getForeignKeyColumn(param.getDBColumnName()).getProperty().getEntity();
+
+            BaseOBObject record = OBDal.getInstance().get(referencedEntity.getName(), defaultValue);
+            if (record != null) {
+              String identifier = record.getIdentifier();
+              JSONObject def = new JSONObject();
+              def.put("value", defaultValue);
+              def.put("identifier", identifier);
+              defaults.put(param.getDBColumnName(), def);
+            }
+          } else {
+            defaults.put(param.getDBColumnName(),
+                ParameterUtils.getJSExpressionResult(fixRequestMap(parameters),
+                    (HttpSession) parameters.get(KernelConstants.HTTP_SESSION),
+                    param.getDefaultValue()));
+          }
         }
       }
       log.debug("Defaults for process " + processDefinition + "\n" + defaults.toString());
@@ -65,5 +102,4 @@ public class DefaultsProcessActionHandler extends BaseProcessActionHandler {
       OBContext.restorePreviousMode();
     }
   }
-
 }
