@@ -458,7 +458,7 @@
                            left join m_pricelist pl on pl.m_pricelist_id = o.m_pricelist_id
                     WHERE l.M_INOUT_ID = s.M_INOUT_ID
                     AND (l.c_orderline_id is null OR pl.istaxincluded = ?)
-                    AND l.isinvoiced = 'N'
+                    AND l.isinvoiced = 'N')
         AND NOT EXISTS (SELECT 1 FROM C_INVOICE_CANDIDATE_V ic, C_ORDER o 
         WHERE o.C_ORDER_ID = s.C_ORDER_ID
         AND o.C_ORDER_ID = ic.C_ORDER_ID
