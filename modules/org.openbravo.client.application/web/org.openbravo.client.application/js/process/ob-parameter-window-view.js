@@ -19,7 +19,10 @@
 
 isc.defineClass('OBParameterWindowView', isc.VLayout);
 
-
+// == OBParameterWindowView ==
+//   OBParameterWindowView is the view that represents parameter windows, this
+//   is, Process Definition with Standard UIPattern. It contains a series of 
+//   parameters (fields) and, optionally, a grid.
 isc.OBParameterWindowView.addProperties({
   // Set default properties for the OBPopup container
   showMinimizeButton: true,

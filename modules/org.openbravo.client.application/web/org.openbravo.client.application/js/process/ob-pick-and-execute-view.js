@@ -19,7 +19,10 @@
 
 isc.defineClass('OBPickAndExecuteView', isc.VLayout);
 
-
+// == OBPickAndExecuteView ==
+//   OBPickAndExecuteView is the view that contains the grid for the Pick &
+//   Execute pattern. It is a special parameter field in OBParameterWindowView
+//   consisting in a window reference.
 isc.OBPickAndExecuteView.addProperties({
   // Set default properties for the OBPopup container
   showMinimizeButton: true,

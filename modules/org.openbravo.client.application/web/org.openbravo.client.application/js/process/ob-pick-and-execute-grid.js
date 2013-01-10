@@ -19,6 +19,9 @@
 
 isc.defineClass('OBPickAndExecuteGrid', isc.OBGrid);
 
+// == OBPickAndExecuteGrid ==
+//   OBPickAndExecuteGrid is the grid that is the actual parameter of the
+//   OBPickAndExecuteView class.
 isc.OBPickAndExecuteGrid.addProperties({
   dataProperties: {
     useClientFiltering: false,
