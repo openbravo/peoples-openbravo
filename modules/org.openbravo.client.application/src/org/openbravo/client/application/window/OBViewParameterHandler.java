@@ -70,7 +70,6 @@ public class OBViewParameterHandler {
     }
 
     public String getName() {
-      // TODO: camelcase??
       return parameter.getDBColumnName();
     }
 
@@ -88,8 +87,6 @@ public class OBViewParameterHandler {
 
       if (parameter.getReferenceSearchKey().getOBUIAPPRefWindowList().size() == 0
           || parameter.getReferenceSearchKey().getOBUIAPPRefWindowList().get(0).getWindow() == null) {
-        // log.error(String.format(AD_DEF_ERROR, p.getId(), "Window", "window"));
-        System.out.println("oooo");
         return null;
       } else {
         window = parameter.getReferenceSearchKey().getOBUIAPPRefWindowList().get(0).getWindow();
@@ -104,7 +101,6 @@ public class OBViewParameterHandler {
 
       final OBViewTab tabComponent = paramWindow.createComponent(OBViewTab.class);
       tabComponent.setTab(tab);
-      // tabComponent.setUniqueString(uniqueString); //XXX: ???
       return tabComponent.generate();
     }
 

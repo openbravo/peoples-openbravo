@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012 Openbravo SLU
+ * All portions are Copyright (C) 2012-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,7 +25,6 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.apache.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.client.application.Parameter;
 import org.openbravo.client.application.Process;
@@ -41,7 +40,6 @@ import org.openbravo.dal.service.OBDal;
  * @author alostale
  */
 public class ParameterWindowComponent extends BaseTemplateComponent {
-  private static final Logger log = Logger.getLogger(ParameterWindowComponent.class);
   private static final String DEFAULT_TEMPLATE_ID = "FF80818132F916130132F9357DE10016";
 
   protected static final Map<String, String> TEMPLATE_MAP = new HashMap<String, String>();
@@ -100,11 +98,6 @@ public class ParameterWindowComponent extends BaseTemplateComponent {
   }
 
   public String getThreadSafe() {
-    // final Boolean value = getWindow().isThreadsafe();
-    // if (value != null) {
-    // return value.toString();
-    // }
-    // TODO: review this
     return "true";
   }
 
