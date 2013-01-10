@@ -112,6 +112,42 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
       printGrid(response, vars, strBusinessPartnerId, strPaymentId, strOrgId, strExpectedDateFrom,
           strExpectedDateTo, strDocumentType, strSelectedPaymentDetails, isReceipt,
           showAlternativePM);
+    } else if (vars.commandIn("BPARTNERBLOCK")) {
+      boolean isReceipt = vars.getRequiredStringParameter("isReceipt").equals("Y");
+      String strBusinessPartnerId = vars.getRequestGlobalVariable("inpBusinessPartnerId", "");
+      if ("".equals(strBusinessPartnerId)) {
+        strBusinessPartnerId = vars.getRequestGlobalVariable("inpcBPartnerId", "");
+      }
+      if (!"".equals(strBusinessPartnerId)) {
+        BusinessPartner businessPartner = OBDal.getInstance().get(BusinessPartner.class,
+            strBusinessPartnerId);
+        if (FIN_Utility.isBlockedBusinessPartner(businessPartner.getId(), isReceipt, 4)) {
+          businessPartnerBlocked(response, vars, businessPartner.getIdentifier());
+        }
+      } else {
+        String strSelectedScheduledPaymentDetailIds = vars.getInStringParameter(
+            "inpScheduledPaymentDetailId", "", null);
+        if (!"".equals(strSelectedScheduledPaymentDetailIds)) {
+          OBContext.setAdminMode(true);
+          try {
+            List<FIN_PaymentScheduleDetail> selectedPaymentDetails = FIN_Utility.getOBObjectList(
+                FIN_PaymentScheduleDetail.class, strSelectedScheduledPaymentDetailIds);
+            for (FIN_PaymentScheduleDetail psd : selectedPaymentDetails) {
+              BusinessPartner bPartner;
+              if (psd.getInvoicePaymentSchedule() == null) {
+                bPartner = psd.getOrderPaymentSchedule().getOrder().getBusinessPartner();
+              } else {
+                bPartner = psd.getInvoicePaymentSchedule().getInvoice().getBusinessPartner();
+              }
+              if (FIN_Utility.isBlockedBusinessPartner(bPartner.getId(), isReceipt, 4)) {
+                businessPartnerBlocked(response, vars, bPartner.getIdentifier());
+              }
+            }
+          } finally {
+            OBContext.restorePreviousMode();
+          }
+        }
+      }
     } else if (vars.commandIn("SAVE") || vars.commandIn("SAVEANDPROCESS")) {
       boolean isReceipt = vars.getRequiredStringParameter("isReceipt").equals("Y");
       String strAction = null;
@@ -885,6 +921,21 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
       }
     }
     return storedNotSelectedPSDs;
+  }
+
+  private void businessPartnerBlocked(HttpServletResponse response, VariablesSecureApp vars,
+      String strBPartnerName) throws IOException, ServletException {
+
+    try {
+      JSONObject json = new JSONObject();
+      json.put("text", "SelectedBPartnerBlocked");
+      response.setContentType("text/html; charset=UTF-8");
+      PrintWriter out = response.getWriter();
+      out.println("objson = " + json);
+      out.close();
+    } catch (JSONException e) {
+      log4j.error(e);
+    }
   }
 
   public String getServletInfo() {

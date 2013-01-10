@@ -96,6 +96,10 @@
     v_reservation_id    VARCHAR2(32);
     v_voidmovementdate M_Inout.MovementDate%TYPE;
     v_voiddate_acct M_Inout.DateAcct%TYPE;
+    v_bpartner_blocked VARCHAR2(1):='N';
+    v_goods_blocked VARCHAR2(1):='N';
+    v_bpartner_name VARCHAR2(60);
+    v_DocAction VARCHAR2(60);
 
   BEGIN
     IF(p_PInstance_ID IS NOT NULL) THEN
@@ -167,6 +171,18 @@
         IF v_Count>0 THEN
           RAISE_APPLICATION_ERROR(-20000, '@NotCorrectOrgBpartnerInout@') ;
         END IF;
+      END IF;
+      
+      SELECT CASE WHEN (m.ISSOTRX='Y') THEN customer_blocking ELSE vendor_blocking END, CASE WHEN (m.ISSOTRX='Y') 
+      THEN so_goods_blocking ELSE po_goods_blocking END, name, DocAction
+      INTO v_bpartner_blocked, v_goods_blocked, v_bpartner_name, v_DocAction
+      FROM M_InOut m, C_BPartner bp
+      WHERE m.c_bpartner_id = bp.c_bpartner_id
+      AND m.M_InOut_ID=v_Record_ID
+      AND m.C_BPARTNER_ID=bp.C_BPARTNER_ID;
+      
+      IF (v_DocAction = 'CO' AND v_bpartner_blocked = 'Y' AND v_goods_blocked = 'Y' AND v_isreturndoctype='N') THEN
+        RAISE_APPLICATION_ERROR(-20000, '@ThebusinessPartner@'||' '|| v_bpartner_name ||' '||'@BusinessPartnerBlocked@');
       END IF;
       
      v_ResultStr:='CheckingRestrictions';

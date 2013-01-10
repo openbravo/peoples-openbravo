@@ -41,6 +41,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.currency.ConversionRateDoc;
@@ -79,6 +80,46 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
 
       final ConnectionProvider conProvider = bundle.getConnection();
       final boolean isReceipt = payment.isReceipt();
+
+      if (strAction.equals("P") || strAction.equals("D")) {
+        if (payment.getBusinessPartner() != null) {
+          if (FIN_Utility.isBlockedBusinessPartner(payment.getBusinessPartner().getId(), isReceipt,
+              4)) {
+            // If the Business Partner is blocked for Payments, the Payment will not be completed.
+            msg.setType("Error");
+            msg.setTitle(Utility.messageBD(conProvider, "Error", language));
+            msg.setMessage(OBMessageUtils.messageBD("ThebusinessPartner") + " "
+                + payment.getBusinessPartner().getIdentifier() + " "
+                + OBMessageUtils.messageBD("BusinessPartnerBlocked"));
+            bundle.setResult(msg);
+            OBDal.getInstance().rollbackAndClose();
+            return;
+          }
+        } else {
+          for (FIN_PaymentDetail pd : payment.getFINPaymentDetailList()) {
+            for (FIN_PaymentScheduleDetail psd : pd.getFINPaymentScheduleDetailList()) {
+              BusinessPartner bPartner;
+              if (psd.getInvoicePaymentSchedule() == null) {
+                bPartner = psd.getOrderPaymentSchedule().getOrder().getBusinessPartner();
+              } else {
+                bPartner = psd.getInvoicePaymentSchedule().getInvoice().getBusinessPartner();
+              }
+              if (FIN_Utility.isBlockedBusinessPartner(bPartner.getId(), payment.isReceipt(), 4)) {
+                // If the Business Partner is blocked for Payments, the Payment will not be
+                // completed.
+                msg.setType("Error");
+                msg.setTitle(Utility.messageBD(conProvider, "Error", language));
+                msg.setMessage(OBMessageUtils.messageBD("ThebusinessPartner") + " "
+                    + bPartner.getIdentifier() + " "
+                    + OBMessageUtils.messageBD("BusinessPartnerBlocked"));
+                bundle.setResult(msg);
+                OBDal.getInstance().rollbackAndClose();
+                return;
+              }
+            }
+          }
+        }
+      }
 
       OBDal.getInstance().flush();
       if (strAction.equals("P") || strAction.equals("D")) {

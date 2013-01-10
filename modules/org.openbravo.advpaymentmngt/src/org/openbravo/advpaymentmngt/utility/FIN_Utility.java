@@ -58,6 +58,7 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.utility.Sequence;
+import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.currency.ConversionRate;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.DocumentType;
@@ -1116,5 +1117,50 @@ public class FIN_Utility {
     Organization org = OBDal.getInstance().get(Organization.class, (String) result);
 
     return org.getOrganizationType().isLegalEntityWithAccounting();
+  }
+
+  /**
+   * Returns true if the Business Partner is blocked for the document type selected.
+   * 
+   * @param strBPartnerId
+   * @param issotrx
+   * @param docType
+   *          1: Order. 2: Goods Receipt / Shipment. 3: Invoice. 4: Payment.
+   * @return
+   */
+  public static boolean isBlockedBusinessPartner(String strBPartnerId, boolean issotrx, int docType) {
+    try {
+      OBContext.setAdminMode(true);
+      BusinessPartner bPartner = OBDal.getInstance().get(BusinessPartner.class, strBPartnerId);
+      switch (docType) {
+      case 1: {
+        // Order
+        return ((issotrx && bPartner.isCustomerBlocking() && bPartner.isSalesOrder()) || (!issotrx
+            && bPartner.isVendorBlocking() && bPartner.isPurchaseOrder()));
+
+      }
+      case 2: {
+        // Goods Shipment / Receipt
+        return ((issotrx && bPartner.isCustomerBlocking() && bPartner.isGoodsShipment()) || (!issotrx
+            && bPartner.isVendorBlocking() && bPartner.isGoodsReceipt()));
+
+      }
+      case 3: {
+        // Invoice
+        return ((issotrx && bPartner.isCustomerBlocking() && bPartner.isSalesInvoice()) || (!issotrx
+            && bPartner.isVendorBlocking() && bPartner.isPurchaseInvoice()));
+      }
+      case 4: {
+        // Payment
+        return ((issotrx && bPartner.isCustomerBlocking() && bPartner.isPaymentIn()) || (!issotrx
+            && bPartner.isVendorBlocking() && bPartner.isPaymentOut()));
+
+      }
+      default:
+        return false;
+      }
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 }
