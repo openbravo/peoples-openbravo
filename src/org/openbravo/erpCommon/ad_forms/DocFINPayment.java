@@ -414,6 +414,9 @@ public class DocFINPayment extends AcctServer {
     StringBuffer sb = new StringBuffer(" [");
     // Total
     retValue = retValue.add(new BigDecimal(getAmount(AcctServer.AMTTYPE_Gross)));
+    if ((new BigDecimal(generatedAmount)).signum() == 0) {
+      retValue = retValue.add(new BigDecimal(usedAmount));
+    }
     sb.append(getAmount(AcctServer.AMTTYPE_Gross));
     // - Lines
     for (int i = 0; i < p_lines.length; i++) {
