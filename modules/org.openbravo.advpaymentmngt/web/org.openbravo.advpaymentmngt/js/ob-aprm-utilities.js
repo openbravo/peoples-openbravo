@@ -207,11 +207,11 @@ OB.APRM.validateDoubtfulDebtPickAndEdit = function (item, validator, value, reco
 };
 
 OB.APRM.selectDoubtfulDebtPickAndEdit = function (grid, record, state) {
-	var percentage = grid.view.parentWindow.views[0].getParentRecord().percentage;
-	if(state){
-	  record.doubtfulDebtAmount = String(new BigDecimal(String(record.outstandingamt)).multiply(new BigDecimal(String(percentage))).divide(new BigDecimal('100')));
-	}else{
-	  record.doubtfulDebtAmount = '0.00';
-	}
+  var percentage = grid.view.parentWindow.views[0].getParentRecord().percentage;
+  if (state) {
+    record.doubtfulDebtAmount = String(new BigDecimal(String(record.outstandingamt)).multiply(new BigDecimal(String(percentage))).divide(new BigDecimal('100')));
+  } else {
+    record.doubtfulDebtAmount = '0.00';
+  }
   return true;
 };

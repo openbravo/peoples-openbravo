@@ -182,7 +182,7 @@ public class DoubtFulDebtPickEditLines extends BaseProcessActionHandler {
         for (FIN_PaymentScheduleDetail psd : salesInvoicePaymentSchedule
             .getFINPaymentScheduleDetailInvoicePaymentScheduleList()) {
           if (psd.getPaymentDetails() == null && !psd.isCanceled()) {
-            psd.setDebtAmount(psd.getDebtAmount().subtract(dd.getAmount()));
+            psd.setDoubtfulDebtAmount(psd.getDoubtfulDebtAmount().subtract(dd.getAmount()));
             OBDal.getInstance().save(psd);
           }
         }
@@ -201,7 +201,8 @@ public class DoubtFulDebtPickEditLines extends BaseProcessActionHandler {
       if (psd.getPaymentDetails() == null && !psd.isCanceled()) {
         // Pending amount should be greater or equals than the doubtful debt amount
         if (psd.getAmount().compareTo(debtAmount) >= 0) {
-          psd.setDebtAmount(psd.getDebtAmount().add(debtAmount).subtract(oldDebtAmount));
+          psd.setDoubtfulDebtAmount(psd.getDoubtfulDebtAmount().add(debtAmount)
+              .subtract(oldDebtAmount));
           OBDal.getInstance().save(psd);
         }
       }

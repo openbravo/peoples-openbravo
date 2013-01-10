@@ -53,10 +53,6 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="ACCOUNTINGDATE" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <column name="AMOUNT" primaryKey="false" required="true" type="DECIMAL" autoIncrement="false">
         <default><![CDATA[0]]></default>
         <onCreateDefault/>
@@ -109,6 +105,17 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="DATEACCT" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="A_ASSET_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <foreign-key foreignTable="A_ASSET" name="FIN_DOUBTFUL_DEBT_ASSET">
+        <reference local="A_ASSET_ID" foreign="A_ASSET_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="C_ACTIVITY" name="FIN_DOUBTFUL_DEBT_C_ACTIVITY">
         <reference local="C_ACTIVITY_ID" foreign="C_ACTIVITY_ID"/>
       </foreign-key>

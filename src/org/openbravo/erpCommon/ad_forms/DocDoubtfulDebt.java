@@ -82,6 +82,8 @@ public class DocDoubtfulDebt extends AcctServer {
         .getNdDimension().getId() : "");
     FieldProviderFactory.setField(data[0], "cCostcenterId", dd.getCostCenter() != null ? dd
         .getCostCenter().getId() : "");
+    FieldProviderFactory.setField(data[0], "aAssetId", dd.getAsset() != null ? dd.getAsset()
+        .getId() : "");
 
     setObjectFieldProvider(data);
 

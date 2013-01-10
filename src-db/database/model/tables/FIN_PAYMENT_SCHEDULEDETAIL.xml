@@ -81,10 +81,6 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="DEBTAMOUNT" primaryKey="false" required="true" type="DECIMAL" autoIncrement="false">
-        <default><![CDATA[0]]></default>
-        <onCreateDefault/>
-      </column>
       <column name="C_COSTCENTER_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
@@ -95,6 +91,10 @@
       </column>
       <column name="USER2_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="DOUBTFULDEBT_AMOUNT" primaryKey="false" required="true" type="DECIMAL" autoIncrement="false">
+        <default><![CDATA[0]]></default>
         <onCreateDefault/>
       </column>
       <foreign-key foreignTable="AD_CLIENT" name="FIN_AD_CLIENT_SCHEDULEDETAIL">
@@ -148,7 +148,6 @@
       <index name="FIN_PYMT_SCHDET_DET_IDX" unique="false">
         <index-column name="FIN_PAYMENT_DETAIL_ID"/>
       </index>
-      <check name="FIN_PAY_SCHE_DETAIL_DEBT_AMT"><![CDATA[DEBTAMOUNT <= AMOUNT]]></check>
       <check name="FIN_PAY_SCHE_DETAIL_ISCANC_CHK"><![CDATA[ISCANCELED IN ('Y', 'N')]]></check>
     </table>
   </database>
