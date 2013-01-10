@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,7 +28,6 @@
  * SectionItem Button
  * Dialog
  * Note section
- * Calendar Item
 =======================================================================*/
 
 /*=======================================================================
@@ -880,75 +879,4 @@ a.OBNoteListGridDelete:link {
 
 a.OBNoteListGridDelete:hover {
   text-decoration: underline;
-}
-
-/*=======================================================================
- * Calendar Item
-=======================================================================*/
-
-.OBEventWindowHeader {
-  font-family: Verdana,Bitstream Vera Sans,sans-serif;
-  font-weight: bold;
-  font-size: 9px;
-  background-color: #FFE1C0;
-}
-
-.OBEventWindowBody {
-  font-family: Verdana,Bitstream Vera Sans,sans-serif;
-  font-size: 9px;
-  background-color: #FFE1C0;
-}
-
-.OBCalendarLegendElementColor {
-  margin: 3px 0px 0px 0px;
-}
-.OBCalendarLegendElementTitle {
-  padding: 4px 0px 0px 5px;
-}
-
-.OBCalendarGridCell {
-  border: 1px solid #cdd7bb;
-  border-width: 0px 1px 1px 0px;
-  font-family: arial, sans-serif;
-  font-size: 11px;
-}
-
-.OBCalendarGridCellWorkday {
-  border: 1px solid #cdd7bb;
-  border-width: 0px 1px 1px 0px;
-  font-family: arial, sans-serif;
-  font-size: 11px;
-}
-.OBCalendarGridCellDark {
-  border: 1px solid #cdd7bb;
-  border-width: 0px 1px 1px 0px;
-  font-family: arial, sans-serif;
-  font-size: 11px;
-}
-.OBCalendarGridCellDisabled {
-  border: 1px solid #cdd7bb;
-  border-width: 0px 1px 1px 0px;
-  font-family: arial, sans-serif;
-  font-size: 11px;
-  background-color: #F5F5F5;
-}
-
-.OBCalendarGridHeaderCell {
-  font-size: 11px;
-  font-family: 'lucida sans', sans-serif;
-  font-weight: bold;
-  border: 1px solid #BBBFB6;
-  border-width: 0px 1px 0px 0px;
-  text-align: center;
-  background-image: url(./images/grid/gridHeader_bg.png);
-}
-
-.OBCalendarGridHeaderCellOver {
-  font-size: 11px;
-  font-family: 'lucida sans', sans-serif;
-  font-weight: bold;
-  border: 1px solid #BBBFB6;
-  border-width: 0px 1px 0px 0px;
-  text-align: center;
-  background-image: url(./images/grid/gridHeader_bg_Over.png);
 }

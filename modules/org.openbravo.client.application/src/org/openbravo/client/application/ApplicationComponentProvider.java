@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -157,7 +157,9 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/main/ob-tab.js", false));
     globalResources.add(createStaticResource(
-        "web/org.openbravo.client.application/js/form/formitem/ob-formitem-calendar.js", true));
+        "web/org.openbravo.client.application/js/calendar/ob-calendar.js", true));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/calendar/ob-multicalendar.js", true));
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/grid/ob-grid.js", false));
 
@@ -293,6 +295,10 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
     globalResources.add(createStyleSheetResource(
         "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
             + KernelConstants.SKIN_PARAMETER
+            + "/org.openbravo.client.application/ob-calendar-styles.css", false));
+    globalResources.add(createStyleSheetResource(
+        "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
+            + KernelConstants.SKIN_PARAMETER
             + "/org.openbravo.client.application/ob-grid-styles.css", false));
     globalResources.add(createStyleSheetResource(
         "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
@@ -340,6 +346,10 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
         "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
             + KernelConstants.SKIN_PARAMETER
             + "/org.openbravo.client.application/ob-form-styles.js", false));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
+            + KernelConstants.SKIN_PARAMETER
+            + "/org.openbravo.client.application/ob-calendar-styles.js", false));
     globalResources.add(createStaticResource(
         "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
             + KernelConstants.SKIN_PARAMETER
