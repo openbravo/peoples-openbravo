@@ -205,7 +205,14 @@ isc.OBParameterWindowView.addProperties({
   },
 
   handleResponse: function (refresh, message, responseActions) {
-    var window = this.parentWindow;
+    var window = this.parentWindow,
+        tab = OB.MainView.TabSet.getTab(this.viewTabId);
+
+    // change title to done
+    if (tab) {
+      tab.setTitle(OB.I18N.getLabel('OBUIAPP_ProcessTitle_Done', [this.title]));
+    }
+
     this.showProcessing(false);
     if (message) {
       if (this.popup) {
@@ -286,9 +293,16 @@ isc.OBParameterWindowView.addProperties({
   doProcess: function (btnValue) {
     var i, tmp, view = this,
         grid, allProperties = (this.sourceView && this.sourceView.getContextInfo(false, true, false, true)) || {},
-        selection, len, allRows, params;
+        selection, len, allRows, params, tab;
     // activeView = view.parentWindow && view.parentWindow.activeView,  ???.
     this.showProcessing(true);
+
+    // change tab title to show executing...
+    tab = OB.MainView.TabSet.getTab(this.viewTabId);
+    if (tab) {
+      tab.setTitle(OB.I18N.getLabel('OBUIAPP_ProcessTitle_Executing', [this.title]));
+    }
+
     if (this.grid) {
       // TODO: Support for multiple grids
       grid = this.grid.viewGrid;
