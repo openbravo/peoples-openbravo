@@ -119,7 +119,7 @@ isc.OBPickAndExecuteGrid.addProperties({
     OB.TestRegistry.register('org.openbravo.client.application.process.pickandexecute.Grid', this);
 
     this.editFormProperties = {
-      view: this.view.parentWindow.activeView
+      view: this.view.buttonOwnerView
     };
 
     this.Super('initWidget', arguments);
@@ -290,7 +290,7 @@ isc.OBPickAndExecuteGrid.addProperties({
   },
 
   getOrgParameter: function () {
-    var view = this.view.parentWindow.activeView,
+    var view = this.view.buttonOwnerView,
         context, i;
 
     context = view.getContextInfo(true, false);
@@ -316,7 +316,7 @@ isc.OBPickAndExecuteGrid.addProperties({
 
   getFetchRequestParams: function (params) {
     var props = this.gridProperties || {},
-        view = this.view.parentWindow.activeView;
+        view = this.view.buttonOwnerView;
 
     params = params || {};
 
@@ -410,7 +410,7 @@ isc.OBPickAndExecuteGrid.addProperties({
   },
 
   getContextInfo: function (rowNum) {
-    var contextInfo = isc.addProperties({}, this.view.parentWindow.activeView.getContextInfo(false, true, false, true)),
+    var contextInfo = isc.addProperties({}, this.view.buttonOwnerView.getContextInfo(false, true, false, true)),
         record = isc.addProperties({}, this.getRecord(rowNum), this.getEditValues(rowNum)),
         fields = this.view.viewProperties.fields,
         len = fields.length,
@@ -425,10 +425,10 @@ isc.OBPickAndExecuteGrid.addProperties({
           if (type.createClassicString) {
             contextInfo[fld.inpColumnName] = type.createClassicString(value);
           } else {
-            contextInfo[fld.inpColumnName] = this.view.parentWindow.activeView.convertContextValue(value, fld.type);
+            contextInfo[fld.inpColumnName] = this.view.buttonOwnerView.convertContextValue(value, fld.type);
           }
         } else {
-          contextInfo[fld.inpColumnName] = this.view.parentWindow.activeView.convertContextValue(value, fld.type);
+          contextInfo[fld.inpColumnName] = this.view.buttonOwnerView.convertContextValue(value, fld.type);
         }
       }
     }
