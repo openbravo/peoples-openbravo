@@ -415,7 +415,7 @@ function onloadFunctions() {
                   </tr>
 
                   <tr>
-                    <td class="Button_RightAlign_ContentCell" colspan="2">
+                    <td class="Button_CenterAlign_ContentCell" colspan="2">
                       <div>
                         <button type="button" 
                           id="buttonHTML" 
@@ -440,7 +440,7 @@ function onloadFunctions() {
                         </button>
                       </div>
                     </td>
-                     <td class="Button_LeftAlign_ContentCell" colspan="2">
+                     <td class="Button_CenterAlign_ContentCell" colspan="2">
                       <div>
                         <button type="button" 
                           id="buttonHTML" 
@@ -465,9 +465,31 @@ function onloadFunctions() {
                         </button>
                       </div>
                     </td>
-                    <td class="ContentCell"></input>
+                     <td class="Button_CenterAlign_ContentCell" colspan="2">
+                      <div>
+                        <button type="button" 
+                          id="buttonXLS" 
+                          class="ButtonLink" 
+                          onclick="openServletNewWindow('PRINT_XLS', true, 'ReportWarehousePartnerJR.html', 'ReportWarehousePartnerJR', null, false, '700', '1000', true);return false;" 
+                          onfocus="buttonEvent('onfocus', this); window.status='View Results in a New Window'; return true;" 
+                          onblur="buttonEvent('onblur', this);" 
+                          onkeyup="buttonEvent('onkeyup', this);" 
+                          onkeydown="buttonEvent('onkeydown', this);" 
+                          onkeypress="buttonEvent('onkeypress', this);" 
+                          onmouseup="buttonEvent('onmouseup', this);" 
+                          onmousedown="buttonEvent('onmousedown', this);" 
+                          onmouseover="buttonEvent('onmouseover', this); window.status='View Results in a New Window'; return true;" 
+                          onmouseout="buttonEvent('onmouseout', this);">
+                          <table class="Button">
+                            <tr>
+                              <td class="Button_left"><img class="Button_Icon Button_Icon_html" alt="Export Results to XLS Format" title="Export Results to XLS Format" src="../../../../../web/images/blank.gif" border="0" /></td>
+                              <td class="Button_text">XLS Format</td>
+                              <td class="Button_right"></td>
+                            </tr>
+                          </table>
+                        </button>
+                      </div>
                     </td>
-                    <td class="ContentCell"></td>
                   </tr>
     </table>
 

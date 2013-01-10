@@ -25,6 +25,7 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
@@ -32,6 +33,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.Vector;
 
 import javax.inject.Inject;
@@ -67,6 +69,7 @@ import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.SessionInfo;
 import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.PropertyNotFoundException;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.datamodel.Column;
@@ -264,6 +267,7 @@ public class DataSourceServlet extends BaseKernelServlet {
     List<String> numericCols = new ArrayList<String>();
     Map<String, DecimalFormat> formats = new HashMap<String, DecimalFormat>();
     int clientUTCOffsetMiliseconds;
+    TimeZone clientTimeZone;
 
     public QueryJSONWriterToCSV(HttpServletRequest request, HttpServletResponse response,
         Map<String, String> parameters, Entity entity) {
@@ -308,6 +312,26 @@ public class DataSourceServlet extends BaseKernelServlet {
         } else {
           clientUTCOffsetMiliseconds = 0;
         }
+
+        clientTimeZone = null;
+        try {
+          String clientTimeZoneId = Preferences.getPreferenceValue("localTimeZoneID", true,
+              OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
+                  .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
+                  .getOBContext().getRole(), null);
+          List<String> validTimeZoneIDs = Arrays.asList(TimeZone.getAvailableIDs());
+          if (validTimeZoneIDs.contains(clientTimeZoneId)) {
+            clientTimeZone = TimeZone.getTimeZone(clientTimeZoneId);
+          } else {
+            log4j
+                .error(clientTimeZoneId
+                    + " is not a valid time zone identifier. For a list of all accepted identifiers check http://www.java2s.com/Tutorial/Java/0120__Development/GettingallthetimezonesIDs.htm");
+          }
+        } catch (PropertyException pe) {
+          log4j
+              .warn("The local Local Timezone ID property is not defined. It can be defined in a preference. For a list of all accepted values check http://www.java2s.com/Tutorial/Java/0120__Development/GettingallthetimezonesIDs.htm");
+        }
+
         fieldProperties = new ArrayList<String>();
         if (parameters.get("viewState") != null
             && !parameters.get("viewState").toString().equals("undefined")) {
@@ -485,6 +509,7 @@ public class DataSourceServlet extends BaseKernelServlet {
         } else {
           itKeys = json.keys();
         }
+
         boolean isFirst = true;
         while (itKeys.hasNext()) {
           String key = (String) itKeys.next();
@@ -535,7 +560,8 @@ public class DataSourceServlet extends BaseKernelServlet {
               && !keyValue.toString().equals("null")) {
             final String repairedString = JsonUtils.convertFromXSDToJavaFormat(keyValue.toString());
             Date localDate = JsonUtils.createDateTimeFormat().parse(repairedString);
-            Date clientTimezoneDate = convertFromLocalToClientTimezone(localDate);
+            Date clientTimezoneDate = null;
+            clientTimezoneDate = convertFromLocalToClientTimezone(localDate);
             String pattern = RequestContext.get().getSessionAttribute("#AD_JAVADATETIMEFORMAT")
                 .toString();
             SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
@@ -559,17 +585,31 @@ public class DataSourceServlet extends BaseKernelServlet {
     }
 
     private Date convertFromLocalToClientTimezone(Date localDate) {
-      Calendar now = Calendar.getInstance();
+
+      Date UTCDate = convertFromLocalToUTCTimezone(localDate);
+      Calendar calendar = null;
+      if (clientTimeZone != null) {
+        calendar = Calendar.getInstance(clientTimeZone);
+        calendar.setTime(UTCDate);
+        int gmtMillisecondOffset = (calendar.get(Calendar.ZONE_OFFSET) + calendar
+            .get(Calendar.DST_OFFSET));
+        calendar.add(Calendar.MILLISECOND, gmtMillisecondOffset);
+      } else {
+        calendar = Calendar.getInstance();
+        calendar.setTime(UTCDate);
+        calendar.add(Calendar.MILLISECOND, clientUTCOffsetMiliseconds);
+      }
+
+      return calendar.getTime();
+    }
+
+    private Date convertFromLocalToUTCTimezone(Date localDate) {
       Calendar calendar = Calendar.getInstance();
       calendar.setTime(localDate);
-      calendar.set(Calendar.DATE, now.get(Calendar.DATE));
-      calendar.set(Calendar.MONTH, now.get(Calendar.MONTH));
-      calendar.set(Calendar.YEAR, now.get(Calendar.YEAR));
 
-      int gmtMillisecondOffset = (now.get(Calendar.ZONE_OFFSET) + now.get(Calendar.DST_OFFSET));
+      int gmtMillisecondOffset = (calendar.get(Calendar.ZONE_OFFSET) + calendar
+          .get(Calendar.DST_OFFSET));
       calendar.add(Calendar.MILLISECOND, -gmtMillisecondOffset);
-
-      calendar.add(Calendar.MILLISECOND, clientUTCOffsetMiliseconds);
 
       return calendar.getTime();
     }

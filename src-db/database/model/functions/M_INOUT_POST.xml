@@ -22,7 +22,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2012 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2013 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -94,6 +94,9 @@
     v_Aux NUMBER;
     v_ProductName M_Product.name%TYPE;
     v_reservation_id    VARCHAR2(32);
+    v_voidmovementdate M_Inout.MovementDate%TYPE;
+    v_voiddate_acct M_Inout.DateAcct%TYPE;
+
   BEGIN
     IF(p_PInstance_ID IS NOT NULL) THEN
       --  Update AD_PInstance
@@ -118,6 +121,11 @@
       LOOP
         v_Record_ID:=Cur_Parameter.Record_ID;
         v_User:=Cur_Parameter.AD_User_ID;
+        IF (Cur_Parameter.parametername = 'voidedDocumentDate') THEN
+          v_voidmovementdate := TO_DATE(Cur_Parameter.p_string, 'YYYY-MM-DD');
+        ELSIF (Cur_Parameter.parametername = 'voidedDocumentAcctDate') THEN
+          v_voiddate_acct := TO_DATE(Cur_Parameter.p_string, 'YYYY-MM-DD');
+        END IF;
       END LOOP; -- Get Parameter
       DBMS_OUTPUT.PUT_LINE('  Record_ID=' || v_Record_ID) ;
     ELSE
@@ -227,15 +235,20 @@
       END IF;
     END IF;
         -- Process Shipments
-  
-      SELECT COUNT(*)
+      SELECT COUNT(*) INTO v_Aux
+      FROM M_InOutLine
+      WHERE M_InOut_ID = v_Record_ID;
+
+      IF v_Aux > 0 THEN  
+        SELECT COUNT(*)
         INTO v_Count
-      FROM M_INOUT IO, M_INOUTLINE IOL
-      WHERE IO.M_INOUT_ID = IOL.M_INOUT_ID
+        FROM M_INOUT IO, M_INOUTLINE IOL
+        WHERE IO.M_INOUT_ID = IOL.M_INOUT_ID
         AND AD_ISORGINCLUDED(IOL.AD_Org_ID, IO.AD_Org_ID, IO.AD_Client_ID) <> -1
         AND IO.M_INOUT_ID = v_Record_ID;
-      IF (v_Count=0) THEN
-        RAISE_APPLICATION_ERROR(-20000, '@NotCorrectOrgLines@') ;
+        IF (v_Count=0) THEN
+          RAISE_APPLICATION_ERROR(-20000, '@NotCorrectOrgLines@') ;
+        END IF;
       END IF;
       
       -- Check the header belongs to a organization where transactions are posible and ready to use
@@ -296,9 +309,7 @@
           IF(Cur_InOut.Processed='N' AND Cur_InOut.DocStatus='DR' AND Cur_InOut.DocAction='CO') THEN
             -- For all active shipment lines
             v_ResultStr:='HeaderLoop-1';
-            SELECT COUNT(*) INTO v_Aux
-        FROM M_InOutLine
-        WHERE M_InOut_ID = v_Record_ID;
+            
         IF v_Aux=0 THEN
         RAISE_APPLICATION_ERROR(-20000, '@ReceiptWithoutLines@');
         END IF;
@@ -521,30 +532,33 @@
                   AND sl.M_Product_ID=ol.M_Product_ID  --    AND   sl.M_AttributeSetInstance_ID=ol.M_AttributeSetInstance_ID
                   AND sl.M_InOut_ID=Cur_InOut.M_InOut_ID
                 )
-              LOOP
-                Ad_Sequence_Next('M_MatchPO', Cur_SLines.AD_Org_ID, v_MatchPO_ID) ;
-                -- The min qty. Modified by Ismael Ciordia
+              LOOP          
+
                 v_Qty:=Cur_SLines.MovementQty;
                 --IF (ABS(Cur_SLines.MovementQty) > ABS(Cur_SLines.QtyOrdered)) THEN
                 -- v_Qty := Cur_SLines.QtyOrdered;
                 --END IF;
-                v_ResultStr:='InsertMatchPO ' || v_MatchPO_ID;
-                INSERT
-                INTO M_MATCHPO
-                  (
-                    M_MatchPO_ID, AD_Client_ID, AD_Org_ID, IsActive,
-                    Created, CreatedBy, Updated, UpdatedBy,
-                    M_InOutLine_ID, C_OrderLine_ID, M_Product_ID, DateTrx,
-                    Qty, Processing, Processed, Posted
-                  )
-                  VALUES
-                  (
-                    v_MatchPO_ID, Cur_SLines.AD_Client_ID, Cur_SLines.AD_Org_ID, 'Y',
-                    now(), v_User, now(), v_User,
-                    Cur_SLines.M_InOutLine_ID, Cur_SLines.C_OrderLine_ID, Cur_SLines.M_Product_ID, now(),
-                    v_Qty, 'N', 'Y', 'N'
-                  )
+
+                  Ad_Sequence_Next('M_MatchPO', Cur_SLines.AD_Org_ID, v_MatchPO_ID) ;
+                  -- The min qty. Modified by Ismael Ciordia
+                  v_ResultStr:='InsertMatchPO ' || v_MatchPO_ID;
+                  INSERT
+                  INTO M_MATCHPO
+                    (
+                      M_MatchPO_ID, AD_Client_ID, AD_Org_ID, IsActive,
+                      Created, CreatedBy, Updated, UpdatedBy,
+                      M_InOutLine_ID, C_OrderLine_ID, M_Product_ID, DateTrx,
+                      Qty, Processing, Processed, Posted
+                    )
+                    VALUES
+                    (
+                      v_MatchPO_ID, Cur_SLines.AD_Client_ID, Cur_SLines.AD_Org_ID, 'Y',
+                      now(), v_User, now(), v_User,
+                      Cur_SLines.M_InOutLine_ID, Cur_SLines.C_OrderLine_ID, Cur_SLines.M_Product_ID, now(),
+                      v_Qty, 'N', 'Y', 'N'
+                    )
                   ;
+                  
               END LOOP;
               v_ResultStr:='MatchInv';
               FOR Cur_ILines IN
@@ -632,6 +646,7 @@
             SET Processed='Y',
             DocStatus='CO',
             DocAction='--',
+            Process_Goods_Java='--',
             Updated=now(),
             UpdatedBy=v_User
           WHERE M_INOUT.M_INOUT_ID=Cur_InOut.M_INOUT_ID;
@@ -707,7 +722,7 @@
               C_Costcenter_ID, A_Asset_ID,
               DeliveryViaRule, M_Shipper_ID, C_Charge_ID, ChargeAmt,
               PriorityRule, DocStatus, DocAction, Processing,
-              Processed, ISLOGISTIC, salesrep_id
+              Processed, ISLOGISTIC, salesrep_id, Process_Goods_Java
             )
             VALUES
             (
@@ -722,7 +737,7 @@
               Cur_InOut.C_Costcenter_ID, Cur_InOut.A_Asset_ID,
               Cur_InOut.DeliveryViaRule, Cur_InOut.M_Shipper_ID, Cur_InOut.C_Charge_ID, Cur_InOut.ChargeAmt * -1,
               Cur_InOut.PriorityRule, 'DR', 'CO', 'N',
-               'N', Cur_InOut.islogistic, Cur_InOut.salesrep_id
+               'N', Cur_InOut.islogistic, Cur_InOut.salesrep_id, 'CO'
             )
             ;
           v_ResultStr:='InsertInOutLine';
@@ -776,6 +791,7 @@
             Processed='Y',
             DocStatus='VO', -- it IS reversed
             DocAction='--',
+            Process_Goods_Java='--',
             Updated=now(),
             UpdatedBy=v_User
           WHERE M_INOUT.M_INOUT_ID=Cur_InOut.M_INOUT_ID;
@@ -796,6 +812,13 @@
           
           -- Post Reversal
           v_ResultStr:='PostReversal';
+          -- Update reversal goods dates
+          IF (v_voidmovementdate IS NOT NULL) THEN
+            UPDATE M_INOUT SET MovementDate = v_voidmovementdate WHERE M_INOUT_ID = v_RInOut_ID;
+          END IF;
+          IF (v_voiddate_acct IS NOT NULL) THEN
+            UPDATE M_INOUT SET DateAcct = v_voiddate_acct WHERE M_INOUT_ID = v_RInOut_ID;
+          END IF;
           M_INOUT_POST(NULL, v_RInOut_ID) ;
           -- Indicate as Reversal Transaction
           v_ResultStr:='IndicateReversal';

@@ -35,6 +35,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.sql.Connection;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -85,6 +86,9 @@ import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.model.ad.utility.Image;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.common.enterprise.OrganizationInformation;
+import org.openbravo.model.common.geography.Country;
+import org.openbravo.model.common.geography.Location;
 import org.openbravo.uiTranslation.TranslationHandler;
 import org.openbravo.utils.FileUtility;
 import org.openbravo.utils.FormatUtilities;
@@ -2499,5 +2503,97 @@ public class Utility {
   public static boolean isMobileBrowser(HttpServletRequest request) {
     final String ua = request.getHeader("User-Agent").toLowerCase();
     return (ua.matches(MOBILE_VENDORS) || ua.substring(0, 4).matches(MOBILE_VERSION));
+  }
+
+  /**
+   * Gets the country of the organization.
+   * 
+   * @param orgid
+   *          ID of the organization.
+   * 
+   * @return the country of the organization.
+   * 
+   */
+  public static Country getCountryFromOrgId(String orgid) {
+    Organization organization = (Organization) OBDal.getInstance().get(Organization.ENTITY_NAME,
+        orgid);
+    List<OrganizationInformation> orgInfoList = organization.getOrganizationInformationList();
+    OrganizationInformation orginfo = orgInfoList.get(0);
+    Location location = orginfo.getLocationAddress();
+    return location.getCountry();
+  }
+
+  /**
+   * Gets the date format for the organization country.
+   * 
+   * @param date
+   *          Date to apply the format.
+   * @param orgid
+   *          ID of the organization.
+   * 
+   * @return date with the country format string applied. In case is not defined, a default format
+   *         is applied
+   */
+  public static String applyCountryDateFormat(Date date, String orgid) {
+    try {
+      OBContext.setAdminMode(true);
+      Country country = getCountryFromOrgId(orgid);
+      String dateFormat = (country.getDateformat() == null) ? "dd-MM-yyyy" : country
+          .getDateformat();
+      SimpleDateFormat df = new SimpleDateFormat(dateFormat);
+      return df.format(date);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  /**
+   * Gets the date format for the organization country.
+   * 
+   * @param timeStamp
+   *          TimeStamp to apply the format.
+   * @param orgid
+   *          ID of the organization.
+   * 
+   * @return date with the country format string applied. In case is not defined, a default format
+   *         is applied
+   */
+  public static String applyCountryDateFormat(Timestamp timeStamp, String orgid) {
+    return applyCountryDateFormat(new Date(timeStamp.getTime()), orgid);
+  }
+
+  /**
+   * Gets the number format for the organization country.
+   * 
+   * @param orgid
+   *          ID of the organization.
+   * @param defaultDecimalFormat
+   *          Default decimal format.
+   * 
+   * @return DecimalFormat for the number representation defined for the country.
+   */
+  public static DecimalFormat getCountryNumberFormat(String orgid,
+      DecimalFormat defaultDecimalFormat) {
+    try {
+      OBContext.setAdminMode(true);
+      Country country = getCountryFromOrgId(orgid);
+      DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+      if (country.getDecimalseparator() != null)
+        symbols.setDecimalSeparator(country.getDecimalseparator().equals("C") ? ',' : '.');
+      if (country.getGroupingseparator() != null)
+        symbols.setGroupingSeparator(country.getGroupingseparator().equals("C") ? ',' : '.');
+      if (country.getNumericmask() != null) {
+        DecimalFormat numberFormat = new DecimalFormat(country.getNumericmask());
+        numberFormat.setDecimalFormatSymbols(symbols);
+        return numberFormat;
+      } else {
+        if (country.getDecimalseparator() != null || country.getNumericmask() != null) {
+          defaultDecimalFormat.setDecimalFormatSymbols(symbols);
+        }
+        return defaultDecimalFormat;
+      }
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 }

@@ -186,7 +186,7 @@ AND AD_ORG.ad_org_id = (SELECT o.AD_ORG_ID
 					<textElement textAlignment="Right">
 						<font fontName="Times-Roman" size="10"/>
 					</textElement>
-					<textFieldExpression class="java.util.Date"><![CDATA[$F{DATEINVOICED}]]></textFieldExpression>
+                                        <textFieldExpression class="java.lang.String"><![CDATA[org.openbravo.erpCommon.utility.Utility.applyCountryDateFormat($F{DATEINVOICED},$F{ORGANIZATIONID})]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement key="element-90" style="Group_Data_Label" mode="Transparent" x="-3" y="217" width="149" height="18" forecolor="#999999" backcolor="#FFFFFF"/>
@@ -317,7 +317,7 @@ AND AD_ORG.ad_org_id = (SELECT o.AD_ORG_ID
 				<subreport isUsingCache="true">
 					<reportElement key="subreport-2" style="Report_Footer" positionType="Float" x="0" y="0" width="482" height="16"/>
 					<subreportParameter name="NUMBERFORMAT">
-						<subreportParameterExpression><![CDATA[$P{NUMBERFORMAT}]]></subreportParameterExpression>
+                                                <subreportParameterExpression><![CDATA[org.openbravo.erpCommon.utility.Utility.getCountryNumberFormat($F{ORGANIZATIONID},$P{NUMBERFORMAT})]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportParameter name="LOCALE">
 						<subreportParameterExpression><![CDATA[$P{LOCALE}]]></subreportParameterExpression>
@@ -355,7 +355,7 @@ AND AD_ORG.ad_org_id = (SELECT o.AD_ORG_ID
 			<subreport isUsingCache="true">
 				<reportElement key="subreport-3" style="Report_Footer" x="0" y="0" width="482" height="16"/>
 				<subreportParameter name="NUMBERFORMAT">
-					<subreportParameterExpression><![CDATA[$P{NUMBERFORMAT}]]></subreportParameterExpression>
+                                        <subreportParameterExpression><![CDATA[org.openbravo.erpCommon.utility.Utility.getCountryNumberFormat($F{ORGANIZATIONID},$P{NUMBERFORMAT})]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="LOCALE">
 					<subreportParameterExpression><![CDATA[$P{LOCALE}]]></subreportParameterExpression>

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2012 Openbravo SLU
+ * All portions are Copyright (C) 2011-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -405,7 +405,14 @@ public class OBViewFieldHandler {
       viewField.setField(field);
       viewField.setProperty(property);
       viewField.setRedrawOnChange(false);
-      viewField.setShowIf("");
+
+      String jsExpression = null;
+      if (field.getDisplayLogic() != null && !field.getDisplayLogic().isEmpty()) {
+        final DynamicExpressionParser parser = new DynamicExpressionParser(field.getDisplayLogic(),
+            tab, field);
+        jsExpression = parser.getJSExpression();
+      }
+      viewField.setShowIf(jsExpression != null ? jsExpression : "");
       viewField.setReadOnlyIf("");
 
       viewFields.add(viewField);
@@ -529,9 +536,11 @@ public class OBViewFieldHandler {
     }
 
     public OBViewFieldAudit(String type, Element element) {
-      name = type;
-      this.element = element;
+      // force reload of element as if it was previously loaded but its children were not touched,
+      // lazy initialization fails
+      this.element = OBDal.getInstance().get(Element.class, element.getId());
 
+      name = type;
       if (type.endsWith("By")) {
         // User search
         refType = "30";
@@ -1319,6 +1328,10 @@ public class OBViewFieldHandler {
       } else {
         return field.isDisplayed() != null && field.isDisplayed();
       }
+    }
+
+    public boolean isStatusBarField() {
+      return field.isShownInStatusBar();
     }
 
     public boolean isShowInitiallyInGrid() {

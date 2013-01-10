@@ -142,7 +142,8 @@ public class ReportShipmentDimensionalAnalyzeJR extends HttpSecureAppServlet {
           strPartnerGroup, strcBpartnerId, strProductCategory, strmProductId, strmWarehouseId,
           strNotShown, strShown, strDateFromRef, strDateToRef, strOrg, strsalesrepId, strOrder,
           strMayor, strMenor, strPartnerSalesrepId, strCurrencyId, "html");
-    } else if (vars.commandIn("EDIT_PDF", "EDIT_PDF_COMPARATIVE")) {
+    } else if (vars.commandIn("EDIT_PDF", "EDIT_PDF_COMPARATIVE", "EDIT_XLS",
+        "EDIT_XLS_COMPARATIVE")) {
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom",
           "ReportShipmentDimensionalAnalyzeJR|dateFrom");
       String strDateTo = vars.getRequestGlobalVariable("inpDateTo",
@@ -177,10 +178,17 @@ public class ReportShipmentDimensionalAnalyzeJR extends HttpSecureAppServlet {
       String strComparative = vars.getStringParameter("inpComparative", "N");
       String strCurrencyId = vars.getGlobalVariable("inpCurrencyId",
           "ReportShipmentDimensionalAnalyzeJR|currency", strUserCurrencyId);
-      printPageHtml(request, response, vars, strComparative, strDateFrom, strDateTo,
-          strPartnerGroup, strcBpartnerId, strProductCategory, strmProductId, strmWarehouseId,
-          strNotShown, strShown, strDateFromRef, strDateToRef, strOrg, strsalesrepId, strOrder,
-          strMayor, strMenor, strPartnerSalesrepId, strCurrencyId, "pdf");
+      if (vars.commandIn("EDIT_PDF", "EDIT_PDF_COMPARATIVE")) {
+        printPageHtml(request, response, vars, strComparative, strDateFrom, strDateTo,
+            strPartnerGroup, strcBpartnerId, strProductCategory, strmProductId, strmWarehouseId,
+            strNotShown, strShown, strDateFromRef, strDateToRef, strOrg, strsalesrepId, strOrder,
+            strMayor, strMenor, strPartnerSalesrepId, strCurrencyId, "pdf");
+      } else {
+        printPageHtml(request, response, vars, strComparative, strDateFrom, strDateTo,
+            strPartnerGroup, strcBpartnerId, strProductCategory, strmProductId, strmWarehouseId,
+            strNotShown, strShown, strDateFromRef, strDateToRef, strOrg, strsalesrepId, strOrder,
+            strMayor, strMenor, strPartnerSalesrepId, strCurrencyId, "xls");
+      }
     } else
       pageErrorPopUp(response);
   }

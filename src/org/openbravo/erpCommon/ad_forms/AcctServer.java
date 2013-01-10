@@ -177,6 +177,8 @@ public abstract class AcctServer {
   /** Document Status */
   public static final String STATUS_NotCalculatedCost = "NC";
   /** Document Status */
+  public static final String STATUS_NoRelatedPO = "NO";
+  /** Document Status */
   public static final String STATUS_DocumentLocked = "L";
   /** Document Status */
   public static final String STATUS_DocumentDisabled = "D";
@@ -2172,6 +2174,12 @@ public abstract class AcctServer {
         // Transalate account name from messages
         parameters.put("Account",
             Utility.parseTranslation(conn, vars, vars.getLanguage(), parameters.get("Account")));
+      }
+    } else if (strStatus.equals(STATUS_NoRelatedPO)) {
+      if (parameters.isEmpty()) {
+        strTitle = "@GoodsReceiptTransactionWithNoPO@";
+      } else {
+        strTitle = "@GoodsReceiptTransactionWithNoPOWichProduct@";
       }
     } else if (strStatus.equals(STATUS_DocumentDisabled)) {
       strTitle = "@DocumentDisabled@";

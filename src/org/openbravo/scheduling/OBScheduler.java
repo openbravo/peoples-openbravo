@@ -492,6 +492,10 @@ public class OBScheduler {
         trigger.setGroup(OB_GROUP);
 
       trigger.getJobDataMap().put(ProcessBundle.KEY, bundle);
+      trigger.getJobDataMap().put(Process.PREVENT_CONCURRENT_EXECUTIONS,
+          "Y".equals(data.preventconcurrent));
+      trigger.getJobDataMap().put(Process.PROCESS_NAME, data.processName);
+      trigger.getJobDataMap().put(Process.PROCESS_ID, data.adProcessId);
 
       return trigger;
     }

@@ -20,6 +20,7 @@ package org.openbravo.advpaymentmngt.ad_forms;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
@@ -382,6 +383,7 @@ public class BatchPaymentExecution extends HttpSecureAppServlet {
     strRowsData.append("  <rows numRows=\"").append(strNumRows)
         .append("\" backendPage=\"" + page + "\">\n");
     if (gridPayments != null && gridPayments.size() > 0) {
+      DecimalFormat df = Utility.getFormat(vars, "euroRelation");
       for (FIN_Payment pay : gridPayments) {
         strRowsData.append("    <tr>\n");
         for (int k = 0; k < headers.length; k++) {
@@ -406,7 +408,7 @@ public class BatchPaymentExecution extends HttpSecureAppServlet {
             columnData = Utility.formatDate(pay.getPaymentDate(), vars.getJavaDateFormat());
             break;
           case 4: // amount
-            columnData = pay.getAmount().toString();
+            columnData = df.format(pay.getAmount());
             break;
           case 5: // rowkey
             columnData = pay.getId().toString();

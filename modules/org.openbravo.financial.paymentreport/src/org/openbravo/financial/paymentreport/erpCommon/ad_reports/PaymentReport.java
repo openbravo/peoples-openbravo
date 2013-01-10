@@ -123,7 +123,7 @@ public class PaymentReport extends HttpSecureAppServlet {
       String strGroupCrit = vars.getGlobalVariable("inpGroupCrit", "PaymentReport|GroupCrit", "");
       String strOrdCrit = vars.getInGlobalVariable("inpShown", "PaymentReport|OrdCrit", "",
           new ValueListFilter("Date", "APRM_FATS_BPARTNER", "Project", "INS_CURRENCY",
-              "FINPR_BPartner_Category", ""));
+              "FINPR_BPartner_Category", "ACCS_ACCOUNT_ID_D", "DueDate", ""));
       final String strInclPaymentUsingCredit = vars.getGlobalVariable("inpInclPaymentUsingCredit",
           "PaymentReport|IncludePaymentUsingCredit", "Y");
       printPageDataSheet(response, vars, strOrg, strInclSubOrg, strDueDateFrom, strDueDateTo,
@@ -197,7 +197,7 @@ public class PaymentReport extends HttpSecureAppServlet {
           .getRequestGlobalVariable("inpGroupCrit", "PaymentReport|GroupCrit");
       String strOrdCrit = vars.getRequestInGlobalVariable("inpShown", "PaymentReport|OrdCrit",
           new ValueListFilter("Date", "APRM_FATS_BPARTNER", "Project", "INS_CURRENCY",
-              "FINPR_BPartner_Category", ""));
+              "FINPR_BPartner_Category", "ACCS_ACCOUNT_ID_D", "DueDate", ""));
       final String strInclPaymentUsingCredit = vars.getStringParameter("inpInclPaymentUsingCredit",
           "N");
       vars.setSessionValue("PaymentReport|IncludePaymentUsingCredit", strInclPaymentUsingCredit);
@@ -255,7 +255,7 @@ public class PaymentReport extends HttpSecureAppServlet {
           .getRequestGlobalVariable("inpGroupCrit", "PaymentReport|GroupCrit");
       String strOrdCrit = vars.getRequestInGlobalVariable("inpShown", "PaymentReport|OrdCrit",
           new ValueListFilter("Date", "APRM_FATS_BPARTNER", "Project", "INS_CURRENCY",
-              "FINPR_BPartner_Category", ""));
+              "FINPR_BPartner_Category", "ACCS_ACCOUNT_ID_D", "DueDate", ""));
       String strOutput = "html";
       final String strInclPaymentUsingCredit = vars.getStringParameter("inpInclPaymentUsingCredit",
           "N");
@@ -636,6 +636,11 @@ public class PaymentReport extends HttpSecureAppServlet {
     sqlRO.setData("NAME", Utility.messageBD(this, "INS_CURRENCY", vars.getLanguage()));
     sqlRO.setData("DESCRIPTION", "");
     vector.addElement(sqlRO);
+    sqlRO = new SQLReturnObject();
+    sqlRO.setData("ID", "ACCS_ACCOUNT_ID_D");
+    sqlRO.setData("NAME", Utility.messageBD(this, "ACCS_ACCOUNT_ID_D", vars.getLanguage()));
+    sqlRO.setData("DESCRIPTION", "");
+    vector.addElement(sqlRO);
 
     objectListData = new FieldProvider[vector.size()];
     vector.copyInto(objectListData);
@@ -670,6 +675,18 @@ public class PaymentReport extends HttpSecureAppServlet {
     sqlRO = new SQLReturnObject();
     sqlRO.setData("ID", "INS_CURRENCY");
     sqlRO.setData("NAME", Utility.messageBD(this, "INS_CURRENCY", vars.getLanguage()));
+    sqlRO.setData("DESCRIPTION", "");
+    vector.addElement(sqlRO);
+
+    sqlRO = new SQLReturnObject();
+    sqlRO.setData("ID", "ACCS_ACCOUNT_ID_D");
+    sqlRO.setData("NAME", Utility.messageBD(this, "ACCS_ACCOUNT_ID_D", vars.getLanguage()));
+    sqlRO.setData("DESCRIPTION", "");
+    vector.addElement(sqlRO);
+
+    sqlRO = new SQLReturnObject();
+    sqlRO.setData("ID", "DueDate");
+    sqlRO.setData("NAME", Utility.messageBD(this, "DueDate", vars.getLanguage()));
     sqlRO.setData("DESCRIPTION", "");
     vector.addElement(sqlRO);
 

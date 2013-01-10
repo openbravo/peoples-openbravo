@@ -215,7 +215,7 @@ WHERE p.fin_payment_id=$P{DOCUMENT_ID}
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement verticalAlignment="Middle"/>
-					<textFieldExpression class="java.util.Date"><![CDATA[$F{PAYMENT_DATE}]]></textFieldExpression>
+                                        <textFieldExpression class="java.lang.String"><![CDATA[org.openbravo.erpCommon.utility.Utility.applyCountryDateFormat($F{PAYMENT_DATE},$F{LEGALENTITY})]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="false">
 					<reportElement key="textField-5" x="125" y="131" width="136" height="13"/>
@@ -226,7 +226,7 @@ WHERE p.fin_payment_id=$P{DOCUMENT_ID}
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement verticalAlignment="Middle"/>
-					<textFieldExpression class="java.lang.String"><![CDATA[$P{NUMBERFORMAT}.format($F{TOTAL}).toString()]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[org.openbravo.erpCommon.utility.Utility.getCountryNumberFormat($F{LEGALENTITY},$P{NUMBERFORMAT}).format($F{TOTAL}).toString()]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="false">
 					<reportElement key="textField-9" x="125" y="105" width="136" height="13"/>
@@ -331,7 +331,7 @@ WHERE p.fin_payment_id=$P{DOCUMENT_ID}
 					<subreportParameterExpression><![CDATA[$P{DOCUMENT_ID}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="NUMBERFORMAT">
-					<subreportParameterExpression><![CDATA[$P{NUMBERFORMAT}]]></subreportParameterExpression>
+					<subreportParameterExpression><![CDATA[org.openbravo.erpCommon.utility.Utility.getCountryNumberFormat($F{LEGALENTITY},$P{NUMBERFORMAT})]]></subreportParameterExpression>
 				</subreportParameter>
 				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 				<subreportExpression class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{SUBREP_RptFIN_PaymentLines}]]></subreportExpression>

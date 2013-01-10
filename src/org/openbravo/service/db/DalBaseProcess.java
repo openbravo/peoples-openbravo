@@ -20,6 +20,7 @@
 package org.openbravo.service.db;
 
 import org.apache.log4j.Logger;
+import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.scheduling.Process;
@@ -59,6 +60,7 @@ public abstract class DalBaseProcess implements Process {
 
     boolean errorOccured = false;
     final OBContext currentOBContext = OBContext.getOBContext();
+    RequestContext.get().setVariableSecureApp(processContext.toVars());
     try {
       String userId = processContext.getUser();
       String roleId = processContext.getRole();
@@ -97,6 +99,7 @@ public abstract class DalBaseProcess implements Process {
       // remove the context at the end, maybe the process scheduler
       // reuses the thread?
       OBContext.setOBContext(currentOBContext);
+      RequestContext.clear();
     }
   }
 

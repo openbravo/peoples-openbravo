@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011 Openbravo SLU
+ * All portions are Copyright (C) 2011-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -32,6 +32,7 @@ import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.client.kernel.reference.UIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.client.kernel.reference.YesNoUIDefinition;
+import org.openbravo.data.Sqlc;
 import org.openbravo.erpCommon.utility.DimensionDisplayUtility;
 import org.openbravo.model.ad.ui.AuxiliaryInput;
 import org.openbravo.model.ad.ui.Field;
@@ -71,7 +72,15 @@ public class DynamicExpressionParser {
   private Tab tab;
   private Field field;
   private StringBuffer jsCode;
+  private boolean tabLevelDisplayLogic = false;
   private ApplicationDictionaryCachedStructures cachedStructures;
+
+  public DynamicExpressionParser(String code, Tab tab, boolean tabLevelDisplayLogic) {
+    this.code = code;
+    this.tab = tab;
+    this.tabLevelDisplayLogic = tabLevelDisplayLogic;
+    parse();
+  }
 
   public DynamicExpressionParser(String code, Tab tab) {
     this.code = code;
@@ -137,8 +146,10 @@ public class DynamicExpressionParser {
         jsCode.append(COMPARATIONS[pos[1]][1]);
       }
 
+      // The value might be transformed if the leftPart contains the string 'currentValues'
+      // or if a tab level display logic is being parsed
       DisplayLogicElement rightPart = getDisplayLogicText(token2,
-          leftPart.text.contains("currentValues"), leftPart.isBoolean);
+          leftPart.text.contains("currentValues") || tabLevelDisplayLogic, leftPart.isBoolean);
       jsCode.append(rightPart.text);
     }
     // Handle accounting dimensions special display logic
@@ -298,9 +309,51 @@ public class DynamicExpressionParser {
         return new DisplayLogicElement(TOKEN_PREFIX + auxIn.getName(), false);
       }
     }
-    sessionAttributesInExpression.add(token);
+
+    String convertedToken = token;
+    boolean isBoolean = false;
+
+    // Session attributes (#sessionAttributeName) must not be converted to the inp format, and they
+    // do not need to be treated as a boolean
+    if (tabLevelDisplayLogic && !convertedToken.startsWith("#")) {
+      Field ancestorField = lookForFieldInAncestorTabs(token);
+      if (ancestorField != null) {
+        // If the token is the name of an ancestor tab field, it must to converted to its inp format
+        convertedToken = "inp" + Sqlc.TransformaNombreColumna(token);
+        UIDefinition uiDef = UIDefinitionController.getInstance().getUIDefinition(
+            ancestorField.getColumn().getId());
+        // ... in that case, the left part is a boolean if that field is a YesNoUIDefinition
+        isBoolean = (uiDef instanceof YesNoUIDefinition);
+      }
+
+    }
+    sessionAttributesInExpression.add(convertedToken);
     return new DisplayLogicElement(TOKEN_PREFIX
-        + (token.startsWith("#") ? token.replace("#", "_") : token), false);
+        + (convertedToken.startsWith("#") ? convertedToken.replace("#", "_") : convertedToken),
+        isBoolean);
+  }
+
+  private Field lookForFieldInAncestorTabs(String fieldName) {
+    Field aField = null;
+    Tab parentTab = KernelUtils.getInstance().getParentTab(tab);
+    while (parentTab != null && aField == null) {
+      aField = searchForFieldInTab(parentTab, fieldName);
+      parentTab = KernelUtils.getInstance().getParentTab(parentTab);
+    }
+    return aField;
+  }
+
+  private Field searchForFieldInTab(Tab tab, String fieldName) {
+    List<Field> fields = tab.getADFieldList();
+    for (Field aField : fields) {
+      if (aField.getColumn() == null) {
+        continue;
+      }
+      if (fieldName.equalsIgnoreCase(aField.getColumn().getDBColumnName())) {
+        return aField;
+      }
+    }
+    return null;
   }
 
   /*

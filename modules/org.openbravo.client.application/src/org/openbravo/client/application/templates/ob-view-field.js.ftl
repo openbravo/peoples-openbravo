@@ -89,7 +89,7 @@ the outputted value is already covered by a default.
         <#if field.redrawOnChange && field.displayed>
             redrawOnChange: true,
         </#if>
-        <#if field.showIf != "" && field.displayed>
+        <#if field.showIf != "" && (field.displayed || field.statusBarField)>
             showIf: function(item, value, form, currentValues, context) {
                 return (${field.showIf});          
             },          

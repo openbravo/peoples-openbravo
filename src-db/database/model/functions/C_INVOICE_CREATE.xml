@@ -693,10 +693,10 @@
 	    	  	  FROM C_INVOICE
 	    	  	  WHERE C_INVOICE_ID = p_Invoice_ID;
 	    	  	  IF(v_Message_Check <= 10) THEN
-	    	  	  	v_Message:=v_Message||', '||'@InvoiceDocumentno@ ' || v_DocumentNo;
+	    	  	  	v_Message:=SUBSTR(v_Message||', '||'@InvoiceDocumentno@ ' || v_DocumentNo, 0, 2000);
 	    	  	  ELSE
 	    	  	  	IF(v_Message_Check = 11) THEN
-	    	  	  		v_Message :=v_Message ||' @InvoiceNumberCheck@';
+	    	  	  		v_Message :=SUBSTR(v_Message ||' @InvoiceNumberCheck@', 0, 2000);
 	    	  	  	END IF;
 	    	  	  END IF;
 	    	  	  v_Message_Check := v_Message_Check+1;
@@ -1109,9 +1109,9 @@
                   v_LineNo:=0;
                   v_InOut_ID:='-1';
                   IF(v_Message NOT LIKE '%@InvoiceDocumentno@%') THEN
-                    v_Message:=v_Message||', '||'@InvoiceDocumentno@ ' || v_DocumentNo;
+                      v_Message:=SUBSTR(v_Message||', '||'@InvoiceDocumentno@ ' || v_DocumentNo, 0, 2000);
                   ELSE
-                    v_Message:=v_Message||', '|| v_DocumentNo;
+                      v_Message:=SUBSTR(v_Message||', '|| v_DocumentNo, 0, 2000);
                   END IF;
                 END IF;
               ELSIF (v_isfinaldoctype = 'N') THEN --If docType is not a final one update it
@@ -1231,9 +1231,9 @@
 	    	  	  WHERE C_INVOICE_ID = p_Invoice_ID;
 	    	  	  IF(v_Message NOT LIKE '%'||v_DocumentNo||'%') THEN
 	    	  	    IF(v_Message NOT LIKE '%@InvoiceDocumentno@%') THEN
-	    	  	      v_Message:=v_Message||', '||'@InvoiceDocumentno@ ' || v_DocumentNo;
+       	    	  	        v_Message:=SUBSTR(v_Message||', '||'@InvoiceDocumentno@ ' || v_DocumentNo, 0, 2000);
 	    	  	    ELSE
-	    	  	      v_Message:=v_Message||', '|| v_DocumentNo;
+	    	  	        v_Message:=SUBSTR(v_Message||', '|| v_DocumentNo, 0, 2000);
 	    	  	    END IF;
 	    	  	  END IF;
         	    END IF;
@@ -1242,7 +1242,7 @@
           END; -- Block
         END IF; -- PInstance not null
         --<<FINISH_PROCESS>>
-        v_Message:='@Created@: ' || v_NoRecords||v_Message;
+        v_Message:=SUBSTR('@Created@: ' || v_NoRecords||v_Message, 0, 2000);
         IF(p_PInstance_ID IS NOT NULL) THEN
           --  Update AD_PInstance
           DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;

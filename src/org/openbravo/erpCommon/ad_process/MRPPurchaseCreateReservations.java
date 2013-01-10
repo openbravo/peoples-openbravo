@@ -40,17 +40,17 @@ import org.openbravo.model.materialmgmt.onhandquantity.Reservation;
 import org.openbravo.model.mrp.PurchasingRun;
 import org.openbravo.model.mrp.PurchasingRunLine;
 import org.openbravo.scheduling.ProcessBundle;
-import org.openbravo.scheduling.ProcessLogger;
 import org.openbravo.service.db.CallProcess;
 import org.openbravo.service.db.DalBaseProcess;
 import org.openbravo.service.db.DbUtility;
 
 public class MRPPurchaseCreateReservations extends DalBaseProcess {
 
-  private ProcessLogger logger;
+  // private ProcessLogger logger;
 
+  @Override
   public void doExecute(ProcessBundle bundle) throws Exception {
-    logger = bundle.getLogger();
+    // logger = bundle.getLogger();
     Map<String, Object> params = bundle.getParams();
 
     String strMRPRunId = (String) params.get("MRP_Run_Purchase_ID");

@@ -3,7 +3,7 @@
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.0"/>
-	<property name="ireport.x" value="734"/>
+	<property name="ireport.x" value="1058"/>
 	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
@@ -266,6 +266,14 @@ FROM DUAL]]>
 				</textElement>
 				<text><![CDATA[Deposit/Withdraw Date]]></text>
 			</staticText>
+			<staticText>
+               <reportElement key="staticText-14" style="Detail_Header" x="1574" y="25" width="77" height="25"/>
+               <box leftPadding="2"/>
+               <textElement textAlignment="Center">
+                   <font size="8" isBold="false"/>
+               </textElement>
+               <text><![CDATA[Financial Account]]></text>
+           </staticText>
 		</band>
 	</pageHeader>
 	<columnHeader>
@@ -426,6 +434,13 @@ FROM DUAL]]>
 				</textElement>
 				<textFieldExpression class="java.util.Date"><![CDATA[$F{DEPOSIT_WITHDRAW_DATE}]]></textFieldExpression>
 			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+               <reportElement key="textField-14" style="Report_Footer" x="1574" y="0" width="77" height="25"/>
+               <textElement textAlignment="Center">
+                   <font size="8"/>
+               </textElement>
+               <textFieldExpression class="java.lang.String"><![CDATA[$F{FINANCIAL_ACCOUNT}]]></textFieldExpression>
+           </textField>
 		</band>
 	</detail>
 	<columnFooter>

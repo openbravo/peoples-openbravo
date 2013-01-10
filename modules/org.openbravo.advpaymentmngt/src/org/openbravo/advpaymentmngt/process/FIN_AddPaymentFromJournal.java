@@ -117,11 +117,6 @@ public class FIN_AddPaymentFromJournal extends DalBaseProcess {
                 .init(conn);
             HashMap<String, Object> parameters = new HashMap<String, Object>();
             parameters.put("GL_JournalLine_ID", journalLine.getId());
-            parameters.put("cBpartnerParaId", journalLine.getBusinessPartner().getId());
-            parameters.put("cGlitemId", journalLine.getGLItem().getId());
-            parameters.put("finFinancialAccountId", journalLine.getFinancialAccount().getId());
-            parameters.put("finPaymentmethodId", journalLine.getPaymentMethod().getId());
-            parameters.put("date", dateFormat.format(date));
             pb.setParams(parameters);
             OBError myMessage = null;
             // Create a Payment for the Journal line

@@ -236,3 +236,7 @@ isc.OBGridFormButton.addProperties({
   height: 21,
   overflow: 'visible'
 });
+
+isc.OBGridFormLabel.addProperties({
+  baseStyle: 'OBGridFormLabel'
+});

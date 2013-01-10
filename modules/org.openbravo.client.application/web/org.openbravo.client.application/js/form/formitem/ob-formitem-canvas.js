@@ -80,7 +80,11 @@ isc.OBClientClassCanvasItem.addProperties({
   }
 });
 
-isc.defineClass('OBTruncAddMinusDisplay', isc.Label);
+// == OBGridFormLabel ==
+// Base component to add label fields in the grid. For styling purposes.
+isc.defineClass('OBGridFormLabel', isc.Label);
+
+isc.defineClass('OBTruncAddMinusDisplay', isc.OBGridFormLabel);
 
 isc.OBTruncAddMinusDisplay.addProperties({
   wrap: false,
@@ -111,7 +115,7 @@ isc.OBTruncAddMinusDisplay.addProperties({
   }
 });
 
-isc.defineClass('OBAddPercentageSign', isc.Label);
+isc.defineClass('OBAddPercentageSign', isc.OBGridFormLabel);
 
 isc.OBAddPercentageSign.addProperties({
   wrap: false,

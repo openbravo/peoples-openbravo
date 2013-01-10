@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -66,6 +66,7 @@ public class DocFINFinAccTransaction extends AcctServer {
   public static final String TRXTYPE_BankFee = "BF";
   BigDecimal usedCredit = ZERO;
   BigDecimal generatedCredit = ZERO;
+  boolean exceptionPosting = false;
 
   private static final long serialVersionUID = 1L;
   private static final Logger log4j = Logger.getLogger(DocFINFinAccTransaction.class);
@@ -389,9 +390,9 @@ public class DocFINFinAccTransaction extends AcctServer {
       // 3 Scenarios: 1st Bank fee 2nd payment related transaction 3rd glitem transaction
       if (TRXTYPE_BankFee.equals(transaction.getTransactionType()))
         fact = createFactFee(transaction, as, conn, fact);
-      else if (transaction.getFinPayment() != null)
+      else if (transaction.getFinPayment() != null) {
         fact = createFactPaymentDetails(as, conn, fact);
-      else
+      } else
         fact = createFactGLItem(as, conn, fact);
     } finally {
       OBContext.restorePreviousMode();
@@ -588,15 +589,27 @@ public class DocFINFinAccTransaction extends AcctServer {
     DocLine_FINFinAccTransaction line = new DocLine_FINFinAccTransaction(DocumentType,
         transaction.getId(), "");
     line.m_description = transaction.getFinPayment().getDescription();
-    fact.createLine(
-        line,
-        getAccountUponDepositWithdrawal(conn, transaction.getFinPayment().getPaymentMethod(),
-            transaction.getAccount(), as, transaction.getFinPayment().isReceipt()), C_Currency_ID,
-        transaction.getDepositAmount().toString(), transaction.getPaymentAmount().toString(),
-        Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
-
+    if (exceptionPosting) {
+      // The Payment FinAcct and Transaction FinAcct are different. To post the transaction
+      // the amount of the payment need to be moved from destiny account of the payment of FinAcct1
+      // to destiny of the payment of the FinAcct2
+      fact.createLine(
+          line,
+          getAccountPayment(conn, transaction.getFinPayment().getPaymentMethod(),
+              transaction.getAccount(), as, transaction.getFinPayment().isReceipt()),
+          C_Currency_ID, transaction.getDepositAmount().toString(), transaction.getPaymentAmount()
+              .toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+    } else {
+      fact.createLine(
+          line,
+          getAccountUponDepositWithdrawal(conn, transaction.getFinPayment().getPaymentMethod(),
+              transaction.getAccount(), as, transaction.getFinPayment().isReceipt()),
+          C_Currency_ID, transaction.getDepositAmount().toString(), transaction.getPaymentAmount()
+              .toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+    }
     SeqNo = "0";
     return fact;
+
   }
 
   @Deprecated
@@ -796,6 +809,7 @@ public class DocFINFinAccTransaction extends AcctServer {
   public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {
     boolean confirmation = false;
     OBContext.setAdminMode();
+    exceptionPosting = false;
     try {
       FIN_FinaccTransaction transaction = OBDal.getInstance().get(FIN_FinaccTransaction.class,
           strRecordId);
@@ -805,7 +819,8 @@ public class DocFINFinAccTransaction extends AcctServer {
       if (payment != null) {
         OBCriteria<FinAccPaymentMethod> obCriteria = OBDal.getInstance().createCriteria(
             FinAccPaymentMethod.class);
-        obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, payment.getAccount()));
+        obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT,
+            transaction.getAccount()));
         obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD,
             payment.getPaymentMethod()));
         obCriteria.setFilterOnReadableClients(false);
@@ -824,6 +839,13 @@ public class DocFINFinAccTransaction extends AcctServer {
             else if (("CLE").equals(lines.get(0).getUponDepositUse())
                 && account.getClearedPaymentAccount() != null)
               confirmation = true;
+
+            else if (null == (lines.get(0).getUponDepositUse())
+                && null == (lines.get(0).getINUponClearingUse())
+                && transaction.getAccount() != payment.getAccount()) {
+              confirmation = true;
+              exceptionPosting = true;
+            }
           } else {
             if (("INT").equals(lines.get(0).getUponWithdrawalUse())
                 && account.getFINOutIntransitAcct() != null)
@@ -836,6 +858,7 @@ public class DocFINFinAccTransaction extends AcctServer {
               confirmation = true;
           }
         }
+
       } else {
         for (FIN_FinancialAccountAccounting account : accounts) {
           if (confirmation)
@@ -855,8 +878,9 @@ public class DocFINFinAccTransaction extends AcctServer {
     } finally {
       OBContext.restorePreviousMode();
     }
-    if (!confirmation)
+    if (!confirmation) {
       setStatus(STATUS_DocumentDisabled);
+    }
     return confirmation;
   }
 

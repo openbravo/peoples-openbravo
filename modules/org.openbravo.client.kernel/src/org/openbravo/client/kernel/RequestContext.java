@@ -91,6 +91,7 @@ public class RequestContext {
     instance.remove();
   }
 
+  private VariablesSecureApp variablesSecureApp;
   private HttpServletRequest request;
   private String requestContent = null;
   private HttpServletResponse response;
@@ -166,10 +167,22 @@ public class RequestContext {
   }
 
   public VariablesSecureApp getVariablesSecureApp() {
-    return new VariablesSecureApp(getRequest());
+    if (variablesSecureApp != null) {
+      return variablesSecureApp;
+    }
+    if (request == null) {
+      throw new OBException("No request object set");
+    }
+    variablesSecureApp = new VariablesSecureApp(getRequest());
+    return variablesSecureApp;
+  }
+
+  public void setVariableSecureApp(VariablesSecureApp variablesSecureApp) {
+    this.variablesSecureApp = variablesSecureApp;
   }
 
   public void setRequest(HttpServletRequest request) {
+    variablesSecureApp = null;
     this.request = request;
   }
 

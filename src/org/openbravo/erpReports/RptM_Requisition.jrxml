@@ -64,7 +64,7 @@
 	<queryString>
 		<![CDATA[SELECT M_REQUISITION.M_REQUISITION_ID, M_REQUISITION.DOCUMENTNO,
        AD_COLUMN_IDENTIFIER(to_char('AD_User'), to_char(M_REQUISITION.AD_USER_ID), $P{LANGUAGE}) AS REQUESTER,
-       REPLACE(M_REQUISITION.DESCRIPTION, CHR(10), '') AS DESCRIPTION
+       REPLACE(M_REQUISITION.DESCRIPTION, CHR(10), '') AS DESCRIPTION, M_REQUISITION.AD_ORG_ID AS ORGANIZATIONID
        FROM M_REQUISITION
        WHERE M_REQUISITION.M_REQUISITION_ID IN $P!{REQUISITION_ID}]]>
 	</queryString>
@@ -80,6 +80,7 @@
 	<field name="DESCRIPTION" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
+        <field name="ORGANIZATIONID" class="java.lang.String"/>
 	<group name="M_REQUISITION_ID" isStartNewPage="true" isResetPageNumber="true" isReprintHeaderOnEachPage="true">
 		<groupExpression><![CDATA[$F{M_REQUISITION_ID}]]></groupExpression>
 		<groupHeader>
@@ -191,7 +192,7 @@
 			<subreport isUsingCache="true">
 				<reportElement key="subreport-1" x="0" y="0" width="483" height="76"/>
 				<subreportParameter name="NUMBERFORMAT">
-					<subreportParameterExpression><![CDATA[$P{NUMBERFORMAT}]]></subreportParameterExpression>
+                                        <subreportParameterExpression><![CDATA[org.openbravo.erpCommon.utility.Utility.getCountryNumberFormat($F{ORGANIZATIONID},$P{NUMBERFORMAT})]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="REQUISITION_ID">
 					<subreportParameterExpression><![CDATA[$F{M_REQUISITION_ID}]]></subreportParameterExpression>
@@ -251,7 +252,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement/>
-				<textFieldExpression class="java.util.Date"><![CDATA[new Date()]]></textFieldExpression>
+                                <textFieldExpression class="java.lang.String"><![CDATA[org.openbravo.erpCommon.utility.Utility.applyCountryDateFormat(new java.util.Date(),$F{ORGANIZATIONID})]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement key="line-5" x="1" y="6" width="482" height="1"/>

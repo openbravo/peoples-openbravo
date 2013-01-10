@@ -1243,7 +1243,7 @@ public class AdvPaymentMngtDao {
             FIN_Payments[i].getAmount());
 
         final Currency foreignCurrency = FIN_Payments[i].getCurrency();
-
+        FieldProviderFactory.setField(data[i], "finAcc", FIN_Payments[i].getAccount().getName());
         FieldProviderFactory.setField(data[i], "paymentId", FIN_Payments[i].getId());
         FieldProviderFactory.setField(data[i], "paymentInfo", FIN_Payments[i].getDocumentNo()
             + " - "
@@ -1270,6 +1270,141 @@ public class AdvPaymentMngtDao {
         FieldProviderFactory.setField(data[i], "paymentAmount", FIN_Utility
             .multiCurrencyAmountToDisplay(paymentAmt, account.getCurrency(), foreignPaymentAmt,
                 foreignCurrency));
+
+        FieldProviderFactory.setField(data[i], "rownum", "" + i);
+      }
+
+      return data;
+
+    } catch (Exception e) {
+      throw new OBException(e);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  public FieldProvider[] getAlternativePaymentsNotDeposited(FIN_FinancialAccount account,
+      Date fromDate, Date toDate, boolean isReceipt) {
+
+    String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+        .getProperty("dateFormat.java");
+    SimpleDateFormat dateFormater = new SimpleDateFormat(dateFormat);
+    OBContext.setAdminMode();
+    try {
+      final StringBuilder whereClause = new StringBuilder();
+      final List<Object> parameters = new ArrayList<Object>();
+
+      whereClause.append(" as p ");
+      whereClause.append(" where p.");
+      whereClause.append(FIN_Payment.PROPERTY_PAYMENTMETHOD);
+      whereClause.append(".id");
+      whereClause.append(" in ");
+      whereClause.append(" ( select ft.");
+      whereClause.append(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD);
+      whereClause.append(".id");
+      whereClause.append(" from ");
+      whereClause.append("FinancialMgmtFinAccPaymentMethod ");
+      whereClause.append(" as ft");
+      whereClause.append(" where ft.");
+      whereClause.append(FinAccPaymentMethod.PROPERTY_ACCOUNT);
+      whereClause.append(".id = ?) ");
+      whereClause.append(" and p.");
+      whereClause.append(FIN_Payment.PROPERTY_STATUS);
+      whereClause.append(" IN ('RPR', 'PPM')");
+      whereClause.append(" and p.");
+      whereClause.append(FIN_Payment.PROPERTY_CURRENCY);
+      whereClause.append(".id");
+      whereClause.append(" in ");
+      whereClause.append(" ( select fa.");
+      whereClause.append(FIN_FinancialAccount.PROPERTY_CURRENCY);
+      whereClause.append(".id");
+      whereClause.append(" from ");
+      whereClause.append(" FIN_Financial_Account as fa");
+      whereClause.append(" where fa.id = ? )");
+      parameters.add(account.getId());
+      parameters.add(account.getId());
+      // IsReceipt
+      whereClause.append(" and p.");
+      whereClause.append(FIN_Payment.PROPERTY_RECEIPT);
+      whereClause.append(" = ");
+      whereClause.append(isReceipt);
+
+      whereClause.append(" and p.");
+      whereClause.append(FIN_Payment.PROPERTY_AMOUNT);
+      whereClause.append(" != ");
+      whereClause.append(BigDecimal.ZERO);
+
+      // From Date
+      if (fromDate != null) {
+        whereClause.append(" and p.");
+        whereClause.append(FIN_Payment.PROPERTY_PAYMENTDATE);
+        whereClause.append(" >= ? ");
+        parameters.add(fromDate);
+      }
+      // To Date
+      if (toDate != null) {
+        whereClause.append(" AND p.");
+        whereClause.append(FIN_Payment.PROPERTY_PAYMENTDATE);
+        whereClause.append(" < ?");
+        parameters.add(toDate);
+      }
+      // Order by date and payment no
+      whereClause.append(" ORDER BY p.");
+      whereClause.append(FIN_Payment.PROPERTY_PAYMENTDATE);
+      whereClause.append(", p.");
+      whereClause.append(FIN_Payment.PROPERTY_DOCUMENTNO);
+
+      final OBQuery<FIN_Payment> obqP = OBDal.getInstance().createQuery(FIN_Payment.class,
+          whereClause.toString(), parameters);
+
+      List<FIN_Payment> paymentOBList = obqP.list();
+
+      FIN_Payment[] FIN_Payments = new FIN_Payment[0];
+      FIN_Payments = paymentOBList.toArray(FIN_Payments);
+      FieldProvider[] data = FieldProviderFactory.getFieldProviderArray(paymentOBList);
+
+      for (int i = 0; i < data.length; i++) {
+        Boolean paymentIsReceipt = FIN_Payments[i].isReceipt();
+
+        BigDecimal depositAmt = FIN_Utility.getDepositAmount(paymentIsReceipt,
+            FIN_Payments[i].getFinancialTransactionAmount());
+        BigDecimal paymentAmt = FIN_Utility.getPaymentAmount(paymentIsReceipt,
+            FIN_Payments[i].getFinancialTransactionAmount());
+        BigDecimal foreignDepositAmt = FIN_Utility.getDepositAmount(paymentIsReceipt,
+            FIN_Payments[i].getAmount());
+        BigDecimal foreignPaymentAmt = FIN_Utility.getPaymentAmount(paymentIsReceipt,
+            FIN_Payments[i].getAmount());
+
+        final Currency foreignCurrency = FIN_Payments[i].getCurrency();
+
+        FieldProviderFactory.setField(data[i], "finAcc", FIN_Payments[i].getAccount().getName());
+        FieldProviderFactory.setField(data[i], "paymentId", FIN_Payments[i].getId());
+        FieldProviderFactory.setField(data[i], "paymentInfo", FIN_Payments[i].getDocumentNo()
+            + " - "
+            + ((FIN_Payments[i].getBusinessPartner() != null) ? FIN_Payments[i]
+                .getBusinessPartner().getName() : "") + " - "
+            + FIN_Payments[i].getCurrency().getISOCode());
+
+        // Truncate description
+        String description = FIN_Payments[i].getDescription();
+        String truncateDescription = "";
+        if (description != null) {
+          truncateDescription = (description.length() > 57) ? description.substring(0, 54)
+              .concat("...").toString() : description;
+        }
+        FieldProviderFactory.setField(data[i], "paymentDescription",
+            (description != null && description.length() > 57) ? description : "");
+        FieldProviderFactory.setField(data[i], "paymentDescriptionTrunc", truncateDescription);
+
+        FieldProviderFactory.setField(data[i], "paymentDate",
+            dateFormater.format(FIN_Payments[i].getPaymentDate()).toString());
+
+        FieldProviderFactory.setField(data[i], "depositAmount", FIN_Utility
+            .multiCurrencyAmountToDisplay(depositAmt, FIN_Payments[i].getAccount().getCurrency(),
+                foreignDepositAmt, foreignCurrency));
+        FieldProviderFactory.setField(data[i], "paymentAmount", FIN_Utility
+            .multiCurrencyAmountToDisplay(paymentAmt, FIN_Payments[i].getAccount().getCurrency(),
+                foreignPaymentAmt, foreignCurrency));
 
         FieldProviderFactory.setField(data[i], "rownum", "" + i);
       }

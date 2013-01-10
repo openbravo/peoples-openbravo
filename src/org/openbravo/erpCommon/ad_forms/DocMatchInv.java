@@ -37,7 +37,9 @@ import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.invoice.Invoice;
+import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
+import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.model.procurement.ReceiptInvoiceMatch;
 
 public class DocMatchInv extends AcctServer {
@@ -58,8 +60,8 @@ public class DocMatchInv extends AcctServer {
     super(AD_Client_ID, AD_Org_ID, connectionProvider);
   }
 
-  public void loadObjectFieldProvider(ConnectionProvider conn, @SuppressWarnings("hiding")
-  String AD_Client_ID, String Id) throws ServletException {
+  public void loadObjectFieldProvider(ConnectionProvider conn,
+      @SuppressWarnings("hiding") String AD_Client_ID, String Id) throws ServletException {
     setObjectFieldProvider(DocMatchInvData.selectRegistro(conn, AD_Client_ID, Id));
   }
 
@@ -183,31 +185,52 @@ public class DocMatchInv extends AcctServer {
     // Invoice Price Variance........ Difference of cost and expenses
 
     FieldProvider[] data = getObjectFieldProvider();
-    MaterialTransaction transaction = getTransaction(Record_ID);
+    ShipmentInOutLine inOutLine = getShipmentLine(Record_ID);
     Currency costCurrency = FinancialUtils.getLegalEntityCurrency(OBDal.getInstance().get(
         Organization.class, AD_Org_ID));
-    if (!CostingStatus.getInstance().isMigrated()) {
-      costCurrency = OBDal.getInstance().get(Client.class, AD_Client_ID).getCurrency();
-    } else if (transaction != null && transaction.getCurrency() != null) {
-      costCurrency = transaction.getCurrency();
+    BigDecimal bdCost = BigDecimal.ZERO;
+    if (inOutLine.getProduct().isBookUsingPurchaseOrderPrice()) {
+      // If the Product is checked as book using PO Price, the Price of the Purchase Order will
+      // be used to create the FactAcct Line
+      if (!CostingStatus.getInstance().isMigrated()) {
+        costCurrency = OBDal.getInstance().get(Client.class, AD_Client_ID).getCurrency();
+      }
+      OrderLine ol = inOutLine.getSalesOrderLine();
+      if (ol == null) {
+        setMessageResult(conn, STATUS_NoRelatedPO, "error", null);
+        throw new IllegalStateException();
+      }
+      Long scale = costCurrency.getStandardPrecision();
+      BigDecimal bdQty = new BigDecimal(data[0].getField("Qty"));
+      bdCost = ol.getUnitPrice().multiply(bdQty).setScale(scale.intValue(), RoundingMode.HALF_UP);
+    } else {
+      // If the Product is not checked as book using PO Price, the Cost of the
+      // Transaction will be used to create the FactAcct Line
+      MaterialTransaction transaction = getTransaction(Record_ID);
+      if (!CostingStatus.getInstance().isMigrated()) {
+        costCurrency = OBDal.getInstance().get(Client.class, AD_Client_ID).getCurrency();
+      } else if (transaction != null && transaction.getCurrency() != null) {
+        costCurrency = transaction.getCurrency();
+      }
+      if (CostingStatus.getInstance().isMigrated() && transaction != null
+          && !transaction.isCostCalculated()) {
+        Map<String, String> parameters = getNotCalculatedCostParameters(transaction);
+        setMessageResult(conn, STATUS_NotCalculatedCost, "error", parameters);
+        throw new IllegalStateException();
+      }
+      BigDecimal trxCost = transaction.getTransactionCost();
+      // Cost is retrieved from the transaction and if it does not exist It calls the old way
+      // The precision of the divide is set to 10 because the rounding is needed to avoid
+      // exceptions.
+      // The rounding itself is not needed because it is done some lines later.
+      bdCost = CostingStatus.getInstance().isMigrated() ? trxCost.divide(
+          transaction.getMovementQuantity(), 10, RoundingMode.HALF_UP) : new BigDecimal(
+          DocMatchInvData.selectProductAverageCost(conn, data[0].getField("M_Product_Id"),
+              data[0].getField("orderAcctDate")));
+      Long scale = costCurrency.getStandardPrecision();
+      BigDecimal bdQty = new BigDecimal(data[0].getField("Qty"));
+      bdCost = bdCost.multiply(bdQty).setScale(scale.intValue(), RoundingMode.HALF_UP);
     }
-    if (CostingStatus.getInstance().isMigrated() && transaction != null
-        && !transaction.isCostCalculated()) {
-      Map<String, String> parameters = getNotCalculatedCostParameters(transaction);
-      setMessageResult(conn, STATUS_NotCalculatedCost, "error", parameters);
-      throw new IllegalStateException();
-    }
-    BigDecimal trxCost = transaction.getTransactionCost();
-    // Cost is retrieved from the transaction and if it does not exist It calls the old way
-    // The precision of the divide is set to 10 because the rounding is needed to avoid exceptions.
-    // The rounding itself is not needed because it is done some lines later.
-    BigDecimal bdCost = CostingStatus.getInstance().isMigrated() ? trxCost.divide(
-        transaction.getMovementQuantity(), 10, RoundingMode.HALF_UP) : new BigDecimal(
-        DocMatchInvData.selectProductAverageCost(conn, data[0].getField("M_Product_Id"),
-            data[0].getField("orderAcctDate")));
-    Long scale = costCurrency.getStandardPrecision();
-    BigDecimal bdQty = new BigDecimal(data[0].getField("Qty"));
-    bdCost = bdCost.multiply(bdQty).setScale(scale.intValue(), RoundingMode.HALF_UP);
 
     DocMatchInvData[] invoiceData = DocMatchInvData.selectInvoiceData(conn, vars.getClient(),
         data[0].getField("C_InvoiceLine_Id"));
@@ -385,6 +408,18 @@ public class DocMatchInv extends AcctServer {
       OBContext.restorePreviousMode();
     }
     return transaction;
+  }
+
+  private ShipmentInOutLine getShipmentLine(String matchInvId) {
+    OBContext.setAdminMode(false);
+    ShipmentInOutLine shipmentLine;
+    try {
+      shipmentLine = OBDal.getInstance().get(ReceiptInvoiceMatch.class, matchInvId)
+          .getGoodsShipmentLine();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    return shipmentLine;
   }
 
   public String getServletInfo() {

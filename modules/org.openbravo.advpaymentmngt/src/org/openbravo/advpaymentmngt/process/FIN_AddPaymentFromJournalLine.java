@@ -20,15 +20,16 @@
 package org.openbravo.advpaymentmngt.process;
 
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
-import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
@@ -49,9 +50,6 @@ public class FIN_AddPaymentFromJournalLine extends DalBaseProcess {
   protected void doExecute(ProcessBundle bundle) throws Exception {
     dao = new AdvPaymentMngtDao();
     OBError message = null;
-    String dateFormatString = OBPropertiesProvider.getInstance().getOpenbravoProperties()
-        .getProperty("dateFormat.java");
-    SimpleDateFormat dateFormat = new SimpleDateFormat(dateFormatString);
 
     String strMessageType = "";
     StringBuilder strMessageResult = new StringBuilder();
@@ -61,25 +59,35 @@ public class FIN_AddPaymentFromJournalLine extends DalBaseProcess {
 
       // retrieve the parameters from the bundle
       final String journalLineId = (String) bundle.getParams().get("GL_JournalLine_ID");
-      final String bPartnerId = (String) bundle.getParams().get("cBpartnerParaId");
-      final String glItemId = (String) bundle.getParams().get("cGlitemId");
-      final String financialAccountId = (String) bundle.getParams().get("finFinancialAccountId");
-      final String paymentMethodId = (String) bundle.getParams().get("finPaymentmethodId");
-      final String strDate = (String) bundle.getParams().get("date");
 
       // Initialize objects
       GLJournalLine journalLine = OBDal.getInstance().get(GLJournalLine.class, journalLineId);
-      FIN_FinancialAccount financialAccount = OBDal.getInstance().get(FIN_FinancialAccount.class,
-          financialAccountId);
-      FIN_PaymentMethod paymentMethod = OBDal.getInstance().get(FIN_PaymentMethod.class,
-          paymentMethodId);
-      BusinessPartner bPartner = OBDal.getInstance().get(BusinessPartner.class, bPartnerId);
-      GLItem glItem = OBDal.getInstance().get(GLItem.class, glItemId);
-      Date date = dateFormat.parse(strDate);
+      FIN_FinancialAccount financialAccount = journalLine.getFinancialAccount();
+      FIN_PaymentMethod paymentMethod = journalLine.getPaymentMethod();
+      BusinessPartner bPartner = journalLine.getBusinessPartner();
+      GLItem glItem = journalLine.getGLItem();
+      Date date = journalLine.getPaymentDate();
       boolean isReceipt = journalLine.getDebit().subtract(journalLine.getCredit())
           .compareTo(BigDecimal.ZERO) > 0;
 
       // Check restrictions
+      OBContext.setAdminMode(false);
+      try {
+        final StringBuilder hsqlScript = new StringBuilder();
+        hsqlScript.append("select distinct(o.generalLedger) ");
+        hsqlScript.append("from Organization o ");
+        hsqlScript.append("where ad_isorgincluded('" + journalLine.getOrganization().getId()
+            + "', o.id, o.client) <> -1 ");
+        hsqlScript.append("and o.generalLedger is not null ");
+        final Session session = OBDal.getInstance().getSession();
+        final Query query = session.createQuery(hsqlScript.toString());
+        if (query.list().size() != 1) {
+          throw new OBException("@FIN_NoMultiAccountingAllowed@");
+        }
+      } finally {
+        OBContext.restorePreviousMode();
+      }
+
       if (!journalLine.getCurrency().equals(financialAccount.getCurrency())) {
         throw new OBException("@FIN_NoMultiCurrencyAllowed@");
       }
