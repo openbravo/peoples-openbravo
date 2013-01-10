@@ -223,7 +223,7 @@ isc.OBParameterWindowView.addProperties({
     }
 
     if (responseActions) {
-      OB.Utilities.Action.executeJSON(responseActions);
+      OB.Utilities.Action.executeJSON(responseActions, null, null, this);
     }
 
     if (this.popup) {

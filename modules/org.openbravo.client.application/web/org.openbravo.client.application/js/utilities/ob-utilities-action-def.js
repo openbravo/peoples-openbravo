@@ -48,6 +48,21 @@ OB.Utilities.Action.set('showMsgInView', function (paramObj) {
   }
 });
 
+//** {{{ showMsgInProcessView }}} **
+// It shows a message in the view that invoked the process.
+//Parameters:
+//* {{{msgType}}}: The message type. It can be 'success', 'error', 'info' or 'warning'
+//* {{{msgTitle}}}: The title of the message.
+//* {{{msgText}}}: The text of the message.
+OB.Utilities.Action.set('showMsgInProcessView', function (paramObj) {
+  var processView = paramObj._processView;
+  if (processView.popup && processView.buttonOwnerView && processView.buttonOwnerView.messageBar) {
+    processView.buttonOwnerView.messageBar.setMessage(paramObj.msgType, paramObj.msgTitle, paramObj.msgText);
+  } else if (processView.messageBar) {
+    processView.messageBar.setMessage(paramObj.msgType, paramObj.msgTitle, paramObj.msgText);
+  }
+});
+
 // ** {{{ openDirectTab }}} **
 // Open a view using a tab id and record id. The tab can be a child tab. If the record id
 // is not set then the tab is opened in grid mode. If command is not set then default is

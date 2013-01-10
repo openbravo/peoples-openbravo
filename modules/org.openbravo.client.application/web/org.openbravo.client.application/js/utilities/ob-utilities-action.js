@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012 Openbravo SLU
+ * All portions are Copyright (C) 2012-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -216,13 +216,14 @@ OB.Utilities.Action = {
   // * {{{jsonArray}}}: object or array of objects to the passed
   // * {{{threadId}}}: the Id of the execution thread. If empty, a random one will be generated
   // * {{{delay}}}: delay in ms to start the action execution
-  executeJSON: function (jsonArray, threadId, delay) {
+  // * {{{processView}}}: view of the process that invoked the execution
+  executeJSON: function (jsonArray, threadId, delay, processView) {
     var length = jsonArray.length,
         i, object, member, paramObj;
 
     if (delay && Object.prototype.toString.apply(delay) === '[object Number]') {
       setTimeout(function () {
-        OB.Utilities.Action.executeJSON(jsonArray, threadId);
+        OB.Utilities.Action.executeJSON(jsonArray, threadId, null, processView);
       }, delay);
       return true;
     }
@@ -237,7 +238,7 @@ OB.Utilities.Action = {
     } else if (!threadId) {
       threadId = OB.Utilities.generateRandomString(8, true, true, true, false);
     } else if (this.isThreadPaused(threadId)) {
-      this.executeJSON(jsonArray, threadId, 100); //Call this action again with a 100ms delay
+      this.executeJSON(jsonArray, threadId, 100, processView); //Call this action again with a 100ms delay
       return true;
     }
 
@@ -248,6 +249,9 @@ OB.Utilities.Action = {
           if (Object.prototype.toString.apply(object[member]) === '[object Object]') {
             object[member].threadId = threadId;
             paramObj = object[member];
+            if (paramObj) {
+              paramObj._processView = processView;
+            }
             this.execute(member, paramObj);
           }
         }
@@ -255,7 +259,7 @@ OB.Utilities.Action = {
     }
     if (length > 1) {
       jsonArray.splice(0, 1);
-      return this.executeJSON(jsonArray, threadId);
+      return this.executeJSON(jsonArray, threadId, null, processView);
     } else {
       return true;
     }
