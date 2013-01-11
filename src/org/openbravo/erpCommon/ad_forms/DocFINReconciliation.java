@@ -199,7 +199,7 @@ public class DocFINReconciliation extends AcctServer {
         FieldProviderFactory.setField(data[i], "Amount", paymentDetails.get(i).getAmount()
             .toString());
         FieldProviderFactory.setField(data[i], "DoubtFulDebtAmount", paymentDetails.get(i)
-            .getFINPaymentScheduleDetailList().get(0).getDebtAmount().toString());
+            .getFINPaymentScheduleDetailList().get(0).getDoubtfulDebtAmount().toString());
         FieldProviderFactory.setField(data[i], "isprepayment",
             paymentDetails.get(i).isPrepayment() ? "Y" : "N");
         // Check if payment against invoice is in a previous date than invoice accounting date

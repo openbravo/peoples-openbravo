@@ -955,7 +955,7 @@ public class AdvPaymentMngtDao {
     final FIN_PaymentScheduleDetail newPaymentScheduleDetail = (FIN_PaymentScheduleDetail) DalUtil
         .copy(paymentScheduleDetail);
     newPaymentScheduleDetail.setAmount(writeoffAmount);
-    newPaymentScheduleDetail.setDebtAmount(debtAmount);
+    newPaymentScheduleDetail.setDoubtfulDebtAmount(debtAmount);
     OBDal.getInstance().save(newPaymentScheduleDetail);
     OBDal.getInstance().flush();
   }

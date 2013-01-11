@@ -128,7 +128,7 @@ public class FIN_DoubtfulDebtProcess implements org.openbravo.scheduling.Process
       if (psd.getPaymentDetails() == null) {
         // Pending amount should be greater or equals than the doubtful debt amount
         if (psd.getAmount().compareTo(debtAmount) >= 0) {
-          psd.setDebtAmount(psd.getDebtAmount().add(debtAmount));
+          psd.setDoubtfulDebtAmount(psd.getDoubtfulDebtAmount().add(debtAmount));
           OBDal.getInstance().save(psd);
         }
       }

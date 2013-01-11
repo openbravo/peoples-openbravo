@@ -195,22 +195,22 @@ public class FIN_AddPayment {
             if (outStandingPSDs.size() == 0) {
               doubtFulDebtAmount = getDoubtFulDebtAmount(
                   paymentScheduleDetail.getAmount().add(paymentScheduleDetail.getWriteoffAmount()),
-                  paymentDetailAmount, paymentScheduleDetail.getDebtAmount());
+                  paymentDetailAmount, paymentScheduleDetail.getDoubtfulDebtAmount());
               if (!isWriteoff) {
                 // No outstanding PSD exists so one needs to be created for the difference
                 FIN_PaymentScheduleDetail outstandingPSD = (FIN_PaymentScheduleDetail) DalUtil
                     .copy(paymentScheduleDetail, false);
                 outstandingPSD.setAmount(difference);
-                outstandingPSD.setDebtAmount(paymentScheduleDetail.getDebtAmount().subtract(
-                    doubtFulDebtAmount));
+                outstandingPSD.setDoubtfulDebtAmount(paymentScheduleDetail.getDoubtfulDebtAmount()
+                    .subtract(doubtFulDebtAmount));
                 outstandingPSD.setPaymentDetails(null);
                 OBDal.getInstance().save(outstandingPSD);
               } else {
                 // If it is write Off then incorporate all doubtful debt
-                doubtFulDebtAmount = paymentScheduleDetail.getDebtAmount();
+                doubtFulDebtAmount = paymentScheduleDetail.getDoubtfulDebtAmount();
                 // Set difference as writeoff
                 paymentScheduleDetail.setWriteoffAmount(difference);
-                paymentScheduleDetail.setDebtAmount(doubtFulDebtAmount);
+                paymentScheduleDetail.setDoubtfulDebtAmount(doubtFulDebtAmount);
                 OBDal.getInstance().save(paymentScheduleDetail);
                 paymentScheduleDetail.getPaymentDetails().setWriteoffAmount(difference);
                 OBDal.getInstance().save(paymentScheduleDetail.getPaymentDetails());
@@ -219,28 +219,32 @@ public class FIN_AddPayment {
               if (!isWriteoff) {
                 // First make sure outstanding amount is not equal zero
                 if (outStandingPSDs.get(0).getAmount().add(difference).signum() == 0) {
-                  doubtFulDebtAmount = paymentScheduleDetail.getDebtAmount().add(
-                      outStandingPSDs.get(0).getDebtAmount());
+                  doubtFulDebtAmount = paymentScheduleDetail.getDoubtfulDebtAmount().add(
+                      outStandingPSDs.get(0).getDoubtfulDebtAmount());
                   OBDal.getInstance().remove(outStandingPSDs.get(0));
                 } else {
                   // update existing PD with difference
                   doubtFulDebtAmount = getDoubtFulDebtAmount(
                       paymentScheduleDetail.getAmount().add(outStandingPSDs.get(0).getAmount()),
                       paymentDetailAmount,
-                      paymentScheduleDetail.getDebtAmount().add(
-                          outStandingPSDs.get(0).getDebtAmount()));
+                      paymentScheduleDetail.getDoubtfulDebtAmount().add(
+                          outStandingPSDs.get(0).getDoubtfulDebtAmount()));
                   outStandingPSDs.get(0).setAmount(
                       outStandingPSDs.get(0).getAmount().add(difference));
-                  outStandingPSDs.get(0).setDebtAmount(
-                      outStandingPSDs.get(0).getDebtAmount()
-                          .add(paymentScheduleDetail.getDebtAmount().subtract(doubtFulDebtAmount)));
+                  outStandingPSDs.get(0).setDoubtfulDebtAmount(
+                      outStandingPSDs
+                          .get(0)
+                          .getDoubtfulDebtAmount()
+                          .add(
+                              paymentScheduleDetail.getDoubtfulDebtAmount().subtract(
+                                  doubtFulDebtAmount)));
                   OBDal.getInstance().save(outStandingPSDs.get(0));
                 }
               } else {
                 paymentScheduleDetail.setWriteoffAmount(difference.add(outStandingPSDs.get(0)
                     .getAmount()));
-                doubtFulDebtAmount = outStandingPSDs.get(0).getDebtAmount()
-                    .add(paymentScheduleDetail.getDebtAmount());
+                doubtFulDebtAmount = outStandingPSDs.get(0).getDoubtfulDebtAmount()
+                    .add(paymentScheduleDetail.getDoubtfulDebtAmount());
                 OBDal.getInstance().save(paymentScheduleDetail);
                 paymentScheduleDetail.getPaymentDetails().setWriteoffAmount(
                     difference.add(outStandingPSDs.get(0).getAmount()));
@@ -249,7 +253,7 @@ public class FIN_AddPayment {
               }
             }
             paymentScheduleDetail.setAmount(paymentDetailAmount);
-            paymentScheduleDetail.setDebtAmount(doubtFulDebtAmount);
+            paymentScheduleDetail.setDoubtfulDebtAmount(doubtFulDebtAmount);
             OBDal.getInstance().save(paymentScheduleDetail);
             paymentScheduleDetail.getPaymentDetails().setAmount(paymentDetailAmount);
             OBDal.getInstance().save(paymentScheduleDetail.getPaymentDetails());
@@ -257,8 +261,8 @@ public class FIN_AddPayment {
             List<FIN_PaymentScheduleDetail> outStandingPSDs = getOutstandingPSDs(paymentScheduleDetail);
             if (outStandingPSDs.size() > 0) {
               paymentScheduleDetail.setWriteoffAmount(outStandingPSDs.get(0).getAmount());
-              paymentScheduleDetail.setDebtAmount(outStandingPSDs.get(0).getDebtAmount()
-                  .add(paymentScheduleDetail.getDebtAmount()));
+              paymentScheduleDetail.setDoubtfulDebtAmount(outStandingPSDs.get(0)
+                  .getDoubtfulDebtAmount().add(paymentScheduleDetail.getDoubtfulDebtAmount()));
               OBDal.getInstance().save(paymentScheduleDetail);
               paymentScheduleDetail.getPaymentDetails().setWriteoffAmount(
                   outStandingPSDs.get(0).getAmount());
@@ -278,20 +282,20 @@ public class FIN_AddPayment {
           // Debt Payment
           BigDecimal doubtfulDebtAmount = getDoubtFulDebtAmount(paymentScheduleDetail.getAmount()
               .add(paymentScheduleDetail.getWriteoffAmount()), paymentDetailAmount,
-              paymentScheduleDetail.getDebtAmount());
+              paymentScheduleDetail.getDoubtfulDebtAmount());
           if (amountDifference.compareTo(BigDecimal.ZERO) != 0) {
             if (!isWriteoff) {
               dao.duplicateScheduleDetail(paymentScheduleDetail, amountDifference,
-                  paymentScheduleDetail.getDebtAmount().subtract(doubtfulDebtAmount));
+                  paymentScheduleDetail.getDoubtfulDebtAmount().subtract(doubtfulDebtAmount));
               amountDifference = BigDecimal.ZERO;
             } else {
               if (paymentDetailAmount.signum() == 0) {
-                doubtfulDebtAmount = paymentScheduleDetail.getDebtAmount();
+                doubtfulDebtAmount = paymentScheduleDetail.getDoubtfulDebtAmount();
               }
               paymentScheduleDetail.setWriteoffAmount(amountDifference);
             }
             paymentScheduleDetail.setAmount(paymentDetailAmount);
-            paymentScheduleDetail.setDebtAmount(doubtfulDebtAmount);
+            paymentScheduleDetail.setDoubtfulDebtAmount(doubtfulDebtAmount);
           }
           assignedAmount = assignedAmount.add(paymentDetailAmount);
           dao.getNewPaymentDetail(payment, paymentScheduleDetail, paymentDetailAmount,
@@ -1026,7 +1030,8 @@ public class FIN_AddPayment {
       final List<String> removedPDSIds = new ArrayList<String>();
       for (FIN_PaymentScheduleDetail psdToRemove : psdFilter.list()) {
         psd.setAmount(psd.getAmount().add(psdToRemove.getAmount()));
-        psd.setDebtAmount(psd.getDebtAmount().add(psdToRemove.getDebtAmount()));
+        psd.setDoubtfulDebtAmount(psd.getDoubtfulDebtAmount().add(
+            psdToRemove.getDoubtfulDebtAmount()));
         // TODO: Set 0 as default value for writeoffamt column in FIN_Payment_ScheduleDetail table
         BigDecimal sum1 = (psd.getWriteoffAmount() == null) ? BigDecimal.ZERO : psd
             .getWriteoffAmount();
