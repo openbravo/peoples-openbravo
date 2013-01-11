@@ -863,7 +863,7 @@
 <!--170-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--170-->  <NAME><![CDATA[Goods Movements]]></NAME>
 <!--170-->  <DESCRIPTION><![CDATA[Create and edit internal inventory movements among warehouses and storage bins.]]></DESCRIPTION>
-<!--170-->  <HELP><![CDATA[Create and edit internal inventory movements among warehouses and storage bins.]]></HELP>
+<!--170-->  <HELP><![CDATA[Goods Movements window allows to create internal inventory movements among warehouses and storage bins.]]></HELP>
 <!--170-->  <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
 <!--170-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--170-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -2769,7 +2769,8 @@ You can also select if transactions are allowed or not for this organization typ
 <!--3E945A9102144C16BD211D211089C2DF-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--3E945A9102144C16BD211D211089C2DF-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--3E945A9102144C16BD211D211089C2DF-->  <NAME><![CDATA[Costing Rules]]></NAME>
-<!--3E945A9102144C16BD211D211089C2DF-->  <HELP><![CDATA[A costing rule is applied during cost calculation. Each rule needs to have a costing algorithm and a valid from date. Costing rules can also be defined in a way that the costs are calculated by warehouse.]]></HELP>
+<!--3E945A9102144C16BD211D211089C2DF-->  <DESCRIPTION><![CDATA[A costing rule can be applied during cost calculation.  Each costing rule requires a costing algorithm and a valid from date to properly calculate the  cost of material's transactions. The "Warehouse" can be configured as a dimension to take into account ]]></DESCRIPTION>
+<!--3E945A9102144C16BD211D211089C2DF-->  <HELP><![CDATA[A costing rule can be applied during cost calculation.  Each costing rule requires a costing algorithm and a valid from date to properly calculate the  cost of material's transactions. The "Warehouse" can be configured as a dimension to take into account while calculating costs.]]></HELP>
 <!--3E945A9102144C16BD211D211089C2DF-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--3E945A9102144C16BD211D211089C2DF-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--3E945A9102144C16BD211D211089C2DF-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -2895,7 +2896,8 @@ You can also select if transactions are allowed or not for this organization typ
 <!--6CB90FC76E2E4CD3A6AF472E39C042B6-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--6CB90FC76E2E4CD3A6AF472E39C042B6-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--6CB90FC76E2E4CD3A6AF472E39C042B6-->  <NAME><![CDATA[Costing Algorithm]]></NAME>
-<!--6CB90FC76E2E4CD3A6AF472E39C042B6-->  <DESCRIPTION><![CDATA[Defines each costing algorithm installed and ready to use]]></DESCRIPTION>
+<!--6CB90FC76E2E4CD3A6AF472E39C042B6-->  <DESCRIPTION><![CDATA[A costing algorithm defines the method to use to calculate the cost of the transactions.]]></DESCRIPTION>
+<!--6CB90FC76E2E4CD3A6AF472E39C042B6-->  <HELP><![CDATA[A costing algorithm defines the method to use to calculate the cost of the transactions.]]></HELP>
 <!--6CB90FC76E2E4CD3A6AF472E39C042B6-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--6CB90FC76E2E4CD3A6AF472E39C042B6-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--6CB90FC76E2E4CD3A6AF472E39C042B6-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -3239,7 +3241,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--FC404D2406A9491CBD905D0D38F04846-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--FC404D2406A9491CBD905D0D38F04846-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--FC404D2406A9491CBD905D0D38F04846-->  <NAME><![CDATA[Warehouse Rules]]></NAME>
-<!--FC404D2406A9491CBD905D0D38F04846-->  <HELP><![CDATA[Warehouse Rules definition]]></HELP>
+<!--FC404D2406A9491CBD905D0D38F04846-->  <HELP><![CDATA[Warehouse rules window allows to review the warehouse rules available.]]></HELP>
 <!--FC404D2406A9491CBD905D0D38F04846-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--FC404D2406A9491CBD905D0D38F04846-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--FC404D2406A9491CBD905D0D38F04846-->  <PROCESSING><![CDATA[N]]></PROCESSING>
