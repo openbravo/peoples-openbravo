@@ -29,6 +29,10 @@
   v_DocAction VARCHAR2(60);
   v_DocStatus VARCHAR2(60);
   v_Aux NUMBER;
+  v_bpartner VARCHAR2(32);
+  v_bpartner_blocked VARCHAR2(1):='N';
+  v_inOutBlocking VARCHAR2(1):='N';
+  v_bpartner_name VARCHAR2(60);
 
   --  Parameter
   TYPE RECORD IS REF CURSOR;
@@ -54,9 +58,37 @@ BEGIN
       v_User_ID:=Cur_Parameter.AD_User_ID;
     END LOOP; -- Get Parameter
 
-    SELECT DocAction, DocStatus INTO v_DocAction, v_DocStatus
+    SELECT DocAction, DocStatus , c_bpartner_id INTO v_DocAction, v_DocStatus, v_bpartner
     FROM M_REQUISITION
     WHERE M_REquisition_ID = v_Record_ID;
+    IF (v_DocAction = 'CO' AND v_bpartner IS NOT NULL) THEN
+      SELECT  vendor_blocking , po_order_blocking, name  
+      INTO v_bpartner_blocked, v_inOutBlocking, v_bpartner_name
+      FROM M_REQUISITION m, C_BPartner bp
+      where m.c_bpartner_id=bp.c_bpartner_id
+      and m.M_REQUISITION_ID=v_Record_ID
+      AND m.C_BPARTNER_ID=v_bpartner;
+      IF (v_bpartner_blocked = 'Y' AND v_inOutBlocking = 'Y')THEN
+        RAISE_APPLICATION_ERROR(-20000,'@ThebusinessPartner@'||' '|| v_bpartner_name ||' '||'@BusinessPartnerBlocked@');
+      END IF;
+      ELSIF (v_DocAction = 'CO') THEN
+      FOR Cur_RequisitionLine IN
+        (SELECT M_RequisitionLine_ID, c_bpartner_id
+         FROM M_RequisitionLine
+         WHERE M_Requisition_ID = v_Record_ID) LOOP
+           IF (Cur_RequisitionLine.c_bpartner_id IS NOT NULL) THEN
+             SELECT  vendor_blocking , po_order_blocking, name  
+             INTO v_bpartner_blocked, v_inOutBlocking, v_bpartner_name
+             FROM M_REQUISITIONLINE m, C_BPartner bp
+             WHERE m.c_bpartner_id=bp.c_bpartner_id
+             AND m.M_REQUISITIONLINE_ID=Cur_RequisitionLine.m_requisitionline_id
+             AND m.C_BPARTNER_ID=Cur_RequisitionLine.c_bpartner_id;
+             IF (v_bpartner_blocked = 'Y' AND v_inOutBlocking = 'Y')THEN
+               RAISE_APPLICATION_ERROR(-20000,'@ThebusinessPartner@'||' '|| v_bpartner_name ||' '||'@BusinessPartnerBlocked@');
+             END IF;
+           END IF;
+        END LOOP; 
+    END IF;
 
     v_ResultStr := 'M_Requisition ' || v_Record_ID || ', DocAction=' || v_DocAction || ', DocStatus=' || v_DocStatus;
 
@@ -87,7 +119,7 @@ BEGIN
             Updated=now(),
             UpdatedBy=v_User_ID
         WHERE M_REQUISITION_ID = v_Record_ID;
-      ELSE
+      ELSE 
         RAISE_APPLICATION_ERROR(-20000, '@ActionNotAllowedHere@');
       END IF;
     ELSIF (v_DocStatus = 'CO') THEN
@@ -97,8 +129,8 @@ BEGIN
           (SELECT M_RequisitionLine_ID
            FROM M_RequisitionLine
            WHERE M_Requisition_ID = v_Record_ID
-             AND ReqStatus = 'O') LOOP
-          M_REQUISITIONLINE_STATUS(NULL, Cur_RequisitionLine.M_RequisitionLine_ID, v_User_ID);
+           AND ReqStatus = 'O') LOOP
+             M_REQUISITIONLINE_STATUS(NULL, Cur_RequisitionLine.M_RequisitionLine_ID, v_User_ID);
         END LOOP;
       ELSIF (v_DocAction = 'RE' ) THEN
         v_ResultStr := 'Reactivate the requisition: ' || v_Record_ID;

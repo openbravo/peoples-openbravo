@@ -416,6 +416,8 @@ public class DalWebService implements WebService {
     if (changeAction == ChangeAction.UPDATE) {
       xec.getEntityResolver().setResolvingMode(ResolvingMode.MUST_EXIST);
     }
+
+    xec.getEntityResolver().setLookForTranslatedIDs(false);
     final List<BaseOBObject> processedObjects = xec.process(doc);
 
     if (xec.getErrorMessages() != null) {

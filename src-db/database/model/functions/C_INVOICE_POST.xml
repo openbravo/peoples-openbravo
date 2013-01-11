@@ -166,6 +166,10 @@
   v_voiddate_inv C_Invoice.DateInvoiced%TYPE;
   v_voiddate_acct C_Invoice.DateAcct%TYPE;
 
+  v_bpartner_blocked VARCHAR2(1):='N';
+  v_invoiceBlocking VARCHAR2(1):='N';
+  v_bpartner_name VARCHAR2(60);
+
     
 BEGIN
   IF (p_PInstance_ID IS NOT NULL) THEN
@@ -205,9 +209,22 @@ BEGIN
 BEGIN --BODY
 
   /*Invoiceline acct dimension*/
-  SELECT C_INVOICE.ISSOTRX INTO v_IsSOTrx
+  SELECT C_INVOICE.ISSOTRX , C_INVOICE.c_bpartner_id
+  INTO v_IsSOTrx, v_BPartner_ID
   FROM C_INVOICE
   WHERE C_INVOICE_ID = v_Record_ID;
+
+  SELECT CASE WHEN (m.ISSOTRX='Y') THEN customer_blocking  ELSE vendor_blocking END ,  
+  CASE WHEN (m.ISSOTRX='Y') THEN so_invoice_blocking ELSE po_invoice_blocking  END, name, DocAction
+  INTO v_bpartner_blocked, v_invoiceBlocking, v_bpartner_name, v_DocAction
+  FROM C_INVOICE m, C_BPartner bp
+  WHERE m.c_bpartner_id=bp.c_bpartner_id
+  AND m.C_INVOICE_ID=v_Record_ID
+  AND m.C_BPARTNER_ID=v_BPartner_ID;
+  IF (v_DocAction = 'CO' AND v_bpartner_blocked = 'Y' AND v_invoiceBlocking = 'Y') THEN
+    RAISE_APPLICATION_ERROR(-20000,'@ThebusinessPartner@'||' '|| v_bpartner_name ||' '||'@BusinessPartnerBlocked@');
+  END IF;
+
   IF (v_IsSOTrx = 'N') THEN
     FOR Cur_line IN
       (SELECT C_INVOICELINE.C_InvoiceLine_ID,

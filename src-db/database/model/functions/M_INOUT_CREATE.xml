@@ -63,6 +63,7 @@
   v_logLines NUMBER:=0;
   v_isWholeLog BOOLEAN := true;
   v_Message VARCHAR2(2000):='';
+  v_MessageBPB VARCHAR2(2000):='';
   result_String VARCHAR2(2000):='';
   v_ResultLinesStr VARCHAR2(2000):='';
   -- Parameter
@@ -70,6 +71,7 @@
     Cur_Parameter RECORD;
     -- Orders to process  - one per warehouse
     Cur_Order RECORD;
+    Cur_BPBlocked RECORD;
     -- Order Lines per Warehouse
     CURSOR Cur_OrderLine (Order_ID VARCHAR, Warehouse_ID VARCHAR) IS
     SELECT l.*, p.name
@@ -203,6 +205,45 @@ BEGIN --BODY
     * Order Loop goes though all open orders, where we would need to ship something
     * (if v_Record_ID = '0')
     *************************************************************************/
+    For Cur_BPBlocked IN (
+        SELECT bp.customer_blocking ,  bp.so_invoice_blocking , bp.name , bp.c_bpartner_id
+        FROM C_ORDER o
+         JOIN C_BPartner bp ON o.c_bpartner_id = bp.c_bpartner_id
+            JOIN C_DOCTYPE d ON o.C_DOCTYPE_ID = d.C_DOCTYPE_ID
+            INNER JOIN C_ORDERLINE l ON o.C_Order_ID = l.C_Order_ID 
+        WHERE(bp.customer_blocking='Y' AND bp.so_goods_blocking='Y')
+        AND((o.DocStatus='IP' OR(o.DocStatus='CO'
+                                  AND o.IsDelivered='N'
+                                  AND v_Record_ID='0')) 
+          AND o.IsSOTrx='Y'
+          AND o.C_DocType_ID IN (SELECT C_DocType_ID
+                                 FROM C_DOCTYPE
+                                 WHERE DocBaseType='SOO'
+                                   AND DocSubTypeSO NOT IN('ON', 'OB')
+                                   AND isReturn = 'N')
+          AND ((v_Selection='Y' AND o.IsSelected='Y')
+              OR (v_Selection<>'Y'
+                  AND (v_AD_Org_ID IS NULL OR v_AD_Org_ID=o.AD_Org_ID) 
+                  AND (o.C_Order_ID=v_Record_ID
+                      OR (v_Record_ID='0'
+                          AND EXISTS (SELECT *
+                                FROM C_ORDERLINE ll
+                                WHERE o.C_Order_ID=ll.C_Order_ID
+                                AND ll.QtyOrdered<>ll.QtyDelivered
+                                AND ll.DirectShip='N'
+                                AND ll.M_Product_ID IS NOT NULL
+            ))))))
+        group by bp.c_bpartner_id,bp.customer_blocking ,  bp.so_invoice_blocking ,  bp.name
+    )
+          LOOP    
+            IF(v_Message NOT LIKE '%@ThebusinessPartner@%') THEN
+            v_MessageBPB:=SUBSTR(v_MessageBPB ||' '||'@ThebusinessPartner@'||' '|| Cur_Bpblocked.name ||' '||'@BusinessPartnerBlocked3@', 0, 2000);
+            ELSE
+            v_MessageBPB:=SUBSTR(v_MessageBPB ||', '||'@ThebusinessPartner@'||' '|| Cur_Bpblocked.name ||' '||'@BusinessPartnerBlocked3@', 0, 2000);
+            END IF;
+          END LOOP;
+
+    
     FOR Cur_Order IN (
         SELECT o.AD_Client_ID, o.AD_Org_ID, o.C_Order_ID, o.IsSOTrx,
             o.Description, o.DocumentNo, o.C_DocType_ID, o.C_BPartner_ID,
@@ -215,8 +256,10 @@ BEGIN --BODY
             o.DELIVERY_LOCATION_ID -- Added by Rafa Roda to include delivery location
         FROM C_ORDER o
             JOIN C_DOCTYPE d ON o.C_DOCTYPE_ID = d.C_DOCTYPE_ID
+            JOIN C_BPartner bp ON o.c_bpartner_id = bp.c_bpartner_id
             INNER JOIN C_ORDERLINE l ON o.C_Order_ID = l.C_Order_ID --  Orders are IP  or CO if Standard Orders
-        WHERE(o.DocStatus='IP' OR(o.DocStatus='CO'
+        WHERE (bp.customer_blocking='N' OR bp.so_goods_blocking='N')
+        AND((o.DocStatus='IP' OR(o.DocStatus='CO'
                                   AND o.IsDelivered='N'
                                   AND v_Record_ID='0')) -- Sales Orders Only and not Offers
           AND o.IsSOTrx='Y'
@@ -237,7 +280,7 @@ BEGIN --BODY
                                 AND ll.QtyOrdered<>ll.QtyDelivered
                                 AND ll.DirectShip='N'
                                 AND ll.M_Product_ID IS NOT NULL
-            )))))
+            ))))))
         GROUP BY o.AD_Client_ID, o.AD_Org_ID, o.C_Order_ID, o.IsSOTrx,
              o.Description, o.DocumentNo, o.C_DocType_ID, o.C_BPartner_ID,
              o.C_BPartner_Location_ID, o.AD_User_ID, l.M_Warehouse_ID, o.POReference,
@@ -888,7 +931,9 @@ BEGIN --BODY
   IF (p_PInstance_ID IS NOT NULL) THEN
     --  Update AD_PInstance
     IF (NOT v_isWholeLog) THEN
-      v_Message := 'First ' || v_logLines || ' result(s):' || '<br>' || v_Message || '...';
+      v_Message := SUBSTR('First ' || v_logLines || ' result(s):' || '<br>' || v_Message || '<br>' || v_MessageBPB || '...', 0, 2000); 
+    ELSE
+      v_Message := SUBSTR(v_Message || '<br>' || v_MessageBPB, 0, 2000); 
     END IF;
   
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;

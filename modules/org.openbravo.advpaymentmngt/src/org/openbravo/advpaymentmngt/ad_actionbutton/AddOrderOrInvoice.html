@@ -133,6 +133,33 @@ function distributeAmount(_amount) {
   return true;
 }
 
+function bPartnerBlocked(){
+  try {
+    var url = "../org.openbravo.advpaymentmngt.ad_actionbutton/AddOrderOrInvoice.html";
+    var paramXMLReq = null;
+    return submitXmlHttpRequest(callBackBPartnerBlocked, document.frmMain, "BPARTNERBLOCK", url, false, null, paramXMLReq);
+  } catch (e) {
+    alert(e);
+  }
+}
+
+function callBackBPartnerBlocked(paramXMLParticular, XMLHttpRequestObj) {
+  if (getReadyStateHandler(XMLHttpRequestObj)) {
+    try {
+      if (XMLHttpRequestObj.responseText) {
+        strText = XMLHttpRequestObj.responseText;
+        var objson = eval(strText);
+        showJSMessage(objson.text);
+        return false;
+      } else {
+        openProcessPayment();
+        return true;
+      }
+    } catch (e) {}
+  }
+  return true;
+}
+
 function callBackGrid(paramXMLParticular, XMLHttpRequestObj) {
   var strText = '';
   if (getReadyStateHandler(XMLHttpRequestObj)) {
@@ -1696,7 +1723,7 @@ function closeProcessPayment() {
                   <button type="button" 
                     id="buttonProcess"
                     class="ButtonLink" 
-                    onclick="openProcessPayment();return false;"
+                    onclick="bPartnerBlocked(this);return false;"
                     onfocus="buttonEvent('onfocus', this); window.status='Create'; return true;"
                     onblur="buttonEvent('onblur', this);"
                     onkeyup="buttonEvent('onkeyup', this);"

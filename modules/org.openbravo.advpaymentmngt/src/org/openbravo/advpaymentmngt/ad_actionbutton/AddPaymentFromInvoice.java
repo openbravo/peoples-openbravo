@@ -151,6 +151,14 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
       refreshExchangeRate(response, vars, strCurrencyId, strFinancialAccountCurrencyId,
           strPaymentDate, org, conversionRatePrecision);
 
+    } else if (vars.commandIn("BPARTNERBLOCK")) {
+      boolean isReceipt = vars.getRequiredStringParameter("isReceipt").equals("Y");
+      String strReceivedFromId = vars.getRequiredStringParameter("inpBusinessPartnerId");
+      BusinessPartner businessPartner = OBDal.getInstance().get(BusinessPartner.class,
+          strReceivedFromId);
+      if (FIN_Utility.isBlockedBusinessPartner(businessPartner.getId(), isReceipt, 4)) {
+        businessPartnerBlocked(response, vars, businessPartner.getIdentifier());
+      }
     } else if (vars.commandIn("SAVE") || vars.commandIn("SAVEANDPROCESS")) {
       boolean isReceipt = vars.getRequiredStringParameter("isReceipt").equals("Y");
       String strAction = null;
@@ -729,5 +737,21 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
       return isReceipt ? paymentMethod.isAutomaticDeposit() : paymentMethod.isAutomaticWithdrawn();
     }
     return false;
+  }
+
+  private void businessPartnerBlocked(HttpServletResponse response, VariablesSecureApp vars,
+      String strBPartnerName) throws IOException, ServletException {
+
+    try {
+      JSONObject json = new JSONObject();
+      json.put("text", "SelectedBPartnerBlocked");
+      response.setContentType("text/html; charset=UTF-8");
+      PrintWriter out = response.getWriter();
+      out.println("objson = " + json);
+      out.close();
+    } catch (JSONException e) {
+      log4j.error(e);
+    }
+
   }
 }

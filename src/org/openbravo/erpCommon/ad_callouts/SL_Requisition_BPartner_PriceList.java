@@ -27,10 +27,12 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.xmlEngine.XmlDocument;
@@ -81,6 +83,12 @@ public class SL_Requisition_BPartner_PriceList extends HttpSecureAppServlet {
         OBContext.setAdminMode(true);
         try {
           BusinessPartner bPartner = OBDal.getInstance().get(BusinessPartner.class, strBPartner);
+          if (FIN_Utility.isBlockedBusinessPartner(strBPartner, false, 1)) {
+            // If the Business Partner is blocked for this document, show an information message.
+            strResult.append("new Array('MESSAGE', \""
+                + OBMessageUtils.messageBD("ThebusinessPartner") + " " + bPartner.getIdentifier()
+                + " " + OBMessageUtils.messageBD("BusinessPartnerBlocked") + "\"), ");
+          }
           if (bPartner.getPurchasePricelist() != null) {
             strResult.append("new Array(\"inpmPricelistId\", \""
                 + bPartner.getPurchasePricelist().getId() + "\"),");
