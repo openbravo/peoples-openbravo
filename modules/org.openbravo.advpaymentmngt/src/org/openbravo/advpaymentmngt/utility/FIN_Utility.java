@@ -1123,10 +1123,11 @@ public class FIN_Utility {
    * Returns true if the Business Partner is blocked for the document type selected.
    * 
    * @param strBPartnerId
+   *          . Business Partner Id.
    * @param issotrx
+   *          . True if Sales, False if Purchase.
    * @param docType
    *          1: Order. 2: Goods Receipt / Shipment. 3: Invoice. 4: Payment.
-   * @return
    */
   public static boolean isBlockedBusinessPartner(String strBPartnerId, boolean issotrx, int docType) {
     try {
@@ -1157,6 +1158,7 @@ public class FIN_Utility {
 
       }
       default:
+        log4j.error("Error in isBusinessPartnerBlocking: docType must be between 1 and 4");
         return false;
       }
     } finally {

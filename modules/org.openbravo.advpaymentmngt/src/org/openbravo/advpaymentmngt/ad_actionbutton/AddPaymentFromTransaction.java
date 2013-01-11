@@ -181,7 +181,7 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
         String strSelectedScheduledPaymentDetailIds = vars.getInStringParameter(
             "inpScheduledPaymentDetailId", "", null);
         if (!"".equals(strSelectedScheduledPaymentDetailIds)) {
-          OBContext.setAdminMode();
+          OBContext.setAdminMode(true);
           try {
             List<FIN_PaymentScheduleDetail> selectedPaymentDetails = FIN_Utility.getOBObjectList(
                 FIN_PaymentScheduleDetail.class, strSelectedScheduledPaymentDetailIds);
@@ -841,7 +841,7 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
       out.println("objson = " + json);
       out.close();
     } catch (JSONException e) {
-      log4j.error(e);
+      log4j.error("AddPaymentFromTransaction - Callback", e);
     }
   }
 
