@@ -321,6 +321,8 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
               // update existing PD with difference
               outStandingPSDs.get(0).setAmount(
                   outStandingPSDs.get(0).getAmount().add(psd.getAmount()));
+              outStandingPSDs.get(0).setDebtAmount(
+                  outStandingPSDs.get(0).getDebtAmount().add(psd.getDebtAmount()));
               OBDal.getInstance().save(outStandingPSDs.get(0));
             }
             toRemovePDs.add(pd.getId());

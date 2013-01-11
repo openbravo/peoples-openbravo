@@ -19,6 +19,8 @@
     ************************************************************************/
 
   v_DateNull DATE := TO_DATE('01-01-1900', 'DD-MM-YYYY');
+  V_Processed FIN_Doubtful_Debt.Processed%TYPE;
+
 
      
 BEGIN
@@ -36,17 +38,24 @@ BEGIN
     OR(COALESCE(:old.RUNDATE, v_DateNull) <> COALESCE(:new.RUNDATE, v_DateNull))
     OR(COALESCE(:old.AD_ORG_ID, '0') <> COALESCE(:new.AD_ORG_ID, '0'))
     OR(COALESCE(:old.AD_CLIENT_ID, '0') <> COALESCE(:new.AD_CLIENT_ID, '0')))) THEN
-      RAISE_APPLICATION_ERROR(-20000, '@20501@') ;
+      RAISE_APPLICATION_ERROR(-20000, '@20507@') ;
     END IF;
   END IF;
   IF(DELETING) THEN
     IF(:old.Processed='Y') THEN
       RAISE_APPLICATION_ERROR(-20000, '@20501@') ;
     END IF;
+    SELECT COALESCE(MAX(PROCESSED), 'N')
+    	INTO V_PROCESSED
+		FROM FIN_DOUBTFUL_DEBT 
+		WHERE fin_doubtful_debt_run_id = :old.fin_doubtful_debt_run_id;
+		IF(V_PROCESSED = 'Y') THEN
+			RAISE_APPLICATION_ERROR(-20000, '@20503@') ;
+		END IF;
   END IF;
   IF(INSERTING) THEN
     IF(:NEW.Processed='Y') THEN
-      RAISE_APPLICATION_ERROR(-20000, '@20501@') ;
+      RAISE_APPLICATION_ERROR(-20000, '@20509@') ;
     END IF;
   END IF;
 END FIN_DOUBTFUL_DEBT_RUN_CHK_TRG
