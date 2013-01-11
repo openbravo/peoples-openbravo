@@ -68,10 +68,9 @@
       if (!this.get('searchKey')) {
         nameLength = this.get('name').toString().length;
         newSk = this.get('name');
-        if (nameLength > 25) {
-          newSk = this.get('name').substring(0, 25);
+        if (nameLength > 30) {
+          newSk = this.get('name').substring(0, 30);
         }
-        newSk = newSk + '_' + (new Date().getFullYear().toString()) + ((new Date().getMonth() + 1).toString()) + (new Date().getDate().toString()) + '_' + (new Date().getHours().toString()) + (new Date().getMinutes().toString());
         this.set('searchKey', newSk);
       }
 

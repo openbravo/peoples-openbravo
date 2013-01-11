@@ -19,11 +19,13 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.businesspartner.Location;
@@ -174,6 +176,26 @@ public class CustomerLoader extends JSONProcessSimple {
       String errorMessage = "Business partner search key is a mandatory field to create a new customer from Web Pos";
       log.error(errorMessage);
       throw new OBException(errorMessage, null);
+    } else {
+      String possibleSK = jsonCustomer.getString("searchKey");
+      String finalSK = "";
+
+      int bpsWithPossibleSK = 0;
+
+      final OBCriteria<BusinessPartner> bpCriteria = OBDal.getInstance().createCriteria(
+          BusinessPartner.class);
+      bpCriteria.add(Restrictions.eq("searchKey", possibleSK));
+      bpCriteria.setMaxResults(1);
+      bpsWithPossibleSK = bpCriteria.count();
+
+      if (bpsWithPossibleSK > 0) {
+        // SK exist -> make it unique
+        finalSK = possibleSK + "_" + jsonCustomer.getString("id").substring(0, 4);
+      } else {
+        // we can use this SK
+        finalSK = possibleSK;
+      }
+      customer.setSearchKey(finalSK);
     }
     // BP name (required)
     if (!jsonCustomer.has("name") && jsonCustomer.getString("name").equals("null")) {
@@ -193,13 +215,17 @@ public class CustomerLoader extends JSONProcessSimple {
 
   protected BusinessPartner editBPartner(BusinessPartner customer, JSONObject jsonCustomer)
       throws JSONException {
+    String previousSK = customer.getSearchKey();
+    BigDecimal previousCL = customer.getCreditLimit();
     Entity BusinessPartnerEntity = ModelProvider.getInstance().getEntity(BusinessPartner.class);
     JSONPropertyToEntity.fillBobFromJSON(BusinessPartnerEntity, customer, jsonCustomer);
 
+    // Don't change SK when BP is modified
+    customer.setSearchKey(previousSK);
     // customer tab
     customer.setCustomer(true);
     // security
-    customer.setCreditLimit(BigDecimal.ZERO);
+    customer.setCreditLimit(previousCL);
 
     OBDal.getInstance().save(customer);
     return customer;
@@ -214,11 +240,41 @@ public class CustomerLoader extends JSONProcessSimple {
     if (user != null) {
 
       JSONPropertyToEntity.fillBobFromJSON(userEntity, user, jsonCustomer);
+      String name = jsonCustomer.getString("name");
+      if (name.length() > 60) {
+        name = name.substring(0, 60);
+      }
+      user.setFirstName(name);
 
-      // Contact exist > modify it
+      // Contact exist > modify it. The username is not modified
       OBDal.getInstance().save(user);
     } else {
       // Contact doesn't exists > create it - create user linked to BP
+
+      // First: Check if the proposed username exists
+      String name = jsonCustomer.getString("name");
+      String possibleUsername = name.trim();
+      String finalUsername = "";
+
+      int usersWithPossibleUsername = 0;
+
+      final OBCriteria<org.openbravo.model.ad.access.User> userCriteria = OBDal.getInstance()
+          .createCriteria(org.openbravo.model.ad.access.User.class);
+      userCriteria.add(Restrictions.eq("username", possibleUsername));
+      userCriteria.setMaxResults(1);
+      usersWithPossibleUsername = userCriteria.count();
+
+      if (usersWithPossibleUsername > 0) {
+        // username exist -> make it unique
+        finalUsername = possibleUsername + "_"
+            + jsonCustomer.getString("contactId").substring(0, 4);
+      } else {
+        // we can use this username
+        finalUsername = possibleUsername;
+      }
+
+      // create the user
+
       final org.openbravo.model.ad.access.User usr = OBProvider.getInstance().get(
           org.openbravo.model.ad.access.User.class);
 
@@ -232,8 +288,11 @@ public class CustomerLoader extends JSONProcessSimple {
         throw new OBException(errorMessage, null);
       }
 
-      usr.setUsername(jsonCustomer.getString("name").trim());
-      usr.setFirstName(jsonCustomer.getString("name").trim());
+      usr.setUsername(finalUsername);
+      if (name.length() > 60) {
+        name = name.substring(0, 60);
+      }
+      usr.setFirstName(name);
 
       usr.setBusinessPartner(customer);
 
