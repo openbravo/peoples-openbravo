@@ -113,6 +113,17 @@ isc.OBMultiSelectorItem.addProperties({
         //Prevents the window from closing when double clicking a record
         setValueInField: function () {}
       });
+
+      this.selectorWindow.selectorGrid.recordClick = function (viewer, record, recordnum, field, fieldnum) {
+        // If a field other than the checkbox is clicked, select/deselect the record manually
+        if (fieldnum !== 0) {
+          if (this.isSelected(record)) {
+            this.deselectRecord(record);
+          } else {
+            this.selectRecord(record);
+          }
+        }
+      };
     }
 
     this.optionCriteria = {
