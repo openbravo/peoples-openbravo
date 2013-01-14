@@ -36,7 +36,7 @@ public class ProcessCashClose extends JSONProcessSimple {
 
       new OrderGroupingProcessor().groupOrders(posTerminal);
       JSONArray arrayCashCloseInfo = jsonsent.getJSONArray("cashCloseInfo");
-      new CashCloseProcessor().processCashClose(arrayCashCloseInfo);
+      new CashCloseProcessor().processCashClose(posTerminal, arrayCashCloseInfo);
       jsonResponse.put(JsonConstants.RESPONSE_DATA, jsonData);
       return jsonResponse;
     } catch (Exception e) {
