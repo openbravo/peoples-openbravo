@@ -109,7 +109,9 @@ isc.OBMultiSelectorItem.addProperties({
           }
           this.selector.setSelectedRecords(records);
           this.Super('closeClick', arguments);
-        }
+        },
+        //Prevents the window from closing when double clicking a record
+        setValueInField: function () {}
       });
     }
 
