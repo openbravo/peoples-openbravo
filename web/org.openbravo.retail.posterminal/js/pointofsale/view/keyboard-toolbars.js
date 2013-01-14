@@ -46,6 +46,14 @@ enyo.kind({
   events: {
     onShowPopup: ''
   },
+  handlers: {
+    onShowAllButtons: 'showAllButtons',
+    onCloseAllPopups: 'closeAllPopups'
+  },
+  components: [{
+    kind: 'OB.OBPOSPointOfSale.UI.PaymentMethods',
+    name: 'OBPOS_UI_PaymentMethods'
+  }],
   pay: function (amount, key, name, paymentMethod, rate, mulrate, isocode) {
     if (OB.DEC.compare(amount) > 0) {
 
@@ -105,12 +113,17 @@ enyo.kind({
 
   initComponents: function () {
     //TODO: modal payments
-    var i, max, payments, Btn, inst, cont, exactdefault, cashdefault, allpayments = {},
+    var i, max, payments, paymentsdialog, paymentsbuttons, countbuttons, btncomponent, Btn, inst, cont, exactdefault, cashdefault, allpayments = {},
         me = this;
 
     this.inherited(arguments);
 
     payments = OB.POS.modelterminal.get('payments');
+
+
+    paymentsdialog = payments.lengh + this.sideButtons.length > 5;
+    paymentsbuttons = paymentsdialog ? 4 : 5;
+    countbuttons = 0;
 
     enyo.forEach(payments, function (payment) {
       if (payment.paymentMethod.id === OB.POS.modelterminal.get('terminal').terminalType.paymentMethod) {
@@ -121,7 +134,7 @@ enyo.kind({
       }
       allpayments[payment.payment.searchKey] = payment;
 
-      this.createComponent(this.getButtonComponent({
+      btncomponent = this.getButtonComponent({
         command: payment.payment.searchKey,
         label: payment.payment._identifier,
         permission: payment.payment.searchKey,
@@ -131,20 +144,38 @@ enyo.kind({
           amount = _.isNaN(amount) ? me.receipt.getPending() : amount;
           me.pay(amount, payment.payment.searchKey, payment.payment._identifier, payment.paymentMethod, payment.rate, payment.mulrate, payment.isocode);
         }
-      }));
+      });
+
+      if (countbuttons++ < paymentsbuttons) {
+        this.createComponent(btncomponent);
+      } else {
+        OB.OBPOSPointOfSale.UI.PaymentMethods.prototype.sideButtons.push(btncomponent);
+      }
     }, this);
 
     // Fallback assign of the payment for the exact command.
     exactdefault = exactdefault || cashdefault || payments[0];
 
     enyo.forEach(this.sideButtons, function (sidebutton) {
-      this.createComponent(this.getButtonComponent(sidebutton));
+      btncomponent = this.getButtonComponent(sidebutton);
+      if (countbuttons++ < paymentsbuttons) {
+        this.createComponent(btncomponent);
+      } else {
+        OB.OBPOSPointOfSale.UI.PaymentMethods.prototype.sideButtons.push(btncomponent);
+      }
     }, this);
 
-    for (i = payments.length + this.sideButtons.length - 1; i < 4; i++) {
+    while (countbuttons++ < paymentsbuttons) {
       this.createComponent({
         kind: 'OB.UI.BtnSide',
         btn: {}
+      });
+    }
+
+    if (paymentsdialog) {
+      this.createComponent({
+        toolbar: this,
+        kind: 'OB.OBPOSPointOfSale.UI.ButtonMore'
       });
     }
 
@@ -172,6 +203,12 @@ enyo.kind({
       }
     });
   },
+  showAllButtons: function () {
+    this.$.OBPOS_UI_PaymentMethods.show();
+  },
+  closeAllPopups: function () {
+    this.$.OBPOS_UI_PaymentMethods.hide();
+  },
   shown: function () {
     var me = this,
         i, max, p, keyboard = this.owner.owner;
@@ -186,6 +223,68 @@ enyo.kind({
         break;
       }
     }
+  }
+});
+
+enyo.kind({
+  name: 'OB.OBPOSPointOfSale.UI.PaymentMethods',
+  kind: 'OB.UI.Modal',
+  topPosition: '125px',
+  header: OB.I18N.getLabel('OBPOS_MorePaymentsHeader'),
+  sideButtons: [],
+  body: {
+    classes: 'row-fluid',
+    components: [{
+      kind: 'OB.OBPOSPointOfSale.UI.ButtonLess'
+    }, {
+      classes: 'span12',
+      components: [{
+        style: 'border-bottom: 1px solid #cccccc;',
+        classes: 'row-fluid',
+        components: [{
+          name: 'buttonslist',
+          classes: 'span12'
+        }]
+      }]
+    }]
+  },
+  executeOnShow: function () {
+    // build only the first time...
+    enyo.forEach(this.sideButtons, function (sidebutton) {
+      this.$.body.$.buttonslist.createComponent(sidebutton, {
+        owner: this.args.toolbar
+      });
+    }, this);
+
+    // this.clearAction();{owner: other}
+    return true;
+  },
+  init: function (model) {
+    this.model = model;
+
+    //    this.prsList = new OB.Collection.GiftCardList();
+
+  }
+});
+
+enyo.kind({
+  name: 'OB.OBPOSPointOfSale.UI.ButtonMore',
+  style: 'display:table; width:100%;',
+  events: {
+    onShowAllButtons: ''
+  },
+  components: [{
+    style: 'margin: 5px;',
+    components: [{
+      kind: 'OB.UI.Button',
+      classes: 'btnkeyboard',
+      name: 'btn',
+      label: 'puchi',
+      content: OB.I18N.getLabel('OBPOS_MorePayments')
+    }]
+  }],
+  tap: function () {
+    this.doShowAllButtons();
   }
 });
 

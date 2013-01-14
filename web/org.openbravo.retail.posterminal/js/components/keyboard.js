@@ -364,6 +364,8 @@ enyo.kind({
   },
 
   virtualKeypressHandler: function (key) {
+
+    this.waterfall('onCloseAllPopups');
     var t;
     if (key.match(/^([0-9]|\.|,| |[a-z]|[A-Z])$/) || (key === 'del')) {
       this.writeCharacter(key);
