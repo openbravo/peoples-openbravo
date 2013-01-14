@@ -213,7 +213,7 @@ isc.OBParameterWindowView.addProperties({
 
     // change title to done
     if (tab) {
-      tab.setTitle(OB.I18N.getLabel('OBUIAPP_ProcessTitle_Done', [this.title]));
+      tab.setTitle(OB.I18N.getLabel('OBUIAPP_ProcessTitle_Done', [this.tabTitle]));
     }
 
     this.showProcessing(false);
@@ -303,7 +303,7 @@ isc.OBParameterWindowView.addProperties({
     // change tab title to show executing...
     tab = OB.MainView.TabSet.getTab(this.viewTabId);
     if (tab) {
-      tab.setTitle(OB.I18N.getLabel('OBUIAPP_ProcessTitle_Executing', [this.title]));
+      tab.setTitle(OB.I18N.getLabel('OBUIAPP_ProcessTitle_Executing', [this.tabTitle]));
     }
 
     if (this.grid) {
