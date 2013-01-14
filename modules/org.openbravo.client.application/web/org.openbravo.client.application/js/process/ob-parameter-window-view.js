@@ -207,7 +207,7 @@ isc.OBParameterWindowView.addProperties({
     });
   },
 
-  handleResponse: function (refresh, message, responseActions) {
+  handleResponse: function (refresh, message, responseActions, retryExecution) {
     var window = this.parentWindow,
         tab = OB.MainView.TabSet.getTab(this.viewTabId), i;
 
@@ -225,7 +225,7 @@ isc.OBParameterWindowView.addProperties({
       }
     }
 
-    if (!message || message.retryExecution !== 'Y') {
+    if (!retryExecution) {
       this.disableFormItems();
     } else {
       // Show again all toolbar buttons so the process
@@ -368,7 +368,7 @@ isc.OBParameterWindowView.addProperties({
       processId: this.processId,
       windowId: this.windowId
     }, function (rpcResponse, data, rpcRequest) {
-      view.handleResponse(true, (data && data.message), (data && data.responseActions));
+      view.handleResponse(true, (data && data.message), (data && data.responseActions), (data && data.retryExecution === 'Y'));
     });
   },
 
