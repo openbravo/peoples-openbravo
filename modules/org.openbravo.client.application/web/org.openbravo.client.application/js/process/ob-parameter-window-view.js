@@ -209,7 +209,7 @@ isc.OBParameterWindowView.addProperties({
 
   handleResponse: function (refresh, message, responseActions) {
     var window = this.parentWindow,
-        tab = OB.MainView.TabSet.getTab(this.viewTabId);
+        tab = OB.MainView.TabSet.getTab(this.viewTabId), i;
 
     // change title to done
     if (tab) {
@@ -225,7 +225,19 @@ isc.OBParameterWindowView.addProperties({
       }
     }
 
-    this.disableFormItems();
+    if (!message || message.validationError !== 'Y') {
+      this.disableFormItems();
+    } else {
+      // Show again all toolbar buttons so the process
+      // can be called again
+      if (this.toolBarLayout) {
+        for (i = 0; i < this.toolBarLayout.children.length; i++) {
+          if (this.toolBarLayout.children[i].show) {
+            this.toolBarLayout.children[i].show();
+          }
+        }
+      }
+    }
 
     if (responseActions) {
       OB.Utilities.Action.executeJSON(responseActions, null, null, this);
