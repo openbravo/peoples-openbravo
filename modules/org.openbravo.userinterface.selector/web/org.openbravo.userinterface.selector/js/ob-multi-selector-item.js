@@ -96,7 +96,7 @@ isc.OBMultiSelectorItem.addProperties({
         selectorGridFields: isc.shallowClone(this.selectorGridFields),
         selectionAppearance: 'checkbox',
         multiselect: true,
-        selectedIds: this.getValue() || [],
+        selectedIds: this.getValue(),
         selectId: function (id) {
           if (!this.selectedIds.contains(id)) {
             this.selectedIds.push(id);
@@ -150,7 +150,7 @@ isc.OBMultiSelectorItem.addProperties({
   // adds a new record to the selection
   setValueFromRecord: function (record) {
     var me = this,
-        selectedElement, currentValue = this.getValue() || [];
+        selectedElement, currentValue = this.getValue();
 
     // add record to selected values
     currentValue.push(record[OB.Constants.ID]);
@@ -163,7 +163,7 @@ isc.OBMultiSelectorItem.addProperties({
       height: 1,
       value: record[OB.Constants.ID],
       iconClick: function () {
-        var currentValues = me.getValue() || [];
+        var currentValues = me.getValue();
         currentValues.remove(this.value);
         me.selectionLayout.removeMember(this);
       }
@@ -195,7 +195,7 @@ isc.OBMultiSelectorItem.addProperties({
     if (this.selectorWindow.selectorGrid) {
       this.selectorWindow.selectorGrid.invalidateCache();
     }
-    this.selectorWindow.selectedIds = this.getValue() || [];
+    this.selectorWindow.selectedIds = this.getValue();
     this.selectorWindow.origSelection = isc.shallowClone(this.selectorWindow.selectedIds);
     this.selectorWindow.open();
   },
@@ -207,6 +207,12 @@ isc.OBMultiSelectorItem.addProperties({
       this.selectorWindow = null;
     }
     this.Super('destroy', arguments);
+  },
+
+  getValue: function () {
+    // lalalala
+    var value = this.Super('getValue', arguments);
+    return (value ? value : []);
   }
 });
 
