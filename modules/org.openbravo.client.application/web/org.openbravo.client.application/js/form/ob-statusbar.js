@@ -155,10 +155,14 @@ isc.OBStatusBar.addProperties({
   // Set in the skin
   previousButton: null,
   nextButton: null,
+  showPreviousNextButton: true,
   closeButton: null,
+  showCloseButton: true,
   maximizeButton: null,
   restoreButton: null,
   maximizeRestoreButton: null,
+  showMaximizeRestoreButton: true,
+  customButtons: null,
 
   newIcon: null,
   editIcon: null,
@@ -166,7 +170,6 @@ isc.OBStatusBar.addProperties({
   mode: '',
   isActive: true,
   buttonBar: null,
-  buttonBarProperties: {},
 
   initWidget: function () {
     this.content = isc.HLayout.create({
@@ -178,7 +181,9 @@ isc.OBStatusBar.addProperties({
     this.leftStatusBar = isc.OBStatusBarLeftBar.create({});
     this.leftStatusBar.addMember(this.content);
 
-    this.buttonBar = isc.OBStatusBarIconButtonBar.create(this.buttonBarProperties);
+    this.buttonBar = isc.OBStatusBarIconButtonBar.create({
+      width: this.buttonBarWidth
+    });
     this.addCreateButtons();
 
     this.savedIcon = isc.Img.create(this.savedIconDefaults);
@@ -196,56 +201,71 @@ isc.OBStatusBar.addProperties({
   addCreateButtons: function () {
     var i, length, buttonSpacer;
 
-    buttonSpacer = isc.HLayout.create({
-      width: this.iconButtonGroupSpacerWidth
-    });
+    if (this.customButtons) {
+      this.buttonBar.addMembers(this.customButtons);
+    }
 
-    this.previousButton = isc.OBStatusBarIconButton.create({
-      view: this.view,
-      buttonType: 'previous',
-      keyboardShortcutId: 'StatusBar_Previous',
-      prompt: OB.I18N.getLabel('OBUIAPP_PREVIOUSBUTTON')
-    });
+    if (this.showPreviousNextButton) {
+      buttonSpacer = isc.HLayout.create({
+        width: this.iconButtonGroupSpacerWidth
+      });
 
-    this.nextButton = isc.OBStatusBarIconButton.create({
-      view: this.view,
-      buttonType: 'next',
-      keyboardShortcutId: 'StatusBar_Next',
-      prompt: OB.I18N.getLabel('OBUIAPP_NEXTBUTTON')
-    });
+      this.previousButton = isc.OBStatusBarIconButton.create({
+        view: this.view,
+        buttonType: 'previous',
+        keyboardShortcutId: 'StatusBar_Previous',
+        prompt: OB.I18N.getLabel('OBUIAPP_PREVIOUSBUTTON')
+      });
 
-    this.closeButton = isc.OBStatusBarIconButton.create({
-      view: this.view,
-      buttonType: 'close',
-      keyboardShortcutId: 'StatusBar_Close',
-      prompt: OB.I18N.getLabel('OBUIAPP_CLOSEBUTTON')
-    });
+      this.nextButton = isc.OBStatusBarIconButton.create({
+        view: this.view,
+        buttonType: 'next',
+        keyboardShortcutId: 'StatusBar_Next',
+        prompt: OB.I18N.getLabel('OBUIAPP_NEXTBUTTON')
+      });
 
-    this.maximizeButton = isc.OBStatusBarIconButton.create({
-      view: this.view,
-      buttonType: 'maximize',
-      prompt: OB.I18N.getLabel('OBUIAPP_MAXIMIZEBUTTON')
-    });
+      this.buttonBar.addMembers([this.previousButton, this.nextButton, buttonSpacer]);
+    }
 
-    this.restoreButton = isc.OBStatusBarIconButton.create({
-      visibility: 'hidden',
-      view: this.view,
-      buttonType: 'restore',
-      prompt: OB.I18N.getLabel('OBUIAPP_RESTOREBUTTON')
-    });
+    if (this.showMaximizeRestoreButton) {
+      this.maximizeButton = isc.OBStatusBarIconButton.create({
+        view: this.view,
+        buttonType: 'maximize',
+        prompt: OB.I18N.getLabel('OBUIAPP_MAXIMIZEBUTTON')
+      });
 
-    this.maximizeRestoreButton = isc.OBStatusBarIconButton.create({ // Only for implement 'StatusBar_Maximize-Restore' keyboard shortcut
-      visibility: 'hidden',
-      view: this.view,
-      buttonType: 'maximizeRestore',
-      forceKeyboardShortcut: true,
-      keyboardShortcutId: 'StatusBar_Maximize-Restore'
-    });
+      this.restoreButton = isc.OBStatusBarIconButton.create({
+        visibility: 'hidden',
+        view: this.view,
+        buttonType: 'restore',
+        prompt: OB.I18N.getLabel('OBUIAPP_RESTOREBUTTON')
+      });
 
-    this.buttonBar.addMembers([this.previousButton, this.nextButton, buttonSpacer, this.maximizeButton, this.restoreButton, this.closeButton, this.maximizeRestoreButton]);
+      this.maximizeRestoreButton = isc.OBStatusBarIconButton.create({ // Only for implement 'StatusBar_Maximize-Restore' keyboard shortcut
+        visibility: 'hidden',
+        view: this.view,
+        buttonType: 'maximizeRestore',
+        forceKeyboardShortcut: true,
+        keyboardShortcutId: 'StatusBar_Maximize-Restore'
+      });
+
+      this.buttonBar.addMembers([this.maximizeButton, this.restoreButton, this.maximizeRestoreButton]);
+    }
+
+    if (this.showCloseButton) {
+      this.closeButton = isc.OBStatusBarIconButton.create({
+        view: this.view,
+        buttonType: 'close',
+        keyboardShortcutId: 'StatusBar_Close',
+        prompt: OB.I18N.getLabel('OBUIAPP_CLOSEBUTTON')
+      });
+
+      this.buttonBar.addMembers([this.closeButton]);
+    }
+
     length = this.buttonBar.members.length;
     for (i = 0; i < length; i++) {
-      if (this.buttonBar.members[i].buttonType) {
+      if (this.buttonBar.members[i].buttonType && this.view) {
         OB.TestRegistry.register('org.openbravo.client.application.statusbar.button.' + this.buttonBar.members[i].buttonType + '.' + this.view.tabId, this.buttonBar.members[i]);
       }
     }

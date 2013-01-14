@@ -75,9 +75,7 @@ OB.Styles.Personalization.deleteViewPopup = {
   height: 150
 };
 
-OB.Styles.Personalization.buttonBarProperties = {
-  width: 30
-};
+OB.Styles.Personalization.buttonBarWidth = 30;
 
 OB.Styles.Personalization.Icons = {
   fieldGroup: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/personalization/iconFolder.png',

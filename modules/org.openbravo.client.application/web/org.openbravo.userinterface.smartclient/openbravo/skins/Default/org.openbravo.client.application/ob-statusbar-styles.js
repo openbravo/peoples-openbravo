@@ -22,6 +22,7 @@ isc.OBStatusBar.addProperties({
   styleName: "OBStatusBar",
   width: '100%',
   height: 30,
+  buttonBarWidth: 130,
   leaveScrollbarGap: false,
   overflow: 'hidden',
 
@@ -76,8 +77,8 @@ isc.OBStatusBarTextLabel.addProperties({
 
 isc.OBStatusBarIconButtonBar.addProperties({
   styleName: "OBStatusBarIconButtonBar",
-  width: 130,
   align: 'right',
+  defaultLayoutAlign: 'center',
   overflow: 'visible',
   membersMargin: 4,
   layoutLeftMargin: 3
