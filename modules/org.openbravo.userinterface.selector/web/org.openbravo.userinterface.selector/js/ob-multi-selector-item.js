@@ -180,6 +180,15 @@ isc.OBMultiSelectorItem.addProperties({
     }
   },
 
+  disable: function () {
+    var i;
+    this.Super('disable', arguments);
+    // Remove the icon that removes a selection
+    for (i = 0; i < this.selectionLayout.members.length; i++) {
+      this.selectionLayout.members[i].setIcon(null);
+    }
+  },
+
   openSelectorWindow: function () {
     // always refresh the content of the grid to force a reload
     // if the organization has changed

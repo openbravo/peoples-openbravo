@@ -225,6 +225,8 @@ isc.OBParameterWindowView.addProperties({
       }
     }
 
+    this.disableFormItems();
+
     if (responseActions) {
       OB.Utilities.Action.executeJSON(responseActions, null, null, this);
     }
@@ -240,6 +242,18 @@ isc.OBParameterWindowView.addProperties({
         return true;
       }; // To avoid loop when "Super call"
       this.parentElement.parentElement.closeClick(); // Super call
+    }
+  },
+
+  disableFormItems: function () {
+    var i, params;
+    if (this.theForm && this.theForm.getItems) {
+      params = this.theForm.getItems();
+      for (i = 0; i < params.length; i++) {
+        if (params[i].disable) {
+          params[i].disable();
+        }
+      }
     }
   },
 
