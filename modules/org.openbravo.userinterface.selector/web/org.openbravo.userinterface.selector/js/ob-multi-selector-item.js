@@ -109,9 +109,7 @@ isc.OBMultiSelectorItem.addProperties({
           }
           this.selector.setSelectedRecords(records);
           this.Super('closeClick', arguments);
-        },
-        //Prevents the window from closing when double clicking a record
-        setValueInField: function () {}
+        }
       });
 
       this.selectorWindow.selectorGrid.recordClick = function (viewer, record, recordnum, field, fieldnum) {
@@ -124,6 +122,8 @@ isc.OBMultiSelectorItem.addProperties({
           }
         }
       };
+
+      this.selectorWindow.selectorGrid.recordDoubleClick = function (viewer, record, recordnum, field, fieldnum) {};
     }
 
     this.optionCriteria = {
