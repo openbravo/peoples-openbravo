@@ -225,7 +225,7 @@ isc.OBParameterWindowView.addProperties({
       }
     }
 
-    if (!message || message.validationError !== 'Y') {
+    if (!message || message.retryExecution !== 'Y') {
       this.disableFormItems();
     } else {
       // Show again all toolbar buttons so the process
