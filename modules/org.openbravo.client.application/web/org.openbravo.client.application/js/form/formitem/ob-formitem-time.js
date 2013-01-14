@@ -39,9 +39,10 @@ isc.OBTimeItem.addProperties({
   // from this method form.itemChangeActions
   keyPress: function (item, form, keyName, characterValue) {
     var i, f = this.form,
-        toolBarButtons = f.view.toolBar.leftMembers;
+        toolBarButtons;
 
-    if (characterValue || keyName === 'Backspace' || keyName === 'Delete') {
+    if ((f && f.view && f.view.toolBar && f.view.messageBar && f.setHasChanged) && (characterValue || keyName === 'Backspace' || keyName === 'Delete')) {
+      toolBarButtons = f.view.toolBar.leftMembers;
       f.setHasChanged(true);
       f.view.messageBar.hide();
       for (i = 0; i < toolBarButtons.length; i++) {
