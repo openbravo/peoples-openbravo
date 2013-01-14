@@ -121,7 +121,7 @@ enyo.kind({
     payments = OB.POS.modelterminal.get('payments');
 
 
-    paymentsdialog = payments.lengh + this.sideButtons.length > 5;
+    paymentsdialog = payments.length + this.sideButtons.length > 5;
     paymentsbuttons = paymentsdialog ? 4 : 5;
     countbuttons = 0;
 
@@ -235,8 +235,6 @@ enyo.kind({
   body: {
     classes: 'row-fluid',
     components: [{
-      kind: 'OB.OBPOSPointOfSale.UI.ButtonLess'
-    }, {
       classes: 'span12',
       components: [{
         style: 'border-bottom: 1px solid #cccccc;',
