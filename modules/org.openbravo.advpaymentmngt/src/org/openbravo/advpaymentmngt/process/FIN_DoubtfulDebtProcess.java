@@ -19,6 +19,8 @@
 package org.openbravo.advpaymentmngt.process;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
@@ -27,6 +29,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.financialmgmt.payment.DoubtfulDebt;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
@@ -65,8 +68,10 @@ public class FIN_DoubtfulDebtProcess implements org.openbravo.scheduling.Process
             .compareTo(doubtfulDebt.getAmount()) < 0) {
           msg.setType("Error");
           msg.setTitle(Utility.messageBD(conProvider, "Error", language));
-          msg.setMessage(Utility.parseTranslation(conProvider, vars, language,
-              "@APRM_PaymentExists@"));
+          Map<String, String> parameters = new HashMap<String, String>();
+          parameters.put("documentNo", doubtfulDebt.getDocumentNo());
+          msg.setMessage(Utility.parseTranslation(conProvider, vars, parameters, language,
+              OBMessageUtils.messageBD("APRM_DoubtfulDebtPaymentExists")));
           bundle.setResult(msg);
           return;
         }
@@ -93,8 +98,10 @@ public class FIN_DoubtfulDebtProcess implements org.openbravo.scheduling.Process
             .compareTo(doubtfulDebt.getAmount()) < 0) {
           msg.setType("Error");
           msg.setTitle(Utility.messageBD(conProvider, "Error", language));
-          msg.setMessage(Utility.parseTranslation(conProvider, vars, language,
-              "@APRM_PaymentExists@"));
+          Map<String, String> parameters = new HashMap<String, String>();
+          parameters.put("documentNo", doubtfulDebt.getDocumentNo());
+          msg.setMessage(Utility.parseTranslation(conProvider, vars, parameters, language,
+              OBMessageUtils.messageBD("APRM_DoubtfulDebtPaymentExists")));
           bundle.setResult(msg);
           return;
         }

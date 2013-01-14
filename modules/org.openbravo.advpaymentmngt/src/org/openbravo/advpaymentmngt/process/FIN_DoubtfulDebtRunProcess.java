@@ -70,7 +70,7 @@ public class FIN_DoubtfulDebtRunProcess implements org.openbravo.scheduling.Proc
         for (DoubtfulDebt ddb : doubtfulDebtRun.getFINDoubtfulDebtList()) {
           if (!ddb.isProcessed()) {
             OBError result = processDoubtfulDebt(vars, conProvider, ddb, strAction);
-            if ("error".equals(result.getType())) {
+            if ("Error".equals(result.getType())) {
               bundle.setResult(result);
               return;
             }
