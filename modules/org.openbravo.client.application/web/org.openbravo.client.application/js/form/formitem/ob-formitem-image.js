@@ -27,6 +27,12 @@ isc.ClassFactory.defineClass('OBImageItemSmallImageContainer', isc.HLayout);
 
 isc.OBImageItemSmallImageContainer.addProperties({
   imageItem: null,
+  initWidget: function () {
+    if (this.initWidgetStyle) {
+      this.initWidgetStyle();
+    }
+    this.Super('initWidget', arguments);
+  },
   click: function () {
     var imageId = this.imageItem.getValue();
     if (!imageId) {
@@ -106,6 +112,12 @@ isc.OBImageCanvas.addProperties({
     });
     if (this.creator.required) {
       this.imageLayout.setStyleName(this.imageLayout.styleName + 'Required');
+    }
+    if (this.creator.disabled) {
+      this.imageLayout.setStyleName(this.imageLayout.styleName + 'Disabled');
+    }
+    if (this.creator.readOnly) {
+      this.imageLayout.setStyleName(this.imageLayout.styleName + 'Disabled');
     }
     this.addMember(this.imageLayout);
     this.image = isc.OBImageItemSmallImage.create({
@@ -248,8 +260,8 @@ isc.OBImageItem.addProperties({
       });
     }
     //Buttons will not be shown if the form is readonly
-    this.canvas.deleteButton.updateState(newValue && !this.form.readOnly && !this.readOnly);
-    this.canvas.selectorButton.updateState(!this.form.readOnly && !this.readOnly);
+    this.canvas.deleteButton.updateState(newValue && (this.form && !this.form.readOnly) && !this.readOnly);
+    this.canvas.selectorButton.updateState((this.form && !this.form.readOnly) && !this.readOnly);
     return this.Super('setValue', arguments);
   },
   refreshImage: function (imageId) {

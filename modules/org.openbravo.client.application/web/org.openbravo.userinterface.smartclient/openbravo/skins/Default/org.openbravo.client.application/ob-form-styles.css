@@ -221,7 +221,9 @@
 .OBFormFieldNumberInputRequiredHint,
 
 .OBFormFieldImageInput,
-.OBFormFieldImageInputRequired {
+.OBFormFieldImageInputDisabled,
+.OBFormFieldImageInputRequired,
+.OBFormFieldImageInputRequiredDisabled {
   border: 1px solid #cdd7bb;
   background-color: #F5F7F1;
   color: #333333;
@@ -236,10 +238,12 @@
 .OBFormFieldSelectInputRequiredDisabled,
 .OBFormFieldDateInputRequiredDisabled,
 .OBFormFieldNumberInputRequiredDisabled,
+.OBFormFieldImageInputRequiredDisabled,
 .OBFormFieldInputDisabled,
 .OBFormFieldSelectInputDisabled,
 .OBFormFieldDateInputDisabled,
-.OBFormFieldNumberInputDisabled {
+.OBFormFieldNumberInputDisabled,
+.OBFormFieldImageInputDisabled {
   border: 0px none;
   background-color: transparent;
   color: #7d7d7d;

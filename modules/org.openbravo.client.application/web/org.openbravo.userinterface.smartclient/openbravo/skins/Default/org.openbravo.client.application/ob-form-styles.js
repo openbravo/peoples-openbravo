@@ -465,10 +465,21 @@ isc.OBImageCanvas.addProperties({
 
 isc.OBImageItemSmallImageContainer.addProperties({
   styleName: 'OBFormFieldImageInput',
-  height: 66,
+  height: 21,
   width: '100%',
   align: 'center',
-  defaultLayoutAlign: 'center'
+  defaultLayoutAlign: 'center',
+  initWidgetStyle: function () {
+    //To adapt the height this code is used because the automatic height doesn't fill empty rows.
+    var rowSpan = 1;
+    var singleRowHeight = this.getHeight();
+    var multipleRowHeight = singleRowHeight + 24; // 24px = title height + form item padding defined in CSS
+    if (this.imageItem.rowSpan) {
+      rowSpan = this.imageItem.rowSpan;
+    }
+    var newHeight = singleRowHeight + (rowSpan - 1) * multipleRowHeight;
+    this.setHeight(newHeight);
+  }
 });
 
 isc.OBImageItemSmallImage.addProperties({
