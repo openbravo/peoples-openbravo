@@ -255,15 +255,10 @@ enyo.kind({
         owner: this.args.toolbar
       });
     }, this);
-
-    // this.clearAction();{owner: other}
     return true;
   },
   init: function (model) {
     this.model = model;
-
-    //    this.prsList = new OB.Collection.GiftCardList();
-
   }
 });
 
