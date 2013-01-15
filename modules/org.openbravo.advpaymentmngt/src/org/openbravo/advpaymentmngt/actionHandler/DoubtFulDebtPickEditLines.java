@@ -42,7 +42,6 @@ import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.financialmgmt.payment.DoubtfulDebt;
 import org.openbravo.model.financialmgmt.payment.DoubtfulDebtRun;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
-import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.service.db.DbUtility;
 
@@ -152,16 +151,7 @@ public class DoubtFulDebtPickEditLines extends BaseProcessActionHandler {
           OBDal.getInstance().save(newDoubtfulDebt);
           OBDal.getInstance().save(doubtfulDebtRun);
         }
-        BigDecimal oldAmount = newDoubtfulDebt.getAmount();
         newDoubtfulDebt.setAmount(amount);
-        // TODO: Review processing of documents (to implement as well reactivate...
-        // Set processed = Yes
-        // newDoubtfulDebt.setProcessed(true);
-        // doubtfulDebtRun.setProcessed(true);
-        // OBDal.getInstance().save(newDoubtfulDebt);
-        // OBDal.getInstance().save(doubtfulDebtRun);
-
-        updateDoubtfulDebtScheduleDetails(paymentSchedule, amount, oldAmount);
       }
 
       cont++;
@@ -178,34 +168,11 @@ public class DoubtFulDebtPickEditLines extends BaseProcessActionHandler {
     if (idList.size() > 0) {
       for (String id : idList) {
         DoubtfulDebt dd = OBDal.getInstance().get(DoubtfulDebt.class, id);
-        FIN_PaymentSchedule salesInvoicePaymentSchedule = dd.getFINPaymentSchedule();
-        for (FIN_PaymentScheduleDetail psd : salesInvoicePaymentSchedule
-            .getFINPaymentScheduleDetailInvoicePaymentScheduleList()) {
-          if (psd.getPaymentDetails() == null && !psd.isCanceled()) {
-            psd.setDoubtfulDebtAmount(psd.getDoubtfulDebtAmount().subtract(dd.getAmount()));
-            OBDal.getInstance().save(psd);
-          }
-        }
         doubtfulDebtRun.getFINDoubtfulDebtList().remove(dd);
         OBDal.getInstance().remove(dd);
       }
       OBDal.getInstance().save(doubtfulDebtRun);
       OBDal.getInstance().flush();
-    }
-  }
-
-  private void updateDoubtfulDebtScheduleDetails(FIN_PaymentSchedule salesInvoicePaymentSchedule,
-      BigDecimal debtAmount, BigDecimal oldDebtAmount) {
-    for (FIN_PaymentScheduleDetail psd : salesInvoicePaymentSchedule
-        .getFINPaymentScheduleDetailInvoicePaymentScheduleList()) {
-      if (psd.getPaymentDetails() == null && !psd.isCanceled()) {
-        // Pending amount should be greater or equals than the doubtful debt amount
-        if (psd.getAmount().compareTo(debtAmount) >= 0) {
-          psd.setDoubtfulDebtAmount(psd.getDoubtfulDebtAmount().add(debtAmount)
-              .subtract(oldDebtAmount));
-          OBDal.getInstance().save(psd);
-        }
-      }
     }
   }
 
