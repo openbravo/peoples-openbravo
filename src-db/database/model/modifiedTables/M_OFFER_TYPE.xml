@@ -9,6 +9,9 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <foreign-key foreignTable="AD_IMAGE" name="EM_OBPOS_IMAGE">
+        <reference local="EM_OBPOS_IMAGE" foreign="AD_IMAGE_ID"/>
+      </foreign-key>
       <check name="EM_OBPOS_CATEG_CHECK"><![CDATA[EM_OBPOS_ISCATEGORY IN ('Y', 'N')]]></check>
     </table>
   </database>
