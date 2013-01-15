@@ -50,7 +50,7 @@
     </script>
     <script language="JavaScript" type="text/javascript">
       function submitThisPage(strCommand) {
-        if (validate()){
+        if (strCommand==="CANCEL_USECREDITPAYMENTS" || validate()){
           setProcessingMode('popup', true);
           submitCommandForm(strCommand, false, null, null, '_self');
         }
@@ -418,9 +418,9 @@ function distributeAmt(key){
       </tr>
       <tr>
         <td class="TitleCell"><span name="lbl" id="lblGrandTotalAmt" class="LabelText">Total Gross Amount</span></td>
-        <td class="TextBox_ContentCell"><input class="readonly dojoValidateValid TextBox_OneCells_width number" type="text" name="inpInvoiceGrossAmt" value="" id="paramInvoiceGrossAmt" outputformat="euroEdition"></input></td>
+        <td class="TextBox_ContentCell"><input class="readonly dojoValidateValid TextBox_OneCells_width number" type="text" name="inpInvoiceGrossAmt" value="" id="paramInvoiceGrossAmt" outputformat="euroEdition" readonly></input></td>
         <td class="TitleCell"><span class="LabelText" name="lbl" id="lblPendingAmount">Credit to be used</span></td>
-        <td class="TextBox_ContentCell"><input class="readonly dojoValidateValid TextBox_OneCell_width number" type="text" name="inpExpectedPayment" value="" id="paramPendingAmt" outputformat="euroEdition"></input></td>      
+        <td class="TextBox_ContentCell"><input class="readonly dojoValidateValid TextBox_OneCell_width number" type="text" name="inpExpectedPayment" value="" id="paramPendingAmt" outputformat="euroEdition" readonly></input></td>      
         <td class="TitleCell"></td>
       </tr>
       <tr>
