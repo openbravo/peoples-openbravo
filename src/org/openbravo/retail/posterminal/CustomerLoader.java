@@ -316,7 +316,8 @@ public class CustomerLoader extends JSONProcessSimple {
 
       JSONPropertyToEntity.fillBobFromJSON(baseLocationEntity, rootLocation, jsonCustomer);
 
-      if (jsonCustomer.has("locName")) {
+      if (jsonCustomer.has("locName") && jsonCustomer.getString("locName") != null
+          && !jsonCustomer.getString("locName").equals("")) {
         rootLocation.setAddressLine1(jsonCustomer.getString("locName"));
       }
 
@@ -328,7 +329,8 @@ public class CustomerLoader extends JSONProcessSimple {
 
       JSONPropertyToEntity.fillBobFromJSON(baseLocationEntity, rootLocation, jsonCustomer);
 
-      if (jsonCustomer.has("locName")) {
+      if (jsonCustomer.has("locName") && jsonCustomer.getString("locName") != null
+          && !jsonCustomer.getString("locName").equals("")) {
         rootLocation.setAddressLine1(jsonCustomer.getString("locName"));
       }
 
@@ -345,8 +347,11 @@ public class CustomerLoader extends JSONProcessSimple {
         log.error(errorMessage);
         throw new OBException(errorMessage, null);
       }
-      if (jsonCustomer.has("locName")) {
+      if (jsonCustomer.has("locName") && jsonCustomer.getString("locName") != null
+          && !jsonCustomer.getString("locName").equals("")) {
         newLocation.setName(jsonCustomer.getString("locName"));
+      } else {
+        newLocation.setName(jsonCustomer.getString("searchKey"));
       }
 
       // don't set phone of location, the phone is set in contact
