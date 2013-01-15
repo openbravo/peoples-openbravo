@@ -249,6 +249,9 @@ public class DocFINPayment extends AcctServer {
     final StringBuilder whereClause = new StringBuilder();
     Fact fact = new Fact(this, as, Fact.POST_Actual);
     String Fact_Acct_Group_ID = SequenceIdData.getUUID();
+    String Fact_Acct_Group_ID2 = SequenceIdData.getUUID();
+    String Fact_Acct_Group_ID3 = SequenceIdData.getUUID();
+
     OBContext.setAdminMode();
     try {
       whereClause.append(" as astdt ");
@@ -293,6 +296,8 @@ public class DocFINPayment extends AcctServer {
 
         boolean isReceipt = DocumentType.equals("ARR");
         boolean isPrepayment = line.getIsPrepayment().equals("Y");
+        String bpartnerId = (line.m_C_BPartner_ID == null || line.m_C_BPartner_ID.equals("")) ? this.C_BPartner_ID
+            : line.m_C_BPartner_ID;
 
         String bpAmount = line.getAmount();
         if (line.WriteOffAmt != null && !line.WriteOffAmt.equals("")
@@ -323,51 +328,39 @@ public class DocFINPayment extends AcctServer {
                   isReceipt, DateAcct, TABLEID_Invoice, invoice.getId(), C_Currency_ID,
                   as.m_C_Currency_ID, line, as, fact, Fact_Acct_Group_ID, nextSeqNo(SeqNo), conn,
                   false);
-              fact.createLine(
-                  line,
-                  getAccountBPartner((line.m_C_BPartner_ID == null || line.m_C_BPartner_ID
-                      .equals("")) ? this.C_BPartner_ID : line.m_C_BPartner_ID, as, true, false,
-                      true, conn), strcCurrencyId, "", doubtFulDebtAmount.toString(),
-                  Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+              fact.createLine(line, getAccountBPartner(bpartnerId, as, true, false, true, conn),
+                  strcCurrencyId, "", doubtFulDebtAmount.toString(), Fact_Acct_Group_ID,
+                  nextSeqNo(SeqNo), DocumentType, conn);
               bpAmountConverted = new BigDecimal(bpAmountConverted).subtract(doubtFulDebtAmount)
                   .toString();
-              String Fact_Acct_Group_ID2 = SequenceIdData.getUUID();
               fact.createLine(line,
-                  getAccountBPartnerAllowanceForDoubtfulDebt(C_BPartner_ID, as, conn),
+                  getAccountBPartnerAllowanceForDoubtfulDebt(bpartnerId, as, conn),
                   this.C_Currency_ID, doubtFulDebtAmount.toString(), "", Fact_Acct_Group_ID2,
                   nextSeqNo(SeqNo), DocumentType, conn);
-              fact.createLine(line, getAccountBPartnerBadDebt(C_BPartner_ID, false, as, conn),
+              fact.createLine(
+                  line,
+                  getAccountBPartnerBadDebt((line.m_C_BPartner_ID == null || line.m_C_BPartner_ID
+                      .equals("")) ? this.C_BPartner_ID : line.m_C_BPartner_ID, false, as, conn),
                   this.C_Currency_ID, "", doubtFulDebtAmount.toString(), Fact_Acct_Group_ID2,
                   nextSeqNo(SeqNo), DocumentType, conn);
             }
           }
-          fact.createLine(
-              line,
-              getAccountBPartner(
-                  (line.m_C_BPartner_ID == null || line.m_C_BPartner_ID.equals("")) ? this.C_BPartner_ID
-                      : line.m_C_BPartner_ID, as, isReceipt, isPrepayment, conn), strcCurrencyId,
-              (isReceipt ? "" : bpAmountConverted), (isReceipt ? bpAmountConverted : ""),
-              Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+          fact.createLine(line, getAccountBPartner(bpartnerId, as, isReceipt, isPrepayment, conn),
+              strcCurrencyId, (isReceipt ? "" : bpAmountConverted), (isReceipt ? bpAmountConverted
+                  : ""), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
           // If payment date is prior to invoice date book invoice as a pre-payment not as a regular
           // Receivable/Payable
           if (line.isPrepaymentAgainstInvoice()) {
-            String Fact_Acct_Group_ID2 = SequenceIdData.getUUID();
             DocLine line2 = new DocLine(DocumentType, Record_ID, line.m_TrxLine_ID);
             line2.copyInfo(line);
             line2.m_DateAcct = OBDateUtils.formatDate(invoice.getAccountingDate());
-            fact.createLine(
-                line2,
-                getAccountBPartner((line2.m_C_BPartner_ID == null || line2.m_C_BPartner_ID
-                    .equals("")) ? this.C_BPartner_ID : line2.m_C_BPartner_ID, as, isReceipt,
-                    false, conn), strcCurrencyId, (isReceipt ? "" : bpAmountConverted),
-                (isReceipt ? bpAmountConverted : ""), Fact_Acct_Group_ID2, nextSeqNo(SeqNo),
+            fact.createLine(line2, getAccountBPartner(bpartnerId, as, isReceipt, false, conn),
+                strcCurrencyId, (isReceipt ? "" : bpAmountConverted),
+                (isReceipt ? bpAmountConverted : ""), Fact_Acct_Group_ID3, nextSeqNo(SeqNo),
                 DocumentType, conn);
-            fact.createLine(
-                line2,
-                getAccountBPartner((line2.m_C_BPartner_ID == null || line2.m_C_BPartner_ID
-                    .equals("")) ? this.C_BPartner_ID : line2.m_C_BPartner_ID, as, isReceipt, true,
-                    conn), strcCurrencyId, (!isReceipt ? "" : bpAmountConverted),
-                (!isReceipt ? bpAmountConverted : ""), Fact_Acct_Group_ID2, nextSeqNo(SeqNo),
+            fact.createLine(line2, getAccountBPartner(bpartnerId, as, isReceipt, true, conn),
+                strcCurrencyId, (!isReceipt ? "" : bpAmountConverted),
+                (!isReceipt ? bpAmountConverted : ""), Fact_Acct_Group_ID3, nextSeqNo(SeqNo),
                 DocumentType, conn);
           }
         } else {
