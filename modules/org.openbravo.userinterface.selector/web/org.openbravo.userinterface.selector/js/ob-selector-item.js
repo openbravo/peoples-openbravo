@@ -402,13 +402,19 @@ isc.OBSelectorItem.addProperties({
   // changed handles the case that the user removes the value using the keyboard
   // this should do the same things as setting the value through the pickvalue
   changed: function (form, item, newValue) {
+    var identifier;
     // only do the identifier actions when clearing
     // in all other cases pickValue is called
     if (!newValue) {
       this.setValueFromRecord(null);
     }
+    if (OB.Utilities.isUUID(newValue)) {
+      identifier = this.mapValueToDisplay(newValue);
+    } else {
+      identifier = newValue;
+    }
     //Setting the element value again to align the cursor position correctly.
-    this.setElementValue(this.mapValueToDisplay(newValue));
+    this.setElementValue(identifier);
   },
 
   setPickListWidth: function () {
@@ -626,10 +632,10 @@ isc.OBSelectorItem.addProperties({
     }
 
     if (this.form.getFocusItem() !== this && !this.form.view.isShowingForm && this.getEnteredValue() === '' && this.savedEnteredValue) {
-      this.setElementValue(this.mapValueToDisplay(this.savedEnteredValue));
+      this.setElementValue(this.savedEnteredValue);
       delete this.savedEnteredValue;
     } else if (this.form.view.isShowingForm && this.getEnteredValue() === '' && this.savedEnteredValue) {
-      this.setElementValue(this.mapValueToDisplay(this.savedEnteredValue));
+      this.setElementValue(this.savedEnteredValue);
       delete this.savedEnteredValue;
     }
 
