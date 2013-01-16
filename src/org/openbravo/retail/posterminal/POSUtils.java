@@ -1,12 +1,11 @@
 package org.openbravo.retail.posterminal;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.hibernate.SQLQuery;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.client.kernel.KernelUtils;
@@ -14,7 +13,6 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
-import org.openbravo.database.ConnectionProviderImpl;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.module.ModuleDependency;
 import org.openbravo.model.common.enterprise.Organization;
@@ -194,52 +192,27 @@ public class POSUtils {
     String sqlToExecute;
 
     if (curDbms.equals("POSTGRE")) {
-      sqlToExecute = "select max(a.docno) from (select to_number(substring(documentno, '/([0-9]+)$')) docno from c_order where documentno like (select orderdocno_prefix || '/%' from obpos_applications where value = '"
-          + searchKey + "') and c_doctype_id = '" + documentTypeId + "' ) a";
+      sqlToExecute = "select max(a.docno) from (select to_number(substring(documentno, '/([0-9]+)$')) docno from c_order where em_obpos_applications_id= (select obpos_applications_id from obpos_applications where value = ?) and c_doctype_id = ? ) a";
     } else if (curDbms.equals("ORACLE")) {
-      sqlToExecute = "select max(a.docno) from (select to_number(substr(REGEXP_SUBSTR(documentno, '/([0-9]+)$'), 2)) docno from c_order where documentno like (select CONCAT(orderdocno_prefix , '/%') from obpos_applications where value = '"
-          + searchKey + "') and c_doctype_id = '" + documentTypeId + "' ) a";
+      sqlToExecute = "select max(a.docno) from (select to_number(substr(REGEXP_SUBSTR(documentno, '/([0-9]+)$'), 2)) docno from c_order where em_obpos_applications_id= (select obpos_applications_id from obpos_applications where value = ?) and c_doctype_id = ? ) a";
     } else {
       // unknow DBMS
       // shouldn't happen
-      log.error("Error getting max documentNo because the DBMS is unknow.");
+      log.error("Error getting max documentNo because the DBMS is unknown.");
       return 0;
     }
 
-    int number = 0;
-    ConnectionProviderImpl con = null;
-    Connection connection = null;
-    try {
-      con = new ConnectionProviderImpl(OBPropertiesProvider.getInstance().getOpenbravoProperties());
-      connection = con.getConnection();
-      PreparedStatement ps = connection.prepareStatement(sqlToExecute);
-      ResultSet rs = ps.executeQuery();
-      while (rs.next()) {
-        number = rs.getInt(1);
-      }
-      rs.close();
-      ps.close();
-    } catch (Exception e) {
-      log.error("An error happened while getting max documentNo. Max document number is 0", e);
-      number = 0;
-      // TODO: handle exception
-    } finally {
-      try {
-        if (connection != null) {
-          connection.close();
-        }
-      } catch (Exception e) {
-        // do nothing
-      }
-      try {
-        if (con != null) {
-          con.destroy();
-        }
-      } catch (Exception e) {
-        // do nothing
-      }
+    SQLQuery query = OBDal.getInstance().getSession().createSQLQuery(sqlToExecute);
+    query.setString(0, searchKey);
+    query.setString(1, documentTypeId);
+    if (curDbms.equals("POSTGRE")) {
+      return ((BigDecimal) query.list().get(0)).intValue();
+    } else if (curDbms.equals("ORACLE")) {
+      return ((Long) query.list().get(0)).intValue();
+    } else {
+      return 0;
     }
-    return number;
+
   }
 
   public static String getRetailDependantModuleIds() {
