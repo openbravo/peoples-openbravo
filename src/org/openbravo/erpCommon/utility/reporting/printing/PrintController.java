@@ -79,7 +79,6 @@ public class PrintController extends HttpSecureAppServlet {
   private PocData[] pocData;
   private boolean multiReports = false;
   private boolean archivedReports = false;
-  private static final String EMAIL_SEPARATOR = ", ";
 
   @Override
   public void init(ServletConfig config) {
@@ -630,36 +629,7 @@ public class PrintController extends HttpSecureAppServlet {
     case SALESORDER:
       return PocData.getContactDetailsForOrders(this, strDocumentId);
     case SALESINVOICE:
-      PocData[] data = PocData.getContactDetailsForInvoices(this, strDocumentId);
-      if (data != null && data.length > 0) {
-        for (final PocData d : data) {
-          final PocData[] ccData = PocData.getCCContactDetailsForInvoices(this, d.contactUserId,
-              d.documentId);
-
-          final StringBuffer ccEmail = new StringBuffer(d.contactEmail);
-          for (final PocData ccd : ccData) {
-            ccEmail.append(EMAIL_SEPARATOR);
-            ccEmail.append(ccd.contactEmail);
-          }
-          d.contactEmail = ccEmail.toString();
-          if (d.contactEmail != null && d.contactEmail.length() >= EMAIL_SEPARATOR.length()
-              && d.contactEmail.startsWith(EMAIL_SEPARATOR)) {
-            d.contactEmail = d.contactEmail.substring(EMAIL_SEPARATOR.length());
-          }
-
-          final StringBuffer ccName = new StringBuffer(d.contactName);
-          for (final PocData ccd : ccData) {
-            ccName.append(EMAIL_SEPARATOR);
-            ccName.append(ccd.contactName);
-          }
-          d.contactName = ccName.toString();
-          if (d.contactName != null && d.contactName.length() >= EMAIL_SEPARATOR.length()
-              && d.contactName.startsWith(EMAIL_SEPARATOR)) {
-            d.contactName = d.contactName.substring(EMAIL_SEPARATOR.length());
-          }
-        }
-      }
-      return data;
+      return PocData.getContactDetailsForInvoices(this, strDocumentId);
     case SHIPMENT:
       return PocData.getContactDetailsForShipments(this, strDocumentId);
     case PURCHASEORDER:

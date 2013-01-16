@@ -195,25 +195,6 @@
         </Sql>
         <Parameter name="adUserId"/> 
    </SqlMethod>   
-   
-   <SqlMethod name="getCCContactDetailsForInvoices" type="preparedStatement" return="multiple">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql>
-      <![CDATA[
-        select
-            customercontact.email as contact_email,
-            customercontact.name as contact_name
-        from
-            c_invoice
-                left join ad_user customercontact on c_invoice.c_bpartner_id = customercontact.c_bpartner_id
-        where customercontact.isbillingcontact = 'Y'
-        and customercontact.ad_user_id <> coalesce(?, '')
-        and c_invoice.c_invoice_id = ?
-        ]]>
-        </Sql>
-        <Parameter name="contactId" />
-        <Parameter name="cInvoiceId" />
-   </SqlMethod>
 
 </SqlClass>
 
