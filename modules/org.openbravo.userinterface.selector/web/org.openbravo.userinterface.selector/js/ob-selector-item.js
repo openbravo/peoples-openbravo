@@ -728,7 +728,7 @@ isc.OBSelectorItem.addProperties({
     requestProperties.params[isc.OBViewGrid.NO_COUNT_PARAMETER] = 'true';
 
     // on purpose not passing the third boolean param
-    if (this.form && this.form.view && this.form.getContextInfo) {
+    if (this.form && this.form.view && this.form.view.getContextInfo) {
       isc.addProperties(requestProperties.params, this.form.view.getContextInfo(false, true));
     } else if (this.view && this.view.sourceView && this.view.sourceView.getContextInfo) {
       isc.addProperties(requestProperties.params, this.view.sourceView.getContextInfo(false, true));
