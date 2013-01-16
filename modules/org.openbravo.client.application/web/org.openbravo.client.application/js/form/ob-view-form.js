@@ -1574,7 +1574,7 @@ OB.ViewFormProperties = {
 
       form.isSaving = false;
       view.toolBar.updateButtonState(true);
-      if (form.isVisible() && storedFocusItem && storedFocusItem.isFocusable(true)) {
+      if (form.isVisible() && storedFocusItem && storedFocusItem.isFocusable(true) && !this.view.viewForm.isNewRecord()) {
         // The setTimeout fixes issue https://issues.openbravo.com/view.php?id=21546
         // that is only reproducible in certain versions of Chrome
         setTimeout(function () {
