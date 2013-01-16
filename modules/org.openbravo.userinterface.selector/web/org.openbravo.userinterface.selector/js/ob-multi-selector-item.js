@@ -22,7 +22,6 @@
 isc.ClassFactory.defineClass('OBMultiSelectorItem', isc.CanvasItem);
 isc.OBMultiSelectorItem.addProperties({
   rowSpan: 2,
-  canvasConstructor: 'OBMultiSelectorSelectorLayout',
   selectionLayout: null,
   selectorGridFields: [{
     title: OB.I18N.getLabel('OBUISC_Identifier'),
@@ -139,6 +138,10 @@ isc.OBMultiSelectorItem.addProperties({
       _selectorDefinitionId: this.selectorDefinitionId
     };
 
+    this.canvas = isc.OBMultiSelectorSelectorLayout.create({
+      selectorItem: this
+    });
+
     this.Super('init', arguments);
 
     this.selectionLayout = this.canvas;
@@ -148,6 +151,18 @@ isc.OBMultiSelectorItem.addProperties({
     }
   },
 
+
+  redrawn: function () {
+    this.fixWidth();
+    this.Super('redrawn', arguments);
+  },
+  fixWidth: function () {
+    // hack to adapt the whole item width, so it takes the same space as other items
+    var w = this.containerWidget.width / this.containerWidget.numCols - this.iconWidth - 3;
+    if (this.width !== w) {
+      this.setWidth(w);
+    }
+  },
   // resets whole selection to the records passed as parameter
   setSelectedRecords: function (records) {
     var i;
@@ -183,6 +198,8 @@ isc.OBMultiSelectorItem.addProperties({
       contents: record[OB.Constants.IDENTIFIER],
       icon: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/clearField.png',
       height: 1,
+      width: '90%',
+      // Setting width to reserve some space for vertical scrollbar
       value: record[OB.Constants.ID],
       iconClick: function () {
         var currentValues = me.getValue();
@@ -232,7 +249,6 @@ isc.OBMultiSelectorItem.addProperties({
   },
 
   getValue: function () {
-    // lalalala
     var value = this.Super('getValue', arguments);
     return (value ? value : []);
   }
@@ -247,10 +263,14 @@ isc.OBMultiSelectorSelectorLayout.addProperties({
   popupTextMatchStyle: 'startswith',
   suggestionTextMatchStyle: 'startswith',
   showOptionsFromDataSource: true,
-
   autoDraw: false,
   overflow: 'auto',
   members: [],
   animateMembers: true,
-  animateMemberTime: 100
+  animateMemberTime: 100,
+  width: '*',
+  initWidget: function () {
+    this.selectorItem.fixWidth();
+    this.Super('initWidget', arguments);
+  }
 });
