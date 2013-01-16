@@ -174,9 +174,10 @@ public class FKSelectorUIDefinition extends ForeignKeyUIDefinition {
     if (superJsonStr.trim().startsWith("{")) {
       return selectorFields + ","
           + superJsonStr.trim().substring(1, superJsonStr.trim().length() - 1);
+    } else {
+      return selectorFields + "," + superJsonStr;
     }
 
-    return selectorFields;
   }
 
   private Selector getSelector(Field field) {
