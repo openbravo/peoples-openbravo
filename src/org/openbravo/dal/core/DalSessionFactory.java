@@ -22,6 +22,7 @@ package org.openbravo.dal.core;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -42,6 +43,7 @@ import org.hibernate.jdbc.BorrowedConnectionProxy;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.metadata.CollectionMetadata;
 import org.hibernate.stat.Statistics;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.session.SessionFactoryController;
 import org.openbravo.database.SessionInfo;
@@ -169,12 +171,21 @@ public class DalSessionFactory implements SessionFactory {
       Connection conn = ((SessionImplementor) session).connection();
       SessionInfo.initDB(conn, props.getProperty("bbdd.rdbms"));
       SessionInfo.setDBSessionInfo(conn);
+      PreparedStatement pstmt = null;
       try {
         final String dbSessionConfig = props.getProperty("bbdd.sessionConfig");
-        PreparedStatement pstmt = conn.prepareStatement(dbSessionConfig);
+        pstmt = conn.prepareStatement(dbSessionConfig);
         pstmt.executeQuery();
       } catch (Exception e) {
         throw new IllegalStateException(e);
+      } finally {
+        try {
+          if (pstmt != null && !pstmt.isClosed()) {
+            pstmt.close();
+          }
+        } catch (SQLException e) {
+          throw new OBException(e);
+        }
       }
     } finally {
       Thread.currentThread().setContextClassLoader(currentLoader);

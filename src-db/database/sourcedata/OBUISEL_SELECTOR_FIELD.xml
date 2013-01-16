@@ -9,7 +9,9 @@
 <!--01C1FF0DFB3643EEA2AF93128A057BEF-->  <AD_COLUMN_ID><![CDATA[2011]]></AD_COLUMN_ID>
 <!--01C1FF0DFB3643EEA2AF93128A057BEF-->  <NAME><![CDATA[Search Key]]></NAME>
 <!--01C1FF0DFB3643EEA2AF93128A057BEF-->  <DESCRIPTION><![CDATA[A fast method for finding a particular record.]]></DESCRIPTION>
-<!--01C1FF0DFB3643EEA2AF93128A057BEF-->  <HELP><![CDATA[A search key allows for a fast method of finding a particular record. If you leave the search key empty, the system automatically creates a numeric number originating from a document sequence defined in the  "Document Sequence" window. The sequence naming convention follows a rule "DocumentNo_TableName", where TableName is the actual name of the database table (e.g. C_Order).Usually, company's internal identifiers for various records (products, customers, etc) are stored here.]]></HELP>
+<!--01C1FF0DFB3643EEA2AF93128A057BEF-->  <HELP><![CDATA[A search key allows for a fast method of finding a particular record. If you leave the search key empty, the system automatically creates a numeric number originating from a document sequence defined in the  "Document Sequence" window. The sequence naming convention follows a rule "DocumentNo_TableName", where TableName is the actual name of the database table (e.g. C_Order).
+
+Usually, company's internal identifiers for various records (products, customers, etc) are stored here.]]></HELP>
 <!--01C1FF0DFB3643EEA2AF93128A057BEF-->  <PROPERTY><![CDATA[product.searchKey]]></PROPERTY>
 <!--01C1FF0DFB3643EEA2AF93128A057BEF-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
 <!--01C1FF0DFB3643EEA2AF93128A057BEF-->  <SORT><![CDATA[Y]]></SORT>
@@ -864,7 +866,9 @@ Usually, company's internal identifiers for various records (products, customers
 <!--65AE411567384A8D916F78C0597E40E4-->  <AD_COLUMN_ID><![CDATA[2011]]></AD_COLUMN_ID>
 <!--65AE411567384A8D916F78C0597E40E4-->  <NAME><![CDATA[Search Key]]></NAME>
 <!--65AE411567384A8D916F78C0597E40E4-->  <DESCRIPTION><![CDATA[A fast method for finding a particular record.]]></DESCRIPTION>
-<!--65AE411567384A8D916F78C0597E40E4-->  <HELP><![CDATA[A search key allows for a fast method of finding a particular record. If you leave the search key empty, the system automatically creates a numeric number originating from a document sequence defined in the  "Document Sequence" window. The sequence naming convention follows a rule "DocumentNo_TableName", where TableName is the actual name of the database table (e.g. C_Order).Usually, company's internal identifiers for various records (products, customers, etc) are stored here.]]></HELP>
+<!--65AE411567384A8D916F78C0597E40E4-->  <HELP><![CDATA[A search key allows for a fast method of finding a particular record. If you leave the search key empty, the system automatically creates a numeric number originating from a document sequence defined in the  "Document Sequence" window. The sequence naming convention follows a rule "DocumentNo_TableName", where TableName is the actual name of the database table (e.g. C_Order).
+
+Usually, company's internal identifiers for various records (products, customers, etc) are stored here.]]></HELP>
 <!--65AE411567384A8D916F78C0597E40E4-->  <PROPERTY><![CDATA[product.searchKey]]></PROPERTY>
 <!--65AE411567384A8D916F78C0597E40E4-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
 <!--65AE411567384A8D916F78C0597E40E4-->  <SORT><![CDATA[Y]]></SORT>
