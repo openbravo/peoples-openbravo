@@ -96,7 +96,7 @@ isc.OBMultiSelectorItem.addProperties({
         selectorGridFields: isc.shallowClone(this.selectorGridFields),
         selectionAppearance: 'checkbox',
         multiselect: true,
-        selectedIds: this.getValue() || [],
+        selectedIds: this.getValue(),
         selectId: function (id) {
           if (!this.selectedIds.contains(id)) {
             this.selectedIds.push(id);
@@ -111,6 +111,19 @@ isc.OBMultiSelectorItem.addProperties({
           this.Super('closeClick', arguments);
         }
       });
+
+      this.selectorWindow.selectorGrid.recordClick = function (viewer, record, recordnum, field, fieldnum) {
+        // If a field other than the checkbox is clicked, select/deselect the record manually
+        if (fieldnum !== 0) {
+          if (this.isSelected(record)) {
+            this.deselectRecord(record);
+          } else {
+            this.selectRecord(record);
+          }
+        }
+      };
+
+      this.selectorWindow.selectorGrid.recordDoubleClick = function (viewer, record, recordnum, field, fieldnum) {};
     }
 
     this.optionCriteria = {
@@ -150,7 +163,7 @@ isc.OBMultiSelectorItem.addProperties({
   // adds a new record to the selection
   setValueFromRecord: function (record) {
     var me = this,
-        selectedElement, currentValue = this.getValue() || [];
+        selectedElement, currentValue = this.getValue();
 
     // add record to selected values
     currentValue.push(record[OB.Constants.ID]);
@@ -163,7 +176,7 @@ isc.OBMultiSelectorItem.addProperties({
       height: 1,
       value: record[OB.Constants.ID],
       iconClick: function () {
-        var currentValues = me.getValue() || [];
+        var currentValues = me.getValue();
         currentValues.remove(this.value);
         me.selectionLayout.removeMember(this);
       }
@@ -180,13 +193,22 @@ isc.OBMultiSelectorItem.addProperties({
     }
   },
 
+  disable: function () {
+    var i;
+    this.Super('disable', arguments);
+    // Remove the icon that removes a selection
+    for (i = 0; i < this.selectionLayout.members.length; i++) {
+      this.selectionLayout.members[i].setIcon(null);
+    }
+  },
+
   openSelectorWindow: function () {
     // always refresh the content of the grid to force a reload
     // if the organization has changed
     if (this.selectorWindow.selectorGrid) {
       this.selectorWindow.selectorGrid.invalidateCache();
     }
-    this.selectorWindow.selectedIds = this.getValue() || [];
+    this.selectorWindow.selectedIds = this.getValue();
     this.selectorWindow.origSelection = isc.shallowClone(this.selectorWindow.selectedIds);
     this.selectorWindow.open();
   },
@@ -198,6 +220,12 @@ isc.OBMultiSelectorItem.addProperties({
       this.selectorWindow = null;
     }
     this.Super('destroy', arguments);
+  },
+
+  getValue: function () {
+    // lalalala
+    var value = this.Super('getValue', arguments);
+    return (value ? value : []);
   }
 });
 

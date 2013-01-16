@@ -207,13 +207,13 @@ isc.OBParameterWindowView.addProperties({
     });
   },
 
-  handleResponse: function (refresh, message, responseActions) {
+  handleResponse: function (refresh, message, responseActions, retryExecution) {
     var window = this.parentWindow,
-        tab = OB.MainView.TabSet.getTab(this.viewTabId);
+        tab = OB.MainView.TabSet.getTab(this.viewTabId), i;
 
     // change title to done
     if (tab) {
-      tab.setTitle(OB.I18N.getLabel('OBUIAPP_ProcessTitle_Done', [this.title]));
+      tab.setTitle(OB.I18N.getLabel('OBUIAPP_ProcessTitle_Done', [this.tabTitle]));
     }
 
     this.showProcessing(false);
@@ -222,6 +222,20 @@ isc.OBParameterWindowView.addProperties({
         this.buttonOwnerView.messageBar.setMessage(message.severity, message.text);
       } else {
         this.messageBar.setMessage(message.severity, message.text);
+      }
+    }
+
+    if (!retryExecution) {
+      this.disableFormItems();
+    } else {
+      // Show again all toolbar buttons so the process
+      // can be called again
+      if (this.toolBarLayout) {
+        for (i = 0; i < this.toolBarLayout.children.length; i++) {
+          if (this.toolBarLayout.children[i].show) {
+            this.toolBarLayout.children[i].show();
+          }
+        }
       }
     }
 
@@ -240,6 +254,18 @@ isc.OBParameterWindowView.addProperties({
         return true;
       }; // To avoid loop when "Super call"
       this.parentElement.parentElement.closeClick(); // Super call
+    }
+  },
+
+  disableFormItems: function () {
+    var i, params;
+    if (this.theForm && this.theForm.getItems) {
+      params = this.theForm.getItems();
+      for (i = 0; i < params.length; i++) {
+        if (params[i].disable) {
+          params[i].disable();
+        }
+      }
     }
   },
 
@@ -303,7 +329,7 @@ isc.OBParameterWindowView.addProperties({
     // change tab title to show executing...
     tab = OB.MainView.TabSet.getTab(this.viewTabId);
     if (tab) {
-      tab.setTitle(OB.I18N.getLabel('OBUIAPP_ProcessTitle_Executing', [this.title]));
+      tab.setTitle(OB.I18N.getLabel('OBUIAPP_ProcessTitle_Executing', [this.tabTitle]));
     }
 
     if (this.grid) {
@@ -342,7 +368,7 @@ isc.OBParameterWindowView.addProperties({
       processId: this.processId,
       windowId: this.windowId
     }, function (rpcResponse, data, rpcRequest) {
-      view.handleResponse(true, (data && data.message), (data && data.responseActions));
+      view.handleResponse(true, (data && data.message), (data && data.responseActions), (data && data.retryExecution === 'Y'));
     });
   },
 

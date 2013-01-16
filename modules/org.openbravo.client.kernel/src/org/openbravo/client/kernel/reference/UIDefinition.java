@@ -370,6 +370,9 @@ public abstract class UIDefinition {
   }
 
   public String getParameterProperties(Parameter parameter) {
+    if (parameter.isStartinnewline()) {
+      return "startRow: true";
+    }
     return "";
   }
 
