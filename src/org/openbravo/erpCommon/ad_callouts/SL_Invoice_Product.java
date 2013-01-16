@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,6 +20,7 @@ package org.openbravo.erpCommon.ad_callouts;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -34,6 +35,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.businessUtility.PAttributeSet;
 import org.openbravo.erpCommon.businessUtility.PAttributeSetData;
+import org.openbravo.erpCommon.businessUtility.PriceAdjustment;
 import org.openbravo.erpCommon.businessUtility.Tax;
 import org.openbravo.erpCommon.utility.AccDefUtility;
 import org.openbravo.erpCommon.utility.ComboTableData;
@@ -109,24 +111,20 @@ public class SL_Invoice_Product extends HttpSecureAppServlet {
         "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
 
     String strPriceActual = "";
+    Invoice invoice = OBDal.getInstance().get(Invoice.class, strCInvoiceID);
+    boolean priceIncludeTaxes = invoice.getPriceList().isPriceIncludesTax();
     if (!strMProductID.equals("")) {
-      SLOrderProductData[] dataInvoice = SLOrderProductData.selectInvoice(this, strCInvoiceID);
-
-      if (log4j.isDebugEnabled())
-        log4j.debug("get Offers date: " + dataInvoice[0].dateinvoiced + " partner:"
-            + dataInvoice[0].cBpartnerId + " prod:" + strMProductID + " std:"
-            + strPriceStd.replace("\"", ""));
-
-      dataInvoice = null;
+      Product product = OBDal.getInstance().get(Product.class, strMProductID);
+      strPriceActual = PriceAdjustment.calculatePriceActual(invoice, product,
+          new BigDecimal(strQty), new BigDecimal((strPriceStd.equals("") ? "0" : strPriceStd)))
+          .toString();
     }
     StringBuffer resultado = new StringBuffer();
-
-    strPriceActual = strPriceStd;
 
     resultado.append("var calloutName='SL_Invoice_Product';\n\n");
     resultado.append("var respuesta = new Array(");
     resultado.append("new Array(\"inpcUomId\", \"" + strUOM + "\"),");
-    if (OBDal.getInstance().get(Invoice.class, strCInvoiceID).getPriceList().isPriceIncludesTax()) {
+    if (priceIncludeTaxes) {
       resultado.append("new Array(\"inpgrossUnitPrice\", "
           + (strPriceActual.equals("") ? "0" : strPriceActual) + "),");
       resultado.append("new Array(\"inpgrosspricestd\", "
