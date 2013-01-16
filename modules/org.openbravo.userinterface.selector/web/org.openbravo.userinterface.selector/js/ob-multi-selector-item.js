@@ -48,6 +48,15 @@ isc.OBMultiSelectorItem.addProperties({
       }
     }];
 
+    if (this.selectorGridFields.length === 0) {
+      this.showSelectorGrid = true;
+      this.selectorGridFields = [{
+        title: 'Identifier',
+        name: OB.Constants.IDENTIFIER,
+        type: 'text'
+      }];
+    }
+
 
     if (this.disabled) {
       // TODO: disable, remove icons
