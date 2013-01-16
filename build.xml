@@ -89,6 +89,8 @@ export.database: exports database structure and data to xml files.
   <property name="obx.export.RD" value="false" />
   <property name="obx.export.DB" value="false" />
   <property name="obx.export.CS" value="false" />
+  <property name="obx.export.validate" value="true" />
+  <property name="obx.export.allDeps" value="false" />
   <property name="chekPerms" value="false" />
   <property name="force" value="false" />
   <property name="strict.template.application" value="false" />
@@ -151,6 +153,13 @@ export.database: exports database structure and data to xml files.
     <or>
       <equals arg1="yes" arg2="${obx.export.CS}" />
       <equals arg1="true" arg2="${obx.export.CS}" />
+    </or>
+  </condition>
+  
+  <condition property="obx.exp.validate">
+    <or>
+      <equals arg1="yes" arg2="${obx.export.validate}" />
+      <equals arg1="true" arg2="${obx.export.validate}" />
     </or>
   </condition>
 
@@ -927,31 +936,39 @@ export.database: exports database structure and data to xml files.
     <antcall target="export.config.script" />
   </target>
 
-  <target name="package.module">
-    <taskdef name="extractModule" classname="org.openbravo.erpCommon.modules.ExtractModuleTask">
-      <classpath refid="project.class.path" />
-    </taskdef>
-
+  <target name="obx.export.validateModules" if="obx.exp.validate">
     <taskdef name="validateModules" classname="org.openbravo.service.system.SystemValidationTask">
       <classpath refid="project.class.path" />
     </taskdef>
-    
+
     <taskdef name="WADValidation" classname="org.openbravo.wad.validation.WADValidatorTask">
       <classpath refid="project.class.path" />
     </taskdef>
-            
+
     <echo message="Validating Module..." />
-    
+
     <WADValidation propertiesFile="${base.config}/Openbravo.properties"
                    modules="${module}"
                    stoponerror="true"/>
 
     <validateModules moduleJavaPackage="${module}" failOnError="true" userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" type="module" />
-
+  </target>
+  
+  <target name="package.module">
+    <taskdef name="extractModule" classname="org.openbravo.erpCommon.modules.ExtractModuleTask">
+      <classpath refid="project.class.path" />
+    </taskdef>
+    
+    <antcall target="obx.export.validateModules" />
     <antcall target="obx.export.database" />
     <antcall target="obx.export.config.script" />
 
-    <extractModule moduleName="${module}" userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" exportRD="${obx.export.RD}" />
+    <extractModule moduleName="${module}" 
+                   userId="0" 
+                   adminMode="true" 
+                   propertiesFile="${base.config}/Openbravo.properties" 
+                   exportRD="${obx.export.RD}" 
+                   addAllDependencies="${obx.export.allDeps}"/>
   </target>
 
   <target name="diagnostic">

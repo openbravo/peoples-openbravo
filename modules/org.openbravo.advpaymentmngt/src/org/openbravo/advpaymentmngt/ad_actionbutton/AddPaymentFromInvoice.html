@@ -273,6 +273,33 @@ function callBackExchangeRate(paramXMLParticular, XMLHttpRequestObj) {
   return true;
 }
 
+function bPartnerBlocked(){
+  try {
+    var url = "../org.openbravo.advpaymentmngt.ad_actionbutton/AddPaymentFromInvoice.html";
+    var paramXMLReq = null;
+    return submitXmlHttpRequest(callBackBPartnerBlocked, document.frmMain, "BPARTNERBLOCK", url, false, null, paramXMLReq);
+  } catch (e) {
+    alert(e);
+  }
+}
+
+function callBackBPartnerBlocked(paramXMLParticular, XMLHttpRequestObj) {
+  if (getReadyStateHandler(XMLHttpRequestObj)) {
+    try {
+      if (XMLHttpRequestObj.responseText) {
+        strText = XMLHttpRequestObj.responseText;
+        var objson = eval(strText);
+        showJSMessage(objson.text);
+        return false;
+      } else {
+        openProcessPayment();
+        return true;
+      }
+    } catch (e) {}
+  }
+  return true;
+}
+
 function useCreditOnChange(){
   actualPaymentOnChange();
   updateTotal();
@@ -467,9 +494,9 @@ function callBackProperOption(paramXMLParticular, XMLHttpRequestObj) {
   if (getReadyStateHandler(XMLHttpRequestObj)) {
     try {
       if (XMLHttpRequestObj.responseText) {
-    	strText = XMLHttpRequestObj.responseText;
+      strText = XMLHttpRequestObj.responseText;
         createCombo(document.getElementById('paramActionDocument'), strText);
-	    document.getElementById('client_top_popup').style.display = 'block';
+      document.getElementById('client_top_popup').style.display = 'block';
         document.getElementById('client_top').style.display = 'none';
         document.getElementById('client_middle').style.display = 'none';
         document.getElementById('client_bottom').style.display = 'none';
@@ -1235,7 +1262,7 @@ function callBackProperOption(paramXMLParticular, XMLHttpRequestObj) {
                   <button type="button" 
                     id="buttonProcess"
                     class="ButtonLink" 
-                    onclick="openProcessPayment();return false;"
+                    onclick="bPartnerBlocked(this);return false;"
                     onfocus="buttonEvent('onfocus', this); window.status='Create'; return true;"
                     onblur="buttonEvent('onblur', this);"
                     onkeyup="buttonEvent('onkeyup', this);"

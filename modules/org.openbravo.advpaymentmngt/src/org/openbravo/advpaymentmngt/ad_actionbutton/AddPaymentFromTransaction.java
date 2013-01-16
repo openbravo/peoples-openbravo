@@ -168,6 +168,39 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
       exchangeRateFormat = vars.getSessionValue("#FormatOutput|generalQtyRelation", "#,##0.######");
       refreshExchangeRate(response, strCurrencyId, strFinancialAccountCurrencyId, strPaymentDate,
           fa.getOrganization(), conversionRatePrecision);
+    } else if (vars.commandIn("BPARTNERBLOCK")) {
+      boolean isReceipt = vars.getRequiredStringParameter("isReceipt").equals("Y");
+      final String strBusinessPartnerId = vars.getRequestGlobalVariable("inpcBpartnerId", "");
+      if (!"".equals(strBusinessPartnerId)) {
+        BusinessPartner businessPartner = OBDal.getInstance().get(BusinessPartner.class,
+            strBusinessPartnerId);
+        if (FIN_Utility.isBlockedBusinessPartner(businessPartner.getId(), isReceipt, 4)) {
+          businessPartnerBlocked(response, vars, businessPartner.getIdentifier());
+        }
+      } else {
+        String strSelectedScheduledPaymentDetailIds = vars.getInStringParameter(
+            "inpScheduledPaymentDetailId", "", null);
+        if (!"".equals(strSelectedScheduledPaymentDetailIds)) {
+          OBContext.setAdminMode(true);
+          try {
+            List<FIN_PaymentScheduleDetail> selectedPaymentDetails = FIN_Utility.getOBObjectList(
+                FIN_PaymentScheduleDetail.class, strSelectedScheduledPaymentDetailIds);
+            for (FIN_PaymentScheduleDetail psd : selectedPaymentDetails) {
+              BusinessPartner bPartner;
+              if (psd.getInvoicePaymentSchedule() == null) {
+                bPartner = psd.getOrderPaymentSchedule().getOrder().getBusinessPartner();
+              } else {
+                bPartner = psd.getInvoicePaymentSchedule().getInvoice().getBusinessPartner();
+              }
+              if (FIN_Utility.isBlockedBusinessPartner(bPartner.getId(), isReceipt, 4)) {
+                businessPartnerBlocked(response, vars, bPartner.getIdentifier());
+              }
+            }
+          } finally {
+            OBContext.restorePreviousMode();
+          }
+        }
+      }
     } else if (vars.commandIn("SAVE") || vars.commandIn("SAVEANDPROCESS")) {
       boolean isReceipt = vars.getRequiredStringParameter("isReceipt").equals("Y");
       String strAction = null;
@@ -794,6 +827,21 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
     if (!IsIDFilter.instance.accept(id)) {
       log4j.error("Input: " + id + " not accepted by filter: IsIDFilter");
       throw new ServletException("Input: " + id + " is not an accepted input");
+    }
+  }
+
+  private void businessPartnerBlocked(HttpServletResponse response, VariablesSecureApp vars,
+      String strBPartnerName) throws IOException, ServletException {
+
+    try {
+      JSONObject json = new JSONObject();
+      json.put("text", "SelectedBPartnerBlocked");
+      response.setContentType("text/html; charset=UTF-8");
+      PrintWriter out = response.getWriter();
+      out.println("objson = " + json);
+      out.close();
+    } catch (JSONException e) {
+      log4j.error("AddPaymentFromTransaction - Callback", e);
     }
   }
 

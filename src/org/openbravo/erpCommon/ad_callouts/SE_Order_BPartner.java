@@ -22,10 +22,14 @@ import java.math.BigDecimal;
 
 import javax.servlet.ServletException;
 
+import org.openbravo.advpaymentmngt.utility.FIN_Utility;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.businessUtility.BpartnerMiscData;
 import org.openbravo.erpCommon.utility.ComboTableData;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.common.businesspartner.BusinessPartner;
 
 public class SE_Order_BPartner extends SimpleCallout {
   private static final long serialVersionUID = 1L;
@@ -312,18 +316,29 @@ public class SE_Order_BPartner extends SimpleCallout {
     // Message
 
     StringBuilder message = new StringBuilder();
-
-    if (data != null && data.length > 0
-        && new BigDecimal(data[0].creditavailable).compareTo(BigDecimal.ZERO) < 0
-        && strIsSOTrx.equals("Y")) {
-      if (message.length() > 0) {
-        message.append("<br>");
+    final String rtvendor = "C50A8AEE6F044825B5EF54FAAE76826F";
+    final String rfcustomer = "FF808081330213E60133021822E40007";
+    String strwindow = info.getStringParameter("inpwindowId", null);
+    if (!(strwindow.equals(rtvendor) || strwindow.equals(rfcustomer))) {
+      if (FIN_Utility.isBlockedBusinessPartner(strBPartner, "Y".equals(strIsSOTrx), 1)) {
+        // If the Business Partner is blocked for this document, show an information message.
+        BusinessPartner bPartner = OBDal.getInstance().get(BusinessPartner.class, strBPartner);
+        message.append(OBMessageUtils.messageBD("ThebusinessPartner") + " "
+            + bPartner.getIdentifier() + " " + OBMessageUtils.messageBD("BusinessPartnerBlocked"));
       }
-      String creditLimitExceed = "" + Double.parseDouble(data[0].creditavailable) * -1;
-      message.append(Utility.messageBD(this, "CreditLimitOver", info.vars.getLanguage())
-          + creditLimitExceed);
-    }
+    } else {
 
+      if (data != null && data.length > 0
+          && new BigDecimal(data[0].creditavailable).compareTo(BigDecimal.ZERO) < 0
+          && strIsSOTrx.equals("Y")) {
+        if (message.length() > 0) {
+          message.append("<br>");
+        }
+        String creditLimitExceed = "" + Double.parseDouble(data[0].creditavailable) * -1;
+        message.append(Utility.messageBD(this, "CreditLimitOver", info.vars.getLanguage())
+            + creditLimitExceed);
+      }
+    }
     info.addResult("MESSAGE", message.toString());
   }
 }

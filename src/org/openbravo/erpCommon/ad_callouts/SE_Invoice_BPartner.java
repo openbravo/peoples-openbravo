@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
@@ -36,6 +37,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.businessUtility.BpartnerMiscData;
 import org.openbravo.erpCommon.utility.ComboTableData;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
@@ -299,17 +301,25 @@ public class SE_Invoice_BPartner extends HttpSecureAppServlet {
       resultado.append("new Array(\"inpcWithholdingId\", \"" + strWithHolding + "\"),");
       resultado
           .append("new Array(\"inpisdiscountprinted\", \"" + data[0].isdiscountprinted + "\")");
-      if (data != null && data.length > 0
-          && new BigDecimal(data[0].creditavailable).compareTo(BigDecimal.ZERO) < 0
-          && strIsSOTrx.equals("Y")) {
-        String creditLimitExceed = "" + Double.parseDouble(data[0].creditavailable) * -1;
-        String automationPaymentMethod = isAutomaticCombination(vars, strBPartner, strIsSOTrx,
-            strFinPaymentMethodId, strOrgId);
+      if (FIN_Utility.isBlockedBusinessPartner(strBPartner, "Y".equals(strIsSOTrx), 3)) {
+        // If the Business Partner is blocked for this document, show an information message.
+        BusinessPartner bPartner = OBDal.getInstance().get(BusinessPartner.class, strBPartner);
         resultado.append(", new Array('MESSAGE', \""
-            + Utility.messageBD(this, "CreditLimitOver", vars.getLanguage()) + creditLimitExceed
-            + "<br/>" + automationPaymentMethod + "\")");
-      } else if (strIsSOTrx.equals("Y")) {
-        resultado.append(", new Array('MESSAGE', \"\")");
+            + OBMessageUtils.messageBD("ThebusinessPartner") + " " + bPartner.getIdentifier() + " "
+            + OBMessageUtils.messageBD("BusinessPartnerBlocked") + "\")");
+      } else {
+        if (data != null && data.length > 0
+            && new BigDecimal(data[0].creditavailable).compareTo(BigDecimal.ZERO) < 0
+            && strIsSOTrx.equals("Y")) {
+          String creditLimitExceed = "" + Double.parseDouble(data[0].creditavailable) * -1;
+          String automationPaymentMethod = isAutomaticCombination(vars, strBPartner, strIsSOTrx,
+              strFinPaymentMethodId, strOrgId);
+          resultado.append(", new Array('MESSAGE', \""
+              + Utility.messageBD(this, "CreditLimitOver", vars.getLanguage()) + creditLimitExceed
+              + "<br/>" + automationPaymentMethod + "\")");
+        } else if (strIsSOTrx.equals("Y")) {
+          resultado.append(", new Array('MESSAGE', \"\")");
+        }
       }
       resultado.append(");");
     }

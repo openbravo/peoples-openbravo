@@ -40,6 +40,7 @@
   -- Logistice
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
+  v_MessageBPB VARCHAR2(2000):='';
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
@@ -87,7 +88,9 @@
     v_defplantype_inv C_InvoiceLine.DefPlanType%TYPE;
     v_periodnumber_inv C_InvoiceLine.periodnumber%TYPE;
     v_period_inv C_InvoiceLine.c_period_id%TYPE;
-   
+
+    Cur_Bpblocked RECORD;
+    
     Cur_OrderLine_ISOPEN BOOLEAN:=false;
     Cur_InOutLine_ISOPEN BOOLEAN:=false;
     v_AD_Client_ID VARCHAR2(32);
@@ -225,11 +228,53 @@
 
           DBMS_OUTPUT.PUT_LINE('  C_Order_ID=' || v_C_Order_ID || ', BPartner_ID=' || v_BPartner_ID || ', AD_Org_ID=' || v_AD_Org_ID) ;
           -- For all Orders
+          
+          FOR Cur_Bpblocked IN(
+            SELECT   bp.customer_blocking ,  bp.so_invoice_blocking , bp.name , bp.c_bpartner_id
+            FROM C_ORDER o   -- Specific InProgress Order
+              JOIN m_pricelist pl ON pl.m_pricelist_id = o.m_pricelist_id
+              JOIN C_BPartner bp ON o.c_bpartner_id = bp.c_bpartner_id
+            WHERE (bp.customer_blocking='Y' AND bp.so_invoice_blocking='Y')
+            AND ((o.C_Order_ID=v_C_Order_ID 
+                    AND v_Selection = 'N'
+                    AND o.DocStatus IN('IP', 'CO')) -- OR all completed and closed orders
+                OR(v_C_Order_ID IS NULL AND v_Selection = 'N'
+                    AND o.DocStatus IN('CO', 'CL')
+                    AND o.IsSOTrx='Y'  -- not for InvoiceSchedule
+                    AND o.InvoiceRule<>'S'  -- of all or a specific business partner / organization
+                    AND(v_BPartner_ID IS NULL OR o.C_BPartner_ID=v_BPartner_ID)
+                    AND(v_InvoiceToDate IS NULL
+                        OR o.DateOrdered<TRUNC(v_InvoiceToDate) +1)
+                    AND(v_AD_Org_ID IS NULL OR o.AD_Org_ID=v_AD_Org_ID)) -- where there is something to invoice
+                OR (v_Selection = 'Y'
+                    AND o.ISSELECTED = 'Y'
+                    AND o.DocStatus IN('CO', 'CL')
+                    AND o.IsSOTrx='Y'  -- not for InvoiceSchedule
+                    AND o.InvoiceRule NOT IN ('S','D'))  -- of all or a specific business partner / organization
+                AND EXISTS
+                    (SELECT *
+                     FROM C_ORDERLINE l
+                     WHERE o.C_Order_ID=l.C_Order_ID
+                     AND l.QtyOrdered<>l.QtyInvoiced)
+            )
+            group by bp.c_bpartner_id,bp.customer_blocking ,  bp.so_invoice_blocking ,  bp.name
+          )
+          LOOP    
+            IF(v_Message NOT LIKE '%@ThebusinessPartner@%') THEN
+             v_MessageBPB:=SUBSTR(v_MessageBPB ||' '||'@ThebusinessPartner@'||' '|| Cur_Bpblocked.name ||' '||'@BusinessPartnerBlocked2@', 0, 2000);
+            ELSE
+            v_MessageBPB:=SUBSTR(v_MessageBPB ||', '||'@ThebusinessPartner@'||' '|| Cur_Bpblocked.name ||' '||'@BusinessPartnerBlocked2@', 0, 2000);
+            END IF;
+          END LOOP;
+          
           FOR Cur_Order IN
-            (SELECT o.*, pl.istaxincluded as taxincludedpl
-            FROM C_ORDER o  -- Specific InProgress Order
-                  JOIN m_pricelist pl ON pl.m_pricelist_id = o.m_pricelist_id
-            WHERE(o.C_Order_ID=v_C_Order_ID AND v_Selection = 'N'
+            (SELECT o.*, pl.istaxincluded as taxincludedpl, bp.customer_blocking ,  bp.so_invoice_blocking , bp.name as bpname
+             FROM C_ORDER o   -- Specific InProgress Order
+             JOIN m_pricelist pl ON pl.m_pricelist_id = o.m_pricelist_id
+             JOIN C_BPartner bp ON o.c_bpartner_id = bp.c_bpartner_id
+              WHERE (bp.customer_blocking='N' OR bp.so_invoice_blocking='N')
+              AND ((o.C_Order_ID=v_C_Order_ID 
+              AND v_Selection = 'N'
               AND o.DocStatus IN('IP', 'CO')) -- OR all completed and closed orders
               OR(v_C_Order_ID IS NULL AND v_Selection = 'N'
               AND o.DocStatus IN('CO', 'CL')
@@ -242,22 +287,23 @@
               AND(v_AD_Org_ID IS NULL
               OR o.AD_Org_ID=v_AD_Org_ID)) -- where there is something to invoice
               OR (v_Selection = 'Y'
-     AND o.ISSELECTED = 'Y'
+              AND o.ISSELECTED = 'Y'
               AND o.DocStatus IN('CO', 'CL')
               AND o.IsSOTrx='Y'  -- not for InvoiceSchedule
               AND o.InvoiceRule NOT IN ('S','D')  -- of all or a specific business partner / organization
               )
-     AND EXISTS
+              AND EXISTS
               (SELECT *
               FROM C_ORDERLINE l
               WHERE o.C_Order_ID=l.C_Order_ID
                 AND l.QtyOrdered<>l.QtyInvoiced
-              )
-            ORDER BY o.DateOrdered,o.PriorityRule,
+              ))
+              ORDER BY o.DateOrdered,o.PriorityRule,
               o.C_BPartner_ID,
               o.DocumentNo
             )
           LOOP
+            
             DBMS_OUTPUT.PUT_LINE('Order ' || Cur_Order.DocumentNo || ', ID=' || Cur_Order.C_Order_ID) ;
             -- Parameter Order Date => Invoice Date, Accounting Date
             v_DateInvoiced:=v_DateInvoiced_aux;
@@ -841,7 +887,8 @@
                 )
                 si
                 ON bp.C_InvoiceSchedule_ID=si.C_InvoiceSchedule_ID
-              WHERE sh.M_InOut_ID=sl.M_InOut_ID
+              WHERE(bp.customer_blocking='N' OR bp.so_invoice_blocking='N')
+                AND (sh.M_InOut_ID=sl.M_InOut_ID
                 AND sh.C_BPartner_ID=bp.C_BPartner_ID
                 AND ol.C_Order_ID=o.C_Order_ID
                 AND sl.C_OrderLine_ID=ol.C_OrderLine_ID
@@ -865,7 +912,7 @@
                 AND o.IsSelected='Y') -- or scheduled
                 OR(v_Selection<>'Y'
                 AND(si.DateLimit IS NULL
-                OR TRUNC(o.DateOrdered)<=si.DateLimit)) )
+                OR TRUNC(o.DateOrdered)<=si.DateLimit)) ))
               ORDER BY sh.C_BPartner_ID, pl.istaxincluded, (
                 CASE TO_CHAR(SUBSTR(RPAD(bp.InvoiceGrouping, 15, '0'), 1, 1))
                   WHEN '0'
@@ -1242,7 +1289,7 @@
           END; -- Block
         END IF; -- PInstance not null
         --<<FINISH_PROCESS>>
-        v_Message:=SUBSTR('@Created@: ' || v_NoRecords||v_Message, 0, 2000);
+        v_Message:=SUBSTR('@Created@: ' || v_NoRecords||v_Message || '<br>' ||v_MessageBPB, 0, 2000);
         IF(p_PInstance_ID IS NOT NULL) THEN
           --  Update AD_PInstance
           DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;

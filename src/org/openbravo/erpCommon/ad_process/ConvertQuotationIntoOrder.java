@@ -31,6 +31,7 @@ import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -42,6 +43,7 @@ import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.businessUtility.Tax;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBErrorBuilder;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderDiscount;
@@ -75,6 +77,18 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
       String orderId = (String) bundle.getParams().get("C_Order_ID");
       Order objOrder = OBDal.getInstance().get(Order.class, orderId);
       Order objCloneOrder = (Order) DalUtil.copy(objOrder, false);
+
+      if (FIN_Utility.isBlockedBusinessPartner(objOrder.getBusinessPartner().getId(), true, 1)) {
+        // If the Business Partner is blocked, the Order should not be completed.
+        OBError msg = new OBError();
+        msg.setType("Error");
+        msg.setMessage(OBMessageUtils.messageBD("ThebusinessPartner") + " "
+            + objOrder.getBusinessPartner().getIdentifier() + " "
+            + OBMessageUtils.messageBD("BusinessPartnerBlocked"));
+        bundle.setResult(msg);
+        OBDal.getInstance().rollbackAndClose();
+        return;
+      }
 
       // Set status of the new Order to Draft and Processed = N
       objCloneOrder.setDocumentAction("CO");

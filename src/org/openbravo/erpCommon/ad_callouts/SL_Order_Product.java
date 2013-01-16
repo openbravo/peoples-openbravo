@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -33,10 +33,12 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.businessUtility.PAttributeSet;
 import org.openbravo.erpCommon.businessUtility.PAttributeSetData;
+import org.openbravo.erpCommon.businessUtility.PriceAdjustment;
 import org.openbravo.erpCommon.businessUtility.Tax;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.order.Order;
+import org.openbravo.model.common.plm.Product;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -109,28 +111,29 @@ public class SL_Order_Product extends HttpSecureAppServlet {
         .getPriceList().isPriceIncludesTax();
 
     if (!strMProductID.equals("")) {
-      SLOrderProductData[] dataOrder = SLOrderProductData.select(this, strCOrderId);
 
-      log4j.debug("get Offers date: " + dataOrder[0].dateordered + " partner:"
-          + dataOrder[0].cBpartnerId + " prod:" + strMProductID + " std:"
-          + strPriceStd.replace("\"", ""));
+      Order order = OBDal.getInstance().get(Order.class, strCOrderId);
+      Product product = OBDal.getInstance().get(Product.class, strMProductID);
+
       if (isTaxIncludedPriceList) {
+        strPriceActual = PriceAdjustment.calculatePriceActual(order, product,
+            "".equals(strQty) ? BigDecimal.ZERO : new BigDecimal(strQty),
+            new BigDecimal(strGrossBaseUnitPrice.equals("") ? "0" : strGrossBaseUnitPrice))
+            .toString();
         strNetPriceList = "0";
       } else {
+        strPriceActual = PriceAdjustment.calculatePriceActual(order, product,
+            "".equals(strQty) ? BigDecimal.ZERO : new BigDecimal(strQty),
+            new BigDecimal(strPriceStd.equals("") ? "0" : strPriceStd)).toString();
         strGrossPriceList = "0";
       }
-      log4j.debug("get Offers price:" + strPriceActual);
-
-      dataOrder = null;
     } else {
       strUOM = strNetPriceList = strGrossPriceList = strPriceLimit = strPriceStd = "";
     }
     StringBuffer resultado = new StringBuffer();
-
-    strPriceActual = strPriceStd;
-
     // Discount...
     BigDecimal discount = BigDecimal.ZERO;
+    BigDecimal priceStd = null;
     if (isTaxIncludedPriceList) {
       BigDecimal priceList = (strGrossPriceList.equals("") ? BigDecimal.ZERO : new BigDecimal(
           strGrossPriceList));
@@ -143,7 +146,7 @@ public class SL_Order_Product extends HttpSecureAppServlet {
     } else {
       BigDecimal priceList = (strNetPriceList.equals("") ? BigDecimal.ZERO : new BigDecimal(
           strNetPriceList));
-      BigDecimal priceStd = (strPriceStd.equals("") ? BigDecimal.ZERO : new BigDecimal(strPriceStd));
+      priceStd = (strPriceStd.equals("") ? BigDecimal.ZERO : new BigDecimal(strPriceStd));
       if (priceList.compareTo(BigDecimal.ZERO) != 0) {
         discount = priceList.subtract(priceStd).multiply(new BigDecimal("100"))
             .divide(priceList, 2, BigDecimal.ROUND_HALF_UP);
@@ -167,8 +170,7 @@ public class SL_Order_Product extends HttpSecureAppServlet {
           + (strPriceLimit.equals("") ? "0" : strPriceLimit) + "),");
       resultado.append("new Array(\"inppricestd\", " + (strPriceStd.equals("") ? "0" : strPriceStd)
           + "),");
-      resultado.append("new Array(\"inppriceactual\", "
-          + (strPriceActual.equals("") ? "0" : strPriceActual) + "),");
+      resultado.append("new Array(\"inppriceactual\", " + strPriceActual + "),");
     }
     if (!"".equals(strCurrency)) {
       resultado.append("new Array(\"inpcCurrencyId\", \"" + strCurrency + "\"),");

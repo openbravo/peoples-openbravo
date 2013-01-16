@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -24,6 +24,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.zip.ZipEntry;
@@ -49,6 +50,8 @@ public class ExtractModule {
   private String modulesBaseDir;
   private String destDir;
   private boolean exportReferenceData;
+  private List<String> processedModules;
+  private boolean addAllDependencies = false;
 
   /**
    * Initializes a ExtractModule instance for Stand Alone conection
@@ -61,6 +64,7 @@ public class ExtractModule {
   public ExtractModule(String xmlPoolFile, String modulesDir) {
     pool = new CPStandAlone(xmlPoolFile);
     modulesBaseDir = modulesDir;
+    processedModules = new ArrayList<String>();
   }
 
   /**
@@ -84,13 +88,13 @@ public class ExtractModule {
                 + " for module does not exist.\nYou may have not exported database before packaging this module");
       }
 
-      relativeDir = modulesBaseDir + File.separator + "modules" + File.separator;
       final FileOutputStream file = new FileOutputStream(destDir + "/" + module.javapackage + "-"
           + module.version + ".obx");
       final ZipOutputStream obx = new ZipOutputStream(file);
       extractModule(moduleID, moduleDirectory, obx);
-      if (module.type.equals("P") || module.type.equals("T")) {
-        log4j.info(module.javapackage + " is a package/template looking for inner modules...");
+      log4j.info("addAllDependencies: " + addAllDependencies);
+      if (addAllDependencies || module.type.equals("P") || module.type.equals("T")) {
+        log4j.info(module.javapackage + " looking for inner modules...");
         extractPackage(moduleID, obx);
       }
       obx.close();
@@ -162,7 +166,14 @@ public class ExtractModule {
     if (exportReferenceData && ExtractModuleData.hasReferenceData(pool, moduleID)) {
       extractReferenceData(moduleID, moduleDirectory);
     }
-    createOBX(new File(moduleDirectory), obx);
+    if ("0".equals(moduleID)) {
+      log4j.info("obx for core...");
+      relativeDir = modulesBaseDir + File.separator;
+      createOBX(ModuleUtiltiy.getCore(modulesBaseDir), obx);
+    } else {
+      relativeDir = modulesBaseDir + File.separator + "modules" + File.separator;
+      createOBX(new File(moduleDirectory), obx);
+    }
   }
 
   /**
@@ -173,22 +184,26 @@ public class ExtractModule {
    * @throws Exception
    */
   private void extractPackage(String moduleID, ZipOutputStream obx) throws Exception {
-    final ExtractModuleData modules[] = ExtractModuleData.selectContainedModules(pool, moduleID);
+    final ExtractModuleData modules[] = ExtractModuleData.selectContainedModules(pool, moduleID,
+        addAllDependencies ? "Y" : "N");
     for (int i = 0; i < modules.length; i++) {
-      if (modules[i].adModuleId.equals("0")) {
+      if (processedModules.contains(modules[i].adModuleId)) {
+        log4j.info("Skipping already processed module:" + modules[i].javapackage);
+        continue;
+      }
+      processedModules.add(modules[i].adModuleId);
+      if (!addAllDependencies && modules[i].adModuleId.equals("0")) {
         log4j.warn("Core is included! It is not going to be packaged...");
       } else {
         obx.putNextEntry(new ZipEntry(modules[i].javapackage + "-" + modules[i].version + ".obx"));
         final ByteArrayOutputStream ba = new ByteArrayOutputStream();
         final ZipOutputStream moduleObx = new ZipOutputStream(ba);
         final String moduleDirectory = modulesBaseDir + "/modules/" + modules[i].javapackage;
-        relativeDir = modulesBaseDir + File.separator + "modules" + File.separator;
         log4j.info("Extracting module: " + modules[i].javapackage);
         extractModule(modules[i].adModuleId, moduleDirectory, moduleObx);
-        if (modules[i].type.equals("P") || modules[i].type.equals("T")) {
+        if (addAllDependencies || modules[i].type.equals("P") || modules[i].type.equals("T")) {
           // If it is Package or Template it can contain other modules
-          log4j
-              .info(modules[i].javapackage + " is a package/template looking for inner modules...");
+          log4j.info(modules[i].javapackage + " looking for inner modules...");
           extractPackage(modules[i].adModuleId, moduleObx);
         }
         moduleObx.close();
@@ -209,11 +224,16 @@ public class ExtractModule {
    * @throws Exception
    */
   private void createOBX(File file, ZipOutputStream obx) throws Exception {
-    final File[] list = file.listFiles(new FilenameFilter() {
-      public boolean accept(File f, String s) {
-        return !(s.equals(".svn") || s.equals(".hg"));
-      }
-    });
+    File[] list;
+    if (file.isDirectory()) {
+      list = file.listFiles(new FilenameFilter() {
+        public boolean accept(File f, String s) {
+          return !(s.equals(".svn") || s.equals(".hg"));
+        }
+      });
+    } else {
+      list = new File[] { file };
+    }
     String fileSeparator = File.separator;
     for (int i = 0; list != null && i < list.length; i++) {
       if (list[i].isDirectory()) {
@@ -239,11 +259,21 @@ public class ExtractModule {
     }
   }
 
+  private void createOBX(List<File> files, ZipOutputStream obx) throws Exception {
+    for (File f : files) {
+      createOBX(f, obx);
+    }
+  }
+
   public void setDestDir(String d) {
     destDir = d;
   }
 
   public void setExportReferenceData(boolean export) {
     exportReferenceData = export;
+  }
+
+  public void setAddAllDependencies(boolean addAllDependencies) {
+    this.addAllDependencies = addAllDependencies;
   }
 }
