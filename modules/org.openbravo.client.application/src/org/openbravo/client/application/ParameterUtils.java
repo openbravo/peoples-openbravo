@@ -39,8 +39,6 @@ import org.openbravo.base.model.domaintype.StringDomainType;
 import org.openbravo.base.util.Check;
 import org.openbravo.dal.core.OBContext;
 
-import sun.org.mozilla.javascript.NativeObject;
-
 /**
  * Utility class for Parameters handling
  * 
@@ -148,6 +146,7 @@ public class ParameterUtils {
    * @return an Object with the result of the expression evaluation.
    * @throws ScriptException
    */
+  @SuppressWarnings("rawtypes")
   public static Object getJSExpressionResult(Map<String, String> parameters, HttpSession session,
       String expression) throws ScriptException {
     final ScriptEngineManager manager = new ScriptEngineManager();
@@ -160,9 +159,9 @@ public class ParameterUtils {
     }
 
     Object result = engine.eval(expression);
-    if (result instanceof NativeObject) {
+    if (result instanceof Map) {
       // complex js object, convert it into a JSON
-      result = new JSONObject((NativeObject) result);
+      result = new JSONObject((Map) result);
     }
     return result;
   }
