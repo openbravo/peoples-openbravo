@@ -378,7 +378,11 @@
 .OBFormFieldPickListCellSelectedFocused,
 .OBFormFieldPickListCellDisabled,
 .OBFormFieldPickListCellDark,
-.OBFormFieldPickListCellSelectedDark {
+.OBFormFieldPickListCellSelectedDark,
+.OBFormFieldPickListCellOver,
+.OBFormFieldPickListCellOverDark,
+.OBFormFieldPickListCellSelectedOver,
+.OBFormFieldPickListCellSelectedOverDark {
   padding-left: 2px;
   font-family: 'lucida sans',sans-serif; 
   font-size:11px;
@@ -396,6 +400,13 @@
 .OBFormFieldPickListCellSelectedDark {
   color: #333333;
   background-color: #CDD7BB;
+}
+
+.OBFormFieldPickListCellOver,
+.OBFormFieldPickListCellOverDark,
+.OBFormFieldPickListCellSelectedOver,
+.OBFormFieldPickListCellSelectedOverDark {
+  background-color: #e1e1e1;
 }
 
 .OBFormFieldPickListCellDisabled {

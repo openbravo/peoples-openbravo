@@ -17,6 +17,10 @@
  ************************************************************************
 */
 
+.OBEventWindow {
+  border: 1px solid #000000;
+}
+
 .OBEventWindowHeader {
   font-family: Verdana,Bitstream Vera Sans,sans-serif;
   font-weight: bold;

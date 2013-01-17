@@ -284,6 +284,14 @@ isc.OBDateItem.addProperties({
 
 isc.OBDateTimeItem.addProperties(isc.addProperties({}, OB.Styles.OBFormField.DefaultDateInput));
 
+isc.OBTimeItemGrid.addProperties({
+  baseStyle: 'OBFormFieldPickListCell',
+  bodyStyleName: 'OBPickListBody',
+  className: 'scrollingMenu',
+  characterWidth: 6,
+  height: 178
+});
+
 isc.OBNumberItem.addProperties({
   cellStyle: 'OBFormField',
   titleStyle: 'OBFormFieldLabel',
