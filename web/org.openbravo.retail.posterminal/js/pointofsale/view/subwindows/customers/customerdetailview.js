@@ -153,7 +153,7 @@ enyo.kind({
     kind: 'OB.UI.CustomerTextProperty',
     name: 'customerBpCat',
     modelProperty: 'businessPartnerCategory_name',
-    label: 'Category',
+    label: OB.I18N.getLabel('OBPOS_BPCategory'),
     readOnly: true,
     displayLogic: OB.POS.modelterminal.get('terminal').bp_showcategoryselector
   }, {
