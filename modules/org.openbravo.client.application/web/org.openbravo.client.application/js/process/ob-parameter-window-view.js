@@ -154,19 +154,21 @@ isc.OBParameterWindowView.addProperties({
         }
       }
 
-      this.theForm = isc.DynamicForm.create({
-        width: '99%',
-        //height: '100%',
-        titleSuffix: '',
-        requiredTitleSuffix: '',
-        autoFocus: true,
-        titleOrientation: 'top',
-        numCols: 4,
-        colWidths: ['*', '*', '*', '*']
-      });
+      if (items.length !== 0) {
+        // create form if there items to include
+        this.theForm = isc.DynamicForm.create({
+          width: '99%',
+          titleSuffix: '',
+          requiredTitleSuffix: '',
+          autoFocus: true,
+          titleOrientation: 'top',
+          numCols: 4,
+          colWidths: ['*', '*', '*', '*']
+        });
 
-      this.theForm.setItems(items);
-      this.members.push(this.theForm);
+        this.theForm.setItems(items);
+        this.members.push(this.theForm);
+      }
     }
     if (this.grid) {
       this.members.push(this.grid);
