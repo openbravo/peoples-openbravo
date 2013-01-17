@@ -236,9 +236,9 @@
         INTO v_Count
         FROM M_INOUT IO, M_INOUTLINE IOL
         WHERE IO.M_INOUT_ID = IOL.M_INOUT_ID
-        AND AD_ISORGINCLUDED(IOL.AD_Org_ID, IO.AD_Org_ID, IO.AD_Client_ID) <> -1
+        AND AD_ISORGINCLUDED(IOL.AD_Org_ID, IO.AD_Org_ID, IO.AD_Client_ID) = -1
         AND IO.M_INOUT_ID = v_Record_ID;
-        IF (v_Count=0) THEN
+        IF (v_Count>0) THEN
           RAISE_APPLICATION_ERROR(-20000, '@NotCorrectOrgLines@') ;
         END IF;
       END IF;

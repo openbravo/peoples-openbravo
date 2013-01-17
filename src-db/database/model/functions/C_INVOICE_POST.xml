@@ -470,9 +470,9 @@ BEGIN --BODY
         INTO v_Count
       FROM C_INVOICE I, C_INVOICELINE IL
       WHERE I.C_INVOICE_ID = IL.C_INVOICE_ID
-        AND AD_ISORGINCLUDED(IL.AD_Org_ID, I.AD_Org_ID, I.AD_Client_ID) <> -1
+        AND AD_ISORGINCLUDED(IL.AD_Org_ID, I.AD_Org_ID, I.AD_Client_ID) = -1
         AND I.C_INVOICE_ID = v_Record_ID;
-      IF (v_Count=0) THEN
+      IF (v_Count>0) THEN
         RAISE_APPLICATION_ERROR(-20000, '@NotCorrectOrgLines@') ;
       END IF;
 

@@ -912,7 +912,7 @@ public class DocInvoice extends AcctServer {
       sb.append("-").append(m_taxes[i].getAmount());
     }
     // - Lines
-    for (int i = 0; i < p_lines.length; i++) {
+    for (int i = 0; p_lines != null && i < p_lines.length; i++) {
       retValue = retValue.subtract(new BigDecimal(p_lines[i].getAmount()));
       sb.append("-").append(p_lines[i].getAmount());
     }
