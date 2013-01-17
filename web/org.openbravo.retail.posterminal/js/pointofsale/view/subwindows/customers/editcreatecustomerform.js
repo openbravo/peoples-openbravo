@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global enyo, $ */
+/*global enyo, _, $ */
 
 enyo.kind({
   kind: 'OB.UI.Subwindow',
@@ -143,6 +143,34 @@ enyo.kind({
     modelProperty: 'name',
     isFirstFocus: true,
     label: OB.I18N.getLabel('OBPOS_LblName')
+  }, {
+    kind: 'OB.UI.CustomerComboProperty',
+    name: 'customerCategory',
+    modelProperty: 'businessPartnerCategory',
+    //Required: property where the selected value will be get and where the value will be saved
+    modelPropertyText: 'businessPartnerCategory_name',
+    //optional: When saving, the property which will store the selected text
+    collection: new OB.Collection.BPCategoryList(),
+    defaultValue: OB.POS.modelterminal.get('terminal').defaultbp_bpcategory,
+    //Default value for new lines
+    retrievedPropertyForValue: 'id',
+    //property of the retrieved model to get the value of the combo item
+    retrievedPropertyForText: '_identifier',
+    //property of the retrieved model to get the text of the combo item
+    //function to retrieve the data
+    fetchDataFunction: function (args) {
+      var me = this;
+      OB.Dal.find(OB.Model.BPCategory, null, function (data, args) {
+        //This function must be called when the data is ready
+        me.dataReadyFunction(data, args);
+      }, function (error) {
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_ErrorGettingBPCategories'));
+        //This function must be called when the data is ready
+        me.dataReadyFunction(null, args);
+      }, args);
+    },
+    label: OB.I18N.getLabel('OBPOS_BPCategory'),
+    displayLogic: OB.POS.modelterminal.get('terminal').bp_showcategoryselector
   }, {
     kind: 'OB.UI.CustomerTextProperty',
     name: 'customerTaxId',

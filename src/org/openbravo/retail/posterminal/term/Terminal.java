@@ -69,6 +69,7 @@ public class Terminal extends ProcessHQLQuery {
             + ", pos.organization.obretcoDbpPtermid.id as defaultbp_paymentterm "
             + ", pos.organization.obretcoDbpPmethodid.id as defaultbp_paymentmethod "
             + ", pos.organization.obretcoDbpBpcatid.id as defaultbp_bpcategory "
+            + ", pos.organization.obretcoDbpBpcatid.id as defaultbp_bpcategory_name "
             + ", pos.organization.obretcoDbpCountryid.id as defaultbp_bpcountry "
             + ", pos.organization.obretcoDbpOrgid.id as defaultbp_bporg "
             + ", pos.organization.obretcoShowtaxid as bp_showtaxid "

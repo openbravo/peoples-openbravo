@@ -151,6 +151,13 @@ enyo.kind({
     readOnly: true
   }, {
     kind: 'OB.UI.CustomerTextProperty',
+    name: 'customerBpCat',
+    modelProperty: 'businessPartnerCategory_name',
+    label: 'Category',
+    readOnly: true,
+    displayLogic: OB.POS.modelterminal.get('terminal').bp_showcategoryselector
+  }, {
+    kind: 'OB.UI.CustomerTextProperty',
     name: 'customerTaxId',
     modelProperty: 'taxID',
     label: OB.I18N.getLabel('OBPOS_LblTaxId'),

@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global enyo, $ */
+/*global enyo, _, $ */
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.customers.ModalConfigurationRequiredForCreateCustomers',
@@ -71,6 +71,79 @@ enyo.kind({
     inEvent.customer.set(this.modelProperty, this.getValue());
   },
   initComponents: function () {
+    if (this.readOnly) {
+      this.setAttribute('readonly', 'readonly');
+    }
+  }
+});
+
+enyo.kind({
+  name: 'OB.UI.CustomerComboProperty',
+  handlers: {
+    onLoadValue: 'loadValue',
+    onSaveChange: 'saveChange'
+  },
+  events: {
+    onSaveProperty: ''
+  },
+  components: [{
+    kind: 'OB.UI.List',
+    name: 'customerCombo',
+    classes: 'combo',
+    style: 'width: 100%; height: 30px; margin:0;',
+    renderLine: enyo.kind({
+      kind: 'enyo.Option',
+      initComponents: function () {
+        this.inherited(arguments);
+        this.setValue(this.model.get(this.parent.parent.retrievedPropertyForValue));
+        this.setContent(this.model.get(this.parent.parent.retrievedPropertyForText));
+      }
+    }),
+    renderEmpty: 'enyo.Control'
+  }],
+  loadValue: function (inSender, inEvent) {
+    this.$.customerCombo.setCollection(this.collection);
+    this.fetchDataFunction(inEvent);
+  },
+  dataReadyFunction: function (data, inEvent) {
+    var index = 0,
+        result = null;
+    if (data) {
+      this.collection.reset(data.models);
+    } else {
+      this.collection.reset(null);
+      return;
+    }
+
+    result = _.find(this.collection.models, function (categ) {
+      if (inEvent.customer) {
+        //Edit: select actual value
+        if (categ.get(this.retrievedPropertyForValue) === inEvent.customer.get(this.modelProperty)) {
+          return true;
+        }
+      } else {
+        //New: select default value
+        if (categ.get(this.defaultValue) === this.defaultValue) {
+          return true;
+        }
+      }
+      index += 1;
+    }, this);
+    if (result) {
+      this.$.customerCombo.setSelected(index);
+    } else {
+      this.$.customerCombo.setSelected(0);
+    }
+  },
+  saveChange: function (inSender, inEvent) {
+    var selected = this.collection.at(this.$.customerCombo.getSelected());
+    inEvent.customer.set(this.modelProperty, selected.get(this.retrievedPropertyForValue));
+    if (this.modelPropertyText) {
+      inEvent.customer.set(this.modelPropertyText, selected.get(this.retrievedPropertyForText));
+    }
+  },
+  initComponents: function () {
+    this.inherited(arguments);
     if (this.readOnly) {
       this.setAttribute('readonly', 'readonly');
     }
