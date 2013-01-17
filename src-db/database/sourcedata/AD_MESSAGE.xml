@@ -18985,7 +18985,7 @@ You can upgrade the license of your instance by contacting Openbravo sales staff
 <!--96B02DEA21084AD28903E48E2612C52A-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--96B02DEA21084AD28903E48E2612C52A-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--96B02DEA21084AD28903E48E2612C52A-->  <VALUE><![CDATA[gl_journalline_openitem_check]]></VALUE>
-<!--96B02DEA21084AD28903E48E2612C52A-->  <MSGTEXT><![CDATA[If Open Items is checked, Business Partner, Financial Account, Payment Method, GL Item and Payment Date fields must be filled.]]></MSGTEXT>
+<!--96B02DEA21084AD28903E48E2612C52A-->  <MSGTEXT><![CDATA[If Open Items is checked, Financial Account, Payment Method, GL Item and Payment Date fields must be filled.]]></MSGTEXT>
 <!--96B02DEA21084AD28903E48E2612C52A-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--96B02DEA21084AD28903E48E2612C52A-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--96B02DEA21084AD28903E48E2612C52A--></AD_MESSAGE>

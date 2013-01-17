@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012 Openbravo SLU
+ * All portions are Copyright (C) 2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -130,7 +130,8 @@ public class FIN_AddPaymentFromJournalLine extends DalBaseProcess {
 
       // Print result
       if (message.getType().equals("Error")) {
-        String exceptionMessage = payment.getBusinessPartner().getName();
+        String exceptionMessage = payment.getBusinessPartner() != null ? payment
+            .getBusinessPartner().getName() : "";
         exceptionMessage += ": " + message.getMessage();
         throw new OBException(exceptionMessage);
       } else if (message.getType().equals("Warning")) {
@@ -141,7 +142,11 @@ public class FIN_AddPaymentFromJournalLine extends DalBaseProcess {
         strMessageType = "Success";
       }
       strMessageResult.append("@Payment@ ").append(payment.getDocumentNo());
-      strMessageResult.append(" (").append(payment.getBusinessPartner().getName()).append(")");
+      strMessageResult
+          .append(" (")
+          .append(
+              payment.getBusinessPartner() != null ? payment.getBusinessPartner().getName() : "")
+          .append(")");
       if (!"".equals(message.getMessage()))
         strMessageResult.append(": ").append(message.getMessage());
       strMessageResult.append("<br>");
