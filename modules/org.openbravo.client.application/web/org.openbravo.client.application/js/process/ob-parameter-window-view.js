@@ -119,6 +119,7 @@ isc.OBParameterWindowView.addProperties({
     if (this.popup) {
       buttonLayout.push(cancelButton);
       buttonLayout.push(isc.LayoutSpacer.create({}));
+      OB.TestRegistry.register('org.openbravo.client.application.process.pickandexecute.button.cancel', cancelButton);
     }
 
     if (!this.popup) {
