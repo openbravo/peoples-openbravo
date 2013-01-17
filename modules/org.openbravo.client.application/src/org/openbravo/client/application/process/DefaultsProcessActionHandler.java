@@ -86,10 +86,7 @@ public class DefaultsProcessActionHandler extends BaseProcessActionHandler {
               defaults.put(param.getDBColumnName(), def);
             }
           } else {
-            defaults.put(param.getDBColumnName(),
-                ParameterUtils.getJSExpressionResult(fixRequestMap(parameters),
-                    (HttpSession) parameters.get(KernelConstants.HTTP_SESSION),
-                    param.getDefaultValue()));
+            defaults.put(param.getDBColumnName(), defaultValue);
           }
         }
       }

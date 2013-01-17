@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -150,21 +150,13 @@ public class FKSelectorUIDefinition extends ForeignKeyUIDefinition {
       return super.getParameterProperties(parameter);
     }
 
-    // TODO: check commented lines: are they needed??
-
     final Selector selector = parameter.getReferenceSearchKey().getOBUISELSelectorList().get(0);
-    // final String tableName = field.getColumn().getTable().getDBTableName();
-    // final String columnName = field.getColumn().getDBColumnName();
-    //
-    // final Property property = DalUtil.getProperty(tableName, columnName);
 
     final SelectorComponent selectorComponent = WeldUtils
         .getInstanceFromStaticBeanManager(SelectorComponent.class);
     final Map<String, Object> parameters = new HashMap<String, Object>();
-    // parameters.put(SelectorConstants.PARAM_TAB_ID, field.getTab().getId());
     parameters.put(SelectorConstants.PARAM_COLUMN_NAME, parameter.getDBColumnName());
     parameters.put(SelectorComponent.SELECTOR_ITEM_PARAMETER, "true");
-    // parameters.put(SelectorConstants.PARAM_TARGET_PROPERTY_NAME, property.getName());
     selectorComponent.setId(selector.getId());
     selectorComponent.setParameters(parameters);
 
