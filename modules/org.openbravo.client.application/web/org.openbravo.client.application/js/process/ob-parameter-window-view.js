@@ -210,7 +210,8 @@ isc.OBParameterWindowView.addProperties({
 
   handleResponse: function (refresh, message, responseActions, retryExecution) {
     var window = this.parentWindow,
-        tab = OB.MainView.TabSet.getTab(this.viewTabId), i;
+        tab = OB.MainView.TabSet.getTab(this.viewTabId),
+        i;
 
     // change title to done
     if (tab) {
@@ -274,10 +275,12 @@ isc.OBParameterWindowView.addProperties({
   setFieldFormProperties: function () {},
 
   validate: function () {
-    var viewGrid;
-
+    var viewGrid, validForm;
     if (this.theForm) {
-      return this.theForm.validate();
+      validForm = this.theForm.validate();
+      if (!validForm) {
+        return validForm;
+      }
     }
 
     if (this.grid) {
@@ -286,6 +289,7 @@ isc.OBParameterWindowView.addProperties({
       viewGrid.endEditing();
       return !viewGrid.hasErrors();
     }
+    return true;
   },
 
   showProcessing: function (processing) {
