@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,10 +29,10 @@ public class ExtractModuleTask extends DalInitializingTask {
   private String moduleName;
   private String moduleID;
 
-  private String propertiesFile;
   private String destDir;
   private String obDir;
   private boolean exportRD = false;
+  private boolean addAllDependencies = false;
 
   /**
    * Initialize DAL only in case RD exportation is active
@@ -57,6 +57,7 @@ public class ExtractModuleTask extends DalInitializingTask {
       ExtractModule em = new ExtractModule(propertiesFile, obDir);
       em.setDestDir(destDir);
       em.setExportReferenceData(exportRD);
+      em.setAddAllDependencies(addAllDependencies);
 
       if (moduleID != null && !moduleID.equals(""))
         em.extract(moduleID);
@@ -65,16 +66,6 @@ public class ExtractModuleTask extends DalInitializingTask {
     } catch (Exception e) {
       throw new BuildException(e);
     }
-  }
-
-  @Override
-  public String getPropertiesFile() {
-    return propertiesFile;
-  }
-
-  @Override
-  public void setPropertiesFile(String propertiesFile) {
-    this.propertiesFile = propertiesFile;
   }
 
   public void setDestDir(String destFile) {
@@ -95,5 +86,9 @@ public class ExtractModuleTask extends DalInitializingTask {
 
   public void setExportRD(boolean exportRD) {
     this.exportRD = exportRD;
+  }
+
+  public void setAddAllDependencies(boolean addAllDependencies) {
+    this.addAllDependencies = addAllDependencies;
   }
 }

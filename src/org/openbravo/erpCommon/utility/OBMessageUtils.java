@@ -288,6 +288,9 @@ public class OBMessageUtils {
   public static OBError getProcessInstanceMessage(ProcessInstance pInstance) {
     OBError myMessage = new OBError();
     String message = pInstance.getErrorMsg();
+    if (message == null) {
+      message = "";
+    }
     String title = "";
     String type = "";
     if (pInstance.getResult() == 1L) {

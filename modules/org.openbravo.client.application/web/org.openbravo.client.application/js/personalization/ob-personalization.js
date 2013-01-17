@@ -438,11 +438,9 @@ OB.Personalization.personalizeForm = function (data, form) {
         delete newField.visible;
       }
     } else if (record.isStatusBarField) {
-      // we encountered a status bar field, if it is not hidden then
-      // put it on the status bar
-      if (!record.hiddenInForm) {
-        statusBarFields.push(record.name);
-      }
+      // Now all status bar fields have the hiddeninform property set to true to true, see issue 21863
+      // In this context hiddeninform prevents the status bar field from showing in the form, not in the status bar
+      statusBarFields.push(record.name);
       // always hide
       newField.visible = false;
       newField.alwaysTakeSpace = false;

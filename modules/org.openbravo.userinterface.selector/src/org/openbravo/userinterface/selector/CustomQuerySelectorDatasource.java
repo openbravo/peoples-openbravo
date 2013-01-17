@@ -96,6 +96,17 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
 
       Query selQuery = OBDal.getInstance().getSession().createQuery(HQL);
       String[] queryAliases = selQuery.getReturnAliases();
+      if ("true".equals(parameters.get(JsonConstants.NOCOUNT_PARAMETER))) {
+        int num = 0, queryListSize = 0;
+        num = endRow + 2;
+        queryListSize = selQuery.list().size();
+        if (startRow < endRow) {
+          if (queryListSize < endRow) {
+            num = queryListSize;
+          }
+          parameters.put(JsonConstants.RESPONSE_TOTALROWS, String.valueOf(num));
+        }
+      }
 
       if (startRow > 0) {
         selQuery.setFirstResult(startRow);

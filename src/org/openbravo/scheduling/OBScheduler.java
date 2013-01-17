@@ -32,6 +32,7 @@ import org.apache.log4j.Logger;
 import org.openbravo.base.ConfigParameters;
 import org.openbravo.base.ConnectionProviderContextListener;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
@@ -175,6 +176,12 @@ public class OBScheduler {
    */
   public void schedule(String requestId, ProcessBundle bundle, Class<? extends Job> jobClass)
       throws SchedulerException, ServletException {
+    String policy = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+        .getProperty("background.policy", "default");
+    if ("no-execute".equals(policy)) {
+      log.info("Not scheduling process because current context background policy is 'no-execute'");
+      return;
+    }
     if (requestId == null) {
       throw new SchedulerException("Request Id cannot be null.");
     }
@@ -347,7 +354,6 @@ public class OBScheduler {
      */
     private static Trigger newInstance(String name, ProcessBundle bundle, ConnectionProvider conn)
         throws ServletException {
-
       final TriggerData data = TriggerData.select(conn, dateTimeFormat, name);
 
       Trigger trigger = null;

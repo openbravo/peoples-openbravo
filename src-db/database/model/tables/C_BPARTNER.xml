@@ -461,6 +461,7 @@
       <check name="C_BPARTNER_ISSUMMARY_CHK"><![CDATA[ISSUMMARY IN ('Y', 'N')]]></check>
       <check name="C_BPARTNER_ISTAXEXEMPT_CHK"><![CDATA[ISTAXEXEMPT IN ('Y', 'N')]]></check>
       <check name="C_BPARTNER_ISVENDOR_CHK"><![CDATA[ISVENDOR IN ('Y', 'N')]]></check>
+      <check name="C_BPARTNER_PGBLOCKING_CHK"><![CDATA[PO_GOODS_BLOCKING IN ('Y', 'N')]]></check>
       <check name="C_BPARTNER_PIBLOCKING_CHK"><![CDATA[PO_INVOICE_BLOCKING IN ('Y', 'N')]]></check>
       <check name="C_BPARTNER_POBLOCKING_CHK"><![CDATA[PO_ORDER_BLOCKING IN ('Y', 'N')]]></check>
       <check name="C_BPARTNER_PPBLOCKING_CHK"><![CDATA[PO_PAYMENT_BLOCKING IN ('Y', 'N')]]></check>

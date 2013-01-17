@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -31,9 +31,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.businessUtility.PriceAdjustment;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.financial.FinancialUtils;
 import org.openbravo.model.common.invoice.Invoice;
+import org.openbravo.model.common.plm.Product;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -65,12 +67,13 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
       String strLineNetAmt = vars.getNumericParameter("inplinenetamt");
       String strTaxId = vars.getStringParameter("inpcTaxId");
       String strGrossUnitPrice = vars.getNumericParameter("inpgrossUnitPrice");
+      String strBaseGrossUnitPrice = vars.getNumericParameter("inpgrosspricestd");
       String strtaxbaseamt = vars.getNumericParameter("inptaxbaseamt");
 
       try {
         printPage(response, vars, strChanged, strQtyInvoice, strPriceActual, strInvoiceId,
             strProduct, strPriceLimit, strTabId, strPriceList, strPriceStd, strLineNetAmt,
-            strTaxId, strGrossUnitPrice, strtaxbaseamt);
+            strTaxId, strGrossUnitPrice, strBaseGrossUnitPrice, strtaxbaseamt);
       } catch (ServletException ex) {
         pageErrorCallOut(response);
       }
@@ -81,8 +84,8 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
   void printPage(HttpServletResponse response, VariablesSecureApp vars, String strChanged,
       String strQtyInvoice, String strPriceActual, String strInvoiceId, String strProduct,
       String strPriceLimit, String strTabId, String strPriceList, String strPriceStd,
-      String strLineNetAmt, String strTaxId, String strGrossUnitPrice, String strTaxBaseAmt)
-      throws IOException, ServletException {
+      String strLineNetAmt, String strTaxId, String strGrossUnitPrice,
+      String strBaseGrossUnitPrice, String strTaxBaseAmt) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -125,6 +128,11 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
     lineNetAmt = (!Utility.isBigDecimal(strLineNetAmt) ? ZERO : new BigDecimal(strLineNetAmt));
     taxBaseAmt = (strTaxBaseAmt.equals("") ? ZERO : (new BigDecimal(strTaxBaseAmt))).setScale(
         PricePrecision, BigDecimal.ROUND_HALF_UP);
+
+    Invoice invoice = OBDal.getInstance().get(Invoice.class, strInvoiceId);
+    Product product = OBDal.getInstance().get(Product.class, strProduct);
+    boolean priceIncludeTaxes = invoice.getPriceList().isPriceIncludesTax();
+
     StringBuffer resultado = new StringBuffer();
 
     resultado.append("var calloutName='SL_Invoice_Amt';\n\n");
@@ -146,7 +154,8 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
       if (log4j.isDebugEnabled())
         log4j.debug("priceActual:" + Double.toString(priceActual.doubleValue()));
 
-      resultado.append("new Array(\"inppricestd\", " + priceActual.toString() + "),");
+      priceStd = PriceAdjustment.calculatePriceStd(invoice, product, qtyInvoice, priceActual);
+      resultado.append("new Array(\"inppricestd\", " + priceStd.toString() + "),");
       resultado.append("new Array(\"inptaxbaseamt\", " + priceActual.multiply(qtyInvoice) + "),");
     }
 
@@ -156,23 +165,33 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
       if (log4j.isDebugEnabled())
         log4j.debug("strPriceList: " + strPriceList.replace("\"", "") + " product:" + strProduct
             + " qty:" + qtyInvoice.toString());
-      // invoiced qty multiply with gross price
-      BigDecimal grossAmount = new BigDecimal(strGrossUnitPrice.trim()).multiply(new BigDecimal(
-          strQtyInvoice.trim()));
-      resultado.append("new Array(\"inplineGrossAmount\", " + grossAmount.toString() + "),");
+
+      if (priceIncludeTaxes) {
+        BigDecimal baseGrossUnitPrice = new BigDecimal(strBaseGrossUnitPrice.trim());
+        BigDecimal grossUnitPrice = PriceAdjustment.calculatePriceActual(invoice, product,
+            qtyInvoice, baseGrossUnitPrice);
+        BigDecimal grossAmount = grossUnitPrice.multiply(new BigDecimal(strQtyInvoice.trim()));
+        priceActual = FinancialUtils.calculateNetFromGross(strTaxId, grossAmount, invoice
+            .getCurrency().getPricePrecision().intValue(), taxBaseAmt, qtyInvoice);
+        resultado.append("new Array(\"inpgrossUnitPrice\", " + grossUnitPrice.toString() + "),");
+        resultado.append("new Array(\"inplineGrossAmount\", " + grossAmount.toString() + "),");
+      } else {
+        priceActual = PriceAdjustment.calculatePriceActual(invoice, product, qtyInvoice, priceStd);
+      }
     }
     // if taxRate field is changed
     if (strChanged.equals("inpgrossUnitPrice")
-        || (strChanged.equals("inpcTaxId") && (OBDal.getInstance().get(Invoice.class, strInvoiceId)
-            .getPriceList().isPriceIncludesTax()))) {
+        || (strChanged.equals("inpcTaxId") && priceIncludeTaxes)) {
       BigDecimal grossUnitPrice = new BigDecimal(strGrossUnitPrice.trim());
+      BigDecimal baseGrossUnitPrice = PriceAdjustment.calculatePriceStd(invoice, product,
+          qtyInvoice, grossUnitPrice);
       BigDecimal grossAmount = grossUnitPrice.multiply(qtyInvoice);
       BigDecimal netUnitPrice = FinancialUtils.calculateNetFromGross(strTaxId, grossAmount,
           PricePrecision, taxBaseAmt, qtyInvoice);
       priceActual = netUnitPrice;
       priceStd = netUnitPrice;
 
-      resultado.append("new Array(\"inpgrosspricestd\", " + grossUnitPrice.toString() + "),");
+      resultado.append("new Array(\"inpgrosspricestd\", " + baseGrossUnitPrice.toString() + "),");
 
       resultado.append("new Array(\"inppriceactual\"," + netUnitPrice.toString() + "),");
       resultado.append("new Array(\"inppricelimit\", " + netUnitPrice.toString() + "),");
@@ -184,9 +203,10 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
       }
     }
 
-    if (!strChanged.equals("inplinenetamt"))
+    if (!strChanged.equals("inplinenetamt")) {
       // Net amount of a line equals quantity x unit price (actual price)
       lineNetAmt = qtyInvoice.multiply(priceActual);
+    }
 
     if (strChanged.equals("inplinenetamt")) {
       DecimalFormat priceEditionFmt = Utility.getFormat(vars, "priceEdition");
@@ -237,5 +257,4 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
     out.println(xmlDocument.print());
     out.close();
   }
-
 }

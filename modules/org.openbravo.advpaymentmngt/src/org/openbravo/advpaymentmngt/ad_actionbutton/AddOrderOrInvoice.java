@@ -934,7 +934,7 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
       out.println("objson = " + json);
       out.close();
     } catch (JSONException e) {
-      log4j.error(e);
+      log4j.error("AddOrderOrInvoice - Callback", e);
     }
   }
 
