@@ -590,7 +590,7 @@ isc.OBNumberFilterItem.addProperties({
     }
     if (!isc.isA.String(value)) {
       // on purpose no grouping symbol
-      return OB.Utilities.Number.JSToOBMasked(value, type.maskNumeric, type.decSeparator, null, type.groupInterval);
+      return OB.Utilities.Number.JSToOBMasked(value, OB.Format.defaultNumericMask, OB.Format.defaultDecimalSymbol, OB.Format.defaultGroupingSymbol, OB.Format.defaultGroupingSize);
     }
     return value;
   },
