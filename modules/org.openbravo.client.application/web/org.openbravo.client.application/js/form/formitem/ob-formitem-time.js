@@ -355,9 +355,9 @@ isc.OBTimeItemGrid.addProperties({
     if (this.isVisible()) {
       return;
     }
-    if (this.formItem && this.formItem.relativeTo) {
-      this.formItem.eventParent.getValue(this.formItem.relativeTo);
-      timeRef = this.formItem.eventParent.getValue(this.formItem.relativeTo);
+    if (this.formItem && this.formItem.relativeField) {
+      this.formItem.eventParent.getValue(this.formItem.relativeField);
+      timeRef = this.formItem.eventParent.getValue(this.formItem.relativeField);
       if (timeRef) {
         timeRef = this.normalizeDateObj(timeRef);
         this.timeReference = timeRef;
@@ -477,7 +477,7 @@ isc.OBTimeItemGrid.addProperties({
       this.timeGranularity = this.formItem.timeGranularity;
     }
 
-    if (this.formItem && this.formItem.relativeTo && this.showDiffText !== false) {
+    if (this.formItem && this.formItem.relativeField && this.showDiffText !== false) {
       this.showDiffText = true;
     }
 
