@@ -57,7 +57,6 @@ import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Process;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.TabTrl;
-import org.openbravo.model.ad.ui.Window;
 import org.openbravo.service.datasource.DataSourceConstants;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
@@ -472,13 +471,17 @@ public class OBViewTab extends BaseTemplateComponent {
   public String getProcessViews() {
     StringBuilder views = new StringBuilder();
     for (ButtonField f : getButtonFields()) {
-      if ("".equals(f.getWindowId())) {
+      if (f.column.getOBUIAPPProcess() == null
+          || !"OBUIAPP_PickAndExecute".equals(f.column.getOBUIAPPProcess().getUIPattern())) {
         continue;
       }
-      final StandardWindowComponent processWindow = createComponent(StandardWindowComponent.class);
+
+      final ParameterWindowComponent processWindow = createComponent(ParameterWindowComponent.class);
       processWindow.setParameters(getParameters());
       processWindow.setUniqueString(uniqueString);
-      processWindow.setWindow(OBDal.getInstance().get(Window.class, f.getWindowId()));
+      processWindow.setProcess(f.column.getOBUIAPPProcess());
+      processWindow.setPoup(true);
+      // processWindow.setWindow(OBDal.getInstance().get(Window.class, f.getWindowId()));
       views.append(processWindow.generate()).append("\n");
     }
     return views.toString();
@@ -586,11 +589,14 @@ public class OBViewTab extends BaseTemplateComponent {
     private boolean newDefinition = false;
     private String uiPattern = "";
     private boolean multiRecord = false;
+    private Column column;
 
     public ButtonField(Field fld) {
       id = fld.getId();
       label = OBViewUtil.getLabel(fld);
-      Column column = fld.getColumn();
+
+      // TODO: column might be null when model doesn't require it!!
+      column = fld.getColumn();
 
       propertyName = KernelUtils.getInstance().getPropertyFromColumn(column).getName();
       autosave = column.isAutosave();
@@ -608,6 +614,7 @@ public class OBViewTab extends BaseTemplateComponent {
         uiPattern = newProcess.getUIPattern();
         multiRecord = newProcess.isMultiRecord();
 
+        setWindowId(tab.getWindow().getId());
         if ("OBUIAPP_PickAndExecute".equals(uiPattern)) {
           // TODO: modal should be a parameter in the process definition?
           modal = false;
@@ -683,18 +690,7 @@ public class OBViewTab extends BaseTemplateComponent {
     }
 
     private void processParameter(org.openbravo.client.application.Parameter p) {
-
-      if (p.getReference().getId().equals(ApplicationConstants.WINDOW_REFERENCE_ID)) {
-        if (p.getReferenceSearchKey().getOBUIAPPRefWindowList().size() == 0
-            || p.getReferenceSearchKey().getOBUIAPPRefWindowList().get(0).getWindow() == null) {
-          log.error(String.format(AD_DEF_ERROR, p.getId(), "Window", "window"));
-        } else {
-          setWindowId(p.getReferenceSearchKey().getOBUIAPPRefWindowList().get(0).getWindow()
-              .getId());
-          setWindowTitle(p.getName());
-        }
-        return;
-      } else if (p.getReference().getId().equals(ApplicationConstants.BUTTON_LIST_REFERENCE_ID)) {
+      if (p.getReference().getId().equals(ApplicationConstants.BUTTON_LIST_REFERENCE_ID)) {
         labelValues = new ArrayList<Value>();
         for (org.openbravo.model.ad.domain.List valueList : p.getReferenceSearchKey()
             .getADListList()) {
@@ -705,7 +701,6 @@ public class OBViewTab extends BaseTemplateComponent {
         }
         return;
       }
-      log.error("Trying to use a yet not implemented reference: " + p.getReference());
     }
 
     public boolean isAutosave() {

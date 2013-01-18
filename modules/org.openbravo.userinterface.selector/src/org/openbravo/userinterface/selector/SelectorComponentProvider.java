@@ -64,6 +64,8 @@ public class SelectorComponentProvider extends BaseComponentProvider {
     resources.add(createStaticResource(
         "web/org.openbravo.userinterface.selector/js/ob-selector-item.js", false, true));
     resources.add(createStaticResource(
+        "web/org.openbravo.userinterface.selector/js/ob-multi-selector-item.js", false, true));
+    resources.add(createStaticResource(
         "web/org.openbravo.userinterface.selector/js/ob-selector-filter-select-item.js", false,
         true));
 

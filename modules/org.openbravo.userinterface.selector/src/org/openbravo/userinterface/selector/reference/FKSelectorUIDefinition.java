@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,6 +27,7 @@ import org.openbravo.base.model.Property;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.util.Check;
 import org.openbravo.base.weld.WeldUtils;
+import org.openbravo.client.application.Parameter;
 import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.client.kernel.reference.ForeignKeyUIDefinition;
 import org.openbravo.dal.core.DalUtil;
@@ -141,6 +142,34 @@ public class FKSelectorUIDefinition extends ForeignKeyUIDefinition {
           + superJsonStr.trim().substring(1, superJsonStr.trim().length() - 1);
     }
     return selectorFields;
+  }
+
+  @Override
+  public String getParameterProperties(Parameter parameter) {
+    if (parameter == null) {
+      return super.getParameterProperties(parameter);
+    }
+
+    final Selector selector = parameter.getReferenceSearchKey().getOBUISELSelectorList().get(0);
+
+    final SelectorComponent selectorComponent = WeldUtils
+        .getInstanceFromStaticBeanManager(SelectorComponent.class);
+    final Map<String, Object> parameters = new HashMap<String, Object>();
+    parameters.put(SelectorConstants.PARAM_COLUMN_NAME, parameter.getDBColumnName());
+    parameters.put(SelectorComponent.SELECTOR_ITEM_PARAMETER, "true");
+    selectorComponent.setId(selector.getId());
+    selectorComponent.setParameters(parameters);
+
+    // append the super fields
+    final String selectorFields = selectorComponent.generate();
+    final String superJsonStr = super.getParameterProperties(parameter);
+    if (superJsonStr.trim().startsWith("{")) {
+      return selectorFields + ","
+          + superJsonStr.trim().substring(1, superJsonStr.trim().length() - 1);
+    } else {
+      return selectorFields + "," + superJsonStr;
+    }
+
   }
 
   private Selector getSelector(Field field) {

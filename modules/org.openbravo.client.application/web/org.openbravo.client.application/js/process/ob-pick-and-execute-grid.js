@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011 Openbravo SLU
+ * All portions are Copyright (C) 2011-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,6 +19,9 @@
 
 isc.defineClass('OBPickAndExecuteGrid', isc.OBGrid);
 
+// == OBPickAndExecuteGrid ==
+//   OBPickAndExecuteGrid is the grid that is the actual parameter of the
+//   OBPickAndExecuteView class.
 isc.OBPickAndExecuteGrid.addProperties({
   dataProperties: {
     useClientFiltering: false,
@@ -58,7 +61,8 @@ isc.OBPickAndExecuteGrid.addProperties({
   },
 
   initWidget: function () {
-    var i, len = this.fields.length;
+    var i, len = this.fields.length,
+        theGrid;
 
     this.selectedIds = [];
 
@@ -118,9 +122,18 @@ isc.OBPickAndExecuteGrid.addProperties({
 
     OB.TestRegistry.register('org.openbravo.client.application.process.pickandexecute.Grid', this);
 
+    // FIXME:---
     this.editFormProperties = {
       view: this.view.buttonOwnerView
     };
+
+    // set properties defined for the grid
+    theGrid = this.view.viewProperties.fields.find(true, 'isGrid');
+    if (theGrid) {
+      this.viewProperties = theGrid.viewProperties;
+    } else {
+      window.warn('grid fiel not found!');
+    }
 
     this.Super('initWidget', arguments);
   },
@@ -162,8 +175,8 @@ isc.OBPickAndExecuteGrid.addProperties({
   selectionChanged: function (record, state) {
     var recordIdx;
 
-    if (this.view.viewProperties.selectionFn) {
-      this.view.viewProperties.selectionFn(this, record, state);
+    if (this.viewProperties.selectionFn) {
+      this.viewProperties.selectionFn(this, record, state);
     }
 
     recordIdx = this.getRecordIndex(record);
@@ -290,17 +303,18 @@ isc.OBPickAndExecuteGrid.addProperties({
   },
 
   getOrgParameter: function () {
-    var view = this.view.buttonOwnerView,
+    var view = this.view && this.view.buttonOwnerView,
         context, i;
 
-    context = view.getContextInfo(true, false);
+    if (view) {
+      context = view.getContextInfo(true, false);
 
-    for (i in context) {
-      if (context.hasOwnProperty(i) && i.indexOf('organization') !== -1) {
-        return context[i];
+      for (i in context) {
+        if (context.hasOwnProperty(i) && i.indexOf('organization') !== -1) {
+          return context[i];
+        }
       }
     }
-
     return null;
   },
 
@@ -316,11 +330,12 @@ isc.OBPickAndExecuteGrid.addProperties({
 
   getFetchRequestParams: function (params) {
     var props = this.gridProperties || {},
-        view = this.view.buttonOwnerView;
+        view = this.view && this.view.buttonOwnerView;
 
     params = params || {};
-
-    isc.addProperties(params, view.getContextInfo(true, false));
+    if (view) {
+      isc.addProperties(params, view.getContextInfo(true, false));
+    }
 
     params[OB.Constants.ORG_PARAMETER] = this.getOrgParameter();
 
@@ -410,11 +425,16 @@ isc.OBPickAndExecuteGrid.addProperties({
   },
 
   getContextInfo: function (rowNum) {
-    var contextInfo = isc.addProperties({}, this.view.buttonOwnerView.getContextInfo(false, true, false, true)),
-        record = isc.addProperties({}, this.getRecord(rowNum), this.getEditValues(rowNum)),
-        fields = this.view.viewProperties.fields,
-        len = fields.length,
-        fld, i, value, undef, type;
+    var view = this.view && this.view.buttonOwnerView,
+        contextInfo, record, fields, len, fld, i, value, undef, type;
+
+    if (!view) {
+      return;
+    }
+    contextInfo = isc.addProperties({}, this.view.parentWindow.activeView.getContextInfo(false, true, false, true));
+    record = isc.addProperties({}, this.getRecord(rowNum), this.getEditValues(rowNum));
+    fields = this.viewProperties.fields;
+    len = fields.length;
 
     for (i = 0; i < len; i++) {
       fld = fields[i];
@@ -425,10 +445,10 @@ isc.OBPickAndExecuteGrid.addProperties({
           if (type.createClassicString) {
             contextInfo[fld.inpColumnName] = type.createClassicString(value);
           } else {
-            contextInfo[fld.inpColumnName] = this.view.buttonOwnerView.convertContextValue(value, fld.type);
+            contextInfo[fld.inpColumnName] = view.convertContextValue(value, fld.type);
           }
         } else {
-          contextInfo[fld.inpColumnName] = this.view.buttonOwnerView.convertContextValue(value, fld.type);
+          contextInfo[fld.inpColumnName] = view.convertContextValue(value, fld.type);
         }
       }
     }
@@ -445,7 +465,7 @@ isc.OBPickAndExecuteGrid.addProperties({
     requestParams = {
       MODE: (newRow ? 'NEW' : 'EDIT'),
       PARENT_ID: null,
-      TAB_ID: this.view.viewProperties.tabId,
+      TAB_ID: this.viewProperties.tabId,
       ROW_ID: (record ? record[OB.Constants.ID] : null)
     };
 
@@ -506,7 +526,7 @@ isc.OBPickAndExecuteGrid.addProperties({
 
   removeRecord: function (rowNum, record) {
     var remove = true,
-        removeFn = this.view.viewProperties && this.view.viewProperties.removeFn;
+        removeFn = this.viewProperties && this.viewProperties.removeFn;
 
     if (removeFn && isc.isA.Function(removeFn)) {
       remove = removeFn(this, rowNum, record);

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,6 +26,7 @@ import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.util.OBClassLoader;
 import org.openbravo.base.weld.WeldUtils;
+import org.openbravo.client.application.window.ParameterWindowComponent;
 import org.openbravo.client.application.window.StandardWindowComponent;
 import org.openbravo.client.kernel.BaseComponent;
 import org.openbravo.client.kernel.BaseTemplateComponent;
@@ -51,6 +52,9 @@ public class ViewComponent extends BaseComponent {
   private StandardWindowComponent standardWindowComponent;
 
   @Inject
+  private ParameterWindowComponent parameterWindowComponent;
+
+  @Inject
   private WeldUtils weldUtils;
 
   @Override
@@ -73,6 +77,13 @@ public class ViewComponent extends BaseComponent {
           throw new OBUserException(featureRestriction.toString());
         }
         return generateWindow(window);
+      } else if (viewId.startsWith("processDefinition_")) {
+        String processId = viewId.substring("processDefinition_".length());
+        Process process = OBDal.getInstance().get(Process.class, processId);
+        if (process == null) {
+          throw new IllegalArgumentException("Not found process definition with ID " + processId);
+        }
+        return generateProcess(process);
       } else {
         return generateView(viewId);
       }
@@ -115,6 +126,13 @@ public class ViewComponent extends BaseComponent {
     return jsCode;
   }
 
+  protected String generateProcess(Process process) {
+    parameterWindowComponent.setProcess(process);
+    parameterWindowComponent.setParameters(getParameters());
+    parameterWindowComponent.setPoup(false);
+    return parameterWindowComponent.generate();
+  }
+
   private OBUIAPPViewImplementation getView(String viewName) {
     OBCriteria<OBUIAPPViewImplementation> obc = OBDal.getInstance().createCriteria(
         OBUIAPPViewImplementation.class);
@@ -134,6 +152,13 @@ public class ViewComponent extends BaseComponent {
     final Window window = OBDal.getInstance().get(Window.class, correctViewId(id));
     if (window != null) {
       return window.getModule();
+    } else if (id.startsWith("processDefinition_")) {
+      String processId = id.substring("processDefinition_".length());
+      Process process = OBDal.getInstance().get(Process.class, processId);
+      if (process == null) {
+        throw new IllegalArgumentException("Not found process definition with ID " + processId);
+      }
+      return process.getModule();
     } else {
       OBUIAPPViewImplementation view = getView(id);
       if (view != null) {

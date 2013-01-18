@@ -181,7 +181,8 @@ isc.OBApplicationMenuTree.addProperties({
         command: 'DEFAULT',
         tabTitle: item.title
       };
-    } else {
+    } else if (!item.processDefinitionId) {
+      // do nothing for param windows
       selectedView = {
         viewId: item.viewId,
         tabTitle: item.title
@@ -266,6 +267,8 @@ isc.OBApplicationMenuButton.addProperties({
       iconPath = this.nodeIcons.ExternalLink;
     } else if (type === 'view') {
       iconPath = this.nodeIcons.View;
+    } else if (type === 'processDefinition') {
+      iconPath = this.nodeIcons.Process;
     } else if (type === 'folder') {
       iconPath = this.nodeIcons.Folder;
     }
