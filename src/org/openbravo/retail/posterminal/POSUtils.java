@@ -207,7 +207,7 @@ public class POSUtils {
     query.setString(1, documentTypeId);
     List result = query.list();
     if (result.size() == 0 || result.get(0) == null) {
-      // return 0;
+      return 0;
     }
     if (curDbms.equals("POSTGRE")) {
       return ((BigDecimal) query.list().get(0)).intValue();
