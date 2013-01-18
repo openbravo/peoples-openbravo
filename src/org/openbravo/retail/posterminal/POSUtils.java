@@ -210,9 +210,9 @@ public class POSUtils {
       return 0;
     }
     if (curDbms.equals("POSTGRE")) {
-      return ((BigDecimal) query.list().get(0)).intValue();
+      return ((BigDecimal) result.get(0)).intValue();
     } else if (curDbms.equals("ORACLE")) {
-      return ((Long) query.list().get(0)).intValue();
+      return ((Long) result.get(0)).intValue();
     } else {
       return 0;
     }
