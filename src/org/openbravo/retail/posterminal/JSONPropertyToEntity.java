@@ -82,6 +82,8 @@ public class JSONPropertyToEntity {
               + "+0000";
           bob.set(p.getName(), (Date) JsonToDataConverter.convertJsonToPropertyValue(
               PropertyByType.DATETIME, transformedValue));
+        } else if (p.getPrimitiveType() == Long.class) {
+          bob.set(p.getName(), json.getLong(oldKey));
         } else if (p.isNumericType()) {
           value = json.getString(oldKey);
           bob.set(key, new BigDecimal((String) value));
