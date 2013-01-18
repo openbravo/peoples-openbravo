@@ -451,7 +451,6 @@
           }
           showTab(viewName, params, null, direct);
         }
-
         if (isc[viewName]) {
           showTab(viewName, params, null, direct);
         } else {

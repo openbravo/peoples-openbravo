@@ -125,7 +125,6 @@ isc.OBQuickLaunch.addProperties({
 
   initWidget: function () {
     var dummyFirstField, dummyLastField;
-
     dummyFirstField = isc.OBFocusButton.create({
       getFocusTarget: function () {
         return this.parentElement.members[this.parentElement.members.length - 2];
@@ -267,6 +266,11 @@ isc.OBQuickLaunch.addProperties({
                 id: record.processId,
                 obManualURL: viewValue,
                 command: 'DEFAULT',
+                tabTitle: record[OB.Constants.IDENTIFIER]
+              };
+            } else if (record.optionType && record.optionType === 'processDefinition') {
+              openObject = {
+                viewId: 'processDefinition_' + record.processId,
                 tabTitle: record[OB.Constants.IDENTIFIER]
               };
             } else if (record.viewId) {

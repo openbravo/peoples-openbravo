@@ -87,6 +87,7 @@ isc.OBToolbarActionButton.addProperties({
     if (this.newDefinition) {
       callbackFunction = function () {
         standardWindow.openProcess({
+          paramWindow:true,
           processId: me.processId,
           windowId: me.windowId,
           windowTitle: me.windowTitle,
