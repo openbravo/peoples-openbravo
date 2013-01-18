@@ -123,7 +123,7 @@ enyo.kind({
         }
       } else {
         //New: select default value
-        if (categ.get(this.defaultValue) === this.defaultValue) {
+        if (categ.get(this.retrievedPropertyForValue) === this.defaultValue) {
           return true;
         }
       }
