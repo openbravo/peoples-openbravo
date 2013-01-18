@@ -205,6 +205,10 @@ public class POSUtils {
     SQLQuery query = OBDal.getInstance().getSession().createSQLQuery(sqlToExecute);
     query.setString(0, searchKey);
     query.setString(1, documentTypeId);
+    List result = query.list();
+    if (result.size() == 0 || result.get(0) == null) {
+      // return 0;
+    }
     if (curDbms.equals("POSTGRE")) {
       return ((BigDecimal) query.list().get(0)).intValue();
     } else if (curDbms.equals("ORACLE")) {
