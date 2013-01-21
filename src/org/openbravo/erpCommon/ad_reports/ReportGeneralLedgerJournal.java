@@ -609,7 +609,8 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
   private ReportGeneralLedgerJournalData[] notshow(ReportGeneralLedgerJournalData[] data,
       VariablesSecureApp vars) {
     for (int i = 0; i < data.length - 1; i++) {
-      if (data[i].identifier.toString().equals(data[i + 1].identifier.toString())) {
+      if ((data[i].identifier.toString().equals(data[i + 1].identifier.toString()))
+          && (data[i].dateacct.toString().equals(data[i + 1].dateacct.toString()))) {
         data[i + 1].newstyle = "visibility: hidden";
       }
     }
