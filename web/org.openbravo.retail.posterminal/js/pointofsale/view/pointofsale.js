@@ -499,10 +499,36 @@ enyo.kind({
     return true;
   },
   removePayment: function (inSender, inEvent) {
-    if (inEvent.payment.get('paymentData') && !confirm(OB.I18N.getLabel('OBPOS_MsgConfirmRemovePayment'))) {
-      return;
+    var me = this;
+    if (inEvent.payment.get('paymentData')) {
+      if (!confirm(OB.I18N.getLabel('OBPOS_MsgConfirmRemovePayment'))) {
+        if (inEvent.removeCallback) {
+          inEvent.removeCallback(false);
+        }
+        //canceled, not remove
+        return;
+      } else {
+        //To remove this payment we've to connect with server
+        //a callback is defined to receive the confirmation
+        var callback = function (hasError, error) {
+          if (hasError){
+            if (inEvent.removeCallback) {
+              inEvent.removeCallback(hasError, error);
+            }
+          } else {
+            if (inEvent.removeCallback) {
+              inEvent.removeCallback(hasError);
+            }
+            me.model.get('order').removePayment(inEvent.payment);
+          }
+        };
+        //async call with defined callback
+        inEvent.payment.get('paymentData').voidTransaction(callback);
+        return;
+      }
+    } else {
+      this.model.get('order').removePayment(inEvent.payment);
     }
-    this.model.get('order').removePayment(inEvent.payment);
   },
   changeSubWindow: function (inSender, inEvent) {
     this.model.get('subWindowManager').set('currentWindow', inEvent.newWindow);

@@ -710,6 +710,9 @@ div.btnlink {
 .btn-icon-clearPayment {
   background-image: url('../img/iconClearPayment.png');
 }
+.btn-icon-loading {
+  background-image: url('../img/iconloading.gif');
+}
 
 .btn-check {
   width: 34px;

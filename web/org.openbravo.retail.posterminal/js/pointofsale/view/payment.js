@@ -285,9 +285,24 @@ enyo.kind({
   kind: 'OB.UI.SmallButton',
   classes: 'btnlink-darkgray btnlink-payment-clear btn-icon-small btn-icon-clearPayment',
   tap: function () {
-    this.doRemovePayment({
-      payment: this.owner.model
-    });
+    var me = this;
+    if (_.isUndefined(this.deleting) || this.deleting === false) {
+      this.deleting = true;
+      this.removeClass('btn-icon-clearPayment');
+      this.addClass('btn-icon-loading');
+
+      this.doRemovePayment({
+        payment: this.owner.model,
+        removeCallback: function (hasError, error) {
+          me.deleting = false;
+          if (hasError) {
+            OB.UTIL.showError(error);
+          }
+          me.removeClass('btn-icon-loading');
+          me.addClass('btn-icon-clearPayment');
+        }
+      });
+    }
   }
 });
 
