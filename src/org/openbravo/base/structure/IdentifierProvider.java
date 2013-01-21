@@ -129,14 +129,15 @@ public class IdentifierProvider implements OBSingleton {
         value = dob.get(identifier.getName());
       }
 
-      // TODO: add number formatting...
-      if (property.isDate() || property.isDatetime()) {
-        value = formatDate(property, (Date) value);
-      }
-
       if (value instanceof Identifiable && identifyDeep) {
         sb.append(getIdentifier(value, false, language));
       } else if (value != null) {
+
+        // TODO: add number formatting...
+        if (property.isDate() || property.isDatetime()) {
+          value = formatDate(property, (Date) value);
+        }
+
         sb.append(value);
       }
     }
