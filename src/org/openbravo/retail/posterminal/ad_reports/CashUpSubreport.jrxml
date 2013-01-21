@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CashUpSubreport" pageWidth="572" pageHeight="792" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="NUMBERFORMAT" class="java.text.DecimalFormat"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="LABEL" class="java.lang.String"/>
+	<field name="VALUE" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement x="397" y="0" width="111" height="20"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="1.0" lineColor="#867D7D"/>
+					<topPen lineWidth="1.0" lineColor="#867D7D"/>
+					<leftPen lineWidth="1.0" lineColor="#867D7D"/>
+					<bottomPen lineWidth="1.0" lineColor="#867D7D"/>
+					<rightPen lineWidth="0.0" lineColor="#867D7D"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{NUMBERFORMAT}.format(new BigDecimal($F{VALUE}))]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="30" y="0" width="367" height="20"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="1.0" lineColor="#867D7D"/>
+					<topPen lineWidth="1.0" lineColor="#867D7D"/>
+					<leftPen lineWidth="0.0" lineColor="#867D7D"/>
+					<bottomPen lineWidth="1.0" lineColor="#867D7D"/>
+					<rightPen lineWidth="1.0" lineColor="#867D7D"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{LABEL}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

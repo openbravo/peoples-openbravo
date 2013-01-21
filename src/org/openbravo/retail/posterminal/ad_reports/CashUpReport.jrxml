@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CashUpReport" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["/home/openbravo/workspaces/openbravo/erp/devel/pi/openbravo-webpos/WebContent/src-loc/design/org/openbravo/retail/posterminal/ad_reports/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREP_CASHUP" class="net.sf.jasperreports.engine.JasperReport"/>
+	<parameter name="SALES_TAXES" class="net.sf.jasperreports.engine.JRDataSource"/>
+	<parameter name="RETURNS_TAXES" class="net.sf.jasperreports.engine.JRDataSource"/>
+	<parameter name="NET_SALES_VALUE" class="java.lang.String"/>
+	<parameter name="NET_RETURNS_VALUE" class="java.lang.String"/>
+	<parameter name="NET_RETURNS_LABEL" class="java.lang.String"/>
+	<parameter name="NET_SALES_LABEL" class="java.lang.String"/>
+	<parameter name="GROSS_SALES_VALUE" class="java.lang.String"/>
+	<parameter name="GROSS_RETURNS_VALUE" class="java.lang.String"/>
+	<parameter name="GROSS_RETURNS_LABEL" class="java.lang.String"/>
+	<parameter name="GROSS_SALES_LABEL" class="java.lang.String"/>
+	<parameter name="TOTAL_RETAIL_TRANS_VALUE" class="java.lang.String"/>
+	<parameter name="TOTAL_RETAIL_TRANS_LABEL" class="java.lang.String"/>
+	<parameter name="TOTAL_DROPS" class="java.lang.String"/>
+	<parameter name="TOTAL_DEPOSITS" class="java.lang.String"/>
+	<parameter name="USER" class="java.lang.String"/>
+	<parameter name="TIME" class="java.lang.String"/>
+	<parameter name="NUMBERFORMAT" class="java.text.DecimalFormat" isForPrompting="false"/>
+	<field name="LABEL" class="java.lang.String"/>
+	<field name="VALUE" class="java.lang.String"/>
+	<field name="GROUPFIELD" class="java.lang.String"/>
+	<field name="TOTAL_LABEL" class="java.lang.String"/>
+	<field name="FOREIGN_VALUE" class="java.lang.String"/>
+	<field name="ISOCODE" class="java.lang.String"/>
+	<variable name="TOTAL" class="java.math.BigDecimal" resetType="Group" resetGroup="GROUPFIELD" calculation="Sum">
+		<variableExpression><![CDATA[new java.math.BigDecimal($F{VALUE})]]></variableExpression>
+		<initialValueExpression><![CDATA[]]></initialValueExpression>
+	</variable>
+	<group name="GROUPFIELD" keepTogether="true">
+		<groupExpression><![CDATA[$F{GROUPFIELD}]]></groupExpression>
+		<groupFooter>
+			<band height="41">
+				<textField>
+					<reportElement positionType="Float" x="397" y="0" width="111" height="20"/>
+					<box leftPadding="5" rightPadding="5">
+						<pen lineWidth="1.0" lineColor="#867D7D"/>
+						<topPen lineColor="#867D7D"/>
+						<leftPen lineColor="#867D7D"/>
+						<bottomPen lineColor="#867D7D"/>
+						<rightPen lineWidth="0.0" lineColor="#867D7D"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{GROUPFIELD}.equals( "SALE" ) ? $P{NUMBERFORMAT}.format(new BigDecimal($P{TOTAL_DEPOSITS})) : ($F{GROUPFIELD}.equals( "WITHDRAWAL" ) ? $P{NUMBERFORMAT}.format(new BigDecimal($P{TOTAL_DROPS})) : $P{NUMBERFORMAT}.format($V{TOTAL}).toString())]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" x="30" y="0" width="367" height="20"/>
+					<box leftPadding="5" rightPadding="5">
+						<pen lineWidth="1.0" lineColor="#867D7D"/>
+						<topPen lineWidth="1.0" lineColor="#867D7D"/>
+						<leftPen lineWidth="0.0" lineColor="#867D7D"/>
+						<bottomPen lineColor="#867D7D"/>
+						<rightPen lineColor="#867D7D"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{TOTAL_LABEL}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="369" splitType="Stretch">
+			<image>
+				<reportElement x="210" y="14" width="100" height="50"/>
+				<imageExpression class="java.awt.Image"><![CDATA[org.openbravo.erpCommon.utility.Utility.showImageLogo("yourcompanymenu")]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement positionType="Float" x="30" y="169" width="367" height="20"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="1.0" lineColor="#867D7D"/>
+					<topPen lineWidth="1.0" lineColor="#867D7D"/>
+					<leftPen lineWidth="0.0" lineColor="#867D7D"/>
+					<bottomPen lineColor="#867D7D"/>
+					<rightPen lineColor="#867D7D"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{NET_SALES_LABEL}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" x="397" y="169" width="111" height="20"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="1.0" lineColor="#867D7D"/>
+					<topPen lineColor="#867D7D"/>
+					<leftPen lineColor="#867D7D"/>
+					<bottomPen lineColor="#867D7D"/>
+					<rightPen lineWidth="0.0" lineColor="#867D7D"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{NUMBERFORMAT}.format(new BigDecimal($P{NET_SALES_VALUE}))]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" x="397" y="209" width="111" height="20"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="1.0" lineColor="#867D7D"/>
+					<topPen lineColor="#867D7D"/>
+					<leftPen lineColor="#867D7D"/>
+					<bottomPen lineColor="#867D7D"/>
+					<rightPen lineWidth="0.0" lineColor="#867D7D"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{NUMBERFORMAT}.format(new BigDecimal($P{GROSS_SALES_VALUE}))]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" x="30" y="209" width="367" height="20"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="1.0" lineColor="#867D7D"/>
+					<topPen lineWidth="1.0" lineColor="#867D7D"/>
+					<leftPen lineWidth="0.0" lineColor="#867D7D"/>
+					<bottomPen lineColor="#867D7D"/>
+					<rightPen lineColor="#867D7D"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{GROSS_SALES_LABEL}]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement positionType="Float" x="0" y="263" width="555" height="20" isRemoveLineWhenBlank="true"/>
+				<subreportParameter name="NUMBERFORMAT">
+					<subreportParameterExpression><![CDATA[$P{NUMBERFORMAT}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[$P{RETURNS_TAXES}]]></dataSourceExpression>
+				<subreportExpression class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{SUBREP_CASHUP}]]></subreportExpression>
+			</subreport>
+			<subreport runToBottom="false">
+				<reportElement positionType="Float" mode="Transparent" x="0" y="189" width="555" height="20" isRemoveLineWhenBlank="true"/>
+				<subreportParameter name="NUMBERFORMAT">
+					<subreportParameterExpression><![CDATA[$P{NUMBERFORMAT}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[$P{SALES_TAXES}]]></dataSourceExpression>
+				<subreportExpression class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{SUBREP_CASHUP}]]></subreportExpression>
+			</subreport>
+			<textField>
+				<reportElement positionType="Float" x="397" y="243" width="111" height="20"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="1.0" lineColor="#867D7D"/>
+					<topPen lineColor="#867D7D"/>
+					<leftPen lineColor="#867D7D"/>
+					<bottomPen lineColor="#867D7D"/>
+					<rightPen lineWidth="0.0" lineColor="#867D7D"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{NUMBERFORMAT}.format(new BigDecimal($P{NET_RETURNS_VALUE}))]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" x="30" y="243" width="367" height="20"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="1.0" lineColor="#867D7D"/>
+					<topPen lineWidth="1.0" lineColor="#867D7D"/>
+					<leftPen lineWidth="0.0" lineColor="#867D7D"/>
+					<bottomPen lineColor="#867D7D"/>
+					<rightPen lineColor="#867D7D"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{NET_RETURNS_LABEL}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" x="30" y="283" width="367" height="20"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="1.0" lineColor="#867D7D"/>
+					<topPen lineWidth="1.0" lineColor="#867D7D"/>
+					<leftPen lineWidth="0.0" lineColor="#867D7D"/>
+					<bottomPen lineColor="#867D7D"/>
+					<rightPen lineColor="#867D7D"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{GROSS_RETURNS_LABEL}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" x="397" y="283" width="111" height="20"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="1.0" lineColor="#867D7D"/>
+					<topPen lineColor="#867D7D"/>
+					<leftPen lineColor="#867D7D"/>
+					<bottomPen lineColor="#867D7D"/>
+					<rightPen lineWidth="0.0" lineColor="#867D7D"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{NUMBERFORMAT}.format(new BigDecimal($P{GROSS_RETURNS_VALUE}))]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" x="30" y="320" width="367" height="20"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="1.0" lineColor="#867D7D"/>
+					<topPen lineWidth="1.0" lineColor="#867D7D"/>
+					<leftPen lineWidth="0.0" lineColor="#867D7D"/>
+					<bottomPen lineColor="#867D7D"/>
+					<rightPen lineColor="#867D7D"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{TOTAL_RETAIL_TRANS_LABEL}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" x="397" y="320" width="111" height="20"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="1.0" lineColor="#867D7D"/>
+					<topPen lineColor="#867D7D"/>
+					<leftPen lineColor="#867D7D"/>
+					<bottomPen lineColor="#867D7D"/>
+					<rightPen lineWidth="0.0" lineColor="#867D7D"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{NUMBERFORMAT}.format(new BigDecimal($P{TOTAL_RETAIL_TRANS_VALUE}))]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="210" y="86" width="100" height="20"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{USER}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="210" y="116" width="100" height="20"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{TIME}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<detail>
+		<band height="20">
+			<textField>
+				<reportElement positionType="Float" x="30" y="0" width="256" height="20"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="1.0" lineColor="#867D7D"/>
+					<topPen lineWidth="1.0" lineColor="#867D7D"/>
+					<leftPen lineWidth="0.0" lineColor="#867D7D"/>
+					<bottomPen lineColor="#867D7D"/>
+					<rightPen lineWidth="0.0" lineColor="#867D7D"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{LABEL}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" x="397" y="0" width="111" height="20"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="1.0" lineColor="#867D7D"/>
+					<topPen lineColor="#867D7D"/>
+					<leftPen lineColor="#867D7D"/>
+					<bottomPen lineColor="#867D7D"/>
+					<rightPen lineWidth="0.0" lineColor="#867D7D"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{NUMBERFORMAT}.format(new BigDecimal($F{VALUE}))]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" x="286" y="0" width="111" height="20"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="1.0" lineColor="#867D7D"/>
+					<topPen lineColor="#867D7D"/>
+					<leftPen lineWidth="0.0" lineColor="#867D7D"/>
+					<bottomPen lineColor="#867D7D"/>
+					<rightPen lineWidth="0.0" lineColor="#867D7D"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{FOREIGN_VALUE} != null) ? "("+$P{NUMBERFORMAT}.format(new BigDecimal($F{FOREIGN_VALUE}))+" "+$F{ISOCODE}+")" : new String("")]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>
