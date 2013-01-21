@@ -28,7 +28,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.costing.CostingStatus;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
@@ -42,7 +41,6 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.financial.FinancialUtils;
 import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.Warehouse;
@@ -112,9 +110,13 @@ public class ReportValuationStock extends HttpSecureAppServlet {
         Organization legalEntity = OBContext.getOBContext()
             .getOrganizationStructureProvider(wh.getClient().getId())
             .getLegalEntity(wh.getOrganization());
+        if (legalEntity == null) {
+          advise(request, response, "ERROR",
+              Utility.messageBD(this, "WarehouseNotInLE", vars.getLanguage()), "");
+        }
         data = ReportValuationStockData.select(this, vars.getLanguage(), strCurrencyId,
-            legalEntity.getId(), DateTimeData.nDaysAfter(this, strDate, "1"), strWarehouse,
-            strCategoryProduct);
+            (legalEntity == null) ? null : legalEntity.getId(),
+            DateTimeData.nDaysAfter(this, strDate, "1"), strWarehouse, strCategoryProduct);
         boolean hasTrxWithNoCost = hasTrxWithNoCost(strDate, strWarehouse, strCategoryProduct);
         if (hasTrxWithNoCost) {
           OBError warning = new OBError();
