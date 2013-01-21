@@ -326,7 +326,7 @@ function validateSelectedAmounts(recordID, existsPendingAmount, selectedAction) 
   // Only possible to pay 0 in case of a write off
   if (selectedAction !== "writeoff" && compare(amount, '==', 0)) {
     setWindowElementFocus(frm.elements["inpPaymentAmount" + recordID]);
-    showJSMessage(9);
+    showJSMessage('APRM_JSZEROUNDERPAYMENT');
     return false;
   }
   if (existsPendingAmount && compare(amount, '<', pendingAmount)) {
