@@ -90,7 +90,7 @@ enyo.kind({
     kind: 'OB.UI.List',
     name: 'customerCombo',
     classes: 'combo',
-    style: 'width: 100%; height: 30px; margin:0;',
+    style: 'width: 101%; margin:0;',
     renderLine: enyo.kind({
       kind: 'enyo.Option',
       initComponents: function () {
