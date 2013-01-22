@@ -645,7 +645,12 @@ public class InitialSetupUtility {
     if (role != null)
       newUser.setDefaultRole(role);
     OBDal.getInstance().save(newUser);
-    OBDal.getInstance().flush();
+    OBContext.setAdminMode(true);
+    try {
+      OBDal.getInstance().flush();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
     return newUser;
   }
 
