@@ -344,7 +344,7 @@ isc.OBParameterWindowView.addProperties({
       grid = this.grid.viewGrid;
       selection = grid.getSelectedRecords() || [];
       len = selection.length;
-      allRows = grid.data.allRows || grid.data;
+      allRows = grid.data.allRows || grid.data.localData || grid.data;
       allProperties._selection = [];
       allProperties._allRows = [];
 
