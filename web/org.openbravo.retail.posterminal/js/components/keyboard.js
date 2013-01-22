@@ -401,6 +401,10 @@ enyo.kind({
     this.waterfall('onStatusChanged', {
       status: newstatus
     });
+    // sending the event to the components above this one
+    this.doStatusChanged({
+      payment: OB.POS.terminal.terminal.paymentnames[this.status]
+    });
 
     // set the right keypad by default
     if (this.namedkeypads[this.status]) {

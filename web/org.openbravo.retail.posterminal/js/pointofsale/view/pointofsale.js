@@ -57,10 +57,12 @@ enyo.kind({
     onDiscountsModeKeyboard: 'keyboardOnDiscountsMode',
     onCheckAllTicketLines: 'allTicketLinesChecked',
     onSetDiscountQty: 'discountQtyChanged',
-    onLineChecked: 'checkedLine'
+    onLineChecked: 'checkedLine',
+    onStatusChanged: 'statusChanged'
   },
   events: {
-    onShowPopup: ''
+    onShowPopup: '',
+    onButtonStatusChanged: ''
   },
   components: [{
     name: 'otherSubWindowsContainer',
@@ -567,6 +569,12 @@ enyo.kind({
     }
     this.model.get('orderList').saveCurrent();
     return true;
+  },
+  statusChanged: function (inSender, inEvent) {
+    // sending the event to the components bellow this one
+    this.waterfall('onButtonStatusChanged', {
+      value: inEvent
+    });
   },
   init: function () {
     var receipt, receiptList;

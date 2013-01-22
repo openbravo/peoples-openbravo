@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global $ Backbone enyo */
+/*global $ Backbone enyo _ */
 
 OB.OBPOSPointOfSale = OB.OBPOSPointOfSale || {};
 OB.OBPOSPointOfSale.Model = OB.OBPOSPointOfSale.Model || {};
@@ -128,6 +128,20 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
 
     receipt.on('paymentDone', function () {
       receipt.prepareToSend(function () {
+        //Create the negative payment for change
+        if (!_.isUndefined(receipt.selectedPayment) && !_.isUndefined(receipt.getPaymentStatus()) && receipt.getPaymentStatus().change > 0) {
+          var payToDo = receipt.getPaymentStatus();
+          var payment = OB.POS.terminal.terminal.paymentnames[receipt.selectedPayment];
+          receipt.addPayment(new OB.Model.PaymentLine({
+            'kind': payment.payment.searchKey,
+            'name': payment.payment.commercialName,
+            'amount': OB.DEC.sub(0, OB.DEC.mul(payToDo.change, payment.mulrate)),
+            'rate': payment.rate,
+            'mulrate': payment.mulrate,
+            'isocode': payment.isocode,
+            'openDrawer': payment.paymentMethod.openDrawer
+          }));
+        }
         receipt.trigger('closed');
         receipt.trigger('print'); // to guaranty execution order
         orderList.deleteCurrent();

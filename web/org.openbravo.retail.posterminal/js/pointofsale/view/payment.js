@@ -7,12 +7,27 @@
  ************************************************************************************
  */
 
-/*global enyo */
+/*global enyo,_ */
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.Payment',
   published: {
     receipt: null
+  },
+  handlers: {
+    onButtonStatusChanged: 'buttonStatusChanged'
+  },
+  buttonStatusChanged: function (inSender, inEvent) {
+    var payment, paymentstatus = this.receipt.getPaymentStatus();
+    if (!_.isUndefined(inEvent.value.payment)) {
+      payment = inEvent.value.payment;
+      this.receipt.selectedPayment = payment.payment.searchKey;
+      if (!_.isNull(paymentstatus.change)) {
+        this.$.change.setContent(OB.DEC.mul(paymentstatus.change, payment.mulrate) + payment.symbol);
+      } else if (paymentstatus.pending) {
+        this.$.totalpending.setContent(OB.DEC.mul(paymentstatus.pending, payment.mulrate) + payment.symbol);
+      }
+    }
   },
   components: [{
     style: 'background-color: #363636; color: white; height: 200px; margin: 5px; padding: 5px',
@@ -112,8 +127,14 @@ enyo.kind({
 
   updatePending: function () {
     var paymentstatus = this.receipt.getPaymentStatus();
+    var symbol = '',
+        rate = OB.DEC.One;
+    if (!_.isUndefined(this.receipt) && !_.isUndefined(OB.POS.terminal.terminal.paymentnames[this.receipt.selectedPayment])) {
+      symbol = OB.POS.terminal.terminal.paymentnames[this.receipt.selectedPayment].symbol;
+      rate = OB.POS.terminal.terminal.paymentnames[this.receipt.selectedPayment].mulrate;
+    }
     if (paymentstatus.change) {
-      this.$.change.setContent(paymentstatus.change);
+      this.$.change.setContent(OB.DEC.mul(paymentstatus.change, rate) + symbol);
       this.$.change.show();
       this.$.changelbl.show();
     } else {
@@ -135,7 +156,7 @@ enyo.kind({
       this.$.doneaction.show();
       this.$.creditsalesaction.hide();
     } else {
-      this.$.totalpending.setContent(paymentstatus.pending);
+      this.$.totalpending.setContent(OB.DEC.mul(paymentstatus.pending, rate) + symbol);
       this.$.totalpending.show();
       this.$.totalpendinglbl.show();
       this.$.doneaction.hide();
