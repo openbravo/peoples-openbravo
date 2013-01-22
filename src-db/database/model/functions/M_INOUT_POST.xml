@@ -472,7 +472,7 @@
                   v_pendingqty          NUMBER;
                   v_qtyaux              NUMBER;
                   v_res_stock_id        VARCHAR2(32);
-                  v_aux_released        NUMBER:= 0;
+                  v_aux_released NUMBER:= 0;
                 BEGIN
                   v_pendingqty := -v_qty;
                   FOR cur_reserve_stock IN (
