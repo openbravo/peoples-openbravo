@@ -92,11 +92,11 @@ public class FIN_AddPaymentFromJournalLine extends DalBaseProcess {
         throw new OBException("@FIN_NoMultiCurrencyAllowed@");
       }
       if (journalLine.getDebit().subtract(journalLine.getCredit()).compareTo(BigDecimal.ZERO) > 0
-          && !bPartner.isCustomer()) {
+          && bPartner != null && !bPartner.isCustomer()) {
         throw new OBException("@FIN_NoCustomer@");
       }
       if (journalLine.getDebit().subtract(journalLine.getCredit()).compareTo(BigDecimal.ZERO) < 0
-          && !bPartner.isVendor()) {
+          && bPartner != null && !bPartner.isVendor()) {
         throw new OBException("@FIN_NoVendor@");
       }
 
