@@ -18,7 +18,7 @@
 */
 
 .OBEventWindow {
-  border: 1px solid #000000;
+  border: 1px solid #333333;
 }
 
 .OBEventWindowHeader {
@@ -32,6 +32,7 @@
   font-family: Verdana,Bitstream Vera Sans,sans-serif;
   font-size: 9px;
   background-color: #FFE1C0;
+  padding: 0px 3px 0px 3px;
 }
 
 .OBCalendarLegendElementColor {
