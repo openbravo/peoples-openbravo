@@ -123,7 +123,7 @@ enyo.kind({
             style: 'clear: both;',
             components: [{
               classes: 'span4',
-              content: OB.I18N.getLabel('OBPOS_LineDescription')
+              content: OB.I18N.getLabel('OBPOS_LineName')
             }, {
               classes: 'span8',
               components: [{
