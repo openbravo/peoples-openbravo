@@ -88,7 +88,7 @@ isc.OBNumberItem.addProperties({
     var newCaretPosition = this.returnNewCaretPosition(this.getElementValue(), oldCaretPosition);
     // update the value shown, mapValueToDisplay will call the editFormatter
     // get the edit value, without grouping symbol.
-    var editValue = OB.Utilities.Number.OBMaskedToOBPlain(this.getElementValue(), OBMaskedToOBPlain);
+    var editValue = OB.Utilities.Number.OBMaskedToOBPlain(this.getElementValue(), this.getDecSeparator(), this.getGroupSeparator());
 
     if (oldCaretPosition !== newCaretPosition || editValue !== this.getElementValue()) {
       this.setElementValue(editValue);
