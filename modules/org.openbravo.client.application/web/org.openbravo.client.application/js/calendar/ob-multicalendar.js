@@ -241,7 +241,7 @@ isc.OBMultiCalendar.addProperties({
   showCustomEventsBgColor: true,
 
   parseCalendarData: function (calendarData) {
-    var i;
+    var canCreateEvents, i;
     if (calendarData.filters) {
       calendarData.hasFilter = true;
     } else {
@@ -254,6 +254,16 @@ isc.OBMultiCalendar.addProperties({
       if (typeof calendarData.calendars[i].color === 'undefined') {
         calendarData.calendars[i].color = OB.Utilities.generateOBColor(
         null, null, null, 100, calendarData.calendars[i].id);
+      }
+      if (i === 0 && typeof calendarData.calendars[i].canCreateEvents !== 'undefined') {
+        canCreateEvents = false;
+      }
+      if (typeof calendarData.calendars[i].canCreateEvents !== 'undefined' && canCreateEvents === false && calendarData.calendars[i].canCreateEvents === true) {
+        canCreateEvents = true;
+      }
+      if (canCreateEvents === false && i === calendarData.calendars.length - 1) {
+        this.canCreateEvents = false;
+        this.calendarProps.canCreateEvents = false;
       }
     }
     return calendarData;
@@ -305,8 +315,6 @@ isc.OBMultiCalendar.addProperties({
     }
     if (typeof this.calendarProps.canCreateEvents !== 'undefined') {
       this.canCreateEvents = this.calendarProps.canCreateEvents;
-    } else {
-      this.showCustomEventsBgColor = true;
     }
     this.addMembers([OB.Utilities.createLoadingLayout()]);
     callback = function (rpcResponse, data, rpcRequest) {
@@ -323,6 +331,10 @@ isc.OBMultiCalendar.addProperties({
     this.Super('initWidget', arguments);
   },
   drawComponents: function () {
+    if (this.canCreateEvents) {
+      this.showCustomEventsBgColor = true;
+    }
+
     this.leftControls = isc.OBMultiCalendarLeftControls.create({
       multiCalendar: this
     });
