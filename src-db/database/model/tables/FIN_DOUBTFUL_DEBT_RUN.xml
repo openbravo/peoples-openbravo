@@ -65,6 +65,10 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
+      <column name="FIN_DOUBTFUL_DEBT_METHOD_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="C_BPARTNER" name="FIN_DOUBTFUL_DEBT_RUN_BP">
         <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
       </foreign-key>
@@ -76,6 +80,9 @@
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="FIN_DOUBTFUL_DEBT_RUN_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="FIN_DOUBTFUL_DEBT_METHOD" name="FIN_DOUBTFULDEBTRUN_METHOD">
+        <reference local="FIN_DOUBTFUL_DEBT_METHOD_ID" foreign="FIN_DOUBTFUL_DEBT_METHOD_ID"/>
       </foreign-key>
       <check name="FIN_DOUBTDEBT_RUN_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
