@@ -513,17 +513,17 @@ enyo.kind({
         //To remove this payment we've to connect with server
         //a callback is defined to receive the confirmation
         var callback = function (hasError, error) {
-          if (hasError){
-            if (inEvent.removeCallback) {
-              inEvent.removeCallback(hasError, error);
+            if (hasError) {
+              if (inEvent.removeCallback) {
+                inEvent.removeCallback(hasError, error);
+              }
+            } else {
+              if (inEvent.removeCallback) {
+                inEvent.removeCallback(hasError);
+              }
+              me.model.get('order').removePayment(inEvent.payment);
             }
-          } else {
-            if (inEvent.removeCallback) {
-              inEvent.removeCallback(hasError);
-            }
-            me.model.get('order').removePayment(inEvent.payment);
-          }
-        };
+            };
         //async call with defined callback
         inEvent.payment.get('paymentData').voidTransaction(callback);
         return;

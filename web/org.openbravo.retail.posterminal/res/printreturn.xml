@@ -61,11 +61,22 @@
         <text align ="left" length="21"><%= lines.at(i).get('product').get('_identifier') %></text>
         <text align ="center" length="5"><%= lines.at(i).printQty() %></text>
         <text align ="left" length="8"><%= lines.at(i).printPrice() %></text>
-        <text align ="left" length="8"><%= lines.at(i).printGross() %></text>
+    <%if(order.get('priceIncludesTax')){%>
+        <text align ="right" length="8"><%= lines.at(i).printGross() %></text>  
+    <%}else{%>
+        <text align ="right" length="8"><%= lines.at(i).printNet() %></text>
+    <%}%>
       </line>
     <%
       }
-    %>
+      if(!order.get('priceIncludesTax')){%>
+      <line>
+        <text align ="left" length="21"><%= OB.I18N.getLabel('OBPOS_LblTotalTax') %></text>
+        <text align ="right" length="5"></text>
+        <text align ="right" length="8"></text>
+        <text align ="right" length="8"><%= OB.I18N.formatCurrency(order.getGross()-order.getNet()) %></text>  
+      </line>
+    <%}%>
     <line></line>
     <line size="1">
       <text align ="left" length="25"><%=OB.I18N.getLabel('OBPOS_ReceiptTotal') + ' ' + order.get('currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER) %></text>

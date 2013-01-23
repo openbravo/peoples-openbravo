@@ -283,7 +283,10 @@ enyo.kind({
     }, this);
 
     model.on('selected', function () {
-      if (this.listStyle && this.listStyle !== 'checkboxlist') {
+      if (this.listStyle && this.listStyle === 'nonselectablelist') {
+        //do nothing in this case, we don't want to select anything
+        return;
+      } else if (this.listStyle && this.listStyle !== 'checkboxlist') {
         if (this.selected) {
           this.selected.addRemoveClass('selected', false);
         }

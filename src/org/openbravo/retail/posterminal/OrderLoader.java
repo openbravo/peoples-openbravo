@@ -726,9 +726,6 @@ public class OrderLoader extends JSONProcessSimple {
       orderline.setSalesOrder(order);
       orderline.setLineNetAmount(BigDecimal.valueOf(jsonOrderLine.getDouble("net")).setScale(
           stdPrecision, RoundingMode.HALF_UP));
-      orderline.setListPrice(orderline.getUnitPrice());
-      orderline.setGrossListPrice(BigDecimal.valueOf(jsonOrderLine.getDouble("priceList"))
-          .setScale(stdPrecision, RoundingMode.HALF_UP));
 
       // shipment is created, so all is delivered
       orderline.setDeliveredQuantity(orderline.getOrderedQuantity());

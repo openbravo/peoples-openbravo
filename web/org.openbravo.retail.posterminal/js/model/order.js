@@ -21,6 +21,7 @@
       price: OB.DEC.Zero,
       priceList: OB.DEC.Zero,
       gross: OB.DEC.Zero,
+      net: OB.DEC.Zero,
       description: ''
     },
 
@@ -33,7 +34,9 @@
         this.set('price', attributes.price);
         this.set('priceList', attributes.priceList);
         this.set('gross', attributes.gross);
+        this.set('net', attributes.net);
         this.set('promotions', attributes.promotions);
+        this.set('priceIncludesTax', attributes.priceIncludesTax);
         if (attributes.product && attributes.product.price) {
           this.set('grossListPrice', attributes.product.price.standardPrice);
         }
@@ -62,15 +65,27 @@
     },
 
     calculateGross: function () {
-      this.set('gross', OB.DEC.mul(this.get('qty'), this.get('price')));
+      if (this.get('priceIncludesTax')) {
+        this.set('gross', OB.DEC.mul(this.get('qty'), this.get('price')));
+      } else {
+        this.set('net', OB.DEC.mul(this.get('qty'), this.get('price')));
+      }
     },
 
     getGross: function () {
       return this.get('gross');
     },
 
+    getNet: function () {
+      return this.get('net');
+    },
+
     printGross: function () {
       return OB.I18N.formatCurrency(this.get('_gross') || this.getGross());
+    },
+
+    printNet: function () {
+      return OB.I18N.formatCurrency(this.getNet());
     },
 
     isAffectedByPack: function () {
@@ -172,6 +187,7 @@
         this.set('isQuotation', attributes.isQuotation);
         this.set('oldId', attributes.oldId);
         this.set('priceList', attributes.priceList);
+        this.set('priceIncludesTax', attributes.priceIncludesTax);
         this.set('currency', attributes.currency);
         this.set('currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, attributes['currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER]);
         this.set('session', attributes.session);
@@ -233,8 +249,16 @@
     },
 
     prepareToSend: function (callback) {
-      this.adjustPrices();
-      this.calculateTaxes(callback);
+      var me = this;
+      this.calculateTaxes(function () {
+        me.adjustPrices();
+        if (me.get('priceIncludesTax')) {
+          //If the price includes taxes, we need to recompute taxes
+          me.calculateTaxes(callback);
+        } else {
+          callback();
+        }
+      });
     },
 
     adjustPrices: function () {
@@ -278,16 +302,35 @@
         gross = OB.DEC.sub(gross, totalDiscount);
         price = OB.DEC.div(gross, line.get('qty'));
 
-        line.set({
-          grossUnitPrice: price,
-          lineGrossAmount: gross
-        }, {
-          silent: true
-        });
+        if (this.get('priceIncludesTax')) {
+          line.set({
+            net: OB.DEC.div(gross, line.get('linerate')),
+            pricenet: OB.DEC.div(OB.DEC.div(gross, line.get('linerate')), line.get('qty')),
+            grossListPrice: grossListPrice,
+            grossUnitPrice: price,
+            lineGrossAmount: gross
+          }, {
+            silent: true
+          });
+        } else {
+          line.set({
+            net: line.get('discountedNet'),
+            pricenet: line.get('discountedNetPrice'),
+            listPrice: line.get('priceList'),
+            price: 0,
+            grossListPrice: 0,
+            lineGrossAmount: 0
+          }, {
+            silent: true
+          });
+        }
       }, this);
     },
     getTotal: function () {
       return this.getGross();
+    },
+    getNet: function () {
+      return this.get('net');
     },
 
     printTotal: function () {
@@ -295,16 +338,33 @@
     },
 
     calculateGross: function () {
-      var gross = this.get('lines').reduce(function (memo, e) {
-        var grossLine = e.getGross();
-        if (e.get('promotions')) {
-          grossLine = e.get('promotions').reduce(function (memo, e) {
-            return OB.DEC.sub(memo, e.actualAmt || e.amt || 0);
-          }, grossLine);
-        }
-        return OB.DEC.add(memo, grossLine);
-      }, OB.DEC.Zero);
-      this.set('gross', gross);
+      if (this.get('priceIncludesTax')) {
+        var gross = this.get('lines').reduce(function (memo, e) {
+          var grossLine = e.getGross();
+          if (e.get('promotions')) {
+            grossLine = e.get('promotions').reduce(function (memo, e) {
+              return OB.DEC.sub(memo, e.actualAmt || e.amt || 0);
+            }, grossLine);
+          }
+          return OB.DEC.add(memo, grossLine);
+        }, OB.DEC.Zero);
+        this.set('gross', gross);
+      } else {
+        var me = this;
+        this.calculateTaxes(function () {
+          //If the price doesn't include tax, the discounted gross has already been calculated
+          var gross = me.get('lines').reduce(function (memo, e) {
+            var grossLine = e.get('discountedGross');
+            return OB.DEC.add(memo, grossLine);
+          }, OB.DEC.Zero);
+          me.set('gross', gross);
+          var net = me.get('lines').reduce(function (memo, e) {
+            var netLine = e.get('discountedNet');
+            return OB.DEC.add(memo, netLine);
+          }, OB.DEC.Zero);
+          me.set('net', net);
+        });
+      }
       //total qty
       var qty = this.get('lines').reduce(function (memo, e) {
         var qtyLine = e.getQty();
@@ -368,6 +428,7 @@
       this.set('isQuotation', false);
       this.set('oldId', null);
       this.set('priceList', null);
+      this.set('priceIncludesTax', null);
       this.set('currency', null);
       this.set('currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, null);
       this.set('session', null);
@@ -386,6 +447,8 @@
       this.set('change', OB.DEC.Zero);
       this.set('qty', OB.DEC.Zero);
       this.set('gross', OB.DEC.Zero);
+      this.set('net', OB.DEC.Zero);
+      this.set('taxes', null);
       this.trigger('calculategross');
       this.set('hasbeenpaid', 'N');
       this.set('isbeingprocessed', 'N');
@@ -530,6 +593,7 @@
       });
       this.adjustPayment();
       this.save();
+      this.calculateGross();
     },
 
     addProduct: function (p, qty, options) {
@@ -679,7 +743,8 @@
         uOM: p.get('uOM'),
         qty: OB.DEC.number(units),
         price: OB.DEC.number(p.get('standardPrice')),
-        priceList: OB.DEC.number(p.get('standardPrice'))
+        priceList: OB.DEC.number(p.get('standardPrice')),
+        priceIncludesTax: this.get('priceIncludesTax')
       });
       newline.calculateGross();
 
@@ -984,6 +1049,7 @@
       order.set('oldId', null);
       order.set('session', OB.POS.modelterminal.get('session'));
       order.set('priceList', OB.POS.modelterminal.get('terminal').priceList);
+      order.set('priceIncludesTax', OB.POS.modelterminal.get('pricelist').priceIncludesTax);
       order.set('currency', OB.POS.modelterminal.get('terminal').currency);
       order.set('currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, OB.POS.modelterminal.get('terminal')['currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER]);
       order.set('warehouse', OB.POS.modelterminal.get('terminal').warehouse);
@@ -993,6 +1059,7 @@
       order.set('posTerminal' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, OB.POS.modelterminal.get('terminal')._identifier);
       order.set('orderDate', new Date());
       order.set('isPaid', false);
+      order.set('taxes', null);
 
       documentseq = OB.POS.modelterminal.get('documentsequence') + 1;
       documentseqstr = OB.UTIL.padNumber(documentseq, 7);
@@ -1067,7 +1134,8 @@
             qty: OB.DEC.number(iter.quantity),
             price: OB.DEC.number(iter.unitPrice),
             priceList: OB.DEC.number(iter.unitPrice),
-            promotions: iter.promotions
+            promotions: iter.promotions,
+            priceIncludesTax: order.get('priceIncludesTax')
           });
           newline.set('gross', iter.linegrossamount);
           newline.set('grossListPrice', iter.unitPrice);
@@ -1206,6 +1274,8 @@
 
   });
 
+  var TaxLine = Backbone.Model.extend();
+
   window.OB = window.OB || {};
   window.OB.Model = window.OB.Model || {};
   window.OB.Collection = window.OB.Collection || {};
@@ -1216,6 +1286,7 @@
   window.OB.Collection.PaymentLineList = PaymentLineList;
   window.OB.Model.Order = Order;
   window.OB.Collection.OrderList = OrderList;
+  window.OB.Model.TaxLine = TaxLine;
 
   window.OB.Model.modelLoaders = [];
 }());

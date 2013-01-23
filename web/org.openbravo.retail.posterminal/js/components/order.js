@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global enyo */
+/*global enyo, Backbone */
 
 enyo.kind({
   name: 'OB.UI.TotalReceiptLine',
@@ -45,6 +45,56 @@ enyo.kind({
       this.$.totalgross.hasNode().style.width = '40%';
     }
   }
+});
+
+enyo.kind({
+  name: 'OB.UI.TotalTaxLine',
+  handlers: {
+    onCheckBoxBehaviorForTicketLine: 'checkBoxForTicketLines'
+  },
+  style: 'position: relative; padding: 10px;',
+  components: [{
+    name: 'lblTotalTax',
+    style: 'float: left; width: 40%;',
+    content: OB.I18N.getLabel('OBPOS_LblTotalTax')
+  }, {
+    name: 'totalbase',
+    style: 'float: left; width: 20%; text-align:right; font-weight:bold;'
+  }, {
+    name: 'totaltax',
+    style: 'float: left; width: 60%; text-align:right; font-weight:bold;'
+  }, {
+    style: 'clear: both;'
+  }],
+  renderTax: function (newTax) {
+    this.$.totaltax.setContent(OB.I18N.formatCurrency(newTax));
+  },
+  renderBase: function (newBase) {
+    //this.$.totalbase.setContent(newBase);
+  },
+  checkBoxForTicketLines: function (inSender, inEvent) {
+    if (inEvent.status) {
+      this.$.lblTotalTax.hasNode().style.width = '48%';
+      this.$.totalbase.hasNode().style.width = '16%';
+      this.$.totaltax.hasNode().style.width = '36%';
+    } else {
+      this.$.lblTotalTax.hasNode().style.width = '40%';
+      this.$.totalbase.hasNode().style.width = '20%';
+      this.$.totaltax.hasNode().style.width = '40%';
+    }
+  }
+});
+
+enyo.kind({
+  name: 'OB.UI.TaxBreakdown',
+  style: 'position: relative; padding: 10px;',
+  components: [{
+    name: 'lblTotalTax',
+    style: 'float: left; width: 40%;',
+    content: OB.I18N.getLabel('OBPOS_LblTaxBreakdown')
+  }, {
+    style: 'clear: both;'
+  }]
 });
 
 enyo.kind({
@@ -88,7 +138,7 @@ enyo.kind({
   components: [{
     kind: 'OB.UI.ScrollableTable',
     name: 'listOrderLines',
-    scrollAreaMaxHeight: '437px',
+    scrollAreaMaxHeight: '250px',
     renderLine: 'OB.UI.RenderOrderLine',
     renderEmpty: 'OB.UI.RenderOrderLineEmpty',
     //defined on redenderorderline.js
@@ -99,6 +149,9 @@ enyo.kind({
     components: [{
       tag: 'li',
       components: [{
+        kind: 'OB.UI.TotalTaxLine',
+        name: 'totalTaxLine'
+      }, {
         kind: 'OB.UI.TotalReceiptLine',
         name: 'totalReceiptLine'
       }]
@@ -129,6 +182,23 @@ enyo.kind({
           style: 'clear: both;'
         }]
       }]
+    }, {
+      tag: 'li',
+      components: [{
+        style: 'padding: 10px; border-top: 1px solid #cccccc; height: 40px;',
+        components: [{
+          kind: 'OB.UI.TaxBreakdown',
+          name: 'taxBreakdown'
+        }]
+      }]
+    }, {
+      kind: 'OB.UI.ScrollableTable',
+      name: 'listTaxLines',
+      scrollAreaMaxHeight: '250px',
+      renderLine: 'OB.UI.RenderTaxLine',
+      renderEmpty: 'OB.UI.RenderTaxLineEmpty',
+      //defined on redenderorderline.js
+      listStyle: 'nonselectablelist'
     }]
   }],
   initComponents: function () {
@@ -148,12 +218,43 @@ enyo.kind({
       this.order.get('lines').trigger('unCheckAll');
     }
   },
+  setTaxes: function () {
+    var taxList = new Backbone.Collection();
+    var taxes = this.order.get('taxes');
+    var empty = true,
+        prop;
+
+    for (prop in taxes) {
+      if (taxes.hasOwnProperty(prop)) {
+        taxList.add(new OB.Model.TaxLine(taxes[prop]));
+        empty = false;
+      }
+    }
+    if (empty) {
+      this.$.taxBreakdown.hide();
+    } else {
+      this.$.taxBreakdown.show();
+    }
+    this.$.listTaxLines.setCollection(taxList);
+  },
   orderChanged: function (oldValue) {
     this.$.totalReceiptLine.renderTotal(this.order.getTotal());
     this.$.totalReceiptLine.renderQty(this.order.getQty());
+    this.$.totalTaxLine.renderTax(this.order.getTotal() - this.order.getNet());
+    this.$.totalTaxLine.renderBase('');
     this.$.listOrderLines.setCollection(this.order.get('lines'));
-    this.order.on('change:gross', function (model) {
+    this.setTaxes();
+    this.order.on('change:gross change:net', function (model) {
       this.$.totalReceiptLine.renderTotal(model.getTotal());
+      this.$.totalTaxLine.renderTax(model.getTotal() - model.getNet());
+      this.setTaxes();
+    }, this);
+    this.order.on('change:priceIncludesTax ', function (model) {
+      if (this.order.get('priceIncludesTax')) {
+        this.$.totalTaxLine.hide();
+      } else {
+        this.$.totalTaxLine.show();
+      }
     }, this);
     this.order.on('change:qty', function (model) {
       this.$.totalReceiptLine.renderQty(model.getQty());
