@@ -427,7 +427,7 @@ BEGIN
 
               --When difference amount is not 0 the payment schedule detail of the order has to be split. The difference
               --amount is the amount of the new psd that is not related to any invoice.
-              IF (v_differenceamount <> 0) THEN
+              IF (v_differenceamount > 0) THEN
                 v_new_scheduledetailid := get_uuid();
                 INSERT INTO fin_payment_scheduledetail
                 (
