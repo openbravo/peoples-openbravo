@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012 Openbravo SLU
+ * All portions are Copyright (C) 2012-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,19 +22,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.UUID;
 
 import javax.enterprise.context.RequestScoped;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
-import org.openbravo.client.kernel.BaseTemplateComponent;
-import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.client.kernel.RequestContext;
-import org.openbravo.client.kernel.Template;
-import org.openbravo.dal.service.OBDal;
-import org.openbravo.model.ad.module.Module;
+import org.openbravo.mobile.core.MobileCoreApplicationCacheComponent;
 
 /**
  * 
@@ -42,70 +35,74 @@ import org.openbravo.model.ad.module.Module;
  */
 
 @RequestScoped
-public class ApplicationCacheComponent extends BaseTemplateComponent {
+public class ApplicationCacheComponent extends MobileCoreApplicationCacheComponent {
 
-  private static final String TEMPLATE_ID = "7A911850D921448EA5AC2E6F4D5FDE2D";
   private static final String PATH_PREFIX = "web/";
-  private static final Logger log = Logger.getLogger(ApplicationCacheComponent.class);
-
-  private String version = null;
 
   @Override
-  protected Template getComponentTemplate() {
-    return OBDal.getInstance().get(Template.class, TEMPLATE_ID);
-  }
+  public List<String> getAppList() {
+    // TODO: review this list: is it needed to be hardcoded?
+    List<String> resources = new ArrayList<String>();
 
-  public String getVersion() {
+    resources.add("../../web/org.openbravo.client.kernel/js/BigDecimal-all-1.0.1.min.js");
+    resources.add("../../web/org.openbravo.client.kernel/js/LAB.min.js");
+    resources.add("../../web/org.openbravo.retail.posterminal/js/libs/jquery-1.7.2.js");
+    resources.add("../../web/org.openbravo.retail.posterminal/js/libs/core-min.js");
+    resources.add("../../web/org.openbravo.retail.posterminal/js/libs/sha1-min.js");
 
-    if (version != null) {
-      return version;
-    }
+    // Boot code
+    resources.add("../../web/org.openbravo.client.application/js/utilities/ob-utilities-date.js");
+    resources.add("../../web/org.openbravo.retail.posterminal/js/datasource.js");
+    resources.add("../../web/org.openbravo.retail.posterminal/js/utilities.js");
+    resources.add("../../web/org.openbravo.retail.posterminal/js/utilitiesui.js");
+    resources.add("../../web/org.openbravo.retail.posterminal/js/i18n.js");
+    resources.add("../../web/org.openbravo.retail.posterminal/js/components/clock.js");
+    resources.add("../../web/org.openbravo.retail.posterminal/js/components/commonbuttons.js");
+    resources.add("../../web/org.openbravo.retail.posterminal/js/model/terminal.js");
+    resources.add("../../web/org.openbravo.retail.posterminal/js/components/terminal.js");
+    resources.add("../../web/org.openbravo.retail.posterminal/js/login/model/login-model.js");
+    resources.add("../../web/org.openbravo.retail.posterminal/js/login/view/login.js");
+    resources.add("../../web/org.openbravo.retail.posterminal/js/data/dal.js");
+    resources.add("../../web/org.openbravo.retail.posterminal/js/model/product-category.js");
+    resources.add("../../web/org.openbravo.retail.posterminal/js/model/product.js");
+    resources.add("../../web/org.openbravo.retail.posterminal/js/model/businesspartner.js");
+    resources.add("../../web/org.openbravo.retail.posterminal/js/model/document-sequence.js");
+    resources.add("../../web/org.openbravo.retail.posterminal/js/model/user.js");
+    resources.add("../../web/org.openbravo.retail.posterminal/js/model/session.js");
+    resources.add("../../web/org.openbravo.retail.posterminal/js/arithmetic.js");
+    resources.add("../../web/org.openbravo.retail.posterminal/js/model/order.js");
+    resources
+        .add("../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=FinancialMgmtTaxRate&modelName=TaxRate&source=org.openbravo.retail.posterminal.master.TaxRate");
+    resources
+        .add("../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingProductPrice&modelName=ProductPrice&source=org.openbravo.retail.posterminal.master.ProductPrice");
 
-    StringBuffer versionString = new StringBuffer();
-    final List<Module> modules = KernelUtils.getInstance().getModulesOrderedByDependency();
-    for (Module module : modules) {
-      versionString.append(module.getVersion());
-    }
-    version = DigestUtils.md5Hex(versionString.toString());
+    resources
+        .add("../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustment&modelName=Discount&source=org.openbravo.retail.posterminal.master.Discount");
+    resources
+        .add("../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustmentBusinessPartner&modelName=DiscountFilterBusinessPartner&source=org.openbravo.retail.posterminal.master.DiscountFilterBusinessPartner");
+    resources
+        .add("../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustmentBusinessPartnerGroup&modelName=DiscountFilterBusinessPartnerGroup&source=org.openbravo.retail.posterminal.master.DiscountFilterBusinessPartnerGroup");
+    resources
+        .add("../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustmentProduct&modelName=DiscountFilterProduct&source=org.openbravo.retail.posterminal.master.DiscountFilterProduct");
+    resources
+        .add("../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustmentProductCategory&modelName=DiscountFilterProductCategory&source=org.openbravo.retail.posterminal.master.DiscountFilterProductCategory");
 
-    return version;
-  }
+    resources.add("../../web/org.openbravo.retail.posterminal/res/printline.xml");
+    resources.add("../../web/org.openbravo.retail.posterminal/res/printreceipt.xml");
 
-  public String getNetwork() {
-    return "*";
-  }
-
-  private List<String> transformPath(List<String> stringFileList) {
-    final List<String> resources = new ArrayList<String>();
-    final String relativePath = PATH_PREFIX + getModulePackageName();
-
-    for (final String f : stringFileList) {
-      final int pos = f.indexOf(relativePath);
-      resources.add("../../" + f.substring(pos));
-    }
+    // Generated file
+    resources.add("../../org.openbravo.client.kernel/OBPOS_Main/StaticResources?_appName=WebPOS");
+    resources.add("../../web/js/gen/" + getFileName() + ".js");
     return resources;
   }
 
   @Override
-  public String getContentType() {
-    return "text/cache-manifest";
-  }
-
-  @Override
-  public String getETag() {
-    return UUID.randomUUID().toString();
-  }
-
-  @Override
-  public boolean isJavaScriptComponent() {
-    return false;
-  }
-
   public List<String> getImageFileList() {
     final String[] extensions = { "png", "gif" };
     return transformPath(getFileList(extensions));
   }
 
+  @Override
   public List<String> getcssFileList() {
     final String[] extensions = { "css", "less" };
     return transformPath(getFileList(extensions));
@@ -128,17 +125,18 @@ public class ApplicationCacheComponent extends BaseTemplateComponent {
     return fileList;
   }
 
-  public String getFileName() {
+  private List<String> transformPath(List<String> stringFileList) {
+    final List<String> resources = new ArrayList<String>();
+    final String relativePath = PATH_PREFIX + getModulePackageName();
+
+    for (final String f : stringFileList) {
+      final int pos = f.indexOf(relativePath);
+      resources.add("../../" + f.substring(pos));
+    }
+    return resources;
+  }
+
+  private String getFileName() {
     return OBPOSStaticResorcesComponent.getStaticResourceFileName();
   }
-
-  public boolean getNotInDevelopment() {
-    return !OBPOSStaticResorcesComponent.isDevelopment();
-  }
-
-  @Override
-  public boolean bypassAuthentication() {
-    return true;
-  }
-
 }
