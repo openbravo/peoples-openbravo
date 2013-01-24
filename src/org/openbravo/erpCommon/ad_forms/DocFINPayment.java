@@ -364,20 +364,29 @@ public class DocFINPayment extends AcctServer {
             DocLine line2 = new DocLine(DocumentType, Record_ID, line.m_TrxLine_ID);
             line2.copyInfo(line);
             line2.m_DateAcct = OBDateUtils.formatDate(invoice.getAccountingDate());
-            fact.createLine(
-                line2,
-                getAccountBPartner((line2.m_C_BPartner_ID == null || line2.m_C_BPartner_ID
+            // checking if the prepayment account and ReceivablesNo account in the Business Partner
+            // is the same.In this case we do not need to create more accounting lines
+            if (!getAccountBPartner(
+                (line2.m_C_BPartner_ID == null || line2.m_C_BPartner_ID.equals("")) ? this.C_BPartner_ID
+                    : line2.m_C_BPartner_ID, as, isReceipt, true, conn).Account_ID
+                .equals(getAccountBPartner((line2.m_C_BPartner_ID == null || line2.m_C_BPartner_ID
                     .equals("")) ? this.C_BPartner_ID : line2.m_C_BPartner_ID, as, isReceipt,
-                    false, conn), strcCurrencyId, (isReceipt ? "" : bpAmountConverted),
-                (isReceipt ? bpAmountConverted : ""), Fact_Acct_Group_ID2, nextSeqNo(SeqNo),
-                DocumentType, conn);
-            fact.createLine(
-                line2,
-                getAccountBPartner((line2.m_C_BPartner_ID == null || line2.m_C_BPartner_ID
-                    .equals("")) ? this.C_BPartner_ID : line2.m_C_BPartner_ID, as, isReceipt, true,
-                    conn), strcCurrencyId, (!isReceipt ? "" : bpAmountConverted),
-                (!isReceipt ? bpAmountConverted : ""), Fact_Acct_Group_ID2, nextSeqNo(SeqNo),
-                DocumentType, conn);
+                    false, conn).Account_ID)) {
+              fact.createLine(
+                  line2,
+                  getAccountBPartner((line2.m_C_BPartner_ID == null || line2.m_C_BPartner_ID
+                      .equals("")) ? this.C_BPartner_ID : line2.m_C_BPartner_ID, as, isReceipt,
+                      false, conn), strcCurrencyId, (isReceipt ? "" : bpAmountConverted),
+                  (isReceipt ? bpAmountConverted : ""), Fact_Acct_Group_ID2, nextSeqNo(SeqNo),
+                  DocumentType, conn);
+              fact.createLine(
+                  line2,
+                  getAccountBPartner((line2.m_C_BPartner_ID == null || line2.m_C_BPartner_ID
+                      .equals("")) ? this.C_BPartner_ID : line2.m_C_BPartner_ID, as, isReceipt,
+                      true, conn), strcCurrencyId, (!isReceipt ? "" : bpAmountConverted),
+                  (!isReceipt ? bpAmountConverted : ""), Fact_Acct_Group_ID2, nextSeqNo(SeqNo),
+                  DocumentType, conn);
+            }
           }
         } else {
           fact.createLine(

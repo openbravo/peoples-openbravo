@@ -865,14 +865,19 @@ public class DocFINReconciliation extends AcctServer {
         DocLine line2 = new DocLine(DocumentType, Record_ID, line.m_TrxLine_ID);
         line2.copyInfo(line);
         line2.m_DateAcct = OBDateUtils.formatDate(invoice.getAccountingDate());
-        fact.createLine(line2, getAccountBPartner(bpartnerId, as, isReceipt, false, conn),
-            paymentCurrency.getId(), !isReceipt ? bpAmountConverted.toString() : "",
-            isReceipt ? bpAmountConverted.toString() : "", Fact_Acct_Group_ID2, nextSeqNo(SeqNo),
-            DocumentType, line2.m_DateAcct, null, conn);
-        fact.createLine(line2, getAccountBPartner(bpartnerId, as, isReceipt, true, conn),
-            paymentCurrency.getId(), isReceipt ? bpAmountConverted.toString() : "",
-            !isReceipt ? bpAmountConverted.toString() : "", Fact_Acct_Group_ID2, nextSeqNo(SeqNo),
-            DocumentType, line2.m_DateAcct, null, conn);
+        // checking if the prepayment account and ReceivablesNo account in the Business Partner
+        // is the same.In this case we do not need to create more accounting lines
+        if (!getAccountBPartner(bpartnerId, as, isReceipt, false, conn).Account_ID
+            .equals(getAccountBPartner(bpartnerId, as, isReceipt, true, conn))) {
+          fact.createLine(line2, getAccountBPartner(bpartnerId, as, isReceipt, false, conn),
+              paymentCurrency.getId(), !isReceipt ? bpAmountConverted.toString() : "",
+              isReceipt ? bpAmountConverted.toString() : "", Fact_Acct_Group_ID2, nextSeqNo(SeqNo),
+              DocumentType, line2.m_DateAcct, null, conn);
+          fact.createLine(line2, getAccountBPartner(bpartnerId, as, isReceipt, true, conn),
+              paymentCurrency.getId(), isReceipt ? bpAmountConverted.toString() : "",
+              !isReceipt ? bpAmountConverted.toString() : "", Fact_Acct_Group_ID2,
+              nextSeqNo(SeqNo), DocumentType, line2.m_DateAcct, null, conn);
+        }
       }
     }
 
