@@ -104,7 +104,7 @@
                   }
                   gross = OB.DEC.mul(element.get('discountedLinePrice') || element.get('price'), element.get('qty'));
                   net = OB.DEC.div(gross, OB.DEC.add(1, rate));
-                  amount = OB.DEC.mul(net, rate);
+                  amount = OB.DEC.sub(gross, net);
                   pricenetcascade = pricenet.multiply(rate.add(BigDecimal.prototype.ONE));
 
                   if (taxes[taxId]) {
@@ -188,11 +188,11 @@
 
               element.set('linerate', String(linerate));
               element.set('tax', linetaxid);
-              element.set('taxAmount', OB.DEC.mul(OB.DEC.mul(discountedprice, linerate), element.get('qty')));
+              element.set('taxAmount', OB.DEC.mul(OB.DEC.mul(discountedprice, element.get('qty')), linerate));
               element.set('net', linenet);
               element.set('pricenet', linepricenet);
               element.set('gross', linegross);
-              element.set('discountedGross', OB.DEC.mul(OB.DEC.mul(discountedprice, linerate), element.get('qty')));
+              element.set('discountedGross', OB.DEC.mul(OB.DEC.mul(discountedprice, element.get('qty')), linerate));
               element.set('discountedNet', OB.DEC.mul(discountedprice, element.get('qty')));
               element.set('taxAmount', OB.DEC.sub(element.get('discountedGross'), element.get('discountedNet')));
               element.set('discountedNetPrice', discountedprice);
