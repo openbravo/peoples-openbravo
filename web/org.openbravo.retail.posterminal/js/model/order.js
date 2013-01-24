@@ -338,19 +338,21 @@
     },
 
     calculateGross: function () {
+      var me = this;
       if (this.get('priceIncludesTax')) {
-        var gross = this.get('lines').reduce(function (memo, e) {
-          var grossLine = e.getGross();
-          if (e.get('promotions')) {
-            grossLine = e.get('promotions').reduce(function (memo, e) {
-              return OB.DEC.sub(memo, e.actualAmt || e.amt || 0);
-            }, grossLine);
-          }
-          return OB.DEC.add(memo, grossLine);
-        }, OB.DEC.Zero);
-        this.set('gross', gross);
+        this.calculateTaxes(function () {
+          var gross = me.get('lines').reduce(function (memo, e) {
+            var grossLine = e.getGross();
+            if (e.get('promotions')) {
+              grossLine = e.get('promotions').reduce(function (memo, e) {
+                return OB.DEC.sub(memo, e.actualAmt || e.amt || 0);
+              }, grossLine);
+            }
+            return OB.DEC.add(memo, grossLine);
+          }, OB.DEC.Zero);
+          me.set('gross', gross);
+        });
       } else {
-        var me = this;
         this.calculateTaxes(function () {
           //If the price doesn't include tax, the discounted gross has already been calculated
           var gross = me.get('lines').reduce(function (memo, e) {

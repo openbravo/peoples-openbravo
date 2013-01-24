@@ -244,7 +244,7 @@ enyo.kind({
     this.$.totalTaxLine.renderBase('');
     this.$.listOrderLines.setCollection(this.order.get('lines'));
     this.setTaxes();
-    this.order.on('change:gross change:net', function (model) {
+    this.order.on('change:gross change:net change:taxes', function (model) {
       this.$.totalReceiptLine.renderTotal(model.getTotal());
       this.$.totalTaxLine.renderTax(model.getTotal() - model.getNet());
       this.setTaxes();

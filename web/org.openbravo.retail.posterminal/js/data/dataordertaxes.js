@@ -44,7 +44,7 @@
             taxCategory: product.get('taxCategory'),
             businessPartnerTaxCategory: bpTaxCategory
           }, function (coll, args) { // success
-            var rate, taxAmt, net, pricenet, pricenetcascade, amount, taxId;
+            var rate, taxAmt, net, gross, pricenet, pricenetcascade, amount, taxId;
             if (coll && coll.length > 0) {
 
               var linerate = BigDecimal.prototype.ONE;
@@ -95,7 +95,8 @@
                   if (taxRate.get('cascade')) {
                     pricenet = pricenetcascade;
                   }
-                  net = OB.DEC.mul(pricenet, element.get('qty'));
+                  gross = OB.DEC.mul(element.get('discountedLinePrice') || element.get('price'), element.get('qty'));
+                  net = OB.DEC.div(gross, OB.DEC.add(1, rate));
                   amount = OB.DEC.mul(net, rate);
                   pricenetcascade = pricenet.multiply(rate.add(BigDecimal.prototype.ONE));
 
@@ -204,7 +205,7 @@
                   if (taxRate.get('cascade')) {
                     pricenet = pricenetcascade;
                   }
-                  net = OB.DEC.mul(element.get('discountedLinePrice') || element.get('price'), element.get('qty'));
+                  net = OB.DEC.mul(element.get('discountedLinePrice') || pricenet, element.get('qty'));
                   amount = OB.DEC.mul(net, rate);
                   pricenetcascade = pricenet.multiply(rate.add(BigDecimal.prototype.ONE));
 
