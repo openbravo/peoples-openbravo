@@ -154,37 +154,6 @@ function checkAllCreateLines(chk, bolCheck)
       cell.className = cell.className.replace(' DataGrid_Body_Cell_hover', '');
     }
 
-    function validateQuantity(chk) {
-        var invalid = false;
-        var i = 0;
-        var frm = document.frmMain;
-        var defaultValue = 0;
-        var currentValue = 0;
-        do {
-          if(chk.length > 0) {
-            if(chk[i].checked) {
-              defaultValue = frm.elements["inpmovementqty" + chk[i].value].defaultValue;
-              currentValue = frm.elements["inpmovementqty" + chk[i].value].value;   
-            }
-          }
-          else {
-            if(chk.checked) {
-              defaultValue = frm.elements["inpmovementqty" + chk.value].defaultValue;
-              currentValue = frm.elements["inpmovementqty" + chk.value].value;   
-            }
-          }
-          i = i + 1;     
-          if(formattedNumberOp(currentValue, '>', defaultValue)) {
-            invalid = true;
-            showJSMessage('InvalidMovementQty');
-            break;
-          }
-          else
-            continue;
-        } while (i<chk.length);
-        if(!invalid)
-          submitThisPage('SAVE');
-      }
   </script>
   <script language="JavaScript" type="text/javascript">
     function onLoadDo(){
@@ -620,7 +589,7 @@ function checkAllCreateLines(chk, bolCheck)
                   <button type="button" 
                     id="buttonOK" 
                     class="ButtonLink" 
-                    onclick="validateQuantity(document.frmMain.inpId);return false;"
+                    onclick="submitThisPage('SAVE');return false;" 
                     onfocus="buttonEvent('onfocus', this); window.status='Accept'; return true;" 
                     onblur="buttonEvent('onblur', this);" 
                     onkeyup="buttonEvent('onkeyup', this);" 
