@@ -77,6 +77,13 @@
                 }
               }, this);
 
+              var discountedGross = null;
+              if (element.get('promotions')) {
+                discountedGross = element.get('gross');
+                discountedGross = element.get('promotions').reduce(function (memo, element) {
+                  return OB.DEC.sub(memo, element.actualAmt || element.amt || 0);
+                }, discountedGross);
+              }
               var linepricenet = OB.DEC.div(element.get('grossUnitPrice') || element.get('price'), linerate);
               var linenet = OB.DEC.mul(linepricenet, element.get('qty'));
               var linegross = element.get('lineGrossAmount') || element.get('gross');
@@ -102,7 +109,7 @@
                   if (taxRate.get('cascade')) {
                     pricenet = pricenetcascade;
                   }
-                  gross = OB.DEC.mul(element.get('discountedLinePrice') || element.get('price'), element.get('qty'));
+                  gross = discountedGross || OB.DEC.mul(element.get('price'), element.get('qty'));
                   net = OB.DEC.div(gross, OB.DEC.add(1, rate));
                   amount = OB.DEC.sub(gross, net);
                   pricenetcascade = pricenet.multiply(rate.add(BigDecimal.prototype.ONE));
