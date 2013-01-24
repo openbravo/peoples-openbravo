@@ -69,7 +69,7 @@
     <FIELD id="fieldRequester">requester</FIELD>
     <FIELD id="fieldVendor">vendor</FIELD>
     <FIELD id="fieldPriceList">pricelistid</FIELD>
-    <FIELD id="fieldPrice" format="euroEdition">price</FIELD>
+    <FIELD id="fieldPrice" format="priceEdition">price</FIELD>
     <SECTION id="sectionLinesDetail"/>
   </structure>
 
@@ -91,7 +91,7 @@
     <FIELD id="fieldSelSecQuantity" format="euroEdition">quantityorder</FIELD>
     <FIELD id="fieldSelSecUnit">secuomname</FIELD>
     <FIELD id="fieldSelPrice" attribute="name" replace="xx">mRequisitionlineId</FIELD>
-    <FIELD id="fieldPriceList" format="euroEdition">pricelist</FIELD>
+    <FIELD id="fieldPriceList" format="priceEdition">pricelist</FIELD>
 
     <SECTION id="sectionVendor" field="vendorId"/>
     <SECTION id="sectionPriceList" field="mPricelistId"/>
