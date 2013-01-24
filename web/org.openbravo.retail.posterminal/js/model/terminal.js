@@ -420,7 +420,8 @@ OB.Model.Terminal = Backbone.Model.extend({
       }, function (users) {
         var user;
         if (users.models.length === 0) {
-          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_OfflineUserNotRegistered'));
+          alert(OB.I18N.getLabel('OBPOS_OfflinePasswordNotCorrect'));
+          window.location.reload();
         } else {
           if (users.models[0].get('password') === me.generate_sha1(me.password + users.models[0].get('created'))) {
             me.usermodel = users.models[0];
