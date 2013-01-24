@@ -264,7 +264,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
               description.append(strRefundCredit).append("\n");
 
             String truncateDescription = (description.length() > 255) ? description
-                .substring(0, 252).concat("...").toString() : description.toString();
+                .substring(0, 251).concat("...").toString() : description.toString();
             payment.setDescription(truncateDescription);
           }
 
