@@ -430,8 +430,8 @@ OB.Model.Terminal = Backbone.Model.extend({
               trigger: true
             });
           } else {
-            OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_OfflinePasswordNotCorrect'));
-            OB.POS.navigate('login');
+            alert(OB.I18N.getLabel('OBPOS_OfflinePasswordNotCorrect'));
+            window.location.reload();
           }
         }
       }, function () {});
