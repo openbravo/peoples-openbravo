@@ -56,7 +56,7 @@ public class CreateAccountingConfiguration extends ModuleScript {
     // Tables to be added hardcoded due to problem when executing module script. The tables
     // sometimes do not exist yet
     String tables[] = { "4D8C3B3C31D1410DA046140C9F024D17", "B1B7075C46934F0A9FD4C4D0F1457B42",
-        "D1A97202E832470285C9B1EB026D54E2", "D4C23A17190649E7B78F55A05AF3438C" };
+        "D1A97202E832470285C9B1EB026D54E2", "D4C23A17190649E7B78F55A05AF3438C", "30721072789F410E9606D2235CB2A226"};
     for (int i = 0; i < data.length; i++) {
       for (int j = 0; j < tables.length; j++) {
         boolean exist = CreateAccountingConfigurationData.selectTables(cp, data[i].cAcctschemaId,
