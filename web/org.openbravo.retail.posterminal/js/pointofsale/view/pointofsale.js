@@ -86,9 +86,6 @@ enyo.kind({
       kind: 'OB.UI.ModalDeleteReceipt',
       name: 'modalConfirmReceiptDelete'
     }, {
-      kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalClosePaidReceipt',
-      name: 'modalConfirmClosePaidTicket'
-    }, {
       kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalProductCannotBeGroup',
       name: 'modalProductCannotBeGroup'
     }, {

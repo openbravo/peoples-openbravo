@@ -70,7 +70,8 @@ enyo.kind({
   kind: 'OB.UI.ToolbarButton',
   icon: 'btn-icon btn-icon-delete',
   events: {
-    onShowPopup: ''
+    onShowPopup: '',
+    onDeleteOrder: ''
   },
   handlers: {
     onLeftToolbarDisabled: 'disabledButton'
@@ -80,14 +81,12 @@ enyo.kind({
     this.setDisabled(inEvent.status);
   },
   tap: function () {
-    if (this.model.get('order').get('isPaid')) {
-      this.doShowPopup({
-        popup: 'modalConfirmClosePaidTicket'
-      });
-    } else {
+    if (!this.model.get('order').get('isPaid') && !this.model.get('order').get('isQuotation')) {
       this.doShowPopup({
         popup: 'modalConfirmReceiptDelete'
       });
+    } else {
+      this.doDeleteOrder();
     }
   },
   init: function (model) {
