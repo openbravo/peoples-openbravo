@@ -31,6 +31,7 @@ import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
@@ -54,6 +55,7 @@ import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentMethod;
+import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment_Credit;
 import org.openbravo.model.financialmgmt.payment.FinAccPaymentMethod;
@@ -112,8 +114,9 @@ public class DocFINFinAccTransaction extends AcctServer {
   public FieldProviderFactory[] loadLinesPaymentDetailsFieldProvider(
       FIN_FinaccTransaction transaction) {
     FIN_Payment payment = transaction.getFinPayment();
-    List<FIN_PaymentDetail> paymentDetails = payment.getFINPaymentDetailList();
+    List<FIN_PaymentDetail> paymentDetails = FIN_Utility.getOrderedPaymentDetailList(payment);
     FieldProviderFactory[] data = new FieldProviderFactory[paymentDetails.size()];
+    FIN_PaymentSchedule ps = null;
     OBContext.setAdminMode();
     try {
       for (int i = 0; i < data.length; i++) {
@@ -122,9 +125,41 @@ public class DocFINFinAccTransaction extends AcctServer {
          */
         // Details refunded used credit are excluded as the entry will be created using the credit
         // used
-        if (paymentDetails.get(i).isRefund() && paymentDetails.get(i).isPrepayment())
+        if (paymentDetails.get(i).isRefund() && paymentDetails.get(i).isPrepayment()) {
           continue;
+        }
         data[i] = new FieldProviderFactory(null);
+
+        FIN_PaymentSchedule psi = paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
+            .getInvoicePaymentSchedule();
+        FIN_PaymentSchedule pso = paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
+            .getOrderPaymentSchedule();
+        // If the Payment Detail belongs to the same Invoice of the previous one
+        if (psi != null && psi.equals(ps)) {
+          // If it has no related Order
+          if (pso == null) {
+            // Sum the Amount of this Payment Detail to the Previous one. This line is not going to
+            // be posted.
+            FieldProviderFactory.setField(data[i - 1], "Amount", paymentDetails.get(i).getAmount()
+                .add(new BigDecimal(data[i - 1].getField("Amount"))).toString());
+            data[i] = null;
+            continue;
+          } else {
+            // Sum the Amount of the previous Payment Detail to this one. The previous line is not
+            // going to be posted
+            FieldProviderFactory.setField(
+                data[i],
+                "Amount",
+                paymentDetails.get(i).getAmount()
+                    .add(new BigDecimal(data[i - 1].getField("Amount"))).toString());
+            data[i - 1] = null;
+          }
+        } else {
+          FieldProviderFactory.setField(data[i], "Amount", paymentDetails.get(i).getAmount()
+              .toString());
+        }
+        ps = psi;
+
         FieldProviderFactory.setField(data[i], "FIN_Finacc_Transaction_ID", transaction.getId());
         FieldProviderFactory.setField(data[i], "AD_Client_ID", paymentDetails.get(i).getClient()
             .getId());
@@ -136,8 +171,6 @@ public class DocFINFinAccTransaction extends AcctServer {
         FieldProviderFactory.setField(data[i], "DepositAmount", transaction.getDepositAmount()
             .toString());
         FieldProviderFactory.setField(data[i], "PaymentAmount", transaction.getPaymentAmount()
-            .toString());
-        FieldProviderFactory.setField(data[i], "Amount", paymentDetails.get(i).getAmount()
             .toString());
         FieldProviderFactory.setField(data[i], "isprepayment",
             paymentDetails.get(i).isPrepayment() ? "Y" : "N");
