@@ -34,6 +34,13 @@
           queue = {},
           triggerNext = false,
           gross = OB.DEC.Zero;
+      if (len === 0) {
+        me.set('taxes', {});
+        if (callback) {
+          callback();
+        }
+        return;
+      }
       if (this.get('priceIncludesTax')) {
 
         _.each(lines.models, function (element, index, list) {

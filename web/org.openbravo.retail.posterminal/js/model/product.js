@@ -30,7 +30,7 @@
       'description': 'description',
       'obposScale': 'em_obpos_scale',
       'groupProduct': 'em_obpos_groupedproduct',
-      'stocked' : 'stocked',
+      'stocked': 'stocked',
       'showstock': 'em_obpos_showstock',
       'bestseller': 'bestseller',
       'ispack': 'ispack',
