@@ -403,7 +403,8 @@ enyo.kind({
     });
     // sending the event to the components above this one
     this.doStatusChanged({
-      payment: OB.POS.terminal.terminal.paymentnames[this.status]
+      payment: OB.POS.terminal.terminal.paymentnames[this.status],
+      status: this.status
     });
 
     // set the right keypad by default

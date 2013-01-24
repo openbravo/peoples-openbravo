@@ -114,7 +114,8 @@ enyo.kind({
   initComponents: function () {
     //TODO: modal payments
     var i, max, payments, paymentsdialog, paymentsbuttons, countbuttons, btncomponent, Btn, inst, cont, exactdefault, cashdefault, allpayments = {},
-        me = this;
+        me = this,
+        dialogbuttons = {};
 
     this.inherited(arguments);
 
@@ -150,6 +151,7 @@ enyo.kind({
         this.createComponent(btncomponent);
       } else {
         OB.OBPOSPointOfSale.UI.PaymentMethods.prototype.sideButtons.push(btncomponent);
+        dialogbuttons[payment.payment.searchKey] = payment.payment._identifier;
       }
     }, this);
 
@@ -162,6 +164,7 @@ enyo.kind({
         this.createComponent(btncomponent);
       } else {
         OB.OBPOSPointOfSale.UI.PaymentMethods.prototype.sideButtons.push(btncomponent);
+        dialogbuttons[sidebutton.command] = sidebutton.label;
       }
     }, this);
 
@@ -174,7 +177,9 @@ enyo.kind({
 
     if (paymentsdialog) {
       this.createComponent({
+        name: 'btnMore',
         toolbar: this,
+        dialogbuttons: dialogbuttons,
         kind: 'OB.OBPOSPointOfSale.UI.ButtonMore'
       });
     }
@@ -266,18 +271,46 @@ enyo.kind({
   events: {
     onShowAllButtons: ''
   },
+  handlers: {
+    onButtonStatusChanged: 'buttonStatusChanged'
+  },
   components: [{
     style: 'margin: 5px;',
     components: [{
       kind: 'OB.UI.Button',
       classes: 'btnkeyboard',
       name: 'btn',
-      label: 'puchi',
+      label: '',
       content: OB.I18N.getLabel('OBPOS_MorePayments')
     }]
   }],
+  initComponents: function () {
+    this.inherited(arguments);
+    this.activegreen = false;
+  },
   tap: function () {
-    this.doShowAllButtons();
+    // this.toolbar.keyboard
+    // this.dialogbuttons
+    if (this.activegreen) {
+      this.toolbar.keyboard.setStatus('');
+    } else {
+      this.doShowAllButtons();
+    }
+  },
+  buttonStatusChanged: function (inSender, inEvent) {
+    var status = inEvent.value.status;
+
+    if (this.activegreen) {
+      this.$.btn.setContent(OB.I18N.getLabel('OBPOS_MorePayments'));
+      this.$.btn.removeClass('btnactive-green');
+      this.activegreen = false;
+    }
+
+    if (this.dialogbuttons[status]) {
+      this.$.btn.setContent(this.dialogbuttons[status]);
+      this.$.btn.addClass('btnactive-green');
+      this.activegreen = true;
+    }
   }
 });
 
