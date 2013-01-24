@@ -180,8 +180,16 @@
                 }
               }, this);
 
+
+              var discAmt = null;
+              if (element.get('promotions')) {
+                discAmt = element.get('net');
+                discAmt = element.get('promotions').reduce(function (memo, element) {
+                  return OB.DEC.sub(memo, element.actualAmt || element.amt || 0);
+                }, discAmt);
+              }
               var linepricenet = element.get('price');
-              var discountedprice = element.get('discountedLinePrice') || element.get('price');
+              var discountedprice = discAmt ? OB.DEC.div(discAmt, element.get('qty')) : element.get('price');
               var linenet = OB.DEC.mul(linepricenet, element.get('qty'));
               var linegross = OB.DEC.mul(linenet, linerate);
               var linepricegross = OB.DEC.mul(linepricenet, linerate);
@@ -212,7 +220,7 @@
                   if (taxRate.get('cascade')) {
                     pricenet = pricenetcascade;
                   }
-                  net = OB.DEC.mul(element.get('discountedLinePrice') || pricenet, element.get('qty'));
+                  net = OB.DEC.mul(discountedprice || pricenet, element.get('qty'));
                   amount = OB.DEC.mul(net, rate);
                   pricenetcascade = pricenet.multiply(rate.add(BigDecimal.prototype.ONE));
 
