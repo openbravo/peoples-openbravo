@@ -86,7 +86,7 @@
     <FIELD id="fieldMatchedQty" format="euroEdition">matchedqty</FIELD>
     <FIELD id="fieldSelQty" format="euroEdition" attribute="value">lockqty</FIELD>
     <FIELD id="fieldSelQty" attribute="name" replace="xx">mRequisitionlineId</FIELD>
-    <FIELD id="fieldSelPrice" format="euroEdition" attribute="value">lockprice</FIELD>
+    <FIELD id="fieldSelPrice" format="priceEdition" attribute="value">lockprice</FIELD>
     <FIELD id="fieldSelUnit">uomname</FIELD>
     <FIELD id="fieldSelSecQuantity" format="euroEdition">quantityorder</FIELD>
     <FIELD id="fieldSelSecUnit">secuomname</FIELD>
