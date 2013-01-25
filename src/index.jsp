@@ -1,3 +1,4 @@
+
 <%@ page import="java.util.Properties" %>
 <%@ page import="org.openbravo.base.HttpBaseServlet" %>
 <%@ page import="org.openbravo.dal.core.OBContext"%>
@@ -8,6 +9,10 @@
 <%@ page import="org.openbravo.dal.core.OBContext" %>
 <%@ page import="org.openbravo.model.ad.module.Module" %>
 <%@ page import="org.apache.log4j.Logger" %>
+<%@ page import="org.openbravo.model.ad.access.Role" %>
+<%@ page import="org.openbravo.model.ad.access.User" %>
+<%@ page import="org.openbravo.dal.service.OBDal" %>
+<%@ page import="org.openbravo.base.secureApp.VariablesSecureApp" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%
   /*
@@ -160,6 +165,29 @@ var isomorphicDir='./web/org.openbravo.userinterface.smartclient/isomorphic/';
 
 // starts the application is called as the last statement in the StaticResources part
 function OBStartApplication() {
+<%
+//If the role has its access to the backend restricted, an error message will be shown
+final VariablesSecureApp vars1 = new VariablesSecureApp(request, false);
+OBContext.setAdminMode();
+try{
+  String roleId=vars1.getRole();
+  Role role;
+  if(roleId==null || roleId.equals("")){
+    role=OBDal.getInstance().get(User.class, userId).getDefaultRole();
+  }else{
+    role = OBDal.getInstance().get(Role.class, vars1.getRole());
+  }
+if(role.isRestrictbackend()){
+%>
+  document.body.removeChild(document.getElementById('OBLoadingDiv'));
+  isc.Dialog.create({message: OB.I18N.getLabel('OBUIAPP_RestrictedUser'), title: OB.I18N.getLabel('OBUIAPP_RestrictedUserTitle'), showCloseButton: false}).show();
+  return;
+<%
+}
+ }finally{
+  OBContext.restorePreviousMode();
+}
+%>
   OB.Layout.initialize();
   OB.Layout.draw();
   OB.Layout.ViewManager.createAddStartTab();

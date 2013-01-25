@@ -312,6 +312,10 @@ BEGIN
       where tt.isactive='Y' and gia.isactive='Y' and tt.issotrx= case when v_totalcredit - v_totaldebit > 0 then 'N' else 'Y' end
       group by tt.issotrx;
 
+      if (v_glitem_acct is null) then
+        RAISE_APPLICATION_ERROR(-20000, '@NoAcctForGLItem@');
+      end if;
+
       if v_totalcredit - v_totaldebit > 0
       then
        v_totalcredit := v_totalcredit - v_totaldebit;

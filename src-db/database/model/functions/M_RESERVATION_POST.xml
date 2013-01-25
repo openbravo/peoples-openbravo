@@ -41,6 +41,8 @@
   v_orderline_id    VARCHAR2(32);
   v_product_id      VARCHAR2(32);
   v_uom_id          VARCHAR2(32);
+  v_client_id       VARCHAR2(32);
+  v_org_id          VARCHAR2(32);
   v_count           NUMBER;
   v_quantity        NUMBER;
   v_reservedqty     NUMBER;
@@ -78,9 +80,9 @@ BEGIN
 
 BEGIN
   SELECT res_status, c_orderline_id, quantity, reservedqty,
-        m_product_id, c_uom_id
+        m_product_id, c_uom_id, ad_client_id, ad_org_id
     INTO v_resstatus, v_orderline_id, v_quantity, v_reservedqty,
-        v_product_id, v_uom_id
+        v_product_id, v_uom_id, v_client_id, v_org_id
   FROM m_reservation
   WHERE m_reservation_id = v_reservation_id;
   
@@ -91,13 +93,86 @@ BEGIN
     DECLARE
       v_sales_order_id        VARCHAR2(32);
       cur_not_available       RECORD;
+      cur_prereserve          RECORD;
+      cur_receipt             RECORD;
       v_linecount             NUMBER;
       v_creservedcount        NUMBER;
       v_preservedcount        NUMBER;
+      v_reservedqty           NUMBER;
+      v_qtytoreserve          NUMBER;
+      v_aux                   NUMBER;
+      v_res_stock_id          VARCHAR2(32);
     BEGIN
       IF (v_resstatus != 'DR') THEN
         RAISE_APPLICATION_ERROR(-20000, '@ActionNotSupported@');
       END IF;
+      -- Convert prereservation to reserve if purchase order is receipt.
+      FOR cur_prereserve IN (
+          SELECT rs.m_reservation_stock_id, rs.quantity, COALESCE(rs.releasedqty, 0) AS releasedqty, rs.c_orderline_id
+          FROM m_reservation_stock rs
+          WHERE rs.m_reservation_id = v_reservation_id
+            AND rs.quantity - COALESCE(rs.releasedqty, 0) > 0
+            AND rs.c_orderline_id IS NOT NULL
+      ) LOOP
+        v_qtytoreserve := cur_prereserve.quantity - cur_prereserve.releasedqty;
+        FOR cur_receipt IN (
+            SELECT SUM(mp.qty) AS receiptqty, iol.m_locator_id,
+                COALESCE(iol.m_attributesetinstance_id, '0') AS m_attributesetinstance_id
+            FROM m_matchpo mp
+                JOIN m_inoutline iol ON mp.m_inoutline_id = iol.m_inoutline_id
+            WHERE mp.c_orderline_id = cur_prereserve.c_orderline_id
+            GROUP BY iol.m_locator_id, COALESCE(iol.m_attributesetinstance_id, '0')
+        ) LOOP
+          SELECT SUM(rs.quantity) INTO v_reservedqty
+          FROM m_reservation_stock rs
+               JOIN m_reservation r ON rs.m_reservation_id = r.m_reservation_id
+          WHERE rs.c_orderline_id = cur_prereserve.c_orderline_id
+            AND r.res_status NOT IN ('DR', 'CL')
+            AND rs.m_locator_id = cur_receipt.m_locator_id
+            AND COALESCE(rs.m_attributesetinstance_id, '0') = cur_receipt.m_attributesetinstance_id;
+          IF (cur_receipt.receiptqty > v_reservedqty) THEN
+            v_aux := LEAST(v_qtytoreserve, cur_receipt.receiptqty - v_reservedqty);
+            -- Check if exists a reserved stock for the same orderline, attributes and locator in the reservation
+            SELECT count(*), max(m_reservation_stock_id) INTO v_count, v_res_stock_id
+            FROM m_reservation_stock
+            WHERE c_orderline_id = cur_prereserve.c_orderline_id
+              AND m_locator_id = cur_receipt.m_locator_id
+              AND m_reservation_id = v_reservation_id
+              AND isallocated = 'Y'
+              AND COALESCE(m_attributesetinstance_id, '0') = cur_receipt.m_attributesetinstance_id;
+            -- Update existing prereserved stock to decrease reserved qty
+            UPDATE m_reservation_stock
+            SET quantity = quantity - v_aux
+            WHERE m_reservation_stock_id = cur_prereserve.m_reservation_stock_id;
+            IF (v_count > 0) THEN
+              UPDATE m_reservation_stock
+              SET quantity = quantity + v_aux
+              WHERE m_reservation_stock_id = v_res_stock_id;
+            ELSE
+              -- Insert reserved stock by same quantity
+              INSERT INTO m_reservation_stock(
+                m_reservation_stock_id, ad_client_id, ad_org_id, isactive,
+                created, createdby, updated, updatedby,
+                m_reservation_id, m_attributesetinstance_id, m_locator_id, c_orderline_id,
+                quantity, releasedqty, isallocated
+              ) VALUES (
+                get_uuid(), v_client_id, v_org_id, 'Y',
+                now(), v_user_id, now(), v_user_id,
+                v_reservation_id, cur_receipt.m_attributesetinstance_id, cur_receipt.m_locator_id, cur_prereserve.c_orderline_id,
+                v_aux, 0, 'Y'
+              );
+              v_qtytoreserve := v_qtytoreserve - v_aux;
+            END IF;
+            IF (v_qtytoreserve = 0) THEN
+              EXIT;
+            END IF;
+          END IF;
+        END LOOP;
+        DELETE FROM m_reservation_stock
+        WHERE c_orderline_id = cur_prereserve.c_orderline_id
+          AND quantity = 0
+          AND COALESCE(releasedqty, 0) = 0;
+      END LOOP;
       -- Check that stock is still available
       FOR cur_not_available IN (
         SELECT AD_COLUMN_IDENTIFIER('M_Locator', rs.m_locator_id, 'en_US') as locatorName,
@@ -216,6 +291,8 @@ BEGIN
     DECLARE
       v_sales_order_id        VARCHAR2(32);
       v_reservedcount         NUMBER;
+      cur_prereserve          RECORD;
+      v_res_stock_id          VARCHAR2(32);
     BEGIN
 
       IF (v_resstatus NOT IN ('CO', 'CL')) THEN
@@ -233,6 +310,49 @@ BEGIN
       FROM c_orderline
       WHERE c_order_id = v_sales_order_id
         AND so_res_status <> 'NR';
+      
+      -- Convert to pre-reserve reservations related to purchase orders that are not released.
+      FOR cur_prereserve IN (
+          SELECT m_reservation_stock_id, quantity - COALESCE(releasedqty, 0) AS reservedqty, c_orderline_id
+          FROM m_reservation_stock
+          WHERE m_reservation_id = v_reservation_id
+            AND c_orderline_id IS NOT NULL
+            AND m_locator_id IS NOT NULL
+            AND quantity - COALESCE(releasedqty, 0) > 0
+      ) LOOP
+        -- Check if exists a pre-reserve for the purchase order line.
+        SELECT COUNT(*), MAX(m_reservation_stock_id)
+          INTO v_count, v_res_stock_id
+        FROM m_reservation_stock
+        WHERE m_reservation_id = v_reservation_id
+          AND c_orderline_id IS NOT NULL
+          AND m_locator_id IS NULL;
+        UPDATE m_reservation_stock
+        SET quantity = quantity - cur_prereserve.reservedqty
+        WHERE m_reservation_stock_id = cur_prereserve.m_reservation_stock_id;
+        IF (v_count > 0) THEN
+          UPDATE m_reservation_stock
+          SET quantity = quantity + cur_prereserve.reservedqty
+          WHERE m_reservation_stock_id = v_res_stock_id;
+        ELSE
+          -- Insert reserved stock by same quantity
+          INSERT INTO m_reservation_stock(
+            m_reservation_stock_id, ad_client_id, ad_org_id, isactive,
+            created, createdby, updated, updatedby,
+            m_reservation_id, m_attributesetinstance_id, m_locator_id, c_orderline_id,
+            quantity, releasedqty, isallocated
+          ) VALUES (
+            get_uuid(), v_client_id, v_org_id, 'Y',
+            now(), v_user_id, now(), v_user_id,
+            v_reservation_id, '0', NULL, cur_prereserve.c_orderline_id,
+            cur_prereserve.reservedqty, 0, 'Y'
+          );
+        END IF;
+      END LOOP;
+      DELETE FROM m_reservation_stock
+      WHERE m_reservation_id = v_reservation_id
+        AND quantity = 0
+        AND COALESCE(releasedqty, 0) = 0;
 
       UPDATE c_order
       SET so_res_status = CASE WHEN v_reservedcount > 0 THEN 'PR'

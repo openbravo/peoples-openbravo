@@ -26,6 +26,14 @@
     title: '${param.title?js_string}',
     name: '${param.name?js_string}',
     width: '*',
+    <#if param.redrawOnChange>
+      redrawOnChange: true,
+    </#if>
+    <#if param.showIf != "" >
+      showIf: function(item, value, form, currentValues, context) {
+        return (${param.showIf});
+      },
+    </#if>
     required: ${param.required?string}
     ${param.parameterProperties}
 }

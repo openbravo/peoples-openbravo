@@ -50,7 +50,8 @@ isc.OBParameterWindowView.addProperties({
   initWidget: function () {
     var i, field, items = [],
         buttonLayout = [],
-        okButton, newButton, cancelButton, view = this;
+        okButton, newButton, cancelButton, view = this,
+        newShowIf;
 
     // Buttons
 
@@ -139,6 +140,25 @@ isc.OBParameterWindowView.addProperties({
     });
     this.members.push(this.messageBar);
 
+    newShowIf = function (item, value, form, values) {
+      var currentValues = values || form.view.getCurrentValues(),
+          context = {},
+          originalShowIfValue = false;
+
+      OB.Utilities.fixNull250(currentValues);
+
+      try {
+        if (isc.isA.Function(this.originalShowIf)) {
+          originalShowIfValue = this.originalShowIf(item, value, form, currentValues, context);
+        } else {
+          originalShowIfValue = isc.JSON.decode(this.originalShowIf);
+        }
+      } catch (_exception) {
+        isc.warn(_exception + ' ' + _exception.message + ' ' + _exception.stack);
+      }
+      return originalShowIfValue;
+    };
+
     // Parameters
     if (this.viewProperties.fields) {
       for (i = 0; i < this.viewProperties.fields.length; i++) {
@@ -147,6 +167,10 @@ isc.OBParameterWindowView.addProperties({
           view: this
         }, field);
 
+        if (field.showIf) {
+          field.originalShowIf = field.showIf;
+          field.showIf = newShowIf;
+        }
         if (field.isGrid) {
           this.grid = isc.OBPickAndExecuteView.create(field);
         } else {
@@ -344,19 +368,19 @@ isc.OBParameterWindowView.addProperties({
       grid = this.grid.viewGrid;
       selection = grid.getSelectedRecords() || [];
       len = selection.length;
-      allRows = grid.data.allRows || grid.data;
+      allRows = grid.data.allRows || grid.data.localData || grid.data;
       allProperties._selection = [];
       allProperties._allRows = [];
 
       for (i = 0; i < len; i++) {
-        tmp = isc.addProperties({}, selection[i], grid.getEditedRecord(selection[i]));
+        tmp = isc.addProperties({}, selection[i], grid.getEditedRecord(i));
         allProperties._selection.push(tmp);
       }
 
       len = (allRows && allRows.length) || 0;
 
       for (i = 0; i < len; i++) {
-        tmp = isc.addProperties({}, allRows[i], grid.getEditedRecord(allRows[i]));
+        tmp = isc.addProperties({}, allRows[i], grid.getEditedRecord(i));
         allProperties._allRows.push(tmp);
       }
     }

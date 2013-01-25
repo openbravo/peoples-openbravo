@@ -84,6 +84,9 @@ public abstract class ReadOnlyDataSourceService extends DefaultDataSourceService
           }
         }
         jsonResponse.put(JsonConstants.RESPONSE_TOTALROWS, num);
+      } else {
+        jsonResponse.put(JsonConstants.RESPONSE_TOTALROWS,
+            parameters.get(JsonConstants.RESPONSE_TOTALROWS));
       }
       jsonResponse.put(JsonConstants.RESPONSE_DATA, new JSONArray(jsonObjects));
       jsonResult.put(JsonConstants.RESPONSE_RESPONSE, jsonResponse);

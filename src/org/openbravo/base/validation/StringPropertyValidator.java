@@ -19,6 +19,7 @@
 
 package org.openbravo.base.validation;
 
+import org.apache.log4j.Logger;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.util.Check;
 
@@ -31,6 +32,7 @@ import org.openbravo.base.util.Check;
 public class StringPropertyValidator extends BasePropertyValidator {
 
   private int fieldLength = -1;
+  private static final Logger log = Logger.getLogger(StringPropertyValidator.class);
 
   static boolean isValidationRequired(Property p) {
     if (p.isPrimitive() && p.getPrimitiveType() == String.class) {
@@ -56,9 +58,12 @@ public class StringPropertyValidator extends BasePropertyValidator {
   }
 
   public void initialize() {
-    Check.isTrue(getProperty().getFieldLength() > 0,
-        "Fieldlength should be larger than 0 for validation");
-    setFieldLength(getProperty().getFieldLength());
+    if (getProperty().getFieldLength() <= 0) {
+      log.error("Fieldlength of property " + getProperty().getName()
+          + " should be larger than 0 for validation");
+    } else {
+      setFieldLength(getProperty().getFieldLength());
+    }
   }
 
   @Override

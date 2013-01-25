@@ -503,8 +503,12 @@ isc.FormItem.addProperties({
     this.clearErrors();
 
     if (this.redrawOnChange) {
-      this.form.onFieldChanged(this.form, item || this, value);
-      this.form.view.toolBar.refreshCustomButtonsView(this.form.view);
+      if (this.form.onFieldChanged) {
+        this.form.onFieldChanged(this.form, item || this, value);
+      }
+      if (this.form && this.form.view && this.form.view.toolBar && this.form.view.toolBar.refreshCustomButtonsView) {
+        this.form.view.toolBar.refreshCustomButtonsView(this.form.view);
+      }
     }
   },
 

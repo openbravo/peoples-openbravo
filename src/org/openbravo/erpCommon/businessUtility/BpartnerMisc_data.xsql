@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2012 Openbravo SLU
+ * All portions are Copyright (C) 2001-2010 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -35,8 +35,7 @@
       p.InvoiceRule,p.DeliveryRule,DeliveryViaRule,
       COALESCE(p.SO_CreditLimit-p.SO_CreditUsed,-1) AS CreditAvailable,
       p.PO_PriceList_ID, p.PaymentRulePO, p.PO_PaymentTerm_ID, p.salesrep_Id,
-      p.fin_paymentmethod_id, p.po_paymentmethod_id,
-      '' as id, '' as name
+      p.fin_paymentmethod_id, p.po_paymentmethod_id
       FROM C_BPartner p
       WHERE p.C_BPartner_ID=?
       ]]>
@@ -57,21 +56,6 @@
     <Parameter name="adOrgId"/>
     <Parameter name="adClientId"/>
     <Parameter name="adClientId"/>
-  </SqlMethod>
-  <SqlMethod name="selectBillingContact" type="preparedStatement" return="multiple">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-      SELECT U.AD_USER_ID as id, ad_column_identifier('AD_USER', U.AD_USER_ID, 'en_US') as name
-      FROM AD_USER U
-      WHERE U.ISACTIVE='Y'
-      AND U.C_BPARTNER_ID = ?
-      AND U.ISBILLINGCONTACT = ?
-      ORDER BY U.ISDEFAULTBILLINGCONTACT ASC
-      ]]>
-    </Sql>
-    <Parameter name="cBpartnerId"/>
-    <Parameter name="isBillingContact"/>
   </SqlMethod>
 
 </SqlClass>
