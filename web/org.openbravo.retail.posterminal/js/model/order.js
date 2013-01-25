@@ -1114,6 +1114,7 @@
       order.set('currency$_identifier', model.currency_identifier);
       order.set('isbeingprocessed', 'N');
       order.set('hasbeenpaid', 'Y');
+      order.set('priceIncludesTax', OB.POS.modelterminal.get('pricelist').priceIncludesTax);
       order.set('json', JSON.stringify(order.toJSON()));
 
 
@@ -1124,23 +1125,30 @@
         // TODO: Report errors properly
       });
       order.set('gross', model.totalamount);
+      order.set('net', model.net);
       order.trigger('calculategross');
       order.set('salesRepresentative$_identifier', model.salesrepresentative_identifier);
 
       _.each(model.receiptLines, function (iter) {
+        var price;
+        if(order.get('priceIncludesTax')){
+          price = OB.DEC.number(iter.unitPrice);
+        } else {
+          price = OB.DEC.number(iter.netPrice);
+        }
 
         OB.Dal.get(OB.Model.Product, iter.id, function (prod) {
           newline = new OrderLine({
             product: prod,
             uOM: iter.uOM,
             qty: OB.DEC.number(iter.quantity),
-            price: OB.DEC.number(iter.unitPrice),
+            price: price,
             priceList: OB.DEC.number(iter.unitPrice),
             promotions: iter.promotions,
             priceIncludesTax: order.get('priceIncludesTax')
           });
-          newline.set('gross', iter.linegrossamount);
-          newline.set('grossListPrice', iter.unitPrice);
+          newline.set('priceIncludesTax', OB.POS.modelterminal.get('pricelist').priceIncludesTax);
+          newline.calculateGross();
           // add the created line
           lines.add(newline);
           numberOfLines--;

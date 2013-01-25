@@ -39,7 +39,7 @@ public class PaidReceipts extends JSONProcessSimple {
         + "ord.warehouse.id as warehouse, ord.currency.iSOCode as currency, ord.obposApplications.name as posterminalidentifier, "
         + "ord.businessPartner.name as businessPartner_identifier, ord.currency.id as currency, ord.priceList.id as priceList, "
         + "ord.salesRepresentative.id as salesRepresentative, ord.organization.id as organization, ord.obposApplications.id as obposApplications, "
-        + "ord.client.id as client, ord.documentType.id as documentTypeId, ord.obposApplications.obposTerminaltype.documentTypeForQuotations.id as docTypeQuotation from Order as ord where ord.id=? and ord.obposApplications is not null";
+        + "ord.client.id as client, ord.documentType.id as documentTypeId, ord.obposApplications.obposTerminaltype.documentTypeForQuotations.id as docTypeQuotation, ord.summedLineAmount as totalNetAmount from Order as ord where ord.id=? and ord.obposApplications is not null";
 
     Query paidReceiptsQuery = OBDal.getInstance().getSession().createQuery(hqlPaidReceipts);
     paidReceiptsQuery.setString(0, orderid);
@@ -70,10 +70,11 @@ public class PaidReceipts extends JSONProcessSimple {
       } else {
         paidReceipt.put("isQuotation", false);
       }
+      paidReceipt.put("net", objpaidReceipts[19]);
 
       JSONArray listpaidReceiptsLines = new JSONArray();
       String hqlPaidReceiptsLines = "select ordLine.product.id as id, ordLine.product.name as name, ordLine.product.uOM.id as uOM, ordLine.orderedQuantity as quantity, "
-          + "ordLine.baseGrossUnitPrice as unitPrice, ordLine.lineGrossAmount as linegrossamount, ordLine.id as lineId from OrderLine as ordLine where ordLine.salesOrder.id=?";
+          + "ordLine.baseGrossUnitPrice as unitPrice, ordLine.lineGrossAmount as linegrossamount, ordLine.id as lineId, ordLine.unitPrice as netPrice from OrderLine as ordLine where ordLine.salesOrder.id=?";
       Query paidReceiptsLinesQuery = OBDal.getInstance().getSession()
           .createQuery(hqlPaidReceiptsLines);
       paidReceiptsLinesQuery.setString(0, (String) objpaidReceipts[0]);
@@ -86,6 +87,7 @@ public class PaidReceipts extends JSONProcessSimple {
         paidReceiptLine.put("uOM", objpaidReceiptsLines[2]);
         paidReceiptLine.put("quantity", objpaidReceiptsLines[3]);
         paidReceiptLine.put("unitPrice", objpaidReceiptsLines[4]);
+        paidReceiptLine.put("netPrice", objpaidReceiptsLines[7]);
 
         // promotions per line
         OBCriteria<OrderLineOffer> qPromotions = OBDal.getInstance().createCriteria(

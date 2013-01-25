@@ -598,6 +598,7 @@ public class OrderLoader extends JSONProcessSimple {
       OrderLine orderLine = lineReferences.get(i);
       BigDecimal pendingQty = orderLine.getOrderedQuantity();
 
+      AttributeSetInstance oldAttributeSetValues = null;
       if (pendingQty.compareTo(BigDecimal.ZERO) > 0) {
         // The M_GetStock function is used
         Process process = (Process) OBDal.getInstance().get(Process.class,
@@ -630,7 +631,9 @@ public class OrderLoader extends JSONProcessSimple {
         stockProposed.addOrderBy(StockProposed.PROPERTY_PRIORITY, true);
 
         ScrollableResults bins = stockProposed.scroll(ScrollMode.FORWARD_ONLY);
+        boolean foundStockProposed = false;
         while (pendingQty.compareTo(BigDecimal.ZERO) > 0 && bins.next()) {
+          foundStockProposed = true;
           // TODO: Can we safely clear session here?
           StockProposed stock = (StockProposed) bins.get(0);
           BigDecimal qty;
@@ -647,6 +650,21 @@ public class OrderLoader extends JSONProcessSimple {
               jsonorder, lineNo, qty, stock.getStorageDetail().getStorageBin(), stock
                   .getStorageDetail().getAttributeSetValue());
         }
+        if (!foundStockProposed && orderLine.getProduct().getAttributeSet() != null) {
+          // M_GetStock couldn't find any valid stock, and the product has an attribute set. We will
+          // attempt to find an old transaction for this product, and get the attribute values from
+          // there
+          OBCriteria<ShipmentInOutLine> oldLines = OBDal.getInstance().createCriteria(
+              ShipmentInOutLine.class);
+          oldLines.add(Restrictions.eq(ShipmentInOutLine.PROPERTY_PRODUCT, orderLine.getProduct()));
+          oldLines.setMaxResults(1);
+          oldLines.addOrderBy(ShipmentInOutLine.PROPERTY_CREATIONDATE, false);
+          List<ShipmentInOutLine> oldLine = oldLines.list();
+          if (oldLine.size() > 0) {
+            oldAttributeSetValues = oldLine.get(0).getAttributeSetValue();
+          }
+
+        }
       }
 
       if (pendingQty.compareTo(BigDecimal.ZERO) != 0) {
@@ -657,7 +675,7 @@ public class OrderLoader extends JSONProcessSimple {
         queryLoc.setMaxResult(1);
         lineNo += 10;
         addShipemntline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine, jsonorder,
-            lineNo, pendingQty, queryLoc.list().get(0), null);
+            lineNo, pendingQty, queryLoc.list().get(0), oldAttributeSetValues);
       }
     }
   }
