@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -1870,6 +1870,25 @@ isc.OBViewGrid.addProperties({
             }
           }
         }
+      }
+    }
+
+    if (this.view.parentView && !this.view.parentProperty) {
+      // subtabs without an explicit reference to their parent property
+      // result in an empty criteria which is ignored not generating the
+      // request. Forcing load
+      // See issue #22645
+      selectedValues = this.view.parentView.viewGrid.getSelectedRecords();
+      if (selectedValues.length !== 1) {
+        // if there is not a single record selected, always false criterion
+        criteria.criteria.push({
+          fieldName: 'id',
+          operator: 'equals',
+          value: '-1'
+        });
+      } else {
+        // with a single record selected, dummy criterion
+        criteria.criteria.push(isc.OBRestDataSource.getDummyCriterion());
       }
     }
 
