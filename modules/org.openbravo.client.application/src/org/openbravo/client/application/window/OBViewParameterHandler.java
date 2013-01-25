@@ -19,9 +19,12 @@
 package org.openbravo.client.application.window;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.openbravo.client.application.DynamicExpressionParser;
 import org.openbravo.client.application.Parameter;
 import org.openbravo.client.application.Process;
 import org.openbravo.client.kernel.reference.UIDefinition;
@@ -40,13 +43,39 @@ public class OBViewParameterHandler {
   }
 
   public List<OBViewParameter> getParameters() {
+
+    List<Parameter> parametersInExpression = new ArrayList<Parameter>();
+    Map<Parameter, String> paramToJSExpression = new HashMap<Parameter, String>();
+    // Computes the display logic of the parameters
+    // It has to be done in advance in order to determine the dynamic parameters
+    for (Parameter param : process.getOBUIAPPParameterList()) {
+      if (param.isActive()) {
+        if (param.getDisplayLogic() != null && !param.getDisplayLogic().isEmpty()) {
+          boolean parameterDisplayLogic = true;
+          final DynamicExpressionParser parser = new DynamicExpressionParser(
+              param.getDisplayLogic(), param.getObuiappProcess(), parameterDisplayLogic);
+          paramToJSExpression.put(param, parser.getJSExpression());
+          for (Parameter parameterExpression : parser.getParameters()) {
+            if (!parametersInExpression.contains(parameterExpression)) {
+              parametersInExpression.add(parameterExpression);
+            }
+          }
+        }
+      }
+    }
+
     List<OBViewParameter> params = new ArrayList<OBViewParameterHandler.OBViewParameter>();
     for (Parameter param : process.getOBUIAPPParameterList()) {
       if (param.isActive()
           && (!param.isFixed() || param.getReference().getId().equals(WINDOW_REFERENCE_ID))
           && (!param.getReference().getId()
               .equals(ParameterWindowComponent.BUTTON_LIST_REFERENCE_ID))) {
-        params.add(new OBViewParameter(param));
+        OBViewParameter parameter = new OBViewParameter(param);
+        parameter.setRedrawOnChange(parametersInExpression.contains(param));
+        if (paramToJSExpression.containsKey(param)) {
+          parameter.setShowIf(paramToJSExpression.get(param));
+        }
+        params.add(parameter);
       }
     }
     return params;
@@ -55,6 +84,8 @@ public class OBViewParameterHandler {
   public class OBViewParameter {
     UIDefinition uiDefinition;
     Parameter parameter;
+    String showIf = "";
+    boolean redrawOnChange = false;
 
     public OBViewParameter(Parameter param) {
       uiDefinition = UIDefinitionController.getInstance().getUIDefinition(param.getReference());
@@ -118,6 +149,22 @@ public class OBViewParameterHandler {
       }
       // be lenient just return the string as it is...
       return "," + jsonString + (jsonString.trim().endsWith(",") ? "" : ",");
+    }
+
+    public void setShowIf(String showIf) {
+      this.showIf = showIf;
+    }
+
+    public String getShowIf() {
+      return showIf;
+    }
+
+    public boolean getRedrawOnChange() {
+      return redrawOnChange;
+    }
+
+    public void setRedrawOnChange(boolean redrawOnChange) {
+      this.redrawOnChange = redrawOnChange;
     }
   }
 
