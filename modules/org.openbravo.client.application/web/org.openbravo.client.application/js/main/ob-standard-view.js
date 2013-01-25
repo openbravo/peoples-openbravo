@@ -2233,7 +2233,7 @@ isc.OBStandardView.addProperties({
         return !(this.hiddenInForm && !this.statusBarField) && context && originalShowIfValue;
       };
       if (fld.statusBarField) {
-        fld.showIf = '';
+        fld.showIf = null;
         fld.statusBarShowIf = newShowIf;
       } else {
         fld.showIf = newShowIf;
