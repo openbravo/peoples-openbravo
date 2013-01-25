@@ -941,6 +941,16 @@ public class OrderLoader extends JSONProcessSimple {
               payment, i == (payments.length() - 1) ? writeoffAmt : BigDecimal.ZERO);
         }
       }
+      if (writeoffAmt.signum() == -1 && invoice != null) {
+        FIN_PaymentScheduleDetail paymentScheduleDetail = OBProvider.getInstance().get(
+            FIN_PaymentScheduleDetail.class);
+        paymentScheduleDetail.setOrderPaymentSchedule(paymentSchedule);
+        paymentScheduleDetail.setAmount(writeoffAmt.abs());
+        if (paymentScheduleInvoice != null) {
+          paymentScheduleDetail.setInvoicePaymentSchedule(paymentScheduleInvoice);
+        }
+        OBDal.getInstance().save(paymentScheduleDetail);
+      }
 
       return null;
     }
