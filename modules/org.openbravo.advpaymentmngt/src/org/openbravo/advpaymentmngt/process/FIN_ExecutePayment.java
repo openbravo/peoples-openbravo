@@ -30,6 +30,7 @@ import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.advpaymentmngt.utility.Value;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.kernel.RequestContext;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.OBError;
@@ -110,24 +111,32 @@ public class FIN_ExecutePayment {
             return error;
           }
         } else {
-          for (FIN_PaymentDetail pd : payment.getFINPaymentDetailList()) {
-            for (FIN_PaymentScheduleDetail psd : pd.getFINPaymentScheduleDetailList()) {
-              BusinessPartner bPartner;
-              if (psd.getInvoicePaymentSchedule() == null) {
-                bPartner = psd.getOrderPaymentSchedule().getOrder().getBusinessPartner();
-              } else {
-                bPartner = psd.getInvoicePaymentSchedule().getInvoice().getBusinessPartner();
-              }
-              if (FIN_Utility.isBlockedBusinessPartner(bPartner.getId(), payment.isReceipt(), 4)) {
-                // If the Business Partner is blocked for Payments, the Payment will not be
-                // completed.
-                OBError error = new OBError();
-                error.setType("Error");
-                error.setMessage(strmessage1 + " " + bPartner.getIdentifier() + " " + strmessage2);
-                OBDal.getInstance().rollbackAndClose();
-                return error;
+          OBContext.setAdminMode(true);
+          try {
+            for (FIN_PaymentDetail pd : payment.getFINPaymentDetailList()) {
+              for (FIN_PaymentScheduleDetail psd : pd.getFINPaymentScheduleDetailList()) {
+                BusinessPartner bPartner = null;
+                if (psd.getInvoicePaymentSchedule() != null) {
+                  bPartner = psd.getInvoicePaymentSchedule().getInvoice().getBusinessPartner();
+                } else if (psd.getOrderPaymentSchedule() != null) {
+                  bPartner = psd.getOrderPaymentSchedule().getOrder().getBusinessPartner();
+                }
+                if (bPartner != null
+                    && FIN_Utility.isBlockedBusinessPartner(bPartner.getId(), payment.isReceipt(),
+                        4)) {
+                  // If the Business Partner is blocked for Payments, the Payment will not be
+                  // completed.
+                  OBError error = new OBError();
+                  error.setType("Error");
+                  error
+                      .setMessage(strmessage1 + " " + bPartner.getIdentifier() + " " + strmessage2);
+                  OBDal.getInstance().rollbackAndClose();
+                  return error;
+                }
               }
             }
+          } finally {
+            OBContext.restorePreviousMode();
           }
         }
       }

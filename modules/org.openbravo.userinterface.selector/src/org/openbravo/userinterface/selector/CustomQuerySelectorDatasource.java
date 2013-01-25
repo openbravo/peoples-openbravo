@@ -382,23 +382,44 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
    */
   private String getSortClause(String sortBy, Selector sel) {
     StringBuffer sortByClause = new StringBuffer();
+    boolean sortByDesc = false;
+    if (sortBy != null && sortBy.startsWith("-")) {
+      sortByDesc = true;
+    }
     // If grid is manually filtered sortBy is not empty
     if (StringUtils.isNotEmpty(sortBy)) {
       if (sortBy.contains(JsonConstants.IN_PARAMETER_SEPARATOR)) {
         final String[] fieldNames = sortBy.split(JsonConstants.IN_PARAMETER_SEPARATOR);
         for (String fieldName : fieldNames) {
+          if (sortByDesc) {
+            fieldName = fieldName.substring(1, fieldName.length());
+          }
           int fieldSortIndex = getFieldSortIndex(fieldName, sel);
           if (fieldSortIndex > 0) {
             if (sortByClause.length() > 0) {
               sortByClause.append(", ");
             }
-            sortByClause.append(fieldSortIndex);
+            if (sortByDesc) {
+              sortByClause.append(fieldSortIndex + " desc");
+            } else {
+              sortByClause.append(fieldSortIndex);
+            }
           }
         }
       } else {
-        int fieldSortIndex = getFieldSortIndex(sortBy, sel);
+        String fieldName = null;
+        if (sortByDesc) {
+          fieldName = sortBy.substring(1, sortBy.length());
+        } else {
+          fieldName = sortBy;
+        }
+        int fieldSortIndex = getFieldSortIndex(fieldName, sel);
         if (fieldSortIndex > 0) {
-          sortByClause.append(fieldSortIndex);
+          if (sortByDesc) {
+            sortByClause.append(fieldSortIndex + " desc");
+          } else {
+            sortByClause.append(fieldSortIndex);
+          }
         }
       }
     }

@@ -51,6 +51,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.OBDateUtils;
@@ -67,6 +68,7 @@ import org.openbravo.model.common.enterprise.OrganizationInformation;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
+import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentMethod;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentProposal;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
@@ -1164,5 +1166,35 @@ public class FIN_Utility {
     } finally {
       OBContext.restorePreviousMode();
     }
+  }
+
+  /**
+   * Returns Payment Details from a Payment ordered by Invoice and Order
+   */
+  public static List<FIN_PaymentDetail> getOrderedPaymentDetailList(FIN_Payment payment) {
+
+    List<FIN_PaymentDetail> pdList = null;
+
+    OBContext.setAdminMode();
+    try {
+      final StringBuilder whereClause = new StringBuilder();
+      whereClause.append(" as pd ");
+      whereClause.append(" left join pd." + FIN_PaymentDetail.PROPERTY_FINPAYMENTSCHEDULEDETAILLIST
+          + " as psd");
+      whereClause.append(" where pd." + FIN_PaymentDetail.PROPERTY_FINPAYMENT + ".id = '"
+          + payment.getId() + "'");
+      whereClause.append(" order by psd."
+          + FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE);
+      whereClause.append(", psd." + FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE);
+
+      OBQuery<FIN_PaymentDetail> query = OBDal.getInstance().createQuery(FIN_PaymentDetail.class,
+          whereClause.toString());
+      pdList = query.list();
+
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+
+    return pdList;
   }
 }
