@@ -1334,9 +1334,9 @@ NOTE: You will not be able to close the fiscal year if you close all its periods
 <!--184-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--184-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--184-->  <VALUE><![CDATA[S_TimeExpense_Post]]></VALUE>
-<!--184-->  <NAME><![CDATA[Process Expenses]]></NAME>
-<!--184-->  <DESCRIPTION><![CDATA[Process Expenses]]></DESCRIPTION>
-<!--184-->  <HELP><![CDATA[Process expense sheet.]]></HELP>
+<!--184-->  <NAME><![CDATA[Process/Unprocess Expenses]]></NAME>
+<!--184-->  <DESCRIPTION><![CDATA[Process/Unprocess Expenses]]></DESCRIPTION>
+<!--184-->  <HELP><![CDATA[Process/Unprocess expense sheet.]]></HELP>
 <!--184-->  <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
 <!--184-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--184-->  <PROCEDURENAME><![CDATA[S_TimeExpense_Post]]></PROCEDURENAME>
@@ -1344,6 +1344,7 @@ NOTE: You will not be able to close the fiscal year if you close all its periods
 <!--184-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
 <!--184-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--184-->  <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--184-->  <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--184-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--184-->  <UIPATTERN><![CDATA[S]]></UIPATTERN>
 <!--184-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
