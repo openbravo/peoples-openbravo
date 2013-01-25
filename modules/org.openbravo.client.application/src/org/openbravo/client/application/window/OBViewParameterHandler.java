@@ -143,12 +143,14 @@ public class OBViewParameterHandler {
       // strip the first and last { }
       if (jsonString.startsWith("{") && jsonString.endsWith("}")) {
         // note -2 is done because the first substring takes of 1 already
-        return "," + jsonString.substring(1).substring(0, jsonString.length() - 2) + ",";
+        return "," + jsonString.substring(1).substring(0, jsonString.length() - 2);
       } else if (jsonString.equals("{}")) {
         return "";
       }
       // be lenient just return the string as it is...
-      return "," + jsonString + (jsonString.trim().endsWith(",") ? "" : ",");
+      return ","
+          + (jsonString.trim().endsWith(",") ? jsonString.substring(0, jsonString.length() - 2)
+              : jsonString);
     }
 
     public void setShowIf(String showIf) {

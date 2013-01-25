@@ -47,7 +47,7 @@ isc.ClassFactory.defineClass('<#if !data.popup>processDefinition</#if>${data.win
       <@createParameter param/><#if param_has_next>,</#if>
       </#if>
     </#list>    
-    ],
+     ]
     }
 });
 
