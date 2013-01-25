@@ -314,11 +314,8 @@ enyo.kind({
 
       this.doRemovePayment({
         payment: this.owner.model,
-        removeCallback: function (hasError, error) {
+        removeCallback: function () {
           me.deleting = false;
-          if (hasError) {
-            OB.UTIL.showError(error);
-          }
           me.removeClass('btn-icon-loading');
           me.addClass('btn-icon-clearPayment');
         }

@@ -502,7 +502,7 @@ enyo.kind({
     if (inEvent.payment.get('paymentData')) {
       if (!confirm(OB.I18N.getLabel('OBPOS_MsgConfirmRemovePayment'))) {
         if (inEvent.removeCallback) {
-          inEvent.removeCallback(false);
+          inEvent.removeCallback();
         }
         //canceled, not remove
         return;
@@ -510,14 +510,12 @@ enyo.kind({
         //To remove this payment we've to connect with server
         //a callback is defined to receive the confirmation
         var callback = function (hasError, error) {
+            if (inEvent.removeCallback) {
+              inEvent.removeCallback();
+            }
             if (hasError) {
-              if (inEvent.removeCallback) {
-                inEvent.removeCallback(hasError, error);
-              }
+              OB.UTIL.showError(error);
             } else {
-              if (inEvent.removeCallback) {
-                inEvent.removeCallback(hasError);
-              }
               me.model.get('order').removePayment(inEvent.payment);
             }
             };
