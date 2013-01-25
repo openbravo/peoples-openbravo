@@ -2619,7 +2619,11 @@ isc.OBViewGrid.addProperties({
       this.view.messageBar.hide();
     }
     this.view.refreshParentRecord();
-    this.refreshRow(rowNum);
+    if (this.getEditRow() === rowNum) {
+      this.getEditForm().markForRedraw();
+    } else {
+      this.refreshRow(rowNum);
+    }
   },
 
   undoEditSelectedRows: function () {

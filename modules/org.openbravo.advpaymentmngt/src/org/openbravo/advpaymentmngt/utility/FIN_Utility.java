@@ -51,6 +51,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.OBDateUtils;
@@ -58,6 +59,7 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.utility.Sequence;
+import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.currency.ConversionRate;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.DocumentType;
@@ -66,6 +68,7 @@ import org.openbravo.model.common.enterprise.OrganizationInformation;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
+import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentMethod;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentProposal;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
@@ -1116,5 +1119,82 @@ public class FIN_Utility {
     Organization org = OBDal.getInstance().get(Organization.class, (String) result);
 
     return org.getOrganizationType().isLegalEntityWithAccounting();
+  }
+
+  /**
+   * Returns true if the Business Partner is blocked for the document type selected.
+   * 
+   * @param strBPartnerId
+   *          . Business Partner Id.
+   * @param issotrx
+   *          . True if Sales, False if Purchase.
+   * @param docType
+   *          1: Order. 2: Goods Receipt / Shipment. 3: Invoice. 4: Payment.
+   */
+  public static boolean isBlockedBusinessPartner(String strBPartnerId, boolean issotrx, int docType) {
+    try {
+      OBContext.setAdminMode(true);
+      BusinessPartner bPartner = OBDal.getInstance().get(BusinessPartner.class, strBPartnerId);
+      switch (docType) {
+      case 1: {
+        // Order
+        return ((issotrx && bPartner.isCustomerBlocking() && bPartner.isSalesOrder()) || (!issotrx
+            && bPartner.isVendorBlocking() && bPartner.isPurchaseOrder()));
+
+      }
+      case 2: {
+        // Goods Shipment / Receipt
+        return ((issotrx && bPartner.isCustomerBlocking() && bPartner.isGoodsShipment()) || (!issotrx
+            && bPartner.isVendorBlocking() && bPartner.isGoodsReceipt()));
+
+      }
+      case 3: {
+        // Invoice
+        return ((issotrx && bPartner.isCustomerBlocking() && bPartner.isSalesInvoice()) || (!issotrx
+            && bPartner.isVendorBlocking() && bPartner.isPurchaseInvoice()));
+      }
+      case 4: {
+        // Payment
+        return ((issotrx && bPartner.isCustomerBlocking() && bPartner.isPaymentIn()) || (!issotrx
+            && bPartner.isVendorBlocking() && bPartner.isPaymentOut()));
+
+      }
+      default:
+        log4j.error("Error in isBusinessPartnerBlocking: docType must be between 1 and 4");
+        return false;
+      }
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  /**
+   * Returns Payment Details from a Payment ordered by Invoice and Order
+   */
+  public static List<FIN_PaymentDetail> getOrderedPaymentDetailList(FIN_Payment payment) {
+
+    List<FIN_PaymentDetail> pdList = null;
+
+    OBContext.setAdminMode();
+    try {
+      final StringBuilder whereClause = new StringBuilder();
+      whereClause.append(" as pd ");
+      whereClause.append(" left join pd." + FIN_PaymentDetail.PROPERTY_FINPAYMENTSCHEDULEDETAILLIST
+          + " as psd");
+      whereClause.append(" where pd." + FIN_PaymentDetail.PROPERTY_FINPAYMENT + ".id = '"
+          + payment.getId() + "'");
+      whereClause.append(" order by psd."
+          + FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE);
+      whereClause.append(", psd." + FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE);
+
+      OBQuery<FIN_PaymentDetail> query = OBDal.getInstance().createQuery(FIN_PaymentDetail.class,
+          whereClause.toString());
+      pdList = query.list();
+
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+
+    return pdList;
   }
 }

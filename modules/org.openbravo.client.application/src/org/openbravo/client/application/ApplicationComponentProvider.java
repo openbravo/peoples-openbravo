@@ -84,6 +84,10 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/utilities/ob-utilities.js", true));
     globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/utilities/ob-utilities-action.js", true));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/utilities/ob-utilities-action-def.js", true));
+    globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/utilities/ob-utilities-date.js", true));
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/utilities/ob-utilities-number.js", true));
@@ -141,6 +145,8 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
             true));
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/form/formitem/ob-formitem-textarea.js", true));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/form/formitem/ob-formitem-richtext.js", true));
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/form/formitem/ob-formitem-time.js", true));
     globalResources.add(createStaticResource(
@@ -269,6 +275,8 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
         "web/org.openbravo.client.application/js/process/ob-pick-and-execute-grid.js", false));
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/process/ob-pick-and-execute-view.js", false));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/process/ob-parameter-window-view.js", false));
 
     // Return Material
     globalResources.add(createStaticResource(

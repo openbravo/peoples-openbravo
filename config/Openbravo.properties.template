@@ -204,3 +204,9 @@ test.environment=false
 # By default those all not generated anymore for tabs for which they are not needed
 #wad.generateAllClassic250Windows=true
 
+# background.policy property defines whether background processes should be
+# executed in this context or not. To prevent process execution this property must
+# be set to no-execute
+background.policy=default
+
+

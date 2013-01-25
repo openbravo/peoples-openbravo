@@ -1334,9 +1334,9 @@ NOTE: You will not be able to close the fiscal year if you close all its periods
 <!--184-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--184-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--184-->  <VALUE><![CDATA[S_TimeExpense_Post]]></VALUE>
-<!--184-->  <NAME><![CDATA[Process Expenses]]></NAME>
-<!--184-->  <DESCRIPTION><![CDATA[Process Expenses]]></DESCRIPTION>
-<!--184-->  <HELP><![CDATA[Process expense sheet.]]></HELP>
+<!--184-->  <NAME><![CDATA[Process/Unprocess Expenses]]></NAME>
+<!--184-->  <DESCRIPTION><![CDATA[Process/Unprocess Expenses]]></DESCRIPTION>
+<!--184-->  <HELP><![CDATA[Process/Unprocess expense sheet.]]></HELP>
 <!--184-->  <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
 <!--184-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--184-->  <PROCEDURENAME><![CDATA[S_TimeExpense_Post]]></PROCEDURENAME>
@@ -1344,6 +1344,7 @@ NOTE: You will not be able to close the fiscal year if you close all its periods
 <!--184-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
 <!--184-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--184-->  <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--184-->  <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--184-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--184-->  <UIPATTERN><![CDATA[S]]></UIPATTERN>
 <!--184-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
@@ -6193,7 +6194,7 @@ When the process is finished it is recommended to schedule the "Costing Backgrou
 <!--A3FE1F9892394386A49FB707AA50A0FA-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--A3FE1F9892394386A49FB707AA50A0FA-->  <VALUE><![CDATA[Create Order]]></VALUE>
 <!--A3FE1F9892394386A49FB707AA50A0FA-->  <NAME><![CDATA[Create Order]]></NAME>
-<!--A3FE1F9892394386A49FB707AA50A0FA-->  <HELP><![CDATA[A firm quote establishes a commitment to the customer at a quoted price for a indicated quantity.  If the firm quote check box is deselected and the price list is modified after quotation, prices will be reflect these changes in the sales order or invoice]]></HELP>
+<!--A3FE1F9892394386A49FB707AA50A0FA-->  <HELP><![CDATA[A firm quote establishes a commitment to the customer at a quoted price for a indicated quantity. If the firm quote check box is not selected and the price list is modified after the quotation then the new prices will be reflected in the sales order or invoice]]></HELP>
 <!--A3FE1F9892394386A49FB707AA50A0FA-->  <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
 <!--A3FE1F9892394386A49FB707AA50A0FA-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--A3FE1F9892394386A49FB707AA50A0FA-->  <ISREPORT><![CDATA[N]]></ISREPORT>

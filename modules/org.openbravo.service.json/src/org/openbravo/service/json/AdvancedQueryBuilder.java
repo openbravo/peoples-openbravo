@@ -548,6 +548,11 @@ public class AdvancedQueryBuilder {
       final Column relatedColumn = OBDal.getInstance().get(Column.class, property.getColumnId());
       final Table relatedTable = relatedColumn.getTable();
 
+      // TODO: this can be improved the left clause computation
+      // correctly uses a || concatenation, so the value clause
+      // can also be made more advanced.
+      // Also filtering by date and number values can be a problem
+      // maybe use a pragmatic approach there
       if (isTableWithMultipleIdentifierColumns(relatedTable)) {
         // if the value consists of multiple parts then filtering won't work
         // only search on the first part then, is pragmatic but very workable
@@ -721,7 +726,7 @@ public class AdvancedQueryBuilder {
         && (operator.equals(OPERATOR_GREATERTHAN) || operator.equals(OPERATOR_GREATEROREQUAL)
             || operator.equals(OPERATOR_IGREATERTHAN) || operator.equals(OPERATOR_IGREATEROREQUAL)
             || operator.equals(OPERATOR_GREATERTHANFIElD) || operator
-              .equals(OPERATOR_GREATEROREQUALFIELD));
+            .equals(OPERATOR_GREATEROREQUALFIELD));
   }
 
   private boolean isLesserOperator(String operator) {
@@ -729,7 +734,7 @@ public class AdvancedQueryBuilder {
         && (operator.equals(OPERATOR_LESSTHAN) || operator.equals(OPERATOR_LESSOREQUAL)
             || operator.equals(OPERATOR_ILESSTHAN) || operator.equals(OPERATOR_ILESSOREQUAL)
             || operator.equals(OPERATOR_LESSTHANFIELD) || operator
-              .equals(OPERATOR_LESSOREQUALFIElD));
+            .equals(OPERATOR_LESSOREQUALFIElD));
   }
 
   private String computeLeftWhereClauseForIdentifier(Property property, String key,

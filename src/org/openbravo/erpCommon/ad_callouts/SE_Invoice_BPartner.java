@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
@@ -36,6 +37,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.businessUtility.BpartnerMiscData;
 import org.openbravo.erpCommon.utility.ComboTableData;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
@@ -255,37 +257,41 @@ public class SE_Invoice_BPartner extends HttpSecureAppServlet {
         resultado.append("null");
       resultado.append("\n),");
 
-      final BpartnerMiscData[] billingContactData = BpartnerMiscData.selectBillingContact(this,
-          strBPartner, "Y");
+      try {
+        ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_User_ID",
+            "", "AD_User C_BPartner User/Contacts", Utility.getContext(this, vars,
+                "#AccessibleOrgTree", strWindowId), Utility.getContext(this, vars, "#User_Client",
+                strWindowId), 0);
+        Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, "");
+        tdv = comboTableData.select(false);
+        comboTableData = null;
+      } catch (Exception ex) {
+        throw new ServletException(ex);
+      }
+
       resultado.append("new Array(\"inpadUserId\", ");
-      if (billingContactData != null && billingContactData.length > 0) {
+      if (tdv != null && tdv.length > 0) {
         resultado.append("new Array(");
 
         if (strContact.isEmpty()) {
-          resultado.append("new Array(\"" + billingContactData[0].getField("id") + "\", \""
-              + FormatUtilities.replaceJS(billingContactData[0].getField("name")) + "\", \""
-              + (billingContactData.length == 1 ? "true" : "false") + "\")");
-          if (billingContactData.length > 1) {
+          resultado.append("new Array(\"" + tdv[0].getField("id") + "\", \""
+              + FormatUtilities.replaceJS(tdv[0].getField("name")) + "\", \"" + "true" + "\")");
+          if (tdv.length > 1) {
             resultado.append(",\n");
           }
-          for (int i = 1; i < billingContactData.length; i++) {
-            resultado.append("new Array(\"" + billingContactData[i].getField("id") + "\", \""
-                + FormatUtilities.replaceJS(billingContactData[i].getField("name")) + "\", \""
-                + (billingContactData.length == i ? "false" : "true") + "\")");
-            if (i < billingContactData.length - 1) {
+          for (int i = 1; i < tdv.length; i++) {
+            resultado.append("new Array(\"" + tdv[i].getField("id") + "\", \""
+                + FormatUtilities.replaceJS(tdv[i].getField("name")) + "\", \"" + "false" + "\")");
+            if (i < tdv.length - 1) {
               resultado.append(",\n");
             }
           }
         } else {
-          for (int i = 0; i < billingContactData.length; i++) {
-            resultado.append("new Array(\""
-                + billingContactData[i].getField("id")
-                + "\", \""
-                + FormatUtilities.replaceJS(billingContactData[i].getField("name"))
-                + "\", \""
-                + (billingContactData[i].getField("id").equalsIgnoreCase(strContact) ? "true"
-                    : "false") + "\")");
-            if (i < billingContactData.length - 1) {
+          for (int i = 0; i < tdv.length; i++) {
+            resultado.append("new Array(\"" + tdv[i].getField("id") + "\", \""
+                + FormatUtilities.replaceJS(tdv[i].getField("name")) + "\", \""
+                + (tdv[i].getField("id").equalsIgnoreCase(strContact) ? "true" : "false") + "\")");
+            if (i < tdv.length - 1) {
               resultado.append(",\n");
             }
           }
@@ -299,17 +305,25 @@ public class SE_Invoice_BPartner extends HttpSecureAppServlet {
       resultado.append("new Array(\"inpcWithholdingId\", \"" + strWithHolding + "\"),");
       resultado
           .append("new Array(\"inpisdiscountprinted\", \"" + data[0].isdiscountprinted + "\")");
-      if (data != null && data.length > 0
-          && new BigDecimal(data[0].creditavailable).compareTo(BigDecimal.ZERO) < 0
-          && strIsSOTrx.equals("Y")) {
-        String creditLimitExceed = "" + Double.parseDouble(data[0].creditavailable) * -1;
-        String automationPaymentMethod = isAutomaticCombination(vars, strBPartner, strIsSOTrx,
-            strFinPaymentMethodId, strOrgId);
+      if (FIN_Utility.isBlockedBusinessPartner(strBPartner, "Y".equals(strIsSOTrx), 3)) {
+        // If the Business Partner is blocked for this document, show an information message.
+        BusinessPartner bPartner = OBDal.getInstance().get(BusinessPartner.class, strBPartner);
         resultado.append(", new Array('MESSAGE', \""
-            + Utility.messageBD(this, "CreditLimitOver", vars.getLanguage()) + creditLimitExceed
-            + "<br/>" + automationPaymentMethod + "\")");
-      } else if (strIsSOTrx.equals("Y")) {
-        resultado.append(", new Array('MESSAGE', \"\")");
+            + OBMessageUtils.messageBD("ThebusinessPartner") + " " + bPartner.getIdentifier() + " "
+            + OBMessageUtils.messageBD("BusinessPartnerBlocked") + "\")");
+      } else {
+        if (data != null && data.length > 0
+            && new BigDecimal(data[0].creditavailable).compareTo(BigDecimal.ZERO) < 0
+            && strIsSOTrx.equals("Y")) {
+          String creditLimitExceed = "" + Double.parseDouble(data[0].creditavailable) * -1;
+          String automationPaymentMethod = isAutomaticCombination(vars, strBPartner, strIsSOTrx,
+              strFinPaymentMethodId, strOrgId);
+          resultado.append(", new Array('MESSAGE', \""
+              + Utility.messageBD(this, "CreditLimitOver", vars.getLanguage()) + creditLimitExceed
+              + "<br/>" + automationPaymentMethod + "\")");
+        } else if (strIsSOTrx.equals("Y")) {
+          resultado.append(", new Array('MESSAGE', \"\")");
+        }
       }
       resultado.append(");");
     }

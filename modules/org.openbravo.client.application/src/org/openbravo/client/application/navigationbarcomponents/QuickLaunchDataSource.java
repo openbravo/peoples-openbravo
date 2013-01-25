@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -45,6 +45,7 @@ public class QuickLaunchDataSource extends ReadOnlyDataSourceService {
   public static final String OPTION_TYPE_URL = "url";
   public static final String OPTION_TYPE_PROCESS = "process";
   public static final String OPTION_TYPE_TAB = "tab";
+  public static final String OPTION_TYPE_PROCESS_DEFINITION = "processDefinition";
   public static final String OPTION_SINGLE_RECORD = "singleRecord";
   public static final String OPTION_READ_ONLY = "readOnly";
   public static final String OPTION_EDIT_OR_DELETE_ONLY = "editOrDeleteOnly";
@@ -121,6 +122,9 @@ public class QuickLaunchDataSource extends ReadOnlyDataSourceService {
         } else if (menuOption.isReport()) {
           data.put(OPTION_TYPE, OPTION_TYPE_URL);
           data.put(PROCESS_ID, menuOption.getMenu().getProcess().getId());
+        } else if (menuOption.isProcessDefinition()) {
+          data.put(OPTION_TYPE, OPTION_TYPE_PROCESS_DEFINITION);
+          data.put(PROCESS_ID, menuOption.getMenu().getOBUIAPPProcessDefinition().getId());
         } else {
           data.put(OPTION_TYPE, OPTION_TYPE_URL);
         }
@@ -130,7 +134,8 @@ public class QuickLaunchDataSource extends ReadOnlyDataSourceService {
           icon = "Form";
         } else if (menuOption.isReport()) {
           icon = "Report";
-        } else if (menuOption.isProcess() || menuOption.isProcessManual()) {
+        } else if (menuOption.isProcess() || menuOption.isProcessManual()
+            || menuOption.isProcessDefinition()) {
           icon = "Process";
         } else {
           icon = "Window";

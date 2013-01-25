@@ -278,6 +278,7 @@
         AND O.BALANCED = 'Y' 
         AND AD_ISORGINCLUDED(O.AD_ORG_ID, ORG.AD_ORG_ID, S.AD_CLIENT_ID) <> -1
         AND ORG.AD_ORG_ID <> '0'
+        AND ORG.AD_ORG_ID IN ('1')
       UNION
       SELECT S.C_ACCTSCHEMA_ID||R.C_ACCT_RPT_ID AS PADRE, O.AD_ORG_ID AS ID, O.NAME AS NAME
       FROM C_ACCT_RPT R, AD_ORG_ACCTSCHEMA S, (
@@ -295,10 +296,13 @@
         AND S.AD_CLIENT_ID = ?
         AND R.ISORGBALANCED = 'N' 
         AND COALESCE(R.REPORTTYPE,'N') = 'N'
+        AND O.AD_ORG_ID IN ('1')
       ORDER BY NAME,PADRE
         ]]></Sql>
         <Parameter name="adClient"/>
+        <Parameter name="adOrg" optional="false" type="replace" after="AND ORG.AD_ORG_ID IN (" text="'1'"/>
         <Parameter name="adClient"/>
+        <Parameter name="adOrg" optional="false" type="replace" after="AND O.AD_ORG_ID IN (" text="'1'"/>
    </SqlMethod>
    <SqlMethod name="selectYearsDouble" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>

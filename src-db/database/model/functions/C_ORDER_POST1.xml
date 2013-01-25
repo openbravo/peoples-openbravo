@@ -114,6 +114,10 @@
   v_acctAmount NUMBER;
   v_reject_reason VARCHAR(32);
   v_dummy VARCHAR2(2000);
+  v_bpartner_blocked VARCHAR2(1):='N';
+  v_orderBlocking VARCHAR2(1):='N';
+  v_bpartner_name VARCHAR2(60);
+
   BEGIN
     IF (p_PInstance_ID IS NOT NULL) THEN
       --  Update AD_PInstance
@@ -143,9 +147,11 @@
   BEGIN --BODY
   
   /*Orderline acct dimension*/
-  SELECT C_ORDER.ISSOTRX INTO v_IsSOTrx
+  SELECT C_ORDER.ISSOTRX , C_ORDER.c_bpartner_id
+  INTO v_IsSOTrx, v_c_Bpartner_ID
   FROM C_ORDER
   WHERE C_ORDER_ID = v_Record_ID;
+  
   IF (v_IsSOTrx = 'N') THEN
     FOR Cur_line IN
       (SELECT C_ORDERLINE.C_OrderLine_ID,
@@ -189,6 +195,17 @@
       INTO v_DocSubTypeSOTarget, v_isreturndoctype
     FROM C_DOCTYPE
     WHERE C_DocType_ID=v_DocTypetarget_ID;
+
+    SELECT CASE WHEN (m.ISSOTRX='Y') THEN customer_blocking  ELSE vendor_blocking END ,  
+    CASE WHEN (m.ISSOTRX='Y') THEN so_order_blocking ELSE po_order_blocking  END, name, DocAction
+      INTO v_bpartner_blocked, v_orderBlocking, v_bpartner_name, v_DocAction
+    FROM C_ORDER m, C_BPartner bp
+    WHERE m.c_bpartner_id=bp.c_bpartner_id
+    AND m.C_ORDER_ID=v_Record_ID
+    AND m.C_BPARTNER_ID=v_c_Bpartner_ID;
+    IF (v_DocAction = 'CO' AND v_bpartner_blocked = 'Y' AND v_orderBlocking = 'Y' AND v_isreturndoctype='N' ) THEN
+      RAISE_APPLICATION_ERROR(-20000,'@ThebusinessPartner@'||' '|| v_bpartner_name ||' '||'@BusinessPartnerBlocked@');
+    END IF;
     -- Get the name of the org of the Order. Added by P.Sarobe
     SELECT name INTO v_Org_Name FROM AD_ORG WHERE ad_org_id = v_Org_ID;
     DBMS_OUTPUT.PUT_LINE('DocAction=' || v_DocAction || ', DocStatus=' || v_DocStatus || ', DocType_ID=' || v_DocType_ID || ', DocTypeTarget_ID=' || v_DocTypeTarget_ID || ', DocSubTypeSO=' || v_DocSubTypeSO) ;
@@ -485,9 +502,9 @@
         INTO v_Count
       FROM C_ORDER C, C_ORDERLINE OL
       WHERE C.C_ORDER_ID = OL.C_ORDER_ID
-        AND AD_ISORGINCLUDED(OL.AD_Org_ID, C.AD_Org_ID, C.AD_Client_ID) <> -1
+        AND AD_ISORGINCLUDED(OL.AD_Org_ID, C.AD_Org_ID, C.AD_Client_ID) = -1
         AND C.C_ORDER_ID = v_Record_ID;
-      IF (v_Count=0) THEN
+      IF (v_Count>0) THEN
         RAISE_APPLICATION_ERROR(-20000, '@NotCorrectOrgLines@') ;
       END IF;
       

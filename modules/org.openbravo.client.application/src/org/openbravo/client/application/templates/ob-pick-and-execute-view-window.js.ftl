@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011 Openbravo SLU
+ * All portions are Copyright (C) 2011-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,12 +20,34 @@
 -->
 
 /*jslint*/
+<#if !data.popup>
+OB.Layout.ViewManager.loadedWindowClassName = 'processDefinition${data.windowClientClassName?js_string}';
+</#if>
 
-isc.ClassFactory.defineClass('${data.windowClientClassName?js_string}', isc.OBPickAndExecuteView).addProperties({
-    windowId: '${data.windowId?js_string}',
+isc.ClassFactory.defineClass('<#if !data.popup>processDefinition</#if>${data.windowClientClassName?js_string}', isc.OBParameterWindowView).addProperties({
+    processId: '${data.processId?js_string}',
+    actionHandler: '${data.actionHandler?js_string}',
+    popup: ${data.popup?string}, 
+    <#list data.buttonList as button>
+    <#if button_index == 0>buttons:{</#if>
+    '${button.searchKey?js_string}':'${button.name?js_string}'<#if button_has_next>,<#else>},</#if>
+    </#list>
     viewProperties: {
-      windowId: '${data.windowId?js_string}', 
-      ${data.tabView}
+      fields: [
+    <#list data.paramHandler.parameters as param>
+      <#if param.grid>
+      {
+        isGrid: true,
+        viewProperties: {
+          ${param.tabView}
+        }
+      }
+      <#if param_has_next>,</#if>
+      <#else>
+      <@createParameter param/><#if param_has_next>,</#if>
+      </#if>
+    </#list>    
+    ],
     }
 });
 

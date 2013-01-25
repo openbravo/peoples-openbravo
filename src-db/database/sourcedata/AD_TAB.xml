@@ -253,7 +253,11 @@
 <!--109-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--109-->  <NAME><![CDATA[Message]]></NAME>
 <!--109-->  <DESCRIPTION><![CDATA[Define application initiated information and error messages.]]></DESCRIPTION>
-<!--109-->  <HELP><![CDATA[Define application initiated information and error messages.]]></HELP>
+<!--109-->  <HELP><![CDATA[
+
+Define application initiated information and error messages.
+
+]]></HELP>
 <!--109-->  <AD_TABLE_ID><![CDATA[109]]></AD_TABLE_ID>
 <!--109-->  <AD_WINDOW_ID><![CDATA[104]]></AD_WINDOW_ID>
 <!--109-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -3028,7 +3032,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--259-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--259-->  <NAME><![CDATA[Header]]></NAME>
 <!--259-->  <DESCRIPTION><![CDATA[Create and edit inventory internal movements.]]></DESCRIPTION>
-<!--259-->  <HELP><![CDATA[Create and edit inventory internal movements.]]></HELP>
+<!--259-->  <HELP><![CDATA[Internal inventory movements can be created by adding products to the lines tab or by moving all items at once.]]></HELP>
 <!--259-->  <AD_TABLE_ID><![CDATA[323]]></AD_TABLE_ID>
 <!--259-->  <AD_WINDOW_ID><![CDATA[170]]></AD_WINDOW_ID>
 <!--259-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -3055,7 +3059,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--260-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--260-->  <NAME><![CDATA[Lines]]></NAME>
 <!--260-->  <DESCRIPTION><![CDATA[Add products and quantities for a specific goods movement. Each line represents one particular product.]]></DESCRIPTION>
-<!--260-->  <HELP><![CDATA[Add products and quantities for a specific goods movement. Each line represents one particular product.]]></HELP>
+<!--260-->  <HELP><![CDATA[Lines tab is a list of the products moved between warehouses and storage bins.]]></HELP>
 <!--260-->  <AD_TABLE_ID><![CDATA[324]]></AD_TABLE_ID>
 <!--260-->  <AD_WINDOW_ID><![CDATA[170]]></AD_WINDOW_ID>
 <!--260-->  <SEQNO><![CDATA[20]]></SEQNO>
@@ -3305,7 +3309,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--289-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--289-->  <NAME><![CDATA[Transactions]]></NAME>
 <!--289-->  <DESCRIPTION><![CDATA[View all transactions related to this product.]]></DESCRIPTION>
-<!--289-->  <HELP><![CDATA[Transaction tab is a summarized view of all the transactions of a product. ]]></HELP>
+<!--289-->  <HELP><![CDATA[The transaction tab is a summarized view of all the transactions of a product. ]]></HELP>
 <!--289-->  <AD_TABLE_ID><![CDATA[329]]></AD_TABLE_ID>
 <!--289-->  <AD_WINDOW_ID><![CDATA[140]]></AD_WINDOW_ID>
 <!--289-->  <SEQNO><![CDATA[50]]></SEQNO>
@@ -3784,7 +3788,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--317-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--317-->  <NAME><![CDATA[Bill of Materials]]></NAME>
 <!--317-->  <DESCRIPTION><![CDATA[Edit the bill of materials components the selected product consists of.]]></DESCRIPTION>
-<!--317-->  <HELP><![CDATA[Edit the bill of materials components the selected product consists of.]]></HELP>
+<!--317-->  <HELP><![CDATA[This tab allows to edit the bill of materials components the selected product consists of.]]></HELP>
 <!--317-->  <AD_TABLE_ID><![CDATA[383]]></AD_TABLE_ID>
 <!--317-->  <AD_WINDOW_ID><![CDATA[140]]></AD_WINDOW_ID>
 <!--317-->  <SEQNO><![CDATA[31]]></SEQNO>
@@ -7242,7 +7246,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800057-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800057-->  <NAME><![CDATA[Costing]]></NAME>
 <!--800057-->  <DESCRIPTION><![CDATA[Define cost information for this specific product.]]></DESCRIPTION>
-<!--800057-->  <HELP><![CDATA[Costing tab collects and summarize item cost related information as a result of items movements. The costs are valid during a fixed date range, it is used by Average and Standard algorithms.]]></HELP>
+<!--800057-->  <HELP><![CDATA[Costing tab collects and summarize product cost related information as a result of every product transaction. Product's costs are valid during a fixed date range and can be calculated either by using an Average or a Standard costing algorithm.]]></HELP>
 <!--800057-->  <AD_TABLE_ID><![CDATA[800043]]></AD_TABLE_ID>
 <!--800057-->  <AD_WINDOW_ID><![CDATA[140]]></AD_WINDOW_ID>
 <!--800057-->  <SEQNO><![CDATA[40]]></SEQNO>
@@ -13313,7 +13317,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--681796AC383440BA8212EC80431E89E9-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--681796AC383440BA8212EC80431E89E9-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--681796AC383440BA8212EC80431E89E9-->  <NAME><![CDATA[Costing Rule]]></NAME>
-<!--681796AC383440BA8212EC80431E89E9-->  <HELP><![CDATA[All costing rules that apply to the product.]]></HELP>
+<!--681796AC383440BA8212EC80431E89E9-->  <HELP><![CDATA[Costing rule tab allows to review the costing rules that apply to the product within a given date range.]]></HELP>
 <!--681796AC383440BA8212EC80431E89E9-->  <AD_TABLE_ID><![CDATA[88386FBE7A274F0EA414C989697B8680]]></AD_TABLE_ID>
 <!--681796AC383440BA8212EC80431E89E9-->  <AD_WINDOW_ID><![CDATA[140]]></AD_WINDOW_ID>
 <!--681796AC383440BA8212EC80431E89E9-->  <SEQNO><![CDATA[39]]></SEQNO>
@@ -13566,7 +13570,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--7580F9AE37704571BB0D3935252CAC5A-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--7580F9AE37704571BB0D3935252CAC5A-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--7580F9AE37704571BB0D3935252CAC5A-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--7580F9AE37704571BB0D3935252CAC5A-->  <NAME><![CDATA[Org Schema]]></NAME>
+<!--7580F9AE37704571BB0D3935252CAC5A-->  <NAME><![CDATA[General Ledgers]]></NAME>
 <!--7580F9AE37704571BB0D3935252CAC5A-->  <DESCRIPTION><![CDATA[It is used for configuring the accounting schemas attached to the organization]]></DESCRIPTION>
 <!--7580F9AE37704571BB0D3935252CAC5A-->  <HELP><![CDATA[Org Schema tabs allows to add or to review the accounting schema/s of the organization.]]></HELP>
 <!--7580F9AE37704571BB0D3935252CAC5A-->  <AD_TABLE_ID><![CDATA[088ED0B6930847508865BCB06E75228A]]></AD_TABLE_ID>
@@ -13707,7 +13711,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--8086A0E5732A45C398A625D766C88FAD-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--8086A0E5732A45C398A625D766C88FAD-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--8086A0E5732A45C398A625D766C88FAD-->  <NAME><![CDATA[Initialization]]></NAME>
-<!--8086A0E5732A45C398A625D766C88FAD-->  <HELP><![CDATA[Close and Initialization Physical Inventories for each Organization and Warehouse]]></HELP>
+<!--8086A0E5732A45C398A625D766C88FAD-->  <HELP><![CDATA[The initialization tab is a read-only tab which allows to review the "Closing" / "Opening" physical inventory created to validate a costing rule. Every time that a costing rule is validated a new record is created for each Organization and Warehouse. This record contains links to the physical inventories created.]]></HELP>
 <!--8086A0E5732A45C398A625D766C88FAD-->  <AD_TABLE_ID><![CDATA[660314BF9A074029814AA12D4CB8340C]]></AD_TABLE_ID>
 <!--8086A0E5732A45C398A625D766C88FAD-->  <AD_WINDOW_ID><![CDATA[3E945A9102144C16BD211D211089C2DF]]></AD_WINDOW_ID>
 <!--8086A0E5732A45C398A625D766C88FAD-->  <SEQNO><![CDATA[20]]></SEQNO>
@@ -13923,6 +13927,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--8A7BC392A4D548E1B97E11548E20E5F2-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--8A7BC392A4D548E1B97E11548E20E5F2-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--8A7BC392A4D548E1B97E11548E20E5F2-->  <NAME><![CDATA[Rule]]></NAME>
+<!--8A7BC392A4D548E1B97E11548E20E5F2-->  <HELP><![CDATA[New warehouse rules can only by applied by extension modules which must include a dataset with the definition of the rule and a procedure that implements it.]]></HELP>
 <!--8A7BC392A4D548E1B97E11548E20E5F2-->  <AD_TABLE_ID><![CDATA[8D057FD1218B44C3BD5B97DA65A6E3C1]]></AD_TABLE_ID>
 <!--8A7BC392A4D548E1B97E11548E20E5F2-->  <AD_WINDOW_ID><![CDATA[FC404D2406A9491CBD905D0D38F04846]]></AD_WINDOW_ID>
 <!--8A7BC392A4D548E1B97E11548E20E5F2-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -14311,7 +14316,8 @@ AND e.pending <> 0]]></HQLWHERECLAUSE>
 <!--AC5EA97A85F14F28B417421F69963FDF-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--AC5EA97A85F14F28B417421F69963FDF-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--AC5EA97A85F14F28B417421F69963FDF-->  <NAME><![CDATA[Header]]></NAME>
-<!--AC5EA97A85F14F28B417421F69963FDF-->  <HELP><![CDATA[Algorithms have to set up the java class that implements them.]]></HELP>
+<!--AC5EA97A85F14F28B417421F69963FDF-->  <DESCRIPTION><![CDATA[The main feature of a costing algorithm is the java class which includes all what's required to implement it.]]></DESCRIPTION>
+<!--AC5EA97A85F14F28B417421F69963FDF-->  <HELP><![CDATA[The main feature of a costing algorithm is the java class which includes all what's required to implement it.]]></HELP>
 <!--AC5EA97A85F14F28B417421F69963FDF-->  <AD_TABLE_ID><![CDATA[19378B1CC7E14FFDA1819AA9E0AF681F]]></AD_TABLE_ID>
 <!--AC5EA97A85F14F28B417421F69963FDF-->  <AD_WINDOW_ID><![CDATA[6CB90FC76E2E4CD3A6AF472E39C042B6]]></AD_WINDOW_ID>
 <!--AC5EA97A85F14F28B417421F69963FDF-->  <SEQNO><![CDATA[10]]></SEQNO>

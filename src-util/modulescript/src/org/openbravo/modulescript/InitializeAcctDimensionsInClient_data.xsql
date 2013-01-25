@@ -597,7 +597,7 @@ values (get_uuid(), ?  , '0', 'Y', now(), '0', now(), '0', 'OO', 'REC', 'Y', 'N'
     </Sql>
      <Parameter name="client"/>
   </SqlMethod>
-SqlMethod name="updateoosoo" type="preparedStatement" return="rowcount">
+<SqlMethod name="updateoosoo" type="preparedStatement" return="rowcount">
        <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[

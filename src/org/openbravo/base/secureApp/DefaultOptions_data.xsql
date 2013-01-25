@@ -37,7 +37,7 @@
             INNER JOIN AD_ROLE role ON users.DEFAULT_AD_ROLE_ID = role.AD_ROLE_ID
          WHERE users.AD_USER_ID = ?
            AND NOT users.DEFAULT_AD_ROLE_ID IS NULL
-           AND role.ISACTIVE = 'Y'
+           AND role.ISACTIVE = 'Y' and role.isrestrictbackend='N'
            ]]></Sql>
       <Parameter name="aduserid"/>
    </SqlMethod>
@@ -127,7 +127,7 @@
             INNER JOIN AD_ROLE role
               ON userRoles.AD_ROLE_ID = role.AD_ROLE_ID
          WHERE userRoles.AD_USER_ID = ?
-           AND role.ISACTIVE = 'Y'
+           AND role.ISACTIVE = 'Y' and role.isrestrictbackend='N'
            ]]></Sql>
       <Parameter name="aduserid"/>
    </SqlMethod>

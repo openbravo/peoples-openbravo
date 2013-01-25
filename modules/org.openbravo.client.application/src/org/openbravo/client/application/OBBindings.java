@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,6 +29,7 @@ import org.apache.log4j.Logger;
 import org.openbravo.base.util.Check;
 import org.openbravo.base.util.OBClassLoader;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.service.json.JsonUtils;
 
 /**
@@ -77,6 +78,10 @@ public class OBBindings {
 
   public OBContext getContext() {
     return context;
+  }
+
+  public String getIdentifier(String entityName, String id) {
+    return OBDal.getInstance().get(entityName, id).getIdentifier();
   }
 
   public Map<String, String> getParameters() {

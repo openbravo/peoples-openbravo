@@ -23,8 +23,10 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.client.application.Parameter;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.model.ad.ui.Field;
 
@@ -87,6 +89,20 @@ public class DateUIDefinition extends UIDefinition {
     } catch (Exception e) { // ignore
       return fieldProperties;
     }
+  }
+
+  @Override
+  public String getParameterProperties(Parameter parameter) {
+    String properties = super.getParameterProperties(parameter);
+    JSONObject o;
+    try {
+      o = new JSONObject(properties != null && properties.length() > 0 ? properties : "{}");
+      o.put("width", "50%");
+    } catch (JSONException e) {
+      // ignore
+      return properties;
+    }
+    return o.toString();
   }
 
   protected SimpleDateFormat getClassicFormat() {

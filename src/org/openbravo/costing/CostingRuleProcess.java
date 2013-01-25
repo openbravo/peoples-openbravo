@@ -176,8 +176,8 @@ public class CostingRuleProcess implements Process {
     where.append("   and p." + Product.PROPERTY_STOCKED + " = true");
     where.append("   and p." + Product.PROPERTY_ORGANIZATION + ".id in (:porgs)");
     where.append("   and exists (select 1 from " + MaterialTransaction.ENTITY_NAME);
-    where.append("     where " + MaterialTransaction.PROPERTY_PRODUCT + " = p)");
-    where.append("      and " + MaterialTransaction.PROPERTY_ORGANIZATION + " .id in (:childOrgs)");
+    where.append("     where " + MaterialTransaction.PROPERTY_PRODUCT + " = p");
+    where.append("      and " + MaterialTransaction.PROPERTY_ORGANIZATION + " .id in (:childOrgs))");
 
     OBQuery<Product> pQry = OBDal.getInstance().createQuery(Product.class, where.toString());
     pQry.setFilterOnReadableOrganization(false);

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2012 Openbravo SLU
+ * All portions are Copyright (C) 2011-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,6 +27,7 @@ isc.OBSelectorPopupWindow.addProperties({
   canDragResize: true,
   dismissOnEscape: true,
   showMaximizeButton: true,
+  multiselect: false,
 
   defaultSelectorGridField: {
     canFreeze: true,
@@ -75,6 +76,7 @@ isc.OBSelectorPopupWindow.addProperties({
     this.selectorGrid = isc.OBGrid.create({
 
       selector: this.selector,
+      selectionAppearance: this.selectionAppearance,
 
       dataProperties: {
         useClientFiltering: false,
@@ -95,8 +97,12 @@ isc.OBSelectorPopupWindow.addProperties({
 
       getFetchRequestParams: function (params) {
         params = params || {};
-        // on purpose not sending the third boolean param
-        isc.addProperties(params, this.selector.form.view.getContextInfo(false, true));
+        // on purpose not passing the third boolean param
+        if (this.selector && this.selector.form && this.selector.form.view && this.selector.form.view.getContextInfo) {
+          isc.addProperties(params, this.selector.form.view.getContextInfo(false, true));
+        } else if (this.view && this.view.sourceView && this.view.sourceView.getContextInfo) {
+          isc.addProperties(params, this.view.sourceView.getContextInfo(false, true));
+        }
 
         // also adds the special ORG parameter
         if (params.inpadOrgId) {
@@ -120,7 +126,8 @@ isc.OBSelectorPopupWindow.addProperties({
       },
 
       dataArrived: function () {
-        var record, rowNum;
+        var record, rowNum, i, selectedRecords = [],
+            ds, ids;
         this.Super('dataArrived', arguments);
         // check if a record has been selected, if
         // not take the one
@@ -128,23 +135,112 @@ isc.OBSelectorPopupWindow.addProperties({
         // by doing this when data arrives the selection
         // will show up
         // when the record shows in view
-        if (this.targetRecordId) {
-          record = this.data.find(this.selector.valueField, this.targetRecordId);
-          rowNum = this.getRecordIndex(record);
-          this.selectSingleRecord(record);
-          // give grid time to draw
-          this.fireOnPause('scrollRecordIntoView', this.scrollRecordIntoView, [rowNum, true], this);
-          delete this.targetRecordId;
-        } else if (this.data.lengthIsKnown() && this.data.getLength() === 1) {
-          // only one record, select that one straight away
-          this.selectSingleRecord(0);
+        if (this.selector.selectorWindow.multiselect) {
+          ds = this.data;
+          ids = this.selector.selectorWindow.selectedIds;
+          for (i = 0; i < ids.length; i++) {
+            selectedRecords.push(ds.find(OB.Constants.ID, ids[i]));
+          }
+          this.selectRecords(selectedRecords);
         } else {
-          this.selectSingleRecord(null);
+          if (this.targetRecordId) {
+            record = this.data.find(this.selector.valueField, this.targetRecordId);
+            rowNum = this.getRecordIndex(record);
+            this.selectSingleRecord(record);
+            // give grid time to draw
+            this.fireOnPause('scrollRecordIntoView', this.scrollRecordIntoView, [rowNum, true], this);
+            delete this.targetRecordId;
+          } else if (this.data.lengthIsKnown() && this.data.getLength() === 1) {
+            // only one record, select that one straight away
+            this.selectSingleRecord(0);
+          } else {
+            this.selectSingleRecord(null);
+          }
         }
       },
       fields: this.selectorGridFields,
       recordDoubleClick: function () {
         selectorWindow.setValueInField();
+      },
+
+      handleFilterEditorSubmit: function (criteria, context) {
+        var ids = [],
+            crit = {},
+            len, i, c, found, fixedCriteria;
+        if (!selectorWindow.multiselect) {
+          this.Super('handleFilterEditorSubmit', arguments);
+          return;
+        }
+
+        if (criteria && criteria.criteria) {
+          fixedCriteria = [];
+          // remove from criteria dummy one created to preserve selected items
+          for (i = 0; i < criteria.criteria.length; i++) {
+            if (!criteria.criteria[i].dummyCriteria && criteria.criteria[i].fieldName !== '_selectorDefinitionId') {
+              fixedCriteria.push(criteria.criteria[i]);
+            }
+          }
+          criteria.criteria = fixedCriteria;
+        }
+
+        len = this.selector.selectorWindow.selectedIds.length;
+        for (i = 0; i < len; i++) {
+          ids.push({
+            fieldName: 'id',
+            operator: 'equals',
+            value: this.selector.selectorWindow.selectedIds[i]
+          });
+        }
+
+        if (len > 0) {
+          crit._constructor = 'AdvancedCriteria';
+          crit._OrExpression = true; // trick to get a really _or_ in the backend
+          crit.operator = 'or';
+          crit.criteria = ids;
+
+          c = (criteria && criteria.criteria) || [];
+          found = false;
+
+          for (i = 0; i < c.length; i++) {
+            if (c[i].fieldName && c[i].fieldName !== '_selectorDefinitionId' && c[i].value !== '') {
+              found = true;
+              break;
+            }
+          }
+
+          if (!found) {
+            if (!criteria) {
+              criteria = {
+                _constructor: 'AdvancedCriteria',
+                operator: 'and',
+                criteria: []
+              };
+            }
+
+            // adding an *always true* sentence
+            criteria.criteria.push({
+              fieldName: 'id',
+              operator: 'notNull',
+              dummyCriteria: true
+            });
+          }
+          crit.criteria.push(criteria); // original filter
+        } else {
+          crit = criteria;
+        }
+        this.Super('handleFilterEditorSubmit', [crit, context]);
+      },
+      selectionChanged: function (record, state) {
+        if (this.selector.selectorWindow.selectedIds) {
+          if (state) {
+            this.selector.selectorWindow.selectId(record[OB.Constants.ID]);
+          } else {
+            this.selector.selectorWindow.selectedIds.remove(record[OB.Constants.ID]);
+          }
+          this.markForRedraw('Selection changed');
+        }
+
+        this.Super('selectionChanged', arguments);
       }
     });
 
@@ -254,8 +350,12 @@ isc.OBSelectorPopupWindow.addProperties({
       '_selectorDefinitionId': this.selectorDefinitionId || this.selector.selectorDefinitionId
     };
 
-    // purposely not passing the third boolean param
-    isc.addProperties(data, this.selector.form.view.getContextInfo(false, true));
+    // on purpose not passing the third boolean param
+    if (this.selector && this.selector.form && this.selector.form.view && this.selector.form.view.getContextInfo) {
+      isc.addProperties(data, this.selector.form.view.getContextInfo(false, true));
+    } else if (this.view && this.view.sourceView && this.view.sourceView.getContextInfo) {
+      isc.addProperties(data, this.view.sourceView.getContextInfo(false, true));
+    }
 
     callback = function (resp, data, req) {
       selectorWindow.fetchDefaultsCallback(resp, data, req);
@@ -278,7 +378,11 @@ isc.OBSelectorPopupWindow.addProperties({
   },
 
   setValueInField: function () {
-    this.selector.setValueFromRecord(this.selectorGrid.getSelectedRecord(), true);
+    if (this.multiselect) {
+      this.selector.setSelectedRecords(this.selectorGrid.getSelectedRecords());
+    } else {
+      this.selector.setValueFromRecord(this.selectorGrid.getSelectedRecord(), true);
+    }
     this.hide();
   }
 });
@@ -402,13 +506,19 @@ isc.OBSelectorItem.addProperties({
   // changed handles the case that the user removes the value using the keyboard
   // this should do the same things as setting the value through the pickvalue
   changed: function (form, item, newValue) {
+    var identifier;
     // only do the identifier actions when clearing
     // in all other cases pickValue is called
     if (!newValue) {
       this.setValueFromRecord(null);
     }
+    if (OB.Utilities.isUUID(newValue)) {
+      identifier = this.mapValueToDisplay(newValue);
+    } else {
+      identifier = newValue;
+    }
     //Setting the element value again to align the cursor position correctly.
-    this.setElementValue(newValue);
+    this.setElementValue(identifier);
   },
 
   setPickListWidth: function () {
@@ -526,8 +636,14 @@ isc.OBSelectorItem.addProperties({
     var i, j, outFields = this.outFields,
         form = this.form,
         grid = this.grid,
-        item, value, fields = form.fields || grid.fields,
-        numberFormat;
+        item, value, fields, numberFormat;
+
+    if ((!form || (form && !form.fields)) && (!grid || (grid && !grid.fields))) {
+      // not handling out fields
+      return;
+    }
+
+    fields = form.fields || grid.fields;
     for (i in outFields) {
       if (outFields.hasOwnProperty(i)) {
         if (outFields[i].suffix) {
@@ -612,9 +728,13 @@ isc.OBSelectorItem.addProperties({
     requestProperties.params[isc.OBViewGrid.NO_COUNT_PARAMETER] = 'true';
 
     // on purpose not passing the third boolean param
-    isc.addProperties(requestProperties.params, this.form.view.getContextInfo(false, true));
+    if (this.form && this.form.view && this.form.view.getContextInfo) {
+      isc.addProperties(requestProperties.params, this.form.view.getContextInfo(false, true));
+    } else if (this.view && this.view.sourceView && this.view.sourceView.getContextInfo) {
+      isc.addProperties(requestProperties.params, this.view.sourceView.getContextInfo(false, true));
+    }
 
-    if (this.form.view.standardWindow) {
+    if (this.form && this.form.view && this.form.view.standardWindow) {
       isc.addProperties(requestProperties.params, {
         windowId: this.form.view.standardWindow.windowId,
         tabId: this.form.view.tabId,
@@ -630,7 +750,7 @@ isc.OBSelectorItem.addProperties({
     if (this.form.getFocusItem() !== this && !this.form.view.isShowingForm && this.getEnteredValue() === '' && this.savedEnteredValue) {
       this.setElementValue(this.savedEnteredValue);
       delete this.savedEnteredValue;
-    } else if (this.form.view.isShowingForm && this.getEnteredValue() === '' && this.savedEnteredValue) {
+    } else if (this.form && this.form.view && this.form.view.isShowingForm && this.getEnteredValue() === '' && this.savedEnteredValue) {
       this.setElementValue(this.savedEnteredValue);
       delete this.savedEnteredValue;
     }

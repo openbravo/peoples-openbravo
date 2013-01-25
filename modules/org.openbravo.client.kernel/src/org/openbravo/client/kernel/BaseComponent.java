@@ -172,7 +172,7 @@ public abstract class BaseComponent implements Component {
    *          an instance of this class will be returned
    * @return an instance of clz
    */
-  protected <U extends Component> U createComponent(Class<U> clz) {
+  public <U extends Component> U createComponent(Class<U> clz) {
     return (U) components.select(clz).get();
   }
 

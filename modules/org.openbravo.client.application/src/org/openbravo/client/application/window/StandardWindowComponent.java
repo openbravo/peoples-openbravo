@@ -44,10 +44,6 @@ public class StandardWindowComponent extends BaseTemplateComponent {
   private static final String DEFAULT_TEMPLATE_ID = "ADD5EF45333C458098286D0E639B3290";
 
   protected static final Map<String, String> TEMPLATE_MAP = new HashMap<String, String>();
-  static {
-    // WindowType - Template
-    TEMPLATE_MAP.put("OBUIAPP_PickAndExecute", "FF80818132F916130132F9357DE10016");
-  }
 
   private Window window;
   private OBViewTab rootTabComponent = null;
@@ -56,9 +52,7 @@ public class StandardWindowComponent extends BaseTemplateComponent {
   private List<String> processViews = new ArrayList<String>();
 
   protected Template getComponentTemplate() {
-    if (TEMPLATE_MAP.containsKey(window.getWindowType())) {
-      return OBDal.getInstance().get(Template.class, TEMPLATE_MAP.get(window.getWindowType()));
-    }
+
     return OBDal.getInstance().get(Template.class, DEFAULT_TEMPLATE_ID);
   }
 

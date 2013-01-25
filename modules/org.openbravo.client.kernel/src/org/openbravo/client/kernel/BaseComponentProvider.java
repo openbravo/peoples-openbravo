@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,7 +21,9 @@ package org.openbravo.client.kernel;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -38,6 +40,8 @@ import org.openbravo.model.ad.module.Module;
 public abstract class BaseComponentProvider implements ComponentProvider {
 
   private Module module;
+
+  private static Map<String, List<String>> appDependencies = new HashMap<String, List<String>>();
 
   @Inject
   @Any
@@ -60,6 +64,10 @@ public abstract class BaseComponentProvider implements ComponentProvider {
     }
     module = KernelUtils.getInstance().getModule(getModulePackageName());
     return module;
+  }
+
+  public static void setAppDependencies(String app, List<String> dependencies) {
+    appDependencies.put(app, dependencies);
   }
 
   /**
@@ -284,7 +292,19 @@ public abstract class BaseComponentProvider implements ComponentProvider {
     }
 
     public boolean isValidForApp(String app) {
-      return this.validForAppList.contains(app);
+      boolean valid = this.validForAppList.contains(app);
+      if (valid) {
+        return true;
+      }
+      if (appDependencies.containsKey(app)) {
+        for (String dep : appDependencies.get(app)) {
+          valid = isValidForApp(dep);
+          if (valid) {
+            return true;
+          }
+        }
+      }
+      return false;
     }
 
   }

@@ -20,8 +20,10 @@ package org.openbravo.erpCommon.ad_callouts;
 
 import javax.servlet.ServletException;
 
+import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 
 public class SE_Payment_BPartner extends SimpleCallout {
@@ -42,6 +44,12 @@ public class SE_Payment_BPartner extends SimpleCallout {
           : bpartner.getPOFinancialAccount().getId());
     } catch (Exception e) {
       log4j.info("No default info for the selected business partner");
+    }
+    if (FIN_Utility.isBlockedBusinessPartner(strcBpartnerId, "Y".equals(strisreceipt), 4)) {
+      // If the Business Partner is blocked for this document, show an information message.
+      info.addResult("MESSAGE",
+          OBMessageUtils.messageBD("ThebusinessPartner") + " " + bpartner.getIdentifier() + " "
+              + OBMessageUtils.messageBD("BusinessPartnerBlocked"));
     }
   }
 }

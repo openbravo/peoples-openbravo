@@ -22,7 +22,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2012 Openbravo SLU
+* All portions are Copyright (C) 2012-2013 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -76,22 +76,35 @@ BEGIN
 	end if;
 
   for Cur_Order in (select c_orderline_id as id, gross_unit_price, c_tax_id, cancelpricead, 
-                           M_Product_ID, ad_client_id, ad_org_id, null as from_order
+                           M_Product_ID, ad_client_id, ad_org_id, null as from_order, line
                       from c_orderline 
                      where c_order_id = p_doc_id
                        and p_type = 'O'
                      union
                     select c_invoiceline_id, gross_unit_price, c_tax_id, 'N', 
-                           M_Product_ID, ad_client_id, ad_org_id, c_orderline_id
+                           M_Product_ID, ad_client_id, ad_org_id, c_orderline_id, line
                       from c_invoiceline 
                      where c_invoice_id = p_doc_id
-                       and p_type = 'I') loop
+                       and p_type = 'I'
+                     order by line, 1) loop
     -- Remove existent promotions as they are going to be recalculated
     if (p_type = 'O') then
       select count(*) 
         into v_count
         from c_orderline_offer
        where c_orderline_id = Cur_Order.id;
+
+      if (v_count = 0) then
+        -- In case there are any price adjustment, prices need also to be recalculated
+        -- as they are proposed in UI as the adjustments were applied
+        select count(*)
+          into v_count
+          from m_offer
+         where isactive = 'Y'
+          and v_date between DateFrom and coalesce(DateTo, TO_DATE('31-12-9999', 'DD-MM-YYYY'))
+          and AD_Client_ID = Cur_Order.AD_Client_ID
+          and M_Offer_Type_ID = '5D4BAF6BB86D4D2C9ED3D5A6FC051579';
+      end if; 
 
       if (v_count > 0) then
 				if (v_taxIncluded = 'Y') then
@@ -116,6 +129,19 @@ BEGIN
        into v_count
        from c_invoiceline_offer
       where c_invoiceline_id = Cur_Order.id;
+
+      if (v_count = 0) then
+        -- In case there are any price adjustment, prices need also to be recalculated
+        -- as they are proposed in UI as the adjustments were applied
+        select count(*)
+          into v_count
+          from m_offer
+         where isactive = 'Y'
+          and v_date between DateFrom and coalesce(DateTo, TO_DATE('31-12-9999', 'DD-MM-YYYY'))
+          and AD_Client_ID = Cur_Order.AD_Client_ID
+          and M_Offer_Type_ID = '5D4BAF6BB86D4D2C9ED3D5A6FC051579';
+      end if; 
+
       if (v_count > 0) then
         if (Cur_Order.from_order is null) then
           -- Invoice: reset to original prices in case invoice is not coming fom an order
