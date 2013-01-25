@@ -187,6 +187,7 @@ isc.OBParameterWindowView.addProperties({
           autoFocus: true,
           titleOrientation: 'top',
           numCols: 4,
+          showErrorIcons: false,
           colWidths: ['*', '*', '*', '*']
         });
 
