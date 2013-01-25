@@ -427,5 +427,7 @@ isc.OBParameterWindowView.addProperties({
         }
       }
     }
+    // redraw to execute display logic
+    this.theForm.markForRedraw();
   }
 });
