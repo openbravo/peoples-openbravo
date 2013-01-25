@@ -185,6 +185,8 @@ isc.OBPickAndExecuteGrid.addProperties({
       this.discardEdits(recordIdx);
     }
 
+    this.selectionUpdated(record, this.getSelectedRecords());
+
     this.Super('selectionChanged', arguments);
   },
 
