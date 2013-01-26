@@ -171,14 +171,14 @@ isc.OBGrid.addProperties({
     var field = this.getField(colNum),
         rowNum = this.getRecordIndex(record),
         isEditRecord = rowNum === this.getEditRow(),
-        canvas, clientClass, clientClassPropsStartPosition, clientClassProps;
+        canvas, clientClass, clientClassPropsStartPosition, clientClassProps, clientClassIsShownInEdit;
 
     if (field.isLink && !field.clientClass && record[field.name]) {
       // To keep compatibility with < 3.0MP20 versions that didn't implement 'clientClass' and only have 'isLink' property
       field.clientClass = 'OBGridLinkCellClick';
     }
 
-    if (field.clientClass && !isEditRecord) {
+    if (field.clientClass) {
       clientClass = field.clientClass;
       clientClassPropsStartPosition = clientClass.indexOf('{');
       if (clientClassPropsStartPosition > 0) {
@@ -194,19 +194,23 @@ isc.OBGrid.addProperties({
       }
       clientClass = clientClass.replace(/\s+/g, '');
 
-      canvas = isc.ClassFactory.newInstance(clientClass, {
-        grid: this,
-        align: this.getCellAlign(record, rowNum, colNum),
-        field: field,
-        record: record,
-        rowNum: rowNum,
-        colNum: colNum
-      }, clientClassProps);
-      if (canvas) {
-        if (canvas.setRecord) {
-          canvas.setRecord(record);
+      clientClassIsShownInEdit = new Function('return ' + clientClass + '.getInstanceProperty("isShownInEdit")')();
+
+      if (!isEditRecord || clientClassIsShownInEdit) {
+        canvas = isc.ClassFactory.newInstance(clientClass, {
+          grid: this,
+          align: this.getCellAlign(record, rowNum, colNum),
+          field: field,
+          record: record,
+          rowNum: rowNum,
+          colNum: colNum
+        }, clientClassProps);
+        if (canvas) {
+          if (canvas.setRecord) {
+            canvas.setRecord(record);
+          }
+          return canvas;
         }
-        return canvas;
       }
     }
     return null;
@@ -794,6 +798,7 @@ isc.OBGridLinkItem.addProperties({
   height: 1,
   width: '100%',
 
+  isShownInEdit: true,
   initWidget: function () {
     this.btn = isc.OBGridLinkButton.create({});
     this.btn.setTitle(this.title);
