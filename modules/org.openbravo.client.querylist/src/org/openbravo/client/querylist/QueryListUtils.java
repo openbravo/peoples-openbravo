@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -81,6 +81,10 @@ class QueryListUtils {
             field.put("summaryFunction", column.getSummarizeType());
           } else {
             field.put("showGridSummary", false);
+          }
+
+          if (column.getClientClass() != null) {
+            field.put("clientClass", column.getClientClass());
           }
 
           field.put("canExport", true);

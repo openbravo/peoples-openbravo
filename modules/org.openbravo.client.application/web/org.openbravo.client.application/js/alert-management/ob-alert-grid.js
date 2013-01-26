@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2012 Openbravo SLU
+ * All portions are Copyright (C) 2011-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -93,7 +93,7 @@ isc.OBAlertGrid.addProperties({
     title: OB.I18N.getLabel('OBUIAPP_AlertGrid_Record'),
     canFilter: true,
     canEdit: false,
-    isLink: true,
+    clientClass: 'OBAlertGridCanvasItem_Link',
     filterOnKeypress: true,
     filterEditorType: 'OBTextItem',
     type: '_id_10',
@@ -210,19 +210,6 @@ isc.OBAlertGrid.addProperties({
       this.singleRecordSelection = false;
     }
     return this.Super('headerClick', arguments);
-  },
-
-  cellClick: function (record, rowNum, colNum) {
-    var i, tabId, field = this.getField(colNum),
-        length = OB.AlertManagement.alertRules.length;
-    for (i = 0; i < length; i++) {
-      if (OB.AlertManagement.alertRules[i].alertRuleId === record.alertRule) {
-        tabId = OB.AlertManagement.alertRules[i].tabId;
-      }
-    }
-    if (field.isLink && tabId && tabId !== '') {
-      OB.Utilities.openDirectTab(tabId, record.referenceSearchKey);
-    }
   },
 
   recordClick: function (viewer, record, recordNum, field, fieldNum, value, rawValue) {
@@ -519,4 +506,23 @@ isc.OBAlertGrid.addProperties({
     this.Super('draw', arguments);
   }
 
+});
+
+isc.defineClass('OBAlertGridCanvasItem_Link', isc.OBGridLinkItem);
+
+isc.OBAlertGridCanvasItem_Link.addProperties({
+  setRecord: function () {
+    this.setTitle(this.grid.formatLinkValue(this.record, this.field, this.colNum, this.rowNum, this.record[this.field.name]));
+  },
+  doAction: function () {
+    var i, tabId, length = OB.AlertManagement.alertRules.length;
+    for (i = 0; i < length; i++) {
+      if (OB.AlertManagement.alertRules[i].alertRuleId === this.record.alertRule) {
+        tabId = OB.AlertManagement.alertRules[i].tabId;
+      }
+    }
+    if (tabId && tabId !== '') {
+      OB.Utilities.openDirectTab(tabId, this.record.referenceSearchKey);
+    }
+  }
 });

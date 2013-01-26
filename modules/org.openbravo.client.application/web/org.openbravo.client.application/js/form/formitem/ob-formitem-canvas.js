@@ -93,12 +93,11 @@ isc.OBTruncAddMinusDisplay.addProperties({
   overflow: 'visible',
 
   setRecord: function (record) {
-    var fld = this.grid.getField(this.fieldName),
-        val = record[this.fieldName];
-    if (fld && fld.type && isc.SimpleType.getType(fld.type).normalDisplayFormatter) {
-      this.showValue(isc.SimpleType.getType(fld.type).normalDisplayFormatter(val), val);
+    var val = record[this.field.name];
+    if (this.field && this.field.type && isc.SimpleType.getType(this.field.type).normalDisplayFormatter) {
+      this.showValue(isc.SimpleType.getType(this.field.type).normalDisplayFormatter(val), val);
     } else {
-      this.showValue(String(record[this.fieldName]));
+      this.showValue(String(record[this.field.name]));
     }
   },
 
@@ -124,12 +123,11 @@ isc.OBAddPercentageSign.addProperties({
   overflow: 'visible',
 
   setRecord: function (record) {
-    var fld = this.grid.getField(this.fieldName),
-        val = record[this.fieldName];
-    if (fld && fld.type && isc.SimpleType.getType(fld.type).normalDisplayFormatter) {
-      this.showValue(isc.SimpleType.getType(fld.type).normalDisplayFormatter(val), val);
+    var val = record[this.field.name];
+    if (this.field && this.field.type && isc.SimpleType.getType(this.field.type).normalDisplayFormatter) {
+      this.showValue(isc.SimpleType.getType(this.field.type).normalDisplayFormatter(val), val);
     } else {
-      this.showValue(String(record[this.fieldName]));
+      this.showValue(String(record[this.field.name]));
     }
   },
 

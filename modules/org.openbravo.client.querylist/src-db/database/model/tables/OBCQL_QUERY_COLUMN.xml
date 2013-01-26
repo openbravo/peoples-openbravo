@@ -89,6 +89,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="CLIENTCLASS" primaryKey="false" required="false" type="NVARCHAR" size="255" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_TAB" name="OBCQL_QUERY_COLUMN_ADTAB">
         <reference local="AD_TAB_ID" foreign="AD_TAB_ID"/>
       </foreign-key>
