@@ -171,7 +171,7 @@ isc.OBGrid.addProperties({
     var field = this.getField(colNum),
         rowNum = this.getRecordIndex(record),
         isEditRecord = rowNum === this.getEditRow(),
-        canvas, clientClass, clientClassPropsStartPosition, clientClassProps, clientClassIsShownInEdit;
+        canvas, clientClass, clientClassPropsStartPosition, clientClassProps, clientClassIsShownInGridEdit;
 
     if (field.isLink && !field.clientClass && record[field.name]) {
       // To keep compatibility with < 3.0MP20 versions that didn't implement 'clientClass' and only have 'isLink' property
@@ -194,9 +194,9 @@ isc.OBGrid.addProperties({
       }
       clientClass = clientClass.replace(/\s+/g, '');
 
-      clientClassIsShownInEdit = new Function('return ' + clientClass + '.getInstanceProperty("isShownInEdit")')();
+      clientClassIsShownInGridEdit = new Function('return ' + clientClass + '.getInstanceProperty("isShownInGridEdit")')();
 
-      if (!isEditRecord || clientClassIsShownInEdit) {
+      if (!isEditRecord || clientClassIsShownInGridEdit) {
         canvas = isc.ClassFactory.newInstance(clientClass, {
           grid: this,
           align: this.getCellAlign(record, rowNum, colNum),
@@ -798,7 +798,7 @@ isc.OBGridLinkItem.addProperties({
   height: 1,
   width: '100%',
 
-  isShownInEdit: true,
+  isShownInGridEdit: true,
   initWidget: function () {
     this.btn = isc.OBGridLinkButton.create({});
     this.btn.setTitle(this.title);
