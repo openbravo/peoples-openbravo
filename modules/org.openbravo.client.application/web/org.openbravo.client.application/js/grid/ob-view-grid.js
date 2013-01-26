@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -1873,6 +1873,25 @@ isc.OBViewGrid.addProperties({
       }
     }
 
+    if (this.view.parentView && !this.view.parentProperty) {
+      // subtabs without an explicit reference to their parent property
+      // result in an empty criteria which is ignored not generating the
+      // request. Forcing load
+      // See issue #22645
+      selectedValues = this.view.parentView.viewGrid.getSelectedRecords();
+      if (selectedValues.length !== 1) {
+        // if there is not a single record selected, always false criterion
+        criteria.criteria.push({
+          fieldName: 'id',
+          operator: 'equals',
+          value: '-1'
+        });
+      } else {
+        // with a single record selected, dummy criterion
+        criteria.criteria.push(isc.OBRestDataSource.getDummyCriterion());
+      }
+    }
+
     this.checkShowFilterFunnelIcon(criteria);
 
     return criteria;
@@ -2462,8 +2481,6 @@ isc.OBViewGrid.addProperties({
 
     ret = this.Super('startEditing', [rowNum, colNum, suppressFocus, eCe, suppressWarning]);
 
-    this.recomputeCanvasComponents(rowNum);
-
     return ret;
   },
 
@@ -2487,19 +2504,6 @@ isc.OBViewGrid.addProperties({
     this.startEditing(insertRow);
     this.recomputeCanvasComponents(insertRow);
     this.view.refreshChildViews();
-  },
-
-  // recompute recordcomponents
-  recomputeCanvasComponents: function (rowNum) {
-    var i, fld, length = this.getFields().length;
-
-    // remove client record components in edit mode
-    for (i = 0; i < length; i++) {
-      fld = this.getFields()[i];
-      if (fld.clientClass) {
-        this.refreshRecordComponent(rowNum, i);
-      }
-    }
   },
 
   initializeEditValues: function (rowNum, colNum) {
@@ -2674,10 +2678,6 @@ isc.OBViewGrid.addProperties({
   formatDisplayValue: function (value, record, rowNum, colNum) {
     var fld = this.getFields()[colNum],
         index;
-
-    if (fld.clientClass) {
-      return '';
-    }
 
     if (this.inCellHoverHTML || !isc.isA.String(value)) {
       return value;
@@ -3324,21 +3324,8 @@ isc.OBViewGrid.addProperties({
         layout.showEditOpen();
       }
       return layout;
-    }
-    if (fld.clientClass && !isEditRecord) {
-      canvas = isc.ClassFactory.newInstance(fld.clientClass, {
-        grid: this,
-        fieldName: fld.name,
-        rowNum: rowNum,
-        record: record,
-        colNum: colNum
-      });
-      if (canvas) {
-        if (canvas.setRecord) {
-          canvas.setRecord(record);
-        }
-        return canvas;
-      }
+    } else {
+      return this.Super('createRecordComponent', arguments);
     }
   },
 
@@ -3361,12 +3348,7 @@ isc.OBViewGrid.addProperties({
     } else if (isEditRecord) {
       return null;
     } else {
-      if (component.setRecord) {
-        component.setRecord(record);
-      } else {
-        component.record = record;
-      }
-      component.rowNum = rowNum;
+      return this.Super('updateRecordComponent', arguments);
     }
     return component;
   },

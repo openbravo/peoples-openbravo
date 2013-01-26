@@ -104,6 +104,16 @@ BEGIN --BODY
   IF (v_Count <> 0) THEN
     RAISE_APPLICATION_ERROR(-20000, '@Inline@'||' '||v_line||' '||'@productWithoutAttributeSet@') ;
   END IF;
+
+  --Checking if the Internal consumption has lines
+  SELECT count(*)
+  INTO v_Count
+  FROM M_Internal_ConsumptionLine
+  WHERE M_Internal_Consumption_ID=Record_ID;
+  IF (v_Count = 0) THEN
+    RAISE_APPLICATION_ERROR(-20000, '@InternalConsuptionNoLines@') ;
+  END IF;
+  
   IF (v_action IN ('CO')) THEN
     /**
     * Complete action: Create records on m_transaction and update status

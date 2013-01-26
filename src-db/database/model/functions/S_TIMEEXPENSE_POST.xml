@@ -101,7 +101,7 @@ BEGIN --BODY
   GROUP BY S_TimeExpense.PROCESSED;
   IF (v_Processed = 'Y') THEN
     IF (v_CInvoicelineId IS NULL AND v_COrderlineId IS NULL) THEN
-        UPDATE S_TimeExpense SET Processed = 'N' WHERE S_TimeExpense_ID = v_Record_ID;
+        UPDATE S_TimeExpense SET Processed = 'N',Processing = 'N' WHERE S_TimeExpense_ID = v_Record_ID;
     ELSE
         v_Message:='@DocumentAssociated@';
      v_Result:=0;
@@ -121,7 +121,7 @@ BEGIN --BODY
        -- Checks come here
        -- Complete
          UPDATE S_TimeExpense
-           SET Processed='Y',
+           SET Processed='Y',processing = 'Y',
            Updated=now(),
            UpdatedBy=v_AD_User_ID
          WHERE S_TimeExpense_ID=CUR_te.S_TimeExpense_ID;

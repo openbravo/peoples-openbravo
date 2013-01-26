@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -37,6 +37,7 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
   OBQueryListShowAllLabelHeight: null,
 
   initWidget: function () {
+    var field, i;
     this.showAllLabel = isc.HLayout.create({
       height: this.OBQueryListShowAllLabelHeight,
       members: [
@@ -52,6 +53,16 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
     });
 
     this.gridDataSource = this.createGridDataSource();
+
+    // To use 'OBQLCanvasItem_Link' clientClass in case we have just a simple 'link' (with no clientClass defined)
+    if (this.fields) {
+      for (i = 0; i < this.fields.length; i++) {
+        field = this.fields[i];
+        if (field.isLink && !field.clientClass) {
+          field.clientClass = 'OBQLCanvasItem_Link';
+        }
+      }
+    }
 
     this.Super('initWidget', arguments);
     this.widgetTitle = this.title;
@@ -308,16 +319,6 @@ isc.OBQueryListGrid.addProperties({
     };
 
     return this.Super('fetchData', [crit, newCallBack, reqProperties]);
-  },
-
-  cellClick: function (record, rowNum, colNum) {
-    var field = this.getField(colNum);
-    if (field.isLink) {
-      if (field.OB_TabId && field.OB_LinkExpression) {
-        //To open the tab provided in the widget column. Refer https://issues.openbravo.com/view.php?id=17411.
-        OB.Utilities.openDirectTab(field.OB_TabId, record[field.OB_LinkExpression]);
-      }
-    }
   },
 
   getWidgetTotalRows: function (dsResponse, data, dsRequest) {

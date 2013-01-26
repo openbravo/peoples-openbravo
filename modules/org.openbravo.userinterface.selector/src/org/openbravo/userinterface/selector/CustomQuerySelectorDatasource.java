@@ -35,6 +35,8 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
+import org.hibernate.ScrollMode;
+import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.domaintype.BigDecimalDomainType;
@@ -97,14 +99,21 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
       Query selQuery = OBDal.getInstance().getSession().createQuery(HQL);
       String[] queryAliases = selQuery.getReturnAliases();
       if ("true".equals(parameters.get(JsonConstants.NOCOUNT_PARAMETER))) {
-        int num = 0, queryListSize = 0;
-        num = endRow + 2;
-        queryListSize = selQuery.list().size();
+        int totalRows = 0, queryListSize = 0, clearEachLoop = 100;
+        // Defaulted to endRow + 2 to check for more records while scrolling.
+        totalRows = endRow + 2;
+        ScrollableResults queryResults = selQuery.scroll(ScrollMode.FORWARD_ONLY);
+        while (queryResults.next()) {
+          queryListSize++;
+          if (queryListSize % clearEachLoop == 0) {
+            OBDal.getInstance().getSession().clear();
+          }
+        }
         if (startRow < endRow) {
           if (queryListSize < endRow) {
-            num = queryListSize;
+            totalRows = queryListSize;
           }
-          parameters.put(JsonConstants.RESPONSE_TOTALROWS, String.valueOf(num));
+          parameters.put(JsonConstants.RESPONSE_TOTALROWS, String.valueOf(totalRows));
         }
       }
 
@@ -373,23 +382,44 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
    */
   private String getSortClause(String sortBy, Selector sel) {
     StringBuffer sortByClause = new StringBuffer();
+    boolean sortByDesc = false;
+    if (sortBy != null && sortBy.startsWith("-")) {
+      sortByDesc = true;
+    }
     // If grid is manually filtered sortBy is not empty
     if (StringUtils.isNotEmpty(sortBy)) {
       if (sortBy.contains(JsonConstants.IN_PARAMETER_SEPARATOR)) {
         final String[] fieldNames = sortBy.split(JsonConstants.IN_PARAMETER_SEPARATOR);
         for (String fieldName : fieldNames) {
+          if (sortByDesc) {
+            fieldName = fieldName.substring(1, fieldName.length());
+          }
           int fieldSortIndex = getFieldSortIndex(fieldName, sel);
           if (fieldSortIndex > 0) {
             if (sortByClause.length() > 0) {
               sortByClause.append(", ");
             }
-            sortByClause.append(fieldSortIndex);
+            if (sortByDesc) {
+              sortByClause.append(fieldSortIndex + " desc");
+            } else {
+              sortByClause.append(fieldSortIndex);
+            }
           }
         }
       } else {
-        int fieldSortIndex = getFieldSortIndex(sortBy, sel);
+        String fieldName = null;
+        if (sortByDesc) {
+          fieldName = sortBy.substring(1, sortBy.length());
+        } else {
+          fieldName = sortBy;
+        }
+        int fieldSortIndex = getFieldSortIndex(fieldName, sel);
         if (fieldSortIndex > 0) {
-          sortByClause.append(fieldSortIndex);
+          if (sortByDesc) {
+            sortByClause.append(fieldSortIndex + " desc");
+          } else {
+            sortByClause.append(fieldSortIndex);
+          }
         }
       }
     }

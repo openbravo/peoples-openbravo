@@ -101,6 +101,9 @@
       <foreign-key foreignTable="FIN_FINANCIAL_ACCOUNT" name="FIN_RECONCIL_FINFINANCIALACC">
         <reference local="FIN_FINANCIAL_ACCOUNT_ID" foreign="FIN_FINANCIAL_ACCOUNT_ID"/>
       </foreign-key>
+      <index name="FIN_RECONCILE_FINACCOUNT" unique="false">
+        <index-column name="FIN_FINANCIAL_ACCOUNT_ID"/>
+      </index>
       <check name="FIN_RECONCIL_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="FIN_RECONCIL_PRINTDETAILED_CHK"><![CDATA[PRINTDETAILED IN ('Y', 'N')]]></check>
       <check name="FIN_RECONCIL_PRINTSUMMARY_CHK"><![CDATA[PRINTSUMMARY IN ('Y', 'N')]]></check>

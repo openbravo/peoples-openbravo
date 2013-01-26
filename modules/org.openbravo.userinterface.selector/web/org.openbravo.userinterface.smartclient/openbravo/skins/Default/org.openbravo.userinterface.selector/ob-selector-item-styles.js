@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2012 Openbravo SLU
+ * All portions are Copyright (C) 2011-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -77,12 +77,11 @@ isc.OBSelectorLinkItem.addProperties({
   }
 });
 
-//isc.OBMultiSelectorItem.addProperties(isc.addProperties({}, OB.Styles.OBSelectorItem.DefaultComboBox));
 isc.OBMultiSelectorItem.addProperties(isc.addProperties({}, OB.Styles.OBFormField.DefaultComboBox));
 isc.OBMultiSelectorItem.addProperties({
 
   comboBoxProperties: OB.Styles.OBFormField.DefaultComboBox,
-
+  requiredStyle: 'OBFormFieldInputRequired',
 
   popupIconSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/search_picker.png',
   popupIconWidth: 21,
@@ -94,6 +93,10 @@ isc.OBMultiSelectorItem.addProperties({
     icon: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/clearField.png'
   },
   initStyle: function () {
+    if (this.required) {
+      this.selectionLayout.setStyleName(this.requiredStyle);
+    }
+
     //To adapt the height this code is used because height: '*' doesn't work properly (conflicts with OBSectionItem).
     var rowSpan = 3;
     var singleRowHeight = this.getHeight();

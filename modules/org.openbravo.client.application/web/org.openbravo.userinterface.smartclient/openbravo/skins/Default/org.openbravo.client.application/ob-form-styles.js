@@ -81,6 +81,41 @@ isc.OBTextAreaItem.addProperties({
   }
 });
 
+isc.OBRichTextItem.addProperties(isc.addProperties({}, OB.Styles.OBFormField.DefaultTextItem));
+
+isc.OBRichTextItem.addProperties({
+  styleCanvasProperties: {
+    styleName: 'OBFormFieldInput',
+    editorStyleName: 'OBFormFieldInput',
+    editAreaStyleName: 'OBFormFieldStatic',
+    editAreaBackgroundColor: 'transparent'
+  }
+});
+
+isc.OBRichTextItem.addProperties({
+  initStyle: function () {
+    var rowSpan = 4;
+    var singleRowHeight = this.height;
+    var multipleRowHeight = singleRowHeight + 24; // 24px = title height + form item padding defined in CSS
+    this.canvasProperties = isc.addProperties({}, this.canvasProperties || {}, this.styleCanvasProperties);
+
+    if (this.rowSpan) {
+      rowSpan = this.rowSpan;
+    }
+    var newHeight = singleRowHeight + (rowSpan - 1) * multipleRowHeight;
+    if (!this.colSpan) {
+      this.colSpan = 2;
+    }
+    this.height = newHeight;
+    this.overflow = "hidden";
+    this.showEdges = true;
+    // Standard control group options include
+    // "fontControls", "formatControls", "styleControls" and "colorControls"
+    this.controlGroups = ["fontControls", "styleControls"];
+
+  }
+});
+
 isc.OBSpinnerItem.addProperties(isc.addProperties({}, OB.Styles.OBFormField.DefaultTextItem));
 isc.OBSpinnerItem.INCREASE_ICON = isc.addProperties(isc.OBSpinnerItem.INCREASE_ICON, {
   width: 21,

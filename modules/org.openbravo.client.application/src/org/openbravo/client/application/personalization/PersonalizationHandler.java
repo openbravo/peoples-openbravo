@@ -142,7 +142,7 @@ public class PersonalizationHandler {
     if (uiPersonalization.getVisibleAtOrganization() != null) {
       final String orgId = (String) DalUtil.getId(uiPersonalization.getVisibleAtOrganization());
       for (RoleOrganization roleOrg : adminOrgs) {
-        if (DalUtil.getId(roleOrg).equals(orgId)) {
+        if (DalUtil.getId(roleOrg.getOrganization()).equals(orgId)) {
           return true;
         }
       }

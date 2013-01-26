@@ -185,6 +185,8 @@ isc.OBPickAndExecuteGrid.addProperties({
       this.discardEdits(recordIdx);
     }
 
+    this.selectionUpdated(record, this.getSelectedRecords());
+
     this.Super('selectionChanged', arguments);
   },
 
@@ -499,11 +501,14 @@ isc.OBPickAndExecuteGrid.addProperties({
   },
 
   validateRows: function () {
-    var i, row, field, errors;
+    var i, row, field, errors, editRowIndexes, editRowIDs, rowIndexID;
 
     if (!this.neverValidate) {
       return;
     }
+
+    editRowIndexes = this.getAllEditRows();
+    editRowIDs = this.getAllEditRows(true);
 
     for (i = 0; i < this.fields.length; i++) {
       field = this.fields[i];
@@ -511,11 +516,15 @@ isc.OBPickAndExecuteGrid.addProperties({
       if (!field.validationFn) {
         continue;
       }
-
       for (row = 0; row < this.data.length; row++) {
         errors = this.validateCellValue(row, i, this.data[row][field.name]);
         if (!errors || isc.isA.emptyArray(errors)) {
-          this.clearFieldError(row, field.name);
+          if (editRowIndexes.indexOf(row) !== -1) {
+            rowIndexID = editRowIDs[editRowIndexes.indexOf(row)];
+          } else {
+            rowIndexID = row;
+          }
+          this.clearFieldError(editRowIDs[row], field.name);
         } else {
           this.setFieldError(row, field.name, errors[0]);
         }

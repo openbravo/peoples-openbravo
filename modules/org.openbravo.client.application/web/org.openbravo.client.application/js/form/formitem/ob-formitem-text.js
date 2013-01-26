@@ -25,9 +25,12 @@ isc.ClassFactory.defineClass('OBTextItem', isc.TextItem);
 isc.OBTextItem.addProperties({
   operator: 'iContains',
   validateOnExit: true,
+  maskSaveLiterals: true,
   itemHoverHTML: function (item, form) {
     if (this.isDisabled()) {
       return this.getValue();
+    } else if (this.mask) {
+      return this.mask;
     }
   }
 });

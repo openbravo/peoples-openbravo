@@ -13570,7 +13570,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--7580F9AE37704571BB0D3935252CAC5A-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--7580F9AE37704571BB0D3935252CAC5A-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--7580F9AE37704571BB0D3935252CAC5A-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--7580F9AE37704571BB0D3935252CAC5A-->  <NAME><![CDATA[Org Schema]]></NAME>
+<!--7580F9AE37704571BB0D3935252CAC5A-->  <NAME><![CDATA[General Ledgers]]></NAME>
 <!--7580F9AE37704571BB0D3935252CAC5A-->  <DESCRIPTION><![CDATA[It is used for configuring the accounting schemas attached to the organization]]></DESCRIPTION>
 <!--7580F9AE37704571BB0D3935252CAC5A-->  <HELP><![CDATA[Org Schema tabs allows to add or to review the accounting schema/s of the organization.]]></HELP>
 <!--7580F9AE37704571BB0D3935252CAC5A-->  <AD_TABLE_ID><![CDATA[088ED0B6930847508865BCB06E75228A]]></AD_TABLE_ID>

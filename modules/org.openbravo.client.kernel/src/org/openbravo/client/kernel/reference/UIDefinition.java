@@ -371,7 +371,13 @@ public abstract class UIDefinition {
 
   public String getParameterProperties(Parameter parameter) {
     if (parameter.isStartinnewline()) {
-      return "startRow: true";
+      JSONObject o = new JSONObject();
+      try {
+        o.put("startRow", true);
+        return o.toString();
+      } catch (Exception e) {
+        return "";
+      }
     }
     return "";
   }

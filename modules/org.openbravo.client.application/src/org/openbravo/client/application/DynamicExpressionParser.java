@@ -65,6 +65,7 @@ public class DynamicExpressionParser {
   }
 
   private List<Field> fieldsInExpression = new ArrayList<Field>();
+  private List<Parameter> parametersInExpression = new ArrayList<Parameter>();
   private List<AuxiliaryInput> auxInputsInExpression = new ArrayList<AuxiliaryInput>();
   private List<String> sessionAttributesInExpression = new ArrayList<String>();
 
@@ -73,7 +74,17 @@ public class DynamicExpressionParser {
   private Field field;
   private StringBuffer jsCode;
   private boolean tabLevelDisplayLogic = false;
+  private boolean parameterDisplayLogic = false;
+  Process process;
+
   private ApplicationDictionaryCachedStructures cachedStructures;
+
+  public DynamicExpressionParser(String code, Process process, boolean parameterDisplayLogic) {
+    this.code = code;
+    this.process = process;
+    this.parameterDisplayLogic = parameterDisplayLogic;
+    parse();
+  }
 
   public DynamicExpressionParser(String code, Tab tab, boolean tabLevelDisplayLogic) {
     this.code = code;
@@ -198,6 +209,14 @@ public class DynamicExpressionParser {
   }
 
   /**
+   * Returns the list of Parameters used in the dynamic expression
+   * 
+   */
+  public List<Parameter> getParameters() {
+    return parametersInExpression;
+  }
+
+  /**
    * Returns the list of session attribute names used in the dynamic expression
    * 
    */
@@ -276,37 +295,52 @@ public class DynamicExpressionParser {
       return new DisplayLogicElement("", false);
     List<Field> fields;
     List<AuxiliaryInput> auxIns;
-    try {
-      if (cachedStructures == null) {
-        cachedStructures = WeldUtils
-            .getInstanceFromStaticBeanManager(ApplicationDictionaryCachedStructures.class);
-      }
-      fields = cachedStructures.getFieldsOfTab(tab.getId());
-      auxIns = cachedStructures.getAuxiliarInputList(tab.getId());
-    } catch (NullPointerException e) {
-      fields = tab.getADFieldList();
-      auxIns = tab.getADAuxiliaryInputList();
-    }
-    for (Field field : fields) {
-      if (field.getColumn() == null) {
-        continue;
-      }
-      if (token.equalsIgnoreCase(field.getColumn().getDBColumnName())) {
-        fieldsInExpression.add(field);
-        final String fieldName = KernelUtils.getInstance().getPropertyFromColumn(field.getColumn())
-            .getName();
+    if (parameterDisplayLogic) {
+      List<Parameter> parameters = process.getOBUIAPPParameterList();
+      for (Parameter parameter : parameters) {
+        if (token.equalsIgnoreCase(parameter.getDBColumnName())) {
+          parametersInExpression.add(parameter);
+          UIDefinition uiDef = UIDefinitionController.getInstance().getUIDefinition(
+              parameter.getReference());
 
-        UIDefinition uiDef = UIDefinitionController.getInstance().getUIDefinition(
-            field.getColumn().getId());
-
-        return new DisplayLogicElement("OB.Utilities.getValue(currentValues,'" + fieldName + "')",
-            uiDef instanceof YesNoUIDefinition);
+          return new DisplayLogicElement("OB.Utilities.getValue(currentValues,'" + token + "')",
+              uiDef instanceof YesNoUIDefinition);
+        }
       }
-    }
-    for (AuxiliaryInput auxIn : auxIns) {
-      if (token.equalsIgnoreCase(auxIn.getName())) {
-        auxInputsInExpression.add(auxIn);
-        return new DisplayLogicElement(TOKEN_PREFIX + auxIn.getName(), false);
+    } else {
+      try {
+        if (cachedStructures == null) {
+          cachedStructures = WeldUtils
+              .getInstanceFromStaticBeanManager(ApplicationDictionaryCachedStructures.class);
+        }
+        fields = cachedStructures.getFieldsOfTab(tab.getId());
+        auxIns = cachedStructures.getAuxiliarInputList(tab.getId());
+      } catch (NullPointerException e) {
+        fields = tab.getADFieldList();
+        auxIns = tab.getADAuxiliaryInputList();
+      }
+      for (Field field : fields) {
+        if (field.getColumn() == null) {
+          continue;
+        }
+        if (token.equalsIgnoreCase(field.getColumn().getDBColumnName())) {
+          fieldsInExpression.add(field);
+          final String fieldName = KernelUtils.getInstance()
+              .getPropertyFromColumn(field.getColumn()).getName();
+
+          UIDefinition uiDef = UIDefinitionController.getInstance().getUIDefinition(
+              field.getColumn().getId());
+
+          return new DisplayLogicElement(
+              "OB.Utilities.getValue(currentValues,'" + fieldName + "')",
+              uiDef instanceof YesNoUIDefinition);
+        }
+      }
+      for (AuxiliaryInput auxIn : auxIns) {
+        if (token.equalsIgnoreCase(auxIn.getName())) {
+          auxInputsInExpression.add(auxIn);
+          return new DisplayLogicElement(TOKEN_PREFIX + auxIn.getName(), false);
+        }
       }
     }
 
