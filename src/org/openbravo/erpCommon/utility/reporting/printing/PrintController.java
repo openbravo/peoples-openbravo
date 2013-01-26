@@ -8,7 +8,7 @@
  * either express or implied. See the License for the specific language
  * governing rights and limitations under the License. The Original Code is
  * Openbravo ERP. The Initial Developer of the Original Code is Openbravo SLU All
- * portions are Copyright (C) 2008-2012 Openbravo SLU All Rights Reserved.
+ * portions are Copyright (C) 2008-2013 Openbravo SLU All Rights Reserved.
  * Contributor(s): ______________________________________.
  */
 package org.openbravo.erpCommon.utility.reporting.printing;
@@ -802,11 +802,21 @@ public class PrintController extends HttpSecureAppServlet {
 
     // Get additional document information
     final String draftDocumentIds = "";
+    String strIsDirectPDF = vars.getStringParameter("isDirectPDF");
+    if (strIsDirectPDF == null || "".equals(strIsDirectPDF)) {
+      strIsDirectPDF = "false";
+    }
+    String strIsDirectAttach = vars.getStringParameter("isDirectAttach");
+    if (strIsDirectAttach == null || "".equals(strIsDirectAttach)) {
+      strIsDirectAttach = "false";
+    }
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\r\n");
     xmlDocument.setParameter("language", vars.getLanguage());
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("description", "");
     xmlDocument.setParameter("help", "");
+    xmlDocument.setParameter("isDirectPDF", "isDirectPDF = " + strIsDirectPDF + ";\r\n");
+    xmlDocument.setParameter("isDirectAttach", "isDirectAttach = " + strIsDirectAttach + ";\r\n");
     response.setContentType("text/html; charset=UTF-8");
     final PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());

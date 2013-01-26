@@ -28,6 +28,7 @@ import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
+import org.openbravo.client.application.window.OBViewTab;
 import org.openbravo.client.kernel.reference.UIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.client.myob.WidgetClass;
@@ -85,6 +86,11 @@ class QueryListUtils {
 
           if (column.getClientClass() != null) {
             field.put("clientClass", column.getClientClass());
+            if (column.isHasLink()) {
+              final Tab tab = column.getTab();
+              final String printUrl = OBViewTab.getPrintUrl(tab);
+              field.put("OB_printUrl", printUrl);
+            }
           }
 
           field.put("canExport", true);

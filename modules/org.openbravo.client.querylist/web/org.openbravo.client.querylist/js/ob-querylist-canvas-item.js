@@ -30,3 +30,34 @@ isc.OBQLCanvasItem_Link.addProperties({
     }
   }
 });
+
+isc.defineClass('OBQLCanvasItem_Print', isc.OBGridLinkItem);
+
+isc.OBQLCanvasItem_Print.addProperties({
+  title: OB.I18N.getLabel('OBUIAPP_Print'),
+  isDirectPDF: true,
+  isDirectAttach: false,
+  blockAction: false,
+  doAction: function () {
+    var postParams = {
+      inpdirectprint: "N",
+      inppdfpath: this.field.OB_printUrl,
+      inpwindowId: this.field.OB_WindowId,
+      inpkeyColumnId: this.field.OB_keyColumnName,
+      inpTabId: this.field.OB_TabId,
+      inphiddenvalue: this.record[this.field.OB_LinkExpression],
+      inpIsDirectPDF: this.isDirectPDF,
+      inpIsDirectAttach: this.isDirectAttach
+    },
+        showPopup = (postParams.inpIsDirectPDF || postParams.inpIsDirectAttach ? false : true),
+        me = this;
+    if (postParams.inppdfpath && !this.blockAction) {
+      // Block action + setTimeout to avoid user double-click the 'Print' button in 4 seconds.
+      this.blockAction = true;
+      OB.Layout.ClassicOBCompatibility.Popup.open('print', 0, 0, OB.Application.contextUrl + 'businessUtility/PrinterReports.html', '', window, false, false, true, postParams, showPopup, showPopup);
+      setTimeout(function () {
+        me.blockAction = false;
+      }, 4000);
+    }
+  }
+});

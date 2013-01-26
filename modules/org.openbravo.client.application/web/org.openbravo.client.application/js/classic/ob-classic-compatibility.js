@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -356,9 +356,10 @@
       // * {{{showCloseControl}}} type: Boolean - to specify if the popup should show the close control or not. The default value is "true" if it is not specified
       // * {{{postParams}}} type: Object - parameters to be sent to the url using POST instead of GET
       // * {{{isModal}}} type: Boolean - to specify if the popup should be modal or not. The default value is "true" if it is not specified
+      // * {{{show}}} type: Boolean - to specify if the popup should be shown or not. The default value is "true" if it is not specified
       // 
       // returns the created OBClassicPopupWindow
-      open: function (name, width, height, url, title, theOpener, showMinimizeControl, showMaximizeControl, showCloseControl, postParams, isModal) {
+      open: function (name, width, height, url, title, theOpener, showMinimizeControl, showMaximizeControl, showCloseControl, postParams, isModal, show) {
         var urlCharacter = (url && url.indexOf('?') !== -1) ? '&' : '?';
 
         if (showMinimizeControl !== false) {
@@ -372,6 +373,9 @@
         }
         if (isModal !== false) {
           isModal = true;
+        }
+        if (show !== false) {
+          show = true;
         }
         var _htmlCode, _navUserAgent = navigator.userAgent.toUpperCase();
         if (OB.Utilities.isIE9Strict || _navUserAgent.indexOf("MSIE") === -1) { // IE >= 9 (Strict) or any other browser
@@ -396,6 +400,9 @@
           popupURL: url + urlCharacter + 'IsPopUpCall=1'
         });
         cPopup.show();
+        if (!show) {
+          cPopup.hide();
+        }
         if (cPopup.getIframeHtmlObj) {
           cPopup.getIframeHtmlObj().name = 'OBClassicPopup_iframe'; //To be used in automated tests: https://issues.openbravo.com/view.php?id=16786
         }
