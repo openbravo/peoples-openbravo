@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.hibernate.SQLQuery;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.client.kernel.KernelUtils;
@@ -15,7 +16,9 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.module.ModuleDependency;
+import org.openbravo.model.common.enterprise.OrgWarehouse;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.common.enterprise.Warehouse;
 import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.retail.config.OBRETCOProductList;
 
@@ -250,5 +253,20 @@ public class POSUtils {
         getRetailDependantModules(depModule.getModule(), moduleList, list);
       }
     }
+  }
+
+  public static Warehouse getWarehouseForTerminal(OBPOSApplications pOSTerminal) {
+    Organization org = pOSTerminal.getOrganization();
+    OBCriteria<OrgWarehouse> warehouses = OBDal.getInstance().createCriteria(OrgWarehouse.class);
+    warehouses.add(Restrictions.eq(OrgWarehouse.PROPERTY_ORGANIZATION, org));
+    warehouses.addOrderBy(OrgWarehouse.PROPERTY_PRIORITY, true);
+    warehouses.addOrderBy(OrgWarehouse.PROPERTY_ID, true);
+    List<OrgWarehouse> warehouseList = warehouses.list();
+    if (warehouseList.size() == 0) {
+      throw new OBException(
+          "The warehouse list is not correctly configured. The organization of a terminal needs a list of warehouses for the Web POS to work correctly. This can be configured in the Organization window in Openbravo.");
+    }
+    return warehouseList.get(0).getWarehouse();
+
   }
 }
