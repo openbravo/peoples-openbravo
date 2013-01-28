@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -169,17 +169,49 @@ isc.OBGrid.addProperties({
 
   createRecordComponent: function (record, colNum) {
     var field = this.getField(colNum),
-        rowNum = this.getRecordIndex(record);
-    if (field.isLink && record[field.name]) {
-      var linkButton = isc.OBGridLinkLayout.create({
-        grid: this,
-        align: this.getCellAlign(record, rowNum, colNum),
-        title: this.formatLinkValue(record, field, colNum, rowNum, record[field.name]),
-        record: record,
-        rowNum: rowNum,
-        colNum: colNum
-      });
-      return linkButton;
+        rowNum = this.getRecordIndex(record),
+        isEditRecord = rowNum === this.getEditRow(),
+        canvas, clientClass, clientClassPropsStartPosition, clientClassProps, clientClassIsShownInGridEdit;
+
+    if (field.isLink && !field.clientClass && record[field.name]) {
+      // To keep compatibility with < 3.0MP20 versions that didn't implement 'clientClass' and only have 'isLink' property
+      field.clientClass = 'OBGridLinkCellClick';
+    }
+
+    if (field.clientClass) {
+      clientClass = field.clientClass;
+      clientClassPropsStartPosition = clientClass.indexOf('{');
+      if (clientClassPropsStartPosition > 0) {
+        clientClassProps = clientClass.substring(clientClassPropsStartPosition, clientClass.length);
+        try {
+          clientClassProps = JSON.parse(clientClassProps);
+        } catch (e) {
+          clientClassProps = {};
+        }
+        clientClass = clientClass.substring(0, clientClassPropsStartPosition);
+      } else {
+        clientClassProps = {};
+      }
+      clientClass = clientClass.replace(/\s+/g, '');
+
+      clientClassIsShownInGridEdit = new Function('return ' + clientClass + '.getInstanceProperty("isShownInGridEdit")')();
+
+      if (!isEditRecord || clientClassIsShownInGridEdit) {
+        canvas = isc.ClassFactory.newInstance(clientClass, {
+          grid: this,
+          align: this.getCellAlign(record, rowNum, colNum),
+          field: field,
+          record: record,
+          rowNum: rowNum,
+          colNum: colNum
+        }, clientClassProps);
+        if (canvas) {
+          if (canvas.setRecord) {
+            canvas.setRecord(record);
+          }
+          return canvas;
+        }
+      }
     }
     return null;
   },
@@ -187,15 +219,43 @@ isc.OBGrid.addProperties({
   updateRecordComponent: function (record, colNum, component, recordChanged) {
     var field = this.getField(colNum),
         rowNum = this.getRecordIndex(record);
-    if (field.isLink && record[field.name]) {
-      component.setTitle(this.formatLinkValue(record, field, colNum, rowNum, record[field.name]));
+    if (field.clientClass) {
+      component.align = this.getCellAlign(record, rowNum, colNum);
+      component.field = field;
       component.record = record;
       component.rowNum = rowNum;
       component.colNum = colNum;
-      component.align = this.getCellAlign(record, rowNum, colNum);
+      if (component.setRecord) {
+        component.setRecord(record);
+      }
       return component;
     }
     return null;
+  },
+
+  // recompute RecordComponents
+  recomputeCanvasComponents: function (rowNum) {
+    var i, fld, length = this.getFields().length;
+
+    // remove client record components in edit mode
+    for (i = 0; i < length; i++) {
+      fld = this.getFields()[i];
+      if (fld.clientClass) {
+        this.refreshRecordComponent(rowNum, i);
+      }
+    }
+  },
+
+  startEditing: function (rowNum, colNum, suppressFocus, eCe, suppressWarning) {
+    var ret = this.Super('startEditing', arguments);
+    this.recomputeCanvasComponents(rowNum);
+    return ret;
+  },
+
+  startEditingNew: function (rowNum) {
+    var ret = this.Super('startEditingNew', arguments);
+    this.recomputeCanvasComponents(rowNum + 1);
+    return ret;
   },
 
   formatLinkValue: function (record, field, colNum, rowNum, value) {
@@ -408,7 +468,7 @@ isc.OBGrid.addProperties({
   },
 
   initWidget: function () {
-    // prevent the value to be displayed in case of a link
+    // prevent the value to be displayed in case of a clientClass
     var i, length, field, formatCellValueFunction;
 
     formatCellValueFunction = function (value, record, rowNum, colNum, grid) {
@@ -430,7 +490,7 @@ isc.OBGrid.addProperties({
           field.filterEditorProperties.criteriaField = field.criteriaField;
         }
 
-        if (field.isLink) {
+        if (field.clientClass) {
           // store the originalFormatCellValue if not already set
           if (field.formatCellValue && !field.formatCellValueFunctionReplaced) {
             field.originalFormatCellValue = field.formatCellValue;
@@ -731,13 +791,14 @@ isc.OBGridSummary.addProperties({
 
 isc.ClassFactory.defineClass('OBGridHeaderImgButton', isc.ImgButton);
 
-isc.ClassFactory.defineClass('OBGridLinkLayout', isc.HLayout);
-isc.OBGridLinkLayout.addProperties({
+isc.ClassFactory.defineClass('OBGridLinkItem', isc.HLayout);
+isc.OBGridLinkItem.addProperties({
   overflow: 'clip-h',
   btn: null,
   height: 1,
   width: '100%',
 
+  isShownInGridEdit: true,
   initWidget: function () {
     this.btn = isc.OBGridLinkButton.create({});
     this.btn.setTitle(this.title);
@@ -748,16 +809,7 @@ isc.OBGridLinkLayout.addProperties({
 
   setTitle: function (title) {
     this.btn.setTitle(title);
-  },
-
-  doAction: function () {
-    if (this.grid && this.grid.doCellClick) {
-      this.grid.doCellClick(this.record, this.rowNum, this.colNum);
-    } else if (this.grid && this.grid.cellClick) {
-      this.grid.cellClick(this.record, this.rowNum, this.colNum);
-    }
   }
-
 });
 
 isc.ClassFactory.defineClass('OBGridLinkButton', isc.Button);
@@ -770,3 +822,20 @@ isc.OBGridLinkButton.addProperties({
 
 isc.ClassFactory.defineClass('OBGridFormButton', isc.OBFormButton);
 isc.OBGridFormButton.addProperties({});
+
+
+isc.defineClass('OBGridLinkCellClick', isc.OBGridLinkItem);
+
+isc.OBGridLinkCellClick.addProperties({
+  setRecord: function () {
+    this.setTitle(this.grid.formatLinkValue(this.record, this.field, this.colNum, this.rowNum, this.record[this.field.name]));
+  },
+
+  doAction: function () {
+    if (this.grid && this.grid.doCellClick) {
+      this.grid.doCellClick(this.record, this.rowNum, this.colNum);
+    } else if (this.grid && this.grid.cellClick) {
+      this.grid.cellClick(this.record, this.rowNum, this.colNum);
+    }
+  }
+});

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.data.Sqlc;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -46,20 +47,34 @@ public class PrinterReports extends HttpSecureAppServlet {
     if (vars.commandIn("DEFAULT")) {
       String strDirectPrint = vars.getStringParameter("inpdirectprint", "N");
       String strPDFPath = vars.getStringParameter("inppdfpath");
-      String strHiddenKey = vars.getStringParameter("inphiddenkey");
-      String strWindowId = vars.getStringParameter("inpwindowId");
       String strKeyColumnId = vars.getStringParameter("inpkeyColumnId");
+      String strHiddenKey = vars.getStringParameter("inphiddenkey");
+      if (strHiddenKey == null || "".equals(strHiddenKey)) {
+        strHiddenKey = "inp" + Sqlc.TransformaNombreColumna(strKeyColumnId);
+      }
+      String strWindowId = vars.getStringParameter("inpwindowId");
       String inptabId = vars.getStringParameter("inpTabId");
       String strHiddenValue = vars.getGlobalVariable("inphiddenvalue", strWindowId + "|"
           + strKeyColumnId);
-      printPage(response, vars, strDirectPrint, strPDFPath, strHiddenKey, strHiddenValue, inptabId);
+      String strIsDirectPDF = vars.getStringParameter("inpIsDirectPDF");
+      if (strIsDirectPDF == null || "".equals(strIsDirectPDF)) {
+        strIsDirectPDF = "false";
+      }
+      String strIsDirectAttach = vars.getStringParameter("inpIsDirectAttach");
+      if (strIsDirectAttach == null || "".equals(strIsDirectAttach)) {
+        strIsDirectAttach = "false";
+      }
+
+      printPage(response, vars, strDirectPrint, strPDFPath, strHiddenKey, strHiddenValue, inptabId,
+          strIsDirectPDF, strIsDirectAttach);
     } else
       pageError(response);
   }
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars,
       String strDirectPrint, String strPDFPath, String strHiddenKey, String strHiddenValue,
-      String inptabId) throws IOException, ServletException {
+      String inptabId, String strIsDirectPDF, String strIsDirectAttach) throws IOException,
+      ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     String[] discard = { "isPrintPreview" };
@@ -79,6 +94,8 @@ public class PrinterReports extends HttpSecureAppServlet {
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("pdfPath", mapping);
     xmlDocument.setParameter("directPrint", strDirectPrint);
+    xmlDocument.setParameter("isDirectPDF", "isDirectPDF = " + strIsDirectPDF + ";\r\n");
+    xmlDocument.setParameter("isDirectAttach", "isDirectAttach = " + strIsDirectAttach + ";\r\n");
     // if (strPDFPath.startsWith("..")) strPDFPath =
     // strPDFPath.substring(2);
 

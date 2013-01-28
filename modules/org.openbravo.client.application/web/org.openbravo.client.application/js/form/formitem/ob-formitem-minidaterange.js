@@ -343,6 +343,7 @@ isc.OBMiniDateRangeItem.addProperties({}, OB.DateItemProperties, {
     if (this.singleDateMode) {
       dateValue = OB.Utilities.Date.OBToJS(newValue, this.dateFormat);
       if (isc.isA.Date(dateValue)) {
+        dateValue.logicalDate = true;
         this.singleDateValue = dateValue;
         this.singleDateDisplayValue = newValue;
         this.singleDateMode = true;
@@ -467,7 +468,25 @@ isc.OBMiniDateRangeItem.addProperties({}, OB.DateItemProperties, {
       };
     }
     var criteria = this.rangeItem ? this.rangeItem.getCriterion() : null;
+    criteria = this.makeLogicalDates(criteria);
     return criteria;
+  },
+
+  // Sets the logicalDate property to true to the date values contained in the criteria.
+  // This way the dates will always be serialized as a Date, and not as a DateTime
+  // See issue https://issues.openbravo.com/view.php?id=22885
+  makeLogicalDates: function (criteria) {
+    var criteriaCopy = isc.shallowClone(criteria),
+        innerCriteria = criteriaCopy.criteria,
+        i;
+    if (innerCriteria && innerCriteria.length) {
+      for (i = 0; i < innerCriteria.length; i++) {
+        if (isc.isA.Date(innerCriteria[i].value)) {
+          innerCriteria[i].value.logicalDate = true;
+        }
+      }
+    }
+    return criteriaCopy;
   },
 
   canEditCriterion: function (criterion) {

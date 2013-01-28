@@ -13,7 +13,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2008-2011 Openbravo SLU
+ * All portions are Copyright (C) 2008-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -31,6 +31,16 @@
       <script language="JavaScript" type="text/javascript" id="paramLanguage">
         var defaultLang = "en_US";
       </script>
+      <script language="JavaScript" type="text/javascript">
+        var isDirectPDF = false;
+        var isDirectAttach = false;
+      </script>
+      <script language="JavaScript" type="text/javascript" id="paramIsDirectPDF">
+        isDirectPDF = false;
+      </script>
+      <script language="JavaScript" type="text/javascript" id="paramIsDirectAttach">
+        isDirectAttach = false;
+      </script>
       <script language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></script>
       <script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
       <script language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></script>
@@ -46,16 +56,19 @@
     }
 
     function submitThisPage(strCommand) {
-       if (!isWindowInMDIPopup || getFrame('LayoutMDI').OB.MainView.TabSet.getSelectedTab().pane.getClassName()==='OBClassicWindow') {
+      if (!isWindowInMDIPopup || getFrame('LayoutMDI').OB.MainView.TabSet.getSelectedTab().pane.getClassName()==='OBClassicWindow') {
         // If opening in 2.50 layout, do it in hidden frame
         submitCommandForm(strCommand, false, null, null, "hiddenFrame");
       } else {
           //In OB 3, we submit the form in the OB 3 background_target hidden iframe
         submitCommandForm(strCommand, false, null, null, "background_target");
           //We refresh the main view to ensure that the attachments counter is updated
-        getFrame('LayoutMDI').OB.MainView.TabSet.getSelectedTab().pane.view.refresh();
+        var tabSet = getFrame('LayoutMDI').OB.MainView.TabSet;
+        if (tabSet && tabSet.getSelectedTab() && tabSet.getSelectedTab().pane.view && tabSet.getSelectedTab().pane.view.refresh) {
+          tabSet.getSelectedTab().pane.view.refresh();
+        }
       }
-       closePage();
+      closePage();
       return true;
     }
 
@@ -65,16 +78,20 @@
 	}
 	
 	function onLoadDo(){
-		
+		if (isDirectAttach) {
+			document.getElementById('linkButtonAttach').click();
+		} else if (isDirectPDF) {
+			document.getElementById('linkButtonPrint').click();
+		}
 		this.windowTables = new Array(
-		  new windowTableId('client', 'buttonOK')
+			new windowTableId('client', 'linkButtonPrint')
 		);
 		setWindowTableParentElement();
 		enableShortcuts('popup');
 		setBrowserAutoComplete(false);
 
 		setWindowElementFocus('firstElement');
-        resizeWindow();
+			resizeWindow();
 	}
 
 	function onResizeDo(){
@@ -288,7 +305,7 @@
 		                <td class="Button_RightAlign_ContentCell">
 		                  <div>
                         <button type="button" 
-                          id="linkButtonOk" 
+                          id="linkButtonAttach" 
                           class="ButtonLink" 
                           onclick="submitThisPage('ARCHIVE');return false;" 
                           onfocus="buttonEvent('onfocus', this); window.status='Print and Archive'; return true;" 
@@ -313,6 +330,7 @@
 		                <td class="Button_LeftAlign_ContentCell">
 		                  <div>
                         <button type="button" 
+                          id="linkButtonPrint" 
                           class="ButtonLink" 
                           onclick="submitThisPage('PRINT');return false;" 
                           onfocus="buttonEvent('onfocus', this); window.status='Print'; return true;" 

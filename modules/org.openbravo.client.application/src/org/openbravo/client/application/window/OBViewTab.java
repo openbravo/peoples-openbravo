@@ -838,12 +838,10 @@ public class OBViewTab extends BaseTemplateComponent {
     }
   }
 
-  public class PrintButton extends IconButton {
-    public boolean hasEmail;
-
-    public PrintButton() {
-      Process process = tab.getProcess();
-      String processUrl = "";
+  public static String getPrintUrl(Tab myTab) {
+    String processUrl = "";
+    if (myTab.getProcess() != null) {
+      Process process = myTab.getProcess();
       for (ModelImplementation mo : process.getADModelImplementationList()) {
         if (mo.isDefault() && ("P".equals(mo.getAction()) || "R".equals(mo.getAction()))) {
           for (ModelImplementationMapping mom : mo.getADModelImplementationMappingList()) {
@@ -861,6 +859,16 @@ public class OBViewTab extends BaseTemplateComponent {
       if (processUrl.indexOf("/") == -1) {
         processUrl = "/" + FormatUtilities.replace(processUrl);
       }
+    }
+    return processUrl;
+  }
+
+  public class PrintButton extends IconButton {
+    public boolean hasEmail;
+
+    public PrintButton() {
+      Process process = tab.getProcess();
+      String processUrl = getPrintUrl(tab);
 
       hasEmail = processUrl.contains("orders") || processUrl.contains("invoices")
           || processUrl.contains("payments");
