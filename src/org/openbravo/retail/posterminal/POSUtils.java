@@ -263,8 +263,7 @@ public class POSUtils {
     warehouses.addOrderBy(OrgWarehouse.PROPERTY_ID, true);
     List<OrgWarehouse> warehouseList = warehouses.list();
     if (warehouseList.size() == 0) {
-      throw new OBException(
-          "The warehouse list is not correctly configured. The organization of a terminal needs a list of warehouses for the Web POS to work correctly. This can be configured in the Organization window in Openbravo.");
+      return null;
     }
     return warehouseList.get(0).getWarehouse();
 
