@@ -1062,6 +1062,12 @@ isc.OBViewGrid.addProperties({
 
     // and no additional filter clauses passed in
     if (localState.filter && this.view.tabId !== this.view.standardWindow.additionalCriteriaTabId && this.view.tabId !== this.view.standardWindow.additionalFilterTabId) {
+      // a filtereditor but no editor yet
+      // set it in the initialcriteria of the filterEditro
+      if (this.filterEditor && !this.filterEditor.getEditForm()) {
+        this.filterEditor.setValuesAsCriteria(localState.filter);
+      }
+      
       this.setCriteria(localState.filter);
     }
   },
@@ -1438,6 +1444,8 @@ isc.OBViewGrid.addProperties({
     this.resetEmptyMessage();
     this.view.updateTabTitle();
 
+    delete this.initialCriteria;
+    
     // do not refresh if the parent is not selected and we have no data
     // anyway
     if (this.view.parentProperty && (!this.data || !this.data.getLength || this.data.getLength() === 0)) {
@@ -2010,7 +2018,23 @@ isc.OBViewGrid.addProperties({
     if (!this.view) {
       this.emptyMessage = this.noDataEmptyMessage;
     } else if (this.isGridFiltered(criteria)) {
-      this.emptyMessage = this.filterNoRecordsEmptyMessage;
+      // there can be some initial filters, but still no parent selected
+      if (this.view.parentView) {
+        selectedValues = this.view.parentView.viewGrid.getSelectedRecords();
+        parentIsNew = this.view.parentView.isShowingForm && this.view.parentView.viewForm.isNew;
+        parentIsNew = parentIsNew || (selectedValues.length === 1 && selectedValues[0]._new);
+        if (parentIsNew) {
+          this.emptyMessage = '<span class="' + this.emptyMessageStyle + '">' + OB.I18N.getLabel('OBUIAPP_ParentIsNew') + '</span>';
+        } else if (!selectedValues || selectedValues.length === 0) {
+          this.emptyMessage = '<span class="' + this.emptyMessageStyle + '">' + OB.I18N.getLabel('OBUIAPP_NoParentSelected') + '</span>';
+        } else if (selectedValues.length > 1) {
+          this.emptyMessage = '<span class="' + this.emptyMessageStyle + '">' + OB.I18N.getLabel('OBUIAPP_MultipleParentsSelected') + '</span>';
+        } else {
+          this.emptyMessage = this.filterNoRecordsEmptyMessage;
+        }
+      } else {
+        this.emptyMessage = this.filterNoRecordsEmptyMessage;
+      }
     } else if (this.view.isRootView) {
       this.emptyMessage = this.noDataEmptyMessage;
     } else {

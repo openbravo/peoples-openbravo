@@ -148,7 +148,7 @@ isc.OBGrid.addProperties({
   },
 
   focusInFirstFilterEditor: function () {
-    if (this.getFilterEditor()) { // there is a filter editor
+    if (this.getFilterEditor() && this.getFilterEditor().getEditForm()) { // there is a filter editor
       var object = this.getFilterEditor().getEditForm(),
           items, item, i, length;
 
@@ -386,7 +386,7 @@ isc.OBGrid.addProperties({
       var prop, fullPropName;
       // make a copy so that we don't change the object
       // which is maybe used somewhere else
-      criteria = isc.clone(criteria);
+      criteria = criteria ? isc.clone(criteria) : {};
       // If a criterion has been added to include the selected record, remove it
       // See issue https://issues.openbravo.com/view.php?id=20722
       criteria = this.removeSpecificIdFilter(criteria);
@@ -511,15 +511,21 @@ isc.OBGrid.addProperties({
       delete this.filterClause;
     }
     this.forceRefresh = true;
-    this.filterEditor.getEditForm().clearValues();
+    if (this.filterEditor) {
+      if (this.filterEditor.getEditForm()) {
+        this.filterEditor.getEditForm().clearValues();
 
-    // clear the date values in a different way
-    length = this.filterEditor.getEditForm().getFields().length;
+        // clear the date values in a different way
+        length = this.filterEditor.getEditForm().getFields().length;
 
-    for (i = 0; i < length; i++) {
-      fld = this.filterEditor.getEditForm().getFields()[i];
-      if (fld.clearDateValues) {
-        fld.clearDateValues();
+        for (i = 0; i < length; i++) {
+          fld = this.filterEditor.getEditForm().getFields()[i];
+          if (fld.clearDateValues) {
+            fld.clearDateValues();
+          }
+        }
+      } else {
+        this.filterEditor.setValuesAsCriteria(null);
       }
     }
     if (!noPerformAction) {
