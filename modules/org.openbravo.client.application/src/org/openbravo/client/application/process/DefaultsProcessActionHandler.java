@@ -39,6 +39,8 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.domain.Reference;
 
 /**
+ * This ActionHandler is invoked when opening a Process Definition window. It is in charge of
+ * computing default values for the parameters in the window.
  * 
  * @author alostale
  */
@@ -49,7 +51,7 @@ public class DefaultsProcessActionHandler extends BaseProcessActionHandler {
   @Override
   protected final JSONObject doExecute(Map<String, Object> parameters, String content) {
     try {
-      OBContext.setAdminMode();
+      OBContext.setAdminMode(true);
 
       final String processId = (String) parameters.get("processId");
       final Process processDefinition = OBDal.getInstance().get(Process.class, processId);

@@ -1374,8 +1374,8 @@ or All (AD_CLIENT=anything, AD_ORG_ID=anything)]]></HELP>
 <!--51E1B1350A334292A67AEBAA9011AB95-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--51E1B1350A334292A67AEBAA9011AB95-->  <NAME><![CDATA[Process Definition]]></NAME>
 <!--51E1B1350A334292A67AEBAA9011AB95-->  <DESCRIPTION><![CDATA[Process to be executed by the button]]></DESCRIPTION>
-<!--51E1B1350A334292A67AEBAA9011AB95-->  <HELP><![CDATA[Process to be executed by the button. There are 2 kind of processes:
-*"Process": Implements the 2.50 style processes with a sevlet.
+<!--51E1B1350A334292A67AEBAA9011AB95-->  <HELP><![CDATA[Process to be executed by the button. There are 2 kinds of processes:
+*"Process": Implements the 2.50 style processes with a Servlet.
 *"Process Definition": Implements 3.0 processes with a pure SmartClient UI.]]></HELP>
 <!--51E1B1350A334292A67AEBAA9011AB95-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
 <!--51E1B1350A334292A67AEBAA9011AB95-->  <AD_TAB_ID><![CDATA[101]]></AD_TAB_ID>
@@ -3316,8 +3316,8 @@ Advanced features are only granted to the automatic roles defined as advanced.]]
 <!--E43B890AE59B4CC8A80140CCDEFFE927-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--E43B890AE59B4CC8A80140CCDEFFE927-->  <NAME><![CDATA[Process Definition]]></NAME>
 <!--E43B890AE59B4CC8A80140CCDEFFE927-->  <DESCRIPTION><![CDATA[Process to be executed by the button]]></DESCRIPTION>
-<!--E43B890AE59B4CC8A80140CCDEFFE927-->  <HELP><![CDATA[Process to be executed by the button. There are 2 kind of processes:
-*"Process": Implements the 2.50 style processes with a sevlet.
+<!--E43B890AE59B4CC8A80140CCDEFFE927-->  <HELP><![CDATA[Process to be executed by the button. There are 2 kinds of processes:
+*"Process": Implements the 2.50 style processes with a Servlet.
 *"Process Definition": Implements 3.0 processes with a pure SmartClient UI.]]></HELP>
 <!--E43B890AE59B4CC8A80140CCDEFFE927-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
 <!--E43B890AE59B4CC8A80140CCDEFFE927-->  <AD_TAB_ID><![CDATA[110]]></AD_TAB_ID>

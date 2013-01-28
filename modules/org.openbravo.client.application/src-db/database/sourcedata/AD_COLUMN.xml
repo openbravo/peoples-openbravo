@@ -5877,8 +5877,8 @@ Usually, company's internal identifiers for various records (products, customers
 <!--CD3A95C8A05D45A0A2B6D250E9C83170-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--CD3A95C8A05D45A0A2B6D250E9C83170-->  <NAME><![CDATA[EM_OBUIAPP_Process_ID]]></NAME>
 <!--CD3A95C8A05D45A0A2B6D250E9C83170-->  <DESCRIPTION><![CDATA[Process to be executed by the button]]></DESCRIPTION>
-<!--CD3A95C8A05D45A0A2B6D250E9C83170-->  <HELP><![CDATA[Process to be executed by the button. There are 2 kind of processes:
-*"Process": Implements the 2.50 style processes with a sevlet.
+<!--CD3A95C8A05D45A0A2B6D250E9C83170-->  <HELP><![CDATA[Process to be executed by the button. There are 2 kinds of processes:
+*"Process": Implements the 2.50 style processes with a Servlet.
 *"Process Definition": Implements 3.0 processes with a pure SmartClient UI.]]></HELP>
 <!--CD3A95C8A05D45A0A2B6D250E9C83170-->  <COLUMNNAME><![CDATA[EM_OBUIAPP_Process_ID]]></COLUMNNAME>
 <!--CD3A95C8A05D45A0A2B6D250E9C83170-->  <AD_TABLE_ID><![CDATA[101]]></AD_TABLE_ID>
@@ -6745,8 +6745,8 @@ or All (AD_CLIENT=anything, AD_ORG_ID=anything)]]></HELP>
 <!--F6ABE97E8E6D4E99878ADFF3B09F9249-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--F6ABE97E8E6D4E99878ADFF3B09F9249-->  <NAME><![CDATA[EM_OBUIAPP_Process Definition]]></NAME>
 <!--F6ABE97E8E6D4E99878ADFF3B09F9249-->  <DESCRIPTION><![CDATA[Process to be executed by the button]]></DESCRIPTION>
-<!--F6ABE97E8E6D4E99878ADFF3B09F9249-->  <HELP><![CDATA[Process to be executed by the button. There are 2 kind of processes:
-*"Process": Implements the 2.50 style processes with a sevlet.
+<!--F6ABE97E8E6D4E99878ADFF3B09F9249-->  <HELP><![CDATA[Process to be executed by the button. There are 2 kinds of processes:
+*"Process": Implements the 2.50 style processes with a Servlet.
 *"Process Definition": Implements 3.0 processes with a pure SmartClient UI.]]></HELP>
 <!--F6ABE97E8E6D4E99878ADFF3B09F9249-->  <COLUMNNAME><![CDATA[EM_Obuiapp_Process_ID]]></COLUMNNAME>
 <!--F6ABE97E8E6D4E99878ADFF3B09F9249-->  <AD_TABLE_ID><![CDATA[116]]></AD_TABLE_ID>

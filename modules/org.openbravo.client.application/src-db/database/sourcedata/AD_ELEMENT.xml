@@ -388,8 +388,8 @@
 <!--A40E05056A904DD8970BFAB4F5AF7E37-->  <NAME><![CDATA[Process Definition]]></NAME>
 <!--A40E05056A904DD8970BFAB4F5AF7E37-->  <PRINTNAME><![CDATA[Process Definition]]></PRINTNAME>
 <!--A40E05056A904DD8970BFAB4F5AF7E37-->  <DESCRIPTION><![CDATA[Process to be executed by the button]]></DESCRIPTION>
-<!--A40E05056A904DD8970BFAB4F5AF7E37-->  <HELP><![CDATA[Process to be executed by the button. There are 2 kind of processes:
-*"Process": Implements the 2.50 style processes with a sevlet.
+<!--A40E05056A904DD8970BFAB4F5AF7E37-->  <HELP><![CDATA[Process to be executed by the button. There are 2 kinds of processes:
+*"Process": Implements the 2.50 style processes with a Servlet.
 *"Process Definition": Implements 3.0 processes with a pure SmartClient UI.]]></HELP>
 <!--A40E05056A904DD8970BFAB4F5AF7E37-->  <AD_MODULE_ID><![CDATA[9BA0836A3CD74EE4AB48753A47211BCC]]></AD_MODULE_ID>
 <!--A40E05056A904DD8970BFAB4F5AF7E37-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
