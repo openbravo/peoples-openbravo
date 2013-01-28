@@ -468,7 +468,6 @@ OB.Model.Terminal = Backbone.Model.extend({
           //(that is, if the call comes from the login page directly)
           savedPass = me.generate_sha1(me.password + user.get('created'));
           user.set('password', savedPass);
-          user.set('created', date);
           OB.Dal.save(user, function () {}, function () {
             window.console.error(arguments);
           });
