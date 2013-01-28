@@ -65,6 +65,7 @@ isc.OBPickAndExecuteGrid.addProperties({
         theGrid;
 
     this.selectedIds = [];
+    this.deselectedIds = [];
 
     // the origSetValuesAsCriteria member is added as 'class' level
     // we only need to do it once
@@ -191,12 +192,31 @@ isc.OBPickAndExecuteGrid.addProperties({
   },
 
   selectionUpdated: function (record, recordList) {
-    var i, len = recordList.length;
+    var i, j, len = recordList.length,
+        prevSelectedLen = this.selectedIds.length,
+        recordId, found;
+
+    // Look for deselected records (records in selectedIds not present in recordList)
+    for (i = 0; i < prevSelectedLen; i++) {
+      recordId = this.selectedIds[i];
+      found = false;
+      for (j = 0; j < len; j++) {
+        if (recordId === recordList[j].id) {
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        this.deselectedIds.push(recordId);
+      }
+    }
 
     this.selectedIds = [];
 
     for (i = 0; i < len; i++) {
       this.selectedIds.push(recordList[i].id);
+      // Remove the record from deselectedIds
+      this.deselectedIds.remove(recordList[i].id);
     }
     // refresh it all as multiple lines can be selected
     this.markForRedraw('Selection changed');
@@ -260,15 +280,24 @@ isc.OBPickAndExecuteGrid.addProperties({
   },
 
   dataArrived: function (startRow, endRow) {
-    var record, i, allRows, len = this.selectedIds.length;
-    for (i = 0; i < len; i++) {
+    var record, i, allRows, selectedLen = this.selectedIds.length,
+        len;
+    for (i = 0; i < selectedLen; i++) {
       record = this.data.findByKey(this.selectedIds[i]);
       if (record) {
         record[this.selectionProperty] = true;
       }
     }
 
-    if (len === 0) {
+    len = this.deselectedIds.length;
+    for (i = 0; i < len; i++) {
+      record = this.data.findByKey(this.deselectedIds[i]);
+      if (record) {
+        record[this.selectionProperty] = false;
+      }
+    }
+
+    if (selectedLen === 0) {
       // push all *selected* rows into selectedIds cache
       allRows = this.data.allRows || [];
       len = allRows.length;
