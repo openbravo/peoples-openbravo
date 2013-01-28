@@ -28,44 +28,36 @@ public class PeriodEnventHandler extends EntityPersistenceEventObserver {
   }
 
   public void onUpdate(@Observes EntityUpdateEvent event) {
-    ConnectionProvider conn = new DalConnectionProvider(false);
-    String language = OBContext.getOBContext().getLanguage().getLanguage();
     if (!isValidEvent(event)) {
       return;
     }
-    if (checkPeriod((Period) event.getTargetInstance())) {
-      logger.error("Period " + event.getTargetInstance().getId()
-          + " is being updated and is overlapping another period");
-      throw new OBException(Utility.messageBD(conn, "DatesOverlapped", language));
-    }
-    logger.info("Period " + event.getTargetInstance().getId() + " is being updated");
+    checkPeriod((Period) event.getTargetInstance());
   }
 
   public void onSave(@Observes EntityNewEvent event) {
-    ConnectionProvider conn = new DalConnectionProvider(false);
-    String language = OBContext.getOBContext().getLanguage().getLanguage();
     if (!isValidEvent(event)) {
       return;
     }
-    if (checkPeriod((Period) event.getTargetInstance())) {
-      logger.error("Period " + event.getTargetInstance().getId()
-          + " is being saved and is overlapping another period");
-      throw new OBException(Utility.messageBD(conn, "DatesOverlapped", language));
-    }
-    logger.info("Period " + event.getTargetInstance().getId() + " is being saved");
+    checkPeriod((Period) event.getTargetInstance());
   }
 
-  private boolean checkPeriod(Period period) {
+  private void checkPeriod(Period period) {
+    ConnectionProvider conn = new DalConnectionProvider(false);
+    String language = OBContext.getOBContext().getLanguage().getLanguage();
     OBCriteria<Period> criteria = OBDal.getInstance().createCriteria(Period.class);
     criteria.add(Restrictions.eq(Period.PROPERTY_ORGANIZATION, period.getOrganization()));
     criteria.add(Restrictions.eq(Period.PROPERTY_CLIENT, period.getClient()));
     criteria.add(Restrictions.ne(Period.PROPERTY_ID, period.getId()));
     criteria.add(Restrictions.ge(Period.PROPERTY_ENDINGDATE, period.getStartingDate()));
     criteria.add(Restrictions.le(Period.PROPERTY_STARTINGDATE, period.getEndingDate()));
-    if (criteria.list().size() > 0) {
-      return true;
-    } else {
-      return false;
+    criteria.setMaxResults(1);
+
+    if (criteria.uniqueResult() != null) {
+      logger
+          .error("Period " + period.getId() + " is being saved and is overlapping another period");
+      throw new OBException(Utility.messageBD(conn, "DatesOverlappedParams", language)
+          .replace("%1", ((Period) criteria.uniqueResult()).getName())
+          .replace("%2", ((Period) criteria.uniqueResult()).getYear().getFiscalYear()));
     }
   }
 }
