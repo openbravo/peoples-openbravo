@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012 Openbravo SLU
+ * All portions are Copyright (C) 2012-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -198,9 +198,9 @@ isc.OBMultiSelectorItem.addProperties({
     this.storeValue(currentValue);
 
     // display it in the layout
-    selectedElement = isc.Label.create({
+    selectedElement = isc.OBMultiSelectorItemLabel.create({
       contents: record[OB.Constants.IDENTIFIER],
-      icon: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/clearField.png',
+      icon: me.buttonDefaults.icon,
       height: 1,
       width: '90%',
       // Setting width to reserve some space for vertical scrollbar
@@ -257,6 +257,11 @@ isc.OBMultiSelectorItem.addProperties({
     return (value ? value : []);
   }
 });
+
+
+// = OBMultiSelectorItemLabel =
+// OBMultiSelectorItemLabel is used for selected element label
+isc.ClassFactory.defineClass('OBMultiSelectorItemLabel', isc.Label);
 
 
 // = OBMultiSelectorSelectorLayout =

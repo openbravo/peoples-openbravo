@@ -54,22 +54,30 @@ public class FIN_BankStatementProcess implements org.openbravo.scheduling.Proces
         if (maxBSLDate != null) {
           for (FIN_BankStatementLine bsl : bankStatement.getFINBankStatementLineList()) {
             if (bsl.getTransactionDate().compareTo(maxBSLDate) <= 0) {
-              msg.setType("Error");
-              msg.setTitle(FIN_Utility.messageBD("Error"));
-              String pattern = OBPropertiesProvider.getInstance().getOpenbravoProperties()
-                  .getProperty("dateFormat.java");
-              msg.setMessage(FIN_Utility.messageBD("APRM_BankStatementLineWrongDate")
-                  + Utility.formatDate(maxBSLDate, pattern));
-              bundle.setResult(msg);
-              return;
+              if (!msg.getMessage().equals("")) {
+                msg.setMessage(msg.getMessage() + ", " + bsl.getLineNo());
+              } else {
+                msg.setType("Warning");
+                msg.setTitle(FIN_Utility.messageBD("Warning"));
+                String pattern = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+                    .getProperty("dateFormat.java");
+                msg.setMessage(msg.getMessage()
+                    + FIN_Utility.messageBD("APRM_BankStatementLineWrongDateWarning")
+                    + Utility.formatDate(maxBSLDate, pattern) + ". "
+                    + FIN_Utility.messageBD("APRM_BankStatementLineWrongDateWarning2") + " "
+                    + bsl.getLineNo());
+              }
             }
           }
         }
 
-        bankStatement.setProcessed(true);
-        bankStatement.setAPRMProcessBankStatement("R");
-        OBDal.getInstance().save(bankStatement);
-        OBDal.getInstance().flush();
+        if (msg.getType() != null && !msg.getType().toLowerCase().equals("warning")) {
+          // Success
+          bankStatement.setProcessed(true);
+          bankStatement.setAPRMProcessBankStatement("R");
+          OBDal.getInstance().save(bankStatement);
+          OBDal.getInstance().flush();
+        }
       } else if (strAction.equals("R")) {
         // *************************
         // Reactivate Bank Statement

@@ -1359,7 +1359,7 @@ BEGIN --BODY
            CHARGEAMT, C_UOM_ID, C_TAX_ID, S_RESOURCEASSIGNMENT_ID,
            TAXAMT, M_ATTRIBUTESETINSTANCE_ID, ISDESCRIPTION,
            QUANTITYORDER, M_PRODUCT_UOM_ID, PRICESTD,
-           GROSS_UNIT_PRICE, LINE_GROSS_AMOUNT,
+           GROSS_UNIT_PRICE, TAXBASEAMT, LINE_GROSS_AMOUNT,
            ISDEFERRED, DEFPLANTYPE, PERIODNUMBER, C_PERIOD_ID
           )
           VALUES
@@ -1372,7 +1372,7 @@ BEGIN --BODY
            0, Cur_CInvoiceDiscount.C_UOM_ID, Cur_TaxDiscount.C_TAX_ID, NULL,
            NULL, NULL, 'N' ,
            NULL, NULL, v_Discount,
-           ROUND(v_gross_unit_price, v_precision), ROUND(v_line_gross_amount, v_precision),
+           ROUND(v_gross_unit_price, v_precision), v_Discount  ,ROUND(v_line_gross_amount, v_precision),
            v_isdeferred_inv, v_defplantype_inv, v_periodnumber_inv, v_period_inv
           );
         --v_InvoiceDiscount:=Ad_Sequence_Nextno('C_InvoiceLine');

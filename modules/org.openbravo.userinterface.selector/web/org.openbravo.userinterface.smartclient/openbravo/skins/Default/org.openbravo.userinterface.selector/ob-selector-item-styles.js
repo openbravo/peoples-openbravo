@@ -109,6 +109,10 @@ isc.OBMultiSelectorItem.addProperties({
   }
 });
 
+isc.OBMultiSelectorItemLabel.addProperties({
+  styleName: 'OBMultiSelectorItemLabel'
+});
+
 isc.OBMultiSelectorSelectorLayout.addProperties({
   styleName: 'OBFormFieldInput'
 });

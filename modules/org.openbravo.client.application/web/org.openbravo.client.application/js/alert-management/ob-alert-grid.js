@@ -52,7 +52,7 @@ isc.OBAlertGrid.addProperties({
   gridFields: [{
     name: 'alertRule',
     title: OB.I18N.getLabel('OBUIAPP_AlertGrid_AlertRule'),
-    displayField: 'alertRule' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
+    displayField: OB.Constants.IDENTIFIER,
     canFilter: true,
     canEdit: false,
     filterOnKeypress: true,

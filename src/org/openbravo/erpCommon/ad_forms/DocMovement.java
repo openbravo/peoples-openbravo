@@ -195,13 +195,17 @@ public class DocMovement extends AcctServer {
           nextSeqNo(SeqNo), DocumentType, conn); // from
       // (-)
       // CR
-      dr.setM_Locator_ID(line.m_M_Locator_ID);
+      if (dr != null) {
+        dr.setM_Locator_ID(line.m_M_Locator_ID);
+      }
       // InventoryTo DR CR
       cr = fact.createLine(line, line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn),
           costCurrency.getId(), costs, Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn); // to
       // (+)
       // DR
-      cr.setM_Locator_ID(line.m_M_LocatorTo_ID);
+      if (cr != null) {
+        cr.setM_Locator_ID(line.m_M_LocatorTo_ID);
+      }
     }
     log4jDocMovement.debug("DocMovement - After the loop");
     SeqNo = "0";

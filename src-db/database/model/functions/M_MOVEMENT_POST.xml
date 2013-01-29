@@ -160,8 +160,7 @@
           RAISE_APPLICATION_ERROR(-20000, '@PeriodNotAvailable@');
         END IF;
       END IF;
-          
-      
+
       v_ResultStr:='LockingMovement';
       UPDATE M_Movement  SET Processing='Y',Updated=now(),UpdatedBy=v_p_User  WHERE M_Movement_ID=v_Record_ID;
       -- Commented by cromero 19102006 COMMIT;
@@ -177,7 +176,12 @@
         LOOP
           v_ResultStr:='Transaction for line' || Cur_MoveLine.Line;
           -- FROM
-          AD_Sequence_Next('M_Transaction', v_Client_ID, NextNo) ;
+          AD_Sequence_Next('M_Transaction', v_Client_ID, NextNo);
+
+          IF (Cur_MoveLine.MovementQty = 0) THEN
+             RAISE_APPLICATION_ERROR(-20000,'@GoodsMovementsWithZeroQty@' || ' @Inline@ ' || Cur_MoveLine.line) ;
+          END IF;
+
           INSERT
           INTO M_Transaction
             (
