@@ -95,9 +95,20 @@ OB.Model.Terminal = Backbone.Model.extend({
 
     OB.POS.modelterminal.loggingIn = true;
 
+
+    OB.DS.Request.commonParams = {};
+
     OB.POS.modelterminal.off('terminal.loaded'); // Unregister previous events.
     OB.POS.modelterminal.on('terminal.loaded', function () {
       var oldOB = OB;
+
+      // setting common datasource parameters based on terminal
+      var t = me.get('terminal');
+      OB.DS.Request.commonParams = {
+        client: t.client,
+        organization: t.organization,
+        pos: t.id
+      };
 
       $LAB.setGlobalDefaults({
         AppendTo: 'body'

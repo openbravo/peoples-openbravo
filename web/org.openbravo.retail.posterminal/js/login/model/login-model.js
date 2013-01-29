@@ -23,51 +23,7 @@
   OB.Model = OB.Model || {};
   OB.Model.Util = {
     loadModels: function (online, models, data, incremental) {
-      var somethigToLoad = false;
-
-      models._LoadOnline = online;
-
-      if (models.length === 0) {
-        triggerReady(models);
-        return;
-      }
-
-      _.each(models, function (item) {
-        var ds, load;
-
-        load = (online && item.prototype.online) || (!online && !item.prototype.online);
-        //TODO: check permissions
-        if (load) {
-          if (item.prototype.local) {
-            OB.Dal.initCache(item, [], function () {
-              // window.console.log('init success: ' + item.prototype.modelName);
-            }, function () {
-              window.console.error('init error', arguments);
-            });
-          } else {
-            ds = new OB.DS.DataSource(new OB.DS.Request(item, OB.POS.modelterminal.get('terminal').client, OB.POS.modelterminal.get('terminal').organization, OB.POS.modelterminal.get('terminal').id, incremental));
-            somethigToLoad = true;
-            models._LoadQueue = models._LoadQueue || {};
-            models._LoadQueue[item.prototype.modelName] = false;
-            ds.on('ready', function () {
-              if (data) {
-                data[item.prototype.modelName] = new Backbone.Collection(ds.cache);
-              }
-              models._LoadQueue[item.prototype.modelName] = true;
-              if (incremental) {
-                window.localStorage.setItem('POSLastIncRefresh', new Date().getTime());
-              } else {
-                window.localStorage.setItem('POSLastTotalRefresh', new Date().getTime());
-              }
-              triggerReady(models);
-            });
-            ds.load(item.params, incremental);
-          }
-        }
-      });
-      if (!somethigToLoad) {
-        triggerReady(models);
-      }
+      OB.Dal.loadModels(online, models, data, incremental);
     }
   };
 
