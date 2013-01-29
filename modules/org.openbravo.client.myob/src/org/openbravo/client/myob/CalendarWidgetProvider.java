@@ -19,9 +19,7 @@
 package org.openbravo.client.myob;
 
 import org.apache.log4j.Logger;
-import org.hibernate.criterion.Restrictions;
 import org.openbravo.client.kernel.KernelConstants;
-import org.openbravo.dal.service.OBDao;
 
 /**
  * Responsible for creating the Calendar Widget.
@@ -36,12 +34,9 @@ public class CalendarWidgetProvider extends WidgetProvider {
 
   @Override
   public String generate() {
-    final WidgetURL widgetURL = (WidgetURL) OBDao.getFilteredCriteria(WidgetURL.class,
-        Restrictions.eq(WidgetURL.PROPERTY_WIDGETCLASS, getWidgetClass())).uniqueResult();
-    String url = widgetURL.getURL();
     final String result = "isc.defineClass('" + KernelConstants.ID_PREFIX
         + getWidgetClass().getId() + "', isc.OBCalendarWidget).addProperties({widgetId: '"
-        + getWidgetClass().getId() + "', calendarProps: " + url + "});";
+        + getWidgetClass().getId() + "'});";
     return result;
   }
 

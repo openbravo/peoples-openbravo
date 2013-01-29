@@ -24,13 +24,18 @@ isc.OBCalendarWidget.addProperties({
   widgetInstanceId: null,
 
   createWindowContents: function () {
-    var layout, calendarProps = this.calendarProps;
+    var layout, calendarProps;
+    this.calendarProps = new Function('return ' + this.parameters.calendarProps)();
+    if (!this.calendarProps.isMultiCalendar && this.parameters.legendId) {
+      this.calendarProps.legendId = this.parameters.legendId;
+    }
+    calendarProps = this.calendarProps;
 
     if (!calendarProps) {
       return isc.VStack.create({
         members: [
         isc.Label.create({
-          contents: 'This widget must have an associated URL pointing to the object with the calendar properties'
+          contents: 'This widget must have a parameter "calendarProps" (DB Column Name) with a fixed value pointing to the object with the calendar properties'
         })]
       });
     }
