@@ -374,14 +374,14 @@ isc.OBParameterWindowView.addProperties({
       allProperties._allRows = [];
 
       for (i = 0; i < len; i++) {
-        tmp = isc.addProperties({}, selection[i], grid.getEditedRecord(i));
+        tmp = isc.addProperties({}, selection[i], grid.getEditedRecord(grid.getRecordIndex(selection[i])));
         allProperties._selection.push(tmp);
       }
 
       len = (allRows && allRows.length) || 0;
 
       for (i = 0; i < len; i++) {
-        tmp = isc.addProperties({}, allRows[i], grid.getEditedRecord(i));
+        tmp = isc.addProperties({}, allRows[i], grid.getEditedRecord(grid.getRecordIndex(allRows[i])));
         allProperties._allRows.push(tmp);
       }
     }
