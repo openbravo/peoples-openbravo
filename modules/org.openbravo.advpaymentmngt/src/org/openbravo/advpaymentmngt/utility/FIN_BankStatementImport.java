@@ -175,7 +175,8 @@ public abstract class FIN_BankStatementImport {
       OBDal.getInstance().rollbackAndClose();
       return getMyError();
     }
-    if (getMyError() != null && !getMyError().getType().toLowerCase().equals("success")) {
+    if (getMyError() != null && !getMyError().getType().toLowerCase().equals("success")
+        && !getMyError().getType().toLowerCase().equals("warning")) {
       OBDal.getInstance().rollbackAndClose();
       return getMyError();
     } else if (getMyError() != null && getMyError().getType().toLowerCase().equals("success")) {
@@ -189,6 +190,8 @@ public abstract class FIN_BankStatementImport {
         msg.setMessage(message);
         setMyError(msg);
       }
+      return getMyError();
+    } else if (getMyError() != null && getMyError().getType().toLowerCase().equals("warning")) {
       return getMyError();
     } else {
       return getOBError(conn, vars, "@APRM_BankStatementNo@ " + bankStatement.getDocumentNo()
