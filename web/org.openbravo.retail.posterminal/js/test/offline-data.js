@@ -17,7 +17,7 @@ function errorCallback() {
 
 var clientId = '23C59575B9CF467C9620760EB255B389';
 var orgId = 'E443A31992CB4635AFCAEABE7183CE85';
-var dsProducts = new OB.DS.DataSource(new OB.DS.Request(OB.Model.Product, clientId, orgId));
+var dsProducts = new OB.DS.DataSource(new OB.DS.Request(OB.Model.Product));
 
 asyncTest('Load and cache products - WebSQL', function () {
   expect(2);
