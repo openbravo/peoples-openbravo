@@ -137,9 +137,14 @@ isc.OBCalendar.addProperties({
           showDSAlert(JSON.stringify(data.response.errors));
           calendar.filterData();
         } else {
-          if (records && multiCalendar && multiCalendar.showCustomEventsBgColor) {
+          if (records) {
             for (i = 0; i < records.getLength(); i++) {
-              records[i].eventWindowStyle = multiCalendar.eventStyles[records[i][calendar.legendIdField]] + ' ' + OB.Styles.OBCalendar.eventWindowStyle;
+              if (multiCalendar && multiCalendar.showCustomEventsBgColor) {
+                records[i].eventWindowStyle = multiCalendar.eventStyles[records[i][calendar.legendIdField]] + ' ' + OB.Styles.OBCalendar.eventWindowStyle;
+              }
+              if (typeof calendar.customTransformResponse === 'function') {
+                records[i] = calendar.customTransformResponse(records[i], calendar);
+              }
             }
           }
         }
@@ -248,12 +253,12 @@ isc.OBCalendar.addProperties({
     }
     criteria.criteria.push({
       fieldName: this.startDateField,
-      operator: "greaterOrEqual",
+      operator: 'greaterOrEqual',
       value: startTime
     });
     criteria.criteria.push({
       fieldName: this.endDateField,
-      operator: "lessThan",
+      operator: 'lessThan',
       value: endTime
     });
 
@@ -276,13 +281,49 @@ isc.OBCalendar.addProperties({
           value: new Date().getTime().toString()
         });
       }
+    } else if (this.legendId) {
+      orPart.criteria.push({
+        fieldName: this.legendIdField,
+        operator: 'equals',
+        value: this.legendId
+      });
+    }
+
+    if (orPart.criteria.getLength() > 0) {
       criteria.criteria.push(orPart);
+    }
+
+    if (typeof this.getCustomCriteria === 'function') {
+      criteria.criteria.push(this.getCustomCriteria(this));
     }
 
     // always force a reload
     criteria.criteria.push(isc.OBRestDataSource.getDummyCriterion());
 
     return criteria;
+  },
+
+  draw: function () {
+    var ret, _originalTabSelected = this.mainView.tabSelected,
+        calendar = this;
+    ret = this.Super('draw', arguments);
+
+    // If change filter/legend parameters in day/week view and you switch to the other one,
+    // data needs to be refreshed in order to show changes
+    if (this.multiCalendar && this.mainView && typeof this.mainView.selectTab === 'function') {
+      this.mainView.tabSelected = function () {
+        var actionObject, mvret;
+        actionObject = {
+          target: this,
+          method: _originalTabSelected,
+          parameters: arguments
+        };
+        mvret = OB.Utilities.callAction(actionObject);
+        calendar.refreshSelectedView();
+        return mvret;
+      };
+    }
+    return ret;
   },
 
   fetchData: function (criteria, callback, request) {
