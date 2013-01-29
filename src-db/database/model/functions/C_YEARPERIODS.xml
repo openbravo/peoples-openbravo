@@ -133,7 +133,7 @@
 	FROM C_PERIOD 
 	WHERE C_PERIOD_ID <> v_NextNo
 	AND AD_ORG_ID = v_Org_ID
-	AND AD_CLIENT_ID = AD_Client_ID
+	AND AD_CLIENT_ID = v_Client_ID
 	AND TO_DATE(ADD_MONTHS(v_StartDate, v_MonthNo-1)) <= ENDDATE 
 	AND ADD_MONTHS(TRUNC(TO_DATE(ADD_MONTHS(v_StartDate, v_MonthNo-1)), 'MM'), 1) -1 >= STARTDATE;
 	
