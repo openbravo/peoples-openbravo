@@ -71,7 +71,7 @@ public class FIN_BankStatementProcess implements org.openbravo.scheduling.Proces
           }
         }
 
-        if (msg.getType() == null && !msg.getType().toLowerCase().equals("warning")) {
+        if (msg.getType() != null && !msg.getType().toLowerCase().equals("warning")) {
           // Success
           bankStatement.setProcessed(true);
           bankStatement.setAPRMProcessBankStatement("R");
