@@ -226,6 +226,7 @@ public class OrderLoader extends JSONProcessSimple {
       order = OBProvider.getInstance().get(Order.class);
       long t111 = System.currentTimeMillis();
       createOrder(order, jsonorder);
+      OBDal.getInstance().save(order);
       long t112 = System.currentTimeMillis();
       // Order lines
       ArrayList<OrderLine> lineReferences = new ArrayList<OrderLine>();
@@ -252,17 +253,14 @@ public class OrderLoader extends JSONProcessSimple {
         // Invoice header
         invoice = OBProvider.getInstance().get(Invoice.class);
         createInvoice(invoice, order, jsonorder);
+        OBDal.getInstance().save(invoice);
 
         // Invoice lines
         createInvoiceLines(invoice, order, jsonorder, orderlines, lineReferences);
       }
       t11 = System.currentTimeMillis();
-      OBDal.getInstance().save(order);
       if (shipment != null) {
         OBDal.getInstance().save(shipment);
-      }
-      if (invoice != null) {
-        OBDal.getInstance().save(invoice);
       }
       t2 = System.currentTimeMillis();
       OBDal.getInstance().flush();
@@ -430,18 +428,32 @@ public class OrderLoader extends JSONProcessSimple {
       line.setGrossAmount(lineReferences.get(i).getLineGrossAmount()
           .setScale(stdPrecision, RoundingMode.HALF_UP));
       invoice.getInvoiceLineList().add(line);
+      OBDal.getInstance().save(line);
 
-      InvoiceLineTax tax = OBProvider.getInstance().get(InvoiceLineTax.class);
-      tax.setLineNo((long) ((i + 1) * 10));
-      tax.setTax(line.getTax());
-      tax.setTaxableAmount(line.getLineNetAmount().setScale(stdPrecision, RoundingMode.HALF_UP));
-      tax.setTaxAmount(BigDecimal.valueOf(orderlines.getJSONObject(i).getDouble("taxAmount"))
-          .setScale(stdPrecision, RoundingMode.HALF_UP));
-      tax.setInvoice(invoice);
-      tax.setInvoiceLine(line);
-      tax.setRecalculate(true);
-      line.getInvoiceLineTaxList().add(tax);
-      invoice.getInvoiceLineTaxList().add(tax);
+      JSONObject taxes = orderlines.getJSONObject(i).getJSONObject("taxLines");
+      @SuppressWarnings("unchecked")
+      Iterator<String> itKeys = taxes.keys();
+      int ind = 0;
+      while (itKeys.hasNext()) {
+        String taxId = (String) itKeys.next();
+        JSONObject jsonOrderTax = taxes.getJSONObject(taxId);
+        InvoiceLineTax invoicelinetax = OBProvider.getInstance().get(InvoiceLineTax.class);
+        TaxRate tax = (TaxRate) OBDal.getInstance().getProxy(
+            ModelProvider.getInstance().getEntity(TaxRate.class).getName(), taxId);
+        invoicelinetax.setTax(tax);
+        invoicelinetax.setTaxableAmount(BigDecimal.valueOf(jsonOrderTax.getDouble("net")).setScale(
+            stdPrecision, RoundingMode.HALF_UP));
+        invoicelinetax.setTaxAmount(BigDecimal.valueOf(jsonOrderTax.getDouble("amount")).setScale(
+            stdPrecision, RoundingMode.HALF_UP));
+        invoicelinetax.setInvoice(invoice);
+        invoicelinetax.setInvoiceLine(line);
+        invoicelinetax.setRecalculate(true);
+        invoicelinetax.setLineNo((long) ((ind + 1) * 10));
+        ind++;
+        invoice.getInvoiceLineTaxList().add(invoicelinetax);
+        line.getInvoiceLineTaxList().add(invoicelinetax);
+        OBDal.getInstance().save(invoicelinetax);
+      }
 
       // Discounts & Promotions
       if (orderlines.getJSONObject(i).has("promotions")
@@ -751,18 +763,31 @@ public class OrderLoader extends JSONProcessSimple {
       lineReferences.add(orderline);
       orderline.setLineNo((long) ((i + 1) * 10));
       order.getOrderLineList().add(orderline);
+      OBDal.getInstance().save(orderline);
 
-      OrderLineTax tax = OBProvider.getInstance().get(OrderLineTax.class);
-      tax.setLineNo((long) ((i + 1) * 10));
-      tax.setTax(orderline.getTax());
-      tax.setTaxableAmount(orderline.getLineNetAmount()
-          .setScale(stdPrecision, RoundingMode.HALF_UP));
-      tax.setTaxAmount(BigDecimal.valueOf(orderlines.getJSONObject(i).getDouble("taxAmount"))
-          .setScale(stdPrecision, RoundingMode.HALF_UP));
-      tax.setSalesOrder(order);
-      tax.setSalesOrderLine(orderline);
-      orderline.getOrderLineTaxList().add(tax);
-      order.getOrderLineTaxList().add(tax);
+      JSONObject taxes = jsonOrderLine.getJSONObject("taxLines");
+      @SuppressWarnings("unchecked")
+      Iterator<String> itKeys = taxes.keys();
+      int ind = 0;
+      while (itKeys.hasNext()) {
+        String taxId = (String) itKeys.next();
+        JSONObject jsonOrderTax = taxes.getJSONObject(taxId);
+        OrderLineTax orderlinetax = OBProvider.getInstance().get(OrderLineTax.class);
+        TaxRate tax = (TaxRate) OBDal.getInstance().getProxy(
+            ModelProvider.getInstance().getEntity(TaxRate.class).getName(), taxId);
+        orderlinetax.setTax(tax);
+        orderlinetax.setTaxableAmount(BigDecimal.valueOf(jsonOrderTax.getDouble("net")).setScale(
+            stdPrecision, RoundingMode.HALF_UP));
+        orderlinetax.setTaxAmount(BigDecimal.valueOf(jsonOrderTax.getDouble("amount")).setScale(
+            stdPrecision, RoundingMode.HALF_UP));
+        orderlinetax.setSalesOrder(order);
+        orderlinetax.setSalesOrderLine(orderline);
+        orderlinetax.setLineNo((long) ((ind + 1) * 10));
+        ind++;
+        orderline.getOrderLineTaxList().add(orderlinetax);
+        order.getOrderLineTaxList().add(orderlinetax);
+        OBDal.getInstance().save(orderlinetax);
+      }
 
       // Discounts & Promotions
       if (jsonOrderLine.has("promotions") && !jsonOrderLine.isNull("promotions")

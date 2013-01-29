@@ -306,7 +306,7 @@
           line.set({
             net: OB.DEC.div(gross, line.get('linerate')),
             pricenet: OB.DEC.div(OB.DEC.div(gross, line.get('linerate')), line.get('qty')),
-            grossListPrice: grossListPrice,
+            grossListPrice: grossListPrice || price,
             grossUnitPrice: price,
             lineGrossAmount: gross
           }, {

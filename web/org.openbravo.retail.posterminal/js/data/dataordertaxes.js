@@ -30,6 +30,7 @@
           lines = this.get('lines'),
           len = lines.length,
           taxes = {},
+          taxesline = {},
           totalnet = OB.DEC.Zero,
           queue = {},
           triggerNext = false,
@@ -99,6 +100,7 @@
               pricenet = discountedGross ? OB.DEC.div(OB.DEC.div(new BigDecimal(String(discountedGross)), linerate), element.get('qty')) : new BigDecimal(String(linepricenet)); // 2 decimals properly rounded.
               pricenetcascade = pricenet;
               // second calculate tax lines.
+              taxesline = {};
               _.each(coll, function (taxRate, taxIndex) {
                 if (!taxRate.get('summaryLevel')) {
                   taxId = taxRate.get('id');
@@ -113,6 +115,11 @@
                   amount = OB.DEC.mul(net, rate);
                   pricenetcascade = OB.DEC.mul(pricenet, (rate.add(BigDecimal.prototype.ONE)));
 
+                  taxesline[taxId] = {};
+                  taxesline[taxId].name = taxRate.get('net');
+                  taxesline[taxId].rate = taxRate.get('rate');
+                  taxesline[taxId].net = net;
+                  taxesline[taxId].amount = amount;
                   if (taxes[taxId]) {
                     taxes[taxId].net = OB.DEC.add(taxes[taxId].net, net);
                     taxes[taxId].amount = OB.DEC.add(taxes[taxId].amount, amount);
@@ -125,6 +132,7 @@
                   }
                 }
               }, this);
+              element.set('taxLines', taxesline);
 
               // processed = yes
               queue[element.cid] = true;
@@ -216,6 +224,7 @@
               pricenet = new BigDecimal(String(discountedprice)) || (new BigDecimal(String(linepricenet))); // 2 decimals properly rounded.
               pricenetcascade = pricenet;
               // second calculate tax lines.
+              taxesline = {};
               _.each(coll, function (taxRate, taxIndex) {
                 if (!taxRate.get('summaryLevel')) {
                   taxId = taxRate.get('id');
@@ -230,6 +239,11 @@
                   amount = OB.DEC.mul(net, rate);
                   pricenetcascade = pricenet.multiply(rate.add(BigDecimal.prototype.ONE));
 
+                  taxesline[taxId] = {};
+                  taxesline[taxId].name = taxRate.get('net');
+                  taxesline[taxId].rate = taxRate.get('rate');
+                  taxesline[taxId].net = net;
+                  taxesline[taxId].amount = amount;
                   if (taxes[taxId]) {
                     taxes[taxId].net = OB.DEC.add(taxes[taxId].net, net);
                     taxes[taxId].amount = OB.DEC.add(taxes[taxId].amount, amount);
@@ -242,6 +256,7 @@
                   }
                 }
               }, this);
+              element.set('taxLines', taxesline);
 
               // processed = yes
               queue[element.cid] = true;
