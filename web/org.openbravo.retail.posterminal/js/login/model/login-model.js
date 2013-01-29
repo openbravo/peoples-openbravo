@@ -20,12 +20,6 @@
 
   // global components.
   OB = window.OB || {};
-  OB.Model = OB.Model || {};
-  OB.Model.Util = {
-    loadModels: function (online, models, data, incremental) {
-      OB.Dal.loadModels(online, models, data, incremental);
-    }
-  };
 
   OB.Router = Backbone.Router.extend({
     routes: {

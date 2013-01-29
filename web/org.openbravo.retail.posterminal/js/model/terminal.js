@@ -214,7 +214,7 @@ OB.Model.Terminal = Backbone.Model.extend({
 
       _.extend(datasources, Backbone.Events);
 
-      OB.Model.Util.loadModels(false, datasources, null, timestamp);
+      OB.Dal.loadModels(false, datasources, null, timestamp);
     }
   },
 

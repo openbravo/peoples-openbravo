@@ -29,7 +29,7 @@ OB.Model.WindowModel = Backbone.Model.extend({
       this.trigger('ready');
     }, this);
     if (OB.POS.modelterminal.get('connectedToERP')) {
-      OB.Model.Util.loadModels(true, this.models, this.data);
+      OB.Dal.loadModels(true, this.models, this.data);
     } else {
       if (this.init) {
         this.init();
