@@ -589,8 +589,7 @@ isc.OBNumberFilterItem.addProperties({
       value = parseFloat(value);
     }
     if (!isc.isA.String(value)) {
-      // on purpose no grouping symbol
-      return OB.Utilities.Number.JSToOBMasked(value, type.maskNumeric, type.decSeparator, null, type.groupInterval);
+      return OB.Utilities.Number.JSToOBMasked(value, type.maskNumeric, type.decSeparator, type.groupSeparator, OB.Format.defaultGroupingSize);
     }
     return value;
   },

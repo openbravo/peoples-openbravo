@@ -19,9 +19,7 @@
 package org.openbravo.client.application.window;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -42,7 +40,6 @@ import org.openbravo.dal.service.OBDal;
 public class ParameterWindowComponent extends BaseTemplateComponent {
   private static final String DEFAULT_TEMPLATE_ID = "FF80818132F916130132F9357DE10016";
 
-  protected static final Map<String, String> TEMPLATE_MAP = new HashMap<String, String>();
   static final String BUTTON_LIST_REFERENCE_ID = "FF80818132F94B500132F9575619000A";
 
   private Boolean inDevelopment = null;

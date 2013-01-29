@@ -68,31 +68,35 @@ isc.OBMultiSelectorItem.addProperties({
     if (this.showSelectorGrid && !this.form.isPreviewForm) {
       // adds pin field, which is marked as pin whenever the
       // record is part of the selection
-      this.selectorGridFields.unshift({
-        name: '_pin',
-        type: 'boolean',
-        title: '&nbsp;',
-        canEdit: false,
-        canFilter: false,
-        canSort: false,
-        canReorder: false,
-        canHide: false,
-        frozen: true,
-        canFreeze: false,
-        canDragResize: false,
-        canGroupBy: false,
-        autoExpand: false,
-        width: OB.Styles.Process.PickAndExecute.pinColumnWidth,
-        formatCellValue: function (value, record, rowNum, colNum, grid) {
-          if (grid.selector.selectorWindow.selectedIds.contains(record[OB.Constants.ID])) {
-            return '<img src="' + OB.Styles.Process.PickAndExecute.iconPinSrc + '" />';
+      // only adds it if the first field is not a pin field already
+      if (this.selectorGridFields.length === 0 || this.selectorGridFields[0].name !== '_pin') {
+        this.selectorGridFields.unshift({
+          name: '_pin',
+          type: 'boolean',
+          title: '&nbsp;',
+          canEdit: false,
+          canFilter: false,
+          canSort: false,
+          canReorder: false,
+          canHide: false,
+          frozen: true,
+          canFreeze: false,
+          canDragResize: false,
+          canGroupBy: false,
+          autoExpand: false,
+          width: OB.Styles.Process.PickAndExecute.pinColumnWidth,
+          formatCellValue: function (value, record, rowNum, colNum, grid) {
+            if (grid.selector.selectorWindow.selectedIds.contains(record[OB.Constants.ID])) {
+              return '<img src="' + OB.Styles.Process.PickAndExecute.iconPinSrc + '" />';
+            }
+            return '';
+          },
+          formatEditorValue: function (value, record, rowNum, colNum, grid) {
+            return this.formatCellValue(arguments);
           }
-          return '';
-        },
-        formatEditorValue: function (value, record, rowNum, colNum, grid) {
-          return this.formatCellValue(arguments);
-        }
-      });
+        });
+      }
+
 
       this.selectorWindow = isc.OBSelectorPopupWindow.create({
         // solves issue: https://issues.openbravo.com/view.php?id=17268

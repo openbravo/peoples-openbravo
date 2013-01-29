@@ -42,6 +42,8 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
+import org.openbravo.base.model.Entity;
+import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.structure.BaseOBObject;
@@ -61,11 +63,13 @@ import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.utility.Sequence;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.currency.ConversionRate;
+import org.openbravo.model.common.currency.ConversionRateDoc;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.OrganizationInformation;
 import org.openbravo.model.common.invoice.Invoice;
+import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
@@ -871,6 +875,47 @@ public class FIN_Utility {
       OBContext.restorePreviousMode();
     }
     return conversionRate;
+  }
+
+  /**
+   * Determine the conversion rate from one currency to another on a given date and given
+   * documentId. Will use the spot conversion rate defined by the system for that date
+   * 
+   * @param fromCurrency
+   *          Currency to convert from
+   * @param toCurrency
+   *          Currency being converted to
+   * @param conversionDate
+   *          Date conversion is being performed
+   * @param documentId
+   *          DocumentId to find the value in table c_conversion_rate_document
+   * @param entity
+   *          Entity type of the document
+   * @return A valid conversion rate for the parameters, or null if no conversion rate can be found
+   */
+  public static ConversionRateDoc getConversionRateDoc(Currency fromCurrency, Currency toCurrency,
+      String documentId, Entity entity) {
+
+    final OBCriteria<ConversionRateDoc> obcConvRateDoc = OBDal.getInstance().createCriteria(
+        ConversionRateDoc.class);
+
+    if (entity.equals(ModelProvider.getInstance().getEntity("Invoice"))) {
+      obcConvRateDoc.add(Restrictions.eq(ConversionRateDoc.PROPERTY_INVOICE, OBDal.getInstance()
+          .get(Invoice.class, documentId)));
+    } else if (entity.equals(ModelProvider.getInstance().getEntity("FIN_Payment"))) {
+      obcConvRateDoc.add(Restrictions.eq(ConversionRateDoc.PROPERTY_PAYMENT, OBDal.getInstance()
+          .get(FIN_Payment.class, documentId)));
+    } else if (entity.equals(ModelProvider.getInstance().getEntity("FIN_Finacc_Transaction"))) {
+      obcConvRateDoc.add(Restrictions.eq(ConversionRateDoc.PROPERTY_FINANCIALACCOUNTTRANSACTION,
+          OBDal.getInstance().get(FIN_FinaccTransaction.class, documentId)));
+    }
+    obcConvRateDoc.add(Restrictions.eq(ConversionRateDoc.PROPERTY_CURRENCY, fromCurrency));
+    obcConvRateDoc.add(Restrictions.eq(ConversionRateDoc.PROPERTY_TOCURRENCY, toCurrency));
+    obcConvRateDoc.setMaxResults(1);
+    if (obcConvRateDoc.uniqueResult() != null) {
+      return (ConversionRateDoc) obcConvRateDoc.uniqueResult();
+    } else
+      return null;
   }
 
   public static int getConversionRatePrecision(VariablesSecureApp vars) {

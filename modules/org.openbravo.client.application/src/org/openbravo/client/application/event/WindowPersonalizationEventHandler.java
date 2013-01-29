@@ -31,6 +31,7 @@ import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.service.db.DalConnectionProvider;
 
@@ -45,17 +46,24 @@ public class WindowPersonalizationEventHandler extends EntityPersistenceEventObs
     return entities;
   }
 
-  public void onUpdate(@Observes EntityUpdateEvent event) {
+  public void onUpdate(@Observes
+  EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
     final UIPersonalization uiPersonalization = (UIPersonalization) event.getTargetInstance();
     String personalizationType = uiPersonalization.getType();
+    Tab personalizationTab = uiPersonalization.getTab();
     Window personalizationWindow = uiPersonalization.getWindow();
     if ("Window".equals(personalizationType) && (personalizationWindow == null)) {
       String language = OBContext.getOBContext().getLanguage().getLanguage();
       ConnectionProvider conn = new DalConnectionProvider(false);
       throw new OBException(Utility.messageBD(conn, "OBUIAPP_WindowFieldMandatory", language));
+    }
+    if ("Form".equals(personalizationType) && (personalizationTab == null)) {
+      String language = OBContext.getOBContext().getLanguage().getLanguage();
+      ConnectionProvider conn = new DalConnectionProvider(false);
+      throw new OBException(Utility.messageBD(conn, "OBUIAPP_TabFieldMandatory", language));
     }
   }
 }

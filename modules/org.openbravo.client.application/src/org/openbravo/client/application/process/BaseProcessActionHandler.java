@@ -36,6 +36,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.model.ad.access.WindowAccess;
 import org.openbravo.model.ad.ui.Window;
@@ -52,7 +53,7 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
   protected final JSONObject execute(Map<String, Object> parameters, String content) {
 
     try {
-      OBContext.setAdminMode();
+      OBContext.setAdminMode(true);
 
       final String processId = (String) parameters.get("processId");
       Check.isNotNull(processId, "Process ID missing in request");
@@ -65,7 +66,7 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
 
         JSONObject err = new JSONObject();
         err.put("severity", "error");
-        err.put("text", "No access to process " + processDefinition);
+        err.put("text", OBMessageUtils.getI18NMessage("OBUIAPP_NoAccess", null));
         jsonRequest.put("message", err);
 
         log.error("No access to process " + processDefinition);

@@ -543,6 +543,7 @@
 					(CASE WHEN (QtyDelivered < 0 AND qtyinvoiced < 0) THEN LEAST(QtyDelivered, qtyinvoiced) ELSE GREATEST(QtyDelivered, qtyinvoiced) END) END) END)
                                   FROM C_ORDERLINE COL
                                   WHERE COL.C_ORDERLINE_ID = C_ORDERLINE.C_ORDERLINE_ID)
+                AND m_product_id IS NOT NULL
             )
             LOOP
               v_QtyOrdered := CASE WHEN (Cur_Inventory.QtyDelivered < 0) THEN LEAST(Cur_Inventory.QtyDelivered, Cur_Inventory.QtyInvoiced) ELSE GREATEST(Cur_Inventory.QtyDelivered, Cur_Inventory.QtyInvoiced) END;
