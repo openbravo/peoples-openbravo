@@ -342,7 +342,7 @@ public class ProcessInvoice extends HttpSecureAppServlet {
               docType, strPaymentDocumentNo, invoice.getBusinessPartner(),
               invoice.getPaymentMethod(), bpFinAccount, "0", FIN_Utility.getDate(strPaymentDate),
               invoice.getOrganization(), invoice.getDocumentNo(), paymentScheduleDetails,
-              paymentScheduleDetailsAmounts, false, false, invoice.getCurrency(), null, null);
+              paymentScheduleDetailsAmounts, false, false);
           newPayment.setAmount(BigDecimal.ZERO);
           newPayment.setGeneratedCredit(BigDecimal.ZERO);
           newPayment.setUsedCredit(totalUsedCreditAmt);
