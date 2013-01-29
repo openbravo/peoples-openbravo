@@ -46,6 +46,9 @@
   v_Sequence_No		            varchar2(32);
   v_C_AcctSchema_ID	          VARCHAR2(32);
   v_count 					  NUMBER;
+  v_currency_pl							VARCHAR2(32);
+  v_currency_credit					VARCHAR2(32);
+  v_currency_iso						VARCHAR2(32);
 BEGIN
     
     IF AD_isTriggerEnabled()='N' THEN RETURN;
@@ -241,6 +244,34 @@ BEGIN
      END LOOP;
 
   ELSIF (UPDATING) THEN
+  
+		 IF (:new.M_PRICELIST_ID <> :old.M_PRICELIST_ID) THEN
+		 -- When Updating the Price List, check if the Business Partner has already generated Credit
+		 -- In that case, do not allow to update to a Price List with a different Currency from the generated Credit.
+       SELECT c_currency_id
+       INTO v_currency_pl
+       FROM m_pricelist pl
+       JOIN c_currency USING (c_currency_id)
+       WHERE m_pricelist_id = :new.M_PRICELIST_ID;
+       
+     --Currency of the generated Credit not consumed yet.
+       SELECT MAX(p.c_currency_id)
+       INTO v_currency_credit
+       FROM fin_payment p
+       WHERE p.c_bpartner_id = :new.C_BPartner_ID
+       AND p.generated_credit <> 0
+       AND p.generated_credit-COALESCE(p.used_credit, 0) <> 0;
+      
+			 IF (v_currency_pl <> COALESCE(v_currency_credit, v_currency_pl)) THEN
+			   SELECT iso_code
+			   INTO v_currency_iso
+			   FROM c_currency
+			   WHERE c_currency_id = v_currency_credit;
+			   
+         RAISE_APPLICATION_ERROR(-20000, '@C_BPWithCreditPriceList@' || ' ' || v_currency_iso || '. ' || '@C_BPWithCreditPriceList2@');
+			 END IF;
+     END IF;
+
      UPDATE C_BP_CUSTOMER_ACCT SET AD_ORG_ID = :new.AD_Org_ID
      WHERE C_BPARTNER_ID = :new.C_BPartner_ID;
      UPDATE C_BP_VENDOR_ACCT SET AD_ORG_ID = :new.AD_Org_ID

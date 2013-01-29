@@ -66,6 +66,7 @@
   v_MessageBPB VARCHAR2(2000):='';
   result_String VARCHAR2(2000):='';
   v_ResultLinesStr VARCHAR2(2000):='';
+  v_stdPrecision NUMBER:=2;
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
@@ -397,14 +398,15 @@ BEGIN --BODY
             --MODIFIED BY F.IRIAZABAL
             v_QtyOrder:=0;
             IF (ol.M_Product_UOM_ID IS NOT NULL) THEN
-              SELECT M_PRODUCT_UOM.C_UOM_ID INTO v_ProductUOM
+              SELECT M_PRODUCT_UOM.C_UOM_ID, C_UOM.stdprecision
+              INTO v_ProductUOM, v_stdPrecision
               FROM M_PRODUCT_UOM, C_UOM
               WHERE M_PRODUCT_UOM.C_UOM_ID=C_UOM.C_UOM_ID
                 AND M_Product_UOM_ID=ol.M_Product_UOM_ID;
               IF (ol.QtyDelivered = 0) THEN
                 v_QtyOrder:=ol.QuantityOrder;
               ELSIF (v_ProductUOM IS NOT NULL) THEN
-                v_QtyOrder:=ol.QuantityOrder*v_Qty/ol.QtyOrdered;
+                v_QtyOrder:=ROUND(ol.QuantityOrder*v_Qty/ol.QtyOrdered,v_stdPrecision);
                 --v_QtyOrder:=C_Uom_Convert(v_Qty, ol.C_UOM_ID, v_ProductUOM, 'Y') ;
               ELSE
                 v_QtyOrder:=NULL;
