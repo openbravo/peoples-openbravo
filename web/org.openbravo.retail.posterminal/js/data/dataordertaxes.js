@@ -96,7 +96,7 @@
 
               totalnet = OB.DEC.add(totalnet, linenet);
 
-              pricenet = new BigDecimal(String(linepricenet)); // 2 decimals properly rounded.
+              pricenet = discountedGross ? OB.DEC.div(OB.DEC.div(new BigDecimal(String(discountedGross)), linerate), element.get('qty')) : new BigDecimal(String(linepricenet)); // 2 decimals properly rounded.
               pricenetcascade = pricenet;
               // second calculate tax lines.
               _.each(coll, function (taxRate, taxIndex) {
@@ -109,10 +109,9 @@
                   if (taxRate.get('cascade')) {
                     pricenet = pricenetcascade;
                   }
-                  gross = discountedGross || OB.DEC.mul(element.get('price'), element.get('qty'));
-                  net = OB.DEC.div(gross, OB.DEC.add(1, rate));
-                  amount = OB.DEC.sub(gross, net);
-                  pricenetcascade = pricenet.multiply(rate.add(BigDecimal.prototype.ONE));
+                  net = OB.DEC.mul(pricenet, element.get('qty'));
+                  amount = OB.DEC.mul(net, rate);
+                  pricenetcascade = OB.DEC.mul(pricenet, (rate.add(BigDecimal.prototype.ONE)));
 
                   if (taxes[taxId]) {
                     taxes[taxId].net = OB.DEC.add(taxes[taxId].net, net);
@@ -214,7 +213,7 @@
 
               totalnet = OB.DEC.add(totalnet, linenet);
 
-              pricenet = new BigDecimal(String(linepricenet)); // 2 decimals properly rounded.
+              pricenet = new BigDecimal(String(discountedprice)) || (new BigDecimal(String(linepricenet))); // 2 decimals properly rounded.
               pricenetcascade = pricenet;
               // second calculate tax lines.
               _.each(coll, function (taxRate, taxIndex) {
@@ -227,7 +226,7 @@
                   if (taxRate.get('cascade')) {
                     pricenet = pricenetcascade;
                   }
-                  net = OB.DEC.mul(discountedprice || pricenet, element.get('qty'));
+                  net = OB.DEC.mul(pricenet, element.get('qty'));
                   amount = OB.DEC.mul(net, rate);
                   pricenetcascade = pricenet.multiply(rate.add(BigDecimal.prototype.ONE));
 

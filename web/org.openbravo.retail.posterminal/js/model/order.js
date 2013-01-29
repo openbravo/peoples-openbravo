@@ -1131,7 +1131,7 @@
 
       _.each(model.receiptLines, function (iter) {
         var price;
-        if(order.get('priceIncludesTax')){
+        if (order.get('priceIncludesTax')) {
           price = OB.DEC.number(iter.unitPrice);
         } else {
           price = OB.DEC.number(iter.netPrice);
