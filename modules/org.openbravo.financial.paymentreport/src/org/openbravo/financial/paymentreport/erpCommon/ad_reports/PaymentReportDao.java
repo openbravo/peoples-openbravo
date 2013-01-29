@@ -636,14 +636,16 @@ public class PaymentReportDao {
               .getPaymentDetails().getFinPayment().getPaymentMethod().getIdentifier());
 
           // payment
-          FieldProviderFactory.setField(
-              data[i],
-              "PAYMENT",
-              dateFormat.format(FIN_PaymentScheduleDetail[i].getPaymentDetails().getFinPayment()
-                  .getPaymentDate())
-                  + " - "
-                  + FIN_PaymentScheduleDetail[i].getPaymentDetails().getFinPayment()
-                      .getDocumentNo());
+          FieldProviderFactory
+              .setField(
+                  data[i],
+                  "PAYMENT",
+                  ((FIN_PaymentScheduleDetail[i].getPaymentDetails().getFinPayment()
+                      .getPaymentDate() != null) ? dateFormat.format(FIN_PaymentScheduleDetail[i]
+                      .getPaymentDetails().getFinPayment().getPaymentDate()) : "Null")
+                      + " - "
+                      + FIN_PaymentScheduleDetail[i].getPaymentDetails().getFinPayment()
+                          .getDocumentNo());
           // payment description
           FieldProviderFactory.setField(data[i], "PAYMENT_DESC", FIN_PaymentScheduleDetail[i]
               .getPaymentDetails().getFinPayment().getDescription());
@@ -651,11 +653,13 @@ public class PaymentReportDao {
           FieldProviderFactory.setField(data[i], "PAYMENT_ID", FIN_PaymentScheduleDetail[i]
               .getPaymentDetails().getFinPayment().getId().toString());
           // payment_date
-          FieldProviderFactory.setField(
-              data[i],
-              "PAYMENT_DATE",
-              dateFormat.format(FIN_PaymentScheduleDetail[i].getPaymentDetails().getFinPayment()
-                  .getPaymentDate()));
+          FieldProviderFactory
+              .setField(
+                  data[i],
+                  "PAYMENT_DATE",
+                  (FIN_PaymentScheduleDetail[i].getPaymentDetails().getFinPayment()
+                      .getPaymentDate() != null) ? dateFormat.format(FIN_PaymentScheduleDetail[i]
+                      .getPaymentDetails().getFinPayment().getPaymentDate()) : "Null");
           // payment_docNo
           FieldProviderFactory.setField(data[i], "PAYMENT_DOCNO", FIN_PaymentScheduleDetail[i]
               .getPaymentDetails().getFinPayment().getDocumentNo());
@@ -1843,8 +1847,9 @@ public class PaymentReportDao {
     FieldProviderFactory.setField(data, "PLANNED_DSO", String.valueOf(plannedDSO));
     // currentDSO
     if (fIN_PaymentScheduleDetail.getPaymentDetails() != null) {
-      currentDSO = (fIN_PaymentScheduleDetail.getPaymentDetails().getFinPayment().getPaymentDate()
-          .getTime() - invoicedDate.getTime())
+      currentDSO = (((fIN_PaymentScheduleDetail.getPaymentDetails().getFinPayment()
+          .getPaymentDate() != null) ? fIN_PaymentScheduleDetail.getPaymentDetails()
+          .getFinPayment().getPaymentDate().getTime() : 0) - invoicedDate.getTime())
           / milisecDayConv;
     } else {
       currentTime = System.currentTimeMillis();
