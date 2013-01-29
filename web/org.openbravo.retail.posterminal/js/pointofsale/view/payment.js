@@ -18,14 +18,14 @@ enyo.kind({
     onButtonStatusChanged: 'buttonStatusChanged'
   },
   buttonStatusChanged: function (inSender, inEvent) {
-    var payment, paymentstatus = this.receipt.getPaymentStatus();
+    var payment;
     if (!_.isUndefined(inEvent.value.payment)) {
       payment = inEvent.value.payment;
       this.receipt.selectedPayment = payment.payment.searchKey;
-      if (!_.isNull(paymentstatus.change)) {
-        this.$.change.setContent(OB.DEC.mul(paymentstatus.change, payment.mulrate) + payment.symbol);
-      } else if (paymentstatus.pending) {
-        this.$.totalpending.setContent(OB.DEC.mul(paymentstatus.pending, payment.mulrate) + payment.symbol);
+      if (!_.isNull(this.receipt.getChange())) {
+        this.$.change.setContent(OB.I18N.formatCurrency(OB.DEC.mul(this.receipt.getChange(), payment.mulrate)) + payment.symbol);
+      } else if (this.receipt.getPending()) {
+        this.$.totalpending.setContent(OB.I18N.formatCurrency(OB.DEC.mul(this.receipt.getPending(), payment.mulrate)) + payment.symbol);
       }
     }
   },
@@ -134,7 +134,7 @@ enyo.kind({
       rate = OB.POS.terminal.terminal.paymentnames[this.receipt.selectedPayment].mulrate;
     }
     if (paymentstatus.change) {
-      this.$.change.setContent(OB.DEC.mul(paymentstatus.change, rate) + symbol);
+      this.$.change.setContent(OB.I18N.formatCurrency(OB.DEC.mul(this.receipt.getChange(), rate)) + symbol);
       this.$.change.show();
       this.$.changelbl.show();
     } else {
@@ -156,7 +156,7 @@ enyo.kind({
       this.$.doneaction.show();
       this.$.creditsalesaction.hide();
     } else {
-      this.$.totalpending.setContent(OB.DEC.mul(paymentstatus.pending, rate) + symbol);
+      this.$.totalpending.setContent(OB.I18N.formatCurrency(OB.DEC.mul(this.receipt.getPending(), rate)) + symbol);
       this.$.totalpending.show();
       this.$.totalpendinglbl.show();
       this.$.doneaction.hide();
