@@ -319,13 +319,16 @@ public class SE_Order_BPartner extends SimpleCallout {
     final String rtvendor = "C50A8AEE6F044825B5EF54FAAE76826F";
     final String rfcustomer = "FF808081330213E60133021822E40007";
     String strwindow = info.getStringParameter("inpwindowId", null);
+
     if (!(strwindow.equals(rtvendor) || strwindow.equals(rfcustomer))) {
-      if (FIN_Utility.isBlockedBusinessPartner(strBPartner, "Y".equals(strIsSOTrx), 1)) {
+      if ((!strBPartner.equals(""))
+          && (FIN_Utility.isBlockedBusinessPartner(strBPartner, "Y".equals(strIsSOTrx), 1))) {
         // If the Business Partner is blocked for this document, show an information message.
         BusinessPartner bPartner = OBDal.getInstance().get(BusinessPartner.class, strBPartner);
         message.append(OBMessageUtils.messageBD("ThebusinessPartner") + " "
             + bPartner.getIdentifier() + " " + OBMessageUtils.messageBD("BusinessPartnerBlocked"));
       }
+
     } else {
 
       if (data != null && data.length > 0

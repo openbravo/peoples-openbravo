@@ -45,7 +45,8 @@ public class SE_Payment_BPartner extends SimpleCallout {
     } catch (Exception e) {
       log4j.info("No default info for the selected business partner");
     }
-    if (FIN_Utility.isBlockedBusinessPartner(strcBpartnerId, "Y".equals(strisreceipt), 4)) {
+    if ((!strcBpartnerId.equals(""))
+        && (FIN_Utility.isBlockedBusinessPartner(strcBpartnerId, "Y".equals(strisreceipt), 4))) {
       // If the Business Partner is blocked for this document, show an information message.
       info.addResult("MESSAGE",
           OBMessageUtils.messageBD("ThebusinessPartner") + " " + bpartner.getIdentifier() + " "
