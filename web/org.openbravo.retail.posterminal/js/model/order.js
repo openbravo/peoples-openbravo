@@ -1000,6 +1000,10 @@
           item.net = -item.net;
           item.qty = -item.qty;
           item.taxAmount = -item.taxAmount;
+          _.forEach(item.taxLines, function (itemtax) {
+            itemtax.amount = -itemtax.amount;
+            itemtax.net = -itemtax.net;
+          });
         });
         _.forEach(jsonorder.payments, function (item) {
           item.amount = -item.amount;
