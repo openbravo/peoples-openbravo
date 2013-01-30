@@ -120,9 +120,16 @@ public class OBSchedulerInitializerListener implements ServletContextListener {
       try {
         Connection connection = OBDal.getInstance().getConnection();
         if (connection != null) {
-          Statement s = connection.createStatement();
-          String query = "UPDATE AD_PROCESS_RUN SET END_TIME=NOW(),STATUS='SYR' WHERE END_TIME IS NULL";
-          s.executeUpdate(query);
+          Statement s = null;
+          try {
+            s = connection.createStatement();
+            String query = "UPDATE AD_PROCESS_RUN SET END_TIME=NOW(),STATUS='SYR' WHERE END_TIME IS NULL";
+            s.executeUpdate(query);
+          } finally {
+            if (s != null && !s.isClosed()) {
+              s.close();
+            }
+          }
           OBDal.getInstance().flush();
           OBDal.getInstance().getConnection().commit();
         } else {

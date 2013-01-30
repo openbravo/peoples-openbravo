@@ -146,12 +146,9 @@ public class ApplyModulesCallServlet extends HttpBaseServlet {
         resp.setStatusofstate(defaultState);
     } catch (Exception e) {
     } finally {
-      try {
-        releasePreparedStatement(ps3);
-        releasePreparedStatement(ps2);
-        releasePreparedStatement(ps);
-      } catch (SQLException e2) {
-      }
+      releasePreparedStatement(ps);
+      releasePreparedStatement(ps2);
+      releasePreparedStatement(ps3);
     }
     return resp;
   }
@@ -201,11 +198,8 @@ public class ApplyModulesCallServlet extends HttpBaseServlet {
       // We need to use printStackTrace here because if not, the log will not be shown
       e.printStackTrace();
     } finally {
-      try {
-        releasePreparedStatement(ps3);
-        releasePreparedStatement(ps2);
-      } catch (SQLException e2) {
-      }
+      releasePreparedStatement(ps2);
+      releasePreparedStatement(ps3);
     }
     return resp;
   }
@@ -239,11 +233,7 @@ public class ApplyModulesCallServlet extends HttpBaseServlet {
       // We need to use printStackTrace here because if not, the log will not be shown
       e.printStackTrace();
     } finally {
-      if (ps != null)
-        try {
-          releasePreparedStatement(ps);
-        } catch (SQLException e) {
-        }
+      releasePreparedStatement(ps);
     }
   }
 
@@ -292,8 +282,13 @@ public class ApplyModulesCallServlet extends HttpBaseServlet {
     }
     String finalMessageType = "";
     OBError error = new OBError();
-    PreparedStatement ps;
-    PreparedStatement ps2;
+    PreparedStatement ps = null;
+    PreparedStatement ps2 = null;
+    PreparedStatement ps3 = null;
+    PreparedStatement ps4 = null;
+    PreparedStatement ps5 = null;
+    PreparedStatement ps6 = null;
+    PreparedStatement ps7 = null;
     try {
       ps = getPreparedStatement("SELECT MESSAGE FROM AD_ERROR_LOG WHERE ERROR_LEVEL='ERROR' ORDER BY CREATED DESC");
       ps.executeQuery();
@@ -324,7 +319,7 @@ public class ApplyModulesCallServlet extends HttpBaseServlet {
 
       BuildMainStep finalStep;
       if (finalMessageType.equals("Error")) {
-        PreparedStatement ps3 = getPreparedStatement("SELECT SYSTEM_STATUS FROM AD_SYSTEM_INFO");
+        ps3 = getPreparedStatement("SELECT SYSTEM_STATUS FROM AD_SYSTEM_INFO");
         ps3.executeQuery();
         ResultSet rs3 = ps3.getResultSet();
         rs3.next();
@@ -382,27 +377,42 @@ public class ApplyModulesCallServlet extends HttpBaseServlet {
       if (!rsErr.next()) {
         String successCode = build.getMainSteps().get(build.getMainSteps().size() - 1)
             .getSuccessCode();
-        PreparedStatement ps3 = getPreparedStatement("UPDATE AD_SYSTEM_INFO SET SYSTEM_STATUS='"
-            + successCode + "'");
-        ps3.executeUpdate();
-        PreparedStatement ps4 = getPreparedStatement("UPDATE AD_MODULE SET STATUS='A' WHERE STATUS='P'");
+        ps4 = getPreparedStatement("UPDATE AD_SYSTEM_INFO SET SYSTEM_STATUS='" + successCode + "'");
         ps4.executeUpdate();
+        ps5 = getPreparedStatement("UPDATE AD_MODULE SET STATUS='A' WHERE STATUS='P'");
+        ps5.executeUpdate();
       } else {
-        ps = getPreparedStatement("SELECT SYSTEM_STATUS FROM AD_SYSTEM_INFO");
-        ps.executeQuery();
-        ResultSet rs1 = ps.getResultSet();
+        ps6 = getPreparedStatement("SELECT SYSTEM_STATUS FROM AD_SYSTEM_INFO");
+        ps6.executeQuery();
+        ResultSet rs1 = ps6.getResultSet();
         rs1.next();
         String state = rs1.getString(1);
         BuildMainStep finalMainStep = build.mainStepOfCode(state);
         String errorCode = finalMainStep.getErrorCode();
-        PreparedStatement ps3 = getPreparedStatement("UPDATE AD_SYSTEM_INFO SET SYSTEM_STATUS='"
-            + errorCode + "'");
-        ps3.executeUpdate();
+        ps7 = getPreparedStatement("UPDATE AD_SYSTEM_INFO SET SYSTEM_STATUS='" + errorCode + "'");
+        ps7.executeUpdate();
       }
     } catch (Exception e) {
       // We need to use printStackTrace here because if not, the log will not be shown
       e.printStackTrace();
+    } finally {
+      releasePreparedStatement(ps);
+      releasePreparedStatement(ps2);
+      releasePreparedStatement(ps3);
+      releasePreparedStatement(ps4);
+      releasePreparedStatement(ps5);
+      releasePreparedStatement(ps6);
+      releasePreparedStatement(ps7);
     }
   }
 
+  public void releasePreparedStatement(PreparedStatement ps) {
+    try {
+      if (ps != null) {
+        super.releasePreparedStatement(ps);
+      }
+    } catch (SQLException e) {
+      // ignore
+    }
+  }
 }

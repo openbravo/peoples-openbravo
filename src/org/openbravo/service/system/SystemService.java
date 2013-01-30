@@ -327,18 +327,38 @@ public class SystemService implements OBSingleton {
         }
       }
       for (String command : sqlCommands) {
-        PreparedStatement ps = con.prepareStatement(command);
-        ps.setString(1, clientId);
-        ps.executeUpdate();
+        PreparedStatement ps = null;
+        try {
+          ps = con.prepareStatement(command);
+          ps.setString(1, clientId);
+          ps.executeUpdate();
+        } finally {
+          if (ps != null && !ps.isClosed()) {
+            ps.close();
+          }
+        }
       }
-      PreparedStatement stpref = con
-          .prepareStatement("DELETE FROM ad_preference p where visibleat_client_id=?");
-      stpref.setString(1, clientId);
-      stpref.executeUpdate();
-      PreparedStatement stpers = con
-          .prepareStatement("DELETE FROM obuiapp_uipersonalization p where visibleat_client_id=?");
-      stpers.setString(1, clientId);
-      stpers.executeUpdate();
+      PreparedStatement stpref = null;
+      try {
+        stpref = con.prepareStatement("DELETE FROM ad_preference p where visibleat_client_id=?");
+        stpref.setString(1, clientId);
+        stpref.executeUpdate();
+      } finally {
+        if (stpref != null && !stpref.isClosed()) {
+          stpref.close();
+        }
+      }
+      PreparedStatement stpers = null;
+      try {
+        stpers = con
+            .prepareStatement("DELETE FROM obuiapp_uipersonalization p where visibleat_client_id=?");
+        stpers.setString(1, clientId);
+        stpers.executeUpdate();
+      } finally {
+        if (stpers != null && !stpers.isClosed()) {
+          stpers.close();
+        }
+      }
       con.commit();
       OBDal.getInstance().commitAndClose();
       enableConstraints(platform);
@@ -368,9 +388,15 @@ public class SystemService implements OBSingleton {
   private void resetSafeMode(Connection con) {
 
     try {
-      PreparedStatement ps2 = con
-          .prepareStatement("UPDATE AD_SYSTEM_INFO SET SYSTEM_STATUS='RB70'");
-      ps2.executeUpdate();
+      PreparedStatement ps2 = null;
+      try {
+        ps2 = con.prepareStatement("UPDATE AD_SYSTEM_INFO SET SYSTEM_STATUS='RB70'");
+        ps2.executeUpdate();
+      } finally {
+        if (ps2 != null && !ps2.isClosed()) {
+          ps2.close();
+        }
+      }
     } catch (Exception e) {
       throw new RuntimeException("Couldn't reset the safe mode", e);
     }
@@ -378,13 +404,26 @@ public class SystemService implements OBSingleton {
 
   private void killConnectionsAndSafeMode(Connection con) {
     try {
-      PreparedStatement updateSession = con
-          .prepareStatement("UPDATE AD_SESSION SET SESSION_ACTIVE='N' WHERE CREATEDBY<>?");
-      updateSession.setString(1, OBContext.getOBContext().getUser().getId());
-      updateSession.executeUpdate();
-      PreparedStatement ps2 = con
-          .prepareStatement("UPDATE AD_SYSTEM_INFO SET SYSTEM_STATUS='RB80'");
-      ps2.executeUpdate();
+      PreparedStatement updateSession = null;
+      try {
+        updateSession = con
+            .prepareStatement("UPDATE AD_SESSION SET SESSION_ACTIVE='N' WHERE CREATEDBY<>?");
+        updateSession.setString(1, OBContext.getOBContext().getUser().getId());
+        updateSession.executeUpdate();
+      } finally {
+        if (updateSession != null && !updateSession.isClosed()) {
+          updateSession.close();
+        }
+      }
+      PreparedStatement ps2 = null;
+      try {
+        ps2 = con.prepareStatement("UPDATE AD_SYSTEM_INFO SET SYSTEM_STATUS='RB80'");
+        ps2.executeUpdate();
+      } finally {
+        if (ps2 != null && !ps2.isClosed()) {
+          ps2.close();
+        }
+      }
     } catch (Exception e) {
       throw new RuntimeException("Couldn't destroy concurrent sessions", e);
     }

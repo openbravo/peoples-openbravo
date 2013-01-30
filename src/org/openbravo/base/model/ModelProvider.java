@@ -320,17 +320,24 @@ public class ModelProvider implements OBSingleton {
     try {
       con = new ConnectionProviderImpl(OBPropertiesProvider.getInstance().getOpenbravoProperties());
       connection = con.getConnection();
-      PreparedStatement ps = connection
-          .prepareStatement("select distinct model_impl from ad_reference where model_impl is not null");
-      ResultSet rs = ps.executeQuery();
-      while (rs.next()) {
-        String classname = rs.getString(1);
-        Class<?> myClass = Class.forName(classname);
-        if (org.openbravo.base.model.domaintype.BaseDomainType.class.isAssignableFrom(myClass)) {
-          BaseDomainType classInstance = (BaseDomainType) myClass.newInstance();
-          for (Class<?> aClass : classInstance.getClasses()) {
-            sessionFactoryController.addAdditionalClasses(aClass);
+      PreparedStatement ps = null;
+      try {
+        ps = connection
+            .prepareStatement("select distinct model_impl from ad_reference where model_impl is not null");
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+          String classname = rs.getString(1);
+          Class<?> myClass = Class.forName(classname);
+          if (org.openbravo.base.model.domaintype.BaseDomainType.class.isAssignableFrom(myClass)) {
+            BaseDomainType classInstance = (BaseDomainType) myClass.newInstance();
+            for (Class<?> aClass : classInstance.getClasses()) {
+              sessionFactoryController.addAdditionalClasses(aClass);
+            }
           }
+        }
+      } finally {
+        if (ps != null && !ps.isClosed()) {
+          ps.close();
         }
       }
     } catch (Exception e) {

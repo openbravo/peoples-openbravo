@@ -22,6 +22,7 @@ package org.openbravo.service.db;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.Date;
@@ -95,9 +96,10 @@ public class CallStoredProcedure {
       sb.append(" AS RESULT FROM DUAL");
     }
     final Connection conn = OBDal.getInstance().getConnection(doFlush);
+    PreparedStatement ps = null;
     try {
-      final PreparedStatement ps = conn.prepareStatement(sb.toString(),
-          ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+      ps = conn.prepareStatement(sb.toString(), ResultSet.TYPE_SCROLL_INSENSITIVE,
+          ResultSet.CONCUR_READ_ONLY);
       int index = 0;
 
       for (Object parameter : parameters) {
@@ -132,10 +134,17 @@ public class CallStoredProcedure {
         }
       }
       resultSet.close();
-      ps.close();
       return resultValue;
     } catch (Exception e) {
       throw new IllegalStateException(e);
+    } finally {
+      try {
+        if (ps != null && !ps.isClosed()) {
+          ps.close();
+        }
+      } catch (SQLException e) {
+        // ignore
+      }
     }
   }
 
