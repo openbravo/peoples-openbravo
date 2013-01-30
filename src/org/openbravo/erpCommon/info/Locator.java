@@ -71,6 +71,12 @@ public class Locator extends HttpSecureAppServlet {
       vars.setSessionValue("Locator.warehousename", strWarehouse);
       String strOrg = vars.getGlobalVariable("inpadOrgId", "Locator.adorgid", "");
       if ("".equals(strOrg) || strOrg == null) {
+        if ("184".equals(windowId) || "169".equals(windowId) || "800013".equals(windowId)
+            || "800014".equals(windowId)) {
+          strOrg = vars.getGlobalVariable("inpadOrgId", "CreateFrom|adOrgId", "");
+        }
+      }
+      if ("".equals(strOrg) || strOrg == null) {
         strOrg = vars.getStringParameter("paramOrgTree");
       }
       printPage(response, vars, strName, strWarehouse, strOrg);
