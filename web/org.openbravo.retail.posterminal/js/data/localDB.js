@@ -45,6 +45,7 @@
       }
     }
   });
-
-  window.OB.Dal.localDB = db;
+  window.OB = OB || {};
+  window.OB.Data = OB.Data || {};
+  window.OB.Data.localDB = db;
 }());

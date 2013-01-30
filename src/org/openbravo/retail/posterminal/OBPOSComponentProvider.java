@@ -19,6 +19,7 @@
 package org.openbravo.retail.posterminal;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +30,7 @@ import org.openbravo.client.kernel.BaseComponentProvider.ComponentResource.Compo
 import org.openbravo.client.kernel.Component;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.client.kernel.KernelConstants;
+import org.openbravo.mobile.core.MobileCoreConstants;
 
 /**
  * @author iperdomo
@@ -38,11 +40,11 @@ import org.openbravo.client.kernel.KernelConstants;
 @ComponentProvider.Qualifier(OBPOSComponentProvider.QUALIFIER)
 public class OBPOSComponentProvider extends BaseComponentProvider {
 
-  // static {
-  // // Set dependency on Mobile Core app
-  // BaseComponentProvider.setAppDependencies(POSUtils.APP_NAME,
-  // Arrays.asList(MobileCoreConstants.APP_IDENTIFIER));
-  // }
+  static {
+    // Set dependency on Mobile Core app
+    BaseComponentProvider.setAppDependencies(POSUtils.APP_NAME,
+        Arrays.asList(MobileCoreConstants.APP_IDENTIFIER));
+  }
 
   public static final String QUALIFIER = "OBPOS_Main";
   public static final String APP_CACHE_COMPONENT = "AppCacheManifest";
@@ -83,7 +85,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
 
     final String[] resourceDependency = {
         // Common components
-        // "datasource",
+        "datasource",
         // "data/dal",
         // "utilities",
         // "utilitiesui",
