@@ -13,6 +13,7 @@
 
   // Sales.OrderLine Model
   var OrderLine = Backbone.Model.extend({
+    modelName: 'OrderLine',
     defaults: {
       product: null,
       productidentifier: null,
@@ -102,6 +103,7 @@
 
   // Sales.Payment Model
   var PaymentLine = Backbone.Model.extend({
+    modelName: 'PaymentLine',
     defaults: {
       'amount': OB.DEC.Zero,
       'origAmount': OB.DEC.Zero,
