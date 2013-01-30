@@ -146,9 +146,13 @@ public class ApplyModulesCallServlet extends HttpBaseServlet {
         resp.setStatusofstate(defaultState);
     } catch (Exception e) {
     } finally {
-      releasePreparedStatement(ps);
-      releasePreparedStatement(ps2);
-      releasePreparedStatement(ps3);
+      try {
+        releasePreparedStatement(ps);
+        releasePreparedStatement(ps2);
+        releasePreparedStatement(ps3);
+      } catch (SQLException e) {
+        // ignore
+      }
     }
     return resp;
   }
@@ -198,8 +202,12 @@ public class ApplyModulesCallServlet extends HttpBaseServlet {
       // We need to use printStackTrace here because if not, the log will not be shown
       e.printStackTrace();
     } finally {
-      releasePreparedStatement(ps2);
-      releasePreparedStatement(ps3);
+      try {
+        releasePreparedStatement(ps2);
+        releasePreparedStatement(ps3);
+      } catch (SQLException e) {
+        // ignore
+      }
     }
     return resp;
   }
@@ -233,7 +241,11 @@ public class ApplyModulesCallServlet extends HttpBaseServlet {
       // We need to use printStackTrace here because if not, the log will not be shown
       e.printStackTrace();
     } finally {
-      releasePreparedStatement(ps);
+      try {
+        releasePreparedStatement(ps);
+      } catch (SQLException e) {
+        // ignore
+      }
     }
   }
 
@@ -396,23 +408,23 @@ public class ApplyModulesCallServlet extends HttpBaseServlet {
       // We need to use printStackTrace here because if not, the log will not be shown
       e.printStackTrace();
     } finally {
-      releasePreparedStatement(ps);
-      releasePreparedStatement(ps2);
-      releasePreparedStatement(ps3);
-      releasePreparedStatement(ps4);
-      releasePreparedStatement(ps5);
-      releasePreparedStatement(ps6);
-      releasePreparedStatement(ps7);
+      try {
+        releasePreparedStatement(ps);
+        releasePreparedStatement(ps2);
+        releasePreparedStatement(ps3);
+        releasePreparedStatement(ps4);
+        releasePreparedStatement(ps5);
+        releasePreparedStatement(ps6);
+        releasePreparedStatement(ps7);
+      } catch (SQLException e) {
+        // ignore
+      }
     }
   }
 
-  public void releasePreparedStatement(PreparedStatement ps) {
-    try {
-      if (ps != null) {
-        super.releasePreparedStatement(ps);
-      }
-    } catch (SQLException e) {
-      // ignore
+  public void releasePreparedStatement(PreparedStatement ps) throws SQLException {
+    if (ps != null) {
+      super.releasePreparedStatement(ps);
     }
   }
 }
