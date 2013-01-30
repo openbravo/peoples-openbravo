@@ -48,4 +48,20 @@
     <Parameter name="adOrgId"/>
     <Parameter name="DateAcct"/>
   </SqlMethod>
+  <SqlMethod name="getCurrencyRate" type="preparedStatement" return="String" default="">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      SELECT C_CURRENCY_RATE(?, ?, TO_DATE(?, 'DD-MM-YYYY'),
+        ?, ?, ?) 
+      FROM c_acctschema 
+      WHERE c_acctschema.c_acctschema_id = ?
+    </Sql>
+    <Parameter name="cCurrencyId"/>
+    <Parameter name="acctSchemaCurrencyId"/>
+    <Parameter name="dateAcct"/>
+    <Parameter name="rateType"/>
+    <Parameter name="adClientId"/>
+    <Parameter name="adOrgId"/>
+    <Parameter name="cAcctSchemaId"/>
+  </SqlMethod>
 </SqlClass>

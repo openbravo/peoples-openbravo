@@ -29,8 +29,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.DateTimeData;
-import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.financialmgmt.gl.GLJournal;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class SL_JournalLineAmt extends HttpSecureAppServlet {
@@ -76,24 +77,22 @@ public class SL_JournalLineAmt extends HttpSecureAppServlet {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument(); 
-    String strAcctSchema = SLJournalLineAmtData.selectGeneralLedger(this,strGLJournal);
+        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
+    String strAcctSchema = SLJournalLineAmtData.selectGeneralLedger(this, strGLJournal);
     SLJournalLineAmtData[] data = SLJournalLineAmtData.select(this, strAcctSchema);
     String strPrecision = "2", strTargetCurrencyId = "";
     if (data != null && data.length > 0) {
       strPrecision = data[0].stdprecision.equals("") ? "2" : data[0].stdprecision;
       strTargetCurrencyId = data[0].cCurrencyId.equals("") ? "0" : data[0].cCurrencyId;
     }
-    String CurrencyRate = SLJournalLineAmtData.currencyRate(this, strCurrency, strTargetCurrencyId,
-        strDateAcct, strCurrencyRateType, vars.getClient(), vars.getOrg());
-    if (CurrencyRate.equals(""))
-      CurrencyRate = SLJournalLineAmtData.currencyRate2(this, strGLJournal, strCurrency,
-          strCurrencyRateType);
+    GLJournal gLJournal = OBDal.getInstance().get(GLJournal.class, strGLJournal);
+    BigDecimal CurrencyRateValue = gLJournal.getRate();
+    String CurrencyRate = CurrencyRateValue.toString();
     int StdPrecision = Integer.valueOf(strPrecision).intValue();
 
     BigDecimal AmtSourceDr = new BigDecimal(strAmtSourceDr);
     BigDecimal AmtSourceCr = new BigDecimal(strAmtSourceCr);
-    BigDecimal CurrencyRateValue = new BigDecimal(strCurrencyRate);
+
     CurrencyRateValue = CurrencyRateValue.setScale(StdPrecision, BigDecimal.ROUND_HALF_UP);
     BigDecimal AmtAcctDr, AmtAcctCr;
 
