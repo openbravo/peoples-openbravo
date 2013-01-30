@@ -38,6 +38,12 @@ import org.openbravo.client.kernel.KernelConstants;
 @ComponentProvider.Qualifier(OBPOSComponentProvider.QUALIFIER)
 public class OBPOSComponentProvider extends BaseComponentProvider {
 
+  // static {
+  // // Set dependency on Mobile Core app
+  // BaseComponentProvider.setAppDependencies(POSUtils.APP_NAME,
+  // Arrays.asList(MobileCoreConstants.APP_IDENTIFIER));
+  // }
+
   public static final String QUALIFIER = "OBPOS_Main";
   public static final String APP_CACHE_COMPONENT = "AppCacheManifest";
   public static final String CLIENT_MODEL_COMPONENT = "ClientModel";

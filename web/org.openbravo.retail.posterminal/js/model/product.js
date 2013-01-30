@@ -47,14 +47,5 @@
     updateStatement: ''
   });
 
-  var ProductList = Backbone.Collection.extend({
-    model: Product
-  });
-
-  window.OB = window.OB || {};
-  window.OB.Model = window.OB.Model || {};
-  window.OB.Collection = window.OB.Collection || {};
-
-  window.OB.Model.Product = Product;
-  window.OB.Collection.ProductList = ProductList;
+  OB.Data.Registry.registerModel(Product);
 }());

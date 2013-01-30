@@ -1206,14 +1206,11 @@
 
   });
 
-  window.OB = window.OB || {};
-  window.OB.Model = window.OB.Model || {};
-  window.OB.Collection = window.OB.Collection || {};
+  OB.Data.Registry.registerModel(OrderLine);
+  OB.Data.Registry.registerModel(PaymentLine);
 
-  window.OB.Model.OrderLine = OrderLine;
-  window.OB.Collection.OrderLineList = OrderLineList;
-  window.OB.Model.PaymentLine = PaymentLine;
-  window.OB.Collection.PaymentLineList = PaymentLineList;
+  // order model is not registered using standard Registry method becasue list is
+  // becasue collection is specific
   window.OB.Model.Order = Order;
   window.OB.Collection.OrderList = OrderList;
 

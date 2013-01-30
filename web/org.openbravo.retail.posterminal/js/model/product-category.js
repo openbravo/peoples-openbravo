@@ -39,14 +39,5 @@
     }
   });
 
-  var ProductCategoryList = Backbone.Collection.extend({
-    model: ProductCategory
-  });
-
-  window.OB = window.OB || {};
-  window.OB.Model = window.OB.Model || {};
-  window.OB.Collection = window.OB.Collection || {};
-
-  window.OB.Model.ProductCategory = ProductCategory;
-  window.OB.Collection.ProductCategoryList = ProductCategoryList;
+  OB.Data.Registry.registerModel(ProductCategory);
 }());

@@ -32,14 +32,5 @@
     local: true
   });
 
-  var SessionList = Backbone.Collection.extend({
-    model: Session
-  });
-
-  window.OB = window.OB || {};
-  window.OB.Model = window.OB.Model || {};
-  window.OB.Collection = window.OB.Collection || {};
-
-  window.OB.Model.Session = Session;
-  window.OB.Collection.SessionList = SessionList;
+  OB.Data.Registry.registerModel(Session);
 }());

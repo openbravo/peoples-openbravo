@@ -32,17 +32,5 @@
     insertStatement: 'INSERT INTO obpos_currency_panel(obpos_currency_panel_id, c_currency_id, amount, backcolor, bordercolor, line, _identifier, _idx)  VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
   });
 
-  var CurrencyPanelList = Backbone.Collection.extend({
-    model: CurrencyPanel,
-    comparator: function (currencypanel) {
-      return currencypanel.get('lineNo');
-    }
-  });
-
-  window.OB = window.OB || {};
-  window.OB.Model = window.OB.Model || {};
-  window.OB.Collection = window.OB.Collection || {};
-
-  window.OB.Model.CurrencyPanel = CurrencyPanel;
-  window.OB.Collection.CurrencyPanelList = CurrencyPanelList;
+  OB.Data.Registry.registerModel(CurrencyPanel);
 }());

@@ -174,14 +174,5 @@
     }
   });
 
-  var BusinessPartnerList = Backbone.Collection.extend({
-    model: BusinessPartner
-  });
-
-  window.OB = window.OB || {};
-  window.OB.Model = window.OB.Model || {};
-  window.OB.Collection = window.OB.Collection || {};
-
-  window.OB.Model.BusinessPartner = BusinessPartner;
-  window.OB.Collection.BusinessPartnerList = BusinessPartnerList;
+  OB.Data.Registry.registerModel(BusinessPartner);
 }());

@@ -29,14 +29,6 @@
     insertStatement: 'INSERT INTO changedbusinesspartners(changedbusinesspartners_id, json, c_bpartner_id, isbeingprocessed) VALUES (?,?,?,?)'
   });
 
-  var ChangedBusinessPartnersList = Backbone.Collection.extend({
-    model: ChangedBusinessPartners
-  });
 
-  window.OB = window.OB || {};
-  window.OB.Model = window.OB.Model || {};
-  window.OB.Collection = window.OB.Collection || {};
-
-  window.OB.Model.ChangedBusinessPartners = ChangedBusinessPartners;
-  window.OB.Collection.ChangedBusinessPartnersList = ChangedBusinessPartnersList;
+  OB.Data.Registry.registerModel(ChangedBusinessPartners);
 }());

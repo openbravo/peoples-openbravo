@@ -43,10 +43,5 @@
     model: ${data.modelName}
   });
 
-  window.OB = window.OB || {};
-  window.OB.Model = window.OB.Model || {};
-  window.OB.Collection = window.OB.Collection || {};
-
-  window.OB.Model.${data.modelName} = ${data.modelName};
-  window.OB.Collection.${data.modelName}List = ${data.modelName}List;
+  OB.Data.Registry.registerModel(${data.modelName});
 }());

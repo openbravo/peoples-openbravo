@@ -30,14 +30,5 @@
     insertStatement: 'INSERT INTO c_bp_group (c_bp_group_id, value, name, _identifier, _idx)  VALUES (?, ?, ?, ?, ?)'
   });
 
-  var BPCategoryList = Backbone.Collection.extend({
-    model: BPCategory
-  });
-
-  window.OB = window.OB || {};
-  window.OB.Model = window.OB.Model || {};
-  window.OB.Collection = window.OB.Collection || {};
-
-  window.OB.Model.BPCategory = BPCategory;
-  window.OB.Collection.BPCategoryList = BPCategoryList;
+  OB.Data.Registry.registerModel(BPCategory);
 }());

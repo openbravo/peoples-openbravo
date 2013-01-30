@@ -34,14 +34,5 @@
     local: true
   });
 
-  var UserList = Backbone.Collection.extend({
-    model: User
-  });
-
-  window.OB = window.OB || {};
-  window.OB.Model = window.OB.Model || {};
-  window.OB.Collection = window.OB.Collection || {};
-
-  window.OB.Model.User = User;
-  window.OB.Collection.UserList = UserList;
+  OB.Data.Registry.registerModel(User);
 }());
