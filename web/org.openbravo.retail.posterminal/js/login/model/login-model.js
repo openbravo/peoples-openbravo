@@ -21,18 +21,6 @@
   // global components.
   OB = window.OB || {};
 
-  OB.Router = Backbone.Router.extend({
-    routes: {
-      main: 'main'
-    },
-
-    main: function (query, page) {},
-
-    renderGenericWindow: function (windowName) {
-      this.terminal.renderGenericWindow(windowName);
-    }
-  });
-
   // var modelterminal= ;
   OB.POS = {
     modelterminal: new OB.Model.Terminal(),
