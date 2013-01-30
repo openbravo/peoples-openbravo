@@ -91,7 +91,6 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         // "utilitiesui",
         // "arithmetic",
         // "i18n",
-        "data/windowmodel",
         // "components/clock",
         // "model/order",
         // "model/terminal",
