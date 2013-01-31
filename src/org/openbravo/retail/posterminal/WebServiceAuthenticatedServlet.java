@@ -56,7 +56,7 @@ public abstract class WebServiceAuthenticatedServlet extends BaseKernelServlet {
       // has no access to this resource a error page is generated in the service using bdError
       // method of HttpSecureAppServlet and the local response has a content type
       //
-      if (localResponse.getRedirectTarget() != null) {
+      if (localResponse.getRedirectTarget() != null && !bypassAuthentication()) {
         if (!response.isCommitted()) {
           response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
           throw new OBSecurityException("Not authorized");
@@ -165,4 +165,7 @@ public abstract class WebServiceAuthenticatedServlet extends BaseKernelServlet {
     }
   }
 
+  protected boolean bypassAuthentication() {
+    return false;
+  }
 }

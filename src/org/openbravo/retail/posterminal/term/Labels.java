@@ -5,8 +5,9 @@ import javax.servlet.ServletException;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.mobile.core.login.LabelsComponent;
 import org.openbravo.retail.posterminal.JSONProcessSimple;
-import org.openbravo.retail.posterminal.LabelsComponent;
+import org.openbravo.retail.posterminal.POSConstants;
 import org.openbravo.service.json.JsonConstants;
 
 public class Labels extends JSONProcessSimple {
@@ -25,7 +26,7 @@ public class Labels extends JSONProcessSimple {
         }
       }
       JSONObject result = new JSONObject();
-      result.put("data", LabelsComponent.getLabels(languageId));
+      result.put("data", LabelsComponent.getLabels(languageId, POSConstants.MODULE_ID));
       result.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
       result.put("result", "0");
       return result;

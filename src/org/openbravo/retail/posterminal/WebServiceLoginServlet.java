@@ -19,6 +19,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.openbravo.authentication.AuthenticationManager;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.mobile.core.WebServiceAbstractServlet;
 import org.openbravo.service.json.JsonUtils;
 import org.openbravo.service.web.InvalidContentException;
 import org.openbravo.service.web.UserContextCache;

@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
+import org.openbravo.mobile.core.WebServiceAbstractServlet;
 import org.openbravo.service.json.JsonUtils;
 
 public class WebServiceLogoutServlet extends WebServiceAbstractServlet {

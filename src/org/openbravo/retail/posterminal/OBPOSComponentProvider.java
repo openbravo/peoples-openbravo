@@ -64,10 +64,12 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
       component.setParameters(parameters);
       return component;
     } else if (componentId.equals(LABELS_COMPONENT)) {
-      final LabelsComponent component = getComponent(LabelsComponent.class);
-      component.setId(LABELS_COMPONENT);
-      component.setParameters(parameters);
-      return component;
+      System.out.println("+++++++++++.................................");
+      // final LabelsComponent component = getComponent(LabelsComponent.class);
+      // component.setId(LABELS_COMPONENT);
+      // component.setParameters(parameters);
+      // return component;
+      return null;
     } else if (componentId.equals(KernelConstants.RESOURCE_COMPONENT_ID)) {
       final OBPOSStaticResorcesComponent component = getComponent(OBPOSStaticResorcesComponent.class);
       component.setId(KernelConstants.RESOURCE_COMPONENT_ID);
