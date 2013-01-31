@@ -1067,7 +1067,7 @@ isc.OBViewGrid.addProperties({
       if (this.filterEditor && !this.filterEditor.getEditForm()) {
         this.filterEditor.setValuesAsCriteria(localState.filter);
       }
-      
+
       this.setCriteria(localState.filter);
     }
   },
@@ -1445,7 +1445,7 @@ isc.OBViewGrid.addProperties({
     this.view.updateTabTitle();
 
     delete this.initialCriteria;
-    
+
     // do not refresh if the parent is not selected and we have no data
     // anyway
     if (this.view.parentProperty && (!this.data || !this.data.getLength || this.data.getLength() === 0)) {
@@ -1514,6 +1514,10 @@ isc.OBViewGrid.addProperties({
       }
     }
     delete this.isOpenDirectMode;
+
+    if (!this.targetRecordId) {
+      delete this.isOpenDirectModeLeaf;
+    }
 
     if (this.targetOpenNewEdit) {
       delete this.targetOpenNewEdit;
