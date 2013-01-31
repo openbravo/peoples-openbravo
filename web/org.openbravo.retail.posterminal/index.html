@@ -107,14 +107,7 @@
     }());
   </script>
   <script>
-    // Hack focus captured by location bar in android browser.
-    (function () {
-    	 OB.POS.terminal.renderInto(document.body);
-
-         OB.UTIL.checkConnectivityStatus(); //Initial check;
-         setInterval(OB.UTIL.checkConnectivityStatus, 5000);
-      
-    }());
+  OB.POS.terminal.renderInto(document.body);
   </script>
   <div id="terminal" class="pos-container">
     <div class="section" id="terminal_topsection">
