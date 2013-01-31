@@ -2056,7 +2056,7 @@ isc.OBViewGrid.addProperties({
       }
     }
     if (oldMessage !== this.emptyMessage) {
-      this.markForRedraw();
+      this.body.markForRedraw();
     }
   },
 
