@@ -84,20 +84,12 @@ BEGIN
    END IF;
 
    IF (v_QTYVARIABLE <> 'Y' AND v_ISSOTRX = 'Y' AND :NEW.C_ORDERLINE_ID IS NOT NULL) THEN
-       v_count:=0;
-       SELECT count(*)
-       INTO V_COUNT
-       FROM m_inout mi
-            LEFT JOIN m_inoutline ml ON ml.m_inout_id=mi.m_inout_id
-            LEFT JOIN c_orderline ol ON ml.c_orderline_id = ol.c_orderline_id 
-       WHERE ml.c_orderline_id = :NEW.C_ORDERLINE_ID 
-       AND (mi.docstatus='CO' or ml.m_inout_id = :NEW.m_inout_id)
-       GROUP BY ml.c_orderline_id,ol.QTYORDERED
-       HAVING abs(sum(ml.MOVEMENTQTY)) > ABS(ol.QTYORDERED);
-
-       IF(V_COUNT <> 0) THEN
-	 RAISE_APPLICATION_ERROR(-20000, '@MovementQtyCheck@');
-       END IF;
+      SELECT COUNT(*) INTO V_COUNT FROM C_ORDERLINE ol 
+      WHERE ol.C_ORDERLINE_ID = :NEW.C_ORDERLINE_ID 
+      AND ABS(:NEW.MOVEMENTQTY) > ABS(ol.QTYORDERED);
+          IF(V_COUNT <> 0) THEN
+	    RAISE_APPLICATION_ERROR(-20000, '@MovementQtyCheck@');
+	  END IF;
    END IF;
  END IF;  
 
