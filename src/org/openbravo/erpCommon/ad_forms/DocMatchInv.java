@@ -223,8 +223,8 @@ public class DocMatchInv extends AcctServer {
       // The precision of the divide is set to 10 because the rounding is needed to avoid
       // exceptions.
       // The rounding itself is not needed because it is done some lines later.
-      bdCost = CostingStatus.getInstance().isMigrated() ? trxCost.divide(
-          transaction.getMovementQuantity(), 10, RoundingMode.HALF_UP) : new BigDecimal(
+      bdCost = CostingStatus.getInstance().isMigrated() ? trxCost.divide(transaction
+          .getMovementQuantity().abs(), 10, RoundingMode.HALF_UP) : new BigDecimal(
           DocMatchInvData.selectProductAverageCost(conn, data[0].getField("M_Product_Id"),
               data[0].getField("orderAcctDate")));
       Long scale = costCurrency.getStandardPrecision();
