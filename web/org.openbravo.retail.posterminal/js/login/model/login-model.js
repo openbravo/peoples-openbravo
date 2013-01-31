@@ -23,7 +23,8 @@
 
   OB.Model.POSTerminal = OB.Model.Terminal.extend({
     defaults: {
-      loginUtilsUrl: '../../org.openbravo.retail.posterminal.service.loginutils'
+      loginUtilsUrl: '../../org.openbravo.retail.posterminal.service.loginutils',
+      supportsOffline: true
     }
   });
 
@@ -75,6 +76,10 @@
 
   OB.POS.terminal = new OB.UI.Terminal({
     terminal: OB.POS.modelterminal
+  });
+
+  OB.POS.modelterminal.set('loginUtilsParams', {
+    terminalName: OB.POS.paramTerminal
   });
 
   OB.Constants = {
