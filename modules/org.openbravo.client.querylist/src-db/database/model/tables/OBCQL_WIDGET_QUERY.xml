@@ -61,7 +61,7 @@
       <foreign-key foreignTable="AD_ORG" name="OBCQL_WIDGET_QUERY_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <index name="FKI_OBCQL_WIDGET_QUERY_DS" unique="false">
+      <index name="OBCQL_WIDGET_QUERY_DS" unique="false">
         <index-column name="OBSERDS_DATASOURCE_ID"/>
       </index>
       <check name="OBCQL_WIDGET_QUERY_ACTIVECHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
