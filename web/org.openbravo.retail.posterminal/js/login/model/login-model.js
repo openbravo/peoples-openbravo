@@ -21,9 +21,15 @@
   // global components.
   OB = window.OB || {};
 
+  OB.Model.POSTerminal = OB.Model.Terminal.extend({
+    defaults: {
+      loginUtilsUrl: '../../org.openbravo.retail.posterminal.service.loginutils'
+    }
+  });
+
   // var modelterminal= ;
   OB.POS = {
-    modelterminal: new OB.Model.Terminal(),
+    modelterminal: new OB.Model.POSTerminal(),
     paramWindow: OB.UTIL.getParameterByName("window") || "retail.pointofsale",
     paramTerminal: OB.UTIL.getParameterByName("terminal") || "POS-1",
     //    terminal: new OB.UI.Terminal({
