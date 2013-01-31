@@ -1001,6 +1001,32 @@ OB.Utilities.isUUID = function (object) {
   return (/[A-Fa-f0-9]{32,32}/).test(object);
 };
 
+//** {{{ OB.Utilities.clientClassSplitProps }}} **
+//
+// Auxiliary function to split a string containing the clientClass and its properties
+// Returns as an array the clientClass (first element) and its attributes (second element)
+OB.Utilities.clientClassSplitProps = function (clientClass) {
+  var clientClassPropsStartPosition, clientClassProps, ret;
+  if (!clientClass) {
+    clientClass = '';
+  }
+  clientClassPropsStartPosition = clientClass.indexOf('{');
+  if (clientClassPropsStartPosition > 0) {
+    clientClassProps = clientClass.substring(clientClassPropsStartPosition, clientClass.length);
+    try {
+      clientClassProps = JSON.parse(clientClassProps);
+    } catch (e) {
+      clientClassProps = {};
+    }
+    clientClass = clientClass.substring(0, clientClassPropsStartPosition);
+  } else {
+    clientClassProps = {};
+  }
+  clientClass = clientClass.replace(/\s+/g, '');
+  ret = [clientClass, clientClassProps];
+  return ret;
+};
+
 
 //** {{{ OB.Utilities.getRGBAStringFromOBColor }}} **
 //
