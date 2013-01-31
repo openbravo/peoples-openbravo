@@ -144,7 +144,7 @@ BEGIN
             Mrp_Run_Insertlines(p_Client_ID, p_Org_ID, p_User_ID, p_Run_ID, Cur_PlanProduct.M_Product_ID, v_qty_new, v_neededqty_new, NULL, 'PP', 'Y', NULL, NULL, NULL, NULL, NULL, v_Planneddate_new, v_plannedorderdate_new, 'N', 'N', Cur_PlanProduct.Vendor_ID, v_Aux_new);
             v_stock := v_stock + v_qty_new;
           ELSE
-            v_neededqty_new := v_neededqty_new + COALESCE(v_neededqty_old,0);
+            v_neededqty_new := v_neededqty_new + COALESCE(v_qty_old,0);
             v_qty_new := GREATEST(v_qty_new, v_neededqty_new);
             IF (Cur_PlanProduct.qtytype = 'M') THEN --Multiple lot qty
               v_Qty_new := CEIL(v_qty_new/Cur_PlanProduct.qtystd)*Cur_PlanProduct.qtystd;
