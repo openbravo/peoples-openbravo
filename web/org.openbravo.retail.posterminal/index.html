@@ -109,79 +109,11 @@
   <script>
     // Hack focus captured by location bar in android browser.
     (function () {
-      function renderPOS() {
-        OB.POS.terminal.renderInto(document.body);
+    	 OB.POS.terminal.renderInto(document.body);
 
-        OB.UTIL.checkConnectivityStatus(); //Initial check;
-        setInterval(OB.UTIL.checkConnectivityStatus, 5000);
-      };
-
-      function showUnknowTerminalError(){
-        var d = new Date();
-        document
-        .getElementById('terminal_containerWindow_login_control5').style.display = "block";
-        document
-        .getElementById('terminal_containerWindow_login_loginUnknowTerminal').style.display = "block";
-        document
-        .getElementById('terminal_containerWindow_login_loginUnknowTerminal_Title_Lbl').innerHTML = OB.I18N.getLabel('OBPOS_NO_POS_TERMINAL_TITLE', [OB.POS.paramTerminal]);
-        document
-            .getElementById('terminal_containerWindow_login_loginUnknowTerminal_P1_Lbl').innerHTML = OB.I18N.getLabel('OBPOS_NO_POS_TERMINAL_MSG', [OB.POS.paramTerminal]);
-        document
-        .getElementById('terminal_containerWindow_login_clock2_clock').innerHTML = OB.I18N.formatHour(d);
-        document
-            .getElementById('terminal_containerWindow_login_clock2_date').innerHTML = OB.I18N.formatDate(d);
-      }
-
-      var ajaxRequest = new enyo.Ajax({
-        url: '../../org.openbravo.retail.posterminal.service.loginutils',
-        cacheBust: false,
-        method: 'GET',
-        handleAs: 'json',
-        contentType: 'application/json;charset=utf-8',
-        data: {
-          command: 'preRenderActions',
-          terminalName: OB.POS.paramTerminal
-        },
-        success: function (inSender, inResponse) {
-          OB.I18N.labels = inResponse.response[0].data[1];
-          OB.Format = inResponse.response[0].data[2];
-          window.localStorage.setItem('I18NLabels', JSON.stringify(OB.I18N.labels));
-          window.localStorage.setItem('WebPOSFormat', JSON.stringify(OB.Format));
-
-          if ((inResponse.response[0].data[0].strClient) !== 'none') {
-            renderPOS();  
-            new OB.DS.Request('org.openbravo.retail.posterminal.term.Context').exec({}, function (inResponse) {
-              if (inResponse && !inResponse.exception) {
-                OB.POS.modelterminal.user = inResponse[0].user.username;
-                OB.POS.modelterminal.set('orgUserId',inResponse[0].user.id);
-                OB.UTIL.showLoading(true);
-                OB.POS.navigate('main');
-              } else {
-                OB.POS.navigate('login');
-              }
-            }, function () {
-              OB.POS.navigate('login');
-            });
-          } else {
-            showUnknowTerminalError();
-            return true;
-          }
-          OB.UTIL.showLoading(false);
-        },
-        fail: function (inSender, inResponse) {
-          // we are likely offline. Attempt to navigate to the login page
-          OB.I18N.labels = JSON.parse(window.localStorage.getItem('I18NLabels'));
-          OB.Format = JSON.parse(window.localStorage.getItem('WebPOSFormat'));
-          OB.UTIL.showLoading(false);
-          renderPOS();
-          OB.POS.navigate('login');
-        }
-      });
-      ajaxRequest.go(ajaxRequest.data).response('success').error('fail');
-      //} else {
-      //  OB.UTIL.showLoading(false);
-      //  OB.POS.navigate('login');
-      //}
+         OB.UTIL.checkConnectivityStatus(); //Initial check;
+         setInterval(OB.UTIL.checkConnectivityStatus, 5000);
+      
     }());
   </script>
   <div id="terminal" class="pos-container">
