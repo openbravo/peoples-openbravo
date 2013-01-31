@@ -351,6 +351,7 @@
             return OB.DEC.add(memo, grossLine);
           }, OB.DEC.Zero);
           me.set('gross', gross);
+          me.trigger('calculategross');
         });
       } else {
         this.calculateTaxes(function () {
@@ -365,6 +366,7 @@
             return OB.DEC.add(memo, netLine);
           }, OB.DEC.Zero);
           me.set('net', net);
+          me.trigger('calculategross');
         });
       }
       //total qty
@@ -373,7 +375,6 @@
         return OB.DEC.add(memo, qtyLine);
       }, OB.DEC.Zero);
       this.set('qty', qty);
-      this.trigger('calculategross');
     },
 
     getQty: function () {
