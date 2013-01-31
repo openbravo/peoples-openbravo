@@ -835,7 +835,7 @@
                 c_charge_id, chargeamt, c_tax_id, s_resourceassignment_id, ref_orderline_id,
                 m_attributesetinstance_id, isdescription, quantityorder, m_product_uom_id,
                 m_offer_id, pricestd, C_ORDER_DISCOUNT_ID,
-                gross_unit_price, line_gross_amount
+                gross_unit_price, taxbaseamt,line_gross_amount
               )
             VALUES
               (
@@ -848,7 +848,7 @@
                 NULL, NULL, Cur_TaxDiscount.C_TAX_ID, NULL, NULL,
                 NULL, 'N', NULL, NULL,
                 NULL, ROUND(v_Discount,v_precision), NULL,
-                ROUND(v_gross_unit_price, v_precision), ROUND(v_line_gross_amount, v_precision)
+                ROUND(v_gross_unit_price, v_precision), ROUND(v_Discount,v_precision),ROUND(v_line_gross_amount, v_precision)
               );
 
             UPDATE C_ORDERLINE
