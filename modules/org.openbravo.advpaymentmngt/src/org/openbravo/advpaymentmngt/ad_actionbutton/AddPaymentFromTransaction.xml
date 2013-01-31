@@ -52,6 +52,7 @@
     <PARAMETER id="paramFinBankStatementLineId" name="finBankStatementLineId" attribute="value" default=""/>
     <PARAMETER id="fieldOrg" name="orgId" attribute="value"/>
     <PARAMETER id="paramInheritedActualPayment" name="inheritedActualPayment" attribute="value"/>
+    <PARAMETER id="paramDisplayDoubtfulDebt" name="displayDoubtfulDebt" attribute="value"/>
     
     <PARAMETER id="paramPaymentDate" name="paymentDate" attribute="value"/>
     <PARAMETER id="paramPaymentDate" name="dateDisplayFormat" attribute="displayformat" replace="xx"/>

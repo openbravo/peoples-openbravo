@@ -18,6 +18,8 @@
  */
 package org.openbravo.erpCommon.ad_forms;
 
+import java.math.BigDecimal;
+
 import org.apache.log4j.Logger;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.order.Order;
@@ -33,6 +35,7 @@ public class DocLine_FINPayment extends DocLine {
   String isPrepayment = "";
   boolean isPrepaymentAgainstInvoice = false;
   Invoice invoice = null;
+  BigDecimal doubtFulDebtAmount = BigDecimal.ZERO;
   Order order = null;
 
   public Invoice getInvoice() {
@@ -154,6 +157,14 @@ public class DocLine_FINPayment extends DocLine {
    */
   public void setAmount(String amount) {
     Amount = amount;
+  }
+
+  public BigDecimal getDoubtFulDebtAmount() {
+    return doubtFulDebtAmount;
+  }
+
+  public void setDoubtFulDebtAmount(BigDecimal doubtFulDebtAmount) {
+    this.doubtFulDebtAmount = doubtFulDebtAmount;
   }
 
   public DocLine_FINPayment(String DocumentType, String TrxHeader_ID, String TrxLine_ID) {

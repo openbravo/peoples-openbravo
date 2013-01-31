@@ -86,6 +86,8 @@ function callBackGrid(paramXMLParticular, XMLHttpRequestObj) {
           document.frmMain.isFirstLoad.value='false';
           actualPaymentOnChange();
         }
+        debugger;
+        displayLogicElement('doubtfulDebt', (document.frmMain.displayDoubtfulDebt.value === 'true'));
       } else {
         document.getElementById('sectionGrid').innerHTML = '';
       }
@@ -185,7 +187,7 @@ function loadPaymentMethodCombo() {
     OB.APRM.APPM_fa = frmMain['inpFinancialAccountId'].value;
     OB.APRM.APPM_re = frmMain['isReceipt'].value;
 
-    try {
+    try {loadGridList
       var url = "../org.openbravo.advpaymentmngt.ad_actionbutton/AddPaymentFromTransaction.html";
       var paramXMLReq = null;
       return submitXmlHttpRequest(callBackPaymentMethod, document.frmMain, "PAYMENTMETHODCOMBO", url, false, null, paramXMLReq);
@@ -894,6 +896,7 @@ function closeProcessPayment() {
   <input type="hidden" name="inpissotrx" value="" id="fieldIsSoTrx"/>
   <input type="hidden" name="inpFinBankStatementLineId" value="" id="paramFinBankStatementLineId"></input>
   <input type="hidden" name="isFirstLoad" value="true"/>
+  <input type="hidden" name="displayDoubtfulDebt" id="paramDisplayDoubtfulDebt" value="false"/>
   <input type="hidden" name="isInGLItemMode" value="N"/>
   <input type="hidden" name="inpGLItems" value=""/>
   <input type="hidden" name="inpInheritedActualPayment" value="N" id="paramInheritedActualPayment"/>
@@ -1711,14 +1714,14 @@ function closeProcessPayment() {
               <td colspan="6">
                 <table class="FieldGroup" cellspacing="0" cellpadding="0" border="0">
                 <tbody>
-                  <tr class="FieldGroup_TopMargin"/>
+                  <tr class="FieldGroup_TopMargin"></tr>
                   <tr>
                     <td class="FieldGroupTitle_Left"><img class="FieldGroupTitle_Left_bg" border="0" src="../../../../../web/images/blank.gif"/></td>
                     <td class="FieldGroupTitle">Accounting Dimensions</td>
                     <td class="FieldGroupTitle_Right"><img class="FieldGroupTitle_Right_bg" border="0" src="../../../../../web/images/blank.gif"/></td>
-                    <td class="FieldGroupContent"/>
+                    <td class="FieldGroupContent"></td>
                   </tr>
-                  <tr class="FieldGroup_BottomMargin"/>
+                  <tr class="FieldGroup_BottomMargin"></tr>
                 </tbody>
                 </table>
               </td>
@@ -1900,6 +1903,7 @@ function closeProcessPayment() {
                         <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="100">Invoiced Amount</th>
                         <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="100">Expected Amount</th>
                         <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="100">Outstanding Amount</th>
+                        <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="100" id="doubtfulDebt">Doubtful Debt Amount</th>
                         <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="110"><span id="lblPPayment">Payment</span></th>
                       </tr>
                     </thead>

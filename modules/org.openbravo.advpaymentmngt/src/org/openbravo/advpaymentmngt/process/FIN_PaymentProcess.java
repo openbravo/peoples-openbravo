@@ -71,8 +71,6 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
     try {
       // retrieve custom params
       final String strAction = (String) bundle.getParams().get("action");
-      // This parameter is used inside this class
-      String isReversedPayment = (String) bundle.getParams().get("isReversedPayment");
       // retrieve standard params
       final String recordID = (String) bundle.getParams().get("Fin_Payment_ID");
       final FIN_Payment payment = dao.getObject(FIN_Payment.class, recordID);
@@ -682,6 +680,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
                 // Restore write off
                 List<FIN_PaymentScheduleDetail> outstandingPDSs = FIN_AddPayment
                     .getOutstandingPSDs(paymentScheduleDetail);
+                BigDecimal outstandingDebtAmount = BigDecimal.ZERO;
                 if (outstandingPDSs.size() > 0) {
                   outstandingPDSs.get(0).setAmount(
                       outstandingPDSs.get(0).getAmount().add(psdWriteoffAmount));
@@ -690,11 +689,18 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
                   FIN_PaymentScheduleDetail outstandingPSD = (FIN_PaymentScheduleDetail) DalUtil
                       .copy(paymentScheduleDetail, false);
                   outstandingPSD.setAmount(psdWriteoffAmount);
+                  if (paymentScheduleDetail.getDoubtfulDebtAmount().signum() != 0) {
+                    outstandingDebtAmount = paymentScheduleDetail.getDoubtfulDebtAmount().subtract(
+                        paymentScheduleDetail.getAmount());
+                  }
+                  outstandingPSD.setDoubtfulDebtAmount(outstandingDebtAmount);
                   outstandingPSD.setWriteoffAmount(BigDecimal.ZERO);
                   outstandingPSD.setPaymentDetails(null);
                   OBDal.getInstance().save(outstandingPSD);
                 }
                 paymentScheduleDetail.setWriteoffAmount(BigDecimal.ZERO);
+                paymentScheduleDetail.setDoubtfulDebtAmount(paymentScheduleDetail
+                    .getDoubtfulDebtAmount().subtract(outstandingDebtAmount));
                 paymentScheduleDetail.getPaymentDetails().setWriteoffAmount(BigDecimal.ZERO);
                 OBDal.getInstance().save(paymentScheduleDetail.getPaymentDetails());
                 OBDal.getInstance().save(paymentScheduleDetail);

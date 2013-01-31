@@ -947,9 +947,15 @@ public class AdvPaymentMngtDao {
 
   public void duplicateScheduleDetail(FIN_PaymentScheduleDetail paymentScheduleDetail,
       BigDecimal writeoffAmount) {
+    duplicateScheduleDetail(paymentScheduleDetail, writeoffAmount, null);
+  }
+
+  public void duplicateScheduleDetail(FIN_PaymentScheduleDetail paymentScheduleDetail,
+      BigDecimal writeoffAmount, BigDecimal debtAmount) {
     final FIN_PaymentScheduleDetail newPaymentScheduleDetail = (FIN_PaymentScheduleDetail) DalUtil
         .copy(paymentScheduleDetail);
     newPaymentScheduleDetail.setAmount(writeoffAmount);
+    newPaymentScheduleDetail.setDoubtfulDebtAmount(debtAmount);
     OBDal.getInstance().save(newPaymentScheduleDetail);
     OBDal.getInstance().flush();
   }
