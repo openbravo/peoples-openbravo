@@ -112,7 +112,7 @@ public class DoubtFulDebtPickEditLines extends BaseProcessActionHandler {
 
       if (amount.compareTo(BigDecimal.ZERO) != 0) {
         String strDebtdId = selectedLine.getString("fINDoubtfulDebt");
-        String strPaymentSchedule = selectedLine.getString("id");
+        String strPaymentSchedule = selectedLine.getString("finPaymentSchedule");
         String strCurrency = selectedLine.getString("currency");
         FIN_PaymentSchedule paymentSchedule = (FIN_PaymentSchedule) OBDal.getInstance().getProxy(
             FIN_PaymentSchedule.ENTITY_NAME, strPaymentSchedule);
@@ -131,7 +131,7 @@ public class DoubtFulDebtPickEditLines extends BaseProcessActionHandler {
           }
           newDoubtfulDebt.setClient(doubtfulDebtRun.getClient());
           newDoubtfulDebt.setOrganization(doubtfulDebtRun.getOrganization());
-          newDoubtfulDebt.setAccountingDate(doubtfulDebtRun.getRundate());
+          newDoubtfulDebt.setAccountingDate(doubtfulDebtRun.getAccountingDate());
           newDoubtfulDebt.setDescription(doubtfulDebtRun.getDescription());
           newDoubtfulDebt.setDocumentNo(FIN_Utility.getDocumentNo(documentType,
               documentType.getTable() != null ? documentType.getTable().getDBTableName() : ""));

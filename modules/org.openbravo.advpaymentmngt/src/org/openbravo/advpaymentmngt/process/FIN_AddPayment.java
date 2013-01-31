@@ -293,6 +293,7 @@ public class FIN_AddPayment {
                 doubtfulDebtAmount = paymentScheduleDetail.getDoubtfulDebtAmount();
               }
               paymentScheduleDetail.setWriteoffAmount(amountDifference);
+              doubtfulDebtAmount = doubtfulDebtAmount.add(amountDifference);
             }
             paymentScheduleDetail.setAmount(paymentDetailAmount);
             paymentScheduleDetail.setDoubtfulDebtAmount(doubtfulDebtAmount);
@@ -741,6 +742,16 @@ public class FIN_AddPayment {
       List<FIN_PaymentScheduleDetail> filteredScheduledPaymentDetails, boolean firstLoad,
       FIN_PaymentProposal paymentProposal, String strSelectedPaymentDetails)
       throws ServletException {
+    return getShownScheduledPaymentDetails(vars, selectedScheduledPaymentDetails,
+        filteredScheduledPaymentDetails, firstLoad, paymentProposal, strSelectedPaymentDetails,
+        false);
+  }
+
+  public static FieldProvider[] getShownScheduledPaymentDetails(VariablesSecureApp vars,
+      List<FIN_PaymentScheduleDetail> selectedScheduledPaymentDetails,
+      List<FIN_PaymentScheduleDetail> filteredScheduledPaymentDetails, boolean firstLoad,
+      FIN_PaymentProposal paymentProposal, String strSelectedPaymentDetails,
+      boolean showDoubtfulDebtAmount) throws ServletException {
 
     String strSelectedRecords = "";
     if (!"".equals(strSelectedPaymentDetails) && strSelectedPaymentDetails != null) {
@@ -949,6 +960,10 @@ public class FIN_AddPayment {
         }
         FieldProviderFactory.setField(data[i], "outstandingAmount", FIN_PaymentScheduleDetails[i]
             .getAmount().toString());
+        FieldProviderFactory.setField(data[i], "doubtfulDebtAmount", FIN_PaymentScheduleDetails[i]
+            .getDoubtfulDebtAmount().toString());
+        FieldProviderFactory.setField(data[i], "displayDoubtfulDebt", showDoubtfulDebtAmount ? ""
+            : "display: none;");
 
         String strPaymentAmt = "";
         String strDifference = "";

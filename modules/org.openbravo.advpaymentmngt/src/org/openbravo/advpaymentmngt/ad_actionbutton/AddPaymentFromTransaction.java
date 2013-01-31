@@ -57,6 +57,7 @@ import org.openbravo.erpCommon.utility.DimensionDisplayUtility;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.domain.Preference;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.currency.ConversionRate;
 import org.openbravo.model.common.currency.Currency;
@@ -460,6 +461,8 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
     xmlDocument.setParameter("orgId", financialAccount.getOrganization().getId());
     xmlDocument.setParameter("inheritedActualPayment", strFinBankStatementLineId.isEmpty() ? "N"
         : "Y");
+    xmlDocument.setParameter("displayDoubtfulDebt", displayDoubtfulDebtAmount(isReceipt) ? "true"
+        : "false");
 
     // get DocumentNo
     final List<Object> parameters = new ArrayList<Object>();
@@ -676,7 +679,8 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
           strAmountTo);
     }
     final FieldProvider[] data = FIN_AddPayment.getShownScheduledPaymentDetails(vars,
-        selectedScheduledPaymentDetails, filteredScheduledPaymentDetails, false, null);
+        selectedScheduledPaymentDetails, filteredScheduledPaymentDetails, false, null, null,
+        displayDoubtfulDebtAmount(isReceipt));
     xmlDocument.setData("structure", (data == null) ? set() : data);
 
     response.setContentType("text/html; charset=UTF-8");
@@ -850,4 +854,20 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
     // end of getServletInfo() method
   }
 
+  boolean displayDoubtfulDebtAmount(boolean isReceipt) {
+    // TODO: Apply preference logic
+    if (!isReceipt) {
+      return false;
+    }
+    OBCriteria<Preference> obCriteria = OBDal.getInstance().createCriteria(Preference.class);
+    obCriteria.add(Restrictions.eq(Preference.PROPERTY_ATTRIBUTE, "Doubtful_Debt_Visibility"));
+    obCriteria.add(Restrictions.eq(Preference.PROPERTY_CLIENT, OBContext.getOBContext()
+        .getCurrentClient()));
+    obCriteria.add(Restrictions.in(Preference.PROPERTY_ORGANIZATION + ".id", OBContext
+        .getOBContext().getReadableOrganizations()));
+    // obCriteria.add(Restrictions.eq(Preference.property_, obCriteria))
+    Preference preference = (Preference) obCriteria.uniqueResult();
+    return "Y".equals(preference.getSearchKey());
+
+  }
 }

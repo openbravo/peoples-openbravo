@@ -69,6 +69,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="DATEACCT" primaryKey="false" required="false" type="TIMESTAMP" size="7" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="C_BPARTNER" name="FIN_DOUBTFUL_DEBT_RUN_BP">
         <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
       </foreign-key>

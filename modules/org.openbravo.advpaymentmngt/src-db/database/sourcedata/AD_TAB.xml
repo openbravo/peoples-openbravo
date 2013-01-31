@@ -115,9 +115,9 @@
 <!--3FD616A223E44621806A8573068B6C62-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--3FD616A223E44621806A8573068B6C62-->  <AD_MODULE_ID><![CDATA[A918E3331C404B889D69AA9BFAFB23AC]]></AD_MODULE_ID>
 <!--3FD616A223E44621806A8573068B6C62-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
-<!--3FD616A223E44621806A8573068B6C62-->  <HQLWHERECLAUSE><![CDATA[e.fINDoubtfulDebtRun.id = @FIN_DoubtFul_Debt_Run.id@ OR e.fINDoubtfulDebtRun.id IS NULL OR e.fINDoubtfulDebtRun.id = '']]></HQLWHERECLAUSE>
+<!--3FD616A223E44621806A8573068B6C62-->  <HQLWHERECLAUSE><![CDATA[(e.fINDoubtfulDebtRun.id = @FIN_DoubtFul_Debt_Run.id@ OR e.fINDoubtfulDebtRun.id IS NULL OR e.fINDoubtfulDebtRun.id = '') and  e.rundate = to_date(@FIN_DoubtFul_Debt_Run.rundate@, 'yyyy-mm-dd')]]></HQLWHERECLAUSE>
 <!--3FD616A223E44621806A8573068B6C62-->  <HQLORDERBYCLAUSE><![CDATA[obSelected desc, dueDate, amount, documentno]]></HQLORDERBYCLAUSE>
-<!--3FD616A223E44621806A8573068B6C62-->  <HQLFILTERCLAUSE><![CDATA[e.fINDoubtfulDebtRun.id = @FIN_DoubtFul_Debt_Run.id@ OR (e.fINDoubtfulDebtRun.id IS NULL AND TO_NUMBER(@FIN_DoubtFul_Debt_Run.Daysoverdue@)<=e.daysOverdue 
+<!--3FD616A223E44621806A8573068B6C62-->  <HQLFILTERCLAUSE><![CDATA[e.fINDoubtfulDebtRun.id = @FIN_DoubtFul_Debt_Run.id@ OR (e.fINDoubtfulDebtRun.id IS NULL AND to_number(@FIN_DoubtFul_Debt_Run.Daysoverdue@)<=e.daysOverdue 
 AND ((@FIN_DoubtFul_Debt_Run.businessPartner@ is null OR @FIN_DoubtFul_Debt_Run.businessPartner@ = '') OR (@FIN_DoubtFul_Debt_Run.businessPartner@ is not null and e.businessPartner.id = @FIN_DoubtFul_Debt_Run.businessPartner@))
 AND ((@FIN_DoubtFul_Debt_Run.businessPartnerCategory@ is null OR @FIN_DoubtFul_Debt_Run.businessPartnerCategory@ = '') OR (@FIN_DoubtFul_Debt_Run.businessPartnerCategory@ is not null and e.businessPartnerCategory.id = @FIN_DoubtFul_Debt_Run.businessPartnerCategory@)))]]></HQLFILTERCLAUSE>
 <!--3FD616A223E44621806A8573068B6C62-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>

@@ -162,9 +162,33 @@ public class DocDoubtfulDebt extends AcctServer {
           nextSeqNo(SeqNo), DocumentType, conn);
       // Provision
       Fact_Acct_Group_ID = SequenceIdData.getUUID();
-      fact.createLine(null, getAccountBPartnerBadDebt(C_BPartner_ID, true, as, conn),
-          this.C_Currency_ID, bpAmountConverted.toString(), "", Fact_Acct_Group_ID,
-          nextSeqNo(SeqNo), DocumentType, conn);
+
+      // Assign expense to the dimensions of the invoice lines
+      BigDecimal assignedAmount = BigDecimal.ZERO;
+      DocDoubtfulDebtData[] data = DocDoubtfulDebtData.select(conn, dd.getFINPaymentSchedule()
+          .getInvoice().getId());
+      for (int i = 0; i < data.length; i++) {
+        BigDecimal lineAmount = bpAmountConverted.multiply(new BigDecimal(data[i].percentage));
+        if (i == data.length - 1) {
+          lineAmount = bpAmountConverted.subtract(assignedAmount);
+        }
+        DocLine line = new DocLine(DocumentType, Record_ID, "");
+        line.m_A_Asset_ID = data[i].aAssetId;
+        line.m_M_Product_ID = data[i].mProductId;
+        line.m_C_Project_ID = data[i].cProjectId;
+        line.m_C_BPartner_ID = data[i].cBpartnerId;
+        line.m_C_Costcenter_ID = data[i].cCostcenterId;
+        line.m_C_Campaign_ID = data[i].cCampaignId;
+        line.m_C_Activity_ID = data[i].cActivityId;
+        line.m_C_Glitem_ID = data[i].mCGlitemId;
+        line.m_User1_ID = data[i].user1id;
+        line.m_User2_ID = data[i].user2id;
+        line.m_AD_Org_ID = data[i].adOrgId;
+        fact.createLine(line, getAccountBPartnerBadDebt(C_BPartner_ID, true, as, conn),
+            this.C_Currency_ID, lineAmount.toString(), "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+            DocumentType, conn);
+        assignedAmount = assignedAmount.add(lineAmount);
+      }
       fact.createLine(null, getAccountBPartnerAllowanceForDoubtfulDebt(C_BPartner_ID, as, conn),
           this.C_Currency_ID, "", bpAmountConverted.toString(), Fact_Acct_Group_ID,
           nextSeqNo(SeqNo), DocumentType, conn);

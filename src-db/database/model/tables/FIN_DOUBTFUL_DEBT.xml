@@ -105,7 +105,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="DATEACCT" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false">
+      <column name="DATEACCT" primaryKey="false" required="false" type="TIMESTAMP" size="7" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
