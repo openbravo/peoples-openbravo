@@ -158,6 +158,6 @@
       <foreign-key foreignTable="USER2" name="FIN_DOUBTFUL_DEBT_USER2">
         <reference local="USER2_ID" foreign="USER2_ID"/>
       </foreign-key>
-      <check name="FIN_DOUBTDEBT_RUN_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="FIN_DOUBTDEBT_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>
