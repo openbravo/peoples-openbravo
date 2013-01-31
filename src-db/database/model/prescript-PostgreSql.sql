@@ -1602,3 +1602,9 @@ END;   $BODY$
   LANGUAGE 'plpgsql' IMMUTABLE
 /-- END
 
+
+CREATE OR REPLACE VIEW AD_INTEGER AS
+SELECT a.value::numeric AS value
+   FROM generate_series(1, 1024) a(value);
+/-- END
+

@@ -272,11 +272,6 @@ END;   $BODY$
   LANGUAGE 'plpgsql' VOLATILE
 /-- END
 
-CREATE OR REPLACE VIEW AD_INTEGER AS
-SELECT a.value::numeric AS value
-   FROM generate_series(1, 1024) a(value);
-/-- END
-
 CREATE OR REPLACE FUNCTION uuid_generate_v4()
 RETURNS uuid
 AS '$libdir/uuid-ossp', 'uuid_generate_v4'
