@@ -254,11 +254,11 @@ function loadGLItemList() {
           var amountSelected = 0;
           for (i=0;i<glItems.length;i++){
             if (isTrue('isReceipt')) {
-              amountSelected = add(amountSelected,glItems[i].glitemReceivedInAmt);
-              amountSelected = subtract(amountSelected,glItems[i].glitemPaidOutAmt);
+              amountSelected = add(amountSelected,applyFormatJSToOBMasked(glItems[i].glitemReceivedInAmt));
+              amountSelected = subtract(amountSelected,applyFormatJSToOBMasked(glItems[i].glitemPaidOutAmt));
             } else {
-              amountSelected = subtract(amountSelected,glItems[i].glitemReceivedInAmt);
-              amountSelected = add(amountSelected,glItems[i].glitemPaidOutAmt);
+              amountSelected = subtract(amountSelected,applyFormatJSToOBMasked(glItems[i].glitemReceivedInAmt));
+              amountSelected = add(amountSelected,applyFormatJSToOBMasked(glItems[i].glitemPaidOutAmt));
             }
           }
           document.getElementById('paramGLItems').value = '';
