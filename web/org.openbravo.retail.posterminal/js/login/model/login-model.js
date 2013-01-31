@@ -82,34 +82,6 @@
 
   OB.I18N.labels = {};
 
-  OB.I18N.getLabel = function (key, params, object, property) {
-    if (!OB.I18N.labels[key]) {
-      if (object && property) {
-        OB.I18N.getLabelFromServer(key, params, object, property);
-      }
-      return 'UNDEFINED ' + key;
-    }
-    var label = OB.I18N.labels[key],
-        i;
-    if (params && params.length && params.length > 0) {
-      for (i = 0; i < params.length; i++) {
-        label = label.replace("%" + i, params[i]);
-      }
-    }
-    if (object && property) {
-      if (Object.prototype.toString.call(object[property]) === '[object Function]') {
-        object[property](label);
-      } else {
-        object[property] = label;
-      }
-    }
-    return label;
-  };
-
-  OB.I18N.hasLabel = function (key, params, object, property) {
-    return OB.I18N.labels[key] ? true : false;
-  };
-
   executeWhenDOMReady = function () {
     if (document.readyState === "interactive" || document.readyState === "complete") {
       OB.POS.modelterminal.off('loginfail');
