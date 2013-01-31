@@ -44,6 +44,7 @@ import org.openbravo.model.ad.access.Session;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.access.UserRoles;
 import org.openbravo.model.ad.system.Client;
+import org.openbravo.model.common.enterprise.Warehouse;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -199,7 +200,8 @@ public class POSLoginHandler extends LoginHandler {
     // terminal defines client, org and warehouse
     strClient = (String) DalUtil.getId(terminal.getClient());
     strOrg = (String) DalUtil.getId(terminal.getOrganization());
-    strWarehouse = (String) DalUtil.getId(terminal.getOrganization().getObretcoMWarehouse());
+    Warehouse warehouse = POSUtils.getWarehouseForTerminal(terminal);
+    strWarehouse = warehouse != null ? (String) DalUtil.getId(warehouse) : null;
 
     if (user.getDefaultLanguage() != null) {
       strLanguage = user.getDefaultLanguage().getLanguage();
