@@ -108,7 +108,8 @@ public class CostingServer {
         .getCostingAlgorithm();
     // FIXME: remove when manufacturing costs are fully migrated
     // In case the product is Manufacturing type it is forced to use Average Algorithm
-    if (transaction.getProduct().isProduction()) {
+    if (transaction.getProduct().isProduction()
+        && costAlgorithm.getJavaClassName() != "org.openbravo.costing.StandardAlgorithm") {
       OBQuery<org.openbravo.model.materialmgmt.cost.CostingAlgorithm> caQry = OBDal.getInstance()
           .createQuery(
               org.openbravo.model.materialmgmt.cost.CostingAlgorithm.class,
