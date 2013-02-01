@@ -132,7 +132,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
         if (!_.isUndefined(receipt.selectedPayment) && !_.isUndefined(receipt.getPaymentStatus()) && receipt.getPaymentStatus().change > 0) {
           var payToDo = receipt.getPaymentStatus();
           var payment = OB.POS.terminal.terminal.paymentnames[receipt.selectedPayment];
-          if (!payment.paymentMethod.isCash) {
+          if (!payment.paymentMethod.iscash) {
             payment = OB.POS.terminal.terminal.paymentnames[OB.POS.modelterminal.get('paymentcash')];
           }
           receipt.addPayment(new OB.Model.PaymentLine({
