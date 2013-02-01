@@ -23,8 +23,9 @@
 
   OB.Model.POSTerminal = OB.Model.Terminal.extend({
     defaults: {
+      supportsOffline: true,
       loginUtilsUrl: '../../org.openbravo.retail.posterminal.service.loginutils',
-      supportsOffline: true
+      loginHandlerUrl: '../../org.openbravo.retail.posterminal/POSLoginHandler'
     }
   });
 
