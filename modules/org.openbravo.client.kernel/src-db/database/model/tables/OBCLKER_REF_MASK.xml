@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="TABLE OBCLKER_REF_MASK">
-    <table name="OBCLKER_REF_MASK" primaryKey="AD_REF_MASK_KEY">
-      <column name="AD_REF_MASK_ID" primaryKey="true" required="true" type="VARCHAR" size="32" autoIncrement="false">
+    <table name="OBCLKER_REF_MASK" primaryKey="OBCLKER_REF_MASK_KEY">
+      <column name="OBCLKER_REF_MASK_ID" primaryKey="true" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -45,13 +45,13 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_REFERENCE" name="AD_REF_AD_REF_KEY">
+      <foreign-key foreignTable="AD_REFERENCE" name="OBCLKER_REF_AD_REF_KEY">
         <reference local="AD_REFERENCE_ID" foreign="AD_REFERENCE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_CLIENT" name="AD_REF_CLIENT_KEY">
+      <foreign-key foreignTable="AD_CLIENT" name="OBCLKER_REF_CLIENT_KEY">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="AD_REF_ORG_KEY">
+      <foreign-key foreignTable="AD_ORG" name="OBCLKER_REF_ORG_KEY">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
       <check name="OBCLKER_REF_MASK_ISCTV_CHCK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
