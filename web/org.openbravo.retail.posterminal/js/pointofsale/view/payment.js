@@ -22,7 +22,7 @@ enyo.kind({
     if (!_.isUndefined(inEvent.value.payment)) {
       payment = inEvent.value.payment;
       this.receipt.selectedPayment = payment.payment.searchKey;
-      if (!_.isNull(this.receipt.getChange())) {
+      if (!_.isNull(this.receipt.getChange()) && this.receipt.getChange()) {
         this.$.change.setContent(OB.I18N.formatCurrency(OB.DEC.mul(this.receipt.getChange(), payment.mulrate)) + payment.symbol);
       } else if (this.receipt.getPending()) {
         this.$.totalpending.setContent(OB.I18N.formatCurrency(OB.DEC.mul(this.receipt.getPending(), payment.mulrate)) + payment.symbol);
