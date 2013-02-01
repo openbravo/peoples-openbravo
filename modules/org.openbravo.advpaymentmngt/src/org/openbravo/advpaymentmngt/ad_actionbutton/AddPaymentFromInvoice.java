@@ -688,10 +688,12 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
 
     BigDecimal exchangeRate = BigDecimal.ONE;
 
+    ConversionRateDoc conversionRateDoc = null;
+
     if (financialAccountCurrency != null && !financialAccountCurrency.equals(paymentCurrency)) {
       if (checkDocumentConversionRate(invoice.getId())) {
-        final ConversionRateDoc conversionRateDoc = FIN_Utility.getConversionRateDoc(
-            paymentCurrency, financialAccountCurrency, invoice.getId(), invoice.getEntity());
+        conversionRateDoc = FIN_Utility.getConversionRateDoc(paymentCurrency,
+            financialAccountCurrency, invoice.getId(), invoice.getEntity());
         if (conversionRateDoc == null) {
           exchangeRate = null;
         } else {
@@ -700,7 +702,7 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
         }
 
       }
-      if (exchangeRate == null) {
+      if (conversionRateDoc == null) {
         final ConversionRate conversionRate = FIN_Utility.getConversionRate(paymentCurrency,
             financialAccountCurrency, paymentDate, organization);
         if (conversionRate == null) {
