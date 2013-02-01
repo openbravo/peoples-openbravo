@@ -537,7 +537,7 @@ enyo.kind({
       kind: 'OB.UI.MenuBackOffice'
     });
 
-    enyo.forEach(OB.POS.windows.filter(function (window) {
+    enyo.forEach(OB.MobileApp.model.windows.filter(function (window) {
       // show in menu only the ones with menuPosition
       return window.get('menuPosition');
     }), function (window) {

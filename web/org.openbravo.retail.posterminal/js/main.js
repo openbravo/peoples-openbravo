@@ -29,7 +29,7 @@
 
     // Set Arithmetic properties:
     OB.DEC.setContext(OB.POS.modelterminal.get('currency').pricePrecision, BigDecimal.prototype.ROUND_HALF_EVEN);
-    webwindow = OB.POS.windows.where({
+    webwindow = OB.MobileApp.model.windows.where({
       route: OB.POS.paramWindow
     })[0].get('windowClass');
 
@@ -64,8 +64,10 @@
   });
 
   executeWhenDOMReady = function () {
+	  debugger
     if (document.readyState === "interactive" || document.readyState === "complete") {
       modelterminal.load();
+      //TODO: this is required but should be changed to make it possible to be included in terminal component
       modelterminal.on('ready', function () {
         OB.POS.terminal.$.dialogsContainer.createComponent({
           kind: 'OB.UI.ModalLogout',
