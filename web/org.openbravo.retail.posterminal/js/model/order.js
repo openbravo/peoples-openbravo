@@ -1148,7 +1148,7 @@
             uOM: iter.uOM,
             qty: OB.DEC.number(iter.quantity),
             price: price,
-            priceList: OB.DEC.number(iter.unitPrice),
+            priceList: price,
             promotions: iter.promotions,
             priceIncludesTax: order.get('priceIncludesTax')
           });
