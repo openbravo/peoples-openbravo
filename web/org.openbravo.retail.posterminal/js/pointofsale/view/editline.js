@@ -237,7 +237,11 @@ enyo.kind({
       this.$.editlineqty.setContent(this.line.printQty());
       this.$.editlinediscount.setContent(this.line.printDiscount());
       this.$.editlineprice.setContent(this.line.printPrice());
-      this.$.editlinegross.setContent(this.line.printGross());
+      if (this.line.get('priceIncludesTax')) {
+        this.$.editlinegross.setContent(this.line.printGross());
+      } else {
+        this.$.editlinegross.setContent(this.line.printNet());
+      }
     } else {
       this.$.txtaction.setContent(OB.I18N.getLabel('OBPOS_NoLineSelected'));
       this.$.msgedit.hide();
