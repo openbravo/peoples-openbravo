@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
   <database name="TRIGGER FIN_DOUBTFUL_DEBT_RUN_CHK_TRG">
     <trigger name="FIN_DOUBTFUL_DEBT_RUN_CHK_TRG" table="FIN_DOUBTFUL_DEBT_RUN" fires="before" insert="true" update="true" delete="true" foreach="row">
-      <body><![CDATA[    /*************************************************************************
+      <body><![CDATA[    
+    /*************************************************************************
     * The contents of this file are subject to the Openbravo  Public  License
     * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
     * Version 1.1  with a permitted attribution clause; you may not  use this

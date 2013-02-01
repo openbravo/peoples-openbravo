@@ -646,6 +646,11 @@ public class DocFINReconciliation extends AcctServer {
   }
 
   public Fact createFactPayment(DocLine_FINReconciliation line, AcctSchema as,
+      ConnectionProvider conn, Fact fact, String Fact_Acct_Group_ID) throws ServletException {
+    return createFactPayment(line, as, conn, fact, Fact_Acct_Group_ID, SequenceIdData.getUUID());
+  }
+
+  public Fact createFactPayment(DocLine_FINReconciliation line, AcctSchema as,
       ConnectionProvider conn, Fact fact, String Fact_Acct_Group_ID, String Fact_Acct_Group_ID2)
       throws ServletException {
     FIN_Payment payment = OBDal.getInstance().get(FIN_Payment.class, line.getFinPaymentId());
@@ -792,6 +797,13 @@ public class DocFINReconciliation extends AcctServer {
 
     SeqNo = "0";
     return fact;
+  }
+
+  public Fact createFactPaymentDetails(DocLine_FINReconciliation line,
+      FIN_PaymentDetail paymentDetail, AcctSchema as, ConnectionProvider conn, Fact fact,
+      String Fact_Acct_Group_ID) throws ServletException {
+    return createFactPaymentDetails(line, paymentDetail, as, conn, fact, Fact_Acct_Group_ID,
+        SequenceIdData.getUUID());
   }
 
   public Fact createFactPaymentDetails(DocLine_FINReconciliation line,

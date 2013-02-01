@@ -373,7 +373,6 @@ public class DocFINPayment extends AcctServer {
                   getAccountBPartnerAllowanceForDoubtfulDebt(bpartnerId, as, conn),
                   this.C_Currency_ID, doubtFulDebtAmount.toString(), "", Fact_Acct_Group_ID2,
                   nextSeqNo(SeqNo), DocumentType, conn);
-
               // Assign expense to the dimensions of the invoice lines
               BigDecimal assignedAmount = BigDecimal.ZERO;
               DocDoubtfulDebtData[] data = DocDoubtfulDebtData.select(conn, invoice.getId());
@@ -404,7 +403,6 @@ public class DocFINPayment extends AcctServer {
                     conn);
                 assignedAmount = assignedAmount.add(lineAmount);
               }
-
             }
           }
           fact.createLine(line, getAccountBPartner(bpartnerId, as, isReceipt, isPrepayment, conn),
