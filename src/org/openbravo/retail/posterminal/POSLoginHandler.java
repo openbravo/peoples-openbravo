@@ -39,7 +39,7 @@ public class POSLoginHandler extends MobileCoreLoginHandler {
   protected RoleDefaults getDefaults(HttpServletRequest req, HttpServletResponse res,
       String userId, String roleId, Session session) {
     final VariablesSecureApp vars = new VariablesSecureApp(req);
-    final String terminalSearchKey = vars.getStringParameter("terminal");
+    final String terminalSearchKey = vars.getStringParameter("terminalName");
     OBCriteria<OBPOSApplications> qApp = OBDal.getInstance()
         .createCriteria(OBPOSApplications.class);
     qApp.add(Restrictions.eq(OBPOSApplications.PROPERTY_SEARCHKEY, terminalSearchKey));
