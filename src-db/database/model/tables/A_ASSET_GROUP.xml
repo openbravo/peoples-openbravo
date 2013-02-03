@@ -53,6 +53,30 @@
         <default><![CDATA[Y]]></default>
         <onCreateDefault/>
       </column>
+      <column name="AMORTIZATIONTYPE" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
+        <default/>
+        <onCreateDefault><![CDATA['LI']]></onCreateDefault>
+      </column>
+      <column name="AMORTIZATIONCALCTYPE" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
+        <default/>
+        <onCreateDefault><![CDATA['PE']]></onCreateDefault>
+      </column>
+      <column name="ANNUALAMORTIZATIONPERCENTAGE" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="ASSETSCHEDULE" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
+        <default/>
+        <onCreateDefault><![CDATA['MO']]></onCreateDefault>
+      </column>
+      <column name="USELIFEYEARS" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="USELIFEMONTHS" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="A_ASSET_GROUP_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>

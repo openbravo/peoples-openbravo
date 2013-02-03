@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2012 Openbravo SLU 
+ * All portions are Copyright (C) 2012-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,7 +21,6 @@ package org.openbravo.erpCommon.ad_callouts;
 
 import javax.servlet.ServletException;
 
-import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -33,18 +32,21 @@ public class SL_Depreciate extends SimpleCallout {
   @Override
   protected void execute(CalloutInfo info) throws ServletException {
     final String assetCategoryID = info.getStringParameter("inpaAssetGroupId", IsIDFilter.instance);
-    if (!StringUtils.isBlank(assetCategoryID)) {
-      info.addResult("inpisdepreciated", getDepreciatedFlag(assetCategoryID));
+    if (!assetCategoryID.isEmpty()) {
+      OBContext.setAdminMode(true);
+      try {
+        final AssetGroup assetGroup = OBDal.getInstance().get(AssetGroup.class, assetCategoryID);
+        info.addResult("inpisdepreciated", assetGroup.isDepreciate());
+        info.addResult("inpamortizationtype", assetGroup.getDepreciationType());
+        info.addResult("inpamortizationcalctype", assetGroup.getCalculateType());
+        info.addResult("inpannualamortizationpercentage", assetGroup.getAnnualDepreciation());
+        info.addResult("inpassetschedule", assetGroup.getAmortize());
+        info.addResult("inpuselifemonths", assetGroup.getUsableLifeMonths());
+        info.addResult("inpuselifeyears", assetGroup.getUsableLifeYears());
+      } finally {
+        OBContext.restorePreviousMode();
+      }
     }
   }
 
-  protected Boolean getDepreciatedFlag(final String assetCategoryID) {
-    OBContext.setAdminMode();
-    try {
-      final AssetGroup assetCategory = OBDal.getInstance().get(AssetGroup.class, assetCategoryID);
-      return (assetCategory == null ? Boolean.FALSE : assetCategory.isDepreciate());
-    } finally {
-      OBContext.restorePreviousMode();
-    }
-  }
 }
