@@ -49,4 +49,14 @@ public class SL_Depreciate extends SimpleCallout {
     }
   }
 
+  protected Boolean getDepreciatedFlag(final String assetCategoryID) {
+    OBContext.setAdminMode();
+    try {
+      final AssetGroup assetCategory = OBDal.getInstance().get(AssetGroup.class, assetCategoryID);
+      return (assetCategory == null ? Boolean.FALSE : assetCategory.isDepreciate());
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
 }
