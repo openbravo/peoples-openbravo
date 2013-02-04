@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2012 Openbravo SLU
+ * All portions are Copyright (C) 2011-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -236,6 +236,26 @@ isc.OBDateItem.addProperties(OB.DateItemProperties, {
     this.doInit();
   },
 
+  getDateWithNewTime: function (date, time) {
+    var newDate, newTime, ret = date;
+    if (time) {
+      newTime = isc.Time.parseInput(time);
+    }
+    if (date && isc.isA.Date(date) && newTime && isc.isA.Date(newTime)) {
+      date.setHours(newTime.getHours(), newTime.getMinutes(), newTime.getSeconds());
+      ret = date;
+    }
+    return ret;
+  },
+
+  setValue: function () {
+    var newArguments = arguments;
+    if (this.fixedTime && arguments[0] && isc.isA.Date(arguments[0])) {
+      newArguments[0] = this.getDateWithNewTime(newArguments[0], this.fixedTime);
+    }
+    return this.Super('setValue', newArguments);
+  },
+
   expandValue: function () {
     var newValue = this.parseValue(),
         oldValue = this.blurValue();
@@ -260,6 +280,9 @@ isc.OBDateItem.addProperties(OB.DateItemProperties, {
     if (this.textField._textChanged) {
       this.expandValue();
       this.Super('updateValue', arguments);
+      if (this.fixedTime && this.getValue() && isc.isA.Date(this.getValue())) {
+        this.setValue(this.getValue()); // To force change the time with the fixed time (if exists) after expandValue
+      }
       //  when the date field has a callout and all the mandatory fields have been entered, 
       //  the grid does not save the value before making the FIC call, so the value has to 
       //  be saved explicitly

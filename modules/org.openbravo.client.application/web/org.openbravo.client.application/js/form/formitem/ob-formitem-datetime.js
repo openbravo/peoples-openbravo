@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2012 Openbravo SLU
+ * All portions are Copyright (C) 2011-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -126,15 +126,24 @@ isc.OBDateTimeItem.addClassProperties({
 // == OBDateItem properties ==
 isc.OBDateTimeItem.addProperties({
   showTime: true,
+  fixedTime: null,
 
   blurValue: function () {
-    var value = OB.Utilities.Date.OBToJS(this.dateTextField.getElementValue(), OB.Format.dateTime);
-    this.setValue(value);
-    return value;
+    if (this.showTime) {
+      var value = OB.Utilities.Date.OBToJS(this.dateTextField.getElementValue(), OB.Format.dateTime);
+      this.setValue(value);
+      return value;
+    } else {
+      return this.Super('blurValue', arguments);
+    }
   },
 
   parseValue: function () {
-    return this.dateTextField.getElementValue();
+    if (this.showTime) {
+      return this.dateTextField.getElementValue();
+    } else {
+      return this.Super('parseValue', arguments);
+    }
   },
 
   // ** {{{ change }}} **
@@ -145,9 +154,14 @@ isc.OBDateTimeItem.addProperties({
       return;
     }
     // prevent change events from happening
-    var completedDate = isc.OBDateTimeItem.autoCompleteDate(item.dateFormat, value, this);
-    if (completedDate !== oldValue) {
-      item.setValue(completedDate);
+    if (!this.fixedTime || !this.getValue()) {
+      //FIXME: autoCompleteDate works wrong if partial time has been set
+      var completedDate = isc.OBDateTimeItem.autoCompleteDate(item.dateFormat, value, this);
+      if (completedDate !== oldValue) {
+        item.setValue(completedDate);
+      }
+    } else if (this.showTime && this.fixedTime) {
+      this.setValue(this.getValue()); // To force change the time with the fixed time (if exists)
     }
   },
 
