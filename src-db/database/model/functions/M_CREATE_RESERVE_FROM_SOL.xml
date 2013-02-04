@@ -90,7 +90,7 @@ BEGIN
       WHERE iol.c_orderline_id = p_orderline_id
         AND io.docstatus = 'CO'
   ) LOOP
-    M_RESERVE_STOCK_MANUAL(v_reservation_id, 'SD', cur_shipments.m_storage_detail_id, cur_shipments.movementqty, p_user_id, v_res_stock_id);
+    M_RESERVE_STOCK_MANUAL(v_reservation_id, 'SD', cur_shipments.m_storage_detail_id, cur_shipments.movementqty, p_user_id, 'N', v_res_stock_id);
     UPDATE m_reservation_stock
     SET releasedqty = COALESCE(releasedqty, 0) + cur_shipments.movementqty
     WHERE m_reservation_stock_id = v_res_stock_id;

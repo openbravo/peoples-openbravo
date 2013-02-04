@@ -136,7 +136,7 @@ public class MRPPurchaseCreateReservations extends DalBaseProcess {
             if (incomingLine.getTransactionType().equals("PP")
                 && incomingLine.getSalesOrderLine() != null) {
               ReservationUtils.reserveStockManual(reservation, incomingLine.getSalesOrderLine(),
-                  consumedQuantity);
+                  consumedQuantity, "N");
             }
 
             if (quantity.signum() < 1 && reservation.getRESStatus().equals("DR")) {

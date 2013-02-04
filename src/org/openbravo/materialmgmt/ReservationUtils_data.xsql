@@ -48,13 +48,15 @@
    <SqlMethod name="reserveStockManual" connection="true" type="callableStatement" return="object" object="CSResponse">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
-        CALL M_RESERVE_STOCK_MANUAL(?,?,?,to_number(?),?,?)
+        CALL M_RESERVE_STOCK_MANUAL(?,?,?,to_number(?),?,to_char(?),?)
       ]]></Sql>
       <Parameter name="mReservationId"/>
       <Parameter name="type"/>
       <Parameter name="stockId"/>
       <Parameter name="quantity"/>
       <Parameter name="adUserId"/>
+      <Parameter name="allocated"/>
       <Parameter name="returnValue" type="out"/>
    </SqlMethod>
+   
 </SqlClass>

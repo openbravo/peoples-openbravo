@@ -120,7 +120,7 @@ BEGIN
     ORDER BY priority
   ) LOOP
     v_qty := LEAST(cur_stock.quantity, v_pendingqty);
-    M_RESERVE_STOCK_MANUAL(p_reservation_id, 'SD', cur_stock.m_storage_detail_id, v_qty, p_user_id, v_dummy);
+    M_RESERVE_STOCK_MANUAL(p_reservation_id, 'SD', cur_stock.m_storage_detail_id, v_qty, p_user_id, 'N', v_dummy);
     v_pendingqty := v_pendingqty - v_qty;
     IF (v_pendingqty <= 0) THEN
       p_reservedqty := v_reserveqty;

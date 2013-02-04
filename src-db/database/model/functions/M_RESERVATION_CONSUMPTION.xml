@@ -175,7 +175,7 @@ BEGIN
       END LOOP;
     END IF;
 
-    M_RESERVE_STOCK_MANUAL(p_reservation_id, 'SD', v_storage_detail_id, v_qtytoreserve, p_user_id, v_res_stock_id);
+    M_RESERVE_STOCK_MANUAL(p_reservation_id, 'SD', v_storage_detail_id, v_qtytoreserve, p_user_id, 'N', v_res_stock_id);
   END IF;
   
   IF (v_qtyfromother > 0) THEN
@@ -227,7 +227,7 @@ BEGIN
       WHERE quantity = 0
         AND m_reservation_stock_id = cur_not_allocated_stock.m_reservation_stock_id;
   
-      M_RESERVE_STOCK_MANUAL(p_reservation_id, 'SD', v_storage_detail_id, v_qtytorelease, p_user_id, v_res_stock_id);
+      M_RESERVE_STOCK_MANUAL(p_reservation_id, 'SD', v_storage_detail_id, v_qtytorelease, p_user_id, 'N', v_res_stock_id);
   
       -- Call get stock to check availability
       DECLARE

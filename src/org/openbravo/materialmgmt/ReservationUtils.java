@@ -100,8 +100,9 @@ public class ReservationUtils {
    * - StorageDetail: reserves stock in the warehouse.<br>
    * - OrderLine: reserves stock pending to receipt purchase order line.
    */
+
   public static ReservationStock reserveStockManual(Reservation reservation, BaseOBObject obObject,
-      BigDecimal quantity) throws OBException {
+      BigDecimal quantity, String allocated) throws OBException {
 
     String strType = "";
 
@@ -119,7 +120,7 @@ public class ReservationUtils {
       cs = ReservationUtilsData.reserveStockManual(OBDal.getInstance().getConnection(false),
           new DalConnectionProvider(false), reservation.getId(), strType, obObject.getId()
               .toString(), quantity.toString(), (String) DalUtil.getId(OBContext.getOBContext()
-              .getUser()));
+              .getUser()), allocated);
     } catch (ServletException e) {
       throw new OBException(DbUtility.getUnderlyingSQLException(e));
     }
