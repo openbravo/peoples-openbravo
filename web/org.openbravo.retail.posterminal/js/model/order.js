@@ -112,7 +112,24 @@
 
   // Sales.OrderLineCol Model.
   var OrderLineList = Backbone.Collection.extend({
-    model: OrderLine
+    model: OrderLine,
+    isProductPresent: function(product){
+      var result = null;
+      if (this.length > 0){
+        result = _.find(this.models, function(line){
+          if (line.get('product').get('id') === product.get('id')){
+            return true;
+          }
+        }, this);
+        if (_.isUndefined(result) || _.isNull(result)){
+          return false;
+        } else {
+          return true;
+        }
+      } else {
+        return false;
+      }
+    }
   });
 
   // Sales.Payment Model
