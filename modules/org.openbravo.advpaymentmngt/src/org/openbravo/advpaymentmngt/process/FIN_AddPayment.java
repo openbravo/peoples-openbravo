@@ -289,11 +289,8 @@ public class FIN_AddPayment {
                   paymentScheduleDetail.getDoubtfulDebtAmount().subtract(doubtfulDebtAmount));
               amountDifference = BigDecimal.ZERO;
             } else {
-              if (paymentDetailAmount.signum() == 0) {
-                doubtfulDebtAmount = paymentScheduleDetail.getDoubtfulDebtAmount();
-              }
+              doubtfulDebtAmount = paymentScheduleDetail.getDoubtfulDebtAmount();
               paymentScheduleDetail.setWriteoffAmount(amountDifference);
-              doubtfulDebtAmount = doubtfulDebtAmount.add(amountDifference);
             }
             paymentScheduleDetail.setAmount(paymentDetailAmount);
             paymentScheduleDetail.setDoubtfulDebtAmount(doubtfulDebtAmount);
@@ -1426,6 +1423,11 @@ public class FIN_AddPayment {
     }
     calculatedDoubtFulDebtAmount = paymentAmount.subtract(scheduleDetailsTotalAmount
         .subtract(doubtfulDebtTotalAmount));
-    return calculatedDoubtFulDebtAmount;
+    // There can not be negative Doubtful Debt Amounts. If it is negative, set it to Zero as the
+    // other Payment Schedule Detail will compensate it.
+    if (calculatedDoubtFulDebtAmount.signum() > 0) {
+      return calculatedDoubtFulDebtAmount;
+    }
+    return BigDecimal.ZERO;
   }
 }

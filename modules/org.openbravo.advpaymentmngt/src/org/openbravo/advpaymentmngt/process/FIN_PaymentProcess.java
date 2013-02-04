@@ -690,8 +690,11 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
                       .copy(paymentScheduleDetail, false);
                   outstandingPSD.setAmount(psdWriteoffAmount);
                   if (paymentScheduleDetail.getDoubtfulDebtAmount().signum() != 0) {
-                    outstandingDebtAmount = paymentScheduleDetail.getDoubtfulDebtAmount().subtract(
-                        paymentScheduleDetail.getAmount());
+                    if (psdWriteoffAmount.compareTo(paymentScheduleDetail.getDoubtfulDebtAmount()) >= 0) {
+                      outstandingDebtAmount = paymentScheduleDetail.getDoubtfulDebtAmount();
+                    } else {
+                      outstandingDebtAmount = psdWriteoffAmount;
+                    }
                   }
                   outstandingPSD.setDoubtfulDebtAmount(outstandingDebtAmount);
                   outstandingPSD.setWriteoffAmount(BigDecimal.ZERO);
