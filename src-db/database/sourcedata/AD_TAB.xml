@@ -3134,7 +3134,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--263-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--263-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--263-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
-<!--263-->  <HQLWHERECLAUSE><![CDATA[e.salesTransaction=true]]></HQLWHERECLAUSE>
+<!--263-->  <HQLWHERECLAUSE><![CDATA[e.salesTransaction=true and e.documentStatus <> 'TEMP']]></HQLWHERECLAUSE>
 <!--263-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--263-->  <EM_OBUIAPP_CAN_ADD><![CDATA[N]]></EM_OBUIAPP_CAN_ADD>
 <!--263-->  <EM_OBUIAPP_CAN_DELETE><![CDATA[N]]></EM_OBUIAPP_CAN_DELETE>
@@ -3353,7 +3353,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--290-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--290-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--290-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
-<!--290-->  <HQLWHERECLAUSE><![CDATA[e.salesTransaction=false]]></HQLWHERECLAUSE>
+<!--290-->  <HQLWHERECLAUSE><![CDATA[e.salesTransaction=false and e.documentStatus <> 'TEMP']]></HQLWHERECLAUSE>
 <!--290-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--290-->  <EM_OBUIAPP_CAN_ADD><![CDATA[N]]></EM_OBUIAPP_CAN_ADD>
 <!--290-->  <EM_OBUIAPP_CAN_DELETE><![CDATA[N]]></EM_OBUIAPP_CAN_DELETE>
@@ -6086,7 +6086,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--553-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--553-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--553-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
-<!--553-->  <HQLWHERECLAUSE><![CDATA[e.businessPartner.id=@BusinessPartner.id@]]></HQLWHERECLAUSE>
+<!--553-->  <HQLWHERECLAUSE><![CDATA[e.businessPartner.id=@BusinessPartner.id@ and e.documentStatus <> 'TEMP']]></HQLWHERECLAUSE>
 <!--553-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--553-->  <EM_OBUIAPP_CAN_ADD><![CDATA[N]]></EM_OBUIAPP_CAN_ADD>
 <!--553-->  <EM_OBUIAPP_CAN_DELETE><![CDATA[N]]></EM_OBUIAPP_CAN_DELETE>
