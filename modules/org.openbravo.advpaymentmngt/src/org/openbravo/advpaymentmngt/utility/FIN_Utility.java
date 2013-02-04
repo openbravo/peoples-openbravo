@@ -1230,7 +1230,8 @@ public class FIN_Utility {
           + payment.getId() + "'");
       whereClause.append(" order by psd."
           + FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE);
-      whereClause.append(", psd." + FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE);
+      whereClause.append(", coalesce(psd."
+          + FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE + ",'0')");
 
       OBQuery<FIN_PaymentDetail> query = OBDal.getInstance().createQuery(FIN_PaymentDetail.class,
           whereClause.toString());

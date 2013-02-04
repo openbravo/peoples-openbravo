@@ -100,30 +100,28 @@ public class DocFINPayment extends AcctServer {
         }
 
         data[i] = new FieldProviderFactory(null);
-
         FIN_PaymentSchedule psi = paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
             .getInvoicePaymentSchedule();
         FIN_PaymentSchedule pso = paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
             .getOrderPaymentSchedule();
         // If the Payment Detail belongs to the same Invoice of the previous one
-        if (psi != null && psi.equals(ps)) {
+        if ((psi != null && psi.equals(ps)) || pso == null) {
           // If it has no related Order
           if (pso == null) {
-            // Sum the Amount of this Payment Detail to the Previous one. This line is not going to
-            // be posted.
-            FieldProviderFactory.setField(data[i - 1], "Amount", paymentDetails.get(i).getAmount()
-                .add(new BigDecimal(data[i - 1].getField("Amount"))).toString());
             data[i] = null;
+            ps = psi;
             continue;
-          } else {
+          } else if (i != 0
+              && paymentDetails.get(i - 1).getFINPaymentScheduleDetailList().get(0)
+                  .getOrderPaymentSchedule() == null) {
             // Sum the Amount of the previous Payment Detail to this one. The previous line is not
             // going to be posted
-            FieldProviderFactory.setField(
-                data[i],
-                "Amount",
-                paymentDetails.get(i).getAmount()
-                    .add(new BigDecimal(data[i - 1].getField("Amount"))).toString());
-            data[i - 1] = null;
+            FieldProviderFactory.setField(data[i], "Amount",
+                paymentDetails.get(i).getAmount().add(paymentDetails.get(i - 1).getAmount())
+                    .toString());
+          } else {
+            FieldProviderFactory.setField(data[i], "Amount", paymentDetails.get(i).getAmount()
+                .toString());
           }
         } else {
           FieldProviderFactory.setField(data[i], "Amount", paymentDetails.get(i).getAmount()

@@ -181,30 +181,28 @@ public class DocFINReconciliation extends AcctServer {
           continue;
         }
         data[i] = new FieldProviderFactory(null);
-
         FIN_PaymentSchedule psi = paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
             .getInvoicePaymentSchedule();
         FIN_PaymentSchedule pso = paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
             .getOrderPaymentSchedule();
         // If the Payment Detail belongs to the same Invoice of the previous one
-        if (psi != null && psi.equals(ps)) {
+        if ((psi != null && psi.equals(ps)) || pso == null) {
           // If it has no related Order
           if (pso == null) {
-            // Sum the Amount of this Payment Detail to the Previous one. This line is not going to
-            // be posted.
-            FieldProviderFactory.setField(data[i - 1], "Amount", paymentDetails.get(i).getAmount()
-                .add(new BigDecimal(data[i - 1].getField("Amount"))).toString());
             data[i] = null;
+            ps = psi;
             continue;
-          } else {
+          } else if (i != 0
+              && paymentDetails.get(i - 1).getFINPaymentScheduleDetailList().get(0)
+                  .getOrderPaymentSchedule() == null) {
             // Sum the Amount of the previous Payment Detail to this one. The previous line is not
             // going to be posted
-            FieldProviderFactory.setField(
-                data[i],
-                "Amount",
-                paymentDetails.get(i).getAmount()
-                    .add(new BigDecimal(data[i - 1].getField("Amount"))).toString());
-            data[i - 1] = null;
+            FieldProviderFactory.setField(data[i], "Amount",
+                paymentDetails.get(i).getAmount().add(paymentDetails.get(i - 1).getAmount())
+                    .toString());
+          } else {
+            FieldProviderFactory.setField(data[i], "Amount", paymentDetails.get(i).getAmount()
+                .toString());
           }
         } else {
           FieldProviderFactory.setField(data[i], "Amount", paymentDetails.get(i).getAmount()
@@ -693,6 +691,7 @@ public class DocFINReconciliation extends AcctServer {
         detail.finFinAccTransactionId = transaction.getId();
         detail.m_User1_ID = data[i].getField("user1Id");
         detail.m_User2_ID = data[i].getField("user2Id");
+        detail.setAmount(data[i].getField("Amount"));
         // Cambiar line to reflect BPs
         FIN_PaymentDetail paymentDetail = OBDal.getInstance().get(FIN_PaymentDetail.class,
             data[i].getField("FIN_Payment_Detail_ID"));
@@ -813,7 +812,7 @@ public class DocFINReconciliation extends AcctServer {
     boolean isPaymentDatePriorToInvoiceDate = isPaymentDatePriorToInvoiceDate(paymentDetail)
         && !paymentDetail.isPrepayment();
     boolean isReceipt = paymentDetail.getFinPayment().isReceipt();
-    BigDecimal bpAmount = paymentDetail.getAmount();
+    BigDecimal bpAmount = new BigDecimal(line.getAmount());
     Currency paymentCurrency = paymentDetail.getFinPayment().getCurrency();
     String bpartnerId = (line.m_C_BPartner_ID == null || line.m_C_BPartner_ID.equals("")) ? this.C_BPartner_ID
         : line.m_C_BPartner_ID;
