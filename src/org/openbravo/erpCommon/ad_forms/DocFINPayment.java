@@ -148,8 +148,6 @@ public class DocFINPayment extends AcctServer {
             .getBusinessPartner())));
         FieldProviderFactory.setField(data[i], "cBpartnerId", bPartner != null ? bPartner.getId()
             : "");
-        FieldProviderFactory.setField(data[i], "Amount", paymentDetails.get(i).getAmount()
-            .toString());
         FieldProviderFactory.setField(data[i], "DoubtFulDebtAmount", paymentDetails.get(i)
             .getFINPaymentScheduleDetailList().get(0).getDoubtfulDebtAmount().toString());
         FieldProviderFactory.setField(data[i], "WriteOffAmt", paymentDetails.get(i)

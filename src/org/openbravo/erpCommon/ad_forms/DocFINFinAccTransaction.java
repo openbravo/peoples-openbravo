@@ -170,8 +170,6 @@ public class DocFINFinAccTransaction extends AcctServer {
             .toString());
         FieldProviderFactory.setField(data[i], "PaymentAmount", transaction.getPaymentAmount()
             .toString());
-        FieldProviderFactory.setField(data[i], "Amount", paymentDetails.get(i).getAmount()
-            .toString());
         FieldProviderFactory.setField(data[i], "DoubtFulDebtAmount", paymentDetails.get(i)
             .getFINPaymentScheduleDetailList().get(0).getDoubtfulDebtAmount().toString());
         FieldProviderFactory.setField(data[i], "isprepayment",
