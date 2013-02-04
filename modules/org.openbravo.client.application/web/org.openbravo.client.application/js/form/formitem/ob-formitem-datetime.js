@@ -176,3 +176,26 @@ isc.OBDateTimeItem.addProperties({
     this.setValue(date);
   }
 });
+
+
+// == OBDateTimeFromDateItem ==
+// OBDateTimeFromDateItem inherits from OBDateTimeItem
+// It has the value of the current selected date at 00:00:00
+isc.ClassFactory.defineClass('OBDateTimeFromDateItem', isc.OBDateTimeItem);
+
+// == OBDateItem properties ==
+isc.OBDateTimeFromDateItem.addProperties({
+  showTime: false,
+  fixedTime: '00:00:00'
+});
+
+// == OBDateTimeToDateItem ==
+// OBDateTimeToDateItem inherits from OBDateTimeItem
+// It has the value of the next day of the selected date at 00:00:00
+isc.ClassFactory.defineClass('OBDateTimeToDateItem', isc.OBDateTimeItem);
+
+// == OBDateItem properties ==
+isc.OBDateTimeToDateItem.addProperties({
+  showTime: false,
+  fixedTime: '24:00:00'
+});
