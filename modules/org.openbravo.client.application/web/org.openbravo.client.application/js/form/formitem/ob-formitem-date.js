@@ -210,7 +210,9 @@ OB.DateItemProperties = {
   },
 
   pickerDataChanged: function (picker) {
+    this.isAPickerDataChange = true;
     this.Super('pickerDataChanged', arguments);
+    this.isAPickerDataChange = false;
     // update the date field after picking a new date 
     this.textField._textChanged = true;
     this.updateValue();
@@ -238,6 +240,9 @@ isc.OBDateItem.addProperties(OB.DateItemProperties, {
 
   getDateWithNewTime: function (date, time) {
     var newDate, newTime, ret = date;
+    if (time === '24:00:00') {
+      time = '00:00:00';
+    }
     if (time) {
       newTime = isc.Time.parseInput(time);
     }
@@ -249,11 +254,23 @@ isc.OBDateItem.addProperties(OB.DateItemProperties, {
   },
 
   setValue: function () {
-    var newArguments = arguments;
-    if (this.fixedTime && arguments[0] && isc.isA.Date(arguments[0])) {
+    var ret, dateText, newArguments = arguments;
+    if (this.fixedTime && newArguments[0] && isc.isA.Date(newArguments[0])) {
       newArguments[0] = this.getDateWithNewTime(newArguments[0], this.fixedTime);
     }
-    return this.Super('setValue', newArguments);
+
+    ret = this.Super('setValue', newArguments);
+
+    // If fixed time (if exists) is '24:00:00', here is the logic to show in the input the day before of the real value of the component.
+    // This logic applies only in the case the time is not shown.
+    if (!this.showTime && this.fixedTime && this.fixedTime === '24:00:00' && newArguments[0] && isc.isA.Date(newArguments[0])) {
+      newArguments[0].setDate(newArguments[0].getDate() - 1);
+      dateText = OB.Utilities.Date.JSToOB(newArguments[0], (this.showTime ? OB.Format.dateTime : OB.Format.date));
+      newArguments[0].setDate(newArguments[0].getDate() + 1);
+      this.dateTextField.setValue(dateText);
+    }
+
+    return ret;
   },
 
   expandValue: function () {
@@ -268,7 +285,7 @@ isc.OBDateItem.addProperties(OB.DateItemProperties, {
   // update the value in update value as this is called from cellEditEnd in the
   // grid, after losing the focus on the form and when autosaving
   updateValue: function () {
-    var savingWithShortcut;
+    var savingWithShortcut, value;
     if (this.grid && this.grid.view && this.grid.view.savingWithShortcut) {
       savingWithShortcut = this.grid.view.savingWithShortcut;
     } else {
@@ -280,8 +297,14 @@ isc.OBDateItem.addProperties(OB.DateItemProperties, {
     if (this.textField._textChanged) {
       this.expandValue();
       this.Super('updateValue', arguments);
-      if (this.fixedTime && this.getValue() && isc.isA.Date(this.getValue())) {
-        this.setValue(this.getValue()); // To force change the time with the fixed time (if exists) after expandValue
+      value = this.getValue();
+      if (this.fixedTime && value && isc.isA.Date(value)) {
+        if (this.fixedTime === '24:00:00' && (!this.showTime || !this.isAPickerDataChange)) {
+          // If fixed time (if exists) is '24:00:00', we need to add a day to the entered date, since we really want the 00:00:00 of the next day
+          // Later, the setValue function will manage the proper displayed value by substracting a day again
+          value.setDate(value.getDate() + 1);
+        }
+        this.setValue(value); // To force change the time with the fixed time (if exists) after expandValue
       }
       //  when the date field has a callout and all the mandatory fields have been entered, 
       //  the grid does not save the value before making the FIC call, so the value has to 
@@ -291,6 +314,23 @@ isc.OBDateItem.addProperties(OB.DateItemProperties, {
         this.grid.setEditValue(this.grid.getEditRow(), this.name, this.getValue(), true, true);
       }
       this.textField._textChanged = false;
+    }
+  },
+
+  getPickerData: function () {
+    var date = this.getValue();
+    // If fixed time (if exists) is '24:00:00', we need to substract a day to the real date value,
+    // to view in the date-picker the same date as in the input
+    if (this.fixedTime === '24:00:00' && date !== null) {
+      if (!isc.isA.Date(date)) {
+        date = new Date(date);
+      }
+      if (isc.isA.Date(date) && !isNaN(date.getTime())) {
+        date.setDate(date.getDate() - 1);
+        return date;
+      }
+    } else {
+      return this.Super('getPickerData', arguments);
     }
   },
 
