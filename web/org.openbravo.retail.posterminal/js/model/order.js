@@ -304,8 +304,6 @@
 
         if (this.get('priceIncludesTax')) {
           line.set({
-            nondiscountedprice: price,
-            nondiscountednet: net,
             net: OB.DEC.div(gross, line.get('linerate')),
             pricenet: OB.DEC.div(OB.DEC.div(gross, line.get('linerate')), line.get('qty')),
             grossListPrice: grossListPrice || price,
@@ -316,8 +314,8 @@
           });
         } else {
           line.set({
-            nondiscountedprice: price,
-            nondiscountednet: net,
+            nondiscountedprice: line.get('price'),
+            nondiscountednet: line.get('net'),
             net: line.get('discountedNet'),
             pricenet: line.get('discountedNetPrice'),
             listPrice: line.get('priceList'),
