@@ -187,14 +187,18 @@ public class DocFINReconciliation extends AcctServer {
             .getOrderPaymentSchedule();
         // If the Payment Detail belongs to the same Invoice of the previous one
         if ((psi != null && psi.equals(ps)) || pso == null) {
+          FIN_PaymentScheduleDetail psdNext = i == paymentDetails.size() - 1 ? null
+              : paymentDetails.get(i + 1).getFINPaymentScheduleDetailList().get(0);
+          FIN_PaymentScheduleDetail psdPrevious = i == 0 ? null : paymentDetails.get(i - 1)
+              .getFINPaymentScheduleDetailList().get(0);
           // If it has no related Order
-          if (pso == null) {
+          if (pso == null && psdNext != null && psdNext.getInvoicePaymentSchedule() == psi
+              && psdNext.getOrderPaymentSchedule() != null) {
             data[i] = null;
             ps = psi;
             continue;
-          } else if (i != 0
-              && paymentDetails.get(i - 1).getFINPaymentScheduleDetailList().get(0)
-                  .getOrderPaymentSchedule() == null) {
+          } else if (psdPrevious != null && psdPrevious.getOrderPaymentSchedule() == null
+              && psdPrevious.getInvoicePaymentSchedule() == psi) {
             // Sum the Amount of the previous Payment Detail to this one. The previous line is not
             // going to be posted
             FieldProviderFactory.setField(data[i], "Amount",
