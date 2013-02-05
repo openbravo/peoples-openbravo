@@ -226,7 +226,8 @@ enyo.kind({
       });
     }
   },
-  initComponents: function () {
+  rendered: function () {
+    this.inherited(arguments);
     if (this.readOnly) {
       this.setAttribute('disabled', 'disabled');
     }
