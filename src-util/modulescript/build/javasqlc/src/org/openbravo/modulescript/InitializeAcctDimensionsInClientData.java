@@ -128,7 +128,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     return(boolReturn);
   }
 
-  public static int createPreference(ConnectionProvider connectionProvider, String client)    throws ServletException {
+  public static int createPreference(Connection conn, ConnectionProvider connectionProvider, String client)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
       "        INSERT INTO ad_preference (" +
@@ -146,7 +146,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
 
     int iParameter = 0;
     try {
-    st = connectionProvider.getPreparedStatement(strSql);
+    st = connectionProvider.getPreparedStatement(conn, strSql);
       iParameter++; UtilSql.setValue(st, iParameter, 12, null, client);
 
       updateCount = st.executeUpdate();
@@ -158,7 +158,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
       throw new ServletException("@CODE=@" + ex.getMessage());
     } finally {
       try {
-        connectionProvider.releasePreparedStatement(st);
+        connectionProvider.releaseTransactionalPreparedStatement(st);
       } catch(Exception ignore){
         ignore.printStackTrace();
       }
@@ -166,7 +166,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     return(updateCount);
   }
 
-  public static int updateDimClient(ConnectionProvider connectionProvider)    throws ServletException {
+  public static int updateDimClient(Connection conn, ConnectionProvider connectionProvider)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
       "        update ad_client set product_acctdim_lines = 'Y' , bpartner_acctdim_header='Y' , " +
@@ -177,7 +177,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     PreparedStatement st = null;
 
     try {
-    st = connectionProvider.getPreparedStatement(strSql);
+    st = connectionProvider.getPreparedStatement(conn, strSql);
 
       updateCount = st.executeUpdate();
     } catch(SQLException e){
@@ -188,7 +188,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
       throw new ServletException("@CODE=@" + ex.getMessage());
     } finally {
       try {
-        connectionProvider.releasePreparedStatement(st);
+        connectionProvider.releaseTransactionalPreparedStatement(st);
       } catch(Exception ignore){
         ignore.printStackTrace();
       }
@@ -196,7 +196,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     return(updateCount);
   }
 
-  public static int updatebpari(ConnectionProvider connectionProvider, String client)    throws ServletException {
+  public static int updatebpari(Connection conn, ConnectionProvider connectionProvider, String client)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
       "        INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
@@ -207,7 +207,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
 
     int iParameter = 0;
     try {
-    st = connectionProvider.getPreparedStatement(strSql);
+    st = connectionProvider.getPreparedStatement(conn, strSql);
       iParameter++; UtilSql.setValue(st, iParameter, 12, null, client);
 
       updateCount = st.executeUpdate();
@@ -219,7 +219,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
       throw new ServletException("@CODE=@" + ex.getMessage());
     } finally {
       try {
-        connectionProvider.releasePreparedStatement(st);
+        connectionProvider.releaseTransactionalPreparedStatement(st);
       } catch(Exception ignore){
         ignore.printStackTrace();
       }
@@ -227,7 +227,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     return(updateCount);
   }
 
-  public static int updatebparirm(ConnectionProvider connectionProvider, String client)    throws ServletException {
+  public static int updatebparirm(Connection conn, ConnectionProvider connectionProvider, String client)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
       "      INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
@@ -238,7 +238,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
 
     int iParameter = 0;
     try {
-    st = connectionProvider.getPreparedStatement(strSql);
+    st = connectionProvider.getPreparedStatement(conn, strSql);
       iParameter++; UtilSql.setValue(st, iParameter, 12, null, client);
 
       updateCount = st.executeUpdate();
@@ -250,7 +250,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
       throw new ServletException("@CODE=@" + ex.getMessage());
     } finally {
       try {
-        connectionProvider.releasePreparedStatement(st);
+        connectionProvider.releaseTransactionalPreparedStatement(st);
       } catch(Exception ignore){
         ignore.printStackTrace();
       }
@@ -258,7 +258,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     return(updateCount);
   }
 
-  public static int updatebpesh(ConnectionProvider connectionProvider, String client)    throws ServletException {
+  public static int updatebpesh(Connection conn, ConnectionProvider connectionProvider, String client)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
       "     INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
@@ -269,7 +269,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
 
     int iParameter = 0;
     try {
-    st = connectionProvider.getPreparedStatement(strSql);
+    st = connectionProvider.getPreparedStatement(conn, strSql);
       iParameter++; UtilSql.setValue(st, iParameter, 12, null, client);
 
       updateCount = st.executeUpdate();
@@ -281,7 +281,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
       throw new ServletException("@CODE=@" + ex.getMessage());
     } finally {
       try {
-        connectionProvider.releasePreparedStatement(st);
+        connectionProvider.releaseTransactionalPreparedStatement(st);
       } catch(Exception ignore){
         ignore.printStackTrace();
       }
@@ -289,7 +289,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     return(updateCount);
   }
 
-  public static int updatebpmmr(ConnectionProvider connectionProvider, String client)    throws ServletException {
+  public static int updatebpmmr(Connection conn, ConnectionProvider connectionProvider, String client)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
@@ -300,7 +300,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
 
     int iParameter = 0;
     try {
-    st = connectionProvider.getPreparedStatement(strSql);
+    st = connectionProvider.getPreparedStatement(conn, strSql);
       iParameter++; UtilSql.setValue(st, iParameter, 12, null, client);
 
       updateCount = st.executeUpdate();
@@ -312,7 +312,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
       throw new ServletException("@CODE=@" + ex.getMessage());
     } finally {
       try {
-        connectionProvider.releasePreparedStatement(st);
+        connectionProvider.releaseTransactionalPreparedStatement(st);
       } catch(Exception ignore){
         ignore.printStackTrace();
       }
@@ -320,7 +320,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     return(updateCount);
   }
 
-  public static int updatebpsoo(ConnectionProvider connectionProvider, String client)    throws ServletException {
+  public static int updatebpsoo(Connection conn, ConnectionProvider connectionProvider, String client)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
       "    INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
@@ -331,7 +331,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
 
     int iParameter = 0;
     try {
-    st = connectionProvider.getPreparedStatement(strSql);
+    st = connectionProvider.getPreparedStatement(conn, strSql);
       iParameter++; UtilSql.setValue(st, iParameter, 12, null, client);
 
       updateCount = st.executeUpdate();
@@ -343,7 +343,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
       throw new ServletException("@CODE=@" + ex.getMessage());
     } finally {
       try {
-        connectionProvider.releasePreparedStatement(st);
+        connectionProvider.releaseTransactionalPreparedStatement(st);
       } catch(Exception ignore){
         ignore.printStackTrace();
       }
@@ -351,7 +351,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     return(updateCount);
   }
 
-  public static int updatebpmms(ConnectionProvider connectionProvider, String client)    throws ServletException {
+  public static int updatebpmms(Connection conn, ConnectionProvider connectionProvider, String client)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
       "   INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
@@ -362,7 +362,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
 
     int iParameter = 0;
     try {
-    st = connectionProvider.getPreparedStatement(strSql);
+    st = connectionProvider.getPreparedStatement(conn, strSql);
       iParameter++; UtilSql.setValue(st, iParameter, 12, null, client);
 
       updateCount = st.executeUpdate();
@@ -374,7 +374,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
       throw new ServletException("@CODE=@" + ex.getMessage());
     } finally {
       try {
-        connectionProvider.releasePreparedStatement(st);
+        connectionProvider.releaseTransactionalPreparedStatement(st);
       } catch(Exception ignore){
         ignore.printStackTrace();
       }
@@ -382,7 +382,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     return(updateCount);
   }
 
-  public static int updatebparr(ConnectionProvider connectionProvider, String client)    throws ServletException {
+  public static int updatebparr(Connection conn, ConnectionProvider connectionProvider, String client)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
       "   INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
@@ -393,7 +393,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
 
     int iParameter = 0;
     try {
-    st = connectionProvider.getPreparedStatement(strSql);
+    st = connectionProvider.getPreparedStatement(conn, strSql);
       iParameter++; UtilSql.setValue(st, iParameter, 12, null, client);
 
       updateCount = st.executeUpdate();
@@ -405,7 +405,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
       throw new ServletException("@CODE=@" + ex.getMessage());
     } finally {
       try {
-        connectionProvider.releasePreparedStatement(st);
+        connectionProvider.releaseTransactionalPreparedStatement(st);
       } catch(Exception ignore){
         ignore.printStackTrace();
       }
@@ -413,7 +413,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     return(updateCount);
   }
 
-  public static int updatebpapc(ConnectionProvider connectionProvider, String client)    throws ServletException {
+  public static int updatebpapc(Connection conn, ConnectionProvider connectionProvider, String client)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
       "  INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
@@ -424,7 +424,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
 
     int iParameter = 0;
     try {
-    st = connectionProvider.getPreparedStatement(strSql);
+    st = connectionProvider.getPreparedStatement(conn, strSql);
       iParameter++; UtilSql.setValue(st, iParameter, 12, null, client);
 
       updateCount = st.executeUpdate();
@@ -436,7 +436,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
       throw new ServletException("@CODE=@" + ex.getMessage());
     } finally {
       try {
-        connectionProvider.releasePreparedStatement(st);
+        connectionProvider.releaseTransactionalPreparedStatement(st);
       } catch(Exception ignore){
         ignore.printStackTrace();
       }
@@ -444,7 +444,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     return(updateCount);
   }
 
-  public static int updatebpfat(ConnectionProvider connectionProvider, String client)    throws ServletException {
+  public static int updatebpfat(Connection conn, ConnectionProvider connectionProvider, String client)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
       "  INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
@@ -455,7 +455,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
 
     int iParameter = 0;
     try {
-    st = connectionProvider.getPreparedStatement(strSql);
+    st = connectionProvider.getPreparedStatement(conn, strSql);
       iParameter++; UtilSql.setValue(st, iParameter, 12, null, client);
 
       updateCount = st.executeUpdate();
@@ -467,7 +467,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
       throw new ServletException("@CODE=@" + ex.getMessage());
     } finally {
       try {
-        connectionProvider.releasePreparedStatement(st);
+        connectionProvider.releaseTransactionalPreparedStatement(st);
       } catch(Exception ignore){
         ignore.printStackTrace();
       }
@@ -475,7 +475,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     return(updateCount);
   }
 
-  public static int updatebpapp(ConnectionProvider connectionProvider, String client)    throws ServletException {
+  public static int updatebpapp(Connection conn, ConnectionProvider connectionProvider, String client)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
       "  INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
@@ -486,7 +486,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
 
     int iParameter = 0;
     try {
-    st = connectionProvider.getPreparedStatement(strSql);
+    st = connectionProvider.getPreparedStatement(conn, strSql);
       iParameter++; UtilSql.setValue(st, iParameter, 12, null, client);
 
       updateCount = st.executeUpdate();
@@ -498,7 +498,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
       throw new ServletException("@CODE=@" + ex.getMessage());
     } finally {
       try {
-        connectionProvider.releasePreparedStatement(st);
+        connectionProvider.releaseTransactionalPreparedStatement(st);
       } catch(Exception ignore){
         ignore.printStackTrace();
       }
@@ -506,7 +506,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     return(updateCount);
   }
 
-  public static int updatebparf(ConnectionProvider connectionProvider, String client)    throws ServletException {
+  public static int updatebparf(Connection conn, ConnectionProvider connectionProvider, String client)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
@@ -517,7 +517,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
 
     int iParameter = 0;
     try {
-    st = connectionProvider.getPreparedStatement(strSql);
+    st = connectionProvider.getPreparedStatement(conn, strSql);
       iParameter++; UtilSql.setValue(st, iParameter, 12, null, client);
 
       updateCount = st.executeUpdate();
@@ -529,7 +529,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
       throw new ServletException("@CODE=@" + ex.getMessage());
     } finally {
       try {
-        connectionProvider.releasePreparedStatement(st);
+        connectionProvider.releaseTransactionalPreparedStatement(st);
       } catch(Exception ignore){
         ignore.printStackTrace();
       }
@@ -537,7 +537,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     return(updateCount);
   }
 
-  public static int updatebparc(ConnectionProvider connectionProvider, String client)    throws ServletException {
+  public static int updatebparc(Connection conn, ConnectionProvider connectionProvider, String client)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
@@ -548,7 +548,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
 
     int iParameter = 0;
     try {
-    st = connectionProvider.getPreparedStatement(strSql);
+    st = connectionProvider.getPreparedStatement(conn, strSql);
       iParameter++; UtilSql.setValue(st, iParameter, 12, null, client);
 
       updateCount = st.executeUpdate();
@@ -560,7 +560,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
       throw new ServletException("@CODE=@" + ex.getMessage());
     } finally {
       try {
-        connectionProvider.releasePreparedStatement(st);
+        connectionProvider.releaseTransactionalPreparedStatement(st);
       } catch(Exception ignore){
         ignore.printStackTrace();
       }
@@ -568,7 +568,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     return(updateCount);
   }
 
-  public static int updatebpbgt(ConnectionProvider connectionProvider, String client)    throws ServletException {
+  public static int updatebpbgt(Connection conn, ConnectionProvider connectionProvider, String client)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
@@ -579,7 +579,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
 
     int iParameter = 0;
     try {
-    st = connectionProvider.getPreparedStatement(strSql);
+    st = connectionProvider.getPreparedStatement(conn, strSql);
       iParameter++; UtilSql.setValue(st, iParameter, 12, null, client);
 
       updateCount = st.executeUpdate();
@@ -591,7 +591,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
       throw new ServletException("@CODE=@" + ex.getMessage());
     } finally {
       try {
-        connectionProvider.releasePreparedStatement(st);
+        connectionProvider.releaseTransactionalPreparedStatement(st);
       } catch(Exception ignore){
         ignore.printStackTrace();
       }
@@ -599,7 +599,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     return(updateCount);
   }
 
-  public static int updatebpamz(ConnectionProvider connectionProvider, String client)    throws ServletException {
+  public static int updatebpamz(Connection conn, ConnectionProvider connectionProvider, String client)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
@@ -610,7 +610,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
 
     int iParameter = 0;
     try {
-    st = connectionProvider.getPreparedStatement(strSql);
+    st = connectionProvider.getPreparedStatement(conn, strSql);
       iParameter++; UtilSql.setValue(st, iParameter, 12, null, client);
 
       updateCount = st.executeUpdate();
@@ -622,7 +622,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
       throw new ServletException("@CODE=@" + ex.getMessage());
     } finally {
       try {
-        connectionProvider.releasePreparedStatement(st);
+        connectionProvider.releaseTransactionalPreparedStatement(st);
       } catch(Exception ignore){
         ignore.printStackTrace();
       }
@@ -630,7 +630,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     return(updateCount);
   }
 
-  public static int updatebpapi(ConnectionProvider connectionProvider, String client)    throws ServletException {
+  public static int updatebpapi(Connection conn, ConnectionProvider connectionProvider, String client)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
@@ -641,7 +641,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
 
     int iParameter = 0;
     try {
-    st = connectionProvider.getPreparedStatement(strSql);
+    st = connectionProvider.getPreparedStatement(conn, strSql);
       iParameter++; UtilSql.setValue(st, iParameter, 12, null, client);
 
       updateCount = st.executeUpdate();
@@ -653,7 +653,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
       throw new ServletException("@CODE=@" + ex.getMessage());
     } finally {
       try {
-        connectionProvider.releasePreparedStatement(st);
+        connectionProvider.releaseTransactionalPreparedStatement(st);
       } catch(Exception ignore){
         ignore.printStackTrace();
       }
@@ -661,7 +661,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     return(updateCount);
   }
 
-  public static int updatebpglj(ConnectionProvider connectionProvider, String client)    throws ServletException {
+  public static int updatebpglj(Connection conn, ConnectionProvider connectionProvider, String client)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
@@ -672,7 +672,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
 
     int iParameter = 0;
     try {
-    st = connectionProvider.getPreparedStatement(strSql);
+    st = connectionProvider.getPreparedStatement(conn, strSql);
       iParameter++; UtilSql.setValue(st, iParameter, 12, null, client);
 
       updateCount = st.executeUpdate();
@@ -684,7 +684,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
       throw new ServletException("@CODE=@" + ex.getMessage());
     } finally {
       try {
-        connectionProvider.releasePreparedStatement(st);
+        connectionProvider.releaseTransactionalPreparedStatement(st);
       } catch(Exception ignore){
         ignore.printStackTrace();
       }
@@ -692,7 +692,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     return(updateCount);
   }
 
-  public static int updatepresh(ConnectionProvider connectionProvider, String client)    throws ServletException {
+  public static int updatepresh(Connection conn, ConnectionProvider connectionProvider, String client)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
@@ -703,7 +703,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
 
     int iParameter = 0;
     try {
-    st = connectionProvider.getPreparedStatement(strSql);
+    st = connectionProvider.getPreparedStatement(conn, strSql);
       iParameter++; UtilSql.setValue(st, iParameter, 12, null, client);
 
       updateCount = st.executeUpdate();
@@ -715,7 +715,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
       throw new ServletException("@CODE=@" + ex.getMessage());
     } finally {
       try {
-        connectionProvider.releasePreparedStatement(st);
+        connectionProvider.releaseTransactionalPreparedStatement(st);
       } catch(Exception ignore){
         ignore.printStackTrace();
       }
@@ -723,7 +723,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     return(updateCount);
   }
 
-  public static int updateprarirm(ConnectionProvider connectionProvider, String client)    throws ServletException {
+  public static int updateprarirm(Connection conn, ConnectionProvider connectionProvider, String client)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
@@ -734,7 +734,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
 
     int iParameter = 0;
     try {
-    st = connectionProvider.getPreparedStatement(strSql);
+    st = connectionProvider.getPreparedStatement(conn, strSql);
       iParameter++; UtilSql.setValue(st, iParameter, 12, null, client);
 
       updateCount = st.executeUpdate();
@@ -746,7 +746,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
       throw new ServletException("@CODE=@" + ex.getMessage());
     } finally {
       try {
-        connectionProvider.releasePreparedStatement(st);
+        connectionProvider.releaseTransactionalPreparedStatement(st);
       } catch(Exception ignore){
         ignore.printStackTrace();
       }
@@ -754,7 +754,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     return(updateCount);
   }
 
-  public static int updateprari(ConnectionProvider connectionProvider, String client)    throws ServletException {
+  public static int updateprari(Connection conn, ConnectionProvider connectionProvider, String client)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
@@ -765,7 +765,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
 
     int iParameter = 0;
     try {
-    st = connectionProvider.getPreparedStatement(strSql);
+    st = connectionProvider.getPreparedStatement(conn, strSql);
       iParameter++; UtilSql.setValue(st, iParameter, 12, null, client);
 
       updateCount = st.executeUpdate();
@@ -777,7 +777,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
       throw new ServletException("@CODE=@" + ex.getMessage());
     } finally {
       try {
-        connectionProvider.releasePreparedStatement(st);
+        connectionProvider.releaseTransactionalPreparedStatement(st);
       } catch(Exception ignore){
         ignore.printStackTrace();
       }
@@ -785,7 +785,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     return(updateCount);
   }
 
-  public static int updateprapi(ConnectionProvider connectionProvider, String client)    throws ServletException {
+  public static int updateprapi(Connection conn, ConnectionProvider connectionProvider, String client)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
@@ -796,7 +796,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
 
     int iParameter = 0;
     try {
-    st = connectionProvider.getPreparedStatement(strSql);
+    st = connectionProvider.getPreparedStatement(conn, strSql);
       iParameter++; UtilSql.setValue(st, iParameter, 12, null, client);
 
       updateCount = st.executeUpdate();
@@ -808,7 +808,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
       throw new ServletException("@CODE=@" + ex.getMessage());
     } finally {
       try {
-        connectionProvider.releasePreparedStatement(st);
+        connectionProvider.releaseTransactionalPreparedStatement(st);
       } catch(Exception ignore){
         ignore.printStackTrace();
       }
@@ -816,7 +816,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     return(updateCount);
   }
 
-  public static int updateprglj(ConnectionProvider connectionProvider, String client)    throws ServletException {
+  public static int updateprglj(Connection conn, ConnectionProvider connectionProvider, String client)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
@@ -827,7 +827,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
 
     int iParameter = 0;
     try {
-    st = connectionProvider.getPreparedStatement(strSql);
+    st = connectionProvider.getPreparedStatement(conn, strSql);
       iParameter++; UtilSql.setValue(st, iParameter, 12, null, client);
 
       updateCount = st.executeUpdate();
@@ -839,7 +839,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
       throw new ServletException("@CODE=@" + ex.getMessage());
     } finally {
       try {
-        connectionProvider.releasePreparedStatement(st);
+        connectionProvider.releaseTransactionalPreparedStatement(st);
       } catch(Exception ignore){
         ignore.printStackTrace();
       }
@@ -847,7 +847,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     return(updateCount);
   }
 
-  public static int updatepramz(ConnectionProvider connectionProvider, String client)    throws ServletException {
+  public static int updatepramz(Connection conn, ConnectionProvider connectionProvider, String client)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
@@ -858,7 +858,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
 
     int iParameter = 0;
     try {
-    st = connectionProvider.getPreparedStatement(strSql);
+    st = connectionProvider.getPreparedStatement(conn, strSql);
       iParameter++; UtilSql.setValue(st, iParameter, 12, null, client);
 
       updateCount = st.executeUpdate();
@@ -870,7 +870,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
       throw new ServletException("@CODE=@" + ex.getMessage());
     } finally {
       try {
-        connectionProvider.releasePreparedStatement(st);
+        connectionProvider.releaseTransactionalPreparedStatement(st);
       } catch(Exception ignore){
         ignore.printStackTrace();
       }
@@ -878,7 +878,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     return(updateCount);
   }
 
-  public static int updateprarc(ConnectionProvider connectionProvider, String client)    throws ServletException {
+  public static int updateprarc(Connection conn, ConnectionProvider connectionProvider, String client)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
@@ -889,7 +889,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
 
     int iParameter = 0;
     try {
-    st = connectionProvider.getPreparedStatement(strSql);
+    st = connectionProvider.getPreparedStatement(conn, strSql);
       iParameter++; UtilSql.setValue(st, iParameter, 12, null, client);
 
       updateCount = st.executeUpdate();
@@ -901,7 +901,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
       throw new ServletException("@CODE=@" + ex.getMessage());
     } finally {
       try {
-        connectionProvider.releasePreparedStatement(st);
+        connectionProvider.releaseTransactionalPreparedStatement(st);
       } catch(Exception ignore){
         ignore.printStackTrace();
       }
@@ -909,7 +909,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     return(updateCount);
   }
 
-  public static int updateprarf(ConnectionProvider connectionProvider, String client)    throws ServletException {
+  public static int updateprarf(Connection conn, ConnectionProvider connectionProvider, String client)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
@@ -920,7 +920,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
 
     int iParameter = 0;
     try {
-    st = connectionProvider.getPreparedStatement(strSql);
+    st = connectionProvider.getPreparedStatement(conn, strSql);
       iParameter++; UtilSql.setValue(st, iParameter, 12, null, client);
 
       updateCount = st.executeUpdate();
@@ -932,7 +932,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
       throw new ServletException("@CODE=@" + ex.getMessage());
     } finally {
       try {
-        connectionProvider.releasePreparedStatement(st);
+        connectionProvider.releaseTransactionalPreparedStatement(st);
       } catch(Exception ignore){
         ignore.printStackTrace();
       }
@@ -940,7 +940,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     return(updateCount);
   }
 
-  public static int updateprbgt(ConnectionProvider connectionProvider, String client)    throws ServletException {
+  public static int updateprbgt(Connection conn, ConnectionProvider connectionProvider, String client)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
@@ -951,7 +951,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
 
     int iParameter = 0;
     try {
-    st = connectionProvider.getPreparedStatement(strSql);
+    st = connectionProvider.getPreparedStatement(conn, strSql);
       iParameter++; UtilSql.setValue(st, iParameter, 12, null, client);
 
       updateCount = st.executeUpdate();
@@ -963,7 +963,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
       throw new ServletException("@CODE=@" + ex.getMessage());
     } finally {
       try {
-        connectionProvider.releasePreparedStatement(st);
+        connectionProvider.releaseTransactionalPreparedStatement(st);
       } catch(Exception ignore){
         ignore.printStackTrace();
       }
@@ -971,7 +971,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     return(updateCount);
   }
 
-  public static int updateprapp(ConnectionProvider connectionProvider, String client)    throws ServletException {
+  public static int updateprapp(Connection conn, ConnectionProvider connectionProvider, String client)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
@@ -982,7 +982,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
 
     int iParameter = 0;
     try {
-    st = connectionProvider.getPreparedStatement(strSql);
+    st = connectionProvider.getPreparedStatement(conn, strSql);
       iParameter++; UtilSql.setValue(st, iParameter, 12, null, client);
 
       updateCount = st.executeUpdate();
@@ -994,7 +994,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
       throw new ServletException("@CODE=@" + ex.getMessage());
     } finally {
       try {
-        connectionProvider.releasePreparedStatement(st);
+        connectionProvider.releaseTransactionalPreparedStatement(st);
       } catch(Exception ignore){
         ignore.printStackTrace();
       }
@@ -1002,7 +1002,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     return(updateCount);
   }
 
-  public static int updateprfat(ConnectionProvider connectionProvider, String client)    throws ServletException {
+  public static int updateprfat(Connection conn, ConnectionProvider connectionProvider, String client)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
@@ -1013,7 +1013,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
 
     int iParameter = 0;
     try {
-    st = connectionProvider.getPreparedStatement(strSql);
+    st = connectionProvider.getPreparedStatement(conn, strSql);
       iParameter++; UtilSql.setValue(st, iParameter, 12, null, client);
 
       updateCount = st.executeUpdate();
@@ -1025,7 +1025,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
       throw new ServletException("@CODE=@" + ex.getMessage());
     } finally {
       try {
-        connectionProvider.releasePreparedStatement(st);
+        connectionProvider.releaseTransactionalPreparedStatement(st);
       } catch(Exception ignore){
         ignore.printStackTrace();
       }
@@ -1033,7 +1033,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     return(updateCount);
   }
 
-  public static int updateprapc(ConnectionProvider connectionProvider, String client)    throws ServletException {
+  public static int updateprapc(Connection conn, ConnectionProvider connectionProvider, String client)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
@@ -1044,7 +1044,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
 
     int iParameter = 0;
     try {
-    st = connectionProvider.getPreparedStatement(strSql);
+    st = connectionProvider.getPreparedStatement(conn, strSql);
       iParameter++; UtilSql.setValue(st, iParameter, 12, null, client);
 
       updateCount = st.executeUpdate();
@@ -1056,7 +1056,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
       throw new ServletException("@CODE=@" + ex.getMessage());
     } finally {
       try {
-        connectionProvider.releasePreparedStatement(st);
+        connectionProvider.releaseTransactionalPreparedStatement(st);
       } catch(Exception ignore){
         ignore.printStackTrace();
       }
@@ -1064,7 +1064,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     return(updateCount);
   }
 
-  public static int updateprpoo(ConnectionProvider connectionProvider, String client)    throws ServletException {
+  public static int updateprpoo(Connection conn, ConnectionProvider connectionProvider, String client)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
@@ -1075,7 +1075,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
 
     int iParameter = 0;
     try {
-    st = connectionProvider.getPreparedStatement(strSql);
+    st = connectionProvider.getPreparedStatement(conn, strSql);
       iParameter++; UtilSql.setValue(st, iParameter, 12, null, client);
 
       updateCount = st.executeUpdate();
@@ -1087,7 +1087,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
       throw new ServletException("@CODE=@" + ex.getMessage());
     } finally {
       try {
-        connectionProvider.releasePreparedStatement(st);
+        connectionProvider.releaseTransactionalPreparedStatement(st);
       } catch(Exception ignore){
         ignore.printStackTrace();
       }
@@ -1095,7 +1095,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     return(updateCount);
   }
 
-  public static int updateprmms(ConnectionProvider connectionProvider, String client)    throws ServletException {
+  public static int updateprmms(Connection conn, ConnectionProvider connectionProvider, String client)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
@@ -1106,7 +1106,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
 
     int iParameter = 0;
     try {
-    st = connectionProvider.getPreparedStatement(strSql);
+    st = connectionProvider.getPreparedStatement(conn, strSql);
       iParameter++; UtilSql.setValue(st, iParameter, 12, null, client);
 
       updateCount = st.executeUpdate();
@@ -1118,7 +1118,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
       throw new ServletException("@CODE=@" + ex.getMessage());
     } finally {
       try {
-        connectionProvider.releasePreparedStatement(st);
+        connectionProvider.releaseTransactionalPreparedStatement(st);
       } catch(Exception ignore){
         ignore.printStackTrace();
       }
@@ -1126,7 +1126,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     return(updateCount);
   }
 
-  public static int updateprarr(ConnectionProvider connectionProvider, String client)    throws ServletException {
+  public static int updateprarr(Connection conn, ConnectionProvider connectionProvider, String client)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
@@ -1137,7 +1137,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
 
     int iParameter = 0;
     try {
-    st = connectionProvider.getPreparedStatement(strSql);
+    st = connectionProvider.getPreparedStatement(conn, strSql);
       iParameter++; UtilSql.setValue(st, iParameter, 12, null, client);
 
       updateCount = st.executeUpdate();
@@ -1149,7 +1149,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
       throw new ServletException("@CODE=@" + ex.getMessage());
     } finally {
       try {
-        connectionProvider.releasePreparedStatement(st);
+        connectionProvider.releaseTransactionalPreparedStatement(st);
       } catch(Exception ignore){
         ignore.printStackTrace();
       }
@@ -1157,7 +1157,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     return(updateCount);
   }
 
-  public static int updateprsoo(ConnectionProvider connectionProvider, String client)    throws ServletException {
+  public static int updateprsoo(Connection conn, ConnectionProvider connectionProvider, String client)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
@@ -1168,7 +1168,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
 
     int iParameter = 0;
     try {
-    st = connectionProvider.getPreparedStatement(strSql);
+    st = connectionProvider.getPreparedStatement(conn, strSql);
       iParameter++; UtilSql.setValue(st, iParameter, 12, null, client);
 
       updateCount = st.executeUpdate();
@@ -1180,7 +1180,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
       throw new ServletException("@CODE=@" + ex.getMessage());
     } finally {
       try {
-        connectionProvider.releasePreparedStatement(st);
+        connectionProvider.releaseTransactionalPreparedStatement(st);
       } catch(Exception ignore){
         ignore.printStackTrace();
       }
@@ -1188,7 +1188,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     return(updateCount);
   }
 
-  public static int updateprmmr(ConnectionProvider connectionProvider, String client)    throws ServletException {
+  public static int updateprmmr(Connection conn, ConnectionProvider connectionProvider, String client)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
@@ -1199,7 +1199,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
 
     int iParameter = 0;
     try {
-    st = connectionProvider.getPreparedStatement(strSql);
+    st = connectionProvider.getPreparedStatement(conn, strSql);
       iParameter++; UtilSql.setValue(st, iParameter, 12, null, client);
 
       updateCount = st.executeUpdate();
@@ -1211,7 +1211,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
       throw new ServletException("@CODE=@" + ex.getMessage());
     } finally {
       try {
-        connectionProvider.releasePreparedStatement(st);
+        connectionProvider.releaseTransactionalPreparedStatement(st);
       } catch(Exception ignore){
         ignore.printStackTrace();
       }
@@ -1219,7 +1219,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     return(updateCount);
   }
 
-  public static int updateprmmi(ConnectionProvider connectionProvider, String client)    throws ServletException {
+  public static int updateprmmi(Connection conn, ConnectionProvider connectionProvider, String client)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
@@ -1230,7 +1230,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
 
     int iParameter = 0;
     try {
-    st = connectionProvider.getPreparedStatement(strSql);
+    st = connectionProvider.getPreparedStatement(conn, strSql);
       iParameter++; UtilSql.setValue(st, iParameter, 12, null, client);
 
       updateCount = st.executeUpdate();
@@ -1242,7 +1242,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
       throw new ServletException("@CODE=@" + ex.getMessage());
     } finally {
       try {
-        connectionProvider.releasePreparedStatement(st);
+        connectionProvider.releaseTransactionalPreparedStatement(st);
       } catch(Exception ignore){
         ignore.printStackTrace();
       }
@@ -1305,7 +1305,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     return(objectInitializeAcctDimensionsInClientData);
   }
 
-  public static int updateooamz(ConnectionProvider connectionProvider, String client)    throws ServletException {
+  public static int updateooamz(Connection conn, ConnectionProvider connectionProvider, String client)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
@@ -1316,7 +1316,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
 
     int iParameter = 0;
     try {
-    st = connectionProvider.getPreparedStatement(strSql);
+    st = connectionProvider.getPreparedStatement(conn, strSql);
       iParameter++; UtilSql.setValue(st, iParameter, 12, null, client);
 
       updateCount = st.executeUpdate();
@@ -1328,7 +1328,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
       throw new ServletException("@CODE=@" + ex.getMessage());
     } finally {
       try {
-        connectionProvider.releasePreparedStatement(st);
+        connectionProvider.releaseTransactionalPreparedStatement(st);
       } catch(Exception ignore){
         ignore.printStackTrace();
       }
@@ -1336,7 +1336,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     return(updateCount);
   }
 
-  public static int updateooapc(ConnectionProvider connectionProvider, String client)    throws ServletException {
+  public static int updateooapc(Connection conn, ConnectionProvider connectionProvider, String client)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
@@ -1347,7 +1347,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
 
     int iParameter = 0;
     try {
-    st = connectionProvider.getPreparedStatement(strSql);
+    st = connectionProvider.getPreparedStatement(conn, strSql);
       iParameter++; UtilSql.setValue(st, iParameter, 12, null, client);
 
       updateCount = st.executeUpdate();
@@ -1359,7 +1359,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
       throw new ServletException("@CODE=@" + ex.getMessage());
     } finally {
       try {
-        connectionProvider.releasePreparedStatement(st);
+        connectionProvider.releaseTransactionalPreparedStatement(st);
       } catch(Exception ignore){
         ignore.printStackTrace();
       }
@@ -1367,7 +1367,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     return(updateCount);
   }
 
-  public static int updateooapi(ConnectionProvider connectionProvider, String client)    throws ServletException {
+  public static int updateooapi(Connection conn, ConnectionProvider connectionProvider, String client)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
@@ -1378,7 +1378,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
 
     int iParameter = 0;
     try {
-    st = connectionProvider.getPreparedStatement(strSql);
+    st = connectionProvider.getPreparedStatement(conn, strSql);
       iParameter++; UtilSql.setValue(st, iParameter, 12, null, client);
 
       updateCount = st.executeUpdate();
@@ -1390,7 +1390,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
       throw new ServletException("@CODE=@" + ex.getMessage());
     } finally {
       try {
-        connectionProvider.releasePreparedStatement(st);
+        connectionProvider.releaseTransactionalPreparedStatement(st);
       } catch(Exception ignore){
         ignore.printStackTrace();
       }
@@ -1398,7 +1398,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     return(updateCount);
   }
 
-  public static int updateooapp(ConnectionProvider connectionProvider, String client)    throws ServletException {
+  public static int updateooapp(Connection conn, ConnectionProvider connectionProvider, String client)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
@@ -1409,7 +1409,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
 
     int iParameter = 0;
     try {
-    st = connectionProvider.getPreparedStatement(strSql);
+    st = connectionProvider.getPreparedStatement(conn, strSql);
       iParameter++; UtilSql.setValue(st, iParameter, 12, null, client);
 
       updateCount = st.executeUpdate();
@@ -1421,7 +1421,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
       throw new ServletException("@CODE=@" + ex.getMessage());
     } finally {
       try {
-        connectionProvider.releasePreparedStatement(st);
+        connectionProvider.releaseTransactionalPreparedStatement(st);
       } catch(Exception ignore){
         ignore.printStackTrace();
       }
@@ -1429,7 +1429,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     return(updateCount);
   }
 
-  public static int updateooarc(ConnectionProvider connectionProvider, String client)    throws ServletException {
+  public static int updateooarc(Connection conn, ConnectionProvider connectionProvider, String client)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
@@ -1440,7 +1440,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
 
     int iParameter = 0;
     try {
-    st = connectionProvider.getPreparedStatement(strSql);
+    st = connectionProvider.getPreparedStatement(conn, strSql);
       iParameter++; UtilSql.setValue(st, iParameter, 12, null, client);
 
       updateCount = st.executeUpdate();
@@ -1452,7 +1452,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
       throw new ServletException("@CODE=@" + ex.getMessage());
     } finally {
       try {
-        connectionProvider.releasePreparedStatement(st);
+        connectionProvider.releaseTransactionalPreparedStatement(st);
       } catch(Exception ignore){
         ignore.printStackTrace();
       }
@@ -1460,7 +1460,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     return(updateCount);
   }
 
-  public static int updateooarf(ConnectionProvider connectionProvider, String client)    throws ServletException {
+  public static int updateooarf(Connection conn, ConnectionProvider connectionProvider, String client)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
@@ -1471,7 +1471,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
 
     int iParameter = 0;
     try {
-    st = connectionProvider.getPreparedStatement(strSql);
+    st = connectionProvider.getPreparedStatement(conn, strSql);
       iParameter++; UtilSql.setValue(st, iParameter, 12, null, client);
 
       updateCount = st.executeUpdate();
@@ -1483,7 +1483,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
       throw new ServletException("@CODE=@" + ex.getMessage());
     } finally {
       try {
-        connectionProvider.releasePreparedStatement(st);
+        connectionProvider.releaseTransactionalPreparedStatement(st);
       } catch(Exception ignore){
         ignore.printStackTrace();
       }
@@ -1491,7 +1491,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     return(updateCount);
   }
 
-  public static int updateooari(ConnectionProvider connectionProvider, String client)    throws ServletException {
+  public static int updateooari(Connection conn, ConnectionProvider connectionProvider, String client)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
@@ -1502,7 +1502,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
 
     int iParameter = 0;
     try {
-    st = connectionProvider.getPreparedStatement(strSql);
+    st = connectionProvider.getPreparedStatement(conn, strSql);
       iParameter++; UtilSql.setValue(st, iParameter, 12, null, client);
 
       updateCount = st.executeUpdate();
@@ -1514,7 +1514,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
       throw new ServletException("@CODE=@" + ex.getMessage());
     } finally {
       try {
-        connectionProvider.releasePreparedStatement(st);
+        connectionProvider.releaseTransactionalPreparedStatement(st);
       } catch(Exception ignore){
         ignore.printStackTrace();
       }
@@ -1522,7 +1522,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     return(updateCount);
   }
 
-  public static int updateooarirm(ConnectionProvider connectionProvider, String client)    throws ServletException {
+  public static int updateooarirm(Connection conn, ConnectionProvider connectionProvider, String client)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
@@ -1533,7 +1533,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
 
     int iParameter = 0;
     try {
-    st = connectionProvider.getPreparedStatement(strSql);
+    st = connectionProvider.getPreparedStatement(conn, strSql);
       iParameter++; UtilSql.setValue(st, iParameter, 12, null, client);
 
       updateCount = st.executeUpdate();
@@ -1545,7 +1545,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
       throw new ServletException("@CODE=@" + ex.getMessage());
     } finally {
       try {
-        connectionProvider.releasePreparedStatement(st);
+        connectionProvider.releaseTransactionalPreparedStatement(st);
       } catch(Exception ignore){
         ignore.printStackTrace();
       }
@@ -1553,7 +1553,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     return(updateCount);
   }
 
-  public static int updateooarr(ConnectionProvider connectionProvider, String client)    throws ServletException {
+  public static int updateooarr(Connection conn, ConnectionProvider connectionProvider, String client)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
@@ -1564,7 +1564,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
 
     int iParameter = 0;
     try {
-    st = connectionProvider.getPreparedStatement(strSql);
+    st = connectionProvider.getPreparedStatement(conn, strSql);
       iParameter++; UtilSql.setValue(st, iParameter, 12, null, client);
 
       updateCount = st.executeUpdate();
@@ -1576,7 +1576,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
       throw new ServletException("@CODE=@" + ex.getMessage());
     } finally {
       try {
-        connectionProvider.releasePreparedStatement(st);
+        connectionProvider.releaseTransactionalPreparedStatement(st);
       } catch(Exception ignore){
         ignore.printStackTrace();
       }
@@ -1584,7 +1584,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     return(updateCount);
   }
 
-  public static int updateoobgt(ConnectionProvider connectionProvider, String client)    throws ServletException {
+  public static int updateoobgt(Connection conn, ConnectionProvider connectionProvider, String client)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
@@ -1595,7 +1595,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
 
     int iParameter = 0;
     try {
-    st = connectionProvider.getPreparedStatement(strSql);
+    st = connectionProvider.getPreparedStatement(conn, strSql);
       iParameter++; UtilSql.setValue(st, iParameter, 12, null, client);
 
       updateCount = st.executeUpdate();
@@ -1607,7 +1607,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
       throw new ServletException("@CODE=@" + ex.getMessage());
     } finally {
       try {
-        connectionProvider.releasePreparedStatement(st);
+        connectionProvider.releaseTransactionalPreparedStatement(st);
       } catch(Exception ignore){
         ignore.printStackTrace();
       }
@@ -1615,7 +1615,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     return(updateCount);
   }
 
-  public static int updateooesh(ConnectionProvider connectionProvider, String client)    throws ServletException {
+  public static int updateooesh(Connection conn, ConnectionProvider connectionProvider, String client)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
@@ -1626,7 +1626,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
 
     int iParameter = 0;
     try {
-    st = connectionProvider.getPreparedStatement(strSql);
+    st = connectionProvider.getPreparedStatement(conn, strSql);
       iParameter++; UtilSql.setValue(st, iParameter, 12, null, client);
 
       updateCount = st.executeUpdate();
@@ -1638,7 +1638,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
       throw new ServletException("@CODE=@" + ex.getMessage());
     } finally {
       try {
-        connectionProvider.releasePreparedStatement(st);
+        connectionProvider.releaseTransactionalPreparedStatement(st);
       } catch(Exception ignore){
         ignore.printStackTrace();
       }
@@ -1646,7 +1646,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     return(updateCount);
   }
 
-  public static int updateooglj(ConnectionProvider connectionProvider, String client)    throws ServletException {
+  public static int updateooglj(Connection conn, ConnectionProvider connectionProvider, String client)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
@@ -1657,7 +1657,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
 
     int iParameter = 0;
     try {
-    st = connectionProvider.getPreparedStatement(strSql);
+    st = connectionProvider.getPreparedStatement(conn, strSql);
       iParameter++; UtilSql.setValue(st, iParameter, 12, null, client);
 
       updateCount = st.executeUpdate();
@@ -1669,7 +1669,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
       throw new ServletException("@CODE=@" + ex.getMessage());
     } finally {
       try {
-        connectionProvider.releasePreparedStatement(st);
+        connectionProvider.releaseTransactionalPreparedStatement(st);
       } catch(Exception ignore){
         ignore.printStackTrace();
       }
@@ -1677,7 +1677,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     return(updateCount);
   }
 
-  public static int updateoommi(ConnectionProvider connectionProvider, String client)    throws ServletException {
+  public static int updateoommi(Connection conn, ConnectionProvider connectionProvider, String client)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
@@ -1688,7 +1688,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
 
     int iParameter = 0;
     try {
-    st = connectionProvider.getPreparedStatement(strSql);
+    st = connectionProvider.getPreparedStatement(conn, strSql);
       iParameter++; UtilSql.setValue(st, iParameter, 12, null, client);
 
       updateCount = st.executeUpdate();
@@ -1700,7 +1700,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
       throw new ServletException("@CODE=@" + ex.getMessage());
     } finally {
       try {
-        connectionProvider.releasePreparedStatement(st);
+        connectionProvider.releaseTransactionalPreparedStatement(st);
       } catch(Exception ignore){
         ignore.printStackTrace();
       }
@@ -1708,7 +1708,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     return(updateCount);
   }
 
-  public static int updateoommm(ConnectionProvider connectionProvider, String client)    throws ServletException {
+  public static int updateoommm(Connection conn, ConnectionProvider connectionProvider, String client)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
@@ -1719,7 +1719,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
 
     int iParameter = 0;
     try {
-    st = connectionProvider.getPreparedStatement(strSql);
+    st = connectionProvider.getPreparedStatement(conn, strSql);
       iParameter++; UtilSql.setValue(st, iParameter, 12, null, client);
 
       updateCount = st.executeUpdate();
@@ -1731,7 +1731,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
       throw new ServletException("@CODE=@" + ex.getMessage());
     } finally {
       try {
-        connectionProvider.releasePreparedStatement(st);
+        connectionProvider.releaseTransactionalPreparedStatement(st);
       } catch(Exception ignore){
         ignore.printStackTrace();
       }
@@ -1739,7 +1739,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     return(updateCount);
   }
 
-  public static int updateoommr(ConnectionProvider connectionProvider, String client)    throws ServletException {
+  public static int updateoommr(Connection conn, ConnectionProvider connectionProvider, String client)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
@@ -1750,7 +1750,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
 
     int iParameter = 0;
     try {
-    st = connectionProvider.getPreparedStatement(strSql);
+    st = connectionProvider.getPreparedStatement(conn, strSql);
       iParameter++; UtilSql.setValue(st, iParameter, 12, null, client);
 
       updateCount = st.executeUpdate();
@@ -1762,7 +1762,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
       throw new ServletException("@CODE=@" + ex.getMessage());
     } finally {
       try {
-        connectionProvider.releasePreparedStatement(st);
+        connectionProvider.releaseTransactionalPreparedStatement(st);
       } catch(Exception ignore){
         ignore.printStackTrace();
       }
@@ -1770,7 +1770,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     return(updateCount);
   }
 
-  public static int updateoomms(ConnectionProvider connectionProvider, String client)    throws ServletException {
+  public static int updateoomms(Connection conn, ConnectionProvider connectionProvider, String client)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
@@ -1781,7 +1781,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
 
     int iParameter = 0;
     try {
-    st = connectionProvider.getPreparedStatement(strSql);
+    st = connectionProvider.getPreparedStatement(conn, strSql);
       iParameter++; UtilSql.setValue(st, iParameter, 12, null, client);
 
       updateCount = st.executeUpdate();
@@ -1793,7 +1793,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
       throw new ServletException("@CODE=@" + ex.getMessage());
     } finally {
       try {
-        connectionProvider.releasePreparedStatement(st);
+        connectionProvider.releaseTransactionalPreparedStatement(st);
       } catch(Exception ignore){
         ignore.printStackTrace();
       }
@@ -1801,7 +1801,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     return(updateCount);
   }
 
-  public static int updateoopoo(ConnectionProvider connectionProvider, String client)    throws ServletException {
+  public static int updateoopoo(Connection conn, ConnectionProvider connectionProvider, String client)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
@@ -1812,7 +1812,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
 
     int iParameter = 0;
     try {
-    st = connectionProvider.getPreparedStatement(strSql);
+    st = connectionProvider.getPreparedStatement(conn, strSql);
       iParameter++; UtilSql.setValue(st, iParameter, 12, null, client);
 
       updateCount = st.executeUpdate();
@@ -1824,7 +1824,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
       throw new ServletException("@CODE=@" + ex.getMessage());
     } finally {
       try {
-        connectionProvider.releasePreparedStatement(st);
+        connectionProvider.releaseTransactionalPreparedStatement(st);
       } catch(Exception ignore){
         ignore.printStackTrace();
       }
@@ -1832,7 +1832,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     return(updateCount);
   }
 
-  public static int updateoorec(ConnectionProvider connectionProvider, String client)    throws ServletException {
+  public static int updateoorec(Connection conn, ConnectionProvider connectionProvider, String client)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
@@ -1843,7 +1843,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
 
     int iParameter = 0;
     try {
-    st = connectionProvider.getPreparedStatement(strSql);
+    st = connectionProvider.getPreparedStatement(conn, strSql);
       iParameter++; UtilSql.setValue(st, iParameter, 12, null, client);
 
       updateCount = st.executeUpdate();
@@ -1855,7 +1855,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
       throw new ServletException("@CODE=@" + ex.getMessage());
     } finally {
       try {
-        connectionProvider.releasePreparedStatement(st);
+        connectionProvider.releaseTransactionalPreparedStatement(st);
       } catch(Exception ignore){
         ignore.printStackTrace();
       }
@@ -1863,7 +1863,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     return(updateCount);
   }
 
-  public static int updateoosoo(ConnectionProvider connectionProvider, String client)    throws ServletException {
+  public static int updateoosoo(Connection conn, ConnectionProvider connectionProvider, String client)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
       "INSERT INTO ad_client_acctdimension(ad_client_acctdimension_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, dimension, docbasetype, show_in_header, show_in_lines, show_in_breakdown)" +
@@ -1874,7 +1874,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
 
     int iParameter = 0;
     try {
-    st = connectionProvider.getPreparedStatement(strSql);
+    st = connectionProvider.getPreparedStatement(conn, strSql);
       iParameter++; UtilSql.setValue(st, iParameter, 12, null, client);
 
       updateCount = st.executeUpdate();
@@ -1886,7 +1886,7 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
       throw new ServletException("@CODE=@" + ex.getMessage());
     } finally {
       try {
-        connectionProvider.releasePreparedStatement(st);
+        connectionProvider.releaseTransactionalPreparedStatement(st);
       } catch(Exception ignore){
         ignore.printStackTrace();
       }

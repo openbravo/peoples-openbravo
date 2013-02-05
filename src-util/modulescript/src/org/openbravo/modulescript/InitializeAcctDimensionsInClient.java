@@ -21,6 +21,7 @@ package org.openbravo.modulescript;
 
 import org.apache.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
+import java.sql.Connection;
 import org.openbravo.utils.FormatUtilities;
 
 public class InitializeAcctDimensionsInClient extends ModuleScript {
@@ -31,68 +32,74 @@ public class InitializeAcctDimensionsInClient extends ModuleScript {
 
     try {
       ConnectionProvider cp = getConnectionProvider();
-      boolean isInitialized= InitializeAcctDimensionsInClientData.isExecuted(cp);
-      if (!isInitialized){
-        for (InitializeAcctDimensionsInClientData client : InitializeAcctDimensionsInClientData
-            .getClients(cp)) {
-      InitializeAcctDimensionsInClientData.updateDimClient(cp);  
-      InitializeAcctDimensionsInClientData.updatebpari(cp, client.adClientId);
-      InitializeAcctDimensionsInClientData.updatebparirm(cp, client.adClientId);
-      InitializeAcctDimensionsInClientData.updatebpesh(cp, client.adClientId);
-      InitializeAcctDimensionsInClientData.updatebpmmr(cp, client.adClientId);
-      InitializeAcctDimensionsInClientData.updatebpsoo(cp, client.adClientId);
-      InitializeAcctDimensionsInClientData.updatebpmms(cp, client.adClientId);
-      InitializeAcctDimensionsInClientData.updatebparr(cp, client.adClientId);
-      InitializeAcctDimensionsInClientData.updatebpapc(cp, client.adClientId);
-      InitializeAcctDimensionsInClientData.updatebpfat(cp, client.adClientId);
-      InitializeAcctDimensionsInClientData.updatebpapp(cp, client.adClientId);
-      InitializeAcctDimensionsInClientData.updatebparf(cp, client.adClientId);
-      InitializeAcctDimensionsInClientData.updatebparc(cp, client.adClientId);
-      InitializeAcctDimensionsInClientData.updatebpbgt(cp, client.adClientId);
-      InitializeAcctDimensionsInClientData.updatebpamz(cp, client.adClientId);  
-      InitializeAcctDimensionsInClientData.updatebpapi(cp, client.adClientId);
-      InitializeAcctDimensionsInClientData.updatebpglj(cp, client.adClientId);
-      InitializeAcctDimensionsInClientData.updatepresh(cp, client.adClientId);
-      InitializeAcctDimensionsInClientData.updateprarirm(cp, client.adClientId);
-      InitializeAcctDimensionsInClientData.updateprapi(cp, client.adClientId);  
-      InitializeAcctDimensionsInClientData.updateprglj(cp, client.adClientId);
-      InitializeAcctDimensionsInClientData.updatepramz(cp, client.adClientId);      
-      InitializeAcctDimensionsInClientData.updateprarc(cp, client.adClientId);
-      InitializeAcctDimensionsInClientData.updateprarf(cp, client.adClientId);
-      InitializeAcctDimensionsInClientData.updateprbgt(cp, client.adClientId); 
-      InitializeAcctDimensionsInClientData.updateprapp(cp, client.adClientId);
-      InitializeAcctDimensionsInClientData.updateprfat(cp, client.adClientId);
-      InitializeAcctDimensionsInClientData.updateprapc(cp, client.adClientId);
-      InitializeAcctDimensionsInClientData.updateprpoo(cp, client.adClientId);   
-      InitializeAcctDimensionsInClientData.updateprmms(cp, client.adClientId);
-      InitializeAcctDimensionsInClientData.updateprarr(cp, client.adClientId);
-      InitializeAcctDimensionsInClientData.updateprsoo(cp, client.adClientId);
-      InitializeAcctDimensionsInClientData.updateprmmr(cp, client.adClientId);   
-      InitializeAcctDimensionsInClientData.updateprmmi(cp, client.adClientId);    
-      InitializeAcctDimensionsInClientData.updateooamz(cp, client.adClientId);
-      InitializeAcctDimensionsInClientData.updateooapc(cp, client.adClientId);      
-      InitializeAcctDimensionsInClientData.updateooapi(cp, client.adClientId);     
-      InitializeAcctDimensionsInClientData.updateooapp(cp, client.adClientId);
-      InitializeAcctDimensionsInClientData.updateooarc(cp, client.adClientId); 
-      InitializeAcctDimensionsInClientData.updateooarf(cp, client.adClientId);
-      InitializeAcctDimensionsInClientData.updateooari(cp, client.adClientId);
-      InitializeAcctDimensionsInClientData.updateooarirm(cp, client.adClientId);
-      InitializeAcctDimensionsInClientData.updateooarr(cp, client.adClientId);        
-      InitializeAcctDimensionsInClientData.updateoobgt(cp, client.adClientId);
-      InitializeAcctDimensionsInClientData.updateooesh(cp, client.adClientId);
-      InitializeAcctDimensionsInClientData.updateooglj(cp, client.adClientId);
-      InitializeAcctDimensionsInClientData.updateoommi(cp, client.adClientId);   
-      InitializeAcctDimensionsInClientData.updateoommm(cp, client.adClientId);      
-      InitializeAcctDimensionsInClientData.updateoommr(cp, client.adClientId);
-      InitializeAcctDimensionsInClientData.updateoomms(cp, client.adClientId);
-      InitializeAcctDimensionsInClientData.updateoopoo(cp, client.adClientId);
-      InitializeAcctDimensionsInClientData.updateoorec(cp, client.adClientId);   
-      InitializeAcctDimensionsInClientData.updateoosoo(cp, client.adClientId); 
-      
-      InitializeAcctDimensionsInClientData.createPreference(cp,client.adClientId);
+      Connection conn = cp.getTransactionConnection();
+      try {
+        boolean isInitialized= InitializeAcctDimensionsInClientData.isExecuted(cp);
+        if (!isInitialized){
+          for (InitializeAcctDimensionsInClientData client : InitializeAcctDimensionsInClientData
+              .getClients(cp)) {
+            InitializeAcctDimensionsInClientData.updateDimClient(conn, cp);  
+            InitializeAcctDimensionsInClientData.updatebpari(conn, cp, client.adClientId);
+            InitializeAcctDimensionsInClientData.updatebparirm(conn, cp, client.adClientId);
+            InitializeAcctDimensionsInClientData.updatebpesh(conn, cp, client.adClientId);
+            InitializeAcctDimensionsInClientData.updatebpmmr(conn, cp, client.adClientId);
+            InitializeAcctDimensionsInClientData.updatebpsoo(conn, cp, client.adClientId);
+            InitializeAcctDimensionsInClientData.updatebpmms(conn, cp, client.adClientId);
+            InitializeAcctDimensionsInClientData.updatebparr(conn, cp, client.adClientId);
+            InitializeAcctDimensionsInClientData.updatebpapc(conn, cp, client.adClientId);
+            InitializeAcctDimensionsInClientData.updatebpfat(conn, cp, client.adClientId);
+            InitializeAcctDimensionsInClientData.updatebpapp(conn, cp, client.adClientId);
+            InitializeAcctDimensionsInClientData.updatebparf(conn, cp, client.adClientId);
+            InitializeAcctDimensionsInClientData.updatebparc(conn, cp, client.adClientId);
+            InitializeAcctDimensionsInClientData.updatebpbgt(conn, cp, client.adClientId);
+            InitializeAcctDimensionsInClientData.updatebpamz(conn, cp, client.adClientId);  
+            InitializeAcctDimensionsInClientData.updatebpapi(conn, cp, client.adClientId);
+            InitializeAcctDimensionsInClientData.updatebpglj(conn, cp, client.adClientId);
+            InitializeAcctDimensionsInClientData.updatepresh(conn, cp, client.adClientId);
+            InitializeAcctDimensionsInClientData.updateprarirm(conn, cp, client.adClientId);
+            InitializeAcctDimensionsInClientData.updateprapi(conn, cp, client.adClientId);  
+            InitializeAcctDimensionsInClientData.updateprglj(conn, cp, client.adClientId);
+            InitializeAcctDimensionsInClientData.updatepramz(conn, cp, client.adClientId);      
+            InitializeAcctDimensionsInClientData.updateprarc(conn, cp, client.adClientId);
+            InitializeAcctDimensionsInClientData.updateprarf(conn, cp, client.adClientId);
+            InitializeAcctDimensionsInClientData.updateprbgt(conn, cp, client.adClientId); 
+            InitializeAcctDimensionsInClientData.updateprapp(conn, cp, client.adClientId);
+            InitializeAcctDimensionsInClientData.updateprfat(conn, cp, client.adClientId);
+            InitializeAcctDimensionsInClientData.updateprapc(conn, cp, client.adClientId);
+            InitializeAcctDimensionsInClientData.updateprpoo(conn, cp, client.adClientId);   
+            InitializeAcctDimensionsInClientData.updateprmms(conn, cp, client.adClientId);
+            InitializeAcctDimensionsInClientData.updateprarr(conn, cp, client.adClientId);
+            InitializeAcctDimensionsInClientData.updateprsoo(conn, cp, client.adClientId);
+            InitializeAcctDimensionsInClientData.updateprmmr(conn, cp, client.adClientId);   
+            InitializeAcctDimensionsInClientData.updateprmmi(conn, cp, client.adClientId);    
+            InitializeAcctDimensionsInClientData.updateooamz(conn, cp, client.adClientId);
+            InitializeAcctDimensionsInClientData.updateooapc(conn, cp, client.adClientId);  
+            InitializeAcctDimensionsInClientData.updateooapi(conn, cp, client.adClientId);     
+            InitializeAcctDimensionsInClientData.updateooapp(conn, cp, client.adClientId);
+            InitializeAcctDimensionsInClientData.updateooarc(conn, cp, client.adClientId); 
+            InitializeAcctDimensionsInClientData.updateooarf(conn, cp, client.adClientId);
+            InitializeAcctDimensionsInClientData.updateooari(conn, cp, client.adClientId);
+            InitializeAcctDimensionsInClientData.updateooarirm(conn, cp, client.adClientId);
+            InitializeAcctDimensionsInClientData.updateooarr(conn, cp, client.adClientId);        
+            InitializeAcctDimensionsInClientData.updateoobgt(conn, cp, client.adClientId);
+            InitializeAcctDimensionsInClientData.updateooesh(conn, cp, client.adClientId);
+            InitializeAcctDimensionsInClientData.updateooglj(conn, cp, client.adClientId);
+            InitializeAcctDimensionsInClientData.updateoommi(conn, cp, client.adClientId);   
+            InitializeAcctDimensionsInClientData.updateoommm(conn, cp, client.adClientId);      
+            InitializeAcctDimensionsInClientData.updateoommr(conn, cp, client.adClientId);
+            InitializeAcctDimensionsInClientData.updateoomms(conn, cp, client.adClientId);
+            InitializeAcctDimensionsInClientData.updateoopoo(conn, cp, client.adClientId);
+            InitializeAcctDimensionsInClientData.updateoorec(conn, cp, client.adClientId);   
+            InitializeAcctDimensionsInClientData.updateoosoo(conn, cp, client.adClientId); 
+            
+            InitializeAcctDimensionsInClientData.createPreference(conn, cp, client.adClientId);
+          }
+          cp.releaseCommitConnection(conn);
         }
+      } catch (Exception e) {
+        cp.releaseRollbackConnection(conn);
+        handleError(e);
       }
-     
     } catch (Exception e) {
       handleError(e);
     }

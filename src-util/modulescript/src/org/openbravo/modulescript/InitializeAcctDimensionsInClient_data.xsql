@@ -39,7 +39,7 @@
       ]]>
     </Sql>
   </SqlMethod>
-   <SqlMethod name="createPreference" type="preparedStatement" return="rowcount">
+   <SqlMethod name="createPreference" type="preparedStatement" connection="true" return="rowcount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
@@ -56,7 +56,7 @@
     </Sql>
     <Parameter name="client"/>
   </SqlMethod>  
-  <SqlMethod name="updateDimClient" type="preparedStatement" return="rowcount">
+  <SqlMethod name="updateDimClient" type="preparedStatement" connection="true" return="rowcount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
@@ -66,7 +66,7 @@
       ]]>
     </Sql>
   </SqlMethod>  
-  <SqlMethod name="updatebpari" type="preparedStatement" return="rowcount">
+  <SqlMethod name="updatebpari" type="preparedStatement" connection="true" return="rowcount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
@@ -76,7 +76,7 @@ values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'BP', 'ARI', 'Y', 'N',
     </Sql>
     <Parameter name="client"/>
   </SqlMethod>  
-  <SqlMethod name="updatebparirm" type="preparedStatement" return="rowcount">
+  <SqlMethod name="updatebparirm" type="preparedStatement" connection="true" return="rowcount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
@@ -86,7 +86,7 @@ values (get_uuid(),?, '0', 'Y', now(), '0', now(), '0', 'BP', 'ARI_RM', 'Y', 'N'
     </Sql>
      <Parameter name="client"/>
   </SqlMethod>  
-   <SqlMethod name="updatebpesh" type="preparedStatement" return="rowcount">
+   <SqlMethod name="updatebpesh" type="preparedStatement" connection="true" return="rowcount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
@@ -96,7 +96,7 @@ values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'BP', 'ESH', 'Y', 'Y',
     </Sql>
      <Parameter name="client"/>
   </SqlMethod>  
-  <SqlMethod name="updatebpmmr" type="preparedStatement" return="rowcount">
+  <SqlMethod name="updatebpmmr" type="preparedStatement" connection="true" return="rowcount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
@@ -107,7 +107,7 @@ values (get_uuid(),? , '0', 'Y', now(), '0', now(), '0', 'BP', 'MMR', 'Y', 'N', 
      <Parameter name="client"/>
   </SqlMethod>  
   
-  <SqlMethod name="updatebpsoo" type="preparedStatement" return="rowcount">
+  <SqlMethod name="updatebpsoo" type="preparedStatement" connection="true" return="rowcount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
@@ -117,7 +117,7 @@ values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'BP', 'SOO', 'Y', 'N',
     </Sql>
      <Parameter name="client"/>
   </SqlMethod>   
-   <SqlMethod name="updatebpmms" type="preparedStatement" return="rowcount">
+   <SqlMethod name="updatebpmms" type="preparedStatement" connection="true" return="rowcount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
@@ -127,7 +127,7 @@ values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'BP', 'MMS', 'Y', 'N',
     </Sql>
      <Parameter name="client"/>
   </SqlMethod> 
-  <SqlMethod name="updatebparr" type="preparedStatement" return="rowcount">
+  <SqlMethod name="updatebparr" type="preparedStatement" connection="true" return="rowcount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
@@ -137,7 +137,7 @@ values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'BP', 'ARR', 'N', 'Y',
     </Sql>
      <Parameter name="client"/>
   </SqlMethod> 
-  <SqlMethod name="updatebpapc" type="preparedStatement" return="rowcount">
+  <SqlMethod name="updatebpapc" type="preparedStatement" connection="true" return="rowcount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
@@ -147,7 +147,7 @@ values (get_uuid(),? , '0', 'Y', now(), '0', now(), '0', 'BP', 'APC', 'Y', 'N', 
     </Sql>
      <Parameter name="client"/>
   </SqlMethod> 
-    <SqlMethod name="updatebpfat" type="preparedStatement" return="rowcount">
+    <SqlMethod name="updatebpfat" type="preparedStatement" connection="true" return="rowcount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
@@ -157,7 +157,7 @@ values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'BP', 'FAT', 'Y', 'N',
     </Sql>
      <Parameter name="client"/>
   </SqlMethod>  
-  <SqlMethod name="updatebpapp" type="preparedStatement" return="rowcount">
+  <SqlMethod name="updatebpapp" type="preparedStatement" connection="true" return="rowcount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
@@ -167,7 +167,7 @@ values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'BP', 'APP', 'N', 'Y',
     </Sql>
      <Parameter name="client"/>
   </SqlMethod> 
-  <SqlMethod name="updatebparf" type="preparedStatement" return="rowcount">
+  <SqlMethod name="updatebparf" type="preparedStatement" connection="true" return="rowcount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
@@ -177,7 +177,7 @@ values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'BP', 'ARF', 'Y', 'N',
     </Sql>
      <Parameter name="client"/>
   </SqlMethod> 
-  <SqlMethod name="updatebparc" type="preparedStatement" return="rowcount">
+  <SqlMethod name="updatebparc" type="preparedStatement" connection="true" return="rowcount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
@@ -187,7 +187,7 @@ values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'BP', 'ARC', 'Y', 'N',
     </Sql>
      <Parameter name="client"/>
   </SqlMethod>    
-  <SqlMethod name="updatebpbgt" type="preparedStatement" return="rowcount">
+  <SqlMethod name="updatebpbgt" type="preparedStatement" connection="true" return="rowcount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
@@ -197,7 +197,7 @@ values (get_uuid(), ?, '0', 'Y', now(), '0', now(), '0', 'BP', 'BGT', 'N', 'N', 
     </Sql>
      <Parameter name="client"/>
   </SqlMethod>
-    <SqlMethod name="updatebpamz" type="preparedStatement" return="rowcount">
+    <SqlMethod name="updatebpamz" type="preparedStatement" connection="true" return="rowcount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
@@ -207,7 +207,7 @@ values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'BP', 'AMZ', 'N', 'N',
     </Sql>
      <Parameter name="client"/>
   </SqlMethod>
-  <SqlMethod name="updatebpapi" type="preparedStatement" return="rowcount">
+  <SqlMethod name="updatebpapi" type="preparedStatement" connection="true" return="rowcount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
@@ -217,7 +217,7 @@ values (get_uuid(),? , '0', 'Y', now(), '0', now(), '0', 'BP', 'API', 'Y', 'N', 
     </Sql>
      <Parameter name="client"/>
   </SqlMethod>
-    <SqlMethod name="updatebpglj" type="preparedStatement" return="rowcount">
+    <SqlMethod name="updatebpglj" type="preparedStatement" connection="true" return="rowcount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
@@ -227,7 +227,7 @@ values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'BP', 'GLJ', 'N', 'N',
     </Sql>
      <Parameter name="client"/>
   </SqlMethod>
-  <SqlMethod name="updatepresh" type="preparedStatement" return="rowcount">
+  <SqlMethod name="updatepresh" type="preparedStatement" connection="true" return="rowcount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
@@ -237,7 +237,7 @@ values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'PR', 'ESH', 'N', 'Y',
     </Sql>
      <Parameter name="client"/>
   </SqlMethod>
-   <SqlMethod name="updateprarirm" type="preparedStatement" return="rowcount">
+   <SqlMethod name="updateprarirm" type="preparedStatement" connection="true" return="rowcount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
@@ -247,7 +247,7 @@ values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'PR', 'ARI_RM', 'N', '
     </Sql>
      <Parameter name="client"/>
   </SqlMethod>
-  <SqlMethod name="updateprari" type="preparedStatement" return="rowcount">
+  <SqlMethod name="updateprari" type="preparedStatement" connection="true" return="rowcount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
@@ -257,7 +257,7 @@ values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'PR', 'ARI', 'N', 'N',
     </Sql>
      <Parameter name="client"/>
   </SqlMethod>
-  <SqlMethod name="updateprapi" type="preparedStatement" return="rowcount">
+  <SqlMethod name="updateprapi" type="preparedStatement" connection="true" return="rowcount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
@@ -267,7 +267,7 @@ values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'PR', 'API', 'N', 'N',
     </Sql>
      <Parameter name="client"/>
   </SqlMethod>
-  <SqlMethod name="updateprglj" type="preparedStatement" return="rowcount">
+  <SqlMethod name="updateprglj" type="preparedStatement" connection="true" return="rowcount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
@@ -277,7 +277,7 @@ values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'PR', 'GLJ', 'N', 'N',
     </Sql>
      <Parameter name="client"/>
   </SqlMethod>
-  <SqlMethod name="updatepramz" type="preparedStatement" return="rowcount">
+  <SqlMethod name="updatepramz" type="preparedStatement" connection="true" return="rowcount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
@@ -287,7 +287,7 @@ values (get_uuid(),? , '0', 'Y', now(), '0', now(), '0', 'PR', 'AMZ', 'N', 'N', 
     </Sql>
      <Parameter name="client"/>
   </SqlMethod>
-    <SqlMethod name="updateprarc" type="preparedStatement" return="rowcount">
+    <SqlMethod name="updateprarc" type="preparedStatement" connection="true" return="rowcount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
@@ -297,7 +297,7 @@ values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'PR', 'ARC', 'N', 'N',
     </Sql>
      <Parameter name="client"/>
   </SqlMethod>
-    <SqlMethod name="updateprarf" type="preparedStatement" return="rowcount">
+    <SqlMethod name="updateprarf" type="preparedStatement" connection="true" return="rowcount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
@@ -307,7 +307,7 @@ values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'PR', 'ARF', 'N', 'N',
     </Sql>
      <Parameter name="client"/>
   </SqlMethod>
-  <SqlMethod name="updateprbgt" type="preparedStatement" return="rowcount">
+  <SqlMethod name="updateprbgt" type="preparedStatement" connection="true" return="rowcount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
@@ -317,7 +317,7 @@ values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'PR', 'BGT', 'N', 'N',
     </Sql>
      <Parameter name="client"/>
   </SqlMethod>
-  <SqlMethod name="updateprapp" type="preparedStatement" return="rowcount">
+  <SqlMethod name="updateprapp" type="preparedStatement" connection="true" return="rowcount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
@@ -327,7 +327,7 @@ values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'PR', 'APP', 'N', 'N',
     </Sql>
      <Parameter name="client"/>
   </SqlMethod>
-    <SqlMethod name="updateprfat" type="preparedStatement" return="rowcount">
+    <SqlMethod name="updateprfat" type="preparedStatement" connection="true" return="rowcount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
@@ -337,7 +337,7 @@ values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'PR', 'FAT', 'N', 'N',
     </Sql>
      <Parameter name="client"/>
   </SqlMethod>
-      <SqlMethod name="updateprapc" type="preparedStatement" return="rowcount">
+      <SqlMethod name="updateprapc" type="preparedStatement" connection="true" return="rowcount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
@@ -347,7 +347,7 @@ values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'PR', 'APC', 'N', 'N',
     </Sql>
      <Parameter name="client"/>
   </SqlMethod>
-  <SqlMethod name="updateprpoo" type="preparedStatement" return="rowcount">
+  <SqlMethod name="updateprpoo" type="preparedStatement" connection="true" return="rowcount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
@@ -357,7 +357,7 @@ values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'PR', 'POO', 'N', 'Y',
     </Sql>
      <Parameter name="client"/>
   </SqlMethod>
- <SqlMethod name="updateprmms" type="preparedStatement" return="rowcount">
+ <SqlMethod name="updateprmms" type="preparedStatement" connection="true" return="rowcount">
  <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
@@ -367,7 +367,7 @@ values (get_uuid(),? , '0', 'Y', now(), '0', now(), '0', 'PR', 'MMS', 'N', 'N', 
     </Sql>
      <Parameter name="client"/>
   </SqlMethod>
-   <SqlMethod name="updateprarr" type="preparedStatement" return="rowcount">
+   <SqlMethod name="updateprarr" type="preparedStatement" connection="true" return="rowcount">
  <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
@@ -377,7 +377,7 @@ values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'PR', 'ARR', 'N', 'N',
     </Sql>
      <Parameter name="client"/>
   </SqlMethod>
-     <SqlMethod name="updateprsoo" type="preparedStatement" return="rowcount">
+     <SqlMethod name="updateprsoo" type="preparedStatement" connection="true" return="rowcount">
  <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
@@ -387,7 +387,7 @@ values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'PR', 'SOO', 'N', 'Y',
     </Sql>
      <Parameter name="client"/>
   </SqlMethod>
-       <SqlMethod name="updateprmmr" type="preparedStatement" return="rowcount">
+       <SqlMethod name="updateprmmr" type="preparedStatement" connection="true" return="rowcount">
  <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
@@ -397,7 +397,7 @@ values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'PR', 'MMR', 'N', 'N',
     </Sql>
      <Parameter name="client"/>
   </SqlMethod>
- <SqlMethod name="updateprmmi" type="preparedStatement" return="rowcount">
+ <SqlMethod name="updateprmmi" type="preparedStatement" connection="true" return="rowcount">
  <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
@@ -416,7 +416,7 @@ values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'PR', 'MMI', 'N', 'Y',
       ]]>
     </Sql>
   </SqlMethod>
-    <SqlMethod name="updateooamz" type="preparedStatement" return="rowcount">
+    <SqlMethod name="updateooamz" type="preparedStatement" connection="true" return="rowcount">
  <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
@@ -426,7 +426,7 @@ values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'OO', 'AMZ', 'Y', 'N',
     </Sql>
      <Parameter name="client"/>
   </SqlMethod>
-      <SqlMethod name="updateooapc" type="preparedStatement" return="rowcount">
+      <SqlMethod name="updateooapc" type="preparedStatement" connection="true" return="rowcount">
  <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
@@ -436,7 +436,7 @@ values (get_uuid(), ?  , '0', 'Y', now(), '0', now(), '0', 'OO', 'APC', 'Y', 'N'
     </Sql>
      <Parameter name="client"/>
   </SqlMethod>
-  <SqlMethod name="updateooapi" type="preparedStatement" return="rowcount">
+  <SqlMethod name="updateooapi" type="preparedStatement" connection="true" return="rowcount">
    <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
@@ -446,7 +446,7 @@ values (get_uuid(), ?  , '0', 'Y', now(), '0', now(), '0', 'OO', 'API', 'Y', 'N'
     </Sql>
      <Parameter name="client"/>
   </SqlMethod>
-      <SqlMethod name="updateooapp" type="preparedStatement" return="rowcount">
+      <SqlMethod name="updateooapp" type="preparedStatement" connection="true" return="rowcount">
   <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
@@ -456,7 +456,7 @@ values (get_uuid(), ?  , '0', 'Y', now(), '0', now(), '0', 'OO', 'APP', 'Y', 'N'
     </Sql>
      <Parameter name="client"/>
   </SqlMethod>
-      <SqlMethod name="updateooarc" type="preparedStatement" return="rowcount">
+      <SqlMethod name="updateooarc" type="preparedStatement" connection="true" return="rowcount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
@@ -466,7 +466,7 @@ values (get_uuid(), ?  , '0', 'Y', now(), '0', now(), '0', 'OO', 'ARC', 'Y', 'N'
     </Sql>
      <Parameter name="client"/>
   </SqlMethod>
-      <SqlMethod name="updateooarf" type="preparedStatement" return="rowcount">
+      <SqlMethod name="updateooarf" type="preparedStatement" connection="true" return="rowcount">
    <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
@@ -477,7 +477,7 @@ values (get_uuid(), ?  , '0', 'Y', now(), '0', now(), '0', 'OO', 'ARF', 'Y', 'N'
      <Parameter name="client"/>
   </SqlMethod>
      
-      <SqlMethod name="updateooari" type="preparedStatement" return="rowcount">
+      <SqlMethod name="updateooari" type="preparedStatement" connection="true" return="rowcount">
        <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
@@ -487,7 +487,7 @@ values (get_uuid(), ?  , '0', 'Y', now(), '0', now(), '0', 'OO', 'ARI', 'Y', 'N'
     </Sql>
      <Parameter name="client"/>
   </SqlMethod>
-  <SqlMethod name="updateooarirm" type="preparedStatement" return="rowcount">
+  <SqlMethod name="updateooarirm" type="preparedStatement" connection="true" return="rowcount">
        <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
@@ -497,7 +497,7 @@ values (get_uuid(), ?  , '0', 'Y', now(), '0', now(), '0', 'OO', 'ARI_RM', 'Y', 
     </Sql>
      <Parameter name="client"/>
   </SqlMethod>
-    <SqlMethod name="updateooarr" type="preparedStatement" return="rowcount">
+    <SqlMethod name="updateooarr" type="preparedStatement" connection="true" return="rowcount">
        <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
@@ -507,7 +507,7 @@ values (get_uuid(), ?  , '0', 'Y', now(), '0', now(), '0', 'OO', 'ARR', 'Y', 'N'
     </Sql>
      <Parameter name="client"/>
   </SqlMethod>
-      <SqlMethod name="updateoobgt" type="preparedStatement" return="rowcount">
+      <SqlMethod name="updateoobgt" type="preparedStatement" connection="true" return="rowcount">
        <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
@@ -517,7 +517,7 @@ values (get_uuid(), ?  , '0', 'Y', now(), '0', now(), '0', 'OO', 'BGT', 'Y', 'N'
     </Sql>
      <Parameter name="client"/>
   </SqlMethod>
-        <SqlMethod name="updateooesh" type="preparedStatement" return="rowcount">
+        <SqlMethod name="updateooesh" type="preparedStatement" connection="true" return="rowcount">
        <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
@@ -527,7 +527,7 @@ values (get_uuid(), ?  , '0', 'Y', now(), '0', now(), '0', 'OO', 'ESH', 'Y', 'N'
     </Sql>
      <Parameter name="client"/>
   </SqlMethod>
-          <SqlMethod name="updateooglj" type="preparedStatement" return="rowcount">
+          <SqlMethod name="updateooglj" type="preparedStatement" connection="true" return="rowcount">
        <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
@@ -537,7 +537,7 @@ values (get_uuid(), ?  , '0', 'Y', now(), '0', now(), '0', 'OO', 'GLJ', 'Y', 'N'
     </Sql>
      <Parameter name="client"/>
   </SqlMethod>
-            <SqlMethod name="updateoommi" type="preparedStatement" return="rowcount">
+            <SqlMethod name="updateoommi" type="preparedStatement" connection="true" return="rowcount">
        <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
@@ -547,7 +547,7 @@ values (get_uuid(), ?  , '0', 'Y', now(), '0', now(), '0', 'OO', 'MMI', 'Y', 'N'
     </Sql>
      <Parameter name="client"/>
   </SqlMethod>
-              <SqlMethod name="updateoommm" type="preparedStatement" return="rowcount">
+              <SqlMethod name="updateoommm" type="preparedStatement" connection="true" return="rowcount">
        <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
@@ -557,7 +557,7 @@ values (get_uuid(), ?  , '0', 'Y', now(), '0', now(), '0', 'OO', 'MMM', 'Y', 'N'
     </Sql>
      <Parameter name="client"/>
   </SqlMethod>
-               <SqlMethod name="updateoommr" type="preparedStatement" return="rowcount">
+               <SqlMethod name="updateoommr" type="preparedStatement" connection="true" return="rowcount">
        <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
@@ -567,7 +567,7 @@ values (get_uuid(), ?  , '0', 'Y', now(), '0', now(), '0', 'OO', 'MMR', 'Y', 'N'
     </Sql>
      <Parameter name="client"/>
   </SqlMethod>  
-                 <SqlMethod name="updateoomms" type="preparedStatement" return="rowcount">
+                 <SqlMethod name="updateoomms" type="preparedStatement" connection="true" return="rowcount">
        <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
@@ -577,7 +577,7 @@ values (get_uuid(), ?  , '0', 'Y', now(), '0', now(), '0', 'OO', 'MMS', 'Y', 'N'
     </Sql>
      <Parameter name="client"/>
   </SqlMethod>
- <SqlMethod name="updateoopoo" type="preparedStatement" return="rowcount">
+ <SqlMethod name="updateoopoo" type="preparedStatement" connection="true" return="rowcount">
        <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
@@ -587,7 +587,7 @@ values (get_uuid(), ?  , '0', 'Y', now(), '0', now(), '0', 'OO', 'POO', 'Y', 'N'
     </Sql>
      <Parameter name="client"/>
   </SqlMethod>
- <SqlMethod name="updateoorec" type="preparedStatement" return="rowcount">
+ <SqlMethod name="updateoorec" type="preparedStatement" connection="true" return="rowcount">
        <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[ 
@@ -597,7 +597,7 @@ values (get_uuid(), ?  , '0', 'Y', now(), '0', now(), '0', 'OO', 'REC', 'Y', 'N'
     </Sql>
      <Parameter name="client"/>
   </SqlMethod>
-<SqlMethod name="updateoosoo" type="preparedStatement" return="rowcount">
+<SqlMethod name="updateoosoo" type="preparedStatement" connection="true" return="rowcount">
        <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
