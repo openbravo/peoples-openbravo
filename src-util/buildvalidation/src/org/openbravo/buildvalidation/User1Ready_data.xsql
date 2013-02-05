@@ -53,8 +53,9 @@
       <Sql><![CDATA[
         SELECT COUNT(1) AS RECORDS
         FROM DUAL
-        WHERE EXISTS (SELECT 1 FROM A_Amortization WHERE USER1_ID IS NOT NULL OR USER2_ID IS NOT NULL)
+        WHERE EXISTS (SELECT 1 FROM A_Amortization WHERE  USER1_ID IS NOT NULL)
       ]]></Sql>
      <Parameter name="tableName" type="replace" optional="true" after="SELECT 1 FROM " text="A_Amortization"/>
+     <Parameter name="columnName" type="replace" optional="true" after="WHERE  " text="USER1_ID"/>
    </SqlMethod>
 </SqlClass>

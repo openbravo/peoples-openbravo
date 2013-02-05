@@ -42,7 +42,7 @@ public class User1Ready extends BuildValidation {
           if(User1ReadyData.tableExists(cp, table)){
             for(String column: columns){
               if(User1ReadyData.columnExists(cp, column, table)){
-                if (!User1ReadyData.countUser1Usage(cp, table).equals("0")) {
+                if (!User1ReadyData.countUser1Usage(cp, table, column).equals("0")) {
           	  errors.add("You can not apply this MP because your instance fails in the pre-validation phase: User1 and User2 dimensions information needs to be properly migrated to newly created tables (User1 and User2). Please contact support.openbravo.com for further details");
                 }
               }
