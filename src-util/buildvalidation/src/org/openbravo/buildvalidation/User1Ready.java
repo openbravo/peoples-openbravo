@@ -27,15 +27,27 @@ import org.openbravo.database.ConnectionProvider;
  * This validation is related to an API change done to implement properly User1 and User2 Dimensions. This change was introduced by MP18
  */
 public class User1Ready extends BuildValidation {
-   
+  String [] tables = {"a_amortization", "c_budgetline", "c_cash", "c_dp_management", 
+      "c_invoice", "c_invoiceline_acctdimension", "c_order", "c_settlement", "c_validcombination", 
+      "fin_finacc_transaction", "fin_payment",  "fact_acct", "gl_journal", "gl_journalline", "m_inout", 
+      "m_inventory", "m_movement", "m_production"};
+  String [] columns = {"user2_id", "user1_id"};
   @Override
   public List<String> execute() {
     ConnectionProvider cp = getConnectionProvider();
     ArrayList<String> errors = new ArrayList<String>();
     try {
-      if(!User1ReadyData.tableExists(cp)){
-        if (!User1ReadyData.countUser1Usage(cp).equals("0")) {
-  	  errors.add("You can not apply this MP because your instance fails in the pre-validation phase: User1 and User2 dimensions information needs to be properly migrated to newly created tables (User1 and User2). Please contact support.openbravo.com for further details");
+      if(!User1ReadyData.tableExists(cp, "user1")){
+        for(String table: tables){
+          if(User1ReadyData.tableExists(cp, table)){
+            for(String column: columns){
+              if(User1ReadyData.columnExists(cp, column, table)){
+                if (!User1ReadyData.countUser1Usage(cp, table).equals("0")) {
+          	  errors.add("You can not apply this MP because your instance fails in the pre-validation phase: User1 and User2 dimensions information needs to be properly migrated to newly created tables (User1 and User2). Please contact support.openbravo.com for further details");
+                }
+              }
+            }
+          }
         }
       }
     } catch (Exception e) {

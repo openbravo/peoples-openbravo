@@ -28,12 +28,25 @@
     ]]></Sql>
    </SqlMethod>
    <SqlMethod name="tableExists" type="preparedStatement" return="boolean">
-      <SqlMethodComment>Checks if User1 table exists in AD. This table has been added in 3.0MP18</SqlMethodComment>
+      <SqlMethodComment>Checks if table exists in AD.</SqlMethodComment>
       <Sql><![CDATA[
              select tablename
              from ad_table
-             where lower(tablename) = 'user1'
+             where lower(tablename) = ?
       ]]></Sql>
+     <Parameter name="tableName"/>
+   </SqlMethod>
+   <SqlMethod name="columnExists" type="preparedStatement" return="boolean">
+      <SqlMethodComment>Checks if table exists in AD.</SqlMethodComment>
+      <Sql><![CDATA[
+             select columnname
+             from ad_column, ad_table
+             where ad_column.ad_table_id = ad_table.ad_table_id
+             and lower(columnname) = ?
+             and lower(tablename) = ?
+      ]]></Sql>
+     <Parameter name="columnname"/>
+     <Parameter name="tablename"/>
    </SqlMethod>
    <SqlMethod name="countUser1Usage" type="preparedStatement" return="string">
       <SqlMethodComment></SqlMethodComment>
@@ -41,23 +54,7 @@
         SELECT COUNT(1) AS RECORDS
         FROM DUAL
         WHERE EXISTS (SELECT 1 FROM A_Amortization WHERE USER1_ID IS NOT NULL OR USER2_ID IS NOT NULL)
-        OR EXISTS (SELECT 1 FROM C_BudgetLine WHERE USER1_ID IS NOT NULL OR USER2_ID IS NOT NULL)
-        OR EXISTS (SELECT 1 FROM C_Cash WHERE USER1_ID IS NOT NULL OR USER2_ID IS NOT NULL)
-        OR EXISTS (SELECT 1 FROM C_DP_Management WHERE USER1_ID IS NOT NULL OR USER2_ID IS NOT NULL)
-        OR EXISTS (SELECT 1 FROM C_Invoice WHERE USER1_ID IS NOT NULL OR USER2_ID IS NOT NULL)
-        OR EXISTS (SELECT 1 FROM C_InvoiceLine_AcctDimension WHERE USER1_ID IS NOT NULL OR USER2_ID IS NOT NULL)
-        OR EXISTS (SELECT 1 FROM C_Order WHERE USER1_ID IS NOT NULL OR USER2_ID IS NOT NULL)
-        OR EXISTS (SELECT 1 FROM C_Settlement WHERE USER1_ID IS NOT NULL OR USER2_ID IS NOT NULL)
-        OR EXISTS (SELECT 1 FROM C_ValidCombination WHERE USER1_ID IS NOT NULL OR USER2_ID IS NOT NULL)
-        OR EXISTS (SELECT 1 FROM FIN_Finacc_Transaction WHERE USER1_ID IS NOT NULL OR USER2_ID IS NOT NULL)
-        OR EXISTS (SELECT 1 FROM FIN_Payment WHERE USER1_ID IS NOT NULL OR USER2_ID IS NOT NULL)
-        OR EXISTS (SELECT 1 FROM Fact_Acct WHERE USER1_ID IS NOT NULL OR USER2_ID IS NOT NULL)
-        OR EXISTS (SELECT 1 FROM GL_Journal WHERE USER1_ID IS NOT NULL OR USER2_ID IS NOT NULL)
-        OR EXISTS (SELECT 1 FROM GL_JournalLine WHERE USER1_ID IS NOT NULL OR USER2_ID IS NOT NULL)
-        OR EXISTS (SELECT 1 FROM M_InOut WHERE USER1_ID IS NOT NULL OR USER2_ID IS NOT NULL)
-        OR EXISTS (SELECT 1 FROM M_Inventory WHERE USER1_ID IS NOT NULL OR USER2_ID IS NOT NULL)
-        OR EXISTS (SELECT 1 FROM M_Movement WHERE USER1_ID IS NOT NULL OR USER2_ID IS NOT NULL)
-        OR EXISTS (SELECT 1 FROM M_Production WHERE USER1_ID IS NOT NULL OR USER2_ID IS NOT NULL)
       ]]></Sql>
+     <Parameter name="tableName" type="replace" optional="true" after="SELECT 1 FROM " text="A_Amortization"/>
    </SqlMethod>
 </SqlClass>
