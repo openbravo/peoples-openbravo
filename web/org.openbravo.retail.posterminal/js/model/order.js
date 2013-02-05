@@ -52,7 +52,7 @@
     },
 
     printPrice: function () {
-      return OB.I18N.formatCurrency(this.get('_price') || this.get('price'));
+      return OB.I18N.formatCurrency(this.get('_price') || this.get('nondiscountedprice') || this.get('price'));
     },
 
     printDiscount: function () {
@@ -85,7 +85,7 @@
     },
 
     printNet: function () {
-      return OB.I18N.formatCurrency(this.getNet());
+      return OB.I18N.formatCurrency(this.get('nondiscountednet') || this.getNet());
     },
 
     isAffectedByPack: function () {
@@ -304,6 +304,8 @@
 
         if (this.get('priceIncludesTax')) {
           line.set({
+            nondiscountedprice: price,
+            nondiscountednet: net,
             net: OB.DEC.div(gross, line.get('linerate')),
             pricenet: OB.DEC.div(OB.DEC.div(gross, line.get('linerate')), line.get('qty')),
             grossListPrice: grossListPrice || price,
