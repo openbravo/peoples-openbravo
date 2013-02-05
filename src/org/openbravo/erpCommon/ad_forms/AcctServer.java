@@ -70,6 +70,9 @@ import org.openbravo.model.financialmgmt.gl.GLItemAccounts;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
+import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
+import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
+import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 
 public abstract class AcctServer {
@@ -2768,6 +2771,53 @@ public abstract class AcctServer {
       OBContext.restorePreviousMode();
     }
     return false;
+  }
+
+  /**
+   * Returns the amount of a Payment Detail. In case the related Payment Schedule Detail was
+   * generated for compensate the difference between an Order and a related Invoice, it merges it's
+   * amount with the next Payment Schedule Detail. Issue 19567:
+   * https://issues.openbravo.com/view.php?id=19567
+   * 
+   * @param paymentDetails
+   *          List of payment Details
+   * @param ps
+   *          Previous Payment Schedule
+   * @param psi
+   *          Invoice Payment Schedule of actual Payment Detail
+   * @param pso
+   *          Order Payment Schedule of actual Payment Detail
+   * @param i
+   *          Index
+   */
+  public BigDecimal getPaymentDetailAmount(List<FIN_PaymentDetail> paymentDetails,
+      FIN_PaymentSchedule ps, FIN_PaymentSchedule psi, FIN_PaymentSchedule pso, int i) {
+    if (psi == null && pso == null) {
+      return paymentDetails.get(i).getAmount();
+    }
+    // If the actual Payment Detail belongs to the same Invoice Payment Schedule as the previous
+    // record, or it has no Order related.
+    if ((psi != null && psi.equals(ps)) || pso == null) {
+      FIN_PaymentScheduleDetail psdNext = (i == paymentDetails.size() - 1) ? null : paymentDetails
+          .get(i + 1).getFINPaymentScheduleDetailList().get(0);
+      FIN_PaymentScheduleDetail psdPrevious = (i == 0) ? null : paymentDetails.get(i - 1)
+          .getFINPaymentScheduleDetailList().get(0);
+      // If it has no Order related, and the next record belongs to the same Invoice Payment
+      // Schedule and the next record has an Order related.
+      if (pso == null && psdNext != null && psdNext.getInvoicePaymentSchedule() == psi
+          && psdNext.getOrderPaymentSchedule() != null) {
+        return null;
+        // If the previous record belongs to the same Invoice Payment Schedule and the previous
+        // record has no Order related.
+      } else if (psdPrevious != null && psdPrevious.getInvoicePaymentSchedule() == psi
+          && psdPrevious.getOrderPaymentSchedule() == null) {
+        return paymentDetails.get(i).getAmount().add(paymentDetails.get(i - 1).getAmount());
+      } else {
+        return paymentDetails.get(i).getAmount();
+      }
+    } else {
+      return paymentDetails.get(i).getAmount();
+    }
   }
 
 }
