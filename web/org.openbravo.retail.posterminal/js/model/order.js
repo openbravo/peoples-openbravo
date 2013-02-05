@@ -316,6 +316,8 @@
           });
         } else {
           line.set({
+            nondiscountedprice: price,
+            nondiscountednet: net,
             net: line.get('discountedNet'),
             pricenet: line.get('discountedNetPrice'),
             listPrice: line.get('priceList'),
