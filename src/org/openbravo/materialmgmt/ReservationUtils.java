@@ -96,7 +96,8 @@ public class ReservationUtils {
   }
 
   /**
-   * Function to reserve given stock or purchase order line. Available OBObject are:<br>
+   * Function to reserve in allocated or not allocated given stock or purchase order line. Available
+   * OBObject are:<br>
    * - StorageDetail: reserves stock in the warehouse.<br>
    * - OrderLine: reserves stock pending to receipt purchase order line.
    */
