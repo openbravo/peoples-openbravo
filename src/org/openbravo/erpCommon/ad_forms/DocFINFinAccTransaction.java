@@ -521,9 +521,11 @@ public class DocFINFinAccTransaction extends AcctServer {
             // Assign expense to the dimensions of the invoice lines
             BigDecimal assignedAmount = BigDecimal.ZERO;
             DocDoubtfulDebtData[] data = DocDoubtfulDebtData.select(conn, invoice.getId());
+            Currency currency = OBDal.getInstance().get(Currency.class, C_Currency_ID);
             for (int j = 0; j < data.length; j++) {
-              BigDecimal lineAmount = doubtFulDebtAmount
-                  .multiply(new BigDecimal(data[j].percentage));
+              BigDecimal lineAmount = doubtFulDebtAmount.multiply(
+                  new BigDecimal(data[j].percentage)).setScale(
+                  currency.getStandardPrecision().intValue(), BigDecimal.ROUND_HALF_UP);
               if (j == data.length - 1) {
                 lineAmount = doubtFulDebtAmount.subtract(assignedAmount);
               }

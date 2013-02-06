@@ -41,6 +41,7 @@ import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
+import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.AcctSchemaTableDocType;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.financialmgmt.accounting.FIN_FinancialAccountAccounting;
@@ -357,9 +358,11 @@ public class DocFINPayment extends AcctServer {
               // Assign expense to the dimensions of the invoice lines
               BigDecimal assignedAmount = BigDecimal.ZERO;
               DocDoubtfulDebtData[] data = DocDoubtfulDebtData.select(conn, invoice.getId());
+              Currency currency = OBDal.getInstance().get(Currency.class, C_Currency_ID);
               for (int j = 0; j < data.length; j++) {
-                BigDecimal lineAmount = doubtFulDebtAmount.multiply(new BigDecimal(
-                    data[j].percentage));
+                BigDecimal lineAmount = doubtFulDebtAmount.multiply(
+                    new BigDecimal(data[j].percentage)).setScale(
+                    currency.getStandardPrecision().intValue(), BigDecimal.ROUND_HALF_UP);
                 if (j == data.length - 1) {
                   lineAmount = doubtFulDebtAmount.subtract(assignedAmount);
                 }

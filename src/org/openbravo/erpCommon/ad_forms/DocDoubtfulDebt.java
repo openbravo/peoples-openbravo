@@ -33,6 +33,7 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.SequenceIdData;
+import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.AcctSchemaTableDocType;
 import org.openbravo.model.financialmgmt.accounting.coa.AcctSchemaTable;
 import org.openbravo.model.financialmgmt.payment.DoubtfulDebt;
@@ -167,8 +168,10 @@ public class DocDoubtfulDebt extends AcctServer {
       BigDecimal assignedAmount = BigDecimal.ZERO;
       DocDoubtfulDebtData[] data = DocDoubtfulDebtData.select(conn, dd.getFINPaymentSchedule()
           .getInvoice().getId());
+      Currency currency = OBDal.getInstance().get(Currency.class, C_Currency_ID);
       for (int i = 0; i < data.length; i++) {
-        BigDecimal lineAmount = bpAmountConverted.multiply(new BigDecimal(data[i].percentage));
+        BigDecimal lineAmount = bpAmountConverted.multiply(new BigDecimal(data[i].percentage))
+            .setScale(currency.getStandardPrecision().intValue(), BigDecimal.ROUND_HALF_UP);
         if (i == data.length - 1) {
           lineAmount = bpAmountConverted.subtract(assignedAmount);
         }
