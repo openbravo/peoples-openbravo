@@ -15262,7 +15262,7 @@ Do you want to enable the Heartbeat?]]></MSGTEXT>
 <!--19E206D186C94610B0179C6B106E94BF-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--19E206D186C94610B0179C6B106E94BF-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--19E206D186C94610B0179C6B106E94BF-->  <VALUE><![CDATA[c_bpartner_venblocking_chk]]></VALUE>
-<!--19E206D186C94610B0179C6B106E94BF-->  <MSGTEXT><![CDATA[If the Vendor Blocking flag is checked, at least one of the flags from the Vendor Blocking group must be checked.]]></MSGTEXT>
+<!--19E206D186C94610B0179C6B106E94BF-->  <MSGTEXT><![CDATA[If the On Hold flag is checked, at least one of the flags from the On Hold group must be checked.]]></MSGTEXT>
 <!--19E206D186C94610B0179C6B106E94BF-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--19E206D186C94610B0179C6B106E94BF-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--19E206D186C94610B0179C6B106E94BF--></AD_MESSAGE>
@@ -15809,7 +15809,7 @@ Do you want to enable the Heartbeat and continue?]]></MSGTEXT>
 <!--2AA326CA514F44E0B8E8A16934EDC586-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--2AA326CA514F44E0B8E8A16934EDC586-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--2AA326CA514F44E0B8E8A16934EDC586-->  <VALUE><![CDATA[BusinessPartnerBlocked3]]></VALUE>
-<!--2AA326CA514F44E0B8E8A16934EDC586-->  <MSGTEXT><![CDATA[is blocked therefore the shipments cannot be created.]]></MSGTEXT>
+<!--2AA326CA514F44E0B8E8A16934EDC586-->  <MSGTEXT><![CDATA[is on hold therefore the shipments cannot be created.]]></MSGTEXT>
 <!--2AA326CA514F44E0B8E8A16934EDC586-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--2AA326CA514F44E0B8E8A16934EDC586-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--2AA326CA514F44E0B8E8A16934EDC586--></AD_MESSAGE>
@@ -16370,7 +16370,7 @@ Do you want to enable the Heartbeat and continue?]]></MSGTEXT>
 <!--3A10B3119F8D471A8710667FB24131A0-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--3A10B3119F8D471A8710667FB24131A0-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--3A10B3119F8D471A8710667FB24131A0-->  <VALUE><![CDATA[c_bpartner_cusblocking_chk]]></VALUE>
-<!--3A10B3119F8D471A8710667FB24131A0-->  <MSGTEXT><![CDATA[If the Customer Blocking flag is checked, at least one of the flags from the Customer Blocking group must be checked.]]></MSGTEXT>
+<!--3A10B3119F8D471A8710667FB24131A0-->  <MSGTEXT><![CDATA[If the On Hold flag is checked, at least one of the flags from the On Hold group must be checked.]]></MSGTEXT>
 <!--3A10B3119F8D471A8710667FB24131A0-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--3A10B3119F8D471A8710667FB24131A0-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--3A10B3119F8D471A8710667FB24131A0--></AD_MESSAGE>
@@ -16638,7 +16638,7 @@ This column is already checked as key: ]]></MSGTEXT>
 <!--436343FCF3FA4FBD821B45EC12935786-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--436343FCF3FA4FBD821B45EC12935786-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--436343FCF3FA4FBD821B45EC12935786-->  <VALUE><![CDATA[BusinessPartnerBlocked2]]></VALUE>
-<!--436343FCF3FA4FBD821B45EC12935786-->  <MSGTEXT><![CDATA[is blocked therefore the invoices cannot be created.]]></MSGTEXT>
+<!--436343FCF3FA4FBD821B45EC12935786-->  <MSGTEXT><![CDATA[is on hold therefore the invoices cannot be created.]]></MSGTEXT>
 <!--436343FCF3FA4FBD821B45EC12935786-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--436343FCF3FA4FBD821B45EC12935786-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--436343FCF3FA4FBD821B45EC12935786--></AD_MESSAGE>
@@ -17590,7 +17590,7 @@ You can upgrade the license of your instance by contacting Openbravo sales staff
 <!--634AB78BCD164AC787E13BFC9D501C76-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--634AB78BCD164AC787E13BFC9D501C76-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--634AB78BCD164AC787E13BFC9D501C76-->  <VALUE><![CDATA[SelectedBPartnerBlocked]]></VALUE>
-<!--634AB78BCD164AC787E13BFC9D501C76-->  <MSGTEXT><![CDATA[The selected Business Partner is Blocked for this document, therefore it is not possible to complete it.]]></MSGTEXT>
+<!--634AB78BCD164AC787E13BFC9D501C76-->  <MSGTEXT><![CDATA[The selected Business Partner is on hold for this document, therefore it is not possible to complete it.]]></MSGTEXT>
 <!--634AB78BCD164AC787E13BFC9D501C76-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--634AB78BCD164AC787E13BFC9D501C76-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--634AB78BCD164AC787E13BFC9D501C76--></AD_MESSAGE>
@@ -19271,7 +19271,7 @@ You can upgrade the license of your instance by contacting Openbravo sales staff
 <!--9B9F68BD69364234B7729292C48790E6-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--9B9F68BD69364234B7729292C48790E6-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--9B9F68BD69364234B7729292C48790E6-->  <VALUE><![CDATA[BusinessPartnerBlocked]]></VALUE>
-<!--9B9F68BD69364234B7729292C48790E6-->  <MSGTEXT><![CDATA[is Blocked for this document, therefore it is not possible to complete it.]]></MSGTEXT>
+<!--9B9F68BD69364234B7729292C48790E6-->  <MSGTEXT><![CDATA[is on hold for this document, therefore it is not possible to complete it.]]></MSGTEXT>
 <!--9B9F68BD69364234B7729292C48790E6-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--9B9F68BD69364234B7729292C48790E6-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--9B9F68BD69364234B7729292C48790E6--></AD_MESSAGE>

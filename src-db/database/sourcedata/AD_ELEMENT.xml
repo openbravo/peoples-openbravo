@@ -24543,8 +24543,8 @@ Glossary orphan elements are preserved when running Synchronize Terminology proc
 <!--61425F4A7E374C9DA173E2912C7D3F14-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--61425F4A7E374C9DA173E2912C7D3F14-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--61425F4A7E374C9DA173E2912C7D3F14-->  <COLUMNNAME><![CDATA[Vendor_Blocking]]></COLUMNNAME>
-<!--61425F4A7E374C9DA173E2912C7D3F14-->  <NAME><![CDATA[Vendor Blocking]]></NAME>
-<!--61425F4A7E374C9DA173E2912C7D3F14-->  <PRINTNAME><![CDATA[Vendor Blocking]]></PRINTNAME>
+<!--61425F4A7E374C9DA173E2912C7D3F14-->  <NAME><![CDATA[On Hold]]></NAME>
+<!--61425F4A7E374C9DA173E2912C7D3F14-->  <PRINTNAME><![CDATA[On Hold]]></PRINTNAME>
 <!--61425F4A7E374C9DA173E2912C7D3F14-->  <DESCRIPTION><![CDATA[This flag allows to block the vendor. By checking it, a new section will be shown called Business Partner Blocking with the possible blocking options.]]></DESCRIPTION>
 <!--61425F4A7E374C9DA173E2912C7D3F14-->  <HELP><![CDATA[This flag allows to block the vendor. By checking it, a new section will be shown called Business Partner Blocking with the possible blocking options.]]></HELP>
 <!--61425F4A7E374C9DA173E2912C7D3F14-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -31029,8 +31029,8 @@ This field is populated in case the used price list includes taxes.]]></HELP>
 <!--F6B45A065F6443A9A0EA1719F69E94C2-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--F6B45A065F6443A9A0EA1719F69E94C2-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--F6B45A065F6443A9A0EA1719F69E94C2-->  <COLUMNNAME><![CDATA[Customer_Blocking]]></COLUMNNAME>
-<!--F6B45A065F6443A9A0EA1719F69E94C2-->  <NAME><![CDATA[Customer Blocking]]></NAME>
-<!--F6B45A065F6443A9A0EA1719F69E94C2-->  <PRINTNAME><![CDATA[Customer Blocking]]></PRINTNAME>
+<!--F6B45A065F6443A9A0EA1719F69E94C2-->  <NAME><![CDATA[On Hold]]></NAME>
+<!--F6B45A065F6443A9A0EA1719F69E94C2-->  <PRINTNAME><![CDATA[On Hold]]></PRINTNAME>
 <!--F6B45A065F6443A9A0EA1719F69E94C2-->  <DESCRIPTION><![CDATA[This flag allows to block the customer. By checking it, a new section will be shown called Business Partner Blocking with the possible blocking options.]]></DESCRIPTION>
 <!--F6B45A065F6443A9A0EA1719F69E94C2-->  <HELP><![CDATA[This flag allows to block the customer. By checking it, a new section will be shown called Business Partner Blocking with the possible blocking options.]]></HELP>
 <!--F6B45A065F6443A9A0EA1719F69E94C2-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
