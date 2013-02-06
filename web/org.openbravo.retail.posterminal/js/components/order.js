@@ -122,7 +122,7 @@ enyo.kind({
   }, {
     tag: 'span',
     style: 'font-weight:bold; ',
-    content: 'Invoice'
+    content: OB.I18N.getLabel('OBPOS_LblInvoiceReceipt')
   }]
 });
 
