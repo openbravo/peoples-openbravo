@@ -354,8 +354,7 @@ enyo.kind({
       style: 'height: 5px;'
     }, {
       kind: 'OB.UI.MenuAction',
-      label: 'Profile',
-      //TODO: OB.I18N.getLabel('OBPOS_LblProfile'),
+      name: 'profile',
       tap: function () {
         this.owner.owner.parent.hide(); // Manual dropdown menu closure
         OB.POS.terminal.$.dialogsContainer.$.profileDialog.show();
@@ -365,7 +364,7 @@ enyo.kind({
     }, {
       kind: 'OB.UI.MenuAction',
       allowHtml: true,
-      label: 'Lock screen <span style="padding-left:190px">0\u21B5</span>',
+      name: 'lockScreen',
       tap: function () {
         this.owner.owner.parent.hide(); // Manual dropdown menu closure
         OB.POS.lock();
@@ -374,8 +373,7 @@ enyo.kind({
       style: 'height: 5px;'
     }, {
       kind: 'OB.UI.MenuAction',
-      label: 'End session',
-      //TODO: OB.I18N.getLabel('OBPOS_LblProfile'),
+      name: 'endSession',
       tap: function () {
         this.owner.owner.parent.hide(); // Manual dropdown menu closure
         OB.POS.terminal.$.dialogsContainer.$.logoutDialog.show();
@@ -388,6 +386,9 @@ enyo.kind({
     this.inherited(arguments);
     this.$.username.setContent(this.username);
     this.$.role.setContent(this.role);
+    this.$.profile.$.lbl.setContent(OB.I18N.getLabel('OBPOS_LblProfile'));
+    this.$.lockScreen.$.lbl.setContent(OB.I18N.getLabel('OBPOS_LblLockScreen') + '<span style="padding-left:190px">0\u21B5</span>');
+    this.$.endSession.$.lbl.setContent(OB.I18N.getLabel('OBPOS_LblEndSession'));
   }
 });
 

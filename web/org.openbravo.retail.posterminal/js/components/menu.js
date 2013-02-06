@@ -152,7 +152,7 @@ enyo.kind({
   events: {
     onChangeSubWindow: ''
   },
-  label: 'Customers',
+  label: OB.I18N.getLabel('OBPOS_LblCustomers'),
   tap: function () {
     if (this.disabled) {
       return true;
@@ -244,7 +244,7 @@ enyo.kind({
     onDiscountsMode: ''
   },
   //TODO
-  label: 'Ticket discounts',
+  label: OB.I18N.getLabel('OBPOS_LblReceiptDiscounts'),
   tap: function () {
     if (!this.disabled) {
       this.parent.hide(); // Manual dropdown menu closure
