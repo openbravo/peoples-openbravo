@@ -167,22 +167,26 @@ public class AccountTree {
    *          Boolean that indicates if this is a summary record.
    * @return BigDecimal with the correct sign applied.
    */
-  private BigDecimal applySign(BigDecimal qty, String sign, boolean isSummary) {
+  private BigDecimal applySign(BigDecimal qty, String sign, boolean isSummary, String accountSign) {
     // resetFlag will store whether the value has been truncated because of
     // showvaluecond or not
+    BigDecimal qtyWithSign = qty;
+    if ("C".equals(accountSign)) {
+      qtyWithSign = qtyWithSign.negate();
+    }
     resetFlag = false;
     BigDecimal total = BigDecimal.ZERO;
     if (isSummary && !sign.equalsIgnoreCase("A")) {
       if (sign.equalsIgnoreCase("P")) {
-        if (qty.compareTo(total) > 0) {
-          total = qty;
+        if (qtyWithSign.compareTo(total) > 0) {
+          total = qtyWithSign;
         } else {
           total = BigDecimal.ZERO;
           resetFlag = true;
         }
       } else if (sign.equalsIgnoreCase("N")) {
-        if (qty.compareTo(total) < 0) {
-          total = qty;
+        if (qtyWithSign.compareTo(total) < 0) {
+          total = qtyWithSign;
         } else {
           total = BigDecimal.ZERO;
           resetFlag = true;
@@ -213,10 +217,10 @@ public class AccountTree {
         element.qtyOperationRef = accounts[i].qtyRef;
         BigDecimal bdQty = new BigDecimal(element.qtyOperation);
         BigDecimal bdQtyRef = new BigDecimal(element.qtyOperationRef);
-        element.qty = (applySign(bdQty, element.showvaluecond, element.issummary.equals("Y")))
-            .toPlainString();
-        element.qtyRef = (applySign(bdQtyRef, element.showvaluecond, element.issummary.equals("Y")))
-            .toPlainString();
+        element.qty = (applySign(bdQty, element.showvaluecond, element.issummary.equals("Y"),
+            element.accountsign)).toPlainString();
+        element.qtyRef = (applySign(bdQtyRef, element.showvaluecond, element.issummary.equals("Y"),
+            element.accountsign)).toPlainString();
         break;
       }
     }
@@ -338,9 +342,10 @@ public class AccountTree {
              * 
              */
             actual.qty = (applySign(new BigDecimal(actual.qtyOperation), actual.showvaluecond,
-                actual.issummary.equals("Y"))).toPlainString();
+                actual.issummary.equals("Y"), actual.accountsign)).toPlainString();
             actual.qtyRef = (applySign(new BigDecimal(actual.qtyOperationRef),
-                actual.showvaluecond, actual.issummary.equals("Y"))).toPlainString();
+                actual.showvaluecond, actual.issummary.equals("Y"), actual.accountsign))
+                .toPlainString();
             total = total.add(new BigDecimal(actual.qty).multiply(new BigDecimal(
                 forms[i].accountsign)));
 
@@ -352,15 +357,14 @@ public class AccountTree {
              * (Double.valueOf(actual.qtyOperationRef).doubleValue()
              * Double.valueOf(forms[i].accountsign).doubleValue());
              */
-            /*
-             * 
-             * 
-             */
-            if (log4j.isDebugEnabled())
+
+            if (log4j.isDebugEnabled()) {
+              ElementValue account = OBDal.getInstance().get(ElementValue.class, forms[i].id);
               log4j.debug("AccountTree.formsCalculate - C_ElementValue_ID: " + actual.nodeId
-                  + " - total: " + total + " - actual.qtyOperation: " + actual.qtyOperation
-                  + " - forms[i].accountsign: " + forms[i].accountsign + " - forms.length:"
-                  + forms.length);
+                  + " - name: " + account.getName() + " - total: " + total
+                  + " - actual.qtyOperation: " + actual.qtyOperation + " - forms[i].accountsign: "
+                  + forms[i].accountsign + " - forms.length:" + forms.length);
+            }
             break;
           }
         }
@@ -546,12 +550,14 @@ public class AccountTree {
             SVC = resultantAccounts[i].showvaluecond;
           }
           resultantAccounts[i].qty = (applySign(new BigDecimal(resultantAccounts[i].qtyOperation),
-              SVC, resultantAccounts[i].issummary.equals("Y"))).toPlainString();
+              SVC, resultantAccounts[i].issummary.equals("Y"), resultantAccounts[i].accountsign))
+              .toPlainString();
           if (resetFlag)
             resultantAccounts[i].svcreset = "Y";
           resultantAccounts[i].qtyRef = (applySign(new BigDecimal(
               resultantAccounts[i].qtyOperationRef), SVC,
-              resultantAccounts[i].issummary.equals("Y"))).toPlainString();
+              resultantAccounts[i].issummary.equals("Y"), resultantAccounts[i].accountsign))
+              .toPlainString();
           if (resetFlag)
             resultantAccounts[i].svcresetref = "Y";
           resultantAccounts[i].calculated = "Y";
@@ -677,9 +683,10 @@ public class AccountTree {
 
     for (int i = 0; i < r.length; i++) {
       if (r[i].showelement.equals("Y")) {
-        r[i].qty = (applySign(new BigDecimal(r[i].qty), r[i].showvaluecond, true)).toPlainString();
-        r[i].qtyRef = (applySign(new BigDecimal(r[i].qtyRef), r[i].showvaluecond, true))
+        r[i].qty = (applySign(new BigDecimal(r[i].qty), r[i].showvaluecond, true, r[i].accountsign))
             .toPlainString();
+        r[i].qtyRef = (applySign(new BigDecimal(r[i].qtyRef), r[i].showvaluecond, true,
+            r[i].accountsign)).toPlainString();
         if ((!notEmptyLines || (new BigDecimal(r[i].qty).compareTo(BigDecimal.ZERO) != 0 || new BigDecimal(
             r[i].qtyRef).compareTo(BigDecimal.ZERO) != 0)) || "Y".equals(r[i].isalwaysshown)) {
           if ("Y".equals(r[i].isalwaysshown)) {
