@@ -270,9 +270,9 @@ enyo.kind({
   classes: 'btnlink-orange',
   tap: function () {
     var product = this.owner.line.get('product');
+    var params = {};
     //show always or just when the product has been set to show stock screen?
     if (product.get('showstock') && !product.get('ispack') && OB.POS.modelterminal.get('connectedToERP')) {
-      params = {};
       params.leftSubWindow = OB.OBPOSPointOfSale.UICustomization.stockLeftSubWindow;
       params.product = product;
       this.doShowLeftSubWindow(params);
