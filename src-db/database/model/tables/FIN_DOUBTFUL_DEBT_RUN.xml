@@ -61,7 +61,7 @@
         <default><![CDATA[Y]]></default>
         <onCreateDefault/>
       </column>
-      <column name="PROCESSED" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+      <column name="PROCESSED" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
@@ -89,5 +89,6 @@
         <reference local="FIN_DOUBTFUL_DEBT_METHOD_ID" foreign="FIN_DOUBTFUL_DEBT_METHOD_ID"/>
       </foreign-key>
       <check name="FIN_DOUBTDEBT_RUN_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="FIN_DOUBTDEBT_RUN_PROCESSED"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
     </table>
   </database>

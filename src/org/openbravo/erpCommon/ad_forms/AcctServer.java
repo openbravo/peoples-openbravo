@@ -1701,14 +1701,15 @@ public abstract class AcctServer {
       if (isDoubtfuldebt) {
         BusinessPartner bp = OBDal.getInstance().get(BusinessPartner.class, cBPartnerId);
         whereClause.append(" as cuscata ");
-        whereClause.append(" where cuscata.businessPartnerCategory.id = '"
-            + bp.getBusinessPartnerCategory().getId() + "'");
-        whereClause.append(" and cuscata.accountingSchema.id = '" + as.m_C_AcctSchema_ID + "'");
+        whereClause.append(" where cuscata.businessPartnerCategory.id = :bpCategoryID");
+        whereClause.append(" and cuscata.accountingSchema.id = :acctSchemaID");
 
         final OBQuery<CategoryAccounts> obqParameters = OBDal.getInstance().createQuery(
             CategoryAccounts.class, whereClause.toString());
         obqParameters.setFilterOnReadableClients(false);
         obqParameters.setFilterOnReadableOrganization(false);
+        obqParameters.setNamedParameter("bpCategoryID", bp.getBusinessPartnerCategory().getId());
+        obqParameters.setNamedParameter("acctSchemaID", as.m_C_AcctSchema_ID);
         final List<CategoryAccounts> customerAccounts = obqParameters.list();
         if (customerAccounts != null && customerAccounts.size() > 0
             && customerAccounts.get(0).getDoubtfulDebtAccount() != null) {
@@ -1811,14 +1812,15 @@ public abstract class AcctServer {
     final StringBuilder whereClause = new StringBuilder();
     BusinessPartner bp = OBDal.getInstance().get(BusinessPartner.class, BPartnerId);
     whereClause.append(" as cuscata ");
-    whereClause.append(" where cuscata.businessPartnerCategory.id = '"
-        + bp.getBusinessPartnerCategory().getId() + "'");
-    whereClause.append(" and cuscata.accountingSchema.id = '" + as.m_C_AcctSchema_ID + "'");
+    whereClause.append(" where cuscata.businessPartnerCategory.id = :bpCategoryID");
+    whereClause.append(" and cuscata.accountingSchema.id = :acctSchemaID");
 
     final OBQuery<CategoryAccounts> obqParameters = OBDal.getInstance().createQuery(
         CategoryAccounts.class, whereClause.toString());
     obqParameters.setFilterOnReadableClients(false);
     obqParameters.setFilterOnReadableOrganization(false);
+    obqParameters.setNamedParameter("bpCategoryID", bp.getBusinessPartnerCategory().getId());
+    obqParameters.setNamedParameter("acctSchemaID", as.m_C_AcctSchema_ID);
     final List<CategoryAccounts> customerAccounts = obqParameters.list();
     if (customerAccounts != null && customerAccounts.size() > 0
         && customerAccounts.get(0).getBadDebtExpenseAccount() != null && isExpense) {
@@ -1868,14 +1870,15 @@ public abstract class AcctServer {
     final StringBuilder whereClause = new StringBuilder();
     BusinessPartner bp = OBDal.getInstance().get(BusinessPartner.class, BPartnerId);
     whereClause.append(" as cuscata ");
-    whereClause.append(" where cuscata.businessPartnerCategory.id = '"
-        + bp.getBusinessPartnerCategory().getId() + "'");
-    whereClause.append(" and cuscata.accountingSchema.id = '" + as.m_C_AcctSchema_ID + "'");
+    whereClause.append(" where cuscata.businessPartnerCategory.id = :bpCategoryID");
+    whereClause.append(" and cuscata.accountingSchema.id = :acctSchemaID");
 
     final OBQuery<CategoryAccounts> obqParameters = OBDal.getInstance().createQuery(
         CategoryAccounts.class, whereClause.toString());
     obqParameters.setFilterOnReadableClients(false);
     obqParameters.setFilterOnReadableOrganization(false);
+    obqParameters.setNamedParameter("bpCategoryID", bp.getBusinessPartnerCategory().getId());
+    obqParameters.setNamedParameter("acctSchemaID", as.m_C_AcctSchema_ID);
     final List<CategoryAccounts> customerAccounts = obqParameters.list();
     if (customerAccounts != null && customerAccounts.size() > 0
         && customerAccounts.get(0).getAllowanceForDoubtfulDebtAccount() != null) {

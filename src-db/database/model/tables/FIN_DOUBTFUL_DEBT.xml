@@ -159,5 +159,6 @@
         <reference local="USER2_ID" foreign="USER2_ID"/>
       </foreign-key>
       <check name="FIN_DOUBTDEBT_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="FIN_DOUBTDEBT_PROCESSED"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
     </table>
   </database>

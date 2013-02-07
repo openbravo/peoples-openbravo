@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2012 Openbravo SLU 
+ * All portions are Copyright (C) 2012-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,6 +29,7 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
 import org.openbravo.dal.core.OBContext;
@@ -46,7 +47,7 @@ import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.service.db.DbUtility;
 
 public class DoubtFulDebtPickEditLines extends BaseProcessActionHandler {
-  private static Logger log = Logger.getLogger(DoubtFulDebtPickEditLines.class);
+  private static final Logger log = Logger.getLogger(DoubtFulDebtPickEditLines.class);
 
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {
@@ -86,7 +87,7 @@ public class DoubtFulDebtPickEditLines extends BaseProcessActionHandler {
         errorMessage.put("text", message);
         jsonRequest.put("message", errorMessage);
       } catch (JSONException ignore) {
-        ignore.printStackTrace();
+        log.error("DoubtFulDebtPickeditLines error: " + ignore.getMessage(), ignore);
       }
 
     } finally {
@@ -183,7 +184,9 @@ public class DoubtFulDebtPickEditLines extends BaseProcessActionHandler {
     parameters.add("DDB");
     String strDocTypeId = (String) CallStoredProcedure.getInstance().call("AD_GET_DOCTYPE",
         parameters, null);
-    // TODO: manage no document type: throw exception
+    if (strDocTypeId == null || "".equals(strDocTypeId)) {
+      throw new OBException("@APRM_DoubtfulDebtNoDocument@");
+    }
     return OBDal.getInstance().get(DocumentType.class, strDocTypeId);
   }
 }

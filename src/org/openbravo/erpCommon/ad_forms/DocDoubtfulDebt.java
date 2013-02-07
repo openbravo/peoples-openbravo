@@ -112,15 +112,17 @@ public class DocDoubtfulDebt extends AcctServer {
     String Fact_Acct_Group_ID = SequenceIdData.getUUID();
 
     try {
-      OBContext.setAdminMode();
+      OBContext.setAdminMode(false);
       whereClause.append(" as astdt ");
-      whereClause.append(" where astdt.acctschemaTable.accountingSchema.id = '"
-          + as.m_C_AcctSchema_ID + "'");
-      whereClause.append(" and astdt.acctschemaTable.table.id = '" + AD_Table_ID + "'");
-      whereClause.append(" and astdt.documentCategory = '" + DocumentType + "'");
+      whereClause.append(" where astdt.acctschemaTable.accountingSchema.id = :acctSchemaID");
+      whereClause.append(" and astdt.acctschemaTable.table.id = :tableID");
+      whereClause.append(" and astdt.documentCategory = :documentType");
 
       final OBQuery<AcctSchemaTableDocType> obqParameters = OBDal.getInstance().createQuery(
           AcctSchemaTableDocType.class, whereClause.toString());
+      obqParameters.setNamedParameter("acctSchemaID", as.m_C_AcctSchema_ID);
+      obqParameters.setNamedParameter("tableID", AD_Table_ID);
+      obqParameters.setNamedParameter("documentType", DocumentType);
       final List<AcctSchemaTableDocType> acctSchemaTableDocTypes = obqParameters.list();
 
       if (acctSchemaTableDocTypes != null && acctSchemaTableDocTypes.size() > 0) {
@@ -130,11 +132,13 @@ public class DocDoubtfulDebt extends AcctServer {
       if (strClassname.equals("")) {
         final StringBuilder whereClause2 = new StringBuilder();
         whereClause2.append(" as ast ");
-        whereClause2.append(" where ast.accountingSchema.id = '" + as.m_C_AcctSchema_ID + "'");
-        whereClause2.append(" and ast.table.id = '" + AD_Table_ID + "'");
+        whereClause2.append(" where ast.accountingSchema.id = :acctSchemaID");
+        whereClause2.append(" and ast.table.id = :tableID");
 
         final OBQuery<AcctSchemaTable> obqParameters2 = OBDal.getInstance().createQuery(
             AcctSchemaTable.class, whereClause2.toString());
+        obqParameters2.setNamedParameter("acctSchemaID", as.m_C_AcctSchema_ID);
+        obqParameters2.setNamedParameter("tableID", AD_Table_ID);
         final List<AcctSchemaTable> acctSchemaTables = obqParameters2.list();
         if (acctSchemaTables != null && acctSchemaTables.size() > 0
             && acctSchemaTables.get(0).getCreatefactTemplate() != null)

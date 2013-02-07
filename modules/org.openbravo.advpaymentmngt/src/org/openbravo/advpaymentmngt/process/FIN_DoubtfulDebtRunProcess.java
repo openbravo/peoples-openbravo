@@ -20,6 +20,7 @@ package org.openbravo.advpaymentmngt.process;
 
 import java.util.HashMap;
 
+import org.apache.log4j.Logger;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -34,6 +35,7 @@ import org.openbravo.scheduling.ProcessBundle;
 
 public class FIN_DoubtfulDebtRunProcess implements org.openbravo.scheduling.Process {
   private static AdvPaymentMngtDao dao;
+  private static final Logger log4j = Logger.getLogger(FIN_DoubtfulDebtRunProcess.class);
 
   public void execute(ProcessBundle bundle) throws Exception {
     dao = new AdvPaymentMngtDao();
@@ -42,7 +44,7 @@ public class FIN_DoubtfulDebtRunProcess implements org.openbravo.scheduling.Proc
     msg.setTitle(Utility.messageBD(bundle.getConnection(), "Success", bundle.getContext()
         .getLanguage()));
 
-    OBContext.setAdminMode();
+    OBContext.setAdminMode(false);
     try {
       // retrieve custom params
       final String strAction = (String) bundle.getParams().get("action");
@@ -100,7 +102,7 @@ public class FIN_DoubtfulDebtRunProcess implements org.openbravo.scheduling.Proc
       bundle.setResult(msg);
     } catch (final Exception e) {
       OBDal.getInstance().rollbackAndClose();
-      e.printStackTrace(System.err);
+      log4j.error("FIN_DoubtfulDebtRunProcess error: " + e.getMessage(), e);
       msg.setType("Error");
       msg.setTitle(Utility.messageBD(bundle.getConnection(), "Error", bundle.getContext()
           .getLanguage()));
