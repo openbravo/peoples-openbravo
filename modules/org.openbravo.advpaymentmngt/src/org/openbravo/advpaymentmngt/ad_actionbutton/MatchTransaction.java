@@ -504,13 +504,13 @@ public class MatchTransaction extends HttpSecureAppServlet {
         final String COLOR_WEAK = "#99CC66";
         final String COLOR_WHITE = "white";
         boolean alreadyMatched = false;
+        FIN_BankStatementLine line = OBDal.getInstance().get(FIN_BankStatementLine.class,
+            FIN_BankStatementLines[i].getId());
 
-        String matchingType = FIN_BankStatementLines[i].getMatchingtype();
-        FIN_FinaccTransaction transaction = FIN_BankStatementLines[i]
-            .getFinancialAccountTransaction();
+        String matchingType = line.getMatchingtype();
+        FIN_FinaccTransaction transaction = line.getFinancialAccountTransaction();
         if (transaction == null && executeMatching) {
-          FIN_MatchedTransaction matched = matchingTransaction.match(FIN_BankStatementLines[i],
-              excluded);
+          FIN_MatchedTransaction matched = matchingTransaction.match(line, excluded);
           // When hide flag checked then exclude matchings for transactions out of date range
           if ("Y".equals(strHideDate)
               && matched.getTransaction() != null
@@ -520,7 +520,7 @@ public class MatchTransaction extends HttpSecureAppServlet {
           }
           transaction = matched.getTransaction();
           if (transaction != null && FIN_MatchedTransaction.STRONG.equals(matched.getMatchLevel())) {
-            FIN_BankStatementLine bsl = FIN_BankStatementLines[i];
+            FIN_BankStatementLine bsl = line;
             if (bsl.getFinancialAccountTransaction() != null) {
               // Unmatch Transaction
               FIN_FinaccTransaction oldTransaction = bsl.getFinancialAccountTransaction();
@@ -562,21 +562,19 @@ public class MatchTransaction extends HttpSecureAppServlet {
             "bankLineTransactionDate",
             Utility.formatDate(FIN_BankStatementLines[i].getTransactionDate(),
                 vars.getJavaDateFormat()));
-        FieldProviderFactory.setField(data[i], "bankLineBusinessPartner", FIN_BankStatementLines[i]
-            .getBusinessPartner() != null ? FIN_BankStatementLines[i].getBusinessPartner()
-            .getIdentifier() : FIN_BankStatementLines[i].getBpartnername());
-        FieldProviderFactory.setField(data[i], "textcolor",
-            FIN_BankStatementLines[i].getBusinessPartner() != null ? "bold" : "normal");
-        FieldProviderFactory.setField(data[i], "bankLineReferenceNo",
-            FIN_BankStatementLines[i].getReferenceNo());
-        // CREDIT - DEBIT
-        FieldProviderFactory.setField(data[i], "bankLineAmount", FIN_BankStatementLines[i]
-            .getCramount().subtract(FIN_BankStatementLines[i].getDramount()).toString());
         FieldProviderFactory.setField(
             data[i],
-            "bankLineDescription",
-            FIN_BankStatementLines[i].getDescription() + " "
-                + FIN_BankStatementLines[i].getBpartnername());
+            "bankLineBusinessPartner",
+            line.getBusinessPartner() != null ? line.getBusinessPartner().getIdentifier() : line
+                .getBpartnername());
+        FieldProviderFactory.setField(data[i], "textcolor",
+            line.getBusinessPartner() != null ? "bold" : "normal");
+        FieldProviderFactory.setField(data[i], "bankLineReferenceNo", line.getReferenceNo());
+        // CREDIT - DEBIT
+        FieldProviderFactory.setField(data[i], "bankLineAmount",
+            line.getCramount().subtract(line.getDramount()).toString());
+        FieldProviderFactory.setField(data[i], "bankLineDescription", line.getDescription() + " "
+            + line.getBpartnername());
         FieldProviderFactory
             .setField(
                 data[i],
