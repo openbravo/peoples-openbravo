@@ -252,12 +252,7 @@
       var me = this;
       this.calculateTaxes(function () {
         me.adjustPrices();
-        if (me.get('priceIncludesTax')) {
-          //If the price includes taxes, we need to recompute taxes
-          me.calculateTaxes(callback);
-        } else {
-          callback();
-        }
+        callback();
       });
     },
 
@@ -277,8 +272,8 @@
           if (OB.DEC.compare(grossListPrice) === 0) {
             discountPercentage = OB.DEC.Zero;
           } else {
-            discountPercentage = OB.DEC.toBigDecimal(grossListPrice).subtract(grossUnitPrice).multiply(new BigDecimal('100')).divide(OB.DEC.toBigDecimal(grossListPrice), 2, BigDecimal.prototype.ROUND_HALF_EVEN);
-            discountPercentage = parseFloat(discountPercentage.setScale(2, BigDecimal.prototype.ROUND_HALF_EVEN).toString(), 10);
+            discountPercentage = OB.DEC.toBigDecimal(grossListPrice).subtract(grossUnitPrice).multiply(new BigDecimal('100')).divide(OB.DEC.toBigDecimal(grossListPrice), 2, BigDecimal.prototype.ROUND_HALF_UP);
+            discountPercentage = parseFloat(discountPercentage.setScale(2, BigDecimal.prototype.ROUND_HALF_UP).toString(), 10);
           }
         } else {
           discountPercentage = OB.DEC.Zero;
@@ -304,8 +299,8 @@
 
         if (this.get('priceIncludesTax')) {
           line.set({
-            net: OB.DEC.div(gross, line.get('linerate')),
-            pricenet: OB.DEC.div(OB.DEC.div(gross, line.get('linerate')), line.get('qty')),
+            net: line.get('discountedNet') || OB.DEC.div(gross, line.get('linerate')),
+            pricenet: line.get('discountedNet')? OB.DEC.div(line.get('discountedNet'), line.get('qty')) : OB.DEC.div(OB.DEC.div(gross, line.get('linerate')), line.get('qty')),
             grossListPrice: grossListPrice || price,
             grossUnitPrice: price,
             lineGrossAmount: gross
@@ -327,6 +322,13 @@
           });
         }
       }, this);
+      
+      var totalnet = this.get('lines').reduce(function (memo, e) {
+        var netLine = e.get('discountedNet');
+        return OB.DEC.add(memo, e.get('net'));
+      }, OB.DEC.Zero);
+
+      this.set('net', totalnet);
     },
     getTotal: function () {
       return this.getGross();
