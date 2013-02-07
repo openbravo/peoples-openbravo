@@ -15,7 +15,7 @@
   OB.DEC = window.OB.DEC || {};
 
   var scale = 2;
-  var roundingmode = BigDecimal.prototype.ROUND_HALF_EVEN;
+  var roundingmode = BigDecimal.prototype.ROUND_HALF_UP;
 
   var toBigDecimal = function (a) {
       return new BigDecimal(a.toString());
