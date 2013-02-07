@@ -109,7 +109,7 @@ public class SE_Order_BPartner extends SimpleCallout {
     FieldProvider[] tdv = null;
 
     String strLocation = info.vars.getStringParameter("inpcBpartnerId_LOC");
-    if (strLocation != null) {
+    if (strLocation != null && !strLocation.isEmpty()) {
       info.addResult("inpcBpartnerLocationId", strLocation);
     }
 
@@ -222,7 +222,7 @@ public class SE_Order_BPartner extends SimpleCallout {
 
     // Bill to
 
-    if (strLocation != null) {
+    if (strLocation != null && !strLocation.isEmpty()) {
       info.addResult("inpbilltoId", strLocation);
     }
 
