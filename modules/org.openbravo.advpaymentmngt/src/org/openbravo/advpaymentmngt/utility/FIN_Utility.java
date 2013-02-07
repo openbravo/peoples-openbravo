@@ -1235,6 +1235,8 @@ public class FIN_Utility {
 
       OBQuery<FIN_PaymentDetail> query = OBDal.getInstance().createQuery(FIN_PaymentDetail.class,
           whereClause.toString());
+      query.setFilterOnReadableClients(false);
+      query.setFilterOnReadableOrganization(false);
       pdList = query.list();
 
     } finally {
