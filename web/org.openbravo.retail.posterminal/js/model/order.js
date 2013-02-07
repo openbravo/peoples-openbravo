@@ -113,15 +113,15 @@
   // Sales.OrderLineCol Model.
   var OrderLineList = Backbone.Collection.extend({
     model: OrderLine,
-    isProductPresent: function(product){
+    isProductPresent: function (product) {
       var result = null;
-      if (this.length > 0){
-        result = _.find(this.models, function(line){
-          if (line.get('product').get('id') === product.get('id')){
+      if (this.length > 0) {
+        result = _.find(this.models, function (line) {
+          if (line.get('product').get('id') === product.get('id')) {
             return true;
           }
         }, this);
-        if (_.isUndefined(result) || _.isNull(result)){
+        if (_.isUndefined(result) || _.isNull(result)) {
           return false;
         } else {
           return true;
@@ -289,12 +289,12 @@
 
         // Calculate inline discount: discount applied before promotions
         if (line.get('priceList') !== price) {
-          grossListPrice = new BigDecimal(line.get('priceList').toString());
+          grossListPrice = line.get('priceList');
           grossUnitPrice = new BigDecimal(price.toString());
           if (OB.DEC.compare(grossListPrice) === 0) {
             discountPercentage = OB.DEC.Zero;
           } else {
-            discountPercentage = grossListPrice.subtract(grossUnitPrice).multiply(new BigDecimal('100')).divide(grossListPrice, 2, BigDecimal.prototype.ROUND_HALF_EVEN);
+            discountPercentage = OB.DEC.toBigDecimal(grossListPrice).subtract(grossUnitPrice).multiply(new BigDecimal('100')).divide(OB.DEC.toBigDecimal(grossListPrice), 2, BigDecimal.prototype.ROUND_HALF_EVEN);
             discountPercentage = parseFloat(discountPercentage.setScale(2, BigDecimal.prototype.ROUND_HALF_EVEN).toString(), 10);
           }
         } else {
