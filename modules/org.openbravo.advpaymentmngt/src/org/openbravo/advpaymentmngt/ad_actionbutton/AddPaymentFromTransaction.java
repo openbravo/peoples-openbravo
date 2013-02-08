@@ -865,7 +865,11 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
     obCriteria.add(Restrictions.in(Preference.PROPERTY_ORGANIZATION + ".id", OBContext
         .getOBContext().getReadableOrganizations()));
     Preference preference = (Preference) obCriteria.uniqueResult();
-    return "Y".equals(preference.getSearchKey());
+    if (preference != null) {
+      return "Y".equals(preference.getSearchKey());
+    } else {
+      return false;
+    }
 
   }
 }
