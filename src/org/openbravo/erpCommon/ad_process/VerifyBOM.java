@@ -23,13 +23,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.common.plm.ProductBOM;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.service.db.DalBaseProcess;
+import org.openbravo.service.db.DalConnectionProvider;
 
 public class VerifyBOM extends DalBaseProcess {
 
@@ -47,6 +50,11 @@ public class VerifyBOM extends DalBaseProcess {
       List<Product> productList = new ArrayList<Product>();
       productList.add(product);
       List<ProductBOM> productBOMList = product.getProductBOMList();
+
+      if (productBOMList.isEmpty()) {
+        throw new Exception(Utility.messageBD(new DalConnectionProvider(), "BOM_Without_Lines",
+            OBContext.getOBContext().getLanguage().getLanguage()));
+      }
 
       boolean cycle = checkForcycles(productList, productBOMList);
 
