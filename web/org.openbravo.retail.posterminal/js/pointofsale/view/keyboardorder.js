@@ -365,24 +365,10 @@ enyo.kind({
   }
 });
 
-
 enyo.kind({
-  name: 'OB.UI.AbstractBarcodeActionHandler',
-  kind: enyo.Object,
-  action: function (keyboard, txt) {
-    if (keyboard.receipt.get('isEditable') === false) {
-      keyboard.doShowPopup({
-        popup: 'modalNotEditableOrder'
-      });
-      return true;
-    }
-    var me = this;
-
-    this.findProductByBarcode(txt, function (product) {
-      me.addProductToReceipt(keyboard, product);
-    });
-  },
-
+  // Overwrite this component to customize the BarcodeActionHandler
+  name: 'OB.UI.BarcodeActionHandler',
+  kind: 'OB.UI.AbstractBarcodeActionHandler',
   findProductByBarcode: function (txt, callback) {
     var criteria;
 
@@ -411,10 +397,4 @@ enyo.kind({
     });
     keyboard.receipt.trigger('scan');
   }
-});
-
-enyo.kind({
-  // Overwrite this component to customize the BarcodeActionHandler
-  name: 'OB.UI.BarcodeActionHandler',
-  kind: 'OB.UI.AbstractBarcodeActionHandler'
 });
