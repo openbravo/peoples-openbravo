@@ -510,7 +510,13 @@ public class MatchTransaction extends HttpSecureAppServlet {
         String matchingType = line.getMatchingtype();
         FIN_FinaccTransaction transaction = line.getFinancialAccountTransaction();
         if (transaction == null && executeMatching) {
-          FIN_MatchedTransaction matched = matchingTransaction.match(line, excluded);
+          FIN_MatchedTransaction matched = null;
+          // try to match if exception is thrown continue
+          try {
+            matched = matchingTransaction.match(line, excluded);
+          } catch (Exception e) {
+            matched = new FIN_MatchedTransaction(null, FIN_MatchedTransaction.NOMATCH);
+          }
           // When hide flag checked then exclude matchings for transactions out of date range
           if ("Y".equals(strHideDate)
               && matched.getTransaction() != null
