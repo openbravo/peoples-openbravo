@@ -430,7 +430,8 @@ public class MatchTransaction extends HttpSecureAppServlet {
       data = getMatchedBankStatementLinesData(vars, strFinancialAccountId, strReconciliationId,
           strPaymentTypeFilter, strShowCleared, strHideDate, executeMatching);
     } catch (Exception e) {
-      log4j.debug("Output: Exception ocurred while retrieving Bank Statement Lines.");
+      log4j.debug("Output: Exception ocurred while retrieving Bank Statement Lines.", e);
+      e.printStackTrace();
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -504,6 +505,7 @@ public class MatchTransaction extends HttpSecureAppServlet {
         final String COLOR_WEAK = "#99CC66";
         final String COLOR_WHITE = "white";
         boolean alreadyMatched = false;
+
         FIN_BankStatementLine line = OBDal.getInstance().get(FIN_BankStatementLine.class,
             FIN_BankStatementLines[i].getId());
 
@@ -514,7 +516,9 @@ public class MatchTransaction extends HttpSecureAppServlet {
           // try to match if exception is thrown continue
           try {
             matched = matchingTransaction.match(line, excluded);
+            OBDal.getInstance().getConnection().commit();
           } catch (Exception e) {
+            OBDal.getInstance().rollbackAndClose();
             matched = new FIN_MatchedTransaction(null, FIN_MatchedTransaction.NOMATCH);
           }
           // When hide flag checked then exclude matchings for transactions out of date range
