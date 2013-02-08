@@ -71,4 +71,8 @@
     return toNumber(a);
   };
 
+  OB.DEC.abs = function (a) {
+    return toNumber(toBigDecimal(a).abs());
+  };
+
 }());
