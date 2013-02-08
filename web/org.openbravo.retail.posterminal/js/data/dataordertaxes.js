@@ -168,8 +168,14 @@
                 if (!taxRate.get('summaryLevel')) {
                   taxId = taxRate.get('id');
                   summedTaxAmt = OB.DEC.add(summedTaxAmt, taxesline[taxId].amount);
-                  if(greaterTax === null || taxesline[greaterTax].amount < taxesline[taxId].amount){
-                    greaterTax = taxId;
+                  if (me.get('orderType') === 1){
+                    if(greaterTax === null || taxesline[greaterTax].amount > taxesline[taxId].amount){
+                      greaterTax = taxId;
+                    }
+                  }else{
+                    if(greaterTax === null || taxesline[greaterTax].amount < taxesline[taxId].amount){
+                      greaterTax = taxId;
+                    }
                   }
                 }
               });
