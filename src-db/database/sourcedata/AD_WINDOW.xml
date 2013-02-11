@@ -1642,7 +1642,7 @@
 <!--800013-->  <AD_WINDOW_ID><![CDATA[800013]]></AD_WINDOW_ID>
 <!--800013-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800013-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800013-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800013-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--800013-->  <NAME><![CDATA[Incoming Shipment]]></NAME>
 <!--800013-->  <DESCRIPTION><![CDATA[Create and manage goods shipments from our vendors]]></DESCRIPTION>
 <!--800013-->  <HELP><![CDATA[Create and manage goods shipments from our vendors]]></HELP>
@@ -1659,7 +1659,7 @@
 <!--800014-->  <AD_WINDOW_ID><![CDATA[800014]]></AD_WINDOW_ID>
 <!--800014-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800014-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800014-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800014-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--800014-->  <NAME><![CDATA[Outgoing Shipment]]></NAME>
 <!--800014-->  <DESCRIPTION><![CDATA[Create and manage goods shipments to your customers.]]></DESCRIPTION>
 <!--800014-->  <HELP><![CDATA[Create and manage goods shipments to your customers.]]></HELP>
