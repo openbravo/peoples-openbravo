@@ -44,6 +44,7 @@
         <Parameter name="key" ignoreValue="%" optional="true" after="WHERE "><![CDATA[ UPPER(p.Value) LIKE UPPER(?) AND ]]></Parameter>
         <Parameter name="name" ignoreValue="%" optional="true" after="WHERE "><![CDATA[ UPPER(p.Name) LIKE UPPER(?) AND ]]></Parameter>
         <Parameter name="productCategory" optional="true" after="WHERE "><![CDATA[ p.M_Product_Category_ID = ? AND ]]></Parameter>
+        <Parameter name="isSoTrx" optional="true" after="AND p.IsSummary='N'"><![CDATA[ AND p.issold = ? ]]></Parameter>
         <Parameter name="adUserClient" type="replace" optional="true" after="p.AD_Client_ID IN (" text="'1'"/>
         <Parameter name="adUserOrg" type="replace" optional="true" after="p.AD_Org_ID IN (" text="'1'"/>
         <Parameter name="orderBy" type="replace" optional="true" after="ORDER BY " text="PRODUCT_CATEGORY" />
@@ -73,6 +74,7 @@
         <Parameter name="key" ignoreValue="%" optional="true" after="WHERE "><![CDATA[ UPPER(p.Value) LIKE UPPER(?) AND ]]></Parameter>
         <Parameter name="name" ignoreValue="%" optional="true" after="WHERE "><![CDATA[ UPPER(p.Name) LIKE UPPER(?) AND ]]></Parameter>
         <Parameter name="productCategory" optional="true" after="WHERE "><![CDATA[ p.M_Product_Category_ID = ? AND ]]></Parameter>
+        <Parameter name="isSoTrx" optional="true" after="AND p.IsSummary='N'"><![CDATA[ AND p.issold = ? ]]></Parameter>
         <Parameter name="adUserClient" type="replace" optional="true" after="p.AD_Client_ID IN (" text="'1'"/>
         <Parameter name="adUserOrg" type="replace" optional="true" after="p.AD_Org_ID IN (" text="'1'"/>
         <Parameter name="pgLimit" type="argument" optional="true" after="AND 1=1"><![CDATA[LIMIT ]]></Parameter>

@@ -124,6 +124,7 @@ function onloadFunctions() {
 <form name="frmSelector" method="post" action="ProductMultiple.html" target="medio">
 	<input type="hidden" name="Command" />
 	<input type="hidden" name="IsPopUpCall" value="1" />
+	<input type="hidden" name="isSoTrx" id="fieldIsSoTrx" value="N" />
 	<div class="Popup_ContentPane_CircleLogo">
 		<div class="Popup_WindowLogo">
 			<img class="Popup_WindowLogo_Icon Popup_WindowLogo_Icon_product" src="../../../../../web/images/blank.gif" border="0" />
@@ -285,8 +286,8 @@ function onloadFunctions() {
 	                    <td>
 	                      <div id="grid" dojotype="openbravo.widget.DataGrid"
 	                        structureurl="../info/ProductMultiple.html?Command=STRUCTURE"
-	                        dataurl="../info/ProductMultiple.html?Command=DATA"
-	                        updatesurl="../info/ProductMultiple.html?Command=DATA"
+	                        dataurl="../info/ProductMultiple.html?Command=DATAqq"
+	                        updatesurl="../info/ProductMultiple.html?Command=DATAqq"
 	                        calculatenumrows="true" editable="false" sortable="true"
 	                        deleteable="true" oninvalidvalue="alert" onscroll="updateHeader"
 	                        ongridload="onGridLoadDo" buffersize="3.0" showlinenumbers="true"

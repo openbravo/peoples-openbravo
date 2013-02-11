@@ -20,6 +20,8 @@ package org.openbravo.erpCommon.info;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Vector;
 
 import javax.servlet.ServletConfig;
@@ -66,7 +68,8 @@ public class ProductMultiple extends HttpSecureAppServlet {
       // vars.setSessionValue("ProductMultiple.name", strNameValue + "%");
       String strKeyValue = vars.getGlobalVariable("inpKey", "ProductMultiple.key", "");
       String strNameValue = vars.getGlobalVariable("inpName", "ProductMultiple.name", "");
-      PrintPage(response, vars, strKeyValue, strNameValue);
+
+      PrintPage(response, vars, strKeyValue, strNameValue, isCalledFromSoTrx(request));
     } else if (vars.commandIn("STRUCTURE")) {
       printGridStructure(response, vars);
     } else if (vars.commandIn("DATA")) {
@@ -89,14 +92,16 @@ public class ProductMultiple extends HttpSecureAppServlet {
       String strPageSize = vars.getStringParameter("page_size");
       String strSortCols = vars.getInStringParameter("sort_cols", columnFilter);
       String strSortDirs = vars.getInStringParameter("sort_dirs", directionFilter);
+      String[] strIsSoTrx = request.getParameterValues("isSoTrx");
+      boolean isSoTrx = (strIsSoTrx != null) ? ("'Y'".equalsIgnoreCase(strIsSoTrx[0])) : false;
 
       if (action.equalsIgnoreCase("getRows")) { // Asking for data rows
         printGridData(response, vars, strKey, strName, strProductCategory, strOrg, strSortCols,
-            strSortDirs, strOffset, strPageSize, strNewFilter);
+            strSortDirs, strOffset, strPageSize, strNewFilter, isSoTrx);
       } else if (action.equalsIgnoreCase("getIdsInRange")) {
         // asking for selected rows
         printGridDataSelectedRows(response, vars, strKey, strName, strProductCategory, strOrg,
-            strSortCols, strSortDirs);
+            strSortCols, strSortDirs, isSoTrx);
       } else {
         throw new ServletException("Unimplemented action in DATA request: " + action);
       }
@@ -105,7 +110,7 @@ public class ProductMultiple extends HttpSecureAppServlet {
   }
 
   private void PrintPage(HttpServletResponse response, VariablesSecureApp vars, String strKeyValue,
-      String strNameValue) throws IOException, ServletException {
+      String strNameValue, boolean isSoTrx) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Multiple products seeker Frame Set");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -121,6 +126,7 @@ public class ProductMultiple extends HttpSecureAppServlet {
         "ALERT_MSG=\"" + Utility.messageBD(this, "NoProductSelected", vars.getLanguage()) + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("name", strNameValue);
+    xmlDocument.setParameter("gridSoTrx", ((isSoTrx) ? "&isSoTrx='Y'" : ""));
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
           "M_Product_Category_ID", "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
@@ -196,8 +202,8 @@ public class ProductMultiple extends HttpSecureAppServlet {
 
   private void printGridData(HttpServletResponse response, VariablesSecureApp vars, String strKey,
       String strName, String strProductCategory, String strOrg, String strOrderCols,
-      String strOrderDirs, String strOffset, String strPageSize, String strNewFilter)
-      throws IOException, ServletException {
+      String strOrderDirs, String strOffset, String strPageSize, String strNewFilter,
+      boolean isSoTrx) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print page rows");
     int page = 0;
@@ -236,7 +242,7 @@ public class ProductMultiple extends HttpSecureAppServlet {
             pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
           }
           strNumRows = ProductMultipleData.countRows(this, rownum, strKey, strName,
-              strProductCategory,
+              strProductCategory, (isSoTrx) ? "Y" : null,
               Utility.getContext(this, vars, "#User_Client", "ProductMultiple"),
               Utility.getSelectorOrgs(this, vars, strOrg), pgLimit, oraLimit1, oraLimit2);
           vars.setSessionValue("BusinessPartnerInfo.numrows", strNumRows);
@@ -249,11 +255,13 @@ public class ProductMultiple extends HttpSecureAppServlet {
           String oraLimit1 = String.valueOf(offset + pageSize);
           String oraLimit2 = (offset + 1) + " AND " + oraLimit1;
           data = ProductMultipleData.select(this, "ROWNUM", strKey, strName, strProductCategory,
+              (isSoTrx) ? "Y" : null,
               Utility.getContext(this, vars, "#User_Client", "ProductMultiple"),
               Utility.getSelectorOrgs(this, vars, strOrg), strOrderBy, "", oraLimit1, oraLimit2);
         } else {
           String pgLimit = pageSize + " OFFSET " + offset;
           data = ProductMultipleData.select(this, "1", strKey, strName, strProductCategory,
+              (isSoTrx) ? "Y" : null,
               Utility.getContext(this, vars, "#User_Client", "ProductMultiple"),
               Utility.getSelectorOrgs(this, vars, strOrg), strOrderBy, pgLimit, "", "");
         }
@@ -345,7 +353,7 @@ public class ProductMultiple extends HttpSecureAppServlet {
    */
   private void printGridDataSelectedRows(HttpServletResponse response, VariablesSecureApp vars,
       String strKey, String strName, String strProductCategory, String strOrg, String strOrderCols,
-      String strOrderDirs) throws IOException, ServletException {
+      String strOrderDirs, boolean isSoTrx) throws IOException, ServletException {
     int minOffset = new Integer(vars.getStringParameter("minOffset")).intValue();
     int maxOffset = new Integer(vars.getStringParameter("maxOffset")).intValue();
     log4j.debug("Output: print page ids, minOffset: " + minOffset + ", maxOffset: " + maxOffset);
@@ -371,6 +379,7 @@ public class ProductMultiple extends HttpSecureAppServlet {
         String oraLimit1 = String.valueOf(maxOffset);
         String oraLimit2 = (minOffset + 1) + " AND " + oraLimit1;
         data = ProductMultipleData.select(this, "ROWNUM", strKey, strName, strProductCategory,
+            (isSoTrx) ? "Y" : null,
             Utility.getContext(this, vars, "#User_Client", "ProductMultiple"),
             Utility.getSelectorOrgs(this, vars, strOrg), strOrderBy, "", oraLimit1, oraLimit2);
       } else {
@@ -378,6 +387,7 @@ public class ProductMultiple extends HttpSecureAppServlet {
         int pageSize = maxOffset - minOffset + 1;
         String pgLimit = pageSize + " OFFSET " + minOffset;
         data = ProductMultipleData.select(this, "1", strKey, strName, strProductCategory,
+            (isSoTrx) ? "Y" : null,
             Utility.getContext(this, vars, "#User_Client", "ProductMultiple"),
             Utility.getSelectorOrgs(this, vars, strOrg), strOrderBy, pgLimit, "", "");
 
@@ -416,4 +426,24 @@ public class ProductMultiple extends HttpSecureAppServlet {
   public String getServletInfo() {
     return "Servlet that presents the multiple products seeker";
   } // end of getServletInfo() method
+
+  /*
+   * Currently this is only being used when the selector is called from: - Sales Dimensional Report
+   * - Shipments Dimensional Report - Sales Order Report
+   */
+  private boolean isCalledFromSoTrx(HttpServletRequest request) {
+    HashMap parameters = (HashMap) request.getParameterMap();
+    Iterator it = parameters.keySet().iterator();
+    String[] value;
+    boolean isSoTrx = false;
+    while (it.hasNext()) {
+      String key = (String) it.next();
+      if (key.toLowerCase().contains("issotrx")) {
+        value = (String[]) (parameters.get(key));
+        isSoTrx = value[0].contains("isSoTrx='Y'");
+      }
+    }
+
+    return isSoTrx;
+  }
 }

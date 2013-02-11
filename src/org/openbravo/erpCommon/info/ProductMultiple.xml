@@ -25,7 +25,10 @@
 	<PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
 	<PARAMETER id="fieldKey" name="key" attribute="value"/>
 	<PARAMETER id="fieldName" name="name" attribute="value"/>
+    <PARAMETER id="fieldIsSoTrx" name="isSoTrx" attribute="value"/>
 	<PARAMETER id="fieldSelected" name="category" />
+    <PARAMETER id="grid" name="gridSoTrx" attribute="dataurl" replace="qq"/>
+    <PARAMETER id="grid" name="gridSoTrx" attribute="updatesurl" replace="qq"/>
 	<SUBREPORT id="reportM_Product_Category_ID" name="reportM_Product_Category_ID" report="org/openbravo/erpCommon/reference/List">
 		<ARGUMENT name="parameterListSelected" withId="fieldSelected"/>
 	</SUBREPORT>

@@ -123,6 +123,19 @@ function onloadFunctions() {
 	function onResizeDo(){
 		resizeArea();
 	}
+	function callProductMultipleSelector(strTop, strLeft, strSelectorName, strWindowName, validate, strForm, strItem){
+	  if (strSelectorName!=null) {
+	    gForm = (strForm==null)?"forms[0]":strForm;
+	    gFieldKey=strItem;
+	    gValidate = (validate==null)?false:validate;
+	    var parameters=new Array();
+	    for (var i=7;arguments[i]!=null;i++) {
+	      parameters[i-7] = arguments[i];
+	    }
+	    parameters = addArrayValue(parameters, "isSoTrx='Y'", "isSoTrx='Y'", true);
+	    windowSearch(strSelectorName, null, 900, strTop, strLeft, strWindowName, parameters, null);
+	  }
+	}
 	</script>
 </head>
     <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();" id="form">
@@ -519,7 +532,7 @@ function onloadFunctions() {
                             <tr>
                               <td>
                                 <a class="List_Button_TopLink" href="#"
-                                  onclick="openMultiSearch(null, null, '../info/ProductMultiple.html', 'SELECTOR_PRODUCT', false, 'frmMain', 'inpmProductId_IN');return false;"
+                                  onclick="callProductMultipleSelector(null, null, '../info/ProductMultiple.html', 'SELECTOR_PRODUCT', false, 'frmMain', 'inpmProductId_IN');return false;"
                                   onfocus="setWindowElementFocus(this); window.status='Add'; return true;"
                                   onblur="window.status=''; return true;"
                                   onkeypress="this.className='List_Button_TopLink_active'; return true;"
