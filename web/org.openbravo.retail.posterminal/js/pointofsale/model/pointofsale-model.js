@@ -129,10 +129,14 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
     receipt.on('paymentDone', function () {
       receipt.prepareToSend(function () {
         //Create the negative payment for change
+        var oldChange = receipt.get('change');
+        var clonedCollection = new Backbone.Collection();
         if (!_.isUndefined(receipt.selectedPayment) && !_.isUndefined(receipt.getPaymentStatus()) && receipt.getPaymentStatus().change > 0) {
           var payToDo = receipt.getPaymentStatus();
           var payment = OB.POS.terminal.terminal.paymentnames[receipt.selectedPayment];
-          var oldChange = receipt.get('change');
+          receipt.get('payments').each(function (model) {
+            clonedCollection.add(new Backbone.Model(model.toJSON()));
+          });
           if (!payment.paymentMethod.iscash) {
             payment = OB.POS.terminal.terminal.paymentnames[OB.POS.modelterminal.get('paymentcash')];
           }
@@ -148,6 +152,12 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
         }
         receipt.set('change', oldChange);
         receipt.trigger('closed');
+        receipt.get('payments').reset();
+        clonedCollection.each(function (model) {
+          receipt.get('payments').add(new Backbone.Model(model.toJSON()), {
+            silent: true
+          });
+        });
         receipt.trigger('print'); // to guaranty execution order
         orderList.deleteCurrent();
       });
