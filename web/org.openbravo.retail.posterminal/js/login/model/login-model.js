@@ -28,6 +28,109 @@
       loginHandlerUrl: '../../org.openbravo.retail.posterminal/POSLoginHandler'
     },
 
+    renderMain: function () {
+      console.log('renderMain')
+      if (!OB.UTIL.isSupportedBrowser()) {
+        OB.MobileApp.model.renderLogin();
+        return false;
+      }
+      var me = OB.MobileApp.model,
+          params = {
+          terminal: OB.POS.paramTerminal
+          };
+
+      OB.MobileApp.model.loggingIn = true;
+
+
+      OB.DS.commonParams = {};
+
+      OB.MobileApp.model.off('terminal.loaded'); // Unregister previous events.
+      OB.MobileApp.model.on('terminal.loaded', function () {
+        var oldOB = OB;
+
+        // setting common datasource parameters based on terminal
+        var t = me.get('terminal');
+        OB.DS.commonParams = {
+          client: t.client,
+          organization: t.organization,
+          pos: t.id
+        };
+
+        $LAB.setGlobalDefaults({
+          AppendTo: 'body'
+        });
+        OB.POS.cleanWindows();
+        if (!OB.MobileApp.model.get('connectedToERP')) {
+          OB.Format = JSON.parse(me.usermodel.get('formatInfo'));
+
+          $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=FinancialMgmtTaxRate&modelName=TaxRate&source=org.openbravo.retail.posterminal.master.TaxRate');
+
+          //Models for discounts and promotions
+          $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustment&modelName=Discount&source=org.openbravo.retail.posterminal.master.Discount');
+          $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustmentBusinessPartner&modelName=DiscountFilterBusinessPartner&source=org.openbravo.retail.posterminal.master.DiscountFilterBusinessPartner');
+          $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustmentBusinessPartnerGroup&modelName=DiscountFilterBusinessPartnerGroup&source=org.openbravo.retail.posterminal.master.DiscountFilterBusinessPartnerGroup');
+          $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustmentProduct&modelName=DiscountFilterProduct&source=org.openbravo.retail.posterminal.master.DiscountFilterProduct');
+          $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustmentProductCategory&modelName=DiscountFilterProductCategory&source=org.openbravo.retail.posterminal.master.DiscountFilterProductCategory');
+
+          $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/StaticResources?_appName=WebPOS');
+          return;
+        }
+        $LAB.script('../../org.openbravo.client.kernel/OBCLKER_Kernel/Application').wait(function () {
+          var newFormat = OB.Format;
+          _.extend(OB, oldOB);
+          OB.Format = newFormat;
+
+          me.usermodel.set('formatInfo', JSON.stringify(OB.Format));
+          OB.Dal.save(me.usermodel, function () {}, function () {
+            window.console.error(arguments);
+          });
+
+
+          $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=FinancialMgmtTaxRate&modelName=TaxRate&source=org.openbravo.retail.posterminal.master.TaxRate');
+
+          //Models for discounts and promotions
+          $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustment&modelName=Discount&source=org.openbravo.retail.posterminal.master.Discount');
+          $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustmentBusinessPartner&modelName=DiscountFilterBusinessPartner&source=org.openbravo.retail.posterminal.master.DiscountFilterBusinessPartner');
+          $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustmentBusinessPartnerGroup&modelName=DiscountFilterBusinessPartnerGroup&source=org.openbravo.retail.posterminal.master.DiscountFilterBusinessPartnerGroup');
+          $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustmentProduct&modelName=DiscountFilterProduct&source=org.openbravo.retail.posterminal.master.DiscountFilterProduct');
+          $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustmentProductCategory&modelName=DiscountFilterProductCategory&source=org.openbravo.retail.posterminal.master.DiscountFilterProductCategory');
+
+          $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/StaticResources?_appName=WebPOS');
+        });
+      });
+      if (OB.MobileApp.model.get('connectedToERP')) {
+        new OB.DS.Request('org.openbravo.retail.posterminal.term.Labels').exec({
+          languageId: window.localStorage.getItem('POSlanguageId')
+        }, function (data) {
+          OB.I18N.labels = data;
+
+          new OB.DS.Request('org.openbravo.retail.posterminal.term.Terminal').exec(params, function (data) {
+            if (data.exception) {
+              OB.POS.navigate('login');
+              if (OB.I18N.hasLabel(data.exception.message)) {
+                OB.UTIL.showError(OB.I18N.getLabel(data.exception.message));
+              } else {
+                OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorLoadingTerminal'));
+              }
+            } else if (data[0]) {
+              me.set('terminal', data[0]);
+              if (!me.usermodel) {
+                OB.MobileApp.model.setUserModelOnline(true);
+              } else {
+                me.trigger('terminal.loaded');
+              }
+            } else {
+              OB.UTIL.showError("Terminal does not exists: " + params.terminal);
+            }
+          });
+        });
+      } else {
+        //Offline mode, we get the terminal information from the local db
+        me.set('terminal', JSON.parse(me.usermodel.get('terminalinfo')).terminal);
+        me.trigger('terminal.loaded');
+      }
+    },
+
     load: function () {
       console.log('load')
       var termInfo, i, max;
