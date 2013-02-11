@@ -322,7 +322,10 @@ public class DataToJsonConverter {
 
   protected Object convertPrimitiveValue(Object value) {
     if (value == null) {
-      return null;
+      // Do not return null, or they key and value of this particular column will
+      // not be added to the JSON object
+      // See issue https://issues.openbravo.com/view.php?id=22971
+      return "";
     }
     if (value instanceof Date) {
       return xmlDateFormat.format(value);
