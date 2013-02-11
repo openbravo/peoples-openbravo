@@ -2502,7 +2502,11 @@ public class Utility {
 
   public static boolean isMobileBrowser(HttpServletRequest request) {
     final String ua = request.getHeader("User-Agent").toLowerCase();
-    return (ua.matches(MOBILE_VENDORS) || ua.substring(0, 4).matches(MOBILE_VERSION));
+    if (ua == null) {
+      return false;
+    } else {
+      return (ua.matches(MOBILE_VENDORS) || ua.substring(0, 4).matches(MOBILE_VERSION));
+    }
   }
 
   /**
