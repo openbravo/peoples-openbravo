@@ -21943,8 +21943,7 @@ Glossary orphan elements are preserved when running Synchronize Terminology proc
 <!--47582E4FA8A6402F979CE4BBC47F9B71-->  <NAME><![CDATA[Bad Debt Expense Account]]></NAME>
 <!--47582E4FA8A6402F979CE4BBC47F9B71-->  <PRINTNAME><![CDATA[Bad Debt Expense Account]]></PRINTNAME>
 <!--47582E4FA8A6402F979CE4BBC47F9B71-->  <DESCRIPTION><![CDATA[Account used to book the expense related to a bad debt]]></DESCRIPTION>
-<!--47582E4FA8A6402F979CE4BBC47F9B71-->  <HELP><![CDATA[        BadDebtExpense_Acct=Cur_Acct.BadDebtExpense_Acct,
-]]></HELP>
+<!--47582E4FA8A6402F979CE4BBC47F9B71-->  <HELP><![CDATA[Account used to book the expense related to a recover of a bad debt]]></HELP>
 <!--47582E4FA8A6402F979CE4BBC47F9B71-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--47582E4FA8A6402F979CE4BBC47F9B71-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--47582E4FA8A6402F979CE4BBC47F9B71--></AD_ELEMENT>
