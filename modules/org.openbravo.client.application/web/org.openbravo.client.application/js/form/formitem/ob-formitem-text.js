@@ -26,19 +26,93 @@ isc.OBTextItem.addProperties({
   operator: 'iContains',
   validateOnExit: true,
   maskSaveLiterals: true,
+
+  validateAgainstMask: true,
+
+  init: function () {
+
+    if (this.mask && this.validateAgainstMask) {
+      this.resetMaskValidator(true);
+    }
+
+    this.Super('init', arguments);
+  },
+
+  resetMaskValidator: function (createNew) {
+    if (this.maskValidator && this.validators) {
+      this.validators.remove(this.maskValidator);
+      delete this.maskValidator;
+    }
+    if (createNew && this.mask && this.validateAgainstMask) {
+      this.maskValidator = isc.clone(isc.Validator.getValidatorDefinition('mask'));
+      this.maskValidator.mask = this.createRegExpFromMask(this.mask);
+      this.validators = this.validators || [];
+      this.validators.push(this.maskValidator);
+    }
+  },
+
+  createRegExpFromMask: function (mask) {
+    var split, i, regexp = '',
+        escaped = false;
+    if (!mask) {
+      return null;
+    }
+    split = mask.split('');
+    for (i = 0; i < split.length; i++) {
+      if (escaped) {
+        regexp = regexp + '\\' + split[i];
+        escaped = false;
+        continue;
+      }
+      if (split[i] === '\\') {
+        escaped = true;
+        continue;
+      } else if (split[i] === '<' || split[i] === '>') {
+        // ignore
+        continue;
+      } else if (split[i] === '0') {
+        regexp = regexp + '[0-9-+]';
+      } else if (split[i] === '9') {
+        regexp = regexp + '[0-9\\s]';
+      } else if (split[i] === '#') {
+        regexp = regexp + '[\\d]';
+      } else if (split[i] === 'L') {
+        regexp = regexp + '[A-Za-z]';
+      } else if (split[i] === '?') {
+        regexp = regexp + '[A-Za-z\\s]';
+      } else if (split[i] === 'A') {
+        regexp = regexp + '[A-Za-z0-9]';
+      } else if (split[i] === 'a') {
+        regexp = regexp + '[A-Za-z0-9]';
+      } else if (split[i] === 'C') {
+        regexp = regexp + '[A-Za-z0-9\\s]';
+      } else {
+        regexp = regexp + split[i];
+      }
+    }
+    return regexp;
+  },
+
   itemHoverHTML: function (item, form) {
     if (this.isDisabled()) {
       return this.getValue();
     } else if (this.mask) {
       return this.mask;
     }
+  },
+
+  setMask: function (mask) {
+    isc.Super('setMask', arguments);
+    this.resetMaskValidator(mask);
   }
+
 });
 
 isc.ClassFactory.defineClass('OBTextFilterItem', isc.OBTextItem);
 
 isc.OBTextFilterItem.addProperties({
   allowExpressions: true,
+  validateAgainstMask: false,
 
   // solve a small bug in the value expressions
   buildValueExpressions: function () {
