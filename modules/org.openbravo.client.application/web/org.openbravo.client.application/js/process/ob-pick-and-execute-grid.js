@@ -276,6 +276,11 @@ isc.OBPickAndExecuteGrid.addProperties({
       crit = criteria;
     }
 
+    if (this._cleaningFilter) {
+      // Always refresh when cleaning the filter
+      criteria.criteria.push(isc.OBRestDataSource.getDummyCriterion());
+    }
+
     this.Super('handleFilterEditorSubmit', [crit, context]);
   },
 
@@ -356,7 +361,9 @@ isc.OBPickAndExecuteGrid.addProperties({
 
   clearFilter: function () {
     this.filterClause = null;
+    this._cleaningFilter = true;
     this.Super('clearFilter', arguments);
+    delete this._cleaningFilter;
   },
 
   getFetchRequestParams: function (params) {
