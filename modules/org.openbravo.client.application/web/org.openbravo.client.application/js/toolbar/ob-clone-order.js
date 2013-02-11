@@ -50,6 +50,6 @@
   };
 
   // register the button for the sales order tab
-  OB.ToolbarRegistry.registerButton(cloneButtonProps.buttonType, isc.OBToolbarIconButton, cloneButtonProps, 100, ['186']);
+  OB.ToolbarRegistry.registerButton(cloneButtonProps.buttonType, isc.OBToolbarIconButton, cloneButtonProps, 100, ['186', '294']);
 
 }());
