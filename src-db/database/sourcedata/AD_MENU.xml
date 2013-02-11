@@ -1127,7 +1127,7 @@
 <!--232-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--232-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--232-->  <NAME><![CDATA[Business Partner Category]]></NAME>
-<!--232-->  <DESCRIPTION><![CDATA[Create and edit information related to similar business partners at one time by grouping them.]]></DESCRIPTION>
+<!--232-->  <DESCRIPTION><![CDATA[Business partners can be grouped into different categories with the aim of helping their management and analysis.]]></DESCRIPTION>
 <!--232-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--232-->  <ACTION><![CDATA[W]]></ACTION>
 <!--232-->  <AD_WINDOW_ID><![CDATA[192]]></AD_WINDOW_ID>
@@ -1568,7 +1568,7 @@
 <!--343-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--343-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--343-->  <NAME><![CDATA[Asset Group]]></NAME>
-<!--343-->  <DESCRIPTION><![CDATA[Create and edit categories to group assets with similar characteristics together.]]></DESCRIPTION>
+<!--343-->  <DESCRIPTION><![CDATA[Assets can be grouped into different categories with the aim of helping their depreciation management and analysis.]]></DESCRIPTION>
 <!--343-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--343-->  <ACTION><![CDATA[W]]></ACTION>
 <!--343-->  <AD_WINDOW_ID><![CDATA[252]]></AD_WINDOW_ID>

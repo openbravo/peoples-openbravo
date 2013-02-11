@@ -2725,7 +2725,7 @@ The ledger accounting entries created by the Fiscal Year closing process are:
 <!--800058-->  <VALUE><![CDATA[ReportShipmentDimensionalAnalyzeJR]]></VALUE>
 <!--800058-->  <NAME><![CDATA[Shipments Dimensional Report]]></NAME>
 <!--800058-->  <DESCRIPTION><![CDATA[Shipment dimensional analyze]]></DESCRIPTION>
-<!--800058-->  <HELP><![CDATA[Shipment dimensional analyze JR]]></HELP>
+<!--800058-->  <HELP><![CDATA[This report shows information about goods shipped to the customers (Goods Shipments in a status Completed or Voided) during a selected period of time. ]]></HELP>
 <!--800058-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--800058-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--800058-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
@@ -3145,7 +3145,7 @@ The ledger accounting entries created by the Fiscal Year closing process are:
 <!--800088-->  <VALUE><![CDATA[ReportValuationStockLegacy]]></VALUE>
 <!--800088-->  <NAME><![CDATA[Valued Stock Report Legacy]]></NAME>
 <!--800088-->  <DESCRIPTION><![CDATA[Valued Stock Report Legacy]]></DESCRIPTION>
-<!--800088-->  <HELP><![CDATA[Valued Stock Report Legacy]]></HELP>
+<!--800088-->  <HELP><![CDATA[Valued Stock Report Legacy shows the stock for a particular warehouse and the value of that stock.]]></HELP>
 <!--800088-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--800088-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--800088-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
@@ -4777,7 +4777,7 @@ This operation can take a long time to complete.]]></HELP>
 <!--800185-->  <VALUE><![CDATA[ReportWarehousePartnerJR]]></VALUE>
 <!--800185-->  <NAME><![CDATA[Stock Report]]></NAME>
 <!--800185-->  <DESCRIPTION><![CDATA[Customer Stock Report]]></DESCRIPTION>
-<!--800185-->  <HELP><![CDATA[Customer Stock Report JR]]></HELP>
+<!--800185-->  <HELP><![CDATA[Stock Report shows a stock level of all products (that have quantity on hand different from zero) and their location (warehouse and storage bin) grouped by product category. For each row product, quantity, unit, attribute, shelves, column, height and warehouse]]></HELP>
 <!--800185-->  <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
 <!--800185-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--800185-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
@@ -5124,7 +5124,7 @@ This operation can take a long time to complete.]]></HELP>
 <!--800205-->  <VALUE><![CDATA[ReportSalesDimensionalAnalyzeJR_legacy]]></VALUE>
 <!--800205-->  <NAME><![CDATA[Sales Invoice Dimensional Report Legacy]]></NAME>
 <!--800205-->  <DESCRIPTION><![CDATA[Sales Invoice Dimensional Report]]></DESCRIPTION>
-<!--800205-->  <HELP><![CDATA[Sales Invoice Dimensional Report JR]]></HELP>
+<!--800205-->  <HELP><![CDATA[Sales Invoice Dimensional Report  shows information about registered sales invoices (Sales Invoices in a status Completed or Voided) during a selected period of time. ]]></HELP>
 <!--800205-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--800205-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--800205-->  <ISREPORT><![CDATA[Y]]></ISREPORT>

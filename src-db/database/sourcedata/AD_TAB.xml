@@ -3897,8 +3897,8 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--322-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--322-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--322-->  <NAME><![CDATA[Business Partner Category]]></NAME>
-<!--322-->  <DESCRIPTION><![CDATA[Create a business partner category.]]></DESCRIPTION>
-<!--322-->  <HELP><![CDATA[Business partner category window allows you to create and configure every business partner category your company may need.]]></HELP>
+<!--322-->  <DESCRIPTION><![CDATA[Business partner category window allows to create and configure every business partner category your organization may need.]]></DESCRIPTION>
+<!--322-->  <HELP><![CDATA[Business partner category window allows to create and configure every business partner category your organization may need.]]></HELP>
 <!--322-->  <AD_TABLE_ID><![CDATA[394]]></AD_TABLE_ID>
 <!--322-->  <AD_WINDOW_ID><![CDATA[192]]></AD_WINDOW_ID>
 <!--322-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -5130,8 +5130,8 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--452-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--452-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--452-->  <NAME><![CDATA[Asset Category]]></NAME>
-<!--452-->  <DESCRIPTION><![CDATA[Create asset categories to group assets with similar characteristics.]]></DESCRIPTION>
-<!--452-->  <HELP><![CDATA[Create asset categories to group assets with similar characteristics.]]></HELP>
+<!--452-->  <DESCRIPTION><![CDATA[Asset category window allows to create and configure every asset category your organization may need.]]></DESCRIPTION>
+<!--452-->  <HELP><![CDATA[Asset category window allows to create and configure every asset category your organization may need.]]></HELP>
 <!--452-->  <AD_TABLE_ID><![CDATA[542]]></AD_TABLE_ID>
 <!--452-->  <AD_WINDOW_ID><![CDATA[252]]></AD_WINDOW_ID>
 <!--452-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -9700,7 +9700,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800204-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800204-->  <NAME><![CDATA[Accounting]]></NAME>
 <!--800204-->  <DESCRIPTION><![CDATA[Create and edit G/L accounts to be used in transactions which include a selected asset group.]]></DESCRIPTION>
-<!--800204-->  <HELP><![CDATA[Create and edit G/L accounts to be used in transactions which include a selected asset group.]]></HELP>
+<!--800204-->  <HELP><![CDATA[Each asset category allows to configure a different set of accounts to use to post asset depreciation.]]></HELP>
 <!--800204-->  <AD_TABLE_ID><![CDATA[800171]]></AD_TABLE_ID>
 <!--800204-->  <AD_WINDOW_ID><![CDATA[252]]></AD_WINDOW_ID>
 <!--800204-->  <SEQNO><![CDATA[20]]></SEQNO>

@@ -980,8 +980,8 @@
 <!--192-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--192-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--192-->  <NAME><![CDATA[Business Partner Category]]></NAME>
-<!--192-->  <DESCRIPTION><![CDATA[Create and edit information related to similar business partners at one time by grouping them.]]></DESCRIPTION>
-<!--192-->  <HELP><![CDATA[Business partners can be grouped into different categories which must be created with the aim of helping their management and analysis.]]></HELP>
+<!--192-->  <DESCRIPTION><![CDATA[Business partners can be grouped into different categories with the aim of helping their management and analysis.]]></DESCRIPTION>
+<!--192-->  <HELP><![CDATA[Business partners can be grouped into different categories with the aim of helping their management and analysis.]]></HELP>
 <!--192-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--192-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--192-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -1269,8 +1269,8 @@
 <!--252-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--252-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--252-->  <NAME><![CDATA[Asset Group]]></NAME>
-<!--252-->  <DESCRIPTION><![CDATA[Create and edit categories to group assets with similar characteristics together.]]></DESCRIPTION>
-<!--252-->  <HELP><![CDATA[Create and edit categories to group assets with similar characteristics together.]]></HELP>
+<!--252-->  <DESCRIPTION><![CDATA[Assets can be grouped into different categories with the aim of helping their depreciation management and analysis.]]></DESCRIPTION>
+<!--252-->  <HELP><![CDATA[Assets can be grouped into different categories with the aim of helping their depreciation management and analysis.]]></HELP>
 <!--252-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--252-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--252-->  <PROCESSING><![CDATA[N]]></PROCESSING>
