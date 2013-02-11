@@ -132,6 +132,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
         if (!_.isUndefined(receipt.selectedPayment) && !_.isUndefined(receipt.getPaymentStatus()) && receipt.getPaymentStatus().change > 0) {
           var payToDo = receipt.getPaymentStatus();
           var payment = OB.POS.terminal.terminal.paymentnames[receipt.selectedPayment];
+          var oldChange = receipt.get('change');
           if (!payment.paymentMethod.iscash) {
             payment = OB.POS.terminal.terminal.paymentnames[OB.POS.modelterminal.get('paymentcash')];
           }
@@ -145,6 +146,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
             'openDrawer': payment.paymentMethod.openDrawer
           }));
         }
+        receipt.set('change', oldChange);
         receipt.trigger('closed');
         receipt.trigger('print'); // to guaranty execution order
         orderList.deleteCurrent();
