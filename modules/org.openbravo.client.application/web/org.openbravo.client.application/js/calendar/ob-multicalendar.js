@@ -318,6 +318,14 @@ isc.OBMultiCalendar.addProperties({
     }
     this.addMembers([OB.Utilities.createLoadingLayout()]);
     callback = function (rpcResponse, data, rpcRequest) {
+      if (data.message) {
+        isc.warn(data.message.text, function () {
+          return true;
+        }, {
+          icon: '[SKINIMG]Dialog/error.png',
+          title: OB.I18N.getLabel('OBUIAPP_Error')
+        });
+      }
       me.calendarData = me.parseCalendarData(data);
       me.drawComponents();
     };
