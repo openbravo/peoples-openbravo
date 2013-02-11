@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2012 Openbravo SLU
+ * All portions are Copyright (C) 2011-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,7 +22,23 @@ isc.ClassFactory.defineClass('OBLogout', isc.ImgButton);
 // = OBLogout =
 // The OBLogout implements a widget to logout the application
 isc.OBLogout.addProperties({
+  showInPortal: true,
+
   keyboardShortcutId: 'NavBar_OBLogout',
+
+  showLogoutText: false,
+
+  initWidget: function () {
+    if (this.showLogoutText) {
+      this.baseStyle = isc.OBAlertIcon.getInstanceProperty('baseStyle');
+      this.height = '100%';
+      this.autoFit = true;
+      this.showTitle = true;
+      this.src = '';
+      this.title = OB.I18N.getLabel('UINAVBA_LogOut');
+    }
+    this.Super('initWidget', arguments);
+  },
 
   draw: function () {
     var me = this,
@@ -35,7 +51,9 @@ isc.OBLogout.addProperties({
     OB.KeyboardManager.Shortcuts.set(this.keyboardShortcutId, 'Canvas', ksAction);
     this.Super("draw", arguments);
 
-    this.setPrompt(OB.I18N.getLabel('UINAVBA_EndSession'));
+    if (!this.showLogoutText) {
+      this.setPrompt(OB.I18N.getLabel('UINAVBA_EndSession'));
+    }
 /* Avoid declare directly "prompt: " in this widget definition.
        Declared as "setPrompt" inside "draw" function in order to solve issue https://issues.openbravo.com/view.php?id=18192 in FF */
 

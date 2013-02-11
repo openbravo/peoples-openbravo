@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2012 Openbravo SLU
+ * All portions are Copyright (C) 2011-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -132,13 +132,3 @@ isc.OBAlertIcon.addProperties({
   iconWidth: 11,
   iconHeight: 13
 });
-
-
-OB.Styles.TopLayout.LogosContainer = {
-  width: '100%',
-  align: 'right',
-  layoutLeftMargin: 10,
-  layoutRightMargin: 10,
-  membersMargin: 20,
-  defaultLayoutAlign: 'center'
-};

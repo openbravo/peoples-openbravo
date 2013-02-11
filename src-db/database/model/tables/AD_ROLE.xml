@@ -85,6 +85,10 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
+      <column name="ISPORTAL" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
+      </column>
       <foreign-key foreignTable="AD_TREE" name="AD_ROLE_AD_TREE_MENU">
         <reference local="AD_TREE_MENU_ID" foreign="AD_TREE_ID"/>
       </foreign-key>

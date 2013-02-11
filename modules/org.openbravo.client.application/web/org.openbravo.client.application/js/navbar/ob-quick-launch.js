@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2012 Openbravo SLU
+ * All portions are Copyright (C) 2011-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -59,6 +59,7 @@ isc.OBQuickLaunchRecentLinkButton.addProperties({
 isc.ClassFactory.defineClass('OBQuickLaunch', isc.OBQuickRun);
 
 isc.OBQuickLaunch.addProperties({
+  showInPortal: false,
 
   draw: function () {
     this.Super("draw", arguments);

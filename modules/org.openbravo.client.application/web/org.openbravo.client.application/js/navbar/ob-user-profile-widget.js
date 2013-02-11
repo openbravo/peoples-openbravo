@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -23,6 +23,9 @@ isc.ClassFactory.defineClass('OBUserProfile', isc.OBQuickRun);
 // user. By clicking the widget a form is opened which allows to edit the
 // user/role information and change the password.
 isc.OBUserProfile.addProperties({
+  showInPortal: true,
+
+  showProfileFormInPortal: false,
 
   layoutProperties: {
     width: 280
@@ -38,10 +41,6 @@ isc.OBUserProfile.addProperties({
   // Set to empty to prevent an icon from being displayed on the button.
   src: '',
 
-  // ** {{{ prompt }}} **
-  //
-  // Shown on hover, shows some user information.
-  prompt: '<b>' + OB.I18N.getLabel('UINAVBA_Role') + '</b>: ' + OB.User.roleName + '<br/>' + '<b>' + OB.I18N.getLabel('UINAVBA_Client') + '</b>: ' + OB.User.clientName + '<br/>' + '<b>' + OB.I18N.getLabel('UINAVBA_Organization') + '</b>: ' + OB.User.organizationName,
   hoverWidth: 200,
 
   showTitle: true,
@@ -53,11 +52,15 @@ isc.OBUserProfile.addProperties({
     this.initialize();
 
     // reset before showing
-    this.roleForm.reset();
-    this.roleForm.focusInItem('role');
+    if (this.profileForm) {
+      this.profileForm.reset();
+      this.profileForm.focusInItem('role');
+    }
     this.tabSet.selectTab(0);
-    this.passwordForm.reset();
-    this.passwordForm.setFocusItem('currentPwd');
+    if (this.pwdForm) {
+      this.pwdForm.reset();
+      this.pwdForm.setFocusItem('currentPwd');
+    }
     this.Super('doShow', arguments);
   },
 
@@ -72,26 +75,23 @@ isc.OBUserProfile.addProperties({
     }, function (req, data, resp) {
       me.formData = data;
     });
+    // ** {{{ setPrompt }}} **
+    // Shown on hover, shows some user information.
+    if (!OB.User.isPortal) {
+      this.setPrompt('<b>' + OB.I18N.getLabel('UINAVBA_Role') + '</b>: ' + OB.User.roleName + '<br/>' + '<b>' + OB.I18N.getLabel('UINAVBA_Client') + '</b>: ' + OB.User.clientName + '<br/>' + '<b>' + OB.I18N.getLabel('UINAVBA_Organization') + '</b>: ' + OB.User.organizationName);
+    }
 
     this.Super('initWidget', arguments);
     OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.UserProfileButton', this);
   },
 
-  // ** {{{ initialize() }}} **
-  //
-  // Creates the forms, fields and buttons.
-  initialize: function () {
-    if (this.roleForm) {
-      return;
-    }
-
+  createProfileForm: function () {
     var me = this,
-        formLayout, newPasswordField, passwordForm, confirmPasswordField, buttonLayout, currentPasswordField, roleForm, widgetInstance, comboBoxFieldProperties, roleField, orgField, warehouseField, languageField, checkboxFieldProperties, defaultField, clientField, tabSet, pwdButtonLayout, pwdFormLayout, pwdSaveButton, textFieldProperties, passwordFieldProperties, dummyFirstField, dummyLastField;
+        profileFormLayout, buttonLayout, profileForm, comboBoxFieldProperties, roleField, orgField, warehouseField, languageField, checkboxFieldProperties, defaultField, clientField, textFieldProperties;
 
-    OB.Layout.userProfileWidget = this;
-
-    // have a pointer to this instance
-    widgetInstance = this;
+    if (OB.User.isPortal && !this.showProfileFormInPortal) {
+      return false;
+    }
 
     // create a default form field types
     comboBoxFieldProperties = {
@@ -217,7 +217,7 @@ isc.OBUserProfile.addProperties({
     }, textFieldProperties);
 
     // create the form for the role information
-    roleForm = isc.DynamicForm.create({
+    profileForm = isc.DynamicForm.create({
       autoFocus: true,
       overflow: 'visible',
       numCols: 1,
@@ -344,16 +344,13 @@ isc.OBUserProfile.addProperties({
     });
 
     // create the form layout which contains both the form and the buttons
-    formLayout = isc.VStack.create({
+    profileFormLayout = isc.VStack.create({
       align: 'center',
       overflow: 'visible',
       height: 1,
       width: '100%'
     });
-    formLayout.addMembers(roleForm);
-
-    // pointer to the form
-    widgetInstance.roleForm = roleForm;
+    profileFormLayout.addMembers(profileForm);
 
     // create the buttons
     buttonLayout = isc.HStack.create({
@@ -372,24 +369,33 @@ isc.OBUserProfile.addProperties({
       title: OB.I18N.getLabel('OBUIAPP_Apply'),
       click: function () {
         isc.OBQuickRun.currentQuickRun.doHide();
-        roleForm.doSave();
+        profileForm.doSave();
       }
     }));
     buttonLayout.addMembers(isc.OBFormButton.create({
       title: OB.I18N.getLabel('UINAVBA_Cancel'),
       click: isc.OBQuickRun.hide
     }));
-    formLayout.addMembers(buttonLayout);
+    profileFormLayout.addMembers(buttonLayout);
 
-    OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.UserProfileRole.RoleField', roleForm.getField('role'));
-    OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.UserProfileRole.OrgField', roleForm.getField('organization'));
-    OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.UserProfileRole.WarehouseField', roleForm.getField('warehouse'));
-    OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.UserProfileRole.LanguageField', roleForm.getField('language'));
-    OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.UserProfileRole.DefaultField', roleForm.getField('default'));
-    OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.UserProfileRole.ClientField', roleForm.getField('client'));
-    OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.UserProfileRole.Form', roleForm);
+    // pointer to the form
+    this.profileForm = profileForm;
+    this.profileFormLayout = profileFormLayout;
+
+    OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.UserProfileRole.RoleField', profileForm.getField('role'));
+    OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.UserProfileRole.OrgField', profileForm.getField('organization'));
+    OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.UserProfileRole.WarehouseField', profileForm.getField('warehouse'));
+    OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.UserProfileRole.LanguageField', profileForm.getField('language'));
+    OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.UserProfileRole.DefaultField', profileForm.getField('default'));
+    OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.UserProfileRole.ClientField', profileForm.getField('client'));
+    OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.UserProfileRole.Form', profileForm);
     OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.UserProfileRole.SaveButton', buttonLayout.members[0]);
     OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.UserProfileRole.CancelButton', buttonLayout.members[1]);
+  },
+
+  createPwdForm: function () {
+    var me = this,
+        newPasswordField, pwdForm, confirmPasswordField, currentPasswordField, pwdButtonLayout, pwdFormLayout, pwdSaveButton, passwordFieldProperties;
 
     // now create the fields for the password form
     passwordFieldProperties = {
@@ -422,7 +428,7 @@ isc.OBUserProfile.addProperties({
     }, passwordFieldProperties);
 
     // create the password form
-    passwordForm = isc.DynamicForm.create({
+    pwdForm = isc.DynamicForm.create({
       autoFocus: true,
       overflow: 'visible',
       width: '100%',
@@ -463,9 +469,9 @@ isc.OBUserProfile.addProperties({
       // call the server
       formActionHandler: 'org.openbravo.client.application.navigationbarcomponents.UserInfoWidgetActionHandler',
       doSave: function () {
-        OB.RemoteCallManager.call(passwordForm.formActionHandler, passwordForm.getValues(), {
+        OB.RemoteCallManager.call(pwdForm.formActionHandler, pwdForm.getValues(), {
           'command': 'changePwd'
-        }, passwordForm.doSaveCallback);
+        }, pwdForm.doSaveCallback);
       },
 
       // the callback displays an info dialog and then hides the form
@@ -482,7 +488,7 @@ isc.OBUserProfile.addProperties({
             length = data.fields.length;
             for (i = 0; i < length; i++) {
               var field = data.fields[i];
-              passwordForm.addFieldErrors(field.field, OB.I18N.getLabel(field.messageCode), true);
+              pwdForm.addFieldErrors(field.field, OB.I18N.getLabel(field.messageCode), true);
             }
           }
         }
@@ -498,16 +504,16 @@ isc.OBUserProfile.addProperties({
           if (pwdSaveButton.isDisabled()) {
             pwdSaveButton.enable();
           }
-          passwordForm.clearFieldErrors('confirmPwd', true);
+          pwdForm.clearFieldErrors('confirmPwd', true);
         } else if (pwdSaveButton.isEnabled()) {
           pwdSaveButton.disable();
         }
         if (item.name === 'newPwd' || item.name === 'confirmPwd') {
           if (!OB.Utilities.areEqualWithTrim(newPwd, confirmPwd)) {
-            passwordForm.addFieldErrors('confirmPwd', OB.I18N.getLabel('UINAVBA_UnequalPwd'), true);
+            pwdForm.addFieldErrors('confirmPwd', OB.I18N.getLabel('UINAVBA_UnequalPwd'), true);
           }
         }
-        passwordForm.focusInItem(item.name);
+        pwdForm.focusInItem(item.name);
       },
       fields: [currentPasswordField, newPasswordField, confirmPasswordField]
     });
@@ -519,13 +525,11 @@ isc.OBUserProfile.addProperties({
       width: '100%',
       align: 'center'
     });
-    pwdFormLayout.addMembers(passwordForm);
-
-    widgetInstance.passwordForm = passwordForm;
+    pwdFormLayout.addMembers(pwdForm);
 
     pwdSaveButton = isc.OBFormButton.create({
       title: OB.I18N.getLabel('OBUIAPP_Apply'),
-      action: passwordForm.doSave,
+      action: pwdForm.doSave,
       disabled: true
     });
 
@@ -547,6 +551,34 @@ isc.OBUserProfile.addProperties({
     }));
     pwdFormLayout.addMembers(pwdButtonLayout);
 
+    // pointer to the form
+    this.pwdForm = pwdForm;
+    this.pwdFormLayout = pwdFormLayout;
+
+    OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.UserProfilePassword.SaveButton', pwdSaveButton);
+    OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.UserProfilePassword.CancelButton', pwdButtonLayout.members[1]);
+    OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.UserProfilePassword.CurrentPasswordField', pwdForm.getField('currentPwd'));
+    OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.UserProfilePassword.NewPasswordField', pwdForm.getField('newPwd'));
+    OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.UserProfilePassword.ConfirmPasswordField', pwdForm.getField('confirmPwd'));
+    OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.UserProfilePassword.Form', pwdForm);
+  },
+
+  // ** {{{ initialize() }}} **
+  //
+  // Creates the forms, fields and buttons.
+  initialize: function () {
+    var me = this,
+        tabSet, dummyFirstField, dummyLastField;
+
+    if (this.profileForm || this.pwdForm) {
+      return;
+    }
+
+    OB.Layout.userProfileWidget = this;
+
+    this.createProfileForm();
+    this.createPwdForm();
+
     // and create the tabset
     tabSet = isc.TabSet.create({
       paneContainerOverflow: 'visible',
@@ -558,17 +590,25 @@ isc.OBUserProfile.addProperties({
         baseLineThickness: 0
       },
       width: 250,
-      tabs: [{
-        title: OB.I18N.getLabel('UINAVBA_Profile'),
-        pane: formLayout,
-        overflow: 'visible'
-      }, {
-        title: OB.I18N.getLabel('UINAVBA_ChangePassword'),
-        pane: pwdFormLayout,
-        overflow: 'visible'
-      }]
+      initWidget: function () {
+        this.Super('initWidget', arguments);
+        if (me.profileFormLayout) {
+          this.addTab({
+            title: OB.I18N.getLabel('UINAVBA_Profile'),
+            pane: me.profileFormLayout,
+            overflow: 'visible'
+          });
+        }
+        if (me.pwdFormLayout) {
+          this.addTab({
+            title: OB.I18N.getLabel('UINAVBA_ChangePassword'),
+            pane: me.pwdFormLayout,
+            overflow: 'visible'
+          });
+        }
+      }
     });
-    widgetInstance.tabSet = tabSet;
+    this.tabSet = tabSet;
 
     dummyFirstField = isc.OBFocusButton.create({
       getFocusTarget: function () {
@@ -591,12 +631,6 @@ isc.OBUserProfile.addProperties({
     this.members = [dummyFirstField, tabSet, dummyLastField];
 
     OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.UserProfile.Tabset', tabSet);
-    OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.UserProfilePassword.SaveButton', pwdSaveButton);
-    OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.UserProfilePassword.CancelButton', pwdButtonLayout.members[1]);
-    OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.UserProfilePassword.CurrentPasswordField', passwordForm.getField('currentPwd'));
-    OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.UserProfilePassword.NewPasswordField', passwordForm.getField('newPwd'));
-    OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.UserProfilePassword.ConfirmPasswordField', passwordForm.getField('confirmPwd'));
-    OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.UserProfilePassword.Form', passwordForm);
 
     this.resetLayout();
     this.computeSetContent();

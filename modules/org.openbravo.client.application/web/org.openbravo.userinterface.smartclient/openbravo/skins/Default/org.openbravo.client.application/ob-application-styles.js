@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -40,6 +40,10 @@ OB.Styles.TopLayout = {
   layoutBottomMargin: 10
 };
 
+OB.Styles.TopLayout.LeftSpacer = {
+  width: 0
+};
+
 // The toolbar showing the navigation bar components
 OB.Styles.TopLayout.NavBar = {
   overflow: 'visible',
@@ -49,6 +53,19 @@ OB.Styles.TopLayout.NavBar = {
   layoutLeftMargin: 1,
   separatorSize: 0,
   height: 28
+};
+
+OB.Styles.TopLayout.MiddleSpacer = {
+  width: '100%'
+};
+
+OB.Styles.TopLayout.LogosContainer = {
+  width: 1,
+  align: 'right',
+  layoutLeftMargin: 10,
+  layoutRightMargin: 10,
+  membersMargin: 20,
+  defaultLayoutAlign: 'center'
 };
 
 

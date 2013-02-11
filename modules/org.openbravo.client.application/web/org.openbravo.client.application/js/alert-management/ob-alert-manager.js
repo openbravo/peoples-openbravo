@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -108,6 +108,7 @@ isc.ClassFactory.defineClass('OBAlertIcon', isc.ImgButton);
 // The OBAlertIcon extends from the Smartclient Button.
 // The OBAlertIcon registers itself as a listener in the Alert Manager.
 isc.OBAlertIcon.addProperties({
+  showInPortal: false,
 
   initWidget: function () {
     var instance = this,

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2012 Openbravo SLU
+ * All portions are Copyright (C) 2011-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -203,6 +203,8 @@ isc.OBApplicationMenuTree.addProperties({
 isc.ClassFactory.defineClass('OBApplicationMenuButton', isc.MenuButton);
 
 isc.OBApplicationMenuButton.addProperties({
+  showInPortal: false,
+
   keyboardShortcutId: 'NavBar_MenuButton',
 
   draw: function () {

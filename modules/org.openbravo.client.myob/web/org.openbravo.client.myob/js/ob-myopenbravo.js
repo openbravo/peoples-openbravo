@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -23,6 +23,7 @@
 isc.defineClass('OBMyOpenbravo', isc.HLayout);
 
 isc.OBMyOpenbravo.addProperties({
+  showLeftColumnInPortal: false,
 
   // added to prevent the close button from being displayed
   // see https://issues.openbravo.com/view.php?id=15953
@@ -90,10 +91,16 @@ isc.OBMyOpenbravo.addProperties({
   adminMode: false,
   adminLevel: '',
   adminLevelValue: '',
-
-  initWidget: function (args) {
+  createLeftColumnLayout: function () {
     var me = this,
-        i, widgetInstance, recentViewsLayout, recentViewsLinksLayout, recentDocumentsLayout, recentDocumentsLinksLayout, addWidgetLayout, adminOtherMyOBLayout, refreshLayout;
+        i, recentViewsLayout, recentViewsLinksLayout, recentDocumentsLayout, recentDocumentsLinksLayout, addWidgetLayout, adminOtherMyOBLayout, refreshLayout;
+
+    if (OB.User.isPortal && !this.showLeftColumnInPortal) {
+      this.addMember(isc.VLayout.create({
+        width: 14
+      }));
+      return false;
+    }
 
     recentViewsLayout = isc.VLayout.create({});
     recentViewsLayout.addMember(isc.Label.create({
@@ -265,7 +272,9 @@ isc.OBMyOpenbravo.addProperties({
     this.leftColumnLayout.refreshLayout = refreshLayout;
 
     this.addMember(this.leftColumnLayout);
+  },
 
+  createPortalLayout: function () {
     // the portallayout containing the widgets
     this.portalLayout = isc.PortalLayout.create({
       styleName: OB.Styles.OBMyOpenbravo.portalLayout.styleName,
@@ -376,6 +385,13 @@ isc.OBMyOpenbravo.addProperties({
     });
 
     this.addMember(this.portalLayout);
+  },
+
+
+  initWidget: function (args) {
+    this.createLeftColumnLayout();
+    this.createPortalLayout();
+
     this.Super('initWidget', args);
 
     // tell each column their index number

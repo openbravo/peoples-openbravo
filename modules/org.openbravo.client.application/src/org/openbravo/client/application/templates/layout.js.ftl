@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -66,6 +66,9 @@ OB.Layout.initialize = function() {
       var newMembers = [], i;
       for (i = 0; i < members.length; i++) {
           // encapsulate in 2 hlayouts to handle correct mouse over/hover and show of box
+          if (OB.User.isPortal && !members[i].showInPortal) {
+            continue;
+          }
           var newMember = isc.HLayout.create({layoutLeftMargin: 0, layoutRightMargin: 0, width: '100%', height: '100%', styleName: 'OBNavBarComponent', members:[members[i]]}); 
           newMembers[i] = newMember;
       }    
@@ -116,12 +119,18 @@ OB.Layout.initialize = function() {
   if (OB.Styles && OB.Styles.hideOpenbravoLogo) {
     OB.TopLayout.OpenbravoLogo.hide();
   }
-  
+
+  OB.TopLayout.addMember(
+    isc.HLayout.create({}, OB.Styles.TopLayout.LeftSpacer)
+  );
   OB.TopLayout.addMember(OB.NavBar);
   OB.TopLayout.addMember(
-          isc.HLayout.create({
-              members: [OB.TopLayout.CompanyImageLogo, OB.TopLayout.OpenbravoLogo]
-          }, OB.Styles.TopLayout.LogosContainer)
+    isc.HLayout.create({}, OB.Styles.TopLayout.MiddleSpacer)
+  );
+  OB.TopLayout.addMember(
+    isc.HLayout.create({
+        members: [OB.TopLayout.CompanyImageLogo, OB.TopLayout.OpenbravoLogo]
+    }, OB.Styles.TopLayout.LogosContainer)
   );
   
   // add the top part to the main layout
