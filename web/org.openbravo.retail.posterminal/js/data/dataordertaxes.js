@@ -34,7 +34,7 @@
           totalnet = OB.DEC.Zero,
           queue = {},
           triggerNext = false,
-          gross = OB.DEC.Zero;
+          discountedNet, gross = OB.DEC.Zero;
       if (len === 0) {
         me.set('taxes', {});
         if (callback) {
@@ -116,7 +116,7 @@
 
               //We follow the same formula of function c_get_net_price_from_gross to compute the discounted net
               if (discountedGross) {
-                var discountedNet = OB.DEC.div(OB.DEC.mul(discountedGross, discountedGross), taxamtdc);
+                discountedNet = OB.DEC.div(OB.DEC.mul(discountedGross, discountedGross), taxamtdc);
                 pricenet = OB.DEC.div(discountedNet, element.get('qty'));
               } else {
                 pricenet = new BigDecimal(String(linepricenet)); // 2 decimals properly rounded.
@@ -180,9 +180,9 @@
               });
               var netandtax;
               if (discountedGross) {
-                netandtax = OB.DEC.add(discountedNet, summedTaxAmt)
+                netandtax = OB.DEC.add(discountedNet, summedTaxAmt);
               } else {
-                netandtax = OB.DEC.add(OB.DEC.mul(linepricenet, element.get('qty')), summedTaxAmt)
+                netandtax = OB.DEC.add(OB.DEC.mul(linepricenet, element.get('qty')), summedTaxAmt);
               }
               if (expectedGross !== netandtax) {
                 //An adjustment is needed
@@ -248,7 +248,7 @@
               var discountedprice = discAmt ? OB.DEC.div(discAmt, element.get('qty')) : element.get('price');
               var linenet = OB.DEC.mul(linepricenet, element.get('qty'));
 
-              var discountedNet = OB.DEC.mul(discountedprice, element.get('qty'));
+              discountedNet = OB.DEC.mul(discountedprice, element.get('qty'));
               var discountedGross = discountedNet;
               var linegross = linenet;
               // First calculate the line rate.
