@@ -145,7 +145,8 @@ public class EntityResolver implements OBNotSingleton {
         }
         result = searchInstance(entity, id);
       }
-    } else {
+    } else if (id != null) {
+      // Only try to fetch the object if the id is not null
       result = OBDal.getInstance().get(entityName, id);
     }
 
