@@ -37,7 +37,7 @@
         this.set('net', attributes.net);
         this.set('promotions', attributes.promotions);
         this.set('priceIncludesTax', attributes.priceIncludesTax);
-        if (attributes.product && attributes.product.price) {
+        if (!attributes.grossListPrice && attributes.product && attributes.product.price) {
           this.set('grossListPrice', attributes.product.price.standardPrice);
         }
       }
