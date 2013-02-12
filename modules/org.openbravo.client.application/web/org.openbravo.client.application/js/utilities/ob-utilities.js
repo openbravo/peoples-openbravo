@@ -53,7 +53,7 @@ OB.Utilities.checkProfessionalLicense = function (msg, doNotShowMessage) {
 // Used in the 'Role' window, in the 'For Portal Users' onchange field
 // It shows a warning dialog, if Portal is not available due to license restrictions
 OB.Utilities.notifyIfPortalIsNotAllowed = function (item, view, form, grid) {
-  if (item.getValue()) {
+  if (item.getValue() && OB.Application.licenseType === 'C') {
     OB.Utilities.checkProfessionalLicense(OB.I18N.getLabel('OBUIAPP_ActivateMessagePortal'));
     item.setValue(false);
   }
