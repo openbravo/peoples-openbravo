@@ -1245,4 +1245,24 @@ public class FIN_Utility {
 
     return pdList;
   }
+
+  /**
+   * Returns true if the payment is a reverse payment not a reversed one.
+   */
+  public static boolean isReversePayment(FIN_Payment payment) {
+    final Session session = OBDal.getInstance().getSession();
+
+    final StringBuilder hql = new StringBuilder();
+    hql.append("select count(p) ");
+    hql.append(" from FIN_Payment p ");
+    hql.append(" where p.reversedPayment = '").append(payment.getId()).append("' ");
+
+    final Query qry = session.createQuery(hql.toString());
+
+    if ((Long) qry.list().get(0) > Long.parseLong("0")) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }

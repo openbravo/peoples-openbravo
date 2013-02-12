@@ -603,6 +603,16 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
           OBDal.getInstance().rollbackAndClose();
           return;
         }
+        // Reverse Payment
+        if (FIN_Utility.isReversePayment(payment)) {
+          msg.setType("Error");
+          msg.setTitle(Utility.messageBD(conProvider, "Error", language));
+          msg.setMessage(Utility.parseTranslation(conProvider, vars, language,
+              "@APRM_ReversePayment@"));
+          bundle.setResult(msg);
+          OBDal.getInstance().rollbackAndClose();
+          return;
+        }
         // Transaction exists
         if (hasTransaction(payment)) {
           msg.setType("Error");
