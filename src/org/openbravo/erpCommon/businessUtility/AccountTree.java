@@ -17,6 +17,7 @@
 package org.openbravo.erpCommon.businessUtility;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.Vector;
 
 import javax.servlet.ServletException;
@@ -37,16 +38,16 @@ public class AccountTree {
   private static Logger log4j = Logger.getLogger(AccountTree.class);
   private VariablesSecureApp vars;
   private ConnectionProvider conn;
-  private AccountTreeData[] accounts;
-  private AccountTreeData[] elements;
-  private AccountTreeData[] resultantAccounts;
-  private String[] elementValueParent;
+  private AccountTreeData[] accountsFacts;
+  private AccountTreeData[] accountsTree;
+  private AccountTreeData[] reportElements;
+  private String[] reportNodes;
   // Used to inform if the applySign function has reset to zero the qty values
   // or not
   private boolean resetFlag;
-  // True when formsCalculate() calls calculateTree(), and the calculateTree()
-  // calls again formsCalculte()
-  private boolean recursiveForms = false;
+  // True when operandsCalculate() calls calculateTree(), and the calculateTree()
+  // calls again operandsCalculte()
+  private boolean recursiveOperands = false;
 
   /**
    * Constructor
@@ -56,38 +57,34 @@ public class AccountTree {
    * @param _conn
    *          ConnectionProvider object with the connection methods.
    * @param _elements
-   *          Array of account's elements.
+   *          Array of element values. (structure)
    * @param _accounts
-   *          Array of accounts.
+   *          Array of accounting facts. (data)
    * @param _elementValueParent
    *          String with the value of the parent element to evaluate.
    * @throws ServletException
    */
   public AccountTree(VariablesSecureApp _vars, ConnectionProvider _conn,
-      AccountTreeData[] _elements, AccountTreeData[] _accounts, String _elementValueParent)
+      AccountTreeData[] _accountsTree, AccountTreeData[] _accountsFacts, String _reportNode)
       throws ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("AccountTree []");
     vars = _vars;
     conn = _conn;
-    elements = _elements;
-    accounts = _accounts;
-    elementValueParent = new String[1];
-    elementValueParent[0] = _elementValueParent;
-    resultantAccounts = updateTreeQuantitiesSign(null, 0, "D");
+    accountsTree = _accountsTree;
+    accountsFacts = _accountsFacts;
+    reportNodes = new String[1];
+    reportNodes[0] = _reportNode;
+    reportElements = updateTreeQuantitiesSign(null, 0, "D");
     // Calculating forms for every elements
-    if (resultantAccounts != null && resultantAccounts.length > 0) {
+    if (reportElements != null && reportElements.length > 0) {
       // forms: Array of accounts with its operands.
-      AccountTreeData[] forms = AccountTreeData.selectForms(conn,
+      AccountTreeData[] operands = AccountTreeData.selectOperands(conn,
           Utility.getContext(conn, vars, "#User_Org", "AccountTree"),
-          Utility.getContext(conn, vars, "#User_Client", "AccountTree"));
-      resultantAccounts = calculateTree(forms, elementValueParent, new Vector<Object>());
-    }
-    for (AccountTreeData account : resultantAccounts) {
-      if ("C".equals(account.accountsign)) {
-        account.qty = new BigDecimal(account.qty).negate().toString();
-        account.qtyRef = new BigDecimal(account.qtyRef).negate().toString();
-      }
+          Utility.getContext(conn, vars, "#User_Client", "AccountTree"),
+          OBDal.getInstance().get(ElementValue.class, reportNodes[0]).getAccountingElement()
+              .getId());
+      reportElements = calculateTree(operands, reportNodes, new Vector<Object>());
     }
   }
 
@@ -98,52 +95,50 @@ public class AccountTree {
    *          VariablesSecureApp object with the session methods.
    * @param _conn
    *          ConnectionProvider object with the connection methods.
-   * @param _elements
+   * @param _accountsTree
    *          Array of account's elements (elementValues).
-   * @param _accounts
+   * @param _accountsFacts
    *          Array of all the fact accts.
-   * @param _elementValueParent
+   * @param _reportNodes
    *          Array with the value of the parent elements to evaluate (For example, first expenses
    *          then revenues) Objective tree.
    * @throws ServletException
    */
   public AccountTree(VariablesSecureApp _vars, ConnectionProvider _conn,
-      AccountTreeData[] _elements, AccountTreeData[] _accounts, String[] _elementValueParent)
+      AccountTreeData[] _accountsTree, AccountTreeData[] _accountsFacts, String[] _reportNodes)
       throws ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("AccountTree []");
     vars = _vars;
     conn = _conn;
-    elements = _elements;
-    accounts = _accounts;
-    elementValueParent = _elementValueParent;
+    accountsTree = _accountsTree;
+    accountsFacts = _accountsFacts;
+    reportNodes = _reportNodes;
+    applySignAsPerParent();
     // Loading tree with new amounts, applying signs (Debit or Credit) and
     // setting the account level (1, 2, 3,...)
-    resultantAccounts = updateTreeQuantitiesSign(null, 0, "D");
-    if (resultantAccounts != null && resultantAccounts.length > 0) {
+    reportElements = updateTreeQuantitiesSign(null, 0, "D");
+
+    if (reportElements != null && reportElements.length > 0) {
       // Array of accounts with its operands.
       // Calculating forms for every elements
-      AccountTreeData[] forms = AccountTreeData.selectForms(conn,
+      AccountTreeData[] operands = AccountTreeData.selectOperands(conn,
           Utility.getContext(conn, vars, "#User_Org", "AccountTree"),
-          Utility.getContext(conn, vars, "#User_Client", "AccountTree"));
+          Utility.getContext(conn, vars, "#User_Client", "AccountTree"),
+          OBDal.getInstance().get(ElementValue.class, reportNodes[0]).getAccountingElement()
+              .getId());
 
       Vector<Object> vec = new Vector<Object>();
       AccountTreeData[] r;
 
-      for (int i = 0; i < elementValueParent.length; i++) {
-        r = calculateTree(forms, elementValueParent[i], new Vector<Object>());
+      for (int i = 0; i < reportNodes.length; i++) {
+        r = calculateTree(operands, reportNodes[i], new Vector<Object>());
         for (int j = 0; j < r.length; j++)
           vec.addElement(r[j]);
       }
 
-      resultantAccounts = new AccountTreeData[vec.size()];
-      vec.copyInto(resultantAccounts);
-    }
-    for (AccountTreeData account : resultantAccounts) {
-      if ("C".equals(account.accountsign)) {
-        account.qty = new BigDecimal(account.qty).negate().toString();
-        account.qtyRef = new BigDecimal(account.qtyRef).negate().toString();
-      }
+      reportElements = new AccountTreeData[vec.size()];
+      vec.copyInto(reportElements);
     }
   }
 
@@ -153,7 +148,7 @@ public class AccountTree {
    * @return Array with the resultant accounts.
    */
   public AccountTreeData[] getAccounts() {
-    return resultantAccounts;
+    return reportElements;
   }
 
   /**
@@ -167,26 +162,22 @@ public class AccountTree {
    *          Boolean that indicates if this is a summary record.
    * @return BigDecimal with the correct sign applied.
    */
-  private BigDecimal applySign(BigDecimal qty, String sign, boolean isSummary, String accountSign) {
+  private BigDecimal applyShowValueCond(BigDecimal qty, String sign, boolean isSummary) {
     // resetFlag will store whether the value has been truncated because of
     // showvaluecond or not
-    BigDecimal qtyWithSign = qty;
-    if ("C".equals(accountSign)) {
-      qtyWithSign = qtyWithSign.negate();
-    }
     resetFlag = false;
     BigDecimal total = BigDecimal.ZERO;
     if (isSummary && !sign.equalsIgnoreCase("A")) {
       if (sign.equalsIgnoreCase("P")) {
-        if (qtyWithSign.compareTo(total) > 0) {
-          total = qtyWithSign;
+        if (qty.compareTo(total) > 0) {
+          total = qty;
         } else {
           total = BigDecimal.ZERO;
           resetFlag = true;
         }
       } else if (sign.equalsIgnoreCase("N")) {
-        if (qtyWithSign.compareTo(total) < 0) {
-          total = qtyWithSign;
+        if (qty.compareTo(total) < 0) {
+          total = qty;
         } else {
           total = BigDecimal.ZERO;
           resetFlag = true;
@@ -202,61 +193,66 @@ public class AccountTree {
    * Update the quantity and the operation quantity fields of the element, depending on the
    * isDebitCredit field.
    * 
-   * @param element
+   * @param reportElement
    *          AccoutnTreeData object with the element information.
    * @param isDebitCredit
    *          String with the parameter to evaluate if is a Debit or Credit element.
    * @return AccountTreeData object with the new element's information.
    */
-  private AccountTreeData setDataQty(AccountTreeData element, String isDebitCredit) {
-    if (element == null || accounts == null || accounts.length == 0)
-      return element;
-    for (int i = 0; i < accounts.length; i++) {
-      if (accounts[i].id.equals(element.id)) {
-        element.qtyOperation = accounts[i].qty;
-        element.qtyOperationRef = accounts[i].qtyRef;
-        BigDecimal bdQty = new BigDecimal(element.qtyOperation);
-        BigDecimal bdQtyRef = new BigDecimal(element.qtyOperationRef);
-        element.qty = (applySign(bdQty, element.showvaluecond, element.issummary.equals("Y"),
-            element.accountsign)).toPlainString();
-        element.qtyRef = (applySign(bdQtyRef, element.showvaluecond, element.issummary.equals("Y"),
-            element.accountsign)).toPlainString();
+  private AccountTreeData setDataQty(AccountTreeData reportElement, String isDebitCredit) {
+    if (reportElement == null || accountsFacts == null || accountsFacts.length == 0)
+      return reportElement;
+    for (int i = 0; i < accountsFacts.length; i++) {
+      if (accountsFacts[i].id.equals(reportElement.id)) {
+        if (isDebitCredit.equals("C")) {
+          accountsFacts[i].qty = accountsFacts[i].qtycredit;
+          accountsFacts[i].qtyRef = accountsFacts[i].qtycreditRef;
+        }
+        reportElement.qtyOperation = accountsFacts[i].qty;
+        reportElement.qtyOperationRef = accountsFacts[i].qtyRef;
+        BigDecimal bdQty = new BigDecimal(reportElement.qtyOperation);
+        BigDecimal bdQtyRef = new BigDecimal(reportElement.qtyOperationRef);
+        reportElement.qty = (applyShowValueCond(bdQty, reportElement.showvaluecond,
+            reportElement.issummary.equals("Y"))).toPlainString();
+        reportElement.qtyRef = (applyShowValueCond(bdQtyRef, reportElement.showvaluecond,
+            reportElement.issummary.equals("Y"))).toPlainString();
         break;
       }
     }
-    return element;
+    return reportElement;
   }
 
   /**
    * This method updates all the Quantitie's signs of the tree. Is used by the constructor to
    * initialize the element's quantities. Also initializes the level of each account
    * 
-   * @param indice
+   * @param rootElement
    *          String with the index from which to start updating.
    * @param level
    *          Integer with the level of the elements.
-   * @param isDebitCredit
-   *          String with the is Debit or Credit value of the trunk.
+   * @param accountSign
+   *          String with the is debit or credit value of the trunk.
    * @return Array of AccountTreeData with the updated tree.
    */
-  private AccountTreeData[] updateTreeQuantitiesSign(String indice, int level, String isDebitCredit) {
-    if (elements == null || elements.length == 0)
-      return elements;
+  private AccountTreeData[] updateTreeQuantitiesSign(String rootElement, int level,
+      String accountSign) {
+    if (accountsTree == null || accountsTree.length == 0)
+      return accountsTree;
     AccountTreeData[] result = null;
     Vector<Object> vec = new Vector<Object>();
     // if (log4j.isDebugEnabled())
     // log4j.debug("AccountTree.updateTreeQuantitiesSign() - elements: " +
     // elements.length);
-    if (indice == null)
-      indice = "0";
-    for (int i = 0; i < elements.length; i++) {
-      if (elements[i].parentId.equals(indice)) {
-        isDebitCredit = elements[i].accountsign;
-        AccountTreeData[] dataChilds = updateTreeQuantitiesSign(elements[i].nodeId, (level + 1),
-            isDebitCredit);
-        elements[i].elementLevel = Integer.toString(level);
-        elements[i] = setDataQty(elements[i], isDebitCredit);
-        vec.addElement(elements[i]);
+    if (rootElement == null)
+      rootElement = "0";
+    for (int i = 0; i < accountsTree.length; i++) {
+      if (accountsTree[i].parentId.equals(rootElement)) {
+        // accountSign = accountsTree[i].accountsign;
+        AccountTreeData[] dataChilds = updateTreeQuantitiesSign(accountsTree[i].nodeId,
+            (level + 1), accountSign);
+        accountsTree[i].elementLevel = Integer.toString(level);
+        accountsTree[i] = setDataQty(accountsTree[i], accountsTree[i].accountsign);
+        vec.addElement(accountsTree[i]);
         if (dataChilds != null && dataChilds.length > 0) {
           for (int j = 0; j < dataChilds.length; j++)
             vec.addElement(dataChilds[j]);
@@ -277,7 +273,7 @@ public class AccountTree {
    *          Array with the existing forms.
    * @return Boolean indicating if has or not form.
    */
-  private boolean hasForm(String indice, AccountTreeData[] forms) {
+  private boolean hasOperand(String indice, AccountTreeData[] forms) {
     if (indice == null) {
       log4j.error("AccountTree.hasForm - Missing index");
       return false;
@@ -290,30 +286,30 @@ public class AccountTree {
   }
 
   /**
-   * Method to calculate the values with the form's conditions.
+   * Method to calculate the values with the operands's conditions.
    * 
    * @param vecAll
    *          Vector with the evaluated tree.
-   * @param forms
-   *          Array with the forms.
-   * @param indice
+   * @param operands
+   *          Array with the operands.
+   * @param accountId
    *          String with the index of the element to evaluate.
    * @param vecTotal
    *          Vector with the totals of the operation.
    */
-  private void formsCalculate(Vector<Object> vecAll, AccountTreeData[] forms, String indice,
-      Vector<Object> vecTotal, boolean isExactValue) {
+  private void operandsCalculate(Vector<Object> vecAll, AccountTreeData[] operands,
+      String accountId, Vector<Object> vecTotal, boolean isExactValue) {
     if (isExactValue) {
-      recursiveForms = true;
+      recursiveOperands = true;
     } else {
-      recursiveForms = false;
+      recursiveOperands = false;
     }
     if (log4j.isDebugEnabled())
       log4j.debug("AccountTree.formsCalculate");
-    if (resultantAccounts == null || resultantAccounts.length == 0)
+    if (reportElements == null || reportElements.length == 0)
       return;
-    if (indice == null) {
-      log4j.error("AccountTree.formsCalculate - Missing index");
+    if (accountId == null) {
+      log4j.error("AccountTree.formsCalculate - Missing accountId");
       return;
     }
     if (vecTotal == null)
@@ -325,66 +321,49 @@ public class AccountTree {
     BigDecimal total = new BigDecimal((String) vecTotal.elementAt(0));
     BigDecimal totalRef = new BigDecimal((String) vecTotal.elementAt(1));
     boolean encontrado = false;
-    for (int i = 0; i < forms.length; i++) {
-      if (forms[i].id.equals(indice)) {
+    for (int i = 0; i < operands.length; i++) {
+      if (operands[i].id.equals(accountId)) {
         encontrado = false;
         // There exists two options to calculate operands: run through
         // the already processed elements of the report (a) or call
         // calculateTree to obtain amount (b)
-        /* (a) */for (int j = 0; j < vecAll.size(); j++) {
+        /* (a) */
+        for (int j = 0; j < vecAll.size(); j++) {
           AccountTreeData actual = (AccountTreeData) vecAll.elementAt(j);
           log4j.debug("AccountTree.formsCalculate - actual.nodeId: " + actual.nodeId
-              + " - forms[i].nodeId: " + forms[i].nodeId);
-          if (actual.nodeId.equals(forms[i].nodeId)) {
+              + " - forms[i].nodeId: " + operands[i].nodeId);
+          if (actual.nodeId.equals(operands[i].nodeId)) {
             encontrado = true;
-            /*
-             * 
-             * 
-             */
-            actual.qty = (applySign(new BigDecimal(actual.qtyOperation), actual.showvaluecond,
-                actual.issummary.equals("Y"), actual.accountsign)).toPlainString();
-            actual.qtyRef = (applySign(new BigDecimal(actual.qtyOperationRef),
-                actual.showvaluecond, actual.issummary.equals("Y"), actual.accountsign))
-                .toPlainString();
-            total = total.add(new BigDecimal(actual.qty).multiply(new BigDecimal(
-                forms[i].accountsign)));
+
+            actual.qty = (applyShowValueCond(new BigDecimal(actual.qtyOperation),
+                actual.showvaluecond, actual.issummary.equals("Y"))).toPlainString();
+            actual.qtyRef = (applyShowValueCond(new BigDecimal(actual.qtyOperationRef),
+                actual.showvaluecond, actual.issummary.equals("Y"))).toPlainString();
+            total = total
+                .add(new BigDecimal(actual.qty).multiply(new BigDecimal(operands[i].sign)));
 
             totalRef = totalRef.add(new BigDecimal(actual.qtyRef).multiply(new BigDecimal(
-                forms[i].accountsign)));
-            /*
-             * total += (Double.valueOf(actual.qtyOperation).doubleValue()
-             * Double.valueOf(forms[i].accountsign).doubleValue()); totalRef +=
-             * (Double.valueOf(actual.qtyOperationRef).doubleValue()
-             * Double.valueOf(forms[i].accountsign).doubleValue());
-             */
-
-            if (log4j.isDebugEnabled()) {
-              ElementValue account = OBDal.getInstance().get(ElementValue.class, forms[i].id);
-              log4j.debug("AccountTree.formsCalculate - C_ElementValue_ID: " + actual.nodeId
-                  + " - name: " + account.getName() + " - total: " + total
-                  + " - actual.qtyOperation: " + actual.qtyOperation + " - forms[i].accountsign: "
-                  + forms[i].accountsign + " - forms.length:" + forms.length);
-            }
+                operands[i].sign)));
             break;
           }
         }
         /* (b) */if (!encontrado) {
           if (log4j.isDebugEnabled())
-            log4j.debug("AccountTree.formsCalculate - C_ElementValue_ID: " + forms[i].nodeId
+            log4j.debug("AccountTree.formsCalculate - C_ElementValue_ID: " + operands[i].nodeId
                 + " not found");
-          Vector<Object> vecParcial = new Vector<Object>();
-          vecParcial.addElement("0");
-          vecParcial.addElement("0");
-          calculateTree(forms, forms[i].nodeId, vecParcial, true, true);
-          BigDecimal parcial = new BigDecimal((String) vecParcial.elementAt(0));
-          BigDecimal parcialRef = new BigDecimal((String) vecParcial.elementAt(1));
+          Vector<Object> amounts = new Vector<Object>();
+          amounts.addElement("0");
+          amounts.addElement("0");
+          calculateTree(operands, operands[i].nodeId, amounts, true, true);
+          BigDecimal parcial = new BigDecimal((String) amounts.elementAt(0));
+          BigDecimal parcialRef = new BigDecimal((String) amounts.elementAt(1));
           if (log4j.isDebugEnabled())
             log4j.debug("AccountTree.formsCalculate - parcial: " + parcial.toPlainString());
-          parcial = parcial.multiply(new BigDecimal(forms[i].accountsign));
-          parcialRef = parcialRef.multiply(new BigDecimal(forms[i].accountsign));
+          parcial = parcial.multiply(new BigDecimal(operands[i].sign));
+          parcialRef = parcialRef.multiply(new BigDecimal(operands[i].sign));
           if (log4j.isDebugEnabled())
-            log4j.debug("AccountTree.formsCalculate - C_ElementValue_ID: " + forms[i].nodeId
-                + " found with value: " + parcial + " account sign: " + forms[i].accountsign);
+            log4j.debug("AccountTree.formsCalculate - C_ElementValue_ID: " + operands[i].nodeId
+                + " found with value: " + parcial + " account sign: " + operands[i].sign);
           total = total.add(parcial);
           totalRef = totalRef.add(parcialRef);
         }
@@ -413,19 +392,17 @@ public class AccountTree {
   /**
    * Main method, which is called by the constructor to evaluate the tree.
    * 
-   * @param forms
+   * @param operands
    *          Array with the forms.
-   * @param indice
+   * @param reportNode
    *          String with the index of the start element.
    * @param vecTotal
    *          Vector with the accumulated totals.
    * @return Array with the new calculated tree.
    */
-  private AccountTreeData[] calculateTree(AccountTreeData[] forms, String indice,
+  private AccountTreeData[] calculateTree(AccountTreeData[] operands, String reportNode,
       Vector<Object> vecTotal) {
-    String[] i = new String[1];
-    i[0] = indice;
-    return calculateTree(forms, indice, vecTotal, true, false);
+    return calculateTree(operands, reportNode, vecTotal, true, false);
   }
 
   private boolean nodeIn(String node, String[] listOfNodes) {
@@ -438,9 +415,9 @@ public class AccountTree {
   /**
    * Main method, which is called by the constructor to evaluate the tree.
    * 
-   * @param forms
+   * @param operands
    *          Array with the forms.
-   * @param indice
+   * @param reportNode
    *          String with the index of the start element.
    * @param vecTotal
    *          Vector with the accumulated totals.
@@ -450,22 +427,22 @@ public class AccountTree {
    *          Boolean auxiliar to use only for the calls from the forms calculating.
    * @return Array with the new calculated tree.
    */
-  private AccountTreeData[] calculateTree(AccountTreeData[] forms, String indice,
+  private AccountTreeData[] calculateTree(AccountTreeData[] operands, String reportNode,
       Vector<Object> vecTotal, boolean applysign, boolean isExactValue) {
     String[] i = new String[1];
-    i[0] = indice;
+    i[0] = reportNode;
 
-    return calculateTree(forms, i, vecTotal, applysign, isExactValue);
+    return calculateTree(operands, i, vecTotal, applysign, isExactValue);
   }
 
   /**
    * Main method, which is called by the constructor to evaluate the tree.
    * 
-   * @param forms
+   * @param operands
    *          Array with the forms.
-   * @param indice
+   * @param reportNode
    *          Array with the start indexes.
-   * @param vecTotal
+   * @param totalAmounts
    *          Vector with the accumulated totals.
    * @param applysign
    *          Boolean to know if the sign must be applied or not.
@@ -473,35 +450,35 @@ public class AccountTree {
    *          Boolean auxiliar to use only for the calls from the forms calculating.
    * @return Array with the new calculated tree.
    */
-  private AccountTreeData[] calculateTree(AccountTreeData[] forms, String[] indice,
-      Vector<Object> vecTotal, boolean applysign, boolean isExactValue) {
-    if (resultantAccounts == null || resultantAccounts.length == 0)
-      return resultantAccounts;
-    if (indice == null) {
-      indice = new String[1];
-      indice[0] = "0";
+  private AccountTreeData[] calculateTree(AccountTreeData[] operands, String[] reportNode,
+      Vector<Object> totalAmounts, boolean applysign, boolean isExactValue) {
+    if (reportElements == null || reportElements.length == 0)
+      return reportElements;
+    if (reportNode == null) {
+      reportNode = new String[1];
+      reportNode[0] = "0";
     }
     AccountTreeData[] result = null;
-    Vector<Object> vec = new Vector<Object>();
+    Vector<Object> report = new Vector<Object>();
     if (log4j.isDebugEnabled())
-      log4j.debug("AccountTree.calculateTree() - accounts: " + resultantAccounts.length);
-    if (vecTotal == null)
-      vecTotal = new Vector<Object>();
-    if (vecTotal.size() == 0) {
-      vecTotal.addElement("0");
-      vecTotal.addElement("0");
+      log4j.debug("AccountTree.calculateTree() - accounts: " + reportElements.length);
+    if (totalAmounts == null)
+      totalAmounts = new Vector<Object>();
+    if (totalAmounts.size() == 0) {
+      totalAmounts.addElement("0");
+      totalAmounts.addElement("0");
     }
-    BigDecimal total = new BigDecimal((String) vecTotal.elementAt(0));
-    BigDecimal totalRef = new BigDecimal((String) vecTotal.elementAt(1));
+    BigDecimal total = new BigDecimal((String) totalAmounts.elementAt(0));
+    BigDecimal totalRef = new BigDecimal((String) totalAmounts.elementAt(1));
 
-    for (int i = 0; i < resultantAccounts.length; i++) {
-      if ((isExactValue && nodeIn(resultantAccounts[i].nodeId, indice))
-          || (!isExactValue && nodeIn(resultantAccounts[i].parentId, indice))) { // modified by
+    for (int i = 0; i < reportElements.length; i++) {
+      if ((isExactValue && nodeIn(reportElements[i].nodeId, reportNode))
+          || (!isExactValue && nodeIn(reportElements[i].parentId, reportNode))) { // modified by
         // Eduardo Argal.
         // For
         // operands calculation
-        AccountTreeData[] dataChilds = null;
-        if (resultantAccounts[i].calculated.equals("N")) // this would
+        AccountTreeData[] reportElementChilds = null;
+        if (reportElements[i].calculated.equals("N")) // this would
         // work if it
         // only passed
         // here once,
@@ -510,83 +487,86 @@ public class AccountTree {
         // times...
         // why????
         {
-          Vector<Object> vecParcial = new Vector<Object>();
-          vecParcial.addElement("0");
-          vecParcial.addElement("0");
+          Vector<Object> amounts = new Vector<Object>();
+          amounts.addElement("0");
+          amounts.addElement("0");
           @SuppressWarnings("unchecked")
-          Vector<Object> vecAux = (Vector<Object>) vec.clone();
-          dataChilds = calculateTree(forms, resultantAccounts[i].nodeId, vecParcial);
-          if (dataChilds != null && dataChilds.length > 0)
-            for (int h = 0; h < dataChilds.length; h++)
-              vecAux.addElement(dataChilds[h]);
-          if (!hasForm(resultantAccounts[i].nodeId, forms)) {
-            BigDecimal parcial = new BigDecimal((String) vecParcial.elementAt(0));
-            BigDecimal parcialRef = new BigDecimal((String) vecParcial.elementAt(1));
-            resultantAccounts[i].qtyOperation = (new BigDecimal(resultantAccounts[i].qtyOperation)
-                .add(parcial)).toPlainString();
-            resultantAccounts[i].qtyOperationRef = (new BigDecimal(
-                resultantAccounts[i].qtyOperationRef).add(parcialRef)).toPlainString();
-            log4j.debug("calculateTree - NothasForm - parcial:" + parcial
-                + " - resultantAccounts[i].qtyOperation:" + resultantAccounts[i].qtyOperation
-                + " - resultantAccounts[i].nodeId:" + resultantAccounts[i].nodeId);
-          } else {
-            vecParcial.set(0, "0");
-            vecParcial.set(1, "0");
-            formsCalculate(vecAux, forms, resultantAccounts[i].nodeId, vecParcial, isExactValue);
-            BigDecimal parcial = new BigDecimal((String) vecParcial.elementAt(0));
-            BigDecimal parcialRef = new BigDecimal((String) vecParcial.elementAt(1));
-            resultantAccounts[i].qtyOperation = (new BigDecimal(resultantAccounts[i].qtyOperation)
-                .add(parcial)).toPlainString();
-            resultantAccounts[i].qtyOperationRef = (new BigDecimal(
-                resultantAccounts[i].qtyOperationRef).add(parcialRef)).toPlainString();
-            log4j.debug("calculateTree - HasForm - parcial:" + parcial
-                + " - resultantAccounts[i].qtyOperation:" + resultantAccounts[i].qtyOperation
-                + " - resultantAccounts[i].nodeId:" + resultantAccounts[i].nodeId);
+          Vector<Object> reportAux = (Vector<Object>) report.clone();
+          reportElementChilds = calculateTree(operands, reportElements[i].nodeId, amounts);
+          if (reportElementChilds != null && reportElementChilds.length > 0) {
+            for (int h = 0; h < reportElementChilds.length; h++) {
+              reportAux.addElement(reportElementChilds[h]);
+            }
           }
+          if (!hasOperand(reportElements[i].nodeId, operands)) {
+            BigDecimal parcial = new BigDecimal((String) amounts.elementAt(0));
+            BigDecimal parcialRef = new BigDecimal((String) amounts.elementAt(1));
+            reportElements[i].qtyOperation = (new BigDecimal(reportElements[i].qtyOperation)
+                .add(parcial)).toPlainString();
+            reportElements[i].qtyOperationRef = (new BigDecimal(reportElements[i].qtyOperationRef)
+                .add(parcialRef)).toPlainString();
+            // log4j.debug("calculateTree - NothasForm - parcial:" + parcial
+            // + " - resultantAccounts[i].qtyOperation:" + reportElements[i].qtyOperation
+            // + " - resultantAccounts[i].nodeId:" + reportElements[i].nodeId);
+          } else {
+            amounts.set(0, "0");
+            amounts.set(1, "0");
+            operandsCalculate(reportAux, operands, reportElements[i].nodeId, amounts, isExactValue);
+            BigDecimal parcial = new BigDecimal((String) amounts.elementAt(0));
+            BigDecimal parcialRef = new BigDecimal((String) amounts.elementAt(1));
+            reportElements[i].qtyOperation = (new BigDecimal(reportElements[i].qtyOperation)
+                .add(parcial)).toPlainString();
+            reportElements[i].qtyOperationRef = (new BigDecimal(reportElements[i].qtyOperationRef)
+                .add(parcialRef)).toPlainString();
+            log4j.debug("calculateTree - HasForm - parcial:" + parcial
+                + " - resultantAccounts[i].qtyOperation:" + reportElements[i].qtyOperation
+                + " - resultantAccounts[i].nodeId:" + reportElements[i].nodeId);
+          }
+          // SVC show value condition
           String SVC = "";
-          if (isExactValue && !recursiveForms) {
+          if (isExactValue && !recursiveOperands) {
             SVC = "A";
           } else {
-            SVC = resultantAccounts[i].showvaluecond;
+            SVC = reportElements[i].showvaluecond;
           }
-          resultantAccounts[i].qty = (applySign(new BigDecimal(resultantAccounts[i].qtyOperation),
-              SVC, resultantAccounts[i].issummary.equals("Y"), resultantAccounts[i].accountsign))
+          reportElements[i].qty = (applyShowValueCond(
+              new BigDecimal(reportElements[i].qtyOperation), SVC,
+              reportElements[i].issummary.equals("Y"))).toPlainString();
+          reportElements[i].qtyRef = (applyShowValueCond(new BigDecimal(
+              reportElements[i].qtyOperationRef), SVC, reportElements[i].issummary.equals("Y")))
               .toPlainString();
-          if (resetFlag)
-            resultantAccounts[i].svcreset = "Y";
-          resultantAccounts[i].qtyRef = (applySign(new BigDecimal(
-              resultantAccounts[i].qtyOperationRef), SVC,
-              resultantAccounts[i].issummary.equals("Y"), resultantAccounts[i].accountsign))
-              .toPlainString();
-          if (resetFlag)
-            resultantAccounts[i].svcresetref = "Y";
-          resultantAccounts[i].calculated = "Y";
+          if (resetFlag) {
+            reportElements[i].svcreset = "Y";
+            reportElements[i].svcresetref = "Y";
+          }
+          reportElements[i].calculated = "Y";
         }
         if (applysign) {
-          total = total.add(new BigDecimal(resultantAccounts[i].qty));
-          totalRef = totalRef.add(new BigDecimal(resultantAccounts[i].qtyRef));
+          total = total.add(new BigDecimal(reportElements[i].qty));
+          totalRef = totalRef.add(new BigDecimal(reportElements[i].qtyRef));
         } else {
-          total = total.add(new BigDecimal(resultantAccounts[i].qtyOperation));
-          totalRef = totalRef.add(new BigDecimal(resultantAccounts[i].qtyOperationRef));
+          total = total.add(new BigDecimal(reportElements[i].qtyOperation));
+          totalRef = totalRef.add(new BigDecimal(reportElements[i].qtyOperationRef));
         }
         // If the element is not active and it has balance != 0 it must be shown otherwise, it must
         // not.
-        ElementValue ev = OBDal.getInstance().get(ElementValue.class, resultantAccounts[i].id);
-        BigDecimal t = new BigDecimal(resultantAccounts[i].qtyOperation);
-        if (ev.isActive() || (total.compareTo(BigDecimal.ZERO) != 0)
-            || (t.compareTo(BigDecimal.ZERO) != 0)) {
-          vec.addElement(resultantAccounts[i]);
-          if (dataChilds != null && dataChilds.length > 0) {
-            for (int j = 0; j < dataChilds.length; j++)
-              vec.addElement(dataChilds[j]);
+        ElementValue repElementAccount = OBDal.getInstance().get(ElementValue.class,
+            reportElements[i].id);
+        BigDecimal qtyOperation = new BigDecimal(reportElements[i].qtyOperation);
+        if (repElementAccount.isActive() || (total.compareTo(BigDecimal.ZERO) != 0)
+            || (qtyOperation.compareTo(BigDecimal.ZERO) != 0)) {
+          report.addElement(reportElements[i]);
+          if (reportElementChilds != null && reportElementChilds.length > 0) {
+            for (int j = 0; j < reportElementChilds.length; j++)
+              report.addElement(reportElementChilds[j]);
           }
         }
       }
     }
-    vecTotal.set(0, total.toPlainString());
-    vecTotal.set(1, totalRef.toPlainString());
-    result = new AccountTreeData[vec.size()];
-    vec.copyInto(result);
+    totalAmounts.set(0, total.toPlainString());
+    totalAmounts.set(1, totalRef.toPlainString());
+    result = new AccountTreeData[report.size()];
+    report.copyInto(result);
     return result;
   }
 
@@ -603,28 +583,28 @@ public class AccountTree {
    * @return New Array with the filter applied.
    */
   private AccountTreeData[] levelFilter(String[] indice, boolean found, String strLevel) {
-    if (resultantAccounts == null || resultantAccounts.length == 0 || strLevel == null
+    if (reportElements == null || reportElements.length == 0 || strLevel == null
         || strLevel.equals(""))
-      return resultantAccounts;
+      return reportElements;
     AccountTreeData[] result = null;
     Vector<Object> vec = new Vector<Object>();
     if (log4j.isDebugEnabled())
-      log4j.debug("AccountTree.levelFilter() - accounts: " + resultantAccounts.length);
+      log4j.debug("AccountTree.levelFilter() - accounts: " + reportElements.length);
 
     // if (indice == null) indice="0";
     if (indice == null) {
       indice = new String[1];
       indice[0] = "0";
     }
-    for (int i = 0; i < resultantAccounts.length; i++) {
+    for (int i = 0; i < reportElements.length; i++) {
       // if (resultantAccounts[i].parentId.equals(indice) && (!found ||
       // resultantAccounts[i].elementlevel.equalsIgnoreCase(strLevel))) {
-      if (nodeIn(resultantAccounts[i].parentId, indice)
-          && (!found || resultantAccounts[i].elementlevel.equalsIgnoreCase(strLevel))) {
-        AccountTreeData[] dataChilds = levelFilter(resultantAccounts[i].nodeId,
-            (found || resultantAccounts[i].elementlevel.equals(strLevel)), strLevel);
-        if (isAccountLevelLower(strLevel, resultantAccounts[i]))
-          vec.addElement(resultantAccounts[i]);
+      if (nodeIn(reportElements[i].parentId, indice)
+          && (!found || reportElements[i].elementlevel.equalsIgnoreCase(strLevel))) {
+        AccountTreeData[] dataChilds = levelFilter(reportElements[i].nodeId,
+            (found || reportElements[i].elementlevel.equals(strLevel)), strLevel);
+        if (isAccountLevelLower(strLevel, reportElements[i]))
+          vec.addElement(reportElements[i]);
         if (dataChilds != null && dataChilds.length > 0)
           for (int j = 0; j < dataChilds.length; j++)
             if (isAccountLevelLower(strLevel, dataChilds[j]))
@@ -673,9 +653,9 @@ public class AccountTree {
   public AccountTreeData[] filterStructure(String[] indice, boolean notEmptyLines, String strLevel,
       boolean isLevel) {
     if (log4j.isDebugEnabled())
-      log4j.debug("AccountTree.filterStructure() - accounts: " + resultantAccounts.length);
-    if (resultantAccounts == null || resultantAccounts.length == 0)
-      return resultantAccounts;
+      log4j.debug("AccountTree.filterStructure() - accounts: " + reportElements.length);
+    if (reportElements == null || reportElements.length == 0)
+      return reportElements;
     AccountTreeData[] result = null;
     Vector<Object> vec = new Vector<Object>();
 
@@ -683,10 +663,10 @@ public class AccountTree {
 
     for (int i = 0; i < r.length; i++) {
       if (r[i].showelement.equals("Y")) {
-        r[i].qty = (applySign(new BigDecimal(r[i].qty), r[i].showvaluecond, true, r[i].accountsign))
+        r[i].qty = (applyShowValueCond(new BigDecimal(r[i].qty), r[i].showvaluecond, true))
             .toPlainString();
-        r[i].qtyRef = (applySign(new BigDecimal(r[i].qtyRef), r[i].showvaluecond, true,
-            r[i].accountsign)).toPlainString();
+        r[i].qtyRef = (applyShowValueCond(new BigDecimal(r[i].qtyRef), r[i].showvaluecond, true))
+            .toPlainString();
         if ((!notEmptyLines || (new BigDecimal(r[i].qty).compareTo(BigDecimal.ZERO) != 0 || new BigDecimal(
             r[i].qtyRef).compareTo(BigDecimal.ZERO) != 0)) || "Y".equals(r[i].isalwaysshown)) {
           if ("Y".equals(r[i].isalwaysshown)) {
@@ -712,9 +692,9 @@ public class AccountTree {
   public void filter(boolean notEmptyLines, String strLevel, boolean isLevel) {
     if (log4j.isDebugEnabled())
       log4j.debug("filter");
-    if (resultantAccounts == null)
+    if (reportElements == null)
       log4j.warn("No resultant Acct");
-    resultantAccounts = filterStructure(elementValueParent, notEmptyLines, strLevel, isLevel);
+    reportElements = filterStructure(reportNodes, notEmptyLines, strLevel, isLevel);
   }
 
   /**
@@ -722,8 +702,8 @@ public class AccountTree {
    */
   public void filterSVC() {
     if (log4j.isDebugEnabled())
-      log4j.debug("AccountTree.filterShowValueCond() - accounts: " + resultantAccounts.length);
-    if (resultantAccounts == null || resultantAccounts.length == 0)
+      log4j.debug("AccountTree.filterShowValueCond() - accounts: " + reportElements.length);
+    if (reportElements == null || reportElements.length == 0)
       return;
 
     int[] levels = new int[2];
@@ -732,24 +712,24 @@ public class AccountTree {
     levels[1] = Integer.MAX_VALUE; // Value of the min level flaged as
     // SVCResetRef
 
-    for (int i = 0; i < resultantAccounts.length; i++) {
-      int level = Integer.parseInt(resultantAccounts[i].elementLevel);
-      if (resultantAccounts[i].svcreset.equals("Y")) {
+    for (int i = 0; i < reportElements.length; i++) {
+      int level = Integer.parseInt(reportElements[i].elementLevel);
+      if (reportElements[i].svcreset.equals("Y")) {
         levels[0] = Math.min(level, levels[0]);
       }
-      if (resultantAccounts[i].svcresetref.equals("Y")) {
+      if (reportElements[i].svcresetref.equals("Y")) {
         levels[1] = Math.min(level, levels[1]);
       }
       if (level > levels[0]) {
-        resultantAccounts[i].qty = "0.0";
+        reportElements[i].qty = "0.0";
       }
-      if (level == levels[0] && resultantAccounts[i].svcreset.equals("N")) {
+      if (level == levels[0] && reportElements[i].svcreset.equals("N")) {
         levels[0] = Integer.MAX_VALUE;
       }
       if (level > levels[1]) {
-        resultantAccounts[i].qtyRef = "0.0";
+        reportElements[i].qtyRef = "0.0";
       }
-      if (level == levels[1] && resultantAccounts[i].svcresetref.equals("N")) {
+      if (level == levels[1] && reportElements[i].svcresetref.equals("N")) {
         levels[1] = Integer.MAX_VALUE;
       }
     }
@@ -762,4 +742,25 @@ public class AccountTree {
 
     return true;
   }
+
+  private void applySignAsPerParent() {
+    if (accountsTree == null || accountsTree.length == 0) {
+      return;
+    }
+    String parentId = accountsTree[0].id;
+    String accountSign = accountsTree[0].accountsign;
+    HashMap<String, String> parentSigns = new HashMap<String, String>();
+    parentSigns.put(parentId, accountSign);
+    for (AccountTreeData node : accountsTree) {
+      parentId = node.id;
+      accountSign = node.accountsign;
+      parentSigns.put(parentId, accountSign);
+      if (parentSigns.get(node.parentId) != null
+          && !node.accountsign.equals(parentSigns.get(node.parentId))) {
+        node.accountsign = parentSigns.get(node.parentId);
+      }
+    }
+    return;
+  }
+
 }

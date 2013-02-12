@@ -24,9 +24,11 @@
   <SqlMethod name="select" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
-        SELECT tn.Node_ID,tn.Parent_ID,tn.SeqNo, m.C_ElementValue_ID AS ID, ((CASE ? WHEN 'Y' THEN TO_CHAR(m.Value) || ' - ' ELSE '' END) || m.Name) AS NAME,m.Description, m.IsSummary, 
+        SELECT tn.Node_ID,tn.Parent_ID,tn.SeqNo, m.C_ElementValue_ID AS ID, 
+        ((CASE ? WHEN 'Y' THEN TO_CHAR(m.Value) || ' - ' ELSE '' END) || m.Name) AS NAME,m.Description, m.IsSummary, 
         m.ACCOUNTSIGN, m.ShowElement, 0 as element_level, 0 as qty, 0 as qty_ref, 0 as qty_operation, 0 as qty_operation_ref, 
-        0 as QTYCREDIT, 0 as QTYCREDIT_REF, m.ShowValueCond, m.ElementLevel, m.Value, 'N' AS CALCULATED, 'N' AS SVCRESET, 'N' AS SVCRESETREF, m.isalwaysshown
+        0 as QTYCREDIT, 0 as QTYCREDIT_REF, m.ShowValueCond, m.ElementLevel, m.Value, 
+        'N' AS CALCULATED, 'N' AS SVCRESET, 'N' AS SVCRESETREF, m.isalwaysshown, '' as sign
         FROM AD_TreeNode tn, C_ElementValue m
         WHERE tn.IsActive='Y' 
         AND tn.Node_ID = m.C_ElementValue_ID 
@@ -119,5 +121,23 @@
       ]]></Sql>
         <Parameter name="adOrgClient" type="replace" optional="true" after="m.AD_Org_ID IN(" text="'1'"/>
         <Parameter name="adUserClient" type="replace" optional="true" after="m.AD_Client_ID IN(" text="'1'"/>
+  </SqlMethod>
+  <SqlMethod name="selectOperands" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+      <Sql><![CDATA[
+        SELECT m.C_ElementValue_ID as id, o.account_id as node_id, o.sign
+        FROM C_ElementValue m, C_ELEMENTVALUE_OPERAND o, C_ElementValue n
+        WHERE m.isActive='Y' 
+        AND m.AD_Org_ID IN('1') 
+        AND m.AD_Client_ID IN('1') 
+        AND m.C_Element_ID = ?
+        AND m.C_ElementValue_ID = o.C_ElementValue_ID
+        AND n.C_ElementValue_ID = o.C_ElementValue_ID
+        AND o.isactive = 'Y' 
+        order by m.C_elementvalue_id, o.seqno
+      ]]></Sql>
+        <Parameter name="adOrgClient" type="replace" optional="true" after="m.AD_Org_ID IN(" text="'1'"/>
+        <Parameter name="adUserClient" type="replace" optional="true" after="m.AD_Client_ID IN(" text="'1'"/>
+        <Parameter name="element"/>
   </SqlMethod>
 </SqlClass>
