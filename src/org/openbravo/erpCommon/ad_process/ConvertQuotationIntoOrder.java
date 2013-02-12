@@ -38,6 +38,7 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.DalUtil;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.businessUtility.Tax;
@@ -261,7 +262,7 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
           + objCloneOrder.getDocumentNo() + " @beenCreated@");
       bundle.setResult(result);
     } catch (Exception e) {
-      throw new OBException(e);
+      throw new OBException(e.getMessage());
     }
   }
 
@@ -453,8 +454,10 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
 
   /**
    * Create new Payment Plan for an Order
+   * 
+   * @throws Exception
    */
-  private FIN_PaymentSchedule generatePaymentPlan(Order order) {
+  private FIN_PaymentSchedule generatePaymentPlan(Order order) throws Exception {
     FIN_PaymentSchedule ps = OBProvider.getInstance().get(FIN_PaymentSchedule.class);
     ps.setClient(order.getClient());
     ps.setOrganization(order.getOrganization());
@@ -465,6 +468,10 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
     ps.setInvoice(null);
     ps.setOrder(order);
     ps.setCurrency(order.getCurrency());
+    if (order.getPaymentMethod() == null) {
+      throw new Exception(OBMessageUtils.messageBD(new DalConnectionProvider(),
+          "APRM_PAYMENTMETHOD_MISSING", OBContext.getOBContext().getLanguage().getLanguage()));
+    }
     ps.setFinPaymentmethod(order.getPaymentMethod());
     ps.setAmount(order.getGrandTotalAmount());
     ps.setDueDate(order.getOrderDate());
