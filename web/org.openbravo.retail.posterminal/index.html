@@ -87,26 +87,7 @@
       }, false);
     }());
   </script>
-  <script>
-    (function () {
-      function resizeWindow() {
-        // console.log('resize');
-        var winHeight = window.innerHeight,
-            percentage;
-        if (winHeight < 740) {
-          percentage = window.innerHeight * 100 / 740;
-          percentage = Math.floor(percentage) / 100;
-          document.body.style.zoom = percentage;
-        } else if (document.body.style.zoom < 1) {
-          document.body.style.zoom = 1;
-        }
-      }
-      resizeWindow();
-      window.onresize = function () {
-        resizeWindow();
-      };
-    }());
-  </script>
+
   <script>
   OB.POS.terminal.renderInto(document.body);
   </script>
