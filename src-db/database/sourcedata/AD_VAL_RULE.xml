@@ -1483,7 +1483,7 @@ or (@AD_Module_ID@ is not null and AD_Role_ID='0')]]></CODE>
 <!--53AE60A473D2460D8663D7A1BC5BA732-->  <NAME><![CDATA[AD_Org show child organizations]]></NAME>
 <!--53AE60A473D2460D8663D7A1BC5BA732-->  <DESCRIPTION><![CDATA[It only shows the child organizations of the organization's header]]></DESCRIPTION>
 <!--53AE60A473D2460D8663D7A1BC5BA732-->  <TYPE><![CDATA[S]]></TYPE>
-<!--53AE60A473D2460D8663D7A1BC5BA732-->  <CODE><![CDATA[AD_ISORGINCLUDED(ad_org.ad_org_id, @AD_ORG_ID@, ad_org.ad_client_id)<>-1 AND IsReady='Y']]></CODE>
+<!--53AE60A473D2460D8663D7A1BC5BA732-->  <CODE><![CDATA[AD_ISORGINCLUDED(ad_org.ad_org_id, CASE WHEN (@Parent_AD_Org@ IS NULL OR @Parent_AD_Org@ = '') THEN @AD_ORG_ID@ ELSE @Parent_AD_Org@ END, ad_org.ad_client_id)<>-1 AND IsReady='Y']]></CODE>
 <!--53AE60A473D2460D8663D7A1BC5BA732-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--53AE60A473D2460D8663D7A1BC5BA732--></AD_VAL_RULE>
 
