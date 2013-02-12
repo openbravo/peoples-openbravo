@@ -94,6 +94,7 @@
         AND TB.ISACTIVE = 'Y' 
         AND W.ISACTIVE = 'Y' 
         AND (TB.WHERECLAUSE IS NULL OR TB.WHERECLAUSE NOT LIKE '%@%') 
+        AND C.SQLLOGIC is NULL
         GROUP BY M.AD_MENU_ID, (case when Wt.NAME IS NULL then W.NAME else  Wt.NAME end), 
         (case when TBt.NAME IS NULL then TB.NAME else TBt.NAME end), a.referenced_column_id, T.TABLENAME, C.COLUMNNAME, TB.AD_TAB_ID, W.AD_WINDOW_ID
         ORDER BY 1, (case when Wt.NAME IS NULL then W.NAME else  Wt.NAME end), 
