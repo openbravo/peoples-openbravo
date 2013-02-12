@@ -2573,6 +2573,7 @@ isc.OBViewGrid.addProperties({
     // set the default error message,
     // is possibly overridden in the next call
     if (record) {
+      record._hasValidationErrors = true;
       if (!record[isc.OBViewGrid.ERROR_MESSAGE_PROP]) {
         this.setRecordErrorMessage(rowNum, OB.I18N.getLabel('OBUIAPP_ErrorInFields'));
         // do not automatically remove this message
@@ -2595,6 +2596,19 @@ isc.OBViewGrid.addProperties({
     // if nothing else got selected, select ourselves then
     if (record && !this.getSelectedRecord()) {
       this.selectRecord(record);
+    }
+  },
+
+  recordHasChanges: function (rowNum) {
+    var record = this.getRecord(rowNum);
+    // If a record has validation errors but had all the mandatory fields set,
+    // smartclient's recordHasChanges will return false, and the record will be cleared (see ListGrid.hideInlineEditor function)
+    // In this case recordhasChanges should return true, because the values in the grid differ with the values in the database
+    // See issue https://issues.openbravo.com/view.php?id=22123
+    if (record && record._hasValidationErrors) {
+      return true;
+    } else {
+      return this.Super('recordHasChanges', arguments);
     }
   },
 
