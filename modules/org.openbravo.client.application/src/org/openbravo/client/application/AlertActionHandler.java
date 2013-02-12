@@ -20,7 +20,6 @@ package org.openbravo.client.application;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.Date;
 import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -37,8 +36,8 @@ import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.client.kernel.StaticResourceComponent;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.UsedByLink;
-import org.openbravo.model.ad.access.Session;
 import org.openbravo.model.ad.alert.AlertRecipient;
 import org.openbravo.model.ad.alert.AlertRule;
 import org.openbravo.service.db.DalConnectionProvider;
@@ -75,13 +74,10 @@ public class AlertActionHandler extends BaseActionHandler {
       if (session != null) {
         final String dbSessionId = (String) session.getAttribute("#AD_Session_ID".toUpperCase());
         if (dbSessionId != null) {
-          final Session dbSession = OBDal.getInstance().get(Session.class, dbSessionId);
-          dbSession.setLastPing(new Date());
-          // flush to force commit in admin mode
-          OBDal.getInstance().flush();
+          ConnectionProvider conn = new DalConnectionProvider(false);
+          AlertActionHandlerData.setLastPing(conn, dbSessionId);
         }
       }
-
       final VariablesSecureApp vars = new VariablesSecureApp(request);
       // Do not execute the alerts if the system if being rebuilt
       Long total = 0L;
