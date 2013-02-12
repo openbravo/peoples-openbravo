@@ -517,6 +517,15 @@ isc.OBSelectorItem.addProperties({
     } else {
       identifier = newValue;
     }
+
+    // check if the whole item identifier has been entered
+    // see issue https://issues.openbravo.com/view.php?id=22821
+    if (OB.Utilities.isUUID(this.mapDisplayToValue(identifier))) {
+      this.fullIdentifierEntered = true;
+    } else {
+      delete this.fullIdentifierEntered;
+    }
+
     //Setting the element value again to align the cursor position correctly.
     this.setElementValue(identifier);
   },
@@ -630,7 +639,18 @@ isc.OBSelectorItem.addProperties({
   },
 
   // override blur to not do any change handling
-  blur: function (form, item) {},
+  blur: function (form, item) {
+    var selectedRecord;
+    // Handles the case where the user has entered the whole item identifier and has moved out of the 
+    // selector field by clicking on another field, instead of pressing the tab key. in that case the change
+    // was not being detected and if the selector had some callouts associated they were not being executed
+    // See issue https://issues.openbravo.com/view.php?id=22821
+    if (this.fullIdentifierEntered) {
+      selectedRecord = this.pickList.getSelectedRecord();
+      this.setValueFromRecord(selectedRecord);
+      delete this.fullIdentifierEntered;
+    }
+  },
 
   handleOutFields: function (record) {
     var i, j, outFields = this.outFields,
@@ -712,6 +732,7 @@ isc.OBSelectorItem.addProperties({
     var selectedRecord = this.pickList.getSelectedRecord(),
         ret = this.Super('pickValue', arguments);
     this.setValueFromRecord(selectedRecord);
+    delete this.fullIdentifierEntered;
     return ret;
   },
 
