@@ -750,12 +750,8 @@ isc.OBSelectorItem.addProperties({
     if (this.form.getFocusItem() !== this && !this.form.view.isShowingForm && this.getEnteredValue() === '' && this.savedEnteredValue) {
       this.setElementValue(this.savedEnteredValue);
       delete this.savedEnteredValue;
-    } else if (this.form && this.form.view && this.form.view.isShowingForm && this.savedEnteredValue) {
-      if (this.getEnteredValue() !== '') {
-        this.setElementValue(this.savedEnteredValue + this.getEnteredValue());
-      } else {
-        this.setElementValue(this.savedEnteredValue);
-      }
+    } else if (this.form && this.form.view && this.form.view.isShowingForm && this.getEnteredValue() === '' && this.savedEnteredValue) {
+      this.setElementValue(this.savedEnteredValue);
       delete this.savedEnteredValue;
     }
 
@@ -849,7 +845,7 @@ isc.OBSelectorItem.addProperties({
         return '';
       }
     }
-    if (value && value !== '' && ret === '' && !OB.Utilities.isUUID(value)) {
+    if (value && value !== '' && ret === '') {
       this.savedEnteredValue = value;
     }
     return ret;
