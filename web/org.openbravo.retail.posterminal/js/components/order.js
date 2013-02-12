@@ -164,20 +164,10 @@ enyo.kind({
           name: 'divbtninvoice',
           showing: false
         }, {
-          name: 'divreturn',
-          style: 'float: right; width: 50%; text-align: right; font-weight:bold; font-size: 30px; color: #f8941d;',
+          name: 'divText',
+          style: 'float: right; text-align: right; font-weight:bold; font-size: 30px;',
           showing: false,
-          content: OB.I18N.getLabel('OBPOS_ToBeReturned')
-        }, {
-          name: 'divbtnquotation',
-          showing: false,
-          style: 'float: right; width: 100%; text-align: right; font-weight:bold; font-size: 30px; color: #f8941d;',
-          content: OB.I18N.getLabel('OBPOS_QuotationDraft')
-        }, {
-          name: 'divispaid',
-          showing: false,
-          style: 'float: right; width: 50%; text-align: right; font-weight:bold; font-size: 30px; color: #f8941d;',
-          content: OB.I18N.getLabel('OBPOS_paid')
+          content: ''
         }, {
           style: 'clear: both;'
         }]
@@ -261,9 +251,16 @@ enyo.kind({
     }, this);
     this.order.on('change:orderType', function (model) {
       if (model.get('orderType') === 1) {
-        this.$.divreturn.show();
-      } else {
-        this.$.divreturn.hide();
+        this.$.divText.addStyles('width: 50%; color: #f8941d;');
+        this.$.divText.setContent(OB.I18N.getLabel('OBPOS_ToBeReturned'));
+        this.$.divText.show();
+      } else if (model.get('orderType') === 2) {
+        this.$.divText.addStyles('width: 50%; color: lightblue;');
+        this.$.divText.setContent(OB.I18N.getLabel('OBPOS_ToBeLaidaway'));
+        this.$.divText.show();
+        //We have to ensure that there is not another handler showing this div
+      } else if (this.$.divText.content === OB.I18N.getLabel('OBPOS_ToBeReturned') || this.$.divText.content === OB.I18N.getLabel('OBPOS_ToBeLaidaway')) {
+        this.$.divText.hide();
       }
     }, this);
     this.order.on('change:generateInvoice', function (model) {
@@ -275,30 +272,36 @@ enyo.kind({
     }, this);
     this.order.on('change:isQuotation', function (model) {
       if (model.get('isQuotation')) {
-        this.$.divbtnquotation.show();
+        this.$.divText.addStyles('width: 100%; color: #f8941d;');
         this.$.listOrderLines.children[4].children[0].setContent(OB.I18N.getLabel('OBPOS_QuotationNew'));
         if (model.get('hasbeenpaid') === 'Y') {
-          this.$.divbtnquotation.setContent(OB.I18N.getLabel('OBPOS_QuotationUnderEvaluation'));
+          this.$.divText.setContent(OB.I18N.getLabel('OBPOS_QuotationUnderEvaluation'));
         } else {
-          this.$.divbtnquotation.setContent(OB.I18N.getLabel('OBPOS_QuotationDraft'));
+          this.$.divText.setContent(OB.I18N.getLabel('OBPOS_QuotationDraft'));
         }
+        this.$.divText.show();
+        //We have to ensure that there is not another handler showing this div
+      } else if (this.$.divText.content === OB.I18N.getLabel('OBPOS_QuotationUnderEvaluation') || this.$.divText.content === OB.I18N.getLabel('OBPOS_QuotationDraft')) {
+        this.$.divText.hide();
       } else {
-        this.$.divbtnquotation.hide();
         this.$.listOrderLines.children[4].children[0].setContent(OB.I18N.getLabel('OBPOS_ReceiptNew'));
       }
     }, this);
     this.order.on('change:hasbeenpaid', function (model) {
       if (model.get('isQuotation') && model.get('hasbeenpaid') === 'Y') {
-        this.$.divbtnquotation.setContent(OB.I18N.getLabel('OBPOS_QuotationUnderEvaluation'));
+        this.$.divText.setContent(OB.I18N.getLabel('OBPOS_QuotationUnderEvaluation'));
       } else if (model.get('isQuotation') && model.get('hasbeenpaid') === 'N') {
-        this.$.divbtnquotation.setContent(OB.I18N.getLabel('OBPOS_QuotationDraft'));
+        this.$.divText.setContent(OB.I18N.getLabel('OBPOS_QuotationDraft'));
       }
     }, this);
     this.order.on('change:isPaid', function (model) {
       if (model.get('isPaid') === true) {
-        this.$.divispaid.show();
-      } else {
-        this.$.divispaid.hide();
+        this.$.divText.addStyles('width: 50%; color: #f8941d;');
+        this.$.divText.setContent(OB.I18N.getLabel('OBPOS_paid'));
+        this.$.divText.show();
+        //We have to ensure that there is not another handler showing this div
+      } else if (this.$.divText.content === OB.I18N.getLabel('OBPOS_paid')) {
+        this.$.divText.hide();
       }
     }, this);
   }

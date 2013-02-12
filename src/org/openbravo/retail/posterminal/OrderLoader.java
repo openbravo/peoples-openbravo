@@ -97,7 +97,7 @@ public class OrderLoader extends JSONProcessSimple {
   HashMap<String, DocumentType> invoiceDocTypes = new HashMap<String, DocumentType>();
   HashMap<String, DocumentType> shipmentDocTypes = new HashMap<String, DocumentType>();
   String paymentDescription = null;
-
+  boolean isLayaway = false;
   private static final Logger log = Logger.getLogger(OrderLoader.class);
 
   private static final BigDecimal NEGATIVE_ONE = new BigDecimal(-1);
@@ -211,6 +211,7 @@ public class OrderLoader extends JSONProcessSimple {
     boolean sendEmail = false;
     TriggerHandler.getInstance().disable();
     boolean isQuotation = jsonorder.has("isQuotation") && jsonorder.getBoolean("isQuotation");
+    isLayaway = jsonorder.has("orderType") && jsonorder.getLong("orderType") == 2;
     try {
       if (jsonorder.has("oldId") && !jsonorder.getString("oldId").equals("null")
           && jsonorder.has("isQuotation") && jsonorder.getBoolean("isQuotation")) {
@@ -218,9 +219,9 @@ public class OrderLoader extends JSONProcessSimple {
       }
 
       t1 = System.currentTimeMillis();
-      boolean createInvoice = !isQuotation
+      boolean createInvoice = !isQuotation && !isLayaway
           && (jsonorder.has("generateInvoice") && jsonorder.getBoolean("generateInvoice"));
-      boolean createShipment = !isQuotation;
+      boolean createShipment = !isQuotation && !isLayaway;
       sendEmail = (jsonorder.has("sendEmail") && jsonorder.getBoolean("sendEmail"));
       // Order header
       order = OBProvider.getInstance().get(Order.class);
@@ -281,10 +282,11 @@ public class OrderLoader extends JSONProcessSimple {
       if (paymentResponse != null) {
         return paymentResponse;
       }
-
-      // Stock manipulation
-      handleStock(shipment);
-      // Send email
+      if (!isLayaway) {
+        // Stock manipulation
+        handleStock(shipment);
+        // Send email
+      }
       if (sendEmail) {
         EmailSender emailSender = new EmailSender(order.getId(), jsonorder);
       }
@@ -757,8 +759,10 @@ public class OrderLoader extends JSONProcessSimple {
       orderline.setLineNetAmount(BigDecimal.valueOf(jsonOrderLine.getDouble("net")).setScale(
           stdPrecision, RoundingMode.HALF_UP));
 
-      // shipment is created, so all is delivered
-      orderline.setDeliveredQuantity(orderline.getOrderedQuantity());
+      if (!isLayaway) {
+        // shipment is created, so all is delivered
+        orderline.setDeliveredQuantity(orderline.getOrderedQuantity());
+      }
 
       lineReferences.add(orderline);
       orderline.setLineNo((long) ((i + 1) * 10));

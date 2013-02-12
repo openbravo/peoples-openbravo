@@ -77,6 +77,10 @@ enyo.kind({
           }, {
             name: 'creditsalesaction',
             kind: 'OB.OBPOSPointOfSale.UI.CreditButton'
+          }, {
+            name: 'layawayaction',
+            kind: 'OB.OBPOSPointOfSale.UI.LayawayButton',
+            showing: false
           }]
         }, {
           style: 'overflow:auto; width: 100%;',
@@ -122,6 +126,14 @@ enyo.kind({
       this.updatePending();
     }, this);
     this.updatePending();
+    this.receipt.on('change:orderType', function (model) {
+      if (model.get('orderType') === 2) {
+        this.$.creditsalesaction.hide();
+        this.$.layawayaction.show();
+      } else {
+        this.$.layawayaction.hide();
+      }
+    }, this);
   },
 
 
@@ -165,7 +177,7 @@ enyo.kind({
         this.$.doneButton.drawerOpened = false;
       }
       if (OB.POS.modelterminal.get('terminal').allowpayoncredit && this.receipt.get('bp')) {
-        if (this.receipt.get('bp').get('creditLimit') > 0) {
+        if (this.receipt.get('bp').get('creditLimit') > 0 && !this.$.layawayaction.showing) {
           this.$.creditsalesaction.show();
         } else {
           this.$.creditsalesaction.hide();
@@ -179,14 +191,13 @@ enyo.kind({
     } else {
       this.$.exactaction.show();
       if (OB.POS.modelterminal.get('terminal').allowpayoncredit && this.receipt.get('bp')) {
-        if (this.receipt.get('bp').get('creditLimit') > 0) {
+        if (this.receipt.get('bp').get('creditLimit') > 0 && !this.$.layawayaction.showing) {
           this.$.creditsalesaction.show();
         } else {
           this.$.creditsalesaction.hide();
         }
       }
     }
-
     if (paymentstatus.done && !paymentstatus.change && !paymentstatus.overpayment) {
       if (this.receipt.getGross() === 0) {
         this.$.exactlbl.hide();
@@ -410,5 +421,24 @@ enyo.kind({
     //	     this.owner.receipt.trigger('paymentDone');
     //	     this.owner.receipt.trigger('openDrawer');
     //	   }
+  }
+});
+
+enyo.kind({
+  name: 'OB.OBPOSPointOfSale.UI.LayawayButton',
+  kind: 'OB.UI.SmallButton',
+  content: OB.I18N.getLabel('OBPOS_LblLayawayButton'),
+  classes: 'btn-icon-small btnlink-lightblue',
+  style: 'width: 120px; float: right; margin: 0px',
+  permission: 'OBPOS_receipt.layaway',
+  events: {
+    onShowPopup: ''
+  },
+  init: function (model) {
+    this.model = model;
+  },
+  tap: function () {
+    this.owner.receipt.trigger('paymentDone');
+    this.owner.receipt.trigger('openDrawer');
   }
 });

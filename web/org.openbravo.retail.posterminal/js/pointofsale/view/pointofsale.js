@@ -28,7 +28,7 @@ enyo.kind({
     onShowReactivateQuotation: 'showReactivateQuotation',
     onRejectQuotation: 'rejectQuotation',
     onQuotations: 'quotations',
-    onShowReturnText: 'showReturnText',
+    onShowDivText: 'showDivText',
     onAddNewOrder: 'addNewOrder',
     onDeleteOrder: 'deleteCurrentOrder',
     onTabChange: 'tabChange',
@@ -344,17 +344,18 @@ enyo.kind({
     this.model.get('orderList').saveCurrent();
     return true;
   },
-  showReturnText: function (inSender, inEvent) {
+  showDivText: function (inSender, inEvent) {
     if (this.model.get('order').get('isEditable') === false) {
       this.doShowPopup({
         popup: 'modalNotEditableOrder'
       });
       return true;
     }
-    this.model.get('order').setOrderTypeReturn();
+    this.model.get('order').setOrderType(inEvent.permission, inEvent.orderType);
     this.model.get('orderList').saveCurrent();
     return true;
   },
+
   cancelReceiptToInvoice: function (inSender, inEvent) {
     if (this.model.get('order').get('isEditable') === false) {
       this.doShowPopup({

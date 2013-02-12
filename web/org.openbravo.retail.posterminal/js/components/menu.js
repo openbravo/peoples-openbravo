@@ -45,7 +45,7 @@ enyo.kind({
   kind: 'OB.UI.MenuAction',
   permission: 'OBPOS_receipt.invoice',
   events: {
-    onShowReturnText: ''
+    onShowDivText: ''
   },
   label: OB.I18N.getLabel('OBPOS_LblReturn'),
   tap: function () {
@@ -53,7 +53,51 @@ enyo.kind({
       return true;
     }
     this.parent.hide(); // Manual dropdown menu closure
-    this.doShowReturnText();
+    this.doShowDivText({
+      permission: this.permission,
+      orderType: 1
+    });
+  },
+  init: function (model) {
+    this.model = model;
+    var receipt = model.get('order'),
+        me = this;
+    receipt.on('change:isQuotation', function (model) {
+      if (!model.get('isQuotation')) {
+        me.show();
+      } else {
+        me.hide();
+      }
+    }, this);
+    receipt.on('change:isEditable', function (newValue) {
+      if (newValue) {
+        if (newValue.get('isEditable') === false) {
+          this.setShowing(false);
+          return;
+        }
+      }
+      this.setShowing(true);
+    }, this);
+  }
+});
+
+enyo.kind({
+  name: 'OB.UI.MenuLayaway',
+  kind: 'OB.UI.MenuAction',
+  permission: 'OBPOS_receipt.layaway',
+  events: {
+    onShowDivText: ''
+  },
+  label: OB.I18N.getLabel('OBPOS_LblLayawayReceipt'),
+  tap: function () {
+    if (this.disabled) {
+      return true;
+    }
+    this.parent.hide(); // Manual dropdown menu closure
+    this.doShowDivText({
+      permission: this.permission,
+      orderType: 2
+    });
   },
   init: function (model) {
     this.model = model;
@@ -488,6 +532,9 @@ enyo.kind({
     });
     this.menuEntries.push({
       kind: 'OB.UI.MenuPrint'
+    });
+    this.menuEntries.push({
+      kind: 'OB.UI.MenuLayaway'
     });
     this.menuEntries.push({
       kind: 'OB.UI.MenuCustomers'

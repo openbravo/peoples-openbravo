@@ -808,12 +808,13 @@
       }
     },
 
-    setOrderTypeReturn: function () {
-      if (OB.POS.modelterminal.hasPermission('OBPOS_receipt.return')) {
-        this.set('documentType', OB.POS.modelterminal.get('terminal').terminalType.documentTypeForReturns);
-        this.set('orderType', 1); // 0: Sales order, 1: Return order
+    setOrderType: function (permission, orderType) {
+      if (OB.POS.modelterminal.hasPermission(permission)) {
+        if (permission === 'OBPOS_receipt.return') {
+          this.set('documentType', OB.POS.modelterminal.get('terminal').terminalType.documentTypeForReturns);
+        }
+        this.set('orderType', orderType); // 0: Sales order, 1: Return order, 2: Layaway
         this.save();
-
         // remove promotions
         OB.Model.Discounts.applyPromotions(this);
       }
