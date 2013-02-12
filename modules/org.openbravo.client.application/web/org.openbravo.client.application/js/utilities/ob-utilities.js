@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2012 Openbravo SLU
+ * All portions are Copyright (C) 2011-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -47,6 +47,16 @@ OB.Utilities.checkProfessionalLicense = function (msg, doNotShowMessage) {
     return false;
   }
   return true;
+};
+
+//** {{{OB.Utilities.notifyIfPortalIsNotAllowed}}} **
+// Used in the 'Role' window, in the 'For Portal Users' onchange field
+// It shows a warning dialog, if Portal is not available due to license restrictions
+OB.Utilities.notifyIfPortalIsNotAllowed = function (item, view, form, grid) {
+  if (item.getValue()) {
+    OB.Utilities.checkProfessionalLicense(OB.I18N.getLabel('OBUIAPP_ActivateMessagePortal'));
+    item.setValue(false);
+  }
 };
 
 //** {{{OB.Utilities.encodeSearchOperator}}} **

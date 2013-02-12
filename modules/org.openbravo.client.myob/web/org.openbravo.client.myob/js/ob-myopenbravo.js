@@ -95,6 +95,30 @@ isc.OBMyOpenbravo.addProperties({
     var me = this,
         i, recentViewsLayout, recentViewsLinksLayout, recentDocumentsLayout, recentDocumentsLinksLayout, addWidgetLayout, adminOtherMyOBLayout, refreshLayout;
 
+    if (OB.User.isPortal && OB.Application.licenseType === 'C') {
+      this.addMember(isc.HLayout.create({
+        width: '100%',
+        align: 'center',
+        layoutTopMargin: '30%',
+        members: [isc.Dialog.create({
+          width: 350,
+          height: 150,
+          canDragReposition: false,
+          canDragResize: false,
+          showCloseButton: false,
+          showMaximizeButton: false,
+          showMinimizeButton: false,
+          title: OB.I18N.getLabel('OBUIAPP_AlertGrid_Note'),
+          initWidget: function () {
+            this.icon = this.warnIcon;
+            this.Super('initWidget', arguments);
+          },
+          message: OB.I18N.getLabel('OBUIAPP_ActivateMessage', [OB.I18N.getLabel('OBUIAPP_ActivateMessagePortal')])
+        })]
+      }));
+      return false;
+    }
+
     if (OB.User.isPortal && !this.showLeftColumnInPortal) {
       this.addMember(isc.VLayout.create({
         width: 14
@@ -275,6 +299,10 @@ isc.OBMyOpenbravo.addProperties({
   },
 
   createPortalLayout: function () {
+    if (OB.User.isPortal && OB.Application.licenseType === 'C') {
+      return false;
+    }
+
     // the portallayout containing the widgets
     this.portalLayout = isc.PortalLayout.create({
       styleName: OB.Styles.OBMyOpenbravo.portalLayout.styleName,
@@ -394,14 +422,16 @@ isc.OBMyOpenbravo.addProperties({
 
     this.Super('initWidget', args);
 
-    // tell each column their index number
-    // is used when dragging/dropping 
-    this.portalLayout.members[0].colNum = 0;
-    this.portalLayout.members[1].colNum = 1;
-    this.portalLayout.sendEvents = true;
     OB.MyOB = this;
 
-    this.reloadWidgets();
+    // tell each column their index number
+    // is used when dragging/dropping 
+    if (this.portalLayout) {
+      this.portalLayout.members[0].colNum = 0;
+      this.portalLayout.members[1].colNum = 1;
+      this.portalLayout.sendEvents = true;
+      this.reloadWidgets();
+    }
   },
 
   setRecentList: function (layout) {
