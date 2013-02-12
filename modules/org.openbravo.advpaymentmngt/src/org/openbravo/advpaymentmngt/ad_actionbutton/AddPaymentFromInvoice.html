@@ -235,8 +235,10 @@ function updateData(key, mark, drivenByGrid,all) {
 }
 
 function validateDate(element){
-  if(isValidDate(element.value, element.getAttribute("displayformat")))
-    loadGridList();
+  if (isMulticurrencyTxn()) {
+    if(isValidDate(element.value, element.getAttribute("displayformat")))
+      loadGridList();
+  }
 }
 
 function paymentAmountOnChange(element){
@@ -246,9 +248,11 @@ function paymentAmountOnChange(element){
 
 function paymentDateOnChange(){
   try {
-    var url = "../org.openbravo.advpaymentmngt.ad_actionbutton/AddPaymentFromInvoice.html";
-    var paramXMLReq = null;
-    return submitXmlHttpRequest(callBackExchangeRate, document.frmMain, "EXCHANGERATE", url, false, null, paramXMLReq);
+	if (isMulticurrencyTxn()) {
+	  var url = "../org.openbravo.advpaymentmngt.ad_actionbutton/AddPaymentFromInvoice.html";
+	  var paramXMLReq = null;
+	  return submitXmlHttpRequest(callBackExchangeRate, document.frmMain, "EXCHANGERATE", url, false, null, paramXMLReq);
+	}
   } catch (e) {
     alert(e);
   }
