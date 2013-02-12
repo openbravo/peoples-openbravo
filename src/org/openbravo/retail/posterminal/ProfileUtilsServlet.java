@@ -24,7 +24,7 @@ import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
-import org.openbravo.mobile.core.WebServiceAbstractServlet;
+import org.openbravo.mobile.core.process.WebServiceAbstractServlet;
 import org.openbravo.model.ad.system.Language;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonUtils;

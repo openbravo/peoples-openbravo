@@ -6,7 +6,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.mobile.core.login.LabelsComponent;
-import org.openbravo.retail.posterminal.JSONProcessSimple;
+import org.openbravo.mobile.core.process.JSONProcessSimple;
 import org.openbravo.retail.posterminal.POSConstants;
 import org.openbravo.service.json.JsonConstants;
 

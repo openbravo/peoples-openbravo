@@ -14,10 +14,10 @@ import java.util.List;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.dal.core.DalUtil;
+import org.openbravo.mobile.core.process.ProcessHQLQuery;
 import org.openbravo.retail.posterminal.InitialValidations;
 import org.openbravo.retail.posterminal.OBPOSApplications;
 import org.openbravo.retail.posterminal.POSUtils;
-import org.openbravo.retail.posterminal.ProcessHQLQuery;
 import org.openbravo.service.json.JsonConstants;
 
 public class Terminal extends ProcessHQLQuery {

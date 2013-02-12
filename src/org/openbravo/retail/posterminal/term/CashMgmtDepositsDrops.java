@@ -21,7 +21,7 @@ import org.hibernate.Query;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.retail.posterminal.JSONProcessSimple;
+import org.openbravo.mobile.core.process.JSONProcessSimple;
 import org.openbravo.retail.posterminal.OBPOSApplications;
 
 public class CashMgmtDepositsDrops extends JSONProcessSimple {

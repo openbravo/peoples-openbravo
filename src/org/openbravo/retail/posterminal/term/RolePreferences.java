@@ -14,8 +14,8 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.PropertyException;
-import org.openbravo.retail.posterminal.JSONProcess;
-import org.openbravo.retail.posterminal.JSONRowConverter;
+import org.openbravo.mobile.core.process.JSONProcess;
+import org.openbravo.mobile.core.process.JSONRowConverter;
 import org.openbravo.retail.posterminal.POSUtils;
 import org.openbravo.service.json.JsonConstants;
 

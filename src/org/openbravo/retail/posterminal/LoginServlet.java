@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-import org.openbravo.mobile.core.WebServiceAbstractServlet;
+import org.openbravo.mobile.core.process.WebServiceAbstractServlet;
 import org.openbravo.service.json.JsonUtils;
 import org.openbravo.service.web.InvalidRequestException;
 

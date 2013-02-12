@@ -15,6 +15,7 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.mobile.core.process.JSONProcessSimple;
 
 public class ProcessOrder extends JSONProcessSimple {
 
