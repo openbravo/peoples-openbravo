@@ -19249,7 +19249,7 @@ You can upgrade the license of your instance by contacting Openbravo sales staff
 <!--9A0953198E304C608CAD2B6A00B0E537-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--9A0953198E304C608CAD2B6A00B0E537-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--9A0953198E304C608CAD2B6A00B0E537-->  <VALUE><![CDATA[NoOrderDocType]]></VALUE>
-<!--9A0953198E304C608CAD2B6A00B0E537-->  <MSGTEXT><![CDATA[Sales Order cannot be created. The quotation must  have defined a document type for the Sales Order. ]]></MSGTEXT>
+<!--9A0953198E304C608CAD2B6A00B0E537-->  <MSGTEXT><![CDATA[The Sales Order cannot be created. Quotation must have a Document Type for Order defined.]]></MSGTEXT>
 <!--9A0953198E304C608CAD2B6A00B0E537-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--9A0953198E304C608CAD2B6A00B0E537-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--9A0953198E304C608CAD2B6A00B0E537--></AD_MESSAGE>
