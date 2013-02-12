@@ -73,10 +73,6 @@
           kind: 'OB.UI.ModalLogout',
           name: 'logoutDialog'
         }).render();
-        OB.POS.terminal.$.dialogsContainer.createComponent({
-          kind: 'OB.UI.ModalProfile',
-          name: 'profileDialog'
-        }).render();
       });
 
       OB.UTIL.checkConnectivityStatus(); //Initial check;
