@@ -157,10 +157,11 @@ public class AlertProcess implements Process {
         .getProperty("dateTimeFormat.sql");
 
     // These fields are foreign keys that might be null
-    String userStr = user.isEmpty() ? null : "\'" + user + "\'";
-    String roleStr = role.isEmpty() ? null : "\'" + role + "\'";
-    String ruleIdStr = ruleId.isEmpty() ? null : "\'" + ruleId + "\'";
-    String recordIdStr = recordId.isEmpty() ? null : "\'" + recordId + "\'";
+
+    String userStr = user.isEmpty() ? null : user;
+    String roleStr = role.isEmpty() ? null : role;
+    String ruleIdStr = ruleId.isEmpty() ? null : ruleId;
+    String recordIdStr = recordId.isEmpty() ? null : recordId;
     // The date needs to be formated
     String createdStr = "to_timestamp(\'" + created + "\', \'" + dateTimeFormat + "\')";
     // These field needs to be escaped
@@ -173,19 +174,39 @@ public class AlertProcess implements Process {
     sqlBuilder.append("AD_ALERTRULE_ID, RECORD_ID, REFERENCEKEY_ID, ");
     sqlBuilder.append("DESCRIPTION, AD_USER_ID, AD_ROLE_ID, STATUS) ");
     sqlBuilder.append("VALUES ");
-    sqlBuilder.append("(\'" + alertId + "\', \'" + clientId + "\', \'" + orgId + "\', ");
-    sqlBuilder.append("\'Y\'" + ", " + createdStr + ", \'" + createdBy + "\', " + "now()" + ", "
-        + "\'0\'" + ", ");
-    sqlBuilder.append(ruleIdStr + ", " + recordIdStr + ", \'" + referenceKey + "\', ");
-    sqlBuilder.append("\'" + descriptionStr + "\', " + userStr + ", " + roleStr + ", " + "\'NEW\'"
-        + ")");
+    sqlBuilder.append("(?, ?, ?, " + "\'Y\', " + createdStr + ", ?, " + "now()" + ", " + "\'0\'"
+        + ", ?, ?, ?, ?, ?, ?, " + "\'NEW\')");
     String strSql = sqlBuilder.toString();
 
     int updateCount = 0;
     PreparedStatement st = null;
 
+    int iParameter = 0;
+
     try {
       st = connectionProvider.getPreparedStatement(strSql);
+
+      iParameter++;
+      UtilSql.setValue(st, iParameter, 12, null, alertId);
+      iParameter++;
+      UtilSql.setValue(st, iParameter, 12, null, clientId);
+      iParameter++;
+      UtilSql.setValue(st, iParameter, 12, null, orgId);
+      iParameter++;
+      UtilSql.setValue(st, iParameter, 12, null, createdBy);
+      iParameter++;
+      UtilSql.setValue(st, iParameter, 12, null, ruleIdStr);
+      iParameter++;
+      UtilSql.setValue(st, iParameter, 12, null, recordIdStr);
+      iParameter++;
+      UtilSql.setValue(st, iParameter, 12, null, referenceKey);
+      iParameter++;
+      UtilSql.setValue(st, iParameter, 12, null, descriptionStr);
+      iParameter++;
+      UtilSql.setValue(st, iParameter, 12, null, userStr);
+      iParameter++;
+      UtilSql.setValue(st, iParameter, 12, null, roleStr);
+
       updateCount = st.executeUpdate();
     } catch (SQLException e) {
       log4j.error("SQL error in query: " + strSql + "Exception:" + e);
