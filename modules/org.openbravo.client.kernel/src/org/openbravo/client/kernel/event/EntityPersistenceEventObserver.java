@@ -19,7 +19,7 @@
 package org.openbravo.client.kernel.event;
 
 import org.openbravo.base.model.Entity;
-import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.dal.core.TriggerHandler;
 
 /**
  * A base listener which can be extended to perform specific actions when persisting entities.
@@ -47,7 +47,7 @@ public abstract class EntityPersistenceEventObserver {
    */
   protected boolean isValidEvent(EntityPersistenceEvent event) {
     // Disable event handlers if data is being imported
-    if (Utility.isImporting()) {
+    if (TriggerHandler.getInstance().isDisabled()) {
       return false;
     }
     final Entity targetEntity = event.getTargetInstance().getEntity();

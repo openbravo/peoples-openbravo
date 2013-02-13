@@ -71,7 +71,6 @@ import org.openbravo.base.secureApp.OrgTree;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.data.Sqlc;
 import org.openbravo.database.ConnectionProvider;
@@ -79,7 +78,6 @@ import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.obps.ActivationKey.LicenseClass;
 import org.openbravo.erpCommon.reference.PInstanceProcessData;
-import org.openbravo.model.ad.access.SessionStatus;
 import org.openbravo.model.ad.system.ClientInformation;
 import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.model.ad.ui.Process;
@@ -2502,17 +2500,4 @@ public class Utility {
     final String ua = request.getHeader("User-Agent").toLowerCase();
     return (ua.matches(MOBILE_VENDORS) || ua.substring(0, 4).matches(MOBILE_VERSION));
   }
-
-  /**
-   * Checks if the database is being imported.
-   * 
-   * 
-   * @return true if data is being imported, false if not
-   */
-  public static boolean isImporting() {
-    OBQuery<SessionStatus> obq = OBDal.getInstance().createQuery(SessionStatus.class,
-        " importing='Y'");
-    return (obq.count() > 0);
-  }
-
 }
