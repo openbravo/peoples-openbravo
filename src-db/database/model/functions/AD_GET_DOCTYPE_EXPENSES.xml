@@ -42,6 +42,7 @@
         OR DOCSUBTYPESO=p_DocSubTypeSO)
         AND AD_Client_Id=p_ClientId
         AND AD_ISORGINCLUDED(p_OrgId, AD_Org_ID, p_ClientId) <> -1
+        AND ISRETURN='N'
       ORDER BY 
         AD_ISORGINCLUDED(p_OrgId, AD_Org_ID, p_ClientId),
         IsExpense DESC,
