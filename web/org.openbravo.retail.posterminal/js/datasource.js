@@ -104,6 +104,3 @@ OB.DS.HWServer.prototype._print = function (templatedata, params, callback) {
     ajaxRequest.go(ajaxRequest.data).response('success').error('fail');
   }
 };
-
-
-OB.DS.Process.url = '../../org.openbravo.retail.posterminal.service.jsonrest/';
