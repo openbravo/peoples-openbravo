@@ -438,8 +438,8 @@ AND C_CURRENCY.C_CURRENCY_ID=C_ORDER.C_CURRENCY_ID]]>
                 </textElement>
                 <textFieldExpression class="java.lang.String"><![CDATA[$F{DELIVERYTERM}]]></textFieldExpression>
             </textField>
-            <textField isBlankWhenNull="false">
-                <reportElement key="textField-22" x="298" y="28" width="89" height="18"/>
+            <textField isStretchWithOverflow="true" isBlankWhenNull="false">
+                <reportElement key="textField-22" x="298" y="28" width="89" height="18" isPrintWhenDetailOverflows="true"/>
                 <textElement>
                     <font size="8"/>
                 </textElement>
