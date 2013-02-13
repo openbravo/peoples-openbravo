@@ -182,7 +182,7 @@
       }
 
       // Adding to the MainView tabSet
-      OB.MainView.TabSet.addTab(tabDef);
+      OB.MainView.TabSet.addTab(tabDef, params.tabPosition);
 
       if (params.i18nTabTitle) {
         tabTitle = '';

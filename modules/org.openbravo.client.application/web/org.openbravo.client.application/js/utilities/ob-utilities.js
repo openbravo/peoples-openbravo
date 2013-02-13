@@ -339,7 +339,7 @@ OB.Utilities.useClassicMode = function (windowId) {
 // Open a view using a tab id and record id. The tab can be a child tab. If the record id
 // is not set then the tab is opened in grid mode. If command is not set then default is
 // used.
-OB.Utilities.openDirectTab = function (tabId, recordId, command) {
+OB.Utilities.openDirectTab = function (tabId, recordId, command, position) {
 
   tabId = OB.Utilities.removeFragment(tabId);
   recordId = OB.Utilities.removeFragment(recordId);
@@ -356,7 +356,8 @@ OB.Utilities.openDirectTab = function (tabId, recordId, command) {
       tabTitle: data.tabTitle,
       windowId: data.windowId,
       tabId: data.tabId,
-      command: command
+      command: command,
+      tabPosition: position
     };
     // new is only supported for the top tab
     if (command !== 'NEW') {
@@ -1152,4 +1153,21 @@ OB.Utilities.generateOBColor = function (r, g, b, a, seed) {
   obcolor += a;
 
   return obcolor;
+};
+
+//** {{{ OB.Utilities.getProcessTabBarPosition }}} **
+//
+// Returns the position of a process window in the main tab bar
+// Parameters:
+//  * {{{processView}}} The process view
+OB.Utilities.getProcessTabBarPosition = function (processView) {
+  var len = OB.MainView.TabSet.paneContainer.members.length,
+      i;
+  for (i = 0; i < len; i++) {
+    if (processView.ID === OB.MainView.TabSet.paneContainer.members[i].ID) {
+      return i;
+    }
+  }
+  return -1;
+
 };

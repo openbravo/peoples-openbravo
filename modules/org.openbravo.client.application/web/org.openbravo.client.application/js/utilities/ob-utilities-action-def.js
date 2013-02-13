@@ -73,13 +73,21 @@ OB.Utilities.Action.set('showMsgInProcessView', function (paramObj) {
 // * {{{command}}}: The command with which the view to be opened
 // * {{{wait}}}: If true, the thread in which this action was called (if there is any) will be paused until the view be opened.
 OB.Utilities.Action.set('openDirectTab', function (paramObj) {
+  var processIndex;
+  if (!paramObj.newTabPosition) {
+    processIndex = OB.Utilities.getProcessTabBarPosition(paramObj._processView);
+    if (processIndex === -1) {
+      // If the process is not found in the main tab bar, add the new window in the last position
+      paramObj.newTabPosition = OB.MainView.TabSet.paneContainer.members.length;
+    } else {
+      // If the process is foudn in the main tab bar, add the new window in its next position
+      paramObj.newTabPosition = processIndex + 1;
+    }
+  }
   if (!paramObj.isOpening) {
-    OB.Utilities.openDirectTab(paramObj.tabId, paramObj.recordId, paramObj.command);
+    OB.Utilities.openDirectTab(paramObj.tabId, paramObj.recordId, paramObj.command, paramObj.newTabPosition);
   }
   if ((paramObj.wait === true || paramObj.wait === 'true') && paramObj.threadId) {
-    if (!paramObj.newTabPosition) {
-      paramObj.newTabPosition = OB.MainView.TabSet.paneContainer.members.length;
-    }
     if (!OB.MainView.TabSet.getTabObject(paramObj.newTabPosition) || OB.MainView.TabSet.getTabObject(paramObj.newTabPosition).pane.isLoadingTab === true) {
       OB.Utilities.Action.pauseThread(paramObj.threadId);
       paramObj.isOpening = true;
