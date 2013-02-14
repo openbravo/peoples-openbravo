@@ -40,6 +40,9 @@ isc.OBTextAreaItem.addProperties({
     var ret = this.Super('isDisabled', arguments);
     if (ret && this.showDisabled) {
       this.readOnly = true;
+      if (this.form && this.form.view && this.form.view.isShowingForm) {
+        this.canEdit = false;
+      }
       if (this.cellStyle.indexOf('Disabled') === -1 || (this.cellStyle.indexOf('Disabled') !== -1 && this.cellStyle.lastIndexOf('Disabled') !== this.cellStyle.length - 8)) {
         this.cellStyle = this.cellStyle + 'Disabled';
       }
