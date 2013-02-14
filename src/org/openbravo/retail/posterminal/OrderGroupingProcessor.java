@@ -359,8 +359,8 @@ public class OrderGroupingProcessor {
         .getDocumentTypeForInvoice());
     invoice.setTransactionDocument(terminal.getObposTerminaltype().getDocumentType()
         .getDocumentTypeForInvoice());
-    invoice.setAccountingDate(new Date());
-    invoice.setInvoiceDate(new Date());
+    invoice.setAccountingDate(POSUtils.getCurrentDate());
+    invoice.setInvoiceDate(POSUtils.getCurrentDate());
     invoice.setPriceList(firstLine.getSalesOrder().getPriceList());
     return invoice;
   }
@@ -387,8 +387,8 @@ public class OrderGroupingProcessor {
         .getDocumentTypeForInvoice());
     invoice.setTransactionDocument(terminal.getObposTerminaltype().getDocumentType()
         .getDocumentTypeForInvoice());
-    invoice.setAccountingDate(new Date());
-    invoice.setInvoiceDate(new Date());
+    invoice.setAccountingDate(POSUtils.getCurrentDate());
+    invoice.setInvoiceDate(POSUtils.getCurrentDate());
     invoice.setPriceList(firstLine.getSalesOrder().getPriceList());
     return invoice;
   }
@@ -417,7 +417,7 @@ public class OrderGroupingProcessor {
     invoice.setPaymentComplete(true);
     invoice.setTotalPaid(grossamount);
     invoice.setPercentageOverdue(new Long(0));
-    invoice.setFinalSettlementDate(new Date());
+    invoice.setFinalSettlementDate(POSUtils.getCurrentDate());
     invoice.setDaysSalesOutstanding(new Long(0));
     invoice.setOutstandingAmount(BigDecimal.ZERO);
 
