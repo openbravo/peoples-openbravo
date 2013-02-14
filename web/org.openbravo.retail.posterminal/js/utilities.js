@@ -181,8 +181,11 @@
     var ajaxParams, currentlyConnected = OB.POS.modelterminal.get('connectedToERP');
     var oldContext = OB.POS.modelterminal.get('context');
     if (currentlyConnected && oldContext) {
-      new OB.DS.Request('org.openbravo.retail.posterminal.term.Context').exec({}, function (data) {
+      new OB.DS.Request('org.openbravo.retail.posterminal.term.Context').exec({terminal: OB.POS.paramTerminal}, function (data) {
         var newContext;
+        if(data && data.exception){
+          OB.POS.modelterminal.logout();
+        }
         if (data[0]) {
           newContext = data[0];
           if (newContext.user.id !== oldContext.user.id || newContext.organization.id !== oldContext.organization.id || newContext.client.id !== oldContext.client.id || newContext.role.id !== oldContext.role.id) {
