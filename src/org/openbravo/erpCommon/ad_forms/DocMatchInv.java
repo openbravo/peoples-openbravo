@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2012 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2013 Openbravo S.L.U.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.ad_forms;
@@ -49,6 +49,7 @@ public class DocMatchInv extends AcctServer {
 
   /** AD_Table_ID */
   private String SeqNo = "0";
+  private DocLine[] p_inOutlines = new DocLine[0];
 
   /**
    * Constructor
@@ -80,6 +81,7 @@ public class DocMatchInv extends AcctServer {
     loadDocumentType(); // lines require doc type
     // Contained Objects
     p_lines = loadLines(conn, data[0].getField("C_InvoiceLine_Id"));
+    p_inOutlines = loadInOutLines(conn, data[0].getField("M_InOutLine_Id"));
     return true;
   } // loadDocumentDetails
 
@@ -117,6 +119,37 @@ public class DocMatchInv extends AcctServer {
       String LineNetAmt = data[i].linenetamt;
       String PriceList = data[i].pricelist;
       docLine.setAmount(LineNetAmt, PriceList, strQty);
+
+      list.add(docLine);
+    }
+    // Return Array
+    DocLine[] dl = new DocLine[list.size()];
+    list.toArray(dl);
+    return dl;
+  } // loadLines
+
+  /**
+   * Load Invoice Line
+   * 
+   * @return DocLine Array
+   */
+  public DocLine[] loadInOutLines(ConnectionProvider conn, String strInOutLineId) {
+    ArrayList<Object> list = new ArrayList<Object>();
+    DocMatchInvData[] data = null;
+    try {
+      log4jDocMatchInv.debug("############### groupLines = " + groupLines);
+      data = DocMatchInvData.selectInOutLineTotal(connectionProvider, strInOutLineId);
+    } catch (ServletException e) {
+      log4jDocMatchInv.warn(e);
+    }
+    if (data == null || data.length == 0)
+      return null;
+    for (int i = 0; i < data.length; i++) {
+      DocLine_Material docLine = new DocLine_Material(DocumentType, Record_ID, strInOutLineId);
+      docLine.loadAttributes(data[i], this);
+      OBContext.setAdminMode(false);
+      String strQty = data[i].movementqty;
+      docLine.setQty(strQty);
 
       list.add(docLine);
     }
@@ -262,10 +295,21 @@ public class DocMatchInv extends AcctServer {
       strMessage = "@MatchedInvIsZero@";
       setStatus(STATUS_DocumentDisabled);
     }
-
-    dr = fact.createLine(docLine, getAccount(AcctServer.ACCTTYPE_NotInvoicedReceipts, as, conn),
-        as.m_C_Currency_ID, bdCost.toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
-        conn);
+    BigDecimal totalInOutLines = BigDecimal.ZERO;
+    for (int i = 0; i < p_inOutlines.length; i++) {
+      DocLine_Material line = (DocLine_Material) p_inOutlines[i];
+      BigDecimal lineAmount = bdCost.multiply(new BigDecimal(line.m_qty)).divide(
+          new BigDecimal(data[0].getField("MOVEMENTQTY")),
+          OBDal.getInstance().get(Currency.class, as.m_C_Currency_ID).getStandardPrecision()
+              .intValue(), BigDecimal.ROUND_HALF_UP);
+      if (i == p_inOutlines.length - 1) {
+        lineAmount = bdCost.subtract(totalInOutLines);
+      }
+      dr = fact.createLine(line, getAccount(AcctServer.ACCTTYPE_NotInvoicedReceipts, as, conn),
+          as.m_C_Currency_ID, lineAmount.toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+          DocumentType, conn);
+      totalInOutLines = totalInOutLines.add(lineAmount);
+    }
 
     bdExpenses = convertAmount(bdExpenses, strIsSOTrx.equalsIgnoreCase("Y") ? true : false,
         DateAcct, TABLEID_Invoice, strRecordId, strInvoiceCurrency, as.m_C_Currency_ID, docLine,
@@ -283,10 +327,21 @@ public class DocMatchInv extends AcctServer {
       return null;
     }
     ProductInfo p = new ProductInfo(data[0].getField("M_Product_Id"), conn);
-
-    cr = fact.createLine(p_lines[0], p.getAccount(ProductInfo.ACCTTYPE_P_Expense, as, conn),
-        strInvoiceCurrency, "0", bdExpenses.toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-        DocumentType, conn);
+    BigDecimal totalLines = BigDecimal.ZERO;
+    for (int i = 0; i < p_lines.length; i++) {
+      DocLine_Invoice line = (DocLine_Invoice) p_lines[i];
+      BigDecimal lineAmount = bdExpenses.multiply(new BigDecimal(line.getAmount())).divide(
+          new BigDecimal(invoiceData[0].linenetamt),
+          OBDal.getInstance().get(Currency.class, strInvoiceCurrency).getStandardPrecision()
+              .intValue(), BigDecimal.ROUND_HALF_UP);
+      if (i == p_lines.length - 1) {
+        lineAmount = bdExpenses.subtract(totalLines);
+      }
+      cr = fact.createLine(line, p.getAccount(ProductInfo.ACCTTYPE_P_Expense, as, conn),
+          strInvoiceCurrency, "0", lineAmount.toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+          DocumentType, conn);
+      totalLines = totalLines.add(lineAmount);
+    }
     if (cr == null && ZERO.compareTo(bdExpenses) != 0) {
       log4j.warn("createFact - unable to calculate line with "
           + " expenses to product expenses account.");
@@ -303,14 +358,26 @@ public class DocMatchInv extends AcctServer {
     updateProductInfo(as.getC_AcctSchema_ID(), conn, con); // only API
 
     if (bdDifference.signum() != 0) {
-      diff = fact.createLine(docLine, p.getAccount(ProductInfo.ACCTTYPE_P_IPV, as, conn),
-          as.m_C_Currency_ID, (bdDifference.compareTo(BigDecimal.ZERO) == 1) ? bdDifference.abs()
-              .toString() : "0", (bdDifference.compareTo(BigDecimal.ZERO) < 1) ? bdDifference.abs()
-              .toString() : "0", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
-      if (diff == null) {
-        log4j.warn("createFact - unable to calculate line with "
-            + " difference to InvoicePriceVariant account.");
-        return null;
+      BigDecimal totalDiffLines = BigDecimal.ZERO;
+      for (int i = 0; i < p_inOutlines.length; i++) {
+        DocLine_Material line = (DocLine_Material) p_inOutlines[i];
+        BigDecimal lineAmount = bdDifference.multiply(new BigDecimal(line.m_qty)).divide(
+            new BigDecimal(data[0].getField("MOVEMENTQTY")),
+            OBDal.getInstance().get(Currency.class, as.m_C_Currency_ID).getStandardPrecision()
+                .intValue(), BigDecimal.ROUND_HALF_UP);
+        if (i == p_inOutlines.length - 1) {
+          lineAmount = bdDifference.subtract(totalDiffLines);
+        }
+        diff = fact.createLine(line, p.getAccount(ProductInfo.ACCTTYPE_P_IPV, as, conn),
+            as.m_C_Currency_ID, (lineAmount.compareTo(BigDecimal.ZERO) == 1) ? lineAmount.abs()
+                .toString() : "0", (lineAmount.compareTo(BigDecimal.ZERO) < 1) ? lineAmount.abs()
+                .toString() : "0", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+        totalDiffLines = totalDiffLines.add(lineAmount);
+        if (diff == null) {
+          log4j.warn("createFact - unable to calculate line with "
+              + " difference to InvoicePriceVariant account.");
+          return null;
+        }
       }
     }
     SeqNo = "0";
