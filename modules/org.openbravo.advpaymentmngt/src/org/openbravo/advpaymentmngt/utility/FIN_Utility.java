@@ -1259,10 +1259,6 @@ public class FIN_Utility {
 
     final Query qry = session.createQuery(hql.toString());
 
-    if ((Long) qry.list().get(0) > Long.parseLong("0")) {
-      return true;
-    } else {
-      return false;
-    }
+    return ((Long) qry.list().get(0) > Long.parseLong("0"));
   }
 }
