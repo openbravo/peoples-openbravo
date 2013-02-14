@@ -273,7 +273,7 @@ enyo.kind({
         }
         return;
       }
-      if (this.model.get('order').get('isEditable') === false) {
+      if (this.model.get('order').get('isEditable') === false && !this.model.get('order').get('isLayaway')) {
         return true;
       }
       this.doTabChange({
@@ -305,9 +305,9 @@ enyo.kind({
   },
   init: function (model) {
     this.model = model;
-    this.model.get('order').on('change:isEditable', function (newValue) {
+    this.model.get('order').on('change:isEditable change:isLayaway', function (newValue) {
       if (newValue) {
-        if (newValue.get('isEditable') === false) {
+        if (newValue.get('isEditable') === false && !newValue.get('isLayaway')) {
           this.tabPanel = null;
           this.setDisabled(true);
           return;

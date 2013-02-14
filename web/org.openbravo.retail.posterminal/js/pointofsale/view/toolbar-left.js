@@ -81,7 +81,7 @@ enyo.kind({
     this.setDisabled(inEvent.status);
   },
   tap: function () {
-    if (!this.model.get('order').get('isPaid') && !this.model.get('order').get('isQuotation')) {
+    if (!this.model.get('order').get('isPaid') && !this.model.get('order').get('isQuotation') && !this.model.get('order').get('isLayaway')) {
       this.doShowPopup({
         popup: 'modalConfirmReceiptDelete'
       });
@@ -91,8 +91,8 @@ enyo.kind({
   },
   init: function (model) {
     this.model = model;
-    this.model.get('order').on('change:isPaid change:isQuotation change:hasbeenpaid', function (changedModel) {
-      if (changedModel.get('isPaid') || (changedModel.get('isQuotation') && changedModel.get('hasbeenpaid') === 'Y')) {
+    this.model.get('order').on('change:isPaid change:isQuotation change:isLayaway change:hasbeenpaid', function (changedModel) {
+      if (changedModel.get('isPaid') || changedModel.get('isLayaway') || (changedModel.get('isQuotation') && changedModel.get('hasbeenpaid') === 'Y')) {
         this.addClass('paidticket');
         return;
       }

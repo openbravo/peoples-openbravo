@@ -158,6 +158,7 @@ enyo.kind({
       documentType: params.isQuotation ? (OB.POS.modelterminal.get('terminal').terminalType.documentTypeForQuotations) : (OB.POS.modelterminal.get('terminal').terminalType.documentType),
       docstatus: params.isQuotation ? 'UE' : null,
       isQuotation: params.isQuotation ? true : false,
+      isLayaway: params.isLayaway ? true : false,
       filterText: this.$.filterText.getValue(),
       startDate: this.$.startDate.getValue(),
       endDate: this.$.endDate.getValue(),
@@ -309,6 +310,8 @@ enyo.kind({
   executeOnShow: function () {
     if (this.params.isQuotation) {
       this.$.header.setContent(OB.I18N.getLabel('OBPOS_Quotations'));
+    } else if (this.params.isLayaway) {
+      this.$.header.setContent(OB.I18N.getLabel('OBPOS_LblLayaways'));
     } else {
       this.$.header.setContent(OB.I18N.getLabel('OBPOS_LblPaidReceipts'));
     }

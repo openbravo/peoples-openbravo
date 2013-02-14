@@ -126,8 +126,8 @@ enyo.kind({
       this.updatePending();
     }, this);
     this.updatePending();
-    this.receipt.on('change:orderType', function (model) {
-      if (model.get('orderType') === 2) {
+    this.receipt.on('change:orderType change:isLayaway', function (model) {
+      if (model.get('orderType') === 2 || model.get('isLayaway')) {
         this.$.creditsalesaction.hide();
         this.$.layawayaction.show();
       } else {
@@ -188,8 +188,12 @@ enyo.kind({
     if (paymentstatus.done || this.receipt.getGross() === 0) {
       this.$.exactaction.hide();
       this.$.creditsalesaction.hide();
+      this.$.layawayaction.hide();
     } else {
       this.$.exactaction.show();
+      if (this.receipt.get('orderType') === 2 || this.receipt.get('isLayaway')) {
+        this.$.layawayaction.show();
+      }
       if (OB.POS.modelterminal.get('terminal').allowpayoncredit && this.receipt.get('bp')) {
         if (this.receipt.get('bp').get('creditLimit') > 0 && !this.$.layawayaction.showing) {
           this.$.creditsalesaction.show();
@@ -305,6 +309,9 @@ enyo.kind({
       } else {
         this.$.info.setContent('');
       }
+    }
+    if (this.model.get('isPrePayment')) {
+      this.hide();
     }
   }
 });

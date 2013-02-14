@@ -304,5 +304,15 @@ enyo.kind({
         this.$.divText.hide();
       }
     }, this);
+    this.order.on('change:isLayaway', function (model) {
+      if (model.get('isLayaway') === true) {
+        this.$.divText.addStyles('width: 50%; color: lightblue;');
+        this.$.divText.setContent(OB.I18N.getLabel('OBPOS_LblLayaway'));
+        this.$.divText.show();
+        //We have to ensure that there is not another handler showing this div
+      } else if (this.$.divText.content === OB.I18N.getLabel('OBPOS_LblLayaway')) {
+        this.$.divText.hide();
+      }
+    }, this);
   }
 });

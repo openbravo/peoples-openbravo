@@ -858,6 +858,7 @@ public class OrderLoader extends JSONProcessSimple {
     order.setProcessed(true);
     order.setProcessNow(false);
     order.setObposSendemail((jsonorder.has("sendEmail") && jsonorder.getBoolean("sendEmail")));
+    order.setObposIslayaway(isLayaway);
 
     JSONObject taxes = jsonorder.getJSONObject("taxes");
     @SuppressWarnings("unchecked")

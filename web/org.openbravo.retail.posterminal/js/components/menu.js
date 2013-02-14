@@ -492,6 +492,29 @@ enyo.kind({
 });
 
 enyo.kind({
+  name: 'OB.UI.MenuLayaways',
+  kind: 'OB.UI.MenuAction',
+  permission: 'OBPOS_retail.layaways',
+  events: {
+    onLayaways: ''
+  },
+  label: OB.I18N.getLabel('OBPOS_LblLayaways'),
+  tap: function () {
+    if (this.disabled) {
+      return true;
+    }
+    this.parent.hide(); // Manual dropdown menu closure
+    if (!OB.POS.modelterminal.get('connectedToERP')) {
+      OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OfflineWindowRequiresOnline'));
+      return;
+    }
+    if (OB.POS.modelterminal.hasPermission(this.permission)) {
+      this.doLayaways();
+    }
+  }
+});
+
+enyo.kind({
   name: 'OB.UI.MenuBackOffice',
   kind: 'OB.UI.MenuAction',
   permission: 'OBPOS_retail.backoffice',
@@ -544,6 +567,9 @@ enyo.kind({
     });
     this.menuEntries.push({
       kind: 'OB.UI.MenuQuotations'
+    });
+    this.menuEntries.push({
+      kind: 'OB.UI.MenuLayaways'
     });
 
     this.menuEntries = this.menuEntries.concat(this.externalEntries);

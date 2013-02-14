@@ -232,6 +232,7 @@
         this.set('print', attributes.print);
         this.set('sendEmail', attributes.sendEmail);
         this.set('isPaid', attributes.isPaid);
+        this.set('isLayaway', attributes.isLayaway);
         this.set('isEditable', attributes.isEditable);
         this.set('openDrawer', attributes.openDrawer);
         _.each(_.keys(attributes), function (key) {
@@ -480,6 +481,7 @@
       this.set('print', true);
       this.set('sendEmail', false);
       this.set('isPaid', false);
+      this.set('isLayaway', false);
       this.set('isEditable', true);
       this.set('openDrawer', false);
     },
@@ -488,6 +490,7 @@
       var me = this,
           undf;
       this.set('isPaid', _order.get('isPaid'));
+      this.set('isLayaway', _order.get('isLayaway'));
       if (!_order.get('isEditable')) {
         // keeping it no editable as much as possible, to prevent
         // modifications to trigger editable events incorrectly
@@ -971,7 +974,7 @@
         // this avoids to merge for example card payments of different cards.
         for (i = 0, max = payments.length; i < max; i++) {
           p = payments.at(i);
-          if (p.get('kind') === payment.get('kind')) {
+          if (p.get('kind') === payment.get('kind') && !p.get('isPrePayment')) {
             p.set('amount', OB.DEC.add(payment.get('amount'), p.get('amount')));
             if (p.get('rate') && p.get('rate') !== '1') {
               p.set('origAmount', OB.DEC.add(payment.get('origAmount'), OB.DEC.mul(p.get('origAmount'), p.get('rate'))));
@@ -1088,6 +1091,7 @@
       order.set('posTerminal' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, OB.POS.modelterminal.get('terminal')._identifier);
       order.set('orderDate', new Date());
       order.set('isPaid', false);
+      order.set('isLayaway', false);
       order.set('taxes', null);
 
       documentseq = OB.POS.modelterminal.get('documentsequence') + 1;
@@ -1124,6 +1128,11 @@
         order.set('id', null);
         order.set('documentType', OB.POS.modelterminal.get('terminal').terminalType.documentTypeForQuotations);
 
+      }
+      if (model.isLayaway) {
+        order.set('isLayaway', true);
+        order.set('id', model.orderid);
+        order.set('documentType', model.documenttype);
       } else {
         order.set('isPaid', true);
         order.set('id', model.orderid);
@@ -1201,7 +1210,7 @@
         payments.add(curPayment);
       });
       order.set('payments', payments);
-
+      order.adjustPayment();
 
       taxes = {};
       _.each(model.receiptTaxes, function (iter) {

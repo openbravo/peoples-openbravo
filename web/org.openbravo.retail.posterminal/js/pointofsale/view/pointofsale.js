@@ -58,7 +58,8 @@ enyo.kind({
     onCheckAllTicketLines: 'allTicketLinesChecked',
     onSetDiscountQty: 'discountQtyChanged',
     onLineChecked: 'checkedLine',
-    onStatusChanged: 'statusChanged'
+    onStatusChanged: 'statusChanged',
+    onLayaways: 'layaways'
   },
   events: {
     onShowPopup: '',
@@ -571,6 +572,15 @@ enyo.kind({
     // sending the event to the components bellow this one
     this.waterfall('onButtonStatusChanged', {
       value: inEvent
+    });
+  },
+  layaways: function (inSender, inEvent) {
+    this.$.modalPaidReceipts.setParams({
+      isLayaway: true
+    });
+    this.$.modalPaidReceipts.waterfall('onClearAction');
+    this.doShowPopup({
+      popup: 'modalPaidReceipts'
     });
   },
   init: function () {
