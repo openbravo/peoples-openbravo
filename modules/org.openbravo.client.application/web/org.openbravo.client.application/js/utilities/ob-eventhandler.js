@@ -106,10 +106,6 @@
           target = null;
         } else if (!target.parentElement && target.grid) {
           target = target.grid;
-        } else if (target.getClassName && target.getClassName() === 'OBPopup') {
-          // If it is a popup window, do not bubble up to the header view
-          // See issue https://issues.openbravo.com/view.php?id=22903
-          return true;
         } else {
           target = target.parentElement;
         }
