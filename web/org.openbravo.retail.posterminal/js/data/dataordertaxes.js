@@ -265,7 +265,13 @@
                 }, discAmt);
               }
               var linepricenet = element.get('price');
-              var discountedprice = discAmt ? OB.DEC.div(discAmt, element.get('qty')) : element.get('price');
+              var discountedprice;
+              if (!(_.isNull(discAmt) || _.isUndefined(discAmt))) {
+                discountedprice = OB.DEC.div(discAmt, element.get('qty'));
+              } else {
+                discountedprice = element.get('price');
+              }
+
               var linenet = OB.DEC.mul(linepricenet, element.get('qty'));
 
               discountedNet = OB.DEC.mul(discountedprice, element.get('qty'));
