@@ -396,33 +396,40 @@ public class PersonalizationHandler {
           uiPersonalization.setWindow(OBDal.getInstance().get(Window.class, windowId));
           uiPersonalization.setType("Window");
         }
-      }
 
-      if (clientId != null) {
-        uiPersonalization.setVisibleAtClient(OBDal.getInstance().get(Client.class, clientId));
-        // also store it in that client
-        uiPersonalization.setClient(uiPersonalization.getVisibleAtClient());
-      } else {
-        uiPersonalization.setVisibleAtClient(null);
-      }
+        // Only enter the clientId, orgId, roleId and userId if the record is new.
+        // If the personalization is being updated, only the form personalization data should be
+        // changed
+        // See issue https://issues.openbravo.com/view.php?id=22767
+        // See comment
+        // https://code.openbravo.com/erp/devel/pi/file/9bbd07a91478/modules/org.openbravo.client.application/web/org.openbravo.client.application/js/personalization/ob-personalize-form.js#l597
+        if (clientId != null) {
+          uiPersonalization.setVisibleAtClient(OBDal.getInstance().get(Client.class, clientId));
+          // also store it in that client
+          uiPersonalization.setClient(uiPersonalization.getVisibleAtClient());
+        } else {
+          uiPersonalization.setVisibleAtClient(null);
+        }
 
-      if (orgId != null) {
-        uiPersonalization.setVisibleAtOrganization(OBDal.getInstance().get(Organization.class,
-            orgId));
-      } else {
-        uiPersonalization.setVisibleAtOrganization(null);
-      }
+        if (orgId != null) {
+          uiPersonalization.setVisibleAtOrganization(OBDal.getInstance().get(Organization.class,
+              orgId));
+        } else {
+          uiPersonalization.setVisibleAtOrganization(null);
+        }
 
-      if (roleId != null) {
-        uiPersonalization.setVisibleAtRole(OBDal.getInstance().get(Role.class, roleId));
-      } else {
-        uiPersonalization.setVisibleAtRole(null);
-      }
+        if (roleId != null) {
+          uiPersonalization.setVisibleAtRole(OBDal.getInstance().get(Role.class, roleId));
+        } else {
+          uiPersonalization.setVisibleAtRole(null);
+        }
 
-      if (userId != null) {
-        uiPersonalization.setUser(OBDal.getInstance().get(User.class, userId));
-      } else {
-        uiPersonalization.setUser(null);
+        if (userId != null) {
+          uiPersonalization.setUser(OBDal.getInstance().get(User.class, userId));
+        } else {
+          uiPersonalization.setUser(null);
+        }
+
       }
 
       final JSONObject jsonValue = new JSONObject(value);
