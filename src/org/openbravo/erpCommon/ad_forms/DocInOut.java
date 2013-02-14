@@ -325,7 +325,7 @@ public class DocInOut extends AcctServer {
             setMessageResult(conn, STATUS_NoRelatedPO, "error", parameters);
             throw new IllegalStateException();
           }
-          costs = ol.getUnitPrice().multiply(inOutLine.getMovementQuantity()).toString();
+          costs = ol.getUnitPrice().multiply(new BigDecimal(line.m_qty)).toString();
           BigDecimal b_Costs = new BigDecimal(costs).setScale(new Integer(strScale),
               RoundingMode.HALF_UP);
           strCosts = b_Costs.toString();
