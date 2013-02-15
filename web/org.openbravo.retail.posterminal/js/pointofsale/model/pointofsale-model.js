@@ -140,24 +140,30 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
           if (!payment.paymentMethod.iscash) {
             payment = OB.POS.terminal.terminal.paymentnames[OB.POS.modelterminal.get('paymentcash')];
           }
-          receipt.addPayment(new OB.Model.PaymentLine({
-            'kind': payment.payment.searchKey,
-            'name': payment.payment.commercialName,
-            'amount': OB.DEC.sub(0, OB.DEC.mul(payToDo.change, payment.mulrate)),
-            'rate': payment.rate,
-            'mulrate': payment.mulrate,
-            'isocode': payment.isocode,
-            'openDrawer': payment.paymentMethod.openDrawer
-          }));
-        }
-        receipt.set('change', oldChange);
-        receipt.trigger('closed');
-        receipt.get('payments').reset();
-        clonedCollection.each(function (model) {
-          receipt.get('payments').add(new Backbone.Model(model.toJSON()), {
-            silent: true
+          if (receipt.get('orderType') === 0) {
+            receipt.addPayment(new OB.Model.PaymentLine({
+              'kind': payment.payment.searchKey,
+              'name': payment.payment.commercialName,
+              'amount': OB.DEC.sub(0, OB.DEC.mul(payToDo.change, payment.mulrate)),
+              'rate': payment.rate,
+              'mulrate': payment.mulrate,
+              'isocode': payment.isocode,
+              'openDrawer': payment.paymentMethod.openDrawer
+            }));
+          }
+          receipt.set('change', oldChange);
+          receipt.trigger('closed');
+          receipt.get('payments').reset();
+          clonedCollection.each(function (model) {
+            receipt.get('payments').add(new Backbone.Model(model.toJSON()), {
+              silent: true
+            });
           });
-        });
+        } else {
+          receipt.set('change', oldChange);
+          receipt.trigger('closed');
+        }
+
         receipt.trigger('print'); // to guaranty execution order
         orderList.deleteCurrent();
       });
