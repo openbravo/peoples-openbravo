@@ -563,13 +563,8 @@ public class OrderLoader extends JSONProcessSimple {
     OBContext.setAdminMode(false);
     try {
       // Same currency, no conversion required
-      if (jsonorder.getLong("orderType") == 1) {
-        invoice.getBusinessPartner().setCreditUsed(
-            invoice.getBusinessPartner().getCreditUsed().subtract(total));
-      } else {
-        invoice.getBusinessPartner().setCreditUsed(
-            invoice.getBusinessPartner().getCreditUsed().add(total));
-      }
+      invoice.getBusinessPartner().setCreditUsed(
+          invoice.getBusinessPartner().getCreditUsed().add(total));
       OBDal.getInstance().flush();
     } finally {
       OBContext.restorePreviousMode();

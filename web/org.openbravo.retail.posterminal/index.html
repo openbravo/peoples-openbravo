@@ -148,7 +148,7 @@
 
           if ((inResponse.response[0].data[0].strClient) !== 'none') {
             renderPOS();  
-            new OB.DS.Request('org.openbravo.retail.posterminal.term.Context').exec({}, function (inResponse) {
+            new OB.DS.Request('org.openbravo.retail.posterminal.term.Context').exec({terminal: OB.POS.paramTerminal}, function (inResponse) {
               if (inResponse && !inResponse.exception) {
                 OB.POS.modelterminal.user = inResponse[0].user.username;
                 OB.POS.modelterminal.set('orgUserId',inResponse[0].user.id);

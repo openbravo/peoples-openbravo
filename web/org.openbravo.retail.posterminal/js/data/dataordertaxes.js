@@ -70,7 +70,7 @@
               var validFromDate = coll.at(0).get('validFromDate');
               var taxamt = orggross;
               var taxamtdc;
-              if (discountedGross) {
+              if (!(_.isNull(discountedGross) || _.isUndefined(discountedGross))) {
                 taxamtdc = discountedGross;
               }
               coll = _.filter(coll.models, function (taxRate) {
@@ -84,13 +84,13 @@
                   if (taxRate.get('cascade')) {
                     linerate = linerate.multiply(rate.add(BigDecimal.prototype.ONE));
                     taxamt = OB.DEC.mul(taxamt, OB.DEC.add(1, rate));
-                    if (discountedGross) {
+                    if (!(_.isNull(discountedGross) || _.isUndefined(discountedGross))) {
                       taxamtdc = OB.DEC.mul(taxamtdc, OB.DEC.add(1, rate));
                     }
                   } else {
                     linerate = linerate.add(rate);
                     taxamt = OB.DEC.add(taxamt, OB.DEC.mul(orggross, rate));
-                    if (discountedGross) {
+                    if (!(_.isNull(discountedGross) || _.isUndefined(discountedGross))) {
                       taxamtdc = OB.DEC.add(taxamtdc, OB.DEC.mul(discountedGross, rate));
                     }
                   }
@@ -102,9 +102,16 @@
 
               // the line net price is calculated by doing price*price/(price*rate), as it is done in
               // the database function c_get_net_price_from_gross
-              var linenet = OB.DEC.div(OB.DEC.mul(orggross, orggross), taxamt);
-              var linepricenet = OB.DEC.div(linenet, element.get('qty'));
-              var linegross = element.get('lineGrossAmount') || element.get('gross');
+              var linenet, linepricenet, linegross;
+              if (orggross === 0) {
+                linenet = 0;
+                linepricenet = 0;
+                linegross = 0;
+              } else {
+                linenet = OB.DEC.div(OB.DEC.mul(orggross, orggross), taxamt);
+                linepricenet = OB.DEC.div(linenet, element.get('qty'));
+                linegross = element.get('lineGrossAmount') || element.get('gross');
+              }
 
               element.set('linerate', linerate);
               element.set('tax', linetaxid);
@@ -115,9 +122,16 @@
               totalnet = OB.DEC.add(totalnet, linenet);
 
               //We follow the same formula of function c_get_net_price_from_gross to compute the discounted net
-              if (discountedGross) {
-                discountedNet = OB.DEC.div(OB.DEC.mul(discountedGross, discountedGross), taxamtdc);
-                pricenet = OB.DEC.div(discountedNet, element.get('qty'));
+              if (!(_.isNull(discountedGross) || _.isUndefined(discountedGross))) {
+                var discountedNet;
+                if (taxamtdc) {
+                  discountedNet = OB.DEC.div(OB.DEC.mul(discountedGross, discountedGross), taxamtdc);
+                  pricenet = OB.DEC.div(discountedNet, element.get('qty'));
+                } else {
+                  //taxamtdc === 0
+                  discountedNet = 0;
+                  pricenet = 0;
+                }
               } else {
                 pricenet = new BigDecimal(String(linepricenet)); // 2 decimals properly rounded.
               }
@@ -161,7 +175,13 @@
               // and if the net amount of the line plus this sum is not equal to the gross,
               // we will adjust the tax line with the greatest amount
               var summedTaxAmt = 0;
-              var expectedGross = discountedGross ? discountedGross : element.get('gross');
+              var expectedGross;
+              if (!(_.isNull(discountedGross) || _.isUndefined(discountedGross))) {
+                expectedGross = discountedGross;
+              } else {
+                expectedGross = element.get('gross');
+              }
+
               var greaterTax = null;
               _.each(coll, function (taxRate, taxIndex) {
                 if (!taxRate.get('summaryLevel')) {
@@ -179,8 +199,8 @@
                 }
               });
               var netandtax;
-              if (discountedGross) {
-                netandtax = OB.DEC.add(discountedNet, summedTaxAmt);
+              if (!(_.isNull(discountedGross) || _.isUndefined(discountedGross))) {
+                netandtax = OB.DEC.add(discountedNet, summedTaxAmt)
               } else {
                 netandtax = OB.DEC.add(OB.DEC.mul(linepricenet, element.get('qty')), summedTaxAmt);
               }
@@ -245,7 +265,13 @@
                 }, discAmt);
               }
               var linepricenet = element.get('price');
-              var discountedprice = discAmt ? OB.DEC.div(discAmt, element.get('qty')) : element.get('price');
+              var discountedprice;
+              if (!(_.isNull(discAmt) || _.isUndefined(discAmt))) {
+                discountedprice = OB.DEC.div(discAmt, element.get('qty'));
+              } else {
+                discountedprice = element.get('price');
+              }
+
               var linenet = OB.DEC.mul(linepricenet, element.get('qty'));
 
               discountedNet = OB.DEC.mul(discountedprice, element.get('qty'));

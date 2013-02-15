@@ -146,8 +146,8 @@ public class CashCloseProcessor {
     reconciliation.setDocumentNo(null);
     reconciliation.setDocumentType(posTerminal.getObposTerminaltype()
         .getDocumentTypeForReconciliations());
-    reconciliation.setEndingDate(new Date());
-    reconciliation.setTransactionDate(new Date());
+    reconciliation.setEndingDate(POSUtils.getCurrentDate());
+    reconciliation.setTransactionDate(POSUtils.getCurrentDate());
     if (!cashCloseObj.getJSONObject("paymentMethod").isNull("amountToKeep")) {
       reconciliation.setEndingBalance(BigDecimal.valueOf(cashCloseObj
           .getJSONObject("paymentMethod").getDouble("amountToKeep")));
@@ -205,8 +205,8 @@ public class CashCloseProcessor {
     transaction.setTransactionType("BPW");
     transaction.setStatus("RPPC");
     transaction.setDescription("GL Item: " + glItem.getName());
-    transaction.setDateAcct(new Date());
-    transaction.setTransactionDate(new Date());
+    transaction.setDateAcct(POSUtils.getCurrentDate());
+    transaction.setTransactionDate(POSUtils.getCurrentDate());
     transaction.setReconciliation(reconciliation);
 
     account.setCurrentBalance(account.getCurrentBalance().subtract(reconciliationTotal));
@@ -250,8 +250,8 @@ public class CashCloseProcessor {
     transaction.setTransactionType("BPW");
     transaction.setStatus("RDNC");
     transaction.setDescription("GL Item: " + glItem.getName());
-    transaction.setDateAcct(new Date());
-    transaction.setTransactionDate(new Date());
+    transaction.setDateAcct(POSUtils.getCurrentDate());
+    transaction.setTransactionDate(POSUtils.getCurrentDate());
 
     accountTo.setCurrentBalance(accountTo.getCurrentBalance().add(reconciliationTotal));
 
@@ -262,7 +262,7 @@ public class CashCloseProcessor {
   protected OBPOSAppCashup createCashUp(OBPOSApplications posTerminal) {
     OBPOSAppCashup cashup = OBProvider.getInstance().get(OBPOSAppCashup.class);
     cashup.setOrganization(posTerminal.getOrganization());
-    cashup.setCashUpDate(new Date());
+    cashup.setCashUpDate(POSUtils.getCurrentDate());
     cashup.setPOSTerminal(posTerminal);
     cashup.setUserContact(OBContext.getOBContext().getUser());
     return cashup;

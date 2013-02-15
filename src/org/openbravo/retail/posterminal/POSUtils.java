@@ -2,6 +2,8 @@ package org.openbravo.retail.posterminal;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -274,5 +276,21 @@ public class POSUtils {
       OBContext.restorePreviousMode();
     }
 
+  }
+
+  /**
+   * This method returns a Date which corresponds to the current date, without hours, minutes, or
+   * seconds
+   * 
+   * @return
+   */
+  public static Date getCurrentDate() {
+    Calendar cal = Calendar.getInstance();
+    cal.set(Calendar.HOUR_OF_DAY, 0);
+    cal.set(Calendar.MINUTE, 0);
+    cal.set(Calendar.SECOND, 0);
+    cal.set(Calendar.MILLISECOND, 0);
+    Date currentDate = cal.getTime();
+    return currentDate;
   }
 }

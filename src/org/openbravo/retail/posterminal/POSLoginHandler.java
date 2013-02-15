@@ -122,6 +122,18 @@ public class POSLoginHandler extends LoginHandler {
           return;
         }
 
+        if (!userHasAccessToTerminal(OBDal.getInstance().get(User.class, userId), apps.get(0))) {
+          log4j.error("User doesn't have access to terminal: " + terminalSearchKey);
+          errorLogin(res, vars, session, "OBPOS_USER_NO_ACCESS_TO_TERMINAL_TITLE",
+              "OBPOS_USER_NO_ACCESS_TO_TERMINAL_MSG", new ArrayList<String>() {
+                private static final long serialVersionUID = 1L;
+                {
+                  add(terminalSearchKey);
+                }
+              });
+          return;
+        }
+
         completeLogin(vars, role, userId, apps.get(0));
 
         vars.setSessionValue("#AD_Role_ID", (String) DalUtil.getId(role));
@@ -154,6 +166,32 @@ public class POSLoginHandler extends LoginHandler {
       }
     } finally {
       OBDal.getInstance().flush(); // flushing in admin mode
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  private boolean userHasAccessToTerminal(User user, OBPOSApplications terminal) {
+    OBContext.setAdminMode(false);
+    OBCriteria<TerminalAccess> terminalAccessCriteria = OBDal.getInstance().createCriteria(
+        TerminalAccess.class);
+    terminalAccessCriteria.setFilterOnActive(false);
+    terminalAccessCriteria.setFilterOnReadableOrganization(false);
+    terminalAccessCriteria.setFilterOnReadableClients(false);
+
+    terminalAccessCriteria.add(Restrictions.eq(TerminalAccess.PROPERTY_USERCONTACT, user));
+    try {
+      List<TerminalAccess> terminalAccessList = terminalAccessCriteria.list();
+      if (terminalAccessList.size() == 0) {
+        // If no access defined then user has access to all terminals
+        return true;
+      }
+      for (TerminalAccess access : terminalAccessList) {
+        if (access.getPOSTerminal().equals(terminal)) {
+          return true;
+        }
+      }
+      return false;
+    } finally {
       OBContext.restorePreviousMode();
     }
   }
