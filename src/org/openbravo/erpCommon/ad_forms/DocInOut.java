@@ -107,6 +107,7 @@ public class DocInOut extends AcctServer {
       DocLine_Material docLine = new DocLine_Material(DocumentType, Record_ID, Line_ID);
       docLine.loadAttributes(data[i], this);
       docLine.setQty(data[i].getField("MOVEMENTQTY"), conn); // sets Trx
+      docLine.setBreakdownQty(data[i].getField("BREAKDOWNQTY"));
       // and
       // Storage
       // Qty
@@ -183,7 +184,6 @@ public class DocInOut extends AcctServer {
     // Line pointers
     FactLine dr = null;
     FactLine cr = null;
-    String strScale = DocInOutData.selectClientCurrencyPrecission(conn, vars.getClient());
     // Sales or Return from Customer
     if (DocumentType.equals(AcctServer.DOCTYPE_MatShipment)) {
       Boolean matReturn = IsReturn.equals("Y");
@@ -197,6 +197,13 @@ public class DocInOut extends AcctServer {
           costCurrency = OBDal.getInstance().get(Client.class, AD_Client_ID).getCurrency();
         } else if (line.transaction != null && line.transaction.getCurrency() != null) {
           costCurrency = line.transaction.getCurrency();
+        }
+        int standardPrecision = 2;
+        OBContext.setAdminMode(false);
+        try {
+          standardPrecision = costCurrency.getStandardPrecision().intValue();
+        } finally {
+          OBContext.restorePreviousMode();
         }
         C_Currency_ID = costCurrency.getId();
         Account cogsAccount = null;
@@ -254,8 +261,8 @@ public class DocInOut extends AcctServer {
               + line.getAccount(ProductInfo.ACCTTYPE_P_Cogs, as, conn));
           log4jDocInOut.debug("(MatShipment) - DR costs: " + costs);
         }
-        BigDecimal b_Costs = new BigDecimal(costs).setScale(new Integer(strScale),
-            RoundingMode.HALF_UP);
+        BigDecimal b_Costs = new BigDecimal(costs).multiply(new BigDecimal(line.getBreakdownQty()))
+            .divide(new BigDecimal(line.m_qty), standardPrecision, RoundingMode.HALF_UP);
         String strCosts = b_Costs.toString();
         if (b_Costs.compareTo(BigDecimal.ZERO) == 0 && !CostingStatus.getInstance().isMigrated()
             && DocInOutData.existsCost(conn, DateAcct, line.m_M_Product_ID).equals("0")) {
@@ -310,6 +317,13 @@ public class DocInOut extends AcctServer {
           costCurrency = line.transaction.getCurrency();
         }
         C_Currency_ID = costCurrency.getId();
+        int standardPrecision = 2;
+        OBContext.setAdminMode(false);
+        try {
+          standardPrecision = costCurrency.getStandardPrecision().intValue();
+        } finally {
+          OBContext.restorePreviousMode();
+        }
         String costs = "0";
         String strCosts = "0";
         if (product.isBookUsingPurchaseOrderPrice()) {
@@ -325,8 +339,8 @@ public class DocInOut extends AcctServer {
             setMessageResult(conn, STATUS_NoRelatedPO, "error", parameters);
             throw new IllegalStateException();
           }
-          costs = ol.getUnitPrice().multiply(new BigDecimal(line.m_qty)).toString();
-          BigDecimal b_Costs = new BigDecimal(costs).setScale(new Integer(strScale),
+          costs = ol.getUnitPrice().multiply(new BigDecimal(line.getBreakdownQty())).toString();
+          BigDecimal b_Costs = new BigDecimal(costs).setScale(standardPrecision,
               RoundingMode.HALF_UP);
           strCosts = b_Costs.toString();
         } else {
@@ -350,8 +364,9 @@ public class DocInOut extends AcctServer {
             }
           }
           costs = line.getProductCosts(DateAcct, as, conn, con);
-          BigDecimal b_Costs = new BigDecimal(costs).setScale(new Integer(strScale),
-              RoundingMode.HALF_UP);
+          BigDecimal b_Costs = new BigDecimal(costs).multiply(
+              new BigDecimal(line.getBreakdownQty())).divide(new BigDecimal(line.m_qty),
+              standardPrecision, RoundingMode.HALF_UP);
           strCosts = b_Costs.toString();
           if (b_Costs.compareTo(BigDecimal.ZERO) == 0 && !CostingStatus.getInstance().isMigrated()
               && DocInOutData.existsCost(conn, DateAcct, line.m_M_Product_ID).equals("0")) {
@@ -533,7 +548,7 @@ public class DocInOut extends AcctServer {
                 } else {
                   trxCost = CostingUtils.getStandardCost(inOutLine.getProduct(), legalEntity,
                       inOut.getAccountingDate(), costDimensions, legalEntity.getCurrency())
-                      .multiply(inOutLine.getMovementQuantity());
+                      .multiply(new BigDecimal(data[i].breakdownqty));
                 }
               }
             }
