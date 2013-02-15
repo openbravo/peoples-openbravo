@@ -63,6 +63,7 @@ public class CloneOrderActionHandler extends BaseActionHandler {
       objCloneOrder.setProcessed(false);
       objCloneOrder.setSalesTransaction(true);
       objCloneOrder.setDocumentNo(null);
+      objCloneOrder.setSalesTransaction(objOrder.isSalesTransaction());
       // save the cloned order object
       OBDal.getInstance().save(objCloneOrder);
 
