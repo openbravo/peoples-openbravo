@@ -54,6 +54,7 @@ public class DocLine_Material extends DocLine {
   /** Production */
   public String m_Productiontype = "";
   public MaterialTransaction transaction = null;
+  public String m_breakdownqty = "";
 
   /**
    * Set Trasaction Quantity and Storage Qty
@@ -128,6 +129,14 @@ public class DocLine_Material extends DocLine {
   public Account getAccount(String AcctType, AcctSchema as, ConnectionProvider conn) {
     return p_productInfo.getAccount(AcctType, as, conn);
   } // getAccount
+
+  public String getBreakdownQty() {
+    return m_breakdownqty;
+  }
+
+  public void setBreakdownQty(String breakdownqty) {
+    this.m_breakdownqty = breakdownqty;
+  }
 
   public String getServletInfo() {
     return "Servlet for the accounting";
