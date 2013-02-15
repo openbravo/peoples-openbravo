@@ -232,7 +232,7 @@ isc.OBToolbarActionButton.addProperties({
   },
 
   updateState: function (record, hide, context, keepNonAutosave) {
-    var currentValues = record || this.contextView.getCurrentValues() || {};
+    var currentValues = isc.shallowClone(record || this.contextView.getCurrentValues() || {});
     // do not hide non autosave buttons when hidding the rest if keepNonAutosave === true
     var hideButton = hide && (!keepNonAutosave || this.autosave);
 

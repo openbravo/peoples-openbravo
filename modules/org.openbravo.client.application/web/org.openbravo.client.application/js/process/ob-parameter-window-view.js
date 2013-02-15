@@ -141,7 +141,7 @@ isc.OBParameterWindowView.addProperties({
     this.members.push(this.messageBar);
 
     newShowIf = function (item, value, form, values) {
-      var currentValues = values || form.view.getCurrentValues(),
+      var currentValues = isc.shallowClone(values || form.view.getCurrentValues()),
           context = {},
           originalShowIfValue = false;
 

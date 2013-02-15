@@ -2220,7 +2220,7 @@ isc.OBStandardView.addProperties({
     if (fld.showIf && !fld.originalShowIf) {
       fld.originalShowIf = fld.showIf;
       newShowIf = function (item, value, form, values) {
-        var currentValues = values || form.view.getCurrentValues(),
+        var currentValues = isc.shallowClone(values || form.view.getCurrentValues()),
             context = form.getCachedContextInfo(),
             originalShowIfValue = false;
 
