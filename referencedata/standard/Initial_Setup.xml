@@ -398,7 +398,7 @@
     <expense>false</expense>
     <reversal>false</reversal>
     <return>false</return>
-    <documentTypeForOrder xsi:nil="true"/>
+    <documentTypeForOrder id="CB6EEA256BBC41109911215C5A14D39B" entity-name="DocumentType" identifier="Standard Order"/>
   </DocumentType>
   <DocumentType id="0CD50184705A42CCBECA4EC967646440" identifier="MM Shipment">
     <id>0CD50184705A42CCBECA4EC967646440</id>
