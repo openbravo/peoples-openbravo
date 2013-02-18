@@ -160,7 +160,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
             });
           });
         } else {
-          receipt.set('change', oldChange);
           receipt.trigger('closed');
         }
 

@@ -288,7 +288,7 @@ enyo.kind({
       }
     }, this);
     this.order.on('change:hasbeenpaid', function (model) {
-      if (model.get('isQuotation') && model.get('hasbeenpaid') === 'Y') {
+      if (model.get('isQuotation') && model.get('hasbeenpaid') === 'Y' && this.$.divText.content && (this.$.divText.content === OB.I18N.getLabel('OBPOS_QuotationNew') || this.$.divText.content === OB.I18N.getLabel('OBPOS_QuotationDraft'))) {
         this.$.divText.setContent(OB.I18N.getLabel('OBPOS_QuotationUnderEvaluation'));
       } else if (model.get('isQuotation') && model.get('hasbeenpaid') === 'N') {
         this.$.divText.setContent(OB.I18N.getLabel('OBPOS_QuotationDraft'));

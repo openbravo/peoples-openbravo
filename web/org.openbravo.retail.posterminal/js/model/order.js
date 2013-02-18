@@ -255,7 +255,7 @@
       this.set('json', JSON.stringify(this.toJSON()));
       OB.Dal.save(this, function () {}, function () {
         window.console.error(arguments);
-      });
+      }, this.attributes.isLayaway);
       this.set('undo', undoCopy);
     },
 
@@ -1132,6 +1132,7 @@
       if (model.isLayaway) {
         order.set('isLayaway', true);
         order.set('id', model.orderid);
+        order.set('createdBy', OB.POS.terminal.terminal.usermodel.id);
         order.set('documentType', model.documenttype);
       } else {
         order.set('isPaid', true);
@@ -1251,6 +1252,7 @@
       this.current = model;
       this.add(this.current);
       this.loadCurrent(true);
+      this.current.save();
     },
 
     addNewQuotation: function () {
