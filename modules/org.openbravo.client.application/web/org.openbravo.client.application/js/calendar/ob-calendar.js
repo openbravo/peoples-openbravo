@@ -139,6 +139,13 @@ isc.OBCalendar.addProperties({
         } else {
           if (records) {
             for (i = 0; i < records.getLength(); i++) {
+              if (typeof records[i][calendar.nameField] === 'undefined') {
+                //To avoid the event displays 'undefined' when no name has been set
+                records[i][calendar.nameField] = '';
+              }
+              if (typeof records[i][calendar.descriptionField] === 'undefined') {
+                records[i][calendar.descriptionField] = '';
+              }
               if (multiCalendar && multiCalendar.showCustomEventsBgColor) {
                 records[i].eventWindowStyle = multiCalendar.eventStyles[records[i][calendar.legendIdField]] + ' ' + OB.Styles.OBCalendar.eventWindowStyle;
               }
