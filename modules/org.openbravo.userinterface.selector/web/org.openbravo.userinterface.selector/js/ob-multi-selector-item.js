@@ -75,7 +75,7 @@ isc.OBMultiSelectorItem.addProperties({
           type: 'boolean',
           title: '&nbsp;',
           canEdit: false,
-          canFilter: false,
+          disableFilter: true,
           canSort: false,
           canReorder: false,
           canHide: false,
@@ -86,7 +86,7 @@ isc.OBMultiSelectorItem.addProperties({
           autoExpand: false,
           width: OB.Styles.Process.PickAndExecute.pinColumnWidth,
           formatCellValue: function (value, record, rowNum, colNum, grid) {
-            if (grid.selector.selectorWindow.selectedIds.contains(record[OB.Constants.ID])) {
+            if (grid && grid.selector && grid.selector.selectorWindow.selectedIds.contains(record[OB.Constants.ID])) {
               return '<img src="' + OB.Styles.Process.PickAndExecute.iconPinSrc + '" />';
             }
             return '';
