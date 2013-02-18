@@ -1082,6 +1082,7 @@
       order.set('session', OB.POS.modelterminal.get('session'));
       order.set('priceList', OB.POS.modelterminal.get('terminal').priceList);
       order.set('priceIncludesTax', OB.POS.modelterminal.get('pricelist').priceIncludesTax);
+      order.set('generateInvoice', OB.POS.modelterminal.get('terminal').terminalType.generateInvoice);
       order.set('currency', OB.POS.modelterminal.get('terminal').currency);
       order.set('currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, OB.POS.modelterminal.get('terminal')['currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER]);
       order.set('warehouse', OB.POS.modelterminal.get('terminal').warehouse);
