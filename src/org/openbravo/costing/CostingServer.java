@@ -139,6 +139,7 @@ public class CostingServer {
     transactionCost.setCurrency(currency);
     transactionCost.setCostDate(transaction.getTransactionProcessDate());
     OBDal.getInstance().save(transactionCost);
+    transaction.getTransactionCostList().add(transactionCost);
   }
 
   public BigDecimal getTransactionCost() {
