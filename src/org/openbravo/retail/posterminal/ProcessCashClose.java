@@ -35,6 +35,8 @@ public class ProcessCashClose extends JSONProcessSimple {
           jsonsent.getString("terminalId"));
 
       new OrderGroupingProcessor().groupOrders(posTerminal);
+      posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
+          jsonsent.getString("terminalId"));
       JSONArray arrayCashCloseInfo = jsonsent.getJSONArray("cashCloseInfo");
       new CashCloseProcessor().processCashClose(posTerminal, arrayCashCloseInfo);
       jsonResponse.put(JsonConstants.RESPONSE_DATA, jsonData);
