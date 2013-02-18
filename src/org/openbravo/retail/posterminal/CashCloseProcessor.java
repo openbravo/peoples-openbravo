@@ -21,13 +21,17 @@ import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.dao.TransactionsDao;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.financialmgmt.gl.GLItem;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Reconciliation;
 import org.openbravo.service.db.CallStoredProcedure;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
 
 public class CashCloseProcessor {
@@ -136,9 +140,9 @@ public class CashCloseProcessor {
     FIN_Reconciliation reconciliation = OBProvider.getInstance().get(FIN_Reconciliation.class);
     reconciliation.setAccount(account);
     reconciliation.setOrganization(posTerminal.getOrganization());
-    reconciliation.setDocumentNo(null);
     reconciliation.setDocumentType(posTerminal.getObposTerminaltype()
         .getDocumentTypeForReconciliations());
+    reconciliation.setDocumentNo(getReconciliationDocumentNo(reconciliation.getDocumentType()));
     reconciliation.setEndingDate(new Date());
     reconciliation.setTransactionDate(new Date());
     if (!cashCloseObj.getJSONObject("paymentMethod").isNull("amountToKeep")) {
@@ -154,6 +158,12 @@ public class CashCloseProcessor {
 
     return reconciliation;
 
+  }
+
+  protected String getReconciliationDocumentNo(DocumentType doctype) {
+    return Utility.getDocumentNo(OBDal.getInstance().getConnection(false),
+        new DalConnectionProvider(false), RequestContext.get().getVariablesSecureApp(), "",
+        "FIN_Reconciliation", "", doctype == null ? "" : doctype.getId(), false, true);
   }
 
   protected FIN_FinaccTransaction createDifferenceTransaction(OBPOSApplications terminal,

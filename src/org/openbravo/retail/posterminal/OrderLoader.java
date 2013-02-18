@@ -263,13 +263,13 @@ public class OrderLoader extends JSONProcessSimple {
       if (invoice != null) {
         OBDal.getInstance().save(invoice);
       }
+
       t2 = System.currentTimeMillis();
       OBDal.getInstance().flush();
       updateAuditInfo(order, invoice, jsonorder);
       t3 = System.currentTimeMillis();
       log.debug("Creation of bobs. Order: " + (t112 - t111) + "; Orderlines: " + (t113 - t112)
           + "; Shipment: " + (t115 - t113) + "; Invoice: " + (t11 - t115));
-
     } finally {
       TriggerHandler.getInstance().enable();
     }
@@ -480,7 +480,6 @@ public class OrderLoader extends JSONProcessSimple {
     JSONPropertyToEntity.fillBobFromJSON(invoiceEntity, invoice, jsonorder,
         jsonorder.getLong("timezoneOffset"));
 
-    invoice.setDocumentNo(null);
     int stdPrecision = order.getCurrency().getStandardPrecision().intValue();
 
     String description = jsonorder.has("description") ? jsonorder.getString("description") + "\n"
@@ -492,6 +491,8 @@ public class OrderLoader extends JSONProcessSimple {
         .setDocumentType(getInvoiceDocumentType((String) DalUtil.getId(order.getDocumentType())));
     invoice.setTransactionDocument(getInvoiceDocumentType((String) DalUtil.getId(order
         .getDocumentType())));
+    invoice.setDocumentNo(getDocumentNo(invoiceEntity, invoice.getTransactionDocument(),
+        invoice.getDocumentType()));
     invoice.setAccountingDate(order.getOrderDate());
     invoice.setInvoiceDate(order.getOrderDate());
     invoice.setSalesTransaction(true);
@@ -687,6 +688,7 @@ public class OrderLoader extends JSONProcessSimple {
     shipment.setDocumentNo(null);
     shipment
         .setDocumentType(getShipmentDocumentType((String) DalUtil.getId(order.getDocumentType())));
+    shipment.setDocumentNo(getDocumentNo(shpEntity, null, shipment.getDocumentType()));
     shipment.setAccountingDate(order.getOrderDate());
     shipment.setMovementDate(order.getOrderDate());
     shipment.setPartnerAddress(OBDal.getInstance().get(Location.class,
@@ -1136,5 +1138,12 @@ public class OrderLoader extends JSONProcessSimple {
       return "unitPrice";
     }
     return null;
+  }
+
+  protected String getDocumentNo(Entity entity, DocumentType doctypeTarget, DocumentType doctype) {
+    return Utility.getDocumentNo(OBDal.getInstance().getConnection(false),
+        new DalConnectionProvider(false), RequestContext.get().getVariablesSecureApp(), "", entity
+            .getTableName(), doctypeTarget == null ? "" : doctypeTarget.getId(),
+        doctype == null ? "" : doctype.getId(), false, true);
   }
 }
