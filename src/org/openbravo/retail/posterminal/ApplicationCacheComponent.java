@@ -44,7 +44,6 @@ public class ApplicationCacheComponent extends MobileCoreApplicationCacheCompone
     // TODO: review this list: is it needed to be hardcoded?
     List<String> resources = new ArrayList<String>();
 
-    resources.add("../../web/org.openbravo.client.kernel/js/BigDecimal-all-1.0.1.min.js");
     resources.add("../../web/org.openbravo.client.kernel/js/LAB.min.js");
     resources.add("../../web/org.openbravo.retail.posterminal/js/libs/jquery-1.7.2.js");
     resources.add("../../web/org.openbravo.retail.posterminal/js/libs/core-min.js");
@@ -69,7 +68,6 @@ public class ApplicationCacheComponent extends MobileCoreApplicationCacheCompone
     resources.add("../../web/org.openbravo.retail.posterminal/js/model/document-sequence.js");
     resources.add("../../web/org.openbravo.retail.posterminal/js/model/user.js");
     resources.add("../../web/org.openbravo.retail.posterminal/js/model/session.js");
-    resources.add("../../web/org.openbravo.retail.posterminal/js/arithmetic.js");
     resources.add("../../web/org.openbravo.retail.posterminal/js/model/order.js");
     resources
         .add("../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=FinancialMgmtTaxRate&modelName=TaxRate&source=org.openbravo.retail.posterminal.master.TaxRate");
