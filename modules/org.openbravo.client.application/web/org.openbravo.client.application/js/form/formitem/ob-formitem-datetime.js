@@ -197,5 +197,5 @@ isc.ClassFactory.defineClass('OBDateTimeToDateItem', isc.OBDateTimeItem);
 // == OBDateItem properties ==
 isc.OBDateTimeToDateItem.addProperties({
   showTime: false,
-  fixedTime: '24:00:00'
+  fixedTime: '00:00:00'
 });
