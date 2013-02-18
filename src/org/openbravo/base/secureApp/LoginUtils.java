@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2012 Openbravo S.L.U.
+ * Copyright (C) 2001-2013 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -422,10 +422,10 @@ public class LoginUtils {
    * Utility class to store login defaults
    * 
    */
-  static class RoleDefaults {
-    String role;
-    String client;
-    String org;
-    String warehouse;
+  public static class RoleDefaults {
+    public String role;
+    public String client;
+    public String org;
+    public String warehouse;
   }
 }
