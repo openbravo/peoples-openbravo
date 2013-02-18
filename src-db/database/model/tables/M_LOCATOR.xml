@@ -61,6 +61,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="BARCODE" primaryKey="false" required="false" type="VARCHAR" size="30" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="M_LOCATOR_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -70,6 +74,9 @@
       <foreign-key foreignTable="M_WAREHOUSE" name="M_WAREHOUSE_LOCATOR" onDelete="cascade">
         <reference local="M_WAREHOUSE_ID" foreign="M_WAREHOUSE_ID"/>
       </foreign-key>
+      <index name="M_LOCATOR_BARCODE_IDX" unique="false">
+        <index-column name="BARCODE"/>
+      </index>
       <unique name="M_LOCATION_WHERE">
         <unique-column name="M_WAREHOUSE_ID"/>
         <unique-column name="X"/>
