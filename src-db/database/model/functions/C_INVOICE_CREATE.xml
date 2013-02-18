@@ -831,7 +831,7 @@
                 ol.A_Asset_ID as line_A_Asset_ID,
                 bp.C_InvoiceSchedule_ID,
                 o.InvoiceRule,
-                RPAD(bp.InvoiceGrouping, 15, '0') AS InvoiceGrouping,
+                RPAD(substr(bp.InvoiceGrouping, instr(bp.InvoiceGrouping, '_') + 1), 15, '0') AS InvoiceGrouping,
                 sh.POReference,
                 sh.C_Charge_ID,
                 COALESCE(sh.ChargeAmt, 0) AS ChargeAmt,
@@ -914,91 +914,91 @@
                 AND(si.DateLimit IS NULL
                 OR TRUNC(o.DateOrdered)<=si.DateLimit)) ))
               ORDER BY sh.C_BPartner_ID, pl.istaxincluded, (
-                CASE TO_CHAR(SUBSTR(RPAD(bp.InvoiceGrouping, 15, '0'), 1, 1))
+                CASE TO_CHAR(SUBSTR(RPAD(substr(bp.InvoiceGrouping, instr(bp.InvoiceGrouping, '_') + 1), 15, '0'), 1, 1))
                   WHEN '0'
                   THEN '0'
                   ELSE sh.AD_Org_ID
                 END
                 ) ||'-'|| (
-                CASE TO_CHAR(SUBSTR(RPAD(bp.InvoiceGrouping, 15, '0'), 2, 1))
+                CASE TO_CHAR(SUBSTR(RPAD(substr(bp.InvoiceGrouping, instr(bp.InvoiceGrouping, '_') + 1), 15, '0'), 2, 1))
                   WHEN '0'
                   THEN '0'
                   ELSE sh.C_Order_ID
                 END
                 ) ||'-'|| (
-                CASE TO_CHAR(SUBSTR(RPAD(bp.InvoiceGrouping, 15, '0'), 3, 1))
+                CASE TO_CHAR(SUBSTR(RPAD(substr(bp.InvoiceGrouping, instr(bp.InvoiceGrouping, '_') + 1), 15, '0'), 3, 1))
                   WHEN '0'
                   THEN '0'
                   ELSE sh.M_InOut_ID
                 END
                 ) ||'-'|| (
-                CASE TO_CHAR(SUBSTR(RPAD(bp.InvoiceGrouping, 15, '0'), 4, 1))
+                CASE TO_CHAR(SUBSTR(RPAD(substr(bp.InvoiceGrouping, instr(bp.InvoiceGrouping, '_') + 1), 15, '0'), 4, 1))
                   WHEN '0'
                   THEN '0'
                   ELSE o.BillTo_ID
                 END
                 ) ||'-'|| (
-                CASE TO_CHAR(SUBSTR(RPAD(bp.InvoiceGrouping, 15, '0'), 5, 1))
+                CASE TO_CHAR(SUBSTR(RPAD(substr(bp.InvoiceGrouping, instr(bp.InvoiceGrouping, '_') + 1), 15, '0'), 5, 1))
                   WHEN '0'
                   THEN '0'
                   ELSE o.C_BPartner_Location_ID
                 END
                 ) ||'-'|| (
-                CASE TO_CHAR(SUBSTR(RPAD(bp.InvoiceGrouping, 15, '0'), 6, 1))
+                CASE TO_CHAR(SUBSTR(RPAD(substr(bp.InvoiceGrouping, instr(bp.InvoiceGrouping, '_') + 1), 15, '0'), 6, 1))
                   WHEN '0'
                   THEN '0'
                   ELSE o.SalesRep_ID
                 END
                 ) ||'-'|| (
-                CASE TO_CHAR(SUBSTR(RPAD(bp.InvoiceGrouping, 15, '0'), 7, 1))
+                CASE TO_CHAR(SUBSTR(RPAD(substr(bp.InvoiceGrouping, instr(bp.InvoiceGrouping, '_') + 1), 15, '0'), 7, 1))
                   WHEN '0'
                   THEN '0'
                   ELSE COALESCE(o.PaymentRule, bp.PaymentRule)
                 END
                 ) ||'-'|| (
-                CASE TO_CHAR(SUBSTR(RPAD(bp.InvoiceGrouping, 15, '0'), 8, 1))
+                CASE TO_CHAR(SUBSTR(RPAD(substr(bp.InvoiceGrouping, instr(bp.InvoiceGrouping, '_') + 1), 15, '0'), 8, 1))
                   WHEN '0'
                   THEN '0'
                   ELSE COALESCE(o.C_PaymentTerm_ID, bp.C_PaymentTerm_ID)
                 END
                 ) ||'-'|| (
-                CASE TO_CHAR(SUBSTR(RPAD(bp.InvoiceGrouping, 15, '0'), 8, 1))
+                CASE TO_CHAR(SUBSTR(RPAD(substr(bp.InvoiceGrouping, instr(bp.InvoiceGrouping, '_') + 1), 15, '0'), 8, 1))
                   WHEN '0'
                   THEN '0'
                   ELSE o.C_Currency_ID
                 END
                 ) ||'-'|| (
-                CASE TO_CHAR(SUBSTR(RPAD(bp.InvoiceGrouping, 15, '0'), 10, 1))
+                CASE TO_CHAR(SUBSTR(RPAD(substr(bp.InvoiceGrouping, instr(bp.InvoiceGrouping, '_') + 1), 15, '0'), 10, 1))
                   WHEN '0'
                   THEN '0'
                   ELSE o.C_Campaign_ID
                 END
                 ) ||'-'|| (
-                CASE TO_CHAR(SUBSTR(RPAD(bp.InvoiceGrouping, 15, '0'), 11, 1))
+                CASE TO_CHAR(SUBSTR(RPAD(substr(bp.InvoiceGrouping, instr(bp.InvoiceGrouping, '_') + 1), 15, '0'), 11, 1))
                   WHEN '0'
                   THEN '0'
                   ELSE o.C_Project_ID
                 END
                 ) ||'-'|| (
-                CASE TO_CHAR(SUBSTR(RPAD(bp.InvoiceGrouping, 15, '0'), 12, 1))
+                CASE TO_CHAR(SUBSTR(RPAD(substr(bp.InvoiceGrouping, instr(bp.InvoiceGrouping, '_') + 1), 15, '0'), 12, 1))
                   WHEN '0'
                   THEN '0'
                   ELSE o.C_Activity_ID
                 END
                 ) ||'-'|| (
-                CASE TO_CHAR(SUBSTR(RPAD(bp.InvoiceGrouping, 15, '0'), 13, 1))
+                CASE TO_CHAR(SUBSTR(RPAD(substr(bp.InvoiceGrouping, instr(bp.InvoiceGrouping, '_') + 1), 15, '0'), 13, 1))
                   WHEN '0'
                   THEN '0'
                   ELSE o.AD_OrgTrx_ID
                 END
                 ) ||'-'|| (
-                CASE TO_CHAR(SUBSTR(RPAD(bp.InvoiceGrouping, 15, '0'), 14, 1))
+                CASE TO_CHAR(SUBSTR(RPAD(substr(bp.InvoiceGrouping, instr(bp.InvoiceGrouping, '_') + 1), 15, '0'), 14, 1))
                   WHEN '0'
                   THEN '0'
                   ELSE o.User1_ID
                 END
                 ) ||'-'|| (
-                CASE TO_CHAR(SUBSTR(RPAD(bp.InvoiceGrouping, 15, '0'), 15, 1))
+                CASE TO_CHAR(SUBSTR(RPAD(substr(bp.InvoiceGrouping, instr(bp.InvoiceGrouping, '_') + 1), 15, '0'), 15, 1))
                   WHEN '0'
                   THEN '0'
                   ELSE o.User2_ID
