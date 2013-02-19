@@ -184,6 +184,8 @@ public class CustomerLoader extends JSONProcessSimple {
 
       final OBCriteria<BusinessPartner> bpCriteria = OBDal.getInstance().createCriteria(
           BusinessPartner.class);
+      bpCriteria.setFilterOnActive(false);
+      bpCriteria.setFilterOnReadableOrganization(false); 
       bpCriteria.add(Restrictions.eq("searchKey", possibleSK));
       bpCriteria.setMaxResults(1);
       bpsWithPossibleSK = bpCriteria.count();
