@@ -82,6 +82,45 @@ enyo.kind({
 });
 
 enyo.kind({
+  name: 'OB.UI.MenuVoidLayaway',
+  kind: 'OB.UI.MenuAction',
+  permission: 'OBPOS_receipt.voidLayaway',
+  events: {
+    onShowDivText: '',
+    onTabChange: ''
+  },
+  label: OB.I18N.getLabel('OBPOS_VoidLayaway'),
+  tap: function () {
+    if (this.disabled) {
+      return true;
+    }
+    this.parent.hide(); // Manual dropdown menu closure
+    this.doShowDivText({
+      permission: this.permission,
+      orderType: 3
+    });
+    this.doTabChange({
+      tabPanel: 'payment',
+      keyboard: 'toolbarscan',
+      edit: false
+    });
+  },
+  init: function (model) {
+    this.model = model;
+    var receipt = model.get('order'),
+        me = this;
+    this.setShowing(false);
+    receipt.on('change:isLayaway', function (model) {
+      if (model.get('isLayaway')) {
+        me.show();
+      } else {
+        me.hide();
+      }
+    }, this);
+  }
+});
+
+enyo.kind({
   name: 'OB.UI.MenuLayaway',
   kind: 'OB.UI.MenuAction',
   permission: 'OBPOS_receipt.layaway',
@@ -546,6 +585,9 @@ enyo.kind({
     this.menuEntries = [];
     this.menuEntries.push({
       kind: 'OB.UI.MenuReturn'
+    });
+    this.menuEntries.push({
+      kind: 'OB.UI.MenuVoidLayaway'
     });
     this.menuEntries.push({
       kind: 'OB.UI.MenuProperties'

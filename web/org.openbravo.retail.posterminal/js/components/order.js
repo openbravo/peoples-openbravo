@@ -259,7 +259,17 @@ enyo.kind({
         this.$.divText.setContent(OB.I18N.getLabel('OBPOS_ToBeLaidaway'));
         this.$.divText.show();
         //We have to ensure that there is not another handler showing this div
-      } else if (this.$.divText.content === OB.I18N.getLabel('OBPOS_ToBeReturned') || this.$.divText.content === OB.I18N.getLabel('OBPOS_ToBeLaidaway')) {
+      } else if (model.get('orderType') === 3) {
+        this.$.divText.addStyles('width: 50%; color: lightblue;');
+        this.$.divText.setContent(OB.I18N.getLabel('OBPOS_VoidLayaway'));
+        this.$.divText.show();
+        //We have to ensure that there is not another handler showing this div
+      } else if (model.get('isLayaway')) {
+        this.$.divText.addStyles('width: 50%; color: lightblue;');
+        this.$.divText.setContent(OB.I18N.getLabel('OBPOS_LblLayaway'));
+        this.$.divText.show();
+        //We have to ensure that there is not another handler showing this div
+      } else if (this.$.divText.content === OB.I18N.getLabel('OBPOS_ToBeReturned') || this.$.divText.content === OB.I18N.getLabel('OBPOS_ToBeLaidaway') || this.$.divText.content === OB.I18N.getLabel('OBPOS_VoidLayaway')) {
         this.$.divText.hide();
       }
     }, this);
@@ -290,7 +300,7 @@ enyo.kind({
     this.order.on('change:hasbeenpaid', function (model) {
       if (model.get('isQuotation') && model.get('hasbeenpaid') === 'Y' && this.$.divText.content && (this.$.divText.content === OB.I18N.getLabel('OBPOS_QuotationNew') || this.$.divText.content === OB.I18N.getLabel('OBPOS_QuotationDraft'))) {
         this.$.divText.setContent(OB.I18N.getLabel('OBPOS_QuotationUnderEvaluation'));
-      } else if (model.get('isQuotation') && model.get('hasbeenpaid') === 'N') {
+      } else if (model.get('isQuotation') && model.get('hasbeenpaid') === 'N' && !model.get('isLayaway')) {
         this.$.divText.setContent(OB.I18N.getLabel('OBPOS_QuotationDraft'));
       }
     }, this);

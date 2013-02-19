@@ -812,12 +812,21 @@
     },
 
     setOrderType: function (permission, orderType) {
+      var me = this;
       if (OB.POS.modelterminal.hasPermission(permission)) {
         if (permission === 'OBPOS_receipt.return') {
           this.set('documentType', OB.POS.modelterminal.get('terminal').terminalType.documentTypeForReturns);
         }
-        this.set('orderType', orderType); // 0: Sales order, 1: Return order, 2: Layaway
-        this.save();
+        this.set('orderType', orderType); // 0: Sales order, 1: Return order, 2: Layaway, 3: Void Layaway
+        if (orderType !== 3) { //Void this Layaway, do not need to save
+          this.save();
+        } else {
+          this.get('payments').each(function (payment) {
+            if (!payment.get('isPrePayment')) {
+              me.removePayment(payment);
+            }
+          });
+        }
         // remove promotions
         OB.Model.Discounts.applyPromotions(this);
       }
@@ -1075,7 +1084,7 @@
       order.set('createdBy', OB.POS.modelterminal.get('orgUserId'));
       order.set('updatedBy', OB.POS.modelterminal.get('orgUserId'));
       order.set('documentType', OB.POS.modelterminal.get('terminal').terminalType.documentType);
-      order.set('orderType', 0); // 0: Sales order, 1: Return order
+      order.set('orderType', 0); // 0: Sales order, 1: Return order, 2: Layaway, 3: Void Layaway
       order.set('generateInvoice', false);
       order.set('isQuotation', false);
       order.set('oldId', null);
@@ -1123,23 +1132,6 @@
       //model.set('id', null);
       lines = new Backbone.Collection();
       order.set('documentNo', model.documentNo);
-      if (model.isQuotation) {
-        order.set('isQuotation', true);
-        order.set('oldId', model.orderid);
-        order.set('id', null);
-        order.set('documentType', OB.POS.modelterminal.get('terminal').terminalType.documentTypeForQuotations);
-
-      }
-      if (model.isLayaway) {
-        order.set('isLayaway', true);
-        order.set('id', model.orderid);
-        order.set('createdBy', OB.POS.terminal.terminal.usermodel.id);
-        order.set('documentType', model.documenttype);
-      } else {
-        order.set('isPaid', true);
-        order.set('id', model.orderid);
-        order.set('documentType', model.documenttype);
-      }
       order.set('isEditable', false);
       order.set('client', model.client);
       order.set('organization', model.organization);
@@ -1154,6 +1146,25 @@
       order.set('hasbeenpaid', 'Y');
       order.set('priceIncludesTax', OB.POS.modelterminal.get('pricelist').priceIncludesTax);
       order.set('json', JSON.stringify(order.toJSON()));
+      if (model.isQuotation) {
+        order.set('isQuotation', true);
+        order.set('oldId', model.orderid);
+        order.set('id', null);
+        order.set('documentType', OB.POS.modelterminal.get('terminal').terminalType.documentTypeForQuotations);
+      }
+      if (model.isLayaway) {
+        order.set('isLayaway', true);
+        order.set('id', model.orderid);
+        order.set('createdBy', OB.POS.terminal.terminal.usermodel.id);
+        order.set('documentType', model.documenttype);
+        order.set('hasbeenpaid', 'N');
+        order.set('session', OB.POS.modelterminal.get('session'));
+      } else {
+        order.set('isPaid', true);
+        order.set('id', model.orderid);
+        order.set('documentType', model.documenttype);
+      }
+
 
 
       bpId = model.businessPartner;

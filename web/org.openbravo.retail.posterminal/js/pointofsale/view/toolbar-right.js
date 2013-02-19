@@ -273,7 +273,7 @@ enyo.kind({
         }
         return;
       }
-      if (this.model.get('order').get('isEditable') === false && !this.model.get('order').get('isLayaway')) {
+      if ((this.model.get('order').get('isEditable') === false && !this.model.get('order').get('isLayaway')) || this.model.get('order').get('orderType') === 3) {
         return true;
       }
       this.doTabChange({

@@ -81,6 +81,16 @@ enyo.kind({
             name: 'layawayaction',
             kind: 'OB.OBPOSPointOfSale.UI.LayawayButton',
             showing: false
+          }, {
+            tag: 'span',
+            name: 'totalrefund',
+            style: 'font-size: 24px; font-weight: bold;',
+            showing: false
+          }, {
+            tag: 'span',
+            name: 'totalrefundlbl',
+            content: OB.I18N.getLabel('OBPOS_LblToRefund'),
+            showing: false
           }]
         }, {
           style: 'overflow:auto; width: 100%;',
@@ -126,11 +136,27 @@ enyo.kind({
       this.updatePending();
     }, this);
     this.updatePending();
-    this.receipt.on('change:orderType change:isLayaway', function (model) {
-      if (model.get('orderType') === 2 || model.get('isLayaway')) {
+    this.receipt.on('change:orderType change:isLayaway change:payment', function (model) {
+      var payment = OB.POS.terminal.terminal.paymentnames[OB.POS.terminal.terminal.get('paymentcash')];
+      if (model.get('orderType') === 2 || (model.get('isLayaway') && model.get('orderType') !== 3)) {
         this.$.creditsalesaction.hide();
+        this.$.layawayaction.setContent(OB.I18N.getLabel('OBPOS_LblLayawayButton'));
+        this.$.layawayaction.show();
+        this.$.totalrefund.hide();
+        this.$.totalrefundlbl.hide();
+      } else if (model.get('orderType') === 3) {
+        this.$.creditsalesaction.hide();
+        this.$.exactaction.hide();
+        this.$.totalpending.hide();
+        this.$.totalpendinglbl.hide();
+        this.$.totalrefund.setContent(OB.I18N.formatCurrency(OB.DEC.mul(this.receipt.getPayment(), payment.mulrate)) + payment.symbol + ' ');
+        this.$.layawayaction.setContent(OB.I18N.getLabel('OBPOS_VoidLayawayButton'));
+        this.$.totalrefund.show();
+        this.$.totalrefundlbl.show();
         this.$.layawayaction.show();
       } else {
+        this.$.totalrefund.hide();
+        this.$.totalrefundlbl.hide();
         this.$.layawayaction.hide();
       }
     }, this);
@@ -167,7 +193,7 @@ enyo.kind({
       this.$.totalpendinglbl.hide();
       this.$.doneaction.show();
       this.$.creditsalesaction.hide();
-    } else {
+    } else if (this.receipt.get('orderType') !== 3) {
       this.$.totalpending.setContent(OB.I18N.formatCurrency(OB.DEC.mul(this.receipt.getPending(), rate)) + symbol);
       this.$.totalpending.show();
       this.$.totalpendinglbl.show();
@@ -191,8 +217,10 @@ enyo.kind({
       this.$.layawayaction.hide();
     } else {
       this.$.exactaction.show();
-      if (this.receipt.get('orderType') === 2 || this.receipt.get('isLayaway')) {
+      if (this.receipt.get('orderType') === 2 || (this.receipt.get('isLayaway') && this.receipt.get('orderType') !== 3)) {
         this.$.layawayaction.show();
+      } else if (this.receipt.get('orderType') === 3) {
+        this.$.exactaction.hide();
       }
       if (OB.POS.modelterminal.get('terminal').allowpayoncredit && this.receipt.get('bp')) {
         if (this.receipt.get('bp').get('creditLimit') > 0 && !this.$.layawayaction.showing) {
@@ -434,7 +462,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.LayawayButton',
   kind: 'OB.UI.SmallButton',
-  content: OB.I18N.getLabel('OBPOS_LblLayawayButton'),
+  content: '',
   classes: 'btn-icon-small btnlink-lightblue',
   style: 'width: 120px; float: right; margin: 0px',
   permission: 'OBPOS_receipt.layaway',
@@ -443,6 +471,7 @@ enyo.kind({
   },
   init: function (model) {
     this.model = model;
+    this.setContent(OB.I18N.getLabel('OBPOS_LblLayawayButton'));
   },
   tap: function () {
     this.owner.receipt.trigger('paymentDone');
