@@ -229,6 +229,9 @@ isc.OBPickAndExecuteGrid.addProperties({
         crit = {},
         len = this.selectedIds.length,
         i, c, found;
+    if (len > 0) {
+      this.data.savedData = this.data.localData;
+    }
 
     for (i = 0; i < len; i++) {
       ids.push({
@@ -286,11 +289,15 @@ isc.OBPickAndExecuteGrid.addProperties({
 
   dataArrived: function (startRow, endRow) {
     var record, i, allRows, selectedLen = this.selectedIds.length,
-        len;
+        len, savedRecord, index;
     for (i = 0; i < selectedLen; i++) {
       record = this.data.findByKey(this.selectedIds[i]);
       if (record) {
-        record[this.selectionProperty] = true;
+        if (this.data.savedData) {
+          savedRecord = this.data.savedData.find('id', this.selectedIds[i]);
+          index = this.data.localData.indexOf(record);
+          this.data.localData[index] = savedRecord;
+        }
       }
     }
 
