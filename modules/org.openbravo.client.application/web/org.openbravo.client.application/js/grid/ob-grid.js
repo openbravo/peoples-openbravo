@@ -795,8 +795,10 @@ isc.OBGridLinkItem.addProperties({
 
   isShownInGridEdit: true,
   initWidget: function () {
-    this.btn = isc.OBGridLinkButton.create({});
-    this.btn.setTitle(this.title);
+    if (!this.btn) {
+      this.btn = isc.OBGridLinkButton.create({});
+    }
+    this.setTitle(this.title);
     this.btn.owner = this;
     this.addMember(this.btn);
     this.Super('initWidget', arguments);

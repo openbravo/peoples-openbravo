@@ -93,7 +93,6 @@ isc.defineClass('OBGridFormLabel', isc.Label);
 isc.defineClass('OBTruncAddMinusDisplay', isc.OBGridFormLabel);
 
 isc.OBTruncAddMinusDisplay.addProperties({
-  wrap: false,
   height: 1,
   width: 1,
   overflow: 'visible',
@@ -123,7 +122,6 @@ isc.OBTruncAddMinusDisplay.addProperties({
 isc.defineClass('OBAddPercentageSign', isc.OBGridFormLabel);
 
 isc.OBAddPercentageSign.addProperties({
-  wrap: false,
   height: 1,
   width: 1,
   overflow: 'visible',
