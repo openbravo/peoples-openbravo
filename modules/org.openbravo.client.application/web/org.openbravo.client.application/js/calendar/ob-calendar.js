@@ -219,13 +219,41 @@ isc.OBCalendar.addProperties({
   },
 
   eventResized: function (newDate, event) {
-    return this.Super('eventResized', arguments);
+    newDate.setSeconds(0);
+    if (this.showEventDialogOnEventResize) {
+      this.eventDialog.event = event;
+      this.eventDialog.currentStart = event[this.startDateField];
+      this.eventDialog.currentEnd = newDate;
+      this.eventDialog.calendar = this;
+      try {
+        //To avoid js error due to conflicts with Smartclient default EventDialog
+        this.eventDialog.show();
+      } catch (e) {}
+    } else {
+      return this.Super('eventResized', arguments);
+    }
+  },
+  eventMoved: function (newDate, event) {
+    newDate.setSeconds(0);
+    if (this.showEventDialogOnEventMove) {
+      var dateDiff = event[this.endDateField] - event[this.startDateField],
+           //Event duration
+          newEndDate = newDate.getTime() + dateDiff; //Add the event duration to the new startDate
+      newEndDate = new Date(newEndDate);
+      this.eventDialog.event = event;
+      this.eventDialog.currentStart = newDate;
+      this.eventDialog.currentEnd = newEndDate;
+      this.eventDialog.calendar = this;
+      try {
+        //To avoid js error due to conflicts with Smartclient default EventDialog
+        this.eventDialog.show();
+      } catch (e) {}
+    } else {
+      return this.Super('eventMoved', arguments);
+    }
   },
   eventRemoved: function (event) {
     return this.Super('eventRemoved', arguments);
-  },
-  eventMoved: function (newDate, event) {
-    return this.Super('eventMoved', arguments);
   },
   showOBEventDialog: function () {
     var dialog = isc.OBPopup.create({});
