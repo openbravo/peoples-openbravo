@@ -1626,6 +1626,7 @@ isc.OBViewGrid.addProperties({
     var rowTop, recordIndex, i, data = this.data,
         tmpTargetRecordId = this.targetRecordId;
     if (!this.targetRecordId) {
+      delete this.isOpenDirectModeLeaf;
       return;
     }
     if (this.body) {
