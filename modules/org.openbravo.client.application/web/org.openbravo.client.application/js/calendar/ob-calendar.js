@@ -252,8 +252,21 @@ isc.OBCalendar.addProperties({
       return this.Super('eventMoved', arguments);
     }
   },
-  eventRemoved: function (event) {
-    return this.Super('eventRemoved', arguments);
+  eventRemoveClick: function (event) {
+    if (this.showEventDialogOnEventDelete) {
+      this.eventDialog.event = event;
+      this.eventDialog.currentStart = event[this.startDateField];
+      this.eventDialog.currentEnd = event[this.endDateField];
+      this.eventDialog.calendar = this;
+      try {
+        //To avoid js error due to conflicts with Smartclient default EventDialog
+        this.eventDialog.show();
+      } catch (e) {
+      }
+      return false;
+    } else {
+      return this.Super('eventRemoveClick', arguments);
+    }
   },
   showOBEventDialog: function () {
     var dialog = isc.OBPopup.create({});
