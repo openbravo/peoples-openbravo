@@ -26,13 +26,16 @@ import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.TriggerHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
+import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.InvoiceLineTax;
 import org.openbravo.model.ad.access.OrderLineTax;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
+import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.invoice.InvoiceLine;
 import org.openbravo.model.common.invoice.InvoiceLineOffer;
@@ -45,6 +48,7 @@ import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.Fin_OrigPaymentSchedule;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
 
 public class OrderGroupingProcessor {
@@ -337,6 +341,13 @@ public class OrderGroupingProcessor {
 
   }
 
+  protected String getInvoiceDocumentNo(DocumentType doctypeTarget, DocumentType doctype) {
+    return Utility.getDocumentNo(OBDal.getInstance().getConnection(false),
+        new DalConnectionProvider(false), RequestContext.get().getVariablesSecureApp(), "",
+        "C_Invoice", doctypeTarget == null ? "" : doctypeTarget.getId(), doctype == null ? ""
+            : doctype.getId(), false, true);
+  }
+
   protected Invoice createNewInvoice(OBPOSApplications terminal, BusinessPartner bp,
       OrderLine firstLine) {
     Invoice invoice = OBProvider.getInstance().get(Invoice.class);
@@ -346,7 +357,6 @@ public class OrderGroupingProcessor {
     }
     invoice.setPartnerAddress(bp.getBusinessPartnerLocationList().get(0));
     invoice.setCurrency(firstLine.getCurrency());
-    invoice.setDocumentNo(null);
     invoice.setOrganization(terminal.getOrganization());
     invoice.setSalesTransaction(true);
     invoice.setDocumentStatus("CO");
@@ -359,6 +369,8 @@ public class OrderGroupingProcessor {
         .getDocumentTypeForInvoice());
     invoice.setTransactionDocument(terminal.getObposTerminaltype().getDocumentType()
         .getDocumentTypeForInvoice());
+    invoice.setDocumentNo(getInvoiceDocumentNo(invoice.getTransactionDocument(),
+        invoice.getDocumentType()));
     invoice.setAccountingDate(POSUtils.getCurrentDate());
     invoice.setInvoiceDate(POSUtils.getCurrentDate());
     invoice.setPriceList(firstLine.getSalesOrder().getPriceList());
@@ -374,7 +386,6 @@ public class OrderGroupingProcessor {
     }
     invoice.setPartnerAddress(order.getBusinessPartner().getBusinessPartnerLocationList().get(0));
     invoice.setCurrency(firstLine.getCurrency());
-    invoice.setDocumentNo(null);
     invoice.setSalesTransaction(true);
     invoice.setOrganization(terminal.getOrganization());
     invoice.setDocumentStatus("CO");
@@ -387,6 +398,8 @@ public class OrderGroupingProcessor {
         .getDocumentTypeForInvoice());
     invoice.setTransactionDocument(terminal.getObposTerminaltype().getDocumentType()
         .getDocumentTypeForInvoice());
+    invoice.setDocumentNo(getInvoiceDocumentNo(invoice.getTransactionDocument(),
+        invoice.getDocumentType()));
     invoice.setAccountingDate(POSUtils.getCurrentDate());
     invoice.setInvoiceDate(POSUtils.getCurrentDate());
     invoice.setPriceList(firstLine.getSalesOrder().getPriceList());
