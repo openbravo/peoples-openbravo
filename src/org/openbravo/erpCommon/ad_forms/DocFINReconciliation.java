@@ -23,7 +23,6 @@ import java.math.BigDecimal;
 import java.sql.Connection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -49,15 +48,10 @@ import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.AcctSchemaTableDocType;
-import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.financialmgmt.accounting.FIN_FinancialAccountAccounting;
 import org.openbravo.model.financialmgmt.accounting.coa.AccountingCombination;
 import org.openbravo.model.financialmgmt.accounting.coa.AcctSchemaTable;
-import org.openbravo.model.financialmgmt.calendar.Calendar;
-import org.openbravo.model.financialmgmt.calendar.Period;
-import org.openbravo.model.financialmgmt.calendar.PeriodControl;
-import org.openbravo.model.financialmgmt.calendar.Year;
 import org.openbravo.model.financialmgmt.gl.GLItem;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
@@ -1186,14 +1180,16 @@ public class DocFINReconciliation extends AcctServer {
       }
       // Exists line in closed period
       for (FIN_FinaccTransaction line : transactionsToBePosted) {
-        Period linePeriod = documentGetPeriod(line.getDateAcct(), reconciliation.getOrganization());
-        if (linePeriod == null) {
+        String linePeriod = getOpenPeriod(OBDateUtils.formatDate(line.getDateAcct()),
+            reconciliation.getOrganization().getId(), reconciliation.getClient().getId(),
+            DOCTYPE_Reconciliation);
+        if (linePeriod == null || "".equals(linePeriod)) {
           setStatus(STATUS_PeriodClosed);
           return false;
         }
       }
     } catch (Exception e) {
-      setStatus(STATUS_DocumentDisabled);
+      setStatus(STATUS_Error);
       return false;
     } finally {
       OBContext.restorePreviousMode();
@@ -1580,34 +1576,24 @@ public class DocFINReconciliation extends AcctServer {
     return account;
   }
 
-  Period documentGetPeriod(Date date, Organization org) {
-    OBCriteria<PeriodControl> obCriteria = OBDal.getInstance().createCriteria(PeriodControl.class);
-    obCriteria.createAlias(PeriodControl.PROPERTY_PERIOD, "p");
-    obCriteria.createAlias("p." + Period.PROPERTY_YEAR, "y");
-    obCriteria.add(Restrictions.eq(PeriodControl.PROPERTY_PERIODSTATUS, "O"));
-    obCriteria.add(Restrictions.eq(PeriodControl.PROPERTY_DOCUMENTCATEGORY,
-        AcctServer.DOCTYPE_Reconciliation));
-    obCriteria.add(Restrictions.eq("y." + Year.PROPERTY_CALENDAR, getCalendar(org)));
-    obCriteria.add(Restrictions.in(PeriodControl.PROPERTY_ORGANIZATION + "."
-        + Organization.PROPERTY_ID, OBContext.getOBContext().getOrganizationStructureProvider()
-        .getNaturalTree(org.getId())));
-    obCriteria.add(Restrictions.eq("p." + PeriodControl.PROPERTY_CLIENT, org.getClient()));
-    obCriteria.add(Restrictions.le("p." + Period.PROPERTY_STARTINGDATE, date));
-    obCriteria.add(Restrictions.ge("p." + Period.PROPERTY_ENDINGDATE, date));
-    obCriteria.setFilterOnReadableOrganization(false);
-    obCriteria.setFilterOnReadableClients(false);
-    List<PeriodControl> lines = obCriteria.list();
-    return lines.size() == 0 ? null : lines.get(0).getPeriod();
-  }
-
-  Calendar getCalendar(Organization organization) {
-    Calendar calendar = organization.getCalendar();
-    if (calendar != null) {
-      return calendar;
-    } else {
-      return getCalendar(OBContext.getOBContext().getOrganizationStructureProvider()
-          .getParentOrg(organization));
+  /**
+   * 
+   * @param date
+   * @param org
+   * @param client
+   * @param documentType
+   * @return A valid period ID in case it is open or empty in case period is not open
+   */
+  private String getOpenPeriod(String date, String org, String client, String documentType) {
+    AcctServerData[] data = null;
+    try {
+      data = AcctServerData.periodOpen(connectionProvider, client, documentType, org, date);
+      return data[0].period;
+    } catch (ServletException e) {
+      log4j.warn(e);
+      e.printStackTrace();
     }
+    return null;
   }
 
   private Account getAccountWriteOffBPartner(String AcctType, String strBPartnerId, AcctSchema as,
