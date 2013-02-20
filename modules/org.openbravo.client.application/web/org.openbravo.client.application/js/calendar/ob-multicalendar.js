@@ -198,7 +198,7 @@ isc.OBMultiCalendarLeftControls.addProperties({
         height: 8
       });
     }
-    button = isc.OBLinkButtonItem.create({
+    button = isc.OBFormButton.create({
       width: 180,
       title: this.multiCalendar.addEventButtonName,
       click: function () {
