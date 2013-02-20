@@ -32,8 +32,6 @@ import org.openbravo.base.filter.IsPositiveIntFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.costing.CostingStatus;
-import org.openbravo.dal.core.DalUtil;
-import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Tree;
 import org.openbravo.erpCommon.businessUtility.TreeData;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
@@ -45,8 +43,6 @@ import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.financial.FinancialUtils;
-import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.utils.Replace;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -681,16 +677,14 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
       String strConvRateErrorMsg = "";
       OBError myMessage = null;
       myMessage = new OBError();
-      String strBaseCurrencyId = (String) DalUtil.getId(FinancialUtils.getLegalEntityCurrency(OBDal
-          .getInstance().get(Organization.class, strOrg)));
       if (strComparative.equals("Y")) {
         try {
           data = ReportInvoiceCustomerDimensionalAnalysesJRData.select(this, strCurrencyId,
-              strBaseCurrencyId, strTextShow[0], strTextShow[1], strTextShow[2], strTextShow[3],
-              strTextShow[4], strTextShow[5], strTextShow[6], strTextShow[7], strTextShow[8],
-              strTextShow[9], Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()),
-                  strOrg), Utility.getContext(this, vars, "#User_Client",
-                  "ReportInvoiceCustomerDimensionalAnalysesJR"), strDateFrom, DateTimeData
+              strTextShow[0], strTextShow[1], strTextShow[2], strTextShow[3], strTextShow[4],
+              strTextShow[5], strTextShow[6], strTextShow[7], strTextShow[8], strTextShow[9], Tree
+                  .getMembers(this, TreeData.getTreeOrg(this, vars.getClient()), strOrg), Utility
+                  .getContext(this, vars, "#User_Client",
+                      "ReportInvoiceCustomerDimensionalAnalysesJR"), strDateFrom, DateTimeData
                   .nDaysAfter(this, strDateTo, "1"), strPartnerGroup, strcBpartnerId,
               strProductCategory, strmProductId, strsalesrepId, strPartnerSalesrepId,
               strcProjectId, strProducttype, strDateFromRef, DateTimeData.nDaysAfter(this,
@@ -701,12 +695,12 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
       } else {
         try {
           data = ReportInvoiceCustomerDimensionalAnalysesJRData.selectNoComparative(this,
-              strCurrencyId, strBaseCurrencyId, strTextShow[0], strTextShow[1], strTextShow[2],
-              strTextShow[3], strTextShow[4], strTextShow[5], strTextShow[6], strTextShow[7],
-              strTextShow[8], strTextShow[9], Tree.getMembers(this,
-                  TreeData.getTreeOrg(this, vars.getClient()), strOrg), Utility.getContext(this,
-                  vars, "#User_Client", "ReportInvoiceCustomerDimensionalAnalysesJR"), strDateFrom,
-              DateTimeData.nDaysAfter(this, strDateTo, "1"), strPartnerGroup, strcBpartnerId,
+              strCurrencyId, strTextShow[0], strTextShow[1], strTextShow[2], strTextShow[3],
+              strTextShow[4], strTextShow[5], strTextShow[6], strTextShow[7], strTextShow[8],
+              strTextShow[9], Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()),
+                  strOrg), Utility.getContext(this, vars, "#User_Client",
+                  "ReportInvoiceCustomerDimensionalAnalysesJR"), strDateFrom, DateTimeData
+                  .nDaysAfter(this, strDateTo, "1"), strPartnerGroup, strcBpartnerId,
               strProductCategory, strmProductId, strsalesrepId, strPartnerSalesrepId,
               strcProjectId, strProducttype, strOrderby);
         } catch (ServletException ex) {
