@@ -27,13 +27,7 @@ import org.openbravo.model.ad.access.Session;
 public class POSLoginHandler extends MobileCoreLoginHandler {
 
   private static final long serialVersionUID = 1L;
-  private static final String WEB_POS_FORM_ID = "B7B7675269CD4D44B628A2C6CF01244F";
   private static final String WEB_POS_SESSION = "OBPOS_POS";
-
-  @Override
-  protected String getFormId() {
-    return WEB_POS_FORM_ID;
-  }
 
   @Override
   protected RoleDefaults getDefaults(HttpServletRequest req, HttpServletResponse res,
