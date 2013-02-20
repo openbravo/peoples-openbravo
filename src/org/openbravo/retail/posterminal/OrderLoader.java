@@ -240,12 +240,9 @@ public class OrderLoader extends JSONProcessSimple {
         order.setDelivered(true);
         for (int i = 0; i < order.getOrderLineList().size(); i++) {
           lineReferences.add(order.getOrderLineList().get(i));
-          orderLine = OBDal.getInstance().get(OrderLine.class,
-              ((OrderLine) order.getOrderLineList().get(i)).getId());
+          orderLine = order.getOrderLineList().get(i);
           orderLine.setDeliveredQuantity(orderLine.getOrderedQuantity());
-          OBDal.getInstance().save(orderLine);
         }
-        OBDal.getInstance().save(order);
       } else if (partialpayLayaway) {
         order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
       } else {
@@ -943,8 +940,7 @@ public class OrderLoader extends JSONProcessSimple {
       FIN_PaymentSchedule paymentSchedule = OBProvider.getInstance().get(FIN_PaymentSchedule.class);
       int stdPrecision = order.getCurrency().getStandardPrecision().intValue();
       if (fullpayLayaway || partialpayLayaway) {
-        paymentSchedule = OBDal.getInstance().get(FIN_PaymentSchedule.class,
-            ((FIN_PaymentSchedule) order.getFINPaymentScheduleList().get(0)).getId());
+        paymentSchedule = order.getFINPaymentScheduleList().get(0);
         stdPrecision = order.getCurrency().getStandardPrecision().intValue();
       } else {
         paymentSchedule = OBProvider.getInstance().get(FIN_PaymentSchedule.class);
@@ -1022,6 +1018,26 @@ public class OrderLoader extends JSONProcessSimple {
               payment, i == (payments.length() - 1) ? writeoffAmt : BigDecimal.ZERO);
         }
       }
+      if (invoice != null && fullpayLayaway) {
+        for (int j = 0; j < paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList()
+            .size(); j++) {
+          if (((FIN_PaymentScheduleDetail) paymentSchedule
+              .getFINPaymentScheduleDetailOrderPaymentScheduleList().get(j))
+              .getInvoicePaymentSchedule() == null) {
+            ((FIN_PaymentScheduleDetail) paymentSchedule
+                .getFINPaymentScheduleDetailOrderPaymentScheduleList().get(j))
+                .setInvoicePaymentSchedule(paymentScheduleInvoice);
+          }
+        }
+        invoice.setTotalPaid(invoice.getGrandTotalAmount());
+        invoice.setOutstandingAmount(BigDecimal.ZERO);
+        invoice.setDueAmount(BigDecimal.ZERO);
+        invoice.setPaymentComplete(true);
+        paymentScheduleInvoice.setOutstandingAmount(BigDecimal.ZERO);
+        paymentScheduleInvoice.setPaidAmount(paymentScheduleInvoice.getAmount());
+        OBDal.getInstance().save(paymentScheduleInvoice);
+      }
+
       if (writeoffAmt.signum() == -1 && invoice != null) {
         FIN_PaymentScheduleDetail paymentScheduleDetail = OBProvider.getInstance().get(
             FIN_PaymentScheduleDetail.class);

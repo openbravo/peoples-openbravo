@@ -209,8 +209,8 @@ enyo.kind({
     this.model = model;
     var receipt = model.get('order'),
         me = this;
-    receipt.on('change:isQuotation', function (model) {
-      if (!model.get('isQuotation')) {
+    receipt.on('change:isQuotation change:isLayaway', function (model) {
+      if (!model.get('isQuotation') || model.get('isLayaway')) {
         me.show();
       } else {
         me.hide();
@@ -218,7 +218,7 @@ enyo.kind({
     }, this);
     receipt.on('change:isEditable', function (newValue) {
       if (newValue) {
-        if (newValue.get('isEditable') === false) {
+        if (newValue.get('isEditable') === false && !newValue.get('isLayaway')) {
           this.setShowing(false);
           return;
         }
