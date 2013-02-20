@@ -137,7 +137,6 @@
     <Parameter name="cCurrencyConv"/>
     <Parameter name="cCurrencyConv"/>
     <Parameter name="cCurrencyConv"/>
-    <Parameter name="cCurrencyConv"/>
     <Parameter name="nivel1" type="replace" optional="true" after="FROM (SELECT to_char(" text="'1'"/>
     <Parameter name="nivel2" type="replace" optional="true" after="AS NIVEL1, to_char(" text="'2'"/>
     <Parameter name="nivel3" type="replace" optional="true" after="AS NIVEL2, to_char(" text="'3'"/>
@@ -170,6 +169,7 @@
     <Parameter name="nivel8" type="replace" optional="true" after="AS NIVEL7 , to_char(" text="'17'"/>
     <Parameter name="nivel9" type="replace" optional="true" after="AS NIVEL8 , to_char(" text="'19'"/>
     <Parameter name="nivel10" type="replace" optional="true" after="AS NIVEL9 , to_char(" text="'21'"/>
+    <Parameter name="cCurrencyConv"/>
     <Parameter name="adOrgId" optional="true" type="replace" after="AND 3=3 AND C_INVOICE.AD_ORG_ID IN (" text="'1'"/>
     <Parameter name="adUserClient" type="replace" optional="true" after="AND C_INVOICE.AD_CLIENT_ID IN(" text="'14'"/>
     <Parameter name="dateFromRef" optional="true" after="AND 2=2"><![CDATA[AND C_INVOICE.DATEINVOICED >= to_date(?)]]></Parameter>
