@@ -182,14 +182,10 @@ OB.Model.Terminal = Backbone.Model.extend({
       return;
     }
     var windows, i, windowName, windowClass, datasources;
-    var timestamp = 0;
     if (windowv) {
       windows = [windowv];
     } else {
       windows = OB.POS.windowObjs;
-    }
-    if (incremental && window.localStorage.getItem('lastUpdatedTimestamp')) {
-      timestamp = window.localStorage.getItem('lastUpdatedTimestamp');
     }
     for (i = 0; i < windows.length; i++) {
       windowClass = windows[i].windowClass;
@@ -203,7 +199,7 @@ OB.Model.Terminal = Backbone.Model.extend({
 
       _.extend(datasources, Backbone.Events);
 
-      OB.Model.Util.loadModels(false, datasources, null, timestamp);
+      OB.Model.Util.loadModels(false, datasources, null, incremental);
     }
   },
 

@@ -23,10 +23,7 @@
       var response = inResponse.response;
       var status = response.status;
       if (status === 0) {
-        if (response.data && response.data.length > 0) {
-          window.localStorage.setItem('lastUpdatedTimestamp', response.lastUpdated);
-        }
-        callback(response.data, response.message);
+        callback(response.data, response.message, response.lastUpdated);
       } else if (response.errors) {
         callback({
           exception: {
@@ -280,10 +277,14 @@
     var me = this;
     this.cache = null;
 
-    this.request.exec(params, function (data) {
+    this.request.exec(params, function (data, message, lastUpdated) {
 
       if (data.exception) {
         throw data.exception;
+      }
+
+      if (lastUpdated) {
+        window.localStorage.setItem('lastUpdatedTimestamp' + me.request.model.prototype.modelName, lastUpdated);
       }
 
       me.cache = data;
