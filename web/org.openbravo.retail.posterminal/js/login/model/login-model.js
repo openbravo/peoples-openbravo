@@ -222,7 +222,7 @@
 
     loadContext: function () {
       var me = this;
-      new OB.DS.Request('org.openbravo.retail.posterminal.term.Context').exec({}, function (data) {
+      new OB.DS.Request('org.openbravo.mobile.core.login.Context').exec({}, function (data) {
         if (data[0]) {
           me.set('context', data[0]);
           me.triggerReady();
