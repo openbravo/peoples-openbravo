@@ -23,7 +23,8 @@
   OB.Model = OB.Model || {};
   OB.Model.Util = {
     loadModels: function (online, models, data, incremental) {
-      var somethigToLoad = false;
+      var somethigToLoad = false,
+          timestamp = 0;
 
       models._LoadOnline = online;
 
@@ -45,7 +46,11 @@
               window.console.error('init error', arguments);
             });
           } else {
-            ds = new OB.DS.DataSource(new OB.DS.Request(item, OB.POS.modelterminal.get('terminal').client, OB.POS.modelterminal.get('terminal').organization, OB.POS.modelterminal.get('terminal').id, incremental));
+
+            if (incremental && window.localStorage.getItem('lastUpdatedTimestamp' + item.prototype.modelName)) {
+              timestamp = window.localStorage.getItem('lastUpdatedTimestamp' + item.prototype.modelName);
+            }
+            ds = new OB.DS.DataSource(new OB.DS.Request(item, OB.POS.modelterminal.get('terminal').client, OB.POS.modelterminal.get('terminal').organization, OB.POS.modelterminal.get('terminal').id, timestamp));
             somethigToLoad = true;
             models._LoadQueue = models._LoadQueue || {};
             models._LoadQueue[item.prototype.modelName] = false;
