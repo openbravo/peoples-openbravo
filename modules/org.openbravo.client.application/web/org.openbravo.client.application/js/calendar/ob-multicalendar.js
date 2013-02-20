@@ -200,7 +200,7 @@ isc.OBMultiCalendarLeftControls.addProperties({
     }
     button = isc.OBLinkButtonItem.create({
       width: 180,
-      title: '[ Create Event ]',
+      title: this.multiCalendar.addEventButtonName,
       click: function () {
         leftControls.multiCalendar.calendar.addEventButton.click();
       }
@@ -233,8 +233,9 @@ isc.OBMultiCalendarLeftControls.addProperties({
 isc.OBMultiCalendar.addProperties({
   width: '100%',
   height: '100%',
-  filterName: 'Filter',
-  legendName: 'Legend',
+  filterName: OB.I18N.getLabel('OBUIAPP_CalWidget_Filter'),
+  legendName: OB.I18N.getLabel('OBUIAPP_CalWidget_Legend'),
+  addEventButtonName: OB.I18N.getLabel('OBUIAPP_CalWidget_AddEvent'),
   defaultViewName: null,
   calendarData: null,
   showLeftControls: true,
@@ -306,6 +307,9 @@ isc.OBMultiCalendar.addProperties({
     }
     if (this.calendarProps.legendName) {
       this.legendName = this.calendarProps.legendName;
+    }
+    if (this.calendarProps.addEventButtonName) {
+      this.addEventButtonName = this.calendarProps.addEventButtonName;
     }
     if (typeof this.calendarProps.showLeftControls !== 'undefined') {
       this.showLeftControls = this.calendarProps.showLeftControls;
