@@ -72,7 +72,7 @@
           $LAB.script('../../org.openbravo.client.kernel/OBMOBC_Main/ClientModel?entity=PricingAdjustmentProduct&modelName=DiscountFilterProduct&source=org.openbravo.retail.posterminal.master.DiscountFilterProduct');
           $LAB.script('../../org.openbravo.client.kernel/OBMOBC_Main/ClientModel?entity=PricingAdjustmentProductCategory&modelName=DiscountFilterProductCategory&source=org.openbravo.retail.posterminal.master.DiscountFilterProductCategory');
 
-          $LAB.script('../../org.openbravo.client.kernel/OBMOBC_Main/StaticResources?_appName=WebPOS');
+          $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/StaticResources?_appName=WebPOS');
           return;
         }
         $LAB.script('../../org.openbravo.client.kernel/OBCLKER_Kernel/Application').wait(function () {
