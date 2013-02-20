@@ -80,10 +80,10 @@ BEGIN
     -- Org
     --
     IF(v_ClientList IS NULL OR LENGTH(v_ClientList)=0) THEN
-      v_ClientList:=' ';
+      v_ClientList:=CUR_Role.AD_Client_ID;
     END IF;
     IF(v_OrgList IS NULL OR LENGTH(v_OrgList)=0) THEN
-      v_OrgList:=' ';
+      v_OrgList:=CUR_Role.AD_Org_ID;
     END IF;
     DBMS_OUTPUT.PUT_LINE(CUR_Role.Name || ': Client=' || CUR_Role.ClientList || '->' || v_ClientList || ' - Org= ' || CUR_Role.OrgList || '->' || v_OrgList) ;
     -- Update Role
