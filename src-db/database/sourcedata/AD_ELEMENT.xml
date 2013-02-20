@@ -29695,8 +29695,8 @@ The main purpose of this whereclause is to select which of the records in a part
 <!--C1FC934106F24E9A82DDD748FC66F7ED-->  <COLUMNNAME><![CDATA[IsPortal]]></COLUMNNAME>
 <!--C1FC934106F24E9A82DDD748FC66F7ED-->  <NAME><![CDATA[For Portal Users]]></NAME>
 <!--C1FC934106F24E9A82DDD748FC66F7ED-->  <PRINTNAME><![CDATA[For Portal Users]]></PRINTNAME>
-<!--C1FC934106F24E9A82DDD748FC66F7ED-->  <DESCRIPTION><![CDATA[If checked, this role will have a simplified (portal) interface, where he only has available the workspace widgets.]]></DESCRIPTION>
-<!--C1FC934106F24E9A82DDD748FC66F7ED-->  <HELP><![CDATA[If checked, this role will have a simplified (portal) interface, where he only has available the workspace widgets.]]></HELP>
+<!--C1FC934106F24E9A82DDD748FC66F7ED-->  <DESCRIPTION><![CDATA[If checked, this role will have a simplified (portal) interface, where it only has available the workspace widgets.]]></DESCRIPTION>
+<!--C1FC934106F24E9A82DDD748FC66F7ED-->  <HELP><![CDATA[If checked, this role will have a simplified (portal) interface, where it only has available the workspace widgets.]]></HELP>
 <!--C1FC934106F24E9A82DDD748FC66F7ED-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--C1FC934106F24E9A82DDD748FC66F7ED-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--C1FC934106F24E9A82DDD748FC66F7ED--></AD_ELEMENT>
