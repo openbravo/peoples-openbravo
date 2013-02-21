@@ -243,8 +243,8 @@ isc.OBCalendar.addProperties({
   eventMoved: function (newDate, event) {
     newDate.setSeconds(0);
     if (this.showEventDialogOnEventMove) {
+      //Event duration
       var dateDiff = event[this.endDateField] - event[this.startDateField],
-           //Event duration
           newEndDate = newDate.getTime() + dateDiff; //Add the event duration to the new startDate
       newEndDate = new Date(newEndDate);
       this.eventDialog.event = event;
@@ -268,8 +268,7 @@ isc.OBCalendar.addProperties({
       try {
         //To avoid js error due to conflicts with Smartclient default EventDialog
         this.eventDialog.show();
-      } catch (e) {
-      }
+      } catch (e) {}
       return false;
     } else {
       return this.Super('eventRemoveClick', arguments);
