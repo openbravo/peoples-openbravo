@@ -55,6 +55,7 @@ public class PersonalizationActionHandler extends BaseActionHandler {
   private static final String USERID = "userId";
   private static final String TABID = "tabId";
   private static final String WINDOWID = "windowId";
+  private static final String APPLYLEVELINFORMATION = "applyLevelInformation";
 
   @Inject
   private PersonalizationHandler personalizationHandler;
@@ -80,21 +81,37 @@ public class PersonalizationActionHandler extends BaseActionHandler {
       final String action = (String) parameters.get(ACTION);
       final String tabId = (String) parameters.get(TABID);
       final String windowId = (String) parameters.get(WINDOWID);
+      final String applyLevelInformation = (String) parameters.get(APPLYLEVELINFORMATION);
+      final String personalizationID = (String) parameters.get(PERSONALIZATIONID);
       if (action.equals(ACTION_DELETE)) {
-        final String persId = (String) parameters.get(PERSONALIZATIONID);
         final UIPersonalization uiPersonalization = OBDal.getInstance().get(
-            UIPersonalization.class, persId);
+            UIPersonalization.class, personalizationID);
         if (uiPersonalization != null) {
           // is null if already removed
           OBDal.getInstance().remove(uiPersonalization);
         }
         return new JSONObject().put("result", "success");
       } else if (action.equals(ACTION_STORE)) {
-        final UIPersonalization uiPersonalization = personalizationHandler
-            .storePersonalization((String) parameters.get(PERSONALIZATIONID),
-                (String) parameters.get(CLIENTID), (String) parameters.get(ORGID),
-                (String) parameters.get(ROLEID), (String) parameters.get(USERID), tabId, windowId,
-                (String) parameters.get(TARGET), data);
+
+        String clientID = (String) parameters.get(CLIENTID);
+        String orgID = (String) parameters.get(ORGID);
+        String roleID = (String) parameters.get(ROLEID);
+        String userID = (String) parameters.get(USERID);
+
+        if ("false".equals(applyLevelInformation) && personalizationID != null) {
+          // If we don't have to apply the level information and the personalization is being
+          // updated, use the original level information
+          final UIPersonalization uiPersonalization = OBDal.getInstance().get(
+              UIPersonalization.class, personalizationID);
+          clientID = uiPersonalization.getVisibleAtClient().getId();
+          orgID = uiPersonalization.getVisibleAtOrganization().getId();
+          roleID = uiPersonalization.getVisibleAtRole().getId();
+          userID = uiPersonalization.getUser().getId();
+        }
+
+        final UIPersonalization uiPersonalization = personalizationHandler.storePersonalization(
+            personalizationID, clientID, orgID, roleID, userID, tabId, windowId,
+            (String) parameters.get(TARGET), data);
         final JSONObject result = new JSONObject();
         result.put("personalizationId", uiPersonalization.getId());
         return result;

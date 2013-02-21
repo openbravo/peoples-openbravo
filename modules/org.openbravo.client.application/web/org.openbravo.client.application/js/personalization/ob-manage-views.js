@@ -239,7 +239,8 @@ OB.Personalization.storeViewDefinition = function (standardWindow, levelInformat
       orgId: levelInformation.orgId,
       roleId: levelInformation.roleId,
       userId: levelInformation.userId,
-      personalizationId: persId
+      personalizationId: persId,
+      applyLevelInformation: true
     };
 
   } else {
@@ -252,7 +253,8 @@ OB.Personalization.storeViewDefinition = function (standardWindow, levelInformat
       orgId: levelInformation.orgId,
       roleId: levelInformation.roleId,
       userId: levelInformation.userId,
-      windowId: standardWindow.windowId
+      windowId: standardWindow.windowId,
+      applyLevelInformation: true
     };
   }
 

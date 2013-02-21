@@ -602,7 +602,8 @@ isc.OBPersonalizeFormLayout.addProperties({
       params = {
         action: 'store',
         target: 'form',
-        personalizationId: formPers.personalizationId
+        personalizationId: formPers.personalizationId,
+        applyLevelInformation: false
       };
 
     } else {
@@ -615,7 +616,8 @@ isc.OBPersonalizeFormLayout.addProperties({
         orgId: this.orgId,
         roleId: this.roleId,
         userId: this.userId,
-        tabId: this.tabId
+        tabId: this.tabId,
+        applyLevelInformation: true
       };
     }
 
