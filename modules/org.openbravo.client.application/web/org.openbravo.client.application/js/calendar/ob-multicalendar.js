@@ -152,22 +152,36 @@ isc.OBMultiCalendarLeftControls.addProperties({
     return legendArray;
   },
   initWidget: function () {
-    var button, label, legend, leftControls = this;
+    var button, label, legend, leftControls = this,
+        currentFilter = null,
+        i;
     this.Super('initWidget', arguments);
     if (this.multiCalendar.calendarData.hasFilter) {
+      for (i = 0; i < leftControls.multiCalendar.calendarData.filters.length; i++) {
+        if (leftControls.multiCalendar.calendarData.filters[i].checked) {
+          currentFilter = leftControls.multiCalendar.calendarData.filters[i].id;
+          break;
+        }
+      }
       this.filter = isc.DynamicForm.create({
         fields: [{
           name: 'filter',
           title: leftControls.multiCalendar.filterName,
           type: 'comboBox',
           valueMap: leftControls.getFilterValueMap(),
-          value: leftControls.multiCalendar.calendarData.currentFilter,
+          value: currentFilter,
           width: 180,
           titleOrientation: 'top',
           required: true,
           changed: function (form, item, value) {
             this.Super('changed', arguments);
-            leftControls.multiCalendar.calendarData.currentFilter = value;
+            for (i = 0; i < leftControls.multiCalendar.calendarData.filters.length; i++) {
+              if (leftControls.multiCalendar.calendarData.filters[i].id === value) {
+                leftControls.multiCalendar.calendarData.filters[i].checked = true;
+              } else {
+                leftControls.multiCalendar.calendarData.filters[i].checked = false;
+              }
+            }
             leftControls.legend.updateMembers(leftControls.getLegendValueMap());
           },
 
@@ -265,6 +279,11 @@ isc.OBMultiCalendar.addProperties({
       if (canCreateEvents === false && i === calendarData.calendars.length - 1) {
         this.canCreateEvents = false;
         this.calendarProps.canCreateEvents = false;
+      }
+    }
+    for (i = 0; i < calendarData.filters.length; i++) {
+      if (typeof calendarData.filters[i].checked === 'undefined') {
+        calendarData.filters[i].checked = false;
       }
     }
     return calendarData;
