@@ -62,17 +62,17 @@ BEGIN
 	END IF;
 	
 
-    IF (:old.c_order_id is not null) THEN
-      SELECT count(*)
-      INTO v_count
+    If (:Old.C_Order_Id Is Not Null) Then
+      SELECT count(*) 
+      Into V_Count
       FROM c_orderline col
       WHERE col.c_order_id = :old.c_order_id 
       AND col.c_orderline_id IN (
                    SELECT c_orderline_id 
                    FROM m_inoutline 
                    WHERE m_inout_id = :old.m_inout_id);
-      IF (v_count = 0) THEN
-        :new.c_order_id = null;
+      If (V_Count = 0) Then
+        :new.c_order_id := null;
       END IF;
     END IF;
   END IF;
