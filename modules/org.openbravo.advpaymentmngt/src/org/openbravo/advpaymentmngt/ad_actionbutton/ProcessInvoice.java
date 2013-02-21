@@ -300,7 +300,9 @@ public class ProcessInvoice extends HttpSecureAppServlet {
             description.append(String.format(
                 Utility.messageBD(this, "APRM_CreditUsedinInvoice", vars.getLanguage()),
                 invoice.getDocumentNo()));
-            creditPayment.setDescription(description.toString());
+            String truncateDescription = (description.length() > 255) ? description
+                .substring(0, 251).concat("...").toString() : description.toString();
+            creditPayment.setDescription(truncateDescription);
             totalUsedCreditAmt = totalUsedCreditAmt.add(usedCreditAmt);
             creditPaymentsIdentifiers.append(creditPayment.getDocumentNo());
             creditPaymentsIdentifiers.append(", ");
