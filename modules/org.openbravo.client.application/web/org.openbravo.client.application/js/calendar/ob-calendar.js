@@ -118,7 +118,7 @@ isc.OBCalendar.addProperties({
       },
       transformResponse: function (dsResponse, dsRequest, data) {
         var showDSAlert, records = data && data.response && data.response.data,
-            i;
+            i, j;
 
         showDSAlert = function (text) {
           isc.warn(text, function () {
@@ -151,6 +151,13 @@ isc.OBCalendar.addProperties({
               }
               if (typeof calendar.customTransformResponse === 'function') {
                 records[i] = calendar.customTransformResponse(records[i], calendar);
+              }
+              if (multiCalendar && multiCalendar.calendarData.hasCustomFilters) {
+                for (j = 0; j < multiCalendar.calendarData.customFilters.length; j++) {
+                  if (typeof multiCalendar.calendarData.customFilters[j].handler.transformResponse === 'function') {
+                    records[i] = multiCalendar.calendarData.customFilters[j].handler.transformResponse(records[i], calendar, multiCalendar.calendarData.customFilters[j]);
+                  }
+                }
               }
             }
           }
@@ -339,6 +346,14 @@ isc.OBCalendar.addProperties({
 
     if (orPart.criteria.getLength() > 0) {
       criteria.criteria.push(orPart);
+    }
+
+    if (this.multiCalendar && this.multiCalendar.calendarData.hasCustomFilters) {
+      for (i = 0; i < this.multiCalendar.calendarData.customFilters.length; i++) {
+        if (typeof this.multiCalendar.calendarData.customFilters[i].handler.filterCriteria === 'function') {
+          criteria.criteria.push(this.multiCalendar.calendarData.customFilters[i].handler.filterCriteria(this, this.multiCalendar.calendarData.customFilters[i]));
+        }
+      }
     }
 
     if (typeof this.getCustomCriteria === 'function') {

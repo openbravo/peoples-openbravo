@@ -159,7 +159,7 @@ isc.OBMultiCalendarLeftControls.addProperties({
     return legendArray;
   },
   initWidget: function () {
-    var button, label, legend, leftControls = this,
+    var button, label, legend, customFilterObj, leftControls = this,
         currentFilter = null,
         i;
     this.Super('initWidget', arguments);
@@ -239,6 +239,26 @@ isc.OBMultiCalendarLeftControls.addProperties({
       height: 10,
       contents: this.multiCalendar.legendName + ' :'
     });
+    this.customFiltersContainer = isc.VLayout.create({
+      width: 1,
+      height: 1,
+      initWidget: function () {
+        var i;
+        if (leftControls.multiCalendar.calendarData.hasCustomFilters) {
+          for (i = 0; i < leftControls.multiCalendar.calendarData.customFilters.length; i++) {
+            if (leftControls.multiCalendar.calendarData.customFilters[i].handler.constructor) {
+              customFilterObj = leftControls.multiCalendar.calendarData.customFilters[i].handler.constructor.create({
+                multiCalendar: leftControls.multiCalendar,
+                checked: leftControls.multiCalendar.calendarData.customFilters[i].checked,
+                customFilter: leftControls.multiCalendar.calendarData.customFilters[i]
+              }, leftControls.multiCalendar.calendarData.customFilters[i].handler.constructorProps);
+              this.addMembers([customFilterObj]);
+            }
+          }
+        }
+        this.Super('initWidget', arguments);
+      }
+    });
     this.legend = isc.OBMultiCalendarLegend.create({
       multiCalendar: this.multiCalendar
     });
@@ -247,7 +267,7 @@ isc.OBMultiCalendarLeftControls.addProperties({
     if (this.multiCalendar.canCreateEvents) {
       this.addMembers([button]);
     }
-    this.addMembers([this.dateChooser, label, this.legend]);
+    this.addMembers([this.dateChooser, this.customFiltersContainer, label, this.legend]);
   }
 });
 
@@ -269,6 +289,11 @@ isc.OBMultiCalendar.addProperties({
     } else {
       calendarData.hasFilter = false;
     }
+    if (calendarData.customFilters) {
+      calendarData.hasCustomFilters = true;
+    } else {
+      calendarData.hasCustomFilters = false;
+    }
     for (i = 0; i < calendarData.calendars.length; i++) {
       if (typeof calendarData.calendars[i].checked === 'undefined') {
         calendarData.calendars[i].checked = true;
@@ -288,9 +313,24 @@ isc.OBMultiCalendar.addProperties({
         this.calendarProps.canCreateEvents = false;
       }
     }
-    for (i = 0; i < calendarData.filters.length; i++) {
-      if (typeof calendarData.filters[i].checked === 'undefined') {
-        calendarData.filters[i].checked = false;
+    if (calendarData.hasFilter) {
+      for (i = 0; i < calendarData.filters.length; i++) {
+        if (typeof calendarData.filters[i].checked === 'undefined') {
+          calendarData.filters[i].checked = false;
+        }
+      }
+    }
+    if (calendarData.hasCustomFilters) {
+      for (i = 0; i < calendarData.customFilters.length; i++) {
+        if (typeof calendarData.customFilters[i].checked === 'undefined') {
+          calendarData.customFilters[i].checked = false;
+        }
+        if (typeof calendarData.customFilters[i].handler === 'string' && this.calendarProps[calendarData.customFilters[i].handler]) {
+          calendarData.customFilters[i].handler = this.calendarProps[calendarData.customFilters[i].handler];
+        }
+        if (typeof calendarData.customFilters[i].handler.constructor === 'string') {
+          calendarData.customFilters[i].handler.constructor = new Function('return ' + calendarData.customFilters[i].handler.constructor)();
+        }
       }
     }
     return calendarData;
