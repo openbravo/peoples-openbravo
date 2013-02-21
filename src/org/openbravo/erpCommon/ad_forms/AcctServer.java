@@ -409,6 +409,7 @@ public abstract class AcctServer {
           return;
         } else {
           connectionProvider.releaseCommitConnection(con);
+          OBDal.getInstance().commitAndClose();
         }
       }
       if (log4j.isDebugEnabled() && data != null)
@@ -660,6 +661,13 @@ public abstract class AcctServer {
     this.m_as = retValue;
   }
 
+  /**
+   * This method handles the accounting of the record identified by strClave. Due to the possibility
+   * of developing processes that may run after the standard accounting the commit of the
+   * transactions made in this method cannot be done here. The commit must be handled in the caller
+   * of this method appropriately. Realize that you must handle the commit of the transactions made
+   * through a normal or a DAL connection.
+   */
   public boolean post(String strClave, boolean force, VariablesSecureApp vars,
       ConnectionProvider conn, Connection con) throws ServletException {
     Record_ID = strClave;

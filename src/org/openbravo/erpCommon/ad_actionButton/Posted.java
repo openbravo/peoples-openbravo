@@ -240,6 +240,7 @@ public class Posted extends HttpSecureAppServlet {
         return myMessage;
       }
       releaseCommitConnection(con);
+      OBDal.getInstance().commitAndClose();
     } catch (Exception e) {
       log4j.error(e);
       myMessage = Utility.translateError(this, vars, vars.getLanguage(), e.getMessage());
