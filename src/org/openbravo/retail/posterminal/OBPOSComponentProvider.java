@@ -43,7 +43,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
   static {
     // Set dependency on Mobile Core app
     BaseComponentProvider.setAppDependencies(POSUtils.APP_NAME,
-        Arrays.asList(MobileCoreConstants.APP_IDENTIFIER));
+        Arrays.asList(MobileCoreConstants.RETAIL_CORE));
   }
 
   public static final String QUALIFIER = "OBPOS_Main";
@@ -129,7 +129,6 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/orderdetails",
         "components/businesspartner",
         "components/listreceiptscounter",
-        "components/product-browser",
         "components/menu",
         // Old Tickets
         "components/modalpaidreceipts",
