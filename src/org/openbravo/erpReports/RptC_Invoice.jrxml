@@ -158,7 +158,7 @@ AND AD_ORG.ad_org_id = (SELECT o.AD_ORG_ID
 			<band splitType="Stretch"/>
 		</groupFooter>
 	</group>
-	<group name="C_INVOICE_ID" isStartNewPage="true" keepTogether="true">
+	<group name="C_INVOICE_ID" isStartNewPage="true">
 		<groupExpression><![CDATA[$F{C_INVOICE_ID}]]></groupExpression>
 		<groupHeader>
 			<band height="255" splitType="Stretch">
@@ -308,7 +308,7 @@ AND AD_ORG.ad_org_id = (SELECT o.AD_ORG_ID
 			<band splitType="Stretch"/>
 		</groupFooter>
 	</group>
-	<group name="tax" minHeightToStartNewPage="300" keepTogether="true">
+	<group name="tax" minHeightToStartNewPage="300">
 		<groupHeader>
 			<band splitType="Stretch"/>
 		</groupHeader>
