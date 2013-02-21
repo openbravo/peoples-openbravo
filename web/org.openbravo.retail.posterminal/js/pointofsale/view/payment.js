@@ -219,6 +219,9 @@ enyo.kind({
       this.$.exactaction.show();
       if (this.receipt.get('orderType') === 2 || (this.receipt.get('isLayaway') && this.receipt.get('orderType') !== 3)) {
         this.$.layawayaction.show();
+        if (!this.receipt.get('isLayaway')) {
+          this.$.exactaction.hide();
+        }
       } else if (this.receipt.get('orderType') === 3) {
         this.$.exactaction.hide();
       }
@@ -474,7 +477,13 @@ enyo.kind({
     this.setContent(OB.I18N.getLabel('OBPOS_LblLayawayButton'));
   },
   tap: function () {
-    this.owner.receipt.trigger('paymentDone');
-    this.owner.receipt.trigger('openDrawer');
+    //Void Layaway
+    if (this.owner.receipt.get('orderType') === 3) {
+      this.owner.receipt.trigger('voidLayaway');
+    } else {
+      this.owner.receipt.trigger('paymentDone');
+      this.owner.receipt.trigger('openDrawer');
+    }
+
   }
 });

@@ -196,5 +196,22 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
       }
       OB.Model.Discounts.applyPromotions(receipt);
     }, this);
+    receipt.on('voidLayaway', function () {
+      var process = new OB.DS.Process('org.openbravo.retail.posterminal.ProcessVoidLayaway');
+      process.exec({
+        orderId: receipt.id
+      }, function (data, message) {
+        if (data && data.exception) {
+          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorVoidLayaway'));
+        } else {
+          OB.Dal.remove(receipt, null, function (tx, err) {
+            OB.UTIL.showError(err);
+          });
+          orderList.deleteCurrent();
+          OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgSuccessVoidLayaway'));
+        }
+      });
+
+    }, this);
   }
 });
