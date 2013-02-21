@@ -32,6 +32,18 @@ OB.User = {
         <#else>
           isPortal: false,
         </#if>
+        <#if data.role.portalAdmin>
+          isPortalAdmin: true,
+        <#else>
+          isPortalAdmin: false,
+        </#if>
+        <#if data.user.businessPartner??>
+          businessPartnerId: '${data.user.businessPartner.id}',
+          businessPartnerName: '${data.user.businessPartner.name?js_string}',
+        <#else>
+          businessPartnerId: null,
+          businessPartnerName: null,
+        </#if>
         clientId: '${data.client.id}',
         clientName: '${data.client.name?js_string}',
         organizationId: '${data.organization.id}',

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -749,6 +749,9 @@ public class OBContext implements OBNotSingleton {
       Hibernate.initialize(getUser().getDefaultClient());
       Hibernate.initialize(getUser().getDefaultRole());
       Hibernate.initialize(getUser().getDefaultLanguage());
+      if (getUser().getBusinessPartner() != null) {
+        Hibernate.initialize(getUser().getBusinessPartner());
+      }
 
       organizationStructureProviderByClient = new HashMap<String, OrganizationStructureProvider>();
 
