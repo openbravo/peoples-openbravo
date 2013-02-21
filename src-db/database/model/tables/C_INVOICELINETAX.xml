@@ -79,6 +79,9 @@
       <index name="C_INVOICELINETAX_INVOICEID" unique="false">
         <index-column name="C_INVOICE_ID"/>
       </index>
+      <index name="C_INVOICELINETAX_INVOICELINE" unique="false">
+        <index-column name="C_INVOICELINE_ID"/>
+      </index>
       <check name="C_INVOICELINETA_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>
