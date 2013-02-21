@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -32,6 +32,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.ConfigParameters;
@@ -94,14 +95,60 @@ public class KernelServlet extends BaseKernelServlet {
   public void service(final HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 
+    boolean sessionForThisRequest = false;
+    boolean bypassAuthentication = false;
+
     final String action = request.getParameter(KernelConstants.ACTION_PARAMETER);
     if (action == null) {
       Component component = getComponent(request);
+
       if (component instanceof BaseComponent && ((BaseComponent) component).bypassAuthentication()) {
-        request.getSession().setAttribute("forceLogin", "Y");
+        bypassAuthentication = true;
+        OBContext context = OBContext.getOBContext();
+        sessionForThisRequest = context == null;
+
+        HttpSession session = request.getSession(true);
+        if (sessionForThisRequest) {
+          // creating session for this request marked as forceLogin
+          session = request.getSession(true);
+          session.setAttribute("forceLogin", "Y");
+        } else {
+          // there is already a session, don't touch it
+          session = request.getSession(false);
+        }
+
+        if (session != null && "Y".equals(session.getAttribute("forceLogin"))) {
+          // session has been created to retrieve a non authenticated component, it might be several
+          // non authenticated components sharing the same session, count them to invalidate the
+          // session after all of them are done
+          Integer count = (Integer) session.getAttribute("forcedSessionsRequestCount");
+          if (count == null || count == 0) {
+            count = 1;
+          } else {
+            count += 1;
+          }
+          session.setAttribute("forcedSessionsRequestCount", count);
+        }
+
       }
     }
+
     super.service(request, response);
+
+    if (bypassAuthentication) {
+      HttpSession session = request.getSession(false);
+      if (session != null && "Y".equals(session.getAttribute("forceLogin"))) {
+        Integer count = (Integer) session.getAttribute("forcedSessionsRequestCount");
+        count = (count != null ? count : 0) - 1;
+
+        if (count <= 0) {
+          session.invalidate();
+          log4j.info("Invalidating session created for bypass authentication elements");
+        } else {
+          session.setAttribute("forcedSessionsRequestCount", count);
+        }
+      }
+    }
   }
 
   @Override

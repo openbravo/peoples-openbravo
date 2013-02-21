@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2012 Openbravo S.L.U.
+ * Copyright (C) 2001-2013 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -1145,6 +1145,13 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
 
   private void saveLoginBD(HttpServletRequest request, VariablesSecureApp vars, String strCliente,
       String strOrganizacion) throws ServletException {
+
+    if ("Y".equals(request.getSession().getAttribute("forceLogin"))) {
+      // don't create a DB session for bypass authentication resources
+      log4j.debug("Bypass session " + request.getRequestURI());
+      return;
+    }
+
     final SessionLogin sl = new SessionLogin(request, strCliente, strOrganizacion,
         vars.getSessionValue("#AD_User_ID"));
 
