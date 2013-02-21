@@ -35,6 +35,17 @@ isc.OBMultiCalendarLegendElement.addProperties({
   id: null,
   checked: true,
   overflow: 'hidden',
+  changed: function (form, item, value) {
+    var calendarData = form.parentElement.multiCalendar.calendarData,
+        i;
+    this.Super('changed', arguments);
+    for (i = 0; i < calendarData.calendars.length; i++) {
+      if (calendarData.calendars[i].id === form.parentElement.id) {
+        calendarData.calendars[i].checked = value;
+      }
+    }
+    form.parentElement.multiCalendar.refreshCalendar();
+  },
   initWidget: function () {
     var checkbox, color, name;
     this.Super('initWidget', arguments);
@@ -44,7 +55,9 @@ isc.OBMultiCalendarLegendElement.addProperties({
     if (this.checked === 'false') {
       this.checked = false;
     }
-    OB.Utilities.Style.addRule('.bgColor_' + this.color, 'background-color: ' + OB.Utilities.getRGBAStringFromOBColor(this.color) + ';' + 'color: ' + (OB.Utilities.getBrightFromOBColor(this.color) > 125 ? 'black' : 'white'));
+    if (this.color) {
+      OB.Utilities.Style.addRule('.bgColor_' + this.color, 'background-color: ' + OB.Utilities.getRGBAStringFromOBColor(this.color) + ';' + 'color: ' + (OB.Utilities.getBrightFromOBColor(this.color) > 125 ? 'black' : 'white'));
+    }
     checkbox = isc.DynamicForm.create({
       width: 20,
       checked: this.checked,
@@ -53,17 +66,7 @@ isc.OBMultiCalendarLegendElement.addProperties({
         width: 20,
         showTitle: false,
         value: this.checked,
-        changed: function (form, item, value) {
-          var calendarData = form.parentElement.multiCalendar.calendarData,
-              i;
-          this.Super('changed', arguments);
-          for (i = 0; i < calendarData.calendars.length; i++) {
-            if (calendarData.calendars[i].id === form.parentElement.id) {
-              calendarData.calendars[i].checked = value;
-            }
-          }
-          form.parentElement.multiCalendar.refreshCalendar();
-        },
+        changed: this.changed,
         type: 'checkbox'
       }]
     });
@@ -79,7 +82,11 @@ isc.OBMultiCalendarLegendElement.addProperties({
       styleName: 'OBMultiCalendarLegendElementName',
       contents: this.name
     });
-    this.addMembers([checkbox, color, name]);
+    this.addMembers([checkbox]);
+    if (this.color) {
+      this.addMembers([color]);
+    }
+    this.addMembers([name]);
   }
 });
 
