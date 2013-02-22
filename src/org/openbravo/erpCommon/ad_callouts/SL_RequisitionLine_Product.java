@@ -106,6 +106,11 @@ public class SL_RequisitionLine_Product extends HttpSecureAppServlet {
       if (strPriceListId.equals(""))
         strPriceListId = SLRequisitionLineProductData.selectPriceList(this, strRequisition);
       if (!strPriceListId.equals("")) {
+        if (OBDal.getInstance().get(PriceList.class, strPriceListId).isPriceIncludesTax()) {
+          strResult.append("new Array(\"inpgrossprice\", \"Y\"),\n"); // auxiliaryInput
+        } else {
+          strResult.append("new Array(\"inpgrossprice\",  \"N\"),\n"); // auxiliaryInput
+        }
         String strPriceListVersion = SLRequisitionLineProductData.selectPriceListVersion(this,
             strPriceListId, strDueDate);
         if (!strPriceListVersion.equals("")) {
@@ -152,12 +157,6 @@ public class SL_RequisitionLine_Product extends HttpSecureAppServlet {
         } else
           strMessage = "PriceListVersionNotFound";
       }
-    }
-
-    if (OBDal.getInstance().get(PriceList.class, strPriceListId).isPriceIncludesTax()) {
-      strResult.append("new Array(\"inpgrossprice\", \"Y\"),\n"); // auxiliaryInput
-    } else {
-      strResult.append("new Array(\"inpgrossprice\",  \"N\"),\n"); // auxiliaryInput
     }
 
     if (strChanged.equals("inpmProductId")) {
