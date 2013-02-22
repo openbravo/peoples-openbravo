@@ -22,10 +22,21 @@
   OB = window.OB || {};
 
   OB.Model.POSTerminal = OB.Model.Terminal.extend({
-    defaults: {
-      supportsOffline: true,
-      loginUtilsUrl: '../../org.openbravo.retail.posterminal.service.loginutils',
-      loginHandlerUrl: '../../org.openbravo.retail.posterminal/POSLoginHandler'
+    initialize: function () {
+      OB.Model.Terminal.prototype.initialize.call(this);
+      this.set({
+        appName: 'WebPOS',
+        supportsOffline: true,
+        loginUtilsUrl: '../../org.openbravo.retail.posterminal.service.loginutils',
+        loginHandlerUrl: '../../org.openbravo.retail.posterminal/POSLoginHandler',
+        profileOptions: {
+          showOrganization: false,
+          showWarehouse: false,
+          defaultProperties: {
+            role: 'oBPOSDefaultPOSRole'
+          }
+        }
+      });
     },
 
     renderMain: function () {
