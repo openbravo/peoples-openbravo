@@ -9,39 +9,55 @@
 package org.openbravo.retail.posterminal;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.ServletException;
 
+import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.advpaymentmngt.process.FIN_AddPayment;
+import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.client.kernel.RequestContext;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.TriggerHandler;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.ad_forms.AcctServer;
+import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.common.enterprise.DocumentType;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
+import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
 
 public class ProcessVoidLayaway extends JSONProcessSimple {
 
+  HashMap<String, DocumentType> paymentDocTypes = new HashMap<String, DocumentType>();
+  String paymentDescription = null;
+  private static final Logger log = Logger.getLogger(ProcessVoidLayaway.class);
+
   @Override
-  public JSONObject exec(JSONObject jsonarray) throws JSONException, ServletException {
+  public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {
 
     JSONArray respArray = new JSONArray();
-    OBContext.setAdminMode(true);
-    final String orderId = jsonarray.getString("orderId");
+    JSONObject jsonorder = (JSONObject) jsonsent.get("order");
     try {
       TriggerHandler.getInstance().disable();
-      Order order = OBDal.getInstance().get(Order.class, orderId);
+      OBContext.setAdminMode(true);
+      Order order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
       order.setObposIslayaway(false);
       order.setDocumentStatus("CL");
       order.setGrandTotalAmount(BigDecimal.ZERO);
@@ -56,55 +72,72 @@ public class ProcessVoidLayaway extends JSONProcessSimple {
       paymentSchedule.setAmount(BigDecimal.ZERO);
       paymentSchedule.setPaidAmount(BigDecimal.ZERO);
       paymentSchedule.setOutstandingAmount(BigDecimal.ZERO);
-      List<FIN_PaymentScheduleDetail> negativePayments = new ArrayList<FIN_PaymentScheduleDetail>();
 
       for (int i = 0; i < paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList()
           .size(); i++) {
-
         FIN_PaymentScheduleDetail paymentScheduleDetail = paymentSchedule
             .getFINPaymentScheduleDetailOrderPaymentScheduleList().get(i);
-
-        FIN_PaymentScheduleDetail newPaymentScheduleDetail = OBProvider.getInstance().get(
-            FIN_PaymentScheduleDetail.class);
-        newPaymentScheduleDetail.setOrderPaymentSchedule(paymentSchedule);
-        newPaymentScheduleDetail.setAmount(paymentScheduleDetail.getAmount().negate());
-        negativePayments.add(newPaymentScheduleDetail);
-        // AddPayment per each
         if (paymentScheduleDetail.getPaymentDetails() != null) {
           FIN_Payment payment = paymentScheduleDetail.getPaymentDetails().getFinPayment();
-          OBDal.getInstance().save(newPaymentScheduleDetail);
           for (int j = 0; j < payment.getFINPaymentDetailList().size(); j++) {
             ((FIN_PaymentDetail) payment.getFINPaymentDetailList().get(j))
                 .setAmount(BigDecimal.ZERO);
           }
-          List<FIN_PaymentScheduleDetail> detail = new ArrayList<FIN_PaymentScheduleDetail>();
-          detail.add(newPaymentScheduleDetail);
-
-          HashMap<String, BigDecimal> paymentAmount = new HashMap<String, BigDecimal>();
-          paymentAmount.put(newPaymentScheduleDetail.getId(), payment.getAmount().negate());
-
-          FIN_Payment finPayment = FIN_AddPayment.savePayment(null, true,
-              payment.getDocumentType(), payment.getDocumentNo(), payment.getBusinessPartner(),
-              payment.getPaymentMethod(), payment.getAccount(), payment.getAmount().negate()
-                  .toString(), payment.getPaymentDate(), payment.getOrganization(), null, detail,
-              paymentAmount, false, false, payment.getCurrency(), BigDecimal.ONE, payment
-                  .getAmount().negate());
-          finPayment.setDescription(payment.getDescription());
-          finPayment.setStatus("RDNC");
-          finPayment.setProcessed(true);
-          finPayment.setAPRMProcessPayment("RE");
-          for (int j = 0; j < finPayment.getFINPaymentDetailList().size(); j++) {
-            ((FIN_PaymentDetail) finPayment.getFINPaymentDetailList().get(j))
-                .setAmount(BigDecimal.ZERO);
-          }
-          OBDal.getInstance().save(finPayment);
+        }
+      }
+      OBPOSApplications posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
+          jsonorder.getString("posTerminal"));
+      int stdPrecision = order.getCurrency().getStandardPrecision().intValue();
+      JSONArray payments = jsonorder.getJSONArray("payments");
+      for (int i = 0; i < payments.length(); i++) {
+        JSONObject payment = payments.getJSONObject(i);
+        OBPOSAppPayment paymentType = null;
+        String paymentTypeName = payment.getString("kind");
+        BigDecimal mulrate = new BigDecimal(1);
+        BigDecimal amount = BigDecimal.valueOf(payment.getDouble("origAmount"))
+            .setScale(stdPrecision, RoundingMode.HALF_UP).negate();
+        BigDecimal foreignAmount = amount;
+        if (payment.has("mulrate") && payment.getDouble("mulrate") != 1) {
+          mulrate = BigDecimal.valueOf(payment.getDouble("mulrate"));
+          foreignAmount = amount.multiply(mulrate).setScale(stdPrecision, RoundingMode.HALF_UP);
         }
 
+        for (OBPOSAppPayment type : posTerminal.getOBPOSAppPaymentList()) {
+          if (type.getSearchKey().equals(paymentTypeName)) {
+            paymentType = type;
+          }
+        }
+        FIN_FinancialAccount account = paymentType.getFinancialAccount();
+
+        FIN_PaymentScheduleDetail newPaymentScheduleDetail = OBProvider.getInstance().get(
+            FIN_PaymentScheduleDetail.class);
+        newPaymentScheduleDetail.setOrderPaymentSchedule(paymentSchedule);
+        newPaymentScheduleDetail.setAmount(amount);
+        OBDal.getInstance().save(newPaymentScheduleDetail);
+        List<FIN_PaymentScheduleDetail> detail = new ArrayList<FIN_PaymentScheduleDetail>();
+        detail.add(newPaymentScheduleDetail);
+
+        HashMap<String, BigDecimal> paymentAmount = new HashMap<String, BigDecimal>();
+        paymentAmount.put(newPaymentScheduleDetail.getId(), amount);
+
+        FIN_Payment finPayment = FIN_AddPayment.savePayment(null, true,
+            getPaymentDocumentType(order.getOrganization()), order.getDocumentNo(),
+            order.getBusinessPartner(), paymentType.getPaymentMethod().getPaymentMethod(), account,
+            amount.toString(), new Date(), order.getOrganization(), null, detail, paymentAmount,
+            false, false, order.getCurrency(),
+            mulrate.setScale(stdPrecision, RoundingMode.HALF_UP), foreignAmount);
+        finPayment.setDescription(getPaymentDescription());
+        finPayment.setStatus("RDNC");
+        finPayment.setProcessed(true);
+        finPayment.setAPRMProcessPayment("RE");
+        for (int j = 0; j < finPayment.getFINPaymentDetailList().size(); j++) {
+          ((FIN_PaymentDetail) finPayment.getFINPaymentDetailList().get(j))
+              .setAmount(BigDecimal.ZERO);
+        }
+        OBDal.getInstance().save(finPayment);
       }
-      for (int i = 0; i < negativePayments.size(); i++) {
-        paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList().add(
-            negativePayments.get(i));
-      }
+    } catch (Exception e) {
+      log.error("There was an error voiding the orde Layaway: ", e);
     } finally {
       OBDal.getInstance().flush();
       OBContext.restorePreviousMode();
@@ -116,5 +149,24 @@ public class ProcessVoidLayaway extends JSONProcessSimple {
     result.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
     return result;
 
+  }
+
+  protected DocumentType getPaymentDocumentType(Organization org) {
+    if (paymentDocTypes.get(DalUtil.getId(org)) != null) {
+      return paymentDocTypes.get(DalUtil.getId(org));
+    }
+    final DocumentType docType = FIN_Utility.getDocumentType(org, AcctServer.DOCTYPE_ARReceipt);
+    paymentDocTypes.put((String) DalUtil.getId(org), docType);
+    return docType;
+
+  }
+
+  protected String getPaymentDescription() {
+    if (paymentDescription == null) {
+      String language = RequestContext.get().getVariablesSecureApp().getLanguage();
+      paymentDescription = Utility.messageBD(new DalConnectionProvider(false), "OrderDocumentno",
+          language);
+    }
+    return paymentDescription;
   }
 }

@@ -81,16 +81,6 @@ enyo.kind({
             name: 'layawayaction',
             kind: 'OB.OBPOSPointOfSale.UI.LayawayButton',
             showing: false
-          }, {
-            tag: 'span',
-            name: 'totalrefund',
-            style: 'font-size: 24px; font-weight: bold;',
-            showing: false
-          }, {
-            tag: 'span',
-            name: 'totalrefundlbl',
-            content: OB.I18N.getLabel('OBPOS_LblToRefund'),
-            showing: false
           }]
         }, {
           style: 'overflow:auto; width: 100%;',
@@ -132,7 +122,7 @@ enyo.kind({
   receiptChanged: function () {
     this.$.payments.setCollection(this.receipt.get('payments'));
 
-    this.receipt.on('change:payment change:change calculategross change:bp', function () {
+    this.receipt.on('change:payment change:change calculategross change:bp change:gross', function () {
       this.updatePending();
     }, this);
     this.updatePending();
@@ -142,21 +132,10 @@ enyo.kind({
         this.$.creditsalesaction.hide();
         this.$.layawayaction.setContent(OB.I18N.getLabel('OBPOS_LblLayawayButton'));
         this.$.layawayaction.show();
-        this.$.totalrefund.hide();
-        this.$.totalrefundlbl.hide();
       } else if (model.get('orderType') === 3) {
         this.$.creditsalesaction.hide();
-        this.$.exactaction.hide();
-        this.$.totalpending.hide();
-        this.$.totalpendinglbl.hide();
-        this.$.totalrefund.setContent(OB.I18N.formatCurrency(OB.DEC.mul(this.receipt.getPayment(), payment.mulrate)) + payment.symbol + ' ');
-        this.$.layawayaction.setContent(OB.I18N.getLabel('OBPOS_VoidLayawayButton'));
-        this.$.totalrefund.show();
-        this.$.totalrefundlbl.show();
-        this.$.layawayaction.show();
+        this.$.layawayaction.hide();
       } else {
-        this.$.totalrefund.hide();
-        this.$.totalrefundlbl.hide();
         this.$.layawayaction.hide();
       }
     }, this);
@@ -193,7 +172,7 @@ enyo.kind({
       this.$.totalpendinglbl.hide();
       this.$.doneaction.show();
       this.$.creditsalesaction.hide();
-    } else if (this.receipt.get('orderType') !== 3) {
+    } else {
       this.$.totalpending.setContent(OB.I18N.formatCurrency(OB.DEC.mul(this.receipt.getPending(), rate)) + symbol);
       this.$.totalpending.show();
       this.$.totalpendinglbl.show();
@@ -223,7 +202,7 @@ enyo.kind({
           this.$.exactaction.hide();
         }
       } else if (this.receipt.get('orderType') === 3) {
-        this.$.exactaction.hide();
+        this.$.layawayaction.hide();
       }
       if (OB.POS.modelterminal.get('terminal').allowpayoncredit && this.receipt.get('bp')) {
         if (this.receipt.get('bp').get('creditLimit') > 0 && !this.$.layawayaction.showing) {
@@ -269,7 +248,11 @@ enyo.kind({
   tap: function () {
     if (this.drawerpreference) {
       if (this.drawerOpened) {
-        this.owner.receipt.trigger('paymentDone');
+        if (this.owner.receipt.get('orderType') === 3) {
+          this.owner.receipt.trigger('voidLayaway');
+        } else {
+          this.owner.receipt.trigger('paymentDone');
+        }
         this.drawerOpened = false;
         this.setContent(OB.I18N.getLabel('OBPOS_LblOpen'));
       } else {
@@ -278,8 +261,13 @@ enyo.kind({
         this.setContent(OB.I18N.getLabel('OBPOS_LblDone'));
       }
     } else {
-      this.owner.receipt.trigger('paymentDone');
-      this.owner.receipt.trigger('openDrawer');
+      //Void Layaway
+      if (this.owner.receipt.get('orderType') === 3) {
+        this.owner.receipt.trigger('voidLayaway');
+      } else {
+        this.owner.receipt.trigger('paymentDone');
+        this.owner.receipt.trigger('openDrawer');
+      }
     }
   }
 });
@@ -466,7 +454,7 @@ enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.LayawayButton',
   kind: 'OB.UI.SmallButton',
   content: '',
-  classes: 'btn-icon-small btnlink-lightblue',
+  classes: 'btn-icon-small btnlink-green',
   style: 'width: 120px; float: right; margin: 0px',
   permission: 'OBPOS_receipt.layaway',
   events: {
@@ -474,16 +462,11 @@ enyo.kind({
   },
   init: function (model) {
     this.model = model;
-    this.setContent(OB.I18N.getLabel('OBPOS_LblLayawayButton'));
+    this.setContent(OB.I18N.getLabel('OBPOS_LblLayaway'));
   },
   tap: function () {
     //Void Layaway
-    if (this.owner.receipt.get('orderType') === 3) {
-      this.owner.receipt.trigger('voidLayaway');
-    } else {
-      this.owner.receipt.trigger('paymentDone');
-      this.owner.receipt.trigger('openDrawer');
-    }
-
+    this.owner.receipt.trigger('paymentDone');
+    this.owner.receipt.trigger('openDrawer');
   }
 });

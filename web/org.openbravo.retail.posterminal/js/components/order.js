@@ -235,9 +235,11 @@ enyo.kind({
     this.$.listOrderLines.setCollection(this.order.get('lines'));
     this.setTaxes();
     this.order.on('change:gross change:net change:taxes', function (model) {
-      this.$.totalReceiptLine.renderTotal(model.getTotal());
-      this.$.totalTaxLine.renderTax(model.getTotal() - model.getNet());
-      this.setTaxes();
+      if (model.get('orderType') !== 3) {
+        this.$.totalReceiptLine.renderTotal(model.getTotal());
+        this.$.totalTaxLine.renderTax(model.getTotal() - model.getNet());
+        this.setTaxes();
+      }
     }, this);
     this.order.on('change:priceIncludesTax ', function (model) {
       if (this.order.get('priceIncludesTax')) {

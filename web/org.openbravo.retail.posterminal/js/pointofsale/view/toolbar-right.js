@@ -101,6 +101,9 @@ enyo.kind({
     var totalPrinterComponent;
 
     this.receipt.on('clear', function () {
+      this.waterfall('onChangeTotal', {
+        newTotal: this.receipt.getTotal()
+      });
       if (this.receipt.get('isEditable') === false) {
         this.manualTap('edit');
       } else {
@@ -126,13 +129,18 @@ enyo.kind({
     }, this);
 
     //some button will draw the total
-    this.waterfall('onChangeTotal', {
-      newTotal: this.receipt.getTotal()
-    });
-    this.receipt.on('change:gross', function (model) {
+    if (this.receipt.get('orderType') !== 3) { //Do not change voiding layaway
       this.waterfall('onChangeTotal', {
         newTotal: this.receipt.getTotal()
       });
+    }
+
+    this.receipt.on('change:gross', function (model) {
+      if (this.receipt.get('orderType') !== 3) { //Do not change voiding layaway
+        this.waterfall('onChangeTotal', {
+          newTotal: this.receipt.getTotal()
+        });
+      }
     }, this);
   }
 });

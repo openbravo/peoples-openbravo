@@ -199,7 +199,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
     receipt.on('voidLayaway', function () {
       var process = new OB.DS.Process('org.openbravo.retail.posterminal.ProcessVoidLayaway');
       process.exec({
-        orderId: receipt.id
+        order: receipt
       }, function (data, message) {
         if (data && data.exception) {
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorVoidLayaway'));
@@ -207,6 +207,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
           OB.Dal.remove(receipt, null, function (tx, err) {
             OB.UTIL.showError(err);
           });
+          receipt.trigger('print');
           orderList.deleteCurrent();
           OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgSuccessVoidLayaway'));
         }

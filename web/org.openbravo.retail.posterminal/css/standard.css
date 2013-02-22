@@ -599,7 +599,7 @@ div.dropdown {
   background-color: white;
   border-radius: 0px;
   color: black;
-  min-width: 165px;
+  min-width: 175px;
 }
 
 div.dropdown:hover {

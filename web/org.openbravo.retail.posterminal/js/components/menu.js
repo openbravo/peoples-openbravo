@@ -43,7 +43,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.MenuReturn',
   kind: 'OB.UI.MenuAction',
-  permission: 'OBPOS_receipt.invoice',
+  permission: 'OBPOS_receipt.return',
   events: {
     onShowDivText: ''
   },
@@ -101,7 +101,7 @@ enyo.kind({
     });
     this.doTabChange({
       tabPanel: 'payment',
-      keyboard: 'toolbarscan',
+      keyboard: 'toolbarpayment',
       edit: false
     });
   },
@@ -123,7 +123,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.MenuLayaway',
   kind: 'OB.UI.MenuAction',
-  permission: 'OBPOS_receipt.layaway',
+  permission: 'OBPOS_receipt.layawayReceipt',
   events: {
     onShowDivText: ''
   },

@@ -821,10 +821,9 @@
         if (orderType !== 3) { //Void this Layaway, do not need to save
           this.save();
         } else {
+          this.set('gross', this.get('payment'));
           this.get('payments').each(function (payment) {
-            if (!payment.get('isPrePayment')) {
-              me.removePayment(payment);
-            }
+            me.removePayment(payment);
           });
         }
         // remove promotions
