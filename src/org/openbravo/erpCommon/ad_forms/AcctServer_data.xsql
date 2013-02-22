@@ -144,6 +144,7 @@
       and c_period.ad_client_id = ?
       and c_periodcontrol.docbasetype = ?
       and c_periodcontrol.periodstatus = 'O'
+      and c_period.periodtype <> 'A'
       and c_periodcontrol.ad_org_id = ad_org_getcalendarowner(?)
       and to_date(?) >= c_period.StartDate
       and to_date(?) < c_period.EndDate + 1
