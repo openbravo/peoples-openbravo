@@ -400,7 +400,7 @@ isc.OBMultiCalendar.addProperties({
       me.drawComponents();
     };
     OB.RemoteCallManager.call(this.calendarProps.calendarDataActionHandler, {
-      action: 'calendarData'
+      action: this.calendarProps.calendarDataActionHandler_Action
     }, {}, callback);
   },
 
