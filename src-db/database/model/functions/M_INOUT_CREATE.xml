@@ -581,11 +581,17 @@ BEGIN --BODY
                   ELSE
                     v_ActualQty:=NULL;
                   END IF;
-                  SELECT MIN(M_LOCATOR_ID) INTO v_Locator_ID
+
+		  SELECT MIN(M_LOCATOR_ID)
+		  INTO v_Locator_ID
                   FROM M_LOCATOR
                   WHERE M_WAREHOUSE_ID=ol.M_Warehouse_ID
-                  AND M_LOCATOR.ISACTIVE = 'Y';
-                  --
+                  AND M_LOCATOR.ISACTIVE = 'Y'
+                  AND priorityno = (SELECT min(priorityno) 
+					FROM M_LOCATOR  
+					WHERE M_WAREHOUSE_ID=ol.M_Warehouse_ID
+					AND M_LOCATOR.ISACTIVE = 'Y');
+
                   DBMS_OUTPUT.PUT_LINE('    Line ' || ol.Line || '  Qty=' || v_LocatorQty) ;
                   v_ResultStr:='CreateInOutLine';
                   INSERT INTO M_INOUTLINE
