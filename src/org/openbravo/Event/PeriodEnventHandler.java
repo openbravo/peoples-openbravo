@@ -50,6 +50,7 @@ public class PeriodEnventHandler extends EntityPersistenceEventObserver {
     criteria.add(Restrictions.ne(Period.PROPERTY_ID, period.getId()));
     criteria.add(Restrictions.ge(Period.PROPERTY_ENDINGDATE, period.getStartingDate()));
     criteria.add(Restrictions.le(Period.PROPERTY_STARTINGDATE, period.getEndingDate()));
+    criteria.add(Restrictions.eq(Period.PROPERTY_PERIODTYPE, period.getPeriodType()));
     criteria.setMaxResults(1);
 
     if (criteria.uniqueResult() != null) {
