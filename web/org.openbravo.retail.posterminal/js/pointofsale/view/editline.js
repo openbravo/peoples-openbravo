@@ -266,7 +266,7 @@ enyo.kind({
   events: {
     onShowLeftSubWindow: ''
   },
-  content: 'Stock Check',
+  content: '',
   classes: 'btnlink-orange',
   tap: function () {
     var product = this.owner.line.get('product');
@@ -277,5 +277,9 @@ enyo.kind({
       params.product = product;
       this.doShowLeftSubWindow(params);
     }
+  },
+  initComponents: function () {
+    this.inherited(arguments);
+    this.setContent(OB.I18N.getLabel('OBPOS_checkStock'));
   }
 });
