@@ -31,14 +31,26 @@ public class PeriodEnventHandler extends EntityPersistenceEventObserver {
     if (!isValidEvent(event)) {
       return;
     }
-    checkPeriod((Period) event.getTargetInstance());
+    if (!adjustmentPeriod((Period) event.getTargetInstance())) {
+      checkPeriod((Period) event.getTargetInstance());
+    }
   }
 
   public void onSave(@Observes EntityNewEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
-    checkPeriod((Period) event.getTargetInstance());
+    if (!adjustmentPeriod((Period) event.getTargetInstance())) {
+      checkPeriod((Period) event.getTargetInstance());
+    }
+  }
+
+  private boolean adjustmentPeriod(Period period) {
+    if ("A".equals(period.getPeriodType())) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   private void checkPeriod(Period period) {
@@ -50,7 +62,7 @@ public class PeriodEnventHandler extends EntityPersistenceEventObserver {
     criteria.add(Restrictions.ne(Period.PROPERTY_ID, period.getId()));
     criteria.add(Restrictions.ge(Period.PROPERTY_ENDINGDATE, period.getStartingDate()));
     criteria.add(Restrictions.le(Period.PROPERTY_STARTINGDATE, period.getEndingDate()));
-    criteria.add(Restrictions.eq(Period.PROPERTY_PERIODTYPE, period.getPeriodType()));
+    criteria.add(Restrictions.eq(Period.PROPERTY_PERIODTYPE, "S"));
     criteria.setMaxResults(1);
 
     if (criteria.uniqueResult() != null) {
