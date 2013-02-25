@@ -112,6 +112,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/modalnoteditableline",
         "main",
         // Web POS window
+        "utils/ordersSyncUtils",
+        "utils/customersSyncUtils",
         "components/keypadcoins",
         "data/dataordersave",
         "data/dataordertaxes",
