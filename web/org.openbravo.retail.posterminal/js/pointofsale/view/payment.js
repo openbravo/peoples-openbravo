@@ -388,7 +388,7 @@ enyo.kind({
   tap: function () {
     var process = new OB.DS.Process('org.openbravo.retail.posterminal.CheckBusinessPartnerCredit');
     var me = this;
-    if (OB.POS.modelterminal.get('connectedToERP')) {
+    if (this.model.get('order').get('orderType') !== 1 && OB.POS.modelterminal.get('connectedToERP')) {
       //this.setContent(OB.I18N.getLabel('OBPOS_LblLoading'));
       process.exec({
         businessPartnerId: this.model.get('order').get('bp').get('id'),
@@ -425,7 +425,7 @@ enyo.kind({
       var creditLimit = this.model.get('order').get('bp').get('creditLimit');
       var creditUsed = this.model.get('order').get('bp').get('creditUsed');
       var totalPending = this.model.get('order').getPending();
-      if ((creditLimit - creditUsed) >= totalPending) {
+      if (this.model.get('order').get('orderType') === 1 && (creditLimit - creditUsed) >= totalPending) {
         this.doShowPopup({
           popup: 'modalEnoughCredit',
           args: {
