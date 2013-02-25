@@ -22,6 +22,7 @@
       this.templateinvoice = new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.ReceiptTemplateInvoice);
       this.templatereturn = new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.ReceiptTemplateReturn);
       this.templatereturninvoice = new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.ReceiptTemplateReturnInvoice);
+      this.templatelayaway = new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.ReceiptTemplateLayaway);
       };
 
   PrintReceipt.prototype.print = function () {
@@ -47,6 +48,8 @@
       } else {
         if (receipt.get('orderType') === 1) {
           template = this.templatereturn;
+        } else if (receipt.get('orderType') === 2 || receipt.get('isLayaway') || receipt.get('orderType') === 3) {
+          template = this.templatelayaway;
         } else {
           template = this.templatereceipt;
         }
@@ -110,5 +113,6 @@
   OB.OBPOSPointOfSale.Print.ReceiptLine = PrintReceiptLine;
   OB.OBPOSPointOfSale.Print.ReceiptLineTemplate = 'res/printline.xml';
   OB.OBPOSPointOfSale.Print.OpenDrawerTemplate = 'res/opendrawer.xml';
+  OB.OBPOSPointOfSale.Print.ReceiptTemplateLayaway = 'res/printlayaway.xml';
 
 }());

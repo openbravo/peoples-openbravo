@@ -128,9 +128,9 @@ enyo.kind({
     this.updatePending();
     this.receipt.on('change:orderType change:isLayaway change:payment', function (model) {
       var payment = OB.POS.terminal.terminal.paymentnames[OB.POS.terminal.terminal.get('paymentcash')];
-      if (model.get('orderType') === 2 || (model.get('isLayaway') && model.get('orderType') !== 3)) {
+      if (model.get('orderType') === 2 || (model.get('isLayaway') && model.get('orderType') !== 3 && !model.getPaymentStatus().done)) {
         this.$.creditsalesaction.hide();
-        this.$.layawayaction.setContent(OB.I18N.getLabel('OBPOS_LblLayawayButton'));
+        this.$.layawayaction.setContent(OB.I18N.getLabel('OBPOS_LblLayaway'));
         this.$.layawayaction.show();
       } else if (model.get('orderType') === 3) {
         this.$.creditsalesaction.hide();
@@ -172,9 +172,15 @@ enyo.kind({
       this.$.totalpendinglbl.hide();
       this.$.doneaction.show();
       this.$.creditsalesaction.hide();
+      this.$.layawayaction.hide();
     } else {
       this.$.totalpending.setContent(OB.I18N.formatCurrency(OB.DEC.mul(this.receipt.getPending(), rate)) + symbol);
       this.$.totalpending.show();
+      if (this.receipt.get('orderType') === 1 || this.receipt.get('orderType') === 3) {
+        this.$.totalpendinglbl.setContent(OB.I18N.getLabel('OBPOS_ReturnRemaining'));
+      } else {
+        this.$.totalpendinglbl.setContent(OB.I18N.getLabel('OBPOS_PaymentsRemaining'));
+      }
       this.$.totalpendinglbl.show();
       this.$.doneaction.hide();
       if (this.$.doneButton.drawerpreference) {
@@ -218,6 +224,11 @@ enyo.kind({
         this.$.donezerolbl.show();
       } else {
         this.$.donezerolbl.hide();
+        if (this.receipt.get('orderType') === 1 || this.receipt.get('orderType') === 3) {
+          this.$.exactlbl.setContent(OB.I18N.getLabel('OBPOS_ReturnExact'));
+        } else {
+          this.$.exactlbl.setContent(OB.I18N.getLabel('OBPOS_PaymentsExact'));
+        }
         this.$.exactlbl.show();
       }
     } else {

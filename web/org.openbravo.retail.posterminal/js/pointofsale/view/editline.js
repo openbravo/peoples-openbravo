@@ -72,9 +72,9 @@ enyo.kind({
           },
           init: function (model) {
             this.model = model;
-            this.model.get('order').on('change:isPaid', function (newValue) {
+            this.model.get('order').on('change:isPaid change:isLayaway', function (newValue) {
               if (newValue) {
-                if (newValue.get('isPaid') === true) {
+                if (newValue.get('isPaid') === true || newValue.get('isLayaway') === true) {
                   this.setShowing(false);
                   return;
                 }
@@ -93,9 +93,9 @@ enyo.kind({
           },
           init: function (model) {
             this.model = model;
-            this.model.get('order').on('change:isPaid', function (newValue) {
+            this.model.get('order').on('change:isPaid change:isLayaway', function (newValue) {
               if (newValue) {
-                if (newValue.get('isPaid') === true) {
+                if (newValue.get('isPaid') === true || newValue.get('isLayaway') === true) {
                   this.setShowing(false);
                   return;
                 }
