@@ -26,6 +26,7 @@
       OB.Model.Terminal.prototype.initialize.call(this);
       this.set({
         appName: 'WebPOS',
+        terminalName: OB.POS.paramTerminal,
         supportsOffline: true,
         loginUtilsUrl: '../../org.openbravo.retail.posterminal.service.loginutils',
         loginHandlerUrl: '../../org.openbravo.retail.posterminal/POSLoginHandler',
