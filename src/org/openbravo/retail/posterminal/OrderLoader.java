@@ -373,7 +373,21 @@ public class OrderLoader extends JSONProcessSimple {
       OBQuery<Order> orders = OBDal.getInstance().createQuery(Order.class,
           "documentNo=? and obposApplications.id=? and businessPartner.id=?");
       orders.setParameters(parameters);
-      return orders.count() > 0;
+      if (orders.count() > 0) {
+        return true;
+      }
+    }
+    OBContext.setAdminMode(false);
+    try {
+      if (jsonorder.has("id") && jsonorder.getString("id") != null
+          && !jsonorder.getString("id").equals("")) {
+        Order order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
+        if (order != null) {
+          return true;
+        }
+      }
+    } finally {
+      OBContext.restorePreviousMode();
     }
     return false;
   }
