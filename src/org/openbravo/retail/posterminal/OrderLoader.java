@@ -201,8 +201,8 @@ public class OrderLoader extends JSONProcessSimple {
 
   public JSONObject saveOrder(JSONObject jsonorder) throws Exception {
 
-    if (verifyOrderExistance(jsonorder) && jsonorder.getLong("orderType") != 2
-        && !jsonorder.getBoolean("isLayaway")) {
+    if (jsonorder.getLong("orderType") != 2 && !jsonorder.getBoolean("isLayaway")
+        && verifyOrderExistance(jsonorder)) {
       return successMessage(jsonorder);
     }
 
