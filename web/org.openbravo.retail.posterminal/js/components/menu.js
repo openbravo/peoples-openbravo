@@ -10,37 +10,6 @@
 /*global enyo */
 
 enyo.kind({
-  name: 'OB.UI.ToolbarMenu',
-  components: [{
-    kind: 'onyx.MenuDecorator',
-    name: 'btnContextMenu',
-    components: [{
-      kind: 'OB.UI.ButtonContextMenu',
-      name: 'toolbarButton'
-    }, {
-      kind: 'onyx.Menu',
-      classes: 'dropdown',
-      name: 'menu',
-      maxHeight: 600,
-      scrolling: false,
-      floating: true
-    }]
-  }],
-  onButtonTap: function () {
-    if (this.$.toolbarButton.hasClass('btn-over')) {
-      this.$.toolbarButton.removeClass('btn-over');
-    }
-  },
-  initComponents: function () {
-    this.inherited(arguments);
-
-    enyo.forEach(this.menuEntries, function (entry) {
-      this.$.menu.createComponent(entry);
-    }, this);
-  }
-});
-
-enyo.kind({
   name: 'OB.UI.MenuReturn',
   kind: 'OB.UI.MenuAction',
   permission: 'OBPOS_receipt.invoice',
