@@ -31,6 +31,7 @@ import org.openbravo.client.kernel.Component;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.client.kernel.KernelConstants;
 import org.openbravo.mobile.core.MobileCoreConstants;
+import org.openbravo.mobile.core.model.ClientModelComponent;
 
 /**
  * @author iperdomo
