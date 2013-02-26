@@ -818,6 +818,8 @@
       if (OB.POS.modelterminal.hasPermission(permission)) {
         if (permission === 'OBPOS_receipt.return') {
           this.set('documentType', OB.POS.modelterminal.get('terminal').terminalType.documentTypeForReturns);
+        } else {
+          this.set('documentType', OB.POS.modelterminal.get('terminal').terminalType.documentType);
         }
         this.set('orderType', orderType); // 0: Sales order, 1: Return order, 2: Layaway, 3: Void Layaway
         if (orderType !== 3) { //Void this Layaway, do not need to save
