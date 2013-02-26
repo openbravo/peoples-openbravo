@@ -43,6 +43,7 @@ public class SL_Depreciate extends SimpleCallout {
         info.addResult("inpassetschedule", assetGroup.getAmortize());
         info.addResult("inpuselifemonths", assetGroup.getUsableLifeMonths());
         info.addResult("inpuselifeyears", assetGroup.getUsableLifeYears());
+        info.addResult("inpis30daymonth", assetGroup.isEveryMonthIs30Days() ? "Y" : "N");
       } finally {
         OBContext.restorePreviousMode();
       }
