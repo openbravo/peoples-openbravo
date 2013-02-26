@@ -45,7 +45,7 @@
         coalesce (l.c_bpartner_id,o.c_bpartner_id) as c_bpartner_id
         FROM C_ORDERLINE l left join  M_MATCHPO m on l.C_OrderLine_ID=m.C_OrderLine_ID
                                                  and m.M_InOutLine_ID IS NOT NULL
-                           LEFT JOIN M_Product_UOM mpu on mpu.m_product_id =l.m_product_id,  
+                           LEFT JOIN M_Product_UOM mpu on mpu.M_PRODUCT_UOM_ID =l.M_PRODUCT_UOM_ID,  
         C_ORDER o, C_UOM uom, M_PRODUCT p, C_DOCTYPE dt
         WHERE o.C_ORDER_ID = l.C_ORDER_ID 
         AND o.C_DOCTYPE_ID = dt.C_DOCTYPE_ID
