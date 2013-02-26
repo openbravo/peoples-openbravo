@@ -1,4 +1,4 @@
-package org.openbravo.Event;
+package org.openbravo.event;
 
 import javax.enterprise.event.Observes;
 
