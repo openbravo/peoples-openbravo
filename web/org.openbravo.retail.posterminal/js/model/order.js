@@ -373,6 +373,7 @@
             return OB.DEC.add(memo, grossLine);
           }, OB.DEC.Zero);
           me.set('gross', gross);
+          me.adjustPayment();
           me.trigger('calculategross');
         });
       } else {
@@ -388,6 +389,7 @@
             return OB.DEC.add(memo, netLine);
           }, OB.DEC.Zero);
           me.set('net', net);
+          me.adjustPayment();
           me.trigger('calculategross');
         });
       }
