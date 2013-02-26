@@ -49,7 +49,7 @@ public class PaidReceiptsHeader extends ProcessHQLQuery {
     if (json.getBoolean("isLayaway")) {
       hqlPaidReceipts += " and ord.deliveryStatus = 0 and ord.documentStatus = 'CO' ";
     } else {
-      hqlPaidReceipts += " and ord.deliveryStatus > 0 or (ord.deliveryStatus = 0 and ord.documentStatus != 'CO')";
+      hqlPaidReceipts += " and ord.deliveryStatus > 0 ";
     }
     hqlPaidReceipts += " order by ord.orderDate asc, ord.documentNo asc";
     return Arrays.asList(new String[] { hqlPaidReceipts });
