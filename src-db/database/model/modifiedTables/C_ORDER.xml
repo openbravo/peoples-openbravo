@@ -13,10 +13,6 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="EM_OBPOS_ISLAYAWAY" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[N]]></default>
-        <onCreateDefault/>
-      </column>
       <foreign-key foreignTable="OBPOS_APPLICATIONS" name="EM_OBPOS_APP_ID">
         <reference local="EM_OBPOS_APPLICATIONS_ID" foreign="OBPOS_APPLICATIONS_ID"/>
       </foreign-key>

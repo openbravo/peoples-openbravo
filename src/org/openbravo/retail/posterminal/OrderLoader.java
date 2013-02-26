@@ -201,7 +201,8 @@ public class OrderLoader extends JSONProcessSimple {
 
   public JSONObject saveOrder(JSONObject jsonorder) throws Exception {
 
-    if (verifyOrderExistance(jsonorder)) {
+    if (verifyOrderExistance(jsonorder) && jsonorder.getLong("orderType") != 2
+        && !jsonorder.getBoolean("isLayaway")) {
       return successMessage(jsonorder);
     }
 
@@ -236,7 +237,6 @@ public class OrderLoader extends JSONProcessSimple {
       JSONArray orderlines = jsonorder.getJSONArray("lines");
       if (fullpayLayaway) {
         order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
-        order.setObposIslayaway(false);
         order.setDelivered(true);
         for (int i = 0; i < order.getOrderLineList().size(); i++) {
           lineReferences.add(order.getOrderLineList().get(i));
@@ -890,7 +890,6 @@ public class OrderLoader extends JSONProcessSimple {
     order.setProcessed(true);
     order.setProcessNow(false);
     order.setObposSendemail((jsonorder.has("sendEmail") && jsonorder.getBoolean("sendEmail")));
-    order.setObposIslayaway(isLayaway);
 
     JSONObject taxes = jsonorder.getJSONObject("taxes");
     @SuppressWarnings("unchecked")

@@ -39,7 +39,7 @@ public class PaidReceipts extends JSONProcessSimple {
         + "ord.warehouse.id as warehouse, ord.currency.iSOCode as currency, ord.obposApplications.name as posterminalidentifier, "
         + "ord.businessPartner.name as businessPartner_identifier, ord.currency.id as currency, ord.priceList.id as priceList, "
         + "ord.salesRepresentative.id as salesRepresentative, ord.organization.id as organization, ord.obposApplications.id as obposApplications, "
-        + "ord.client.id as client, ord.documentType.id as documentTypeId, ord.obposApplications.obposTerminaltype.documentTypeForQuotations.id as docTypeQuotation, ord.summedLineAmount as totalNetAmount, ord.obposIslayaway as isLayaway from Order as ord where ord.id=? and ord.obposApplications is not null";
+        + "ord.client.id as client, ord.documentType.id as documentTypeId, ord.obposApplications.obposTerminaltype.documentTypeForQuotations.id as docTypeQuotation, ord.summedLineAmount as totalNetAmount, ord.deliveryStatus as deliveryStatus from Order as ord where ord.id=? and ord.obposApplications is not null";
 
     Query paidReceiptsQuery = OBDal.getInstance().getSession().createQuery(hqlPaidReceipts);
     paidReceiptsQuery.setString(0, orderid);
@@ -71,7 +71,11 @@ public class PaidReceipts extends JSONProcessSimple {
         paidReceipt.put("isQuotation", false);
       }
       paidReceipt.put("net", objpaidReceipts[19]);
-      paidReceipt.put("isLayaway", objpaidReceipts[20]);
+      if (Long.valueOf(objpaidReceipts[20].toString()).compareTo(new Long(0)) == 0) {
+        paidReceipt.put("isLayaway", true);
+      } else {
+        paidReceipt.put("isLayaway", false);
+      }
 
       JSONArray listpaidReceiptsLines = new JSONArray();
       String hqlPaidReceiptsLines = "select ordLine.product.id as id, ordLine.product.name as name, ordLine.product.uOM.id as uOM, ordLine.orderedQuantity as quantity, "
@@ -184,7 +188,7 @@ public class PaidReceipts extends JSONProcessSimple {
             paidReceiptPayment.put("mulrate", objectType.get("mulrate"));
             paidReceiptPayment.put("isocode", objectType.get("isocode"));
             paidReceiptPayment.put("openDrawer", objectType.get("openDrawer"));
-            paidReceiptPayment.put("isPrePayment", objpaidReceipts[20]);
+            paidReceiptPayment.put("isPrePayment", paidReceipt.getBoolean("isLayaway"));
             listpaidReceiptsPayments.put(paidReceiptPayment);
           }
         }

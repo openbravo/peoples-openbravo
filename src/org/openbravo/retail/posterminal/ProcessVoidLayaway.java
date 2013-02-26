@@ -58,7 +58,6 @@ public class ProcessVoidLayaway extends JSONProcessSimple {
       TriggerHandler.getInstance().disable();
       OBContext.setAdminMode(true);
       Order order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
-      order.setObposIslayaway(false);
       order.setDocumentStatus("CL");
       order.setGrandTotalAmount(BigDecimal.ZERO);
       order.setSummedLineAmount(BigDecimal.ZERO);
