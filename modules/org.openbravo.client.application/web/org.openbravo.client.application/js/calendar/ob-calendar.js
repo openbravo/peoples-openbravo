@@ -225,6 +225,45 @@ isc.OBCalendar.addProperties({
     }
   },
 
+  directEventEdit: function (event, popupCallback) {
+    var callback, openEventDialog, calendar = this;
+    callback = function (dsResponse, data, dsRequest) {
+      if (data && data[0]) {
+        openEventDialog(data[0]);
+      }
+    };
+    openEventDialog = function (event) {
+      if (event) {
+        if (calendar.OBEventEditor) {
+          calendar.eventDialog.event = event;
+          calendar.eventDialog.event.popupCallback = popupCallback;
+          calendar.eventDialog.currentStart = event[calendar.startDateField];
+          calendar.eventDialog.currentEnd = event[calendar.endDateField];
+          calendar.eventDialog.calendar = calendar;
+          try {
+            //To avoid js error due to conflicts with Smartclient default EventDialog
+            if (event.canEdit === false && event.canDelete === false) {
+              isc.warn(OB.I18N.getLabel('OBUIAPP_CalendarCanNotUpdateEvent'), function () {
+                return true;
+              }, {
+                icon: '[SKINIMG]Dialog/error.png',
+                title: OB.I18N.getLabel('OBUIAPP_Error')
+              });
+            } else {
+              calendar.eventDialog.show();
+            }
+          } catch (e) {}
+        }
+      }
+    };
+
+    if (typeof event === 'string') {
+      this.dataSource.fetchRecord(event, callback);
+    } else {
+      openEventDialog(event);
+    }
+  },
+
   eventResized: function (newDate, event) {
     newDate.setSeconds(0);
     if (this.showEventDialogOnEventResize) {
