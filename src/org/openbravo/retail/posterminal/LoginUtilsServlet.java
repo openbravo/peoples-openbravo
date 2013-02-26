@@ -45,18 +45,6 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
   }
 
   @Override
-  protected JSONObject getPrerrenderData(HttpServletRequest request) throws JSONException {
-    JSONObject data = super.getPrerrenderData(request);
-
-    final String terminalName = request.getParameter("terminalName");
-    final String strClient = getClientOrgIds(terminalName)[0];
-
-    data.put("client", strClient);
-
-    return data;
-  }
-
-  @Override
   protected JSONObject getCompanyLogo(HttpServletRequest request) throws JSONException {
     JSONObject result = new JSONObject();
     final String terminalName = request.getParameter("terminalName");
