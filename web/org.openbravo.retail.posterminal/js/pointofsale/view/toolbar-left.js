@@ -103,36 +103,6 @@ enyo.kind({
 });
 
 enyo.kind({
-  name: 'OB.UI.ButtonContextMenu',
-  kind: 'OB.UI.ToolbarButton',
-  icon: 'btn-icon btn-icon-menu',
-  handlers: {
-    onLeftToolbarDisabled: 'disabledButton'
-  },
-  disabledButton: function (inSender, inEvent) {
-    this.setDisabled(inEvent.status);
-  },
-  components: [{
-    name: 'leftIcon'
-  }, {
-    tag: 'span',
-    style: 'display: inline-block;'
-  }, {
-    name: 'rightIcon'
-  }],
-  ontap: 'onButtonTap',
-  initComponents: function () {
-    this.inherited(arguments);
-    if (this.icon) {
-      this.$.leftIcon.addClass(this.icon);
-    }
-    if (this.iconright) {
-      this.$.rightIcon.addClass(this.iconright);
-    }
-  }
-});
-
-enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.LeftToolbarImpl',
   kind: 'OB.OBPOSPointOfSale.UI.LeftToolbar',
   buttons: [{
