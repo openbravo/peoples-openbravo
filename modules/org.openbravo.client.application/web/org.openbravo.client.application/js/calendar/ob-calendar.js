@@ -17,6 +17,7 @@
  ************************************************************************
  */
 
+
 // == OBCalendar_EventDialogBridge ==
 // Hack to allow the OBCalendar open its own full customizable EventDialog (OBEventEditor)
 isc.ClassFactory.defineClass('OBCalendar_EventDialogBridge', isc.Window);
@@ -51,6 +52,7 @@ isc.ClassFactory.defineClass('OBCalendarTabSet', isc.TabSet);
 // == OBClientClassCanvasItem ==
 // Extends Calendar, with some customizations (most of them styling related)
 isc.ClassFactory.defineClass('OBCalendar', isc.Calendar);
+
 
 isc.OBCalendar.addProperties({
   autoFetchData: true,
@@ -104,11 +106,8 @@ isc.OBCalendar.addProperties({
         type: "datetime"
       }],
 
-      // these are read extra from the server with the
-      // events
+      // these are read extra from the server with the events
       additionalProperties: this.dataSourceProps.additionalProperties,
-
-      dataSourceProps: this.dataSourceProps,
 
       transformRequest: function (dsRequest) {
         dsRequest.params = dsRequest.params || {};
@@ -141,9 +140,7 @@ isc.OBCalendar.addProperties({
           if (records) {
             for (i = 0; i < records.getLength(); i++) {
               if (typeof records[i][calendar.nameField] === 'undefined') {
-                // To avoid the event displays
-                // 'undefined' when no name has
-                // been set
+                //To avoid the event displays 'undefined' when no name has been set
                 records[i][calendar.nameField] = '';
               }
               if (typeof records[i][calendar.descriptionField] === 'undefined') {
@@ -153,14 +150,12 @@ isc.OBCalendar.addProperties({
                 records[i].eventWindowStyle = multiCalendar.eventStyles[records[i][calendar.legendIdField]] + ' ' + OB.Styles.OBCalendar.eventWindowStyle;
               }
               if (typeof calendar.customTransformResponse === 'function') {
-                records[i] = calendar.customTransformResponse(
-                records[i], calendar);
+                records[i] = calendar.customTransformResponse(records[i], calendar);
               }
               if (multiCalendar && multiCalendar.calendarData.hasCustomFilters) {
                 for (j = 0; j < multiCalendar.calendarData.customFilters.length; j++) {
                   if (typeof multiCalendar.calendarData.customFilters[j].handler.transformResponse === 'function') {
-                    records[i] = multiCalendar.calendarData.customFilters[j].handler.transformResponse(
-                    records[i], calendar, multiCalendar.calendarData.customFilters[j]);
+                    records[i] = multiCalendar.calendarData.customFilters[j].handler.transformResponse(records[i], calendar, multiCalendar.calendarData.customFilters[j]);
                   }
                 }
               }
@@ -170,10 +165,8 @@ isc.OBCalendar.addProperties({
         return this.Super('transformResponse', arguments);
       },
 
-      // override the addData, updateData and removeData
-      // to wrap
-      // the calendar callback to prevent adding events in
-      // cased
+      // override the addData, updateData and removeData to wrap
+      // the calendar callback to prevent adding events in cased
       // of errors
       addData: function (newRecord, callback, requestProperties) {
         var dataSourceProps = this.dataSourceProps,
@@ -220,12 +213,8 @@ isc.OBCalendar.addProperties({
       }
     });
     this.Super('initWidget', arguments);
-    this.controlsBar.reorderMember(4, 1); // Moves the 'next'
-    // button to the second
-    // position
-    this.controlsBar.reorderMember(2, 4); // Moves the 'displayed
-    // date' to last
-    // position
+    this.controlsBar.reorderMember(4, 1); // Moves the 'next' button to the second position
+    this.controlsBar.reorderMember(2, 4); // Moves the 'displayed date' to last position
     if (this.defaultViewName && ((this.showDayView !== false && this.showWeekView !== false) || (this.showDayView !== false && this.showMonthView !== false) || (this.showWeekView !== false && this.showMonthView !== false))) {
       this.setCurrentViewName(this.defaultViewName);
     }
@@ -265,11 +254,9 @@ isc.OBCalendar.addProperties({
           calendar.eventDialog.currentEnd = event[calendar.endDateField];
           calendar.eventDialog.calendar = calendar;
           try {
-            // To avoid js error due to conflicts with
-            // Smartclient default EventDialog
+            //To avoid js error due to conflicts with Smartclient default EventDialog
             if (event.canEdit === false && event.canDelete === false) {
-              isc.warn(
-              OB.I18N.getLabel('OBUIAPP_CalendarCanNotUpdateEvent'), function () {
+              isc.warn(OB.I18N.getLabel('OBUIAPP_CalendarCanNotUpdateEvent'), function () {
                 return true;
               }, {
                 icon: '[SKINIMG]Dialog/error.png',
@@ -298,8 +285,7 @@ isc.OBCalendar.addProperties({
       this.eventDialog.currentEnd = newDate;
       this.eventDialog.calendar = this;
       try {
-        // To avoid js error due to conflicts with Smartclient
-        // default EventDialog
+        //To avoid js error due to conflicts with Smartclient default EventDialog
         this.eventDialog.show();
       } catch (e) {}
     } else {
@@ -309,18 +295,16 @@ isc.OBCalendar.addProperties({
   eventMoved: function (newDate, event) {
     newDate.setSeconds(0);
     if (this.showEventDialogOnEventMove) {
-      // Event duration
+      //Event duration
       var dateDiff = event[this.endDateField] - event[this.startDateField],
-          newEndDate = newDate.getTime() + dateDiff; // Add the event duration to the new
-      // startDate
+          newEndDate = newDate.getTime() + dateDiff; //Add the event duration to the new startDate
       newEndDate = new Date(newEndDate);
       this.eventDialog.event = event;
       this.eventDialog.currentStart = newDate;
       this.eventDialog.currentEnd = newEndDate;
       this.eventDialog.calendar = this;
       try {
-        // To avoid js error due to conflicts with Smartclient
-        // default EventDialog
+        //To avoid js error due to conflicts with Smartclient default EventDialog
         this.eventDialog.show();
       } catch (e) {}
     } else {
@@ -334,8 +318,7 @@ isc.OBCalendar.addProperties({
       this.eventDialog.currentEnd = event[this.endDateField];
       this.eventDialog.calendar = this;
       try {
-        // To avoid js error due to conflicts with Smartclient
-        // default EventDialog
+        //To avoid js error due to conflicts with Smartclient default EventDialog
         this.eventDialog.show();
       } catch (e) {}
       return false;
@@ -419,8 +402,7 @@ isc.OBCalendar.addProperties({
     if (this.multiCalendar && this.multiCalendar.calendarData.hasCustomFilters) {
       for (i = 0; i < this.multiCalendar.calendarData.customFilters.length; i++) {
         if (typeof this.multiCalendar.calendarData.customFilters[i].handler.filterCriteria === 'function') {
-          criteria.criteria.push(this.multiCalendar.calendarData.customFilters[i].handler.filterCriteria(
-          this, this.multiCalendar.calendarData.customFilters[i]));
+          criteria.criteria.push(this.multiCalendar.calendarData.customFilters[i].handler.filterCriteria(this, this.multiCalendar.calendarData.customFilters[i]));
         }
       }
     }
@@ -440,8 +422,7 @@ isc.OBCalendar.addProperties({
         calendar = this;
     ret = this.Super('draw', arguments);
 
-    // If change filter/legend parameters in day/week view and you
-    // switch to the other one,
+    // If change filter/legend parameters in day/week view and you switch to the other one,
     // data needs to be refreshed in order to show changes
     if (this.multiCalendar && this.mainView && typeof this.mainView.selectTab === 'function') {
       this.mainView.tabSelected = function () {
