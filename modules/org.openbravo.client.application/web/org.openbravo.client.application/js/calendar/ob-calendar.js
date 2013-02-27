@@ -109,6 +109,8 @@ isc.OBCalendar.addProperties({
       // these are read extra from the server with the events
       additionalProperties: this.dataSourceProps.additionalProperties,
 
+      dataSourceProps: this.dataSourceProps,
+
       transformRequest: function (dsRequest) {
         dsRequest.params = dsRequest.params || {};
         dsRequest.params._extraProperties = this.additionalProperties;
