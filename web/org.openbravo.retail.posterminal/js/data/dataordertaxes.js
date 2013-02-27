@@ -123,7 +123,6 @@
 
               //We follow the same formula of function c_get_net_price_from_gross to compute the discounted net
               if (!(_.isNull(discountedGross) || _.isUndefined(discountedGross))) {
-                var discountedNet;
                 if (taxamtdc) {
                   discountedNet = OB.DEC.div(OB.DEC.mul(discountedGross, discountedGross), taxamtdc);
                   pricenet = OB.DEC.div(discountedNet, element.get('qty'));
@@ -200,7 +199,7 @@
               });
               var netandtax;
               if (!(_.isNull(discountedGross) || _.isUndefined(discountedGross))) {
-                netandtax = OB.DEC.add(discountedNet, summedTaxAmt)
+                netandtax = OB.DEC.add(discountedNet, summedTaxAmt);
               } else {
                 netandtax = OB.DEC.add(OB.DEC.mul(linepricenet, element.get('qty')), summedTaxAmt);
               }
