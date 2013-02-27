@@ -42,7 +42,8 @@
         coalesce(l.a_asset_id,o.a_asset_id) as a_asset_id, coalesce(l.c_project_id,o.c_project_id) as c_project_id, 
         coalesce(l.c_costcenter_id, o.c_costcenter_id) as c_costcenter_id,
         coalesce(l.user1_id,o.user1_id) as user1_id, coalesce(l.user2_id,o.user2_id) as user2_id, 
-        coalesce (l.c_bpartner_id,o.c_bpartner_id) as c_bpartner_id
+        coalesce (l.c_bpartner_id,o.c_bpartner_id) as c_bpartner_id, l.explode, l.bom_parent_id, CASE WHEN l.Bom_parent_id is null then 'Y' else 'N' END isparent, 
+        '' as isorder
         FROM C_ORDERLINE l left join  M_MATCHPO m on l.C_OrderLine_ID=m.C_OrderLine_ID
                                                  and m.M_InOutLine_ID IS NOT NULL
                            LEFT JOIN M_Product_UOM mpu on mpu.M_PRODUCT_UOM_ID =l.M_PRODUCT_UOM_ID,  
@@ -60,8 +61,8 @@
         GROUP BY o.C_ORDER_ID, o.DocumentNo, o.DateOrdered, o.GrandTotal, l.QtyOrdered,l.qtydelivered, 
         l.C_UOM_ID,uom.UOMSymbol,l.M_Product_ID,p.NAME,l.Line,l.C_OrderLine_ID, l.ad_org_id, l.DESCRIPTION, l.QUANTITYORDER, 
         l.M_PRODUCT_UOM_ID, l.M_ATTRIBUTESETINSTANCE_ID, coalesce(l.a_asset_id,o.a_asset_id), coalesce(l.c_project_id,o.c_project_id), coalesce(l.c_costcenter_id, o.c_costcenter_id),
-        coalesce(l.user1_id,o.user1_id), coalesce(l.user2_id,o.user2_id), coalesce (l.c_bpartner_id,o.c_bpartner_id) ,mpu.C_UOM_ID
-        HAVING (l.QtyOrdered-SUM(COALESCE(m.Qty,0))) <> 0
+        coalesce(l.user1_id,o.user1_id), coalesce(l.user2_id,o.user2_id), coalesce (l.c_bpartner_id,o.c_bpartner_id) ,mpu.C_UOM_ID, l.explode, l.bom_parent_id
+        HAVING ((l.explode='Y')  OR ((l.QtyOrdered-SUM(COALESCE(m.Qty,0)))<>0)) 
         ORDER BY NAME, l.Line
       ]]>
     </Sql>
@@ -109,7 +110,7 @@
         coalesce(l.a_asset_id,o.a_asset_id) as a_asset_id, coalesce(l.c_project_id,o.c_project_id) as c_project_id, 
 		coalesce(l.c_costcenter_id,o.c_costcenter_id) as c_costcenter_id, 
 		coalesce(l.user1_id,o.user1_id) as user1_id ,coalesce( l.user2_id ,o.user2_id) as user2_id, 
-		coalesce (l.c_bpartner_id,o.c_bpartner_id) as c_bpartner_id
+		coalesce (l.c_bpartner_id,o.c_bpartner_id) as c_bpartner_id, l.Bom_parent_id, CASE WHEN l.Bom_parent_id is null then 'Y' else 'N' END isparent
         FROM M_INOUT_CANDIDATE_V ic, C_ORDER o, C_UOM uom, C_ORDERLINE l, M_PRODUCT p 
         WHERE o.C_ORDER_ID = l.C_ORDER_ID
         AND o.C_ORDER_ID = ic.C_ORDER_ID 
@@ -118,11 +119,12 @@
         AND l.C_UOM_ID = uom.C_UOM_ID
         AND l.M_Product_ID=p.M_Product_ID 
         AND ic.C_Order_ID = ?
-        AND l.QtyOrdered <> COALESCE(l.qtydelivered,0)
+        AND ((l.explode <>'Y' AND l.QtyOrdered <> COALESCE(l.qtydelivered,0)) OR (l.explode ='Y')) 
         GROUP BY o.C_ORDER_ID, o.DocumentNo, o.DateOrdered, o.GrandTotal, l.QtyOrdered,l.qtydelivered, 
         l.C_UOM_ID,uom.UOMSymbol,l.M_Product_ID,p.NAME,l.Line,l.C_OrderLine_ID, l.ad_org_id, l.DESCRIPTION,
        	coalesce(l.a_asset_id,o.a_asset_id) , coalesce( l.c_project_id,o.c_project_id),coalesce(l.c_costcenter_id,o.c_costcenter_id), 
-		coalesce(l.user1_id,o.user1_id), coalesce(l.user2_id,o.user2_id), coalesce (l.c_bpartner_id,o.c_bpartner_id) 
+		coalesce(l.user1_id,o.user1_id), coalesce(l.user2_id,o.user2_id), coalesce (l.c_bpartner_id,o.c_bpartner_id),
+		l.Bom_parent_id
         ORDER BY NAME, l.Line
       ]]>
     </Sql>
@@ -241,7 +243,7 @@
       coalesce(l.a_asset_id,o.a_asset_id) as a_asset_id, coalesce(l.c_project_id, o.c_project_id) as c_project_id , 
    	  coalesce(l.c_costcenter_id,o.c_costcenter_id) as c_costcenter_id,
       coalesce(l.user1_id,o.user1_id) as user1_id,coalesce( l.user2_id,o.user2_id) as user2_id , 
-      coalesce (l.c_bpartner_id,o.c_bpartner_id) as c_bpartner_id
+      coalesce (l.c_bpartner_id,o.c_bpartner_id) as c_bpartner_id, l.explode, 'Y' as isorder
       FROM C_ORDERLINE l left join M_MATCHPO m on l.C_OrderLine_ID=m.C_OrderLine_ID
                                               and  m.M_InOutLine_ID IS NOT NULL 
                          left join M_Product_UOM mu on l.M_Product_UOM_ID = mu.M_Product_UOM_ID
@@ -253,7 +255,7 @@
       GROUP BY l.QtyOrdered,l.qtydelivered,l.C_UOM_ID,uom.UOMSymbol,l.M_Product_ID,p.NAME,l.Line,l.C_OrderLine_ID, 
       uom1.BREAKDOWN, l.QUANTITYORDER, l.M_Product_UOM_ID, l.M_ATTRIBUTESETINSTANCE_ID, l.ad_org_id, l.DESCRIPTION,
       coalesce(l.a_asset_id,o.a_asset_id), coalesce(l.c_project_id, o.c_project_id), coalesce(l.c_costcenter_id,o.c_costcenter_id) ,
-      coalesce(l.user1_id,o.user1_id) ,coalesce( l.user2_id,o.user2_id) , coalesce (l.c_bpartner_id,o.c_bpartner_id) 
+      coalesce(l.user1_id,o.user1_id) ,coalesce( l.user2_id,o.user2_id) , coalesce (l.c_bpartner_id,o.c_bpartner_id), l.explode 
       ORDER BY l.Line
       ]]>
     </Sql>
@@ -273,7 +275,7 @@
       coalesce(l.a_asset_id,o.a_asset_id) as a_asset_id, coalesce(l.c_project_id, o.c_project_id) as c_project_id , 
    	  coalesce(l.c_costcenter_id,o.c_costcenter_id) as c_costcenter_id,
       coalesce(l.user1_id,o.user1_id) as user1_id,coalesce( l.user2_id,o.user2_id) as user2_id , 
-      l.c_bpartner_id
+      l.c_bpartner_id, l.explode, 'Y' as isorder
       FROM C_ORDERLINE l left join M_Product_UOM mu on l.M_Product_UOM_ID = mu.M_Product_UOM_ID
                          left join C_UOM uom1 on mu.C_UOM_ID = uom1.C_UOM_ID ,
       C_UOM uom,  M_PRODUCT p, C_ORDER o
@@ -283,8 +285,8 @@
       GROUP BY l.QtyOrdered,l.qtydelivered,l.C_UOM_ID,uom.UOMSymbol,l.M_Product_ID,p.NAME,l.Line,l.C_OrderLine_ID, 
       uom1.BREAKDOWN, l.QUANTITYORDER, l.M_Product_UOM_ID, l.M_ATTRIBUTESETINSTANCE_ID, l.ad_org_id, l.DESCRIPTION,
       coalesce(l.a_asset_id,o.a_asset_id), coalesce(l.c_project_id, o.c_project_id), coalesce(l.c_costcenter_id,o.c_costcenter_id),
-   	  coalesce(l.user1_id,o.user1_id),coalesce( l.user2_id,o.user2_id), l.c_bpartner_id
-      HAVING l.QtyOrdered - COALESCE(l.QTYDELIVERED,0)<>0
+   	  coalesce(l.user1_id,o.user1_id),coalesce( l.user2_id,o.user2_id), l.c_bpartner_id, l.explode
+      HAVING ((l.explode='Y')  OR (l.QtyOrdered - COALESCE(l.QTYDELIVERED,0)<>0)) 
       ORDER BY l.Line
       ]]>
     </Sql>
@@ -311,7 +313,8 @@
         as SECQTY, l.M_PRODUCT_UOM_ID as SEC_PRODUCT_UOM_ID,
         (SELECT C_UOM.NAME FROM M_PRODUCT_UOM, C_UOM WHERE M_PRODUCT_UOM_ID = l.M_PRODUCT_UOM_ID AND M_PRODUCT_UOM.C_UOM_ID = C_UOM.C_UOM_ID) as SECUOMSYMBOL,
         COALESCE(l.M_PRODUCT_UOM_ID,null,'0') as HAVESEC,'' as HAVESECUOM,'' AS LOCATOR,l.M_ATTRIBUTESETINSTANCE_ID AS M_ATTRIBUTESETINSTANCE_ID,
-        (SELECT M_ATTRIBUTESETINSTANCE.DESCRIPTION FROM M_ATTRIBUTESETINSTANCE WHERE l.M_ATTRIBUTESETINSTANCE_ID = M_ATTRIBUTESETINSTANCE.M_ATTRIBUTESETINSTANCE_ID) as ATTRIBUTESETINSTANCENAME
+        (SELECT M_ATTRIBUTESETINSTANCE.DESCRIPTION FROM M_ATTRIBUTESETINSTANCE WHERE l.M_ATTRIBUTESETINSTANCE_ID = M_ATTRIBUTESETINSTANCE.M_ATTRIBUTESETINSTANCE_ID) as ATTRIBUTESETINSTANCENAME, l.explode, l.Bom_parent_id, 
+        CASE WHEN l.Bom_parent_id is null then 'Y' else 'N' END isparent
         FROM C_INVOICELINE l left join  M_MATCHINV mi  on l.C_InvoiceLine_ID=mi.C_InvoiceLine_ID,
         C_INVOICE i, C_UOM uom,  M_PRODUCT p
         WHERE i.C_INVOICE_ID = l.C_INVOICE_ID 
@@ -326,8 +329,8 @@
         l.C_UOM_ID,uom.UOMSymbol,l.M_Product_ID,p.NAME, l.C_InvoiceLine_ID,l.Line,l.C_OrderLine_ID, l.DESCRIPTION,l.QUANTITYORDER,
         l.M_PRODUCT_UOM_ID,l.M_ATTRIBUTESETINSTANCE_ID,  coalesce(l.a_asset_id,i.a_asset_id), coalesce(l.c_project_id,i.c_project_id), 
         coalesce(l.c_costcenter_id,i.c_costcenter_id) , 
-        coalesce(l.user1_id,i.user1_id) , coalesce(l.user2_id, i.user2_id), l.c_bpartner_id 
-        HAVING (l.QtyInvoiced-SUM(COALESCE(mi.Qty,0))) <> 0 
+        coalesce(l.user1_id,i.user1_id) , coalesce(l.user2_id, i.user2_id), l.c_bpartner_id, l.explode, l.bom_parent_id
+        HAVING ((l.explode='Y')  OR (l.QtyInvoiced-SUM(COALESCE(mi.Qty,0))<>0))   
         ORDER BY NAME, l.Line
       ]]>
     </Sql>
@@ -348,7 +351,8 @@
 	    l.C_InvoiceLine_ID,l.Line, l.C_OrderLine_ID, l.C_InvoiceLine_ID AS ID, 
         l.DESCRIPTION AS DESCRIPTION,
         coalesce(l.a_asset_id,i.a_asset_id) as a_asset_id, coalesce(l.c_project_id,i.c_project_id) as c_project_id,coalesce(l.c_costcenter_id,i.c_costcenter_id)
-        as c_costcenter_id, coalesce(l.user1_id,i.user1_id) as user1_id , coalesce(l.user2_id,i.user2_id) as user2_id , l.c_bpartner_id 
+        as c_costcenter_id, coalesce(l.user1_id,i.user1_id) as user1_id , coalesce(l.user2_id,i.user2_id) as user2_id , l.c_bpartner_id, l.explode, l.Bom_parent_id,
+        CASE  WHEN l.Bom_parent_id is null then 'Y' else 'N' END isparent
         FROM C_INVOICELINE l left join M_INOUTLINE mi on l.M_INOUTLINE_ID = mi.M_INOUTLINE_ID,
         C_INVOICE i, C_UOM uom,  M_PRODUCT p
         WHERE i.C_INVOICE_ID = l.C_INVOICE_ID 
@@ -361,8 +365,8 @@
         GROUP BY i.C_Invoice_ID, i.DocumentNo, DateInvoiced, GrandTotal, l.QtyInvoiced, 
         l.C_UOM_ID,uom.UOMSymbol,l.M_Product_ID,p.NAME, l.C_InvoiceLine_ID,l.Line,l.C_OrderLine_ID, l.DESCRIPTION,
         coalesce(l.a_asset_id,i.a_asset_id), coalesce(l.c_project_id,i.c_project_id),coalesce(l.c_costcenter_id,i.c_costcenter_id), 
-		coalesce(l.user1_id,i.user1_id), coalesce(l.user2_id,i.user2_id) , l.c_bpartner_id 
-        HAVING (l.QtyInvoiced-SUM(COALESCE(mi.MOVEMENTQTY,0))) <> 0 
+		coalesce(l.user1_id,i.user1_id), coalesce(l.user2_id,i.user2_id) , l.c_bpartner_id, l.explode, l.Bom_parent_id
+        HAVING ((l.explode='Y')  OR ((l.QtyInvoiced-SUM(COALESCE(mi.MOVEMENTQTY,0))) <> 0))  
         ORDER BY NAME, l.Line
       ]]>
     </Sql>
@@ -481,7 +485,8 @@
       l.M_ATTRIBUTESETINSTANCE_ID, l.ad_org_id, l.DESCRIPTION AS DESCRIPTION, l.C_INVOICE_ID,
       coalesce(l.a_asset_id,i.a_asset_id) as a_asset_id, coalesce(l.c_project_id, i.c_project_id) as c_project_id, 
       coalesce(l.c_costcenter_id,i.c_costcenter_id) as c_costcenter_id , 
-      coalesce(l.user1_id,i.user1_id ) as user1_id , coalesce(l.user2_id , i.user2_id) as user2_id, l.c_bpartner_id
+      coalesce(l.user1_id,i.user1_id ) as user1_id , coalesce(l.user2_id , i.user2_id) as user2_id, l.c_bpartner_id, l.explode, 
+      'N' as isorder
       FROM C_INVOICELINE l left join  M_Product_UOM mu on l.M_Product_UOM_ID = mu.M_Product_UOM_ID 
                            left join C_UOM uom1 on mu.C_UOM_ID = uom1.C_UOM_ID 
                            left join M_MATCHINV mi on l.C_InvoiceLine_ID=mi.C_InvoiceLine_ID,
@@ -493,8 +498,8 @@
       l.C_UOM_ID,uom.UOMSymbol,l.M_Product_ID,p.NAME, l.C_InvoiceLine_ID,l.Line,l.C_OrderLine_ID, 
       uom1.BREAKDOWN, l.QUANTITYORDER, l.M_Product_UOM_ID, l.M_ATTRIBUTESETINSTANCE_ID, l.ad_org_id, l.DESCRIPTION, l.C_INVOICE_ID,
       coalesce(l.a_asset_id,i.a_asset_id), coalesce(l.c_project_id, i.c_project_id), coalesce(l.c_costcenter_id,i.c_costcenter_id), 
-      coalesce(l.user1_id,i.user1_id ), coalesce(l.user2_id , i.user2_id),l.c_bpartner_id
-      HAVING l.QtyInvoiced-SUM(COALESCE(mi.Qty,0))<>0
+      coalesce(l.user1_id,i.user1_id ), coalesce(l.user2_id , i.user2_id),l.c_bpartner_id, l.explode
+      HAVING ((l.explode='Y')  OR (l.QtyInvoiced-SUM(COALESCE(mi.Qty,0))<>0))   
       ORDER BY l.Line
       ]]>
     </Sql>
@@ -512,7 +517,8 @@
       l.M_ATTRIBUTESETINSTANCE_ID, l.ad_org_id, l.DESCRIPTION AS DESCRIPTION,
       coalesce(l.a_asset_id,i.a_asset_id) as a_asset_id , coalesce(l.c_project_id,i.c_project_id) as c_project_id, 
       coalesce(l.c_costcenter_id,i.c_costcenter_id) as c_costcenter_id,
-      coalesce( l.user1_id,i.user1_id) as user1_id , coalesce(l.user2_id ,i.user2_id) as  user2_id ,  l.c_bpartner_id
+      coalesce( l.user1_id,i.user1_id) as user1_id , coalesce(l.user2_id ,i.user2_id) as  user2_id ,  l.c_bpartner_id, l.explode,
+      'N' as isorder
       FROM C_INVOICELINE l left join  M_Product_UOM mu on l.M_Product_UOM_ID = mu.M_Product_UOM_ID 
                            left join C_UOM uom1 on mu.C_UOM_ID = uom1.C_UOM_ID 
                            left join M_INOUTLINE mi on l.M_INOUTLINE_ID=mi.M_INOUTLINE_ID,
@@ -525,8 +531,8 @@
       l.C_UOM_ID,uom.UOMSymbol,l.M_Product_ID,p.NAME, l.C_InvoiceLine_ID,l.Line,l.C_OrderLine_ID, 
       uom1.BREAKDOWN, l.QUANTITYORDER, l.M_Product_UOM_ID, l.M_ATTRIBUTESETINSTANCE_ID, l.ad_org_id, l.DESCRIPTION,
       coalesce(l.a_asset_id,i.a_asset_id), coalesce(l.c_project_id,i.c_project_id), coalesce(l.c_costcenter_id,i.c_costcenter_id),
-      coalesce( l.user1_id,i.user1_id), coalesce(l.user2_id ,i.user2_id) ,  l.c_bpartner_id
-      HAVING l.QtyInvoiced-SUM(COALESCE(mi.MOVEMENTQTY,0))<>0
+      coalesce( l.user1_id,i.user1_id), coalesce(l.user2_id ,i.user2_id) ,  l.c_bpartner_id, l.explode
+      HAVING ((l.explode='Y')  OR (l.QtyInvoiced-SUM(COALESCE(mi.MOVEMENTQTY,0))<>0))  
       ORDER BY l.Line
       ]]>
     </Sql>
@@ -570,7 +576,7 @@
          M_Locator_ID,IsInvoiced, QUANTITYORDER, 
       M_PRODUCT_UOM_ID, M_ATTRIBUTESETINSTANCE_ID,
       A_ASSET_ID, C_PROJECT_ID, C_COSTCENTER_ID,
-      USER1_ID, USER2_ID, C_BPARTNER_ID)
+      USER1_ID, USER2_ID, C_BPARTNER_ID, explode, BOM_Parent_id)
       VALUES 
         (?, ?, ?, ?, 
          'Y', now(), ?, now(), ?, 
@@ -579,7 +585,16 @@
          ?, ?, TO_NUMBER(?), 
          ?, ?,
          ?, ?, ?,
-         ?, ?,?)
+         ?, ?,?, ?,
+         (CASE to_char(?) WHEN 'Y' THEN (SELECT m_inoutline_id 
+                                        FROM m_inoutline 
+                                        WHERE m_inout_id=? 
+                                         and c_orderline_id = (SELECT BOM_parent_id 
+                                                               FROM c_orderline 
+                                                               WHERE c_orderline_id = ?)) 
+          ELSE null END                        
+         )
+        )
     </Sql>
     <Parameter name="mInoutlineId"/>
     <Parameter name="mInoutId"/>
@@ -604,6 +619,11 @@
     <Parameter name="user1Id"/>
     <Parameter name="user2Id"/>
     <Parameter name="cBpartnerId"/>
+    <Parameter name="explode"/>
+    <Parameter name="isOrder"/>
+    <Parameter name="mInoutId"/>
+    <Parameter name="cOrderlineId"/>
+
   </SqlMethod>
   <SqlMethod name="insertAcctDimension" type="preparedStatement" connection="true" return="rowCount">
     <SqlMethodComment>Copies the order line accounting dimensions to In/Out lines</SqlMethodComment>
@@ -703,6 +723,25 @@
     <Parameter name="mInoutlineId"/>
     <Parameter name="cInvoicelineId"/>
   </SqlMethod>
+  <SqlMethod name="updateBOMStructure" type="preparedStatement" connection="true" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      UPDATE M_Inoutline 
+      SET Bom_parent_id = (SELECT m_inoutline.m_inoutline_id 
+                           FROM m_inoutline inner join c_invoiceline on m_inoutline.m_inoutline_id = c_invoiceline.m_inoutline_id
+                           WHERE m_inout_id=? 
+                             and c_invoiceline_id = (SELECT BOM_parent_id 
+                                                     FROM c_invoiceline 
+                                                     WHERE c_invoiceline_id = (select c_invoiceline_id 
+                                                    from c_invoiceline 
+                                                    where m_inoutline_id = ?)))
+      WHERE m_inoutLine_ID= ? 
+    </Sql>
+    <Parameter name="mInoutId"/>
+    <Parameter name="mInoutlineId"/>
+    <Parameter name="mInoutlineId"/>
+  </SqlMethod>
+  
   <SqlMethod name="updateInvoiceOrder" type="preparedStatement" connection="true" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>

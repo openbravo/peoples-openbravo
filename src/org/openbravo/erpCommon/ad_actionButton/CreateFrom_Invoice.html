@@ -47,6 +47,11 @@
 
     function submitThisPage(strCommand) {
       if (validate(strCommand)) {
+          var inp= document.frmMain.inpcOrderId;
+          var total = document.frmMain.inpcOrderId.length;
+          for (var i=0;i<total;i++) {
+              inp[i].removeAttribute("disabled");
+          }
         submitCommandForm(strCommand, false, null, null);
         return true;
       }
@@ -133,6 +138,22 @@
     function onResizeDo(){
      resizeAreaCreateFrom();
     }
+    
+    function checkchilds(inp, bolMark) {
+      if (bolMark==null) bolMark = false;
+      if (!inp) return false;
+      else if (!inp.length) {
+        document.getElementById('CheckNum' + inp.value).checked = bolMark;
+      }  
+      else {
+        var total = inp.length;
+        for (var i=0;i<total;i++) {
+          document.getElementById('CheckNum' +inp[i].value).checked = bolMark;
+        }
+      }
+      return true;
+     }
+
   </script>
 </head>
 <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">
@@ -419,7 +440,7 @@
                     <div id="sectionDetail">
                       <tr class="DataGrid_Body_Row DataGrid_Body_Row_yy" onclick="selectActual(this); return true;" ondblclick="checkActual(this); return true;" id="funcEvenOddRowxx"> 
                         <td class="DataGrid_Body_LineNoCell DataGrid_Body_Cell_CheckBox">
-                          <span class="Checkbox_container_NOT_Focused"><input type="checkbox"  name="inpcOrderId" value="" id="CheckNumxx"></input></span>
+                          <span class="Checkbox_container_NOT_Focused"><input type="checkbox"  name="inpcOrderId" value="" id="CheckNumxx" onclick="checkchilds(document.frmMain['inpBomParent'+this.value], this.checked)"></input><input type="hidden" id="fieldBomParent" name="inpBomParentxx" value=""></input></span>
                         </td>
                         <td class="DataGrid_Body_Cell" onmouseover="HoverCell(this);" onmouseout="unHoverCell(this);" id="fieldQuantity">xxQuantity</td>
                         <td class="DataGrid_Body_Cell" onmouseover="HoverCell(this);" onmouseout="unHoverCell(this);" id="fieldCuomid">xx</td>

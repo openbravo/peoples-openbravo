@@ -1069,192 +1069,30 @@ BEGIN --BODY
     /**************************************************************************
      * Resolve not-stocked BOMs
      *************************************************************************/
-    DECLARE
+   DECLARE
       -- Invoice Lines with non-stocked BOMs
       CUR_BOM_Line RECORD;
-      CUR_BOM RECORD;
-      CUR_PriceList_Version RECORD;
-      --
-      CountNo NUMBER;
-      v_PriceList_Version_ID VARCHAR2(32);
-      v_Line NUMBER;
-      v_ChargeAmt NUMBER;
-      -- v_Offer_ID       varchar2(32);
-      v_DateInvoiced DATE;
-      v_BPartner_ID VARCHAR2(32);
-      v_PriceList_ID VARCHAR2(32);
       --
     BEGIN
       v_ResultStr:='ResolveBOM';
-      LOOP
-        -- How many BOMs do we have:1
-        SELECT COUNT(*) INTO CountNo
-        FROM C_INVOICELINE l
-        WHERE l.C_Invoice_ID=v_Record_ID
-          AND EXISTS
+      FOR CUR_BOM_Line IN
+        (SELECT *
+         FROM C_INVOICELINE l
+         WHERE l.C_Invoice_ID=v_Record_ID
+           AND l.IsActive='Y'
+           AND l.explode='N'
+           AND EXISTS
               (SELECT *
                FROM M_PRODUCT p
                WHERE l.M_Product_ID=p.M_Product_ID
                  AND p.IsBOM='Y'
                  AND p.IsStocked='N'
                  AND p.productType='I'
-              );
-        -- Nothing to do:2
-        EXIT WHEN CountNo=0;
-        DBMS_OUTPUT.PUT_LINE('  BOMs to resolve=' || CountNo) ;
-        -- Get Price List Version
-        FOR CUR_PriceList_Version IN
-          (SELECT COALESCE(v.M_PriceList_Version_ID, '0') AS PriceList_Version_ID, o.M_PriceList_ID AS M_PriceLIst_ID
-           FROM M_PRICELIST_VERSION v, C_INVOICE o
-           WHERE v.M_PriceList_ID=o.M_PriceList_ID
-             AND v.ValidFrom<=COALESCE(o.DateOrdered, o.DateInvoiced)
-             AND v.IsActive='Y'
-             AND o.C_Invoice_ID=v_Record_ID
-           ORDER BY v.ValidFrom DESC
-          )
-        LOOP
-          v_PriceList_Version_ID:=CUR_PriceList_Version.PriceList_Version_ID;
-          v_PriceList_ID := CUR_PriceList_Version.M_PriceList_ID;
-          EXIT;
-        END LOOP;
-        --Reference Date for price DateOrdered
-        SELECT C_BPARTNER_ID, DATEORDERED
-          INTO v_BPartner_ID, v_DateInvoiced
-        FROM C_INVOICE
-        WHERE C_INVOICE_ID=v_Record_ID;
-        -- Replace Lines
-        FOR CUR_BOM_Line IN
-          (SELECT *
-           FROM C_INVOICELINE l
-           WHERE l.C_Invoice_ID=v_Record_ID
-             AND IsActive='Y'
-             AND EXISTS
-                (SELECT *
-                 FROM M_PRODUCT p
-                 WHERE l.M_Product_ID=p.M_Product_ID
-                   AND p.IsBOM='Y'
-                   AND p.IsStocked='N'
-                   AND p.productType='I'
-                 )
-           ORDER BY l.Line  FOR UPDATE
-          )
-        LOOP
-          v_Line:=CUR_BOM_Line.Line;
-          -- One Time variables
-          v_ChargeAmt:=CUR_BOM_Line.ChargeAmt;
-          -- Create New Lines
-          FOR CUR_BOM IN
-            (SELECT b.M_ProductBOM_ID, p.C_UOM_ID, b.BOMQty, b.Description,
-							revplantype, isdeferredrevenue, periodnumber, defaultperiod,
-							expplantype, isdeferredexpense, periodnumber_exp, defaultperiod_exp
-             FROM M_PRODUCT_BOM b, M_PRODUCT p
-             WHERE b.M_Product_ID=CUR_BOM_Line.M_Product_ID
-               AND b.M_ProductBOM_ID=p.M_Product_ID
-               AND b.isactive = 'Y'
-             ORDER BY Line
-            )
-          LOOP
-            v_Line:=v_Line + 10;
-            --     v_Offer_ID := M_GET_OFFER(v_DateInvoiced, v_BPartner_ID, CUR_BOM.M_ProductBOM_ID);
-            /* INSERT INTO C_INVOICELINE
-              (C_InvoiceLine_ID,
-               AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,UpdatedBy,
-                C_Invoice_ID,Line,
-                Description,
-                M_Product_ID,C_UOM_ID,
-                QtyInvoiced,
-                PriceList,PriceActual,PriceLimit,LineNetAmt,
-                C_Charge_ID,ChargeAmt,
-                C_Tax_ID,
-                PriceStd)
-              VALUES
-                (v_NextNo,
-                CUR_BOM_Line.AD_Client_ID,CUR_BOM_Line.AD_Org_ID,CUR_BOM_Line.IsActive,now(),v_UpdatedBy,now(),v_UpdatedBy,
-                CUR_BOM_Line.C_Invoice_ID,v_Line,
-                CUR_BOM.Description,
-                CUR_BOM.M_ProductBOM_ID, CUR_BOM.C_UOM_ID,
-                CUR_BOM_Line.QtyInvoiced*CUR_BOM.BOMQty,
-                M_BOM_PriceList(CUR_BOM.M_ProductBOM_ID, PriceList_Version_ID),M_GET_OFFER_PRICE(v_Offer_ID, M_BOM_PriceStd(CUR_BOM.M_ProductBOM_ID, PriceList_Version_ID)td),
-                M_BOM_PriceLimit(CUR_BOM.M_ProductBOM_ID, PriceList_Version_ID),
-                M_GET_OFFER_PRICE(v_Offer_ID, M_BOM_PriceStd(CUR_BOM.M_ProductBOM_ID, PriceList_Version_ID)) * CUR_BOM_Line.QtyInvoiced*CUR_BOM.BOMQty,
-                CUR_BOM_Line.C_Charge_ID,v_ChargeAmt,
-                CUR_BOM_Line.C_Tax_ID);
-                */
-            -- M_BOM_PriceStd(CUR_BOM.M_ProductBOM_ID, PriceList_Version_ID), v_Offer_ID);
-            -- One Time variables
-                IF(CUR_BOM.M_ProductBOM_ID IS NOT NULL) THEN
-									IF(v_IsSOTrx = 'Y') THEN
-										v_period_inv:= c_get_default_period(CUR_BOM_Line.C_Invoice_ID, CUR_BOM.defaultperiod);
-										IF(v_period_inv IS NOT NULL AND CUR_BOM.isdeferredrevenue = 'Y') THEN
-											v_isdeferred_inv := CUR_BOM.isdeferredrevenue;
-											v_defplantype_inv := CUR_BOM.revplantype;
-											v_periodnumber_inv := CUR_BOM.periodnumber;
-									  ELSE
-									  	v_period_inv := NULL;
-											v_isdeferred_inv := 'N';
-											v_defplantype_inv := NULL;
-											v_periodnumber_inv := NULL;
-										END IF;
-									ELSE
-										v_period_inv:= c_get_default_period(CUR_BOM_Line.C_Invoice_ID, CUR_BOM.defaultperiod_exp);
-										IF(v_period_inv IS NOT NULL AND CUR_BOM.isdeferredexpense = 'Y') THEN
-											v_isdeferred_inv := CUR_BOM.isdeferredexpense;
-											v_defplantype_inv := CUR_BOM.expplantype;
-											v_periodnumber_inv := CUR_BOM.periodnumber_exp;
-									  ELSE
-									  	v_period_inv := NULL;
-											v_isdeferred_inv := 'N';
-											v_defplantype_inv := NULL;
-											v_periodnumber_inv := NULL;
-										END IF;
-									END IF;
-                END IF;
-            INSERT INTO C_INVOICELINE
-              (
-               C_InvoiceLine_ID, AD_Client_ID, AD_Org_ID, IsActive,
-               Created, CreatedBy, Updated, UpdatedBy,
-               C_Invoice_ID, Line, Description, M_Product_ID,
-               C_UOM_ID, QtyInvoiced, PriceList,
-               PriceActual,
-               PriceLimit, LineNetAmt, C_Charge_ID, ChargeAmt,
-               C_Tax_ID, PriceStd,
-               isdeferred, defplantype, periodnumber, c_period_id,
-               c_bpartner_id, c_project_id, c_projectline_id, a_asset_id,
-               user1_id, user2_id
-              )
-              VALUES
-              (
-               get_uuid(), CUR_BOM_Line.AD_Client_ID, CUR_BOM_Line.AD_Org_ID, CUR_BOM_Line.IsActive,
-               now(), v_UpdatedBy, now(), v_UpdatedBy,
-               CUR_BOM_Line.C_Invoice_ID, v_Line, CUR_BOM.Description, CUR_BOM.M_ProductBOM_ID,
-               CUR_BOM.C_UOM_ID, CUR_BOM_Line.QtyInvoiced*CUR_BOM.BOMQty, M_BOM_PriceList(CUR_BOM.M_ProductBOM_ID, v_PriceList_Version_ID),
-               M_Get_Offers_Price(v_DateInvoiced, v_BPartner_ID, CUR_BOM.M_ProductBOM_ID, M_BOM_PriceStd(CUR_BOM.M_ProductBOM_ID, v_PriceList_Version_ID),CUR_BOM_Line.QtyInvoiced*CUR_BOM.BOMQty, v_PriceList_ID),
-               M_BOM_PriceLimit(CUR_BOM.M_ProductBOM_ID, v_PriceList_Version_ID),
-               M_Get_Offers_Price(v_DateInvoiced, v_BPartner_ID, CUR_BOM.M_ProductBOM_ID, M_BOM_PriceStd(CUR_BOM.M_ProductBOM_ID, v_PriceList_Version_ID),CUR_BOM_Line.QtyInvoiced*CUR_BOM.BOMQty, v_PriceList_ID) * CUR_BOM_Line.QtyInvoiced*CUR_BOM.BOMQty, CUR_BOM_Line.C_Charge_ID, v_ChargeAmt,
-               CUR_BOM_Line.C_Tax_ID, M_BOM_PriceStd(CUR_BOM.M_ProductBOM_ID, v_PriceList_Version_ID),
-               v_isdeferred_inv, v_defplantype_inv, v_periodnumber_inv, v_period_inv,
-               CUR_BOM_Line.c_bpartner_id, CUR_BOM_Line.c_project_id, CUR_BOM_Line.c_projectline_id, CUR_BOM_Line.a_asset_id,
-               CUR_BOM_Line.user1_id, CUR_BOM_Line.user2_id
-              );
-            v_ChargeAmt:=0;
-          END LOOP; -- Create New Lines
-          -- Convert into Comment Line
-          UPDATE C_INVOICELINE
-          SET M_Product_ID=NULL,
-              PriceList=0,
-              PriceActual=0,
-              PriceLimit=0,
-              LineNetAmt=0,
-              ChargeAmt=0,
-              Description=
-                (SELECT p.NAME || ' ' || COALESCE(TO_CHAR(C_INVOICELINE.Description), '')
-                 FROM M_PRODUCT p
-                 WHERE p.M_Product_ID=CUR_BOM_Line.M_Product_ID
-                ),
-              PriceStd=0,
-              M_Offer_ID=NULL
-          WHERE C_InvoiceLine_ID=CUR_BOM_Line.C_InvoiceLine_ID;
-        END LOOP; -- Replace Lines
+               )
+         ORDER BY l.Line  FOR UPDATE
+        )
+      LOOP
+        M_INVEXPLODEBOMNOTSTOCK(null, CUR_BOM_Line.c_invoiceline_ID);
       END LOOP; -- BOM Loop
     END;
   END IF;--FINISH_PROCESS

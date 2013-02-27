@@ -159,7 +159,7 @@
       FROM AD_CLIENTINFO
       WHERE AD_CLIENT_ID=v_AD_Client_ID
         AND CHECKINOUTORG='Y';
-      IF v_Count>0 THEN
+      IF (v_Count>0) THEN
         v_ResultStr:='CheckingRestrictions - M_INOUT ORG IS IN C_BPARTNER ORG TREE';
         SELECT count(*)
         INTO v_Count
@@ -195,7 +195,7 @@
       AND C_DocType.IsSOTrx=M.IsSOTrx
       AND AD_ISORGINCLUDED(m.AD_Org_ID,C_DocType.AD_Org_ID, m.AD_Client_ID) <> -1
        AND M.C_DOCTYPE_ID=C_DocType.C_DOCTYPE_ID;
-        IF v_Count=0 THEN
+        IF (v_Count=0) THEN
           RAISE_APPLICATION_ERROR(-20000, '@NotCorrectOrgDoctypeShipment@') ;
         END IF;
         SELECT COUNT(*), MAX(M.line)
@@ -221,7 +221,7 @@
           AND P.ISLOCKED='Y'
           AND I.ISSOTRX='Y'
           AND I.M_INOUT_ID=v_Record_ID;
-        IF v_Count<>0 THEN
+        IF (v_Count<>0) THEN
           RAISE_APPLICATION_ERROR(-20000, '@Inline@'||v_line||' '||'@lockedProduct@') ;
         END IF;
       -- check inout line instance location
@@ -234,10 +234,22 @@
           AND p.m_product_id = m.m_product_id
           AND p.isstocked = 'Y'
           AND p.producttype = 'I';
-        IF v_Count <> 0 THEN
+        IF (v_Count <> 0) THEN
           RAISE_APPLICATION_ERROR(-20000, '@Inline@'||v_line||' '||'@InoutLineWithoutLocator@') ;
         END IF;	  
-      
+      --check if bom non-stockable is exploded
+        SELECT COUNT(*), MAX(M.line)
+        INTO v_Count, v_Line
+        FROM M_InOutLine M,    
+          M_Product P
+        WHERE M.M_InOut_ID=v_Record_ID
+          AND P.isBOM='Y' 
+          AND P.isstocked='N'
+          AND M.explode='N'
+          AND p.m_product_id = m.m_product_id;
+        IF (v_Count <> 0) THEN
+          RAISE_APPLICATION_ERROR(-20000, '@Inline@'||v_line||' '||'@InoutLineNotExploded@') ;
+        END IF;
     --Check negative quantities on return inouts
     IF (v_isreturndoctype = 'Y') THEN
       SELECT count(*) INTO v_count
@@ -843,7 +855,8 @@
                 Description, IsInvoiced,  --MODIFIED BY F.IRIAZABAL
                 QuantityOrder, M_Product_UOM_ID, IsDescription,
                 canceled_inoutline_id, A_Asset_ID, C_Project_ID, C_BPartner_ID,
-                User1_ID, User2_ID, C_CostCenter_ID
+                User1_ID, User2_ID, C_CostCenter_ID, 
+                explode
               )
               VALUES
               (
@@ -854,7 +867,8 @@
                  '*R*: ' || COALESCE(TO_CHAR(Cur_InOutLine.Description), ''), Cur_InOutLine.IsInvoiced, --MODIFIED BY F.IRIAZABAL
                 Cur_InOutLine.QuantityOrder * -1, Cur_InOutLine.M_PRODUCT_UOM_ID, Cur_InOutLine.IsDescription,
                 Cur_InOutLine.M_InOutLine_ID, Cur_InOutLine.A_Asset_ID, Cur_InOutLine.C_Project_ID, Cur_InOutLine.C_BPartner_ID,
-                Cur_InOutLine.User1_ID, Cur_InOutLine.User2_ID, Cur_InOutLine.C_CostCenter_ID
+                Cur_InOutLine.User1_ID, Cur_InOutLine.User2_ID, Cur_InOutLine.C_CostCenter_ID, 
+                Cur_InOutLine.explode 
               )
               ;
             INSERT INTO M_MATCHINV

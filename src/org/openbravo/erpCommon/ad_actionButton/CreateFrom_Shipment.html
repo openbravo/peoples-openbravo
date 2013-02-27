@@ -45,6 +45,11 @@
 
     function submitThisPage(strCommand) {
       if (validate(strCommand)) {
+        var inp= document.frmMain.inpId;
+        var total = document.frmMain.inpId.length;
+        for (var i=0;i<total;i++) {
+            inp[i].removeAttribute("disabled");
+        }       
         submitCommandForm(strCommand, false, null, null);
         return true;
       }
@@ -60,7 +65,7 @@
 
     function validate(action) {
       var frm=document.frmMain;
-      if (radioValue(frm.inpId)==null) {
+      if (radioValue(frm.inpId)==null) { 
         showJSMessage(1);
         setTimeout('resizeAreaCreateFrom()',100);
         return false;
@@ -82,6 +87,7 @@
 
     function onloadFunctions() {
     }
+    
 
     function enableLocalShortcuts(){
         keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/BusinessPartner.html', 'SELECTOR_BUSINESS', true, 'frmMain', 'inpcBpartnerId', 'inpBpartnerId_DES', document.frmMain.inpBpartnerId_DES.value, 'Command', 'KEY');", "inpBpartnerId_DES", "null");
@@ -102,7 +108,6 @@
 
     function checkActual(obj) {
       selectedCheck = selectedRow.id.toString().replace('funcEvenOddRow', 'CheckNum');
-      document.getElementById(selectedCheck).checked = !document.getElementById(selectedCheck).checked;
     }
 
     function HoverCell(cell) {
@@ -135,7 +140,25 @@
 
     function onResizeDo(){
       resizeAreaCreateFrom();
-    }
+    } 
+    
+    function checkchilds(inp, bolMark) {
+      
+      if (bolMark==null) bolMark = false;
+      if (!inp) return false;
+      else if (!inp.length) {
+        document.getElementById('inpfieldID' + inp.value).checked = bolMark;
+      }  
+      else {
+        var total = inp.length;
+        for (var i=0;i<total;i++) {
+          document.getElementById('inpfieldID' +inp[i].value).checked = bolMark;
+        }
+      }
+      return true;
+     }
+     
+
   </script>
 </head>
 <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">
@@ -425,13 +448,13 @@
             </tr>
             <div id="sectionDetail">
               <tr class="DataGrid_Body_Row DataGrid_Body_Row_yy" onclick="selectActual(this); return true;" ondblclick="checkActual(this); return true;" id="funcEvenOddRowxx"> 
-                <td class="DataGrid_Body_LineNoCell DataGrid_Body_Cell_CheckBox"> <span class="Checkbox_container_NOT_Focused"><input type="checkbox" id="fieldID" name="inpId" value=""></input></span></td>
+                <td class="DataGrid_Body_LineNoCell DataGrid_Body_Cell_CheckBox"> <span class="Checkbox_container_NOT_Focused"><input type="checkbox" disabled="disabled" id="inpfieldIDxx" name="inpId" value="" onclick="checkchilds(document.frmMain['inpBomParent'+this.value], this.checked)"></input><input type="hidden" id="fieldBomParent" name="inpBomParentxx" value=""></input></span></td>
                 <td class="DataGrid_Body_Cell" onmouseover="HoverCell(this);" onmouseout="unHoverCell(this);" id="fieldQuantity">xxQuantity</td>
                 <td class="DataGrid_Body_Cell" onmouseover="HoverCell(this);" onmouseout="unHoverCell(this);" id="fieldCuomid">xxUOM</td>
                 <td class="DataGrid_Body_Cell" onmouseover="HoverCell(this);" onmouseout="unHoverCell(this);" id="fieldMproductid">xxProduct</td>
                 <td class="DataGrid_Body_Cell" onmouseover="HoverCell(this);" onmouseout="unHoverCell(this);" id="fieldPurchaseorder">xxPurchase Order</td>
                 <td class="DataGrid_Body_Cell"></td>
-                <td class="DataGrid_Body_Cell"></td>
+                <td class="DataGrid_Body_Cell"></td>      
               </tr>
             </div>
           </table>
@@ -514,3 +537,4 @@
   </table>
 </body>
 </html>
+
