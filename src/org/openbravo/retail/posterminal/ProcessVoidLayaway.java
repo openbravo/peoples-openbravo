@@ -65,10 +65,6 @@ public class ProcessVoidLayaway extends JSONProcessSimple {
         ((OrderLine) order.getOrderLineList().get(i)).setOrderedQuantity(BigDecimal.ZERO);
         ((OrderLine) order.getOrderLineList().get(i)).setLineNetAmount(BigDecimal.ZERO);
         ((OrderLine) order.getOrderLineList().get(i)).setLineGrossAmount(BigDecimal.ZERO);
-        ((OrderLine) order.getOrderLineList().get(i)).setUnitPrice(BigDecimal.ZERO);
-        ((OrderLine) order.getOrderLineList().get(i)).setGrossUnitPrice(BigDecimal.ZERO);
-        ((OrderLine) order.getOrderLineList().get(i)).setListPrice(BigDecimal.ZERO);
-        ((OrderLine) order.getOrderLineList().get(i)).setGrossListPrice(BigDecimal.ZERO);
       }
       FIN_PaymentSchedule paymentSchedule = (FIN_PaymentSchedule) order.getFINPaymentScheduleList()
           .get(0);
