@@ -215,9 +215,10 @@ public class OrderLoader extends JSONProcessSimple {
     boolean sendEmail = false;
     TriggerHandler.getInstance().disable();
     boolean isQuotation = jsonorder.has("isQuotation") && jsonorder.getBoolean("isQuotation");
-    isLayaway = jsonorder.has("orderType") && jsonorder.getLong("orderType") == 2;
+    isLayaway = jsonorder.has("orderType") && jsonorder.getLong("orderType") == 2
+        && jsonorder.getDouble("payment") < jsonorder.getDouble("gross");
     partialpayLayaway = jsonorder.getBoolean("isLayaway")
-        && jsonorder.getDouble("payment") <= jsonorder.getDouble("gross");
+        && jsonorder.getDouble("payment") < jsonorder.getDouble("gross");
     fullpayLayaway = jsonorder.getBoolean("isLayaway")
         && jsonorder.getDouble("payment") == jsonorder.getDouble("gross");
     try {

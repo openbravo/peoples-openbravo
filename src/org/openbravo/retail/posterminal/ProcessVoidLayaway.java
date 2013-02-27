@@ -65,6 +65,10 @@ public class ProcessVoidLayaway extends JSONProcessSimple {
         ((OrderLine) order.getOrderLineList().get(i)).setOrderedQuantity(BigDecimal.ZERO);
         ((OrderLine) order.getOrderLineList().get(i)).setLineNetAmount(BigDecimal.ZERO);
         ((OrderLine) order.getOrderLineList().get(i)).setLineGrossAmount(BigDecimal.ZERO);
+        ((OrderLine) order.getOrderLineList().get(i)).setUnitPrice(BigDecimal.ZERO);
+        ((OrderLine) order.getOrderLineList().get(i)).setGrossUnitPrice(BigDecimal.ZERO);
+        ((OrderLine) order.getOrderLineList().get(i)).setListPrice(BigDecimal.ZERO);
+        ((OrderLine) order.getOrderLineList().get(i)).setGrossListPrice(BigDecimal.ZERO);
       }
       FIN_PaymentSchedule paymentSchedule = (FIN_PaymentSchedule) order.getFINPaymentScheduleList()
           .get(0);
@@ -93,7 +97,7 @@ public class ProcessVoidLayaway extends JSONProcessSimple {
         OBPOSAppPayment paymentType = null;
         String paymentTypeName = payment.getString("kind");
         BigDecimal mulrate = new BigDecimal(1);
-        BigDecimal amount = BigDecimal.valueOf(payment.getDouble("origAmount"))
+        BigDecimal amount = BigDecimal.valueOf(payment.getDouble("paid"))
             .setScale(stdPrecision, RoundingMode.HALF_UP).negate();
         BigDecimal foreignAmount = amount;
         if (payment.has("mulrate") && payment.getDouble("mulrate") != 1) {

@@ -255,7 +255,7 @@
       this.set('json', JSON.stringify(this.toJSON()));
       OB.Dal.save(this, function () {}, function () {
         window.console.error(arguments);
-      }, this.attributes.isLayaway);
+      });
       this.set('undo', undoCopy);
     },
 
@@ -826,9 +826,8 @@
           this.save();
         } else {
           this.set('gross', this.get('payment'));
-          this.get('payments').each(function (payment) {
-            me.removePayment(payment);
-          });
+          this.set('payment', OB.DEC.Zero);
+          this.get('payments').reset();
         }
         // remove promotions
         OB.Model.Discounts.applyPromotions(this);
@@ -919,6 +918,7 @@
       var origCash = OB.DEC.Zero;
       var auxCash = OB.DEC.Zero;
       var prevCash = OB.DEC.Zero;
+      var paidCash = OB.DEC.Zero;
       var pcash;
 
       for (i = 0, max = payments.length; i < max; i++) {
@@ -933,10 +933,12 @@
           // The default cash method
           cash = OB.DEC.add(cash, p.get('origAmount'));
           pcash = p;
+          paidCash = OB.DEC.add(paidCash, p.get('origAmount'));
         } else if (OB.POS.modelterminal.hasPayment(p.get('kind')) && OB.POS.modelterminal.hasPayment(p.get('kind')).paymentMethod.iscash) {
           // Another cash method
           origCash = OB.DEC.add(origCash, p.get('origAmount'));
           pcash = p;
+          paidCash = OB.DEC.add(paidCash, p.get('origAmount'));
         } else {
           nocash = OB.DEC.add(nocash, p.get('origAmount'));
         }
@@ -957,7 +959,7 @@
           this.set('payment', nocash);
           this.set('change', OB.DEC.add(cash, origCash));
         } else if (OB.DEC.compare(OB.DEC.sub(OB.DEC.add(OB.DEC.add(nocash, cash), origCash), total)) > 0) {
-          pcash.set('paid', OB.DEC.sub(total, OB.DEC.add(nocash, prevCash)));
+          pcash.set('paid', OB.DEC.sub(total, OB.DEC.add(nocash, OB.DEC.sub(paidCash, pcash.get('origAmount')))));
           this.set('payment', total);
           this.set('change', OB.DEC.sub(OB.DEC.add(OB.DEC.add(nocash, cash), origCash), total));
         } else {
@@ -966,7 +968,13 @@
           this.set('change', OB.DEC.Zero);
         }
       } else {
-        this.set('payment', nocash);
+        if (payments.length > 0) {
+          if (this.get('payment') === 0) {
+            this.set('payment', nocash);
+          }
+        } else {
+          this.set('payment', OB.DEC.Zero);
+        }
         this.set('change', OB.DEC.Zero);
       }
     },
@@ -1267,7 +1275,10 @@
       this.current = model;
       this.add(this.current);
       this.loadCurrent(true);
-      this.current.save();
+      // OB.Dal.save is done here because we want to force to save with the original od, only this time.
+      OB.Dal.save(model, function () {}, function () {
+        window.console.error(arguments);
+      }, model.get('isLayaway'));
     },
 
     addNewQuotation: function () {
