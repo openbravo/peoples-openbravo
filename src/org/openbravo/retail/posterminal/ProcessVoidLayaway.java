@@ -31,10 +31,12 @@ import org.openbravo.dal.core.TriggerHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.ad_forms.AcctServer;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.access.OrderLineTax;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
+import org.openbravo.model.common.order.OrderTax;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
@@ -62,9 +64,20 @@ public class ProcessVoidLayaway extends JSONProcessSimple {
       order.setGrandTotalAmount(BigDecimal.ZERO);
       order.setSummedLineAmount(BigDecimal.ZERO);
       for (int i = 0; i < order.getOrderLineList().size(); i++) {
-        ((OrderLine) order.getOrderLineList().get(i)).setOrderedQuantity(BigDecimal.ZERO);
-        ((OrderLine) order.getOrderLineList().get(i)).setLineNetAmount(BigDecimal.ZERO);
-        ((OrderLine) order.getOrderLineList().get(i)).setLineGrossAmount(BigDecimal.ZERO);
+        OrderLine orderLine = ((OrderLine) order.getOrderLineList().get(i));
+        orderLine.setOrderedQuantity(BigDecimal.ZERO);
+        orderLine.setLineNetAmount(BigDecimal.ZERO);
+        orderLine.setLineGrossAmount(BigDecimal.ZERO);
+      }
+      for (int i = 0; i < order.getOrderLineTaxList().size(); i++) {
+        OrderLineTax orderLineTax = ((OrderLineTax) order.getOrderLineTaxList().get(i));
+        orderLineTax.setTaxableAmount(BigDecimal.ZERO);
+        orderLineTax.setTaxAmount(BigDecimal.ZERO);
+      }
+      for (int i = 0; i < order.getOrderTaxList().size(); i++) {
+        OrderTax orderLineTax = ((OrderTax) order.getOrderTaxList().get(i));
+        orderLineTax.setTaxableAmount(BigDecimal.ZERO);
+        orderLineTax.setTaxAmount(BigDecimal.ZERO);
       }
       FIN_PaymentSchedule paymentSchedule = (FIN_PaymentSchedule) order.getFINPaymentScheduleList()
           .get(0);
