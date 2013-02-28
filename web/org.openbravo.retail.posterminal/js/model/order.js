@@ -1053,6 +1053,7 @@
         });
         _.forEach(jsonorder.payments, function (item) {
           item.amount = -item.amount;
+          item.origAmount = -item.origAmount;
           item.paid = -item.paid;
         });
         _.forEach(jsonorder.taxes, function (item) {
