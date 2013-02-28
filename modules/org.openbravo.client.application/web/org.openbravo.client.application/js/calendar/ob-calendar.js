@@ -123,12 +123,22 @@ isc.OBCalendar.addProperties({
             i, j;
 
         showDSAlert = function (text) {
-          isc.warn(text, function () {
-            return true;
-          }, {
-            icon: '[SKINIMG]Dialog/error.png',
-            title: OB.I18N.getLabel('OBUIAPP_Error')
-          });
+          if (calendar.OBEventEditor && calendar.OBEventEditor.messageBar) {
+            // Display message in event editor
+            calendar.OBEventEditor.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, OB.I18N.getLabel('OBUIAPP_Error'), text);
+          } else {
+            // there is no message bar in editor, showing a popup warn
+            isc.warn(text, function () {
+              return true;
+            }, {
+              icon: '[SKINIMG]Dialog/error.png',
+              title: OB.I18N.getLabel('OBUIAPP_Error')
+            });
+          }
+          if (calendar.OBEventEditor) {
+            // needs to keep the popup open once, because data is refreshed
+            calendar.OBEventEditor.keepOpen = true;
+          }
         };
 
         // handle error
@@ -162,6 +172,10 @@ isc.OBCalendar.addProperties({
                 }
               }
             }
+          }
+          if (typeof calendar.OBEventEditor.closeClick === 'function') {
+            // close editor popup on success
+            calendar.OBEventEditor.closeClick();
           }
         }
         return this.Super('transformResponse', arguments);
