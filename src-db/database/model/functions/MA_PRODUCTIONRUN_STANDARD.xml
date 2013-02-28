@@ -273,12 +273,14 @@
         AND pp.M_PRODUCTIONPLAN_ID=v_Record_ID;
       FOR Cur_WRPUsed IN
         (SELECT wrpp.*, p.IsStocked, pp.AD_Client_ID AS Client_ID, pp.AD_Org_ID AS Org_ID,
-          p.M_LOCATOR_ID, pp.M_PRODUCTION_ID, p.Name as pname
-        FROM MA_WRPhaseProduct wrpp, M_Product p, M_ProductionPlan pp
+          COALESCE(po.M_Locator_ID, p.M_Locator_ID) AS M_Locator_ID, pp.M_PRODUCTION_ID, p.Name as pname
+        FROM MA_WRPhaseProduct wrpp, M_Product p, M_ProductionPlan pp, M_Product_Org po
         WHERE pp.M_PRODUCTIONPLAN_ID=v_Record_ID
           AND pp.MA_WRPHASE_ID=wrpp.MA_WRPHASE_ID
           AND p.M_PRODUCT_ID=wrpp.M_PRODUCT_ID
           AND wrpp.PRODUCTIONTYPE='-'
+          AND wrpp.M_Product_ID = po.M_Product_ID
+          AND po.AD_Org_ID = v_PlanOrg_ID
         )
       LOOP
         v_ResultStr:='CreatingLine Products';
