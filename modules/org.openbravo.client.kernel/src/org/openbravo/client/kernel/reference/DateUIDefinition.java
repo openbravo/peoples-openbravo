@@ -23,7 +23,6 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.client.application.Parameter;
@@ -92,17 +91,8 @@ public class DateUIDefinition extends UIDefinition {
   }
 
   @Override
-  public String getParameterProperties(Parameter parameter) {
-    String properties = super.getParameterProperties(parameter);
-    JSONObject o;
-    try {
-      o = new JSONObject(properties != null && properties.length() > 0 ? properties : "{}");
-      o.put("width", "50%");
-    } catch (JSONException e) {
-      // ignore
-      return properties;
-    }
-    return o.toString();
+  public String getParameterWidth(Parameter parameter) {
+    return "50%";
   }
 
   protected SimpleDateFormat getClassicFormat() {

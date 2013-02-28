@@ -25,7 +25,7 @@
     type: '${param.type}',
     title: '${param.title?js_string}',
     name: '${param.name?js_string}',
-    width: '*',
+    width: '${param.width?js_string}',
     <#if param.redrawOnChange>
       redrawOnChange: true,
     </#if>
