@@ -254,7 +254,7 @@ enyo.kind({
                 };
                 errorCallback = function () {
                   OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorProcessingCustomersPendingData'));
-                  OB.UTIL.processPaidOrders(null);
+                  // we will not process pending orders in case there was an order while syncing customers
                 };
                 customersChangedNotProcessed.each(function (cus) {
                   cus.set('json', enyo.json.parse(cus.get('json')));

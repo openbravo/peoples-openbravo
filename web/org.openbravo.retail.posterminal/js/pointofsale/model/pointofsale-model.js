@@ -67,7 +67,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
         };
         errorCallback = function () {
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorProcessingCustomersPendingData'));
-          OB.UTIL.processPaidOrders(me);
+          // we will not process pending orders in case there was an order while syncing customers
           me.loadUnpaidOrders();
         };
         customersChangedNotProcessed.each(function (cus) {
