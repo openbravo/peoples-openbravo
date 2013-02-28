@@ -2330,6 +2330,16 @@ isc.OBStandardView.addProperties({
 
       isc.addProperties(fld, fld.gridProps);
 
+      // if a client class/canvas field
+      if (fld.clientClass) {
+        if (fld.showGridSummary !== true && fld.showGridSummary !== false) {
+          fld.showGridSummary = false;
+        }
+        if (fld.showGroupSummary !== true && fld.showGridSummary !== false) {
+          fld.showGridSummary = false;
+        }
+      }
+
       // correct some stuff coming from the form fields
       if (fld.displayed === false) {
         fld.visible = true;

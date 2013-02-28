@@ -309,6 +309,7 @@ isc.OBViewGrid.addProperties({
 
     // re-use getCellValue to handle count and related functions
     this.summaryRowProperties = {
+      showRecordComponents: false,
       cellHoverHTML: this.cellHoverHTML,
 
       getCellAlign: function (record, rowNum, colNum) {
@@ -618,7 +619,7 @@ isc.OBViewGrid.addProperties({
       isDate = isc.SimpleType.inheritsFrom(type, 'date');
       isNumber = isc.SimpleType.inheritsFrom(type, 'integer') || isc.SimpleType.inheritsFrom(type, 'float');
 
-      if (isNumber) {
+      if (isNumber && !field.clientClass) {
         summarySubMenu.add({
           title: OB.I18N.getLabel('OBUIAPP_SummaryFunctionSum'),
           // enabled: field.summaryFunction != 'sum',
@@ -640,23 +641,25 @@ isc.OBViewGrid.addProperties({
         });
       }
 
-      summarySubMenu.add({
-        title: OB.I18N.getLabel('OBUIAPP_SummaryFunctionMin'),
-        checked: field.summaryFunction === 'min',
-        click: function (target, item) {
-          field.summaryFunction = 'min';
-          grid.setSummaryFunctionActions();
-        }
-      });
+      if (!field.clientClass) {
+        summarySubMenu.add({
+          title: OB.I18N.getLabel('OBUIAPP_SummaryFunctionMin'),
+          checked: field.summaryFunction === 'min',
+          click: function (target, item) {
+            field.summaryFunction = 'min';
+            grid.setSummaryFunctionActions();
+          }
+        });
 
-      summarySubMenu.add({
-        title: OB.I18N.getLabel('OBUIAPP_SummaryFunctionMax'),
-        checked: field.summaryFunction === 'max',
-        click: function (target, item) {
-          field.summaryFunction = 'max';
-          grid.setSummaryFunctionActions();
-        }
-      });
+        summarySubMenu.add({
+          title: OB.I18N.getLabel('OBUIAPP_SummaryFunctionMax'),
+          checked: field.summaryFunction === 'max',
+          click: function (target, item) {
+            field.summaryFunction = 'max';
+            grid.setSummaryFunctionActions();
+          }
+        });
+      }
 
       summarySubMenu.add({
         title: OB.I18N.getLabel('OBUIAPP_SummaryFunctionCount'),
@@ -3350,10 +3353,16 @@ isc.OBViewGrid.addProperties({
   // +++++++++++++++++ functions for the edit-link column +++++++++++++++++
   createRecordComponent: function (record, colNum) {
     var fld = this.getFields()[colNum],
-        isSummary = record[this.groupSummaryRecordProperty],
+        isSummary = record && (record[this.groupSummaryRecordProperty] || record[this.gridSummaryRecordProperty]),
         canvas, rowNum = this.getRecordIndex(record),
         isEditRecord = rowNum === this.getEditRow();
-    if (!isSummary && this.isEditLinkColumn(colNum)) {
+
+    // don't support record components in summary fields
+    if (isSummary) {
+      return null;
+    }
+
+    if (this.isEditLinkColumn(colNum)) {
       var layout = isc.OBGridButtonsComponent.create({
         record: record,
         grid: this
@@ -3374,7 +3383,14 @@ isc.OBViewGrid.addProperties({
 
   updateRecordComponent: function (record, colNum, component, recordChanged) {
     var rowNum = this.getRecordIndex(record),
+        isSummary = record && (record[this.groupSummaryRecordProperty] || record[this.gridSummaryRecordProperty]),
         isEditRecord = rowNum === this.getEditRow();
+
+    // don't support record components in summary fields
+    if (isSummary) {
+      return null;
+    }
+
     if (component.editButton) {
       if (recordChanged && component.record.editColumnLayout === component) {
         component.record.editColumnLayout = null;
