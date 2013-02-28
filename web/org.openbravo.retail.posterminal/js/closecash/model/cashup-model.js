@@ -285,6 +285,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
   processAndFinishCashUp: function () {
     var objToSend = {
       terminalId: OB.POS.modelterminal.get('terminal').id,
+      cashUpId: OB.UTIL.get_UUID(),
       cashCloseInfo: []
     },
         server = new OB.DS.Process('org.openbravo.retail.posterminal.ProcessCashClose'),
