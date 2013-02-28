@@ -229,6 +229,7 @@ isc.OBPickAndExecuteGrid.addProperties({
         crit = {},
         len = this.selectedIds.length,
         i, c, found;
+    //saved Data will be used to retain values after fetch through filters.
     if (len > 0) {
       this.data.savedData = this.data.localData;
     }
@@ -289,14 +290,20 @@ isc.OBPickAndExecuteGrid.addProperties({
 
   dataArrived: function (startRow, endRow) {
     var record, i, allRows, selectedLen = this.selectedIds.length,
-        len, savedRecord, index;
+        len, savedRecord, index, j, fields, undef;
     for (i = 0; i < selectedLen; i++) {
       record = this.data.findByKey(this.selectedIds[i]);
       if (record) {
         if (this.data.savedData) {
           savedRecord = this.data.savedData.find('id', this.selectedIds[i]);
-          index = this.data.localData.indexOf(record);
-          this.data.localData[index] = savedRecord;
+          record[this.selectionProperty] = true;
+          fields = this.getFields();
+          //Setting editable fields from saved Data to retain values.
+          for (j = 0; j < fields.length; j++) {
+            if (fields[j].canEdit === undef) {
+              record[fields[j].name] = savedRecord[fields[j].name];
+            }
+          }
         }
       }
     }
