@@ -74,7 +74,7 @@
   BEGIN --BODY
      
     SELECT C_INVOICE.c_invoice_id, C_INVOICE.c_bpartner_id, C_INVOICE.M_PriceList_ID, DATEORDERED, c_invoiceline.explode
-      INTO v_invoiceID, v_CBPartner_ID, v_PriceList_ID, v_DateInvoiced, c_invoiceline, v_explode
+      INTO v_invoiceID, v_CBPartner_ID, v_PriceList_ID, v_DateInvoiced, v_explode
     FROM C_INVOICE JOIN m_pricelist ON C_INVOICE.m_pricelist_id = m_pricelist.m_pricelist_id JOIN c_invoiceline ON C_INVOICE.c_invoice_id = c_invoiceline.c_invoice_id
     WHERE c_invoiceline.c_invoiceline_id=v_Record_ID  FOR UPDATE;
 
