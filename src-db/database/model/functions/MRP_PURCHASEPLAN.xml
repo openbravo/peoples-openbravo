@@ -112,7 +112,7 @@ BEGIN
         WHERE pl.MRP_RUN_PURCHASE_ID = p_Run_ID
           AND M_PRODUCT.M_PRODUCT_ID = pl.M_PRODUCT_ID
           AND pl.M_PRODUCT_ID = Cur_PlanProduct.M_Product_ID
-        ORDER BY pl.planneddate, priority
+        ORDER BY TRUNC(pl.planneddate), priority
         ) LOOP
 
         v_neededQty_New :=  - Cur_Lines.qty - v_Stock;
