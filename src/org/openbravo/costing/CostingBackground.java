@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBDal;
@@ -145,6 +146,15 @@ public class CostingBackground extends DalBaseProcess {
     where.append("   and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " <= :now");
     where.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
     where.append(" order by trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE);
+    where.append("   , trx." + MaterialTransaction.PROPERTY_MOVEMENTLINE);
+    // This makes M- to go before M+. In Oracle it must go with desc as if not, M+ would go before
+    // M-.
+    if (OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty("bbdd.rdbms")
+        .equalsIgnoreCase("oracle")) {
+      where.append("   , trx." + MaterialTransaction.PROPERTY_MOVEMENTTYPE + " desc ");
+    } else {
+      where.append("   , trx." + MaterialTransaction.PROPERTY_MOVEMENTTYPE);
+    }
     OBQuery<MaterialTransaction> trxQry = OBDal.getInstance().createQuery(
         MaterialTransaction.class, where.toString());
     trxQry.setNamedParameter("now", new Date());
