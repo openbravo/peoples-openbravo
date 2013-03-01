@@ -30,7 +30,6 @@ public class ProcessCashClose extends JSONProcessSimple {
     JSONObject jsonResponse = new JSONObject();
     JSONObject jsonData = new JSONObject();
     try {
-      System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
       jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
       jsonResponse.put("result", "0");
       OBPOSApplications posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
