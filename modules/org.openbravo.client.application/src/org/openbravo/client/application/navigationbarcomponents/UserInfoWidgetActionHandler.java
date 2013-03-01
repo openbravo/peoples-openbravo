@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,6 +27,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -352,26 +353,25 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler {
       languageId = pickLanguage();
     }
     final boolean isDefault;
+    String defaultRoleProperty = null;
     boolean setOnlyRole = false;
-    JSONObject jsonDefaults = new JSONObject();
     if (json.has("default")) {
       isDefault = json.getBoolean("default");
-      if (json.has("defaultProperties")) {
-        jsonDefaults = json.getJSONObject("defaultProperties");
-        if (jsonDefaults.has("setOnlyRole") && jsonDefaults.getBoolean("setOnlyRole")) {
-          setOnlyRole = true;
-        }
-      } else {
-        // backwards compatibility
-        jsonDefaults = json;
+      if (json.has("defaultRoleProperty")) {
         setOnlyRole = true;
+        defaultRoleProperty = json.getString("defaultRoleProperty");
       }
     } else {
       isDefault = false;
     }
 
+    if (StringUtils.isEmpty(defaultRoleProperty)) {
+      defaultRoleProperty = User.PROPERTY_DEFAULTROLE;
+    }
+
     new UserSessionSetter().resetSession(request, isDefault, OBContext.getOBContext().getUser()
-        .getId(), roleId, clientId, orgId, languageId, warehouseId, jsonDefaults, setOnlyRole);
+        .getId(), roleId, clientId, orgId, languageId, warehouseId, defaultRoleProperty,
+        setOnlyRole);
 
     return ApplicationConstants.ACTION_RESULT_SUCCESS;
   }
@@ -410,7 +410,7 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler {
 
     private void resetSession(HttpServletRequest request, boolean isDefault, String userId,
         String roleId, String clientId, String organizationId, String languageId,
-        String warehouseId, JSONObject jsonDefaults, boolean setOnlyRole) throws Exception {
+        String warehouseId, String defaultRoleProperty, boolean setOnlyRole) throws Exception {
       final VariablesSecureApp vars = new VariablesSecureApp(request); // refresh
       final Language language = OBDal.getInstance().get(Language.class, languageId);
       if (language.isRTLLanguage()) {
@@ -420,43 +420,16 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler {
       }
 
       if (isDefault) {
-        String defaultRoleProperty = User.PROPERTY_DEFAULTROLE;
-        if (jsonDefaults.has("defaultRoleProperty")) {
-          defaultRoleProperty = jsonDefaults.getString("defaultRoleProperty");
-        }
-
-        String defaultLanguageProperty = User.PROPERTY_DEFAULTLANGUAGE;
-        if (jsonDefaults.has("defaultLanguageProperty")) {
-          defaultRoleProperty = jsonDefaults.getString("defaultLanguageProperty");
-        }
-
-        String defaultClientProperty = User.PROPERTY_DEFAULTCLIENT;
-        if (jsonDefaults.has("defaultClientProperty")) {
-          defaultRoleProperty = jsonDefaults.getString("defaultClientProperty");
-        }
-
-        String defaultOrganizationProperty = User.PROPERTY_DEFAULTORGANIZATION;
-        if (jsonDefaults.has("defaultOrganizationProperty")) {
-          defaultRoleProperty = jsonDefaults.getString("defaultOrganizationProperty");
-        }
-
-        String defaultWarehouseProperty = User.PROPERTY_DEFAULTWAREHOUSE;
-        if (jsonDefaults.has("defaultWarehouseProperty")) {
-          defaultRoleProperty = jsonDefaults.getString("defaultWarehouseProperty");
-        }
-
         final User user = OBDal.getInstance().get(User.class, userId);
         user.set(defaultRoleProperty, OBDal.getInstance().get(Role.class, roleId));
-        user.set(defaultLanguageProperty, OBDal.getInstance().get(Language.class, languageId));
-
+        user.setDefaultLanguage(OBDal.getInstance().get(Language.class, languageId));
         if (!setOnlyRole) {
-          user.set(defaultClientProperty, OBDal.getInstance().get(Client.class, clientId));
-          user.set(defaultOrganizationProperty,
-              OBDal.getInstance().get(Organization.class, organizationId));
+          user.setDefaultClient(OBDal.getInstance().get(Client.class, clientId));
+          user.setDefaultOrganization(OBDal.getInstance().get(Organization.class, organizationId));
         }
 
         if (warehouseId != null) {
-          user.set(defaultWarehouseProperty, OBDal.getInstance().get(Warehouse.class, warehouseId));
+          user.setDefaultWarehouse(OBDal.getInstance().get(Warehouse.class, warehouseId));
         }
         OBDal.getInstance().save(user);
         OBDal.getInstance().flush();
