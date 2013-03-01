@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
@@ -188,6 +189,9 @@ public class FinancialUtils {
   public static ConversionRate getConversionRate(Date date, Currency fromCurrency,
       Currency toCurrency, Organization org, Client client) {
     ConversionRate conversionRate;
+    // Conversion rate records do not get into account timestamp.
+    Date dateWithoutTimestamp = DateUtils.setHours(
+        DateUtils.setMinutes(DateUtils.setSeconds(DateUtils.setMilliseconds(date, 0), 0), 0), 0);
     // Readable Client Org filters to false as organization is filtered explicitly.
     OBContext.setAdminMode(false);
     try {
@@ -197,8 +201,8 @@ public class FinancialUtils {
       obcConvRate.add(Restrictions.eq(ConversionRate.PROPERTY_CLIENT, client));
       obcConvRate.add(Restrictions.eq(ConversionRate.PROPERTY_CURRENCY, fromCurrency));
       obcConvRate.add(Restrictions.eq(ConversionRate.PROPERTY_TOCURRENCY, toCurrency));
-      obcConvRate.add(Restrictions.le(ConversionRate.PROPERTY_VALIDFROMDATE, date));
-      obcConvRate.add(Restrictions.ge(ConversionRate.PROPERTY_VALIDTODATE, date));
+      obcConvRate.add(Restrictions.le(ConversionRate.PROPERTY_VALIDFROMDATE, dateWithoutTimestamp));
+      obcConvRate.add(Restrictions.ge(ConversionRate.PROPERTY_VALIDTODATE, dateWithoutTimestamp));
       obcConvRate.setFilterOnReadableClients(false);
       obcConvRate.setFilterOnReadableOrganization(false);
       conversionRate = (ConversionRate) obcConvRate.uniqueResult();
