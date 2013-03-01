@@ -33,7 +33,7 @@
         l.C_OrderLine_ID,l.Line, l.ad_org_id, '' as C_InvoiceLine_ID, '' as M_InOutLine_ID, '' AS BREAKDOWN, '' AS STDPRECISION, 
         '' AS C_UOM_ID_Conversion, '' AS QUANTITYORDER, '' AS M_Product_UOM_ID, l.M_ATTRIBUTESETINSTANCE_ID AS M_ATTRIBUTESETINSTANCE_ID, 
         l.C_OrderLine_ID AS ID, '' AS C_Invoice_ID, l.DESCRIPTION AS DESCRIPTION,
-        (l.quantityorder - C_UOM_CONVERT(SUM(COALESCE(m.Qty,0)), l.C_UOM_ID, l.M_PRODUCT_UOM_ID, 'Y'))
+        (l.quantityorder - C_UOM_CONVERT(SUM(COALESCE(m.Qty,0)), l.C_UOM_ID, mpu.C_UOM_ID, 'Y'))
         as SECQTY, l.M_PRODUCT_UOM_ID as SEC_PRODUCT_UOM_ID,
         (SELECT M_ATTRIBUTESETINSTANCE.DESCRIPTION FROM M_ATTRIBUTESETINSTANCE WHERE 
         l.M_ATTRIBUTESETINSTANCE_ID = M_ATTRIBUTESETINSTANCE.M_ATTRIBUTESETINSTANCE_ID) as ATTRIBUTESETINSTANCENAME, 
@@ -44,7 +44,8 @@
         coalesce(l.user1_id,o.user1_id) as user1_id, coalesce(l.user2_id,o.user2_id) as user2_id, 
         coalesce (l.c_bpartner_id,o.c_bpartner_id) as c_bpartner_id
         FROM C_ORDERLINE l left join  M_MATCHPO m on l.C_OrderLine_ID=m.C_OrderLine_ID
-                                                 and m.M_InOutLine_ID IS NOT NULL,
+                                                 and m.M_InOutLine_ID IS NOT NULL
+                           LEFT JOIN M_Product_UOM mpu on mpu.m_product_id =l.m_product_id,  
         C_ORDER o, C_UOM uom, M_PRODUCT p, C_DOCTYPE dt
         WHERE o.C_ORDER_ID = l.C_ORDER_ID 
         AND o.C_DOCTYPE_ID = dt.C_DOCTYPE_ID
@@ -59,7 +60,7 @@
         GROUP BY o.C_ORDER_ID, o.DocumentNo, o.DateOrdered, o.GrandTotal, l.QtyOrdered,l.qtydelivered, 
         l.C_UOM_ID,uom.UOMSymbol,l.M_Product_ID,p.NAME,l.Line,l.C_OrderLine_ID, l.ad_org_id, l.DESCRIPTION, l.QUANTITYORDER, 
         l.M_PRODUCT_UOM_ID, l.M_ATTRIBUTESETINSTANCE_ID, coalesce(l.a_asset_id,o.a_asset_id), coalesce(l.c_project_id,o.c_project_id), coalesce(l.c_costcenter_id, o.c_costcenter_id),
-        coalesce(l.user1_id,o.user1_id), coalesce(l.user2_id,o.user2_id), coalesce (l.c_bpartner_id,o.c_bpartner_id) 
+        coalesce(l.user1_id,o.user1_id), coalesce(l.user2_id,o.user2_id), coalesce (l.c_bpartner_id,o.c_bpartner_id) ,mpu.C_UOM_ID
         HAVING (l.QtyOrdered-SUM(COALESCE(m.Qty,0))) <> 0
         ORDER BY NAME, l.Line
       ]]>
