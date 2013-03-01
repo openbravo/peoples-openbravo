@@ -19,6 +19,7 @@
 package org.openbravo.service.json;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -675,7 +676,13 @@ public class AdvancedQueryBuilder {
       try {
         Date date = null;
         if (property.isDatetime()) {
-          date = simpleDateTimeFormat.parse(value.toString());
+          try {
+            date = simpleDateTimeFormat.parse(value.toString());
+          } catch (ParseException e) {
+            // When a DateTime column is filtered, plan Date values are used
+            // See issue https://issues.openbravo.com/view.php?id=23203
+            date = simpleDateFormat.parse(value.toString());
+          }
         }
         if (property.isDate()) {
           date = simpleDateFormat.parse(value.toString());
@@ -726,7 +733,7 @@ public class AdvancedQueryBuilder {
         && (operator.equals(OPERATOR_GREATERTHAN) || operator.equals(OPERATOR_GREATEROREQUAL)
             || operator.equals(OPERATOR_IGREATERTHAN) || operator.equals(OPERATOR_IGREATEROREQUAL)
             || operator.equals(OPERATOR_GREATERTHANFIElD) || operator
-            .equals(OPERATOR_GREATEROREQUALFIELD));
+              .equals(OPERATOR_GREATEROREQUALFIELD));
   }
 
   private boolean isLesserOperator(String operator) {
@@ -734,7 +741,7 @@ public class AdvancedQueryBuilder {
         && (operator.equals(OPERATOR_LESSTHAN) || operator.equals(OPERATOR_LESSOREQUAL)
             || operator.equals(OPERATOR_ILESSTHAN) || operator.equals(OPERATOR_ILESSOREQUAL)
             || operator.equals(OPERATOR_LESSTHANFIELD) || operator
-            .equals(OPERATOR_LESSOREQUALFIElD));
+              .equals(OPERATOR_LESSOREQUALFIElD));
   }
 
   private String computeLeftWhereClauseForIdentifier(Property property, String key,
