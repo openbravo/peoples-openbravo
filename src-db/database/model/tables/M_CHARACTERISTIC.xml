@@ -37,10 +37,6 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="CH_TYPE" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <column name="DESCRIPTION" primaryKey="false" required="false" type="NVARCHAR" size="2000" autoIncrement="false">
         <default/>
         <onCreateDefault/>
