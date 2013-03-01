@@ -30,14 +30,18 @@ public class ProcessCashClose extends JSONProcessSimple {
     JSONObject jsonResponse = new JSONObject();
     JSONObject jsonData = new JSONObject();
     try {
+      System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
       jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
       jsonResponse.put("result", "0");
       OBPOSApplications posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
           jsonsent.getString("terminalId"));
       OBPOSAppCashup cashUp = OBDal.getInstance().get(OBPOSAppCashup.class,
           jsonsent.getString("cashUpId"));
-      if (cashUp == null && RequestContext.get().getSessionAttribute("terminalId") == null) {
-        RequestContext.get().setSessionAttribute("terminalId", jsonsent.getString("terminalId"));
+      if (cashUp == null
+          && RequestContext.get().getSessionAttribute(
+              "cashupTerminalId|" + jsonsent.getString("terminalId")) == null) {
+        RequestContext.get().setSessionAttribute(
+            "cashupTerminalId|" + jsonsent.getString("terminalId"), true);
         new OrderGroupingProcessor().groupOrders(posTerminal);
         posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
             jsonsent.getString("terminalId"));
@@ -54,7 +58,8 @@ public class ProcessCashClose extends JSONProcessSimple {
       jsonResponse.put(JsonConstants.RESPONSE_DATA, jsonData);
       return jsonResponse;
     } finally {
-      RequestContext.get().removeSessionAttribute("terminalId");
+      RequestContext.get().removeSessionAttribute(
+          "cashupTerminalId|" + jsonsent.getString("terminalId"));
       OBDal.getInstance().rollbackAndClose();
       OBContext.restorePreviousMode();
       if (TriggerHandler.getInstance().isDisabled()) {

@@ -18,7 +18,17 @@ enyo.kind({
   events: {
     onChangeStep: ''
   },
+  init: function(model){
+    this.model = model;
+  },
   tap: function () {
+    if(this.model.get('cashUpSent')){
+      return true;
+    }
+    if(this.model.get('step') === 4){
+      this.setDisabled(true);
+      this.model.set('cashUpSent', true);
+    }
     this.doChangeStep();
   }
 });
