@@ -301,6 +301,22 @@
         <Parameter name="parentId" optional="true" after="AND 2=2 " text="AND tn.Parent_ID = ? "/>
         <Parameter name="nodeId" optional="true" after="AND 2=2 " text="AND tn.Node_ID = ? "/>
    </SqlMethod>
+   <SqlMethod name="selectChValue" type="preparedStatement" return="multiple">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        SELECT tn.Node_ID, tn.Parent_ID, tn.SeqNo, m.m_ch_value_id AS ID,
+            m.name AS Name, '' as description, m.IsSummary 
+        FROM m_ch_value m JOIN AD_TreeNode tn ON tn.Node_ID = m.m_ch_value_id
+        WHERE tn.AD_Tree_ID = ? 
+          AND m.m_characteristic_id = ? 
+        ORDER BY COALESCE(tn.Parent_ID, '-1'), tn.SeqNo
+      </Sql>
+        <Parameter name="editable" optional="true" type="none" after="WHERE " text="tn.IsActive='Y' AND m.isActive='Y' AND "/>
+        <Parameter name="parentId" optional="true" after="WHERE " text="tn.Parent_ID = ? AND "/>
+        <Parameter name="nodeId" optional="true" after="WHERE " text="tn.Node_ID = ? AND "/>
+        <Parameter name="adTreeId"/>
+        <Parameter name="mCharacteristicId"/>
+   </SqlMethod>
    <SqlMethod name="selectTreeID" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>

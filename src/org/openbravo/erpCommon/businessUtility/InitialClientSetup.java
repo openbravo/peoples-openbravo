@@ -72,12 +72,13 @@ public class InitialClientSetup {
   private static final String STRTREETYPEUSERDIMENSION1 = "U1";
   private static final String STRTREETYPEUSERDIMENSION2 = "U2";
   private static final String STRTREETYPEOBRE_RESOURCECATEGORY = "OBRE_RC";
+  private static final String STRTREETYPEPRODUCTCHARACTERISTIC = "CH";
   private static final String STRSEPARATOR = "*****************************************************";
   private static final String STRCLIENTNAMESUFFIX = " Admin";
   private boolean bAccountingCreated = false;
   private Tree treeOrg, treeBPartner, treeProject, treeSalesRegion, treeProduct, treeAccount,
       treeMenu, treeCampaign, treeAsset, treeProductCategory, treeCostcenter, treeUserDimension1,
-      treeUserDimension2, treeOBRE_ResourceCategory;
+      treeUserDimension2, treeOBRE_ResourceCategory, treeProductCharacteristic;
   private Client client;
   private Role role;
   private Currency currency;
@@ -364,6 +365,9 @@ public class InitialClientSetup {
     } else if (strTreeType.endsWith(STRTREETYPEUSERDIMENSION2)) {
       treeUserDimension2 = tree;
       return;
+    } else if (strTreeType.endsWith(STRTREETYPEPRODUCTCHARACTERISTIC)) {
+      treeProductCharacteristic = tree;
+      return;
     }
   }
 
@@ -373,7 +377,7 @@ public class InitialClientSetup {
         || treeProject == null || treeSalesRegion == null || treeProduct == null
         || treeCampaign == null || treeAsset == null || treeProductCategory == null
         || treeCostcenter == null || treeUserDimension1 == null || treeUserDimension2 == null
-        || treeOBRE_ResourceCategory == null) {
+        || treeOBRE_ResourceCategory == null || treeProductCharacteristic == null) {
       return logErrorAndRollback("@CreateClientFailed@",
           "insertClientInfo() - ERROR - Required information is not present. "
               + "Please check that client and trees where correctly created.");

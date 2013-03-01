@@ -81,7 +81,9 @@ class WindowTreeUtility {
       TreeType = "AS";
     else if (keyColumnName.equals("Obre_Resource_Category_ID"))
       TreeType = "OBRE_RC";
-    else
+    else if (keyColumnName.equals("M_Ch_Value_ID")) {
+      TreeType = "CH";
+    } else
       TreeType = "";
     if (TreeType.equals(""))
       log4j.error("WindowTreeUtility.getTreeID() - Could not map " + keyColumnName);
@@ -156,6 +158,12 @@ class WindowTreeUtility {
     else if (TreeType.equals("OBRE_RC"))
       data = WindowTreeData.selectOBRE_ResouceCategory(conn, "OBRE_Resource_Category_ID",
           "OBRE_Resource_Category", TreeID, strEditable, strParentID, strNodeId);
+    else if (TreeType.equals("CH")) {
+      String strCharacteristicId = vars.getSessionValue(Utility.getWindowID(conn, strTabID)
+          + "|M_Characteristic_ID");
+      data = WindowTreeData.selectChValue(conn, strEditable, strParentID, strNodeId, TreeID,
+          strCharacteristicId);
+    }
 
     return data;
   }
