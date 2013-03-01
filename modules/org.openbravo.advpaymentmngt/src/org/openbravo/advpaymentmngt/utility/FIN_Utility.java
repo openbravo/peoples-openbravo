@@ -850,7 +850,9 @@ public class FIN_Utility {
       obcConvRate.add(Restrictions.eq(ConversionRate.PROPERTY_CURRENCY, fromCurrency));
       obcConvRate.add(Restrictions.eq(ConversionRate.PROPERTY_TOCURRENCY, toCurrency));
       obcConvRate.add(Restrictions.le(ConversionRate.PROPERTY_VALIDFROMDATE, conversionDate));
-      obcConvRate.add(Restrictions.ge(ConversionRate.PROPERTY_VALIDTODATE, conversionDate));
+      long oneDay = 24 * 60 * 60 * 1000;
+      obcConvRate.add(Restrictions.ge(ConversionRate.PROPERTY_VALIDTODATE,
+          new Date(conversionDate.getTime() - oneDay)));
       conversionRateList = obcConvRate.list();
       if ((conversionRateList != null) && (conversionRateList.size() != 0)) {
         conversionRate = conversionRateList.get(0);
