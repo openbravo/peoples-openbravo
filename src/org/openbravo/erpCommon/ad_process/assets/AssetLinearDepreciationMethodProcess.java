@@ -171,7 +171,7 @@ public class AssetLinearDepreciationMethodProcess extends DalBaseProcess {
           OBMessageUtils.messageBD("ASSET_DEPRECIATION_AMOUNT")));
       return msg;
     }
-    if (pendingAmountToAmortize.compareTo(BigDecimal.ZERO) == 0) {
+    if (pendingAmountToAmortize.compareTo(BigDecimal.ZERO) <= 0) {
       msg.setType("Warning");
       msg.setTitle("");
       msg.setMessage(OBMessageUtils.messageBD("ASSET_FULLY_DEPRECIATED"));
@@ -312,7 +312,7 @@ public class AssetLinearDepreciationMethodProcess extends DalBaseProcess {
     calAux.setTime(startDate);
     // First and last period (month or year) day. For example, 2 month, starting on 17/01/12.
     // period 1: calFirstDayOfPeriod = 01/01/12, calLastDayOfPeriod = 31/01/12.
-    // period 2: calFirstDayOfPeriod = 01/02/12, calLastDayOfPeriod = 29/01/12.
+    // period 2: calFirstDayOfPeriod = 01/02/12, calLastDayOfPeriod = 29/02/12.
     // period 3: calFirstDayOfPeriod = 01/03/12, calLastDayOfPeriod = 31/03/12.
     Calendar calLastDayOfPeriod = Calendar.getInstance(); // Last period (month or year) day.
     Calendar calFirstDayOfPeriod = (Calendar) calStart.clone(); // First period (month or year) day.
@@ -438,8 +438,8 @@ public class AssetLinearDepreciationMethodProcess extends DalBaseProcess {
           totalizedPercentage = totalizedPercentage.add(proportionaldPercentage);
 
           // Search for not processed amortization (calFirstDayOfPeriod - calLastDayOfPeriod)
-          Amortization amortization = getAmortization(asset.getOrganization(),
-              calFirstDayOfPeriod.getTime(), calLastDayOfPeriod.getTime(), asset.getProject());
+          Amortization amortization = getAmortization(asset.getOrganization(), null,
+              calLastDayOfPeriod.getTime(), asset.getProject());
           if (amortization == null) {
             amortization = createNewAmortization(asset.getOrganization(),
                 OBDateUtils.formatDate(calLastDayOfPeriod.getTime()), null /* description */,
@@ -500,7 +500,9 @@ public class AssetLinearDepreciationMethodProcess extends DalBaseProcess {
       Project project) {
     OBCriteria<Amortization> obc = OBDal.getInstance().createCriteria(Amortization.class);
     obc.add(Restrictions.eq(Amortization.PROPERTY_ORGANIZATION, org));
-    obc.add(Restrictions.eq(Amortization.PROPERTY_STARTINGDATE, startDate));
+    if (startDate != null) {
+      obc.add(Restrictions.eq(Amortization.PROPERTY_STARTINGDATE, startDate));
+    }
     obc.add(Restrictions.eq(Amortization.PROPERTY_ENDINGDATE, endDate));
     obc.add(Restrictions.eq(Amortization.PROPERTY_PROCESSED, "N"));
     if (project != null) {
@@ -514,8 +516,9 @@ public class AssetLinearDepreciationMethodProcess extends DalBaseProcess {
       return null;
     } else if (amortizationList.size() > 1) {
       // FIXME do not hardcode the message
-      throw new OBException("More than one amortization exist from " + startDate.toString()
-          + " to " + endDate.toString() + " for " + org.getName() + " organization");
+      throw new OBException("More than one amortization exist from " + startDate == null ? " null "
+          : startDate.toString() + " to " + endDate.toString() + " for " + org.getName()
+              + " organization");
     }
     return amortizationList.get(0);
   }
@@ -611,6 +614,8 @@ public class AssetLinearDepreciationMethodProcess extends DalBaseProcess {
     aml.setCostcenter(costCenter);
 
     OBDal.getInstance().save(aml);
+    amortization.getFinancialMgmtAmortizationLineList().add(aml);
+    OBDal.getInstance().save(amortization);
     return aml;
   }
 
