@@ -75,6 +75,9 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
         if (data != null && data.length > 0 && !data[0].mAttributesetId.equals("")) {
           strAttributeSet = data[0].mAttributesetId;
           strProductInstance = data[0].mAttributesetinstanceId;
+        } else {
+          strAttributeSet = vars.getRequestGlobalVariable("inpmAttributesetId",
+              "AttributeSetInstance.attributeSet_id");
         }
       } else {
         strAttributeSet = AttributeSetInstanceData.selectAttributeSet(this, strNameValue);
