@@ -32,7 +32,7 @@
     receipt.clearWith(this.receipt);
 
     var template;
-    if (receipt.get('generateInvoice')) {
+    if (receipt.get('generateInvoice') && receipt.get('orderType') !== 2 && receipt.get('orderType') !== 3 && !receipt.get('isLayaway')) {
       if (receipt.get('orderType') === 1) {
         template = this.templatereturninvoice;
       } else {

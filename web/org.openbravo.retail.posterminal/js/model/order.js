@@ -825,6 +825,7 @@
         if (orderType !== 3) { //Void this Layaway, do not need to save
           this.save();
         } else {
+          this.set('layawayGross', this.getGross());
           this.set('gross', this.get('payment'));
           this.set('payment', OB.DEC.Zero);
           this.get('payments').reset();
