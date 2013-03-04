@@ -3063,6 +3063,9 @@ isc.OBViewGrid.addProperties({
     }
 
     delete this._hidingInlineEditor;
+    
+    this.recomputeCanvasComponents(rowNum);
+    
     return ret;
   },
 
