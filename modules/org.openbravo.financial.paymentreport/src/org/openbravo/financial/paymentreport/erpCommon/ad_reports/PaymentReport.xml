@@ -42,6 +42,12 @@
   <PARAMETER id="paramDueDateTo" name="dueDateTo" attribute="value"/>
   <PARAMETER id="paramDueDateTo" name="dueDateTodisplaySave" attribute="displayformat" replace="xx"/>
   <PARAMETER id="paramDueDateTo" name="dueDateTodisplaySave" attribute="saveformat" replace="yy"/>
+  <PARAMETER id="paramExpectedDateFrom" name="expectedDateFrom" attribute="value"/>
+  <PARAMETER id="paramExpectedDateFrom" name="expectedDateFromdisplaySave" attribute="displayformat" replace="xx"/>
+  <PARAMETER id="paramExpectedDateFrom" name="expectedDateFromsdisplaySave" attribute="saveformat" replace="yy"/>
+  <PARAMETER id="paramExpectedDateTo" name="expectedDateTo" attribute="value"/>
+  <PARAMETER id="paramExpectedDateTo" name="expectedDateTodisplaySave" attribute="displayformat" replace="xx"/>
+  <PARAMETER id="paramExpectedDateTo" name="expectedDateTodisplaySave" attribute="saveformat" replace="yy"/>
   <PARAMETER id="paramAmountFrom" name="amountFrom" attribute="value" format="euroEdition"/>
   <PARAMETER id="paramAmountTo" name="amountTo" attribute="value" format="euroEdition"/>
   <PARAMETER id="paramDocumentDateFrom" name="documentDateFrom" attribute="value"/>
@@ -147,6 +153,7 @@
     <FIELD id="fieldPaymLink" attribute="title" replace="xx">PAYMENT_DESC</FIELD>
     
     <FIELD id="fieldDueDate">DUE_DATE</FIELD>
+    <FIELD id="fieldExpectedDate">EXPECTED_DATE</FIELD>
     <FIELD id="fieldPlannedDSO">PLANNED_DSO</FIELD>
     <FIELD id="fieldCurrentDSO">CURRENT_DSO</FIELD>
     <FIELD id="fieldOverdue">OVERDUE</FIELD>
@@ -186,6 +193,7 @@
     <FIELD id="fieldPayment2">PAYMENT</FIELD>
     
     <FIELD id="fieldDueDate2">DUE_DATE</FIELD>
+    <FIELD id="fieldExpectedDate2">EXPECTED_DATE</FIELD>
     <FIELD id="fieldPlannedDSO2">PLANNED_DSO</FIELD>
     <FIELD id="fieldCurrentDSO2">CURRENT_DSO</FIELD>
     <FIELD id="fieldOverdue2">OVERDUE</FIELD>

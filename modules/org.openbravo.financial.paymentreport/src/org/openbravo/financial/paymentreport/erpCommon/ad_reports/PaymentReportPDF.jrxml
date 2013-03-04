@@ -2,9 +2,9 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PaymentReportPDF" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="782" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
-	<property name="ireport.zoom" value="1.0"/>
-	<property name="ireport.x" value="25"/>
-	<property name="ireport.y" value="151"/>
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="581"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -60,6 +60,8 @@
 	</parameter>
 	<parameter name="PAYDATEFROM_SHOW" class="java.lang.String"/>
 	<parameter name="PAYDATETO_SHOW" class="java.lang.String"/>
+	<parameter name="EXPECTEDDATEFROM_SHOW" class="java.lang.String"/>
+	<parameter name="EXPECTEDDATETO_SHOW" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[SELECT 'hello' AS BP_GROUP, 'hello' AS BPARTNER, 'hello' AS PROJECT, 'hello' AS PAYMENT, 'hello' AS SALES_PERSON, 1234 AS INVOICE_NUMBER, to_Date('01/01/2010') AS INVOICE_DATE,
        to_Date('01/03/2010') AS DUE_DATE, 1234 AS PLANNED_DSO, 1234 AS CURRENT_DSO, 1234 AS OVERDUE, 1234 AS DAYS_OVERDUE, 1234 AS AMOUNT,
@@ -87,6 +89,7 @@ FROM DUAL]]>
 	<field name="GROUP_CRIT" class="java.lang.String"/>
 	<field name="STATUS" class="java.lang.String"/>
 	<field name="BALANCE" class="java.math.BigDecimal"/>
+	<field name="EXPECTED_DATE" class="java.lang.String"/>
 	<variable name="SUMSUBTOTALSTATUS" class="java.math.BigDecimal" resetType="Group" resetGroup="Status" calculation="Sum">
 		<variableExpression><![CDATA[$F{BASE_AMOUNT}]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
@@ -391,7 +394,7 @@ FROM DUAL]]>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<text><![CDATA[Due Date]]></text>
+					<text><![CDATA[Expected Date]]></text>
 				</staticText>
 				<staticText>
 					<reportElement key="staticText-9" style="Detail_Header" x="412" y="35" width="33" height="25"/>
@@ -544,7 +547,7 @@ FROM DUAL]]>
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="175" splitType="Stretch">
+		<band height="196" splitType="Stretch">
 			<staticText>
 				<reportElement key="staticText-24" style="Report_Footer" x="11" y="73" width="179" height="18"/>
 				<textElement textAlignment="Right"/>
@@ -566,22 +569,22 @@ FROM DUAL]]>
 				<text><![CDATA[Due Date To:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-28" style="Report_Footer" x="11" y="113" width="179" height="18"/>
+				<reportElement key="staticText-28" style="Report_Footer" x="11" y="136" width="179" height="18"/>
 				<textElement textAlignment="Right"/>
 				<text><![CDATA[Amount From:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-29" style="Report_Footer" x="408" y="113" width="179" height="18"/>
+				<reportElement key="staticText-29" style="Report_Footer" x="408" y="136" width="179" height="18"/>
 				<textElement textAlignment="Right"/>
 				<text><![CDATA[Amount To:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-30" style="Report_Footer" x="11" y="134" width="179" height="18"/>
+				<reportElement key="staticText-30" style="Report_Footer" x="11" y="157" width="179" height="18"/>
 				<textElement textAlignment="Right"/>
 				<text><![CDATA[Document Date From:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-31" style="Report_Footer" x="408" y="134" width="179" height="18"/>
+				<reportElement key="staticText-31" style="Report_Footer" x="408" y="157" width="179" height="18"/>
 				<textElement textAlignment="Right"/>
 				<text><![CDATA[Document Date To:]]></text>
 			</staticText>
@@ -596,12 +599,12 @@ FROM DUAL]]>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{DUEDATEFROM_SHOW}.toString()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-27" style="Report_Footer" x="196" y="113" width="179" height="18"/>
+				<reportElement key="textField-27" style="Report_Footer" x="196" y="136" width="179" height="18"/>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{AMTFROM_SHOW}.toString()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-28" style="Report_Footer" x="196" y="134" width="179" height="18"/>
+				<reportElement key="textField-28" style="Report_Footer" x="196" y="157" width="179" height="18"/>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{DOCDATEFROM_SHOW}.toString()]]></textFieldExpression>
 			</textField>
@@ -616,12 +619,12 @@ FROM DUAL]]>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{DUEDATETO_SHOW}.toString()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-38" style="Report_Footer" x="593" y="113" width="179" height="18"/>
+				<reportElement key="textField-38" style="Report_Footer" x="593" y="136" width="179" height="18"/>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{AMTTO_SHOW}.toString()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-39" style="Report_Footer" x="593" y="134" width="179" height="18"/>
+				<reportElement key="textField-39" style="Report_Footer" x="593" y="157" width="179" height="18"/>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{DOCDATETO_SHOW}.toString()]]></textFieldExpression>
 			</textField>
@@ -633,25 +636,45 @@ FROM DUAL]]>
 				<text><![CDATA[PAYMENT REPORT]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-28" style="Report_Footer" x="196" y="154" width="179" height="18"/>
+				<reportElement key="textField-28" style="Report_Footer" x="196" y="177" width="179" height="18"/>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{PAYDATEFROM_SHOW}.toString()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-39" style="Report_Footer" x="593" y="154" width="179" height="18"/>
+				<reportElement key="textField-39" style="Report_Footer" x="593" y="177" width="179" height="18"/>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{PAYDATETO_SHOW}.toString()]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement key="staticText-31" style="Report_Footer" x="408" y="154" width="179" height="18"/>
+				<reportElement key="staticText-31" style="Report_Footer" x="408" y="177" width="179" height="18"/>
 				<textElement textAlignment="Right"/>
 				<text><![CDATA[Payment Date To:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-30" style="Report_Footer" x="11" y="154" width="179" height="18"/>
+				<reportElement key="staticText-30" style="Report_Footer" x="11" y="177" width="179" height="18"/>
 				<textElement textAlignment="Right"/>
 				<text><![CDATA[Payment Date From:]]></text>
 			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-26" style="Report_Footer" x="196" y="114" width="179" height="18"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{EXPECTEDDATEFROM_SHOW}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText-27" style="Report_Footer" x="408" y="114" width="179" height="18"/>
+				<textElement textAlignment="Right"/>
+				<text><![CDATA[Expected Date To:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-26" style="Report_Footer" x="11" y="114" width="179" height="18"/>
+				<textElement textAlignment="Right"/>
+				<text><![CDATA[Expected Date From:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-37" style="Report_Footer" x="593" y="114" width="179" height="18"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{EXPECTEDDATETO_SHOW}]]></textFieldExpression>
+			</textField>
 		</band>
 	</title>
 	<pageHeader>
@@ -714,7 +737,7 @@ FROM DUAL]]>
 				<textElement>
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{DUE_DATE}== null ? " " : $F{DUE_DATE})]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{EXPECTED_DATE}== null ? " " : $F{EXPECTED_DATE})]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-9" style="Report_Footer" x="412" y="0" width="33" height="25"/>

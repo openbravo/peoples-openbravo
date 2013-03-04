@@ -514,6 +514,52 @@ function onloadFunctions() {
                       </tr>
                     </table>
                   </td>
+                </tr>
+                <tr>
+                  <td class="TitleCell"><span class="LabelText">Expected Date From</span></td>
+                  <td class="TextBox_btn_ContentCell">
+                    <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
+                      <tr>
+                        <td class="TextBox_ContentCell">
+                          <input dojoType="openbravo:DateTextbox" lowerThan="paramExpectedDateTo" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width" type="text" name="inpExpectedDateFrom" id="paramExpectedDateFrom" size="10" maxlength="10" value="" onkeyup="autoCompleteDate(this.textbox, this.displayFormat);return true;"></input><script>djConfig.searchIds.push("paramExpectedDateFrom");</script>
+                        </td>
+                        <td class="FieldButton_ContentCell">
+                          <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="showCalendar('frmMain.inpExpectedDateFrom', document.frmMain.inpExpectedDateFrom.value, false);return false;">
+                          <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calendar';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
+                            <tr>
+                              <td class="FieldButton_bg">
+                                <img alt="Calendar" class="FieldButton_Icon FieldButton_Icon_Calendar" title="Calendar" src="../../../../../web/images/blank.gif" border="0"></img>
+                              </td>
+                            </tr>
+                          </table>
+                          </a>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                  <td class="ContentCell"></td>
+                  <td class="ContentCell"></td>
+                  <td class="TitleCell"><span class="LabelText">Expected Date To</span></td>
+                  <td class="TextBox_btn_ContentCell">
+                    <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
+                      <tr>
+                        <td class="TextBox_ContentCell">
+                          <input dojoType="openbravo:DateTextbox" greaterThan="paramExpectedDateFrom" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width" type="text" name="inpExpectedDateTo" id="paramExpectedDateTo" size="10" maxlength="10" value="" onkeyup="autoCompleteDate(this.textbox, this.displayFormat);return true;"></input><script>djConfig.searchIds.push("paramExpectedDateTo");</script>
+                        </td>
+                        <td class="FieldButton_ContentCell">
+                          <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="showCalendar('frmMain.inpExpectedDateTo', document.frmMain.inpExpectedDateTo.value, false);return false;" >
+                          <table class="FieldButton"onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calendar';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
+                            <tr>
+                              <td class="FieldButton_bg">
+                                <img alt="Calendar" class="FieldButton_Icon FieldButton_Icon_Calendar" title="Calendar" src="../../../../../web/images/blank.gif" border="0"></img>
+                              </td>
+                            </tr>
+                          </table>
+                          </a>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
                 </tr>               
                 <tr>
                   <td class="TitleCell"><span class="LabelText">Document Date From</span></td>
@@ -1127,7 +1173,7 @@ function onloadFunctions() {
                       <table border="0" cellspacing="0" cellpadding="0" width="90%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;">
                         <div id="sectionStatus">
                           <tr class="DataGrid_Body_Row">
-                            <th colspan="16"  class="DataGrid_Header_Cell" style="text-align:left">Status<span>:&nbsp;</span>
+                            <th colspan="17"  class="DataGrid_Header_Cell" style="text-align:left">Status<span>:&nbsp;</span>
                             <span id="fieldStatus">xxStatusName</span></th>
                           </tr>
                     
@@ -1141,6 +1187,7 @@ function onloadFunctions() {
                             <th width="10%" class="DataGrid_Header_Cell">Invoice Date</th>
                             <th width="10%" class="DataGrid_Header_Cell">Payment</th>
                             <th width="10%" class="DataGrid_Header_Cell">Due Date</th>
+                            <th width="10%" class="DataGrid_Header_Cell">Expected Date</th>
                             <th width="10%" class="DataGrid_Header_Cell">PlannedDSO</th>
                             <th width="10%" class="DataGrid_Header_Cell">CurrentDSO</th>
                             <th width="10%" class="DataGrid_Header_Cell">Overdue</th>
@@ -1171,6 +1218,7 @@ function onloadFunctions() {
                                 </a>
                               </td>
                               <td width="10%" id="fieldDueDate" class="DataGrid_Body_Cell">xx14500.34</td>
+                              <td width="10%" id="fieldExpectedDate" class="DataGrid_Body_Cell">xx14500.34</td>
                               <td width="10%" id="fieldPlannedDSO" class="DataGrid_Body_Cell_Amount">xx14500.34</td>
                               <td width="10%" id="fieldCurrentDSO" class="DataGrid_Body_Cell_Amount">xx14500.34</td>
                               <td width="10%" id="fieldOverdue" class="DataGrid_Body_Cell_Amount">xx14500.34</td>
@@ -1183,13 +1231,13 @@ function onloadFunctions() {
                           </div>
                           <tr class="DataGrid_Body_Row">
                             <th width="10%" class="DataGrid_Header_Cell"><span class="Bold">Sub Total (Status)</span></th>
-                            <th width="100%" class="DataGrid_Header_Cell_Amount" colspan="12"></th>
+                            <th width="100%" class="DataGrid_Header_Cell_Amount" colspan="13"></th>
                             <th width="10%" class="DataGrid_Header_Cell_Amount" style="text-align:right"><span class="Bold" id="subtotalBaseAmount"></span></th>
                             <th width="10%" class="DataGrid_Header_Cell"><span class="Bold" id="fieldBaseCurrency"></span></th>
                             <th width="100%" class="DataGrid_Header_Cell_Amount"></th>
                           </tr>
                           <tr>
-                            <th colspan="16" height="25px"/>
+                            <th colspan="17" height="25px"/>
                           </tr>
                         </div>
                       </table>
@@ -1207,7 +1255,7 @@ function onloadFunctions() {
                             </tr>
                             <div id="sectionStatus2">
                                 <tr class="DataGrid_Body_Row">
-                                  <th colspan="16" class="DataGrid_Header_Cell" style="text-align:left">Status<span>:&nbsp;</span>
+                                  <th colspan="17" class="DataGrid_Header_Cell" style="text-align:left">Status<span>:&nbsp;</span>
                                 <span id="fieldStatus2">xxStatusName</span></th>
                                 </tr>
                         
@@ -1220,6 +1268,7 @@ function onloadFunctions() {
                                     <th width="10%" class="DataGrid_Header_Cell">Invoice Date</th>
                                     <th width="10%" class="DataGrid_Header_Cell">Payment</th>
                                     <th width="10%" class="DataGrid_Header_Cell">Due Date</th>
+                                    <th width="10%" class="DataGrid_Header_Cell">Expected Date</th>
                                     <th width="10%" class="DataGrid_Header_Cell">PlannedDSO</th>
                                     <th width="10%" class="DataGrid_Header_Cell">CurrentDSO</th>
                                     <th width="10%" class="DataGrid_Header_Cell">Overdue</th>
@@ -1249,6 +1298,7 @@ function onloadFunctions() {
                                       </a>
                                     </td>
                                     <td width="10%" id="fieldDueDate2" class="DataGrid_Body_Cell">xx14500.34</td>
+                                    <td width="10%" id="fieldExpectedDate2" class="DataGrid_Body_Cell">xx14500.34</td>
                                     <td width="10%" id="fieldPlannedDSO2" class="DataGrid_Body_Cell_Amount">xx14500.34</td>
                                     <td width="10%" id="fieldCurrentDSO2" class="DataGrid_Body_Cell_Amount">xx14500.34</td>
                                     <td width="10%" id="fieldOverdue2" class="DataGrid_Body_Cell_Amount">xx14500.34</td>
@@ -1261,7 +1311,7 @@ function onloadFunctions() {
                                 </div>
                                 <tr class="DataGrid_Body_Row">
                                   <th width="10%" class="DataGrid_Header_Cell"><span class="Bold">Sub Total (Status)</span></th>
-                                  <th width="100%" class="DataGrid_Header_Cell_Amount" colspan="12"></th>
+                                  <th width="100%" class="DataGrid_Header_Cell_Amount" colspan="13"></th>
                                   <th width="10%" class="DataGrid_Header_Cell_Amount" style="text-align:right"><span class="Bold" id="subtotalBaseAmountStatus"></span></th>
                                   <th width="10%" class="DataGrid_Header_Cell"><span class="Bold" id="fieldBaseCurrency2"></span></th>
                                   <th width="100%" class="DataGrid_Header_Cell_Amount"></th>
@@ -1269,7 +1319,7 @@ function onloadFunctions() {
                               
                             </div>
                             <tr>
-                              <th colspan="16" style="height:25px"/>
+                              <th colspan="17" style="height:25px"/>
                             </tr>
                           </div>
                       </table>
