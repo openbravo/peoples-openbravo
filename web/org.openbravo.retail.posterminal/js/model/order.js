@@ -970,7 +970,7 @@
         }
       } else {
         if (payments.length > 0) {
-          if (this.get('payment') === 0) {
+          if (this.get('payment') === 0 || nocash > 0) {
             this.set('payment', nocash);
           }
         } else {
