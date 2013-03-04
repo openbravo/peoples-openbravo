@@ -118,7 +118,7 @@ public class IdentifierProvider implements OBSingleton {
         // Assign displayColumnProperty to apply formatting if needed
         property = displayColumnProperty;
       } else if (property.isTranslatable()) {
-        value = ((BaseOBObject) dob).get(identifier.getName(), language);
+        value = ((BaseOBObject) dob).get(identifier.getName(), language, (String) dob.get("id"));
       } else if (!property.isPrimitive() && identifyDeep) {
         if (dob.get(property.getName()) != null) {
           value = ((BaseOBObject) dob.get(property.getName())).getIdentifier();
