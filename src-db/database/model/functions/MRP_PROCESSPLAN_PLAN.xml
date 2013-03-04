@@ -88,9 +88,10 @@ BEGIN
         END IF;
 
         v_plannedorderdate_new := Cur_Lines.planneddate -
-                                  GREATEST(Cur_Lines.DELAYMIN, (CASE WHEN Cur_Lines.CAPACITY IS NULL THEN 0
-                                                                ELSE CEIL(v_Qty_new/Cur_Lines.CAPACITY)
-                                                                END));
+                                  (COALESCE(Cur_Lines.DELAYMIN, 0) +
+                                  (CASE WHEN Cur_Lines.CAPACITY IS NULL THEN 0
+                                        ELSE CEIL(v_Qty_new/Cur_Lines.CAPACITY)
+                                        END));
 
         UPDATE MRP_RUN_PRODUCTIONLINE
         SET qty = v_qty_new,
