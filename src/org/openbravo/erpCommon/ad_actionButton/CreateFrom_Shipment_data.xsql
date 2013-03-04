@@ -42,7 +42,7 @@
         coalesce(l.a_asset_id,o.a_asset_id) as a_asset_id, coalesce(l.c_project_id,o.c_project_id) as c_project_id, 
         coalesce(l.c_costcenter_id, o.c_costcenter_id) as c_costcenter_id,
         coalesce(l.user1_id,o.user1_id) as user1_id, coalesce(l.user2_id,o.user2_id) as user2_id, 
-        coalesce (l.c_bpartner_id,o.c_bpartner_id) as c_bpartner_id, l.explode, l.bom_parent_id, CASE WHEN l.Bom_parent_id is null then 'Y' else 'N' END isparent, 
+        coalesce (l.c_bpartner_id,o.c_bpartner_id) as c_bpartner_id, l.explode, l.bom_parent_id, CASE WHEN l.Bom_parent_id is null then 'Y' else 'N' END as isparent, 
         '' as isorder
         FROM C_ORDERLINE l left join  M_MATCHPO m on l.C_OrderLine_ID=m.C_OrderLine_ID
                                                  and m.M_InOutLine_ID IS NOT NULL
@@ -110,7 +110,7 @@
         coalesce(l.a_asset_id,o.a_asset_id) as a_asset_id, coalesce(l.c_project_id,o.c_project_id) as c_project_id, 
 		coalesce(l.c_costcenter_id,o.c_costcenter_id) as c_costcenter_id, 
 		coalesce(l.user1_id,o.user1_id) as user1_id ,coalesce( l.user2_id ,o.user2_id) as user2_id, 
-		coalesce (l.c_bpartner_id,o.c_bpartner_id) as c_bpartner_id, l.Bom_parent_id, CASE WHEN l.Bom_parent_id is null then 'Y' else 'N' END isparent
+		coalesce (l.c_bpartner_id,o.c_bpartner_id) as c_bpartner_id, l.Bom_parent_id, CASE WHEN l.Bom_parent_id is null then 'Y' else 'N' END as isparent
         FROM M_INOUT_CANDIDATE_V ic, C_ORDER o, C_UOM uom, C_ORDERLINE l, M_PRODUCT p 
         WHERE o.C_ORDER_ID = l.C_ORDER_ID
         AND o.C_ORDER_ID = ic.C_ORDER_ID 
@@ -314,7 +314,7 @@
         (SELECT C_UOM.NAME FROM M_PRODUCT_UOM, C_UOM WHERE M_PRODUCT_UOM_ID = l.M_PRODUCT_UOM_ID AND M_PRODUCT_UOM.C_UOM_ID = C_UOM.C_UOM_ID) as SECUOMSYMBOL,
         COALESCE(l.M_PRODUCT_UOM_ID,null,'0') as HAVESEC,'' as HAVESECUOM,'' AS LOCATOR,l.M_ATTRIBUTESETINSTANCE_ID AS M_ATTRIBUTESETINSTANCE_ID,
         (SELECT M_ATTRIBUTESETINSTANCE.DESCRIPTION FROM M_ATTRIBUTESETINSTANCE WHERE l.M_ATTRIBUTESETINSTANCE_ID = M_ATTRIBUTESETINSTANCE.M_ATTRIBUTESETINSTANCE_ID) as ATTRIBUTESETINSTANCENAME, l.explode, l.Bom_parent_id, 
-        CASE WHEN l.Bom_parent_id is null then 'Y' else 'N' END isparent
+        CASE WHEN l.Bom_parent_id is null then 'Y' else 'N' END as isparent
         FROM C_INVOICELINE l left join  M_MATCHINV mi  on l.C_InvoiceLine_ID=mi.C_InvoiceLine_ID,
         C_INVOICE i, C_UOM uom,  M_PRODUCT p
         WHERE i.C_INVOICE_ID = l.C_INVOICE_ID 
@@ -352,7 +352,7 @@
         l.DESCRIPTION AS DESCRIPTION,
         coalesce(l.a_asset_id,i.a_asset_id) as a_asset_id, coalesce(l.c_project_id,i.c_project_id) as c_project_id,coalesce(l.c_costcenter_id,i.c_costcenter_id)
         as c_costcenter_id, coalesce(l.user1_id,i.user1_id) as user1_id , coalesce(l.user2_id,i.user2_id) as user2_id , l.c_bpartner_id, l.explode, l.Bom_parent_id,
-        CASE  WHEN l.Bom_parent_id is null then 'Y' else 'N' END isparent
+        CASE  WHEN l.Bom_parent_id is null then 'Y' else 'N' END as isparent
         FROM C_INVOICELINE l left join M_INOUTLINE mi on l.M_INOUTLINE_ID = mi.M_INOUTLINE_ID,
         C_INVOICE i, C_UOM uom,  M_PRODUCT p
         WHERE i.C_INVOICE_ID = l.C_INVOICE_ID 
