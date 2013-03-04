@@ -1480,6 +1480,7 @@ isc.OBViewGrid.addProperties({
   // mode is opened
   // - if there is only one record then select it directly
   dataArrived: function (startRow, endRow) {
+    var noSetSession, changeEvent, forceUpdate;
     // do this now, to replace the loading message
     // TODO: add dynamic part of readonly (via setWindowSettings: see issue 17441)
     if (this.uiPattern === 'SR' || this.uiPattern === 'RO' || this.uiPattern === 'ED') {
@@ -1543,6 +1544,14 @@ isc.OBViewGrid.addProperties({
       // this select method prevents state changing if the record
       // was already selected
       this.doSelectSingleRecord(record);
+
+      // Call to updateButtonState to force a call to the FIC in setsession mode
+      // See issue https://issues.openbravo.com/view.php?id=22655
+      noSetSession = false;
+      changeEvent = false;
+      forceUpdate = true;
+      this.view.toolBar.updateButtonState(noSetSession, changeEvent, forceUpdate);
+
     } else if (this.lastSelectedRecord) {
       // if nothing was select, select the record again
       if (!this.getSelectedRecord()) {
