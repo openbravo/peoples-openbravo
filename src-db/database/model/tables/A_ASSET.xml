@@ -289,6 +289,7 @@
       <foreign-key foreignTable="M_PRODUCT" name="A_ASSET_M_PRODUCT">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
+      <check name="A_ASSET_IS30DAYMONTH_CHK"><![CDATA[IS30DAYMONTH IN ('Y', 'N')]]></check>
       <check name="A_ASSET_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="A_ASSET_ISDISPOSED_CHK"><![CDATA[ISDISPOSED IN ('Y', 'N')]]></check>
       <check name="A_ASSET_ISINPOSESSION_CHK"><![CDATA[ISINPOSESSION IN ('Y', 'N')]]></check>

@@ -57,7 +57,7 @@ import org.openbravo.service.db.DalBaseProcess;
 import org.openbravo.service.db.DbUtility;
 
 public class AssetLinearDepreciationMethodProcess extends DalBaseProcess {
-  static Logger log4j = Logger.getLogger(AssetLinearDepreciationMethodProcess.class);
+  private static final Logger log4j = Logger.getLogger(AssetLinearDepreciationMethodProcess.class);
   private static final String LINEAR = "LI";
   private static final String TIME = "TI";
   private static final String PERCENTAGE = "PE";
@@ -66,7 +66,7 @@ public class AssetLinearDepreciationMethodProcess extends DalBaseProcess {
   private static final BigDecimal HUNDRED = new BigDecimal("100");
   private static final BigDecimal THIRTY = new BigDecimal("30");
   private static final BigDecimal YEARDAYS = new BigDecimal("365");
-  private final static MathContext mc = new MathContext(32, RoundingMode.HALF_UP);
+  private static final MathContext mc = new MathContext(32, RoundingMode.HALF_UP);
 
   @Override
   public void doExecute(ProcessBundle bundle) throws Exception {
@@ -515,7 +515,6 @@ public class AssetLinearDepreciationMethodProcess extends DalBaseProcess {
     if (amortizationList.size() == 0) {
       return null;
     } else if (amortizationList.size() > 1) {
-      // FIXME do not hardcode the message
       throw new OBException("More than one amortization exist from " + startDate == null ? " null "
           : startDate.toString() + " to " + endDate.toString() + " for " + org.getName()
               + " organization");
@@ -557,7 +556,6 @@ public class AssetLinearDepreciationMethodProcess extends DalBaseProcess {
     if (amortizationLineList.size() == 0) {
       return null;
     } else if (amortizationLineList.size() > 1) {
-      // FIXME do not hardcode the message
       throw new OBException("More than one amortization line exist from " + startDate.toString()
           + " to " + endDate.toString() + " for " + asset.getName() + " asset");
     }
