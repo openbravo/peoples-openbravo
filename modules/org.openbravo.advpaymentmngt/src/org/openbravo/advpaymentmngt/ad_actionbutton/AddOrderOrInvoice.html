@@ -71,7 +71,6 @@ function distributeAmount(_amount) {
   if (isGLItemEnabled) {
     amount = subtract(amount, frm.inpGLSumAmount.value);
   }
-  
   if (!chk) {
     updateTotal();
     return;
@@ -90,12 +89,39 @@ function distributeAmount(_amount) {
     var total = chk.length;
     for ( i = 0; i < total; i++) {
       if (chk[i].checked) {
-        distributedAmount = add(distributedAmount, frm.elements["inpPaymentAmount" + chk[i].value].value);
+        if(frm.elements["inpPaymentAmount" + chk[i].value].value > 0){
+          distributedAmount = add(distributedAmount, frm.elements["inpPaymentAmount" + chk[i].value].value);
+        } else{
+          amount = subtract(amount, frm.elements["inpPaymentAmount" + chk[i].value].value);
+        }
       }
     }
     if (compare(amount, '>', distributedAmount) || compare(amount, '==', distributedAmount)) {
       amount = subtract(amount, distributedAmount);
       keepSelection = true;
+    }
+    if (compare(amount, '>', 0)){
+        for (i = 0; i < total; i++) {
+          scheduledPaymentDetailId = frm.elements["inpRecordId" + i].value;
+          outstandingAmount = frm.elements["inpRecordAmt" + scheduledPaymentDetailId].value;
+          if(compare(outstandingAmount, '>', 0)){
+              continue;
+          }
+          if (chk[i].checked && keepSelection) {
+            if(compare(outstandingAmount, '<', amount) && compare(distributedAmount, '==', outstandingAmount))
+              continue;
+            else
+              amount = add(amount, frm.elements["inpPaymentAmount" + chk[i].value].value);
+          }
+          frm.elements["inpPaymentAmount" + scheduledPaymentDetailId].value = outstandingAmount;
+          for ( j = 0; j < total; j++) {
+            if (!chk[j].checked && chk[j].value === scheduledPaymentDetailId) {
+              chk[j].checked = true;
+              updateData(chk[j].value, chk[j].checked,null ,true );
+            }
+          }
+          amount = subtract(amount, outstandingAmount);
+        }
     }
     for (i = 0; i < total; i++) {
       scheduledPaymentDetailId = frm.elements["inpRecordId" + i].value;
