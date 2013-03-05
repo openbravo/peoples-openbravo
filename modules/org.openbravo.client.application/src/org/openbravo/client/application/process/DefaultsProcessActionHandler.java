@@ -27,6 +27,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.domaintype.DomainType;
 import org.openbravo.base.model.domaintype.ForeignKeyDomainType;
+import org.openbravo.base.model.domaintype.PrimitiveDomainType;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.application.Parameter;
 import org.openbravo.client.application.ParameterUtils;
@@ -88,6 +89,10 @@ public class DefaultsProcessActionHandler extends BaseProcessActionHandler {
               defaults.put(param.getDBColumnName(), def);
             }
           } else {
+            if (domainType instanceof PrimitiveDomainType) {
+              defaultValue = ((PrimitiveDomainType) domainType)
+                  .createFromString((String) defaultValue);
+            }
             defaults.put(param.getDBColumnName(), defaultValue);
           }
         }
