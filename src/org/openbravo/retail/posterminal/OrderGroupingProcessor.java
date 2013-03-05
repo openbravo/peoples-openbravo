@@ -67,6 +67,9 @@ public class OrderGroupingProcessor {
         + "                               from FIN_Finacc_Transaction t"
         + "                              where t.reconciliation is null"
         + "                                and t.finPayment = d.paymentDetails.finPayment))"
+        + "or not exists (select 1 "
+        + "                 from FIN_Payment_ScheduleDetail d"
+        + "              where d.orderPaymentSchedule.order = line.salesOrder)"
         + " and line.salesOrder.obposApplications = :terminal and line.salesOrder.deliveryStatus > 0"
         + " and not exists (select 1 from OrderLine as ord where invoicedQuantity<>0 and ord.salesOrder = line.salesOrder)"
         + " order by line.businessPartner.id";
@@ -133,7 +136,10 @@ public class OrderGroupingProcessor {
         OBDal.getInstance().save(origPaymentSchedule);
         OBDal.getInstance().flush();
       }
-      if (!processedOrders.contains((String) DalUtil.getId(orderLine.getSalesOrder()))) {
+      FIN_PaymentSchedule finPaymentSchedule = orderLine.getSalesOrder()
+          .getFINPaymentScheduleList().get(0);
+      if (!processedOrders.contains((String) DalUtil.getId(orderLine.getSalesOrder()))
+          && finPaymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList().size() > 0) {
         boolean success = processPaymentsFromOrder(invoice, orderLine.getSalesOrder(),
             paymentSchedule, origPaymentSchedule);
         if (!success) {
