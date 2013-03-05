@@ -5862,7 +5862,7 @@
 <!--800128-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800128-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800128-->  <VALUE><![CDATA[N]]></VALUE>
-<!--800128-->  <NAME><![CDATA[Create amortization]]></NAME>
+<!--800128-->  <NAME><![CDATA[Create Amortization]]></NAME>
 <!--800128-->  <AD_REFERENCE_ID><![CDATA[800042]]></AD_REFERENCE_ID>
 <!--800128-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800128--></AD_REF_LIST>
@@ -5873,7 +5873,7 @@
 <!--800129-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800129-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800129-->  <VALUE><![CDATA[Y]]></VALUE>
-<!--800129-->  <NAME><![CDATA[Recalculate amortization]]></NAME>
+<!--800129-->  <NAME><![CDATA[Recalculate Amortization]]></NAME>
 <!--800129-->  <AD_REFERENCE_ID><![CDATA[800042]]></AD_REFERENCE_ID>
 <!--800129-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800129--></AD_REF_LIST>
