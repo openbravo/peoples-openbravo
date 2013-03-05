@@ -85,6 +85,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="MAXIMUMQTY" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="MRP_PLANNINGMETHOD" name="M_PRDCT_RG_MRP_PLNNNGMTHD">
         <reference local="MRP_PLANNINGMETHOD_ID" foreign="MRP_PLANNINGMETHOD_ID"/>
       </foreign-key>
