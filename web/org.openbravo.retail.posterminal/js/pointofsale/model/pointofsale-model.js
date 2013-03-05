@@ -208,6 +208,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
             OB.UTIL.showError(err);
           });
           receipt.trigger('print');
+          if (receipt.get('layawayGross')) {
+            receipt.set('layawayGross', null);
+          }
           orderList.deleteCurrent();
           OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgSuccessVoidLayaway'));
         }

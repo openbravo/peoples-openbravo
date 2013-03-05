@@ -110,7 +110,6 @@
        <%if(!_.isUndefined(order.get('layawayGross')) && !_.isNull(order.get('layawayGross'))){%>
          <text align ="right" length="14"><%= OB.I18N.formatCurrency(order.get('layawayGross')) %></text>
         <%
-        order.set('layawayGross', null);
         } else {%>
          <text align ="right" length="14"><%= order.printGross() %></text>
        <%}%>
