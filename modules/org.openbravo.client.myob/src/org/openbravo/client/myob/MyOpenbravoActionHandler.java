@@ -41,6 +41,7 @@ import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
@@ -308,6 +309,13 @@ public class MyOpenbravoActionHandler extends BaseActionHandler {
           widgetInstance.setActive(Boolean.FALSE);
           OBDal.getInstance().save(widgetInstance);
         } else {
+          // Remove all instances of the widget instance that is to be removed
+          OBQuery<WidgetInstance> widgetInstanceQuery = OBDal.getInstance().createQuery(
+              WidgetInstance.class, "copiedFrom='" + widgetInstance.getId() + "'");
+          widgetInstanceQuery.setFilterOnActive(false);
+          for (WidgetInstance copiedWidgetInstance : widgetInstanceQuery.list()) {
+            OBDal.getInstance().remove(copiedWidgetInstance);
+          }
           OBDal.getInstance().remove(widgetInstance);
         }
       }
