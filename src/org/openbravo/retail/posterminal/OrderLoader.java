@@ -220,7 +220,7 @@ public class OrderLoader extends JSONProcessSimple {
     partialpayLayaway = jsonorder.getBoolean("isLayaway")
         && jsonorder.getDouble("payment") < jsonorder.getDouble("gross");
     fullpayLayaway = jsonorder.getBoolean("isLayaway")
-        && jsonorder.getDouble("payment") == jsonorder.getDouble("gross");
+        && jsonorder.getDouble("payment") >= jsonorder.getDouble("gross");
     try {
       if (jsonorder.has("oldId") && !jsonorder.getString("oldId").equals("null")
           && jsonorder.has("isQuotation") && jsonorder.getBoolean("isQuotation")) {
