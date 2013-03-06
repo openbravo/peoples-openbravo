@@ -89,9 +89,22 @@ public class AddTransaction extends HttpSecureAppServlet {
       String strFinancialAccountId = vars.getStringParameter("inpfinFinancialAccountId");
       String strFinBankStatementLineId = vars.getStringParameter("inpFinBankStatementLineId", "",
           IsIDFilter.instance);
+      final int accesslevel = 3;
 
-      printPage(response, vars, strOrgId, strWindowId, strTabId, strFinancialAccountId,
-          strFinBankStatementLineId);
+      if ((org.openbravo.erpCommon.utility.WindowAccessData.hasReadOnlyAccess(this, vars.getRole(),
+          strTabId))
+          || !(Utility.isElementInList(
+              Utility.getContext(this, vars, "#User_Client", strWindowId, accesslevel),
+              vars.getClient()) && Utility.isElementInList(
+              Utility.getContext(this, vars, "#User_Org", strWindowId, accesslevel), strOrgId))) {
+        OBError myError = Utility.translateError(this, vars, vars.getLanguage(),
+            Utility.messageBD(this, "NoWriteAccess", vars.getLanguage()));
+        vars.setMessage(strTabId, myError);
+        printPageClosePopUp(response, vars);
+      } else {
+        printPage(response, vars, strOrgId, strWindowId, strTabId, strFinancialAccountId,
+            strFinBankStatementLineId);
+      }
 
     } else if (vars.commandIn("GRID")) {
       String strFinancialAccountId = vars.getStringParameter("inpFinFinancialAccountId", "");
