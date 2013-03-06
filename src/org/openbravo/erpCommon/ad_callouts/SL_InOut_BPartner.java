@@ -222,26 +222,30 @@ public class SL_InOut_BPartner extends HttpSecureAppServlet {
     final String rtvendorship = "273673D2ED914C399A6C51DB758BE0F9";
     final String rMatReceipt = "123271B9AD60469BAE8A924841456B63";
     String strwindow = vars.getStringParameter("inpwindowId");
+    String message = "";
     if ((!(strwindow.equals(rtvendorship) || strwindow.equals(rMatReceipt)))) {
       if ((!bpartner.equals(""))
           && FIN_Utility.isBlockedBusinessPartner(strBPartner, "Y".equals(strIsSOTrx), 2)) {
         // If the Business Partner is blocked for this document, show an information message.
-        resultado.append(", new Array('MESSAGE', \""
-            + OBMessageUtils.messageBD("ThebusinessPartner") + " " + bpartner.getIdentifier() + " "
-            + OBMessageUtils.messageBD("BusinessPartnerBlocked") + "\")");
-      }
-    } else {
-      if (data != null && data.length > 0
-          && new BigDecimal(data[0].creditavailable).compareTo(BigDecimal.ZERO) < 0
-          && strIsSOTrx.equals("Y")) {
-        String creditLimitExceed = "" + Double.parseDouble(data[0].creditavailable) * -1;
-        resultado.append(", new Array('MESSAGE', \""
-            + Utility.messageBD(this, "CreditLimitOver", vars.getLanguage()) + creditLimitExceed
-            + "\")");
-      } else {
-        resultado.append(", new Array('MESSAGE', \"\")");
+        if (message.length() > 0) {
+          message = message + "<br>";
+        }
+        message = message + OBMessageUtils.messageBD("ThebusinessPartner") + " "
+            + bpartner.getIdentifier() + " " + OBMessageUtils.messageBD("BusinessPartnerBlocked");
       }
     }
+    if (data != null && data.length > 0
+        && new BigDecimal(data[0].creditavailable).compareTo(BigDecimal.ZERO) < 0
+        && strIsSOTrx.equals("Y")) {
+      String creditLimitExceed = "" + Double.parseDouble(data[0].creditavailable) * -1;
+      if (message.length() > 0) {
+        message = message + "<br>";
+      }
+      message = message + Utility.messageBD(this, "CreditLimitOver", vars.getLanguage())
+          + creditLimitExceed;
+    }
+    resultado.append(", new Array('MESSAGE', \"" + message + "\")");
+
     resultado.append(");");
     xmlDocument.setParameter("array", resultado.toString());
     xmlDocument.setParameter("frameName", "appFrame");

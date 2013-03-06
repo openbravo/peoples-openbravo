@@ -66,8 +66,8 @@
 	<Parameter name="cCurrencyConv"/>
     <Parameter name="adUserOrg" type="replace" optional="true" after=" AND C_ORDER.AD_ORG_ID IN (" text="'1'"/>
     <Parameter name="adUserClient" type="replace" optional="true" after=" AND C_ORDER.AD_CLIENT_ID IN (" text="'1'"/>
-    <Parameter name="dateFrom" optional="true" after="1=1"><![CDATA[ AND C_ORDER.DATEORDERED >= TO_DATE(?)]]></Parameter>
-    <Parameter name="dateTo" optional="true" after="1=1"><![CDATA[ AND C_ORDER.DATEORDERED <= TO_DATE(?)]]></Parameter>
+    <Parameter name="dateFrom" optional="true" after="1=1"><![CDATA[ AND TRUNC(C_ORDER.DATEORDERED, 'DD') >= TO_DATE(?)]]></Parameter>
+    <Parameter name="dateTo" optional="true" after="1=1"><![CDATA[ AND TRUNC(C_ORDER.DATEORDERED, 'DD') <= TO_DATE(?)]]></Parameter>
     <Parameter name="mWarehouseId" optional="true" after="1=1"><![CDATA[ AND C_ORDER.M_WAREHOUSE_ID = ?]]></Parameter>
     <Parameter name="cProjectId" optional="true" after="1=1"><![CDATA[ AND C_PROJECT.C_PROJECT_ID = ?]]></Parameter>
     <Parameter name="cRegionId" optional="true" type="argument" after="AND 1=1"><![CDATA[ AND C_LOCATION.C_REGION_ID IN]]></Parameter>

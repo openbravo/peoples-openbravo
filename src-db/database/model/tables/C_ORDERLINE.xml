@@ -261,6 +261,14 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="EXPLODE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
+      </column>
+      <column name="BOM_PARENT_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="A_ASSET" name="C_ORDERLINE_A_ASSET">
         <reference local="A_ASSET_ID" foreign="A_ASSET_ID"/>
       </foreign-key>
@@ -269,6 +277,9 @@
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="C_ORDERLINE_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_ORDERLINE" name="C_ORDERLINE_BOMPARENTID">
+        <reference local="BOM_PARENT_ID" foreign="C_ORDERLINE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_BPARTNER" name="C_ORDERLINE_C_BPARTNER">
         <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
@@ -354,6 +365,7 @@
       <check name="C_ORDERLINE_CHECK1"><![CDATA[((QUANTITYORDER IS NULL) AND (M_PRODUCT_UOM_ID IS NULL)) OR ((QUANTITYORDER IS NOT NULL) AND (M_PRODUCT_UOM_ID IS NOT NULL))]]></check>
       <check name="C_ORDERLINE_CHECK2"><![CDATA[(LINENETAMT = 0) OR (C_TAX_ID IS NOT NULL)]]></check>
       <check name="C_ORDERLINE_DIRECTSHIP_CHECK"><![CDATA[DIRECTSHIP IN ('Y', 'N')]]></check>
+      <check name="C_ORDERLINE_EXPLODE_CHECK"><![CDATA[EXPLODE IN ('Y', 'N')]]></check>
       <check name="C_ORDERLINE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

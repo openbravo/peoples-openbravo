@@ -154,7 +154,39 @@ public class PaymentReportDao {
       String strFinancialAccountId, String strcCurrency, String strConvertCurrency,
       String strConversionDate, String strPaymType, String strOverdue, String strGroupCrit,
       String strOrdCrit, String strInclPaymentUsingCredit, String strPaymentDateFrom,
-      String strPaymentDateTo) throws OBException {
+      String strPaymentDateTo) {
+
+    try {
+      return getPaymentReport(vars, strOrg, strInclSubOrg, strDueDateFrom, strDueDateTo,
+          strAmountFrom, strAmountTo, strDocumentDateFrom, strDocumentDateTo, strcBPartnerIdIN,
+          strcBPGroupIdIN, "include", strcProjectIdIN, strfinPaymSt, strPaymentMethodId,
+          strFinancialAccountId, strcCurrency, strConvertCurrency, strConversionDate, strPaymType,
+          strOverdue, strGroupCrit, strOrdCrit, strInclPaymentUsingCredit, "", "");
+    } catch (OBException e) {
+      FieldProvider[] fp = new FieldProvider[1];
+      HashMap<String, String> hm = new HashMap<String, String>();
+      hm.put("transCurrency", strcCurrency);
+      hm.put("baseCurrency", strConvertCurrency);
+      hm.put("conversionDate", strConversionDate);
+
+      fp[0] = new FieldProviderFactory(hm);
+      FieldProvider[] data = fp;
+
+      OBContext.restorePreviousMode();
+      return data;
+    }
+  }
+
+  public FieldProvider[] getPaymentReport(VariablesSecureApp vars, String strOrg,
+      String strInclSubOrg, String strDueDateFrom, String strDueDateTo, String strAmountFrom,
+      String strAmountTo, String strDocumentDateFrom, String strDocumentDateTo,
+      String strcBPartnerIdIN, String strcBPGroupIdIN, String strcNoBusinessPartner,
+      String strcProjectIdIN, String strfinPaymSt, String strPaymentMethodId,
+      String strFinancialAccountId, String strcCurrency, String strConvertCurrency,
+      String strConversionDate, String strPaymType, String strOverdue, String strGroupCrit,
+      String strOrdCrit, String strInclPaymentUsingCredit, String strPaymentDateFrom,
+      String strPaymentDateTo, String strExpectedDateFrom, String strExpectedDateTo)
+      throws OBException {
 
     final StringBuilder hsqlScript = new StringBuilder();
     final java.util.List<Object> parameters = new ArrayList<Object>();
@@ -248,6 +280,20 @@ public class PaymentReportDao {
         parameters.add(FIN_Utility.getDate(strDueDateTo));
       }
 
+      // expected date from - expected date to
+      if (!strExpectedDateFrom.isEmpty()) {
+        hsqlScript.append(" and invps.");
+        hsqlScript.append(FIN_PaymentSchedule.PROPERTY_EXPECTEDDATE);
+        hsqlScript.append(" >= ?");
+        parameters.add(FIN_Utility.getDate(strExpectedDateFrom));
+      }
+      if (!strExpectedDateTo.isEmpty()) {
+        hsqlScript.append(" and invps.");
+        hsqlScript.append(FIN_PaymentSchedule.PROPERTY_EXPECTEDDATE);
+        hsqlScript.append(" <= ?");
+        parameters.add(FIN_Utility.getDate(strExpectedDateTo));
+      }
+
       // document date from - document date to
       if (!strDocumentDateFrom.isEmpty()) {
         hsqlScript.append(" and coalesce(inv.");
@@ -273,7 +319,7 @@ public class PaymentReportDao {
         hsqlScript.append(" >= ?)  or (pay.");
         hsqlScript.append(FIN_Payment.PROPERTY_PAYMENTDATE);
         hsqlScript.append(" is null and invps.");
-        hsqlScript.append(FIN_PaymentSchedule.PROPERTY_DUEDATE);
+        hsqlScript.append(FIN_PaymentSchedule.PROPERTY_EXPECTEDDATE);
         hsqlScript.append(" >= ?))");
         parameters.add(FIN_Utility.getDate(strPaymentDateFrom));
         parameters.add(FIN_Utility.getDate(strPaymentDateFrom));
@@ -282,7 +328,7 @@ public class PaymentReportDao {
         hsqlScript.append(" and coalesce(pay.");
         hsqlScript.append(FIN_Payment.PROPERTY_PAYMENTDATE);
         hsqlScript.append(", invps.");
-        hsqlScript.append(FIN_PaymentSchedule.PROPERTY_DUEDATE);
+        hsqlScript.append(FIN_PaymentSchedule.PROPERTY_EXPECTEDDATE);
         hsqlScript.append(") <= ?");
         parameters.add(FIN_Utility.getDate(strPaymentDateTo));
       }
@@ -602,7 +648,8 @@ public class PaymentReportDao {
           strOrg, strcBPartnerIdIN, strFinancialAccountId, strDocumentDateFrom, strDocumentDateTo,
           strPaymentDateFrom, strPaymentDateTo, strAmountFrom, strAmountTo, strcBPGroupIdIN,
           strcProjectIdIN, strfinPaymSt, strcCurrency, strPaymType, strGroupCrit, strOrdCrit,
-          strcNoBusinessPartner, strDueDateFrom, strDueDateTo);
+          strcNoBusinessPartner, strDueDateFrom, strDueDateTo, strExpectedDateFrom,
+          strExpectedDateTo);
 
       transactionData = FieldProviderFactory.getFieldProviderArray(transactionsList);
       int totalTransElements = transactionsList.size();
@@ -778,6 +825,8 @@ public class PaymentReportDao {
             FieldProviderFactory.setField(data[i], "INVOICE_DATE", "");
             // dueDate.
             FieldProviderFactory.setField(data[i], "DUE_DATE", "");
+            // expectedDate.
+            FieldProviderFactory.setField(data[i], "EXPECTED_DATE", "");
             // plannedDSO
             FieldProviderFactory.setField(data[i], "PLANNED_DSO", "0");
             // currentDSO
@@ -802,6 +851,8 @@ public class PaymentReportDao {
           FieldProviderFactory.setField(data[i], "INVOICE_DATE", "");
           // dueDate.
           FieldProviderFactory.setField(data[i], "DUE_DATE", "");
+          // expectedDate.
+          FieldProviderFactory.setField(data[i], "EXPECTED_DATE", "");
           // plannedDSO
           FieldProviderFactory.setField(data[i], "PLANNED_DSO", "0");
           // currentDSO
@@ -1223,6 +1274,9 @@ public class PaymentReportDao {
     // dueDate.
     FieldProviderFactory.setField(transactionData, "DUE_DATE",
         dateFormat.format(transaction.getDateAcct()));
+    // expectedDate.
+    FieldProviderFactory.setField(transactionData, "EXPECTED_DATE",
+        dateFormat.format(transaction.getDateAcct()));
     // plannedDSO
     FieldProviderFactory.setField(transactionData, "PLANNED_DSO", "0");
     // currentDSO
@@ -1602,7 +1656,7 @@ public class PaymentReportDao {
       String strPaymentDateTo, String strAmountFrom, String strAmountTo, String strcBPGroupIdIN,
       String strcProjectIdIN, String strfinPaymSt, String strcCurrency, String strPaymType,
       String strGroupCrit, String strOrdCrit, String strcNoBusinessPartner, String strDueDateFrom,
-      String strDueDateTo) {
+      String strDueDateTo, String strExpectedDateFrom, String strExpectedDateTo) {
     Organization[] organizations;
     if (strInclSubOrg.equalsIgnoreCase("include")) {
       Set<String> orgChildTree = OBContext.getOBContext().getOrganizationStructureProvider()
@@ -1703,9 +1757,9 @@ public class PaymentReportDao {
         obCriteriaTrans.add(Restrictions.ge(FIN_FinaccTransaction.PROPERTY_DATEACCT,
             FIN_Utility.getDate(strDueDateFrom)));
       }
-      if (!strDueDateTo.equals("")) {
+      if (!strExpectedDateTo.equals("")) {
         obCriteriaTrans.add(Restrictions.le(FIN_FinaccTransaction.PROPERTY_DATEACCT,
-            FIN_Utility.getDate(strDueDateFrom)));
+            FIN_Utility.getDate(strExpectedDateFrom)));
       }
 
       // Amount
@@ -1842,6 +1896,9 @@ public class PaymentReportDao {
     // dueDate
     FieldProviderFactory.setField(data, "DUE_DATE", dateFormat.format(paymentSchedule.getDueDate())
         .toString());
+    // expectedDate
+    FieldProviderFactory.setField(data, "EXPECTED_DATE",
+        dateFormat.format(paymentSchedule.getExpectedDate()).toString());
     // plannedDSO
     plannedDSO = (paymentSchedule.getDueDate().getTime() - invoicedDate.getTime()) / milisecDayConv;
     FieldProviderFactory.setField(data, "PLANNED_DSO", String.valueOf(plannedDSO));

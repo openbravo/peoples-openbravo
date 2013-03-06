@@ -899,6 +899,27 @@ OB.Utilities.applicationUrl = function (path) {
   return appUrl;
 };
 
+// ** {{{ refreshWorkspaceWidget(widgetId) }}} **
+//
+// Refresh all instances of the widget placed in the Workspace of the given widget id
+//
+// Parameters:
+//  * {{{widgetId}}} the widget id
+//
+OB.Utilities.refreshWorkspaceWidget = function (widgetId) {
+  var i;
+  if (!OB.MyOB || !OB.MyOB.widgets) {
+    return;
+  }
+  for (i = 0; i < OB.MyOB.widgets.length; i++) {
+    if (OB.MyOB.widgets[i].widgetClassId === widgetId) {
+      if (OB.MyOB.widgets[i].ID && isc.Canvas.getById(OB.MyOB.widgets[i].ID)) {
+        isc.Canvas.getById(OB.MyOB.widgets[i].ID).refresh();
+      }
+    }
+  }
+};
+
 OB.Utilities.formatTimePassedMessage = function (n, messageId) {
   var message = OB.I18N.getLabel(messageId, [n]);
   return message;

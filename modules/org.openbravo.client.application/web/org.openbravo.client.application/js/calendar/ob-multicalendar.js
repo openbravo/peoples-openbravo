@@ -25,9 +25,11 @@ isc.ClassFactory.defineClass('OBMultiCalendarCalendar', isc.OBCalendar);
 
 isc.ClassFactory.defineClass('OBMultiCalendarLegend', isc.VLayout);
 
+isc.ClassFactory.defineClass('OBMultiCalendarLegendGroupElement', isc.HLayout);
+
 isc.ClassFactory.defineClass('OBMultiCalendarLegendElement', isc.HLayout);
 
-isc.OBMultiCalendarLegendElement.addProperties({
+isc.OBMultiCalendarLegendGroupElement.addProperties({
   height: 20,
   width: 162,
   color: null,
@@ -35,19 +37,90 @@ isc.OBMultiCalendarLegendElement.addProperties({
   id: null,
   checked: true,
   overflow: 'hidden',
-  changed: function (form, item, value) {
-    var calendarData = form.parentElement.multiCalendar.calendarData,
-        i;
-    this.Super('changed', arguments);
-    for (i = 0; i < calendarData.calendars.length; i++) {
-      if (calendarData.calendars[i].id === form.parentElement.id) {
-        calendarData.calendars[i].checked = value;
+  nodes: [],
+  show: function () {
+    this.Super('show', arguments);
+    this.updateCheckboxValue();
+    this.updateChildsVisibility();
+  },
+  updateChildsVisibility: function () {
+    var i;
+    for (i = 0; i < this.nodes.length; i++) {
+      if (this.checked) {
+        this.nodes[i].show();
+      } else {
+        this.nodes[i].hide();
       }
     }
-    form.parentElement.multiCalendar.refreshCalendar();
+  },
+  // Change action of tree button (opened/closed state)
+  changedTree: function (value) {
+    var calendarData = this.multiCalendar.calendarData,
+        i;
+    for (i = 0; i < calendarData.calendarGroups.length; i++) {
+      if (calendarData.calendarGroups[i].id === this.id) {
+        this.checked = value;
+        calendarData.calendarGroups[i].checked = value;
+      }
+    }
+    this.updateChildsVisibility();
+  },
+  // Refresh the checkbox state based on nodes state
+  updateCheckboxValue: function () {
+    var status = '',
+        i; // true, all nodes are true -- false, all nodes are false -- null, are mixed nodes states -- '' is the starting point
+    for (i = 0; i < this.nodes.length; i++) {
+      if (this.nodes[i].checked) {
+        if (status === '') {
+          status = true;
+        } else if (status === false) {
+          status = null;
+        }
+      } else {
+        if (status === '') {
+          status = false;
+        } else if (status === true) {
+          status = null;
+        }
+      }
+    }
+    if (status !== '') {
+      this.setCheckboxValue(status, true, false, false);
+    }
+  },
+  // Programatically set the checkbox value
+  setCheckboxValue: function (value, updateParent, refreshCalendar, updateNodes) {
+    this.members[1].items[0].setValue(value);
+    this.doAfterCheckboxChange(updateParent, refreshCalendar, updateNodes);
+  },
+  doAfterCheckboxChange: function (updateParent, refreshCalendar, updateNodes) {
+    var value = this.members[1].items[0].getValue(),
+        i;
+    if (updateNodes) {
+      for (i = 0; i < this.nodes.length; i++) {
+        this.nodes[i].setCheckboxValue(value, false, false);
+      }
+    }
+    if (updateParent && this.parentNode) {
+      this.parentNode.updateCheckboxValue();
+    }
+    if (refreshCalendar) {
+      this.multiCalendar.refreshCalendar();
+    }
+  },
+  // Checkbox for all/none nodes selected
+  changed: function (form, item, value) {
+    if (value === null) {
+      // To avoid a "null" state if the user clicks in a "false" state checkbox. It jumps directly to the "true" state
+      item.setValue(true);
+      item.changed(form, item, true);
+      return;
+    }
+    this.Super('changed', [form, item, value]);
+    form.parentElement.doAfterCheckboxChange(true, true, true);
   },
   initWidget: function () {
-    var checkbox, color, name;
+    var buttonTree, checkboxGroup, name, me = this;
     this.Super('initWidget', arguments);
     if (this.checked === 'true') {
       this.checked = true;
@@ -58,6 +131,113 @@ isc.OBMultiCalendarLegendElement.addProperties({
     if (this.color) {
       OB.Utilities.Style.addRule('.bgColor_' + this.color, 'background-color: ' + OB.Utilities.getRGBAStringFromOBColor(this.color) + ';' + 'color: ' + (OB.Utilities.getBrightFromOBColor(this.color) > 125 ? 'black' : 'white'));
     }
+    buttonTree = isc.Layout.create({
+      width: 15,
+      height: 18,
+      styleName: 'OBMultiCalendarLegendGroupElementTreeOpened',
+      value: null,
+      initWidget: function () {
+        this.value = me.checked;
+        this.updateIcon();
+        this.Super('initWidget', arguments);
+      },
+      updateIcon: function () {
+        if (this.value) {
+          this.setStyleName('OBMultiCalendarLegendGroupElementTreeOpened');
+        } else {
+          this.setStyleName('OBMultiCalendarLegendGroupElementTreeClosed');
+        }
+      },
+      click: function () {
+        if (this.value) {
+          this.value = false;
+        } else {
+          this.value = true;
+        }
+        this.updateIcon();
+        this.parentElement.changedTree(this.value);
+      }
+    });
+    checkboxGroup = isc.DynamicForm.create({
+      width: 20,
+      checked: this.checked,
+      fields: [{
+        height: 16,
+        width: 20,
+        allowEmptyValue: true,
+        showUnsetImage: true,
+        showTitle: false,
+        value: this.checked,
+        init: function () {
+          this.unsetImage = this.partialSelectedImage;
+        },
+        changed: this.changed,
+        type: 'checkbox'
+      }]
+    });
+    name = isc.Label.create({
+      height: 10,
+      width: 118,
+      styleName: 'OBMultiCalendarLegendElementName',
+      contents: this.name
+    });
+    this.addMembers([buttonTree]);
+    this.addMembers([checkboxGroup]);
+    this.addMembers([name]);
+  }
+});
+
+isc.OBMultiCalendarLegendElement.addProperties({
+  height: 20,
+  width: 162,
+  color: null,
+  name: null,
+  id: null,
+  checked: true,
+  overflow: 'hidden',
+  // Programatically set the checkbox value
+  setCheckboxValue: function (value, updateParent, refreshCalendar) {
+    value = !! value;
+    this.members[2].items[0].setValue(value);
+    this.doAfterCheckboxChange(updateParent, refreshCalendar);
+  },
+  doAfterCheckboxChange: function (updateParent, refreshCalendar) {
+    var value = this.members[2].items[0].getValue(),
+        calendarData = this.multiCalendar.calendarData,
+        i;
+    for (i = 0; i < calendarData.calendars.length; i++) {
+      if (calendarData.calendars[i].id === this.id) {
+        this.checked = value;
+        calendarData.calendars[i].checked = value;
+      }
+    }
+    if (updateParent && this.parentNode) {
+      this.parentNode.updateCheckboxValue();
+    }
+    if (refreshCalendar) {
+      this.multiCalendar.refreshCalendar();
+    }
+  },
+  changed: function (form, item, value) {
+    this.Super('changed', arguments);
+    form.parentElement.doAfterCheckboxChange(true, true);
+  },
+  initWidget: function () {
+    var leftMargin, checkbox, color, name, me = this;
+    this.Super('initWidget', arguments);
+    if (this.checked === 'true') {
+      this.checked = true;
+    }
+    if (this.checked === 'false') {
+      this.checked = false;
+    }
+    if (this.color) {
+      OB.Utilities.Style.addRule('.bgColor_' + this.color, 'background-color: ' + OB.Utilities.getRGBAStringFromOBColor(this.color) + ';' + 'color: ' + (OB.Utilities.getBrightFromOBColor(this.color) > 125 ? 'black' : 'white'));
+    }
+    leftMargin = isc.Layout.create({
+      width: (me.parentNode ? 20 : 0),
+      height: 1
+    });
     checkbox = isc.DynamicForm.create({
       width: 20,
       checked: this.checked,
@@ -82,10 +262,11 @@ isc.OBMultiCalendarLegendElement.addProperties({
       styleName: 'OBMultiCalendarLegendElementName',
       contents: this.name
     });
-    this.addMembers([checkbox]);
+    this.addMembers([leftMargin]);
     if (this.color) {
       this.addMembers([color]);
     }
+    this.addMembers([checkbox]);
     this.addMembers([name]);
   }
 });
@@ -101,7 +282,8 @@ isc.OBMultiCalendarLegend.addProperties({
   },
 
   updateMembers: function (newMembers) {
-    var i;
+    var calendarGroups = [],
+        getNextCalendarGroupFromPosition, getCalendarGroupPosition, i, j, me = this;
     if (this.members) {
       for (i = this.members.length - 1; i > -1; i--) {
         this.members[i].destroy();
@@ -109,14 +291,80 @@ isc.OBMultiCalendarLegend.addProperties({
     }
     this.multiCalendar.eventStyles = {};
 
-    for (i = 0; i < newMembers.length; i++) {
-      this.addMember(isc.OBMultiCalendarLegendElement.create({
+    getNextCalendarGroupFromPosition = function (position) {
+      var i;
+      for (i = position; i < me.members.length; i++) {
+        if (me.members[i].Class === 'OBMultiCalendarLegendGroupElement') {
+          return me.members[i].id;
+        }
+      }
+    };
+
+    getCalendarGroupPosition = function (id) {
+      var i;
+      for (i = 0; i < me.members.length; i++) {
+        if (me.members[i].id === id) {
+          return i;
+        }
+      }
+    };
+
+    // Create calendar groups
+    for (i = 0; i < this.multiCalendar.calendarData.calendarGroups.length; i++) {
+      calendarGroups.push(isc.OBMultiCalendarLegendGroupElement.create({
         multiCalendar: this.multiCalendar,
-        color: newMembers[i].color,
-        name: newMembers[i].name,
-        id: newMembers[i].id,
-        checked: newMembers[i].checked
+        name: this.multiCalendar.calendarData.calendarGroups[i].name,
+        id: this.multiCalendar.calendarData.calendarGroups[i].id,
+        checked: this.multiCalendar.calendarData.calendarGroups[i].checked,
+        nodes: []
       }));
+    }
+
+    // Add nodes to groups
+    for (i = 0; i < newMembers.length; i++) {
+      if (newMembers[i].calendarGroupId) {
+        for (j = 0; j < this.multiCalendar.calendarData.calendarGroups.length; j++) {
+          if (newMembers[i].calendarGroupId === this.multiCalendar.calendarData.calendarGroups[j].id) {
+            calendarGroups[j].nodes.push(isc.OBMultiCalendarLegendElement.create({
+              multiCalendar: this.multiCalendar,
+              color: newMembers[i].color,
+              name: newMembers[i].name,
+              id: newMembers[i].id,
+              //calendarGroupId: newMembers[i].calendarGroupId,
+              parentNode: calendarGroups[j],
+              checked: newMembers[i].checked
+            }));
+          }
+        }
+      }
+    }
+
+    // Add orphan members
+    for (i = 0; i < newMembers.length; i++) {
+      if (!newMembers[i].calendarGroupId) {
+        this.addMember(isc.OBMultiCalendarLegendElement.create({
+          multiCalendar: this.multiCalendar,
+          color: newMembers[i].color,
+          name: newMembers[i].name,
+          id: newMembers[i].id,
+          calendarGroupId: newMembers[i].calendarGroupId,
+          checked: newMembers[i].checked
+        }));
+      }
+    }
+
+    // Add calendar groups (if they have nodes) and its nodes
+    for (i = 0; i < calendarGroups.length; i++) {
+      if (calendarGroups[i].nodes.length > 0) {
+        this.addMember(calendarGroups[i]);
+        for (j = 0; j < calendarGroups[i].nodes.length; j++) {
+          this.addMember(calendarGroups[i].nodes[j]);
+        }
+      }
+    }
+
+    // Save the colors
+    for (i = 0; i < newMembers.length; i++) {
       this.multiCalendar.eventStyles[newMembers[i].id] = 'bgColor_' + newMembers[i].color;
     }
 
@@ -293,6 +541,12 @@ isc.OBMultiCalendar.addProperties({
       calendarData.hasCustomFilters = true;
     } else {
       calendarData.hasCustomFilters = false;
+    }
+    for (i = 0; i < calendarData.calendarGroups.length; i++) {
+      // calendarGroups.checked means if the tree is opened or not
+      if (typeof calendarData.calendarGroups[i].checked === 'undefined') {
+        calendarData.calendarGroups[i].checked = false;
+      }
     }
     for (i = 0; i < calendarData.calendars.length; i++) {
       if (typeof calendarData.calendars[i].checked === 'undefined') {

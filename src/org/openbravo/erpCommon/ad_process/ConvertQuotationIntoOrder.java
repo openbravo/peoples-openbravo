@@ -123,6 +123,7 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
 
       Map<String, BigDecimal> taxForDiscounts = new HashMap<String, BigDecimal>();
       int lineNo = 10;
+      StringBuilder strMessage = new StringBuilder();
 
       // Copy the Lines of the Quotation in the new Sales Order.
       for (OrderLine ordLine : objOrder.getOrderLineList()) {
@@ -141,6 +142,13 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
                 .getWarehouse().getId(), ordLine.getSalesOrder().getInvoiceAddress().getId(),
             ordLine.getSalesOrder().getPartnerAddress().getId(), strProjectID, true);
         TaxRate lineTax = OBDal.getInstance().get(TaxRate.class, strCTaxID);
+
+        if (lineTax == null) {
+          if (strMessage.length() > 0) {
+            strMessage = strMessage.append(", ");
+          }
+          strMessage = strMessage.append(lineNo);
+        }
         objCloneOrdLine.setTax(lineTax);
 
         // Update the HashMap of the Taxes. HashMap<TaxId, TotalAmount>
@@ -176,6 +184,13 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
         lineNo = lineNo + 10;
       }
 
+      if (strMessage.length() > 0) {
+        OBDal.getInstance().rollbackAndClose();
+        String message = "@TaxCategoryWithoutTaxRate@".concat(strMessage.toString());
+        OBError result = OBErrorBuilder.buildMessage(null, "error", message);
+        bundle.setResult(result);
+        return;
+      }
       OBDal.getInstance().flush();
       OBDal.getInstance().refresh(objCloneOrder);
 

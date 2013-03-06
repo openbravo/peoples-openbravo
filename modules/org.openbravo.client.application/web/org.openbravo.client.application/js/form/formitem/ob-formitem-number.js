@@ -47,8 +47,8 @@ isc.OBNumberItem.addProperties({
   changed: function (form, item, value) {
     if (this.form.setTextualValue) {
       this.form.setTextualValue(this.name, this.getEnteredValue(), this.typeInstance);
+      item.setValue(this.getEnteredValue());
     }
-    this.focusNumberInput();
     this.Super('changed', arguments);
   },
 

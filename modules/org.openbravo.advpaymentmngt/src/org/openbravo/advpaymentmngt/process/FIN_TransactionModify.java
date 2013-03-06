@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -30,7 +30,10 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.plm.Product;
+import org.openbravo.model.financialmgmt.accounting.Costcenter;
 import org.openbravo.model.financialmgmt.accounting.FIN_FinancialAccountAccounting;
+import org.openbravo.model.financialmgmt.accounting.UserDimension1;
+import org.openbravo.model.financialmgmt.accounting.UserDimension2;
 import org.openbravo.model.financialmgmt.gl.GLItem;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
@@ -90,6 +93,9 @@ public class FIN_TransactionModify implements org.openbravo.scheduling.Process {
       final String strCampaignId = (String) bundle.getParams().get("cCampaignId");
       final String strActivityId = (String) bundle.getParams().get("cActivityId");
       final String strSalesRegionId = (String) bundle.getParams().get("cSalesregionId");
+      final String strCostCenterId = (String) bundle.getParams().get("cCostcenterId");
+      final String strUser1Id = (String) bundle.getParams().get("user1Id");
+      final String strUser2Id = (String) bundle.getParams().get("user2Id");
       transaction.setProcessed(false);
       OBDal.getInstance().save(transaction);
       OBDal.getInstance().flush();
@@ -129,6 +135,21 @@ public class FIN_TransactionModify implements org.openbravo.scheduling.Process {
         transaction.setSalesRegion(OBDal.getInstance().get(SalesRegion.class, strSalesRegionId));
       } else {
         transaction.setSalesRegion(null);
+      }
+      if (strCostCenterId != null && !"".equals(strCostCenterId)) {
+        transaction.setCostCenter(OBDal.getInstance().get(Costcenter.class, strCostCenterId));
+      } else {
+        transaction.setCostCenter(null);
+      }
+      if (strUser1Id != null && !"".equals(strUser1Id)) {
+        transaction.setStDimension(OBDal.getInstance().get(UserDimension1.class, strUser1Id));
+      } else {
+        transaction.setStDimension(null);
+      }
+      if (strUser2Id != null && !"".equals(strUser2Id)) {
+        transaction.setNdDimension(OBDal.getInstance().get(UserDimension2.class, strUser2Id));
+      } else {
+        transaction.setNdDimension(null);
       }
       String description = transaction.getDescription();
       String oldGlItemString = Utility.messageBD(bundle.getConnection(), "APRM_GLItem", bundle

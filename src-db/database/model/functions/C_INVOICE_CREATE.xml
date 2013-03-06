@@ -130,7 +130,8 @@
           ol.taxbaseamt,
           ol.gross_unit_price,
           ol.grosspricestd,
-          ol.grosspricelist
+          ol.grosspricelist, 
+          sl.explode
         FROM M_INOUT s, M_INOUTLINE sl
         RIGHT JOIN C_ORDERLINE ol
           ON sl.C_OrderLine_ID=ol.C_OrderLine_ID
@@ -526,7 +527,8 @@
                     C_Invoice_ID, C_OrderLine_ID, M_InOutLine_ID, Line,
                     Description, M_Product_ID, QtyInvoiced, PriceList,
                     PriceActual, PriceLimit, LineNetAmt, C_Charge_ID,
-                    ChargeAmt, C_UOM_ID, C_Tax_ID, PriceStd
+                    ChargeAmt, C_UOM_ID, C_Tax_ID, PriceStd, 
+                    explode, bom_parent_id 
                   )
                   VALUES
                   (
@@ -535,7 +537,13 @@
                     p_Invoice_ID, NULL, NULL, v_LineNo,
                     v_Reference, NULL, 0, 0,
                     0, 0, 0, NULL,
-                    0, NULL, NULL, 0
+                    0, NULL, NULL, 0, 
+                    ptr_ol.explode, (SELECT c_invoiceline_id 
+                                            FROM c_invoiceline 
+                                            WHERE c_invoice_id=p_Invoice_ID 
+                                               and c_orderline_id = (SELECT BOM_parent_id 
+                                                                     FROM c_orderline 
+                                                                     WHERE c_orderline_id = ptr_ol.c_orderline_id))
                   )
                   ;
               END IF;
@@ -612,7 +620,8 @@
                         m_attributesetinstance_id, taxbaseamt,
                         gross_unit_price, line_gross_amount,
                         grosspricestd, grosspricelist,
-                        isdeferred, defplantype, periodnumber, c_period_id                        
+                        isdeferred, defplantype, periodnumber, c_period_id,
+                        explode, bom_parent_id                        
                       )
                       VALUES
                       (
@@ -627,7 +636,13 @@
                         ptr_ol.m_attributesetinstance_id, ptr_ol.taxbaseamt,
                         ptr_ol.gross_unit_price, C_Currency_Round(v_Qty*ptr_ol.gross_unit_price, Cur_Order.C_Currency_ID, NULL),
                         COALESCE(ptr_ol.grosspricestd,0), COALESCE(ptr_ol.grosspricelist,0),
-                        v_isdeferred_inv, v_defplantype_inv, v_periodnumber_inv, v_period_inv
+                        v_isdeferred_inv, v_defplantype_inv, v_periodnumber_inv, v_period_inv,
+                        ptr_ol.explode, (SELECT c_invoiceline_id 
+                                            FROM c_invoiceline 
+                                            WHERE c_invoice_id=p_Invoice_ID 
+                                               and c_orderline_id = (SELECT BOM_parent_id 
+                                                                     FROM c_orderline 
+                                                                     WHERE c_orderline_id = ptr_ol.c_orderline_id))
                       )
                       ;
                   END IF;--Next_O_Line
@@ -702,7 +717,8 @@
                         m_attributesetinstance_id, taxbaseamt,
                         gross_unit_price, line_gross_amount,
                         grosspricestd, grosspricelist,
-                        isdeferred, defplantype, periodnumber, c_period_id
+                        isdeferred, defplantype, periodnumber, c_period_id, 
+                        explode, bom_parent_id
                       )
                       VALUES
                       (
@@ -717,7 +733,13 @@
                         ptr_sl.m_attributesetinstance_id, ptr_sl.taxbaseamt,
                         ptr_sl.gross_unit_price, C_Currency_Round(ptr_sl.MovementQty*ptr_sl.gross_unit_price, Cur_Order.C_Currency_ID, NULL),
                         COALESCE(ptr_sl.grosspricestd,0), COALESCE(ptr_sl.grosspricelist,0),
-                        v_isdeferred_inv, v_defplantype_inv, v_periodnumber_inv, v_period_inv
+                        v_isdeferred_inv, v_defplantype_inv, v_periodnumber_inv, v_period_inv,
+                        ptr_sl.explode, (SELECT c_invoiceline_id 
+                                            FROM c_invoiceline 
+                                            WHERE c_invoice_id=p_Invoice_ID 
+                                               and c_orderline_id = (SELECT BOM_parent_id 
+                                                                     FROM c_orderline 
+                                                                     WHERE c_orderline_id = ptr_sl.c_orderline_id))
                       )
                       ;
                   END IF;--Next_S_Line
@@ -860,7 +882,8 @@
                 ol.taxbaseamt, o.fin_paymentmethod_id,
                 pl.istaxincluded,
                 ol.grosspricestd,
-                ol.grosspricelist
+                ol.grosspricelist, 
+                sl.explode, sl.bom_parent_id
               FROM M_INOUT sh,
                 M_INOUTLINE sl,
                 C_ORDER o,
@@ -1232,7 +1255,8 @@
                     grosspricestd, grosspricelist,
                     isdeferred, defplantype, periodnumber, c_period_id,
                     c_project_id, c_costcenter_id, a_asset_id,
-                    user1_id, user2_id
+                    user1_id, user2_id,
+                    explode, bom_parent_id
                   )
                   VALUES
                   (
@@ -1249,7 +1273,13 @@
                     COALESCE(Cur_InvoiceSchedule.grosspricestd,0), COALESCE(Cur_InvoiceSchedule.grosspricelist,0),
                     v_isdeferred_inv, v_defplantype_inv, v_periodnumber_inv, v_period_inv,
                     coalesce(Cur_InvoiceSchedule.line_c_project_id, Cur_InvoiceSchedule.c_project_id), coalesce(Cur_InvoiceSchedule.line_c_costcenter_id, Cur_InvoiceSchedule.c_costcenter_id), coalesce(Cur_InvoiceSchedule.line_a_asset_id,Cur_InvoiceSchedule.a_asset_id),
-                    coalesce(Cur_InvoiceSchedule.line_user1_id, Cur_InvoiceSchedule.user1_id), coalesce(Cur_InvoiceSchedule.line_user2_id, Cur_InvoiceSchedule.user2_id)
+                    coalesce(Cur_InvoiceSchedule.line_user1_id, Cur_InvoiceSchedule.user1_id), coalesce(Cur_InvoiceSchedule.line_user2_id, Cur_InvoiceSchedule.user2_id),
+                    Cur_InvoiceSchedule.explode, (SELECT c_invoiceline_id 
+                                            FROM c_invoiceline 
+                                            WHERE c_invoice_id=p_Invoice_ID 
+                                               and c_orderline_id = (SELECT BOM_parent_id 
+                                                                     FROM c_orderline 
+                                                                     WHERE c_orderline_id = Cur_InvoiceSchedule.c_orderline_id))
                   )
                   ;
                 v_DateOrdered:=COALESCE(Cur_InvoiceSchedule.movementDate, COALESCE(Cur_InvoiceSchedule.DateOrdered, now())) ;

@@ -25,6 +25,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.model.Entity;
+import org.openbravo.base.model.domaintype.BooleanDomainType;
 import org.openbravo.base.model.domaintype.DomainType;
 import org.openbravo.base.model.domaintype.ForeignKeyDomainType;
 import org.openbravo.base.structure.BaseOBObject;
@@ -88,6 +89,10 @@ public class DefaultsProcessActionHandler extends BaseProcessActionHandler {
               defaults.put(param.getDBColumnName(), def);
             }
           } else {
+            if (domainType instanceof BooleanDomainType) {
+              defaultValue = ((BooleanDomainType) domainType)
+                  .createFromString((String) defaultValue);
+            }
             defaults.put(param.getDBColumnName(), defaultValue);
           }
         }

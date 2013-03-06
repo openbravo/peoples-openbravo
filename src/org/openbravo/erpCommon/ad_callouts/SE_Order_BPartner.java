@@ -324,24 +324,27 @@ public class SE_Order_BPartner extends SimpleCallout {
       if ((!strBPartner.equals(""))
           && (FIN_Utility.isBlockedBusinessPartner(strBPartner, "Y".equals(strIsSOTrx), 1))) {
         // If the Business Partner is blocked for this document, show an information message.
+        if (message.length() > 0) {
+          message.append("<br>");
+        }
         BusinessPartner bPartner = OBDal.getInstance().get(BusinessPartner.class, strBPartner);
         message.append(OBMessageUtils.messageBD("ThebusinessPartner") + " "
             + bPartner.getIdentifier() + " " + OBMessageUtils.messageBD("BusinessPartnerBlocked"));
       }
 
-    } else {
-
-      if (data != null && data.length > 0
-          && new BigDecimal(data[0].creditavailable).compareTo(BigDecimal.ZERO) < 0
-          && strIsSOTrx.equals("Y")) {
-        if (message.length() > 0) {
-          message.append("<br>");
-        }
-        String creditLimitExceed = "" + Double.parseDouble(data[0].creditavailable) * -1;
-        message.append(Utility.messageBD(this, "CreditLimitOver", info.vars.getLanguage())
-            + creditLimitExceed);
-      }
     }
+
+    if (data != null && data.length > 0
+        && new BigDecimal(data[0].creditavailable).compareTo(BigDecimal.ZERO) < 0
+        && strIsSOTrx.equals("Y")) {
+      if (message.length() > 0) {
+        message.append("<br>");
+      }
+      String creditLimitExceed = "" + Double.parseDouble(data[0].creditavailable) * -1;
+      message.append(Utility.messageBD(this, "CreditLimitOver", info.vars.getLanguage())
+          + creditLimitExceed);
+    }
+
     info.addResult("MESSAGE", message.toString());
   }
 }

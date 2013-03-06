@@ -170,8 +170,13 @@ isc.OBGrid.addProperties({
   createRecordComponent: function (record, colNum) {
     var field = this.getField(colNum),
         rowNum = this.getRecordIndex(record),
+        isSummary = record && (record[this.groupSummaryRecordProperty] || record[this.gridSummaryRecordProperty]),
         isEditRecord = rowNum === this.getEditRow(),
         canvas, clientClassArray, clientClass, clientClassProps, clientClassIsShownInGridEdit;
+
+    if (isSummary) {
+      return null;
+    }
 
     if (field.isLink && !field.clientClass && record[field.name]) {
       // To keep compatibility with < 3.0MP20 versions that didn't implement 'clientClass' and only have 'isLink' property
@@ -207,7 +212,13 @@ isc.OBGrid.addProperties({
 
   updateRecordComponent: function (record, colNum, component, recordChanged) {
     var field = this.getField(colNum),
+        isSummary = record && (record[this.groupSummaryRecordProperty] || record[this.gridSummaryRecordProperty]),
         rowNum = this.getRecordIndex(record);
+
+    if (isSummary) {
+      return null;
+    }
+
     if (field.clientClass) {
       component.align = this.getCellAlign(record, rowNum, colNum);
       component.field = field;

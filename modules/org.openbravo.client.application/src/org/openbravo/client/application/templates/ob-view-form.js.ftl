@@ -35,8 +35,9 @@
       onFieldChanged: function(form, item, value) {
         var f = form || this,
             context = this.view.getContextInfo(false, true),
-            currentValues = f.view.getCurrentValues(), otherItem,
+            currentValues = isc.shallowClone(f.view.getCurrentValues()), otherItem,
             disabledFields, i;
+            OB.Utilities.fixNull250(currentValues);
         <#list data.fieldHandler.fields as field>
         <#if field.readOnlyIf != "">
             f.disableItem('${field.name}', ${field.readOnlyIf});

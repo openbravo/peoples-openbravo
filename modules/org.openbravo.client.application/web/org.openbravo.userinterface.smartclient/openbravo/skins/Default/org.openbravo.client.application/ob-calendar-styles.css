@@ -93,6 +93,22 @@
   margin: 3px 0px 0px 0px;
 }
 
+.OBMultiCalendarLegendGroupElementTreeOpened {
+  margin: 3px 0px 0px 0px;
+  cursor: pointer;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-image: url(./images/calendar/treeOpened.png);
+}
+
+.OBMultiCalendarLegendGroupElementTreeClosed {
+  margin: 3px 0px 0px 0px;
+  cursor: pointer;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-image: url(./images/calendar/treeClosed.png);
+}
+
 .OBMultiCalendarLegendElementName {
-  padding: 4px 0px 0px 5px;
+  padding: 4px 0px 0px 0px;
 }

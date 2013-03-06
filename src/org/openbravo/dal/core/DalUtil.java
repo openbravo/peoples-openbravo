@@ -154,7 +154,15 @@ public class DalUtil {
       }
       final Entity currentEntity = currentBob.getEntity();
       if (!currentEntity.hasProperty(part)) {
-        return null;
+        // If the entity does not have the property, try with the following properties if possible
+        // This allows to use the display field in selectors based on views
+        // See issue https://issues.openbravo.com/view.php?id=22638
+        if (propertyPath.length() > part.length()) {
+          String nextParts = propertyPath.substring(propertyPath.indexOf(part) + part.length() + 1);
+          return getValueFromPath(currentBob, nextParts);
+        } else {
+          return null;
+        }
       }
       value = currentBob.get(part);
       // if there is a next step, just make it

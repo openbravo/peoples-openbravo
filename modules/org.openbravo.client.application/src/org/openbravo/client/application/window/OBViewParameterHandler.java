@@ -168,6 +168,10 @@ public class OBViewParameterHandler {
     public void setRedrawOnChange(boolean redrawOnChange) {
       this.redrawOnChange = redrawOnChange;
     }
+
+    public String getWidth() {
+      return this.uiDefinition.getParameterWidth(this.parameter);
+    }
   }
 
   public void setParamWindow(ParameterWindowComponent parameterWindowComponent) {

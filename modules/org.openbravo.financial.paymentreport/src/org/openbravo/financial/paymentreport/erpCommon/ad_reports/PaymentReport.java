@@ -73,6 +73,10 @@ public class PaymentReport extends HttpSecureAppServlet {
           "");
       String strDueDateTo = vars
           .getRequestGlobalVariable("inpDueDateTo", "PaymentReport|DueDateTo");
+      String strExpectedDateFrom = vars.getGlobalVariable("inpExpectedDateFrom",
+          "PaymentReport|ExpectedDateFrom", "");
+      String strExpectedDateTo = vars.getRequestGlobalVariable("inpExpectedDateTo",
+          "PaymentReport|ExpectedDateTo");
       String strAmountFrom = vars.getNumericGlobalVariable("inpAmountFrom",
           "PaymentReport|AmountFrom", "");
       String strAmountTo = vars.getNumericGlobalVariable("inpAmountTo", "PaymentReport|AmountTo",
@@ -127,10 +131,10 @@ public class PaymentReport extends HttpSecureAppServlet {
       final String strInclPaymentUsingCredit = vars.getGlobalVariable("inpInclPaymentUsingCredit",
           "PaymentReport|IncludePaymentUsingCredit", "Y");
       printPageDataSheet(response, vars, strOrg, strInclSubOrg, strDueDateFrom, strDueDateTo,
-          strAmountFrom, strAmountTo, strDocumentDateFrom, strDocumentDateTo, strcBPartnerIdIN,
-          strcBPGroupIdIN, strcNoBusinessPartner, strcProjectIdIN, strfinPaymSt,
-          strPaymentMethodId, strFinancialAccountId, strcCurrency, strConvertCurrency,
-          strConversionDate, strPaymType, strOverdue, strGroupCrit, strOrdCrit,
+          strExpectedDateFrom, strExpectedDateTo, strAmountFrom, strAmountTo, strDocumentDateFrom,
+          strDocumentDateTo, strcBPartnerIdIN, strcBPGroupIdIN, strcNoBusinessPartner,
+          strcProjectIdIN, strfinPaymSt, strPaymentMethodId, strFinancialAccountId, strcCurrency,
+          strConvertCurrency, strConversionDate, strPaymType, strOverdue, strGroupCrit, strOrdCrit,
           strInclPaymentUsingCredit, strPaymentDateFrom, strPaymentDateTo);
       // DIRECT is used when coming from Aging Balance Report
     } else if (vars.commandIn("FIND", "DIRECT")) {
@@ -141,6 +145,10 @@ public class PaymentReport extends HttpSecureAppServlet {
           "PaymentReport|DueDateFrom");
       String strDueDateTo = vars
           .getRequestGlobalVariable("inpDueDateTo", "PaymentReport|DueDateTo");
+      String strExpectedDateFrom = vars.getRequestGlobalVariable("inpExpectedDateFrom",
+          "PaymentReport|ExpectedDateFrom");
+      String strExpectedDateTo = vars.getRequestGlobalVariable("inpExpectedDateTo",
+          "PaymentReport|ExpectedDateTo");
       if (vars.getNumericParameter("inpAmountFrom").isEmpty()) {
         vars.removeSessionValue("PaymentReport|AmountFrom");
       }
@@ -202,10 +210,10 @@ public class PaymentReport extends HttpSecureAppServlet {
           "N");
       vars.setSessionValue("PaymentReport|IncludePaymentUsingCredit", strInclPaymentUsingCredit);
       printPageDataSheet(response, vars, strOrg, strInclSubOrg, strDueDateFrom, strDueDateTo,
-          strAmountFrom, strAmountTo, strDocumentDateFrom, strDocumentDateTo, strcBPartnerIdIN,
-          strcBPGroupIdIN, strcNoBusinessPartner, strcProjectIdIN, strfinPaymSt,
-          strPaymentMethodId, strFinancialAccountId, strcCurrency, strConvertCurrency,
-          strConversionDate, strPaymType, strOverdue, strGroupCrit, strOrdCrit,
+          strExpectedDateFrom, strExpectedDateTo, strAmountFrom, strAmountTo, strDocumentDateFrom,
+          strDocumentDateTo, strcBPartnerIdIN, strcBPGroupIdIN, strcNoBusinessPartner,
+          strcProjectIdIN, strfinPaymSt, strPaymentMethodId, strFinancialAccountId, strcCurrency,
+          strConvertCurrency, strConversionDate, strPaymType, strOverdue, strGroupCrit, strOrdCrit,
           strInclPaymentUsingCredit, strPaymentDateFrom, strPaymentDateTo);
     } else if (vars.commandIn("PDF", "XLS")) {
       String strOrg = vars.getRequestGlobalVariable("inpOrg", "PaymentReport|Organization");
@@ -215,6 +223,10 @@ public class PaymentReport extends HttpSecureAppServlet {
           "PaymentReport|DueDateFrom");
       String strDueDateTo = vars
           .getRequestGlobalVariable("inpDueDateTo", "PaymentReport|DueDateTo");
+      String strExpectedDateFrom = vars.getRequestGlobalVariable("inpExpectedDateFrom",
+          "PaymentReport|ExpectedDateFrom");
+      String strExpectedDateTo = vars.getRequestGlobalVariable("inpExpectedDateTo",
+          "PaymentReport|ExpectedDateTo");
       String strAmountFrom = vars.getNumericRequestGlobalVariable("inpAmountFrom",
           "PaymentReport|AmountFrom");
       String strAmountTo = vars.getNumericRequestGlobalVariable("inpAmountTo",
@@ -266,11 +278,11 @@ public class PaymentReport extends HttpSecureAppServlet {
         strOutput = "xls";
 
       printPage(request, response, vars, strOrg, strInclSubOrg, strDueDateFrom, strDueDateTo,
-          strAmountFrom, strAmountTo, strDocumentDateFrom, strDocumentDateTo, strcBPartnerIdIN,
-          strcBPGroupIdIN, strcNoBusinessPartner, strcProjectIdIN, strfinPaymSt,
-          strPaymentMethodId, strFinancialAccountId, strcCurrency, strConvertCurrency,
-          strConversionDate, strPaymType, strOverdue, strOutput, strGroupCrit, strOrdCrit,
-          strInclPaymentUsingCredit, strPaymentDateFrom, strPaymentDateTo);
+          strExpectedDateFrom, strExpectedDateTo, strAmountFrom, strAmountTo, strDocumentDateFrom,
+          strDocumentDateTo, strcBPartnerIdIN, strcBPGroupIdIN, strcNoBusinessPartner,
+          strcProjectIdIN, strfinPaymSt, strPaymentMethodId, strFinancialAccountId, strcCurrency,
+          strConvertCurrency, strConversionDate, strPaymType, strOverdue, strOutput, strGroupCrit,
+          strOrdCrit, strInclPaymentUsingCredit, strPaymentDateFrom, strPaymentDateTo);
 
     } else if (vars.commandIn("LINK")) {
       String strTableId = vars.getRequiredStringParameter("inpAdTableId", IsIDFilter.instance);
@@ -295,13 +307,14 @@ public class PaymentReport extends HttpSecureAppServlet {
 
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strOrg, String strInclSubOrg, String strDueDateFrom, String strDueDateTo,
-      String strAmountFrom, String strAmountTo, String strDocumentDateFrom,
-      String strDocumentDateTo, String strcBPartnerIdIN, String strcBPGroupIdIN,
-      String strcNoBusinessPartner, String strcProjectIdIN, String strfinPaymSt,
-      String strPaymentMethodId, String strFinancialAccountId, String strcCurrency,
-      String strConvertCurrency, String strConversionDate, String strPaymType, String strOverdue,
-      String strGroupCrit, String strOrdCrit, String strInclPaymentUsingCredit,
-      String strPaymentDateFrom, String strPaymentDateTo) throws IOException, ServletException {
+      String strExpectedDateFrom, String strExpectedDateTo, String strAmountFrom,
+      String strAmountTo, String strDocumentDateFrom, String strDocumentDateTo,
+      String strcBPartnerIdIN, String strcBPGroupIdIN, String strcNoBusinessPartner,
+      String strcProjectIdIN, String strfinPaymSt, String strPaymentMethodId,
+      String strFinancialAccountId, String strcCurrency, String strConvertCurrency,
+      String strConversionDate, String strPaymType, String strOverdue, String strGroupCrit,
+      String strOrdCrit, String strInclPaymentUsingCredit, String strPaymentDateFrom,
+      String strPaymentDateTo) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument = null;
@@ -318,7 +331,8 @@ public class PaymentReport extends HttpSecureAppServlet {
             strcBPGroupIdIN, strcNoBusinessPartner, strcProjectIdIN, strfinPaymSt,
             strPaymentMethodId, strFinancialAccountId, strcCurrency, strConvertCurrency,
             strConversionDate, strPaymType, strOverdue, strGroupCrit, strOrdCrit,
-            strInclPaymentUsingCredit, strPaymentDateFrom, strPaymentDateTo);
+            strInclPaymentUsingCredit, strPaymentDateFrom, strPaymentDateTo, strExpectedDateFrom,
+            strExpectedDateTo);
       } catch (OBException e) {
         discardAL.add("sectionGroupCrit");
         discardAL.add("sectionStatus");
@@ -474,6 +488,12 @@ public class PaymentReport extends HttpSecureAppServlet {
     xmlDocument.setParameter("dueDateFromdisplaySave", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("dueDateTo", strDueDateTo);
     xmlDocument.setParameter("dueDateTodisplaySave", vars.getSessionValue("#AD_SqlDateFormat"));
+    xmlDocument.setParameter("expectedDateFrom", strExpectedDateFrom);
+    xmlDocument.setParameter("expectedDateFromdisplaySave",
+        vars.getSessionValue("#AD_SqlDateFormat"));
+    xmlDocument.setParameter("expectedDateTo", strExpectedDateTo);
+    xmlDocument
+        .setParameter("expectedDateTodisplaySave", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("amountFrom", strAmountFrom);
     xmlDocument.setParameter("amountTo", strAmountTo);
     xmlDocument.setParameter("documentDateFrom", strDocumentDateFrom);
@@ -725,7 +745,8 @@ public class PaymentReport extends HttpSecureAppServlet {
 
   private void printPage(HttpServletRequest request, HttpServletResponse response,
       VariablesSecureApp vars, String strOrg, String strInclSubOrg, String strDueDateFrom,
-      String strDueDateTo, String strAmountFrom, String strAmountTo, String strDocumentDateFrom,
+      String strDueDateTo, String strExpectedDateFrom, String strExpectedDateTo,
+      String strAmountFrom, String strAmountTo, String strDocumentDateFrom,
       String strDocumentDateTo, String strcBPartnerIdIN, String strcBPGroupIdIN,
       String strcNoBusinessPartner, String strcProjectIdIN, String strfinPaymSt,
       String strPaymentMethodId, String strFinancialAccountId, String strcCurrency,
@@ -743,7 +764,8 @@ public class PaymentReport extends HttpSecureAppServlet {
           strcBPGroupIdIN, strcNoBusinessPartner, strcProjectIdIN, strfinPaymSt,
           strPaymentMethodId, strFinancialAccountId, strcCurrency, strConvertCurrency,
           strConversionDate, strPaymType, strOverdue, strGroupCrit, strOrdCrit,
-          strInclPaymentUsingCredit, strPaymentDateFrom, strPaymentDateTo);
+          strInclPaymentUsingCredit, strPaymentDateFrom, strPaymentDateTo, strExpectedDateFrom,
+          strExpectedDateTo);
     } catch (OBException e) {
       advisePopUp(request, response, "WARNING",
           Utility.messageBD(this, "ProcessStatus-W", vars.getLanguage()),
@@ -898,6 +920,8 @@ public class PaymentReport extends HttpSecureAppServlet {
       parameters.put("INCL_SUBORG_SHOW", Utility.messageBD(this, "No", vars.getLanguage()));
     parameters.put("DUEDATEFROM_SHOW", strDueDateFrom);
     parameters.put("DUEDATETO_SHOW", strDueDateTo);
+    parameters.put("EXPECTEDDATEFROM_SHOW", strExpectedDateFrom);
+    parameters.put("EXPECTEDDATETO_SHOW", strExpectedDateTo);
     parameters.put("AMTFROM_SHOW", strAmountFrom);
     parameters.put("AMTTO_SHOW", strAmountTo);
     parameters.put("DOCDATEFROM_SHOW", strDocumentDateFrom);

@@ -50,7 +50,9 @@
           JOIN c_invoiceline il ON mi.c_invoiceline_id = il.c_invoiceline_id
           LEFT JOIN fact_acct far ON far.line_id = iol.m_inoutline_id AND far.account_id = fa.account_id
           LEFT JOIN fact_acct fi ON fi.line_id = il.c_invoiceline_id AND fi.account_id = fa.account_id AND fi.ad_table_id = '318'
-      WHERE fa.ad_table_id = '472'
+      WHERE (round((select movementqty from m_inoutline where m_inoutline_id=mi.m_inoutline_id),2) = 
+            round((select qtyinvoiced from c_invoiceline where c_invoiceline_id=mi.c_invoiceline_id),2))     
+        AND fa.ad_table_id = '472'
         AND (COALESCE(far.amtacctcr + far.amtacctdr, fa.amtacctdr + fa.amtacctcr) <> (fa.amtacctdr + fa.amtacctcr)
             OR COALESCE(fi.amtacctcr + fi.amtacctdr, fa.amtacctdr + fa.amtacctcr) <> (fa.amtacctdr + fa.amtacctcr))
         AND fa.ad_client_id = ?

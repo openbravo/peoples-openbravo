@@ -1613,7 +1613,8 @@ public class CreateFrom extends HttpSecureAppServlet {
                   priceStd, lineNetAmt.toString(), priceGross, grossAmt.toString(),
                   priceListGross.toString(), priceStdGross.toString(), isDeferred, planType,
                   periodNumber, startingPeriodId, data[i].aAssetId, data[i].cProjectId,
-                  data[i].cCostcenterId, data[i].user1Id, data[i].user2Id);
+                  data[i].cCostcenterId, data[i].user1Id, data[i].user2Id, data[i].explode,
+                  data[i].isorder);
 
               if (!data[i].mInoutlineId.isEmpty() && strType.equals("SHIPMENT")) {
                 CreateFromInvoiceData.insertShipmentAcctDimension(conn, this, strSequence,
@@ -1815,7 +1816,8 @@ public class CreateFrom extends HttpSecureAppServlet {
                       CreateFromShipmentData.isInvoiced(conn, this, data[i].cInvoicelineId),
                       (qtyIsNegative ? "-" + total : total), data[i].mProductUomId,
                       strmAttributesetinstanceId, data[i].aAssetId, data[i].cProjectId,
-                      data[i].cCostcenterId, data[i].user1Id, data[i].user2Id, data[i].cBpartnerId);
+                      data[i].cCostcenterId, data[i].user1Id, data[i].user2Id, data[i].cBpartnerId,
+                      data[i].explode, data[i].isorder);
 
                   if (strType.equals("INVOICE") && !data[i].cInvoicelineId.isEmpty()) {
                     CreateFromShipmentData.insertInvoiceAcctDimension(conn, this, strSequence,
@@ -1846,7 +1848,7 @@ public class CreateFrom extends HttpSecureAppServlet {
                     CreateFromShipmentData.isInvoiced(conn, this, data[i].cInvoicelineId),
                     strQuantityorder, strProductUomId, strmAttributesetinstanceId,
                     data[i].aAssetId, data[i].cProjectId, data[i].cCostcenterId, data[i].user1Id,
-                    data[i].user2Id, data[i].cBpartnerId);
+                    data[i].user2Id, data[i].cBpartnerId, data[i].explode, data[i].isorder);
 
                 if (strType.equals("INVOICE") && !data[i].cInvoicelineId.isEmpty()) {
                   CreateFromShipmentData.insertInvoiceAcctDimension(conn, this, strSequence,
@@ -1858,10 +1860,11 @@ public class CreateFrom extends HttpSecureAppServlet {
                 if (!strInvoice.equals("")) {
                   String strInOutLineId = CreateFromShipmentData.selectInvoiceInOut(conn, this,
                       data[i].cInvoicelineId);
-                  if (strInOutLineId.isEmpty())
+                  if (strInOutLineId.isEmpty()) {
                     CreateFromShipmentData.updateInvoice(conn, this, strSequence,
                         data[i].cInvoicelineId);
-                  else {
+                    CreateFromShipmentData.updateBOMStructure(conn, this, strKey, strSequence);
+                  } else {
                     CreateFromShipmentData.insertMatchInv(conn, this, vars.getUser(),
                         data[i].cInvoicelineId, strSequence, data[i].cInvoiceId);
                   }
@@ -2020,7 +2023,8 @@ public class CreateFrom extends HttpSecureAppServlet {
                       CreateFromShipmentData.isInvoiced(conn, this, data[i].cInvoicelineId),
                       (qtyIsNegative ? "-" + total : total), data[i].mProductUomId,
                       data[i].mAttributesetinstanceId, data[i].aAssetId, data[i].cProjectId,
-                      data[i].cCostcenterId, data[i].user1Id, data[i].user2Id, data[i].cBpartnerId);
+                      data[i].cCostcenterId, data[i].user1Id, data[i].user2Id, data[i].cBpartnerId,
+                      data[i].explode, data[i].isorder);
 
                   if (strType.equals("INVOICE") && !data[i].cInvoicelineId.isEmpty()) {
                     CreateFromShipmentData.insertInvoiceAcctDimension(conn, this, strSequence,
@@ -2052,7 +2056,7 @@ public class CreateFrom extends HttpSecureAppServlet {
                     CreateFromShipmentData.isInvoiced(conn, this, data[i].cInvoicelineId),
                     data[i].quantityorder, data[i].mProductUomId, data[i].mAttributesetinstanceId,
                     data[i].aAssetId, data[i].cProjectId, data[i].cCostcenterId, data[i].user1Id,
-                    data[i].user2Id, data[i].cBpartnerId);
+                    data[i].user2Id, data[i].cBpartnerId, data[i].explode, data[i].isorder);
 
                 if (strType.equals("INVOICE") && !data[i].cInvoicelineId.isEmpty()) {
                   CreateFromShipmentData.insertInvoiceAcctDimension(conn, this, strSequence,
@@ -2062,10 +2066,11 @@ public class CreateFrom extends HttpSecureAppServlet {
                       vars.getClient(), data[i].adOrgId, vars.getUser(), data[i].cOrderlineId);
                 }
 
-                if (!strInvoice.equals(""))
+                if (!strInvoice.equals("")) {
                   CreateFromShipmentData.updateInvoice(conn, this, strSequence,
                       data[i].cInvoicelineId);
-                else
+                  CreateFromShipmentData.updateBOMStructure(conn, this, strKey, strSequence);
+                } else
                   CreateFromShipmentData.updateInvoiceOrder(conn, this, strSequence,
                       data[i].cOrderlineId);
               } catch (final ServletException ex) {

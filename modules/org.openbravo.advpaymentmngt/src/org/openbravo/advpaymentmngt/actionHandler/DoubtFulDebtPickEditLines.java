@@ -130,6 +130,9 @@ public class DoubtFulDebtPickEditLines extends BaseProcessActionHandler {
           if (currency == null) {
             currency = (Currency) OBDal.getInstance().getProxy(Currency.ENTITY_NAME, strCurrency);
           }
+          int stdPrecision = 2;
+          stdPrecision = currency.getStandardPrecision().intValue();
+          amount = amount.setScale(stdPrecision, BigDecimal.ROUND_HALF_UP);
           newDoubtfulDebt.setClient(doubtfulDebtRun.getClient());
           newDoubtfulDebt.setOrganization(doubtfulDebtRun.getOrganization());
           newDoubtfulDebt.setAccountingDate(doubtfulDebtRun.getAccountingDate());

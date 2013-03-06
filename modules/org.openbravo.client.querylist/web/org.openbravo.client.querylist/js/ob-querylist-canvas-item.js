@@ -34,7 +34,13 @@ isc.OBQLCanvasItem_Link.addProperties({
 isc.defineClass('OBQLCanvasItem_Print', isc.OBGridLinkItem);
 
 isc.OBQLCanvasItem_Print.addProperties({
-  title: OB.I18N.getLabel('OBUIAPP_Print'),
+  initWidget: function () {
+    if (this.record.isGridSummary) {
+      this.title = '';
+    }
+    return this.Super('initWidget', arguments);
+  },
+  title: OB.I18N.getLabel('OBUIAPP_PrintGridLink'),
   isDirectPDF: true,
   isDirectAttach: false,
   blockAction: false,

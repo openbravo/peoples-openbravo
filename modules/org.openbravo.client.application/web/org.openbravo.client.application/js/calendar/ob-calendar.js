@@ -109,6 +109,8 @@ isc.OBCalendar.addProperties({
       // these are read extra from the server with the events
       additionalProperties: this.dataSourceProps.additionalProperties,
 
+      dataSourceProps: this.dataSourceProps,
+
       transformRequest: function (dsRequest) {
         dsRequest.params = dsRequest.params || {};
         dsRequest.params._extraProperties = this.additionalProperties;
@@ -121,12 +123,22 @@ isc.OBCalendar.addProperties({
             i, j;
 
         showDSAlert = function (text) {
-          isc.warn(text, function () {
-            return true;
-          }, {
-            icon: '[SKINIMG]Dialog/error.png',
-            title: OB.I18N.getLabel('OBUIAPP_Error')
-          });
+          if (calendar.OBEventEditor && calendar.OBEventEditor.messageBar) {
+            // Display message in event editor
+            calendar.OBEventEditor.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, OB.I18N.getLabel('OBUIAPP_Error'), text);
+          } else {
+            // there is no message bar in editor, showing a popup warn
+            isc.warn(text, function () {
+              return true;
+            }, {
+              icon: '[SKINIMG]Dialog/error.png',
+              title: OB.I18N.getLabel('OBUIAPP_Error')
+            });
+          }
+          if (calendar.OBEventEditor) {
+            // needs to keep the popup open once, because data is refreshed
+            calendar.OBEventEditor.keepOpen = true;
+          }
         };
 
         // handle error
@@ -161,6 +173,10 @@ isc.OBCalendar.addProperties({
               }
             }
           }
+          if (typeof calendar.OBEventEditor.closeClick === 'function') {
+            // close editor popup on success
+            calendar.OBEventEditor.closeClick();
+          }
         }
         return this.Super('transformResponse', arguments);
       },
@@ -169,32 +185,45 @@ isc.OBCalendar.addProperties({
       // the calendar callback to prevent adding events in cased
       // of errors
       addData: function (newRecord, callback, requestProperties) {
-        var newCallBack = function (dsResponse, data, dsRequest) {
+        var dataSourceProps = this.dataSourceProps,
+            newCallBack = function (dsResponse, data, dsRequest) {
             // don't call if there is an error
             if (dsResponse.status < 0) {
               return;
             }
             callback(dsResponse, data, dsRequest);
+            if (dataSourceProps.addEventCallback) {
+              dataSourceProps.addEventCallback(newRecord, requestProperties);
+            }
             };
         return this.Super('addData', [newRecord, newCallBack, requestProperties]);
       },
       updateData: function (updatedRecord, callback, requestProperties) {
-        var newCallBack = function (dsResponse, data, dsRequest) {
+        var dataSourceProps = this.dataSourceProps,
+            newCallBack = function (dsResponse, data, dsRequest) {
             // don't call if there is an error
             if (dsResponse.status < 0) {
               return;
             }
             callback(dsResponse, data, dsRequest);
+            if (dataSourceProps.updateEventCallback) {
+              dataSourceProps.updateEventCallback(updatedRecord, requestProperties);
+            }
             };
-        return this.Super('updateData', [updatedRecord, newCallBack, requestProperties]);
+        return this.Super('updateData', [
+        updatedRecord, newCallBack, requestProperties]);
       },
       removeData: function (recordKeys, callback, requestProperties) {
-        var newCallBack = function (dsResponse, data, dsRequest) {
+        var dataSourceProps = this.dataSourceProps,
+            newCallBack = function (dsResponse, data, dsRequest) {
             // don't call if there is an error
             if (dsResponse.status < 0) {
               return;
             }
             callback(dsResponse, data, dsRequest);
+            if (dataSourceProps.removeEventCallback) {
+              dataSourceProps.removeEventCallback(recordKeys, requestProperties);
+            }
             };
         return this.Super('removeData', [recordKeys, newCallBack, requestProperties]);
       }
@@ -222,6 +251,45 @@ isc.OBCalendar.addProperties({
     if (this.showMonthView !== false) {
       this.monthView.baseStyle = OB.Styles.OBCalendar.monthView_baseStyle;
       this.monthView.headerBaseStyle = OB.Styles.OBCalendar.monthView_headerBaseStyle;
+    }
+  },
+
+  directEventEdit: function (event, popupCallback) {
+    var callback, openEventDialog, calendar = this;
+    callback = function (dsResponse, data, dsRequest) {
+      if (data && data[0]) {
+        openEventDialog(data[0]);
+      }
+    };
+    openEventDialog = function (event) {
+      if (event) {
+        if (calendar.OBEventEditor) {
+          calendar.eventDialog.event = event;
+          calendar.eventDialog.event.popupCallback = popupCallback;
+          calendar.eventDialog.currentStart = event[calendar.startDateField];
+          calendar.eventDialog.currentEnd = event[calendar.endDateField];
+          calendar.eventDialog.calendar = calendar;
+          try {
+            //To avoid js error due to conflicts with Smartclient default EventDialog
+            if (event.canEdit === false && event.canDelete === false) {
+              isc.warn(OB.I18N.getLabel('OBUIAPP_CalendarCanNotUpdateEvent'), function () {
+                return true;
+              }, {
+                icon: '[SKINIMG]Dialog/error.png',
+                title: OB.I18N.getLabel('OBUIAPP_Error')
+              });
+            } else {
+              calendar.eventDialog.show();
+            }
+          } catch (e) {}
+        }
+      }
+    };
+
+    if (typeof event === 'string') {
+      this.dataSource.fetchRecord(event, callback);
+    } else {
+      openEventDialog(event);
     }
   },
 

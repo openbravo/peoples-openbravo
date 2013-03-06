@@ -45,6 +45,12 @@
 
     function submitThisPage(strCommand) {
       if (validate(strCommand)) {
+        var inp= document.frmMain.inpId; 
+        var total = document.frmMain.inpId.length;
+        for (var i=0;i<total;i++) {
+            inp[i].removeAttribute("disabled");
+            document.frmMain['inpmovementqty' + inp[i].value].removeAttribute("disabled");
+        }
         submitCommandForm(strCommand, false, null, '../ad_actionButton/CreateFrom.html', '_self');
         return true;
       }
@@ -95,12 +101,12 @@ return true;
 }
 
 function updateData(clave, marcar) {
-	if (marcar==null) marcar=false;
-	var frm = document.frmMain;
-	frm.elements["inpmovementqty" + clave].disabled=!marcar; 
-	frm.elements["inpquantityorder" + clave].disabled=!marcar;
-	frm.elements["inpmProductUomId" + clave].disabled=!marcar;
-	return true;
+    if (marcar==null) marcar=false;
+    var frm = document.frmMain;
+    frm.elements["inpmovementqty" + clave].disabled=!marcar; 
+    frm.elements["inpquantityorder" + clave].disabled=!marcar;
+    frm.elements["inpmProductUomId" + clave].disabled=!marcar;
+    return true;
 }
 
 function checkAllCreateLines(chk, bolCheck)
@@ -108,20 +114,20 @@ function checkAllCreateLines(chk, bolCheck)
   if (bolCheck==null) bolCheck = false;
   if (!chk) return false;
   else if (!chk.length){
-	  chk.checked = bolCheck;
-	  var frm = document.frmMain;
-	  frm.elements["inpmovementqty" + chk.value].disabled=!bolCheck; 
-	  frm.elements["inpquantityorder" + chk.value].disabled=!bolCheck;
-	  frm.elements["inpmProductUomId" + chk.value].disabled=!bolCheck;
+      chk.checked = bolCheck;
+      var frm = document.frmMain;
+      frm.elements["inpmovementqty" + chk.value].disabled=!bolCheck; 
+      frm.elements["inpquantityorder" + chk.value].disabled=!bolCheck;
+      frm.elements["inpmProductUomId" + chk.value].disabled=!bolCheck;
   }
   else {
     var total = chk.length;
     for (var i=0;i<total;i++) {
     chk[i].checked = bolCheck;
-	var frm = document.frmMain;
-	frm.elements["inpmovementqty" + chk[i].value].disabled=!bolCheck; 
-	frm.elements["inpquantityorder" + chk[i].value].disabled=!bolCheck;
-	frm.elements["inpmProductUomId" + chk[i].value].disabled=!bolCheck;
+    var frm = document.frmMain;
+    frm.elements["inpmovementqty" + chk[i].value].disabled=!bolCheck; 
+    frm.elements["inpquantityorder" + chk[i].value].disabled=!bolCheck;
+    frm.elements["inpmProductUomId" + chk[i].value].disabled=!bolCheck;
     }
   }
   return true;
@@ -177,6 +183,21 @@ function checkAllCreateLines(chk, bolCheck)
 
     function onResizeDo(){
       resizeAreaCreateFrom();
+    }
+    
+    function checkchilds(inp, bolMark) {
+        if (bolMark==null) bolMark = false;
+         if (!inp) return false;
+         else if (!inp.length) {
+             document.getElementById('inpfieldID' + inp.value).checked = bolMark;
+         }
+         else {
+             var total = inp.length;
+             for (var i=0;i<total;i++) {
+                 document.getElementById('inpfieldID' +inp[i].value).checked = bolMark; 
+             }
+         }
+         return true;
     }
   </script>
 </head>
@@ -458,109 +479,109 @@ function checkAllCreateLines(chk, bolCheck)
 
             <tr class="Popup_Client_Selector_DataGrid_HeaderRow"> 
                       <th width="29" class="DataGrid_Header_LineNoCell DataGrid_Body_Cell_CheckBox"> <span class="Checkbox_container_NOT_Focused"><input type="checkbox" name="inpTodos" onclick="checkAllCreateLines(document.frmMain.inpId, this.checked);return true;"></input></span></th>
-					  <th width="70" class="DataGrid_Header_Cell">Quantity</th>
+                      <th width="70" class="DataGrid_Header_Cell">Quantity</th>
                       <th width="70" class="DataGrid_Header_Cell">Unit</th>
-					  <th width="71" class="DataGrid_Header_Cell">Secondary Quantity</th>
-					  <th width="71" class="DataGrid_Header_Cell">Secondary Unit</th>
+                      <th width="71" class="DataGrid_Header_Cell">Secondary Quantity</th>
+                      <th width="71" class="DataGrid_Header_Cell">Secondary Unit</th>
                       <th width="129" class="DataGrid_Header_Cell">Product</th>
                       <th width="127" class="DataGrid_Header_Cell">Line</th>
-					  <th width="124" class="DataGrid_Header_Cell">Storage Bin</th>
-					  <th width="124" class="DataGrid_Header_Cell">Attribute</th>
+                      <th width="124" class="DataGrid_Header_Cell">Storage Bin</th>
+                      <th width="124" class="DataGrid_Header_Cell">Attribute</th>
                     </tr>
                     <div id="sectionDetail">
                       <tr class="DataGrid_Body_Row DataGrid_Body_Row_yy" onclick="selectActual(this); return true;" ondblclick="checkActual(this); return true;" id="funcEvenOddRowxx">
-						<td class="DataGrid_Body_LineNoCell DataGrid_Body_Cell_CheckBox"> <span class="Checkbox_container_NOT_Focused"><input type="checkbox" id="fieldID" name="inpId" onclick="updateData(this.value, this.checked);return true;" value=""></input></span></td>
-						<td class="DataGrid_Body_Cell">
-						<input  type="text" id="fieldQuantity" class="dojoValidateValid TextBox_btn_OneCell_width number" required="false" value="" maxlength="10" name="inpmovementqtyxx" disabled="true" onkeyup="" onkeypress="changeToEditingMode();"></input>
-						</td>
-						<td class="DataGrid_Body_Cell" onmouseover="HoverCell(this);" onmouseout="unHoverCell(this);" id="fieldCuomName" value="">xxUOM</td>
-						<input type="hidden" id="fieldCuomId" name="inpcUomIdxx" value="0"></input>
-						<td class="DataGrid_Body_Cell">
-						<input type="zzz" id="fieldSecQuantity" class="dojoValidateValid TextBox_btn_OneCell_width number" required="false" value="" maxlength="10" name="inpquantityorderxx" disabled="true" onkeyup="" onkeypress="changeToEditingMode();" onchange="logChanges(this);calloutSL_CreateLines_Conversion_UOM('ff');return true;"></input>
-						</td>
-						<td  class="DataGrid_Body_Cell">
-						<select class="DataGrid_Body_Cell" style="display:yyy;" name="inpmProductUomIdxx" id="fieldSecUom" disabled="true" onchange="logChanges(this);calloutSL_CreateLines_Conversion_UOM('ff');return true;"><div id="reportM_Product_Uom_To_ID"></div></select>
-						</td>
+                        <td class="DataGrid_Body_LineNoCell DataGrid_Body_Cell_CheckBox"> <span class="Checkbox_container_NOT_Focused"><input type="checkbox" id="inpfieldIDxx" name="inpId" onclick="updateData(this.value, this.checked);checkchilds(document.frmMain['inpBomParent'+this.value], this.checked)" value=""></input><input type="hidden" id="fieldBomParent" name="inpBomParentxx" value=""></input></span></td>
+                        <td class="DataGrid_Body_Cell">
+                        <input  type="text" id="fieldQuantity" class="dojoValidateValid TextBox_btn_OneCell_width number" required="false" value="" maxlength="10" name="inpmovementqtyxx" disabled="true" onkeyup="" onkeypress="changeToEditingMode();"></input>
+                        </td>
+                        <td class="DataGrid_Body_Cell" onmouseover="HoverCell(this);" onmouseout="unHoverCell(this);" id="fieldCuomName" value="">xxUOM</td>
+                        <input type="hidden" id="fieldCuomId" name="inpcUomIdxx" value="0"></input>
+                        <td class="DataGrid_Body_Cell">
+                        <input type="zzz" id="fieldSecQuantity" class="dojoValidateValid TextBox_btn_OneCell_width number" required="false" value="" maxlength="10" name="inpquantityorderxx" disabled="true" onkeyup="" onkeypress="changeToEditingMode();" onchange="logChanges(this);calloutSL_CreateLines_Conversion_UOM('ff');return true;"></input>
+                        </td>
+                        <td  class="DataGrid_Body_Cell">
+                        <select class="DataGrid_Body_Cell" style="display:yyy;" name="inpmProductUomIdxx" id="fieldSecUom" disabled="true" onchange="logChanges(this);calloutSL_CreateLines_Conversion_UOM('ff');return true;"><div id="reportM_Product_Uom_To_ID"></div></select>
+                        </td>
                         <td class="DataGrid_Body_Cell" onmouseover="HoverCell(this);" onmouseout="unHoverCell(this);" id="fieldMproductid">xxProduct</td>
                         <td class="DataGrid_Body_Cell" onmouseover="HoverCell(this);" onmouseout="unHoverCell(this);" id="fieldPurchaseorder">xxPurchase Order</td>
-						<td class="DataGrid_Body_Cell"> 
-						<table>
-						<td>
-						<input type="text" onfocus="enableLocatorShortcut('xx');" class="dojoValidateValid TextBox_btn_TwoCells_width" required="false" maxlength="22" name="inpmLocatorId_DESxx" id="fieldM_Locator_ID_DES"></input>
-						</td>
-						<td>
-						<a id="fieldLocatorDES" class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Locator'; return true;" onblur=" window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="openSearch(null, null, '../info/Locator.html', null, false, 'frmMain', 'inpmLocatorIdyyy', 'inpmLocatorId_DESvvv', document.frmMain.inpmLocatorId_DESxxx.value, 'WindowID', document.frmMain.inpWindowId.value);return false;" >
+                        <td class="DataGrid_Body_Cell"> 
+                        <table>
+                        <td>
+                        <input type="text" onfocus="enableLocatorShortcut('xx');" class="dojoValidateValid TextBox_btn_TwoCells_width" required="false" maxlength="22" name="inpmLocatorId_DESxx" id="fieldM_Locator_ID_DES"></input>
+                        </td>
+                        <td>
+                        <a id="fieldLocatorDES" class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Locator'; return true;" onblur=" window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="openSearch(null, null, '../info/Locator.html', null, false, 'frmMain', 'inpmLocatorIdyyy', 'inpmLocatorId_DESvvv', document.frmMain.inpmLocatorId_DESxxx.value, 'WindowID', document.frmMain.inpWindowId.value);return false;" >
                         <table class="FieldButton"onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Locator';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
                             <td class="FieldButton_bg">
                               <img alt="Locator" class="FieldButton_Icon FieldButton_Icon_Locator" title="Locator" src="../../../../../web/images/blank.gif" border="0" id="buttonLocator"></img>
                             </td>
                           
                         </table>
-						</a>
-						</td>
-						<input type="hidden" name="inpmLocatorIdxx" id="fieldM_Locator_ID" value="">
-						</table>
-						</td>
-						<input style="display:none;" type="text" name="inpmProductIdxxxx_LOC" id="M_Product_ID_LOC" value=""></input>
-						<input type="text" style="display:none;" name="inpmProductIdyyyy_ATR" id="M_Product_ID_ATR" value=""></input>
-						<input type="text" style="display:none;" name="inpmProductIdzzzz" id="M_Product_ID" value=""></input>
-						<td class="TextBox_btn_ContentCell" id="M_AttributeSetInstance_ID_inp_td">
-						  <input type="hidden" name="inpmAttributesetinstanceIdxxx" id="M_AttributeSetInstance_ID" value="" onchange="logChanges(this);return true;"></input>
-						  <table border="0" cellspacing="0" cellpadding="0" summary="" class="">
-							<tr>
-							  <td class="TextBox_ContentCell">
-							  <table style="border:0px;border-collapse:collapse;">
-								<tr>
-								  <td style="padding-top: 0px;">
-									
-									<input type="text" class="dojoValidateValid readonly TextBox_btn_OneCell_width" tabindex="1" maxlength="22"  name="inpmAttributesetinstanceId_Rxxx" id="M_AttributeSetInstance_ID_R" value="" required="false" onkeypress="changeToEditingMode();" onchange="validateTextBox(this.id);" readonly=true></input>
-								  </td>
-								</tr>
-							  </table>
-						  <span class="TextBox_MsgContainer_span" style="display: none;" id="M_AttributeSetInstance_ID_RinvalidSpan">
-							<table class="TextBox_MsgContainer_table">
-							  <tr class="TextBox_MsgContainer_tr">
-								<td class="TextBox_MsgContainer_td"><div class="TextBox_MsgContainer_div"></div></td><td></td>
-							  </tr>
-							  <tr>
-								<td colspan="2" class="invalid"><div class="TextBox_MsgContainer_div2" id="M_AttributeSetInstance_ID_RinvalidSpanText">* The value entered is not valid.</div></td>
-							  </tr>
-							</table>
-						  </span>
-						  <span class="TextBox_MsgContainer_span" style="display: none;" id="M_AttributeSetInstance_ID_RmissingSpan">
-							<table class="TextBox_MsgContainer_table">
-							  <tr class="TextBox_MsgContainer_tr">
-								<td class="TextBox_MsgContainer_td"><div class="TextBox_MsgContainer_div"></div></td><td></td>
-							  </tr>
-							  <tr>
-								<td colspan="2" class="missing"><div class="TextBox_MsgContainer_div2" id="M_AttributeSetInstance_ID_RmissingSpanText">* This value is required.</div></td>
-							  </tr>
-							</table>
-						  </span>
-						  <span class="TextBox_MsgContainer_span" style="display: none;" id="M_AttributeSetInstance_ID_RrangeSpan">
-							<table class="TextBox_MsgContainer_table">
-							  <tr class="TextBox_MsgContainer_tr">
-								<td class="TextBox_MsgContainer_td"><div class="TextBox_MsgContainer_div"></div></td><td></td>
-							  </tr>
-							  <tr>
-								<td colspan="2" class="range"><div class="TextBox_MsgContainer_div2" id="M_AttributeSetInstance_ID_RrangeSpanText">* This value is out of range.</div></td>
-							  </tr>
-							</table>
-						  </span>
-							  </td>
-							  <td class="FieldButton_ContentCell"><a id="fieldAttributeseinstance" class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Attribute Set Value'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;" 
-							  onclick="openPAttribute(null, null, '../info/AttributeSetInstance.html', null, false, 'frmMain', 'inpmAttributesetinstanceIdxxx', 'inpmAttributesetinstanceId_Ryyy', inputValue(document.frmMain.inpmAttributesetinstanceId_Rvvv), 'inpIDValue', inputValue(document.frmMain.inpmAttributesetinstanceIdwww), 'WindowID', inputValue(document.frmMain.inpwindowId), 'inpKeyValue', inputValue(document.frmMain.inpmAttributesetinstanceIduuu), 'inpwindowId', inputValue(document.frmMain.inpwindowId), 'inpProduct', inputValue(document.frmMain.inpmProductIdzzz));return false;">
-						  <table class="FieldButton" onmousedown="this.className='FieldButton_active'; return true;" onmouseup="this.className='FieldButton'; return true;" onmouseover="this.className='FieldButton_hover'; window.status='Attribute Set Value'; return true;" onmouseout="this.className='FieldButton'; window.status=''; return true;" id="M_AttributeSetInstance_IDlinkAttributeSetInstance">
-							<tr>
-							  <td class="FieldButton_bg">
-								<img alt="Attribute Set Value" class="FieldButton_Icon FieldButton_Icon_AttributeSetInstance" title="Attribute Set Value" src="../../../../../web/images/blank.gif" border="0" id="buttonAttributeSetInstance"></img>
-							  </td>
-							</tr>
-						  </table>
-						</a>
-						</td>
-							</tr>
-						  </table>
+                        </a>
+                        </td>
+                        <input type="hidden" name="inpmLocatorIdxx" id="fieldM_Locator_ID" value="">
+                        </table>
+                        </td>
+                        <input style="display:none;" type="text" name="inpmProductIdxxxx_LOC" id="M_Product_ID_LOC" value=""></input>
+                        <input type="text" style="display:none;" name="inpmProductIdyyyy_ATR" id="M_Product_ID_ATR" value=""></input>
+                        <input type="text" style="display:none;" name="inpmProductIdzzzz" id="M_Product_ID" value=""></input>
+                        <td class="TextBox_btn_ContentCell" id="M_AttributeSetInstance_ID_inp_td">
+                          <input type="hidden" name="inpmAttributesetinstanceIdxxx" id="M_AttributeSetInstance_ID" value="" onchange="logChanges(this);return true;"></input>
+                          <table border="0" cellspacing="0" cellpadding="0" summary="" class="">
+                            <tr>
+                              <td class="TextBox_ContentCell">
+                              <table style="border:0px;border-collapse:collapse;">
+                                <tr>
+                                  <td style="padding-top: 0px;">
+                                    
+                                    <input type="text" class="dojoValidateValid readonly TextBox_btn_OneCell_width" tabindex="1" maxlength="22"  name="inpmAttributesetinstanceId_Rxxx" id="M_AttributeSetInstance_ID_R" value="" required="false" onkeypress="changeToEditingMode();" onchange="validateTextBox(this.id);" readonly=true></input>
+                                  </td>
+                                </tr>
+                              </table>
+                          <span class="TextBox_MsgContainer_span" style="display: none;" id="M_AttributeSetInstance_ID_RinvalidSpan">
+                            <table class="TextBox_MsgContainer_table">
+                              <tr class="TextBox_MsgContainer_tr">
+                                <td class="TextBox_MsgContainer_td"><div class="TextBox_MsgContainer_div"></div></td><td></td>
+                              </tr>
+                              <tr>
+                                <td colspan="2" class="invalid"><div class="TextBox_MsgContainer_div2" id="M_AttributeSetInstance_ID_RinvalidSpanText">* The value entered is not valid.</div></td>
+                              </tr>
+                            </table>
+                          </span>
+                          <span class="TextBox_MsgContainer_span" style="display: none;" id="M_AttributeSetInstance_ID_RmissingSpan">
+                            <table class="TextBox_MsgContainer_table">
+                              <tr class="TextBox_MsgContainer_tr">
+                                <td class="TextBox_MsgContainer_td"><div class="TextBox_MsgContainer_div"></div></td><td></td>
+                              </tr>
+                              <tr>
+                                <td colspan="2" class="missing"><div class="TextBox_MsgContainer_div2" id="M_AttributeSetInstance_ID_RmissingSpanText">* This value is required.</div></td>
+                              </tr>
+                            </table>
+                          </span>
+                          <span class="TextBox_MsgContainer_span" style="display: none;" id="M_AttributeSetInstance_ID_RrangeSpan">
+                            <table class="TextBox_MsgContainer_table">
+                              <tr class="TextBox_MsgContainer_tr">
+                                <td class="TextBox_MsgContainer_td"><div class="TextBox_MsgContainer_div"></div></td><td></td>
+                              </tr>
+                              <tr>
+                                <td colspan="2" class="range"><div class="TextBox_MsgContainer_div2" id="M_AttributeSetInstance_ID_RrangeSpanText">* This value is out of range.</div></td>
+                              </tr>
+                            </table>
+                          </span>
+                              </td>
+                              <td class="FieldButton_ContentCell"><a id="fieldAttributeseinstance" class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Attribute Set Value'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;" 
+                              onclick="openPAttribute(null, null, '../info/AttributeSetInstance.html', null, false, 'frmMain', 'inpmAttributesetinstanceIdxxx', 'inpmAttributesetinstanceId_Ryyy', inputValue(document.frmMain.inpmAttributesetinstanceId_Rvvv), 'inpIDValue', inputValue(document.frmMain.inpmAttributesetinstanceIdwww), 'WindowID', inputValue(document.frmMain.inpwindowId), 'inpKeyValue', inputValue(document.frmMain.inpmAttributesetinstanceIduuu), 'inpwindowId', inputValue(document.frmMain.inpwindowId), 'inpProduct', inputValue(document.frmMain.inpmProductIdzzz));return false;">
+                          <table class="FieldButton" onmousedown="this.className='FieldButton_active'; return true;" onmouseup="this.className='FieldButton'; return true;" onmouseover="this.className='FieldButton_hover'; window.status='Attribute Set Value'; return true;" onmouseout="this.className='FieldButton'; window.status=''; return true;" id="M_AttributeSetInstance_IDlinkAttributeSetInstance">
+                            <tr>
+                              <td class="FieldButton_bg">
+                                <img alt="Attribute Set Value" class="FieldButton_Icon FieldButton_Icon_AttributeSetInstance" title="Attribute Set Value" src="../../../../../web/images/blank.gif" border="0" id="buttonAttributeSetInstance"></img>
+                              </td>
+                            </tr>
+                          </table>
+                        </a>
+                        </td>
+                            </tr>
+                          </table>
               </tr>
             </div>
           </table>

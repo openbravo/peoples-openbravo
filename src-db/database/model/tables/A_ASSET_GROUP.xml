@@ -77,6 +77,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="IS30DAYMONTH" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault><![CDATA['Y']]></onCreateDefault>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="A_ASSET_GROUP_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -85,5 +89,6 @@
       </foreign-key>
       <check name="A_ASSET_GROUP_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="A_ASSET_GROUP_ISOWNED_CHK"><![CDATA[ISOWNED IN ('Y', 'N')]]></check>
+      <check name="A_ASSETGROUP_IS30DAY_CHK"><![CDATA[IS30DAYMONTH IN ('Y', 'N')]]></check>
     </table>
   </database>

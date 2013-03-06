@@ -22,6 +22,7 @@ package org.openbravo.base.structure;
 import java.io.Serializable;
 import java.util.List;
 
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.BaseOBObjectDef;
 import org.openbravo.base.model.Entity;
@@ -33,6 +34,7 @@ import org.openbravo.base.util.CheckException;
 import org.openbravo.base.validation.ValidationException;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.OBInterceptor;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.system.Language;
 
@@ -113,7 +115,7 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable, Dyn
     return data[p.getIndexInEntity()];
   }
 
-  private Object getDataValue(Property p, Language language) {
+  private Object getDataValue(Property p, Language language, String id) {
     if (data == null) {
       // nothing set in this case anyway
       return null;
@@ -132,8 +134,28 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable, Dyn
             dataTrl = trl.get(0);
           }
         } catch (Throwable t) {
-          // Log error but do not fail here, continue using base language
-          log.debug("Error looking for translation of " + p + ". Using base value.", t);
+          // Log error but do not fail here
+          log.debug("Error looking for translation of " + p + " in Session. Looking in Object.", t);
+
+          try {
+            if (id != null) {
+              // check whether translation is available in the object and not stored in session
+              OBCriteria<BaseOBObject> trlList = OBDal.getInstance().createCriteria(
+                  p.getEntity().getName() + "Trl");
+              String parentProperty = p.getTrlOneToManyProperty().getName();
+              parentProperty = parentProperty.replace("TrlList", "");
+              trlList.add(Restrictions.eq(parentProperty,
+                  OBDal.getInstance().get(p.getEntity().toString(), id)));
+              trlList.add(Restrictions.eq("language", language));
+              if (trlList.count() > 0) {
+                dataTrl = trlList.list().get(0);
+              }
+            }
+          } catch (Throwable t1) {
+            // continue using base language
+            log.debug("Error looking for translation of " + p + ". Using base value", t);
+          }
+
         }
       }
 
@@ -203,10 +225,32 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable, Dyn
    *           in case property is not readable
    */
   public Object get(String propName, Language language) {
+    return get(propName, language, null);
+  }
+
+  /**
+   * Returns the value of the {@link Property Property} identified by the propName translating it,
+   * if possible, to the language. In case the translated value is not in session, it will look for
+   * the same in the object. This method does security checking. If a security violation occurs then
+   * a OBSecurityException is thrown.
+   * 
+   * @see BaseOBObject#get(String)
+   * 
+   * @param propName
+   *          the name of the {@link Property Property} for which the value is requested
+   * @param language
+   *          language to translate to
+   * @param id
+   *          uuid of the referenced object
+   * @return value of the property
+   * @throws OBSecurityException
+   *           in case property is not readable
+   */
+  public Object get(String propName, Language language, String id) {
     final Property p = getEntity().getProperty(propName);
     checkDerivedReadable(p);
     if (language != null) {
-      return getDataValue(p, language);
+      return getDataValue(p, language, id);
     } else {
       return getDataValue(p);
     }

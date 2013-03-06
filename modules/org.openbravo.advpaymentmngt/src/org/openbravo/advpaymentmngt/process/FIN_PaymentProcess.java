@@ -928,6 +928,9 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
                   for (final FIN_PaymentScheduleDetail invScheDetail : paymentScheduleDetail
                       .getInvoicePaymentSchedule()
                       .getFINPaymentScheduleDetailInvoicePaymentScheduleList()) {
+                    if (invScheDetail.isCanceled()) {
+                      continue;
+                    }
                     if (invScheDetail.getPaymentDetails() == null) {
                       outStandingAmt = outStandingAmt.add(invScheDetail.getAmount()).add(
                           invScheDetail.getWriteoffAmount());
@@ -946,6 +949,8 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
                         .getNewPaymentScheduleDetail(payment.getOrganization(), outStandingAmt);
                     mergedScheduleDetail.setInvoicePaymentSchedule(paymentScheduleDetail
                         .getInvoicePaymentSchedule());
+                    mergedScheduleDetail.setOrderPaymentSchedule(paymentScheduleDetail
+                        .getOrderPaymentSchedule());
                     OBDal.getInstance().save(mergedScheduleDetail);
                   }
                 } else if (paymentScheduleDetail.getOrderPaymentSchedule() != null) {
@@ -953,6 +958,9 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
                   for (final FIN_PaymentScheduleDetail ordScheDetail : paymentScheduleDetail
                       .getOrderPaymentSchedule()
                       .getFINPaymentScheduleDetailOrderPaymentScheduleList()) {
+                    if (ordScheDetail.isCanceled()) {
+                      continue;
+                    }
                     if (ordScheDetail.getPaymentDetails() == null) {
                       outStandingAmt = outStandingAmt.add(ordScheDetail.getAmount()).add(
                           ordScheDetail.getWriteoffAmount());
@@ -998,6 +1006,8 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
                 }
                 OBDal.getInstance().remove(removedPD);
               }
+              OBDal.getInstance().flush();
+              removedPDS.clear();
             }
             if (payment.getGeneratedCredit().compareTo(BigDecimal.ZERO) == 0
                 && payment.getUsedCredit().compareTo(BigDecimal.ZERO) == 1) {

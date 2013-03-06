@@ -40,7 +40,7 @@
         l.taxbaseamt, l.CancelPriceAD, '' AS Rate, '' AS gross_unit_price, '' AS grosspricelist, '' AS grosspricestd,
         COALESCE(l.A_Asset_ID, o.A_Asset_ID) AS A_Asset_ID, COALESCE(l.C_Project_ID, o.C_Project_ID) AS C_Project_ID,
         COALESCE(l.C_Costcenter_ID, o.C_Costcenter_ID) AS C_Costcenter_ID,
-        COALESCE(l.User1_ID, o.User1_ID) AS User1_ID, COALESCE(l.User2_ID, o.User2_ID) AS User2_ID
+        COALESCE(l.User1_ID, o.User1_ID) AS User1_ID, COALESCE(l.User2_ID, o.User2_ID) AS User2_ID, l.explode, '' as isOrder, CASE WHEN l.Bom_parent_id is null then 'Y' else 'N' END as isparent, l.bom_parent_id
         FROM C_ORDERLINE l left join M_MATCHPO m on  l.C_OrderLine_ID=m.C_OrderLine_ID
                                                  AND m.C_InvoiceLine_ID IS NOT NULL, 
         C_ORDER o, C_UOM uom,  M_PRODUCT p
@@ -61,8 +61,8 @@
         GROUP BY o.C_ORDER_ID, o.DocumentNo, o.DateOrdered, o.GrandTotal, l.QtyOrdered,l.C_UOM_ID,
         uom.UOMSymbol,l.M_Product_ID,p.NAME,l.Line,l.C_OrderLine_ID, l.ad_org_id, l.taxbaseamt,l.CancelPriceAD,
         COALESCE(l.A_Asset_ID, o.A_Asset_ID), COALESCE(l.C_Project_ID, o.C_Project_ID), COALESCE(l.C_Costcenter_ID, o.C_Costcenter_ID),
-        COALESCE(l.User1_ID, o.User1_ID), COALESCE(l.User2_ID, o.User2_ID)
-        HAVING (l.QtyOrdered-SUM(COALESCE(m.Qty,0))) <> 0
+        COALESCE(l.User1_ID, o.User1_ID), COALESCE(l.User2_ID, o.User2_ID), l.explode, l.bom_parent_id 
+        HAVING ( (l.explode='Y') OR ((l.QtyOrdered-SUM(COALESCE(m.Qty,0))) <> 0)) 
         ORDER BY NAME, l.Line
       ]]>
     </Sql>
@@ -111,7 +111,8 @@
 	Ad_Column_Identifier(to_char('M_Product'), to_char(l.m_product_id), to_char(?)) AS RELATION_NAME, 
         l.C_OrderLine_ID,l.Line, l.ad_Org_id, l.taxbaseamt,
         COALESCE(l.A_Asset_ID, o.A_Asset_ID) AS A_Asset_ID, COALESCE(l.C_Project_ID, o.C_Project_ID) AS C_Project_ID, COALESCE(l.C_Costcenter_ID, o.C_Costcenter_ID) AS C_Costcenter_ID,
-        COALESCE(l.User1_ID, o.User1_ID) AS User1_ID, COALESCE(l.User2_ID, o.User2_ID) AS User2_ID
+        COALESCE(l.User1_ID, o.User1_ID) AS User1_ID, COALESCE(l.User2_ID, o.User2_ID) AS User2_ID, l.explode, l.Bom_parent_id, 
+         CASE WHEN l.Bom_parent_id is null then 'Y' else 'N' END as isparent
         FROM C_INVOICE_CANDIDATE_V ic, C_UOM uom, C_ORDER o, C_ORDERLINE l, M_PRODUCT p 
         WHERE l.C_UOM_ID=uom.C_UOM_ID
         AND o.C_ORDER_ID = ic.C_ORDER_ID 
@@ -123,7 +124,7 @@
         GROUP BY o.C_ORDER_ID, o.DocumentNo, o.DateOrdered, o.GrandTotal, l.QtyOrdered,
         l.C_UOM_ID,uom.UOMSymbol,l.M_Product_ID,p.NAME,l.Line,l.C_OrderLine_ID, l.QTYINVOICED, l.ad_org_id, l.taxbaseamt,
         COALESCE(l.A_Asset_ID, o.A_Asset_ID), COALESCE(l.C_Project_ID, o.C_Project_ID), COALESCE(l.C_Costcenter_ID, o.C_Costcenter_ID),
-        COALESCE(l.User1_ID, o.User1_ID), COALESCE(l.User2_ID, o.User2_ID)
+        COALESCE(l.User1_ID, o.User1_ID), COALESCE(l.User2_ID, o.User2_ID), l.explode, l.Bom_parent_id
         ORDER BY NAME, l.Line
       ]]>
     </Sql>
@@ -253,10 +254,10 @@
       A.C_OrderLine_ID,A.Line, uom.stdprecision AS stdprecision, cur.priceprecision, 
       B.M_InOutLine_ID, A.Description, (CASE WHEN B.M_InOutLine_ID IS NULL THEN A.quantityOrder ELSE B.quantityOrder END) AS quantityOrder, 
       (CASE WHEN B.M_InOutLine_ID IS NULL THEN A.M_Product_UOM_ID ELSE B.M_Product_UOM_ID END) AS M_Product_UOM_ID, A.M_ATTRIBUTESETINSTANCE_ID, A.ad_org_id,
-      A.taxbaseamt, A.a_asset_id, A.c_project_id, A.c_costcenter_id, A.user1_id, A.user2_id
+      A.taxbaseamt, A.a_asset_id, A.c_project_id, A.c_costcenter_id, A.user1_id, A.user2_id, A.explode, 'Y' as isOrder
       FROM c_currency cur,C_UOM uom, M_PRODUCT p, 
       (SELECT COALESCE(l.A_Asset_ID, o.A_Asset_ID) AS A_Asset_ID, COALESCE(l.C_Project_ID, o.C_Project_ID) AS C_Project_ID, COALESCE(l.C_Costcenter_ID, o.C_Costcenter_ID) AS C_Costcenter_ID,
-       COALESCE(l.User1_ID, o.User1_ID) AS User1_ID, COALESCE(l.User2_ID, o.User2_ID) AS User2_ID, l.ad_org_id,l.C_CURRENCY_ID,l.C_UOM_ID, l.M_Product_ID, l.Line, l.Description, l.C_OrderLine_ID, (l.QtyOrdered-SUM(COALESCE(mp.Qty,0))-
+       COALESCE(l.User1_ID, o.User1_ID) AS User1_ID, COALESCE(l.User2_ID, o.User2_ID) AS User2_ID, l.explode,l.ad_org_id,l.C_CURRENCY_ID,l.C_UOM_ID, l.M_Product_ID, l.Line, l.Description, l.C_OrderLine_ID, (l.QtyOrdered-SUM(COALESCE(mp.Qty,0))-
        COALESCE((SELECT SUM(COALESCE(CI.QtyINVOICED, 0))  
        FROM C_ORDERLINE CO LEFT JOIN C_INVOICELINE CI ON CI.C_ORDERLINE_ID = CO.C_ORDERLINE_ID
        WHERE  CI.C_INVOICE_ID=? AND CO.C_ORDERLINE_ID = l.c_orderline_id
@@ -271,7 +272,7 @@
         LEFT JOIN C_Order o ON l.C_Order_ID = o.C_Order_ID
         GROUP BY l.ad_org_id,l.C_CURRENCY_ID,l.C_UOM_ID, l.M_Product_ID, l.Line, l.Description, l.C_OrderLine_ID, l.QtyOrdered, l.quantityOrder, l.M_Product_UOM_ID,
         l.M_ATTRIBUTESETINSTANCE_ID, l.taxbaseamt, COALESCE(l.A_Asset_ID, o.A_Asset_ID), COALESCE(l.C_Project_ID, o.C_Project_ID), COALESCE(l.C_Costcenter_ID, o.C_Costcenter_ID),
-        COALESCE(l.User1_ID, o.User1_ID), COALESCE(l.User2_ID, o.User2_ID)) A left join 
+        COALESCE(l.User1_ID, o.User1_ID), COALESCE(l.User2_ID, o.User2_ID), l.explode) A left join 
       (SELECT il.M_InOutLine_ID, il.C_OrderLine_ID, (il.MovementQty-SUM(COALESCE(mi.Qty,0))) AS QTY,
       il.quantityOrder*C_DIVIDE((il.MovementQty-SUM(COALESCE(mi.Qty,0))),(il.MovementQty)) as quantityOrder, il.M_Product_UOM_ID
         FROM M_INOUTLINE il left join M_MATCHINV mi on il.M_InOutLine_ID=mi.M_InOutLine_ID,
@@ -302,7 +303,7 @@
         (CASE WHEN il.M_INOUTLINE_ID IS NULL THEN l.quantityOrder*C_DIVIDE((l.QtyOrdered-COALESCE(l.QTYINVOICED ,0)),(l.QtyOrdered)) ELSE il.quantityOrder END) AS quantityOrder, 
         (CASE WHEN il.M_INOUTLINE_ID IS NULL THEN l.M_Product_UOM_ID ELSE il.M_Product_UOM_ID END) AS M_Product_UOM_ID, l.M_ATTRIBUTESETINSTANCE_ID, l.ad_org_id,
         l.taxbaseamt, COALESCE(l.A_Asset_ID, o.A_Asset_ID) as A_Asset_ID, COALESCE(l.C_Project_ID, o.C_Project_ID) as C_Project_ID,
-        COALESCE(l.C_Costcenter_ID, o.C_Costcenter_ID) as C_Costcenter_ID, COALESCE(l.User1_ID, o.User1_ID) as User1_ID, COALESCE(l.User2_ID, o.User2_ID) as User2_ID
+        COALESCE(l.C_Costcenter_ID, o.C_Costcenter_ID) as C_Costcenter_ID, COALESCE(l.User1_ID, o.User1_ID) as User1_ID, COALESCE(l.User2_ID, o.User2_ID) as User2_ID, l.explode, 'Y' as isOrder
         FROM C_ORDERLINE l left join (SELECT M_InOutLine.* FROM M_InOutLine, M_InOut
                                       WHERE M_InOut.M_InOut_ID = M_InOutLine.M_InOut_ID
                                       AND M_InOutLine.IsInvoiced = 'N'
@@ -315,8 +316,8 @@
         l.QTYINVOICED, il.M_InOutLine_ID, il.MovementQty, l.Description, l.quantityOrder, il.quantityOrder, 
         l.M_Product_UOM_ID, il.M_Product_UOM_ID, l.M_ATTRIBUTESETINSTANCE_ID,l.ad_org_id, cur.priceprecision,
         l.taxbaseamt, COALESCE(l.A_Asset_ID, o.A_Asset_ID), COALESCE(l.C_Project_ID, o.C_Project_ID), COALESCE(l.C_Costcenter_ID, o.C_Costcenter_ID),
-        COALESCE(l.User1_ID, o.User1_ID), COALESCE(l.User2_ID, o.User2_ID)
-        HAVING (l.QtyOrdered-COALESCE(l.QTYINVOICED ,0)) <> 0 
+        COALESCE(l.User1_ID, o.User1_ID), COALESCE(l.User2_ID, o.User2_ID), l.explode
+        HAVING ( (l.explode='Y') OR ((l.QtyOrdered-COALESCE(l.QTYINVOICED ,0)) <> 0)) 
         ORDER BY l.Line
       ]]>
     </Sql>
@@ -334,7 +335,8 @@
         l.M_InOutLine_ID,l.Line, l.M_InOutLine_ID as C_OrderLine_ID,
         COALESCE(l.A_Asset_ID, s.A_Asset_ID) AS A_Asset_ID, COALESCE(l.C_Project_ID, s.C_Project_ID) AS C_Project_ID, 
         COALESCE(l.C_Costcenter_ID, s.C_Costcenter_ID) AS C_Costcenter_ID,
-        COALESCE(l.User1_ID, s.User1_ID) AS User1_ID, COALESCE(l.User2_ID, s.User2_ID) AS User2_ID
+        COALESCE(l.User1_ID, s.User1_ID) AS User1_ID, COALESCE(l.User2_ID, s.User2_ID) AS User2_ID, l.explode, l.Bom_parent_id, 
+        CASE WHEN l.Bom_parent_id is null then 'Y' else 'N' END as isparent
         FROM M_INOUTLINE l left join M_ATTRIBUTESETINSTANCE ma on l.M_ATTRIBUTESETINSTANCE_ID = ma.M_ATTRIBUTESETINSTANCE_ID
                            left join M_MATCHINV mi             on l.M_InOutLine_ID=mi.M_InOutLine_ID
                            left join c_orderline ol on l.c_orderline_id = ol.c_orderline_id
@@ -353,8 +355,8 @@
         GROUP BY s.M_InOut_ID, s.DocumentNo, s.MovementDate, l.MovementQty,l.C_UOM_ID,uom.UOMSymbol,
         l.M_Product_ID,ma.serno,p.NAME, l.M_InOutLine_ID,l.Line,l.C_OrderLine_ID,
         COALESCE(l.A_Asset_ID, s.A_Asset_ID), COALESCE(l.C_Project_ID, s.C_Project_ID), COALESCE(l.C_Costcenter_ID, s.C_Costcenter_ID),
-        COALESCE(l.User1_ID, s.User1_ID), COALESCE(l.User2_ID, s.User2_ID)
-        HAVING  (l.MovementQty-SUM(COALESCE(mi.Qty,0))) <> 0
+        COALESCE(l.User1_ID, s.User1_ID), COALESCE(l.User2_ID, s.User2_ID), l.explode, l.bom_parent_id
+        HAVING  (((l.MovementQty-SUM(COALESCE(mi.Qty,0))) <> 0) OR (l.explode='Y'))
         ORDER BY NAME, l.Line
       ]]>
     </Sql>
@@ -409,7 +411,8 @@
         l.M_InOutLine_ID as C_OrderLine_ID,
         COALESCE(l.A_Asset_ID, s.A_Asset_ID) AS A_Asset_ID, COALESCE(l.C_Project_ID, s.C_Project_ID) AS C_Project_ID, 
         COALESCE(l.C_Costcenter_ID, s.C_Costcenter_ID) AS C_Costcenter_ID,
-        COALESCE(l.User1_ID, s.User1_ID) AS User1_ID, COALESCE(l.User2_ID, s.User2_ID) AS User2_ID
+        COALESCE(l.User1_ID, s.User1_ID) AS User1_ID, COALESCE(l.User2_ID, s.User2_ID) AS User2_ID, l.explode, l.Bom_parent_id, 
+        CASE WHEN l.Bom_parent_id is null then 'Y' else 'N' END as isparent
         FROM M_INOUTLINE l
                 left join M_ATTRIBUTESETINSTANCE ma on l.M_ATTRIBUTESETINSTANCE_ID = ma.M_ATTRIBUTESETINSTANCE_ID
                 left join c_orderline ol on l.c_orderline_id = ol.c_orderline_id
@@ -430,9 +433,10 @@
         GROUP BY s.M_InOut_ID, s.DocumentNo, s.MovementDate, l.MovementQty,l.C_UOM_ID,uom.UOMSymbol,
         l.M_Product_ID,p.NAME, ma.serno, l.M_InOutLine_ID,l.Line,l.C_OrderLine_ID,
         COALESCE(l.A_Asset_ID, s.A_Asset_ID), COALESCE(l.C_Project_ID, s.C_Project_ID), COALESCE(l.C_Costcenter_ID, s.C_Costcenter_ID),
-        COALESCE(l.User1_ID, s.User1_ID), COALESCE(l.User2_ID, s.User2_ID)
+        COALESCE(l.User1_ID, s.User1_ID), COALESCE(l.User2_ID, s.User2_ID), l.explode, l.Bom_parent_id
         HAVING (l.movementqty >= 0 AND l.movementqty > SUM(COALESCE(CASE WHEN i.docstatus = 'CO' THEN il.qtyinvoiced ELSE 0 END, 0)))
            OR (l.movementqty < 0 AND l.movementqty < SUM(COALESCE(CASE WHEN i.docstatus = 'CO' THEN il.qtyinvoiced ELSE 0 END, 0)))
+           OR (l.explode='Y')
         ORDER BY NAME, l.Line
       ]]>
     </Sql>
@@ -590,7 +594,8 @@
       l.M_Product_UOM_ID, l.M_ATTRIBUTESETINSTANCE_ID, l.ad_org_id, COALESCE(co.taxbaseamt,0) * C_DIVIDE((l.MovementQty-SUM(COALESCE(mi.Qty,0))),COALESCE(co.qtyordered,1)) as taxbaseamt,
       COALESCE(l.A_Asset_ID, s.A_Asset_ID) AS A_Asset_ID, COALESCE(l.C_Project_ID, s.C_Project_ID) AS C_Project_ID, 
       COALESCE(l.C_Costcenter_ID, s.C_Costcenter_ID) AS C_Costcenter_ID,
-      COALESCE(l.User1_ID, s.User1_ID) AS User1_ID, COALESCE(l.User2_ID, s.User2_ID) AS User2_ID
+      COALESCE(l.User1_ID, s.User1_ID) AS User1_ID, COALESCE(l.User2_ID, s.User2_ID) AS User2_ID,
+      l.explode, 'N' as isOrder
       FROM M_INOUTLINE l left join M_MATCHINV mi on l.M_InOutLine_ID=mi.M_InOutLine_ID
             left join C_ORDERLINE co ON co.C_ORDERLINE_ID=l.C_ORDERLINE_ID,
       C_UOM uom,  M_PRODUCT p, M_InOut s
@@ -599,7 +604,7 @@
       AND l.M_Product_ID=p.M_Product_ID
       GROUP BY l.MovementQty,l.C_UOM_ID,uom.UOMSymbol,l.M_Product_ID,p.NAME, l.M_InOutLine_ID,l.Line,l.C_OrderLine_ID, l.Description,l.quantityOrder, l.M_Product_UOM_ID, l.M_ATTRIBUTESETINSTANCE_ID, l.ad_org_id, co.taxbaseamt,co.qtyordered,
       COALESCE(l.A_Asset_ID, s.A_Asset_ID), COALESCE(l.C_Project_ID, s.C_Project_ID), COALESCE(l.C_Costcenter_ID, s.C_Costcenter_ID),
-      COALESCE(l.User1_ID, s.User1_ID), COALESCE(l.User2_ID, s.User2_ID)
+      COALESCE(l.User1_ID, s.User1_ID), COALESCE(l.User2_ID, s.User2_ID),l.explode
       ORDER BY l.Line
       ]]>
     </Sql>
@@ -616,7 +621,8 @@
         l.M_ATTRIBUTESETINSTANCE_ID, l.ad_org_id,
         COALESCE(l.A_Asset_ID, s.A_Asset_ID) AS A_Asset_ID, COALESCE(l.C_Project_ID, s.C_Project_ID) AS C_Project_ID, 
         COALESCE(l.C_Costcenter_ID, s.C_Costcenter_ID) AS C_Costcenter_ID,
-        COALESCE(l.User1_ID, s.User1_ID) AS User1_ID, COALESCE(l.User2_ID, s.User2_ID) AS User2_ID
+        COALESCE(l.User1_ID, s.User1_ID) AS User1_ID, COALESCE(l.User2_ID, s.User2_ID) AS User2_ID, 
+        l.explode, 'N' as isOrder
         FROM C_UOM uom, M_INOUTLINE l
           left join c_invoiceline il on l.m_inoutline_id = il.m_inoutline_id
           left join c_invoice i on il.c_invoice_id = i.c_invoice_id 
@@ -626,9 +632,10 @@
         AND l.M_Product_ID=p.M_Product_ID 
         GROUP BY l.MovementQty,l.C_UOM_ID,uom.UOMSymbol,l.M_Product_ID,p.NAME, l.M_InOutLine_ID,l.Line,l.C_OrderLine_ID, l.Description, l.quantityOrder, l.M_Product_UOM_ID, l.M_ATTRIBUTESETINSTANCE_ID, l.ad_org_id, l.m_inout_id,
         COALESCE(l.A_Asset_ID, s.A_Asset_ID), COALESCE(l.C_Project_ID, s.C_Project_ID), COALESCE(l.C_Costcenter_ID, s.C_Costcenter_ID),
-        COALESCE(l.User1_ID, s.User1_ID), COALESCE(l.User2_ID, s.User2_ID)
+        COALESCE(l.User1_ID, s.User1_ID), COALESCE(l.User2_ID, s.User2_ID), l.explode
         HAVING (l.movementqty >= 0 AND l.movementqty > SUM(COALESCE(CASE WHEN i.docstatus = 'CO' THEN il.qtyinvoiced ELSE 0 END, 0)))
           OR (l.movementqty < 0 AND l.movementqty < SUM(COALESCE(CASE WHEN i.docstatus = 'CO' THEN il.qtyinvoiced ELSE 0 END, 0)))
+          OR(l.explode='Y') 
         ORDER BY l.Line
       ]]>
     </Sql>
@@ -704,7 +711,8 @@
         M_Attributesetinstance_ID, PriceStd, taxbaseamt, excludeforwithholding,
         gross_unit_price, line_gross_amount, grosspricelist, grosspricestd,
         isdeferred, defplantype, periodnumber, c_period_id,
-        a_asset_id, c_project_id, c_costcenter_id, user1_id, user2_id
+        a_asset_id, c_project_id, c_costcenter_id, user1_id, user2_id, explode, 
+        BOM_Parent_id
         )
       VALUES 
         (?, ?, ?, ?, 'Y', 
@@ -716,8 +724,21 @@
          ?, TO_NUMBER(?), TO_NUMBER(?), 'N',
          TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?),
          ?, ?, TO_NUMBER(?), ?,
-         ?, ?, ?, ?, ?
+         ?, ?, ?, ?, ?, ?,
+         (CASE to_char(?) WHEN 'Y' THEN (SELECT c_invoiceline_id 
+                                FROM c_invoiceline 
+                                WHERE c_invoice_id=? 
+                                   and c_orderline_id = (SELECT BOM_parent_id 
+                                                         FROM c_orderline 
+                                                         WHERE c_orderline_id = ?))
+          ELSE (SELECT c_invoiceline_id 
+                FROM c_invoiceline 
+                WHERE c_invoice_id=? 
+                and m_inoutline_id = (SELECT BOM_parent_id 
+                                      FROM m_inoutline 
+                                      WHERE m_inoutline_id = ?)) END
          )
+        )
     </Sql>
     <Parameter name="cInvoicelineId"/>
     <Parameter name="cInvoiceId"/>
@@ -756,6 +777,12 @@
     <Parameter name="cCostcenterId"/>
     <Parameter name="user1Id"/>
     <Parameter name="user2Id"/>
+    <Parameter name="explode"/>
+    <Parameter name="isOrder"/>
+    <Parameter name="cInvoiceId"/>
+    <Parameter name="cOrderlineId"/>
+    <Parameter name="cInvoiceId"/>
+    <Parameter name="mInoutlineId"/>
   </SqlMethod>
   <SqlMethod name="insertAcctDimension" type="preparedStatement" connection="true" return="rowCount">
     <SqlMethodComment>Copies the order line accounting dimensions to invoice lines</SqlMethodComment>

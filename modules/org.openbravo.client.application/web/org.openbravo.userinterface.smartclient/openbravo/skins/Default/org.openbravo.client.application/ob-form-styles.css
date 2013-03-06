@@ -50,6 +50,7 @@
 
 .OBFormField,
 .OBFormFieldDisabled,
+.OBFormFieldRequired,
 .OBFormFieldFocused,
 .OBFormFieldError {
   font-family: 'lucida sans', sans-serif;
@@ -60,6 +61,7 @@
 
 .OBFormFieldLabel,
 .OBFormFieldLabelDisabled,
+.OBFormFieldLabelRequired,
 .OBFormFieldLabelError,
 .OBFormFieldLabelFocused {
   font-family: 'lucida sans', sans-serif;

@@ -121,6 +121,14 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="EXPLODE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="BOM_PARENT_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="M_CONDITION_GOODS" name="M_CONDITION_GOODS">
         <reference local="M_CONDITION_GOODS_ID" foreign="M_CONDITION_GOODS_ID"/>
       </foreign-key>
@@ -132,6 +140,9 @@
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="M_INOUTLINE_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_INOUTLINE" name="M_INOUTLINE_BOMPARENTID">
+        <reference local="BOM_PARENT_ID" foreign="M_INOUTLINE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_BPARTNER" name="M_INOUTLINE_C_BPARTNER">
         <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
@@ -182,6 +193,7 @@
         <index-column name="M_PRODUCT_ID"/>
       </index>
       <check name="M_INOUTLINE"><![CDATA[((QUANTITYORDER IS NULL) AND (M_PRODUCT_UOM_ID IS NULL)) OR ((QUANTITYORDER IS NOT NULL) AND (M_PRODUCT_UOM_ID IS NOT NULL))]]></check>
+      <check name="M_INOUTLINE_EXPLODE_CHECK"><![CDATA[EXPLODE IN ('Y', 'N')]]></check>
       <check name="M_INOUTLINE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="M_INOUTLINE_ISINVOICED_CHECK"><![CDATA[ISINVOICED IN ('Y', 'N')]]></check>
     </table>

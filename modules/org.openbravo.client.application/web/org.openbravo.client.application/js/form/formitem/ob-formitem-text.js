@@ -102,7 +102,7 @@ isc.OBTextItem.addProperties({
   },
 
   setMask: function (mask) {
-    isc.Super('setMask', arguments);
+    this.Super('setMask', arguments);
     this.resetMaskValidator(mask);
   }
 

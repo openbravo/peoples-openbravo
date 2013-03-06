@@ -1,14 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <data>
-<!--100--><AD_CALLOUT>
-<!--100-->  <AD_CALLOUT_ID><![CDATA[100]]></AD_CALLOUT_ID>
-<!--100-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--100-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--100-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--100-->  <NAME><![CDATA[A_Asset_Post0]]></NAME>
-<!--100-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--100--></AD_CALLOUT>
-
 <!--102--><AD_CALLOUT>
 <!--102-->  <AD_CALLOUT_ID><![CDATA[102]]></AD_CALLOUT_ID>
 <!--102-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>

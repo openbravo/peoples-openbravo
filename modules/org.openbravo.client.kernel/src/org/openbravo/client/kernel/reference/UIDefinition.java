@@ -382,6 +382,10 @@ public abstract class UIDefinition {
     return "";
   }
 
+  public String getParameterWidth(Parameter parameter) {
+    return "*";
+  }
+
   /**
    * Computes properties to initialize and set the field in a Smartclient grid cell when it is being
    * edited. This can be the default value or the sets of values in the valuemap.
