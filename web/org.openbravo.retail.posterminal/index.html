@@ -21,7 +21,20 @@
 
   <script src="../../org.openbravo.client.kernel/OBMOBC_Main/Lib?_id=Enyo"></script>
   <script src="../../org.openbravo.client.kernel/OBMOBC_Main/Lib?_id=Deps"></script>
+    <script src="../org.openbravo.client.kernel/js/LAB.min.js"></script>
+    
+ 
+  <script src="../../org.openbravo.client.kernel/OBCLKER_Kernel/StaticResources?_appName=WebPOS"></script>
+  <script src="js/data/localDB.js"></script>
+  <script src="js/model/user.js"></script>
+  <script src="js/model/session.js"></script>
   
+   
+  <script src="js/model/order.js"></script>
+  <script src="js/model/product-category.js"></script>
+  <script src="js/model/product.js"></script>
+  <script src="js/model/businesspartner.js"></script>
+  <script src="js/model/document-sequence.js"></script>
   
   
   <link rel="stylesheet" type="text/css" href="../org.openbravo.mobile.core/assets/css/ob-standard.css" />
@@ -30,39 +43,39 @@
 
 <body class="enyo-body-fit webkitOverflowScrolling" style="background-color: darkgray; background: url(../org.openbravo.mobile.core/assets/img/BACKGROUND-PNG24.png) top left">
   <script src="../org.openbravo.mobile.core/lib/vendor/bigdecimal-1.0.1.min.js"></script>
-  <script src="../org.openbravo.client.kernel/js/LAB.min.js"></script>
   <script src="js/libs/jquery-1.7.2.js"></script>
   
   <script src="js/libs/core-min.js"></script>
   <script src="js/libs/sha1-min.js"></script>
 
   <!-- Login application -->
-  <script src="../org.openbravo.client.application/js/utilities/ob-utilities-date.js"></script>
-  <script src="../org.openbravo.mobile.core/source/data/ob-datasource.js"></script>
-  <script src="js/datasource.js"></script>
-  <script src="../org.openbravo.mobile.core/source/utils/ob-utilities.js"></script>
-  <script src="../org.openbravo.mobile.core/source/utils/ob-utilitiesui.js"></script>
-  <script src="../org.openbravo.mobile.core/source/utils/ob-i18n.js"></script>
-  <script src="../org.openbravo.mobile.core/source/component/ob-clock.js"></script>
-  <script src="../org.openbravo.mobile.core/source/model/ob-terminal-model.js"></script>
-  <script src="../org.openbravo.mobile.core/source/component/ob-terminal-component.js"></script>
-  <script src="../org.openbravo.mobile.core/source/component/ob-logout.js"></script>
-  <script src="../org.openbravo.mobile.core/source/component/ob-menu.js"></script>
-  <script src="js/login/model/login-model.js"></script>
-  <script src="../org.openbravo.mobile.core/source/component/ob-commonbuttons.js"></script>
-  <script src="../org.openbravo.mobile.core/source/component/ob-login.js"></script>
-  <script src="../org.openbravo.mobile.core/source/data/ob-model.js"></script>
-  <script src="../org.openbravo.mobile.core/source/data/ob-dal.js"></script>
-  <script src="js/data/localDB.js"></script>
+<!--   <script src="../org.openbravo.client.application/js/utilities/ob-utilities-date.js"></script> -->
+<!--   <script src="../org.openbravo.mobile.core/source/data/ob-datasource.js"></script> -->
+<!--   <script src="js/datasource.js"></script> -->
+<!--   <script src="../org.openbravo.mobile.core/source/utils/ob-utilities.js"></script> -->
+<!--   <script src="../org.openbravo.mobile.core/source/utils/ob-utilitiesui.js"></script> -->
+<!--   <script src="../org.openbravo.mobile.core/source/utils/ob-i18n.js"></script> -->
+<!--   <script src="../org.openbravo.mobile.core/source/component/ob-clock.js"></script> -->
+<!--   <script src="../org.openbravo.mobile.core/source/model/ob-terminal-model.js"></script> -->
+<!--   <script src="../org.openbravo.mobile.core/source/component/ob-terminal-component.js"></script> -->
+<!--   <script src="../org.openbravo.mobile.core/source/component/ob-logout.js"></script> -->
+<!--   <script src="../org.openbravo.mobile.core/source/component/ob-commonbuttons.js"></script> -->
+<!--   <script src="../org.openbravo.mobile.core/source/component/ob-context-menu.js"></script> -->
+<!--   <script src="../org.openbravo.mobile.core/source/component/ob-menu.js"></script> -->
+<!--   <script src="js/login/model/login-model.js"></script> -->
+<!--   <script src="../org.openbravo.mobile.core/source/component/ob-login.js"></script> -->
+<!--   <script src="../org.openbravo.mobile.core/source/data/ob-model.js"></script> -->
+<!--   <script src="../org.openbravo.mobile.core/source/data/ob-dal.js"></script> -->
+  
+  
 
-  <script src="js/model/product-category.js"></script>
-  <script src="js/model/product.js"></script>
-  <script src="js/model/businesspartner.js"></script>
-  <script src="js/model/document-sequence.js"></script>
-  <script src="js/model/user.js"></script>
-  <script src="js/model/session.js"></script>
-  <script src="../org.openbravo.mobile.core/source/utils/ob-arithmetic.js"></script>
-  <script src="js/model/order.js"></script>
+<!--   <script src="js/model/product-category.js"></script> -->
+<!--   <script src="js/model/product.js"></script> -->
+<!--   <script src="js/model/businesspartner.js"></script> -->
+<!--   <script src="js/model/document-sequence.js"></script> -->
+
+<!--   <script src="../org.openbravo.mobile.core/source/utils/ob-arithmetic.js"></script> -->
+
   
   <script>
     (function () {
@@ -89,7 +102,11 @@
   </script>
 
   <script>
-  OB.POS.terminal.renderInto(document.body);
+
+OB.POS.terminal = new OB.UI.Terminal({
+terminal: OB.POS.modelterminal
+});
+OB.POS.terminal.write();
   </script>
   <div id="terminal" class="pos-container">
     <div class="section" id="terminal_topsection">

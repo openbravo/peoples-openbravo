@@ -151,7 +151,7 @@ enyo.kind({
     modelPropertyText: 'businessPartnerCategory_name',
     //optional: When saving, the property which will store the selected text
     collection: new OB.Collection.BPCategoryList(),
-    defaultValue: OB.POS.modelterminal.get('terminal').defaultbp_bpcategory,
+   // defaultValue: OB.POS.modelterminal.get('terminal').defaultbp_bpcategory,
     //Default value for new lines
     retrievedPropertyForValue: 'id',
     //property of the retrieved model to get the value of the combo item
@@ -170,13 +170,13 @@ enyo.kind({
       }, args);
     },
     label: OB.I18N.getLabel('OBPOS_BPCategory'),
-    displayLogic: OB.POS.modelterminal.get('terminal').bp_showcategoryselector
+   // displayLogic: OB.POS.modelterminal.get('terminal').bp_showcategoryselector
   }, {
     kind: 'OB.UI.CustomerTextProperty',
     name: 'customerTaxId',
     modelProperty: 'taxID',
     label: OB.I18N.getLabel('OBPOS_LblTaxId'),
-    displayLogic: OB.POS.modelterminal.get('terminal').bp_showtaxid
+   // displayLogic: OB.POS.modelterminal.get('terminal').bp_showtaxid
   }, {
     kind: 'OB.UI.CustomerTextProperty',
     name: 'customerLocName',

@@ -15,9 +15,9 @@
   OB.DATA = window.OB.DATA || {};
 
   // Order taxes in descent order by lineNo
-  OB.Collection.TaxRateList.prototype.comparator = function (tax) {
-    return tax.get('lineNo');
-  };
+//  OB.Collection.TaxRateList.prototype.comparator = function (tax) {
+//    return tax.get('lineNo');
+//  };
 
   OB.DATA.OrderTaxes = function (modelOrder) {
     this._id = 'logicOrderTaxes';

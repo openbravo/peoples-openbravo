@@ -29,24 +29,30 @@
 
     // Set Arithmetic properties:
     OB.DEC.setContext(OB.POS.modelterminal.get('currency').pricePrecision, BigDecimal.prototype.ROUND_HALF_EVEN);
-    webwindow = OB.MobileApp.model.windows.where({
-      route: OB.POS.paramWindow
-    })[0].get('windowClass');
 
-    if (webwindow) {
-      if (OB.POS.modelterminal.hasPermission(OB.POS.paramWindow)) {
-        OB.POS.navigate('retail.pointofsale');
-      } else {
-        OB.UTIL.showLoading(false);
-        alert(OB.I18N.getLabel('OBPOS_WindowNotPermissions', [OB.POS.paramWindow]));
-      }
-    } else {
-      OB.UTIL.showLoading(false);
-      alert(OB.I18N.getLabel('OBPOS_WindowNotFound', [OB.POS.paramWindow]));
-    }
+
+    // TODO: check permissions: this has been removed because windows are not already loaded
+    // at this point
+    //    webwindow = OB.MobileApp.model.windows.where({
+    //      route: OB.POS.paramWindow
+    //    })[0].get('windowClass');
+    //
+    //    if (webwindow) {
+    //      if (OB.POS.modelterminal.hasPermission(OB.POS.paramWindow)) {
+    //        OB.POS.navigate('retail.pointofsale');
+    //      } else {
+    //        OB.UTIL.showLoading(false);
+    //        alert(OB.I18N.getLabel('OBPOS_WindowNotPermissions', [OB.POS.paramWindow]));
+    //      }
+    //    } else {
+    //      OB.UTIL.showLoading(false);
+    //      alert(OB.I18N.getLabel('OBPOS_WindowNotFound', [OB.POS.paramWindow]));
+    //    }
+    OB.POS.navigate('retail.pointofsale');
     if (OB.POS.modelterminal.get('loggedOffline') === true) {
       OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_OfflineLogin'));
     }
+
   });
 
   modelterminal.on('loginsuccess', function () {
@@ -65,7 +71,7 @@
 
   executeWhenDOMReady = function () {
     if (document.readyState === "interactive" || document.readyState === "complete") {
-      modelterminal.load();
+      //modelterminal.load();
       //TODO: this is required but should be changed to make it possible to be included in terminal component
       modelterminal.on('ready', function () {
         OB.POS.terminal.$.dialogsContainer.createComponent({

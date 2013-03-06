@@ -155,14 +155,14 @@ enyo.kind({
     modelProperty: 'businessPartnerCategory_name',
     label: OB.I18N.getLabel('OBPOS_BPCategory'),
     readOnly: true,
-    displayLogic: OB.POS.modelterminal.get('terminal').bp_showcategoryselector
+    //displayLogic: OB.POS.modelterminal.get('terminal').bp_showcategoryselector
   }, {
     kind: 'OB.UI.CustomerTextProperty',
     name: 'customerTaxId',
     modelProperty: 'taxID',
     label: OB.I18N.getLabel('OBPOS_LblTaxId'),
     readOnly: true,
-    displayLogic: OB.POS.modelterminal.get('terminal').bp_showtaxid
+  //  displayLogic: OB.POS.modelterminal.get('terminal').bp_showtaxid
   }, {
     kind: 'OB.UI.CustomerTextProperty',
     name: 'customerLocName',

@@ -71,7 +71,7 @@
         $LAB.setGlobalDefaults({
           AppendTo: 'body'
         });
-        OB.POS.cleanWindows();
+     //   OB.POS.cleanWindows();
         if (!OB.MobileApp.model.get('connectedToERP')) {
           OB.Format = JSON.parse(me.usermodel.get('formatInfo'));
 
@@ -84,7 +84,9 @@
           $LAB.script('../../org.openbravo.client.kernel/OBMOBC_Main/ClientModel?entity=PricingAdjustmentProduct&modelName=DiscountFilterProduct&source=org.openbravo.retail.posterminal.master.DiscountFilterProduct');
           $LAB.script('../../org.openbravo.client.kernel/OBMOBC_Main/ClientModel?entity=PricingAdjustmentProductCategory&modelName=DiscountFilterProductCategory&source=org.openbravo.retail.posterminal.master.DiscountFilterProductCategory');
 
-          $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/StaticResources?_appName=WebPOS');
+          me.load();
+        // $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/StaticResources?_appName=WebPOS');
+          OB.POS.navigate('retail.pointofsale'); //TODO: this was in main.js, check it
           return;
         }
         $LAB.script('../../org.openbravo.client.kernel/OBCLKER_Kernel/Application').wait(function () {
@@ -96,6 +98,8 @@
           OB.Dal.save(me.usermodel, function () {}, function () {
             window.console.error(arguments);
           });
+          
+          me.load();
 
 
           $LAB.script('../../org.openbravo.client.kernel/OBMOBC_Main/ClientModel?entity=FinancialMgmtTaxRate&modelName=TaxRate&source=org.openbravo.retail.posterminal.master.TaxRate');
@@ -107,14 +111,11 @@
           $LAB.script('../../org.openbravo.client.kernel/OBMOBC_Main/ClientModel?entity=PricingAdjustmentProduct&modelName=DiscountFilterProduct&source=org.openbravo.retail.posterminal.master.DiscountFilterProduct');
           $LAB.script('../../org.openbravo.client.kernel/OBMOBC_Main/ClientModel?entity=PricingAdjustmentProductCategory&modelName=DiscountFilterProductCategory&source=org.openbravo.retail.posterminal.master.DiscountFilterProductCategory');
 
-          $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/StaticResources?_appName=WebPOS');
+      //    $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/StaticResources?_appName=WebPOS');
+          OB.POS.navigate('retail.pointofsale'); //TODO: this was in main.js, check it
         });
       });
       if (OB.MobileApp.model.get('connectedToERP')) {
-        new OB.DS.Request('org.openbravo.retail.posterminal.term.Labels').exec({
-          languageId: window.localStorage.getItem('POSlanguageId')
-        }, function (data) {
-          OB.I18N.labels = data;
 
           new OB.DS.Request('org.openbravo.retail.posterminal.term.Terminal').exec(params, function (data) {
             if (data.exception) {
@@ -135,7 +136,6 @@
               OB.UTIL.showError("Terminal does not exists: " + params.terminal);
             }
           });
-        });
       } else {
         //Offline mode, we get the terminal information from the local db
         me.set('terminal', JSON.parse(me.usermodel.get('terminalinfo')).terminal);
@@ -477,6 +477,7 @@
 
     triggerReady: function () {
       var undef, loadModelsIncFunc, loadModelsTotalFunc, minTotalRefresh, minIncRefresh;
+      console.log(this.get('payments'), this.get('pricelistversion'), this.get('warehouses'), this.get('currency'), this.get('context'), this.get('writableOrganizations'), this.get('permissions'), this.get('documentsequence'),  this.get('windowRegistered') );
       if (this.get('payments') && this.get('pricelistversion') && this.get('warehouses') && this.get('currency') && this.get('context') && this.get('writableOrganizations') && this.get('permissions') && (this.get('documentsequence') !== undef || this.get('documentsequence') === 0) && this.get('windowRegistered') !== undef) {
         OB.MobileApp.model.loggingIn = false;
         if (OB.MobileApp.model.get('connectedToERP')) {
@@ -531,18 +532,17 @@
         trigger: true
       });
     },
-    registerWindow: function (windowName, window) {
-      this.modelterminal.registerWindow(windowName, window);
-
+    registerWindow: function (window) {
+      OB.MobileApp.windowRegistry.registerWindow(window);
     },
     cleanWindows: function () {
       this.modelterminal.cleanWindows();
     }
   };
 
-  OB.POS.terminal = new OB.UI.Terminal({
-    terminal: OB.POS.modelterminal
-  });
+//  OB.POS.terminal = new OB.UI.Terminal({
+//    terminal: OB.POS.modelterminal
+//  });
 
   OB.POS.modelterminal.set('loginUtilsParams', {
     terminalName: OB.POS.paramTerminal
