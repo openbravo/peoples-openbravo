@@ -87,6 +87,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     final String prefix = "web/" + POSUtils.MODULE_JAVA_PACKAGE + "/js/";
 
     final String[] resourceDependency = {
+        "login/model/login-model",
+
         // Common components
         "datasource",
         // "data/dal",
@@ -106,7 +108,6 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/modalcancel",
         "components/subwindow",
         "components/leftsubwindow",
-        "components/windowview",
         "components/modalreceiptproperties",
         "components/modalreceiptlineproperties",
         "components/modalnoteditableorder",
@@ -196,7 +197,9 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/mockpayments",
 
         // Discounts
-        "model/discounts" };
+        "model/discounts",
+
+    };
 
     for (String resource : resourceDependency) {
       globalResources.add(createComponentResource(ComponentResourceType.Static, prefix + resource
