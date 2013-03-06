@@ -2534,7 +2534,11 @@ isc.OBViewGrid.addProperties({
     if (rowNum === undef) {
       // nothing selected
       if (!this.getSelectedRecord()) {
-        insertRow = this.getTotalRows();
+        if (this.getTotalRows() > this.data.cachedRows) {
+          insertRow = 0;
+        } else {
+          insertRow = this.getTotalRows();
+        }
       } else {
         insertRow = 1 + this.getRecordIndex(this.getSelectedRecord());
       }
