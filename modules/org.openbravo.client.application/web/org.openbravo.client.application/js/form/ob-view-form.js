@@ -920,7 +920,7 @@ OB.ViewFormProperties = {
     var typeInstance;
     var assignValue;
     var assignClassicValue;
-    var isDate, isDateTime, i, valueMap = {},
+    var isDate, isDateTime, isImage, i, valueMap = {},
         oldValue, field = this.getFieldFromColumnName(columnName),
         entries = columnValue.entries;
     // not a field on the form, probably a datasource field
@@ -975,10 +975,14 @@ OB.ViewFormProperties = {
     } else if (columnValue.value || columnValue.value === 0 || columnValue.value === false) {
       isDate = field.type && (isc.SimpleType.getType(field.type).inheritsFrom === 'date' || isc.SimpleType.getType(field.type).inheritsFrom === 'time');
       isDateTime = field.type && isc.SimpleType.getType(field.type).inheritsFrom === 'datetime';
+      isImage = field.type && isc.SimpleType.getType(field.type).inheritsFrom === 'image';
       if (isDate) {
         this.setItemValue(field.name, isc.Date.parseSchemaDate(columnValue.value));
       } else if (isDateTime) {
         this.setItemValue(field.name, isc.Date.parseStandardDate(columnValue.value));
+      } else if (isImage) {
+        //calls setValue to handle buttons display for read-only windows
+        this.setValue(field.name, assignValue);
       } else if (columnValue.hasDateDefault) {
         this.setItemValue(field.name, columnValue.classicValue);
       } else {
@@ -1016,6 +1020,11 @@ OB.ViewFormProperties = {
     } else {
       // note: do not use clearvalue as this removes the value from the form
       // which results it to not be sent to the server anymore
+      isImage = field.type && isc.SimpleType.getType(field.type).inheritsFrom === 'image';
+      if (isImage) {
+        //calls setValue to handle buttons display for read-only windows
+        this.setValue(field.name, null);
+      }
       this.setItemValue(field.name, null);
       if (this.getValue(field.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER)) {
         this.setItemValue(field.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, null);
