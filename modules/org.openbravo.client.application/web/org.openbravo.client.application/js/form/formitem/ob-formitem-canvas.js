@@ -141,5 +141,8 @@ isc.OBAddPercentageSign.addProperties({
     } else {
       this.setContents(displayValue + ' %');
     }
+    if (this.grid && this.grid.body) {
+      this.grid.body.markForRedraw();
+    }
   }
 });
