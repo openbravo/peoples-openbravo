@@ -437,7 +437,9 @@ enyo.kind({
     } else {
       this.$.keyboard.hide();
     }
-
+    if (!_.isUndefined(inEvent.status)) {
+      this.$.keyboard.setStatus(inEvent.status);
+    }
   },
   discountsModeFinished: function (inSender, inEvent) {
     this.leftToolbarDisabled(inSender, {

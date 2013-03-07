@@ -188,7 +188,8 @@ enyo.kind({
         tabPanel: this.tabPanel,
         keyboard: 'toolbarscan',
         edit: false,
-        options: options
+        options: options,
+        status: ''
       });
     }
   }
