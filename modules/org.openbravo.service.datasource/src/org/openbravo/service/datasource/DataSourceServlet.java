@@ -264,6 +264,7 @@ public class DataSourceServlet extends BaseKernelServlet {
     List<String> refListCols = new ArrayList<String>();
     List<String> dateCols = new ArrayList<String>();
     List<String> dateTimeCols = new ArrayList<String>();
+    List<String> timeCols = new ArrayList<String>();
     List<String> numericCols = new ArrayList<String>();
     Map<String, DecimalFormat> formats = new HashMap<String, DecimalFormat>();
     int clientUTCOffsetMiliseconds;
@@ -418,6 +419,8 @@ public class DataSourceServlet extends BaseKernelServlet {
               dateCols.add(propKey);
             } else if (prop.isDatetime()) {
               dateTimeCols.add(propKey);
+            } else if (prop.isTime()) {
+              timeCols.add(propKey);
             } else if (prop.isPrimitive() && prop.isNumericType()) {
               numericCols.add(propKey);
             }
@@ -567,6 +570,14 @@ public class DataSourceServlet extends BaseKernelServlet {
             SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
             dateFormat.setLenient(true);
             keyValue = dateFormat.format(clientTimezoneDate);
+          } else if (timeCols.contains(key) && keyValue != null
+              && !keyValue.toString().equals("null")) {
+            Date UTCdate = JsonUtils.createTimeFormatWithoutGMTOffset().parse(keyValue.toString());
+            Date clientTimezoneDate = null;
+            clientTimezoneDate = convertFromUTCToClientTimezone(UTCdate);
+            SimpleDateFormat timeFormat = JsonUtils.createTimeFormatWithoutGMTOffset();
+            timeFormat.setLenient(true);
+            keyValue = timeFormat.format(clientTimezoneDate);
           }
 
           if (keyValue != null && !keyValue.toString().equals("null")) {
@@ -587,19 +598,25 @@ public class DataSourceServlet extends BaseKernelServlet {
     private Date convertFromLocalToClientTimezone(Date localDate) {
 
       Date UTCDate = convertFromLocalToUTCTimezone(localDate);
-      Calendar calendar = null;
+      Date clientDate = convertFromUTCToClientTimezone(UTCDate);
+
+      return clientDate;
+    }
+
+    private Date convertFromUTCToClientTimezone(Date UTCdate) {
+      Calendar calendar = Calendar.getInstance();
+      calendar.setTime(UTCdate);
       if (clientTimeZone != null) {
         calendar = Calendar.getInstance(clientTimeZone);
-        calendar.setTime(UTCDate);
+        calendar.setTime(UTCdate);
         int gmtMillisecondOffset = (calendar.get(Calendar.ZONE_OFFSET) + calendar
             .get(Calendar.DST_OFFSET));
         calendar.add(Calendar.MILLISECOND, gmtMillisecondOffset);
       } else {
         calendar = Calendar.getInstance();
-        calendar.setTime(UTCDate);
+        calendar.setTime(UTCdate);
         calendar.add(Calendar.MILLISECOND, clientUTCOffsetMiliseconds);
       }
-
       return calendar.getTime();
     }
 
