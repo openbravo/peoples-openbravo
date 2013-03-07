@@ -366,11 +366,6 @@ enyo.kind({
 });
 
 enyo.kind({
-  name: 'OB.UI.MenuSeparator',
-  classes: 'dropdown-menudivider'
-});
-
-enyo.kind({
   name: 'OB.UI.MenuPaidReceipts',
   kind: 'OB.UI.MenuAction',
   permission: 'OBPOS_retail.paidReceipts',
