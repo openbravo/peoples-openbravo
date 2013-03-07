@@ -64,6 +64,8 @@ public class Product extends ProcessHQLQuery {
             + "ppp.priceListVersion.id = pplv.id"
             + ") AND ("
             + "pli.product.id = ppp.product.id"
+            + ") AND ("
+            + "pli.product.active = true"
             + ") AND "
             + "(pli.product.$incrementalUpdateCriteria) order by pli.product.name");
 
