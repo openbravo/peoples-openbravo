@@ -232,7 +232,7 @@ isc.OBViewGrid.addProperties({
     },
 
     transformData: function (newData, dsResponse) {
-      var i, length, timeFields;
+      var i, length, timeFields, responseToFilter;
 
       // when the data is received from the datasource, time fields are formatted in UTC time. They have to be converted to local time
       if (dsResponse && dsResponse.context && (dsResponse.context.operationType === 'fetch' || dsResponse.context.operationType === 'update' || dsResponse.context.operationType === 'add')) {
@@ -246,7 +246,14 @@ isc.OBViewGrid.addProperties({
         return newData;
       }
       // correct the length if there is already data in the localData array
-      if (this.localData) {
+      // only do this if filtering is not the origin action to the datasource request
+      // see issue https://issues.openbravo.com/view.php?id=23006
+      responseToFilter = false;
+      if (dsResponse.context && dsResponse.context._dsRequest && dsResponse.context._dsRequest.filtering) {
+        responseToFilter = true;
+      }
+
+      if (this.localData && !responseToFilter) {
         length = this.localData.length;
         for (i = dsResponse.endRow + 1; i < length; i++) {
           if (!Array.isLoading(this.localData[i]) && this.localData[i]) {
@@ -261,6 +268,12 @@ isc.OBViewGrid.addProperties({
         // call with a delay otherwise the grid will keep requesting rows while processing the
         // current rowset
         this.delayCall('clearLoadingMarkers', [dsResponse.context.startRow, dsResponse.context.endRow], 100);
+      } else {
+        // Clear the filtering attribute from the context to prevent including it
+        // automatically in the following datasource requests
+        if (this.context) {
+          delete this.context.filtering;
+        }
       }
       if (this.localData && this.localData[dsResponse.totalRows]) {
         this.localData[dsResponse.totalRows] = null;
@@ -1703,6 +1716,7 @@ isc.OBViewGrid.addProperties({
       requestProperties = {};
     }
     requestProperties.showPrompt = false;
+    requestProperties.filtering = true;
 
     newCallBack = function () {
       theView.recordSelected();
