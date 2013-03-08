@@ -57,7 +57,7 @@ enyo.kind({
                 if (this.model.get('discountType') === '20E4EC27397344309A2185097392D964') {
                   //variable porcentaje
                   this.units = '%';
-                  if (this.model.get('obdiscPercentage')) {
+                  if (!_.isUndefined(this.model.get('obdiscPercentage')) && !_.isNull(this.model.get('obdiscPercentage'))) {
                     this.amt = this.model.get('obdiscPercentage');
                   }
                 } else if (this.model.get('discountType') === 'D1D193305A6443B09B299259493B272A') {
@@ -73,13 +73,13 @@ enyo.kind({
                 if (this.model.get('discountType') === '8338556C0FBF45249512DB343FEFD280') {
                   //fixed percentage
                   this.units = '%';
-                  if (this.model.get('obdiscPercentage')) {
+                  if (!_.isUndefined(this.model.get('obdiscPercentage')) && !_.isNull(this.model.get('obdiscPercentage'))) {
                     this.amt = this.model.get('obdiscPercentage');
                   }
                 } else if (this.model.get('discountType') === '7B49D8CC4E084A75B7CB4D85A6A3A578') {
                   //fixed amount
                   this.units = OB.POS.modelterminal.get('terminal').currency$_identifier;
-                  if (this.model.get('obdiscAmt')) {
+                  if (!_.isUndefined(this.model.get('obdiscAmt')) && !_.isNull(this.model.get('obdiscAmt'))) {
                     this.amt = this.model.get('obdiscAmt');
                   }
                 }
