@@ -176,7 +176,7 @@ enyo.kind({
 
     if (OB.POS.modelterminal.hasPermission(this.paymenttype)) {
       var me = this,
-          i, max, p, receipt = this.owner.owner.owner.owner.model.get('order'),
+          i, max, p, receipt = this.owner.owner.owner.owner.owner.owner.model.get('order'),
           openDrawer = false;
       for (i = 0, max = OB.POS.modelterminal.get('payments').length; i < max; i++) {
         p = OB.POS.modelterminal.get('payments')[i];

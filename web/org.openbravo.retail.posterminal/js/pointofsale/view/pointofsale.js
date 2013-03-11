@@ -76,104 +76,120 @@ enyo.kind({
     }, {
       kind: 'OB.OBPOSPointOfSale.UI.customers.editcustomer',
       name: 'customerView'
-    }]
+    },{
+        kind: 'OB.UI.ModalDeleteReceipt',
+        name: 'modalConfirmReceiptDelete'
+      }, {
+        kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalClosePaidReceipt',
+        name: 'modalConfirmClosePaidTicket'
+      }, {
+        kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalProductCannotBeGroup',
+        name: 'modalProductCannotBeGroup'
+      }, {
+        kind: 'OB.UI.Modalnoteditableorder',
+        name: 'modalNotEditableOrder'
+      }, {
+        kind: 'OB.UI.ModalNotEditableLine',
+        name: 'modalNotEditableLine'
+      }, {
+        kind: 'OB.UI.ModalBusinessPartners',
+        name: "modalcustomer"
+      }, {
+        kind: 'OB.UI.ModalReceipts',
+        name: 'modalreceipts'
+      }, {
+        kind: 'OB.UI.ModalPaidReceipts',
+        name: 'modalPaidReceipts'
+      }, {
+        kind: 'OB.UI.ModalCreateOrderFromQuotation',
+        name: 'modalCreateOrderFromQuotation'
+      }, {
+        kind: 'OB.UI.ModalReactivateQuotation',
+        name: 'modalReactivateQuotation'
+      }, {
+        kind: 'OB.UI.ModalReceiptPropertiesImpl',
+        name: 'receiptPropertiesDialog'
+      }, {
+        kind: 'OB.UI.ModalReceiptLinesPropertiesImpl',
+        name: "receiptLinesPropertiesDialog"
+      }, {
+        kind: 'OB.UI.ModalPayment',
+        name: "modalpayment"
+      }, {
+        kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalConfigurationRequiredForCrossStore',
+        name: 'modalConfigurationRequiredForCrossStore'
+      }, {
+        kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalStockInStore',
+        name: 'modalLocalStock'
+      }, {
+        kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalStockInOtherStores',
+        name: 'modalStockInOtherStores'
+      }, {
+        kind: 'OB.OBPOSPointOfSale.UI.Modals.modalEnoughCredit',
+        name: 'modalEnoughCredit'
+      }, {
+        kind: 'OB.OBPOSPointOfSale.UI.Modals.modalNotEnoughCredit',
+        name: 'modalNotEnoughCredit'
+      }, {
+        kind: 'OB.UI.ValidateAction',
+        name: 'modalValidateAction'
+      }, {
+        kind: 'OB.OBPOSPointOfSale.UI.Modals.modalDiscountNeedQty',
+        name: 'modalDiscountNeedQty'
+      }, {
+        kind: 'OB.OBPOSPointOfSale.UI.Modals.modalNotValidValueForDiscount',
+        name: 'modalNotValidValueForDiscount'
+      }]
   }, {
     name: 'mainSubWindow',
     isMainSubWindow: true,
     components: [{
-      kind: 'OB.UI.ModalDeleteReceipt',
-      name: 'modalConfirmReceiptDelete'
-    }, {
-      kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalClosePaidReceipt',
-      name: 'modalConfirmClosePaidTicket'
-    }, {
-      kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalProductCannotBeGroup',
-      name: 'modalProductCannotBeGroup'
-    }, {
-      kind: 'OB.UI.Modalnoteditableorder',
-      name: 'modalNotEditableOrder'
-    }, {
-      kind: 'OB.UI.ModalNotEditableLine',
-      name: 'modalNotEditableLine'
-    }, {
-      kind: 'OB.UI.ModalBusinessPartners',
-      name: "modalcustomer"
-    }, {
-      kind: 'OB.UI.ModalReceipts',
-      name: 'modalreceipts'
-    }, {
-      kind: 'OB.UI.ModalPaidReceipts',
-      name: 'modalPaidReceipts'
-    }, {
-      kind: 'OB.UI.ModalCreateOrderFromQuotation',
-      name: 'modalCreateOrderFromQuotation'
-    }, {
-      kind: 'OB.UI.ModalReactivateQuotation',
-      name: 'modalReactivateQuotation'
-    }, {
-      kind: 'OB.UI.ModalReceiptPropertiesImpl',
-      name: 'receiptPropertiesDialog'
-    }, {
-      kind: 'OB.UI.ModalReceiptLinesPropertiesImpl',
-      name: "receiptLinesPropertiesDialog"
-    }, {
-      kind: 'OB.UI.ModalPayment',
-      name: "modalpayment"
-    }, {
-      kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalConfigurationRequiredForCrossStore',
-      name: 'modalConfigurationRequiredForCrossStore'
-    }, {
-      kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalStockInStore',
-      name: 'modalLocalStock'
-    }, {
-      kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalStockInOtherStores',
-      name: 'modalStockInOtherStores'
-    }, {
-      kind: 'OB.OBPOSPointOfSale.UI.Modals.modalEnoughCredit',
-      name: 'modalEnoughCredit'
-    }, {
-      kind: 'OB.OBPOSPointOfSale.UI.Modals.modalNotEnoughCredit',
-      name: 'modalNotEnoughCredit'
-    }, {
-      kind: 'OB.UI.ValidateAction',
-      name: 'modalValidateAction'
-    }, {
-      kind: 'OB.OBPOSPointOfSale.UI.Modals.modalDiscountNeedQty',
-      name: 'modalDiscountNeedQty'
-    }, {
-      kind: 'OB.OBPOSPointOfSale.UI.Modals.modalNotValidValueForDiscount',
-      name: 'modalNotValidValueForDiscount'
-    }, {
-      classes: 'row',
-      style: 'margin-bottom: 5px;',
-      components: [{
-        kind: 'OB.OBPOSPointOfSale.UI.LeftToolbarImpl'
-      }, {
-        kind: 'OB.OBPOSPointOfSale.UI.RightToolbarImpl',
-        name: 'rightToolbar'
+        kind: 'OB.UI.MultiColumn',
+        name: 'multiColumn',
+        handlers: {
+        	onChangeTotal: 'processChangeTotal'
+        },
+        leftToolbar: {
+            kind: 'OB.OBPOSPointOfSale.UI.LeftToolbarImpl',
+          name: 'leftToolbar'
+        },
+        leftPanel: {
+          name: 'leftPanel',
+          components: [{
+              classes: 'span12',
+              kind: 'OB.OBPOSPointOfSale.UI.ReceiptView',
+              name: 'receiptview'
+            }, {
+              name: 'leftSubWindowsContainer',
+              components: [{
+                kind: 'OB.OBPOSPointOfSale.UI.ProductDetailsView',
+                name: 'productdetailsview'
+              }]
+            }]
+        },
+        rightToolbar: {
+            kind: 'OB.OBPOSPointOfSale.UI.RightToolbarImpl',
+          name: 'rightToolbar'
+        },
+        rightPanel: {
+          name: 'keyboardTabsPanel',
+              components: [ {
+                  classes: 'span12',
+                  components: [{
+                    kind: 'OB.OBPOSPointOfSale.UI.RightToolbarPane',
+                    name: 'toolbarpane'
+                  }, {
+                    kind: 'OB.OBPOSPointOfSale.UI.KeyboardOrder',
+                    name: 'keyboard'
+                  }]
+                }]
+        },
+        processChangeTotal: function(inSender, inEvent) {
+            this.waterfall('onChangedTotal', {
+              newTotal: inEvent.newTotal
+            });
+        }
       }]
-    }, {
-      classes: 'row',
-      components: [{
-        kind: 'OB.OBPOSPointOfSale.UI.ReceiptView',
-        name: 'receiptview'
-      }, {
-        name: 'leftSubWindowsContainer',
-        components: [{
-          kind: 'OB.OBPOSPointOfSale.UI.ProductDetailsView',
-          name: 'productdetailsview'
-        }]
-      }, {
-        classes: 'span6',
-        components: [{
-          kind: 'OB.OBPOSPointOfSale.UI.RightToolbarPane',
-          name: 'toolbarpane'
-        }, {
-          kind: 'OB.OBPOSPointOfSale.UI.KeyboardOrder',
-          name: 'keyboard'
-        }]
-      }]
-    }]
   }],
   classModel: new Backbone.Model(),
   printReceipt: function () {
@@ -252,7 +268,7 @@ enyo.kind({
   },
   showOrder: function (inSender, inEvent) {
     var allHidden = true;
-    enyo.forEach(this.$.leftSubWindowsContainer.getControls(), function (component) {
+    enyo.forEach(this.$.multiColumn.$.leftPanel.$.leftSubWindowsContainer.getControls(), function (component) {
       if (component.showing === true) {
         if (component.mainBeforeSetHidden) {
           if (!component.mainBeforeSetHidden(inEvent)) {
@@ -265,7 +281,7 @@ enyo.kind({
       }
     }, this);
     if (allHidden) {
-      this.$.receiptview.setShowing(true);
+    	this.$.multiColumn.$.leftPanel.$.receiptview.setShowing(true);
     }
   },
   showLeftSubWindow: function (inSender, inEvent) {
@@ -283,14 +299,14 @@ enyo.kind({
           }
         }, this);
         if (this.$[inEvent.leftSubWindow].mainBeforeSetShowing(inEvent) && allHidden) {
-          this.$.receiptview.setShowing(false);
+        	this.$.multiColumn.$.leftPanel.$.receiptview.setShowing(false);
           this.$[inEvent.leftSubWindow].setShowing(true);
         }
       }
     }
   },
   viewProductDetails: function (inSender, inEvent) {
-    this.$.receiptview.applyStyle('display', 'none');
+	  this.$.multiColumn.$.leftPanel.$.receiptview.applyStyle('display', 'none');
     this.$.productdetailsview.updateProduct(inEvent.product);
     this.$.productdetailsview.applyStyle('display', 'inline');
     return true;
@@ -427,9 +443,9 @@ enyo.kind({
       edit: inEvent.edit
     });
     if (inEvent.keyboard) {
-      this.$.keyboard.showToolbar(inEvent.keyboard);
+    	this.$.multiColumn.$.rightPanel.$.keyboard.showToolbar(inEvent.keyboard);
     } else {
-      this.$.keyboard.hide();
+    	this.$.multiColumn.$.rightPanel.$.keyboard.hide();
     }
 
   },
@@ -492,7 +508,7 @@ enyo.kind({
     });
   },
   exactPayment: function (inSender, inEvent) {
-    this.$.keyboard.execStatelessCommand('cashexact');
+	  this.$.multiColumn.$.rightPanel.$.keyboard.execStatelessCommand('cashexact');
   },
   changeCurrentOrder: function (inSender, inEvent) {
     this.model.get('orderList').load(inEvent.newCurrentOrder);
@@ -606,11 +622,11 @@ enyo.kind({
       this.classModel.trigger('removedLine', this, line);
     }, this);
 
-    this.$.receiptview.setOrder(receipt);
-    this.$.receiptview.setOrderList(receiptList);
-    this.$.toolbarpane.setModel(this.model);
-    this.$.keyboard.setReceipt(receipt);
-    this.$.rightToolbar.setReceipt(receipt);
+    this.$.multiColumn.$.leftPanel.$.receiptview.setOrder(receipt);
+    this.$.multiColumn.$.leftPanel.$.receiptview.setOrderList(receiptList);
+    this.$.multiColumn.$.rightPanel.$.toolbarpane.setModel(this.model);
+    this.$.multiColumn.$.rightPanel.$.keyboard.setReceipt(receipt);
+    this.$.multiColumn.$.rightToolbar.$.rightToolbar.setReceipt(receipt);
   },
   initComponents: function () {
     this.inherited(arguments);

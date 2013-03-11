@@ -13,7 +13,6 @@
 // ----------------------------------------------------------------------------
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.RightToolbar',
-  classes: 'span9',
   handlers: {
     onTabButtonTap: 'tabButtonTapHandler'
   },
@@ -56,7 +55,6 @@ enyo.kind({
     if (tab) {
       tab.tap(options);
     }
-
   },
   initComponents: function () {
     this.inherited(arguments);
@@ -74,27 +72,62 @@ enyo.kind({
   published: {
     receipt: null
   },
+  handlers: {
+	    onTabButtonTap: 'tabButtonTapHandler'
+	  },
+	  tabButtonTapHandler: function (inSender, inEvent) {
+		    if (inEvent.tabPanel) {
+		      this.setTabButtonActive(inEvent.tabPanel);
+		    }
+		  },
+		  setTabButtonActive: function (tabName) {
+		    var buttonContainerArray = this.getComponents()[0].getComponents(),
+		        i;
+
+		    for (i = 0; i < buttonContainerArray.length; i++) {
+		      buttonContainerArray[i].removeClass('active');
+		      if (buttonContainerArray[i].getComponents()[0].getComponents()[0].name === tabName) {
+		        buttonContainerArray[i].addClass('active');
+		      }
+		    }
+		  },
+		  manualTap: function (tabName, options) {
+		    var tab;
+
+		    function getButtonByName(name, me) {
+		      var componentArray = me.$.toolbar.getComponents(),
+		          i;
+		      for (i = 0; i < componentArray.length; i++) {
+		        if (componentArray[i].$.theButton.getComponents()[0].name === name) {
+		          return componentArray[i].$.theButton.getComponents()[0];
+		        }
+		      }
+		      return null;
+		    }
+
+		    tab = getButtonByName(tabName, this);
+		    if (tab) {
+		      tab.tap(options);
+		    }
+		  },
   kind: 'OB.OBPOSPointOfSale.UI.RightToolbar',
-  buttons: [{
-    kind: 'OB.OBPOSPointOfSale.UI.ButtonTabPayment',
-    name: 'payment',
-    containerCssClass: 'span4'
-  }, {
+  kind: 'OB.UI.MultiColumn.Toolbar',
+  buttons: [ {
     kind: 'OB.OBPOSPointOfSale.UI.ButtonTabScan',
     name: 'scan',
-    containerCssClass: 'span2'
+    span: 3
   }, {
     kind: 'OB.OBPOSPointOfSale.UI.ButtonTabBrowse',
     name: 'catalog',
-    containerCssClass: 'span2'
+    span: 3
   }, {
     kind: 'OB.OBPOSPointOfSale.UI.ButtonTabSearch',
     name: 'search',
-    containerCssClass: 'span2'
+    span: 3
   }, {
     kind: 'OB.OBPOSPointOfSale.UI.ButtonTabEditLine',
     name: 'edit',
-    containerCssClass: 'span2'
+    span: 3
   }],
 
   receiptChanged: function () {
@@ -126,15 +159,15 @@ enyo.kind({
     }, this);
 
     //some button will draw the total
-    this.waterfall('onChangeTotal', {
-      newTotal: this.receipt.getTotal()
-    });
+    this.bubble('onChangeTotal', {
+        newTotal: this.receipt.getTotal()
+      });
     this.receipt.on('change:gross', function (model) {
-      this.waterfall('onChangeTotal', {
+      this.bubble('onChangeTotal', {
         newTotal: this.receipt.getTotal()
       });
     }, this);
-  }
+  },
 });
 
 
@@ -163,7 +196,7 @@ enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ButtonTabScan',
   kind: 'OB.UI.ToolbarButtonTab',
   tabPanel: 'scan',
-  label: OB.I18N.getLabel('OBPOS_LblScan'),
+  label: OB.I18N.getLabel('OBMOBC_LblScan'),
   events: {
     onTabChange: ''
   },
@@ -200,7 +233,7 @@ enyo.kind({
     this.setDisabled(inEvent.status);
   },
   tabPanel: 'catalog',
-  label: OB.I18N.getLabel('OBPOS_LblBrowse'),
+  label: OB.I18N.getLabel('OBMOBC_LblBrowse'),
   tap: function () {
     if (!this.disabled) {
       this.doTabChange({
@@ -241,83 +274,6 @@ enyo.kind({
   }
 });
 
-enyo.kind({
-  name: 'OB.OBPOSPointOfSale.UI.ButtonTabPayment',
-  kind: 'OB.UI.ToolbarButtonTab',
-  tabPanel: 'payment',
-  handlers: {
-    onChangeTotal: 'renderTotal',
-    onRightToolbarDisabled: 'disabledButton'
-  },
-  disabledButton: function (inSender, inEvent) {
-    this.isEnabled = !inEvent.status;
-    this.setDisabled(inEvent.status);
-  },
-  events: {
-    onTabChange: ''
-  },
-  tap: function () {
-    if (this.disabled === false) {
-      var receipt = this.model.get('order');
-      if (receipt.get('isQuotation')) {
-        if (receipt.get('hasbeenpaid') !== 'Y') {
-          receipt.prepareToSend(function () {
-            receipt.trigger('closed');
-            receipt.trigger('scan');
-          });
-        } else {
-          receipt.prepareToSend(function () {
-            receipt.trigger('scan');
-            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_QuotationClosed'));
-          });
-        }
-        return;
-      }
-      if (this.model.get('order').get('isEditable') === false) {
-        return true;
-      }
-      this.doTabChange({
-        tabPanel: this.tabPanel,
-        keyboard: 'toolbarpayment',
-        edit: false
-      });
-    }
-  },
-  attributes: {
-    style: 'text-align: center; font-size: 30px;'
-  },
-  components: [{
-    tag: 'span',
-    attributes: {
-      style: 'font-weight: bold; margin: 0px 5px 0px 0px;'
-    },
-    components: [{
-      kind: 'OB.UI.Total',
-      name: 'totalPrinter'
-    }]
-  }],
-  initComponents: function () {
-    this.inherited(arguments);
-    this.removeClass('btnlink-gray');
-  },
-  renderTotal: function (inSender, inEvent) {
-    this.$.totalPrinter.renderTotal(inEvent.newTotal);
-  },
-  init: function (model) {
-    this.model = model;
-    this.model.get('order').on('change:isEditable', function (newValue) {
-      if (newValue) {
-        if (newValue.get('isEditable') === false) {
-          this.tabPanel = null;
-          this.setDisabled(true);
-          return;
-        }
-      }
-      this.tabPanel = 'payment';
-      this.setDisabled(false);
-    }, this);
-  }
-});
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ButtonTabEditLine',

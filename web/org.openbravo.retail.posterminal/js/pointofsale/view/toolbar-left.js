@@ -103,13 +103,101 @@ enyo.kind({
 });
 
 enyo.kind({
+  name: 'OB.OBPOSPointOfSale.UI.ButtonTabPayment',
+  kind: 'OB.UI.ToolbarButtonTab',
+  tabPanel: 'payment',
+  handlers: {
+    onChangedTotal: 'renderTotal',
+    onRightToolbarDisabled: 'disabledButton'
+  },
+  disabledButton: function (inSender, inEvent) {
+    this.isEnabled = !inEvent.status;
+    this.setDisabled(inEvent.status);
+  },
+  events: {
+    onTabChange: ''
+  },
+  tap: function () {
+    if (this.disabled === false) {
+      var receipt = this.model.get('order');
+      if (receipt.get('isQuotation')) {
+        if (receipt.get('hasbeenpaid') !== 'Y') {
+          receipt.prepareToSend(function () {
+            receipt.trigger('closed');
+            receipt.trigger('scan');
+          });
+        } else {
+          receipt.prepareToSend(function () {
+            receipt.trigger('scan');
+            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_QuotationClosed'));
+          });
+        }
+        return;
+      }
+      if (this.model.get('order').get('isEditable') === false) {
+        return true;
+      }
+      this.doTabChange({
+        tabPanel: this.tabPanel,
+        keyboard: 'toolbarpayment',
+        edit: false
+      });
+      this.bubble('onShowColumn', {
+          colNum: 1
+        });
+    }
+  },
+  attributes: {
+    style: 'text-align: center; font-size: 30px;'
+  },
+  components: [{
+    tag: 'span',
+    attributes: {
+      style: 'font-weight: bold; margin: 0px 5px 0px 0px;'
+    },
+    components: [{
+      kind: 'OB.UI.Total',
+      name: 'totalPrinter'
+    }]
+  }],
+  initComponents: function () {
+    this.inherited(arguments);
+    this.removeClass('btnlink-gray');
+  },
+  renderTotal: function (inSender, inEvent) {
+    this.$.totalPrinter.renderTotal(inEvent.newTotal);
+  },
+  init: function (model) {
+    this.model = model;
+    this.model.get('order').on('change:isEditable', function (newValue) {
+      if (newValue) {
+        if (newValue.get('isEditable') === false) {
+          this.tabPanel = null;
+          this.setDisabled(true);
+          return;
+        }
+      }
+      this.tabPanel = 'payment';
+      this.setDisabled(false);
+    }, this);
+  }
+});
+
+enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.LeftToolbarImpl',
-  kind: 'OB.OBPOSPointOfSale.UI.LeftToolbar',
+  kind: 'OB.UI.MultiColumn.Toolbar',
   buttons: [{
-    kind: 'OB.UI.ButtonNew'
+    kind: 'OB.UI.ButtonNew',
+    span: 2
   }, {
-    kind: 'OB.UI.ButtonDelete'
+    kind: 'OB.UI.ButtonDelete',
+    span: 2
   }, {
-    kind: 'OB.OBPOSPointOfSale.UI.StandardMenu'
-  }]
+    kind: 'OB.OBPOSPointOfSale.UI.StandardMenu',
+    span: 2
+  },{
+	    kind: 'OB.OBPOSPointOfSale.UI.ButtonTabPayment',
+	    name: 'payment',
+	    span: 6
+	  }]
 });

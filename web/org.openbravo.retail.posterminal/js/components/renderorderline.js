@@ -85,6 +85,9 @@ enyo.kind({
   },
   changeEditMode: function (inSender, inEvent) {
     this.addRemoveClass('btnselect-orderline-edit', inEvent.edit);
+    this.bubble('onShowColumn', {
+        colNum: 1
+      });
   },
   checkBoxForTicketLines: function (inSender, inEvent) {
     if (inEvent.status) {
