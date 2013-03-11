@@ -36,6 +36,7 @@ import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
+import org.openbravo.model.common.order.OrderLineOffer;
 import org.openbravo.model.common.order.OrderTax;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
@@ -68,6 +69,12 @@ public class ProcessVoidLayaway extends JSONProcessSimple {
         orderLine.setOrderedQuantity(BigDecimal.ZERO);
         orderLine.setLineNetAmount(BigDecimal.ZERO);
         orderLine.setLineGrossAmount(BigDecimal.ZERO);
+        for (int j = 0; i < orderLine.getOrderLineOfferList().size(); j++) {
+          OrderLineOffer offer = ((OrderLineOffer) orderLine.getOrderLineOfferList().get(j));
+          offer.setTotalAmount(BigDecimal.ZERO);
+          offer.setDisplayedTotalAmount(BigDecimal.ZERO);
+          offer.setPriceAdjustmentAmt(BigDecimal.ZERO);
+        }
       }
       for (int i = 0; i < order.getOrderLineTaxList().size(); i++) {
         OrderLineTax orderLineTax = ((OrderLineTax) order.getOrderLineTaxList().get(i));
