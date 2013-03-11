@@ -30,8 +30,14 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hibernate.ScrollMode;
+import org.hibernate.ScrollableResults;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.Sqlc;
 import org.openbravo.utils.Replace;
 import org.openbravo.xmlEngine.XmlDocument;
@@ -47,6 +53,7 @@ import com.thoughtworks.xstream.io.json.JettisonMappedXmlDriver;
 public class WindowTree extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
   private static final String CHILD_SHEETS = "frameWindowTreeF3";
+  private static List<String> nodeIdList = new ArrayList<String>();
 
   public void init(ServletConfig config) {
     super.init(config);
@@ -153,8 +160,9 @@ public class WindowTree extends HttpSecureAppServlet {
     WindowTreeData[] wtd = WindowTreeUtility.getTree(this, vars, TreeType, TreeID, editable, "",
         "", strTabId);
     Map<String, List<WindowTreeData>> wtdTree = buildTree(wtd);
-    menu.append(generateTree(wtd, wtdTree, strDireccion, "0", true));
+    menu.append(generateTree(wtd, wtdTree, strDireccion, "0", true, strTabId));
     menu.append("\n</ul>\n");
+    nodeIdList = null;
     return menu.toString();
   }
 
@@ -172,7 +180,7 @@ public class WindowTree extends HttpSecureAppServlet {
    * @return String html with the tree.
    */
   private String generateTree(WindowTreeData[] data, Map<String, List<WindowTreeData>> wtdTree,
-      String strDireccion, String indice, boolean isFirst) {
+      String strDireccion, String indice, boolean isFirst, String strTabId) {
     if (data == null || data.length == 0)
       return "";
     if (log4j.isDebugEnabled())
@@ -185,20 +193,96 @@ public class WindowTree extends HttpSecureAppServlet {
     isFirst = false;
     List<WindowTreeData> subList = wtdTree.get(indice);
     if (subList != null) {
+      List<WindowTreeData> filteredSubList = applyWhereClause(subList, strTabId);
       for (WindowTreeData elem : subList) {
         hayDatos = true;
-        String strHijos = generateTree(data, wtdTree, strDireccion, elem.nodeId, isFirst);
-        strResultado.append(WindowTreeUtility.addNodeElement(elem.name, elem.description,
-            CHILD_SHEETS, elem.issummary.equals("Y"), WindowTreeUtility.windowType(elem.action),
-            strDireccion,
-            "clickItem('" + elem.nodeId + "', '" + Replace.replace(elem.name, "'", "\\'") + "', '"
-                + elem.issummary + "');", "dblClickItem('" + elem.nodeId + "');",
-            !strHijos.equals(""), elem.nodeId, elem.action));
+        String strHijos = generateTree(data, wtdTree, strDireccion, elem.nodeId, isFirst, strTabId);
+        // if elem is present in filtered sublist click action is allowed, else disabled
+        if (filteredSubList.contains(elem)) {
+          strResultado.append(WindowTreeUtility.addNodeElement(elem.name, elem.description,
+              CHILD_SHEETS, elem.issummary.equals("Y"), WindowTreeUtility.windowType(elem.action),
+              strDireccion,
+              "clickItem('" + elem.nodeId + "', '" + Replace.replace(elem.name, "'", "\\'")
+                  + "', '" + elem.issummary + "');", "dblClickItem('" + elem.nodeId + "');",
+              !strHijos.equals(""), elem.nodeId, elem.action));
+        } else {
+          strResultado.append(WindowTreeUtility.addNodeElement(elem.name, elem.description,
+              CHILD_SHEETS, elem.issummary.equals("Y"), WindowTreeUtility.windowType(elem.action),
+              strDireccion, null, null, !strHijos.equals(""), elem.nodeId, elem.action));
+        }
         strResultado.append(strHijos);
       }
     }
     strResultado.append("</li></ul>");
     return (hayDatos ? strResultado.toString() : "");
+  }
+
+  /*
+   * Retrieves the tab level hqlWhereClause and applies them to the current TreeData list and
+   * returns the filtered list. sqlWhereClause is not applied in the tab, so not applied here. Uses
+   * a global static list nodeIdList to fetch it only once though the method is called recursively.
+   */
+  private List<WindowTreeData> applyWhereClause(List<WindowTreeData> subList, String strTabId) {
+    String entityName = null, hqlWhereClause = null;
+    try {
+      OBContext.setAdminMode();
+      OBQuery<org.openbravo.model.ad.ui.Tab> tab = OBDal.getInstance().createQuery(
+          org.openbravo.model.ad.ui.Tab.class, "id='" + strTabId + "'");
+      if (tab.count() != 0) {
+        ScrollableResults tabResults = tab.scroll(ScrollMode.FORWARD_ONLY);
+        while (tabResults.next()) {
+          org.openbravo.model.ad.ui.Tab tabData = (org.openbravo.model.ad.ui.Tab) tabResults.get()[0];
+
+          entityName = tabData.getTable().getName();
+          tabData.getTable().getName();
+          hqlWhereClause = tabData.getHqlwhereclause();
+        }
+      }
+    } catch (Exception e) {
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+
+    List<WindowTreeData> newSubList = new ArrayList<WindowTreeData>();
+    if ((hqlWhereClause != null && !("".equals(hqlWhereClause)))) {
+      hqlWhereClause = (hqlWhereClause != null && !(" ".equals(hqlWhereClause))) ? hqlWhereClause
+          : "1=1";
+      hqlWhereClause = hqlWhereClause.replace("e.", "");
+      OBQuery<BaseOBObject> entityResults = OBDal.getInstance().createQuery("" + entityName + "",
+          hqlWhereClause);
+      if (nodeIdList == null) {
+        nodeIdList = new ArrayList<String>();
+      }
+      if (nodeIdList.size() == 0 && nodeIdList.size() != entityResults.count()) {
+
+        ScrollableResults entityData = entityResults.scroll(ScrollMode.FORWARD_ONLY);
+        int clearEachLoops = 100;
+        int i = 0;
+        while (entityData.next()) {
+          i++;
+          BaseOBObject entity = (BaseOBObject) entityData.get()[0];
+          if (entity.getId() != null) {
+            nodeIdList.add(entity.getId().toString());
+          }
+          if (i % clearEachLoops == 0) {
+            OBDal.getInstance().getSession().clear();
+          }
+        }
+      }
+
+      for (WindowTreeData elem : subList) {
+        if (nodeIdList.contains(elem.nodeId)) {
+          newSubList.add(elem);
+        } else {
+          if ("Y".equals(elem.issummary)) {
+            TreeUtility utils = new TreeUtility();
+          }
+        }
+      }
+    } else {
+      newSubList = subList;
+    }
+    return newSubList;
   }
 
   private static Map<String, List<WindowTreeData>> buildTree(WindowTreeData[] input) {
