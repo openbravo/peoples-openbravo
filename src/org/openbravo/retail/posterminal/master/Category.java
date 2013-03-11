@@ -57,7 +57,8 @@ public class Category extends ProcessHQLQuery {
             + ") AND ("
             + "pli.product.id = ppp.product.id"
             + ") AND "
-            + "(ppp.$incrementalUpdateCriteria) AND (pplv.$incrementalUpdateCriteria)) order by pCat.name");
+            + "(ppp.$incrementalUpdateCriteria) AND (pplv.$incrementalUpdateCriteria))"
+            + "AND pCat.active = true order by pCat.name");
 
     // Discounts marked as category
     hqlQueries
