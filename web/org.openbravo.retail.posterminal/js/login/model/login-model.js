@@ -23,9 +23,9 @@
 
   OB.Model.POSTerminal = OB.Model.Terminal.extend({
     initialize: function () {
-      OB.Model.Terminal.prototype.initialize.call(this);
       this.set({
         appName: 'WebPOS',
+        appModuleId:'FF808181326CC34901326D53DBCF0018',
         terminalName: OB.UTIL.getParameterByName("terminal") || "POS-1",
         supportsOffline: true,
         loginUtilsUrl: '../../org.openbravo.retail.posterminal.service.loginutils',
@@ -38,6 +38,7 @@
           }
         }
       });
+      OB.Model.Terminal.prototype.initialize.call(this);
     },
 
     renderMain: function () {
@@ -71,7 +72,7 @@
         $LAB.setGlobalDefaults({
           AppendTo: 'body'
         });
-     //   OB.POS.cleanWindows();
+        //   OB.POS.cleanWindows();
         if (!OB.MobileApp.model.get('connectedToERP')) {
           OB.Format = JSON.parse(me.usermodel.get('formatInfo'));
 
@@ -85,7 +86,7 @@
           $LAB.script('../../org.openbravo.client.kernel/OBMOBC_Main/ClientModel?entity=PricingAdjustmentProductCategory&modelName=DiscountFilterProductCategory&source=org.openbravo.retail.posterminal.master.DiscountFilterProductCategory');
 
           me.load();
-        // $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/StaticResources?_appName=WebPOS');
+          // $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/StaticResources?_appName=WebPOS');
           OB.POS.navigate('retail.pointofsale'); //TODO: this was in main.js, check it
           return;
         }
@@ -98,7 +99,7 @@
           OB.Dal.save(me.usermodel, function () {}, function () {
             window.console.error(arguments);
           });
-          
+
           me.load();
 
 
@@ -111,31 +112,31 @@
           $LAB.script('../../org.openbravo.client.kernel/OBMOBC_Main/ClientModel?entity=PricingAdjustmentProduct&modelName=DiscountFilterProduct&source=org.openbravo.retail.posterminal.master.DiscountFilterProduct');
           $LAB.script('../../org.openbravo.client.kernel/OBMOBC_Main/ClientModel?entity=PricingAdjustmentProductCategory&modelName=DiscountFilterProductCategory&source=org.openbravo.retail.posterminal.master.DiscountFilterProductCategory');
 
-      //    $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/StaticResources?_appName=WebPOS');
+          //    $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/StaticResources?_appName=WebPOS');
           OB.POS.navigate('retail.pointofsale'); //TODO: this was in main.js, check it
         });
       });
       if (OB.MobileApp.model.get('connectedToERP')) {
 
-          new OB.DS.Request('org.openbravo.retail.posterminal.term.Terminal').exec(params, function (data) {
-            if (data.exception) {
-              OB.POS.navigate('login');
-              if (OB.I18N.hasLabel(data.exception.message)) {
-                OB.UTIL.showError(OB.I18N.getLabel(data.exception.message));
-              } else {
-                OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorLoadingTerminal'));
-              }
-            } else if (data[0]) {
-              me.set('terminal', data[0]);
-              if (!me.usermodel) {
-                OB.MobileApp.model.setUserModelOnline(true);
-              } else {
-                me.trigger('terminal.loaded');
-              }
+        new OB.DS.Request('org.openbravo.retail.posterminal.term.Terminal').exec(params, function (data) {
+          if (data.exception) {
+            OB.POS.navigate('login');
+            if (OB.I18N.hasLabel(data.exception.message)) {
+              OB.UTIL.showError(OB.I18N.getLabel(data.exception.message));
             } else {
-              OB.UTIL.showError("Terminal does not exists: " + params.terminal);
+              OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorLoadingTerminal'));
             }
-          });
+          } else if (data[0]) {
+            me.set('terminal', data[0]);
+            if (!me.usermodel) {
+              OB.MobileApp.model.setUserModelOnline(true);
+            } else {
+              me.trigger('terminal.loaded');
+            }
+          } else {
+            OB.UTIL.showError("Terminal does not exists: " + params.terminal);
+          }
+        });
       } else {
         //Offline mode, we get the terminal information from the local db
         me.set('terminal', JSON.parse(me.usermodel.get('terminalinfo')).terminal);
@@ -176,7 +177,6 @@
       this.set('payments', null);
       this.set('paymentcash', null);
       this.set('context', null);
-      this.set('permissions', null);
       this.set('businesspartner', null);
       this.set('location', null);
       this.set('pricelist', null);
@@ -193,7 +193,6 @@
 
       me.loadPayments();
       me.loadContext();
-      me.loadPermissions();
       me.loadBP();
       me.loadLocation();
       me.loadPriceList();
@@ -237,24 +236,6 @@
       new OB.DS.Request('org.openbravo.mobile.core.login.Context').exec({}, function (data) {
         if (data[0]) {
           me.set('context', data[0]);
-          me.triggerReady();
-        }
-      });
-    },
-
-    loadPermissions: function () {
-      var me = this;
-      new OB.DS.Request('org.openbravo.retail.posterminal.term.RolePreferences').exec({}, function (data) {
-        var i, max, separator, permissions = {};
-        if (data) {
-          for (i = 0, max = data.length; i < max; i++) {
-            permissions[data[i].key] = data[i].value; // Add the permission value
-            separator = data[i].key.indexOf('_');
-            if (separator >= 0) {
-              permissions[data[i].key.substring(separator + 1)] = data[i].value; // if key has a DB prefix, add also the permission value without this prefix
-            }
-          }
-          me.set('permissions', permissions);
           me.triggerReady();
         }
       });
@@ -477,8 +458,7 @@
 
     triggerReady: function () {
       var undef, loadModelsIncFunc, loadModelsTotalFunc, minTotalRefresh, minIncRefresh;
-      console.log(this.get('payments'), this.get('pricelistversion'), this.get('warehouses'), this.get('currency'), this.get('context'), this.get('writableOrganizations'), this.get('permissions'), this.get('documentsequence'),  this.get('windowRegistered') );
-      if (this.get('payments') && this.get('pricelistversion') && this.get('warehouses') && this.get('currency') && this.get('context') && this.get('writableOrganizations') && this.get('permissions') && (this.get('documentsequence') !== undef || this.get('documentsequence') === 0) && this.get('windowRegistered') !== undef) {
+      if (this.get('payments') && this.get('pricelistversion') && this.get('warehouses') && this.get('currency') && this.get('context') && this.get('writableOrganizations') && (this.get('documentsequence') !== undef || this.get('documentsequence') === 0) && this.get('windowRegistered') !== undef) {
         OB.MobileApp.model.loggingIn = false;
         if (OB.MobileApp.model.get('connectedToERP')) {
           //In online mode, we save the terminal information in the local db
@@ -540,10 +520,9 @@
     }
   };
 
-//  OB.POS.terminal = new OB.UI.Terminal({
-//    terminal: OB.POS.modelterminal
-//  });
-
+  //  OB.POS.terminal = new OB.UI.Terminal({
+  //    terminal: OB.POS.modelterminal
+  //  });
   OB.POS.modelterminal.set('loginUtilsParams', {
     terminalName: OB.POS.paramTerminal
   });

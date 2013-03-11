@@ -22,7 +22,6 @@ import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.mobile.core.process.JSONProcess;
 import org.openbravo.mobile.core.process.JSONRowConverter;
-import org.openbravo.mobile.core.process.ProcessHQLQueryJSON;
 import org.openbravo.mobile.core.process.ProcessProcedure;
 import org.openbravo.mobile.core.process.WebServiceAuthenticatedServlet;
 import org.openbravo.service.json.JsonUtils;
@@ -142,8 +141,6 @@ public class TerminalServlet extends WebServiceAuthenticatedServlet {
       } catch (ClassNotFoundException e) {
         JSONRowConverter.addJSONExceptionFields(w, e);
       }
-    } else if (jsonsent.has("query")) { // It is an HQL Query
-      execClassName(w, ProcessHQLQueryJSON.class, jsonsent);
     } else if (jsonsent.has("process")) { // It is a Process
       execClassName(w, ProcessProcedure.class, jsonsent);
     } else {

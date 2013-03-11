@@ -1,7 +1,6 @@
 package org.openbravo.retail.posterminal;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -10,7 +9,6 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.ad.module.Module;
@@ -218,28 +216,6 @@ public class POSUtils {
       return 0;
     }
 
-  }
-
-  public static String getRetailDependantModuleIds() {
-    StringBuffer ids = new StringBuffer();
-
-    List<Module> dependantModules = new ArrayList<Module>();
-    Module retailModule = OBDal.getInstance().get(Module.class, "FF808181326CC34901326D53DBCF0018");
-    OBCriteria<ModuleDependency> totalDeps = OBDal.getInstance().createCriteria(
-        ModuleDependency.class);
-    dependantModules.add(retailModule);
-    getRetailDependantModules(retailModule, dependantModules, totalDeps.list());
-    int n = 0;
-    ids.append("(");
-    for (Module mod : dependantModules) {
-      if (n > 0) {
-        ids.append(",");
-      }
-      ids.append("'" + mod.getId() + "'");
-      n++;
-    }
-    ids.append(")");
-    return ids.toString();
   }
 
   public static void getRetailDependantModules(Module module, List<Module> moduleList,
