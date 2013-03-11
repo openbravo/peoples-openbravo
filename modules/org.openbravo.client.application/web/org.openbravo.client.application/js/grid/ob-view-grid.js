@@ -1875,16 +1875,6 @@ isc.OBViewGrid.addProperties({
         } else if (isc.isA.emptyString(criterion.value)) {
           shouldRemove = true;
         }
-        // if the field referenced by the criterion has a criteriaField, remove the redundant criterion that references its displayField
-        if (!shouldRemove && this.fields) {
-          for (j = 0; j < this.fields.length; j++) {
-            if (criterion.operator === 'iContains' && this.fields[j].criteriaField && this.fields[j].displayField === criterion.fieldName && criterion.fieldName !== this.fields[j].criteriaField) {
-              shouldRemove = true;
-              break;
-            }
-          }
-        }
-
         if (shouldRemove) {
           internalCriteria.removeAt(i);
         } else {
