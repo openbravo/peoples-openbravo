@@ -25,7 +25,7 @@
     initialize: function () {
       this.set({
         appName: 'WebPOS',
-        appModuleId:'FF808181326CC34901326D53DBCF0018',
+        appModuleId: 'FF808181326CC34901326D53DBCF0018',
         terminalName: OB.UTIL.getParameterByName("terminal") || "POS-1",
         supportsOffline: true,
         loginUtilsUrl: '../../org.openbravo.retail.posterminal.service.loginutils',
@@ -36,6 +36,12 @@
           defaultProperties: {
             role: 'oBPOSDefaultPOSRole'
           }
+        },
+        localDB: {
+          size: 50 * 1024 * 1024,
+          name: 'WEBPOS',
+          displayName: 'Openbravo Web POS',
+          version: '0.5'
         }
       });
       OB.Model.Terminal.prototype.initialize.call(this);
