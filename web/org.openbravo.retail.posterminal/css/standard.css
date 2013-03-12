@@ -1010,6 +1010,15 @@ button.modal-dialog-button {
   border: 1px solid #CCC;
 }
 
+.discount-dialog-profile-combo {
+  height: 40px;
+  width: 100%;
+  margin: 0px;
+  background-color: white;
+  padding: 4px;
+  border: 1px solid #CCC;
+}
+
 .modal-dialog-profile-checkbox {
   height: 40px;
   margin: 0px;
