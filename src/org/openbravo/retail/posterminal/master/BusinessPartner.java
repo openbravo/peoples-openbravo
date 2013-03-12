@@ -13,6 +13,7 @@ import java.util.List;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.mobile.core.process.ProcessHQLQuery;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.retail.posterminal.POSUtils;
@@ -21,7 +22,9 @@ public class BusinessPartner extends ProcessHQLQuery {
 
   @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
-    Organization org = POSUtils.getOrganization(jsonsent.getString("organization"));
+
+    Organization org = POSUtils.getOrganization(OBContext.getOBContext().getCurrentOrganization()
+        .getId());
     return Arrays
         .asList(new String[] { "SELECT bpl.businessPartner.id as id, bpl.businessPartner.organization.id as organization, bpl.businessPartner.name as name, bpl.businessPartner.name as _identifier, "
             + "bpl.businessPartner.searchKey as searchKey, bpl.businessPartner.description as description, bpl.businessPartner.taxID as taxID, "

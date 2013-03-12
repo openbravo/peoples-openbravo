@@ -13,6 +13,7 @@ import java.util.List;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.mobile.core.process.ProcessHQLQuery;
 import org.openbravo.model.common.enterprise.OrganizationInformation;
 import org.openbravo.model.common.geography.Country;
@@ -30,7 +31,15 @@ public class TaxRate extends ProcessHQLQuery {
   @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
 
-    final OBPOSApplications posDetail = POSUtils.getTerminalById(jsonsent.getString("pos"));
+    OBPOSApplications posDetail;
+
+    if (jsonsent.has("pos")) {
+      posDetail = POSUtils.getTerminalById(jsonsent.getString("pos"));
+    } else if (jsonsent.has("terminalName")) {
+      posDetail = POSUtils.getTerminal(jsonsent.getString("terminalName"));
+    } else {
+      throw new OBException("terminal not sent as parameter");
+    }
 
     // FROM
     final OrganizationInformation storeInfo = posDetail.getOrganization()

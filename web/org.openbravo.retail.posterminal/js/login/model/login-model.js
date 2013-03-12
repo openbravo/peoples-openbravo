@@ -44,7 +44,40 @@
           version: '0.5'
         }
       });
+
+
       OB.Model.Terminal.prototype.initialize.call(this);
+      OB.MobileApp.model.on('change:terminal', function () {
+        // setting common datasource parameters based on terminal
+        var t = OB.MobileApp.model.get('terminal');
+        console.log('change terminal', t);
+        if (!t) {
+          return;
+        }
+
+        OB.DS.commonParams = OB.DS.commonParams || {};
+        if (t.client) {
+          OB.DS.commonParams.client = t.client;
+        }
+        if (t.organization) {
+          OB.DS.commonParams.organization = t.organization;
+        }
+
+        if (t.id) {
+          OB.DS.commonParams.pos = t.id;
+        }
+      });
+
+      OB.MobileApp.model.on('change:terminalName', function () {
+        OB.DS.commonParams = OB.DS.commonParams || {};
+        OB.DS.commonParams.terminalName = OB.MobileApp.model.get('terminalName');
+      });
+
+      if (this.get('terminalName')) {
+        OB.DS.commonParams = OB.DS.commonParams || {};
+        OB.DS.commonParams.terminalName = this.get('terminalName');
+      }
+
     },
 
     renderMain: function () {
@@ -66,7 +99,6 @@
       OB.MobileApp.model.off('terminal.loaded'); // Unregister previous events.
       OB.MobileApp.model.on('terminal.loaded', function () {
         var oldOB = OB;
-
         // setting common datasource parameters based on terminal
         var t = me.get('terminal');
         OB.DS.commonParams = {
@@ -81,15 +113,6 @@
         //   OB.POS.cleanWindows();
         if (!OB.MobileApp.model.get('connectedToERP')) {
           OB.Format = JSON.parse(me.usermodel.get('formatInfo'));
-
-          $LAB.script('../../org.openbravo.client.kernel/OBMOBC_Main/ClientModel?entity=FinancialMgmtTaxRate&modelName=TaxRate&source=org.openbravo.retail.posterminal.master.TaxRate');
-
-          //Models for discounts and promotions
-          $LAB.script('../../org.openbravo.client.kernel/OBMOBC_Main/ClientModel?entity=PricingAdjustment&modelName=Discount&source=org.openbravo.retail.posterminal.master.Discount');
-          $LAB.script('../../org.openbravo.client.kernel/OBMOBC_Main/ClientModel?entity=PricingAdjustmentBusinessPartner&modelName=DiscountFilterBusinessPartner&source=org.openbravo.retail.posterminal.master.DiscountFilterBusinessPartner');
-          $LAB.script('../../org.openbravo.client.kernel/OBMOBC_Main/ClientModel?entity=PricingAdjustmentBusinessPartnerGroup&modelName=DiscountFilterBusinessPartnerGroup&source=org.openbravo.retail.posterminal.master.DiscountFilterBusinessPartnerGroup');
-          $LAB.script('../../org.openbravo.client.kernel/OBMOBC_Main/ClientModel?entity=PricingAdjustmentProduct&modelName=DiscountFilterProduct&source=org.openbravo.retail.posterminal.master.DiscountFilterProduct');
-          $LAB.script('../../org.openbravo.client.kernel/OBMOBC_Main/ClientModel?entity=PricingAdjustmentProductCategory&modelName=DiscountFilterProductCategory&source=org.openbravo.retail.posterminal.master.DiscountFilterProductCategory');
 
           me.load();
           // $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/StaticResources?_appName=WebPOS');
@@ -107,16 +130,6 @@
           });
 
           me.load();
-
-
-          $LAB.script('../../org.openbravo.client.kernel/OBMOBC_Main/ClientModel?entity=FinancialMgmtTaxRate&modelName=TaxRate&source=org.openbravo.retail.posterminal.master.TaxRate');
-
-          //Models for discounts and promotions
-          $LAB.script('../../org.openbravo.client.kernel/OBMOBC_Main/ClientModel?entity=PricingAdjustment&modelName=Discount&source=org.openbravo.retail.posterminal.master.Discount');
-          $LAB.script('../../org.openbravo.client.kernel/OBMOBC_Main/ClientModel?entity=PricingAdjustmentBusinessPartner&modelName=DiscountFilterBusinessPartner&source=org.openbravo.retail.posterminal.master.DiscountFilterBusinessPartner');
-          $LAB.script('../../org.openbravo.client.kernel/OBMOBC_Main/ClientModel?entity=PricingAdjustmentBusinessPartnerGroup&modelName=DiscountFilterBusinessPartnerGroup&source=org.openbravo.retail.posterminal.master.DiscountFilterBusinessPartnerGroup');
-          $LAB.script('../../org.openbravo.client.kernel/OBMOBC_Main/ClientModel?entity=PricingAdjustmentProduct&modelName=DiscountFilterProduct&source=org.openbravo.retail.posterminal.master.DiscountFilterProduct');
-          $LAB.script('../../org.openbravo.client.kernel/OBMOBC_Main/ClientModel?entity=PricingAdjustmentProductCategory&modelName=DiscountFilterProductCategory&source=org.openbravo.retail.posterminal.master.DiscountFilterProductCategory');
 
           //    $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/StaticResources?_appName=WebPOS');
           OB.POS.navigate('retail.pointofsale'); //TODO: this was in main.js, check it
@@ -151,7 +164,6 @@
     },
 
     load: function () {
-      console.log('load')
       var termInfo, i, max;
       if (!OB.MobileApp.model.get('connectedToERP')) {
         termInfo = JSON.parse(this.usermodel.get('terminalinfo'));
@@ -328,7 +340,6 @@
     },
 
     setDocumentSequence: function () {
-    	console.log('setDocumentSequence')
       var me = this;
       // Obtains the persisted document number (documentno of the last processed order)
       OB.Dal.find(OB.Model.DocumentSequence, {
@@ -465,11 +476,7 @@
 
     triggerReady: function () {
       var undef, loadModelsIncFunc, loadModelsTotalFunc, minTotalRefresh, minIncRefresh;
-      
-      console.log('triggerReady', this.get('payments') && this.get('pricelistversion') && this.get('warehouses') && this.get('currency') && this.get('context') && this.get('writableOrganizations') && (this.get('documentsequence') !== undef || this.get('documentsequence') === 0),
-    		  this.get('payments'), this.get('pricelistversion'), this.get('warehouses'), this.get('currency'), this.get('context'), this.get('writableOrganizations'), this.get('documentsequence')
-      )
-      
+
       if (this.get('payments') && this.get('pricelistversion') && this.get('warehouses') && this.get('currency') && this.get('context') && this.get('writableOrganizations') && (this.get('documentsequence') !== undef || this.get('documentsequence') === 0)) {
         OB.MobileApp.model.loggingIn = false;
         if (OB.MobileApp.model.get('connectedToERP')) {

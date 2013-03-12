@@ -15,7 +15,28 @@ OB.OBPOSPointOfSale.UI = OB.OBPOSPointOfSale.UI || {};
 
 //Window model
 OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
-  models: [OB.Model.TaxRate, OB.Model.Product, OB.Model.ProductCategory, OB.Model.BusinessPartner, OB.Model.BPCategory, OB.Model.Order, OB.Model.DocumentSequence, OB.Model.ChangedBusinessPartners, OB.Model.Discount, OB.Model.DiscountFilterBusinessPartner, OB.Model.DiscountFilterBusinessPartnerGroup, OB.Model.DiscountFilterProduct, OB.Model.DiscountFilterProductCategory, OB.Model.CurrencyPanel],
+  models: [{
+    generatedModel: true,
+    modelName: 'TaxRate'
+  },
+  OB.Model.Product, OB.Model.ProductCategory, OB.Model.BusinessPartner, OB.Model.BPCategory, OB.Model.Order, OB.Model.DocumentSequence, OB.Model.ChangedBusinessPartners,
+  {
+    generatedModel: true,
+    modelName: 'Discount'
+  }, {
+    generatedModel: true,
+    modelName: 'DiscountFilterBusinessPartner'
+  }, {
+    generatedModel: true,
+    modelName: 'DiscountFilterBusinessPartnerGroup'
+  }, {
+    generatedModel: true,
+    modelName: 'DiscountFilterProduct'
+  }, {
+    generatedModel: true,
+    modelName: 'DiscountFilterProductCategory'
+  },
+  OB.Model.CurrencyPanel],
 
   loadUnpaidOrders: function () {
     // Shows a modal window with the orders pending to be paid

@@ -13,6 +13,7 @@ import java.util.List;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.mobile.core.process.ProcessHQLQuery;
 import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.retail.config.OBRETCOProductList;
@@ -23,10 +24,11 @@ public class Category extends ProcessHQLQuery {
   @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
 
-    final OBRETCOProductList productList = POSUtils.getProductListByOrgId(jsonsent
-        .getString("organization"));
+    String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
 
-    final PriceList priceList = POSUtils.getPriceListByOrgId(jsonsent.getString("organization"));
+    final OBRETCOProductList productList = POSUtils.getProductListByOrgId(orgId);
+
+    final PriceList priceList = POSUtils.getPriceListByOrgId(orgId);
     if (productList == null) {
       throw new JSONException("Product list not found");
     }

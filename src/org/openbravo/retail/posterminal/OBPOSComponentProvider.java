@@ -140,6 +140,15 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         // Detection of change in context
         "components/modalcontextchanged",
 
+        // Point of sale models
+        "model/order",
+        "model/product-category",
+        "model/product",
+        "model/businesspartner",
+        "model/document-sequence",
+        "model/taxRate",
+        "model/promotions",
+
         // Point of sale
         "pointofsale/model/pointofsale-print",
         "pointofsale/model/pointofsale-model",
@@ -197,8 +206,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/mockpayments",
 
         // Discounts
-        "model/discounts", "model/order", "model/product-category", "model/product",
-        "model/businesspartner", "model/document-sequence"
+        "model/discounts"
 
     };
 
