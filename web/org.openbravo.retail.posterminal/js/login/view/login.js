@@ -126,6 +126,9 @@
       components: [{
         classes: 'span6',
         components: [{
+          kind: 'Scroller',
+          thumb: true,
+          horizontal: 'hidden',
           name: 'loginUserContainer',
           classes: 'login-user-container',
           content: ['.']
