@@ -26,13 +26,6 @@
  
   <script src="../../org.openbravo.client.kernel/OBCLKER_Kernel/StaticResources?_appName=WebPOS"></script>
   
-  <script src="js/model/order.js"></script>
-  <script src="js/model/product-category.js"></script>
-  <script src="js/model/product.js"></script>
-  <script src="js/model/businesspartner.js"></script>
-  <script src="js/model/document-sequence.js"></script>
-  
-  
   <link rel="stylesheet" type="text/css" href="../org.openbravo.mobile.core/assets/css/ob-standard.css" />
   <link rel="stylesheet" type="text/css" href="../org.openbravo.mobile.core/assets/css/ob-login.css" />
 </head>
@@ -103,59 +96,5 @@ terminal: OB.POS.modelterminal
 });
 OB.POS.terminal.write();
   </script>
-  <div id="terminal" class="pos-container">
-    <div class="section" id="terminal_topsection">
-      <div style="height: 50px; vertical-align: middle;" class="row" id="terminal_control">
-        <div style="padding: 10px 0px 0px 0px; color: white; font-size: 16px;" class="span12" id="terminal_control2">
-          <div style="display: inline-block; vertical-align: middle; margin: 3px 0px 0px 0px;" id="terminal_onlineContainer">
-            <div style="display: inline-block; margin-left: 15px;" id="terminal_onlineviewer"></div>
-            <div style="display: inline-block; margin-left: 50px;" id="terminal_terminal"></div>
-            <div style="display: inline-block; margin-left: 50px;" class="onyx-popup-decorator onyx-popup-decorator enyo-unselectable" id="terminal_menuDecorator"></div>
-            <div style="display: inline-block; margin-left: 50px;" class="onyx-popup-decorator onyx-popup-decorator enyo-unselectable" id="terminal_menuDecorator2"></div>
-          </div>
-          <div style="display: inline-block; float: right;" id="terminal_control3">
-            <div style="display: inline-block; float: left; margin: 4px 10px 0px 0px;" id="terminal_control4">Openbravo Web POS</div>
-            <div style="width: 30px; height: 30px; float: right; margin: 0px 12px 0px 0px;" id="terminal_control5">
-              <div class="top-right-logo" id="terminal_control6"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div id="terminal_control7">
-        <div id="terminal_containerWindow">
-          <section style="" id="terminal_containerWindow_login">
-            <div class="login-header-row" id="terminal_containerWindow_login_control">
-              <div class="login-header-ob" id="terminal_containerWindow_login_control2"></div>
-            </div>
-            <div id="terminal_containerWindow_login_control3">
-              <div class="span6" id="terminal_containerWindow_login_control4">
-                <div class="login-user-container" id="terminal_containerWindow_login_loginUserContainer">.</div>
-              </div>
-              <div class="span6" id="terminal_containerWindow_login_control5" style="display:none;">
-                <div class="login-inputs-container" id="terminal_containerWindow_login_control6">
-                  <div style="display: none" id="terminal_containerWindow_login_loginUnknowTerminal">
-                    <div id="terminal_containerWindow_login_control16">
-                      <div class="login-browsernotsupported-title" id="terminal_containerWindow_login_loginUnknowTerminal_Title_Lbl"></div>
-                    </div>
-                    <div id="terminal_containerWindow_login_control17">
-                      <div class="span8" id="terminal_containerWindow_login_control18">
-                        <div class="login-browsernotsupported-content" id="terminal_containerWindow_login_loginUnknowTerminal_P1_Lbl"></div>
-                      </div>
-                      <div style="padding: 78px 0px 0px 0px" class="span4" id="terminal_containerWindow_login_control19">
-                        <div class="login-clock" id="terminal_containerWindow_login_clock2">
-                          <div class="clock-time" id="terminal_containerWindow_login_clock2_clock"></div>
-                          <div class="clock-date" id="terminal_containerWindow_login_clock2_date"></div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-        </div>
-      </div>
-    </div>
-  </div>
-</body>
+   </body>
 </html>

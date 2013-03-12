@@ -644,5 +644,4 @@ OB.POS.registerWindow({
   // Not to display it in the menu
   menuLabel: 'POS'
 });
-OB.POS.modelterminal.set('windowRegistered', true);
 OB.POS.modelterminal.triggerReady();

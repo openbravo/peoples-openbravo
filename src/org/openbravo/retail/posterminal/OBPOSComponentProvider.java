@@ -197,7 +197,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/mockpayments",
 
         // Discounts
-        "model/discounts",
+        "model/discounts", "model/order", "model/product-category", "model/product",
+        "model/businesspartner", "model/document-sequence"
 
     };
 

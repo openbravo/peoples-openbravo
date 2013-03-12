@@ -328,6 +328,7 @@
     },
 
     setDocumentSequence: function () {
+    	console.log('setDocumentSequence')
       var me = this;
       // Obtains the persisted document number (documentno of the last processed order)
       OB.Dal.find(OB.Model.DocumentSequence, {
@@ -464,7 +465,12 @@
 
     triggerReady: function () {
       var undef, loadModelsIncFunc, loadModelsTotalFunc, minTotalRefresh, minIncRefresh;
-      if (this.get('payments') && this.get('pricelistversion') && this.get('warehouses') && this.get('currency') && this.get('context') && this.get('writableOrganizations') && (this.get('documentsequence') !== undef || this.get('documentsequence') === 0) && this.get('windowRegistered') !== undef) {
+      
+      console.log('triggerReady', this.get('payments') && this.get('pricelistversion') && this.get('warehouses') && this.get('currency') && this.get('context') && this.get('writableOrganizations') && (this.get('documentsequence') !== undef || this.get('documentsequence') === 0),
+    		  this.get('payments'), this.get('pricelistversion'), this.get('warehouses'), this.get('currency'), this.get('context'), this.get('writableOrganizations'), this.get('documentsequence')
+      )
+      
+      if (this.get('payments') && this.get('pricelistversion') && this.get('warehouses') && this.get('currency') && this.get('context') && this.get('writableOrganizations') && (this.get('documentsequence') !== undef || this.get('documentsequence') === 0)) {
         OB.MobileApp.model.loggingIn = false;
         if (OB.MobileApp.model.get('connectedToERP')) {
           //In online mode, we save the terminal information in the local db
