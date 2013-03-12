@@ -425,39 +425,15 @@ enyo.kind({
       var creditLimit = this.model.get('order').get('bp').get('creditLimit');
       var creditUsed = this.model.get('order').get('bp').get('creditUsed');
       var totalPending = this.model.get('order').getPending();
-      if (this.model.get('order').get('orderType') === 1 && (creditLimit - creditUsed) >= totalPending) {
+      if (this.model.get('order').get('orderType') === 1) {
         this.doShowPopup({
           popup: 'modalEnoughCredit',
           args: {
             order: this.model.get('order')
           }
         });
-      } else {
-        actualCredit = creditLimit - creditUsed;
-        this.doShowPopup({
-          popup: 'modalNotEnoughCredit',
-          args: {
-            bpName: this.model.get('order').get('bp'),
-            actualCredit: actualCredit
-          }
-        });
       }
     }
-
-    //		if(this.drawerpreference){
-    //		  if(this.drawerOpened){
-    //		  this.owner.receipt.trigger('paymentDone');
-    //	      this.drawerOpened= false;
-    //	      this.setContent(OB.I18N.getLabel('OBPOS_LblOpen'));
-    //	    }else{
-    //	      this.owner.receipt.trigger('openDrawer');
-    //	      this.drawerOpened= true;
-    //	      this.setContent(OB.I18N.getLabel('OBPOS_LblDone'));
-    //	      }
-    //	   }else{
-    //	     this.owner.receipt.trigger('paymentDone');
-    //	     this.owner.receipt.trigger('openDrawer');
-    //	   }
   }
 });
 

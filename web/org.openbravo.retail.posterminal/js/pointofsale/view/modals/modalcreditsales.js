@@ -28,9 +28,9 @@ enyo.kind({
     var pendingQty = this.args.order.getPending();
     var bpName = this.args.order.get('bp').get('_identifier');
     if (this.args.order.get('orderType') === 1) {
-      this.$.bodyContent.$.popupmessage.setContent(OB.I18N.getLabel('OBPOS_enoughCreditReturnBody', [pendingQty, bpName]));
+      this.$.bodyContent.$.popupmessage.setContent(OB.I18N.getLabel('OBPOS_enoughCreditReturnBody', [OB.I18N.formatCurrency(pendingQty), bpName]));
     } else {
-      this.$.bodyContent.$.popupmessage.setContent(OB.I18N.getLabel('OBPOS_enoughCreditBody', [pendingQty, bpName]));
+      this.$.bodyContent.$.popupmessage.setContent(OB.I18N.getLabel('OBPOS_enoughCreditBody', [OB.I18N.formatCurrency(pendingQty), bpName]));
     }
   }
 });
