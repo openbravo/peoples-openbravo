@@ -15,26 +15,26 @@ enyo.kind({
     components: [{
       classes: 'row-fluid',
       components: [{
-        classes: 'span6',
-        style: 'text-align:left;',
+        style: 'float:left; padding-left:30px',
         content: OB.I18N.getLabel('OBPOS_LblModalType')
       }, {
         name: 'paymenttype',
-        classes: 'span6',
-        style: 'font-weight: bold;'
+        style: 'float:right; font-weight: bold; padding-right:30px'
       }]
+    }, {
+      style: 'clear: both'
     }, {
       classes: 'row-fluid',
       components: [{
-        classes: 'span6',
-        style: 'text-align:left;',
+        style: 'float:left; padding-left:30px',
         content: OB.I18N.getLabel('OBPOS_LblModalAmount')
       }, {
         name: 'paymentamount',
-        classes: 'span6',
-        style: 'font-weight: bold;'
+        style: 'float:right; font-weight: bold; padding-right:30px'
       }]
     }]
+  }, {
+    style: 'clear: both'
   }, {
     kind: 'OB.UI.MockPayment_OkButton'
   }],
