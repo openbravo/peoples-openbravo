@@ -1142,8 +1142,11 @@ public class OrderLoader extends JSONProcessSimple {
       List<FIN_PaymentScheduleDetail> detail = new ArrayList<FIN_PaymentScheduleDetail>();
       detail.add(paymentScheduleDetail);
 
-      FIN_Payment finPayment = FIN_AddPayment.savePayment(null, true,
-          getPaymentDocumentType(order.getOrganization()), order.getDocumentNo(),
+      DocumentType paymentDocType = getPaymentDocumentType(order.getOrganization());
+      Entity paymentEntity = ModelProvider.getInstance().getEntity(FIN_Payment.class);
+      String paymentDocNo = getDocumentNo(paymentEntity, null, paymentDocType);
+
+      FIN_Payment finPayment = FIN_AddPayment.savePayment(null, true, paymentDocType, paymentDocNo,
           order.getBusinessPartner(), paymentType.getPaymentMethod().getPaymentMethod(), account,
           amount.toString(), order.getOrderDate(), order.getOrganization(), null, detail,
           paymentAmount, false, false, order.getCurrency(), mulrate, origAmount);

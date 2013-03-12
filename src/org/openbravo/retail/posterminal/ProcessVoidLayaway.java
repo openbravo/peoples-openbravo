@@ -23,6 +23,8 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.advpaymentmngt.process.FIN_AddPayment;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
+import org.openbravo.base.model.Entity;
+import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.DalUtil;
@@ -69,7 +71,7 @@ public class ProcessVoidLayaway extends JSONProcessSimple {
         orderLine.setOrderedQuantity(BigDecimal.ZERO);
         orderLine.setLineNetAmount(BigDecimal.ZERO);
         orderLine.setLineGrossAmount(BigDecimal.ZERO);
-        for (int j = 0; i < orderLine.getOrderLineOfferList().size(); j++) {
+        for (int j = 0; j < orderLine.getOrderLineOfferList().size(); j++) {
           OrderLineOffer offer = ((OrderLineOffer) orderLine.getOrderLineOfferList().get(j));
           offer.setTotalAmount(BigDecimal.ZERO);
           offer.setDisplayedTotalAmount(BigDecimal.ZERO);
@@ -139,11 +141,14 @@ public class ProcessVoidLayaway extends JSONProcessSimple {
         HashMap<String, BigDecimal> paymentAmount = new HashMap<String, BigDecimal>();
         paymentAmount.put(newPaymentScheduleDetail.getId(), amount);
 
-        FIN_Payment finPayment = FIN_AddPayment.savePayment(null, true,
-            getPaymentDocumentType(order.getOrganization()), order.getDocumentNo(),
-            order.getBusinessPartner(), paymentType.getPaymentMethod().getPaymentMethod(), account,
-            amount.toString(), new Date(), order.getOrganization(), null, detail, paymentAmount,
-            false, false, order.getCurrency(),
+        DocumentType paymentDocType = getPaymentDocumentType(order.getOrganization());
+        Entity paymentEntity = ModelProvider.getInstance().getEntity(FIN_Payment.class);
+        String paymentDocNo = getDocumentNo(paymentEntity, null, paymentDocType);
+
+        FIN_Payment finPayment = FIN_AddPayment.savePayment(null, true, paymentDocType,
+            paymentDocNo, order.getBusinessPartner(), paymentType.getPaymentMethod()
+                .getPaymentMethod(), account, amount.toString(), new Date(), order
+                .getOrganization(), null, detail, paymentAmount, false, false, order.getCurrency(),
             mulrate.setScale(stdPrecision, RoundingMode.HALF_UP), foreignAmount);
         finPayment.setDescription(getPaymentDescription());
         finPayment.setStatus("RDNC");
@@ -187,5 +192,12 @@ public class ProcessVoidLayaway extends JSONProcessSimple {
           language);
     }
     return paymentDescription;
+  }
+
+  protected String getDocumentNo(Entity entity, DocumentType doctypeTarget, DocumentType doctype) {
+    return Utility.getDocumentNo(OBDal.getInstance().getConnection(false),
+        new DalConnectionProvider(false), RequestContext.get().getVariablesSecureApp(), "", entity
+            .getTableName(), doctypeTarget == null ? "" : doctypeTarget.getId(),
+        doctype == null ? "" : doctype.getId(), false, true);
   }
 }
