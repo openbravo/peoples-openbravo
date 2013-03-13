@@ -29,9 +29,7 @@ import org.openbravo.client.kernel.BaseComponentProvider;
 import org.openbravo.client.kernel.BaseComponentProvider.ComponentResource.ComponentResourceType;
 import org.openbravo.client.kernel.Component;
 import org.openbravo.client.kernel.ComponentProvider;
-import org.openbravo.client.kernel.KernelConstants;
 import org.openbravo.mobile.core.MobileCoreConstants;
-import org.openbravo.mobile.core.model.ClientModelComponent;
 
 /**
  * @author iperdomo
@@ -48,32 +46,12 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
   }
 
   public static final String QUALIFIER = "OBPOS_Main";
-  public static final String APP_CACHE_COMPONENT = "AppCacheManifest";
-  public static final String CLIENT_MODEL_COMPONENT = "ClientModel";
-  public static final String LABELS_COMPONENT = "Labels";
 
   @Override
   public Component getComponent(String componentId, Map<String, Object> parameters) {
-    if (componentId.equals(APP_CACHE_COMPONENT)) {
+    if (componentId.equals(MobileCoreConstants.APP_CACHE_COMPONENT)) {
       final ApplicationCacheComponent component = getComponent(ApplicationCacheComponent.class);
-      component.setId(APP_CACHE_COMPONENT);
-      component.setParameters(parameters);
-      return component;
-    } else if (componentId.equals(CLIENT_MODEL_COMPONENT)) {
-      final ClientModelComponent component = getComponent(ClientModelComponent.class);
-      component.setId(CLIENT_MODEL_COMPONENT);
-      component.setParameters(parameters);
-      return component;
-    } else if (componentId.equals(LABELS_COMPONENT)) {
-      System.out.println("+++++++++++.................................");
-      // final LabelsComponent component = getComponent(LabelsComponent.class);
-      // component.setId(LABELS_COMPONENT);
-      // component.setParameters(parameters);
-      // return component;
-      return null;
-    } else if (componentId.equals(KernelConstants.RESOURCE_COMPONENT_ID)) {
-      final OBPOSStaticResorcesComponent component = getComponent(OBPOSStaticResorcesComponent.class);
-      component.setId(KernelConstants.RESOURCE_COMPONENT_ID);
+      component.setId(componentId);
       component.setParameters(parameters);
       return component;
     }

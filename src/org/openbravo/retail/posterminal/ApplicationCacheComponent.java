@@ -50,47 +50,25 @@ public class ApplicationCacheComponent extends MobileCoreApplicationCacheCompone
     resources.add("../../web/org.openbravo.retail.posterminal/js/libs/sha1-min.js");
 
     // Boot code
-    resources.add("../../web/org.openbravo.client.application/js/utilities/ob-utilities-date.js");
-    resources.add("../../web/org.openbravo.retail.posterminal/js/datasource.js");
-    resources.add("../../web/org.openbravo.retail.posterminal/js/utilities.js");
-    resources.add("../../web/org.openbravo.retail.posterminal/js/utilitiesui.js");
-    resources.add("../../web/org.openbravo.retail.posterminal/js/i18n.js");
-    resources.add("../../web/org.openbravo.retail.posterminal/js/components/clock.js");
-    resources.add("../../web/org.openbravo.retail.posterminal/js/components/commonbuttons.js");
-    resources.add("../../web/org.openbravo.retail.posterminal/js/model/terminal.js");
-    resources.add("../../web/org.openbravo.retail.posterminal/js/components/terminal.js");
-    resources.add("../../web/org.openbravo.retail.posterminal/js/login/model/login-model.js");
-    resources.add("../../web/org.openbravo.retail.posterminal/js/login/view/login.js");
-    resources.add("../../web/org.openbravo.retail.posterminal/js/data/dal.js");
-    resources.add("../../web/org.openbravo.retail.posterminal/js/model/product-category.js");
-    resources.add("../../web/org.openbravo.retail.posterminal/js/model/product.js");
-    resources.add("../../web/org.openbravo.retail.posterminal/js/model/businesspartner.js");
-    resources.add("../../web/org.openbravo.retail.posterminal/js/model/document-sequence.js");
-    resources.add("../../web/org.openbravo.retail.posterminal/js/model/user.js");
-    resources.add("../../web/org.openbravo.retail.posterminal/js/model/session.js");
-    resources.add("../../web/org.openbravo.retail.posterminal/js/model/order.js");
-    resources
-        .add("../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=FinancialMgmtTaxRate&modelName=TaxRate&source=org.openbravo.retail.posterminal.master.TaxRate");
-    resources
-        .add("../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingProductPrice&modelName=ProductPrice&source=org.openbravo.retail.posterminal.master.ProductPrice");
 
     resources
-        .add("../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustment&modelName=Discount&source=org.openbravo.retail.posterminal.master.Discount");
+        .add("../../org.openbravo.client.kernel/OBMOBC_Main/ClientModel?entity=FinancialMgmtTaxRate&modelName=TaxRate&source=org.openbravo.retail.posterminal.master.TaxRate");
     resources
-        .add("../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustmentBusinessPartner&modelName=DiscountFilterBusinessPartner&source=org.openbravo.retail.posterminal.master.DiscountFilterBusinessPartner");
+        .add("../../org.openbravo.client.kernel/OBMOBC_Main/ClientModel?entity=PricingProductPrice&modelName=ProductPrice&source=org.openbravo.retail.posterminal.master.ProductPrice");
+
     resources
-        .add("../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustmentBusinessPartnerGroup&modelName=DiscountFilterBusinessPartnerGroup&source=org.openbravo.retail.posterminal.master.DiscountFilterBusinessPartnerGroup");
+        .add("../../org.openbravo.client.kernel/OBMOBC_Main/ClientModel?entity=PricingAdjustment&modelName=Discount&source=org.openbravo.retail.posterminal.master.Discount");
     resources
-        .add("../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustmentProduct&modelName=DiscountFilterProduct&source=org.openbravo.retail.posterminal.master.DiscountFilterProduct");
+        .add("../../org.openbravo.client.kernel/OBMOBC_Main/ClientModel?entity=PricingAdjustmentBusinessPartner&modelName=DiscountFilterBusinessPartner&source=org.openbravo.retail.posterminal.master.DiscountFilterBusinessPartner");
     resources
-        .add("../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingAdjustmentProductCategory&modelName=DiscountFilterProductCategory&source=org.openbravo.retail.posterminal.master.DiscountFilterProductCategory");
+        .add("../../org.openbravo.client.kernel/OBMOBC_Main/ClientModel?entity=PricingAdjustmentBusinessPartnerGroup&modelName=DiscountFilterBusinessPartnerGroup&source=org.openbravo.retail.posterminal.master.DiscountFilterBusinessPartnerGroup");
+    resources
+        .add("../../org.openbravo.client.kernel/OBMOBC_Main/ClientModel?entity=PricingAdjustmentProduct&modelName=DiscountFilterProduct&source=org.openbravo.retail.posterminal.master.DiscountFilterProduct");
+    resources
+        .add("../../org.openbravo.client.kernel/OBMOBC_Main/ClientModel?entity=PricingAdjustmentProductCategory&modelName=DiscountFilterProductCategory&source=org.openbravo.retail.posterminal.master.DiscountFilterProductCategory");
 
     resources.add("../../web/org.openbravo.retail.posterminal/res/printline.xml");
     resources.add("../../web/org.openbravo.retail.posterminal/res/printreceipt.xml");
-
-    // Generated file
-    resources.add("../../org.openbravo.client.kernel/OBPOS_Main/StaticResources?_appName=WebPOS");
-    resources.add("../../web/js/gen/" + getFileName() + ".js");
     return resources;
   }
 
@@ -134,7 +112,8 @@ public class ApplicationCacheComponent extends MobileCoreApplicationCacheCompone
     return resources;
   }
 
-  private String getFileName() {
-    return OBPOSStaticResorcesComponent.getStaticResourceFileName();
+  @Override
+  public String getAppName() {
+    return POSConstants.APP_NAME;
   }
 }
