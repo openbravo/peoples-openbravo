@@ -192,6 +192,37 @@
       this.cleanSessionInfo();
     },
 
+    postCloseSession: function (session) {
+      console.log('POS postclosesession');
+      //All pending to be paid orders will be removed on logout
+      OB.Dal.find(OB.Model.Order, {
+        'session': session.get('id'),
+        'hasbeenpaid': 'N'
+      }, function (orders) {
+        var i, j, order, orderlines, orderline, errorFunc = function () {
+            window.console.error(arguments);
+            };
+        var triggerLogoutFunc = function () {
+            OB.MobileApp.model.triggerLogout();
+            };
+        if (orders.models.length === 0) {
+          //If there are no orders to remove, a logout is triggered
+          OB.MobileApp.model.triggerLogout();
+        }
+        for (i = 0; i < orders.models.length; i++) {
+          order = orders.models[i];
+          OB.Dal.removeAll(OB.Model.Order, {
+            'order': order.get('id')
+          }, null, errorFunc);
+          //Logout will only be triggered after last order
+          OB.Dal.remove(order, i < orders.models.length - 1 ? null : triggerLogoutFunc, errorFunc);
+        }
+      }, function () {
+        window.console.error(arguments);
+        OB.MobileApp.model.triggerLogout();
+      });
+    },
+
     load: function () {
       var termInfo, i, max;
       if (!OB.MobileApp.model.get('connectedToERP')) {
