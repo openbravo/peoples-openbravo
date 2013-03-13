@@ -16,7 +16,7 @@ enyo.kind({
   events: {
     onShowReturnText: ''
   },
-  label: OB.I18N.getLabel('OBPOS_LblReturn'),
+  i18nLabel: 'OBPOS_LblReturn',
   tap: function () {
     if (this.disabled) {
       return true;
@@ -54,7 +54,7 @@ enyo.kind({
   events: {
     onShowReceiptProperties: ''
   },
-  label: OB.I18N.getLabel('OBPOS_LblProperties'),
+  i18nLabel: 'OBPOS_LblProperties',
   tap: function () {
     if (this.disabled) {
       return true;
@@ -83,7 +83,7 @@ enyo.kind({
   events: {
     onReceiptToInvoice: ''
   },
-  label: OB.I18N.getLabel('OBPOS_LblInvoice'),
+  i18nLabel: 'OBPOS_LblInvoice',
   tap: function () {
     if (this.disabled) {
       return true;
@@ -145,7 +145,7 @@ enyo.kind({
   events: {
     onPrintReceipt: ''
   },
-  label: OB.I18N.getLabel('OBPOS_LblPrintReceipt'),
+  i18nLabel: 'OBPOS_LblPrintReceipt',
   tap: function () {
     if (this.disabled) {
       return true;
@@ -175,7 +175,7 @@ enyo.kind({
   events: {
     onCreateQuotation: ''
   },
-  label: OB.I18N.getLabel('OBPOS_CreateQuotation'),
+  i18nLabel: 'OBPOS_CreateQuotation',
   tap: function () {
     if (this.disabled) {
       return true;
@@ -260,7 +260,7 @@ enyo.kind({
   events: {
     onShowPopup: ''
   },
-  label: OB.I18N.getLabel('OBPOS_CreateOrderFromQuotation'),
+  i18nLabel: 'OBPOS_CreateOrderFromQuotation',
   tap: function () {
     if (this.disabled) {
       return true;
@@ -299,7 +299,7 @@ enyo.kind({
   events: {
     onRejectQuotation: ''
   },
-  label: OB.I18N.getLabel('OBPOS_RejectQuotation'),
+  i18nLabel: 'OBPOS_RejectQuotation',
   tap: function () {
     if (this.disabled) {
       return true;
@@ -335,7 +335,7 @@ enyo.kind({
   events: {
     onShowReactivateQuotation: ''
   },
-  label: OB.I18N.getLabel('OBPOS_ReactivateQuotation'),
+  i18nLabel: 'OBPOS_ReactivateQuotation',
   tap: function () {
     if (this.disabled) {
       return true;
@@ -372,7 +372,7 @@ enyo.kind({
   events: {
     onPaidReceipts: ''
   },
-  label: OB.I18N.getLabel('OBPOS_LblPaidReceipts'),
+  i18nLabel: 'OBPOS_LblPaidReceipts',
   tap: function () {
     if (this.disabled) {
       return true;
@@ -395,7 +395,7 @@ enyo.kind({
   events: {
     onQuotations: ''
   },
-  label: OB.I18N.getLabel('OBPOS_Quotations'),
+  i18nLabel: 'OBPOS_Quotations',
   tap: function () {
     if (this.disabled) {
       return true;
@@ -419,7 +419,7 @@ enyo.kind({
   events: {
     onBackOffice: ''
   },
-  label: OB.I18N.getLabel('OBPOS_LblOpenbravoWorkspace'),
+  i18nLabel: 'OBPOS_LblOpenbravoWorkspace',
   tap: function () {
     if (this.disabled) {
       return true;
@@ -508,6 +508,7 @@ enyo.kind({
       this.menuEntries.push({
         kind: 'OB.UI.MenuItem',
         label: window.get('menuLabel'),
+        i18nLabel: window.get('menuI18NLabel'),
         route: window.get('route'),
         permission: window.get('permission')
       });

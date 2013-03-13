@@ -101,6 +101,6 @@ OB.POS.registerWindow({
   route: 'retail.cashmanagement',
   menuPosition: 10,
   online: true,
-  menuLabel: OB.I18N.getLabel('OBPOS_LblCashManagement'),
+  menuI18NLabel: 'OBPOS_LblCashManagement',
   permission: 'OBPOS_retail.cashmanagement'
 });
