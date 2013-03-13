@@ -163,8 +163,7 @@
       }
     },
 
-    preLoginActions: function () {
-      console.log('pos prelogin');
+    cleanSessionInfo: function () {
       this.set('terminal', null);
       this.set('payments', null);
       this.set('paymentcash', null);
@@ -176,6 +175,10 @@
       this.set('pricelistversion', null);
       this.set('currency', null);
       this.set('currencyPrecision', null);
+    },
+
+    preLoginActions: function () {
+      this.cleanSessionInfo();
 
       // Remove the pending orders that have not been paid
       if (OB.Dal) { //TODO: check this...
@@ -183,6 +186,10 @@
           'hasbeenpaid': 'N'
         }, null, null);
       }
+    },
+
+    preLogoutActions: function () {
+      this.cleanSessionInfo();
     },
 
     load: function () {
