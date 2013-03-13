@@ -163,6 +163,28 @@
       }
     },
 
+    preLoginActions: function () {
+      console.log('pos prelogin');
+      this.set('terminal', null);
+      this.set('payments', null);
+      this.set('paymentcash', null);
+      this.set('context', null);
+      this.set('permissions', null);
+      this.set('businesspartner', null);
+      this.set('location', null);
+      this.set('pricelist', null);
+      this.set('pricelistversion', null);
+      this.set('currency', null);
+      this.set('currencyPrecision', null);
+
+      // Remove the pending orders that have not been paid
+      if (OB.Dal) { //TODO: check this...
+        OB.Dal.removeAll(OB.Model.Order, {
+          'hasbeenpaid': 'N'
+        }, null, null);
+      }
+    },
+
     load: function () {
       var termInfo, i, max;
       if (!OB.MobileApp.model.get('connectedToERP')) {
