@@ -526,6 +526,14 @@
         }
         this.trigger('ready');
       }
+    },
+
+    getPaymentName: function (key) {
+      return this.paymentnames[key].payment._identifier;
+    },
+
+    hasPayment: function (key) {
+      return this.paymentnames[key];
     }
   });
 
