@@ -91,7 +91,8 @@ public class SE_PaymentMethod_FinAccount extends SimpleCallout {
           }
           selectedPaymentMethod = accPm;
 
-          info.addSelectResult(accPm.getAccount().getId(), accPm.getAccount().getName(), isSelected);
+          info.addSelectResult(accPm.getAccount().getId(), accPm.getAccount().getIdentifier(),
+              isSelected);
         }
         isSelected = false;
       }
