@@ -196,7 +196,7 @@ enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ButtonTabScan',
   kind: 'OB.UI.ToolbarButtonTab',
   tabPanel: 'scan',
-  label: OB.I18N.getLabel('OBMOBC_LblScan'),
+  i18nLabel: 'OBMOBC_LblScan',
   events: {
     onTabChange: ''
   },
@@ -233,7 +233,7 @@ enyo.kind({
     this.setDisabled(inEvent.status);
   },
   tabPanel: 'catalog',
-  label: OB.I18N.getLabel('OBMOBC_LblBrowse'),
+  i18nLabel: 'OBMOBC_LblBrowse',
   tap: function () {
     if (!this.disabled) {
       this.doTabChange({
@@ -249,7 +249,7 @@ enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ButtonTabSearch',
   kind: 'OB.UI.ToolbarButtonTab',
   tabPanel: 'search',
-  label: OB.I18N.getLabel('OBPOS_LblSearch'),
+  i18nLabel: 'OBPOS_LblSearch',
   handlers: {
     onRightToolbarDisabled: 'disabledButton'
   },
@@ -282,7 +282,7 @@ enyo.kind({
   },
   kind: 'OB.UI.ToolbarButtonTab',
   tabPanel: 'edit',
-  label: OB.I18N.getLabel('OBPOS_LblEdit'),
+  i18nLabel: 'OBPOS_LblEdit',
   events: {
     onTabChange: ''
   },
