@@ -105,7 +105,9 @@ public class KernelServlet extends BaseKernelServlet {
       if (component instanceof BaseComponent && ((BaseComponent) component).bypassAuthentication()) {
         bypassAuthentication = true;
         OBContext context = OBContext.getOBContext();
-        sessionForThisRequest = context == null;
+
+        sessionForThisRequest = context == null
+            || request.getSession().getAttribute("#Authenticated_user") == null;
 
         HttpSession session = request.getSession(true);
         if (sessionForThisRequest) {
