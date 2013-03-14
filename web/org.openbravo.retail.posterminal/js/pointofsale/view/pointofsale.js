@@ -151,7 +151,8 @@ enyo.kind({
       },
       leftToolbar: {
         kind: 'OB.OBPOSPointOfSale.UI.LeftToolbarImpl',
-        name: 'leftToolbar'
+        name: 'leftToolbar',
+        showMenu: true,
       },
       leftPanel: {
         name: 'leftPanel',
