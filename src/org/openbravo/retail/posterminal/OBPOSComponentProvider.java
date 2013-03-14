@@ -82,7 +82,6 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "model/currencypanel",
         "model/changedbusinesspartners",
         "model/executor",
-        "components/scrollabletable",
         "components/modalcancel",
         "components/subwindow",
         "components/leftsubwindow",
