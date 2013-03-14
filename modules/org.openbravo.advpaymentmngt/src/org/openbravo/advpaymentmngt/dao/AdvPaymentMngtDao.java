@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  Enterprise Intelligence Systems (http://www.eintel.com.au).
  *************************************************************************
@@ -1700,7 +1700,7 @@ public class AdvPaymentMngtDao {
         .getFinancialMgmtPaymentExecutionProcessParameterList();
     for (PaymentExecutionProcessParameter parameter : parameters) {
       if ("CONSTANT".equals(parameter.getParameterType())
-          && parameter.getDefaultTextValue() != null && parameter.getDefaultTextValue() != "")
+          && StringUtils.isBlank(parameter.getDefaultTextValue()))
         return false;
       else if ("IN".equals(parameter.getParameterType())) {
         if ("CHECK".equals(parameter.getInputType())
