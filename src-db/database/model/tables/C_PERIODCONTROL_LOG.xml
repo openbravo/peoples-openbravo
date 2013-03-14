@@ -69,6 +69,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="C_PERIOD_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="C_PERIODCONTROL_LOG_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -80,6 +84,9 @@
       </foreign-key>
       <foreign-key foreignTable="C_YEAR" name="C_PERIODCONTROL_LOG_C_YEAR">
         <reference local="C_YEAR_ID" foreign="C_YEAR_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_PERIOD" name="C_PERIODCONTROL_LOG_PERIOD">
+        <reference local="C_PERIOD_ID" foreign="C_PERIOD_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_PERIOD" name="C_PERIODCONTROL_LOG_PERIODNO">
         <reference local="PERIODNO" foreign="C_PERIOD_ID"/>

@@ -53,6 +53,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="OPENCLOSE" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
+        <default><![CDATA[O]]></default>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="C_PERIOD" name="C_PERIOD_PERIODCONTROL">
         <reference local="C_PERIOD_ID" foreign="C_PERIOD_ID"/>
       </foreign-key>

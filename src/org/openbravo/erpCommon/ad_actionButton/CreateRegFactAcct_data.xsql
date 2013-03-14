@@ -205,7 +205,7 @@
         SELECT get_UUID(), ?, ?,
         'Y', now(), ?, now(), ?,
         C_ACCTSCHEMA_ID, ACCOUNT_ID, to_date(?), to_date(?),
-        ?, '224', ?, 
+        ?, '145', ?, 
         'A', ?, (CASE SIGN(SUM(AMTACCTCR)-SUM(AMTACCTDR)) WHEN -1 THEN 0 ELSE (SUM(AMTACCTCR)-SUM(AMTACCTDR)) END),
         (CASE SIGN(SUM(AMTACCTDR)-SUM(AMTACCTCR)) WHEN -1 THEN 0 ELSE (SUM(AMTACCTDR)-SUM(AMTACCTCR)) END),
         (CASE SIGN(SUM(AMTACCTCR)-SUM(AMTACCTDR)) WHEN -1 THEN 0 ELSE (SUM(AMTACCTCR)-SUM(AMTACCTDR)) END), 
@@ -270,7 +270,7 @@
         SELECT get_UUID(), ?, ?,
         'Y', now(), ?, now(), ?,
         C_ACCTSCHEMA_ID, ACCOUNT_ID, to_date(?), to_date(?),
-        ?, '224', ?, 
+        ?, '145', ?, 
         'A', ?, (CASE SIGN(SUM(AMTACCTCR)-SUM(AMTACCTDR)) WHEN -1 THEN 0 ELSE (SUM(AMTACCTCR)-SUM(AMTACCTDR)) END),
         (CASE SIGN(SUM(AMTACCTDR)-SUM(AMTACCTCR)) WHEN -1 THEN 0 ELSE (SUM(AMTACCTDR)-SUM(AMTACCTCR)) END),
         (CASE SIGN(SUM(AMTACCTCR)-SUM(AMTACCTDR)) WHEN -1 THEN 0 ELSE (SUM(AMTACCTCR)-SUM(AMTACCTDR)) END), 
@@ -517,7 +517,7 @@
     <Sql>
       <![CDATA[
         UPDATE C_PeriodControl
-        SET PeriodStatus = 'C', UPDATED = now(), UPDATEDBY = ?
+        SET PeriodStatus = 'P', UPDATED = now(), UPDATEDBY = ?
         WHERE PeriodStatus <> 'P'
         AND C_PERIOD_ID IN (SELECT C_PERIOD_ID
                 FROM C_PERIOD

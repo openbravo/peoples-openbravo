@@ -20,6 +20,10 @@ package org.openbravo.client.kernel;
 
 import javax.enterprise.context.ApplicationScoped;
 
+import org.hibernate.dialect.function.StandardSQLFunction;
+import org.hibernate.type.StringType;
+import org.openbravo.dal.service.OBDal;
+
 /**
  * An example {@link ApplicationInitializer}.
  * 
@@ -29,5 +33,9 @@ import javax.enterprise.context.ApplicationScoped;
 public class KernelApplicationInitializer implements ApplicationInitializer {
 
   public void initialize() {
+    OBDal.getInstance().registerSQLFunction("ad_org_getcalendarowner",
+        new StandardSQLFunction("ad_org_getcalendarowner", new StringType()));
+    OBDal.getInstance().registerSQLFunction("ad_org_getperiodcontrolallow",
+        new StandardSQLFunction("ad_org_getperiodcontrolallow", new StringType()));
   }
 }

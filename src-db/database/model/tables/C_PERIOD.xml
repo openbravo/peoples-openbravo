@@ -77,6 +77,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="OPENCLOSE" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
+        <default><![CDATA[O]]></default>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="C_PERIODCLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
