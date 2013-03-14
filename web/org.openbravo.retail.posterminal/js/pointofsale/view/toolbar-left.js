@@ -143,8 +143,8 @@ enyo.kind({
         edit: false
       });
       this.bubble('onShowColumn', {
-          colNum: 1
-        });
+        colNum: 1
+      });
     }
   },
   attributes: {
@@ -195,9 +195,75 @@ enyo.kind({
   }, {
     kind: 'OB.OBPOSPointOfSale.UI.StandardMenu',
     span: 2
-  },{
-	    kind: 'OB.OBPOSPointOfSale.UI.ButtonTabPayment',
-	    name: 'payment',
-	    span: 6
-	  }]
+  }, {
+    kind: 'OB.OBPOSPointOfSale.UI.ButtonTabPayment',
+    name: 'payment',
+    span: 6
+  }],
+  initComponents: function () {
+    // set up the POS menu
+    this.menuEntries = [];
+
+    this.menuEntries.push({
+      kind: 'OB.UI.MenuReturn'
+    });
+    this.menuEntries.push({
+      kind: 'OB.UI.MenuProperties'
+    });
+    this.menuEntries.push({
+      kind: 'OB.UI.MenuInvoice'
+    });
+    this.menuEntries.push({
+      kind: 'OB.UI.MenuPrint'
+    });
+    this.menuEntries.push({
+      kind: 'OB.UI.MenuCustomers'
+    });
+    this.menuEntries.push({
+      kind: 'OB.UI.MenuPaidReceipts'
+    });
+    this.menuEntries.push({
+      kind: 'OB.UI.MenuQuotations'
+    });
+
+    // TODO: what is this for?!!
+    // this.menuEntries = this.menuEntries.concat(this.externalEntries);
+    this.menuEntries.push({
+      kind: 'OB.UI.MenuSeparator'
+    });
+
+    this.menuEntries.push({
+      kind: 'OB.UI.MenuDiscounts'
+    });
+
+    this.menuEntries.push({
+      kind: 'OB.UI.MenuSeparator'
+    });
+
+    this.menuEntries.push({
+      kind: 'OB.UI.MenuReactivateQuotation'
+    });
+
+    this.menuEntries.push({
+      kind: 'OB.UI.MenuRejectQuotation'
+    });
+
+    this.menuEntries.push({
+      kind: 'OB.UI.MenuCreateOrderFromQuotation'
+    });
+
+    this.menuEntries.push({
+      kind: 'OB.UI.MenuQuotation'
+    });
+
+    this.menuEntries.push({
+      kind: 'OB.UI.MenuSeparator'
+    });
+
+    this.menuEntries.push({
+      kind: 'OB.UI.MenuBackOffice'
+    });
+
+    this.inherited(arguments);
+  }
 });
