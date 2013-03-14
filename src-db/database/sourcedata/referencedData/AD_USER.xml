@@ -9,6 +9,7 @@
 <!--0-->  <SUPERVISOR_ID><![CDATA[100]]></SUPERVISOR_ID>
 <!--0-->  <USERNAME><![CDATA[System]]></USERNAME>
 <!--0-->  <ISLOCKED><![CDATA[N]]></ISLOCKED>
+<!--0-->  <GRANT_PORTAL_ACCESS><![CDATA[N]]></GRANT_PORTAL_ACCESS>
 <!--0--></AD_USER>
 
 <!--100--><AD_USER>
@@ -22,6 +23,7 @@
 <!--100-->  <FIRSTNAME><![CDATA[Openbravo]]></FIRSTNAME>
 <!--100-->  <USERNAME><![CDATA[Openbravo]]></USERNAME>
 <!--100-->  <ISLOCKED><![CDATA[N]]></ISLOCKED>
+<!--100-->  <GRANT_PORTAL_ACCESS><![CDATA[N]]></GRANT_PORTAL_ACCESS>
 <!--100--></AD_USER>
 
 </data>
