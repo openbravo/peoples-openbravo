@@ -23,7 +23,7 @@ isc.PeriodControlStatus_Field.addProperties({
   width: 100,
   initWidget: function () {
     if (this.record && this.record.periodStatus) {
-    	//debugger;
+      //debugger;
       this.createField(this.record.periodStatus);
     }
 
@@ -60,7 +60,7 @@ isc.PeriodStatus_Field.addProperties({
   width: 100,
   initWidget: function () {
     if (this.record && this.record.status) {
-    	//debugger;
+      //debugger;
       this.createField(this.record.status);
     }
 
@@ -113,7 +113,7 @@ OB.OpenClose = {
 
     for (i = 0; i < selection.length; i++) {
       recordIdList.push(selection[i].id);
-    };
+    }
 
      isc.OpenClosePeriodProcessPopup.create({
        recordIdList: recordIdList,
@@ -156,7 +156,6 @@ isc.OpenClosePeriodProcessPopup.addProperties({
     },
         actionField, popup = this;
     send.action = 'ACTION_COMBO';
-    debugger;
     OB.RemoteCallManager.call('org.openbravo.client.application.event.OpenClosePeriodHandler', send, {}, function (response, data, request) {
       if (response) {
         actionField = form.getField('Action');
@@ -167,7 +166,7 @@ isc.OpenClosePeriodProcessPopup.addProperties({
           actionField.setDefaultValue(response.data.actionComboBox.defaultValue);
         }
       }
-    })
+    });
   },
 
   initWidget: function () {
@@ -175,7 +174,7 @@ isc.OpenClosePeriodProcessPopup.addProperties({
     var recordIdList = this.recordIdList,
         originalView = this.view,
         params = this.params;
-debugger;
+
     this.mainform = isc.DynamicForm.create({
       numCols: 2,
       colWidths: ['50%', '50%'],
