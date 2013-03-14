@@ -188,13 +188,10 @@ enyo.kind({
   kind: 'OB.UI.MultiColumn.Toolbar',
   buttons: [{
     kind: 'OB.UI.ButtonNew',
-    span: 2
+    span: 3
   }, {
     kind: 'OB.UI.ButtonDelete',
-    span: 2
-  }, {
-    kind: 'OB.OBPOSPointOfSale.UI.StandardMenu',
-    span: 2
+    span: 3
   }, {
     kind: 'OB.OBPOSPointOfSale.UI.ButtonTabPayment',
     name: 'payment',
