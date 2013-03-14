@@ -73,12 +73,7 @@
     if (document.readyState === "interactive" || document.readyState === "complete") {
       //modelterminal.load();
       //TODO: this is required but should be changed to make it possible to be included in terminal component
-      modelterminal.on('ready', function () {
-        OB.POS.terminal.$.dialogsContainer.createComponent({
-          kind: 'OB.UI.ModalLogout',
-          name: 'logoutDialog'
-        }).render();
-      });
+
 
       OB.UTIL.checkConnectivityStatus(); //Initial check;
       setInterval(OB.UTIL.checkConnectivityStatus, 5000);
