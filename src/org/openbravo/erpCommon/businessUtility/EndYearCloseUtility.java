@@ -68,6 +68,13 @@ public class EndYearCloseUtility {
     String strOrgId = organization.getId();
     OBError myError = new OBError();
     try {
+      boolean isYearNotClose = EndYearCloseUtilityData.selectYearNotClosed(conn, strYearId);
+      if (isYearNotClose) {
+        myError.setType("Error");
+        myError.setTitle("");
+        myError.setMessage(Utility.messageBD(conn, "YearNotClose", vars.getLanguage()));
+        return myError;
+      }
       EndYearCloseUtilityData[] dataOrgs = EndYearCloseUtilityData.treeOrg(conn, vars.getClient(),
           strOrgId);
       EndYearCloseUtilityData[] dataOrgAcctSchemas = EndYearCloseUtilityData.treeOrgAcctSchemas(
@@ -365,8 +372,8 @@ public class EndYearCloseUtility {
             if (!"ProcessOK".equals(strResult)) {
               myError = new OBError();
               myError.setType("Error");
-              myError.setTitle("");
-              myError.setMessage(Utility.messageBD(conn, "Error", vars.getLanguage()));
+              myError.setTitle("Error");
+              myError.setMessage(Utility.messageBD(conn, strResult, vars.getLanguage()));
               conn.releaseRollbackConnection(con);
               return myError;
             }
@@ -396,14 +403,17 @@ public class EndYearCloseUtility {
     return myError;
   }
 
-  private String processUndoYearClose(String strKey, String stradOrgId,
+  private String processUndoYearClose(String strYearId, String stradOrgId,
       String strRegFactAcctGroupId, String strCloseFactAcctGroupId,
       String strDivideUpFactAcctGroupId, String strOpenUpFactAcctGroupId, String strOrgClosingId)
       throws ServletException {
+    boolean isYearNotAllowed = EndYearCloseUtilityData.selectUndoAllowed(conn, strYearId);
+    if (isYearNotAllowed) {
+      return "UndoNotAllowedForYear";
+    }
     EndYearCloseUtilityData.deleteOrgClosing(con, conn, strOrgClosingId);
     EndYearCloseUtilityData.deleteFactAcctClose(con, conn, strRegFactAcctGroupId,
         strCloseFactAcctGroupId, strDivideUpFactAcctGroupId, strOpenUpFactAcctGroupId, stradOrgId);
     return "ProcessOK";
   }
-
 }

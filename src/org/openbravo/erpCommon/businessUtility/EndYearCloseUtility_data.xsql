@@ -639,16 +639,34 @@
     <Parameter name="acctSchemaId"/>
     <Parameter name="organizationList" optional="true" type="replace" after="and fact_acct.ad_org_id in (" text="'1'"/>
   </SqlMethod>
-  <SqlMethod name="selectOtgClosing" type="preparedStatement" return="multiple">
+  <SqlMethod name="selectYearNotClosed" type="preparedStatement" return="boolean">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT DISTINCT AD_ORG_CLOSING.AD_ORG_ID AS ID, AD_COLUMN_IDENTIFIER('AD_ORG', AD_ORG_CLOSING.AD_ORG_ID, ?) AS NAME
-        FROM AD_ORG_CLOSING
-        WHERE C_YEAR_ID = ?
+        select 1 
+        from c_year y1, c_year y2
+        where y1.c_year_id = ?
+        and y1.c_calendar_id = y2.c_calendar_id
+        and y1.year>y2.year
+        and not exists (select 1 from ad_org_closing where ad_org_closing.c_year_id = y2.c_year_id)
       ]]>
     </Sql>
-    <Parameter name="adlanguage"/>
+    <Parameter name="cYearId"/>
+  </SqlMethod>
+  <SqlMethod name="selectUndoAllowed" type="preparedStatement" return="boolean">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+    select 1 from dual
+    where exists(select 1 
+            from c_year_close_v, c_year
+            where c_year_close_v.c_year_id = c_year.c_year_id
+            and c_year_close_v.c_calendar_id = (select c_calendar_id from c_year where c_year_id = ?)
+            and c_year.year > (select year from c_year where c_year_id = ?)
+            and c_year_close_v.status <> 'O')
+      ]]>
+    </Sql>
+    <Parameter name="cYearId"/>
     <Parameter name="cYearId"/>
   </SqlMethod>
   <SqlMethod name="updatePeriodsOpen" type="preparedStatement" connection="true" return="rowCount">
