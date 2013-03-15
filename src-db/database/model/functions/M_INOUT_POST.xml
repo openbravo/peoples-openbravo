@@ -98,7 +98,7 @@
     v_voiddate_acct M_Inout.DateAcct%TYPE;
     v_bpartner_blocked VARCHAR2(1):='N';
     v_goods_blocked VARCHAR2(1):='N';
-    v_bpartner_name VARCHAR2(60);
+    v_bpartner_name c_bpartner.name%TYPE;
     v_DocAction VARCHAR2(60);
 
   BEGIN

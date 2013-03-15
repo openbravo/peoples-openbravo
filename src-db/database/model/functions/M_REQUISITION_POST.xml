@@ -32,7 +32,7 @@
   v_bpartner VARCHAR2(32);
   v_bpartner_blocked VARCHAR2(1):='N';
   v_inOutBlocking VARCHAR2(1):='N';
-  v_bpartner_name VARCHAR2(60);
+  v_bpartner_name c_bpartner.name%TYPE;
 
   --  Parameter
   TYPE RECORD IS REF CURSOR;
