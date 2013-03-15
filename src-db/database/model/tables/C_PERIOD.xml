@@ -90,6 +90,9 @@
       <foreign-key foreignTable="C_YEAR" name="C_YEAR_PERIOD">
         <reference local="C_YEAR_ID" foreign="C_YEAR_ID"/>
       </foreign-key>
+      <index name="C_PERIOD_YEAR" unique="false">
+        <index-column name="C_YEAR_ID"/>
+      </index>
       <unique name="C_PERIOD_NOUNIQUE">
         <unique-column name="C_YEAR_ID"/>
         <unique-column name="PERIODNO"/>
