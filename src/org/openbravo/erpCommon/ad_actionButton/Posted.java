@@ -28,16 +28,19 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.ad_forms.AcctServer;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.financial.ResetAccounting;
 import org.openbravo.model.ad.ui.Process;
+import org.openbravo.model.financialmgmt.accounting.AccountingFact;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class Posted extends HttpSecureAppServlet {
@@ -68,9 +71,21 @@ public class Posted extends HttpSecureAppServlet {
       String strForcedTableId = vars.getGlobalVariable("inpforcedTableId", strWindowId
           + "|FORCED_TABLE_ID", "");
       String strTabName = vars.getGlobalVariable("inpTabName", "Posted|tabName", "");
+      String strModify = "N";
+      if (strPosted.equals("Y")) {
+        final OBCriteria<AccountingFact> fact = OBDal.getInstance().createCriteria(
+            AccountingFact.class);
+        fact.add(Restrictions.eq(AccountingFact.PROPERTY_RECORDID, strKey));
+        for (AccountingFact fa : fact.list()) {
+          if (fa.isModify()) {
+            strModify = "Y";
+
+          }
+        }
+      }
 
       printPage(response, vars, strKey, strWindowId, strTabId, strProcessId, strTableId,
-          strForcedTableId, strPath, strTabName, strPosted);
+          strForcedTableId, strPath, strTabName, strPosted, strModify);
     } else if (vars.commandIn("SAVE")) {
       String strKey = vars.getRequiredGlobalVariable("inpKey", "Posted|key");
       String strTableId = vars.getRequiredGlobalVariable("inpTableId", "Posted|tableId");
@@ -279,7 +294,7 @@ public class Posted extends HttpSecureAppServlet {
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strKey,
       String windowId, String strTab, String strProcessId, String strTableId,
-      String strForcedTableId, String strPath, String strTabName, String strPosted)
+      String strForcedTableId, String strPath, String strTabName, String strPosted, String strModify)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Button process Posted");
@@ -330,6 +345,7 @@ public class Posted extends HttpSecureAppServlet {
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("description", strDescription);
     xmlDocument.setParameter("help", strHelp);
+    xmlDocument.setParameter("modify", strModify);
 
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
