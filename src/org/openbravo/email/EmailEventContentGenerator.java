@@ -19,6 +19,9 @@
 
 package org.openbravo.email;
 
+import java.io.File;
+import java.util.List;
+
 /**
  * Classes implementing this interface will be listening to email events. In case the event is valid
  * for them ({@link EmailEventContentGenerator#isValidEvent(String, Object)} returns
@@ -81,4 +84,9 @@ public interface EmailEventContentGenerator {
    * rest of the execution flow.
    */
   public boolean isAsynchronous();
+
+  /**
+   * Returns the list of files to be attached to the email. Return null for no attachments
+   */
+  public List<File> getAttachments(Object data, String event);
 }

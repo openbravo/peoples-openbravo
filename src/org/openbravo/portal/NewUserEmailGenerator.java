@@ -18,6 +18,8 @@
  */
 package org.openbravo.portal;
 
+import java.io.File;
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -83,5 +85,10 @@ public class NewUserEmailGenerator implements EmailEventContentGenerator {
   @Override
   public boolean isAsynchronous() {
     return false;
+  }
+
+  @Override
+  public List<File> getAttachments(Object data, String event) {
+    return null;
   }
 }

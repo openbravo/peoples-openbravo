@@ -18,6 +18,9 @@
  */
 package org.openbravo.portal;
 
+import java.io.File;
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.openbravo.email.EmailEventContentGenerator;
@@ -71,6 +74,11 @@ public class AccountCancelledEmailGenerator implements EmailEventContentGenerato
   @Override
   public boolean isAsynchronous() {
     return true;
+  }
+
+  @Override
+  public List<File> getAttachments(Object data, String event) {
+    return null;
   }
 
 }

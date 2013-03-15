@@ -19,6 +19,7 @@
 
 package org.openbravo.email;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -104,13 +105,14 @@ public class EmailEventManager {
           final String subject = gen.getSubject(data, event);
           final String body = gen.getBody(data, event);
           final String type = gen.getContentType();
+          final List<File> attachments = gen.getAttachments(data, event);
           Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
               try {
                 EmailManager.sendEmail(host, auth, username, password, connSecurity, port,
-                    senderAddress, recipient, null, null, null, subject, body, type, null, null,
-                    null);
+                    senderAddress, recipient, null, null, null, subject, body, type, attachments,
+                    null, null);
               } catch (Exception e) {
                 log.error(e.getMessage(), e);
               }
@@ -120,7 +122,7 @@ public class EmailEventManager {
         } else {
           EmailManager.sendEmail(host, auth, username, password, connSecurity, port, senderAddress,
               recipient, null, null, null, gen.getSubject(data, event), gen.getBody(data, event),
-              gen.getContentType(), null, null, null);
+              gen.getContentType(), gen.getAttachments(data, event), null, null);
         }
       }
       if (!sent) {
