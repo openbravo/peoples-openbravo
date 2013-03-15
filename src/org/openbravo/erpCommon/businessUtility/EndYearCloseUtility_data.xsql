@@ -31,7 +31,8 @@
           '' AS TOTALAMTDR, '' AS TOTALAMTCR, '' AS ACCOUNT_ID, '' as org, '' as acctvalue, '' as acctdescription, '' as value,
           '' as c_bpartner_id, '' as record_id2, '' as m_product_id, '' as a_asset_id, '' AS REGCOUNT,
           '' AS C_TAX_ID, '' AS C_PROJECT_ID, '' AS  C_ACTIVITY_ID, '' AS USER1_ID, '' AS  USER2_ID, '' AS  C_CAMPAIGN_ID,
-          '' AS  C_SALESREGION_ID
+          '' AS  C_SALESREGION_ID, '' AS REG_FACT_ACCT_GROUP_ID, '' AS CLOSE_FACT_ACCT_GROUP_ID, '' AS DIVIDEUP_FACT_ACCT_GROUP_ID,
+        '' AS OPEN_FACT_ACCT_GROUP_ID, '' AS AD_ORG_CLOSING_ID
 		from ad_org
 		where ad_org.isperiodcontrolallowed = 'Y'
 		and ad_client_id = ?
@@ -637,5 +638,70 @@
     <Parameter name="yearId"/>
     <Parameter name="acctSchemaId"/>
     <Parameter name="organizationList" optional="true" type="replace" after="and fact_acct.ad_org_id in (" text="'1'"/>
+  </SqlMethod>
+  <SqlMethod name="selectOtgClosing" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT DISTINCT AD_ORG_CLOSING.AD_ORG_ID AS ID, AD_COLUMN_IDENTIFIER('AD_ORG', AD_ORG_CLOSING.AD_ORG_ID, ?) AS NAME
+        FROM AD_ORG_CLOSING
+        WHERE C_YEAR_ID = ?
+      ]]>
+    </Sql>
+    <Parameter name="adlanguage"/>
+    <Parameter name="cYearId"/>
+  </SqlMethod>
+  <SqlMethod name="updatePeriodsOpen" type="preparedStatement" connection="true" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        UPDATE C_PERIODCONTROL
+        SET PERIODSTATUS = 'C', UPDATED = now(), UPDATEDBY = ?
+        WHERE C_PERIOD_ID IN (SELECT C_PERIOD_ID
+                FROM C_PERIOD
+                WHERE C_YEAR_ID = ?)
+        AND AD_ORG_ID = ?
+        ]]>
+    </Sql>
+    <Parameter name="user"/>
+    <Parameter name="cYearId"/>
+    <Parameter name="adOrgId"/>
+  </SqlMethod>
+  <SqlMethod name="selectFactAcctGroupId" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT REG_FACT_ACCT_GROUP_ID, CLOSE_FACT_ACCT_GROUP_ID, DIVIDEUP_FACT_ACCT_GROUP_ID, OPEN_FACT_ACCT_GROUP_ID, AD_ORG_CLOSING_ID
+        FROM AD_ORG_CLOSING
+        WHERE AD_ORG_ID = ?
+        AND C_YEAR_ID = ?
+      ]]>
+    </Sql>
+    <Parameter name="adOrgId"/>
+    <Parameter name="cYearId"/>
+  </SqlMethod>
+  <SqlMethod name="deleteOrgClosing" type="preparedStatement" connection="true" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      DELETE FROM AD_ORG_CLOSING WHERE AD_ORG_CLOSING_ID = ?
+      ]]>
+    </Sql>
+    <Parameter name="adOrgClosingId"/>
+  </SqlMethod>
+  <SqlMethod name="deleteFactAcctClose" type="preparedStatement" connection="true" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      DELETE FROM FACT_ACCT
+      WHERE FACT_ACCT_GROUP_ID IN (?, ?, ?, ?)
+      AND AD_ISORGINCLUDED(FACT_ACCT.AD_ORG_ID, ?, FACT_ACCT.AD_CLIENT_ID)<>-1
+      ]]>
+    </Sql>
+    <Parameter name="fact_acct_group_id"/>
+    <Parameter name="open_acct_group_id"/>
+    <Parameter name="divideup_fact_acct_group_id"/>
+    <Parameter name="reg_fact_acct_group_id"/>
+    <Parameter name="adOrgId"/>
   </SqlMethod>
 </SqlClass>

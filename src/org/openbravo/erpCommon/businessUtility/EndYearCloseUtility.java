@@ -52,7 +52,7 @@ public class EndYearCloseUtility {
   private BigDecimal ExpenseAmtCr = new BigDecimal("0");
   private BigDecimal RevenueAmtDr = new BigDecimal("0");
   private BigDecimal RevenueAmtCr = new BigDecimal("0");
-  protected Logger log4j = Logger.getLogger(this.getClass());
+  protected Logger log4j = Logger.getLogger(conn.getClass());
 
   public EndYearCloseUtility(Organization _organization, Year _year, ConnectionProvider _conn,
       VariablesSecureApp _vars) {
@@ -62,8 +62,9 @@ public class EndYearCloseUtility {
     vars = _vars;
   }
 
-  private synchronized OBError processButton(String strYearId, String strOrgId) {
-
+  private synchronized OBError processYearClose() {
+    String strYearId = year.getId();
+    String strOrgId = organization.getId();
     OBError myError = new OBError();
     try {
       EndYearCloseUtilityData[] dataOrgs = EndYearCloseUtilityData.treeOrg(conn, vars.getClient(),
@@ -121,8 +122,8 @@ public class EndYearCloseUtility {
                 vars.getLanguage()));
             return myError;
           }
-          String strRegOut = processButtonReg(strYearId, dataOrgs[i].org, strRegId, acctSchema[j].id,
-              strDivideUpId, retainedEarningAccount);
+          String strRegOut = processButtonReg(strYearId, dataOrgs[i].org, strRegId,
+              acctSchema[j].id, strDivideUpId, retainedEarningAccount);
           String strCloseOut = createClosing ? processButtonClose(strYearId, dataOrgs[i].org,
               strCloseId, strOpenId, acctSchema[j].id, strDivideUpId) : "Success";
           if (!createClosing) {
@@ -318,11 +319,10 @@ public class EndYearCloseUtility {
 
     String currency = EndYearCloseUtilityData.cCurrencyId(conn, strAcctSchema);
 
-    EndYearCloseUtilityData
-        .insertSelect(con, conn, vars.getClient(), stradOrgId, vars.getUser(),
-            EndYearCloseUtilityData.getEndDate(conn, strPediodId), strPediodId, currency,
-            Fact_Acct_Group_ID, "20", "C", strClosingEntry, strYearId, "'A'", strAcctSchema,
-            strDivideUpId);
+    EndYearCloseUtilityData.insertSelect(con, conn, vars.getClient(), stradOrgId, vars.getUser(),
+        EndYearCloseUtilityData.getEndDate(conn, strPediodId), strPediodId, currency,
+        Fact_Acct_Group_ID, "20", "C", strClosingEntry, strYearId, "'A'", strAcctSchema,
+        strDivideUpId);
 
     EndYearCloseUtilityData.insertSelect(con, conn, vars.getClient(), stradOrgId, vars.getUser(),
         EndYearCloseUtilityData.getEndDate(conn, strPediodId), strPediodId, currency,
@@ -336,6 +336,71 @@ public class EndYearCloseUtility {
         strDivideUpId);
 
     return "Success";
+  }
+
+  private OBError processUndoYearClose(String stradOrgId, String strYearId) {
+    OBError myError = null;
+    try {
+      String strRegFactAcctGroupId = "";
+      String strCloseFactAcctGroupId = "";
+      String strDivideUpFactAcctGroupId = "";
+      String strOpenUpFactAcctGroupId = "";
+      String strOrgClosingId = "";
+      try {
+        EndYearCloseUtilityData[] data = EndYearCloseUtilityData.selectFactAcctGroupId(conn,
+            stradOrgId, strYearId);
+        if (data != null && data.length != 0) {
+          for (int i = 0; i < data.length; i++) {
+            strRegFactAcctGroupId = data[i].regFactAcctGroupId;
+            strCloseFactAcctGroupId = data[i].closeFactAcctGroupId;
+            strDivideUpFactAcctGroupId = data[i].divideupFactAcctGroupId;
+            strOpenUpFactAcctGroupId = data[i].openFactAcctGroupId;
+            strOrgClosingId = data[i].adOrgClosingId;
+            String strResult = processUndoYearClose(strYearId, stradOrgId, strRegFactAcctGroupId,
+                strCloseFactAcctGroupId, strDivideUpFactAcctGroupId, strOpenUpFactAcctGroupId,
+                strOrgClosingId);
+            if (!"ProcessOK".equals(strResult)) {
+              myError = new OBError();
+              myError.setType("Error");
+              myError.setTitle("");
+              myError.setMessage(Utility.messageBD(conn, "Error", vars.getLanguage()));
+              conn.releaseRollbackConnection(con);
+              return myError;
+            }
+          }
+          EndYearCloseUtilityData.updatePeriodsOpen(con, conn, vars.getUser(), strYearId,
+              stradOrgId);
+        }
+      } catch (ServletException ex) {
+        myError = Utility.translateError(conn, vars, vars.getLanguage(), ex.getMessage());
+        conn.releaseRollbackConnection(con);
+        return myError;
+      }
+
+      conn.releaseCommitConnection(con);
+      myError = new OBError();
+      myError.setType("Success");
+      myError.setTitle("");
+      myError.setMessage(Utility.messageBD(conn, "Success", vars.getLanguage()));
+    } catch (Exception e) {
+      log4j.warn(e);
+      try {
+        conn.releaseRollbackConnection(con);
+      } catch (Exception ignored) {
+      }
+      myError = Utility.translateError(conn, vars, vars.getLanguage(), "ProcessRunError");
+    }
+    return myError;
+  }
+
+  private String processUndoYearClose(String strKey, String stradOrgId,
+      String strRegFactAcctGroupId, String strCloseFactAcctGroupId,
+      String strDivideUpFactAcctGroupId, String strOpenUpFactAcctGroupId, String strOrgClosingId)
+      throws ServletException {
+    EndYearCloseUtilityData.deleteOrgClosing(con, conn, strOrgClosingId);
+    EndYearCloseUtilityData.deleteFactAcctClose(con, conn, strRegFactAcctGroupId,
+        strCloseFactAcctGroupId, strDivideUpFactAcctGroupId, strOpenUpFactAcctGroupId, stradOrgId);
+    return "ProcessOK";
   }
 
 }
