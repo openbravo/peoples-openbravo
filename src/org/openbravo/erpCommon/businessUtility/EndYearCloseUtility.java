@@ -52,17 +52,18 @@ public class EndYearCloseUtility {
   private BigDecimal ExpenseAmtCr = new BigDecimal("0");
   private BigDecimal RevenueAmtDr = new BigDecimal("0");
   private BigDecimal RevenueAmtCr = new BigDecimal("0");
-  protected Logger log4j = Logger.getLogger(conn.getClass());
+  protected Logger log4j = Logger.getLogger(EndYearCloseUtility.class);
 
   public EndYearCloseUtility(Organization _organization, Year _year, ConnectionProvider _conn,
-      VariablesSecureApp _vars) {
+      Connection _con, VariablesSecureApp _vars) {
     organization = _organization;
     year = _year;
     conn = _conn;
     vars = _vars;
+    con = _con;
   }
 
-  private synchronized OBError processYearClose() {
+  public synchronized OBError processYearClose() {
     String strYearId = year.getId();
     String strOrgId = organization.getId();
     OBError myError = new OBError();
@@ -176,11 +177,11 @@ public class EndYearCloseUtility {
     return myError;
   }
 
-  private synchronized String processButtonReg(String strYearId, String stradOrgId, String strID,
-      String strAcctSchema, String strDivideUpId, EndYearCloseUtilityData[] account2)
-      throws ServletException {
+  private synchronized String processButtonReg(String strYearId, String stradOrgId,
+      String strFact_Acct_Group_ID, String strAcctSchema, String strDivideUpId,
+      EndYearCloseUtilityData[] account2) throws ServletException {
     String Fact_Acct_ID = "";
-    String Fact_Acct_Group_ID = strID;
+    String Fact_Acct_Group_ID = strFact_Acct_Group_ID;
     String strPediodId = EndYearCloseUtilityData.getLastPeriod(conn, strYearId);
     String strRegEntry = Utility.messageBD(conn, "RegularizationEntry", vars.getLanguage());
     String currency = EndYearCloseUtilityData.cCurrencyId(conn, strAcctSchema);
@@ -338,7 +339,9 @@ public class EndYearCloseUtility {
     return "Success";
   }
 
-  private OBError processUndoYearClose(String stradOrgId, String strYearId) {
+  public OBError processUndoYearClose() {
+    String stradOrgId = organization.getId();
+    String strYearId = year.getId();
     OBError myError = null;
     try {
       String strRegFactAcctGroupId = "";
