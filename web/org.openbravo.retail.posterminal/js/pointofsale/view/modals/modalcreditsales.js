@@ -60,7 +60,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.OBPOSPointOfSale.UI.Modals.modalEnoughCredit.Components.cancel_button',
-  content: OB.I18N.getLabel('OBPOS_LblCancel'),
+  i18nContent: 'OBMOBC_LblCancel',
   tap: function () {
     this.doHideThisPopup();
   }
@@ -70,7 +70,7 @@ enyo.kind({
   kind: 'OB.UI.ModalInfo',
   name: 'OB.OBPOSPointOfSale.UI.Modals.modalNotEnoughCredit',
   style: 'background-color: #EBA001;',
-  header: OB.I18N.getLabel('OBPOS_notEnoughCreditHeader'),
+  i18nHeader: 'OBPOS_notEnoughCreditHeader',
   isDefaultAction: true,
   executeOnShow: function () {
     if (this.args) {

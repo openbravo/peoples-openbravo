@@ -13,7 +13,7 @@ OB.OBPOSPointOfSale.UI.ToolbarScan = {
   name: 'toolbarscan',
   buttons: [{
     command: 'code',
-    label: OB.I18N.getLabel('OBMOBC_KbCode'),
+    i18nLabel: 'OBMOBC_KbCode',
     classButtonActive: 'btnactive-blue'
   }],
   shown: function () {

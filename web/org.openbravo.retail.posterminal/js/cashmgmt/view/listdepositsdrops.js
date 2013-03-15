@@ -233,7 +233,7 @@ enyo.kind({
           style: 'border-bottom: 1px solid #cccccc;',
           components: [{
             style: 'padding: 6px; border-bottom: 1px solid #cccccc;text-align:center; font-weight:bold;',
-            content: OB.I18N.getLabel('OBPOS_LblCashManagement')
+            name: 'titleLbl'
           }, {
             name: 'userName',
             style: 'padding: 6px; border-bottom: 1px solid #cccccc; text-align:center;'
@@ -270,5 +270,6 @@ enyo.kind({
     // this.owner is the window (OB.UI.WindowView)
     // this.parent is the DOM object on top of the list (usually a DIV)
     this.$.depositDropsList.setCollection(this.owner.model.getData('DataDepositsDrops'));
+    this.$.titleLbl.setContent(OB.I18N.getLabel('OBPOS_LblCashManagement'));
   }
 });

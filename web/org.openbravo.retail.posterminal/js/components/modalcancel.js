@@ -14,13 +14,11 @@ enyo.kind({
   name: 'OB.UI.ModalCancel',
   popup: 'modalCancel',
 
-  header: OB.I18N.getLabel('OBPOS_LblCancel'),
+  i18nHeader: 'OBMOBC_LblCancel',
   bodyContent: {
-    tag: 'div',
-    content: OB.I18N.getLabel('OBPOS_ProcessCancelDialog')
+    i18Content: 'OBPOS_ProcessCancelDialog'
   },
   bodyButtons: {
-    tag: 'div',
     components: [{
       //OK button
       kind: 'OB.UI.ModalCancel_OkButton'
@@ -34,7 +32,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.UI.ModalCancel_OkButton',
-  content: OB.I18N.getLabel('OBPOS_LblOk'),
+  i18nContent: 'OBMOBC_LblOk',
   isDefaultAction: true,
   popup: 'modalCancel',
   tap: function () {
@@ -46,7 +44,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.UI.ModalCancel_CancelButton',
-  content: OB.I18N.getLabel('OBPOS_LblCancel'),
+  i18nContent: 'OBMOBC_LblCancel',
   popup: 'modalCancel',
   tap: function () {
     this.doHideThisPopup();

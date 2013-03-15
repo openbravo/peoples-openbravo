@@ -16,7 +16,7 @@ enyo.kind({
   published: {
     receiptsList: null
   },
-  header: OB.I18N.getLabel('OBPOS_LblAssignReceipt'),
+  i18nHeader: 'OBPOS_LblAssignReceipt',
   body: {
     kind: 'OB.UI.ListReceipts',
     name: 'listreceipts'
@@ -116,9 +116,9 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ModalAction',
   name: 'OB.UI.ModalDeleteReceipt',
-  header: OB.I18N.getLabel('OBPOS_ConfirmDeletion'),
+  i18nHeader: 'OBPOS_ConfirmDeletion',
   bodyContent: {
-    content: OB.I18N.getLabel('OBPOS_MsgConfirmDelete') + '\n' + OB.I18N.getLabel('OBPOS_cannotBeUndone')
+    i18nContent: 'OBPOS_MsgConfirmDelete' // TODO: add this as part of the message + '\n' + OB.I18N.getLabel('OBPOS_cannotBeUndone')
   },
   bodyButtons: {
     components: [{
@@ -133,7 +133,7 @@ enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.UI.btnModalApplyDelete',
   isDefaultAction: true,
-  content: OB.I18N.getLabel('OBPOS_LblYesDelete'),
+  i18nContent: 'OBPOS_LblYesDelete',
   events: {
     onDeleteOrder: ''
   },
@@ -146,7 +146,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.UI.btnModalCancelDelete',
-  content: OB.I18N.getLabel('OBPOS_LblCancel'),
+  i18nContent: 'OBMOBC_LblCancel',
   tap: function () {
     this.doHideThisPopup();
   }

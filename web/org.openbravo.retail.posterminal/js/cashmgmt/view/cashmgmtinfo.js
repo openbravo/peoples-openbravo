@@ -20,7 +20,7 @@ enyo.kind({
     }, {
       // process info
       style: 'padding: 10px; float: left; width: 320px; line-height: 23px;',
-      content: OB.I18N.getLabel('OBPOS_LblDepositsWithdrawalsMsg')
+      name: 'infoLbl'
     }, {
       style: 'padding: 5px; float: right;',
       components: [{
@@ -36,7 +36,11 @@ enyo.kind({
         kind: 'OB.OBPOSCashMgmt.UI.DoneButton'
       }]
     }]
-  }]
+  }],
+  initComponents: function () {
+    this.inherited(arguments);
+    this.$.infoLbl.setContent(OB.I18N.getLabel('OBPOS_LblDepositsWithdrawalsMsg'));
+  }
 });
 
 enyo.kind({
@@ -44,7 +48,7 @@ enyo.kind({
   kind: 'OB.UI.RegularButton',
   classes: 'btnlink-white btnlink-fontgray',
   style: 'min-width: 115px;',
-  content: OB.I18N.getLabel('OBPOS_LblDone'),
+  i18nContent: 'OBPOS_LblDone',
   tap: function () {
     this.owner.owner.model.depsdropstosend.trigger('makeDeposits');
   }

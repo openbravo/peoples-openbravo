@@ -12,8 +12,8 @@
 enyo.kind({
   kind: 'OB.UI.ModalInfo',
   name: 'OB.OBPOSPointOfSale.UI.Modals.ModalProductCannotBeGroup',
-  header: OB.I18N.getLabel('OBPOS_productCannotBeGroupHeader'),
+  i18nHeader: 'OBPOS_productCannotBeGroupHeader',
   bodyContent: {
-    content: OB.I18N.getLabel('OBPOS_productCannotBeGroupMessage')
+    i18nContent: 'OBPOS_productCannotBeGroupMessage'
   }
 });

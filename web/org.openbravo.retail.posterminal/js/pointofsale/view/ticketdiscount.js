@@ -338,7 +338,7 @@ enyo.kind({
   events: {
     onDiscountsClose: ''
   },
-  content: OB.I18N.getLabel('OBPOS_LblCancel'),
+  i18nContent: 'OBMOBC_LblCancel',
   tap: function () {
     this.doDiscountsClose();
   }

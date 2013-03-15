@@ -12,9 +12,8 @@
 enyo.kind({
   name: 'OB.UI.ModalNotEditableLine',
   kind: 'OB.UI.ModalInfo',
-  header: OB.I18N.getLabel('OBPOS_modalNoEditableLineHeader'),
+  i18Header: 'OBPOS_modalNoEditableLineHeader',
   bodyContent: {
-    tag: 'div',
-    content: OB.I18N.getLabel('OBPOS_modalNoEditableLineBody')
+    i18nContent: 'OBPOS_modalNoEditableLineBody'
   }
 });

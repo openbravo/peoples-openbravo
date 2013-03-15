@@ -12,17 +12,17 @@
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.Modals.modalDiscountNeedQty',
   kind: 'OB.UI.ModalInfo',
-  header: OB.I18N.getLabel('OBPOS_discountNeedsQty_header'),
+  i18nHeader: 'OBPOS_discountNeedsQty_header',
   bodyContent: {
-    content: OB.I18N.getLabel('OBPOS_discountNeedsQty_body')
+    i18nContent: 'OBPOS_discountNeedsQty_body'
   }
 });
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.Modals.modalNotValidValueForDiscount',
   kind: 'OB.UI.ModalInfo',
-  header: OB.I18N.getLabel('OBPOS_modalNotValidValueForDiscount_header'),
+  i18nHeader: 'OBPOS_modalNotValidValueForDiscount_header',
   bodyContent: {
-    content: OB.I18N.getLabel('OBPOS_modalNotValidValueForDiscount_body')
+    i18nContent: 'OBPOS_modalNotValidValueForDiscount_body'
   }
 });

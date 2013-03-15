@@ -17,8 +17,7 @@ enyo.kind({
   style: 'position: relative; padding: 10px;',
   components: [{
     name: 'lblTotal',
-    style: 'float: left; width: 40%;',
-    content: OB.I18N.getLabel('OBPOS_LblTotal')
+    style: 'float: left; width: 40%;'
   }, {
     name: 'totalqty',
     style: 'float: left; width: 20%; text-align:right; font-weight:bold;'
@@ -44,6 +43,10 @@ enyo.kind({
       this.$.totalqty.hasNode().style.width = '20%';
       this.$.totalgross.hasNode().style.width = '40%';
     }
+  },
+  initComponents: function () {
+    this.inherited(arguments);
+    this.$.lblTotal.setContent(OB.I18N.getLabel('OBPOS_LblTotal'));
   }
 });
 

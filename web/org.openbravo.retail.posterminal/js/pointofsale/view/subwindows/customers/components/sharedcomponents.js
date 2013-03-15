@@ -12,10 +12,9 @@
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.customers.ModalConfigurationRequiredForCreateCustomers',
   kind: 'OB.UI.ModalInfo',
-  header: OB.I18N.getLabel('OBPOS_configurationRequired'),
+  i18nHeader: 'OBPOS_configurationRequired',
   bodyContent: {
-    tag: 'div',
-    content: OB.I18N.getLabel('OBPOS_configurationNeededToCreateCustomers')
+    i18nContent: 'OBPOS_configurationNeededToCreateCustomers'
   }
 });
 
@@ -24,7 +23,7 @@ enyo.kind({
   kind: 'OB.UI.Button',
   style: 'width: 100px; margin: 0px 0px 8px 5px;',
   classes: 'btnlink-gray btnlink btnlink-small',
-  content: OB.I18N.getLabel('OBPOS_LblCancel')
+  i18nContent: 'OBMOBC_LblCancel'
 });
 
 enyo.kind({

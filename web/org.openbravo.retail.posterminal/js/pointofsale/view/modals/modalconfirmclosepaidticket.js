@@ -12,7 +12,7 @@
 enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.OBPOSPointOfSale.UI.Modals.btnModalApplyClosePaidTicket',
-  content: OB.I18N.getLabel('OBPOS_acceptClosePaidTicket'),
+  i18nContent: 'OBPOS_acceptClosePaidTicket',
   isDefaultAction: true,
   events: {
     onDeleteOrder: ''
@@ -28,9 +28,9 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ModalAction',
   name: 'OB.OBPOSPointOfSale.UI.Modals.ModalClosePaidReceipt',
-  header: OB.I18N.getLabel('OBPOS_confirmClosePaidTicketHeader'),
+  i18nHeader: 'OBPOS_confirmClosePaidTicketHeader',
   bodyContent: {
-    content: OB.I18N.getLabel('OBPOS_closePaidTicketMessage')
+    i18nContent: 'OBPOS_closePaidTicketMessage'
   },
   bodyButtons: {
     components: [{

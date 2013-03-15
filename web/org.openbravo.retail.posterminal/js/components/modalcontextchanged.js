@@ -13,7 +13,7 @@ enyo.kind({
   kind: 'OB.UI.Button',
   name: 'OB.OBPOSPointOfSale.UI.Modals.btnModaContextChangedAccept',
   classes: 'btnlink btnlink-gray modal-dialog-button',
-  content: OB.I18N.getLabel('OBPOS_LblOk'),
+  i18Content: 'OBMOBC_LblOk',
   events: {
     onHideThisPopup: ''
   },
@@ -29,7 +29,7 @@ enyo.kind({
   bodyContent: {},
   closeOnEscKey: false,
   autoDismiss: false,
-  header: OB.I18N.getLabel('OBPOS_ContextChanged'),
+  i18nHeader: 'OBPOS_ContextChanged',
   bodyButtons: {
     components: [{
       content: OB.I18N.getLabel('OBPOS_ContextChangedMessage')

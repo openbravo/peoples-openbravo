@@ -33,32 +33,27 @@ enyo.kind({
             style: 'font-size: 24px; font-weight: bold;'
           }, {
             tag: 'span',
-            name: 'totalpendinglbl',
-            content: OB.I18N.getLabel('OBPOS_PaymentsRemaining')
+            name: 'totalpendinglbl'
           }, {
             tag: 'span',
             name: 'change',
             style: 'font-size: 24px; font-weight: bold;'
           }, {
             tag: 'span',
-            name: 'changelbl',
-            content: OB.I18N.getLabel('OBPOS_PaymentsChange')
+            name: 'changelbl'
           }, {
             tag: 'span',
             name: 'overpayment',
             style: 'font-size: 24px; font-weight: bold;'
           }, {
             tag: 'span',
-            name: 'overpaymentlbl',
-            content: OB.I18N.getLabel('OBPOS_PaymentsOverpayment')
+            name: 'overpaymentlbl'
           }, {
             tag: 'span',
-            name: 'exactlbl',
-            content: OB.I18N.getLabel('OBPOS_PaymentsExact')
+            name: 'exactlbl'
           }, {
             tag: 'span',
-            name: 'donezerolbl',
-            content: OB.I18N.getLabel('OBPOS_MsgPaymentAmountZero')
+            name: 'donezerolbl'
           }, {
             name: 'creditsalesaction',
             kind: 'OB.OBPOSPointOfSale.UI.CreditButton'
@@ -178,6 +173,14 @@ enyo.kind({
       this.$.exactlbl.hide();
       this.$.donezerolbl.hide();
     }
+  },
+  initComponents: function () {
+    this.inherited(arguments);
+    this.$.totalpendinglbl.setContent(OB.I18N.getLabel('OBPOS_PaymentsRemaining'));
+    this.$.changelbl.setContent(OB.I18N.getLabel('OBPOS_PaymentsChange'));
+    this.$.overpaymentlbl.setContent(OB.I18N.getLabel('OBPOS_PaymentsOverpayment'));
+    this.$.exactlbl.setContent(OB.I18N.getLabel('OBPOS_PaymentsExact'));
+    this.$.donezerolbl.setContent(OB.I18N.getLabel('OBPOS_MsgPaymentAmountZero'));
   }
 });
 

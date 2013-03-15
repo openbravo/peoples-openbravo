@@ -12,7 +12,7 @@
 enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.OBPOSPointOfSale.UI.Modals.btnModalReactivateQuotationCancel',
-  content: OB.I18N.getLabel('OBPOS_LblCancel'),
+  i18nContent: 'OBMOBC_LblCancel',
   tap: function () {
     this.doHideThisPopup();
   }
@@ -20,7 +20,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.OBPOSPointOfSale.UI.Modals.btnModalReactivateQuotationAccept',
-  content: OB.I18N.getLabel('OBPOS_LblOk'),
+  i18nContent: 'OBMOBC_LblOk',
   events: {
     onReactivateQuotation: ''
   },

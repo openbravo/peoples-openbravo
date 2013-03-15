@@ -12,9 +12,8 @@
 enyo.kind({
   name: 'OB.UI.Modalnoteditableorder',
   kind: 'OB.UI.ModalInfo',
-  header: OB.I18N.getLabel('OBPOS_modalNoEditableHeader'),
+  i18nHeader: 'OBPOS_modalNoEditableHeader',
   bodyContent: {
-    tag: 'div',
-    content: OB.I18N.getLabel('OBPOS_modalNoEditableBody')
+    i18nContent: 'OBPOS_modalNoEditableBody'
   }
 });

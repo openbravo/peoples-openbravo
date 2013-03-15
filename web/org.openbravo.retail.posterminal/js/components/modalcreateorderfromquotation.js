@@ -12,7 +12,7 @@
 enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.OBPOSPointOfSale.UI.Modals.btnModalCreateOrderCancel',
-  content: OB.I18N.getLabel('OBPOS_LblCancel'),
+  i18nContent: 'OBMOBC_LblCancel',
   tap: function () {
     this.doHideThisPopup();
   }
@@ -20,7 +20,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.OBPOSPointOfSale.UI.Modals.btnModalCreateOrderAccept',
-  content: OB.I18N.getLabel('OBPOS_CreateOrderFromQuotation'),
+  i18nContent: 'OBPOS_CreateOrderFromQuotation',
   events: {
     onCreateOrderFromQuotation: ''
   },
@@ -37,7 +37,7 @@ enyo.kind({
   kind: 'OB.UI.CheckboxButton',
   classes: 'modal-dialog-btn-check',
   checked: false,
-  content: OB.I18N.getLabel('OBPOS_QuotationUpdatePrices'),
+  i18nContent: 'OBPOS_QuotationUpdatePrices',
   init: function () {
     this.checked = true;
     this.addRemoveClass('active', this.checked);

@@ -69,7 +69,7 @@ enyo.kind({
               classes: 'span12',
               components: [{
                 kind: 'OB.UI.SmallButton',
-                content: OB.I18N.getLabel('OBPOS_ButtonDelete'),
+                i18nContent: 'OBPOS_ButtonDelete',
                 classes: 'btnlink-orange',
                 tap: function () {
                   this.owner.doDeleteLine({
@@ -90,7 +90,7 @@ enyo.kind({
                 }
               }, {
                 kind: 'OB.UI.SmallButton',
-                content: OB.I18N.getLabel('OBPOS_LblDescription'),
+                i18nContent: 'OBPOS_LblDescription',
                 classes: 'btnlink-orange',
                 tap: function () {
                   this.owner.doEditLine({
@@ -123,7 +123,7 @@ enyo.kind({
             style: 'clear: both;',
             components: [{
               classes: 'span4',
-              content: OB.I18N.getLabel('OBPOS_LineDescription')
+              name: 'editlinenameLbl'
             }, {
               classes: 'span8',
               components: [{
@@ -136,7 +136,7 @@ enyo.kind({
             style: 'clear: both;',
             components: [{
               classes: 'span4',
-              content: OB.I18N.getLabel('OBPOS_LineQuantity')
+              name: 'editlineqtyLbl'
             }, {
               classes: 'span8',
               components: [{
@@ -149,7 +149,7 @@ enyo.kind({
             style: 'clear: both;',
             components: [{
               classes: 'span4',
-              content: OB.I18N.getLabel('OBPOS_LinePrice')
+              name: 'editlinepriceLbl'
             }, {
               classes: 'span8',
               components: [{
@@ -162,7 +162,7 @@ enyo.kind({
             style: 'clear: both;',
             components: [{
               classes: 'span4',
-              content: OB.I18N.getLabel('OBPOS_LineDiscount')
+              name: 'editlinediscountLbl'
             }, {
               classes: 'span8',
               components: [{
@@ -175,7 +175,7 @@ enyo.kind({
             style: 'clear: both;',
             components: [{
               classes: 'span4',
-              content: OB.I18N.getLabel('OBPOS_LineTotal')
+              name: 'editlinegrossLbl'
             }, {
               classes: 'span8',
               components: [{
@@ -249,5 +249,11 @@ enyo.kind({
       this.$.editlineprice.setContent('');
       this.$.editlinegross.setContent('');
     }
+
+    this.$.editlinenameLbl.setContent(OB.I18N.getLabel('OBPOS_LineDescription'));
+    this.$.editlineqtyLbl.setContent(OB.I18N.getLabel('OBPOS_LineQuantity'));
+    this.$.editlinepriceLbl.setContent(OB.I18N.getLabel('OBPOS_LinePrice'));
+    this.$.editlinediscountLbl.setContent(OB.I18N.getLabel('OBPOS_LineDiscount'));
+    this.$.editlinegrossLbl.setContent(OB.I18N.getLabel('OBPOS_LineTotal'));
   }
 });

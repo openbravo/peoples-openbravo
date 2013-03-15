@@ -41,12 +41,12 @@ enyo.kind({
     {
       components: [{
         kind: 'OB.OBPOSCashMgmt.UI.ModalDepositEvents',
-        header: OB.I18N.getLabel('OBPOS_SelectDepositDestinations'),
+        i18nHeader: 'OBPOS_SelectDepositDestinations',
         name: 'modaldepositevents',
         type: 'DataDepositEvents'
       }, {
         kind: 'OB.OBPOSCashMgmt.UI.ModalDepositEvents',
-        header: OB.I18N.getLabel('OBPOS_SelectDropDestinations'),
+        i18nHeader: 'OBPOS_SelectDropDestinations',
         name: 'modaldropevents',
         type: 'DataDropEvents'
       }, {

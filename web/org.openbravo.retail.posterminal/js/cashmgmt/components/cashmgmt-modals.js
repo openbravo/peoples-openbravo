@@ -12,12 +12,11 @@
 enyo.kind({
   kind: 'OB.UI.ModalAction',
   name: 'OB.OBPOSCashMgmt.UI.modalFinished',
-  header: OB.I18N.getLabel('OBPOS_LblDone'),
+  i18nHeader: 'OBPOS_LblDone',
   bodyContent: {
-    content: OB.I18N.getLabel('OBPOS_FinishCashMgmtDialog')
+    i18Content: 'OBPOS_FinishCashMgmtDialog'
   },
   bodyButtons: {
-    tag: 'div',
     components: [{
       //OK button
       kind: 'OB.OBPOSCashMgmt.UI.modalFinished_OkButton'
@@ -31,7 +30,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.OBPOSCashMgmt.UI.modalFinished_OkButton',
-  content: OB.I18N.getLabel('OBPOS_LblOk'),
+  i18nContent: 'OBMOBC_LblOk',
   tap: function () {
     this.doHideThisPopup();
   }
@@ -41,12 +40,11 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ModalAction',
   name: 'OB.OBPOSCashMgmt.UI.modalFinishedWrongly',
-  header: OB.I18N.getLabel('OBPOS_CashMgmtWronglyHeader'),
+  i18nHeader: 'OBPOS_CashMgmtWronglyHeader',
   bodyContent: {
-    content: OB.I18N.getLabel('OBPOS_CashMgmtWrongly')
+    i18Content: 'OBPOS_CashMgmtWrongly'
   },
   bodyButtons: {
-    tag: 'div',
     components: [{
       //OK button
       kind: 'OB.OBPOSCashMgmt.UI.modalFinishedWrongly_OkButton'
@@ -60,7 +58,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.OBPOSCashMgmt.UI.modalFinishedWrongly_OkButton',
-  content: OB.I18N.getLabel('OBPOS_LblOk'),
+  i18nContent: 'OBMOBC_LblOk',
   tap: function () {
     this.doHideThisPopup();
   }

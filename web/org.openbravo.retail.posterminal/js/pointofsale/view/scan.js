@@ -26,7 +26,7 @@ enyo.kind({
         style: 'padding: 10px;',
         components: [{
           style: 'float:right;',
-          content: OB.I18N.getLabel('OBPOS_WelcomeMessage')
+          name: 'msgwelcomeLbl'
         }]
       }, {
         name: 'msgaction',
@@ -39,7 +39,7 @@ enyo.kind({
           components: [{
             name: 'undobutton',
             kind: 'OB.UI.SmallButton',
-            content: OB.I18N.getLabel('OBPOS_LblUndo'),
+            i18nContent: 'OBMOBC_LblUndo',
             classes: 'btnlink-white btnlink-fontblue',
             tap: function () {
               if (this.undoclick) {
@@ -73,5 +73,9 @@ enyo.kind({
       this.$.msgwelcome.show();
       delete this.$.undobutton.undoclick;
     }
+  },
+  initComponents: function () {
+    this.inherited(arguments);
+    this.$.msgwelcomeLbl.setContent(OB.I18N.getLabel('OBPOS_WelcomeMessage'));
   }
 });
