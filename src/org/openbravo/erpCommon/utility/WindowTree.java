@@ -39,6 +39,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.Sqlc;
+import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.utils.Replace;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -226,26 +227,20 @@ public class WindowTree extends HttpSecureAppServlet {
     String entityName = null, hqlWhereClause = null;
     try {
       OBContext.setAdminMode();
-      OBQuery<org.openbravo.model.ad.ui.Tab> tab = OBDal.getInstance().createQuery(
-          org.openbravo.model.ad.ui.Tab.class, "id='" + strTabId + "'");
-      if (tab.count() != 0) {
-        ScrollableResults tabResults = tab.scroll(ScrollMode.FORWARD_ONLY);
-        while (tabResults.next()) {
-          org.openbravo.model.ad.ui.Tab tabData = (org.openbravo.model.ad.ui.Tab) tabResults.get()[0];
-
-          entityName = tabData.getTable().getName();
-          tabData.getTable().getName();
-          hqlWhereClause = tabData.getHqlwhereclause();
-        }
+      Tab tabData = OBDal.getInstance().get(org.openbravo.model.ad.ui.Tab.class, strTabId);
+      if (tabData != null) {
+        entityName = tabData.getTable().getName();
+        hqlWhereClause = tabData.getHqlwhereclause();
       }
     } catch (Exception e) {
+      log4j.error("Exception while retrieving hqlWhereClause " + e);
     } finally {
       OBContext.restorePreviousMode();
     }
 
     List<WindowTreeData> newSubList = new ArrayList<WindowTreeData>();
-    if ((hqlWhereClause != null && !("".equals(hqlWhereClause)))) {
-      hqlWhereClause = (hqlWhereClause != null && !(" ".equals(hqlWhereClause))) ? hqlWhereClause
+    if (hqlWhereClause != null && !hqlWhereClause.trim().isEmpty()) {
+      hqlWhereClause = (hqlWhereClause != null && !hqlWhereClause.trim().isEmpty()) ? hqlWhereClause
           : "1=1";
       hqlWhereClause = hqlWhereClause.replace("e.", "");
       OBQuery<BaseOBObject> entityResults = OBDal.getInstance().createQuery("" + entityName + "",
@@ -273,10 +268,6 @@ public class WindowTree extends HttpSecureAppServlet {
       for (WindowTreeData elem : subList) {
         if (nodeIdList.contains(elem.nodeId)) {
           newSubList.add(elem);
-        } else {
-          if ("Y".equals(elem.issummary)) {
-            TreeUtility utils = new TreeUtility();
-          }
         }
       }
     } else {
