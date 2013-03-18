@@ -43,13 +43,11 @@ import net.sf.jasperreports.engine.JasperPrint;
 import org.apache.commons.fileupload.FileItem;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBError;
@@ -918,7 +916,7 @@ public class PrintController extends HttpSecureAppServlet {
         throw new ServletException("No Poc configuration found for this client.");
       }
 
-      EmailServerConfiguration mailConfig = getEmailConfiguration(OBDal.getInstance().get(
+      EmailServerConfiguration mailConfig = Utility.getEmailConfiguration(OBDal.getInstance().get(
           Organization.class, vars.getOrg()));
 
       if (mailConfig == null) {
@@ -1127,42 +1125,6 @@ public class PrintController extends HttpSecureAppServlet {
     final PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
     out.close();
-  }
-
-  private EmailServerConfiguration getEmailConfiguration(Organization organization) {
-    EmailServerConfiguration emailConfiguration = null;
-    try {
-      if (organization != null) {
-        OBCriteria<EmailServerConfiguration> mailConfigCriteria = OBDal.getInstance()
-            .createCriteria(EmailServerConfiguration.class);
-        mailConfigCriteria.addOrderBy("client.id", false);
-        mailConfigCriteria.add(Restrictions.eq(EmailServerConfiguration.PROPERTY_ORGANIZATION,
-            organization));
-        List<EmailServerConfiguration> mailConfigList = null;
-        // if the current organization is *, return email configuration if present, else return
-        // null
-        if (organization.getId().equals("0")) {
-          mailConfigList = mailConfigCriteria.list();
-          if (mailConfigList.size() != 0) {
-            emailConfiguration = mailConfigList.get(0);
-            return emailConfiguration;
-          } else {
-            return null;
-          }
-        } else {
-          mailConfigList = mailConfigCriteria.list();
-          if (mailConfigList.size() == 0) {
-            OrganizationStructureProvider orgStructure = new OrganizationStructureProvider();
-            return getEmailConfiguration(orgStructure.getParentOrg(organization));
-          } else {
-            emailConfiguration = mailConfigList.get(0);
-          }
-        }
-      }
-    } catch (Exception e) {
-      log4j.error("Exception while retrieving email configuration" + e);
-    }
-    return emailConfiguration;
   }
 
   private boolean moreThanOneLenguageDefined(Map<String, Report> reports) throws ReportingException {
