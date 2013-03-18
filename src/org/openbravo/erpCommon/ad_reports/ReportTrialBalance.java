@@ -538,10 +538,10 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
         StringBuilder strSubTitle = new StringBuilder();
 
         strSubTitle.append(Utility.messageBD(this, "LegalEntity", vars.getLanguage()) + ": ");
-        strSubTitle.append(ReportTrialBalanceData.selectCompany(this, vars.getClient())+ " (");
-        strSubTitle.append(Utility.messageBD(this, "ACCS_AD_ORG_ID_D", vars.getLanguage())+": " );
-        strSubTitle.append(ReportTrialBalanceData.selectOrgName(this, strOrg)+ ") \n");
-        strSubTitle.append("As of: " + strDateTo);
+        strSubTitle.append(ReportTrialBalanceData.selectCompany(this, vars.getClient()) + " (");
+        strSubTitle.append(Utility.messageBD(this, "ACCS_AD_ORG_ID_D", vars.getLanguage()) + ": ");
+        strSubTitle.append(ReportTrialBalanceData.selectOrgName(this, strOrg) + ") \n");
+        strSubTitle.append(Utility.messageBD(this, "asof", vars.getLanguage()) + ": " + strDateTo);
 
         parameters.put("REPORT_SUBTITLE", strSubTitle.toString());
         parameters.put("SHOWTOTALS", false);
@@ -619,7 +619,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
 
         strSubTitle.append(Utility.messageBD(this, "LegalEntity", vars.getLanguage()) + ": ");
         strSubTitle.append(ReportTrialBalanceData.selectCompany(this, vars.getClient()) + "\n");
-        strSubTitle.append("As of: " + strDateTo);
+        strSubTitle.append(Utility.messageBD(this, "asof", vars.getLanguage()) + ": " + strDateTo);
 
         parameters.put("REPORT_SUBTITLE", strSubTitle.toString());
 
