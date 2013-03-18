@@ -410,7 +410,7 @@ class DataValue implements XmlComponentValue {
 
       // Some tag values are not translated yet, let's translate them now
       if (map != null && xmlComponentValue instanceof CharacterComponent) {
-        String trl = map.get(text);
+        String trl = map.get(text.trim());
         if (trl != null) {
           text = trl;
         }

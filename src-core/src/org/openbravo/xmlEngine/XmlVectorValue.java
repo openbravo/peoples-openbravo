@@ -53,11 +53,11 @@ class XmlVectorValue extends Vector<Object> {
             && !xmlComponentValue.print().equals("")) {
 
           boolean isTranslated = false;
-          result = xmlComponentValue.print().trim();
+          result = xmlComponentValue.print().replace(String.valueOf((char) 160), " ").trim();
           log4jXmlVectorValue.debug("printStringBuffer(HashMap<String, String> textMap) - result: "
               + result);
           log4jXmlVectorValue.debug("checking for existence of text in textdata: " + result);
-          String translation = textMap.get(result);
+          String translation = textMap.get(result.trim());
           if (translation != null && !translation.equals("")) {
             log4jXmlVectorValue.debug("printStringBuffer() appending xmlComponentValue: "
                 + xmlComponentValue.print() + ", translation: " + translation);
@@ -199,7 +199,7 @@ class XmlVectorValue extends Vector<Object> {
     text = text.replace(prefixStr, "");
     int end = text.indexOf(suffixStr);
     text = text.substring(0, end);
-    String trlText = textMap.get(text);
+    String trlText = textMap.get(text.trim());
     if (trlText != null && !trlText.equals("")) {
       log4jXmlVectorValue.debug("Found a match - ORIGINAL: " + prefixStr + text + suffixStr
           + ", TRANSLATION: " + prefixStr + trlText + suffixStr);
