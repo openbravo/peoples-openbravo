@@ -56,6 +56,8 @@ public class Category extends ProcessHQLQuery {
             + "ppp.priceListVersion.id = pplv.id"
             + ") AND ("
             + "pli.product.id = ppp.product.id"
+            + ") AND ("
+            + "pli.product.active = true"
             + ") AND "
             + "(ppp.$incrementalUpdateCriteria) AND (pplv.$incrementalUpdateCriteria))"
             + "AND pCat.active = true order by pCat.name");
