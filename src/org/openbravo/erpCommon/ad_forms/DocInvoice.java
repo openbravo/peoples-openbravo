@@ -28,6 +28,7 @@ import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
@@ -878,10 +879,17 @@ public class DocInvoice extends AcctServer {
     ArrayList<HashMap<String, String>> plan = new ArrayList<HashMap<String, String>>();
     int i = 1;
     BigDecimal total = BigDecimal.ZERO;
-    int stdPrecision = OBDal.getInstance().get(Currency.class, this.C_Currency_ID)
-        .getStandardPrecision().intValue();
+    int stdPrecision = 0;
+    OBContext.setAdminMode(true);
+    try {
+      stdPrecision = OBDal.getInstance().get(Currency.class, this.C_Currency_ID)
+          .getStandardPrecision().intValue();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
     BigDecimal periodAmount = amount.divide(new BigDecimal(periodNumber),
         new MathContext(32, RoundingMode.HALF_UP)).setScale(stdPrecision, BigDecimal.ROUND_HALF_UP);
+
     while (i <= periodNumber) {
       if (!OBDateUtils.formatDate(date).equals(DateAcct)) {
         HashMap<String, String> hm = new HashMap<String, String>();
