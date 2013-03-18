@@ -92,6 +92,13 @@ BEGIN
     ELSE
       v_TableDir:=SUBSTR(p_ColumnName, 1, LENGTH(p_ColumnName) -3) ;
     END IF;
+  ELSIF p_Reference_ID IN ('95E2A8B50A254B2AAE6774B8C2F28120') THEN --UISelector
+     SELECT t.TABLENAME
+      INTO v_TableDir
+      FROM OBUISEL_SELECTOR s,
+        AD_TABLE t
+      WHERE UPPER(s.AD_REFERENCE_ID)=UPPER(p_Reference_Value_ID)
+      AND s.AD_TABLE_ID=t.AD_TABLE_ID;
   ELSE
     SELECT c.ISTRANSLATED
     INTO v_IsTranslated
@@ -131,7 +138,7 @@ BEGIN
       v_SQL:='TO_CHAR(COALESCE(TO_CHAR('||p_TableRef||'.'|| p_ColumnName||'),''''))';
     END IF;
   END IF;
-  IF p_Reference_ID IN('19', '32', '30', '31', '35', '25', '800011') THEN
+  IF p_Reference_ID IN('19', '32', '30', '31', '35', '25', '800011','95E2A8B50A254B2AAE6774B8C2F28120') THEN
     DECLARE
       v_PartialDisplay VARCHAR2(2000) ;
       v_KeyName        VARCHAR2(50) ;

@@ -13,7 +13,7 @@
  * and  limitations under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2005-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2005-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s): Openbravo S.L.U.
  ************************************************************************
@@ -477,6 +477,9 @@ build.war: build a war file in the lib directory.
     </copy>
     <copy todir="${build}">
       <fileset dir="${basedir}" includes="**/*.hbm.xml" />
+    </copy>
+    <copy todir="${build}">
+      <fileset dir="${basedir}" includes="**/*.ftl" />
     </copy>
     <copy todir="${base.design}/design">
       <fileset dir="${basedir}" includes="**/*.xml" />

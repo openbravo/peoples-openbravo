@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -40,5 +40,7 @@
 	<PARAMETER id="messageBoxID" name="messageType" attribute="class" replace="yy" default="HIDDEN"/>
 	<PARAMETER id="messageBoxIDTitle" name="messageTitle" default=""/>
 	<PARAMETER id="messageBoxIDMessage" name="messageMessage" default=""/>
+    <PARAMETER id="modify" name="modify"  attribute="value" default=""/>
 	<DISCARD id="discard"/>
 </REPORT>
+

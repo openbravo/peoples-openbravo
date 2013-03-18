@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2011 Openbravo SLU
+ * All portions are Copyright (C) 2001-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -78,6 +78,24 @@
        SELECT P_STRING FROM AD_PINSTANCE_PARA
        WHERE AD_PINSTANCE_ID = ?
        AND PARAMETERNAME = 'AD_Org_ID'
+     ]]></Sql>
+     <Parameter name="adPinstanceId"/>
+   </SqlMethod>
+     <SqlMethod name="selectDateFrom" type="preparedStatement" return="String" default="">
+     <SqlMethodComment></SqlMethodComment>
+     <Sql><![CDATA[
+       SELECT P_STRING FROM AD_PINSTANCE_PARA
+       WHERE AD_PINSTANCE_ID = ?
+       AND PARAMETERNAME = 'DateFrom'
+     ]]></Sql>
+     <Parameter name="adPinstanceId"/>
+   </SqlMethod>
+     <SqlMethod name="selectDateTo" type="preparedStatement" return="String" default="">
+     <SqlMethodComment></SqlMethodComment>
+     <Sql><![CDATA[
+       SELECT P_STRING FROM AD_PINSTANCE_PARA
+       WHERE AD_PINSTANCE_ID = ?
+       AND PARAMETERNAME = 'DateTo'
      ]]></Sql>
      <Parameter name="adPinstanceId"/>
    </SqlMethod>

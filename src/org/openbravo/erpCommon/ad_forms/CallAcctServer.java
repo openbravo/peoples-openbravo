@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.reference.PInstanceProcessData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
@@ -57,10 +58,14 @@ public class CallAcctServer extends HttpSecureAppServlet {
     if (vars.commandIn("DEFAULT")) {
       String strTableId = vars.getStringParameter("inpadTableId", "");
       String strAdOrgId = vars.getStringParameter("inpadOrgId");
-      printPage(response, vars, strTableId, strAdOrgId, "");
+      String strDateFrom = vars.getGlobalVariable("inpDateFrom", "CallAcctServer|dateFrom", "");
+      String strDateTo = vars.getGlobalVariable("inpDateTo", "CallAcctServer|dateTo", "");
+      printPage(response, vars, strTableId, strAdOrgId, "", strDateFrom, strDateTo);
     } else if (vars.commandIn("CANCELAR")) {
       String strTableId = vars.getStringParameter("inpadTableId", "");
       String strAdOrgId = vars.getStringParameter("inpadOrgId");
+      String strDateFrom = vars.getStringParameter("inpDateFrom");
+      String strDateTo = vars.getStringParameter("inpDateTo");
       if (data.length > 0 && data[0].status.equals(org.openbravo.scheduling.Process.SCHEDULED)) {
         try {
           OBScheduler.getInstance().unschedule(data[0].id, new ProcessContext(vars));
@@ -69,22 +74,28 @@ public class CallAcctServer extends HttpSecureAppServlet {
         }
       }
       // acctServer.cancelDirectProcess();
-      printPage(response, vars, strTableId, strAdOrgId, "");
+      printPage(response, vars, strTableId, strAdOrgId, "", strDateFrom, strDateTo);
     } else if (vars.commandIn("REFRESH_INFO")) {
     } else if (vars.commandIn("RUN")) {
       String strTableId = vars.getStringParameter("inpadTableId");
       String strAdOrgId = vars.getStringParameter("inpadOrgId");
+      // String strDateFrom = vars.getStringParameter("inpDateFrom");
+      // String strDateTo = vars.getStringParameter("inpDateTo");
+      String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom", "CallAcctServer|dateFrom");
+      String strDateTo = vars.getRequestGlobalVariable("inpDateTo", "CallAcctServer|dateTo");
       if (strAdOrgId == null || strAdOrgId.equals(""))
         strAdOrgId = "0";
       if (log4j.isDebugEnabled())
         log4j.debug(strTableId);
-      runProcess(response, vars, strTableId, strAdOrgId, adProcessId);
+      runProcess(response, vars, strTableId, strAdOrgId, adProcessId, strDateFrom, strDateTo,
+          this.myPool);
     } else
       pageError(response);
   }
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strTableId,
-      String strOrgId, String strMessage) throws IOException, ServletException {
+      String strOrgId, String strMessage, String strDateFrom, String strDateTo) throws IOException,
+      ServletException {
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_forms/CallAcctServer").createXmlDocument();
 
@@ -146,6 +157,15 @@ public class CallAcctServer extends HttpSecureAppServlet {
 
       xmlDocument.setParameter("adOrgId", strOrgId);
 
+      // xmlDocument.setParameter("datefrom", vars.getStringParameter("inpdatefrom"));
+      xmlDocument.setParameter("datefrom", strDateFrom);
+      xmlDocument.setParameter("dateFromdisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+      xmlDocument.setParameter("dateFromsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+      // xmlDocument.setParameter("dateto", vars.getStringParameter("inpdateto"));
+      xmlDocument.setParameter("dateto", strDateTo);
+      xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+      xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+
       response.setContentType("text/html; charset=UTF-8");
       PrintWriter out = response.getWriter();
       out.println(xmlDocument.print());
@@ -154,7 +174,8 @@ public class CallAcctServer extends HttpSecureAppServlet {
   }
 
   private void runProcess(HttpServletResponse response, VariablesSecureApp vars, String strTableId,
-      String strOrgId, String adProcessId) throws IOException, ServletException {
+      String strOrgId, String adProcessId, String strDateFrom, String strDateTo,
+      ConnectionProvider myPool) throws IOException, ServletException {
     OBError myMessage = new OBError();
     myMessage.setTitle("");
     boolean scheduled = false;
@@ -179,6 +200,10 @@ public class CallAcctServer extends HttpSecureAppServlet {
             strTableId, vars.getClient(), vars.getOrg(), vars.getUser());
         PInstanceProcessData.insertPInstanceParam(this, adPinstanceId, "20", "AD_Org_ID", strOrgId,
             vars.getClient(), vars.getOrg(), vars.getUser());
+        PInstanceProcessData.insertPInstanceParam(this, adPinstanceId, "30", "DateFrom",
+            strDateFrom, vars.getClient(), vars.getOrg(), vars.getUser());
+        PInstanceProcessData.insertPInstanceParam(this, adPinstanceId, "40", "DateTo", strDateTo,
+            vars.getClient(), vars.getOrg(), vars.getUser());
 
         ProcessBundle bundle = new ProcessBundle(adProcessId, vars).init(this);
         bundle.getParams().put(ProcessBundle.PINSTANCE, adPinstanceId);
@@ -195,7 +220,7 @@ public class CallAcctServer extends HttpSecureAppServlet {
       log4j.error(e.getMessage());
     } finally {
       vars.setMessage("CallAcctServer", myMessage);
-      printPage(response, vars, strTableId, strOrgId, "");
+      printPage(response, vars, strTableId, strOrgId, "", strDateFrom, strDateTo);
     }
   }
 

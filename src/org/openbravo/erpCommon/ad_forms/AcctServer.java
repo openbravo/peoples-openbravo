@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2012 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2013 Openbravo S.L.U.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.ad_forms;
@@ -29,6 +29,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 
 import javax.servlet.ServletException;
@@ -377,17 +378,13 @@ public abstract class AcctServer {
       log4j.debug("AcctServer.run - AD_Client_ID: " + AD_Client_ID);
 
       AcctServerData[] data = null;
+      final Set<String> orgSet = OBContext.getOBContext().getOrganizationStructureProvider()
+          .getChildTree(AD_Org_ID, true);
+      String strOrgs = Utility.getInStrSet(orgSet);
 
-      if ((strDateFrom == null && strDateTo == null)
-          || (strDateFrom.equals("") && strDateTo.equals(""))) {
-        data = AcctServerData.select(connectionProvider, tableName, AD_Client_ID, AD_Org_ID,
-            strDateColumn, 0, Integer.valueOf(batchSize).intValue());
-      } else {
+      data = AcctServerData.select(connectionProvider, tableName, strDateColumn, AD_Client_ID,
+          strOrgs, strDateFrom, strDateTo, 0, Integer.valueOf(batchSize).intValue());
 
-        data = AcctServerData.selectFilterDates(connectionProvider, tableName, AD_Client_ID,
-            AD_Org_ID, strDateColumn, strDateFrom, strDateTo);
-
-      }
       if (data != null && data.length > 0) {
         if (log4j.isDebugEnabled()) {
           log4j.debug("AcctServer - Run -Select inicial realizada N = " + data.length + " - Key: "
@@ -2089,16 +2086,33 @@ public abstract class AcctServer {
   }
 
   public boolean checkDocuments() throws ServletException {
+    return checkDocuments(null, null);
+  }
+
+  public boolean checkDocuments(String dateFrom, String dateTo) throws ServletException {
     if (m_as.length == 0)
       return false;
     AcctServerData[] docTypes = AcctServerData.selectDocTypes(connectionProvider, AD_Table_ID,
         AD_Client_ID);
     // if (log4j.isDebugEnabled())
     // log4j.debug("AcctServer - AcctSchema length-" + (this.m_as).length);
-    for (int i = 0; i < docTypes.length; i++) {
-      AcctServerData data = AcctServerData.selectDocuments(connectionProvider, tableName,
-          AD_Client_ID, AD_Org_ID, docTypes[i].name, strDateColumn);
+    final Set<String> orgSet = OBContext.getOBContext().getOrganizationStructureProvider()
+        .getChildTree(AD_Org_ID, true);
+    String strorgs = Utility.getInStrSet(orgSet);
 
+    String rownum = "0", oraLimit1 = null, oraLimit2 = null, pgLimit = null;
+    if (connectionProvider.getRDBMS().equalsIgnoreCase("ORACLE")) {
+      oraLimit1 = "2";
+      oraLimit2 = "1 AND 2";
+      rownum = "ROWNUM";
+    } else {
+      pgLimit = "2";
+    }
+
+    for (int i = 0; i < docTypes.length; i++) {
+      AcctServerData data = AcctServerData.selectDocumentsDates(connectionProvider, rownum,
+          tableName, strDateColumn, AD_Client_ID, strorgs, docTypes[i].name, dateFrom, dateTo,
+          pgLimit, oraLimit1, oraLimit2);
       if (data != null) {
         if (data.id != null && !data.id.equals("")) {
           if (log4j.isDebugEnabled()) {
@@ -2119,6 +2133,7 @@ public abstract class AcctServer {
         AD_Client_ID);
     // if (log4j.isDebugEnabled())
     // log4j.debug("AcctServer - AcctSchema length-" + (this.m_as).length);
+
     for (int i = 0; i < docTypes.length; i++) {
       AcctServerData data = AcctServerData.filterDatesSelectDocuments(connectionProvider,
           tableName, AD_Client_ID, AD_Org_ID, docTypes[i].name, strDateColumn, dateFrom, dateTo);

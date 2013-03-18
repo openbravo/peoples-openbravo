@@ -43,11 +43,13 @@ import net.sf.jasperreports.engine.JasperPrint;
 import org.apache.commons.fileupload.FileItem;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBError;
@@ -65,6 +67,7 @@ import org.openbravo.erpCommon.utility.reporting.TemplateInfo;
 import org.openbravo.erpCommon.utility.reporting.TemplateInfo.EmailDefinition;
 import org.openbravo.exception.NoConnectionAvailableException;
 import org.openbravo.model.common.enterprise.EmailServerConfiguration;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -915,28 +918,12 @@ public class PrintController extends HttpSecureAppServlet {
         throw new ServletException("No Poc configuration found for this client.");
       }
 
-      // TODO: There should be a mechanism to select the desired Email server configuration, until
-      // then, first search for the current organization (and use the first returned one), then for
-      // organization '0' (and use the first returned one) and then for any other of the
-      // organization tree where current organization belongs to (and use the first returned one).
-      EmailServerConfiguration mailConfig = null;
+      EmailServerConfiguration mailConfig = getEmailConfiguration(OBDal.getInstance().get(
+          Organization.class, vars.getOrg()));
 
-      for (EmailServerConfiguration currentOrgConfig : mailConfigList) {
-        if (vars.getOrg().equals(currentOrgConfig.getOrganization().getId())) {
-          mailConfig = currentOrgConfig;
-          break;
-        }
-      }
       if (mailConfig == null) {
-        for (EmailServerConfiguration zeroOrgConfig : mailConfigList) {
-          if ("0".equals(zeroOrgConfig.getOrganization().getId())) {
-            mailConfig = zeroOrgConfig;
-            break;
-          }
-        }
-      }
-      if (mailConfig == null) {
-        mailConfig = mailConfigList.get(0);
+        throw new ServletException(
+            "No sender defined: Please go to client configuration to complete the email configuration.");
       }
 
       fromEmail = mailConfig.getSmtpServerSenderAddress();
@@ -1140,6 +1127,42 @@ public class PrintController extends HttpSecureAppServlet {
     final PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
     out.close();
+  }
+
+  private EmailServerConfiguration getEmailConfiguration(Organization organization) {
+    EmailServerConfiguration emailConfiguration = null;
+    try {
+      if (organization != null) {
+        OBCriteria<EmailServerConfiguration> mailConfigCriteria = OBDal.getInstance()
+            .createCriteria(EmailServerConfiguration.class);
+        mailConfigCriteria.addOrderBy("client.id", false);
+        mailConfigCriteria.add(Restrictions.eq(EmailServerConfiguration.PROPERTY_ORGANIZATION,
+            organization));
+        List<EmailServerConfiguration> mailConfigList = null;
+        // if the current organization is *, return email configuration if present, else return
+        // null
+        if (organization.getId().equals("0")) {
+          mailConfigList = mailConfigCriteria.list();
+          if (mailConfigList.size() != 0) {
+            emailConfiguration = mailConfigList.get(0);
+            return emailConfiguration;
+          } else {
+            return null;
+          }
+        } else {
+          mailConfigList = mailConfigCriteria.list();
+          if (mailConfigList.size() == 0) {
+            OrganizationStructureProvider orgStructure = new OrganizationStructureProvider();
+            return getEmailConfiguration(orgStructure.getParentOrg(organization));
+          } else {
+            emailConfiguration = mailConfigList.get(0);
+          }
+        }
+      }
+    } catch (Exception e) {
+      log4j.error("Exception while retrieving email configuration" + e);
+    }
+    return emailConfiguration;
   }
 
   private boolean moreThanOneLenguageDefined(Map<String, Report> reports) throws ReportingException {
