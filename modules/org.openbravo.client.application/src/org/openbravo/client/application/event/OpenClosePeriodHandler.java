@@ -60,7 +60,42 @@ public class OpenClosePeriodHandler extends BaseActionHandler {
         if (size == 0) {
           return response;
         }
-        response.put("actionComboBox", getActionComboBox("", vars));
+        String strAction = "";
+        if (size == 1) {
+          if (OBDal.getInstance().get(Period.class, periodIdList.get(0)) == null) {
+            PeriodControl periodControl = OBDal.getInstance().get(PeriodControl.class,
+                periodIdList.get(0));
+            strAction = periodControl.getPeriodStatus();
+          } else {
+            Period period = OBDal.getInstance().get(Period.class, periodIdList.get(0));
+            strAction = period.getStatus();
+          }
+        } else {
+          if (OBDal.getInstance().get(Period.class, periodIdList.get(0)) == null) {
+            for (String id : PeriodControlUtility.parseJSON(periodIdList)) {
+              PeriodControl periodControl = OBDal.getInstance().get(PeriodControl.class, id);
+              if ("".equals(strAction)) {
+                strAction = periodControl.getPeriodStatus();
+              }
+              if (!strAction.equals(periodControl.getPeriodStatus())) {
+                strAction = "";
+                break;
+              }
+            }
+          } else {
+            for (String id : PeriodControlUtility.parseJSON(periodIdList)) {
+              Period period = OBDal.getInstance().get(Period.class, id);
+              if ("".equals(strAction)) {
+                strAction = period.getStatus();
+              }
+              if (!strAction.equals(period.getStatus())) {
+                strAction = "";
+                break;
+              }
+            }
+          }
+        }
+        response.put("actionComboBox", getActionComboBox(strAction, vars));
         return response;
       } else {
         if (periodIdList.length() == 0) {
@@ -148,10 +183,12 @@ public class OpenClosePeriodHandler extends BaseActionHandler {
     return errorMessage;
   }
 
-  private JSONObject getActionComboBox(String action, VariablesSecureApp vars) throws Exception {
+  private JSONObject getActionComboBox(String actionToExclude, VariablesSecureApp vars)
+      throws Exception {
     final String PERIOD_CONTROL_WINDOW_ID = "6AE1A09CAAD945F78C3E05A484A1F07A";
     final String VALID_PERIOD_CONTROL_ACTION_VALIDATION = "CA6741A18A214FE9A50FDFC398662235";
     final String ACTIONS_REF = "176";
+    final String ACTION_PERMANENTLY_CLOSED = "P";
     String defaultValue = null;
     JSONObject response = new JSONObject();
     DalConnectionProvider conn = new DalConnectionProvider(false);
@@ -164,6 +201,9 @@ public class OpenClosePeriodHandler extends BaseActionHandler {
     JSONObject valueMap = new JSONObject();
     for (FieldProvider fp : fpArray) {
       String key = fp.getField("id");
+      if (key.equals(actionToExclude) || ACTION_PERMANENTLY_CLOSED.equals(key)) {
+        continue;
+      }
       String value = fp.getField("name");
       if (defaultValue != null) {
         defaultValue = key;
