@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2013 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -282,7 +282,7 @@ enyo.kind({
         }
         return;
       }
-      if ((this.model.get('order').get('isEditable') === false && !this.model.get('order').get('isLayaway')) || this.model.get('order').get('orderType') === 3) {
+      if ((this.model.get('order').get('isEditable') === false && (!this.model.get('order').get('isLayaway') && !this.model.get('order').get('isPaid'))) || this.model.get('order').get('orderType') === 3) {
         return true;
       }
       this.doTabChange({
@@ -314,9 +314,9 @@ enyo.kind({
   },
   init: function (model) {
     this.model = model;
-    this.model.get('order').on('change:isEditable change:isLayaway', function (newValue) {
+    this.model.get('order').on('change:isEditable change:isLayaway change:isPaid', function (newValue) {
       if (newValue) {
-        if (newValue.get('isEditable') === false && !newValue.get('isLayaway')) {
+        if (newValue.get('isEditable') === false && !newValue.get('isLayaway') && !newValue.get('isPaid')) {
           this.tabPanel = null;
           this.setDisabled(true);
           return;

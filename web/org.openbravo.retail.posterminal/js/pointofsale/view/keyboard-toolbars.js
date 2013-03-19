@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2013 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -56,8 +56,13 @@ enyo.kind({
   }],
   pay: function (amount, key, name, paymentMethod, rate, mulrate, isocode) {
     if (OB.DEC.compare(amount) > 0) {
-
-      var provider;
+      var provider, me = this;
+      if (this.receipt.get('isPaid')) {
+        me.doShowPopup({
+          popup: 'modalNotEditableOrder'
+        });
+        return true;
+      }
       if (this.receipt.get('orderType') === 0) {
         provider = paymentMethod.paymentProvider;
       } else if (this.receipt.get('orderType') === 1) {

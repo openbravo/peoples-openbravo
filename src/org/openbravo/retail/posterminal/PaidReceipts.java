@@ -188,7 +188,7 @@ public class PaidReceipts extends JSONProcessSimple {
             paidReceiptPayment.put("mulrate", objectType.get("mulrate"));
             paidReceiptPayment.put("isocode", objectType.get("isocode"));
             paidReceiptPayment.put("openDrawer", objectType.get("openDrawer"));
-            paidReceiptPayment.put("isPrePayment", paidReceipt.getBoolean("isLayaway"));
+            paidReceiptPayment.put("isPrePayment", true);
             listpaidReceiptsPayments.put(paidReceiptPayment);
           }
         }

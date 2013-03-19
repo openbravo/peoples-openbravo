@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2013 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -162,6 +162,9 @@ enyo.kind({
     classes: 'btnkeyboard',
     name: 'btn'
   }],
+  events: {
+    onShowPopup: ''
+  },
   background: '#6cb33f',
   initComponents: function () {
     var btn;
@@ -178,6 +181,12 @@ enyo.kind({
       var me = this,
           i, max, p, receipt = this.owner.owner.owner.owner.model.get('order'),
           openDrawer = false;
+      if (receipt.get('isPaid')) {
+        me.doShowPopup({
+          popup: 'modalNotEditableOrder'
+        });
+        return true;
+      }
       for (i = 0, max = OB.POS.modelterminal.get('payments').length; i < max; i++) {
         p = OB.POS.modelterminal.get('payments')[i];
         if (p.payment.searchKey === me.paymenttype) {
