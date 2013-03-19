@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2013 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -306,8 +306,8 @@ enyo.kind({
         this.$.divText.setContent(OB.I18N.getLabel('OBPOS_QuotationDraft'));
       }
     }, this);
-    this.order.on('change:isPaid', function (model) {
-      if (model.get('isPaid') === true) {
+    this.order.on('change:isPaid change:isQuotation', function (model) {
+      if (model.get('isPaid') === true && !model.get('isQuotation')) {
         this.$.divText.addStyles('width: 50%; color: #f8941d;');
         this.$.divText.setContent(OB.I18N.getLabel('OBPOS_paid'));
         this.$.divText.show();
