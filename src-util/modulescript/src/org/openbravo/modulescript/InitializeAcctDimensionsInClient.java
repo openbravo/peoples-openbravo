@@ -34,8 +34,7 @@ public class InitializeAcctDimensionsInClient extends ModuleScript {
       ConnectionProvider cp = getConnectionProvider();
       Connection conn = cp.getTransactionConnection();
       try {
-        boolean isInitialized= InitializeAcctDimensionsInClientData.isExecuted(cp);
-        if (!isInitialized){
+    
           for (InitializeAcctDimensionsInClientData client : InitializeAcctDimensionsInClientData
               .getClients(cp)) {
             InitializeAcctDimensionsInClientData.updateDimClient(conn, cp);  
@@ -92,10 +91,9 @@ public class InitializeAcctDimensionsInClient extends ModuleScript {
             InitializeAcctDimensionsInClientData.updateoorec(conn, cp, client.adClientId);   
             InitializeAcctDimensionsInClientData.updateoosoo(conn, cp, client.adClientId); 
             
-            InitializeAcctDimensionsInClientData.createPreference(conn, cp, client.adClientId);
-          }
+         }
           cp.releaseCommitConnection(conn);
-        }
+          
       } catch (Exception e) {
         cp.releaseRollbackConnection(conn);
         handleError(e);
