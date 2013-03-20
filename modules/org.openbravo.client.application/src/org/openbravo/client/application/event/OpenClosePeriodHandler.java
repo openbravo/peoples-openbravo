@@ -185,7 +185,7 @@ public class OpenClosePeriodHandler extends BaseActionHandler {
 
   private JSONObject getActionComboBox(String actionToExclude, VariablesSecureApp vars)
       throws Exception {
-    final String PERIOD_CONTROL_WINDOW_ID = "6AE1A09CAAD945F78C3E05A484A1F07A";
+    final String PERIOD_CONTROL_WINDOW_ID = "E66E701CCBA14B8BA480CBDE37C50D7A";
     final String VALID_PERIOD_CONTROL_ACTION_VALIDATION = "CA6741A18A214FE9A50FDFC398662235";
     final String ACTIONS_REF = "176";
     final String ACTION_PERMANENTLY_CLOSED = "P";

@@ -165,6 +165,8 @@ isc.OpenClosePeriodProcessPopup.addProperties({
 
   initWidget: function () {
 
+  OB.TestRegistry.register('org.openbravo.client.application.OpenClosePeriod.popup', this);
+
     var recordIdList = this.recordIdList,
         originalView = this.view,
         params = this.params;
