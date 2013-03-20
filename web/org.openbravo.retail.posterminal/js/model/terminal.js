@@ -102,7 +102,7 @@ OB.Model.Terminal = Backbone.Model.extend({
       $LAB.setGlobalDefaults({
         AppendTo: 'body'
       });
-      if (!OB.POS.modelterminal.get('connectedToERP')) {
+      if (me.get('loggedOffline')) {
         OB.Format = JSON.parse(me.usermodel.get('formatInfo'));
         OB.POS.cleanWindows();
         $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=FinancialMgmtTaxRate&modelName=TaxRate&source=org.openbravo.retail.posterminal.master.TaxRate');
@@ -350,6 +350,33 @@ OB.Model.Terminal = Backbone.Model.extend({
   generate_sha1: function (theString) {
     return CryptoJS.enc.Hex.stringify(CryptoJS.SHA1(theString));
   },
+  
+  attemptToLoginOffline: function(){
+    var me = this;
+    OB.POS.modelterminal.set('windowRegistered', undefined);
+    OB.POS.modelterminal.set('loggedOffline', true);
+    OB.Dal.find(OB.Model.User, {
+      'name': me.user
+    }, function (users) {
+      var user;
+      if (users.models.length === 0) {
+        alert(OB.I18N.getLabel('OBPOS_OfflinePasswordNotCorrect'));
+        window.location.reload();
+      } else {
+        if (users.models[0].get('password') === me.generate_sha1(me.password + users.models[0].get('created'))) {
+          me.usermodel = users.models[0];
+          me.set('orgUserId', users.models[0].id);
+          me.updateSession(me.usermodel);
+          OB.POS.navigate('main', {
+            trigger: true
+          });
+        } else {
+          alert(OB.I18N.getLabel('OBPOS_OfflinePasswordNotCorrect'));
+          window.location.reload();
+        }
+      }
+    }, function () {});
+  },
 
   login: function (user, password, mode) {
     OB.UTIL.showLoading(true);
@@ -380,6 +407,7 @@ OB.Model.Terminal = Backbone.Model.extend({
         url: '../../org.openbravo.retail.posterminal/POSLoginHandler',
         cacheBust: false,
         method: 'POST',
+        timeout: 5000,
         contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
         data: {
           'user': user,
@@ -390,6 +418,10 @@ OB.Model.Terminal = Backbone.Model.extend({
         },
         success: function (inSender, inResponse) {
           var pos, baseUrl;
+          if(OB.POS.modelterminal.get('timeoutWhileLogin')){
+            OB.POS.modelterminal.set('timeoutWhileLogin', false);
+            return;
+          }
           if (inResponse && inResponse.showMessage) {
             me.triggerLoginFail(401, mode, inResponse);
             return;
@@ -399,41 +431,27 @@ OB.Model.Terminal = Backbone.Model.extend({
           //          window.location = baseUrl + OB.POS.hrefWindow(OB.POS.paramWindow);
           OB.POS.modelterminal.set('orgUserId', inResponse.userId);
           me.setUserModelOnline();
+          me.set('loggedOffline', false);
 
           OB.POS.navigate('main', {
             trigger: true
           });
         },
         fail: function (inSender, inResponse) {
-          me.triggerLoginFail(inResponse, mode);
+          if(inSender === 'timeout') {
+            OB.POS.modelterminal.set('timeoutWhileLogin', true);
+            me.attemptToLoginOffline();
+          } else {
+            me.triggerLoginFail(inResponse, mode);
+          }
         }
       });
       ajaxRequest.go(ajaxRequest.data).response('success').error('fail');
     } else {
-      OB.POS.modelterminal.set('windowRegistered', undefined);
-      OB.Dal.find(OB.Model.User, {
-        'name': me.user
-      }, function (users) {
-        var user;
-        if (users.models.length === 0) {
-          alert(OB.I18N.getLabel('OBPOS_OfflinePasswordNotCorrect'));
-          window.location.reload();
-        } else {
-          if (users.models[0].get('password') === me.generate_sha1(me.password + users.models[0].get('created'))) {
-            me.usermodel = users.models[0];
-            me.set('orgUserId', users.models[0].id);
-            me.updateSession(me.usermodel);
-            OB.POS.navigate('main', {
-              trigger: true
-            });
-          } else {
-            alert(OB.I18N.getLabel('OBPOS_OfflinePasswordNotCorrect'));
-            window.location.reload();
-          }
-        }
-      }, function () {});
+      this.attemptToLoginOffline();
     }
   },
+  
 
   setUserModelOnline: function (triggerTerminalLoaded) {
     var me = this;
@@ -556,7 +574,7 @@ OB.Model.Terminal = Backbone.Model.extend({
 
   load: function () {
     var termInfo, i, max;
-    if (!OB.POS.modelterminal.get('connectedToERP')) {
+    if (this.get('loggedOffline')) {
       termInfo = JSON.parse(this.usermodel.get('terminalinfo'));
       this.set('payments', termInfo.payments);
       this.paymentnames = {};
@@ -575,7 +593,6 @@ OB.Model.Terminal = Backbone.Model.extend({
       this.set('currency', termInfo.currency);
       this.set('currencyPrecision', termInfo.currencyPrecision);
       this.set('orgUserId', termInfo.orgUserId);
-      this.set('loggedOffline', true);
       this.setDocumentSequence();
       this.triggerReady();
       return;
@@ -889,7 +906,7 @@ OB.Model.Terminal = Backbone.Model.extend({
     var undef, loadModelsIncFunc, loadModelsTotalFunc, minTotalRefresh, minIncRefresh;
     if (this.get('payments') && this.get('pricelistversion') && this.get('warehouses') && this.get('currency') && this.get('context') && this.get('writableOrganizations') && this.get('permissions') && (this.get('documentsequence') !== undef || this.get('documentsequence') === 0) && this.get('windowRegistered') !== undef) {
       OB.POS.modelterminal.loggingIn = false;
-      if (OB.POS.modelterminal.get('connectedToERP')) {
+      if (!this.get('loggedOffline')) {
         //In online mode, we save the terminal information in the local db
         this.usermodel.set('terminalinfo', JSON.stringify(this));
         OB.Dal.save(this.usermodel, function () {}, function () {
