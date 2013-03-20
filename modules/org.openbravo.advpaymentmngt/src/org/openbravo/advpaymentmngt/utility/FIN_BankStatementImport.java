@@ -288,7 +288,7 @@ public abstract class FIN_BankStatementImport {
     result.put("BPartnerID", "");
     result.put("GLItemID", "");
     if (partnername == null || "".equals(partnername.trim())) {
-      return null;
+      return result;
     }
     final StringBuilder whereClause = new StringBuilder();
     List<Object> parameters = new ArrayList<Object>();
