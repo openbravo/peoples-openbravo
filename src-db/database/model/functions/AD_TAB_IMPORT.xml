@@ -55,7 +55,7 @@
     v_count NUMBER(10):=0;
     -- added by Pablo Sarobe
     v_isDisplayed CHAR(1):='Y';
-    v_showInRelation CHAR(1):='Y';
+    v_showInRelation CHAR(1):='N';
     v_isReadOnly CHAR(1):='N';
     v_SeqNo NUMBER(10) ;
     v_SeqNoCounter NUMBER;
@@ -120,26 +120,15 @@
     WHERE AD_Tab_ID=v_Record_ID  AND AD_Table_ID!='291'; -- C_BPartner (multiple tabs)
     
     
-    --Set gridSeqno = 0 if there are gridSeqno values in the current grid, other
-    --case leave it null
-    SELECT count(*)
-      into v_Aux
-      FROM AD_Field
-     WHERE ad_tab_id = v_Record_ID
-       AND grid_Seqno is not null;
-       
-    if v_Aux =0 then
-      v_GridSeqNo := null;
-    else
-      v_GridSeqNo := 0;
-    end if;
+    --always set grid sequence to null as by default the showinrelation is set to 'N'
+    v_GridSeqNo := null;
 
     if v_SeqNoCounter < 20 OR v_SeqNoCounter is NULL then
       v_SeqNoCounter := 10; --Reserve 10 for Organization. The field in the first iteration will be 20 (line 189)
     end if;
     
     FOR Cur_Column IN(-- added by Pablo Sarobe
-    SELECT c.Columnname, c.Name, c.Description, c.Help, c.AD_Column_ID, c.FieldLength, t.tablename, c.AD_Module_ID
+    SELECT c.Columnname, c.Name, c.Description, c.Help, c.AD_Column_ID, c.FieldLength, t.tablename, c.AD_Module_ID, c.IsIdentifier
     FROM AD_Column c, AD_Table t
     WHERE NOT EXISTS
       (SELECT *
@@ -150,10 +139,11 @@
       AND UPPER(c.Columnname) NOT IN ('CREATED', 'UPDATED', 'CREATEDBY', 'UPDATEDBY') AND c.IsActive='Y'
     ORDER BY POSITION)
     LOOP
+      v_showInRelation:='N';
+      v_SeqNo:=null;
       AD_Sequence_Next('AD_Field', '0', v_NextNo) ; -- get ID
       -- added by Pablo Sarobe
       v_isDisplayed:='Y';
-      v_showInRelation:='Y';
       v_isReadOnly:='N';
       v_SeqNo:=0;
       v_sortNo:=NULL;
@@ -186,6 +176,12 @@
         v_isReadOnly:='Y';
       END IF;
       
+      --show in grid only if the column is identifier
+      IF Cur_Column.isidentifier = 'Y' THEN
+        v_showInRelation:='Y';
+        v_SeqNo:=0;
+      END IF;
+
       IF COALESCE(v_SeqNo,-1) = 0 THEN
         v_SeqNoCounter := v_SeqNoCounter + 10;
         v_SeqNo := v_SeqNoCounter;
