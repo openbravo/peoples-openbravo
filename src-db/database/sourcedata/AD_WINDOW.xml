@@ -2880,7 +2880,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--6AE1A09CAAD945F78C3E05A484A1F07A-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--6AE1A09CAAD945F78C3E05A484A1F07A-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--6AE1A09CAAD945F78C3E05A484A1F07A-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--6AE1A09CAAD945F78C3E05A484A1F07A-->  <NAME><![CDATA[Period Control (Open/Close periods)]]></NAME>
+<!--6AE1A09CAAD945F78C3E05A484A1F07A-->  <NAME><![CDATA[Open/Close Period Control]]></NAME>
 <!--6AE1A09CAAD945F78C3E05A484A1F07A-->  <DESCRIPTION><![CDATA[Open/Close Period Control for the allowed organizations]]></DESCRIPTION>
 <!--6AE1A09CAAD945F78C3E05A484A1F07A-->  <HELP><![CDATA[Open/Close Period Control feature manage the periods of an organization. This feature applies to organizations for which the "Period Control" feature is enabled.]]></HELP>
 <!--6AE1A09CAAD945F78C3E05A484A1F07A-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
@@ -3238,9 +3238,9 @@ You can also select if transactions are allowed or not for this organization typ
 <!--E56E701CCBA14B8BA480CBDE37C50D7A-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--E56E701CCBA14B8BA480CBDE37C50D7A-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--E56E701CCBA14B8BA480CBDE37C50D7A-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--E56E701CCBA14B8BA480CBDE37C50D7A-->  <NAME><![CDATA[Open/Close Period Control]]></NAME>
-<!--E56E701CCBA14B8BA480CBDE37C50D7A-->  <DESCRIPTION><![CDATA[Open or close periods for the allowed organizations]]></DESCRIPTION>
-<!--E56E701CCBA14B8BA480CBDE37C50D7A-->  <HELP><![CDATA[Open/Close Period Control feature manage the periods of an organization. This feature applies to organizations for which the "Period Control" feature is enabled.]]></HELP>
+<!--E56E701CCBA14B8BA480CBDE37C50D7A-->  <NAME><![CDATA[Period Control Log]]></NAME>
+<!--E56E701CCBA14B8BA480CBDE37C50D7A-->  <DESCRIPTION><![CDATA[This windows shows the log for period control. ]]></DESCRIPTION>
+<!--E56E701CCBA14B8BA480CBDE37C50D7A-->  <HELP><![CDATA[This windows shows the log for period control. ]]></HELP>
 <!--E56E701CCBA14B8BA480CBDE37C50D7A-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--E56E701CCBA14B8BA480CBDE37C50D7A-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--E56E701CCBA14B8BA480CBDE37C50D7A-->  <PROCESSING><![CDATA[N]]></PROCESSING>

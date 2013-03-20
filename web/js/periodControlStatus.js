@@ -23,10 +23,8 @@ isc.PeriodControlStatus_Field.addProperties({
   width: 100,
   initWidget: function () {
     if (this.record && this.record.periodStatus) {
-      //debugger;
       this.createField(this.record.periodStatus);
     }
-
     this.Super('initWidget', arguments);
   },
 
@@ -60,10 +58,8 @@ isc.PeriodStatus_Field.addProperties({
   width: 100,
   initWidget: function () {
     if (this.record && this.record.status) {
-      //debugger;
       this.createField(this.record.status);
     }
-
     this.Super('initWidget', arguments);
   },
 
@@ -123,10 +119,8 @@ OB.OpenClose = {
   },
 
   openClose: function (params, view) {
-	  //debugger;
     params.actionHandler = 'org.openbravo.client.application.event.OpenClosePeriodHandler';
     params.adTabId = view.activeView.tabId;
-    //params.adTabId = 'E429CB8F5CDF4D8395B76D553E72A2D0';
     params.processId = 'A832A5DA28FB4BB391BDE883E928DFC5';
     OB.OpenClose.execute(params, view);
   }
@@ -160,7 +154,7 @@ isc.OpenClosePeriodProcessPopup.addProperties({
       if (response) {
         actionField = form.getField('Action');
         if (response.data) {
-          popup.setTitle('hola');
+          popup.setTitle('Process Request');
           actionField.closePeriodStepId = response.data.nextStepId;
           actionField.setValueMap(response.data.actionComboBox.valueMap);
           actionField.setDefaultValue(response.data.actionComboBox.defaultValue);
@@ -221,8 +215,7 @@ isc.OpenClosePeriodProcessPopup.addProperties({
     });
 
     this.cancelButton = isc.OBFormButton.create({
-        //title: OB.I18N.getLabel('Cancel'),
-      title: 'Cancel',
+      title: OB.I18N.getLabel('Cancel'),
       popup: this,
       action: function () {
         this.popup.closeClick();
