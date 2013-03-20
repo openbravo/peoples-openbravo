@@ -628,8 +628,11 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
         strSubTitle.append(ReportTrialBalanceData.selectCompany(this, vars.getClient()) + " \n");
         strSubTitle.append(Utility.messageBD(this, "asof", vars.getLanguage()) + ": " + strDateTo
             + " \n");
-        strSubTitle.append(Utility.messageBD(this, "ACCS_AD_ORG_ID_D", vars.getLanguage()) + ": "
-            + ReportTrialBalanceData.selectOrgName(this, strOrg) + " \n");
+
+        if (!("0".equals(strOrg)))
+          strSubTitle.append(Utility.messageBD(this, "ACCS_AD_ORG_ID_D", vars.getLanguage()) + ": "
+              + ReportTrialBalanceData.selectOrgName(this, strOrg) + " \n");
+
         strSubTitle.append(Utility.messageBD(this, "generalLedger", vars.getLanguage()) + ": "
             + acctSchema.getName());
 
