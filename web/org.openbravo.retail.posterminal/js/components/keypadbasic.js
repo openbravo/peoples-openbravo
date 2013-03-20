@@ -150,12 +150,15 @@ enyo.kind({
     onAddButton: '',
     onKeyCommandPressed: '',
     onRegisterButton: ''
-
+  },
+  handlers: {
+    onDisableButton: 'disableButton'
   },
   tag: 'div',
   style: 'margin: 5px;',
   classButtonActive: 'btnactive',
   classButton: '',
+  classButtonDisabled: 'btnkeyboard-inactive',
   command: false,
   permission: null,
   label: null,
@@ -164,6 +167,17 @@ enyo.kind({
     name: 'button',
     classes: 'btnkeyboard'
   }],
+  disableButton: function (inSender, inEvent) {
+    if (inSender === this || _.indexOf(inEvent.commands, this.command) !== -1) {
+      this.$.button.setDisabled(inEvent.disabled);
+      if (inEvent.disabled) {
+        this.$.button.addClass(this.classButtonDisabled);
+      } else {
+        this.$.button.removeClass(this.classButtonDisabled);
+      }
+    }
+    return true;
+  },
   initComponents: function () {
     var me = this;
 
@@ -173,5 +187,10 @@ enyo.kind({
 
     this.$.button.addClass(this.classButton);
     this.$.button.setContent(this.label);
+
+    if (this.isDisabled) {
+      this.$.button.setDisabled(true);
+      this.$.button.addClass(this.classButtonDisabled);
+    }
   }
 });

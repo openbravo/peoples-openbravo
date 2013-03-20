@@ -21,6 +21,10 @@ OB.OBPOSPointOfSale.UI.ToolbarScan = {
     keyboard.showKeypad('basic');
     keyboard.showSidepad('sideenabled');
     keyboard.defaultcommand = 'code';
+    keyboard.disableCommandKey(this, {
+      disabled: true,
+      commands: ['%']
+    });
   }
 };
 
@@ -32,6 +36,10 @@ OB.OBPOSPointOfSale.UI.ToolbarDiscounts = {
     keyboard.showKeypad('basic');
     keyboard.showSidepad('sideenabled');
     keyboard.defaultcommand = 'line:dto';
+    keyboard.disableCommandKey(this, {
+      disabled: true,
+      commands: ['%']
+    });
   }
 };
 
@@ -54,7 +62,12 @@ enyo.kind({
     kind: 'OB.OBPOSPointOfSale.UI.PaymentMethods',
     name: 'OBPOS_UI_PaymentMethods'
   }],
-  pay: function (amount, key, name, paymentMethod, rate, mulrate, isocode) {
+  pay: function (amount, key, name, paymentMethod, rate, mulrate, isocode, options) {
+    if (options && options.percentaje) {
+      var percToApply = OB.DEC.div(amount, 100);
+      amount = OB.DEC.mul(this.receipt.getPending(), percToApply);
+    }
+
     if (OB.DEC.compare(amount) > 0) {
       var provider, me = this;
       if (this.receipt.get('isPaid')) {
@@ -146,9 +159,13 @@ enyo.kind({
         permission: payment.payment.searchKey,
         stateless: false,
         action: function (keyboard, txt) {
+          var options = {};
+          if (_.last(txt) === '%') {
+            options.percentaje = true;
+          }
           var amount = OB.DEC.number(OB.I18N.parseNumber(txt));
           amount = _.isNaN(amount) ? me.receipt.getPending() : amount;
-          me.pay(amount, payment.payment.searchKey, payment.payment._identifier, payment.paymentMethod, payment.rate, payment.mulrate, payment.isocode);
+          me.pay(amount, payment.payment.searchKey, payment.payment._identifier, payment.paymentMethod, payment.rate, payment.mulrate, payment.isocode, options);
         }
       });
 
@@ -224,6 +241,11 @@ enyo.kind({
         i, max, p, keyboard = this.owner.owner;
     keyboard.showKeypad('Coins-' + OB.POS.modelterminal.get('currency').id); // shows the Coins/Notes panel for the terminal currency
     keyboard.showSidepad('sidedisabled');
+
+    keyboard.disableCommandKey(this, {
+      commands: ['%'],
+      disabled: false
+    });
 
     for (i = 0, max = OB.POS.modelterminal.get('payments').length; i < max; i++) {
       p = OB.POS.modelterminal.get('payments')[i];

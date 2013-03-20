@@ -11,7 +11,6 @@
 
 enyo.kind({
   name: 'OB.UI.Keyboard',
-
   commands: {},
   buttons: {},
   status: '',
@@ -21,7 +20,7 @@ enyo.kind({
     this.commands = null;
     this.inherited(arguments);
   },
-  tag: 'div',
+  keyMatcher: /^([0-9]|\.|,| |%|[a-z]|[A-Z])$/,
   classes: 'row-fluid',
   components: [{
     name: 'toolbarcontainer',
@@ -300,6 +299,9 @@ enyo.kind({
       return true;
     }
   },
+  disableCommandKey: function (inSender, inEvent) {
+    this.waterfall('onDisableButton', inEvent);
+  },
   keyboardDisabled: function (inSender, inEvent) {
     if (inEvent.status) {
       _.each(this.buttons, function (btn) {
@@ -367,7 +369,7 @@ enyo.kind({
 
     this.waterfall('onCloseAllPopups');
     var t;
-    if (key.match(/^([0-9]|\.|,| |[a-z]|[A-Z])$/) || (key === 'del')) {
+    if (key.match(this.keyMatcher) || (key === 'del')) {
       this.writeCharacter(key);
     } else {
       this.doCommandFired({
@@ -378,7 +380,7 @@ enyo.kind({
 
   writeCharacter: function (character) {
     var t;
-    if (character.match(/^([0-9]|\.|,| |[a-z]|[A-Z])$/) && this.isEnabled) {
+    if (character.match(this.keyMatcher) && this.isEnabled) {
       t = this.$.editbox.getContent();
       this.$.editbox.setContent(t + character);
     } else if (character === 'del') {
@@ -519,7 +521,7 @@ enyo.kind({
       if (button.command === '---') {
         // It is the null command
         button.command = false;
-      } else if (!button.command.match(/^([0-9]|\.|,|[a-z])$/) && button.command !== 'OK' && button.command !== 'del' && button.command !== String.fromCharCode(13) && !this.commands[button.command]) {
+      } else if (!button.command.match(this.keyMatcher) && button.command !== 'OK' && button.command !== 'del' && button.command !== String.fromCharCode(13) && !this.commands[button.command]) {
         // is not a key and does not exists the command
         button.command = false;
       } else if (button.permission && !OB.POS.modelterminal.hasPermission(button.permission)) {
@@ -535,7 +537,9 @@ enyo.kind({
 
       this.addButton(button.command, button.$.button);
     } else {
-      button.$.button.addClass('btnkeyboard-inactive');
+      button.disableButton(button, {
+        disabled: true
+      });
     }
   },
 
