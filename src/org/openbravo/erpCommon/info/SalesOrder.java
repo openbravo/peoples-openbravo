@@ -36,6 +36,7 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.SQLReturnObject;
 import org.openbravo.erpCommon.utility.TableSQLData;
 import org.openbravo.erpCommon.utility.Utility;
@@ -312,7 +313,7 @@ public class SalesOrder extends HttpSecureAppServlet {
           return;
         } else {
           type = myError.getType();
-          title = "ERROR";
+          title = OBMessageUtils.parseTranslation("@OBUIAPP_Error@");
           if (!myError.getMessage().startsWith("<![CDATA["))
             description = "<![CDATA[" + myError.getMessage() + "]]>";
           else
