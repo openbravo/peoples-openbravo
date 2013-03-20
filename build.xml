@@ -346,6 +346,16 @@ export.database: exports database structure and data to xml files.
        </sql>
      </sequential>
   </macrodef>
+
+  <macrodef name="createAuditTriggers">
+     <sequential>
+       <sql driver="${bbdd.driver}" url="${bbdd.owner.url}" userid="${bbdd.user}" password="${bbdd.password}" onerror="abort" autocommit="true" print="yes">
+         <classpath> <fileset dir="${base.lib}"> <include name="**/*.jar"> </include> </fileset> </classpath>
+         <transaction> SELECT ad_create_audit_triggers(null);
+         </transaction>
+       </sql>
+     </sequential>
+  </macrodef>
   
   <taskdef resource="axis-tasks.properties" classpathref="project.class.path" />
   
@@ -1191,6 +1201,10 @@ export.database: exports database structure and data to xml files.
                     userId="0" 
                     adminMode="true" 
                     propertiesFile="${base.config}/Openbravo.properties"/>
+  </target>
+
+  <target name="update.audit.trail.infrastructure">
+    <createAuditTriggers/>
   </target>
   
 </project>

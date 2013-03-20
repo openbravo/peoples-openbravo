@@ -358,7 +358,6 @@ update ad_reference
  
 alter table ad_reference enable trigger ad_reference_mod_trg;
 /-- END
- 
 
 CREATE OR REPLACE FUNCTION ad_create_audit_triggers(p_pinstance_id character varying)
   RETURNS void AS
@@ -375,7 +374,7 @@ $BODY1$ DECLARE
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2009-2012 Openbravo SLU
+* All portions are Copyright (C) 2009-2013 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -390,6 +389,7 @@ $BODY1$ DECLARE
   deleted NUMERIC :=0;
   created NUMERIC :=0;
   v_message VARCHAR(500);
+  v_tableList VARCHAR(500);
   v_isObps NUMERIC;
 BEGIN 
   select count(*) 
@@ -397,24 +397,50 @@ BEGIN
     from ad_system
    where Instance_key is not null
      and activation_key is not null;
-     
   if v_isObps = 0 then
     RAISE EXCEPTION '%', '@OBPSNeededForAudit@' ;
-  end if;  	
-	
+  end if;
+
+  if p_pinstance_id is not null then
+    for cur_triggers in (select *
+                         from user_triggers
+                        where trigger_name like 'au_%' and trigger_name <> 'au_ad_client_trg' and trigger_name <> 'au_ad_org_trg') loop
+    execute 'DROP TRIGGER '||cur_triggers.trigger_name||' ON '||cur_triggers.table_name;
+    execute 'DROP FUNCTION '||cur_triggers.trigger_name||'()';
+    raise notice 'deleting %', cur_triggers.trigger_name;
+    deleted := deleted + 1;
+  end loop;
+  ELSE
   for cur_triggers in (select *
                          from user_triggers
                         where trigger_name like 'au_%') loop
     execute 'DROP TRIGGER '||cur_triggers.trigger_name||' ON '||cur_triggers.table_name;
-    execute 'DROP FUNCTION '||cur_triggers.trigger_name||'()';  
+    execute 'DROP FUNCTION '||cur_triggers.trigger_name||'()';
     raise notice 'deleting %', cur_triggers.trigger_name;
     deleted := deleted + 1;
   end loop;
+  end if;
+
+  if p_pinstance_id is not null then
+  for cur_tables in (select * from ad_table
+                      where isfullyaudited = 'Y'
+                      and ISVIEW='N'
+                      and (UPPER(TABLENAME) = 'AD_CLIENT'
+                      or UPPER(TABLENAME) = 'AD_ORG')) loop
+      if v_tableList IS NULL then
+        v_tableList := cur_tables.tablename;
+      else
+        v_tableList := v_tableList || ' , '|| cur_tables.tablename;
+      end if;
+  end loop;
+  end if;
 
   for cur_tables in (select *
                        from ad_table
                       where isfullyaudited = 'Y'
                       AND ISVIEW='N'
+                      AND UPPER(TABLENAME) <> CASE WHEN p_pinstance_id is not null THEN 'AD_ORG' ELSE '' END
+                      AND UPPER(TABLENAME) <> CASE WHEN p_pinstance_id is not null THEN 'AD_CLIENT' ELSE '' END
                       order by tablename) loop
     
     triggerName := 'AU_'||SUBSTR(cur_tables.tablename,1,23)||'_TRG';
@@ -531,7 +557,7 @@ SELECT COALESCE(MAX(RECORD_REVISION),0)+1
                         and upper(c.columnname) = u.column_name
                         AND u.data_type != 'BYTEA'
                         and upper(c.columnname) not in ('CREATED','CREATEDBY','UPDATED', 'UPDATEDBY')
-			and c.isexcludeaudit='N'
+                        and c.isexcludeaudit='N'
                         order by c.position) loop
       code := code || '
     V_Change := false;';
@@ -606,8 +632,13 @@ EXECUTE(code);
     created := created + 1;
 
   end loop;
+
+  if v_tableList is null then
+    v_Message := '@Deleted@: '||deleted||' @Created@: '||created;
+  else
+    v_Message := '@Deleted@: '||deleted||' @Created@: '||created||'. @RunAuditFromTerminalTbl@ '|| v_tableList || '. @RunAuditFromTerminalHint@' ;
+  end if;
   
-  v_Message := '@Deleted@: '||deleted||' @Created@: '||created;
   PERFORM AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 1, v_Message) ;
   EXCEPTION
 WHEN OTHERS THEN
