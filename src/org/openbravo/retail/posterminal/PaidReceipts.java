@@ -137,7 +137,7 @@ public class PaidReceipts extends JSONProcessSimple {
       paidReceipt.put("receiptLines", listpaidReceiptsLines);
 
       JSONArray listPaymentsIn = new JSONArray();
-      String hqlPaymentsIn = "select scheduleDetail.paymentDetails.finPayment.amount, scheduleDetail.paymentDetails.finPayment.account.id "
+      String hqlPaymentsIn = "select scheduleDetail.paymentDetails.finPayment.amount, scheduleDetail.paymentDetails.finPayment.account.id, scheduleDetail.paymentDetails.finPayment.paymentDate "
           + "from FIN_Payment_ScheduleDetail as scheduleDetail where scheduleDetail.orderPaymentSchedule.order.id=?";
       Query paymentsInQuery = OBDal.getInstance().getSession().createQuery(hqlPaymentsIn);
       // paidReceiptsQuery.setString(0, id);
@@ -147,6 +147,7 @@ public class PaidReceipts extends JSONProcessSimple {
         JSONObject paymentsIn = new JSONObject();
         paymentsIn.put("amount", objPaymentsIn[0]);
         paymentsIn.put("account", objPaymentsIn[1]);
+        paymentsIn.put("paymentDate", objPaymentsIn[2]);
         listPaymentsIn.put(paymentsIn);
       }
 
@@ -182,6 +183,7 @@ public class PaidReceipts extends JSONProcessSimple {
             JSONObject paidReceiptPayment = new JSONObject();
             // FIXME: Multicurrency problem, amount always in terminal currency
             paidReceiptPayment.put("amount", objectIn.get("amount"));
+            paidReceiptPayment.put("paymentDate", objectIn.get("paymentDate"));
             paidReceiptPayment.put("name", objectType.get("name"));
             paidReceiptPayment.put("kind", objectType.get("kind"));
             paidReceiptPayment.put("rate", objectType.get("rate"));

@@ -70,12 +70,6 @@ enyo.kind({
 
     if (OB.DEC.compare(amount) > 0) {
       var provider, me = this;
-      if (this.receipt.get('isPaid')) {
-        me.doShowPopup({
-          popup: 'modalNotEditableOrder'
-        });
-        return true;
-      }
       if (this.receipt.get('orderType') === 0) {
         provider = paymentMethod.paymentProvider;
       } else if (this.receipt.get('orderType') === 1) {

@@ -162,9 +162,6 @@ enyo.kind({
     classes: 'btnkeyboard',
     name: 'btn'
   }],
-  events: {
-    onShowPopup: ''
-  },
   background: '#6cb33f',
   initComponents: function () {
     var btn;
@@ -181,12 +178,6 @@ enyo.kind({
       var me = this,
           i, max, p, receipt = this.owner.owner.owner.owner.model.get('order'),
           openDrawer = false;
-      if (receipt.get('isPaid')) {
-        me.doShowPopup({
-          popup: 'modalNotEditableOrder'
-        });
-        return true;
-      }
       for (i = 0, max = OB.POS.modelterminal.get('payments').length; i < max; i++) {
         p = OB.POS.modelterminal.get('payments')[i];
         if (p.payment.searchKey === me.paymenttype) {

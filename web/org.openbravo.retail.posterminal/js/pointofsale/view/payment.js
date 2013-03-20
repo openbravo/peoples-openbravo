@@ -235,9 +235,6 @@ enyo.kind({
       this.$.exactlbl.hide();
       this.$.donezerolbl.hide();
     }
-    if (this.receipt.get('isPaid')) {
-      this.$.doneaction.hide();
-    }
   }
 });
 
@@ -343,6 +340,9 @@ enyo.kind({
         this.$.info.setContent('');
       }
     }
+    if (this.model.get('isPrePayment')) {
+      this.hide();
+    }
   }
 });
 
@@ -355,7 +355,7 @@ enyo.kind({
   classes: 'btnlink-darkgray btnlink-payment-clear btn-icon-small btn-icon-clearPayment',
   tap: function () {
     var me = this;
-    if ((_.isUndefined(this.deleting) || this.deleting === false) && !this.owner.model.get('isPrePayment')) {
+    if ((_.isUndefined(this.deleting) || this.deleting === false)) {
       this.deleting = true;
       this.removeClass('btn-icon-clearPayment');
       this.addClass('btn-icon-loading');
