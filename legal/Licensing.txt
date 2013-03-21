@@ -110,10 +110,8 @@ Copyright (c) 2007, Yahoo! Inc. All rights reserved. Code licensed under the BSD
 # commons-io-2.0.1.jar
 # commons-lang-2.6.jar
 # commons-logging-1.1.1.jar
-# commons-math-1.2.jar
 # commons-pool-1.5.6.jar
 # fop.jar
-# google-collections.jar
 # jakarta-oro-2.0.8.jar
 # jettison-1.3.jar
 # log4j-1.2.16.jar
@@ -127,9 +125,6 @@ http://www.apache.org/licenses/LICENSE-2.0
 
 # postgresql-9.0-801.jdbc4.jar
 Under the BSD license, also available at http://jdbc.postgresql.org/license.html  
-
-# smartsprites-0.2.1-alpha.jar
-Under a modified BSD license (the smartsprites.license.txt), also available at http://smartsprites.osinski.name/
 
 # xstream-1.3.1.jar
 Under a modified BSD license available at http://xstream.codehaus.org/license.html
