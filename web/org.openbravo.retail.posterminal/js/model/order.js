@@ -1157,7 +1157,7 @@
       order.set('currency$_identifier', model.currency_identifier);
       order.set('isbeingprocessed', 'N');
       order.set('hasbeenpaid', 'Y');
-      order.set('priceIncludesTax', OB.POS.modelterminal.get('pricelist').priceIncludesTax);
+      order.set('priceIncludesTax', model.priceIncludesTax);
       order.set('json', JSON.stringify(order.toJSON()));
       if (model.isQuotation) {
         order.set('isQuotation', true);
@@ -1196,7 +1196,7 @@
         if (order.get('priceIncludesTax')) {
           price = OB.DEC.number(iter.unitPrice);
         } else {
-          price = OB.DEC.number(iter.listPrice);
+          price = OB.DEC.number(iter.netPrice);
         }
 
         OB.Dal.get(OB.Model.Product, iter.id, function (prod) {
@@ -1209,7 +1209,6 @@
             promotions: iter.promotions,
             priceIncludesTax: order.get('priceIncludesTax')
           });
-          newline.set('priceIncludesTax', OB.POS.modelterminal.get('pricelist').priceIncludesTax);
           newline.calculateGross();
           // add the created line
           lines.add(newline);

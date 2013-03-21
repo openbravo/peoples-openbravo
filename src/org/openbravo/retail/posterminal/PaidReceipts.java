@@ -39,7 +39,7 @@ public class PaidReceipts extends JSONProcessSimple {
         + "ord.warehouse.id as warehouse, ord.currency.iSOCode as currency, ord.obposApplications.name as posterminalidentifier, "
         + "ord.businessPartner.name as businessPartner_identifier, ord.currency.id as currency, ord.priceList.id as priceList, "
         + "ord.salesRepresentative.id as salesRepresentative, ord.organization.id as organization, ord.obposApplications.id as obposApplications, "
-        + "ord.client.id as client, ord.documentType.id as documentTypeId, ord.obposApplications.obposTerminaltype.documentTypeForQuotations.id as docTypeQuotation, ord.summedLineAmount as totalNetAmount, ord.deliveryStatus as deliveryStatus from Order as ord where ord.id=? and ord.obposApplications is not null";
+        + "ord.client.id as client, ord.documentType.id as documentTypeId, ord.obposApplications.obposTerminaltype.documentTypeForQuotations.id as docTypeQuotation, ord.summedLineAmount as totalNetAmount, ord.deliveryStatus as deliveryStatus, ord.priceList.priceIncludesTax as priceIncludesTax from Order as ord where ord.id=? and ord.obposApplications is not null";
 
     Query paidReceiptsQuery = OBDal.getInstance().getSession().createQuery(hqlPaidReceipts);
     paidReceiptsQuery.setString(0, orderid);
@@ -76,10 +76,11 @@ public class PaidReceipts extends JSONProcessSimple {
       } else {
         paidReceipt.put("isLayaway", false);
       }
+      paidReceipt.put("priceIncludesTax", objpaidReceipts[21]);
 
       JSONArray listpaidReceiptsLines = new JSONArray();
       String hqlPaidReceiptsLines = "select ordLine.product.id as id, ordLine.product.name as name, ordLine.product.uOM.id as uOM, ordLine.orderedQuantity as quantity, "
-          + "ordLine.baseGrossUnitPrice as unitPrice, ordLine.lineGrossAmount as linegrossamount, ordLine.id as lineId, ordLine.listPrice as listPrice from OrderLine as ordLine where ordLine.salesOrder.id=?";
+          + "ordLine.baseGrossUnitPrice as unitPrice, ordLine.lineGrossAmount as linegrossamount, ordLine.id as lineId, ordLine.unitPrice as netPrice from OrderLine as ordLine where ordLine.salesOrder.id=?";
       Query paidReceiptsLinesQuery = OBDal.getInstance().getSession()
           .createQuery(hqlPaidReceiptsLines);
       paidReceiptsLinesQuery.setString(0, (String) objpaidReceipts[0]);
@@ -92,7 +93,7 @@ public class PaidReceipts extends JSONProcessSimple {
         paidReceiptLine.put("uOM", objpaidReceiptsLines[2]);
         paidReceiptLine.put("quantity", objpaidReceiptsLines[3]);
         paidReceiptLine.put("unitPrice", objpaidReceiptsLines[4]);
-        paidReceiptLine.put("listPrice", objpaidReceiptsLines[7]);
+        paidReceiptLine.put("netPrice", objpaidReceiptsLines[7]);
 
         // promotions per line
         OBCriteria<OrderLineOffer> qPromotions = OBDal.getInstance().createCriteria(
@@ -118,6 +119,10 @@ public class PaidReceipts extends JSONProcessSimple {
           jsonPromo.put("hidden", BigDecimal.ZERO.equals(displayedAmount));
           promotions.put(jsonPromo);
           hasPromotions = true;
+          if (!paidReceipt.getBoolean("priceIncludesTax")) {
+            paidReceiptLine.put("netPrice", ((BigDecimal) objpaidReceiptsLines[7])
+                .add(displayedAmount.divide((BigDecimal) objpaidReceiptsLines[3])));
+          }
         }
 
         BigDecimal lineAmount;
