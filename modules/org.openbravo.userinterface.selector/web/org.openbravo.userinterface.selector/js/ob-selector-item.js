@@ -116,6 +116,11 @@ isc.OBSelectorPopupWindow.addProperties({
         params._selectorDefinitionId = this.selector.selectorDefinitionId;
         params._requestType = 'Window';
 
+        // Include the windowId in the params if possible
+        if (this.selector.form && this.selector.form.view && this.selector.form.view.standardProperties && this.selector.form.view.standardProperties.inpwindowId) {
+          params.windowId = this.selector.form.view.standardProperties.inpwindowId;
+        }
+
         // add field's default filter expressions
         params.filterClass = 'org.openbravo.userinterface.selector.SelectorDataSourceFilter';
 
@@ -767,6 +772,11 @@ isc.OBSelectorItem.addProperties({
     // also add the special ORG parameter
     if (requestProperties.params.inpadOrgId) {
       requestProperties.params[OB.Constants.ORG_PARAMETER] = requestProperties.params.inpadOrgId;
+    }
+
+    // Include the windowId in the params if possible
+    if (this.form && this.form.view && this.form.view.standardProperties && this.form.view.standardProperties.inpwindowId) {
+      requestProperties.params.windowId = this.form.view.standardProperties.inpwindowId;
     }
 
     if (this.form.getFocusItem() !== this && !this.form.view.isShowingForm && this.getEnteredValue() === '' && this.savedEnteredValue) {

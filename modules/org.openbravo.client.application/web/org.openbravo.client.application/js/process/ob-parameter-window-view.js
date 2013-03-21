@@ -254,7 +254,12 @@ isc.OBParameterWindowView.addProperties({
     this.showProcessing(false);
     if (message) {
       if (this.popup) {
-        this.buttonOwnerView.messageBar.setMessage(message.severity, message.text);
+        if (!retryExecution) {
+          this.buttonOwnerView.messageBar.setMessage(message.severity, message.text);
+        } else {
+          // Popup has no message bar, showing the message in a warn popup
+          isc.warn(message.text);
+        }
       } else {
         this.messageBar.setMessage(message.severity, message.text);
       }
@@ -272,13 +277,16 @@ isc.OBParameterWindowView.addProperties({
           }
         }
       }
+      if (this.popupButtons) {
+        this.popupButtons.show();
+      }
     }
 
     if (responseActions) {
       OB.Utilities.Action.executeJSON(responseActions, null, null, this);
     }
 
-    if (this.popup) {
+    if (this.popup && !retryExecution) {
       this.buttonOwnerView.setAsActiveView();
 
       if (refresh) {

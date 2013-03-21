@@ -531,7 +531,7 @@ isc.OBMultiCalendar.addProperties({
   showCustomEventsBgColor: true,
 
   parseCalendarData: function (calendarData) {
-    var canCreateEvents, i;
+    var canCreateEvents, cPropAttr, i;
     if (calendarData.filters) {
       calendarData.hasFilter = true;
     } else {
@@ -587,6 +587,14 @@ isc.OBMultiCalendar.addProperties({
         }
       }
     }
+    if (calendarData.calendarProps && this.calendarProps) {
+      for (cPropAttr in calendarData.calendarProps) {
+        if (calendarData.calendarProps.hasOwnProperty(cPropAttr)) {
+          this.calendarProps[cPropAttr] = calendarData.calendarProps[cPropAttr];
+        }
+      }
+    }
+
     return calendarData;
   },
   setLoading: function (value) {

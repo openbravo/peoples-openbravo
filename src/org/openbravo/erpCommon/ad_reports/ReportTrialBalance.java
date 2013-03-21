@@ -38,6 +38,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.AccountingSchemaMiscData;
 import org.openbravo.erpCommon.businessUtility.Tree;
 import org.openbravo.erpCommon.businessUtility.TreeData;
@@ -50,6 +51,7 @@ import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.financialmgmt.accounting.coa.AcctSchema;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class ReportTrialBalance extends HttpSecureAppServlet {
@@ -528,6 +530,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
             Utility.messageBD(this, "ProcessStatus-W", vars.getLanguage()),
             Utility.messageBD(this, "NoDataFound", vars.getLanguage()));
       } else {
+        AcctSchema acctSchema = OBDal.getInstance().get(AcctSchema.class, strcAcctSchemaId);
 
         String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportTrialBalanceExcel.jrxml";
 
@@ -538,10 +541,13 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
         StringBuilder strSubTitle = new StringBuilder();
 
         strSubTitle.append(Utility.messageBD(this, "LegalEntity", vars.getLanguage()) + ": ");
-        strSubTitle.append(ReportTrialBalanceData.selectCompany(this, vars.getClient())+ " (");
-        strSubTitle.append(Utility.messageBD(this, "ACCS_AD_ORG_ID_D", vars.getLanguage())+": " );
-        strSubTitle.append(ReportTrialBalanceData.selectOrgName(this, strOrg)+ ") \n");
-        strSubTitle.append("As of: " + strDateTo);
+        strSubTitle.append(ReportTrialBalanceData.selectCompany(this, vars.getClient()) + " (");
+        strSubTitle.append(Utility.messageBD(this, "ACCS_AD_ORG_ID_D", vars.getLanguage()) + ": ");
+        strSubTitle.append(ReportTrialBalanceData.selectOrgName(this, strOrg) + ") \n");
+        strSubTitle.append(Utility.messageBD(this, "asof", vars.getLanguage()) + ": " + strDateTo
+            + " \n");
+        strSubTitle.append(Utility.messageBD(this, "generalLedger", vars.getLanguage()) + ": "
+            + acctSchema.getName());
 
         parameters.put("REPORT_SUBTITLE", strSubTitle.toString());
         parameters.put("SHOWTOTALS", false);
@@ -609,6 +615,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
             Utility.messageBD(this, "ProcessStatus-W", vars.getLanguage()),
             Utility.messageBD(this, "NoDataFound", vars.getLanguage()));
       } else {
+        AcctSchema acctSchema = OBDal.getInstance().get(AcctSchema.class, strcAcctSchemaId);
 
         String strLanguage = vars.getLanguage();
         String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportTrialBalancePDF.jrxml";
@@ -618,8 +625,16 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
         StringBuilder strSubTitle = new StringBuilder();
 
         strSubTitle.append(Utility.messageBD(this, "LegalEntity", vars.getLanguage()) + ": ");
-        strSubTitle.append(ReportTrialBalanceData.selectCompany(this, vars.getClient()) + "\n");
-        strSubTitle.append("As of: " + strDateTo);
+        strSubTitle.append(ReportTrialBalanceData.selectCompany(this, vars.getClient()) + " \n");
+        strSubTitle.append(Utility.messageBD(this, "asof", vars.getLanguage()) + ": " + strDateTo
+            + " \n");
+
+        if (!("0".equals(strOrg)))
+          strSubTitle.append(Utility.messageBD(this, "ACCS_AD_ORG_ID_D", vars.getLanguage()) + ": "
+              + ReportTrialBalanceData.selectOrgName(this, strOrg) + " \n");
+
+        strSubTitle.append(Utility.messageBD(this, "generalLedger", vars.getLanguage()) + ": "
+            + acctSchema.getName());
 
         parameters.put("REPORT_SUBTITLE", strSubTitle.toString());
 

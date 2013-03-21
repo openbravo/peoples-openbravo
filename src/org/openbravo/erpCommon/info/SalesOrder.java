@@ -36,6 +36,7 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.SQLReturnObject;
 import org.openbravo.erpCommon.utility.TableSQLData;
 import org.openbravo.erpCommon.utility.Utility;
@@ -302,13 +303,17 @@ public class SalesOrder extends HttpSecureAppServlet {
       } catch (ServletException e) {
         log4j.error("Error in print page data: " + e);
         e.printStackTrace();
-        OBError myError = Utility.translateError(this, vars, vars.getLanguage(), e.getMessage());
+        String error = e.getMessage();
+        if (e.getMessage().contains("@NoConversionRate@")) {
+          error = e.getMessage().split("Where:")[0];
+        }
+        OBError myError = Utility.translateError(this, vars, vars.getLanguage(), error);
         if (!myError.isConnectionAvailable()) {
           bdErrorAjax(response, "Error", "Connection Error", "No database connection");
           return;
         } else {
           type = myError.getType();
-          title = myError.getTitle();
+          title = OBMessageUtils.parseTranslation("@OBUIAPP_Error@");
           if (!myError.getMessage().startsWith("<![CDATA["))
             description = "<![CDATA[" + myError.getMessage() + "]]>";
           else

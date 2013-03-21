@@ -240,16 +240,14 @@ public class WindowTree extends HttpSecureAppServlet {
 
     List<WindowTreeData> newSubList = new ArrayList<WindowTreeData>();
     if (hqlWhereClause != null && !hqlWhereClause.trim().isEmpty()) {
-      hqlWhereClause = (hqlWhereClause != null && !hqlWhereClause.trim().isEmpty()) ? hqlWhereClause
-          : "1=1";
       hqlWhereClause = hqlWhereClause.replace("e.", "");
       OBQuery<BaseOBObject> entityResults = OBDal.getInstance().createQuery("" + entityName + "",
           hqlWhereClause);
       if (nodeIdList == null) {
         nodeIdList = new ArrayList<String>();
       }
-      if (nodeIdList.size() == 0 && nodeIdList.size() != entityResults.count()) {
 
+      if (nodeIdList.size() == 0 && nodeIdList.size() != entityResults.count()) {
         ScrollableResults entityData = entityResults.scroll(ScrollMode.FORWARD_ONLY);
         int clearEachLoops = 100;
         int i = 0;

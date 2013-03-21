@@ -24,11 +24,11 @@
   <PARAMETER id="paramDirectory" name="directory" default=""/>
   <PARAMETER id="paramLanguage" name="paramLanguage" default=""/>
   <PARAMETER id="paramDateFrom" name="dateFrom" attribute="value"/>
-	<PARAMETER id="paramDateFrom" name="dateFromdisplayFormat" attribute="displayformat" replace="xx"/>
-	<PARAMETER id="paramDateFrom" name="dateFromsaveFormat" attribute="saveformat" replace="yy"/>
+    <PARAMETER id="paramDateFrom" name="dateFromdisplayFormat" attribute="displayformat" replace="xx"/>
+    <PARAMETER id="paramDateFrom" name="dateFromsaveFormat" attribute="saveformat" replace="yy"/>
   <PARAMETER id="paramDateTo" name="dateTo" attribute="value"/>
-	<PARAMETER id="paramDateTo" name="dateTodisplayFormat" attribute="displayformat" replace="xx"/>
-	<PARAMETER id="paramDateTo" name="dateTosaveFormat" attribute="saveformat" replace="yy"/>
+    <PARAMETER id="paramDateTo" name="dateTodisplayFormat" attribute="displayformat" replace="xx"/>
+    <PARAMETER id="paramDateTo" name="dateTosaveFormat" attribute="saveformat" replace="yy"/>
   <PARAMETER id="paramReferential" name="referential" attribute="value"/>
   <PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
   <PARAMETER id="tdleftTabs" name="leftTabs" default=""/>
@@ -49,6 +49,7 @@
     <FIELD id="fieldMovementdate">movementdate</FIELD>
     <FIELD id="fieldMovementqty" format="euroInform">movementqty</FIELD>
     <FIELD id="fieldUom">uom</FIELD>
+    <FIELD id="fieldLocator">locator</FIELD>
     <FIELD id="fieldReferential">referential</FIELD>
     <FIELD id="fieldDescription">description</FIELD>
     <FIELD id="fieldId" attribute="onclick" replace="xx">id</FIELD>
