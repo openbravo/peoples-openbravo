@@ -60,7 +60,7 @@ public class OrderGroupingProcessor {
     // reconciled. This query must be kept in sync with the one in CashCloseReport
 
     String hqlWhereClause = "as line"
-        + " where exists (select 1 "
+        + " where (exists (select 1 "
         + "                 from FIN_Payment_ScheduleDetail d"
         + "              where d.orderPaymentSchedule.order = line.salesOrder"
         + "                 and exists (select 1 "
@@ -69,7 +69,7 @@ public class OrderGroupingProcessor {
         + "                                and t.finPayment = d.paymentDetails.finPayment))"
         + "or not exists (select 1 "
         + "                 from FIN_Payment_ScheduleDetail d"
-        + "              where d.orderPaymentSchedule.order = line.salesOrder)"
+        + "              where d.orderPaymentSchedule.order = line.salesOrder))"
         + " and line.salesOrder.obposApplications = :terminal and line.salesOrder.deliveryStatus > 0"
         + " and not exists (select 1 from OrderLine as ord where invoicedQuantity<>0 and ord.salesOrder = line.salesOrder)"
         + " order by line.businessPartner.id";
