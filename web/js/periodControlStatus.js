@@ -215,6 +215,8 @@ isc.OpenClosePeriodProcessPopup.addProperties({
         });
       }
     });
+    
+    OB.TestRegistry.register('org.openbravo.client.application.OpenClosePeriod.popup.okButton', this.okButton);
 
     this.cancelButton = isc.OBFormButton.create({
       title: OB.I18N.getLabel('Cancel'),
