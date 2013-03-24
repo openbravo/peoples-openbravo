@@ -983,6 +983,12 @@ OB.ViewFormProperties = {
       } else if (isImage) {
         //calls setValue to handle buttons display for read-only windows
         this.setValue(field.name, assignValue);
+        if (field.rowSpan) {
+          this.rowSpan = field.rowSpan;
+        }
+        if (field.colSpan) {
+          this.colSpan = field.colSpan;
+        }
       } else if (columnValue.hasDateDefault) {
         this.setItemValue(field.name, columnValue.classicValue);
       } else {
@@ -1024,6 +1030,12 @@ OB.ViewFormProperties = {
       if (isImage) {
         //calls setValue to handle buttons display for read-only windows
         this.setValue(field.name, null);
+        if (field.rowSpan) {
+          this.rowSpan = field.rowSpan;
+        }
+        if (field.colSpan) {
+          this.colSpan = field.colSpan;
+        }
       }
       this.setItemValue(field.name, null);
       if (this.getValue(field.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER)) {
