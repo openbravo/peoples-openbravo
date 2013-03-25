@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -284,8 +284,13 @@ public class MyOpenbravoComponent extends BaseTemplateComponent {
     final Client client = OBDal.getInstance().get(Client.class,
         OBContext.getOBContext().getCurrentClient().getId());
     final Set<WidgetInstance> defaultWidgets = new HashSet<WidgetInstance>();
-    defaultWidgets.addAll(MyOBUtils.getDefaultWidgetInstances("OB", null));
-    defaultWidgets.addAll(MyOBUtils.getDefaultWidgetInstances("SYSTEM", null));
+
+    if (!OBContext.getOBContext().getRole().isForPortalUsers()) {
+      // do not include global widgets in portal roles
+      defaultWidgets.addAll(MyOBUtils.getDefaultWidgetInstances("OB", null));
+      defaultWidgets.addAll(MyOBUtils.getDefaultWidgetInstances("SYSTEM", null));
+    }
+
     defaultWidgets.addAll(MyOBUtils.getDefaultWidgetInstances("CLIENT",
         new String[] { client.getId() }));
     final Set<String> orgs = OBContext.getOBContext().getWritableOrganizations();
