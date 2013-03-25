@@ -136,10 +136,12 @@ public class OrderGroupingProcessor {
         OBDal.getInstance().save(origPaymentSchedule);
         OBDal.getInstance().flush();
       }
-      FIN_PaymentSchedule finPaymentSchedule = orderLine.getSalesOrder()
-          .getFINPaymentScheduleList().get(0);
+      List<FIN_PaymentSchedule> finPaymentScheduleList = orderLine.getSalesOrder()
+          .getFINPaymentScheduleList();
       if (!processedOrders.contains((String) DalUtil.getId(orderLine.getSalesOrder()))
-          && finPaymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList().size() > 0) {
+          && !finPaymentScheduleList.isEmpty()
+          && finPaymentScheduleList.get(0).getFINPaymentScheduleDetailOrderPaymentScheduleList()
+              .size() > 0) {
         boolean success = processPaymentsFromOrder(invoice, orderLine.getSalesOrder(),
             paymentSchedule, origPaymentSchedule);
         if (!success) {
