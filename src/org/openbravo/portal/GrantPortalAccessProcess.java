@@ -96,23 +96,12 @@ public class GrantPortalAccessProcess extends BaseProcessActionHandler {
       user.setDefaultRole(role);
 
       if (user.getUsername() == null) {
-        String userName = "";
-        if (!StringUtils.isEmpty(user.getFirstName())) {
-          userName += user.getFirstName().toLowerCase();
-        }
-
-        if (!StringUtils.isEmpty(user.getLastName())) {
-          userName += StringUtils.isEmpty(userName) ? "" : ".";
-          userName += user.getLastName().toLowerCase();
-        }
-
-        user.setUsername(userName);
-        log.info("Setting " + userName + " username to " + user);
+        user.setUsername(user.getEmail());
+        log.info("Setting " + user.getEmail() + " username to " + user);
       }
 
       String newPassword = RandomStringUtils.randomAlphanumeric(PASSWORD_LENGHT);
       user.setPassword(CryptoSHA1BASE64.hash(newPassword));
-      System.out.println("new password " + newPassword);
 
       // flushing changes in admin mode
       OBDal.getInstance().flush();
