@@ -148,7 +148,8 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
     if (priceActual.compareTo(BigDecimal.ZERO) == 0) {
       lineNetAmt = BigDecimal.ZERO;
     }
-    // If unit price (actual price) changes, recalculates standard price (std price)
+    // If unit price (actual price) changes, recalculates standard price
+    // (std price) applying price adjustments (offers) if any
     if (strChanged.equals("inppriceactual") || strChanged.equals("inplinenetamt")) {
       if (log4j.isDebugEnabled())
         log4j.debug("priceActual:" + Double.toString(priceActual.doubleValue()));
@@ -158,7 +159,8 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
       resultado.append("new Array(\"inptaxbaseamt\", " + priceActual.multiply(qtyInvoice) + "),");
     }
 
-    // If quantity changes, recalculates unit price (actual price)
+    // If quantity changes, recalculates unit price (actual price) applying
+    // price adjustments (offers) if any
     if (strChanged.equals("inpqtyinvoiced")) {
       if (log4j.isDebugEnabled())
         log4j.debug("strPriceList: " + strPriceList.replace("\"", "") + " product:" + strProduct
