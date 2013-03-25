@@ -189,6 +189,33 @@ enyo.kind({
       renderEmpty: 'OB.UI.RenderTaxLineEmpty',
       //defined on redenderorderline.js
       listStyle: 'nonselectablelist'
+    }, {
+      tag: 'li',
+      components: [{
+        name: 'paymentBreakdown',
+        style: 'padding: 10px; height: 40px;',
+        showing: false,
+        components: [{
+          style: 'position: relative; padding: 10px;',
+          components: [{
+            name: 'lblTotalPayment',
+            style: 'float: left; width: 40%;',
+            content: OB.I18N.getLabel('OBPOS_LblPaymentBreakdown')
+          }, {
+            style: 'clear: both;'
+          }]
+        }]
+      }]
+    }, {
+      kind: 'OB.UI.ScrollableTable',
+      style: 'border-bottom: 1px solid #cccccc;',
+      name: 'listPaymentLines',
+      showing: false,
+      scrollAreaMaxHeight: '250px',
+      renderLine: 'OB.UI.RenderPaymentLine',
+      renderEmpty: 'OB.UI.RenderPaymentLineEmpty',
+      //defined on redenderorderline.js
+      listStyle: 'nonselectablelist'
     }]
   }],
   initComponents: function () {
@@ -233,6 +260,7 @@ enyo.kind({
     this.$.totalTaxLine.renderTax(this.order.getTotal() - this.order.getNet());
     this.$.totalTaxLine.renderBase('');
     this.$.listOrderLines.setCollection(this.order.get('lines'));
+    this.$.listPaymentLines.setCollection(this.order.get('payments'));
     this.setTaxes();
     this.order.on('change:gross change:net change:taxes', function (model) {
       if (model.get('orderType') !== 3) {
@@ -311,9 +339,13 @@ enyo.kind({
         this.$.divText.addStyles('width: 50%; color: #f8941d;');
         this.$.divText.setContent(OB.I18N.getLabel('OBPOS_paid'));
         this.$.divText.show();
+        this.$.listPaymentLines.show();
+        this.$.paymentBreakdown.show();
         //We have to ensure that there is not another handler showing this div
       } else if (this.$.divText.content === OB.I18N.getLabel('OBPOS_paid')) {
         this.$.divText.hide();
+        this.$.listPaymentLines.hide();
+        this.$.paymentBreakdown.hide();
       }
     }, this);
     this.order.on('change:isLayaway', function (model) {
@@ -321,9 +353,13 @@ enyo.kind({
         this.$.divText.addStyles('width: 50%; color: lightblue;');
         this.$.divText.setContent(OB.I18N.getLabel('OBPOS_LblLayaway'));
         this.$.divText.show();
+        this.$.listPaymentLines.show();
+        this.$.paymentBreakdown.show();
         //We have to ensure that there is not another handler showing this div
       } else if (this.$.divText.content === OB.I18N.getLabel('OBPOS_LblLayaway')) {
         this.$.divText.hide();
+        this.$.listPaymentLines.hide();
+        this.$.paymentBreakdown.hide();
       }
     }, this);
   }

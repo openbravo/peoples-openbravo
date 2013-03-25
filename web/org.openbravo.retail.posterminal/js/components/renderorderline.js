@@ -1,13 +1,13 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2013 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
 
-/*global enyo */
+/*global enyo,_ */
 
 enyo.kind({
   kind: 'OB.UI.SelectButton',
@@ -160,5 +160,66 @@ enyo.kind({
     this.$.tax.setContent(this.model.get('name'));
     this.$.base.setContent(this.model.get('net'));
     this.$.totaltax.setContent(this.model.get('amount'));
+  }
+});
+
+
+enyo.kind({
+  kind: 'OB.UI.SelectButton',
+  name: 'OB.UI.RenderPaymentLine',
+  classes: 'btnselect-orderline',
+  style: 'border-bottom: 0px',
+  tap: function () {
+
+  },
+  components: [{
+    name: 'name',
+    attributes: {
+      style: 'float: left; width: 40%; padding: 5px 0px 0px 0px;'
+    }
+  }, {
+    name: 'date',
+    attributes: {
+      style: 'float: left; width: 20%; padding: 5px 0px 0px 0px; text-align: right;'
+    }
+  }, {
+    name: 'foreignAmount',
+    attributes: {
+      style: 'float: left; width: 20%; padding: 5px 0px 0px 0px; text-align: right;'
+    }
+  }, {
+    name: 'amount',
+    attributes: {
+      style: 'float: left; width: 20%; padding: 5px 0px 0px 0px; text-align: right;'
+    }
+  }, {
+    style: 'clear: both;'
+  }],
+  selected: function () {
+
+  },
+  initComponents: function () {
+    var paymentDate;
+    this.inherited(arguments);
+    this.$.name.setContent(OB.POS.modelterminal.getPaymentName(this.model.get('kind')) || this.model.get('name'));
+    if (_.isUndefined(this.model.get('paymentDate')) || _.isNull(this.model.get('paymentDate'))) {
+      paymentDate = new Date();
+    } else {
+      paymentDate = new Date(this.model.get('paymentDate'));
+    }
+    this.$.date.setContent(OB.I18N.formatDate(paymentDate));
+    if (this.model.get('rate') && this.model.get('rate') !== '1') {
+      this.$.foreignAmount.setContent(this.model.printForeignAmount());
+    } else {
+      this.$.foreignAmount.setContent('');
+    }
+    this.$.amount.setContent(this.model.printAmount());
+  }
+});
+enyo.kind({
+  name: 'OB.UI.RenderPaymentLineEmpty',
+  style: 'border-bottom: 1px solid #cccccc; padding: 20px; text-align: center; font-weight: bold; font-size: 30px; color: #cccccc',
+  initComponents: function () {
+    this.inherited(arguments);
   }
 });
