@@ -92,80 +92,6 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
     return(objectInitializeAcctDimensionsInClientData);
   }
 
-  public static boolean isExecuted(ConnectionProvider connectionProvider)    throws ServletException {
-    String strSql = "";
-    strSql = strSql + 
-      "        SELECT count(*) as exist" +
-      "        FROM DUAL" +
-      "        WHERE EXISTS (SELECT 1 FROM ad_preference" +
-      "                      WHERE attribute = 'DimensionDisplayConfigured')";
-
-    ResultSet result;
-    boolean boolReturn = false;
-    PreparedStatement st = null;
-
-    try {
-    st = connectionProvider.getPreparedStatement(strSql);
-
-      result = st.executeQuery();
-      if(result.next()) {
-        boolReturn = !UtilSql.getValue(result, "exist").equals("0");
-      }
-      result.close();
-    } catch(SQLException e){
-      log4j.error("SQL error in query: " + strSql + "Exception:"+ e);
-      throw new ServletException("@CODE=" + Integer.toString(e.getErrorCode()) + "@" + e.getMessage());
-    } catch(Exception ex){
-      log4j.error("Exception in query: " + strSql + "Exception:"+ ex);
-      throw new ServletException("@CODE=@" + ex.getMessage());
-    } finally {
-      try {
-        connectionProvider.releasePreparedStatement(st);
-      } catch(Exception ignore){
-        ignore.printStackTrace();
-      }
-    }
-    return(boolReturn);
-  }
-
-  public static int createPreference(Connection conn, ConnectionProvider connectionProvider, String client)    throws ServletException {
-    String strSql = "";
-    strSql = strSql + 
-      "        INSERT INTO ad_preference (" +
-      "          ad_preference_id, ad_client_id, ad_org_id, isactive," +
-      "          createdby, created, updatedby, updated," +
-      "          attribute" +
-      "        ) VALUES (" +
-      "          get_uuid(), ?, '0', 'Y'," +
-      "          '0', NOW(), '0', NOW()," +
-      "          'DimensionDisplayConfigured'" +
-      "        )";
-
-    int updateCount = 0;
-    PreparedStatement st = null;
-
-    int iParameter = 0;
-    try {
-    st = connectionProvider.getPreparedStatement(conn, strSql);
-      iParameter++; UtilSql.setValue(st, iParameter, 12, null, client);
-
-      updateCount = st.executeUpdate();
-    } catch(SQLException e){
-      log4j.error("SQL error in query: " + strSql + "Exception:"+ e);
-      throw new ServletException("@CODE=" + Integer.toString(e.getErrorCode()) + "@" + e.getMessage());
-    } catch(Exception ex){
-      log4j.error("Exception in query: " + strSql + "Exception:"+ ex);
-      throw new ServletException("@CODE=@" + ex.getMessage());
-    } finally {
-      try {
-        connectionProvider.releaseTransactionalPreparedStatement(st);
-      } catch(Exception ignore){
-        ignore.printStackTrace();
-      }
-    }
-    return(updateCount);
-  }
-
   public static int updateDimClient(Connection conn, ConnectionProvider connectionProvider)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
@@ -1257,9 +1183,10 @@ static Logger log4j = Logger.getLogger(InitializeAcctDimensionsInClientData.clas
   public static InitializeAcctDimensionsInClientData[] getClients(ConnectionProvider connectionProvider, int firstRegister, int numberRegisters)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
-      "      SELECT ad_client_id" +
-      "      FROM ad_client" +
-      "      where ad_client_id <> '0'";
+      "        select ad_client_id " +
+      "        from ad_client " +
+      "        where ad_Client_id not in(select ad_client_id from AD_Client_AcctDimension )" +
+      "        and ad_client_id <> '0'";
 
     ResultSet result;
     Vector<java.lang.Object> vector = new Vector<java.lang.Object>(0);

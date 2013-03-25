@@ -61,7 +61,7 @@ class WindowTreeChecks {
       String key = WindowTreeData.selectKey(conn, tabId);
       String TreeType = WindowTreeUtility.getTreeType(key);
       String isReady = WindowTreeData.selectIsReady(conn, nodeId);
-      if ("Y".equals(isReady))
+      if ("OO".equals(TreeType) && "Y".equals(isReady))
         return Utility.messageBD(conn, "OrgIsReady", vars.getLanguage());
       if ("AS".equals(TreeType)
           && "Y".equals(WindowTreeData.selectIsStatic(conn, "A_ASSET", nodeId))) {

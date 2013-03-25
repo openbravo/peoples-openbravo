@@ -168,82 +168,14 @@ public class RTLSkin {
           if (folderContentType == "RTL") {
             count++;
             modifySkin(list[i]);
-            if (list[i].toString().toLowerCase().endsWith("css"))
-              applySpriteTags(list[i], strSkinFolderName, "RTL");
           } else if (folderContentType == "LTR") {
             count++;
-            if (list[i].toString().toLowerCase().endsWith("css"))
-              applySpriteTags(list[i], strSkinFolderName, "LTR");
           }
         } catch (Exception e) {
           log4j.error("IOException: " + e);
         }
       }
     }
-  }
-
-  /**
-   * Modifies text of sprite tags
-   * 
-   * @param file
-   *          File to be modified
-   * @param skinName
-   *          Name of the skin
-   * @param textDirection
-   *          RTL or LTR
-   */
-  public static void applySpriteTags(File file, String skinName, String textDirection)
-      throws Exception {
-    BufferedReader in = new BufferedReader(new FileReader(file));
-    Vector<String> vLines = new Vector<String>();
-    String line, fileName, midLine = "";
-    fileName = file.toString().substring(file.toString().lastIndexOf("/") + 1,
-        file.toString().length() - 4);
-    int initLTR, initRTL, midLTR, midRTL, endLTR, endRTL;
-
-    while ((line = in.readLine()) != null) {
-      if (line.indexOf("xxspritexx") != -1) {
-
-        line = line.replace("xxspritexx", fileName + "_" + skinName + "_" + textDirection
-            + "_Sprite")
-            + "\n";
-        midLine = "";
-        initLTR = line.indexOf("sprite-alignment-ltr");
-        midLTR = line.indexOf(":", initLTR);
-        endLTR = line.indexOf(";", initLTR);
-        initRTL = line.indexOf("sprite-alignment-rtl");
-        midRTL = line.indexOf(":", initRTL);
-        endRTL = line.indexOf(";", initRTL);
-
-        if (initRTL != -1 || initLTR != -1) {
-          if (initRTL == -1) {
-            initRTL = line.length();
-          } else if (textDirection.equals("RTL")) {
-            midLine = line.substring(initRTL, midRTL - 4) + ":"
-                + line.substring(midRTL + 1, endRTL) + ";";
-          }
-          if (initLTR == -1) {
-            initLTR = line.length();
-          } else if (textDirection.equals("LTR")) {
-            midLine = line.substring(initLTR, midLTR - 4) + ":"
-                + line.substring(midLTR + 1, endLTR) + ";";
-          }
-
-          line = line.substring(0, Math.min(initLTR, initRTL)) + midLine
-              + line.substring(Math.max(endRTL, endLTR) + 1, line.length());
-        }
-        vLines.add(line + "\n");
-      } else {
-        vLines.add(line + "\n");
-      }
-    }
-    in.close();
-
-    BufferedWriter out = new BufferedWriter(new FileWriter(file));
-    for (String lineToWrite : vLines) {
-      out.write(lineToWrite);
-    }
-    out.close();
   }
 
   /**

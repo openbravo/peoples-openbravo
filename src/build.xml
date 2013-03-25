@@ -627,10 +627,6 @@ build.war: build a war file in the lib directory.
     
     <antcall target="build.web.folder.skins"  inheritAll="true" inheritrefs="true" />
     
-    <condition property="generateSpritesBool">
-        <istrue value="${generateSprites}" />
-    </condition>
-    <antcall target="generate.sprites" inheritAll="true" inheritrefs="true" />
     <antcall target="minimizeJSandCSS" inheritAll="true" inheritrefs="true" />
   </target>
     
@@ -681,20 +677,6 @@ build.war: build a war file in the lib directory.
       <classpath refid="project.class.path" />
     </java>
     
-  </target>
-
-  <target name="generate.sprites" description="Performs CSS sprite processing" if="generateSpritesBool">
-    <property name="skins.location" location="${base.context}/web/skins/" />
-    <taskdef name="smartsprites" classname="org.carrot2.labs.smartsprites.ant.SmartSpritesTask">
-      <classpath refid="project.class.path" />
-    </taskdef>
-    <smartsprites rootdir="${skins.location}" documentrootdir="${skins.location}" outputdir="${skins.location}" cssfilesuffix="-sprite" csspropertyindent="  " loglevel="WARN" spritepngdepth="DIRECT" spritepngie6="false" />
-    <move todir="${skins.location}">
-      <fileset dir="${skins.location}">
-        <include name="**/*-sprite.css" />
-      </fileset>
-      <mapper type="glob" from="*-sprite.css" to="*.css" />
-    </move>
   </target>
 
   <target name="minimizeJSandCSS" description="minimize JS and CSS files" if="minimizeJSandCSSbool">

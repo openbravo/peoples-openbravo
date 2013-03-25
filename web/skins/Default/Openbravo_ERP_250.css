@@ -17,8 +17,8 @@
  ************************************************************************
 */
 
-/** sprite: xxspritexx_V; sprite-image: url('xxspritexx_V.png'); sprite-layout: vertical */
-/** sprite: xxspritexx_H; sprite-image: url('xxspritexx_H.png'); sprite-layout: horizontal */
+
+
 
 @import url(../../../images/Logos.css);
 
@@ -94,7 +94,7 @@ select:-moz-ui-invalid {
 
 .datawarehouseopen {
   background-repeat: no-repeat;
-  background-image: url(Common/minus.png); /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/minus.png); 
   display: table-cell;
   display: -moz-inline-box;
   height: 15px;
@@ -106,7 +106,7 @@ select:-moz-ui-invalid {
 
 .datawarehouseclose {
   background-repeat: no-repeat;
-  background-image: url(Common/plus.png); /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/plus.png); 
   display: table-cell;
   display: -moz-inline-box;
   height: 15px;
@@ -198,7 +198,7 @@ button.ButtonLink table.Button .Button_left, table.Button .Button_left {
   height: 26px;
   background-repeat: no-repeat;
   background-position: center right; /*~RTL   background-position: center left;  */
-  background-image: url(Common/Button/buttonLeft.normal.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: right; sprite-alignment-rtl: left; */
+  background-image: url(Common/Button/buttonLeft.normal.png);  
   text-align: right; /*~RTL   text-align: left; */
   vertical-align: middle;
 }
@@ -206,7 +206,7 @@ button.ButtonLink table.Button .Button_left, table.Button .Button_left {
 button.ButtonLink table.Button .Button_text, table.Button .Button_text {
   background-repeat: repeat-x;
   background-position: center center;
-  background-image: url(Common/Button/buttonBody.normal.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
+  background-image: url(Common/Button/buttonBody.normal.png);  
   text-align: center;
   height: 26px;
   font-family: tahoma, arial, helvetica, sans-serif;
@@ -220,7 +220,7 @@ button.ButtonLink table.Button .Button_right, table.Button .Button_right {
   height: 26px;
   background-repeat: no-repeat;
   background-position: center left;
-  background-image: url(Common/Button/buttonRight.normal.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/Button/buttonRight.normal.png);  
 }
 
 button.ButtonLink_hover table.Button, .Button_hover {
@@ -239,7 +239,7 @@ button.ButtonLink_hover table.Button, .Button_hover {
 button.ButtonLink_hover table.Button .Button_left, table.Button_hover .Button_left {
   background-repeat: no-repeat;
   background-position: center right; /*~RTL   background-position: center left; */
-  background-image: url(Common/Button/buttonLeft.rollover.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: right; sprite-alignment-rtl: left; */
+  background-image: url(Common/Button/buttonLeft.rollover.png);  
   width: 35px;
   height: 26px;
 }
@@ -247,13 +247,13 @@ button.ButtonLink_hover table.Button .Button_left, table.Button_hover .Button_le
 button.ButtonLink_hover table.Button .Button_text, table.Button_hover .Button_text {
   background-repeat: repeat-x;
   background-position: center center;
-  background-image: url(Common/Button/buttonBody.rollover.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
+  background-image: url(Common/Button/buttonBody.rollover.png);  
 }
 
 button.ButtonLink_hover table.Button .Button_right, table.Button_hover .Button_right {
   background-repeat: no-repeat;
   background-position: center left;
-  background-image: url(Common/Button/buttonRight.rollover.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/Button/buttonRight.rollover.png);  
   width: 26px;
   height: 26px;
 }
@@ -274,7 +274,7 @@ button.ButtonLink_active table.Button, .Button_active {
 button.ButtonLink_active table.Button .Button_left, .Button_active .Button_left {
   background-repeat: no-repeat;
   background-position: center right; /*~RTL    background-position: center left; */
-  background-image: url(Common/Button/buttonLeft.pressed.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: right; sprite-alignment-rtl: left; */
+  background-image: url(Common/Button/buttonLeft.pressed.png);  
   width: 35px;
   height: 26px;
 }
@@ -282,13 +282,13 @@ button.ButtonLink_active table.Button .Button_left, .Button_active .Button_left 
 button.ButtonLink_active table.Button .Button_text, table.Button_active .Button_text {
   background-repeat: repeat-x;
   background-position: center center;
-  background-image: url(Common/Button/buttonBody.pressed.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
+  background-image: url(Common/Button/buttonBody.pressed.png);  
 }
 
 button.ButtonLink_active table.Button .Button_right, table.Button_active .Button_right {
   background-repeat: no-repeat;
   background-position: center left; 
-  background-image: url(Common/Button/buttonRight.pressed.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/Button/buttonRight.pressed.png);  
   width: 26px;
   height: 26px;
 }
@@ -309,7 +309,7 @@ button.ButtonLink_focus table.Button, .Button_focus {
 button.ButtonLink_focus table.Button .Button_left, .Button_focus .Button_left {
   background-repeat: no-repeat;
   background-position: center right; /*~RTL   background-position: center left; */
-  background-image: url(Common/Button/buttonLeft.focused.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: right; */
+  background-image: url(Common/Button/buttonLeft.focused.png);  
   width: 35px;
   height: 26px;
 }
@@ -317,13 +317,13 @@ button.ButtonLink_focus table.Button .Button_left, .Button_focus .Button_left {
 button.ButtonLink_focus table.Button .Button_text, table.Button_focus .Button_text {
   background-repeat: repeat-x;
   background-position: center center;
-  background-image: url(Common/Button/buttonBody.focused.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
+  background-image: url(Common/Button/buttonBody.focused.png);  
 }
 
 button.ButtonLink_focus table.Button .Button_right, table.Button_focus .Button_right {
   background-repeat: no-repeat;
   background-position: center left;
-  background-image: url(Common/Button/buttonRight.focused.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/Button/buttonRight.focused.png);  
   width: 26px;
   height: 26px;
 }
@@ -344,7 +344,7 @@ button.ButtonLink_default table.Button, .Button_default {
 button.ButtonLink_default table.Button .Button_left, .Button_default .Button_left {
   background-repeat: no-repeat;
   background-position: center right; /*~RTL   background-position: center left; */
-  background-image: url(Common/Button/buttonLeft.default.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: right; sprite-alignment-rtl: left; */
+  background-image: url(Common/Button/buttonLeft.default.png);  
   width: 35px;
   height: 26px;
 }
@@ -352,13 +352,13 @@ button.ButtonLink_default table.Button .Button_left, .Button_default .Button_lef
 button.ButtonLink_default table.Button .Button_text, table.Button_default .Button_text {
   background-repeat: repeat-x;
   background-position: center center;
-  background-image: url(Common/Button/buttonBody.default.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
+  background-image: url(Common/Button/buttonBody.default.png);  
 }
 
 button.ButtonLink_default table.Button .Button_right, table.Button_default .Button_right {
   background-repeat: no-repeat;
   background-position: center left;
-  background-image: url(Common/Button/buttonRight.default.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/Button/buttonRight.default.png);  
   width: 26px;
   height: 26px;
 }
@@ -379,7 +379,7 @@ button.ButtonLink_disabled table.Button, .Button_disabled {
 button.ButtonLink_disabled table.Button .Button_left, .Button_disabled .Button_left {
   background-repeat: no-repeat;
   background-position: center right; /*~RTL    background-position: center left; */
-  background-image: url(Common/Button/buttonLeft.disabled.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: right; sprite-alignment-rtl: left; */
+  background-image: url(Common/Button/buttonLeft.disabled.png);  
   width: 35px;
   height: 26px;
 }
@@ -387,13 +387,13 @@ button.ButtonLink_disabled table.Button .Button_left, .Button_disabled .Button_l
 button.ButtonLink_disabled table.Button .Button_text, table.Button_disabled .Button_text {
   background-repeat: repeat-x;
   background-position: center center;
-  background-image: url(Common/Button/buttonBody.disabled.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
+  background-image: url(Common/Button/buttonBody.disabled.png);  
 }
 
 button.ButtonLink_disabled table.Button .Button_right, table.Button_disabled .Button_right {
   background-repeat: no-repeat;
   background-position: center left; 
-  background-image: url(Common/Button/buttonRight.disabled.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/Button/buttonRight.disabled.png);  
   width: 26px;
   height: 26px;
 }
@@ -455,7 +455,7 @@ a.ButtonLink table.Button .Button_left, table.Button .Button_left {
   height: 26px;
   background-repeat: no-repeat;
   background-position: center right; /*~RTL   background-position: center left;  */
-  background-image: url(Common/Button/buttonLeft.normal.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: right; sprite-alignment-rtl: left; */
+  background-image: url(Common/Button/buttonLeft.normal.png);  
   text-align: right; /*~RTL   text-align: left; */
   vertical-align: middle;
 }
@@ -463,7 +463,7 @@ a.ButtonLink table.Button .Button_left, table.Button .Button_left {
 a.ButtonLink table.Button .Button_text, table.Button .Button_text {
   background-repeat: repeat-x;
   background-position: center center;
-  background-image: url(Common/Button/buttonBody.normal.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
+  background-image: url(Common/Button/buttonBody.normal.png);  
   text-align: center;
   height: 26px;
   font-family: tahoma, arial, helvetica, sans-serif;
@@ -477,7 +477,7 @@ a.ButtonLink table.Button .Button_right, table.Button .Button_right {
   height: 26px;
   background-repeat: no-repeat;
   background-position: center left;
-  background-image: url(Common/Button/buttonRight.normal.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/Button/buttonRight.normal.png);  
 }
 
 a.ButtonLink_hover .Button, .Button_hover {
@@ -493,7 +493,7 @@ a.ButtonLink_hover .Button, .Button_hover {
 a.ButtonLink_hover table.Button .Button_left, table.Button_hover .Button_left {
   background-repeat: no-repeat;
   background-position: center right; /*~RTL   background-position: center left; */
-  background-image: url(Common/Button/buttonLeft.rollover.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: right; sprite-alignment-rtl: left; */
+  background-image: url(Common/Button/buttonLeft.rollover.png);  
   width: 35px;
   height: 26px;
 }
@@ -501,13 +501,13 @@ a.ButtonLink_hover table.Button .Button_left, table.Button_hover .Button_left {
 a.ButtonLink_hover table.Button .Button_text, table.Button_hover .Button_text {
   background-repeat: repeat-x;
   background-position: center center;
-  background-image: url(Common/Button/buttonBody.rollover.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
+  background-image: url(Common/Button/buttonBody.rollover.png);  
 }
 
 a.ButtonLink_hover table.Button .Button_right, table.Button_hover .Button_right {
   background-repeat: no-repeat;
   background-position: center left;
-  background-image: url(Common/Button/buttonRight.rollover.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/Button/buttonRight.rollover.png);  
   width: 26px;
   height: 26px;
 }
@@ -525,7 +525,7 @@ a.ButtonLink_active .Button, .Button_active {
 a.ButtonLink_active table.Button .Button_left, .Button_active .Button_left {
   background-repeat: no-repeat;
   background-position: center right; /*~RTL    background-position: center left; */
-  background-image: url(Common/Button/buttonLeft.pressed.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: right; sprite-alignment-rtl: left; */
+  background-image: url(Common/Button/buttonLeft.pressed.png);  
   width: 35px;
   height: 26px;
 }
@@ -533,13 +533,13 @@ a.ButtonLink_active table.Button .Button_left, .Button_active .Button_left {
 a.ButtonLink_active table.Button .Button_text, table.Button_active .Button_text {
   background-repeat: repeat-x;
   background-position: center center;
-  background-image: url(Common/Button/buttonBody.pressed.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
+  background-image: url(Common/Button/buttonBody.pressed.png);  
 }
 
 a.ButtonLink_active table.Button .Button_right, table.Button_active .Button_right {
   background-repeat: no-repeat;
   background-position: center left; 
-  background-image: url(Common/Button/buttonRight.pressed.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/Button/buttonRight.pressed.png);  
   width: 26px;
   height: 26px;
 }
@@ -557,7 +557,7 @@ a.ButtonLink_focus .Button, .Button_focus {
 a.ButtonLink_focus table.Button .Button_left, .Button_focus .Button_left {
   background-repeat: no-repeat;
   background-position: center right;  /*~RTL   background-position: center left; */
-  background-image: url(Common/Button/buttonLeft.focused.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: right; */
+  background-image: url(Common/Button/buttonLeft.focused.png);  
   width: 35px;
   height: 26px;
 }
@@ -565,13 +565,13 @@ a.ButtonLink_focus table.Button .Button_left, .Button_focus .Button_left {
 a.ButtonLink_focus table.Button .Button_text, table.Button_focus .Button_text {
   background-repeat: repeat-x;
   background-position: center center;
-  background-image: url(Common/Button/buttonBody.focused.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
+  background-image: url(Common/Button/buttonBody.focused.png);  
 }
 
 a.ButtonLink_focus table.Button .Button_right, table.Button_focus .Button_right {
   background-repeat: no-repeat;
   background-position: center left;
-  background-image: url(Common/Button/buttonRight.focused.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/Button/buttonRight.focused.png);  
   width: 26px;
   height: 26px;
 }
@@ -589,7 +589,7 @@ a.ButtonLink_default .Button, .Button_default {
 a.ButtonLink_default table.Button .Button_left, .Button_default .Button_left {
   background-repeat: no-repeat;
   background-position: center right;  /*~RTL   background-position: center left; */
-  background-image: url(Common/Button/buttonLeft.default.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: right; */
+  background-image: url(Common/Button/buttonLeft.default.png);  
   width: 35px;
   height: 26px;
 }
@@ -597,13 +597,13 @@ a.ButtonLink_default table.Button .Button_left, .Button_default .Button_left {
 a.ButtonLink_default table.Button .Button_text, table.Button_default .Button_text {
   background-repeat: repeat-x;
   background-position: center center;
-  background-image: url(Common/Button/buttonBody.default.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
+  background-image: url(Common/Button/buttonBody.default.png);  
 }
 
 a.ButtonLink_default table.Button .Button_right, table.Button_default .Button_right {
   background-repeat: no-repeat;
   background-position: center left;
-  background-image: url(Common/Button/buttonRight.default.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/Button/buttonRight.default.png);  
   width: 26px;
   height: 26px;
 }
@@ -622,7 +622,7 @@ a.ButtonLink_disabled table.Button .Button_left, table.ButtonLink_disabled .Butt
   height: 26px;
   background-repeat: no-repeat;
   background-position: center right; /*~RTL background-position: center left; */
-  background-image: url(Common/Button/buttonLeft.disabled.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: right; */
+  background-image: url(Common/Button/buttonLeft.disabled.png);  
   text-align: right;
   vertical-align: middle;
 }
@@ -630,7 +630,7 @@ a.ButtonLink_disabled table.Button .Button_left, table.ButtonLink_disabled .Butt
 a.ButtonLink_disabled table.Button .Button_text, table.ButtonLink_disabled .Button_text {
   background-repeat: repeat-x;
   background-position: center center;
-  background-image: url(Common/Button/buttonBody.disabled.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
+  background-image: url(Common/Button/buttonBody.disabled.png);  
   text-align: center;
   height: 26px;
   font-family: tahoma, arial, helvetica, sans-serif;
@@ -645,7 +645,7 @@ a.ButtonLink_disabled table.Button .Button_right, table.ButtonLink_disabled .But
   height: 26px;
   background-repeat: no-repeat;
   background-position: center left;
-  background-image: url(Common/Button/buttonRight.disabled.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/Button/buttonRight.disabled.png);  
 }
 
 
@@ -658,116 +658,116 @@ a.ButtonLink_disabled table.Button .Button_right, table.ButtonLink_disabled .But
 .Button_Icon_process {
   background-repeat: no-repeat;
   background-position: center left; /*~RTL background-position: center right; */
-  background-image: url(Common/Button/iconProcess.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; sprite-alignment-rtl: right; */
+  background-image: url(Common/Button/iconProcess.png);  
 }
 
 .Button_Icon_back {
   background-repeat: no-repeat;
   background-position: center left; /*~RTL background-position: center right; */
-  background-image: url(Common/Button/iconBack.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; sprite-alignment-rtl: right; */
+  background-image: url(Common/Button/iconBack.png);  
 }
 
 .Button_Icon_next {
   background-repeat: no-repeat;
   background-position: center left; /*~RTL background-position: center right; */
-  background-image: url(Common/Button/iconNext.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; sprite-alignment-rtl: right; */
+  background-image: url(Common/Button/iconNext.png);  
 }
 
 .Button_Icon_ok {
   background-repeat: no-repeat;
   background-position: center left; /*~RTL background-position: center right; */
-  background-image: url(Common/Button/iconOk.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; sprite-alignment-rtl: right; */
+  background-image: url(Common/Button/iconOk.png);  
 }
 
 .Button_Icon_cancel {
   background-repeat: no-repeat;
   background-position: center left; /*~RTL background-position: center right; */
-  background-image: url(Common/Button/iconCancel.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; sprite-alignment-rtl: right; */
+  background-image: url(Common/Button/iconCancel.png);  
 }
 
 .Button_Icon_clear {
   background-repeat: no-repeat;
   background-position: center left; /*~RTL background-position: center right; */
-  background-image: url(Common/Button/iconClear.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; sprite-alignment-rtl: right; */
+  background-image: url(Common/Button/iconClear.png);  
 }
 
 .Button_Icon_pdf {
   background-repeat: no-repeat;
   background-position: center left; /*~RTL background-position: center right; */
-  background-image: url(Common/Button/iconPdf.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; sprite-alignment-rtl: right; */
+  background-image: url(Common/Button/iconPdf.png);  
 }
 
 .Button_Icon_html {
   background-repeat: no-repeat;
   background-position: center left; /*~RTL background-position: center right; */
-  background-image: url(Common/Button/iconHtml.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; sprite-alignment-rtl: right; */
+  background-image: url(Common/Button/iconHtml.png);  
 }
 
 .Button_Icon_search {
   background-repeat: no-repeat;
   background-position: center left; /*~RTL background-position: center right; */
-  background-image: url(Common/Button/iconSearch.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; sprite-alignment-rtl: right; */
+  background-image: url(Common/Button/iconSearch.png);  
 }
 
 .Button_Icon_scanUpdates {
   background-repeat: no-repeat;
   background-position: center left; /*~RTL background-position: center right; */
-  background-image: url(Common/Button/iconScanUpdates.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; sprite-alignment-rtl: right; */
+  background-image: url(Common/Button/iconScanUpdates.png);  
 }
 
 
 .Button_Icon_save {
   background-repeat: no-repeat;
   background-position: center left; /*~RTL background-position: center right; */
-  background-image: url(Common/Button/iconSave.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; sprite-alignment-rtl: right; */
+  background-image: url(Common/Button/iconSave.png);  
 }
 
 .Button_Icon_download {
   background-repeat: no-repeat;
   background-position: center left; /*~RTL background-position: center right; */
-  background-image: url(Common/Button/iconDownload.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; sprite-alignment-rtl: right; */
+  background-image: url(Common/Button/iconDownload.png);  
 }
 
 .Button_Icon_edit {
   background-repeat: no-repeat;
   background-position: center left; /*~RTL background-position: center right; */
-  background-image: url(Common/Button/iconEdit.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; sprite-alignment-rtl: right; */
+  background-image: url(Common/Button/iconEdit.png);  
 }
 
 .Button_Icon_erase {
   background-repeat: no-repeat;
   background-position: center left; /*~RTL background-position: center right; */
-  background-image: url(Common/Button/iconErase.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; sprite-alignment-rtl: right; */
+  background-image: url(Common/Button/iconErase.png);  
 }
 
 .Button_Icon_password {
   background-repeat: no-repeat;
   background-position: center left; /*~RTL background-position: center right; */
-  background-image: url(Common/Button/iconPassword.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; sprite-alignment-rtl: right; */
+  background-image: url(Common/Button/iconPassword.png);  
 }
 
 .Button_Icon_contract {
   background-repeat: no-repeat;
   background-position: center left; /*~RTL background-position: center right; */
-  background-image: url(Common/Button/iconContract.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; sprite-alignment-rtl: right; */
+  background-image: url(Common/Button/iconContract.png);  
 }
 
 .Button_Icon_expand {
   background-repeat: no-repeat;
   background-position: center left; /*~RTL background-position: center right; */
-  background-image: url(Common/Button/iconExpand.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; sprite-alignment-rtl: right; */
+  background-image: url(Common/Button/iconExpand.png);  
 }
 
 .Button_Icon_lock {
   background-repeat: no-repeat;
   background-position: center left; /*~RTL background-position: center right; */
-  background-image: url(Common/Button/iconLock.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; sprite-alignment-rtl: right; */
+  background-image: url(Common/Button/iconLock.png);  
 }
 
 .Button_Icon_unlock {
   background-repeat: no-repeat;
   background-position: center left; /*~RTL background-position: center right; */
-  background-image: url(Common/Button/iconUnlock.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; sprite-alignment-rtl: right; */
+  background-image: url(Common/Button/iconUnlock.png);  
 }
 
 /*
@@ -814,7 +814,7 @@ a.ButtonLink_TwoLines table.Button_TwoLines .Button_TwoLines_left, table.Button_
   height: 39px;
   background-repeat: no-repeat;
   background-position: center right;
-  background-image: url(Common/Button_TwoLines/buttonLeft.normal.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: right; */
+  background-image: url(Common/Button_TwoLines/buttonLeft.normal.png);  
   text-align: right;
   vertical-align: top;
 }
@@ -822,7 +822,7 @@ a.ButtonLink_TwoLines table.Button_TwoLines .Button_TwoLines_left, table.Button_
 a.ButtonLink_TwoLines table.Button_TwoLines .Button_TwoLines_text, table.Button_TwoLines .Button_TwoLines_text {
   background-repeat: repeat-x;
   background-position: center center;
-  background-image: url(Common/Button_TwoLines/buttonBody.normal.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
+  background-image: url(Common/Button_TwoLines/buttonBody.normal.png);  
   text-align: center;
   height: 39px;
   font-family: tahoma, arial, helvetica, sans-serif;
@@ -836,7 +836,7 @@ a.ButtonLink_TwoLines table.Button_TwoLines .Button_TwoLines_right, table.Button
   height: 39px;
   background-repeat: no-repeat;
   background-position: center left;
-  background-image: url(Common/Button_TwoLines/buttonRight.normal.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/Button_TwoLines/buttonRight.normal.png);  
 }
 
 a.ButtonLink_TwoLines_hover .Button_TwoLines, .Button_TwoLines_hover {
@@ -852,7 +852,7 @@ a.ButtonLink_TwoLines_hover .Button_TwoLines, .Button_TwoLines_hover {
 a.ButtonLink_TwoLines_hover table.Button_TwoLines .Button_TwoLines_left, table.Button_TwoLines_hover .Button_TwoLines_left {
   background-repeat: no-repeat;
   background-position: center right;
-  background-image: url(Common/Button_TwoLines/buttonLeft.rollover.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: right; */
+  background-image: url(Common/Button_TwoLines/buttonLeft.rollover.png);  
   width: 35px;
   height: 39px;
   vertical-align: top;
@@ -861,13 +861,13 @@ a.ButtonLink_TwoLines_hover table.Button_TwoLines .Button_TwoLines_left, table.B
 a.ButtonLink_TwoLines_hover table.Button_TwoLines .Button_TwoLines_text, table.Button_TwoLines_hover .Button_TwoLines_text {
   background-repeat: repeat-x;
   background-position: center center;
-  background-image: url(Common/Button_TwoLines/buttonBody.rollover.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
+  background-image: url(Common/Button_TwoLines/buttonBody.rollover.png);  
 }
 
 a.ButtonLink_TwoLines_hover table.Button_TwoLines .Button_TwoLines_right, table.Button_TwoLines_hover .Button_TwoLines_right {
   background-repeat: no-repeat;
   background-position: center left;
-  background-image: url(Common/Button_TwoLines/buttonRight.rollover.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/Button_TwoLines/buttonRight.rollover.png);  
   width: 28px;
   height: 39px;
 }
@@ -885,7 +885,7 @@ a.ButtonLink_TwoLines_active .Button_TwoLines, .Button_TwoLines_active {
 a.ButtonLink_TwoLines_active table.Button_TwoLines .Button_TwoLines_left, table.Button_TwoLines_active .Button_TwoLines_left {
   background-repeat: no-repeat;
   background-position: center right;
-  background-image: url(Common/Button_TwoLines/buttonLeft.pressed.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: right; */
+  background-image: url(Common/Button_TwoLines/buttonLeft.pressed.png);  
   width: 35px;
   height: 39px;
   vertical-align: top;
@@ -894,13 +894,13 @@ a.ButtonLink_TwoLines_active table.Button_TwoLines .Button_TwoLines_left, table.
 a.ButtonLink_TwoLines_active table.Button_TwoLines .Button_TwoLines_text, table.Button_TwoLines_active .Button_TwoLines_text {
   background-repeat: repeat-x;
   background-position: center center;
-  background-image: url(Common/Button_TwoLines/buttonBody.pressed.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
+  background-image: url(Common/Button_TwoLines/buttonBody.pressed.png);  
 }
 
 a.ButtonLink_TwoLines_active table.Button_TwoLines .Button_TwoLines_right, table.Button_TwoLines_active .Button_TwoLines_right {
   background-repeat: no-repeat;
   background-position: center left;
-  background-image: url(Common/Button_TwoLines/buttonRight.pressed.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/Button_TwoLines/buttonRight.pressed.png);  
   width: 28px;
   height: 39px;
 }
@@ -918,7 +918,7 @@ a.ButtonLink_TwoLines_focus .Button_TwoLines, .Button_TwoLines_focus {
 a.ButtonLink_TwoLines_focus table.Button_TwoLines .Button_TwoLines_left, .Button_TwoLines_focus .Button_TwoLines_left {
   background-repeat: no-repeat;
   background-position: center right;
-  background-image: url(Common/Button_TwoLines/buttonLeft.focused.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: right; */
+  background-image: url(Common/Button_TwoLines/buttonLeft.focused.png);  
   width: 35px;
   height: 39px;
 }
@@ -926,13 +926,13 @@ a.ButtonLink_TwoLines_focus table.Button_TwoLines .Button_TwoLines_left, .Button
 a.ButtonLink_TwoLines_focus table.Button_TwoLines .Button_TwoLines_text, table.Button_TwoLines_focus .Button_TwoLines_text {
   background-repeat: repeat-x;
   background-position: center center;
-  background-image: url(Common/Button_TwoLines/buttonBody.focused.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
+  background-image: url(Common/Button_TwoLines/buttonBody.focused.png);  
 }
 
 a.ButtonLink_TwoLines_focus table.Button_TwoLines .Button_TwoLines_right, table.Button_TwoLines_focus .Button_TwoLines_right {
   background-repeat: no-repeat;
   background-position: center left;
-  background-image: url(Common/Button_TwoLines/buttonRight.focused.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/Button_TwoLines/buttonRight.focused.png);  
   width: 28px;
   height: 39px;
 }
@@ -945,85 +945,85 @@ a.ButtonLink_TwoLines_focus table.Button_TwoLines .Button_TwoLines_right, table.
 .Button_TwoLines_Icon_process {
   background-repeat: no-repeat;
   background-position: top left;
-  background-image: url(Common/Button_TwoLines/iconProcess.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/Button_TwoLines/iconProcess.png);  
 }
 
 .Button_TwoLines_Icon_back {
   background-repeat: no-repeat;
   background-position: top left;
-  background-image: url(Common/Button_TwoLines/iconBack.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/Button_TwoLines/iconBack.png);  
 }
 
 .Button_TwoLines_Icon_next {
   background-repeat: no-repeat;
   background-position: top left;
-  background-image: url(Common/Button_TwoLines/iconNext.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/Button_TwoLines/iconNext.png);  
 }
 
 .Button_TwoLines_Icon_ok {
   background-repeat: no-repeat;
   background-position: top left;
-  background-image: url(Common/Button_TwoLines/iconOk.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/Button_TwoLines/iconOk.png);  
 }
 
 .Button_TwoLines_Icon_cancel {
   background-repeat: no-repeat;
   background-position: top left;
-  background-image: url(Common/Button_TwoLines/iconCancel.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/Button_TwoLines/iconCancel.png);  
 }
 
 .Button_TwoLines_Icon_clear {
   background-repeat: no-repeat;
   background-position: top left;
-  background-image: url(Common/Button_TwoLines/iconClear.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/Button_TwoLines/iconClear.png);  
 }
 
 .Button_TwoLines_Icon_pdf {
   background-repeat: no-repeat;
   background-position: top left;
-  background-image: url(Common/Button_TwoLines/iconPdf.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/Button_TwoLines/iconPdf.png);  
 }
 
 .Button_TwoLines_Icon_html {
   background-repeat: no-repeat;
   background-position: top left;
-  background-image: url(Common/Button_TwoLines/iconHtml.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/Button_TwoLines/iconHtml.png);  
 }
 
 .Button_TwoLines_Icon_search {
   background-repeat: no-repeat;
   background-position: top left;
-  background-image: url(Common/Button_TwoLines/iconSearch.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/Button_TwoLines/iconSearch.png);  
 }
 
 .Button_TwoLines_Icon_save {
   background-repeat: no-repeat;
   background-position: top left;
-  background-image: url(Common/Button_TwoLines/iconSave.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/Button_TwoLines/iconSave.png);  
 }
 
 .Button_TwoLines_Icon_download {
   background-repeat: no-repeat;
   background-position: top left;
-  background-image: url(Common/Button_TwoLines/iconDownload.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/Button_TwoLines/iconDownload.png);  
 }
 
 .Button_TwoLines_Icon_edit {
   background-repeat: no-repeat;
   background-position: top left;
-  background-image: url(Common/Button_TwoLines/iconEdit.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/Button_TwoLines/iconEdit.png);  
 }
 
 .Button_TwoLines_Icon_erase {
   background-repeat: no-repeat;
   background-position: top left;
-  background-image: url(Common/Button_TwoLines/iconErase.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/Button_TwoLines/iconErase.png);  
 }
 
 .Button_TwoLines_Icon_password {
   background-repeat: no-repeat;
   background-position: top left;
-  background-image: url(Common/Button_TwoLines/iconPassword.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/Button_TwoLines/iconPassword.png);  
 }
 
 /*
@@ -1415,7 +1415,7 @@ div.calendar {
   float: left;
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/CheckList/iconOk.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/CheckList/iconOk.png);  
 }
 
 .CheckList_Icon_Error {
@@ -1424,7 +1424,7 @@ div.calendar {
   float: left;
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/CheckList/iconError.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/CheckList/iconError.png);  
 }
 
 .CheckList_Icon_Warning {
@@ -1433,7 +1433,7 @@ div.calendar {
   float: left;
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/CheckList/iconWarning.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/CheckList/iconWarning.png);  
 }
 
 .CheckList_Icon_Exception {
@@ -1442,7 +1442,7 @@ div.calendar {
   float: left;
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/CheckList/iconError.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/CheckList/iconError.png);  
 }
 
 .CheckList_Icon_Pending {
@@ -1451,7 +1451,7 @@ div.calendar {
   float: left;
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/CheckList/iconPending.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/CheckList/iconPending.png);  
 }
 
 .CheckList_Icon_Processing {
@@ -1460,7 +1460,7 @@ div.calendar {
   float: left;
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/CheckList/iconProcessing.gif);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/CheckList/iconProcessing.gif);  
 }
 
 .CheckList_Text_Container {
@@ -1520,7 +1520,7 @@ div.calendar {
   float: left;
   background-repeat: no-repeat;
   background-position: right bottom;
-  background-image: url(Common/CheckList/dots.gif);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: right; */
+  background-image: url(Common/CheckList/dots.gif);  
 }
 
 /*
@@ -1654,7 +1654,7 @@ div.calendar {
   vertical-align: middle;
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/DataGrid/iconAscArrow.png);  /** sprite-ref: xxspritexx_V; sprite-margin-top: 3px; sprite-margin-bottom: 6px; */
+  background-image: url(Common/DataGrid/iconAscArrow.png);  
 }
 
 .DataGrid_Header_icon_descArrow {
@@ -1666,7 +1666,7 @@ div.calendar {
   vertical-align: middle;
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/DataGrid/iconDescArrow.png);  /** sprite-ref: xxspritexx_V; sprite-margin-top: 3px; sprite-margin-bottom: 6px; */
+  background-image: url(Common/DataGrid/iconDescArrow.png);  
 }
 
 .DataGrid_Header_icon_delete {
@@ -1675,7 +1675,7 @@ div.calendar {
   height: 14px;
   margin: 0px;
   vertical-align: middle;
-  background-image: url(Common/DataGrid/iconDelete.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/DataGrid/iconDelete.png);  
 }
 
 .DataGrid_Scroll_icon_prevRange {
@@ -1688,7 +1688,7 @@ div.calendar {
   cursor: pointer;
   border-collapse:collapse;
   border: none;
-  background-image: url(Common/DataGrid/iconPrevRange.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/DataGrid/iconPrevRange.png);  
 }
 
 .DataGrid_Scroll_icon_nextRange {
@@ -1701,7 +1701,7 @@ div.calendar {
   cursor: pointer;
   border-collapse:collapse;
   border: none;
-  background-image: url(Common/DataGrid/iconNextRange.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/DataGrid/iconNextRange.png);  
 }
 
 .DataGrid_Popup_text_container {
@@ -1828,7 +1828,7 @@ tr.DataGrid_Body_Row_Even, tr.DataGrid_Body_Row_1 {
   background: none;
   background-repeat: repeat-x;
   background-position: top left;
-  background-image: url(Common/DataGrid/backgroundRow.even.normal.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; sprite-margin-bottom: 30px; */
+  background-image: url(Common/DataGrid/backgroundRow.even.normal.png);  
   background-color: #E1E1E1;
   _background-color: #DDDDDD;
 }
@@ -1837,7 +1837,7 @@ tr.DataGrid_Body_Row_Odd, tr.DataGrid_Body_Row_0 {
   background: none;
   background-repeat: repeat-x;
   background-position: top left;
-  background-image: url(Common/DataGrid/backgroundRow.odd.normal.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; sprite-margin-bottom: 30px; */
+  background-image: url(Common/DataGrid/backgroundRow.odd.normal.png);  
   background-color: #C0CFDC;
   _background-color: #B9C9D8;
 }
@@ -1846,7 +1846,7 @@ tr.DataGrid_Body_Row_focus {
   background: none;
   background-repeat: repeat-x;
   background-position: top left;
-  background-image: url(Common/DataGrid/backgroundRow.focused.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; sprite-margin-bottom: 30px; */
+  background-image: url(Common/DataGrid/backgroundRow.focused.png);  
   background-color: #458CBB;
   color: #FFFFFF;
 }
@@ -1855,7 +1855,7 @@ tr.DataGrid_Body_Row_selected {
   background: none;
   background-repeat: repeat-x;
   background-position: top left;
-  background-image: url(Common/DataGrid/backgroundRow.selected.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; sprite-margin-bottom: 30px; */
+  background-image: url(Common/DataGrid/backgroundRow.selected.png);  
   background-color: #569633;
   _background-color: #4A8C29;
   color: #FFFFFF;
@@ -1885,7 +1885,7 @@ th.DataGrid_Header_Cell {
   background: none;
   background-repeat: repeat-x;
   background-position: top left;
-  background-image: url(Common/DataGrid/backgroundHeader.normal.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; sprite-margin-bottom: 30px; */
+  background-image: url(Common/DataGrid/backgroundHeader.normal.png);  
   background-color: #A6A6A6;
   _background-color: #9D9D9D;
   color: #000000;
@@ -1911,7 +1911,7 @@ th.DataGrid_Header_Cell_Amount {
   background: none;
   background-repeat: repeat-x;
   background-position: top left;
-  background-image: url(Common/DataGrid/backgroundHeader.normal.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; sprite-margin-bottom: 30px; */
+  background-image: url(Common/DataGrid/backgroundHeader.normal.png);  
   background-color: #A6A6A6;
   _background-color: #9D9D9D;
   color: #000000;
@@ -1928,7 +1928,7 @@ th.DataGrid_Header_Cell_hover {
   background: none;
   background-repeat: repeat-x;
   background-position: top left;
-  background-image: url(Common/DataGrid/backgroundHeader.rollover.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; sprite-margin-bottom: 30px; */
+  background-image: url(Common/DataGrid/backgroundHeader.rollover.png);  
   background-color: #BEBEBE;
   _background-color: #B7B7B7;
   font-weight: bold !important;
@@ -1937,7 +1937,7 @@ th.DataGrid_Header_Cell_hover {
 th.DataGrid_Header_Cell_active {
   background-repeat: repeat-x;
   background-position: top left;
-  background-image: url(Common/DataGrid/backgroundHeader.pressed.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; sprite-margin-bottom: 30px; */
+  background-image: url(Common/DataGrid/backgroundHeader.pressed.png);  
   color: #000000;
   font-weight: bold;
 }
@@ -1945,7 +1945,7 @@ th.DataGrid_Header_Cell_active {
 th.DataGrid_Header_Cell_sorted {
   background-repeat: repeat-x;
   background-position: top left;
-  background-image: url(Common/DataGrid/backgroundHeader.selected.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; sprite-margin-bottom: 30px; */
+  background-image: url(Common/DataGrid/backgroundHeader.selected.png);  
   color: #000000;
   font-weight: bold;
 }
@@ -2019,7 +2019,7 @@ td.DataGrid_Body_Cell_hover {
   background: none;
   background-repeat: repeat-x;
   background-position: top left;
-  background-image: url(Common/DataGrid/backgroundRow.rollover.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; sprite-margin-bottom: 30px; */
+  background-image: url(Common/DataGrid/backgroundRow.rollover.png);  
   background-color: #A3D77F;
   _background-color: #97D070;
 }
@@ -2160,7 +2160,7 @@ td.Dimension_LeftRight_Button_Separator {
   width: 28px;
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/Dimension/dimensionButtonLRSeparator.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/Dimension/dimensionButtonLRSeparator.png);  
 }
 
 td.Dimension_UpDown_Button_Separator {
@@ -2168,7 +2168,7 @@ td.Dimension_UpDown_Button_Separator {
   width: 26px;
   background-repeat: repeat;
   background-position: center center;
-  background-image: url(Common/Dimension/dimensionButtonUDSeparator.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/Dimension/dimensionButtonUDSeparator.png);  
 }
 
 
@@ -2205,7 +2205,7 @@ a.Dimension_LeftRight_Button_TopLink .Dimension_LeftRight_Button_Top_bg, .Dimens
   height: 22px;
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/Dimension/dimensionButtonLRTop.normal.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/Dimension/dimensionButtonLRTop.normal.png);  
 }
 
 a.Dimension_LeftRight_Button_TopLink_hover .Dimension_LeftRight_Button_Top, .Dimension_LeftRight_Button_Top_hover {
@@ -2216,7 +2216,7 @@ a.Dimension_LeftRight_Button_TopLink_hover .Dimension_LeftRight_Button_Top, .Dim
 a.Dimension_LeftRight_Button_TopLink_hover table.Dimension_LeftRight_Button_Top .Dimension_LeftRight_Button_Top_bg, table.Dimension_LeftRight_Button_Top_hover .Dimension_LeftRight_Button_Top_bg {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/Dimension/dimensionButtonLRTop.rollover.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/Dimension/dimensionButtonLRTop.rollover.png);  
 }
 
 a.Dimension_LeftRight_Button_TopLink_active .Dimension_LeftRight_Button_Top, .Dimension_LeftRight_Button_Top_active {
@@ -2227,7 +2227,7 @@ a.Dimension_LeftRight_Button_TopLink_active .Dimension_LeftRight_Button_Top, .Di
 a.Dimension_LeftRight_Button_TopLink_active table.Dimension_LeftRight_Button_Top .Dimension_LeftRight_Button_Top_bg, table.Dimension_LeftRight_Button_Top_active .Dimension_LeftRight_Button_Top_bg {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/Dimension/dimensionButtonLRTop.pressed.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/Dimension/dimensionButtonLRTop.pressed.png);  
   -moz-outline-style: none;
 }
 
@@ -2239,7 +2239,7 @@ a.Dimension_LeftRight_Button_TopLink_focus .Dimension_LeftRight_Button_Top, .Dim
 a.Dimension_LeftRight_Button_TopLink_focus table.Dimension_LeftRight_Button_Top .Dimension_LeftRight_Button_Top_bg, table.Dimension_LeftRight_Button_Top_focus .Dimension_LeftRight_Button_Top_bg {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/Dimension/dimensionButtonLRTop.focused.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/Dimension/dimensionButtonLRTop.focused.png);  
 }
 
 
@@ -2277,7 +2277,7 @@ a.Dimension_LeftRight_Button_BottomLink .Dimension_LeftRight_Button_Bottom_bg, .
   height: 22px;
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/Dimension/dimensionButtonLRBottom.normal.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/Dimension/dimensionButtonLRBottom.normal.png);  
 }
 
 a.Dimension_LeftRight_Button_BottomLink_hover .Dimension_LeftRight_Button_Bottom, .Dimension_LeftRight_Button_Bottom_hover {
@@ -2288,7 +2288,7 @@ a.Dimension_LeftRight_Button_BottomLink_hover .Dimension_LeftRight_Button_Bottom
 a.Dimension_LeftRight_Button_BottomLink_hover table.Dimension_LeftRight_Button_Bottom .Dimension_LeftRight_Button_Bottom_bg, table.Dimension_LeftRight_Button_Bottom_hover .Dimension_LeftRight_Button_Bottom_bg {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/Dimension/dimensionButtonLRBottom.rollover.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/Dimension/dimensionButtonLRBottom.rollover.png);  
 }
 
 a.Dimension_LeftRight_Button_BottomLink_active .Dimension_LeftRight_Button_Bottom, .Dimension_LeftRight_Button_Bottom_active {
@@ -2299,7 +2299,7 @@ a.Dimension_LeftRight_Button_BottomLink_active .Dimension_LeftRight_Button_Botto
 a.Dimension_LeftRight_Button_BottomLink_active table.Dimension_LeftRight_Button_Bottom .Dimension_LeftRight_Button_Bottom_bg, table.Dimension_LeftRight_Button_Bottom_active .Dimension_LeftRight_Button_Bottom_bg {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/Dimension/dimensionButtonLRBottom.pressed.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/Dimension/dimensionButtonLRBottom.pressed.png);  
   -moz-outline-style: none;
 }
 
@@ -2311,7 +2311,7 @@ a.Dimension_LeftRight_Button_BottomLink_focus .Dimension_LeftRight_Button_Bottom
 a.Dimension_LeftRight_Button_BottomLink_focus table.Dimension_LeftRight_Button_Bottom .Dimension_LeftRight_Button_Bottom_bg, table.Dimension_LeftRight_Button_Bottom_focus .Dimension_LeftRight_Button_Bottom_bg {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/Dimension/dimensionButtonLRBottom.focused.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/Dimension/dimensionButtonLRBottom.focused.png);  
   -moz-outline-style: none;
 }
 
@@ -2330,13 +2330,13 @@ a.Dimension_LeftRight_Button_BottomLink_focus table.Dimension_LeftRight_Button_B
 .Dimension_LeftRight_Button_Icon_Include {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/Dimension/iconInclude.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; sprite-margin-left: 3px; sprite-margin-right: 3px; sprite-margin-top: 1px; sprite-margin-bottom: 1px */
+  background-image: url(Common/Dimension/iconInclude.png);  
 }
 
 .Dimension_LeftRight_Button_Icon_Exclude {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/Dimension/iconExclude.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; sprite-margin-left: 3px; sprite-margin-right: 3px; sprite-margin-top: 1px; sprite-margin-bottom: 1px */
+  background-image: url(Common/Dimension/iconExclude.png);  
 }
 
 
@@ -2376,7 +2376,7 @@ a.Dimension_UpDown_Button_TopLink .Dimension_UpDown_Button_Top_bg, .Dimension_Up
   height: 34px;
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/Dimension/dimensionButtonUDTop.normal.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/Dimension/dimensionButtonUDTop.normal.png);  
 }
 
 a.Dimension_UpDown_Button_TopLink_hover .Dimension_UpDown_Button_Top, .Dimension_UpDown_Button_Top_hover {
@@ -2387,7 +2387,7 @@ a.Dimension_UpDown_Button_TopLink_hover .Dimension_UpDown_Button_Top, .Dimension
 a.Dimension_UpDown_Button_TopLink_hover table.Dimension_UpDown_Button_Top .Dimension_UpDown_Button_Top_bg, table.Dimension_UpDown_Button_Top_hover .Dimension_UpDown_Button_Top_bg {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/Dimension/dimensionButtonUDTop.rollover.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/Dimension/dimensionButtonUDTop.rollover.png);  
 }
 
 a.Dimension_UpDown_Button_TopLink_active .Dimension_UpDown_Button_Top, .Dimension_UpDown_Button_Top_active {
@@ -2398,7 +2398,7 @@ a.Dimension_UpDown_Button_TopLink_active .Dimension_UpDown_Button_Top, .Dimensio
 a.Dimension_UpDown_Button_TopLink_active table.Dimension_UpDown_Button_Top .Dimension_UpDown_Button_Top_bg, table.Dimension_UpDown_Button_Top_active .Dimension_UpDown_Button_Top_bg {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/Dimension/dimensionButtonUDTop.pressed.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/Dimension/dimensionButtonUDTop.pressed.png);  
   -moz-outline-style: none;
 }
 
@@ -2410,7 +2410,7 @@ a.Dimension_UpDown_Button_TopLink_focus .Dimension_UpDown_Button_Top, .Dimension
 a.Dimension_UpDown_Button_TopLink_focus table.Dimension_UpDown_Button_Top .Dimension_UpDown_Button_Top_bg, table.Dimension_UpDown_Button_Top_focus .Dimension_UpDown_Button_Top_bg {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/Dimension/dimensionButtonUDTop.focused.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/Dimension/dimensionButtonUDTop.focused.png);  
   -moz-outline-style: none;
 }
 
@@ -2448,7 +2448,7 @@ a.Dimension_UpDown_Button_BottomLink .Dimension_UpDown_Button_Bottom_bg, .Dimens
   height: 34px;
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/Dimension/dimensionButtonUDBottom.normal.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/Dimension/dimensionButtonUDBottom.normal.png);  
 }
 
 a.Dimension_UpDown_Button_BottomLink_hover .Dimension_UpDown_Button_Bottom, .Dimension_UpDown_Button_Bottom_hover {
@@ -2459,7 +2459,7 @@ a.Dimension_UpDown_Button_BottomLink_hover .Dimension_UpDown_Button_Bottom, .Dim
 a.Dimension_UpDown_Button_BottomLink_hover table.Dimension_UpDown_Button_Bottom .Dimension_UpDown_Button_Bottom_bg, table.Dimension_UpDown_Button_Bottom_hover .Dimension_UpDown_Button_Bottom_bg {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/Dimension/dimensionButtonUDBottom.rollover.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/Dimension/dimensionButtonUDBottom.rollover.png);  
 }
 
 a.Dimension_UpDown_Button_BottomLink_active .Dimension_UpDown_Button_Bottom, .Dimension_UpDown_Button_Bottom_active {
@@ -2470,7 +2470,7 @@ a.Dimension_UpDown_Button_BottomLink_active .Dimension_UpDown_Button_Bottom, .Di
 a.Dimension_UpDown_Button_BottomLink_active table.Dimension_UpDown_Button_Bottom .Dimension_UpDown_Button_Bottom_bg, table.Dimension_UpDown_Button_Bottom_active .Dimension_UpDown_Button_Bottom_bg {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/Dimension/dimensionButtonUDBottom.pressed.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/Dimension/dimensionButtonUDBottom.pressed.png);  
   -moz-outline-style: none;
 }
 
@@ -2482,7 +2482,7 @@ a.Dimension_UpDown_Button_BottomLink_focus .Dimension_UpDown_Button_Bottom, .Dim
 a.Dimension_UpDown_Button_BottomLink_focus table.Dimension_UpDown_Button_Bottom .Dimension_UpDown_Button_Bottom_bg, table.Dimension_UpDown_Button_Bottom_focus .Dimension_UpDown_Button_Bottom_bg {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/Dimension/dimensionButtonUDBottom.focused.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/Dimension/dimensionButtonUDBottom.focused.png);  
   -moz-outline-style: none;
 }
 
@@ -2500,13 +2500,13 @@ a.Dimension_UpDown_Button_BottomLink_focus table.Dimension_UpDown_Button_Bottom 
 .Dimension_UpDown_Button_Icon_Up {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/Dimension/iconUp.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; sprite-margin-left: 2px; sprite-margin-right: 2px; sprite-margin-top: 7px; sprite-margin-bottom: 7px */
+  background-image: url(Common/Dimension/iconUp.png);  
 }
 
 .Dimension_UpDown_Button_Icon_Down {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/Dimension/iconDown.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; sprite-margin-left: 2px; sprite-margin-right: 2px; sprite-margin-top: 7px; sprite-margin-bottom: 7px */
+  background-image: url(Common/Dimension/iconDown.png);  
 }
 
 
@@ -2549,7 +2549,7 @@ a.FieldButtonLink .FieldButton_bg, .FieldButton_bg {
   height: 18px;
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/FieldButton/fieldButton.normal.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; sprite-margin-top: 2px; sprite-margin-bottom: 5px */
+  background-image: url(Common/FieldButton/fieldButton.normal.png);  
 }
 
 a.FieldButtonLink_hover .FieldButton, .FieldButton_hover {
@@ -2560,7 +2560,7 @@ a.FieldButtonLink_hover .FieldButton, .FieldButton_hover {
 a.FieldButtonLink_hover table.FieldButton .FieldButton_bg, table.FieldButton_hover .FieldButton_bg {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/FieldButton/fieldButton.rollover.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; sprite-margin-top: 2px; sprite-margin-bottom: 5px */
+  background-image: url(Common/FieldButton/fieldButton.rollover.png);  
 }
 
 a.FieldButtonLink_active .FieldButton, .FieldButton_active {
@@ -2571,7 +2571,7 @@ a.FieldButtonLink_active .FieldButton, .FieldButton_active {
 a.FieldButtonLink_active table.FieldButton .FieldButton_bg, table.FieldButton_active .FieldButton_bg {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/FieldButton/fieldButton.pressed.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; sprite-margin-top: 2px; sprite-margin-bottom: 5px */
+  background-image: url(Common/FieldButton/fieldButton.pressed.png);  
 }
 
 a.FieldButtonLink_focus .FieldButton, .FieldButton_focus {
@@ -2582,7 +2582,7 @@ a.FieldButtonLink_focus .FieldButton, .FieldButton_focus {
 a.FieldButtonLink_focus table.FieldButton .FieldButton_bg, table.FieldButton_focus .FieldButton_bg {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/FieldButton/fieldButton.focused.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; sprite-margin-top: 2px; sprite-margin-bottom: 5px */
+  background-image: url(Common/FieldButton/fieldButton.focused.png);  
 }
 
 
@@ -2597,139 +2597,139 @@ a.FieldButtonLink_focus table.FieldButton .FieldButton_bg, table.FieldButton_foc
 .FieldButton_Icon_Calc {
   background-repeat: no-repeat;
   background-position: top center;
-  background-image: url(Common/FieldButton/iconCalculator.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/FieldButton/iconCalculator.png);  
 }
 
 .FieldButton_Icon_BusinessPartner {
   background-repeat: no-repeat;
   background-position: top center;
-  background-image: url(Common/FieldButton/iconBusinessPartner.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/FieldButton/iconBusinessPartner.png);  
 }
 
 .FieldButton_Icon_Project {
   background-repeat: no-repeat;
   background-position: top center;
-  background-image: url(Common/FieldButton/iconProject.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/FieldButton/iconProject.png);  
 }
 
 .FieldButton_Icon_SalesOrderLine {
   background-repeat: no-repeat;
   background-position: top center;
-  background-image: url(Common/FieldButton/iconOrderLine.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/FieldButton/iconOrderLine.png);  
 }
 
 .FieldButton_Icon_ShipmentReceiptLine {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/FieldButton/iconShipmentReceipt.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/FieldButton/iconShipmentReceipt.png);  
 }
 
 .FieldButton_Icon_DebtPayment {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/FieldButton/iconDebtPayment.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/FieldButton/iconDebtPayment.png);  
 }
 
 .FieldButton_Icon_Invoice {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/FieldButton/iconInvoice.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/FieldButton/iconInvoice.png);  
 }
 
 .FieldButton_Icon_InvoiceLine {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/FieldButton/iconInvoiceLine.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/FieldButton/iconInvoiceLine.png);  
 }
 
 .FieldButton_Icon_Product {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/FieldButton/iconProduct.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/FieldButton/iconProduct.png);  
 }
 
 .FieldButton_Icon_SalesOrder {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/FieldButton/iconOrder.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/FieldButton/iconOrder.png);  
 }
 
 .FieldButton_Icon_Order {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/FieldButton/iconOrder.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/FieldButton/iconOrder.png);  
 }
 
 .FieldButton_Icon_AttributeSetInstance {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/FieldButton/iconAttribute.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/FieldButton/iconAttribute.png);  
 }
 
 .FieldButton_Icon_Password {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/FieldButton/iconPassword.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/FieldButton/iconPassword.png);  
 }
 
 .FieldButton_Icon_Calendar {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/FieldButton/iconCalendar.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/FieldButton/iconCalendar.png);  
 }
 
 .FieldButton_Icon_Link {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/FieldButton/iconUrl.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/FieldButton/iconUrl.png);  
 }
 
 .FieldButton_Icon_Locator {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/FieldButton/iconLocator.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/FieldButton/iconLocator.png);  
 }
 
 .FieldButton_Icon_LocatorDetail {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/FieldButton/iconLocator.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/FieldButton/iconLocator.png);  
 }
 
 .FieldButton_Icon_Location {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/FieldButton/iconLocation.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/FieldButton/iconLocation.png);  
 }
 
 .FieldButton_Icon_Account {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/FieldButton/iconAccount.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/FieldButton/iconAccount.png);  
 }
 
 .FieldButton_Icon_AccountDimension {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/FieldButton/iconAccountDimension.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/FieldButton/iconAccountDimension.png);  
 }
 
 .FieldButton_Icon_ProductComplete {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/FieldButton/iconProduct.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/FieldButton/iconProduct.png);  
 }
 
 .FieldButton_Icon_Clock {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/FieldButton/iconTime.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/FieldButton/iconTime.png);  
 }
 
 .FieldButton_Icon_InputTypeFile {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/FieldButton/iconInputTypeFile.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/FieldButton/iconInputTypeFile.png);  
 }
 
 /*
@@ -2759,7 +2759,7 @@ table.FieldGroup {
 .FieldGroupTitle_Left_bg {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/FieldGroup/labelLeft.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/FieldGroup/labelLeft.png);  
   height: 26px !important;
   width: 9px !important;
 }
@@ -2767,7 +2767,7 @@ table.FieldGroup {
 .FieldGroupTitle {
   background-repeat: repeat-x;
   background-position: center center;
-  background-image: url(Common/FieldGroup/labelBody.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
+  background-image: url(Common/FieldGroup/labelBody.png);  
   white-space: nowrap;
   text-align: center;
   font-size: 8pt;
@@ -2786,7 +2786,7 @@ table.FieldGroup {
 .FieldGroupTitle_Right_bg {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/FieldGroup/labelRight.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/FieldGroup/labelRight.png);  
   height: 26px !important;
   width: 9px !important;
 }
@@ -2794,7 +2794,7 @@ table.FieldGroup {
 .FieldGroupContent {
   background-repeat: repeat-x;
   background-position: center center;
-  background-image: url(Common/FieldGroup/labelContent.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
+  background-image: url(Common/FieldGroup/labelContent.png);  
   width: 99%;
   white-space: nowrap;
   border-bottom-style: none;
@@ -2829,7 +2829,7 @@ table.FieldGroup {
   margin: 0px 0px 0px 0px;
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/Image/imageNotAvailable_small.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/Image/imageNotAvailable_small.png);  
 }
 
 .Image_NotAvailable_medium {
@@ -2897,7 +2897,7 @@ table.FieldGroup {
 a.LabelLink {
   background-repeat: no-repeat;
   background-position: top left; /*~RTL   background-position: 98% 0; */
-  background-image: url(Common/Label/link.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; sprite-alignment-rtl: right; */
+  background-image: url(Common/Label/link.png);  
   padding-left: 9px; /*~RTL   padding-right: 14px; */
   color: #2985BA;
   text-decoration: none;
@@ -2923,7 +2923,7 @@ a.LabelLink_focus {
   padding: 0px 4px 0px 14px;
   background-repeat: no-repeat;
   background-position: top left;
-  background-image: url(Common/Label/link.focused.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/Label/link.focused.png);  
   background-color: #C8E9F9 !important;
   color: #2985BA;
   border-style: solid;
@@ -2991,7 +2991,7 @@ td.List_Button_Separator {
   width: 26px;
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/List/listButtonSeparator.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/List/listButtonSeparator.png);  
 }
 
 
@@ -3028,7 +3028,7 @@ a.List_Button_TopLink .List_Button_Top_bg, .List_Button_Top_bg {
   height: 22px;
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/List/listButtonTop.normal.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/List/listButtonTop.normal.png);  
 }
 
 a.List_Button_TopLink_hover .List_Button_Top, .List_Button_Top_hover {
@@ -3039,7 +3039,7 @@ a.List_Button_TopLink_hover .List_Button_Top, .List_Button_Top_hover {
 a.List_Button_TopLink_hover table.List_Button_Top .List_Button_Top_bg, table.List_Button_Top_hover .List_Button_Top_bg {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/List/listButtonTop.rollover.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/List/listButtonTop.rollover.png);  
 }
 
 a.List_Button_TopLink_active .List_Button_Top, .List_Button_Top_active {
@@ -3050,7 +3050,7 @@ a.List_Button_TopLink_active .List_Button_Top, .List_Button_Top_active {
 a.List_Button_TopLink_active table.List_Button_Top .List_Button_Top_bg, table.List_Button_Top_active .List_Button_Top_bg {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/List/listButtonTop.pressed.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/List/listButtonTop.pressed.png);  
   -moz-outline-style: none;
 }
 
@@ -3062,7 +3062,7 @@ a.List_Button_TopLink_focus .List_Button_Top, .List_Button_Top_focus {
 a.List_Button_TopLink_focus table.List_Button_Top .List_Button_Top_bg, table.List_Button_Top_focus .List_Button_Top_bg {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/List/listButtonTop.focused.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/List/listButtonTop.focused.png);  
   -moz-outline-style: none;
 }
 
@@ -3099,7 +3099,7 @@ a.List_Button_MiddleLink .List_Button_Middle_bg, .List_Button_Middle_bg {
   height: 22px;
   background-repeat: repeat-y;
   background-position: center center;
-  background-image: url(Common/List/listButtonMiddle.normal.png);  /** sprite-ref: xxspritexx_H; sprite-alignment-ltr: repeat; */
+  background-image: url(Common/List/listButtonMiddle.normal.png);  
 }
 
 a.List_Button_MiddleLink_hover .List_Button_Middle, .List_Button_Middle_hover {
@@ -3110,7 +3110,7 @@ a.List_Button_MiddleLink_hover .List_Button_Middle, .List_Button_Middle_hover {
 a.List_Button_MiddleLink_hover table.List_Button_Middle .List_Button_Middle_bg, table.List_Button_Middle_hover .List_Button_Middle_bg {
   background-repeat: repeat-y;
   background-position: center center;
-  background-image: url(Common/List/listButtonMiddle.rollover.png);  /** sprite-ref: xxspritexx_H; sprite-alignment-ltr: repeat; */
+  background-image: url(Common/List/listButtonMiddle.rollover.png);  
 }
 
 a.List_Button_MiddleLink_active .List_Button_Middle, .List_Button_Middle_active {
@@ -3121,7 +3121,7 @@ a.List_Button_MiddleLink_active .List_Button_Middle, .List_Button_Middle_active 
 a.List_Button_MiddleLink_active table.List_Button_Middle .List_Button_Middle_bg, table.List_Button_Middle_active .List_Button_Middle_bg {
   background-repeat: repeat-y;
   background-position: center center;
-  background-image: url(Common/List/listButtonMiddle.pressed.png);  /** sprite-ref: xxspritexx_H; sprite-alignment-ltr: repeat; */
+  background-image: url(Common/List/listButtonMiddle.pressed.png);  
   -moz-outline-style: none;
 }
 
@@ -3133,7 +3133,7 @@ a.List_Button_MiddleLink_focus .List_Button_Middle, .List_Button_Middle_focus {
 a.List_Button_MiddleLink_focus table.List_Button_Middle .List_Button_Middle_bg, table.List_Button_Middle_focus .List_Button_Middle_bg {
   background-repeat: repeat-y;
   background-position: center center;
-  background-image: url(Common/List/listButtonMiddle.focused.png);  /** sprite-ref: xxspritexx_H; sprite-alignment-ltr: repeat; */
+  background-image: url(Common/List/listButtonMiddle.focused.png);  
   -moz-outline-style: none;
 }
 
@@ -3171,7 +3171,7 @@ a.List_Button_BottomLink .List_Button_Bottom_bg, .List_Button_Bottom_bg {
   height: 22px;
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/List/listButtonBottom.normal.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/List/listButtonBottom.normal.png);  
 }
 
 a.List_Button_BottomLink_hover .List_Button_Bottom, .List_Button_Bottom_hover {
@@ -3182,7 +3182,7 @@ a.List_Button_BottomLink_hover .List_Button_Bottom, .List_Button_Bottom_hover {
 a.List_Button_BottomLink_hover table.List_Button_Bottom .List_Button_Bottom_bg, table.List_Button_Bottom_hover .List_Button_Bottom_bg {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/List/listButtonBottom.rollover.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/List/listButtonBottom.rollover.png);  
 }
 
 a.List_Button_BottomLink_active .List_Button_Bottom, .List_Button_Bottom_active {
@@ -3193,7 +3193,7 @@ a.List_Button_BottomLink_active .List_Button_Bottom, .List_Button_Bottom_active 
 a.List_Button_BottomLink_active table.List_Button_Bottom .List_Button_Bottom_bg, table.List_Button_Bottom_active .List_Button_Bottom_bg {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/List/listButtonBottom.pressed.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/List/listButtonBottom.pressed.png);  
   -moz-outline-style: none;
 }
 
@@ -3205,7 +3205,7 @@ a.List_Button_BottomLink_focus .List_Button_Bottom, .List_Button_Bottom_focus {
 a.List_Button_BottomLink_focus table.List_Button_Bottom .List_Button_Bottom_bg, table.List_Button_Bottom_focus .List_Button_Bottom_bg {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/List/listButtonBottom.focused.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/List/listButtonBottom.focused.png);  
   -moz-outline-style: none;
 }
 
@@ -3222,19 +3222,19 @@ a.List_Button_BottomLink_focus table.List_Button_Bottom .List_Button_Bottom_bg, 
 .List_Button_Icon_Add {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/List/iconAdd.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; sprite-margin-left: 2px; sprite-margin-right: 2px; sprite-margin-top: 1px; sprite-margin-bottom: 1px */
+  background-image: url(Common/List/iconAdd.png);  
 }
 
 .List_Button_Icon_Delete {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/List/iconDelete.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; sprite-margin-left: 2px; sprite-margin-right: 2px; sprite-margin-top: 1px; sprite-margin-bottom: 1px */
+  background-image: url(Common/List/iconDelete.png);  
 }
 
 .List_Button_Icon_DeleteAll {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/List/iconDeleteAll.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; sprite-margin-left: 2px; sprite-margin-right: 2px; sprite-margin-top: 1px; sprite-margin-bottom: 1px */
+  background-image: url(Common/List/iconDeleteAll.png);  
 }
 
 /*
@@ -3315,7 +3315,7 @@ table.MessageBoxERROR table.MessageBox_Top {
   width: 100%;
   background-repeat: repeat-x;
   background-position: top left;
-  background-image: url(Common/MessageBox/messageErrorTop.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; sprite-margin-bottom: 160px */
+  background-image: url(Common/MessageBox/messageErrorTop.png);  
 }
 
 table.MessageBoxERROR .MessageBox_TopRight {
@@ -3323,7 +3323,7 @@ table.MessageBoxERROR .MessageBox_TopRight {
   width: 9px;
   background-repeat: no-repeat;
   background-position: top left;
-  background-image: url(Common/MessageBox/messageErrorTopRight.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/MessageBox/messageErrorTopRight.png);  
 }
 
 table.MessageBoxERROR .MessageBox_Right {
@@ -3331,7 +3331,7 @@ table.MessageBoxERROR .MessageBox_Right {
   width: 9px;
   background-repeat: repeat-y;
   background-position: top left;
-  background-image: url(Common/MessageBox/messageErrorRight.png);  /** sprite-ref: xxspritexx_H; sprite-alignment-ltr: repeat; */
+  background-image: url(Common/MessageBox/messageErrorRight.png);  
 }
 
 table.MessageBoxERROR .MessageBox_RightTrans {
@@ -3351,14 +3351,14 @@ table.MessageBoxERROR td.MessageBox_BottomRight {
   height: 9px;
   background-repeat: no-repeat;
   background-position: top left;
-  background-image: url(Common/MessageBox/messageErrorBottomRight.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/MessageBox/messageErrorBottomRight.png);  
 }
 
 table.MessageBoxERROR td.MessageBox_Bottom {
   height: 3px;
   background-repeat: repeat-x;
   background-position: top left;
-  background-image: url(Common/MessageBox/messageErrorBottom.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
+  background-image: url(Common/MessageBox/messageErrorBottom.png);  
   line-height: 1px;
   font-size: 1px;
 }
@@ -3372,7 +3372,7 @@ table.MessageBoxERROR td.MessageBox_BottomLeft {
   height: 9px;
   background-repeat: no-repeat;
   background-position: top left;
-  background-image: url(Common/MessageBox/messageErrorBottomLeft.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/MessageBox/messageErrorBottomLeft.png);  
 }
 
 table.MessageBoxERROR .MessageBox_Left {
@@ -3380,7 +3380,7 @@ table.MessageBoxERROR .MessageBox_Left {
   width: 9px;
   background-repeat: repeat-y;
   background-position: top left;
-  background-image: url(Common/MessageBox/messageErrorLeft.png);  /** sprite-ref: xxspritexx_H; sprite-alignment-ltr: repeat; */
+  background-image: url(Common/MessageBox/messageErrorLeft.png);  
 }
 
 table.MessageBoxERROR .MessageBox_TopLeft {
@@ -3388,7 +3388,7 @@ table.MessageBoxERROR .MessageBox_TopLeft {
   width: 9px;
   background-repeat: no-repeat;
   background-position: top left;
-  background-image: url(Common/MessageBox/messageErrorTopLeft.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/MessageBox/messageErrorTopLeft.png);  
 }
 
 
@@ -3415,7 +3415,7 @@ table.MessageBoxERROR .MessageBox_Icon {
   height: 31px;
   background-repeat: no-repeat;
   background-position: top left;
-  background-image: url(Common/MessageBox/messageErrorIcon.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/MessageBox/messageErrorIcon.png);  
   margin-left: 2px;
   margin-right: 10px;
 }
@@ -3493,7 +3493,7 @@ table.MessageBoxINFO table.MessageBox_Top {
   width: 100%;
   background-repeat: repeat-x;
   background-position: top left;
-  background-image: url(Common/MessageBox/messageInfoTop.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; sprite-margin-bottom: 160px */
+  background-image: url(Common/MessageBox/messageInfoTop.png);  
 }
 
 table.MessageBoxINFO .MessageBox_TopRight {
@@ -3501,7 +3501,7 @@ table.MessageBoxINFO .MessageBox_TopRight {
   width: 9px;
   background-repeat: no-repeat;
   background-position: top left;
-  background-image: url(Common/MessageBox/messageInfoTopRight.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/MessageBox/messageInfoTopRight.png);  
 }
 
 table.MessageBoxINFO .MessageBox_Right {
@@ -3509,7 +3509,7 @@ table.MessageBoxINFO .MessageBox_Right {
   width: 9px;
   background-repeat: repeat-y;
   background-position: top left;
-  background-image: url(Common/MessageBox/messageInfoRight.png);  /** sprite-ref: xxspritexx_H; sprite-alignment-ltr: repeat; */
+  background-image: url(Common/MessageBox/messageInfoRight.png);  
 }
 
 table.MessageBoxINFO .MessageBox_RightTrans {
@@ -3529,14 +3529,14 @@ table.MessageBoxINFO td.MessageBox_BottomRight {
   height: 9px;
   background-repeat: no-repeat;
   background-position: top left;
-  background-image: url(Common/MessageBox/messageInfoBottomRight.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/MessageBox/messageInfoBottomRight.png);  
 }
 
 table.MessageBoxINFO td.MessageBox_Bottom {
   height: 3px;
   background-repeat: repeat-x;
   background-position: top left;
-  background-image: url(Common/MessageBox/messageInfoBottom.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
+  background-image: url(Common/MessageBox/messageInfoBottom.png);  
   line-height: 1px;
   font-size: 1px;
 }
@@ -3550,7 +3550,7 @@ table.MessageBoxINFO td.MessageBox_BottomLeft {
   height: 9px;
   background-repeat: no-repeat;
   background-position: top left;
-  background-image: url(Common/MessageBox/messageInfoBottomLeft.png)  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/MessageBox/messageInfoBottomLeft.png)  
 }
 
 table.MessageBoxINFO .MessageBox_Left {
@@ -3558,7 +3558,7 @@ table.MessageBoxINFO .MessageBox_Left {
   width: 9px;
   background-repeat: repeat-y;
   background-position: top left;
-  background-image: url(Common/MessageBox/messageInfoLeft.png);  /** sprite-ref: xxspritexx_H; sprite-alignment-ltr: repeat; */
+  background-image: url(Common/MessageBox/messageInfoLeft.png);  
 }
 
 table.MessageBoxINFO .MessageBox_TopLeft {
@@ -3566,7 +3566,7 @@ table.MessageBoxINFO .MessageBox_TopLeft {
   width: 9px;
   background-repeat: no-repeat;
   background-position: top left;
-  background-image: url(Common/MessageBox/messageInfoTopLeft.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/MessageBox/messageInfoTopLeft.png);  
 }
 
 
@@ -3593,7 +3593,7 @@ table.MessageBoxINFO .MessageBox_Icon {
   height: 31px;
   background-repeat: no-repeat;
   background-position: top left;
-  background-image: url(Common/MessageBox/messageInfoIcon.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/MessageBox/messageInfoIcon.png);  
   margin-left: 2px;
   margin-right: 10px;
 }
@@ -3671,7 +3671,7 @@ table.MessageBoxSUCCESS table.MessageBox_Top {
   width: 100%;
   background-repeat: repeat-x;
   background-position: top left;
-  background-image: url(Common/MessageBox/messageSuccessTop.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; sprite-margin-bottom: 160px */
+  background-image: url(Common/MessageBox/messageSuccessTop.png);  
 }
 
 table.MessageBoxSUCCESS .MessageBox_TopRight {
@@ -3679,7 +3679,7 @@ table.MessageBoxSUCCESS .MessageBox_TopRight {
   width: 9px;
   background-repeat: no-repeat;
   background-position: top left;
-  background-image: url(Common/MessageBox/messageSuccessTopRight.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/MessageBox/messageSuccessTopRight.png);  
 }
 
 table.MessageBoxSUCCESS .MessageBox_Right {
@@ -3687,7 +3687,7 @@ table.MessageBoxSUCCESS .MessageBox_Right {
   width: 9px;
   background-repeat: repeat-y;
   background-position: top left;
-  background-image: url(Common/MessageBox/messageSuccessRight.png);  /** sprite-ref: xxspritexx_H; sprite-alignment-ltr: repeat; */
+  background-image: url(Common/MessageBox/messageSuccessRight.png);  
 }
 
 table.MessageBoxSUCCESS .MessageBox_RightTrans {
@@ -3707,14 +3707,14 @@ table.MessageBoxSUCCESS td.MessageBox_BottomRight {
   height: 9px;
   background-repeat: no-repeat;
   background-position: top left;
-  background-image: url(Common/MessageBox/messageSuccessBottomRight.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/MessageBox/messageSuccessBottomRight.png);  
 }
 
 table.MessageBoxSUCCESS td.MessageBox_Bottom {
   height: 3px;
   background-repeat: repeat-x;
   background-position: top left;
-  background-image: url(Common/MessageBox/messageSuccessBottom.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
+  background-image: url(Common/MessageBox/messageSuccessBottom.png);  
   line-height: 1px;
   font-size: 1px;
 }
@@ -3728,7 +3728,7 @@ table.MessageBoxSUCCESS td.MessageBox_BottomLeft {
   height: 9px;
   background-repeat: no-repeat;
   background-position: top left;
-  background-image: url(Common/MessageBox/messageSuccessBottomLeft.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/MessageBox/messageSuccessBottomLeft.png);  
 }
 
 table.MessageBoxSUCCESS .MessageBox_Left {
@@ -3736,7 +3736,7 @@ table.MessageBoxSUCCESS .MessageBox_Left {
   width: 9px;
   background-repeat: repeat-y;
   background-position: top left;
-  background-image: url(Common/MessageBox/messageSuccessLeft.png);  /** sprite-ref: xxspritexx_H; sprite-alignment-ltr: repeat; */
+  background-image: url(Common/MessageBox/messageSuccessLeft.png);  
 }
 
 table.MessageBoxSUCCESS .MessageBox_TopLeft {
@@ -3744,7 +3744,7 @@ table.MessageBoxSUCCESS .MessageBox_TopLeft {
   width: 9px;
   background-repeat: no-repeat;
   background-position: top left;
-  background-image: url(Common/MessageBox/messageSuccessTopLeft.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/MessageBox/messageSuccessTopLeft.png);  
 }
 
 
@@ -3771,7 +3771,7 @@ table.MessageBoxSUCCESS .MessageBox_Icon {
   height: 31px;
   background-repeat: no-repeat;
   background-position: top left;
-  background-image: url(Common/MessageBox/messageSuccessIcon.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/MessageBox/messageSuccessIcon.png);  
   margin-left: 2px;
   margin-right: 10px;
 }
@@ -3849,7 +3849,7 @@ table.MessageBoxWARNING table.MessageBox_Top {
   width: 100%;
   background-repeat: repeat-x;
   background-position: top left;
-  background-image: url(Common/MessageBox/messageWarningTop.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; sprite-margin-bottom: 160px */
+  background-image: url(Common/MessageBox/messageWarningTop.png);  
 }
 
 table.MessageBoxWARNING .MessageBox_TopRight {
@@ -3857,7 +3857,7 @@ table.MessageBoxWARNING .MessageBox_TopRight {
   width: 9px;
   background-repeat: no-repeat;
   background-position: top left;
-  background-image: url(Common/MessageBox/messageWarningTopRight.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/MessageBox/messageWarningTopRight.png);  
 }
 
 table.MessageBoxWARNING .MessageBox_Right {
@@ -3865,7 +3865,7 @@ table.MessageBoxWARNING .MessageBox_Right {
   width: 9px;
   background-repeat: repeat-y;
   background-position: top left;
-  background-image: url(Common/MessageBox/messageWarningRight.png);  /** sprite-ref: xxspritexx_H; sprite-alignment-ltr: repeat; */
+  background-image: url(Common/MessageBox/messageWarningRight.png);  
 }
 
 table.MessageBoxWARNING .MessageBox_RightTrans {
@@ -3885,14 +3885,14 @@ table.MessageBoxWARNING td.MessageBox_BottomRight {
   height: 9px;
   background-repeat: no-repeat;
   background-position: top left;
-  background-image: url(Common/MessageBox/messageWarningBottomRight.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/MessageBox/messageWarningBottomRight.png);  
 }
 
 table.MessageBoxWARNING td.MessageBox_Bottom {
   height: 3px;
   background-repeat: repeat-x;
   background-position: top left;
-  background-image: url(Common/MessageBox/messageWarningBottom.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
+  background-image: url(Common/MessageBox/messageWarningBottom.png);  
   line-height: 1px;
   font-size: 1px;
 }
@@ -3906,7 +3906,7 @@ table.MessageBoxWARNING td.MessageBox_BottomLeft {
   height: 9px;
   background-repeat: no-repeat;
   background-position: top left;
-  background-image: url(Common/MessageBox/messageWarningBottomLeft.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/MessageBox/messageWarningBottomLeft.png);  
 }
 
 table.MessageBoxWARNING .MessageBox_Left {
@@ -3914,7 +3914,7 @@ table.MessageBoxWARNING .MessageBox_Left {
   width: 9px;
   background-repeat: repeat-y;
   background-position: top left;
-  background-image: url(Common/MessageBox/messageWarningLeft.png);  /** sprite-ref: xxspritexx_H; sprite-alignment-ltr: repeat; */
+  background-image: url(Common/MessageBox/messageWarningLeft.png);  
 }
 
 table.MessageBoxWARNING .MessageBox_TopLeft {
@@ -3922,7 +3922,7 @@ table.MessageBoxWARNING .MessageBox_TopLeft {
   width: 9px;
   background-repeat: no-repeat;
   background-position: top left;
-  background-image: url(Common/MessageBox/messageWarningTopLeft.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/MessageBox/messageWarningTopLeft.png);  
 }
 
 
@@ -3949,7 +3949,7 @@ table.MessageBoxWARNING .MessageBox_Icon {
   height: 31px;
   background-repeat: no-repeat;
   background-position: top left;
-  background-image: url(Common/MessageBox/messageWarningIcon.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/MessageBox/messageWarningIcon.png);  
   margin-left: 2px;
   margin-right: 10px;
 }
@@ -4101,7 +4101,7 @@ th.Popup_Client_Selector_DataGrid_HeaderRow {
   background: none;
   background-repeat: repeat-x;
   background-position: top left;
-  background-image: url(Common/Selector/backgroundRow.rollover.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; sprite-margin-bottom: 30px; */
+  background-image: url(Common/Selector/backgroundRow.rollover.png);  
   background-color: #A3D77F;
   _background-color: #97D070;
 }
@@ -4110,7 +4110,7 @@ th.Popup_Client_Selector_DataGrid_HeaderRow {
   background: none;
   background-repeat: repeat-x;
   background-position: top left;
-  background-image: url(Common/Selector/backgroundRow.odd.normal.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; sprite-margin-bottom: 30px; */
+  background-image: url(Common/Selector/backgroundRow.odd.normal.png);  
   background-color: #C0CFDC;
   _background-color: #B9C9D8;
 }
@@ -4121,7 +4121,7 @@ th.Popup_Client_Selector_DataGrid_HeaderRow {
   text-indent: 2pt;
   background-repeat: repeat-x;
   background-position: top left;
-  background-image: url(Common/Selector/backgroundRow.odd.normal.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; sprite-margin-bottom: 30px; */
+  background-image: url(Common/Selector/backgroundRow.odd.normal.png);  
   background-color: #c0cfdc;
 }
 
@@ -4129,7 +4129,7 @@ th.Popup_Client_Selector_DataGrid_HeaderRow {
   background: none;
   background-repeat: repeat-x;
   background-position: top left;
-  background-image: url(Common/Selector/backgroundRow.even.normal.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; sprite-margin-bottom: 30px; */
+  background-image: url(Common/Selector/backgroundRow.even.normal.png);  
   background-color: #E1E1E1;
   _background-color: #DDDDDD;
 }
@@ -4149,7 +4149,7 @@ td.Popup_Client_Selector_DataGrid_RightMargin {
   text-indent: 2pt;
   background-repeat: repeat-x;
   background-position: top left;
-  background-image: url(Common/Selector/backgroundRow.even.normal.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; sprite-margin-bottom: 30px; */
+  background-image: url(Common/Selector/backgroundRow.even.normal.png);  
   background-color: #e1e1e1;
 }
 
@@ -4157,7 +4157,7 @@ td.Popup_Client_Selector_DataGrid_RightMargin {
   background: none;
   background-repeat: repeat-x;
   background-position: top left;
-  background-image: url(Common/Selector/backgroundRow.selected.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; sprite-margin-bottom: 30px; */
+  background-image: url(Common/Selector/backgroundRow.selected.png);  
   background-color: #569633;
   _background-color: #4A8C29;
   color: #FFFFFF;
@@ -4167,7 +4167,7 @@ th.Popup_Client_Selector_HeaderRow_bg {
   background: none;
   background-repeat: repeat-x !important;
   background-position: top left;
-  background-image: url(Common/Selector/backgroundHeader.normal.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; sprite-margin-bottom: 30px; */
+  background-image: url(Common/Selector/backgroundHeader.normal.png);  
   background-color: #A6A6A6 !important;
   _background-color: #9D9D9D !important;
 }
@@ -4197,7 +4197,7 @@ td.TableDetailHeader {
   border-left : 1px solid #505050;
   background-repeat: repeat-x;
   background-position: top left;
-  background-image: url(Common/Selector/backgroundHeader.normal.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; sprite-margin-bottom: 30px; */
+  background-image: url(Common/Selector/backgroundHeader.normal.png);  
   color: #000000;
   background-color: #a6a6a6;
 }
@@ -4267,7 +4267,7 @@ td.TableDetailHeader {
   text-indent: 2pt; 
   background-repeat: repeat-x;
   background-position: top left;
-  background-image: url(Common/Selector/backgroundRow.even.normal.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; sprite-margin-bottom: 30px; */
+  background-image: url(Common/Selector/backgroundRow.even.normal.png);  
   background-color: #e1e1e1;
 }
 
@@ -5048,7 +5048,7 @@ td.TextBox_MsgContainerVt_td {
   float: left;
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/Tree/spotsR.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/Tree/spotsR.png);  
 }
 
 .Tree_FirstNode_Spots {
@@ -5057,7 +5057,7 @@ td.TextBox_MsgContainerVt_td {
   float: left;
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/Tree/spotsRD.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/Tree/spotsRD.png);  
 }
 
 .Tree_MiddleNode_Spots {
@@ -5066,7 +5066,7 @@ td.TextBox_MsgContainerVt_td {
   float: left;
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/Tree/spotsURD.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/Tree/spotsURD.png);  
 }
 
 .Tree_LastNode_Spots {
@@ -5075,7 +5075,7 @@ td.TextBox_MsgContainerVt_td {
   float: left;
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/Tree/spotsUR.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/Tree/spotsUR.png);  
 }
 
 .Tree_MiddleParent_Spots {
@@ -5084,7 +5084,7 @@ td.TextBox_MsgContainerVt_td {
   float: left;
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/Tree/spotsUD.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/Tree/spotsUD.png);  
 }
 
 .Tree_LastParent_Spots {
@@ -5099,7 +5099,7 @@ td.TextBox_MsgContainerVt_td {
   float: left;
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/Tree/spotsRL.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/Tree/spotsRL.png);  
 }
 
 .Tree_Checkbox_Spots_Opened {
@@ -5108,7 +5108,7 @@ td.TextBox_MsgContainerVt_td {
   float: left;
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/Tree/spotsRDL.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/Tree/spotsRDL.png);  
 }
 
 .Tree_Folder_Opened {
@@ -5117,7 +5117,7 @@ td.TextBox_MsgContainerVt_td {
   float: left;
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/Tree/iconFolderOpened.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/Tree/iconFolderOpened.png);  
   cursor: pointer;
 }
 
@@ -5126,7 +5126,7 @@ td.TextBox_MsgContainerVt_td {
   height: 19px;
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/Tree/iconFolderClosed.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/Tree/iconFolderClosed.png);  
   cursor: pointer;
 }
 
@@ -5136,7 +5136,7 @@ td.TextBox_MsgContainerVt_td {
   float: left;
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/Tree/iconModule.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/Tree/iconModule.png);  
 }
 
 .Tree_Icon_Pack {
@@ -5145,7 +5145,7 @@ td.TextBox_MsgContainerVt_td {
   float: left;
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/Tree/iconPack.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/Tree/iconPack.png);  
 }
 
 .Tree_Icon_Template {
@@ -5154,7 +5154,7 @@ td.TextBox_MsgContainerVt_td {
   float: left;
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/Tree/iconTemplate.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/Tree/iconTemplate.png);  
 }
 
 .Tree_Icon_Update {
@@ -5162,7 +5162,7 @@ td.TextBox_MsgContainerVt_td {
   height: 19px;
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/Tree/iconUpdate.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Common/Tree/iconUpdate.png);  
 }
 
 .Tree_Checkbox_visible {
@@ -5803,7 +5803,7 @@ table.Login_ToolBar_bg {
   float: left;
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/_ParticularItems/AddModule/iconPack.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/_ParticularItems/AddModule/iconPack.png);  
 }
 
 .AddModule_Icon_Template {
@@ -5812,7 +5812,7 @@ table.Login_ToolBar_bg {
   float: left;
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/_ParticularItems/AddModule/iconTemplate.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/_ParticularItems/AddModule/iconTemplate.png);  
 }
 
 .AddModule_Icon_Module {
@@ -5821,7 +5821,7 @@ table.Login_ToolBar_bg {
   float: left;
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/_ParticularItems/AddModule/iconModule.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/_ParticularItems/AddModule/iconModule.png);  
 }
 
 .AddModule_Text_Title {
@@ -5889,7 +5889,7 @@ table.Login_ToolBar_bg {
   height: 1px;
   background-repeat: repeat-x;
   background-position: center center;
-  background-image: url(Main/_ParticularItems/AddModule/separator.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
+  background-image: url(Main/_ParticularItems/AddModule/separator.png);  
   margin: 10 0 0 43;
   _margin: 0 0 0 43;
   _padding: 0 0 0 0;
@@ -6089,14 +6089,14 @@ td.Main_LeftTabsBar_bg_body {
   border: 0px solid #000;
   background-repeat: repeat-x;
   background-position: top left;
-  background-image: url(Main/LeftTabsBar/backgroundBody.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
+  background-image: url(Main/LeftTabsBar/backgroundBody.png);  
 }
 
 td.Main_LeftTabsBar_bg_separator_cell {
   height: 12px;
   background-repeat: repeat-y;
   background-position: top left;
-  background-image: url(Main/LeftTabsBar/backgroundBorder.png);  /** sprite-ref: xxspritexx_H; sprite-alignment-ltr: repeat; */
+  background-image: url(Main/LeftTabsBar/backgroundBorder.png);  
 }
 
 td.Main_LeftTabsBar_bg_empty_cell {
@@ -6105,7 +6105,7 @@ td.Main_LeftTabsBar_bg_empty_cell {
   border: 0px solid #000;
   background-repeat: repeat-y;
   background-position: top left;
-  background-image: url(Main/LeftTabsBar/backgroundBorder.png);  /** sprite-ref: xxspritexx_H; sprite-alignment-ltr: repeat; */
+  background-image: url(Main/LeftTabsBar/backgroundBorder.png);  
 }
 
 .Main_LeftTabsBar_bg_top {
@@ -6113,7 +6113,7 @@ td.Main_LeftTabsBar_bg_empty_cell {
   height: 51px;
   background-repeat: no-repeat;
   background-position: top left;
-  background-image: url(Main/LeftTabsBar/backgroundTop.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/LeftTabsBar/backgroundTop.png);  
 }
 
 
@@ -6131,7 +6131,7 @@ a.Main_LeftTabsBar_ButtonLeft {
   outline: none;
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/LeftTabsBar/leftbutton.normal.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/LeftTabsBar/leftbutton.normal.png);  
 }
 
 a.Main_LeftTabsBar_ButtonLeft_hidden {
@@ -6148,7 +6148,7 @@ a.Main_LeftTabsBar_ButtonLeft_hidden {
   cursor: default;
   background-repeat: repeat-y;
   background-position: top left;
-  background-image: url(Main/LeftTabsBar/backgroundBorder.png);  /** sprite-ref: xxspritexx_H; sprite-alignment-ltr: repeat; */
+  background-image: url(Main/LeftTabsBar/backgroundBorder.png);  
 }
 
 a.Main_LeftTabsBar_ButtonLeft:visited {
@@ -6157,12 +6157,12 @@ a.Main_LeftTabsBar_ButtonLeft:visited {
 a.Main_LeftTabsBar_ButtonLeft:hover {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/LeftTabsBar/leftbutton.rollover.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/LeftTabsBar/leftbutton.rollover.png);  
 }
 a.Main_LeftTabsBar_ButtonLeft:active {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/LeftTabsBar/leftbutton.pressed.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/LeftTabsBar/leftbutton.pressed.png);  
   -moz-outline-style: none;
 }
 
@@ -6180,25 +6180,25 @@ a.Main_LeftTabsBar_ButtonLeft:active {
 .Main_LeftTabsBar_ButtonLeft_Icon_arrow_show {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/LeftTabsBar/iconShowAppMenu.normal.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/LeftTabsBar/iconShowAppMenu.normal.png);  
 }
 
 a.Main_LeftTabsBar_ButtonLeft:hover .Main_LeftTabsBar_ButtonLeft_Icon_arrow_show {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/LeftTabsBar/iconShowAppMenu.rollover.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/LeftTabsBar/iconShowAppMenu.rollover.png);  
 }
 
 .Main_LeftTabsBar_ButtonLeft_Icon_arrow_hide {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/LeftTabsBar/iconHideAppMenu.normal.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/LeftTabsBar/iconHideAppMenu.normal.png);  
 }
 
 a.Main_LeftTabsBar_ButtonLeft:hover .Main_LeftTabsBar_ButtonLeft_Icon_arrow_hide {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/LeftTabsBar/iconHideAppMenu.rollover.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/LeftTabsBar/iconHideAppMenu.rollover.png);  
 }
 
 
@@ -6216,7 +6216,7 @@ a.Main_LeftTabsBar_ButtonRight {
   outline: none;
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/LeftTabsBar/rightbutton.normal.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/LeftTabsBar/rightbutton.normal.png);  
 }
 
 a.Main_LeftTabsBar_ButtonRight:visited { 
@@ -6225,12 +6225,12 @@ a.Main_LeftTabsBar_ButtonRight:visited {
 a.Main_LeftTabsBar_ButtonRight:hover {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/LeftTabsBar/rightbutton.rollover.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/LeftTabsBar/rightbutton.rollover.png);  
 }
 a.Main_LeftTabsBar_ButtonRight:active {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/LeftTabsBar/rightbutton.pressed.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/LeftTabsBar/rightbutton.pressed.png);  
   -moz-outline-style: none;
   outline: none;
 }
@@ -6238,7 +6238,7 @@ a.Main_LeftTabsBar_ButtonRight:active {
 .Main_LeftTabsBar_ButtonRight_selected {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/LeftTabsBar/rightbutton.selected.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/LeftTabsBar/rightbutton.selected.png);  
 }
 
 
@@ -6255,31 +6255,31 @@ a.Main_LeftTabsBar_ButtonRight:active {
 .Main_LeftTabsBar_ButtonRight_Icon_edition {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/LeftTabsBar/iconEditView.normal.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/LeftTabsBar/iconEditView.normal.png);  
 }
 
 a.Main_LeftTabsBar_ButtonRight:hover .Main_LeftTabsBar_ButtonRight_Icon_edition {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/LeftTabsBar/iconEditView.rollover.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/LeftTabsBar/iconEditView.rollover.png);  
 }
 
 a.Main_LeftTabsBar_ButtonRight:active .Main_LeftTabsBar_ButtonRight_Icon_edition {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/LeftTabsBar/iconEditView.rollover.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/LeftTabsBar/iconEditView.rollover.png);  
 }
 
 .Main_LeftTabsBar_ButtonRight_Icon_edition_selected {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/LeftTabsBar/iconEditView.selected.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/LeftTabsBar/iconEditView.selected.png);  
 }
 
 .Main_LeftTabsBar_ButtonRight_Icon_edition_new_selected {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/LeftTabsBar/iconNewView.selected.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/LeftTabsBar/iconNewView.selected.png);  
 }
 
 
@@ -6287,25 +6287,25 @@ a.Main_LeftTabsBar_ButtonRight:active .Main_LeftTabsBar_ButtonRight_Icon_edition
 .Main_LeftTabsBar_ButtonRight_Icon_relation {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/LeftTabsBar/iconRelationalView.normal.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/LeftTabsBar/iconRelationalView.normal.png);  
 }
 
 a.Main_LeftTabsBar_ButtonRight:hover .Main_LeftTabsBar_ButtonRight_Icon_relation {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/LeftTabsBar/iconRelationalView.rollover.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/LeftTabsBar/iconRelationalView.rollover.png);  
 }
 
 a.Main_LeftTabsBar_ButtonRight:active .Main_LeftTabsBar_ButtonRight_Icon_relation {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/LeftTabsBar/iconRelationalView.rollover.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/LeftTabsBar/iconRelationalView.rollover.png);  
 }
 
 .Main_LeftTabsBar_ButtonRight_Icon_relation_selected {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/LeftTabsBar/iconRelationalView.selected.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/LeftTabsBar/iconRelationalView.selected.png);  
 }
 
 /*
@@ -6318,7 +6318,7 @@ a.Main_LeftTabsBar_ButtonRight:active .Main_LeftTabsBar_ButtonRight_Icon_relatio
   height: 34px;
   background-repeat: repeat-x;
   background-position: center center;
-  background-image: url(Main/NavBar/backgroundCenter.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
+  background-image: url(Main/NavBar/backgroundCenter.png);  
 }
 
 .Main_NavBar_bg_left {
@@ -6326,7 +6326,7 @@ a.Main_LeftTabsBar_ButtonRight:active .Main_LeftTabsBar_ButtonRight_Icon_relatio
   height: 34px;
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/NavBar/backgroundLeft.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/NavBar/backgroundLeft.png);  
 }
 
 .Main_NavBar_bg_right {
@@ -6334,7 +6334,7 @@ a.Main_LeftTabsBar_ButtonRight:active .Main_LeftTabsBar_ButtonRight_Icon_relatio
   height: 34px;
   background-repeat: repeat-x;
   background-position: center center;
-  background-image: url(Main/NavBar/backgroundRight.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
+  background-image: url(Main/NavBar/backgroundRight.png);  
 }
 
 .Main_NavBar_bg_logo_left {
@@ -6342,7 +6342,7 @@ a.Main_LeftTabsBar_ButtonRight:active .Main_LeftTabsBar_ButtonRight_Icon_relatio
   height: 34px;
   background-repeat: no-repeat;
   background-position: center right;
-  background-image: url(Main/NavBar/logoLeft.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/NavBar/logoLeft.png);  
 }
 
 .Main_NavBar_bg_logo_right {
@@ -6350,7 +6350,7 @@ a.Main_LeftTabsBar_ButtonRight:active .Main_LeftTabsBar_ButtonRight_Icon_relatio
   height: 34px;
   background-repeat: no-repeat;
   background-position: center left;
-  background-image: url(Main/NavBar/logoRight.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/NavBar/logoRight.png);  
 }
 
 .Main_NavBar_bg_logo {
@@ -6420,37 +6420,37 @@ a.Main_NavBar_LeftButton:active {
 .Main_NavBar_LeftButton_Icon_back {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/NavBar/iconBack.normal.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/NavBar/iconBack.normal.png);  
 }
 
 a.Main_NavBar_LeftButton:hover .Main_NavBar_LeftButton_Icon_back {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/NavBar/iconBack.rollover.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/NavBar/iconBack.rollover.png);  
 }
 
 a.Main_NavBar_LeftButton:active .Main_NavBar_LeftButton_Icon_back {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/NavBar/iconBack.pressed.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/NavBar/iconBack.pressed.png);  
 }
 
 .Main_NavBar_LeftButton_Icon_refresh {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/NavBar/iconRefresh.normal.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/NavBar/iconRefresh.normal.png);  
 }
 
 a.Main_NavBar_LeftButton:hover .Main_NavBar_LeftButton_Icon_refresh {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/NavBar/iconRefresh.rollover.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/NavBar/iconRefresh.rollover.png);  
 }
 
 a.Main_NavBar_LeftButton:active .Main_NavBar_LeftButton_Icon_refresh {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/NavBar/iconRefresh.pressed.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/NavBar/iconRefresh.pressed.png);  
 }
 
 
@@ -6472,7 +6472,7 @@ a.Main_NavBar_RightButton {
   vertical-align: top;
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/NavBar/buttonRight.normal.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/NavBar/buttonRight.normal.png);  
   -moz-outline-style: none;
 
 }
@@ -6483,13 +6483,13 @@ a.Main_NavBar_RightButton:visited {
 a.Main_NavBar_RightButton:hover {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/NavBar/buttonRight.rollover.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/NavBar/buttonRight.rollover.png);  
 }
 
 a.Main_NavBar_RightButton:active {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/NavBar/buttonRight.pressed.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/NavBar/buttonRight.pressed.png);  
   -moz-outline-style: none;
 }
 
@@ -6507,37 +6507,37 @@ a.Main_NavBar_RightButton:active {
 .Main_NavBar_RightButton_Icon_about {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/NavBar/iconAbout.normal.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/NavBar/iconAbout.normal.png);  
 }
 
 a.Main_NavBar_RightButton:hover .Main_NavBar_RightButton_Icon_about {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/NavBar/iconAbout.rollover.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/NavBar/iconAbout.rollover.png);  
 }
 
 a.Main_NavBar_RightButton:active .Main_NavBar_RightButton_Icon_about {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/NavBar/iconAbout.pressed.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/NavBar/iconAbout.pressed.png);  
 }
 
 .Main_NavBar_RightButton_Icon_help {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/NavBar/iconHelp.normal.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/NavBar/iconHelp.normal.png);  
 }
 
 a.Main_NavBar_RightButton:hover .Main_NavBar_RightButton_Icon_help {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/NavBar/iconHelp.rollover.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/NavBar/iconHelp.rollover.png);  
 }
 
 a.Main_NavBar_RightButton:active .Main_NavBar_RightButton_Icon_help {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/NavBar/iconHelp.pressed.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/NavBar/iconHelp.pressed.png);  
 }
 
 
@@ -6655,7 +6655,7 @@ span.tabTitle {
   padding-right: 1px;
   background-repeat: no-repeat;
   background-position: top left;
-  background-image: url(Main/Tabs/titleLeft.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/Tabs/titleLeft.png);  
   cursor: default;
   white-space: nowrap;
   z-index: 5;
@@ -6669,7 +6669,7 @@ span.tabTitle {
   margin-right: 14px;
   background-repeat: repeat-x;
   background-position: top left;
-  background-image: url(Main/Tabs/titleFill.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; sprite-margin-bottom: 16px */
+  background-image: url(Main/Tabs/titleFill.png);  
 }
 
 .tabTitle_elements_container {
@@ -6679,7 +6679,7 @@ span.tabTitle {
   margin-right: -14px;
   background-repeat: no-repeat;
   background-position: top right;
-  background-image: url(Main/Tabs/titleRight.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: right; */
+  background-image: url(Main/Tabs/titleRight.png);  
   height: 18px;
   _width: 14px;
 }
@@ -6698,7 +6698,7 @@ span.tabTitle {
 .tabTitle_elements_separator_icon {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/Tabs/tabTitle.separator.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/Tabs/tabTitle.separator.png);  
   width: 2px;
   height: 19px;
 }
@@ -6741,7 +6741,7 @@ span.tabTitle {
   padding-right: 1px;*/
   background-repeat: no-repeat;
   background-position: top left;
-  background-image: url(Main/Tabs/roundItemLeft.selected.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/Tabs/roundItemLeft.selected.png);  
   cursor: default;
   white-space: nowrap;
   z-index: 5;
@@ -6755,7 +6755,7 @@ span.tabTitle {
   margin-right: 10px;
   background-repeat: repeat-x;
   background-position: top left;
-  background-image: url(Main/Tabs/roundItemFill.selected.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
+  background-image: url(Main/Tabs/roundItemFill.selected.png);  
 }
 
 .dojoTabcurrent div span {
@@ -6765,7 +6765,7 @@ span.tabTitle {
   margin-right: -8px;
   background-repeat: no-repeat;
   background-position: top right;
-  background-image: url(Main/Tabs/roundItemRight.selected.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: right; */
+  background-image: url(Main/Tabs/roundItemRight.selected.png);  
   height: 31px;
   _width: 8px;
 }
@@ -6784,7 +6784,7 @@ span.tabTitle {
   padding-right: 1px;*/
   background-repeat: no-repeat;
   background-position: top left;
-  background-image: url(Main/Tabs/roundItemLeft.normal.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/Tabs/roundItemLeft.normal.png);  
   cursor: default;
   white-space: nowrap;
   z-index: 4;
@@ -6800,7 +6800,7 @@ span.tabTitle {
   margin-right: 16px;
   background-repeat: repeat-x;
   background-position: top left;
-  background-image: url(Main/Tabs/roundItemFill.normal.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
+  background-image: url(Main/Tabs/roundItemFill.normal.png);  
   height: 34px;
 }
 
@@ -6812,7 +6812,7 @@ span.tabTitle {
   margin-right: -8px;
   background-repeat: no-repeat;
   background-position: top right;
-  background-image: url(Main/Tabs/roundItemRight.normal.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: right; */
+  background-image: url(Main/Tabs/roundItemRight.normal.png);  
   height: 34px;
   _width: 8px;
 }
@@ -6831,7 +6831,7 @@ span.tabTitle {
   padding-right: 1px;*/
   background-repeat: no-repeat;
   background-position: top left;
-  background-image: url(Main/Tabs/roundItemLeft.selected.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/Tabs/roundItemLeft.selected.png);  
   cursor: default;
   white-space: nowrap;
   z-index: 5;
@@ -6845,7 +6845,7 @@ span.tabTitle {
   margin-right: 10px;
   background-repeat: repeat-x;
   background-position: top left;
-  background-image: url(Main/Tabs/roundItemFill.selected.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
+  background-image: url(Main/Tabs/roundItemFill.selected.png);  
 }
 
 .dojoTabcurrentfirst div span {
@@ -6855,7 +6855,7 @@ span.tabTitle {
   margin-right: -8px;
   background-repeat: no-repeat;
   background-position: top right;
-  background-image: url(Main/Tabs/roundItemRight.selected.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: right; */
+  background-image: url(Main/Tabs/roundItemRight.selected.png);  
   height: 31px;
   _width: 8px;
 }
@@ -6874,7 +6874,7 @@ span.tabTitle {
   padding-right: 1px;*/
   background-repeat: no-repeat;
   background-position: top left;
-  background-image: url(Main/Tabs/roundItemLeft.normal.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/Tabs/roundItemLeft.normal.png);  
   cursor: default;
   white-space: nowrap;
   z-index: 4;
@@ -6890,7 +6890,7 @@ span.tabTitle {
   margin-right: 16px;
   background-repeat: repeat;
   background-position: top left;
-  background-image: url(Main/Tabs/roundItemFill.normal.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
+  background-image: url(Main/Tabs/roundItemFill.normal.png);  
   height: 34px;
 }
 
@@ -6902,7 +6902,7 @@ span.tabTitle {
   margin-right: -8px;
   background-repeat: no-repeat;
   background-position: top right;
-  background-image: url(Main/Tabs/roundItemRight.normal.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: right; */
+  background-image: url(Main/Tabs/roundItemRight.normal.png);  
   height: 34px;
   _width: 8px;
 }
@@ -6922,7 +6922,7 @@ span.tabTitle {
   padding-right: 1px;*/
   background-repeat: no-repeat;
   background-position: top left;
-  background-image: url(Main/Tabs/roundItemLeft.selected.focused.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/Tabs/roundItemLeft.selected.focused.png);  
   cursor: default;
   white-space: nowrap;
   z-index: 5;
@@ -6936,7 +6936,7 @@ span.tabTitle {
   margin-right: 10px;
   background-repeat: repeat-x;
   background-position: top left;
-  background-image: url(Main/Tabs/roundItemFill.selected.focused.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
+  background-image: url(Main/Tabs/roundItemFill.selected.focused.png);  
 }
 
 .dojoTabcurrent_focus div span {
@@ -6946,7 +6946,7 @@ span.tabTitle {
   margin-right: -8px;
   background-repeat: no-repeat;
   background-position: top right;
-  background-image: url(Main/Tabs/roundItemRight.selected.focused.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: right; */
+  background-image: url(Main/Tabs/roundItemRight.selected.focused.png);  
   height: 31px;
   _width: 8px;
 }
@@ -6965,7 +6965,7 @@ span.tabTitle {
   padding-right: 1px;*/
   background-repeat: no-repeat;
   background-position: top left;
-  background-image: url(Main/Tabs/roundItemLeft.normal.focused.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/Tabs/roundItemLeft.normal.focused.png);  
   cursor: default;
   white-space: nowrap;
   z-index: 4;
@@ -6981,7 +6981,7 @@ span.tabTitle {
   margin-right: 16px;
   background-repeat: repeat;
   background-position: top left;
-  background-image: url(Main/Tabs/roundItemFill.normal.focused.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
+  background-image: url(Main/Tabs/roundItemFill.normal.focused.png);  
   height: 34px;
 }
 
@@ -6993,7 +6993,7 @@ span.tabTitle {
   margin-right: -8px;
   background-repeat: no-repeat;
   background-position: top right;
-  background-image: url(Main/Tabs/roundItemRight.normal.focused.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: right; */
+  background-image: url(Main/Tabs/roundItemRight.normal.focused.png);  
   height: 34px;
   _width: 8px;
 }
@@ -7012,7 +7012,7 @@ span.tabTitle {
   padding-right: 1px;*/
   background-repeat: no-repeat;
   background-position: top left;
-  background-image: url(Main/Tabs/roundItemLeft.selected.focused.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/Tabs/roundItemLeft.selected.focused.png);  
   cursor: default;
   white-space: nowrap;
   z-index: 5;
@@ -7026,7 +7026,7 @@ span.tabTitle {
   margin-right: 10px;
   background-repeat: repeat-x;
   background-position: top left;
-  background-image: url(Main/Tabs/roundItemFill.selected.focused.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
+  background-image: url(Main/Tabs/roundItemFill.selected.focused.png);  
 }
 
 .dojoTabcurrentfirst_focus div span {
@@ -7036,7 +7036,7 @@ span.tabTitle {
   margin-right: -8px;
   background-repeat: no-repeat;
   background-position: top right;
-  background-image: url(Main/Tabs/roundItemRight.selected.focused.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: right; */
+  background-image: url(Main/Tabs/roundItemRight.selected.focused.png);  
   height: 31px;
   _width: 8px;
 }
@@ -7055,7 +7055,7 @@ span.tabTitle {
   padding-right: 1px;*/
   background-repeat: no-repeat;
   background-position: top left;
-  background-image: url(Main/Tabs/roundItemLeft.normal.focused.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/Tabs/roundItemLeft.normal.focused.png);  
   cursor: default;
   white-space: nowrap;
   z-index: 4;
@@ -7071,7 +7071,7 @@ span.tabTitle {
   margin-right: 16px;
   background-repeat: repeat;
   background-position: top left;
-  background-image: url(Main/Tabs/roundItemFill.normal.focused.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
+  background-image: url(Main/Tabs/roundItemFill.normal.focused.png);  
   height: 34px;
 }
 
@@ -7083,7 +7083,7 @@ span.tabTitle {
   margin-right: -8px;
   background-repeat: no-repeat;
   background-position: top right;
-  background-image: url(Main/Tabs/roundItemRight.normal.focused.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: right; */
+  background-image: url(Main/Tabs/roundItemRight.normal.focused.png);  
   height: 34px;
   _width: 8px;
 }
@@ -7226,7 +7226,7 @@ span.tabTitle {
   border-bottom: 1px solid #000000;
   background-repeat: repeat-x;
   background-position: top left;
-  background-image: url(Main/Tabs/TabPane_top_bg.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; sprite-margin-bottom: 16px */
+  background-image: url(Main/Tabs/TabPane_top_bg.png);  
   background-color: #505050;
 }
 
@@ -7238,7 +7238,7 @@ tr#paramParentTabContainer .tabBackGroundInit {
   position: relative;
   background-repeat: repeat-x;
   background-position: top left;
-  background-image: url(Main/Tabs/inlayFill.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; sprite-margin-bottom: 16px */
+  background-image: url(Main/Tabs/inlayFill.png);  
   margin-left: 0px;
   padding-left: 2px;
   height: 17px;
@@ -7253,7 +7253,7 @@ tr#paramParentTabContainer .tabBackGroundInit {
   padding-left : 0px;
   background-repeat: no-repeat;
   background-position: top left;
-  background-image: url(Main/Tabs/inlaySeparator.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/Tabs/inlaySeparator.png);  
   overflow: hidden;
   height: 15px;
   width: 2px;
@@ -7267,7 +7267,7 @@ tr#paramParentTabContainer .tabBackGroundInit {
   margin-right:-5px; /*~RTL   margin-right:15px; */
   background-repeat: no-repeat !important;
   background-position: top left;
-  background-image: url(Main/Tabs/inlayLeft.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/Tabs/inlayLeft.png);  
 
   width: 5px;
   height: 17px;
@@ -7281,7 +7281,7 @@ tr#paramParentTabContainer .tabBackGroundInit {
   margin-right: 15px; /*~RTL   margin-right: -5px; */
   background-repeat: no-repeat !important;
   background-position: top left; /*~RTL   background-position: top right; */
-  background-image: url(Main/Tabs/inlayRight.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; sprite-alignment-rtl: right; */
+  background-image: url(Main/Tabs/inlayRight.png);  
   width: 5px;
   height: 17px;
   vertical-align: top;
@@ -7394,7 +7394,7 @@ A.dojoTabLink_focus {
   color: black;
   background-repeat: repeat-x;
   background-position: top left;
-  background-image: url(Main/Tabs/singleTab.focused.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
+  background-image: url(Main/Tabs/singleTab.focused.png);  
   border-style: solid;
   border-width: 2px;
   border-color: #4D98CA;
@@ -7439,7 +7439,7 @@ A.Linkwhite {
 .Main_ToolBar_bg {
   background-repeat: repeat-x;
   background-position: top center;
-  background-image: url(Main/ToolBar/backgroundCenter.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
+  background-image: url(Main/ToolBar/backgroundCenter.png);  
   background-color: #505050;
 }
 
@@ -7448,7 +7448,7 @@ A.Linkwhite {
   height: 48px;
   background-repeat: no-repeat;
   background-position: top center;
-  background-image: url(Main/ToolBar/backgroundLeft.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/ToolBar/backgroundLeft.png);  
 }
 
 .Main_ToolBar_bg_right {
@@ -7456,7 +7456,7 @@ A.Linkwhite {
   height: 48px;
   background-repeat: repeat-x;
   background-position: top center;
-  background-image: url(Main/ToolBar/backgroundRight.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
+  background-image: url(Main/ToolBar/backgroundRight.png);  
 }
 
 
@@ -7466,13 +7466,13 @@ A.Linkwhite {
   width: 9px;
   background-repeat: no-repeat;
   background-position: center right;
-  background-image: url(Main/ToolBar/labelLeft.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: right; */
+  background-image: url(Main/ToolBar/labelLeft.png);  
 }
 
 .Main_ToolBar_textlabel_bg_body {
   background-repeat: repeat-x;
   background-position: center center;
-  background-image: url(Main/ToolBar/labelBody.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; sprite-margin-top: 4px */
+  background-image: url(Main/ToolBar/labelBody.png);  
 }
 
 .Main_ToolBar_textlabel_bg_right {
@@ -7480,7 +7480,7 @@ A.Linkwhite {
   width: 9px;
   background-repeat: no-repeat;
   background-position: center left; /*~RTL   background-position: 100% 50%; */
-  background-image: url(Main/ToolBar/labelRight.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; sprite-alignment-rtl: right; sprite-margin-top: 4px */
+  background-image: url(Main/ToolBar/labelRight.png);  
 }
 
 a.Main_ToolBar_text_relatedinfo {
@@ -7545,7 +7545,7 @@ a.Main_ToolBar_text_pagerange:hover {
   width: 16px;
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/ToolBar/separator.png);  /** sprite-ref: xxspritexx_V; sprite-margin-left: 7px; sprite-margin-right: 7px; */
+  background-image: url(Main/ToolBar/separator.png);  
 }
 
 
@@ -7584,13 +7584,13 @@ a.Main_ToolBar_Button:visited {
 a.Main_ToolBar_Button:hover {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/ToolBar/button.rollover.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/ToolBar/button.rollover.png);  
 }
 
 a.Main_ToolBar_Button:active {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/ToolBar/button.pressed.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/ToolBar/button.pressed.png);  
   -moz-outline-style: none;
 }
 
@@ -7607,7 +7607,7 @@ a.Main_ToolBar_Button_Selected {
   -moz-outline-style: none;
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/ToolBar/button.selected.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/ToolBar/button.selected.png);  
 }
 
 
@@ -7645,13 +7645,13 @@ a.Main_ToolBar_Button_Selected:visited {
 a.Main_ToolBar_Button_Selected:hover {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/ToolBar/button.selected.rollover.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/ToolBar/button.selected.rollover.png);  
 }
 
 a.Main_ToolBar_Button_Selected:active {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/ToolBar/button.pressed.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/ToolBar/button.pressed.png);  
   -moz-outline-style: none;
 }
 
@@ -7668,131 +7668,131 @@ a.Main_ToolBar_Button_Selected:active {
 .Main_ToolBar_Button_Icon_Edition {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/ToolBar/iconEdition.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/ToolBar/iconEdition.png);  
 
 }
 
 .Main_ToolBar_Button_Icon_Edition_new {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/ToolBar/iconEditionNew.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/ToolBar/iconEditionNew.png);  
 
 }
 
 .Main_ToolBar_Button_Icon_Relation {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/ToolBar/iconRelation.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/ToolBar/iconRelation.png);  
 
 }
 
 .Main_ToolBar_Button_Icon_New {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/ToolBar/iconNew.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/ToolBar/iconNew.png);  
 }
 
 .Main_ToolBar_Button_Icon_Find {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/ToolBar/iconSearch.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/ToolBar/iconSearch.png);  
 }
 
 .Main_ToolBar_Button_Icon_Save_Relation {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/ToolBar/iconSaveAndRelation.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/ToolBar/iconSaveAndRelation.png);  
 }
 
 .Main_ToolBar_Button_Icon_Save_New {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/ToolBar/iconSaveAndNew.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/ToolBar/iconSaveAndNew.png);  
 }
 
 .Main_ToolBar_Button_Icon_Save {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/ToolBar/iconSave.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/ToolBar/iconSave.png);  
 }
 
 .Main_ToolBar_Button_Icon_Save_Next {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/ToolBar/iconSaveAndNext.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/ToolBar/iconSaveAndNext.png);  
 }
 
 .Main_ToolBar_Button_Icon_Delete {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/ToolBar/iconErase.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/ToolBar/iconErase.png);  
 }
 
 .Main_ToolBar_Button_Icon_Undo {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/ToolBar/iconUndo.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/ToolBar/iconUndo.png);  
 }
 
 .Main_ToolBar_Button_Icon_Refresh {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/ToolBar/iconRefresh.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/ToolBar/iconRefresh.png);  
 
 }
 
 .Main_ToolBar_Button_Icon_Tree {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/ToolBar/iconOrganzieMenu.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/ToolBar/iconOrganzieMenu.png);  
 }
 
 .Main_ToolBar_Button_Icon_Attachment {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/ToolBar/iconAttach.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/ToolBar/iconAttach.png);  
 }
 
 .Main_ToolBar_Button_Icon_AttachedDocuments {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/ToolBar/iconAttachedDocuments.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/ToolBar/iconAttachedDocuments.png);  
 }
 
 .Main_ToolBar_Button_Icon_Excel {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/ToolBar/iconExportExcel.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/ToolBar/iconExportExcel.png);  
 }
 
 .Main_ToolBar_Button_Icon_ExportExcel {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/ToolBar/iconExportExcel.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/ToolBar/iconExportExcel.png);  
 }
 
 .Main_ToolBar_Button_Icon_ExportForm {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/ToolBar/iconExport.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/ToolBar/iconExport.png);  
 }
 
 .Main_ToolBar_Button_Icon_ExportCsv {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/ToolBar/iconExport.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/ToolBar/iconExport.png);  
 }
 
 .Main_ToolBar_Button_Icon_ExportPDF {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/ToolBar/iconExportPdf.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/ToolBar/iconExportPdf.png);  
 }
 
 .Main_ToolBar_Button_Icon_Print {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/ToolBar/iconPrint.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/ToolBar/iconPrint.png);  
 }
 
 .Main_ToolBar_Button_Icon_Email {
@@ -7802,55 +7802,55 @@ a.Main_ToolBar_Button_Selected:active {
 .Main_ToolBar_Button_Icon_Search {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/ToolBar/iconSearch.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/ToolBar/iconSearch.png);  
 }
 
 .Main_ToolBar_Button_Icon_SearchFiltered {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/ToolBar/iconSearchFilter.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/ToolBar/iconSearchFilter.png);  
 }
 
 .Main_ToolBar_Button_Icon_First {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/ToolBar/iconFirst.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/ToolBar/iconFirst.png);  
 }
 
 .Main_ToolBar_Button_Icon_Previous {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/ToolBar/iconPrevious.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/ToolBar/iconPrevious.png);  
 }
 
 .Main_ToolBar_Button_Icon_Next {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/ToolBar/iconNext.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/ToolBar/iconNext.png);  
 }
 
 .Main_ToolBar_Button_Icon_Last {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/ToolBar/iconLast.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/ToolBar/iconLast.png);  
 }
 
 .Main_ToolBar_Button_Icon_RelatedInfo {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/ToolBar/iconRelatedInfo.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/ToolBar/iconRelatedInfo.png);  
 }
 
 .Main_ToolBar_Button_Icon_Audit {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/ToolBar/iconAudit.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/ToolBar/iconAudit.png);  
 }
 
 .Main_ToolBar_Button_Icon_AuditTrail {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/ToolBar/iconAuditTrail.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/ToolBar/iconAuditTrail.png);  
 }
 
 
@@ -7858,103 +7858,103 @@ a.Main_ToolBar_Button_Selected:active {
 .Main_ToolBar_Button_Icon_New_disabled {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/ToolBar/iconNew.disabled.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/ToolBar/iconNew.disabled.png);  
 }
 
 .Main_ToolBar_Button_Icon_Find_disabled {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/ToolBar/iconSearch.disabled.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/ToolBar/iconSearch.disabled.png);  
 }
 
 .Main_ToolBar_Button_Icon_Save_Relation_disabled {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/ToolBar/iconSaveAndRelation.disabled.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/ToolBar/iconSaveAndRelation.disabled.png);  
 }
 
 .Main_ToolBar_Button_Icon_Save_New_disabled {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/ToolBar/iconSaveAndNew.disabled.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/ToolBar/iconSaveAndNew.disabled.png);  
 }
 
 .Main_ToolBar_Button_Icon_Save_disabled {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/ToolBar/iconSave.disabled.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/ToolBar/iconSave.disabled.png);  
 }
 
 .Main_ToolBar_Button_Icon_Save_Next_disabled {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/ToolBar/iconSaveAndNext.disabled.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/ToolBar/iconSaveAndNext.disabled.png);  
 }
 
 .Main_ToolBar_Button_Icon_Delete_disabled {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/ToolBar/iconErase.disabled.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/ToolBar/iconErase.disabled.png);  
 }
 
 .Main_ToolBar_Button_Icon_Undo_disabled {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/ToolBar/iconUndo.disabled.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/ToolBar/iconUndo.disabled.png);  
 }
 
 .Main_ToolBar_Button_Icon_Tree_disabled {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/ToolBar/iconOrganzieMenu.disabled.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/ToolBar/iconOrganzieMenu.disabled.png);  
 }
 
 .Main_ToolBar_Button_Icon_Attachment_disabled {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/ToolBar/iconAttach.disabled.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/ToolBar/iconAttach.disabled.png);  
 }
 
 .Main_ToolBar_Button_Icon_AttachedDocuments_disabled {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/ToolBar/iconAttachedDocuments.disabled.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/ToolBar/iconAttachedDocuments.disabled.png);  
 }
 
 .Main_ToolBar_Button_Icon_Excel_disabled {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/ToolBar/iconExportExcel.disabled.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/ToolBar/iconExportExcel.disabled.png);  
 }
 
 .Main_ToolBar_Button_Icon_ExportExcel_disabled {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/ToolBar/iconExportExcel.disabled.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/ToolBar/iconExportExcel.disabled.png);  
 }
 
 .Main_ToolBar_Button_Icon_ExportForm_disabled {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/ToolBar/iconExport.disabled.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/ToolBar/iconExport.disabled.png);  
 }
 
 .Main_ToolBar_Button_Icon_ExportCsv_disabled {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/ToolBar/iconExport.disabled.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/ToolBar/iconExport.disabled.png);  
 }
 
 .Main_ToolBar_Button_Icon_ExportPDF_disabled {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/ToolBar/iconExportPdf.disabled.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/ToolBar/iconExportPdf.disabled.png);  
 }
 
 .Main_ToolBar_Button_Icon_Print_disabled {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/ToolBar/iconPrint.disabled.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/ToolBar/iconPrint.disabled.png);  
 }
 
 .Main_ToolBar_Button_Icon_Email_disabled {
@@ -7964,55 +7964,55 @@ a.Main_ToolBar_Button_Selected:active {
 .Main_ToolBar_Button_Icon_Search_disabled {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/ToolBar/iconSearch.disabled.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/ToolBar/iconSearch.disabled.png);  
 }
 
 .Main_ToolBar_Button_Icon_SearchFiltered_disabled {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/ToolBar/iconSearchFilter.disabled.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/ToolBar/iconSearchFilter.disabled.png);  
 }
 
 .Main_ToolBar_Button_Icon_First_disabled {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/ToolBar/iconFirst.disabled.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/ToolBar/iconFirst.disabled.png);  
 }
 
 .Main_ToolBar_Button_Icon_Previous_disabled {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/ToolBar/iconPrevious.disabled.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/ToolBar/iconPrevious.disabled.png);  
 }
 
 .Main_ToolBar_Button_Icon_Next_disabled {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/ToolBar/iconNext.disabled.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/ToolBar/iconNext.disabled.png);  
 }
 
 .Main_ToolBar_Button_Icon_Last_disabled {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/ToolBar/iconLast.disabled.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/ToolBar/iconLast.disabled.png);  
 }
 
 .Main_ToolBar_Button_Icon_RelatedInfo_disabled {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/ToolBar/iconRelatedInfo.disabled.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/ToolBar/iconRelatedInfo.disabled.png);  
 }
 
 .Main_ToolBar_Button_Icon_Audit_disabled {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/ToolBar/iconAudit.disabled.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/ToolBar/iconAudit.disabled.png);  
 }
 
 .Main_ToolBar_Button_Icon_AuditTrail_disabled {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Main/ToolBar/iconAuditTrail.disabled.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Main/ToolBar/iconAuditTrail.disabled.png);  
 }
 
 
@@ -8261,7 +8261,7 @@ td.ToolBar_ExpansibleMenu_bg_active {
   height: 34px;
   background-repeat: repeat-x;
   background-position: top center;
-  background-image: url(Menu/NavBar/backgroundCenter.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
+  background-image: url(Menu/NavBar/backgroundCenter.png);  
 }
 
 .Menu_NavBar_bg_left {
@@ -8269,7 +8269,7 @@ td.ToolBar_ExpansibleMenu_bg_active {
   height: 34px;
   background-repeat: repeat-x;
   background-position: top center;
-  background-image: url(Menu/NavBar/backgroundLeft.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
+  background-image: url(Menu/NavBar/backgroundLeft.png);  
 }
 
 .Menu_NavBar_bg_right {
@@ -8277,7 +8277,7 @@ td.ToolBar_ExpansibleMenu_bg_active {
   height: 34px;
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Menu/NavBar/backgroundRight.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Menu/NavBar/backgroundRight.png);  
 }
 
 .Menu_NavBar_bg_logo_left {
@@ -8285,7 +8285,7 @@ td.ToolBar_ExpansibleMenu_bg_active {
   height: 34px;
   background-repeat: no-repeat;
   background-position: center right;
-  background-image: url(Menu/NavBar/logoLeft.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: right; */
+  background-image: url(Menu/NavBar/logoLeft.png);  
 }
 
 .Menu_NavBar_bg_logo_right {
@@ -8293,7 +8293,7 @@ td.ToolBar_ExpansibleMenu_bg_active {
   height: 34px;
   background-repeat: no-repeat;
   background-position: center left;
-  background-image: url(Menu/NavBar/logoRight.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Menu/NavBar/logoRight.png);  
 }
 
 .Menu_NavBar_bg_logo {
@@ -8384,7 +8384,7 @@ td.ToolBar_ExpansibleMenu_bg_active {
 .Menu_ToolBar_bg {
   background-repeat: repeat-x;
   background-position: top center;
-  background-image: url(Menu/ToolBar/backgroundCenter.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; sprite-margin-bottom: 4px; */
+  background-image: url(Menu/ToolBar/backgroundCenter.png);  
   background-color: #505050;
 }
 
@@ -8393,7 +8393,7 @@ td.ToolBar_ExpansibleMenu_bg_active {
   height: 52px;
   background-repeat: repeat-x;
   background-position: top center;
-  background-image: url(Menu/ToolBar/backgroundLeft.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; sprite-margin-bottom: 4px; */
+  background-image: url(Menu/ToolBar/backgroundLeft.png);  
   background-color: #505050;
 }
 
@@ -8402,7 +8402,7 @@ td.ToolBar_ExpansibleMenu_bg_active {
   height: 52px;
   background-repeat: no-repeat;
   background-position: top center;
-  background-image: url(Menu/ToolBar/backgroundRight.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; sprite-margin-bottom: 4px; */
+  background-image: url(Menu/ToolBar/backgroundRight.png);  
   background-color: #505050;
 }
 
@@ -8412,13 +8412,13 @@ td.ToolBar_ExpansibleMenu_bg_active {
   width: 9px;
   background-repeat: no-repeat;
   background-position: center right; /*~RTL   background-position: center left; */
-  background-image: url(Menu/ToolBar/labelLeft.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: right; sprite-alignment-rtl: left; */
+  background-image: url(Menu/ToolBar/labelLeft.png);  
 }
 
 .Menu_ToolBar_textlabel_bg_body {
   background-repeat: repeat-x;
   background-position: center center;
-  background-image: url(Menu/ToolBar/labelBody.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
+  background-image: url(Menu/ToolBar/labelBody.png);  
 }
 
 .Menu_ToolBar_textlabel_bg_right {
@@ -8426,7 +8426,7 @@ td.ToolBar_ExpansibleMenu_bg_active {
   width: 9px;
   background-repeat: no-repeat;
   background-position: center left; /*~RTL   background-position: center right; */
-  background-image: url(Menu/ToolBar/labelRight.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; sprite-alignment-rtl: right; */
+  background-image: url(Menu/ToolBar/labelRight.png);  
 }
 
 
@@ -8507,12 +8507,12 @@ a.Menu_ToolBar_Button:visited {
 a.Menu_ToolBar_Button:hover {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Menu/ToolBar/button.rollover.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Menu/ToolBar/button.rollover.png);  
 }
 a.Menu_ToolBar_Button:active {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Menu/ToolBar/button.pressed.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Menu/ToolBar/button.pressed.png);  
   -moz-outline-style: none;
 }
 
@@ -8530,37 +8530,37 @@ a.Menu_ToolBar_Button:active {
 .Menu_ToolBar_Button_Icon_expand {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Menu/ToolBar/iconExpand.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Menu/ToolBar/iconExpand.png);  
 }
 
 .Menu_ToolBar_Button_Icon_contract {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Menu/ToolBar/iconContract.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Menu/ToolBar/iconContract.png);  
 }
 
 .Menu_ToolBar_Button_Icon_user {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Menu/ToolBar/iconUser.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Menu/ToolBar/iconUser.png);  
 }
 
 .Menu_ToolBar_Button_Icon_logout {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Menu/ToolBar/iconLogout.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Menu/ToolBar/iconLogout.png);  
 }
 
 .Menu_ToolBar_Button_Icon_alert {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Menu/ToolBar/iconAlert.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Menu/ToolBar/iconAlert.png);  
 }
 
 .Menu_ToolBar_Button_Icon_alertActive {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Menu/ToolBar/iconAlertActive.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Menu/ToolBar/iconAlertActive.png);  
 }
 
 
@@ -8568,37 +8568,37 @@ a.Menu_ToolBar_Button:active {
 .Menu_ToolBar_Button_Icon_expand_disabled {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Menu/ToolBar/iconExpand.disabled.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Menu/ToolBar/iconExpand.disabled.png);  
 }
 
 .Menu_ToolBar_Button_Icon_contract_disabled {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Menu/ToolBar/iconContract.disabled.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Menu/ToolBar/iconContract.disabled.png);  
 }
 
 .Menu_ToolBar_Button_Icon_user_disabled {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Menu/ToolBar/iconUser.disabled.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Menu/ToolBar/iconUser.disabled.png);  
 }
 
 .Menu_ToolBar_Button_Icon_logout_disabled {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Menu/ToolBar/iconLogout.disabled.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Menu/ToolBar/iconLogout.disabled.png);  
 }
 
 .Menu_ToolBar_Button_Icon_alert_disabled {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Menu/ToolBar/iconAlert.disabled.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Menu/ToolBar/iconAlert.disabled.png);  
 }
 
 .Menu_ToolBar_Button_Icon_alertActive_disabled {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Menu/ToolBar/iconAlertActive.disabled.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Menu/ToolBar/iconAlertActive.disabled.png);  
 }
 
 .Menu_ToolBar_Space {
@@ -8651,7 +8651,7 @@ a.Menu_ToolBar_Button:active {
   color: #FFFFFF;
   background-repeat: repeat-x;
   background-position: top left;
-  background-image: url(Menu/Tree/bigbutton.normal.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
+  background-image: url(Menu/Tree/bigbutton.normal.png);  
   background-color: #292929;
   font-weight: normal;
 }
@@ -8663,7 +8663,7 @@ a.Menu_ToolBar_Button:active {
 #Menu_Client table table tr.Opened {
   background-repeat: repeat-x;
   background-position: top left;
-  background-image: url(Menu/Tree/bigbutton.opened.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
+  background-image: url(Menu/Tree/bigbutton.opened.png);  
   background-color: #e8e8e8;
   color: #333333;
   font-weight: bold;
@@ -8672,7 +8672,7 @@ a.Menu_ToolBar_Button:active {
 #Menu_Client table table tr.Hover {
   background-repeat: repeat-x;
   background-position: top left;
-  background-image: url(Menu/Tree/bigbutton.rollover.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
+  background-image: url(Menu/Tree/bigbutton.rollover.png);  
   background-color: #dbdbdb;
   color: #333333;
   font-weight: bold;
@@ -8681,7 +8681,7 @@ a.Menu_ToolBar_Button:active {
 #Menu_Client table table tr.Selected {
   background-repeat: repeat-x;
   background-position: top left;
-  background-image: url(Menu/Tree/bigbutton.selected.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
+  background-image: url(Menu/Tree/bigbutton.selected.png);  
   background-color: #e8e8e8;
   color: #333333;
   font-weight: bold;
@@ -8690,7 +8690,7 @@ a.Menu_ToolBar_Button:active {
 #Menu_Client table table tr.Pressed {
   background-repeat: repeat-x;
   background-position: top left;
-  background-image: url(Menu/Tree/bigbutton.pressed.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
+  background-image: url(Menu/Tree/bigbutton.pressed.png);  
   background-color: #dbdbdb;
   color: #333333;
   font-weight: bold;
@@ -8699,7 +8699,7 @@ a.Menu_ToolBar_Button:active {
 #Menu_Client table table tr.Focused {
   background-repeat: repeat-x;
   background-position: top left;
-  background-image: url(Menu/Tree/bigbutton.focused.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
+  background-image: url(Menu/Tree/bigbutton.focused.png);  
   color: #333333;
   font-weight: bold;
 }
@@ -8750,7 +8750,7 @@ a.Menu_ToolBar_Button:active {
   background: none;
   background-repeat: repeat-x;
   background-position: top left;
-  background-image: url(Menu/Tree/smallbutton.focused.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
+  background-image: url(Menu/Tree/smallbutton.focused.png);  
   color: #333333;
   font-weight: normal;
 }
@@ -8796,7 +8796,7 @@ a.Menu_ToolBar_Button:active {
   background: none;
   background-repeat: repeat-x;
   background-position: top left;
-  background-image: url(Menu/Tree/smallbutton.focused.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
+  background-image: url(Menu/Tree/smallbutton.focused.png);  
   color: #333333;
   font-weight: normal;
 }
@@ -8841,7 +8841,7 @@ a.Menu_ToolBar_Button:active {
   background: none;
   background-repeat: repeat-x;
   background-position: top left;
-  background-image: url(Menu/Tree/smallbutton.focused.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
+  background-image: url(Menu/Tree/smallbutton.focused.png);  
   color: #333333;
   font-weight: normal;
 }
@@ -8886,7 +8886,7 @@ a.Menu_ToolBar_Button:active {
   background: none;
   background-repeat: repeat-x;
   background-position: top left;
-  background-image: url(Menu/Tree/smallbutton.focused.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
+  background-image: url(Menu/Tree/smallbutton.focused.png);  
   color: #333333;
   font-weight: normal;
 }
@@ -8900,139 +8900,139 @@ a.Menu_ToolBar_Button:active {
 #folderCell1_153 .Menu_Client_Button_BigIcon_folderClosed {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Menu/Tree/applicationManagement.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Menu/Tree/applicationManagement.png);  
 }
 
 #folderCell1_153 .Menu_Client_Button_BigIcon_folderOpened {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Menu/Tree/applicationManagement.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Menu/Tree/applicationManagement.png);  
 }
 
 #folderCell1_155 .Menu_Client_Button_BigIcon_folderClosed {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Menu/Tree/generalSetup.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Menu/Tree/generalSetup.png);  
 }
 
 #folderCell1_155 .Menu_Client_Button_BigIcon_folderOpened {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Menu/Tree/generalSetup.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Menu/Tree/generalSetup.png);  
 }
 
 #folderCell1_800237 .Menu_Client_Button_BigIcon_folderClosed {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Menu/Tree/masterDataManagement.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Menu/Tree/masterDataManagement.png);  
 }
 
 #folderCell1_800237 .Menu_Client_Button_BigIcon_folderOpened {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Menu/Tree/masterDataManagement.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Menu/Tree/masterDataManagement.png);  
 }
 
 #folderCell1_203 .Menu_Client_Button_BigIcon_folderClosed {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Menu/Tree/procurementManagement.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Menu/Tree/procurementManagement.png);  
 }
 
 #folderCell1_203 .Menu_Client_Button_BigIcon_folderOpened {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Menu/Tree/procurementManagement.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Menu/Tree/procurementManagement.png);  
 }
 
 #folderCell1_800243 .Menu_Client_Button_BigIcon_folderClosed {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Menu/Tree/warehouseManagement.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Menu/Tree/warehouseManagement.png);  
 }
 
 #folderCell1_800243 .Menu_Client_Button_BigIcon_folderOpened {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Menu/Tree/warehouseManagement.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Menu/Tree/warehouseManagement.png);  
 }
 
 #folderCell1_800121 .Menu_Client_Button_BigIcon_folderClosed {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Menu/Tree/productionManagement.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Menu/Tree/productionManagement.png);  
 }
 
 #folderCell1_800121 .Menu_Client_Button_BigIcon_folderOpened {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Menu/Tree/productionManagement.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Menu/Tree/productionManagement.png);  
 }
 
 #folderCell1_800212 .Menu_Client_Button_BigIcon_folderClosed {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Menu/Tree/materialResourcePlanning.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Menu/Tree/materialResourcePlanning.png);  
 }
 
 #folderCell1_800212 .Menu_Client_Button_BigIcon_folderOpened {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Menu/Tree/materialResourcePlanning.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Menu/Tree/materialResourcePlanning.png);  
 }
 
 #folderCell1_166 .Menu_Client_Button_BigIcon_folderClosed {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Menu/Tree/salesManagement.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Menu/Tree/salesManagement.png);  
 }
 
 #folderCell1_166 .Menu_Client_Button_BigIcon_folderOpened {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Menu/Tree/salesManagement.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Menu/Tree/salesManagement.png);  
 }
 
 #folderCell1_160 .Menu_Client_Button_BigIcon_folderClosed {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Menu/Tree/projectManagement.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Menu/Tree/projectManagement.png);  
 }
 
 #folderCell1_160 .Menu_Client_Button_BigIcon_folderOpened {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Menu/Tree/projectManagement.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Menu/Tree/projectManagement.png);  
 }
 
 #folderCell1_278 .Menu_Client_Button_BigIcon_folderClosed {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Menu/Tree/financialManagement.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Menu/Tree/financialManagement.png);  
 }
 
 #folderCell1_278 .Menu_Client_Button_BigIcon_folderOpened {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Menu/Tree/financialManagement.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Menu/Tree/financialManagement.png);  
 }
 
 .Menu_Client_Button_BigIcon_folderClosed {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Menu/Tree/iconPackageClosed.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Menu/Tree/iconPackageClosed.png);  
 }
 
 .Menu_Client_Button_BigIcon_folderOpened {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Menu/Tree/iconPackageOpened.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Menu/Tree/iconPackageOpened.png);  
 }
 
 .Menu_Client_Button_BigIcon_favourites {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Menu/Tree/iconFavourites.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Menu/Tree/iconFavourites.png);  
 }
 
 
@@ -9045,86 +9045,86 @@ a.Menu_ToolBar_Button:active {
 .Menu_Client_Button_Icon_folderClosed {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Menu/Tree/iconFolderClosed.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Menu/Tree/iconFolderClosed.png);  
 }
 
 .Menu_Client_Button_Icon_folderOpened{
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Menu/Tree/iconFolderOpened.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Menu/Tree/iconFolderOpened.png);  
 }
 
 .Menu_Client_Button_Icon_folderWithoutChildren{
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Menu/Tree/iconFolderClosed.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Menu/Tree/iconFolderClosed.png);  
 }
 
 .Menu_Client_Button_Icon_folderOpenedWithoutChildren{
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Menu/Tree/iconFolderOpened.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Menu/Tree/iconFolderOpened.png);  
 }
 
 .Menu_Client_Button_Icon_child {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Menu/Tree/iconElement.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Menu/Tree/iconElement.png);  
 }
 
 .Menu_Client_Button_Icon_childProcesses {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Menu/Tree/iconProcess.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Menu/Tree/iconProcess.png);  
 }
 
 .Menu_Client_Button_Icon_childTasks {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Menu/Tree/iconTask.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Menu/Tree/iconTask.png);  
 }
 
 .Menu_Client_Button_Icon_childReports {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Menu/Tree/iconReport.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Menu/Tree/iconReport.png);  
 }
 
 .Menu_Client_Button_Icon_childWindows {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Menu/Tree/iconAutoForm.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Menu/Tree/iconAutoForm.png);  
 }
 
 .Menu_Client_Button_Icon_childForms {
   background-repeat: no-repeat;
   background-position: center center;
   /*background-image: url(iconConfigForm.png);*/
-  background-image: url(Menu/Tree/iconProcess.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Menu/Tree/iconProcess.png);  
 }
 
 .Menu_Client_Button_Icon_childWorkFlow {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Menu/Tree/iconWorkflow.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Menu/Tree/iconWorkflow.png);  
 }
 
 .Menu_Client_Button_Icon_childWorkBench {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Menu/Tree/iconWorkbench.gif);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Menu/Tree/iconWorkbench.gif);  
 }
 
 .Menu_Client_Button_Icon_childInfo {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Menu/Tree/iconInfo.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Menu/Tree/iconInfo.png);  
 }
 
 .Menu_Client_Button_Icon_childExternalLink {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Menu/Tree/iconExternalLink.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Menu/Tree/iconExternalLink.png);  
 }
 
 /*
@@ -9243,7 +9243,7 @@ td.Popup_Client_Help_VertSeparator {
   width: 9px;
   background-repeat: repeat-y;
   background-position: center center;
-  background-image: url(Popup/_ParticularItems/Help/VertSeparator_bg.png);  /** sprite-ref: xxspritexx_H; sprite-alignment-ltr: repeat; */
+  background-image: url(Popup/_ParticularItems/Help/VertSeparator_bg.png);  
 }
 
 table.Popup_Client_Help_SubMenu {
@@ -9280,7 +9280,7 @@ td.Popup_Client_Help_SubClient_Links {
   height: 16px;
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Popup/_ParticularItems/Help/iconEdit.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Popup/_ParticularItems/Help/iconEdit.png);  
 }
 
 .Popup_Client_Help_Icon_top {
@@ -9288,7 +9288,7 @@ td.Popup_Client_Help_SubClient_Links {
   height: 16px;
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Popup/_ParticularItems/Help/iconTop.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Popup/_ParticularItems/Help/iconTop.png);  
 }
 
 a.Popup_Client_Help_Icon_LabelLink {
@@ -9413,7 +9413,7 @@ td.Popup_Client_UserOps_VertSeparator {
   width: 9px;
   background-repeat: repeat-y;
   background-position: center center;
-  background-image: url(Popup/_ParticularItems/UserOps/VertSeparator_bg.png);  /** sprite-ref: xxspritexx_H; sprite-alignment-ltr: repeat; */
+  background-image: url(Popup/_ParticularItems/UserOps/VertSeparator_bg.png);  
 }
 
 .Popup_Client_UserOps_SubMenu {
@@ -9517,7 +9517,7 @@ td.Popup_Workflow_text_ContentCell {
   margin-left: auto;
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Popup/_ParticularItems/Workflow/arrow.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Popup/_ParticularItems/Workflow/arrow.png);  
 }
 
 .Popup_Workflow_text {
@@ -9562,7 +9562,7 @@ a.Popup_Workflow_Button {
   -moz-outline-style: none;
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Popup/_ParticularItems/Workflow/button.normal.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Popup/_ParticularItems/Workflow/button.normal.png);  
 }
 
 a.Popup_Workflow_Button:visited { 
@@ -9571,13 +9571,13 @@ a.Popup_Workflow_Button:visited {
 a.Popup_Workflow_Button:hover {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Popup/_ParticularItems/Workflow/button.rollover.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Popup/_ParticularItems/Workflow/button.rollover.png);  
 }
 
 a.Popup_Workflow_Button:active {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Popup/_ParticularItems/Workflow/button.pressed.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Popup/_ParticularItems/Workflow/button.pressed.png);  
   -moz-outline-style: none;
 }
 
@@ -9591,7 +9591,7 @@ a.Popup_Workflow_Button_focus {
   -moz-outline-style: none;
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Popup/_ParticularItems/Workflow/button.focused.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Popup/_ParticularItems/Workflow/button.focused.png);  
 }
 
 
@@ -9607,31 +9607,31 @@ a.Popup_Workflow_Button_focus {
 .Popup_Workflow_Button_Icon_childWindows {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Popup/_ParticularItems/Workflow/iconAutoForm.png);  /** sprite-ref: xxspritexx_V; sprite-margin-top: 14px; sprite-margin-right: 14px; sprite-margin-bottom: 14px; sprite-margin-left: 14px; */
+  background-image: url(Popup/_ParticularItems/Workflow/iconAutoForm.png);  
 }
 
 .Popup_Workflow_Button_Icon_childProcesses {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Popup/_ParticularItems/Workflow/iconProcess.png);  /** sprite-ref: xxspritexx_V; sprite-margin-top: 14px; sprite-margin-right: 14px; sprite-margin-bottom: 14px; sprite-margin-left: 14px; */
+  background-image: url(Popup/_ParticularItems/Workflow/iconProcess.png);  
 }
 
 .Popup_Workflow_Button_Icon_childForms {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Popup/_ParticularItems/Workflow/iconProcess.png);  /** sprite-ref: xxspritexx_V; sprite-margin-top: 14px; sprite-margin-right: 14px; sprite-margin-bottom: 14px; sprite-margin-left: 14px; */
+  background-image: url(Popup/_ParticularItems/Workflow/iconProcess.png);  
 }
 
 .Popup_Workflow_Button_Icon_childTasks {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Popup/_ParticularItems/Workflow/iconTask.png);  /** sprite-ref: xxspritexx_V; sprite-margin-top: 14px; sprite-margin-right: 14px; sprite-margin-bottom: 14px; sprite-margin-left: 14px; */
+  background-image: url(Popup/_ParticularItems/Workflow/iconTask.png);  
 }
 
 .Popup_Workflow_Button_Icon_childWorkflows {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Popup/_ParticularItems/Workflow/iconWorkflow.png);  /** sprite-ref: xxspritexx_V; sprite-margin-top: 14px; sprite-margin-right: 14px; sprite-margin-bottom: 14px; sprite-margin-left: 14px; */
+  background-image: url(Popup/_ParticularItems/Workflow/iconWorkflow.png);  
 }
 
 /*
@@ -9728,7 +9728,7 @@ table.Popup_ContentPane_NavBar {
   height: 16px;
   background-repeat: no-repeat;
   background-position: top left;
-  background-image: url(Popup/DragDropTree/iconElement.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Popup/DragDropTree/iconElement.png);  
 }
 
 .DragDropTree_folderClosed_icon {
@@ -9736,7 +9736,7 @@ table.Popup_ContentPane_NavBar {
   height: 16px;
   background-repeat: no-repeat;
   background-position: top left;
-  background-image: url(Popup/DragDropTree/iconFolderClosed.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Popup/DragDropTree/iconFolderClosed.png);  
 }
 
 .DragDropTree_folderOpened_icon {
@@ -9744,7 +9744,7 @@ table.Popup_ContentPane_NavBar {
   height: 16px;
   background-repeat: no-repeat;
   background-position: top left;
-  background-image: url(Popup/DragDropTree/iconFolderOpened.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Popup/DragDropTree/iconFolderOpened.png);  
 }
 
 
@@ -9753,7 +9753,7 @@ table.Popup_ContentPane_NavBar {
   height: 13px;
   background-repeat: no-repeat;
   background-position: top left;
-  background-image: url(Popup/DragDropTree/iconPlus.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Popup/DragDropTree/iconPlus.png);  
 }
 
 .DragDropTree_minus_icon {
@@ -9761,7 +9761,7 @@ table.Popup_ContentPane_NavBar {
   height: 13px;
   background-repeat: no-repeat;
   background-position: top left;
-  background-image: url(Popup/DragDropTree/iconMinus.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Popup/DragDropTree/iconMinus.png);  
 }
 
 .DragDropTree_sibling_pos_icon {
@@ -9769,7 +9769,7 @@ table.Popup_ContentPane_NavBar {
   height: 6px;
   background-repeat: no-repeat;
   background-position: top left;
-  background-image: url(Popup/DragDropTree/iconSiblingPos.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Popup/DragDropTree/iconSiblingPos.png);  
 }
 
 .DragDropTree_child_pos_icon {
@@ -9777,7 +9777,7 @@ table.Popup_ContentPane_NavBar {
   height: 6px;
   background-repeat: no-repeat;
   background-position: top left;
-  background-image: url(Popup/DragDropTree/iconChildPos.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Popup/DragDropTree/iconChildPos.png);  
 }
 
     /************************************************************************************************************
@@ -9906,7 +9906,7 @@ td.Popup_InfoBar_Icon_cell {
   height: 31px;
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Popup/InfoBar/iconInfo.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Popup/InfoBar/iconInfo.png);  
 }
 
 td.Popup_InfoBar_text {
@@ -9931,7 +9931,7 @@ td.Popup_InfoBar_text_table {
   height: 34px;
   background-repeat: repeat;
   background-position: center center;
-  background-image: url(Popup/NavBar/backgroundCenter.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
+  background-image: url(Popup/NavBar/backgroundCenter.png);  
 }
 
 .Popup_NavBar_bg_left {
@@ -9939,7 +9939,7 @@ td.Popup_InfoBar_text_table {
   height: 34px;
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Popup/NavBar/backgroundLeft.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Popup/NavBar/backgroundLeft.png);  
 }
 
 .Popup_NavBar_bg_right {
@@ -9947,7 +9947,7 @@ td.Popup_InfoBar_text_table {
   height: 34px;
   background-repeat: repeat;
   background-position: center center;
-  background-image: url(Popup/NavBar/backgroundRight.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
+  background-image: url(Popup/NavBar/backgroundRight.png);  
 }
 
 .Popup_NavBar_bg_logo_left {
@@ -9955,7 +9955,7 @@ td.Popup_InfoBar_text_table {
   height: 34px;
   background-repeat: no-repeat;
   background-position: center right;
-  background-image: url(Popup/NavBar/logoLeft.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: right; */
+  background-image: url(Popup/NavBar/logoLeft.png);  
 }
 
 .Popup_NavBar_bg_logo_right {
@@ -9963,7 +9963,7 @@ td.Popup_InfoBar_text_table {
   height: 34px;
   background-repeat: no-repeat;
   background-position: center left;
-  background-image: url(Popup/NavBar/logoRight.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Popup/NavBar/logoRight.png);  
 }
 
 .Popup_NavBar_bg_logo {
@@ -10002,7 +10002,7 @@ td.Popup_SeparatorBar_bg {
   width: 7px;
   background-repeat: repeat-x;
   background-position: top center;
-  background-image: url(Popup/SeparatorBar/backgroundBody.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
+  background-image: url(Popup/SeparatorBar/backgroundBody.png);  
 }
 
 /*
@@ -10155,7 +10155,7 @@ td.Popup_SeparatorBar_bg {
   height: 70px;
   background-repeat: no-repeat;
   background-position: top left;
-  background-image: url(Popup/WindowLogo/background.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Popup/WindowLogo/background.png);  
   z-index: 50;
 }
 
@@ -10167,187 +10167,187 @@ td.Popup_SeparatorBar_bg {
 .Popup_WindowLogo_Icon_process {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Popup/WindowLogo/iconProcess.png);  /** sprite-ref: xxspritexx_V; sprite-margin-left: 16px; sprite-margin-right: 16px; sprite-margin-top: 16px; sprite-margin-bottom: 16px */
+  background-image: url(Popup/WindowLogo/iconProcess.png);  
 }
 
 .Popup_WindowLogo_Icon_searchFiltered {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Popup/WindowLogo/iconSearchFilter.png);  /** sprite-ref: xxspritexx_V; sprite-margin-left: 16px; sprite-margin-right: 16px; sprite-margin-top: 16px; sprite-margin-bottom: 16px */
+  background-image: url(Popup/WindowLogo/iconSearchFilter.png);  
 }
 
 .Popup_WindowLogo_Icon_info {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Popup/WindowLogo/iconInfo.png);  /** sprite-ref: xxspritexx_V; sprite-margin-left: 16px; sprite-margin-right: 16px; sprite-margin-top: 16px; sprite-margin-bottom: 16px */
+  background-image: url(Popup/WindowLogo/iconInfo.png);  
 }
 
 .Popup_WindowLogo_Icon_password {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Popup/WindowLogo/iconPassword.png);  /** sprite-ref: xxspritexx_V; sprite-margin-left: 16px; sprite-margin-right: 16px; sprite-margin-top: 16px; sprite-margin-bottom: 16px */
+  background-image: url(Popup/WindowLogo/iconPassword.png);  
 }
 
 .Popup_WindowLogo_Icon_debtPayment {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Popup/WindowLogo/iconDebtPayment.png);  /** sprite-ref: xxspritexx_V; sprite-margin-left: 16px; sprite-margin-right: 16px; sprite-margin-top: 16px; sprite-margin-bottom: 16px */
+  background-image: url(Popup/WindowLogo/iconDebtPayment.png);  
 }
 
 .Popup_WindowLogo_Icon_relatedInfo {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Popup/WindowLogo/iconRelatedInfo.png);  /** sprite-ref: xxspritexx_V; sprite-margin-left: 16px; sprite-margin-right: 16px; sprite-margin-top: 16px; sprite-margin-bottom: 16px */
+  background-image: url(Popup/WindowLogo/iconRelatedInfo.png);  
 }
 
 .Popup_WindowLogo_Icon_help {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Popup/WindowLogo/iconHelp.png);  /** sprite-ref: xxspritexx_V; sprite-margin-left: 16px; sprite-margin-right: 16px; sprite-margin-top: 16px; sprite-margin-bottom: 16px */
+  background-image: url(Popup/WindowLogo/iconHelp.png);  
 }
 
 .Popup_WindowLogo_Icon_account {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Popup/WindowLogo/iconAccount.png);  /** sprite-ref: xxspritexx_V; sprite-margin-left: 16px; sprite-margin-right: 16px; sprite-margin-top: 16px; sprite-margin-bottom: 16px */
+  background-image: url(Popup/WindowLogo/iconAccount.png);  
 }
 
 .Popup_WindowLogo_Icon_attachment {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Popup/WindowLogo/iconAttachment.png);  /** sprite-ref: xxspritexx_V; sprite-margin-left: 16px; sprite-margin-right: 16px; sprite-margin-top: 16px; sprite-margin-bottom: 16px */
+  background-image: url(Popup/WindowLogo/iconAttachment.png);  
 }
 
 .Popup_WindowLogo_Icon_attribute {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Popup/WindowLogo/iconAttribute.png);  /** sprite-ref: xxspritexx_V; sprite-margin-left: 16px; sprite-margin-right: 16px; sprite-margin-top: 16px; sprite-margin-bottom: 16px */
+  background-image: url(Popup/WindowLogo/iconAttribute.png);  
 }
 
 .Popup_WindowLogo_Icon_businessPartner {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Popup/WindowLogo/iconBusinessPartner.png);  /** sprite-ref: xxspritexx_V; sprite-margin-left: 16px; sprite-margin-right: 16px; sprite-margin-top: 16px; sprite-margin-bottom: 16px */
+  background-image: url(Popup/WindowLogo/iconBusinessPartner.png);  
 }
 
 .Popup_WindowLogo_Icon_cashJornal {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Popup/WindowLogo/iconCashJornal.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: url(Popup/WindowLogo/iconCashJornal.png);  
 }
 
 .Popup_WindowLogo_Icon_image {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Popup/WindowLogo/iconImage.png);  /** sprite-ref: xxspritexx_V; sprite-margin-left: 16px; sprite-margin-right: 16px; sprite-margin-top: 16px; sprite-margin-bottom: 16px */
+  background-image: url(Popup/WindowLogo/iconImage.png);  
 }
 
 .Popup_WindowLogo_Icon_invoice {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Popup/WindowLogo/iconInvoice.png);  /** sprite-ref: xxspritexx_V; sprite-margin-left: 16px; sprite-margin-right: 16px; sprite-margin-top: 16px; sprite-margin-bottom: 16px */
+  background-image: url(Popup/WindowLogo/iconInvoice.png);  
 }
 
 .Popup_WindowLogo_Icon_invoiceLine {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Popup/WindowLogo/iconInvoiceLine.png);  /** sprite-ref: xxspritexx_V; sprite-margin-left: 16px; sprite-margin-right: 16px; sprite-margin-top: 16px; sprite-margin-bottom: 16px */
+  background-image: url(Popup/WindowLogo/iconInvoiceLine.png);  
 }
 
 .Popup_WindowLogo_Icon_location {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Popup/WindowLogo/iconLocation.png);  /** sprite-ref: xxspritexx_V; sprite-margin-left: 16px; sprite-margin-right: 16px; sprite-margin-top: 16px; sprite-margin-bottom: 16px */
+  background-image: url(Popup/WindowLogo/iconLocation.png);  
 }
 
 .Popup_WindowLogo_Icon_locator {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Popup/WindowLogo/iconLocator.png);  /** sprite-ref: xxspritexx_V; sprite-margin-left: 16px; sprite-margin-right: 16px; sprite-margin-top: 16px; sprite-margin-bottom: 16px */
+  background-image: url(Popup/WindowLogo/iconLocator.png);  
 }
 
 .Popup_WindowLogo_Icon_okCancel {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Popup/WindowLogo/iconOkCancel.png);  /** sprite-ref: xxspritexx_V; sprite-margin-left: 16px; sprite-margin-right: 16px; sprite-margin-top: 16px; sprite-margin-bottom: 16px */
+  background-image: url(Popup/WindowLogo/iconOkCancel.png);  
 }
 
 .Popup_WindowLogo_Icon_product {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Popup/WindowLogo/iconProduct.png);  /** sprite-ref: xxspritexx_V; sprite-margin-left: 16px; sprite-margin-right: 16px; sprite-margin-top: 16px; sprite-margin-bottom: 16px */
+  background-image: url(Popup/WindowLogo/iconProduct.png);  
 }
 
 .Popup_WindowLogo_Icon_productComplete {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Popup/WindowLogo/iconProductComplete.png);  /** sprite-ref: xxspritexx_V; sprite-margin-left: 16px; sprite-margin-right: 16px; sprite-margin-top: 16px; sprite-margin-bottom: 16px */
+  background-image: url(Popup/WindowLogo/iconProductComplete.png);  
 }
 
 .Popup_WindowLogo_Icon_project {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Popup/WindowLogo/iconProject.png);  /** sprite-ref: xxspritexx_V; sprite-margin-left: 16px; sprite-margin-right: 16px; sprite-margin-top: 16px; sprite-margin-bottom: 16px */
+  background-image: url(Popup/WindowLogo/iconProject.png);  
 }
 
 .Popup_WindowLogo_Icon_request {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Popup/WindowLogo/iconRequest.png);  /** sprite-ref: xxspritexx_V; sprite-margin-left: 16px; sprite-margin-right: 16px; sprite-margin-top: 16px; sprite-margin-bottom: 16px */
+  background-image: url(Popup/WindowLogo/iconRequest.png);  
 }
 
 .Popup_WindowLogo_Icon_salesOrder {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Popup/WindowLogo/iconSalesOrder.png);  /** sprite-ref: xxspritexx_V; sprite-margin-left: 16px; sprite-margin-right: 16px; sprite-margin-top: 16px; sprite-margin-bottom: 16px */
+  background-image: url(Popup/WindowLogo/iconSalesOrder.png);  
 }
 
 .Popup_WindowLogo_Icon_salesOrderLine {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Popup/WindowLogo/iconSalesOrderLine.png);  /** sprite-ref: xxspritexx_V; sprite-margin-left: 16px; sprite-margin-right: 16px; sprite-margin-top: 16px; sprite-margin-bottom: 16px */
+  background-image: url(Popup/WindowLogo/iconSalesOrderLine.png);  
 }
 
 .Popup_WindowLogo_Icon_shipment {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Popup/WindowLogo/iconShipment.png);  /** sprite-ref: xxspritexx_V; sprite-margin-left: 16px; sprite-margin-right: 16px; sprite-margin-top: 16px; sprite-margin-bottom: 16px */
+  background-image: url(Popup/WindowLogo/iconShipment.png);  
 }
 
 .Popup_WindowLogo_Icon_shipmentReceipt {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Popup/WindowLogo/iconShipmentReceipt.png);  /** sprite-ref: xxspritexx_V; sprite-margin-left: 16px; sprite-margin-right: 16px; sprite-margin-top: 16px; sprite-margin-bottom: 16px */
+  background-image: url(Popup/WindowLogo/iconShipmentReceipt.png);  
 }
 
 .Popup_WindowLogo_Icon_task {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Popup/WindowLogo/iconTask.png);  /** sprite-ref: xxspritexx_V; sprite-margin-left: 16px; sprite-margin-right: 16px; sprite-margin-top: 16px; sprite-margin-bottom: 16px */
+  background-image: url(Popup/WindowLogo/iconTask.png);  
 }
 
 .Popup_WindowLogo_Icon_userContact {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Popup/WindowLogo/iconUserContact.png);  /** sprite-ref: xxspritexx_V; sprite-margin-left: 16px; sprite-margin-right: 16px; sprite-margin-top: 16px; sprite-margin-bottom: 16px */
+  background-image: url(Popup/WindowLogo/iconUserContact.png);  
 }
 
 .Popup_WindowLogo_Icon_workflow {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Popup/WindowLogo/iconWorkflow.png);  /** sprite-ref: xxspritexx_V; sprite-margin-left: 16px; sprite-margin-right: 16px; sprite-margin-top: 16px; sprite-margin-bottom: 16px */
+  background-image: url(Popup/WindowLogo/iconWorkflow.png);  
 }
 
 .Popup_WindowLogo_Icon_organizeMenu {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Popup/WindowLogo/iconOrganizeMenu.png);  /** sprite-ref: xxspritexx_V; sprite-margin-left: 16px; sprite-margin-right: 16px; sprite-margin-top: 16px; sprite-margin-bottom: 16px */
+  background-image: url(Popup/WindowLogo/iconOrganizeMenu.png);  
 }
 
 .Popup_WindowLogo_Icon_error {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Popup/WindowLogo/iconError.png);  /** sprite-ref: xxspritexx_V; sprite-margin-left: 16px; sprite-margin-right: 16px; sprite-margin-top: 16px; sprite-margin-bottom: 16px */
+  background-image: url(Popup/WindowLogo/iconError.png);  
 }
 
 .Popup_WindowLogo_Icon_heartbeat {
@@ -10365,25 +10365,25 @@ td.Popup_SeparatorBar_bg {
 .Popup_WindowLogo_Icon_moduleInstall {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Popup/WindowLogo/iconModuleInstall.png);  /** sprite-ref: xxspritexx_V; sprite-margin-left: 16px; sprite-margin-right: 16px; sprite-margin-top: 16px; sprite-margin-bottom: 16px */
+  background-image: url(Popup/WindowLogo/iconModuleInstall.png);  
 }
 
 .Popup_WindowLogo_Icon_auditTrail {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Popup/WindowLogo/iconAuditTrail.png);  /** sprite-ref: xxspritexx_V; sprite-margin-left: 16px; sprite-margin-right: 16px; sprite-margin-top: 16px; sprite-margin-bottom: 16px */
+  background-image: url(Popup/WindowLogo/iconAuditTrail.png);  
 }
 
 .Popup_WindowLogo_Icon_instancePurpose {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Popup/WindowLogo/iconInstancePurpose.png);  /** sprite-ref: xxspritexx_V; sprite-margin-left: 16px; sprite-margin-right: 16px; sprite-margin-top: 16px; sprite-margin-bottom: 16px */
+  background-image: url(Popup/WindowLogo/iconInstancePurpose.png);  
 }
 
 .Small_cancel {
   background-repeat: no-repeat;
   background-position: center left; /*~RTL background-position: center right; */
-  background-image: url(Common/Button/iconCancelSmall.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; sprite-alignment-rtl: right; */
+  background-image: url(Common/Button/iconCancelSmall.png);  
   width: 16px;
   height: 16px;
 }
