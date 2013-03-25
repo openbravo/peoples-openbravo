@@ -60,6 +60,12 @@ public class SL_JournalLineAmt extends HttpSecureAppServlet {
       String strAmtSourceDr = vars.getNumericParameter("inpamtsourcedr", "0");
       String strAmtSourceCr = vars.getNumericParameter("inpamtsourcecr", "0");
       String strTabId = vars.getStringParameter("inpTabId");
+      if (!(strAmtSourceDr.equals("0")) && (strChanged.equals("inpamtsourcedr"))) {
+        strAmtSourceCr = "0";
+      }
+      if ((!strAmtSourceCr.equals("0")) && (strChanged.equals("inpamtsourcecr"))) {
+        strAmtSourceDr = "0";
+      }
       try {
         printPage(response, vars, strGLJournal, strCurrencyRate, strCurrency, strDateAcct,
             strCurrencyRateType, strWindowId, strAmtSourceDr, strAmtSourceCr, strTabId);
@@ -106,6 +112,8 @@ public class SL_JournalLineAmt extends HttpSecureAppServlet {
     resultado.append("var respuesta = new Array(");
     resultado.append("new Array(\"inpamtacctdr\", " + AmtAcctDr.toString() + "),");
     resultado.append("new Array(\"inpamtacctcr\", " + AmtAcctCr.toString() + "),");
+    resultado.append("new Array(\"inpamtsourcedr\", " + strAmtSourceDr + "),");
+    resultado.append("new Array(\"inpamtsourcecr\", " + strAmtSourceCr + "),");
     resultado.append("new Array(\"inpcurrencyrate\", " + CurrencyRateValue.toString() + "),");
     resultado.append("new Array(\"inpcurrencyratetype\", \"" + strCurrencyRateType + "\")");
 
