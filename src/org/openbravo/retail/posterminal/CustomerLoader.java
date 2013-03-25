@@ -24,6 +24,7 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -43,6 +44,7 @@ public class CustomerLoader extends JSONProcessSimple {
     Object jsonCustomer = jsonsent.get("customer");
 
     JSONArray array = null;
+    JSONObject result = new JSONObject();
     if (jsonCustomer instanceof JSONObject) {
       array = new JSONArray();
       array.put(jsonCustomer);
@@ -53,55 +55,59 @@ public class CustomerLoader extends JSONProcessSimple {
     } else if (jsonCustomer instanceof JSONArray) {
       array = (JSONArray) jsonCustomer;
     }
-
-    JSONObject result = this.saveCustomer(array);
+    result = this.saveCustomer(array, jsonsent.getString("terminalId"));
     return result;
   }
 
-  public JSONObject saveCustomer(JSONArray jsonarray) throws JSONException {
+  public JSONObject saveCustomer(JSONArray jsonarray, Object terminalId) throws JSONException {
     boolean error = false;
     OBContext.setAdminMode(false);
     try {
-      for (int i = 0; i < jsonarray.length(); i++) {
-        JSONObject jsonCustomer = jsonarray.getJSONObject(i);
-        String posTerminalId = jsonCustomer.getString("posTerminal");
-        try {
-          JSONObject result = saveCustomer(jsonCustomer);
-          if (!result.get(JsonConstants.RESPONSE_STATUS).equals(
-              JsonConstants.RPCREQUEST_STATUS_SUCCESS)) {
-            log.error("There was an error importing order: " + jsonCustomer.toString());
-            error = true;
-          }
-          if (i % 1 == 0) {
-            OBDal.getInstance().flush();
-            OBDal.getInstance().getConnection().commit();
-            OBDal.getInstance().getSession().clear();
-          }
-        } catch (Exception e) {
-          // Creation of the customer failed. We will now store the customer in the import errors
-          // table
-          log.error("An error happened when processing a customer: ", e);
-          OBDal.getInstance().rollbackAndClose();
-
-          OBPOSErrors errorEntry = OBProvider.getInstance().get(OBPOSErrors.class);
-          errorEntry.setError(getErrorMessage(e));
-          errorEntry.setOrderstatus("N");
-          errorEntry.setJsoninfo(jsonCustomer.toString());
-          errorEntry.setTypeofdata("BP");
-          errorEntry.setObposApplications(OBDal.getInstance().get(OBPOSApplications.class,
-              posTerminalId));
-          OBDal.getInstance().save(errorEntry);
-          OBDal.getInstance().flush();
-
-          log.error("Error while loading customer", e);
+      if (RequestContext.get().getSessionAttribute("customerTerminalId|" + terminalId) == null) {
+        RequestContext.get().setSessionAttribute("customerTerminalId|" + terminalId, true);
+        for (int i = 0; i < jsonarray.length(); i++) {
+          JSONObject jsonCustomer = jsonarray.getJSONObject(i);
+          String posTerminalId = jsonCustomer.getString("posTerminal");
           try {
-            OBDal.getInstance().getConnection().commit();
-          } catch (SQLException e1) {
-            // this won't happen
+            JSONObject result = saveCustomer(jsonCustomer);
+            if (!result.get(JsonConstants.RESPONSE_STATUS).equals(
+                JsonConstants.RPCREQUEST_STATUS_SUCCESS)) {
+              log.error("There was an error importing order: " + jsonCustomer.toString());
+              error = true;
+            }
+            if (i % 1 == 0) {
+              OBDal.getInstance().flush();
+              OBDal.getInstance().getConnection().commit();
+              OBDal.getInstance().getSession().clear();
+            }
+          } catch (Exception e) {
+            // Creation of the customer failed. We will now store the customer in the import errors
+            // table
+            log.error("An error happened when processing a customer: ", e);
+            OBDal.getInstance().rollbackAndClose();
+
+            OBPOSErrors errorEntry = OBProvider.getInstance().get(OBPOSErrors.class);
+            errorEntry.setError(getErrorMessage(e));
+            errorEntry.setOrderstatus("N");
+            errorEntry.setJsoninfo(jsonCustomer.toString());
+            errorEntry.setTypeofdata("BP");
+            errorEntry.setObposApplications(OBDal.getInstance().get(OBPOSApplications.class,
+                posTerminalId));
+            OBDal.getInstance().save(errorEntry);
+            OBDal.getInstance().flush();
+
+            log.error("Error while loading customer", e);
+            try {
+              OBDal.getInstance().getConnection().commit();
+            } catch (SQLException e1) {
+              // this won't happen
+            }
           }
         }
       }
+
     } finally {
+      RequestContext.get().removeSessionAttribute("customerTerminalId|" + terminalId);
       OBContext.restorePreviousMode();
     }
     JSONObject jsonResponse = new JSONObject();
@@ -185,7 +191,7 @@ public class CustomerLoader extends JSONProcessSimple {
       final OBCriteria<BusinessPartner> bpCriteria = OBDal.getInstance().createCriteria(
           BusinessPartner.class);
       bpCriteria.setFilterOnActive(false);
-      bpCriteria.setFilterOnReadableOrganization(false); 
+      bpCriteria.setFilterOnReadableOrganization(false);
       bpCriteria.add(Restrictions.eq("searchKey", possibleSK));
       bpCriteria.setMaxResults(1);
       bpsWithPossibleSK = bpCriteria.count();
