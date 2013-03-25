@@ -83,6 +83,9 @@ public class GrantPortalAccessProcess extends BaseProcessActionHandler {
         UserRoles newUserRole = OBProvider.getInstance().get(UserRoles.class);
         newUserRole.setUserContact(user);
         newUserRole.setRole(role);
+
+        Organization org = OBDal.getInstance().get(Organization.class, "0");
+        newUserRole.setOrganization(org);
         OBDal.getInstance().save(newUserRole);
         log.info(user + " is granted to " + role);
       } else {
@@ -144,9 +147,12 @@ public class GrantPortalAccessProcess extends BaseProcessActionHandler {
       JSONObject result = new JSONObject();
       JSONObject msg = new JSONObject();
       try {
-        msg.put("severity", "warning");
-        msg.put("text",
-            OBMessageUtils.getI18NMessage("ErrorInEmail", new String[] { e.getMessage() }));
+        OBDal.getInstance().rollbackAndClose();
+        msg.put("severity", "error");
+        msg.put(
+            "text",
+            OBMessageUtils.getI18NMessage("Portal_ErrorGrantingPortalAccess",
+                new String[] { e.getMessage() }));
         result.put("message", msg);
       } catch (JSONException e1) {
         log.error("Couldn't genereate error msg", e1);
