@@ -886,10 +886,6 @@ public class DocInvoice extends AcctServer {
         .getStandardPrecision().intValue();
     BigDecimal periodAmount = amount.divide(new BigDecimal(periodNumber),
         new MathContext(32, RoundingMode.HALF_UP)).setScale(stdPrecision, BigDecimal.ROUND_HALF_UP);
-    BigDecimal periodAmount1 = amount.divide(new BigDecimal("0.0000000001"),
-        new MathContext(32, RoundingMode.HALF_UP)).setScale(stdPrecision, BigDecimal.ROUND_HALF_UP);
-    BigDecimal periodAmount2 = amount.divide(new BigDecimal("0.0000000001"), stdPrecision,
-        BigDecimal.ROUND_HALF_UP);
     while (i <= periodNumber) {
       if (!OBDateUtils.formatDate(date).equals(DateAcct)) {
         HashMap<String, String> hm = new HashMap<String, String>();
@@ -898,7 +894,6 @@ public class DocInvoice extends AcctServer {
             i == periodNumber ? amount.subtract(total).toString() : periodAmount.toString());
         plan.add(hm);
       }
-      period = AccDefUtility.getNextPeriod(period);
       try {
         AcctServerData[] data = AcctServerData.periodOpen(connectionProvider, AD_Client_ID,
             DocumentType, AD_Org_ID, OBDateUtils.formatDate(period.getEndingDate()));
@@ -910,6 +905,7 @@ public class DocInvoice extends AcctServer {
         log4j.warn("DocInvoice - Error checking period open.", e);
         e.printStackTrace();
       }
+      period = AccDefUtility.getNextPeriod(period);
       date = period.getEndingDate();
       total = total.add(periodAmount);
       i++;
