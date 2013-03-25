@@ -34,6 +34,7 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.AccDefUtility;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.SequenceIdData;
+import org.openbravo.model.common.currency.ConversionRateDoc;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.financialmgmt.calendar.Period;
 
@@ -384,29 +385,47 @@ public class DocInvoice extends AcctServer {
             }
           }
           String amount = p_lines[i].getAmount();
+          String amountCoverted = "";
+          ConversionRateDoc conversionRateCurrentDoc = getConversionRateDoc(TABLEID_Invoice,
+              Record_ID, C_Currency_ID, as.m_C_Currency_ID);
+          if (conversionRateCurrentDoc != null) {
+            amountCoverted = applyRate(new BigDecimal(p_lines[i].getAmount()),
+                conversionRateCurrentDoc, true).setScale(2, BigDecimal.ROUND_HALF_UP).toString();
+          } else {
+            amountCoverted = convertAmount(new BigDecimal(p_lines[i].getAmount()), true, DateAcct,
+                TABLEID_Invoice, Record_ID, C_Currency_ID, as.m_C_Currency_ID, p_lines[i], as,
+                fact, Fact_Acct_Group_ID, nextSeqNo(SeqNo), conn, false).toString();
+          }
           if (((DocLine_Invoice) p_lines[i]).isDeferred()) {
             amount = createAccDefRevenueFact(fact, (DocLine_Invoice) p_lines[i], account,
                 ((DocLine_Invoice) p_lines[i]).getAccount(ProductInfo.ACCTTYPE_P_DefRevenue, as,
-                    conn), amount, conn);
-          }
-          if (IsReversal.equals("Y")) {
-            fact.createLine(p_lines[i], account, this.C_Currency_ID, amount, "",
-                Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+                    conn), amountCoverted, as.m_C_Currency_ID, conn);
+            if (IsReversal.equals("Y")) {
+              fact.createLine(p_lines[i], account, as.m_C_Currency_ID, amount, "",
+                  Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+            } else {
+              fact.createLine(p_lines[i], account, as.m_C_Currency_ID, "", amount,
+                  Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+            }
           } else {
-            fact.createLine(p_lines[i], account, this.C_Currency_ID, "", amount,
-                Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+            if (IsReversal.equals("Y")) {
+              fact.createLine(p_lines[i], account, this.C_Currency_ID, amount, "",
+                  Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+            } else {
+              fact.createLine(p_lines[i], account, this.C_Currency_ID, "", amount,
+                  Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+            }
           }
           // If revenue has been deferred
-          if (!amount.equals(p_lines[i].getAmount())) {
-            amount = new BigDecimal(p_lines[i].getAmount()).subtract(new BigDecimal(amount))
-                .toString();
+          if (((DocLine_Invoice) p_lines[i]).isDeferred() && !amount.equals(amountCoverted)) {
+            amount = new BigDecimal(amountCoverted).subtract(new BigDecimal(amount)).toString();
             if (IsReversal.equals("Y")) {
               fact.createLine(p_lines[i], ((DocLine_Invoice) p_lines[i]).getAccount(
-                  ProductInfo.ACCTTYPE_P_DefRevenue, as, conn), this.C_Currency_ID, amount, "",
+                  ProductInfo.ACCTTYPE_P_DefRevenue, as, conn), as.m_C_Currency_ID, amount, "",
                   Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
             } else {
               fact.createLine(p_lines[i], ((DocLine_Invoice) p_lines[i]).getAccount(
-                  ProductInfo.ACCTTYPE_P_DefRevenue, as, conn), this.C_Currency_ID, "", amount,
+                  ProductInfo.ACCTTYPE_P_DefRevenue, as, conn), as.m_C_Currency_ID, "", amount,
                   Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
             }
           }
@@ -495,21 +514,35 @@ public class DocInvoice extends AcctServer {
       // Revenue CR
       for (int i = 0; p_lines != null && i < p_lines.length; i++) {
         String amount = p_lines[i].getAmount();
+        String amountCoverted = "";
+        ConversionRateDoc conversionRateCurrentDoc = getConversionRateDoc(TABLEID_Invoice,
+            Record_ID, C_Currency_ID, as.m_C_Currency_ID);
+        if (conversionRateCurrentDoc != null) {
+          amountCoverted = applyRate(new BigDecimal(p_lines[i].getAmount()),
+              conversionRateCurrentDoc, true).setScale(2, BigDecimal.ROUND_HALF_UP).toString();
+        } else {
+          amountCoverted = convertAmount(new BigDecimal(p_lines[i].getAmount()), true, DateAcct,
+              TABLEID_Invoice, Record_ID, C_Currency_ID, as.m_C_Currency_ID, p_lines[i], as, fact,
+              Fact_Acct_Group_ID, nextSeqNo(SeqNo), conn, false).toString();
+        }
         Account account = ((DocLine_Invoice) p_lines[i]).getAccount(ProductInfo.ACCTTYPE_P_Revenue,
             as, conn);
         if (((DocLine_Invoice) p_lines[i]).isDeferred()) {
           amount = createAccDefRevenueFact(fact, (DocLine_Invoice) p_lines[i], account,
               ((DocLine_Invoice) p_lines[i])
-                  .getAccount(ProductInfo.ACCTTYPE_P_DefRevenue, as, conn), amount, conn);
+                  .getAccount(ProductInfo.ACCTTYPE_P_DefRevenue, as, conn), amountCoverted,
+              as.m_C_Currency_ID, conn);
+          fact.createLine(p_lines[i], account, as.m_C_Currency_ID, amount, "", Fact_Acct_Group_ID,
+              nextSeqNo(SeqNo), DocumentType, conn);
+        } else {
+          fact.createLine(p_lines[i], account, this.C_Currency_ID, amount, "", Fact_Acct_Group_ID,
+              nextSeqNo(SeqNo), DocumentType, conn);
         }
-        fact.createLine(p_lines[i], account, this.C_Currency_ID, amount, "", Fact_Acct_Group_ID,
-            nextSeqNo(SeqNo), DocumentType, conn);
         // If revenue has been deferred
-        if (!amount.equals(p_lines[i].getAmount())) {
-          amount = new BigDecimal(p_lines[i].getAmount()).subtract(new BigDecimal(amount))
-              .toString();
+        if (((DocLine_Invoice) p_lines[i]).isDeferred() && !amount.equals(amountCoverted)) {
+          amount = new BigDecimal(amountCoverted).subtract(new BigDecimal(amount)).toString();
           fact.createLine(p_lines[i], ((DocLine_Invoice) p_lines[i]).getAccount(
-              ProductInfo.ACCTTYPE_P_DefRevenue, as, conn), this.C_Currency_ID, amount, "",
+              ProductInfo.ACCTTYPE_P_DefRevenue, as, conn), as.m_C_Currency_ID, amount, "",
               Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
         }
       }
@@ -611,33 +644,61 @@ public class DocInvoice extends AcctServer {
       // Expense DR
       for (int i = 0; p_lines != null && i < p_lines.length; i++) {
         String amount = p_lines[i].getAmount();
+        String amountConverted = "";
+        ConversionRateDoc conversionRateCurrentDoc = getConversionRateDoc(TABLEID_Invoice,
+            Record_ID, C_Currency_ID, as.m_C_Currency_ID);
+        if (conversionRateCurrentDoc != null) {
+          amountConverted = applyRate(new BigDecimal(p_lines[i].getAmount()),
+              conversionRateCurrentDoc, true).setScale(2, BigDecimal.ROUND_HALF_UP).toString();
+        } else {
+          amountConverted = convertAmount(new BigDecimal(p_lines[i].getAmount()), true, DateAcct,
+              TABLEID_Invoice, Record_ID, C_Currency_ID, as.m_C_Currency_ID, p_lines[i], as, fact,
+              Fact_Acct_Group_ID, nextSeqNo(SeqNo), conn, false).toString();
+        }
         if (((DocLine_Invoice) p_lines[i]).isDeferred()) {
           amount = createAccDefExpenseFact(fact, (DocLine_Invoice) p_lines[i],
               ((DocLine_Invoice) p_lines[i]).getAccount(ProductInfo.ACCTTYPE_P_Expense, as, conn),
               ((DocLine_Invoice) p_lines[i])
-                  .getAccount(ProductInfo.ACCTTYPE_P_DefExpense, as, conn), amount, conn);
+                  .getAccount(ProductInfo.ACCTTYPE_P_DefExpense, as, conn), amountConverted,
+              as.m_C_Currency_ID, conn);
+          if (IsReversal.equals("Y")) {
+            fact.createLine(
+                p_lines[i],
+                ((DocLine_Invoice) p_lines[i]).getAccount(ProductInfo.ACCTTYPE_P_Expense, as, conn),
+                as.m_C_Currency_ID, "", amount, Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
+                conn);
+          } else {
+            fact.createLine(
+                p_lines[i],
+                ((DocLine_Invoice) p_lines[i]).getAccount(ProductInfo.ACCTTYPE_P_Expense, as, conn),
+                as.m_C_Currency_ID, amount, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
+                conn);
+          }
+        } else {
+          if (IsReversal.equals("Y")) {
+            fact.createLine(
+                p_lines[i],
+                ((DocLine_Invoice) p_lines[i]).getAccount(ProductInfo.ACCTTYPE_P_Expense, as, conn),
+                this.C_Currency_ID, "", amount, Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
+                conn);
+          } else {
+            fact.createLine(
+                p_lines[i],
+                ((DocLine_Invoice) p_lines[i]).getAccount(ProductInfo.ACCTTYPE_P_Expense, as, conn),
+                this.C_Currency_ID, amount, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
+                conn);
+          }
         }
-        if (IsReversal.equals("Y"))
-          fact.createLine(p_lines[i],
-              ((DocLine_Invoice) p_lines[i]).getAccount(ProductInfo.ACCTTYPE_P_Expense, as, conn),
-              this.C_Currency_ID, "", amount, Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
-              conn);
-        else
-          fact.createLine(p_lines[i],
-              ((DocLine_Invoice) p_lines[i]).getAccount(ProductInfo.ACCTTYPE_P_Expense, as, conn),
-              this.C_Currency_ID, amount, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
-              conn);
         // If expense has been deferred
-        if (!amount.equals(p_lines[i].getAmount())) {
-          amount = new BigDecimal(p_lines[i].getAmount()).subtract(new BigDecimal(amount))
-              .toString();
+        if (((DocLine_Invoice) p_lines[i]).isDeferred() && !amount.equals(amountConverted)) {
+          amount = new BigDecimal(amountConverted).subtract(new BigDecimal(amount)).toString();
           if (IsReversal.equals("Y")) {
             fact.createLine(p_lines[i], ((DocLine_Invoice) p_lines[i]).getAccount(
-                ProductInfo.ACCTTYPE_P_DefExpense, as, conn), this.C_Currency_ID, "", amount,
+                ProductInfo.ACCTTYPE_P_DefExpense, as, conn), as.m_C_Currency_ID, "", amount,
                 Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
           } else {
             fact.createLine(p_lines[i], ((DocLine_Invoice) p_lines[i]).getAccount(
-                ProductInfo.ACCTTYPE_P_DefExpense, as, conn), this.C_Currency_ID, amount, "",
+                ProductInfo.ACCTTYPE_P_DefExpense, as, conn), as.m_C_Currency_ID, amount, "",
                 Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
           }
         }
@@ -732,21 +793,35 @@ public class DocInvoice extends AcctServer {
       // Expense CR
       for (int i = 0; p_lines != null && i < p_lines.length; i++) {
         String amount = p_lines[i].getAmount();
+        String amountConverted = "";
+        ConversionRateDoc conversionRateCurrentDoc = getConversionRateDoc(TABLEID_Invoice,
+            Record_ID, C_Currency_ID, as.m_C_Currency_ID);
+        if (conversionRateCurrentDoc != null) {
+          amountConverted = applyRate(new BigDecimal(p_lines[i].getAmount()),
+              conversionRateCurrentDoc, true).setScale(2, BigDecimal.ROUND_HALF_UP).toString();
+        } else {
+          amountConverted = convertAmount(new BigDecimal(p_lines[i].getAmount()), true, DateAcct,
+              TABLEID_Invoice, Record_ID, C_Currency_ID, as.m_C_Currency_ID, p_lines[i], as, fact,
+              Fact_Acct_Group_ID, nextSeqNo(SeqNo), conn, false).toString();
+        }
         Account account = ((DocLine_Invoice) p_lines[i]).getAccount(ProductInfo.ACCTTYPE_P_Expense,
             as, conn);
         if (((DocLine_Invoice) p_lines[i]).isDeferred()) {
           amount = createAccDefExpenseFact(fact, (DocLine_Invoice) p_lines[i], account,
               ((DocLine_Invoice) p_lines[i])
-                  .getAccount(ProductInfo.ACCTTYPE_P_DefExpense, as, conn), amount, conn);
+                  .getAccount(ProductInfo.ACCTTYPE_P_DefExpense, as, conn), amountConverted,
+              as.m_C_Currency_ID, conn);
+          fact.createLine(p_lines[i], account, as.m_C_Currency_ID, "", amount, Fact_Acct_Group_ID,
+              nextSeqNo(SeqNo), DocumentType, conn);
+        } else {
+          fact.createLine(p_lines[i], account, this.C_Currency_ID, "", amount, Fact_Acct_Group_ID,
+              nextSeqNo(SeqNo), DocumentType, conn);
         }
-        fact.createLine(p_lines[i], account, this.C_Currency_ID, "", amount, Fact_Acct_Group_ID,
-            nextSeqNo(SeqNo), DocumentType, conn);
         // If expense has been deferred
-        if (!amount.equals(p_lines[i].getAmount())) {
-          amount = new BigDecimal(p_lines[i].getAmount()).subtract(new BigDecimal(amount))
-              .toString();
+        if (((DocLine_Invoice) p_lines[i]).isDeferred() && !amount.equals(amountConverted)) {
+          amount = new BigDecimal(amountConverted).subtract(new BigDecimal(amount)).toString();
           fact.createLine(p_lines[i], ((DocLine_Invoice) p_lines[i]).getAccount(
-              ProductInfo.ACCTTYPE_P_DefExpense, as, conn), this.C_Currency_ID, "", amount,
+              ProductInfo.ACCTTYPE_P_DefExpense, as, conn), as.m_C_Currency_ID, "", amount,
               Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
         }
 
@@ -768,30 +843,30 @@ public class DocInvoice extends AcctServer {
   }// createFact
 
   String createAccDefRevenueFact(Fact fact, DocLine_Invoice line, Account prodRevAccount,
-      Account prodDefRevAccount, String lineAmount, ConnectionProvider conn) {
+      Account prodDefRevAccount, String lineAmount, String strCurrencyId, ConnectionProvider conn) {
     BigDecimal amount = new BigDecimal(lineAmount);
     String Fact_Acct_Group_ID = SequenceIdData.getUUID();
     ArrayList<HashMap<String, String>> plan = new ArrayList<HashMap<String, String>>();
     Period startingPeriod = OBDal.getInstance().get(Period.class, line.getStartingPeriodId());
-    plan = calculateAccDefPlan(startingPeriod, line.getPeriodNumber(), amount);
+    plan = calculateAccDefPlan(startingPeriod, line.getPeriodNumber(), amount, strCurrencyId);
     for (HashMap<String, String> planLine : plan) {
       DocLine planDocLine = new DocLine(DocumentType, Record_ID, line.m_TrxLine_ID);
       planDocLine.copyInfo(line);
       planDocLine.m_DateAcct = planLine.get("date");
       if (IsReversal.equals("Y")) {
         // Revenue Account
-        fact.createLine(planDocLine, prodRevAccount, this.C_Currency_ID, planLine.get("amount"),
-            "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+        fact.createLine(planDocLine, prodRevAccount, strCurrencyId, planLine.get("amount"), "",
+            Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
         // Deferred Revenue Account
-        fact.createLine(planDocLine, prodDefRevAccount, this.C_Currency_ID, "",
-            planLine.get("amount"), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+        fact.createLine(planDocLine, prodDefRevAccount, strCurrencyId, "", planLine.get("amount"),
+            Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
       } else {
         // Deferred Revenue Account
-        fact.createLine(planDocLine, prodDefRevAccount, this.C_Currency_ID, planLine.get("amount"),
-            "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+        fact.createLine(planDocLine, prodDefRevAccount, strCurrencyId, planLine.get("amount"), "",
+            Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
         // Revenue Account
-        fact.createLine(planDocLine, prodRevAccount, this.C_Currency_ID, "",
-            planLine.get("amount"), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+        fact.createLine(planDocLine, prodRevAccount, strCurrencyId, "", planLine.get("amount"),
+            Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
       }
       amount = amount.subtract(new BigDecimal(planLine.get("amount")));
       Fact_Acct_Group_ID = SequenceIdData.getUUID();
@@ -801,7 +876,7 @@ public class DocInvoice extends AcctServer {
   }
 
   private ArrayList<HashMap<String, String>> calculateAccDefPlan(Period startingPeriod,
-      int periodNumber, BigDecimal amount) {
+      int periodNumber, BigDecimal amount, String strCurrencyId) {
     Period period = startingPeriod;
     Date date = period.getEndingDate();
     ArrayList<HashMap<String, String>> plan = new ArrayList<HashMap<String, String>>();
@@ -811,6 +886,10 @@ public class DocInvoice extends AcctServer {
         .getStandardPrecision().intValue();
     BigDecimal periodAmount = amount.divide(new BigDecimal(periodNumber),
         new MathContext(32, RoundingMode.HALF_UP)).setScale(stdPrecision, BigDecimal.ROUND_HALF_UP);
+    BigDecimal periodAmount1 = amount.divide(new BigDecimal("0.0000000001"),
+        new MathContext(32, RoundingMode.HALF_UP)).setScale(stdPrecision, BigDecimal.ROUND_HALF_UP);
+    BigDecimal periodAmount2 = amount.divide(new BigDecimal("0.0000000001"), stdPrecision,
+        BigDecimal.ROUND_HALF_UP);
     while (i <= periodNumber) {
       if (!OBDateUtils.formatDate(date).equals(DateAcct)) {
         HashMap<String, String> hm = new HashMap<String, String>();
@@ -839,30 +918,30 @@ public class DocInvoice extends AcctServer {
   }
 
   String createAccDefExpenseFact(Fact fact, DocLine_Invoice line, Account prodExpAccount,
-      Account prodDefExpAccount, String lineAmount, ConnectionProvider conn) {
+      Account prodDefExpAccount, String lineAmount, String strCurrencyId, ConnectionProvider conn) {
     BigDecimal amount = new BigDecimal(lineAmount);
     String Fact_Acct_Group_ID = SequenceIdData.getUUID();
     ArrayList<HashMap<String, String>> plan = new ArrayList<HashMap<String, String>>();
     Period startingPeriod = OBDal.getInstance().get(Period.class, line.getStartingPeriodId());
-    plan = calculateAccDefPlan(startingPeriod, line.getPeriodNumber(), amount);
+    plan = calculateAccDefPlan(startingPeriod, line.getPeriodNumber(), amount, strCurrencyId);
     for (HashMap<String, String> planLine : plan) {
       DocLine planDocLine = new DocLine(DocumentType, Record_ID, line.m_TrxLine_ID);
       planDocLine.copyInfo(line);
       planDocLine.m_DateAcct = planLine.get("date");
       if (IsReversal.equals("Y")) {
         // Expense Account
-        fact.createLine(planDocLine, prodExpAccount, this.C_Currency_ID, "",
-            planLine.get("amount"), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+        fact.createLine(planDocLine, prodExpAccount, strCurrencyId, "", planLine.get("amount"),
+            Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
         // Deferred Expense Account
-        fact.createLine(planDocLine, prodDefExpAccount, this.C_Currency_ID, planLine.get("amount"),
-            "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+        fact.createLine(planDocLine, prodDefExpAccount, strCurrencyId, planLine.get("amount"), "",
+            Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
       } else {
         // Deferred Expense Account
-        fact.createLine(planDocLine, prodDefExpAccount, this.C_Currency_ID, "",
-            planLine.get("amount"), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+        fact.createLine(planDocLine, prodDefExpAccount, strCurrencyId, "", planLine.get("amount"),
+            Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
         // Expense Account
-        fact.createLine(planDocLine, prodExpAccount, this.C_Currency_ID, planLine.get("amount"),
-            "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+        fact.createLine(planDocLine, prodExpAccount, strCurrencyId, planLine.get("amount"), "",
+            Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
       }
       amount = amount.subtract(new BigDecimal(planLine.get("amount")));
       Fact_Acct_Group_ID = SequenceIdData.getUUID();
