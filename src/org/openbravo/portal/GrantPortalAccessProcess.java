@@ -39,6 +39,7 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.access.UserRoles;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.utils.CryptoSHA1BASE64;
 
 /**
