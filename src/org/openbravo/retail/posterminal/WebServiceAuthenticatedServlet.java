@@ -59,14 +59,19 @@ public abstract class WebServiceAuthenticatedServlet extends BaseKernelServlet {
       if (localResponse.getRedirectTarget() != null) {
         if (!response.isCommitted()) {
           response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-          throw new OBSecurityException("Not authorized");
+          throw new NotAuthorizedException();
         }
       } else {
         response.setStatus(HttpServletResponse.SC_OK);
       }
     } catch (Exception e) {
       SessionHandler.getInstance().setDoRollback(true);
-      log.error(e.getMessage(), e);
+      if (e instanceof NotAuthorizedException) {
+        log.debug("Not authorized", e);
+      } else {
+        log.error("Not authorized", e);
+      }
+
       writeResult(response, silentExceptionToJson(e));
     }
   }
@@ -163,6 +168,10 @@ public abstract class WebServiceAuthenticatedServlet extends BaseKernelServlet {
     } catch (JSONException e) {
       throw new IOException(e);
     }
+  }
+
+  private class NotAuthorizedException extends RuntimeException {
+    private static final long serialVersionUID = 1L;
   }
 
 }
