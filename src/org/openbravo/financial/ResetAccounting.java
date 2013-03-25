@@ -313,7 +313,7 @@ public class ResetAccounting {
       String dateto) {
     if (!"".equals(recordId)) {
       List<Period> periods = new ArrayList<Period>();
-      periods.add(getDocumentPeriod(clientId, tableId, recordId));
+      periods.add(getDocumentPeriod(clientId, tableId, recordId, docBaseType));
       return periods;
     }
     String myQuery = "select distinct p from FinancialMgmtPeriodControl e left join e.period p left join p.year y left join y.calendar c where c.id = :calendarId and e.client.id = :clientId and e.documentCategory = :docbasetype and e.periodStatus = 'O'";
@@ -344,12 +344,14 @@ public class ResetAccounting {
     return query.list();
   }
 
-  private static Period getDocumentPeriod(String clientId, String tableId, String recordId) {
-    String myQuery = "select distinct e.period from FinancialMgmtAccountingFact e , FinancialMgmtPeriodControl p where p.period=e.period and p.periodStatus = 'O' and e.client.id = :clientId and e.table.id = :tableId and e.recordID=:recordId";
+  private static Period getDocumentPeriod(String clientId, String tableId, String recordId,
+      String docBaseType) {
+    String myQuery = "select distinct e.period from FinancialMgmtAccountingFact e , FinancialMgmtPeriodControl p where p.period=e.period and p.periodStatus = 'O' and e.client.id = :clientId and e.table.id = :tableId and e.recordID=:recordId and p.documentCategory = :docbasetype";
     Query query = OBDal.getInstance().getSession().createQuery(myQuery);
     query.setString("clientId", clientId);
     query.setString("tableId", tableId);
     query.setString("recordId", recordId);
+    query.setString("docbasetype", docBaseType);
     query.setFetchSize(1);
     @SuppressWarnings("unchecked")
     List<Period> periods = query.list();
