@@ -363,10 +363,11 @@ enyo.kind({
     }
   },
 
-  virtualKeypressHandler: function (key) {
-
-    this.waterfall('onCloseAllPopups');
+  virtualKeypressHandler: function (key, options) {
     var t;
+    if (options && options.fromPopup) {
+       this.waterfall('onCloseAllPopups');
+    }
     if (key.match(/^([0-9]|\.|,| |[a-z]|[A-Z])$/) || (key === 'del')) {
       this.writeCharacter(key);
     } else {
@@ -530,7 +531,14 @@ enyo.kind({
 
     if (button.command) {
       button.$.button.tap = function () {
-        me.virtualKeypressHandler(button.command);
+        if (button && button.definition && button.definition.includedInPopUp) {
+          me.virtualKeypressHandler(button.command, {
+            fromPopup: button.definition.includedInPopUp
+          });
+        } else {
+          me.virtualKeypressHandler(button.command);
+        }
+
       };
 
       this.addButton(button.command, button.$.button);
