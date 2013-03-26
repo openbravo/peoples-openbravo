@@ -385,21 +385,20 @@ public class DocInvoice extends AcctServer {
             }
           }
           String amount = p_lines[i].getAmount();
-          String amountCoverted = "";
+          String amountConverted = "";
           ConversionRateDoc conversionRateCurrentDoc = getConversionRateDoc(TABLEID_Invoice,
               Record_ID, C_Currency_ID, as.m_C_Currency_ID);
           if (conversionRateCurrentDoc != null) {
-            amountCoverted = applyRate(new BigDecimal(p_lines[i].getAmount()),
+            amountConverted = applyRate(new BigDecimal(p_lines[i].getAmount()),
                 conversionRateCurrentDoc, true).setScale(2, BigDecimal.ROUND_HALF_UP).toString();
           } else {
-            amountCoverted = convertAmount(new BigDecimal(p_lines[i].getAmount()), true, DateAcct,
-                TABLEID_Invoice, Record_ID, C_Currency_ID, as.m_C_Currency_ID, p_lines[i], as,
-                fact, Fact_Acct_Group_ID, nextSeqNo(SeqNo), conn, false).toString();
+            amountConverted = getConvertedAmt(p_lines[i].getAmount(), C_Currency_ID,
+                as.m_C_Currency_ID, DateAcct, "", AD_Client_ID, AD_Org_ID, conn);
           }
           if (((DocLine_Invoice) p_lines[i]).isDeferred()) {
             amount = createAccDefRevenueFact(fact, (DocLine_Invoice) p_lines[i], account,
                 ((DocLine_Invoice) p_lines[i]).getAccount(ProductInfo.ACCTTYPE_P_DefRevenue, as,
-                    conn), amountCoverted, as.m_C_Currency_ID, conn);
+                    conn), amountConverted, as.m_C_Currency_ID, conn);
             if (IsReversal.equals("Y")) {
               fact.createLine(p_lines[i], account, as.m_C_Currency_ID, amount, "",
                   Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
@@ -417,8 +416,8 @@ public class DocInvoice extends AcctServer {
             }
           }
           // If revenue has been deferred
-          if (((DocLine_Invoice) p_lines[i]).isDeferred() && !amount.equals(amountCoverted)) {
-            amount = new BigDecimal(amountCoverted).subtract(new BigDecimal(amount)).toString();
+          if (((DocLine_Invoice) p_lines[i]).isDeferred() && !amount.equals(amountConverted)) {
+            amount = new BigDecimal(amountConverted).subtract(new BigDecimal(amount)).toString();
             if (IsReversal.equals("Y")) {
               fact.createLine(p_lines[i], ((DocLine_Invoice) p_lines[i]).getAccount(
                   ProductInfo.ACCTTYPE_P_DefRevenue, as, conn), as.m_C_Currency_ID, amount, "",
@@ -521,9 +520,8 @@ public class DocInvoice extends AcctServer {
           amountCoverted = applyRate(new BigDecimal(p_lines[i].getAmount()),
               conversionRateCurrentDoc, true).setScale(2, BigDecimal.ROUND_HALF_UP).toString();
         } else {
-          amountCoverted = convertAmount(new BigDecimal(p_lines[i].getAmount()), true, DateAcct,
-              TABLEID_Invoice, Record_ID, C_Currency_ID, as.m_C_Currency_ID, p_lines[i], as, fact,
-              Fact_Acct_Group_ID, nextSeqNo(SeqNo), conn, false).toString();
+          amountCoverted = getConvertedAmt(p_lines[i].getAmount(), C_Currency_ID,
+              as.m_C_Currency_ID, DateAcct, "", AD_Client_ID, AD_Org_ID, conn);
         }
         Account account = ((DocLine_Invoice) p_lines[i]).getAccount(ProductInfo.ACCTTYPE_P_Revenue,
             as, conn);
@@ -651,9 +649,8 @@ public class DocInvoice extends AcctServer {
           amountConverted = applyRate(new BigDecimal(p_lines[i].getAmount()),
               conversionRateCurrentDoc, true).setScale(2, BigDecimal.ROUND_HALF_UP).toString();
         } else {
-          amountConverted = convertAmount(new BigDecimal(p_lines[i].getAmount()), true, DateAcct,
-              TABLEID_Invoice, Record_ID, C_Currency_ID, as.m_C_Currency_ID, p_lines[i], as, fact,
-              Fact_Acct_Group_ID, nextSeqNo(SeqNo), conn, false).toString();
+          amountConverted = getConvertedAmt(p_lines[i].getAmount(), C_Currency_ID,
+              as.m_C_Currency_ID, DateAcct, "", AD_Client_ID, AD_Org_ID, conn);
         }
         if (((DocLine_Invoice) p_lines[i]).isDeferred()) {
           amount = createAccDefExpenseFact(fact, (DocLine_Invoice) p_lines[i],
@@ -800,9 +797,8 @@ public class DocInvoice extends AcctServer {
           amountConverted = applyRate(new BigDecimal(p_lines[i].getAmount()),
               conversionRateCurrentDoc, true).setScale(2, BigDecimal.ROUND_HALF_UP).toString();
         } else {
-          amountConverted = convertAmount(new BigDecimal(p_lines[i].getAmount()), true, DateAcct,
-              TABLEID_Invoice, Record_ID, C_Currency_ID, as.m_C_Currency_ID, p_lines[i], as, fact,
-              Fact_Acct_Group_ID, nextSeqNo(SeqNo), conn, false).toString();
+          amountConverted = getConvertedAmt(p_lines[i].getAmount(), C_Currency_ID,
+              as.m_C_Currency_ID, DateAcct, "", AD_Client_ID, AD_Org_ID, conn);
         }
         Account account = ((DocLine_Invoice) p_lines[i]).getAccount(ProductInfo.ACCTTYPE_P_Expense,
             as, conn);
