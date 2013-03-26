@@ -206,6 +206,18 @@ export.database: exports database structure and data to xml files.
     </and>
   </condition>
 
+  <condition property="instance.oracle" value="true">
+    <and>
+      <equals arg1="${bbdd.rdbms}" arg2="ORACLE" />
+    </and>
+  </condition>
+
+  <condition property="instance.postgres" value="true" >
+    <and>
+      <equals arg1="${bbdd.rdbms}" arg2="POSTGRE" />
+    </and>
+  </condition>
+
   <condition property="root.user">
     <and>
       <equals arg1="${user.name}" arg2="root" />
@@ -347,12 +359,21 @@ export.database: exports database structure and data to xml files.
      </sequential>
   </macrodef>
 
-  <macrodef name="createAuditTriggers">
+  <macrodef name="createAuditTriggersOracle">
      <sequential>
        <sql driver="${bbdd.driver}" url="${bbdd.owner.url}" userid="${bbdd.user}" password="${bbdd.password}" onerror="abort" autocommit="true" print="yes">
          <classpath> <fileset dir="${base.lib}"> <include name="**/*.jar"> </include> </fileset> </classpath>
-         <transaction> SELECT ad_create_audit_triggers(null);
+         <transaction> CALL ad_create_audit_triggers(null)
          </transaction>
+       </sql>
+     </sequential>
+  </macrodef>
+
+  <macrodef name="createAuditTriggersPostgres">
+     <sequential>
+       <sql driver="${bbdd.driver}" url="${bbdd.owner.url}" userid="${bbdd.user}" password="${bbdd.password}" onerror="abort" autocommit="true" print="yes">
+         <classpath> <fileset dir="${base.lib}"> <include name="**/*.jar"> </include> </fileset> </classpath>
+         <transaction> SELECT ad_create_audit_triggers(null) FROM DUAL; </transaction>
        </sql>
      </sequential>
   </macrodef>
@@ -1203,8 +1224,17 @@ export.database: exports database structure and data to xml files.
                     propertiesFile="${base.config}/Openbravo.properties"/>
   </target>
 
+  <target name="update.audit.trail.infrastructure.oracle" if="instance.oracle">
+    <createAuditTriggersOracle/>
+  </target>
+
+  <target name="update.audit.trail.infrastructure.postgres" if="instance.postgres">
+    <createAuditTriggersPostgres/>
+  </target>
+
   <target name="update.audit.trail.infrastructure">
-    <createAuditTriggers/>
+    <antcall target="update.audit.trail.infrastructure.postgres"/>
+    <antcall target="update.audit.trail.infrastructure.oracle"/>
   </target>
   
 </project>
