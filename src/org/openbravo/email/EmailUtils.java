@@ -18,14 +18,11 @@ package org.openbravo.email;
  * Contributor(s):  ______________________________________.
  *************************************************************************
  */
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.enterprise.EmailServerConfiguration;
 import org.openbravo.model.common.enterprise.Organization;
 
@@ -37,7 +34,7 @@ import org.openbravo.model.common.enterprise.Organization;
  */
 
 public class EmailUtils {
-  static Logger log4j = Logger.getLogger(Utility.class);
+  static Logger log4j = Logger.getLogger(EmailUtils.class);
 
   /*
    * Retrieves the email configuration of the Organization
@@ -54,29 +51,21 @@ public class EmailUtils {
             .createCriteria(EmailServerConfiguration.class);
         mailConfigCriteria.add(Restrictions.eq(EmailServerConfiguration.PROPERTY_ORGANIZATION,
             organization));
-        List<EmailServerConfiguration> mailConfigList = null;
-        // if the current organization is *, return email configuration if present, else return
-        // null
+        emailConfiguration = (EmailServerConfiguration) mailConfigCriteria.uniqueResult();
         if (organization.getId().equals("0")) {
-          mailConfigList = mailConfigCriteria.list();
-          if (mailConfigList.size() != 0) {
-            emailConfiguration = mailConfigList.get(0);
-            return emailConfiguration;
-          } else {
-            return null;
-          }
+          return emailConfiguration;
         } else {
-          mailConfigList = mailConfigCriteria.list();
-          if (mailConfigList.size() == 0) {
+          // if value not available look in parent organization
+          if (emailConfiguration == null) {
             OrganizationStructureProvider orgStructure = new OrganizationStructureProvider();
             return getEmailConfiguration(orgStructure.getParentOrg(organization));
           } else {
-            emailConfiguration = mailConfigList.get(0);
+            return emailConfiguration;
           }
         }
       }
     } catch (Exception e) {
-      log4j.error("Exception while retrieving email configuration" + e);
+      log4j.error("Exception while retrieving email configuration", e);
     }
     return emailConfiguration;
   }
