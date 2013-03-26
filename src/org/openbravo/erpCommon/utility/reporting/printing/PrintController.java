@@ -50,6 +50,7 @@ import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.email.EmailUtils;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
@@ -916,8 +917,8 @@ public class PrintController extends HttpSecureAppServlet {
         throw new ServletException("No Poc configuration found for this client.");
       }
 
-      EmailServerConfiguration mailConfig = Utility.getEmailConfiguration(OBDal.getInstance().get(
-          Organization.class, vars.getOrg()));
+      EmailServerConfiguration mailConfig = EmailUtils.getEmailConfiguration(OBDal.getInstance()
+          .get(Organization.class, vars.getOrg()));
 
       if (mailConfig == null) {
         throw new ServletException(

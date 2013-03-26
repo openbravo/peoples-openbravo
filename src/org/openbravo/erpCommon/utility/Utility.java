@@ -65,15 +65,12 @@ import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
-import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBConfigFileProvider;
 import org.openbravo.base.secureApp.OrgTree;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.security.OrganizationStructureProvider;
-import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.data.Sqlc;
@@ -88,7 +85,6 @@ import org.openbravo.model.ad.ui.Process;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.model.ad.utility.Image;
-import org.openbravo.model.common.enterprise.EmailServerConfiguration;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.OrganizationInformation;
 import org.openbravo.model.common.geography.Country;
@@ -2605,45 +2601,4 @@ public class Utility {
     }
   }
 
-  /*
-   * Retrieves the email configuration of the Organization
-   * 
-   * @param Organization Organization whose email server configuration is to be retrieved.
-   * 
-   * @return EmailServerConfiguration of the Organization.
-   */
-  public static EmailServerConfiguration getEmailConfiguration(Organization organization) {
-    EmailServerConfiguration emailConfiguration = null;
-    try {
-      if (organization != null) {
-        OBCriteria<EmailServerConfiguration> mailConfigCriteria = OBDal.getInstance()
-            .createCriteria(EmailServerConfiguration.class);
-        mailConfigCriteria.add(Restrictions.eq(EmailServerConfiguration.PROPERTY_ORGANIZATION,
-            organization));
-        List<EmailServerConfiguration> mailConfigList = null;
-        // if the current organization is *, return email configuration if present, else return
-        // null
-        if (organization.getId().equals("0")) {
-          mailConfigList = mailConfigCriteria.list();
-          if (mailConfigList.size() != 0) {
-            emailConfiguration = mailConfigList.get(0);
-            return emailConfiguration;
-          } else {
-            return null;
-          }
-        } else {
-          mailConfigList = mailConfigCriteria.list();
-          if (mailConfigList.size() == 0) {
-            OrganizationStructureProvider orgStructure = new OrganizationStructureProvider();
-            return getEmailConfiguration(orgStructure.getParentOrg(organization));
-          } else {
-            emailConfiguration = mailConfigList.get(0);
-          }
-        }
-      }
-    } catch (Exception e) {
-      log4j.error("Exception while retrieving email configuration" + e);
-    }
-    return emailConfiguration;
-  }
 }

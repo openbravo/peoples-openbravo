@@ -33,8 +33,6 @@ import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.service.OBCriteria;
-import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.poc.EmailManager;
 import org.openbravo.model.common.enterprise.EmailServerConfiguration;
@@ -78,7 +76,8 @@ public class EmailEventManager {
   public boolean sendEmail(String event, final String recipient, Object data)
       throws EmailEventException {
     // Retrieves the Email Server configuration
-    final EmailServerConfiguration mailConfig = getEmailConfiguration();
+    Organization currenctOrg = OBContext.getOBContext().getCurrentOrganization();
+    final EmailServerConfiguration mailConfig = EmailUtils.getEmailConfiguration(currenctOrg);
 
     if (mailConfig == null) {
       log.warn("Couldn't find email configuarion");
@@ -166,42 +165,4 @@ public class EmailEventManager {
     return generators;
   }
 
-  /**
-   * First search for the current organization (and use the first returned one), then for
-   * organization '0' (and use the first returned one) and then for any other of the organization
-   * tree where current organization belongs to (and use the first returned one)
-   */
-  private EmailServerConfiguration getEmailConfiguration() {
-    // TODO: this should be centralized and improved, see issue #23198
-
-    Organization currenctOrg = OBContext.getOBContext().getCurrentOrganization();
-    EmailServerConfiguration mailConfig = null;
-
-    OBCriteria<EmailServerConfiguration> mailConfigCriteria = OBDal.getInstance().createCriteria(
-        EmailServerConfiguration.class);
-    mailConfigCriteria.addOrderBy("client.id", false);
-    final List<EmailServerConfiguration> mailConfigList = mailConfigCriteria.list();
-
-    if (mailConfigList.size() == 0) {
-      return null;
-    }
-    for (EmailServerConfiguration currentOrgConfig : mailConfigList) {
-      if (currenctOrg.getId().equals(currentOrgConfig.getOrganization().getId())) {
-        mailConfig = currentOrgConfig;
-        break;
-      }
-    }
-    if (mailConfig == null) {
-      for (EmailServerConfiguration zeroOrgConfig : mailConfigList) {
-        if ("0".equals(zeroOrgConfig.getOrganization().getId())) {
-          mailConfig = zeroOrgConfig;
-          break;
-        }
-      }
-    }
-    if (mailConfig == null) {
-      mailConfig = mailConfigList.get(0);
-    }
-    return mailConfig;
-  }
 }
