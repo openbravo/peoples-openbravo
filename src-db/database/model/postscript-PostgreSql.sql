@@ -389,11 +389,8 @@ $BODY1$ DECLARE
   deleted NUMERIC :=0;
   created NUMERIC :=0;
   v_message VARCHAR(500);
-  v_tableListToUpdate VARCHAR(500);
-  v_tableListToDelete VARCHAR(500);
+  v_tableList VARCHAR(500);
   v_isObps NUMERIC;
-  v_isfullyaudited CHAR(1);
-  v_triggerspresent NUMERIC :=0;
 BEGIN 
   select count(*) 
     into v_isObps
@@ -407,38 +404,13 @@ BEGIN
   if p_pinstance_id is not null then
     for cur_triggers in (select *
                          from user_triggers
-                         where trigger_name like 'au_%'
-                         and UPPER(trigger_name) <> 'AU_AD_CLIENT_TRG'
-                         and UPPER(trigger_name) <> 'AU_AD_ORG_TRG') loop
+                        where trigger_name like 'au_%' and trigger_name <> 'au_ad_client_trg' and trigger_name <> 'au_ad_org_trg') loop
     execute 'DROP TRIGGER '||cur_triggers.trigger_name||' ON '||cur_triggers.table_name;
     execute 'DROP FUNCTION '||cur_triggers.trigger_name||'()';
     raise notice 'deleting %', cur_triggers.trigger_name;
     deleted := deleted + 1;
   end loop;
-
-  --remove client and org audit triggers if isfullyaudited is set to 'N'
-  select isfullyaudited into v_isfullyaudited from ad_table where UPPER(tablename)='AD_CLIENT';
-  if v_isfullyaudited = 'N' then
-    select count(*) into v_triggerspresent from user_triggers where UPPER(trigger_name) = 'AU_AD_CLIENT_TRG';
-    if v_triggerspresent > 0 then
-      v_tableListToDelete := 'AD_CLIENT';
-    end if;
-  end if;
-
-  select isfullyaudited into v_isfullyaudited from ad_table where UPPER(tablename)='AD_ORG';
-  if v_isfullyaudited = 'N' then
-    select count(*) into v_triggerspresent from user_triggers where UPPER(trigger_name) = 'AU_AD_ORG_TRG';
-    if v_triggerspresent > 0 then
-      if v_tableListToDelete is null then
-        v_tableListToDelete := 'AD_ORG';
-      else
-        v_tableListToDelete := v_tableListToDelete || ' , AD_ORG';
-      end if;
-    end if;
-  end if;
-
-  else
-
+  ELSE
   for cur_triggers in (select *
                          from user_triggers
                         where trigger_name like 'au_%') loop
@@ -455,10 +427,10 @@ BEGIN
                       and ISVIEW='N'
                       and (UPPER(TABLENAME) = 'AD_CLIENT'
                       or UPPER(TABLENAME) = 'AD_ORG')) loop
-      if v_tableListToUpdate IS NULL then
-        v_tableListToUpdate := cur_tables.tablename;
+      if v_tableList IS NULL then
+        v_tableList := cur_tables.tablename;
       else
-        v_tableListToUpdate := v_tableListToUpdate || ' , '|| cur_tables.tablename;
+        v_tableList := v_tableList || ' , '|| cur_tables.tablename;
       end if;
   end loop;
   end if;
@@ -661,14 +633,10 @@ EXECUTE(code);
 
   end loop;
 
-  if v_tableListToUpdate is null and v_tableListToDelete is null then
+  if v_tableList is null then
     v_Message := '@Deleted@: '||deleted||' @Created@: '||created;
-  elsif v_tableListToDelete is null and v_tableListToUpdate is not null then
-    v_Message := '@Deleted@: '||deleted||' @Created@: '||created||'. @RunAuditFromTerminalUpdate@ '|| v_tableListToUpdate ||'. @RunAuditFromTerminalHint@' ;
-  elsif v_tableListToDelete is not null and v_tableListToUpdate is null then
-    v_Message := '@Deleted@: '||deleted||' @Created@: '||created||'. @RunAuditFromTerminalDelete@ '|| v_tableListToDelete ||'. @RunAuditFromTerminalHint@' ;
   else
-    v_Message := '@Deleted@: '||deleted||' @Created@: '||created||'. @RunAuditFromTerminalUpdate@ '|| v_tableListToUpdate ||'. @RunAuditFromTerminalDelete@ '|| v_tableListToDelete || '. @RunAuditFromTerminalHint@' ;
+    v_Message := '@Deleted@: '||deleted||' @Created@: '||created||'. @RunAuditFromTerminalTbl@ '|| v_tableList || '. @RunAuditFromTerminalHint@' ;
   end if;
   
   PERFORM AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 1, v_Message) ;
@@ -682,7 +650,7 @@ WHEN OTHERS THEN
   RETURN;
   
 END ; $BODY1$
-LANGUAGE plpgsql VOLATILE
+LANGUAGE 'plpgsql' VOLATILE
 /-- END
 
 -- DOW: day of week
