@@ -64,8 +64,7 @@ enyo.kind({
   }],
   pay: function (amount, key, name, paymentMethod, rate, mulrate, isocode, options) {
     if (options && options.percentaje) {
-      var percToApply = OB.DEC.div(amount, 100);
-      amount = OB.DEC.mul(this.receipt.getPending(), percToApply);
+      amount = OB.DEC.div(OB.DEC.mul(this.receipt.getPending(), amount), 100);
     }
 
     if (OB.DEC.compare(amount) > 0) {
