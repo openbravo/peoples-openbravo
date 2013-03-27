@@ -527,8 +527,9 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql>
       <![CDATA[
-        select MIN(C_INVOICE_ID) as id
-        from c_invoice a, ad_org
+        select 1 as id from dual where exists (
+        select  C_INVOICE_ID as id
+        from  c_invoice a, ad_org
         where posted = 'N'
         and processed = 'Y'
         and (processing = 'N' or processing is null)
@@ -544,11 +545,11 @@
               and c_periodcontrol.docbasetype = ?
               and c_periodcontrol.periodstatus = 'O'
               and    a.dateacct >= c_period.StartDate
-              and     a.dateacct < c_period.EndDate + 1)
+              and     a.dateacct < c_period.EndDate + 1))
       ]]>
       </Sql>
-      <Parameter name="tableName" type="replace" optional="true" after="select MIN(" text="C_INVOICE"/>
-      <Parameter name="tableName" type="replace" optional="true" after="from " text="c_invoice"/>
+      <Parameter name="tableName" type="replace" optional="true" after="select  " text="C_INVOICE"/>
+      <Parameter name="tableName" type="replace" optional="true" after="from  " text="c_invoice"/>
       <Parameter name="adClientId" />
       <Parameter name="adOrgId"/>
       <Parameter name="docbasetype"/>
