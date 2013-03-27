@@ -134,8 +134,8 @@ public class AcctServerProcess extends DalBaseProcess {
     String strTable = "";
     // If it is the background process, we use 0
     String strOrg = "0";
-    String strDateFrom = "";// "01-01-2012";
-    String strDateTo = "";// "01-04-2012";
+    String strDateFrom = "";
+    String strDateTo = "";
     // if called by 'Posting by DB tables' get params from ad_pinstance
     if (isDirect) {
       strTable = AcctServerProcessData.selectTable(connection, pinstanceId);

@@ -27,7 +27,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.reference.PInstanceProcessData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
@@ -79,16 +78,13 @@ public class CallAcctServer extends HttpSecureAppServlet {
     } else if (vars.commandIn("RUN")) {
       String strTableId = vars.getStringParameter("inpadTableId");
       String strAdOrgId = vars.getStringParameter("inpadOrgId");
-      // String strDateFrom = vars.getStringParameter("inpDateFrom");
-      // String strDateTo = vars.getStringParameter("inpDateTo");
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom", "CallAcctServer|dateFrom");
       String strDateTo = vars.getRequestGlobalVariable("inpDateTo", "CallAcctServer|dateTo");
       if (strAdOrgId == null || strAdOrgId.equals(""))
         strAdOrgId = "0";
       if (log4j.isDebugEnabled())
         log4j.debug(strTableId);
-      runProcess(response, vars, strTableId, strAdOrgId, adProcessId, strDateFrom, strDateTo,
-          this.myPool);
+      runProcess(response, vars, strTableId, strAdOrgId, adProcessId, strDateFrom, strDateTo);
     } else
       pageError(response);
   }
@@ -157,11 +153,9 @@ public class CallAcctServer extends HttpSecureAppServlet {
 
       xmlDocument.setParameter("adOrgId", strOrgId);
 
-      // xmlDocument.setParameter("datefrom", vars.getStringParameter("inpdatefrom"));
       xmlDocument.setParameter("datefrom", strDateFrom);
       xmlDocument.setParameter("dateFromdisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
       xmlDocument.setParameter("dateFromsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-      // xmlDocument.setParameter("dateto", vars.getStringParameter("inpdateto"));
       xmlDocument.setParameter("dateto", strDateTo);
       xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
       xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
@@ -174,8 +168,8 @@ public class CallAcctServer extends HttpSecureAppServlet {
   }
 
   private void runProcess(HttpServletResponse response, VariablesSecureApp vars, String strTableId,
-      String strOrgId, String adProcessId, String strDateFrom, String strDateTo,
-      ConnectionProvider myPool) throws IOException, ServletException {
+      String strOrgId, String adProcessId, String strDateFrom, String strDateTo)
+      throws IOException, ServletException {
     OBError myMessage = new OBError();
     myMessage.setTitle("");
     boolean scheduled = false;
