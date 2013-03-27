@@ -44,10 +44,6 @@ public class ResetAccountingProcess extends DalBaseProcess {
       String datefrom = (String) bundle.getParams().get("datefrom");
       String dateto = (String) bundle.getParams().get("dateto");
       HashMap<String, Integer> results = new HashMap<String, Integer>();
-      Long totalupdate = 0l;
-      Long inicioupdate = 0l;
-      Long finupdate = 0l;
-      inicioupdate = System.currentTimeMillis();
       if ("Y".equals(deletePosting)) {
         results = ResetAccounting
             .delete(adClientId, adOrgId, adTableId, recordId, datefrom, dateto);
@@ -58,13 +54,8 @@ public class ResetAccountingProcess extends DalBaseProcess {
           results = ResetAccounting.restore(adClientId, adOrgId, datefrom, dateto);
         }
       }
-      finupdate = System.currentTimeMillis();
-      totalupdate = totalupdate + finupdate - inicioupdate;
       int counter = results.get("updated");
       int counterDeleted = results.get("deleted");
-      System.out.println("Records updated: " + counter + "\n");
-      System.out.println("Records deleted: " + counterDeleted + "\n");
-      System.out.println("totalupdate /milis:" + totalupdate);
       OBError myError = new OBError();
       myError.setType("Success");
       myError.setTitle("@Success@");
@@ -80,6 +71,5 @@ public class ResetAccountingProcess extends DalBaseProcess {
       // JobExecutionException
       throw new JobExecutionException(e.getMessage(), e);
     }
-
   }
 }

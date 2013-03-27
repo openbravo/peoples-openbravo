@@ -44,7 +44,7 @@ import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.db.DbUtility;
 
 public class OpenClosePeriodHandler extends BaseActionHandler {
-  static Logger log4j = Logger.getLogger(OpenClosePeriodHandler.class);
+  private static final Logger log4j = Logger.getLogger(OpenClosePeriodHandler.class);
 
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String content) {
@@ -151,7 +151,7 @@ public class OpenClosePeriodHandler extends BaseActionHandler {
         JSONObject errorMessage = new JSONObject();
         errorMessage.put("severity", "success");
         errorMessage.put("text",
-            Utility.messageBD(new DalConnectionProvider(), "ProcessOK", vars.getLanguage()));
+            Utility.messageBD(new DalConnectionProvider(false), "ProcessOK", vars.getLanguage()));
         response.put("message", errorMessage);
       }
     } catch (Exception e) {
@@ -166,32 +166,9 @@ public class OpenClosePeriodHandler extends BaseActionHandler {
         errorMessage.put("text", message);
         response.put("message", errorMessage);
       } catch (JSONException ignore) {
-        ignore.printStackTrace();
       }
     }
-
     return response;
-
-  }
-
-  /**
-   * Converts the OBError message to a JSONObject message.
-   * <p>
-   * Mapping: type <-> severity, message <-> text
-   * 
-   * @param obError
-   *          OBError.
-   * @return JSONObject containing the OBError information.
-   */
-  public static JSONObject convertOBErrorToJSON(OBError obError) {
-    JSONObject errorMessage = new JSONObject();
-    try {
-      errorMessage.put("severity", obError.getType().toLowerCase());
-      errorMessage.put("text", obError.getMessage());
-    } catch (JSONException ignore) {
-      ignore.printStackTrace();
-    }
-    return errorMessage;
   }
 
   private JSONObject getActionComboBox(String actionToExclude, VariablesSecureApp vars)

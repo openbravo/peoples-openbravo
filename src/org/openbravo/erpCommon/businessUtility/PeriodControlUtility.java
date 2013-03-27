@@ -25,7 +25,6 @@ import java.util.Map;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.hibernate.criterion.Order;
@@ -48,7 +47,6 @@ import org.openbravo.service.db.CallProcess;
 import org.openbravo.service.db.DalConnectionProvider;
 
 public class PeriodControlUtility {
-  private static final Logger log4j = Logger.getLogger(PeriodControlUtility.class);
 
   public static OBError openClosePeriod(PeriodControlLog periodControlLog) {
     OBError myMessage = new OBError();
@@ -65,7 +63,7 @@ public class PeriodControlUtility {
         periodControlLog.getId(), parameters);
     VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
     try {
-      ConnectionProvider conn = new DalConnectionProvider();
+      ConnectionProvider conn = new DalConnectionProvider(false);
       myMessage = Utility.getProcessInstanceMessage(conn, vars,
           PInstanceProcessData.select(conn, pinstance.getId()));
     } catch (ServletException e) {
@@ -89,7 +87,7 @@ public class PeriodControlUtility {
         parameters);
     VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
     try {
-      ConnectionProvider conn = new DalConnectionProvider();
+      ConnectionProvider conn = new DalConnectionProvider(false);
       myMessage = Utility.getProcessInstanceMessage(conn, vars,
           PInstanceProcessData.select(conn, pinstance.getId()));
     } catch (ServletException e) {

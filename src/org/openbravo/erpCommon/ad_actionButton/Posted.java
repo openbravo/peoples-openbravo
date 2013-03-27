@@ -221,7 +221,7 @@ public class Posted extends HttpSecureAppServlet {
         } else {
           if (log4j.isDebugEnabled())
             log4j.debug("SAVE, delete");
-          Long inicio = System.currentTimeMillis();
+          long start = System.currentTimeMillis();
           OBError myMessage = new OBError();
           myMessage.setType("Success");
           PostedData[] data = PostedData.select(this, strKey, strTableId);
@@ -239,7 +239,7 @@ public class Posted extends HttpSecureAppServlet {
             myMessage.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(),
                 e.getMessage()));
           }
-          System.out.println("Total deleting /milis: " + (System.currentTimeMillis() - inicio));
+          log4j.debug("Total deleting /milis: " + (System.currentTimeMillis() - start));
           vars.setMessage(strTabId, myMessage);
           printPageClosePopUp(response, vars);
         }
