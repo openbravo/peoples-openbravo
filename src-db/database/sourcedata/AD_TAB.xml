@@ -5175,7 +5175,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--456-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--456-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--456-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
-<!--456-->  <HQLWHERECLAUSE><![CDATA[e in (select t1.businessPartner from TimeAndExpenseSheet as t1, TimeAndExpenseSheetLine as t2 where t1=t2.expenseSheet and t1.processed='Y' and t2.timeSheet<>'Y' and t2.invoiceLine is null))]]></HQLWHERECLAUSE>
+<!--456-->  <HQLWHERECLAUSE><![CDATA[e in (select t1.businessPartner from TimeAndExpenseSheet as t1, TimeAndExpenseSheetLine as t2 where t1=t2.expenseSheet and t1.processed='Y' and t2.timeSheet<>'Y' and t2.invoiceLine is null)]]></HQLWHERECLAUSE>
 <!--456-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--456-->  <EM_OBUIAPP_CAN_ADD><![CDATA[N]]></EM_OBUIAPP_CAN_ADD>
 <!--456-->  <EM_OBUIAPP_CAN_DELETE><![CDATA[N]]></EM_OBUIAPP_CAN_DELETE>
