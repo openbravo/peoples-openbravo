@@ -158,7 +158,7 @@ enyo.kind({
             options.percentaje = true;
           }
           var amount = OB.DEC.number(OB.I18N.parseNumber(txt));
-          amount = _.isNaN(amount) ? me.receipt.getPending() : amount;
+          amount = _.isNaN(amount) ? 100 : amount;
           me.pay(amount, payment.payment.searchKey, payment.payment._identifier, payment.paymentMethod, payment.rate, payment.mulrate, payment.isocode, options);
         }
       });
