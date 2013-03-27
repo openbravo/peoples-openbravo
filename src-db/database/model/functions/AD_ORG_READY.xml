@@ -135,11 +135,12 @@ BEGIN
       IF ( v_isperiodcontrol = 'Y') THEN
         FOR CUR_PeriodControl IN
         (SELECT Value, a.C_Period_ID as Period
-         FROM AD_Ref_List , (select c_period_id
+         FROM AD_Ref_List , (select c_period_id, periodtype
                             from c_period, c_year
                             where c_year.c_year_id= c_period.c_year_id
                             and c_year.c_calendar_id = COALESCE(v_calendar_id,(SELECT C_CALENDAR_ID FROM AD_ORG WHERE AD_ORG_ID = AD_ORG_GETCALENDAROWNER(v_Record_ID)))) a
          WHERE AD_Reference_ID='183'
+         AND value = (CASE WHEN a.PeriodType = 'S' THEN value ELSE 'GLJ' END)
          ORDER BY 1)
         LOOP
           INSERT
@@ -182,11 +183,12 @@ BEGIN
       LOOP
         FOR CUR_PeriodControl IN
           (SELECT Value, a.C_Period_ID as Period
-           FROM AD_Ref_List , (select c_period_id
+           FROM AD_Ref_List , (select c_period_id, PeriodType
                               from c_period, c_year
                               where c_year.c_year_id= c_period.c_year_id
                               and c_year.c_calendar_id = (SELECT C_CALENDAR_ID FROM AD_ORG WHERE AD_ORG_ID = AD_ORG_GETCALENDAROWNER(Cur_Org.AD_Org_ID))) a
            WHERE AD_Reference_ID='183'
+         		AND value = (CASE WHEN a.PeriodType = 'S' THEN value ELSE 'GLJ' END)
            ORDER BY 1)
           LOOP
             INSERT
