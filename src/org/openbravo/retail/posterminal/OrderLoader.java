@@ -1148,7 +1148,7 @@ public class OrderLoader extends JSONProcessSimple {
 
       FIN_Payment finPayment = FIN_AddPayment.savePayment(null, true, paymentDocType, paymentDocNo,
           order.getBusinessPartner(), paymentType.getPaymentMethod().getPaymentMethod(), account,
-          amount.toString(), order.getOrderDate(), order.getOrganization(), null, detail,
+          amount.toString(), new Date(), order.getOrganization(), null, detail,
           paymentAmount, false, false, order.getCurrency(), mulrate, origAmount);
       if (writeoffAmt.signum() == 1) {
         FIN_AddPayment.saveGLItem(finPayment, writeoffAmt, paymentType.getPaymentMethod()
