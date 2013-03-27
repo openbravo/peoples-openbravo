@@ -5060,7 +5060,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--431-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--431-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--431-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
-<!--431-->  <HQLWHERECLAUSE><![CDATA[e in (select t2.businessPartner from TimeAndExpenseSheet as t1, TimeAndExpenseSheetLine as t2 where t1=t2.expenseSheet and t1.processed='Y' and t2.reinvoice='Y' and t2.salesOrderLine is null))]]></HQLWHERECLAUSE>
+<!--431-->  <HQLWHERECLAUSE><![CDATA[e in (select t2.businessPartner from TimeAndExpenseSheet as t1, TimeAndExpenseSheetLine as t2 where t1=t2.expenseSheet and t1.processed='Y' and t2.reinvoice='Y' and t2.salesOrderLine is null)]]></HQLWHERECLAUSE>
 <!--431-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--431-->  <EM_OBUIAPP_CAN_ADD><![CDATA[N]]></EM_OBUIAPP_CAN_ADD>
 <!--431-->  <EM_OBUIAPP_CAN_DELETE><![CDATA[N]]></EM_OBUIAPP_CAN_DELETE>
@@ -5090,7 +5090,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--432-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--432-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--432-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
-<!--432-->  <HQLWHERECLAUSE><![CDATA[e.reinvoice='Y'  and e.salesOrderLine is NULL and e.expenseSheet in (select t from TimeAndExpenseSheet t where t.processed='Y'))]]></HQLWHERECLAUSE>
+<!--432-->  <HQLWHERECLAUSE><![CDATA[e.reinvoice='Y'  and e.salesOrderLine is NULL and e.expenseSheet in (select t from TimeAndExpenseSheet t where t.processed='Y')]]></HQLWHERECLAUSE>
 <!--432-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--432-->  <EM_OBUIAPP_CAN_ADD><![CDATA[N]]></EM_OBUIAPP_CAN_ADD>
 <!--432-->  <EM_OBUIAPP_CAN_DELETE><![CDATA[N]]></EM_OBUIAPP_CAN_DELETE>
