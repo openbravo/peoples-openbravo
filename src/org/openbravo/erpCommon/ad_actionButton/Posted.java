@@ -39,6 +39,7 @@ import org.openbravo.erpCommon.ad_forms.AcctServer;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.financial.ResetAccounting;
+import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.ui.Process;
 import org.openbravo.model.financialmgmt.accounting.AccountingFact;
 import org.openbravo.xmlEngine.XmlDocument;
@@ -73,17 +74,16 @@ public class Posted extends HttpSecureAppServlet {
       String strTabName = vars.getGlobalVariable("inpTabName", "Posted|tabName", "");
       String strModify = "N";
       if (strPosted.equals("Y")) {
+        final Table table = OBDal.getInstance().get(Table.class, strTableId);
         final OBCriteria<AccountingFact> fact = OBDal.getInstance().createCriteria(
             AccountingFact.class);
         fact.add(Restrictions.eq(AccountingFact.PROPERTY_RECORDID, strKey));
-        for (AccountingFact fa : fact.list()) {
-          if (fa.isModify()) {
-            strModify = "Y";
-
-          }
+        fact.add(Restrictions.eq(AccountingFact.PROPERTY_TABLE, table));
+        fact.add(Restrictions.eq(AccountingFact.PROPERTY_MODIFY, true));
+        if (fact.list().size() > 0) {
+          strModify = "Y";
         }
       }
-
       printPage(response, vars, strKey, strWindowId, strTabId, strProcessId, strTableId,
           strForcedTableId, strPath, strTabName, strPosted, strModify);
     } else if (vars.commandIn("SAVE")) {

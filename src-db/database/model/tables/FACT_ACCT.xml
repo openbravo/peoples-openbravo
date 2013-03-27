@@ -300,5 +300,6 @@
         <index-column name="RECORD_ID"/>
       </index>
       <check name="FACT_ACCT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="FACT_ACCT_ISMODIFY_CHECK"><![CDATA[ISMODIFY IN ('Y', 'N')]]></check>
     </table>
   </database>

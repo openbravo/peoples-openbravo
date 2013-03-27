@@ -17920,7 +17920,7 @@ You can upgrade the license of your instance by contacting Openbravo sales staff
 <!--6C26F9C7266749748F0B2DEE4B86CA1F-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--6C26F9C7266749748F0B2DEE4B86CA1F-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--6C26F9C7266749748F0B2DEE4B86CA1F-->  <VALUE><![CDATA[DESC_EDITED]]></VALUE>
-<!--6C26F9C7266749748F0B2DEE4B86CA1F-->  <MSGTEXT><![CDATA[Some accounting entries description has been modified. If you unpost the document you will lose the changes in the description.]]></MSGTEXT>
+<!--6C26F9C7266749748F0B2DEE4B86CA1F-->  <MSGTEXT><![CDATA[Some accounting entries description have been modified. If you unpost the document you will lose the changes in the description.]]></MSGTEXT>
 <!--6C26F9C7266749748F0B2DEE4B86CA1F-->  <MSGTYPE><![CDATA[W]]></MSGTYPE>
 <!--6C26F9C7266749748F0B2DEE4B86CA1F-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--6C26F9C7266749748F0B2DEE4B86CA1F--></AD_MESSAGE>
