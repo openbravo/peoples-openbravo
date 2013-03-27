@@ -29,6 +29,7 @@ import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.client.kernel.RequestContext;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.businessUtility.PeriodControlUtility;
@@ -108,8 +109,13 @@ public class OpenClosePeriodHandler extends BaseActionHandler {
               continue;
             }
             pc.setPeriodAction(action);
-            OBDal.getInstance().save(pc);
-            OBDal.getInstance().flush();
+            OBContext.setAdminMode(false);
+            try {
+              OBDal.getInstance().save(pc);
+              OBDal.getInstance().flush();
+            } finally {
+              OBContext.restorePreviousMode();
+            }
             OBError error = PeriodControlUtility.openClosePeriodControl(id);
             if ("Error".equals(error.getType())) {
               throw new OBException(error.getMessage());
@@ -128,8 +134,13 @@ public class OpenClosePeriodHandler extends BaseActionHandler {
             pcl.setYear(p.getYear());
             pcl.setProcessed(false);
             pcl.setProcessNow(false);
-            OBDal.getInstance().save(pcl);
-            OBDal.getInstance().flush();
+            OBContext.setAdminMode(false);
+            try {
+              OBDal.getInstance().save(pcl);
+              OBDal.getInstance().flush();
+            } finally {
+              OBContext.restorePreviousMode();
+            }
             OBError error = PeriodControlUtility.openClosePeriod(pcl);
             if ("Error".equals(error.getType())) {
               throw new OBException(error.getMessage());
