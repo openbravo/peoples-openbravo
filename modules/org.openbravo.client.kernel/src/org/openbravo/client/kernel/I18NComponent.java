@@ -72,7 +72,7 @@ public class I18NComponent extends BaseTemplateComponent {
 
       // first read the labels from the base table
       final OBQuery<Message> messages = OBDal.getInstance().createQuery(Message.class,
-          "module.id in (:modules)");
+          "module.id in (:modules) or includeInI18N='Y'");
       messages.setNamedParameter("modules", modules);
       for (Message message : messages.list()) {
         final Label label = new Label();
@@ -81,7 +81,7 @@ public class I18NComponent extends BaseTemplateComponent {
         labels.put(message.getSearchKey(), label);
       }
       final OBQuery<MessageTrl> messagesTrl = OBDal.getInstance().createQuery(MessageTrl.class,
-          "message.module.id in (:modules) and language.id=:languageId");
+          "(message.module.id in (:modules) or message.includeInI18N='Y') and language.id=:languageId");
       messagesTrl.setNamedParameter("modules", modules);
       messagesTrl.setNamedParameter("languageId", OBContext.getOBContext().getLanguage().getId());
       for (MessageTrl message : messagesTrl.list()) {

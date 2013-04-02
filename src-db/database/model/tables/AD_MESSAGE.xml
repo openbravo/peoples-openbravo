@@ -53,6 +53,10 @@
         <default><![CDATA[0]]></default>
         <onCreateDefault><![CDATA[SELECT AD_MODULE_ID FROM AD_MODULE WHERE AD_MODULE_ID<>'0' AND TYPE='M']]></onCreateDefault>
       </column>
+      <column name="ISINCLUDEINI18N" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="AD_MESSAGE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -65,6 +69,7 @@
       <unique name="AD_MESSAGE_VALUE_UN">
         <unique-column name="VALUE"/>
       </unique>
+      <check name="AD_MESSAGE_INI18N_CHECK"><![CDATA[ISINCLUDEINI18N IN ('Y', 'N')]]></check>
       <check name="AD_MESSAGE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>
