@@ -88,6 +88,9 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
           transaction.setProcessed(true);
           FIN_Payment payment = transaction.getFinPayment();
           if (payment != null) {
+            if (transaction.getBusinessPartner() == null) {
+              transaction.setBusinessPartner(payment.getBusinessPartner());
+            }
             payment.setStatus(payment.isReceipt() ? "RDNC" : "PWNC");
             transaction.setStatus(payment.isReceipt() ? "RDNC" : "PWNC");
             OBDal.getInstance().save(payment);

@@ -61,8 +61,15 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="FIN_FINACC_TRANSACTION_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="FIN_FINACC_TRANSACTION" name="C_CONVERSIONRATEDOC_TXN">
         <reference local="APRM_FINACC_TRANSACTION_V_ID" foreign="FIN_FINACC_TRANSACTION_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="FIN_FINACC_TRANSACTION" name="C_CONVERSIONRATEDOC_TXN2">
+        <reference local="FIN_FINACC_TRANSACTION_ID" foreign="FIN_FINACC_TRANSACTION_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_CURRENCY" name="C_CURRENCYRATEDOC_C_CURRENCY">
         <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>

@@ -2185,6 +2185,7 @@ AND fapm.Payout_Allow = (SELECT CASE WHEN '@FIN_ISRECEIPT@'='N' THEN 'Y' ELSE fa
 <!--FF8081813092D5DC013092DD70AD000C-->  <CODE><![CDATA[C_Currency.C_Currency_id = 
 CASE WHEN @C_Invoice_ID@ is not null THEN (SELECT C_Currency_ID FROM C_Invoice WHERE C_Invoice_ID = COALESCE(@C_Invoice_ID@,'---'))
 WHEN @APRM_Finacc_Transaction_V_ID@ is not null THEN (SELECT c_currency_id FROM aprm_finacc_transaction_v WHERE aprm_finacc_transaction_v_id = COALESCE(@APRM_Finacc_Transaction_V_ID@, '---')) 
+WHEN @FIN_Finacc_Transaction_ID@ is not null THEN (SELECT c_currency_id FROM fin_finacc_transaction WHERE fin_finacc_transaction_id = COALESCE(@FIN_Finacc_Transaction_ID@, '---')) 
 ELSE (SELECT C_Currency_ID FROM FIN_Payment WHERE FIN_Payment_ID = COALESCE(@FIN_Payment_ID@, '---')) END]]></CODE>
 <!--FF8081813092D5DC013092DD70AD000C-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--FF8081813092D5DC013092DD70AD000C--></AD_VAL_RULE>

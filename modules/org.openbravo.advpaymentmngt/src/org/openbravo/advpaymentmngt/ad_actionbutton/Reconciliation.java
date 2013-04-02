@@ -216,10 +216,10 @@ public class Reconciliation extends HttpSecureAppServlet {
         Calendar tomorrow = Calendar.getInstance();
         tomorrow.add(Calendar.DATE, 1);
         tomorrow.setTime(DateUtils.truncate(tomorrow.getTime(), Calendar.DATE));
-        if (calCurrent.after(tomorrow)) {
-          strMessage = "@APRM_ReconcileInFutureOrPast@";
-          raiseException = true;
-        }
+        // if (calCurrent.after(tomorrow)) {
+        // strMessage = "@APRM_ReconcileInFutureOrPast@";
+        // raiseException = true;
+        // }
         if (raiseException) {
           msg.setType("Error");
           msg.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
