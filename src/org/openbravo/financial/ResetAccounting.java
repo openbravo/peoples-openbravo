@@ -210,8 +210,7 @@ public class ResetAccounting {
     try {
       Table table = OBDal.getInstance().get(Table.class, tableId);
       tableName = table.getName();
-      tableDate = lowerCaseFirst(camelCaseIt(table.getAcctdateColumn().getName()));
-      tableDate = ModelProvider.getInstance().getTable(tableName).getColumns().get(0)
+      tableDate = ModelProvider.getInstance().getTable(table.getDBTableName()).getColumns().get(0)
           .getColumnName();
       String strUpdate = "update "
           + tableName
@@ -455,37 +454,6 @@ public class ResetAccounting {
       }
     }
     return exceptionDates.size() == validDates;
-  }
-
-  private static String camelCaseIt(String mappingName) {
-    String localMappingName = mappingName.replaceAll("_", " ");
-    String separator = " ";
-    // strip _ at the end
-    while (localMappingName.endsWith(separator)) {
-      localMappingName = localMappingName.substring(0, localMappingName.length() - 1);
-    }
-    // strip _ at the beginning
-    while (localMappingName.startsWith(separator)) {
-      localMappingName = localMappingName.substring(1);
-    }
-
-    // "CamelCasing"
-    int pos = localMappingName.indexOf(separator);
-    while (pos != -1) {
-      final String leftPart = localMappingName.substring(0, pos);
-      final String camelLetter = String.valueOf(localMappingName.charAt(pos + 1)).toUpperCase();
-      final String rightPart = localMappingName.substring(pos + 2);
-      localMappingName = leftPart + camelLetter + rightPart;
-      pos = localMappingName.indexOf(separator);
-    }
-    return localMappingName;
-  }
-
-  private static String lowerCaseFirst(String value) {
-    if (value.length() > 1) {
-      return value.substring(0, 1).toLowerCase() + value.substring(1);
-    }
-    return value;
   }
 
 }
