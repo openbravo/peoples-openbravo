@@ -642,7 +642,7 @@ public class OrderLoader extends JSONProcessSimple {
       String hqlWhereClause;
 
       OrderLine orderLine = lineReferences.get(i);
-      BigDecimal pendingQty = orderLine.getOrderedQuantity();
+      BigDecimal pendingQty = orderLine.getOrderedQuantity().abs();
 
       AttributeSetInstance oldAttributeSetValues = null;
       if (pendingQty.compareTo(BigDecimal.ZERO) > 0) {
@@ -692,6 +692,9 @@ public class OrderLoader extends JSONProcessSimple {
             pendingQty = BigDecimal.ZERO;
           }
           lineNo += 10;
+          if(jsonorder.getLong("orderType") == 1){
+        	  qty= qty.negate();
+          }
           addShipemntline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine,
               jsonorder, lineNo, qty, stock.getStorageDetail().getStorageBin(), stock
                   .getStorageDetail().getAttributeSetValue());
@@ -720,6 +723,9 @@ public class OrderLoader extends JSONProcessSimple {
         queryLoc.setNamedParameter("warehouse", order.getWarehouse());
         queryLoc.setMaxResult(1);
         lineNo += 10;
+        if(jsonorder.getLong("orderType") == 1){
+        	pendingQty= pendingQty.negate();
+        }
         addShipemntline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine, jsonorder,
             lineNo, pendingQty, queryLoc.list().get(0), oldAttributeSetValues);
       }
