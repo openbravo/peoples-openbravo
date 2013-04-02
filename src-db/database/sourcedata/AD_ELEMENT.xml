@@ -30750,6 +30750,8 @@ The main purpose of this whereclause is to select which of the records in a part
 <!--D8EA55654CE40F46E040007F010055AC-->  <COLUMNNAME><![CDATA[IsIncludeInI18N]]></COLUMNNAME>
 <!--D8EA55654CE40F46E040007F010055AC-->  <NAME><![CDATA[Force Availability in Client]]></NAME>
 <!--D8EA55654CE40F46E040007F010055AC-->  <PRINTNAME><![CDATA[Force Availability in Client]]></PRINTNAME>
+<!--D8EA55654CE40F46E040007F010055AC-->  <DESCRIPTION><![CDATA[Column to force including Core messages in the OB.I18N object]]></DESCRIPTION>
+<!--D8EA55654CE40F46E040007F010055AC-->  <HELP><![CDATA[The OB.I18N object allows developers to use labels in the client side. By default only labels that belong to modules other than core are included in this objects. This flag can be used to force including core labels in OB.I18N]]></HELP>
 <!--D8EA55654CE40F46E040007F010055AC-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--D8EA55654CE40F46E040007F010055AC-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--D8EA55654CE40F46E040007F010055AC--></AD_ELEMENT>
