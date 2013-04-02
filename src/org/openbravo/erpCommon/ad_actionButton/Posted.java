@@ -80,7 +80,7 @@ public class Posted extends HttpSecureAppServlet {
         fact.add(Restrictions.eq(AccountingFact.PROPERTY_RECORDID, strKey));
         fact.add(Restrictions.eq(AccountingFact.PROPERTY_TABLE, table));
         fact.add(Restrictions.eq(AccountingFact.PROPERTY_MODIFY, true));
-        if (fact.list().size() > 0) {
+        if (fact.count() > 0) {
           strModify = "Y";
         }
       }
