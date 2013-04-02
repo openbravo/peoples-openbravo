@@ -27,7 +27,11 @@ enyo.kind({
   executeOnShow: function () {
     var pendingQty = this.args.order.getPending();
     var bpName = this.args.order.get('bp').get('_identifier');
-    this.$.bodyContent.$.popupmessage.setContent(OB.I18N.getLabel('OBPOS_enoughCreditBody', [pendingQty, bpName]));
+    if (this.args.order.get('orderType') === 1) {
+      this.$.bodyContent.$.popupmessage.setContent(OB.I18N.getLabel('OBPOS_enoughCreditReturnBody', [OB.I18N.formatCurrency(pendingQty), bpName]));
+    } else {
+      this.$.bodyContent.$.popupmessage.setContent(OB.I18N.getLabel('OBPOS_enoughCreditBody', [OB.I18N.formatCurrency(pendingQty), bpName]));
+    }
   }
 });
 
@@ -51,7 +55,12 @@ enyo.kind({
       var bp = this.model.get('order').get('bp');
       var bpCreditUsed = this.model.get('order').get('bp').get('creditUsed');
       var totalPending = this.model.get('order').getPending();
-      bp.set('creditUsed', bpCreditUsed + totalPending);
+
+      if (this.args.order.get('orderType') === 1) {
+        bp.set('creditUsed', bpCreditUsed - totalPending);
+      } else {
+        bp.set('creditUsed', bpCreditUsed + totalPending);
+      }
       OB.Dal.save(bp, null, error);
     }
   }

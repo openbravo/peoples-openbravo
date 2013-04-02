@@ -18,8 +18,12 @@
         <% if (line.get('qty') === 1)  { %>     
            <text align="right" length="20"><%= line.printPrice() %></text>
         <% } else { %>
-           <text align="right" length="10"><%= line.printPrice() %></text>        
-           <text align="right" length="10"><%= line.printGross() %></text>        
+           <text align="right" length="10"><%= line.printPrice() %></text>
+           <%if(line.get('priceIncludesTax')){%>
+           <text align="right" length="10"><%= line.printGross() %></text>
+           <%}else{%>
+           <text align="right" length="10"><%= line.printNet() %></text>
+           <%} %>
         <% } %>
         </line>
     </display>

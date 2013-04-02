@@ -21,6 +21,7 @@
     this.receipt.on('closed', function () {
       var me = this,
           docno = this.receipt.get('documentNo'),
+          isLayaway = (this.receipt.get('orderType') === 2 || this.receipt.get('isLayaway')),
           json = this.receipt.serializeToJSON(),
           receiptId = this.receipt.get('id'),
           creationDate = new Date(),
@@ -57,7 +58,11 @@
                 model.get('order').set('isbeingprocessed', 'N');
                 OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationSaved', [docno]));
               } else {
-                OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgReceiptSaved', [docno]));
+                if (isLayaway) {
+                  OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgLayawaySaved', [docno]));
+                } else {
+                  OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgReceiptSaved', [docno]));
+                }
               }
             };
             errorCallback = function () {

@@ -17,7 +17,7 @@ enyo.kind({
     orderList: null
   },
   components: [{
-    style: 'overflow:auto; margin: 5px',
+    style: 'margin: 5px',
     components: [{
       style: 'position: relative;background-color: #ffffff; color: black;',
       components: [{
@@ -44,7 +44,7 @@ enyo.kind({
           }]
         }, {
           classes: 'row-fluid',
-          style: 'max-height: 536px; overflow: auto;',
+          style: 'max-height: 536px;',
           components: [{
             classes: 'span12',
             components: [{

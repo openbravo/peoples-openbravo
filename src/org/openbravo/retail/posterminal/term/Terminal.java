@@ -46,6 +46,7 @@ public class Terminal extends ProcessHQLQuery {
       lastQuotationDocumentNumber = POSUtils.getLastDocumentNumberForPOS(POSSearchKey,
           quotationsDocTypeId);
     }
+    String warehouseId = POSUtils.getWarehouseForTerminal(pOSTerminal).getId();
     final org.openbravo.model.pricing.pricelist.PriceList pricesList = POSUtils
         .getPriceListByTerminal(POSSearchKey);
 
@@ -74,7 +75,9 @@ public class Terminal extends ProcessHQLQuery {
             + ", pos.organization.obretcoDbpOrgid.id as defaultbp_bporg "
             + ", pos.organization.obretcoShowtaxid as bp_showtaxid "
             + ", pos.organization.obretcoShowbpcategory as bp_showcategoryselector "
-            + ", pos.organization.obretcoMWarehouse.id as warehouse "
+            + ", '"
+            + warehouseId
+            + "' as warehouse "
             + ", pos.orderdocnoPrefix as docNoPrefix "
             + ", pos.quotationdocnoPrefix as quotationDocNoPrefix "
             + ", pos.obposTerminaltype.allowpayoncredit as allowpayoncredit "

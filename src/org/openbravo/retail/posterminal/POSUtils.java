@@ -1,19 +1,26 @@
 package org.openbravo.retail.posterminal;
 
+import java.util.ArrayList;
 import java.math.BigDecimal;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.hibernate.SQLQuery;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.module.ModuleDependency;
+import org.openbravo.model.common.enterprise.OrgWarehouse;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.common.enterprise.Warehouse;
 import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.retail.config.OBRETCOProductList;
 
@@ -227,5 +234,42 @@ public class POSUtils {
         getRetailDependantModules(depModule.getModule(), moduleList, list);
       }
     }
+  }
+
+  public static Warehouse getWarehouseForTerminal(OBPOSApplications pOSTerminal) {
+    OBContext.setAdminMode(false);
+    try {
+      Organization org = pOSTerminal.getOrganization();
+      OBCriteria<OrgWarehouse> warehouses = OBDal.getInstance().createCriteria(OrgWarehouse.class);
+      warehouses.setFilterOnReadableClients(false);
+      warehouses.setFilterOnReadableOrganization(false);
+      warehouses.add(Restrictions.eq(OrgWarehouse.PROPERTY_ORGANIZATION, org));
+      warehouses.addOrderBy(OrgWarehouse.PROPERTY_PRIORITY, true);
+      warehouses.addOrderBy(OrgWarehouse.PROPERTY_ID, true);
+      List<OrgWarehouse> warehouseList = warehouses.list();
+      if (warehouseList.size() == 0) {
+        return null;
+      }
+      return warehouseList.get(0).getWarehouse();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+
+  }
+
+  /**
+   * This method returns a Date which corresponds to the current date, without hours, minutes, or
+   * seconds
+   * 
+   * @return
+   */
+  public static Date getCurrentDate() {
+    Calendar cal = Calendar.getInstance();
+    cal.set(Calendar.HOUR_OF_DAY, 0);
+    cal.set(Calendar.MINUTE, 0);
+    cal.set(Calendar.SECOND, 0);
+    cal.set(Calendar.MILLISECOND, 0);
+    Date currentDate = cal.getTime();
+    return currentDate;
   }
 }

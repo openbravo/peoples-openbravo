@@ -24,6 +24,11 @@ public class InitialValidations {
       throw new JSONException("OBPOS_errorLoadingProductList");
     }
 
+    if (POSUtils.getWarehouseForTerminal(posTerminal) == null) {
+      throw new JSONException("OBPOS_WarehouseNotConfigured");
+
+    }
+
   }
 
 }

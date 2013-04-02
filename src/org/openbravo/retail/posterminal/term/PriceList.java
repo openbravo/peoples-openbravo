@@ -18,6 +18,11 @@ import org.openbravo.mobile.core.process.ProcessHQLQuery;
 public class PriceList extends ProcessHQLQuery {
 
   @Override
+  protected boolean isAdminMode() {
+    return true;
+  }
+
+  @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
     return Arrays
         .asList(new String[] { "from PricingPriceList where id =:pricelist and $readableCriteria" });

@@ -37,10 +37,10 @@ import org.openbravo.service.json.JsonConstants;
 
 public class CashCloseProcessor {
 
-  public JSONObject processCashClose(OBPOSApplications posTerminal, JSONArray cashCloseInfo)
-      throws JSONException {
+  public JSONObject processCashClose(OBPOSApplications posTerminal, String cashUpId,
+      JSONArray cashCloseInfo) throws JSONException {
 
-    OBPOSAppCashup cashUp = createCashUp(posTerminal);
+    OBPOSAppCashup cashUp = createCashUp(posTerminal, cashUpId);
     OBDal.getInstance().save(cashUp);
 
     for (int i = 0; i < cashCloseInfo.length(); i++) {
@@ -147,11 +147,11 @@ public class CashCloseProcessor {
     FIN_Reconciliation reconciliation = OBProvider.getInstance().get(FIN_Reconciliation.class);
     reconciliation.setAccount(account);
     reconciliation.setOrganization(posTerminal.getOrganization());
-    reconciliation.setDocumentNo(null);
     reconciliation.setDocumentType(posTerminal.getObposTerminaltype()
         .getDocumentTypeForReconciliations());
-    reconciliation.setEndingDate(new Date());
-    reconciliation.setTransactionDate(new Date());
+    reconciliation.setDocumentNo(getReconciliationDocumentNo(reconciliation.getDocumentType()));
+    reconciliation.setEndingDate(POSUtils.getCurrentDate());
+    reconciliation.setTransactionDate(POSUtils.getCurrentDate());
     if (!cashCloseObj.getJSONObject("paymentMethod").isNull("amountToKeep")) {
       reconciliation.setEndingBalance(BigDecimal.valueOf(cashCloseObj
           .getJSONObject("paymentMethod").getDouble("amountToKeep")));
@@ -215,8 +215,8 @@ public class CashCloseProcessor {
     transaction.setTransactionType("BPW");
     transaction.setStatus("RPPC");
     transaction.setDescription("GL Item: " + glItem.getName());
-    transaction.setDateAcct(new Date());
-    transaction.setTransactionDate(new Date());
+    transaction.setDateAcct(POSUtils.getCurrentDate());
+    transaction.setTransactionDate(POSUtils.getCurrentDate());
     transaction.setReconciliation(reconciliation);
 
     account.setCurrentBalance(account.getCurrentBalance().subtract(reconciliationTotal));
@@ -260,8 +260,8 @@ public class CashCloseProcessor {
     transaction.setTransactionType("BPW");
     transaction.setStatus("RDNC");
     transaction.setDescription("GL Item: " + glItem.getName());
-    transaction.setDateAcct(new Date());
-    transaction.setTransactionDate(new Date());
+    transaction.setDateAcct(POSUtils.getCurrentDate());
+    transaction.setTransactionDate(POSUtils.getCurrentDate());
 
     accountTo.setCurrentBalance(accountTo.getCurrentBalance().add(reconciliationTotal));
 
@@ -269,10 +269,12 @@ public class CashCloseProcessor {
 
   }
 
-  protected OBPOSAppCashup createCashUp(OBPOSApplications posTerminal) {
+  protected OBPOSAppCashup createCashUp(OBPOSApplications posTerminal, String cashUpId) {
     OBPOSAppCashup cashup = OBProvider.getInstance().get(OBPOSAppCashup.class);
+    cashup.setNewOBObject(true);
+    cashup.setId(cashUpId);
     cashup.setOrganization(posTerminal.getOrganization());
-    cashup.setCashUpDate(new Date());
+    cashup.setCashUpDate(POSUtils.getCurrentDate());
     cashup.setPOSTerminal(posTerminal);
     cashup.setUserContact(OBContext.getOBContext().getUser());
     return cashup;

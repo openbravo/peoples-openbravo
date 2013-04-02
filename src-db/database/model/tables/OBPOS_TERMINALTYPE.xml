@@ -73,6 +73,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="GENERATEINVOICE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="C_DOCTYPE" name="OBPOS_DOCTYPE_QUOT_ID">
         <reference local="C_DOCTYPEQUOT_ID" foreign="C_DOCTYPE_ID"/>
       </foreign-key>
@@ -97,6 +101,7 @@
       <index name="OBPOS_DOCTYPE_QUOT_ID" unique="false">
         <index-column name="C_DOCTYPEQUOT_ID"/>
       </index>
+      <check name="OBPOS_TERTYPE_GENINVOICE_CHK"><![CDATA[GENERATEINVOICE IN ('Y', 'N')]]></check>
       <check name="OBPOS_TERTYPE_GROUPORD_CHK"><![CDATA[GROUPINGORDERS IN ('Y', 'N')]]></check>
       <check name="OBPOS_TERTYPE_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>

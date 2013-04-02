@@ -60,14 +60,17 @@ public class OrderGroupingProcessor {
     // reconciled. This query must be kept in sync with the one in CashCloseReport
 
     String hqlWhereClause = "as line"
-        + " where exists (select 1 "
+        + " where (exists (select 1 "
         + "                 from FIN_Payment_ScheduleDetail d"
         + "              where d.orderPaymentSchedule.order = line.salesOrder"
         + "                 and exists (select 1 "
         + "                               from FIN_Finacc_Transaction t"
         + "                              where t.reconciliation is null"
         + "                                and t.finPayment = d.paymentDetails.finPayment))"
-        + " and line.salesOrder.obposApplications = :terminal "
+        + "or not exists (select 1 "
+        + "                 from FIN_Payment_ScheduleDetail d"
+        + "              where d.orderPaymentSchedule.order = line.salesOrder))"
+        + " and line.salesOrder.obposApplications = :terminal and line.salesOrder.deliveryStatus > 0"
         + " and not exists (select 1 from OrderLine as ord where invoicedQuantity<>0 and ord.salesOrder = line.salesOrder)"
         + " order by line.businessPartner.id";
 
@@ -133,7 +136,12 @@ public class OrderGroupingProcessor {
         OBDal.getInstance().save(origPaymentSchedule);
         OBDal.getInstance().flush();
       }
-      if (!processedOrders.contains((String) DalUtil.getId(orderLine.getSalesOrder()))) {
+      List<FIN_PaymentSchedule> finPaymentScheduleList = orderLine.getSalesOrder()
+          .getFINPaymentScheduleList();
+      if (!processedOrders.contains((String) DalUtil.getId(orderLine.getSalesOrder()))
+          && !finPaymentScheduleList.isEmpty()
+          && finPaymentScheduleList.get(0).getFINPaymentScheduleDetailOrderPaymentScheduleList()
+              .size() > 0) {
         boolean success = processPaymentsFromOrder(invoice, orderLine.getSalesOrder(),
             paymentSchedule, origPaymentSchedule);
         if (!success) {
@@ -369,8 +377,10 @@ public class OrderGroupingProcessor {
         .getDocumentTypeForInvoice());
     invoice.setTransactionDocument(terminal.getObposTerminaltype().getDocumentType()
         .getDocumentTypeForInvoice());
-    invoice.setAccountingDate(new Date());
-    invoice.setInvoiceDate(new Date());
+    invoice.setDocumentNo(getInvoiceDocumentNo(invoice.getTransactionDocument(),
+        invoice.getDocumentType()));
+    invoice.setAccountingDate(POSUtils.getCurrentDate());
+    invoice.setInvoiceDate(POSUtils.getCurrentDate());
     invoice.setPriceList(firstLine.getSalesOrder().getPriceList());
     return invoice;
   }
@@ -396,8 +406,10 @@ public class OrderGroupingProcessor {
         .getDocumentTypeForInvoice());
     invoice.setTransactionDocument(terminal.getObposTerminaltype().getDocumentType()
         .getDocumentTypeForInvoice());
-    invoice.setAccountingDate(new Date());
-    invoice.setInvoiceDate(new Date());
+    invoice.setDocumentNo(getInvoiceDocumentNo(invoice.getTransactionDocument(),
+        invoice.getDocumentType()));
+    invoice.setAccountingDate(POSUtils.getCurrentDate());
+    invoice.setInvoiceDate(POSUtils.getCurrentDate());
     invoice.setPriceList(firstLine.getSalesOrder().getPriceList());
     return invoice;
   }
@@ -426,7 +438,7 @@ public class OrderGroupingProcessor {
     invoice.setPaymentComplete(true);
     invoice.setTotalPaid(grossamount);
     invoice.setPercentageOverdue(new Long(0));
-    invoice.setFinalSettlementDate(new Date());
+    invoice.setFinalSettlementDate(POSUtils.getCurrentDate());
     invoice.setDaysSalesOutstanding(new Long(0));
     invoice.setOutstandingAmount(BigDecimal.ZERO);
 

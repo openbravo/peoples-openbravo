@@ -1,13 +1,13 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2013 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
 
-/*global OB, Backbone, enyo, $, confirm */
+/*global OB, Backbone, enyo, $, confirm, _ */
 
 // Point of sale main window view
 enyo.kind({
@@ -28,7 +28,7 @@ enyo.kind({
     onShowReactivateQuotation: 'showReactivateQuotation',
     onRejectQuotation: 'rejectQuotation',
     onQuotations: 'quotations',
-    onShowReturnText: 'showReturnText',
+    onShowDivText: 'showDivText',
     onAddNewOrder: 'addNewOrder',
     onDeleteOrder: 'deleteCurrentOrder',
     onTabChange: 'tabChange',
@@ -57,10 +57,13 @@ enyo.kind({
     onDiscountsModeKeyboard: 'keyboardOnDiscountsMode',
     onCheckAllTicketLines: 'allTicketLinesChecked',
     onSetDiscountQty: 'discountQtyChanged',
-    onLineChecked: 'checkedLine'
+    onLineChecked: 'checkedLine',
+    onStatusChanged: 'statusChanged',
+    onLayaways: 'layaways'
   },
   events: {
-    onShowPopup: ''
+    onShowPopup: '',
+    onButtonStatusChanged: ''
   },
   components: [{
     name: 'otherSubWindowsContainer',
@@ -79,9 +82,6 @@ enyo.kind({
     }, {
       kind: 'OB.UI.ModalDeleteReceipt',
       name: 'modalConfirmReceiptDelete'
-    }, {
-      kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalClosePaidReceipt',
-      name: 'modalConfirmClosePaidTicket'
     }, {
       kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalProductCannotBeGroup',
       name: 'modalProductCannotBeGroup'
@@ -252,10 +252,11 @@ enyo.kind({
       });
       return true;
     }
+
     if (inEvent.ignoreStockTab) {
       this.showOrder(inSender, inEvent);
     } else {
-      if (inEvent.product.get('showstock') && !inEvent.product.get('ispack') && OB.POS.modelterminal.get('connectedToERP')) {
+      if (!this.model.get('order').get('lines').isProductPresent(inEvent.product) && inEvent.product.get('showstock') && !inEvent.product.get('ispack') && OB.POS.modelterminal.get('connectedToERP')) {
         inEvent.leftSubWindow = OB.OBPOSPointOfSale.UICustomization.stockLeftSubWindow;
         this.showLeftSubWindow(inSender, inEvent);
         return true;
@@ -325,7 +326,7 @@ enyo.kind({
     return true;
   },
   receiptToInvoice: function () {
-    if (this.model.get('order').get('isEditable') === false) {
+    if (this.model.get('order').get('isEditable') === false && !this.model.get('order').get('isLayaway')) {
       this.doShowPopup({
         popup: 'modalNotEditableOrder'
       });
@@ -362,17 +363,22 @@ enyo.kind({
     this.model.get('orderList').saveCurrent();
     return true;
   },
-  showReturnText: function (inSender, inEvent) {
-    if (this.model.get('order').get('isEditable') === false) {
+  showDivText: function (inSender, inEvent) {
+    if (this.model.get('order').get('isEditable') === false && !this.model.get('order').get('isLayaway')) {
       this.doShowPopup({
         popup: 'modalNotEditableOrder'
       });
       return true;
     }
-    this.model.get('order').setOrderTypeReturn();
+    //Void Layaway must block keyboard actions
+    if (inEvent.orderType === 3) {
+      this.$.keyboard.setStatus('');
+    }
+    this.model.get('order').setOrderType(inEvent.permission, inEvent.orderType);
     this.model.get('orderList').saveCurrent();
     return true;
   },
+
   cancelReceiptToInvoice: function (inSender, inEvent) {
     if (this.model.get('order').get('isEditable') === false) {
       this.doShowPopup({
@@ -449,7 +455,9 @@ enyo.kind({
     } else {
       this.$.multiColumn.$.rightPanel.$.keyboard.hide();
     }
-
+    if (!_.isUndefined(inEvent.status)) {
+      this.$.keyboard.setStatus(inEvent.status);
+    }
   },
   discountsModeFinished: function (inSender, inEvent) {
     this.leftToolbarDisabled(inSender, {
@@ -517,10 +525,34 @@ enyo.kind({
     return true;
   },
   removePayment: function (inSender, inEvent) {
-    if (inEvent.payment.get('paymentData') && !confirm(OB.I18N.getLabel('OBPOS_MsgConfirmRemovePayment'))) {
-      return;
+    var me = this;
+    if (inEvent.payment.get('paymentData')) {
+      if (!confirm(OB.I18N.getLabel('OBPOS_MsgConfirmRemovePayment'))) {
+        if (inEvent.removeCallback) {
+          inEvent.removeCallback();
+        }
+        //canceled, not remove
+        return;
+      } else {
+        //To remove this payment we've to connect with server
+        //a callback is defined to receive the confirmation
+        var callback = function (hasError, error) {
+            if (inEvent.removeCallback) {
+              inEvent.removeCallback();
+            }
+            if (hasError) {
+              OB.UTIL.showError(error);
+            } else {
+              me.model.get('order').removePayment(inEvent.payment);
+            }
+            };
+        //async call with defined callback
+        inEvent.payment.get('paymentData').voidTransaction(callback);
+        return;
+      }
+    } else {
+      this.model.get('order').removePayment(inEvent.payment);
     }
-    this.model.get('order').removePayment(inEvent.payment);
   },
   changeSubWindow: function (inSender, inEvent) {
     this.model.get('subWindowManager').set('currentWindow', inEvent.newWindow);
@@ -559,6 +591,21 @@ enyo.kind({
     }
     this.model.get('orderList').saveCurrent();
     return true;
+  },
+  statusChanged: function (inSender, inEvent) {
+    // sending the event to the components bellow this one
+    this.waterfall('onButtonStatusChanged', {
+      value: inEvent
+    });
+  },
+  layaways: function (inSender, inEvent) {
+    this.$.modalPaidReceipts.setParams({
+      isLayaway: true
+    });
+    this.$.modalPaidReceipts.waterfall('onClearAction');
+    this.doShowPopup({
+      popup: 'modalPaidReceipts'
+    });
   },
   init: function () {
     var receipt, receiptList;

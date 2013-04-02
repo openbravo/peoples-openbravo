@@ -73,6 +73,7 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
         + "user.username is not null and "
         + "user.password is not null and "
         + "exists (from ADRoleOrganization ro where ro.role = role and ro.organization = terminal.organization) and "
+        + "(not exists(from OBPOS_TerminalAccess ta where ta.userContact = user) or exists(from OBPOS_TerminalAccess ta where ta.userContact = user and ta.pOSTerminal=terminal)) and "
         + "terminal.searchKey = :theTerminalSearchKey and "
         + "user.id = userRoles.userContact.id and " + "userRoles.role.id = role.id and "
         + "userRoles.role.id = formAccess.role.id and "

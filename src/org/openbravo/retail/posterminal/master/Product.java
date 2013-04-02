@@ -40,6 +40,7 @@ public class Product extends ProcessHQLQuery {
             + "pli.product.productCategory.id as productCategory, pli.product.obposScale as obposScale, pli.product.uOM.id as uOM, pli.product.uOM.symbol as uOMsymbol, pli.product.uPCEAN as uPCEAN, img.bindaryData as img "
             + ", pli.product.description as description "
             + ", pli.product.obposGroupedproduct as groupProduct "
+            + ", pli.product.stocked as stocked "
             + ", pli.product.obposShowstock as showstock "
             + ", pli.bestseller as bestseller "
             + ", 'false' as ispack, "
@@ -64,12 +65,14 @@ public class Product extends ProcessHQLQuery {
             + "ppp.priceListVersion.id = pplv.id"
             + ") AND ("
             + "pli.product.id = ppp.product.id"
+            + ") AND ("
+            + "pli.product.active = true"
             + ") AND "
             + "(pli.product.$incrementalUpdateCriteria) order by pli.product.name");
 
     // discounts which type is defined as category
     products
-        .add("select p.id as id, p.name as searchkey, p.name as _identifier, p.discountType.id as productCategory, p.obdiscPrice as listPrice, p.obdiscPrice as standardPrice, p.obdiscUpc as uPCEAN, img.bindaryData as img, 'true' as ispack"//
+        .add("select p.id as id, p.name as searchkey, p.name as _identifier, p.discountType.id as productCategory, p.obdiscPrice as listPrice, p.obdiscPrice as standardPrice, p.obdiscUpc as uPCEAN, img.bindaryData as img, 'true' as ispack, 'false' as stocked"//
             + "  from PricingAdjustment as p left outer join p.obdiscImage img" //
             + " where p.discountType.obposIsCategory = true "//
             + "   and p.discountType.active = true " //

@@ -14,6 +14,7 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.TriggerHandler;
 import org.openbravo.dal.service.OBDal;
@@ -34,10 +35,20 @@ public class ProcessCashClose extends JSONProcessSimple {
       jsonResponse.put("result", "0");
       OBPOSApplications posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
           jsonsent.getString("terminalId"));
-
-      new OrderGroupingProcessor().groupOrders(posTerminal);
-      JSONArray arrayCashCloseInfo = jsonsent.getJSONArray("cashCloseInfo");
-      new CashCloseProcessor().processCashClose(posTerminal, arrayCashCloseInfo);
+      OBPOSAppCashup cashUp = OBDal.getInstance().get(OBPOSAppCashup.class,
+          jsonsent.getString("cashUpId"));
+      if (cashUp == null
+          && RequestContext.get().getSessionAttribute(
+              "cashupTerminalId|" + jsonsent.getString("terminalId")) == null) {
+        RequestContext.get().setSessionAttribute(
+            "cashupTerminalId|" + jsonsent.getString("terminalId"), true);
+        new OrderGroupingProcessor().groupOrders(posTerminal);
+        posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
+            jsonsent.getString("terminalId"));
+        JSONArray arrayCashCloseInfo = jsonsent.getJSONArray("cashCloseInfo");
+        new CashCloseProcessor().processCashClose(posTerminal, jsonsent.getString("cashUpId"),
+            arrayCashCloseInfo);
+      }
       jsonResponse.put(JsonConstants.RESPONSE_DATA, jsonData);
       return jsonResponse;
     } catch (Exception e) {
@@ -47,6 +58,8 @@ public class ProcessCashClose extends JSONProcessSimple {
       jsonResponse.put(JsonConstants.RESPONSE_DATA, jsonData);
       return jsonResponse;
     } finally {
+      RequestContext.get().removeSessionAttribute(
+          "cashupTerminalId|" + jsonsent.getString("terminalId"));
       OBDal.getInstance().rollbackAndClose();
       OBContext.restorePreviousMode();
       if (TriggerHandler.getInstance().isDisabled()) {

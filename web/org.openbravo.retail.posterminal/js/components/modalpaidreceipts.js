@@ -55,14 +55,14 @@ enyo.kind({
         style: 'display: table-cell;',
         components: [{
           tag: 'h4',
-          content: 'Start Date:',
+          content: OB.I18N.getLabel('OBPOS_LblStartDate'),
           style: 'width: 200px;  margin: 0px 0px 2px 5px;'
         }]
       }, {
         style: 'display: table-cell;',
         components: [{
           tag: 'h4',
-          content: 'End Date:',
+          content: OB.I18N.getLabel('OBPOS_LblEndDate'),
           style: 'width 200px; margin: 0px 0px 2px 65px;'
         }]
       }]
@@ -82,7 +82,7 @@ enyo.kind({
         style: 'display: table-cell;',
         components: [{
           tag: 'h4',
-          content: 'yyyy-mm-dd',
+          content: OB.I18N.getLabel('OBPOS_LblDateFormat'),
           style: 'width: 100px; color:gray;  margin: 0px 0px 8px 5px;'
         }]
       }, {
@@ -96,7 +96,7 @@ enyo.kind({
         style: 'display: table-cell;',
         components: [{
           tag: 'h4',
-          content: 'yyyy-mm-dd',
+          content: OB.I18N.getLabel('OBPOS_LblDateFormat'),
           style: 'width: 100px; color:gray;  margin: 0px 0px 8px 5px;'
         }]
       }]
@@ -158,6 +158,7 @@ enyo.kind({
       documentType: params.isQuotation ? (OB.POS.modelterminal.get('terminal').terminalType.documentTypeForQuotations) : (OB.POS.modelterminal.get('terminal').terminalType.documentType),
       docstatus: params.isQuotation ? 'UE' : null,
       isQuotation: params.isQuotation ? true : false,
+      isLayaway: params.isLayaway ? true : false,
       filterText: this.$.filterText.getValue(),
       startDate: this.$.startDate.getValue(),
       endDate: this.$.endDate.getValue(),
@@ -309,6 +310,8 @@ enyo.kind({
   executeOnShow: function () {
     if (this.params.isQuotation) {
       this.$.header.setContent(OB.I18N.getLabel('OBPOS_Quotations'));
+    } else if (this.params.isLayaway) {
+      this.$.header.setContent(OB.I18N.getLabel('OBPOS_LblLayaways'));
     } else {
       this.$.header.setContent(OB.I18N.getLabel('OBPOS_LblPaidReceipts'));
     }

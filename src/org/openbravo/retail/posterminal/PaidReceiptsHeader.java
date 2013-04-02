@@ -23,7 +23,6 @@ public class PaidReceiptsHeader extends ProcessHQLQuery {
 
     OBContext.setAdminMode(true);
     JSONObject json = jsonsent.getJSONObject("filters");
-
     String hqlPaidReceipts = "select ord.id as id, ord.documentNo as documentNo, ord.orderDate as orderDate, "
         + "ord.businessPartner.name as businessPartner, ord.grandTotalAmount as totalamount from Order as ord "
         + "where ord.client='"
@@ -48,6 +47,12 @@ public class PaidReceiptsHeader extends ProcessHQLQuery {
     if (!json.getString("endDate").isEmpty()) {
       hqlPaidReceipts += " and ord.orderDate <='" + json.getString("endDate") + "'";
     }
+    if (json.getBoolean("isLayaway")) {
+      hqlPaidReceipts += " and ord.deliveryStatus = 0 and ord.documentStatus = 'CO' ";
+    } else {
+      hqlPaidReceipts += " and ord.deliveryStatus > 0 ";
+    }
+    hqlPaidReceipts += " order by ord.orderDate asc, ord.documentNo asc";
     return Arrays.asList(new String[] { hqlPaidReceipts });
   }
 }

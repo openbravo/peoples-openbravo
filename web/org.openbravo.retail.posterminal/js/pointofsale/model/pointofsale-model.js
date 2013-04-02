@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global $ Backbone enyo */
+/*global $ Backbone enyo _ */
 
 OB.OBPOSPointOfSale = OB.OBPOSPointOfSale || {};
 OB.OBPOSPointOfSale.Model = OB.OBPOSPointOfSale.Model || {};
@@ -88,7 +88,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
         };
         errorCallback = function () {
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorProcessingCustomersPendingData'));
-          OB.UTIL.processPaidOrders(me);
+          // we will not process pending orders in case there was an order while syncing customers
           me.loadUnpaidOrders();
         };
         customersChangedNotProcessed.each(function (cus) {
@@ -149,7 +149,41 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
 
     receipt.on('paymentDone', function () {
       receipt.prepareToSend(function () {
-        receipt.trigger('closed');
+        //Create the negative payment for change
+        var oldChange = receipt.get('change');
+        var clonedCollection = new Backbone.Collection();
+        if (!_.isUndefined(receipt.selectedPayment) && !_.isUndefined(receipt.getPaymentStatus()) && receipt.getPaymentStatus().change > 0) {
+          var payToDo = receipt.getPaymentStatus();
+          var payment = OB.POS.terminal.terminal.paymentnames[receipt.selectedPayment];
+          receipt.get('payments').each(function (model) {
+            clonedCollection.add(new Backbone.Model(model.toJSON()));
+          });
+          if (!payment.paymentMethod.iscash) {
+            payment = OB.POS.terminal.terminal.paymentnames[OB.POS.modelterminal.get('paymentcash')];
+          }
+          if (receipt.get('orderType') === 0 || (receipt.get('orderType') === 2 && receipt.get('payment') >= receipt.get('gross'))) {
+            receipt.addPayment(new OB.Model.PaymentLine({
+              'kind': payment.payment.searchKey,
+              'name': payment.payment.commercialName,
+              'amount': OB.DEC.sub(0, OB.DEC.mul(payToDo.change, payment.mulrate)),
+              'rate': payment.rate,
+              'mulrate': payment.mulrate,
+              'isocode': payment.isocode,
+              'openDrawer': payment.paymentMethod.openDrawer
+            }));
+          }
+          receipt.set('change', oldChange);
+          receipt.trigger('closed');
+          receipt.get('payments').reset();
+          clonedCollection.each(function (model) {
+            receipt.get('payments').add(new Backbone.Model(model.toJSON()), {
+              silent: true
+            });
+          });
+        } else {
+          receipt.trigger('closed');
+        }
+
         receipt.trigger('print'); // to guaranty execution order
         orderList.deleteCurrent();
       });
@@ -163,7 +197,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
     this.printLine = new OB.OBPOSPointOfSale.Print.ReceiptLine(receipt);
 
     // Listening events that cause a discount recalculation
-    receipt.get('lines').on('add change:qty change:gross', function (line) {
+    receipt.get('lines').on('add change:qty change:gross change:net', function (line) {
       if (!receipt.get('isEditable')) {
         return;
       }
@@ -182,6 +216,27 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
         return;
       }
       OB.Model.Discounts.applyPromotions(receipt);
+    }, this);
+    receipt.on('voidLayaway', function () {
+      var process = new OB.DS.Process('org.openbravo.retail.posterminal.ProcessVoidLayaway');
+      process.exec({
+        order: receipt
+      }, function (data, message) {
+        if (data && data.exception) {
+          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorVoidLayaway'));
+        } else {
+          OB.Dal.remove(receipt, null, function (tx, err) {
+            OB.UTIL.showError(err);
+          });
+          receipt.trigger('print');
+          if (receipt.get('layawayGross')) {
+            receipt.set('layawayGross', null);
+          }
+          orderList.deleteCurrent();
+          OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgSuccessVoidLayaway'));
+        }
+      });
+
     }, this);
   }
 });

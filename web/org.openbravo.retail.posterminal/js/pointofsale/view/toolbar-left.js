@@ -70,7 +70,8 @@ enyo.kind({
   kind: 'OB.UI.ToolbarButton',
   icon: 'btn-icon btn-icon-delete',
   events: {
-    onShowPopup: ''
+    onShowPopup: '',
+    onDeleteOrder: ''
   },
   handlers: {
     onLeftToolbarDisabled: 'disabledButton'
@@ -80,20 +81,18 @@ enyo.kind({
     this.setDisabled(inEvent.status);
   },
   tap: function () {
-    if (this.model.get('order').get('isPaid')) {
-      this.doShowPopup({
-        popup: 'modalConfirmClosePaidTicket'
-      });
-    } else {
+    if (!this.model.get('order').get('isPaid') && !this.model.get('order').get('isQuotation') && !this.model.get('order').get('isLayaway')) {
       this.doShowPopup({
         popup: 'modalConfirmReceiptDelete'
       });
+    } else {
+      this.doDeleteOrder();
     }
   },
   init: function (model) {
     this.model = model;
-    this.model.get('order').on('change:isPaid change:isQuotation change:hasbeenpaid', function (changedModel) {
-      if (changedModel.get('isPaid') || (changedModel.get('isQuotation') && changedModel.get('hasbeenpaid') === 'Y')) {
+    this.model.get('order').on('change:isPaid change:isQuotation change:isLayaway change:hasbeenpaid', function (changedModel) {
+      if (changedModel.get('isPaid') || changedModel.get('isLayaway') || (changedModel.get('isQuotation') && changedModel.get('hasbeenpaid') === 'Y')) {
         this.addClass('paidticket');
         return;
       }
@@ -134,7 +133,7 @@ enyo.kind({
         }
         return;
       }
-      if (this.model.get('order').get('isEditable') === false) {
+      if ((this.model.get('order').get('isEditable') === false && !this.model.get('order').get('isLayaway')) || this.model.get('order').get('orderType') === 3) {
         return true;
       }
       this.doTabChange({
@@ -169,9 +168,9 @@ enyo.kind({
   },
   init: function (model) {
     this.model = model;
-    this.model.get('order').on('change:isEditable', function (newValue) {
+    this.model.get('order').on('change:isEditable change:isLayaway', function (newValue) {
       if (newValue) {
-        if (newValue.get('isEditable') === false) {
+        if (newValue.get('isEditable') === false && !newValue.get('isLayaway')) {
           this.tabPanel = null;
           this.setDisabled(true);
           return;
@@ -205,6 +204,9 @@ enyo.kind({
       kind: 'OB.UI.MenuReturn'
     });
     this.menuEntries.push({
+      kind: 'OB.UI.MenuVoidLayaway'
+    });
+    this.menuEntries.push({
       kind: 'OB.UI.MenuProperties'
     });
     this.menuEntries.push({
@@ -212,6 +214,9 @@ enyo.kind({
     });
     this.menuEntries.push({
       kind: 'OB.UI.MenuPrint'
+    });
+    this.menuEntries.push({
+      kind: 'OB.UI.MenuLayaway'
     });
     this.menuEntries.push({
       kind: 'OB.UI.MenuCustomers'
@@ -251,6 +256,10 @@ enyo.kind({
 
     this.menuEntries.push({
       kind: 'OB.UI.MenuQuotation'
+    });
+
+    this.menuEntries.push({
+      kind: 'OB.UI.MenuLayaways'
     });
 
     this.menuEntries.push({

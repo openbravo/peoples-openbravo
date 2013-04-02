@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2013 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -21,6 +21,10 @@ OB.OBPOSPointOfSale.UI.ToolbarScan = {
     keyboard.showKeypad('basic');
     keyboard.showSidepad('sideenabled');
     keyboard.defaultcommand = 'code';
+    keyboard.disableCommandKey(this, {
+      disabled: true,
+      commands: ['%']
+    });
   }
 };
 
@@ -32,6 +36,10 @@ OB.OBPOSPointOfSale.UI.ToolbarDiscounts = {
     keyboard.showKeypad('basic');
     keyboard.showSidepad('sideenabled');
     keyboard.defaultcommand = 'line:dto';
+    keyboard.disableCommandKey(this, {
+      disabled: true,
+      commands: ['%']
+    });
   }
 };
 
@@ -54,10 +62,13 @@ enyo.kind({
     kind: 'OB.OBPOSPointOfSale.UI.PaymentMethods',
     name: 'OBPOS_UI_PaymentMethods'
   }],
-  pay: function (amount, key, name, paymentMethod, rate, mulrate, isocode) {
-    if (OB.DEC.compare(amount) > 0) {
+  pay: function (amount, key, name, paymentMethod, rate, mulrate, isocode, options) {
+    if (options && options.percentaje) {
+      amount = OB.DEC.div(OB.DEC.mul(this.receipt.getPending(), amount), 100);
+    }
 
-      var provider;
+    if (OB.DEC.compare(amount) > 0) {
+      var provider, me = this;
       if (this.receipt.get('orderType') === 0) {
         provider = paymentMethod.paymentProvider;
       } else if (this.receipt.get('orderType') === 1) {
@@ -114,7 +125,8 @@ enyo.kind({
   initComponents: function () {
     //TODO: modal payments
     var i, max, payments, paymentsdialog, paymentsbuttons, countbuttons, btncomponent, Btn, inst, cont, exactdefault, cashdefault, allpayments = {},
-        me = this;
+        me = this,
+        dialogbuttons = {};
 
     this.inherited(arguments);
 
@@ -140,9 +152,13 @@ enyo.kind({
         permission: payment.payment.searchKey,
         stateless: false,
         action: function (keyboard, txt) {
+          var options = {};
+          if (_.last(txt) === '%') {
+            options.percentaje = true;
+          }
           var amount = OB.DEC.number(OB.I18N.parseNumber(txt));
-          amount = _.isNaN(amount) ? me.receipt.getPending() : amount;
-          me.pay(amount, payment.payment.searchKey, payment.payment._identifier, payment.paymentMethod, payment.rate, payment.mulrate, payment.isocode);
+          amount = _.isNaN(amount) ? 100 : amount;
+          me.pay(amount, payment.payment.searchKey, payment.payment._identifier, payment.paymentMethod, payment.rate, payment.mulrate, payment.isocode, options);
         }
       });
 
@@ -150,6 +166,7 @@ enyo.kind({
         this.createComponent(btncomponent);
       } else {
         OB.OBPOSPointOfSale.UI.PaymentMethods.prototype.sideButtons.push(btncomponent);
+        dialogbuttons[payment.payment.searchKey] = payment.payment._identifier;
       }
     }, this);
 
@@ -162,6 +179,7 @@ enyo.kind({
         this.createComponent(btncomponent);
       } else {
         OB.OBPOSPointOfSale.UI.PaymentMethods.prototype.sideButtons.push(btncomponent);
+        dialogbuttons[sidebutton.command] = sidebutton.label;
       }
     }, this);
 
@@ -174,7 +192,9 @@ enyo.kind({
 
     if (paymentsdialog) {
       this.createComponent({
+        name: 'btnMore',
         toolbar: this,
+        dialogbuttons: dialogbuttons,
         kind: 'OB.OBPOSPointOfSale.UI.ButtonMore'
       });
     }
@@ -215,6 +235,11 @@ enyo.kind({
     keyboard.showKeypad('Coins-' + OB.POS.modelterminal.get('currency').id); // shows the Coins/Notes panel for the terminal currency
     keyboard.showSidepad('sidedisabled');
 
+    keyboard.disableCommandKey(this, {
+      commands: ['%'],
+      disabled: false
+    });
+
     for (i = 0, max = OB.POS.modelterminal.get('payments').length; i < max; i++) {
       p = OB.POS.modelterminal.get('payments')[i];
       if (p.paymentMethod.id === OB.POS.modelterminal.get('terminal').terminalType.paymentMethod) {
@@ -249,6 +274,7 @@ enyo.kind({
   executeOnShow: function () {
     // build only the first time...
     enyo.forEach(this.sideButtons, function (sidebutton) {
+      sidebutton.btn.definition.includedInPopUp = true;
       this.$.body.$.buttonslist.createComponent(sidebutton, {
         owner: this.args.toolbar
       });
@@ -266,18 +292,46 @@ enyo.kind({
   events: {
     onShowAllButtons: ''
   },
+  handlers: {
+    onButtonStatusChanged: 'buttonStatusChanged'
+  },
   components: [{
     style: 'margin: 5px;',
     components: [{
       kind: 'OB.UI.Button',
       classes: 'btnkeyboard',
       name: 'btn',
-      label: 'puchi',
+      label: '',
       content: OB.I18N.getLabel('OBPOS_MorePayments')
     }]
   }],
+  initComponents: function () {
+    this.inherited(arguments);
+    this.activegreen = false;
+  },
   tap: function () {
-    this.doShowAllButtons();
+    // this.toolbar.keyboard
+    // this.dialogbuttons
+    if (this.activegreen) {
+      this.toolbar.keyboard.setStatus('');
+    } else {
+      this.doShowAllButtons();
+    }
+  },
+  buttonStatusChanged: function (inSender, inEvent) {
+    var status = inEvent.value.status;
+
+    if (this.activegreen) {
+      this.$.btn.setContent(OB.I18N.getLabel('OBPOS_MorePayments'));
+      this.$.btn.removeClass('btnactive-green');
+      this.activegreen = false;
+    }
+
+    if (this.dialogbuttons[status]) {
+      this.$.btn.setContent(this.dialogbuttons[status]);
+      this.$.btn.addClass('btnactive-green');
+      this.activegreen = true;
+    }
   }
 });
 

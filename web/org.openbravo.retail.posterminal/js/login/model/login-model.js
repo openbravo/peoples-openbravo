@@ -41,7 +41,7 @@
           size: 50 * 1024 * 1024,
           name: 'WEBPOS',
           displayName: 'Openbravo Web POS',
-          version: '0.5'
+          version: '0.7'
         }
       });
 
@@ -111,7 +111,7 @@
           AppendTo: 'body'
         });
         //   OB.POS.cleanWindows();
-        if (!OB.MobileApp.model.get('connectedToERP')) {
+        if (me.get('loggedOffline')) {
           OB.Format = JSON.parse(me.usermodel.get('formatInfo'));
 
           me.load();
@@ -225,7 +225,7 @@
 
     load: function () {
       var termInfo, i, max;
-      if (!OB.MobileApp.model.get('connectedToERP')) {
+      if (this.get('loggedOffline')) {
         termInfo = JSON.parse(this.usermodel.get('terminalinfo'));
         this.set('payments', termInfo.payments);
         this.paymentnames = {};
@@ -244,7 +244,6 @@
         this.set('currency', termInfo.currency);
         this.set('currencyPrecision', termInfo.currencyPrecision);
         this.set('orgUserId', termInfo.orgUserId);
-        this.set('loggedOffline', true);
         this.setDocumentSequence();
         this.triggerReady();
         return;
@@ -311,7 +310,7 @@
 
     loadContext: function () {
       var me = this;
-      new OB.DS.Request('org.openbravo.mobile.core.login.Context').exec({}, function (data) {
+      new OB.DS.Request('org.openbravo.mobile.core.login.Context').exec({terminal: OB.POS.paramTerminal}, function (data) {
         if (data[0]) {
           me.set('context', data[0]);
           me.triggerReady();
@@ -539,7 +538,7 @@
 
       if (this.get('payments') && this.get('pricelistversion') && this.get('warehouses') && this.get('currency') && this.get('context') && this.get('writableOrganizations') && (this.get('documentsequence') !== undef || this.get('documentsequence') === 0)) {
         OB.MobileApp.model.loggingIn = false;
-        if (OB.MobileApp.model.get('connectedToERP')) {
+        if (!this.get('loggedOffline')) {
           //In online mode, we save the terminal information in the local db
           this.usermodel.set('terminalinfo', JSON.stringify(this));
           OB.Dal.save(this.usermodel, function () {}, function () {

@@ -150,7 +150,6 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         // Point of sale modals
         "pointofsale/view/modals/modalstockinstore",
         "pointofsale/view/modals/modalstockinotherstore",
-        "pointofsale/view/modals/modalconfirmclosepaidticket",
         "pointofsale/view/modals/modalproductcannotbegroup",
         "pointofsale/view/modals/modalwarehousesrequired",
         "pointofsale/view/modals/modalcreditsales",

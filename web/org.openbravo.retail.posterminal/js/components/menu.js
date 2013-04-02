@@ -12,9 +12,9 @@
 enyo.kind({
   name: 'OB.UI.MenuReturn',
   kind: 'OB.UI.MenuAction',
-  permission: 'OBPOS_receipt.invoice',
+  permission: 'OBPOS_receipt.return',
   events: {
-    onShowReturnText: ''
+    onShowDivText: ''
   },
   i18nLabel: 'OBPOS_LblReturn',
   tap: function () {
@@ -22,7 +22,90 @@ enyo.kind({
       return true;
     }
     this.parent.hide(); // Manual dropdown menu closure
-    this.doShowReturnText();
+    this.doShowDivText({
+      permission: this.permission,
+      orderType: 1
+    });
+  },
+  init: function (model) {
+    this.model = model;
+    var receipt = model.get('order'),
+        me = this;
+    receipt.on('change:isQuotation', function (model) {
+      if (!model.get('isQuotation')) {
+        me.show();
+      } else {
+        me.hide();
+      }
+    }, this);
+    receipt.on('change:isEditable', function (newValue) {
+      if (newValue) {
+        if (newValue.get('isEditable') === false) {
+          this.setShowing(false);
+          return;
+        }
+      }
+      this.setShowing(true);
+    }, this);
+  }
+});
+
+enyo.kind({
+  name: 'OB.UI.MenuVoidLayaway',
+  kind: 'OB.UI.MenuAction',
+  permission: 'OBPOS_receipt.voidLayaway',
+  events: {
+    onShowDivText: '',
+    onTabChange: ''
+  },
+  label: OB.I18N.getLabel('OBPOS_VoidLayaway'),
+  tap: function () {
+    if (this.disabled) {
+      return true;
+    }
+    this.parent.hide(); // Manual dropdown menu closure
+    this.doShowDivText({
+      permission: this.permission,
+      orderType: 3
+    });
+    this.doTabChange({
+      tabPanel: 'payment',
+      keyboard: 'toolbarpayment',
+      edit: false
+    });
+  },
+  init: function (model) {
+    this.model = model;
+    var receipt = model.get('order'),
+        me = this;
+    this.setShowing(false);
+    receipt.on('change:isLayaway', function (model) {
+      if (model.get('isLayaway')) {
+        me.show();
+      } else {
+        me.hide();
+      }
+    }, this);
+  }
+});
+
+enyo.kind({
+  name: 'OB.UI.MenuLayaway',
+  kind: 'OB.UI.MenuAction',
+  permission: 'OBPOS_receipt.layawayReceipt',
+  events: {
+    onShowDivText: ''
+  },
+  label: OB.I18N.getLabel('OBPOS_LblLayawayReceipt'),
+  tap: function () {
+    if (this.disabled) {
+      return true;
+    }
+    this.parent.hide(); // Manual dropdown menu closure
+    this.doShowDivText({
+      permission: this.permission,
+      orderType: 2
+    });
   },
   init: function (model) {
     this.model = model;
@@ -95,8 +178,8 @@ enyo.kind({
     this.model = model;
     var receipt = model.get('order'),
         me = this;
-    receipt.on('change:isQuotation', function (model) {
-      if (!model.get('isQuotation')) {
+    receipt.on('change:isQuotation change:isLayaway', function (model) {
+      if (!model.get('isQuotation') || model.get('isLayaway')) {
         me.show();
       } else {
         me.hide();
@@ -104,7 +187,7 @@ enyo.kind({
     }, this);
     receipt.on('change:isEditable', function (newValue) {
       if (newValue) {
-        if (newValue.get('isEditable') === false) {
+        if (newValue.get('isEditable') === false && !newValue.get('isLayaway')) {
           this.setShowing(false);
           return;
         }
@@ -121,7 +204,7 @@ enyo.kind({
   events: {
     onChangeSubWindow: ''
   },
-  label: 'Customers',
+  label: OB.I18N.getLabel('OBPOS_LblCustomers'),
   tap: function () {
     if (this.disabled) {
       return true;
@@ -213,7 +296,7 @@ enyo.kind({
     onDiscountsMode: ''
   },
   //TODO
-  label: 'Ticket discounts',
+  label: OB.I18N.getLabel('OBPOS_LblReceiptDiscounts'),
   tap: function () {
     if (!this.disabled) {
       this.parent.hide(); // Manual dropdown menu closure
@@ -407,6 +490,29 @@ enyo.kind({
     }
     if (OB.POS.modelterminal.hasPermission(this.permission)) {
       this.doQuotations();
+    }
+  }
+});
+
+enyo.kind({
+  name: 'OB.UI.MenuLayaways',
+  kind: 'OB.UI.MenuAction',
+  permission: 'OBPOS_retail.layaways',
+  events: {
+    onLayaways: ''
+  },
+  label: OB.I18N.getLabel('OBPOS_LblLayaways'),
+  tap: function () {
+    if (this.disabled) {
+      return true;
+    }
+    this.parent.hide(); // Manual dropdown menu closure
+    if (!OB.POS.modelterminal.get('connectedToERP')) {
+      OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OfflineWindowRequiresOnline'));
+      return;
+    }
+    if (OB.POS.modelterminal.hasPermission(this.permission)) {
+      this.doLayaways();
     }
   }
 });

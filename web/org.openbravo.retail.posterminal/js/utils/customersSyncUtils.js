@@ -24,6 +24,7 @@
     this.proc = new OB.DS.Process(OB.UTIL.processCustomerClass);
     if (OB.MobileApp.model.get('connectedToERP')) {
       this.proc.exec({
+        terminalId: OB.MobileApp.model.get('terminal').id,
         customer: customersToJson
       }, function (data, message) {
         if (data && data.exception) {

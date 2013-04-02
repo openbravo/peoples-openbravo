@@ -23,6 +23,7 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.mobile.core.login.MobileCoreLoginHandler;
 import org.openbravo.model.ad.access.Session;
+import org.openbravo.model.common.enterprise.Warehouse;
 
 public class POSLoginHandler extends MobileCoreLoginHandler {
 
@@ -64,7 +65,8 @@ public class POSLoginHandler extends MobileCoreLoginHandler {
     OBPOSApplications terminal = apps.get(0);
     defaults.client = (String) DalUtil.getId(terminal.getClient());
     defaults.org = (String) DalUtil.getId(terminal.getOrganization());
-    defaults.warehouse = (String) DalUtil.getId(terminal.getOrganization().getObretcoMWarehouse());
+    Warehouse warehouse = POSUtils.getWarehouseForTerminal(terminal);
+    defaults.warehouse = warehouse != null ? (String) DalUtil.getId(warehouse) : null;
     return defaults;
   }
 

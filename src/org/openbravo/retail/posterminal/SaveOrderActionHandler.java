@@ -37,6 +37,10 @@ public class SaveOrderActionHandler extends BaseActionHandler {
     } catch (Exception e) {// won't' happen
     }
     boolean errorb = false;
+    String currentClient = OBContext.getOBContext().getCurrentClient().getId();
+    String currentOrg = OBContext.getOBContext().getCurrentOrganization().getId();
+    String currentUser = OBContext.getOBContext().getUser().getId();
+    String currentRole = OBContext.getOBContext().getRole().getId();
     try {
       OBContext.setAdminMode(true);
 
@@ -46,6 +50,8 @@ public class SaveOrderActionHandler extends BaseActionHandler {
           OBPOSErrors error = OBDal.getInstance().get(OBPOSErrors.class, errorId);
           JSONObject jsonorder = new JSONObject(error.getJsoninfo());
           posTerminalId = jsonorder.getString("posTerminal");
+          OBContext.setOBContext(jsonorder.getString("createdBy"), currentRole,
+              jsonorder.getString("client"), jsonorder.getString("organization"));
           OrderLoader loader = WeldUtils.getInstanceFromStaticBeanManager(OrderLoader.class);
           loader.saveOrder(jsonorder);
           error.setOrderstatus("Y");
@@ -70,6 +76,7 @@ public class SaveOrderActionHandler extends BaseActionHandler {
       }
     } finally {
       OBContext.restorePreviousMode();
+      OBContext.setOBContext(currentUser, currentRole, currentClient, currentOrg);
     }
 
     if (errorb) {
