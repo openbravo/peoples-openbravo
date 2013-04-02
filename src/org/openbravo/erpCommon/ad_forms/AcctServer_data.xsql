@@ -55,7 +55,7 @@
      <Parameter name="StrOrg" type="replace" optional="true" after="a.ad_org_id in (" text="'1'"/>
      <Parameter name="dateColumn" type="replace" optional="true" after="ORDER BY a." text="CREATED"/>
      <Parameter name="dateFrom" optional="true" after="where 1=1"><![CDATA[ AND a.da >= TO_DATE(?)]]></Parameter>
-     <Parameter name="dateTo" optional="true" after="where 1=1"><![CDATA[ AND a.da < TO_DATE(?)]]></Parameter>
+     <Parameter name="dateTo" optional="true" after="where 1=1"><![CDATA[ AND a.da <= TO_DATE(?)]]></Parameter>
    </SqlMethod>
   <SqlMethod name="update" type="preparedStatement" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
@@ -593,7 +593,7 @@
       <Parameter name="StrOrg" type="replace" optional="true" after="a.ad_org_id in (" text="'1'"/>
       <Parameter name="docbasetype"/>
       <Parameter name="dateFrom" optional="true" after="and 1=1"><![CDATA[ AND b.da >= TO_DATE(?)]]></Parameter>
-      <Parameter name="dateTo" optional="true" after="and 1=1"><![CDATA[ AND b.da < TO_DATE(?)]]></Parameter>
+      <Parameter name="dateTo" optional="true" after="and 1=1"><![CDATA[ AND b.da <= TO_DATE(?)]]></Parameter>
       <Parameter name="pgLimit" type="argument" optional="true" after="and 1=1"><![CDATA[LIMIT ]]></Parameter>
       <Parameter name="oraLimit1" type="argument" optional="true" after=")c "><![CDATA[ WHERE ROWNUM <= ]]></Parameter>
       <Parameter name="oraLimit2" type="argument" optional="true" after="where 2=2"><![CDATA[AND RN1 BETWEEN ]]></Parameter>

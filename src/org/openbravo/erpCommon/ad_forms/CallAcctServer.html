@@ -50,22 +50,6 @@ var baseDirectory = "../../../../../web/";
       dojo.hostenv.writeIncludes(); //makes debugging in Venkman possible
 </script> 
 <script language="JavaScript" type="text/javascript">
-function validate(action)
-{
-    var frm = document.frmMain;
-    if (frm.inpdatefrom.value == null || frm.inpdatefrom.value == "") {
-        setWindowElementFocus(frm.inpdatefrom);
-        showJSMessage(7);
-        return false;
-    } else if (frm.inpdateto.value == null || frm.inpdateto.value == ""){
-        setWindowElementFocus(frm.inpdateto);
-        showJSMessage(7);
-        return false;
-    }
-    return true;
-}
- 
-
 
 function onloadFunctions() {
 }
