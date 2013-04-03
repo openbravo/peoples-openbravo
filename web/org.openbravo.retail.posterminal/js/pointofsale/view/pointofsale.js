@@ -456,7 +456,7 @@ enyo.kind({
       this.$.multiColumn.$.rightPanel.$.keyboard.hide();
     }
     if (!_.isUndefined(inEvent.status)) {
-      this.$.keyboard.setStatus(inEvent.status);
+      this.$.multiColumn.$.rightPanel.$.keyboard.setStatus(inEvent.status);
     }
   },
   discountsModeFinished: function (inSender, inEvent) {
