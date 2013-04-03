@@ -88,7 +88,7 @@
       }
       var me = OB.MobileApp.model,
           params = {
-          terminal: OB.POS.paramTerminal
+          terminal: OB.MobileApp.model.get('terminalName')
           };
 
       OB.MobileApp.model.loggingIn = true;
@@ -265,7 +265,7 @@
       // Starting app
       var me = this;
       var params = {
-        terminal: OB.POS.paramTerminal
+        terminal: OB.MobileApp.model.get('terminalName')
       };
 
       me.loadPayments();
@@ -310,7 +310,7 @@
 
     loadContext: function () {
       var me = this;
-      new OB.DS.Request('org.openbravo.mobile.core.login.Context').exec({terminal: OB.POS.paramTerminal}, function (data) {
+      new OB.DS.Request('org.openbravo.mobile.core.login.Context').exec({terminal: OB.MobileApp.model.get('terminalName')}, function (data) {
         if (data[0]) {
           me.set('context', data[0]);
           me.triggerReady();
@@ -577,7 +577,7 @@
     //      terminal: this.modelterminal
     //    }),
     hrefWindow: function (windowname) {
-      return '?terminal=' + window.encodeURIComponent(OB.POS.paramTerminal) + '&window=' + window.encodeURIComponent(windowname);
+      return '?terminal=' + window.encodeURIComponent(OB.MobileApp.model.get('terminalName')) + '&window=' + window.encodeURIComponent(windowname);
     },
     logout: function (callback) {
       this.modelterminal.logout();
@@ -610,7 +610,7 @@
   //    terminal: OB.POS.modelterminal
   //  });
   OB.POS.modelterminal.set('loginUtilsParams', {
-    terminalName: OB.POS.paramTerminal
+    terminalName: OB.MobileApp.model.get('terminalName')
   });
 
   OB.Constants = {
