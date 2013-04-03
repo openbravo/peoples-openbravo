@@ -33,7 +33,7 @@ public class ProcessCashMgmt extends JSONProcessSimple {
   public JSONObject exec(JSONObject jsonarray) throws JSONException, ServletException {
 
     JSONArray respArray = new JSONArray();
-    OBContext.setAdminMode(true);
+    OBContext.setAdminMode(false);
     final JSONObject jsonData = new JSONObject();
     try {
       JSONArray array = jsonarray.getJSONArray("depsdropstosend");
