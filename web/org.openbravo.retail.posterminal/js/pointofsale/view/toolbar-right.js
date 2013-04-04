@@ -110,7 +110,6 @@ enyo.kind({
 		      tab.tap(options);
 		    }
 		  },
-  kind: 'OB.OBPOSPointOfSale.UI.RightToolbar',
   kind: 'OB.UI.MultiColumn.Toolbar',
   buttons: [ {
     kind: 'OB.OBPOSPointOfSale.UI.ButtonTabScan',
@@ -174,7 +173,7 @@ enyo.kind({
           });
         }
       }, this);
-  },
+  }
 });
 
 

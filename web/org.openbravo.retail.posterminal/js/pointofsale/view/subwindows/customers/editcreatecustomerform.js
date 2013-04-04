@@ -169,7 +169,7 @@ enyo.kind({
         me.dataReadyFunction(null, args);
       }, args);
     },
-    i18nLabel: 'OBPOS_BPCategory',
+    i18nLabel: 'OBPOS_BPCategory'
    // displayLogic: OB.POS.modelterminal.get('terminal').bp_showcategoryselector
   }, {
     kind: 'OB.UI.CustomerTextProperty',

@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global B, $, _, Backbone, window, confirm */
+/*global B, $, _, Backbone, window, confirm, $LAB */
 
 (function () {
   var executeWhenDOMReady;
@@ -50,7 +50,6 @@
       OB.MobileApp.model.on('change:terminal', function () {
         // setting common datasource parameters based on terminal
         var t = OB.MobileApp.model.get('terminal');
-        console.log('change terminal', t);
         if (!t) {
           return;
         }
@@ -81,7 +80,6 @@
     },
 
     renderMain: function () {
-      console.log('renderMain')
       if (!OB.UTIL.isSupportedBrowser()) {
         OB.MobileApp.model.renderLogin();
         return false;
@@ -193,7 +191,6 @@
     },
 
     postCloseSession: function (session) {
-      console.log('POS postclosesession');
       //All pending to be paid orders will be removed on logout
       OB.Dal.find(OB.Model.Order, {
         'session': session.get('id'),
@@ -528,7 +525,7 @@
           docSeq.set('quotationDocumentSequence', quotationDocumentSequence);
         }
         OB.Dal.save(docSeq, null, function () {
-          console.error(arguments);
+          window.console.error(arguments);
         });
       });
     },
@@ -548,7 +545,6 @@
         minIncRefresh = OB.MobileApp.model.get('terminal').terminalType.minutestorefreshdatainc * 60 * 1000;
         if (minIncRefresh) {
           loadModelsIncFunc = function () {
-            console.log('Performing incremental masterdata refresh');
             OB.MobileApp.model.loadModels(null, true);
             setTimeout(loadModelsIncFunc, minIncRefresh);
           };

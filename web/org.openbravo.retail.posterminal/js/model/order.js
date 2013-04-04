@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global B,_,moment,Backbone,localStorage */
+/*global B,_,moment,Backbone,localStorage, enyo */
 
 (function () {
 
