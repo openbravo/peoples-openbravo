@@ -33,7 +33,7 @@ enyo.kind({
   bodyButtons: {
     components: [{
       initComponents: function () {
-      this.setContent(OB.I18N.getLabel('OBPOS_ContextChangedMessage'));
+        this.setContent(OB.I18N.getLabel('OBPOS_ContextChangedMessage'));
       }
     }, {
       kind: 'OB.OBPOSPointOfSale.UI.Modals.btnModaContextChangedAccept'
