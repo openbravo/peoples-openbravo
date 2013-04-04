@@ -255,13 +255,13 @@ isc.OBParameterWindowView.addProperties({
     if (message) {
       if (this.popup) {
         if (!retryExecution) {
-          this.buttonOwnerView.messageBar.setMessage(message.severity, message.text);
+          this.buttonOwnerView.messageBar.setMessage(message.severity, null, message.text);
         } else {
           // Popup has no message bar, showing the message in a warn popup
           isc.warn(message.text);
         }
       } else {
-        this.messageBar.setMessage(message.severity, message.text);
+        this.messageBar.setMessage(message.severity, null, message.text);
       }
     }
 
