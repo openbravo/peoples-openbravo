@@ -160,11 +160,12 @@ public class EndYearCloseUtility {
               return Utility.translateError(conn, vars, vars.getLanguage(), "ProcessRunError");
           }
         }
-        if (closedOrganizations.contains(strOrgId)
-            && EndYearCloseUtilityData.updateClose(con, conn, vars.getUser(), strYearId, strOrgId) == 0) {
-          String strAllPeriodsErr = Utility.messageBD(conn, "AllPeriodsPermanentClosed",
-              vars.getLanguage());
-          return Utility.translateError(conn, vars, vars.getLanguage(), strAllPeriodsErr);
+        if (!closedOrganizations.contains(strOrgId)) {
+          if (EndYearCloseUtilityData.updateClose(con, conn, vars.getUser(), strYearId, strOrgId) == 0) {
+            String strAllPeriodsErr = Utility.messageBD(conn, "AllPeriodsPermanentClosed",
+                vars.getLanguage());
+            return Utility.translateError(conn, vars, vars.getLanguage(), strAllPeriodsErr);
+          }
         }
         closedOrganizations.add(strOrgId);
       }
