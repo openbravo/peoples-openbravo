@@ -173,6 +173,36 @@ isc.OBAlertGrid.addProperties({
     requestProperties.params[OB.Constants.WHERE_PARAMETER] = this.getFilterClause();
   },
 
+  getAlertsWithFilterClause: function (alertRule) {
+    var filterClause, alerts = alertRule.alerts.split(','),
+        alertsNum = alerts.length,
+        i, chunksOfAlerts = [],
+        j, chunkSize = 1000;
+    filterClause = ' and (e.alertRule.id != \'' + alertRule.alertRuleId + '\'';
+
+    if (alertsNum <= chunkSize) {
+      filterClause += ' or e.id in (' + alertRule.alerts + '))';
+      return filterClause;
+    }
+
+    // there are more than 1000 alerts to include in the where clause, Oracle doesn't
+    // support it, so let's split them in chunks with <=1000 elements each
+    for (i = 0; i < alertsNum; i += chunkSize) {
+      chunksOfAlerts.push(alerts.slice(i, i + chunkSize));
+    }
+
+    for (i = 0; i < chunksOfAlerts.length; i++) {
+      filterClause += ' or e.id in (';
+      for (j = 0; j < chunksOfAlerts[i].length; j++) {
+        filterClause += j > 0 ? ',' : '';
+        filterClause += chunksOfAlerts[i][j];
+      }
+      filterClause += ')';
+    }
+    filterClause += ')';
+    return filterClause;
+  },
+
   getFilterClause: function () {
     var i, filterClause = '',
         alertRuleIds = '',
@@ -188,8 +218,7 @@ isc.OBAlertGrid.addProperties({
       // alerts are of a different alertRule or only the alerts predefined
       // this only happens if the alertRule has an SQL filter expression defined
       if (OB.AlertManagement.alertRules[i].alerts) {
-        filterClause += ' and (e.alertRule.id != \'' + OB.AlertManagement.alertRules[i].alertRuleId + '\'';
-        filterClause += ' or e.id in (' + OB.AlertManagement.alertRules[i].alerts + '))';
+        filterClause += this.getAlertsWithFilterClause(OB.AlertManagement.alertRules[i]);
       }
     }
     if (alertRuleIds !== '') {
