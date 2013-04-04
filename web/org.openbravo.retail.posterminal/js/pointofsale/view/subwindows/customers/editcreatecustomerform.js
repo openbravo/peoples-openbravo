@@ -73,7 +73,7 @@ enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.customers.newcustomersave',
   style: 'width: 100px; margin: 0px 5px 8px 19px;',
   classes: 'btnlink btnlink-small',
-  content: OB.I18N.getLabel('OBPOS_LblSave'),
+  i18nLabel: 'OBPOS_LblSave',
   events: {
     onSaveCustomer: ''
   },
@@ -142,7 +142,7 @@ enyo.kind({
     name: 'customerName',
     modelProperty: 'name',
     isFirstFocus: true,
-    label: OB.I18N.getLabel('OBPOS_LblName')
+    i18nLabel: 'OBPOS_LblName'
   }, {
     kind: 'OB.UI.CustomerComboProperty',
     name: 'customerCategory',
@@ -169,38 +169,38 @@ enyo.kind({
         me.dataReadyFunction(null, args);
       }, args);
     },
-    label: OB.I18N.getLabel('OBPOS_BPCategory'),
+    i18nLabel: 'OBPOS_BPCategory',
    // displayLogic: OB.POS.modelterminal.get('terminal').bp_showcategoryselector
   }, {
     kind: 'OB.UI.CustomerTextProperty',
     name: 'customerTaxId',
     modelProperty: 'taxID',
-    label: OB.I18N.getLabel('OBPOS_LblTaxId'),
+    i18nLabel: 'OBPOS_LblTaxId'
    // displayLogic: OB.POS.modelterminal.get('terminal').bp_showtaxid
   }, {
     kind: 'OB.UI.CustomerTextProperty',
     name: 'customerLocName',
     modelProperty: 'locName',
-    label: OB.I18N.getLabel('OBPOS_LblAddress')
+    i18nLabel: 'OBPOS_LblAddress'
   }, {
     kind: 'OB.UI.CustomerTextProperty',
     name: 'customerPostalCode',
     modelProperty: 'postalCode',
-    label: OB.I18N.getLabel('OBPOS_LblPostalCode')
+    i18nLabel: 'OBPOS_LblPostalCode'
   }, {
     kind: 'OB.UI.CustomerTextProperty',
     name: 'customerCity',
     modelProperty: 'cityName',
-    label: OB.I18N.getLabel('OBPOS_LblCity')
+    i18nLabel: 'OBPOS_LblCity'
   }, {
     kind: 'OB.UI.CustomerTextProperty',
     name: 'customerPhone',
     modelProperty: 'phone',
-    label: OB.I18N.getLabel('OBPOS_LblPhone')
+    i18nLabel: 'OBPOS_LblPhone'
   }, {
     kind: 'OB.UI.CustomerTextProperty',
     name: 'customerEmail',
     modelProperty: 'email',
-    label: OB.I18N.getLabel('OBPOS_LblEmail')
+    i18nLabel: 'OBPOS_LblEmail'
   }]
 });

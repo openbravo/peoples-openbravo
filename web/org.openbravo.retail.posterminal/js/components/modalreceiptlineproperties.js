@@ -15,7 +15,7 @@ enyo.kind({
   handlers: {
     onApplyChanges: 'applyChanges'
   },
-  header: OB.I18N.getLabel('OBPOS_ReceiptLinePropertiesDialogTitle'),
+  i18nHeader: 'OBPOS_ReceiptLinePropertiesDialogTitle',
   bodyContent: {
     kind: 'Scroller',
     maxHeight: '225px',
@@ -66,6 +66,7 @@ enyo.kind({
   initComponents: function () {
     this.inherited(arguments);
     this.attributeContainer = this.$.bodyContent.$.attributes;
+    this.setHeader(OB.I18N.getLabel(this.i18nHeader));
 
     this.propertycomponents = {};
 
@@ -104,7 +105,7 @@ enyo.kind({
     kind: 'OB.UI.renderTextProperty',
     name: 'receiptLineDescription',
     modelProperty: 'description',
-    label: OB.I18N.getLabel('OBPOS_LblDescription')
+    i18nLabel: 'OBPOS_LblDescription'
   }]
 });
 

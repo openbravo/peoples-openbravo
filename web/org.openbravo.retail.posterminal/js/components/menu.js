@@ -58,7 +58,7 @@ enyo.kind({
     onShowDivText: '',
     onTabChange: ''
   },
-  label: OB.I18N.getLabel('OBPOS_VoidLayaway'),
+  i18nLabel: 'OBPOS_VoidLayaway',
   tap: function () {
     if (this.disabled) {
       return true;
@@ -96,7 +96,7 @@ enyo.kind({
   events: {
     onShowDivText: ''
   },
-  label: OB.I18N.getLabel('OBPOS_LblLayawayReceipt'),
+  i18nLabel: 'OBPOS_LblLayawayReceipt',
   tap: function () {
     if (this.disabled) {
       return true;
@@ -204,7 +204,7 @@ enyo.kind({
   events: {
     onChangeSubWindow: ''
   },
-  label: OB.I18N.getLabel('OBPOS_LblCustomers'),
+  i18nLabel: 'OBPOS_LblCustomers',
   tap: function () {
     if (this.disabled) {
       return true;
@@ -296,7 +296,7 @@ enyo.kind({
     onDiscountsMode: ''
   },
   //TODO
-  label: OB.I18N.getLabel('OBPOS_LblReceiptDiscounts'),
+  i18nLabel: 'OBPOS_LblReceiptDiscounts',
   tap: function () {
     if (!this.disabled) {
       this.parent.hide(); // Manual dropdown menu closure
@@ -501,7 +501,7 @@ enyo.kind({
   events: {
     onLayaways: ''
   },
-  label: OB.I18N.getLabel('OBPOS_LblLayaways'),
+  i18nLabel: 'OBPOS_LblLayaways',
   tap: function () {
     if (this.disabled) {
       return true;

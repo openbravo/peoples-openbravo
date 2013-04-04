@@ -16,14 +16,14 @@ enyo.kind({
     kind: 'OB.UI.renderTextProperty',
     name: 'receiptDescription',
     modelProperty: 'description',
-    label: OB.I18N.getLabel('OBPOS_LblDescription')
+    i18nLabel: 'OBPOS_LblDescription'
   }, {
     kind: 'OB.UI.renderBooleanProperty',
     name: 'printBox',
     checked: true,
     classes: 'modal-dialog-btn-check active',
     modelProperty: 'print',
-    label: OB.I18N.getLabel('OBPOS_Lbl_RP_Print')
+    i18nLabel: 'OBPOS_Lbl_RP_Print'
   }
 /*, {
     kind: 'OB.UI.renderBooleanProperty',
@@ -37,13 +37,13 @@ enyo.kind({
     kind: 'OB.UI.renderBooleanProperty',
     name: 'invoiceBox',
     modelProperty: 'generateInvoice',
-    label: OB.I18N.getLabel('OBPOS_ToInvoice'),
+    i18nLabel: 'OBPOS_ToInvoice',
     readOnly: true
   }, {
     kind: 'OB.UI.renderBooleanProperty',
     name: 'returnBox',
     modelProperty: 'orderType',
-    label: OB.I18N.getLabel('OBPOS_ToBeReturned'),
+    i18nLabel: 'OBPOS_ToBeReturned',
     readOnly: true
   }],
 

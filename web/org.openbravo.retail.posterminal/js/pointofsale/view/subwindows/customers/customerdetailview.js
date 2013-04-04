@@ -147,51 +147,51 @@ enyo.kind({
     kind: 'OB.UI.CustomerTextProperty',
     name: 'customerName',
     modelProperty: 'name',
-    label: OB.I18N.getLabel('OBPOS_LblName'),
+    i18nLabel: 'OBPOS_LblName',
     readOnly: true
   }, {
     kind: 'OB.UI.CustomerTextProperty',
     name: 'customerBpCat',
     modelProperty: 'businessPartnerCategory_name',
-    label: OB.I18N.getLabel('OBPOS_BPCategory'),
+    i18nLabel: 'OBPOS_BPCategory',
     readOnly: true,
     //displayLogic: OB.POS.modelterminal.get('terminal').bp_showcategoryselector
   }, {
     kind: 'OB.UI.CustomerTextProperty',
     name: 'customerTaxId',
     modelProperty: 'taxID',
-    label: OB.I18N.getLabel('OBPOS_LblTaxId'),
+    i18nLabel: 'OBPOS_LblTaxId',
     readOnly: true,
   //  displayLogic: OB.POS.modelterminal.get('terminal').bp_showtaxid
   }, {
     kind: 'OB.UI.CustomerTextProperty',
     name: 'customerLocName',
     modelProperty: 'locName',
-    label: OB.I18N.getLabel('OBPOS_LblAddress'),
+    i18nLabel: 'OBPOS_LblAddress',
     readOnly: true
   }, {
     kind: 'OB.UI.CustomerTextProperty',
     name: 'customerPostalCode',
     modelProperty: 'postalCode',
-    label: OB.I18N.getLabel('OBPOS_LblPostalCode'),
+    i18nLabel: 'OBPOS_LblPostalCode',
     readOnly: true
   }, {
     kind: 'OB.UI.CustomerTextProperty',
     name: 'customerCity',
     modelProperty: 'cityName',
-    label: OB.I18N.getLabel('OBPOS_LblCity'),
+    i18nLabel: 'OBPOS_LblCity',
     readOnly: true
   }, {
     kind: 'OB.UI.CustomerTextProperty',
     name: 'customerPhone',
     modelProperty: 'phone',
-    label: OB.I18N.getLabel('OBPOS_LblPhone'),
+    i18nLabel: 'OBPOS_LblPhone',
     readOnly: true
   }, {
     kind: 'OB.UI.CustomerTextProperty',
     name: 'customerEmail',
     modelProperty: 'email',
-    label: OB.I18N.getLabel('OBPOS_LblEmail'),
+    i18nLabel: 'OBPOS_LblEmail',
     readOnly: true
   }]
 });

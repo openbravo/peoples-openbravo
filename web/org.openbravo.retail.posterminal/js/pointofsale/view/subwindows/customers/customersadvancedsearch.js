@@ -140,6 +140,10 @@ enyo.kind({
       bpName: params.initial,
       operator: params.operator
     });
+  },
+  initComponents: function () {
+    this.inherited(arguments);
+    this.setContent(this.i18nLabel ? OB.I18N.getLabel(this.i18nLabel) : this.label);
   }
 });
 
@@ -161,6 +165,10 @@ enyo.kind({
         }
       }
     });
+  },
+  initComponents: function () {
+    this.inherited(arguments);
+    this.setContent(this.i18nLabel ? OB.I18N.getLabel(this.i18nLabel) : this.label);
   }
 });
 
@@ -169,10 +177,10 @@ enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.customers.CustomerLeftBar',
   components: [{
     kind: 'OB.OBPOSPointOfSale.UI.customers.NewCustomerButton',
-    content: OB.I18N.getLabel('OBPOS_LblNew')
+    i18nLabel: 'OBPOS_LblNew'
   }, {
     kind: 'OB.OBPOSPointOfSale.UI.customers.SearchCustomerButton',
-    content: OB.I18N.getLabel('OBPOS_LblAC'),
+    i18nLabel: 'OBPOS_LblAC',
     tap: function () {
       this.searchAction({
         initial: 'A,B,C',
@@ -181,7 +189,7 @@ enyo.kind({
     }
   }, {
     kind: 'OB.OBPOSPointOfSale.UI.customers.SearchCustomerButton',
-    content: OB.I18N.getLabel('OBPOS_LblDF'),
+    i18nLabel: 'OBPOS_LblDF',
     tap: function () {
       this.searchAction({
         initial: 'D,E,F',
@@ -190,7 +198,7 @@ enyo.kind({
     }
   }, {
     kind: 'OB.OBPOSPointOfSale.UI.customers.SearchCustomerButton',
-    content: OB.I18N.getLabel('OBPOS_LblGI'),
+    i18nLabel: 'OBPOS_LblGI',
     tap: function () {
       this.searchAction({
         initial: 'G,H,I',
@@ -199,7 +207,7 @@ enyo.kind({
     }
   }, {
     kind: 'OB.OBPOSPointOfSale.UI.customers.SearchCustomerButton',
-    content: OB.I18N.getLabel('OBPOS_LblJL'),
+    i18nLabel: 'OBPOS_LblJL',
     tap: function () {
       this.searchAction({
         initial: 'J,K,L',
@@ -208,7 +216,7 @@ enyo.kind({
     }
   }, {
     kind: 'OB.OBPOSPointOfSale.UI.customers.SearchCustomerButton',
-    content: OB.I18N.getLabel('OBPOS_LblMO'),
+    i18nLabel: 'OBPOS_LblMO',
     tap: function () {
       this.searchAction({
         initial: 'M,N,O',
@@ -217,7 +225,7 @@ enyo.kind({
     }
   }, {
     kind: 'OB.OBPOSPointOfSale.UI.customers.SearchCustomerButton',
-    content: OB.I18N.getLabel('OBPOS_LblPR'),
+    i18nLabel: 'OBPOS_LblPR',
     tap: function () {
       this.searchAction({
         initial: 'P,Q,R',
@@ -226,7 +234,7 @@ enyo.kind({
     }
   }, {
     kind: 'OB.OBPOSPointOfSale.UI.customers.SearchCustomerButton',
-    content: OB.I18N.getLabel('OBPOS_LblSV'),
+    i18nLabel: 'OBPOS_LblSV',
     tap: function () {
       this.searchAction({
         initial: 'S,T,U,V',
@@ -235,7 +243,7 @@ enyo.kind({
     }
   }, {
     kind: 'OB.OBPOSPointOfSale.UI.customers.SearchCustomerButton',
-    content: OB.I18N.getLabel('OBPOS_LblWZ'),
+    i18nLabel: 'OBPOS_LblWZ',
     tap: function () {
       this.searchAction({
         initial: 'W,X,Y,Z',

@@ -171,12 +171,15 @@ enyo.kind({
     }]
   }, {
     classes: 'subwindowheadertext',
-    name: 'headermessage',
-    content: OB.I18N.getLabel('OBPOS_TitleCustomerAdvancedSearch')
+    name: 'headermessage'
   }],
   initComponents: function () {
     this.inherited(arguments);
-    this.$.headermessage.setContent(this.headermessage);
+    if(this.headerMessage){
+      this.$.headermessage.setContent(this.headermessage);
+    }else{
+      this.$.headermessage.setContent(OB.I18N.getLabel('OBPOS_TitleCustomerAdvancedSearch'));
+    }
     this.$.closebutton.headerContainer = this.$.closebutton.parent;
     this.$.closebutton.tap = this.onTapCloseButton;
   }

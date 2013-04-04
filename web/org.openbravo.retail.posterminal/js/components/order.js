@@ -85,6 +85,10 @@ enyo.kind({
       this.$.totalbase.hasNode().style.width = '20%';
       this.$.totaltax.hasNode().style.width = '40%';
     }
+  },
+  initComponents: function () {
+    this.inherited(arguments);
+    this.$.lblTotalTax.setContent(OB.I18N.getLabel('OBPOS_LblTotalTax'));
   }
 });
 
@@ -92,12 +96,15 @@ enyo.kind({
   name: 'OB.UI.TaxBreakdown',
   style: 'position: relative; padding: 10px;',
   components: [{
-    name: 'lblTotalTax',
-    style: 'float: left; width: 40%;',
-    content: OB.I18N.getLabel('OBPOS_LblTaxBreakdown')
+    name: 'lblTotalTaxBreakdown',
+    style: 'float: left; width: 40%;'
   }, {
     style: 'clear: both;'
-  }]
+  }],
+  initComponents: function () {
+    this.inherited(arguments);
+    this.$.lblTotalTaxBreakdown.setContent(OB.I18N.getLabel('OBPOS_LblTaxBreakdown'));
+  }
 });
 
 enyo.kind({
@@ -124,9 +131,13 @@ enyo.kind({
     content: ' '
   }, {
     tag: 'span',
-    style: 'font-weight:bold; ',
-    content: OB.I18N.getLabel('OBPOS_LblInvoiceReceipt')
-  }]
+    name: 'lblInvoiceReceipt',
+    style: 'font-weight:bold; '
+  }],
+  initComponents: function () {
+    this.inherited(arguments);
+    this.$.lblInvoiceReceipt.setContent(OB.I18N.getLabel('OBPOS_LblInvoiceReceipt'));
+  }
 });
 
 enyo.kind({

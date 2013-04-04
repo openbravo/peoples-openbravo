@@ -244,10 +244,10 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.DoneButton',
   kind: 'OB.UI.RegularButton',
-  content: OB.I18N.getLabel('OBPOS_LblDone'),
   drawerOpened: true,
   init: function (model) {
     this.model = model;
+    this.setContent(OB.I18N.getLabel('OBPOS_LblDone'));
     this.model.get('order').on('change:openDrawer', function () {
       this.drawerpreference = this.model.get('order').get('openDrawer');
       if (this.drawerpreference) {
