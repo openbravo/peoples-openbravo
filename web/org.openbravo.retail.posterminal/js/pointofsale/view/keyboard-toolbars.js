@@ -255,7 +255,7 @@ enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.PaymentMethods',
   kind: 'OB.UI.Modal',
   topPosition: '125px',
-  header: OB.I18N.getLabel('OBPOS_MorePaymentsHeader'),
+  i18nHeader: 'OBPOS_MorePaymentsHeader',
   sideButtons: [],
   body: {
     classes: 'row-fluid',

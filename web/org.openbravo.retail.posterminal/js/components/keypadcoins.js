@@ -11,7 +11,6 @@
 
 enyo.kind({
   name: 'OB.UI.KeypadCoinsLegacy',
-  label: OB.I18N.getLabel('OBPOS_KeypadCoins'),
   padName: 'Coins-102',
   padPayment: 'OBPOS_payment.cash',
   components: [{
@@ -151,7 +150,11 @@ enyo.kind({
         background: '#f3bc9e'
       }]
     }]
-  }]
+  }],
+  initComponents: function () {
+    this.inherited(arguments);
+    this.label = OB.I18N.getLabel('OBPOS_KeypadCoins');
+  }
 });
 
 enyo.kind({

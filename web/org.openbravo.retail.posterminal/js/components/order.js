@@ -58,8 +58,7 @@ enyo.kind({
   style: 'position: relative; padding: 10px;',
   components: [{
     name: 'lblTotalTax',
-    style: 'float: left; width: 40%;',
-    content: OB.I18N.getLabel('OBPOS_LblTotalTax')
+    style: 'float: left; width: 40%;'
   }, {
     name: 'totalbase',
     style: 'float: left; width: 20%; text-align:right; font-weight:bold;'
@@ -213,8 +212,7 @@ enyo.kind({
           style: 'position: relative; padding: 10px;',
           components: [{
             name: 'lblTotalPayment',
-            style: 'float: left; width: 40%;',
-            content: OB.I18N.getLabel('OBPOS_LblPaymentBreakdown')
+            style: 'float: left; width: 40%;'
           }, {
             style: 'clear: both;'
           }]
@@ -234,6 +232,7 @@ enyo.kind({
   }],
   initComponents: function () {
     this.inherited(arguments);
+    this.$.lblTotalPayment.setContent(OB.I18N.getLabel('OBPOS_LblPaymentBreakdown'));
   },
   checkBoxBehavior: function (inSender, inEvent) {
     if (inEvent.status) {

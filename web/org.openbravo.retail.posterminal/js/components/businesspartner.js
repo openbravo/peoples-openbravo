@@ -67,7 +67,7 @@ enyo.kind({
   },
   style: 'width: 150px; margin: 0px 5px 8px 19px;',
   classes: 'btnlink-yellow btnlink btnlink-small',
-  content: OB.I18N.getLabel('OBPOS_LblNewCustomer'),
+  i18nLabel: 'OBPOS_LblNewCustomer',
   handlers: {
     onSetModel: 'setModel'
   },
@@ -92,7 +92,7 @@ enyo.kind({
   name: 'OB.UI.AdvancedSearchCustomerWindowButton',
   style: 'width: 170px; margin: 0px 0px 8px 5px;',
   classes: 'btnlink-yellow btnlink btnlink-small',
-  content: OB.I18N.getLabel('OBPOS_LblAdvancedSearch'),
+  i18nLabel: 'OBPOS_LblAdvancedSearch',
   handlers: {
     onSetModel: 'setModel'
   },
@@ -292,7 +292,7 @@ enyo.kind({
   executeOnHide: function () {
     this.$.body.$.listBps.$.bpslistitemprinter.$.theader.$.modalBpScrollableHeader.clearAction();
   },
-  header: OB.I18N.getLabel('OBPOS_LblAssignCustomer'),
+  header: 'OBPOS_LblAssignCustomer',
   body: {
     kind: 'OB.UI.ListBps'
   },

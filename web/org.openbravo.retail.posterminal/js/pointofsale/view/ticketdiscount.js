@@ -35,7 +35,9 @@ enyo.kind({
         style: 'border: 1px solid #F0F0F0; background-color: #E2E2E2; color: black; width: 35%; height: 40px; float: left; text-align: left',
         components: [{
           style: 'padding: 5px 8px 0px 3px;',
-          content: OB.I18N.getLabel('OBPOS_LineDiscount')
+          initComponents: function () {
+            this.setContent(OB.I18N.getLabel('OBPOS_LineDiscount'));
+          }
         }]
       }, {
         style: 'border: 1px solid #F0F0F0; float: left; width: 63%;',
@@ -100,7 +102,9 @@ enyo.kind({
         style: 'border: 1px solid #F0F0F0; background-color: #E2E2E2; color: black; width: 35%; height: 40px; float: left; text-align: left',
         components: [{
           style: 'padding: 5px 8px 0px 3px;',
-          content: OB.I18N.getLabel('OBPOS_overridePromotions')
+          initComponents: function () {
+            this.setContent(OB.I18N.getLabel('OBPOS_overridePromotions'));
+          }
         }]
       }, {
         style: 'border: 1px solid #F0F0F0; float: left; width: 63%;',
@@ -120,7 +124,9 @@ enyo.kind({
         style: 'border: 1px solid #F0F0F0; background-color: #E2E2E2; color: black; width: 35%; height: 40px; float: left;  text-align: left',
         components: [{
           style: 'padding: 5px 8px 0px 3px;',
-          content: OB.I18N.getLabel('OBPOS_applyToAllLines')
+          initComponents: function () {
+            this.setContent(OB.I18N.getLabel('OBPOS_applyToAllLines'));
+          }
         }]
       }, {
         style: 'border: 1px solid #F0F0F0; float: left; width: 63%;',
@@ -297,7 +303,7 @@ enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.OBPOSPointOfSale.UI.Discounts.btnDiscountsApply',
   style: 'color: orange; font-weight: bold;',
-  content: OB.I18N.getLabel('OBPOS_LblApply'),
+  i18nLabel: 'OBMOBC_LblApply',
   events: {
     onApplyDiscounts: ''
   },

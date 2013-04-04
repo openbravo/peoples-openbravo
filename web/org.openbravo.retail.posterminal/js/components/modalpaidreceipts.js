@@ -55,14 +55,18 @@ enyo.kind({
         style: 'display: table-cell;',
         components: [{
           tag: 'h4',
-          content: OB.I18N.getLabel('OBPOS_LblStartDate'),
+          initComponents: function () {
+            this.setContent(OB.I18N.getLabel('OBPOS_LblStartDate'));
+          },
           style: 'width: 200px;  margin: 0px 0px 2px 5px;'
         }]
       }, {
         style: 'display: table-cell;',
         components: [{
           tag: 'h4',
-          content: OB.I18N.getLabel('OBPOS_LblEndDate'),
+          initComponents: function () {
+            this.setContent(OB.I18N.getLabel('OBPOS_LblEndDate'));
+          },
           style: 'width 200px; margin: 0px 0px 2px 65px;'
         }]
       }]
@@ -82,7 +86,9 @@ enyo.kind({
         style: 'display: table-cell;',
         components: [{
           tag: 'h4',
-          content: OB.I18N.getLabel('OBPOS_LblDateFormat'),
+          initComponents: function () {
+            this.setContent(OB.I18N.getLabel('OBPOS_LblDateFormat'));
+          },
           style: 'width: 100px; color:gray;  margin: 0px 0px 8px 5px;'
         }]
       }, {
@@ -96,7 +102,9 @@ enyo.kind({
         style: 'display: table-cell;',
         components: [{
           tag: 'h4',
-          content: OB.I18N.getLabel('OBPOS_LblDateFormat'),
+          initComponents: function () {
+            this.setContent(OB.I18N.getLabel('OBPOS_LblDateFormat'));
+          },
           style: 'width: 100px; color:gray;  margin: 0px 0px 8px 5px;'
         }]
       }]
@@ -290,7 +298,7 @@ enyo.kind({
   name: 'OB.UI.ModalPaidReceipts',
   kind: 'OB.UI.Modal',
   topPosition: '125px',
-  header: OB.I18N.getLabel('OBPOS_LblPaidReceipts'),
+  i18nHeader: 'OBPOS_LblPaidReceipts',
   published: {
     params: null
   },

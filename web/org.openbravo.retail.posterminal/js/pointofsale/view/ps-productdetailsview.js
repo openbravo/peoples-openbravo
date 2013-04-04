@@ -33,7 +33,7 @@ enyo.kind({
   kind: 'OB.UI.RegularButton',
   classes: 'btnlink-green',
   style: 'min-width: 70px; margin: 2px 5px 2px 5px;',
-  content: OB.I18N.getLabel('OBPOS_addToTicket'),
+  i18nLabel: 'OBPOS_addToTicket',
   events: {
     onAddProduct: ''
   },

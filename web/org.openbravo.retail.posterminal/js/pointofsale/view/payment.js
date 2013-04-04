@@ -378,7 +378,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.CreditButton',
   kind: 'OB.UI.SmallButton',
-  content: OB.I18N.getLabel('OBPOS_LblCreditSales'),
+  i18nLabel: 'OBPOS_LblCreditSales',
   classes: 'btn-icon-small btnlink-green',
   style: 'width: 120px; float: right; margin: 0px',
   permission: 'OBPOS_receipt.creditsales',

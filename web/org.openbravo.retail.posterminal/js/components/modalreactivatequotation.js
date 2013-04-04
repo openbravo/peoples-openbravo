@@ -36,10 +36,12 @@ enyo.kind({
   name: 'OB.UI.ModalReactivateQuotation',
   myId: 'modalReactivateQuotation',
   bodyContent: {},
-  header: OB.I18N.getLabel('OBPOS_ReactivateQuotation'),
+  i18nHeader: 'OBPOS_ReactivateQuotation',
   bodyButtons: {
     components: [{
-      content: OB.I18N.getLabel('OBPOS_ReactivateQuotationMessage')
+      initComponents: function () {
+        this.setContent(OB.I18N.getLabel('OBPOS_ReactivateQuotationMessage'));
+      }
     }, {
       kind: 'OB.OBPOSPointOfSale.UI.Modals.btnModalReactivateQuotationAccept'
     }, {
