@@ -74,7 +74,6 @@
       //modelterminal.load();
       //TODO: this is required but should be changed to make it possible to be included in terminal component
 
-
       OB.UTIL.checkConnectivityStatus(); //Initial check;
       setInterval(OB.UTIL.checkConnectivityStatus, 5000);
 

@@ -175,9 +175,9 @@ enyo.kind({
   }],
   initComponents: function () {
     this.inherited(arguments);
-    if(this.headerMessage){
+    if (this.headerMessage) {
       this.$.headermessage.setContent(this.headermessage);
-    }else{
+    } else {
       this.$.headermessage.setContent(OB.I18N.getLabel('OBPOS_TitleCustomerAdvancedSearch'));
     }
     this.$.closebutton.headerContainer = this.$.closebutton.parent;

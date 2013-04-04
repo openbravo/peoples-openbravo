@@ -307,7 +307,9 @@
 
     loadContext: function () {
       var me = this;
-      new OB.DS.Request('org.openbravo.mobile.core.login.Context').exec({terminal: OB.MobileApp.model.get('terminalName')}, function (data) {
+      new OB.DS.Request('org.openbravo.mobile.core.login.Context').exec({
+        terminal: OB.MobileApp.model.get('terminalName')
+      }, function (data) {
         if (data[0]) {
           me.set('context', data[0]);
           me.triggerReady();

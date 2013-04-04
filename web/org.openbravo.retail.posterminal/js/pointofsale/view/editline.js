@@ -123,7 +123,7 @@ enyo.kind({
             components: [{
               classes: 'span4',
               name: 'editlinenameLbl'
-            },{
+            }, {
               classes: 'span8',
               components: [{
                 tag: 'span',

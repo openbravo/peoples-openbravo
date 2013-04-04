@@ -631,7 +631,7 @@
       var me = this;
 
       if (enyo.Panels.isScreenNarrow()) {
-        OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_AddLine', [qty?qty:1, p.get('_identifier')]));
+        OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_AddLine', [qty ? qty : 1, p.get('_identifier')]));
       }
       if (p.get('ispack')) {
         OB.Model.Discounts.discountRules[p.get('productCategory')].addProductToOrder(this, p);

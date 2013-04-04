@@ -73,45 +73,45 @@ enyo.kind({
     receipt: null
   },
   handlers: {
-	    onTabButtonTap: 'tabButtonTapHandler'
-	  },
-	  tabButtonTapHandler: function (inSender, inEvent) {
-		    if (inEvent.tabPanel) {
-		      this.setTabButtonActive(inEvent.tabPanel);
-		    }
-		  },
-		  setTabButtonActive: function (tabName) {
-		    var buttonContainerArray = this.getComponents()[0].getComponents(),
-		        i;
+    onTabButtonTap: 'tabButtonTapHandler'
+  },
+  tabButtonTapHandler: function (inSender, inEvent) {
+    if (inEvent.tabPanel) {
+      this.setTabButtonActive(inEvent.tabPanel);
+    }
+  },
+  setTabButtonActive: function (tabName) {
+    var buttonContainerArray = this.getComponents()[0].getComponents(),
+        i;
 
-		    for (i = 0; i < buttonContainerArray.length; i++) {
-		      buttonContainerArray[i].removeClass('active');
-		      if (buttonContainerArray[i].getComponents()[0].getComponents()[0].name === tabName) {
-		        buttonContainerArray[i].addClass('active');
-		      }
-		    }
-		  },
-		  manualTap: function (tabName, options) {
-		    var tab;
+    for (i = 0; i < buttonContainerArray.length; i++) {
+      buttonContainerArray[i].removeClass('active');
+      if (buttonContainerArray[i].getComponents()[0].getComponents()[0].name === tabName) {
+        buttonContainerArray[i].addClass('active');
+      }
+    }
+  },
+  manualTap: function (tabName, options) {
+    var tab;
 
-		    function getButtonByName(name, me) {
-		      var componentArray = me.$.toolbar.getComponents(),
-		          i;
-		      for (i = 0; i < componentArray.length; i++) {
-		        if (componentArray[i].$.theButton.getComponents()[0].name === name) {
-		          return componentArray[i].$.theButton.getComponents()[0];
-		        }
-		      }
-		      return null;
-		    }
+    function getButtonByName(name, me) {
+      var componentArray = me.$.toolbar.getComponents(),
+          i;
+      for (i = 0; i < componentArray.length; i++) {
+        if (componentArray[i].$.theButton.getComponents()[0].name === name) {
+          return componentArray[i].$.theButton.getComponents()[0];
+        }
+      }
+      return null;
+    }
 
-		    tab = getButtonByName(tabName, this);
-		    if (tab) {
-		      tab.tap(options);
-		    }
-		  },
+    tab = getButtonByName(tabName, this);
+    if (tab) {
+      tab.tap(options);
+    }
+  },
   kind: 'OB.UI.MultiColumn.Toolbar',
-  buttons: [ {
+  buttons: [{
     kind: 'OB.OBPOSPointOfSale.UI.ButtonTabScan',
     name: 'scan',
     span: 3
@@ -169,10 +169,10 @@ enyo.kind({
     this.receipt.on('change:gross', function (model) {
       if (this.receipt.get('orderType') !== 3) { //Do not change voiding layaway
         this.bubble('onChangeTotal', {
-            newTotal: this.receipt.getTotal()
-          });
-        }
-      }, this);
+          newTotal: this.receipt.getTotal()
+        });
+      }
+    }, this);
   }
 });
 
