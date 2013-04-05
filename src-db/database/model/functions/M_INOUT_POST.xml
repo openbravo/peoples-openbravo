@@ -497,41 +497,39 @@
                   ) LOOP
                     v_qtyaux := LEAST((cur_reserve_stock.quantity - COALESCE(cur_reserve_stock.releasedqty, 0)), v_pendingqty);
                     v_aux_released := v_aux_released + COALESCE(cur_reserve_stock.releasedqty, 0);
-                    IF (cur_reserve_stock.quantity = COALESCE(cur_reserve_stock.releasedqty, 0)) THEN
-                      -- Reservation is completely released do not convert to pre-reserve.
-                      CONTINUE;
-                    END IF;
-                    -- Check if exists a prereservation for the same orderline, attributes and locator in the reservation
-                    SELECT count(*), max(m_reservation_stock_id) INTO v_aux, v_res_stock_id
-                    FROM m_reservation_stock
-                    WHERE c_orderline_id = cur_inoutline.c_orderline_id
-                      AND m_locator_id IS NULL
-                      AND m_reservation_id = cur_reserve_stock.m_reservation_id;
-                    -- Update existing prereserved stock to decrease reserved qty
-                    UPDATE m_reservation_stock
-                    SET quantity = quantity - v_qtyaux
-                    WHERE m_reservation_stock_id = cur_reserve_stock.m_reservation_stock_id;
-                    -- Insert or update reserved stock by same quantity
-                    IF (v_aux > 0) THEN
+                    IF (cur_reserve_stock.quantity <> COALESCE(cur_reserve_stock.releasedqty, 0)) THEN
+                      -- Check if exists a prereservation for the same orderline, attributes and locator in the reservation
+                      SELECT count(*), max(m_reservation_stock_id) INTO v_aux, v_res_stock_id
+                      FROM m_reservation_stock
+                      WHERE c_orderline_id = cur_inoutline.c_orderline_id
+                        AND m_locator_id IS NULL
+                        AND m_reservation_id = cur_reserve_stock.m_reservation_id;
+                      -- Update existing prereserved stock to decrease reserved qty
                       UPDATE m_reservation_stock
-                      SET quantity = quantity + v_qtyaux
-                      WHERE m_reservation_stock_id = v_res_stock_id;
-                    ELSE
-                      INSERT INTO m_reservation_stock (
-                        m_reservation_stock_id, ad_client_id, ad_org_id, isactive,
-                        created, createdby, updated, updatedby,
-                        m_reservation_id, m_attributesetinstance_id, m_locator_id, c_orderline_id,
-                        quantity, releasedqty, isallocated
-                      ) VALUES (
-                        get_uuid(), cur_reserve_stock.ad_client_id, cur_reserve_stock.ad_org_id, 'Y',
-                        now(), v_user, now(), v_user,
-                        cur_reserve_stock.m_reservation_id, '0', NULL, cur_inoutline.c_orderline_id,
-                        v_qtyaux, 0, 'Y'
-                      );
-                    END IF;
-                    v_pendingqty := v_pendingqty - v_qtyaux;
-                    IF (v_pendingqty <= 0) THEN
-                      EXIT;
+                      SET quantity = quantity - v_qtyaux
+                      WHERE m_reservation_stock_id = cur_reserve_stock.m_reservation_stock_id;
+                      -- Insert or update reserved stock by same quantity
+                      IF (v_aux > 0) THEN
+                        UPDATE m_reservation_stock
+                        SET quantity = quantity + v_qtyaux
+                        WHERE m_reservation_stock_id = v_res_stock_id;
+                      ELSE
+                        INSERT INTO m_reservation_stock (
+                          m_reservation_stock_id, ad_client_id, ad_org_id, isactive,
+                          created, createdby, updated, updatedby,
+                          m_reservation_id, m_attributesetinstance_id, m_locator_id, c_orderline_id,
+                          quantity, releasedqty, isallocated
+                        ) VALUES (
+                          get_uuid(), cur_reserve_stock.ad_client_id, cur_reserve_stock.ad_org_id, 'Y',
+                          now(), v_user, now(), v_user,
+                          cur_reserve_stock.m_reservation_id, '0', NULL, cur_inoutline.c_orderline_id,
+                          v_qtyaux, 0, 'Y'
+                        );
+                      END IF;
+                      v_pendingqty := v_pendingqty - v_qtyaux;
+                      IF (v_pendingqty <= 0) THEN
+                        EXIT;
+                      END IF;
                     END IF;
                   END LOOP;
                   IF (v_pendingqty > 0 AND v_aux_released > 0) THEN
