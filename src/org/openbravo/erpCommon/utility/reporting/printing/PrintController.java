@@ -251,6 +251,7 @@ public class PrintController extends HttpSecureAppServlet {
       } else {
         if (vars.commandIn("DEFAULT")) {
 
+          differentDocTypes.clear();
           reports = new HashMap<String, Report>();
           for (int index = 0; index < documentIds.length; index++) {
             final String documentId = documentIds[index];
