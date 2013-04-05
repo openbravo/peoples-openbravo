@@ -42,31 +42,24 @@
   padding: 4px 0px 0px 5px;
 }
 
-.OBCalendarGridCell {
+.OBCalendarGridCell,
+.OBCalendarGridCellWorkday,
+.OBCalendarGridCellSelected,
+.OBCalendarGridCellDark,
+.OBCalendarGridCellDisabled {
   border: 1px solid #cdd7bb;
   border-width: 0px 1px 1px 0px;
   font-family: arial, sans-serif;
   font-size: 11px;
 }
 
-.OBCalendarGridCellWorkday {
-  border: 1px solid #cdd7bb;
-  border-width: 0px 1px 1px 0px;
-  font-family: arial, sans-serif;
-  font-size: 11px;
-}
-.OBCalendarGridCellDark {
-  border: 1px solid #cdd7bb;
-  border-width: 0px 1px 1px 0px;
-  font-family: arial, sans-serif;
-  font-size: 11px;
-}
+.OBCalendarGridCell,
 .OBCalendarGridCellDisabled {
-  border: 1px solid #cdd7bb;
-  border-width: 0px 1px 1px 0px;
-  font-family: arial, sans-serif;
-  font-size: 11px;
-  background-color: #F5F5F5;
+  background-color: #D8D8D8;
+}
+
+.OBCalendarGridCellSelected {
+  background-color: #FFE1C0;
 }
 
 .OBCalendarGridHeaderCell {

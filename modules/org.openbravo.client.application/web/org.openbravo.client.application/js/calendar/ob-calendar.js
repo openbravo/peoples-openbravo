@@ -241,6 +241,8 @@ isc.OBCalendar.addProperties({
       this.datePickerButton.hide();
     }
 
+    this.workdayBaseStyle = OB.Styles.OBCalendar.workdayBaseStyle;
+    this.selectedCellStyle = OB.Styles.OBCalendar.selectedCellStyle;
     if (this.showDayView !== false) {
       this.dayView.baseStyle = OB.Styles.OBCalendar.dayView_baseStyle;
     }
@@ -433,6 +435,10 @@ isc.OBCalendar.addProperties({
     return criteria;
   },
 
+  // This is needed, because the first time (and only the first time) we switch to week view (if we load the day view),
+  // or the other way around, we need to set also the initialScroll to this other view.
+  isInitialScrollAlreadyBeenSet: false,
+
   draw: function () {
     var ret, _originalTabSelected = this.mainView.tabSelected,
         calendar = this;
@@ -441,7 +447,7 @@ isc.OBCalendar.addProperties({
     // If change filter/legend parameters in day/week view and you switch to the other one,
     // data needs to be refreshed in order to show changes
     if (this.multiCalendar && this.mainView && typeof this.mainView.selectTab === 'function') {
-      this.mainView.tabSelected = function () {
+      this.mainView.tabSelected = function (tabNum) {
         var actionObject, mvret;
         actionObject = {
           target: this,
@@ -450,8 +456,27 @@ isc.OBCalendar.addProperties({
         };
         mvret = OB.Utilities.callAction(actionObject);
         calendar.refreshSelectedView();
+        if (!calendar.isInitialScrollAlreadyBeenSet && tabNum <= 1) {
+          calendar.isInitialScrollAlreadyBeenSet = true;
+          // Timeout to allow new selected tab grid be fully loaded
+          if (calendar.initialScrollTo) {
+            setTimeout(function () {
+              try {
+                calendar.scrollToTime(calendar.initialScrollTo);
+              } catch (e) {}
+            }, 100);
+          }
+        }
         return mvret;
       };
+    }
+    // Timeout to allow the tab grid be fully loaded
+    if (calendar.initialScrollTo) {
+      setTimeout(function () {
+        try {
+          calendar.scrollToTime(calendar.initialScrollTo);
+        } catch (e) {}
+      }, 100);
     }
     return ret;
   },

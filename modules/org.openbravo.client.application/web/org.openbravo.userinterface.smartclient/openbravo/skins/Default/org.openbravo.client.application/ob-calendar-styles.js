@@ -80,6 +80,8 @@ OB.Styles.OBCalendar = {
     width: 20,
     height: 20
   },
+  workdayBaseStyle: 'OBCalendarGridCellWorkday',
+  selectedCellStyle: 'OBCalendarGridCellSelected',
   dayView_baseStyle: 'OBCalendarGridCell',
   weekView_baseStyle: 'OBCalendarGridCell',
   weekView_headerBaseStyle: 'OBCalendarGridHeaderCell',
