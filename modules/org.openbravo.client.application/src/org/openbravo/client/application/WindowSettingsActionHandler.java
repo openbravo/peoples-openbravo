@@ -137,14 +137,15 @@ public class WindowSettingsActionHandler extends BaseActionHandler {
       } catch (PropertyException e) {
         // do nothing, property is not set so securedProcess is false
       }
-
       if (securedProcess) {
         OBQuery<Field> q = OBDal.getInstance().createQuery(
             Field.class,
             " as f where  tab.window = :window " + "and ( (column.oBUIAPPProcess is not null"
                 + " and not exists (select 1 from " + " OBUIAPP_Process_Access a"
                 + " where a.obuiappProcess = f.column.oBUIAPPProcess"
-                + " and a.role.id = :role and a.active=true))" + "or (column.process is not null))"
+                + " and a.role.id = :role and a.active=true))" + "or (column.process is not null and "
+                + " not exists (select 1 from ADProcessAccess a where a.process = f.column.process and "
+                + " a.role.id = 'B5E17C3278704E169F5B11FC2F84850B' and a.active=true)))"
                 + " order by f.tab");
 
         q.setNamedParameter("window", window);
