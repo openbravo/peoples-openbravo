@@ -204,7 +204,9 @@
             ShowInRelation, Grid_Seqno,
             startinoddcolumn,startnewline, em_obuisel_outfield_id,
             isfirstfocusedfield, isshowninstatusbar, onchangefunction,
-            em_obuiapp_colspan,em_obuiapp_rowspan
+            em_obuiapp_colspan, em_obuiapp_rowspan, property,
+	    ignoreinwad, clientclass, em_obuiapp_validator,
+	    em_obuiapp_showsummary, em_obuiapp_summaryfn
           )
           VALUES
           (
@@ -218,7 +220,9 @@
             Cur_Fields.ShowInRelation, Cur_Fields.Grid_Seqno,
             Cur_Fields.Startinoddcolumn, Cur_Fields.Startnewline, Cur_Fields.EM_Obuisel_Outfield_ID,
             Cur_Fields.isFirstFocusedField, Cur_Fields.isShownInStatusBar, Cur_Fields.onchangefunction,
-            Cur_Fields.em_obuiapp_colspan,Cur_Fields.em_obuiapp_rowspan    
+            Cur_Fields.em_obuiapp_colspan,Cur_Fields.em_obuiapp_rowspan, Cur_Fields.property,
+	    Cur_Fields.ignoreinwad, Cur_Fields.clientclass, Cur_Fields.em_obuiapp_validator,
+	    Cur_Fields.em_obuiapp_showsummary, Cur_Fields.em_obuiapp_summaryfn
             );
 
         -- update dest translations from source translations

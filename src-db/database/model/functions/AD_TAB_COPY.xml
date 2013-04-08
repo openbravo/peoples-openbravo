@@ -141,7 +141,9 @@
           DISPLAYLOGIC, DISPLAYLENGTH, ISREADONLY,
           SEQNO, SORTNO, ISSAMELINE,
           ISFIELDONLY, ISENCRYPTED, AD_MODULE_ID, 
-          ShowInRelation, Grid_Seqno
+          ShowInRelation, Grid_Seqno, property,
+          ignoreinwad, isfirstfocusedfield, startinoddcolumn,
+          startnewline,isshowninstatusbar,onchangefunction,clientclass
         )
         VALUES
         (
@@ -152,7 +154,9 @@
           Cur_Fields.DISPLAYLOGIC, Cur_Fields.DISPLAYLENGTH, Cur_Fields.ISREADONLY,
           Cur_Fields.SEQNO, Cur_Fields.SORTNO, Cur_Fields.ISSAMELINE, 
           Cur_Fields.ISFIELDONLY, Cur_Fields.ISENCRYPTED, v_dest_ad_module_id,
-          Cur_Fields.ShowInRelation, Cur_Fields.Grid_Seqno
+          Cur_Fields.ShowInRelation, Cur_Fields.Grid_Seqno, Cur_Fields.property,
+          Cur_Fields.ignoreinwad, Cur_Fields.isfirstfocusedfield, Cur_Fields.startinoddcolumn,
+          Cur_Fields.startnewline,Cur_Fields.isshowninstatusbar,Cur_Fields.onchangefunction,Cur_Fields.clientclass
         );
 
       -- update translations from source translations
