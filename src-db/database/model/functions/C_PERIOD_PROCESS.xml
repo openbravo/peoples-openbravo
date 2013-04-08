@@ -120,7 +120,7 @@ BEGIN
           LOOP
             v_Record_ID:=Cur_Document.C_PERIODCONTROL_ID;
             UPDATE C_PeriodControl
-              SET PeriodStatus='O'
+              SET PeriodStatus='O', openclose='C'
             WHERE C_PeriodControl_ID=v_Record_ID
               AND PeriodStatus<>'P';
           END LOOP;
@@ -141,7 +141,7 @@ BEGIN
           LOOP
             v_Record_ID:=Cur_Document.C_PERIODCONTROL_ID;    
             UPDATE C_PeriodControl
-              SET PeriodStatus='O'
+              SET PeriodStatus='O', openclose='C'
             WHERE C_PeriodControl_ID=v_Record_ID
               AND PeriodStatus<>'P';
           END LOOP;
@@ -165,7 +165,7 @@ BEGIN
           LOOP
             v_Record_ID:=Cur_Document.C_PERIODCONTROL_ID;            
             UPDATE C_PeriodControl
-              SET PeriodStatus='C'
+              SET PeriodStatus='C', openclose='O'
             WHERE C_PeriodControl_ID=v_Record_ID
               AND PeriodStatus<>'P';
           END LOOP;
@@ -183,7 +183,7 @@ BEGIN
           LOOP
             v_Record_ID:=Cur_Document.C_PERIODCONTROL_ID;            
             UPDATE C_PeriodControl
-              SET PeriodStatus='C'
+              SET PeriodStatus='C', openclose='O'
             WHERE C_PeriodControl_ID=v_Record_ID
               AND PeriodStatus<>'P';
           END LOOP;
@@ -206,7 +206,7 @@ BEGIN
             )
           LOOP
             v_Record_ID:=Cur_Document.C_PERIODCONTROL_ID;
-            UPDATE C_PeriodControl  SET PeriodStatus='P'  WHERE C_PeriodControl_ID=v_Record_ID;
+            UPDATE C_PeriodControl  SET PeriodStatus='P', openclose='O'  WHERE C_PeriodControl_ID=v_Record_ID;
           END LOOP;
        ELSIF (p_IsRecursive='N') THEN
         FOR Cur_Document IN
@@ -221,11 +221,19 @@ BEGIN
             )
           LOOP
             v_Record_ID:=Cur_Document.C_PERIODCONTROL_ID;
-            UPDATE C_PeriodControl  SET PeriodStatus='P'  WHERE C_PeriodControl_ID=v_Record_ID;
+            UPDATE C_PeriodControl  SET PeriodStatus='P', openclose='O'  WHERE C_PeriodControl_ID=v_Record_ID;
           END LOOP;
        END IF;
       END IF;
       
+      UPDATE C_Period
+      SET openclose= (SELECT CASE
+             WHEN (max(pc.periodstatus) = min(pc.periodstatus) AND min(pc.periodstatus) = 'O') THEN 'C'
+             ELSE 'O'
+             END
+         FROM c_periodcontrol pc
+         WHERE pc.c_period_id = p_C_Period_ID)
+      WHERE c_period_id = p_C_Period_ID;
       
       --<<FINISH_PROCESS>>
       --  Update AD_PInstance
