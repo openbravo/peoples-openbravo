@@ -301,12 +301,12 @@ enyo.kind({
       kind: 'OB.UI.Button',
       classes: 'btnkeyboard',
       name: 'btn',
-      label: '',
-      content: OB.I18N.getLabel('OBPOS_MorePayments')
+      label: ''
     }]
   }],
   initComponents: function () {
     this.inherited(arguments);
+    this.$.btn.setContent(OB.I18N.getLabel('OBPOS_MorePayments'));
     this.activegreen = false;
   },
   tap: function () {
