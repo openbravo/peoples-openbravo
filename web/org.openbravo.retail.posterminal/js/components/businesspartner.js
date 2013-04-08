@@ -65,7 +65,7 @@ enyo.kind({
     onChangeSubWindow: '',
     onHideThisPopup: ''
   },
-  style: 'width: 150px; margin: 0px 5px 8px 19px;',
+  style: 'width: 170px; margin: 0px 5px 8px 19px;',
   classes: 'btnlink-yellow btnlink btnlink-small',
   i18nLabel: 'OBPOS_LblNewCustomer',
   handlers: {
