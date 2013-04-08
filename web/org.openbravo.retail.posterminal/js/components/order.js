@@ -350,12 +350,16 @@ enyo.kind({
     this.order.on('change:isPaid change:isQuotation', function (model) {
       if (model.get('isPaid') === true && !model.get('isQuotation')) {
         this.$.divText.addStyles('width: 50%; color: #f8941d;');
-        this.$.divText.setContent(OB.I18N.getLabel('OBPOS_paid'));
+        if (model.get('documentType') === OB.POS.modelterminal.get('terminal').terminalType.documentTypeForReturns) {
+          this.$.divText.setContent(OB.I18N.getLabel('OBPOS_paidReturn'));
+        } else {
+          this.$.divText.setContent(OB.I18N.getLabel('OBPOS_paid'));
+        }
         this.$.divText.show();
         this.$.listPaymentLines.show();
         this.$.paymentBreakdown.show();
         //We have to ensure that there is not another handler showing this div
-      } else if (this.$.divText.content === OB.I18N.getLabel('OBPOS_paid')) {
+      } else if (this.$.divText.content === OB.I18N.getLabel('OBPOS_paid') || this.$.divText.content === OB.I18N.getLabel('OBPOS_paidReturn')) {
         this.$.divText.hide();
         this.$.listPaymentLines.hide();
         this.$.paymentBreakdown.hide();

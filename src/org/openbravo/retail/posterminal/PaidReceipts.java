@@ -36,11 +36,11 @@ public class PaidReceipts extends JSONProcessSimple {
 
     String hqlPaidReceipts = "select ord.id as id, ord.documentNo as documentNo, ord.orderDate as orderDate, "
         + "ord.businessPartner.id as businessPartner, ord.grandTotalAmount as totalamount,  "
-        + "ord.salesRepresentative.name as salesRepresentative_identifier,  ord.documentType.name as documenttype, "
+        + "ord.salesRepresentative.name as salesRepresentative_identifier, ord.documentType.name as documenttype, "
         + "ord.warehouse.id as warehouse, ord.currency.iSOCode as currency, ord.obposApplications.name as posterminalidentifier, "
         + "ord.businessPartner.name as businessPartner_identifier, ord.currency.id as currency, ord.priceList.id as priceList, "
         + "ord.salesRepresentative.id as salesRepresentative, ord.organization.id as organization, ord.obposApplications.id as obposApplications, "
-        + "ord.client.id as client, ord.documentType.id as documentTypeId, ord.obposApplications.obposTerminaltype.documentTypeForQuotations.id as docTypeQuotation, ord.summedLineAmount as totalNetAmount, ord.deliveryStatus as deliveryStatus, ord.priceList.priceIncludesTax as priceIncludesTax from Order as ord where ord.id=? and ord.obposApplications is not null";
+        + "ord.client.id as client, ord.documentType.id as documenttypeid, ord.obposApplications.obposTerminaltype.documentTypeForQuotations.id as docTypeQuotation, ord.summedLineAmount as totalNetAmount, ord.deliveryStatus as deliveryStatus, ord.priceList.priceIncludesTax as priceIncludesTax from Order as ord where ord.id=? and ord.obposApplications is not null";
 
     Query paidReceiptsQuery = OBDal.getInstance().getSession().createQuery(hqlPaidReceipts);
     paidReceiptsQuery.setString(0, orderid);
@@ -55,6 +55,7 @@ public class PaidReceipts extends JSONProcessSimple {
       paidReceipt.put("totalamount", objpaidReceipts[4]);
       paidReceipt.put("salesrepresentative_identifier", objpaidReceipts[5]);
       paidReceipt.put("documenttype", objpaidReceipts[6]);
+      paidReceipt.put("documenttypeid", objpaidReceipts[17]);
       paidReceipt.put("warehouse", objpaidReceipts[7]);
       paidReceipt.put("currency_identifier", objpaidReceipts[8]);
       paidReceipt.put("posterminalidentifier", objpaidReceipts[9]);

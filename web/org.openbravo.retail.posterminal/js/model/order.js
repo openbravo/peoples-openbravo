@@ -493,6 +493,9 @@
     clearWith: function (_order) {
       var me = this,
           undf;
+      //we need this data when IsPaid, IsLayaway changes are triggered
+      this.set('documentType', _order.get('documentType'));
+
       this.set('isPaid', _order.get('isPaid'));
       this.set('isLayaway', _order.get('isLayaway'));
       if (!_order.get('isEditable')) {
@@ -1175,13 +1178,13 @@
         order.set('isLayaway', true);
         order.set('id', model.orderid);
         order.set('createdBy', OB.POS.terminal.terminal.usermodel.id);
-        order.set('documentType', model.documenttype);
+        order.set('documentType', model.documenttypeid);
         order.set('hasbeenpaid', 'N');
         order.set('session', OB.POS.modelterminal.get('session'));
       } else {
         order.set('isPaid', true);
         order.set('id', model.orderid);
-        order.set('documentType', model.documenttype);
+        order.set('documentType', model.documenttypeid);
       }
 
 

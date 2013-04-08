@@ -11,6 +11,7 @@ package org.openbravo.retail.posterminal;
 import java.util.Arrays;
 import java.util.List;
 
+import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.dal.core.OBContext;
@@ -35,8 +36,16 @@ public class PaidReceiptsHeader extends ProcessHQLQuery {
           + "%' or upper(ord.businessPartner.name) like upper('%" + json.getString("filterText")
           + "%')) ";
     }
-    if (!json.getString("documentType").isEmpty()) {
-      hqlPaidReceipts += " and ord.documentType.id='" + json.getString("documentType") + "'";
+    if (!json.isNull("documentType")) {
+      JSONArray docTypes = json.getJSONArray("documentType");
+      hqlPaidReceipts += " and ( ";
+      for (int docType_i = 0; docType_i < docTypes.length(); docType_i++) {
+        hqlPaidReceipts += "ord.documentType.id='" + docTypes.getString(docType_i) + "'";
+        if (docType_i != docTypes.length() - 1) {
+          hqlPaidReceipts += " or ";
+        }
+      }
+      hqlPaidReceipts += " )";
     }
     if (!json.getString("docstatus").isEmpty() && !json.getString("docstatus").equals("null")) {
       hqlPaidReceipts += " and ord.documentStatus='" + json.getString("docstatus") + "'";
