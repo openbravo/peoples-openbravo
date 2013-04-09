@@ -627,7 +627,7 @@ isc.OBSelectorItem.addProperties({
         this.valueMap = {};
       }
 
-      this.valueMap[record[this.valueField]] = record[this.displayField];
+      this.valueMap[record[this.valueField]] = record[this.displayField].replace(/[\n\r]/g, '');
       this.updateValueMap();
     }
 
@@ -963,7 +963,7 @@ isc.OBSelectorLinkItem.addProperties({
       if (!this.valueMap) {
         this.valueMap = {};
       }
-      this.valueMap[record[this.gridValueField]] = record[this.gridDisplayField];
+      this.valueMap[record[this.gridValueField]] = record[this.gridDisplayField].replace(/[\n\r]/g, '');
       this.updateValueMap();
     }
     this.handleOutFields(record);
