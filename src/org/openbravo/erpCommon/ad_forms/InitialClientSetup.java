@@ -164,19 +164,13 @@ public class InitialClientSetup extends HttpSecureAppServlet {
     String strCurrency = vars.getStringParameter("inpCurrency");
     org.apache.commons.fileupload.FileItem fileCoAFilePath = vars.getMultiFile("inpFile");
     boolean bCreateAccounting = isTrue(vars.getStringParameter("inpCreateAccounting"));
-    boolean bBPartner = isTrue(vars.getStringParameter("inpBPartner"));
-    boolean bProduct = isTrue(vars.getStringParameter("inpProduct"));
-    boolean bProject = isTrue(vars.getStringParameter("inpProject"));
-    boolean bCampaign = isTrue(vars.getStringParameter("inpCampaign"));
-    boolean bSalesRegion = isTrue(vars.getStringParameter("inpSalesRegion"));
     log4j.debug("process() - Client name: " + strClientName + ". Client user name: "
         + strClientUser);
-
     org.openbravo.erpCommon.businessUtility.InitialClientSetup ics = new org.openbravo.erpCommon.businessUtility.InitialClientSetup();
     OBError obeResult = ics.createClient(vars, strCurrency, strClientName, strClientUser,
         strPassword, strModules, Utility.messageBD(this, "Account_ID", vars.getLanguage()),
         Utility.messageBD(this, "C_Calendar_ID", vars.getLanguage()), bCreateAccounting,
-        fileCoAFilePath, bBPartner, bProduct, bProject, bCampaign, bSalesRegion);
+        fileCoAFilePath, false, false, false, false, false);
 
     strLog.append(ics.getLog());
 
