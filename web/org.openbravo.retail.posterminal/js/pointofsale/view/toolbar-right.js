@@ -223,6 +223,9 @@ enyo.kind({
         status: ''
       });
     }
+    OB.MobileApp.view.scanningFocus(true);
+
+    return true;
   }
 });
 
@@ -242,6 +245,7 @@ enyo.kind({
   tabPanel: 'catalog',
   i18nLabel: 'OBMOBC_LblBrowse',
   tap: function () {
+    OB.MobileApp.view.scanningFocus(false);
     if (!this.disabled) {
       this.doTabChange({
         tabPanel: this.tabPanel,
@@ -268,6 +272,7 @@ enyo.kind({
     onTabChange: ''
   },
   tap: function () {
+    OB.MobileApp.view.scanningFocus(false);
     if (this.disabled === false) {
       this.doTabChange({
         tabPanel: this.tabPanel,
@@ -300,6 +305,7 @@ enyo.kind({
     this.setDisabled(inEvent.status);
   },
   tap: function () {
+    OB.MobileApp.view.scanningFocus(false);
     if (!this.disabled) {
       this.doTabChange({
         tabPanel: this.tabPanel,

@@ -612,6 +612,7 @@ enyo.kind({
     this.inherited(arguments);
     receipt = this.model.get('order');
     receiptList = this.model.get('orderList');
+    OB.MobileApp.view.scanningFocus(true);
     this.model.get('subWindowManager').on('change:currentWindow', function (changedModel) {
 
       function restorePreviousState(swManager, changedModel) {
@@ -646,7 +647,8 @@ enyo.kind({
             if (this.$[changedModel.get('currentWindow').name].isMainSubWindow) {
               this.$[changedModel.previousAttributes().currentWindow.name].setShowing(false);
               this.$[changedModel.get('currentWindow').name].setShowing(true);
-              OB.POS.terminal.$.focusKeeper.focus();
+              OB.MobileApp.view.scanningFocus(true);
+              //OB.POS.terminal.$.focusKeeper.focus();
             } else {
               //developers helps
               //console.log("Error! A subwindow must inherits from OB.UI.subwindow -> restore previous state");
