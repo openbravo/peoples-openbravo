@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -65,6 +65,9 @@ public class DataEntityQueryService {
   private boolean filterOnActive = true;
   private AdvancedQueryBuilder queryBuilder = new AdvancedQueryBuilder();
 
+  private boolean filterOnReadableOrganizations = true;
+  private boolean filterOnReadableClients = true;
+
   private String distinct;
 
   private String summarySettings;
@@ -79,6 +82,8 @@ public class DataEntityQueryService {
     Check.isNotNull(entityName, "entityName must be set");
     final OBQuery<BaseOBObject> obq = OBDal.getInstance().createQuery(entityName,
         queryBuilder.getJoinClause() + queryBuilder.getWhereClause());
+    obq.setFilterOnReadableClients(isFilterOnReadableClients());
+    obq.setFilterOnReadableOrganization(isFilterOnReadableOrganizations());
 
     if (queryBuilder.hasOrganizationParameter()) {
       obq.setFilterOnReadableOrganization(false);
@@ -121,6 +126,9 @@ public class DataEntityQueryService {
     log.debug("Querying for " + entityName + " " + whereOrderBy);
 
     final OBQuery<BaseOBObject> obq = OBDal.getInstance().createQuery(entityName, whereOrderBy);
+    obq.setFilterOnReadableClients(isFilterOnReadableClients());
+    obq.setFilterOnReadableOrganization(isFilterOnReadableOrganizations());
+
     if (getSummarySettings() != null) {
       obq.setSelectClause(queryBuilder.getSelectClause());
     } else if (getDistinct() != null) {
@@ -174,6 +182,8 @@ public class DataEntityQueryService {
     // System.err.println("Querying for " + entityName + " " + whereOrderBy);
 
     final OBQuery<BaseOBObject> obq = OBDal.getInstance().createQuery(entityName, whereOrderBy);
+    obq.setFilterOnReadableClients(isFilterOnReadableClients());
+    obq.setFilterOnReadableOrganization(isFilterOnReadableOrganizations());
 
     if (queryBuilder.hasOrganizationParameter()) {
       obq.setFilterOnReadableOrganization(false);
@@ -310,6 +320,22 @@ public class DataEntityQueryService {
 
   public List<String> getSummaryFields() {
     return summaryFields;
+  }
+
+  public boolean isFilterOnReadableOrganizations() {
+    return filterOnReadableOrganizations;
+  }
+
+  public void setFilterOnReadableOrganizations(boolean filterOnReadableOrganizations) {
+    this.filterOnReadableOrganizations = filterOnReadableOrganizations;
+  }
+
+  public boolean isFilterOnReadableClients() {
+    return filterOnReadableClients;
+  }
+
+  public void setFilterOnReadableClients(boolean filterOnReadableClients) {
+    this.filterOnReadableClients = filterOnReadableClients;
   }
 
 }

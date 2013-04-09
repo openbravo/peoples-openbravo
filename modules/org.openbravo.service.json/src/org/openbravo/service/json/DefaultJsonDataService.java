@@ -307,7 +307,7 @@ public class DefaultJsonDataService implements JsonDataService {
     log.debug("Fetch took " + (System.currentTimeMillis() - t) + " ms");
   }
 
-  private DataEntityQueryService createSetQueryService(Map<String, String> parameters,
+  protected DataEntityQueryService createSetQueryService(Map<String, String> parameters,
       boolean forCountOperation) {
     final String entityName = parameters.get(JsonConstants.ENTITYNAME);
     final String startRowStr = parameters.get(JsonConstants.STARTROW_PARAMETER);
