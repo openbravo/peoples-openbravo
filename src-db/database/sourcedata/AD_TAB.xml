@@ -1344,7 +1344,6 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--174-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--174-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--174-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
-<!--174-->  <HQLORDERBYCLAUSE><![CDATA[lineNo]]></HQLORDERBYCLAUSE>
 <!--174-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--174-->  <EM_OBUIAPP_CAN_ADD><![CDATA[N]]></EM_OBUIAPP_CAN_ADD>
 <!--174-->  <EM_OBUIAPP_CAN_DELETE><![CDATA[N]]></EM_OBUIAPP_CAN_DELETE>
@@ -3811,7 +3810,6 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--317-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--317-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--317-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
-<!--317-->  <HQLORDERBYCLAUSE><![CDATA[lineNo]]></HQLORDERBYCLAUSE>
 <!--317-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--317-->  <DISPLAYLOGIC><![CDATA[@IsBOM@='Y']]></DISPLAYLOGIC>
 <!--317-->  <EM_OBUIAPP_CAN_ADD><![CDATA[N]]></EM_OBUIAPP_CAN_ADD>
@@ -3869,7 +3867,6 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--320-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--320-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--320-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
-<!--320-->  <HQLORDERBYCLAUSE><![CDATA[lineNo]]></HQLORDERBYCLAUSE>
 <!--320-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--320-->  <EM_OBUIAPP_CAN_ADD><![CDATA[N]]></EM_OBUIAPP_CAN_ADD>
 <!--320-->  <EM_OBUIAPP_CAN_DELETE><![CDATA[N]]></EM_OBUIAPP_CAN_DELETE>
@@ -5105,7 +5102,6 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--432-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--432-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--432-->  <HQLWHERECLAUSE><![CDATA[e.reinvoice='Y'  and e.salesOrderLine is NULL and e.expenseSheet in (select t from TimeAndExpenseSheet t where t.processed='Y')]]></HQLWHERECLAUSE>
-<!--432-->  <HQLORDERBYCLAUSE><![CDATA[lineNo]]></HQLORDERBYCLAUSE>
 <!--432-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--432-->  <EM_OBUIAPP_CAN_ADD><![CDATA[N]]></EM_OBUIAPP_CAN_ADD>
 <!--432-->  <EM_OBUIAPP_CAN_DELETE><![CDATA[N]]></EM_OBUIAPP_CAN_DELETE>
@@ -7167,7 +7163,6 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800052-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800052-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800052-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
-<!--800052-->  <HQLORDERBYCLAUSE><![CDATA[lineNo]]></HQLORDERBYCLAUSE>
 <!--800052-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800052-->  <EM_OBUIAPP_CAN_ADD><![CDATA[N]]></EM_OBUIAPP_CAN_ADD>
 <!--800052-->  <EM_OBUIAPP_CAN_DELETE><![CDATA[N]]></EM_OBUIAPP_CAN_DELETE>
