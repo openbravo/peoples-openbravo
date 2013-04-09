@@ -36,7 +36,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
     generatedModel: true,
     modelName: 'DiscountFilterProductCategory'
   },
-  OB.Model.CurrencyPanel],
+  OB.Model.CurrencyPanel, OB.Model.SalesRepresentative],
 
   loadUnpaidOrders: function () {
     // Shows a modal window with the orders pending to be paid

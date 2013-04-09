@@ -45,6 +45,29 @@ enyo.kind({
     modelProperty: 'orderType',
     i18nLabel: 'OBPOS_ToBeReturned',
     readOnly: true
+  }, {
+    kind: 'OB.UI.renderComboProperty',
+    name: 'salesRepresentativeBox',
+    modelProperty: 'salesRepresentative',
+    i18nLabel: 'OBPOS_SalesRepresentative',
+    permission: 'OBPOS_salesRepresentative.receipt',
+    collection: new OB.Collection.SalesRepresentativeList(),
+    retrievedPropertyForValue: 'id',
+    retrievedPropertyForText: '_identifier',
+    init: function () {
+      if (!OB.POS.modelterminal.hasPermission(this.permission)) {
+        this.parent.parent.parent.hide();
+      }
+    },
+    fetchDataFunction: function (args) {
+      var me = this;
+      OB.Dal.find(OB.Model.SalesRepresentative, null, function (data, args) {
+        me.dataReadyFunction(data, args);
+      }, function (error) {
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_ErrorGettingSalesRepresentative'));
+        me.dataReadyFunction(null, args);
+      }, args);
+    }
   }],
 
   init: function (model) {

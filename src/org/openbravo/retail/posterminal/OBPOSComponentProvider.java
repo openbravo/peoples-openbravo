@@ -80,6 +80,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         // "model/user",
         "model/bpcategory",
         "model/currencypanel",
+        "model/salesrepresentative",
         "model/changedbusinesspartners",
         "model/executor",
         "components/modalcancel",
