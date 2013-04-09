@@ -78,9 +78,9 @@ import com.lowagie.text.pdf.PdfReader;
 @SuppressWarnings("serial")
 public class PrintController extends HttpSecureAppServlet {
   private final Map<String, TemplateData[]> differentDocTypes = new HashMap<String, TemplateData[]>();
-  private PocData[] pocData;
   private boolean multiReports = false;
   private boolean archivedReports = false;
+
 
   @Override
   public void init(ServletConfig config) {
@@ -160,6 +160,8 @@ public class PrintController extends HttpSecureAppServlet {
       DocumentType documentType, String sessionValuePrefix, String strDocumentId)
       throws IOException, ServletException {
     try {
+
+      String fullDocumentIdentifier = strDocumentId + documentType.getTableName();
 
       Map<String, Report> reports;
 
@@ -302,7 +304,7 @@ public class PrintController extends HttpSecureAppServlet {
                 getComaSeparatedString(documentIds), reports);
           else
             createEmailOptionsPage(request, response, vars, documentType,
-                getComaSeparatedString(documentIds), reports, checks);
+                getComaSeparatedString(documentIds), reports, checks, fullDocumentIdentifier);
 
         } else if (vars.commandIn("ADD")) {
           if (request.getServletPath().toLowerCase().indexOf("print.html") != -1)
@@ -311,7 +313,7 @@ public class PrintController extends HttpSecureAppServlet {
           else {
             final boolean showList = true;
             createEmailOptionsPage(request, response, vars, documentType,
-                getComaSeparatedString(documentIds), reports, checks);
+                getComaSeparatedString(documentIds), reports, checks, fullDocumentIdentifier);
           }
 
         } else if (vars.commandIn("DEL")) {
@@ -321,9 +323,10 @@ public class PrintController extends HttpSecureAppServlet {
 
           seekAndDestroy(vector, documentToDelete);
           createEmailOptionsPage(request, response, vars, documentType,
-              getComaSeparatedString(documentIds), reports, checks);
+              getComaSeparatedString(documentIds), reports, checks, fullDocumentIdentifier);
 
         } else if (vars.commandIn("EMAIL")) {
+          PocData[] pocData = (PocData[]) vars.getSessionObject("pocData" + fullDocumentIdentifier);
           int nrOfEmailsSend = 0;
           for (final PocData documentData : pocData) {
             getEnvironentInformation(pocData, checks);
@@ -388,10 +391,12 @@ public class PrintController extends HttpSecureAppServlet {
             }
           }
           request.getSession().removeAttribute("files");
+          vars.removeSessionValue("pocData" + fullDocumentIdentifier);
           createPrintStatusPage(response, vars, nrOfEmailsSend);
         } else if (vars.commandIn("UPDATE_TEMPLATE")) {
           JSONObject o = new JSONObject();
           try {
+            PocData[] pocData = (PocData[]) vars.getSessionObject("pocData" + fullDocumentIdentifier);
             final String templateId = vars.getRequestGlobalVariable("templates", "templates");
             final String documentId = pocData[0].documentId;
             for (final PocData documentData : pocData) {
@@ -827,11 +832,17 @@ public class PrintController extends HttpSecureAppServlet {
   }
 
   void createEmailOptionsPage(HttpServletRequest request, HttpServletResponse response,
+	      VariablesSecureApp vars, DocumentType documentType, String strDocumentId,
+	      Map<String, Report> reports, HashMap<String, Boolean> checks) {
+	  createEmailOptionsPage(request, response, vars, documentType, strDocumentId, reports, checks);
+  }
+
+  void createEmailOptionsPage(HttpServletRequest request, HttpServletResponse response,
       VariablesSecureApp vars, DocumentType documentType, String strDocumentId,
-      Map<String, Report> reports, HashMap<String, Boolean> checks) throws IOException,
+      Map<String, Report> reports, HashMap<String, Boolean> checks, String fullDocumentIdentifier) throws IOException,
       ServletException {
     XmlDocument xmlDocument = null;
-    pocData = getContactDetails(documentType, strDocumentId);
+    PocData[] pocData = getContactDetails(documentType, strDocumentId);
     @SuppressWarnings("unchecked")
     Vector<java.lang.Object> vector = (Vector<java.lang.Object>) request.getSession().getAttribute(
         "files");
@@ -1123,6 +1134,8 @@ public class PrintController extends HttpSecureAppServlet {
     xmlDocument.setParameter("inpArchive", vars.getStringParameter("inpArchive"));
     xmlDocument.setParameter("multCusCount", String.valueOf(numberOfCustomers));
     xmlDocument.setParameter("multSalesRepCount", String.valueOf(numberOfSalesReps));
+
+    vars.setSessionObject("pocData" + fullDocumentIdentifier, pocData);
     response.setContentType("text/html; charset=UTF-8");
     final PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
