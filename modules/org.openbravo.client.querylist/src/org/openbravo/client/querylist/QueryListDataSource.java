@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -59,6 +59,7 @@ import org.openbravo.client.myob.WidgetClass;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.domain.Reference;
+import org.openbravo.portal.PortalAccessible;
 import org.openbravo.service.datasource.DataSourceProperty;
 import org.openbravo.service.datasource.ReadOnlyDataSourceService;
 import org.openbravo.service.json.JsonConstants;
@@ -69,7 +70,7 @@ import org.openbravo.service.json.JsonUtils;
  * 
  * @author gorkaion
  */
-public class QueryListDataSource extends ReadOnlyDataSourceService {
+public class QueryListDataSource extends ReadOnlyDataSourceService implements PortalAccessible {
   private static final String OPTIONAL_FILTERS = "@optional_filters@";
   private static final Logger log = Logger.getLogger(QueryListDataSource.class);
 

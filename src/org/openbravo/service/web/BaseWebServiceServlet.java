@@ -98,6 +98,13 @@ public class BaseWebServiceServlet extends HttpServlet {
   protected void doService(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
     try {
+      if (OBContext.getOBContext() != null && OBContext.getOBContext().isPortalRole()) {
+        // Portal users are not granted to direct web services
+        log.error("Portal user " + OBContext.getOBContext().getUser() + " with role "
+            + OBContext.getOBContext().getRole()
+            + " is trying to access to non granted web service " + request.getRequestURL());
+        throw new OBSecurityException("Web Services are not granted to Portal roles");
+      }
       super.service(request, response);
       response.setStatus(200);
     } catch (final InvalidRequestException e) {

@@ -57,6 +57,7 @@ import org.openbravo.model.ad.system.Language;
 import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.Warehouse;
+import org.openbravo.portal.PortalAccessible;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.utils.FormatUtilities;
@@ -70,7 +71,7 @@ import org.openbravo.utils.FormatUtilities;
  * @see StaticResourceComponent
  */
 @ApplicationScoped
-public class UserInfoWidgetActionHandler extends BaseActionHandler {
+public class UserInfoWidgetActionHandler extends BaseActionHandler implements PortalAccessible {
 
   /*
    * (non-Javadoc)

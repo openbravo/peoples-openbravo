@@ -34,6 +34,7 @@ import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.portal.PortalAccessible;
 
 /**
  * Is responsible for storing a preference.
@@ -42,7 +43,7 @@ import org.openbravo.model.common.enterprise.Organization;
  * @see StaticResourceComponent
  */
 @ApplicationScoped
-public class StorePropertyActionHandler extends BaseActionHandler {
+public class StorePropertyActionHandler extends BaseActionHandler implements PortalAccessible {
   private static final Logger log = Logger.getLogger(StorePropertyActionHandler.class);
 
   protected JSONObject execute(Map<String, Object> parameters, String data) {
