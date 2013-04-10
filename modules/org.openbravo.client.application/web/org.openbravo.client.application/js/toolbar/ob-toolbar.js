@@ -466,7 +466,7 @@ isc.OBToolbar.addClassProperties({
          * Fixes Issue 0023270. The Business partner print button provides statistics about the
          * business partner transactions in a pop up and so handling multiple records are not allowed.
          */
-        if (view.tabId == '220' && selectedRecords.length > 1) {
+        if (view.tabId === '220' && selectedRecords.length > 1) {
           disabled = true;
         }
         this.setDisabled(disabled);
