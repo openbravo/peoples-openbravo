@@ -116,7 +116,6 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ModalAction',
   name: 'OB.UI.ModalDeleteReceipt',
-  i18nHeader: 'OBPOS_ConfirmDeletion',
   bodyContent: {
     i18nContent: 'OBPOS_MsgConfirmDelete' // TODO: add this as part of the message + '\n' + OB.I18N.getLabel('OBPOS_cannotBeUndone')
   },
@@ -126,6 +125,10 @@ enyo.kind({
     }, {
       kind: 'OB.UI.btnModalCancelDelete'
     }]
+  },
+  initComponents: function () {
+    this.header = OB.I18N.getLabel('OBPOS_ConfirmDeletion');
+    this.inherited(arguments);
   }
 });
 
