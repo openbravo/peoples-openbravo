@@ -40,5 +40,12 @@ isc.OBFKItem.addProperties({
       form.grid.setEditValue(form.grid.getEditRow(), identifierFieldName, display);
     }
     return this.Super('changed', arguments);
+  },
+
+  setValue: function (val) {
+    if (this._clearingValue) {
+      this._editorEnterValue = null;
+    }
+    this.Super('setValue', arguments);
   }
 });

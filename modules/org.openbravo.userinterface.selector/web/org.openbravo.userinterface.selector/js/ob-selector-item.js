@@ -493,6 +493,10 @@ isc.OBSelectorItem.addProperties({
       this.selectFirstPickListOption();
     }
 
+    if (this._clearingValue) {
+      this._editorEnterValue = null;
+    }
+
     this.Super('setValue', arguments);
   },
 
