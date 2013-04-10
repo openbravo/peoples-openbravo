@@ -1,54 +1,58 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2013 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
 
-/*global enyo, Backbone */
+/*global enyo, Backbone, _ */
 
 
 enyo.kind({
   kind: 'OB.UI.SmallButton',
-  name: 'OB.UI.BusinessPartner',
+  name: 'OB.UI.SalesRepresentative',
   classes: 'btnlink btnlink-small btnlink-gray',
+  style: 'float:left; margin:7px; height:27px; padding: 4px 15px 7px 15px;',
   published: {
     order: null
   },
   events: {
     onShowPopup: ''
   },
-  handlers: {
-    onBPSelectionDisabled: 'buttonDisabled'
-  },
-  buttonDisabled: function (inSender, inEvent) {
-    this.setDisabled(inEvent.status);
-  },
   tap: function () {
     if (!this.disabled) {
       this.doShowPopup({
-        popup: 'modalcustomer'
+        popup: 'modalsalesrepresentative'
       });
     }
   },
-  initComponents: function () {},
-  renderCustomer: function (newCustomer) {
-    this.setContent(newCustomer);
+  init: function (model) {
+    if (!OB.POS.modelterminal.hasPermission(this.permission)) {
+      this.parent.parent.parent.hide();
+    }else{
+      if(OB.POS.modelterminal.hasPermission(this.permissionOption)){
+        this.parent.parent.parent.hide();
+      }
+    }
+    this.setOrder(model.get('order'));
+  },
+  renderSalesRepresentative: function (newSalesRepresentative) {
+    this.setContent(newSalesRepresentative);
   },
   orderChanged: function (oldValue) {
-    if (this.order.get('bp')) {
-      this.renderCustomer(this.order.get('bp').get('_identifier'));
+    if (this.order.get('salesRepresentative')) {
+      this.renderSalesRepresentative(this.order.get('salesRepresentative'));
     } else {
-      this.renderCustomer('');
+      this.renderSalesRepresentative('');
     }
 
-    this.order.on('change:bp', function (model) {
-      if (model.get('bp')) {
-        this.renderCustomer(model.get('bp').get('_identifier'));
+    this.order.on('change:salesRepresentative$_identifier change:salesRepresentative', function (model) {
+      if (!_.isUndefined(model.get('salesRepresentative$_identifier')) && !_.isNull(model.get('salesRepresentative$_identifier'))) {
+        this.renderSalesRepresentative(model.get('salesRepresentative$_identifier'));
       } else {
-        this.renderCustomer('');
+        this.renderSalesRepresentative('');
       }
     }, this);
   }
@@ -56,65 +60,8 @@ enyo.kind({
 
 /*Modal*/
 
-
-/*header of scrollable table*/
 enyo.kind({
-  kind: 'OB.UI.Button',
-  name: 'OB.UI.NewCustomerWindowButton',
-  events: {
-    onChangeSubWindow: '',
-    onHideThisPopup: ''
-  },
-  style: 'width: 170px; margin: 0px 5px 8px 19px;',
-  classes: 'btnlink-yellow btnlink btnlink-small',
-  i18nLabel: 'OBPOS_LblNewCustomer',
-  handlers: {
-    onSetModel: 'setModel'
-  },
-  setModel: function (inSender, inEvent) {
-    this.model = inEvent.model;
-  },
-  tap: function (model) {
-    this.doHideThisPopup();
-    this.doChangeSubWindow({
-      newWindow: {
-        name: 'customerCreateAndEdit',
-        params: {
-          navigateOnClose: 'mainSubWindow'
-        }
-      }
-    });
-  }
-});
-
-enyo.kind({
-  kind: 'OB.UI.Button',
-  name: 'OB.UI.AdvancedSearchCustomerWindowButton',
-  style: 'width: 170px; margin: 0px 0px 8px 5px;',
-  classes: 'btnlink-yellow btnlink btnlink-small',
-  i18nLabel: 'OBPOS_LblAdvancedSearch',
-  handlers: {
-    onSetModel: 'setModel'
-  },
-  setModel: function (inSender, inEvent) {
-    this.model = inEvent.model;
-  },
-  events: {
-    onHideThisPopup: ''
-  },
-  tap: function () {
-    this.doHideThisPopup();
-    this.model.get('subWindowManager').set('currentWindow', {
-      name: 'customerAdvancedSearch',
-      params: {
-        caller: 'mainSubWindow'
-      }
-    });
-  }
-});
-
-enyo.kind({
-  name: 'OB.UI.ModalBpScrollableHeader',
+  name: 'OB.UI.ModalSrScrollableHeader',
   kind: 'OB.UI.ScrollableTableHeader',
   events: {
     onSearchAction: '',
@@ -153,22 +100,6 @@ enyo.kind({
         }]
       }]
     }]
-  }, {
-    style: 'padding: 10px;',
-    components: [{
-      style: 'display: table;',
-      components: [{
-        style: 'display: table-cell;',
-        components: [{
-          kind: 'OB.UI.NewCustomerWindowButton'
-        }]
-      }, {
-        style: 'display: table-cell;',
-        components: [{
-          kind: 'OB.UI.AdvancedSearchCustomerWindowButton'
-        }]
-      }]
-    }]
   }],
   clearAction: function () {
     this.$.filterText.setValue('');
@@ -176,7 +107,7 @@ enyo.kind({
   },
   searchAction: function () {
     this.doSearchAction({
-      bpName: this.$.filterText.getValue()
+      srName: this.$.filterText.getValue()
     });
     return true;
   }
@@ -184,16 +115,13 @@ enyo.kind({
 
 /*items of collection*/
 enyo.kind({
-  name: 'OB.UI.ListBpsLine',
+  name: 'OB.UI.ListSrsLine',
   kind: 'OB.UI.SelectButton',
   components: [{
     name: 'line',
     style: 'line-height: 23px;',
     components: [{
-      name: 'identifier'
-    }, {
-      style: 'color: #888888',
-      name: 'address'
+      name: 'name'
     }, {
       style: 'clear: both;'
     }]
@@ -207,21 +135,20 @@ enyo.kind({
   },
   create: function () {
     this.inherited(arguments);
-    this.$.identifier.setContent(this.model.get('_identifier'));
-    this.$.address.setContent(this.model.get('locName'));
+    this.$.name.setContent(this.model.get('name'));
   }
 });
 
 /*scrollable table (body of modal)*/
 enyo.kind({
-  name: 'OB.UI.ListBps',
+  name: 'OB.UI.ListSrs',
   classes: 'row-fluid',
   handlers: {
     onSearchAction: 'searchAction',
     onClearAction: 'clearAction'
   },
   events: {
-    onChangeBusinessPartner: ''
+    onChangeSalesRepresentative: ''
   },
   components: [{
     classes: 'span12',
@@ -231,54 +158,53 @@ enyo.kind({
       components: [{
         classes: 'span12',
         components: [{
-          name: 'bpslistitemprinter',
+          name: 'srslistitemprinter',
           kind: 'OB.UI.ScrollableTable',
           scrollAreaMaxHeight: '400px',
-          renderHeader: 'OB.UI.ModalBpScrollableHeader',
-          renderLine: 'OB.UI.ListBpsLine',
+          renderHeader: 'OB.UI.ModalSrScrollableHeader',
+          renderLine: 'OB.UI.ListSrsLine',
           renderEmpty: 'OB.UI.RenderEmpty'
         }]
       }]
     }]
   }],
   clearAction: function (inSender, inEvent) {
-    this.bpsList.reset();
+    this.srsList.reset();
     return true;
   },
   searchAction: function (inSender, inEvent) {
     var me = this,
-        filter = inEvent.bpName;
-
+        filter = inEvent.srName;
     function errorCallback(tx, error) {
       OB.UTIL.showError("OBDAL error: " + error);
     }
 
-    function successCallbackBPs(dataBps) {
-      if (dataBps && dataBps.length > 0) {
-        me.bpsList.reset(dataBps.models);
+    function successCallbackBPs(dataSrs) {
+      if (dataSrs && dataSrs.length > 0) {
+        me.srsList.reset(dataSrs.models);
       } else {
-        me.bpsList.reset();
+        me.srsList.reset();
       }
     }
 
     var criteria = {};
     if (filter && filter !== '') {
-      criteria._filter = {
+      criteria._identifier = {
         operator: OB.Dal.CONTAINS,
         value: filter
       };
     }
 
-    OB.Dal.find(OB.Model.BusinessPartner, criteria, successCallbackBPs, errorCallback);
+    OB.Dal.find(OB.Model.SalesRepresentative, criteria, successCallbackBPs, errorCallback);
     return true;
   },
-  bpsList: null,
+  srsList: null,
   init: function (model) {
-    this.bpsList = new Backbone.Collection();
-    this.$.bpslistitemprinter.setCollection(this.bpsList);
-    this.bpsList.on('click', function (model) {
-      this.doChangeBusinessPartner({
-        businessPartner: model
+    this.srsList = new Backbone.Collection();
+    this.$.srslistitemprinter.setCollection(this.srsList);
+    this.srsList.on('click', function (model) {
+      this.doChangeSalesRepresentative({
+        salesRepresentative: model
       });
     }, this);
   }
@@ -286,15 +212,15 @@ enyo.kind({
 
 /*Modal definiton*/
 enyo.kind({
-  name: 'OB.UI.ModalBusinessPartners',
+  name: 'OB.UI.ModalSalesRepresentative',
   topPosition: '125px',
   kind: 'OB.UI.Modal',
   executeOnHide: function () {
-    this.$.body.$.listBps.$.bpslistitemprinter.$.theader.$.modalBpScrollableHeader.clearAction();
+    this.$.body.$.listSrs.$.srslistitemprinter.$.theader.$.modalSrScrollableHeader.clearAction();
   },
-  i18nHeader: 'OBPOS_LblAssignCustomer',
+  i18nHeader: 'OBPOS_LblAssignSalesRepresentative',
   body: {
-    kind: 'OB.UI.ListBps'
+    kind: 'OB.UI.ListSrs'
   },
   init: function (model) {
     this.model = model;

@@ -108,6 +108,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/order",
         "components/orderdetails",
         "components/businesspartner",
+        "components/salesrepresentative",
         "components/listreceiptscounter",
         "components/menu",
         // Old Tickets

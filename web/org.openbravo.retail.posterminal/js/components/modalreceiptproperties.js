@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2013 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -24,16 +24,7 @@ enyo.kind({
     classes: 'modal-dialog-btn-check active',
     modelProperty: 'print',
     i18nLabel: 'OBPOS_Lbl_RP_Print'
-  }
-/*, {
-    kind: 'OB.UI.renderBooleanProperty',
-    name: 'emailBox',
-    modelContent: 'bp:email',
-    modelProperty: 'sendEmail',
-    label: OB.I18N.getLabel('OBPOS_LblEmail')
-  }*/
-  ,
-  {
+  }, {
     kind: 'OB.UI.renderBooleanProperty',
     name: 'invoiceBox',
     modelProperty: 'generateInvoice',
@@ -51,12 +42,17 @@ enyo.kind({
     modelProperty: 'salesRepresentative',
     i18nLabel: 'OBPOS_SalesRepresentative',
     permission: 'OBPOS_salesRepresentative.receipt',
+    permissionOption: 'OBPOS_SR.comboOrModal',
     collection: new OB.Collection.SalesRepresentativeList(),
     retrievedPropertyForValue: 'id',
     retrievedPropertyForText: '_identifier',
     init: function () {
       if (!OB.POS.modelterminal.hasPermission(this.permission)) {
         this.parent.parent.parent.hide();
+      } else {
+        if (!OB.POS.modelterminal.hasPermission(this.permissionOption)) {
+          this.parent.parent.parent.hide();
+        }
       }
     },
     fetchDataFunction: function (args) {
@@ -68,6 +64,12 @@ enyo.kind({
         me.dataReadyFunction(null, args);
       }, args);
     }
+  }, {
+    kind: 'OB.UI.SalesRepresentative',
+    name: 'salesrepresentativebutton',
+    i18nLabel: 'OBPOS_SalesRepresentative',
+    permission: 'OBPOS_salesRepresentative.receipt',
+    permissionOption: 'OBPOS_SR.comboOrModal'
   }],
 
   init: function (model) {

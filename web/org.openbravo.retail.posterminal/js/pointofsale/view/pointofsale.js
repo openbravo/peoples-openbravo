@@ -59,7 +59,8 @@ enyo.kind({
     onSetDiscountQty: 'discountQtyChanged',
     onLineChecked: 'checkedLine',
     onStatusChanged: 'statusChanged',
-    onLayaways: 'layaways'
+    onLayaways: 'layaways',
+    onChangeSalesRepresentative: 'changeSalesRepresentative'
   },
   events: {
     onShowPopup: '',
@@ -139,6 +140,9 @@ enyo.kind({
     }, {
       kind: 'OB.OBPOSPointOfSale.UI.Modals.modalNotValidValueForDiscount',
       name: 'modalNotValidValueForDiscount'
+    }, {
+      kind: 'OB.UI.ModalSalesRepresentative',
+      name: "modalsalesrepresentative"
     }]
   }, {
     name: 'mainSubWindow',
@@ -606,6 +610,18 @@ enyo.kind({
     this.doShowPopup({
       popup: 'modalPaidReceipts'
     });
+  },
+  changeSalesRepresentative: function (inSender, inEvent) {
+    if (this.model.get('order').get('isEditable') === false) {
+      this.doShowPopup({
+        popup: 'modalNotEditableOrder'
+      });
+      return true;
+    }
+    this.model.get('order').set('salesRepresentative', inEvent.salesRepresentative.get('id'));
+    this.model.get('order').set('salesRepresentative$_identifier', inEvent.salesRepresentative.get('_identifier'));
+    this.model.get('orderList').saveCurrent();
+    return true;
   },
   init: function () {
     var receipt, receiptList;
