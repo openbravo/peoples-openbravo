@@ -145,6 +145,9 @@
             }
           } else if (data[0]) {
             me.set('terminal', data[0]);
+
+            OB.MobileApp.model.set('useBarcode', OB.MobileApp.model.get('terminal').terminalType.usebarcodescanner);
+            OB.MobileApp.view.scanningFocus(true);
             if (!me.usermodel) {
               OB.MobileApp.model.setUserModelOnline(true);
             } else {

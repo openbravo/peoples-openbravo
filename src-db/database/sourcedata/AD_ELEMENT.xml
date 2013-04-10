@@ -742,6 +742,22 @@ So, if this field is set to 60, the master data will be refreshed every 60 minut
 <!--E6D9D4462E574910AA248EBAE2BF96B9-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--E6D9D4462E574910AA248EBAE2BF96B9--></AD_ELEMENT>
 
+<!--E9A79CB8043A4F01A17C442B6A6CB351--><AD_ELEMENT>
+<!--E9A79CB8043A4F01A17C442B6A6CB351-->  <AD_ELEMENT_ID><![CDATA[E9A79CB8043A4F01A17C442B6A6CB351]]></AD_ELEMENT_ID>
+<!--E9A79CB8043A4F01A17C442B6A6CB351-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--E9A79CB8043A4F01A17C442B6A6CB351-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--E9A79CB8043A4F01A17C442B6A6CB351-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--E9A79CB8043A4F01A17C442B6A6CB351-->  <COLUMNNAME><![CDATA[Usebarcodescanner]]></COLUMNNAME>
+<!--E9A79CB8043A4F01A17C442B6A6CB351-->  <NAME><![CDATA[Use Barcode Scanner]]></NAME>
+<!--E9A79CB8043A4F01A17C442B6A6CB351-->  <PRINTNAME><![CDATA[Use Barcode Scanner]]></PRINTNAME>
+<!--E9A79CB8043A4F01A17C442B6A6CB351-->  <DESCRIPTION><![CDATA[Check this property when an external barcode scanner will be used with this terminal type]]></DESCRIPTION>
+<!--E9A79CB8043A4F01A17C442B6A6CB351-->  <HELP><![CDATA[If this property is checked, the Web POS will take into account that an external barcode scanner is going to be used in this POS terminal type. Checking this option and then not connecting an external barcode will cause the virtual keyboard to be shown continuously in some devices (specifically, in iOS devices (iPads, iPhones)).
+
+If this option is not checked, then the barcode scanners will not be detected in the application even if they are correctly connected to the system.]]></HELP>
+<!--E9A79CB8043A4F01A17C442B6A6CB351-->  <AD_MODULE_ID><![CDATA[FF808181326CC34901326D53DBCF0018]]></AD_MODULE_ID>
+<!--E9A79CB8043A4F01A17C442B6A6CB351-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
+<!--E9A79CB8043A4F01A17C442B6A6CB351--></AD_ELEMENT>
+
 <!--EC33F46B900B4EE091EB1175CB1AA24E--><AD_ELEMENT>
 <!--EC33F46B900B4EE091EB1175CB1AA24E-->  <AD_ELEMENT_ID><![CDATA[EC33F46B900B4EE091EB1175CB1AA24E]]></AD_ELEMENT_ID>
 <!--EC33F46B900B4EE091EB1175CB1AA24E-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
