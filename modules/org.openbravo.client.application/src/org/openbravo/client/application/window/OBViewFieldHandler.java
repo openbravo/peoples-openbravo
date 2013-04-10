@@ -67,7 +67,6 @@ public class OBViewFieldHandler {
   private static final String IMAGEBLOB_AD_REFERENCE_ID = "4AA6C3BE9D3B4D84A3B80489505A23E5";
 
   private static final String AUDIT_GROUP_ID = "1000100001";
-  private static final String MORE_INFO_GROUP_ID = "402880E72F1C15A5012F1C7AA98B00E8";
 
   private Tab tab;
   private List<String> statusBarFields;
@@ -1564,11 +1563,7 @@ public class OBViewFieldHandler {
     }
 
     public void setFieldGroup(FieldGroup fieldGroup) {
-      if (AUDIT_GROUP_ID.equals(fieldGroup.getId())
-          || MORE_INFO_GROUP_ID.equals(fieldGroup.getId())) {
-        expanded = false;
-      }
-
+      expanded = (fieldGroup.isCollapsed() == null) ? true : !fieldGroup.isCollapsed();
       this.fieldGroup = fieldGroup;
     }
 
