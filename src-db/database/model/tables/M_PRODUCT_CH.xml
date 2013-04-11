@@ -49,17 +49,31 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
+      <column name="M_CH_VALUE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="M_CH_SUBSET_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="M_PRODUCT_CH_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="M_PRODUCT_CH_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="M_CH_VALUE" name="M_PRODUCT_CH_CH_VALUE">
+        <reference local="M_CH_VALUE_ID" foreign="M_CH_VALUE_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="M_CHARACTERISTIC" name="M_PRODUCT_CH_M_CHARACTERISTIC">
         <reference local="M_CHARACTERISTIC_ID" foreign="M_CHARACTERISTIC_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_PRODUCT" name="M_PRODUCT_CH_M_PRODUCT">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_CH_SUBSET" name="M_PRODUCT_CH_SUBSET">
+        <reference local="M_CH_SUBSET_ID" foreign="M_CH_SUBSET_ID"/>
       </foreign-key>
       <check name="M_PRODUCT_CH_ISACTIVE"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_CH_VARIANT"><![CDATA[ISVARIANT IN ('Y', 'N')]]></check>
