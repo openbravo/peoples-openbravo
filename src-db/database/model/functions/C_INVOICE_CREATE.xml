@@ -251,13 +251,12 @@
                     AND o.ISSELECTED = 'Y'
                     AND o.DocStatus IN('CO', 'CL')
                     AND o.IsSOTrx='Y'  -- not for InvoiceSchedule
-                    AND o.InvoiceRule NOT IN ('S','D'))  -- of all or a specific business partner / organization
+                    AND o.InvoiceRule NOT IN ('S','D')))  -- of all or a specific business partner / organization
                 AND EXISTS
                     (SELECT *
                      FROM C_ORDERLINE l
                      WHERE o.C_Order_ID=l.C_Order_ID
                      AND l.QtyOrdered<>l.QtyInvoiced)
-            )
             group by bp.c_bpartner_id,bp.customer_blocking ,  bp.so_invoice_blocking ,  bp.name
           )
           LOOP    
@@ -292,13 +291,13 @@
               AND o.DocStatus IN('CO', 'CL')
               AND o.IsSOTrx='Y'  -- not for InvoiceSchedule
               AND o.InvoiceRule NOT IN ('S','D')  -- of all or a specific business partner / organization
-              )
+              ))
               AND EXISTS
               (SELECT *
               FROM C_ORDERLINE l
               WHERE o.C_Order_ID=l.C_Order_ID
                 AND l.QtyOrdered<>l.QtyInvoiced
-              ))
+              )
               ORDER BY o.DateOrdered,o.PriorityRule,
               o.C_BPartner_ID,
               o.DocumentNo
