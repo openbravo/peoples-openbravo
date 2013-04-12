@@ -50,7 +50,7 @@ enyo.kind({
       if (!OB.POS.modelterminal.hasPermission(this.permission)) {
         this.parent.parent.parent.hide();
       } else {
-        if (!OB.POS.modelterminal.hasPermission(this.permissionOption)) {
+        if (OB.POS.modelterminal.hasPermission(this.permissionOption)) {
           this.parent.parent.parent.hide();
         }
       }

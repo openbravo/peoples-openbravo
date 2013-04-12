@@ -31,8 +31,8 @@ enyo.kind({
   init: function (model) {
     if (!OB.POS.modelterminal.hasPermission(this.permission)) {
       this.parent.parent.parent.hide();
-    }else{
-      if(OB.POS.modelterminal.hasPermission(this.permissionOption)){
+    } else {
+      if (!OB.POS.modelterminal.hasPermission(this.permissionOption)) {
         this.parent.parent.parent.hide();
       }
     }
@@ -175,6 +175,7 @@ enyo.kind({
   searchAction: function (inSender, inEvent) {
     var me = this,
         filter = inEvent.srName;
+
     function errorCallback(tx, error) {
       OB.UTIL.showError("OBDAL error: " + error);
     }
