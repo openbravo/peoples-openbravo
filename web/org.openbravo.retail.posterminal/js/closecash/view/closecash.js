@@ -214,7 +214,7 @@ enyo.kind({
       }
     }
     this.$.cashupMultiColumn.$.rightPanel.$.cashUpInfo.refresh();
-    this.$.cashupMultiColumn.$.leftToolbar.$.leftToolbar.refresh();
+    //this.$.cashupMultiColumn.$.leftToolbar.$.leftToolbar.refresh();
   },
   changeStep: function (inSender, inEvent) {
     var nextStep, nextStepOfStep3;
