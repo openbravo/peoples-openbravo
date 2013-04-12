@@ -39,6 +39,8 @@ public class UpdateOpenClosePeriodsButton extends ModuleScript {
       if (!isUpdated) {
         UpdateOpenClosePeriodsButtonData.updatePeriodControl(cp);
         UpdateOpenClosePeriodsButtonData.updatePeriod(cp);
+        // Update entries in Fact Acct Type that have a Accounting Group related to a Divide Up
+        UpdateOpenClosePeriodsButtonData.updateFactAcctTypeForDivideUp(cp);
         UpdateOpenClosePeriodsButtonData.createPreference(cp);
       }
     } catch (Exception e) {
