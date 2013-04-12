@@ -61,6 +61,18 @@
       ]]>
     </Sql>
   </SqlMethod>
+  <SqlMethod name="updateFactAcctTypeForDivideUp" type="preparedStatement" return="rowcount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        UPDATE fact_acct
+        SET factaccttype = 'D'
+        WHERE fact_acct_group_id IN(SELECT divideup_fact_acct_group_id
+                                    FROM ad_org_closing
+                                    WHERE divideup_fact_acct_group_id IS NOT NULL)
+      ]]>
+    </Sql>
+  </SqlMethod>
   <SqlMethod name="createPreference" type="preparedStatement" return="rowcount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
