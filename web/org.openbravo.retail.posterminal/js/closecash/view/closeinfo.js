@@ -30,6 +30,11 @@ enyo.kind({
       this.model.set('cashUpSent', true);
     }
     this.doChangeStep();
+  },
+  initialize: function(){
+    if(this.i18nLabel){
+      this.setContent(OB.I18N.getLabel(this.i18nLabel));
+    }
   }
 });
 
@@ -51,33 +56,43 @@ enyo.kind({
     }, {
       // process info
       style: 'padding: 5px',
-      content: OB.I18N.getLabel('OBPOS_LblCashUpProcess')
+      initialize: function(){
+        this.setContent(OB.I18N.getLabel('OBPOS_LblCashUpProcess'));
+      }
     }, {
       // Prev and Next buttons
       style: 'padding: 5px;',
       components: [{
         kind: 'OB.OBPOSCashUp.UI.Button',
         name: 'btnPrevious',
-        content: OB.I18N.getLabel('OBPOS_LblPrevStep'),
+        i18nLabel: 'OBPOS_LblPrevStep',
         stepCount: -1
       }, {
         kind: 'OB.OBPOSCashUp.UI.Button',
         name: 'btnNext',
-        content: OB.I18N.getLabel('OBPOS_LblNextStep'),
+        i18nLabel: 'OBPOS_LblNextStep',
         stepCount: 1
       }]
     }, {
       style: 'padding: 3px',
-      content: OB.I18N.getLabel('OBPOS_LblStep1')
+      initialize: function(){
+        this.setContent(OB.I18N.getLabel('OBPOS_LblStep1'));
+      }
     }, {
       style: 'padding: 3px',
-      content: OB.I18N.getLabel('OBPOS_LblStep2')
+      initialize: function(){
+        this.setContent(OB.I18N.getLabel('OBPOS_LblStep2'));
+      }
     }, {
       style: 'padding: 3px',
-      content: OB.I18N.getLabel('OBPOS_LblStep3')
+      initialize: function(){
+        this.setContent(OB.I18N.getLabel('OBPOS_LblStep3'));
+      }
     }, {
       style: 'padding: 3px',
-      content: OB.I18N.getLabel('OBPOS_LblStep4')
+      initialize: function(){
+        this.setContent(OB.I18N.getLabel('OBPOS_LblStep4'));
+      }
     }]
   }],
   refresh: function () {

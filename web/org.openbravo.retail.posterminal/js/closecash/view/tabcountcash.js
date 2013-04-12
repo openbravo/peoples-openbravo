@@ -128,7 +128,9 @@ enyo.kind({
             classes: 'span12',
             components: [{
               style: 'padding: 10px; border-bottom: 1px solid #cccccc; text-align:center;',
-              content: OB.I18N.getLabel('OBPOS_LblStep2of4')
+              initComponents: function(){
+                this.setContent(OB.I18N.getLabel('OBPOS_LblStep2of4'));
+              }
             }]
           }]
         }, {
@@ -141,13 +143,19 @@ enyo.kind({
                 style: 'border-bottom: 1px solid #cccccc;',
                 components: [{
                   style: 'padding: 10px 20px 10px 10px; float: left; width: 32%',
-                  content: OB.I18N.getLabel('OBPOS_LblPaymentMethod')
+                  initComponents: function(){
+                    this.setContent(OB.I18N.getLabel('OBPOS_LblPaymentMethod'));
+                  }
                 }, {
                   style: 'padding: 10px 20px 10px 0px; float: left; width: 39%',
-                  content: OB.I18N.getLabel('OBPOS_LblExpected')
+                  initComponents: function(){
+                    this.setContent(OB.I18N.getLabel('OBPOS_LblExpected'));
+                  }
                 }, {
                   style: 'padding: 10px 0px 10px 0px;  float: left;',
-                  content: OB.I18N.getLabel('OBPOS_LblCounted')
+                  initComponents: function(){
+                    this.setContent(OB.I18N.getLabel('OBPOS_LblCounted'));
+                  }
                 }]
               }]
             }, {
@@ -187,7 +195,9 @@ enyo.kind({
                 components: [{
                   name: 'totalLbl',
                   style: 'padding: 10px 20px 10px 10px; float: left; width: 32%;',
-                  content: OB.I18N.getLabel('OBPOS_ReceiptTotal')
+                  initComponents: function(){
+                    this.setContent(OB.I18N.getLabel('OBPOS_ReceiptTotal'));
+                  }
                 }, {
                   style: 'padding: 10px 20px 10px 0px; float: left; width: 14%;',
                   components: [{

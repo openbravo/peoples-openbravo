@@ -35,6 +35,10 @@ enyo.kind({
   },
   initComponents: function () {
     this.inherited(arguments);
+    if(this.i18nLabel){
+      this.$.lbl.setContent(OB.I18N.getLabel(this.i18nLabel));
+      return;
+    }
     if (this.label) {
       this.$.lbl.setContent(this.label);
     }
@@ -70,7 +74,7 @@ enyo.kind({
       name: 'allowmoveeverything',
       kind: 'OB.OBPOSCashUp.UI.CashToKeepRadioButton',
       qtyToKeep: 0,
-      label: OB.I18N.getLabel('OBPOS_LblNothing'),
+      i18nLabel: 'OBPOS_LblNothing',
       showing: false
     }, {
       style: 'clear: both;'
@@ -91,7 +95,9 @@ enyo.kind({
         style: 'display: table-row;',
         components: [{
           style: 'vertical-align: middle; display: table-cell; ',
-          content: OB.I18N.getLabel('OBPOS_LblOther')
+          initComponents: function(){
+            this.setContent(OB.I18N.getLabel('OBPOS_LblOther'));
+          }
         }, {
           name: 'variableInput',
           style: 'width: 90px; vertical-align: middle; margin-top: 0px; margin-right: 0px; margin-bottom: 1px; margin-left: 10px; display: inline-block; ',

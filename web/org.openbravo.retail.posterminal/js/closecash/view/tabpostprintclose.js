@@ -66,13 +66,21 @@ enyo.kind({
     this.render();
   },
   render: function () {
-    this.$.totalLbl.setContent(this.label);
+    if(this.i18nLabel){
+      this.$.totalLbl.setContent(OB.I18N.getLabel(this.i18nLabel));
+    }else{
+      this.$.totalLbl.setContent(this.label);
+    }
     this.$.totalQty.setContent(OB.I18N.formatCurrency(this.value));
   },
   initComponents: function () {
     this.inherited(arguments);
-    if (this.label && this.value) {
-      this.$.totalLbl.setContent(this.label);
+    if ((this.label || this.i18nLabel) && this.value) {
+      if(this.i18nLabel){
+        this.$.totalLbl.setContent(OB.I18N.getLabel(this.i18nLabel));
+      }else{
+        this.$.totalLbl.setContent(this.label);
+      }
       this.$.totalQty.setContent(this.value);
     }
   }
@@ -120,7 +128,11 @@ enyo.kind({
     this.render();
   },
   render: function () {
-    this.$.itemLbl.setContent(this.label);
+    if(this.i18nLabel){
+      this.$.itemLbl.setContent(OB.I18N.getLabel(this.i18nLabel));
+    }else{
+      this.$.itemLbl.setContent(this.label);
+    }
     this.$.itemQty.setContent(OB.I18N.formatCurrency(this.value));
 
     if (this.second && this.second !== this.value && this.convertedValues.indexOf(this.type) !== -1) {
@@ -167,7 +179,7 @@ enyo.kind({
   components: [{
     kind: 'OB.OBPOSCashUp.UI.ppc_itemLine',
     name: 'netsales',
-    label: OB.I18N.getLabel('OBPOS_LblNetSales')
+    i18nLabel: 'OBPOS_LblNetSales'
   }, {
     kind: 'OB.OBPOSCashUp.UI.ppc_collectionLines',
     name: 'salestaxes',
@@ -176,7 +188,7 @@ enyo.kind({
   }, {
     kind: 'OB.OBPOSCashUp.UI.ppc_totalsLine',
     name: 'totalsales',
-    label: OB.I18N.getLabel('OBPOS_LblGrossSales')
+    i18nLabel: 'OBPOS_LblGrossSales'
   }, {
     kind: 'OB.OBPOSCashUp.UI.ppc_lineSeparator',
     name: 'separator'
@@ -192,7 +204,7 @@ enyo.kind({
   components: [{
     kind: 'OB.OBPOSCashUp.UI.ppc_itemLine',
     name: 'netreturns',
-    label: OB.I18N.getLabel('OBPOS_LblNetReturns')
+    i18nLabel: 'OBPOS_LblNetReturns'
   }, {
     kind: 'OB.OBPOSCashUp.UI.ppc_collectionLines',
     name: 'retunrnstaxes',
@@ -201,7 +213,7 @@ enyo.kind({
   }, {
     kind: 'OB.OBPOSCashUp.UI.ppc_totalsLine',
     name: 'totalreturns',
-    label: OB.I18N.getLabel('OBPOS_LblGrossReturns')
+    i18nLabel: 'OBPOS_LblGrossReturns'
   }, {
     kind: 'OB.OBPOSCashUp.UI.ppc_lineSeparator',
     name: 'separator'
@@ -217,7 +229,7 @@ enyo.kind({
   components: [{
     kind: 'OB.OBPOSCashUp.UI.ppc_totalsLine',
     name: 'totaltransactionsline',
-    label: OB.I18N.getLabel('OBPOS_LblTotalRetailTrans')
+    i18nLabel: 'OBPOS_LblTotalRetailTrans'
   }, {
     kind: 'OB.OBPOSCashUp.UI.ppc_lineSeparator',
     name: 'separator'
@@ -236,7 +248,7 @@ enyo.kind({
   }, {
     kind: 'OB.OBPOSCashUp.UI.ppc_totalsLine',
     name: 'totaldrops',
-    label: OB.I18N.getLabel('OBPOS_LblTotalWithdrawals')
+    i18nLabel: 'OBPOS_LblTotalWithdrawals'
   }, {
     kind: 'OB.OBPOSCashUp.UI.ppc_lineSeparator',
     name: 'separator'
@@ -258,7 +270,7 @@ enyo.kind({
   }, {
     kind: 'OB.OBPOSCashUp.UI.ppc_totalsLine',
     name: 'totaldeposits',
-    label: OB.I18N.getLabel('OBPOS_LblTotalDeposits')
+    i18nLabel: 'OBPOS_LblTotalDeposits'
   }, {
     kind: 'OB.OBPOSCashUp.UI.ppc_lineSeparator',
     name: 'separator'
@@ -280,7 +292,7 @@ enyo.kind({
   }, {
     kind: 'OB.OBPOSCashUp.UI.ppc_totalsLine',
     name: 'totalstartings',
-    label: OB.I18N.getLabel('OBPOS_LblTotalStarting')
+    i18nLabel: 'OBPOS_LblTotalStarting'
   }, {
     kind: 'OB.OBPOSCashUp.UI.ppc_lineSeparator',
     name: 'separator'
@@ -302,7 +314,7 @@ enyo.kind({
   }, {
     kind: 'OB.OBPOSCashUp.UI.ppc_totalsLine',
     name: 'totalexpected',
-    label: OB.I18N.getLabel('OBPOS_LblTotalExpected')
+    i18nLabel: 'OBPOS_LblTotalExpected'
   }, {
     kind: 'OB.OBPOSCashUp.UI.ppc_lineSeparator',
     name: 'separator'
@@ -324,7 +336,7 @@ enyo.kind({
   }, {
     kind: 'OB.OBPOSCashUp.UI.ppc_totalsLine',
     name: 'totaldifference',
-    label: OB.I18N.getLabel('OBPOS_LblTotalDifference')
+    i18nLabel: 'OBPOS_LblTotalDifference'
   }, {
     kind: 'OB.OBPOSCashUp.UI.ppc_lineSeparator',
     name: 'separator'
@@ -346,7 +358,7 @@ enyo.kind({
   }, {
     kind: 'OB.OBPOSCashUp.UI.ppc_totalsLine',
     name: 'totalcounted',
-    label: OB.I18N.getLabel('OBPOS_LblTotalCounted')
+    i18nLabel: 'OBPOS_LblTotalCounted'
   }, {
     kind: 'OB.OBPOSCashUp.UI.ppc_lineSeparator',
     name: 'separator'
@@ -368,7 +380,7 @@ enyo.kind({
   }, {
     kind: 'OB.OBPOSCashUp.UI.ppc_totalsLine',
     name: 'totalqtyToKeep',
-    label: OB.I18N.getLabel('OBPOS_LblTotalQtyToKeep')
+    i18nLabel: 'OBPOS_LblTotalQtyToKeep'
   }, {
     kind: 'OB.OBPOSCashUp.UI.ppc_lineSeparator',
     name: 'separator'
@@ -390,7 +402,7 @@ enyo.kind({
   }, {
     kind: 'OB.OBPOSCashUp.UI.ppc_totalsLine',
     name: 'totalqtyToDepo',
-    label: OB.I18N.getLabel('OBPOS_LblTotalQtyToDepo')
+    i18nLabel: 'OBPOS_LblTotalQtyToDepo'
   }, {
     kind: 'OB.OBPOSCashUp.UI.ppc_lineSeparator',
     name: 'separator'
@@ -418,7 +430,9 @@ enyo.kind({
           classes: 'span12',
           components: [{
             style: 'padding: 10px; border-bottom: 1px solid #cccccc; text-align:center;',
-            content: OB.I18N.getLabel('OBPOS_LblStep4of4')
+            initComponents: function(){
+              this.setContent(OB.I18N.getLabel('OBPOS_LblStep4of4'));
+            }
           }]
         }]
       }, {

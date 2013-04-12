@@ -9,6 +9,45 @@
 
 /*global OB, enyo, $*/
 
+
+enyo.kind({
+  name: 'OB.OBPOSCashUp.UI.LeftToolbarImpl',
+  kind: 'OB.UI.MultiColumn.Toolbar',
+  published: {
+    model: null
+  },
+  buttons: [{
+    kind: 'OB.OBPOSCashUp.UI.Button',
+    name: 'btnPrevious',
+    i18nLabel: 'OBPOS_LblPrevStep',
+    stepCount: -1,
+    span: 4
+  }, {
+    kind: 'OB.OBPOSCashUp.UI.Button',
+    name: 'btnNext',
+    i18nLabel: 'OBPOS_LblNextStep',
+    stepCount: 1,
+    span: 4
+  }],
+  refresh: function () {
+    this.$.btnPrevious.setDisabled(!this.model.allowPrevious());
+    this.$.btnNext.setDisabled(!this.model.allowNext());
+    //Normaly the button shows Next
+    this.$.btnNext.setContent(OB.I18N.getLabel('OBPOS_LblNextStep'));
+    if (this.model.get('step') === 4) {
+      //in the last step the button shows another label
+      this.$.btnNext.setContent(OB.I18N.getLabel('OBPOS_LblPostPrintClose'));
+    }
+    //Sometimes the button is shown with over css class.
+    if (this.$.btnNext.hasClass('btn-over')) {
+      this.$.btnNext.removeClass('btn-over');
+    }
+    if (this.$.btnPrevious.hasClass('btn-over')) {
+      this.$.btnPrevious.removeClass('btn-over');
+    }
+  }
+});
+
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.CashUp',
   kind: 'OB.UI.WindowView',
@@ -33,6 +72,12 @@ enyo.kind({
     components: [{
       kind: 'OB.UI.MultiColumn',
       name: 'cashupMultiColumn',
+      leftToolbar: {
+        kind: 'OB.OBPOSCashUp.UI.LeftToolbarImpl',
+        name: 'leftToolbar',
+        showMenu: false,
+        showWindowsMenu: false
+      },
       leftPanel: {
         name: 'cashupLeftPanel',
         components: [{
@@ -84,6 +129,7 @@ enyo.kind({
     this.inherited(arguments);
 
     this.$.cashupMultiColumn.$.rightPanel.$.cashUpInfo.setModel(this.model);
+    this.$.cashupMultiColumn.$.leftToolbar.$.leftToolbar.setModel(this.model);
 
     //step 0
     this.model.on('change:pendingOrdersToProcess', function (model) {
@@ -168,6 +214,7 @@ enyo.kind({
       }
     }
     this.$.cashupMultiColumn.$.rightPanel.$.cashUpInfo.refresh();
+    this.$.cashupMultiColumn.$.leftToolbar.$.leftToolbar.refresh();
   },
   changeStep: function (inSender, inEvent) {
     var nextStep, nextStepOfStep3;
@@ -229,7 +276,7 @@ enyo.kind({
         //if the new step is 2 or 4 we should set the step number
         if (nextStep < 0 || nextStep > this.model.get('paymentList').length - 1) {
           //change the step and not change the substep
-          this.$.postPrintClose.setSummary(this.model.getCountCashSummary());
+          this.$.cashupMultiColumn.$.leftPanel.$.postPrintClose.setSummary(this.model.getCountCashSummary());
           this.model.set('step', this.model.get('step') + inEvent.originator.stepCount);
         } else {
           if (this.model.isStep3Needed(nextStep) === false) {
