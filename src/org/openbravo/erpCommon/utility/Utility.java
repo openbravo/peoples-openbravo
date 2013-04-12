@@ -22,6 +22,7 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
+import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -32,6 +33,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -1087,6 +1089,22 @@ public class Utility {
       final PrintWriter printWriterData = new PrintWriter(fileWriterData);
       printWriterData.print(data);
       fileWriterData.close();
+    } catch (final IOException e) {
+      e.printStackTrace();
+      log4j.error("Problem of IOExceptio in file: " + strPath + " - " + strFile);
+      return false;
+    }
+    return true;
+  }
+
+  public static boolean generateFileEncoding(String strPath, String strFile, String data,
+      String encoding) {
+    try {
+      BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File(
+          strPath, strFile)), encoding));
+      final PrintWriter printWriterData = new PrintWriter(out);
+      printWriterData.print(data);
+      out.close();
     } catch (final IOException e) {
       e.printStackTrace();
       log4j.error("Problem of IOExceptio in file: " + strPath + " - " + strFile);
