@@ -85,7 +85,7 @@ enyo.kind({
               style: 'margin: 2px 0px 0px 0px; border-bottom: 1px solid #cccccc;'
             }, {
               kind: 'OB.UI.ScrollableTable',
-              scrollAreaMaxHeight: '160px',
+              scrollAreaMaxHeight: '150px',
               name: 'payments',
               renderEmpty: enyo.kind({
                 style: 'height: 36px'
