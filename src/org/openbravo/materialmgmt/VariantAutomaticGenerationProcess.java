@@ -1,6 +1,8 @@
 package org.openbravo.materialmgmt;
 
+import java.math.BigDecimal;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -22,11 +24,13 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.financial.FinancialUtils;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.common.plm.ProductAccounts;
 import org.openbravo.model.common.plm.ProductCharacteristic;
 import org.openbravo.model.common.plm.ProductCharacteristicConf;
 import org.openbravo.model.common.plm.ProductCharacteristicValue;
+import org.openbravo.model.pricing.pricelist.ProductPrice;
 import org.openbravo.scheduling.Process;
 import org.openbravo.scheduling.ProcessBundle;
 
@@ -123,6 +127,7 @@ public class VariantAutomaticGenerationProcess implements Process {
         searchKey += productNo;
         variant.setSearchKey(searchKey);
         OBDal.getInstance().save(variant);
+        OBDal.getInstance().flush();
 
         for (i = 0; i < chNumber; i++) {
           ProductCharacteristicConf prChConf = currentValues[i];
@@ -132,6 +137,10 @@ public class VariantAutomaticGenerationProcess implements Process {
           newPrChValue.setCharacteristicValue(prChConf.getCharacteristicValue());
           newPrChValue.setProduct(variant);
           OBDal.getInstance().save(newPrChValue);
+          if (prChConf.getCharacteristicOfProduct().isDefinesPrice()
+              && prChConf.getNetUnitPrice() != null) {
+            setPrice(variant, prChConf.getNetUnitPrice());
+          }
         }
 
         for (i = 0; i < chNumber; i++) {
@@ -205,6 +214,17 @@ public class VariantAutomaticGenerationProcess implements Process {
     if (errorFlag) {
       throw new OBException(OBMessageUtils.parseTranslation("@GenericWithNoVariantChError@"));
     }
+  }
+
+  private void setPrice(Product variant, BigDecimal price) {
+    ProductPrice prodPrice = FinancialUtils.getProductPrice(variant, new Date(), true, null, false);
+    if (prodPrice == null) {
+      throw new OBException(OBMessageUtils.parseTranslation("@GenericMustHavePriceDefined@"));
+    }
+    prodPrice.setStandardPrice(price);
+    prodPrice.setListPrice(price);
+    prodPrice.setPriceLimit(price);
+    OBDal.getInstance().save(prodPrice);
   }
 
   private class ProductCharacteristicAux {
