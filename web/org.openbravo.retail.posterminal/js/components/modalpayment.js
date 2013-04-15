@@ -18,9 +18,9 @@ enyo.kind({
   bodyButtons: {},
   executeOnShow: function () {
 
-    if (this.args.receipt.get('orderType') === 0) {
+    if (this.args.receipt.get('orderType') === 0 || this.args.receipt.get('orderType') === 2 || this.args.receipt.get('isLayaway')) {
       this.$.header.setContent(OB.I18N.getLabel('OBPOS_LblModalPayment', [OB.I18N.formatCurrency(this.args.amount)]));
-    } else if (this.args.receipt.get('orderType') === 1) {
+    } else if (this.args.receipt.get('orderType') === 1 || this.args.receipt.get('orderType') === 3) {
       this.$.header.setContent(OB.I18N.getLabel('OBPOS_LblModalReturn', [OB.I18N.formatCurrency(this.args.amount)]));
     } else {
       this.$.header.setContent('');

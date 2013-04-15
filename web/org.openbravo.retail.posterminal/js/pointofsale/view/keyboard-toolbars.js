@@ -69,9 +69,9 @@ enyo.kind({
 
     if (OB.DEC.compare(amount) > 0) {
       var provider, me = this;
-      if (this.receipt.get('orderType') === 0) {
+      if (this.receipt.get('orderType') === 0 || this.receipt.get('orderType') === 2 || this.receipt.get('isLayaway')) {
         provider = paymentMethod.paymentProvider;
-      } else if (this.receipt.get('orderType') === 1) {
+      } else if (this.receipt.get('orderType') === 1 || this.receipt.get('orderType') === 3) {
         provider = paymentMethod.refundProvider;
       } else {
         provider = null;

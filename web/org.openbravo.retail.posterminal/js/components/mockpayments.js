@@ -16,7 +16,7 @@ enyo.kind({
       classes: 'row-fluid',
       components: [{
         style: 'float:left; padding-left:30px',
-        content: OB.I18N.getLabel('OBPOS_LblModalType')
+        name: 'lblType'
       }, {
         name: 'paymenttype',
         style: 'float:right; font-weight: bold; padding-right:30px'
@@ -27,7 +27,7 @@ enyo.kind({
       classes: 'row-fluid',
       components: [{
         style: 'float:left; padding-left:30px',
-        content: OB.I18N.getLabel('OBPOS_LblModalAmount')
+        name: 'lblAmount'
       }, {
         name: 'paymentamount',
         style: 'float:right; font-weight: bold; padding-right:30px'
@@ -40,6 +40,8 @@ enyo.kind({
   }],
   initComponents: function () {
     this.inherited(arguments);
+    this.$.lblType.setContent(OB.I18N.getLabel('OBPOS_LblModalType'));
+    this.$.lblAmount.setContent(OB.I18N.getLabel('OBPOS_LblModalAmount'));
     this.$.paymenttype.setContent(this.paymentType);
     this.$.paymentamount.setContent(OB.I18N.formatCurrency(this.paymentAmount));
   }
