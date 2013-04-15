@@ -91,5 +91,8 @@
       <foreign-key foreignTable="M_WAREHOUSE" name="AD_ALERT_M_WAREHOUSE">
         <reference local="M_WAREHOUSE_ID" foreign="M_WAREHOUSE_ID"/>
       </foreign-key>
+      <index name="AD_ALERT_RULE" unique="false">
+        <index-column name="AD_ALERTRULE_ID"/>
+      </index>
     </table>
   </database>
