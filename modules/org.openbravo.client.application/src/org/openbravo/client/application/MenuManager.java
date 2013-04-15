@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,68 +22,79 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.enterprise.context.SessionScoped;
+import javax.inject.Inject;
 
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
-import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.session.SessionFactoryController;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.obps.ActivationKey.FeatureRestriction;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.model.ad.access.Role;
-import org.openbravo.model.ad.domain.ModelImplementationMapping;
 import org.openbravo.model.ad.ui.Form;
 import org.openbravo.model.ad.ui.Menu;
 import org.openbravo.model.ad.ui.MenuTrl;
 import org.openbravo.model.ad.ui.Tab;
-import org.openbravo.model.ad.ui.Window;
-import org.openbravo.model.ad.utility.Tree;
 import org.openbravo.model.ad.utility.TreeNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Reads the menu from the database and caches it in memory for easy consumption by components.
+ * Configures cached global menu (@see {@link GlobalMenu}) to adapt it to the current session's
+ * permissions and caches it in memory for easy consumption by components. Reads the menu from the
  * 
  * @author mtaal
  */
 @SessionScoped
 public class MenuManager implements Serializable {
-
+  private static final Logger log = LoggerFactory.getLogger(MenuManager.class);
   private static final long serialVersionUID = 1L;
 
   public static enum MenuEntryType {
     Window, Process, ProcessManual, Report, Form, External, Summary, View, ProcessDefinition
   };
 
+  /**
+   * Points to globally cached generic menu
+   */
+  @Inject
+  private GlobalMenu globalMenuOptions;
+
   private MenuOption cachedMenu;
   private List<MenuOption> selectableMenuOptions;
   private String roleId;
   private List<MenuOption> menuOptions;
 
+  private long cacheTimeStamp = 0;
+
   public synchronized MenuOption getMenu() {
+    long t = System.currentTimeMillis();
     if (cachedMenu == null || roleId == null
-        || !roleId.equals(OBContext.getOBContext().getRole().getId())) {
+        || !roleId.equals(OBContext.getOBContext().getRole().getId())
+        || cacheTimeStamp != globalMenuOptions.getCacheTimeStamp()) {
 
       // set the current RoleId
       roleId = OBContext.getOBContext().getRole().getId();
 
       OBContext.setAdminMode();
       try {
+        // take from global menus the one for current role and language
+        menuOptions = globalMenuOptions.getMenuOptions(roleId, OBContext.getOBContext()
+            .getLanguage().getId());
+        cacheTimeStamp = globalMenuOptions.getCacheTimeStamp();
 
-        createInitialMenuList();
-
+        // configure global menu with role permissions
         linkWindows();
         linkProcesses();
         linkForms();
         linkProcessDefinition();
+        linkViewDefinition();
 
         removeInvisibleNodes();
         removeInaccessibleNodes();
@@ -107,256 +118,124 @@ public class MenuManager implements Serializable {
       } finally {
         OBContext.restorePreviousMode();
       }
+    } else {
+      log.debug("Cached menu");
     }
+    log.debug("getMenu took {} ms", System.currentTimeMillis() - t);
     return cachedMenu;
   }
 
   @SuppressWarnings("unchecked")
-  private void linkMenus() {
-    final String menuHql = "select m from ADMenu m left join fetch m.aDMenuTrlList where m.module.enabled=true";
-    final Query menuQry = OBDal.getInstance().getSession().createQuery(menuHql);
-    final Map<String, MenuOption> menuOptionsByNodeId = new HashMap<String, MenuOption>();
-    for (MenuOption menuOption : menuOptions) {
-      menuOptionsByNodeId.put(menuOption.getTreeNode().getNode(), menuOption);
-    }
-    for (Menu menu : (List<Menu>) menuQry.list()) {
-      final MenuOption foundOption = menuOptionsByNodeId.get(menu.getId());
-      if (menu.isActive() || menu.isSummaryLevel()) {
-        if (foundOption != null) {
-          foundOption.setMenu(menu);
-          if (menu.getURL() != null) {
-            foundOption.setType(MenuEntryType.External);
-            foundOption.setId(menu.getURL());
-          }
-          if (menu.getObuiappView() != null && menu.getObuiappView().isActive()
-              && isValidForCurrentUserRole(menu.getObuiappView())) {
-            foundOption.setType(MenuEntryType.View);
-            foundOption.setId(menu.getObuiappView().getName());
-          }
-        }
-      }
-    }
-  }
-
-  private boolean isValidForCurrentUserRole(OBUIAPPViewImplementation view) {
-    for (ViewRoleAccess access : view.getObuiappViewRoleAccessList()) {
-      final String accessRoleId = (String) DalUtil.getId(access.getRole());
-      if (access.isActive() && roleId.equals(accessRoleId)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
   private void linkForms() {
-    final String formsHql = "select f, amim from ADForm f, ADModelImplementation ami, ADModelImplementationMapping amim, ADFormAccess afa "
-        + "where afa.role.id=:roleId and f.active = true and afa.specialForm = f and ami.specialForm=f and amim.modelObject=ami and amim.default=true";
+    final String formsHql = "select fa.specialForm.id " + //
+        " from ADFormAccess fa " + //
+        "where fa.role.id=:roleId";
+
     final Query formsQry = OBDal.getInstance().getSession().createQuery(formsHql);
     formsQry.setParameter("roleId", OBContext.getOBContext().getRole().getId());
-    // force a load
-    final List<?> list = formsQry.list();
 
-    final Map<String, MenuOption> menuOptionsByFormId = new HashMap<String, MenuOption>();
-    for (MenuOption menuOption : menuOptions) {
-      if (menuOption.getMenu() != null && menuOption.getMenu().getSpecialForm() != null) {
+    for (String formId : (List<String>) formsQry.list()) {
+      MenuOption option = getMenuOptionByType(MenuEntryType.Form, formId);
+      if (option != null) {
         // allow access if not running in a webcontainer as then the config file can not be checked
         boolean hasAccess = !SessionFactoryController.isRunningInWebContainer()
-            || ActivationKey.getInstance().hasLicenseAccess("X",
-                menuOption.getMenu().getSpecialForm().getId()) == FeatureRestriction.NO_RESTRICTION;
-        if (hasAccess) {
-          menuOptionsByFormId.put(menuOption.getMenu().getSpecialForm().getId(), menuOption);
-        }
-      }
-    }
-
-    for (Object object : list) {
-      final Object[] values = (Object[]) object;
-      final Form form = (Form) values[0];
-      final ModelImplementationMapping mim = (ModelImplementationMapping) values[1];
-      final MenuOption menuOption = menuOptionsByFormId.get(form.getId());
-      if (menuOption != null) {
-        menuOption.setType(MenuEntryType.Form);
-        menuOption.setId(mim.getMappingName());
-        menuOption.setForm(form);
+            || ActivationKey.getInstance().hasLicenseAccess("X", formId) == FeatureRestriction.NO_RESTRICTION;
+        option.setAccessGranted(hasAccess);
       }
     }
   }
 
+  @SuppressWarnings("unchecked")
   private void linkProcesses() {
+    final String allowedProcessHql = "select pa.process.id " + //
+        " from ADProcessAccess pa " + //
+        "where pa.role = :role";
 
-    // collect the valid tabs/windows
-    final String allowedProcessHql = "select p from ADProcess p, ADProcessAccess apa "
-        + "where apa.role.id=:roleId and p.active = true and apa.process = p";
     final Query allowedProcessQry = OBDal.getInstance().getSession().createQuery(allowedProcessHql);
-    allowedProcessQry.setParameter("roleId", OBContext.getOBContext().getRole().getId());
-    final Map<String, org.openbravo.model.ad.ui.Process> allowedProcesses = new HashMap<String, org.openbravo.model.ad.ui.Process>();
-    for (Object processObj : allowedProcessQry.list()) {
-      // allow access if not running in a web container
-      boolean hasAccess = !SessionFactoryController.isRunningInWebContainer()
-          || ActivationKey.getInstance().hasLicenseAccess("P",
-              ((org.openbravo.model.ad.ui.Process) processObj).getId()) == FeatureRestriction.NO_RESTRICTION;
-      if (hasAccess) {
-        allowedProcesses.put(((org.openbravo.model.ad.ui.Process) processObj).getId(),
-            (org.openbravo.model.ad.ui.Process) processObj);
-      }
-    }
+    allowedProcessQry.setParameter("role", OBContext.getOBContext().getRole());
 
-    final String processHql = "select p, amim from ADProcess p, ADModelImplementation ami, ADModelImplementationMapping amim, ADProcessAccess apa "
-        + "where apa.role.id=:roleId and p.active = true and apa.process = p and ami.process=p and ami.default=true and amim.modelObject=ami and amim.default=true";
-    final Query processQry = OBDal.getInstance().getSession().createQuery(processHql);
-    processQry.setParameter("roleId", OBContext.getOBContext().getRole().getId());
-    // force a load
-    final List<?> list = processQry.list();
-
-    final Map<String, MenuOption> menuOptionsByProcessId = new HashMap<String, MenuOption>();
-    for (MenuOption menuOption : menuOptions) {
-      if (menuOption.getMenu() != null && menuOption.getMenu().getProcess() != null
-          && allowedProcesses.containsKey(menuOption.getMenu().getProcess().getId())) {
-        menuOptionsByProcessId.put(menuOption.getMenu().getProcess().getId(), menuOption);
-      }
-    }
-
-    for (Object object : list) {
-      final Object[] values = (Object[]) object;
-      final org.openbravo.model.ad.ui.Process process = (org.openbravo.model.ad.ui.Process) values[0];
-      final ModelImplementationMapping mim = (ModelImplementationMapping) values[1];
-      final MenuOption menuOption = menuOptionsByProcessId.get(process.getId());
-      if (menuOption != null) {
-        if (process.getUIPattern().equals("Standard")) {
-          menuOption.setType(MenuEntryType.Process);
-        } else if (process.isReport() || process.isJasperReport()) {
-          menuOption.setType(MenuEntryType.Report);
-          menuOption.setReport(true);
-        } else {
-          menuOption.setType(MenuEntryType.ProcessManual);
-        }
-        menuOption.setId(mim.getMappingName());
-      }
-    }
-
-    // note this logic is based on the VerticalMenu.getUrlString method:
-    // } else if (action.equals("P")) {
-    // if (isExternalService.equals("Y") && externalType.equals("PS"))
-    // strResultado.append("/utility/OpenPentaho.html?inpadProcessId=").append(adProcessId);
-    // else {
-    // try {
-    // if (MenuData.isGenericJavaProcess(this, adProcessId))
-    // strResultado.append(
-    // "/ad_actionButton/ActionButtonJava_Responser.html?inpadProcessId=").append(
-    // adProcessId);
-    // else
-    // strResultado.append("/ad_actionButton/ActionButton_Responser.html?inpadProcessId=")
-    // .append(adProcessId);
-    // } catch (final Exception e) {
-    // e.printStackTrace();
-    // strResultado.append("/ad_actionButton/ActionButton_Responser.html?inpadProcessId=")
-    // .append(adProcessId);
-    // }
-    // }
-
-    for (String processId : menuOptionsByProcessId.keySet()) {
-      final MenuOption menuOption = menuOptionsByProcessId.get(processId);
-      final org.openbravo.model.ad.ui.Process process = allowedProcesses.get(processId);
-
-      if (menuOption.getId() == null && menuOption.getMenu() != null
-          && menuOption.getMenu().getAction().equals("P")) {
-        if (process.isExternalService() != null && process.isExternalService()
-            && "PS".equals(process.getServiceType())) {
-          menuOption.setType(MenuEntryType.Process);
-          menuOption.setId("/utility/OpenPentaho.html?inpadProcessId=" + processId);
-        } else if ("S".equals(process.getUIPattern()) && !process.isJasperReport()
-            && process.getProcedure() == null) {
-          // see the MenuData.isGenericJavaProcess method
-          menuOption.setType(MenuEntryType.Process);
-          menuOption.setId("/ad_actionButton/ActionButtonJava_Responser.html");
-        } else {
-          menuOption.setType(MenuEntryType.Process);
-          menuOption.setId("/ad_actionButton/ActionButton_Responser.html");
-        }
+    for (String processId : (List<String>) allowedProcessQry.list()) {
+      MenuOption option = getMenuOptionByType(MenuEntryType.Process, processId);
+      if (option != null) {
+        // allow access if not running in a webcontainer as then the config file can not be checked
+        boolean hasAccess = !SessionFactoryController.isRunningInWebContainer()
+            || ActivationKey.getInstance().hasLicenseAccess("P", processId) == FeatureRestriction.NO_RESTRICTION;
+        option.setAccessGranted(hasAccess);
       }
     }
   }
 
   @SuppressWarnings("unchecked")
   private void linkProcessDefinition() {
-    String processHql = "select p " + //
-        " from OBUIAPP_Process p, OBUIAPP_Process_Access pa " + //
-        "where pa.obuiappProcess = p " + //
-        "  and p.active = true " + //
-        "  and pa.active = true " + //
-        "  and pa.role = :role";
+    final String processHql = "select pa.obuiappProcess.id " + //
+        " from OBUIAPP_Process_Access pa " + //
+        "where pa.role = :role" + //
+        "  and pa.active = true ";
     final Query processQry = OBDal.getInstance().getSession().createQuery(processHql);
     processQry.setParameter("role", OBContext.getOBContext().getRole());
-    final List<?> list = processQry.list();
-    // force load
 
-    final Map<String, MenuOption> menuOptionsProcessId = new HashMap<String, MenuOption>();
-    for (MenuOption menuOption : menuOptions) {
-      if (menuOption.getMenu() != null
-          && menuOption.getMenu().getOBUIAPPProcessDefinition() != null) {
-        menuOptionsProcessId.put(menuOption.getMenu().getOBUIAPPProcessDefinition().getId(),
-            menuOption);
+    for (String processId : (List<String>) processQry.list()) {
+      MenuOption option = getMenuOptionByType(MenuEntryType.ProcessDefinition, processId);
+      if (option != null) {
+        option.setAccessGranted(true);
       }
     }
+  }
 
-    for (org.openbravo.client.application.Process process : (List<org.openbravo.client.application.Process>) list) {
-      MenuOption option = menuOptionsProcessId.get(process.getId());
+  @SuppressWarnings("unchecked")
+  private void linkViewDefinition() {
+    final String processHql = "select va.viewImplementation.id " + //
+        " from obuiapp_ViewRoleAccess va " + //
+        "where va.role = :role" + //
+        "  and va.active = true ";
+    final Query processQry = OBDal.getInstance().getSession().createQuery(processHql);
+    processQry.setParameter("role", OBContext.getOBContext().getRole());
+
+    for (String processId : (List<String>) processQry.list()) {
+      MenuOption option = getMenuOptionByType(MenuEntryType.View, processId);
       if (option != null) {
-        option.setType(MenuEntryType.ProcessDefinition);
+        option.setAccessGranted(true);
       }
     }
   }
 
   @SuppressWarnings("unchecked")
   private void linkWindows() {
-    // collect the valid tabs/windows
-    final String tabsHql = "select t from ADTab t join fetch t.window w join fetch t.table, ADWindowAccess awa "
-        + "where awa.role.id=:roleId and t.active = true and w.active = true and w = awa.window and t.tabLevel = 0";
-    final Query tabsQry = OBDal.getInstance().getSession().createQuery(tabsHql);
-    tabsQry.setParameter("roleId", OBContext.getOBContext().getRole().getId());
-    // force a load
-    final List<?> list = tabsQry.list();
+    final String windowsHql = "select wa.window.id " + //
+        " from ADWindowAccess wa " + //
+        "where wa.role = :role" + //
+        "  and wa.active = true ";
+    final Query windowsQry = OBDal.getInstance().getSession().createQuery(windowsHql);
+    windowsQry.setParameter("role", OBContext.getOBContext().getRole());
 
-    final Map<String, List<MenuOption>> menuOptionsByWindowId = new HashMap<String, List<MenuOption>>();
-    for (MenuOption menuOption : menuOptions) {
-      if (menuOption.getMenu() != null && menuOption.getMenu().getWindow() != null) {
-        // allow access if not running in a web container
+    for (String windowId : (List<String>) windowsQry.list()) {
+      MenuOption option = getMenuOptionByType(MenuEntryType.Window, windowId);
+      if (option != null) {
         boolean hasAccess = !SessionFactoryController.isRunningInWebContainer()
-            || ActivationKey.getInstance().hasLicenseAccess("MW",
-                menuOption.getMenu().getWindow().getId()) == FeatureRestriction.NO_RESTRICTION;
-        if (hasAccess) {
-          final String windowId = menuOption.getMenu().getWindow().getId();
-          if (menuOptionsByWindowId.containsKey(windowId)) {
-            menuOptionsByWindowId.get(windowId).add(menuOption);
-          } else {
-            List<MenuOption> option = new ArrayList<MenuOption>();
-            option.add(menuOption);
-            menuOptionsByWindowId.put(windowId, option);
-          }
-        }
-        // make sure that the important parts are read into mem
-        for (Tab windowTab : menuOption.getMenu().getWindow().getADTabList()) {
-          Hibernate.initialize(windowTab);
-          Hibernate.initialize(windowTab.getTable());
-        }
-      }
-    }
-
-    for (Tab tab : (List<Tab>) list) {
-      final Window window = tab.getWindow();
-      final List<MenuOption> options = menuOptionsByWindowId.get(window.getId());
-      if (options != null) {
-        for (MenuOption menuOption : options) {
-          menuOption.setType(MenuEntryType.Window);
-          menuOption.setId(tab.getId());
-          menuOption.setTab(tab);
-        }
+            || ActivationKey.getInstance().hasLicenseAccess("MW", windowId) == FeatureRestriction.NO_RESTRICTION;
+        option.setAccessGranted(hasAccess);
       }
     }
   }
 
-  private void removeInvisibleNodes() {
+  private MenuOption getMenuOptionByType(MenuEntryType type, String objectId) {
+    for (MenuOption option : menuOptions) {
+      if (option.getType() == type && objectId.equals(option.objectId)) {
+        return option;
+      }
 
+      // Process is special case, there are several types of processes
+      if (type == MenuEntryType.Process && objectId.equals(option.objectId)) {
+        if (option.getType() == MenuEntryType.Process || option.getType() == MenuEntryType.Report
+            || option.getType() == MenuEntryType.ProcessManual) {
+          return option;
+        }
+      }
+    }
+    return null;
+  }
+
+  private void removeInvisibleNodes() {
     final List<MenuOption> toRemove = new ArrayList<MenuOption>();
     for (MenuOption menuOption : menuOptions) {
       if (!menuOption.isVisible()) {
@@ -386,60 +265,6 @@ public class MenuManager implements Serializable {
     menuOptions.removeAll(toRemove);
   }
 
-  private void createInitialMenuList() {
-    Role role = OBDal.getInstance().get(Role.class, roleId);
-    final Tree tree;
-    if (role.getPrimaryTreeMenu() != null) {
-      tree = role.getPrimaryTreeMenu();
-    } else {
-      tree = OBDal.getInstance().get(Tree.class, "10");
-    }
-    menuOptions = new ArrayList<MenuOption>();
-    OBCriteria<TreeNode> treeNodes = OBDal.getInstance().createCriteria(TreeNode.class);
-    treeNodes.add(Restrictions.eq(TreeNode.PROPERTY_TREE, tree));
-    treeNodes.setFilterOnActive(false);
-
-    final Map<String, MenuOption> menuOptionsByMenuId = new HashMap<String, MenuOption>();
-    for (TreeNode treeNode : treeNodes.list()) {
-      boolean addOption = treeNode.isActive();
-      boolean inactiveSummary = false;
-
-      if (!addOption) {
-        Menu menuEntry = OBDal.getInstance().get(Menu.class, treeNode.getNode());
-        if (menuEntry != null) {
-          addOption = menuEntry.isSummaryLevel();
-          inactiveSummary = true;
-        }
-      }
-
-      if (addOption) {
-        final MenuOption menuOption = new MenuOption();
-        menuOption.setTreeNode(treeNode);
-        menuOption.setDbId(treeNode.getId());
-        Menu menuEntry = OBDal.getInstance().get(Menu.class, treeNode.getNode());
-        if (menuEntry != null && !menuEntry.isActive()) {
-          menuOption.setVisible(false);
-        }
-        menuOptions.add(menuOption);
-      }
-    }
-    linkMenus();
-
-    for (MenuOption menuOption : menuOptions) {
-      if (menuOption.getMenu() != null) {
-        menuOptionsByMenuId.put(menuOption.getMenu().getId(), menuOption);
-      }
-    }
-
-    // sort them by sequencenumber of the treenode
-    Collections.sort(menuOptions, new MenuSequenceComparator());
-
-    // now put the menuOptions in a tree structure
-    for (MenuOption menuOption : menuOptions) {
-      menuOption.setParentMenuOption(menuOptionsByMenuId);
-    }
-  }
-
   public static class MenuOption implements Serializable {
     private static final long serialVersionUID = 1L;
     private TreeNode treeNode;
@@ -455,6 +280,28 @@ public class MenuManager implements Serializable {
     private List<MenuOption> children = new ArrayList<MenuOption>();
     private Boolean visible = null;
     private boolean showInClassicMode = false;
+    private String objectId;
+
+    private boolean accessGranted = false;
+
+    public MenuOption() {
+      // Default constructor, just sets all the defaults
+    }
+
+    public MenuOption(MenuOption option) {
+      this();
+      this.treeNode = option.treeNode;
+      this.label = option.label;
+      this.type = option.type;
+      this.id = option.id;
+      this.dbId = option.dbId;
+      this.menu = option.menu;
+      this.tab = option.tab;
+      this.form = option.form;
+      this.isReport = option.isReport;
+      this.showInClassicMode = option.showInClassicMode;
+      this.objectId = option.objectId;
+    }
 
     public boolean isSingleRecord() {
       return getTab() != null && getTab().getUIPattern().equals("SR");
@@ -508,8 +355,10 @@ public class MenuManager implements Serializable {
         visible = localVisible;
       } else if (type == MenuEntryType.Summary) {
         visible = false;
-      } else {
+      } else if (type == MenuEntryType.External) {
         visible = true;
+      } else {
+        visible = accessGranted;
       }
       return visible;
     }
@@ -587,6 +436,10 @@ public class MenuManager implements Serializable {
       this.form = form;
     }
 
+    public void setParentMenuOption(MenuOption parentMenuOption) {
+      this.parentMenuOption = parentMenuOption;
+    }
+
     public void setParentMenuOption(Map<String, MenuOption> menuOptionsByMenuId) {
       if (treeNode.getReportSet() != null) {
         parentMenuOption = menuOptionsByMenuId.get(treeNode.getReportSet());
@@ -600,9 +453,15 @@ public class MenuManager implements Serializable {
       return menu;
     }
 
+    /**
+     * @deprecated Use instead setMenu(Menu menu, String userLanguageId)
+     */
     public void setMenu(Menu menu) {
+      setMenu(menu, OBContext.getOBContext().getLanguage().getId());
+    }
+
+    public void setMenu(Menu menu, String userLanguageId) {
       this.menu = menu;
-      final String userLanguageId = OBContext.getOBContext().getLanguage().getId();
       for (MenuTrl menuTrl : menu.getADMenuTrlList()) {
         final String trlLanguageId = (String) DalUtil.getId(menuTrl.getLanguage());
         if (trlLanguageId.equals(userLanguageId)) {
@@ -686,6 +545,14 @@ public class MenuManager implements Serializable {
     public void setDbId(String dbId) {
       this.dbId = dbId;
     }
+
+    public void setAccessGranted(boolean accessGranted) {
+      this.accessGranted = accessGranted;
+    }
+
+    public void setObjectId(String objectId) {
+      this.objectId = objectId;
+    }
   }
 
   private static class MenuComparator implements Comparator<MenuOption> {
@@ -694,18 +561,6 @@ public class MenuManager implements Serializable {
     public int compare(MenuOption o1, MenuOption o2) {
       return o1.getLabel().compareTo(o2.getLabel());
     }
-
-  }
-
-  private static class MenuSequenceComparator implements Comparator<MenuOption> {
-
-    @Override
-    public int compare(MenuOption o1, MenuOption o2) {
-      TreeNode tn1 = o1.getTreeNode();
-      TreeNode tn2 = o2.getTreeNode();
-      return (int) (tn1.getSequenceNumber() - tn2.getSequenceNumber());
-    }
-
   }
 
   public List<MenuOption> getSelectableMenuOptions() {
