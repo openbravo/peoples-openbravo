@@ -486,7 +486,13 @@ isc.OBCalendar.addProperties({
   },
 
   filterData: function (criteria) {
-    return this.Super('filterData', [this.getCriteria(criteria)]);
+    var newCriteria, ret;
+    newCriteria = this.getCriteria(criteria);
+    ret = this.Super('filterData', [newCriteria]);
+    if (this.doPreFilterData) {
+      this.doPreFilterData(newCriteria);
+    }
+    return ret;
   },
 
   // read the dates for the current month
