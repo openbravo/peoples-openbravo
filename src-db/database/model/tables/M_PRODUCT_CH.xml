@@ -79,6 +79,13 @@
       <foreign-key foreignTable="M_CH_SUBSET" name="M_PRODUCT_CH_SUBSET">
         <reference local="M_CH_SUBSET_ID" foreign="M_CH_SUBSET_ID"/>
       </foreign-key>
+      <index name="M_PRODUCT_CH_CHARACTERISTIC" unique="true">
+        <index-column name="M_PRODUCT_ID"/>
+        <index-column name="M_CHARACTERISTIC_ID"/>
+      </index>
+      <index name="M_PRODUCT_CH_PRODUCT" unique="false">
+        <index-column name="M_PRODUCT_ID"/>
+      </index>
       <check name="M_PRODUCT_CH_DEFINE_PRICE_CHK"><![CDATA[DEFINE_PRICE IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_CH_ISACTIVE"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_CH_VARIANT"><![CDATA[ISVARIANT IN ('Y', 'N')]]></check>

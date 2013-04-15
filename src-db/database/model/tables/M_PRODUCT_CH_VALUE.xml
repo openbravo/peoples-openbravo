@@ -60,6 +60,16 @@
       <foreign-key foreignTable="M_PRODUCT" name="M_PRODUCT_CH_VALUE_M_PRODUCT">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
+      <index name="M_PRODUCT_CH_VALUE_PRODUCT" unique="false">
+        <index-column name="M_PRODUCT_ID"/>
+      </index>
+      <index name="M_PRODUCT_CH_VALUE_VALUE" unique="true">
+        <index-column name="M_PRODUCT_ID"/>
+        <index-column name="M_CH_VALUE_ID"/>
+      </index>
+      <index name="M_PRODUCT_CH_VALUE_VALUE_IDX" unique="false">
+        <index-column name="M_CH_VALUE_ID"/>
+      </index>
       <check name="M_PRODUCT_CH_VALUE_ISACTIVE"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>
