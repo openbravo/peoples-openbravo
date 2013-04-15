@@ -1320,7 +1320,7 @@ BEGIN
  -- create temporary tables. This function is used in  M_PRICELIST_CREATE() and M_PRODUCT_BOM_CHECK() functions.
  -- This function has been created as a result of fix for bug 0005229: Temporary tables T_Selection and T_Selection2 have been ported from v2.22 to 2.35 improperly 
  drop table if exists C_TEMP_SELECTION;
- CREATE GLOBAL TEMPORARY TABLE C_TEMP_SELECTION
+ CREATE TEMPORARY TABLE C_TEMP_SELECTION
  (
   C_TEMP_SELECTION_ID  character varying(32) NOT NULL,
   CONSTRAINT C_TEMP_SELECTION_key PRIMARY KEY (C_TEMP_SELECTION_ID)
@@ -1328,7 +1328,7 @@ BEGIN
   ON COMMIT DELETE ROWS;
 
   drop table if exists C_TEMP_SELECTION2;
-  CREATE GLOBAL TEMPORARY TABLE C_TEMP_SELECTION2
+  CREATE TEMPORARY TABLE C_TEMP_SELECTION2
   (
    QUERY_ID        character varying(32)             NOT NULL,
    C_TEMP_SELECTION_ID  character varying(32)             NOT NULL,
