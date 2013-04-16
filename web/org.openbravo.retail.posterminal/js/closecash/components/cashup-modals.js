@@ -9,62 +9,6 @@
 
 /*global enyo, $ */
 
-enyo.kind({
-  kind: 'OB.UI.ModalAction',
-  name: 'OB.OBPOSCashUp.UI.modalFinished',
-  i18nHeader: 'OBPOS_LblGoodjob',
-  bodyContent: {
-    i18Content: 'OBPOS_FinishCloseDialog'
-  },
-  bodyButtons: {
-    components: [{
-      //OK button
-      kind: 'OB.OBPOSCashUp.UI.modalFinished_OkButton'
-    }]
-  },
-  executeOnHide: function () {
-    OB.POS.navigate('retail.pointofsale');
-  }
-});
-
-enyo.kind({
-  kind: 'OB.UI.ModalDialogButton',
-  name: 'OB.OBPOSCashUp.UI.modalFinished_OkButton',
-  i18Content: 'OBMOBC_LblOk',
-  isDefaultAction: true,
-  tap: function () {
-    this.doHideThisPopup();
-  }
-});
-
-
-enyo.kind({
-  kind: 'OB.UI.ModalAction',
-  name: 'OB.OBPOSCashUp.UI.modalFinishedWrongly',
-  i18nHeader: 'OBPOS_CashUpWronglyHeader',
-  bodyContent: {
-    i18Content: 'OBPOS_CashUpWrongly'
-  },
-  bodyButtons: {
-    components: [{
-      //OK button
-      kind: 'OB.OBPOSCashUp.UI.modalFinishedWrongly_OkButton'
-    }]
-  },
-  executeOnHide: function () {
-    OB.POS.navigate('retail.pointofsale');
-  }
-});
-
-enyo.kind({
-  kind: 'OB.UI.ModalDialogButton',
-  name: 'OB.OBPOSCashUp.UI.modalFinishedWrongly_OkButton',
-  i18Content: 'OBMOBC_LblOk',
-  isDefaultAction: true,
-  tap: function () {
-    this.doHideThisPopup();
-  }
-});
 
 
 enyo.kind({

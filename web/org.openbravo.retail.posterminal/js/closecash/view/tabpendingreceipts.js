@@ -14,7 +14,9 @@ enyo.kind({
   kind: 'OB.UI.SmallButton',
   classes: 'btnlink-gray',
   style: 'min-width: 70px; margin: 2px 5px 2px 5px;',
-  content: OB.I18N.getLabel('OBPOS_Delete')
+  initComponents: function(){
+    this.setContent(OB.I18N.getLabel('OBPOS_Delete'));
+  }
 });
 
 enyo.kind({

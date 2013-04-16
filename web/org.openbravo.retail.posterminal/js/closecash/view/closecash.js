@@ -9,6 +9,42 @@
 
 /*global OB, enyo, $*/
 
+enyo.kind({
+  name: 'OB.OBPOSCashUp.UI.Button',
+  kind: 'OB.UI.ToolbarButton',
+  disabled: true,
+  events: {
+    onChangeStep: ''
+  },
+  init: function (model) {
+    this.model = model;
+  },
+  tap: function () {
+    if (this.model.get('cashUpSent')) {
+      return true;
+    }
+    if (this.model.get('step') === 4) {
+      this.setDisabled(true);
+      this.model.set('cashUpSent', true);
+    }
+    this.doChangeStep();
+  },
+  initialize: function(){
+    if(this.i18nLabel){
+      this.setContent(OB.I18N.getLabel(this.i18nLabel));
+    }
+  }
+});
+enyo.kind({
+  name: 'OB.OBPOSCashUp.UI.RightToolbarImpl',
+  kind: 'OB.UI.MultiColumn.Toolbar',
+  buttons: [{
+    kind: 'OB.OBPOSCashUp.UI.Button',
+    name: 'btnCashUp',
+    span: 12,
+    i18nLabel: 'OBPOS_LblCloseCash'
+  }]
+});
 
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.LeftToolbarImpl',
@@ -21,31 +57,44 @@ enyo.kind({
     name: 'btnPrevious',
     i18nLabel: 'OBPOS_LblPrevStep',
     stepCount: -1,
+    span: 4,
+    handlers: {
+      onDisablePreviousButton: 'disablePreviousButton'
+    },
+    disablePreviousButton: function(inSender, inEvent){
+      this.setDisabled(inEvent.disable);
+      if (this.hasClass('btn-over')) {
+        this.removeClass('btn-over');
+      }
+    },
+  }, {
+    kind: 'OB.OBPOSCashUp.UI.Button',
+    name: 'btnCancel',
+    disabled: false,
+    i18nLabel: 'OBMOBC_LblCancel',
+    stepCount: 0,
     span: 4
   }, {
     kind: 'OB.OBPOSCashUp.UI.Button',
     name: 'btnNext',
     i18nLabel: 'OBPOS_LblNextStep',
     stepCount: 1,
-    span: 4
-  }],
-  refresh: function () {
-    this.$.btnPrevious.setDisabled(!this.model.allowPrevious());
-    this.$.btnNext.setDisabled(!this.model.allowNext());
-    //Normaly the button shows Next
-    this.$.btnNext.setContent(OB.I18N.getLabel('OBPOS_LblNextStep'));
-    if (this.model.get('step') === 4) {
-      //in the last step the button shows another label
-      this.$.btnNext.setContent(OB.I18N.getLabel('OBPOS_LblPostPrintClose'));
-    }
-    //Sometimes the button is shown with over css class.
-    if (this.$.btnNext.hasClass('btn-over')) {
-      this.$.btnNext.removeClass('btn-over');
-    }
-    if (this.$.btnPrevious.hasClass('btn-over')) {
-      this.$.btnPrevious.removeClass('btn-over');
-    }
-  }
+    span: 4,
+    handlers: {
+      onDisableNextButton: 'disableNextButton'
+    },
+    disableNextButton: function(inSender, inEvent){
+      this.setDisabled(inEvent.disable);
+      this.setContent(OB.I18N.getLabel('OBPOS_LblNextStep'));
+      if (this.model.get('step') === 4) {
+        //in the last step the button shows another label
+        this.setContent(OB.I18N.getLabel('OBPOS_LblPostPrintClose'));
+      }
+      if (this.hasClass('btn-over')) {
+        this.removeClass('btn-over');
+      }
+    },
+  }]
 });
 
 enyo.kind({
@@ -67,7 +116,9 @@ enyo.kind({
   },
   events: {
     onShowPopup: '',
-    onChangeOption: ''
+    onChangeOption: '',
+    onDisablePreviousButton: '',
+    onDisableNextButton: ''
   },
     components: [{
       kind: 'OB.UI.MultiColumn',
@@ -75,6 +126,12 @@ enyo.kind({
       leftToolbar: {
         kind: 'OB.OBPOSCashUp.UI.LeftToolbarImpl',
         name: 'leftToolbar',
+        showMenu: false,
+        showWindowsMenu: false
+      },
+      rightToolbar: {
+        kind: 'OB.OBPOSCashUp.UI.RightToolbarImpl',
+        name: 'rightToolbar',
         showMenu: false,
         showWindowsMenu: false
       },
@@ -110,20 +167,14 @@ enyo.kind({
       }, {
         kind: 'OB.OBPOSCashUp.UI.CashUpKeyboard',
         name: 'cashUpKeyboard'
-    }, {
+    }, ]
+  }
+    },{
       kind: 'OB.UI.ModalCancel',
       name: 'modalCancel'
     }, {
-      kind: 'OB.OBPOSCashUp.UI.modalFinished',
-      name: 'modalFinished'
-    }, {
-      kind: 'OB.OBPOSCashUp.UI.modalFinishedWrongly',
-      name: 'modalFinishedWrongly'
-    }, {
       kind: 'OB.OBPOSCashUp.UI.modalPendingToProcess',
       name: 'modalPendingToProcess'
-    }]
-  }
     }],
   init: function () {
     this.inherited(arguments);
@@ -142,7 +193,7 @@ enyo.kind({
     // Pending Orders - Step 1
     this.$.cashupMultiColumn.$.leftPanel.$.listPendingReceipts.setCollection(this.model.get('orderlist'));
     this.model.get('orderlist').on('all', function () {
-      this.$.cashupMultiColumn.$.rightPanel.$.cashUpInfo.refresh();
+      this.refresh();
     }, this);
 
     // Cash count - Step 2
@@ -186,20 +237,34 @@ enyo.kind({
 
     //finished
     this.model.on('change:finished', function () {
-      this.doShowPopup({
-        popup: 'modalFinished'
-      });
+      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_LblGoodjob'), OB.I18N.getLabel('OBPOS_FinishCloseDialog'), [{
+        label: OB.I18N.getLabel('OBMOBC_LblOk'),
+        action: function () {
+          OB.POS.navigate('retail.pointofsale');
+          return true;
+        }
+      }]);
     }, this);
     //finishedWrongly
     this.model.on('change:finishedWrongly', function () {
-      this.doShowPopup({
-        popup: 'modalFinishedWrongly'
-      });
+      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_CashUpWronglyHeader'), OB.I18N.getLabel('OBPOS_CashUpWrongly'), [{
+        label: OB.I18N.getLabel('OBMOBC_LblOk'),
+        action: function () {
+          OB.POS.navigate('retail.pointofsale');
+          return true;
+        }
+      }]);
     }, this);
 
     this.refresh();
   },
   refresh: function () {
+    this.waterfall('onDisablePreviousButton', {
+      disable: !this.model.allowPrevious()
+    });
+    this.waterfall('onDisableNextButton', {
+      disable: !this.model.allowNext()
+    });
     this.$.cashupMultiColumn.$.leftPanel.$.listPendingReceipts.setShowing(this.model.showPendingOrdersList());
     this.$.cashupMultiColumn.$.leftPanel.$.listPaymentMethods.setShowing(this.model.showPaymentMethodList());
     this.$.cashupMultiColumn.$.leftPanel.$.cashToKeep.setShowing(this.model.showCashToKeep());
@@ -213,8 +278,6 @@ enyo.kind({
         this.$.cashupMultiColumn.$.rightPanel.$.cashUpKeyboard.showToolbar('toolbarempty');
       }
     }
-    this.$.cashupMultiColumn.$.rightPanel.$.cashUpInfo.refresh();
-    //this.$.cashupMultiColumn.$.leftToolbar.$.leftToolbar.refresh();
   },
   changeStep: function (inSender, inEvent) {
     var nextStep, nextStepOfStep3;
@@ -222,6 +285,10 @@ enyo.kind({
       //send cash up to the server
       this.model.processAndFinishCashUp();
     } else {
+      if(inEvent.originator.stepCount === 0){
+        OB.POS.navigate('retail.pointofsale');
+        return true;
+      }
       if (this.model.get('step') !== 3) {
         nextStep = this.model.get('step') + inEvent.originator.stepCount;
         if (nextStep === 3 && this.model.get('ignoreStep3')) {
@@ -294,7 +361,7 @@ enyo.kind({
   },
   countAllOK: function (inSender, inEvent) {
     this.model.countAll();
-    this.$.cashupMultiColumn.$.rightPanel.$.cashUpInfo.refresh();
+    this.refresh();
   },
   lineEditCount: function (inSender, inEvent) {
     this.$.cashupMultiColumn.$.rightPanel.$.cashUpKeyboard.setStatus(inEvent.originator.model.get('_id'));
@@ -306,12 +373,12 @@ enyo.kind({
     } else {
       OB.UTIL.showWarning(validationResult.message);
     }
-    this.$.cashupMultiColumn.$.rightPanel.$.cashUpInfo.refresh();
+    this.refresh();
     this.$.cashupMultiColumn.$.rightPanel.$.cashUpKeyboard.setStatus(inEvent.name);
   },
   resetQtyToKeep: function (inSender, inEvent) {
     this.model.get('paymentList').at(this.model.get('stepOfStep3')).set('qtyToKeep', null);
-    this.$.cashupMultiColumn.$.rightPanel.$.cashUpInfo.refresh();
+    this.refresh();
   },
   holdActiveCmd: function (inSender, inEvent) {
     this.waterfall('onChangeOption', {

@@ -9,34 +9,6 @@
 
 /*global OB, enyo, */
 
-enyo.kind({
-  name: 'OB.OBPOSCashUp.UI.Button',
-  kind: 'OB.UI.SmallButton',
-  classes: 'btnlink-fontgray',
-  style: 'min-width: 115px;',
-  disabled: true,
-  events: {
-    onChangeStep: ''
-  },
-  init: function (model) {
-    this.model = model;
-  },
-  tap: function () {
-    if (this.model.get('cashUpSent')) {
-      return true;
-    }
-    if (this.model.get('step') === 4) {
-      this.setDisabled(true);
-      this.model.set('cashUpSent', true);
-    }
-    this.doChangeStep();
-  },
-  initialize: function(){
-    if(this.i18nLabel){
-      this.setContent(OB.I18N.getLabel(this.i18nLabel));
-    }
-  }
-});
 
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.CashUpInfo',
@@ -49,30 +21,11 @@ enyo.kind({
       kind: 'OB.UI.Clock',
       classes: 'pos-clock'
     }, {
-      style: 'padding: 5px; float: right;',
-      components: [{
-        kind: 'OB.UI.CancelButton'
-      }]
-    }, {
       // process info
       style: 'padding: 5px',
       initialize: function(){
         this.setContent(OB.I18N.getLabel('OBPOS_LblCashUpProcess'));
       }
-    }, {
-      // Prev and Next buttons
-      style: 'padding: 5px;',
-      components: [{
-        kind: 'OB.OBPOSCashUp.UI.Button',
-        name: 'btnPrevious',
-        i18nLabel: 'OBPOS_LblPrevStep',
-        stepCount: -1
-      }, {
-        kind: 'OB.OBPOSCashUp.UI.Button',
-        name: 'btnNext',
-        i18nLabel: 'OBPOS_LblNextStep',
-        stepCount: 1
-      }]
     }, {
       style: 'padding: 3px',
       initialize: function(){
@@ -94,22 +47,5 @@ enyo.kind({
         this.setContent(OB.I18N.getLabel('OBPOS_LblStep4'));
       }
     }]
-  }],
-  refresh: function () {
-    this.$.btnPrevious.setDisabled(!this.model.allowPrevious());
-    this.$.btnNext.setDisabled(!this.model.allowNext());
-    //Normaly the button shows Next
-    this.$.btnNext.setContent(OB.I18N.getLabel('OBPOS_LblNextStep'));
-    if (this.model.get('step') === 4) {
-      //in the last step the button shows another label
-      this.$.btnNext.setContent(OB.I18N.getLabel('OBPOS_LblPostPrintClose'));
-    }
-    //Sometimes the button is shown with over css class.
-    if (this.$.btnNext.hasClass('btn-over')) {
-      this.$.btnNext.removeClass('btn-over');
-    }
-    if (this.$.btnPrevious.hasClass('btn-over')) {
-      this.$.btnPrevious.removeClass('btn-over');
-    }
-  }
+  }]
 });
