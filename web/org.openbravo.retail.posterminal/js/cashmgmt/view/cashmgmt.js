@@ -9,6 +9,44 @@
 
 /*global OB, enyo, $ */
 
+enyo.kind({
+  name: 'OB.OBPOSCashMgmt.UI.LeftToolbarImpl',
+  kind: 'OB.UI.MultiColumn.Toolbar',
+  buttons: [{
+    kind: 'OB.UI.ToolbarButton',
+    name: 'btnCancel',
+    disabled: false,
+    i18nLabel: 'OBMOBC_LblCancel',
+    stepCount: 0,
+    span: 6,
+    tap: function () {
+      OB.POS.navigate('retail.pointofsale');
+    }
+  }, {
+    kind: 'OB.UI.ToolbarButton',
+    name: 'btnCancel',
+    disabled: false,
+    i18nLabel: 'OBPOS_LblDone',
+    stepCount: 0,
+    span: 6,
+    tap: function () {
+      this.owner.owner.owner.owner.owner.owner.owner.model.depsdropstosend.trigger('makeDeposits');
+    }
+  }]
+});
+
+enyo.kind({
+  name: 'OB.OBPOSCashMgmt.UI.RightToolbarImpl',
+  kind: 'OB.UI.MultiColumn.Toolbar',
+  buttons: [{
+    kind: 'OB.UI.ToolbarButton',
+    name: 'btnCashMgmt',
+    span: 12,
+    disabled: true,
+    i18nLabel: 'OBPOS_LblCashManagement'
+  }]
+});
+
 // Cash Management main window view
 enyo.kind({
   name: 'OB.OBPOSCashMgmt.UI.CashManagement',
@@ -19,48 +57,63 @@ enyo.kind({
     onShowPopup: ''
   },
   components: [{
-    classes: 'row',
-    components: [
-    // 1st column: list of deposits/drops done or in process
-    {
-      classes: 'span6',
+    kind: 'OB.UI.MultiColumn',
+    name: 'cashupMultiColumn',
+    leftToolbar: {
+      kind: 'OB.OBPOSCashMgmt.UI.LeftToolbarImpl',
+      name: 'leftToolbar',
+      showMenu: false,
+      showWindowsMenu: false
+    },
+    rightToolbar: {
+      kind: 'OB.OBPOSCashMgmt.UI.RightToolbarImpl',
+      name: 'rightToolbar',
+      showMenu: false,
+      showWindowsMenu: false
+    },
+    leftPanel: {
+      name: 'cashmgmtLeftPanel',
       components: [{
-        kind: 'OB.OBPOSCashMgmt.UI.ListDepositsDrops'
+        classes: 'row',
+        components: [
+        // 1st column: list of deposits/drops done or in process
+        {
+          classes: 'span12',
+          components: [{
+            kind: 'OB.OBPOSCashMgmt.UI.ListDepositsDrops'
+          }]
+        }]
       }]
     },
-    //2nd column
-    {
-      classes: 'span6',
-      components: [{
-        kind: 'OB.OBPOSCashMgmt.UI.CashMgmtInfo'
-      }, {
-        kind: 'OB.OBPOSCashMgmt.UI.CashMgmtKeyboard'
+    rightPanel: {
+      name: 'cashmgmtRightPanel',
+      components: [
+
+      //2nd column
+      {
+        classes: 'span12',
+        components: [{
+          kind: 'OB.OBPOSCashMgmt.UI.CashMgmtInfo'
+        }, {
+          kind: 'OB.OBPOSCashMgmt.UI.CashMgmtKeyboard'
+        }]
       }]
-    },
-    //hidden stuff
-    {
-      components: [{
-        kind: 'OB.OBPOSCashMgmt.UI.ModalDepositEvents',
-        i18nHeader: 'OBPOS_SelectDepositDestinations',
-        name: 'modaldepositevents',
-        type: 'DataDepositEvents'
-      }, {
-        kind: 'OB.OBPOSCashMgmt.UI.ModalDepositEvents',
-        i18nHeader: 'OBPOS_SelectDropDestinations',
-        name: 'modaldropevents',
-        type: 'DataDropEvents'
-      }, {
-        kind: OB.UI.ModalCancel,
-        name: 'modalCancel'
-      }, {
-        kind: 'OB.OBPOSCashMgmt.UI.modalFinished',
-        name: 'modalFinishedMgmt'
-      }, {
-        kind: 'OB.OBPOSCashMgmt.UI.modalFinishedWrongly',
-        name: 'modalFinishedWronglyMgmt'
-      }]
+    }
+  }, //hidden stuff
+  {
+    components: [{
+      kind: 'OB.OBPOSCashMgmt.UI.ModalDepositEvents',
+      i18nHeader: 'OBPOS_SelectDepositDestinations',
+      name: 'modaldepositevents',
+      type: 'DataDepositEvents'
+    }, {
+      kind: 'OB.OBPOSCashMgmt.UI.ModalDepositEvents',
+      i18nHeader: 'OBPOS_SelectDropDestinations',
+      name: 'modaldropevents',
+      type: 'DataDropEvents'
     }]
   }],
+
 
   init: function () {
     this.inherited(arguments);
@@ -81,15 +134,21 @@ enyo.kind({
 
     //finished
     this.model.on('change:finished', function () {
-      this.doShowPopup({
-        popup: 'modalFinishedMgmt'
-      });
+      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_LblDone'), OB.I18N.getLabel('OBPOS_FinishCashMgmtDialog'), [{
+        label: OB.I18N.getLabel('OBMOBC_LblOk'),
+        action: function () {
+          OB.POS.navigate('retail.pointofsale');
+        }
+      }]);
     }, this);
     //finishedWrongly
     this.model.on('change:finishedWrongly', function () {
-      this.doShowPopup({
-        popup: 'modalFinishedWronglyMgmt'
-      });
+      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_CashMgmtWronglyHeader'), OB.I18N.getLabel('OBPOS_CashMgmtWrongly'), [{
+        label: OB.I18N.getLabel('OBMOBC_LblOk'),
+        action: function () {
+          OB.POS.navigate('retail.pointofsale');
+        }
+      }]);
     }, this);
   }
 });

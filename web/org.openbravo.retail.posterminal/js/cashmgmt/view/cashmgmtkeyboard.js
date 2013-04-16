@@ -22,7 +22,7 @@ enyo.kind({
       permission: key,
       action: function (keyboard, txt) {
         txt = OB.I18N.parseNumber(txt);
-        keyboard.owner.currentPayment = {
+        keyboard.owner.owner.owner.currentPayment = {
           id: id,
           amount: txt,
           identifier: identifier,
@@ -51,7 +51,7 @@ enyo.kind({
     _.bind(this.getPayment, this);
 
 
-    this.owner.model.getData('DataCashMgmtPaymentMethod').each(function (paymentMethod) {
+    this.owner.owner.owner.model.getData('DataCashMgmtPaymentMethod').each(function (paymentMethod) {
       var payment = paymentMethod.get('payment');
       if (paymentMethod.get('allowdeposits')) {
         buttons.push({

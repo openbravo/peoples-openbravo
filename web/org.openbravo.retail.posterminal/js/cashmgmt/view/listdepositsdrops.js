@@ -269,7 +269,7 @@ enyo.kind({
   init: function () {
     // this.owner is the window (OB.UI.WindowView)
     // this.parent is the DOM object on top of the list (usually a DIV)
-    this.$.depositDropsList.setCollection(this.owner.model.getData('DataDepositsDrops'));
+    this.$.depositDropsList.setCollection(this.owner.owner.owner.model.getData('DataDepositsDrops'));
     this.$.titleLbl.setContent(OB.I18N.getLabel('OBPOS_LblCashManagement'));
   }
 });

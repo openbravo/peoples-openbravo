@@ -21,20 +21,6 @@ enyo.kind({
       // process info
       style: 'padding: 10px; float: left; width: 320px; line-height: 23px;',
       name: 'infoLbl'
-    }, {
-      style: 'padding: 5px; float: right;',
-      components: [{
-        kind: 'OB.UI.CancelButton'
-      }]
-    }, {
-      // done button
-      style: 'width: 100%; float: left;',
-      attributes: {
-        align: 'center'
-      },
-      components: [{
-        kind: 'OB.OBPOSCashMgmt.UI.DoneButton'
-      }]
     }]
   }],
   initComponents: function () {
