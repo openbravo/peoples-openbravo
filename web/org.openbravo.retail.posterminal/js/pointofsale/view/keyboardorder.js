@@ -117,16 +117,16 @@ enyo.kind({
           return true;
         }
         if (keyboard.line && keyboard.line.get('product').get('isEditableQty') === false) {
-               me.doShowPopup({
-              popup: 'modalNotEditableLine'
-            });
-            return true;
+          me.doShowPopup({
+            popup: 'modalNotEditableLine'
+          });
+          return true;
         }
         if (keyboard.line) {
           keyboard.receipt.removeUnit(keyboard.line, value);
           keyboard.receipt.trigger('scan');
         }
-    };
+        };
 
     this.addCommand('line:qty', {
       action: function (keyboard, txt) {

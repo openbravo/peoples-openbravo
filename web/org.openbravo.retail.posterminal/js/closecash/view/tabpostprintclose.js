@@ -66,9 +66,9 @@ enyo.kind({
     this.render();
   },
   render: function () {
-    if(this.i18nLabel){
+    if (this.i18nLabel) {
       this.$.totalLbl.setContent(OB.I18N.getLabel(this.i18nLabel));
-    }else{
+    } else {
       this.$.totalLbl.setContent(this.label);
     }
     this.$.totalQty.setContent(OB.I18N.formatCurrency(this.value));
@@ -76,9 +76,9 @@ enyo.kind({
   initComponents: function () {
     this.inherited(arguments);
     if ((this.label || this.i18nLabel) && this.value) {
-      if(this.i18nLabel){
+      if (this.i18nLabel) {
         this.$.totalLbl.setContent(OB.I18N.getLabel(this.i18nLabel));
-      }else{
+      } else {
         this.$.totalLbl.setContent(this.label);
       }
       this.$.totalQty.setContent(this.value);
@@ -128,9 +128,9 @@ enyo.kind({
     this.render();
   },
   render: function () {
-    if(this.i18nLabel){
+    if (this.i18nLabel) {
       this.$.itemLbl.setContent(OB.I18N.getLabel(this.i18nLabel));
-    }else{
+    } else {
       this.$.itemLbl.setContent(this.label);
     }
     this.$.itemQty.setContent(OB.I18N.formatCurrency(this.value));
@@ -430,7 +430,7 @@ enyo.kind({
           classes: 'span12',
           components: [{
             style: 'padding: 10px; border-bottom: 1px solid #cccccc; text-align:center;',
-            initComponents: function(){
+            initComponents: function () {
               this.setContent(OB.I18N.getLabel('OBPOS_LblStep4of4'));
             }
           }]

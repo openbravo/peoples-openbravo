@@ -23,27 +23,27 @@ enyo.kind({
     }, {
       // process info
       style: 'padding: 5px',
-      initialize: function(){
+      initialize: function () {
         this.setContent(OB.I18N.getLabel('OBPOS_LblCashUpProcess'));
       }
     }, {
       style: 'padding: 3px',
-      initialize: function(){
+      initialize: function () {
         this.setContent(OB.I18N.getLabel('OBPOS_LblStep1'));
       }
     }, {
       style: 'padding: 3px',
-      initialize: function(){
+      initialize: function () {
         this.setContent(OB.I18N.getLabel('OBPOS_LblStep2'));
       }
     }, {
       style: 'padding: 3px',
-      initialize: function(){
+      initialize: function () {
         this.setContent(OB.I18N.getLabel('OBPOS_LblStep3'));
       }
     }, {
       style: 'padding: 3px',
-      initialize: function(){
+      initialize: function () {
         this.setContent(OB.I18N.getLabel('OBPOS_LblStep4'));
       }
     }]

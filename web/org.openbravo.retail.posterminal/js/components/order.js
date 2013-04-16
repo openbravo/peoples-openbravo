@@ -334,12 +334,12 @@ enyo.kind({
         }
         this.$.divText.show();
       } else {
-		this.$.listOrderLines.children[4].children[0].setContent(OB.I18N.getLabel('OBPOS_ReceiptNew'));
-		
-		// We have to ensure that there is not another handler showing this div
-		if (this.$.divText.content === OB.I18N.getLabel('OBPOS_QuotationUnderEvaluation') || this.$.divText.content === OB.I18N.getLabel('OBPOS_QuotationDraft')) {
-		  this.$.divText.hide();
-		}
+        this.$.listOrderLines.children[4].children[0].setContent(OB.I18N.getLabel('OBPOS_ReceiptNew'));
+
+        // We have to ensure that there is not another handler showing this div
+        if (this.$.divText.content === OB.I18N.getLabel('OBPOS_QuotationUnderEvaluation') || this.$.divText.content === OB.I18N.getLabel('OBPOS_QuotationDraft')) {
+          this.$.divText.hide();
+        }
       }
     }, this);
     this.order.on('change:hasbeenpaid', function (model) {

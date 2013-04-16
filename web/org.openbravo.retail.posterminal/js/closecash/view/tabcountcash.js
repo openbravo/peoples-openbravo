@@ -128,7 +128,7 @@ enyo.kind({
             classes: 'span12',
             components: [{
               style: 'padding: 10px; border-bottom: 1px solid #cccccc; text-align:center;',
-              initComponents: function(){
+              initComponents: function () {
                 this.setContent(OB.I18N.getLabel('OBPOS_LblStep2of4'));
               }
             }]
@@ -143,17 +143,17 @@ enyo.kind({
                 style: 'border-bottom: 1px solid #cccccc;',
                 components: [{
                   style: 'padding: 10px 20px 10px 10px; float: left; width: 32%',
-                  initComponents: function(){
+                  initComponents: function () {
                     this.setContent(OB.I18N.getLabel('OBPOS_LblPaymentMethod'));
                   }
                 }, {
                   style: 'padding: 10px 20px 10px 0px; float: left; width: 39%',
-                  initComponents: function(){
+                  initComponents: function () {
                     this.setContent(OB.I18N.getLabel('OBPOS_LblExpected'));
                   }
                 }, {
                   style: 'padding: 10px 0px 10px 0px;  float: left;',
-                  initComponents: function(){
+                  initComponents: function () {
                     this.setContent(OB.I18N.getLabel('OBPOS_LblCounted'));
                   }
                 }]
@@ -195,7 +195,7 @@ enyo.kind({
                 components: [{
                   name: 'totalLbl',
                   style: 'padding: 10px 20px 10px 10px; float: left; width: 32%;',
-                  initComponents: function(){
+                  initComponents: function () {
                     this.setContent(OB.I18N.getLabel('OBPOS_ReceiptTotal'));
                   }
                 }, {

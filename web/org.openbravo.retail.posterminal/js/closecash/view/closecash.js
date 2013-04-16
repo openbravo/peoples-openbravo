@@ -29,8 +29,8 @@ enyo.kind({
     }
     this.doChangeStep();
   },
-  initialize: function(){
-    if(this.i18nLabel){
+  initialize: function () {
+    if (this.i18nLabel) {
       this.setContent(OB.I18N.getLabel(this.i18nLabel));
     }
   }
@@ -61,7 +61,7 @@ enyo.kind({
     handlers: {
       onDisablePreviousButton: 'disablePreviousButton'
     },
-    disablePreviousButton: function(inSender, inEvent){
+    disablePreviousButton: function (inSender, inEvent) {
       this.setDisabled(inEvent.disable);
       if (this.hasClass('btn-over')) {
         this.removeClass('btn-over');
@@ -83,7 +83,7 @@ enyo.kind({
     handlers: {
       onDisableNextButton: 'disableNextButton'
     },
-    disableNextButton: function(inSender, inEvent){
+    disableNextButton: function (inSender, inEvent) {
       this.setDisabled(inEvent.disable);
       this.setContent(OB.I18N.getLabel('OBPOS_LblNextStep'));
       if (this.model.get('step') === 4) {
@@ -120,25 +120,25 @@ enyo.kind({
     onDisablePreviousButton: '',
     onDisableNextButton: ''
   },
-    components: [{
-      kind: 'OB.UI.MultiColumn',
-      name: 'cashupMultiColumn',
-      leftToolbar: {
-        kind: 'OB.OBPOSCashUp.UI.LeftToolbarImpl',
-        name: 'leftToolbar',
-        showMenu: false,
-        showWindowsMenu: false
-      },
-      rightToolbar: {
-        kind: 'OB.OBPOSCashUp.UI.RightToolbarImpl',
-        name: 'rightToolbar',
-        showMenu: false,
-        showWindowsMenu: false
-      },
-      leftPanel: {
-        name: 'cashupLeftPanel',
-        components: [{
-      classes: 'span12',
+  components: [{
+    kind: 'OB.UI.MultiColumn',
+    name: 'cashupMultiColumn',
+    leftToolbar: {
+      kind: 'OB.OBPOSCashUp.UI.LeftToolbarImpl',
+      name: 'leftToolbar',
+      showMenu: false,
+      showWindowsMenu: false
+    },
+    rightToolbar: {
+      kind: 'OB.OBPOSCashUp.UI.RightToolbarImpl',
+      name: 'rightToolbar',
+      showMenu: false,
+      showWindowsMenu: false
+    },
+    leftPanel: {
+      name: 'cashupLeftPanel',
+      components: [{
+        classes: 'span12',
         kind: 'OB.OBPOSCashUp.UI.ListPendingReceipts',
         name: 'listPendingReceipts'
       }, {
@@ -157,7 +157,7 @@ enyo.kind({
         name: 'postPrintClose',
         showing: false
       }]
-    }, 
+    },
     rightPanel: {
       classes: 'span12',
       name: 'cashupRightPanel',
@@ -167,15 +167,15 @@ enyo.kind({
       }, {
         kind: 'OB.OBPOSCashUp.UI.CashUpKeyboard',
         name: 'cashUpKeyboard'
-    }, ]
-  }
-    },{
-      kind: 'OB.UI.ModalCancel',
-      name: 'modalCancel'
-    }, {
-      kind: 'OB.OBPOSCashUp.UI.modalPendingToProcess',
-      name: 'modalPendingToProcess'
-    }],
+      }, ]
+    }
+  }, {
+    kind: 'OB.UI.ModalCancel',
+    name: 'modalCancel'
+  }, {
+    kind: 'OB.OBPOSCashUp.UI.modalPendingToProcess',
+    name: 'modalPendingToProcess'
+  }],
   init: function () {
     this.inherited(arguments);
 
@@ -285,7 +285,7 @@ enyo.kind({
       //send cash up to the server
       this.model.processAndFinishCashUp();
     } else {
-      if(inEvent.originator.stepCount === 0){
+      if (inEvent.originator.stepCount === 0) {
         OB.POS.navigate('retail.pointofsale');
         return true;
       }

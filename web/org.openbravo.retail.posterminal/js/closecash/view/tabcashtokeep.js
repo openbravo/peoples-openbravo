@@ -35,7 +35,7 @@ enyo.kind({
   },
   initComponents: function () {
     this.inherited(arguments);
-    if(this.i18nLabel){
+    if (this.i18nLabel) {
       this.$.lbl.setContent(OB.I18N.getLabel(this.i18nLabel));
       return;
     }
@@ -95,7 +95,7 @@ enyo.kind({
         style: 'display: table-row;',
         components: [{
           style: 'vertical-align: middle; display: table-cell; ',
-          initComponents: function(){
+          initComponents: function () {
             this.setContent(OB.I18N.getLabel('OBPOS_LblOther'));
           }
         }, {
