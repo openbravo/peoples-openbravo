@@ -538,7 +538,7 @@
     DBMS_OUTPUT.PUT_LINE('Synchronize PO Field') ;
    UPDATE AD_FIELD
       SET NAME=
-        (SELECT COALESCE(T.PO_NAME, e.PO_NAME, t.name, e.name)
+        (SELECT COALESCE(T.PO_NAME, (CASE WHEN e.PO_NAME='' THEN e.name ELSE COALESCE(e.PO_NAME,e.name) END), t.name, e.name)
         FROM AD_COLUMN c,
              AD_MODULE M,
              AD_ELEMENT e, AD_ELEMENT_TRL T
@@ -548,7 +548,7 @@
           AND AD_FIELD.AD_MODULE_ID = M.AD_MODULE_ID
           AND T.AD_LANGUAGE = M.AD_LANGUAGE
           union
-      SELECT COALESCE(e.PO_NAME, e.name)
+      SELECT (CASE WHEN e.PO_NAME='' THEN e.name ELSE COALESCE(e.PO_NAME,e.name) END)
         FROM AD_COLUMN c,
              AD_MODULE M, AD_MODULE M2,
              AD_ELEMENT e
@@ -611,7 +611,7 @@
           AND AD_FIELD.AD_MODULE_ID = M.AD_MODULE_ID
           AND (M.ISINDEVELOPMENT='Y' OR v_TemplateInDev ='Y')
           AND T.AD_LANGUAGE = M.AD_LANGUAGE
-          AND (AD_FIELD.NAME != COALESCE(T.PO_NAME, e.PO_NAME, t.name, e.name)
+          AND (AD_FIELD.NAME != COALESCE(T.PO_NAME, (CASE WHEN e.PO_NAME='' THEN e.name ELSE COALESCE(e.PO_NAME,e.name) END), t.name, e.name)
              OR COALESCE(TO_CHAR(AD_FIELD.Description), ' ')<>COALESCE(TO_CHAR(T.PO_Description), TO_CHAR(e.PO_Description), to_char(t.description), to_char(e.description), ' ')
              OR COALESCE(TO_CHAR(AD_FIELD.Help), ' ')<>COALESCE(TO_CHAR(T.PO_Help), TO_CHAR(e.PO_Help), to_char(t.help), to_char(e.help), ' '))
           union
@@ -625,7 +625,7 @@
           AND (M.ISINDEVELOPMENT='Y' OR v_TemplateInDev ='Y')
           AND E.AD_MODULE_ID = M2.AD_MODULE_ID
           AND M2.AD_LANGUAGE = M.AD_LANGUAGE
-          AND (AD_FIELD.NAME != e.PO_NAME
+          AND (AD_FIELD.NAME != (CASE WHEN e.PO_NAME='' THEN e.name ELSE COALESCE(e.PO_NAME,e.name) END)
              OR COALESCE(TO_CHAR(AD_FIELD.Description), ' ')<>COALESCE(TO_CHAR(e.PO_Description), to_char(e.description), ' ')
              OR COALESCE(TO_CHAR(AD_FIELD.Help), ' ')<>COALESCE(TO_CHAR(e.PO_Help), to_char(e.help), ' ')))
       AND EXISTS
@@ -678,7 +678,7 @@
       AND M.AD_MODULE_ID = F.AD_MODULE_ID
       AND (M.ISINDEVELOPMENT='Y' OR v_TemplateInDev ='Y')
       AND M.AD_LANGUAGE != E.AD_LANGUAGE
-      AND(AD_FIELD_TRL.NAME<>e.PO_Name OR COALESCE(TO_CHAR(AD_FIELD_TRL.Description), ' ')<>COALESCE(TO_CHAR(e.PO_Description), ' ')
+      AND(AD_FIELD_TRL.NAME<>(CASE WHEN e.PO_NAME='' THEN e.name ELSE COALESCE(e.PO_NAME,e.name) END) OR COALESCE(TO_CHAR(AD_FIELD_TRL.Description), ' ')<>COALESCE(TO_CHAR(e.PO_Description), ' ')
       OR COALESCE(TO_CHAR(AD_FIELD_TRL.Help), ' ')<>COALESCE(TO_CHAR(e.PO_Help), ' '))
       )
       AND EXISTS
@@ -728,7 +728,7 @@
       AND (M.ISINDEVELOPMENT='Y' OR v_TemplateInDev ='Y')
       AND M1.AD_MODULE_ID = E.AD_MODULE_ID
       AND M.AD_LANGUAGE != M1.AD_LANGUAGE
-      AND(AD_FIELD_TRL.NAME<>e.PO_Name OR COALESCE(TO_CHAR(AD_FIELD_TRL.Description), ' ')<>COALESCE(TO_CHAR(e.PO_Description), ' ')
+      AND(AD_FIELD_TRL.NAME<>(CASE WHEN e.PO_NAME='' THEN e.name ELSE COALESCE(e.PO_NAME,e.name) END) OR COALESCE(TO_CHAR(AD_FIELD_TRL.Description), ' ')<>COALESCE(TO_CHAR(e.PO_Description), ' ')
       OR COALESCE(TO_CHAR(AD_FIELD_TRL.Help), ' ')<>COALESCE(TO_CHAR(e.PO_Help), ' '))
       )
       AND EXISTS
