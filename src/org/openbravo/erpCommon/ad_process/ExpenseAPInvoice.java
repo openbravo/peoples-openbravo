@@ -340,8 +340,8 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
             ExpenseAPInvoiceData.insertLine(conn, this, data[i].adClientId, data[i].adOrgId,
                 strcInvoiceId, "", String.valueOf(line), "", data[i].mProductId, "",
                 data[i].description, "", strmProductUomId, String.valueOf(qty), data[i].cUomId,
-                strPricestd, strPricelist, strcTaxID, (new BigDecimal(strPricestd).multiply(qty))
-                    .setScale(stdPrecision, BigDecimal.ROUND_HALF_UP).toPlainString(), "",
+                strPricestd, strPricelist, strcTaxID, ((new BigDecimal(strPricestd).setScale(
+                    stdPrecision, BigDecimal.ROUND_HALF_UP)).multiply(qty)).toPlainString(), "",
                 strPricestd, strPricelimit, "", "", "", "Y", "0", "", "", strcInvoiceLineId, "N",
                 vars.getUser(), vars.getUser(), isDeferred, planType, periodNumber,
                 startingPeriodId, data[i].cProjectId, data[i].cCostcenterId, data[i].aAssetId,
