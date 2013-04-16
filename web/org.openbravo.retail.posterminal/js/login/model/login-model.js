@@ -45,6 +45,172 @@
         }
       });
 
+      this.addPropertiesLoader({
+        properties: ['context'],
+        sync: false,
+        loadFunction: function (terminalModel) {
+          console.log('Loading... ' + this.properties);
+          var me = this;
+          new OB.DS.Request('org.openbravo.mobile.core.login.Context').exec({
+            terminal: OB.MobileApp.model.get('terminalName')
+          }, function (data) {
+            if (data[0]) {
+              terminalModel.set(me.properties[0], data[0]);
+              terminalModel.propertiesReady(me.properties);
+            }
+          });
+        }
+      });
+
+      this.addPropertiesLoader({
+        properties: ['payments', 'paymentcash'],
+        loadFunction: function (terminalModel) {
+          console.log('loading... ' + this.properties);
+          var me = this;
+          new OB.DS.Request('org.openbravo.retail.posterminal.term.Payments').exec({
+            pos: terminalModel.get('terminal').id
+          }, function (data) {
+            if (data) {
+              var i, max, paymentlegacy, paymentcash, paymentcashcurrency;
+              terminalModel.set(me.properties[0], data);
+              terminalModel.paymentnames = {};
+              for (i = 0, max = data.length; i < max; i++) {
+                terminalModel.paymentnames[data[i].payment.searchKey] = data[i];
+                if (data[i].payment.searchKey === 'OBPOS_payment.cash') {
+                  paymentlegacy = data[i].payment.searchKey;
+                }
+                if (data[i].paymentMethod.iscash) {
+                  paymentcash = data[i].payment.searchKey;
+                }
+                if (data[i].paymentMethod.iscash && data[i].paymentMethod.currency === terminalModel.get('terminal').currency) {
+                  paymentcashcurrency = data[i].payment.searchKey;
+                }
+              }
+              // sets the default payment method
+              terminalModel.set(me.properties[1], paymentcashcurrency || paymentcash || paymentlegacy);
+              terminalModel.propertiesReady(me.properties);
+            }
+          });
+        }
+      });
+
+      this.addPropertiesLoader({
+        properties: ['businesspartner'],
+        loadFunction: function (terminalModel) {
+          console.log('loading... ' + this.properties);
+          terminalModel.set('businesspartner', terminalModel.get('terminal').businessPartner);
+          terminalModel.propertiesReady(this.properties);
+        }
+      });
+
+      this.addPropertiesLoader({
+        properties: ['location'],
+        loadFunction: function (terminalModel) {
+          console.log('loading... ' + this.properties);
+          var me = this;
+          new OB.DS.Request('org.openbravo.retail.posterminal.term.Location').exec({
+            org: terminalModel.get('terminal').organization
+          }, function (data) {
+            if (data[0]) {
+              terminalModel.set(me.properties[0], data[0]);
+              terminalModel.propertiesReady(me.properties);
+            }
+          });
+        }
+      });
+
+      this.addPropertiesLoader({
+        properties: ['pricelist'],
+        loadFunction: function (terminalModel) {
+          console.log('loading... ' + this.properties);
+          var me = this;
+          new OB.DS.Request('org.openbravo.retail.posterminal.term.PriceList').exec({
+            pricelist: terminalModel.get('terminal').priceList
+          }, function (data) {
+            if (data[0]) {
+              terminalModel.set(me.properties[0], data[0]);
+              terminalModel.propertiesReady(me.properties);
+            }
+          });
+        }
+      });
+
+      this.addPropertiesLoader({
+        properties: ['warehouses'],
+        loadFunction: function (terminalModel) {
+          console.log('loading... ' + this.properties);
+          var me = this;
+          new OB.DS.Request('org.openbravo.retail.posterminal.term.Warehouses').exec({
+            organization: terminalModel.get('terminal').organization
+          }, function (data) {
+            if (data && data.exception) {
+              //MP17
+              terminalModel.set(me.properties[0], []);
+            } else {
+              terminalModel.set(me.properties[0], data);
+            }
+            terminalModel.propertiesReady(me.properties);
+          });
+        }
+      });
+
+      this.addPropertiesLoader({
+        properties: ['writableOrganizations'],
+        loadFunction: function (terminalModel) {
+          console.log('loading... ' + this.properties);
+          var me = this;
+          new OB.DS.Process('org.openbravo.retail.posterminal.term.WritableOrganizations').exec({
+
+          }, function (data) {
+            if (data.length > 0) {
+              terminalModel.set(me.properties[0], data);
+              terminalModel.propertiesReady(me.properties);
+            }
+          });
+        }
+      });
+
+      this.addPropertiesLoader({
+        properties: ['pricelistversion'],
+        loadFunction: function (terminalModel) {
+          console.log('loading... ' + this.properties);
+          var me = this;
+          new OB.DS.Request('org.openbravo.retail.posterminal.term.PriceListVersion').exec({
+            pricelist: terminalModel.get('terminal').priceList
+          }, function (data) {
+            if (data[0]) {
+              terminalModel.set(me.properties[0], data[0]);
+              terminalModel.propertiesReady(me.properties);
+            }
+          });
+        }
+      });
+
+      this.addPropertiesLoader({
+        properties: ['currency'],
+        loadFunction: function (terminalModel) {
+          console.log('loading... ' + this.properties);
+          var me = this;
+          new OB.DS.Request('org.openbravo.retail.posterminal.term.Currency').exec({
+            currency: terminalModel.get('terminal').currency
+          }, function (data) {
+            if (data[0]) {
+              terminalModel.set(me.properties[0], data[0]);
+              //Precision used by arithmetics operations is set using the currency
+              OB.DEC.scale = data[0].pricePrecision;
+              terminalModel.propertiesReady(me.properties);
+            }
+          });
+        }
+      });
+
+      this.addPropertiesLoader({
+        properties: ['documentsequence', 'quotationDocumentSequence'],
+        loadFunction: function (terminalModel) {
+          console.log('loading... ' + this.properties);
+          terminalModel.setDocumentSequence();
+        }
+      });
 
       OB.Model.Terminal.prototype.initialize.call(this);
       OB.MobileApp.model.on('change:terminal', function () {
@@ -76,7 +242,6 @@
         OB.DS.commonParams = OB.DS.commonParams || {};
         OB.DS.commonParams.terminalName = this.get('terminalName');
       }
-
     },
 
     renderMain: function () {
@@ -108,13 +273,11 @@
         $LAB.setGlobalDefaults({
           AppendTo: 'body'
         });
-        //   OB.POS.cleanWindows();
+
         if (me.get('loggedOffline')) {
           OB.Format = JSON.parse(me.usermodel.get('formatInfo'));
 
           me.load();
-          // $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/StaticResources?_appName=WebPOS');
-          OB.POS.navigate('retail.pointofsale'); //TODO: this was in main.js, check it
           return;
         }
         $LAB.script('../../org.openbravo.client.kernel/OBCLKER_Kernel/Application').wait(function () {
@@ -129,8 +292,8 @@
 
           me.load();
 
-          //    $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/StaticResources?_appName=WebPOS');
-          OB.POS.navigate('retail.pointofsale'); //TODO: this was in main.js, check it
+          //$LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/StaticResources?_appName=WebPOS');
+          //OB.POS.navigate('retail.pointofsale'); //TODO: this was in main.js, check it
         });
       });
       if (OB.MobileApp.model.get('connectedToERP')) {
@@ -166,16 +329,7 @@
 
     cleanSessionInfo: function () {
       this.set('terminal', null);
-      this.set('payments', null);
-      this.set('paymentcash', null);
-      this.set('context', null);
-      this.set('permissions', null);
-      this.set('businesspartner', null);
-      this.set('location', null);
-      this.set('pricelist', null);
-      this.set('pricelistversion', null);
-      this.set('currency', null);
-      this.set('currencyPrecision', null);
+      this.cleanTerminalData();
     },
 
     preLoginActions: function () {
@@ -223,224 +377,61 @@
       });
     },
 
+    //model.get('terminal') is NOT cleaned
+    cleanTerminalData: function () {
+      _.each(this.get('propertiesLoaders'), function (curPropertiesToLoadProcess) {
+        _.each(curPropertiesToLoadProcess.properties, function (curProperty) {
+          this.set(curProperty, null);
+        }, this)
+      }, this);
+    },
+
     load: function () {
       var termInfo, i, max;
       if (this.get('loggedOffline')) {
+        debugger;
         termInfo = JSON.parse(this.usermodel.get('terminalinfo'));
-        this.set('payments', termInfo.payments);
+
         this.paymentnames = {};
         for (i = 0, max = termInfo.payments.length; i < max; i++) {
           this.paymentnames[termInfo.payments[i].payment.searchKey] = termInfo.payments[i];
         }
-        this.set('paymentcash', termInfo.paymentcash);
-        this.set('context', termInfo.context);
+
+        //Load from termInfo
+        _.each(this.get('propertiesLoaders'), function (curPropertiesToLoadProcess) {
+          _.each(curPropertiesToLoadProcess.properties, function (curProperty) {
+            this.set(curProperty, termInfo[curProperty]);
+          }, this)
+        }, this);
+
+        //Not included into array
         this.set('permissions', termInfo.permissions);
-        this.set('businesspartner', termInfo.businesspartner);
-        this.set('location', termInfo.location);
-        this.set('pricelist', termInfo.pricelist);
-        this.set('pricelistversion', termInfo.pricelistversion);
-        this.set('warehouses', termInfo.warehouses);
-        this.set('writableOrganizations', termInfo.writableOrganizations);
-        this.set('currency', termInfo.currency);
-        this.set('currencyPrecision', termInfo.currencyPrecision);
         this.set('orgUserId', termInfo.orgUserId);
         this.setDocumentSequence();
-        this.triggerReady();
+
+        this.paymentnames = {};
+        for (i = 0, max = termInfo.payments.length; i < max; i++) {
+          this.paymentnames[termInfo.payments[i].payment.searchKey] = termInfo.payments[i];
+        }
+
+        this.allPropertiesLoaded();
         return;
       }
 
-      // reset all application state.
-      //this.set('terminal', null);
-      this.set('payments', null);
-      this.set('paymentcash', null);
-      this.set('context', null);
-      this.set('businesspartner', null);
-      this.set('location', null);
-      this.set('pricelist', null);
-      this.set('pricelistversion', null);
-      this.set('currency', null);
-      this.set('currencyPrecision', null);
+      //Set array properties as null except terminal
+      this.cleanTerminalData();
       this.set('loggedOffline', false);
 
-      // Starting app
-      var me = this;
-      var params = {
-        terminal: OB.MobileApp.model.get('terminalName')
-      };
 
-      me.loadPayments();
-      me.loadContext();
-      me.loadBP();
-      me.loadLocation();
-      me.loadPriceList();
-      me.loadWarehouses();
-      me.loadWritableOrganizations();
-      me.loadPriceListVersion();
-      me.loadCurrency();
-      me.setDocumentSequence();
-    },
-
-    loadPayments: function () {
-      var me = this;
-      new OB.DS.Request('org.openbravo.retail.posterminal.term.Payments').exec({
-        pos: this.get('terminal').id
-      }, function (data) {
-        if (data) {
-          var i, max, paymentlegacy, paymentcash, paymentcashcurrency;
-          me.set('payments', data);
-          me.paymentnames = {};
-          for (i = 0, max = data.length; i < max; i++) {
-            me.paymentnames[data[i].payment.searchKey] = data[i];
-            if (data[i].payment.searchKey === 'OBPOS_payment.cash') {
-              paymentlegacy = data[i].payment.searchKey;
-            }
-            if (data[i].paymentMethod.iscash) {
-              paymentcash = data[i].payment.searchKey;
-            }
-            if (data[i].paymentMethod.iscash && data[i].paymentMethod.currency === me.get('terminal').currency) {
-              paymentcashcurrency = data[i].payment.searchKey;
-            }
-          }
-          // sets the default payment method
-          me.set('paymentcash', paymentcashcurrency || paymentcash || paymentlegacy);
-          me.triggerReady();
-        }
-      });
-    },
-
-    loadContext: function () {
-      var me = this;
-      new OB.DS.Request('org.openbravo.mobile.core.login.Context').exec({
-        terminal: OB.MobileApp.model.get('terminalName')
-      }, function (data) {
-        if (data[0]) {
-          me.set('context', data[0]);
-          me.triggerReady();
-        }
-      });
-    },
-
-    loadBP: function () {
-      this.set('businesspartner', this.get('terminal').businessPartner);
-    },
-
-    loadLocation: function () {
-      var me = this;
-      new OB.DS.Request('org.openbravo.retail.posterminal.term.Location').exec({
-        org: this.get('terminal').organization
-      }, function (data) {
-        if (data[0]) {
-          me.set('location', data[0]);
-        }
-      });
-    },
-
-    loadPriceList: function () {
-      var me = this;
-      new OB.DS.Request('org.openbravo.retail.posterminal.term.PriceList').exec({
-        pricelist: this.get('terminal').priceList
-      }, function (data) {
-        if (data[0]) {
-          me.set('pricelist', data[0]);
-        }
-      });
-    },
-
-    loadWarehouses: function () {
-      var me = this;
-      new OB.DS.Request('org.openbravo.retail.posterminal.term.Warehouses').exec({
-        organization: this.get('terminal').organization
-      }, function (data) {
-        if (data && data.exception) {
-          //MP17
-          me.set('warehouses', []);
-          me.triggerReady();
-        } else {
-          me.set('warehouses', data);
-          me.triggerReady();
-        }
-      });
-    },
-
-    loadWritableOrganizations: function () {
-      var me = this;
-      new OB.DS.Process('org.openbravo.retail.posterminal.term.WritableOrganizations').exec({
-
-      }, function (data) {
-        if (data.length > 0) {
-          me.set('writableOrganizations', data);
-          me.triggerReady();
-        }
-      });
-    },
-
-    loadPriceListVersion: function () {
-      var me = this;
-      new OB.DS.Request('org.openbravo.retail.posterminal.term.PriceListVersion').exec({
-        pricelist: this.get('terminal').priceList
-      }, function (data) {
-        if (data[0]) {
-          me.set('pricelistversion', data[0]);
-          me.triggerReady();
-        }
-      });
-    },
-
-    loadCurrency: function () {
-      var me = this;
-      new OB.DS.Request('org.openbravo.retail.posterminal.term.Currency').exec({
-        currency: this.get('terminal').currency
-      }, function (data) {
-        if (data[0]) {
-          me.set('currency', data[0]);
-          //Precision used by arithmetics operations is set using the currency
-          OB.DEC.scale = data[0].pricePrecision;
-          me.triggerReady();
-        }
-      });
-    },
-
-    setDocumentSequence: function () {
-      var me = this;
-      // Obtains the persisted document number (documentno of the last processed order)
-      OB.Dal.find(OB.Model.DocumentSequence, {
-        'posSearchKey': OB.MobileApp.model.get('terminal').searchKey
-      }, function (documentsequence) {
-        var lastInternalDocumentSequence, lastInternalQuotationSequence, max, maxquote;
-        if (documentsequence && documentsequence.length > 0) {
-          lastInternalDocumentSequence = documentsequence.at(0).get('documentSequence');
-          lastInternalQuotationSequence = documentsequence.at(0).get('quotationDocumentSequence');
-          // Compares the persisted document number with the fetched from the server
-          if (lastInternalDocumentSequence > OB.MobileApp.model.get('terminal').lastDocumentNumber) {
-            max = lastInternalDocumentSequence;
-          } else {
-            max = OB.MobileApp.model.get('terminal').lastDocumentNumber;
-          }
-          if (lastInternalQuotationSequence > OB.MobileApp.model.get('terminal').lastQuotationDocumentNumber) {
-            maxquote = lastInternalQuotationSequence;
-          } else {
-            maxquote = OB.MobileApp.model.get('terminal').lastQuotationDocumentNumber;
-          }
-          // Compares the maximum with the document number of the paid pending orders
-          me.compareDocSeqWithPendingOrdersAndSave(max, maxquote);
-        } else {
-          max = OB.MobileApp.model.get('terminal').lastDocumentNumber;
-          maxquote = OB.MobileApp.model.get('terminal').lastQuotationDocumentNumber;
-          // Compares the maximum with the document number of the paid pending orders
-          me.compareDocSeqWithPendingOrdersAndSave(max, maxquote);
-        }
-
-      }, function () {
-        var max = OB.MobileApp.model.get('terminal').lastDocumentNumber,
-            maxquote = OB.MobileApp.model.get('terminal').lastQuotationDocumentNumber;
-        // Compares the maximum with the document number of the paid pending orders
-        me.compareDocSeqWithPendingOrdersAndSave(max, maxquote);
-      });
+      //Loading the properties off the array
+      console.log('Starting to load properties based on properties loaders', this.get('propertiesLoaders'));
+      _.each(this.get('propertiesLoaders'), function (curProperty) {
+        curProperty.loadFunction(this);
+      }, this);
     },
 
     compareDocSeqWithPendingOrdersAndSave: function (maxDocumentSequence, maxQuotationDocumentSequence) {
-      var me = this,
-          orderDocNo, quotationDocNo;
+      var orderDocNo, quotationDocNo;
       // compare the last document number returned from the ERP with
       // the last document number of the unprocessed pending lines (if any)
       OB.Dal.find(OB.Model.Order, {}, function (fetchedOrderList) {
@@ -448,12 +439,12 @@
         if (!fetchedOrderList || fetchedOrderList.length === 0) {
           // There are no pending orders, the initial document sequence
           // will be the one fetched from the database
-          me.saveDocumentSequenceAndGo(maxDocumentSequence, maxQuotationDocumentSequence);
+          OB.MobileApp.model.saveDocumentSequenceAndGo(maxDocumentSequence, maxQuotationDocumentSequence);
         } else {
           // There are pending orders. The document sequence will be set
           // to the maximum of the pending order document sequence and the
           // document sequence retrieved from the server
-          maxDocumentSequencePendingOrders = me.getMaxDocumentSequenceFromPendingOrders(fetchedOrderList.models);
+          maxDocumentSequencePendingOrders = OB.MobileApp.model.getMaxDocumentSequenceFromPendingOrders(fetchedOrderList.models);
           if (maxDocumentSequencePendingOrders.orderDocNo > maxDocumentSequence) {
             orderDocNo = maxDocumentSequencePendingOrders.orderDocNo;
           } else {
@@ -464,12 +455,12 @@
           } else {
             quotationDocNo = maxQuotationDocumentSequence;
           }
-          me.saveDocumentSequenceAndGo(orderDocNo, quotationDocNo);
+          OB.MobileApp.model.saveDocumentSequenceAndGo(orderDocNo, quotationDocNo);
         }
       }, function () {
         // If c_order does not exist yet, go with the sequence
         // number fetched from the server
-        me.saveDocumentSequenceAndGo(maxDocumentSequence, maxQuotationDocumentSequence);
+        OB.MobileApp.model.saveDocumentSequenceAndGo(maxDocumentSequence, maxQuotationDocumentSequence);
       });
     },
 
@@ -503,16 +494,52 @@
     saveDocumentSequenceAndGo: function (documentSequence, quotationDocumentSequence) {
       this.set('documentsequence', documentSequence);
       this.set('quotationDocumentSequence', quotationDocumentSequence);
-      this.triggerReady();
+      this.propertiesReady(['documentsequence', 'quotationDocumentSequence']);
+    },
+
+    setDocumentSequence: function () {
+      // Obtains the persisted document number (documentno of the last processed order)
+      OB.Dal.find(OB.Model.DocumentSequence, {
+        'posSearchKey': OB.MobileApp.model.get('terminal').searchKey
+      }, function (documentsequence) {
+        var lastInternalDocumentSequence, lastInternalQuotationSequence, max, maxquote;
+        if (documentsequence && documentsequence.length > 0) {
+          lastInternalDocumentSequence = documentsequence.at(0).get('documentSequence');
+          lastInternalQuotationSequence = documentsequence.at(0).get('quotationDocumentSequence');
+          // Compares the persisted document number with the fetched from the server
+          if (lastInternalDocumentSequence > OB.MobileApp.model.get('terminal').lastDocumentNumber) {
+            max = lastInternalDocumentSequence;
+          } else {
+            max = OB.MobileApp.model.get('terminal').lastDocumentNumber;
+          }
+          if (lastInternalQuotationSequence > OB.MobileApp.model.get('terminal').lastQuotationDocumentNumber) {
+            maxquote = lastInternalQuotationSequence;
+          } else {
+            maxquote = OB.MobileApp.model.get('terminal').lastQuotationDocumentNumber;
+          }
+          // Compares the maximum with the document number of the paid pending orders
+          OB.MobileApp.model.compareDocSeqWithPendingOrdersAndSave(max, maxquote);
+        } else {
+          max = OB.MobileApp.model.get('terminal').lastDocumentNumber;
+          maxquote = OB.MobileApp.model.get('terminal').lastQuotationDocumentNumber;
+          // Compares the maximum with the document number of the paid pending orders
+          OB.MobileApp.model.compareDocSeqWithPendingOrdersAndSave(max, maxquote);
+        }
+
+      }, function () {
+        var max = OB.MobileApp.model.get('terminal').lastDocumentNumber,
+            maxquote = OB.MobileApp.model.get('terminal').lastQuotationDocumentNumber;
+        // Compares the maximum with the document number of the paid pending orders
+        OB.MobileApp.model.compareDocSeqWithPendingOrdersAndSave(max, maxquote);
+      });
     },
 
     saveDocumentSequenceInDB: function () {
       var me = this,
-          modelterminal = OB.MobileApp.model,
-          documentSequence = modelterminal.get('documentsequence'),
-          quotationDocumentSequence = modelterminal.get('quotationDocumentSequence'),
+          documentSequence = this.get('documentsequence'),
+          quotationDocumentSequence = this.get('quotationDocumentSequence'),
           criteria = {
-          'posSearchKey': OB.MobileApp.model.get('terminal').searchKey
+          'posSearchKey': this.get('terminal').searchKey
           };
       OB.Dal.find(OB.Model.DocumentSequence, criteria, function (documentSequenceList) {
         var docSeq;
@@ -525,7 +552,7 @@
         } else {
           // There is not a document sequence for the pos, create it
           docSeq = new OB.Model.DocumentSequence();
-          docSeq.set('posSearchKey', OB.MobileApp.model.get('terminal').searchKey);
+          docSeq.set('posSearchKey', me.get('terminal').searchKey);
           docSeq.set('documentSequence', documentSequence);
           docSeq.set('quotationDocumentSequence', quotationDocumentSequence);
         }
@@ -535,28 +562,29 @@
       });
     },
 
-    triggerReady: function () {
+    //DEVELOPER: this function will be automatically called when all the properties defined in
+    //this.get('propertiesLoaders') are loaded. To indicate that a property is loaded
+    //me.propertiesReady(properties) should be executed by loadFunction of each property
+    allPropertiesLoaded: function () {
+      console.log('properties has been loaded successfully', this.attributes);
       var undef, loadModelsIncFunc, loadModelsTotalFunc, minTotalRefresh, minIncRefresh;
-
-      if (this.get('payments') && this.get('pricelistversion') && this.get('warehouses') && this.get('currency') && this.get('context') && this.get('writableOrganizations') && (this.get('documentsequence') !== undef || this.get('documentsequence') === 0)) {
-        OB.MobileApp.model.loggingIn = false;
-        if (!this.get('loggedOffline')) {
-          //In online mode, we save the terminal information in the local db
-          this.usermodel.set('terminalinfo', JSON.stringify(this));
-          OB.Dal.save(this.usermodel, function () {}, function () {
-            window.console.error(arguments);
-          });
-        }
-        minIncRefresh = OB.MobileApp.model.get('terminal').terminalType.minutestorefreshdatainc * 60 * 1000;
-        if (minIncRefresh) {
-          loadModelsIncFunc = function () {
-            OB.MobileApp.model.loadModels(null, true);
-            setTimeout(loadModelsIncFunc, minIncRefresh);
-          };
-          setTimeout(loadModelsIncFunc, minIncRefresh);
-        }
-        this.trigger('ready');
+      this.loggingIn = false;
+      if (!this.get('loggedOffline')) {
+        //In online mode, we save the terminal information in the local db
+        this.usermodel.set('terminalinfo', JSON.stringify(this));
+        OB.Dal.save(this.usermodel, function () {}, function () {
+          window.console.error(arguments);
+        });
       }
+      minIncRefresh = this.get('terminal').terminalType.minutestorefreshdatainc * 60 * 1000;
+      if (minIncRefresh) {
+        loadModelsIncFunc = function () {
+          this.loadModels(null, true);
+          setTimeout(loadModelsIncFunc, minIncRefresh);
+        };
+        setTimeout(loadModelsIncFunc, minIncRefresh);
+      }
+      this.trigger('ready');
     },
 
     getPaymentName: function (key) {
