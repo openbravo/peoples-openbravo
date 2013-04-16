@@ -186,6 +186,7 @@
 <!--054FAFB28A504CD2B8ACB971342C2CA8-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--054FAFB28A504CD2B8ACB971342C2CA8-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--054FAFB28A504CD2B8ACB971342C2CA8-->  <NAME><![CDATA[Cash Up Date]]></NAME>
+<!--054FAFB28A504CD2B8ACB971342C2CA8-->  <DESCRIPTION><![CDATA[Cash Up Date]]></DESCRIPTION>
 <!--054FAFB28A504CD2B8ACB971342C2CA8-->  <COLUMNNAME><![CDATA[Cashupdate]]></COLUMNNAME>
 <!--054FAFB28A504CD2B8ACB971342C2CA8-->  <AD_TABLE_ID><![CDATA[47475EB0CD6542A98C6E1B3B0E914BD7]]></AD_TABLE_ID>
 <!--054FAFB28A504CD2B8ACB971342C2CA8-->  <AD_REFERENCE_ID><![CDATA[15]]></AD_REFERENCE_ID>
@@ -434,7 +435,8 @@
 <!--0A675AFE14144BA28A45ACD081C1E2C9-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--0A675AFE14144BA28A45ACD081C1E2C9-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--0A675AFE14144BA28A45ACD081C1E2C9-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--0A675AFE14144BA28A45ACD081C1E2C9-->  <NAME><![CDATA[Payment type]]></NAME>
+<!--0A675AFE14144BA28A45ACD081C1E2C9-->  <NAME><![CDATA[Payment Type]]></NAME>
+<!--0A675AFE14144BA28A45ACD081C1E2C9-->  <DESCRIPTION><![CDATA[Payment Type]]></DESCRIPTION>
 <!--0A675AFE14144BA28A45ACD081C1E2C9-->  <COLUMNNAME><![CDATA[Obpos_App_Payment_ID]]></COLUMNNAME>
 <!--0A675AFE14144BA28A45ACD081C1E2C9-->  <AD_TABLE_ID><![CDATA[060F457B82494B81B7F3DE4DE60B3DC9]]></AD_TABLE_ID>
 <!--0A675AFE14144BA28A45ACD081C1E2C9-->  <AD_REFERENCE_ID><![CDATA[19]]></AD_REFERENCE_ID>
@@ -577,7 +579,7 @@
 <!--12556DBF01154B3A85F77D7587583391-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--12556DBF01154B3A85F77D7587583391-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--12556DBF01154B3A85F77D7587583391-->  <NAME><![CDATA[C_Glitem_Dropdep_ID]]></NAME>
-<!--12556DBF01154B3A85F77D7587583391-->  <DESCRIPTION><![CDATA[G/L Item for Cash drop/deposit]]></DESCRIPTION>
+<!--12556DBF01154B3A85F77D7587583391-->  <DESCRIPTION><![CDATA[G/L item for cash drop/deposit]]></DESCRIPTION>
 <!--12556DBF01154B3A85F77D7587583391-->  <HELP><![CDATA[In case of automated funds movement in cash up process, two new transactions for this movement are created both in current and destination financial accounts. These transactions will use this G/L Item.]]></HELP>
 <!--12556DBF01154B3A85F77D7587583391-->  <COLUMNNAME><![CDATA[C_Glitem_Dropdep_ID]]></COLUMNNAME>
 <!--12556DBF01154B3A85F77D7587583391-->  <AD_TABLE_ID><![CDATA[B096FDF43917472D8FDE9693E9CCFFD4]]></AD_TABLE_ID>
@@ -929,7 +931,7 @@
 <!--2286CFE5E2074432B7723288554677F6-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--2286CFE5E2074432B7723288554677F6-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--2286CFE5E2074432B7723288554677F6-->  <NAME><![CDATA[Allowdontmove]]></NAME>
-<!--2286CFE5E2074432B7723288554677F6-->  <DESCRIPTION><![CDATA[Allow not to Move]]></DESCRIPTION>
+<!--2286CFE5E2074432B7723288554677F6-->  <DESCRIPTION><![CDATA[Allow not to move]]></DESCRIPTION>
 <!--2286CFE5E2074432B7723288554677F6-->  <HELP><![CDATA[Allows user to decide to keep all counted amount in current financial account.]]></HELP>
 <!--2286CFE5E2074432B7723288554677F6-->  <COLUMNNAME><![CDATA[Allowdontmove]]></COLUMNNAME>
 <!--2286CFE5E2074432B7723288554677F6-->  <AD_TABLE_ID><![CDATA[B096FDF43917472D8FDE9693E9CCFFD4]]></AD_TABLE_ID>
@@ -1281,7 +1283,7 @@
 <!--349309D809134679955395B9655E8236-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--349309D809134679955395B9655E8236-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--349309D809134679955395B9655E8236-->  <NAME><![CDATA[Cash differences]]></NAME>
-<!--349309D809134679955395B9655E8236-->  <DESCRIPTION><![CDATA[G/L Item for cash differences]]></DESCRIPTION>
+<!--349309D809134679955395B9655E8236-->  <DESCRIPTION><![CDATA[G/L item for cash differences]]></DESCRIPTION>
 <!--349309D809134679955395B9655E8236-->  <HELP><![CDATA[This is the G/L Item used in Cash Up process in case there are differences between the expected and counted amount in this payment type. In this case a new transaction with this G/L Item and difference between expected and counted amounts will be created.]]></HELP>
 <!--349309D809134679955395B9655E8236-->  <COLUMNNAME><![CDATA[C_Glitem_Diff_ID]]></COLUMNNAME>
 <!--349309D809134679955395B9655E8236-->  <AD_TABLE_ID><![CDATA[B096FDF43917472D8FDE9693E9CCFFD4]]></AD_TABLE_ID>
@@ -2307,6 +2309,7 @@ The types flagged in this way, are required to implement a js method that will b
 <!--6D68F7DFC208402D8B9AB2807EB44515-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--6D68F7DFC208402D8B9AB2807EB44515-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--6D68F7DFC208402D8B9AB2807EB44515-->  <NAME><![CDATA[Minutestorefreshdatainc]]></NAME>
+<!--6D68F7DFC208402D8B9AB2807EB44515-->  <DESCRIPTION><![CDATA[Time to incrementally refresh masterdata (in minutes)]]></DESCRIPTION>
 <!--6D68F7DFC208402D8B9AB2807EB44515-->  <HELP><![CDATA[This field allows the user to specify the interval of time between every incremental refresh of the master data (which includes business partners, products, tax information, ...). This time is specified in minutes.
 
 The incremental refresh is much lighter, less expensive and therefore can be completed quicker than a total refresh, but will not detect deletions of master data records.
@@ -2734,6 +2737,7 @@ Usually, company's internal identifiers for various records (products, customers
 <!--85B10D9ED30A4CABA8D2C1DE28BDE636-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--85B10D9ED30A4CABA8D2C1DE28BDE636-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--85B10D9ED30A4CABA8D2C1DE28BDE636-->  <NAME><![CDATA[Minutestorefreshdatatotal]]></NAME>
+<!--85B10D9ED30A4CABA8D2C1DE28BDE636-->  <DESCRIPTION><![CDATA[Time to fully refresh masterdata (in minutes)]]></DESCRIPTION>
 <!--85B10D9ED30A4CABA8D2C1DE28BDE636-->  <HELP><![CDATA[This field allows the user to specify the interval of time between every refresh of the master data (which includes business partners, products, tax information, ...). This time is specified in minutes.
 
 The total refresh can be a very expensive operation, and if done too much frequently it can tax the server, and decrease the performance of all POS terminals, so it is strongly recommended to set it to a high value (60 minutes, or greater if possible).
@@ -3523,6 +3527,7 @@ Document Types determine document sequence and processing rules.]]></HELP>
 <!--AACB4C8CCC154CE2B369E4EB0B7ACDB7-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--AACB4C8CCC154CE2B369E4EB0B7ACDB7-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--AACB4C8CCC154CE2B369E4EB0B7ACDB7-->  <NAME><![CDATA[Obpos_App_Payment_ID]]></NAME>
+<!--AACB4C8CCC154CE2B369E4EB0B7ACDB7-->  <DESCRIPTION><![CDATA[Payment Type]]></DESCRIPTION>
 <!--AACB4C8CCC154CE2B369E4EB0B7ACDB7-->  <COLUMNNAME><![CDATA[Obpos_App_Payment_ID]]></COLUMNNAME>
 <!--AACB4C8CCC154CE2B369E4EB0B7ACDB7-->  <AD_TABLE_ID><![CDATA[CCE07BDBDC344FD98E52C293A987203F]]></AD_TABLE_ID>
 <!--AACB4C8CCC154CE2B369E4EB0B7ACDB7-->  <AD_REFERENCE_ID><![CDATA[13]]></AD_REFERENCE_ID>
@@ -4408,6 +4413,7 @@ Document Types determine document sequence and processing rules.]]></HELP>
 <!--D32F613462464135BA7C12580739C8A2-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--D32F613462464135BA7C12580739C8A2-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--D32F613462464135BA7C12580739C8A2-->  <NAME><![CDATA[Allowpayoncredit]]></NAME>
+<!--D32F613462464135BA7C12580739C8A2-->  <DESCRIPTION><![CDATA[Allow Pay on Credit]]></DESCRIPTION>
 <!--D32F613462464135BA7C12580739C8A2-->  <COLUMNNAME><![CDATA[Allowpayoncredit]]></COLUMNNAME>
 <!--D32F613462464135BA7C12580739C8A2-->  <AD_TABLE_ID><![CDATA[1ECA0B99F44F4FD1854B7DDA9292A75F]]></AD_TABLE_ID>
 <!--D32F613462464135BA7C12580739C8A2-->  <AD_REFERENCE_ID><![CDATA[20]]></AD_REFERENCE_ID>
@@ -5018,7 +5024,7 @@ If this option is not checked, then the barcode scanners will not be detected in
 <!--F32F3AED2CEC43B7B253DCF74D0F2040-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--F32F3AED2CEC43B7B253DCF74D0F2040-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--F32F3AED2CEC43B7B253DCF74D0F2040-->  <NAME><![CDATA[Grouping orders]]></NAME>
-<!--F32F3AED2CEC43B7B253DCF74D0F2040-->  <DESCRIPTION><![CDATA[Group Orders in one Invoice]]></DESCRIPTION>
+<!--F32F3AED2CEC43B7B253DCF74D0F2040-->  <DESCRIPTION><![CDATA[Group Orders in One Invoice]]></DESCRIPTION>
 <!--F32F3AED2CEC43B7B253DCF74D0F2040-->  <HELP><![CDATA[In the cash up process, orders without invoice are grouped in one invoice per business partner.]]></HELP>
 <!--F32F3AED2CEC43B7B253DCF74D0F2040-->  <COLUMNNAME><![CDATA[Groupingorders]]></COLUMNNAME>
 <!--F32F3AED2CEC43B7B253DCF74D0F2040-->  <AD_TABLE_ID><![CDATA[1ECA0B99F44F4FD1854B7DDA9292A75F]]></AD_TABLE_ID>
@@ -5228,7 +5234,7 @@ If this option is not checked, then the barcode scanners will not be detected in
 <!--F8B5212A3C17437DBCFFD7B808EFB140-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--F8B5212A3C17437DBCFFD7B808EFB140-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--F8B5212A3C17437DBCFFD7B808EFB140-->  <NAME><![CDATA[Document type for Reconciliations]]></NAME>
-<!--F8B5212A3C17437DBCFFD7B808EFB140-->  <DESCRIPTION><![CDATA[Document type for Reconciliations]]></DESCRIPTION>
+<!--F8B5212A3C17437DBCFFD7B808EFB140-->  <DESCRIPTION><![CDATA[Document type for reconciliations]]></DESCRIPTION>
 <!--F8B5212A3C17437DBCFFD7B808EFB140-->  <HELP><![CDATA[When Cash Up process is executed from POS, a reconciliation including all transactions done in that terminal since last cash up is created. This is the document type used for that reconciliation.]]></HELP>
 <!--F8B5212A3C17437DBCFFD7B808EFB140-->  <COLUMNNAME><![CDATA[C_Doctyperecon_ID]]></COLUMNNAME>
 <!--F8B5212A3C17437DBCFFD7B808EFB140-->  <AD_TABLE_ID><![CDATA[1ECA0B99F44F4FD1854B7DDA9292A75F]]></AD_TABLE_ID>

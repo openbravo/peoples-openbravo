@@ -6,7 +6,7 @@
 <!--8AC4D0AC73A44547ACE1FC6A39D00F7F-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--8AC4D0AC73A44547ACE1FC6A39D00F7F-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--8AC4D0AC73A44547ACE1FC6A39D00F7F-->  <NAME><![CDATA[POS Terminal Type]]></NAME>
-<!--8AC4D0AC73A44547ACE1FC6A39D00F7F-->  <DESCRIPTION><![CDATA[Defines terminal properties]]></DESCRIPTION>
+<!--8AC4D0AC73A44547ACE1FC6A39D00F7F-->  <DESCRIPTION><![CDATA[Defines Terminal Properties]]></DESCRIPTION>
 <!--8AC4D0AC73A44547ACE1FC6A39D00F7F-->  <HELP><![CDATA[POS Terminal Types are used to define a series of properties that will be shared among all terminals of the same type. In this way, definition of type is done once and reused by different terminals, each of these terminals will set the terminal specific configuration.]]></HELP>
 <!--8AC4D0AC73A44547ACE1FC6A39D00F7F-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--8AC4D0AC73A44547ACE1FC6A39D00F7F-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
@@ -22,8 +22,8 @@
 <!--B2738FA83B494AD08AE1660859C014A6-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--B2738FA83B494AD08AE1660859C014A6-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--B2738FA83B494AD08AE1660859C014A6-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--B2738FA83B494AD08AE1660859C014A6-->  <NAME><![CDATA[Errors while importing POS data]]></NAME>
-<!--B2738FA83B494AD08AE1660859C014A6-->  <DESCRIPTION><![CDATA[Errors while importing POS data]]></DESCRIPTION>
+<!--B2738FA83B494AD08AE1660859C014A6-->  <NAME><![CDATA[Errors While Importing POS Data]]></NAME>
+<!--B2738FA83B494AD08AE1660859C014A6-->  <DESCRIPTION><![CDATA[Errors While Importing POS Data]]></DESCRIPTION>
 <!--B2738FA83B494AD08AE1660859C014A6-->  <HELP><![CDATA[When synchronizing data from POS to back office, the errors are not shown in POS user interface as the cashier needn't know how to react in those cases. This window compiles all the errors occurred, allowing to fix data to try to create the data again.]]></HELP>
 <!--B2738FA83B494AD08AE1660859C014A6-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--B2738FA83B494AD08AE1660859C014A6-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
