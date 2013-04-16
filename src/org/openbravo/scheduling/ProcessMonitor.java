@@ -208,10 +208,24 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
     }
 
     // Checking if there is another instance in execution for this process
+
     for (JobExecutionContext job : jobs) {
       if (job.getTrigger().getJobDataMap().get(Process.PROCESS_ID)
           .equals(trigger.getJobDataMap().get(Process.PROCESS_ID))
           && !job.getJobInstance().equals(jec.getJobInstance())) {
+
+        ProcessBundle jobAlreadyScheduled = (ProcessBundle) job.getTrigger().getJobDataMap()
+            .get("org.openbravo.scheduling.ProcessBundle.KEY");
+        ProcessBundle newJob = (ProcessBundle) trigger.getJobDataMap().get(
+            "org.openbravo.scheduling.ProcessBundle.KEY");
+
+        boolean isSameClient = isSameParam(jobAlreadyScheduled, newJob, "Client");
+
+        if (!isSameClient
+            || (isSameClient && !isSameParam(jobAlreadyScheduled, newJob, "Organization"))) {
+          continue;
+        }
+
         log.info("There's another instance running, so leaving" + processName);
 
         try {
@@ -243,6 +257,41 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
     }
 
     log.info("No other instance");
+    return false;
+  }
+
+  private boolean isSameParam(ProcessBundle jobAlreadyScheduled, ProcessBundle newJob, String param) {
+    ProcessContext jobAlreadyScheduledContext = null;
+    String jobAlreadyScheduledParam = null;
+    ProcessContext newJobContext = null;
+    String newJobParam = null;
+
+    if (jobAlreadyScheduled != null) {
+      jobAlreadyScheduledContext = jobAlreadyScheduled.getContext();
+      if (jobAlreadyScheduledContext != null) {
+        if ("Client".equals(param)) {
+          jobAlreadyScheduledParam = jobAlreadyScheduledContext.getClient();
+        } else if ("Organization".equals(param)) {
+          jobAlreadyScheduledParam = jobAlreadyScheduledContext.getOrganization();
+        }
+      }
+    }
+
+    if (newJob != null) {
+      newJobContext = newJob.getContext();
+      if (newJobContext != null) {
+        if ("Client".equals(param)) {
+          newJobParam = newJobContext.getClient();
+        } else if ("Organization".equals(param)) {
+          newJobParam = newJobContext.getOrganization();
+        }
+      }
+    }
+
+    if (newJobParam != null && jobAlreadyScheduledParam != null
+        && newJobParam.equals(jobAlreadyScheduledParam)) {
+      return true;
+    }
     return false;
   }
 
