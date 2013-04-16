@@ -72,7 +72,7 @@ enyo.kind({
     this.$.totaltax.setContent(OB.I18N.formatCurrency(newTax));
   },
   renderBase: function (newBase) {
-    //this.$.totalbase.setContent(newBase);
+    // this.$.totalbase.setContent(newBase);
   },
   checkBoxForTicketLines: function (inSender, inEvent) {
     if (inEvent.status) {
@@ -154,7 +154,7 @@ enyo.kind({
     scrollAreaMaxHeight: '250px',
     renderLine: 'OB.UI.RenderOrderLine',
     renderEmpty: 'OB.UI.RenderOrderLineEmpty',
-    //defined on redenderorderline.js
+    // defined on redenderorderline.js
     listStyle: 'edit'
   }, {
     tag: 'ul',
@@ -200,7 +200,7 @@ enyo.kind({
       scrollAreaMaxHeight: '250px',
       renderLine: 'OB.UI.RenderTaxLine',
       renderEmpty: 'OB.UI.RenderTaxLineEmpty',
-      //defined on redenderorderline.js
+      // defined on redenderorderline.js
       listStyle: 'nonselectablelist'
     }, {
       tag: 'li',
@@ -226,7 +226,7 @@ enyo.kind({
       scrollAreaMaxHeight: '250px',
       renderLine: 'OB.UI.RenderPaymentLine',
       renderEmpty: 'OB.UI.RenderPaymentLineEmpty',
-      //defined on redenderorderline.js
+      // defined on redenderorderline.js
       listStyle: 'nonselectablelist'
     }]
   }],
@@ -301,17 +301,17 @@ enyo.kind({
         this.$.divText.addStyles('width: 50%; color: lightblue;');
         this.$.divText.setContent(OB.I18N.getLabel('OBPOS_ToBeLaidaway'));
         this.$.divText.show();
-        //We have to ensure that there is not another handler showing this div
+        // We have to ensure that there is not another handler showing this div
       } else if (model.get('orderType') === 3) {
         this.$.divText.addStyles('width: 50%; color: lightblue;');
         this.$.divText.setContent(OB.I18N.getLabel('OBPOS_VoidLayaway'));
         this.$.divText.show();
-        //We have to ensure that there is not another handler showing this div
+        // We have to ensure that there is not another handler showing this div
       } else if (model.get('isLayaway')) {
         this.$.divText.addStyles('width: 50%; color: lightblue;');
         this.$.divText.setContent(OB.I18N.getLabel('OBPOS_LblLayaway'));
         this.$.divText.show();
-        //We have to ensure that there is not another handler showing this div
+        // We have to ensure that there is not another handler showing this div
       } else if (this.$.divText.content === OB.I18N.getLabel('OBPOS_ToBeReturned') || this.$.divText.content === OB.I18N.getLabel('OBPOS_ToBeLaidaway') || this.$.divText.content === OB.I18N.getLabel('OBPOS_VoidLayaway')) {
         this.$.divText.hide();
       }
@@ -333,10 +333,12 @@ enyo.kind({
           this.$.divText.setContent(OB.I18N.getLabel('OBPOS_QuotationDraft'));
         }
         this.$.divText.show();
-        //We have to ensure that there is not another handler showing this div
-      } else if (this.$.divText.content === OB.I18N.getLabel('OBPOS_QuotationUnderEvaluation') || this.$.divText.content === OB.I18N.getLabel('OBPOS_QuotationDraft')) {
-        this.$.divText.hide();
+        // We have to ensure that there is not another handler showing this div
       } else {
+        if (this.$.divText.content === OB.I18N.getLabel('OBPOS_QuotationUnderEvaluation') || this.$.divText.content === OB.I18N.getLabel('OBPOS_QuotationDraft')) {
+          this.$.divText.hide();
+        }
+
         this.$.listOrderLines.children[4].children[0].setContent(OB.I18N.getLabel('OBPOS_ReceiptNew'));
       }
     }, this);
@@ -358,7 +360,7 @@ enyo.kind({
         this.$.divText.show();
         this.$.listPaymentLines.show();
         this.$.paymentBreakdown.show();
-        //We have to ensure that there is not another handler showing this div
+        // We have to ensure that there is not another handler showing this div
       } else if (this.$.divText.content === OB.I18N.getLabel('OBPOS_paid') || this.$.divText.content === OB.I18N.getLabel('OBPOS_paidReturn')) {
         this.$.divText.hide();
         this.$.listPaymentLines.hide();
@@ -372,7 +374,7 @@ enyo.kind({
         this.$.divText.show();
         this.$.listPaymentLines.show();
         this.$.paymentBreakdown.show();
-        //We have to ensure that there is not another handler showing this div
+        // We have to ensure that there is not another handler showing this div
       } else if (this.$.divText.content === OB.I18N.getLabel('OBPOS_LblLayaway')) {
         this.$.divText.hide();
         this.$.listPaymentLines.hide();
