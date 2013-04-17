@@ -800,7 +800,7 @@ public class AdvPaymentMngtDao {
     finTrans.setCurrency(account.getCurrency());
     finTrans.setAccount(account);
     finTrans.setLineNo(line);
-    finTrans.setFinPayment(payment);
+    finTrans.setFinPayment(OBDal.getInstance().get(FIN_Payment.class, payment.getId()));
     String truncateDescription = null;
     if (description != null) {
       truncateDescription = (description.length() > 255) ? description.substring(0, 252)
@@ -823,7 +823,6 @@ public class AdvPaymentMngtDao {
       finTrans.setForeignConversionRate(convertRate);
       finTrans.setForeignAmount(sourceAmount);
     }
-
     OBDal.getInstance().save(finTrans);
     OBDal.getInstance().flush();
 
