@@ -87,7 +87,6 @@ enyo.kind({
             classes: 'span12',
             components: [{
               style: 'padding: 10px; border-bottom: 1px solid #cccccc; text-align:center;',
-              content: OB.I18N.getLabel('OBPOS_LblStep1of4'),
               initComponents: function () {
                 this.setContent(OB.I18N.getLabel('OBPOS_LblStep1of4'));
               }

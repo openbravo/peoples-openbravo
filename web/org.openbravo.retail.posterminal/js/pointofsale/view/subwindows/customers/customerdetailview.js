@@ -25,7 +25,6 @@ enyo.kind({
   defaultNavigateOnClose: 'customerAdvancedSearch',
   header: {
     kind: 'OB.UI.SubwindowHeader',
-    headermessage: OB.I18N.getLabel('OBPOS_TitleViewCustomer'),
     onTapCloseButton: function () {
       var subWindow = this.subWindow;
       subWindow.doChangeSubWindow({
@@ -36,6 +35,9 @@ enyo.kind({
           }
         }
       });
+    },
+    initComponents: function(){
+      this.setContent(OB.I18N.getLabel('OBPOS_TitleViewCustomer'));
     }
   },
   body: {
@@ -50,7 +52,6 @@ enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.customers.assigncustomertoticket',
   style: 'width: 150px; margin: 0px 0px 8px 5px;',
   classes: 'btnlink btnlink-small',
-  content: OB.I18N.getLabel('OBPOS_LblAssignToTicket'),
   handlers: {
     onSetCustomer: 'setCustomer'
   },
@@ -73,6 +74,9 @@ enyo.kind({
   },
   init: function (model) {
     this.model = model;
+  },
+  initComponents: function(){
+    this.setContent(OB.I18N.getLabel('OBPOS_LblAssignToTicket'));
   }
 });
 
@@ -95,7 +99,6 @@ enyo.kind({
           },
           style: 'width: 100px; margin: 0px 5px 8px 19px;',
           classes: 'btnlink-orange btnlink btnlink-small',
-          content: OB.I18N.getLabel('OBPOS_LblEdit'),
           setCustomer: function (inSender, inEvent) {
             this.customer = inEvent.customer;
             if (!OB.UTIL.isWritableOrganization(this.customer.get('organization'))) {
@@ -120,6 +123,9 @@ enyo.kind({
           },
           init: function (model) {
             this.model = model;
+          },
+          initComponents: function(){
+            this.setContent(OB.I18N.getLabel('OBPOS_LblEdit'));
           }
         }]
       }, {

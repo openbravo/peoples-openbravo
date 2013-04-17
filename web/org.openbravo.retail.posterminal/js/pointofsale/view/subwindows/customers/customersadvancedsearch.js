@@ -387,7 +387,9 @@ enyo.kind({
       }
     });
   },
-  headermessage: OB.I18N.getLabel('OBPOS_TitleCustomerAdvancedSearch')
+  initComponents: function(){
+    this.setContent(OB.I18N.getLabel('OBPOS_TitleCustomerAdvancedSearch'));
+  }
 });
 
 

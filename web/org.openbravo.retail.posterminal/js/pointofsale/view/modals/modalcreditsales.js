@@ -12,7 +12,6 @@
 enyo.kind({
   kind: 'OB.UI.ModalAction',
   name: 'OB.OBPOSPointOfSale.UI.Modals.modalEnoughCredit',
-  header: OB.I18N.getLabel('OBPOS_enoughCreditHeader'),
   bodyContent: {
     name: 'popupmessage',
     content: ''
@@ -27,6 +26,7 @@ enyo.kind({
   executeOnShow: function () {
     var pendingQty = this.args.order.getPending();
     var bpName = this.args.order.get('bp').get('_identifier');
+    this.setHeader(OB.I18N.getLabel('OBPOS_enoughCreditHeader'));
     if (this.args.order.get('orderType') === 1) {
       this.$.bodyContent.$.popupmessage.setContent(OB.I18N.getLabel('OBPOS_enoughCreditReturnBody', [OB.I18N.formatCurrency(pendingQty), bpName]));
     } else {
@@ -38,7 +38,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.OBPOSPointOfSale.UI.Modals.modalEnoughCredit.Components.apply_button',
-  content: OB.I18N.getLabel('OBPOS_LblUseCredit'),
+  i18nContent: 'OBPOS_LblUseCredit',
   isDefaultAction: true,
   init: function (model) {
     this.model = model;
