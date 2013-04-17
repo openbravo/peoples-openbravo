@@ -60,19 +60,33 @@ enyo.kind({
   },
   i18nLabel: 'OBPOS_VoidLayaway',
   tap: function () {
+    var voidAllowed = true,
+        notValid = {};
     if (this.disabled) {
       return true;
     }
     this.inherited(arguments); // Manual dropdown menu closure
-    this.doShowDivText({
-      permission: this.permission,
-      orderType: 3
-    });
-    this.doTabChange({
-      tabPanel: 'payment',
-      keyboard: 'toolbarpayment',
-      edit: false
-    });
+    enyo.forEach(this.model.get('order').get('payments').models, function (curPayment) {
+      if (_.isUndefined(curPayment.get('isPrePayment')) || _.isNull(curPayment.get('isPrePayment'))) {
+        voidAllowed = false;
+        notValid = curPayment;
+        return;
+      }
+    }, this);
+
+    if (voidAllowed) {
+      this.doShowDivText({
+        permission: this.permission,
+        orderType: 3
+      });
+      this.doTabChange({
+        tabPanel: 'payment',
+        keyboard: 'toolbarpayment',
+        edit: false
+      });
+    } else {
+      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_lblPaymentNotProcessedHeader'), OB.I18N.getLabel('OBPOS_lblPaymentNotProcessedMessage', [notValid.get('name'), notValid.get('origAmount'), OB.MobileApp.model.paymentnames[notValid.get('kind')].isocode]));
+    }
   },
   init: function (model) {
     this.model = model;

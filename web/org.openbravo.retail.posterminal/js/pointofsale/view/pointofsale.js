@@ -376,7 +376,7 @@ enyo.kind({
     }
     //Void Layaway must block keyboard actions
     if (inEvent.orderType === 3) {
-      this.$.keyboard.setStatus('');
+      this.$.multiColumn.$.rightPanel.$.keyboard.setStatus('');
     }
     this.model.get('order').setOrderType(inEvent.permission, inEvent.orderType);
     this.model.get('orderList').saveCurrent();
