@@ -335,12 +335,6 @@
     preLoginActions: function () {
       this.cleanSessionInfo();
 
-      // Remove the pending orders that have not been paid
-      if (OB.Dal) { //TODO: check this...
-        OB.Dal.removeAll(OB.Model.Order, {
-          'hasbeenpaid': 'N'
-        }, null, null);
-      }
     },
 
     preLogoutActions: function () {
