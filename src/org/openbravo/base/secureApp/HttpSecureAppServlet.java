@@ -1277,7 +1277,9 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
         exportParameters.put(JRHtmlExporterParameter.OUTPUT_STREAM, os);
 
         HttpSession session = (HttpSession) designParameters.get("HTTP_SESSION");
-        session.setAttribute(ImageServlet.DEFAULT_JASPER_PRINT_SESSION_ATTRIBUTE, jasperPrint);
+        if (session != null) {
+            session.setAttribute(ImageServlet.DEFAULT_JASPER_PRINT_SESSION_ATTRIBUTE, jasperPrint);
+        }
 
         HttpServletRequest request = RequestContext.get().getRequest();
         String localAddress = HttpBaseUtils.getLocalAddress(request);
