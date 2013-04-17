@@ -459,10 +459,10 @@ isc.OBCalendar.addProperties({
         if (!calendar.isInitialScrollAlreadyBeenSet && tabNum <= 1) {
           calendar.isInitialScrollAlreadyBeenSet = true;
           // Timeout to allow new selected tab grid be fully loaded
-          if (calendar.initialScrollTo) {
+          if (calendar.initialScrollTime) {
             setTimeout(function () {
               try {
-                calendar.scrollToTime(calendar.initialScrollTo);
+                calendar.scrollToTime(calendar.initialScrollTime);
               } catch (e) {}
             }, 100);
           }
@@ -471,10 +471,10 @@ isc.OBCalendar.addProperties({
       };
     }
     // Timeout to allow the tab grid be fully loaded
-    if (calendar.initialScrollTo) {
+    if (calendar.initialScrollTime) {
       setTimeout(function () {
         try {
-          calendar.scrollToTime(calendar.initialScrollTo);
+          calendar.scrollToTime(calendar.initialScrollTime);
         } catch (e) {}
       }, 100);
     }
