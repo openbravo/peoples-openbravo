@@ -128,6 +128,26 @@ enyo.kind({
         }
         };
 
+    // action bindable to a command that completely deletes a product from the order list
+    var actionDeleteLine = function (keyboard) {
+        if (keyboard.receipt.get('isEditable') === false) {
+          me.doShowPopup({
+            popup: 'modalNotEditableOrder'
+          });
+          return true;
+        }
+        if (keyboard.line && keyboard.line.get('product').get('isEditableQty') === false) {
+               me.doShowPopup({
+              popup: 'modalNotEditableLine'
+            });
+            return true;
+        }
+        if (keyboard.line) {
+          keyboard.receipt.deleteLine(keyboard.line);
+          keyboard.receipt.trigger('scan');
+        }
+    };
+
     this.addCommand('line:qty', {
       action: function (keyboard, txt) {
         var value = OB.I18N.parseNumber(txt);
@@ -199,6 +219,7 @@ enyo.kind({
     });
 
     this.addCommand('code', new OB.UI.BarcodeActionHandler());
+    
     this.addCommand('+', {
       stateless: true,
       action: function (keyboard, txt) {
@@ -209,6 +230,13 @@ enyo.kind({
       stateless: true,
       action: function (keyboard, txt) {
         actionRemoveProduct(keyboard, OB.I18N.parseNumber(txt));
+      }
+    });
+    // add a command that will handle the DELETE keyboard key
+    this.addCommand('line:delete', {
+      stateless: true,
+      action: function (keyboard) {
+        actionDeleteLine(keyboard);
       }
     });
 
