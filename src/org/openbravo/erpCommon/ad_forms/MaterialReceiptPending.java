@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.StringTokenizer;
 import java.util.regex.Pattern;
 
@@ -33,6 +34,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Tree;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.businessUtility.WindowTabsData;
@@ -45,6 +47,11 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.common.enterprise.Locator;
+import org.openbravo.model.common.enterprise.OrgWarehouse;
+import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.common.enterprise.Warehouse;
+import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.utils.Replace;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -231,6 +238,7 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
       }
       xmlDocument.setParameter("script", html.toString());
     }
+
     xmlDocument.setData("structure1", data);
     out.println(xmlDocument.print());
     out.close();
@@ -270,6 +278,35 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
           String strOrderlineId = st.nextToken().trim();
           MaterialReceiptPendingData[] data = MaterialReceiptPendingData.select(this,
               strOrderlineId);
+
+          String strLocator = vars.getStringParameter("inpmLocatorId" + strOrderlineId);
+          Locator locator = OBDal.getInstance().get(Locator.class, strLocator);
+          Warehouse locatorWH = locator.getWarehouse();
+
+          Organization orderOrganization = OBDal.getInstance().get(Organization.class,
+              data[0].adOrgId);
+
+          boolean warehouseBelongsToOrg = false;
+          List<OrgWarehouse> orderOrgWHList = orderOrganization.getOrganizationWarehouseList();
+          for (OrgWarehouse orderOrgWH : orderOrgWHList) {
+            if (orderOrgWH.getWarehouse().equals(locatorWH)) {
+              warehouseBelongsToOrg = true;
+              continue;
+            }
+          }
+          if (!warehouseBelongsToOrg) {
+            OrderLine ol = OBDal.getInstance().get(OrderLine.class, strOrderlineId);
+            myMessage.setType("Error");
+            myMessage.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
+            myMessage.setMessage(Utility.messageBD(this, "WarehouseNotAccessibleByOrg",
+                vars.getLanguage())
+                + " "
+                + ol.getSalesOrder().getDocumentNo()
+                + " - "
+                + MaterialReceiptPendingData.bPartnerDescription(this, data[0].cBpartnerId));
+            return myMessage;
+          }
+
           if (!strLastBpartnerId.equals(data[0].cBpartnerId)
               || !strLastOrgId.equals(data[0].adOrgId)) {
             if (!strmInoutId.equals("")) {
@@ -318,7 +355,6 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
           strLastBpartnerId = data[0].cBpartnerId;
           strLastOrgId = data[0].adOrgId;
           String strQtyordered = vars.getNumericParameter("inpQtyordered" + strOrderlineId);
-          String strLocator = vars.getStringParameter("inpmLocatorId" + strOrderlineId);
           String strSequenceLine = SequenceIdData.getUUID();
           MaterialReceiptPendingLinesData[] dataLine = MaterialReceiptPendingLinesData.select(this,
               strOrderlineId);
