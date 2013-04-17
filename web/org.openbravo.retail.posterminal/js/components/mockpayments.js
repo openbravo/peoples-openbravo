@@ -51,7 +51,7 @@ enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.UI.MockPayment_OkButton',
   style: 'float: right;',
-  i18Content: 'OBMOBC_LblOk',
+  i18nContent: 'OBMOBC_LblOk',
   isDefaultAction: true,
   tap: function () {
     this.owner.receipt.addPayment(new OB.Model.PaymentLine({
