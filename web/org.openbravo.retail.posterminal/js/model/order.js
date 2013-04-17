@@ -1167,7 +1167,6 @@
       order.set('isbeingprocessed', 'N');
       order.set('hasbeenpaid', 'Y');
       order.set('priceIncludesTax', model.priceIncludesTax);
-      order.set('json', JSON.stringify(order.toJSON()));
       if (model.isQuotation) {
         order.set('isQuotation', true);
         order.set('oldId', model.orderid);
@@ -1226,6 +1225,7 @@
           if (numberOfLines === 0) {
             order.set('lines', lines);
             order.set('qty', orderQty);
+            order.set('json', JSON.stringify(order.toJSON()));
             callback(order);
           }
         });
