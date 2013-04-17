@@ -190,6 +190,12 @@ public class DatabaseValidator implements SystemValidator {
 
     final String moduleId = (getValidateModule() == null ? null : getValidateModule().getId());
     for (Table adTable : adTables) {
+
+      // Do not validate the table if it is based on a datasource
+      if (!"Table".equals(adTable.getDataOriginType())) {
+    	  continue;
+      }
+
       final org.apache.ddlutils.model.Table dbTable = dbTablesByName.get(adTable.getDBTableName()
           .toUpperCase());
       final View view = dbViews.get(adTable.getDBTableName().toUpperCase());
