@@ -389,7 +389,6 @@
     load: function () {
       var termInfo, i, max;
       if (this.get('loggedOffline')) {
-        debugger;
         termInfo = JSON.parse(this.usermodel.get('terminalinfo'));
 
         this.paymentnames = {};
