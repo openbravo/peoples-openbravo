@@ -14,7 +14,7 @@ enyo.kind({
   name: 'OB.OBPOSCashMgmt.UI.modalFinished',
   i18nHeader: 'OBPOS_LblDone',
   bodyContent: {
-    i18Content: 'OBPOS_FinishCashMgmtDialog'
+    i18nContent: 'OBPOS_FinishCashMgmtDialog'
   },
   bodyButtons: {
     components: [{
@@ -42,7 +42,7 @@ enyo.kind({
   name: 'OB.OBPOSCashMgmt.UI.modalFinishedWrongly',
   i18nHeader: 'OBPOS_CashMgmtWronglyHeader',
   bodyContent: {
-    i18Content: 'OBPOS_CashMgmtWrongly'
+    i18nContent: 'OBPOS_CashMgmtWrongly'
   },
   bodyButtons: {
     components: [{

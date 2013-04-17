@@ -16,7 +16,7 @@ enyo.kind({
   name: 'OB.OBPOSCashUp.UI.modalPendingToProcess',
   i18nHeader: 'OBPOS_LblReceiptsToProcess',
   bodyContent: {
-    i18Content: 'OBPOS_MsgReceiptsProcess'
+    i18nContent: 'OBPOS_MsgReceiptsProcess'
   },
   bodyButtons: {
     components: [{

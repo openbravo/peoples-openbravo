@@ -13,7 +13,7 @@ enyo.kind({
   kind: 'OB.UI.Button',
   name: 'OB.OBPOSPointOfSale.UI.Modals.btnModaContextChangedAccept',
   classes: 'btnlink btnlink-gray modal-dialog-button',
-  i18Content: 'OBMOBC_LblOk',
+  i18nContent: 'OBMOBC_LblOk',
   events: {
     onHideThisPopup: ''
   },

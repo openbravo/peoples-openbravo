@@ -16,7 +16,7 @@ enyo.kind({
 
   i18nHeader: 'OBMOBC_LblCancel',
   bodyContent: {
-    i18Content: 'OBPOS_ProcessCancelDialog'
+    i18nContent: 'OBPOS_ProcessCancelDialog'
   },
   bodyButtons: {
     components: [{
