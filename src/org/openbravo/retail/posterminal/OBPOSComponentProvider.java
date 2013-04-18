@@ -81,6 +81,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "model/bpcategory",
         "model/currencypanel",
         "model/salesrepresentative",
+        "model/productcharacteristic",
         "model/changedbusinesspartners",
         "model/executor",
         "components/modalcancel",
@@ -102,6 +103,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/modalreceipts",
         "components/rendercategory",
         "components/renderproduct",
+        "components/renderproductch",
         "components/total",
         "components/modalpayment",
         "components/renderorderline",
@@ -118,6 +120,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/modalreactivatequotation",
         // Detection of change in context
         "components/modalcontextchanged",
+        "components/modalproductcharacteristic",
 
         // Point of sale models
         "model/order",

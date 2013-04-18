@@ -60,7 +60,8 @@ enyo.kind({
     onLineChecked: 'checkedLine',
     onStatusChanged: 'statusChanged',
     onLayaways: 'layaways',
-    onChangeSalesRepresentative: 'changeSalesRepresentative'
+    onChangeSalesRepresentative: 'changeSalesRepresentative',
+    onSelectCharacteristicValue: 'selectCharacteristicValue'
   },
   events: {
     onShowPopup: '',
@@ -143,6 +144,9 @@ enyo.kind({
     }, {
       kind: 'OB.UI.ModalSalesRepresentative',
       name: "modalsalesrepresentative"
+    }, {
+      kind: 'OB.UI.ModalProductCharacteristic',
+      name: "modalproductcharacteristic"
     }]
   }, {
     name: 'mainSubWindow',
@@ -622,6 +626,11 @@ enyo.kind({
     this.model.get('order').set('salesRepresentative$_identifier', inEvent.salesRepresentative.get('_identifier'));
     this.model.get('orderList').saveCurrent();
     return true;
+  },
+  selectCharacteristicValue: function (inSender, inEvent) {
+    this.waterfall('onUpdateFilter', {
+      value: inEvent
+    });
   },
   init: function () {
     var receipt, receiptList;

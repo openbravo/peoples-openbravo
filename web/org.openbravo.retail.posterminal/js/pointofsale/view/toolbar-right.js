@@ -339,6 +339,9 @@ enyo.kind({
     kind: 'OB.OBPOSPointOfSale.UI.TabSearch',
     name: 'search'
   }, {
+    kind: 'OB.OBPOSPointOfSale.UI.TabSearchCharacteristic',
+    name: 'searchCharacteristic'
+  }, {
     kind: 'OB.OBPOSPointOfSale.UI.TabPayment',
     name: 'payment'
   }, {
@@ -385,6 +388,21 @@ enyo.kind({
   }],
   receiptChanged: function () {
     this.$.search.setReceipt(this.receipt);
+  }
+});
+
+enyo.kind({
+  name: 'OB.OBPOSPointOfSale.UI.TabSearchCharacteristic',
+  kind: 'OB.UI.TabPane',
+  published: {
+    receipt: null
+  },
+  components: [{
+    kind: 'OB.UI.SearchProductCharacteristic',
+    name: 'searchCharacteristic'
+  }],
+  receiptChanged: function () {
+    this.$.searchCharacteristic.setReceipt(this.receipt);
   }
 });
 
