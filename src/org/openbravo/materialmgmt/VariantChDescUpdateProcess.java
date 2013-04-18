@@ -1,3 +1,21 @@
+/*
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SLU
+ * All portions are Copyright (C) 2013 Openbravo SLU
+ * All Rights Reserved.
+ * Contributor(s):  ______________________________________.
+ *************************************************************************
+ */
 package org.openbravo.materialmgmt;
 
 import org.apache.commons.lang.StringUtils;
@@ -15,24 +33,81 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.common.plm.ProductCharacteristic;
 import org.openbravo.model.common.plm.ProductCharacteristicValue;
-import org.openbravo.scheduling.Process;
 import org.openbravo.scheduling.ProcessBundle;
+import org.openbravo.service.db.DalBaseProcess;
 
-public class VariantChDescUpdateProcess implements Process {
+public class VariantChDescUpdateProcess extends DalBaseProcess {
   private static final Logger log4j = Logger.getLogger(VariantChDescUpdateProcess.class);
+  private String strProductId;
+  private String strChValueId;
+  private String strChValueName;
 
   @Override
-  public void execute(ProcessBundle bundle) throws Exception {
+  public void doExecute(ProcessBundle bundle) throws Exception {
     OBError msg = new OBError();
     msg.setType("Success");
     msg.setTitle(OBMessageUtils.messageBD("Success"));
 
-    OBContext.setAdminMode(false);
     try {
       // retrieve standard params
-      final String strProductId = (String) bundle.getParams().get("mProductId");
-      final String strChValueId = (String) bundle.getParams().get("mChValueId");
+      strProductId = (String) bundle.getParams().get("mProductId");
+      strChValueId = (String) bundle.getParams().get("mChValueId");
+      strChValueName = (String) bundle.getParams().get("chValueName");
 
+      update();
+
+      bundle.setResult(msg);
+
+      // Postgres wraps the exception into a GenericJDBCException
+    } catch (GenericJDBCException ge) {
+      log4j.error("Exception processing variant generation", ge);
+      msg.setType("Error");
+      msg.setTitle(OBMessageUtils.messageBD(bundle.getConnection(), "Error", bundle.getContext()
+          .getLanguage()));
+      msg.setMessage(((GenericJDBCException) ge).getSQLException().getMessage());
+      bundle.setResult(msg);
+      OBDal.getInstance().rollbackAndClose();
+      // Oracle wraps the exception into a QueryTimeoutException
+    } catch (QueryTimeoutException qte) {
+      log4j.error("Exception processing variant generation", qte);
+      msg.setType("Error");
+      msg.setTitle(OBMessageUtils.messageBD(bundle.getConnection(), "Error", bundle.getContext()
+          .getLanguage()));
+      msg.setMessage(((QueryTimeoutException) qte).getSQLException().getMessage().split("\n")[0]);
+      bundle.setResult(msg);
+      OBDal.getInstance().rollbackAndClose();
+    } catch (final Exception e) {
+      log4j.error("Exception processing variant generation", e);
+      msg.setType("Error");
+      msg.setTitle(OBMessageUtils.messageBD(bundle.getConnection(), "Error", bundle.getContext()
+          .getLanguage()));
+      msg.setMessage(FIN_Utility.getExceptionMessage(e));
+      bundle.setResult(msg);
+      OBDal.getInstance().rollbackAndClose();
+    }
+
+  }
+
+  public void init(String _strProductId, String _strChValueId, String _strChValueName) {
+    this.strProductId = _strProductId;
+    this.strChValueId = _strChValueId;
+    this.strChValueName = _strChValueName;
+  }
+  /**
+   * Method to update the Characteristics Description.
+   * 
+   * @param strProductId
+   *          Optional parameter, when given updates only the description of this product.
+   * @param strChValueId
+   *          Optional parameter, when given updates only products with this characteristic value
+   *          assigned.
+   * @param strChValueName
+   *          Optional parameter, when a characteristic value id is given it is possible to pass
+   *          here it's new name, used
+   */
+  public void update() {
+    OBContext.setAdminMode(false);
+    try {
       StringBuffer where = new StringBuffer();
       where.append(" as p");
       where.append(" where p." + Product.PROPERTY_PRODUCTCHARACTERISTICLIST + " is not empty");
@@ -72,6 +147,8 @@ public class VariantChDescUpdateProcess implements Process {
         pchQuery.setFilterOnReadableOrganization(false);
         pchQuery.setNamedParameter("product", product);
         for (ProductCharacteristic pch : pchQuery.list()) {
+          // Reload pch to avoid errors after session clear.
+          OBDal.getInstance().refresh(pch);
           if (StringUtils.isNotBlank(strChDesc)) {
             strChDesc += ", ";
           }
@@ -79,17 +156,24 @@ public class VariantChDescUpdateProcess implements Process {
           where = new StringBuffer();
           where.append(" as pchv");
           where.append(" where pchv." + ProductCharacteristicValue.PROPERTY_CHARACTERISTIC
-              + " = :ch");
-          where
-              .append("   and pchv." + ProductCharacteristicValue.PROPERTY_PRODUCT + " = :product");
+              + ".id = :ch");
+          where.append("   and pchv." + ProductCharacteristicValue.PROPERTY_PRODUCT
+              + ".id = :product");
           OBQuery<ProductCharacteristicValue> pchvQuery = OBDal.getInstance().createQuery(
               ProductCharacteristicValue.class, where.toString());
           pchvQuery.setFilterOnActive(false);
           pchvQuery.setFilterOnReadableOrganization(false);
-          pchvQuery.setNamedParameter("ch", pch.getCharacteristic());
-          pchvQuery.setNamedParameter("product", product);
+          pchvQuery.setNamedParameter("ch", pch.getCharacteristic().getId());
+          pchvQuery.setNamedParameter("product", product.getId());
           for (ProductCharacteristicValue pchv : pchvQuery.list()) {
-            strChDesc += " " + pchv.getCharacteristicValue().getName();
+            // Reload pchv to avoid errors after session clear.
+            OBDal.getInstance().refresh(pchv);
+            String strChName = pchv.getCharacteristicValue().getName();
+            if (StringUtils.isNotBlank(strChValueId) && StringUtils.isNotBlank(strChValueName)
+                && pchv.getCharacteristicValue().getId().equals(strChValueId)) {
+              strChName = strChValueName;
+            }
+            strChDesc += " " + strChName;
           }
         }
         product.setCharacteristicDescription(strChDesc);
@@ -101,38 +185,8 @@ public class VariantChDescUpdateProcess implements Process {
         }
         i++;
       }
-
-      bundle.setResult(msg);
-
-      // Postgres wraps the exception into a GenericJDBCException
-    } catch (GenericJDBCException ge) {
-      log4j.error("Exception processing variant generation", ge);
-      msg.setType("Error");
-      msg.setTitle(OBMessageUtils.messageBD(bundle.getConnection(), "Error", bundle.getContext()
-          .getLanguage()));
-      msg.setMessage(((GenericJDBCException) ge).getSQLException().getMessage());
-      bundle.setResult(msg);
-      OBDal.getInstance().rollbackAndClose();
-      // Oracle wraps the exception into a QueryTimeoutException
-    } catch (QueryTimeoutException qte) {
-      log4j.error("Exception processing variant generation", qte);
-      msg.setType("Error");
-      msg.setTitle(OBMessageUtils.messageBD(bundle.getConnection(), "Error", bundle.getContext()
-          .getLanguage()));
-      msg.setMessage(((QueryTimeoutException) qte).getSQLException().getMessage().split("\n")[0]);
-      bundle.setResult(msg);
-      OBDal.getInstance().rollbackAndClose();
-    } catch (final Exception e) {
-      log4j.error("Exception processing variant generation", e);
-      msg.setType("Error");
-      msg.setTitle(OBMessageUtils.messageBD(bundle.getConnection(), "Error", bundle.getContext()
-          .getLanguage()));
-      msg.setMessage(FIN_Utility.getExceptionMessage(e));
-      bundle.setResult(msg);
-      OBDal.getInstance().rollbackAndClose();
     } finally {
       OBContext.restorePreviousMode();
     }
-
   }
 }
