@@ -569,7 +569,7 @@
       minIncRefresh = this.get('terminal').terminalType.minutestorefreshdatainc * 60 * 1000;
       if (minIncRefresh) {
         loadModelsIncFunc = function () {
-          this.loadModels(null, true);
+          OB.MobileApp.model.loadModels(null, true);
           setTimeout(loadModelsIncFunc, minIncRefresh);
         };
         setTimeout(loadModelsIncFunc, minIncRefresh);
