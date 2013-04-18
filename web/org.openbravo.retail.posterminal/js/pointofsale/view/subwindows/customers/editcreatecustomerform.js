@@ -144,7 +144,8 @@ enyo.kind({
     name: 'customerName',
     modelProperty: 'name',
     isFirstFocus: true,
-    i18nLabel: 'OBPOS_LblName'
+    i18nLabel: 'OBPOS_LblName',
+    maxlength: 60
   }, {
     kind: 'OB.UI.CustomerComboProperty',
     name: 'customerCategory',
