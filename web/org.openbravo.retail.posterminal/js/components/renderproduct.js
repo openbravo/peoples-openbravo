@@ -30,11 +30,18 @@ enyo.kind({
     style: 'float: left; width: 20%; text-align: right; font-weight:bold;'
   }, {
     style: 'clear:both;'
+  }, {
+    name: 'generic',
+    style: 'float: right; width: 20%; text-align: right; font-style: italic; color: grey; padding: 15px'
   }],
   initComponents: function () {
     this.inherited(arguments);
     this.$.identifier.setContent(this.model.get('_identifier'));
     this.$.price.setContent(OB.I18N.formatCurrency(this.model.get('standardPrice')));
     this.$.thumbnail.setImg(this.model.get('img'));
+    if (this.model.get('isGeneric')) {
+      //      this.$.generic.setContent(OB.I18N.getLabel('OBPOS_LblGeneric'));
+      this.$.generic.setContent('Generic');
+    }
   }
 });
