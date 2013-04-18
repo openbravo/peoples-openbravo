@@ -385,11 +385,6 @@
       if (this.get('loggedOffline')) {
         termInfo = JSON.parse(this.usermodel.get('terminalinfo'));
 
-        this.paymentnames = {};
-        for (i = 0, max = termInfo.payments.length; i < max; i++) {
-          this.paymentnames[termInfo.payments[i].payment.searchKey] = termInfo.payments[i];
-        }
-
         //Load from termInfo
         _.each(this.get('propertiesLoaders'), function (curPropertiesToLoadProcess) {
           _.each(curPropertiesToLoadProcess.properties, function (curProperty) {
@@ -416,9 +411,11 @@
       this.set('loggedOffline', false);
 
 
-      //Loading the properties off the array
+      //Loading the properties of the array
       console.log('Starting to load properties based on properties loaders', this.get('propertiesLoaders'));
       _.each(this.get('propertiesLoaders'), function (curProperty) {
+        //each loadFunction will call to propertiesReady function. This function will trigger
+        //allPropertiesLoaded when all of the loadFunctions are done.
         curProperty.loadFunction(this);
       }, this);
     },
