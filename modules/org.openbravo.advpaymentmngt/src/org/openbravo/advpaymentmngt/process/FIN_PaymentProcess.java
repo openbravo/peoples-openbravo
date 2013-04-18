@@ -1189,6 +1189,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
       newConversionRateDoc.setRate(payment.getFinancialTransactionConvertRate());
       newConversionRateDoc.setForeignAmount(payment.getFinancialTransactionAmount());
       newConversionRateDoc.setPayment(payment);
+      newConversionRateDoc.setClient(payment.getClient());
       OBDal.getInstance().save(newConversionRateDoc);
       OBDal.getInstance().flush();
       return newConversionRateDoc;
