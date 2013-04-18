@@ -800,7 +800,8 @@ public class AdvPaymentMngtDao {
     finTrans.setCurrency(account.getCurrency());
     finTrans.setAccount(account);
     finTrans.setLineNo(line);
-    finTrans.setFinPayment(OBDal.getInstance().get(FIN_Payment.class, payment.getId()));
+    OBDal.getInstance().refresh(payment);
+    finTrans.setFinPayment(payment);
     String truncateDescription = null;
     if (description != null) {
       truncateDescription = (description.length() > 255) ? description.substring(0, 252)
