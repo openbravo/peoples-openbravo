@@ -182,31 +182,37 @@ enyo.kind({
     i18nLabel: 'OBPOS_LblTaxId',
     displayLogic: function () {
       return OB.MobileApp.model.get('terminal').bp_showtaxid;
-    }
+    },
+    maxlength: 20
   }, {
     kind: 'OB.UI.CustomerTextProperty',
     name: 'customerLocName',
     modelProperty: 'locName',
-    i18nLabel: 'OBPOS_LblAddress'
+    i18nLabel: 'OBPOS_LblAddress',
+    maxlength: 60
   }, {
     kind: 'OB.UI.CustomerTextProperty',
     name: 'customerPostalCode',
     modelProperty: 'postalCode',
-    i18nLabel: 'OBPOS_LblPostalCode'
+    i18nLabel: 'OBPOS_LblPostalCode',
+    maxlength: 10
   }, {
     kind: 'OB.UI.CustomerTextProperty',
     name: 'customerCity',
     modelProperty: 'cityName',
-    i18nLabel: 'OBPOS_LblCity'
+    i18nLabel: 'OBPOS_LblCity',
+    maxlength: 60
   }, {
     kind: 'OB.UI.CustomerTextProperty',
     name: 'customerPhone',
     modelProperty: 'phone',
-    i18nLabel: 'OBPOS_LblPhone'
+    i18nLabel: 'OBPOS_LblPhone',
+    maxlength: 40
   }, {
     kind: 'OB.UI.CustomerTextProperty',
     name: 'customerEmail',
     modelProperty: 'email',
-    i18nLabel: 'OBPOS_LblEmail'
+    i18nLabel: 'OBPOS_LblEmail',
+    maxlength: 255
   }]
 });
