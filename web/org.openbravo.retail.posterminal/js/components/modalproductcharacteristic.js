@@ -126,29 +126,31 @@ enyo.kind({
   },
   searchAction: function (inSender, inEvent) {
     var me = this,
+        i, j, whereClause = '',
+        params = [],
         filter = inEvent.valueName;
-
-    function errorCallback(tx, error) {
-      OB.UTIL.showError("OBDAL error: " + error);
+    params.push(this.parent.parent.characteristic.get('characteristic_id'));
+    if (filter) {
+      whereClause = whereClause + ' and ch_value like ?';
+      params.push('%' + filter + '%');
     }
-
-    function successCallbackValues(dataValues) {
+    OB.Dal.query(OB.Model.ProductCharacteristic, 'select distinct(ch_value_id), ch_value, characteristic_id from m_product_ch where characteristic_id = ?' + whereClause, params, function (dataValues, me) {
       if (dataValues && dataValues.length > 0) {
-        me.valuesList.reset(dataValues.models);
+        for (i = 0; i < dataValues.length; i++) {
+          for (j = 0; j < me.parent.parent.model.get('filter').length; j++) {
+            if (dataValues.models[i].get('ch_value_id') === me.parent.parent.model.get('filter')[j].ch_value_id) {
+              dataValues.models[i].set('checked', true);
+              break;
+            }
+          }
+        }
+        me.parent.parent.$.body.$.listValues.valuesList.reset(dataValues.models);
       } else {
-        me.valuesList.reset();
+        me.parent.parent.$.body.$.listValues.valuesList.reset();
       }
-    }
-
-    var criteria = {};
-    if (filter && filter !== '') {
-      criteria._filter = {
-        operator: OB.Dal.CONTAINS,
-        value: filter
-      };
-    }
-
-    OB.Dal.find(OB.Model.ProductCharacteristic, criteria, successCallbackValues, errorCallback);
+    }, function (tx, error) {
+      OB.UTIL.showError("OBDAL error: " + error);
+    }, this);
     return true;
   },
   valuesList: null,
@@ -163,30 +165,19 @@ enyo.kind({
   name: 'OB.UI.ModalProductCharacteristic',
   topPosition: '125px',
   kind: 'OB.UI.Modal',
+  published: {
+    characteristic: null
+  },
   executeOnHide: function () {
     this.$.body.$.listValues.$.valueslistitemprinter.$.theader.$.modalProductChHeader.clearAction();
   },
   executeOnShow: function () {
-    var i,j;
+    var i, j;
+    this.characteristic = this.args.model;
     this.$.header.setContent(this.args.model.get('_identifier'));
-    OB.Dal.query(OB.Model.ProductCharacteristic, 'select distinct(ch_value_id), ch_value, characteristic_id from m_product_ch where characteristic_id = ?', [this.args.model.get('characteristic_id')], function (dataValues, me) {
-      if (dataValues && dataValues.length > 0) {
-        for (i = 0; i < dataValues.length; i++) {
-          for (j = 0; j < me.model.get('filter').length; j++) {
-            if (dataValues.models[i].get('ch_value_id') === me.model.get('filter')[j].ch_value_id) {
-              dataValues.models[i].set('checked', true);
-              break;
-            }
-          }
-        }
-        me.$.body.$.listValues.valuesList.reset(dataValues.models);
-      } else {
-        me.$.body.$.listValues.valuesList.reset();
-      }
-    }, function (tx, error) {
-      OB.UTIL.showError("OBDAL error: " + error);
-    }, this);
-
+    this.waterfall('onSearchAction', {
+      valueName: this.$.body.$.listValues.$.valueslistitemprinter.$.theader.$.modalProductChHeader.$.filterText.getValue()
+    });
   },
   i18nHeader: '',
   body: {
