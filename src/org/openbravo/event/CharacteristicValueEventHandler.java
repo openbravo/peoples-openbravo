@@ -22,45 +22,61 @@ import java.util.HashMap;
 
 import javax.enterprise.event.Observes;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
+import org.openbravo.client.kernel.event.TransactionBeginEvent;
+import org.openbravo.client.kernel.event.TransactionCompletedEvent;
+import org.openbravo.materialmgmt.VariantChDescUpdateProcess;
 import org.openbravo.model.common.plm.CharacteristicValue;
 import org.openbravo.scheduling.OBScheduler;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.service.db.DalConnectionProvider;
 
 public class CharacteristicValueEventHandler extends EntityPersistenceEventObserver {
+  protected Logger logger = Logger.getLogger(this.getClass());
   private static Entity[] entities = { ModelProvider.getInstance().getEntity(
       CharacteristicValue.ENTITY_NAME) };
-  protected Logger logger = Logger.getLogger(this.getClass());
+  private static ThreadLocal<String> chvalueUpdated = new ThreadLocal<String>();
 
   @Override
   protected Entity[] getObservedEntities() {
     return entities;
   }
 
+  @SuppressWarnings("unused")
+  public void onTransactionBegin(@Observes TransactionBeginEvent event) {
+    chvalueUpdated.set(null);
+  }
+
   public void onUpdate(@Observes EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
-    System.out.println("entra al event handler");
     final CharacteristicValue chv = (CharacteristicValue) event.getTargetInstance();
+    chvalueUpdated.set(chv.getId());
+  }
+
+  public void onTransactionCompleted(@Observes TransactionCompletedEvent event) {
+    String strChValueId = chvalueUpdated.get();
+    chvalueUpdated.set(null);
+    if (StringUtils.isBlank(strChValueId) || event.getTransaction().wasRolledBack()) {
+      return;
+    }
     try {
-      ProcessBundle pb = new ProcessBundle("58591E3E0F7648E4A09058E037CE49FC", RequestContext.get()
-          .getVariablesSecureApp()).init(new DalConnectionProvider(false));
+      ProcessBundle pb = new ProcessBundle(VariantChDescUpdateProcess.AD_PROCESS_ID, RequestContext
+          .get().getVariablesSecureApp()).init(new DalConnectionProvider(false));
       HashMap<String, Object> parameters = new HashMap<String, Object>();
       parameters.put("mProductId", null);
-      parameters.put("mChValueId", chv.getId());
-      parameters.put("chValueName", chv.getName());
+      parameters.put("mChValueId", strChValueId);
       pb.setParams(parameters);
       OBScheduler.getInstance().schedule(pb);
     } catch (Exception e) {
       logger.error("Error executing process", e);
     }
   }
-
 }

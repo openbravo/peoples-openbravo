@@ -161,9 +161,7 @@ public class VariantAutomaticGenerationProcess implements Process {
           }
         }
         OBDal.getInstance().flush();
-        VariantChDescUpdateProcess updateProcess = new VariantChDescUpdateProcess();
-        updateProcess.init(variant.getId(), null, null);
-        updateProcess.update();
+        new VariantChDescUpdateProcess().update(variant.getId(), null);
 
         for (i = 0; i < chNumber; i++) {
           ProductCharacteristicAux prChConfAux = prChUseCode.get(prChs.get(i));

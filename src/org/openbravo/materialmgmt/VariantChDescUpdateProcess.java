@@ -38,9 +38,7 @@ import org.openbravo.service.db.DalBaseProcess;
 
 public class VariantChDescUpdateProcess extends DalBaseProcess {
   private static final Logger log4j = Logger.getLogger(VariantChDescUpdateProcess.class);
-  private String strProductId;
-  private String strChValueId;
-  private String strChValueName;
+  public static final String AD_PROCESS_ID = "58591E3E0F7648E4A09058E037CE49FC";
 
   @Override
   public void doExecute(ProcessBundle bundle) throws Exception {
@@ -50,11 +48,10 @@ public class VariantChDescUpdateProcess extends DalBaseProcess {
 
     try {
       // retrieve standard params
-      strProductId = (String) bundle.getParams().get("mProductId");
-      strChValueId = (String) bundle.getParams().get("mChValueId");
-      strChValueName = (String) bundle.getParams().get("chValueName");
+      String strProductId = (String) bundle.getParams().get("mProductId");
+      String strChValueId = (String) bundle.getParams().get("mChValueId");
 
-      update();
+      update(strProductId, strChValueId);
 
       bundle.setResult(msg);
 
@@ -88,11 +85,6 @@ public class VariantChDescUpdateProcess extends DalBaseProcess {
 
   }
 
-  public void init(String _strProductId, String _strChValueId, String _strChValueName) {
-    this.strProductId = _strProductId;
-    this.strChValueId = _strChValueId;
-    this.strChValueName = _strChValueName;
-  }
   /**
    * Method to update the Characteristics Description.
    * 
@@ -101,11 +93,8 @@ public class VariantChDescUpdateProcess extends DalBaseProcess {
    * @param strChValueId
    *          Optional parameter, when given updates only products with this characteristic value
    *          assigned.
-   * @param strChValueName
-   *          Optional parameter, when a characteristic value id is given it is possible to pass
-   *          here it's new name, used
    */
-  public void update() {
+  public void update(String strProductId, String strChValueId) {
     OBContext.setAdminMode(false);
     try {
       StringBuffer where = new StringBuffer();
@@ -168,12 +157,7 @@ public class VariantChDescUpdateProcess extends DalBaseProcess {
           for (ProductCharacteristicValue pchv : pchvQuery.list()) {
             // Reload pchv to avoid errors after session clear.
             OBDal.getInstance().refresh(pchv);
-            String strChName = pchv.getCharacteristicValue().getName();
-            if (StringUtils.isNotBlank(strChValueId) && StringUtils.isNotBlank(strChValueName)
-                && pchv.getCharacteristicValue().getId().equals(strChValueId)) {
-              strChName = strChValueName;
-            }
-            strChDesc += " " + strChName;
+            strChDesc += " " + pchv.getCharacteristicValue().getName();
           }
         }
         product.setCharacteristicDescription(strChDesc);
