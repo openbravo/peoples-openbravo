@@ -103,8 +103,27 @@ function myReadOnlyLogic() {
     }
     return true;
   }
+  
+  //Checks whether any of the reference data is selected
+  function isReferenceDataSelected() {
+    var boxes = gt_getElementsByName("inpNodes", "input");
+    for (i = 0; i < boxes.length; i++) {
+      if (boxes[i].disabled == true) {
+        continue;
+      }
+      if (boxes[i].checked == true) {
+        return true;
+      }
+    }
+    return false;
+}
 
   function runInitialOrgSetup() {
+    if(document.frmMain.inpCreateAccounting.checked == true && document.frmMain.inpFile.value == "" && !isReferenceDataSelected()) {
+        showJSMessage('CreateAccountingButNoCoAProvided');
+        setProcessingMode('window', false);
+        return false;
+    }
     setProcessingMode('window',true);
     submitCommandForm('OK',true);
     return false;

@@ -134,6 +134,15 @@ public class InitialOrgSetup {
       return obResult;
     logEvent("@StartingOrg@" + NEW_LINE);
 
+    if (boCreateAccounting) {
+      if (fileCoAFilePath == null || fileCoAFilePath.getSize() < 1) {
+        log4j.debug("process() - Check COA");
+        obResult = coaModule(strModules);
+        if (!obResult.getType().equals(OKTYPE))
+          return obResult;
+      }
+    }
+
     log4j.debug("createOrganization() - Creating organization.");
     obResult = insertOrganization((strOrgName == null || strOrgName.equals("")) ? "newOrg"
         : strOrgName, strOrgType, strParentOrg, strcLocationId, strCurrency);
@@ -763,6 +772,28 @@ public class InitialOrgSetup {
       return org.getId();
     else
       return "";
+  }
+
+  OBError coaModule(String strModules) {
+    strModules = cleanUpStrModules(strModules);
+    OBError obeResult = new OBError();
+    obeResult.setType(OKTYPE);
+    List<Module> lCoaModules = null;
+    try {
+      lCoaModules = InitialSetupUtility.getCOAModules(strModules);
+      // Modules with CoA are retrieved.
+      if (lCoaModules.size() < 1) {
+
+        return logErrorAndRollback(
+            "@CreateReferenceDataFailed@. @CreateAccountingButNoCoAProvided@",
+            "createReferenceData() - Create accounting option was active, but no file was provided, and no accounting module was chosen",
+            null);
+      }
+    } catch (Exception e) {
+      return logErrorAndRollback("@CreateReferenceDataFailed@",
+          "createReferenceData() - Exception while processing accounting modules", e);
+    }
+    return obeResult;
   }
 
 }
