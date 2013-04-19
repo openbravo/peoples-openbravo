@@ -569,4 +569,13 @@ public class MenuManager implements Serializable {
 
     return selectableMenuOptions;
   }
+
+  /**
+   * Sets globalMenuOptions. This method is intended to be used only when running out of a context;
+   * 
+   * @param globalMenuOptions
+   */
+  public void setGlobalMenuOptions(GlobalMenu globalMenuOptions) {
+    this.globalMenuOptions = globalMenuOptions;
+  }
 }
