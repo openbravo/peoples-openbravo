@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2012 Openbravo SLU
+ * All portions are Copyright (C) 2011-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s): ___________
  ************************************************************************
@@ -228,6 +228,6 @@
     keyboardShortcutId: 'ToolBar_ManageViews'
   };
 
-  OB.ToolbarRegistry.registerButton(manageViewButtonProperties.buttonType, isc.OBToolbarIconButton, manageViewButtonProperties, 320, null);
+  OB.ToolbarRegistry.registerButton(manageViewButtonProperties.buttonType, isc.OBToolbarIconButton, manageViewButtonProperties, 320, null, false);
 
 }());
