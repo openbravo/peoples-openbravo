@@ -1678,17 +1678,18 @@ OB.ToolbarUtils.showTree = function (view) {
 };
 
 
-// ** {{{ OB.ToolbarUtils.createCloneButton(/*String*/ actionHandler, /*Array[String]*/ tabIds, /*String*/ askMsg, /*Integer*/ sortOrder, /*Boolean*/ editRecordAfterClone, /*String*/ buttonId, /*Boolean*/ overwriteIfExists}}} **
+// ** {{{ OB.ToolbarUtils.createCloneButton(/*String*/ actionHandler, /*Array[String]*/ tabIds, /*String*/ askMsg, /*Integer*/ sortOrder, /*Boolean*/ editRecordAfterClone, /*String*/ buttonId, /*Boolean*/ overwriteIfExists, /*Array[String]*/ tabIdsToAvoid}}} **
 // Automatically set up a clone button for the provided tabs
 // Parameters:
 // * {{{actionHandler}}}:  action handler which processes and returns the cloned record
-// * {{{tabIds}}}: array of tabIds where this button will be shown
+// * {{{tabIds}}}: (Optional, all tabs will be included by default) array of tabIds where this button will be shown
 // * {{{askMsg}}}: (Optional, 'OBUIAPP_WantToCloneRecord' by default) Text that will be displayed when the button be pressed.
 // * {{{sortOrder}}}: (Optional, '100' by default) Position in the toolbar of the clone button.
 // * {{{editRecordAfterClone}}}: (Optional, true by default) If the form edit view (of the cloned record) should be opened after clone it.
 // * {{{buttonId}}}: (Optional, random by default) Don't set it unless you plan to do advanced coding with this button (as, for example, overwrite it later in another place).
 // * {{{overwriteIfExists}}}: (Optional, false by default) To be able to overwrite a particular existing clone button. The buttonId should match with the overwritten one.
-OB.ToolbarUtils.createCloneButton = function (actionHandler, tabIds, askMsg, sortOrder, editRecordAfterClone, buttonId, overwriteIfExists) {
+// * {{{tabIdsToAvoid}}}: (Optional, no tabs to avoid by default) array of tabIds where this button should not be shown
+OB.ToolbarUtils.createCloneButton = function (actionHandler, tabIds, askMsg, sortOrder, editRecordAfterClone, buttonId, overwriteIfExists, tabIdsToAvoid) {
   var cloneButtonProps = isc.addProperties({}, isc.OBToolbar.CLONE_BUTTON_PROPERTIES);
 
   if (!askMsg) {
@@ -1737,18 +1738,22 @@ OB.ToolbarUtils.createCloneButton = function (actionHandler, tabIds, askMsg, sor
     isc.ask(askMsg, callback);
   };
 
-  OB.ToolbarRegistry.registerButton(buttonId, isc.OBToolbarIconButton, cloneButtonProps, sortOrder, tabIds, overwriteIfExists);
+  OB.ToolbarRegistry.registerButton(buttonId, isc.OBToolbarIconButton, cloneButtonProps, sortOrder, tabIds, tabIdsToAvoid, overwriteIfExists);
 };
 
 OB.ToolbarRegistry = {
   buttonDefinitions: [],
 
   // note tabIds is an array of strings, but maybe null/undefined
-  registerButton: function (buttonId, clazz, properties, sortOrder, tabIds, overwriteIfExists) {
+  registerButton: function (buttonId, clazz, properties, sortOrder, tabIds, tabIdsToAvoid, overwriteIfExists) {
     var length;
 
     if (tabIds && !isc.isA.Array(tabIds)) {
       tabIds = [tabIds];
+    }
+
+    if (tabIdsToAvoid && !isc.isA.Array(tabIdsToAvoid)) {
+      tabIdsToAvoid = [tabIdsToAvoid];
     }
 
     // declare the vars and the object which will be stored
@@ -1760,7 +1765,8 @@ OB.ToolbarRegistry = {
       clazz: clazz,
       properties: properties,
       sortOrder: sortOrder,
-      tabIds: tabIds
+      tabIds: tabIds,
+      tabIdsToAvoid: tabIdsToAvoid
     };
 
     // already registered button handling
@@ -1799,16 +1805,26 @@ OB.ToolbarRegistry = {
     //  btnDefinitionClass.create(btnDefinitionProperties);
     var result = [],
         j, resultIndex = 0,
-        i, validTabId, tabIds, length = this.buttonDefinitions.length,
-        tabIdsLength;
+        i, validTabId, tabIds, tabIdsToAvoid, length = this.buttonDefinitions.length,
+        tabIdsLength, tabIdsToAvoidLength;
     for (i = 0; i < length; i++) {
       tabIds = this.buttonDefinitions[i].tabIds;
+      tabIdsToAvoid = this.buttonDefinitions[i].tabIdsToAvoid;
       validTabId = !tabIds;
       if (tabIds) {
         tabIdsLength = tabIds.length;
         for (j = 0; j < tabIdsLength; j++) {
           if (tabIds[j] === tabId) {
             validTabId = true;
+            break;
+          }
+        }
+      }
+      if (validTabId) {
+        tabIdsToAvoidLength = (tabIdsToAvoid && isc.isA.Array(tabIdsToAvoid) && tabIdsToAvoid.length ? tabIdsToAvoid.length : 0);
+        for (j = 0; j < tabIdsToAvoidLength; j++) {
+          if (tabIdsToAvoid[j] === tabId) {
+            validTabId = false;
             break;
           }
         }
@@ -1822,15 +1838,15 @@ OB.ToolbarRegistry = {
 };
 
 //These are the icon toolbar buttons shown in all the tabs 
-OB.ToolbarRegistry.registerButton(isc.OBToolbar.NEW_DOC_BUTTON_PROPERTIES.buttonType, isc.OBToolbarIconButton, isc.OBToolbar.NEW_DOC_BUTTON_PROPERTIES, 10, null, false);
-OB.ToolbarRegistry.registerButton(isc.OBToolbar.NEW_ROW_BUTTON_PROPERTIES.buttonType, isc.OBToolbarIconButton, isc.OBToolbar.NEW_ROW_BUTTON_PROPERTIES, 20, null, false);
-OB.ToolbarRegistry.registerButton(isc.OBToolbar.SAVE_BUTTON_PROPERTIES.buttonType, isc.OBToolbarIconButton, isc.OBToolbar.SAVE_BUTTON_PROPERTIES, 30, null, false);
-OB.ToolbarRegistry.registerButton(isc.OBToolbar.SAVECLOSE_BUTTON_PROPERTIES.buttonType, isc.OBToolbarIconButton, isc.OBToolbar.SAVECLOSE_BUTTON_PROPERTIES, 40, null, false);
-OB.ToolbarRegistry.registerButton(isc.OBToolbar.UNDO_BUTTON_PROPERTIES.buttonType, isc.OBToolbarIconButton, isc.OBToolbar.UNDO_BUTTON_PROPERTIES, 50, null, false);
-OB.ToolbarRegistry.registerButton(isc.OBToolbar.DELETE_BUTTON_PROPERTIES.buttonType, isc.OBToolbarIconButton, isc.OBToolbar.DELETE_BUTTON_PROPERTIES, 60, null, false);
-OB.ToolbarRegistry.registerButton(isc.OBToolbar.REFRESH_BUTTON_PROPERTIES.buttonType, isc.OBToolbarIconButton, isc.OBToolbar.REFRESH_BUTTON_PROPERTIES, 70, null, false);
-OB.ToolbarRegistry.registerButton(isc.OBToolbar.EXPORT_BUTTON_PROPERTIES.buttonType, isc.OBToolbarIconButton, isc.OBToolbar.EXPORT_BUTTON_PROPERTIES, 80, null, false);
-OB.ToolbarRegistry.registerButton(isc.OBToolbar.ATTACHMENTS_BUTTON_PROPERTIES.buttonType, isc.OBToolbarIconButton, isc.OBToolbar.ATTACHMENTS_BUTTON_PROPERTIES, 90, null, false);
+OB.ToolbarRegistry.registerButton(isc.OBToolbar.NEW_DOC_BUTTON_PROPERTIES.buttonType, isc.OBToolbarIconButton, isc.OBToolbar.NEW_DOC_BUTTON_PROPERTIES, 10, null, null, false);
+OB.ToolbarRegistry.registerButton(isc.OBToolbar.NEW_ROW_BUTTON_PROPERTIES.buttonType, isc.OBToolbarIconButton, isc.OBToolbar.NEW_ROW_BUTTON_PROPERTIES, 20, null, null, false);
+OB.ToolbarRegistry.registerButton(isc.OBToolbar.SAVE_BUTTON_PROPERTIES.buttonType, isc.OBToolbarIconButton, isc.OBToolbar.SAVE_BUTTON_PROPERTIES, 30, null, null, false);
+OB.ToolbarRegistry.registerButton(isc.OBToolbar.SAVECLOSE_BUTTON_PROPERTIES.buttonType, isc.OBToolbarIconButton, isc.OBToolbar.SAVECLOSE_BUTTON_PROPERTIES, 40, null, null, false);
+OB.ToolbarRegistry.registerButton(isc.OBToolbar.UNDO_BUTTON_PROPERTIES.buttonType, isc.OBToolbarIconButton, isc.OBToolbar.UNDO_BUTTON_PROPERTIES, 50, null, null, false);
+OB.ToolbarRegistry.registerButton(isc.OBToolbar.DELETE_BUTTON_PROPERTIES.buttonType, isc.OBToolbarIconButton, isc.OBToolbar.DELETE_BUTTON_PROPERTIES, 60, null, null, false);
+OB.ToolbarRegistry.registerButton(isc.OBToolbar.REFRESH_BUTTON_PROPERTIES.buttonType, isc.OBToolbarIconButton, isc.OBToolbar.REFRESH_BUTTON_PROPERTIES, 70, null, null, false);
+OB.ToolbarRegistry.registerButton(isc.OBToolbar.EXPORT_BUTTON_PROPERTIES.buttonType, isc.OBToolbarIconButton, isc.OBToolbar.EXPORT_BUTTON_PROPERTIES, 80, null, null, false);
+OB.ToolbarRegistry.registerButton(isc.OBToolbar.ATTACHMENTS_BUTTON_PROPERTIES.buttonType, isc.OBToolbarIconButton, isc.OBToolbar.ATTACHMENTS_BUTTON_PROPERTIES, 90, null, null, false);
 
 //and add the direct link at the end
-OB.ToolbarRegistry.registerButton(isc.OBToolbar.LINK_BUTTON_PROPERTIES.buttonType, isc.OBToolbarIconButton, isc.OBToolbar.LINK_BUTTON_PROPERTIES, 300, null, false);
+OB.ToolbarRegistry.registerButton(isc.OBToolbar.LINK_BUTTON_PROPERTIES.buttonType, isc.OBToolbarIconButton, isc.OBToolbar.LINK_BUTTON_PROPERTIES, 300, null, null, false);

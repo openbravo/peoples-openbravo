@@ -228,6 +228,6 @@
     keyboardShortcutId: 'ToolBar_ManageViews'
   };
 
-  OB.ToolbarRegistry.registerButton(manageViewButtonProperties.buttonType, isc.OBToolbarIconButton, manageViewButtonProperties, 320, null, false);
+  OB.ToolbarRegistry.registerButton(manageViewButtonProperties.buttonType, isc.OBToolbarIconButton, manageViewButtonProperties, 320, null, null, false);
 
 }());

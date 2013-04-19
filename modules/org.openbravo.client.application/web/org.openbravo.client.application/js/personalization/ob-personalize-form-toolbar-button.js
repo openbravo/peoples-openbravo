@@ -71,7 +71,7 @@
     keyboardShortcutId: 'ToolBar_Personalization'
   };
 
-  OB.ToolbarRegistry.registerButton(personalizationButtonProperties.buttonType, isc.OBToolbarIconButton, personalizationButtonProperties, 310, null, false);
+  OB.ToolbarRegistry.registerButton(personalizationButtonProperties.buttonType, isc.OBToolbarIconButton, personalizationButtonProperties, 310, null, null, false);
 
   // and register the toolbar button the window personalization tab  
   windowPersonalizationTabButtonProperties = {
@@ -147,6 +147,6 @@
   };
 
   // register only for the window personalization tab
-  OB.ToolbarRegistry.registerButton(windowPersonalizationTabButtonProperties.buttonType, isc.OBToolbarIconButton, windowPersonalizationTabButtonProperties, 320, 'FF8081813157AED2013157BF6D810023', false);
+  OB.ToolbarRegistry.registerButton(windowPersonalizationTabButtonProperties.buttonType, isc.OBToolbarIconButton, windowPersonalizationTabButtonProperties, 320, 'FF8081813157AED2013157BF6D810023', null, false);
 
 }());

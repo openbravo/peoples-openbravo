@@ -250,7 +250,7 @@ isc.OBStandardView.addProperties({
       length = this.iconToolbarButtons.length;
       for (i = 0; i < length; i++) {
         // note create a somewhat unique id by concatenating the tabid and the index
-        OB.ToolbarRegistry.registerButton(this.tabId + '_' + i, isc.OBToolbarIconButton, this.iconToolbarButtons[i], 200 + (i * 10), this.tabId, false);
+        OB.ToolbarRegistry.registerButton(this.tabId + '_' + i, isc.OBToolbarIconButton, this.iconToolbarButtons[i], 200 + (i * 10), this.tabId, null, false);
       }
     }
 
