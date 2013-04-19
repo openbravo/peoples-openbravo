@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  Mallikarjun M
  ************************************************************************
@@ -52,7 +52,7 @@ public class CloneOrderActionHandler extends BaseActionHandler {
     final DataToJsonConverter jsonConverter = new DataToJsonConverter();
     JSONObject json = null;
     try {
-      String orderId = (String) parameters.get("orderId");
+      String orderId = (String) parameters.get("recordId");
       Order objOrder = OBDal.getInstance().get(Order.class, orderId);
       Order objCloneOrder = (Order) DalUtil.copy(objOrder, false);
       BigDecimal bLineNetAmt = getLineNetAmt(orderId);

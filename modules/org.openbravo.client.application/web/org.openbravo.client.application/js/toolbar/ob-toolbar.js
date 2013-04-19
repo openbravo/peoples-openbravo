@@ -1717,7 +1717,7 @@ OB.ToolbarUtils.createCloneButton = function (actionHandler, tabIds, askMsg, sor
 
       if (ok) {
         requestParams = {
-          orderId: view.viewGrid.getSelectedRecord().id
+          recordId: view.viewGrid.getSelectedRecord().id
         };
         OB.RemoteCallManager.call(actionHandler, {}, requestParams, function (rpcResponse, data, rpcRequest) {
           var recordIndex = view.viewGrid.getRecordIndex(view.viewGrid.getSelectedRecord()) + 1,
