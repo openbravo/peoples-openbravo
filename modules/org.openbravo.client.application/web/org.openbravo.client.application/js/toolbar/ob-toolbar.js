@@ -1678,10 +1678,11 @@ OB.ToolbarUtils.showTree = function (view) {
 };
 
 
-// ** {{{ OB.ToolbarUtils.createCloneButton(/*String*/ actionHandler, /*Array[String]*/ tabIds, /*String*/ askMsg, /*Integer*/ sortOrder, /*Boolean*/ editRecordAfterClone, /*String*/ buttonId, /*Boolean*/ overwriteIfExists, /*Array[String]*/ tabIdsToAvoid}}} **
+// ** {{{ OB.ToolbarUtils.createCloneButton(/*String*/ actionHandler, /*Object*/ requestParams, /*Array[String]*/ tabIds, /*String*/ askMsg, /*Integer*/ sortOrder, /*Boolean*/ editRecordAfterClone, /*String*/ buttonId, /*Boolean*/ overwriteIfExists, /*Array[String]*/ tabIdsToAvoid}}} **
 // Automatically set up a clone button for the provided tabs
 // Parameters:
 // * {{{actionHandler}}}:  action handler which processes and returns the cloned record
+// * {{{requestParams}}}: (Optional) aditional parameters to send to the action handler
 // * {{{tabIds}}}: (Optional, all tabs will be included by default) array of tabIds where this button will be shown
 // * {{{askMsg}}}: (Optional, 'OBUIAPP_WantToCloneRecord' by default) Text that will be displayed when the button be pressed.
 // * {{{sortOrder}}}: (Optional, '100' by default) Position in the toolbar of the clone button.
@@ -1689,7 +1690,7 @@ OB.ToolbarUtils.showTree = function (view) {
 // * {{{buttonId}}}: (Optional, random by default) Don't set it unless you plan to do advanced coding with this button (as, for example, overwrite it later in another place).
 // * {{{overwriteIfExists}}}: (Optional, false by default) To be able to overwrite a particular existing clone button. The buttonId should match with the overwritten one.
 // * {{{tabIdsToAvoid}}}: (Optional, no tabs to avoid by default) array of tabIds where this button should not be shown
-OB.ToolbarUtils.createCloneButton = function (actionHandler, tabIds, askMsg, sortOrder, editRecordAfterClone, buttonId, overwriteIfExists, tabIdsToAvoid) {
+OB.ToolbarUtils.createCloneButton = function (actionHandler, requestParams, tabIds, askMsg, sortOrder, editRecordAfterClone, buttonId, overwriteIfExists, tabIdsToAvoid) {
   var cloneButtonProps = isc.addProperties({}, isc.OBToolbar.CLONE_BUTTON_PROPERTIES);
 
   if (!askMsg) {
@@ -1713,12 +1714,12 @@ OB.ToolbarUtils.createCloneButton = function (actionHandler, tabIds, askMsg, sor
         callback;
 
     callback = function (ok) {
-      var requestParams;
+      if (!requestParams) {
+        requestParams = {};
+      }
+      requestParams.recordId = view.viewGrid.getSelectedRecord().id;
 
       if (ok) {
-        requestParams = {
-          recordId: view.viewGrid.getSelectedRecord().id
-        };
         OB.RemoteCallManager.call(actionHandler, {}, requestParams, function (rpcResponse, data, rpcRequest) {
           var recordIndex = view.viewGrid.getRecordIndex(view.viewGrid.getSelectedRecord()) + 1,
               recordsData = view.viewGrid.getDataSource().recordsFromObjects(data)[0];

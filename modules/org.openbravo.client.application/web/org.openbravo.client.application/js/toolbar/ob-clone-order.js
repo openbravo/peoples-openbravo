@@ -18,4 +18,4 @@
  */
 
 // Create a button to clone a sales order ('Sales Order' tab)
-OB.ToolbarUtils.createCloneButton('org.openbravo.client.application.businesslogic.CloneOrderActionHandler', ['186', '294'], OB.I18N.getLabel('OBUIAPP_WantToCloneOrder'));
+OB.ToolbarUtils.createCloneButton('org.openbravo.client.application.businesslogic.CloneOrderActionHandler', null, ['186', '294'], OB.I18N.getLabel('OBUIAPP_WantToCloneOrder'));
