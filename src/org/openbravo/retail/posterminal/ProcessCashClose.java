@@ -18,7 +18,6 @@ import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.TriggerHandler;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.mobile.core.process.JSONProcessSimple;
 import org.openbravo.service.json.JsonConstants;
 
 public class ProcessCashClose extends JSONProcessSimple {

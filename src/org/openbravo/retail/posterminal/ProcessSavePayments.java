@@ -35,7 +35,6 @@ import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
-import org.openbravo.mobile.core.process.JSONProcessSimple;
 import org.openbravo.mobile.core.process.PropertyByType;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.enterprise.DocumentType;
@@ -53,7 +52,7 @@ public class ProcessSavePayments extends JSONProcessSimple {
 
   @Override
   public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {
-    
+
     // Get context
     ConnectionProvider conn = new DalConnectionProvider();
     VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
@@ -66,7 +65,8 @@ public class ProcessSavePayments extends JSONProcessSimple {
         jsonsent.getString("docType"));
     String documentNo = "xx"; // Utility.getDocumentNoByDocumentType(conn, vars.getClient(),
                               // jsonsent.getString("docType"), true);
-    FIN_PaymentMethod paymentMethod = OBDal.getInstance().get(FIN_PaymentMethod.class, jsonsent.getString("paymentMethod"));
+    FIN_PaymentMethod paymentMethod = OBDal.getInstance().get(FIN_PaymentMethod.class,
+        jsonsent.getString("paymentMethod"));
     FIN_FinancialAccount account = OBDal.getInstance().get(FIN_FinancialAccount.class,
         jsonsent.getString("account"));
     String amount = Double.toString(jsonsent.getDouble("amount"));
@@ -82,7 +82,7 @@ public class ProcessSavePayments extends JSONProcessSimple {
       throw new ServletException("Not found payment scheduled for order.");
     }
     FIN_PaymentSchedule paymentSched = paymentScheds.get(0);
-    
+
     // Payments Scheduled Details
     OBCriteria<FIN_PaymentScheduleDetail> crProcess = OBDal.getInstance().createCriteria(
         FIN_PaymentScheduleDetail.class);
@@ -101,14 +101,14 @@ public class ProcessSavePayments extends JSONProcessSimple {
     FIN_Payment payment = FIN_AddPayment.savePayment(null, true, docType, documentNo, bp,
         paymentMethod, account, amount, paymentDate, org, null, paymentSchedDetails, paymentAmount,
         false, false);
-    
+
     // Process Payment
     try {
       FIN_AddPayment.processPayment(vars, conn, "D", payment);
     } catch (Exception e) {
       throw new ServletException(e);
     }
-    
+
     // Return processed payment.
     List<Object> data = new ArrayList<Object>();
     data.add(payment);

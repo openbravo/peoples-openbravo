@@ -14,10 +14,10 @@ import java.util.List;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.mobile.core.process.ProcessHQLQuery;
 import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.retail.config.OBRETCOProductList;
 import org.openbravo.retail.posterminal.POSUtils;
+import org.openbravo.retail.posterminal.ProcessHQLQuery;
 
 public class Product extends ProcessHQLQuery {
 

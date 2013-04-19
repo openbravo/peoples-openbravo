@@ -14,7 +14,7 @@ import org.hibernate.Session;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.mobile.core.process.JSONProcessSimple;
+import org.openbravo.retail.posterminal.JSONProcessSimple;
 
 public class StoreDetailedStock extends JSONProcessSimple {
   @Override
