@@ -1813,16 +1813,17 @@ public class AdvPaymentMngtDao {
         strInvoiceId).getFINPaymentScheduleList();
     OBCriteria<FIN_PaymentScheduleDetail> psdCriteria = OBDal.getInstance().createCriteria(
         FIN_PaymentScheduleDetail.class);
-    if (!paySchedList.isEmpty())
+    if (!paySchedList.isEmpty()) {
       psdCriteria.add(Restrictions.in(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE,
           paySchedList));
-    for (FIN_PaymentScheduleDetail psd : psdCriteria.list()) {
-      if (psd.getPaymentDetails() != null) {
-        FIN_Payment payment = psd.getPaymentDetails().getFinPayment();
-        if ("RPAE".equals(payment.getStatus())
-            && hasNotDeferredExecutionProcess(payment.getAccount(), payment.getPaymentMethod(),
-                payment.isReceipt()))
-          payments.add(payment);
+      for (FIN_PaymentScheduleDetail psd : psdCriteria.list()) {
+        if (psd.getPaymentDetails() != null) {
+          FIN_Payment payment = psd.getPaymentDetails().getFinPayment();
+          if ("RPAE".equals(payment.getStatus())
+              && hasNotDeferredExecutionProcess(payment.getAccount(), payment.getPaymentMethod(),
+                  payment.isReceipt()))
+            payments.add(payment);
+        }
       }
     }
 
