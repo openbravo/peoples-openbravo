@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):   Sreedhar Sirigiri (TDS), Mallikarjun M (TDS)
  ************************************************************************
@@ -497,7 +497,7 @@ isc.OBToolbar.addClassProperties({
 
   CLONE_BUTTON_PROPERTIES: {
     action: function () {
-      alert('this method must be overridden when registering the button');
+      alert('This method must be overridden when registering the button');
     },
     disabled: false,
     buttonType: 'clone',
@@ -507,11 +507,14 @@ isc.OBToolbar.addClassProperties({
           form = view.viewForm,
           grid = view.viewGrid,
           selectedRecords = grid.getSelectedRecords();
+
       if (selectedRecords && selectedRecords.length > 1) {
         this.setDisabled(true);
       } else if (view.isShowingForm && form.isNew) {
         this.setDisabled(true);
       } else if (view.isEditingGrid && grid.getEditForm().isNew) {
+        this.setDisabled(true);
+      } else if (form.hasChanged || (view.isEditingGrid && grid.getEditForm().hasChanged)) {
         this.setDisabled(true);
       } else {
         this.setDisabled(selectedRecords.length === 0);
