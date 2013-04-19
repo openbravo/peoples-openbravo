@@ -1677,6 +1677,67 @@ OB.ToolbarUtils.showTree = function (view) {
   view.setContextInfo(view.getContextInfo(true, true, true, true), openPopupTree, true);
 };
 
+
+// ** {{{ OB.ToolbarUtils.createCloneButton(/*String*/ actionHandler, /*Array[String]*/ tabIds, /*String*/ askMsg, /*Integer*/ sortOrder, /*Boolean*/ editRecordAfterClone, /*String*/ buttonId}}} **
+// Automatically set up a clone button for the provided tabs
+// Parameters:
+// * {{{actionHandler}}}:  action handler which processes and returns the cloned record
+// * {{{tabIds}}}: array of tabIds where this button will be shown
+// * {{{askMsg}}}: (Optional, 'OBUIAPP_WantToCloneRecord' by default) Text that will be displayed when the button be pressed.
+// * {{{sortOrder}}}: (Optional, '100' by default) Position in the toolbar of the clone button.
+// * {{{editRecordAfterClone}}}: (Optional, true by default) If the form edit view (of the cloned record) should be opened after clone it.
+// * {{{buttonId}}}: (Optional, random by default) Don't set it unless you plan to do advanced coding with this button
+//
+// Based on the development of: Sreedhar Sirigiri (TDS), Mallikarjun M (TDS)
+OB.ToolbarUtils.createCloneButton = function (actionHandler, tabIds, askMsg, sortOrder, editRecordAfterClone, buttonId) {
+  var cloneButtonProps = isc.addProperties({}, isc.OBToolbar.CLONE_BUTTON_PROPERTIES);
+
+  if (!askMsg) {
+    askMsg = OB.I18N.getLabel('OBUIAPP_WantToCloneRecord');
+  }
+  if (!sortOrder) {
+    sortOrder = 100;
+  }
+  if (editRecordAfterClone !== false) {
+    editRecordAfterClone = true;
+  }
+  if (!buttonId) {
+    buttonId = cloneButtonProps.buttonType + '_' + OB.Utilities.generateRandomString(8);
+  }
+
+  cloneButtonProps.action = function () {
+    var view = this.view,
+        callback;
+
+    callback = function (ok) {
+      var requestParams;
+
+      if (ok) {
+        requestParams = {
+          orderId: view.viewGrid.getSelectedRecord().id
+        };
+        OB.RemoteCallManager.call(actionHandler, {}, requestParams, function (rpcResponse, data, rpcRequest) {
+          var recordIndex = view.viewGrid.getRecordIndex(view.viewGrid.getSelectedRecord()) + 1,
+              recordsData = view.viewGrid.getDataSource().recordsFromObjects(data)[0];
+          view.viewGrid.addToCacheData(recordsData, recordIndex);
+          view.viewGrid.scrollToRow(recordIndex);
+          view.viewGrid.markForRedraw();
+          if (view.viewGrid.getEditRow()) {
+            view.viewGrid.endEditing();
+          }
+          view.viewGrid.doSelectSingleRecord(recordIndex);
+          if (editRecordAfterClone) {
+            view.editRecord(view.viewGrid.getRecord(recordIndex), false);
+          }
+        });
+      }
+    };
+    isc.ask(askMsg, callback);
+  };
+
+  OB.ToolbarRegistry.registerButton(buttonId, isc.OBToolbarIconButton, cloneButtonProps, sortOrder, tabIds);
+};
+
 OB.ToolbarRegistry = {
   buttonDefinitions: [],
 
