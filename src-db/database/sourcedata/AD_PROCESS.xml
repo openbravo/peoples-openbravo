@@ -6364,8 +6364,8 @@ When the process is finished it is recommended to schedule the "Costing Backgrou
 <!--D234AE084F7040DCB66E281A4237FF99-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--D234AE084F7040DCB66E281A4237FF99-->  <VALUE><![CDATA[JR_CustomerStatement]]></VALUE>
 <!--D234AE084F7040DCB66E281A4237FF99-->  <NAME><![CDATA[Customer Statement]]></NAME>
-<!--D234AE084F7040DCB66E281A4237FF99-->  <DESCRIPTION><![CDATA[Customer Statement]]></DESCRIPTION>
-<!--D234AE084F7040DCB66E281A4237FF99-->  <HELP><![CDATA[Customer Statement]]></HELP>
+<!--D234AE084F7040DCB66E281A4237FF99-->  <DESCRIPTION><![CDATA[Customer statement is a consolidated statement of every transaction of a customer posted to the ledger over a given period]]></DESCRIPTION>
+<!--D234AE084F7040DCB66E281A4237FF99-->  <HELP><![CDATA[Customer statement is a consolidated statement of every transaction of a customer posted to the ledger over a given period]]></HELP>
 <!--D234AE084F7040DCB66E281A4237FF99-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--D234AE084F7040DCB66E281A4237FF99-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--D234AE084F7040DCB66E281A4237FF99-->  <ISREPORT><![CDATA[N]]></ISREPORT>
@@ -6477,7 +6477,7 @@ When the process is finished it is recommended to schedule the "Costing Backgrou
 <!--E264309FF8244A94936502BF51829109-->  <VALUE><![CDATA[Reset Accounting]]></VALUE>
 <!--E264309FF8244A94936502BF51829109-->  <NAME><![CDATA[Reset Accounting]]></NAME>
 <!--E264309FF8244A94936502BF51829109-->  <DESCRIPTION><![CDATA[Reset Accounting Entries]]></DESCRIPTION>
-<!--E264309FF8244A94936502BF51829109-->  <HELP><![CDATA[The reset accounting process allows to totally or partially remove the ledger entries of an organization. The ledger entries can be massively re-created again by using the "Accounting Server Process" or the "G/L Posting by DB Tables" process. If some accounting entries description have been modified when running this process you will lose the changes in the description.]]></HELP>
+<!--E264309FF8244A94936502BF51829109-->  <HELP><![CDATA[The reset accounting process allows to totally or partially remove the ledger entries of an organization. The ledger entries can be massively re-created again by using the "Accounting Server Process" or the "G/L Posting by DB Tables" process. The manual changes done for the accounting entries description will obviously be lost after running this process]]></HELP>
 <!--E264309FF8244A94936502BF51829109-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--E264309FF8244A94936502BF51829109-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--E264309FF8244A94936502BF51829109-->  <ISREPORT><![CDATA[N]]></ISREPORT>
