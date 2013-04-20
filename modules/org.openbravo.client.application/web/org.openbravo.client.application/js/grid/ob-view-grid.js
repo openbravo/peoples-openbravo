@@ -2178,7 +2178,22 @@ isc.OBViewGrid.addProperties({
         title: OB.I18N.getLabel('OBUIAPP_Delete'),
         keyTitle: OB.KeyboardManager.Shortcuts.getProperty('keyComb.text', 'ToolBar_Eliminate', 'id'),
         click: function () {
-          grid.view.deleteSelectedRows();
+          // The click action should be the same than the toolbar button, so if this last one is overwritten, this click should perform the same action.
+          var isToolbarButtonFound = false,
+              i;
+          if (grid.view.toolBar && grid.view.toolBar.leftMembers && isc.OBToolbar.TYPE_DELETE) {
+            for (i = 0; i < grid.view.toolBar.leftMembers.length; i++) {
+              if (grid.view.toolBar.leftMembers[i].buttonType === isc.OBToolbar.TYPE_DELETE) {
+                isToolbarButtonFound = true;
+                grid.view.toolBar.leftMembers[i].action();
+                break;
+              }
+            }
+          }
+          // But if the toolbar button is not found, do the default action
+          if (!isToolbarButtonFound) {
+            grid.view.deleteSelectedRows();
+          }
         }
       });
     }
