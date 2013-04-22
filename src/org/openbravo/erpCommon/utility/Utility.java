@@ -81,6 +81,7 @@ import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.obps.ActivationKey.LicenseClass;
 import org.openbravo.erpCommon.reference.PInstanceProcessData;
+import org.openbravo.model.ad.process.ProcessInstance;
 import org.openbravo.model.ad.system.ClientInformation;
 import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.model.ad.ui.Process;
@@ -1261,8 +1262,7 @@ public class Utility {
   }
 
   /**
-   * @see OBMessageUtils#getProcessInstanceMessage(ConnectionProvider, VariablesSecureApp,
-   *      PInstanceProcessData[])
+   * @see OBMessageUtils#getProcessInstanceMessage(ProcessInstance)
    */
   public static OBError getProcessInstanceMessage(ConnectionProvider conn, VariablesSecureApp vars,
       PInstanceProcessData[] pinstanceData) throws ServletException {

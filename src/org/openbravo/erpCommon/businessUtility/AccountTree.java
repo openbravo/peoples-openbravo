@@ -56,11 +56,11 @@ public class AccountTree {
    *          VariablesSecureApp object with the session methods.
    * @param _conn
    *          ConnectionProvider object with the connection methods.
-   * @param _elements
+   * @param _accountsTree
    *          Array of element values. (structure)
-   * @param _accounts
+   * @param _accountsFacts
    *          Array of accounting facts. (data)
-   * @param _elementValueParent
+   * @param _reportNode
    *          String with the value of the parent element to evaluate.
    * @throws ServletException
    */

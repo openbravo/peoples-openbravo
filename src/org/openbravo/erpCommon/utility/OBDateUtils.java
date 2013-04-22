@@ -41,8 +41,6 @@ public class OBDateUtils {
    * 
    * @param date
    *          Date to be formatted.
-   * @param pattern
-   *          Format expected for the output.
    * @return String formatted.
    */
   public static String formatDate(Date date) {
@@ -113,9 +111,9 @@ public class OBDateUtils {
   /**
    * Determines the labor days between two dates
    * 
-   * @param strDate1
+   * @param _strDate1
    *          Date 1.
-   * @param strDate2
+   * @param _strDate2
    *          Date 2.
    * @param dateFormatter
    *          Format of the dates.
