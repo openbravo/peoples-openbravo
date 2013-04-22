@@ -34,9 +34,11 @@ enyo.kind({
   defaultNavigateOnClose: 'customerView',
   header: {
     kind: 'OB.UI.SubwindowHeader',
+    name: 'OB.OBPOSPointOfSale.UI.customers.newcustomerheader',
     handlers: {
       onSetCustomer: 'setCustomer'
     },
+    i18nHeaderMessage: 'OBPOS_TitleEditNewCustomer',
     setCustomer: function (inSender, inEvent) {
       this.customer = inEvent.customer;
     },
@@ -59,9 +61,6 @@ enyo.kind({
           }
         });
       }
-    },
-    initComponents: function(){
-      this.setContent(OB.I18N.getLabel('OBPOS_TitleEditNewCustomer'));
     }
   },
   body: {
@@ -144,7 +143,8 @@ enyo.kind({
     name: 'customerName',
     modelProperty: 'name',
     isFirstFocus: true,
-    i18nLabel: 'OBPOS_LblName'
+    i18nLabel: 'OBPOS_LblName',
+    maxlength: 60
   }, {
     kind: 'OB.UI.CustomerComboProperty',
     name: 'customerCategory',
@@ -171,38 +171,48 @@ enyo.kind({
         me.dataReadyFunction(null, args);
       }, args);
     },
-    i18nLabel: 'OBPOS_BPCategory'
-    // displayLogic: OB.POS.modelterminal.get('terminal').bp_showcategoryselector
+    i18nLabel: 'OBPOS_BPCategory',
+    displayLogic: function () {
+      return OB.MobileApp.model.get('terminal').bp_showcategoryselector;
+    }
   }, {
     kind: 'OB.UI.CustomerTextProperty',
     name: 'customerTaxId',
     modelProperty: 'taxID',
-    i18nLabel: 'OBPOS_LblTaxId'
-    // displayLogic: OB.POS.modelterminal.get('terminal').bp_showtaxid
+    i18nLabel: 'OBPOS_LblTaxId',
+    displayLogic: function () {
+      return OB.MobileApp.model.get('terminal').bp_showtaxid;
+    },
+    maxlength: 20
   }, {
     kind: 'OB.UI.CustomerTextProperty',
     name: 'customerLocName',
     modelProperty: 'locName',
-    i18nLabel: 'OBPOS_LblAddress'
+    i18nLabel: 'OBPOS_LblAddress',
+    maxlength: 60
   }, {
     kind: 'OB.UI.CustomerTextProperty',
     name: 'customerPostalCode',
     modelProperty: 'postalCode',
-    i18nLabel: 'OBPOS_LblPostalCode'
+    i18nLabel: 'OBPOS_LblPostalCode',
+    maxlength: 10
   }, {
     kind: 'OB.UI.CustomerTextProperty',
     name: 'customerCity',
     modelProperty: 'cityName',
-    i18nLabel: 'OBPOS_LblCity'
+    i18nLabel: 'OBPOS_LblCity',
+    maxlength: 60
   }, {
     kind: 'OB.UI.CustomerTextProperty',
     name: 'customerPhone',
     modelProperty: 'phone',
-    i18nLabel: 'OBPOS_LblPhone'
+    i18nLabel: 'OBPOS_LblPhone',
+    maxlength: 40
   }, {
     kind: 'OB.UI.CustomerTextProperty',
     name: 'customerEmail',
     modelProperty: 'email',
-    i18nLabel: 'OBPOS_LblEmail'
+    i18nLabel: 'OBPOS_LblEmail',
+    maxlength: 255
   }]
 });

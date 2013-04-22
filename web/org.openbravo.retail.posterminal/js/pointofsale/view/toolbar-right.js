@@ -27,7 +27,7 @@ enyo.kind({
     }
   },
   setTabButtonActive: function (tabName) {
-    var buttonContainerArray = this.getComponents()[0].getComponents(),
+    var buttonContainerArray =  this.$.toolbar.getComponents(),
         i;
 
     for (i = 0; i < buttonContainerArray.length; i++) {
@@ -81,7 +81,7 @@ enyo.kind({
     }
   },
   setTabButtonActive: function (tabName) {
-    var buttonContainerArray = this.getComponents()[0].getComponents(),
+    var buttonContainerArray =  this.$.toolbar.getComponents(),
         i;
 
     for (i = 0; i < buttonContainerArray.length; i++) {
@@ -112,6 +112,11 @@ enyo.kind({
   },
   kind: 'OB.UI.MultiColumn.Toolbar',
   buttons: [{
+    kind: 'OB.OBPOSPointOfSale.UI.ButtonTabScan',
+    name: 'dummy',
+    span: 0,
+    showing: false
+  }, {
     kind: 'OB.OBPOSPointOfSale.UI.ButtonTabScan',
     name: 'scan',
     span: 3

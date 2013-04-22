@@ -54,7 +54,6 @@ import org.openbravo.erpCommon.ad_forms.AcctServer;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.mobile.core.process.JSONProcessSimple;
 import org.openbravo.mobile.core.process.JSONPropertyToEntity;
 import org.openbravo.mobile.core.process.PropertyByType;
 import org.openbravo.model.ad.access.InvoiceLineTax;
@@ -695,8 +694,8 @@ public class OrderLoader extends JSONProcessSimple {
             pendingQty = BigDecimal.ZERO;
           }
           lineNo += 10;
-          if(jsonorder.getLong("orderType") == 1){
-        	  qty= qty.negate();
+          if (jsonorder.getLong("orderType") == 1) {
+            qty = qty.negate();
           }
           addShipemntline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine,
               jsonorder, lineNo, qty, stock.getStorageDetail().getStorageBin(), stock
@@ -726,8 +725,8 @@ public class OrderLoader extends JSONProcessSimple {
         queryLoc.setNamedParameter("warehouse", order.getWarehouse());
         queryLoc.setMaxResult(1);
         lineNo += 10;
-        if(jsonorder.getLong("orderType") == 1){
-        	pendingQty= pendingQty.negate();
+        if (jsonorder.getLong("orderType") == 1) {
+          pendingQty = pendingQty.negate();
         }
         addShipemntline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine, jsonorder,
             lineNo, pendingQty, queryLoc.list().get(0), oldAttributeSetValues);

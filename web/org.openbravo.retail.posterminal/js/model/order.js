@@ -438,7 +438,12 @@
         'overpayment': OB.DEC.compare(OB.DEC.sub(pay, total)) > 0 ? OB.I18N.formatCurrency(OB.DEC.sub(pay, total)) : null
       };
     },
-
+    
+    // returns true if the order is a Layaway, otherwise false
+    isLayaway: function () {
+      return this.getOrderType() === 2 || this.getOrderType() === 3 || this.get('isLayaway');
+    },
+    
     clear: function () {
       this.clearOrderAttributes();
       this.trigger('change');
@@ -843,6 +848,11 @@
         OB.Model.Discounts.applyPromotions(this);
       }
     },
+    
+    // returns the ordertype: 0: Sales order, 1: Return order, 2: Layaway, 3: Void Layaway
+    getOrderType: function () {
+      return this.get('orderType');
+    }, 
 
     shouldApplyPromotions: function () {
       // Do not apply promotions in return tickets

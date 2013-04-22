@@ -12,12 +12,6 @@
 (function () {
   var executeWhenDOMReady;
 
-  function triggerReady(models) {
-    if (models._LoadOnline && OB.UTIL.queueStatus(models._LoadQueue || {})) {
-      models.trigger('ready');
-    }
-  }
-
   // global components.
   OB = window.OB || {};
 
@@ -46,6 +40,35 @@
       });
 
       this.addPropertiesLoader({
+        properties: ['terminal'],
+        loadFunction: function (terminalModel) {
+          console.log('Loading... ' + this.properties);
+          var me = this;
+          new OB.DS.Request('org.openbravo.retail.posterminal.term.Terminal').exec(null, function (data) {
+            if (data.exception) {
+              OB.POS.navigate('login');
+              if (OB.I18N.hasLabel(data.exception.message)) {
+                OB.UTIL.showError(OB.I18N.getLabel(data.exception.message));
+              } else {
+                OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorLoadingTerminal'));
+              }
+            } else if (data[0]) {
+              terminalModel.set(me.properties[0], data[0]);
+              terminalModel.set('useBarcode', terminalModel.get('terminal').terminalType.usebarcodescanner);
+              OB.MobileApp.view.scanningFocus(true);
+              if (!terminalModel.usermodel) {
+                terminalModel.setUserModelOnline(true);
+              } else {
+                terminalModel.propertiesReady(me.properties);
+              }
+            } else {
+              OB.UTIL.showError("Terminal does not exists: " + 'params.terminal');
+            }
+          });
+        }
+      })
+
+      this.addPropertiesLoader({
         properties: ['context'],
         sync: false,
         loadFunction: function (terminalModel) {
@@ -63,31 +86,14 @@
       });
 
       this.addPropertiesLoader({
-        properties: ['payments', 'paymentcash'],
+        properties: ['payments'],
         loadFunction: function (terminalModel) {
           console.log('loading... ' + this.properties);
           var me = this;
-          new OB.DS.Request('org.openbravo.retail.posterminal.term.Payments').exec({
-            pos: terminalModel.get('terminal').id
-          }, function (data) {
+          new OB.DS.Request('org.openbravo.retail.posterminal.term.Payments').exec(null, function (data) {
             if (data) {
               var i, max, paymentlegacy, paymentcash, paymentcashcurrency;
               terminalModel.set(me.properties[0], data);
-              terminalModel.paymentnames = {};
-              for (i = 0, max = data.length; i < max; i++) {
-                terminalModel.paymentnames[data[i].payment.searchKey] = data[i];
-                if (data[i].payment.searchKey === 'OBPOS_payment.cash') {
-                  paymentlegacy = data[i].payment.searchKey;
-                }
-                if (data[i].paymentMethod.iscash) {
-                  paymentcash = data[i].payment.searchKey;
-                }
-                if (data[i].paymentMethod.iscash && data[i].paymentMethod.currency === terminalModel.get('terminal').currency) {
-                  paymentcashcurrency = data[i].payment.searchKey;
-                }
-              }
-              // sets the default payment method
-              terminalModel.set(me.properties[1], paymentcashcurrency || paymentcash || paymentlegacy);
               terminalModel.propertiesReady(me.properties);
             }
           });
@@ -98,8 +104,14 @@
         properties: ['businesspartner'],
         loadFunction: function (terminalModel) {
           console.log('loading... ' + this.properties);
-          terminalModel.set('businesspartner', terminalModel.get('terminal').businessPartner);
-          terminalModel.propertiesReady(this.properties);
+          var me = this;
+          new OB.DS.Request('org.openbravo.retail.posterminal.term.BusinessPartner').exec(null, function (data) {
+            if (data[0]) {
+              //TODO set backbone model
+              terminalModel.set(me.properties[0], data[0].id);
+              terminalModel.propertiesReady(me.properties);
+            }
+          });
         }
       });
 
@@ -108,9 +120,7 @@
         loadFunction: function (terminalModel) {
           console.log('loading... ' + this.properties);
           var me = this;
-          new OB.DS.Request('org.openbravo.retail.posterminal.term.Location').exec({
-            org: terminalModel.get('terminal').organization
-          }, function (data) {
+          new OB.DS.Request('org.openbravo.retail.posterminal.term.Location').exec(null, function (data) {
             if (data[0]) {
               terminalModel.set(me.properties[0], data[0]);
               terminalModel.propertiesReady(me.properties);
@@ -124,9 +134,7 @@
         loadFunction: function (terminalModel) {
           console.log('loading... ' + this.properties);
           var me = this;
-          new OB.DS.Request('org.openbravo.retail.posterminal.term.PriceList').exec({
-            pricelist: terminalModel.get('terminal').priceList
-          }, function (data) {
+          new OB.DS.Request('org.openbravo.retail.posterminal.term.PriceList').exec(null, function (data) {
             if (data[0]) {
               terminalModel.set(me.properties[0], data[0]);
               terminalModel.propertiesReady(me.properties);
@@ -140,9 +148,7 @@
         loadFunction: function (terminalModel) {
           console.log('loading... ' + this.properties);
           var me = this;
-          new OB.DS.Request('org.openbravo.retail.posterminal.term.Warehouses').exec({
-            organization: terminalModel.get('terminal').organization
-          }, function (data) {
+          new OB.DS.Request('org.openbravo.retail.posterminal.term.Warehouses').exec(null, function (data) {
             if (data && data.exception) {
               //MP17
               terminalModel.set(me.properties[0], []);
@@ -159,9 +165,7 @@
         loadFunction: function (terminalModel) {
           console.log('loading... ' + this.properties);
           var me = this;
-          new OB.DS.Process('org.openbravo.retail.posterminal.term.WritableOrganizations').exec({
-
-          }, function (data) {
+          new OB.DS.Process('org.openbravo.retail.posterminal.term.WritableOrganizations').exec(null, function (data) {
             if (data.length > 0) {
               terminalModel.set(me.properties[0], data);
               terminalModel.propertiesReady(me.properties);
@@ -175,9 +179,7 @@
         loadFunction: function (terminalModel) {
           console.log('loading... ' + this.properties);
           var me = this;
-          new OB.DS.Request('org.openbravo.retail.posterminal.term.PriceListVersion').exec({
-            pricelist: terminalModel.get('terminal').priceList
-          }, function (data) {
+          new OB.DS.Request('org.openbravo.retail.posterminal.term.PriceListVersion').exec(null, function (data) {
             if (data[0]) {
               terminalModel.set(me.properties[0], data[0]);
               terminalModel.propertiesReady(me.properties);
@@ -191,9 +193,7 @@
         loadFunction: function (terminalModel) {
           console.log('loading... ' + this.properties);
           var me = this;
-          new OB.DS.Request('org.openbravo.retail.posterminal.term.Currency').exec({
-            currency: terminalModel.get('terminal').currency
-          }, function (data) {
+          new OB.DS.Request('org.openbravo.retail.posterminal.term.Currency').exec(null, function (data) {
             if (data[0]) {
               terminalModel.set(me.properties[0], data[0]);
               //Precision used by arithmetics operations is set using the currency
@@ -204,137 +204,63 @@
         }
       });
 
-      this.addPropertiesLoader({
-        properties: ['documentsequence', 'quotationDocumentSequence'],
-        loadFunction: function (terminalModel) {
-          console.log('loading... ' + this.properties);
-          terminalModel.setDocumentSequence();
-        }
-      });
-
       OB.Model.Terminal.prototype.initialize.call(this);
-      OB.MobileApp.model.on('change:terminal', function () {
-        // setting common datasource parameters based on terminal
-        var t = OB.MobileApp.model.get('terminal');
-        if (!t) {
-          return;
-        }
-
-        OB.DS.commonParams = OB.DS.commonParams || {};
-        if (t.client) {
-          OB.DS.commonParams.client = t.client;
-        }
-        if (t.organization) {
-          OB.DS.commonParams.organization = t.organization;
-        }
-
-        if (t.id) {
-          OB.DS.commonParams.pos = t.id;
-        }
-      });
-
-      OB.MobileApp.model.on('change:terminalName', function () {
-        OB.DS.commonParams = OB.DS.commonParams || {};
-        OB.DS.commonParams.terminalName = OB.MobileApp.model.get('terminalName');
-      });
-
-      if (this.get('terminalName')) {
-        OB.DS.commonParams = OB.DS.commonParams || {};
-        OB.DS.commonParams.terminalName = this.get('terminalName');
-      }
     },
 
     renderMain: function () {
+      var i, paymentcashcurrency, paymentcash, paymentlegacy, minIncRefresh
       if (!OB.UTIL.isSupportedBrowser()) {
         OB.MobileApp.model.renderLogin();
         return false;
       }
-      var me = OB.MobileApp.model,
-          params = {
-          terminal: OB.MobileApp.model.get('terminalName')
-          };
+      OB.DS.commonParams = OB.DS.commonParams || {};
+      OB.DS.commonParams = {
+        client: this.get('terminal').client,
+        organization: this.get('terminal').organization,
+        pos: this.get('terminal').id,
+        terminalName: this.get('terminalName')
+      };
 
-      OB.MobileApp.model.loggingIn = true;
-
-
-      OB.DS.commonParams = {};
-
-      OB.MobileApp.model.off('terminal.loaded'); // Unregister previous events.
-      OB.MobileApp.model.on('terminal.loaded', function () {
-        var oldOB = OB;
-        // setting common datasource parameters based on terminal
-        var t = me.get('terminal');
-        OB.DS.commonParams = {
-          client: t.client,
-          organization: t.organization,
-          pos: t.id
-        };
-
-        $LAB.setGlobalDefaults({
-          AppendTo: 'body'
-        });
-
-        if (me.get('loggedOffline')) {
-          OB.Format = JSON.parse(me.usermodel.get('formatInfo'));
-
-          me.load();
-          return;
+      //LEGACY
+      this.paymentnames = {};
+      for (i = 0, max = this.get('payments').length; i < max; i++) {
+        this.paymentnames[this.get('payments')[i].payment.searchKey] = this.get('payments')[i];
+        if (this.get('payments')[i].payment.searchKey === 'OBPOS_payment.cash') {
+          paymentlegacy = this.get('payments')[i].payment.searchKey;
         }
-        $LAB.script('../../org.openbravo.client.kernel/OBCLKER_Kernel/Application').wait(function () {
-          var newFormat = OB.Format;
-          _.extend(OB, oldOB);
-          OB.Format = newFormat;
-
-          me.usermodel.set('formatInfo', JSON.stringify(OB.Format));
-          OB.Dal.save(me.usermodel, function () {}, function () {
-            window.console.error(arguments);
-          });
-
-          me.load();
-
-          //$LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/StaticResources?_appName=WebPOS');
-          //OB.POS.navigate('retail.pointofsale'); //TODO: this was in main.js, check it
-        });
-      });
-      if (OB.MobileApp.model.get('connectedToERP')) {
-
-        new OB.DS.Request('org.openbravo.retail.posterminal.term.Terminal').exec(params, function (data) {
-          if (data.exception) {
-            OB.POS.navigate('login');
-            if (OB.I18N.hasLabel(data.exception.message)) {
-              OB.UTIL.showError(OB.I18N.getLabel(data.exception.message));
-            } else {
-              OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorLoadingTerminal'));
-            }
-          } else if (data[0]) {
-            me.set('terminal', data[0]);
-
-            OB.MobileApp.model.set('useBarcode', OB.MobileApp.model.get('terminal').terminalType.usebarcodescanner);
-            OB.MobileApp.view.scanningFocus(true);
-            if (!me.usermodel) {
-              OB.MobileApp.model.setUserModelOnline(true);
-            } else {
-              me.trigger('terminal.loaded');
-            }
-          } else {
-            OB.UTIL.showError("Terminal does not exists: " + params.terminal);
-          }
-        });
-      } else {
-        //Offline mode, we get the terminal information from the local db
-        me.set('terminal', JSON.parse(me.usermodel.get('terminalinfo')).terminal);
-        me.trigger('terminal.loaded');
+        if (this.get('payments')[i].paymentMethod.iscash) {
+          paymentcash = this.get('payments')[i].payment.searchKey;
+        }
+        if (this.get('payments')[i].paymentMethod.iscash && this.get('payments')[i].paymentMethod.currency === this.get('terminal').currency) {
+          paymentcashcurrency = this.get('payments')[i].payment.searchKey;
+        }
       }
+      // sets the default payment method
+      this.set('paymentcash', paymentcashcurrency || paymentcash || paymentlegacy);
+
+      //MASTER DATA REFRESH
+      minIncRefresh = this.get('terminal').terminalType.minutestorefreshdatainc * 60 * 1000;
+      if (minIncRefresh) {
+        loadModelsIncFunc = function () {
+          OB.MobileApp.model.loadModels(null, true);
+          setTimeout(loadModelsIncFunc, minIncRefresh);
+        };
+        setTimeout(loadModelsIncFunc, minIncRefresh);
+      }
+
+      this.on('seqNoReady', function () {
+        this.trigger('ready'); //NAVIGATE
+      }, this);
+
+      this.setDocumentSequence();
     },
 
     cleanSessionInfo: function () {
-      this.set('terminal', null);
       this.cleanTerminalData();
     },
 
     preLoginActions: function () {
       this.cleanSessionInfo();
-
     },
 
     preLogoutActions: function () {
@@ -369,55 +295,6 @@
         window.console.error(arguments);
         OB.MobileApp.model.triggerLogout();
       });
-    },
-
-    //model.get('terminal') is NOT cleaned
-    cleanTerminalData: function () {
-      _.each(this.get('propertiesLoaders'), function (curPropertiesToLoadProcess) {
-        _.each(curPropertiesToLoadProcess.properties, function (curProperty) {
-          this.set(curProperty, null);
-        }, this)
-      }, this);
-    },
-
-    load: function () {
-      var termInfo, i, max;
-      if (this.get('loggedOffline')) {
-        termInfo = JSON.parse(this.usermodel.get('terminalinfo'));
-
-        //Load from termInfo
-        _.each(this.get('propertiesLoaders'), function (curPropertiesToLoadProcess) {
-          _.each(curPropertiesToLoadProcess.properties, function (curProperty) {
-            this.set(curProperty, termInfo[curProperty]);
-          }, this)
-        }, this);
-
-        //Not included into array
-        this.set('permissions', termInfo.permissions);
-        this.set('orgUserId', termInfo.orgUserId);
-        this.setDocumentSequence();
-
-        this.paymentnames = {};
-        for (i = 0, max = termInfo.payments.length; i < max; i++) {
-          this.paymentnames[termInfo.payments[i].payment.searchKey] = termInfo.payments[i];
-        }
-
-        this.allPropertiesLoaded();
-        return;
-      }
-
-      //Set array properties as null except terminal
-      this.cleanTerminalData();
-      this.set('loggedOffline', false);
-
-
-      //Loading the properties of the array
-      console.log('Starting to load properties based on properties loaders', this.get('propertiesLoaders'));
-      _.each(this.get('propertiesLoaders'), function (curProperty) {
-        //each loadFunction will call to propertiesReady function. This function will trigger
-        //allPropertiesLoaded when all of the loadFunctions are done.
-        curProperty.loadFunction(this);
-      }, this);
     },
 
     compareDocSeqWithPendingOrdersAndSave: function (maxDocumentSequence, maxQuotationDocumentSequence) {
@@ -484,13 +361,13 @@
     saveDocumentSequenceAndGo: function (documentSequence, quotationDocumentSequence) {
       this.set('documentsequence', documentSequence);
       this.set('quotationDocumentSequence', quotationDocumentSequence);
-      this.propertiesReady(['documentsequence', 'quotationDocumentSequence']);
+      this.trigger('seqNoReady');
     },
 
     setDocumentSequence: function () {
       // Obtains the persisted document number (documentno of the last processed order)
       OB.Dal.find(OB.Model.DocumentSequence, {
-        'posSearchKey': OB.MobileApp.model.get('terminal').searchKey
+        'posSearchKey': OB.MobileApp.model.terminalName
       }, function (documentsequence) {
         var lastInternalDocumentSequence, lastInternalQuotationSequence, max, maxquote;
         if (documentsequence && documentsequence.length > 0) {
@@ -550,31 +427,6 @@
           window.console.error(arguments);
         });
       });
-    },
-
-    //DEVELOPER: this function will be automatically called when all the properties defined in
-    //this.get('propertiesLoaders') are loaded. To indicate that a property is loaded
-    //me.propertiesReady(properties) should be executed by loadFunction of each property
-    allPropertiesLoaded: function () {
-      console.log('properties has been loaded successfully', this.attributes);
-      var undef, loadModelsIncFunc, loadModelsTotalFunc, minTotalRefresh, minIncRefresh;
-      this.loggingIn = false;
-      if (!this.get('loggedOffline')) {
-        //In online mode, we save the terminal information in the local db
-        this.usermodel.set('terminalinfo', JSON.stringify(this));
-        OB.Dal.save(this.usermodel, function () {}, function () {
-          window.console.error(arguments);
-        });
-      }
-      minIncRefresh = this.get('terminal').terminalType.minutestorefreshdatainc * 60 * 1000;
-      if (minIncRefresh) {
-        loadModelsIncFunc = function () {
-          this.loadModels(null, true);
-          setTimeout(loadModelsIncFunc, minIncRefresh);
-        };
-        setTimeout(loadModelsIncFunc, minIncRefresh);
-      }
-      this.trigger('ready');
     },
 
     getPaymentName: function (key) {

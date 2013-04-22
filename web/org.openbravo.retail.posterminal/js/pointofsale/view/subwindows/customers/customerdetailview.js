@@ -25,6 +25,7 @@ enyo.kind({
   defaultNavigateOnClose: 'customerAdvancedSearch',
   header: {
     kind: 'OB.UI.SubwindowHeader',
+    i18nHeaderMessage: 'OBPOS_TitleViewCustomer',
     onTapCloseButton: function () {
       var subWindow = this.subWindow;
       subWindow.doChangeSubWindow({
@@ -35,9 +36,6 @@ enyo.kind({
           }
         }
       });
-    },
-    initComponents: function(){
-      this.setContent(OB.I18N.getLabel('OBPOS_TitleViewCustomer'));
     }
   },
   body: {
@@ -76,6 +74,7 @@ enyo.kind({
     this.model = model;
   },
   initComponents: function(){
+    this.inherited(arguments);
     this.setContent(OB.I18N.getLabel('OBPOS_LblAssignToTicket'));
   }
 });

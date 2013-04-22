@@ -13,11 +13,12 @@ import java.util.List;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.DalUtil;
-import org.openbravo.mobile.core.process.ProcessHQLQuery;
 import org.openbravo.retail.posterminal.InitialValidations;
 import org.openbravo.retail.posterminal.OBPOSApplications;
 import org.openbravo.retail.posterminal.POSUtils;
+import org.openbravo.retail.posterminal.ProcessHQLQuery;
 import org.openbravo.service.json.JsonConstants;
 
 public class Terminal extends ProcessHQLQuery {
@@ -29,9 +30,8 @@ public class Terminal extends ProcessHQLQuery {
 
   @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
-    String POSSearchKey = jsonsent.getJSONObject("parameters").getJSONObject("terminal")
-        .getString("value");
-    OBPOSApplications pOSTerminal = POSUtils.getTerminal(POSSearchKey);
+    String posId = RequestContext.get().getSessionAttribute("POSTerminal").toString();
+    OBPOSApplications pOSTerminal = POSUtils.getTerminalById(posId);
 
     // INITIAL VALIDATIONS
     InitialValidations.validateTerminal(pOSTerminal);
@@ -39,16 +39,16 @@ public class Terminal extends ProcessHQLQuery {
     // saving quotations doc id to prevent session to be lost in getLastDocumentNumberForPOS
     String quotationsDocTypeId = pOSTerminal.getObposTerminaltype().getDocumentTypeForQuotations() == null ? null
         : pOSTerminal.getObposTerminaltype().getDocumentTypeForQuotations().getId();
-    int lastDocumentNumber = POSUtils.getLastDocumentNumberForPOS(POSSearchKey, pOSTerminal
-        .getObposTerminaltype().getDocumentType().getId());
+    int lastDocumentNumber = POSUtils.getLastDocumentNumberForPOS(pOSTerminal.getSearchKey(),
+        pOSTerminal.getObposTerminaltype().getDocumentType().getId());
     int lastQuotationDocumentNumber = 0;
     if (quotationsDocTypeId != null) {
-      lastQuotationDocumentNumber = POSUtils.getLastDocumentNumberForPOS(POSSearchKey,
-          quotationsDocTypeId);
+      lastQuotationDocumentNumber = POSUtils.getLastDocumentNumberForPOS(
+          pOSTerminal.getSearchKey(), quotationsDocTypeId);
     }
     String warehouseId = POSUtils.getWarehouseForTerminal(pOSTerminal).getId();
     final org.openbravo.model.pricing.pricelist.PriceList pricesList = POSUtils
-        .getPriceListByTerminal(POSSearchKey);
+        .getPriceListByTerminal(pOSTerminal.getSearchKey());
 
     return Arrays
         .asList(new String[] { "select pos.id as id, pos.organization.obretcoCBpartner.id as businessPartner, pos.name as _identifier, pos.searchKey as searchKey, pos.organization.obretcoCBpLocation.id as partnerAddress, "
@@ -87,7 +87,8 @@ public class Terminal extends ProcessHQLQuery {
             + " as lastDocumentNumber, "
             + lastQuotationDocumentNumber
             + " as lastQuotationDocumentNumber, postype as terminalType"
-            + " from OBPOS_Applications AS pos inner join pos.obposTerminaltype as postype where pos.$readableCriteria and pos.searchKey = :terminal" });
+            + " from OBPOS_Applications AS pos inner join pos.obposTerminaltype as postype where pos.$readableCriteria and pos.searchKey = '"
+            + pOSTerminal.getSearchKey() + "'" });
   }
 
   private String getIdentifierAlias(String propertyName) {

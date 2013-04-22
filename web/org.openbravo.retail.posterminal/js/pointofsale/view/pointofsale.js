@@ -172,6 +172,7 @@ enyo.kind({
         }, {
           name: 'leftSubWindowsContainer',
           components: [{
+            classes: 'span12',
             kind: 'OB.OBPOSPointOfSale.UI.ProductDetailsView',
             name: 'productdetailsview'
           }]
@@ -296,10 +297,10 @@ enyo.kind({
     }
   },
   showLeftSubWindow: function (inSender, inEvent) {
-    if (this.$[inEvent.leftSubWindow]) {
-      if (this.$[inEvent.leftSubWindow].mainBeforeSetShowing) {
+    if (this.$.multiColumn.$.leftPanel.$[inEvent.leftSubWindow]) {
+      if (this.$.multiColumn.$.leftPanel.$[inEvent.leftSubWindow].mainBeforeSetShowing) {
         var allHidden = true;
-        enyo.forEach(this.$.leftSubWindowsContainer.getControls(), function (component) {
+        enyo.forEach(this.$.multiColumn.$.leftPanel.getControls(), function (component) {
           if (component.showing === true) {
             if (component.mainBeforeSetHidden) {
               if (!component.mainBeforeSetHidden(inEvent)) {
@@ -309,9 +310,9 @@ enyo.kind({
             }
           }
         }, this);
-        if (this.$[inEvent.leftSubWindow].mainBeforeSetShowing(inEvent) && allHidden) {
+        if (this.$.multiColumn.$.leftPanel.$[inEvent.leftSubWindow].mainBeforeSetShowing(inEvent) && allHidden) {
           this.$.multiColumn.$.leftPanel.$.receiptview.setShowing(false);
-          this.$[inEvent.leftSubWindow].setShowing(true);
+          this.$.multiColumn.$.leftPanel.$[inEvent.leftSubWindow].setShowing(true);
         }
       }
     }

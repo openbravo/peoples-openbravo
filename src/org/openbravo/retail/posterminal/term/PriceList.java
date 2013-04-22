@@ -13,7 +13,9 @@ import java.util.List;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.mobile.core.process.ProcessHQLQuery;
+import org.openbravo.retail.posterminal.POSUtils;
 
 public class PriceList extends ProcessHQLQuery {
 
@@ -24,7 +26,9 @@ public class PriceList extends ProcessHQLQuery {
 
   @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
-    return Arrays
-        .asList(new String[] { "from PricingPriceList where id =:pricelist and $readableCriteria" });
+    String priceListId = POSUtils.getPriceListByTerminalId(
+        RequestContext.get().getSessionAttribute("POSTerminal").toString()).getId();
+    return Arrays.asList(new String[] { "from PricingPriceList where id ='" + priceListId
+        + "' and $readableCriteria" });
   }
 }

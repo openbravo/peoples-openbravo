@@ -388,6 +388,7 @@ enyo.kind({
     });
   },
   initComponents: function(){
+    this.inherited(arguments);
     this.setContent(OB.I18N.getLabel('OBPOS_TitleCustomerAdvancedSearch'));
   }
 });

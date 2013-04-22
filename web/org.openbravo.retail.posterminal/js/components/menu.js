@@ -108,7 +108,8 @@ enyo.kind({
   kind: 'OB.UI.MenuAction',
   permission: 'OBPOS_receipt.layawayReceipt',
   events: {
-    onShowDivText: ''
+    onShowDivText: '',
+    onCancelReceiptToInvoice: ''
   },
   i18nLabel: 'OBPOS_LblLayawayReceipt',
   tap: function () {
@@ -116,6 +117,7 @@ enyo.kind({
       return true;
     }
     this.inherited(arguments); // Manual dropdown menu closure
+    this.doCancelReceiptToInvoice();
     this.doShowDivText({
       permission: this.permission,
       orderType: 2
@@ -186,6 +188,10 @@ enyo.kind({
       return true;
     }
     this.inherited(arguments); // Manual dropdown menu closure
+    if (this.model.get('order').isLayaway()) {
+      OB.UTIL.showError(OB.I18N.getLabel('OBPOS_noInvoiceIfLayaway'));
+      return;
+    }
     this.doReceiptToInvoice();
   },
   init: function (model) {

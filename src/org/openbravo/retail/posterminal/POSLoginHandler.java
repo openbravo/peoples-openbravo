@@ -18,9 +18,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.secureApp.LoginUtils.RoleDefaults;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.DalUtil;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.mobile.core.login.MobileCoreLoginHandler;
 import org.openbravo.model.ad.access.Session;
 import org.openbravo.model.common.enterprise.Warehouse;
@@ -33,6 +36,7 @@ public class POSLoginHandler extends MobileCoreLoginHandler {
   @Override
   protected RoleDefaults getDefaults(HttpServletRequest req, HttpServletResponse res,
       String userId, String roleId, Session session) {
+
     final VariablesSecureApp vars = new VariablesSecureApp(req);
     final String terminalSearchKey = vars.getStringParameter("terminalName");
     OBCriteria<OBPOSApplications> qApp = OBDal.getInstance()
@@ -58,6 +62,40 @@ public class POSLoginHandler extends MobileCoreLoginHandler {
       return null;
     }
 
+    OBContext.setAdminMode(false);
+    try {
+      // Terminal access will be checked to ensure that the user has access to the terminal
+      OBQuery<TerminalAccess> accessCrit = OBDal.getInstance().createQuery(TerminalAccess.class,
+          "where userContact.id='" + userId + "'");
+      accessCrit.setFilterOnReadableClients(false);
+      accessCrit.setFilterOnReadableOrganization(false);
+      List<TerminalAccess> accessList = accessCrit.list();
+      boolean hasAccess = false;
+      if (accessList.size() != 0) {
+        for (TerminalAccess access : accessList) {
+          if (access.getPOSTerminal().getSearchKey().equals(terminalSearchKey)) {
+            hasAccess = true;
+          }
+        }
+        if (!hasAccess) {
+          try {
+            errorLogin(res, vars, session, "OBPOS_USER_NO_ACCESS_TO_TERMINAL_TITLE",
+                "OBPOS_USER_NO_ACCESS_TO_TERMINAL_MSG", new ArrayList<String>() {
+                  private static final long serialVersionUID = 1L;
+                  {
+                    add(terminalSearchKey);
+                  }
+                });
+          } catch (Exception e) {
+            log4j.error("Error in login", e);
+            return null;
+          }
+        }
+      }
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+
     RoleDefaults defaults = new RoleDefaults();
     defaults.role = roleId;
 
@@ -67,6 +105,7 @@ public class POSLoginHandler extends MobileCoreLoginHandler {
     defaults.org = (String) DalUtil.getId(terminal.getOrganization());
     Warehouse warehouse = POSUtils.getWarehouseForTerminal(terminal);
     defaults.warehouse = warehouse != null ? (String) DalUtil.getId(warehouse) : null;
+    RequestContext.get().setSessionAttribute("POSTerminal", terminal.getId());
     return defaults;
   }
 

@@ -13,6 +13,7 @@ import java.util.List;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.mobile.core.process.ProcessHQLQuery;
 
 public class Location extends ProcessHQLQuery {
@@ -24,7 +25,9 @@ public class Location extends ProcessHQLQuery {
 
   @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
+    String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
     return Arrays
-        .asList(new String[] { "from Location where id = (select min(locationAddress) from OrganizationInformation where organization.id = :org and $readableCriteria)" });
+        .asList(new String[] { "from Location where id = (select min(locationAddress) from OrganizationInformation where organization.id = '"
+            + orgId + "' and $readableCriteria)" });
   }
 }

@@ -73,6 +73,9 @@ enyo.kind({
     if (this.readOnly) {
       this.setAttribute('readonly', 'readonly');
     }
+    if (this.maxlength){
+      this.setAttribute('maxlength', this.maxlength);
+    }
   }
 });
 
