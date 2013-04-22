@@ -12,7 +12,7 @@
 enyo.kind({
   kind: 'OB.UI.SmallButton',
   name: 'OB.UI.RenderProductCh',
-  style: 'width: 100px; border: 2px solid #cccccc;',
+  style: 'width: 150px; border: 2px solid #cccccc;',
   classes: 'btnlink-white',
   events: {
     onShowPopup: ''
@@ -29,6 +29,11 @@ enyo.kind({
   },
   initComponents: function () {
     this.inherited(arguments);
-    this.setContent(this.model.get('_identifier'));
+    if (this.model.get('_identifier').length < 16) {
+      this.setContent(this.model.get('_identifier'));
+    } else {
+      this.setContent(this.model.get('_identifier').substring(0, 13) + '...');
+    }
+
   }
 });
