@@ -63,7 +63,8 @@ isc.OBParameterWindowView.addProperties({
         grid = view.grid.viewGrid;
         fields = grid.getFields();
         selection = grid.getSelectedRecords() || [];
-        len = selection.length, allRows = grid.data.allRows || grid.data.localData || grid.data;
+        len = selection.length;
+        allRows = grid.data.allRows || grid.data.localData || grid.data;
         for (i = 0; i < len; i++) {
           record = grid.getEditedRecord(grid.getRecordIndex(selection[i]));
           for (j = 0; j < fields.length; j++) {
