@@ -34,9 +34,11 @@ enyo.kind({
   defaultNavigateOnClose: 'customerView',
   header: {
     kind: 'OB.UI.SubwindowHeader',
+    name: 'OB.OBPOSPointOfSale.UI.customers.newcustomerheader',
     handlers: {
       onSetCustomer: 'setCustomer'
     },
+    i18nHeaderMessage: 'OBPOS_TitleEditNewCustomer',
     setCustomer: function (inSender, inEvent) {
       this.customer = inEvent.customer;
     },
@@ -59,9 +61,6 @@ enyo.kind({
           }
         });
       }
-    },
-    initComponents: function(){
-      this.setContent(OB.I18N.getLabel('OBPOS_TitleEditNewCustomer'));
     }
   },
   body: {
