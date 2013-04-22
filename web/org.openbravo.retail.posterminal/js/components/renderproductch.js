@@ -37,3 +37,20 @@ enyo.kind({
 
   }
 });
+
+enyo.kind({
+  kind: 'OB.UI.SmallButton',
+  name: 'OB.UI.RenderEmptyCh',
+  style: 'width: 150px; border: 2px solid #cccccc;',
+  classes: 'btnlink-white',
+  events: {
+    onClearAction: ''
+  },
+  tap: function () {
+    this.doClearAction();
+  },
+  initComponents: function () {
+    this.inherited(arguments);
+    this.setContent('Clear Filters');
+  }
+});
