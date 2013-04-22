@@ -25,7 +25,9 @@ public class Location extends ProcessHQLQuery {
 
   @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
+    String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
     return Arrays
-        .asList(new String[] { "from Location where id = (select min(locationAddress) from OrganizationInformation where organization.id = :org and $readableCriteria)" });
+        .asList(new String[] { "from Location where id = (select min(locationAddress) from OrganizationInformation where organization.id = '"
+            + orgId + "' and $readableCriteria)" });
   }
 }
