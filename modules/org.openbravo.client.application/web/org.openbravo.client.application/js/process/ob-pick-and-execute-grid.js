@@ -224,6 +224,20 @@ isc.OBPickAndExecuteGrid.addProperties({
     this.Super('selectionUpdated', arguments);
   },
 
+  cellEditEnd: function (editCompletionEvent, newValue, ficCallDone, autoSaveDone) {
+    var colNum = this.getEditCol(),
+        editField = this.getEditField(colNum),
+        undef;
+    if (editField.required) {
+      if (newValue === null || newValue === undef) {
+        this.setFieldError(rowNum, editField.name, "Invalid Value");
+      } else {
+        this.clearFieldError(rowNum, editField.name);
+      }
+    }
+    this.Super('cellEditEnd', arguments);
+  },
+
   handleFilterEditorSubmit: function (criteria, context) {
     var ids = [],
         crit = {},

@@ -57,14 +57,41 @@ isc.OBParameterWindowView.addProperties({
 
     function actionClick() {
       view.messageBar.hide();
-      if (view.validate()) {
-        view.doProcess(this._buttonValue);
-      } else {
-        // If the messageBar is visible, it means that it has been set due to a custom validation inside view.validate()
-        // so we don't want to overwrite it with the generic OBUIAPP_ErrorInFields message
-        if (!view.messageBar.isVisible()) {
-          view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_ErrorInFields'));
+      var hasErrors = false,
+          grid = view.grid.viewGrid,
+          fields = grid.getFields(),
+          selection = grid.getSelectedRecords() || [],
+          len = selection.length,
+          allRows = grid.data.allRows || grid.data.localData || grid.data,
+          lineNumbers = null,
+          i, j, record, undef;
+      for (i = 0; i < len; i++) {
+        record = grid.getEditedRecord(grid.getRecordIndex(selection[i]));
+        for (j = 0; j < fields.length; j++) {
+          if (fields[j].required) {
+            if (record[fields[j].name] === null || record[fields[j] === undef]) {
+              hasErrors = true;
+              if (lineNumbers === null) {
+                lineNumbers = grid.getRecordIndex(selection[i]).toString();
+              } else {
+                lineNumbers = lineNumbers + "," + grid.getRecordIndex(selection[i]).toString();
+              }
+            }
+          }
         }
+      }
+      if (!hasErrors) {
+        if (view.validate()) {
+          view.doProcess(this._buttonValue);
+        } else {
+          // If the messageBar is visible, it means that it has been set due to a custom validation inside view.validate()
+          // so we don't want to overwrite it with the generic OBUIAPP_ErrorInFields message
+          if (!view.messageBar.isVisible()) {
+            view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_ErrorInFields'));
+          }
+        }
+      } else {
+        view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_FillMandatoryFields') + " " + lineNumbers);
       }
     }
 
