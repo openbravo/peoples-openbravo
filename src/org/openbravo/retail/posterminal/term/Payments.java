@@ -13,7 +13,8 @@ import java.util.List;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.openbravo.retail.posterminal.ProcessHQLQuery;
+import org.openbravo.client.kernel.RequestContext;
+import org.openbravo.mobile.core.process.ProcessHQLQuery;
 
 public class Payments extends ProcessHQLQuery {
 

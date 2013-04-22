@@ -1,6 +1,5 @@
 package org.openbravo.retail.posterminal;
 
-import java.util.ArrayList;
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
@@ -126,6 +125,27 @@ public class POSUtils {
     return null;
   }
 
+  public static List<String> getOrgListByTerminalId(String terminalId) {
+    try {
+      OBContext.setAdminMode();
+
+      OBPOSApplications terminal = getTerminalById(terminalId);
+
+      if (terminal == null) {
+        throw new OBException("No terminal with id: " + terminalId);
+      }
+
+      return OBContext.getOBContext().getOrganizationStructureProvider()
+          .getParentList(terminal.getOrganization().getId(), true);
+
+    } catch (Exception e) {
+      log.error("Error getting store list: " + e.getMessage(), e);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    return null;
+  }
+
   public static List<String> getStoreList(String orgId) {
     return OBContext.getOBContext().getOrganizationStructureProvider().getParentList(orgId, true);
   }
@@ -165,6 +185,27 @@ public class POSUtils {
       }
     } catch (Exception e) {
       log.error("Error getting PriceList by Terminal value: " + e.getMessage(), e);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+
+    return null;
+  }
+
+  public static PriceList getPriceListByTerminalId(String terminalId) {
+    try {
+      OBContext.setAdminMode();
+
+      final List<String> orgList = getOrgListByTerminalId(terminalId);
+
+      for (String orgId : orgList) {
+        final Organization org = OBDal.getInstance().get(Organization.class, orgId);
+        if (org.getObretcoPricelist() != null) {
+          return org.getObretcoPricelist();
+        }
+      }
+    } catch (Exception e) {
+      log.error("Error getting PriceList by Terminal id: " + e.getMessage(), e);
     } finally {
       OBContext.restorePreviousMode();
     }

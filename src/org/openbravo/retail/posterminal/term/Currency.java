@@ -13,7 +13,9 @@ import java.util.List;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.openbravo.retail.posterminal.ProcessHQLQuery;
+import org.openbravo.client.kernel.RequestContext;
+import org.openbravo.mobile.core.process.ProcessHQLQuery;
+import org.openbravo.retail.posterminal.POSUtils;
 
 public class Currency extends ProcessHQLQuery {
 
@@ -24,7 +26,11 @@ public class Currency extends ProcessHQLQuery {
 
   @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
-    return Arrays
-        .asList(new String[] { "from Currency where id =:currency and $readableCriteria" });
+    String currId = POSUtils
+        .getPriceListByTerminalId(
+            RequestContext.get().getSessionAttribute("POSTerminal").toString()).getCurrency()
+        .getId();
+    return Arrays.asList(new String[] { "from Currency where id ='" + currId
+        + "' and $readableCriteria" });
   }
 }

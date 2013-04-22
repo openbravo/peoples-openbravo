@@ -13,16 +13,21 @@ import java.util.List;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.openbravo.retail.posterminal.ProcessHQLQuery;
+import org.openbravo.client.kernel.RequestContext;
+import org.openbravo.mobile.core.process.ProcessHQLQuery;
+import org.openbravo.retail.posterminal.POSUtils;
 
 public class PriceListVersion extends ProcessHQLQuery {
 
   @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
+    String priceListId = POSUtils.getPriceListByTerminalId(
+        RequestContext.get().getSessionAttribute("POSTerminal").toString()).getId();
     return Arrays
-        .asList(new String[] { "select plv.id AS id "
-            + "from PricingPriceListVersion AS plv "
-            + "where plv.$readableCriteria and plv.priceList.id =:pricelist and plv.validFromDate = (select max(pplv.validFromDate) "
-            + "from PricingPriceListVersion as pplv where pplv.priceList.id = :pricelist)" });
+        .asList(new String[] { "select plv.id AS id " + "from PricingPriceListVersion AS plv "
+            + "where plv.$readableCriteria and plv.priceList.id ='" + priceListId
+            + "' and plv.validFromDate = (select max(pplv.validFromDate) "
+            + "from PricingPriceListVersion as pplv where pplv.priceList.id = '" + priceListId
+            + "')" });
   }
 }

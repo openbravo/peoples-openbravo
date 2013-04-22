@@ -13,7 +13,8 @@ import java.util.List;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.openbravo.retail.posterminal.ProcessHQLQuery;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.mobile.core.process.ProcessHQLQuery;
 
 public class Warehouses extends ProcessHQLQuery {
 
@@ -24,10 +25,10 @@ public class Warehouses extends ProcessHQLQuery {
 
   @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
-
+    String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
     return Arrays
         .asList(new String[] { "select ow.warehouse.id as warehouseid, ow.warehouse.name as warehousename, ow.priority as priority "
-            + "from OrganizationWarehouse as ow where ow.$readableCriteria and ow.organization.id = :organization "
-            + "order by priority asc" });
+            + "from OrganizationWarehouse as ow where ow.$readableCriteria and ow.organization.id = '"
+            + orgId + "'" + "order by priority asc" });
   }
 }
