@@ -56,25 +56,25 @@ isc.OBParameterWindowView.addProperties({
     // Buttons
 
     function actionClick() {
-      view.messageBar.hide();
       var hasErrors = false,
-          grid = view.grid.viewGrid,
-          fields = grid.getFields(),
-          selection = grid.getSelectedRecords() || [],
-          len = selection.length,
-          allRows = grid.data.allRows || grid.data.localData || grid.data,
-          lineNumbers = null,
-          i, j, record, undef;
-      for (i = 0; i < len; i++) {
-        record = grid.getEditedRecord(grid.getRecordIndex(selection[i]));
-        for (j = 0; j < fields.length; j++) {
-          if (fields[j].required) {
-            if (record[fields[j].name] === null || record[fields[j] === undef]) {
-              hasErrors = true;
-              if (lineNumbers === null) {
-                lineNumbers = grid.getRecordIndex(selection[i]).toString();
-              } else {
-                lineNumbers = lineNumbers + "," + grid.getRecordIndex(selection[i]).toString();
+          grid, fields, selection, len, allRows, lineNumbers, i, j, record, undef;
+      view.messageBar.hide();
+      if (view.grid && view.grid.viewGrid) {
+        grid = view.grid.viewGrid;
+        fields = grid.getFields();
+        selection = grid.getSelectedRecords() || [];
+        len = selection.length, allRows = grid.data.allRows || grid.data.localData || grid.data;
+        for (i = 0; i < len; i++) {
+          record = grid.getEditedRecord(grid.getRecordIndex(selection[i]));
+          for (j = 0; j < fields.length; j++) {
+            if (fields[j].required) {
+              if (record[fields[j].name] === null || record[fields[j] === undef]) {
+                hasErrors = true;
+                if (lineNumbers === undef) {
+                  lineNumbers = grid.getRecordIndex(selection[i]).toString();
+                } else {
+                  lineNumbers = lineNumbers + "," + grid.getRecordIndex(selection[i]).toString();
+                }
               }
             }
           }
