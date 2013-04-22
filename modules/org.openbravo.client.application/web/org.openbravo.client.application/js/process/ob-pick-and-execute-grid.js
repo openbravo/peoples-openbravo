@@ -225,7 +225,8 @@ isc.OBPickAndExecuteGrid.addProperties({
   },
 
   cellEditEnd: function (editCompletionEvent, newValue, ficCallDone, autoSaveDone) {
-    var colNum = this.getEditCol(),
+    var rowNum = this.getEditRow(),
+        colNum = this.getEditCol(),
         editField = this.getEditField(colNum),
         undef;
     if (editField.required) {
