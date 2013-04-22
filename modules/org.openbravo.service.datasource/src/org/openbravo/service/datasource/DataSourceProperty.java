@@ -140,7 +140,6 @@ public class DataSourceProperty {
    * 
    * @param reference
    *          List reference
-   * @return
    */
   public static Set<String> getAllowedValues(Reference reference) {
     Set<String> allowedValues = new HashSet<String>();

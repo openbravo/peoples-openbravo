@@ -604,7 +604,6 @@ public class AdvPaymentMngtDao {
    *          accounting dimension
    * @param user2
    *          accounting dimension
-   * @return
    */
   public FIN_PaymentScheduleDetail getNewPaymentScheduleDetail(Organization organization,
       BigDecimal amount, BusinessPartner businessPartner, Product product, Project project,
@@ -640,7 +639,6 @@ public class AdvPaymentMngtDao {
    *          accounting dimension
    * @param salesRegion
    *          accounting dimension
-   * @return
    */
   public FIN_PaymentScheduleDetail getNewPaymentScheduleDetail(Organization organization,
       BigDecimal amount, BusinessPartner businessPartner, Product product, Project project,
@@ -1910,11 +1908,6 @@ public class AdvPaymentMngtDao {
   /**
    * Returns the list of credit payments for the selected business partner that belongs to the legal
    * entity's natural tree of the given organization
-   * 
-   * @param org
-   * @param bp
-   * @param isReceipt
-   * @return
    */
   public List<FIN_Payment> getCustomerPaymentsWithCredit(Organization org, BusinessPartner bp,
       boolean isReceipt) {
