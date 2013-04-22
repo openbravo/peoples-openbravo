@@ -185,6 +185,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.LeftToolbarImpl',
   kind: 'OB.UI.MultiColumn.Toolbar',
+  menuEntries: [],
   buttons: [{
     kind: 'OB.UI.ButtonNew',
     span: 3
@@ -198,8 +199,6 @@ enyo.kind({
   }],
   initComponents: function () {
     // set up the POS menu
-    this.menuEntries = [];
-
     this.menuEntries.push({
       kind: 'OB.UI.MenuReturn'
     });
