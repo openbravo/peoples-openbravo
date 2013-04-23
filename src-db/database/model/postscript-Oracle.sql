@@ -770,6 +770,13 @@ SELECT COALESCE(MAX(RECORD_REVISION),0)+1
                         and upper(c.columnname) not in ('CREATED','CREATEDBY','UPDATED', 'UPDATEDBY')
 			and c.isexcludeaudit='N'
                         order by c.position) loop
+
+      if (cur_tables.IsAuditInserts = 'N' and cur_cols.isKey='N' ) then
+        code := code || '
+      IF NOT INSERTING THEN
+      ';
+      end if;
+
       if (cur_cols.data_type in ('VARCHAR2', 'CHAR')) then
         datatype := 'CHAR';
         code := code || 'IF (UPDATING AND ((COALESCE(:NEW.'||cur_cols.COLUMN_NAME||',''.'') != COALESCE(:OLD.'||cur_cols.COLUMN_NAME||',''.'')) OR ((:NEW.'||cur_cols.COLUMN_NAME||' IS NULL) AND :OLD.'||cur_cols.COLUMN_NAME||'=''.'') OR ((:OLD.'||cur_cols.COLUMN_NAME||' IS NULL) AND :NEW.'||cur_cols.COLUMN_NAME||'=''.'')))';
@@ -810,6 +817,13 @@ OR DELETING OR INSERTING THEN
            V_CLIENT, V_ORG);
   END IF;
 ';
+
+      if (cur_tables.IsAuditInserts = 'N' and cur_cols.isKey='N' ) then
+        code := code || '
+      END IF;
+      ';
+      end if;
+
     end loop;
  
 code := code ||
