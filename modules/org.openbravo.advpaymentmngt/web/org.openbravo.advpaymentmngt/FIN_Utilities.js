@@ -286,11 +286,17 @@ function updateConvertedAmounts(recalcExchangeRate) {
   var actualConverted = frm.inpActualConverted;
   var expectedPayment = frm.inpExpectedPayment;
   var actualPayment = frm.inpActualPayment;
+  var exchangeRateValue = exchangeRate.value;
 
   if (actualConverted && expectedConverted && exchangeRate) {
+	   actualConverted.value = formattedNumberOpTemp(actualConverted.value, 'round', precision, roundedMask, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
     if (recalcExchangeRate) {
       if (actualConverted.value && actualPayment.value) {
         if (compare(actualPayment.value, '!=', 0)) {
+          var actualConvertedValue = OB.Utilities.Number.OBMaskedToJS(actualConverted.value, globalDecSeparator, globalGroupSeparator);
+          var actualPaymentValue = OB.Utilities.Number.OBMaskedToJS(actualPayment.value, globalDecSeparator, globalGroupSeparator);
+          exchangeRateValue = (actualConvertedValue/actualPaymentValue).toString();
+          exchangeRateValue = exchangeRateValue.replace('.', globalDecSeparator);
           exchangeRate.value = formattedNumberOpTemp(actualConverted.value, '/', actualPayment.value, roundedMask, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
         }
       } else {
@@ -298,13 +304,13 @@ function updateConvertedAmounts(recalcExchangeRate) {
       }
     } else {
       if (exchangeRate.value) {
-        actualConverted.value = formattedNumberOpTemp(actualPayment.value, '*', exchangeRate.value, roundedMask, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
+        actualConverted.value = formattedNumberOpTemp(actualPayment.value, '*', exchangeRateValue, roundedMask, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
       } else {
         actualConverted.value = applyFormat('0');
       }
     }
     if (exchangeRate.value && expectedPayment.value) {
-      expectedConverted.value = formattedNumberOpTemp(expectedPayment.value, '*', exchangeRate.value, roundedMask, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
+      expectedConverted.value = formattedNumberOpTemp(expectedPayment.value, '*', exchangeRateValue, roundedMask, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
     } else {
       expectedConverted.value = applyFormat('0');
     }
