@@ -51,7 +51,7 @@
 <!--575E470ABADB4C278132C957A78C47E3-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--575E470ABADB4C278132C957A78C47E3-->  <NAME><![CDATA[Process Payment valid actions]]></NAME>
 <!--575E470ABADB4C278132C957A78C47E3-->  <TYPE><![CDATA[S]]></TYPE>
-<!--575E470ABADB4C278132C957A78C47E3-->  <CODE><![CDATA[((@EM_APRM_Process_Payment@ = 'P' AND AD_Ref_List.value='P') OR (@EM_APRM_Process_Payment@ in ('R','RE') AND AD_Ref_List.value IN ('RE','R')) OR (@EM_APRM_Process_Payment@ in ('R','RE') AND AD_Ref_List.value IN ('V') AND @Status@='RPAE') OR (@EM_APRM_Process_Payment@ is null)) AND AD_Ref_List.IsActive = 'Y']]></CODE>
+<!--575E470ABADB4C278132C957A78C47E3-->  <CODE><![CDATA[((@EM_APRM_Process_Payment@ = 'P' AND AD_Ref_List.value='P') OR (@EM_APRM_Process_Payment@ in ('R','RE') AND AD_Ref_List.value IN ('RE','R') AND NOT EXISTS (SELECT 1 FROM FIN_PAYMENT WHERE FIN_Rev_Payment_ID = @FIN_Payment_ID@)) OR (@EM_APRM_Process_Payment@ in ('R','RE') AND AD_Ref_List.value IN ('R') AND EXISTS (SELECT 1 FROM FIN_PAYMENT WHERE FIN_Rev_Payment_ID = @FIN_Payment_ID@)) OR (@EM_APRM_Process_Payment@ in ('R','RE') AND AD_Ref_List.value IN ('V') AND @Status@='RPAE') OR (@EM_APRM_Process_Payment@ is null)) AND AD_Ref_List.IsActive = 'Y']]></CODE>
 <!--575E470ABADB4C278132C957A78C47E3-->  <AD_MODULE_ID><![CDATA[A918E3331C404B889D69AA9BFAFB23AC]]></AD_MODULE_ID>
 <!--575E470ABADB4C278132C957A78C47E3--></AD_VAL_RULE>
 
