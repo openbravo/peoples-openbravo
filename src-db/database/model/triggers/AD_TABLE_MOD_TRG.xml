@@ -126,7 +126,7 @@ BEGIN
       COALESCE(:NEW.ACCTDATE_COLUMN_ID   ,'.') = COALESCE(:OLD.ACCTDATE_COLUMN_ID   ,'.') AND                                                                                                                                                                            
       COALESCE(:NEW.ACCTCLASSNAME        ,'.') = COALESCE(:OLD.ACCTCLASSNAME        ,'.') AND
       COALESCE(:NEW.TreeType             ,'.') = COALESCE(:OLD.TreeType             ,'.') AND
-      :NEW.ISFULLYAUDITED != :OLD.ISFULLYAUDITED) THEN
+      (:NEW.ISFULLYAUDITED != :OLD.ISFULLYAUDITED OR :NEW.ISAUDITINSERTS != :OLD.ISAUDITINSERTS)) THEN
          :NEW.UPDATED := :OLD.UPDATED;
     END IF;
   END IF;
