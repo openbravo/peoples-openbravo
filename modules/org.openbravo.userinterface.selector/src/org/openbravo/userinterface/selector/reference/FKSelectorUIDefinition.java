@@ -119,10 +119,17 @@ public class FKSelectorUIDefinition extends ForeignKeyUIDefinition {
       return super.getFieldProperties(field);
     }
     final Selector selector = getSelector(field);
+
     final String tableName = field.getColumn().getTable().getDBTableName();
     final String columnName = field.getColumn().getDBColumnName();
+    final String tableId = field.getColumn().getTable().getId();
 
-    final Property property = DalUtil.getProperty(tableName, columnName);
+    Property property = null;
+    if ("Datasource".equals(field.getColumn().getTable().getDataOriginType())) {
+      property = DalUtil.getPropertyByTableId(tableId, columnName);
+    } else {
+      property = DalUtil.getProperty(tableName, columnName);
+    }
 
     final SelectorComponent selectorComponent = WeldUtils
         .getInstanceFromStaticBeanManager(SelectorComponent.class);

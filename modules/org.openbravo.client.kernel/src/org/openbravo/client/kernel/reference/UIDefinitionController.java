@@ -143,7 +143,10 @@ public class UIDefinitionController extends BaseTemplateComponent {
         }
       }
 
-      for (Table table : ModelProvider.getInstance().getTables()) {
+      List<Table> tableList = ModelProvider.getInstance().getTables();
+      tableList.addAll(ModelProvider.getInstance().getDataSourceBasedTables());
+
+      for (Table table : tableList) {
         List<Column> cols = table.getColumns();
         for (Column column : cols) {
           String referenceId;
