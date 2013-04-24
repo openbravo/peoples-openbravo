@@ -57,7 +57,10 @@ BEGIN
   
  -- Do not allow to de-activate products with OnHand Qty
  -- or Change the attribute set
-  IF ((:new.IsActive='N' AND :old.IsActive='Y') OR (COALESCE(:new.m_attributeset_id,'null') <> COALESCE(:old.m_attributeset_id,'null')) OR (COALESCE(:new.c_uom_id,'null') <> COALESCE(:old.c_uom_id,'null'))) THEN
+  IF ((:new.IsActive='N' AND :old.IsActive='Y')
+      OR (COALESCE(:new.m_attributeset_id,'null') <> COALESCE(:old.m_attributeset_id,'null'))
+      OR (COALESCE(:new.c_uom_id,'null') <> COALESCE(:old.c_uom_id,'null'))
+      OR (:new.IsGeneric='Y' AND :old.IsGeneric='N')) THEN
    SELECT  COALESCE(SUM(QtyOnHand)+SUM(QtyReserved)*.111+SUM(QtyOrdered)*999, 0) INTO v_ControlNo
    FROM (SELECT QtyOnHand, 0 AS QtyReserved, 0 AS QtyOrdered
    FROM M_Storage_Detail s
@@ -71,14 +74,15 @@ BEGIN
       RAISE_APPLICATION_ERROR(-20000, '@20633@');
     ELSIF (COALESCE(:new.c_uom_id,'null') <> COALESCE(:old.c_uom_id,'null')) THEN
       RAISE_APPLICATION_ERROR(-20000, '@20634@');
+    ELSIF (:new.IsGeneric='Y' AND :old.IsGeneric='N') THEN
+      RAISE_APPLICATION_ERROR(-20000, '@GenericWithStock@');
     ELSE
       RAISE_APPLICATION_ERROR(-20000, '@20400@');
     END IF;
    END IF;
   END IF;
-	
+
   IF( COALESCE(:old.Name,'.') <> COALESCE(:new.Name,'.')  OR COALESCE(:old.documentnote,'.') <> COALESCE(:new.documentnote,'.') ) THEN   
-    
     UPDATE M_PRODUCT_Trl
       SET IsTranslated='N'
     WHERE M_PRODUCT_ID=:new.M_PRODUCT_ID;

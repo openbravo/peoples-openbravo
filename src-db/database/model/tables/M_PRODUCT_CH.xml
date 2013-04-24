@@ -49,10 +49,6 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
-      <column name="M_CH_VALUE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <column name="M_CH_SUBSET_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
@@ -66,9 +62,6 @@
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="M_PRODUCT_CH_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="M_CH_VALUE" name="M_PRODUCT_CH_CH_VALUE">
-        <reference local="M_CH_VALUE_ID" foreign="M_CH_VALUE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_CHARACTERISTIC" name="M_PRODUCT_CH_M_CHARACTERISTIC">
         <reference local="M_CHARACTERISTIC_ID" foreign="M_CHARACTERISTIC_ID"/>

@@ -63,6 +63,17 @@ BEGIN
           END
       );
     END IF;
+    INSERT INTO m_product_ch_conf (
+      m_product_ch_conf_id, ad_client_id, ad_org_id, isactive,
+      created, createdby, updated, updatedby,
+      m_product_ch_id, m_ch_value_id, skcode
+    ) SELECT
+      get_uuid(), :new.ad_client_id, :new.ad_org_id, 'N',
+      now(), :new.createdby, now(), :new.updatedby,
+      pch.m_product_ch_id, :new.m_ch_value_id, :new.skcode
+      FROM m_product_ch pch
+      WHERE pch.m_characteristic_id = :new.m_characteristic_id
+        AND pch.m_ch_subset_id IS NULL;
   END IF;
 
   IF DELETING THEN

@@ -39,7 +39,6 @@ import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.erpCommon.utility.TreeUtility;
 import org.openbravo.model.ad.access.CharacteristicSubsetValue;
 import org.openbravo.model.common.plm.CharacteristicValue;
 import org.openbravo.model.common.plm.ProductCharacteristic;
@@ -135,18 +134,6 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
           strCode = subsetValue.getCharacteristicValue().getCode();
         }
         String[] strValues = { subsetValue.getCharacteristicValue().getId(), strCode };
-        chValues.add(strValues);
-      }
-      return chValues;
-    }
-    // If a summary node is selected insert only children values.
-    if (prCh.getCharacteristicValue() != null) {
-      TreeUtility tu = new TreeUtility();
-      Set<String> chValueIds = tu.getChildTree(prCh.getCharacteristicValue().getId(), "CH", false);
-      for (String strChValueId : chValueIds) {
-        CharacteristicValue chValue = OBDal.getInstance().get(CharacteristicValue.class,
-            strChValueId);
-        String[] strValues = { strChValueId, chValue.getCode() };
         chValues.add(strValues);
       }
       return chValues;
