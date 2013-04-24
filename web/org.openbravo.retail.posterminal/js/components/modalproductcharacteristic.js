@@ -177,5 +177,11 @@ enyo.kind({
   i18nHeader: '',
   body: {
     kind: 'OB.UI.ListValues'
+  },
+  init: function (model) {
+    this.model = model;
+    this.waterfall('onSetModel', {
+      model: this.model
+    });
   }
 });

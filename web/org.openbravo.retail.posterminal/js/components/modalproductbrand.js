@@ -178,5 +178,11 @@ enyo.kind({
   i18nHeader: '',
   body: {
     kind: 'OB.UI.ListBrands'
+  },
+  init: function (model) {
+    this.model = model;
+    this.waterfall('onSetModel', {
+      model: this.model
+    });
   }
 });
