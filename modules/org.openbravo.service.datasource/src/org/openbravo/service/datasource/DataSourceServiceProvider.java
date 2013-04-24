@@ -32,6 +32,7 @@ import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.datamodel.Table;
 
 /**
  * Provides {@link DataSourceService} instances and caches them in a global cache.
@@ -73,10 +74,21 @@ public class DataSourceServiceProvider {
           }
         }
         if (dataSource == null) {
-          ds = weldUtils.getInstance(DefaultDataSourceService.class);
-          ds.setName(name);
-          ds.setEntity(ModelProvider.getInstance().getEntity(name));
-          dataSources.put(name, ds);
+          final OBCriteria<Table> qTable = OBDal.getInstance().createCriteria(Table.class);
+          qTable.add(Restrictions.eq(Table.PROPERTY_NAME, name));
+          if (!qTable.list().isEmpty()) {
+            Table table = (Table) qTable.list().get(0);
+            if ("Datasource".equals(table.getDataOriginType())) {
+              dataSource = table.getObserdsDatasource();
+            }
+          }
+          if (dataSource == null) {
+            ds = weldUtils.getInstance(DefaultDataSourceService.class);
+            ds.setName(name);
+            ds.setEntity(ModelProvider.getInstance().getEntity(name));
+            dataSources.put(name, ds);
+          }
+
         } else {
           if (dataSource.getJavaClassName() != null) {
             final Class<DataSourceService> clz = (Class<DataSourceService>) OBClassLoader
