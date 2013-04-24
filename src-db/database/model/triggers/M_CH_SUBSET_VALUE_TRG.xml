@@ -40,6 +40,7 @@ BEGIN
       WHERE pch.m_characteristic_id = v_characteristic_id
         AND pch.m_ch_subset_id = :new.m_ch_subset_id;
   END IF;
-END]]></body>
+END M_CH_SUBSET_VALUE_TRG
+]]></body>
     </trigger>
   </database>
