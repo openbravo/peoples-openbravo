@@ -31,6 +31,7 @@
 
 		<property name="className"/>
 		
+        <property name="dataOrigin" type="string" not-null="true" column="dataorigintype"/>
 		<property name="tableName"/>
 		<property name="view" type="org.openbravo.base.session.OBYesNoType" column="isview"/>
 		<property name="deletable" type="org.openbravo.base.session.OBYesNoType" column="isdeleteable"/>
