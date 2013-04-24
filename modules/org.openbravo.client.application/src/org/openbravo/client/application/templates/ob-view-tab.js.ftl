@@ -59,12 +59,14 @@
 <@compress single_line=true>
       inpTabId: '${tabComponent.tabId}',
       inpwindowId: '${tabComponent.windowId}',
-      inpTableId: '${tabComponent.tableId?js_string}',
-      inpkeyColumnId: '${tabComponent.keyColumnName?js_string}',
-      keyProperty: '${tabComponent.keyProperty.name?js_string}',
-      inpKeyName: '${tabComponent.keyInpName?js_string}',
-      keyColumnName: '${tabComponent.keyColumnName?js_string}',
-      keyPropertyType: '${tabComponent.keyPropertyType?js_string}'      
+      inpTableId: '${tabComponent.tableId?js_string}'
+      <#if !tabComponent.dataSourceTable>
+        ,inpkeyColumnId: '${tabComponent.keyColumnName?js_string}',
+        keyProperty: '${tabComponent.keyProperty.name?js_string}',
+        inpKeyName: '${tabComponent.keyInpName?js_string}',
+        keyColumnName: '${tabComponent.keyColumnName?js_string}',
+        keyPropertyType: '${tabComponent.keyPropertyType?js_string}'
+      </#if>
 </@compress>
     },
      
