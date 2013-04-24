@@ -1994,7 +1994,7 @@ isc.OBStandardView.addProperties({
         }
         // Prevents the proper id from being overwritten with the dummy id
         // See issue https://issues.openbravo.com/view.php?id=22625
-        if (this.viewGrid.getEditValues(rowNum)[OB.Constants.ID].indexOf('_') === 0 && this.viewGrid.getRecord(rowNum)[OB.Constants.ID].indexOf('_') !== 0) {
+        if (this.viewGrid.getEditValues(rowNum)[OB.Constants.ID] && this.viewGrid.getEditValues(rowNum)[OB.Constants.ID].indexOf('_') === 0 && this.viewGrid.getRecord(rowNum)[OB.Constants.ID].indexOf('_') !== 0) {
           record[OB.Constants.ID] = this.viewGrid.getRecord(rowNum)[OB.Constants.ID];
         }
       } else {
