@@ -266,8 +266,6 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
         discard[0] = "sectionAmount";
       BigDecimal previousDebit = BigDecimal.ZERO;
       BigDecimal previousCredit = BigDecimal.ZERO;
-      BigDecimal previousTotalDr = BigDecimal.ZERO;
-      BigDecimal previousTotalCr = BigDecimal.ZERO;
       String strAllaccounts = "Y";
       if (strcelementvaluefrom != null && !strcelementvaluefrom.equals("")) {
         if (strcelementvalueto.equals("")) {
@@ -318,14 +316,17 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
                 strOrgFamily, strcBpartnerId, strmProductId, strcProjectId, strAmtFrom, strAmtTo,
                 data[0].id, data[0].groupbyid, null, null, null, data[0].dateacctnumber
                     + data[0].factaccttype + data[0].factAcctGroupId + data[0].factAcctId);
-
             dataSubtotal = ReportGeneralLedgerData.select2sum(this, rowNum, strGroupByText,
                 strGroupBy, strAllaccounts, strcelementvaluefrom, strcelementvalueto,
                 Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
                 Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
-                strcAcctSchemaId, strDateFrom, toDatePlusOne, strOrgFamily, strcBpartnerId,
-                strmProductId, strcProjectId, strAmtFrom, strAmtTo, null, null, pgSubtotalLimit,
-                oraSubtotalLimit, null, null, data[0].id);
+                strcAcctSchemaId, strDateFrom, toDatePlusOne, strOrgFamily,
+                (strGroupBy.equals("BPartner") ? "('" + data[i].groupbyid + "')" : strcBpartnerId),
+                (strGroupBy.equals("Product") ? "('" + data[i].groupbyid + "')" : strmProductId),
+                (strGroupBy.equals("Project") ? "('" + data[i].groupbyid + "')" : strcProjectId),
+                strAmtFrom, strAmtTo, null, null, null, null, null, data[0].dateacctnumber
+                    + data[0].factaccttype + data[0].factAcctGroupId + data[0].factAcctId,
+                data[0].id);
 
             log4j.debug("Select2Total. Time in mils: " + (System.currentTimeMillis() - init));
             // Now dataTotal is covered adding debit and credit amounts
