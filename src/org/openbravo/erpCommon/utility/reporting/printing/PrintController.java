@@ -81,7 +81,6 @@ public class PrintController extends HttpSecureAppServlet {
   private boolean multiReports = false;
   private boolean archivedReports = false;
 
-
   @Override
   public void init(ServletConfig config) {
     super.init(config);
@@ -396,7 +395,8 @@ public class PrintController extends HttpSecureAppServlet {
         } else if (vars.commandIn("UPDATE_TEMPLATE")) {
           JSONObject o = new JSONObject();
           try {
-            PocData[] pocData = (PocData[]) vars.getSessionObject("pocData" + fullDocumentIdentifier);
+            PocData[] pocData = (PocData[]) vars.getSessionObject("pocData"
+                + fullDocumentIdentifier);
             final String templateId = vars.getRequestGlobalVariable("templates", "templates");
             final String documentId = pocData[0].documentId;
             for (final PocData documentData : pocData) {
@@ -832,15 +832,15 @@ public class PrintController extends HttpSecureAppServlet {
   }
 
   void createEmailOptionsPage(HttpServletRequest request, HttpServletResponse response,
-	      VariablesSecureApp vars, DocumentType documentType, String strDocumentId,
-	      Map<String, Report> reports, HashMap<String, Boolean> checks) {
-	  createEmailOptionsPage(request, response, vars, documentType, strDocumentId, reports, checks);
+      VariablesSecureApp vars, DocumentType documentType, String strDocumentId,
+      Map<String, Report> reports, HashMap<String, Boolean> checks) {
+    createEmailOptionsPage(request, response, vars, documentType, strDocumentId, reports, checks);
   }
 
   void createEmailOptionsPage(HttpServletRequest request, HttpServletResponse response,
       VariablesSecureApp vars, DocumentType documentType, String strDocumentId,
-      Map<String, Report> reports, HashMap<String, Boolean> checks, String fullDocumentIdentifier) throws IOException,
-      ServletException {
+      Map<String, Report> reports, HashMap<String, Boolean> checks, String fullDocumentIdentifier)
+      throws IOException, ServletException {
     XmlDocument xmlDocument = null;
     PocData[] pocData = getContactDetails(documentType, strDocumentId);
     @SuppressWarnings("unchecked")
@@ -954,7 +954,7 @@ public class PrintController extends HttpSecureAppServlet {
     for (final PocData documentData : pocData) {
       // Map used to count the different users
 
-      final String customer = documentData.contactName;
+      final String customer = documentData.contactEmail;
       getEnvironentInformation(pocData, checks);
       if (checks.get("moreThanOneDoc")) {
         if (customer == null || customer.length() == 0) {
@@ -987,7 +987,7 @@ public class PrintController extends HttpSecureAppServlet {
         customerMap.put(customer, documentData);
       }
 
-      final String salesRep = documentData.salesrepName;
+      final String salesRep = documentData.salesrepEmail;
 
       boolean moreThanOnesalesRep = checks.get("moreThanOnesalesRep").booleanValue();
       if (moreThanOnesalesRep) {
@@ -1162,8 +1162,8 @@ public class PrintController extends HttpSecureAppServlet {
     for (final PocData documentData : pocData) {
       // Map used to count the different users
       docCounter++;
-      final String customer = documentData.contactName;
-      final String salesRep = documentData.salesrepName;
+      final String customer = documentData.contactEmail;
+      final String salesRep = documentData.salesrepEmail;
       if (!customerMap.containsKey(customer)) {
         customerMap.put(customer, documentData);
       }
@@ -1195,8 +1195,8 @@ public class PrintController extends HttpSecureAppServlet {
     for (final PocData documentData : pocData) {
       // Map used to count the different users
 
-      final String customer = documentData.contactName;
-      final String salesRep = documentData.salesrepName;
+      final String customer = documentData.contactEmail;
+      final String salesRep = documentData.salesrepEmail;
       if (!customerMap.containsKey(customer)) {
         customerMap.put(customer, documentData);
       }
