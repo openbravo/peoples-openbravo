@@ -63,8 +63,7 @@ OB.DS.HWServer.prototype.getWeight = function (callback) {
 };
 
 OB.DS.HWServer.prototype.print = function (template, params, callback) {
-
-  if (template.getData) {
+  if (template && template.getData) {
     var me = this;
     template.getData(function (data) {
       me.print(data, params, callback);
