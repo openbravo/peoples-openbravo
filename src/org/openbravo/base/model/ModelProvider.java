@@ -72,6 +72,7 @@ public class ModelProvider implements OBSingleton {
   private List<Entity> model = null;
   private List<Table> tables = null;
   private HashMap<String, Table> tablesByTableName = null;
+  private HashMap<String, Table> dataSourceTablesByName = null;
   private Map<String, RefTable> refTableMap = new HashMap<String, RefTable>();
   private Map<String, RefSearch> refSearchMap = new HashMap<String, RefSearch>();
   private HashMap<String, Entity> entitiesByName = null;
@@ -193,13 +194,22 @@ public class ModelProvider implements OBSingleton {
 
       // this map stores the mapped tables
       tablesByTableName = new HashMap<String, Table>();
+      dataSourceTablesByName = new HashMap<String, Table>();
       for (final Table t : tables) {
         // tables are stored case insensitive!
-        tablesByTableName.put(t.getTableName().toLowerCase(), t);
+        if ("Table".equals(t.getDataOrigin())) {
+          tablesByTableName.put(t.getTableName().toLowerCase(), t);
+        } else {
+          String dataOrigin = t.getDataOrigin();
+          dataSourceTablesByName.put(t.getName().toLowerCase(), t);
+        }
       }
 
       log.debug("Setting referencetypes for columns");
       for (final Table t : tablesByTableName.values()) {
+        t.setReferenceTypes(ModelProvider.instance);
+      }
+      for (final Table t : dataSourceTablesByName.values()) {
         t.setReferenceTypes(ModelProvider.instance);
       }
       //
@@ -215,13 +225,15 @@ public class ModelProvider implements OBSingleton {
       entitiesByTableId = new HashMap<String, Entity>();
       entitiesWithTreeType = new ArrayList<Entity>();
       for (final Table t : tables) {
-        log.debug("Building model for table " + t.getTableName());
+        log.debug("Building model for table " + t.getName());
         final Entity e = new Entity();
         e.initialize(t);
         model.add(e);
         entitiesByClassName.put(e.getClassName(), e);
         entitiesByName.put(e.getName(), e);
-        entitiesByTableName.put(t.getTableName().toUpperCase(), e);
+        if ("Table".equals(t.getDataOrigin())) {
+          entitiesByTableName.put(t.getTableName().toUpperCase(), e);
+        }
         entitiesByTableId.put(t.getId(), e);
         if (e.getTreeType() != null) {
           entitiesWithTreeType.add(e);
@@ -255,8 +267,8 @@ public class ModelProvider implements OBSingleton {
         for (final Property p : e.getProperties()) {
           if (!p.isOneToMany()) {
             p.initializeName();
-            // don't do mandatory value setting for views
-            if (!e.isView() && p.getColumnName() != null) {
+            // don't do mandatory value setting for views or datasource based tables
+            if (!e.isView() && p.getColumnName() != null && !e.isDataSourceBased()) {
               final Boolean mandatory = colMandatories.get(createColumnMandatoryKey(
                   e.getTableName(), p.getColumnName()));
               if (mandatory != null) {
@@ -274,7 +286,11 @@ public class ModelProvider implements OBSingleton {
       for (final Entity e : model) {
         // add virtual property in the parent table based on
         // isParent columns
-        createPropertyInParentEntity(e);
+
+        // Support datasource based tables
+        if (!e.isDataSourceBased()) {
+          createPropertyInParentEntity(e);
+        }
       }
 
       for (final Entity e : model) {
@@ -373,6 +389,15 @@ public class ModelProvider implements OBSingleton {
   }
 
   /**
+   * Returns list of dataSource based tables known in the dal in memory model.
+   * 
+   * @return list of dataSource based tables known by dal in no particular stable order
+   */
+  public List<Table> getDataSourceBasedTables() {
+    return new ArrayList<Table>(dataSourceTablesByName.values());
+  }
+
+  /**
    * @return the last time that one of the relevant Application Dictionary objects was modified.
    *         Relevant AD objects are: Table, Column, Reference, RefList, RefSearch, RefTable,
    *         Module, Package.
@@ -460,49 +485,56 @@ public class ModelProvider implements OBSingleton {
 
     List<Column> translatableColumns = new ArrayList<Column>();
     for (final Table t : tablesByTableName.values()) {
-      for (final Column c : t.getColumns()) {
-        if (!c.isPrimitiveType()) {
-          final Property thisProp = c.getProperty();
-          log.debug("Setting targetEntity and reference Property for " + thisProp);
-          final Column thatColumn = c.getReferenceType();
-          if (thatColumn == null) {
-            if (!OBPropertiesProvider.isFriendlyWarnings()) {
-              log.error("Property "
-                  + thisProp
-                  + " is mapped incorrectly, there is no referenced column for it, removing from the mapping");
-            }
-            thisProp.getEntity().getProperties().remove(thisProp);
-            if (thisProp.getEntity().getIdProperties().remove(thisProp)) {
-              Check.fail("Incorrect mapping for property " + thisProp
-                  + " which is an id, mapping fails, stopping here");
-            }
-            thisProp.getEntity().getIdentifierProperties().remove(thisProp);
-            continue;
-          }
-
-          // can occur if the column is read and returned through a
-          // module provided Domain Type
-          if (thatColumn.getProperty() == null) {
-            final Entity entity = getEntityByTableName(thatColumn.getTable().getTableName());
-            Check.isNotNull(entity, "No entity found using tablename "
-                + thatColumn.getTable().getTableName() + " for column " + thatColumn);
-            final Property property = entity.getPropertyByColumnName(thatColumn.getColumnName());
-            thatColumn.setProperty(property);
-          }
-
-          // targetentity is set within setReferencedProperty
-          final Property thatProperty = thatColumn.getProperty();
-          thisProp.setReferencedProperty(thatProperty);
-        }
-
-        if (c.isTranslatable()) {
-          translatableColumns.add(c);
-        }
-      }
+      setReferencedPropertiesForTable(translatableColumns, t);
+    }
+    for (final Table t : dataSourceTablesByName.values()) {
+      setReferencedPropertiesForTable(translatableColumns, t);
     }
 
     return translatableColumns;
 
+  }
+
+  private void setReferencedPropertiesForTable(List<Column> translatableColumns, final Table t) {
+    for (final Column c : t.getColumns()) {
+      if (!c.isPrimitiveType()) {
+        final Property thisProp = c.getProperty();
+        log.debug("Setting targetEntity and reference Property for " + thisProp);
+        final Column thatColumn = c.getReferenceType();
+        if (thatColumn == null) {
+          if (!OBPropertiesProvider.isFriendlyWarnings()) {
+            log.error("Property "
+                + thisProp
+                + " is mapped incorrectly, there is no referenced column for it, removing from the mapping");
+          }
+          thisProp.getEntity().getProperties().remove(thisProp);
+          if (thisProp.getEntity().getIdProperties().remove(thisProp)) {
+            Check.fail("Incorrect mapping for property " + thisProp
+                + " which is an id, mapping fails, stopping here");
+          }
+          thisProp.getEntity().getIdentifierProperties().remove(thisProp);
+          continue;
+        }
+
+        // can occur if the column is read and returned through a
+        // module provided Domain Type
+        if (thatColumn.getProperty() == null) {
+          final Entity entity = getEntityByTableName(thatColumn.getTable().getTableName());
+          Check.isNotNull(entity, "No entity found using tablename "
+              + thatColumn.getTable().getTableName() + " for column " + thatColumn);
+          final Property property = entity.getPropertyByColumnName(thatColumn.getColumnName());
+          thatColumn.setProperty(property);
+        }
+
+        // targetentity is set within setReferencedProperty
+        final Property thatProperty = thatColumn.getProperty();
+        thisProp.setReferencedProperty(thatProperty);
+      }
+
+      if (c.isTranslatable()) {
+        translatableColumns.add(c);
+      }
+    }
   }
 
   private List<Table> removeInvalidTables(List<Table> allTables) {
@@ -517,10 +549,13 @@ public class ModelProvider implements OBSingleton {
       // continue;
       // }
 
-      if (t.getPrimaryKeyColumns().size() == 0) {
-        log.warn("Ignoring table/view " + t.getName() + " because it has no primary key columns");
-        toRemove.add(t);
-        continue;
+      // Support datasource based tables
+      if ("Table".equals(t.getDataOrigin())) {
+        if (t.getPrimaryKeyColumns().size() == 0) {
+          log.warn("Ignoring table/view " + t.getName() + " because it has no primary key columns");
+          toRemove.add(t);
+          continue;
+        }
       }
     }
     allTables.removeAll(toRemove);
@@ -806,8 +841,9 @@ public class ModelProvider implements OBSingleton {
     if (model == null)
       getModel();
     final Entity entity = entitiesByName.get(entityName);
-    if (entity == null)
+    if (entity == null) {
       Check.fail("Mapping name: " + entityName + " not found in runtime model");
+    }
     return entity;
   }
 
