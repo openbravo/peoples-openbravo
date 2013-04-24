@@ -387,12 +387,20 @@ public class KernelUtils {
     List<Tab> tabsOfWindow = tab.getWindow().getADTabList();
     ArrayList<Entity> entities = new ArrayList<Entity>();
     HashMap<Entity, Tab> tabOfEntity = new HashMap<Entity, Tab>();
-    Entity theEntity = ModelProvider.getInstance().getEntityByTableName(
-        tab.getTable().getDBTableName());
+    Entity theEntity = null;
+    if ("Datasource".equals(tab.getTable().getDataOriginType())) {
+      theEntity = ModelProvider.getInstance().getEntityByTableId(tab.getTable().getId());
+    } else {
+      theEntity = ModelProvider.getInstance().getEntityByTableName(tab.getTable().getDBTableName());
+    }
 
     for (Tab aTab : tabsOfWindow) {
-      Entity entity = ModelProvider.getInstance().getEntityByTableName(
-          aTab.getTable().getDBTableName());
+      Entity entity = null;
+      if ("Datasource".equals(aTab.getTable().getDataOriginType())) {
+        entity = ModelProvider.getInstance().getEntityByTableId(tab.getTable().getId());
+      } else {
+        entity = ModelProvider.getInstance().getEntityByTableName(aTab.getTable().getDBTableName());
+      }
       entities.add(entity);
       tabOfEntity.put(entity, aTab);
     }
