@@ -127,23 +127,24 @@ public class GenerateEntitiesTask extends Task {
     // process template & write file for each entity
     List<Entity> entities = ModelProvider.getInstance().getModel();
     for (Entity entity : entities) {
-      String classfileName = entity.getClassName().replaceAll("\\.", "/") + ".java";
-      log.debug("Generating file: " + classfileName);
-      File outFile = new File(srcGenPath, classfileName);
-      new File(outFile.getParent()).mkdirs();
+      // If the entity is associated with a datasource based table, do not generate a Java file
+      if (!entity.isDataSourceBased()) {
+        String classfileName = entity.getClassName().replaceAll("\\.", "/") + ".java";
+        log.debug("Generating file: " + classfileName);
+        File outFile = new File(srcGenPath, classfileName);
+        new File(outFile.getParent()).mkdirs();
 
-      Writer outWriter;
-      try {
-        outWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outFile),
-            "UTF-8"));
-        Map<String, Object> data = new HashMap<String, Object>();
-
-        data.put("entity", entity);
-        processTemplate(template, data, outWriter);
-      } catch (IOException e) {
-        log.error("Error generating file: " + classfileName, e);
+        Writer outWriter;
+        try {
+          outWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outFile),
+              "UTF-8"));
+          Map<String, Object> data = new HashMap<String, Object>();
+          data.put("entity", entity);
+          processTemplate(template, data, outWriter);
+        } catch (IOException e) {
+          log.error("Error generating file: " + classfileName, e);
+        }
       }
-
     }
     log.info("Generated " + entities.size() + " entities");
   }
