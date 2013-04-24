@@ -81,8 +81,11 @@ public class DalMappingGenerator implements OBSingleton {
     final ModelProvider mp = ModelProvider.getInstance();
     final StringBuilder sb = new StringBuilder();
     for (final Entity e : mp.getModel()) {
-      final String entityMapping = generateMapping(e);
-      sb.append(entityMapping);
+      // Do not map datasource based tables
+      if (!e.isDataSourceBased()) {
+        final String entityMapping = generateMapping(e);
+        sb.append(entityMapping);
+      }
     }
     final String mainTemplate = readFile(MAIN_TEMPLATE_FILE);
     final String result = mainTemplate.replace("contentPlaceholder", sb.toString());
