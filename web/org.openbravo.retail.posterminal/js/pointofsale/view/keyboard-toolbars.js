@@ -112,6 +112,9 @@ enyo.kind({
   },
 
   getButtonComponent: function (sidebutton) {
+    if (sidebutton.i18nLabel){
+      sidebutton.label = OB.I18N.getLabel(sidebutton.i18nLabel);
+    }
     return {
       kind: 'OB.UI.BtnSide',
       btn: {

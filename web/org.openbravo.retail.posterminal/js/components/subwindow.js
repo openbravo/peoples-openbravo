@@ -178,7 +178,9 @@ enyo.kind({
   }],
   initComponents: function () {
     this.inherited(arguments);
-    if (this.headerMessage) {
+    if(this.i18nHeaderMessage){
+      this.$.headermessage.setContent(OB.I18N.getLabel(this.i18nHeaderMessage));
+    }else if (this.headerMessage) {
       this.$.headermessage.setContent(this.headermessage);
     } else {
       this.$.headermessage.setContent(OB.I18N.getLabel('OBPOS_TitleCustomerAdvancedSearch'));
