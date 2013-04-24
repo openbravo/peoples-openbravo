@@ -29,6 +29,7 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.util.OBClassLoader;
 import org.openbravo.base.weld.WeldUtils;
+import org.openbravo.client.application.ApplicationConstants;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -78,7 +79,7 @@ public class DataSourceServiceProvider {
           qTable.add(Restrictions.eq(Table.PROPERTY_NAME, name));
           if (!qTable.list().isEmpty()) {
             Table table = (Table) qTable.list().get(0);
-            if ("Datasource".equals(table.getDataOriginType())) {
+            if (ApplicationConstants.DATASOURCEBASEDTABLE.equals(table.getDataOriginType())) {
               dataSource = table.getObserdsDatasource();
             }
           }

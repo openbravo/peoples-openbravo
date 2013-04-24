@@ -33,6 +33,7 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.client.application.ApplicationConstants;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
@@ -388,7 +389,7 @@ public class KernelUtils {
     ArrayList<Entity> entities = new ArrayList<Entity>();
     HashMap<Entity, Tab> tabOfEntity = new HashMap<Entity, Tab>();
     Entity theEntity = null;
-    if ("Datasource".equals(tab.getTable().getDataOriginType())) {
+    if (ApplicationConstants.DATASOURCEBASEDTABLE.equals(tab.getTable().getDataOriginType())) {
       theEntity = ModelProvider.getInstance().getEntityByTableId(tab.getTable().getId());
     } else {
       theEntity = ModelProvider.getInstance().getEntityByTableName(tab.getTable().getDBTableName());
@@ -396,7 +397,7 @@ public class KernelUtils {
 
     for (Tab aTab : tabsOfWindow) {
       Entity entity = null;
-      if ("Datasource".equals(aTab.getTable().getDataOriginType())) {
+      if (ApplicationConstants.DATASOURCEBASEDTABLE.equals(aTab.getTable().getDataOriginType())) {
         entity = ModelProvider.getInstance().getEntityByTableId(tab.getTable().getId());
       } else {
         entity = ModelProvider.getInstance().getEntityByTableName(aTab.getTable().getDBTableName());

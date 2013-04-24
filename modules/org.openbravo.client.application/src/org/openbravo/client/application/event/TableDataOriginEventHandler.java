@@ -25,19 +25,19 @@ import org.apache.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
+import org.openbravo.client.application.ApplicationConstants;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.datamodel.Table;
-import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.datasource.DataSource;
+import org.openbravo.service.db.DalConnectionProvider;
 
 public class TableDataOriginEventHandler extends EntityPersistenceEventObserver {
 
-  private static Entity[] entities = { ModelProvider.getInstance().getEntity(
-      Table.ENTITY_NAME) };
+  private static Entity[] entities = { ModelProvider.getInstance().getEntity(Table.ENTITY_NAME) };
   protected Logger logger = Logger.getLogger(this.getClass());
 
   @Override
@@ -45,8 +45,7 @@ public class TableDataOriginEventHandler extends EntityPersistenceEventObserver 
     return entities;
   }
 
-  public void onUpdate(@Observes
-  EntityUpdateEvent event) {
+  public void onUpdate(@Observes EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -54,18 +53,18 @@ public class TableDataOriginEventHandler extends EntityPersistenceEventObserver 
     String dataOriginType = table.getDataOriginType();
     String tableName = table.getDBTableName();
     String javaClassName = table.getJavaClassName();
-    DataSource datasource= table.getObserdsDatasource();
-    if ("Table".equals(dataOriginType) && (tableName == null)) {
+    DataSource datasource = table.getObserdsDatasource();
+    if (ApplicationConstants.TABLEBASEDTABLE.equals(dataOriginType) && (tableName == null)) {
       String language = OBContext.getOBContext().getLanguage().getLanguage();
       ConnectionProvider conn = new DalConnectionProvider(false);
       throw new OBException(Utility.messageBD(conn, "OBUIAPP_TableNameMandatory", language));
     }
-    if ("Table".equals(dataOriginType) && (javaClassName == null)) {
-        String language = OBContext.getOBContext().getLanguage().getLanguage();
-        ConnectionProvider conn = new DalConnectionProvider(false);
-        throw new OBException(Utility.messageBD(conn, "OBUIAPP_JavaClassNameMandatory", language));
-      }
-    if ("Datasource".equals(dataOriginType) && (datasource == null)) {
+    if (ApplicationConstants.TABLEBASEDTABLE.equals(dataOriginType) && (javaClassName == null)) {
+      String language = OBContext.getOBContext().getLanguage().getLanguage();
+      ConnectionProvider conn = new DalConnectionProvider(false);
+      throw new OBException(Utility.messageBD(conn, "OBUIAPP_JavaClassNameMandatory", language));
+    }
+    if (ApplicationConstants.DATASOURCEBASEDTABLE.equals(dataOriginType) && (datasource == null)) {
       String language = OBContext.getOBContext().getLanguage().getLanguage();
       ConnectionProvider conn = new DalConnectionProvider(false);
       throw new OBException(Utility.messageBD(conn, "OBUIAPP_DatasourceMandatory", language));

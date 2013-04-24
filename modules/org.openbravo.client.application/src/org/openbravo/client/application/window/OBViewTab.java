@@ -403,12 +403,12 @@ public class OBViewTab extends BaseTemplateComponent {
   }
 
   public String getDataSourceId() {
-	String dataSourceId = null;
-	if ("Table".equals(tab.getTable().getDataOriginType())) {
-		dataSourceId = tab.getTable().getName();
-	} else {
-		dataSourceId = tab.getTable().getObserdsDatasource().getId();
-	}
+    String dataSourceId = null;
+    if (ApplicationConstants.TABLEBASEDTABLE.equals(tab.getTable().getDataOriginType())) {
+      dataSourceId = tab.getTable().getName();
+    } else {
+      dataSourceId = tab.getTable().getObserdsDatasource().getId();
+    }
     return dataSourceId;
   }
 
@@ -443,13 +443,13 @@ public class OBViewTab extends BaseTemplateComponent {
     }
     throw new IllegalStateException("Entity " + getEntityName() + " does not have an id property");
   }
-  
+
   public boolean isDataSourceTable() {
-	  if ("Datasource".equals(this.tab.getTable().getDataOriginType())) {
-		  return true;
-	  } else {
-		  return false;
-	  }
+    if (ApplicationConstants.DATASOURCEBASEDTABLE.equals(this.tab.getTable().getDataOriginType())) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   public String getKeyPropertyType() {

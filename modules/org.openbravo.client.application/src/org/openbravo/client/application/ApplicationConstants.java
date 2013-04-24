@@ -60,6 +60,9 @@ public class ApplicationConstants {
   // Identifier of the key holding the value of the button clicked
   public static final String BUTTON_VALUE = "_buttonValue";
 
+  public static final String DATASOURCEBASEDTABLE = "Datasource";
+  public static final String TABLEBASEDTABLE = "Table";
+
   static {
     try {
       ACTION_RESULT_SUCCESS = new JSONObject("{result: 'success'}");

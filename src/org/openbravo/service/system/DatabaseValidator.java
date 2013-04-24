@@ -41,6 +41,7 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.model.domaintype.ButtonDomainType;
+import org.openbravo.client.application.ApplicationConstants;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.datamodel.Column;
@@ -192,8 +193,8 @@ public class DatabaseValidator implements SystemValidator {
     for (Table adTable : adTables) {
 
       // Do not validate the table if it is based on a datasource
-      if (!"Table".equals(adTable.getDataOriginType())) {
-    	  continue;
+      if (ApplicationConstants.DATASOURCEBASEDTABLE.equals(adTable.getDataOriginType())) {
+        continue;
       }
 
       final org.apache.ddlutils.model.Table dbTable = dbTablesByName.get(adTable.getDBTableName()

@@ -37,6 +37,7 @@ import org.openbravo.base.util.OBClassLoader;
 import org.openbravo.base.validation.AccessLevelChecker;
 import org.openbravo.base.validation.EntityValidator;
 import org.openbravo.base.validation.PropertyValidator;
+import org.openbravo.client.application.ApplicationConstants;
 
 /**
  * Models the business object type. The Entity is the main concept in the in-memory model. An entity
@@ -118,7 +119,7 @@ public class Entity {
     setInActive(!table.isActive());
     setView(table.isView());
     setTreeType(table.getTreeType());
-    setDataSourceBased("Datasource".equals(table.getDataOrigin()));
+    setDataSourceBased(ApplicationConstants.DATASOURCEBASEDTABLE.equals(table.getDataOrigin()));
 
     properties = new ArrayList<Property>();
     idProperties = new ArrayList<Property>();

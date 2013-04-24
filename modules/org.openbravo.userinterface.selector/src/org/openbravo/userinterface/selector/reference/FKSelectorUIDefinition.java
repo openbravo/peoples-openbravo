@@ -27,6 +27,7 @@ import org.openbravo.base.model.Property;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.util.Check;
 import org.openbravo.base.weld.WeldUtils;
+import org.openbravo.client.application.ApplicationConstants;
 import org.openbravo.client.application.Parameter;
 import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.client.kernel.reference.ForeignKeyUIDefinition;
@@ -125,7 +126,8 @@ public class FKSelectorUIDefinition extends ForeignKeyUIDefinition {
     final String tableId = field.getColumn().getTable().getId();
 
     Property property = null;
-    if ("Datasource".equals(field.getColumn().getTable().getDataOriginType())) {
+    if (ApplicationConstants.DATASOURCEBASEDTABLE.equals(field.getColumn().getTable()
+        .getDataOriginType())) {
       property = DalUtil.getPropertyByTableId(tableId, columnName);
     } else {
       property = DalUtil.getProperty(tableName, columnName);

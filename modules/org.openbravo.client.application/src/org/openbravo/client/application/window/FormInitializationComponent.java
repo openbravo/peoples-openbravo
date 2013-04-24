@@ -49,6 +49,7 @@ import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.ClientEnabled;
 import org.openbravo.base.structure.OrganizationEnabled;
+import org.openbravo.client.application.ApplicationConstants;
 import org.openbravo.client.application.DynamicExpressionParser;
 import org.openbravo.client.application.Note;
 import org.openbravo.client.application.window.servlet.CalloutHttpServletResponse;
@@ -138,7 +139,8 @@ public class FormInitializationComponent extends BaseActionHandler {
       List<String> jsExcuteCode = new ArrayList<String>();
       Map<String, Object> hiddenInputs = new HashMap<String, Object>();
 
-      boolean dataSourceBasedTable = "Datasource".equals(tab.getTable().getDataOriginType());
+      boolean dataSourceBasedTable = ApplicationConstants.DATASOURCEBASEDTABLE.equals(tab
+          .getTable().getDataOriginType());
 
       log.debug("Form Initialization Component Execution. Tab Name: " + tab.getWindow().getName()
           + "." + tab.getName() + " Tab Id:" + tab.getId());
@@ -804,10 +806,12 @@ public class FormInitializationComponent extends BaseActionHandler {
 
   private void setValuesInRequest(String mode, Tab tab, BaseOBObject row, JSONObject jsContent) {
 
-    boolean dataSourceBasedTable = "Datasource".equals(tab.getTable().getDataOriginType());
+    boolean dataSourceBasedTable = ApplicationConstants.DATASOURCEBASEDTABLE.equals(tab.getTable()
+        .getDataOriginType());
 
     List<Field> fields = getADFieldList(tab.getId());
-    // If the table is based on a datasource it is not possible to initialize the values from the database
+    // If the table is based on a datasource it is not possible to initialize the values from the
+    // database
     if (mode.equals("EDIT") && !dataSourceBasedTable) {
       // In EDIT mode we initialize them from the database
       for (Field field : fields) {
