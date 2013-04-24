@@ -113,7 +113,7 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
         me = this,
         criteria, t0 = new Date().getTime();
 
-    if (!receipt.shouldApplyPromotions()) {
+    if (!receipt.shouldApplyPromotions() || line.get('product').get('ignorePromotions')) {
       // Cannot apply promotions, leave actions empty
       evt.trigger('actionsCreated');
       return;
