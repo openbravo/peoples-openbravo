@@ -19,7 +19,7 @@
     * under the License.
     * The Original Code is Openbravo ERP.
     * The Initial Developer of the Original Code is Openbravo SLU
-    * All portions are Copyright (C) 2001-2012 Openbravo SLU
+    * All portions are Copyright (C) 2001-2013 Openbravo SLU
     * All Rights Reserved.
     * Contributor(s):  ______________________________________.
     ************************************************************************/
@@ -38,6 +38,14 @@ BEGIN
     -- If invoice is posted, CRUD is not allowed
     IF INSERTING
     THEN
+    
+	IF(:NEW.FIN_FINACC_TRANSACTION_ID IS NULL AND :NEW.APRM_FINACC_TRANSACTION_V_ID IS NOT NULL) THEN
+		:NEW.FIN_FINACC_TRANSACTION_ID := :NEW.APRM_FINACC_TRANSACTION_V_ID;
+	END IF;
+	IF(:NEW.FIN_FINACC_TRANSACTION_ID IS NOT NULL AND :NEW.APRM_FINACC_TRANSACTION_V_ID IS NULL) THEN
+		:NEW.APRM_FINACC_TRANSACTION_V_ID := :NEW.FIN_FINACC_TRANSACTION_ID;
+	END IF;
+
 	IF :NEW.C_INVOICE_ID IS NOT NULL THEN
 		SELECT POSTED INTO v_Posted 
 		FROM C_INVOICE

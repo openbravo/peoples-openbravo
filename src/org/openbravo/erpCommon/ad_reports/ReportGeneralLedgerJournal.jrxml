@@ -446,7 +446,7 @@
 						</textElement>
 						<textFieldExpression class="java.util.Date"><![CDATA[$F{DATEACCT}]]></textFieldExpression>
 					</textField>
-					<textField isBlankWhenNull="false">
+					<textField isBlankWhenNull="true">
 						<reportElement key="textField" x="91" y="0" width="126" height="10" printWhenGroupChanges="JournalEntry"/>
 						<box leftPadding="2" rightPadding="2">
 							<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -545,7 +545,7 @@
 						</textElement>
 						<textFieldExpression class="java.util.Date"><![CDATA[$F{DATEACCT}]]></textFieldExpression>
 					</textField>
-					<textField isBlankWhenNull="false">
+					<textField isBlankWhenNull="true">
 						<reportElement key="textField" x="91" y="0" width="126" height="10" printWhenGroupChanges="JournalEntry"/>
 						<box leftPadding="2" rightPadding="2">
 							<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

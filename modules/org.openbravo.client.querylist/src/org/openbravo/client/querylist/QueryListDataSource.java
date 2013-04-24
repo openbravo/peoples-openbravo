@@ -42,6 +42,7 @@ import org.hibernate.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.domaintype.BigDecimalDomainType;
+import org.openbravo.base.model.domaintype.BooleanDomainType;
 import org.openbravo.base.model.domaintype.DateDomainType;
 import org.openbravo.base.model.domaintype.DomainType;
 import org.openbravo.base.model.domaintype.LongDomainType;
@@ -170,6 +171,9 @@ public class QueryListDataSource extends ReadOnlyDataSourceService {
         }
 
         for (OBCQL_QueryColumn column : columns) {
+          UIDefinition uiDefinition = UIDefinitionController.getInstance().getUIDefinition(
+              column.getReference());
+          DomainType domainType = uiDefinition.getDomainType();
           // TODO: throw an exception if the display expression doesn't match any returned alias.
           for (int i = 0; i < queryAliases.length; i++) {
             if (queryAliases[i].equals(column.getDisplayExpression())
@@ -182,6 +186,11 @@ public class QueryListDataSource extends ReadOnlyDataSourceService {
               if (value instanceof Date) {
                 value = xmlDateFormat.format(value);
               }
+
+              if (domainType instanceof BooleanDomainType) {
+                value = ((PrimitiveDomainType) domainType).createFromString((String) value);
+              }
+
               if (!isExport) {
                 data.put(queryAliases[i], value);
               } else {

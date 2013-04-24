@@ -24,7 +24,9 @@ import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -96,6 +98,7 @@ public class CreateRegFactAcct extends HttpSecureAppServlet {
       CreateRegFactAcctData[] acctSchema = CreateRegFactAcctData.treeAcctSchema(this,
           vars.getClient(), strOrgId);
       String strPediodId = CreateRegFactAcctData.getLastPeriod(this, strKey);
+      Set<String> closedOrganizations = new HashSet<String>();
       for (int j = 0; j < acctSchema.length; j++) {
         String balanceAmount = CreateRegFactAcctData.balanceAmount(this, strKey, acctSchema[j].id,
             Utility.getInStrSet(new OrganizationStructureProvider().getChildTree(strOrgId, true)));
@@ -172,11 +175,13 @@ public class CreateRegFactAcct extends HttpSecureAppServlet {
               return Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
           }
         }
-        if (CreateRegFactAcctData.updateClose(conn, this, vars.getUser(), strKey, strOrgId) == 0) {
+        if (closedOrganizations.contains(strOrgId)
+            && CreateRegFactAcctData.updateClose(conn, this, vars.getUser(), strKey, strOrgId) == 0) {
           String strAllPeriodsErr = Utility.messageBD(this, "AllPeriodsPermanentClosed",
               vars.getLanguage());
           return Utility.translateError(this, vars, vars.getLanguage(), strAllPeriodsErr);
         }
+        closedOrganizations.add(strOrgId);
       }
 
       releaseCommitConnection(conn);
@@ -263,7 +268,7 @@ public class CreateRegFactAcct extends HttpSecureAppServlet {
                 CreateRegFactAcctData.cCurrencyId(this, strAcctSchema),
                 ExpenseAmtDr.add(RevenueAmtDr).subtract(RevenueAmtCr).subtract(ExpenseAmtCr)
                     .toString(), "0", ExpenseAmtDr.add(RevenueAmtDr).subtract(RevenueAmtCr)
-                    .subtract(ExpenseAmtCr).toString(), "0", strDivideUpId, "10", "C",
+                    .subtract(ExpenseAmtCr).toString(), "0", strDivideUpId, "10", "D",
                 account[0].name, account[0].value, account[0].cBpartnerId, account[0].recordId2,
                 account[0].mProductId, account[0].aAssetId, strClosingEntry, account[0].cTaxId,
                 account[0].cProjectId, account[0].cActivityId, account[0].user1Id,
@@ -277,7 +282,7 @@ public class CreateRegFactAcct extends HttpSecureAppServlet {
                 CreateRegFactAcctData.cCurrencyId(this, strAcctSchema), "0",
                 ExpenseAmtDr.add(RevenueAmtDr).subtract(RevenueAmtCr).subtract(ExpenseAmtCr)
                     .toString(), "0", ExpenseAmtDr.add(RevenueAmtDr).subtract(RevenueAmtCr)
-                    .subtract(ExpenseAmtCr).toString(), strDivideUpId, "10", "C", account2[0].name,
+                    .subtract(ExpenseAmtCr).toString(), strDivideUpId, "10", "D", account2[0].name,
                 account2[0].value, account2[0].cBpartnerId, account2[0].recordId2,
                 account2[0].mProductId, account2[0].aAssetId, strClosingEntry, account2[0].cTaxId,
                 account2[0].cProjectId, account2[0].cActivityId, account2[0].user1Id,

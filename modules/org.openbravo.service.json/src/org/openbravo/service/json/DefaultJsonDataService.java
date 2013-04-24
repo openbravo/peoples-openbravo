@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -265,7 +265,7 @@ public class DefaultJsonDataService implements JsonDataService {
       jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
       jsonResult.put(JsonConstants.RESPONSE_RESPONSE, jsonResponse);
 
-      return doPostAction(parameters, jsonResult.toString(), DataSourceAction.FETCH);
+      return doPostAction(parameters, jsonResult.toString(), DataSourceAction.FETCH, null);
     } catch (Throwable t) {
       log.error(t.getMessage(), t);
       return JsonUtils.convertExceptionToJson(t);
@@ -487,7 +487,7 @@ public class DefaultJsonDataService implements JsonDataService {
         OBDal.getInstance().remove(bob);
 
         final String result = doPostAction(parameters, jsonResult.toString(),
-            DataSourceAction.REMOVE);
+            DataSourceAction.REMOVE, null);
 
         OBDal.getInstance().commitAndClose();
 
@@ -626,9 +626,9 @@ public class DefaultJsonDataService implements JsonDataService {
 
         final String result;
         if (parameters.containsKey(ADD_FLAG)) {
-          result = doPostAction(parameters, jsonResult.toString(), DataSourceAction.ADD);
+          result = doPostAction(parameters, jsonResult.toString(), DataSourceAction.ADD, content);
         } else {
-          result = doPostAction(parameters, jsonResult.toString(), DataSourceAction.UPDATE);
+          result = doPostAction(parameters, jsonResult.toString(), DataSourceAction.UPDATE, content);
         }
 
         OBDal.getInstance().commitAndClose();
@@ -717,7 +717,7 @@ public class DefaultJsonDataService implements JsonDataService {
   }
 
   protected String doPostAction(Map<String, String> parameters, String content,
-      DataSourceAction action) {
+      DataSourceAction action, String originalObject) {
 
     OBDal.getInstance().flush();
 
@@ -737,10 +737,10 @@ public class DefaultJsonDataService implements JsonDataService {
           doPostFetch(parameters, dataElement);
           break;
         case UPDATE:
-          doPostUpdate(parameters, dataElement);
+          doPostUpdate(parameters, dataElement, originalObject);
           break;
         case ADD:
-          doPostInsert(parameters, dataElement);
+          doPostInsert(parameters, dataElement, originalObject);
           break;
         case REMOVE:
           doPostRemove(parameters, dataElement);
@@ -803,9 +803,13 @@ public class DefaultJsonDataService implements JsonDataService {
   /**
    * Is called after the insert action in the same transaction as the insert. The inserted
    * {@link JSONObject} can be changed, the changes are sent to the client.
+   * 
+   * The originalToInsert contains the json object/array string as it was passed into the
+   * doPreInsert method. The inserted JSONObject is the object read from the database after it was
+   * inserted. So it contains the changes done by stored procedures.
    */
-  protected void doPostInsert(Map<String, String> parameters, JSONObject inserted)
-      throws JSONException {
+  protected void doPostInsert(Map<String, String> parameters, JSONObject inserted,
+      String originalToInsert) throws JSONException {
     // final String id = inserted.getString(JsonConstants.ID);
     // final String entityName = inserted.getString(JsonConstants.ENTITYNAME);
 
@@ -823,9 +827,13 @@ public class DefaultJsonDataService implements JsonDataService {
    * Called after the updates have been done, within the same transaction as the main update.
    * Changes to the updated {@link JSONObject} are sent to the client (but not persisted to the
    * database).
+   * 
+   * The originalToUpdate contains the json object/array string as it was passed into the
+   * doPreUpdate method. The updated JSONObject is the object read from the database after it was
+   * updated. So it contains all the changes done by stored procedures.
    */
-  protected void doPostUpdate(Map<String, String> parameters, JSONObject updated)
-      throws JSONException {
+  protected void doPostUpdate(Map<String, String> parameters, JSONObject updated,
+      String originalToUpdate) throws JSONException {
   }
 
   protected enum DataSourceAction {

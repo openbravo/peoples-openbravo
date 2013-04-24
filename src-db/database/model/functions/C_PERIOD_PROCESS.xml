@@ -51,6 +51,7 @@
   p_PeriodAction C_PeriodControl_Log.PeriodAction%TYPE;
   p_Processing C_PeriodControl_Log.Processing%TYPE;
   v_AD_Client_ID C_PeriodControl_Log.AD_Client_ID%TYPE;
+  p_C_Period_ID C_PeriodControl_Log.C_Period_ID%TYPE;
   
 BEGIN
     --  Update AD_PInstance
@@ -65,8 +66,8 @@ BEGIN
     FROM AD_PInstance
     WHERE AD_PInstance_ID=p_PInstance_ID;
     
-    SELECT L.AD_Client_ID, L.AD_Org_ID, L.C_Calendar_ID, L.ISRecursive, L.C_Year_ID, C_Year.Year, L.PeriodNO, L.DocBaseType, L.PeriodAction, L.Processing
-    INTO v_AD_Client_ID, p_Organization, p_Calendar, p_IsRecursive, p_Year, p_YearName, p_PeriodNO, p_DocBaseType, p_PeriodAction, p_Processing
+    SELECT L.AD_Client_ID, L.AD_Org_ID, L.C_Calendar_ID, L.ISRecursive, L.C_Year_ID, C_Year.Year, L.PeriodNO, L.DocBaseType, L.PeriodAction, L.Processing, L.c_period_id
+    INTO v_AD_Client_ID, p_Organization, p_Calendar, p_IsRecursive, p_Year, p_YearName, p_PeriodNO, p_DocBaseType, p_PeriodAction, p_Processing, p_C_Period_ID
     FROM C_PeriodControl_Log L, C_Year
     WHERE L.C_PeriodControl_Log_ID=v_Record_ID_Log AND C_Year.C_Year_Id = L.C_Year_Id;
       
@@ -84,12 +85,12 @@ BEGIN
               AND C_PERIODCONTROL.AD_Org_ID IN (SELECT AD_Org_ID
                                                 FROM AD_Org
                                                 WHERE AD_ISORGINCLUDED(ad_org.ad_org_id, p_Organization, ad_org.ad_client_id)<>-1)
-              AND C_PERIODCONTROL.PERIODSTATUS IN ('C')
+              AND C_PERIODCONTROL.PERIODSTATUS IN ('P')
               AND C_YEAR.YEAR>p_YearName
               AND C_PERIODCONTROL.AD_CLIENT_ID = v_AD_Client_ID
               AND C_YEAR.C_CALENDAR_ID = p_Calendar;
         IF (v_Count2>=1) THEN
-          RAISE_APPLICATION_ERROR(-20000, '@FeatureYearClosed@');
+          RAISE_APPLICATION_ERROR(-20000, '@FuturePeriodPermanentlyClosed@');
         END IF;
    
         IF (p_IsRecursive='N') THEN
@@ -98,12 +99,12 @@ BEGIN
           WHERE C_PERIODCONTROL.C_PERIOD_ID=C_PERIOD.C_PERIOD_ID
               AND C_PERIOD.C_YEAR_ID=C_YEAR.C_YEAR_ID
               AND C_PERIODCONTROL.AD_Org_ID=p_Organization
-              AND C_PERIODCONTROL.PERIODSTATUS IN ('C')
+              AND C_PERIODCONTROL.PERIODSTATUS IN ('P')
               AND C_YEAR.YEAR>p_YearName
               AND C_PERIODCONTROL.AD_CLIENT_ID = v_AD_Client_ID
               AND C_YEAR.C_CALENDAR_ID = p_Calendar;
           IF (v_Count2>=1) THEN
-            RAISE_APPLICATION_ERROR(-20000, '@FeatureYearClosed@');
+            RAISE_APPLICATION_ERROR(-20000, '@FuturePeriodPermanentlyClosed@');
           END IF;
 
           FOR Cur_Document IN
@@ -113,12 +114,13 @@ BEGIN
               AND C_PERIOD.C_Year_ID=p_Year
               AND C_PERIODCONTROL.AD_Org_ID=p_Organization
               AND C_PERIOD.periodno<=(SELECT periodno FROM C_PERIOD WHERE C_Period.C_Period_ID=p_PeriodNO)
+              and C_PERIOD.c_period_id = coalesce(p_C_Period_ID, C_PERIOD.c_period_id)
               AND C_PERIODCONTROL.DocBaseType LIKE COALESCE(p_DocBaseType, '%')
             )
           LOOP
             v_Record_ID:=Cur_Document.C_PERIODCONTROL_ID;
             UPDATE C_PeriodControl
-              SET PeriodStatus='O'
+              SET PeriodStatus='O', openclose='C'
             WHERE C_PeriodControl_ID=v_Record_ID
               AND PeriodStatus<>'P';
           END LOOP;
@@ -133,12 +135,13 @@ BEGIN
                                                 FROM AD_Org 
                                                 WHERE AD_ISORGINCLUDED(ad_org.ad_org_id, p_Organization, ad_org.ad_client_id)<>-1)
               AND C_PERIOD.periodno<=(SELECT periodno FROM C_PERIOD WHERE C_Period.C_Period_ID=p_PeriodNO)
+              and C_PERIOD.c_period_id = coalesce(p_C_Period_ID, C_PERIOD.c_period_id)
               AND C_PERIODCONTROL.DocBaseType LIKE COALESCE(p_DocBaseType, '%')
             )
           LOOP
             v_Record_ID:=Cur_Document.C_PERIODCONTROL_ID;    
             UPDATE C_PeriodControl
-              SET PeriodStatus='O'
+              SET PeriodStatus='O', openclose='C'
             WHERE C_PeriodControl_ID=v_Record_ID
               AND PeriodStatus<>'P';
           END LOOP;
@@ -147,20 +150,6 @@ BEGIN
         -- Action: Close if not permanently closed
       ELSIF(p_PeriodAction='C') THEN
         IF (p_IsRecursive='Y') THEN
-          SELECT COUNT(DISTINCT C_YEAR.YEAR) INTO v_Count
-          FROM C_PERIOD, C_PERIODCONTROL, C_YEAR
-          WHERE C_PERIODCONTROL.C_PERIOD_ID=C_PERIOD.C_PERIOD_ID
-            AND C_PERIOD.C_YEAR_ID=C_YEAR.C_YEAR_ID
-            AND C_PERIODCONTROL.AD_Org_ID IN (SELECT AD_Org_ID
-                                              FROM AD_Org 
-                                              WHERE AD_ISORGINCLUDED(ad_org.ad_org_id, p_Organization, ad_org.ad_client_id)<>-1)
-            AND C_PERIODCONTROL.PERIODSTATUS IN ('N','O')
-            AND C_YEAR.YEAR<p_YearName
-            AND C_PERIODCONTROL.AD_CLIENT_ID = v_AD_Client_ID
-            AND C_YEAR.C_CALENDAR_ID = p_Calendar;
-          IF (v_Count>=1) THEN
-            RAISE_APPLICATION_ERROR(-20000, '@YearNotClose@');
-          END IF;
           FOR Cur_Document IN
             (SELECT C_PERIODCONTROL_ID
               FROM C_PERIODCONTROL, C_PERIOD 
@@ -170,28 +159,17 @@ BEGIN
                                                 FROM AD_Org 
                                                 WHERE AD_ISORGINCLUDED(ad_org.ad_org_id, p_Organization, ad_org.ad_client_id)<>-1)
               AND C_PERIOD.periodno<=(SELECT periodno FROM C_PERIOD WHERE C_Period.C_Period_ID=p_PeriodNO)
+              and C_PERIOD.c_period_id = coalesce(p_C_Period_ID, C_PERIOD.c_period_id)
               AND C_PERIODCONTROL.DocBaseType LIKE COALESCE(p_DocBaseType, '%')
             )
           LOOP
             v_Record_ID:=Cur_Document.C_PERIODCONTROL_ID;            
             UPDATE C_PeriodControl
-              SET PeriodStatus='C'
+              SET PeriodStatus='C', openclose='O'
             WHERE C_PeriodControl_ID=v_Record_ID
               AND PeriodStatus<>'P';
           END LOOP;
        ELSIF (p_IsRecursive='N') THEN
-         SELECT COUNT(DISTINCT C_YEAR.YEAR) INTO v_Count
-         FROM C_PERIOD, C_PERIODCONTROL, C_YEAR
-         WHERE C_PERIODCONTROL.C_PERIOD_ID=C_PERIOD.C_PERIOD_ID
-           AND C_PERIOD.C_YEAR_ID=C_YEAR.C_YEAR_ID
-           AND C_PERIODCONTROL.AD_Org_ID=p_Organization
-           AND C_PERIODCONTROL.PERIODSTATUS IN ('N','O')
-           AND C_YEAR.YEAR<p_YearName
-           AND C_PERIODCONTROL.AD_CLIENT_ID = v_AD_Client_ID
-           AND C_YEAR.C_CALENDAR_ID = p_Calendar;
-         IF (v_Count>=1) THEN
-           RAISE_APPLICATION_ERROR(-20000, '@YearNotClose@');
-         END IF;
         FOR Cur_Document IN
             (SELECT C_PERIODCONTROL_ID
               FROM C_PERIODCONTROL, C_PERIOD 
@@ -199,12 +177,13 @@ BEGIN
               AND C_PERIOD.C_Year_ID=p_Year
               AND C_PERIODCONTROL.AD_Org_ID=p_Organization
               AND C_PERIOD.periodno<=(SELECT periodno FROM C_PERIOD WHERE C_Period.C_Period_ID=p_PeriodNO)
+              and C_PERIOD.c_period_id = coalesce(p_C_Period_ID, C_PERIOD.c_period_id)
               AND C_PERIODCONTROL.DocBaseType LIKE COALESCE(p_DocBaseType, '%')
             )
           LOOP
             v_Record_ID:=Cur_Document.C_PERIODCONTROL_ID;            
             UPDATE C_PeriodControl
-              SET PeriodStatus='C'
+              SET PeriodStatus='C', openclose='O'
             WHERE C_PeriodControl_ID=v_Record_ID
               AND PeriodStatus<>'P';
           END LOOP;
@@ -222,11 +201,12 @@ BEGIN
                                                 FROM AD_Org 
                                                 WHERE AD_ISORGINCLUDED(ad_org.ad_org_id, p_Organization, ad_org.ad_client_id)<>-1)
               AND C_PERIOD.periodno<=(SELECT periodno FROM C_PERIOD WHERE C_Period.C_Period_ID=p_PeriodNO)
+              and C_PERIOD.c_period_id = coalesce(p_C_Period_ID, C_PERIOD.c_period_id)
               AND C_PERIODCONTROL.DocBaseType LIKE COALESCE(p_DocBaseType, '%')
             )
           LOOP
             v_Record_ID:=Cur_Document.C_PERIODCONTROL_ID;
-            UPDATE C_PeriodControl  SET PeriodStatus='P'  WHERE C_PeriodControl_ID=v_Record_ID;
+            UPDATE C_PeriodControl  SET PeriodStatus='P', openclose='O'  WHERE C_PeriodControl_ID=v_Record_ID;
           END LOOP;
        ELSIF (p_IsRecursive='N') THEN
         FOR Cur_Document IN
@@ -236,15 +216,24 @@ BEGIN
               AND C_PERIOD.C_Year_ID=p_Year
               AND C_PERIODCONTROL.AD_Org_ID=p_Organization
               AND C_PERIOD.periodno<=(SELECT periodno FROM C_PERIOD WHERE C_Period.C_Period_ID=p_PeriodNO)
+              and C_PERIOD.c_period_id = coalesce(p_C_Period_ID, C_PERIOD.c_period_id)
               AND C_PERIODCONTROL.DocBaseType LIKE COALESCE(p_DocBaseType, '%')
             )
           LOOP
             v_Record_ID:=Cur_Document.C_PERIODCONTROL_ID;
-            UPDATE C_PeriodControl  SET PeriodStatus='P'  WHERE C_PeriodControl_ID=v_Record_ID;
+            UPDATE C_PeriodControl  SET PeriodStatus='P', openclose='O'  WHERE C_PeriodControl_ID=v_Record_ID;
           END LOOP;
        END IF;
       END IF;
       
+      UPDATE C_Period
+      SET openclose= (SELECT CASE
+             WHEN (max(pc.periodstatus) = min(pc.periodstatus) AND min(pc.periodstatus) = 'O') THEN 'C'
+             ELSE 'O'
+             END
+         FROM c_periodcontrol pc
+         WHERE pc.c_period_id = p_C_Period_ID)
+      WHERE c_period_id = p_C_Period_ID;
       
       --<<FINISH_PROCESS>>
       --  Update AD_PInstance
@@ -253,7 +242,7 @@ BEGIN
       -- Update C_PeriodControl_Log
       UPDATE C_PeriodControl_Log
       SET Processing='N', Processed='Y'
-      WHERE C_PeriodControl_Log_ID=v_Record_ID_Log;     
+      WHERE C_PeriodControl_Log_ID=v_Record_ID_Log; 
       
     ELSE
       RAISE_APPLICATION_ERROR(-20000, '@OtherProcessActive@');

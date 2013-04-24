@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -105,6 +105,9 @@ public class TransactionsDao {
       newTransaction.setTransactionDate(payment.getPaymentDate());
       newTransaction.setActivity(payment.getActivity());
       newTransaction.setProject(payment.getProject());
+      newTransaction.setCostCenter(payment.getCostCenter());
+      newTransaction.setStDimension(payment.getStDimension());
+      newTransaction.setNdDimension(payment.getNdDimension());
       newTransaction.setCurrency(payment.getAccount().getCurrency());
       newTransaction.setDescription(payment
           .getDescription()

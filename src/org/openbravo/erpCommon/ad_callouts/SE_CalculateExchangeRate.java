@@ -58,6 +58,9 @@ public class SE_CalculateExchangeRate extends SimpleCallout {
         originalAmt = payment.getAmount();
       } else if (strWindowId.equals(ADWINDOW_Transaction)) {
         String strfinTransactionId = info.vars.getStringParameter("inpaprmFinaccTransactionVId");
+        if ("".equals(strfinTransactionId)) {
+          strfinTransactionId = info.vars.getStringParameter("inpfinFinaccTransactionId");
+        }
         APRM_FinaccTransactionV transaction = OBDal.getInstance().get(
             APRM_FinaccTransactionV.class, strfinTransactionId);
         originalAmt = transaction.getDepositAmount().subtract(transaction.getWithdrawalAmount());

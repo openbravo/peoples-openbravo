@@ -246,7 +246,11 @@ function compare(number1, operator, number2) {
 
 function compareWithSign(number1, operator, number2) {
   if (compare(number1, '<', 0) && compare(number2, '<', 0)) {
-    return formattedNumberOpTemp(abs(number1), operator, abs(number2), globalMaskNumeric, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
+    if (operator === '<' || operator === '>' || operator === '<=' || operator === '>=') {
+      return formattedNumberOpTemp(abs(number2), operator, abs(number1), globalMaskNumeric, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
+    } else {
+      return formattedNumberOpTemp(abs(number1), operator, abs(number2), globalMaskNumeric, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
+    }
   } else {
     return formattedNumberOpTemp(number1, operator, number2, globalMaskNumeric, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
   }

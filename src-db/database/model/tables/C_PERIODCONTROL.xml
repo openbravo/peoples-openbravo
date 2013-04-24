@@ -53,6 +53,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="OPENCLOSE" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
+        <default><![CDATA[O]]></default>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="C_PERIOD" name="C_PERIOD_PERIODCONTROL">
         <reference local="C_PERIOD_ID" foreign="C_PERIOD_ID"/>
       </foreign-key>
@@ -69,6 +73,10 @@
       </index>
       <index name="C_PERIODCONTROL_PERIOD" unique="false">
         <index-column name="C_PERIOD_ID"/>
+      </index>
+      <index name="C_PERIODCONTROL_PERIODORG" unique="false">
+        <index-column name="C_PERIOD_ID"/>
+        <index-column name="AD_ORG_ID"/>
       </index>
       <check name="C_PERIODCONTROL_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>

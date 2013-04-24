@@ -270,7 +270,7 @@ public abstract class CostingAlgorithm {
 
     PriceList pricelist = bp.getPurchasePricelist();
     ProductPrice pp = FinancialUtils.getProductPrice(transaction.getProduct(),
-        transaction.getMovementDate(), false, pricelist, false);
+        transaction.getTransactionProcessDate(), false, pricelist, false);
     OrderLine orderLine = CostingUtils.getOrderLine(transaction.getProduct(), bp, costOrg);
 
     if (stdCost == null && pp == null && orderLine == null) {

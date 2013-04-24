@@ -345,7 +345,7 @@ public class XmlDocument implements XmlComponentValue {
         CharacterComponent charComponent = (CharacterComponent) componentTemplate;
         if (charComponent.character != null && !charComponent.character.equals("")) {
           String original = charComponent.character.trim();
-          String trl = xmlVectorValue.getTextMap().get(original);
+          String trl = xmlVectorValue.getTextMap().get(original.trim());
           if (trl != null && !trl.equals("")) {
             /*
              * Need to create a new instance here, instead of just modifying the attribute of the

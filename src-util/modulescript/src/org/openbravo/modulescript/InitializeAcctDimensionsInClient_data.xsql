@@ -27,35 +27,7 @@
         from dual
       ]]>
     </Sql>
-  </SqlMethod>
-   <SqlMethod name="isExecuted" type="preparedStatement" return="boolean">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-        SELECT count(*) as exist
-        FROM DUAL
-        WHERE EXISTS (SELECT 1 FROM ad_preference
-                      WHERE attribute = 'DimensionDisplayConfigured')
-      ]]>
-    </Sql>
-  </SqlMethod>
-   <SqlMethod name="createPreference" type="preparedStatement" connection="true" return="rowcount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-        INSERT INTO ad_preference (
-          ad_preference_id, ad_client_id, ad_org_id, isactive,
-          createdby, created, updatedby, updated,
-          attribute
-        ) VALUES (
-          get_uuid(), ?, '0', 'Y',
-          '0', NOW(), '0', NOW(),
-          'DimensionDisplayConfigured'
-        )
-      ]]>
-    </Sql>
-    <Parameter name="client"/>
-  </SqlMethod>  
+  </SqlMethod> 
   <SqlMethod name="updateDimClient" type="preparedStatement" connection="true" return="rowcount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
@@ -410,9 +382,11 @@ values (get_uuid(), ? , '0', 'Y', now(), '0', now(), '0', 'PR', 'MMI', 'N', 'Y',
    <SqlMethod name="getClients" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql><![CDATA[
-      SELECT ad_client_id
-      FROM ad_client
-      where ad_client_id <> '0'
+        select ad_client_id 
+        from ad_client 
+        where ad_Client_id not in(select ad_client_id from AD_Client_AcctDimension )
+        and ad_client_id <> '0'
+
       ]]>
     </Sql>
   </SqlMethod>

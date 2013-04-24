@@ -30,6 +30,7 @@ import org.openbravo.base.model.Column;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Table;
 import org.openbravo.base.model.domaintype.BaseForeignKeyDomainType;
+import org.openbravo.base.model.domaintype.ForeignKeyDomainType;
 
 /**
  * Implements the domain type for a selector.
@@ -109,6 +110,11 @@ public class SelectorDomainType extends BaseForeignKeyDomainType {
    * String)
    */
   public Column getForeignKeyColumn(String columnName) {
+    while (!column.isKey() && column.getDomainType() instanceof ForeignKeyDomainType) {
+      column = ((ForeignKeyDomainType) column.getDomainType()).getForeignKeyColumn(column
+          .getColumnName());
+      tableName = column.getTable().getName();
+    }
     return column;
   }
 

@@ -40,13 +40,20 @@ public class ActionButtonUtility {
   public static FieldProvider[] docAction(ConnectionProvider conn, VariablesSecureApp vars,
       String strDocAction, String strReference, String strDocStatus, String strProcessing,
       String strTable) {
-    return docAction(conn, vars, strDocAction, strReference, strDocStatus, strProcessing, strTable,
-        null);
+    return docAction(conn, vars, strDocAction, strReference, "", strDocStatus, strProcessing,
+        strTable, null);
   }
 
   public static FieldProvider[] docAction(ConnectionProvider conn, VariablesSecureApp vars,
       String strDocAction, String strReference, String strDocStatus, String strProcessing,
       String strTable, String tabId) {
+    return docAction(conn, vars, strDocAction, strReference, "", strDocStatus, strProcessing,
+        strTable, tabId);
+  }
+
+  public static FieldProvider[] docAction(ConnectionProvider conn, VariablesSecureApp vars,
+      String strDocAction, String strReference, String validationRule, String strDocStatus,
+      String strProcessing, String strTable, String tabId) {
     FieldProvider[] ld = null;
     boolean isQuotation = false;
     String windowId = "";
@@ -65,7 +72,7 @@ public class ActionButtonUtility {
           + " - actual status: " + strDocStatus);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, conn, "LIST", "DocAction",
-          strReference, "", Utility.getContext(conn, vars, "#AccessibleOrgTree",
+          strReference, validationRule, Utility.getContext(conn, vars, "#AccessibleOrgTree",
               "ActionButtonUtility"), Utility.getContext(conn, vars, "#User_Client",
               "ActionButtonUtility"), 0);
       Utility.fillSQLParameters(conn, vars, null, comboTableData, "ActionButtonUtility", "");

@@ -168,7 +168,7 @@
 
   v_bpartner_blocked VARCHAR2(1):='N';
   v_invoiceBlocking VARCHAR2(1):='N';
-  v_bpartner_name VARCHAR2(60);
+  v_bpartner_name c_bpartner.name%TYPE;
 
     
 BEGIN

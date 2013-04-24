@@ -37,6 +37,7 @@ import org.openbravo.client.kernel.reference.UIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.data.Sqlc;
 import org.openbravo.model.ad.domain.Reference;
 
 /**
@@ -55,8 +56,12 @@ public class DefaultsProcessActionHandler extends BaseProcessActionHandler {
       OBContext.setAdminMode(true);
 
       final String processId = (String) parameters.get("processId");
-      final Process processDefinition = OBDal.getInstance().get(Process.class, processId);
 
+      JSONObject context = null;
+      if (parameters.get("context") != null) {
+        context = new JSONObject((String) parameters.get("context"));
+      }
+      final Process processDefinition = OBDal.getInstance().get(Process.class, processId);
       JSONObject defaults = new JSONObject();
 
       for (Parameter param : processDefinition.getOBUIAPPParameterList()) {
@@ -70,8 +75,19 @@ public class DefaultsProcessActionHandler extends BaseProcessActionHandler {
           UIDefinition uiDefinition = UIDefinitionController.getInstance().getUIDefinition(
               reference);
 
-          Object defaultValue = ParameterUtils.getJSExpressionResult(fixRequestMap(parameters),
-              (HttpSession) parameters.get(KernelConstants.HTTP_SESSION), param.getDefaultValue());
+          String rawDefaultValue = param.getDefaultValue();
+
+          Object defaultValue;
+          if (isSessionDefaultValue(rawDefaultValue) && context != null) {
+            // Transforms the default value from @columnName@ to the column inp name
+            String inpName = "inp"
+                + Sqlc.TransformaNombreColumna(rawDefaultValue.substring(1,
+                    rawDefaultValue.length() - 1));
+            defaultValue = context.get(inpName);
+          } else {
+            defaultValue = ParameterUtils.getJSExpressionResult(fixRequestMap(parameters),
+                (HttpSession) parameters.get(KernelConstants.HTTP_SESSION), rawDefaultValue);
+          }
 
           DomainType domainType = uiDefinition.getDomainType();
           if (defaultValue != null && defaultValue instanceof String
@@ -104,6 +120,17 @@ public class DefaultsProcessActionHandler extends BaseProcessActionHandler {
       return new JSONObject();
     } finally {
       OBContext.restorePreviousMode();
+    }
+  }
+
+  // Returns true if the value of the parameter default value matches "@*@"
+  private boolean isSessionDefaultValue(String rawDefaultValue) {
+    if ("@".equals(rawDefaultValue.substring(0, 1))
+        && "@".equals(rawDefaultValue.substring(rawDefaultValue.length() - 1))
+        && rawDefaultValue.length() > 2) {
+      return true;
+    } else {
+      return false;
     }
   }
 }

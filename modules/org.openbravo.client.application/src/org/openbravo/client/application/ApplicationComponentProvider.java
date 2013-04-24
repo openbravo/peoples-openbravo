@@ -80,7 +80,6 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
   @Override
   public List<ComponentResource> getGlobalComponentResources() {
     final List<ComponentResource> globalResources = new ArrayList<ComponentResource>();
-
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/utilities/ob-utilities.js", true));
     globalResources.add(createStaticResource(
@@ -434,6 +433,7 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
               + KernelConstants.SKIN_PARAMETER
               + "/org.openbravo.client.application/ob-rtl-styles.js", false));
     }
+    globalResources.add(createStaticResource("web/js/periodControlStatus.js", true));
 
     return globalResources;
   }

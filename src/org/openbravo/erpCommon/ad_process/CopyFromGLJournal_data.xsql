@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -39,7 +39,8 @@
         '' AS TOTALDR, '' AS TOTALCR, '' AS PROCESSING, '' AS PROCESSED, '' AS POSTED,
         (SELECT GL2.AD_ORG_ID FROM GL_JOURNALBATCH GL2 WHERE GL2.GL_JOURNALBATCH_ID = ?) AS AD_ORG_ID, USER1_ID, USER2_ID, 
         C_CAMPAIGN_ID,  C_PROJECT_ID, '' AS C_ACTIVITY_ID, '' AS C_SALESREGION_ID,   M_PRODUCT_ID,  C_BPARTNER_ID,
-        A_ASSET_ID, C_COSTCENTER_ID   
+        A_ASSET_ID, C_COSTCENTER_ID, 
+        '' as OPEN_ITEMS, '' as FIN_FINANCIAL_ACCOUNT_ID, '' as FIN_PAYMENTMETHOD_ID,  '' as C_GLITEM_ID, '' as PAYMENTDATE, '' as FIN_PAYMENT_ID
         FROM GL_JOURNAL GL
         WHERE GL.GL_JOURNALBATCH_ID = ?
       ]]>
@@ -60,7 +61,8 @@
 		coalesce(gll.C_CAMPAIGN_ID, gl.C_CAMPAIGN_ID) as C_CAMPAIGN_ID , coalesce(gll.C_PROJECT_ID,gl.C_PROJECT_ID) as C_PROJECT_ID,  
 		gll.C_ACTIVITY_ID , gll.C_SALESREGION_ID , 
 		coalesce(gll.M_PRODUCT_ID,gl.M_PRODUCT_ID) as M_PRODUCT_ID, coalesce(gll.C_BPARTNER_ID,gl.C_BPARTNER_ID) as C_BPARTNER_ID, 
-		gll.AD_ORG_ID, coalesce(gll.A_ASSET_ID,gl.A_ASSET_ID) as A_ASSET_ID, coalesce(gll.C_COSTCENTER_ID,gl.C_COSTCENTER_ID) as C_COSTCENTER_ID   
+		gll.AD_ORG_ID, coalesce(gll.A_ASSET_ID,gl.A_ASSET_ID) as A_ASSET_ID, coalesce(gll.C_COSTCENTER_ID,gl.C_COSTCENTER_ID) as C_COSTCENTER_ID,
+		gll.OPEN_ITEMS, gll.FIN_FINANCIAL_ACCOUNT_ID, gll.FIN_PAYMENTMETHOD_ID,  gll.C_GLITEM_ID, gll.PAYMENTDATE, gll.FIN_PAYMENT_ID   
 		FROM GL_JOURNALLINE gll, GL_JOURNAL gl
 		WHERE gl.gl_journal_id=gll.gl_journal_id
         AND gll.GL_JOURNAL_ID = ?
@@ -152,9 +154,11 @@
         INSERT INTO GL_JOURNALLINE (GL_JOURNALLINE_ID, AD_CLIENT_ID, AD_ORG_ID, CREATED, CREATEDBY, 
         UPDATED, UPDATEDBY, GL_JOURNAL_ID,LINE, ISGENERATED, DESCRIPTION,AMTSOURCEDR, AMTSOURCECR, C_CURRENCY_ID, 
         CURRENCYRATETYPE, CURRENCYRATE, DATEACCT,AMTACCTDR, AMTACCTCR, C_UOM_ID,QTY, C_VALIDCOMBINATION_ID,
-        USER1_ID, USER2_ID, C_CAMPAIGN_ID, C_PROJECT_ID, C_ACTIVITY_ID, C_SALESREGION_ID, M_PRODUCT_ID, C_BPARTNER_ID,  A_ASSET_ID,  C_COSTCENTER_ID) 
+        USER1_ID, USER2_ID, C_CAMPAIGN_ID, C_PROJECT_ID, C_ACTIVITY_ID, C_SALESREGION_ID, M_PRODUCT_ID, C_BPARTNER_ID,  A_ASSET_ID,  C_COSTCENTER_ID,
+        OPEN_ITEMS, FIN_FINANCIAL_ACCOUNT_ID, FIN_PAYMENTMETHOD_ID,  C_GLITEM_ID, PAYMENTDATE, FIN_PAYMENT_ID) 
         VALUES (?,?,?,now(),?,now(),?,?,TO_NUMBER(?),?,?,TO_NUMBER(?),TO_NUMBER(?),?,?,TO_NUMBER(?),now(),TO_NUMBER(?),
-        TO_NUMBER(?),?,TO_NUMBER(?), ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)
+        TO_NUMBER(?),?,TO_NUMBER(?), ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,
+        ?,?,?,?,TO_DATE(?), ?)
       ]]>
     </Sql>
     <Parameter name="gl_journalline_id"/>
@@ -186,5 +190,11 @@
     <Parameter name="c_bpartner_id"/>
     <Parameter name="a_asset_id"/>
     <Parameter name="c_costcenter_id"/>
+    <Parameter name="Open_Items"/>
+    <Parameter name="FIN_Financial_Account_ID"/>
+    <Parameter name="fin_Paymentmethod_ID"/>
+    <Parameter name="C_Glitem_ID"/>
+    <Parameter name="Paymentdate"/>
+    <Parameter name="FIN_Payment_ID"/>
   </SqlMethod>
 </SqlClass>

@@ -36,6 +36,7 @@ import org.openbravo.base.model.domaintype.HashedStringDomainType;
 import org.openbravo.base.model.domaintype.PrimitiveDomainType;
 import org.openbravo.base.model.domaintype.StringDomainType;
 import org.openbravo.base.model.domaintype.TableDomainType;
+import org.openbravo.base.model.domaintype.TimestampDomainType;
 import org.openbravo.base.util.Check;
 import org.openbravo.base.validation.PropertyValidator;
 import org.openbravo.base.validation.ValidationException;
@@ -1039,6 +1040,10 @@ public class Property {
 
   public boolean isDatetime() {
     return getDomainType() instanceof DatetimeDomainType;
+  }
+
+  public boolean isTime() {
+    return getDomainType() instanceof TimestampDomainType;
   }
 
   public boolean isDate() {

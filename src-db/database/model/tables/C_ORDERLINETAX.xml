@@ -72,6 +72,9 @@
       <foreign-key foreignTable="C_TAX" name="C_ORDERLINETAX_C_TAX">
         <reference local="C_TAX_ID" foreign="C_TAX_ID"/>
       </foreign-key>
+      <index name="C_ORDERLINETAX_ORDERLINE" unique="false">
+        <index-column name="C_ORDERLINE_ID"/>
+      </index>
       <unique name="C_ORDERLINETAX_DERLINE_TAX_UN">
         <unique-column name="C_ORDERLINE_ID"/>
         <unique-column name="C_TAX_ID"/>

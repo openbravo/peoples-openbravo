@@ -182,8 +182,8 @@ public class TranslationHandler {
           if (end > 0) {
             text = text.substring(0, end);
           }
-          String result = formLabels.get(text);
-          if (formLabels.containsKey(text)) {
+          String result = formLabels.get(text.trim());
+          if (formLabels.containsKey(text.trim())) {
             inputLine = inputLine.replace(prefix + text + suffix, prefix + result + suffix);
           }
         }

@@ -222,11 +222,11 @@ public abstract class FIN_BankStatementImport {
         // Try finding Previous matches
         HashMap<String, String> previous = matchPreviousBSL(bankStatementLine.getBpartnername(),
             bankStatementLine.getOrganization(), bankStatementLine.getBankStatement().getAccount());
-        if (!"".equals(previous.get("BPartnerID"))) {
+        if ((previous != null) && (!"".equals(previous.get("BPartnerID")))) {
           businessPartner = OBDal.getInstance().get(BusinessPartner.class,
               previous.get("BPartnerID"));
         }
-        if (!"".equals(previous.get("GLItemID"))) {
+        if ((previous != null) && (!"".equals(previous.get("GLItemID")))) {
           glItem = OBDal.getInstance().get(GLItem.class, previous.get("GLItemID"));
         }
         // if no previous BSL is found, try match BP Name

@@ -56,6 +56,7 @@
   v_neededQty_Old NUMBER;
   v_Qty_New NUMBER;
   v_Qty_Old NUMBER;
+  v_Qty_Added VARCHAR(1);
 
   v_plannedorderdate_new DATE;
   v_planneddate_new DATE;
@@ -78,7 +79,9 @@ BEGIN
             COALESCE(ppo.qtytype, porg.qtytype, 'E') AS qtytype,
             COALESCE(ppo.order_min, porg.qtymin,0) AS qtymin,
             COALESCE(ppo.qtystd, porg.qtystd, 1) AS qtystd,
-            ppo.c_bpartner_id AS vendor_id
+            ppo.c_bpartner_id AS vendor_id,
+            COALESCE(porg.stockmin, 0) as stockmin,
+            COALESCE(porg.maximumqty, 0) as maximumqty
         FROM mrp_run_purchaseline rpl
               JOIN m_product p ON p.m_product_id = rpl.m_product_id AND p.ispurchased = 'Y'
               JOIN m_product_org porg ON p.m_product_id = porg.m_product_id AND rpl.ad_org_id = porg.ad_org_id
@@ -96,11 +99,13 @@ BEGIN
             ppo.deliverytime_promised, porg.delaymin, p.delaymin,
             ppo.qtytype, porg.qtytype, 
             ppo.order_min, porg.qtymin,
-            ppo.qtystd, porg.qtystd, ppo.c_bpartner_id --CASE WITH MORE THAN ONE DEFAULT VENDOR
+            ppo.qtystd, porg.qtystd, ppo.c_bpartner_id, --CASE WITH MORE THAN ONE DEFAULT VENDOR
+            porg.stockmin, porg.maximumqty
     ) LOOP
       v_stock := 0;
       v_neededqty_old := NULL;
       v_planneddate_old := NULL;
+      v_Qty_Added := 'N';
       FOR Cur_Lines IN (
         SELECT pl.*,
           (CASE WHEN pl.INOUTTRXTYPE = 'ST' THEN 0
@@ -116,6 +121,7 @@ BEGIN
         ) LOOP
 
         v_neededQty_New :=  - Cur_Lines.qty - v_Stock;
+
         IF (v_neededQty_New > 0) THEN
           v_planneddate_new := TO_DATE(Cur_Lines.planneddate) - p_securitymargin;
 
@@ -129,8 +135,17 @@ BEGIN
               AND planneddate <= v_planneddate_new;
 
             v_Qty_New := GREATEST(v_neededqty_New, Cur_PlanProduct.qtymin);
+
+            IF (Cur_PlanProduct.maximumqty > 0 AND v_Qty_Added = 'N') THEN
+              v_Qty_New := v_Qty_New + Cur_PlanProduct.maximumqty - Cur_PlanProduct.stockmin;
+	    END IF;
+	    
             IF (Cur_PlanProduct.qtytype = 'M') THEN --Multiple lot qty
-              v_Qty_new := CEIL(v_qty_new/Cur_PlanProduct.qtystd)*Cur_PlanProduct.qtystd;
+              IF (Cur_PlanProduct.maximumqty > 0) THEN
+                v_Qty_new := FLOOR(v_qty_new/Cur_PlanProduct.qtystd)*Cur_PlanProduct.qtystd;
+              ELSE
+		v_Qty_new := CEIL(v_qty_new/Cur_PlanProduct.qtystd)*Cur_PlanProduct.qtystd;
+              END IF;
             END IF;
 
             IF (Cur_PlanProduct.CAPACITY = 0) THEN
@@ -142,12 +157,23 @@ BEGIN
                                                                   ELSE CEIL(v_Qty_new/Cur_PlanProduct.CAPACITY)
                                                                   END)));
             Mrp_Run_Insertlines(p_Client_ID, p_Org_ID, p_User_ID, p_Run_ID, Cur_PlanProduct.M_Product_ID, v_qty_new, v_neededqty_new, NULL, 'PP', 'Y', NULL, NULL, NULL, NULL, NULL, v_Planneddate_new, v_plannedorderdate_new, 'N', 'N', Cur_PlanProduct.Vendor_ID, v_Aux_new);
-            v_stock := v_stock + v_qty_new;
+
+            IF (Cur_PlanProduct.maximumqty > 0 AND v_Qty_Added = 'N') THEN
+		v_stock := v_stock + v_qty_new - (Cur_PlanProduct.maximumqty - Cur_PlanProduct.stockmin);
+		v_Qty_Added := 'Y';
+	    ELSE
+	        v_stock := v_stock + v_qty_new;
+            END IF;
+            
           ELSE
             v_neededqty_new := v_neededqty_new + COALESCE(v_qty_old,0);
             v_qty_new := GREATEST(v_qty_new, v_neededqty_new);
             IF (Cur_PlanProduct.qtytype = 'M') THEN --Multiple lot qty
-              v_Qty_new := CEIL(v_qty_new/Cur_PlanProduct.qtystd)*Cur_PlanProduct.qtystd;
+              IF (Cur_PlanProduct.maximumqty > 0) THEN
+                v_Qty_new := FLOOR(v_qty_new/Cur_PlanProduct.qtystd)*Cur_PlanProduct.qtystd;
+              ELSE
+		v_Qty_new := CEIL(v_qty_new/Cur_PlanProduct.qtystd)*Cur_PlanProduct.qtystd;
+              END IF;
             END IF;
 
             IF (Cur_PlanProduct.CAPACITY = 0) THEN

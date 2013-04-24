@@ -19,8 +19,12 @@
 
 package org.openbravo.erpCommon.ad_process;
 
+import java.sql.SQLException;
+
 import org.apache.log4j.Logger;
+import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.utility.OBError;
@@ -29,7 +33,6 @@ import org.openbravo.model.ad.process.ProcessInstance;
 import org.openbravo.scheduling.OBScheduler;
 import org.openbravo.scheduling.Process;
 import org.openbravo.scheduling.ProcessBundle;
-import org.openbravo.service.db.CallProcess;
 
 public class UpdateAuditTrail implements Process {
 
@@ -78,13 +81,14 @@ public class UpdateAuditTrail implements Process {
     }
 
     try {
-      // Execute the PL process to re-generate audit triggers
-      org.openbravo.model.ad.ui.Process process = OBDal.getInstance().get(
-          org.openbravo.model.ad.ui.Process.class, "65D1E895C7FD47B48F3D18BC9E28BE9F");
-      CallProcess cp = CallProcess.getInstance();
-      ProcessInstance pi = cp.call(process, null, null);
+
+      ProcessInstance pi = createProcessInstance();
+      UpdateAuditTrailData.updateAuditTrail(bundle.getConnection(), pi.getId());
+      OBDal.getInstance().getSession().refresh(pi);
+
       Long result = pi.getResult();
       msg.setMessage(pi.getErrorMsg());
+
       if (result == 0) {
         msg.setType("Error");
         msg.setTitle("@Error@");
@@ -119,5 +123,40 @@ public class UpdateAuditTrail implements Process {
       bundle.setResult(msg);
     }
 
+  }
+
+  private ProcessInstance createProcessInstance() {
+
+    org.openbravo.model.ad.ui.Process process = OBDal.getInstance().get(
+        org.openbravo.model.ad.ui.Process.class, "65D1E895C7FD47B48F3D18BC9E28BE9F");
+
+    // Create the pInstance
+    final ProcessInstance pInstance = OBProvider.getInstance().get(ProcessInstance.class);
+    // sets its process
+    pInstance.setProcess(process);
+    // must be set to true
+    pInstance.setActive(true);
+
+    // allow it to be read by others also
+    pInstance.setAllowRead(true);
+
+    pInstance.setRecordID("0");
+
+    // get the user from the context
+    pInstance.setUserContact(OBContext.getOBContext().getUser());
+
+    // persist to the db
+    OBDal.getInstance().save(pInstance);
+
+    // flush, this gives pInstance an ID
+    OBDal.getInstance().flush();
+    try {
+      OBDal.getInstance().getConnection().commit();
+    } catch (SQLException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+
+    return pInstance;
   }
 }

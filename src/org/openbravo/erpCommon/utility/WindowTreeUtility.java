@@ -228,6 +228,8 @@ class WindowTreeUtility {
     strOnClick = Replace.replace(strOnClick, "\"", "&quot;");
     strOnDblClick = Replace.replace(strOnDblClick, "\"", "&quot;");
 
+    // In case the element is filtered (strOnClick and strOnDblClick is null), it is shown in the
+    // tree but click action is disabled
     if (isSummary) {
       element
           .append("<li id=\"folder")
@@ -238,23 +240,32 @@ class WindowTreeUtility {
           .append(
               (nodeId.equals("0") ? " noDrag=\"true\" noSiblings=\"true\" noDelete=\"true\" noRename=\"true\" "
                   : "")).append(">\n");
-      element.append("<a href=\"#\" id=\"folderHref").append((hasChilds ? "" : "NoChilds"))
-          .append("__").append(nodeId).append("\"");
-
-      if (strOnDblClick != null && !strOnDblClick.equals("")) {
-        element.append(" onclick=\"").append(strOnDblClick).append("return true;\"");
+      if (strOnClick == null && strOnDblClick == null) {
+        element.append("<a id=\"folderHref").append((hasChilds ? "" : "NoChilds")).append("__")
+            .append(nodeId).append("\"");
+      } else {
+        element.append("<a href=\"#\" id=\"folderHref").append((hasChilds ? "" : "NoChilds"))
+            .append("__").append(nodeId).append("\"");
+        if (strOnDblClick != null && !strOnDblClick.equals("")) {
+          element.append(" onclick=\"").append(strOnDblClick).append("return true;\"");
+        }
       }
       element.append(">").append(name).append("</a>\n");
       // element.append("</li>\n");
     } else {
       element.append("<li id=\"").append(windowTypeNico(action)).append("__").append(nodeId)
           .append("\" isElement=\"true\"").append(" noChildren=\"true\"").append(">\n");
-      element.append("<a href=\"#\" id=\"child").append(windowTypeNico(action)).append("__")
-          .append(nodeId).append("\"");
-
-      if (strOnDblClick != null && !strOnDblClick.equals("")) {
-        element.append(" onclick=\"").append(strOnDblClick).append("return true;\"");
+      if (strOnClick == null && strOnDblClick == null) {
+        element.append("<a id=\"child").append(windowTypeNico(action)).append("__").append(nodeId)
+            .append("\"");
+      } else {
+        element.append("<a href=\"#\" id=\"child").append(windowTypeNico(action)).append("__")
+            .append(nodeId).append("\"");
+        if (strOnDblClick != null && !strOnDblClick.equals("")) {
+          element.append(" onclick=\"").append(strOnDblClick).append("return true;\"");
+        }
       }
+
       element.append(">").append(name).append("</a>\n");
       element.append("</li>\n");
     }

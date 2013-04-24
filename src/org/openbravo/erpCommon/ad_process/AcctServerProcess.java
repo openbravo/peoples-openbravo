@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2009-2011 Openbravo SLU
+ * All portions are Copyright (C) 2009-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -33,9 +33,9 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.ad_forms.AcctServer;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.scheduling.ProcessBundle;
+import org.openbravo.scheduling.ProcessBundle.Channel;
 import org.openbravo.scheduling.ProcessContext;
 import org.openbravo.scheduling.ProcessLogger;
-import org.openbravo.scheduling.ProcessBundle.Channel;
 import org.openbravo.service.db.DalBaseProcess;
 
 public class AcctServerProcess extends DalBaseProcess {
@@ -134,10 +134,14 @@ public class AcctServerProcess extends DalBaseProcess {
     String strTable = "";
     // If it is the background process, we use 0
     String strOrg = "0";
+    String strDateFrom = "";
+    String strDateTo = "";
     // if called by 'Posting by DB tables' get params from ad_pinstance
     if (isDirect) {
       strTable = AcctServerProcessData.selectTable(connection, pinstanceId);
       strOrg = AcctServerProcessData.selectOrg(connection, pinstanceId);
+      strDateFrom = AcctServerProcessData.selectDateFrom(connection, pinstanceId);
+      strDateTo = AcctServerProcessData.selectDateTo(connection, pinstanceId);
     }
     if (!strTable.equals("")) {
       tables = new String[1];
@@ -156,7 +160,7 @@ public class AcctServerProcess extends DalBaseProcess {
       strTableDesc = AcctServerProcessData.selectDescription(connection, ctx.getLanguage(),
           acct.AD_Table_ID);
       int total = 0;
-      while (acct.checkDocuments()) {
+      while (acct.checkDocuments(strDateFrom, strDateTo)) {
 
         if (total == 0) {
           if (isDirect)
@@ -171,7 +175,7 @@ public class AcctServerProcess extends DalBaseProcess {
         }
 
         try {
-          acct.run(vars);
+          acct.run(vars, strDateFrom, strDateTo);
         } catch (final Exception ex) {
           log4j.error(ex.getMessage(), ex);
           return;
@@ -216,5 +220,4 @@ public class AcctServerProcess extends DalBaseProcess {
           .append("</span><br>");
     }
   }
-
 }

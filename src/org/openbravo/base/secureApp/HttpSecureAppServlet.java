@@ -48,13 +48,16 @@ import net.sf.jasperreports.engine.export.JExcelApiExporter;
 import net.sf.jasperreports.engine.export.JExcelApiExporterParameter;
 import net.sf.jasperreports.engine.export.JRHtmlExporter;
 import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
+import net.sf.jasperreports.j2ee.servlets.ImageServlet;
 
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.authentication.AuthenticationManager;
 import org.openbravo.base.HttpBaseServlet;
+import org.openbravo.base.HttpBaseUtils;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.LoginUtils.RoleDefaults;
+import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -1272,6 +1275,17 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
         exportParameters.put(JRHtmlExporterParameter.SIZE_UNIT,
             JRHtmlExporterParameter.SIZE_UNIT_POINT);
         exportParameters.put(JRHtmlExporterParameter.OUTPUT_STREAM, os);
+
+        HttpSession session = (HttpSession) designParameters.get("HTTP_SESSION");
+        if (session != null) {
+            session.setAttribute(ImageServlet.DEFAULT_JASPER_PRINT_SESSION_ATTRIBUTE, jasperPrint);
+        }
+
+        HttpServletRequest request = RequestContext.get().getRequest();
+        String localAddress = HttpBaseUtils.getLocalAddress(request);
+        exportParameters.put(JRHtmlExporterParameter.IMAGES_URI, localAddress
+            + "/servlets/image?image=");
+
         exporter.setParameters(exportParameters);
         exporter.exportReport();
       } else if (strOutputType.equals("pdf") || strOutputType.equalsIgnoreCase("xls")) {

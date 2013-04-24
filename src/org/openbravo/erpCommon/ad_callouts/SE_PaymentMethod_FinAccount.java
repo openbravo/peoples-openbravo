@@ -82,15 +82,18 @@ public class SE_PaymentMethod_FinAccount extends SimpleCallout {
 
       FinAccPaymentMethod selectedPaymentMethod = null;
       for (FinAccPaymentMethod accPm : obc.list()) {
-        if (srtSelectedFinancialAccount.equals(accPm.getAccount().getId())) {
-          isSelected = true;
-        } else if (srtSelectedFinancialAccount.isEmpty()) {
-          srtSelectedFinancialAccount = accPm.getAccount().getIdentifier();
-          isSelected = true;
+        if (accPm.getAccount().isActive()) {
+          if (srtSelectedFinancialAccount.equals(accPm.getAccount().getId())) {
+            isSelected = true;
+          } else if (srtSelectedFinancialAccount.isEmpty()) {
+            srtSelectedFinancialAccount = accPm.getAccount().getIdentifier();
+            isSelected = true;
+          }
+          selectedPaymentMethod = accPm;
+
+          info.addSelectResult(accPm.getAccount().getId(), accPm.getAccount().getIdentifier(),
+              isSelected);
         }
-        selectedPaymentMethod = accPm;
-        info.addSelectResult(accPm.getAccount().getId(), accPm.getAccount().getIdentifier(),
-            isSelected);
         isSelected = false;
       }
       if (selectedPaymentMethod != null) {

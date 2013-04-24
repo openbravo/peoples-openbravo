@@ -51,7 +51,7 @@ isc.OBParameterWindowView.addProperties({
     var i, field, items = [],
         buttonLayout = [],
         okButton, newButton, cancelButton, view = this,
-        newShowIf;
+        newShowIf, params;
 
     // Buttons
 
@@ -228,9 +228,15 @@ isc.OBParameterWindowView.addProperties({
     this.members.push(this.loading);
     this.Super('initWidget', arguments);
 
-    OB.RemoteCallManager.call('org.openbravo.client.application.process.DefaultsProcessActionHandler', {}, {
+    params = {
       processId: this.processId
-    }, function (rpcResponse, data, rpcRequest) {
+    };
+
+    if (this.sourceView) {
+      params.context = this.sourceView.getContextInfo(false, true, true, true);
+    }
+
+    OB.RemoteCallManager.call('org.openbravo.client.application.process.DefaultsProcessActionHandler', {}, params, function (rpcResponse, data, rpcRequest) {
       view.handleDefaults(data);
     });
   },
@@ -248,7 +254,12 @@ isc.OBParameterWindowView.addProperties({
     this.showProcessing(false);
     if (message) {
       if (this.popup) {
-        this.buttonOwnerView.messageBar.setMessage(message.severity, message.text);
+        if (!retryExecution) {
+          this.buttonOwnerView.messageBar.setMessage(message.severity, message.text);
+        } else {
+          // Popup has no message bar, showing the message in a warn popup
+          isc.warn(message.text);
+        }
       } else {
         this.messageBar.setMessage(message.severity, message.text);
       }
@@ -266,13 +277,16 @@ isc.OBParameterWindowView.addProperties({
           }
         }
       }
+      if (this.popupButtons) {
+        this.popupButtons.show();
+      }
     }
 
     if (responseActions) {
       OB.Utilities.Action.executeJSON(responseActions, null, null, this);
     }
 
-    if (this.popup) {
+    if (this.popup && !retryExecution) {
       this.buttonOwnerView.setAsActiveView();
 
       if (refresh) {

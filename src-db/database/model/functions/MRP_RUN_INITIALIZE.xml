@@ -249,6 +249,7 @@ BEGIN --BODY
                       JOIN m_reservation_stock rs ON r.m_reservation_id = rs.m_reservation_id
                   WHERE rs.c_orderline_id IS NOT NULL
                     AND r.res_status NOT IN ('CL', 'DR')
+                    AND rs.m_locator_id IS NULL
                   GROUP BY rs.c_orderline_id 
               ) preres ON preres.c_orderline_id = ol.c_orderline_id
          WHERE o.processed = 'Y'

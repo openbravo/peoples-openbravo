@@ -286,6 +286,7 @@ isc.OBQueryListGrid.addProperties({
     params.rowsNumber = this.widget.parameters.RowsNumber;
     params.viewMode = this.widget.viewMode;
     params.showAll = this.widget.parameters.showAll;
+    params.UTCOffsetMiliseconds = OB.Utilities.Date.getUTCOffsetInMiliseconds();
     return params;
   },
 

@@ -56,6 +56,8 @@ public class PrintJR extends HttpSecureAppServlet {
     String strReportName = PrintJRData.getReportName(this, strProcessId);
     HashMap<String, Object> parameters = createParameters(vars, strProcessId);
 
+    parameters.put("HTTP_SESSION", request.getSession(false));
+
     renderJR(vars, response, strReportName, strOutputType, parameters, null, null);
   }
 

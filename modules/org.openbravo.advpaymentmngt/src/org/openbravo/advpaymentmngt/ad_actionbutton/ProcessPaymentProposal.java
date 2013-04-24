@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -65,7 +65,7 @@ public class ProcessPaymentProposal extends HttpSecureAppServlet {
       OBContext.setAdminMode();
       try {
 
-        if (strProcessProposalAction.equals("GSP")) {
+        if (strProcessProposalAction.equals("GSP") || strProcessProposalAction.equals("GONEP")) {
           try {
             List<FIN_PaymentPropDetail> ppd = new AdvPaymentMngtDao().getObject(
                 FIN_PaymentProposal.class, strFinPaymentProposalId).getFINPaymentPropDetailList();
@@ -139,6 +139,7 @@ public class ProcessPaymentProposal extends HttpSecureAppServlet {
       discard[0] = "displayCheckBox";
       filterActions.put(fpp.getAPRMProcessProposal(), fpp.getAPRMProcessProposal());
     } else {
+      filterActions.put("GONEP", "GONEP");
       filterActions.put("GSP", "GSP");
     }
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(

@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2012 Openbravo S.L.U.
+ * Copyright (C) 2001-2013 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -19,6 +19,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
@@ -283,6 +284,12 @@ public abstract class AuthenticationManager {
       dbSessionId = createDBSession(request, username, userId, successSessionType);
       if (setSession) {
         vars.setSessionValue("#AD_SESSION_ID", dbSessionId);
+        if (userId != null) {
+          HttpSession session = request.getSession(false);
+          if (session != null) {
+            session.setAttribute("#Authenticated_user", userId);
+          }
+        }
       }
     }
     return dbSessionId;

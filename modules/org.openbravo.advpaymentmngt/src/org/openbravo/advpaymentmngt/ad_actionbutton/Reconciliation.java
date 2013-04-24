@@ -72,8 +72,22 @@ public class Reconciliation extends HttpSecureAppServlet {
       String strWindowId = vars.getRequestGlobalVariable("inpwindowId", "Reconciliation|windowId");
       String strTabId = vars.getRequestGlobalVariable("inpTabId", "Reconciliation|tabId");
       String strFinancialAccountId = vars.getStringParameter("inpfinFinancialAccountId");
+      final int accesslevel = 3;
 
-      printPage(response, vars, strOrgId, strWindowId, strTabId, strFinancialAccountId, null, null);
+      if ((org.openbravo.erpCommon.utility.WindowAccessData.hasReadOnlyAccess(this, vars.getRole(),
+          strTabId))
+          || !(Utility.isElementInList(
+              Utility.getContext(this, vars, "#User_Client", strWindowId, accesslevel),
+              vars.getClient()) && Utility.isElementInList(
+              Utility.getContext(this, vars, "#User_Org", strWindowId, accesslevel), strOrgId))) {
+        OBError myError = Utility.translateError(this, vars, vars.getLanguage(),
+            Utility.messageBD(this, "NoWriteAccess", vars.getLanguage()));
+        vars.setMessage(strTabId, myError);
+        printPageClosePopUp(response, vars);
+      } else {
+        printPage(response, vars, strOrgId, strWindowId, strTabId, strFinancialAccountId, null,
+            null);
+      }
 
     } else if (vars.commandIn("GRID")) {
       String strFinancialAccountId = vars.getStringParameter("inpFinFinancialAccountId", "");

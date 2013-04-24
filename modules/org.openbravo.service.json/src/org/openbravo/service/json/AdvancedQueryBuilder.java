@@ -1452,7 +1452,8 @@ public class AdvancedQueryBuilder {
     if (value == null || value.trim().length() == 0) {
       return value;
     }
-    String localValue = value.replace(ESCAPE_CHAR + "", ESCAPE_CHAR + ESCAPE_CHAR + "");
+    String escapeChar = "|";
+    String localValue = value.replace(escapeChar + "", escapeChar + escapeChar + "");
     localValue = localValue.replace("_", ESCAPE_CHAR + "_");
     localValue = localValue.replace("%", ESCAPE_CHAR + "%");
     return localValue;

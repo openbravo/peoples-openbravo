@@ -86,6 +86,13 @@ function validate(){
 	function onResizeDo(){
 		resizeArea();
 	}
+	
+	function openMovementTab(recordId, tab) {
+      var myframe = getFrame('LayoutMDI') || top.opener;
+	  if (myframe) {
+	    myframe.OB.Utilities.openDirectTab(tab, recordId, 'DIRECT');
+	  }
+    }
 	</script>
 </head>
 
@@ -342,24 +349,26 @@ function validate(){
                   <div id="sectionDescription"> 
                     <table cellspacing="0" cellpadding="0" width="100%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;">
                       <tr class="DataGrid_Body_Row">
-                        <th colspan="4" class="DataGrid_Header_Cell">Movement type<span>:&nbsp;&nbsp;</span><a href="#" onclick="submitCommandFormParameter('DIRECT', document.frmSecondary.zz, 'xx', false, document.frmSecondary, 'yy', null, false, true);return false;" onmouseover="window.status='Shipment edition';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldId"> 
+                        <th colspan="5" class="DataGrid_Header_Cell">Movement type<span>:&nbsp;&nbsp;</span><a href="#" onclick="openMovementTab('xx', 'yy');return false;" onmouseover="window.status='Shipment edition';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldId"> 
                           <span id="fieldDescription">xxiva16%</span></a></th> 
                       </tr>
                       <tr class="DataGrid_Body_Row">
-                        <th colspan="4" class="DataGrid_Header_Cell">Movement date<span>:&nbsp;</span><span id="fieldMovementdate">xx23/06/2004</span></th>
+                        <th colspan="5" class="DataGrid_Header_Cell">Movement date<span>:&nbsp;</span><span id="fieldMovementdate">xx23/06/2004</span></th>
                       </tr>
                       <tr class="DataGrid_Body_Row">
-                        <th class="DataGrid_Header_Cell" width="40%">Product</th>
+                        <th class="DataGrid_Header_Cell" width="30%">Product</th>
                         <th class="DataGrid_Header_Cell" width="20%">Attribute</th>
-                        <th class="DataGrid_Header_Cell" width="20%">Unit</th>
-                        <th class="DataGrid_Header_Cell" width="20%" style="text-align:right;">Quantity</th>
+                        <th class="DataGrid_Header_Cell" width="10%">Unit</th>
+                        <th class="DataGrid_Header_Cell" width="20%">Quantity</th>
+                        <th class="DataGrid_Header_Cell" width="20%">Storage Bin</th>
                       </tr>
                       <div id="sectionDetail"> 
                         <tr class="DataGrid_Body_Row DataGrid_Body_Row_yy" id="funcEvenOddRow1xx">
-                          <td class="DataGrid_Body_Cell" width="40%"><span id="fieldProductname">xx38383484</span></td>
+                          <td class="DataGrid_Body_Cell" width="30%"><span id="fieldProductname">xx38383484</span></td>
                           <td class="DataGrid_Body_Cell" width="20%"><span id="fieldReferential">xx2394.48</span></td>
-                          <td class="DataGrid_Body_Cell" width="20%"><span id="fieldUom">xx88959.44</span></td>
+                          <td class="DataGrid_Body_Cell" width="10%"><span id="fieldUom">xx88959.44</span></td>
                           <td class="DataGrid_Body_Cell" width="20%" style="text-align:right;"><span id="fieldMovementqty">xx88959.44</span></td>
+                          <td class="DataGrid_Body_Cell" width="20%"><span id="fieldLocator">xx2222</span></td>
                         </tr>
                       </div>
                     </table>

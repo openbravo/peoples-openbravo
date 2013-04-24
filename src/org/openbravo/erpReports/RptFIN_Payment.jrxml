@@ -2,6 +2,9 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="RptFIN_Payment" pageWidth="595" pageHeight="842" columnWidth="483" leftMargin="56" rightMargin="56" topMargin="56" bottomMargin="56">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="200"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -21,7 +24,7 @@
        p.amount as TOTAL, pm.name as PAYMENT_METHOD, cur.cursymbol as CURRENCY, p.isreceipt as ISRECEIPT,
        org.ad_org_id as legalentity, org.name as LE_NAME, ad_orginfo.taxid as LE_TAXID,
        c_location_description(ad_orginfo.c_location_id) as LE_LOCATION
-FROM fin_payment p join c_bpartner bp on (p.c_bpartner_id=bp.c_bpartner_id)
+FROM fin_payment p left join c_bpartner bp on (p.c_bpartner_id=bp.c_bpartner_id)
      join c_currency cur on (p.c_currency_id=cur.c_currency_id)
      left outer join fin_paymentmethod pm on (p.fin_paymentmethod_id=pm.fin_paymentmethod_id), ad_org org, ad_orginfo
 WHERE p.fin_payment_id=$P{DOCUMENT_ID}
@@ -215,7 +218,7 @@ WHERE p.fin_payment_id=$P{DOCUMENT_ID}
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement verticalAlignment="Middle"/>
-                                        <textFieldExpression class="java.lang.String"><![CDATA[org.openbravo.erpCommon.utility.Utility.applyCountryDateFormat($F{PAYMENT_DATE},$F{LEGALENTITY})]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[org.openbravo.erpCommon.utility.Utility.applyCountryDateFormat($F{PAYMENT_DATE},$F{LEGALENTITY})]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="false">
 					<reportElement key="textField-5" x="125" y="131" width="136" height="13"/>
@@ -228,7 +231,7 @@ WHERE p.fin_payment_id=$P{DOCUMENT_ID}
 					<textElement verticalAlignment="Middle"/>
 					<textFieldExpression class="java.lang.String"><![CDATA[org.openbravo.erpCommon.utility.Utility.getCountryNumberFormat($F{LEGALENTITY},$P{NUMBERFORMAT}).format($F{TOTAL}).toString()]]></textFieldExpression>
 				</textField>
-				<textField isBlankWhenNull="false">
+				<textField isBlankWhenNull="true">
 					<reportElement key="textField-9" x="125" y="105" width="136" height="13"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

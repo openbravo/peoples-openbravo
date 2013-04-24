@@ -45,6 +45,9 @@ BEGIN
   END IF;
   -- Add new Amount
   IF(INSERTING OR UPDATING) THEN
+    IF((:new.AmtSourceDr=0) and (:new.AmtSourceCr=0))THEN
+     RAISE_APPLICATION_ERROR(-20000, '@APRM_JSAMOUNTDIFFTOZERO@') ;
+    END IF;
     IF(:new.IsActive='Y') THEN
       UPDATE GL_Journal
         SET TotalDr=TotalDr + :new.AmtSourceDr,

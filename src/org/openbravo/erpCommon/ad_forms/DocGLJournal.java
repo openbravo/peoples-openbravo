@@ -24,6 +24,7 @@ import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
@@ -181,13 +182,18 @@ public class DocGLJournal extends AcctServer {
     // GLJ
     if (DocumentType.equals(AcctServer.DOCTYPE_GLJournal)) {
       // account DR CR
-      for (int i = 0; i < p_lines.length; i++) {
-        if (p_lines[i].getC_AcctSchema_ID().equals(as.getC_AcctSchema_ID())) {
-          fact.createLine(p_lines[i], p_lines[i].getAccount(), C_Currency_ID,
-              p_lines[i].getAmtSourceDr(), p_lines[i].getAmtSourceCr(), Fact_Acct_Group_ID,
-              nextSeqNo(SeqNo), DocumentType, conn);
-        }
-      } // for all lines
+      OBContext.setAdminMode(true);
+      try {
+        for (int i = 0; i < p_lines.length; i++) {
+          if (p_lines[i].getC_AcctSchema_ID().equals(as.getC_AcctSchema_ID())) {
+            fact.createLine(p_lines[i], p_lines[i].getAccount(), C_Currency_ID,
+                p_lines[i].getAmtSourceDr(), p_lines[i].getAmtSourceCr(), Fact_Acct_Group_ID,
+                nextSeqNo(SeqNo), DocumentType, conn);
+          }
+        } // for all lines
+      } finally {
+        OBContext.restorePreviousMode();
+      }
     } else {
       log4jDocGLJournal.warn("createFact - " + "DocumentType unknown: " + DocumentType);
       fact = null;

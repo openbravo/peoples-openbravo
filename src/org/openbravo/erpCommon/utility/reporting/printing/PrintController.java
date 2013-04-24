@@ -50,6 +50,7 @@ import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.email.EmailUtils;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
@@ -65,6 +66,7 @@ import org.openbravo.erpCommon.utility.reporting.TemplateInfo;
 import org.openbravo.erpCommon.utility.reporting.TemplateInfo.EmailDefinition;
 import org.openbravo.exception.NoConnectionAvailableException;
 import org.openbravo.model.common.enterprise.EmailServerConfiguration;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -249,6 +251,7 @@ public class PrintController extends HttpSecureAppServlet {
       } else {
         if (vars.commandIn("DEFAULT")) {
 
+          differentDocTypes.clear();
           reports = new HashMap<String, Report>();
           for (int index = 0; index < documentIds.length; index++) {
             final String documentId = documentIds[index];
@@ -915,28 +918,12 @@ public class PrintController extends HttpSecureAppServlet {
         throw new ServletException("No Poc configuration found for this client.");
       }
 
-      // TODO: There should be a mechanism to select the desired Email server configuration, until
-      // then, first search for the current organization (and use the first returned one), then for
-      // organization '0' (and use the first returned one) and then for any other of the
-      // organization tree where current organization belongs to (and use the first returned one).
-      EmailServerConfiguration mailConfig = null;
+      EmailServerConfiguration mailConfig = EmailUtils.getEmailConfiguration(OBDal.getInstance()
+          .get(Organization.class, vars.getOrg()));
 
-      for (EmailServerConfiguration currentOrgConfig : mailConfigList) {
-        if (vars.getOrg().equals(currentOrgConfig.getOrganization().getId())) {
-          mailConfig = currentOrgConfig;
-          break;
-        }
-      }
       if (mailConfig == null) {
-        for (EmailServerConfiguration zeroOrgConfig : mailConfigList) {
-          if ("0".equals(zeroOrgConfig.getOrganization().getId())) {
-            mailConfig = zeroOrgConfig;
-            break;
-          }
-        }
-      }
-      if (mailConfig == null) {
-        mailConfig = mailConfigList.get(0);
+        throw new ServletException(
+            "No sender defined: Please go to client configuration to complete the email configuration.");
       }
 
       fromEmail = mailConfig.getSmtpServerSenderAddress();

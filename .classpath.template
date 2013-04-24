@@ -4,7 +4,7 @@
 	<classpathentry exported="true" kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/OpenbravoTrl"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/OpenbravoWAD"/>
-	<classpathentry including="**/*.ext|**/*.java|**/*.oaw|**/*.properties|**/*.xml|**/*.xpt|**/*.xslt" kind="src" path="src"/>
+	<classpathentry including="**/*.ext|**/*.ftl|**/*.java|**/*.oaw|**/*.properties|**/*.xml|**/*.xpt|**/*.xslt" kind="src" path="src"/>
 	<classpathentry kind="src" path="modules/org.openbravo.client.widgets/src"/>
 	<classpathentry kind="src" path="modules/org.openbravo.client.htmlwidget/src"/>
 	<classpathentry kind="src" path="modules/org.openbravo.base.weld/src"/>

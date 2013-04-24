@@ -42,9 +42,8 @@
     <Sql>
       <![CDATA[
         UPDATE C_PERIODCONTROL
-        SET PERIODSTATUS = 'O', UPDATED = now(), UPDATEDBY = ?
-        WHERE PeriodStatus <> 'P'
-        AND C_PERIOD_ID IN (SELECT C_PERIOD_ID
+        SET PERIODSTATUS = 'C', UPDATED = now(), UPDATEDBY = ?
+        WHERE C_PERIOD_ID IN (SELECT C_PERIOD_ID
                 FROM C_PERIOD
                 WHERE C_YEAR_ID = ?)
         AND AD_ORG_ID = ?

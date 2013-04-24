@@ -228,7 +228,7 @@
 				<textElement textAlignment="Left">
 					<font size="10" isBold="false"/>
 				</textElement>
-				<text><![CDATA[ Account No.]]></text>
+				<text><![CDATA[Account No.]]></text>
 			</staticText>
 			<staticText>
 				<reportElement key="element-95" style="Detail_Header" x="79" y="84" width="200" height="15" forecolor="#000000" backcolor="#FFFFFF"/>

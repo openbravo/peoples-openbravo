@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2012 Openbravo SLU
+ * All portions are Copyright (C) 2001-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,23 +21,27 @@ package org.openbravo.erpCommon.ad_actionButton;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
+import java.util.HashMap;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hibernate.criterion.Restrictions;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.ad_forms.AcctServer;
-import org.openbravo.erpCommon.reference.ActionButtonData;
-import org.openbravo.erpCommon.reference.PInstanceProcessData;
 import org.openbravo.erpCommon.utility.OBError;
-import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.financial.ResetAccounting;
+import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.ui.Process;
+import org.openbravo.model.financialmgmt.accounting.AccountingFact;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class Posted extends HttpSecureAppServlet {
@@ -68,9 +72,20 @@ public class Posted extends HttpSecureAppServlet {
       String strForcedTableId = vars.getGlobalVariable("inpforcedTableId", strWindowId
           + "|FORCED_TABLE_ID", "");
       String strTabName = vars.getGlobalVariable("inpTabName", "Posted|tabName", "");
-
+      String strModify = "N";
+      if (strPosted.equals("Y")) {
+        final Table table = OBDal.getInstance().get(Table.class, strTableId);
+        final OBCriteria<AccountingFact> fact = OBDal.getInstance().createCriteria(
+            AccountingFact.class);
+        fact.add(Restrictions.eq(AccountingFact.PROPERTY_RECORDID, strKey));
+        fact.add(Restrictions.eq(AccountingFact.PROPERTY_TABLE, table));
+        fact.add(Restrictions.eq(AccountingFact.PROPERTY_MODIFY, true));
+        if (fact.count() > 0) {
+          strModify = "Y";
+        }
+      }
       printPage(response, vars, strKey, strWindowId, strTabId, strProcessId, strTableId,
-          strForcedTableId, strPath, strTabName, strPosted);
+          strForcedTableId, strPath, strTabName, strPosted, strModify);
     } else if (vars.commandIn("SAVE")) {
       String strKey = vars.getRequiredGlobalVariable("inpKey", "Posted|key");
       String strTableId = vars.getRequiredGlobalVariable("inpTableId", "Posted|tableId");
@@ -206,7 +221,25 @@ public class Posted extends HttpSecureAppServlet {
         } else {
           if (log4j.isDebugEnabled())
             log4j.debug("SAVE, delete");
-          OBError myMessage = processButtonDelete(vars, strKey, strTableId);
+          long start = System.currentTimeMillis();
+          OBError myMessage = new OBError();
+          myMessage.setType("Success");
+          PostedData[] data = PostedData.select(this, strKey, strTableId);
+          try {
+            HashMap<String, Integer> hm = ResetAccounting.delete(data[0].client, data[0].org,
+                strTableId, strKey, "", "");
+            myMessage.setMessage(Utility.parseTranslation(
+                this,
+                vars,
+                vars.getLanguage(),
+                "@UnpostedDocuments@ = " + hm.get("updated") + ", @DeletedEntries@ = "
+                    + hm.get("deleted")));
+          } catch (OBException e) {
+            myMessage.setType("Error");
+            myMessage.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(),
+                e.getMessage()));
+          }
+          log4j.debug("Total deleting /milis: " + (System.currentTimeMillis() - start));
           vars.setMessage(strTabId, myMessage);
           printPageClosePopUp(response, vars);
         }
@@ -259,44 +292,9 @@ public class Posted extends HttpSecureAppServlet {
     return myMessage;
   }
 
-  private OBError processButtonDelete(VariablesSecureApp vars, String strKey, String strTableId)
-      throws ServletException {
-    OBError myMessage = null;
-
-    try {
-
-      String strClient = PostedData.selectClient(this,
-          PostedData.selectTableName(this, strTableId), strKey);
-      String pinstance = SequenceIdData.getUUID();
-      PInstanceProcessData.insertPInstance(this, pinstance, "176", strKey, "N", vars.getUser(),
-          vars.getClient(), vars.getOrg());
-      PInstanceProcessData.insertPInstanceParam(this, pinstance, "10", "AD_Client_ID", strClient,
-          vars.getClient(), vars.getOrg(), vars.getUser());
-      PInstanceProcessData.insertPInstanceParam(this, pinstance, "20", "AD_Table_ID", strTableId,
-          vars.getClient(), vars.getOrg(), vars.getUser());
-      PInstanceProcessData.insertPInstanceParam(this, pinstance, "30", "DeletePosting", "Y",
-          vars.getClient(), vars.getOrg(), vars.getUser());
-      if (log4j.isDebugEnabled())
-        log4j.debug("delete, pinstance " + pinstance);
-      ActionButtonData.process176(this, pinstance);
-
-      PInstanceProcessData[] pinstanceData = PInstanceProcessData.select(this, pinstance);
-      myMessage = Utility.getProcessInstanceMessage(this, vars, pinstanceData);
-    } catch (ServletException ex) {
-      myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
-    }
-    if (myMessage == null) {
-      myMessage = new OBError();
-      myMessage.setType("Success");
-      myMessage.setTitle("");
-      myMessage.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));
-    }
-    return myMessage;
-  }
-
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strKey,
       String windowId, String strTab, String strProcessId, String strTableId,
-      String strForcedTableId, String strPath, String strTabName, String strPosted)
+      String strForcedTableId, String strPath, String strTabName, String strPosted, String strModify)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Button process Posted");
@@ -347,6 +345,7 @@ public class Posted extends HttpSecureAppServlet {
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("description", strDescription);
     xmlDocument.setParameter("help", strHelp);
+    xmlDocument.setParameter("modify", strModify);
 
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
