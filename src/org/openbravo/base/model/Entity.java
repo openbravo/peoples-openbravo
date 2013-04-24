@@ -82,6 +82,7 @@ public class Entity {
   private boolean isMutable;
   private boolean isDeletable;
   private boolean isView;
+  private boolean isDataSourceBased;
 
   private EntityValidator entityValidator;
   private AccessLevelChecker accessLevelChecker;
@@ -117,6 +118,7 @@ public class Entity {
     setInActive(!table.isActive());
     setView(table.isView());
     setTreeType(table.getTreeType());
+    setDataSourceBased("Datasource".equals(table.getDataOrigin()));
 
     properties = new ArrayList<Property>();
     idProperties = new ArrayList<Property>();
@@ -665,6 +667,14 @@ public class Entity {
 
   public void setView(boolean isView) {
     this.isView = isView;
+  }
+
+  public boolean isDataSourceBased() {
+    return isDataSourceBased;
+  }
+
+  public void setDataSourceBased(boolean isDataSourceBased) {
+    this.isDataSourceBased = isDataSourceBased;
   }
 
   List<String> getJavaImportsInternal() {
