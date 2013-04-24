@@ -129,6 +129,25 @@ public class DalUtil {
   }
 
   /**
+   * Finds a property using the db column name and table id.
+   *
+   * @param tableId
+   *          the table id, is used to find the {@link Entity}
+   * @param dbColumnName
+   *          is used to find the {@link Property}
+   * @return a Property or null if no property found
+   */
+  public static Property getPropertyByTableId(String tableId, String dbColumnName) {
+    final Entity entity = ModelProvider.getInstance().getEntityByTableId(tableId);
+    for (Property property : entity.getProperties()) {
+      if (property.getColumnName().equalsIgnoreCase(dbColumnName)) {
+        return property;
+      }
+    }
+    return null;
+  }
+
+  /**
    * Translates a so-called property path to a property. The passed entity is the starting entity.
    * For example the property: organization.name and entity: Product will result in the
    * Organization.name property to be returned.
