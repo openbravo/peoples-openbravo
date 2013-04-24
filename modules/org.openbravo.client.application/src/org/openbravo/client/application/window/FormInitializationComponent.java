@@ -138,6 +138,8 @@ public class FormInitializationComponent extends BaseActionHandler {
       List<String> jsExcuteCode = new ArrayList<String>();
       Map<String, Object> hiddenInputs = new HashMap<String, Object>();
 
+      boolean dataSourceBasedTable = "Datasource".equals(tab.getTable().getDataOriginType());
+
       log.debug("Form Initialization Component Execution. Tab Name: " + tab.getWindow().getName()
           + "." + tab.getName() + " Tab Id:" + tab.getId());
       log.debug("Execution mode: " + mode);
@@ -147,7 +149,10 @@ public class FormInitializationComponent extends BaseActionHandler {
       if (changedColumn != null) {
         log.debug("Changed field: " + changedColumn);
       }
-      if (rowId != null && !rowId.equals("null")) {
+
+      // If the table is based in a datasource there is no BaseOBObject associated to it, don't try
+      // to retrieve the row
+      if (!dataSourceBasedTable && rowId != null && !rowId.equals("null")) {
         row = OBDal.getInstance().get(tab.getTable().getName(), rowId);
       }
       JSONObject jsContent = new JSONObject();
@@ -162,43 +167,48 @@ public class FormInitializationComponent extends BaseActionHandler {
       if (jsContent.has("_visibleProperties")) {
         visibleProperties = convertJSONArray(jsContent.getJSONArray("_visibleProperties"));
       }
-      // create the row from the json content then
-      if (row == null) {
-        final JsonToDataConverter fromJsonConverter = OBProvider.getInstance().get(
-            JsonToDataConverter.class);
 
-        // create a new json object using property names:
-        final JSONObject convertedJson = new JSONObject();
-        final Entity entity = ModelProvider.getInstance().getEntityByTableName(
-            tab.getTable().getDBTableName());
-        for (Property property : entity.getProperties()) {
-          if (property.getColumnName() != null) {
-            final String inpName = "inp" + Sqlc.TransformaNombreColumna(property.getColumnName());
-            if (jsContent.has(inpName)) {
-              final UIDefinition uiDef = UIDefinitionController.getInstance().getUIDefinition(
-                  property.getColumnId());
-              Object jsonValue = jsContent.get(inpName);
-              if (jsonValue instanceof String) {
-                jsonValue = uiDef.createFromClassicString((String) jsonValue);
-              }
-              convertedJson.put(property.getName(), jsonValue);
-              if (property.isId()) {
-                setSessionValue(tab.getWindow().getId() + "|" + property.getColumnName(), jsonValue);
+      // If the table is based in a datasource, don't try to create a BaseOBObject
+      if (!dataSourceBasedTable) {
+        // create the row from the json content then
+        if (row == null) {
+          final JsonToDataConverter fromJsonConverter = OBProvider.getInstance().get(
+              JsonToDataConverter.class);
+
+          // create a new json object using property names:
+          final JSONObject convertedJson = new JSONObject();
+          final Entity entity = ModelProvider.getInstance().getEntityByTableName(
+              tab.getTable().getDBTableName());
+          for (Property property : entity.getProperties()) {
+            if (property.getColumnName() != null) {
+              final String inpName = "inp" + Sqlc.TransformaNombreColumna(property.getColumnName());
+              if (jsContent.has(inpName)) {
+                final UIDefinition uiDef = UIDefinitionController.getInstance().getUIDefinition(
+                    property.getColumnId());
+                Object jsonValue = jsContent.get(inpName);
+                if (jsonValue instanceof String) {
+                  jsonValue = uiDef.createFromClassicString((String) jsonValue);
+                }
+                convertedJson.put(property.getName(), jsonValue);
+                if (property.isId()) {
+                  setSessionValue(tab.getWindow().getId() + "|" + property.getColumnName(),
+                      jsonValue);
+                }
               }
             }
           }
-        }
-        // remove the id as it must be a new record
-        convertedJson.remove("id");
-        convertedJson.put(JsonConstants.ENTITYNAME, entity.getName());
-        row = fromJsonConverter.toBaseOBObject(convertedJson);
-        row.setNewOBObject(true);
-      } else {
-        final Entity entity = ModelProvider.getInstance().getEntityByTableName(
-            tab.getTable().getDBTableName());
-        for (Property property : entity.getProperties()) {
-          if (property.isId()) {
-            setSessionValue(tab.getWindow().getId() + "|" + property.getColumnName(), row.getId());
+          // remove the id as it must be a new record
+          convertedJson.remove("id");
+          convertedJson.put(JsonConstants.ENTITYNAME, entity.getName());
+          row = fromJsonConverter.toBaseOBObject(convertedJson);
+          row.setNewOBObject(true);
+        } else {
+          final Entity entity = ModelProvider.getInstance().getEntityByTableName(
+              tab.getTable().getDBTableName());
+          for (Property property : entity.getProperties()) {
+            if (property.isId()) {
+              setSessionValue(tab.getWindow().getId() + "|" + property.getColumnName(), row.getId());
+            }
           }
         }
       }
@@ -206,7 +216,11 @@ public class FormInitializationComponent extends BaseActionHandler {
       // First the parent record is retrieved and the session variables for the parent records are
       // set
       long t1 = System.currentTimeMillis();
-      parentRecord = setSessionVariablesInParent(mode, tab, row, parentId);
+      // If the table is based in a datasource, don't try to retrieve the parent record (the row is
+      // null because datasource based tables do not have BaseOBObjects)
+      if (!dataSourceBasedTable) {
+        parentRecord = setSessionVariablesInParent(mode, tab, row, parentId);
+      }
 
       // We also need to set the current record values in the request
       long t2 = System.currentTimeMillis();
@@ -790,8 +804,11 @@ public class FormInitializationComponent extends BaseActionHandler {
 
   private void setValuesInRequest(String mode, Tab tab, BaseOBObject row, JSONObject jsContent) {
 
+    boolean dataSourceBasedTable = "Datasource".equals(tab.getTable().getDataOriginType());
+
     List<Field> fields = getADFieldList(tab.getId());
-    if (mode.equals("EDIT")) {
+    // If the table is based on a datasource it is not possible to initialize the values from the database
+    if (mode.equals("EDIT") && !dataSourceBasedTable) {
       // In EDIT mode we initialize them from the database
       for (Field field : fields) {
         if (field.getColumn() == null) {
