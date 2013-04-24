@@ -61,7 +61,8 @@ enyo.kind({
     onStatusChanged: 'statusChanged',
     onLayaways: 'layaways',
     onChangeSalesRepresentative: 'changeSalesRepresentative',
-    onSelectCharacteristicValue: 'selectCharacteristicValue'
+    onSelectCharacteristicValue: 'selectCharacteristicValue',
+    onSelectBrand: 'selectBrand'
   },
   events: {
     onShowPopup: '',
@@ -147,6 +148,9 @@ enyo.kind({
     }, {
       kind: 'OB.UI.ModalProductCharacteristic',
       name: "modalproductcharacteristic"
+    }, {
+      kind: 'OB.UI.ModalProductBrand',
+      name: "modalproductbrand"
     }]
   }, {
     name: 'mainSubWindow',
@@ -630,6 +634,11 @@ enyo.kind({
   },
   selectCharacteristicValue: function (inSender, inEvent) {
     this.waterfall('onUpdateFilter', {
+      value: inEvent
+    });
+  },
+  selectBrand: function (inSender, inEvent) {
+    this.waterfall('onUpdateBrandFilter', {
       value: inEvent
     });
   },

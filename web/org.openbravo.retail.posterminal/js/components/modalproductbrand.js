@@ -11,7 +11,7 @@
 
 /*header of scrollable table*/
 enyo.kind({
-  name: 'OB.UI.ModalProductChHeader',
+  name: 'OB.UI.ModalProductBrandHeader',
   kind: 'OB.UI.ScrollableTableHeader',
   events: {
     onSearchAction: '',
@@ -65,24 +65,24 @@ enyo.kind({
 
 /*items of collection*/
 enyo.kind({
-  name: 'OB.UI.ListValuesLine',
+  name: 'OB.UI.ListBrandsLine',
   kind: 'OB.UI.CheckboxButton',
   classes: 'modal-dialog-btn-check',
   style: 'border-bottom: 1px solid #cccccc;text-align: left; padding-left: 70px;',
   events: {
     onHideThisPopup: '',
-    onSelectCharacteristicValue: ''
+    onSelectBrand: ''
   },
   tap: function () {
     this.inherited(arguments);
-    this.doSelectCharacteristicValue({
+    this.doSelectBrand({
       value: this.model
     });
     this.doHideThisPopup();
   },
   create: function () {
     this.inherited(arguments);
-    this.setContent(this.model.get('ch_value'));
+    this.setContent(this.model.get('name'));
     if (this.model.get('checked')) {
       this.addClass('active');
     } else {
@@ -93,7 +93,7 @@ enyo.kind({
 
 /*scrollable table (body of modal)*/
 enyo.kind({
-  name: 'OB.UI.ListValues',
+  name: 'OB.UI.ListBrands',
   classes: 'row-fluid',
   handlers: {
     onSearchAction: 'searchAction',
@@ -106,76 +106,77 @@ enyo.kind({
       components: [{
         classes: 'span12',
         components: [{
-          name: 'valueslistitemprinter',
+          name: 'brandslistitemprinter',
           kind: 'OB.UI.ScrollableTable',
           scrollAreaMaxHeight: '400px',
-          renderHeader: 'OB.UI.ModalProductChHeader',
-          renderLine: 'OB.UI.ListValuesLine',
+          renderHeader: 'OB.UI.ModalProductBrandHeader',
+          renderLine: 'OB.UI.ListBrandsLine',
           renderEmpty: 'OB.UI.RenderEmpty'
         }]
       }]
     }]
   }],
   clearAction: function (inSender, inEvent) {
-    this.valuesList.reset();
+    this.brandsList.reset();
     return true;
   },
   searchAction: function (inSender, inEvent) {
     var me = this,
-        i, j, whereClause = '',
-        params = [],
+        i, j, criteria = {},
         filter = inEvent.valueName;
-    params.push(this.parent.parent.characteristic.get('characteristic_id'));
-    if (filter) {
-      whereClause = whereClause + ' and ch_value like ?';
-      params.push('%' + filter + '%');
+
+    function errorCallback(tx, error) {
+      OB.UTIL.showError("OBDAL error: " + error);
     }
-    OB.Dal.query(OB.Model.ProductCharacteristic, 'select distinct(ch_value_id), ch_value, characteristic_id from m_product_ch where characteristic_id = ?' + whereClause, params, function (dataValues, me) {
-      if (dataValues && dataValues.length > 0) {
-        for (i = 0; i < dataValues.length; i++) {
-          for (j = 0; j < me.parent.parent.model.get('filter').length; j++) {
-            if (dataValues.models[i].get('ch_value_id') === me.parent.parent.model.get('filter')[j].ch_value_id) {
-              dataValues.models[i].set('checked', true);
+
+    function successCallbackBrands(dataBrands) {
+      if (dataBrands && dataBrands.length > 0) {
+        for (i = 0; i < dataBrands.length; i++) {
+          for (j = 0; j < me.parent.parent.model.get('brandFilter').length; j++) {
+            if (dataBrands.models[i].get('id') === me.parent.parent.model.get('brandFilter')[j].id) {
+              dataBrands.models[i].set('checked', true);
             }
           }
         }
-        me.parent.parent.$.body.$.listValues.valuesList.reset(dataValues.models);
+        me.brandsList.reset(dataBrands.models);
       } else {
-        me.parent.parent.$.body.$.listValues.valuesList.reset();
+        me.brandsList.reset();
       }
-    }, function (tx, error) {
-      OB.UTIL.showError("OBDAL error: " + error);
-    }, this);
+    }
+    criteria._filter = {
+      operator: OB.Dal.CONTAINS,
+      value: filter
+    };
+    OB.Dal.find(OB.Model.Brand, criteria, successCallbackBrands, errorCallback);
     return true;
   },
-  valuesList: null,
+  brandsList: null,
   init: function (model) {
-    this.valuesList = new Backbone.Collection();
-    this.$.valueslistitemprinter.setCollection(this.valuesList);
+    this.brandsList = new Backbone.Collection();
+    this.$.brandslistitemprinter.setCollection(this.brandsList);
   }
 });
 
 /*Modal definiton*/
 enyo.kind({
-  name: 'OB.UI.ModalProductCharacteristic',
+  name: 'OB.UI.ModalProductBrand',
   topPosition: '125px',
   kind: 'OB.UI.Modal',
   published: {
     characteristic: null
   },
   executeOnHide: function () {
-    this.$.body.$.listValues.$.valueslistitemprinter.$.theader.$.modalProductChHeader.clearAction();
+    this.$.body.$.listBrands.$.brandslistitemprinter.$.theader.$.modalProductBrandHeader.clearAction();
   },
   executeOnShow: function () {
     var i, j;
-    this.characteristic = this.args.model;
-    this.$.header.setContent(this.args.model.get('_identifier'));
+    this.$.header.setContent(OB.I18N.getLabel('OBMOBC_LblBrand'));
     this.waterfall('onSearchAction', {
-      valueName: this.$.body.$.listValues.$.valueslistitemprinter.$.theader.$.modalProductChHeader.$.filterText.getValue()
+      valueName: this.$.body.$.listBrands.$.brandslistitemprinter.$.theader.$.modalProductBrandHeader.$.filterText.getValue()
     });
   },
   i18nHeader: '',
   body: {
-    kind: 'OB.UI.ListValues'
+    kind: 'OB.UI.ListBrands'
   }
 });

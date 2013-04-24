@@ -36,7 +36,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
     generatedModel: true,
     modelName: 'DiscountFilterProductCategory'
   },
-  OB.Model.CurrencyPanel, OB.Model.SalesRepresentative, OB.Model.ProductCharacteristic],
+  OB.Model.CurrencyPanel, OB.Model.SalesRepresentative, OB.Model.ProductCharacteristic, OB.Model.Brand],
 
   loadUnpaidOrders: function () {
     // Shows a modal window with the orders pending to be paid
@@ -106,6 +106,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
     var receipt = new OB.Model.Order(),
         discounts, ordersave, customersave, taxes, orderList, hwManager, ViewManager;
     this.set('filter', []);
+    this.set('brandFilter', []);
 
     function searchCurrentBP() {
       function errorCallback(tx, error) {

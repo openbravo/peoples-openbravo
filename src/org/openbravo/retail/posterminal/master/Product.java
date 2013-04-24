@@ -44,6 +44,7 @@ public class Product extends ProcessHQLQuery {
             + ", pli.product.obposShowstock as showstock "
             + ", pli.product.isGeneric as isGeneric "
             + ", pli.product.genericProduct.id as generic_product_id "
+            + ", pli.product.brand.id as brand "
             + ", pli.bestseller as bestseller "
             + ", 'false' as ispack, "
             + "ppp.listPrice as listPrice, ppp.standardPrice as standardPrice, ppp.priceLimit as priceLimit, "

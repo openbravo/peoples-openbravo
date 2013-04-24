@@ -14,11 +14,11 @@ import java.util.List;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.mobile.core.process.ProcessHQLQuery;
 import org.openbravo.retail.config.OBRETCOProductList;
 import org.openbravo.retail.posterminal.POSUtils;
+import org.openbravo.retail.posterminal.ProcessHQLQuery;
 
-public class ProductCharacteristic extends ProcessHQLQuery {
+public class Brand extends ProcessHQLQuery {
 
   @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
@@ -28,13 +28,11 @@ public class ProductCharacteristic extends ProcessHQLQuery {
 
     // standard product categories
     hqlQueries
-        .add("select product_ch.id as m_product_ch_id, product_ch.product.id as m_product, product_ch.characteristic.id as characteristic_id, "
-            + "product_ch.characteristic.name as characteristic, product_ch.characteristicValue.id as ch_value_id, "
-            + "product_ch.characteristicValue.name as ch_value, product_ch.characteristic.name as _identifier "
-            + "from ProductCharacteristicValue product_ch "
+        .add("select distinct(product.brand.id) as id, product.brand.name as name, product.brand.name as _identifier "
+            + "from Product product "
             + "where exists (select 1 from OBRETCO_Prol_Product assort where obretcoProductlist= '"
             + productList.getId()
-            + "' and assort.product = product_ch.product) "
+            + "' and assort.product = product) "
             + "and $naturalOrgCriteria and $incrementalUpdateCriteria ");
 
     return hqlQueries;
