@@ -150,12 +150,14 @@ public class Posted extends HttpSecureAppServlet {
                   + "/ad_reports/ReportGeneralLedgerJournal.html?Command=DIRECT&inpTable="
                   + strTableId + "&inpRecord=" + strKey + "&inpOrg=" + data[0].org
                   + "&inpAccSchemas=" + accSchemas + "&posted=Y", title);
-            } else {
+            } else if (data2.length > 1) {
               printPageClosePopUp(response, vars, strDireccion
                   + "/ad_reports/ReportGeneralLedgerJournal.html?Command=DIRECT&inpTable="
                   + strTableId + "&inpRecord=" + strKey + "&inpOrg=" + data[0].org
                   + "&inpAccSchemas=" + accSchemas + "&posted=Y", title + " - "
                   + data2[0].schemaName);
+            } else {
+              printPageClosePopUp(response, vars);
             }
           }
         }
