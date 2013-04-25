@@ -30,4 +30,9 @@ public class Location extends ProcessHQLQuery {
         .asList(new String[] { "from Location where id = (select min(locationAddress) from OrganizationInformation where organization.id = '"
             + orgId + "' and $readableCriteria)" });
   }
+
+  @Override
+  protected boolean bypassPreferenceCheck() {
+    return true;
+  }
 }

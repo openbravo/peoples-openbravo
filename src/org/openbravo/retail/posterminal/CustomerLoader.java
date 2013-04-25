@@ -378,4 +378,9 @@ public class CustomerLoader extends JSONProcessSimple {
     e.printStackTrace(new PrintWriter(sb));
     return sb.toString();
   }
+
+  @Override
+  protected String getProperty() {
+    return "OBPOS_receipt.customers";
+  }
 }

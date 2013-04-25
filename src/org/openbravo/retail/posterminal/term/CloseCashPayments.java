@@ -28,4 +28,9 @@ public class CloseCashPayments extends ProcessHQLQuery {
         .asList(new String[] { "select p.id as id, p.searchKey as _id, p.commercialName as name, f.currentBalance as expected, p.paymentMethod as paymentMethod, c_currency_rate(p.financialAccount.currency, p.obposApplications.organization.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id) as rate, p.financialAccount.currency.iSOCode as isocode from OBPOS_App_Payment as p, FIN_Financial_Account as f "
             + "where p.financialAccount=f and p.obposApplications.id = :pos order by p.line, p.commercialName" });
   }
+
+  @Override
+  protected String getProperty() {
+    return "OBPOS_retail.cashup";
+  }
 }

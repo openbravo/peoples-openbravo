@@ -34,4 +34,9 @@ public class Payments extends ProcessHQLQuery {
             + "from OBPOS_App_Payment as p where p.obposApplications.id = '" + posId
             + "' and p.$readableCriteria order by p.line, p.commercialName" });
   }
+
+  @Override
+  protected boolean bypassPreferenceCheck() {
+    return true;
+  }
 }

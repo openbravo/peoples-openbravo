@@ -32,4 +32,9 @@ public class SalesRepresentative extends ProcessHQLQuery {
 
     return hqlQueries;
   }
+
+  @Override
+  protected String getProperty() {
+    return "OBPOS_salesRepresentative.receipt";
+  }
 }

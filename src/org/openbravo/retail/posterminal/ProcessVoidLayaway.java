@@ -200,4 +200,9 @@ public class ProcessVoidLayaway extends JSONProcessSimple {
             .getTableName(), doctypeTarget == null ? "" : doctypeTarget.getId(),
         doctype == null ? "" : doctype.getId(), false, true);
   }
+
+  @Override
+  protected String getProperty() {
+    return "OBPOS_receipt.voidLayaway";
+  }
 }

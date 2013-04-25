@@ -52,4 +52,9 @@ public class CheckBusinessPartnerCredit extends JSONProcessSimple {
     return result;
 
   }
+
+  @Override
+  protected String getProperty() {
+    return "OBPOS_receipt.creditsales";
+  }
 }

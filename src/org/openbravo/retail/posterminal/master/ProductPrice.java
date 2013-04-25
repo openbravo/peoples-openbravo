@@ -56,4 +56,9 @@ public class ProductPrice extends ProcessHQLQuery {
         );
     return prices;
   }
+
+  @Override
+  protected boolean bypassPreferenceCheck() {
+    return true;
+  }
 }

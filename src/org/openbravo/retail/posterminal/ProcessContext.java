@@ -48,4 +48,9 @@ public class ProcessContext extends JSONProcessSimple {
 
     return jsonResponse;
   }
+
+  @Override
+  protected boolean bypassPreferenceCheck() {
+    return true;
+  }
 }

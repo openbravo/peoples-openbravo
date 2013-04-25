@@ -25,4 +25,9 @@ public class CashMgmtDropEvents extends ProcessHQLQuery {
             + jsonsent.getString("organization")
             + "' and c.eventtype like '%OUT%'" });
   }
+
+  @Override
+  protected String getProperty() {
+    return "OBPOS_retail.cashmanagement";
+  }
 }

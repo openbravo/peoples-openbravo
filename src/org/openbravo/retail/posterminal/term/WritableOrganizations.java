@@ -28,4 +28,9 @@ public class WritableOrganizations extends JSONProcessSimple {
       return null;
     }
   }
+
+  @Override
+  protected boolean bypassPreferenceCheck() {
+    return true;
+  }
 }

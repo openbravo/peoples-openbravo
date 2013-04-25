@@ -63,4 +63,9 @@ public class PaidReceiptsHeader extends ProcessHQLQuery {
     hqlPaidReceipts += " order by ord.orderDate asc, ord.documentNo asc";
     return Arrays.asList(new String[] { hqlPaidReceipts });
   }
+
+  @Override
+  protected String getProperty() {
+    return "OBPOS_retail.paidReceipts";
+  }
 }

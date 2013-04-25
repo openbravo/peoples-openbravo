@@ -111,4 +111,9 @@ public class StoreDetailedStock extends JSONProcessSimple {
     finalResult.put("status", 0);
     return finalResult;
   }
+
+  @Override
+  protected boolean bypassPreferenceCheck() {
+    return true;
+  }
 }

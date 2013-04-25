@@ -31,4 +31,9 @@ public class PriceList extends ProcessHQLQuery {
     return Arrays.asList(new String[] { "from PricingPriceList where id ='" + priceListId
         + "' and $readableCriteria" });
   }
+
+  @Override
+  protected boolean bypassPreferenceCheck() {
+    return true;
+  }
 }
