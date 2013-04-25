@@ -97,8 +97,6 @@ public class ExecutePayments extends HttpSecureAppServlet {
           IsIDFilter.instance);
       processAndClose(response, vars, strWindowId, executionProcess, payments,
           dao.getObject(Organization.class, strOrganizationId));
-    } else if (vars.commandIn("CLOSE")) {
-      printPageClosePopUp(response, vars);
     }
   }
 
