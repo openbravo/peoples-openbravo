@@ -972,7 +972,7 @@ public class PrintController extends HttpSecureAppServlet {
         } else if (documentData.contactEmail == null || documentData.contactEmail.equals("")) {
           final OBError on = new OBError();
           on.setMessage(Utility.messageBD(this, "NoEmail", vars.getLanguage()).replace(
-              "@customer@", customer));
+              "@customer@", documentData.contactName));
           on.setTitle(Utility.messageBD(this, "Info", vars.getLanguage()));
           on.setType("info");
           final String tabId = vars.getSessionValue("inpTabId");
@@ -1004,7 +1004,7 @@ public class PrintController extends HttpSecureAppServlet {
         } else if (documentData.salesrepEmail == null || documentData.salesrepEmail.equals("")) {
           final OBError on = new OBError();
           on.setMessage(Utility.messageBD(this, "NoEmailSender", vars.getLanguage()).replace(
-              "@salesRep@", salesRep));
+              "@salesRep@", documentData.salesrepName));
           on.setTitle(Utility.messageBD(this, "Info", vars.getLanguage()));
           on.setType("info");
           final String tabId = vars.getSessionValue("inpTabId");
