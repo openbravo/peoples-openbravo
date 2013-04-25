@@ -71,9 +71,10 @@ public class SL_TableAudit extends HttpSecureAppServlet {
       if (currentRecordFullyAudited) {
         SessionInfo.setAuditActive(true);
 
-        String nTablesFullyAuditedWithInserts = SLTableAuditData
-            .countFullyAuditedTablesWithInserts(this);
-        if ("0".equals(nTablesFullyAuditedWithInserts)) {
+        OBCriteria<Table> qTables = OBDal.getInstance().createCriteria(Table.class);
+        qTables.add(Restrictions.eq(Table.PROPERTY_ISFULLYAUDITED, true));
+        qTables.add(Restrictions.eq(Table.PROPERTY_ISAUDITINSERTS, true));
+        if (qTables.count() == 0) {
           action.append("new Array(\"inpisauditinserts\", \"N\"),\n");
         } else {
           action.append("new Array(\"inpisauditinserts\", \"Y\"),\n");
@@ -114,5 +115,4 @@ public class SL_TableAudit extends HttpSecureAppServlet {
     out.println(xmlDocument.print());
     out.close();
   }
-
 }
