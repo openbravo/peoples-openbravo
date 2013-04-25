@@ -34,7 +34,7 @@ public class SalesRepresentative extends ProcessHQLQuery {
   }
 
   @Override
-  protected String getProperty() {
-    return "OBPOS_salesRepresentative.receipt";
+  protected boolean bypassPreferenceCheck() {
+    return true;
   }
 }
