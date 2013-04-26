@@ -32,10 +32,10 @@ public class ProductCharacteristic extends ProcessHQLQuery {
             + "product_ch.characteristic.name as characteristic, product_ch.characteristicValue.id as ch_value_id, "
             + "product_ch.characteristicValue.name as ch_value, product_ch.characteristic.name as _identifier "
             + "from ProductCharacteristicValue product_ch "
-            + "where exists (select 1 from OBRETCO_Prol_Product assort where obretcoProductlist= '"
+            + "where product_ch.product.id in (select product.id from OBRETCO_Prol_Product assort where obretcoProductlist.id= '"
             + productList.getId()
-            + "' and assort.product = product_ch.product) "
-            + "and $naturalOrgCriteria and $incrementalUpdateCriteria ");
+            + "') "
+            + "and $naturalOrgCriteria and $readableClientCriteria and ($incrementalUpdateCriteria)");
 
     return hqlQueries;
   }
