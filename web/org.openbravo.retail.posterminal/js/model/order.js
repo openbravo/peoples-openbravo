@@ -438,12 +438,12 @@
         'overpayment': OB.DEC.compare(OB.DEC.sub(pay, total)) > 0 ? OB.I18N.formatCurrency(OB.DEC.sub(pay, total)) : null
       };
     },
-    
+
     // returns true if the order is a Layaway, otherwise false
     isLayaway: function () {
       return this.getOrderType() === 2 || this.getOrderType() === 3 || this.get('isLayaway');
     },
-    
+
     clear: function () {
       this.clearOrderAttributes();
       this.trigger('change');
@@ -848,11 +848,11 @@
         OB.Model.Discounts.applyPromotions(this);
       }
     },
-    
+
     // returns the ordertype: 0: Sales order, 1: Return order, 2: Layaway, 3: Void Layaway
     getOrderType: function () {
       return this.get('orderType');
-    }, 
+    },
 
     shouldApplyPromotions: function () {
       // Do not apply promotions in return tickets
@@ -1085,6 +1085,32 @@
       return jsonorder;
     },
 
+    changeSignToShowReturns: function () {
+      this.set('change', OB.DEC.mul(this.get('change'), -1));
+      this.set('gross', OB.DEC.mul(this.get('gross'), -1));
+      this.set('net', OB.DEC.mul(this.get('net'), -1));
+      this.set('qty', OB.DEC.mul(this.get('qty'), -1));
+      //lines
+      _.each(this.get('lines').models, function (line) {
+        line.set('gross', OB.DEC.mul(line.get('gross'), -1));
+        line.set('qty', OB.DEC.mul(line.get('qty'), -1));
+      }, this);
+
+      //payments
+      _.each(this.get('payments').models, function (payment) {
+        payment.set('amount', OB.DEC.mul(payment.get('amount'), -1));
+        payment.set('origAmount', OB.DEC.mul(payment.get('origAmount'), -1));
+      }, this);
+
+      //taxes
+      _.each(this.get('taxes'), function (tax) {
+        tax.amount = OB.DEC.mul(tax.amount, -1);
+        tax.gross = OB.DEC.mul(tax.gross, -1);
+        tax.net = OB.DEC.mul(tax.net, -1);
+      }, this);
+
+    },
+
     setProperty: function (_property, _value) {
       this.set(_property, _value);
       this.save();
@@ -1194,6 +1220,10 @@
         order.set('isPaid', true);
         order.set('id', model.orderid);
         order.set('documentType', model.documenttypeid);
+        if (order.get('documentType') === OB.POS.modelterminal.get('terminal').terminalType.documentTypeForReturns) {
+          //return
+          order.set('orderType', 1);
+        }
       }
 
 
@@ -1235,6 +1265,9 @@
           if (numberOfLines === 0) {
             order.set('lines', lines);
             order.set('qty', orderQty);
+            if (order.get('orderType') === 1) {
+              order.changeSignToShowReturns();
+            }
             order.set('json', JSON.stringify(order.toJSON()));
             callback(order);
           }
