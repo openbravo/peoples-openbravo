@@ -27,7 +27,7 @@ enyo.kind({
     }
   },
   setTabButtonActive: function (tabName) {
-    var buttonContainerArray =  this.$.toolbar.getComponents(),
+    var buttonContainerArray = this.$.toolbar.getComponents(),
         i;
 
     for (i = 0; i < buttonContainerArray.length; i++) {
@@ -81,7 +81,7 @@ enyo.kind({
     }
   },
   setTabButtonActive: function (tabName) {
-    var buttonContainerArray =  this.$.toolbar.getComponents(),
+    var buttonContainerArray = this.$.toolbar.getComponents(),
         i;
 
     for (i = 0; i < buttonContainerArray.length; i++) {

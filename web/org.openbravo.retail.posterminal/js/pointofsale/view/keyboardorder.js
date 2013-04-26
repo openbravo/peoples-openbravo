@@ -137,16 +137,16 @@ enyo.kind({
           return true;
         }
         if (keyboard.line && keyboard.line.get('product').get('isEditableQty') === false) {
-               me.doShowPopup({
-              popup: 'modalNotEditableLine'
-            });
-            return true;
+          me.doShowPopup({
+            popup: 'modalNotEditableLine'
+          });
+          return true;
         }
         if (keyboard.line) {
           keyboard.receipt.deleteLine(keyboard.line);
           keyboard.receipt.trigger('scan');
         }
-    };
+        };
 
     this.addCommand('line:qty', {
       action: function (keyboard, txt) {
@@ -219,7 +219,7 @@ enyo.kind({
     });
 
     this.addCommand('code', new OB.UI.BarcodeActionHandler());
-    
+
     this.addCommand('+', {
       stateless: true,
       action: function (keyboard, txt) {

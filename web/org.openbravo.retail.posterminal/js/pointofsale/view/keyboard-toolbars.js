@@ -66,7 +66,7 @@ enyo.kind({
     if (options && options.percentaje) {
       var pending = this.receipt.getPending();
       //multicurrency
-      if (mulrate && mulrate !== '1'){
+      if (mulrate && mulrate !== '1') {
         pending = OB.DEC.mul(pending, mulrate);
       }
       amount = OB.DEC.div(OB.DEC.mul(pending, amount), 100);
@@ -112,7 +112,7 @@ enyo.kind({
   },
 
   getButtonComponent: function (sidebutton) {
-    if (sidebutton.i18nLabel){
+    if (sidebutton.i18nLabel) {
       sidebutton.label = OB.I18N.getLabel(sidebutton.i18nLabel);
     }
     return {

@@ -203,33 +203,33 @@
           });
         }
       });
-      
+
       OB.Model.Terminal.prototype.initialize.call(this);
     },
-    
-    returnToOnline: function(){
+
+    returnToOnline: function () {
 
       //The session is fine, we don't need to warn the user
-        //but we will attempt to send all pending orders automatically
-        OB.Dal.find(OB.Model.ChangedBusinessPartners, null, function (customersChangedNotProcessed) { //OB.Dal.find success
-          var successCallback, errorCallback;
-          if (!customersChangedNotProcessed || customersChangedNotProcessed.length === 0) {
-            OB.UTIL.processPaidOrders(null);
-            return;
-          }
-          successCallback = function () {
-            OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_pendigDataOfCustomersProcessed'));
-            OB.UTIL.processPaidOrders(null);
-          };
-          errorCallback = function () {
-            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorProcessingCustomersPendingData'));
-            OB.UTIL.processPaidOrders(null);
-          };
-          customersChangedNotProcessed.each(function (cus) {
-            cus.set('json', enyo.json.parse(cus.get('json')));
-          });
-          OB.UTIL.processCustomers(customersChangedNotProcessed, successCallback, errorCallback);
+      //but we will attempt to send all pending orders automatically
+      OB.Dal.find(OB.Model.ChangedBusinessPartners, null, function (customersChangedNotProcessed) { //OB.Dal.find success
+        var successCallback, errorCallback;
+        if (!customersChangedNotProcessed || customersChangedNotProcessed.length === 0) {
+          OB.UTIL.processPaidOrders(null);
+          return;
+        }
+        successCallback = function () {
+          OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_pendigDataOfCustomersProcessed'));
+          OB.UTIL.processPaidOrders(null);
+        };
+        errorCallback = function () {
+          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorProcessingCustomersPendingData'));
+          OB.UTIL.processPaidOrders(null);
+        };
+        customersChangedNotProcessed.each(function (cus) {
+          cus.set('json', enyo.json.parse(cus.get('json')));
         });
+        OB.UTIL.processCustomers(customersChangedNotProcessed, successCallback, errorCallback);
+      });
     },
 
     renderMain: function () {
