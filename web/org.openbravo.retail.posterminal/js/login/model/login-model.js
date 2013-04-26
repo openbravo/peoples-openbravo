@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global B, $, _, console, Backbone, window, confirm, $LAB */
+/*global B, $, _, console, enyo, Backbone, window, confirm, $LAB */
 
 (function () {
   var executeWhenDOMReady;
@@ -66,7 +66,7 @@
             }
           });
         }
-      })
+      });
 
       this.addPropertiesLoader({
         properties: ['context'],
@@ -233,7 +233,7 @@
     },
 
     renderMain: function () {
-      var i, paymentcashcurrency, paymentcash, paymentlegacy, minIncRefresh
+      var i, paymentcashcurrency, paymentcash, paymentlegacy, minIncRefresh, max, loadModelsIncFunc;
       if (!OB.UTIL.isSupportedBrowser()) {
         OB.MobileApp.model.renderLogin();
         return false;
