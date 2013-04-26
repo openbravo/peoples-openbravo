@@ -66,7 +66,7 @@ enyo.kind({
       if (this.hasClass('btn-over')) {
         this.removeClass('btn-over');
       }
-    },
+    }
   }, {
     kind: 'OB.OBPOSCashUp.UI.Button',
     name: 'btnCancel',
@@ -93,7 +93,7 @@ enyo.kind({
       if (this.hasClass('btn-over')) {
         this.removeClass('btn-over');
       }
-    },
+    }
   }]
 });
 
@@ -167,7 +167,7 @@ enyo.kind({
       }, {
         kind: 'OB.OBPOSCashUp.UI.CashUpKeyboard',
         name: 'cashUpKeyboard'
-      }, ]
+      }]
     }
   }, {
     kind: 'OB.UI.ModalCancel',
