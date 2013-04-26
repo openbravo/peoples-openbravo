@@ -380,7 +380,7 @@ enyo.kind({
   kind: 'OB.UI.SmallButton',
   i18nLabel: 'OBPOS_LblCreditSales',
   classes: 'btn-icon-small btnlink-green',
-  style: 'width: 120px; float: right; margin: 0px',
+  style: 'width: 120px; float: right; margin: -5px 5px 0px 0px; height: 1.8em',
   permission: 'OBPOS_receipt.creditsales',
   events: {
     onShowPopup: ''
@@ -445,7 +445,7 @@ enyo.kind({
   kind: 'OB.UI.SmallButton',
   content: '',
   classes: 'btn-icon-small btnlink-green',
-  style: 'width: 120px; float: right; margin: -5px 5px 0px 0px;',
+  style: 'width: 120px; float: right; margin: -5px 5px 0px 0px; height: 1.8em',
   permission: 'OBPOS_receipt.layaway',
   events: {
     onShowPopup: ''
