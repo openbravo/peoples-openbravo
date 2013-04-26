@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global B, $, _, Backbone, window, confirm, $LAB */
+/*global B, $, _, console, Backbone, window, confirm, $LAB */
 
 (function () {
   var executeWhenDOMReady;
