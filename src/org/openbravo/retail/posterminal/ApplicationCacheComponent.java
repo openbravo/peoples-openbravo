@@ -67,8 +67,16 @@ public class ApplicationCacheComponent extends MobileCoreApplicationCacheCompone
     resources
         .add("../../org.openbravo.client.kernel/OBMOBC_Main/ClientModel?entity=PricingAdjustmentProductCategory&modelName=DiscountFilterProductCategory&source=org.openbravo.retail.posterminal.master.DiscountFilterProductCategory");
 
+    resources.add("../../web/org.openbravo.retail.posterminal/res/opendrawer.xml");
+    resources.add("../../web/org.openbravo.retail.posterminal/res/printclosedreceipt.xml");
+    resources.add("../../web/org.openbravo.retail.posterminal/res/printinvoice.xml");
+    resources.add("../../web/org.openbravo.retail.posterminal/res/printlayaway.xml");
     resources.add("../../web/org.openbravo.retail.posterminal/res/printline.xml");
     resources.add("../../web/org.openbravo.retail.posterminal/res/printreceipt.xml");
+    resources.add("../../web/org.openbravo.retail.posterminal/res/printreturn.xml");
+    resources.add("../../web/org.openbravo.retail.posterminal/res/printreturninvoice.xml");
+    resources.add("../../web/org.openbravo.retail.posterminal/res/welcome.xml");
+
     return resources;
   }
 
