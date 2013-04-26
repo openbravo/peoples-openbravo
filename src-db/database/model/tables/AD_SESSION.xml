@@ -78,6 +78,9 @@
       <index name="AD_SESSION_CREATED_IDX" unique="false">
         <index-column name="CREATED"/>
       </index>
+      <index name="AD_SESSION_LOGSTATUS" unique="false">
+        <index-column name="LOGIN_STATUS"/>
+      </index>
       <index name="AD_SESSION_USER_IDX" unique="false">
         <index-column name="USERNAME"/>
       </index>
