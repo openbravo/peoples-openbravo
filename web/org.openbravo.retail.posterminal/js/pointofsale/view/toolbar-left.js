@@ -136,6 +136,7 @@ enyo.kind({
       if ((this.model.get('order').get('isEditable') === false && !this.model.get('order').get('isLayaway')) || this.model.get('order').get('orderType') === 3) {
         return true;
       }
+      OB.MobileApp.view.scanningFocus(false);
       this.doTabChange({
         tabPanel: this.tabPanel,
         keyboard: 'toolbarpayment',
