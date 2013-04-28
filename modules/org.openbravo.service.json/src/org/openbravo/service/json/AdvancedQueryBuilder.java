@@ -1016,7 +1016,11 @@ public class AdvancedQueryBuilder {
           // substitute all occurrences of paramater
           localWhereClause = localWhereClause.substring(0, index) + getTypedParameterAlias() + " "
               + localWhereClause.substring(index + key.length());
-          typedParameters.add("null".equals(value) ? null : value);
+          if (value.equals("true") || value.equals("false")) {
+            typedParameters.add("null".equals(value) ? null : Boolean.valueOf(value.toString()));
+          } else {
+            typedParameters.add("null".equals(value) ? null : value);
+          }
           index = localWhereClause.toLowerCase().indexOf(key.toLowerCase());
         }
       }
@@ -1129,25 +1133,25 @@ public class AdvancedQueryBuilder {
   }
 
   protected String getOrderByClausePart(String orderByParam) {
-	// Support for one argument functions
-	String functionPattern = "(.*)\\((.*)\\) (desc|DESC)+";
-	Pattern p = Pattern.compile(functionPattern);
-	Matcher m = p.matcher(orderByParam);
+    // Support for one argument functions
+    String functionPattern = "(.*)\\((.*)\\) (desc|DESC)+";
+    Pattern p = Pattern.compile(functionPattern);
+    Matcher m = p.matcher(orderByParam);
 
-	String localOrderBy = null;
-	String functionName = null;
-	boolean descOrderedFunction = false;
-	if (m.find()) {
-		// If it is a function, retrieve the function name and the localOrderBy
-		functionName = m.group(1);
-		localOrderBy = m.group(2);
-		if (m.groupCount() == 3) {
-			// Check if the property is to be ordered in descending order
-			descOrderedFunction = true;
-		}
-	} else {
-		localOrderBy = orderByParam;
-	}
+    String localOrderBy = null;
+    String functionName = null;
+    boolean descOrderedFunction = false;
+    if (m.find()) {
+      // If it is a function, retrieve the function name and the localOrderBy
+      functionName = m.group(1);
+      localOrderBy = m.group(2);
+      if (m.groupCount() == 3) {
+        // Check if the property is to be ordered in descending order
+        descOrderedFunction = true;
+      }
+    } else {
+      localOrderBy = orderByParam;
+    }
 
     final boolean asc = !localOrderBy.startsWith("-");
     String direction = "";
@@ -1220,10 +1224,10 @@ public class AdvancedQueryBuilder {
 
     String orderByClausePart = sb.toString();
     if (functionName != null) {
-    	orderByClausePart = functionName + "(" + orderByClausePart + ")";
-    	if (descOrderedFunction) {
-    		orderByClausePart = orderByClausePart + " desc";
-    	}
+      orderByClausePart = functionName + "(" + orderByClausePart + ")";
+      if (descOrderedFunction) {
+        orderByClausePart = orderByClausePart + " desc";
+      }
     }
     return orderByClausePart;
   }
