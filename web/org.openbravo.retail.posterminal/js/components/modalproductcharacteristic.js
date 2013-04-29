@@ -30,7 +30,8 @@ enyo.kind({
         components: [{
           kind: 'OB.UI.SearchInputAutoFilter',
           name: 'filterText',
-          style: 'width: 100%'
+          style: 'width: 100%',
+          isFirstFocus: true
         }]
       }, {
         style: 'display: table-cell;',
@@ -70,15 +71,11 @@ enyo.kind({
   classes: 'modal-dialog-btn-check',
   style: 'border-bottom: 1px solid #cccccc;text-align: left; padding-left: 70px;',
   events: {
-    onHideThisPopup: '',
-    onSelectCharacteristicValue: ''
+    onHideThisPopup: ''
   },
   tap: function () {
     this.inherited(arguments);
-    this.doSelectCharacteristicValue({
-      value: this.model
-    });
-    this.doHideThisPopup();
+    this.model.set('checked', !this.model.get('checked'));
   },
   create: function () {
     this.inherited(arguments);
@@ -155,6 +152,50 @@ enyo.kind({
   }
 });
 
+enyo.kind({
+  name: 'OB.UI.ModalProductChTopHeader',
+  kind: 'OB.UI.ScrollableTableHeader',
+  events: {
+    onHideThisPopup: '',
+    onSelectCharacteristicValue: ''
+  },
+  components: [{
+    style: 'display: table;',
+    components: [{
+      style: 'display: table-cell; float:left',
+      name: 'doneChButton',
+      kind: 'OB.UI.SmallButton',
+      ontap: 'doneAction'
+    }, {
+      name: 'title',
+      style: 'display: table-cell; width: 100%; text-align: center; vertical-align: middle'
+    }, {
+      style: 'display: table-cell; float:right',
+      classes: 'btnlink-gray',
+      name: 'cancelChButton',
+      kind: 'OB.UI.SmallButton',
+      ontap: 'cancelAction'
+    }]
+  }],
+  initComponents: function () {
+    this.inherited(arguments);
+    this.$.doneChButton.setContent('Done');
+    this.$.cancelChButton.setContent('Cancel');
+  },
+  doneAction: function () {
+    var selectedValues = _.compact(this.parent.parent.parent.$.body.$.listValues.valuesList.map(function (e) {
+      return e;
+    }));
+    this.doSelectCharacteristicValue({
+      value: selectedValues
+    });
+    this.doHideThisPopup();
+  },
+  cancelAction: function () {
+    this.doHideThisPopup();
+  }
+});
+
 /*Modal definiton*/
 enyo.kind({
   name: 'OB.UI.ModalProductCharacteristic',
@@ -169,7 +210,7 @@ enyo.kind({
   executeOnShow: function () {
     var i, j;
     this.characteristic = this.args.model;
-    this.$.header.setContent(this.args.model.get('_identifier'));
+    this.$.header.$.modalProductChTopHeader.$.title.setContent(this.args.model.get('_identifier'));
     this.waterfall('onSearchAction', {
       valueName: this.$.body.$.listValues.$.valueslistitemprinter.$.theader.$.modalProductChHeader.$.filterText.getValue()
     });
@@ -177,6 +218,13 @@ enyo.kind({
   i18nHeader: '',
   body: {
     kind: 'OB.UI.ListValues'
+  },
+  initComponents: function () {
+    this.inherited(arguments);
+    this.$.closebutton.hide();
+    this.$.header.createComponent({
+      kind: 'OB.UI.ModalProductChTopHeader'
+    });
   },
   init: function (model) {
     this.model = model;
