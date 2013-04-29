@@ -60,7 +60,7 @@
       <foreign-key foreignTable="AD_CLIENT" name="AD_IMAGE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="AD_IMAGE_AD_ORG">
+      <foreign-key foreignTable="AD_ORG" name="AD_IMAGE_AD_ORG" onDelete="cascade">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
       <check name="AD_IMAGE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>

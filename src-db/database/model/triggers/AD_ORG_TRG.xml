@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="TRIGGER AD_ORG_TRG">
-    <trigger name="AD_ORG_TRG" table="AD_ORG" fires="after" insert="true" update="true" delete="true" foreach="row">
+    <trigger name="AD_ORG_TRG" table="AD_ORG" fires="after" insert="true" update="false" delete="false" foreach="row">
       <body><![CDATA[
   /*************************************************************************
   * The contents of this file are subject to the Compiere Public
@@ -104,26 +104,7 @@ BEGIN
          '?'
       )
       ;
-        
-  ELSIF(DELETING) THEN
-    --  Delete TreeNode --
-    --  get AD_Tree_ID
-    SELECT c.AD_Tree_Org_ID
-    INTO v_xTree_ID
-    FROM AD_ClientInfo c
-    WHERE c.AD_Client_ID=:old.AD_Client_ID;
-    select COUNT(*) INTO v_count from AD_TREENODE where parent_id=:old.AD_ORG_ID
-  	and AD_TREE_ID=v_xTree_ID;
-    IF(v_count>0) THEN
-    	RAISE_APPLICATION_ERROR(-20000, '@ChildOrgCheck@') ;
-    END IF;
-    DELETE
-    FROM AD_TREENODE
-    WHERE AD_CLIENT_ID=:old.AD_Client_ID
-      AND AD_Tree_ID=v_xTree_ID
-      AND Node_ID=:old.AD_Org_ID;     
   END IF;
-  -- Deleting
 EXCEPTION
 WHEN NO_DATA_FOUND THEN
   RAISE_APPLICATION_ERROR(-20000, '@20014@') ;

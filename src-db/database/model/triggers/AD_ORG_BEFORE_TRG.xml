@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+  <database name="TRIGGER AD_ORG_BEFORE_TRG">
+    <trigger name="AD_ORG_BEFORE_TRG" table="AD_ORG" fires="before" insert="false" update="false" delete="true" foreach="row">
+      <body><![CDATA[
+  /*************************************************************************
+  * The contents of this file are subject to the Compiere Public
+  * License 1.1 ("License"); You may not use this file except in
+  * compliance with the License. You may obtain a copy of the License in
+  * the legal folder of your Openbravo installation.
+  * Software distributed under the License is distributed on an
+  * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+  * implied. See the License for the specific language governing rights
+  * and limitations under the License.
+  * The Original Code is  Compiere  ERP &  Business Solution
+  * The Initial Developer of the Original Code is Jorg Janke and ComPiere, Inc.
+  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
+  * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
+  * All Rights Reserved.
+  * Contributor(s): Openbravo SLU
+  * Contributions are Copyright (C) 2013 Openbravo, S.L.U.
+  *
+  * Specifically, this derivative work is based upon the following Compiere
+  * file and version.
+  *************************************************************************/
+  v_xTree_ID VARCHAR2(32);
+  v_xParent_ID VARCHAR2(32);
+  TYPE RECORD IS REF CURSOR;
+    CUR_PeriodControl RECORD;
+    v_count NUMBER;
+
+BEGIN
+
+    IF AD_isTriggerEnabled()='N' THEN RETURN;
+    END IF;
+
+  IF(DELETING) THEN
+    --  Delete TreeNode --
+    --  get AD_Tree_ID
+    SELECT c.AD_Tree_Org_ID
+    INTO v_xTree_ID
+    FROM AD_ClientInfo c
+    WHERE c.AD_Client_ID=:old.AD_Client_ID;
+    select COUNT(*) INTO v_count from AD_TREENODE where parent_id=:old.AD_ORG_ID
+  	and AD_TREE_ID=v_xTree_ID;
+    IF(v_count>0) THEN
+    	RAISE_APPLICATION_ERROR(-20000, '@ChildOrgCheck@') ;
+    END IF;
+    DELETE
+    FROM AD_TREENODE
+    WHERE AD_CLIENT_ID=:old.AD_Client_ID
+      AND AD_Tree_ID=v_xTree_ID
+      AND Node_ID=:old.AD_Org_ID;
+  END IF;
+  
+  -- Deleting
+EXCEPTION
+WHEN NO_DATA_FOUND THEN
+  RAISE_APPLICATION_ERROR(-20000, '@20014@') ;
+END AD_ORG_BEFORE_TRG
+]]></body>
+    </trigger>
+  </database>
