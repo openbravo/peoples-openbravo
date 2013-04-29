@@ -32,11 +32,14 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
+import org.openbravo.base.model.domaintype.TableDomainType;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.util.Check;
+import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
+import org.openbravo.model.ad.datamodel.Column;
 
 /**
  * Implements a service which can handle different types of query and paging options. This class
@@ -55,8 +58,6 @@ public class DataEntityQueryService {
   private static final Logger log = Logger.getLogger(DataEntityQueryService.class);
 
   public static final String PARAM_DELIMITER = "@";
-
-  private static final long serialVersionUID = 1L;
 
   private String entityName;
   private Integer firstResult = null;
@@ -135,10 +136,9 @@ public class DataEntityQueryService {
       final String localDistinct = getDistinct();
       queryBuilder.addSelectClausePart(localDistinct + ".id");
 
-      final Property property = DalUtil.getPropertyFromPath(
-          ModelProvider.getInstance().getEntity(getEntityName()), localDistinct);
+      final List<Property> properties = getDistinctDisplayProperties();
 
-      for (Property identifierProp : property.getTargetEntity().getIdentifierProperties()) {
+      for (Property identifierProp : properties) {
         if (identifierProp.getTargetEntity() != null) {
           // go one level deeper
           final List<Property> nextIdentifierProps = JsonUtils.getIdentifierSet(identifierProp);
@@ -171,6 +171,33 @@ public class DataEntityQueryService {
     obq.setNamedParameters(queryBuilder.getNamedParameters());
 
     return obq;
+  }
+
+  // package private on purpose
+  List<Property> getDistinctDisplayProperties() {
+    final String localDistinct = getDistinct();
+    final List<Property> properties = new ArrayList<Property>();
+    final Property property = DalUtil.getPropertyFromPath(
+        ModelProvider.getInstance().getEntity(getEntityName()), localDistinct);
+
+    // now use the table reference definition or select on the identifier properties
+    if (property.getDomainType() instanceof TableDomainType
+        && ((TableDomainType) property.getDomainType()).getRefTable() != null) {
+      final TableDomainType domainType = (TableDomainType) property.getDomainType();
+      final Property displayProp = KernelUtils.getInstance().getPropertyFromColumn(
+          OBDal.getInstance()
+              .get(Column.class, domainType.getRefTable().getDisplayColumn().getId()));
+      if (displayProp != null) {
+        properties.add(displayProp);
+      }
+    }
+
+    if (properties.isEmpty()) {
+      for (Property identifierProp : property.getTargetEntity().getIdentifierProperties()) {
+        properties.add(identifierProp);
+      }
+    }
+    return properties;
   }
 
   public int getRowNumber(String targetRecordId) {

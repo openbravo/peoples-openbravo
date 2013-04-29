@@ -68,6 +68,7 @@ public class FKComboUIDefinition extends ForeignKeyUIDefinition {
               referencedTable.getDisplayedColumn());
           if (prop != null && referencedProp != null) {
             criteriaField = ", criteriaField: " + "'" + prop.getName() + DalUtil.FIELDSEPARATOR
+                + referencedProp.getName() + "', criteriaDisplayField: '"
                 + referencedProp.getName() + "'";
           }
         }
