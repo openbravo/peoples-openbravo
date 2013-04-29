@@ -58,6 +58,11 @@ public class TimeUIDefinition extends UIDefinition {
     if (value == null || value == "") {
       return "";
     }
+
+    if (value instanceof String) {
+      return (String) value;
+    }
+
     String timestamp = value.toString();
     timestamp = timestamp.substring(timestamp.indexOf(" ") + 1);
     StringBuffer convertedValue = convertUtcToLocalTime(timestamp);
