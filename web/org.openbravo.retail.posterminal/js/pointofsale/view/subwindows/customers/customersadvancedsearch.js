@@ -265,13 +265,12 @@ enyo.kind({
     onChangeSubWindow: ''
   },
   components: [{
-    style: 'text-align: center; padding-top: 10px',
-    classes: 'span1',
+    style: 'text-align: center; padding-top: 10px; float: left; width: 9.5%;',
     components: [{
       kind: 'OB.OBPOSPointOfSale.UI.customers.CustomerLeftBar'
     }]
   }, {
-    classes: 'span11',
+    style: 'float: left; width: 90.5%;',
     components: [{
       classes: 'row-fluid',
       components: [{
