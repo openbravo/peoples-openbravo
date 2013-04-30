@@ -1028,7 +1028,7 @@ Usually, company's internal identifiers for various records (products, customers
 <!--7A814E72DF9240E280BA6B2AEFF9405A-->  <SORTNO><![CDATA[35]]></SORTNO>
 <!--7A814E72DF9240E280BA6B2AEFF9405A-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--7A814E72DF9240E280BA6B2AEFF9405A-->  <ISOUTFIELD><![CDATA[N]]></ISOUTFIELD>
-<!--7A814E72DF9240E280BA6B2AEFF9405A-->  <DEFAULT_EXPRESSION><![CDATA[if (OB.getWindowId() && OB.getSession().getAttribute(OB.getWindowId() +"|M_WAREHOUSE_ID")) {   OB.getSession().getAttribute(OB.getWindowId() +"|M_WAREHOUSE_ID"); } else {   if (OB.getContext().getWarehouse() != null) {     OB.getContext().getWarehouse().id;   } }]]></DEFAULT_EXPRESSION>
+<!--7A814E72DF9240E280BA6B2AEFF9405A-->  <DEFAULT_EXPRESSION><![CDATA[if (OB.getWindowId() != "183" && OB.getWindowId() != "167") { if (OB.getWindowId() && OB.getSession().getAttribute(OB.getWindowId() +"|M_WAREHOUSE_ID")) { OB.getSession().getAttribute(OB.getWindowId() +"|M_WAREHOUSE_ID"); } else { if (OB.getContext().getWarehouse() != null) { OB.getContext().getWarehouse().id; } } }]]></DEFAULT_EXPRESSION>
 <!--7A814E72DF9240E280BA6B2AEFF9405A-->  <SHOWINPICKLIST><![CDATA[N]]></SHOWINPICKLIST>
 <!--7A814E72DF9240E280BA6B2AEFF9405A--></OBUISEL_SELECTOR_FIELD>
 
