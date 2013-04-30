@@ -2312,7 +2312,7 @@ Usually, company's internal identifiers for various records (products, customers
 <!--FF8080812E77708D012E7796A94B0017-->  <SORTNO><![CDATA[110]]></SORTNO>
 <!--FF8080812E77708D012E7796A94B0017-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--FF8080812E77708D012E7796A94B0017-->  <ISOUTFIELD><![CDATA[N]]></ISOUTFIELD>
-<!--FF8080812E77708D012E7796A94B0017-->  <DEFAULT_EXPRESSION><![CDATA[if (OB.getWindowId() == '800051' ||  OB.getWindowId() == '800052' || OB.getWindowId() == '800096' || OB.getWindowId() == '800027') {false} else {if (OB.isSalesTransaction() == true) { true } else {if (OB.getWindowId() != '184') {false}}}]]></DEFAULT_EXPRESSION>
+<!--FF8080812E77708D012E7796A94B0017-->  <DEFAULT_EXPRESSION><![CDATA[if (OB.getWindowId() == '800051' ||  OB.getWindowId() == '800052' || OB.getWindowId() == '800096' || OB.getWindowId() == '800027') {false} else {if (OB.isSalesTransaction() == true) { true } else {false}}]]></DEFAULT_EXPRESSION>
 <!--FF8080812E77708D012E7796A94B0017-->  <SHOWINPICKLIST><![CDATA[N]]></SHOWINPICKLIST>
 <!--FF8080812E77708D012E7796A94B0017--></OBUISEL_SELECTOR_FIELD>
 
