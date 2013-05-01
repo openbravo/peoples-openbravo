@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -118,7 +118,23 @@ public class IdentifierProvider implements OBSingleton {
         // Assign displayColumnProperty to apply formatting if needed
         property = displayColumnProperty;
       } else if (property.isTranslatable()) {
-        value = ((BaseOBObject) dob).get(identifier.getName(), language, (String) dob.get("id"));
+        // Trying to get id of translatable object.
+        Object id = dob.get("id");
+        if (id instanceof BaseOBObject) {
+          // When the object is created for a drop down list filter, it is incorrect: id is not a
+          // String but a BaseOBject. This code deals with this exception.
+
+          // TODO: once issue #23706 is fixed, this should not be needed anymore
+          id = ((BaseOBObject) id).get("id");
+        }
+
+        if (id instanceof String) {
+          value = ((BaseOBObject) dob).get(identifier.getName(), language, (String) id);
+        } else {
+          // give up, couldn't find the id
+          value = ((BaseOBObject) dob).get(identifier.getName(), language);
+        }
+
       } else if (!property.isPrimitive() && identifyDeep) {
         if (dob.get(property.getName()) != null) {
           value = ((BaseOBObject) dob.get(property.getName())).getIdentifier();
