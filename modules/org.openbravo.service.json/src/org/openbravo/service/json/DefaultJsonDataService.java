@@ -169,6 +169,10 @@ public class DefaultJsonDataService implements JsonDataService {
           jsonResponse.put(JsonConstants.RESPONSE_TOTALROWS, 1);
           return jsonResult.toString();
         } else if (parameters.containsKey(JsonConstants.DISTINCT_PARAMETER)) {
+          // TODO: BaseOBObjects created by this query are not valid, see issue #23705, when this is
+          // fixed, IdentifierProvider should be revisited to remove code handling this
+          // incorrectness
+
           // when distinct an array of values is returned
           // the first value is the BaseObObject the other values
           // are part of the order by and such and can be ignored
