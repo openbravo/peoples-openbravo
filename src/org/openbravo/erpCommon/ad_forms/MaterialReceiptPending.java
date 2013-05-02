@@ -21,6 +21,7 @@ package org.openbravo.erpCommon.ad_forms;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
@@ -31,9 +32,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Tree;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
@@ -52,6 +55,9 @@ import org.openbravo.model.common.enterprise.OrgWarehouse;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.Warehouse;
 import org.openbravo.model.common.order.OrderLine;
+import org.openbravo.model.common.plm.ProductUOM;
+import org.openbravo.model.common.uom.UOM;
+import org.openbravo.model.common.uom.UOMConversion;
 import org.openbravo.utils.Replace;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -356,16 +362,30 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
           strLastOrgId = data[0].adOrgId;
           String strQtyordered = vars.getNumericParameter("inpQtyordered" + strOrderlineId);
           String strSequenceLine = SequenceIdData.getUUID();
+          String qtyorder = null;
           MaterialReceiptPendingLinesData[] dataLine = MaterialReceiptPendingLinesData.select(this,
               strOrderlineId);
+          if (dataLine[0].quantityorder != "") {
+            OBCriteria<UOMConversion> conversion = OBDal.getInstance().createCriteria(
+                UOMConversion.class);
+            conversion.add(Restrictions.eq(UOMConversion.PROPERTY_UOM,
+                OBDal.getInstance().get(UOM.class, dataLine[0].cUomId)));
+            conversion.add(Restrictions.eq(UOMConversion.PROPERTY_TOUOM,
+                OBDal.getInstance().get(ProductUOM.class, dataLine[0].mProductUomId).getUOM()));
+
+            for (UOMConversion conv : conversion.list()) {
+              qtyorder = new BigDecimal(strQtyordered).divide(conv.getMultipleRateBy()).toString();
+            }
+
+          }
           try {
             MaterialReceiptPendingLinesData.insert(conn, this, strSequenceLine, vars.getClient(),
                 dataLine[0].adOrgId, "Y", vars.getUser(), vars.getUser(), String.valueOf(line),
                 dataLine[0].description, strmInoutId, strOrderlineId, strLocator,
                 dataLine[0].mProductId, dataLine[0].cUomId, strQtyordered, "N",
-                dataLine[0].mAttributesetinstanceId, "N", dataLine[0].quantityorder,
-                dataLine[0].mProductUomId, dataLine[0].cProjectId, dataLine[0].user1Id,
-                dataLine[0].user2Id, dataLine[0].cCostcenterId, dataLine[0].aAssetId);
+                dataLine[0].mAttributesetinstanceId, "N", qtyorder, dataLine[0].mProductUomId,
+                dataLine[0].cProjectId, dataLine[0].user1Id, dataLine[0].user2Id,
+                dataLine[0].cCostcenterId, dataLine[0].aAssetId);
           } catch (ServletException ex) {
             myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
             releaseRollbackConnection(conn);
