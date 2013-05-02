@@ -30,4 +30,9 @@ public class PriceListVersion extends ProcessHQLQuery {
             + "from PricingPriceListVersion as pplv where pplv.priceList.id = '" + priceListId
             + "')" });
   }
+
+  @Override
+  protected boolean bypassPreferenceCheck() {
+    return true;
+  }
 }

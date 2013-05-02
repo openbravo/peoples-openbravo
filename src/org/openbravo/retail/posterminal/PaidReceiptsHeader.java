@@ -24,7 +24,7 @@ public class PaidReceiptsHeader extends ProcessHQLQuery {
     OBContext.setAdminMode(true);
     JSONObject json = jsonsent.getJSONObject("filters");
     String hqlPaidReceipts = "select ord.id as id, ord.documentNo as documentNo, ord.orderDate as orderDate, "
-        + "ord.businessPartner.name as businessPartner, ord.grandTotalAmount as totalamount from Order as ord "
+        + "ord.businessPartner.name as businessPartner, ord.grandTotalAmount as totalamount, ord.documentType.id as documentTypeId from Order as ord "
         + "where ord.client='"
         + json.getString("client")
         + "' and ord.organization='"
@@ -62,5 +62,10 @@ public class PaidReceiptsHeader extends ProcessHQLQuery {
     }
     hqlPaidReceipts += " order by ord.orderDate asc, ord.documentNo asc";
     return Arrays.asList(new String[] { hqlPaidReceipts });
+  }
+
+  @Override
+  protected String getProperty() {
+    return "OBPOS_retail.paidReceipts";
   }
 }

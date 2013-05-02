@@ -73,7 +73,7 @@ enyo.kind({
   init: function (model) {
     this.model = model;
   },
-  initComponents: function(){
+  initComponents: function () {
     this.inherited(arguments);
     this.setContent(OB.I18N.getLabel('OBPOS_LblAssignToTicket'));
   }
@@ -123,7 +123,7 @@ enyo.kind({
           init: function (model) {
             this.model = model;
           },
-          initComponents: function(){
+          initComponents: function () {
             this.setContent(OB.I18N.getLabel('OBPOS_LblEdit'));
           }
         }]

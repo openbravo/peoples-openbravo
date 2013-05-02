@@ -37,4 +37,9 @@ public class Labels extends JSONProcessSimple {
       OBContext.restorePreviousMode();
     }
   }
+
+  @Override
+  protected boolean bypassPreferenceCheck() {
+    return true;
+  }
 }

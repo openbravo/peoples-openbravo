@@ -1278,4 +1278,9 @@ public class OrderLoader extends JSONProcessSimple {
             .getTableName(), doctypeTarget == null ? "" : doctypeTarget.getId(),
         doctype == null ? "" : doctype.getId(), false, true);
   }
+
+  @Override
+  protected boolean bypassPreferenceCheck() {
+    return true;
+  }
 }

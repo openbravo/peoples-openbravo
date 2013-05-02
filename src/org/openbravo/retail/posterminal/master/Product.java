@@ -87,4 +87,9 @@ public class Product extends ProcessHQLQuery {
     return products;
 
   }
+
+  @Override
+  protected boolean bypassPreferenceCheck() {
+    return true;
+  }
 }

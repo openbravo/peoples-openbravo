@@ -116,4 +116,9 @@ public class ProcessSavePayments extends JSONProcessSimple {
     // return JSONRowConverter.buildResponse(data, null);
     return null;
   }
+
+  @Override
+  protected String getProperty() {
+    return "OBPOS_retail.layaways";
+  }
 }

@@ -104,4 +104,9 @@ public class Discount extends ProcessHQLQuery {
 
     return Arrays.asList(new String[] { hql });
   }
+
+  @Override
+  protected boolean bypassPreferenceCheck() {
+    return true;
+  }
 }

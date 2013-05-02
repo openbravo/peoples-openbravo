@@ -23,6 +23,7 @@ enyo.kind({
   components: [{
     name: 'checkBoxColumn',
     kind: 'OB.UI.CheckboxButton',
+    tag: 'div',
     tap: function () {
 
     },

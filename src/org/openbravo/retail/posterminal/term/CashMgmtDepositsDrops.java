@@ -146,4 +146,9 @@ public class CashMgmtDepositsDrops extends JSONProcessSimple {
     log.debug(result.toString());
     return finalResult;
   }
+
+  @Override
+  protected String getProperty() {
+    return "OBPOS_retail.cashmanagement";
+  }
 }

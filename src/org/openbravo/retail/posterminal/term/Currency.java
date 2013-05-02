@@ -33,4 +33,9 @@ public class Currency extends ProcessHQLQuery {
     return Arrays.asList(new String[] { "from Currency where id ='" + currId
         + "' and $readableCriteria" });
   }
+
+  @Override
+  protected boolean bypassPreferenceCheck() {
+    return true;
+  }
 }

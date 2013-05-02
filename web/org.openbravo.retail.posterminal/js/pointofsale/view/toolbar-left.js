@@ -136,6 +136,7 @@ enyo.kind({
       if ((this.model.get('order').get('isEditable') === false && !this.model.get('order').get('isLayaway')) || this.model.get('order').get('orderType') === 3) {
         return true;
       }
+      OB.MobileApp.view.scanningFocus(false);
       this.doTabChange({
         tabPanel: this.tabPanel,
         keyboard: 'toolbarpayment',
@@ -199,6 +200,7 @@ enyo.kind({
   }],
   initComponents: function () {
     // set up the POS menu
+    this.menuEntries = [];
     this.menuEntries.push({
       kind: 'OB.UI.MenuReturn'
     });

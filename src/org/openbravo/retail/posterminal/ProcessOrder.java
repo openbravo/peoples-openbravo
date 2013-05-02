@@ -43,4 +43,9 @@ public class ProcessOrder extends JSONProcessSimple {
     return result;
   }
 
+  @Override
+  protected boolean bypassPreferenceCheck() {
+    return true;
+  }
+
 }

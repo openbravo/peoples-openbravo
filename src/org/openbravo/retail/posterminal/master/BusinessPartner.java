@@ -82,4 +82,9 @@ public class BusinessPartner extends ProcessHQLQuery {
     // +
     // "where bp.id = loc.businessPartner.id and bp.customer = true and bp.$readableClientCriteria and bp.$naturalOrgCriteria";
   }
+
+  @Override
+  protected boolean bypassPreferenceCheck() {
+    return true;
+  }
 }

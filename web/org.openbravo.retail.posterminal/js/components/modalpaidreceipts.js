@@ -185,6 +185,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ListPRsLine',
   kind: 'OB.UI.SelectButton',
+  allowHtml: true,
   events: {
     onHideThisPopup: ''
   },
@@ -205,9 +206,15 @@ enyo.kind({
     }]
   }],
   create: function () {
+    var returnLabel = '';
     this.inherited(arguments);
-    this.$.topLine.setContent(this.model.get('documentNo') + ' - ' + this.model.get('businessPartner'));
+    if (this.model.get('documentTypeId') === OB.POS.modelterminal.get('terminal').terminalType.documentTypeForReturns) {
+      this.model.set('totalamount', OB.DEC.mul(this.model.get('totalamount'), -1));
+      returnLabel = ' (' + OB.I18N.getLabel('OBPOS_ToReturn') + ')';
+    }
+    this.$.topLine.setContent(this.model.get('documentNo') + ' - ' + this.model.get('businessPartner') + returnLabel);
     this.$.bottonLine.setContent(this.model.get('totalamount') + ' (' + this.model.get('orderDate').substring(0, 10) + ') ');
+    this.render();
   }
 });
 

@@ -80,4 +80,9 @@ public class Category extends ProcessHQLQuery {
 
     return hqlQueries;
   }
+
+  @Override
+  protected boolean bypassPreferenceCheck() {
+    return true;
+  }
 }

@@ -135,7 +135,15 @@
     </line>
     <line></line>
     <line size="1">
-        <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_paidReturn')) %></text>
+      <%
+        var returnText;
+        if (order.get('hasbeenpaid') === 'Y') {
+          returnText = 'OBPOS_paidReturn';
+        } else {
+          returnText = 'OBPOS_ReturnDraft';
+        }
+      %>
+      <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel(returnText)) %></text>
     </line>
     <line>
       <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_tckfooter_line2'))%></text>

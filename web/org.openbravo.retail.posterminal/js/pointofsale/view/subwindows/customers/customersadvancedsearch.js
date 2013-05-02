@@ -265,13 +265,12 @@ enyo.kind({
     onChangeSubWindow: ''
   },
   components: [{
-    style: 'text-align: center; padding-top: 10px',
-    classes: 'span1',
+    style: 'text-align: center; padding-top: 10px; float: left; width: 14%;',
     components: [{
       kind: 'OB.OBPOSPointOfSale.UI.customers.CustomerLeftBar'
     }]
   }, {
-    classes: 'span11',
+    style: 'float: left; width: 86%;',
     components: [{
       classes: 'row-fluid',
       components: [{
@@ -387,7 +386,7 @@ enyo.kind({
       }
     });
   },
-  initComponents: function(){
+  initComponents: function () {
     this.inherited(arguments);
     this.setContent(OB.I18N.getLabel('OBPOS_TitleCustomerAdvancedSearch'));
   }

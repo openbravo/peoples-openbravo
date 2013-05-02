@@ -94,4 +94,9 @@ public class Terminal extends ProcessHQLQuery {
   private String getIdentifierAlias(String propertyName) {
     return propertyName + DalUtil.FIELDSEPARATOR + JsonConstants.IDENTIFIER;
   }
+
+  @Override
+  protected boolean bypassPreferenceCheck() {
+    return true;
+  }
 }
