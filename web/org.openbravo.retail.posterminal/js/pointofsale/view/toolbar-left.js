@@ -200,6 +200,7 @@ enyo.kind({
   }],
   initComponents: function () {
     // set up the POS menu
+    this.menuEntries = [];
     this.menuEntries.push({
       kind: 'OB.UI.MenuReturn'
     });
