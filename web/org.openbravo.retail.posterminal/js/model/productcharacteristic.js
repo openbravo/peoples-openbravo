@@ -11,7 +11,7 @@
 
 (function () {
 
-  var SalesRepresentative = Backbone.Model.extend({
+  var ProductCharacteristic = Backbone.Model.extend({
     modelName: 'ProductCharacteristic',
     tableName: 'm_product_ch',
     entityName: 'ProductCharacteristic',
@@ -28,10 +28,10 @@
       '_identifier': '_identifier',
       '_idx': '_idx'
     },
-    createStatement: 'CREATE TABLE IF NOT EXISTS m_product_ch (m_product_ch_id TEXT PRIMARY KEY, m_product TEXT , characteristic_id TEXT, characteristic TEXT, ch_value_id TEXT, ch_value TEXT,  _identifier TEXT, _idx NUMERIC)',
+    createStatement: 'CREATE TABLE IF NOT EXISTS m_product_ch (m_product_ch_id TEXT PRIMARY KEY, m_product TEXT , characteristic_id TEXT, characteristic TEXT, ch_value_id TEXT, ch_value TEXT, _identifier TEXT, _idx NUMERIC)',
     dropStatement: 'DROP TABLE IF EXISTS m_product_ch',
     insertStatement: 'INSERT INTO m_product_ch(m_product_ch_id, m_product, characteristic_id, characteristic, ch_value_id, ch_value, _identifier, _idx)  VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
   });
 
-  OB.Data.Registry.registerModel(SalesRepresentative);
+  OB.Data.Registry.registerModel(ProductCharacteristic);
 }());

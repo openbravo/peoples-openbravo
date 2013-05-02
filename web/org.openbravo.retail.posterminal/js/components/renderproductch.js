@@ -34,7 +34,9 @@ enyo.kind({
     } else {
       this.setContent(this.model.get('_identifier').substring(0, 10) + '...');
     }
-
+    if (this.model.get('filtering')) {
+      this.addStyles('background-color: yellow');
+    }
   }
 });
 

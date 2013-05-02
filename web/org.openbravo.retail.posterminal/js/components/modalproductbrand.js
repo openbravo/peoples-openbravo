@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global enyo, Backbone */
+/*global enyo, Backbone, _ */
 
 /*header of scrollable table*/
 enyo.kind({

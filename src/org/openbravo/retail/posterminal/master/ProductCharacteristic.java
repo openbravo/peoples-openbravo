@@ -28,11 +28,11 @@ public class ProductCharacteristic extends ProcessHQLQuery {
 
     // standard product categories
     hqlQueries
-        .add("select product_ch.id as m_product_ch_id, product_ch.product.id as m_product, product_ch.characteristic.id as characteristic_id, "
-            + "product_ch.characteristic.name as characteristic, product_ch.characteristicValue.id as ch_value_id, "
-            + "product_ch.characteristicValue.name as ch_value, product_ch.characteristic.name as _identifier "
-            + "from ProductCharacteristicValue product_ch "
-            + "where product_ch.product.id in (select product.id from OBRETCO_Prol_Product assort where obretcoProductlist.id= '"
+        .add("select pcv.id as m_product_ch_id, pcv.product.id as m_product, pcv.characteristic.id as characteristic_id, "
+            + "pcv.characteristic.name as characteristic, pcv.characteristicValue.id as ch_value_id, "
+            + "pcv.characteristicValue.name as ch_value, pcv.characteristic.name as _identifier "
+            + "from ProductCharacteristicValue pcv "
+            + "where pcv.product.id in (select product.id from OBRETCO_Prol_Product assort where obretcoProductlist.id= '"
             + productList.getId()
             + "') "
             + "and $naturalOrgCriteria and $readableClientCriteria and ($incrementalUpdateCriteria)");
