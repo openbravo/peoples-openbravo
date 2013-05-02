@@ -364,6 +364,9 @@ enyo.kind({
     this.refresh();
   },
   lineEditCount: function (inSender, inEvent) {
+    this.waterfall('onShowColumn', {
+      colNum: 1
+    });
     this.$.cashupMultiColumn.$.rightPanel.$.cashUpKeyboard.setStatus(inEvent.originator.model.get('_id'));
   },
   paymentMethodKept: function (inSender, inEvent) {
