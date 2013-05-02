@@ -30,9 +30,9 @@ enyo.kind({
   name: 'OB.UI.CustomerPropertyLine',
   components: [{
     name: 'labelLine',
-    style: 'font-size: 15px; color: black; text-align: right; border: 1px solid #FFFFFF; background-color: #E2E2E2; width: 10%; height: 28px; padding: 12px 5px 1px 0; float: left;'
+    style: 'font-size: 15px; color: black; text-align: right; border: 1px solid #FFFFFF; background-color: #E2E2E2; width: 20%; height: 28px; padding: 12px 5px 1px 0; float: left;'
   }, {
-    style: 'border: 1px solid #FFFFFF; float: left; width: 88%;',
+    style: 'border: 1px solid #FFFFFF; float: left; width: 75%;',
     name: 'newAttribute'
   }, {
     style: 'clear: both'

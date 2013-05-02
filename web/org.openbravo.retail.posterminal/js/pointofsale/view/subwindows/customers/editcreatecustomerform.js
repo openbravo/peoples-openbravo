@@ -88,9 +88,8 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.customers.subwindowNewCustomer_bodyheader',
   components: [{
-    style: 'padding: 10px 500px 10px 500px;',
     components: [{
-      style: 'display: table;',
+      style: 'display: table; margin: 0 auto;',
       components: [{
         style: 'display: table-cell;',
         components: [{
