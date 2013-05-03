@@ -374,7 +374,8 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
                 OBDal.getInstance().get(ProductUOM.class, dataLine[0].mProductUomId).getUOM()));
 
             for (UOMConversion conv : conversion.list()) {
-              qtyorder = new BigDecimal(strQtyordered).divide(conv.getMultipleRateBy()).toString();
+              qtyorder = new BigDecimal(strQtyordered).multiply(conv.getMultipleRateBy())
+                  .toString();
             }
 
           }
