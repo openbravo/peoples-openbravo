@@ -90,7 +90,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.Button',
   name: 'OB.UI.AdvancedSearchCustomerWindowButton',
-  style: 'width: 170px; margin: 0px 0px 8px 5px;',
+  style: 'margin: 0px 0px 8px 5px;',
   classes: 'btnlink-yellow btnlink btnlink-small',
   i18nLabel: 'OBPOS_LblAdvancedSearch',
   handlers: {
