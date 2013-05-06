@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2012 Openbravo SLU
+ * All portions are Copyright (C) 2008-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,7 +28,6 @@ import java.util.Date;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
 import org.openbravo.base.ConfigParameters;
 import org.openbravo.base.ConnectionProviderContextListener;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -45,6 +44,8 @@ import org.quartz.SchedulerException;
 import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
 import org.quartz.TriggerUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author awolski
@@ -54,7 +55,7 @@ public class OBScheduler {
 
   private static final OBScheduler INSTANCE = new OBScheduler();
 
-  static Logger log = Logger.getLogger(OBScheduler.class);
+  private static Logger log = LoggerFactory.getLogger(OBScheduler.class);
 
   private static final String OB_GROUP = "OB_QUARTZ_GROUP";
 
@@ -346,6 +347,8 @@ public class OBScheduler {
 
     private static final String MONTH_OPTION_SPECIFIC = "S";
 
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
+
     /**
      * Loads the trigger details from AD_PROCESS_REQUEST and converts them into a schedulable Quartz
      * Trigger instance.
@@ -354,7 +357,7 @@ public class OBScheduler {
      */
     private static Trigger newInstance(String name, ProcessBundle bundle, ConnectionProvider conn)
         throws ServletException {
-      final TriggerData data = TriggerData.select(conn, dateTimeFormat, name);
+      final TriggerData data = TriggerData.select(conn, name);
 
       Trigger trigger = null;
 
@@ -363,7 +366,6 @@ public class OBScheduler {
         trigger.getJobDataMap().put(ProcessBundle.KEY, bundle);
         return trigger;
       }
-
       Calendar start = null;
       Calendar finish = null;
       try {
@@ -373,11 +375,11 @@ public class OBScheduler {
 
         } else if (data.timingOption.equals(TIMING_OPTION_LATER)) {
           trigger = new SimpleTrigger();
-          start = timestamp(data.startDate, data.startTime, dateTimeFormat);
+          start = timestamp(data.startDate, data.startTime);
           trigger.setStartTime(start.getTime());
 
         } else if (data.timingOption.equals(TIMING_OPTION_SCHEDULED)) {
-          start = timestamp(data.startDate, data.startTime, dateTimeFormat);
+          start = timestamp(data.startDate, data.startTime);
 
           final int second = start.get(Calendar.SECOND);
           final int minute = start.get(Calendar.MINUTE);
@@ -475,13 +477,12 @@ public class OBScheduler {
           if (data.nextFireTime.equals("")) {
             trigger.setStartTime(start.getTime());
           } else {
-            Calendar nextTriggerTime = timestamp(data.nextFireTime, data.nextFireTime,
-                dateTimeFormat);
+            Calendar nextTriggerTime = timestamp(data.nextFireTime, data.nextFireTime);
             trigger.setStartTime(nextTriggerTime.getTime());
           }
 
           if (data.finishes.equals(FINISHES)) {
-            finish = timestamp(data.finishesDate, data.finishesTime, dateTimeFormat);
+            finish = timestamp(data.finishesDate, data.finishesTime);
             trigger.setEndTime(finish.getTime());
           }
 
@@ -502,6 +503,8 @@ public class OBScheduler {
           "Y".equals(data.preventconcurrent));
       trigger.getJobDataMap().put(Process.PROCESS_NAME, data.processName);
       trigger.getJobDataMap().put(Process.PROCESS_ID, data.adProcessId);
+
+      log.debug("Scheduled process {}. Start time:{}.", data.processName, trigger.getStartTime());
 
       return trigger;
     }
@@ -533,27 +536,21 @@ public class OBScheduler {
     /**
      * Utility method to parse a start date string and a start time string into a date.
      * 
+     * Expected format for dates: 'dd-MM-yyyy' Expected format for times: 'HH24:MI:SS'
+     * 
      * @param date
      * @param time
-     * @param dtFormat
      * @return
      * @throws ParseException
      */
-    private static Calendar timestamp(String date, String time, String dtFormat)
-        throws ParseException {
-
-      if (dtFormat == null || dtFormat.trim().equals("")) {
-        throw new ParseException("dateTimeFormat cannot be null.", -1);
-      }
-
+    private static Calendar timestamp(String date, String time) throws ParseException {
       Calendar cal = null;
-      final String dateFormat = dtFormat.substring(0, dtFormat.indexOf(' '));
 
       if (date == null || date.equals("")) {
         cal = Calendar.getInstance();
       } else {
         cal = Calendar.getInstance();
-        cal.setTime(new SimpleDateFormat(dateFormat).parse(date));
+        cal.setTime(DATE_FORMAT.parse(date));
       }
 
       if (time != null && !time.equals("")) {
