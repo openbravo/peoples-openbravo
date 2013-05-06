@@ -1789,7 +1789,7 @@
     <name>Purchase Order Report template</name>
     <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
     <reportFilename>Purchase Order-@our_ref@</reportFilename>
-    <templateFilename>C_OrderJR.jrxml</templateFilename>
+    <templateFilename>C_OrderJR_new.jrxml</templateFilename>
     <showcompanydata>true</showcompanydata>
     <showlogo>true</showlogo>
     <headermargin xsi:nil="true"/>
@@ -1825,7 +1825,7 @@
     <name>Return Material Report template</name>
     <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
     <reportFilename>Sales Order-@our_ref@</reportFilename>
-    <templateFilename>C_OrderJR.jrxml</templateFilename>
+    <templateFilename>C_OrderJR_new.jrxml</templateFilename>
     <showcompanydata>true</showcompanydata>
     <showlogo>true</showlogo>
     <headermargin xsi:nil="true"/>
@@ -1837,7 +1837,7 @@
     <name>Standard order report template</name>
     <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
     <reportFilename>StandardOrder-@our_ref@</reportFilename>
-    <templateFilename>C_OrderJR.jrxml</templateFilename>
+    <templateFilename>C_OrderJR_new.jrxml</templateFilename>
     <showcompanydata>true</showcompanydata>
     <showlogo>true</showlogo>
     <headermargin xsi:nil="true"/>
@@ -1873,7 +1873,7 @@
     <name>AR Credit Memo Report template</name>
     <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
     <reportFilename>Sales Invoice-@our_ref@</reportFilename>
-    <templateFilename>RptC_Invoice.jrxml</templateFilename>
+    <templateFilename>RptC_Invoice_new.jrxml</templateFilename>
     <showcompanydata>true</showcompanydata>
     <showlogo>true</showlogo>
     <headermargin xsi:nil="true"/>
@@ -1885,7 +1885,7 @@
     <name>AR Invoice Report template</name>
     <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
     <reportFilename>Sales Invoice-@our_ref@</reportFilename>
-    <templateFilename>RptC_Invoice.jrxml</templateFilename>
+    <templateFilename>RptC_Invoice_new.jrxml</templateFilename>
     <showcompanydata>true</showcompanydata>
     <showlogo>true</showlogo>
     <headermargin xsi:nil="true"/>
@@ -1897,7 +1897,7 @@
     <name>Proposal Report template</name>
     <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
     <reportFilename>Sales Order-@our_ref@</reportFilename>
-    <templateFilename>C_OrderJR.jrxml</templateFilename>
+    <templateFilename>C_OrderJR_new.jrxml</templateFilename>
     <showcompanydata>true</showcompanydata>
     <showlogo>true</showlogo>
     <headermargin xsi:nil="true"/>
@@ -1921,7 +1921,7 @@
     <name>POS Order Report template</name>
     <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
     <reportFilename>Sales Order-@our_ref@</reportFilename>
-    <templateFilename>C_OrderJR.jrxml</templateFilename>
+    <templateFilename>C_OrderJR_new.jrxml</templateFilename>
     <showcompanydata>true</showcompanydata>
     <showlogo>true</showlogo>
     <headermargin xsi:nil="true"/>
@@ -1933,7 +1933,7 @@
     <name>Return Material Sales Invoice Report template</name>
     <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
     <reportFilename>Return Material Invoice-@our_ref@</reportFilename>
-    <templateFilename>RptC_Invoice.jrxml</templateFilename>
+    <templateFilename>RptC_Invoice_new.jrxml</templateFilename>
     <showcompanydata>true</showcompanydata>
     <showlogo>true</showlogo>
     <headermargin xsi:nil="true"/>
@@ -1945,7 +1945,7 @@
     <name>AP Credit Report template</name>
     <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
     <reportFilename>Purchase Invoice-@our_ref@</reportFilename>
-    <templateFilename>RptC_Invoice.jrxml</templateFilename>
+    <templateFilename>RptC_Invoice_new.jrxml</templateFilename>
     <showcompanydata>true</showcompanydata>
     <showlogo>true</showlogo>
     <headermargin xsi:nil="true"/>
@@ -1957,7 +1957,7 @@
     <name>Prepay Order Report template</name>
     <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
     <reportFilename>Sales Order-@our_ref@</reportFilename>
-    <templateFilename>C_OrderJR.jrxml</templateFilename>
+    <templateFilename>C_OrderJR_new.jrxml</templateFilename>
     <showcompanydata>true</showcompanydata>
     <showlogo>true</showlogo>
     <headermargin xsi:nil="true"/>
@@ -1969,7 +1969,7 @@
     <name>MM Receipt Report template</name>
     <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
     <reportFilename>Goods Receipt-@our_ref@</reportFilename>
-    <templateFilename>RptM_InOut.jrxml</templateFilename>
+    <templateFilename>RptM_InOut_new.jrxml</templateFilename>
     <showcompanydata>true</showcompanydata>
     <showlogo>true</showlogo>
     <headermargin xsi:nil="true"/>
@@ -1981,7 +1981,7 @@
     <name>MM Shipment Report template</name>
     <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
     <reportFilename>Goods Shipment-@our_ref@</reportFilename>
-    <templateFilename>RptM_InOut.jrxml</templateFilename>
+    <templateFilename>RptM_InOut_new.jrxml</templateFilename>
     <showcompanydata>true</showcompanydata>
     <showlogo>true</showlogo>
     <headermargin xsi:nil="true"/>
@@ -1993,7 +1993,7 @@
     <name>Warehouse Order Memo Report template</name>
     <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
     <reportFilename>Sales Order-@our_ref@</reportFilename>
-    <templateFilename>C_OrderJR.jrxml</templateFilename>
+    <templateFilename>C_OrderJR_new.jrxml</templateFilename>
     <showcompanydata>true</showcompanydata>
     <showlogo>true</showlogo>
     <headermargin xsi:nil="true"/>
@@ -2017,7 +2017,7 @@
     <name>On Credit Order Report template</name>
     <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
     <reportFilename>Sales Order-@our_ref@</reportFilename>
-    <templateFilename>C_OrderJR.jrxml</templateFilename>
+    <templateFilename>C_OrderJR_new.jrxml</templateFilename>
     <showcompanydata>true</showcompanydata>
     <showlogo>true</showlogo>
     <headermargin xsi:nil="true"/>
@@ -2029,7 +2029,7 @@
     <name>AP Invoice Report template</name>
     <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
     <reportFilename>Invoice-@our_ref@</reportFilename>
-    <templateFilename>RptC_Invoice.jrxml</templateFilename>
+    <templateFilename>RptC_Invoice_new.jrxml</templateFilename>
     <showcompanydata>true</showcompanydata>
     <showlogo>true</showlogo>
     <headermargin xsi:nil="true"/>
@@ -2041,7 +2041,7 @@
     <name>MM Shipment Indirect Report template</name>
     <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
     <reportFilename>Goods Shipment-@our_ref@</reportFilename>
-    <templateFilename>RptM_InOut.jrxml</templateFilename>
+    <templateFilename>RptM_InOut_new.jrxml</templateFilename>
     <showcompanydata>true</showcompanydata>
     <showlogo>true</showlogo>
     <headermargin xsi:nil="true"/>
@@ -2065,7 +2065,7 @@
     <name>Reversed Purchase Invoice Report template</name>
     <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
     <reportFilename>Reversed Invoice-@our_ref@</reportFilename>
-    <templateFilename>RptC_Invoice.jrxml</templateFilename>
+    <templateFilename>RptC_Invoice_new.jrxml</templateFilename>
     <showcompanydata>true</showcompanydata>
     <showlogo>true</showlogo>
     <headermargin xsi:nil="true"/>
@@ -2077,7 +2077,7 @@
     <name>Reversed Sales Invoice Report template</name>
     <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
     <reportFilename>Reversed Sales Invoice-@our_ref@</reportFilename>
-    <templateFilename>RptC_Invoice.jrxml</templateFilename>
+    <templateFilename>RptC_Invoice_new.jrxml</templateFilename>
     <showcompanydata>true</showcompanydata>
     <showlogo>true</showlogo>
     <headermargin xsi:nil="true"/>
