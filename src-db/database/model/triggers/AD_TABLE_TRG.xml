@@ -66,6 +66,10 @@ BEGIN
        RAISE_APPLICATION_ERROR(-20000, '@20536@') ;
      END IF;
 
+     IF :new.DataOriginType = 'Datasource' THEN
+       :new.tableName = :new.name;
+     END IF;
+
      --Check Name for illegal characters
      FOR I IN 1..LENGTH(trim(:NEW.name)) LOOP
         v_char := substr(trim(:NEW.name),i,1);
