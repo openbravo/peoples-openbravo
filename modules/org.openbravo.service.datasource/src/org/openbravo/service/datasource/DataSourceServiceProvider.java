@@ -81,6 +81,7 @@ public class DataSourceServiceProvider {
             Table table = (Table) qTable.list().get(0);
             if (ApplicationConstants.DATASOURCEBASEDTABLE.equals(table.getDataOriginType())) {
               dataSource = table.getObserdsDatasource();
+              ds.setEntity(ModelProvider.getInstance().getEntityByTableId(table.getId()));
             }
           }
           if (dataSource == null) {
