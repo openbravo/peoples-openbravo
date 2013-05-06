@@ -39,6 +39,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.Sqlc;
 import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.system.Language;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.WindowTrl;
@@ -205,14 +206,28 @@ public class ReferencedLink extends HttpSecureAppServlet {
         try {
           OBContext.setAdminMode();
           Project referencedProject = OBDal.getInstance().get(Project.class, strKeyReferenceId);
-          if (referencedProject != null && referencedProject.getProjectCategory() != null
-              && referencedProject.getProjectCategory().equals("S")) {
-            // Multiphase project
-            strWindowId = "130";
+          Table table = OBDal.getInstance().get(Table.class, strTableReferenceId);
+
+          if (table.getWindow() == null) {
+            // If there is no Window defined in Application Dictionary
+            if (referencedProject == null) {
+              // Service project
+              strWindowId = "800001";
+            } else if (referencedProject != null && referencedProject.getProjectCategory() != null
+                && referencedProject.getProjectCategory().equals("S")) {
+              // Multiphase project
+              strWindowId = "130";
+            }
           } else {
-            // Service project
-            strWindowId = "800001";
+            // Window defined in Application Dictionary
+            strWindowId = table.getWindow().getId();
+            if (referencedProject != null && referencedProject.getProjectCategory() != null
+                && referencedProject.getProjectCategory().equals("S")) {
+              // Multiphase project
+              strWindowId = "130";
+            }
           }
+
         } finally {
           OBContext.restorePreviousMode();
         }

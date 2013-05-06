@@ -1109,7 +1109,7 @@ The Window Access Tab defines the Windows and type of access that this Role is g
 <!--203-->  <CLASSNAME><![CDATA[Project]]></CLASSNAME>
 <!--203-->  <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--203-->  <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
-<!--203-->  <AD_WINDOW_ID><![CDATA[800001]]></AD_WINDOW_ID>
+<!--203-->  <AD_WINDOW_ID><![CDATA[130]]></AD_WINDOW_ID>
 <!--203-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
 <!--203-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
 <!--203-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
