@@ -49,7 +49,6 @@ import org.openbravo.base.session.SessionFactoryController;
 import org.openbravo.base.session.UniqueConstraintColumn;
 import org.openbravo.base.util.Check;
 import org.openbravo.base.util.CheckException;
-import org.openbravo.client.application.ApplicationConstants;
 import org.openbravo.database.ConnectionProviderImpl;
 
 /**
@@ -85,6 +84,9 @@ public class ModelProvider implements OBSingleton {
   private List<Entity> entitiesWithTreeType = null;
   private List<Module> modules;
   private Session initsession;
+
+  private static final String DATASOURCEBASEDTABLE = "Datasource";
+  private static final String TABLEBASEDTABLE = "Table";
 
   /**
    * Returns the singleton instance providing the ModelProvider functionality.
@@ -198,7 +200,7 @@ public class ModelProvider implements OBSingleton {
       dataSourceTablesByName = new HashMap<String, Table>();
       for (final Table t : tables) {
         // tables are stored case insensitive!
-        if (ApplicationConstants.TABLEBASEDTABLE.equals(t.getDataOrigin())) {
+        if (TABLEBASEDTABLE.equals(t.getDataOrigin())) {
           tablesByTableName.put(t.getTableName().toLowerCase(), t);
         } else {
           String dataOrigin = t.getDataOrigin();
@@ -232,7 +234,7 @@ public class ModelProvider implements OBSingleton {
         model.add(e);
         entitiesByClassName.put(e.getClassName(), e);
         entitiesByName.put(e.getName(), e);
-        if (ApplicationConstants.TABLEBASEDTABLE.equals(t.getDataOrigin())) {
+        if (TABLEBASEDTABLE.equals(t.getDataOrigin())) {
           entitiesByTableName.put(t.getTableName().toUpperCase(), e);
         }
         entitiesByTableId.put(t.getId(), e);
@@ -551,7 +553,7 @@ public class ModelProvider implements OBSingleton {
       // }
 
       // Support datasource based tables
-      if (ApplicationConstants.TABLEBASEDTABLE.equals(t.getDataOrigin())) {
+      if (TABLEBASEDTABLE.equals(t.getDataOrigin())) {
         if (t.getPrimaryKeyColumns().size() == 0) {
           log.warn("Ignoring table/view " + t.getName() + " because it has no primary key columns");
           toRemove.add(t);
