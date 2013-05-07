@@ -1118,6 +1118,19 @@ public class FIN_Utility {
     }
   }
 
+  /**
+   * Return true if the period is open for a client, document type, organization and accounting date
+   * 
+   * @param client
+   *          the client for which it wants to know if the period is open
+   * @param documentType
+   *          It is the docbasetype from the document type
+   * @param org
+   *          the Organization for which it wants to know if the period is open
+   * @param dateAcct
+   *          The accounting date from the document
+   * @return boolean
+   */
   public static boolean isPeriodOpen(String client, String documentType, String org, String dateAcct) {
     final Session session = OBDal.getInstance().getSession();
 
