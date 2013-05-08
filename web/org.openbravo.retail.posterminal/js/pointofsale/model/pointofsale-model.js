@@ -131,8 +131,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
         //Create the negative payment for change
         var oldChange = receipt.get('change');
         var clonedCollection = new Backbone.Collection();
-        if (!_.isUndefined(receipt.selectedPayment) && !_.isUndefined(receipt.getPaymentStatus()) && receipt.getPaymentStatus().change > 0) {
-          var payToDo = receipt.getPaymentStatus();
+        if (!_.isUndefined(receipt.selectedPayment) && receipt.getChange() > 0) {
           var payment = OB.POS.terminal.terminal.paymentnames[receipt.selectedPayment];
           receipt.get('payments').each(function (model) {
             clonedCollection.add(new Backbone.Model(model.toJSON()));
@@ -144,7 +143,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
             receipt.addPayment(new OB.Model.PaymentLine({
               'kind': payment.payment.searchKey,
               'name': payment.payment.commercialName,
-              'amount': OB.DEC.sub(0, OB.DEC.mul(payToDo.change, payment.mulrate)),
+              'amount': OB.DEC.sub(0, OB.DEC.mul(receipt.getChange(), payment.mulrate)),
               'rate': payment.rate,
               'mulrate': payment.mulrate,
               'isocode': payment.isocode,
