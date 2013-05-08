@@ -181,8 +181,8 @@ enyo.kind({
   }],
   initComponents: function () {
     this.inherited(arguments);
-    this.$.doneBrandButton.setContent('Done');
-    this.$.cancelBrandButton.setContent('Cancel');
+    this.$.doneBrandButton.setContent(OB.I18N.getLabel('OBMOBC_LblDone'));
+    this.$.cancelBrandButton.setContent(OB.I18N.getLabel('OBMOBC_LblCancel'));
   },
   doneAction: function () {
     var selectedBrands = _.compact(this.parent.parent.parent.$.body.$.listBrands.brandsList.map(function (e) {
