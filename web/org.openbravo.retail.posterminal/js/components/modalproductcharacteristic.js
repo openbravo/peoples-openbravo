@@ -219,13 +219,13 @@ enyo.kind({
     for (i = 0; i < inEvent.value.length; i++) {
       for (j = 0; j < this.parent.parent.model.get('filter').length; j++) {
         if (inEvent.value[i].get('id') === this.parent.parent.model.get('filter')[j].id) {
-          inEvent.value[i].set('checked', this.parent.parent.model.get('filter')[j].cheked);
+          inEvent.value[i].set('checked', this.parent.parent.model.get('filter')[j].checked);
           inEvent.value[i].set('selected', this.parent.parent.model.get('filter')[j].selected);
         }
       }
       for (k = 0; k < this.parent.parent.selected.length; k++) {
         if (inEvent.value[i].get('id') === this.parent.parent.selected[k].id) {
-          inEvent.value[i].set('checked', this.parent.parent.selected[k].get('cheked'));
+          inEvent.value[i].set('checked', this.parent.parent.selected[k].get('checked'));
           inEvent.value[i].set('selected', this.parent.parent.selected[k].get('selected'));
         }
       }
@@ -233,13 +233,28 @@ enyo.kind({
     this.valuesList.reset(inEvent.value);
   },
   getPrevCollection: function (inSender, inEvent) {
-    var me = this;
+    var me = this,
+        i, j, k;
     OB.Dal.query(OB.Model.ProductChValue, "select distinct(id) , name , characteristic_id, parent as parent from m_ch_value " + "where parent = (select parent from m_ch_value where id = '" + this.parentValue + "') and " + "characteristic_id = (select characteristic_id from m_ch_value where id = '" + this.parentValue + "')", [], function (dataValues, me) {
       if (dataValues && dataValues.length > 0) {
+        for (i = 0; i < dataValues.length; i++) {
+          for (j = 0; j < me.parent.parent.model.get('filter').length; j++) {
+            if (dataValues.models[i].get('id') === me.parent.parent.model.get('filter')[j].id) {
+              dataValues.models[i].set('checked', me.parent.parent.model.get('filter')[j].checked);
+              dataValues.models[i].set('selected', me.parent.parent.model.get('filter')[j].selected);
+            }
+          }
+          for (k = 0; k < me.parent.parent.selected.length; k++) {
+            if (dataValues.models[i].get('id') === me.parent.parent.selected[k].id) {
+              dataValues.models[i].set('checked', me.parent.parent.selected[k].get('checked'));
+              dataValues.models[i].set('selected', me.parent.parent.selected[k].get('selected'));
+            }
+          }
+        }
         me.valuesList.reset(dataValues.models);
         //We take the first to know the parent
         me.parentValue = dataValues.models[0].get('parent');
-        if (me.parentValue === 0) {
+        if (me.parentValue === '0') { //root
           me.$.valueslistitemprinter.$.theader.$.modalProductChHeader.$.backChButton.hide();
         }
       }
@@ -296,6 +311,8 @@ enyo.kind({
     }
   },
   cancelAction: function () {
+    this.parent.parent.parent.selected = [];
+    this.parent.parent.parent.countedValues = 0;
     this.doHideThisPopup();
   },
   checkFinished: function () {
@@ -360,6 +377,8 @@ enyo.kind({
   },
   executeOnShow: function () {
     var i, j;
+    this.$.body.$.listValues.parentValue = 0;
+    this.$.body.$.listValues.$.valueslistitemprinter.$.theader.$.modalProductChHeader.$.backChButton.hide();
     this.characteristic = this.args.model;
     this.$.header.$.modalProductChTopHeader.$.title.setContent(this.args.model.get('_identifier'));
     this.waterfall('onSearchAction', {
