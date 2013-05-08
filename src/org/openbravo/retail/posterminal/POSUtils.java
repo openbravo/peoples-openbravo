@@ -6,11 +6,13 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.client.kernel.KernelUtils;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -21,6 +23,7 @@ import org.openbravo.model.common.enterprise.OrgWarehouse;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.Warehouse;
 import org.openbravo.model.pricing.pricelist.PriceList;
+import org.openbravo.model.pricing.pricelist.PriceListVersion;
 import org.openbravo.retail.config.OBRETCOProductList;
 
 /**
@@ -211,6 +214,47 @@ public class POSUtils {
     }
 
     return null;
+  }
+
+  public static PriceListVersion getPriceListVersionForPriceList(String priceListId) {
+
+    try {
+      OBContext.setAdminMode(true);
+      Query priceListVersionQuery = OBDal
+          .getInstance()
+          .getSession()
+          .createQuery(
+              "from PricingPriceListVersion AS plv "
+                  + "where plv.priceList.id ='"
+                  + priceListId
+                  + "' and plv.validFromDate = (select max(pplv.validFromDate) "
+                  + "from PricingPriceListVersion as pplv where pplv.active=true and pplv.priceList.id = '"
+                  + priceListId + "')");
+      for (Object plv : priceListVersionQuery.list()) {
+        return (PriceListVersion) plv;
+      }
+
+    } catch (Exception e) {
+      log.error("Error getting PriceList by Terminal id: " + e.getMessage(), e);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+
+    return null;
+  }
+
+  public static PriceListVersion getPriceListVersionByTerminalId(String terminalId) {
+
+    PriceList priceList = POSUtils.getPriceListByTerminalId(terminalId);
+    String priceListId = (String) DalUtil.getId(priceList);
+    return POSUtils.getPriceListVersionForPriceList(priceListId);
+  }
+
+  public static PriceListVersion getPriceListVersionByOrgId(String orgId) {
+
+    PriceList priceList = POSUtils.getPriceListByOrgId(orgId);
+    String priceListId = (String) DalUtil.getId(priceList);
+    return POSUtils.getPriceListVersionForPriceList(priceListId);
   }
 
   public static OBRETCOProductList getProductListByOrgId(String orgId) {

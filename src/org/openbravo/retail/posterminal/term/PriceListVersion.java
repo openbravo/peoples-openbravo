@@ -21,14 +21,10 @@ public class PriceListVersion extends ProcessHQLQuery {
 
   @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
-    String priceListId = POSUtils.getPriceListByTerminalId(
+    String priceListVersionId = POSUtils.getPriceListVersionByTerminalId(
         RequestContext.get().getSessionAttribute("POSTerminal").toString()).getId();
-    return Arrays
-        .asList(new String[] { "select plv.id AS id " + "from PricingPriceListVersion AS plv "
-            + "where plv.$readableCriteria and plv.priceList.id ='" + priceListId
-            + "' and plv.validFromDate = (select max(pplv.validFromDate) "
-            + "from PricingPriceListVersion as pplv where pplv.priceList.id = '" + priceListId
-            + "')" });
+    return Arrays.asList(new String[] { "select plv.id AS id "
+        + "from PricingPriceListVersion AS plv " + "where plv.id ='" + priceListVersionId + "'" });
   }
 
   @Override
