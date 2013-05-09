@@ -42,13 +42,6 @@ BEGIN
     IF AD_isTriggerEnabled()='N' THEN RETURN;
     END IF;
 
- --We need to check if we need to delete or not the column c_order_id in table m_inout
- --we are going to delete only if all the related lines with the order has been deleted. For this reason we need to launch
- --the m_inout trigger to check. Related to issue 22508
- IF (DELETING) THEN
-  Update m_inout set description=description where m_inout_id = :old.m_inout_id; 
- END IF;
-
  IF (INSERTING) THEN
   IF (:NEW.M_PRODUCT_ID IS NOT NULL) THEN
      SELECT C_UOM_ID INTO v_UOM_ID FROM M_PRODUCT WHERE M_PRODUCT_ID=:NEW.M_PRODUCT_ID;
