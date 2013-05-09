@@ -89,6 +89,17 @@
      myframe.OB.Utilities.openDirectTab('800202', recordid); //Internal Consumption
    }
  }
+ function openReturnDoc(recordId, issotrx){
+   var myframe = getFrame('LayoutMDI') || top.opener;
+   if (myframe) {
+     if (issotrx == 'Y'){
+       myframe.OB.Utilities.openDirectTab('30576C6ABD12419F9D19D497216FC9B8', recordId); //Return Material Receipt
+     }
+     else{
+       myframe.OB.Utilities.openDirectTab('728DBD16A1F14A4D82335E37BA433E33', recordId); //Return to Vendor Shipment
+     }
+   }
+ }
 function validate(action)
 {
   var frm = document.frmMain;
@@ -419,19 +430,22 @@ function onloadFunctions(){
               <td class="TitleCell"><span class="LabelText">Shipment/Receipt</span></td>
               <td class="Radio_Check_ContentCell"><span class="Checkbox_container_NOT_Focused"><input type="checkbox" name="inpInout" id="paramInOut" value="-1" checked></input></span></td>
               <td class="ContentCell"> </td>
+              <td class="TitleCell"><span class="LabelText">Return M.R./Return to V.S.</span></td>
+              <td class="Radio_Check_ContentCell"><span class="Checkbox_container_NOT_Focused"><input type="checkbox" name="inpReturn" id="paramReturn" value="-1" checked></input></span></td>
+              <td class="ContentCell"> </td>
+            </tr>
+            <tr>
               <td class="TitleCell"><span class="LabelText">Physical Inventory</span></td>
               <td class="Radio_Check_ContentCell"><span class="Checkbox_container_NOT_Focused"><input type="checkbox" name="inpInventory" id="paramInventory" value="-1" checked></input></span></td>
               <td class="ContentCell"> </td>
-            </tr>
-            <tr>
               <td class="TitleCell"><span class="LabelText">Inventory Move</span></td>
               <td class="Radio_Check_ContentCell"><span class="Checkbox_container_NOT_Focused"><input type="checkbox" name="inpMovement" id="paramMovement" value="-1" checked></input></span></td>
               <td class="ContentCell"> </td>
+            </tr>
+            <tr>
               <td class="TitleCell"><span class="LabelText">Production</span></td>
               <td class="Radio_Check_ContentCell"><span class="Checkbox_container_NOT_Focused"><input type="checkbox" name="inpProduction" id="paramProduction" value="-1" checked></input></span></td>
               <td class="ContentCell"> </td>
-            </tr>
-            <tr>
               <td class="TitleCell"><span class="LabelText">Internal Consumption</span></td>
               <td class="Radio_Check_ContentCell"><span class="Checkbox_container_NOT_Focused"><input type="checkbox" name="inpInternalConsumption" id="paramInternalConsumption" value="-1" checked></input></span></td>
               <td class="ContentCell"> </td>
@@ -535,7 +549,7 @@ function onloadFunctions(){
                       <th width="6%" class="DataGrid_Header_Cell">Quantity</th>
                     </tr>
                     <div id="sectionDetail"> 
-                      <tr class="DataGrid_Body_Row DataGrid_Body_Row_yy" id="funcEvenOddRow1xx">
+                      <tr class="DataGrid_Body_Row DataGrid_Body_Row_yy" id="funcEvenOddRowxx">
                         <td width="8%" class="DataGrid_Body_Cell"><a href="#" onclick="ShipmentOrReceipt('xx', 'yy');return false;" onmouseover="window.status='Incoming/Outgoing';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldId"> 
                           <span id="fieldDocumentNo">xx850000007</span></a></td>
                         <td width="8%" class="DataGrid_Body_Cell" id="fieldMovementdate">xxfd200</td>
@@ -551,6 +565,70 @@ function onloadFunctions(){
                         <td width="3%"  class="DataGrid_Body_Cell" id="fieldZDestiny">xx2</td>
                         <td width="6%"  class="DataGrid_Body_Cell" id="fieldOut">xxsi</td>
                         <td width="6%" class="DataGrid_Body_Cell" id="fieldMovementqty">xx23</td>
+                      </tr>
+                    </div>
+                  </div>
+                </table>
+                <div style="height:25px;" />
+                <table cellspacing="0" cellpadding="0" width="100%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;" id="selEliminar6">
+                  <tr class="DataGrid_Body_Row"> 
+                    <th class="DataGrid_Header_Cell" colspan="14"><span>Return Material Receipt/Return to Vendor Shipment</span></th>
+                  </tr>
+                  <div id="sectionPartner6"> 
+                    <tr class="DataGrid_Body_Row"> 
+                      <th colspan="14" class="DataGrid_Header_Cell"><span>Customer<span>:&nbsp;</span><span id="fieldPartnername6">xxAguinaga</span></span></th>
+                    </tr>
+                    <tr class="DataGrid_Body_Row"> 
+                      <th width="8%" class="DataGrid_Header_Cell">Document No.</th>
+                      <th width="8%" class="DataGrid_Header_Cell">Date</th>
+                      <th width="12%" class="DataGrid_Header_Cell">Description</th>
+                      <th width="10%" class="DataGrid_Header_Cell">Attribute</th>
+                      <th width="16%" class="DataGrid_Header_Cell">Starting Warehouse</th>
+                      <th width="9%" class="DataGrid_Header_Cell" colspan="3">
+                        <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background: none; border: 0px none">
+                          <tr class="DataGrid_Header_Cell">
+                            <th class="DataGrid_Header_Cell" width="100%" colspan="3" style="background: none; border: 0px none">Starting location</th>
+                          </tr>
+                          <tr class="DataGrid_Header_Cell">
+                            <th class="DataGrid_Header_Cell" width="34%" style="background: none; border: 0px none">X</th>
+                            <th class="DataGrid_Header_Cell" width="33%" style="background: none; border: 0px none">Y</th>
+                            <th class="DataGrid_Header_Cell" width="33%" style="background: none; border: 0px none">Z</th>
+                          </tr>
+                        </table>
+                      </th>
+                      <th width="16%" class="DataGrid_Header_Cell">Final Warehouse</th>
+                      <th width="9%" class="DataGrid_Header_Cell" colspan="3">
+                        <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background: none; border: 0px none">
+                          <tr class="DataGrid_Header_Cell" style="background: none; border: 0px none">
+                            <th class="DataGrid_Header_Cell" width="100%" colspan="3" style="background: none; border: 0px none">Final location</th>
+                          </tr>
+                          <tr class="DataGrid_Header_Cell">
+                            <th class="DataGrid_Header_Cell" width="34%" style="background: none; border: 0px none">X</th>
+                            <th class="DataGrid_Header_Cell" width="33%" style="background: none; border: 0px none">Y</th>
+                            <th class="DataGrid_Header_Cell" width="33%" style="background: none; border: 0px none">Z</th>
+                          </tr>
+                        </table>
+                      </th>
+                      <th width="6%" class="DataGrid_Header_Cell">Exit</th>
+                      <th width="6%" class="DataGrid_Header_Cell">Quantity</th>
+                    </tr>
+                    <div id="sectionDetail6"> 
+                      <tr class="DataGrid_Body_Row DataGrid_Body_Row_yy" id="funcEvenOddRow6xx">
+                        <td width="8%" class="DataGrid_Body_Cell"><a href="#" onclick="openReturnDoc('xx', 'yy');return false;" onmouseover="window.status='Incoming/Outgoing';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldId6"> 
+                          <span id="fieldDocumentNo6">xx850000007</span></a></td>
+                        <td width="8%" class="DataGrid_Body_Cell" id="fieldMovementdate6">xxfd200</td>
+                        <td width="12%" class="DataGrid_Body_Cell" id="fieldName6">xx2345</td>
+                        <td width="10%" class="DataGrid_Body_Cell" id="fieldAttr6">xx2345</td>
+                        <td width="16%" class="DataGrid_Body_Cell" id="fieldWaOrigin6">xx3</td>
+                        <td width="3%"  class="DataGrid_Body_Cell" id="fieldXOrigin6">xx3</td>
+                        <td width="3%"  class="DataGrid_Body_Cell" id="fieldYOrigin6">xx3</td>
+                        <td width="3%"  class="DataGrid_Body_Cell" id="fieldZOrigin6">xx3</td>
+                        <td width="16%" class="DataGrid_Body_Cell" id="fieldWaDestiny6">xx2</td>
+                        <td width="3%"  class="DataGrid_Body_Cell" id="fieldXDestiny6">xx2</td>
+                        <td width="3%"  class="DataGrid_Body_Cell" id="fieldYDestiny6">xx2</td>
+                        <td width="3%"  class="DataGrid_Body_Cell" id="fieldZDestiny6">xx2</td>
+                        <td width="6%"  class="DataGrid_Body_Cell" id="fieldOut6">xxsi</td>
+                        <td width="6%" class="DataGrid_Body_Cell" id="fieldMovementqty6">xx23</td>
                       </tr>
                     </div>
                   </div>
