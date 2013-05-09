@@ -995,7 +995,9 @@ Usually, company's internal identifiers for various records (products, customers
 <!--7408792B65234E049547D6C78BB074A4-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--7408792B65234E049547D6C78BB074A4-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--7408792B65234E049547D6C78BB074A4-->  <AD_COLUMN_ID><![CDATA[9DB971B1A60A42518768915556E680D0]]></AD_COLUMN_ID>
-<!--7408792B65234E049547D6C78BB074A4-->  <NAME><![CDATA[name]]></NAME>
+<!--7408792B65234E049547D6C78BB074A4-->  <NAME><![CDATA[Name]]></NAME>
+<!--7408792B65234E049547D6C78BB074A4-->  <DESCRIPTION><![CDATA[A non-unique identifier for a record/document often used as a search tool.]]></DESCRIPTION>
+<!--7408792B65234E049547D6C78BB074A4-->  <HELP><![CDATA[A more descriptive identifier (that does need to be unique) of a record/document that is used as a default search option along with the search key (that is unique and mostly shorter). It is up to 60 characters in length.]]></HELP>
 <!--7408792B65234E049547D6C78BB074A4-->  <PROPERTY><![CDATA[name]]></PROPERTY>
 <!--7408792B65234E049547D6C78BB074A4-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
 <!--7408792B65234E049547D6C78BB074A4-->  <SORT><![CDATA[Y]]></SORT>
