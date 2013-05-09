@@ -27,11 +27,14 @@ isc.OBCharacteristicsItem.addProperties({
 
     });
 
+    this.title = null;
+    this.colSpan = 4;
+
     this.Super('init', arguments);
   },
 
   setValue: function (value) {
-    var field;
+    var field, formFields = [];
     this.completeValue = value;
     if (!value) {
       this.hide();
@@ -41,19 +44,20 @@ isc.OBCharacteristicsItem.addProperties({
     this.show();
 
     //Remove all members the widget might have
-    this.canvas.removeMembers(this.canvas.getMembers());
-
+    //this.canvas.removeMembers(this.canvas.getMembers());
     if (value.characteristics) {
       for (field in value.characteristics) {
         if (value.characteristics.hasOwnProperty(field)) {
-          this.canvas.addMember(isc.Label.create({
-            contents: field + " -> " + value.characteristics[field]
+          formFields.push(isc.OBTextItem.create({
+            width: '*',
+            title: field,
+            value: value.characteristics[field]
           }));
         }
       }
     }
 
-
+    this.canvas.setFields(formFields);
 
     this.Super('setValue', arguments);
   },
@@ -66,8 +70,11 @@ isc.OBCharacteristicsItem.addProperties({
   }
 });
 
-isc.ClassFactory.defineClass('OBCharacteristicsLayout', isc.VStack);
+isc.ClassFactory.defineClass('OBCharacteristicsLayout', isc.DynamicForm);
 
 isc.OBCharacteristicsLayout.addProperties({
-  width: '*'
+  titleOrientation: 'left',
+  width: '*',
+  numCols: 3,
+  colWidths: ['10%', '40%', '50%']
 });
