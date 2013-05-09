@@ -254,6 +254,8 @@ public class DefaultJsonDataService implements JsonDataService {
           bobs = queryService.list();
         }
 
+        bobs = bobFetchTransformation(bobs, parameters);
+
         if (preventCountOperation) {
           count = bobs.size() + startRow;
           // computedMaxResults is one too much, if we got one to much then correct
@@ -709,6 +711,19 @@ public class DefaultJsonDataService implements JsonDataService {
 
   public static abstract class QueryResultWriter {
     public abstract void write(JSONObject json);
+  }
+
+  protected List<BaseOBObject> bobFetchTransformation(List<BaseOBObject> bobs,
+      Map<String, String> parameters) {
+    // If is override, take into account:
+    // * If the number of the returned bobs change, there could be problems because endRow and
+    // totalRows parameters will be out-of-sync with that the requester expects, and some values can
+    // be missing in the following fetches. If there is no pagination (all values are returned at
+    // once), there is no problem.
+    // * If any bob is modified, the original entity is being modified, so a good practice could be
+    // clone the bob (using DalUtil.copy, for example) before modify it, and then return the clone.
+
+    return bobs;
   }
 
   protected String doPreAction(Map<String, String> parameters, String content,
