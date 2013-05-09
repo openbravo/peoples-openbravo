@@ -85,8 +85,8 @@ isc.OBCharacteristicsItem.addProperties({
 isc.ClassFactory.defineClass('OBCharacteristicsLayout', isc.DynamicForm);
 
 isc.OBCharacteristicsLayout.addProperties({
-  titleOrientation: 'left',
+  titleOrientation: 'top',
   width: '*',
-  numCols: 3,
-  colWidths: ['10%', '40%', '50%']
+  numCols: 4,
+  colWidths: ['25%', '25%', '25%', '25%']
 });
