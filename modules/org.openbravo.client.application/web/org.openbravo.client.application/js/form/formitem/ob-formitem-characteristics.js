@@ -36,13 +36,16 @@ isc.OBCharacteristicsItem.addProperties({
   setValue: function (value) {
     var field, formFields = [],
         itemIds = [];
-    
+
     this.completeValue = value;
-    if (!value) {
-      this.hide();
+    if (!value || !value.characteristics) {
+      if (!value) {
+        this.hide();
+      }
       this.Super('setValue', arguments);
       return;
     }
+
     this.show();
 
     //Remove all members the widget might have
@@ -74,14 +77,8 @@ isc.OBCharacteristicsItem.addProperties({
 
     this.canvas.setFields(formFields);
 
-    this.Super('setValue', arguments);
-  },
-
-  getValue: function () {
-    if (this.completeValue && this.completeValue.dbValue) {
-      return this.completeValue.dbValue;
-    }
-    return this.completeValue;
+    // actual value is the one in DB
+    this.setValue(value.dbValue);
   }
 });
 
