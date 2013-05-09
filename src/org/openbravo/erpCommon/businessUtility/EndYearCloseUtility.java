@@ -284,7 +284,7 @@ public class EndYearCloseUtility {
                 EndYearCloseUtilityData.cCurrencyId(conn, strAcctSchema), "0",
                 ExpenseAmtCr.add(RevenueAmtCr).subtract(RevenueAmtDr).subtract(ExpenseAmtDr)
                     .toString(), "0", ExpenseAmtCr.add(RevenueAmtCr).subtract(RevenueAmtDr)
-                    .subtract(ExpenseAmtDr).toString(), strDivideUpId, "10", "C", account[0].name,
+                    .subtract(ExpenseAmtDr).toString(), strDivideUpId, "10", "D", account[0].name,
                 account[0].value, account[0].cBpartnerId, account[0].recordId2,
                 account[0].mProductId, account[0].aAssetId, strClosingEntry, account[0].cTaxId,
                 account[0].cProjectId, account[0].cActivityId, account[0].user1Id,
@@ -298,7 +298,7 @@ public class EndYearCloseUtility {
                 EndYearCloseUtilityData.cCurrencyId(conn, strAcctSchema),
                 ExpenseAmtCr.add(RevenueAmtCr).subtract(RevenueAmtDr).subtract(ExpenseAmtDr)
                     .toString(), "0", ExpenseAmtCr.add(RevenueAmtCr).subtract(RevenueAmtDr)
-                    .subtract(ExpenseAmtDr).toString(), "0", strDivideUpId, "10", "C",
+                    .subtract(ExpenseAmtDr).toString(), "0", strDivideUpId, "10", "D",
                 account2[0].name, account2[0].value, account2[0].cBpartnerId,
                 account2[0].recordId2, account2[0].mProductId, account2[0].aAssetId,
                 strClosingEntry, account2[0].cTaxId, account2[0].cProjectId,

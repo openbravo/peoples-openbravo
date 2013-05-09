@@ -210,8 +210,9 @@ public class ResetAccounting {
     try {
       Table table = OBDal.getInstance().get(Table.class, tableId);
       tableName = table.getName();
-      tableDate = ModelProvider.getInstance().getTable(table.getDBTableName()).getColumns().get(0)
-          .getColumnName();
+      tableDate = ModelProvider.getInstance().getEntityByTableName(table.getDBTableName())
+          .getPropertyByColumnName(table.getAcctdateColumn().getDBColumnName()).getName();
+
       String strUpdate = "update "
           + tableName
           + " set posted='N', processNow=false where posted not in ('N','Y') and processed = 'Y' and organization.id in (:orgIds)  ";

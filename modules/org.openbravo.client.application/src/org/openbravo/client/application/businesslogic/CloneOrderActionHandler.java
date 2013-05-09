@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  Mallikarjun M
  ************************************************************************
@@ -20,6 +20,7 @@ package org.openbravo.client.application.businesslogic;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -28,8 +29,10 @@ import org.hibernate.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.dal.core.DalUtil;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
+import org.openbravo.model.ad.access.User;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.pricing.pricelist.PriceListVersion;
@@ -52,7 +55,8 @@ public class CloneOrderActionHandler extends BaseActionHandler {
     final DataToJsonConverter jsonConverter = new DataToJsonConverter();
     JSONObject json = null;
     try {
-      String orderId = (String) parameters.get("orderId");
+      String orderId = (String) parameters.get("recordId");
+      User currentUser = OBContext.getOBContext().getUser();
       Order objOrder = OBDal.getInstance().get(Order.class, orderId);
       Order objCloneOrder = (Order) DalUtil.copy(objOrder, false);
       BigDecimal bLineNetAmt = getLineNetAmt(orderId);
@@ -64,6 +68,11 @@ public class CloneOrderActionHandler extends BaseActionHandler {
       objCloneOrder.setSalesTransaction(true);
       objCloneOrder.setDocumentNo(null);
       objCloneOrder.setSalesTransaction(objOrder.isSalesTransaction());
+      objCloneOrder.setCreationDate(new Date());
+      objCloneOrder.setUpdated(new Date());
+      objCloneOrder.setCreatedBy(currentUser);
+      objCloneOrder.setUpdatedBy(currentUser);
+
       // save the cloned order object
       OBDal.getInstance().save(objCloneOrder);
 
@@ -84,6 +93,10 @@ public class CloneOrderActionHandler extends BaseActionHandler {
             || !bdPriceList.equals(BigDecimal.ZERO.setScale(bdPriceList.scale()))) {
           objCloneOrdLine.setListPrice(bdPriceList);
         }
+        objCloneOrdLine.setCreationDate(new Date());
+        objCloneOrdLine.setUpdated(new Date());
+        objCloneOrdLine.setCreatedBy(currentUser);
+        objCloneOrdLine.setUpdatedBy(currentUser);
         objCloneOrder.getOrderLineList().add(objCloneOrdLine);
         objCloneOrdLine.setSalesOrder(objCloneOrder);
       }

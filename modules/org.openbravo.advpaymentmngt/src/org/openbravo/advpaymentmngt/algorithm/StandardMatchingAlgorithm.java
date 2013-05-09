@@ -19,6 +19,7 @@
 
 package org.openbravo.advpaymentmngt.algorithm;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -41,7 +42,22 @@ public class StandardMatchingAlgorithm implements FIN_MatchingAlgorithm {
     Date transactionDate = (algorithm.isMatchtransactiondate()) ? line.getTransactionDate() : null;
     String reference = (algorithm.isMatchreference()) ? line.getReferenceNo() : "";
 
-    List<FIN_FinaccTransaction> transactions;
+    List<FIN_FinaccTransaction> transactions = new ArrayList<FIN_FinaccTransaction>();
+    if (line.getGLItem() != null) {
+      transactions = MatchTransactionDao.getMatchingGLItemTransaction(line.getBankStatement()
+          .getAccount().getId(), line.getGLItem(), line.getTransactionDate(),
+          (line.getCramount().subtract(line.getDramount())), excluded);
+      if (transactions.isEmpty()) {
+        transactions = MatchTransactionDao.getMatchingGLItemTransaction(line.getBankStatement()
+            .getAccount().getId(), line.getGLItem(), null,
+            (line.getCramount().subtract(line.getDramount())), excluded);
+        if (!transactions.isEmpty()) {
+          return new FIN_MatchedTransaction(transactions.get(0), FIN_MatchedTransaction.WEAK);
+        }
+      } else {
+        return new FIN_MatchedTransaction(transactions.get(0), FIN_MatchedTransaction.STRONG);
+      }
+    }
     if (algorithm.isMatchbpname()) {
       transactions = MatchTransactionDao.getMatchingFinancialTransaction(line.getBankStatement()
           .getAccount().getId(), transactionDate, reference,

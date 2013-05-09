@@ -121,6 +121,10 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
+      <column name="ISAUDITINSERTS" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault><![CDATA['Y']]></onCreateDefault>
+      </column>
       <column name="DATAORIGINTYPE" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default><![CDATA[Table]]></default>
         <onCreateDefault><![CDATA['Table']]></onCreateDefault>
@@ -164,6 +168,7 @@
         <unique-column name="TREETYPE"/>
       </unique>
       <check name="AD_TABLE_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="AD_TABLE_ISAUDITINS_CHK"><![CDATA[ISAUDITINSERTS IN ('Y', 'N')]]></check>
       <check name="AD_TABLE_ISDELETEABLE_CHK"><![CDATA[ISDELETEABLE IN ('Y', 'N')]]></check>
       <check name="AD_TABLE_ISFULLYAUDITED_CHK"><![CDATA[ISFULLYAUDITED IN ('Y', 'N')]]></check>
       <check name="AD_TABLE_ISFULLYAUDITED_CHK2"><![CDATA[(ISFULLYAUDITED = 'N') OR (UPPER((TABLENAME)) <> 'AD_AUDIT_TRAIL')]]></check>

@@ -2801,7 +2801,7 @@ The ledger accounting entries created by the Fiscal Year closing process are:
 <!--800064-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800064-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
 <!--800064-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--800064-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
+<!--800064-->  <PREVENTCONCURRENT><![CDATA[Y]]></PREVENTCONCURRENT>
 <!--800064--></AD_PROCESS>
 
 <!--800067--><AD_PROCESS>
@@ -4457,7 +4457,7 @@ This operation can take a long time to complete.]]></HELP>
 <!--800170-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800170-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
 <!--800170-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--800170-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
+<!--800170-->  <PREVENTCONCURRENT><![CDATA[Y]]></PREVENTCONCURRENT>
 <!--800170--></AD_PROCESS>
 
 <!--800171--><AD_PROCESS>
@@ -5652,7 +5652,7 @@ Once the Purchase Order is created, it is marked as Completed and its Document N
 <!--3F2B4AAC707B4CE7B98D2005CF7310B5-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--3F2B4AAC707B4CE7B98D2005CF7310B5-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
 <!--3F2B4AAC707B4CE7B98D2005CF7310B5-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--3F2B4AAC707B4CE7B98D2005CF7310B5-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
+<!--3F2B4AAC707B4CE7B98D2005CF7310B5-->  <PREVENTCONCURRENT><![CDATA[Y]]></PREVENTCONCURRENT>
 <!--3F2B4AAC707B4CE7B98D2005CF7310B5--></AD_PROCESS>
 
 <!--4062D3F4448547C3A2BCDFB09D062BA2--><AD_PROCESS>
@@ -6364,8 +6364,8 @@ When the process is finished it is recommended to schedule the "Costing Backgrou
 <!--D234AE084F7040DCB66E281A4237FF99-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--D234AE084F7040DCB66E281A4237FF99-->  <VALUE><![CDATA[JR_CustomerStatement]]></VALUE>
 <!--D234AE084F7040DCB66E281A4237FF99-->  <NAME><![CDATA[Customer Statement]]></NAME>
-<!--D234AE084F7040DCB66E281A4237FF99-->  <DESCRIPTION><![CDATA[Customer Statement]]></DESCRIPTION>
-<!--D234AE084F7040DCB66E281A4237FF99-->  <HELP><![CDATA[Customer Statement]]></HELP>
+<!--D234AE084F7040DCB66E281A4237FF99-->  <DESCRIPTION><![CDATA[Customer statement is a consolidated statement of every transaction of a customer posted to the ledger over a given period]]></DESCRIPTION>
+<!--D234AE084F7040DCB66E281A4237FF99-->  <HELP><![CDATA[Customer statement is a consolidated statement of every transaction of a customer posted to the ledger over a given period]]></HELP>
 <!--D234AE084F7040DCB66E281A4237FF99-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--D234AE084F7040DCB66E281A4237FF99-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--D234AE084F7040DCB66E281A4237FF99-->  <ISREPORT><![CDATA[N]]></ISREPORT>
@@ -6477,7 +6477,7 @@ When the process is finished it is recommended to schedule the "Costing Backgrou
 <!--E264309FF8244A94936502BF51829109-->  <VALUE><![CDATA[Reset Accounting]]></VALUE>
 <!--E264309FF8244A94936502BF51829109-->  <NAME><![CDATA[Reset Accounting]]></NAME>
 <!--E264309FF8244A94936502BF51829109-->  <DESCRIPTION><![CDATA[Reset Accounting Entries]]></DESCRIPTION>
-<!--E264309FF8244A94936502BF51829109-->  <HELP><![CDATA[The reset accounting process allows to totally or partially remove the ledger entries of an organization. The ledger entries can be massively re-created again by using the "Accounting Server Process" or the "G/L Posting by DB Tables" process. If some accounting entries description have been modified when running this process you will lose the changes in the description.]]></HELP>
+<!--E264309FF8244A94936502BF51829109-->  <HELP><![CDATA[The reset accounting process allows to totally or partially remove the ledger entries of an organization. The ledger entries can be massively re-created again by using the "Accounting Server Process" or the "G/L Posting by DB Tables" process. The manual changes done for the accounting entries description will obviously be lost after running this process]]></HELP>
 <!--E264309FF8244A94936502BF51829109-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--E264309FF8244A94936502BF51829109-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--E264309FF8244A94936502BF51829109-->  <ISREPORT><![CDATA[N]]></ISREPORT>

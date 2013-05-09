@@ -20,8 +20,6 @@ package org.openbravo.erpCommon.utility;
 
 import java.util.Map;
 
-import javax.servlet.ServletException;
-
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
@@ -169,7 +167,7 @@ public class OBMessageUtils {
    * 
    * @param text
    *          String with the text to translate.
-   * @param replaceMap
+   * @param map
    *          optional Map containing replacement values for the tokens
    * @return String translated.
    */
@@ -283,7 +281,6 @@ public class OBMessageUtils {
    * @param pInstance
    *          ProcessInstance object
    * @return Object with the message.
-   * @throws ServletException
    */
   public static OBError getProcessInstanceMessage(ProcessInstance pInstance) {
     OBError myMessage = new OBError();
@@ -334,7 +331,6 @@ public class OBMessageUtils {
    * 
    * @param message
    *          String with the message to translate.
-   * @return
    */
   public static OBError translateError(String message) {
     VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
@@ -352,7 +348,7 @@ public class OBMessageUtils {
    *          Handler for the session info.
    * @param strLanguage
    *          Language to translate.
-   * @param message
+   * @param _message
    *          String with the message to translate.
    * @return Object with the message.
    */

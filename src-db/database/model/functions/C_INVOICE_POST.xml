@@ -994,6 +994,12 @@ BEGIN --BODY
       END_PROCESSING:=TRUE;
     END IF;
   END IF;--END_PROCESSING
+  -- Issue 20553. Problem with the order of the execution of the triggers.
+  -- By updating the Invoice Line again, we can assure that the Invoice Line Tax
+  -- Trigger had been executed before.
+  UPDATE C_INVOICELINE
+  SET UPDATED = now()
+  WHERE C_INVOICE_ID = v_Record_ID;
   IF (NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
     /**************************************************************************
      * Actions allowed: COmplete, APprove

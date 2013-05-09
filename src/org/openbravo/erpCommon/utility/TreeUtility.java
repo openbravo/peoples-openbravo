@@ -40,10 +40,6 @@ public class TreeUtility {
 
   /**
    * Gets Natural tree for the given node
-   * 
-   * @param nodeId
-   * @param treeType
-   * @return
    */
   public Set<String> getNaturalTree(String nodeId, String treeType) {
     initialize(treeType);
@@ -60,11 +56,6 @@ public class TreeUtility {
 
   /**
    * Gets the Child tree for the given node, including optionally given node
-   * 
-   * @param nodeId
-   * @param treeType
-   * @param includeNode
-   * @return
    */
   public Set<String> getChildTree(String nodeId, String treeType, boolean includeNode) {
     initialize(treeType);
@@ -86,10 +77,6 @@ public class TreeUtility {
 
   /**
    * Gets Child node in the tree
-   * 
-   * @param nodeId
-   * @param treeType
-   * @return
    */
   public Set<String> getChildNode(String nodeId, String treeType) {
     initialize(treeType);

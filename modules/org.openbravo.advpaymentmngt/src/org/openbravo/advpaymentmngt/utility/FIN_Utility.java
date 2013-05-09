@@ -600,10 +600,6 @@ public class FIN_Utility {
 
   /**
    * Returns the amount of days between two given dates
-   * 
-   * @param endDate
-   * @param beginDate
-   * @return
    */
   public static Long getDaysBetween(Date beginDate, Date endDate) {
     final TimeZone tz = TimeZone.getDefault();
@@ -887,8 +883,6 @@ public class FIN_Utility {
    *          Currency to convert from
    * @param toCurrency
    *          Currency being converted to
-   * @param conversionDate
-   *          Date conversion is being performed
    * @param documentId
    *          DocumentId to find the value in table c_conversion_rate_document
    * @param entity
@@ -1016,8 +1010,6 @@ public class FIN_Utility {
    * @param organization
    *          to get its configuration. In case no configuration is available, the invoice's
    *          document number is returned
-   * @param invoice
-   * @return
    */
   public static String getDesiredDocumentNo(final Organization organization, final Invoice invoice) {
     String invoiceDocNo;
@@ -1126,6 +1118,19 @@ public class FIN_Utility {
     }
   }
 
+  /**
+   * Return true if the period is open for a client, document type, organization and accounting date
+   * 
+   * @param client
+   *          the client for which it wants to know if the period is open
+   * @param documentType
+   *          It is the docbasetype from the document type
+   * @param org
+   *          the Organization for which it wants to know if the period is open
+   * @param dateAcct
+   *          The accounting date from the document
+   * @return boolean
+   */
   public static boolean isPeriodOpen(String client, String documentType, String org, String dateAcct) {
     final Session session = OBDal.getInstance().getSession();
 

@@ -234,8 +234,12 @@ BEGIN
         ad_sequence_doctype(v_gl_journaldoctype_id, v_record_id, 'Y', v_gljdocumentno);
 
         insert
-        into gl_journal (gl_journal_id,   ad_client_id,   ad_org_id,   isactive,   created,   createdby,   updated,   updatedby, c_acctschema_id, c_doctype_id, documentno, docstatus, docaction, isapproved,description, postingtype, gl_category_id,   datedoc,   dateacct, c_period_id, c_currency_id, currencyratetype, gl_journalbatch_id)
-        values (v_gl_journalid, v_client_id, v_org_id,'Y', now(), v_createdby, now(), v_updatedby, v_acctschema_id, v_gl_journaldoctype_id, v_gljdocumentno, 'DR', 'CO', 'Y', v_name, 'A', v_gl_category_id, v_date, v_date, v_period_id, v_currency_id, v_currencyratetype, v_gl_journalbatchid);
+        into gl_journal (gl_journal_id,   ad_client_id,   ad_org_id,   isactive,   created,   createdby,   updated,   updatedby, c_acctschema_id, 
+        c_doctype_id, documentno, docstatus, docaction, isapproved,description, postingtype, gl_category_id,   datedoc,   dateacct, c_period_id, 
+        c_currency_id, currencyratetype, gl_journalbatch_id)
+        values (v_gl_journalid, v_client_id, v_org_id,'Y', now(), v_createdby, now(), v_updatedby, v_acctschema_id, 
+        v_gl_journaldoctype_id, v_gljdocumentno, 'DR', 'CO', 'Y', v_name, 'A', v_gl_category_id, v_date, v_date, v_period_id, 
+        v_currency_id, v_currencyratetype, v_gl_journalbatchid);
 
       v_line:=0;
       v_totaldebit:=0;
@@ -245,12 +249,12 @@ BEGIN
       (select
       ttl.c_tax_id,
       tt.issotrx,
-      case when tt.issotrx='Y' then max(ta.t_due_acct) else max(ta.t_credit_acct) end as acct_id
+      case when tt.issotrx='Y' then ta.t_due_acct else ta.t_credit_acct end as acct_id
       from c_taxregister_type_lines ttl
       inner join c_taxregister_type tt on ttl.c_taxregister_type_id=tt.c_taxregister_type_id
       inner join c_tax_acct ta on ta.c_tax_id=ttl.c_tax_id
-      where tt.isactive='Y' and ttl.isactive='Y' and ta.isactive='Y'
-      group by ttl.c_tax_id, tt.issotrx )
+      where tt.isactive='Y' and ttl.isactive='Y' and ta.isactive='Y' and ta.c_acctschema_id = v_acctschema_id
+      group by ttl.c_tax_id, tt.issotrx, case when tt.issotrx='Y' then ta.t_due_acct else ta.t_credit_acct end)
 
       loop --move the sum over
 
@@ -328,8 +332,10 @@ BEGIN
       v_line := v_line + 10;
       ad_sequence_next('GL_JournalLine', v_record_id, v_gl_journallineid);
      insert
-     into gl_journalline(gl_journalline_id,   ad_client_id,   ad_org_id,   isactive,   created,   createdby,   updated,   updatedby, gl_journal_id,    line, c_currency_id, currencyratetype, dateacct, c_validcombination_id, AMTSOURCEDR, AMTSOURCECR, AMTACCTDR, AMTACCTCR)
-                 values (v_gl_journallineid,   v_client_id,      v_org_id,        'Y',     now(), v_createdby,   now(), v_updatedby, v_gl_journalid, v_line, v_currency_id, v_currencyratetype, v_date, v_glitem_acct, v_totaldebit, v_totalcredit, v_totaldebit, v_totalcredit);
+     into gl_journalline(gl_journalline_id,   ad_client_id,   ad_org_id,   isactive,   created,   createdby,   updated,   updatedby, gl_journal_id,    
+     line, c_currency_id, currencyratetype, dateacct, c_validcombination_id, AMTSOURCEDR, AMTSOURCECR, AMTACCTDR, AMTACCTCR)
+                 values (v_gl_journallineid,   v_client_id,      v_org_id,        'Y',     now(), v_createdby,   now(), v_updatedby, v_gl_journalid, 
+                 v_line, v_currency_id, v_currencyratetype, v_date, v_glitem_acct, v_totaldebit, v_totalcredit, v_totaldebit, v_totalcredit);
 
     GL_JOURNAL_POST(null, v_gl_journalid);
 

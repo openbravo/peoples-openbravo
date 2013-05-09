@@ -927,8 +927,6 @@ public class ActivationKey {
 
   /**
    * Checks if heartbeat is active and a beat has been sent during last days.
-   * 
-   * @return
    */
   public boolean isHeartbeatActive() {
     OBContext.setAdminMode();

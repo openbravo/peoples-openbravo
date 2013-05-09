@@ -594,6 +594,9 @@ isc.OBMultiCalendar.addProperties({
         }
       }
     }
+    if (typeof this.calendarProps.customParseCalendarData === 'function') {
+      calendarData = this.calendarProps.customParseCalendarData(calendarData);
+    }
 
     return calendarData;
   },

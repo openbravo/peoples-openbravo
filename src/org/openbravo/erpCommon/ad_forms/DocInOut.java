@@ -504,6 +504,9 @@ public class DocInOut extends AcctServer {
             // Get related M_Transaction_ID
             ShipmentInOutLine inOutLine = OBDal.getInstance().get(ShipmentInOutLine.class,
                 data[i].mInoutlineId);
+            if (inOutLine.getProduct() == null) {
+              continue;
+            }
             MaterialTransaction trx = null;
             if (inOutLine.getMaterialMgmtMaterialTransactionList().size() > 0) {
               trx = inOutLine.getMaterialMgmtMaterialTransactionList().get(0);

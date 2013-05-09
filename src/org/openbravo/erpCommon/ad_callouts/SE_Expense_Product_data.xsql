@@ -24,9 +24,9 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT TRIM(TO_CHAR(M_BOM_PriceStd(p.M_Product_ID,pv.M_PriceList_Version_ID), '9999999990D00'))  AS PriceStd,
-        TRIM(TO_CHAR(M_BOM_PriceList(p.M_Product_ID,pv.M_PriceList_Version_ID), '9999999990D00'))  AS PriceList,
-        TRIM(TO_CHAR(M_BOM_PriceLimit(p.M_Product_ID,pv.M_PriceList_Version_ID), '9999999990D00'))  AS PriceLimit,
+        SELECT M_BOM_PriceStd(p.M_Product_ID,pv.M_PriceList_Version_ID)  AS PriceStd,
+        M_BOM_PriceList(p.M_Product_ID,pv.M_PriceList_Version_ID)  AS PriceList,
+        M_BOM_PriceLimit(p.M_Product_ID,pv.M_PriceList_Version_ID)  AS PriceLimit,
         p.C_UOM_ID,pv.ValidFrom,pl.C_Currency_ID 
         FROM M_Product p, M_ProductPrice pp, M_Pricelist pl, M_PriceList_Version pv 
         WHERE p.M_Product_ID=pp.M_Product_ID
@@ -45,9 +45,9 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT TRIM(TO_CHAR(M_BOM_PriceStd(p.M_Product_ID,pv.M_PriceList_Version_ID), '9999999990D00')) AS PriceStd,
-        TRIM(TO_CHAR(M_BOM_PriceList(p.M_Product_ID,pv.M_PriceList_Version_ID), '9999999990D00'))  AS PriceList,
-        TRIM(TO_CHAR(M_BOM_PriceLimit(p.M_Product_ID,pv.M_PriceList_Version_ID), '9999999990D00'))  AS PriceLimit,
+        SELECT M_BOM_PriceStd(p.M_Product_ID,pv.M_PriceList_Version_ID) AS PriceStd,
+        M_BOM_PriceList(p.M_Product_ID,pv.M_PriceList_Version_ID)  AS PriceList,
+        M_BOM_PriceLimit(p.M_Product_ID,pv.M_PriceList_Version_ID)  AS PriceLimit,
         p.C_UOM_ID,pv.ValidFrom,pl.C_Currency_ID 
         FROM M_Product p, M_ProductPrice pp, M_Pricelist pl, M_Pricelist bpl, M_PriceList_Version pv
         WHERE p.M_Product_ID=pp.M_Product_ID

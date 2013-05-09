@@ -139,16 +139,16 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable, Dyn
 
           try {
             if (id != null) {
-              // check whether translation is available in the object and not stored in session
-              OBCriteria<BaseOBObject> trlList = OBDal.getInstance().createCriteria(
-                  p.getEntity().getName() + "Trl");
-              String parentProperty = p.getTrlOneToManyProperty().getName();
-              parentProperty = parentProperty.replace("TrlList", "");
-              trlList.add(Restrictions.eq(parentProperty,
-                  OBDal.getInstance().get(p.getEntity().toString(), id)));
-              trlList.add(Restrictions.eq("language", language));
-              if (trlList.count() > 0) {
-                dataTrl = trlList.list().get(0);
+              if (p.getTrlParentProperty() != null) {
+                // check whether translation is available in the object and not stored in session
+                OBCriteria<BaseOBObject> trlList = OBDal.getInstance().createCriteria(
+                    p.getEntity().getName() + "Trl");
+                trlList.add(Restrictions.eq(p.getTrlParentProperty().getName(), OBDal.getInstance()
+                    .get(p.getEntity().toString(), id)));
+                trlList.add(Restrictions.eq("language", language));
+                if (trlList.count() > 0) {
+                  dataTrl = trlList.list().get(0);
+                }
               }
             }
           } catch (Throwable t1) {

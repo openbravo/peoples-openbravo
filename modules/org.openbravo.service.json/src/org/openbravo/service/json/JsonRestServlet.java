@@ -38,6 +38,7 @@ import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.util.CheckException;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.service.web.BaseWebServiceServlet;
@@ -74,6 +75,13 @@ public class JsonRestServlet extends BaseWebServiceServlet {
   protected void doService(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
     try {
+      if (OBContext.getOBContext() != null && OBContext.getOBContext().isPortalRole()) {
+        // Portal users are not granted to direct web services
+        log.error("Portal user " + OBContext.getOBContext().getUser() + " with role "
+            + OBContext.getOBContext().getRole()
+            + " is trying to access to non granted web service " + request.getRequestURL());
+        throw new OBSecurityException();
+      }
       callServiceInSuper(request, response);
       response.setStatus(200);
     } catch (final InvalidRequestException e) {

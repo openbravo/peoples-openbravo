@@ -26,7 +26,7 @@
   v_UOM_ID VARCHAR2(32) ;
   v_ATTRIBUTESET_ID VARCHAR2(32);
   v_AttrSetValueType M_Product.AttrSetValueType%TYPE;
-  v_Name NVARCHAR2(60);
+  v_Name M_Product.Name%TYPE;
   v_IsOneAtSetValReq M_Attributeset.Isoneattrsetvalrequired%TYPE;
   v_PRODUCTION_ID VARCHAR2(32);
   v_LINE NUMBER;

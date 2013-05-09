@@ -58,8 +58,8 @@ isc.OBFKFilterTextItem.addProperties({
 
     // the data from the datasource will contain the id and the identifier
     // the value for the filter and the display are the same: the identifier
-    this.displayField = OB.Constants.IDENTIFIER;
-    this.valueField = OB.Constants.IDENTIFIER;
+    this.displayField = this.criteriaDisplayField || OB.Constants.IDENTIFIER;
+    this.valueField = this.criteriaDisplayField || OB.Constants.IDENTIFIER;
 
     this.pickListProperties = {
 
@@ -82,12 +82,12 @@ isc.OBFKFilterTextItem.addProperties({
         var i, values = this.formItem.getValue();
         if (values.length) {
           for (i = 0; i < values.length; i++) {
-            if (record[OB.Constants.IDENTIFIER] === values[i]) {
+            if (record[me.displayField] === values[i]) {
               return true;
             }
           }
         }
-        return record[OB.Constants.IDENTIFIER] === values;
+        return record[me.displayField] === values;
       },
 
       // override data arrived to prevent the first entry from being
@@ -109,7 +109,7 @@ isc.OBFKFilterTextItem.addProperties({
           }
           for (rowNum = startRow; rowNum < (endRow + 1); rowNum++) {
             record = this.getRecord(rowNum);
-            if (record && values.contains(record[OB.Constants.IDENTIFIER])) {
+            if (record && values.contains(record[me.displayField])) {
               this.selectRecord(record, true);
             }
           }
@@ -122,11 +122,7 @@ isc.OBFKFilterTextItem.addProperties({
       requestProperties: {
         params: {
           // distinct forces the distinct query on the server side
-          _distinct: gridField.valueField || gridField.name,
-          // identifier is not listed here as it is always send, actually
-          // the id is also always send, but setting _selectedProperties
-          // prevents other fields from coming over
-          _selectedProperties: 'id'
+          _distinct: gridField.valueField || gridField.name
         }
       },
       fields: this.pickListFields
@@ -240,7 +236,7 @@ isc.OBFKFilterTextItem.addProperties({
   },
 
   canEditCriterion: function (criterion) {
-    return criterion && criterion.fieldName === this.name;
+    return criterion && (criterion.fieldName === this.name || criterion.fieldName === this.criteriaField);
   },
 
   getCriterion: function (textMatchStyle) {
@@ -291,7 +287,7 @@ isc.OBFKFilterTextItem.addProperties({
   // see also the setValuesAsCriteria in ob-grid-js which again translates
   // back
   getCriteriaFieldName: function () {
-    return this.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER;
+    return this.criteriaField || this.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER;
   },
 
   // solve a small bug in the value expressions

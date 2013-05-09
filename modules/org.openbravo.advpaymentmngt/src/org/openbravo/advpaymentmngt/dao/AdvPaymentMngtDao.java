@@ -604,7 +604,6 @@ public class AdvPaymentMngtDao {
    *          accounting dimension
    * @param user2
    *          accounting dimension
-   * @return
    */
   public FIN_PaymentScheduleDetail getNewPaymentScheduleDetail(Organization organization,
       BigDecimal amount, BusinessPartner businessPartner, Product product, Project project,
@@ -640,7 +639,6 @@ public class AdvPaymentMngtDao {
    *          accounting dimension
    * @param salesRegion
    *          accounting dimension
-   * @return
    */
   public FIN_PaymentScheduleDetail getNewPaymentScheduleDetail(Organization organization,
       BigDecimal amount, BusinessPartner businessPartner, Product product, Project project,
@@ -800,6 +798,9 @@ public class AdvPaymentMngtDao {
     finTrans.setCurrency(account.getCurrency());
     finTrans.setAccount(account);
     finTrans.setLineNo(line);
+    if (payment != null) {
+      OBDal.getInstance().refresh(payment);
+    }
     finTrans.setFinPayment(payment);
     String truncateDescription = null;
     if (description != null) {
@@ -823,7 +824,6 @@ public class AdvPaymentMngtDao {
       finTrans.setForeignConversionRate(convertRate);
       finTrans.setForeignAmount(sourceAmount);
     }
-
     OBDal.getInstance().save(finTrans);
     OBDal.getInstance().flush();
 
@@ -1813,16 +1813,17 @@ public class AdvPaymentMngtDao {
         strInvoiceId).getFINPaymentScheduleList();
     OBCriteria<FIN_PaymentScheduleDetail> psdCriteria = OBDal.getInstance().createCriteria(
         FIN_PaymentScheduleDetail.class);
-    if (!paySchedList.isEmpty())
+    if (!paySchedList.isEmpty()) {
       psdCriteria.add(Restrictions.in(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE,
           paySchedList));
-    for (FIN_PaymentScheduleDetail psd : psdCriteria.list()) {
-      if (psd.getPaymentDetails() != null) {
-        FIN_Payment payment = psd.getPaymentDetails().getFinPayment();
-        if ("RPAE".equals(payment.getStatus())
-            && hasNotDeferredExecutionProcess(payment.getAccount(), payment.getPaymentMethod(),
-                payment.isReceipt()))
-          payments.add(payment);
+      for (FIN_PaymentScheduleDetail psd : psdCriteria.list()) {
+        if (psd.getPaymentDetails() != null) {
+          FIN_Payment payment = psd.getPaymentDetails().getFinPayment();
+          if ("RPAE".equals(payment.getStatus())
+              && hasNotDeferredExecutionProcess(payment.getAccount(), payment.getPaymentMethod(),
+                  payment.isReceipt()))
+            payments.add(payment);
+        }
       }
     }
 
@@ -1907,11 +1908,6 @@ public class AdvPaymentMngtDao {
   /**
    * Returns the list of credit payments for the selected business partner that belongs to the legal
    * entity's natural tree of the given organization
-   * 
-   * @param org
-   * @param bp
-   * @param isReceipt
-   * @return
    */
   public List<FIN_Payment> getCustomerPaymentsWithCredit(Organization org, BusinessPartner bp,
       boolean isReceipt) {

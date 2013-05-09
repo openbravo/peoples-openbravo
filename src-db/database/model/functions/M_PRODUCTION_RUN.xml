@@ -233,6 +233,7 @@ BEGIN --BODY
           v_QtyAcumulated:=0;
           IF ((NOT CUR_STOCK_ISOPEN) 
               OR (v_Product_old <> CUR_BOM.M_ProductBOM_ID OR v_Warehouse_old <> cur_bom.m_warehouse_id OR v_UOM_old <> CUR_BOM.C_UOM_ID)) THEN
+            NEXT_PRODUCT:=false;
             v_product_old := cur_bom.m_productbom_id;
             v_warehouse_old := cur_bom.m_warehouse_id;
             v_uom_old := cur_bom.c_uom_id;
@@ -347,8 +348,6 @@ BEGIN --BODY
               CUR_BOM.M_Locator_ID, CUR_BOM.C_UOM_ID
           );
         END IF;
-        --<<NEXT_PRODUCT>>
-        NEXT_PRODUCT:=false;
         v_Line:=v_Line;
         IF (v_QtyAcumulated < CUR_BOM.BOMQTY*CUR_BOM.ProductionQty) AND MustBeStocked='Y' THEN
           v_Message := '@NotEnoughStocked@: ' || CUR_BOM.pname || ' ' || v_QtyAcumulated || ' / '|| CUR_BOM.BOMQTY*CUR_BOM.ProductionQty;

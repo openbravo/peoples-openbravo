@@ -94,8 +94,17 @@ public class SE_Expense_Product extends HttpSecureAppServlet {
           .today(this) : SEExpenseProductData.selectReportDate(this, strsTimeexpenseId);
     }
 
+    BigDecimal invPrice = BigDecimal.ZERO;
+    BigDecimal lastNetUnitPrice = BigDecimal.ZERO;
+    if (!"".equals(strInvPrice)) {
+      invPrice = new BigDecimal(strInvPrice);
+    }
+    if (!"".equals(strlastNetUnitPrice)) {
+      lastNetUnitPrice = new BigDecimal(strlastNetUnitPrice);
+    }
+
     if (strInvPrice.equals("")
-        || (strChanged.equals("inpmProductId") && strInvPrice.equals(strlastNetUnitPrice))) {
+        || (strChanged.equals("inpmProductId") && invPrice.compareTo(lastNetUnitPrice) == 0)) {
       for (int i = 0; data != null && i < data.length && noPrice; i++) {
         if (data[i].validfrom == null || data[i].validfrom.equals("")
             || !DateTimeData.compare(this, strDateexpense, data[i].validfrom).equals("-1")) {

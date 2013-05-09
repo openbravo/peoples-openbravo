@@ -30,7 +30,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.AccountTree;
 import org.openbravo.erpCommon.businessUtility.AccountTreeData;
 import org.openbravo.erpCommon.businessUtility.AccountingSchemaMiscData;
@@ -44,7 +43,6 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.erpCommon.utility.WindowTreeData;
-import org.openbravo.model.ad.access.Role;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class GeneralAccountingReports extends HttpSecureAppServlet {
@@ -170,8 +168,8 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
 
       Vector<Object> vec = new Vector<Object>();
       // Relation of open and closed years is obtained
-      GeneralAccountingReportsData[] closedYears = GeneralAccountingReportsData.checkFiscalYears(
-          this, vars.getClient());
+      GeneralAccountingReportsData[] closedYears = GeneralAccountingReportsData
+          .checkFiscalYearsGenLed(this, vars.getClient(), strcAcctSchemaId);
       GeneralAccountingReportsData[] previousYears = GeneralAccountingReportsData.previousYear(
           this, vars.getClient());
       if (strCalculateOpening.equals("Y")) {
@@ -453,20 +451,19 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
     } catch (Exception ex) {
       throw new ServletException(ex);
     }
-    
+
     String strOrgList = "";
     String[] orgList = OBContext.getOBContext().getReadableOrganizations();
     int i = 0;
-    for (String org : orgList ){
-    	if(i==0){
-        	strOrgList += "'"+org+"'";
-    	}
-    	else{
-    		strOrgList += ",'"+org+"'";
-    	}
-    	i++;
+    for (String org : orgList) {
+      if (i == 0) {
+        strOrgList += "'" + org + "'";
+      } else {
+        strOrgList += ",'" + org + "'";
+      }
+      i++;
     }
-    
+
     xmlDocument.setParameter(
         "orgs",
         Utility.arrayDobleEntrada("arrOrgs",

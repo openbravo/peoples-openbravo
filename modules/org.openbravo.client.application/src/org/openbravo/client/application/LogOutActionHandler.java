@@ -25,9 +25,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.BaseActionHandler;
+import org.openbravo.client.kernel.BaseKernelServlet.KernelHttpServletResponse;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.client.kernel.StaticResourceComponent;
-import org.openbravo.client.kernel.BaseKernelServlet.KernelHttpServletResponse;
+import org.openbravo.portal.PortalAccessible;
 
 /**
  * Is responsible for logging out from the application.
@@ -36,7 +37,7 @@ import org.openbravo.client.kernel.BaseKernelServlet.KernelHttpServletResponse;
  * @see StaticResourceComponent
  */
 @ApplicationScoped
-public class LogOutActionHandler extends BaseActionHandler {
+public class LogOutActionHandler extends BaseActionHandler implements PortalAccessible {
 
   /*
    * (non-Javadoc)

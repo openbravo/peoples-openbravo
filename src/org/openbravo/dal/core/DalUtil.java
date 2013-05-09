@@ -346,14 +346,6 @@ public class DalUtil {
             for (final BaseOBObject sourceChild : sourceChildren) {
               targetChildren.add(copy(sourceChild, copyChildren, resetId, fromTo));
             }
-          } else {
-            final List<BaseOBObject> targetReferedObjects = new ArrayList<BaseOBObject>();
-            target.setValue(p.getName(), targetReferedObjects);
-            @SuppressWarnings("unchecked")
-            final List<BaseOBObject> sourceReferedObjects = (List<BaseOBObject>) value;
-            for (final BaseOBObject sourceReferedObject : sourceReferedObjects) {
-              targetReferedObjects.add(sourceReferedObject);
-            }
           }
         }
       } else {

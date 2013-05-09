@@ -219,6 +219,49 @@
         <Parameter name="adClientId"/>
         <Parameter name="adClientId"/>
    </SqlMethod>
+   <SqlMethod name="checkFiscalYearsGenLed" type="preparedStatement" return="multiple" default="">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql><![CDATA[
+        SELECT CASE WHEN C.CLOSE_FACT_ACCT_GROUP_ID IS NULL THEN 'N' ELSE 'Y' END || SELECTED.C_YEAR_ID AS ID,
+          C_YEAR.YEAR AS NAME
+        FROM C_PERIOD PREVIOUS LEFT JOIN AD_ORG_CLOSING C ON C.C_YEAR_ID = PREVIOUS.C_YEAR_ID, C_PERIOD SELECTED, C_YEAR,
+          AD_ORG_ACCTSCHEMA OAS
+        WHERE PREVIOUS.AD_CLIENT_ID = ?
+          AND SELECTED.AD_CLIENT_ID = ?
+          AND SELECTED.ISACTIVE = 'Y'
+          AND C_YEAR.ISACTIVE = 'Y'
+          AND PREVIOUS.ENDDATE = SELECTED.STARTDATE-1
+          AND PREVIOUS.ENDDATE IN (
+            SELECT MAX(P.ENDDATE) AS END
+            FROM C_PERIOD P, C_YEAR Y
+            WHERE P.AD_CLIENT_ID = ?
+              AND Y.C_YEAR_ID = P.C_YEAR_ID
+            GROUP BY Y.YEAR, P.C_YEAR_ID
+          )
+          AND C_YEAR.C_YEAR_ID = SELECTED.C_YEAR_ID
+          AND C.AD_ORG_ACCTSCHEMA_ID = OAS.AD_ORG_ACCTSCHEMA_ID
+          AND OAS.C_ACCTSCHEMA_ID = ?
+        UNION
+        SELECT 'M'||Y.C_YEAR_ID AS ID, Y.YEAR AS NAME
+        FROM C_PERIOD P, C_YEAR Y
+        WHERE P.AD_CLIENT_ID=?
+          AND P.C_YEAR_ID = Y.C_YEAR_ID
+          AND P.ISACTIVE = 'Y'
+          AND Y.ISACTIVE = 'Y'
+          AND P.STARTDATE-1 NOT IN (
+                SELECT ENDDATE
+                FROM C_PERIOD
+                WHERE C_PERIOD.AD_CLIENT_ID = ?
+          )
+        ORDER BY NAME DESC
+        ]]></Sql>
+        <Parameter name="adClientId"/>
+        <Parameter name="adClientId"/>
+        <Parameter name="adClientId"/>
+        <Parameter name="cAcctschemaId"/>
+        <Parameter name="adClientId"/>
+        <Parameter name="adClientId"/>
+   </SqlMethod>
    <SqlMethod name="previousYear" type="preparedStatement" return="multiple" default="">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[

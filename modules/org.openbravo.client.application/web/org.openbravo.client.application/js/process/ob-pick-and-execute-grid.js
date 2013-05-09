@@ -226,6 +226,21 @@ isc.OBPickAndExecuteGrid.addProperties({
     this.Super('selectionUpdated', arguments);
   },
 
+  cellEditEnd: function (editCompletionEvent, newValue, ficCallDone, autoSaveDone) {
+    var rowNum = this.getEditRow(),
+        colNum = this.getEditCol(),
+        editField = this.getEditField(colNum),
+        undef;
+    if (editField.required) {
+      if (newValue === null || newValue === undef) {
+        this.setFieldError(rowNum, editField.name, "Invalid Value");
+      } else {
+        this.clearFieldError(rowNum, editField.name);
+      }
+    }
+    this.Super('cellEditEnd', arguments);
+  },
+
   handleFilterEditorSubmit: function (criteria, context) {
     var ids = [],
         crit = {},
@@ -297,9 +312,9 @@ isc.OBPickAndExecuteGrid.addProperties({
     for (i = 0; i < selectedLen; i++) {
       record = this.data.findByKey(this.selectedIds[i]);
       if (record) {
+        record[this.selectionProperty] = true;
         if (this.data.savedData) {
           savedRecord = this.data.savedData.find('id', this.selectedIds[i]);
-          record[this.selectionProperty] = true;
           //Setting editable fields from saved Data to retain values.
           for (j = 0; j < fields.length; j++) {
             if (fields[j].canEdit !== false) {

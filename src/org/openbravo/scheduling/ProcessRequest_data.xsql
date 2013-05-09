@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -117,6 +117,25 @@
     <Parameter name="dateTimeFormat"/>
     <Parameter name="scheduledFinish"/>
     <Parameter name="dateTimeFormat"/>
+    <Parameter name="obContext"/>
+    <Parameter name="id"/>
+   </SqlMethod>
+   
+   <SqlMethod name="setContext" type="preparedStatement" return="rowcount">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql><![CDATA[
+        UPDATE AD_Process_Request
+        SET Updatedby = ?, 
+            AD_User_ID = ?, 
+            Status = ?, 
+            Channel = ?,
+            Ob_Context = ?
+        WHERE AD_Process_Request_ID = ?
+    ]]></Sql>
+    <Parameter name="updatedBy"/>
+    <Parameter name="user"/>
+    <Parameter name="status"/>
+    <Parameter name="channel"/>
     <Parameter name="obContext"/>
     <Parameter name="id"/>
    </SqlMethod>

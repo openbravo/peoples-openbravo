@@ -110,8 +110,6 @@ public class AttributeSetInstanceValue {
    *          Handler for the database connection.
    * @param vars
    *          Handler for the session info.
-   * @param data
-   *          AttributeSetInstanceValueData with the attribute set info.
    * @param strAttributeSet
    *          String with the record attributeSetId.
    * @param strInstance

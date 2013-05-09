@@ -482,6 +482,8 @@ public class OBContext implements OBNotSingleton {
 
   private boolean isRTL = false;
 
+  private boolean isPortalRole = false;
+
   private Set<String> additionalWritableOrganizations = new HashSet<String>();
 
   // support storing the context in a persistent tomcat session
@@ -945,6 +947,7 @@ public class OBContext implements OBNotSingleton {
 
   public void setRole(Role role) {
     isAdministrator = ((String) DalUtil.getId(role)).equals("0");
+    isPortalRole = role.isForPortalUsers();
     setUserLevel(role.getUserLevel());
     entityAccessChecker = null;
     writableOrganizations = null;
@@ -1121,6 +1124,10 @@ public class OBContext implements OBNotSingleton {
 
   public boolean isRTL() {
     return isRTL;
+  }
+
+  public boolean isPortalRole() {
+    return isPortalRole;
   }
 
   public void setRTL(boolean isRTL) {

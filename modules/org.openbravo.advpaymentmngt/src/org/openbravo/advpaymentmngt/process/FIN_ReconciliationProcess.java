@@ -29,10 +29,13 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.ad_forms.AcctServer;
+import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.financialmgmt.payment.FIN_BankStatement;
 import org.openbravo.model.financialmgmt.payment.FIN_Reconciliation;
+import org.openbravo.model.financialmgmt.payment.FIN_ReconciliationLine_v;
 import org.openbravo.scheduling.ProcessBundle;
 
 public class FIN_ReconciliationProcess implements org.openbravo.scheduling.Process {
@@ -74,6 +77,26 @@ public class FIN_ReconciliationProcess implements org.openbravo.scheduling.Proce
               "@APRM_ReconciliationNoLines@" + ": " + reconciliation.getDocumentNo()));
           bundle.setResult(msg);
           return;
+        } else {
+          for (FIN_ReconciliationLine_v recLine : reconciliation.getFINReconciliationLineVList()) {
+            boolean orgLegalWithAccounting = FIN_Utility.periodControlOpened(recLine
+                .getFinancialAccountTransaction().getReconciliation().TABLE_NAME, recLine
+                .getFinancialAccountTransaction().getReconciliation().getId(), recLine
+                .getFinancialAccountTransaction().getReconciliation().TABLE_NAME + "_ID", "LE");
+            if (!FIN_Utility.isPeriodOpen(recLine.getFinancialAccountTransaction().getClient()
+                .getId(), AcctServer.DOCTYPE_Reconciliation, recLine
+                .getFinancialAccountTransaction().getOrganization().getId(),
+                OBDateUtils.formatDate(recLine.getFinancialAccountTransaction().getDateAcct()))
+                && orgLegalWithAccounting) {
+              msg.setType("Error");
+              msg.setTitle(Utility.messageBD(conProvider, "Error", language));
+              msg.setMessage(String.format(Utility.parseTranslation(conProvider, vars, language,
+                  "@APRM_PeriodNotAvailableClearedItem@"), recLine.getIdentifier()));
+              bundle.setResult(msg);
+              OBDal.getInstance().rollbackAndClose();
+              return;
+            }
+          }
         }
         reconciliation.setProcessed(true);
         reconciliation.setAPRMProcessReconciliation("R");

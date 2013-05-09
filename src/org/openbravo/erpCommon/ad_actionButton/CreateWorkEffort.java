@@ -143,10 +143,10 @@ public class CreateWorkEffort implements org.openbravo.scheduling.Process {
               estimatedTime = wrOp.getEstimatedTime().divide(wrOp.getQuantity())
                   .multiply(requeriedQty);
             }
-            productionPlan.setEstimatedTime(estimatedTime.longValue());
+            productionPlan.setEstimatedTime(new BigDecimal(estimatedTime.longValue()));
           } else {
             productionPlan.setProductionQuantity(BigDecimal.ZERO);
-            productionPlan.setEstimatedTime(0L);
+            productionPlan.setEstimatedTime(BigDecimal.ZERO);
           }
 
           productionPlan.setRejectedQuantity(0L);

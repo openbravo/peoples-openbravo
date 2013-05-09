@@ -533,6 +533,13 @@ SELECT COALESCE(MAX(RECORD_REVISION),0)+1
                         and upper(c.columnname) not in ('CREATED','CREATEDBY','UPDATED', 'UPDATEDBY')
 			and c.isexcludeaudit='N'
                         order by c.position) loop
+
+      if (cur_tables.IsAuditInserts = 'N' and cur_cols.isKey='N' ) then
+        code := code || '
+      IF TG_OP != ''INSERT'' THEN
+      ';
+      end if;
+
       code := code || '
     V_Change := false;';
       if (cur_cols.data_type in ('VARCHAR', 'BPCHAR')) then
@@ -586,6 +593,13 @@ code := code || '
            V_CLIENT, V_ORG);
   END IF;
 ';
+
+      if (cur_tables.IsAuditInserts = 'N' and cur_cols.isKey='N' ) then
+        code := code || '
+      END IF;
+      ';
+      end if;
+
     end loop;
  
 code := code ||

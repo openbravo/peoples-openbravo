@@ -40,6 +40,7 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.UsedByLink;
 import org.openbravo.model.ad.alert.AlertRecipient;
 import org.openbravo.model.ad.alert.AlertRule;
+import org.openbravo.portal.PortalAccessible;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
 
@@ -52,7 +53,7 @@ import org.openbravo.service.json.JsonConstants;
  * @see StaticResourceComponent
  */
 @ApplicationScoped
-public class AlertActionHandler extends BaseActionHandler {
+public class AlertActionHandler extends BaseActionHandler implements PortalAccessible {
   private static final Logger log4j = Logger.getLogger(AlertActionHandler.class);
 
   /*

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -32,7 +32,6 @@ import java.util.List;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
 import org.openbravo.base.ConfigParameters;
 import org.openbravo.base.ConnectionProviderContextListener;
 import org.openbravo.database.ConnectionProvider;
@@ -46,6 +45,8 @@ import org.quartz.SchedulerException;
 import org.quartz.SchedulerListener;
 import org.quartz.Trigger;
 import org.quartz.TriggerListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author awolski
@@ -53,7 +54,7 @@ import org.quartz.TriggerListener;
  */
 class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener {
 
-  static final Logger log = Logger.getLogger(ProcessMonitor.class);
+  static final Logger log = LoggerFactory.getLogger(ProcessMonitor.class);
 
   public static final String KEY = "org.openbravo.scheduling.ProcessMonitor.KEY";
 
@@ -70,8 +71,8 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
     final ProcessBundle bundle = (ProcessBundle) trigger.getJobDataMap().get(ProcessBundle.KEY);
     final ProcessContext ctx = bundle.getContext();
     try {
-      ProcessRequestData.update(getConnection(), ctx.getUser(), ctx.getUser(), SCHEDULED, bundle
-          .getChannel().toString(), null, null, null, null, ctx.toString(), trigger.getName());
+      ProcessRequestData.setContext(getConnection(), ctx.getUser(), ctx.getUser(), SCHEDULED,
+          bundle.getChannel().toString(), ctx.toString(), trigger.getName());
 
     } catch (final ServletException e) {
       log.error(e.getMessage(), e);
@@ -82,6 +83,12 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
     final ProcessBundle bundle = (ProcessBundle) jec.getMergedJobDataMap().get(ProcessBundle.KEY);
     final ProcessContext ctx = bundle.getContext();
     try {
+      try {
+        log.debug("triggerFired for process process {}. Next execution time: {}", jec.getTrigger()
+            .getJobDataMap().getString(Process.PROCESS_NAME), trigger.getNextFireTime());
+      } catch (Exception ignore) {
+        // ignore: exception while trying to log
+      }
       ProcessRequestData.update(getConnection(), ctx.getUser(), ctx.getUser(), SCHEDULED, bundle
           .getChannel().toString(), format(trigger.getPreviousFireTime()),
           OBScheduler.sqlDateTimeFormat, format(trigger.getNextFireTime()), format(trigger
@@ -153,6 +160,13 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
   }
 
   public void triggerMisfired(Trigger trigger) {
+    try {
+      log.debug("Misfired process {}, start time {}.",
+          trigger.getJobDataMap().getString(Process.PROCESS_NAME), trigger.getStartTime());
+    } catch (Exception e) {
+      // ignore: exception while trying to log
+    }
+
     // Not implemented
   }
 
@@ -208,10 +222,24 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
     }
 
     // Checking if there is another instance in execution for this process
+
     for (JobExecutionContext job : jobs) {
       if (job.getTrigger().getJobDataMap().get(Process.PROCESS_ID)
           .equals(trigger.getJobDataMap().get(Process.PROCESS_ID))
           && !job.getJobInstance().equals(jec.getJobInstance())) {
+
+        ProcessBundle jobAlreadyScheduled = (ProcessBundle) job.getTrigger().getJobDataMap()
+            .get("org.openbravo.scheduling.ProcessBundle.KEY");
+        ProcessBundle newJob = (ProcessBundle) trigger.getJobDataMap().get(
+            "org.openbravo.scheduling.ProcessBundle.KEY");
+
+        boolean isSameClient = isSameParam(jobAlreadyScheduled, newJob, "Client");
+
+        if (!isSameClient
+            || (isSameClient && !isSameParam(jobAlreadyScheduled, newJob, "Organization"))) {
+          continue;
+        }
+
         log.info("There's another instance running, so leaving" + processName);
 
         try {
@@ -242,7 +270,42 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
       }
     }
 
-    log.info("No other instance");
+    log.debug("No other instance");
+    return false;
+  }
+
+  private boolean isSameParam(ProcessBundle jobAlreadyScheduled, ProcessBundle newJob, String param) {
+    ProcessContext jobAlreadyScheduledContext = null;
+    String jobAlreadyScheduledParam = null;
+    ProcessContext newJobContext = null;
+    String newJobParam = null;
+
+    if (jobAlreadyScheduled != null) {
+      jobAlreadyScheduledContext = jobAlreadyScheduled.getContext();
+      if (jobAlreadyScheduledContext != null) {
+        if ("Client".equals(param)) {
+          jobAlreadyScheduledParam = jobAlreadyScheduledContext.getClient();
+        } else if ("Organization".equals(param)) {
+          jobAlreadyScheduledParam = jobAlreadyScheduledContext.getOrganization();
+        }
+      }
+    }
+
+    if (newJob != null) {
+      newJobContext = newJob.getContext();
+      if (newJobContext != null) {
+        if ("Client".equals(param)) {
+          newJobParam = newJobContext.getClient();
+        } else if ("Organization".equals(param)) {
+          newJobParam = newJobContext.getOrganization();
+        }
+      }
+    }
+
+    if (newJobParam != null && jobAlreadyScheduledParam != null
+        && newJobParam.equals(jobAlreadyScheduledParam)) {
+      return true;
+    }
     return false;
   }
 

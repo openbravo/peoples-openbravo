@@ -611,8 +611,7 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
 
     long s1 = System.currentTimeMillis();
 
-    // get list of field-id's, excluding the ones with reference ID (13)
-    String hql = "as f where f.tab.id = :tabId and f.displayed = true and f.column.reference.id <> '13'";
+    String hql = "as f where f.tab.id = :tabId and (f.displayed = true or f.column.reference.id = '13')";
     OBQuery<Field> qf = OBDal.getInstance().createQuery(Field.class, hql);
     qf.setNamedParameter("tabId", tabId);
     List<Field> fieldList = qf.list();

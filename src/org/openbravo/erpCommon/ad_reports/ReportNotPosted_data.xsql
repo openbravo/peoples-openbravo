@@ -12,13 +12,13 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
 -->
 <SqlClass name="ReportNotPostedData" package="org.openbravo.erpCommon.ad_reports">
-  <SqlClassComment>Clase ReportNotPostedData</SqlClassComment>
+  <SqlClassComment>Class ReportNotPostedData</SqlClassComment>
   <SqlMethod name="select" type="preparedStatement" return="multiple">
     <SqlMethodComment>Select for relation</SqlMethodComment>
     <Sql>
@@ -220,7 +220,7 @@
             where ad_client_id=?
             and docbasetype='FAT') 
         and ad_language=? 
-        and ad_client_id=?)), 'Financial Account Transaction') as document, 'FF8080812F213146012F2135BC25000E' as tab_id, 'FAT' as docbasetype,
+        and ad_client_id=?)), 'Financial Account Transaction') as document, '23691259D1BD4496BCC5F32645BCA4B9' as tab_id, 'FAT' as docbasetype,
         fin_finacc_transaction_id as record_id
         from fin_finacc_transaction
         where processed = 'Y'

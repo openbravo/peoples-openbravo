@@ -715,23 +715,31 @@ public class DocFINFinAccTransaction extends AcctServer {
     sb.append(retValue);
     FIN_Payment payment = OBDal.getInstance().get(FIN_FinaccTransaction.class, Record_ID)
         .getFinPayment();
+    if (payment != null) {
+      retValue = retValue.add(payment.isReceipt() ? payment.getWriteoffAmount() : payment
+          .getWriteoffAmount().negate());
+    }
     // - Lines
-    for (int i = 0; i < p_lines.length; i++) {
-      if (payment == null) {
-        BigDecimal lineBalance = new BigDecimal(
-            ((DocLine_FINFinAccTransaction) p_lines[i]).DepositAmount);
-        lineBalance = lineBalance.subtract(new BigDecimal(
-            ((DocLine_FINFinAccTransaction) p_lines[i]).PaymentAmount));
-        retValue = retValue.subtract(lineBalance);
-      } else {
-        BigDecimal lineBalance = payment.isReceipt() ? new BigDecimal(
-            ((DocLine_FINFinAccTransaction) p_lines[i]).getAmount()) : new BigDecimal(
-            ((DocLine_FINFinAccTransaction) p_lines[i]).getAmount()).negate();
-        BigDecimal lineWriteoff = payment.isReceipt() ? new BigDecimal(
-            ((DocLine_FINFinAccTransaction) p_lines[i]).getWriteOffAmt()) : new BigDecimal(
-            ((DocLine_FINFinAccTransaction) p_lines[i]).getWriteOffAmt()).negate();
-        retValue = retValue.subtract(lineBalance).subtract(lineWriteoff);
+    OBContext.setAdminMode(false);
+    try {
+      for (int i = 0; i < p_lines.length; i++) {
+        if (payment == null) {
+          BigDecimal lineBalance = new BigDecimal(
+              ((DocLine_FINFinAccTransaction) p_lines[i]).DepositAmount);
+          lineBalance = lineBalance.subtract(new BigDecimal(
+              ((DocLine_FINFinAccTransaction) p_lines[i]).PaymentAmount));
+          retValue = retValue.subtract(lineBalance);
+        } else {
+          BigDecimal lineBalance = BigDecimal.ZERO;
+          for (FIN_PaymentDetail pd : payment.getFINPaymentDetailList()) {
+            lineBalance = lineBalance.add(payment.isReceipt() ? pd.getAmount().add(
+                pd.getWriteoffAmount()) : pd.getAmount().add(pd.getWriteoffAmount()).negate());
+          }
+          retValue = retValue.subtract(lineBalance);
+        }
       }
+    } finally {
+      OBContext.restorePreviousMode();
     }
     sb.append("]");
     //

@@ -51,6 +51,13 @@ public class CallStoredProcedure {
   }
 
   /**
+   * @see #call(String, List, List, boolean, boolean)
+   */
+  public Object call(String name, List<Object> parameters, List<Class<?>> types, boolean doFlush) {
+    return call(name, parameters, types, doFlush, true);
+  }
+
+  /**
    * Calls a stored procedure with the specified name. The parameter list is translated in exactly
    * the same parameters for the call so the parameters should be in the correct order and have the
    * correct type as expected by the stored procedure. The parameter types can be any of the
@@ -71,10 +78,6 @@ public class CallStoredProcedure {
    * 
    * @return the stored procedure result.
    */
-  public Object call(String name, List<Object> parameters, List<Class<?>> types, boolean doFlush) {
-    return call(name, parameters, types, doFlush, true);
-  }
-
   public Object call(String name, List<Object> parameters, List<Class<?>> types, boolean doFlush,
       boolean returnResults) {
     final StringBuilder sb = new StringBuilder();

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -35,6 +36,7 @@ import org.hibernate.ScrollableResults;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.client.application.GlobalMenu;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
@@ -55,6 +57,9 @@ public class WindowTree extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
   private static final String CHILD_SHEETS = "frameWindowTreeF3";
   private static List<String> nodeIdList = new ArrayList<String>();
+
+  @Inject
+  GlobalMenu menu;
 
   public void init(ServletConfig config) {
     super.init(config);
@@ -386,6 +391,13 @@ public class WindowTree extends HttpSecureAppServlet {
     String TreeID = "";
     String strParent = strTop;
     boolean editable = WindowTreeData.selectEditable(this, strTabId).equals("Y");
+
+    if ("MM".equals(TreeType)) {
+      // Editing Application Menu tree, invalidate menu cache manually as this update is not
+      // captured by Listener because it is not done though DAL
+      menu.invalidateCache();
+    }
+
     // Calculating the TreeID
     {
       WindowTreeData[] data = WindowTreeData.selectTreeID(this,

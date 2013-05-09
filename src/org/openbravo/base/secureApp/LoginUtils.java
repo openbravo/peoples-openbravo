@@ -390,8 +390,16 @@ public class LoginUtils {
     String strWarehouse = DefaultOptionsData.defaultWarehouse(cp, strUserAuth);
     if (strWarehouse == null) {
       if (!strRole.equals("0")) {
-        strWarehouse = DefaultOptionsData.getDefaultWarehouse(cp, strClient, new OrgTree(cp,
-            strClient).getAccessibleTree(cp, strRole).toString());
+        if (strOrg != null && !strOrg.isEmpty()) {
+          // Pick the warehouse using the default organization
+          strWarehouse = DefaultOptionsData.getDefaultWarehouse(cp, strClient, "'" + strOrg + "'");
+        }
+        if (strWarehouse == null || strWarehouse.isEmpty()) {
+          // If no warehouse for the default organization is available, pick using using the
+          // accessible tree
+          strWarehouse = DefaultOptionsData.getDefaultWarehouse(cp, strClient, new OrgTree(cp,
+              strClient).getAccessibleTree(cp, strRole).toString());
+        }
       } else
         strWarehouse = "";
     }

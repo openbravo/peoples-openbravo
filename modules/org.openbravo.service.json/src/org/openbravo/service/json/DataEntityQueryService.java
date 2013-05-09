@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -32,11 +32,14 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
+import org.openbravo.base.model.domaintype.TableDomainType;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.util.Check;
+import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
+import org.openbravo.model.ad.datamodel.Column;
 
 /**
  * Implements a service which can handle different types of query and paging options. This class
@@ -56,14 +59,15 @@ public class DataEntityQueryService {
 
   public static final String PARAM_DELIMITER = "@";
 
-  private static final long serialVersionUID = 1L;
-
   private String entityName;
   private Integer firstResult = null;
   private Integer maxResults = null;
 
   private boolean filterOnActive = true;
   private AdvancedQueryBuilder queryBuilder = new AdvancedQueryBuilder();
+
+  private boolean filterOnReadableOrganizations = true;
+  private boolean filterOnReadableClients = true;
 
   private String distinct;
 
@@ -79,6 +83,8 @@ public class DataEntityQueryService {
     Check.isNotNull(entityName, "entityName must be set");
     final OBQuery<BaseOBObject> obq = OBDal.getInstance().createQuery(entityName,
         queryBuilder.getJoinClause() + queryBuilder.getWhereClause());
+    obq.setFilterOnReadableClients(isFilterOnReadableClients());
+    obq.setFilterOnReadableOrganization(isFilterOnReadableOrganizations());
 
     if (queryBuilder.hasOrganizationParameter()) {
       obq.setFilterOnReadableOrganization(false);
@@ -121,16 +127,18 @@ public class DataEntityQueryService {
     log.debug("Querying for " + entityName + " " + whereOrderBy);
 
     final OBQuery<BaseOBObject> obq = OBDal.getInstance().createQuery(entityName, whereOrderBy);
+    obq.setFilterOnReadableClients(isFilterOnReadableClients());
+    obq.setFilterOnReadableOrganization(isFilterOnReadableOrganizations());
+
     if (getSummarySettings() != null) {
       obq.setSelectClause(queryBuilder.getSelectClause());
     } else if (getDistinct() != null) {
       final String localDistinct = getDistinct();
       queryBuilder.addSelectClausePart(localDistinct + ".id");
 
-      final Property property = DalUtil.getPropertyFromPath(
-          ModelProvider.getInstance().getEntity(getEntityName()), localDistinct);
+      final List<Property> properties = getDistinctDisplayProperties();
 
-      for (Property identifierProp : property.getTargetEntity().getIdentifierProperties()) {
+      for (Property identifierProp : properties) {
         if (identifierProp.getTargetEntity() != null) {
           // go one level deeper
           final List<Property> nextIdentifierProps = JsonUtils.getIdentifierSet(identifierProp);
@@ -165,6 +173,33 @@ public class DataEntityQueryService {
     return obq;
   }
 
+  // package private on purpose
+  List<Property> getDistinctDisplayProperties() {
+    final String localDistinct = getDistinct();
+    final List<Property> properties = new ArrayList<Property>();
+    final Property property = DalUtil.getPropertyFromPath(
+        ModelProvider.getInstance().getEntity(getEntityName()), localDistinct);
+
+    // now use the table reference definition or select on the identifier properties
+    if (property.getDomainType() instanceof TableDomainType
+        && ((TableDomainType) property.getDomainType()).getRefTable() != null) {
+      final TableDomainType domainType = (TableDomainType) property.getDomainType();
+      final Property displayProp = KernelUtils.getInstance().getPropertyFromColumn(
+          OBDal.getInstance()
+              .get(Column.class, domainType.getRefTable().getDisplayColumn().getId()));
+      if (displayProp != null) {
+        properties.add(displayProp);
+      }
+    }
+
+    if (properties.isEmpty()) {
+      for (Property identifierProp : property.getTargetEntity().getIdentifierProperties()) {
+        properties.add(identifierProp);
+      }
+    }
+    return properties;
+  }
+
   public int getRowNumber(String targetRecordId) {
     final String whereOrderBy = queryBuilder.getJoinClause() + queryBuilder.getWhereClause()
         + queryBuilder.getOrderByClause();
@@ -174,6 +209,8 @@ public class DataEntityQueryService {
     // System.err.println("Querying for " + entityName + " " + whereOrderBy);
 
     final OBQuery<BaseOBObject> obq = OBDal.getInstance().createQuery(entityName, whereOrderBy);
+    obq.setFilterOnReadableClients(isFilterOnReadableClients());
+    obq.setFilterOnReadableOrganization(isFilterOnReadableOrganizations());
 
     if (queryBuilder.hasOrganizationParameter()) {
       obq.setFilterOnReadableOrganization(false);
@@ -310,6 +347,22 @@ public class DataEntityQueryService {
 
   public List<String> getSummaryFields() {
     return summaryFields;
+  }
+
+  public boolean isFilterOnReadableOrganizations() {
+    return filterOnReadableOrganizations;
+  }
+
+  public void setFilterOnReadableOrganizations(boolean filterOnReadableOrganizations) {
+    this.filterOnReadableOrganizations = filterOnReadableOrganizations;
+  }
+
+  public boolean isFilterOnReadableClients() {
+    return filterOnReadableClients;
+  }
+
+  public void setFilterOnReadableClients(boolean filterOnReadableClients) {
+    this.filterOnReadableClients = filterOnReadableClients;
   }
 
 }

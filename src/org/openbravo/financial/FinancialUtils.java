@@ -72,7 +72,7 @@ public class FinancialUtils {
    *          Date when Product Price is needed.
    * @param useSalesPriceList
    *          boolean to set if the price list should be a sales or purchase price list.
-   * @param priceList
+   * @param pricelist
    *          PriceList to get its ProductPrice
    * @param currency
    *          Currency to convert to the returned price.

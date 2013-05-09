@@ -32,6 +32,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.portal.PortalAccessible;
 
 /**
  * Responsible of retrieving/storing Parameter values
@@ -39,7 +40,7 @@ import org.openbravo.erpCommon.utility.OBError;
  * @author iperdomo
  */
 @ApplicationScoped
-public class ParametersActionHandler extends BaseActionHandler {
+public class ParametersActionHandler extends BaseActionHandler implements PortalAccessible {
   private static Logger log = Logger.getLogger(ParametersActionHandler.class);
 
   @Override

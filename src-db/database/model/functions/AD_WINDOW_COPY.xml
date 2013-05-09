@@ -121,7 +121,9 @@
           AD_COLUMN_ID, HASTREE, WHERECLAUSE, ORDERBYCLAUSE, COMMITWARNING,
           AD_PROCESS_ID, PROCESSING, AD_Module_ID,
           FilterName, UIPATTERN, HQLWHERECLAUSE,
-          HQLORDERBYCLAUSE, HQLFILTERCLAUSE, SHOWPARENTBUTTONS
+          HQLORDERBYCLAUSE, HQLFILTERCLAUSE, SHOWPARENTBUTTONS, AD_IMAGE_ID, IMPORTFIELDS,
+          AD_COLUMNSORTORDER_ID, AD_COLUMNSORTYESNO_ID, ISSORTTAB, INCLUDED_TAB_ID,
+	  FILTERCLAUSE, EDITREFERENCE, DISPLAYLOGIC
         )
         select
           v_NextNo_T, v_Record_ID,
@@ -131,7 +133,9 @@
           Cur_Tabs.AD_COLUMN_ID, Cur_Tabs.HASTREE, Cur_Tabs.WHERECLAUSE, Cur_Tabs.ORDERBYCLAUSE, Cur_Tabs.COMMITWARNING,
           Cur_Tabs.AD_PROCESS_ID, Cur_Tabs.PROCESSING, v_dest_ad_module_id, 
           coalesce(sub.filterName, Cur_Tabs.filterName), Cur_Tabs.UIPATTERN, Cur_Tabs.HQLWHERECLAUSE,
-          Cur_Tabs.HQLORDERBYCLAUSE, Cur_Tabs.HQLFILTERCLAUSE, Cur_Tabs.SHOWPARENTBUTTONS
+          Cur_Tabs.HQLORDERBYCLAUSE, Cur_Tabs.HQLFILTERCLAUSE, Cur_Tabs.SHOWPARENTBUTTONS, Cur_Tabs.AD_IMAGE_ID, Cur_Tabs.IMPORTFIELDS,
+          Cur_Tabs.AD_COLUMNSORTORDER_ID, Cur_Tabs.AD_COLUMNSORTYESNO_ID, Cur_Tabs.ISSORTTAB, Cur_Tabs.INCLUDED_TAB_ID,
+	  Cur_Tabs.FILTERCLAUSE, Cur_Tabs.EDITREFERENCE, Cur_Tabs.DISPLAYLOGIC
          FROM ad_tab s left join 
         (select * from AD_tab_trl where ad_language=v_dest_ad_module_lang and ad_tab_id=Cur_Tabs.ad_tab_id ) sub
          on sub.ad_tab_id=s.ad_tab_id where s.ad_tab_id=Cur_Tabs.ad_tab_id;
@@ -204,7 +208,9 @@
             ShowInRelation, Grid_Seqno,
             startinoddcolumn,startnewline, em_obuisel_outfield_id,
             isfirstfocusedfield, isshowninstatusbar, onchangefunction,
-            em_obuiapp_colspan,em_obuiapp_rowspan
+            em_obuiapp_colspan, em_obuiapp_rowspan, property,
+	    ignoreinwad, clientclass, em_obuiapp_validator,
+	    em_obuiapp_showsummary, em_obuiapp_summaryfn
           )
           VALUES
           (
@@ -218,7 +224,9 @@
             Cur_Fields.ShowInRelation, Cur_Fields.Grid_Seqno,
             Cur_Fields.Startinoddcolumn, Cur_Fields.Startnewline, Cur_Fields.EM_Obuisel_Outfield_ID,
             Cur_Fields.isFirstFocusedField, Cur_Fields.isShownInStatusBar, Cur_Fields.onchangefunction,
-            Cur_Fields.em_obuiapp_colspan,Cur_Fields.em_obuiapp_rowspan    
+            Cur_Fields.em_obuiapp_colspan,Cur_Fields.em_obuiapp_rowspan, Cur_Fields.property,
+	    Cur_Fields.ignoreinwad, Cur_Fields.clientclass, Cur_Fields.em_obuiapp_validator,
+	    Cur_Fields.em_obuiapp_showsummary, Cur_Fields.em_obuiapp_summaryfn
             );
 
         -- update dest translations from source translations

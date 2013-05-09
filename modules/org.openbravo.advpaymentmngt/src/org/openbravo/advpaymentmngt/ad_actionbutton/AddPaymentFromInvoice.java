@@ -230,6 +230,15 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
           // parameters.add(null);
           String strDocTypeId = (String) CallStoredProcedure.getInstance().call("AD_GET_DOCTYPE",
               parameters, null);
+          String strDocBaseType = parameters.get(2).toString();
+
+          if (!FIN_Utility.isPeriodOpen(vars.getClient(), strDocBaseType, strOrgId, strPaymentDate)) {
+            final OBError myMessage = Utility.translateError(this, vars, vars.getLanguage(),
+                Utility.messageBD(this, "PeriodNotAvailable", vars.getLanguage()));
+            vars.setMessage(strTabId, myMessage);
+            printPageClosePopUp(response, vars);
+            return;
+          }
 
           if (strPaymentDocumentNo.startsWith("<")) {
             // get DocumentNo

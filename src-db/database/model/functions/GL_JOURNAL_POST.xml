@@ -37,6 +37,7 @@
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
   v_Result NUMBER:=1; -- 0=failure
+  v_DateAcctBelongsToPeriod NUMBER;
   v_Record_ID VARCHAR2(32);
   v_AD_User_ID VARCHAR2(32);
   v_AD_Org_ID VARCHAR2(32);
@@ -257,6 +258,17 @@
         RAISE_APPLICATION_ERROR(-20000, '@BatchAndHeaderDifferentOrg@');
       END IF;
       
+      -- Check if the Accounting Date belongs to the Period
+
+      SELECT COUNT(*) INTO v_DateAcctBelongsToPeriod
+  	  FROM c_period p
+      WHERE p.c_period_id = v_C_Period_ID
+      AND v_DateAcct BETWEEN p.startdate AND p.enddate;
+
+      IF v_DateAcctBelongsToPeriod < 1 THEN
+          RAISE_APPLICATION_ERROR(-20000, '@PeriodNotValid@');
+      END IF;
+
       -- Check the period control is opened (only if it is legal entity with accounting)
       -- Gets the BU or LE of the document
       SELECT AD_GET_DOC_LE_BU('GL_JOURNAL', v_Record_ID, 'GL_JOURNAL_ID', 'LE')

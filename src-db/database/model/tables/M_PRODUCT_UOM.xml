@@ -53,6 +53,9 @@
       <foreign-key foreignTable="C_UOM" name="M_PRODUCT_UOMUOM">
         <reference local="C_UOM_ID" foreign="C_UOM_ID"/>
       </foreign-key>
+      <index name="M_PRODUCT_UOM_PRODUCT" unique="false">
+        <index-column name="M_PRODUCT_ID"/>
+      </index>
       <unique name="M_PRODUCT_UOM_UNIQUE">
         <unique-column name="AD_CLIENT_ID"/>
         <unique-column name="AD_ORG_ID"/>

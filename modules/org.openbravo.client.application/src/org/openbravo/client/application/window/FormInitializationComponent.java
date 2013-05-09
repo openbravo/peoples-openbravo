@@ -1077,7 +1077,7 @@ public class FormInitializationComponent extends BaseActionHandler {
         }
       }
     } catch (Exception e) {
-      log.error("Couldn't get the value for column " + columnName);
+      log.error("Couldn't get the value for column " + columnName, e);
     }
   }
 

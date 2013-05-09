@@ -94,6 +94,12 @@
       <foreign-key foreignTable="M_PRODUCT_UOM" name="M_STORAGE_DETAIL_M_PRODUCT_UOM">
         <reference local="M_PRODUCT_UOM_ID" foreign="M_PRODUCT_UOM_ID"/>
       </foreign-key>
+      <index name="M_STORAGE_DETAIL_LOCATOR" unique="false">
+        <index-column name="M_LOCATOR_ID"/>
+      </index>
+      <index name="M_STORAGE_DETAIL_PRODUCT" unique="false">
+        <index-column name="M_PRODUCT_ID"/>
+      </index>
       <unique name="M_STORAGE_DETAIL_UN">
         <unique-column name="M_PRODUCT_ID"/>
         <unique-column name="M_LOCATOR_ID"/>

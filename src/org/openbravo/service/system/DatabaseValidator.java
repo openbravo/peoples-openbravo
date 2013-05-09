@@ -381,6 +381,12 @@ public class DatabaseValidator implements SystemValidator {
       return;
     }
     for (Property property : entity.getProperties()) {
+
+      // ignore computed columns
+      if (property.getSqlLogic() != null) {
+        continue;
+      }
+
       if (!property.isPrimitive() && !property.isOneToMany() && !property.isAuditInfo()) {
         // check if the property column is present in a foreign key
 

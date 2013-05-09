@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -33,6 +33,7 @@ import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.utility.Image;
+import org.openbravo.portal.PortalAccessible;
 
 /**
  * This ActionHandler implements the DELETE and GETSIZE actions which are used by the ImageBLOB
@@ -46,7 +47,7 @@ import org.openbravo.model.ad.utility.Image;
  * MIME type if it hasn't yet been computed
  * 
  */
-public class ImagesActionHandler extends BaseActionHandler {
+public class ImagesActionHandler extends BaseActionHandler implements PortalAccessible {
 
   private static final Logger log = Logger.getLogger(ImagesActionHandler.class);
 

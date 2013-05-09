@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2012 Openbravo SLU
+ * All portions are Copyright (C) 2011-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s): ___________
  ************************************************************************
@@ -71,7 +71,7 @@
     keyboardShortcutId: 'ToolBar_Personalization'
   };
 
-  OB.ToolbarRegistry.registerButton(personalizationButtonProperties.buttonType, isc.OBToolbarIconButton, personalizationButtonProperties, 310, null);
+  OB.ToolbarRegistry.registerButton(personalizationButtonProperties.buttonType, isc.OBToolbarIconButton, personalizationButtonProperties, 310, null, null, false);
 
   // and register the toolbar button the window personalization tab  
   windowPersonalizationTabButtonProperties = {
@@ -147,6 +147,6 @@
   };
 
   // register only for the window personalization tab
-  OB.ToolbarRegistry.registerButton(windowPersonalizationTabButtonProperties.buttonType, isc.OBToolbarIconButton, windowPersonalizationTabButtonProperties, 320, 'FF8081813157AED2013157BF6D810023');
+  OB.ToolbarRegistry.registerButton(windowPersonalizationTabButtonProperties.buttonType, isc.OBToolbarIconButton, windowPersonalizationTabButtonProperties, 320, 'FF8081813157AED2013157BF6D810023', null, false);
 
 }());
