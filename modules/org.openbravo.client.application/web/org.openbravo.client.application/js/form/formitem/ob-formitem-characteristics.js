@@ -21,20 +21,22 @@ isc.ClassFactory.defineClass('OBCharacteristicsItem', isc.CanvasItem);
 
 isc.OBCharacteristicsItem.addProperties({
   completeValue: null,
-
+  showTitle: false,
   init: function () {
     this.canvas = isc.OBCharacteristicsLayout.create({
 
     });
 
-    this.title = null;
     this.colSpan = 4;
+    this.disabled = false;
 
     this.Super('init', arguments);
   },
 
   setValue: function (value) {
-    var field, formFields = [];
+    var field, formFields = [],
+        itemIds = [];
+    
     this.completeValue = value;
     if (!value) {
       this.hide();
@@ -45,17 +47,30 @@ isc.OBCharacteristicsItem.addProperties({
 
     //Remove all members the widget might have
     //this.canvas.removeMembers(this.canvas.getMembers());
+    //    
     if (value.characteristics) {
       for (field in value.characteristics) {
         if (value.characteristics.hasOwnProperty(field)) {
-          formFields.push(isc.OBTextItem.create({
+          formFields.push({
             width: '*',
             title: field,
+            disabled: true,
+            name: '__Characteristic__' + field,
+            type: 'OBTextItem',
             value: value.characteristics[field]
-          }));
+          });
+          itemIds.push('__Characteristic__' + field);
         }
       }
     }
+
+    formFields.unshift({
+      defaultValue: this.title,
+      type: 'OBSectionItem',
+      sectionExpanded: true,
+      itemIds: itemIds
+    });
+
 
     this.canvas.setFields(formFields);
 
