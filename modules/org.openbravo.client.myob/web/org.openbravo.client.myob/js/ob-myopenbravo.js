@@ -436,7 +436,7 @@ isc.OBMyOpenbravo.addProperties({
 
   setRecentList: function (layout) {
     var recentList, newRecent, handleClickFunction, recentIndex = 0,
-        recent, lbl, newIcon, entryLayout, icon;
+        recent, lbl, newIcon, entryLayout, icon, destroyFunction;
 
     // start with a fresh content
     layout.destroyAndRemoveMembers(layout.members);
@@ -451,6 +451,11 @@ isc.OBMyOpenbravo.addProperties({
         } else {
           OB.Layout.ViewManager.openView('OBClassicWindow', this.recent);
         }
+      };
+
+      destroyFunction = function () {
+        this.destroyAndRemoveMembers(this.members);
+        this.Super('destroy', arguments);
       };
 
       for (; recentIndex < recentList.length; recentIndex++) {
@@ -492,7 +497,8 @@ isc.OBMyOpenbravo.addProperties({
 
           entryLayout = isc.HLayout.create({
             defaultLayoutAlign: 'center',
-            width: '100%'
+            width: '100%',
+            destroy: destroyFunction
           });
           entryLayout.addMember(lbl);
           // if a standard window then show the new icon
