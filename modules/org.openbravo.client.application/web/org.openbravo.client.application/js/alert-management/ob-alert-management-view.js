@@ -195,6 +195,52 @@ isc.OBUIAPP_AlertManagement.addProperties({
     this.sectionStack.addSection(this.sections.Solved);
   },
 
+  destroy: function () {
+    if (this.grids) {
+      if (this.grids.New) {
+        this.grids.New.destroy();
+        this.grids.New = null;
+      }
+      if (this.grids.Acknowledged) {
+        this.grids.Acknowledged.destroy();
+        this.grids.Acknowledged = null;
+      }
+      if (this.grids.Suppressed) {
+        this.grids.Suppressed.destroy();
+        this.grids.Suppressed = null;
+      }
+      if (this.grids.Solved) {
+        this.grids.Solved.destroy();
+        this.grids.Solved = null;
+      }
+    }
+    if (this.NewAcknowledged) {
+      this.NewAcknowledged.destroy();
+      this.NewAcknowledged = null;
+    }
+    if (this.NewSuppressed) {
+      this.NewSuppressed.destroy();
+      this.NewSuppressed = null;
+    }
+    if (this.AcknowledgedNew) {
+      this.AcknowledgedNew.destroy();
+      this.AcknowledgedNew = null;
+    }
+    if (this.AcknowledgedSuppressed) {
+      this.AcknowledgedSuppressed.destroy();
+      this.AcknowledgedSuppressed = null;
+    }
+    if (this.SuppressedNew) {
+      this.SuppressedNew.destroy();
+      this.SuppressedNew = null;
+    }
+    if (this.SuppressedAcknowledged) {
+      this.SuppressedAcknowledged.destroy();
+      this.SuppressedAcknowledged = null;
+    }
+    this.Super('destroy', arguments);
+  },
+
   moveToStatus: function (alertIDs, oldStatus, newStatus) {
     var post = {
       'eventType': 'moveToStatus',

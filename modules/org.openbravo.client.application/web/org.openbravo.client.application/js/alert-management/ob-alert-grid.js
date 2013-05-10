@@ -126,6 +126,14 @@ isc.OBAlertGrid.addProperties({
     this.Super('initWidget', arguments);
   },
 
+  destroy: function () {
+    if (this.contextMenu) {
+      this.contextMenu.destroy();
+      this.contextMenu = null;
+    }
+    this.Super('destroy', arguments);
+  },
+
   setDataSource: function (ds) {
     this.Super('setDataSource', [ds, this.gridFields]);
     // Some properties need to be set when the datasource is loaded to avoid errors when form is
