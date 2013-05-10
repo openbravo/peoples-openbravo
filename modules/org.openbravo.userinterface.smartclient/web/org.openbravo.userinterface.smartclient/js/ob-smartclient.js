@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2012 Openbravo SLU
+ * All portions are Copyright (C) 2011-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -99,16 +99,21 @@ isc.DynamicForm.getOperatorIndex()['=.'][0].processValue = function (value, ds) 
 isc.Layout.addProperties({
 
   destroyAndRemoveMembers: function (toDestroy) {
-    var i;
+    var i, len, toDestroyCopy, nextIndex = 0;
     if (!isc.isA.Array(toDestroy)) {
       toDestroy = [toDestroy];
     }
-    for (i = 0; i < toDestroy.length; i++) {
-      if (toDestroy[i] && toDestroy[i].destroy) {
-        toDestroy[i].destroy();
+    toDestroyCopy = isc.shallowClone(toDestroy);
+    len = toDestroy.length;
+    for (i = 0; i < len; i++) {
+      if (toDestroy[nextIndex] && toDestroy[nextIndex].destroy) {
+        toDestroy[nextIndex].destroy();
+      }
+      if (toDestroy.length === len) {
+        nextIndex = nextIndex + 1;
       }
     }
-    this.removeMembers(toDestroy);
+    this.removeMembers(toDestroyCopy);
   }
 });
 
