@@ -67,7 +67,7 @@ BEGIN
      END IF;
 
      IF :new.DataOriginType = 'Datasource' THEN
-       :new.tableName = :new.name;
+       :new.tableName := :new.name;
      END IF;
 
      --Check Name for illegal characters
