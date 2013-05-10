@@ -29487,6 +29487,8 @@ By disabling this option standard beats will be sent to HeartBeat server, but no
 <!--B998B95EEED7404B9713735D0B5B687E-->  <COLUMNNAME><![CDATA[Sqllogic]]></COLUMNNAME>
 <!--B998B95EEED7404B9713735D0B5B687E-->  <NAME><![CDATA[Sqllogic]]></NAME>
 <!--B998B95EEED7404B9713735D0B5B687E-->  <PRINTNAME><![CDATA[Sqllogic]]></PRINTNAME>
+<!--B998B95EEED7404B9713735D0B5B687E-->  <DESCRIPTION><![CDATA[This field is used to define a computed column. A computed column is a column of a table which is computed using a sql expression and which does not exist explicitly in the database schema.]]></DESCRIPTION>
+<!--B998B95EEED7404B9713735D0B5B687E-->  <HELP><![CDATA[This field is used to define a computed column. A computed column is a column of a table which is computed using a sql expression and which does not exist explicitly in the database schema. More information can be found at http://wiki.openbravo.com/wiki/How_to_create_a_Computed_Column]]></HELP>
 <!--B998B95EEED7404B9713735D0B5B687E-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--B998B95EEED7404B9713735D0B5B687E-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--B998B95EEED7404B9713735D0B5B687E--></AD_ELEMENT>
@@ -31121,6 +31123,8 @@ The main purpose of this whereclause is to select which of the records in a part
 <!--ECAC136184A746C39804BD71BC3C78DB-->  <COLUMNNAME><![CDATA[Hqlwhereclause]]></COLUMNNAME>
 <!--ECAC136184A746C39804BD71BC3C78DB-->  <NAME><![CDATA[HQL Where Clause]]></NAME>
 <!--ECAC136184A746C39804BD71BC3C78DB-->  <PRINTNAME><![CDATA[HQL Where Clause]]></PRINTNAME>
+<!--ECAC136184A746C39804BD71BC3C78DB-->  <DESCRIPTION><![CDATA[ By using this HQL filter, the user will never be able to see data that does not fit the criteria.]]></DESCRIPTION>
+<!--ECAC136184A746C39804BD71BC3C78DB-->  <HELP><![CDATA[ By using this HQL filter, the user will never be able to see data that does not fit the criteria. The HQL where clause is added to the query to retrieve the data which is returned by the datasource]]></HELP>
 <!--ECAC136184A746C39804BD71BC3C78DB-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--ECAC136184A746C39804BD71BC3C78DB-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--ECAC136184A746C39804BD71BC3C78DB--></AD_ELEMENT>
@@ -31229,6 +31233,8 @@ This field is populated in case the used price list includes taxes.]]></HELP>
 <!--F3B77B38FDF84D7293862DF5A927783D-->  <COLUMNNAME><![CDATA[Hqlfilterclause]]></COLUMNNAME>
 <!--F3B77B38FDF84D7293862DF5A927783D-->  <NAME><![CDATA[HQL Filter Clause]]></NAME>
 <!--F3B77B38FDF84D7293862DF5A927783D-->  <PRINTNAME><![CDATA[HQL Filter Clause]]></PRINTNAME>
+<!--F3B77B38FDF84D7293862DF5A927783D-->  <DESCRIPTION><![CDATA[By using this HQL clause, initially the user will not be able to see  data that does not fit the criteria. Once the user clears the filter, this hql clause will not be applied.]]></DESCRIPTION>
+<!--F3B77B38FDF84D7293862DF5A927783D-->  <HELP><![CDATA[By using this HQL clause, initially the user will not be able to see  data that does not fit the criteria. Once the user clears the filter, this hql clause will not be applied.]]></HELP>
 <!--F3B77B38FDF84D7293862DF5A927783D-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--F3B77B38FDF84D7293862DF5A927783D-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--F3B77B38FDF84D7293862DF5A927783D--></AD_ELEMENT>
