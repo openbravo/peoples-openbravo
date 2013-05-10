@@ -101,6 +101,7 @@ isc.OBCharacteristicsFilterDialog.addProperties({
   autoSize: true,
   vertical: true,
   showMinimizeButton: false,
+  destroyOnClose: true,
 
   mainLayoutDefaults: {
     _constructor: 'VLayout',
@@ -109,15 +110,76 @@ isc.OBCharacteristicsFilterDialog.addProperties({
     layoutMargin: 5
   },
 
+  buttonLayoutDefaults: {
+    _constructor: 'HLayout',
+    width: '100%',
+    height: 22,
+    layoutAlign: 'right',
+    align: 'right',
+    membersMargin: 5,
+    autoParent: 'mainLayout'
+  },
+
+
+  okButtonDefaults: {
+    _constructor: 'OBFormButton',
+    height: 22,
+    width: 80,
+    canFocus: true,
+    autoParent: 'buttonLayout',
+    click: function () {
+      this.creator.accept();
+    }
+  },
+
+  clearButtonDefaults: {
+    _constructor: 'OBFormButton',
+    height: 22,
+    width: 80,
+    canFocus: true,
+    autoParent: 'buttonLayout',
+    click: function () {
+      this.creator.clearValues();
+    }
+  },
+
+  cancelButtonDefaults: {
+    _constructor: 'OBFormButton',
+    height: 22,
+    width: 80,
+    canFocus: true,
+    autoParent: 'buttonLayout',
+    click: function () {
+      this.creator.cancel();
+    }
+  },
+
+  accept: function () {
+    var value = 'oeoeoe';
+    if (this.callback) {
+      this.fireCallback(this.callback, 'value', [value]);
+    }
+    this.hide();
+    if (this.destroyOnClose) {
+      this.markForDestroy();
+    }
+  },
+
+  clearValues: function () {
+    this.tree.deselectAllRecords();
+  },
+
+  cancel: function () {
+    this.hide();
+    this.markForDestroy();
+  },
 
   initWidget: function () {
     this.Super('initWidget', arguments);
 
     this.addAutoChild('mainLayout');
-    this.addItem(this.mainLayout);
 
-
-    var tree = isc.TreeGrid.create({
+    this.tree = isc.TreeGrid.create({
       showHeader: false,
 
       autoFetchData: true,
@@ -135,9 +197,23 @@ isc.OBCharacteristicsFilterDialog.addProperties({
       cascadeSelection: true
     });
 
-    OB.Datasource.get('BE2735798ECC4EF88D131F16F1C4EC72', tree, null, true);
+    OB.Datasource.get('BE2735798ECC4EF88D131F16F1C4EC72', this.tree, null, true);
 
-    this.mainLayout.addMember(tree);
+    this.mainLayout.addMember(this.tree);
+    this.addAutoChild('buttonLayout');
+    this.addAutoChild('okButton', {
+      canFocus: true,
+      title: OB.I18N.getLabel('OBUISC_Dialog.OK_BUTTON_TITLE')
+    });
+    this.addAutoChild('clearButton', {
+      canFocus: true,
+      title: OB.I18N.getLabel('OBUIAPP_Clear')
+    });
+    this.addAutoChild('cancelButton', {
+      canFocus: true,
+      title: OB.I18N.getLabel('OBUISC_Dialog.CANCEL_BUTTON_TITLE')
+    });
+    this.addItem(this.mainLayout);
   }
 });
 
@@ -163,9 +239,15 @@ isc.OBCharacteristicsFilterItem.addProperties({
     }
   },
 
+  filterDialogCallback: function (value) {
+    this.setElementValue(value);
+  },
+
   init: function () {
 
-    this.addAutoChild('filterDialog', {});
+    this.addAutoChild('filterDialog', {
+      callback: this.getID() + '.filterDialogCallback(value)'
+    });
 
     this.icons = [isc.addProperties({
       prompt: this.pickerIconPrompt
