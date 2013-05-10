@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012 Openbravo SLU
+ * All portions are Copyright (C) 2012-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -21,7 +21,7 @@ package org.openbravo.materialmgmt;
 
 import java.util.List;
 
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -36,9 +36,9 @@ public class CharacteristicsUtils {
       Characteristic characteristic) throws OBException {
     OBCriteria<ProductCharacteristicValue> obCriteria = OBDal.getInstance().createCriteria(
         ProductCharacteristicValue.class);
-    obCriteria.add(Expression.eq(ProductCharacteristicValue.PROPERTY_PRODUCT, product));
-    obCriteria.add(Expression
-        .eq(ProductCharacteristicValue.PROPERTY_CHARACTERISTIC, characteristic));
+    obCriteria.add(Restrictions.eq(ProductCharacteristicValue.PROPERTY_PRODUCT, product));
+    obCriteria.add(Restrictions.eq(ProductCharacteristicValue.PROPERTY_CHARACTERISTIC,
+        characteristic));
     final List<ProductCharacteristicValue> bpgs = obCriteria.list();
     if (bpgs.size() > 0) {
       return bpgs.get(0).getCharacteristicValue();
