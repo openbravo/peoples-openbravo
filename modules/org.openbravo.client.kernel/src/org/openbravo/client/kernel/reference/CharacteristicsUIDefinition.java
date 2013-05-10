@@ -38,6 +38,11 @@ public class CharacteristicsUIDefinition extends TextUIDefinition {
   }
 
   @Override
+  public String getFilterEditorType() {
+    return "OBCharacteristicsFilterItem";
+  }
+
+  @Override
   public String getFieldProperties(Field field, boolean getValueFromSession) {
     String result = super.getFieldProperties(field, getValueFromSession);
     try {

@@ -90,3 +90,91 @@ isc.OBCharacteristicsLayout.addProperties({
   numCols: 4,
   colWidths: ['25%', '25%', '25%', '25%']
 });
+
+isc.ClassFactory.defineClass('OBCharacteristicsFilterDialog', isc.OBPopup);
+
+isc.OBCharacteristicsFilterDialog.addProperties({
+  isModal: true,
+  showModalMask: true,
+  dismissOnEscape: true,
+  autoCenter: true,
+  autoSize: true,
+  vertical: true,
+  showMinimizeButton: false,
+
+  mainLayoutDefaults: {
+    _constructor: 'VLayout',
+    width: 380,
+    height: 105,
+    layoutMargin: 5
+  },
+
+
+  initWidget: function () {
+    this.Super('initWidget', arguments);
+
+    this.addAutoChild('mainLayout');
+    this.addItem(this.mainLayout);
+
+
+    var tree = isc.TreeGrid.create({
+      showHeader: false,
+
+      autoFetchData: true,
+      loadDataOnDemand: false,
+      // loading the whole tree in a single request
+      height: 400,
+      showOpenIcons: false,
+      showDropIcons: false,
+      nodeIcon: null,
+      folderIcon: null,
+      openIconSuffix: 'open',
+      selectionAppearance: 'checkbox',
+      showSelectedStyle: false,
+      showPartialSelection: true,
+      cascadeSelection: true
+    });
+
+    OB.Datasource.get('BE2735798ECC4EF88D131F16F1C4EC72', tree, null, true);
+
+    this.mainLayout.addMember(tree);
+  }
+});
+
+
+isc.ClassFactory.defineClass('OBCharacteristicsFilterItem', isc.OBTextItem);
+
+isc.OBCharacteristicsFilterItem.addProperties({
+  showPickerIcon: false,
+  filterDialogConstructor: isc.OBCharacteristicsFilterDialog,
+  pickerIconDefaults: {
+    name: 'showDateRange',
+    src: '[SKIN]/DynamicForm/DatePicker_icon.gif',
+    width: 16,
+    height: 16,
+    showOver: false,
+    showFocused: false,
+    showFocusedWithItem: false,
+    hspace: 0,
+    click: function (form, item, icon) {
+      if (!item.disabled) {
+        item.showDialog();
+      }
+    }
+  },
+
+  init: function () {
+
+    this.addAutoChild('filterDialog', {});
+
+    this.icons = [isc.addProperties({
+      prompt: this.pickerIconPrompt
+    }, this.pickerIconDefaults, this.pickerIconProperties)];
+
+    this.Super('init', arguments);
+  },
+
+  showDialog: function () {
+    this.filterDialog.show();
+  }
+});
