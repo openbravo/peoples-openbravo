@@ -146,3 +146,31 @@ isc.OBAddPercentageSign.addProperties({
     }
   }
 });
+
+isc.defineClass('OBAddPercentageSignNull', isc.OBGridFormLabel);
+
+isc.OBAddPercentageSign.addProperties({
+  height: 1,
+  width: 1,
+  overflow: 'visible',
+
+  setRecord: function (record) {
+    var val = record[this.field.name];
+    if (this.field && this.field.type && isc.SimpleType.getType(this.field.type).normalDisplayFormatter) {
+      this.showValue(isc.SimpleType.getType(this.field.type).normalDisplayFormatter(val), val);
+    } else {
+      this.showValue(String(record[this.field.name]));
+    }
+  },
+
+  showValue: function (displayValue, dataValue, form, item) {
+    if (!displayValue) {
+	  this.setContents(null);
+    } else {
+	  this.setContents(displayValue + ' %');
+	}
+	if (this.grid && this.grid.body) {
+	  this.grid.body.markForRedraw();
+	}
+  }
+});
