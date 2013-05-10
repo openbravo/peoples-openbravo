@@ -154,10 +154,73 @@ isc.OBCharacteristicsFilterDialog.addProperties({
     }
   },
 
+  /**
+   * Based on values selected in the tree, returns the ones that are
+   * going to be used for visualization and/or filtering:
+   * 
+   *   -Filtering: includes all selected leaf nodes
+   *   -Visualization: includes the top in branch fully selected nodes
+   */
+  getValue: function () {
+    var selection = this.tree.getSelection(),
+        result = {},
+        i, c, chars = {},
+        values = {},
+        completeParentNodes = [],
+        node, currentChar, grandParent;
+
+    for (i = 0; i < selection.length; i++) {
+      node = selection[i];
+      if (node.isCharacteristic) {
+        continue;
+      }
+
+      if (!result[node.characteristic]) {
+        result[node.characteristic] = {
+          name: node.characteristic$_identifier,
+          values: []
+        };
+      }
+
+      currentChar = result[node.characteristic];
+
+      if (node.children) {
+        // parent node, include it only if fully selected
+        if (!this.tree.isPartiallySelected(node)) {
+          // this is a fully selected group value
+          grandParent = false;
+          for (c = 0; c < node.children.length; c++) {
+            if (node.children[c].children) {
+              grandParent = true;
+              break;
+            }
+          }
+
+          if (!grandParent) {
+            completeParentNodes.push(node.id);
+            currentChar.values.push({
+              value: node._identifier,
+              filter: false,
+              visualize: true
+            });
+          }
+        }
+      } else {
+        // leaf node: always filters, visualized if parent is not fully selected
+        currentChar.values.push({
+          value: node._identifier,
+          filter: true,
+          visualize: completeParentNodes.indexOf(node.parentId) === -1
+        });
+      }
+    }
+
+    return result;
+  },
+
   accept: function () {
-    var value = 'oeoeoe';
     if (this.callback) {
-      this.fireCallback(this.callback, 'value', [value]);
+      this.fireCallback(this.callback, 'value', [this.getValue()]);
     }
     this.hide();
     if (this.destroyOnClose) {
@@ -239,12 +302,98 @@ isc.OBCharacteristicsFilterItem.addProperties({
     }
   },
 
+  /**
+   * Criterion obtained queries the text field with the concatenation of all characteristics.
+   * 
+   * It might be changed to query actual table of characteristic values, but this would make it
+   * not usable in other views than Product
+   */
+  getCriterion: function () {
+    var c, characteristic, v, value, charCriteria, fieldName = this.getCriteriaFieldName();
+    if (!this.internalValue) {
+      return;
+    }
+
+    var result;
+    result = {
+      _constructor: 'AdvancedCriteria',
+      operator: 'and',
+      criteria: []
+    };
+
+    for (c in this.internalValue) {
+      if (this.internalValue.hasOwnProperty(c)) {
+        charCriteria = {
+          _constructor: 'AdvancedCriteria',
+          operator: 'or',
+          criteria: []
+        };
+
+        characteristic = this.internalValue[c];
+
+        for (v = 0; v < characteristic.values.length; v++) {
+          value = characteristic.values[v];
+          if (value.filter) {
+            charCriteria.criteria.push({
+              fieldName: fieldName,
+              operator: 'contains',
+              value: characteristic.name + ': ' + value.value
+            });
+          }
+        }
+
+        result.criteria.push(charCriteria);
+      }
+    }
+
+    return result;
+  },
+
+  setValue: function (value) {
+    this.Super('setValue', this.getDisplayValue());
+  },
+
+  /**
+   * Reusing same method as in OBMiniDateRangeItem. It is invoked when filter is removed
+   * from grid.
+   */
+  clearDateValues: function () {
+    delete this.internalValue;
+  },
+
+  getDisplayValue: function (displayValue) {
+    var c, characteristic, v, value, hasAny = false,
+        result = '';
+    if (!this.internalValue) {
+      return displayValue;
+    }
+
+    for (c in this.internalValue) {
+      if (this.internalValue.hasOwnProperty(c)) {
+        characteristic = this.internalValue[c];
+        result += (hasAny ? '], ' : '') + characteristic.name + ':[';
+        hasAny = true;
+
+        for (v = 0; v < characteristic.values.length; v++) {
+          value = characteristic.values[v];
+          if (value.visualize) {
+            result += (v > 0 ? ' - ' : '') + value.value;
+          }
+        }
+      }
+    }
+    result += hasAny ? ']' : '';
+    return result;
+
+  },
+
   filterDialogCallback: function (value) {
-    this.setElementValue(value);
+    this.internalValue = value;
+    this.setElementValue(this.getDisplayValue());
+    this.form.grid.performAction();
   },
 
   init: function () {
-
     this.addAutoChild('filterDialog', {
       callback: this.getID() + '.filterDialogCallback(value)'
     });

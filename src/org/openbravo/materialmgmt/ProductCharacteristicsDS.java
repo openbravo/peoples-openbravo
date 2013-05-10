@@ -87,6 +87,7 @@ public class ProductCharacteristicsDS extends DefaultDataSourceService {
           characteristic.put("id", charId);
           characteristic.put("_identifier", node[CHAR_NAME]);
           characteristic.put("showOpenIcon", true);
+          characteristic.put("isCharacteristic", true);
           characteristic
               .put(
                   "icon",
@@ -101,6 +102,8 @@ public class ProductCharacteristicsDS extends DefaultDataSourceService {
         value.put("id", node[VAL_ID]);
         value.put("_identifier", node[VAL_NAME]);
         value.put("parentId", parentId);
+        value.put("characteristic", charId);
+        value.put("characteristic$_identifier", node[CHAR_NAME]);
 
         responseData.put(value);
       }
