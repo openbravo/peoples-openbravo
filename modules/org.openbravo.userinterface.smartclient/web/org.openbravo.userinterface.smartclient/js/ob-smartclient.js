@@ -99,11 +99,11 @@ isc.DynamicForm.getOperatorIndex()['=.'][0].processValue = function (value, ds) 
 isc.Layout.addProperties({
 
   destroyAndRemoveMembers: function (toDestroy) {
-    var i, len, toDestroyCopy, nextIndex = 0;
+    var i, len, nextIndex = 0;
     if (!isc.isA.Array(toDestroy)) {
       toDestroy = [toDestroy];
     }
-    toDestroyCopy = isc.shallowClone(toDestroy);
+    this.removeMembers(toDestroy);
     len = toDestroy.length;
     for (i = 0; i < len; i++) {
       if (toDestroy[nextIndex] && toDestroy[nextIndex].destroy) {
@@ -113,7 +113,6 @@ isc.Layout.addProperties({
         nextIndex = nextIndex + 1;
       }
     }
-    this.removeMembers(toDestroyCopy);
   }
 });
 
