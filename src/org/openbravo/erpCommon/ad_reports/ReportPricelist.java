@@ -99,7 +99,8 @@ public class ReportPricelist extends HttpSecureAppServlet {
       discard[0] = "sectionPricelistVersion";
       data = ReportPricelistData.set();
     } else {
-      data = ReportPricelistData.select(this,
+      data = ReportPricelistData.selectTrl(this,
+          Utility.messageBD(this, "validFrom", vars.getLanguage()),
           Utility.getContext(this, vars, "#User_Client", "ReportPricelist"),
           Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportPricelist"),
           strPricelistversionId, strProductCategory, strmProductId);
