@@ -394,6 +394,7 @@ isc.OBCharacteristicsFilterItem.addProperties({
 
   init: function () {
     this.addAutoChild('filterDialog', {
+      title: this.title,
       callback: this.getID() + '.filterDialogCallback(value)'
     });
 
