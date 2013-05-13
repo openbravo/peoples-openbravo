@@ -239,9 +239,17 @@ isc.OBCharacteristicsFilterDialog.addProperties({
   },
 
   initWidget: function () {
+    var me = this;
+
     this.Super('initWidget', arguments);
 
     this.addAutoChild('mainLayout');
+
+    this.selectionVisualization = isc.Label.create({
+      contents: null
+    });
+    this.mainLayout.addMember(this.selectionVisualization);
+
 
     this.tree = isc.TreeGrid.create({
       showHeader: false,
@@ -258,7 +266,13 @@ isc.OBCharacteristicsFilterDialog.addProperties({
       selectionAppearance: 'checkbox',
       showSelectedStyle: false,
       showPartialSelection: true,
-      cascadeSelection: true
+      cascadeSelection: true,
+      selectionChanged: function () {
+        me.fireOnPause('updateCharacteristicsText', function () {
+          //fire on pause because selecting a node raises several time selectionChanged to select its parants
+          me.selectionVisualization.setContents(isc.OBCharacteristicsFilterItem.getDisplayValue(me.getValue()));
+        }, 100);
+      }
     });
 
     OB.Datasource.get('BE2735798ECC4EF88D131F16F1C4EC72', this.tree, null, true);
@@ -283,6 +297,31 @@ isc.OBCharacteristicsFilterDialog.addProperties({
 
 
 isc.ClassFactory.defineClass('OBCharacteristicsFilterItem', isc.OBTextItem);
+
+
+isc.OBCharacteristicsFilterItem.addClassProperties({
+  getDisplayValue: function (displayValue) {
+    var c, characteristic, v, value, hasAny = false,
+        result = '';
+
+    for (c in displayValue) {
+      if (displayValue.hasOwnProperty(c)) {
+        characteristic = displayValue[c];
+        result += (hasAny ? '], ' : '') + characteristic.name + ':[';
+        hasAny = true;
+
+        for (v = 0; v < characteristic.values.length; v++) {
+          value = characteristic.values[v];
+          if (value.visualize) {
+            result += (v > 0 ? ' - ' : '') + (value.shownValue || value.value);
+          }
+        }
+      }
+    }
+    result += hasAny ? ']' : '';
+    return result;
+  }
+});
 
 isc.OBCharacteristicsFilterItem.addProperties({
   showPickerIcon: false,
@@ -349,7 +388,7 @@ isc.OBCharacteristicsFilterItem.addProperties({
   },
 
   setValue: function (value) {
-    this.Super('setValue', this.getDisplayValue());
+    this.Super('setValue', isc.OBCharacteristicsFilterItem.getDisplayValue(this.internalValue));
   },
 
   /**
@@ -360,35 +399,9 @@ isc.OBCharacteristicsFilterItem.addProperties({
     delete this.internalValue;
   },
 
-  getDisplayValue: function (displayValue) {
-    var c, characteristic, v, value, hasAny = false,
-        result = '';
-    if (!this.internalValue) {
-      return displayValue;
-    }
-
-    for (c in this.internalValue) {
-      if (this.internalValue.hasOwnProperty(c)) {
-        characteristic = this.internalValue[c];
-        result += (hasAny ? '], ' : '') + characteristic.name + ':[';
-        hasAny = true;
-
-        for (v = 0; v < characteristic.values.length; v++) {
-          value = characteristic.values[v];
-          if (value.visualize) {
-            result += (v > 0 ? ' - ' : '') + (value.shownValue || value.value);
-          }
-        }
-      }
-    }
-    result += hasAny ? ']' : '';
-    return result;
-
-  },
-
   filterDialogCallback: function (value) {
     this.internalValue = value;
-    this.setElementValue(this.getDisplayValue());
+    this.setElementValue(isc.OBCharacteristicsFilterItem.getDisplayValue(value));
     this.form.grid.performAction();
   },
 
