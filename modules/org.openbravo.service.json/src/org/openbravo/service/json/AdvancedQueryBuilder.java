@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -64,10 +64,12 @@ public class AdvancedQueryBuilder {
   private static final String CRITERIA_KEY = "criteria";
   private static final String VALUE_KEY = "value";
   private static final String FIELD_NAME_KEY = "fieldName";
+  private static final String EXISTS_QUERY_KEY = "existsQuery";
   private static final String OPERATOR_KEY = "operator";
   private static final String ALIAS_PREFIX = "alias_";
   private static final String JOIN_ALIAS_PREFIX = "join_";
   private static final char ESCAPE_CHAR = '|';
+  private static final String EXISTS_VALUE_HOLDER = "$value";
 
   private static final String OPERATOR_AND = "and";
   static final String OPERATOR_OR = "or";
@@ -116,8 +118,7 @@ public class AdvancedQueryBuilder {
   private static final String OPERATOR_BETWEENINCLUSIVE = "betweenInclusive";
   private static final String OPERATOR_IBETWEEN = "iBetween";
   private static final String OPERATOR_IBETWEENINCLUSIVE = "iBetweenInclusive";
-
-  private static final long serialVersionUID = 1L;
+  private static final String OPERATOR_EXISTS = "exists";
 
   private JSONObject criteria = null;
 
@@ -308,8 +309,17 @@ public class AdvancedQueryBuilder {
       return parseBetween(jsonCriteria, operator, true);
     }
 
-    String fieldName = jsonCriteria.getString(FIELD_NAME_KEY);
     Object value = jsonCriteria.has(VALUE_KEY) ? jsonCriteria.get(VALUE_KEY) : null;
+
+    if (operator.equals(OPERATOR_EXISTS)) {
+      String query = jsonCriteria.getString(EXISTS_QUERY_KEY);
+      String alias = getTypedParameterAlias();
+      query = query.replace(EXISTS_VALUE_HOLDER, alias);
+      typedParameters.add(value);
+      return query;
+    }
+
+    String fieldName = jsonCriteria.getString(FIELD_NAME_KEY);
 
     // translate to a OR for each value
     if (value instanceof JSONArray) {
@@ -956,6 +966,8 @@ public class AdvancedQueryBuilder {
       return "is";
     } else if (operator.equals(OPERATOR_NOTNULL)) {
       return "is not";
+    } else if (operator.equals(OPERATOR_EXISTS)) {
+      return "exists";
     }
     // todo throw exception
     return null;

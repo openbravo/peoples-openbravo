@@ -208,7 +208,8 @@ isc.OBCharacteristicsFilterDialog.addProperties({
       } else {
         // leaf node: always filters, visualized if parent is not fully selected
         currentChar.values.push({
-          value: node._identifier,
+          value: node.id,
+          shownValue: node._identifier,
           filter: true,
           visualize: completeParentNodes.indexOf(node.parentId) === -1
         });
@@ -335,9 +336,10 @@ isc.OBCharacteristicsFilterItem.addProperties({
           value = characteristic.values[v];
           if (value.filter) {
             charCriteria.criteria.push({
-              fieldName: fieldName,
-              operator: 'contains',
-              value: characteristic.name + ': ' + value.value
+              //fieldName: fieldName,
+              operator: 'exists',
+              existsQuery: 'exists (from ProductCharacteristicValue v where e = v.product and v.characteristicValue.id  = $value)',
+              value: value.value
             });
           }
         }
@@ -377,7 +379,7 @@ isc.OBCharacteristicsFilterItem.addProperties({
         for (v = 0; v < characteristic.values.length; v++) {
           value = characteristic.values[v];
           if (value.visualize) {
-            result += (v > 0 ? ' - ' : '') + value.value;
+            result += (v > 0 ? ' - ' : '') + (value.shownValue || value.value);
           }
         }
       }
