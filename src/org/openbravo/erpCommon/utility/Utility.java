@@ -2519,11 +2519,12 @@ public class Utility {
   }
 
   public static boolean isMobileBrowser(HttpServletRequest request) {
-    final String ua = request.getHeader("User-Agent").toLowerCase();
+    final String ua = request.getHeader("User-Agent");
     if (ua == null) {
       return false;
     } else {
-      return (ua.matches(MOBILE_VENDORS) || ua.substring(0, 4).matches(MOBILE_VERSION));
+      return (ua.toLowerCase().matches(MOBILE_VENDORS) || ua.toLowerCase().substring(0, 4)
+          .matches(MOBILE_VERSION));
     }
   }
 
