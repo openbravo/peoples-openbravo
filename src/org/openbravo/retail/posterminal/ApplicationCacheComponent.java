@@ -37,7 +37,7 @@ import org.openbravo.mobile.core.MobileCoreApplicationCacheComponent;
 @RequestScoped
 public class ApplicationCacheComponent extends MobileCoreApplicationCacheComponent {
 
-  private static final String PATH_PREFIX = "web/";
+  private static final String PATH_PREFIX = "web" + File.separatorChar;
 
   @Override
   public List<String> getAppList() {
