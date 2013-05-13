@@ -310,7 +310,8 @@ isc.OBCharacteristicsFilterItem.addProperties({
    * not usable in other views than Product
    */
   getCriterion: function () {
-    var c, characteristic, v, value, charCriteria, fieldName = this.getCriteriaFieldName();
+    var c, characteristic, v, value, charCriteria, fieldName = this.getCriteriaFieldName(),
+        inValues;
     if (!this.internalValue) {
       return;
     }
@@ -324,25 +325,21 @@ isc.OBCharacteristicsFilterItem.addProperties({
 
     for (c in this.internalValue) {
       if (this.internalValue.hasOwnProperty(c)) {
-        charCriteria = {
-          _constructor: 'AdvancedCriteria',
-          operator: 'or',
-          criteria: []
-        };
-
         characteristic = this.internalValue[c];
 
+        inValues = [];
         for (v = 0; v < characteristic.values.length; v++) {
           value = characteristic.values[v];
           if (value.filter) {
-            charCriteria.criteria.push({
-              //fieldName: fieldName,
-              operator: 'exists',
-              existsQuery: 'exists (from ProductCharacteristicValue v where e = v.product and v.characteristicValue.id  = $value)',
-              value: value.value
-            });
+            inValues.push(value.value);
           }
         }
+
+        charCriteria = {
+          operator: 'exists',
+          existsQuery: 'exists (from ProductCharacteristicValue v where e = v.product and v.characteristicValue.id in ($value))',
+          value: inValues
+        };
 
         result.criteria.push(charCriteria);
       }

@@ -315,7 +315,14 @@ public class AdvancedQueryBuilder {
       String query = jsonCriteria.getString(EXISTS_QUERY_KEY);
       String alias = getTypedParameterAlias();
       query = query.replace(EXISTS_VALUE_HOLDER, alias);
-      typedParameters.add(value);
+
+      final List<Object> typedValues = new ArrayList<Object>();
+      final JSONArray values = (JSONArray) value;
+      for (int i = 0; i < values.length(); i++) {
+        typedValues.add(values.getString(i));
+      }
+
+      typedParameters.add(typedValues);
       return query;
     }
 
