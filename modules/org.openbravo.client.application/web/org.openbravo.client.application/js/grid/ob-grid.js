@@ -455,7 +455,7 @@ isc.OBGrid.addProperties({
       initWidget: function () {
         this.recordEditor.sourceWidget.filterImage = this;
         this.recordEditor.filterImage = this;
-        if (this.recordEditor.sourceWidget.filterClause) {
+        if (this.recordEditor.sourceWidget.filterClause || this.recordEditor.sourceWidget.sqlFilterClause) {
           this.prompt = OB.I18N.getLabel('OBUIAPP_GridFilterImplicitToolTip');
           this.visibility = 'inherit';
         }
@@ -509,6 +509,7 @@ isc.OBGrid.addProperties({
         fld, length;
     if (!keepFilterClause) {
       delete this.filterClause;
+      delete this.sqlFilterClause;
     }
     this.forceRefresh = true;
     if (this.filterEditor) {

@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011 Openbravo SLU
+ * All portions are Copyright (C) 2011-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -24,14 +24,23 @@
   <#if data.whereClause != "">
   whereClause: '${data.whereClause?js_string}',
   </#if>
+  <#if data.whereClauseSQL != "">
+  sqlWhereClause: '${data.whereClauseSQL?js_string}',
+  </#if>  
   <#if data.orderByClause != "">
   orderByClause: '${data.orderByClause?js_string}',
+  </#if>
+  <#if data.orderByClauseSQL != "">
+  sqlOrderByClause: '${data.orderByClauseSQL?js_string}',
   </#if>
   <#if data.sortField != "">
   sortField: '${data.sortField?js_string}',
   </#if>
   <#if data.filterClause != "">
   filterClause: '${data.filterClause?js_string}',
+  </#if>
+  <#if data.filterClauseSQL != "">
+  sqlFilterClause: '${data.filterClauseSQL?js_string}',
   </#if>
   <#if data.filterName != "">
   filterName: '${data.filterName?js_string}',

@@ -61,6 +61,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="USEASTABLEDATAORIGIN" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="OBSERDS_DS_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -79,6 +83,7 @@
       <unique name="OBSERDS_DATASOURCE_NAME">
         <unique-column name="NAME"/>
       </unique>
+      <check name="OBSERDS_DS_DATAORIGIN_CHECK"><![CDATA[USEASTABLEDATAORIGIN IN ('Y', 'N')]]></check>
       <check name="OBSERDS_DS_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

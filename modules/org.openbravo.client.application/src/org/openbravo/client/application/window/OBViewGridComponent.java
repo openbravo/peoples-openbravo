@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -83,11 +83,24 @@ public class OBViewGridComponent extends BaseTemplateComponent {
     return "";
   }
 
+  public String getWhereClauseSQL() {
+    if (tab.getSQLWhereClause() != null) {
+      return tab.getSQLWhereClause();
+    }
+    return "";
+  }
+
   public String getOrderByClause() {
     if (tab.getHqlorderbyclause() != null) {
       return tab.getHqlorderbyclause();
     }
+    return "";
+  }
 
+  public String getOrderByClauseSQL() {
+    if (tab.getSQLOrderByClause() != null) {
+      return tab.getSQLOrderByClause();
+    }
     return "";
   }
 
@@ -138,6 +151,13 @@ public class OBViewGridComponent extends BaseTemplateComponent {
       return addTransactionalFilter(tab.getHqlfilterclause());
     }
     return addTransactionalFilter("");
+  }
+
+  public String getFilterClauseSQL() {
+    if (tab.getFilterClause() != null) {
+      return tab.getFilterClause();
+    }
+    return "";
   }
 
   public String getFilterName() {

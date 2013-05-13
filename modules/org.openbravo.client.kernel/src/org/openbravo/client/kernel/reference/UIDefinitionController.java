@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -143,7 +143,10 @@ public class UIDefinitionController extends BaseTemplateComponent {
         }
       }
 
-      for (Table table : ModelProvider.getInstance().getTables()) {
+      List<Table> tableList = ModelProvider.getInstance().getTables();
+      tableList.addAll(ModelProvider.getInstance().getDataSourceBasedTables());
+
+      for (Table table : tableList) {
         List<Column> cols = table.getColumns();
         for (Column column : cols) {
           String referenceId;

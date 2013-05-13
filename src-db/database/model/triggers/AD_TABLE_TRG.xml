@@ -15,7 +15,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2008-2012 Openbravo SLU
+* All portions are Copyright (C) 2008-2013 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -54,7 +54,7 @@ BEGIN
       SELECT 1      
         FROM AD_MODULE_DBPREFIX P
       WHERE P.AD_MODULE_ID = cuerrentModuleID
-        AND instr(upper(:new.TableName), upper(name)||'_') = 1
+        AND (:new.DataOriginType = 'Datasource' OR instr(upper(:new.TableName), upper(name)||'_') = 1)
         AND (instr(upper(:new.Name), upper(name)||'_') = 1 OR cuerrentModuleID = '0')
       UNION
        SELECT 1
@@ -64,6 +64,10 @@ BEGIN
       
      IF v_Aux = 0 THEN
        RAISE_APPLICATION_ERROR(-20000, '@20536@') ;
+     END IF;
+
+     IF :new.DataOriginType = 'Datasource' THEN
+       :new.tableName := :new.name;
      END IF;
 
      --Check Name for illegal characters

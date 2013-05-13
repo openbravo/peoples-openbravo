@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -41,6 +41,7 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.model.domaintype.ButtonDomainType;
+import org.openbravo.client.application.ApplicationConstants;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.datamodel.Column;
@@ -190,6 +191,12 @@ public class DatabaseValidator implements SystemValidator {
 
     final String moduleId = (getValidateModule() == null ? null : getValidateModule().getId());
     for (Table adTable : adTables) {
+
+      // Do not validate the table if it is based on a datasource
+      if (ApplicationConstants.DATASOURCEBASEDTABLE.equals(adTable.getDataOriginType())) {
+        continue;
+      }
+
       final org.apache.ddlutils.model.Table dbTable = dbTablesByName.get(adTable.getDBTableName()
           .toUpperCase());
       final View view = dbViews.get(adTable.getDBTableName().toUpperCase());

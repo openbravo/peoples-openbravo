@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -59,12 +59,14 @@
 <@compress single_line=true>
       inpTabId: '${tabComponent.tabId}',
       inpwindowId: '${tabComponent.windowId}',
-      inpTableId: '${tabComponent.tableId?js_string}',
-      inpkeyColumnId: '${tabComponent.keyColumnName?js_string}',
-      keyProperty: '${tabComponent.keyProperty.name?js_string}',
-      inpKeyName: '${tabComponent.keyInpName?js_string}',
-      keyColumnName: '${tabComponent.keyColumnName?js_string}',
-      keyPropertyType: '${tabComponent.keyPropertyType?js_string}'      
+      inpTableId: '${tabComponent.tableId?js_string}'
+      <#if !tabComponent.dataSourceTable>
+        ,inpkeyColumnId: '${tabComponent.keyColumnName?js_string}',
+        keyProperty: '${tabComponent.keyProperty.name?js_string}',
+        inpKeyName: '${tabComponent.keyInpName?js_string}',
+        keyColumnName: '${tabComponent.keyColumnName?js_string}',
+        keyPropertyType: '${tabComponent.keyPropertyType?js_string}'
+      </#if>
 </@compress>
     },
      

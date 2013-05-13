@@ -403,7 +403,13 @@ public class OBViewTab extends BaseTemplateComponent {
   }
 
   public String getDataSourceId() {
-    return tab.getTable().getName();
+    String dataSourceId = null;
+    if (ApplicationConstants.TABLEBASEDTABLE.equals(tab.getTable().getDataOriginType())) {
+      dataSourceId = tab.getTable().getName();
+    } else {
+      dataSourceId = tab.getTable().getObserdsDatasource().getId();
+    }
+    return dataSourceId;
   }
 
   public String getSelectionFunction() {
@@ -436,6 +442,14 @@ public class OBViewTab extends BaseTemplateComponent {
       }
     }
     throw new IllegalStateException("Entity " + getEntityName() + " does not have an id property");
+  }
+
+  public boolean isDataSourceTable() {
+    if (ApplicationConstants.DATASOURCEBASEDTABLE.equals(this.tab.getTable().getDataOriginType())) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   public String getKeyPropertyType() {
