@@ -15,8 +15,7 @@ enyo.kind({
   kind: 'OB.UI.ScrollableTableHeader',
   events: {
     onSearchAction: '',
-    onClearAction: '',
-    onGetPrevCollection: ''
+    onClearAction: ''
   },
   handlers: {
     onSearchActionByKey: 'searchAction',
@@ -51,13 +50,6 @@ enyo.kind({
           ontap: 'searchAction'
         }]
       }]
-    }, {
-      style: 'margin: 0px;',
-      classes: 'btnlink-gray',
-      name: 'backChButton',
-      kind: 'OB.UI.SmallButton',
-      showing: false,
-      ontap: 'backAction'
     }]
   }],
   clearAction: function () {
@@ -70,12 +62,8 @@ enyo.kind({
     });
     return true;
   },
-  backAction: function () {
-    this.doGetPrevCollection();
-  },
   initComponents: function () {
     this.inherited(arguments);
-    this.$.backChButton.setContent(OB.I18N.getLabel('OBMOBC_LblBack'));
   }
 });
 
@@ -91,9 +79,13 @@ enyo.kind({
   tap: function () {
     this.inherited(arguments);
     var me = this;
+    if (!this.parent.model.get('childrenSelected')) {
+      this.removeClass('half-active');
+    }
     this.doAddToSelected({
       value: me.parent.model,
-      checked: !this.parent.model.get('checked')
+      checked: !this.parent.model.get('checked'),
+      selected: !this.parent.model.get('selected')
     });
   },
   create: function () {
@@ -103,14 +95,17 @@ enyo.kind({
       this.addClass('active');
     } else {
       this.removeClass('active');
+      if (this.parent.model.get('childrenSelected')) {
+        this.addClass('half-active');
+      }
     }
   }
 });
 enyo.kind({
   name: 'OB.UI.ListValuesLineChildren',
-  kind: 'OB.UI.SmallButton',
-  classes: 'btnlink-yellow btn-icon-small btn-icon-search',
-  style: 'width: 10%; margin: 0px;',
+  kind: 'OB.UI.Button',
+  classes: 'btn-icon-inspectTree',
+  style: 'width: 10%; margin: 0px; ',
   showing: false,
   childrenArray: [],
   events: {
@@ -152,8 +147,7 @@ enyo.kind({
   handlers: {
     onSearchAction: 'searchAction',
     onClearAction: 'clearAction',
-    onSetCollection: 'setCollection',
-    onGetPrevCollection: 'getPrevCollection'
+    onSetCollection: 'setCollection'
   },
   components: [{
     classes: 'span12',
@@ -197,6 +191,8 @@ enyo.kind({
             } else {
               dataValues.models[i].set('checked', false);
             }
+            dataValues.models[i].set('childrenSelected', null);
+            me.hasSelectedChildrenTree([dataValues.models[i]], dataValues.models[i]);
           }
         }
         me.parent.parent.$.body.$.listValues.valuesList.reset(dataValues.models);
@@ -212,14 +208,14 @@ enyo.kind({
   setCollection: function (inSender, inEvent) {
     var i, j, k;
     if (inEvent.parentValue !== 0) {
-      this.$.valueslistitemprinter.$.theader.$.modalProductChHeader.$.backChButton.show();
+      this.parent.parent.$.header.$.modalProductChTopHeader.$.backChButton.setDisabled(false);
     }
 
     this.parentValue = inEvent.parentValue;
     for (i = 0; i < inEvent.value.length; i++) {
       for (j = 0; j < this.parent.parent.model.get('filter').length; j++) {
         if (inEvent.value[i].get('id') === this.parent.parent.model.get('filter')[j].id) {
-          inEvent.value[i].set('checked', this.parent.parent.model.get('filter')[j].checked);
+          inEvent.value[i].set('checked', this.parent.parent.model.get('filter')[j].selected);
           inEvent.value[i].set('selected', this.parent.parent.model.get('filter')[j].selected);
         }
       }
@@ -229,34 +225,41 @@ enyo.kind({
           inEvent.value[i].set('selected', this.parent.parent.selected[k].get('selected'));
         }
       }
+      inEvent.value[i].set('childrenSelected', null);
+      this.hasSelectedChildrenTree([inEvent.value[i]], inEvent.value[i]);
     }
     this.valuesList.reset(inEvent.value);
   },
-  getPrevCollection: function (inSender, inEvent) {
-    var me = this,
-        i, j, k;
-    OB.Dal.query(OB.Model.ProductChValue, "select distinct(id) , name , characteristic_id, parent as parent from m_ch_value " + "where parent = (select parent from m_ch_value where id = '" + this.parentValue + "') and " + "characteristic_id = (select characteristic_id from m_ch_value where id = '" + this.parentValue + "')", [], function (dataValues, me) {
+  hasSelectedChildrenTree: function (selected, rootObject) {
+    var aux;
+    for (aux = 0; aux < selected.length; aux++) {
+      this.hasSelectedChildren(selected, aux, rootObject, this);
+    }
+  },
+  hasSelectedChildren: function (selected, aux, rootObject, me) {
+    var j,k;
+    me.exist = null;
+    me.selected = selected;
+    me.aux = aux;
+    me.rootObject = rootObject;
+    OB.Dal.query(OB.Model.ProductChValue, "select distinct(id), name, characteristic_id, parent " + "from m_ch_value where parent = '" + selected[aux].get('id') + "' ", [], function (dataValues, me) {
+      for (j = 0; j < me.parent.parent.model.get('filter').length; j++) {
+        if (selected[aux].id === me.parent.parent.model.get('filter')[j].id && selected[aux].id !== rootObject.id && me.parent.parent.model.get('filter')[j].selected) {
+          me.exist = true;
+          break;
+        }
+      }
+      for (k = 0; k < me.parent.parent.selected.length; k++) {
+        if (selected[aux].id === me.parent.parent.selected[k].id && selected[aux].id !== rootObject.id) {
+          me.exist = me.parent.parent.selected[k].get('selected');
+          break;
+        }
+      }
+      if (_.isNull(rootObject.get('childrenSelected')) || !rootObject.get('childrenSelected')) {
+        rootObject.set('childrenSelected', me.exist);
+      }
       if (dataValues && dataValues.length > 0) {
-        for (i = 0; i < dataValues.length; i++) {
-          for (j = 0; j < me.parent.parent.model.get('filter').length; j++) {
-            if (dataValues.models[i].get('id') === me.parent.parent.model.get('filter')[j].id) {
-              dataValues.models[i].set('checked', me.parent.parent.model.get('filter')[j].checked);
-              dataValues.models[i].set('selected', me.parent.parent.model.get('filter')[j].selected);
-            }
-          }
-          for (k = 0; k < me.parent.parent.selected.length; k++) {
-            if (dataValues.models[i].get('id') === me.parent.parent.selected[k].id) {
-              dataValues.models[i].set('checked', me.parent.parent.selected[k].get('checked'));
-              dataValues.models[i].set('selected', me.parent.parent.selected[k].get('selected'));
-            }
-          }
-        }
-        me.valuesList.reset(dataValues.models);
-        //We take the first to know the parent
-        me.parentValue = dataValues.models[0].get('parent');
-        if (me.parentValue === '0') { //root
-          me.$.valueslistitemprinter.$.theader.$.modalProductChHeader.$.backChButton.hide();
-        }
+        me.hasSelectedChildrenTree(dataValues.models, rootObject);
       }
     }, function (tx, error) {
       OB.UTIL.showError("OBDAL error: " + error);
@@ -274,31 +277,52 @@ enyo.kind({
   kind: 'OB.UI.ScrollableTableHeader',
   events: {
     onHideThisPopup: '',
-    onSelectCharacteristicValue: ''
+    onSelectCharacteristicValue: '',
+    onGetPrevCollection: ''
   },
   components: [{
-    style: 'display: table;',
+    style: 'display: table;  width: 100%;',
     components: [{
-      style: 'display: table-cell; float:left',
-      name: 'doneChButton',
-      kind: 'OB.UI.SmallButton',
-      ontap: 'doneAction'
+      style: 'display: table-cell; ',
+      components: [{
+        classes: 'btnlink-gray',
+        name: 'backChButton',
+        kind: 'OB.UI.SmallButton',
+        ontap: 'backAction'
+      }]
     }, {
-      name: 'title',
-      style: 'display: table-cell; width: 100%; text-align: center; vertical-align: middle'
+      style: 'display: table-cell; width: 55%;',
+      components: [{
+        name: 'title',
+        style: 'text-align: center; vertical-align: middle;'
+      }]
     }, {
-      style: 'display: table-cell; float:right',
-      classes: 'btnlink-gray',
-      name: 'cancelChButton',
-      kind: 'OB.UI.SmallButton',
-      ontap: 'cancelAction'
+      style: 'display: table-cell; ',
+      components: [{
+        name: 'doneChButton',
+        kind: 'OB.UI.SmallButton',
+        ontap: 'doneAction'
+      }]
+    }, {
+      style: 'display: table-cell;',
+      components: [{
+        classes: 'btnlink-gray',
+        name: 'cancelChButton',
+        kind: 'OB.UI.SmallButton',
+        ontap: 'cancelAction'
+      }]
     }]
   }],
   initComponents: function () {
     this.inherited(arguments);
+    this.$.backChButton.setContent(OB.I18N.getLabel('OBMOBC_LblBack'));
+    this.$.backChButton.setDisabled(true);
     this.$.doneChButton.setContent(OB.I18N.getLabel('OBMOBC_LblDone'));
     this.$.cancelChButton.setContent(OB.I18N.getLabel('OBMOBC_LblCancel'));
     this.selectedToSend = [];
+  },
+  backAction: function () {
+    this.doGetPrevCollection();
   },
   doneAction: function () {
     var me = this;
@@ -339,6 +363,9 @@ enyo.kind({
   getChildren: function (selected, aux, checkedParent, me) {
     OB.Dal.query(OB.Model.ProductChValue, "select distinct(id), name, characteristic_id, parent " + "from m_ch_value where parent = '" + selected[aux].get('id') + "' ", [], function (dataValues, me) {
       if (dataValues && dataValues.length > 0) {
+        if (!_.isUndefined(checkedParent)) {
+          selected[aux].set('checked', checkedParent);
+        }
         me.selectedToSend.push(selected[aux]);
         if (!_.isUndefined(checkedParent)) {
           me.inspectTree(dataValues.models, checkedParent);
@@ -370,7 +397,8 @@ enyo.kind({
     selected: []
   },
   handlers: {
-    onAddToSelected: 'addToSelected'
+    onAddToSelected: 'addToSelected',
+    onGetPrevCollection: 'getPrevCollection'
   },
   executeOnHide: function () {
     this.$.body.$.listValues.$.valueslistitemprinter.$.theader.$.modalProductChHeader.clearAction();
@@ -378,7 +406,7 @@ enyo.kind({
   executeOnShow: function () {
     var i, j;
     this.$.body.$.listValues.parentValue = 0;
-    this.$.body.$.listValues.$.valueslistitemprinter.$.theader.$.modalProductChHeader.$.backChButton.hide();
+    this.$.header.$.modalProductChTopHeader.$.backChButton.setDisabled(true);
     this.characteristic = this.args.model;
     this.$.header.$.modalProductChTopHeader.$.title.setContent(this.args.model.get('_identifier'));
     this.waterfall('onSearchAction', {
@@ -402,17 +430,49 @@ enyo.kind({
     }).indexOf(inEvent.value.get('id'));
     if (index !== -1) {
       inEvent.value.set('checked', inEvent.checked);
-      inEvent.value.set('selected', inEvent.checked);
+      inEvent.value.set('selected', inEvent.selected);
       this.selected[index].set('checked', inEvent.checked);
-      this.selected[index].set('selected', inEvent.checked);
+      this.selected[index].set('selected', inEvent.selected);
     } else {
       inEvent.value.set('checked', inEvent.checked);
-      inEvent.value.set('selected', inEvent.checked);
+      inEvent.value.set('selected', inEvent.selected);
       this.selected.push(inEvent.value);
       this.inspectCountTree([inEvent.value]);
       this.countedValues++;
     }
 
+  },
+  getPrevCollection: function (inSender, inEvent) {
+    var me = this,
+        i, j, k;
+    OB.Dal.query(OB.Model.ProductChValue, "select distinct(id) , name , characteristic_id, parent as parent from m_ch_value " + "where parent = (select parent from m_ch_value where id = '" + this.$.body.$.listValues.parentValue + "') and " + "characteristic_id = (select characteristic_id from m_ch_value where id = '" + this.$.body.$.listValues.parentValue + "')", [], function (dataValues, me) {
+      if (dataValues && dataValues.length > 0) {
+        for (i = 0; i < dataValues.length; i++) {
+          for (j = 0; j < me.model.get('filter').length; j++) {
+            if (dataValues.models[i].get('id') === me.model.get('filter')[j].id) {
+              dataValues.models[i].set('checked', me.model.get('filter')[j].checked);
+              dataValues.models[i].set('selected', me.model.get('filter')[j].selected);
+            }
+          }
+          for (k = 0; k < me.selected.length; k++) {
+            if (dataValues.models[i].get('id') === me.selected[k].id) {
+              dataValues.models[i].set('checked', me.selected[k].get('checked'));
+              dataValues.models[i].set('selected', me.selected[k].get('selected'));
+            }
+          }
+          dataValues.models[i].set('childrenSelected', null);
+          me.$.body.$.listValues.hasSelectedChildrenTree([dataValues.models[i]], dataValues.models[i]);
+        }
+        me.$.body.$.listValues.valuesList.reset(dataValues.models);
+        //We take the first to know the parent
+        me.$.body.$.listValues.parentValue = dataValues.models[0].get('parent');
+        if (me.parentValue === '0') { //root
+          me.$.header.$.modalProductChTopHeader.$.backChButton.setDisabled(true);
+        }
+      }
+    }, function (tx, error) {
+      OB.UTIL.showError("OBDAL error: " + error);
+    }, this);
   },
   countedValues: 0,
   inspectCountTree: function (selected) {
