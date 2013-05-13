@@ -101,7 +101,7 @@ isc.OBCharacteristicsFilterDialog.addProperties({
   autoSize: true,
   vertical: true,
   showMinimizeButton: false,
-  destroyOnClose: true,
+  destroyOnClose: false,
 
   mainLayoutDefaults: {
     _constructor: 'VLayout',
@@ -119,7 +119,6 @@ isc.OBCharacteristicsFilterDialog.addProperties({
     membersMargin: 5,
     autoParent: 'mainLayout'
   },
-
 
   okButtonDefaults: {
     _constructor: 'OBFormButton',
@@ -224,9 +223,6 @@ isc.OBCharacteristicsFilterDialog.addProperties({
       this.fireCallback(this.callback, 'value', [this.getValue()]);
     }
     this.hide();
-    if (this.destroyOnClose) {
-      this.markForDestroy();
-    }
   },
 
   clearValues: function () {
@@ -235,7 +231,6 @@ isc.OBCharacteristicsFilterDialog.addProperties({
 
   cancel: function () {
     this.hide();
-    this.markForDestroy();
   },
 
   initWidget: function () {
