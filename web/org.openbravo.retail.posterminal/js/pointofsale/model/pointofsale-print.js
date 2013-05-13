@@ -29,6 +29,7 @@
 
     // Clone the receipt
     var receipt = new OB.Model.Order();
+    var me = this;
     receipt.clearWith(this.receipt);
 
     var template;
@@ -58,6 +59,21 @@
 
     OB.POS.hwserver.print(template, {
       order: receipt
+    }, function(result){
+      var otherMe = me;
+      var myreceipt = receipt;
+      if(result && result.exception){
+        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'), OB.I18N.getLabel('OBPOS_MsgPrintAgain'), [{
+          label: OB.I18N.getLabel('OBMOBC_LblOk'),
+          action: function () {
+            var otherOtherMe = otherMe;
+            otherOtherMe.print();
+            return true;
+          }
+        },{
+          label: OB.I18N.getLabel('OBMOBC_LblCancel')
+        }]);
+      }
     });
   };
 
