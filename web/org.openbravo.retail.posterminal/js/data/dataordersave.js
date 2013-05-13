@@ -65,12 +65,9 @@
                 }
               }
             };
-            errorCallback = function () {
-              OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgReceiptNotSaved', [docno]));
-            };
             orderList = new OB.Collection.OrderList();
             orderList.add(receipt);
-            OB.UTIL.processOrders(model, orderList, successCallback, errorCallback);
+            OB.UTIL.processOrders(model, orderList, successCallback, null);
           }, null);
         }
       }, function () {

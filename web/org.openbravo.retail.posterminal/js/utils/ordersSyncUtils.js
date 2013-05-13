@@ -78,7 +78,7 @@
             successCallback();
           }
         }
-      });
+      }, null, null, 4000);
     }
   };
 }());
