@@ -102,7 +102,6 @@ public class EntityResolver implements OBNotSingleton {
   // When the entity resolver is used to apply datasets, it has to look for the translated IDs
   // When the entity resolver is used from a DAL REST webservice, there is not need to look for the
   // translated IDs
-  private boolean lookForTranslatedIDs = true;
 
   void clear() {
     data.clear();
@@ -137,17 +136,18 @@ public class EntityResolver implements OBNotSingleton {
     BaseOBObject result = null;
     // note id can be null if someone did not care to add it in a manual
     // xml file
-    if (lookForTranslatedIDs) {
-      if (id != null) {
-        result = data.get(getKey(entityName, id));
-        if (result != null) {
-          return result;
-        }
-        result = searchInstance(entity, id);
+    if (id != null) {
+      result = data.get(getKey(entityName, id));
+      if (result != null) {
+        return result;
       }
-    } else if (id != null) {
-      // Only try to fetch the object if the id is not null
-      result = OBDal.getInstance().get(entityName, id);
+      result = searchInstance(entity, id);
+    }
+
+    // Only try to fetch the object if the id is not null
+    if (result == null && id != null) {
+      boolean filterOrgs = false;
+      result = doSearch(id, entity, client.getId(), filterOrgs, "");
     }
 
     // search using the id if it is a view, note can be wrong as there can
@@ -402,6 +402,12 @@ public class EntityResolver implements OBNotSingleton {
   }
 
   protected BaseOBObject doSearch(String id, Entity entity, String clientId, String orgId) {
+    boolean filterOrgs = true;
+    return doSearch(id, entity, clientId, filterOrgs, orgId);
+  }
+
+  protected BaseOBObject doSearch(String id, Entity entity, String clientId, boolean filterOrgs,
+      String orgId) {
     final String[] searchOrgIds = getOrgIds(orgId);
     final OBCriteria<?> obc = OBDal.getInstance().createCriteria(entity.getName());
     obc.setFilterOnActive(false);
@@ -410,7 +416,7 @@ public class EntityResolver implements OBNotSingleton {
     if (entity.isClientEnabled()) {
       obc.add(Restrictions.eq(PROPERTY_CLIENT + "." + Organization.PROPERTY_ID, clientId));
     }
-    if (entity.isOrganizationEnabled()) {
+    if (filterOrgs && entity.isOrganizationEnabled()) {
       // Note the query is for other types than client but the client
       // property names
       // are good standard ones to use
@@ -611,10 +617,6 @@ public class EntityResolver implements OBNotSingleton {
    */
   public void setOptionCreateReferencedIfNotFound(boolean optionCreateReferencedIfNotFound) {
     this.optionCreateReferencedIfNotFound = optionCreateReferencedIfNotFound;
-  }
-
-  public void setLookForTranslatedIDs(boolean lookForTranslatedIDs) {
-    this.lookForTranslatedIDs = lookForTranslatedIDs;
   }
 
   public ResolvingMode getResolvingMode() {
