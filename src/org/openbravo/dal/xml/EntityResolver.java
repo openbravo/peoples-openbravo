@@ -94,6 +94,7 @@ public class EntityResolver implements OBNotSingleton {
   private Organization organization;
   private String[] orgNaturalTree;
   private ResolvingMode resolvingMode = ResolvingMode.ALLOW_NOT_EXIST;
+  private boolean lookForTranslatedIDs;
 
   private OrganizationStructureProvider organizationStructureProvider;
 
@@ -740,4 +741,10 @@ public class EntityResolver implements OBNotSingleton {
   protected String getKey(String entityName, String id) {
     return entityName + id;
   }
+
+  @Deprecated
+  public void setLookForTranslatedIDs(boolean lookForTranslatedIDs) {
+    this.lookForTranslatedIDs = lookForTranslatedIDs;
+  }
+
 }
