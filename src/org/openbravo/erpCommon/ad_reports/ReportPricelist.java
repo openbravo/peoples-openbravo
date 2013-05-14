@@ -193,7 +193,8 @@ public class ReportPricelist extends HttpSecureAppServlet {
     XmlDocument xmlDocument = null;
     xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_reports/ReportPricelist_Pdf").createXmlDocument();
-    xmlDocument.setData("structure1", ReportPricelistData.selectPDF(this,
+    xmlDocument.setData("structure1", ReportPricelistData.selectPDFTrl(this,
+        Utility.messageBD(this, "validFrom", vars.getLanguage()),
         Utility.getContext(this, vars, "#User_Client", "ReportPricelist"),
         Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportPricelist"),
         strPricelistversionId, strProductCategory, strmProductId));
