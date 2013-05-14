@@ -617,7 +617,7 @@ public class EntityResolver implements OBNotSingleton {
     this.lookForTranslatedIDs = lookForTranslatedIDs;
   }
 
-  protected ResolvingMode getResolvingMode() {
+  public ResolvingMode getResolvingMode() {
     return resolvingMode;
   }
 
