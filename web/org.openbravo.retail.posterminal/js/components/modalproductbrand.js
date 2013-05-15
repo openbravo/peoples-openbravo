@@ -9,61 +9,6 @@
 
 /*global enyo, Backbone, _ */
 
-/*header of scrollable table*/
-enyo.kind({
-  name: 'OB.UI.ModalProductBrandHeader',
-  kind: 'OB.UI.ScrollableTableHeader',
-  events: {
-    onSearchAction: '',
-    onClearAction: ''
-  },
-  handlers: {
-    onSearchActionByKey: 'searchAction',
-    onFiltered: 'searchAction'
-  },
-  components: [{
-    style: 'padding: 10px;',
-    components: [{
-      style: 'display: table;',
-      components: [{
-        style: 'display: table-cell; width: 100%;',
-        components: [{
-          kind: 'OB.UI.SearchInputAutoFilter',
-          name: 'filterText',
-          style: 'width: 100%',
-          isFirstFocus: true
-        }]
-      }, {
-        style: 'display: table-cell;',
-        components: [{
-          kind: 'OB.UI.SmallButton',
-          classes: 'btnlink-gray btn-icon-small btn-icon-clear',
-          style: 'width: 100px; margin: 0px 5px 8px 19px;',
-          ontap: 'clearAction'
-        }]
-      }, {
-        style: 'display: table-cell;',
-        components: [{
-          kind: 'OB.UI.SmallButton',
-          classes: 'btnlink-yellow btn-icon-small btn-icon-search',
-          style: 'width: 100px; margin: 0px 0px 8px 5px;',
-          ontap: 'searchAction'
-        }]
-      }]
-    }]
-  }],
-  clearAction: function () {
-    this.$.filterText.setValue('');
-    this.doClearAction();
-  },
-  searchAction: function () {
-    this.doSearchAction({
-      valueName: this.$.filterText.getValue()
-    });
-    return true;
-  }
-});
-
 /*items of collection*/
 enyo.kind({
   name: 'OB.UI.ListBrandsLine',
@@ -106,7 +51,6 @@ enyo.kind({
           name: 'brandslistitemprinter',
           kind: 'OB.UI.ScrollableTable',
           scrollAreaMaxHeight: '400px',
-          renderHeader: 'OB.UI.ModalProductBrandHeader',
           renderLine: 'OB.UI.ListBrandsLine',
           renderEmpty: 'OB.UI.RenderEmpty'
         }]
@@ -119,8 +63,7 @@ enyo.kind({
   },
   searchAction: function (inSender, inEvent) {
     var me = this,
-        i, j, criteria = {},
-        filter = inEvent.valueName;
+        i, j;
 
     function errorCallback(tx, error) {
       OB.UTIL.showError("OBDAL error: " + error);
@@ -140,11 +83,7 @@ enyo.kind({
         me.brandsList.reset();
       }
     }
-    criteria._filter = {
-      operator: OB.Dal.CONTAINS,
-      value: filter
-    };
-    OB.Dal.find(OB.Model.Brand, criteria, successCallbackBrands, errorCallback);
+    OB.Dal.find(OB.Model.Brand, null, successCallbackBrands, errorCallback);
     return true;
   },
   brandsList: null,
@@ -159,24 +98,32 @@ enyo.kind({
   kind: 'OB.UI.ScrollableTableHeader',
   events: {
     onHideThisPopup: '',
-    onSelectBrand: ''
+    onSelectBrand: '',
+    onSearchAction: ''
   },
   components: [{
     style: 'display: table;',
     components: [{
-      style: 'display: table-cell; float:left',
-      name: 'doneBrandButton',
-      kind: 'OB.UI.SmallButton',
-      ontap: 'doneAction'
+      style: 'display: table-cell; width: 100%;',
+      components: [{
+        name: 'title',
+        style: 'text-align: center; vertical-align: middle'
+      }]
     }, {
-      name: 'title',
-      style: 'display: table-cell; width: 100%; text-align: center; vertical-align: middle'
+      style: 'display: table-cell;',
+      components: [{
+        name: 'doneBrandButton',
+        kind: 'OB.UI.SmallButton',
+        ontap: 'doneAction'
+      }]
     }, {
-      style: 'display: table-cell; float:right',
-      classes: 'btnlink-gray',
-      name: 'cancelBrandButton',
-      kind: 'OB.UI.SmallButton',
-      ontap: 'cancelAction'
+      style: 'display: table-cell;',
+      components: [{
+        classes: 'btnlink-gray',
+        name: 'cancelBrandButton',
+        kind: 'OB.UI.SmallButton',
+        ontap: 'cancelAction'
+      }]
     }]
   }],
   initComponents: function () {
@@ -204,15 +151,11 @@ enyo.kind({
   published: {
     characteristic: null
   },
-  executeOnHide: function () {
-    this.$.body.$.listBrands.$.brandslistitemprinter.$.theader.$.modalProductBrandHeader.clearAction();
-  },
   executeOnShow: function () {
     var i, j;
+    this.$.header.parent.addStyles('padding: 0px; border-bottom: 1px solid #cccccc');
     this.$.header.$.modalProductBrandTopHeader.$.title.setContent(OB.I18N.getLabel('OBMOBC_LblBrand'));
-    this.waterfall('onSearchAction', {
-      valueName: this.$.body.$.listBrands.$.brandslistitemprinter.$.theader.$.modalProductBrandHeader.$.filterText.getValue()
-    });
+    this.waterfall('onSearchAction');
   },
   i18nHeader: '',
   body: {
@@ -222,7 +165,8 @@ enyo.kind({
     this.inherited(arguments);
     this.$.closebutton.hide();
     this.$.header.createComponent({
-      kind: 'OB.UI.ModalProductBrandTopHeader'
+      kind: 'OB.UI.ModalProductBrandTopHeader',
+      style: 'border-bottom: 0px'
     });
   },
   init: function (model) {

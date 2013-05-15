@@ -9,64 +9,6 @@
 
 /*global enyo, Backbone, _ */
 
-/*header of scrollable table*/
-enyo.kind({
-  name: 'OB.UI.ModalProductChHeader',
-  kind: 'OB.UI.ScrollableTableHeader',
-  events: {
-    onSearchAction: '',
-    onClearAction: ''
-  },
-  handlers: {
-    onSearchActionByKey: 'searchAction',
-    onFiltered: 'searchAction'
-  },
-  components: [{
-    style: 'padding: 10px;',
-    components: [{
-      style: 'display: table;',
-      components: [{
-        style: 'display: table-cell; width: 100%;',
-        components: [{
-          kind: 'OB.UI.SearchInputAutoFilter',
-          name: 'filterText',
-          style: 'width: 100%',
-          isFirstFocus: true
-        }]
-      }, {
-        style: 'display: table-cell;',
-        components: [{
-          kind: 'OB.UI.SmallButton',
-          classes: 'btnlink-gray btn-icon-small btn-icon-clear',
-          style: 'width: 100px; margin: 0px 5px 8px 19px;',
-          ontap: 'clearAction'
-        }]
-      }, {
-        style: 'display: table-cell;',
-        components: [{
-          kind: 'OB.UI.SmallButton',
-          classes: 'btnlink-yellow btn-icon-small btn-icon-search',
-          style: 'width: 100px; margin: 0px 0px 8px 5px;',
-          ontap: 'searchAction'
-        }]
-      }]
-    }]
-  }],
-  clearAction: function () {
-    this.$.filterText.setValue('');
-    this.doClearAction();
-  },
-  searchAction: function () {
-    this.doSearchAction({
-      valueName: this.$.filterText.getValue()
-    });
-    return true;
-  },
-  initComponents: function () {
-    this.inherited(arguments);
-  }
-});
-
 /*items of collection*/
 enyo.kind({
   name: 'OB.UI.ListValuesLineCheck',
@@ -159,7 +101,6 @@ enyo.kind({
           name: 'valueslistitemprinter',
           kind: 'OB.UI.ScrollableTable',
           scrollAreaMaxHeight: '400px',
-          renderHeader: 'OB.UI.ModalProductChHeader',
           renderLine: 'OB.UI.ListValuesLine',
           renderEmpty: 'OB.UI.RenderEmpty'
         }]
@@ -173,13 +114,8 @@ enyo.kind({
   searchAction: function (inSender, inEvent) {
     var me = this,
         i, j, whereClause = '',
-        params = [],
-        filter = inEvent.valueName;
+        params = [];
     params.push(this.parent.parent.characteristic.get('characteristic_id'));
-    if (filter) {
-      whereClause = whereClause + ' and name like ?';
-      params.push('%' + filter + '%');
-    }
     OB.Dal.query(OB.Model.ProductChValue, "select distinct(id), name, characteristic_id, parent from m_ch_value where parent = '" + this.parentValue + "' and characteristic_id = ?" + whereClause, params, function (dataValues, me) {
       if (dataValues && dataValues.length > 0) {
         for (i = 0; i < dataValues.length; i++) {
@@ -208,7 +144,7 @@ enyo.kind({
   setCollection: function (inSender, inEvent) {
     var i, j, k;
     if (inEvent.parentValue !== 0) {
-      this.parent.parent.$.header.$.modalProductChTopHeader.$.backChButton.setDisabled(false);
+      this.parent.parent.$.header.$.modalProductChTopHeader.$.backChButton.addStyles('visibility: visible');
     }
 
     this.parentValue = inEvent.parentValue;
@@ -276,6 +212,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ModalProductChTopHeader',
   kind: 'OB.UI.ScrollableTableHeader',
+  style: '',
   events: {
     onHideThisPopup: '',
     onSelectCharacteristicValue: '',
@@ -317,7 +254,7 @@ enyo.kind({
   initComponents: function () {
     this.inherited(arguments);
     this.$.backChButton.setContent(OB.I18N.getLabel('OBMOBC_LblBack'));
-    this.$.backChButton.setDisabled(true);
+    this.$.backChButton.addStyles('visibility: hidden');
     this.$.doneChButton.setContent(OB.I18N.getLabel('OBMOBC_LblDone'));
     this.$.cancelChButton.setContent(OB.I18N.getLabel('OBMOBC_LblCancel'));
     this.selectedToSend = [];
@@ -419,18 +356,14 @@ enyo.kind({
     onAddToSelected: 'addToSelected',
     onGetPrevCollection: 'getPrevCollection'
   },
-  executeOnHide: function () {
-    this.$.body.$.listValues.$.valueslistitemprinter.$.theader.$.modalProductChHeader.clearAction();
-  },
   executeOnShow: function () {
     var i, j;
     this.$.body.$.listValues.parentValue = 0;
-    this.$.header.$.modalProductChTopHeader.$.backChButton.setDisabled(true);
+    this.$.header.parent.addStyles('padding: 0px; border-bottom: 1px solid #cccccc');
+    this.$.header.$.modalProductChTopHeader.$.backChButton.addStyles('visibility: hidden');
     this.characteristic = this.args.model;
     this.$.header.$.modalProductChTopHeader.$.title.setContent(this.args.model.get('_identifier'));
-    this.waterfall('onSearchAction', {
-      valueName: this.$.body.$.listValues.$.valueslistitemprinter.$.theader.$.modalProductChHeader.$.filterText.getValue()
-    });
+    this.waterfall('onSearchAction');
   },
   i18nHeader: '',
   body: {
@@ -440,7 +373,8 @@ enyo.kind({
     this.inherited(arguments);
     this.$.closebutton.hide();
     this.$.header.createComponent({
-      kind: 'OB.UI.ModalProductChTopHeader'
+      kind: 'OB.UI.ModalProductChTopHeader',
+      style: 'border-bottom: 0px'
     });
   },
   addToSelected: function (inSender, inEvent) {
@@ -489,8 +423,8 @@ enyo.kind({
         me.$.body.$.listValues.valuesList.reset(dataValues.models);
         //We take the first to know the parent
         me.$.body.$.listValues.parentValue = dataValues.models[0].get('parent');
-        if (me.parentValue === '0') { //root
-          me.$.header.$.modalProductChTopHeader.$.backChButton.setDisabled(true);
+        if (me.$.body.$.listValues.parentValue === '0') { //root
+          me.$.header.$.modalProductChTopHeader.$.backChButton.addStyles('visibility: hidden');
         }
       }
     }, function (tx, error) {
@@ -534,8 +468,6 @@ enyo.kind({
             checked: selected[aux].get('checked'),
             selected: selected[aux].get('selected')
           });
-          //          me.selected.push(selected[aux]);
-          //          me.countedValues++;
         } else {
           me.selected[index] = selected[aux];
         }

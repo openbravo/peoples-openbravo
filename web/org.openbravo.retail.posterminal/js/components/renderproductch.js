@@ -12,8 +12,8 @@
 enyo.kind({
   kind: 'OB.UI.SmallButton',
   name: 'OB.UI.RenderProductCh',
-  style: 'width: 86%; border: 2px solid #cccccc; padding: 0px',
-  classes: 'btnlink-white',
+  style: 'width: 86%; padding: 0px',
+  classes: 'btnlink-white-simple',
   events: {
     onShowPopup: ''
   },
@@ -35,7 +35,7 @@ enyo.kind({
       this.setContent(this.model.get('_identifier').substring(0, 10) + '...');
     }
     if (this.model.get('filtering')) {
-      this.addStyles('background-color: yellow');
+      this.addClass('btnlink-yellow-bold');
     }
   }
 });
