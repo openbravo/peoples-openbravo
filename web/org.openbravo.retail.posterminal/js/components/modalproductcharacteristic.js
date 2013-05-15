@@ -237,7 +237,7 @@ enyo.kind({
     }
   },
   hasSelectedChildren: function (selected, aux, rootObject, me) {
-    var j,k;
+    var j, k;
     me.exist = null;
     me.selected = selected;
     me.aux = aux;
@@ -258,6 +258,7 @@ enyo.kind({
       if (_.isNull(rootObject.get('childrenSelected')) || !rootObject.get('childrenSelected')) {
         rootObject.set('childrenSelected', me.exist);
       }
+      me.exist = null;
       if (dataValues && dataValues.length > 0) {
         me.hasSelectedChildrenTree(dataValues.models, rootObject);
       }
@@ -362,11 +363,19 @@ enyo.kind({
   },
   getChildren: function (selected, aux, checkedParent, me) {
     OB.Dal.query(OB.Model.ProductChValue, "select distinct(id), name, characteristic_id, parent " + "from m_ch_value where parent = '" + selected[aux].get('id') + "' ", [], function (dataValues, me) {
+      var index;
       if (dataValues && dataValues.length > 0) {
         if (!_.isUndefined(checkedParent)) {
           selected[aux].set('checked', checkedParent);
         }
-        me.selectedToSend.push(selected[aux]);
+        index = me.selectedToSend.map(function (e) {
+          return e.id;
+        }).indexOf(selected[aux].id);
+        if (index === -1) {
+          me.selectedToSend.push(selected[aux]);
+        } else if (!_.isNull(selected[aux].get('selected')) && !_.isUndefined(selected[aux].get('selected'))) {
+          me.selectedToSend[index] = selected[aux];
+        }
         if (!_.isUndefined(checkedParent)) {
           me.inspectTree(dataValues.models, checkedParent);
         } else {
@@ -376,7 +385,14 @@ enyo.kind({
         if (!_.isUndefined(checkedParent)) {
           selected[aux].set('checked', checkedParent);
         }
-        me.selectedToSend.push(selected[aux]);
+        index = me.selectedToSend.map(function (e) {
+          return e.id;
+        }).indexOf(selected[aux].id);
+        if (index === -1) {
+          me.selectedToSend.push(selected[aux]);
+        } else if (!_.isNull(selected[aux].get('selected')) && !_.isUndefined(selected[aux].get('selected'))) {
+          me.selectedToSend[index] = selected[aux];
+        }
         me.countingValues++;
         me.checkFinished();
       }
@@ -395,6 +411,9 @@ enyo.kind({
   published: {
     characteristic: null,
     selected: []
+  },
+  events: {
+    onAddToSelected: ''
   },
   handlers: {
     onAddToSelected: 'addToSelected',
@@ -428,6 +447,10 @@ enyo.kind({
     var index = this.selected.map(function (e) {
       return e.get('id');
     }).indexOf(inEvent.value.get('id'));
+    if (!inEvent.checked) {
+      inEvent.value.set('childrenSelected', false);
+      this.inspectDeselectTree([inEvent.value], inEvent.value);
+    }
     if (index !== -1) {
       inEvent.value.set('checked', inEvent.checked);
       inEvent.value.set('selected', inEvent.selected);
@@ -487,6 +510,38 @@ enyo.kind({
         me.inspectCountTree(dataValues.models);
       } else {
         me.countedValues++;
+      }
+    }, function (tx, error) {
+      OB.UTIL.showError("OBDAL error: " + error);
+    }, this);
+  },
+  inspectDeselectTree: function (selected, rootObject) {
+    var aux;
+    for (aux = 0; aux < selected.length; aux++) {
+      this.deselectChildren(selected, aux, rootObject, this);
+    }
+  },
+  deselectChildren: function (selected, aux, rootObject, me) {
+    OB.Dal.query(OB.Model.ProductChValue, "select distinct(id), name, characteristic_id, parent " + "from m_ch_value where parent = '" + selected[aux].get('id') + "' ", [], function (dataValues, me) {
+      var index = me.selected.map(function (e) {
+        return e.id;
+      }).indexOf(selected[aux].id);
+      if (!rootObject.get('selected') && rootObject.get('id') !== selected[aux].get('id')) {
+        selected[aux].set('selected', rootObject.get('selected'));
+        if (index === -1) {
+          me.doAddToSelected({
+            value: selected[aux],
+            checked: selected[aux].get('checked'),
+            selected: selected[aux].get('selected')
+          });
+          //          me.selected.push(selected[aux]);
+          //          me.countedValues++;
+        } else {
+          me.selected[index] = selected[aux];
+        }
+      }
+      if (dataValues && dataValues.length > 0) {
+        me.inspectDeselectTree(dataValues.models, rootObject);
       }
     }, function (tx, error) {
       OB.UTIL.showError("OBDAL error: " + error);
