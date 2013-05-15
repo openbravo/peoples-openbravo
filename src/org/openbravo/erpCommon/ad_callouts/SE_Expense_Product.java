@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,9 +29,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class SE_Expense_Product extends HttpSecureAppServlet {
@@ -88,6 +90,9 @@ public class SE_Expense_Product extends HttpSecureAppServlet {
     String cCurrencyID = "";
     BigDecimal qty = new BigDecimal(strqty);
     BigDecimal amount = null;
+
+    final Organization org = OBDal.getInstance()
+        .get(org.openbravo.model.timeandexpense.Sheet.class, strsTimeexpenseId).getOrganization();
 
     if (strDateexpense.equals("")) {
       strDateexpense = SEExpenseProductData.selectReportDate(this, strsTimeexpenseId).equals("") ? DateTimeData
@@ -166,7 +171,8 @@ public class SE_Expense_Product extends HttpSecureAppServlet {
     resultado.append(", new Array(\"inpexpenseamt\", " + amount.toPlainString() + ")");
     resultado.append(", new Array(\"inpinvoiceprice\", "
         + (priceActual.equals("") ? "\"\"" : priceActual) + ")");
-    String c_Currency_To_ID = Utility.getContext(this, vars, "$C_Currency_ID", "");
+    String c_Currency_To_ID = org.getCurrency().getId();
+
     // Checks if there is a conversion rate for each of the transactions of
     // the report
     String strConvRateErrorMsg = "";
@@ -177,7 +183,7 @@ public class SE_Expense_Product extends HttpSecureAppServlet {
       if (!cCurrencyID.equals(c_Currency_To_ID)) {
         try {
           convertedAmount = SEExpenseProductData.selectConvertedAmt(this, amount.toPlainString(),
-              cCurrencyID, c_Currency_To_ID, strDateexpense, vars.getClient(), vars.getOrg());
+              cCurrencyID, c_Currency_To_ID, strDateexpense, vars.getClient(), org.getId());
         } catch (ServletException e) {
           convertedAmount = "";
           myMessage = Utility.translateError(this, vars, vars.getLanguage(), e.getMessage());
