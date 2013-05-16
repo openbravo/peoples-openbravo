@@ -161,6 +161,8 @@ OB.Personalization.applyViewDefinition = function (persId, viewDefinition, stand
       }
 
       if (viewTabDefinition.grid) {
+        //clear grouping, will be applied later
+        view.viewGrid.clearGroupBy();
         view.viewGrid.setViewState(viewTabDefinition.grid);
         view.viewGrid.refreshContents();
       }
