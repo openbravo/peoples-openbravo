@@ -40,11 +40,11 @@ public class Terminal extends ProcessHQLQuery {
     String quotationsDocTypeId = pOSTerminal.getObposTerminaltype().getDocumentTypeForQuotations() == null ? null
         : pOSTerminal.getObposTerminaltype().getDocumentTypeForQuotations().getId();
     int lastDocumentNumber = POSUtils.getLastDocumentNumberForPOS(pOSTerminal.getSearchKey(),
-        pOSTerminal.getObposTerminaltype().getDocumentType().getId());
+        pOSTerminal.getObposTerminaltype().getDocumentType().getId()) + 1;
     int lastQuotationDocumentNumber = 0;
     if (quotationsDocTypeId != null) {
       lastQuotationDocumentNumber = POSUtils.getLastDocumentNumberForPOS(
-          pOSTerminal.getSearchKey(), quotationsDocTypeId);
+          pOSTerminal.getSearchKey(), quotationsDocTypeId) + 1;
     }
     String warehouseId = POSUtils.getWarehouseForTerminal(pOSTerminal).getId();
     final org.openbravo.model.pricing.pricelist.PriceList pricesList = POSUtils

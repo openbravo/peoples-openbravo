@@ -51,7 +51,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
       if (!ordersNotPaid || ordersNotPaid.length === 0) {
         // If there are no pending orders,
         //  add an initial empty order
-        orderlist.addNewOrder();
+        orderlist.addFirstOrder();
       } else {
         // The order object is stored in the json property of the row fetched from the database
         orderlist.reset(ordersNotPaid.models);
@@ -64,7 +64,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
     }, function () { //OB.Dal.find error
       // If there is an error fetching the pending orders,
       // add an initial empty order
-      orderlist.addNewOrder();
+      orderlist.addFirstOrder();
     });
   },
 
