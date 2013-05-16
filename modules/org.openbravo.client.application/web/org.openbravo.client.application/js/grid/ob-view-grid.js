@@ -3018,10 +3018,7 @@ isc.OBViewGrid.addProperties({
       }
     };
 
-    if (ficCallDone) {
-      // reset the new values as this can have changed because of a fic call
-      newValues = this.getEditValues(rowNum);
-    } else {
+    if (!ficCallDone) {
       var editForm = this.getEditForm(),
           focusItem = editForm.getFocusItem();
       if (focusItem && !focusItem.hasPickList) {
@@ -3037,6 +3034,9 @@ isc.OBViewGrid.addProperties({
         }
       }
     }
+    // reset the new values as this can have changed because of a fic call or in the blur event of the focused item
+    newValues = this.getEditValues(rowNum);
+
     previousExplicitOffline = isc.Offline.explicitOffline;
     isc.Offline.explicitOffline = false;
     this.Super('saveEditedValues', [rowNum, colNum, newValues, oldValues, editValuesID, editCompletionEvent, saveCallback]);
