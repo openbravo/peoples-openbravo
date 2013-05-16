@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -222,6 +222,9 @@ public class ActivationKey {
   private static final Long OUT_OF_PLATFORM_DEMAND_MAX_USERS = 2L;
   private static final String ON_DEMAND_PLATFORM_CHECK_URL = "http://localhost:20290/checkOnDemand?qry=";
 
+  /**
+   * Session types that are considered for user concurrency
+   */
   private static final List<String> ACTIVE_SESSION_TYPES = new ArrayList<String>() {
     {
       add("S");
@@ -970,6 +973,7 @@ public class ActivationKey {
         Restrictions.eq(Session.PROPERTY_SESSIONACTIVE, true),
         Restrictions.or(Restrictions.isNull(Session.PROPERTY_LASTPING),
             Restrictions.lt(Session.PROPERTY_LASTPING, lastValidPingTime))));
+    obCriteria.add(Restrictions.in(Session.PROPERTY_LOGINSTATUS, ACTIVE_SESSION_TYPES));
     obCriteria.add(Restrictions.ne(Session.PROPERTY_ID, currentSessionId));
 
     boolean sessionDeactivated = false;
