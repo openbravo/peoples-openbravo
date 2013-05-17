@@ -34,7 +34,18 @@
         SELECT count(*) as exist
         FROM DUAL
         WHERE EXISTS (SELECT 1 FROM ad_preference
-                      WHERE attribute = 'Period_Open_Close_Button_is_Updated' and attribute='updateTypeForDivideUp')
+                      WHERE attribute = 'Period_Open_Close_Button_is_Updated')
+      ]]>
+    </Sql>
+  </SqlMethod>
+  <SqlMethod name="isUpdated2" type="preparedStatement" return="boolean">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT count(*) as exist
+        FROM DUAL
+        WHERE EXISTS (SELECT 1 FROM ad_preference
+                      WHERE attribute='updateTypeForDivideUp')
       ]]>
     </Sql>
   </SqlMethod>
@@ -89,7 +100,7 @@
       ]]>
     </Sql>
   </SqlMethod>
-    <SqlMethod name="createPreference" type="preparedStatement" return="rowcount">
+    <SqlMethod name="createPreference2" type="preparedStatement" return="rowcount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
