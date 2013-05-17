@@ -1618,7 +1618,9 @@ isc.OBStandardView.addProperties({
       if (me.viewGrid.data) {
         var recordIndex = me.viewGrid.getRecordIndex(me.viewGrid.getSelectedRecord());
         data = OB.Utilities.Date.convertUTCTimeToLocalTime(data, me.viewGrid.completeFields);
-        me.viewGrid.data.updateCacheData(data, req);
+        if (me.viewGrid.data.updateCacheData) {
+          me.viewGrid.data.updateCacheData(data, req);
+        }
         me.viewGrid.selectRecord(me.viewGrid.getRecord(recordIndex));
         me.viewGrid.refreshRow(recordIndex);
         me.viewGrid.redraw();
