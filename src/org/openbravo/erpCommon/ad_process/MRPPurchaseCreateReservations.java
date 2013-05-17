@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2012 Openbravo SLU 
+ * All portions are Copyright (C) 2012-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -152,6 +152,8 @@ public class MRPPurchaseCreateReservations extends DalBaseProcess {
         OBDal.getInstance().getSession().clear();
       }
     }
+    outgoingRLs.close();
+    outgoingRLs.close();
     OBError message = new OBError();
     message.setType("Success");
     message.setTitle(OBMessageUtils.messageBD("Success"));

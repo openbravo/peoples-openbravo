@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012 Openbravo SLU
+ * All portions are Copyright (C) 2012-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -177,7 +177,8 @@ public class CostingRuleProcess implements Process {
     where.append("   and p." + Product.PROPERTY_ORGANIZATION + ".id in (:porgs)");
     where.append("   and exists (select 1 from " + MaterialTransaction.ENTITY_NAME);
     where.append("     where " + MaterialTransaction.PROPERTY_PRODUCT + " = p");
-    where.append("      and " + MaterialTransaction.PROPERTY_ORGANIZATION + " .id in (:childOrgs))");
+    where
+        .append("      and " + MaterialTransaction.PROPERTY_ORGANIZATION + " .id in (:childOrgs))");
 
     OBQuery<Product> pQry = OBDal.getInstance().createQuery(Product.class, where.toString());
     pQry.setFilterOnReadableOrganization(false);
@@ -266,6 +267,7 @@ public class CostingRuleProcess implements Process {
       }
       i++;
     }
+    trxs.close();
   }
 
   @Deprecated
@@ -316,6 +318,7 @@ public class CostingRuleProcess implements Process {
       }
       i++;
     }
+    stockLines.close();
     // Process closing physical inventories.
     for (CostingRuleInit cri : rule.getCostingRuleInitList()) {
       new InventoryCountProcess().processInventory(cri.getCloseInventory());
@@ -549,5 +552,6 @@ public class CostingRuleProcess implements Process {
         OBDal.getInstance().getSession().clear();
       }
     }
+    trxs.close();
   }
 }

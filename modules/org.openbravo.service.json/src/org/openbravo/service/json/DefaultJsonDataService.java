@@ -334,6 +334,7 @@ public class DefaultJsonDataService implements JsonDataService {
         log.debug("clearing in record " + i + " elapsed time " + (System.currentTimeMillis() - t));
       }
     }
+    scrollableResults.close();
     log.debug("Fetch took " + (System.currentTimeMillis() - t) + " ms");
   }
 

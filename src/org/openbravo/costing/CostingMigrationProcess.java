@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012 Openbravo SLU
+ * All portions are Copyright (C) 2012-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -288,6 +288,7 @@ public class CostingMigrationProcess implements Process {
             OBDal.getInstance().getSession().clear();
           }
         }
+        legacyCosts.close();
         SessionHandler.getInstance().commitAndStart();
       }
     }
@@ -322,6 +323,7 @@ public class CostingMigrationProcess implements Process {
       }
       i++;
     }
+    costs.close();
   }
 
   private void createRules() throws Exception {
@@ -426,6 +428,7 @@ public class CostingMigrationProcess implements Process {
       }
       i++;
     }
+    icls.close();
 
     OBDal.getInstance().flush();
     insertTrxCosts();
@@ -609,6 +612,7 @@ public class CostingMigrationProcess implements Process {
       }
       i++;
     }
+    trxs.close();
 
     log4j.debug("****** UpdateTrxLegacyCosts updated:" + i);
   }
@@ -653,6 +657,7 @@ public class CostingMigrationProcess implements Process {
       }
       i++;
     }
+    trxs.close();
     log4j.debug("****** updateWithCeroRemainingTrx updated:" + i);
   }
 

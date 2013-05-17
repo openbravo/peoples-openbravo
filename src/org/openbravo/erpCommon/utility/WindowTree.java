@@ -266,6 +266,7 @@ public class WindowTree extends HttpSecureAppServlet {
             OBDal.getInstance().getSession().clear();
           }
         }
+        entityData.close();
       }
 
       for (WindowTreeData elem : subList) {
