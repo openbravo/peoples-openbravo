@@ -65,7 +65,7 @@ public class Product extends ProcessHQLQuery {
             + ") AND ("
             + "pli.product.active = true"
             + ") AND "
-            + "(pli.product.$incrementalUpdateCriteria) order by pli.product.name");
+            + "((pli.product.$incrementalUpdateCriteria) or (ppp.$incrementalUpdateCriteria) ) order by pli.product.name");
 
     // discounts which type is defined as category
     products
