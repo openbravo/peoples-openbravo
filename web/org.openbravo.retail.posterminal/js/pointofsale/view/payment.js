@@ -18,14 +18,14 @@ enyo.kind({
     onButtonStatusChanged: 'buttonStatusChanged'
   },
   buttonStatusChanged: function (inSender, inEvent) {
-    var payment;
+    var payment, amt;
     if (!_.isUndefined(inEvent.value.payment)) {
       payment = inEvent.value.payment;
       this.receipt.selectedPayment = payment.payment.searchKey;
       if (!_.isNull(this.receipt.getChange()) && this.receipt.getChange()) {
-        this.$.change.setContent(OB.I18N.formatCurrency(OB.DEC.mul(this.receipt.getChange(), payment.mulrate)) + payment.symbol);
+        this.$.change.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(this.receipt.getChange(), payment.mulrate), payment.symbol, payment.currencySymbolAtTheRight));
       } else if (this.receipt.getPending()) {
-        this.$.totalpending.setContent(OB.I18N.formatCurrency(OB.DEC.mul(this.receipt.getPending(), payment.mulrate)) + payment.symbol);
+        this.$.totalpending.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(this.receipt.getPending(), payment.mulrate), payment.symbol, payment.currencySymbolAtTheRight));
       }
     }
   },
@@ -140,13 +140,15 @@ enyo.kind({
   updatePending: function () {
     var paymentstatus = this.receipt.getPaymentStatus();
     var symbol = '',
-        rate = OB.DEC.One;
+        rate = OB.DEC.One
+        symbolAtRight = true;
     if (!_.isUndefined(this.receipt) && !_.isUndefined(OB.POS.terminal.terminal.paymentnames[this.receipt.selectedPayment])) {
       symbol = OB.POS.terminal.terminal.paymentnames[this.receipt.selectedPayment].symbol;
       rate = OB.POS.terminal.terminal.paymentnames[this.receipt.selectedPayment].mulrate;
+      symbolAtRight = OB.POS.terminal.terminal.paymentnames[this.receipt.selectedPayment].currencySymbolAtRight;
     }
     if (paymentstatus.change) {
-      this.$.change.setContent(OB.I18N.formatCurrency(OB.DEC.mul(this.receipt.getChange(), rate)) + symbol);
+      this.$.change.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(this.receipt.getChange(), rate), symbol, symbolAtRight));
       this.$.change.show();
       this.$.changelbl.show();
     } else {
@@ -169,7 +171,7 @@ enyo.kind({
       this.$.creditsalesaction.hide();
       this.$.layawayaction.hide();
     } else {
-      this.$.totalpending.setContent(OB.I18N.formatCurrency(OB.DEC.mul(this.receipt.getPending(), rate)) + symbol);
+      this.$.totalpending.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(this.receipt.getPending(), rate), symbol, symbolAtRight));
       this.$.totalpending.show();
       if (this.receipt.get('orderType') === 1 || this.receipt.get('orderType') === 3) {
         this.$.totalpendinglbl.setContent(OB.I18N.getLabel('OBPOS_ReturnRemaining'));
