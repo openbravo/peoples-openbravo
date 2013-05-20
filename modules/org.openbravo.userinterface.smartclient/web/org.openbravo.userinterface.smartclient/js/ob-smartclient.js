@@ -103,7 +103,6 @@ isc.Layout.addProperties({
     if (!isc.isA.Array(toDestroy)) {
       toDestroy = [toDestroy];
     }
-    this.removeMembers(toDestroy);
     len = toDestroy.length;
     for (i = 0; i < len; i++) {
       if (toDestroy[nextIndex] && toDestroy[nextIndex].destroy) {
@@ -113,6 +112,7 @@ isc.Layout.addProperties({
         nextIndex = nextIndex + 1;
       }
     }
+    this.removeMembers(toDestroy);
   }
 });
 
