@@ -140,7 +140,7 @@ enyo.kind({
   updatePending: function () {
     var paymentstatus = this.receipt.getPaymentStatus();
     var symbol = '',
-        rate = OB.DEC.One
+        rate = OB.DEC.One,
         symbolAtRight = true;
     if (!_.isUndefined(this.receipt) && !_.isUndefined(OB.POS.terminal.terminal.paymentnames[this.receipt.selectedPayment])) {
       symbol = OB.POS.terminal.terminal.paymentnames[this.receipt.selectedPayment].symbol;

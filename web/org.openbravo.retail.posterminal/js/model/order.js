@@ -1032,6 +1032,10 @@
       payments.add(payment);
       this.adjustPayment();
     },
+    
+    overpaymentExists: function() {
+      return this.getPaymentStatus().overpayment?true:false;
+    },
 
     removePayment: function (payment) {
       var payments = this.get('payments');
