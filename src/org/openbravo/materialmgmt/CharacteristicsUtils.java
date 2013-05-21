@@ -19,9 +19,7 @@
 
 package org.openbravo.materialmgmt;
 
-import java.util.List;
-
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -36,12 +34,12 @@ public class CharacteristicsUtils {
       Characteristic characteristic) throws OBException {
     OBCriteria<ProductCharacteristicValue> obCriteria = OBDal.getInstance().createCriteria(
         ProductCharacteristicValue.class);
-    obCriteria.add(Expression.eq(ProductCharacteristicValue.PROPERTY_PRODUCT, product));
-    obCriteria.add(Expression
-        .eq(ProductCharacteristicValue.PROPERTY_CHARACTERISTIC, characteristic));
-    final List<ProductCharacteristicValue> bpgs = obCriteria.list();
-    if (bpgs.size() > 0) {
-      return bpgs.get(0).getCharacteristicValue();
+    obCriteria.add(Restrictions.eq(ProductCharacteristicValue.PROPERTY_PRODUCT, product));
+    obCriteria.add(Restrictions.eq(ProductCharacteristicValue.PROPERTY_CHARACTERISTIC,
+        characteristic));
+    obCriteria.setMaxResults(1);
+    if (obCriteria.count() > 0) {
+      return (CharacteristicValue) obCriteria.uniqueResult();
     } else {
       return null;
     }
