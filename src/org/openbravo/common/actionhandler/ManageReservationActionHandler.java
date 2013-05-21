@@ -52,7 +52,8 @@ public class ManageReservationActionHandler extends BaseProcessActionHandler {
   private static final Logger log = Logger.getLogger(ManageReservationActionHandler.class);
   private static final String strOrderLineTableId = "260";
   private static final String strReservationsTableId = "77264B07BB0E4FA483A07FB40C2E0FE0";
-  private static final String strResStockTableId = "8A36D18D1D164189B7C3AE892F310E11";
+  private static final String strResStockTableId = "D6079A4A6C2542678D9A50114367B967";
+  private static final String strResStockOrderTableId = "8A36D18D1D164189B7C3AE892F310E11";
 
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {
@@ -68,7 +69,8 @@ public class ManageReservationActionHandler extends BaseProcessActionHandler {
       if (strTableId.equals(strReservationsTableId) || strTableId.equals(strResStockTableId)) {
         final String strReservationId = jsonRequest.getString("inpmReservationId");
         reservation = OBDal.getInstance().get(Reservation.class, strReservationId);
-      } else if (strTableId.equals(strOrderLineTableId)) {
+      } else if (strTableId.equals(strOrderLineTableId)
+          || strTableId.equals(strResStockOrderTableId)) {
         final String strOrderLineId = jsonRequest.getString("C_OrderLine_ID");
         final OrderLine sol = OBDal.getInstance().get(OrderLine.class, strOrderLineId);
         reservation = ReservationUtils.getReservationFromOrder(sol);
