@@ -686,8 +686,12 @@ public class OrderLoader extends JSONProcessSimple {
           StockProposed stock = (StockProposed) bins.get(0);
           BigDecimal qty;
 
-          if (pendingQty.compareTo(new BigDecimal(stock.getQuantity())) > 0) {
-            qty = new BigDecimal(stock.getQuantity());
+          Object stockQty = stock.get("quantity");
+          if (stockQty instanceof Long) {
+            stockQty = new BigDecimal((Long) stockQty);
+          }
+          if (pendingQty.compareTo((BigDecimal) stockQty) > 0) {
+            qty = (BigDecimal) stockQty;
             pendingQty = pendingQty.subtract(qty);
           } else {
             qty = pendingQty;
