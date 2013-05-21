@@ -433,7 +433,7 @@ isc.OBNumberItem.addProperties({
 
     // Make sure the number is rounded using the number of decimal digits specified in the number typeInstance
     value = OB.Utilities.Number.OBPlainToOBMasked(this.getValue(), this.typeInstance.maskNumeric, this.typeInstance.decSeparator, this.typeInstance.groupSeparator);
-    this.setValue(value);
+    this.setValue(OB.Utilities.Number.OBMaskedToJS(value));
 
     if (this.grid && this.grid.isEditing && this.grid.isEditing()) {
       this.grid.setEditValue(this.grid.getEditRow(), this.name, this.getValue(), true, true);
