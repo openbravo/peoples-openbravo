@@ -222,8 +222,7 @@
           OB.UTIL.processPaidOrders(null);
         };
         errorCallback = function () {
-          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorProcessingCustomersPendingData'));
-          OB.UTIL.processPaidOrders(null);
+          //nothing to show
         };
         customersChangedNotProcessed.each(function (cus) {
           cus.set('json', enyo.json.parse(cus.get('json')));
