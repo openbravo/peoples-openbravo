@@ -499,7 +499,7 @@ public class OBQuery<E extends BaseOBObject> {
    */
   public String getWhereAndOrderBy() {
     // replace WHERE keyword to lowercase as hql exception is generated in org.hibernate.hql.PARSER
-    whereAndOrderBy = whereAndOrderBy.replaceAll("WHERE", "where");
+    whereAndOrderBy = whereAndOrderBy.replaceAll(" WHERE ", " where ");
     return whereAndOrderBy;
   }
 
