@@ -523,6 +523,9 @@ isc.OBGrid.addProperties({
           if (fld.clearDateValues) {
             fld.clearDateValues();
           }
+          if (fld.clearTreeValues) {
+            fld.clearTreeValues();
+          }
         }
       } else {
         this.filterEditor.setValuesAsCriteria(null);

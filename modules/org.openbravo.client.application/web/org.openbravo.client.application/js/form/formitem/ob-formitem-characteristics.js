@@ -391,7 +391,8 @@ isc.OBCharacteristicsFilterItem.addProperties({
    * Reusing same method as in OBMiniDateRangeItem. It is invoked when filter is removed
    * from grid.
    */
-  clearDateValues: function () {
+  clearTreeValues: function () {
+    this.filterDialog.tree.deselectAllRecords();
     delete this.internalValue;
   },
 
