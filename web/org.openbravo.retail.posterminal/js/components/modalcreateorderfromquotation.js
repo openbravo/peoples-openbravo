@@ -37,7 +37,6 @@ enyo.kind({
   kind: 'OB.UI.CheckboxButton',
   classes: 'modal-dialog-btn-check',
   checked: false,
-  i18nContent: 'OBPOS_QuotationUpdatePrices',
   init: function () {
     this.checked = true;
     this.addRemoveClass('active', this.checked);
@@ -51,14 +50,18 @@ enyo.kind({
   bodyContent: {},
   bodyButtons: {
     components: [{
-      style: 'height: 40px; width: 127px; float:left;'
+      style: 'height: 40px; width: 120px; float:left;'
     }, {
-      style: 'height: 40px; width: 50px; background-color: #ffffff; float:left',
+      style: 'height: 40px; width: 50px; background-color: rgb(226, 226, 226); float:left',
       components: [{
         kind: 'OB.UI.updateprices',
         myId: 'updatePricesCheck'
       }]
-    }, {
+    },{
+      style: 'text-align: left; padding: 11px; float: left; width: 248px; background: #dddddd;',
+      initComponents: function(){
+        this.setContent(OB.I18N.getLabel('OBPOS_QuotationUpdatePrices'));
+      }}, {
       style: 'clear: both;'
     }, {
       kind: 'OB.OBPOSPointOfSale.UI.Modals.btnModalCreateOrderAccept'
