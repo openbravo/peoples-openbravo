@@ -842,7 +842,7 @@ public class IssuesTest extends BaseTest {
   public void test23743() throws Exception {
     // create a OBQuery where clause with WHERE keyword and see query does not return exception when
     // fetching results or getting count
-    String whereClause = " AS orderline WHERE orderDate <='" + new Date() + "'";
+    String whereClause = " AS orderline WHERE orderDate <=now()";
     final OBQuery<OrderLine> ols = OBDal.getInstance().createQuery(OrderLine.class, whereClause);
     ols.setMaxResult(1);
     assertTrue(ols.list().size() >= 0);
