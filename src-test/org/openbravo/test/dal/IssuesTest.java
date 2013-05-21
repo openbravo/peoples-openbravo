@@ -839,6 +839,15 @@ public class IssuesTest extends BaseTest {
     assertTrue(copiedUom.getOrderLineList().isEmpty());
   }
 
+  public void test23743() throws Exception {
+    // create a OBQuery where clause with WHERE keyword and see query does not return exception when
+    // fetching results or getting count
+    String whereClause = " AS orderline WHERE orderDate <='" + new Date() + "'";
+    final OBQuery<OrderLine> ols = OBDal.getInstance().createQuery(OrderLine.class, whereClause);
+    ols.setMaxResult(1);
+    assertTrue(ols.list().size() >= 0);
+  }
+
   private static class Test22235 extends DalBaseProcess {
 
     private boolean errorOccured = true;
