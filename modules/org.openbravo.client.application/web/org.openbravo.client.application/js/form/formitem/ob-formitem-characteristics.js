@@ -372,6 +372,7 @@ isc.OBCharacteristicsFilterItem.addProperties({
         charCriteria = {
           operator: 'exists',
           existsQuery: 'exists (from ProductCharacteristicValue v where e = v.product and v.characteristicValue.id in ($value))',
+          fieldName: this.getCriteriaFieldName(),
           value: inValues
         };
 
