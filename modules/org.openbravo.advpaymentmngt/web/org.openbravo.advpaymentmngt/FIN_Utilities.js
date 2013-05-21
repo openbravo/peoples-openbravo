@@ -289,13 +289,13 @@ function updateConvertedAmounts(recalcExchangeRate) {
   var exchangeRateValue = exchangeRate.value;
 
   if (actualConverted && expectedConverted && exchangeRate) {
-	   actualConverted.value = formattedNumberOpTemp(actualConverted.value, 'round', precision, roundedMask, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
+    actualConverted.value = formattedNumberOpTemp(actualConverted.value, 'round', precision, roundedMask, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
     if (recalcExchangeRate) {
       if (actualConverted.value && actualPayment.value) {
         if (compare(actualPayment.value, '!=', 0)) {
           var actualConvertedValue = OB.Utilities.Number.OBMaskedToJS(actualConverted.value, globalDecSeparator, globalGroupSeparator);
           var actualPaymentValue = OB.Utilities.Number.OBMaskedToJS(actualPayment.value, globalDecSeparator, globalGroupSeparator);
-          exchangeRateValue = (actualConvertedValue/actualPaymentValue).toString();
+          exchangeRateValue = (actualConvertedValue / actualPaymentValue).toString();
           exchangeRateValue = exchangeRateValue.replace('.', globalDecSeparator);
           exchangeRate.value = formattedNumberOpTemp(actualConverted.value, '/', actualPayment.value, roundedMask, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
         }
