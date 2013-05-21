@@ -20,14 +20,16 @@ enyo.kind({
       name: 'thumbnail'
     }]
   }, {
-    style: 'float: left; width: 55%;',
+    style: 'float: left; width: 45%; ',
     components: [{
-      name: 'identifier',
-      style: 'padding-left: 5px;'
+      name: 'topLine'
+    }, {
+      style: 'color: #888888',
+      name: 'bottonLine'
     }]
   }, {
     name: 'price',
-    style: 'float: left; width: 20%; text-align: right; font-weight:bold;'
+    style: 'float: right; width: 20%; text-align: right; font-weight:bold;'
   }, {
     style: 'clear:both;'
   }, {
@@ -36,12 +38,14 @@ enyo.kind({
   }],
   initComponents: function () {
     this.inherited(arguments);
-    this.$.identifier.setContent(this.model.get('_identifier'));
+    this.$.topLine.setContent(this.model.get('_identifier'));
+    if (this.model.get('showchdesc')) {
+      this.$.bottonLine.setContent(this.model.get('characteristicDescription'));
+    }
     this.$.price.setContent(OB.I18N.formatCurrency(this.model.get('standardPrice')));
     this.$.thumbnail.setImg(this.model.get('img'));
     if (this.model.get('isGeneric')) {
-      //      this.$.generic.setContent(OB.I18N.getLabel('OBPOS_LblGeneric'));
-      this.$.generic.setContent('Generic');
+      this.$.generic.setContent(OB.I18N.getLabel('OBMOBC_LblGeneric'));
     }
   }
 });
