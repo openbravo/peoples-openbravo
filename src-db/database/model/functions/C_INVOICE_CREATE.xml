@@ -131,7 +131,13 @@
           ol.gross_unit_price,
           ol.grosspricestd,
           ol.grosspricelist, 
-          sl.explode
+          sl.explode,
+          ol.C_Project_ID, 
+          ol.C_Bpartner_ID, 
+          ol.A_Asset_ID,
+          ol.C_Costcenter_ID,
+          ol.User1_ID, 
+          ol.User2_ID
         FROM M_INOUT s, M_INOUTLINE sl
         RIGHT JOIN C_ORDERLINE ol
           ON sl.C_OrderLine_ID=ol.C_OrderLine_ID
@@ -748,8 +754,8 @@
                                                and c_orderline_id = (SELECT BOM_parent_id 
                                                                      FROM c_orderline 
                                                                      WHERE c_orderline_id = ptr_sl.c_orderline_id)),
-                        ptr_sl.C_Project_ID, ptr_sl.C_Bpartner_ID, ptr_sl.A_Asset_ID,
-                        ptr_sl_C_Costcenter_ID, ptr_sl.User1_ID, ptr_sl.User2_ID
+                        ptr_sl.C_Project_ID, ptr_sl.C_BPartner_ID, ptr_sl.A_Asset_ID,
+                        ptr_sl.C_Costcenter_ID, ptr_sl.User1_ID, ptr_sl.User2_ID
                       )
                       ;
                   END IF;--Next_S_Line
