@@ -246,7 +246,9 @@ public class OBQuery<E extends BaseOBObject> {
 
   String createQueryString() {
     // split the orderby and where
-    final String qryStr = getWhereAndOrderBy();
+    String qryStr = getWhereAndOrderBy();
+    // replace WHERE keyword to lowercase as hql exception is generated in org.hibernate.hql.PARSER
+    qryStr = qryStr.replaceAll("WHERE", "where");
     final String orderByClause;
     String whereClause;
     final int orderByIndex = qryStr.toLowerCase().indexOf(ORDERBY);
