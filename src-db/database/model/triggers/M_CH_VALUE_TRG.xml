@@ -53,7 +53,7 @@ BEGIN
           ad_tree_id, node_id, parent_id,
           seqno
       ) VALUES (
-          get_uuid(), :NEW.ad_client_id, :NEW.ad_org_id, :NEW.isactive,
+          get_uuid(), :NEW.ad_client_id, '0', :NEW.isactive,
           :NEW.created, :NEW.createdby, :NEW.updated, :NEW.updatedby,
           v_tree_id, :NEW.m_ch_value_id, v_parent_id,
           -- Summary Nodes first

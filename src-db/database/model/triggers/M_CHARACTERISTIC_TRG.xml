@@ -34,8 +34,7 @@ BEGIN
       FROM ad_tree
       WHERE treetype = 'CH'
         AND isactive = 'Y'
-        AND ad_client_id = :NEW.ad_client_id
-        AND ad_org_isinnaturaltree(ad_org_id, :NEW.ad_org_id, ad_client_id) = 'Y';
+        AND ad_client_id = :NEW.ad_client_id;
       IF (v_count > 0) THEN
         :NEW.ad_tree_id := v_tree_id;
       ELSE
@@ -46,7 +45,7 @@ BEGIN
             created, createdby, updated, updatedby,
             name, description, treetype, isallnodes
         ) VALUES (
-            v_tree_id, :NEW.ad_client_id, :NEW.ad_org_id, :NEW.isactive,
+            v_tree_id, :NEW.ad_client_id, '0', :NEW.isactive,
             now(), :NEW.createdby, now(), :NEW.updatedby,
             'Product Characteristic tree', null, 'CH', 'Y'
         );
