@@ -159,7 +159,10 @@ BEGIN
 				if(v_Count>0) THEN
 			    UPDATE C_ValidCombination
 			      SET Updated=now(), isactive = 'Y' 		          
-			      WHERE Account_ID=:new.C_ElementValue_ID;
+			      WHERE Account_ID=:new.C_ElementValue_ID
+			        AND C_AcctSchema_ID in (SELECT C_AcctSchema_ID
+			                                FROM C_AcctSchema
+			                                WHERE isactive = 'Y');
 			  ELSE
 		  	    FOR cur_AcctSchema IN
 			        (SELECT C_AcctSchema_ID
