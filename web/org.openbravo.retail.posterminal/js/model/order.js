@@ -899,7 +899,9 @@
       this.set('isQuotation', false);
       this.set('generateInvoice', OB.POS.modelterminal.get('terminal').terminalType.generateInvoice);
       this.set('documentType', OB.POS.modelterminal.get('terminal').terminalType.documentType);
+      this.set('createdBy', OB.POS.modelterminal.get('orgUserId'));
       this.set('hasbeenpaid', 'N');
+      this.set('isPaid', false);
       this.set('isEditable', true);
       this.set('orderDate', new Date());
       documentseq = OB.POS.modelterminal.get('documentsequence') + 1;
@@ -916,6 +918,9 @@
     reactivateQuotation: function () {
       this.set('hasbeenpaid', 'N');
       this.set('isEditable', true);
+      this.set('createdBy', OB.POS.modelterminal.get('orgUserId'));
+      this.set('oldId', this.get('id'));
+      this.set('id', null);
       this.save();
     },
 
