@@ -487,16 +487,7 @@
     },
     windows: null,
     navigate: function (route) {
-      //HACK -> when f5 in login page
-      //the route to navigate is the same that we are.
-      //Backbone doesn't navigates
-      //With this hack allways navigate.
-      if (route === Backbone.history.fragment) {
-        Backbone.history.fragment = '';
-      }
-      this.modelterminal.router.navigate(route, {
-        trigger: true
-      });
+      this.modelterminal.navigate(route);
     },
     registerWindow: function (window) {
       OB.MobileApp.windowRegistry.registerWindow(window);
