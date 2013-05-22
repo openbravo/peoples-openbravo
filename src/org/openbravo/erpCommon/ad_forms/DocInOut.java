@@ -558,7 +558,8 @@ public class DocInOut extends AcctServer {
             if (trxCost == null) {
               Map<String, String> parameters = getNotCalculatedCostParameters(trx);
               setMessageResult(conn, STATUS_NotCalculatedCost, "error", parameters);
-              throw new IllegalStateException();
+              setStatus(STATUS_NotCalculatedCost);
+              return false;
             }
           } finally {
             OBContext.restorePreviousMode();
