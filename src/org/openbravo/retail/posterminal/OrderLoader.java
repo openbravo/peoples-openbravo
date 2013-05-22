@@ -203,7 +203,8 @@ public class OrderLoader extends JSONProcessSimple {
 
   public JSONObject saveOrder(JSONObject jsonorder) throws Exception {
 
-    if (jsonorder.getLong("orderType") != 2 && !jsonorder.getBoolean("isLayaway")
+    boolean isQuotation = jsonorder.has("isQuotation") && jsonorder.getBoolean("isQuotation");
+    if (jsonorder.getLong("orderType") != 2 && !jsonorder.getBoolean("isLayaway") && !isQuotation
         && verifyOrderExistance(jsonorder)) {
       return successMessage(jsonorder);
     }
@@ -216,7 +217,6 @@ public class OrderLoader extends JSONProcessSimple {
     Invoice invoice = null;
     boolean sendEmail = false;
     TriggerHandler.getInstance().disable();
-    boolean isQuotation = jsonorder.has("isQuotation") && jsonorder.getBoolean("isQuotation");
     isLayaway = jsonorder.has("orderType") && jsonorder.getLong("orderType") == 2
         && jsonorder.getDouble("payment") < jsonorder.getDouble("gross");
     partialpayLayaway = jsonorder.getBoolean("isLayaway")
