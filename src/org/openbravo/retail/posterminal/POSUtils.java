@@ -283,9 +283,9 @@ public class POSUtils {
     String sqlToExecute;
 
     if (curDbms.equals("POSTGRE")) {
-      sqlToExecute = "select max(a.docno) from (select to_number(substring(documentno, '/([0-9]+)$')) docno from c_order where em_obpos_applications_id= (select obpos_applications_id from obpos_applications where value = ?) and c_doctype_id = ? ) a";
+      sqlToExecute = "select max(a.docno) from (select to_number(substring(documentno, '/([0-9]+)$')) docno from c_order where em_obpos_applications_id= (select obpos_applications_id from obpos_applications where value = ?) and c_doctype_id = ? and documentno like (select orderdocno_prefix from obpos_applications where value = ?)||'%') a";
     } else if (curDbms.equals("ORACLE")) {
-      sqlToExecute = "select max(a.docno) from (select to_number(substr(REGEXP_SUBSTR(documentno, '/([0-9]+)$'), 2)) docno from c_order where em_obpos_applications_id= (select obpos_applications_id from obpos_applications where value = ?) and c_doctype_id = ? ) a";
+      sqlToExecute = "select max(a.docno) from (select to_number(substr(REGEXP_SUBSTR(documentno, '/([0-9]+)$'), 2)) docno from c_order where em_obpos_applications_id= (select obpos_applications_id from obpos_applications where value = ?) and c_doctype_id = ? and documentno like (select orderdocno_prefix from obpos_applications where value = ?)||'%' ) a";
     } else {
       // unknow DBMS
       // shouldn't happen
@@ -296,6 +296,7 @@ public class POSUtils {
     SQLQuery query = OBDal.getInstance().getSession().createSQLQuery(sqlToExecute);
     query.setString(0, searchKey);
     query.setString(1, documentTypeId);
+    query.setString(2, searchKey);
     List result = query.list();
     if (result.size() == 0 || result.get(0) == null) {
       return 0;
