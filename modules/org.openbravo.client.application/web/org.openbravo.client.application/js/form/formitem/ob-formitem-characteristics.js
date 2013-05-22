@@ -319,6 +319,9 @@ isc.OBCharacteristicsFilterItem.addClassProperties({
 });
 
 isc.OBCharacteristicsFilterItem.addProperties({
+  defaultHqlExists: 'exists (from ProductCharacteristicValue v where e = v.product and v.characteristicValue.id in ($value))',
+  productSelectorHqlExists: 'exists (from ProductCharacteristicValue v where e.product = v.product and v.characteristicValue.id in ($value))',
+  productSelectorID: '2E64F551C7C4470C80C29DBA24B34A5F',
   showPickerIcon: false,
   filterDialogConstructor: isc.OBCharacteristicsFilterDialog,
   pickerIconDefaults: {
@@ -371,10 +374,15 @@ isc.OBCharacteristicsFilterItem.addProperties({
 
         charCriteria = {
           operator: 'exists',
-          existsQuery: 'exists (from ProductCharacteristicValue v where e = v.product and v.characteristicValue.id in ($value))',
           fieldName: this.getCriteriaFieldName(),
           value: inValues
         };
+
+        if (this.selectorWindow && this.selectorWindow.selector && this.selectorWindow.selector.selectorDefinitionId === this.productSelectorID) {
+          charCriteria.existsQuery = this.productSelectorHqlExists;
+        } else {
+          charCriteria.existsQuery = this.defaultHqlExists;
+        }
 
         result.criteria.push(charCriteria);
       }
