@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2012 Openbravo SLU
+ * All portions are Copyright (C) 2001-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -463,7 +463,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
           strPosition = ReportGeneralLedgerJournalData.selectCountDirect(this,
               Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
               Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
-              strTable, strRecord, data[0].dateacct, data[0].identifier);
+              strTable, strRecord, strFactAcctGroupId, data[0].dateacct, data[0].identifier);
       }
     } else if (vars.commandIn("DIRECT")) {
       data = ReportGeneralLedgerJournalData.selectDirect(this,
@@ -474,7 +474,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
         strPosition = ReportGeneralLedgerJournalData.selectCountDirect(this,
             Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
             Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"), strTable,
-            strRecord, data[0].dateacct, data[0].identifier);
+            strRecord, strFactAcctGroupId, data[0].dateacct, data[0].identifier);
     } else if (vars.commandIn("DIRECT2")) {
       data = ReportGeneralLedgerJournalData.selectDirect2(this,
           Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),

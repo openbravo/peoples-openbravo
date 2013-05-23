@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2012 Openbravo SLU
+ * All portions are Copyright (C) 2001-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -200,6 +200,7 @@
         WHERE F.AD_CLIENT_ID IN ('1')
         AND F.AD_ORG_ID IN('1')
         AND 1=1
+        AND F.fact_acct_group_id = ?
         AND (CASE (SELECT MAX(ISSOTRX) FROM C_DOCTYPE D 
         WHERE D.DOCBASETYPE = F.DOCBASETYPE) WHEN 'N' THEN COALESCE(T.PO_WINDOW_ID, T.AD_WINDOW_ID) ELSE T.AD_WINDOW_ID END) = W.AD_WINDOW_ID 
         GROUP BY F.DATEACCT, F.FACT_ACCT_GROUP_ID) AA
@@ -209,6 +210,7 @@
     <Parameter name="adUserOrg" type="replace" optional="true" after="AND F.AD_ORG_ID IN(" text="'1'"/>
     <Parameter name="table" optional="true" after="AND 1=1"><![CDATA[ AND f.ad_table_Id = ?]]></Parameter>
     <Parameter name="record" optional="true" after="AND 1=1"><![CDATA[ AND f.record_Id = ?]]></Parameter>
+    <Parameter name="factAcctGroup"/>
     <Parameter name="dateAcct"/>
     <Parameter name="dateAcct"/>
     <Parameter name="factAcctGroupId"/>
