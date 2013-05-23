@@ -234,7 +234,8 @@ isc.OBCharacteristicsFilterDialog.addProperties({
   },
 
   initWidget: function () {
-    var me = this;
+    var me = this,
+        dataArrived, checkInitialNodes, getNodeByID;
 
     this.Super('initWidget', arguments);
 
@@ -246,10 +247,62 @@ isc.OBCharacteristicsFilterDialog.addProperties({
     this.mainLayout.addMember(this.selectionVisualization);
 
 
+
+    /**
+     * Overrides dataArrived to initialize the tree initial selection
+     * based on the filter initial criteria
+     */
+    dataArrived = function () {
+      var internalValue, nodeList, i, j;
+      this.Super('dataArrived', arguments);
+      if (this.topElement && this.topElement.creator && this.topElement.creator.internalValue) {
+        this.checkInitialNodes(this.topElement.creator.internalValue);
+      }
+
+    };
+
+    /**
+     * Marks the checkboxes of the nodes that
+     * are present in the initial criteria
+     */
+    checkInitialNodes = function (internalValue) {
+      var c, v, value, node, characteristic;
+      for (c in internalValue) {
+        if (internalValue.hasOwnProperty(c)) {
+          characteristic = internalValue[c];
+          for (v = 0; v < characteristic.values.length; v++) {
+            value = characteristic.values[v];
+            if (value.filter) {
+              node = this.getNodeByID(value.value);
+              if (node) {
+                this.selectRecord(node);
+              }
+            }
+          }
+        }
+      }
+    };
+
+    /**
+     * Returns a tree node given its id
+     */
+    getNodeByID = function (nodeId) {
+      var i, node, nodeList = this.data.getNodeList();
+      for (i = 0; i < nodeList.length; i++) {
+        node = nodeList[i];
+        if (node.id === nodeId) {
+          return node;
+        }
+      }
+      return null;
+    };
+
     this.tree = isc.TreeGrid.create({
       showHeader: false,
-
       autoFetchData: true,
+      dataArrived: dataArrived,
+      checkInitialNodes: checkInitialNodes,
+      getNodeByID: getNodeByID,
       loadDataOnDemand: false,
       // loading the whole tree in a single request
       height: 400,
@@ -340,6 +393,13 @@ isc.OBCharacteristicsFilterItem.addProperties({
     }
   },
 
+
+  setCriterion: function (criterion) {
+    if (criterion && criterion.internalValue) {
+      this.internalValue = criterion.internalValue;
+    }
+  },
+
   /**
    * Criterion obtained queries the text field with the concatenation of all characteristics.
    * 
@@ -375,7 +435,8 @@ isc.OBCharacteristicsFilterItem.addProperties({
         charCriteria = {
           operator: 'exists',
           fieldName: this.getCriteriaFieldName(),
-          value: inValues
+          value: inValues,
+          internalValue: this.internalValue
         };
 
         if (this.selectorWindow && this.selectorWindow.selector && this.selectorWindow.selector.selectorDefinitionId === this.productSelectorID) {
