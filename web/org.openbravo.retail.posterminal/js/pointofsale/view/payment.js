@@ -295,7 +295,7 @@ enyo.kind({
   },
   kind: 'OB.UI.RegularButton',
   classes: 'btn-icon-adaptative btn-icon-check btnlink-green',
-  style: 'width: 73px',
+  style: 'width: 73px; height: 43.37px;',
   tap: function () {
     this.doExactPayment();
   }
