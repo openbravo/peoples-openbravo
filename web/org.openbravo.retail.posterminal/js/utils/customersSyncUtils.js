@@ -47,7 +47,7 @@
             OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorRemovingLocallyProcessedCustomer'));
           });
         }
-      });
+      }, null, null, 4000);
     }
   };
 }());

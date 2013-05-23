@@ -48,7 +48,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.Button',
   name: 'OB.OBPOSPointOfSale.UI.customers.assigncustomertoticket',
-  style: 'width: 150px; margin: 0px 0px 8px 5px;',
+  style: 'margin: 0px 0px 8px 5px;',
   classes: 'btnlink btnlink-small',
   handlers: {
     onSetCustomer: 'setCustomer'
@@ -86,11 +86,9 @@ enyo.kind({
     onSearchAction: ''
   },
   components: [{
-    style: 'padding: 10px 500px 10px 500px;',
     components: [{
-      style: 'display: table;',
+      style: 'display: table; margin: 0 auto;',
       components: [{
-        style: 'display: table-cell;',
         components: [{
           kind: 'OB.UI.Button',
           handlers: {

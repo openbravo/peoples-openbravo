@@ -14,7 +14,7 @@
   OB = window.OB || {};
   OB.UTILS = window.OB.UTILS || {};
 
-  OB.UTIL.processPaidOrders = function (model) {
+  OB.UTIL.processPaidOrders = function (model, orderSucessCallback) {
     // Processes the paid, unprocessed orders
     var me = this,
         criteria = {
@@ -30,6 +30,10 @@
           order.set('isbeingretriggered', 'Y');
         });
         successCallback = function () {
+          if (orderSucessCallback) {
+            orderSucessCallback(model);
+            return;
+          }
           OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgSuccessProcessOrder'));
         };
         errorCallback = function () {
@@ -78,7 +82,7 @@
             successCallback();
           }
         }
-      });
+      }, null, null, 4000);
     }
   };
 }());
