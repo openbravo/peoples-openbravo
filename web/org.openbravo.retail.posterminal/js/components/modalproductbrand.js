@@ -146,7 +146,7 @@ enyo.kind({
 }); /*Modal definiton*/
 enyo.kind({
   name: 'OB.UI.ModalProductBrand',
-  topPosition: '125px',
+  topPosition: '170px',
   kind: 'OB.UI.Modal',
   published: {
     characteristic: null
