@@ -37,7 +37,6 @@
           OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgSuccessProcessOrder'));
         };
         errorCallback = function () {
-          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorProcessOrder'));
         };
         OB.UTIL.showAlert.display(OB.I18N.getLabel('OBPOS_ProcessPendingOrders'), OB.I18N.getLabel('OBPOS_Info'));
         OB.UTIL.processOrders(model, ordersPaidNotProcessed, successCallback, errorCallback);
