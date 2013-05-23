@@ -39,7 +39,7 @@ public class CharacteristicsUtils {
         characteristic));
     obCriteria.setMaxResults(1);
     if (obCriteria.count() > 0) {
-      return (CharacteristicValue) obCriteria.uniqueResult();
+      return ((ProductCharacteristicValue) obCriteria.uniqueResult()).getCharacteristicValue();
     } else {
       return null;
     }
