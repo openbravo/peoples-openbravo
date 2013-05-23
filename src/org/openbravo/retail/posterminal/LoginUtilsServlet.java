@@ -8,6 +8,8 @@
  */
 package org.openbravo.retail.posterminal;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
@@ -15,6 +17,10 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
+import org.hibernate.criterion.Restrictions;
+import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.client.kernel.RequestContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.mobile.core.login.MobileCoreLoginUtilsServlet;
 
@@ -124,6 +130,23 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
     }
     result.put("data", data);
     return result;
+  }
+
+  @Override
+  protected JSONObject getPrerrenderData(HttpServletRequest request) throws JSONException {
+    if (RequestContext.get().getSessionAttribute("POSTerminal") == null) {
+      final VariablesSecureApp vars = new VariablesSecureApp(request);
+      final String terminalSearchKey = vars.getStringParameter("terminalName");
+      OBCriteria<OBPOSApplications> qApp = OBDal.getInstance().createCriteria(
+          OBPOSApplications.class);
+      qApp.add(Restrictions.eq(OBPOSApplications.PROPERTY_SEARCHKEY, terminalSearchKey));
+      qApp.setFilterOnReadableOrganization(false);
+      qApp.setFilterOnReadableClients(false);
+      List<OBPOSApplications> apps = qApp.list();
+      OBPOSApplications terminal = apps.get(0);
+      RequestContext.get().setSessionAttribute("POSTerminal", terminal.getId());
+    }
+    return super.getPrerrenderData(request);
   }
 
   @Override
