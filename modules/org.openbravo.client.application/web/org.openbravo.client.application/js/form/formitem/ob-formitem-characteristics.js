@@ -79,6 +79,12 @@ isc.OBCharacteristicsItem.addProperties({
 
     // actual value is the one in DB
     this.setValue(value.dbValue);
+  },
+
+  destroy: function () {
+    this.canvas.destroy();
+    this.canvas = null;
+    this.Super('destroy', arguments);
   }
 });
 
@@ -488,5 +494,12 @@ isc.OBCharacteristicsFilterItem.addProperties({
 
   showDialog: function () {
     this.filterDialog.show();
+  },
+
+  destroy: function () {
+    this.filterDialog.destroy();
+    this.filterDialog = null;
+    this.Super('destroy', arguments);
+
   }
 });
