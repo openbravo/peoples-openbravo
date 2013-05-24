@@ -495,7 +495,7 @@ public class AdvancedQueryBuilder {
                 && referencedTable.getDisplayedColumn().isActive()) {
               useProperty = property.getEntity().getPropertyByColumnName(
                   referencedTable.getDisplayedColumn().getDBColumnName());
-              final int index = useFieldName.indexOf(DalUtil.DOT);
+              final int index = useFieldName.lastIndexOf(DalUtil.DOT);
               useFieldName = useFieldName.substring(0, index + 1) + useProperty.getName();
               break;
             }
