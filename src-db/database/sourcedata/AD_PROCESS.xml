@@ -4534,8 +4534,8 @@ This operation can take a long time to complete.]]></HELP>
 <!--800174-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800174-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800174-->  <VALUE><![CDATA[RV_ReportProductionJR]]></VALUE>
-<!--800174-->  <NAME><![CDATA[Production Report]]></NAME>
-<!--800174-->  <DESCRIPTION><![CDATA[Report Production]]></DESCRIPTION>
+<!--800174-->  <NAME><![CDATA[BOM Production Report]]></NAME>
+<!--800174-->  <DESCRIPTION><![CDATA[BOM Report Production]]></DESCRIPTION>
 <!--800174-->  <HELP><![CDATA[Report Production]]></HELP>
 <!--800174-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--800174-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
