@@ -20,6 +20,7 @@
 package org.openbravo.materialmgmt;
 
 import java.util.Map;
+import java.util.Set;
 
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
@@ -57,18 +58,21 @@ public class ProductCharacteristicsDS extends DefaultDataSourceService {
     OBContext.setAdminMode(true);
     try {
 
-      String hql = //
-      "      select c.id, c.name, v.id, v.name, tn.reportSet  " //
-          + "  from ADTreeNode tn,                            " //
-          + "           CharacteristicValue v,                " //
-          + "           Characteristic c                      " //
-          + " where tn.tree.typeArea ='CH'                    " //
-          + "   and tn.node = v.id                            " //
-          + "   and v.characteristic = c                      " //
-          + " order by c.name,                                " //
-          + "       coalesce(tn.reportSet, '-1'),             " //
-          + "       tn.sequenceNumber,                        " //
-          + "       v.sequenceNumber                          ";
+      StringBuilder hqlBuilder = new StringBuilder();
+      hqlBuilder.append(" select c.id, c.name, v.id, v.name, tn.reportSet ");
+      hqlBuilder.append(" from ADTreeNode tn, ");
+      hqlBuilder.append("      CharacteristicValue v, ");
+      hqlBuilder.append("      Characteristic c ");
+      hqlBuilder.append(" where tn.tree.typeArea ='CH'");
+      hqlBuilder.append(" and tn.node = v.id");
+      hqlBuilder.append(" and v.characteristic = c");
+      hqlBuilder.append(this.getClientOrgFilter());
+      hqlBuilder.append(" order by c.name, ");
+      hqlBuilder.append("          coalesce(tn.reportSet, '-1'), ");
+      hqlBuilder.append("          tn.sequenceNumber, ");
+      hqlBuilder.append("          v.sequenceNumber ");
+
+      String hql = hqlBuilder.toString();
 
       // TODO: client/org security in the query
 
@@ -125,5 +129,26 @@ public class ProductCharacteristicsDS extends DefaultDataSourceService {
     } finally {
       OBContext.restorePreviousMode();
     }
+  }
+
+  private String getClientOrgFilter() {
+    String clientId = OBContext.getOBContext().getCurrentClient().getId();
+    String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
+    final Set<String> orgs = OBContext.getOBContext().getOrganizationStructureProvider()
+        .getNaturalTree(orgId);
+
+    StringBuilder hqlBuilder = new StringBuilder();
+    hqlBuilder.append(" and c.client.id = '" + clientId + "' ");
+    hqlBuilder.append(" and c.organization.id in (");
+    boolean addComma = false;
+    for (String org : orgs) {
+      if (addComma) {
+        hqlBuilder.append(",");
+      }
+      hqlBuilder.append("'" + org + "'");
+      addComma = true;
+    }
+    hqlBuilder.append(") ");
+    return hqlBuilder.toString();
   }
 }
