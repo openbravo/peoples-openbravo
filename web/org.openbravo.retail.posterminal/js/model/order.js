@@ -914,6 +914,7 @@
         OB.Model.Discounts.applyPromotions(this);
       }
       OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationCreatedOrder'));
+      this.trigger('orderCreatedFromQuotation');
     },
     reactivateQuotation: function () {
       this.set('hasbeenpaid', 'N');
