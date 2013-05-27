@@ -544,14 +544,14 @@
                     v_Reference, NULL, 0, 0,
                     0, 0, 0, NULL,
                     0, NULL, NULL, 0, 
-                    ptr_ol.explode, (SELECT c_invoiceline_id 
+                    ptr_sl.explode, (SELECT c_invoiceline_id 
                                             FROM c_invoiceline 
                                             WHERE c_invoice_id=p_Invoice_ID 
                                                and c_orderline_id = (SELECT BOM_parent_id 
                                                                      FROM c_orderline 
-                                                                     WHERE c_orderline_id = ptr_ol.c_orderline_id)),
-                    ptr_ol.C_Project_ID, ptr_ol.C_Bpartner_ID, ptr_ol.A_Asset_ID,
-                    ptr_ol.C_Costcenter_ID, ptr_ol.User1_ID, ptr_ol.User2_ID
+                                                                     WHERE c_orderline_id = ptr_sl.c_orderline_id)),
+                    ptr_sl.C_Project_ID, ptr_sl.C_Bpartner_ID, ptr_sl.A_Asset_ID,
+                    ptr_sl.C_Costcenter_ID, ptr_sl.User1_ID, ptr_sl.User2_ID
                   )
                   ;
               END IF;
