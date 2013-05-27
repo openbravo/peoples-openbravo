@@ -49,6 +49,8 @@ import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.module.ModuleDBPrefix;
 import org.openbravo.model.ad.system.Client;
+import org.openbravo.model.ad.ui.Field;
+import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.utility.DataSet;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.service.system.SystemValidationResult.SystemValidationType;
@@ -221,6 +223,7 @@ public class DatabaseValidator implements SystemValidator {
         }
         matchColumns(adTable, dbTable, result);
         tmpDBTablesByName.remove(dbTable.getName().toUpperCase());
+        checkFieldsInGridView(adTable, result);
       }
     }
     for (int i = 0; i < database.getTableCount(); i++) {
@@ -850,4 +853,26 @@ public class DatabaseValidator implements SystemValidator {
     this.dbsmExecution = dbsmExecution;
   }
 
+  /*
+   * Check at least one field is visible in grid view
+   */
+  public void checkFieldsInGridView(Table adTable, SystemValidationResult result) {
+    OBCriteria<Tab> tabCriteria = OBDal.getInstance().createCriteria(Tab.class);
+    tabCriteria.add(Restrictions.eq(Tab.PROPERTY_TABLE, adTable));
+    for (Tab tab : tabCriteria.list()) {
+      if ("Field Sequence".equals(tab.getName()) || ("Grid Sequence".equals(tab.getName()))) {
+        continue;
+      }
+      OBCriteria<Field> fieldCriteria = OBDal.getInstance().createCriteria(Field.class);
+      fieldCriteria.add(Restrictions.eq(Field.PROPERTY_TAB, tab));
+      fieldCriteria.add(Restrictions.eq(Field.PROPERTY_SHOWINGRIDVIEW, true));
+      if (fieldCriteria.count() == 0) {
+        result.addError(
+            SystemValidationType.NOFIELDSINGRIDVIEW,
+            "No Fields are visible in grid view for Tab " + tab.getWindow().getName() + " - "
+                + tab.getName());
+      }
+    }
+
+  }
 }
