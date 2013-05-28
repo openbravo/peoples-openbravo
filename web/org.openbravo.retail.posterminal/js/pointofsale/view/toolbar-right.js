@@ -125,8 +125,8 @@ enyo.kind({
     name: 'catalog',
     span: 3
   }, {
-    kind: 'OB.OBPOSPointOfSale.UI.ButtonTabSearch',
-    name: 'search',
+    kind: 'OB.OBPOSPointOfSale.UI.ButtonTabSearchCharacteristic',
+    name: 'searchCharacteristic',
     span: 3
   }, {
     kind: 'OB.OBPOSPointOfSale.UI.ButtonTabEditLine',
@@ -262,7 +262,7 @@ enyo.kind({
 });
 
 enyo.kind({
-  name: 'OB.OBPOSPointOfSale.UI.ButtonTabSearch',
+  name: 'OB.OBPOSPointOfSale.UI.ButtonTabSearchCharacteristic',
   kind: 'OB.UI.ToolbarButtonTab',
   tabPanel: 'searchCharacteristic',
   i18nLabel: 'OBPOS_LblSearch',
