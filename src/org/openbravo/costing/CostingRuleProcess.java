@@ -360,7 +360,7 @@ public class CostingRuleProcess implements Process {
     Query stockLinesQry = OBDal.getInstance().getSession().createQuery(select.toString());
     stockLinesQry.setParameterList("orgs", childOrgs);
     if (date != null) {
-      stockLinesQry.setDate("date", date);
+      stockLinesQry.setTimestamp("date", date);
     }
     stockLinesQry.setFetchSize(1000);
     ScrollableResults stockLines = stockLinesQry.scroll(ScrollMode.FORWARD_ONLY);
