@@ -1038,9 +1038,9 @@
       payments.add(payment);
       this.adjustPayment();
     },
-    
-    overpaymentExists: function() {
-      return this.getPaymentStatus().overpayment?true:false;
+
+    overpaymentExists: function () {
+      return this.getPaymentStatus().overpayment ? true : false;
     },
 
     removePayment: function (payment) {
@@ -1335,12 +1335,12 @@
       this.add(this.current);
       this.loadCurrent(true);
     },
-    
+
     addFirstOrder: function () {
-      OB.POS.modelterminal.set('documentsequence', OB.POS.modelterminal.get('documentsequence')-1);
+      OB.POS.modelterminal.set('documentsequence', OB.POS.modelterminal.get('documentsequence') - 1);
       this.addNewOrder();
     },
-    
+
     addPaidReceipt: function (model) {
       this.saveCurrent();
       this.current = model;

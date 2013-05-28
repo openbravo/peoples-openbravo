@@ -59,10 +59,10 @@
 
     OB.POS.hwserver.print(template, {
       order: receipt
-    }, function(result){
+    }, function (result) {
       var otherMe = me;
       var myreceipt = receipt;
-      if(result && result.exception){
+      if (result && result.exception) {
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'), OB.I18N.getLabel('OBPOS_MsgPrintAgain'), [{
           label: OB.I18N.getLabel('OBMOBC_LblOk'),
           action: function () {
@@ -70,7 +70,7 @@
             otherOtherMe.print();
             return true;
           }
-        },{
+        }, {
           label: OB.I18N.getLabel('OBMOBC_LblCancel')
         }]);
       }

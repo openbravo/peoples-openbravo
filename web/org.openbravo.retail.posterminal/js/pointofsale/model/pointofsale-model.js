@@ -146,8 +146,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
 
     OB.POS.modelterminal.saveDocumentSequenceInDB();
     this.processChangedCustomers();
-    
-    receipt.on('paymentAccepted', function (){
+
+    receipt.on('paymentAccepted', function () {
       receipt.prepareToSend(function () {
         //Create the negative payment for change
         var oldChange = receipt.get('change');
@@ -190,16 +190,16 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
 
     receipt.on('paymentDone', function () {
 
-      if(receipt.overpaymentExists()){
+      if (receipt.overpaymentExists()) {
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_OverpaymentWarningTitle'), OB.I18N.getLabel('OBPOS_OverpaymentWarningBody'), [{
           label: OB.I18N.getLabel('OBMOBC_LblOk'),
           action: function () {
             receipt.trigger('paymentAccepted');
           }
-        },{
+        }, {
           label: OB.I18N.getLabel('OBMOBC_LblCancel')
         }]);
-      }else{
+      } else {
         receipt.trigger('paymentAccepted');
       }
     }, this);
