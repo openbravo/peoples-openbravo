@@ -77,6 +77,9 @@ public class ApplicationCacheComponent extends MobileCoreApplicationCacheCompone
     resources.add("../../web/org.openbravo.retail.posterminal/res/printreturninvoice.xml");
     resources.add("../../web/org.openbravo.retail.posterminal/res/welcome.xml");
 
+    resources
+        .add("../../org.openbravo.client.kernel/OBCLKER_Kernel/StyleSheetResources?_appName=WebPOS");
+
     return resources;
   }
 
