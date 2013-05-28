@@ -95,7 +95,7 @@ public class RMInsertOrphanLine implements org.openbravo.scheduling.Process {
               .negate());
           BigDecimal newUnitPrice = FinancialUtils.calculateNetFromGross(strTaxId,
               productPrice.getStandardPrice(), currency.getPricePrecision().intValue(),
-              newOrderLine.getTaxableAmount(), returnedQty);
+              newOrderLine.getTaxableAmount(), returnedQty).multiply(returnedQty);
           newOrderLine.setUnitPrice(newUnitPrice);
         }
       } else {
