@@ -245,7 +245,7 @@ public class WindowTree extends HttpSecureAppServlet {
 
     List<WindowTreeData> newSubList = new ArrayList<WindowTreeData>();
     if (hqlWhereClause != null && !hqlWhereClause.trim().isEmpty()) {
-      hqlWhereClause = hqlWhereClause.replaceAll("\\Ae.", "");
+      hqlWhereClause = hqlWhereClause.replaceAll("\\be.", "");
       OBQuery<BaseOBObject> entityResults = OBDal.getInstance().createQuery("" + entityName + "",
           hqlWhereClause);
       if (nodeIdList == null) {
