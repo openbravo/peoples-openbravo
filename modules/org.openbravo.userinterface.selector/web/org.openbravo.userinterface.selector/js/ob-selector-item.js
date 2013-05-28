@@ -78,6 +78,10 @@ isc.OBSelectorPopupWindow.addProperties({
       selector: this.selector,
       selectionAppearance: this.selectionAppearance,
 
+      // drawAllMaxCells is set to 0 to prevent extra reads of data
+      // Smartclient will try to read until drawAllMaxCells has been reached
+      drawAllMaxCells: 0,
+
       dataProperties: {
         useClientFiltering: false,
         useClientSorting: false
@@ -458,6 +462,9 @@ isc.OBSelectorItem.addProperties({
 
   setUpPickList: function (show, queueFetches, request) {
     this.pickListProperties.canResizeFields = true;
+    // drawAllMaxCells is set to 0 to prevent extra reads of data
+    // Smartclient will try to read until drawAllMaxCells has been reached
+    this.pickListProperties.drawAllMaxCells = 0;
     // Set the pickListWidth just before being shown.
     this.setPickListWidth();
     this.Super('setUpPickList', arguments);
