@@ -110,9 +110,28 @@ public class FKSelectorUIDefinition extends ForeignKeyUIDefinition {
       // fallback to the default
       return null;
     }
-    final String result = (prop.getName() + DalUtil.FIELDSEPARATOR + displayFieldName).replace(".",
-        DalUtil.FIELDSEPARATOR);
-    return result;
+
+    if (!prop.getReferencedProperty().getEntity().hasProperty(getFirstProperty(displayFieldName))) {
+      // If the first property of the display field name does not belong to the referenced entity,
+      // return the displayFieldName
+      // Otherwise trying to append the displayFieldName to the referenced property would later
+      // result in an error
+      return displayFieldName.replace(".", DalUtil.FIELDSEPARATOR);
+    } else {
+      final String result = (prop.getName() + DalUtil.FIELDSEPARATOR + displayFieldName).replace(
+          ".", DalUtil.FIELDSEPARATOR);
+      return result;
+    }
+
+  }
+
+  private String getFirstProperty(String displayFieldName) {
+    int dotPosition = displayFieldName.indexOf(DalUtil.DOT);
+    if (dotPosition == -1) {
+      return displayFieldName;
+    } else {
+      return displayFieldName.substring(0, dotPosition);
+    }
   }
 
   public String getFieldProperties(Field field) {
