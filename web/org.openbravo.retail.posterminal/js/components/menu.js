@@ -538,6 +538,29 @@ enyo.kind({
 });
 
 enyo.kind({
+  name: 'OB.UI.MenuMultiOrders',
+  kind: 'OB.UI.MenuAction',
+  permission: 'OBPOS_retail.multiorders',
+  events: {
+    onMultiOrders: ''
+  },
+  i18nLabel: 'OBPOS_LblPayOpenTickets',
+  tap: function () {
+    if (this.disabled) {
+      return true;
+    }
+    this.inherited(arguments); // Manual dropdown menu closure
+    if (!OB.POS.modelterminal.get('connectedToERP')) {
+      OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OfflineWindowRequiresOnline'));
+      return;
+    }
+    if (OB.POS.modelterminal.hasPermission(this.permission)) {
+      this.doMultiOrders();
+    }
+  }
+});
+
+enyo.kind({
   name: 'OB.UI.MenuBackOffice',
   kind: 'OB.UI.MenuAction',
   permission: 'OBPOS_retail.backoffice',

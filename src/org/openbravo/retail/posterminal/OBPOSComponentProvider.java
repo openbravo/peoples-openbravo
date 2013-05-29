@@ -90,6 +90,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/modalreceiptlineproperties",
         "components/modalnoteditableorder",
         "components/modalnoteditableline",
+        "components/modalmultiorders",
         "main",
         // Web POS window
         "utils/ordersSyncUtils",
@@ -105,6 +106,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/total",
         "components/modalpayment",
         "components/renderorderline",
+        "components/rendermultiorderline",
         "components/order",
         "components/orderdetails",
         "components/businesspartner",
@@ -135,6 +137,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "pointofsale/model/otherstoresstock",
         "pointofsale/view/pointofsale",
         "pointofsale/view/ps-receiptview",
+        "pointofsale/view/ps-multireceiptview",
         "pointofsale/view/ps-productdetailsview",
         "pointofsale/view/toolbar-left",
         "pointofsale/view/toolbar-right",
