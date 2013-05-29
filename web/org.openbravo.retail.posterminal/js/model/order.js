@@ -887,6 +887,7 @@
     createQuotation: function () {
       if (OB.POS.modelterminal.hasPermission('OBPOS_receipt.quotation')) {
         this.set('isQuotation', true);
+        this.set('generateInvoice', false);
         this.set('documentType', OB.POS.modelterminal.get('terminal').terminalType.documentTypeForQuotations);
         this.save();
       }
@@ -896,8 +897,11 @@
       var documentseq, documentseqstr;
       this.set('id', null);
       this.set('isQuotation', false);
+      this.set('generateInvoice', OB.POS.modelterminal.get('terminal').terminalType.generateInvoice);
       this.set('documentType', OB.POS.modelterminal.get('terminal').terminalType.documentType);
+      this.set('createdBy', OB.POS.modelterminal.get('orgUserId'));
       this.set('hasbeenpaid', 'N');
+      this.set('isPaid', false);
       this.set('isEditable', true);
       this.set('orderDate', new Date());
       documentseq = OB.POS.modelterminal.get('documentsequence') + 1;
@@ -910,10 +914,14 @@
         OB.Model.Discounts.applyPromotions(this);
       }
       OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationCreatedOrder'));
+      this.trigger('orderCreatedFromQuotation');
     },
     reactivateQuotation: function () {
       this.set('hasbeenpaid', 'N');
       this.set('isEditable', true);
+      this.set('createdBy', OB.POS.modelterminal.get('orgUserId'));
+      this.set('oldId', this.get('id'));
+      this.set('id', null);
       this.save();
     },
 
@@ -1001,6 +1009,10 @@
 
     addPayment: function (payment) {
       OB.UTIL.addPayment(payment, this.get('payments'), this.getTotal(), this);
+    },
+    
+    overpaymentExists: function() {
+      return this.getPaymentStatus().overpayment?true:false;
     },
 
     removePayment: function (payment) {
@@ -1295,6 +1307,12 @@
       this.add(this.current);
       this.loadCurrent(true);
     },
+    
+    addFirstOrder: function () {
+      OB.POS.modelterminal.set('documentsequence', OB.POS.modelterminal.get('documentsequence')-1);
+      this.addNewOrder();
+    },
+    
     addPaidReceipt: function (model) {
       this.saveCurrent();
       this.current = model;
@@ -1311,6 +1329,7 @@
       this.saveCurrent();
       this.current = this.newOrder();
       this.current.set('isQuotation', true);
+      this.current.set('generateInvoice', false);
       this.current.set('documentType', OB.POS.modelterminal.get('terminal').terminalType.documentTypeForQuotations);
       documentseq = OB.POS.modelterminal.get('quotationDocumentSequence') + 1;
       documentseqstr = OB.UTIL.padNumber(documentseq, 7);

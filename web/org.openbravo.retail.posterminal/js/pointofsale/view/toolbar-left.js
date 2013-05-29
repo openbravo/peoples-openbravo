@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global enyo, $ */
+/*global enyo, $, _ */
 
 /*left toolbar*/
 enyo.kind({
@@ -219,7 +219,8 @@ enyo.kind({
   }],
   initComponents: function () {
     // set up the POS menu
-    this.menuEntries = [];
+    //Menu entries is used for modularity. cannot be initialized
+    //this.menuEntries = [];
     this.menuEntries.push({
       kind: 'OB.UI.MenuReturn'
     });
@@ -251,7 +252,8 @@ enyo.kind({
     // TODO: what is this for?!!
     // this.menuEntries = this.menuEntries.concat(this.externalEntries);
     this.menuEntries.push({
-      kind: 'OB.UI.MenuSeparator'
+      kind: 'OB.UI.MenuSeparator',
+      name: 'sep1'
     });
 
     this.menuEntries.push({
@@ -259,7 +261,8 @@ enyo.kind({
     });
 
     this.menuEntries.push({
-      kind: 'OB.UI.MenuSeparator'
+      kind: 'OB.UI.MenuSeparator',
+      name: 'sep2'
     });
 
     this.menuEntries.push({
@@ -287,11 +290,17 @@ enyo.kind({
     });
 
     this.menuEntries.push({
-      kind: 'OB.UI.MenuSeparator'
+      kind: 'OB.UI.MenuSeparator',
+      name: 'sep3'
     });
 
     this.menuEntries.push({
       kind: 'OB.UI.MenuBackOffice'
+    });
+
+    //remove duplicates
+    this.menuEntries = _.uniq(this.menuEntries, false, function (p) {
+      return p.kind + p.name;
     });
 
     this.inherited(arguments);

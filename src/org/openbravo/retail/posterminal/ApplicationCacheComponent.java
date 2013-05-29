@@ -37,7 +37,7 @@ import org.openbravo.mobile.core.MobileCoreApplicationCacheComponent;
 @RequestScoped
 public class ApplicationCacheComponent extends MobileCoreApplicationCacheComponent {
 
-  private static final String PATH_PREFIX = "web/";
+  private static final String PATH_PREFIX = "web" + File.separatorChar;
 
   @Override
   public List<String> getAppList() {
@@ -76,6 +76,9 @@ public class ApplicationCacheComponent extends MobileCoreApplicationCacheCompone
     resources.add("../../web/org.openbravo.retail.posterminal/res/printreturn.xml");
     resources.add("../../web/org.openbravo.retail.posterminal/res/printreturninvoice.xml");
     resources.add("../../web/org.openbravo.retail.posterminal/res/welcome.xml");
+
+    resources
+        .add("../../org.openbravo.client.kernel/OBCLKER_Kernel/StyleSheetResources?_appName=WebPOS");
 
     return resources;
   }

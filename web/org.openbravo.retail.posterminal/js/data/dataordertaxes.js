@@ -288,7 +288,7 @@
                   } else {
                     linerate = linerate.add(rate);
                     linegross = OB.DEC.add(linegross, OB.DEC.mul(linenet, rate));
-                    discountedGross = OB.DEC.add(discountedNet, OB.DEC.mul(discountedNet, rate));
+                    discountedGross = OB.DEC.add(discountedGross, OB.DEC.mul(discountedNet, rate));
                   }
                 } else {
                   linetaxid = taxRate.get('id');

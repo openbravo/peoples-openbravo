@@ -14,7 +14,7 @@ import java.util.List;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.model.pricing.pricelist.PriceList;
+import org.openbravo.model.pricing.pricelist.PriceListVersion;
 import org.openbravo.retail.config.OBRETCOProductList;
 import org.openbravo.retail.posterminal.POSUtils;
 import org.openbravo.retail.posterminal.ProcessHQLQuery;
@@ -28,7 +28,7 @@ public class Category extends ProcessHQLQuery {
 
     final OBRETCOProductList productList = POSUtils.getProductListByOrgId(orgId);
 
-    final PriceList priceList = POSUtils.getPriceListByOrgId(orgId);
+    final PriceListVersion priceListVersion = POSUtils.getPriceListVersionByOrgId(orgId);
     if (productList == null) {
       throw new JSONException("Product list not found");
     }
@@ -45,16 +45,9 @@ public class Category extends ProcessHQLQuery {
             + "WHERE pCat=pli.product.productCategory and (pli.obretcoProductlist = '"
             + productList.getId()
             + "') "
-            + "AND ("
-            + "pplv.priceList.id = '"
-            + priceList.getId()
-            + "' AND "
-            + "pplv.validFromDate = (select max(a.validFromDate) "
-            + "  FROM PricingPriceListVersion a "
-            + "  WHERE a.priceList.id = '"
-            + priceList.getId()
-            + "')"
-            + ") AND ("
+            + "AND (pplv.id='"
+            + priceListVersion.getId()
+            + "') AND ("
             + "ppp.priceListVersion.id = pplv.id"
             + ") AND ("
             + "pli.product.id = ppp.product.id"

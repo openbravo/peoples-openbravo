@@ -15,6 +15,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.model.pricing.pricelist.PriceList;
+import org.openbravo.model.pricing.pricelist.PriceListVersion;
 import org.openbravo.retail.config.OBRETCOProductList;
 import org.openbravo.retail.posterminal.POSUtils;
 import org.openbravo.retail.posterminal.ProcessHQLQuery;
@@ -27,6 +28,7 @@ public class Product extends ProcessHQLQuery {
     final OBRETCOProductList productList = POSUtils.getProductListByOrgId(orgId);
 
     final PriceList priceList = POSUtils.getPriceListByOrgId(orgId);
+    final PriceListVersion priceListVersion = POSUtils.getPriceListVersionByOrgId(orgId);
 
     if (productList == null) {
       throw new JSONException("Product list not found");
@@ -53,14 +55,9 @@ public class Product extends ProcessHQLQuery {
             + productList.getId()
             + "') "
             + "AND ("
-            + "pplv.priceList.id = '"
-            + priceList.getId()
-            + "' AND "
-            + "pplv.validFromDate = (select max(a.validFromDate) "
-            + "  FROM PricingPriceListVersion a "
-            + "  WHERE a.priceList.id = '"
-            + priceList.getId()
-            + "')"
+            + "pplv.id='"
+            + priceListVersion.getId()
+            + "'"
             + ") AND ("
             + "ppp.priceListVersion.id = pplv.id"
             + ") AND ("
@@ -68,7 +65,7 @@ public class Product extends ProcessHQLQuery {
             + ") AND ("
             + "pli.product.active = true"
             + ") AND "
-            + "(pli.product.$incrementalUpdateCriteria) order by pli.product.name");
+            + "((pli.product.$incrementalUpdateCriteria) or (ppp.$incrementalUpdateCriteria) ) order by pli.product.name");
 
     // discounts which type is defined as category
     products

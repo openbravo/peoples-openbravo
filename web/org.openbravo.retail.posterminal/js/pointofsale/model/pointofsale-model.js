@@ -51,7 +51,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
       if (!ordersNotPaid || ordersNotPaid.length === 0) {
         // If there are no pending orders,
         //  add an initial empty order
-        orderlist.addNewOrder();
+        orderlist.addFirstOrder();
       } else {
         // The order object is stored in the json property of the row fetched from the database
         orderlist.reset(ordersNotPaid.models);
@@ -64,7 +64,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
     }, function () { //OB.Dal.find error
       // If there is an error fetching the pending orders,
       // add an initial empty order
-      orderlist.addNewOrder();
+      orderlist.addFirstOrder();
     });
   },
 
@@ -199,14 +199,13 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
 
     OB.POS.modelterminal.saveDocumentSequenceInDB();
     this.processChangedCustomers();
-
-    receipt.on('paymentDone', function () {
+    
+    receipt.on('paymentAccepted', function (){
       receipt.prepareToSend(function () {
         //Create the negative payment for change
         var oldChange = receipt.get('change');
         var clonedCollection = new Backbone.Collection();
-        if (!_.isUndefined(receipt.selectedPayment) && !_.isUndefined(receipt.getPaymentStatus()) && receipt.getPaymentStatus().change > 0) {
-          var payToDo = receipt.getPaymentStatus();
+        if (!_.isUndefined(receipt.selectedPayment) && receipt.getChange() > 0) {
           var payment = OB.POS.terminal.terminal.paymentnames[receipt.selectedPayment];
           receipt.get('payments').each(function (model) {
             clonedCollection.add(new Backbone.Model(model.toJSON()));
@@ -218,7 +217,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
             receipt.addPayment(new OB.Model.PaymentLine({
               'kind': payment.payment.searchKey,
               'name': payment.payment.commercialName,
-              'amount': OB.DEC.sub(0, OB.DEC.mul(payToDo.change, payment.mulrate)),
+              'amount': OB.DEC.sub(0, OB.DEC.mul(receipt.getChange(), payment.mulrate)),
               'rate': payment.rate,
               'mulrate': payment.mulrate,
               'isocode': payment.isocode,
@@ -242,7 +241,21 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
       });
     }, this);
 
+    receipt.on('paymentDone', function () {
 
+      if(receipt.overpaymentExists()){
+        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_OverpaymentWarningTitle'), OB.I18N.getLabel('OBPOS_OverpaymentWarningBody'), [{
+          label: OB.I18N.getLabel('OBMOBC_LblOk'),
+          action: function () {
+            receipt.trigger('paymentAccepted');
+          }
+        },{
+          label: OB.I18N.getLabel('OBMOBC_LblCancel')
+        }]);
+      }else{
+        receipt.trigger('paymentAccepted');
+      }
+    }, this);
 
     receipt.on('openDrawer', function () {
       receipt.trigger('popenDrawer');

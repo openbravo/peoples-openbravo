@@ -35,7 +35,7 @@ enyo.kind({
   },
   loadValue: function (mProperty, component) {
     this.waterfall('onLoadValue', {
-      order: this.currentLine,
+      model: this.currentLine,
       modelProperty: mProperty
     });
     // Make it visible or not...

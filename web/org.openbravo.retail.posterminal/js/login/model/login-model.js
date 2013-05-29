@@ -207,29 +207,33 @@
       OB.Model.Terminal.prototype.initialize.call(this);
     },
 
-    returnToOnline: function () {
-
-      //The session is fine, we don't need to warn the user
-      //but we will attempt to send all pending orders automatically
+    runSyncProcess: function (model, orderSuccessCallback) {
+      model = model || null;
       OB.Dal.find(OB.Model.ChangedBusinessPartners, null, function (customersChangedNotProcessed) { //OB.Dal.find success
         var successCallback, errorCallback;
         if (!customersChangedNotProcessed || customersChangedNotProcessed.length === 0) {
-          OB.UTIL.processPaidOrders(null);
+          OB.UTIL.processPaidOrders(model, orderSuccessCallback);
           return;
         }
         successCallback = function () {
           OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_pendigDataOfCustomersProcessed'));
-          OB.UTIL.processPaidOrders(null);
+          OB.UTIL.processPaidOrders(model, orderSuccessCallback);
         };
         errorCallback = function () {
-          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorProcessingCustomersPendingData'));
-          OB.UTIL.processPaidOrders(null);
+          //nothing to show
         };
         customersChangedNotProcessed.each(function (cus) {
           cus.set('json', enyo.json.parse(cus.get('json')));
         });
         OB.UTIL.processCustomers(customersChangedNotProcessed, successCallback, errorCallback);
       });
+    },
+
+    returnToOnline: function () {
+
+      //The session is fine, we don't need to warn the user
+      //but we will attempt to send all pending orders automatically
+      this.runSyncProcess();
     },
 
     renderMain: function () {
@@ -483,16 +487,7 @@
     },
     windows: null,
     navigate: function (route) {
-      //HACK -> when f5 in login page
-      //the route to navigate is the same that we are.
-      //Backbone doesn't navigates
-      //With this hack allways navigate.
-      if (route === Backbone.history.fragment) {
-        Backbone.history.fragment = '';
-      }
-      this.modelterminal.router.navigate(route, {
-        trigger: true
-      });
+      this.modelterminal.navigate(route);
     },
     registerWindow: function (window) {
       OB.MobileApp.windowRegistry.registerWindow(window);

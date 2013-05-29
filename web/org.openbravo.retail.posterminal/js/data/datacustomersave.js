@@ -56,12 +56,9 @@
             successCallback = function () {
               OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_customerSaved', [me.customer.get('_identifier')]));
             };
-            errorCallback = function () {
-              OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorSavingCustomer', [me.customer.get('_identifier')]));
-            };
             customersListToChange = new OB.Collection.ChangedBusinessPartnersList();
             customersListToChange.add(bpToSave);
-            OB.UTIL.processCustomers(customersListToChange, successCallback, errorCallback);
+            OB.UTIL.processCustomers(customersListToChange, successCallback, null);
           }
         }, function () {
           //error saving BP changes with changes in changedbusinesspartners
