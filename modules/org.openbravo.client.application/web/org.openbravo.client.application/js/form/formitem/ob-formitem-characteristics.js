@@ -425,6 +425,7 @@ isc.OBCharacteristicsFilterItem.addProperties({
     result = {
       _constructor: 'AdvancedCriteria',
       operator: 'and',
+      internalValue: this.internalValue,
       criteria: []
     };
 
@@ -443,8 +444,7 @@ isc.OBCharacteristicsFilterItem.addProperties({
         charCriteria = {
           operator: 'exists',
           fieldName: this.getCriteriaFieldName(),
-          value: inValues,
-          internalValue: this.internalValue
+          value: inValues
         };
 
         if (this.selectorWindow && this.selectorWindow.selector && this.selectorWindow.selector.selectorDefinitionId === this.productSelectorID) {
