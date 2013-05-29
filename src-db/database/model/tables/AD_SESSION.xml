@@ -75,6 +75,9 @@
       <foreign-key foreignTable="AD_ORG" name="AD_SESSION_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <index name="AD_SESSION_ACTIVE_IDX" unique="false">
+        <index-column name="SESSION_ACTIVE"/>
+      </index>
       <index name="AD_SESSION_CREATED_IDX" unique="false">
         <index-column name="CREATED"/>
       </index>
