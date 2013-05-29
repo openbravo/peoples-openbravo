@@ -1000,35 +1000,7 @@
     },
 
     addPayment: function (payment) {
-      var i, max, p;
-
-      if (!OB.DEC.isNumber(payment.get('amount'))) {
-        alert(OB.I18N.getLabel('OBPOS_MsgPaymentAmountError'));
-        return;
-      }
-
-      var payments = this.get('payments');
-
-      if (!payment.get('paymentData')) {
-        // search for an existing payment only if there is not paymentData info.
-        // this avoids to merge for example card payments of different cards.
-        for (i = 0, max = payments.length; i < max; i++) {
-          p = payments.at(i);
-          if (p.get('kind') === payment.get('kind') && !p.get('isPrePayment')) {
-            p.set('amount', OB.DEC.add(payment.get('amount'), p.get('amount')));
-            if (p.get('rate') && p.get('rate') !== '1') {
-              p.set('origAmount', OB.DEC.add(payment.get('origAmount'), OB.DEC.mul(p.get('origAmount'), p.get('rate'))));
-            }
-            this.adjustPayment();
-            return;
-          }
-        }
-      }
-      if (payment.get('openDrawer')) {
-        this.set('openDrawer', payment.get('openDrawer'));
-      }
-      payments.add(payment);
-      this.adjustPayment();
+      OB.UTIL.addPayment(payment, this.get('payments'), this.getTotal(), this);
     },
 
     removePayment: function (payment) {
@@ -1400,7 +1372,28 @@
     }
 
   });
-
+  var MultiOrders = Backbone.Model.extend({
+    modelName: 'MultiOrders',
+    defaults: {
+      isMultiOrders: false,
+      multiOrdersList: new Backbone.Collection(),
+      total: OB.DEC.Zero,
+      payment: OB.DEC.Zero,
+      pending: OB.DEC.Zero,
+      payments: new Backbone.Collection()
+    },
+    addPayment: function (payment) {
+      OB.UTIL.addPayment(payment, this.get('payments'), this.get('total'), this);
+    },
+    removePayment: function (payment) {
+      var payments = this.get('payments');
+      payments.remove(payment);
+      if (payment.get('openDrawer')) {
+        this.set('openDrawer', false);
+      }
+      OB.UTIL.adjustPayment(this.get('total'), this);
+    }
+  });
   var TaxLine = Backbone.Model.extend();
   OB.Data.Registry.registerModel(OrderLine);
   OB.Data.Registry.registerModel(PaymentLine);
@@ -1410,6 +1403,7 @@
   window.OB.Model.Order = Order;
   window.OB.Collection.OrderList = OrderList;
   window.OB.Model.TaxLine = TaxLine;
+  window.OB.Model.MultiOrders = MultiOrders;
 
   window.OB.Model.modelLoaders = [];
 }());

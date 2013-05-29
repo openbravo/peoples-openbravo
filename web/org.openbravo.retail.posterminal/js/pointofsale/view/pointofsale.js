@@ -60,7 +60,11 @@ enyo.kind({
     onLineChecked: 'checkedLine',
     onStatusChanged: 'statusChanged',
     onLayaways: 'layaways',
-    onChangeSalesRepresentative: 'changeSalesRepresentative'
+    onChangeSalesRepresentative: 'changeSalesRepresentative',
+    onMultiOrders: 'multiOrders',
+    onSelectMultiOrders: 'selectMultiOrders',
+    onRemoveMultiOrders: 'removeMultiOrders',
+    onRightToolDisabled: 'rightToolbarDisabled'
   },
   events: {
     onShowPopup: '',
@@ -101,6 +105,9 @@ enyo.kind({
     }, {
       kind: 'OB.UI.ModalPaidReceipts',
       name: 'modalPaidReceipts'
+    }, {
+      kind: 'OB.UI.ModalMultiOrders',
+      name: 'modalMultiOrders'
     }, {
       kind: 'OB.UI.ModalCreateOrderFromQuotation',
       name: 'modalCreateOrderFromQuotation'
@@ -164,7 +171,24 @@ enyo.kind({
         components: [{
           classes: 'span12',
           kind: 'OB.OBPOSPointOfSale.UI.ReceiptView',
-          name: 'receiptview'
+          name: 'receiptview',
+          init: function (model) {
+            this.model = model;
+            this.model.get('multiOrders').on('change:isMultiOrders', function () {
+              this.setShowing(!this.model.get('multiOrders').get('isMultiOrders'));
+            }, this);
+          }
+        }, {
+          classes: 'span12',
+          kind: 'OB.OBPOSPointOfSale.UI.MultiReceiptView',
+          name: 'multireceiptview',
+          showing: false,
+          init: function (model) {
+            this.model = model;
+            this.model.get('multiOrders').on('change:isMultiOrders', function () {
+              this.setShowing(this.model.get('multiOrders').get('isMultiOrders'));
+            }, this);
+          }
         }, {
           name: 'leftSubWindowsContainer',
           components: [{
@@ -548,7 +572,11 @@ enyo.kind({
             if (hasError) {
               OB.UTIL.showError(error);
             } else {
-              me.model.get('order').removePayment(inEvent.payment);
+              if (!me.model.get('multiOrders').get('isMultiOrders')) {
+                me.model.get('order').removePayment(inEvent.payment);
+              } else {
+                me.model.get('multiOrders').removePayment(inEvent.payment);
+              }
             }
             };
         //async call with defined callback
@@ -556,7 +584,11 @@ enyo.kind({
         return;
       }
     } else {
-      this.model.get('order').removePayment(inEvent.payment);
+      if (!me.model.get('multiOrders').get('isMultiOrders')) {
+        me.model.get('order').removePayment(inEvent.payment);
+      } else {
+        me.model.get('multiOrders').removePayment(inEvent.payment);
+      }
     }
   },
   changeSubWindow: function (inSender, inEvent) {
@@ -622,6 +654,34 @@ enyo.kind({
     this.model.get('order').set('salesRepresentative', inEvent.salesRepresentative.get('id'));
     this.model.get('order').set('salesRepresentative$_identifier', inEvent.salesRepresentative.get('_identifier'));
     this.model.get('orderList').saveCurrent();
+    return true;
+  },
+  multiOrders: function (inSender, inEvent) {
+    this.doShowPopup({
+      popup: 'modalMultiOrders'
+    });
+    return true;
+  },
+  selectMultiOrders: function (inSender, inEvent) {
+    var me = this;
+    me.model.get('multiOrders').get('multiOrdersList').reset();
+    _.each(inEvent.value, function (iter) {
+      me.model.get('orderList').addPaidReceipt(iter);
+      me.model.get('multiOrders').get('multiOrdersList').add(iter);
+    });
+    this.model.get('multiOrders').set('isMultiOrders', true);
+    return true;
+  },
+  removeMultiOrders: function (inSender, inEvent) {
+    var me = this;
+    me.model.get('multiOrders').get('multiOrdersList').remove(inEvent.order);
+    if (!_.isNull(inEvent.order.id)) {
+      OB.Dal.remove(inEvent.order, function () {
+        return true;
+      }, function () {
+        OB.UTIL.showError('Error removing');
+      });
+    }
     return true;
   },
   init: function () {

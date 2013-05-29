@@ -7,8 +7,33 @@
  ************************************************************************************
  */
 
-/*global enyo, Backbone */
-
+/*global enyo, Backbone, _ */
+enyo.kind({
+  name: 'OB.UI.TotalMultiReceiptLine',
+  style: 'position: relative; padding: 10px;',
+  components: [{
+    name: 'lblTotal',
+    style: 'float: left; width: 40%;'
+  }, {
+    name: 'totalqty',
+    style: 'float: left; width: 20%; text-align:right; font-weight:bold;'
+  }, {
+    name: 'totalgross',
+    style: 'float: left; width: 40%; text-align:right; font-weight:bold;'
+  }, {
+    style: 'clear: both;'
+  }],
+  renderTotal: function (newTotal) {
+    this.$.totalgross.setContent(OB.I18N.formatCurrency(newTotal));
+  },
+  renderQty: function (newQty) {
+    this.$.totalqty.setContent(newQty);
+  },
+  initComponents: function () {
+    this.inherited(arguments);
+    this.$.lblTotal.setContent(OB.I18N.getLabel('OBPOS_LblTotal'));
+  }
+});
 enyo.kind({
   name: 'OB.UI.TotalReceiptLine',
   handlers: {
@@ -381,5 +406,56 @@ enyo.kind({
         this.$.paymentBreakdown.hide();
       }
     }, this);
+  }
+});
+enyo.kind({
+  name: 'OB.UI.MultiOrderView',
+  published: {
+    order: null
+  },
+  events: {
+    onChangeTotal: ''
+  },
+  components: [{
+    kind: 'OB.UI.ScrollableTable',
+    name: 'listMultiOrderLines',
+    scrollAreaMaxHeight: '450px',
+    renderLine: 'OB.UI.RenderMultiOrdersLine',
+    renderEmpty: 'OB.UI.RenderMultiOrdersLineEmpty',
+    //defined on redenderorderline.js
+    listStyle: 'edit'
+  }, {
+    tag: 'ul',
+    classes: 'unstyled',
+    components: [{
+      tag: 'li',
+      components: [{
+        kind: 'OB.UI.TotalMultiReceiptLine',
+        name: 'totalMultiReceiptLine'
+      }]
+    }]
+  }],
+  listMultiOrders: null,
+  init: function (model) {
+    this.model = model;
+    var me = this;
+    this.total = 0;
+    this.listMultiOrders = new Backbone.Collection();
+    this.$.listMultiOrderLines.setCollection(this.listMultiOrders);
+    this.model.get('multiOrders').get('multiOrdersList').on('add remove', function () {
+      me.total = _.reduce(me.model.get('multiOrders').get('multiOrdersList').models, function (memo, order) {
+        return memo + order.getPending();
+      }, 0);
+      this.model.get('multiOrders').set('total', this.total);
+      this.$.totalMultiReceiptLine.renderTotal(this.total);
+      me.listMultiOrders.reset(me.model.get('multiOrders').get('multiOrdersList').models);
+      this.doChangeTotal({
+        newTotal: this.total
+      });
+      this.$.totalMultiReceiptLine.renderQty(me.model.get('multiOrders').get('multiOrdersList').length);
+    }, this);
+  },
+  initComponents: function () {
+    this.inherited(arguments);
   }
 });

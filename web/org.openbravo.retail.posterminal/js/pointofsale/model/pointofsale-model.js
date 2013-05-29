@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2013 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -104,7 +104,18 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
 
   init: function () {
     var receipt = new OB.Model.Order(),
+        i, j, k, multiOrders = new OB.Model.MultiOrders(),
+        me = this,
+        iter, isNew = false,
         discounts, ordersave, customersave, taxes, orderList, hwManager, ViewManager;
+
+    function success() {
+      return true;
+    }
+
+    function error() {
+      OB.UTIL.showError('Error removing');
+    }
 
     function searchCurrentBP() {
       function errorCallback(tx, error) {
@@ -136,6 +147,48 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
     orderList = new OB.Collection.OrderList(receipt);
     this.set('orderList', orderList);
     this.set('customer', new OB.Model.BusinessPartner());
+    this.set('multiOrders', multiOrders);
+
+    this.get('multiOrders').on('paymentDone', function () {
+      for (j = 0; j < this.get('multiOrders').get('multiOrdersList').length; j++) {
+        //Create the negative payment for change
+        iter = this.get('multiOrders').get('multiOrdersList').at(j);
+        var clonedCollection = new Backbone.Collection();
+        while (iter.get('gross') > iter.get('payment')) {
+          for (i = 0; i < this.get('multiOrders').get('payments').length; i++) {
+            //FIXME: MULTICURRENCY
+            var payment = this.get('multiOrders').get('payments').at(i),
+                paymentMethod = OB.POS.terminal.terminal.paymentnames[payment.get('kind')];
+            if (payment.get('origAmount') <= OB.DEC.sub(iter.get('gross'), iter.get('payment'))) {
+              iter.addPayment(new OB.Model.PaymentLine({
+                'kind': payment.get('kind'),
+                'name': payment.get('name'),
+                'amount': OB.DEC.mul(payment.get('origAmount'), paymentMethod.mulrate),
+                'rate': paymentMethod.rate,
+                'mulrate': paymentMethod.mulrate,
+                'isocode': paymentMethod.isocode,
+                'openDrawer': payment.get('openDrawer')
+              }));
+              this.get('multiOrders').get('payments').remove(this.get('multiOrders').get('payments').at(i));
+            } else {
+              this.get('multiOrders').get('payments').at(i).set('origAmount', OB.DEC.sub(this.get('multiOrders').get('payments').at(i).get('origAmount'), OB.DEC.mul(OB.DEC.sub(iter.get('gross'), iter.get('payment')), paymentMethod.mulrate)));
+              iter.addPayment(new OB.Model.PaymentLine({
+                'kind': payment.get('kind'),
+                'name': payment.get('name'),
+                'amount': OB.DEC.mul(OB.DEC.sub(iter.get('gross'), iter.get('payment')), paymentMethod.mulrate),
+                'rate': paymentMethod.rate,
+                'mulrate': paymentMethod.mulrate,
+                'isocode': paymentMethod.isocode,
+                'openDrawer': payment.get('openDrawer')
+              }));
+              break;
+            }
+          }
+        }
+        this.get('multiOrders').trigger('closed', iter);
+        iter.trigger('print'); // to guaranty execution order
+      }
+    }, this);
 
     customersave = new OB.DATA.CustomerSave(this);
 
@@ -188,6 +241,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
         orderList.deleteCurrent();
       });
     }, this);
+
+
 
     receipt.on('openDrawer', function () {
       receipt.trigger('popenDrawer');
