@@ -94,7 +94,9 @@ isc.OBCharacteristicsLayout.addProperties({
   titleOrientation: 'top',
   width: '*',
   numCols: 4,
-  colWidths: ['25%', '25%', '25%', '25%']
+  colWidths: ['25%', '25%', '25%', '25%'],
+  titlePrefix: '<b>',
+  titleSuffix: '</b>'
 });
 
 isc.ClassFactory.defineClass('OBCharacteristicsFilterDialog', isc.OBPopup);
