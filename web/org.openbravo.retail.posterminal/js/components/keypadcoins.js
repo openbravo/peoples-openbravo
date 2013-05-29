@@ -176,10 +176,13 @@ enyo.kind({
     btn.applyStyle('border', '10px solid ' + (this.bordercolor || this.background));
   },
   tap: function () {
-
     if (OB.POS.modelterminal.hasPermission(this.paymenttype)) {
       var me = this,
+          
+          
+          //FIXME: TOO MANY OWNERS
           i, max, p, receipt = this.owner.owner.owner.owner.owner.owner.model.get('order'),
+          multiOrders = this.owner.owner.owner.owner.owner.owner.model.get('multiOrders'),
           openDrawer = false;
       for (i = 0, max = OB.POS.modelterminal.get('payments').length; i < max; i++) {
         p = OB.POS.modelterminal.get('payments')[i];
@@ -190,12 +193,22 @@ enyo.kind({
           break;
         }
       }
-      receipt.addPayment(new OB.Model.PaymentLine({
-        kind: me.paymenttype,
-        name: OB.POS.modelterminal.getPaymentName(me.paymenttype),
-        amount: OB.DEC.number(me.amount),
-        openDrawer: openDrawer
-      }));
+      if (!multiOrders.get('isMultiOrders') && multiOrders.get('multiOrdersList').length === 0) {
+        receipt.addPayment(new OB.Model.PaymentLine({
+          kind: me.paymenttype,
+          name: OB.POS.modelterminal.getPaymentName(me.paymenttype),
+          amount: OB.DEC.number(me.amount),
+          openDrawer: openDrawer
+        }));
+      } else {
+        multiOrders.addPayment(new OB.Model.PaymentLine({
+          kind: me.paymenttype,
+          name: OB.POS.modelterminal.getPaymentName(me.paymenttype),
+          amount: OB.DEC.number(me.amount),
+          openDrawer: openDrawer
+        }));
+      }
+
     }
   }
 });

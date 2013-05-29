@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2013 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -59,7 +59,11 @@ enyo.kind({
     this.isEnabled = !inEvent.status;
     this.setDisabled(inEvent.status);
   },
+  init: function (model) {
+    this.model = model;
+  },
   tap: function () {
+    this.model.get('multiOrders').set('isMultiOrders', false);
     this.doAddNewOrder();
   }
 });
@@ -81,6 +85,10 @@ enyo.kind({
     this.setDisabled(inEvent.status);
   },
   tap: function () {
+    if (this.model.get('multiOrders').get('isMultiOrders')) {
+      this.model.get('multiOrders').set('isMultiOrders', false);
+      return true;
+    }
     if (!this.model.get('order').get('isPaid') && !this.model.get('order').get('isQuotation') && !this.model.get('order').get('isLayaway')) {
       this.doShowPopup({
         popup: 'modalConfirmReceiptDelete'
@@ -91,6 +99,14 @@ enyo.kind({
   },
   init: function (model) {
     this.model = model;
+    this.model.get('multiOrders').on('change:isMultiOrders', function (model) {
+      if (model.get('isMultiOrders')) {
+        this.addClass('paidticket');
+      } else {
+        this.removeClass('paidticket');
+      }
+      return true;
+    }, this);
     this.model.get('order').on('change:isPaid change:isQuotation change:isLayaway change:hasbeenpaid', function (changedModel) {
       if (changedModel.get('isPaid') || changedModel.get('isLayaway') || (changedModel.get('isQuotation') && changedModel.get('hasbeenpaid') === 'Y')) {
         this.addClass('paidticket');
@@ -110,6 +126,9 @@ enyo.kind({
     onRightToolbarDisabled: 'disabledButton'
   },
   disabledButton: function (inSender, inEvent) {
+    if (inEvent.exceptionPanel === this.tabPanel) {
+      return true;
+    }
     this.isEnabled = !inEvent.status;
     this.setDisabled(inEvent.status);
   },
@@ -261,6 +280,10 @@ enyo.kind({
 
     this.menuEntries.push({
       kind: 'OB.UI.MenuLayaways'
+    });
+
+    this.menuEntries.push({
+      kind: 'OB.UI.MenuMultiOrders'
     });
 
     this.menuEntries.push({

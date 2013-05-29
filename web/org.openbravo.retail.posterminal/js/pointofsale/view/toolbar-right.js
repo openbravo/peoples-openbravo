@@ -209,10 +209,28 @@ enyo.kind({
   tabPanel: 'scan',
   i18nLabel: 'OBMOBC_LblScan',
   events: {
-    onTabChange: ''
+    onTabChange: '',
+    onRightToolbarDisabled: ''
   },
   handlers: {
     onRightToolbarDisabled: 'disabledButton'
+  },
+  init: function (model) {
+    this.model = model;
+    var me = this;
+    this.model.get('multiOrders').on('change:isMultiOrders', function (model) {
+      if (!model.get('isMultiOrders')) {
+        this.doTabChange({
+          tabPanel: this.tabPanel,
+          keyboard: 'toolbarscan',
+          edit: false,
+          status: ''
+        });
+      }
+      me.doRightToolbarDisabled({
+        status: model.get('isMultiOrders')
+      });
+    }, this);
   },
   disabledButton: function (inSender, inEvent) {
     this.isEnabled = !inEvent.status;
@@ -238,10 +256,20 @@ enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ButtonTabBrowse',
   kind: 'OB.UI.ToolbarButtonTab',
   events: {
-    onTabChange: ''
+    onTabChange: '',
+    onRightToolbarDisabled: ''
   },
   handlers: {
     onRightToolbarDisabled: 'disabledButton'
+  },
+  init: function (model) {
+    this.model = model;
+    var me = this;
+    this.model.get('multiOrders').on('change:isMultiOrders', function (model) {
+      me.doRightToolbarDisabled({
+        status: model.get('isMultiOrders')
+      });
+    }, this);
   },
   disabledButton: function (inSender, inEvent) {
     this.isEnabled = !inEvent.status;
@@ -266,15 +294,25 @@ enyo.kind({
   kind: 'OB.UI.ToolbarButtonTab',
   tabPanel: 'search',
   i18nLabel: 'OBPOS_LblSearch',
+  events: {
+    onTabChange: '',
+    onRightToolbarDisabled: ''
+  },
   handlers: {
     onRightToolbarDisabled: 'disabledButton'
+  },
+  init: function (model) {
+    this.model = model;
+    var me = this;
+    this.model.get('multiOrders').on('change:isMultiOrders', function (model) {
+      me.doRightToolbarDisabled({
+        status: model.get('isMultiOrders')
+      });
+    }, this);
   },
   disabledButton: function (inSender, inEvent) {
     this.isEnabled = !inEvent.status;
     this.setDisabled(inEvent.status);
-  },
-  events: {
-    onTabChange: ''
   },
   tap: function () {
     OB.MobileApp.view.scanningFocus(false);
@@ -301,10 +339,20 @@ enyo.kind({
   tabPanel: 'edit',
   i18nLabel: 'OBPOS_LblEdit',
   events: {
-    onTabChange: ''
+    onTabChange: '',
+    onRightToolbarDisabled: ''
   },
   handlers: {
     onRightToolbarDisabled: 'disabledButton'
+  },
+  init: function (model) {
+    this.model = model;
+    var me = this;
+    this.model.get('multiOrders').on('change:isMultiOrders', function (model) {
+      me.doRightToolbarDisabled({
+        status: model.get('isMultiOrders')
+      });
+    }, this);
   },
   disabledButton: function (inSender, inEvent) {
     this.setDisabled(inEvent.status);

@@ -62,10 +62,13 @@ enyo.kind({
     kind: 'OB.OBPOSPointOfSale.UI.PaymentMethods',
     name: 'OBPOS_UI_PaymentMethods'
   }],
+  init: function (model) {
+    this.model = model;
+  },
   pay: function (amount, key, name, paymentMethod, rate, mulrate, isocode, options) {
     if (options && options.percentaje) {
       var pending = this.receipt.getPending();
-      //multicurrency
+      //FIXME: multicurrency
       if (mulrate && mulrate !== '1') {
         pending = OB.DEC.mul(pending, mulrate);
       }
@@ -110,7 +113,55 @@ enyo.kind({
       }
     }
   },
+  payMultiOrder: function (amount, key, name, paymentMethod, rate, mulrate, isocode, options) {
+    if (options && options.percentaje) {
+      var pending = OB.DEC.sub(this.model.get('multiOrders').get('total'), this.model.get('multiOrders').get('payment'));
+      //multicurrency
+      if (mulrate && mulrate !== '1') {
+        pending = OB.DEC.mul(pending, mulrate);
+      }
+      amount = OB.DEC.div(OB.DEC.mul(pending, amount), 100);
+    }
 
+    if (OB.DEC.compare(amount) > 0) {
+      var provider = paymentMethod.paymentProvider,
+          me = this;
+      //      if (this.receipt.get('orderType') === 0 || this.receipt.get('orderType') === 2 || this.receipt.get('isLayaway')) {
+      //        provider = paymentMethod.paymentProvider;
+      //      } else if (this.receipt.get('orderType') === 1 || this.receipt.get('orderType') === 3) {
+      //        provider = paymentMethod.refundProvider;
+      //      } else {
+      //        provider = null;
+      //      }
+      //FIXME: Add modal option
+      //      if (provider) {
+      //        this.doShowPopup({
+      //          popup: 'modalpayment',
+      //          args: {
+      //            'receipt': this.receipt,
+      //            'provider': provider,
+      //            'key': key,
+      //            'name': name,
+      //            'paymentMethod': paymentMethod,
+      //            'amount': amount,
+      //            'rate': rate,
+      //            'mulrate': mulrate,
+      //            'isocode': isocode
+      //          }
+      //        });
+      //      } else {
+      this.model.get('multiOrders').addPayment(new OB.Model.PaymentLine({
+        'kind': key,
+        'name': name,
+        'amount': amount,
+        'rate': rate,
+        'mulrate': mulrate,
+        'isocode': isocode,
+        'openDrawer': paymentMethod.openDrawer
+      }));
+      //      }
+    }
+  },
   getButtonComponent: function (sidebutton) {
     if (sidebutton.i18nLabel) {
       sidebutton.label = OB.I18N.getLabel(sidebutton.i18nLabel);
@@ -166,7 +217,11 @@ enyo.kind({
           }
           var amount = OB.DEC.number(OB.I18N.parseNumber(txt));
           amount = _.isNaN(amount) ? 100 : amount;
-          me.pay(amount, payment.payment.searchKey, payment.payment._identifier, payment.paymentMethod, payment.rate, payment.mulrate, payment.isocode, options);
+          if (me.model.get('multiOrders').get('total') !== OB.DEC.Zero) {
+            me.payMultiOrder(amount, payment.payment.searchKey, payment.payment._identifier, payment.paymentMethod, payment.rate, payment.mulrate, payment.isocode, options);
+          } else {
+            me.pay(amount, payment.payment.searchKey, payment.payment._identifier, payment.paymentMethod, payment.rate, payment.mulrate, payment.isocode, options);
+          }
         }
       });
 
@@ -224,8 +279,13 @@ enyo.kind({
           if (exactpayment.rate && exactpayment.rate !== '1') {
             amount = OB.DEC.div(me.receipt.getPending(), exactpayment.rate);
           }
-          if (amount > 0 && exactpayment && OB.POS.modelterminal.hasPermission(exactpayment.payment.searchKey)) {
-            me.pay(amount, exactpayment.payment.searchKey, exactpayment.payment._identifier, exactpayment.paymentMethod, exactpayment.rate, exactpayment.mulrate, exactpayment.isocode);
+          if (me.model.get('multiOrders').get('total') !== OB.DEC.Zero) {
+            amount = OB.DEC.sub(me.model.get('multiOrders').get('total'), me.model.get('multiOrders').get('payment'));
+            me.payMultiOrder(amount, exactpayment.payment.searchKey, exactpayment.payment._identifier, exactpayment.paymentMethod, exactpayment.rate, exactpayment.mulrate, exactpayment.isocode);
+          } else {
+            if (amount > 0 && exactpayment && OB.POS.modelterminal.hasPermission(exactpayment.payment.searchKey)) {
+              me.pay(amount, exactpayment.payment.searchKey, exactpayment.payment._identifier, exactpayment.paymentMethod, exactpayment.rate, exactpayment.mulrate, exactpayment.isocode);
+            }
           }
         }
       }
