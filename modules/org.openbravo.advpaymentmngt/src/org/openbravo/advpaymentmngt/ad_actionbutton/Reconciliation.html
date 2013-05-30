@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -51,6 +51,7 @@
 </script>
 
 <script language="JavaScript" type="text/javascript">
+var checksToEnable=[];
 function showWarning(){
     if(!document.frmMain.inpAfterDate.checked){
       showJSMessage('APRM_DateWillBeUpdated');
@@ -115,6 +116,7 @@ function submitThisPage(strCommand) {
 }
 
 function hideClearedTransactions(isChecked) {
+  disable();
   var chk = document.frmMain.inpTransactionId;
   if (chk === undefined) {
     return true;
@@ -132,7 +134,13 @@ function hideClearedTransactions(isChecked) {
       }
     }
   }
-  return true;
+  try {
+	 var url = "../org.openbravo.advpaymentmngt.ad_actionbutton/Reconciliation.html";
+	 var paramXMLReq = null;
+	 return submitXmlHttpRequest(callBackLineStatus, document.frmMain, "UPDATESTATUS", url, false, null, paramXMLReq);
+	 } catch (e) { 
+	  alert(e);
+	 }
 }
 
 function updateAll(mark) {
@@ -255,19 +263,17 @@ function updateEndingBalance() {
 <script language="JavaScript" type="text/javascript">
 
 function saveTransactionLineStatus(isChecked, transLineId) {
-  document.frmMain.inpCurrentTransIdSelected.value = transLineId;
-  document.frmMain.inpIsCurrentTransSelected.value = isChecked;
-  document.frmMain.inpClearAll.disabled = true;
-  document.getElementById('buttonSave').disabled = true;
-  document.getElementById('buttonProcess').disabled = true;
-  document.getElementById('buttonCancel').disabled = true;
-  try {
-    var url = "../org.openbravo.advpaymentmngt.ad_actionbutton/Reconciliation.html";
-    var paramXMLReq = null;
-    return submitXmlHttpRequest(callBackLineStatus, document.frmMain, "UPDATESTATUS", url, false, null, paramXMLReq);
-  } catch (e) {
-    alert(e);
-  }
+	document.frmMain.inpCurrentTransIdSelected.value = transLineId;
+	document.frmMain.inpIsCurrentTransSelected.value = isChecked;
+	disable();  
+	try {
+	  var url = "../org.openbravo.advpaymentmngt.ad_actionbutton/Reconciliation.html";
+	  var paramXMLReq = null;
+	  return submitXmlHttpRequest(callBackLineStatus, document.frmMain, "UPDATESTATUS", url, false, null, paramXMLReq);
+	  
+      } catch (e) { 
+	    alert(e);
+	  }	      
 }
 
 function callBackLineStatus(paramXMLParticular, XMLHttpRequestObj) {
@@ -276,10 +282,7 @@ function callBackLineStatus(paramXMLParticular, XMLHttpRequestObj) {
     try {
       if (XMLHttpRequestObj.responseText) {
         strText = XMLHttpRequestObj.responseText;
-        document.frmMain.inpClearAll.disabled = false;
-        document.getElementById('buttonSave').disabled = false;
-        document.getElementById('buttonProcess').disabled = false;
-        document.getElementById('buttonCancel').disabled = false;
+        enable();
       } else {
       }
     } catch (e) {
@@ -289,6 +292,7 @@ function callBackLineStatus(paramXMLParticular, XMLHttpRequestObj) {
 }
 
 function loadGrid() {
+  disable();
   try {
     var url = "../org.openbravo.advpaymentmngt.ad_actionbutton/Reconciliation.html";
     var paramXMLReq = null;
@@ -326,6 +330,7 @@ function callBackGrid(paramXMLParticular, XMLHttpRequestObj) {
           document.frmMain.inpIsFirstLoad.value = "false";
         }
         updateWhenAjaxResponse();
+        enable();
       } else {
         document.getElementById('sectionGrid').innerHTML = '';
       }
@@ -334,6 +339,35 @@ function callBackGrid(paramXMLParticular, XMLHttpRequestObj) {
   }
   return true;
 }
+
+function enable(){
+	  document.frmMain.inpClearAll.disabled = false;
+	  document.getElementById('buttonSave').disabled = false;
+	  document.getElementById('buttonProcess').disabled = false;
+	  document.getElementById('buttonCancel').disabled = false;
+	  document.getElementById('paramHideCleared').disabled = false;
+	  document.getElementById('paramAfterDate').disabled = false;
+	  for(var i=0; i<checksToEnable.length; i++){
+	     document.getElementById(checksToEnable[i]).disabled = false;
+	  }
+	}
+
+	function disable(){
+	    document.frmMain.inpClearAll.disabled = true;
+	  document.getElementById('buttonSave').disabled = true;
+	  document.getElementById('buttonProcess').disabled = true;
+	  document.getElementById('buttonCancel').disabled = true;
+	  document.getElementById('paramHideCleared').disabled = true;
+	  document.getElementById('paramAfterDate').disabled = true;
+	  var items = document.frmMain.getElementsByTagName("input");
+	  checksToEnable = [];
+	  for(var i=0; i<items.length; i++){
+	    if(items[i].name === 'inpTransactionId'){
+	        items[i].disabled=true;
+	        checksToEnable.push(items[i].id);
+	    }
+	  }
+	}
 </script>
 <script language="JavaScript" type="text/javascript">
   function onLoadDo(){

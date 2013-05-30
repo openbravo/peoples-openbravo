@@ -42,6 +42,10 @@
     <FIELD id="fieldRecordDepositAmt" attribute="value" format="euroEdition">depositAmount</FIELD>
     <FIELD id="fieldRecordPaymentAmt" attribute="name" replace="xx">transactionId</FIELD>
     <FIELD id="fieldRecordDepositAmt" attribute="name" replace="xx">transactionId</FIELD>
+   
+    <FIELD id="fieldTransactionId_xx" attribute="value">transactionId</FIELD>
+    <FIELD id="fieldTransactionId_xx" attribute="id">transactionId</FIELD>
+    <FIELD id="fieldTransactionId_xx" attribute="onclick" replace="xx">transactionId</FIELD>
     
     <SECTION id="sectionLinesDetail"/>
   </structure>
