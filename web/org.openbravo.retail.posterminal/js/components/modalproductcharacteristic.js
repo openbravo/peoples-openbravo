@@ -47,7 +47,7 @@ enyo.kind({
   name: 'OB.UI.ListValuesLineChildren',
   kind: 'OB.UI.Button',
   classes: 'btn-icon-inspectTree',
-  style: 'width: 10%; margin: 0px; ',
+  style: 'width: 14%; margin: 0px; ',
   showing: false,
   childrenArray: [],
   events: {
@@ -56,7 +56,7 @@ enyo.kind({
   create: function () {
     this.inherited(arguments);
     var me = this;
-    OB.Dal.query(OB.Model.ProductChValue, "select distinct(id), name, characteristic_id from m_ch_value where parent = '" + this.parent.model.get('id') + "'", [], function (dataValues, me) {
+    OB.Dal.query(OB.Model.ProductChValue, "select distinct(id), name, characteristic_id from m_ch_value where parent = '" + this.parent.model.get('id') + "' order by UPPER(name) asc", [], function (dataValues, me) {
       if (dataValues && dataValues.length > 0) {
         me.childrenArray = dataValues.models;
         me.show();
@@ -116,7 +116,7 @@ enyo.kind({
         i, j, whereClause = '',
         params = [];
     params.push(this.parent.parent.characteristic.get('characteristic_id'));
-    OB.Dal.query(OB.Model.ProductChValue, "select distinct(id), name, characteristic_id, parent from m_ch_value where parent = '" + this.parentValue + "' and characteristic_id = ?" + whereClause, params, function (dataValues, me) {
+    OB.Dal.query(OB.Model.ProductChValue, "select distinct(id), name, characteristic_id, parent from m_ch_value where parent = '" + this.parentValue + "' and characteristic_id = ?" + whereClause + ' order by UPPER(name) asc', params, function (dataValues, me) {
       if (dataValues && dataValues.length > 0) {
         for (i = 0; i < dataValues.length; i++) {
           for (j = 0; j < me.parent.parent.model.get('filter').length; j++) {
@@ -178,7 +178,7 @@ enyo.kind({
     me.selected = selected;
     me.aux = aux;
     me.rootObject = rootObject;
-    OB.Dal.query(OB.Model.ProductChValue, "select distinct(id), name, characteristic_id, parent " + "from m_ch_value where parent = '" + selected[aux].get('id') + "' ", [], function (dataValues, me) {
+    OB.Dal.query(OB.Model.ProductChValue, "select distinct(id), name, characteristic_id, parent " + "from m_ch_value where parent = '" + selected[aux].get('id') + "' order by UPPER(name) asc", [], function (dataValues, me) {
       for (j = 0; j < me.parent.parent.model.get('filter').length; j++) {
         if (selected[aux].id === me.parent.parent.model.get('filter')[j].id && selected[aux].id !== rootObject.id && me.parent.parent.model.get('filter')[j].selected) {
           me.exist = true;
@@ -299,7 +299,7 @@ enyo.kind({
     }
   },
   getChildren: function (selected, aux, checkedParent, me) {
-    OB.Dal.query(OB.Model.ProductChValue, "select distinct(id), name, characteristic_id, parent " + "from m_ch_value where parent = '" + selected[aux].get('id') + "' ", [], function (dataValues, me) {
+    OB.Dal.query(OB.Model.ProductChValue, "select distinct(id), name, characteristic_id, parent " + "from m_ch_value where parent = '" + selected[aux].get('id') + "' order by UPPER(name) asc", [], function (dataValues, me) {
       var index;
       if (dataValues && dataValues.length > 0) {
         if (!_.isUndefined(checkedParent)) {
@@ -402,7 +402,7 @@ enyo.kind({
   getPrevCollection: function (inSender, inEvent) {
     var me = this,
         i, j, k;
-    OB.Dal.query(OB.Model.ProductChValue, "select distinct(id) , name , characteristic_id, parent as parent from m_ch_value " + "where parent = (select parent from m_ch_value where id = '" + this.$.body.$.listValues.parentValue + "') and " + "characteristic_id = (select characteristic_id from m_ch_value where id = '" + this.$.body.$.listValues.parentValue + "')", [], function (dataValues, me) {
+    OB.Dal.query(OB.Model.ProductChValue, "select distinct(id) , name , characteristic_id, parent as parent from m_ch_value " + "where parent = (select parent from m_ch_value where id = '" + this.$.body.$.listValues.parentValue + "') and " + "characteristic_id = (select characteristic_id from m_ch_value where id = '" + this.$.body.$.listValues.parentValue + "') order by UPPER(name) asc", [], function (dataValues, me) {
       if (dataValues && dataValues.length > 0) {
         for (i = 0; i < dataValues.length; i++) {
           for (j = 0; j < me.model.get('filter').length; j++) {
@@ -439,7 +439,7 @@ enyo.kind({
     }
   },
   countChildren: function (selected, aux, me) {
-    OB.Dal.query(OB.Model.ProductChValue, "select distinct(id), name, characteristic_id, parent " + "from m_ch_value where parent = '" + selected[aux].get('id') + "' ", [], function (dataValues, me) {
+    OB.Dal.query(OB.Model.ProductChValue, "select distinct(id), name, characteristic_id, parent " + "from m_ch_value where parent = '" + selected[aux].get('id') + "'  order by UPPER(name) asc", [], function (dataValues, me) {
       if (dataValues && dataValues.length > 0) {
         me.inspectCountTree(dataValues.models);
       } else {
@@ -456,7 +456,7 @@ enyo.kind({
     }
   },
   deselectChildren: function (selected, aux, rootObject, me) {
-    OB.Dal.query(OB.Model.ProductChValue, "select distinct(id), name, characteristic_id, parent " + "from m_ch_value where parent = '" + selected[aux].get('id') + "' ", [], function (dataValues, me) {
+    OB.Dal.query(OB.Model.ProductChValue, "select distinct(id), name, characteristic_id, parent " + "from m_ch_value where parent = '" + selected[aux].get('id') + "' order by UPPER(name) asc", [], function (dataValues, me) {
       var index = me.selected.map(function (e) {
         return e.id;
       }).indexOf(selected[aux].id);
