@@ -63,7 +63,12 @@ enyo.kind({
     this.model = model;
   },
   tap: function () {
-    this.model.get('multiOrders').set('isMultiOrders', false);
+    var i;
+    for (i = 0; this.model.get('multiOrders').get('multiOrdersList').length > i; i++) {
+      this.model.get('orderList').current = this.model.get('multiOrders').get('multiOrdersList').at(i);
+      this.model.get('orderList').deleteCurrent();
+    }
+    this.model.get('multiOrders').resetValues();
     this.doAddNewOrder();
   }
 });
@@ -85,8 +90,13 @@ enyo.kind({
     this.setDisabled(inEvent.status);
   },
   tap: function () {
+    var i;
     if (this.model.get('multiOrders').get('isMultiOrders')) {
-      this.model.get('multiOrders').set('isMultiOrders', false);
+      for (i = 0; this.model.get('multiOrders').get('multiOrdersList').length > i; i++) {
+        this.model.get('orderList').current = this.model.get('multiOrders').get('multiOrdersList').at(i);
+        this.model.get('orderList').deleteCurrent();
+      }
+      this.model.get('multiOrders').resetValues();
       return true;
     }
     if (!this.model.get('order').get('isPaid') && !this.model.get('order').get('isQuotation') && !this.model.get('order').get('isLayaway')) {

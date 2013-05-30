@@ -55,8 +55,8 @@ enyo.kind({
     }]
   }],
   tap: function () {
-    this.owner.model.trigger('selected', this.owner.model);
-    this.owner.model.trigger('click', this.owner.model);
+    //    this.owner.model.trigger('selected', this.owner.model);
+    //    this.owner.model.trigger('click', this.owner.model);
   },
   changeEditMode: function (inSender, inEvent) {
     this.addRemoveClass('btnselect-orderline-edit', inEvent.edit);

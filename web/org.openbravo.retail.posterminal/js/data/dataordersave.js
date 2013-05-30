@@ -147,8 +147,7 @@
             };
             model.get('orderList').current = receipt;
             model.get('orderList').deleteCurrent();
-            model.get('multiOrders').get('multiOrdersList').reset();
-            model.get('multiOrders').set('isMultiOrders', false);
+            model.get('multiOrders').resetValues();
             orderList = new OB.Collection.OrderList();
             orderList.add(receipt);
             OB.UTIL.showLoading(true);

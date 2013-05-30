@@ -1010,9 +1010,9 @@
     addPayment: function (payment) {
       OB.UTIL.addPayment(payment, this.get('payments'), this.getTotal(), this);
     },
-    
-    overpaymentExists: function() {
-      return this.getPaymentStatus().overpayment?true:false;
+
+    overpaymentExists: function () {
+      return this.getPaymentStatus().overpayment ? true : false;
     },
 
     removePayment: function (payment) {
@@ -1307,12 +1307,12 @@
       this.add(this.current);
       this.loadCurrent(true);
     },
-    
+
     addFirstOrder: function () {
-      OB.POS.modelterminal.set('documentsequence', OB.POS.modelterminal.get('documentsequence')-1);
+      OB.POS.modelterminal.set('documentsequence', OB.POS.modelterminal.get('documentsequence') - 1);
       this.addNewOrder();
     },
-    
+
     addPaidReceipt: function (model) {
       this.saveCurrent();
       this.current = model;
@@ -1399,6 +1399,7 @@
       total: OB.DEC.Zero,
       payment: OB.DEC.Zero,
       pending: OB.DEC.Zero,
+      change: OB.DEC.Zero,
       payments: new Backbone.Collection()
     },
     addPayment: function (payment) {
@@ -1411,6 +1412,15 @@
         this.set('openDrawer', false);
       }
       OB.UTIL.adjustPayment(this.get('total'), this);
+    },
+    resetValues: function () {
+      this.set('isMultiOrders', false);
+      this.get('multiOrdersList').reset();
+      this.set('total', OB.DEC.Zero);
+      this.set('payment', OB.DEC.Zero);
+      this.set('pending', OB.DEC.Zero);
+      this.set('change', OB.DEC.Zero);
+      this.get('payments').reset();
     }
   });
   var TaxLine = Backbone.Model.extend();

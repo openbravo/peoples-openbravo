@@ -217,7 +217,7 @@ enyo.kind({
           }
           var amount = OB.DEC.number(OB.I18N.parseNumber(txt));
           amount = _.isNaN(amount) ? 100 : amount;
-          if (me.model.get('multiOrders').get('total') !== OB.DEC.Zero) {
+          if (me.model.get('multiOrders').get('isMultiOrders') && me.model.get('multiOrders').get('total') !== OB.DEC.Zero) {
             me.payMultiOrder(amount, payment.payment.searchKey, payment.payment._identifier, payment.paymentMethod, payment.rate, payment.mulrate, payment.isocode, options);
           } else {
             me.pay(amount, payment.payment.searchKey, payment.payment._identifier, payment.paymentMethod, payment.rate, payment.mulrate, payment.isocode, options);
@@ -279,7 +279,7 @@ enyo.kind({
           if (exactpayment.rate && exactpayment.rate !== '1') {
             amount = OB.DEC.div(me.receipt.getPending(), exactpayment.rate);
           }
-          if (me.model.get('multiOrders').get('total') !== OB.DEC.Zero) {
+          if (me.model.get('multiOrders').get('isMultiOrders') && me.model.get('multiOrders').get('total') !== OB.DEC.Zero) {
             amount = OB.DEC.sub(me.model.get('multiOrders').get('total'), me.model.get('multiOrders').get('payment'));
             me.payMultiOrder(amount, exactpayment.payment.searchKey, exactpayment.payment._identifier, exactpayment.paymentMethod, exactpayment.rate, exactpayment.mulrate, exactpayment.isocode);
           } else {

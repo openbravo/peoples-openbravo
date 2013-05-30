@@ -91,6 +91,15 @@ enyo.kind({
                 style: 'height: 36px'
               }),
               renderLine: 'OB.OBPOSPointOfSale.UI.RenderPaymentLine'
+            }, {
+              kind: 'OB.UI.ScrollableTable',
+              scrollAreaMaxHeight: '150px',
+              name: 'multiPayments',
+              showing: false,
+              renderEmpty: enyo.kind({
+                style: 'height: 36px'
+              }),
+              renderLine: 'OB.OBPOSPointOfSale.UI.RenderPaymentLine'
             }]
           }]
         }]
@@ -120,6 +129,7 @@ enyo.kind({
       return true;
     }
     this.$.payments.setCollection(this.receipt.get('payments'));
+    this.$.multiPayments.setCollection(this.model.get('multiOrders').get('payments'));
     this.receipt.on('change:payment change:change calculategross change:bp change:gross', function () {
       this.updatePending();
     }, this);
@@ -154,7 +164,7 @@ enyo.kind({
     if (!_.isUndefined(this.receipt) && !_.isUndefined(OB.POS.terminal.terminal.paymentnames[this.receipt.selectedPayment])) {
       symbol = OB.POS.terminal.terminal.paymentnames[this.receipt.selectedPayment].symbol;
       rate = OB.POS.terminal.terminal.paymentnames[this.receipt.selectedPayment].mulrate;
-      symbolAtRight = OB.POS.terminal.terminal.paymentnames[this.receipt.selectedPayment].currencySymbolAtRight;
+      symbolAtRight = OB.POS.terminal.terminal.paymentnames[this.receipt.selectedPayment].currencySymbolAtTheRight;
     }
     if (paymentstatus.change) {
       this.$.change.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(this.receipt.getChange(), rate), symbol, symbolAtRight));
@@ -194,7 +204,7 @@ enyo.kind({
         this.$.doneButton.drawerOpened = false;
       }
       if (OB.POS.modelterminal.get('terminal').allowpayoncredit && this.receipt.get('bp')) {
-        if ((this.receipt.get('bp').get('creditLimit') > 0 || this.receipt.get('bp').get('creditUsed') < 0)  && !this.$.layawayaction.showing) {
+        if ((this.receipt.get('bp').get('creditLimit') > 0 || this.receipt.get('bp').get('creditUsed') < 0) && !this.$.layawayaction.showing) {
           this.$.creditsalesaction.show();
         } else {
           this.$.creditsalesaction.hide();
@@ -245,14 +255,16 @@ enyo.kind({
   updatePendingMultiOrders: function () {
     var paymentstatus = this.model.get('multiOrders');
     var symbol = '',
+        symbolAtRight = true,
         rate = OB.DEC.One;
     this.$.layawayaction.hide();
-    if (!_.isUndefined(OB.POS.terminal.terminal.paymentnames[this.receipt.selectedPayment])) {
-      symbol = OB.POS.terminal.terminal.paymentnames[this.receipt.selectedPayment].symbol;
-      rate = OB.POS.terminal.terminal.paymentnames[this.receipt.selectedPayment].mulrate;
+    if (!_.isUndefined(OB.POS.terminal.terminal.paymentnames[OB.POS.modelterminal.get('paymentcash')])) {
+      symbol = OB.POS.terminal.terminal.paymentnames[OB.POS.modelterminal.get('paymentcash')].symbol;
+      rate = OB.POS.terminal.terminal.paymentnames[OB.POS.modelterminal.get('paymentcash')].mulrate;
+      symbolAtRight = OB.POS.terminal.terminal.paymentnames[OB.POS.modelterminal.get('paymentcash')].currencySymbolAtRight;
     }
     if (paymentstatus.get('change')) {
-      this.$.change.setContent(OB.I18N.formatCurrency(OB.DEC.mul(paymentstatus.get('change'), rate)) + symbol);
+      this.$.change.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(paymentstatus.get('change'), rate), symbol, symbolAtRight));
       this.$.change.show();
       this.$.changelbl.show();
     } else {
@@ -276,7 +288,7 @@ enyo.kind({
       this.$.creditsalesaction.hide();
       //            this.$.layawayaction.hide();
     } else {
-      this.$.totalpending.setContent(OB.I18N.formatCurrency(OB.DEC.mul(OB.DEC.sub(paymentstatus.get('total'), paymentstatus.get('payment')), rate)) + symbol);
+      this.$.totalpending.setContent(OB.I18N.formatCurrency(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(paymentstatus.get('total'), rate), symbol, symbolAtRight)));
       this.$.totalpending.show();
       this.$.totalpendinglbl.show();
       this.$.doneaction.hide();
@@ -334,7 +346,7 @@ enyo.kind({
   init: function (model) {
     var me = this;
     this.model = model;
-    this.model.get('multiOrders').get('multiOrdersList').on('remove', function () {
+    this.model.get('multiOrders').get('multiOrdersList').on('all', function () {
       this.updatePendingMultiOrders();
     }, this);
     this.model.get('multiOrders').on('change:payment change:total change:change', function () {
@@ -342,9 +354,11 @@ enyo.kind({
     }, this);
     this.model.get('multiOrders').on('change:isMultiOrders', function () {
       if (!this.model.get('multiOrders').get('isMultiOrders')) {
-        this.$.payments.setCollection(this.receipt.get('payments'));
+        this.$.multiPayments.hide();
+        this.$.payments.show();
       } else {
-        this.$.payments.setCollection(this.model.get('multiOrders').get('payments'));
+        this.$.payments.hide();
+        this.$.multiPayments.show();
       }
     }, this);
   }
