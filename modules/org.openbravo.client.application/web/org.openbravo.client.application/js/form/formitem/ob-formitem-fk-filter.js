@@ -269,10 +269,23 @@ isc.OBFKFilterTextItem.addProperties({
 
   setCriterion: function (criterion) {
     var i, value, values = [],
+        operator, operators, valueSet = false,
         criteria = criterion ? criterion.criteria : null;
     if (criteria && criteria.length && criterion.operator === 'or') {
       for (i = 0; i < criteria.length; i++) {
-        values.push(criteria[i].value);
+        operators = isc.DataSource.getSearchOperators();
+        if (criteria[i].operator !== "iContains" && criteria[i].operator !== "contains") {
+          for (operator in operators) {
+            if (operators[operator].ID === criteria[i].operator && operators[operator].symbol && criteria[i].value && criteria[i].value.indexOf(operators[operator].symbol) === -1) {
+              values.push(operators[operator].symbol + criteria[i].value);
+              valueSet = true;
+            }
+          }
+        }
+        if (valueSet == false) {
+          values.push(criteria[i].value);
+        }
+        valueSet = false;
       }
       this.setValue(values);
     } else {
