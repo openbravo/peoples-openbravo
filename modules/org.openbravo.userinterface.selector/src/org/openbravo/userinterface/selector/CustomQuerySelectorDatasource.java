@@ -103,13 +103,16 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
         // Defaulted to endRow + 2 to check for more records while scrolling.
         totalRows = endRow + 2;
         ScrollableResults queryResults = selQuery.scroll(ScrollMode.FORWARD_ONLY);
-        while (queryResults.next()) {
-          queryListSize++;
-          if (queryListSize % clearEachLoop == 0) {
-            OBDal.getInstance().getSession().clear();
+        try {
+          while (queryResults.next()) {
+            queryListSize++;
+            if (queryListSize % clearEachLoop == 0) {
+              OBDal.getInstance().getSession().clear();
+            }
           }
+        } finally {
+          queryResults.close();
         }
-        queryResults.close();
         if (startRow < endRow) {
           if (queryListSize < endRow) {
             totalRows = queryListSize;

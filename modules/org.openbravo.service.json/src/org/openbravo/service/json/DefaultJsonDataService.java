@@ -313,28 +313,31 @@ public class DefaultJsonDataService implements JsonDataService {
     toJsonConverter.setAdditionalProperties(JsonUtils.getAdditionalProperties(parameters));
 
     final ScrollableResults scrollableResults = queryService.scroll();
-    int i = 0;
-    while (scrollableResults.next()) {
-      final Object result = scrollableResults.get()[0];
-      final JSONObject json = toJsonConverter.toJsonObject((BaseOBObject) result,
-          DataResolvingMode.FULL);
+    try {
+      int i = 0;
+      while (scrollableResults.next()) {
+        final Object result = scrollableResults.get()[0];
+        final JSONObject json = toJsonConverter.toJsonObject((BaseOBObject) result,
+            DataResolvingMode.FULL);
 
-      try {
-        doPostFetch(parameters, json);
-      } catch (JSONException e) {
-        throw new OBException(e);
+        try {
+          doPostFetch(parameters, json);
+        } catch (JSONException e) {
+          throw new OBException(e);
+        }
+
+        writer.write(json);
+
+        i++;
+        // Clear session every 1000 records to prevent huge memory consumption in case of big loops
+        if (i % 1000 == 0) {
+          OBDal.getInstance().getSession().clear();
+          log.debug("clearing in record " + i + " elapsed time " + (System.currentTimeMillis() - t));
+        }
       }
-
-      writer.write(json);
-
-      i++;
-      // Clear session every 1000 records to prevent huge memory consumption in case of big loops
-      if (i % 1000 == 0) {
-        OBDal.getInstance().getSession().clear();
-        log.debug("clearing in record " + i + " elapsed time " + (System.currentTimeMillis() - t));
-      }
+    } finally {
+      scrollableResults.close();
     }
-    scrollableResults.close();
     log.debug("Fetch took " + (System.currentTimeMillis() - t) + " ms");
   }
 

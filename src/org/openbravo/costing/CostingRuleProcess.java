@@ -241,33 +241,36 @@ public class CostingRuleProcess implements Process {
     trxQry.setFetchSize(1000);
     ScrollableResults trxs = trxQry.scroll(ScrollMode.FORWARD_ONLY);
     int i = 1;
-    while (trxs.next()) {
-      MaterialTransaction trx = (MaterialTransaction) trxs.get(0);
+    try {
+      while (trxs.next()) {
+        MaterialTransaction trx = (MaterialTransaction) trxs.get(0);
 
-      TransactionCost transactionCost = OBProvider.getInstance().get(TransactionCost.class);
-      transactionCost.setInventoryTransaction(trx);
-      transactionCost.setCostDate(trx.getTransactionProcessDate());
-      transactionCost.setClient(trx.getClient());
-      transactionCost.setOrganization(trx.getOrganization());
-      transactionCost.setCost(BigDecimal.ZERO);
-      transactionCost.setCurrency(trx.getClient().getCurrency());
-      List<TransactionCost> trxCosts = trx.getTransactionCostList();
-      trxCosts.add(transactionCost);
-      trx.setTransactionCostList(trxCosts);
+        TransactionCost transactionCost = OBProvider.getInstance().get(TransactionCost.class);
+        transactionCost.setInventoryTransaction(trx);
+        transactionCost.setCostDate(trx.getTransactionProcessDate());
+        transactionCost.setClient(trx.getClient());
+        transactionCost.setOrganization(trx.getOrganization());
+        transactionCost.setCost(BigDecimal.ZERO);
+        transactionCost.setCurrency(trx.getClient().getCurrency());
+        List<TransactionCost> trxCosts = trx.getTransactionCostList();
+        trxCosts.add(transactionCost);
+        trx.setTransactionCostList(trxCosts);
 
-      trx.setCostCalculated(true);
-      trx.setCostingStatus("CC");
-      trx.setTransactionCost(BigDecimal.ZERO);
-      trx.setCurrency(trx.getClient().getCurrency());
-      OBDal.getInstance().save(trx);
+        trx.setCostCalculated(true);
+        trx.setCostingStatus("CC");
+        trx.setTransactionCost(BigDecimal.ZERO);
+        trx.setCurrency(trx.getClient().getCurrency());
+        OBDal.getInstance().save(trx);
 
-      if ((i % 100) == 0) {
-        OBDal.getInstance().flush();
-        OBDal.getInstance().getSession().clear();
+        if ((i % 100) == 0) {
+          OBDal.getInstance().flush();
+          OBDal.getInstance().getSession().clear();
+        }
+        i++;
       }
-      i++;
+    } finally {
+      trxs.close();
     }
-    trxs.close();
   }
 
   @Deprecated
@@ -282,43 +285,46 @@ public class CostingRuleProcess implements Process {
     Map<String, String> initLines = new HashMap<String, String>();
     Map<String, Long> maxLineNumbers = new HashMap<String, Long>();
     int i = 1;
-    while (stockLines.next()) {
-      Object[] stockLine = stockLines.get();
-      String productId = (String) stockLine[0];
-      String attrSetInsId = (String) stockLine[1];
-      String uomId = (String) stockLine[2];
-      String orderUOMId = (String) stockLine[3];
-      String locatorId = (String) stockLine[4];
-      String warehouseId = (String) stockLine[5];
-      BigDecimal qty = (BigDecimal) stockLine[6];
-      BigDecimal orderQty = (BigDecimal) stockLine[7];
+    try {
+      while (stockLines.next()) {
+        Object[] stockLine = stockLines.get();
+        String productId = (String) stockLine[0];
+        String attrSetInsId = (String) stockLine[1];
+        String uomId = (String) stockLine[2];
+        String orderUOMId = (String) stockLine[3];
+        String locatorId = (String) stockLine[4];
+        String warehouseId = (String) stockLine[5];
+        BigDecimal qty = (BigDecimal) stockLine[6];
+        BigDecimal orderQty = (BigDecimal) stockLine[7];
 
-      String criId = initLines.get(warehouseId);
-      CostingRuleInit cri = null;
-      if (criId == null) {
-        cri = createCostingRuleInitLine(rule, warehouseId, date);
+        String criId = initLines.get(warehouseId);
+        CostingRuleInit cri = null;
+        if (criId == null) {
+          cri = createCostingRuleInitLine(rule, warehouseId, date);
 
-        initLines.put(warehouseId, cri.getId());
-      } else {
-        cri = OBDal.getInstance().get(CostingRuleInit.class, criId);
+          initLines.put(warehouseId, cri.getId());
+        } else {
+          cri = OBDal.getInstance().get(CostingRuleInit.class, criId);
+        }
+        Long lineNo = (maxLineNumbers.get(criId) == null ? 0L : maxLineNumbers.get(criId)) + 10L;
+        maxLineNumbers.put(criId, lineNo);
+
+        insertInventoryLine(cri.getCloseInventory(), productId, attrSetInsId, uomId, orderUOMId,
+            locatorId, BigDecimal.ZERO, qty, BigDecimal.ZERO, orderQty, lineNo);
+        insertInventoryLine(cri.getInitInventory(), productId, attrSetInsId, uomId, orderUOMId,
+            locatorId, qty, BigDecimal.ZERO, orderQty, BigDecimal.ZERO, lineNo);
+
+        if ((i % 100) == 0) {
+          OBDal.getInstance().flush();
+          OBDal.getInstance().getSession().clear();
+          // Reload rule after clear session.
+          rule = OBDal.getInstance().get(CostingRule.class, ruleId);
+        }
+        i++;
       }
-      Long lineNo = (maxLineNumbers.get(criId) == null ? 0L : maxLineNumbers.get(criId)) + 10L;
-      maxLineNumbers.put(criId, lineNo);
-
-      insertInventoryLine(cri.getCloseInventory(), productId, attrSetInsId, uomId, orderUOMId,
-          locatorId, BigDecimal.ZERO, qty, BigDecimal.ZERO, orderQty, lineNo);
-      insertInventoryLine(cri.getInitInventory(), productId, attrSetInsId, uomId, orderUOMId,
-          locatorId, qty, BigDecimal.ZERO, orderQty, BigDecimal.ZERO, lineNo);
-
-      if ((i % 100) == 0) {
-        OBDal.getInstance().flush();
-        OBDal.getInstance().getSession().clear();
-        // Reload rule after clear session.
-        rule = OBDal.getInstance().get(CostingRule.class, ruleId);
-      }
-      i++;
+    } finally {
+      stockLines.close();
     }
-    stockLines.close();
     // Process closing physical inventories.
     for (CostingRuleInit cri : rule.getCostingRuleInitList()) {
       new InventoryCountProcess().processInventory(cri.getCloseInventory());

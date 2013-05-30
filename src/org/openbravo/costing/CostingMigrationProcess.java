@@ -278,17 +278,20 @@ public class CostingMigrationProcess implements Process {
         Set<String> naturalTree = osp.getNaturalTree(legalEntity.getId());
         ScrollableResults legacyCosts = getLegacyCostScroll(clientId, naturalTree);
         int i = 0;
-        while (legacyCosts.next()) {
-          Costing cost = (Costing) legacyCosts.get(0);
+        try {
+          while (legacyCosts.next()) {
+            Costing cost = (Costing) legacyCosts.get(0);
 
-          updateTrxLegacyCosts(cost, stdPrecission, naturalTree);
+            updateTrxLegacyCosts(cost, stdPrecission, naturalTree);
 
-          if ((i % 100) == 0) {
-            OBDal.getInstance().flush();
-            OBDal.getInstance().getSession().clear();
+            if ((i % 100) == 0) {
+              OBDal.getInstance().flush();
+              OBDal.getInstance().getSession().clear();
+            }
           }
+        } finally {
+          legacyCosts.close();
         }
-        legacyCosts.close();
         SessionHandler.getInstance().commitAndStart();
       }
     }
@@ -313,17 +316,20 @@ public class CostingMigrationProcess implements Process {
 
     final ScrollableResults costs = costQry.scroll(ScrollMode.FORWARD_ONLY);
     int i = 0;
-    while (costs.next()) {
-      Costing cost = (Costing) costs.get(0);
-      cost.setCurrency(cost.getClient().getCurrency());
-      OBDal.getInstance().save(cost);
-      if ((i % 100) == 0) {
-        OBDal.getInstance().flush();
-        OBDal.getInstance().getSession().clear();
+    try {
+      while (costs.next()) {
+        Costing cost = (Costing) costs.get(0);
+        cost.setCurrency(cost.getClient().getCurrency());
+        OBDal.getInstance().save(cost);
+        if ((i % 100) == 0) {
+          OBDal.getInstance().flush();
+          OBDal.getInstance().getSession().clear();
+        }
+        i++;
       }
-      i++;
+    } finally {
+      costs.close();
     }
-    costs.close();
   }
 
   private void createRules() throws Exception {
@@ -378,57 +384,60 @@ public class CostingMigrationProcess implements Process {
     BigDecimal totalCost = BigDecimal.ZERO;
     BigDecimal totalStock = BigDecimal.ZERO;
     int i = 0;
-    while (icls.next()) {
-      InventoryCountLine icl = (InventoryCountLine) icls.get(0);
-      if (!productId.equals(icl.getProduct().getId())) {
-        productId = icl.getProduct().getId();
-        HashMap<String, BigDecimal> stock = getCurrentValuedStock(productId, curId, orgs, orgId);
-        totalCost = stock.get("cost");
-        totalStock = stock.get("stock");
-      }
+    try {
+      while (icls.next()) {
+        InventoryCountLine icl = (InventoryCountLine) icls.get(0);
+        if (!productId.equals(icl.getProduct().getId())) {
+          productId = icl.getProduct().getId();
+          HashMap<String, BigDecimal> stock = getCurrentValuedStock(productId, curId, orgs, orgId);
+          totalCost = stock.get("cost");
+          totalStock = stock.get("stock");
+        }
 
-      MaterialTransaction trx = crp.getInventoryLineTransaction(icl);
-      trx.setTransactionProcessDate(DateUtils.addSeconds(trx.getTransactionProcessDate(), -1));
-      trx.setCurrency(OBDal.getInstance().get(Currency.class, curId));
+        MaterialTransaction trx = crp.getInventoryLineTransaction(icl);
+        trx.setTransactionProcessDate(DateUtils.addSeconds(trx.getTransactionProcessDate(), -1));
+        trx.setCurrency(OBDal.getInstance().get(Currency.class, curId));
 
-      BigDecimal trxCost = BigDecimal.ZERO;
-      if (totalStock.compareTo(BigDecimal.ZERO) != 0) {
-        trxCost = totalCost.multiply(trx.getMovementQuantity().abs()).divide(totalStock,
-            stdPrecision, BigDecimal.ROUND_HALF_UP);
-      }
-      if (trx.getMovementQuantity().compareTo(totalStock) == 0) {
-        // Last transaction adjusts remaining cost amount.
-        trxCost = totalCost;
-      }
-      trx.setTransactionCost(trxCost);
-      trx.setCostCalculated(true);
-      trx.setCostingStatus("CC");
-      OBDal.getInstance().save(trx);
-      Currency legalEntityCur = FinancialUtils.getLegalEntityCurrency(trx.getOrganization());
-      BigDecimal cost = trxCost.divide(trx.getMovementQuantity().abs(), costPrecision,
-          BigDecimal.ROUND_HALF_UP);
-      if (!legalEntityCur.equals(cur)) {
-        cost = FinancialUtils.getConvertedAmount(cost, cur, legalEntityCur, new Date(),
-            icl.getOrganization(), FinancialUtils.PRECISION_COSTING);
-      }
-      OBDal.getInstance().refresh(icl.getPhysInventory());
-      CostingRuleInit cri = icl.getPhysInventory().getCostingRuleInitCloseInventoryList().get(0);
-      InventoryCountLine initICL = crp.getInitIcl(cri.getInitInventory(), icl);
-      initICL.setCost(cost);
-      OBDal.getInstance().save(initICL);
+        BigDecimal trxCost = BigDecimal.ZERO;
+        if (totalStock.compareTo(BigDecimal.ZERO) != 0) {
+          trxCost = totalCost.multiply(trx.getMovementQuantity().abs()).divide(totalStock,
+              stdPrecision, BigDecimal.ROUND_HALF_UP);
+        }
+        if (trx.getMovementQuantity().compareTo(totalStock) == 0) {
+          // Last transaction adjusts remaining cost amount.
+          trxCost = totalCost;
+        }
+        trx.setTransactionCost(trxCost);
+        trx.setCostCalculated(true);
+        trx.setCostingStatus("CC");
+        OBDal.getInstance().save(trx);
+        Currency legalEntityCur = FinancialUtils.getLegalEntityCurrency(trx.getOrganization());
+        BigDecimal cost = trxCost.divide(trx.getMovementQuantity().abs(), costPrecision,
+            BigDecimal.ROUND_HALF_UP);
+        if (!legalEntityCur.equals(cur)) {
+          cost = FinancialUtils.getConvertedAmount(cost, cur, legalEntityCur, new Date(),
+              icl.getOrganization(), FinancialUtils.PRECISION_COSTING);
+        }
+        OBDal.getInstance().refresh(icl.getPhysInventory());
+        CostingRuleInit cri = icl.getPhysInventory().getCostingRuleInitCloseInventoryList().get(0);
+        InventoryCountLine initICL = crp.getInitIcl(cri.getInitInventory(), icl);
+        initICL.setCost(cost);
+        OBDal.getInstance().save(initICL);
 
-      totalCost = totalCost.subtract(trxCost);
-      // MovementQty is already negative so add to totalStock to decrease it.
-      totalStock = totalStock.add(trx.getMovementQuantity());
+        totalCost = totalCost.subtract(trxCost);
+        // MovementQty is already negative so add to totalStock to decrease it.
+        totalStock = totalStock.add(trx.getMovementQuantity());
 
-      if ((i % 100) == 0) {
-        OBDal.getInstance().flush();
-        OBDal.getInstance().getSession().clear();
-        cur = OBDal.getInstance().get(Currency.class, curId);
+        if ((i % 100) == 0) {
+          OBDal.getInstance().flush();
+          OBDal.getInstance().getSession().clear();
+          cur = OBDal.getInstance().get(Currency.class, curId);
+        }
+        i++;
       }
-      i++;
+    } finally {
+      icls.close();
     }
-    icls.close();
 
     OBDal.getInstance().flush();
     insertTrxCosts();
@@ -579,40 +588,43 @@ public class CostingMigrationProcess implements Process {
 
     ScrollableResults trxs = trxQry.scroll(ScrollMode.FORWARD_ONLY);
     int i = 0;
-    while (trxs.next()) {
-      MaterialTransaction trx = (MaterialTransaction) trxs.get(0);
-      log4j.debug("********** UpdateTrxLegacyCosts process trx:" + trx.getIdentifier());
+    try {
+      while (trxs.next()) {
+        MaterialTransaction trx = (MaterialTransaction) trxs.get(0);
+        log4j.debug("********** UpdateTrxLegacyCosts process trx:" + trx.getIdentifier());
 
-      if (trx.getGoodsShipmentLine() != null
-          && trx.getGoodsShipmentLine().getShipmentReceipt().getAccountingDate()
-              .compareTo(trx.getMovementDate()) != 0) {
-        // Shipments with accounting date different than the movement date gets the cost valid on
-        // the accounting date.
-        BigDecimal unitCost = new BigDecimal(new ProductInfo(cost.getProduct().getId(),
-            new DalConnectionProvider(false)).getProductItemCost(OBDateUtils.formatDate(trx
-            .getGoodsShipmentLine().getShipmentReceipt().getAccountingDate()), null, "AV",
-            new DalConnectionProvider(false), OBDal.getInstance().getConnection()));
-        BigDecimal trxCost = unitCost.multiply(trx.getMovementQuantity().abs()).setScale(
-            standardPrecision, BigDecimal.ROUND_HALF_UP);
+        if (trx.getGoodsShipmentLine() != null
+            && trx.getGoodsShipmentLine().getShipmentReceipt().getAccountingDate()
+                .compareTo(trx.getMovementDate()) != 0) {
+          // Shipments with accounting date different than the movement date gets the cost valid on
+          // the accounting date.
+          BigDecimal unitCost = new BigDecimal(new ProductInfo(cost.getProduct().getId(),
+              new DalConnectionProvider(false)).getProductItemCost(OBDateUtils.formatDate(trx
+              .getGoodsShipmentLine().getShipmentReceipt().getAccountingDate()), null, "AV",
+              new DalConnectionProvider(false), OBDal.getInstance().getConnection()));
+          BigDecimal trxCost = unitCost.multiply(trx.getMovementQuantity().abs()).setScale(
+              standardPrecision, BigDecimal.ROUND_HALF_UP);
 
-        trx.setTransactionCost(trxCost);
-      } else {
-        trx.setTransactionCost(cost.getCost().multiply(trx.getMovementQuantity().abs())
-            .setScale(standardPrecision, BigDecimal.ROUND_HALF_UP));
+          trx.setTransactionCost(trxCost);
+        } else {
+          trx.setTransactionCost(cost.getCost().multiply(trx.getMovementQuantity().abs())
+              .setScale(standardPrecision, BigDecimal.ROUND_HALF_UP));
+        }
+
+        trx.setCurrency(cost.getCurrency());
+        trx.setCostCalculated(true);
+        trx.setCostingStatus("CC");
+
+        if ((i % 100) == 0) {
+          OBDal.getInstance().flush();
+          OBDal.getInstance().getSession().clear();
+          cost = OBDal.getInstance().get(Costing.class, cost.getId());
+        }
+        i++;
       }
-
-      trx.setCurrency(cost.getCurrency());
-      trx.setCostCalculated(true);
-      trx.setCostingStatus("CC");
-
-      if ((i % 100) == 0) {
-        OBDal.getInstance().flush();
-        OBDal.getInstance().getSession().clear();
-        cost = OBDal.getInstance().get(Costing.class, cost.getId());
-      }
-      i++;
+    } finally {
+      trxs.close();
     }
-    trxs.close();
 
     log4j.debug("****** UpdateTrxLegacyCosts updated:" + i);
   }
@@ -638,26 +650,29 @@ public class CostingMigrationProcess implements Process {
     int i = 0;
     String orgId = "";
     String curId = "";
-    while (trxs.next()) {
-      MaterialTransaction trx = (MaterialTransaction) trxs.get(0);
-      if (!orgId.equals((String) DalUtil.getId(trx.getOrganization()))) {
-        orgId = (String) DalUtil.getId(trx.getOrganization());
-        Currency cur = FinancialUtils.getLegalEntityCurrency(trx.getOrganization());
-        curId = cur.getId();
-      }
-      trx.setTransactionCost(BigDecimal.ZERO);
-      trx.setCurrency((Currency) OBDal.getInstance().getProxy(Currency.ENTITY_NAME, curId));
-      trx.setCostCalculated(true);
-      trx.setCostingStatus("CC");
-      OBDal.getInstance().save(trx);
+    try {
+      while (trxs.next()) {
+        MaterialTransaction trx = (MaterialTransaction) trxs.get(0);
+        if (!orgId.equals((String) DalUtil.getId(trx.getOrganization()))) {
+          orgId = (String) DalUtil.getId(trx.getOrganization());
+          Currency cur = FinancialUtils.getLegalEntityCurrency(trx.getOrganization());
+          curId = cur.getId();
+        }
+        trx.setTransactionCost(BigDecimal.ZERO);
+        trx.setCurrency((Currency) OBDal.getInstance().getProxy(Currency.ENTITY_NAME, curId));
+        trx.setCostCalculated(true);
+        trx.setCostingStatus("CC");
+        OBDal.getInstance().save(trx);
 
-      if ((i % 100) == 0) {
-        OBDal.getInstance().flush();
-        OBDal.getInstance().getSession().clear();
+        if ((i % 100) == 0) {
+          OBDal.getInstance().flush();
+          OBDal.getInstance().getSession().clear();
+        }
+        i++;
       }
-      i++;
+    } finally {
+      trxs.close();
     }
-    trxs.close();
     log4j.debug("****** updateWithCeroRemainingTrx updated:" + i);
   }
 

@@ -153,23 +153,26 @@ public class AcctSchemaEventHandler extends EntityPersistenceEventObserver {
     elementValueQry.setFetchSize(1000);
 
     ScrollableResults elementvalues = elementValueQry.scroll(ScrollMode.FORWARD_ONLY);
-    // TODO: Review with Martin to see if flush is permitted in handlers
-    // int i = 0;
-    while (elementvalues.next()) {
-      ElementValue elementValue = (ElementValue) elementvalues.get(0);
-      boolean isCredit = getAccountSign(elementValue.getAccountType(), assetPositive,
-          liabilityPositive, ownersEquityPositive, expensePositive, revenuePositive);
-      if (!ACCOUNTTYPE_MEMO.equals(elementValue.getAccountType())) {
-        elementValue.setAccountSign(isCredit ? ACCOUNTSIGN_CREDIT : ACCOUNTSIGN_DEBIT);
+    try {
+      // TODO: Review with Martin to see if flush is permitted in handlers
+      // int i = 0;
+      while (elementvalues.next()) {
+        ElementValue elementValue = (ElementValue) elementvalues.get(0);
+        boolean isCredit = getAccountSign(elementValue.getAccountType(), assetPositive,
+            liabilityPositive, ownersEquityPositive, expensePositive, revenuePositive);
+        if (!ACCOUNTTYPE_MEMO.equals(elementValue.getAccountType())) {
+          elementValue.setAccountSign(isCredit ? ACCOUNTSIGN_CREDIT : ACCOUNTSIGN_DEBIT);
+        }
+        // if ((i % 100) == 0) {
+        // OBDal.getInstance().flush();
+        // OBDal.getInstance().getSession().clear();
+        // element = OBDal.getInstance().get(Element.class, element.getId());
+        // }
+        // i++;
       }
-      // if ((i % 100) == 0) {
-      // OBDal.getInstance().flush();
-      // OBDal.getInstance().getSession().clear();
-      // element = OBDal.getInstance().get(Element.class, element.getId());
-      // }
-      // i++;
+    } finally {
+      elementvalues.close();
     }
-    elementvalues.close();
   }
 
   private boolean getAccountSign(String accountType, boolean assetPositive,

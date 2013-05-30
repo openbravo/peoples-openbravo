@@ -256,17 +256,20 @@ public class WindowTree extends HttpSecureAppServlet {
         ScrollableResults entityData = entityResults.scroll(ScrollMode.FORWARD_ONLY);
         int clearEachLoops = 100;
         int i = 0;
-        while (entityData.next()) {
-          i++;
-          BaseOBObject entity = (BaseOBObject) entityData.get()[0];
-          if (entity.getId() != null) {
-            nodeIdList.add(entity.getId().toString());
+        try {
+          while (entityData.next()) {
+            i++;
+            BaseOBObject entity = (BaseOBObject) entityData.get()[0];
+            if (entity.getId() != null) {
+              nodeIdList.add(entity.getId().toString());
+            }
+            if (i % clearEachLoops == 0) {
+              OBDal.getInstance().getSession().clear();
+            }
           }
-          if (i % clearEachLoops == 0) {
-            OBDal.getInstance().getSession().clear();
-          }
+        } finally {
+          entityData.close();
         }
-        entityData.close();
       }
 
       for (WindowTreeData elem : subList) {
