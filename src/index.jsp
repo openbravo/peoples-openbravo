@@ -177,7 +177,7 @@ try{
   }else{
     role = OBDal.getInstance().get(Role.class, vars1.getRole());
   }
-if(role.isRestrictbackend()){
+if(role !=null && role.isRestrictbackend()){
 %>
   document.body.removeChild(document.getElementById('OBLoadingDiv'));
   isc.Dialog.create({message: OB.I18N.getLabel('OBUIAPP_RestrictedUser'), title: OB.I18N.getLabel('OBUIAPP_RestrictedUserTitle'), showCloseButton: false}).show();
