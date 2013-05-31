@@ -335,6 +335,10 @@ Order closed: All the products agreed have been delivered.]]></HELP>
 <!--3257616746BE4074BBF4BD04F31F0C41-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--3257616746BE4074BBF4BD04F31F0C41-->  <AD_COLUMN_ID><![CDATA[2011]]></AD_COLUMN_ID>
 <!--3257616746BE4074BBF4BD04F31F0C41-->  <NAME><![CDATA[Search Key]]></NAME>
+<!--3257616746BE4074BBF4BD04F31F0C41-->  <DESCRIPTION><![CDATA[A fast method for finding a particular record.]]></DESCRIPTION>
+<!--3257616746BE4074BBF4BD04F31F0C41-->  <HELP><![CDATA[A search key allows for a fast method of finding a particular record. If you leave the search key empty, the system automatically creates a numeric number originating from a document sequence defined in the  "Document Sequence" window. The sequence naming convention follows a rule "DocumentNo_TableName", where TableName is the actual name of the database table (e.g. C_Order).
+
+Usually, company's internal identifiers for various records (products, customers, etc) are stored here.]]></HELP>
 <!--3257616746BE4074BBF4BD04F31F0C41-->  <PROPERTY><![CDATA[searchKey]]></PROPERTY>
 <!--3257616746BE4074BBF4BD04F31F0C41-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
 <!--3257616746BE4074BBF4BD04F31F0C41-->  <SORT><![CDATA[Y]]></SORT>
@@ -780,6 +784,8 @@ Usually, company's internal identifiers for various records (products, customers
 <!--417C19D0593B4C84A9A422075C849DD0-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--417C19D0593B4C84A9A422075C849DD0-->  <AD_COLUMN_ID><![CDATA[1410]]></AD_COLUMN_ID>
 <!--417C19D0593B4C84A9A422075C849DD0-->  <NAME><![CDATA[Name]]></NAME>
+<!--417C19D0593B4C84A9A422075C849DD0-->  <DESCRIPTION><![CDATA[A non-unique identifier for a record/document often used as a search tool.]]></DESCRIPTION>
+<!--417C19D0593B4C84A9A422075C849DD0-->  <HELP><![CDATA[A more descriptive identifier (that does need to be unique) of a record/document that is used as a default search option along with the search key (that is unique and mostly shorter). It is up to 60 characters in length.]]></HELP>
 <!--417C19D0593B4C84A9A422075C849DD0-->  <PROPERTY><![CDATA[name]]></PROPERTY>
 <!--417C19D0593B4C84A9A422075C849DD0-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
 <!--417C19D0593B4C84A9A422075C849DD0-->  <SORT><![CDATA[Y]]></SORT>
@@ -788,7 +794,8 @@ Usually, company's internal identifiers for various records (products, customers
 <!--417C19D0593B4C84A9A422075C849DD0-->  <SHOWINGRID><![CDATA[Y]]></SHOWINGRID>
 <!--417C19D0593B4C84A9A422075C849DD0-->  <SORTNO><![CDATA[0]]></SORTNO>
 <!--417C19D0593B4C84A9A422075C849DD0-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--417C19D0593B4C84A9A422075C849DD0-->  <ISOUTFIELD><![CDATA[N]]></ISOUTFIELD>
+<!--417C19D0593B4C84A9A422075C849DD0-->  <ISOUTFIELD><![CDATA[Y]]></ISOUTFIELD>
+<!--417C19D0593B4C84A9A422075C849DD0-->  <SUFFIX><![CDATA[_NAME]]></SUFFIX>
 <!--417C19D0593B4C84A9A422075C849DD0-->  <SHOWINPICKLIST><![CDATA[Y]]></SHOWINPICKLIST>
 <!--417C19D0593B4C84A9A422075C849DD0--></OBUISEL_SELECTOR_FIELD>
 
@@ -906,6 +913,7 @@ Usually, company's internal identifiers for various records (products, customers
 <!--61468BCC79F14B0289A046060D119EC2-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--61468BCC79F14B0289A046060D119EC2-->  <AD_COLUMN_ID><![CDATA[D7192114A6A6B6B7E040007F01001270]]></AD_COLUMN_ID>
 <!--61468BCC79F14B0289A046060D119EC2-->  <NAME><![CDATA[Generic Product]]></NAME>
+<!--61468BCC79F14B0289A046060D119EC2-->  <HELP><![CDATA[Generic product related to this product. The product will inherit all the properties defined in the generic product. Such as taxes or price.]]></HELP>
 <!--61468BCC79F14B0289A046060D119EC2-->  <PROPERTY><![CDATA[genericProduct]]></PROPERTY>
 <!--61468BCC79F14B0289A046060D119EC2-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
 <!--61468BCC79F14B0289A046060D119EC2-->  <SORT><![CDATA[Y]]></SORT>

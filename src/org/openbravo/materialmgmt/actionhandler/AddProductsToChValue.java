@@ -112,6 +112,7 @@ public class AddProductsToChValue extends BaseProcessActionHandler {
         newPrCh.setProduct(product);
         newPrCh.setCharacteristic(chValue.getCharacteristic());
         newPrCh.setOrganization(product.getOrganization());
+        newPrCh.setVariant(false);
         newPrCh.setSequenceNumber((product.getProductCharacteristicList().size() + 1) * 10L);
         OBDal.getInstance().save(newPrCh);
       }
