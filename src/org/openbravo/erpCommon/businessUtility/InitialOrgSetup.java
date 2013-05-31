@@ -160,6 +160,7 @@ public class InitialOrgSetup {
     OBContext.getOBContext().getWritableOrganizations();
     try {
       OBDal.getInstance().flush();
+      OBDal.getInstance().commitAndClose();
       org = OBDal.getInstance().get(Organization.class, strOrgId);
       client = org.getClient();
       if (strcLocationId != null && !strcLocationId.equals(""))
@@ -248,7 +249,6 @@ public class InitialOrgSetup {
 
     obResult.setType(OKTYPE);
     obResult.setMessage("@" + OKTYPE + "@");
-    OBDal.getInstance().commitAndClose();
 
     return obResult;
 
