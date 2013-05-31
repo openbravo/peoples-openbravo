@@ -95,6 +95,16 @@ BEGIN
     WHERE ad_client_id = :OLD.ad_client_id
       AND ad_tree_id = v_tree_id
       AND node_id = :OLD.m_ch_value_id;
+      
+    -- Delete from m_product_ch_conf
+    DELETE FROM m_product_ch_conf
+    WHERE m_product_ch_conf_id IN (
+        SELECT m_product_ch_conf_id
+        FROM m_product_ch_conf pcc
+            JOIN m_product_ch pc ON pcc.m_product_ch_id = pc.m_product_ch_id
+        WHERE pc.m_characteristic_id = :OLD.m_characteristic_id
+          AND pcc.m_ch_value_id = :OLD.m_ch_value_id
+      );
   END IF;
 EXCEPTION
 WHEN NO_DATA_FOUND THEN
