@@ -30,6 +30,7 @@ import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.OrgTree;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.modules.ModuleReferenceDataOrgTree;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
@@ -41,6 +42,7 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class InitialOrgSetup extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
+  private static final String OKTYPE = "Success";
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -72,6 +74,9 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
           strParentOrg, strcLocationId, strPassword, strModules, isTrue(strCreateAccounting),
           fileCoAFilePath, strCurrency, bBPartner, bProduct, bProject, bCampaign, bSalesRegion,
           vars.getSessionValue("#SOURCEPATH"));
+      if (!obeResult.getType().equals(OKTYPE)) {
+        OBDal.getInstance().rollbackAndClose();
+      }
       vars.setSessionValue("#USER_ORG", vars.getSessionValue("#USER_ORG") + ", '" + ios.getOrgId()
           + "'");
       vars.setSessionValue("#ORG_CLIENT",
