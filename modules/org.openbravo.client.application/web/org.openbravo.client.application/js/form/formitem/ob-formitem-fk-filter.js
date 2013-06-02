@@ -269,20 +269,16 @@ isc.OBFKFilterTextItem.addProperties({
 
   setCriterion: function (criterion) {
     var i, value, values = [],
-        operator, operators, valueSet = false,
+        operators, valueSet = false,
         criteria = criterion ? criterion.criteria : null;
     if (criteria && criteria.length && criterion.operator === 'or') {
+      operators = isc.DataSource.getSearchOperators();
       for (i = 0; i < criteria.length; i++) {
-        operators = isc.DataSource.getSearchOperators();
         //handles case where column filter symbols are removed. Refer Issue https://issues.openbravo.com/view.php?id=23925
         if (criteria[i].operator !== "iContains" && criteria[i].operator !== "contains" && criteria[i].operator !== "regexp") {
-          for (operator in operators) {
-            if (operators.hasOwnProperty(operator)) {
-              if (operators[operator].ID === criteria[i].operator && operators[operator].symbol && criteria[i].value && criteria[i].value.indexOf(operators[operator].symbol) === -1) {
-                values.push(operators[operator].symbol + criteria[i].value);
-                valueSet = true;
-              }
-            }
+          if (operators[criteria[i].operator] && (operators[criteria[i].operator].ID === criteria[i].operator) && operators[criteria[i].operator].symbol && criteria[i].value && (criteria[i].value.indexOf(operators[criteria[i].operator].symbol) === -1)) {
+            values.push(operators[criteria[i].operator].symbol + criteria[i].value);
+            valueSet = true;
           }
         }
         if (valueSet === false) {
