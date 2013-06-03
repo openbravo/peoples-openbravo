@@ -96,9 +96,9 @@
 <!--101-->  <AD_REF_LIST_ID><![CDATA[101]]></AD_REF_LIST_ID>
 <!--101-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--101-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--101-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--101-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--101-->  <VALUE><![CDATA[J]]></VALUE>
-<!--101-->  <NAME><![CDATA[Java Language]]></NAME>
+<!--101-->  <NAME><![CDATA[Java Language (Not Implemented)]]></NAME>
 <!--101-->  <DESCRIPTION><![CDATA[Java Language]]></DESCRIPTION>
 <!--101-->  <AD_REFERENCE_ID><![CDATA[101]]></AD_REFERENCE_ID>
 <!--101-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -108,9 +108,9 @@
 <!--102-->  <AD_REF_LIST_ID><![CDATA[102]]></AD_REF_LIST_ID>
 <!--102-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--102-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--102-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--102-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--102-->  <VALUE><![CDATA[E]]></VALUE>
-<!--102-->  <NAME><![CDATA[Java Script]]></NAME>
+<!--102-->  <NAME><![CDATA[Java Script (Not Implemented)]]></NAME>
 <!--102-->  <DESCRIPTION><![CDATA[ECMA Script]]></DESCRIPTION>
 <!--102-->  <AD_REFERENCE_ID><![CDATA[101]]></AD_REFERENCE_ID>
 <!--102-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
