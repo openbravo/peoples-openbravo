@@ -520,8 +520,8 @@ isc.OBGrid.addProperties({
 
         for (i = 0; i < length; i++) {
           fld = this.filterEditor.getEditForm().getFields()[i];
-          if (fld.clearDateValues) {
-            fld.clearDateValues();
+          if (fld.clearFilterValues) {
+            fld.clearFilterValues();
           }
         }
       } else {

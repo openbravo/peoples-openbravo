@@ -43,6 +43,32 @@ isc.DataSource.addProperties({
   }
 });
 
+isc.DataSource.addSearchOperator({
+  ID: 'exists',
+  compareCriteria: function (newCriterion, oldCriterion, operator, ds) {
+    var newValues, oldValues, i;
+    if (newCriterion.fieldName === oldCriterion.fieldName && newCriterion.existsQuery === oldCriterion.existsQuery) {
+      // If the fieldName and the exists query is the same, compare the values
+      newValues = newCriterion.value;
+      oldValues = oldCriterion.value;
+      if (newValues.length === oldValues.length) {
+        // They have the same length, check if they are the same in the same order
+        for (i = 0; i < newValues.length; i++) {
+          if (newValues[i] !== oldValues[i]) {
+            return -1;
+          }
+        }
+        // Same fieldName, same existsQuery, same values: both criterias are the same
+        return 0;
+      } else {
+        return -1;
+      }
+    } else {
+      return -1;
+    }
+  }
+});
+
 
 isc.Canvas.addProperties({
 

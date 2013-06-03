@@ -357,7 +357,7 @@ isc.OBMiniDateRangeItem.addProperties({}, OB.DateItemProperties, {
     return false;
   },
 
-  clearDateValues: function () {
+  clearFilterValues: function () {
     this.singleDateValue = null;
     this.singleDateDisplayValue = '';
     this.singleDateMode = true;
