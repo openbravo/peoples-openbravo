@@ -1168,7 +1168,7 @@ public class OrderLoader extends JSONProcessSimple {
             .getGlitemWriteoff());
       }
       // Update Payment In amount after adding GLItem
-      finPayment.setAmount(origAmount.setScale(stdPrecision, RoundingMode.HALF_UP));
+      finPayment.setAmount(amount.setScale(stdPrecision, RoundingMode.HALF_UP));
       OBDal.getInstance().save(finPayment);
 
       String description = getPaymentDescription();
