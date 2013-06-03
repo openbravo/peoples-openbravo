@@ -503,11 +503,17 @@
         v_Result := 2;
         v_MessageCount := v_MessageCount + 1;
         IF (v_MessageCount < 20) THEN	    
-	    v_Message := v_Message || '<br><br>@CannotCalcCosts@:  ''' || Cur_InOutLine.BPARTNER_NAME || ''', ''' || Cur_InOutLine.PRODUCT_NAME || '''';
+            IF (COALESCE(LENGTH(v_Message),0) > 1900) THEN
+                v_Message := SUBSTR(v_Message,1,1900) || '(...)';
+            ELSE
+                v_Message := v_Message || '<br><br>@CannotCalcCosts@:  ''' || Cur_InOutLine.BPARTNER_NAME || ''', ''' || Cur_InOutLine.PRODUCT_NAME || '''';
+            END IF;
 	ELSE 
-	    IF (v_MessageCount = 20) THEN
-	        v_Message := v_Message || '<br><br>@NoMoreMessages@';
-	    END IF;
+            IF (COALESCE(LENGTH(v_Message),0) > 1900) THEN
+                v_Message := SUBSTR(v_Message,1,1900) || '(...)';
+            ELSE
+                v_Message := v_Message || '<br><br>@NoMoreMessages@';
+            END IF;
 	END IF;
 
 	      FOR Cur_OldCost IN
@@ -527,7 +533,11 @@
 
       IF (v_PriceNew IS NULL) THEN   
 	IF (v_MessageCount < 20) THEN	 
-	      v_Message := v_Message || '. @CannotCalcPrevCost@';
+            IF (COALESCE(LENGTH(v_Message),0) > 1900) THEN
+                v_Message := SUBSTR(v_Message,1,1900) || '(...)';
+            ELSE
+                v_Message := v_Message || '. @CannotCalcPrevCost@';
+            END IF;
 	END IF;
       ELSE     
               IF (COALESCE(LENGTH(v_ResultStr),0) > 1900) THEN
