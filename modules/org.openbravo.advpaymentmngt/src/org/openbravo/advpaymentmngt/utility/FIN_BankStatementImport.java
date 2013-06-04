@@ -156,7 +156,7 @@ public abstract class FIN_BankStatementImport {
       bankStatementLines = loadFile(file, bankStatement);
     } catch (Exception e) {
       OBDal.getInstance().rollbackAndClose();
-      return getMyError();
+      return getOBError(conn, vars, "@APRM_InvalidOrMissingValues@", "Error", "Error");
     }
     if (bankStatementLines == null || bankStatementLines.size() == 0) {
       OBDal.getInstance().rollbackAndClose();
