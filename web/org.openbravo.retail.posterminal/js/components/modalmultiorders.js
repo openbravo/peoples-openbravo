@@ -343,14 +343,10 @@ enyo.kind({
     this.doSelectMultiOrders({
       value: selectedMultiOrders
     });
-    OB.MobileApp.view.scanningFocus(false);
     this.doTabChange({
       tabPanel: 'payment',
       keyboard: 'toolbarpayment',
       edit: false
-    });
-    this.bubble('onShowColumn', {
-      colNum: 1
     });
     this.doHideThisPopup();
   },

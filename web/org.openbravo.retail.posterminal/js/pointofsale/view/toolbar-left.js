@@ -67,6 +67,9 @@ enyo.kind({
     for (i = 0; this.model.get('multiOrders').get('multiOrdersList').length > i; i++) {
       this.model.get('orderList').current = this.model.get('multiOrders').get('multiOrdersList').at(i);
       this.model.get('orderList').deleteCurrent();
+      if (!_.isNull(this.model.get('multiOrders').get('multiOrdersList').at(i).id)) {
+        this.model.get('orderList').deleteCurrentFromDatabase(this.model.get('multiOrders').get('multiOrdersList').at(i));
+      }
     }
     this.model.get('multiOrders').resetValues();
     this.doAddNewOrder();
@@ -95,6 +98,9 @@ enyo.kind({
       for (i = 0; this.model.get('multiOrders').get('multiOrdersList').length > i; i++) {
         this.model.get('orderList').current = this.model.get('multiOrders').get('multiOrdersList').at(i);
         this.model.get('orderList').deleteCurrent();
+        if (!_.isNull(this.model.get('multiOrders').get('multiOrdersList').at(i).id)) {
+          this.model.get('orderList').deleteCurrentFromDatabase(this.model.get('multiOrders').get('multiOrdersList').at(i));
+        }
       }
       this.model.get('multiOrders').resetValues();
       return true;
