@@ -150,6 +150,9 @@ enyo.kind({
     }, {
       kind: 'OB.UI.ModalSalesRepresentative',
       name: "modalsalesrepresentative"
+    }, {
+      kind: 'OB.UI.ModalMultiOrdersLayaway',
+      name: "modalmultiorderslayaway"
     }]
   }, {
     name: 'mainSubWindow',
@@ -666,7 +669,8 @@ enyo.kind({
     var me = this;
     me.model.get('multiOrders').get('multiOrdersList').reset();
     _.each(inEvent.value, function (iter) {
-      me.model.get('orderList').addPaidReceipt(iter);
+      iter.set('isMultiOrder', true);
+      me.model.get('orderList').addMultiReceipt(iter);
       me.model.get('multiOrders').get('multiOrdersList').add(iter);
     });
     this.model.get('multiOrders').set('isMultiOrders', true);
@@ -675,12 +679,10 @@ enyo.kind({
   removeMultiOrders: function (inSender, inEvent) {
     var me = this;
     me.model.get('multiOrders').get('multiOrdersList').remove(inEvent.order);
+    me.model.get('orderList').current = inEvent.order;
+    me.model.get('orderList').deleteCurrent();
     if (!_.isNull(inEvent.order.id)) {
-      OB.Dal.remove(inEvent.order, function () {
-        return true;
-      }, function () {
-        OB.UTIL.showError('Error removing');
-      });
+      me.model.get('orderList').deleteCurrentFromDatabase(inEvent.order);
     }
     return true;
   },

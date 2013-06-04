@@ -11,7 +11,6 @@
 enyo.kind({
   name: 'OB.UI.RemoveMultiOrders',
   kind: 'OB.UI.SmallButton',
-  style: 'width: 20%;',
   classes: 'btnlink-darkgray btnlink-payment-clear btn-icon-small btn-icon-clearPayment',
   events: {
     onRemoveMultiOrders: ''
@@ -36,27 +35,38 @@ enyo.kind({
   handlers: {
     onChangeEditMode: 'changeEditMode'
   },
+  events: {
+    onShowPopup: ''
+  },
   components: [{
     name: 'line',
-    style: 'line-height: 23px;',
+    style: 'line-height: 23px; width: 100%;',
     components: [{
       name: 'multiTopLine',
       initComponents: function () {
         this.setContent(this.owner.owner.model.get('documentNo') + ' - ' + this.owner.owner.model.get('bp').get('_identifier'));
       }
     }, {
-      style: 'color: #888888',
+      style: 'color: #888888; display: inline;',
       name: 'multiBottonLine',
       initComponents: function () {
-        this.setContent(this.owner.owner.model.getPending() + ' (' + OB.I18N.formatDate(new Date(this.owner.owner.model.get('orderDate'))) + ') ');
+        this.setContent(this.owner.owner.model.printTotal() + ' - Remaining to pay: ' + this.owner.owner.model.printPending() + ' - (' + OB.I18N.formatDate(new Date(this.owner.owner.model.get('orderDate'))) + ') ');
+      }
+    }, {
+      style: 'font-weight: bold; float: right; text-align:right; ',
+      name: 'total',
+      initComponents: function () {
+        this.setContent(this.owner.owner.model.get('amountToLayaway') ? this.owner.owner.model.get('amountToLayaway') : this.owner.owner.model.printPending());
       }
     }, {
       style: 'clear: both;'
     }]
   }],
   tap: function () {
-    //    this.owner.model.trigger('selected', this.owner.model);
-    //    this.owner.model.trigger('click', this.owner.model);
+    this.doShowPopup({
+      popup: 'modalmultiorderslayaway',
+      args: this.owner.model
+    });
   },
   changeEditMode: function (inSender, inEvent) {
     this.addRemoveClass('btnselect-orderline-edit', inEvent.edit);
@@ -70,10 +80,10 @@ enyo.kind({
   name: 'OB.UI.RenderMultiOrdersLine',
   style: 'border-bottom: 1px solid #cccccc; width: 100%',
   components: [{
-    style: 'display: inline; width: 20%',
+    style: 'display: inline; width: 8%',
     kind: 'OB.UI.RemoveMultiOrders'
   }, {
-    style: 'display: inline; width: 75%; border: none; margin: 1px;',
+    style: 'display: inline; width: 88%; border: none; margin: 1px; padding-right: 6px;',
     kind: 'OB.UI.RenderMultiOrdersLineValues'
   }]
 });
