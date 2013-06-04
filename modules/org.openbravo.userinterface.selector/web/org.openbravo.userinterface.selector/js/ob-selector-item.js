@@ -802,6 +802,14 @@ isc.OBSelectorItem.addProperties({
       delete this.savedEnteredValue;
     }
 
+    // Parameter windows
+    if (this.form.paramWindow) {
+      requestProperties.params.paramWindowId = this.form.paramWindow;
+      // TODO: send ID instead of name
+      requestProperties.params.selectorFieldName = this.name;
+      isc.addProperties(requestProperties.params, this.form.paramWindow.getContextInfo());
+    }
+
     var criteria = this.getPickListFilterCriteria(),
         i;
     for (i = 0; i < criteria.criteria.length; i++) {

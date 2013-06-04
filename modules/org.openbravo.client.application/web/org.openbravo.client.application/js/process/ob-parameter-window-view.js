@@ -209,6 +209,7 @@ isc.OBParameterWindowView.addProperties({
       if (items.length !== 0) {
         // create form if there items to include
         this.theForm = isc.DynamicForm.create({
+          paramWindow: this,
           width: '99%',
           titleSuffix: '',
           requiredTitleSuffix: '',
@@ -440,13 +441,7 @@ isc.OBParameterWindowView.addProperties({
 
     allProperties._buttonValue = btnValue || 'DONE';
 
-    allProperties._params = {};
-    if (this.theForm && this.theForm.getItems) {
-      params = this.theForm.getItems();
-      for (i = 0; i < params.length; i++) {
-        allProperties._params[params[i].name] = params[i].getValue();
-      }
-    }
+    allProperties._params = this.getContextInfo();
 
     OB.RemoteCallManager.call(this.actionHandler, allProperties, {
       processId: this.processId,
@@ -481,5 +476,22 @@ isc.OBParameterWindowView.addProperties({
     }
     // redraw to execute display logic
     this.theForm.markForRedraw();
+  },
+
+  getContextInfo: function () {
+    var result = {},
+        params, i;
+    if (!this.theForm) {
+      return result;
+    }
+
+    if (this.theForm && this.theForm.getItems) {
+      params = this.theForm.getItems();
+      for (i = 0; i < params.length; i++) {
+        result[params[i].name] = params[i].getValue();
+      }
+    }
+
+    return result;
   }
 });
