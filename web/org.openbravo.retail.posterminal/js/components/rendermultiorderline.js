@@ -56,7 +56,7 @@ enyo.kind({
       style: 'font-weight: bold; float: right; text-align:right; ',
       name: 'total',
       initComponents: function () {
-        this.setContent(this.owner.owner.model.get('amountToLayaway') ? this.owner.owner.model.get('amountToLayaway') : this.owner.owner.model.printPending());
+        this.setContent(this.owner.owner.model.get('amountToLayaway') ? OB.I18N.formatCurrency(this.owner.owner.model.get('amountToLayaway')) : this.owner.owner.model.printPending());
       }
     }, {
       style: 'clear: both;'

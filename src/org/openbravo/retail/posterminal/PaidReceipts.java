@@ -188,7 +188,9 @@ public class PaidReceipts extends JSONProcessSimple {
           if (objectIn.get("account").equals(objectType.get("account"))) {
             JSONObject paidReceiptPayment = new JSONObject();
             // FIXME: Multicurrency problem, amount always in terminal currency
-            paidReceiptPayment.put("amount", objectIn.get("amount"));
+            paidReceiptPayment.put("amount", new BigDecimal((String) objectIn.get("amount")
+                .toString())
+                .multiply(new BigDecimal((String) objectType.get("mulrate").toString())));
             paidReceiptPayment.put("paymentDate", objectIn.get("paymentDate"));
             paidReceiptPayment.put("name", objectType.get("name"));
             paidReceiptPayment.put("kind", objectType.get("kind"));

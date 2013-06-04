@@ -158,10 +158,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
             amountToPay = iter.get('amountToLayaway') ? iter.get('amountToLayaway') : OB.DEC.sub(iter.get('gross'), iter.get('payment'));
         while ((iter.get('amountToLayaway') !== 0 && iter.get('gross') > iter.get('payment')) || (iter.get('amountToLayaway') > 0)) {
           for (i = 0; i < this.get('multiOrders').get('payments').length; i++) {
-            //FIXME: MULTICURRENCY
             var payment = this.get('multiOrders').get('payments').at(i),
                 paymentMethod = OB.POS.terminal.terminal.paymentnames[payment.get('kind')];
-
             if (payment.get('origAmount') <= amountToPay) {
               iter.addPayment(new OB.Model.PaymentLine({
                 'kind': payment.get('kind'),
@@ -172,11 +170,11 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
                 'isocode': paymentMethod.isocode,
                 'openDrawer': payment.get('openDrawer')
               }));
-              if (iter.get('amountToLayaway')) {
+              if (!_.isUndefined(iter.get('amountToLayaway'))) {
                 iter.set('amountToLayaway', OB.DEC.sub(iter.get('amountToLayaway'), payment.get('origAmount')));
               }
               this.get('multiOrders').get('payments').remove(this.get('multiOrders').get('payments').at(i));
-              amountToPay = iter.get('amountToLayaway') ? iter.get('amountToLayaway') : OB.DEC.sub(iter.get('gross'), iter.get('payment'));
+              amountToPay = !_.isUndefined(iter.get('amountToLayaway')) ? iter.get('amountToLayaway') : OB.DEC.sub(iter.get('gross'), iter.get('payment'));
             } else {
               this.get('multiOrders').get('payments').at(i).set('origAmount', OB.DEC.sub(this.get('multiOrders').get('payments').at(i).get('origAmount'), amountToPay));
               iter.addPayment(new OB.Model.PaymentLine({
@@ -188,10 +186,10 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
                 'isocode': paymentMethod.isocode,
                 'openDrawer': payment.get('openDrawer')
               }));
-              if (iter.get('amountToLayaway')) {
+              if (!_.isUndefined(iter.get('amountToLayaway'))) {
                 iter.set('amountToLayaway', OB.DEC.sub(iter.get('amountToLayaway'), amountToPay));
               }
-              amountToPay = iter.get('amountToLayaway') ? iter.get('amountToLayaway') : OB.DEC.sub(iter.get('gross'), iter.get('payment'));
+              amountToPay = !_.isUndefined(iter.get('amountToLayaway')) ? iter.get('amountToLayaway') : OB.DEC.sub(iter.get('gross'), iter.get('payment'));
               break;
             }
           }
@@ -284,7 +282,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
         this.get('multiOrders').trigger('paymentAccepted');
       }
     }, this);
-    //    FIXME: openDrawer for multiorders
     receipt.on('openDrawer', function () {
       receipt.trigger('popenDrawer');
     }, this);

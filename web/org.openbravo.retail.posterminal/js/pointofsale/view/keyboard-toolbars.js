@@ -68,7 +68,6 @@ enyo.kind({
   pay: function (amount, key, name, paymentMethod, rate, mulrate, isocode, options) {
     if (options && options.percentaje) {
       var pending = this.receipt.getPending();
-      //FIXME: multicurrency
       if (mulrate && mulrate !== '1') {
         pending = OB.DEC.mul(pending, mulrate);
       }
