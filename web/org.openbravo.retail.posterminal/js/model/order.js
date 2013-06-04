@@ -1413,7 +1413,8 @@
       payment: OB.DEC.Zero,
       pending: OB.DEC.Zero,
       change: OB.DEC.Zero,
-      payments: new Backbone.Collection()
+      payments: new Backbone.Collection(),
+      openDrawer: false
     },
     addPayment: function (payment) {
       OB.UTIL.addPayment(payment, this.get('payments'), this.get('total'), this);
@@ -1434,6 +1435,7 @@
       this.set('pending', OB.DEC.Zero);
       this.set('change', OB.DEC.Zero);
       this.get('payments').reset();
+      this.set('openDrawer', false);
     }
   });
   var TaxLine = Backbone.Model.extend();

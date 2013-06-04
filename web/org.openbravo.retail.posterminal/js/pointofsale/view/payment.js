@@ -382,36 +382,65 @@ enyo.kind({
         this.setContent(OB.I18N.getLabel('OBPOS_LblDone'));
       }
     }, this);
+    this.model.get('multiOrders').on('change:openDrawer', function () {
+      this.drawerpreference = this.model.get('multiOrders').get('openDrawer');
+      if (this.drawerpreference) {
+        this.drawerOpened = false;
+        this.setContent(OB.I18N.getLabel('OBPOS_LblOpen'));
+      } else {
+        this.drawerOpened = true;
+        this.setContent(OB.I18N.getLabel('OBPOS_LblDone'));
+      }
+    }, this);
   },
   tap: function () {
-    if (this.drawerpreference) {
-      if (this.drawerOpened) {
+    if (this.owner.model.get('multiOrders').get('multiOrdersList').length === 0 && !this.owner.model.get('multiOrders').get('isMultiOrders')) {
+      if (this.drawerpreference) {
+        if (this.drawerOpened) {
+          if (this.owner.receipt.get('orderType') === 3) {
+            this.owner.receipt.trigger('voidLayaway');
+          } else {
+            if (this.owner.model.get('multiOrders').get('multiOrdersList').length === 0 && !this.owner.model.get('multiOrders').get('isMultiOrders')) {
+              this.owner.model.get('order').trigger('paymentDone');
+            } else {
+              this.owner.model.get('multiOrders').trigger('paymentDone');
+            }
+          }
+          this.drawerOpened = false;
+          this.setContent(OB.I18N.getLabel('OBPOS_LblOpen'));
+        } else {
+          this.owner.receipt.trigger('openDrawer');
+          this.drawerOpened = true;
+          this.setContent(OB.I18N.getLabel('OBPOS_LblDone'));
+        }
+      } else {
+        //Void Layaway
         if (this.owner.receipt.get('orderType') === 3) {
           this.owner.receipt.trigger('voidLayaway');
         } else {
           if (this.owner.model.get('multiOrders').get('multiOrdersList').length === 0 && !this.owner.model.get('multiOrders').get('isMultiOrders')) {
-            this.owner.model.get('order').trigger('paymentDone');
+            this.owner.receipt.trigger('paymentDone');
           } else {
             this.owner.model.get('multiOrders').trigger('paymentDone');
           }
+          this.owner.receipt.trigger('openDrawer');
         }
-        this.drawerOpened = false;
-        this.setContent(OB.I18N.getLabel('OBPOS_LblOpen'));
-      } else {
-        this.owner.receipt.trigger('openDrawer');
-        this.drawerOpened = true;
-        this.setContent(OB.I18N.getLabel('OBPOS_LblDone'));
       }
     } else {
-      //Void Layaway
-      if (this.owner.receipt.get('orderType') === 3) {
-        this.owner.receipt.trigger('voidLayaway');
-      } else {
-        if (this.owner.model.get('multiOrders').get('multiOrdersList').length === 0 && !this.owner.model.get('multiOrders').get('isMultiOrders')) {
-          this.owner.receipt.trigger('paymentDone');
-        } else {
+      if (this.drawerpreference) {
+        if (this.drawerOpened) {
           this.owner.model.get('multiOrders').trigger('paymentDone');
+          this.owner.model.get('multiOrders').set('openDrawer', false);
+          this.drawerOpened = false;
+          this.setContent(OB.I18N.getLabel('OBPOS_LblOpen'));
+        } else {
+          this.owner.receipt.trigger('openDrawer');
+          this.drawerOpened = true;
+          this.setContent(OB.I18N.getLabel('OBPOS_LblDone'));
         }
+      } else {
+        this.owner.model.get('multiOrders').trigger('paymentDone');
+        this.owner.model.get('multiOrders').set('openDrawer', false);
         this.owner.receipt.trigger('openDrawer');
       }
     }
