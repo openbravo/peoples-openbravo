@@ -57,11 +57,12 @@ enyo.kind({
         kind: 'OB.UI.updateprices',
         myId: 'updatePricesCheck'
       }]
-    },{
+    }, {
       style: 'text-align: left; padding: 11px; float: left; width: 248px; background: #dddddd;',
-      initComponents: function(){
+      initComponents: function () {
         this.setContent(OB.I18N.getLabel('OBPOS_QuotationUpdatePrices'));
-      }}, {
+      }
+    }, {
       style: 'clear: both;'
     }, {
       kind: 'OB.OBPOSPointOfSale.UI.Modals.btnModalCreateOrderAccept'

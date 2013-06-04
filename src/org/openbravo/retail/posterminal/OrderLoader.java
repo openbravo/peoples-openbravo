@@ -230,8 +230,14 @@ public class OrderLoader extends JSONProcessSimple {
       }
 
       t1 = System.currentTimeMillis();
-      boolean createInvoice = !isQuotation && (!isLayaway && !partialpayLayaway || fullpayLayaway)
-          && (jsonorder.has("generateInvoice") && jsonorder.getBoolean("generateInvoice"));
+      // An invoice will be automatically created if:
+      // - The order is not a layaway and is not completely paid (ie. it's paid on credit)
+      // - Or, the order is a normal order or a fully paid layaway, and has the "generateInvoice"
+      // flag
+      boolean createInvoice = (!isLayaway && !partialpayLayaway && !fullpayLayaway && !isQuotation && jsonorder
+          .getDouble("payment") < jsonorder.getDouble("gross"))
+          || (!isQuotation && (!isLayaway && !partialpayLayaway || fullpayLayaway) && (jsonorder
+              .has("generateInvoice") && jsonorder.getBoolean("generateInvoice")));
       boolean createShipment = !isQuotation && (!isLayaway && !partialpayLayaway || fullpayLayaway);
       sendEmail = (jsonorder.has("sendEmail") && jsonorder.getBoolean("sendEmail"));
       // Order header
@@ -1167,7 +1173,7 @@ public class OrderLoader extends JSONProcessSimple {
             .getGlitemWriteoff());
       }
       // Update Payment In amount after adding GLItem
-      finPayment.setAmount(origAmount.setScale(stdPrecision, RoundingMode.HALF_UP));
+      finPayment.setAmount(amount.setScale(stdPrecision, RoundingMode.HALF_UP));
       OBDal.getInstance().save(finPayment);
 
       String description = getPaymentDescription();

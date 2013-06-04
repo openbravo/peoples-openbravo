@@ -1951,7 +1951,8 @@ Please contact your system administrator.]]></MSGTEXT>
 <!--7EC813AE2A094FE18CEA6ADD6071BA5C-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--7EC813AE2A094FE18CEA6ADD6071BA5C-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--7EC813AE2A094FE18CEA6ADD6071BA5C-->  <VALUE><![CDATA[OBPOS_enoughCreditBody]]></VALUE>
-<!--7EC813AE2A094FE18CEA6ADD6071BA5C-->  <MSGTEXT><![CDATA[Are you sure you want to use %0 of %1 's credit to complete this receipt?]]></MSGTEXT>
+<!--7EC813AE2A094FE18CEA6ADD6071BA5C-->  <MSGTEXT><![CDATA[By using credit, an invoice will be automatically generated for this receipt, and this customer's credit will be automatically updated.
+Are you sure you want to use %0 of %1 's credit to complete this receipt?]]></MSGTEXT>
 <!--7EC813AE2A094FE18CEA6ADD6071BA5C-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--7EC813AE2A094FE18CEA6ADD6071BA5C-->  <AD_MODULE_ID><![CDATA[FF808181326CC34901326D53DBCF0018]]></AD_MODULE_ID>
 <!--7EC813AE2A094FE18CEA6ADD6071BA5C-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
