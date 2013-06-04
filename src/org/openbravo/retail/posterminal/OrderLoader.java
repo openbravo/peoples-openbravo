@@ -230,8 +230,12 @@ public class OrderLoader extends JSONProcessSimple {
       }
 
       t1 = System.currentTimeMillis();
-      boolean createInvoice = (!isLayaway && jsonorder.getDouble("payment") < jsonorder
-          .getDouble("gross"))
+      // An invoice will be automatically created if:
+      // - The order is not a layaway and is not completely paid (ie. it's paid on credit)
+      // - Or, the order is a normal order or a fully paid layaway, and has the "generateInvoice"
+      // flag
+      boolean createInvoice = (!isLayaway && !partialpayLayaway && !fullpayLayaway && !isQuotation && jsonorder
+          .getDouble("payment") < jsonorder.getDouble("gross"))
           || (!isQuotation && (!isLayaway && !partialpayLayaway || fullpayLayaway) && (jsonorder
               .has("generateInvoice") && jsonorder.getBoolean("generateInvoice")));
       boolean createShipment = !isQuotation && (!isLayaway && !partialpayLayaway || fullpayLayaway);
