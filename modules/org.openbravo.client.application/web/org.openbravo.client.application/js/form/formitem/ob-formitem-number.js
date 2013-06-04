@@ -435,9 +435,9 @@ isc.OBNumberItem.addProperties({
     if (isc.isA.String(this.getValue())) {
         value = OB.Utilities.Number.OBPlainToOBMasked(this.getValue(), this.typeInstance.maskNumeric, this.typeInstance.decSeparator, this.typeInstance.groupSeparator);
         this.setValue(OB.Utilities.Number.OBMaskedToJS(value, this.typeInstance.decSeparator, this.typeInstance.groupSeparator));
-    } else {
-        value = OB.Utilities.Number.OBPlainToOBMasked(this.getValue(), this.typeInstance.maskNumeric);
-        this.setValue(OB.Utilities.Number.OBMaskedToJS(value));
+        if (this.form.setTextualValue) {
+            this.form.setTextualValue(this.name, value, this.typeInstance);
+        }
     }
 
     if (this.grid && this.grid.isEditing && this.grid.isEditing()) {
