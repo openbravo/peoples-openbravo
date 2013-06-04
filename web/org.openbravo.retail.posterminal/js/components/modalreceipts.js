@@ -106,9 +106,7 @@ enyo.kind({
       this.$.time.setContent(OB.I18N.formatHour(this.model.get('orderDate')));
     }
     this.$.orderNo.setContent(this.model.get('documentNo'));
-    if (this.model.get('bp')) {
-      this.$.bp.setContent(this.model.get('bp').get('_identifier'));
-    }
+    this.$.bp.setContent(this.model.get('bp').get('_identifier'));
     this.$.total.setContent(this.model.printTotal());
   }
 });

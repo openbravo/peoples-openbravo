@@ -263,7 +263,9 @@ enyo.kind({
     }, function (data) {
       if (data) {
         _.each(me.model.get('orderList').models, function (iter) {
-          me.multiOrdersList.add(iter);
+          if (!_.isNull(iter.id) && !_.isUndefined(iter.id)) {
+            me.multiOrdersList.add(iter);
+          }
         });
         _.each(data, function (iter) {
           process.exec({
