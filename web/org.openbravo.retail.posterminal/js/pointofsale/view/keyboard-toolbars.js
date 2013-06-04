@@ -122,44 +122,35 @@ enyo.kind({
       }
       amount = OB.DEC.div(OB.DEC.mul(pending, amount), 100);
     }
-
     if (OB.DEC.compare(amount) > 0) {
       var provider = paymentMethod.paymentProvider,
           me = this;
-      //      if (this.receipt.get('orderType') === 0 || this.receipt.get('orderType') === 2 || this.receipt.get('isLayaway')) {
-      //        provider = paymentMethod.paymentProvider;
-      //      } else if (this.receipt.get('orderType') === 1 || this.receipt.get('orderType') === 3) {
-      //        provider = paymentMethod.refundProvider;
-      //      } else {
-      //        provider = null;
-      //      }
-      //FIXME: Add modal option
-      //      if (provider) {
-      //        this.doShowPopup({
-      //          popup: 'modalpayment',
-      //          args: {
-      //            'receipt': this.receipt,
-      //            'provider': provider,
-      //            'key': key,
-      //            'name': name,
-      //            'paymentMethod': paymentMethod,
-      //            'amount': amount,
-      //            'rate': rate,
-      //            'mulrate': mulrate,
-      //            'isocode': isocode
-      //          }
-      //        });
-      //      } else {
-      this.model.get('multiOrders').addPayment(new OB.Model.PaymentLine({
-        'kind': key,
-        'name': name,
-        'amount': amount,
-        'rate': rate,
-        'mulrate': mulrate,
-        'isocode': isocode,
-        'openDrawer': paymentMethod.openDrawer
-      }));
-      //      }
+      if (provider) {
+        this.doShowPopup({
+          popup: 'modalpayment',
+          args: {
+            'receipt': this.model.get('multiOrders'),
+            'provider': provider,
+            'key': key,
+            'name': name,
+            'paymentMethod': paymentMethod,
+            'amount': amount,
+            'rate': rate,
+            'mulrate': mulrate,
+            'isocode': isocode
+          }
+        });
+      } else {
+        this.model.get('multiOrders').addPayment(new OB.Model.PaymentLine({
+          'kind': key,
+          'name': name,
+          'amount': amount,
+          'rate': rate,
+          'mulrate': mulrate,
+          'isocode': isocode,
+          'openDrawer': paymentMethod.openDrawer
+        }));
+      }
     }
   },
   getButtonComponent: function (sidebutton) {
@@ -280,7 +271,7 @@ enyo.kind({
             amount = OB.DEC.div(me.receipt.getPending(), exactpayment.rate);
           }
           if (me.model.get('multiOrders').get('isMultiOrders') && me.model.get('multiOrders').get('total') !== OB.DEC.Zero) {
-            amount = OB.DEC.sub(me.model.get('multiOrders').get('total'), me.model.get('multiOrders').get('payment'));
+            amount = OB.DEC.div(OB.DEC.sub(me.model.get('multiOrders').get('total'), me.model.get('multiOrders').get('payment')), exactpayment.rate);
             me.payMultiOrder(amount, exactpayment.payment.searchKey, exactpayment.payment._identifier, exactpayment.paymentMethod, exactpayment.rate, exactpayment.mulrate, exactpayment.isocode);
           } else {
             if (amount > 0 && exactpayment && OB.POS.modelterminal.hasPermission(exactpayment.payment.searchKey)) {

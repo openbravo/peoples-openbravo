@@ -18,14 +18,25 @@ enyo.kind({
     onButtonStatusChanged: 'buttonStatusChanged'
   },
   buttonStatusChanged: function (inSender, inEvent) {
-    var payment, amt;
+    var payment, amt, change, pending, isMultiOrders;
     if (!_.isUndefined(inEvent.value.payment)) {
       payment = inEvent.value.payment;
-      this.receipt.selectedPayment = payment.payment.searchKey;
-      if (!_.isNull(this.receipt.getChange()) && this.receipt.getChange()) {
-        this.$.change.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(this.receipt.getChange(), payment.mulrate), payment.symbol, payment.currencySymbolAtTheRight));
-      } else if (this.receipt.getPending() && !this.model.get('isMultiOrders') && this.model.get('multiOrders').get('multiOrdersList').length === OB.DEC.Zero) {
-        this.$.totalpending.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(this.receipt.getPending(), payment.mulrate), payment.symbol, payment.currencySymbolAtTheRight));
+
+      isMultiOrders = this.model.get('multiOrders').get('isMultiOrders') && this.model.get('multiOrders').get('multiOrdersList').length !== 0;
+      if (!isMultiOrders) {
+        change = this.receipt.getChange();
+        pending = this.receipt.getPending();
+        this.receipt.selectedPayment = payment.payment.searchKey;
+      } else {
+        change = this.model.get('multiOrders').get('change');
+        pending = OB.DEC.sub(this.model.get('multiOrders').get('total'), this.model.get('multiOrders').get('payment'));
+        this.model.get('multiOrders').set('selectedPayment', payment.payment.searchKey);
+      }
+
+      if (!_.isNull(change) && change) {
+        this.$.change.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(change, payment.mulrate), payment.symbol, payment.currencySymbolAtTheRight));
+      } else if (!_.isNull(pending) && pending) {
+        this.$.totalpending.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(pending, payment.mulrate), payment.symbol, payment.currencySymbolAtTheRight));
       }
     }
   },
@@ -256,12 +267,18 @@ enyo.kind({
     var paymentstatus = this.model.get('multiOrders');
     var symbol = '',
         symbolAtRight = true,
-        rate = OB.DEC.One;
+        rate = OB.DEC.One,
+        selectedPayment;
     this.$.layawayaction.hide();
-    if (!_.isUndefined(OB.POS.terminal.terminal.paymentnames[OB.POS.modelterminal.get('paymentcash')])) {
-      symbol = OB.POS.terminal.terminal.paymentnames[OB.POS.modelterminal.get('paymentcash')].symbol;
-      rate = OB.POS.terminal.terminal.paymentnames[OB.POS.modelterminal.get('paymentcash')].mulrate;
-      symbolAtRight = OB.POS.terminal.terminal.paymentnames[OB.POS.modelterminal.get('paymentcash')].currencySymbolAtRight;
+    if (paymentstatus.get('selectedPayment')) {
+      selectedPayment = OB.POS.terminal.terminal.paymentnames[paymentstatus.get('selectedPayment')];
+    } else {
+      selectedPayment = OB.POS.terminal.terminal.paymentnames[OB.POS.modelterminal.get('paymentcash')];
+    }
+    if (!_.isUndefined(selectedPayment)) {
+      symbol = selectedPayment.symbol;
+      rate = selectedPayment.mulrate;
+      symbolAtRight = selectedPayment.currencySymbolAtTheRight;
     }
     if (paymentstatus.get('change')) {
       this.$.change.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(paymentstatus.get('change'), rate), symbol, symbolAtRight));
@@ -288,7 +305,7 @@ enyo.kind({
       this.$.creditsalesaction.hide();
       //            this.$.layawayaction.hide();
     } else {
-      this.$.totalpending.setContent(OB.I18N.formatCurrency(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(paymentstatus.get('total'), rate), symbol, symbolAtRight)));
+      this.$.totalpending.setContent(OB.I18N.formatCurrency(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(OB.DEC.sub(paymentstatus.get('total'), paymentstatus.get('payment')), rate), symbol, symbolAtRight)));
       this.$.totalpending.show();
       this.$.totalpendinglbl.show();
       this.$.doneaction.hide();
@@ -304,22 +321,6 @@ enyo.kind({
       //            this.$.layawayaction.hide();
     } else {
       this.$.exactaction.show();
-      //FIXME: Add credit option
-      //      if (this.receipt.get('orderType') === 2 || (this.receipt.get('isLayaway') && this.receipt.get('orderType') !== 3)) {
-      //        this.$.layawayaction.show();
-      //        if (!this.receipt.get('isLayaway')) {
-      //          this.$.exactaction.hide();
-      //        }
-      //      } else if (this.receipt.get('orderType') === 3) {
-      //        this.$.layawayaction.hide();
-      //      }
-      //      if (OB.POS.modelterminal.get('terminal').allowpayoncredit && this.receipt.get('bp')) {
-      //        if (this.receipt.get('bp').get('creditLimit') > 0 && !this.$.layawayaction.showing) {
-      //          this.$.creditsalesaction.show();
-      //        } else {
-      //          this.$.creditsalesaction.hide();
-      //        }
-      //      }
     }
     if (paymentstatus.get('multiOrdersList').length > 0 && OB.DEC.compare(paymentstatus.get('total')) >= 0 && OB.DEC.compare(OB.DEC.sub(paymentstatus.get('payment'), paymentstatus.get('total'))) >= 0 && !paymentstatus.get('change') && OB.DEC.compare(OB.DEC.sub(paymentstatus.get('payment'), paymentstatus.get('total'))) <= 0) {
       if (paymentstatus.get('total') === 0) {
@@ -389,7 +390,7 @@ enyo.kind({
           this.owner.receipt.trigger('voidLayaway');
         } else {
           if (this.owner.model.get('multiOrders').get('multiOrdersList').length === 0 && !this.owner.model.get('multiOrders').get('isMultiOrders')) {
-            this.owner.model.get('multiOrders').trigger('paymentDone');
+            this.owner.model.get('order').trigger('paymentDone');
           } else {
             this.owner.model.get('multiOrders').trigger('paymentDone');
           }

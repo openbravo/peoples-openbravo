@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2013 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -129,17 +129,10 @@
             successCallback = function () {
               OB.UTIL.showLoading(false);
               //In case the processed document is a quotation, we remove its id so it can be reactivated
-              if (model.get('order') && model.get('order').get('isQuotation')) {
-                model.get('order').set('oldId', model.get('order').get('id'));
-                model.get('order').set('id', null);
-                model.get('order').set('isbeingprocessed', 'N');
-                OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationSaved', [docno]));
+              if (isLayaway) {
+                OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgLayawaySaved', [docno]));
               } else {
-                if (isLayaway) {
-                  OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgLayawaySaved', [docno]));
-                } else {
-                  OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgReceiptSaved', [docno]));
-                }
+                OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgReceiptSaved', [docno]));
               }
             };
             errorCallback = function () {
@@ -150,7 +143,6 @@
             model.get('multiOrders').resetValues();
             orderList = new OB.Collection.OrderList();
             orderList.add(receipt);
-            OB.UTIL.showLoading(true);
             OB.UTIL.processOrders(model, orderList, successCallback, errorCallback);
           }, null);
         }

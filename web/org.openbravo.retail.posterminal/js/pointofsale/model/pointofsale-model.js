@@ -149,17 +149,20 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
     this.set('customer', new OB.Model.BusinessPartner());
     this.set('multiOrders', multiOrders);
 
-    this.get('multiOrders').on('paymentDone', function () {
+    this.get('multiOrders').on('paymentAccepted', function () {
+      OB.UTIL.showLoading(true);
       for (j = 0; j < this.get('multiOrders').get('multiOrdersList').length; j++) {
         //Create the negative payment for change
         iter = this.get('multiOrders').get('multiOrdersList').at(j);
-        var clonedCollection = new Backbone.Collection();
-        while (iter.get('gross') > iter.get('payment')) {
+        var clonedCollection = new Backbone.Collection(),
+            amountToPay = iter.get('amountToLayaway') ? iter.get('amountToLayaway') : OB.DEC.sub(iter.get('gross'), iter.get('payment'));
+        while ((iter.get('amountToLayaway') !== 0 && iter.get('gross') > iter.get('payment')) || (iter.get('amountToLayaway') > 0)) {
           for (i = 0; i < this.get('multiOrders').get('payments').length; i++) {
             //FIXME: MULTICURRENCY
             var payment = this.get('multiOrders').get('payments').at(i),
                 paymentMethod = OB.POS.terminal.terminal.paymentnames[payment.get('kind')];
-            if (payment.get('origAmount') <= OB.DEC.sub(iter.get('gross'), iter.get('payment'))) {
+
+            if (payment.get('origAmount') <= amountToPay) {
               iter.addPayment(new OB.Model.PaymentLine({
                 'kind': payment.get('kind'),
                 'name': payment.get('name'),
@@ -169,18 +172,26 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
                 'isocode': paymentMethod.isocode,
                 'openDrawer': payment.get('openDrawer')
               }));
+              if (iter.get('amountToLayaway')) {
+                iter.set('amountToLayaway', OB.DEC.sub(iter.get('amountToLayaway'), payment.get('origAmount')));
+              }
               this.get('multiOrders').get('payments').remove(this.get('multiOrders').get('payments').at(i));
+              amountToPay = iter.get('amountToLayaway') ? iter.get('amountToLayaway') : OB.DEC.sub(iter.get('gross'), iter.get('payment'));
             } else {
-              this.get('multiOrders').get('payments').at(i).set('origAmount', OB.DEC.sub(this.get('multiOrders').get('payments').at(i).get('origAmount'), OB.DEC.mul(OB.DEC.sub(iter.get('gross'), iter.get('payment')), paymentMethod.mulrate)));
+              this.get('multiOrders').get('payments').at(i).set('origAmount', OB.DEC.sub(this.get('multiOrders').get('payments').at(i).get('origAmount'), amountToPay));
               iter.addPayment(new OB.Model.PaymentLine({
                 'kind': payment.get('kind'),
                 'name': payment.get('name'),
-                'amount': OB.DEC.mul(OB.DEC.sub(iter.get('gross'), iter.get('payment')), paymentMethod.mulrate),
+                'amount': OB.DEC.mul(amountToPay, paymentMethod.mulrate),
                 'rate': paymentMethod.rate,
                 'mulrate': paymentMethod.mulrate,
                 'isocode': paymentMethod.isocode,
                 'openDrawer': payment.get('openDrawer')
               }));
+              if (iter.get('amountToLayaway')) {
+                iter.set('amountToLayaway', OB.DEC.sub(iter.get('amountToLayaway'), amountToPay));
+              }
+              amountToPay = iter.get('amountToLayaway') ? iter.get('amountToLayaway') : OB.DEC.sub(iter.get('gross'), iter.get('payment'));
               break;
             }
           }
@@ -199,8 +210,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
 
     OB.POS.modelterminal.saveDocumentSequenceInDB();
     this.processChangedCustomers();
-    
-    receipt.on('paymentAccepted', function (){
+
+    receipt.on('paymentAccepted', function () {
       receipt.prepareToSend(function () {
         //Create the negative payment for change
         var oldChange = receipt.get('change');
@@ -243,20 +254,37 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
 
     receipt.on('paymentDone', function () {
 
-      if(receipt.overpaymentExists()){
+      if (receipt.overpaymentExists()) {
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_OverpaymentWarningTitle'), OB.I18N.getLabel('OBPOS_OverpaymentWarningBody'), [{
           label: OB.I18N.getLabel('OBMOBC_LblOk'),
           action: function () {
             receipt.trigger('paymentAccepted');
           }
-        },{
+        }, {
           label: OB.I18N.getLabel('OBMOBC_LblCancel')
         }]);
-      }else{
+      } else {
         receipt.trigger('paymentAccepted');
       }
     }, this);
 
+    this.get('multiOrders').on('paymentDone', function () {
+      var me = this,
+          paymentstatus = this.get('multiOrders');
+      if (OB.DEC.compare(OB.DEC.sub(paymentstatus.get('payment'), paymentstatus.get('total'))) > 0) {
+        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_OverpaymentWarningTitle'), OB.I18N.getLabel('OBPOS_OverpaymentWarningBody'), [{
+          label: OB.I18N.getLabel('OBMOBC_LblOk'),
+          action: function () {
+            me.get('multiOrders').trigger('paymentAccepted');
+          }
+        }, {
+          label: OB.I18N.getLabel('OBMOBC_LblCancel')
+        }]);
+      } else {
+        this.get('multiOrders').trigger('paymentAccepted');
+      }
+    }, this);
+    //    FIXME: openDrawer for multiorders
     receipt.on('openDrawer', function () {
       receipt.trigger('popenDrawer');
     }, this);

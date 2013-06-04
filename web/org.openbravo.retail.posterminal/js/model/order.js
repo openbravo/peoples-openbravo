@@ -377,6 +377,7 @@
           me.set('gross', gross);
           me.adjustPayment();
           me.trigger('calculategross');
+          me.trigger('saveCurrent');
         });
       } else {
         this.calculateTaxes(function () {
@@ -393,6 +394,7 @@
           me.set('net', net);
           me.adjustPayment();
           me.trigger('calculategross');
+          me.trigger('saveCurrent');
         });
       }
       //total qty
@@ -425,6 +427,9 @@
 
     getPending: function () {
       return OB.DEC.sub(this.getTotal(), this.getPayment());
+    },
+    printPending: function () {
+      return OB.I18N.formatCurrency(this.getPending());
     },
 
     getPaymentStatus: function () {
@@ -935,7 +940,6 @@
         this.save();
       }
     },
-
     adjustPayment: function () {
       var i, max, p;
       var payments = this.get('payments');
@@ -1113,7 +1117,13 @@
     },
 
     initialize: function () {
+      var me = this;
       this.current = null;
+      if (this.modelorder) {
+        this.modelorder.on('saveCurrent', function () {
+          me.saveCurrent();
+        });
+      }
     },
 
     newOrder: function () {
@@ -1323,6 +1333,11 @@
         window.console.error(arguments);
       }, model.get('isLayaway'));
     },
+    addMultiReceipt: function (model) {
+      OB.Dal.save(model, function () {}, function () {
+        window.console.error(arguments);
+      }, model.get('isLayaway'));
+    },
 
     addNewQuotation: function () {
       var documentseq, documentseqstr;
@@ -1338,17 +1353,15 @@
       this.add(this.current);
       this.loadCurrent();
     },
-
+    deleteCurrentFromDatabase: function (orderToDelete) {
+      OB.Dal.remove(orderToDelete, function () {
+        return true;
+      }, function () {
+        OB.UTIL.showError('Error removing');
+      });
+    },
     deleteCurrent: function () {
       var isNew = false;
-
-      function deleteCurrentFromDatabase(orderToDelete) {
-        OB.Dal.remove(orderToDelete, function () {
-          return true;
-        }, function () {
-          OB.UTIL.showError('Error removing');
-        });
-      }
 
       if (this.current) {
         this.remove(this.current);
