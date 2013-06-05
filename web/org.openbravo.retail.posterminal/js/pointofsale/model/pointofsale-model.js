@@ -195,7 +195,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
           }
         }
         this.get('multiOrders').trigger('closed', iter);
-        iter.trigger('print'); // to guaranty execution order
+        this.get('multiOrders').trigger('print', iter); // to guaranty execution order
       }
     }, this);
 
@@ -286,7 +286,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
       receipt.trigger('popenDrawer');
     }, this);
 
-    this.printReceipt = new OB.OBPOSPointOfSale.Print.Receipt(receipt);
+    this.printReceipt = new OB.OBPOSPointOfSale.Print.Receipt(this);
     this.printLine = new OB.OBPOSPointOfSale.Print.ReceiptLine(receipt);
 
     // Listening events that cause a discount recalculation

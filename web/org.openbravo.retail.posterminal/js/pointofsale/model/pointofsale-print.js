@@ -1,18 +1,22 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2013 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
 
-/*global $ */
+/*global $, _ */
 
 (function () {
 
-  var PrintReceipt = function (receipt) {
-      this.receipt = receipt;
+  var PrintReceipt = function (model) {
+      this.receipt = model.get('order');
+      this.multiOrders = model.get('multiOrders');
+      this.multiOrders.on('print', function (order) {
+        this.print(order);
+      }, this);
       this.receipt.on('print', this.print, this);
       this.receipt.on('popenDrawer', this.openDrawer, this);
 
@@ -25,14 +29,17 @@
       this.templatelayaway = new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.ReceiptTemplateLayaway);
       };
 
-  PrintReceipt.prototype.print = function () {
-
+  PrintReceipt.prototype.print = function (order) {
     // Clone the receipt
     var receipt = new OB.Model.Order();
     var me = this;
-    receipt.clearWith(this.receipt);
-
     var template;
+    if (!_.isUndefined(order)) {
+      receipt.clearWith(order);
+    } else {
+      receipt.clearWith(this.receipt);
+    }
+
     if (receipt.get('generateInvoice') && receipt.get('orderType') !== 2 && receipt.get('orderType') !== 3 && !receipt.get('isLayaway')) {
       if (receipt.get('orderType') === 1) {
         template = this.templatereturninvoice;
