@@ -433,7 +433,8 @@ public abstract class FIN_BankStatementImport {
     for (BusinessPartner bp : businessPartners) {
       // Calculates distance between two strings meaning number of changes required for a string to
       // convert in another string
-      int bpDistance = StringUtils.getLevenshteinDistance(partnername, bp.getName().toLowerCase());
+      int bpDistance = StringUtils.getLevenshteinDistance(parsedPartnername, bp.getName()
+          .toLowerCase());
       if (bpDistance < distance) {
         distance = bpDistance;
         targetBusinessPartner = bp;
