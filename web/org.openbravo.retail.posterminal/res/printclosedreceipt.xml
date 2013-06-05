@@ -57,7 +57,7 @@
         line = lines.at(i);
     %>
       <line>
-        <text align ="left" length="21"><%= lines.at(i).get('product').get('_identifier') %></text>
+        <text align ="left" length="21"><%= OB.UTIL.encodeXMLComponent(lines.at(i).get('product').get('_identifier')) %></text>
         <text align ="right" length="5"><%= lines.at(i).printQty() %></text>
         <text align ="right" length="8"><%= lines.at(i).printPrice() %></text>
     <%if(order.get('priceIncludesTax')){%>

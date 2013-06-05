@@ -11,7 +11,7 @@
 <output>
     <display>
         <line>
-            <text align="left" length="15"><%= line.get('product').get('_identifier') %></text>
+            <text align="left" length="15"><%= OB.UTIL.encodeXMLComponent(line.get('product').get('_identifier')) %></text>
             <text align="right" length="5">x<%= line.printQty() %></text>
         </line>
         <line>
