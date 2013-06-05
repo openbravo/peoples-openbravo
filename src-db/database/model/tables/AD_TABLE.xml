@@ -167,6 +167,8 @@
       <unique name="AD_TABLE_TREETYPE_UN">
         <unique-column name="TREETYPE"/>
       </unique>
+      <check name="AD_TABLE_CLASSNAME_CHK"><![CDATA[((DATAORIGINTYPE) = 'DATASOURCE') OR (CLASSNAME IS NOT NULL)]]></check>
+      <check name="AD_TABLE_DATASOURCE_CHK"><![CDATA[((DATAORIGINTYPE) = 'TABLE') OR (OBSERDS_DATASOURCE_ID IS NOT NULL)]]></check>
       <check name="AD_TABLE_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="AD_TABLE_ISAUDITINS_CHK"><![CDATA[ISAUDITINSERTS IN ('Y', 'N')]]></check>
       <check name="AD_TABLE_ISDELETEABLE_CHK"><![CDATA[ISDELETEABLE IN ('Y', 'N')]]></check>
