@@ -45,7 +45,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="TABLENAME" primaryKey="false" required="false" type="VARCHAR" size="40" autoIncrement="false">
+      <column name="TABLENAME" primaryKey="false" required="true" type="VARCHAR" size="40" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
