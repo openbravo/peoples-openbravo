@@ -309,10 +309,24 @@ public class CostingRuleProcess implements Process {
         Long lineNo = (maxLineNumbers.get(criId) == null ? 0L : maxLineNumbers.get(criId)) + 10L;
         maxLineNumbers.put(criId, lineNo);
 
-        insertInventoryLine(cri.getCloseInventory(), productId, attrSetInsId, uomId, orderUOMId,
-            locatorId, BigDecimal.ZERO, qty, BigDecimal.ZERO, orderQty, lineNo);
-        insertInventoryLine(cri.getInitInventory(), productId, attrSetInsId, uomId, orderUOMId,
-            locatorId, qty, BigDecimal.ZERO, orderQty, BigDecimal.ZERO, lineNo);
+        if (BigDecimal.ZERO.compareTo(qty) < 0) {
+          // Do not insert negative values in Inventory lines, instead reverse the Quantity Count
+          // and the Book Quantity. For example:
+          // Instead of CountQty=0 and BookQty=-5 insert CountQty=5 and BookQty=0
+          // By doing so the difference between both quantities remains the same and no negative
+          // values have been inserted.
+          insertInventoryLine(cri.getCloseInventory(), productId, attrSetInsId, uomId, orderUOMId,
+              locatorId, qty == null ? null : qty.abs(), BigDecimal.ZERO, orderQty == null ? null
+                  : orderQty.abs(), BigDecimal.ZERO, lineNo);
+          insertInventoryLine(cri.getInitInventory(), productId, attrSetInsId, uomId, orderUOMId,
+              locatorId, BigDecimal.ZERO, qty.abs(), BigDecimal.ZERO, orderQty == null ? null
+                  : orderQty.abs(), lineNo);
+        } else {
+          insertInventoryLine(cri.getCloseInventory(), productId, attrSetInsId, uomId, orderUOMId,
+              locatorId, BigDecimal.ZERO, qty, BigDecimal.ZERO, orderQty, lineNo);
+          insertInventoryLine(cri.getInitInventory(), productId, attrSetInsId, uomId, orderUOMId,
+              locatorId, qty, BigDecimal.ZERO, orderQty, BigDecimal.ZERO, lineNo);
+        }
 
         if ((i % 100) == 0) {
           OBDal.getInstance().flush();
