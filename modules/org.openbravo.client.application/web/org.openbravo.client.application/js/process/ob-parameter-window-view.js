@@ -217,7 +217,21 @@ isc.OBParameterWindowView.addProperties({
           titleOrientation: 'top',
           numCols: 4,
           showErrorIcons: false,
-          colWidths: ['*', '*', '*', '*']
+          colWidths: ['*', '*', '*', '*'],
+          itemChanged: function (item, newValue) {
+            var affectedParams = this.paramWindow.dynamicColumns[item.name],
+                i, field;
+            if (!affectedParams) {
+              return;
+            }
+            // changing value of a dynamic columns forces subordinated fields to be set to null
+            for (i = 0; i < affectedParams.length; i++) {
+              field = this.getField(affectedParams[i]);
+              if (field && field.setValue) {
+                field.setValue(null);
+              }
+            }
+          }
         });
 
         this.theForm.setItems(items);
