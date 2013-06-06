@@ -143,7 +143,7 @@ public class ParameterWindowComponent extends BaseTemplateComponent {
 
   public String getDynamicColumns() {
     List<Parameter> paramsWithValidation = new ArrayList<Parameter>();
-    Map<String, Parameter> allParams = new HashMap<String, Parameter>();
+    List<String> allParams = new ArrayList<String>();
     Map<String, List<String>> dynCols = new HashMap<String, List<String>>();
 
     for (Parameter param : process.getOBUIAPPParameterList()) {
@@ -156,7 +156,7 @@ public class ParameterWindowComponent extends BaseTemplateComponent {
               "HQL_JS", param, process });
         }
       }
-      allParams.put(param.getDBColumnName(), param);
+      allParams.add(param.getDBColumnName());
     }
 
     for (Parameter paramWithVal : paramsWithValidation) {
@@ -180,8 +180,12 @@ public class ParameterWindowComponent extends BaseTemplateComponent {
     return jsonDynCols.toString();
   }
 
+  /**
+   * Dynamic columns is a list of columns that cause others to be modified, it includes the ones
+   * causing the modification as well as the affected ones.
+   */
   private void parseValidation(Validation validation, Map<String, List<String>> dynCols,
-      Map<String, Parameter> allParams, String paramName) {
+      List<String> allParams, String paramName) {
     String token = validation.getValidationCode();
 
     List<String> columns;
@@ -196,7 +200,7 @@ public class ParameterWindowComponent extends BaseTemplateComponent {
         columns = dynCols.get(token);
 
         // if (!columns.contains(strAux)) {
-        if (!strAux.equals(paramName) && allParams.containsKey(strAux)) {
+        if (!strAux.equals(paramName) && allParams.contains(strAux)) {
           if (dynCols.containsKey(strAux)) {
             columns = dynCols.get(strAux);
           } else {
