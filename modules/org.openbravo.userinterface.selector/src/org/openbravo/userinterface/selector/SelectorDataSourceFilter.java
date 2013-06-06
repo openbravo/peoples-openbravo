@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,12 +28,14 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
+import org.openbravo.client.application.Parameter;
 import org.openbravo.client.application.ParameterUtils;
 import org.openbravo.client.kernel.reference.StringUIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinition;
@@ -42,6 +44,7 @@ import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.domain.Validation;
 import org.openbravo.service.datasource.DataSourceFilter;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonUtils;
@@ -65,11 +68,9 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
 
   @Override
   public void doFilter(Map<String, String> parameters, HttpServletRequest request) {
-
     final long t1 = System.currentTimeMillis();
 
     try {
-
       OBContext.setAdminMode();
 
       String selectorId = parameters.get(SelectorConstants.DS_REQUEST_SELECTOR_ID_PARAMETER);
@@ -81,20 +82,56 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
 
       Selector sel = OBDal.getInstance().get(Selector.class, selectorId);
 
-      OBCriteria<SelectorField> sfc = OBDal.getInstance().createCriteria(SelectorField.class);
-      sfc.add(Restrictions.isNotNull(SelectorField.PROPERTY_DEFAULTEXPRESSION));
-      sfc.add(Restrictions.eq(SelectorField.PROPERTY_OBUISELSELECTOR, sel));
+      String filterExpression = sel.getFilterExpression() == null ? "" : sel.getFilterExpression();
+      String filterHQL = "";
 
-      if ((sel.getFilterExpression() == null || sel.getFilterExpression().equals(""))
-          && sfc.count() == 0) { // Nothing to filter
-        return;
+      filterHQL = applyFilterExpression(filterExpression, sel, parameters, request);
+
+      String processId = parameters.get(SelectorConstants.DS_REQUEST_PROCESS_DEFINITION_ID);
+      if (!StringUtils.isEmpty(processId)) {
+        OBCriteria<Parameter> qParam = OBDal.getInstance().createCriteria(Parameter.class);
+        qParam.add(Restrictions.eq(Parameter.PROPERTY_ID,
+            parameters.get(SelectorConstants.DS_REQUEST_SELECTOR_FIELD_ID)));
+        Parameter param = qParam.list().get(0);
+        Validation validation = qParam.list().get(0).getValidation();
+        if (validation != null) {
+          if (validation.getType().equals("HQL_JS")) {
+            String validationCode = qParam.list().get(0).getValidation().getValidationCode();
+            String validationHQL = applyFilterExpression(validationCode, sel, parameters, request);
+
+            if (!StringUtils.isEmpty(validationHQL)) {
+              if (StringUtils.isEmpty(filterHQL)) {
+                filterHQL = validationHQL;
+              } else {
+                filterHQL = "(" + filterHQL + ") and (" + validationHQL + ")";
+              }
+            }
+          } else {
+            log.error("Unsupported validation type '" + validation.getType() + "' in "
+                + param.getObuiappProcess().getName() + "->" + param.getName()
+                + ". Only 'HQL_JS' type is supported. No validation is applied!!!");
+          }
+        }
       }
 
-      // Applying filter expression
-      applyFilterExpression(sel, parameters, request);
+      if (!StringUtils.isEmpty(filterHQL)) {
+        log.debug("Adding to where clause (based on filter expression): " + filterHQL);
+
+        String currentWhere = parameters.get(JsonConstants.WHERE_PARAMETER);
+
+        if (currentWhere == null || currentWhere.equals("null") || currentWhere.equals("")) {
+          parameters.put(JsonConstants.WHERE_PARAMETER, filterHQL);
+        } else {
+          parameters.put(JsonConstants.WHERE_PARAMETER, currentWhere + " and " + filterHQL);
+        }
+      }
 
       // Applying default expression for selector fields when is not a selector window request
       if (!"Window".equals(requestType)) {
+        OBCriteria<SelectorField> sfc = OBDal.getInstance().createCriteria(SelectorField.class);
+        sfc.add(Restrictions.isNotNull(SelectorField.PROPERTY_DEFAULTEXPRESSION));
+        sfc.add(Restrictions.eq(SelectorField.PROPERTY_OBUISELSELECTOR, sel));
+
         applyDefaultExpressions(sel, parameters, sfc, request);
         verifyPropertyTypes(sel, parameters);
       }
@@ -206,11 +243,11 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
   /**
    * Evaluates the Selector filter expression and modifies the parameters map for data filtering
    */
-  private void applyFilterExpression(Selector sel, Map<String, String> parameters,
-      HttpServletRequest request) {
+  private String applyFilterExpression(String filterExpression, Selector sel,
+      Map<String, String> parameters, HttpServletRequest request) {
 
-    if (sel.getFilterExpression() == null) {
-      return;
+    if (StringUtils.isEmpty(filterExpression)) {
+      return "";
     }
 
     Object result = null;
@@ -218,7 +255,7 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
 
     try {
       result = ParameterUtils.getJSExpressionResult(parameters, request.getSession(),
-          sel.getFilterExpression());
+          filterExpression);
       if (result != null && !result.toString().equals("")) {
         dynamicWhere = result.toString();
       }
@@ -226,17 +263,7 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
       log.error("Error evaluating filter expression: " + e.getMessage(), e);
     }
 
-    if (!dynamicWhere.equals("")) {
-      log.debug("Adding to where clause (based on filter expression): " + dynamicWhere);
-
-      String currentWhere = parameters.get(JsonConstants.WHERE_PARAMETER);
-
-      if (currentWhere == null || currentWhere.equals("null") || currentWhere.equals("")) {
-        parameters.put(JsonConstants.WHERE_PARAMETER, dynamicWhere);
-      } else {
-        parameters.put(JsonConstants.WHERE_PARAMETER, currentWhere + " and " + dynamicWhere);
-      }
-    }
+    return dynamicWhere;
   }
 
   /**
