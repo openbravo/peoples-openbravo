@@ -92,6 +92,10 @@ public class OBViewParameterHandler {
       parameter = param;
     }
 
+    public String getId() {
+      return parameter.getId();
+    }
+
     public String getType() {
       return uiDefinition != null ? uiDefinition.getName() : "--";
     }

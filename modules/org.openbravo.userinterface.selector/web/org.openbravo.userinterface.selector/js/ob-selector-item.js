@@ -776,8 +776,7 @@ isc.OBSelectorItem.addProperties({
     // Parameter windows
     if (this.form.paramWindow) {
       params._processDefinitionId = this.form.paramWindow.processId;
-      // TODO: send ID instead of name
-      params._selectorFieldName = this.name;
+      params._selectorFieldId = this.paramId;
       isc.addProperties(params, this.form.paramWindow.getContextInfo());
     }
   },

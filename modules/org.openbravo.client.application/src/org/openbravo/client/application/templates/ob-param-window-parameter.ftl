@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012 Openbravo SLU
+ * All portions are Copyright (C) 2012-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,6 +22,7 @@
 
 <#macro createParameter param>
 {
+    paramId: '${param.id}',
     type: '${param.type}',
     title: '${param.title?js_string}',
     name: '${param.name?js_string}',
