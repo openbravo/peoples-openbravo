@@ -218,7 +218,9 @@ public class QueryListDataSource extends ReadOnlyDataSourceService implements Po
               }
 
               if (domainType instanceof BooleanDomainType) {
-                value = ((PrimitiveDomainType) domainType).createFromString((String) value);
+                if (value instanceof String) {
+                  value = ((PrimitiveDomainType) domainType).createFromString((String) value);
+                }
               }
 
               if (!isExport) {
