@@ -104,7 +104,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
 
   init: function () {
     var receipt = new OB.Model.Order(),
-        i, j, k, multiOrders = new OB.Model.MultiOrders(),
+        i, j, k, amtAux, amountToPay, ordersLength, multiOrders = new OB.Model.MultiOrders(),
         me = this,
         iter, isNew = false,
         discounts, ordersave, customersave, taxes, orderList, hwManager, ViewManager;
@@ -151,15 +151,20 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
 
     this.get('multiOrders').on('paymentAccepted', function () {
       OB.UTIL.showLoading(true);
-      for (j = 0; j < this.get('multiOrders').get('multiOrdersList').length; j++) {
+      ordersLength = this.get('multiOrders').get('multiOrdersList').length;
+      for (j = 0; j < ordersLength; j++) {
         //Create the negative payment for change
         iter = this.get('multiOrders').get('multiOrdersList').at(j);
-        var clonedCollection = new Backbone.Collection(),
-            amountToPay = iter.get('amountToLayaway') ? iter.get('amountToLayaway') : OB.DEC.sub(iter.get('gross'), iter.get('payment'));
+        amountToPay = !_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway')) ? iter.get('amountToLayaway') : OB.DEC.sub(iter.get('gross'), iter.get('payment'));
         while ((iter.get('amountToLayaway') !== 0 && iter.get('gross') > iter.get('payment')) || (iter.get('amountToLayaway') > 0)) {
           for (i = 0; i < this.get('multiOrders').get('payments').length; i++) {
             var payment = this.get('multiOrders').get('payments').at(i),
                 paymentMethod = OB.POS.terminal.terminal.paymentnames[payment.get('kind')];
+            //FIXME:Change is always given back in store currency
+            if (this.get('multiOrders').get('change') > 0 && paymentMethod.paymentMethod.iscash) {
+              payment.set('origAmount', OB.DEC.sub(payment.get('origAmount'), this.get('multiOrders').get('change')));
+              this.get('multiOrders').set('change', OB.DEC.Zero);
+            }
             if (payment.get('origAmount') <= amountToPay) {
               iter.addPayment(new OB.Model.PaymentLine({
                 'kind': payment.get('kind'),
@@ -170,26 +175,33 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
                 'isocode': paymentMethod.isocode,
                 'openDrawer': payment.get('openDrawer')
               }));
-              if (!_.isUndefined(iter.get('amountToLayaway'))) {
+              if (!_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway'))) {
                 iter.set('amountToLayaway', OB.DEC.sub(iter.get('amountToLayaway'), payment.get('origAmount')));
               }
               this.get('multiOrders').get('payments').remove(this.get('multiOrders').get('payments').at(i));
-              amountToPay = !_.isUndefined(iter.get('amountToLayaway')) ? iter.get('amountToLayaway') : OB.DEC.sub(iter.get('gross'), iter.get('payment'));
+              amountToPay = !_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway')) ? iter.get('amountToLayaway') : OB.DEC.sub(iter.get('gross'), iter.get('payment'));
             } else {
-              this.get('multiOrders').get('payments').at(i).set('origAmount', OB.DEC.sub(this.get('multiOrders').get('payments').at(i).get('origAmount'), amountToPay));
+              if (j === this.get('multiOrders').get('multiOrdersList').length - 1 && !paymentMethod.paymentMethod.iscash) {
+                amtAux = payment.get('origAmount');
+                this.get('multiOrders').get('payments').at(i).set('origAmount', OB.DEC.sub(this.get('multiOrders').get('payments').at(i).get('origAmount'), payment.get('origAmount')));
+              } else {
+                amtAux = OB.DEC.mul(amountToPay, paymentMethod.mulrate);
+                this.get('multiOrders').get('payments').at(i).set('origAmount', OB.DEC.sub(this.get('multiOrders').get('payments').at(i).get('origAmount'), amountToPay));
+              }
+
               iter.addPayment(new OB.Model.PaymentLine({
                 'kind': payment.get('kind'),
                 'name': payment.get('name'),
-                'amount': OB.DEC.mul(amountToPay, paymentMethod.mulrate),
+                'amount': amtAux,
                 'rate': paymentMethod.rate,
                 'mulrate': paymentMethod.mulrate,
                 'isocode': paymentMethod.isocode,
                 'openDrawer': payment.get('openDrawer')
               }));
-              if (!_.isUndefined(iter.get('amountToLayaway'))) {
-                iter.set('amountToLayaway', OB.DEC.sub(iter.get('amountToLayaway'), amountToPay));
+              if (!_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway'))) {
+                iter.set('amountToLayaway', OB.DEC.sub(iter.get('amountToLayaway'), amtAux));
               }
-              amountToPay = !_.isUndefined(iter.get('amountToLayaway')) ? iter.get('amountToLayaway') : OB.DEC.sub(iter.get('gross'), iter.get('payment'));
+              amountToPay = !_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway')) ? iter.get('amountToLayaway') : OB.DEC.sub(iter.get('gross'), iter.get('payment'));
               break;
             }
           }
