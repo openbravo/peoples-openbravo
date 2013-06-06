@@ -22,10 +22,12 @@
 
 <#macro createParameter param>
 {
-    paramId: '${param.id}',
     type: '${param.type}',
     title: '${param.title?js_string}',
     name: '${param.name?js_string}',
+    
+  <#if param.type != "OBSectionItem">
+    paramId: '${param.id}',
     width: '${param.width?js_string}',
     <#if param.redrawOnChange>
       redrawOnChange: true,
@@ -37,5 +39,14 @@
     </#if>
     required: ${param.required?string}
     ${param.parameterProperties}
+  <#else>
+    defaultValue: '${param.title?js_string}',
+    sectionExpanded: ${param.expanded?string},
+    itemIds: [
+    <#list param.children as childParam>
+      '${childParam.dBColumnName?js_string}'<#if childParam_has_next>,</#if>
+    </#list>
+    ]
+  </#if>
 }
 </#macro>
