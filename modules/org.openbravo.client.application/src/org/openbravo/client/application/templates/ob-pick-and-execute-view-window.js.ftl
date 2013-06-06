@@ -48,6 +48,7 @@ isc.ClassFactory.defineClass('<#if !data.popup>processDefinition</#if>${data.win
       </#if>
     </#list>    
      ]
-    }
+    },
+    dynamicColumns: ${data.dynamicColumns}
 });
 
