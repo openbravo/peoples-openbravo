@@ -183,10 +183,13 @@ public class ParameterWindowComponent extends BaseTemplateComponent {
   /**
    * Dynamic columns is a list of columns that cause others to be modified, it includes the ones
    * causing the modification as well as the affected ones.
+   * 
+   * Columns are identified as strings surrounded by quotes (" or ') matching one of the names of
+   * the parameters.
    */
   private void parseValidation(Validation validation, Map<String, List<String>> dynCols,
       List<String> allParams, String paramName) {
-    String token = validation.getValidationCode();
+    String token = validation.getValidationCode().replace("\"", "'");
 
     List<String> columns;
 
@@ -199,7 +202,6 @@ public class ParameterWindowComponent extends BaseTemplateComponent {
         token = token.substring(i + 1);
         columns = dynCols.get(token);
 
-        // if (!columns.contains(strAux)) {
         if (!strAux.equals(paramName) && allParams.contains(strAux)) {
           if (dynCols.containsKey(strAux)) {
             columns = dynCols.get(strAux);
@@ -211,7 +213,6 @@ public class ParameterWindowComponent extends BaseTemplateComponent {
             columns.add(paramName);
           }
         }
-        // }
       }
       if (token.indexOf("'") != -1) {
         token = "'" + token;
