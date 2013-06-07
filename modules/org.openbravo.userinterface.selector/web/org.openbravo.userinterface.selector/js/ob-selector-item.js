@@ -854,6 +854,12 @@ isc.OBSelectorItem.addProperties({
       this.selectorWindow.destroy();
       this.selectorWindow = null;
     }
+
+    // Sometimes, internal _columnSizer member of pickList is leaked
+    if (this.pickList && this.pickList.members && this.pickList.members.length > 0 && this.pickList.members[0]._columnSizer) {
+      this.pickList.members[0]._columnSizer.destroy();
+    }
+
     this.Super('destroy', arguments);
   }
 });

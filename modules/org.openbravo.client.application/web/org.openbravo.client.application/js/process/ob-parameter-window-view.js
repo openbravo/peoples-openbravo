@@ -103,13 +103,6 @@ isc.OBParameterWindowView.addProperties({
       click: actionClick
     });
 
-    cancelButton = isc.OBFormButton.create({
-      title: OB.I18N.getLabel('OBUISC_Dialog.CANCEL_BUTTON_TITLE'),
-      realTitle: '',
-      click: function () {
-        view.closeClick();
-      }
-    });
     if (this.popup) {
       buttonLayout.push(isc.LayoutSpacer.create({}));
     }
@@ -146,6 +139,13 @@ isc.OBParameterWindowView.addProperties({
     }
 
     if (this.popup) {
+      cancelButton = isc.OBFormButton.create({
+        title: OB.I18N.getLabel('OBUISC_Dialog.CANCEL_BUTTON_TITLE'),
+        realTitle: '',
+        click: function () {
+          view.closeClick();
+        }
+      });
       buttonLayout.push(cancelButton);
       buttonLayout.push(isc.LayoutSpacer.create({}));
       OB.TestRegistry.register('org.openbravo.client.application.process.pickandexecute.button.cancel', cancelButton);
