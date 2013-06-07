@@ -46,20 +46,34 @@ public class OBViewParameterHandler {
   public List<OBViewParameter> getParameters() {
 
     List<Parameter> parametersInExpression = new ArrayList<Parameter>();
-    Map<Parameter, String> paramToJSExpression = new HashMap<Parameter, String>();
+
     // Computes the display logic of the parameters
     // It has to be done in advance in order to determine the dynamic parameters
+    Map<Parameter, String> displayLogicMap = new HashMap<Parameter, String>();
     for (Parameter param : process.getOBUIAPPParameterList()) {
-      if (param.isActive()) {
-        if (param.getDisplayLogic() != null && !param.getDisplayLogic().isEmpty()) {
-          boolean parameterDisplayLogic = true;
-          final DynamicExpressionParser parser = new DynamicExpressionParser(
-              param.getDisplayLogic(), param.getObuiappProcess(), parameterDisplayLogic);
-          paramToJSExpression.put(param, parser.getJSExpression());
-          for (Parameter parameterExpression : parser.getParameters()) {
-            if (!parametersInExpression.contains(parameterExpression)) {
-              parametersInExpression.add(parameterExpression);
-            }
+      if (param.isActive() && param.getDisplayLogic() != null && !param.getDisplayLogic().isEmpty()) {
+        final DynamicExpressionParser parser = new DynamicExpressionParser(param.getDisplayLogic(),
+            param.getObuiappProcess(), true);
+        displayLogicMap.put(param, parser.getJSExpression());
+        for (Parameter parameterExpression : parser.getParameters()) {
+          if (!parametersInExpression.contains(parameterExpression)) {
+            parametersInExpression.add(parameterExpression);
+          }
+        }
+      }
+    }
+
+    // Computes read-only logic
+    Map<Parameter, String> readOnlyLogicMap = new HashMap<Parameter, String>();
+    for (Parameter param : process.getOBUIAPPParameterList()) {
+      if (param.isActive() && !param.isFixed() && param.getReadOnlyLogic() != null
+          && !param.getReadOnlyLogic().isEmpty()) {
+        final DynamicExpressionParser parser = new DynamicExpressionParser(
+            param.getReadOnlyLogic(), param.getObuiappProcess(), true);
+        readOnlyLogicMap.put(param, parser.getJSExpression());
+        for (Parameter parameterExpression : parser.getParameters()) {
+          if (!parametersInExpression.contains(parameterExpression)) {
+            parametersInExpression.add(parameterExpression);
           }
         }
       }
@@ -91,8 +105,12 @@ public class OBViewParameterHandler {
 
       OBViewParameter parameter = new OBViewParameter(param);
       parameter.setRedrawOnChange(parametersInExpression.contains(param));
-      if (paramToJSExpression.containsKey(param)) {
-        parameter.setShowIf(paramToJSExpression.get(param));
+      if (displayLogicMap.containsKey(param)) {
+        parameter.setShowIf(displayLogicMap.get(param));
+      }
+
+      if (readOnlyLogicMap.containsKey(param)) {
+        parameter.setReadOnlyIf(readOnlyLogicMap.get(param));
       }
 
       params.add(parameter);
@@ -104,6 +122,7 @@ public class OBViewParameterHandler {
     UIDefinition uiDefinition;
     Parameter parameter;
     String showIf = "";
+    String readOnlyIf = "";
     boolean redrawOnChange = false;
 
     public OBViewParameter() {
@@ -186,6 +205,14 @@ public class OBViewParameterHandler {
 
     public String getShowIf() {
       return showIf;
+    }
+
+    public void setReadOnlyIf(String readOnlyIf) {
+      this.readOnlyIf = readOnlyIf;
+    }
+
+    public String getReadOnlyIf() {
+      return readOnlyIf;
     }
 
     public boolean getRedrawOnChange() {

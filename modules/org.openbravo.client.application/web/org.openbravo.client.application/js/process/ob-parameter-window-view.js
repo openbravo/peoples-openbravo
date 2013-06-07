@@ -219,12 +219,23 @@ isc.OBParameterWindowView.addProperties({
           showErrorIcons: false,
           colWidths: ['*', '*', '*', '*'],
           itemChanged: function (item, newValue) {
-            var affectedParams = this.paramWindow.dynamicColumns[item.name],
-                i, field;
+            var affectedParams, i, field, fields;
+
+            // Check read only logic
+            fields = this.getFields();
+            for (i = 0; i < fields.length; i++) {
+              field = this.getField(i);
+              if (field.readOnlyIf && field.setDisabled) {
+                field.setDisabled(field.readOnlyIf(this.getValues()));
+              }
+            }
+
+            // Check validation rules (subordinated fields), when value of a
+            // parent field is changed, all its subordinated are reset
+            affectedParams = this.paramWindow.dynamicColumns[item.name];
             if (!affectedParams) {
               return;
             }
-            // changing value of a dynamic columns forces subordinated fields to be set to null
             for (i = 0; i < affectedParams.length; i++) {
               field = this.getField(affectedParams[i]);
               if (field && field.setValue) {

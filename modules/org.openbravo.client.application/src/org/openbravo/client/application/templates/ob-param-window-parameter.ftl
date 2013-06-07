@@ -37,6 +37,11 @@
         return (${param.showIf});
       },
     </#if>
+    <#if param.readOnlyIf != "" >
+      readOnlyIf: function(currentValues) {
+        return (${param.readOnlyIf});
+      },
+    </#if>
     required: ${param.required?string}
     ${param.parameterProperties}
   <#else>
