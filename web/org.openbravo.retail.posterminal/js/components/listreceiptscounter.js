@@ -38,7 +38,7 @@ enyo.kind({
       orderList: this.orderList
     });
     this.renderNrItems(this.orderList.length);
-    this.orderList.on('all', function (model) {
+    this.orderList.on('add remove reset', function () {
       me.renderNrItems(me.orderList.length);
     }, this);
   },
