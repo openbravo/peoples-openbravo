@@ -8,5 +8,8 @@
       <foreign-key foreignTable="OBKMO_WIDGET_CLASS" name="EM_OBKMO_PARAMETER_WIDGETCLASS" onDelete="cascade">
         <reference local="EM_OBKMO_WIDGET_CLASS_ID" foreign="OBKMO_WIDGET_CLASS_ID"/>
       </foreign-key>
+      <index name="EM_OBKMO_PARAM_WIDGET" unique="false">
+        <index-column name="EM_OBKMO_WIDGET_CLASS_ID"/>
+      </index>
     </table>
   </database>

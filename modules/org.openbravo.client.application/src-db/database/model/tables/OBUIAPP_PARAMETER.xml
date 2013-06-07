@@ -148,8 +148,8 @@
       <foreign-key foreignTable="AD_REFERENCE" name="OBUIAPP_PARAMETER_REFERENCE_V">
         <reference local="AD_REFERENCE_VALUE_ID" foreign="AD_REFERENCE_ID"/>
       </foreign-key>
-      <index name="FKI_OBUIAPP_PARAM_AD_VALRULE" unique="false">
-        <index-column name="AD_VAL_RULE_ID"/>
+      <index name="OBUIAPP_PARAMETER_PROCESS" unique="false">
+        <index-column name="OBUIAPP_PROCESS_ID"/>
       </index>
       <check name="OBUIAPP_PARAMETER_CENTR_CHK"><![CDATA[ISCENTRALLYMAINTAINED IN ('Y', 'N')]]></check>
       <check name="OBUIAPP_PARAMETER_EVFIXVAL_CHK"><![CDATA[EVALUATEFIXEDVALUE IN ('Y', 'N')]]></check>
