@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2012 Openbravo SLU
+ * All portions are Copyright (C) 2001-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,19 +22,16 @@
    <SqlMethod name="select" type="preparedStatement" return="single">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
-      	SELECT AD_Process_Request_ID, Timing_Option, TO_CHAR(Start_Time, 'HH24:MI:SS') AS Start_Time, to_char(Start_Date, ?) AS Start_Date,
+      	SELECT AD_Process_Request_ID, Timing_Option, TO_CHAR(Start_Time, 'HH24:MI:SS') AS Start_Time, to_char(Start_Date, 'DD-MM-YYYY') AS Start_Date,
       	Frequency, Secondly_Interval, Secondly_Repetitions, Minutely_Interval, Minutely_Repetitions,
       	Hourly_Interval, Hourly_Repetitions, Daily_Interval, Day_Mon, Day_Tue,
       	Day_Wed, Day_Thu, Day_Fri, Day_Sat, Day_Sun, Monthly_Option, Monthly_Specific_Day,
-      	Monthly_Day_Of_Week, Finishes, TO_CHAR(Finishes_Time, 'HH24:MI:SS') AS Finishes_Time, to_char(Finishes_Date, ?) as Finishes_Date,
-      	Daily_Option, Cron, r.Description, TO_CHAR(Next_Fire_Time, ?) AS Next_Fire_Time, p.preventConcurrent, p.name as process_name, p.ad_process_id
+      	Monthly_Day_Of_Week, Finishes, TO_CHAR(Finishes_Time, 'HH24:MI:SS') AS Finishes_Time, to_char(Finishes_Date, 'DD-MM-YYYY') as Finishes_Date,
+      	Daily_Option, Cron, r.Description, TO_CHAR(Next_Fire_Time, 'DD-MM-YYYY HH24:MI:SS') AS Next_Fire_Time, p.preventConcurrent, p.name as process_name, p.ad_process_id
       	FROM AD_Process_Request r, AD_Process p
       	WHERE AD_Process_Request_ID = ?
       	AND p.AD_Process_ID = r.AD_Process_ID
     ]]></Sql>
-    <Parameter name="dateTimeFormat" />
-    <Parameter name="dateTimeFormat" />
-    <Parameter name="dateTimeFormat" />
     <Parameter name="id"/>
    </SqlMethod>
 </SqlClass>

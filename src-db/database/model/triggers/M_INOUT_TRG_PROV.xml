@@ -56,25 +56,10 @@ BEGIN
 			RAISE_APPLICATION_ERROR(-20000, '@20501@') ;
 		ELSIF (V_COUNT <> 0) THEN
 			RAISE_APPLICATION_ERROR(-20000, '@20632@') ;
-                ELSE
-                     UPDATE M_MATCHINV SET DATETRX = :NEW.DATEACCT WHERE M_INOUTLINE_ID IN (SELECT MI.M_INOUTLINE_ID FROM M_INOUTLINE MI WHERE MI.M_INOUT_ID = :old.M_INOUT_ID);
+    ELSE
+      UPDATE M_MATCHINV SET DATETRX = :NEW.DATEACCT WHERE M_INOUTLINE_ID IN (SELECT MI.M_INOUTLINE_ID FROM M_INOUTLINE MI WHERE MI.M_INOUT_ID = :old.M_INOUT_ID);
 		END IF;
 	END IF;
-	
-
-    If (:Old.C_Order_Id Is Not Null) Then
-      SELECT count(*) 
-      Into V_Count
-      FROM c_orderline col
-      WHERE col.c_order_id = :old.c_order_id 
-      AND col.c_orderline_id IN (
-                   SELECT c_orderline_id 
-                   FROM m_inoutline 
-                   WHERE m_inout_id = :old.m_inout_id);
-      If (V_Count = 0) Then
-        :new.c_order_id := null;
-      END IF;
-    END IF;
   END IF;
 
 END M_INOUT_TRG_PROV

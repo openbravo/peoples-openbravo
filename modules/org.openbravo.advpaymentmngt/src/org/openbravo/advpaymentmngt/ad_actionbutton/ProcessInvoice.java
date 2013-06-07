@@ -200,6 +200,7 @@ public class ProcessInvoice extends HttpSecureAppServlet {
             if (strWindowPath.equals(""))
               strWindowPath = strDefaultServlet;
             printPageClosePopUp(response, vars, strWindowPath);
+            return;
           }
         } finally {
           OBContext.restorePreviousMode();

@@ -408,6 +408,9 @@ public class DalWebService implements WebService {
     // for a webservice referenced entities should not be created at all!
     xec.getEntityResolver().setOptionCreateReferencedIfNotFound(false);
 
+    // Retrieves the current resolving mode, to restore it after importing the data
+    ResolvingMode prevResolvingMode = xec.getEntityResolver().getResolvingMode();
+
     // the create action also supports updating
     // an update action should only update
     // and a delete action should be lenient, allowing non existing
@@ -417,8 +420,9 @@ public class DalWebService implements WebService {
       xec.getEntityResolver().setResolvingMode(ResolvingMode.MUST_EXIST);
     }
 
-    xec.getEntityResolver().setLookForTranslatedIDs(false);
     final List<BaseOBObject> processedObjects = xec.process(doc);
+
+    xec.getEntityResolver().setResolvingMode(prevResolvingMode);
 
     if (xec.getErrorMessages() != null) {
       throw new InvalidContentException(xec.getErrorMessages());

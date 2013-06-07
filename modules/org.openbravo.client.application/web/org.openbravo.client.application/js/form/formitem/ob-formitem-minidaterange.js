@@ -457,7 +457,7 @@ isc.OBMiniDateRangeItem.addProperties({}, OB.DateItemProperties, {
         operator: 'notNull'
       };
     }
-    if (value === '') {
+    if (value === '' || value === null) {
       return {};
     }
     if (this.singleDateValue) {
