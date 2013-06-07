@@ -894,10 +894,10 @@ BEGIN --BODY
             Cur_Lines.QuantityOrder, Cur_Lines.M_Product_Uom_ID, Cur_Lines.M_ATTRIBUTESETINSTANCE_ID,
             coalesce(Cur_Lines.C_Project_ID, Cur_Invoice.C_Project_ID), coalesce(Cur_Lines.A_Asset_ID, Cur_Invoice.A_Asset_ID), 
             coalesce(Cur_Lines.C_CostCenter_ID, Cur_Invoice.C_CostCenter_ID), coalesce(Cur_Lines.User1_ID, Cur_Invoice.User1_ID),
-            coalesce(Cur_Lines.User2_ID, Cur_Invoice.User2_ID), ol.explode, (select m_inoutline_id 
-                                     from m_inoutline 
-                                     where m_inout_id = p_InOut_ID
-                                       and c_orderline_id = (SELECT BOM_parent_id from c_orderline WHERE c_orderline_id = ol.C_OrderLine_ID)));
+            coalesce(Cur_Lines.User2_ID, Cur_Invoice.User2_ID), Cur_Lines.explode, (select m_inoutline_id 
+                                     from c_invoiceline
+                                     where c_invoice_id = Cur_Lines.C_Invoice_ID
+                                       and c_invoiceline_id = Cur_Lines.BOM_parent_id));
           UPDATE C_INVOICELINE
           SET M_INOUTLINE_ID=v_NextNo,
               Updated=now(),
