@@ -1192,7 +1192,7 @@
           documentseq, documentseqstr, bp, newline, prod, payments, curPayment, taxes, bpId, numberOfLines = model.receiptLines.length,
           orderQty = 0;
 
-      // Call orderLoader plugings to adjust remote model to local model first 
+      // Call orderLoader plugings to adjust remote model to local model first
       // ej: sales on credit: Add a new payment if total payment < total receipt
       // ej: gift cards: Add a new payment for each gift card discount
       _.each(OB.Model.modelLoaders, function (f) {
@@ -1356,6 +1356,7 @@
       var documentseq, documentseqstr;
       this.saveCurrent();
       this.current = this.newOrder();
+      OB.POS.modelterminal.set('documentsequence', OB.POS.modelterminal.get('documentsequence') - 1);
       this.current.set('isQuotation', true);
       this.current.set('generateInvoice', false);
       this.current.set('documentType', OB.POS.modelterminal.get('terminal').terminalType.documentTypeForQuotations);
@@ -1409,7 +1410,7 @@
     loadCurrent: function (isNew) {
       if (this.current) {
         if (isNew) {
-          //set values of new attrs in current, 
+          //set values of new attrs in current,
           //this values will be copied to modelOrder
           //in the next instruction
           this.modelorder.trigger('beforeChangeOrderForNewOne', this.current);
