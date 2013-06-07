@@ -226,6 +226,13 @@ public class OBViewParameterHandler {
     public String getWidth() {
       return this.uiDefinition.getParameterWidth(this.parameter);
     }
+
+    public Long getLength() {
+      if (parameter == null || parameter.getLength() == 0L) {
+        return -1L;
+      }
+      return parameter.getLength();
+    }
   }
 
   public class OBViewParamGroup extends OBViewParameter {

@@ -42,6 +42,9 @@
         return (${param.readOnlyIf});
       },
     </#if>
+    <#if param.length != -1>
+      length: ${param.length},
+    </#if>
     required: ${param.required?string}
     ${param.parameterProperties}
   <#else>
