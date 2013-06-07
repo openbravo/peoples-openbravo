@@ -25,7 +25,7 @@ public class CurrencyPanel extends ProcessHQLQuery {
   @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
 
-    String hql = "from OBPOS_CurrencyPanel where $readableClientCriteria";
+    String hql = "from OBPOS_CurrencyPanel where $readableClientCriteria order by lineNo asc";
 
     return Arrays.asList(new String[] { hql });
   }
