@@ -21,16 +21,42 @@ package org.openbravo.materialmgmt;
 
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.plm.Characteristic;
 import org.openbravo.model.common.plm.CharacteristicValue;
 import org.openbravo.model.common.plm.Product;
+import org.openbravo.model.common.plm.ProductCharacteristic;
 import org.openbravo.model.common.plm.ProductCharacteristicValue;
 
 public class CharacteristicsUtils {
 
   public static CharacteristicValue getCharacteristicValue(Product product,
+      Characteristic characteristic) throws OBException {
+    ProductCharacteristicValue pcv = getProductCharacteristicValue(product, characteristic);
+    if (pcv == null) {
+      return null;
+    }
+    return pcv.getCharacteristicValue();
+  }
+
+  public static ProductCharacteristicValue setCharacteristicValue(Product product,
+      CharacteristicValue cv) {
+    ProductCharacteristicValue pcv = getProductCharacteristicValue(product, cv.getCharacteristic());
+    if (pcv == null) {
+      pcv = OBProvider.getInstance().get(ProductCharacteristicValue.class);
+      pcv.setCharacteristic(cv.getCharacteristic());
+      pcv.setOrganization(product.getOrganization());
+      pcv.setProduct(product);
+    }
+    pcv.setCharacteristicValue(cv);
+    setCharacteristic(product, cv.getCharacteristic());
+    OBDal.getInstance().save(pcv);
+    return pcv;
+  }
+
+  private static ProductCharacteristicValue getProductCharacteristicValue(Product product,
       Characteristic characteristic) throws OBException {
     OBCriteria<ProductCharacteristicValue> obCriteria = OBDal.getInstance().createCriteria(
         ProductCharacteristicValue.class);
@@ -39,9 +65,28 @@ public class CharacteristicsUtils {
         characteristic));
     obCriteria.setMaxResults(1);
     if (obCriteria.count() > 0) {
-      return ((ProductCharacteristicValue) obCriteria.uniqueResult()).getCharacteristicValue();
+      return ((ProductCharacteristicValue) obCriteria.uniqueResult());
     } else {
       return null;
     }
   }
+
+  private static void setCharacteristic(Product product, Characteristic characteristic) {
+    OBCriteria<ProductCharacteristic> obCriteria = OBDal.getInstance().createCriteria(
+        ProductCharacteristic.class);
+    obCriteria.add(Restrictions.eq(ProductCharacteristicValue.PROPERTY_PRODUCT, product));
+    obCriteria.add(Restrictions.eq(ProductCharacteristicValue.PROPERTY_CHARACTERISTIC,
+        characteristic));
+    obCriteria.setMaxResults(1);
+    if (obCriteria.count() > 0) {
+      return;
+    }
+    ProductCharacteristic pc = OBProvider.getInstance().get(ProductCharacteristic.class);
+    pc.setOrganization(product.getOrganization());
+    pc.setProduct(product);
+    pc.setCharacteristic(characteristic);
+    pc.setSequenceNumber((product.getProductCharacteristicList().size() + 1) * 10L);
+    OBDal.getInstance().save(pc);
+  }
+
 }
