@@ -173,9 +173,7 @@ BEGIN --BODY
         AND inouttrxtype = 'MS';
     END IF;
 
-    IF (v_Count > 0) THEN -- Product already initialized
-      CONTINUE;
-    END IF;
+   IF (v_Count = 0) THEN
 
     -- Call M_GET_STOCK
     DECLARE
@@ -367,6 +365,7 @@ BEGIN --BODY
         WHERE m_requisitionline_id = cur_requisitionline.m_requisitionline_id;
       END LOOP;
     END IF;
+   END IF;
   END LOOP;
 
 END; --BODY
