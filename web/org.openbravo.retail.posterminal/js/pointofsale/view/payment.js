@@ -123,7 +123,7 @@ enyo.kind({
     this.updatePending();
     this.receipt.on('change:orderType change:isLayaway change:payment', function (model) {
       var payment = OB.POS.terminal.terminal.paymentnames[OB.POS.terminal.terminal.get('paymentcash')];
-      if (model.get('orderType') === 2 || (model.get('isLayaway') && model.get('orderType') !== 3 && !model.getPaymentStatus().done)) {
+      if ((model.get('orderType') === 2 || (model.get('isLayaway'))) && model.get('orderType') !== 3 && !model.getPaymentStatus().done) {
         this.$.creditsalesaction.hide();
         this.$.layawayaction.setContent(OB.I18N.getLabel('OBPOS_LblLayaway'));
         this.$.layawayaction.show();
