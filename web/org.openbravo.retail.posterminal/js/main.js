@@ -66,7 +66,7 @@
 
     // Redirect to login window
     localStorage.setItem('target-window', window.location.href);
-    window.location = window.location.pathname + '?terminal=' + window.encodeURIComponent(OB.POS.paramTerminal);
+    //window.location = window.location.pathname + '?terminal=' + window.encodeURIComponent(OB.POS.paramTerminal);
   });
 
   executeWhenDOMReady = function () {
