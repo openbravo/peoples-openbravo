@@ -219,16 +219,9 @@ isc.OBParameterWindowView.addProperties({
           showErrorIcons: false,
           colWidths: ['*', '*', '*', '*'],
           itemChanged: function (item, newValue) {
-            var affectedParams, i, field, fields;
+            var affectedParams, i, field;
 
-            // Check read only logic
-            fields = this.getFields();
-            for (i = 0; i < fields.length; i++) {
-              field = this.getField(i);
-              if (field.readOnlyIf && field.setDisabled) {
-                field.setDisabled(field.readOnlyIf(this.getValues()));
-              }
-            }
+            this.paramWindow.handleReadOnlyLogic();
 
             // Check validation rules (subordinated fields), when value of a
             // parent field is changed, all its subordinated are reset
@@ -499,8 +492,29 @@ isc.OBParameterWindowView.addProperties({
         }
       }
     }
+
+    this.handleReadOnlyLogic();
+
     // redraw to execute display logic
     this.theForm.markForRedraw();
+  },
+
+  // Checks params with readonly logic enabling or disabling them based on it
+  handleReadOnlyLogic: function () {
+    var form, fields, i, field;
+
+    form = this.theForm;
+    if (!form) {
+      return;
+    }
+
+    fields = form.getFields();
+    for (i = 0; i < fields.length; i++) {
+      field = form.getField(i);
+      if (field.readOnlyIf && field.setDisabled) {
+        field.setDisabled(field.readOnlyIf(form.getValues()));
+      }
+    }
   },
 
   getContextInfo: function () {
