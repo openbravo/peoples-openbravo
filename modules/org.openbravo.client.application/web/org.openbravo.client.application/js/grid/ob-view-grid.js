@@ -1593,7 +1593,20 @@ isc.OBViewGrid.addProperties({
 
   refreshGrid: function (callback, newRecordsToBeIncluded) {
     var originalCriteria, criteria = {},
-        newRecordsCriteria, newRecordsLength, i;
+        newRecordsCriteria, newRecordsLength, i, index;
+
+    //check whether newRecordsToBeIncluded contains records not part of the current grid and remove them.
+    if (newRecordsToBeIncluded && newRecordsToBeIncluded.length > 0 && this.data) {
+      for (i = 0; i < newRecordsToBeIncluded.length; i++) {
+        if (!this.data.findByKey(newRecordsToBeIncluded[i])) {
+          index = newRecordsToBeIncluded.indexOf(newRecordsToBeIncluded[i]);
+          if (index !== -1) {
+            newRecordsToBeIncluded.splice(index, 1);
+          }
+        }
+      }
+    }
+
     if (this.getSelectedRecord()) {
       this.targetRecordId = this.getSelectedRecord()[OB.Constants.ID];
       // as the record is already selected it is already in the filter
