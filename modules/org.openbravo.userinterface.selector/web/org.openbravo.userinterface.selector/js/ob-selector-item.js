@@ -101,32 +101,11 @@ isc.OBSelectorPopupWindow.addProperties({
 
       getFetchRequestParams: function (params) {
         params = params || {};
-        // on purpose not passing the third boolean param
-        if (this.selector && this.selector.form && this.selector.form.view && this.selector.form.view.getContextInfo) {
-          isc.addProperties(params, this.selector.form.view.getContextInfo(false, true));
-        } else if (this.view && this.view.sourceView && this.view.sourceView.getContextInfo) {
-          isc.addProperties(params, this.view.sourceView.getContextInfo(false, true));
+        if (this.selector) {
+          isc.OBSelectorItem.prepareDSRequest(params, this.selector);
         }
 
-        // also adds the special ORG parameter
-        if (params.inpadOrgId) {
-          params[OB.Constants.ORG_PARAMETER] = params.inpadOrgId;
-        }
-        params[OB.Constants.WHERE_PARAMETER] = this.selector.whereClause;
-
-        // set the default sort option
-        params[OB.Constants.SORTBY_PARAMETER] = this.displayField;
-
-        params._selectorDefinitionId = this.selector.selectorDefinitionId;
         params._requestType = 'Window';
-
-        // Include the windowId in the params if possible
-        if (this.selector.form && this.selector.form.view && this.selector.form.view.standardProperties && this.selector.form.view.standardProperties.inpwindowId) {
-          params.windowId = this.selector.form.view.standardProperties.inpwindowId;
-        }
-
-        // add field's default filter expressions
-        params.filterClass = 'org.openbravo.userinterface.selector.SelectorDataSourceFilter';
 
         if (this.getSelectedRecord()) {
           params._targetRecordId = this.targetRecordId;
@@ -757,6 +736,8 @@ isc.OBSelectorItem.addProperties({
     requestProperties = requestProperties || {};
     requestProperties.params = requestProperties.params || {};
 
+    isc.OBSelectorItem.prepareDSRequest(requestProperties.params, this);
+
     // sometimes the value is passed as a filter criteria remove it
     if (this.getValueFieldName() && requestProperties.params[this.getValueFieldName()]) {
       requestProperties.params[this.getValueFieldName()] = null;
@@ -764,31 +745,6 @@ isc.OBSelectorItem.addProperties({
 
     // do not prevent the count operation
     requestProperties.params[isc.OBViewGrid.NO_COUNT_PARAMETER] = 'true';
-
-    // on purpose not passing the third boolean param
-    if (this.form && this.form.view && this.form.view.getContextInfo) {
-      isc.addProperties(requestProperties.params, this.form.view.getContextInfo(false, true));
-    } else if (this.view && this.view.sourceView && this.view.sourceView.getContextInfo) {
-      isc.addProperties(requestProperties.params, this.view.sourceView.getContextInfo(false, true));
-    }
-
-    if (this.form && this.form.view && this.form.view.standardWindow) {
-      isc.addProperties(requestProperties.params, {
-        windowId: this.form.view.standardWindow.windowId,
-        tabId: this.form.view.tabId,
-        moduleId: this.form.view.moduleId
-      });
-    }
-
-    // also add the special ORG parameter
-    if (requestProperties.params.inpadOrgId) {
-      requestProperties.params[OB.Constants.ORG_PARAMETER] = requestProperties.params.inpadOrgId;
-    }
-
-    // Include the windowId in the params if possible
-    if (this.form && this.form.view && this.form.view.standardProperties && this.form.view.standardProperties.inpwindowId) {
-      requestProperties.params.windowId = this.form.view.standardProperties.inpwindowId;
-    }
 
     if (this.form.getFocusItem() !== this && !this.form.view.isShowingForm && this.getEnteredValue() === '' && this.savedEnteredValue) {
       this.setElementValue(this.savedEnteredValue);
@@ -810,19 +766,6 @@ isc.OBSelectorItem.addProperties({
         requestProperties.params[OB.Constants.OR_EXPRESSION] = 'true';
       }
     }
-
-    // adds the selector id to filter used to get filter information
-    requestProperties.params._selectorDefinitionId = this.selectorDefinitionId;
-
-    // add field's default filter expressions
-    requestProperties.params.filterClass = 'org.openbravo.userinterface.selector.SelectorDataSourceFilter';
-
-    // the additional where clause
-    requestProperties.params[OB.Constants.WHERE_PARAMETER] = this.whereClause;
-
-    // and sort according to the display field
-    // initially
-    requestProperties.params[OB.Constants.SORTBY_PARAMETER] = this.displayField;
 
     return this.Super('filterDataBoundPickList', [requestProperties, dropCache]);
   },
@@ -911,7 +854,64 @@ isc.OBSelectorItem.addProperties({
       this.selectorWindow.destroy();
       this.selectorWindow = null;
     }
+
+    // Sometimes, internal _columnSizer member of pickList is leaked
+    if (this.pickList && this.pickList.members && this.pickList.members.length > 0 && this.pickList.members[0]._columnSizer) {
+      this.pickList.members[0]._columnSizer.destroy();
+    }
+
     this.Super('destroy', arguments);
+  }
+});
+
+isc.OBSelectorItem.addClassMethods({
+  // Prepares requestProperties adding contextInfo, this is later used in backed
+  // to prepare filters 
+  prepareDSRequest: function (params, selector) {
+    // on purpose not passing the third boolean param
+    if (selector.form && selector.form.view && selector.form.view.getContextInfo) {
+      isc.addProperties(params, selector.form.view.getContextInfo(false, true));
+    } else if (selector.view && selector.view.sourceView && selector.view.sourceView.getContextInfo) {
+      isc.addProperties(params, selector.view.sourceView.getContextInfo(false, true));
+    }
+
+    if (selector.form && selector.form.view && selector.form.view.standardWindow) {
+      isc.addProperties(params, {
+        windowId: selector.form.view.standardWindow.windowId,
+        tabId: selector.form.view.tabId,
+        moduleId: selector.form.view.moduleId
+      });
+    }
+
+    // Include the windowId in the params if possible
+    if (selector.form && selector.form.view && selector.form.view.standardProperties && selector.form.view.standardProperties.inpwindowId) {
+      params.windowId = selector.form.view.standardProperties.inpwindowId;
+    }
+
+    // also add the special ORG parameter
+    if (params.inpadOrgId) {
+      params[OB.Constants.ORG_PARAMETER] = params.inpadOrgId;
+    }
+
+    // adds the selector id to filter used to get filter information
+    params._selectorDefinitionId = selector.selectorDefinitionId;
+
+    // add field's default filter expressions
+    params.filterClass = 'org.openbravo.userinterface.selector.SelectorDataSourceFilter';
+
+    // the additional where clause
+    params[OB.Constants.WHERE_PARAMETER] = selector.whereClause;
+
+    // and sort according to the display field
+    // initially
+    params[OB.Constants.SORTBY_PARAMETER] = selector.displayField;
+
+    // Parameter windows
+    if (selector.form.paramWindow) {
+      params._processDefinitionId = selector.form.paramWindow.processId;
+      params._selectorFieldId = selector.paramId;
+      isc.addProperties(params, selector.form.paramWindow.getContextInfo());
+    }
   }
 });
 

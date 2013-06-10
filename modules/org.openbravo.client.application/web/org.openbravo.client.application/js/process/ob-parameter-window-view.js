@@ -103,13 +103,6 @@ isc.OBParameterWindowView.addProperties({
       click: actionClick
     });
 
-    cancelButton = isc.OBFormButton.create({
-      title: OB.I18N.getLabel('OBUISC_Dialog.CANCEL_BUTTON_TITLE'),
-      realTitle: '',
-      click: function () {
-        view.closeClick();
-      }
-    });
     if (this.popup) {
       buttonLayout.push(isc.LayoutSpacer.create({}));
     }
@@ -146,6 +139,13 @@ isc.OBParameterWindowView.addProperties({
     }
 
     if (this.popup) {
+      cancelButton = isc.OBFormButton.create({
+        title: OB.I18N.getLabel('OBUISC_Dialog.CANCEL_BUTTON_TITLE'),
+        realTitle: '',
+        click: function () {
+          view.closeClick();
+        }
+      });
       buttonLayout.push(cancelButton);
       buttonLayout.push(isc.LayoutSpacer.create({}));
       OB.TestRegistry.register('org.openbravo.client.application.process.pickandexecute.button.cancel', cancelButton);
@@ -209,6 +209,7 @@ isc.OBParameterWindowView.addProperties({
       if (items.length !== 0) {
         // create form if there items to include
         this.theForm = isc.DynamicForm.create({
+          paramWindow: this,
           width: '99%',
           titleSuffix: '',
           requiredTitleSuffix: '',
@@ -216,7 +217,25 @@ isc.OBParameterWindowView.addProperties({
           titleOrientation: 'top',
           numCols: 4,
           showErrorIcons: false,
-          colWidths: ['*', '*', '*', '*']
+          colWidths: ['*', '*', '*', '*'],
+          itemChanged: function (item, newValue) {
+            var affectedParams, i, field;
+
+            this.paramWindow.handleReadOnlyLogic();
+
+            // Check validation rules (subordinated fields), when value of a
+            // parent field is changed, all its subordinated are reset
+            affectedParams = this.paramWindow.dynamicColumns[item.name];
+            if (!affectedParams) {
+              return;
+            }
+            for (i = 0; i < affectedParams.length; i++) {
+              field = this.getField(affectedParams[i]);
+              if (field && field.setValue) {
+                field.setValue(null);
+              }
+            }
+          }
         });
 
         this.theForm.setItems(items);
@@ -440,13 +459,7 @@ isc.OBParameterWindowView.addProperties({
 
     allProperties._buttonValue = btnValue || 'DONE';
 
-    allProperties._params = {};
-    if (this.theForm && this.theForm.getItems) {
-      params = this.theForm.getItems();
-      for (i = 0; i < params.length; i++) {
-        allProperties._params[params[i].name] = params[i].getValue();
-      }
-    }
+    allProperties._params = this.getContextInfo();
 
     OB.RemoteCallManager.call(this.actionHandler, allProperties, {
       processId: this.processId,
@@ -479,7 +492,45 @@ isc.OBParameterWindowView.addProperties({
         }
       }
     }
+
+    this.handleReadOnlyLogic();
+
     // redraw to execute display logic
     this.theForm.markForRedraw();
+  },
+
+  // Checks params with readonly logic enabling or disabling them based on it
+  handleReadOnlyLogic: function () {
+    var form, fields, i, field;
+
+    form = this.theForm;
+    if (!form) {
+      return;
+    }
+
+    fields = form.getFields();
+    for (i = 0; i < fields.length; i++) {
+      field = form.getField(i);
+      if (field.readOnlyIf && field.setDisabled) {
+        field.setDisabled(field.readOnlyIf(form.getValues()));
+      }
+    }
+  },
+
+  getContextInfo: function () {
+    var result = {},
+        params, i;
+    if (!this.theForm) {
+      return result;
+    }
+
+    if (this.theForm && this.theForm.getItems) {
+      params = this.theForm.getItems();
+      for (i = 0; i < params.length; i++) {
+        result[params[i].name] = params[i].getValue();
+      }
+    }
+
+    return result;
   }
 });
