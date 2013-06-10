@@ -377,6 +377,7 @@
           me.set('gross', gross);
           me.adjustPayment();
           me.trigger('calculategross');
+          me.trigger('saveCurrent');
         });
       } else {
         this.calculateTaxes(function () {
@@ -393,6 +394,7 @@
           me.set('net', net);
           me.adjustPayment();
           me.trigger('calculategross');
+          me.trigger('saveCurrent');
         });
       }
       //total qty
@@ -1141,7 +1143,13 @@
     },
 
     initialize: function () {
+      var me = this;
       this.current = null;
+      if(this.modelorder){
+        this.modelorder.on('saveCurrent', function(){
+          me.saveCurrent();
+        });
+      }
     },
 
     newOrder: function () {
