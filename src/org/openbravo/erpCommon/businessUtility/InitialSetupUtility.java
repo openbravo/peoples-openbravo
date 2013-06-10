@@ -1661,9 +1661,7 @@ public class InitialSetupUtility {
       }
       DataImportService myData = DataImportService.getInstance();
       String strXml = Utility.fileToString(datasetFile.getPath());
-      boolean filterOrganizations = true;
-      myResult = myData.importDataFromXML(client, organization, strXml, dataset.getModule(),
-          filterOrganizations);
+      myResult = myData.importDataFromXML(client, organization, strXml, dataset.getModule());
 
       if (myResult.getErrorMessages() != null && !myResult.getErrorMessages().equals("")
           && !myResult.getErrorMessages().equals("null")) {
