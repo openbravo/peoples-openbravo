@@ -457,8 +457,14 @@ enyo.kind({
     this.setContent(OB.I18N.getLabel('OBPOS_LblLayaway'));
   },
   tap: function () {
-    //Void Layaway
-    this.owner.receipt.trigger('paymentDone');
-    this.owner.receipt.trigger('openDrawer');
+    var receipt = this.owner.receipt;
+    if(receipt) {
+      if(receipt.get('generateInvoice')) {
+        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_noInvoiceIfLayaway'));
+        receipt.set('generateInvoice', false);
+      }
+    }
+    receipt.trigger('paymentDone');
+    receipt.trigger('openDrawer');
   }
 });
