@@ -445,7 +445,6 @@ enyo.kind({
               tag: 'img',
               style: 'padding: 20px 20px 20px 10px;',
               initComponents: function () {
-                debugger;
                 this.setAttribute('src', '../../utility/ShowImageLogo?logo=yourcompanydoc&orgId=' + OB.MobileApp.model.get('terminal').organization);
               }
             }, {
