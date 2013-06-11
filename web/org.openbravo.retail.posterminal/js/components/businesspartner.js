@@ -65,6 +65,7 @@ enyo.kind({
     onChangeSubWindow: '',
     onHideThisPopup: ''
   },
+  disabled: false,
   style: 'width: 170px; margin: 0px 5px 8px 19px;',
   classes: 'btnlink-yellow btnlink btnlink-small',
   i18nLabel: 'OBPOS_LblNewCustomer',
@@ -75,6 +76,9 @@ enyo.kind({
     this.model = inEvent.model;
   },
   tap: function (model) {
+    if (this.disabled) {
+      return true;
+    }
     this.doHideThisPopup();
     this.doChangeSubWindow({
       newWindow: {
@@ -84,6 +88,22 @@ enyo.kind({
         }
       }
     });
+  },
+  putDisabled: function (status) {
+    if (status === false) {
+      this.disabled = false;
+      this.setDisabled(false);
+      this.removeClass('disabled');
+      return;
+    } else {
+      this.disabled = true;
+      this.setDisabled();
+      this.addClass('disabled');
+    }
+  },
+  initComponents: function () {
+    this.inherited(arguments);
+    this.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomers'));
   }
 });
 
@@ -93,6 +113,7 @@ enyo.kind({
   style: 'margin: 0px 0px 8px 5px;',
   classes: 'btnlink-yellow btnlink btnlink-small',
   i18nLabel: 'OBPOS_LblAdvancedSearch',
+  disabled: false,
   handlers: {
     onSetModel: 'setModel'
   },
@@ -103,6 +124,9 @@ enyo.kind({
     onHideThisPopup: ''
   },
   tap: function () {
+    if (this.disabled) {
+      return true;
+    }
     this.doHideThisPopup();
     this.model.get('subWindowManager').set('currentWindow', {
       name: 'customerAdvancedSearch',
@@ -110,6 +134,22 @@ enyo.kind({
         caller: 'mainSubWindow'
       }
     });
+  },
+  putDisabled: function (status) {
+    if (status === false) {
+      this.disabled = false;
+      this.setDisabled(false);
+      this.removeClass('disabled');
+      return;
+    } else {
+      this.disabled = true;
+      this.setDisabled();
+      this.addClass('disabled');
+    }
+  },
+  initComponents: function () {
+    this.inherited(arguments);
+    this.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_receipt.customers'));
   }
 });
 

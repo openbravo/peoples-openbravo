@@ -61,7 +61,7 @@
       for (var i = 0; i < lines.length; i++) {
     %>
       <line>
-        <text align ="left" length="21"><%= lines.at(i).get('product').get('_identifier') %></text>
+        <text align ="left" length="21"><%= OB.UTIL.encodeXMLComponent(lines.at(i).get('product').get('_identifier')) %></text>
         <text align ="center" length="5"><%= lines.at(i).printQty() %></text>
         <text align ="left" length="8"><%= lines.at(i).printPrice() %></text>
     <%if(order.get('priceIncludesTax')){%>

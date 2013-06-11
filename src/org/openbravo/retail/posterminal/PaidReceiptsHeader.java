@@ -32,6 +32,8 @@ public class PaidReceiptsHeader extends ProcessHQLQuery {
 
     if (!json.getString("filterText").isEmpty()) {
       hqlPaidReceipts += " and (ord.documentNo like '%" + json.getString("filterText")
+          + "%' or REPLACE(ord.documentNo, '/', '') like '%"
+          + json.getString("filterText").replace("-", "")
           + "%' or upper(ord.businessPartner.name) like upper('%" + json.getString("filterText")
           + "%')) ";
     }

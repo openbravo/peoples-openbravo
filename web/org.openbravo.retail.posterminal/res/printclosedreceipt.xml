@@ -57,7 +57,7 @@
         line = lines.at(i);
     %>
       <line>
-        <text align ="left" length="21"><%= lines.at(i).get('product').get('_identifier') %></text>
+        <text align ="left" length="21"><%= OB.UTIL.encodeXMLComponent(lines.at(i).get('product').get('_identifier')) %></text>
         <text align ="right" length="5"><%= lines.at(i).printQty() %></text>
         <text align ="right" length="8"><%= lines.at(i).printPrice() %></text>
     <%if(order.get('priceIncludesTax')){%>
@@ -100,7 +100,7 @@
         for (var i = 0; i < payments.length; i++) {
          var paymentDate;
           if(_.isUndefined(payments.at(i).get('paymentDate')) || _.isNull(payments.at(i).get('paymentDate'))){
-              paymentDate = new Date();
+              paymentDate = OB.I18N.formatDate(new Date());
           }else{
               paymentDate = new Date(payments.at(i).get('paymentDate'));
           }
@@ -108,7 +108,7 @@
       %>
         <line>
           <text align="left" length="10"><%= payments.at(i).get('name') %></text>
-          <text align="left" length="10"><%= OB.I18N.formatDate(paymentDate) %></text>
+          <text align="left" length="10"><%= paymentDate %></text>
           <text align="right" length="12"><%= '('+OB.I18N.formatCurrency(payments.at(i).get('amount'))+' '+payments.at(i).get('isocode')+')' %></text>
           <text align="right" length="10"><%= OB.I18N.formatCurrency(payments.at(i).get('origAmount')) %></text>
         </line>
@@ -117,7 +117,7 @@
      %>
         <line>
           <text align="left" length="15"><%= payments.at(i).get('name') %></text>
-          <text align="left" length="10"><%= OB.I18N.formatDate(paymentDate) %></text>
+          <text align="left" length="10"><%= paymentDate %></text>
           <text align="right" length="15"><%= OB.I18N.formatCurrency(payments.at(i).get('amount')) %></text>
         </line>
       <%

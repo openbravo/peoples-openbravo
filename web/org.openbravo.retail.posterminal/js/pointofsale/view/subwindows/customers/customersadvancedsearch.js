@@ -154,8 +154,12 @@ enyo.kind({
   events: {
     onChangeSubWindow: ''
   },
+  disabled: false,
   classes: 'btnlink-left-toolbar',
   tap: function () {
+    if (this.disabled) {
+      return true;
+    }
     var sw = this.subWindow;
     this.doChangeSubWindow({
       newWindow: {
@@ -166,8 +170,21 @@ enyo.kind({
       }
     });
   },
+  putDisabled: function (status) {
+    if (status === false) {
+      this.disabled = false;
+      this.setDisabled(false);
+      this.removeClass('disabled');
+      return;
+    } else {
+      this.disabled = true;
+      this.setDisabled();
+      this.addClass('disabled');
+    }
+  },
   initComponents: function () {
     this.inherited(arguments);
+    this.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomers'));
     this.setContent(this.i18nLabel ? OB.I18N.getLabel(this.i18nLabel) : this.label);
   }
 });

@@ -98,7 +98,7 @@ enyo.kind({
           classes: 'btnlink-orange btnlink btnlink-small',
           setCustomer: function (inSender, inEvent) {
             this.customer = inEvent.customer;
-            if (!OB.UTIL.isWritableOrganization(this.customer.get('organization'))) {
+            if (!OB.UTIL.isWritableOrganization(this.customer.get('organization')) || !OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomers')) {
               this.disabled = true;
               this.setAttribute("disabled", "disabled");
             } else {

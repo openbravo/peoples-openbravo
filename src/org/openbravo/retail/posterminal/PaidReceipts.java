@@ -9,6 +9,8 @@
 package org.openbravo.retail.posterminal;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.servlet.ServletException;
 
@@ -18,6 +20,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -153,7 +156,10 @@ public class PaidReceipts extends JSONProcessSimple {
         JSONObject paymentsIn = new JSONObject();
         paymentsIn.put("amount", objPaymentsIn[0]);
         paymentsIn.put("account", objPaymentsIn[1]);
-        paymentsIn.put("paymentDate", objPaymentsIn[2]);
+        String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+            .getProperty("dateFormat.java");
+        SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
+        paymentsIn.put("paymentDate", outputFormat.format(((Date) objPaymentsIn[2])));
         listPaymentsIn.put(paymentsIn);
       }
 

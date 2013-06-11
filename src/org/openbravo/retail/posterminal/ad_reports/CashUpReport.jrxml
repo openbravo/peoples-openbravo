@@ -22,6 +22,7 @@
 	<parameter name="TOTAL_DROPS" class="java.lang.String"/>
 	<parameter name="TOTAL_DEPOSITS" class="java.lang.String"/>
 	<parameter name="USER" class="java.lang.String"/>
+	<parameter name="TERMINAL_ORGANIZATION" class="java.lang.String"/>
 	<parameter name="TIME" class="java.lang.String"/>
 	<parameter name="NUMBERFORMAT" class="java.text.DecimalFormat" isForPrompting="false"/>
 	<field name="LABEL" class="java.lang.String"/>
@@ -76,7 +77,7 @@
 		<band height="369" splitType="Stretch">
 			<image>
 				<reportElement x="210" y="14" width="100" height="50"/>
-				<imageExpression class="java.awt.Image"><![CDATA[org.openbravo.erpCommon.utility.Utility.showImageLogo("yourcompanymenu")]]></imageExpression>
+				<imageExpression class="java.awt.Image"><![CDATA[org.openbravo.erpCommon.utility.Utility.showImageLogo("yourcompanydoc", $P{TERMINAL_ORGANIZATION})]]></imageExpression>
 			</image>
 			<textField>
 				<reportElement positionType="Float" x="30" y="169" width="367" height="20"/>
