@@ -254,17 +254,31 @@ enyo.kind({
   },
   searchAction: function (inSender, inEvent) {
     var me = this,
-        i, j, process = new OB.DS.Process('org.openbravo.retail.posterminal.PaidReceipts'),
+        toMatch = 0,
+        re, actualDate, i, process = new OB.DS.Process('org.openbravo.retail.posterminal.PaidReceipts'),
         processHeader = new OB.DS.Process('org.openbravo.retail.posterminal.PaidReceiptsHeader');
+    me.filters = inEvent.filters;
     this.clearAction();
     processHeader.exec({
-      filters: inEvent.filters,
+      filters: me.filters,
       _limit: OB.Model.Order.prototype.dataLimit
     }, function (data) {
       if (data) {
         _.each(me.model.get('orderList').models, function (iter) {
-          if (!_.isNull(iter.id) && !_.isUndefined(iter.id)) {
-            me.multiOrdersList.add(iter);
+          re = new RegExp(me.filters.filterText, 'gi');
+          toMatch = iter.get('documentNo').match(re) + iter.get('bp').get('_identifier').match(re);
+          if (me.filters.filterText === "" || toMatch !== 0) {
+            actualDate = new Date().setHours(0, 0, 0, 0);
+            if (me.filters.endDate === "" || new Date(me.filters.endDate) >= actualDate) {
+              for (i = 0; i < me.filters.documentType.length; i++) {
+                if (me.filters.documentType[i] === iter.get('documentType')) {
+                  if (!_.isNull(iter.id) && !_.isUndefined(iter.id)) {
+                    me.multiOrdersList.add(iter);
+                    break;
+                  }
+                }
+              }
+            }
           }
         });
         _.each(data, function (iter) {
