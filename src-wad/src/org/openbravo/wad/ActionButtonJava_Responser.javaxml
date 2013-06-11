@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -60,6 +60,8 @@ public class ActionButtonJava_Responser extends HttpSecureAppServlet {
     // set process type and id for audit
     SessionInfo.setProcessType("P");
     SessionInfo.setProcessId(strProcessId);
+    SessionInfo.setUserId(vars.getSessionValue("#AD_User_ID"));
+    SessionInfo.setSessionId(vars.getSessionValue("#AD_Session_ID"));
 
     try {
       OBContext.setAdminMode();

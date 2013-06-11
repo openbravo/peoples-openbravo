@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -77,13 +77,21 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     
     boolean securedProcess = false;
     if (command.contains("BUTTON")) {
+     SessionInfo.setUserId(vars.getSessionValue("#AD_User_ID"));
+     SessionInfo.setSessionId(vars.getSessionValue("#AD_Session_ID"));
+     <FIELDS_TMP id="sectionActionButtonsServiceJava">
+      if (command.contains("<FIELD_TMP id="ProcessIDsrvJ">processId</FIELD_TMP>")) {
+        SessionInfo.setProcessType("P");
+        SessionInfo.setProcessId("<FIELD_TMP id="ProcessIDsrvJ">processId</FIELD_TMP>");
+        SessionInfo.setModuleId("<FIELD_TMP id="ProcessModulesrvJ">moduleId</FIELD_TMP>");
+      }
+     </FIELDS_TMP>
       try {
         securedProcess = "Y".equals(org.openbravo.erpCommon.businessUtility.Preferences
             .getPreferenceValue("SecuredProcess", true, vars.getClient(), vars.getOrg(), vars
                 .getUser(), vars.getRole(), windowId));
       } catch (PropertyException e) {
       }
-    
      <FIELDS_TMP id="sectionActionButtonsService">
       if (command.contains("<FIELD_TMP id="ProcessIDsrv">processId</FIELD_TMP>")) {
         SessionInfo.setProcessType("P");
@@ -95,15 +103,11 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
         }
       }
      </FIELDS_TMP>
-     <FIELDS_TMP id="sectionActionButtonsServiceJava">
-      if (command.contains("<FIELD_TMP id="ProcessIDsrvJ">processId</FIELD_TMP>")) {
-        SessionInfo.setProcessType("P");
-        SessionInfo.setProcessId("<FIELD_TMP id="ProcessIDsrvJ">processId</FIELD_TMP>");
-        SessionInfo.setModuleId("<FIELD_TMP id="ProcessModulesrvJ">moduleId</FIELD_TMP>");
-        if (securedProcess) {
-          classInfo.type = "P";
-          classInfo.id = "<FIELD_TMP id="ProcessIDsrvJ">processId</FIELD_TMP>";
-        }
+
+     <FIELDS_TMP id="sectionActionButtonsServiceJavaSecuredProcess">
+      if (securedProcess &amp;&amp; command.contains("<FIELD_TMP id="ProcessIDsrvJSP">processId</FIELD_TMP>")) {
+        classInfo.type = "P";
+        classInfo.id = "<FIELD_TMP id="ProcessIDsrvJSP">processId</FIELD_TMP>";
       }
      </FIELDS_TMP>
     }
