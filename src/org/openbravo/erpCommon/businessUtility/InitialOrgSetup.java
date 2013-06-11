@@ -154,9 +154,14 @@ public class InitialOrgSetup {
 
     String strOrgId = org.getId();
 
+    // TODO: REMOVE THESE getWritableOrganizations CALLS AS THEY SHOULD NOT BE NEEDED ONCE ARE FIXED
+    OBContext.getOBContext().getWritableOrganizations();
+    OBContext.getOBContext().addWritableOrganization(strOrgId);
+    OBContext.getOBContext().getWritableOrganizations();
     try {
       OBDal.getInstance().flush();
-      OBDal.getInstance().refresh(org);
+      OBDal.getInstance().commitAndClose();
+      org = OBDal.getInstance().get(Organization.class, strOrgId);
       client = org.getClient();
       if (strcLocationId != null && !strcLocationId.equals(""))
         try {
@@ -185,6 +190,13 @@ public class InitialOrgSetup {
     }
     appendHeader("@CreateOrgSuccess@");
     obResult.setType(ERRORTYPE);
+
+    log4j.debug("createOrganization() - Setting organization image");
+    obResult = addImages();
+    if (!obResult.getType().equals(OKTYPE))
+      logEvent(obResult.getMessage());
+    obResult.setType(ERRORTYPE);
+    logEvent(STRSEPARATOR);
 
     boolean bAccountingCreated = false;
     if (boCreateAccounting) {
@@ -227,25 +239,16 @@ public class InitialOrgSetup {
     }
     try {
       OBDal.getInstance().flush();
-      OBContext.getOBContext().addWritableOrganization(strOrgId);
-      OBContext.getOBContext().getWritableOrganizations();
-      log4j.debug("createOrganization() - Setting organization image");
-      obResult = addImages();
-      if (!obResult.getType().equals(OKTYPE))
-        logEvent(obResult.getMessage());
-      logEvent(STRSEPARATOR);
+      OBDal.getInstance().commitAndClose();
     } catch (Exception e) {
       logErrorAndRollback(
           "@ExceptionInCommit@",
           "createClient() - Exception occured while performing commit in database. Your data may have NOT been saved in database.",
           e);
-      obResult.setType(ERRORTYPE);
-      obResult.setMessage("@ExceptionInCommit@");
     }
-    if (obResult.getType().equals(OKTYPE)) {
-      OBDal.getInstance().commitAndClose();
-      obResult.setMessage("@" + OKTYPE + "@");
-    }
+
+    obResult.setType(OKTYPE);
+    obResult.setMessage("@" + OKTYPE + "@");
 
     return obResult;
 
@@ -513,7 +516,7 @@ public class InitialOrgSetup {
               + fileCoAFilePath.getName(), e);
     }
     try {
-      OBContext.setAdminMode(false);
+      OBContext.setAdminMode(true);
       obResult = coaUtility.createAccounting(vars, istrFileCoA, partner, product, project,
           campaign, salesRegion,
           InitialSetupUtility.getTranslatedColumnName(language, "C_Element_ID"), "US", "A",
