@@ -437,6 +437,7 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
               + "/org.openbravo.client.application/ob-rtl-styles.js", false));
     }
     globalResources.add(createStaticResource("web/js/periodControlStatus.js", true));
+    globalResources.add(createStaticResource("web/js/productCharacteristicsProcess.js", true));
 
     return globalResources;
   }
