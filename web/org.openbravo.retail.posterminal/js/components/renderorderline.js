@@ -207,11 +207,11 @@ enyo.kind({
     this.inherited(arguments);
     this.$.name.setContent(OB.POS.modelterminal.getPaymentName(this.model.get('kind')) || this.model.get('name'));
     if (_.isUndefined(this.model.get('paymentDate')) || _.isNull(this.model.get('paymentDate'))) {
-      paymentDate = new Date();
+      paymentDate = OB.I18N.formatDate(new Date());
     } else {
-      paymentDate = new Date(this.model.get('paymentDate'));
+      paymentDate = this.model.get('paymentDate');
     }
-    this.$.date.setContent(OB.I18N.formatDate(paymentDate));
+    this.$.date.setContent(paymentDate);
     if (this.model.get('rate') && this.model.get('rate') !== '1') {
       this.$.foreignAmount.setContent(this.model.printForeignAmount());
     } else {
