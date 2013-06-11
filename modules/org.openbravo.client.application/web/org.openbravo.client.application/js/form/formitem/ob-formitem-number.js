@@ -433,11 +433,11 @@ isc.OBNumberItem.addProperties({
 
     // Make sure the number is rounded using the number of decimal digits specified in the number typeInstance
     if (isc.isA.String(this.getValue())) {
-        value = OB.Utilities.Number.OBPlainToOBMasked(this.getValue(), this.typeInstance.maskNumeric, this.typeInstance.decSeparator, this.typeInstance.groupSeparator);
-        this.setValue(OB.Utilities.Number.OBMaskedToJS(value, this.typeInstance.decSeparator, this.typeInstance.groupSeparator));
-        if (this.form.setTextualValue) {
-            this.form.setTextualValue(this.name, value, this.typeInstance);
-        }
+      value = OB.Utilities.Number.OBPlainToOBMasked(this.getValue(), this.typeInstance.maskNumeric, this.typeInstance.decSeparator, this.typeInstance.groupSeparator);
+      this.setValue(OB.Utilities.Number.OBMaskedToJS(value, this.typeInstance.decSeparator, this.typeInstance.groupSeparator));
+      if (this.form.setTextualValue) {
+        this.form.setTextualValue(this.name, value, this.typeInstance);
+      }
     }
 
     if (this.grid && this.grid.isEditing && this.grid.isEditing()) {
