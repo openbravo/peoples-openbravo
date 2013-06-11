@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,6 +27,7 @@ import org.apache.log4j.Logger;
 import org.openbravo.base.ConfigParameters;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.database.SessionInfo;
 import org.openbravo.erpCommon.ad_process.JasperProcess;
 import org.openbravo.erpCommon.ad_process.PinstanceProcedure;
 import org.openbravo.erpCommon.ad_process.ProcedureProcess;
@@ -232,6 +233,9 @@ public class ProcessBundle {
   }
 
   public ConnectionProvider getConnection() {
+    // Force session info change so first time this ConnectionProvider is used, session audit info
+    // is set in DB
+    SessionInfo.infoChanged();
     return connection;
   }
 
