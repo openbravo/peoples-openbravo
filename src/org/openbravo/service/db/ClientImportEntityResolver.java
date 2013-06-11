@@ -123,12 +123,6 @@ public class ClientImportEntityResolver extends EntityResolver {
     return result;
   }
 
-  @Override
-  public BaseOBObject resolve(String entityName, String id, boolean referenced,
-      boolean filterOrganizations) {
-    return resolve(entityName, id, referenced);
-  }
-
   // search on the basis of the access level of the entity
   @Override
   public BaseOBObject searchInstance(Entity entity, String id) {

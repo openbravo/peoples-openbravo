@@ -127,7 +127,7 @@ public class EntityResolver implements OBNotSingleton {
   // searches for a previous entity with the same id or an id retrieved from
   // the ad_ref_data_loaded table. The resolving takes into account different
   // access levels and
-  public BaseOBObject resolve(String entityName, String id, boolean referenced, boolean filterOrgs) {
+  public BaseOBObject resolve(String entityName, String id, boolean referenced) {
 
     Check.isNotNull(client, "Client should not be null");
     Check.isNotNull(organization, "Org should not be null");
@@ -147,6 +147,7 @@ public class EntityResolver implements OBNotSingleton {
 
     // Only try to fetch the object if the id is not null
     if (result == null && id != null) {
+      boolean filterOrgs = false;
       result = doSearch(id, entity, client.getId(), filterOrgs, "");
     }
 
@@ -193,11 +194,6 @@ public class EntityResolver implements OBNotSingleton {
       setClientOrganization(result);
     }
     return result;
-  }
-
-  public BaseOBObject resolve(String entityName, String id, boolean referenced) {
-    boolean filterOrgs = false;
-    return resolve(entityName, id, referenced, filterOrgs);
   }
 
   protected void addObjectToCaches(String id, String entityName, BaseOBObject bob) {

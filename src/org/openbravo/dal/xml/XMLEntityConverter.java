@@ -104,7 +104,7 @@ public class XMLEntityConverter extends BaseXMLEntityConverter {
    * @return the list of BaseOBObject present in the root of the xml. This list contains the
    *         to-be-updated, to-be-inserted as well as the unchanged business objects
    */
-  public List<BaseOBObject> process(Document doc, boolean filterOrganizations) {
+  public List<BaseOBObject> process(Document doc) {
     clear();
     getEntityResolver().setClient(getClient());
     getEntityResolver().setOrganization(getOrganization());
@@ -121,8 +121,7 @@ public class XMLEntityConverter extends BaseXMLEntityConverter {
     final List<BaseOBObject> result = new ArrayList<BaseOBObject>();
     for (final Object o : rootElement.elements()) {
       final Element element = (Element) o;
-      final BaseOBObject bob = processEntityElement(element.getName(), element, false,
-          filterOrganizations);
+      final BaseOBObject bob = processEntityElement(element.getName(), element, false);
       // only add it if okay
       if (bob != null && !checkDuplicates.contains(bob)) {
         result.add(bob);
@@ -134,15 +133,10 @@ public class XMLEntityConverter extends BaseXMLEntityConverter {
     return result;
   }
 
-  public List<BaseOBObject> process(Document doc) {
-    boolean filterOrganizations = false;
-    return process(doc, filterOrganizations);
-  }
-
   // processes a xml tag which denotes an instance of a business object
   @SuppressWarnings("unchecked")
   private BaseOBObject processEntityElement(String entityName, Element obElement,
-      boolean theReferenced, boolean filterOrganizations) {
+      boolean theReferenced) {
     // note: referenced is true for both childs and many-to-one references
     // it is passed to the entityresolver to allow searches in other
     // organization
@@ -160,7 +154,7 @@ public class XMLEntityConverter extends BaseXMLEntityConverter {
 
       // resolve the entity, using the id, note that
       // resolve will create a new object if none is found
-      BaseOBObject bob = resolve(entityName, id, false, filterOrganizations);
+      BaseOBObject bob = resolve(entityName, id, false);
 
       // should never be null at this point
       Check.isNotNull(bob, "The business object " + entityName + " (" + id
@@ -198,8 +192,7 @@ public class XMLEntityConverter extends BaseXMLEntityConverter {
             if (childElement.getName().equals(Client.PROPERTY_ORGANIZATION)) {
               // found
               final String refId = childElement.attributeValue(XMLConstants.ID_ATTRIBUTE);
-              objectOrganization = (Organization) resolve(Organization.ENTITY_NAME, refId, true,
-                  filterOrganizations);
+              objectOrganization = (Organization) resolve(Organization.ENTITY_NAME, refId, true);
             }
           }
         } else {
@@ -258,7 +251,7 @@ public class XMLEntityConverter extends BaseXMLEntityConverter {
             // resolve the content of the list, but do not change the list
             for (final Object o : childElement.elements()) {
               final Element listElement = (Element) o;
-              processEntityElement(listElement.getName(), listElement, true, filterOrganizations);
+              processEntityElement(listElement.getName(), listElement, true);
             }
           } else {
             Check.isTrue(!p.isOneToMany(), "One to many property not allowed here");
@@ -273,7 +266,7 @@ public class XMLEntityConverter extends BaseXMLEntityConverter {
               // get the info and resolve the reference
               final String refId = childElement.attributeValue(XMLConstants.ID_ATTRIBUTE);
               final String refEntityName = p.getTargetEntity().getName();
-              newValue = resolve(refEntityName, refId, true, filterOrganizations);
+              newValue = resolve(refEntityName, refId, true);
             }
             newValue = replaceValue(bob, p, newValue);
 

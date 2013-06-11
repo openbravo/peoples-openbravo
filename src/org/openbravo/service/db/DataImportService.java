@@ -46,11 +46,11 @@ import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.core.TriggerHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.xml.EntityResolver;
-import org.openbravo.dal.xml.EntityResolver.ResolvingMode;
 import org.openbravo.dal.xml.EntityXMLProcessor;
 import org.openbravo.dal.xml.PrimitiveReferenceHandler;
 import org.openbravo.dal.xml.StaxXMLEntityConverter;
 import org.openbravo.dal.xml.XMLEntityConverter;
+import org.openbravo.dal.xml.EntityResolver.ResolvingMode;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.RoleOrganization;
 import org.openbravo.model.ad.datamodel.Table;
@@ -119,20 +119,13 @@ public class DataImportService implements OBSingleton {
    *         to-be-updated business objects
    */
   public ImportResult importDataFromXML(Client client, Organization organization, String xml,
-      Module module, boolean filterOrganizations) {
+      Module module) {
     try {
       final Document doc = DocumentHelper.parseText(xml);
-      return importDataFromXML(client, organization, doc, true, module, null, false, false,
-          filterOrganizations);
+      return importDataFromXML(client, organization, doc, true, module, null, false, false);
     } catch (final Exception e) {
       throw new OBException(e);
     }
-  }
-
-  public ImportResult importDataFromXML(Client client, Organization organization, String xml,
-      Module module) {
-    boolean filterOrganizations = false;
-    return importDataFromXML(client, organization, xml, module, filterOrganizations);
   }
 
   /**
@@ -385,7 +378,7 @@ public class DataImportService implements OBSingleton {
 
   private ImportResult importDataFromXML(Client client, Organization organization, Document doc,
       boolean createReferencesIfNotFound, Module module, EntityXMLProcessor importProcessor,
-      boolean isClientImport, boolean importAuditInfo, boolean filterOrganizations) {
+      boolean isClientImport, boolean importAuditInfo) {
 
     if (!isClientImport) {
       log.debug("Importing data for client " + client.getId()
@@ -415,7 +408,7 @@ public class DataImportService implements OBSingleton {
         xec.setEntityResolver(ClientImportEntityResolver.getInstance());
       }
       xec.setImportProcessor(importProcessor);
-      xec.process(doc, filterOrganizations);
+      xec.process(doc);
 
       ir.setLogMessages(xec.getLogMessages());
       ir.setErrorMessages(xec.getErrorMessages());
