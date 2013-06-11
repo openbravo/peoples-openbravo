@@ -122,7 +122,6 @@
               paymentDate = OB.I18N.formatDate(new Date());
           }else{
               paymentDate = payments.at(i).get('paymentDate');
-              console.log(paymentDate);
           }
           if(payments.at(i).get('rate') && payments.at(i).get('rate')!=='1'){
       %>
