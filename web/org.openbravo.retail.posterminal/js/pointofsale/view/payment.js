@@ -400,11 +400,7 @@ enyo.kind({
           if (this.owner.receipt.get('orderType') === 3) {
             this.owner.receipt.trigger('voidLayaway');
           } else {
-            if (this.owner.model.get('multiOrders').get('multiOrdersList').length === 0 && !this.owner.model.get('multiOrders').get('isMultiOrders')) {
-              this.owner.model.get('order').trigger('paymentDone');
-            } else {
-              this.owner.model.get('multiOrders').trigger('paymentDone');
-            }
+            this.owner.model.get('order').trigger('paymentDone');
           }
           this.drawerOpened = false;
           this.setContent(OB.I18N.getLabel('OBPOS_LblOpen'));
@@ -418,11 +414,7 @@ enyo.kind({
         if (this.owner.receipt.get('orderType') === 3) {
           this.owner.receipt.trigger('voidLayaway');
         } else {
-          if (this.owner.model.get('multiOrders').get('multiOrdersList').length === 0 && !this.owner.model.get('multiOrders').get('isMultiOrders')) {
-            this.owner.receipt.trigger('paymentDone');
-          } else {
-            this.owner.model.get('multiOrders').trigger('paymentDone');
-          }
+          this.owner.receipt.trigger('paymentDone');
           this.owner.receipt.trigger('openDrawer');
         }
       }
@@ -617,13 +609,17 @@ enyo.kind({
   },
   tap: function () {
     var receipt = this.owner.receipt;
-    if(receipt) {
-      if(receipt.get('generateInvoice')) {
+    if (receipt) {
+      if (receipt.get('generateInvoice')) {
         OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_noInvoiceIfLayaway'));
         receipt.set('generateInvoice', false);
       }
     }
     receipt.trigger('paymentDone');
     receipt.trigger('openDrawer');
+
+    //Void Layaway
+    this.owner.receipt.trigger('paymentDone');
+    this.owner.receipt.trigger('openDrawer');
   }
 });
