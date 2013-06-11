@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -298,6 +298,13 @@ public class SessionInfo {
       sessionId.set(session);
       changedInfo.set(true);
     }
+  }
+
+  /**
+   * Forces changed info flag so next time it is checked it session info will be set in DB
+   */
+  public static void infoChanged() {
+    changedInfo.set(true);
   }
 
   public static String getCommand() {
