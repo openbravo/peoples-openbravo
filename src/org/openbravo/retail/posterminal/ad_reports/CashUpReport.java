@@ -501,6 +501,7 @@ public class CashUpReport extends HttpSecureAppServlet {
 
     parameters.put("USER", OBMessageUtils.getI18NMessage("OBPOS_LblUser", new String[] {}) + ": "
         + cashup.getUserContact().getName());
+    parameters.put("TERMINAL_ORGANIZATION", cashup.getPOSTerminal().getOrganization().getId());
     parameters.put("TIME", OBMessageUtils.getI18NMessage("OBPOS_LblTime", new String[] {}) + ": "
         + cashup.getCashUpDate());
     parameters.put("NET_SALES_LABEL",
