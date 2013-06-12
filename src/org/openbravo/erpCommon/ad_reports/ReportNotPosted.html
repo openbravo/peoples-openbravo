@@ -50,7 +50,13 @@
     }
 </script>
 <script language="JavaScript" type="text/javascript">
-    function onLoadDo(){
+
+//prevent refocus after the tab containing this window
+//gets selected, this prevents change of scroll position
+//for that tab
+OB_NoRefocusAfterTabSelection = true;
+
+function onLoadDo(){
         this.windowTables = new Array(
           new windowTableId('client', 'buttonHTML')
         );
