@@ -56,6 +56,7 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.mobile.core.process.JSONPropertyToEntity;
 import org.openbravo.mobile.core.process.PropertyByType;
+import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.model.ad.access.InvoiceLineTax;
 import org.openbravo.model.ad.access.OrderLineTax;
 import org.openbravo.model.ad.process.ProcessInstance;
@@ -1047,7 +1048,8 @@ public class OrderLoader extends JSONProcessSimple {
               : BigDecimal.ZERO);
         } else {
           processPayments(paymentSchedule, paymentScheduleInvoice, order, invoice, paymentType,
-              payment, i == (payments.length() - 1) ? writeoffAmt : BigDecimal.ZERO);
+              payment, i == (payments.length() - 1) ? writeoffAmt : BigDecimal.ZERO,
+              jsonorder.getLong("timezoneOffset"));
         }
       }
       if (invoice != null && fullpayLayaway) {
@@ -1088,7 +1090,8 @@ public class OrderLoader extends JSONProcessSimple {
 
   protected void processPayments(FIN_PaymentSchedule paymentSchedule,
       FIN_PaymentSchedule paymentScheduleInvoice, Order order, Invoice invoice,
-      OBPOSAppPayment paymentType, JSONObject payment, BigDecimal writeoffAmt) throws Exception {
+      OBPOSAppPayment paymentType, JSONObject payment, BigDecimal writeoffAmt, Long timeZoneOffset)
+      throws Exception {
     long t1 = System.currentTimeMillis();
     OBContext.setAdminMode(true);
     try {
@@ -1164,10 +1167,14 @@ public class OrderLoader extends JSONProcessSimple {
       Entity paymentEntity = ModelProvider.getInstance().getEntity(FIN_Payment.class);
       String paymentDocNo = getDocumentNo(paymentEntity, null, paymentDocType);
 
+      // get date
+      Date calculatedDate = OBMOBCUtils.calculateServerDate((String) payment.get("date"),
+          timeZoneOffset);
+
       FIN_Payment finPayment = FIN_AddPayment.savePayment(null, true, paymentDocType, paymentDocNo,
           order.getBusinessPartner(), paymentType.getPaymentMethod().getPaymentMethod(), account,
-          amount.toString(), order.getOrderDate(), order.getOrganization(), null, detail,
-          paymentAmount, false, false, order.getCurrency(), mulrate, origAmount);
+          amount.toString(), calculatedDate, order.getOrganization(), null, detail, paymentAmount,
+          false, false, order.getCurrency(), mulrate, origAmount);
       if (writeoffAmt.signum() == 1) {
         FIN_AddPayment.saveGLItem(finPayment, writeoffAmt, paymentType.getPaymentMethod()
             .getGlitemWriteoff());

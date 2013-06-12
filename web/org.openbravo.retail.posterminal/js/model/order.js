@@ -139,7 +139,8 @@
     defaults: {
       'amount': OB.DEC.Zero,
       'origAmount': OB.DEC.Zero,
-      'paid': OB.DEC.Zero // amount - change...
+      'paid': OB.DEC.Zero,// amount - change...
+      'date': null
     },
     printAmount: function () {
       if (this.get('rate')) {
@@ -1011,7 +1012,6 @@
 
     addPayment: function (payment) {
       var i, max, p;
-
       if (!OB.DEC.isNumber(payment.get('amount'))) {
         alert(OB.I18N.getLabel('OBPOS_MsgPaymentAmountError'));
         return;
@@ -1037,6 +1037,7 @@
       if (payment.get('openDrawer')) {
         this.set('openDrawer', payment.get('openDrawer'));
       }
+      payment.set('date', new Date());
       payments.add(payment);
       this.adjustPayment();
     },
