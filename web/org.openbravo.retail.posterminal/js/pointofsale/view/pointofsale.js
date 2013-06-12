@@ -264,7 +264,9 @@ enyo.kind({
       if (!this.model.get('order').get('lines').isProductPresent(inEvent.product) && inEvent.product.get('showstock') && !inEvent.product.get('ispack') && OB.POS.modelterminal.get('connectedToERP')) {
         inEvent.leftSubWindow = OB.OBPOSPointOfSale.UICustomization.stockLeftSubWindow;
         this.showLeftSubWindow(inSender, inEvent);
-        this.$.multiColumn.switchColumn();
+        if (enyo.Panels.isScreenNarrow()) {
+          this.$.multiColumn.switchColumn();
+        }
         return true;
       } else {
         this.showOrder(inSender, inEvent);
