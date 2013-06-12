@@ -8,7 +8,9 @@
  */
 package org.openbravo.retail.posterminal.master;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import org.codehaus.jettison.json.JSONException;
@@ -33,6 +35,9 @@ public class Product extends ProcessHQLQuery {
     if (productList == null) {
       throw new JSONException("Product list not found");
     }
+
+    SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
+    Calendar now = Calendar.getInstance();
 
     List<String> products = new ArrayList<String>();
 
@@ -75,6 +80,12 @@ public class Product extends ProcessHQLQuery {
             + "   and p.discountType.active = true " //
             + "   and p.active = true"//
             + "   and p.$readableClientCriteria"//
+            + "   and (p.endingDate is null or p.endingDate >= '"
+            + format.format(now.getTime())
+            + "')" //
+            + "   and p.startingDate <= '"
+            + format.format(now.getTime())
+            + "'"
             + "   and (p.$incrementalUpdateCriteria) "//
         );
 
