@@ -46,7 +46,8 @@ enyo.kind({
     collection: new OB.Collection.SalesRepresentativeList(),
     retrievedPropertyForValue: 'id',
     retrievedPropertyForText: '_identifier',
-    init: function () {
+    init: function (model) {
+      this.model = model;
       if (!OB.POS.modelterminal.hasPermission(this.permission)) {
         this.parent.parent.parent.hide();
       } else {
@@ -56,9 +57,19 @@ enyo.kind({
       }
     },
     fetchDataFunction: function (args) {
-      var me = this;
+      var me = this,
+          actualUser;
       OB.Dal.find(OB.Model.SalesRepresentative, null, function (data, args) {
-        me.dataReadyFunction(data, args);
+        if (data.length > 0) {
+          me.dataReadyFunction(data, args);
+        } else {
+          actualUser = new OB.Model.SalesRepresentative();
+          actualUser.set('_identifier', me.model.get('order').get('salesRepresentative$_identifier'));
+          actualUser.set('id', me.model.get('order').get('salesRepresentative'));
+          data.models = [actualUser];
+          me.dataReadyFunction(data, args);
+        }
+
       }, function (error) {
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_ErrorGettingSalesRepresentative'));
         me.dataReadyFunction(null, args);
