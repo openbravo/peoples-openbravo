@@ -120,7 +120,12 @@ isc.OBViewDataSource.addProperties({
     if (!newRequestProperties.dataSource) {
       newRequestProperties.dataSource = this;
     }
-    this.Super('performDSOperation', [operationType, data, callback, newRequestProperties]);
+    if (!this.view._saving || operationType !== 'add') {
+      if (operationType === 'add') {
+        this.view._saving = true;
+      }
+      this.Super('performDSOperation', [operationType, data, callback, newRequestProperties]);
+    }
   },
 
   getAdditionalProps: function () {
