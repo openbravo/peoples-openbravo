@@ -45,6 +45,11 @@ isc.DataSource.addProperties({
 
 isc.DataSource.addSearchOperator({
   ID: 'exists',
+  // Compares two criteria that use the 'exists' operator:
+  // - If they are the same, return 0 (no need to reapply the filter)
+  // - If they are not the same, return -1 to force a datasource call. 
+  // - Returning 1 would imply that the new criterion is more retrictive than the old criterion and that the filtered results can be
+  // fetched locally, we don't want to do that with criteria that use the 'exists' operator
   compareCriteria: function (newCriterion, oldCriterion, operator, ds) {
     var newValues, oldValues, i;
     if (newCriterion.fieldName === oldCriterion.fieldName && newCriterion.existsQuery === oldCriterion.existsQuery) {

@@ -74,8 +74,6 @@ public class ProductCharacteristicsDS extends DefaultDataSourceService {
 
       String hql = hqlBuilder.toString();
 
-      // TODO: client/org security in the query
-
       Query qTree = OBDal.getInstance().getSession().createQuery(hql);
 
       String currentCharId = null;

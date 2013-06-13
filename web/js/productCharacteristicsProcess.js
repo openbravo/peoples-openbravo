@@ -26,6 +26,7 @@ OB.ProductCharacteristics = {
         callback, validationMessage, validationOK = true;
 
     callback = function (rpcResponse, data, rpcRequest) {
+      // When the product invariant characteristic data is received, the popup can be created
       this.view = view;
       isc.UpdateInvariantCharacteristicsPopup.create({
         productId: data.productId,
@@ -34,7 +35,8 @@ OB.ProductCharacteristics = {
         view: view
       }).show();
     };
-
+    
+    // Retrieves the productId and sends it to the handler to obtain the product invariant characteristic data
     productId = selection[0].id;
     OB.RemoteCallManager.call(params.actionHandler, {
       productId: productId,
@@ -53,6 +55,8 @@ OB.ProductCharacteristics = {
 
 isc.defineClass('UpdateInvariantCharacteristicsPopup', isc.OBPopup);
 
+// This popup will show a combo for each of the product invariant
+// characteristics, and OK and Cancel buttons.
 isc.UpdateInvariantCharacteristicsPopup.addProperties({
   width: 320,
   height: 200,
@@ -73,6 +77,7 @@ isc.UpdateInvariantCharacteristicsPopup.addProperties({
         params = this.params,
         i;
 
+    // Populates the combos using the provided characteristicList
     this.characteristicCombos = [];
     for (i = 0; i < this.characteristicList.length; i++) {
       this.characteristicCombos[i] = isc.DynamicForm.create({
@@ -104,12 +109,12 @@ isc.UpdateInvariantCharacteristicsPopup.addProperties({
             rpcRequest.clientContext.popup.view.view.messageBar.setMessage(data.message.severity, null, data.message.text);
           }
         };
-
+        // Saves in updatedValues the product invariant values selected by the user 
         for (i = 0; i < this.popup.items[0].members[0].members.length; i++) {
           characteristicCombo = this.popup.items[0].members[0].members[i];
           updatedValues[characteristicCombo.fields[0].id] = characteristicCombo.values[characteristicCombo.fields[0].name]
         }
-
+        // Send the updated values to the handler so that the product invariant selected values are updated
         OB.RemoteCallManager.call(this.popup.actionHandler, {
           productId: this.popup.productId,
           updatedValues: updatedValues,
@@ -133,21 +138,21 @@ isc.UpdateInvariantCharacteristicsPopup.addProperties({
 
     this.items = [
     isc.VLayout.create({
-      defaultLayoutAlign: "center",
-      align: "center",
-      width: "100%",
+      defaultLayoutAlign: 'center',
+      align: 'center',
+      width: '100%',
       layoutMargin: 10,
       membersMargin: 6,
       members: [
       isc.VLayout.create({
-        defaultLayoutAlign: "right",
-        align: "right",
+        defaultLayoutAlign: 'right',
+        align: 'right',
         layoutMargin: 30,
         membersMargin: 6,
         members: this.characteristicCombos
       }), isc.HLayout.create({
-        defaultLayoutAlign: "center",
-        align: "center",
+        defaultLayoutAlign: 'center',
+        align: 'center',
         membersMargin: 10,
         members: [this.okButton, this.cancelButton]
       })]

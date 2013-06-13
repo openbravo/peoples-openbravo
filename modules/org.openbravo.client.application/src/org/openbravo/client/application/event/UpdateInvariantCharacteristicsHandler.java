@@ -22,7 +22,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -36,9 +35,24 @@ import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.common.plm.ProductCharacteristic;
 import org.openbravo.model.common.plm.ProductCharacteristicValue;
 import org.openbravo.service.db.DbUtility;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+/**
+ * Process in charge of updating the product characteristics
+ * 
+ * When this process is called with the INITIALIZE action, it will provide the data needed to
+ * initializar a popup that displays the invariant characteristics of the provided product
+ * 
+ * This process can also be called with the UPDATE action. In that case, it will update the value of
+ * the product invariant characteristics using the provided data
+ * 
+ * 
+ * @author augusto.mauch
+ * 
+ */
 public class UpdateInvariantCharacteristicsHandler extends BaseActionHandler {
-  private static final Logger log4j = Logger.getLogger(UpdateInvariantCharacteristicsHandler.class);
+  final static Logger log = LoggerFactory.getLogger(UpdateInvariantCharacteristicsHandler.class);
 
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String content) {
@@ -114,7 +128,7 @@ public class UpdateInvariantCharacteristicsHandler extends BaseActionHandler {
       }
     } catch (Exception e) {
       OBDal.getInstance().rollbackAndClose();
-      log4j.error("UpdateInvariantCharacteristics error: " + e.getMessage(), e);
+      log.error("UpdateInvariantCharacteristics error: " + e.getMessage(), e);
       Throwable ex = DbUtility.getUnderlyingSQLException(e);
       String message = OBMessageUtils.translateError(ex.getMessage()).getMessage();
       try {

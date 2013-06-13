@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -40,9 +39,11 @@ import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.common.plm.ProductCharacteristic;
 import org.openbravo.model.common.plm.ProductCharacteristicValue;
 import org.openbravo.service.db.DbUtility;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AddProductsToChValue extends BaseProcessActionHandler {
-  private static final Logger log = Logger.getLogger(AddProductsToChValue.class);
+  final static Logger log = LoggerFactory.getLogger(AddProductsToChValue.class);
 
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {
@@ -51,7 +52,7 @@ public class AddProductsToChValue extends BaseProcessActionHandler {
     try {
       jsonRequest = new JSONObject(content);
       JSONObject params = jsonRequest.getJSONObject("_params");
-      log.debug(jsonRequest);
+      log.debug("{}", jsonRequest);
       final String strChValueId = jsonRequest.getString("inpmChValueId");
       CharacteristicValue chValue = OBDal.getInstance()
           .get(CharacteristicValue.class, strChValueId);
