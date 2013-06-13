@@ -160,8 +160,7 @@ public class InitialOrgSetup {
     OBContext.getOBContext().getWritableOrganizations();
     try {
       OBDal.getInstance().flush();
-      OBDal.getInstance().commitAndClose();
-      org = OBDal.getInstance().get(Organization.class, strOrgId);
+      OBDal.getInstance().refresh(org);
       client = org.getClient();
       if (strcLocationId != null && !strcLocationId.equals(""))
         try {
@@ -245,6 +244,8 @@ public class InitialOrgSetup {
           "@ExceptionInCommit@",
           "createClient() - Exception occured while performing commit in database. Your data may have NOT been saved in database.",
           e);
+      obResult.setType(ERRORTYPE);
+      obResult.setMessage("@ExceptionInCommit@");
     }
 
     obResult.setType(OKTYPE);
