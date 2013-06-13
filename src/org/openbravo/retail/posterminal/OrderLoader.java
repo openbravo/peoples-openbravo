@@ -1179,9 +1179,9 @@ public class OrderLoader extends JSONProcessSimple {
           || (writeoffAmt.signum() == -1 && jsonorder.getLong("orderType") == 1)) {
         FIN_AddPayment.saveGLItem(finPayment, writeoffAmt, paymentType.getPaymentMethod()
             .getGlitemWriteoff());
+        // Update Payment In amount after adding GLItem
+        finPayment.setAmount(origAmount.setScale(stdPrecision, RoundingMode.HALF_UP));
       }
-      // Update Payment In amount after adding GLItem
-      finPayment.setAmount(amount.setScale(stdPrecision, RoundingMode.HALF_UP));
       OBDal.getInstance().save(finPayment);
 
       String description = getPaymentDescription();
