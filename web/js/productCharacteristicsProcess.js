@@ -35,7 +35,7 @@ OB.ProductCharacteristics = {
         view: view
       }).show();
     };
-    
+
     // Retrieves the productId and sends it to the handler to obtain the product invariant characteristic data
     productId = selection[0].id;
     OB.RemoteCallManager.call(params.actionHandler, {
