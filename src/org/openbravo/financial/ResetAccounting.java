@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -303,9 +304,22 @@ public class ResetAccounting {
       Set<String> orgIds, String calendarId, String tableId, String recordId, String datefrom,
       String dateto) {
     if (!"".equals(recordId)) {
-      List<Period> periods = new ArrayList<Period>();
-      periods.add(getDocumentPeriod(clientId, tableId, recordId, docBaseType));
-      return periods;
+      String organization = "";
+      Iterator<String> iterator = orgIds.iterator();
+      while (iterator.hasNext()) {
+        organization = iterator.next();
+        String myQuery = "select p.id from Organization p where ad_org_getperiodcontrolallow(:organization)=p.id";
+        Query query = OBDal.getInstance().getSession().createQuery(myQuery);
+        query.setString("organization", organization);
+        query.setMaxResults(1);
+        if (query.uniqueResult() != null) {
+          List<Period> periods = new ArrayList<Period>();
+          periods.add(getDocumentPeriod(clientId, tableId, recordId, docBaseType, organization));
+          return periods;
+        }
+
+      }
+
     }
     String myQuery = "select distinct p from FinancialMgmtPeriodControl e left join e.period p left join p.year y left join y.calendar c where c.id = :calendarId and e.client.id = :clientId and e.documentCategory = :docbasetype and e.periodStatus = 'O'";
 
@@ -335,13 +349,14 @@ public class ResetAccounting {
   }
 
   private static Period getDocumentPeriod(String clientId, String tableId, String recordId,
-      String docBaseType) {
-    String myQuery = "select distinct e.period from FinancialMgmtAccountingFact e , FinancialMgmtPeriodControl p where p.period=e.period and p.periodStatus = 'O' and e.client.id = :clientId and e.table.id = :tableId and e.recordID=:recordId and p.documentCategory = :docbasetype";
+      String docBaseType, String organization) {
+    String myQuery = "select distinct e.period from FinancialMgmtAccountingFact e , FinancialMgmtPeriodControl p where p.period=e.period and p.periodStatus = 'O' and e.client.id = :clientId and e.table.id = :tableId and e.recordID=:recordId and p.documentCategory = :docbasetype and p.organization= :organization";
     Query query = OBDal.getInstance().getSession().createQuery(myQuery);
     query.setString("clientId", clientId);
     query.setString("tableId", tableId);
     query.setString("recordId", recordId);
     query.setString("docbasetype", docBaseType);
+    query.setString("organization", organization);
     query.setMaxResults(1);
     Period period = (Period) query.uniqueResult();
     if (period == null) {
