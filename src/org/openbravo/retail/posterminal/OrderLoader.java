@@ -1048,8 +1048,7 @@ public class OrderLoader extends JSONProcessSimple {
               : BigDecimal.ZERO);
         } else {
           processPayments(paymentSchedule, paymentScheduleInvoice, order, invoice, paymentType,
-              payment, i == (payments.length() - 1) ? writeoffAmt : BigDecimal.ZERO,
-              jsonorder.getLong("timezoneOffset"));
+              payment, i == (payments.length() - 1) ? writeoffAmt : BigDecimal.ZERO, jsonorder);
         }
       }
       if (invoice != null && fullpayLayaway) {
@@ -1090,7 +1089,7 @@ public class OrderLoader extends JSONProcessSimple {
 
   protected void processPayments(FIN_PaymentSchedule paymentSchedule,
       FIN_PaymentSchedule paymentScheduleInvoice, Order order, Invoice invoice,
-      OBPOSAppPayment paymentType, JSONObject payment, BigDecimal writeoffAmt, Long timeZoneOffset)
+      OBPOSAppPayment paymentType, JSONObject payment, BigDecimal writeoffAmt, JSONObject jsonorder)
       throws Exception {
     long t1 = System.currentTimeMillis();
     OBContext.setAdminMode(true);
@@ -1111,7 +1110,8 @@ public class OrderLoader extends JSONProcessSimple {
       if (amount.signum() == 0) {
         return;
       }
-      if (writeoffAmt.signum() == 1) {
+      if ((writeoffAmt.signum() == 1 && (jsonorder.getLong("orderType") == 0 || isLayaway))
+          || (writeoffAmt.signum() == -1 && jsonorder.getLong("orderType") == 1)) {
         // there was an overpayment, we need to take into account the writeoffamt
         amount = amount.subtract(writeoffAmt).setScale(stdPrecision, RoundingMode.HALF_UP);
       }
@@ -1169,13 +1169,14 @@ public class OrderLoader extends JSONProcessSimple {
 
       // get date
       Date calculatedDate = OBMOBCUtils.calculateServerDate((String) payment.get("date"),
-          timeZoneOffset);
+          jsonorder.getLong("timezoneOffset"));
 
       FIN_Payment finPayment = FIN_AddPayment.savePayment(null, true, paymentDocType, paymentDocNo,
           order.getBusinessPartner(), paymentType.getPaymentMethod().getPaymentMethod(), account,
           amount.toString(), calculatedDate, order.getOrganization(), null, detail, paymentAmount,
           false, false, order.getCurrency(), mulrate, origAmount);
-      if (writeoffAmt.signum() == 1) {
+      if ((writeoffAmt.signum() == 1 && (jsonorder.getLong("orderType") == 0 || isLayaway))
+          || (writeoffAmt.signum() == -1 && jsonorder.getLong("orderType") == 1)) {
         FIN_AddPayment.saveGLItem(finPayment, writeoffAmt, paymentType.getPaymentMethod()
             .getGlitemWriteoff());
       }
