@@ -162,8 +162,8 @@ enyo.kind({
   initComponents: function () {
     this.inherited(arguments);
     this.$.tax.setContent(this.model.get('name'));
-    this.$.base.setContent(this.model.get('net'));
-    this.$.totaltax.setContent(this.model.get('amount'));
+    this.$.base.setContent(OB.I18N.formatCurrency(this.model.get('net')));
+    this.$.totaltax.setContent(OB.I18N.formatCurrency(this.model.get('amount')));
   }
 });
 
