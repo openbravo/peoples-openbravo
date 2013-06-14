@@ -992,9 +992,9 @@
         } else if (OB.DEC.compare(OB.DEC.sub(OB.DEC.add(OB.DEC.add(nocash, cash), origCash), total)) > 0) {
           pcash.set('paid', OB.DEC.sub(total, OB.DEC.add(nocash, OB.DEC.sub(paidCash, pcash.get('origAmount')))));
           this.set('payment', total);
-          //The change value will be computed through a truncated total value, to ensure that the total plus change
+          //The change value will be computed through a rounded total value, to ensure that the total plus change
           //add up to the paid amount without any kind of precission loss
-          this.set('change', OB.DEC.sub(OB.DEC.add(OB.DEC.add(nocash, cash), origCash), OB.I18N.formatCurrency(total)));
+          this.set('change', OB.DEC.sub(OB.DEC.add(OB.DEC.add(nocash, cash), origCash), OB.Utilities.Number.roundJSNumber(total,2)));
         } else {
           pcash.set('paid', auxCash);
           this.set('payment', OB.DEC.add(OB.DEC.add(nocash, cash), origCash));
