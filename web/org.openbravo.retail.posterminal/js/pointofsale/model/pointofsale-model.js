@@ -227,7 +227,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
     });
 
     receipt.on('change:bp', function (line) {
-      if (!receipt.get('isEditable')) {
+      if (!receipt.get('isEditable') || receipt.get('lines').length === 0) {
         return;
       }
       OB.Model.Discounts.applyPromotions(receipt);
