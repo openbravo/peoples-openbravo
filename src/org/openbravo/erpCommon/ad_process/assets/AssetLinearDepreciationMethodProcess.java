@@ -442,7 +442,7 @@ public class AssetLinearDepreciationMethodProcess extends DalBaseProcess {
           proportionalAmount = proportionalAmount.setScale(stdPrecision, RoundingMode.HALF_UP);
 
           // Last period. Adjust for avoiding rounding issues.
-          if (new BigDecimal(contPeriods).compareTo(totalPeriods) == 0
+          if (((!isPercentage && new BigDecimal(contPeriods).compareTo(totalPeriods) == 0))
               || totalizedAmount.add(proportionalAmount).compareTo(amount) > 0) {
             proportionalAmount = amount.subtract(totalizedAmount);
             proportionaldPercentage = HUNDRED.subtract(totalizedPercentage);
