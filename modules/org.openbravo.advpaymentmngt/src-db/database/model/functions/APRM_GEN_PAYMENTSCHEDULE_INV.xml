@@ -611,11 +611,54 @@ BEGIN
               IF (v_PaymentDocumentNo IS NULL) THEN
                 AD_Sequence_Doc('DocumentNo_FIN_Payment', v_client_id, 'Y', v_PaymentDocumentNo) ;
               END IF;
+
+              --Gets the financial account currency
+              SELECT C_Currency_ID 
+              INTO v_finacct_currency 
+              FROM FIN_Financial_Account 
+              WHERE FIN_Financial_Account_id = v_Financial_Account_ID;
+
+              --Gets the Price precision
+              SELECT priceprecision 
+              INTO v_PricePr 
+              FROM C_CURRENCY 
+              WHERE c_currency_id = v_finacct_currency;
+
+              --Check for the exchange rate at document level and get the rate
+              SELECT COUNT(rate)
+              INTO v_count
+              FROM C_Conversion_Rate_Document
+              WHERE C_Invoice_ID = p_record_id
+	      AND C_Currency_ID = cur_paymentschedule.C_CURRENCY_ID
+	      AND C_Currency_ID_To = v_finacct_currency;
+	      
+              IF(v_count > 0) THEN
+	        SELECT rate
+	        INTO v_rate
+	        FROM C_Conversion_Rate_Document
+	        WHERE C_Invoice_ID = p_record_id
+	        AND C_Currency_ID = cur_paymentschedule.C_CURRENCY_ID
+	        AND C_Currency_ID_To = v_finacct_currency; 
+	      ELSE
+	        v_rate := 0;
+	      END IF;
+	      --The financial account currency and payment currency are different and the financial account is not configured to accept payment from different currency
+	      IF (v_finacct_currency<>cur_paymentschedule.C_CURRENCY_ID AND cur_finaccpaymentmethod.multicurrency='N') THEN
+	        RAISE_APPLICATION_ERROR(-20000,'@APRM_NoFinancialAccountDefined@');
+	      --The financial account currency and payment currency are different and the financial account is not configured to accept payment from different currency
+	      --and there is no exchange rate defined at document level
+              ELSIF (v_finacct_currency<>cur_paymentschedule.C_CURRENCY_ID AND cur_finaccpaymentmethod.multicurrency='Y' AND v_rate = 0) THEN
+                v_rate := C_CURRENCY_RATE(cur_paymentschedule.C_CURRENCY_ID, v_finacct_currency, cur_paymentschedule.DUEDATE, NULL, v_client_id, cur_paymentschedule.AD_ORG_ID );
+              --default exchange rate to 1
+              ELSIF (v_rate = 0) THEN
+                v_rate := 1;
+              END IF;
+
               INSERT INTO fin_payment(
                 fin_payment_id, ad_client_id, ad_org_id, created, createdby,
                 updated, updatedby, isactive, isreceipt, c_bpartner_id, paymentdate,
                 c_currency_id, amount, writeoffamt,
-                finacc_txn_amount,fin_paymentmethod_id, documentno,
+                finacc_txn_amount, finacc_txn_convert_rate, fin_paymentmethod_id, documentno,
                 referenceno,
                 status,
                 processed, processing, posted, description,
@@ -625,7 +668,7 @@ BEGIN
               VALUES (v_FIN_PAYMENT_ID, v_client_id, cur_paymentschedule.AD_ORG_ID, now(), p_user,
                 now(), p_user, 'Y', v_IsSOTrx, v_bpartner_id, cur_paymentschedule.DUEDATE,
                 cur_paymentschedule.C_CURRENCY_ID, COALESCE(cur_paymentschedule.OUTSTANDINGAMT,0), 0,
-                COALESCE(cur_paymentschedule.OUTSTANDINGAMT,0), cur_paymentschedule.FIN_PAYMENTMETHOD_ID, v_PaymentDocumentNo,
+                ROUND(COALESCE(cur_paymentschedule.OUTSTANDINGAMT,0)*v_rate, v_PricePr), v_rate, cur_paymentschedule.FIN_PAYMENTMETHOD_ID, v_PaymentDocumentNo,
                 '',
                 CASE
                   WHEN cur_finaccpaymentmethod.ExecutionType = 'A' THEN 'RPAE'
