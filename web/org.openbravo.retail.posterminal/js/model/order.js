@@ -139,7 +139,8 @@
     defaults: {
       'amount': OB.DEC.Zero,
       'origAmount': OB.DEC.Zero,
-      'paid': OB.DEC.Zero,// amount - change...
+      'paid': OB.DEC.Zero,
+      // amount - change...
       'date': null
     },
     printAmount: function () {
@@ -385,12 +386,20 @@
           //If the price doesn't include tax, the discounted gross has already been calculated
           var gross = me.get('lines').reduce(function (memo, e) {
             var grossLine = e.get('discountedGross');
-            return OB.DEC.add(memo, grossLine);
+            if (grossLine) {
+              return OB.DEC.add(memo, grossLine);
+            } else {
+              return memo;
+            }
           }, OB.DEC.Zero);
           me.set('gross', gross);
           var net = me.get('lines').reduce(function (memo, e) {
             var netLine = e.get('discountedNet');
-            return OB.DEC.add(memo, netLine);
+            if (netLine) {
+              return OB.DEC.add(memo, netLine);
+            } else {
+              return memo;
+            }
           }, OB.DEC.Zero);
           me.set('net', net);
           me.adjustPayment();
@@ -1148,8 +1157,8 @@
     initialize: function () {
       var me = this;
       this.current = null;
-      if(this.modelorder){
-        this.modelorder.on('saveCurrent', function(){
+      if (this.modelorder) {
+        this.modelorder.on('saveCurrent', function () {
           me.saveCurrent();
         });
       }
