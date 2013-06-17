@@ -25,18 +25,6 @@ enyo.kind({
     modelProperty: 'print',
     i18nLabel: 'OBPOS_Lbl_RP_Print'
   }, {
-    kind: 'OB.UI.renderBooleanProperty',
-    name: 'invoiceBox',
-    modelProperty: 'generateInvoice',
-    i18nLabel: 'OBPOS_ToInvoice',
-    readOnly: true
-  }, {
-    kind: 'OB.UI.renderBooleanProperty',
-    name: 'returnBox',
-    modelProperty: 'orderType',
-    i18nLabel: 'OBPOS_ToBeReturned',
-    readOnly: true
-  }, {
     kind: 'OB.UI.renderComboProperty',
     name: 'salesRepresentativeBox',
     modelProperty: 'salesRepresentative',
