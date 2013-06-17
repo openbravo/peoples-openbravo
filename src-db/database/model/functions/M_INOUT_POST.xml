@@ -314,9 +314,11 @@
         SELECT C_CHK_OPEN_PERIOD(v_AD_Org_ID, v_DateAcct, NULL, v_DocType_ID) 
         INTO v_available_period
         FROM DUAL;
-        
+
         IF (v_available_period<>1) THEN
-          RAISE_APPLICATION_ERROR(-20000, '@PeriodNotAvailable@');
+          IF (v_docAction <> 'RC') THEN
+             RAISE_APPLICATION_ERROR(-20000, '@PeriodNotAvailable@');
+          END IF;
         END IF;
       END IF;  
   
