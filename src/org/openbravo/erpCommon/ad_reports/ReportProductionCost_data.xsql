@@ -49,6 +49,7 @@
           LEFT OUTER JOIN MA_SequenceProduct sp ON (rp.M_Product_ID = sp.M_Product_ID AND rp.MA_Sequence_ID = sp.MA_Sequence_ID), M_Product
         WHERE rp.M_Product_ID = M_Product.M_Product_ID
         AND M_Product.IsSold = 'Y'
+        AND M_PRODUCT.ad_client_id = ?
         GROUP BY rp.M_Product_ID, M_Product.Name
         ]]></Sql>
       <Parameter name="cCurrencyBase"/>
@@ -61,6 +62,7 @@
       <Parameter name="dateFrom"/>
       <Parameter name="dateTo"/>
       <Parameter name="mProductId" optional="true" after="1=1"> AND pl.M_PRODUCT_ID = ?</Parameter>
+      <Parameter name="adClientId"/>
   </SqlMethod>
   <SqlMethod name="set" type="constant" return="multiple">
       <SqlMethodComment></SqlMethodComment>
