@@ -206,7 +206,8 @@ public class OrderLoader extends JSONProcessSimple {
 
     boolean isQuotation = jsonorder.has("isQuotation") && jsonorder.getBoolean("isQuotation");
     if (jsonorder.getLong("orderType") != 2 && !jsonorder.getBoolean("isLayaway") && !isQuotation
-        && verifyOrderExistance(jsonorder)) {
+        && verifyOrderExistance(jsonorder)
+        && (!jsonorder.has("preserveId") || jsonorder.getBoolean("preserveId"))) {
       return successMessage(jsonorder);
     }
 
@@ -880,7 +881,9 @@ public class OrderLoader extends JSONProcessSimple {
     JSONPropertyToEntity.fillBobFromJSON(orderEntity, order, jsonorder,
         jsonorder.getLong("timezoneOffset"));
     order.setNewOBObject(true);
-    order.setId(jsonorder.getString("id"));
+    if (!jsonorder.has("preserveId") || jsonorder.getBoolean("preserveId")) {
+      order.setId(jsonorder.getString("id"));
+    }
     int stdPrecision = order.getCurrency().getStandardPrecision().intValue();
 
     order.setTransactionDocument((DocumentType) OBDal.getInstance().getProxy("DocumentType",
