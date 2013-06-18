@@ -180,7 +180,17 @@ public class SecurityChecker implements OBSingleton {
         // efficient
         // by
         // not loading the hibernate proxy
-        if (!obContext.getWritableOrganizations().contains(orgId)) {
+
+        // Due to issue 23419: Impossible to add an organization to one role, it has been necessary
+        // to add the below check. The system is going to check if it can avoid the permission
+        // during the record insertion. The application is allowed to avoid the permission when the
+        // user is inserting one record in table "AD_ORG_ACCESS" and the role of the user is the
+        // client administrator and also is inserting the record in the same client
+        boolean checkOrgAccess = !(entity.getTableName().equals("AD_Role_OrgAccess")
+            && OBContext.getOBContext().getRole().isClientAdmin() && OBContext.getOBContext()
+            .getRole().getClient().getId().equals(clientId));
+
+        if (checkOrgAccess && !obContext.getWritableOrganizations().contains(orgId)) {
           // TODO: maybe move rollback to exception throwing
           SessionHandler.getInstance().setDoRollback(true);
           throw new OBSecurityException("Organization " + orgId + " of object (" + obj
