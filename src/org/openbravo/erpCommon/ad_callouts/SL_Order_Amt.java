@@ -379,6 +379,7 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
           BigDecimal.ROUND_HALF_UP);
       resultado.append("new Array(\"inplineGrossAmount\", " + grossLineAmt.toString() + "),");
     }
+    resultado.append("new Array(\"inptaxbaseamt\", " + lineNetAmt.toString() + "),");
     resultado.append("new Array(\"dummy\", \"\" )");
 
     resultado.append(");");
