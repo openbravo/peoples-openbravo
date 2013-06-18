@@ -365,7 +365,13 @@ public class BaseXMLEntityConverter implements OBNotSingleton {
   }
 
   protected BaseOBObject resolve(String entityName, String id, boolean reference) {
-    return entityResolver.resolve(entityName, id, reference);
+    boolean filterOrganizations = false;
+    return resolve(entityName, id, reference, filterOrganizations);
+  }
+
+  protected BaseOBObject resolve(String entityName, String id, boolean reference,
+      boolean filterOrganizations) {
+    return entityResolver.resolve(entityName, id, reference, filterOrganizations);
   }
 
   public Client getClient() {
