@@ -394,7 +394,7 @@ where @additional_filters@
 <!--B748F356A65641D4974E5C349A16FB27-->  <NAME><![CDATA[Org_no_org_access]]></NAME>
 <!--B748F356A65641D4974E5C349A16FB27-->  <AD_REFERENCE_ID><![CDATA[9FFC72525D7E49069272B22293F7D163]]></AD_REFERENCE_ID>
 <!--B748F356A65641D4974E5C349A16FB27-->  <AD_TABLE_ID><![CDATA[155]]></AD_TABLE_ID>
-<!--B748F356A65641D4974E5C349A16FB27-->  <FILTER_EXPRESSION><![CDATA["((org.client = '" + OB.getParameters().get('inpadClientId') + "'     and (select r.manual          from ADRole r          where r.id = '"+ OB.getParameters().get('inpadRoleId') + "') = 'Y')   or (org.id in (select org2                  from ADRole r2                    left join r2.aDRoleOrganizationList ol                    left join ol.organization org2                  where r2.id = '"+ OB.getParameters().get('inpadRoleId') + "')))"]]></FILTER_EXPRESSION>
+<!--B748F356A65641D4974E5C349A16FB27-->  <FILTER_EXPRESSION><![CDATA[((org.client = @ad_client_id@     and (select r.id          from ADRole r          where r.manual = 'Y'            and r.id = @ad_role_id@) = @ad_role_id@)   or (org.id in (select org2                  from ADRole r2                    left join r2.aDRoleOrganizationList ol                    left join ol.organization org2                  where r2.id = @ad_role_id@)))]]></FILTER_EXPRESSION>
 <!--B748F356A65641D4974E5C349A16FB27-->  <OBCLKER_TEMPLATE_ID><![CDATA[9314DE8599AD44E7BFC4CC50699042AB]]></OBCLKER_TEMPLATE_ID>
 <!--B748F356A65641D4974E5C349A16FB27-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--B748F356A65641D4974E5C349A16FB27-->  <VALUEFIELD_ID><![CDATA[190E45B61635477BBC0799229F889FD6]]></VALUEFIELD_ID>
