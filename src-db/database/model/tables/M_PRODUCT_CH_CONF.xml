@@ -55,7 +55,7 @@
       <foreign-key foreignTable="AD_ORG" name="M_PRODUCT_CH_CONF_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_CH_VALUE" name="M_PRODUCT_CH_CONF_M_CHVALUE">
+      <foreign-key foreignTable="M_CH_VALUE" name="M_PRODUCT_CH_CONF_M_CHVALUE" onDelete="cascade">
         <reference local="M_CH_VALUE_ID" foreign="M_CH_VALUE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_PRODUCT_CH" name="M_PRODUCT_CH_CONF_M_PRODUCT_CH">
