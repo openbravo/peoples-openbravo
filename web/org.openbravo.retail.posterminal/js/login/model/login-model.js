@@ -462,7 +462,7 @@
     },
 
     getPaymentName: function (key) {
-      if (this.paymentnames[key] && this.paymentnames[key].payment && this.paymentnames[key].payment._identifier){
+      if (this.paymentnames[key] && this.paymentnames[key].payment && this.paymentnames[key].payment._identifier) {
         return this.paymentnames[key].payment._identifier;
       }
       return null;

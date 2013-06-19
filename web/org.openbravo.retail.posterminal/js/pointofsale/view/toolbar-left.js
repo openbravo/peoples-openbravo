@@ -82,7 +82,7 @@ enyo.kind({
   },
   tap: function () {
     // deletion without warning is allowed if the ticket has been processed
-    if(this.hasClass('paidticket')) {
+    if (this.hasClass('paidticket')) {
       this.doDeleteOrder();
     } else {
       this.doShowPopup({
