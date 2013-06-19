@@ -392,14 +392,14 @@ enyo.kind({
   },
   disabled: false,
   putDisabled: function (status) {
-    if (status===false){
+    if (status === false) {
       this.setDisabled(false);
       this.removeClass('disabled');
-      this.disabled=false;      
+      this.disabled = false;
     } else {
       this.setDisabled(true);
       this.addClass('disabled');
-      this.disabled=true;
+      this.disabled = true;
     }
   },
   initComponents: function () {
@@ -407,10 +407,10 @@ enyo.kind({
     this.putDisabled(!OB.MobileApp.model.hasPermission(this.permission));
   },
   tap: function () {
-    if (this.disabled){
+    if (this.disabled) {
       return true;
     }
-    
+
     var process = new OB.DS.Process('org.openbravo.retail.posterminal.CheckBusinessPartnerCredit');
     var me = this;
     if (this.model.get('order').get('orderType') !== 1 && OB.POS.modelterminal.get('connectedToERP')) {
@@ -478,8 +478,8 @@ enyo.kind({
   },
   tap: function () {
     var receipt = this.owner.receipt;
-    if(receipt) {
-      if(receipt.get('generateInvoice')) {
+    if (receipt) {
+      if (receipt.get('generateInvoice')) {
         OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_noInvoiceIfLayaway'));
         receipt.set('generateInvoice', false);
       }
