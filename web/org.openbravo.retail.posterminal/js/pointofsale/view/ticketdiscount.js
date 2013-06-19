@@ -155,8 +155,8 @@ enyo.kind({
     }]
   }],
   show: function () {
-    OB.MobileApp.view.scanningFocus(false);
     var me = this;
+    OB.MobileApp.view.scanningFocus(false);
     me.discounts.reset();
     //uncheck lines
     this.doCheckAllTicketLines({
