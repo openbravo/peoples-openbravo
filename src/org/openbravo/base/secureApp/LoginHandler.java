@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2012 Openbravo S.L.U.
+ * Copyright (C) 2001-2013 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -149,6 +149,8 @@ public class LoginHandler extends HttpBaseServlet {
       boolean doRedirect = redirect
           || (limitation == LicenseRestriction.NO_RESTRICTION && forceNamedUserLogin);
 
+      SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
+
       // We check if there is a Openbravo Professional Subscription restriction in the license,
       // or if the last rebuild didn't go well. If any of these are true, then the user is
       // allowed to login only as system administrator
@@ -212,14 +214,21 @@ public class LoginHandler extends HttpBaseServlet {
         goToRetry(res, vars, msg, title, "Error", "../security/Login_FS.html", doRedirect);
         return;
       case CONCURRENT_NAMED_USER:
-        msg = Utility.messageBD(myPool, "CONCURRENT_NAMED_USER", vars.getLanguage());
-        title = Utility.messageBD(myPool, "CONCURRENT_NAMED_USER_TITLE", vars.getLanguage());
-        log4j.warn("Named Concurrent Users Reached - Session: " + sessionId);
-        vars.clearSession(true);
-        goToRetry(res, vars, msg, title, "Confirmation", "../secureApp/LoginHandler.html",
-            doRedirect);
-
-        return;
+        if (sysInfo.getSystemStatus() == null || sysInfo.getSystemStatus().equals("RB70")) {
+          // Preventing concurrency of already logged in named user in case System Status is OK.
+          // While rebuilding or if problems in the rebuild, allow same user with Sys Admin role not
+          // to kill the session that started the rebuild.
+          msg = Utility.messageBD(myPool, "CONCURRENT_NAMED_USER", vars.getLanguage());
+          title = Utility.messageBD(myPool, "CONCURRENT_NAMED_USER_TITLE", vars.getLanguage());
+          log4j.warn("Named Concurrent Users Reached - Session: " + sessionId);
+          vars.clearSession(true);
+          goToRetry(res, vars, msg, title, "Confirmation", "../secureApp/LoginHandler.html",
+              doRedirect);
+          return;
+        } else {
+          // System is being rebuild: allowing extra System Admin sessions
+          break;
+        }
       case ON_DEMAND_OFF_PLATFORM:
         msg = Utility.messageBD(myPool, "ON_DEMAND_OFF_PLATFORM", vars.getLanguage());
         title = Utility.messageBD(myPool, "ON_DEMAND_OFF_PLATFORM_TITLE", vars.getLanguage());
@@ -246,7 +255,7 @@ public class LoginHandler extends HttpBaseServlet {
       }
 
       // Build checks
-      SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
+
       if (sysInfo.getSystemStatus() == null || sysInfo.getSystemStatus().equals("RB70")
           || this.globalParameters.getOBProperty("safe.mode", "false").equalsIgnoreCase("false")) {
         // Last build went fine and tomcat was restarted. We should continue with the rest of checks
