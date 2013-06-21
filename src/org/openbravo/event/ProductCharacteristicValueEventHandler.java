@@ -82,6 +82,7 @@ public class ProductCharacteristicValueEventHandler extends EntityPersistenceEve
   public void onTransactionCompleted(@Observes TransactionCompletedEvent event) {
     String strProductId = prodchvalueUpdated.get();
     prodchvalueUpdated.set(null);
+    prodchvalueUpdated.remove();
     if (StringUtils.isBlank(strProductId) || event.getTransaction().wasRolledBack()) {
       return;
     }

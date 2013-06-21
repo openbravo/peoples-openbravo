@@ -97,12 +97,17 @@ public class VariantChDescUpdateProcess extends DalBaseProcess {
   public void update(String strProductId, String strChValueId) {
     OBContext.setAdminMode(false);
     try {
+      if (StringUtils.isNotBlank(strProductId)) {
+        Product product = OBDal.getInstance().get(Product.class, strProductId);
+        // In some cases product might have been deleted.
+        if (product != null) {
+          updateProduct(product);
+        }
+        return;
+      }
       StringBuffer where = new StringBuffer();
       where.append(" as p");
       where.append(" where p." + Product.PROPERTY_PRODUCTCHARACTERISTICLIST + " is not empty");
-      if (StringUtils.isNotBlank(strProductId)) {
-        where.append(" and p.id = :productId");
-      }
       if (StringUtils.isNotBlank(strChValueId)) {
         where.append(" and exists (select 1 from p."
             + Product.PROPERTY_PRODUCTCHARACTERISTICVALUELIST + " as chv");
@@ -111,9 +116,6 @@ public class VariantChDescUpdateProcess extends DalBaseProcess {
       }
       OBQuery<Product> productQuery = OBDal.getInstance().createQuery(Product.class,
           where.toString());
-      if (StringUtils.isNotBlank(strProductId)) {
-        productQuery.setNamedParameter("productId", strProductId);
-      }
       if (StringUtils.isNotBlank(strChValueId)) {
         productQuery.setNamedParameter("chvid", strChValueId);
       }
@@ -125,43 +127,7 @@ public class VariantChDescUpdateProcess extends DalBaseProcess {
       int i = 0;
       while (products.next()) {
         Product product = (Product) products.get(0);
-        String strChDesc = "";
-        where = new StringBuffer();
-        where.append(" as pch");
-        where.append(" where pch." + ProductCharacteristic.PROPERTY_PRODUCT + " = :product");
-        where.append(" order by pch." + ProductCharacteristic.PROPERTY_SEQUENCENUMBER);
-        OBQuery<ProductCharacteristic> pchQuery = OBDal.getInstance().createQuery(
-            ProductCharacteristic.class, where.toString());
-        pchQuery.setFilterOnActive(false);
-        pchQuery.setFilterOnReadableOrganization(false);
-        pchQuery.setNamedParameter("product", product);
-        for (ProductCharacteristic pch : pchQuery.list()) {
-          // Reload pch to avoid errors after session clear.
-          OBDal.getInstance().refresh(pch);
-          if (StringUtils.isNotBlank(strChDesc)) {
-            strChDesc += ", ";
-          }
-          strChDesc += pch.getCharacteristic().getName() + ":";
-          where = new StringBuffer();
-          where.append(" as pchv");
-          where.append(" where pchv." + ProductCharacteristicValue.PROPERTY_CHARACTERISTIC
-              + ".id = :ch");
-          where.append("   and pchv." + ProductCharacteristicValue.PROPERTY_PRODUCT
-              + ".id = :product");
-          OBQuery<ProductCharacteristicValue> pchvQuery = OBDal.getInstance().createQuery(
-              ProductCharacteristicValue.class, where.toString());
-          pchvQuery.setFilterOnActive(false);
-          pchvQuery.setFilterOnReadableOrganization(false);
-          pchvQuery.setNamedParameter("ch", pch.getCharacteristic().getId());
-          pchvQuery.setNamedParameter("product", product.getId());
-          for (ProductCharacteristicValue pchv : pchvQuery.list()) {
-            // Reload pchv to avoid errors after session clear.
-            OBDal.getInstance().refresh(pchv);
-            strChDesc += " " + pchv.getCharacteristicValue().getName();
-          }
-        }
-        product.setCharacteristicDescription(strChDesc);
-        OBDal.getInstance().save(product);
+        updateProduct(product);
 
         if ((i % 100) == 0) {
           OBDal.getInstance().flush();
@@ -169,8 +135,48 @@ public class VariantChDescUpdateProcess extends DalBaseProcess {
         }
         i++;
       }
+
     } finally {
       OBContext.restorePreviousMode();
     }
+  }
+
+  private void updateProduct(Product product) {
+    String strChDesc = "";
+    StringBuffer where = new StringBuffer();
+    where.append(" as pch");
+    where.append(" where pch." + ProductCharacteristic.PROPERTY_PRODUCT + " = :product");
+    where.append(" order by pch." + ProductCharacteristic.PROPERTY_SEQUENCENUMBER);
+    OBQuery<ProductCharacteristic> pchQuery = OBDal.getInstance().createQuery(
+        ProductCharacteristic.class, where.toString());
+    pchQuery.setFilterOnActive(false);
+    pchQuery.setFilterOnReadableOrganization(false);
+    pchQuery.setNamedParameter("product", product);
+    for (ProductCharacteristic pch : pchQuery.list()) {
+      // Reload pch to avoid errors after session clear.
+      OBDal.getInstance().refresh(pch);
+      if (StringUtils.isNotBlank(strChDesc)) {
+        strChDesc += ", ";
+      }
+      strChDesc += pch.getCharacteristic().getName() + ":";
+      where = new StringBuffer();
+      where.append(" as pchv");
+      where.append(" where pchv." + ProductCharacteristicValue.PROPERTY_CHARACTERISTIC
+          + ".id = :ch");
+      where.append("   and pchv." + ProductCharacteristicValue.PROPERTY_PRODUCT + ".id = :product");
+      OBQuery<ProductCharacteristicValue> pchvQuery = OBDal.getInstance().createQuery(
+          ProductCharacteristicValue.class, where.toString());
+      pchvQuery.setFilterOnActive(false);
+      pchvQuery.setFilterOnReadableOrganization(false);
+      pchvQuery.setNamedParameter("ch", pch.getCharacteristic().getId());
+      pchvQuery.setNamedParameter("product", product.getId());
+      for (ProductCharacteristicValue pchv : pchvQuery.list()) {
+        // Reload pchv to avoid errors after session clear.
+        OBDal.getInstance().refresh(pchv);
+        strChDesc += " " + pchv.getCharacteristicValue().getName();
+      }
+    }
+    product.setCharacteristicDescription(strChDesc);
+    OBDal.getInstance().save(product);
   }
 }
