@@ -117,6 +117,7 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
       objCloneOrder.setValidUntil(null);
       objCloneOrder.setSummedLineAmount(BigDecimal.ZERO);
       objCloneOrder.setGrandTotalAmount(BigDecimal.ZERO);
+      objCloneOrder.setQuotation(objOrder);
       OBDal.getInstance().save(objCloneOrder);
       OBDal.getInstance().flush();
       OBDal.getInstance().refresh(objCloneOrder);
@@ -260,7 +261,6 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
       objCloneOrder.setDocumentAction("RE");
       objCloneOrder.setDocumentStatus("CO");
       objCloneOrder.setProcessed(true);
-      objCloneOrder.setQuotation(objOrder);
 
       // Set the Status of the Quotation to Closed - Converted
       objOrder.setDocumentStatus("CA");
