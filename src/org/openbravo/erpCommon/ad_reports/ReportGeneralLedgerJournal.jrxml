@@ -246,7 +246,7 @@
 					<text><![CDATA[Credit]]></text>
 				</staticText>
 				<staticText>
-					<reportElement mode="Opaque" x="89" y="2" width="125" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
+					<reportElement mode="Opaque" x="89" y="2" width="125" height="18" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single" markup="none">
 						<font fontName="DejaVu Sans" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					</textElement>
@@ -342,7 +342,7 @@
 					<text><![CDATA[Credit]]></text>
 				</staticText>
 				<staticText>
-					<reportElement mode="Opaque" x="88" y="2" width="125" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
+					<reportElement mode="Opaque" x="88" y="2" width="125" height="18" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single" markup="none">
 						<font fontName="DejaVu Sans" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					</textElement>
@@ -446,8 +446,8 @@
 						</textElement>
 						<textFieldExpression class="java.util.Date"><![CDATA[$F{DATEACCT}]]></textFieldExpression>
 					</textField>
-					<textField isBlankWhenNull="true">
-						<reportElement key="textField" x="91" y="0" width="126" height="10" printWhenGroupChanges="JournalEntry"/>
+					<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+						<reportElement key="textField" x="91" y="0" width="126" height="10" isPrintWhenDetailOverflows="true" printWhenGroupChanges="JournalEntry"/>
 						<box leftPadding="2" rightPadding="2">
 							<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 							<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -545,8 +545,8 @@
 						</textElement>
 						<textFieldExpression class="java.util.Date"><![CDATA[$F{DATEACCT}]]></textFieldExpression>
 					</textField>
-					<textField isBlankWhenNull="true">
-						<reportElement key="textField" x="91" y="0" width="126" height="10" printWhenGroupChanges="JournalEntry"/>
+					<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+						<reportElement key="textField" x="91" y="0" width="126" height="10" isPrintWhenDetailOverflows="true" printWhenGroupChanges="JournalEntry"/>
 						<box leftPadding="2" rightPadding="2">
 							<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 							<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
