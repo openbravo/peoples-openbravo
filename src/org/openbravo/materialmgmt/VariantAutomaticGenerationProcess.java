@@ -175,6 +175,10 @@ public class VariantAutomaticGenerationProcess implements Process {
         productNo++;
       } while (hasNext);
 
+      String message = OBMessageUtils.messageBD("variantsCreated");
+      Map<String, String> map = new HashMap<String, String>();
+      map.put("variantNo", Long.toString(productNo));
+      msg.setMessage(OBMessageUtils.parseTranslation(message, map));
       bundle.setResult(msg);
 
       // Postgres wraps the exception into a GenericJDBCException
