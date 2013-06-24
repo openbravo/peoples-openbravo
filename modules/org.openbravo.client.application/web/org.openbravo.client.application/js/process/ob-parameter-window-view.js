@@ -430,7 +430,7 @@ isc.OBParameterWindowView.addProperties({
 
       len = (allRows && allRows.length) || 0;
       // Only send _allRows if all rows are cached
-      if (len <= grid.data.cachedRows) {
+      if (!(grid.data.resultSize) || (len < grid.data.resultSize)) {
         for (i = 0; i < len; i++) {
           tmp = isc.addProperties({}, allRows[i], grid.getEditedRecord(grid.getRecordIndex(allRows[i])));
           allProperties._allRows.push(tmp);
