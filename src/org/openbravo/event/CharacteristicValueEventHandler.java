@@ -79,7 +79,6 @@ public class CharacteristicValueEventHandler extends EntityPersistenceEventObser
             .getCurrentOrganization().getId(), OBContext.getOBContext().getRole().getId(),
             OBContext.getOBContext().getLanguage().getLanguage());
       }
-      logger.error("ejecutando event handler para el chvalue: " + strChValueId);
 
       ProcessBundle pb = new ProcessBundle(VariantChDescUpdateProcess.AD_PROCESS_ID, vars)
           .init(new DalConnectionProvider(false));

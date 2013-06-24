@@ -26,6 +26,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
+import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.client.kernel.event.EntityDeleteEvent;
 import org.openbravo.client.kernel.event.EntityNewEvent;
@@ -33,6 +34,7 @@ import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.client.kernel.event.TransactionBeginEvent;
 import org.openbravo.client.kernel.event.TransactionCompletedEvent;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.materialmgmt.VariantChDescUpdateProcess;
 import org.openbravo.model.common.plm.ProductCharacteristicValue;
 import org.openbravo.scheduling.OBScheduler;
@@ -87,8 +89,18 @@ public class ProductCharacteristicValueEventHandler extends EntityPersistenceEve
       return;
     }
     try {
-      ProcessBundle pb = new ProcessBundle(VariantChDescUpdateProcess.AD_PROCESS_ID, RequestContext
-          .get().getVariablesSecureApp()).init(new DalConnectionProvider(false));
+      VariablesSecureApp vars = null;
+      try {
+        vars = RequestContext.get().getVariablesSecureApp();
+      } catch (Exception e) {
+        vars = new VariablesSecureApp(OBContext.getOBContext().getUser().getId(), OBContext
+            .getOBContext().getCurrentClient().getId(), OBContext.getOBContext()
+            .getCurrentOrganization().getId(), OBContext.getOBContext().getRole().getId(),
+            OBContext.getOBContext().getLanguage().getLanguage());
+      }
+
+      ProcessBundle pb = new ProcessBundle(VariantChDescUpdateProcess.AD_PROCESS_ID, vars)
+          .init(new DalConnectionProvider(false));
       HashMap<String, Object> parameters = new HashMap<String, Object>();
       parameters.put("mProductId", strProductId);
       parameters.put("mChValueId", null);
