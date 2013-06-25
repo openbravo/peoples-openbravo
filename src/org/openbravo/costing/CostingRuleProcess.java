@@ -284,6 +284,8 @@ public class CostingRuleProcess implements Process {
     // The key of the Map is the concatenation of orgId and warehouseId
     Map<String, String> initLines = new HashMap<String, String>();
     Map<String, Long> maxLineNumbers = new HashMap<String, Long>();
+    InventoryCountLine closingInventoryLine = null;
+    InventoryCountLine openInventoryLine = null;
     int i = 1;
     try {
       while (stockLines.next()) {
@@ -315,17 +317,21 @@ public class CostingRuleProcess implements Process {
           // Instead of CountQty=0 and BookQty=-5 insert CountQty=5 and BookQty=0
           // By doing so the difference between both quantities remains the same and no negative
           // values have been inserted.
+
+          openInventoryLine = insertInventoryLine(cri.getInitInventory(), productId, attrSetInsId,
+              uomId, orderUOMId, locatorId, qty, BigDecimal.ZERO, orderQty, BigDecimal.ZERO,
+              lineNo, null);
           insertInventoryLine(cri.getCloseInventory(), productId, attrSetInsId, uomId, orderUOMId,
-              locatorId, BigDecimal.ZERO, qty, BigDecimal.ZERO, orderQty, lineNo);
-          insertInventoryLine(cri.getInitInventory(), productId, attrSetInsId, uomId, orderUOMId,
-              locatorId, qty, BigDecimal.ZERO, orderQty, BigDecimal.ZERO, lineNo);
+              locatorId, BigDecimal.ZERO, qty, BigDecimal.ZERO, orderQty, lineNo, openInventoryLine);
+
         } else {
+          openInventoryLine = insertInventoryLine(cri.getInitInventory(), productId, attrSetInsId,
+              uomId, orderUOMId, locatorId, BigDecimal.ZERO, qty.abs(), BigDecimal.ZERO,
+              orderQty == null ? null : orderQty.abs(), lineNo, closingInventoryLine);
           insertInventoryLine(cri.getCloseInventory(), productId, attrSetInsId, uomId, orderUOMId,
               locatorId, qty == null ? null : qty.abs(), BigDecimal.ZERO, orderQty == null ? null
-                  : orderQty.abs(), BigDecimal.ZERO, lineNo);
-          insertInventoryLine(cri.getInitInventory(), productId, attrSetInsId, uomId, orderUOMId,
-              locatorId, BigDecimal.ZERO, qty.abs(), BigDecimal.ZERO, orderQty == null ? null
-                  : orderQty.abs(), lineNo);
+                  : orderQty.abs(), BigDecimal.ZERO, lineNo, openInventoryLine);
+
         }
 
         if ((i % 100) == 0) {
@@ -432,9 +438,10 @@ public class CostingRuleProcess implements Process {
     return cri;
   }
 
-  private void insertInventoryLine(InventoryCount inventory, String productId, String attrSetInsId,
-      String uomId, String orderUOMId, String locatorId, BigDecimal qtyCount, BigDecimal qtyBook,
-      BigDecimal orderQtyCount, BigDecimal orderQtyBook, Long lineNo) {
+  private InventoryCountLine insertInventoryLine(InventoryCount inventory, String productId,
+      String attrSetInsId, String uomId, String orderUOMId, String locatorId, BigDecimal qtyCount,
+      BigDecimal qtyBook, BigDecimal orderQtyCount, BigDecimal orderQtyBook, Long lineNo,
+      InventoryCountLine relatedInventoryLine) {
     InventoryCountLine icl = OBProvider.getInstance().get(InventoryCountLine.class);
     icl.setClient(inventory.getClient());
     icl.setOrganization(inventory.getOrganization());
@@ -452,13 +459,13 @@ public class CostingRuleProcess implements Process {
       icl.setQuantityOrderBook(orderQtyBook);
       icl.setOrderUOM((ProductUOM) OBDal.getInstance().getProxy(ProductUOM.ENTITY_NAME, orderUOMId));
     }
-
+    icl.setRelatedInventoryLineID(relatedInventoryLine);
     List<InventoryCountLine> invLines = inventory.getMaterialMgmtInventoryCountLineList();
     invLines.add(icl);
     inventory.setMaterialMgmtInventoryCountLineList(invLines);
     OBDal.getInstance().save(inventory);
     OBDal.getInstance().flush();
-
+    return icl;
   }
 
   private void updateInventoriesCostAndProcessInitInventories(String ruleId, Date startingDate,

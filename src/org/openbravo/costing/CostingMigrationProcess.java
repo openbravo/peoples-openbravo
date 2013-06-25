@@ -421,9 +421,8 @@ public class CostingMigrationProcess implements Process {
           cost = FinancialUtils.getConvertedAmount(cost, cur, legalEntityCur, new Date(),
               icl.getOrganization(), FinancialUtils.PRECISION_COSTING);
         }
-        OBDal.getInstance().refresh(icl.getPhysInventory());
-        CostingRuleInit cri = icl.getPhysInventory().getCostingRuleInitCloseInventoryList().get(0);
-        InventoryCountLine initICL = crp.getInitIcl(cri.getInitInventory(), icl);
+
+        InventoryCountLine initICL = icl.getRelatedInventoryLineID();
         initICL.setCost(cost);
         OBDal.getInstance().save(initICL);
 
