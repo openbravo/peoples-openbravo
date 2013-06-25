@@ -316,16 +316,16 @@ public class CostingRuleProcess implements Process {
           // By doing so the difference between both quantities remains the same and no negative
           // values have been inserted.
           insertInventoryLine(cri.getCloseInventory(), productId, attrSetInsId, uomId, orderUOMId,
+              locatorId, BigDecimal.ZERO, qty, BigDecimal.ZERO, orderQty, lineNo);
+          insertInventoryLine(cri.getInitInventory(), productId, attrSetInsId, uomId, orderUOMId,
+              locatorId, qty, BigDecimal.ZERO, orderQty, BigDecimal.ZERO, lineNo);
+        } else {
+          insertInventoryLine(cri.getCloseInventory(), productId, attrSetInsId, uomId, orderUOMId,
               locatorId, qty == null ? null : qty.abs(), BigDecimal.ZERO, orderQty == null ? null
                   : orderQty.abs(), BigDecimal.ZERO, lineNo);
           insertInventoryLine(cri.getInitInventory(), productId, attrSetInsId, uomId, orderUOMId,
               locatorId, BigDecimal.ZERO, qty.abs(), BigDecimal.ZERO, orderQty == null ? null
                   : orderQty.abs(), lineNo);
-        } else {
-          insertInventoryLine(cri.getCloseInventory(), productId, attrSetInsId, uomId, orderUOMId,
-              locatorId, BigDecimal.ZERO, qty, BigDecimal.ZERO, orderQty, lineNo);
-          insertInventoryLine(cri.getInitInventory(), productId, attrSetInsId, uomId, orderUOMId,
-              locatorId, qty, BigDecimal.ZERO, orderQty, BigDecimal.ZERO, lineNo);
         }
 
         if ((i % 100) == 0) {
