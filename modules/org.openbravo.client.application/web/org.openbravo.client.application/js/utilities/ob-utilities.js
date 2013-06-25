@@ -219,7 +219,7 @@ OB.Utilities.createLoadingLayout = function (label) {
 // Adds the Required suffix to a base style for a required formitem, to show it yellow in 
 // the forms.
 OB.Utilities.addRequiredSuffixToBaseStyle = function (item) {
-  if (item.required) {
+  if (item && item.required) {
     // apparently this is called many times therefore do not append
     // if we already did append it
     if (item.textFieldProperties && item.textFieldProperties.textBoxStyle) {
@@ -238,7 +238,11 @@ OB.Utilities.addRequiredSuffixToBaseStyle = function (item) {
 // ** {{{OB.Utilities.determineViewOfFormItem}}} **
 // Handles the different ways to find the view of a form item.
 OB.Utilities.determineViewOfFormItem = function (item) {
-  var form = item.form;
+  var form;
+  if (!item) {
+    return null;
+  }
+  form = item.form;
   if (form.view) {
     // form item in standard form
     return form.view;
