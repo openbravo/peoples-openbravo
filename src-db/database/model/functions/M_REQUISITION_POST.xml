@@ -33,6 +33,7 @@
   v_bpartner_blocked VARCHAR2(1):='N';
   v_inOutBlocking VARCHAR2(1):='N';
   v_bpartner_name c_bpartner.name%TYPE;
+  v_productname m_product.name%TYPE;
 
   --  Parameter
   TYPE RECORD IS REF CURSOR;
@@ -61,6 +62,7 @@ BEGIN
     SELECT DocAction, DocStatus , c_bpartner_id INTO v_DocAction, v_DocStatus, v_bpartner
     FROM M_REQUISITION
     WHERE M_REquisition_ID = v_Record_ID;
+    
     IF (v_DocAction = 'CO' AND v_bpartner IS NOT NULL) THEN
       SELECT  vendor_blocking , po_order_blocking, name  
       INTO v_bpartner_blocked, v_inOutBlocking, v_bpartner_name
@@ -103,6 +105,14 @@ BEGIN
       IF v_Aux=0 THEN
         RAISE_APPLICATION_ERROR(-20000, '@RequisitionWithoutLines@');
       END IF;
+    END IF;
+
+    SELECT count(*), max(p.name) INTO v_aux, v_productname
+    FROM m_requisitionline rl JOIN m_product p ON rl.m_product_id = p.m_product_id
+    WHERE rl.m_requisition_id = v_record_id
+      AND COALESCE(p.isgeneric, 'N') = 'Y';
+    IF (v_aux > 0) THEN
+      RAISE_APPLICATION_ERROR(-20000, '@CannotUseGenericProduct@ ' || v_productName);
     END IF;
 
     /**

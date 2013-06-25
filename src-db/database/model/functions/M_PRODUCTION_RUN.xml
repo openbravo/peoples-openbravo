@@ -59,7 +59,7 @@
   v_Line NUMBER;
   v_Count NUMBER;
   p_User VARCHAR2(32);
-  v_Product_Name VARCHAR2(2000):='';
+  v_Product_Name m_product.name%TYPE;
   -- Stocked BOMs
   -- Proposed stock from given warehouse is priorized.
   CURSOR CUR_STOCK (v_ad_pinstance_id VARCHAR) IS
@@ -457,6 +457,16 @@ BEGIN --BODY
       v_Message:='@Product@'||' "' ||v_Product_Name ||'" ' || '@ProductWithoutAttributeSet@';
       RAISE_APPLICATION_ERROR(-20000, v_Message);
     END IF;
+    SELECT count(*), max(p.name) INTO v_count, v_product_name
+    FROM m_productionplan pp
+        JOIN m_productionline pl ON pp.m_productionplan_id = pl.m_productionplan_id
+        JOIN m_product p ON pl.m_product_id = p.m_product_id
+    WHERE pp.m_production_id = v_record_id
+      AND COALESCE(p.isgeneric, 'N') = 'Y';
+    IF (v_count > 0) THEN
+      RAISE_APPLICATION_ERROR(-20000, '@CannotUseGenericProduct@ ' || v_product_Name);
+    END IF;
+
     -- All Production Lines
     FOR CUR_PL_Post IN (
         SELECT pl.M_ProductionLine_ID, pl.AD_Client_ID, pl.AD_Org_ID, p.MovementDate,

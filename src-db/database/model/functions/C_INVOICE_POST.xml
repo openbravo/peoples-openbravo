@@ -169,7 +169,7 @@
   v_bpartner_blocked VARCHAR2(1):='N';
   v_invoiceBlocking VARCHAR2(1):='N';
   v_bpartner_name c_bpartner.name%TYPE;
-
+  v_productname m_product.name%TYPE;
     
 BEGIN
   IF (p_PInstance_ID IS NOT NULL) THEN
@@ -294,6 +294,14 @@ BEGIN --BODY
     IF (v_count=0) THEN
       RAISE_APPLICATION_ERROR(-20000, '@InvoicesNeedLines@');
     END IF;
+    SELECT count(*), max(p.name) INTO v_count, v_productname
+    FROM c_invoiceline il JOIN m_product p ON il.m_product_id = p.m_product_id
+    WHERE COALESCE(p.isgeneric, 'N') = 'Y'
+      AND il.c_invoice_id = v_record_id;
+    IF (v_count > 0) THEN
+      RAISE_APPLICATION_ERROR(-20000, '@CannotUseGenericProduct@ ' || v_productName);
+    END IF;
+
     /*
      * Avoids repeating the same documentno for the same organization tree within the same fiscal year
      */

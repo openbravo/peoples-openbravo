@@ -46,6 +46,7 @@
   v_count           NUMBER;
   v_quantity        NUMBER;
   v_reservedqty     NUMBER;
+  v_productname     m_product.name%TYPE;
 
 TYPE RECORD IS REF CURSOR;
   Cur_Parameter RECORD;
@@ -85,6 +86,14 @@ BEGIN
         v_product_id, v_uom_id, v_client_id, v_org_id
   FROM m_reservation
   WHERE m_reservation_id = v_reservation_id;
+  
+  SELECT count(*), max(p.name) INTO v_count, v_productname
+  FROM m_product p 
+  WHERE p.m_product_id = v_product_id
+    AND COALESCE(p.isgeneric, 'N') = 'Y';
+  IF (v_count > 0) THEN
+    RAISE_APPLICATION_ERROR(-20000, '@CannotUseGenericProduct@ ' || v_productName);
+  END IF;
   
   IF (v_resaction = 'PR') THEN
   /*

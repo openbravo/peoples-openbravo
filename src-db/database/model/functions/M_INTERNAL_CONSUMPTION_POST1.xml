@@ -47,6 +47,7 @@
   v_action VARCHAR2(60):='CO';
   v_status M_Internal_Consumption.status%TYPE;
   v_name M_Internal_Consumption.name%TYPE;
+  v_productname m_product.name%TYPE;
 BEGIN
   --  Update AD_PInstance
   IF (pinstance_id IS NOT NULL) THEN
@@ -112,6 +113,15 @@ BEGIN --BODY
   WHERE M_Internal_Consumption_ID=Record_ID;
   IF (v_Count = 0) THEN
     RAISE_APPLICATION_ERROR(-20000, '@InternalConsuptionNoLines@') ;
+  END IF;
+
+  SELECT count(*), max(p.name)
+    INTO v_count, v_productname
+  FROM m_internal_consumptionline icl JOIN m_product p ON icl.m_product_id = p.m_product_id
+  WHERE icl.m_internal_consumption_id = record_id
+    AND COALESCE(p.isgeneric, 'N') = 'Y';
+  IF (v_count > 0) THEN
+    RAISE_APPLICATION_ERROR(-20000, '@CannotUseGenericProduct@ ' || v_productName);
   END IF;
   
   IF (v_action IN ('CO')) THEN

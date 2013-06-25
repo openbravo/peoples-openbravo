@@ -165,6 +165,7 @@
           FROM M_Product p
           WHERE p.AD_Client_ID=v_Client_ID
             AND IsStocked='Y'
+            AND COALESCE(p.isgeneric, 'N') = 'N'
             AND NOT EXISTS
             (SELECT *
             FROM M_Storage_Detail s
@@ -240,6 +241,7 @@
 		 AND COALESCE(QTYORDERONHAND,0) = 0
 		 AND PREQTYONHAND=0
 		 AND COALESCE(PREQTYORDERONHAND,0) = 0) OR v_QtyRange = '=')
+        AND COALESCE(p.isgeneric, 'N') = 'N'
       ORDER BY s.M_Locator_ID,
         p.Value,
         s.Created

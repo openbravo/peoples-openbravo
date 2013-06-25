@@ -63,6 +63,7 @@
     END_PROCESS BOOLEAN:=false;
     END_PROCESSING BOOLEAN:=false;
     rowcount NUMBER;
+    v_productname m_product.name%TYPE;
   BEGIN
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Processing') ;
@@ -131,6 +132,14 @@
       AND M.M_Inventory_ID=v_Record_ID;
     IF v_Count<>0 THEN
       RAISE_APPLICATION_ERROR(-20000, '@Inline@'||' '||v_line||' '||'@productWithoutAttributeSet@') ;
+    END IF;
+    SELECT count(*), max(p.name)
+      INTO v_count, v_productname
+    FROM m_inventoryline il JOIN m_product p ON il.m_product_id = p.m_product_id
+    WHERE il.m_inventory_id = v_record_id
+      AND COALESCE(p.isgeneric, 'N') = 'Y';
+    IF (v_count > 0) THEN
+      RAISE_APPLICATION_ERROR(-20000, '@CannotUseGenericProduct@ ' || v_productName);
     END IF;
   END IF;--PROCESS_ERROR
   IF(NOT PROCESS_ERROR AND NOT END_PROCESS AND NOT END_PROCESSING) THEN

@@ -46,6 +46,8 @@
     v_C_CommissionRun_ID VARCHAR2(32) ;
     v_NextNo VARCHAR2(32) ;
     v_DocumentNo VARCHAR(40) ;
+    v_isgeneric CHAR(1);
+    v_productname M_Product.Name%TYPE;
   BEGIN
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Processing ' || p_PInstance_ID) ;
@@ -80,16 +82,18 @@
     * Create Header + Determine DATE Range
     */
     v_ResultStr:='ReadingRecord';
-    SELECT AD_Client_ID,
-      AD_Org_ID,
-      Name,
-      FrequencyType,
-      DocBasisType,
-      ListDetails,
-      C_BPartner_ID, 
-      BasisStatus, 
-      BasisAmt, 
-      iscascade
+    SELECT c.AD_Client_ID,
+      c.AD_Org_ID,
+      c.Name,
+      c.FrequencyType,
+      c.DocBasisType,
+      c.ListDetails,
+      c.C_BPartner_ID, 
+      c.BasisStatus, 
+      c.BasisAmt, 
+      c.iscascade,
+      COALESCE(p.isgeneric, 'N'),
+      p.name
     INTO v_AD_Client_ID,
       v_AD_Org_ID,
       v_Name,
@@ -99,10 +103,17 @@
       v_SalesRep_ID, 
       v_BasisStatus, 
       v_BasisAmt, 
-      v_isCascade
-    FROM C_Commission
+      v_isCascade,
+      v_isgeneric,
+      v_productname
+    FROM C_Commission c
+        LEFT JOIN m_product p ON c.m_product_id = p.m_product_id
     WHERE C_Commission_ID=v_Record_ID;
     --
+    IF (v_isgeneric = 'Y') THEN
+      RAISE_APPLICATION_ERROR(-20000, '@CannotUseGenericProduct@ ' || v_productName);
+    END IF;
+    
     SELECT ISO_Code
     INTO v_Currency
     FROM C_Currency cur,

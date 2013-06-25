@@ -68,6 +68,7 @@
     v_prodline NUMBER;
     v_line NUMBER;
     v_AD_Pinstance_ID VARCHAR2(32);
+    v_productname m_product.name%TYPE;
   BEGIN
     -- Process Parameters
     IF(p_PInstance_ID IS NOT NULL) THEN
@@ -104,6 +105,16 @@
       v_Message:='@WorkEffortValidated@';
       RAISE_APPLICATION_ERROR(-20000, v_Message);
     END IF;
+    SELECT count(*), max(p.name) INTO v_count, v_productname
+    FROM m_productionplan pp
+        JOIN m_productionline pl ON pp.m_productionplan_id = pl.m_productionplan_id
+        JOIN m_product p ON p.m_product_id = pl.m_product_id
+    WHERE pp.m_production_id = v_record_id
+      AND COALESCE(p.isgeneric, 'N') = 'Y';
+    IF (v_count > 0) THEN
+      RAISE_APPLICATION_ERROR(-20000, '@CannotUseGenericProduct@ ' || v_productName);
+    END IF;
+    
     IF(NOT FINISH_PROCESS) THEN
       -- Check that there are some parts of the job and that theay are processed
       

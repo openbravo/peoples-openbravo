@@ -33,6 +33,8 @@
     v_C_OrderLine_ID VARCHAR2(32);
     v_C_DOCTYPE_ID VARCHAR2(32);
     v_DocumentNo VARCHAR(40);
+    v_isgeneric CHAR(1);
+    v_productname M_Product.Name%TYPE;
   BEGIN
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Processing ' || p_PInstance_ID) ;
@@ -125,6 +127,15 @@
           FOR SOLINES IN
             (SELECT * FROM C_PROJECTLINE WHERE C_PROJECT_ID=v_Record_ID)
           LOOP
+            IF (solines.m_product_id IS NOT NULL) THEN
+              SELECT COALESCE(isgeneric, 'N'), name INTO v_isgeneric, v_productname
+              FROM m_product
+              WHERE m_product_id = solines.m_product_id;
+              IF (v_isgeneric = 'Y') THEN
+                RAISE_APPLICATION_ERROR(-20000, '@CannotUseGenericProduct@ ' || v_productName);
+              END IF;
+            END IF;
+
             IF(SOLINES.M_PRODUCT_ID IS NOT NULL AND Cur_SO.M_PRICELIST_VERSION_ID IS NOT NULL) THEN
               v_ResultStr:='SOLINES1 - SO.M_PRICELIST_VERSION_ID - ' || Cur_SO.M_PRICELIST_VERSION_ID || ' - ' || SOLINES.M_PRODUCT_ID;
               SELECT COUNT(p.C_UOM_ID)

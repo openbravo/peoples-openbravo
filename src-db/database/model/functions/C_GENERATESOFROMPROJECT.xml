@@ -32,6 +32,8 @@
     v_C_OrderLine_ID VARCHAR2(32);
     v_C_DOCTYPE_ID VARCHAR2(32);
     v_DocumentNo NVARCHAR2(30) ;
+    v_isgeneric CHAR(1);
+    v_productname M_Product.Name%TYPE;
   BEGIN
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Processing ' || p_PInstance_ID) ;
@@ -181,6 +183,12 @@
             ORDER BY SEQNO ASC
             )
           LOOP
+            SELECT COALESCE(isgeneric, 'N'), name INTO v_isgeneric, v_productname
+            FROM m_product
+            WHERE m_product_id = cur_solines.m_product_id;
+            IF (v_isgeneric = 'Y') THEN
+              RAISE_APPLICATION_ERROR(-20000, '@CannotUseGenericProduct@ ' || v_productName);
+            END IF;
 
             -- Take StdPrice, PriceList and PriceLimit from Price List Version
             SELECT COUNT(*)

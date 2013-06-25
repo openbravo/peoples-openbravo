@@ -117,6 +117,7 @@
   v_bpartner_blocked VARCHAR2(1):='N';
   v_orderBlocking VARCHAR2(1):='N';
   v_bpartner_name c_bpartner.name%TYPE;
+  v_productname m_product.name%TYPE;
 
   BEGIN
     IF (p_PInstance_ID IS NOT NULL) THEN
@@ -209,6 +210,14 @@
     -- Get the name of the org of the Order. Added by P.Sarobe
     SELECT name INTO v_Org_Name FROM AD_ORG WHERE ad_org_id = v_Org_ID;
     DBMS_OUTPUT.PUT_LINE('DocAction=' || v_DocAction || ', DocStatus=' || v_DocStatus || ', DocType_ID=' || v_DocType_ID || ', DocTypeTarget_ID=' || v_DocTypeTarget_ID || ', DocSubTypeSO=' || v_DocSubTypeSO) ;
+
+    SELECT count(*), max(p.name) INTO v_aux, v_productname
+    FROM c_orderline ol JOIN m_product p ON ol.m_product_id = p.m_product_id
+    WHERE ol.c_order_id = v_record_id
+      AND COALESCE(p.isgeneric, 'N') = 'Y';
+    IF (v_aux > 0) THEN
+      RAISE_APPLICATION_ERROR(-20000, '@CannotUseGenericProduct@ ' || v_productName);
+    END IF;
 
     /** 
     * Quotations

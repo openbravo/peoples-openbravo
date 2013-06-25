@@ -55,6 +55,7 @@
     v_isacctle AD_OrgType.IsAcctLegalEntity%TYPE;
     v_org_bule_id AD_Org.AD_Org_ID%TYPE;
     END_PROCESS BOOLEAN:=false;
+    v_productname m_product.name%TYPE;
   BEGIN
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Processing ' || PInstance_ID) ;
@@ -116,6 +117,14 @@
         AND M.M_Movement_ID=v_Record_ID;
       IF v_Count<>0 THEN
        RAISE_APPLICATION_ERROR(-20000, '@Inline@'||' '||v_line||' '||'@productWithoutAttributeSet@') ;
+      END IF;
+      SELECT count(*), max(p.name)
+        INTO v_count, v_productname
+      FROM m_movementline ml JOIN m_product p ON ml.m_product_id = p.m_product_id
+      WHERE ml.m_movement_id = v_record_id
+        AND COALESCE(p.isgeneric, 'N') = 'Y';
+      IF (v_count > 0) THEN
+        RAISE_APPLICATION_ERROR(-20000, '@CannotUseGenericProduct@ ' || v_productName);
       END IF;
     END IF;--END_PROCESS
     IF(NOT END_PROCESS) THEN

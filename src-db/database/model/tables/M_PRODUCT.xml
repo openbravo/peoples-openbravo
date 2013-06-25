@@ -402,6 +402,9 @@
       <foreign-key foreignTable="MA_PROCESSPLAN" name="MA_PROCESSPLAN_MPRODUCT">
         <reference local="MA_PROCESSPLAN_ID" foreign="MA_PROCESSPLAN_ID"/>
       </foreign-key>
+      <index name="M_PRODUC_ISGENERID_IDX" unique="false">
+        <index-column name="ISGENERIC"/>
+      </index>
       <index name="M_PRODUCT_BPARTNER" unique="false">
         <index-column name="C_BPARTNER_ID"/>
       </index>
