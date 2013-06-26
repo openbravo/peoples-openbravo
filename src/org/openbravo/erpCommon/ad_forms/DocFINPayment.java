@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -55,7 +55,6 @@ import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment_Credit;
 import org.openbravo.model.financialmgmt.payment.FinAccPaymentMethod;
-import org.openbravo.service.db.DalConnectionProvider;
 
 public class DocFINPayment extends AcctServer {
   private static final long serialVersionUID = 1L;
@@ -203,17 +202,17 @@ public class DocFINPayment extends AcctServer {
         FieldProviderFactory.setField(data[i], "cSalesregionId", paymentDetails.get(i)
             .getFINPaymentScheduleDetailList().get(0).getSalesRegion() != null ? paymentDetails
             .get(i).getFINPaymentScheduleDetailList().get(0).getSalesRegion().getId() : "");
+        FieldProviderFactory
+            .setField(data[i], "cCostcenterId", paymentDetails.get(i)
+                .getFINPaymentScheduleDetailList().get(0).getCostCenter() != null ? paymentDetails
+                .get(i).getFINPaymentScheduleDetailList().get(0).getCostCenter().getId() : "");
 
-        try { // Get User1_ID and User2_ID using xsql
-          ConnectionProvider conn = new DalConnectionProvider(false);
-          DocFINPaymentData[] paymentInfo = DocFINPaymentData.select(conn, payment.getId());
-          if (paymentInfo.length > 0) {
-            FieldProviderFactory.setField(data[i], "user1Id", paymentInfo[0].user1Id);
-            FieldProviderFactory.setField(data[i], "user2Id", paymentInfo[0].user2Id);
-          }
-        } catch (Exception e) {
-          log4j.error("Error while retreiving user1 and user2 - ", e);
-        }
+        FieldProviderFactory.setField(data[i], "user1Id", paymentDetails.get(i)
+            .getFINPaymentScheduleDetailList().get(0).getStDimension() != null ? paymentDetails
+            .get(i).getFINPaymentScheduleDetailList().get(0).getStDimension().getId() : "");
+        FieldProviderFactory.setField(data[i], "user2Id", paymentDetails.get(i)
+            .getFINPaymentScheduleDetailList().get(0).getNdDimension() != null ? paymentDetails
+            .get(i).getFINPaymentScheduleDetailList().get(0).getNdDimension().getId() : "");
 
       }
     } finally {
@@ -603,6 +602,7 @@ public class DocFINPayment extends AcctServer {
     if (paymentInfo.length > 0) {
       FieldProviderFactory.setField(data[0], "User1_ID", paymentInfo[0].user1Id);
       FieldProviderFactory.setField(data[0], "User2_ID", paymentInfo[0].user2Id);
+      FieldProviderFactory.setField(data[0], "User2_ID", paymentInfo[0].cCostcenterId);
     }
 
     setObjectFieldProvider(data);

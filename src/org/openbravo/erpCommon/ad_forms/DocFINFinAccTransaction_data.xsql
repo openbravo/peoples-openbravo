@@ -12,7 +12,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2011 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2013 Openbravo S.L.U.
  ******************************************************************************
 -->
 
@@ -22,7 +22,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT user1_id, user2_id
+        SELECT c_costcenter_id, user1_id, user2_id
         FROM fin_finacc_transaction
         WHERE fin_finacc_transaction_id = ?
       ]]>
