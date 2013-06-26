@@ -17,7 +17,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2012 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2013 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -59,8 +59,7 @@ BEGIN
  -- or Change the attribute set
   IF ((:new.IsActive='N' AND :old.IsActive='Y')
       OR (COALESCE(:new.m_attributeset_id,'null') <> COALESCE(:old.m_attributeset_id,'null'))
-      OR (COALESCE(:new.c_uom_id,'null') <> COALESCE(:old.c_uom_id,'null'))
-      OR (:new.IsGeneric='Y' AND :old.IsGeneric='N')) THEN
+      OR (COALESCE(:new.c_uom_id,'null') <> COALESCE(:old.c_uom_id,'null'))) THEN
    SELECT  COALESCE(SUM(QtyOnHand)+SUM(QtyReserved)*.111+SUM(QtyOrdered)*999, 0) INTO v_ControlNo
    FROM (SELECT QtyOnHand, 0 AS QtyReserved, 0 AS QtyOrdered
    FROM M_Storage_Detail s
@@ -74,8 +73,6 @@ BEGIN
       RAISE_APPLICATION_ERROR(-20000, '@20633@');
     ELSIF (COALESCE(:new.c_uom_id,'null') <> COALESCE(:old.c_uom_id,'null')) THEN
       RAISE_APPLICATION_ERROR(-20000, '@20634@');
-    ELSIF (:new.IsGeneric='Y' AND :old.IsGeneric='N') THEN
-      RAISE_APPLICATION_ERROR(-20000, '@GenericWithStock@');
     ELSE
       RAISE_APPLICATION_ERROR(-20000, '@20400@');
     END IF;
@@ -86,6 +83,19 @@ BEGIN
     UPDATE M_PRODUCT_Trl
       SET IsTranslated='N'
     WHERE M_PRODUCT_ID=:new.M_PRODUCT_ID;
+  END IF;
+
+  -- Do not allow to set as generic a product used in documents.
+  IF (:OLD.isgeneric = 'N' AND :NEW.isgeneric = 'Y') THEN
+    SELECT count(*) INTO v_count
+    FROM dual
+    WHERE EXISTS (SELECT 1 FROM c_orderline WHERE m_product_id = :NEW.m_product_id)
+       OR EXISTS (SELECT 1 FROM c_invoiceline WHERE m_product_id = :NEW.m_product_id)
+       OR EXISTS (SELECT 1 FROM m_storage_detail WHERE m_product_id = :NEW.m_product_id)
+       OR EXISTS (SELECT 1 FROM m_transaction WHERE m_product_id = :NEW.m_product_id);
+    IF (v_count > 0) THEN
+      RAISE_APPLICATION_ERROR(-20000, '@CannotSetAsGenericProduct@');
+    END IF;
   END IF;
 
  ELSIF (INSERTING) THEN
