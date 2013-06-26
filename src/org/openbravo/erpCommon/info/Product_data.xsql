@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -61,7 +61,8 @@
         M_Pricelist pl, M_PriceList_Version pv
         WHERE
             pv.M_PriceList_Version_ID = ?
-        AND pv.M_PriceList_ID=pl.M_PriceList_ID
+        AND pv.M_PriceList_ID=pl.M_PriceList_ID 
+        AND p.IsGeneric='N'
         ) A ORDER BY Value
       ]]></Sql>
         <Field name="position" value="count"/>
@@ -91,7 +92,8 @@
         SELECT 1 FROM M_Product p, M_ProductPrice pr
         WHERE p.M_Product_ID=pr.M_Product_ID 
         AND p.IsSummary='N' 
-        AND p.IsActive='Y' 
+        AND p.IsActive='Y'  
+        AND p.IsGeneric='N'
         AND pr.IsActive='Y'
         AND pr.M_PriceList_Version_ID = ?
         AND p.AD_Client_ID IN ('1') 
