@@ -21825,7 +21825,7 @@ Reload the context to make the changes available.]]></MSGTEXT>
 <!--AA8371C7B5984858B3020B9C578008FB-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--AA8371C7B5984858B3020B9C578008FB-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--AA8371C7B5984858B3020B9C578008FB-->  <VALUE><![CDATA[FIN_NoMultiCurrencyAllowed]]></VALUE>
-<!--AA8371C7B5984858B3020B9C578008FB-->  <MSGTEXT><![CDATA[No Multicurrency transactions are allowed. The exchange rate should be the same as the exchange rate of the Financial Account.]]></MSGTEXT>
+<!--AA8371C7B5984858B3020B9C578008FB-->  <MSGTEXT><![CDATA[No Multicurrency transactions are allowed. The currency should be the same as the currency of the Financial Account.]]></MSGTEXT>
 <!--AA8371C7B5984858B3020B9C578008FB-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--AA8371C7B5984858B3020B9C578008FB-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--AA8371C7B5984858B3020B9C578008FB-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
