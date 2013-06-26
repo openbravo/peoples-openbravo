@@ -422,7 +422,7 @@ public class CostingMigrationProcess implements Process {
               icl.getOrganization(), FinancialUtils.PRECISION_COSTING);
         }
 
-        InventoryCountLine initICL = icl.getRelatedInventoryLineID();
+        InventoryCountLine initICL = icl.getRelatedInventory();
         initICL.setCost(cost);
         OBDal.getInstance().save(initICL);
 

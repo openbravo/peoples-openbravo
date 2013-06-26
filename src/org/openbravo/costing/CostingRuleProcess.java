@@ -459,7 +459,7 @@ public class CostingRuleProcess implements Process {
       icl.setQuantityOrderBook(orderQtyBook);
       icl.setOrderUOM((ProductUOM) OBDal.getInstance().getProxy(ProductUOM.ENTITY_NAME, orderUOMId));
     }
-    icl.setRelatedInventoryLineID(relatedInventoryLine);
+    icl.setRelatedInventory(relatedInventoryLine);
     List<InventoryCountLine> invLines = inventory.getMaterialMgmtInventoryCountLineList();
     invLines.add(icl);
     inventory.setMaterialMgmtInventoryCountLineList(invLines);
