@@ -70,7 +70,7 @@
               var taxamt = orggross;
               var taxamtdc;
               if (!(_.isNull(discountedGross) || _.isUndefined(discountedGross))) {
-                taxamtdc = discountedGross;
+                taxamtdc = new BigDecimal(String(discountedGross));
               }
               coll = _.filter(coll.models, function (taxRate) {
                 return taxRate.get('validFromDate') === validFromDate;
@@ -84,13 +84,13 @@
                     linerate = linerate.multiply(rate.add(BigDecimal.prototype.ONE));
                     taxamt = OB.DEC.mul(taxamt, OB.DEC.add(1, rate));
                     if (!(_.isNull(discountedGross) || _.isUndefined(discountedGross))) {
-                      taxamtdc = OB.DEC.mul(taxamtdc, OB.DEC.add(1, rate));
+                      taxamtdc = taxamtdc.multiply(new BigDecimal(String(OB.DEC.add(1, rate))));
                     }
                   } else {
                     linerate = linerate.add(rate);
                     taxamt = OB.DEC.add(taxamt, OB.DEC.mul(orggross, rate));
                     if (!(_.isNull(discountedGross) || _.isUndefined(discountedGross))) {
-                      taxamtdc = OB.DEC.add(taxamtdc, OB.DEC.mul(discountedGross, rate));
+                      taxamtdc = taxamtdc.add(new BigDecimal(String(OB.DEC.mul(discountedGross, rate))));
                     }
                   }
                 } else {
@@ -123,7 +123,7 @@
               //We follow the same formula of function c_get_net_price_from_gross to compute the discounted net
               if (!(_.isNull(discountedGross) || _.isUndefined(discountedGross))) {
                 if (taxamtdc) {
-                  discountedNet = OB.DEC.div(OB.DEC.mul(discountedGross, discountedGross), taxamtdc);
+                  discountedNet = OB.DEC.div(new BigDecimal(String(discountedGross)).multiply(new BigDecimal(String(discountedGross))), taxamtdc);
                   pricenet = OB.DEC.div(discountedNet, element.get('qty'));
                 } else {
                   //taxamtdc === 0
