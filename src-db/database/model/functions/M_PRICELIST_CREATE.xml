@@ -269,7 +269,7 @@
            OR p.C_BPartner_ID=Cur_DiscountLine.C_BPartner_ID)
            AND(Cur_DiscountLine.M_Product_ID IS NULL
            OR p.M_Product_ID=Cur_DiscountLine.M_Product_ID)
-           AND datefrom<=v_validfromdate AND dateto>v_validfromdate
+           AND TRUNC(datefrom)<=v_validfromdate AND TRUNC(dateto)>v_validfromdate
            AND NOT EXISTS
            (select M_Product_id from c_discount d where co.M_Product_id=d.M_Product_id);
         ELSE
