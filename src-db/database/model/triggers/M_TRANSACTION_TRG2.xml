@@ -15,13 +15,15 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2012 Openbravo SLU
+* All portions are Copyright (C) 2012-2013 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
   v_onhand      NUMBER;
   v_reserved    NUMBER;
   v_count       NUMBER;
+  v_productname m_product.name%TYPE;
+  v_isgeneric   CHAR(1);
 
 BEGIN
   IF (AD_isTriggerEnabled() = 'N') THEN RETURN;
@@ -59,6 +61,14 @@ BEGIN
         IF (v_onhand - v_reserved < ABS(:NEW.movementqty)) THEN
           RAISE_APPLICATION_ERROR(-20000, '@CannotTakeOutReservedStock@');
         END IF;
+      END IF;
+    END IF;
+    IF (:NEW.m_product_id IS NOT NULL) THEN
+      SELECT isgeneric, name INTO v_isgeneric, v_productname
+      FROM m_product
+      WHERE m_product_id = :NEW.m_product_id;
+      IF (v_isgeneric = 'Y') THEN
+        RAISE_APPLICATION_ERROR(-20000, '@CannotUseGenericProduct@');
       END IF;
     END IF;
   END IF;

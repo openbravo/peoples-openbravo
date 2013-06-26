@@ -2,16 +2,6 @@
   <database name="TRIGGER M_INTERNAL_CONSUMPTIONLINE_TRG">
     <trigger name="M_INTERNAL_CONSUMPTIONLINE_TRG" table="M_INTERNAL_CONSUMPTIONLINE" fires="after" insert="true" update="true" delete="true" foreach="row">
       <body><![CDATA[
-
-
-
-
-  v_ID VARCHAR2(32);
-  v_RO            NUMBER;
-  V_STOCKED       NUMBER;
-  v_MOVEMENTQTY   NUMBER;
-  v_QUANTITYORDER NUMBER;
-  v_AttrSetValueType M_Product.AttrSetValueType%TYPE;
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
@@ -24,10 +14,19 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2012 Openbravo SLU
+* All portions are Copyright (C) 2001-2013 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
+
+  v_ID VARCHAR2(32);
+  v_RO            NUMBER;
+  V_STOCKED       NUMBER;
+  v_MOVEMENTQTY   NUMBER;
+  v_QUANTITYORDER NUMBER;
+  v_AttrSetValueType M_Product.AttrSetValueType%TYPE;
+  v_productname m_product.name%TYPE;
+  v_isgeneric   CHAR(1);
     
 BEGIN
     

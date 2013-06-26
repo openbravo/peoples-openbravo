@@ -14,7 +14,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2012 Openbravo SLU
+* All portions are Copyright (C) 2001-2013 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -30,6 +30,8 @@
   v_BP_PL_Currency_ID VARCHAR2(32);
   v_Count NUMBER;
   v_Posted VARCHAR(60);
+  v_productname m_product.name%TYPE;
+  v_isgeneric   CHAR(1);
     
 BEGIN
     
@@ -146,6 +148,16 @@ BEGIN
             RAISE_APPLICATION_ERROR(-20000, '@20555@') ;
           END IF;
         END IF;      
+      END IF;
+    END IF;
+  END IF;
+  IF (INSERTING) THEN
+    IF (:NEW.m_product_id IS NOT NULL) THEN
+      SELECT isgeneric, name INTO v_isgeneric, v_productname
+      FROM m_product
+      WHERE m_product_id = :NEW.m_product_id;
+      IF (v_isgeneric = 'Y') THEN
+        RAISE_APPLICATION_ERROR(-20000, '@CannotUseGenericProduct@');
       END IF;
     END IF;
   END IF;
