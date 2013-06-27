@@ -37,6 +37,8 @@ import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.model.common.currency.ConversionRateDoc;
 import org.openbravo.model.common.currency.Currency;
+import org.openbravo.model.common.invoice.Invoice;
+import org.openbravo.model.common.invoice.InvoiceLine;
 import org.openbravo.model.financialmgmt.calendar.Period;
 
 public class DocInvoice extends AcctServer {
@@ -1121,13 +1123,20 @@ public class DocInvoice extends AcctServer {
   public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {
     DocInvoiceData[] data = null;
     FieldProvider dataFP[] = getObjectFieldProvider();
-
     if (ZERO.compareTo(new BigDecimal(dataFP[0].getField("GrandTotal"))) == 0) {
-      strMessage = "@TotalGrossIsZero@";
-      setStatus(STATUS_DocumentDisabled);
-      return false;
+      Invoice invoice = OBDal.getInstance().get(Invoice.class, strRecordId);
+      boolean zero = true;
+      for (InvoiceLine invoiceline : invoice.getInvoiceLineList()) {
+        if (ZERO.compareTo(invoiceline.getLineNetAmount()) != 0) {
+          zero = false;
+        }
+      }
+      if (zero) {
+        strMessage = "@TotalGrossIsZero@";
+        setStatus(STATUS_DocumentDisabled);
+        return false;
+      }
     }
-
     try {
       data = DocInvoiceData.selectRegistro(conn, AD_Client_ID, strRecordId);
       AcctSchema[] m_acctSchemas = reloadLocalAcctSchemaArray(data[0].adOrgId);
