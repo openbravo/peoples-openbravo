@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,7 +29,7 @@
                AL.A_AMORTIZATION_ID,
                AL.A_AMORTIZATIONLINE_ID,
                COALESCE(ALAD.AMT, AL.AMORTIZATIONAMT) AS AMORTIZATIONAMT,
-               COALESCE(ALAD.A_ASSET_ID, ASSET.M_PRODUCT_ID) AS M_PRODUCT_ID,
+               COALESCE(ALAD.M_PRODUCT_ID, ASSET.M_PRODUCT_ID) AS M_PRODUCT_ID,
                COALESCE(ALAD.A_ASSET_ID, AL.A_ASSET_ID) AS A_ASSET_ID,
                COALESCE(ALAD.C_PROJECT_ID, AL.C_PROJECT_ID) AS C_PROJECT_ID,
                COALESCE(ALAD.C_COSTCENTER_ID, AL.C_COSTCENTER_ID) AS C_COSTCENTER_ID,
