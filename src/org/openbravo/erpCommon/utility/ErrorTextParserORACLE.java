@@ -117,13 +117,15 @@ class ErrorTextParserORACLE extends ErrorTextParser {
 
           String toTranslate = myMessage.replace(errorCodeText + ": ", "");
           // assumption incoming error message useful part is completely contained in the first line
-          pos = toTranslate.indexOf("\n");
+          pos = toTranslate.indexOf("\\n");
           if (pos != -1) {
             toTranslate = toTranslate.substring(0, pos);
           }
 
           String messageAux = Utility.parseTranslation(getConnection(), getVars(), getLanguage(),
               toTranslate);
+          // in case some backward slashes are not properly removed, remove them
+          messageAux = messageAux.replaceAll("\\\\", "");
           if (log4j.isDebugEnabled())
             log4j.debug("Message parsed: " + messageAux);
           myError.setMessage(messageAux);
