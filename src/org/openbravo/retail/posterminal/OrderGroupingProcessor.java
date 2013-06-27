@@ -70,7 +70,7 @@ public class OrderGroupingProcessor {
         + "or not exists (select 1 "
         + "                 from FIN_Payment_ScheduleDetail d"
         + "              where d.orderPaymentSchedule.order = line.salesOrder))"
-        + " and line.salesOrder.obposApplications = :terminal and line.salesOrder.deliveryStatus > 0"
+        + " and line.salesOrder.obposApplications = :terminal and line.deliveredQuantity=line.orderedQuantity"
         + " and not exists (select 1 from OrderLine as ord where invoicedQuantity<>0 and ord.salesOrder = line.salesOrder)"
         + " order by line.businessPartner.id";
 
