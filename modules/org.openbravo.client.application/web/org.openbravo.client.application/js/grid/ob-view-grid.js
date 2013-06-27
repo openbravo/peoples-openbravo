@@ -1348,9 +1348,8 @@ isc.OBViewGrid.addProperties({
     OB.KeyboardManager.Shortcuts.set('ViewGrid_CancelEditing', ['OBViewGrid.body', 'OBViewGrid.editForm'], ksAction_CancelEditing);
 
     ksAction_DeleteSelectedRecords = function () {
-      var isDeletingEnabled = !me.view.toolBar.getLeftMember(isc.OBToolbar.TYPE_DELETE).disabled;
-      if (me.getSelectedRecords().length > 0 && isDeletingEnabled) {
-        me.view.deleteSelectedRows();
+      var isRecordDeleted = me.deleteSelectedRowsByToolbarIcon();
+      if (isRecordDeleted) {
         return false; // To avoid keyboard shortcut propagation
       } else {
         return true;
@@ -2178,12 +2177,41 @@ isc.OBViewGrid.addProperties({
         title: OB.I18N.getLabel('OBUIAPP_Delete'),
         keyTitle: OB.KeyboardManager.Shortcuts.getProperty('keyComb.text', 'ToolBar_Eliminate', 'id'),
         click: function () {
-          grid.view.deleteSelectedRows();
+          grid.deleteSelectedRowsByToolbarIcon();
         }
       });
     }
-
     return menuItems;
+  },
+
+  deleteSelectedRowsByToolbarIcon: function () {
+    // The deleteSelectedRows action trigger should be the same than the toolbar button, so if this last one is overwritten,
+    // this delete rows logic should perform the same action than the toolbar button.
+    var grid = this,
+        isToolbarButtonFound = false,
+        toolbarButton, i;
+    if (grid.getSelectedRecords().length < 1) {
+      return false;
+    }
+    if (grid.view.toolBar && grid.view.toolBar.leftMembers && isc.OBToolbar.TYPE_DELETE) {
+      for (i = 0; i < grid.view.toolBar.leftMembers.length; i++) {
+        if (grid.view.toolBar.leftMembers[i].buttonType === isc.OBToolbar.TYPE_DELETE) {
+          isToolbarButtonFound = true;
+          toolbarButton = grid.view.toolBar.leftMembers[i];
+          if (!toolbarButton.disabled) {
+            toolbarButton.action();
+            return true;
+          }
+          break;
+        }
+      }
+    }
+    // But if the toolbar button is not found, do the default action
+    if (!isToolbarButtonFound) {
+      grid.view.deleteSelectedRows();
+      return true;
+    }
+    return false;
   },
 
   // +++++++++++++++++++++++++++++ Record Selection Handling +++++++++++++++++++++++
@@ -2990,10 +3018,7 @@ isc.OBViewGrid.addProperties({
       }
     };
 
-    if (ficCallDone) {
-      // reset the new values as this can have changed because of a fic call
-      newValues = this.getEditValues(rowNum);
-    } else {
+    if (!ficCallDone) {
       var editForm = this.getEditForm(),
           focusItem = editForm.getFocusItem();
       if (focusItem && !focusItem.hasPickList) {
@@ -3009,6 +3034,9 @@ isc.OBViewGrid.addProperties({
         }
       }
     }
+    // reset the new values as this can have changed because of a fic call or in the blur event of the focused item
+    newValues = this.getEditValues(rowNum);
+
     previousExplicitOffline = isc.Offline.explicitOffline;
     isc.Offline.explicitOffline = false;
     this.Super('saveEditedValues', [rowNum, colNum, newValues, oldValues, editValuesID, editCompletionEvent, saveCallback]);

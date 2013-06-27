@@ -31,6 +31,7 @@ import javax.inject.Inject;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -46,6 +47,7 @@ import org.openbravo.client.kernel.Template;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.Sqlc;
 import org.openbravo.erpCommon.obps.ActivationKey;
@@ -282,6 +284,15 @@ public class OBViewTab extends BaseTemplateComponent {
     // force a load all the columns of the table
     getTab().getTable().getADColumnList().size();
 
+    // check at least one field is visible in grid view, does not stop the execution
+    OBCriteria<Field> fieldCriteria = OBDal.getInstance().createCriteria(Field.class);
+    fieldCriteria.add(Restrictions.eq(Field.PROPERTY_TAB, getTab()));
+    fieldCriteria.add(Restrictions.eq(Field.PROPERTY_SHOWINGRIDVIEW, true));
+    if (fieldCriteria.count() == 0) {
+      log.error("No Fields are visible in grid view for Tab " + tab.getWindow().getName() + " - "
+          + tab.getName());
+    }
+
     final OBViewGridComponent viewGridComponent = createComponent(OBViewGridComponent.class);
     viewGridComponent.setParameters(getParameters());
     viewGridComponent.setTab(tab);
@@ -403,7 +414,13 @@ public class OBViewTab extends BaseTemplateComponent {
   }
 
   public String getDataSourceId() {
-    return tab.getTable().getName();
+    String dataSourceId = null;
+    if (ApplicationConstants.TABLEBASEDTABLE.equals(tab.getTable().getDataOriginType())) {
+      dataSourceId = tab.getTable().getName();
+    } else {
+      dataSourceId = tab.getTable().getObserdsDatasource().getId();
+    }
+    return dataSourceId;
   }
 
   public String getSelectionFunction() {
@@ -436,6 +453,14 @@ public class OBViewTab extends BaseTemplateComponent {
       }
     }
     throw new IllegalStateException("Entity " + getEntityName() + " does not have an id property");
+  }
+
+  public boolean isDataSourceTable() {
+    if (ApplicationConstants.DATASOURCEBASEDTABLE.equals(this.tab.getTable().getDataOriginType())) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   public String getKeyPropertyType() {

@@ -34,7 +34,11 @@ import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.materialmgmt.cost.CostingRule;
 import org.openbravo.model.materialmgmt.cost.TransactionCost;
+import org.openbravo.model.materialmgmt.transaction.InternalConsumption;
+import org.openbravo.model.materialmgmt.transaction.InternalMovement;
+import org.openbravo.model.materialmgmt.transaction.InventoryCount;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
+import org.openbravo.model.materialmgmt.transaction.ProductionTransaction;
 
 /**
  * @author gorkaion
@@ -96,10 +100,78 @@ public class CostingServer {
       // insert on m_transaction_cost
       createTransactionCost();
       OBDal.getInstance().save(transaction);
+      setNotPostedTransaction();
     } finally {
       OBContext.restorePreviousMode();
     }
     return;
+  }
+
+  private void setNotPostedTransaction() {
+    TrxType trxType = TrxType.getTrxType(transaction);
+    switch (trxType) {
+    case Shipment:
+    case ShipmentReturn:
+    case ShipmentVoid:
+    case ShipmentNegative:
+    case Receipt:
+    case ReceiptReturn:
+    case ReceiptVoid:
+    case ReceiptNegative: {
+      org.openbravo.model.materialmgmt.transaction.ShipmentInOut inout = transaction
+          .getGoodsShipmentLine().getShipmentReceipt();
+      if (!"N".equals(inout.getPosted()) || !"Y".equals(inout.getPosted())) {
+        inout.setPosted("N");
+        OBDal.getInstance().save(inout);
+      }
+      break;
+    }
+    case InventoryDecrease:
+    case InventoryIncrease: {
+      InventoryCount inventory = transaction.getPhysicalInventoryLine().getPhysInventory();
+      if (!"N".equals(inventory.getPosted()) || !"Y".equals(inventory.getPosted())) {
+        inventory.setPosted("N");
+        OBDal.getInstance().save(inventory);
+      }
+      break;
+    }
+    case IntMovementFrom:
+    case IntMovementTo: {
+      InternalMovement movement = transaction.getMovementLine().getMovement();
+      if (!"N".equals(movement.getPosted()) || !"Y".equals(movement.getPosted())) {
+        movement.setPosted("N");
+        OBDal.getInstance().save(movement);
+      }
+      break;
+    }
+    case InternalCons:
+    case InternalConsNegative:
+    case InternalConsVoid: {
+      InternalConsumption consumption = transaction.getInternalConsumptionLine()
+          .getInternalConsumption();
+      if (!"N".equals(consumption.getPosted()) || !"Y".equals(consumption.getPosted())) {
+        consumption.setPosted("N");
+        OBDal.getInstance().save(consumption);
+      }
+      break;
+    }
+    case BOMPart:
+    case BOMProduct:
+    case ManufacturingConsumed:
+    case ManufacturingProduced: {
+      ProductionTransaction production = transaction.getProductionLine().getProductionPlan()
+          .getProduction();
+      if (!"N".equals(production.getPosted()) || !"Y".equals(production.getPosted())) {
+        production.setPosted("N");
+        OBDal.getInstance().save(production);
+      }
+      break;
+    }
+    case Unknown:
+      throw new OBException("@UnknownTrxType@: " + transaction.getIdentifier());
+    default:
+      throw new OBException("@UnknownTrxType@: " + transaction.getIdentifier());
+    }
   }
 
   private CostingAlgorithm getCostingAlgorithm() {

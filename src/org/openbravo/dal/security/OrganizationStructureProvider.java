@@ -234,8 +234,8 @@ public class OrganizationStructureProvider implements OBNotSingleton {
   /**
    * Returns the parent organization of an organization.
    * 
-   * @param orgId
-   *          the id of the organization for which the parent organization is determined.
+   * @param org
+   *          the organization for which the parent organization is determined.
    * @return the parent organization.
    */
   public Organization getParentOrg(Organization org) {
@@ -456,7 +456,6 @@ public class OrganizationStructureProvider implements OBNotSingleton {
    * 
    * @param org
    *          Organization to get its period control allowed organization.
-   * @return
    */
   public Organization getPeriodControlAllowedOrganization(final Organization org) {
     if (org.isAllowPeriodControl()) {

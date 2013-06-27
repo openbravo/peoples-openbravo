@@ -235,7 +235,7 @@
 <!--118-->  <UPDATED><![CDATA[2011-02-22 17:06:39.0]]></UPDATED>
 <!--118-->  <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--118-->  <NAME><![CDATA[AK]]></NAME>
-<!--118-->  <DESCRIPTION><![CDATA[Arkansas]]></DESCRIPTION>
+<!--118-->  <DESCRIPTION><![CDATA[Alaska]]></DESCRIPTION>
 <!--118-->  <C_COUNTRY_ID><![CDATA[100]]></C_COUNTRY_ID>
 <!--118-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--118--></C_REGION>
@@ -759,7 +759,7 @@
 <!--156-->  <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--156-->  <UPDATED><![CDATA[2011-02-22 17:06:39.0]]></UPDATED>
 <!--156-->  <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--156-->  <NAME><![CDATA[Alberta]]></NAME>
+<!--156-->  <NAME><![CDATA[AB]]></NAME>
 <!--156-->  <DESCRIPTION><![CDATA[Alberta]]></DESCRIPTION>
 <!--156-->  <C_COUNTRY_ID><![CDATA[109]]></C_COUNTRY_ID>
 <!--156-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
@@ -774,8 +774,8 @@
 <!--157-->  <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--157-->  <UPDATED><![CDATA[2011-02-22 17:06:39.0]]></UPDATED>
 <!--157-->  <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--157-->  <NAME><![CDATA[British Columbia]]></NAME>
-<!--157-->  <DESCRIPTION><![CDATA[Colombie-Britannique]]></DESCRIPTION>
+<!--157-->  <NAME><![CDATA[BC]]></NAME>
+<!--157-->  <DESCRIPTION><![CDATA[British Columbia]]></DESCRIPTION>
 <!--157-->  <C_COUNTRY_ID><![CDATA[109]]></C_COUNTRY_ID>
 <!--157-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--157--></C_REGION>
@@ -789,7 +789,7 @@
 <!--158-->  <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--158-->  <UPDATED><![CDATA[2011-02-22 17:06:39.0]]></UPDATED>
 <!--158-->  <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--158-->  <NAME><![CDATA[Manitoba]]></NAME>
+<!--158-->  <NAME><![CDATA[MB]]></NAME>
 <!--158-->  <DESCRIPTION><![CDATA[Manitoba]]></DESCRIPTION>
 <!--158-->  <C_COUNTRY_ID><![CDATA[109]]></C_COUNTRY_ID>
 <!--158-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
@@ -804,8 +804,8 @@
 <!--159-->  <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--159-->  <UPDATED><![CDATA[2011-02-22 17:06:39.0]]></UPDATED>
 <!--159-->  <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--159-->  <NAME><![CDATA[New Brunswick]]></NAME>
-<!--159-->  <DESCRIPTION><![CDATA[Nouveau-Brunswick]]></DESCRIPTION>
+<!--159-->  <NAME><![CDATA[NB]]></NAME>
+<!--159-->  <DESCRIPTION><![CDATA[New Brunswick]]></DESCRIPTION>
 <!--159-->  <C_COUNTRY_ID><![CDATA[109]]></C_COUNTRY_ID>
 <!--159-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--159--></C_REGION>
@@ -819,8 +819,8 @@
 <!--160-->  <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--160-->  <UPDATED><![CDATA[2011-02-22 17:06:39.0]]></UPDATED>
 <!--160-->  <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--160-->  <NAME><![CDATA[Newfoundland, Labrador]]></NAME>
-<!--160-->  <DESCRIPTION><![CDATA[Terre-Neuve-et-Labrador]]></DESCRIPTION>
+<!--160-->  <NAME><![CDATA[NL]]></NAME>
+<!--160-->  <DESCRIPTION><![CDATA[Newfoundland and Labrador]]></DESCRIPTION>
 <!--160-->  <C_COUNTRY_ID><![CDATA[109]]></C_COUNTRY_ID>
 <!--160-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--160--></C_REGION>
@@ -834,8 +834,8 @@
 <!--161-->  <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--161-->  <UPDATED><![CDATA[2011-02-22 17:06:39.0]]></UPDATED>
 <!--161-->  <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--161-->  <NAME><![CDATA[Nova Scotia]]></NAME>
-<!--161-->  <DESCRIPTION><![CDATA[Nouvelle-Écosse]]></DESCRIPTION>
+<!--161-->  <NAME><![CDATA[NS]]></NAME>
+<!--161-->  <DESCRIPTION><![CDATA[Nova Scotia]]></DESCRIPTION>
 <!--161-->  <C_COUNTRY_ID><![CDATA[109]]></C_COUNTRY_ID>
 <!--161-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--161--></C_REGION>
@@ -849,8 +849,8 @@
 <!--162-->  <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--162-->  <UPDATED><![CDATA[2011-02-22 17:06:39.0]]></UPDATED>
 <!--162-->  <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--162-->  <NAME><![CDATA[Northwest Territories]]></NAME>
-<!--162-->  <DESCRIPTION><![CDATA[Territoires du Nord-Ouest]]></DESCRIPTION>
+<!--162-->  <NAME><![CDATA[NT]]></NAME>
+<!--162-->  <DESCRIPTION><![CDATA[Northwest Territories]]></DESCRIPTION>
 <!--162-->  <C_COUNTRY_ID><![CDATA[109]]></C_COUNTRY_ID>
 <!--162-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--162--></C_REGION>
@@ -864,7 +864,7 @@
 <!--163-->  <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--163-->  <UPDATED><![CDATA[2011-02-22 17:06:39.0]]></UPDATED>
 <!--163-->  <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--163-->  <NAME><![CDATA[Nunavut]]></NAME>
+<!--163-->  <NAME><![CDATA[NU]]></NAME>
 <!--163-->  <DESCRIPTION><![CDATA[Nunavut]]></DESCRIPTION>
 <!--163-->  <C_COUNTRY_ID><![CDATA[109]]></C_COUNTRY_ID>
 <!--163-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
@@ -879,7 +879,7 @@
 <!--164-->  <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--164-->  <UPDATED><![CDATA[2011-02-22 17:06:39.0]]></UPDATED>
 <!--164-->  <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--164-->  <NAME><![CDATA[Ontario]]></NAME>
+<!--164-->  <NAME><![CDATA[ON]]></NAME>
 <!--164-->  <DESCRIPTION><![CDATA[Ontario]]></DESCRIPTION>
 <!--164-->  <C_COUNTRY_ID><![CDATA[109]]></C_COUNTRY_ID>
 <!--164-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
@@ -894,8 +894,8 @@
 <!--165-->  <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--165-->  <UPDATED><![CDATA[2011-02-22 17:06:39.0]]></UPDATED>
 <!--165-->  <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--165-->  <NAME><![CDATA[Prince Edward Island]]></NAME>
-<!--165-->  <DESCRIPTION><![CDATA[Île-du-Prince-Édouard]]></DESCRIPTION>
+<!--165-->  <NAME><![CDATA[PE]]></NAME>
+<!--165-->  <DESCRIPTION><![CDATA[Prince Edward Island]]></DESCRIPTION>
 <!--165-->  <C_COUNTRY_ID><![CDATA[109]]></C_COUNTRY_ID>
 <!--165-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--165--></C_REGION>
@@ -909,7 +909,7 @@
 <!--166-->  <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--166-->  <UPDATED><![CDATA[2011-02-22 17:06:39.0]]></UPDATED>
 <!--166-->  <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--166-->  <NAME><![CDATA[Québec]]></NAME>
+<!--166-->  <NAME><![CDATA[QC]]></NAME>
 <!--166-->  <DESCRIPTION><![CDATA[Québec]]></DESCRIPTION>
 <!--166-->  <C_COUNTRY_ID><![CDATA[109]]></C_COUNTRY_ID>
 <!--166-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
@@ -924,7 +924,7 @@
 <!--167-->  <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--167-->  <UPDATED><![CDATA[2011-02-22 17:06:39.0]]></UPDATED>
 <!--167-->  <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--167-->  <NAME><![CDATA[Saskatchewan]]></NAME>
+<!--167-->  <NAME><![CDATA[SK]]></NAME>
 <!--167-->  <DESCRIPTION><![CDATA[Saskatchewan]]></DESCRIPTION>
 <!--167-->  <C_COUNTRY_ID><![CDATA[109]]></C_COUNTRY_ID>
 <!--167-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
@@ -939,7 +939,7 @@
 <!--168-->  <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--168-->  <UPDATED><![CDATA[2011-02-22 17:06:39.0]]></UPDATED>
 <!--168-->  <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--168-->  <NAME><![CDATA[Yukon]]></NAME>
+<!--168-->  <NAME><![CDATA[YT]]></NAME>
 <!--168-->  <DESCRIPTION><![CDATA[Yukon]]></DESCRIPTION>
 <!--168-->  <C_COUNTRY_ID><![CDATA[109]]></C_COUNTRY_ID>
 <!--168-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>

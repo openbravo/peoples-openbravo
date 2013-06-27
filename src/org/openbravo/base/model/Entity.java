@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -82,6 +82,7 @@ public class Entity {
   private boolean isMutable;
   private boolean isDeletable;
   private boolean isView;
+  private boolean isDataSourceBased;
 
   private EntityValidator entityValidator;
   private AccessLevelChecker accessLevelChecker;
@@ -90,6 +91,8 @@ public class Entity {
   private Module module;
 
   private String treeType;
+
+  private static final String DATASOURCEBASEDTABLE = "Datasource";
 
   public String getTreeType() {
     return treeType;
@@ -117,6 +120,7 @@ public class Entity {
     setInActive(!table.isActive());
     setView(table.isView());
     setTreeType(table.getTreeType());
+    setDataSourceBased(DATASOURCEBASEDTABLE.equals(table.getDataOrigin()));
 
     properties = new ArrayList<Property>();
     idProperties = new ArrayList<Property>();
@@ -665,6 +669,14 @@ public class Entity {
 
   public void setView(boolean isView) {
     this.isView = isView;
+  }
+
+  public boolean isDataSourceBased() {
+    return isDataSourceBased;
+  }
+
+  public void setDataSourceBased(boolean isDataSourceBased) {
+    this.isDataSourceBased = isDataSourceBased;
   }
 
   List<String> getJavaImportsInternal() {

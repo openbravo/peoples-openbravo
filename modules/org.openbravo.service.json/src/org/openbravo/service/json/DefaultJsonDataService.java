@@ -85,6 +85,8 @@ public class DefaultJsonDataService implements JsonDataService {
       Check.isNotNull(entityName, "The name of the service/entityname should not be null");
       Check.isNotNull(parameters, "The parameters should not be null");
 
+      String selectedProperties = parameters.get(JsonConstants.SELECTEDPROPERTIES_PARAMETER);
+
       final JSONObject jsonResult = new JSONObject();
       final JSONObject jsonResponse = new JSONObject();
       List<BaseOBObject> bobs;
@@ -178,9 +180,32 @@ public class DefaultJsonDataService implements JsonDataService {
           final Property distinctProperty = DalUtil.getPropertyFromPath(ModelProvider.getInstance()
               .getEntity(entityName), distinct);
           final Entity distinctEntity = distinctProperty.getTargetEntity();
+
           final List<Property> properties = new ArrayList<Property>();
           properties.addAll(distinctEntity.getIdProperties());
-          properties.addAll(distinctEntity.getIdentifierProperties());
+          properties.addAll(queryService.getDistinctDisplayProperties());
+
+          // filter the json serialization later on
+          final StringBuilder selectedSb = new StringBuilder();
+          for (Property prop : properties) {
+            if (selectedSb.length() > 0) {
+              selectedSb.append(",");
+            }
+            if (prop.getTargetEntity() != null) {
+              // go one level deeper
+              final List<Property> nextIdentifierProps = JsonUtils.getIdentifierSet(prop);
+              for (Property nextIdentifierProp : nextIdentifierProps) {
+                selectedSb.append(prop.getName() + "." + nextIdentifierProp);
+              }
+            } else {
+              selectedSb.append(prop.getName());
+            }
+          }
+          if (selectedProperties == null) {
+            selectedProperties = selectedSb.toString();
+          } else {
+            selectedProperties += "," + selectedSb.toString();
+          }
 
           bobs = new ArrayList<BaseOBObject>();
 
@@ -229,6 +254,8 @@ public class DefaultJsonDataService implements JsonDataService {
           bobs = queryService.list();
         }
 
+        bobs = bobFetchTransformation(bobs, parameters);
+
         if (preventCountOperation) {
           count = bobs.size() + startRow;
           // computedMaxResults is one too much, if we got one to much then correct
@@ -259,8 +286,7 @@ public class DefaultJsonDataService implements JsonDataService {
       final DataToJsonConverter toJsonConverter = OBProvider.getInstance().get(
           DataToJsonConverter.class);
       toJsonConverter.setAdditionalProperties(JsonUtils.getAdditionalProperties(parameters));
-      toJsonConverter.setSelectedProperties(parameters
-          .get(JsonConstants.SELECTEDPROPERTIES_PARAMETER));
+      toJsonConverter.setSelectedProperties(selectedProperties);
       final List<JSONObject> jsonObjects = toJsonConverter.toJsonObjects(bobs);
 
       addWritableAttribute(jsonObjects);
@@ -287,31 +313,35 @@ public class DefaultJsonDataService implements JsonDataService {
     toJsonConverter.setAdditionalProperties(JsonUtils.getAdditionalProperties(parameters));
 
     final ScrollableResults scrollableResults = queryService.scroll();
-    int i = 0;
-    while (scrollableResults.next()) {
-      final Object result = scrollableResults.get()[0];
-      final JSONObject json = toJsonConverter.toJsonObject((BaseOBObject) result,
-          DataResolvingMode.FULL);
+    try {
+      int i = 0;
+      while (scrollableResults.next()) {
+        final Object result = scrollableResults.get()[0];
+        final JSONObject json = toJsonConverter.toJsonObject((BaseOBObject) result,
+            DataResolvingMode.FULL);
 
-      try {
-        doPostFetch(parameters, json);
-      } catch (JSONException e) {
-        throw new OBException(e);
+        try {
+          doPostFetch(parameters, json);
+        } catch (JSONException e) {
+          throw new OBException(e);
+        }
+
+        writer.write(json);
+
+        i++;
+        // Clear session every 1000 records to prevent huge memory consumption in case of big loops
+        if (i % 1000 == 0) {
+          OBDal.getInstance().getSession().clear();
+          log.debug("clearing in record " + i + " elapsed time " + (System.currentTimeMillis() - t));
+        }
       }
-
-      writer.write(json);
-
-      i++;
-      // Clear session every 1000 records to prevent huge memory consumption in case of big loops
-      if (i % 1000 == 0) {
-        OBDal.getInstance().getSession().clear();
-        log.debug("clearing in record " + i + " elapsed time " + (System.currentTimeMillis() - t));
-      }
+    } finally {
+      scrollableResults.close();
     }
     log.debug("Fetch took " + (System.currentTimeMillis() - t) + " ms");
   }
 
-  private DataEntityQueryService createSetQueryService(Map<String, String> parameters,
+  protected DataEntityQueryService createSetQueryService(Map<String, String> parameters,
       boolean forCountOperation) {
     final String entityName = parameters.get(JsonConstants.ENTITYNAME);
     final String startRowStr = parameters.get(JsonConstants.STARTROW_PARAMETER);
@@ -385,8 +415,7 @@ public class DefaultJsonDataService implements JsonDataService {
         && parameters.get(JsonConstants.DISTINCT_PARAMETER).trim().length() > 0) {
       queryService.setDistinct(parameters.get(JsonConstants.DISTINCT_PARAMETER).trim());
       // sortby the distinct's identifier
-      orderBy = queryService.getDistinct() + DalUtil.DOT + JsonConstants.IDENTIFIER + ","
-          + queryService.getDistinct() + DalUtil.DOT + JsonConstants.ID;
+      orderBy = getOrderByForDistinct(entityName, queryService);
     } else {
       // Always append id to the orderby to make a predictable sorting
       orderBy += (orderBy.isEmpty() ? "" : ",") + "id";
@@ -420,6 +449,26 @@ public class DefaultJsonDataService implements JsonDataService {
       // queryService.setJoinAssociatedEntities(true);
     }
     return queryService;
+  }
+
+  private String getOrderByForDistinct(String entityName, DataEntityQueryService queryService) {
+    final String localDistinct = queryService.getDistinct();
+    final List<Property> properties = queryService.getDistinctDisplayProperties();
+    final StringBuilder sb = new StringBuilder();
+    for (Property identifierProp : properties) {
+      if (identifierProp.getTargetEntity() != null) {
+        // go one level deeper
+        final List<Property> nextIdentifierProps = JsonUtils.getIdentifierSet(identifierProp);
+        for (Property nextIdentifierProp : nextIdentifierProps) {
+          sb.append(localDistinct + DalUtil.DOT + identifierProp.getName() + "."
+              + nextIdentifierProp + ",");
+        }
+      } else {
+        sb.append(localDistinct + DalUtil.DOT + identifierProp.getName() + ",");
+      }
+    }
+    sb.append(localDistinct + DalUtil.DOT + JsonConstants.ID);
+    return sb.toString();
   }
 
   private void addWritableAttribute(List<JSONObject> jsonObjects) throws JSONException {
@@ -666,6 +715,19 @@ public class DefaultJsonDataService implements JsonDataService {
 
   public static abstract class QueryResultWriter {
     public abstract void write(JSONObject json);
+  }
+
+  protected List<BaseOBObject> bobFetchTransformation(List<BaseOBObject> bobs,
+      Map<String, String> parameters) {
+    // If is override, take into account:
+    // * If the number of the returned bobs change, there could be problems because endRow and
+    // totalRows parameters will be out-of-sync with that the requester expects, and some values can
+    // be missing in the following fetches. If there is no pagination (all values are returned at
+    // once), there is no problem.
+    // * If any bob is modified, the original entity is being modified, so a good practice could be
+    // clone the bob (using DalUtil.copy, for example) before modify it, and then return the clone.
+
+    return bobs;
   }
 
   protected String doPreAction(Map<String, String> parameters, String content,

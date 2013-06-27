@@ -114,8 +114,9 @@ public class Reconciliation extends HttpSecureAppServlet {
 
     } else if (vars.commandIn("UPDATESTATUS")) {
       String strFinancialAccountId = vars.getStringParameter("inpFinFinancialAccountId", "");
-      String strSelectedTransId = vars.getStringParameter("inpCurrentTransIdSelected");
+      String strSelectedTransId = vars.getStringParameter("inpCurrentTransIdSelected", "");
       boolean isChecked = "true".equals(vars.getStringParameter("inpIsCurrentTransSelected"));
+
       updateTransactionStatus(response, strFinancialAccountId, strSelectedTransId, isChecked);
     }
 
@@ -126,30 +127,31 @@ public class Reconciliation extends HttpSecureAppServlet {
 
     OBContext.setAdminMode();
     try {
-      FIN_FinaccTransaction trans = OBDal.getInstance().get(FIN_FinaccTransaction.class,
-          strSelectedTransId);
+      if (strSelectedTransId != "") {
+        FIN_FinaccTransaction trans = OBDal.getInstance().get(FIN_FinaccTransaction.class,
+            strSelectedTransId);
+        String newStatus = "RPPC";
+        if (!isChecked) {
+          newStatus = (trans.getPaymentAmount().compareTo(trans.getDepositAmount()) >= 0) ? "RDNC"
+              : "PWNC";
+          trans.setReconciliation(null);
+          if (trans.getFinPayment() != null) {
+            trans.getFinPayment().setStatus((trans.getFinPayment().isReceipt()) ? "RDNC" : "PWNC");
+          }
+        } else {
+          FIN_FinancialAccount account = OBDal.getInstance().get(FIN_FinancialAccount.class,
+              strFinancialAccountId);
+          FIN_Reconciliation reconciliation = TransactionsDao.getLastReconciliation(account, "N");
+          trans.setReconciliation(reconciliation);
+          if (trans.getFinPayment() != null) {
+            trans.getFinPayment().setStatus("RPPC");
+          }
+        }
 
-      String newStatus = "RPPC";
-      if (!isChecked) {
-        newStatus = (trans.getPaymentAmount().compareTo(trans.getDepositAmount()) >= 0) ? "RDNC"
-            : "PWNC";
-        trans.setReconciliation(null);
-        if (trans.getFinPayment() != null) {
-          trans.getFinPayment().setStatus((trans.getFinPayment().isReceipt()) ? "RDNC" : "PWNC");
-        }
-      } else {
-        FIN_FinancialAccount account = OBDal.getInstance().get(FIN_FinancialAccount.class,
-            strFinancialAccountId);
-        FIN_Reconciliation reconciliation = TransactionsDao.getLastReconciliation(account, "N");
-        trans.setReconciliation(reconciliation);
-        if (trans.getFinPayment() != null) {
-          trans.getFinPayment().setStatus("RPPC");
-        }
+        trans.setStatus(newStatus);
+        OBDal.getInstance().save(trans);
+        OBDal.getInstance().flush();
       }
-      trans.setStatus(newStatus);
-      OBDal.getInstance().save(trans);
-      OBDal.getInstance().flush();
-
       response.setContentType("text/html; charset=UTF-8");
       PrintWriter out = response.getWriter();
       out.println("");
@@ -468,6 +470,7 @@ public class Reconciliation extends HttpSecureAppServlet {
     BigDecimal totalDeposit = new BigDecimal(strTotalDeposit);
 
     for (FieldProvider fp : data) {
+
       if (!map.containsKey(fp.getField("transactionId"))
           && !fp.getField("markSelectedId").isEmpty()) {
         BigDecimal payAmt = new BigDecimal(fp.getField("paymentAmount"));

@@ -56,8 +56,8 @@ public class CostingUtils {
   protected static Logger log4j = Logger.getLogger(CostingUtils.class);
 
   /**
-   * Calls {@link #getTransactionCost(MaterialTransaction, Date, boolean)} setting the calculateTrx
-   * flag to false.
+   * Calls {@link #getTransactionCost(MaterialTransaction, Date, boolean, Currency)} setting the
+   * calculateTrx flag to false.
    */
   public static BigDecimal getTransactionCost(MaterialTransaction transaction, Date date,
       Currency currency) {
@@ -104,8 +104,8 @@ public class CostingUtils {
   }
 
   /**
-   * Calls {@link #getStandardCost(Product, Date, HashMap, boolean)} setting the
-   * recheckWithoutDimensions flag to true.
+   * Calls {@link #getStandardCost(Product, Organization, Date, HashMap, boolean, Currency)} setting
+   * the recheckWithoutDimensions flag to true.
    */
   public static BigDecimal getStandardCost(Product product, Organization org, Date date,
       HashMap<CostDimension, BaseOBObject> costDimensions, Currency convCurrency)
@@ -144,8 +144,8 @@ public class CostingUtils {
   }
 
   /**
-   * Calls {@link #hasStandardCostDefinition(Product, Date, HashMap, boolean)} setting the
-   * recheckWithoutDimensions flag to true.
+   * Calls {@link #hasStandardCostDefinition(Product, Organization, Date, HashMap, boolean)} setting
+   * the recheckWithoutDimensions flag to true.
    */
   public static boolean hasStandardCostDefinition(Product product, Organization org, Date date,
       HashMap<CostDimension, BaseOBObject> costDimensions) {
@@ -173,8 +173,8 @@ public class CostingUtils {
   }
 
   /**
-   * Calls {@link #getStandardCostDefinition(Product, Date, HashMap, boolean)} setting the
-   * recheckWithoutDimensions flag to true.
+   * Calls {@link #getStandardCostDefinition(Product, Organization, Date, HashMap, boolean)} setting
+   * the recheckWithoutDimensions flag to true.
    */
   public static Costing getStandardCostDefinition(Product product, Organization org, Date date,
       HashMap<CostDimension, BaseOBObject> costDimensions) {

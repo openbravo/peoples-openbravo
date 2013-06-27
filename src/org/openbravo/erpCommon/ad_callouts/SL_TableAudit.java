@@ -63,13 +63,22 @@ public class SL_TableAudit extends HttpSecureAppServlet {
   }
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strChanged)
-      throws IOException {
+      throws IOException, ServletException {
     // Change audit trail status regarding whether there are audited tables
     StringBuffer action = new StringBuffer();
     if (strChanged.equalsIgnoreCase("inpisfullyaudited")) {
       boolean currentRecordFullyAudited = vars.getStringParameter("inpisfullyaudited").equals("Y");
       if (currentRecordFullyAudited) {
         SessionInfo.setAuditActive(true);
+
+        OBCriteria<Table> qTables = OBDal.getInstance().createCriteria(Table.class);
+        qTables.add(Restrictions.eq(Table.PROPERTY_ISFULLYAUDITED, true));
+        qTables.add(Restrictions.eq(Table.PROPERTY_ISAUDITINSERTS, true));
+        if (qTables.count() == 0) {
+          action.append("new Array(\"inpisauditinserts\", \"N\"),\n");
+        } else {
+          action.append("new Array(\"inpisauditinserts\", \"Y\"),\n");
+        }
         action.append("new Array(\"MESSAGE\", \""
             + Utility.messageBD(this, "RegenerateAudit_ExcludeColumn", vars.getLanguage())
             + "\")\n");
@@ -106,5 +115,4 @@ public class SL_TableAudit extends HttpSecureAppServlet {
     out.println(xmlDocument.print());
     out.close();
   }
-
 }

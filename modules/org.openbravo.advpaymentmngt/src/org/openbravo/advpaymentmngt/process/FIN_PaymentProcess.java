@@ -604,7 +604,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
           return;
         }
         // Reverse Payment
-        if (FIN_Utility.isReversePayment(payment)) {
+        if (strAction.equals("RE") && FIN_Utility.isReversePayment(payment)) {
           msg.setType("Error");
           msg.setTitle(Utility.messageBD(conProvider, "Error", language));
           msg.setMessage(Utility.parseTranslation(conProvider, vars, language,
@@ -793,6 +793,10 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
                   && BigDecimal.ZERO.compareTo(psd.getWriteoffAmount()) == 0) {
                 paymentDetail.getFINPaymentScheduleDetailList().remove(psd);
                 OBDal.getInstance().getSession().refresh(paymentDetail);
+                psd.getInvoicePaymentSchedule()
+                    .getFINPaymentScheduleDetailInvoicePaymentScheduleList().remove(psd);
+                psd.getOrderPaymentSchedule().getFINPaymentScheduleDetailOrderPaymentScheduleList()
+                    .remove(psd);
                 OBDal.getInstance().remove(psd);
               }
             }
@@ -1189,6 +1193,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
       newConversionRateDoc.setRate(payment.getFinancialTransactionConvertRate());
       newConversionRateDoc.setForeignAmount(payment.getFinancialTransactionAmount());
       newConversionRateDoc.setPayment(payment);
+      newConversionRateDoc.setClient(payment.getClient());
       OBDal.getInstance().save(newConversionRateDoc);
       OBDal.getInstance().flush();
       return newConversionRateDoc;

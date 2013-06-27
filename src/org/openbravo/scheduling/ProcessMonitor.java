@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -35,6 +35,7 @@ import javax.servlet.ServletException;
 import org.openbravo.base.ConfigParameters;
 import org.openbravo.base.ConnectionProviderContextListener;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.database.SessionInfo;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
@@ -74,8 +75,17 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
       ProcessRequestData.setContext(getConnection(), ctx.getUser(), ctx.getUser(), SCHEDULED,
           bundle.getChannel().toString(), ctx.toString(), trigger.getName());
 
+      try {
+        log.debug("jobScheduled for process {}",
+            trigger.getJobDataMap().getString(Process.PROCESS_NAME));
+      } catch (Exception ignore) {
+        // ignore: exception while trying to log
+      }
     } catch (final ServletException e) {
       log.error(e.getMessage(), e);
+    } finally {
+      // return connection to pool and remove it from current thread
+      SessionInfo.init();
     }
   }
 
@@ -84,7 +94,7 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
     final ProcessContext ctx = bundle.getContext();
     try {
       try {
-        log.debug("triggerFired for process process {}. Next execution time: {}", jec.getTrigger()
+        log.debug("triggerFired for process {}. Next execution time: {}", jec.getTrigger()
             .getJobDataMap().getString(Process.PROCESS_NAME), trigger.getNextFireTime());
       } catch (Exception ignore) {
         // ignore: exception while trying to log
@@ -97,12 +107,19 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
     } catch (final ServletException e) {
       log.error(e.getMessage(), e);
     }
+    // no need to return the connection because it will be done after the process is executed
   }
 
   public void jobToBeExecuted(JobExecutionContext jec) {
     final ProcessBundle bundle = (ProcessBundle) jec.getMergedJobDataMap().get(ProcessBundle.KEY);
     if (bundle == null) {
       return;
+    }
+    try {
+      log.debug("jobToBeExecuted for process {}}",
+          jec.getTrigger().getJobDataMap().getString(Process.PROCESS_NAME));
+    } catch (Exception ignore) {
+      // ignore: exception while trying to log
     }
     final ProcessContext ctx = bundle.getContext();
     final String executionId = SequenceIdData.getUUID();
@@ -117,12 +134,19 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
     } catch (final ServletException e) {
       log.error(e.getMessage(), e);
     }
+    // no need to return the connection because it will be done after the process is executed
   }
 
   public void jobWasExecuted(JobExecutionContext jec, JobExecutionException jee) {
     final ProcessBundle bundle = (ProcessBundle) jec.getMergedJobDataMap().get(ProcessBundle.KEY);
     if (bundle == null) {
       return;
+    }
+    try {
+      log.debug("jobToBeExecuted for process {}}",
+          jec.getTrigger().getJobDataMap().getString(Process.PROCESS_NAME));
+    } catch (Exception ignore) {
+      // ignore: exception while trying to log
     }
     final ProcessContext ctx = bundle.getContext();
     try {
@@ -139,14 +163,21 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
 
     } catch (final ServletException e) {
       log.error(e.getMessage(), e);
+    } finally {
+      // return connection to pool and remove it from current thread
+      SessionInfo.init();
     }
   }
 
   public void triggerFinalized(Trigger trigger) {
     try {
       ProcessRequestData.update(getConnection(), COMPLETE, trigger.getName());
+
     } catch (final ServletException e) {
       log.error(e.getMessage(), e);
+    } finally {
+      // return connection to pool and remove it from current thread
+      SessionInfo.init();
     }
   }
 
@@ -156,6 +187,9 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
 
     } catch (final ServletException e) {
       log.error(e.getMessage(), e);
+    } finally {
+      // return connection to pool and remove it from current thread
+      SessionInfo.init();
     }
   }
 
@@ -222,10 +256,24 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
     }
 
     // Checking if there is another instance in execution for this process
+
     for (JobExecutionContext job : jobs) {
       if (job.getTrigger().getJobDataMap().get(Process.PROCESS_ID)
           .equals(trigger.getJobDataMap().get(Process.PROCESS_ID))
           && !job.getJobInstance().equals(jec.getJobInstance())) {
+
+        ProcessBundle jobAlreadyScheduled = (ProcessBundle) job.getTrigger().getJobDataMap()
+            .get("org.openbravo.scheduling.ProcessBundle.KEY");
+        ProcessBundle newJob = (ProcessBundle) trigger.getJobDataMap().get(
+            "org.openbravo.scheduling.ProcessBundle.KEY");
+
+        boolean isSameClient = isSameParam(jobAlreadyScheduled, newJob, "Client");
+
+        if (!isSameClient
+            || (isSameClient && !isSameParam(jobAlreadyScheduled, newJob, "Organization"))) {
+          continue;
+        }
+
         log.info("There's another instance running, so leaving" + processName);
 
         try {
@@ -251,12 +299,52 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
         } catch (Exception e) {
           log.error("Error updating conetext for non executed process due to concurrency "
               + processName, e);
+        } finally {
+          // return connection to pool and remove it from current thread only in case the process is
+          // not going to be executed because of concurrency, other case leave the connection to be
+          // closed after the process finishes
+          SessionInfo.init();
         }
         return true;
       }
     }
 
-    log.info("No other instance");
+    log.debug("No other instance");
+    return false;
+  }
+
+  private boolean isSameParam(ProcessBundle jobAlreadyScheduled, ProcessBundle newJob, String param) {
+    ProcessContext jobAlreadyScheduledContext = null;
+    String jobAlreadyScheduledParam = null;
+    ProcessContext newJobContext = null;
+    String newJobParam = null;
+
+    if (jobAlreadyScheduled != null) {
+      jobAlreadyScheduledContext = jobAlreadyScheduled.getContext();
+      if (jobAlreadyScheduledContext != null) {
+        if ("Client".equals(param)) {
+          jobAlreadyScheduledParam = jobAlreadyScheduledContext.getClient();
+        } else if ("Organization".equals(param)) {
+          jobAlreadyScheduledParam = jobAlreadyScheduledContext.getOrganization();
+        }
+      }
+    }
+
+    if (newJob != null) {
+      newJobContext = newJob.getContext();
+      if (newJobContext != null) {
+        if ("Client".equals(param)) {
+          newJobParam = newJobContext.getClient();
+        } else if ("Organization".equals(param)) {
+          newJobParam = newJobContext.getOrganization();
+        }
+      }
+    }
+
+    if (newJobParam != null && jobAlreadyScheduledParam != null
+        && newJobParam.equals(jobAlreadyScheduledParam)) {
+      return true;
+    }
     return false;
   }
 

@@ -490,6 +490,7 @@ public class OBScheduler {
       } catch (final ParseException e) {
         final String msg = Utility.messageBD(conn, "TRIG_INVALID_DATA", bundle.getContext()
             .getLanguage());
+        log.error("Error scheduling process {}", data.processName, e);
         throw new ServletException(msg + " " + e.getMessage());
       }
 
@@ -502,7 +503,15 @@ public class OBScheduler {
       trigger.getJobDataMap().put(Process.PREVENT_CONCURRENT_EXECUTIONS,
           "Y".equals(data.preventconcurrent));
       trigger.getJobDataMap().put(Process.PROCESS_NAME, data.processName);
+
       trigger.getJobDataMap().put(Process.PROCESS_ID, data.adProcessId);
+
+      if (trigger instanceof CronTrigger) {
+        // Setting misfore instruction for CronTriggers not to execute on misfire.
+        // For SimpleTrigger, default policy does not execute on missfire.
+
+        trigger.setMisfireInstruction(CronTrigger.MISFIRE_INSTRUCTION_DO_NOTHING);
+      }
 
       log.debug("Scheduled process {}. Start time:{}.", data.processName, trigger.getStartTime());
 

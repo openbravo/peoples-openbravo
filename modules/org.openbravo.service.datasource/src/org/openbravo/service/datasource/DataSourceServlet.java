@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -78,6 +78,7 @@ import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.FieldTrl;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
+import org.openbravo.portal.PortalAccessible;
 import org.openbravo.service.json.DefaultJsonDataService;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonUtils;
@@ -120,6 +121,15 @@ public class DataSourceServlet extends BaseKernelServlet {
       throws ServletException, IOException {
 
     try {
+      if (OBContext.getOBContext() != null && OBContext.getOBContext().isPortalRole()) {
+        if (!(getDataSource(request) instanceof PortalAccessible)) {
+          log.error("Portal user " + OBContext.getOBContext().getUser() + " with role "
+              + OBContext.getOBContext().getRole()
+              + " is trying to access to non granted datasource " + request.getRequestURL());
+          throw new OBSecurityException();
+        }
+      }
+
       SessionInfo.setModuleId(request.getParameter("moduleId"));
       SessionInfo.setCommand(request.getParameter(DataSourceConstants.OPERATION_TYPE_PARAM));
       SessionInfo.setProcessId(request.getParameter("tabId"));

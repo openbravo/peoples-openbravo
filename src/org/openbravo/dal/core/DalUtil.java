@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -120,6 +120,25 @@ public class DalUtil {
    */
   public static Property getProperty(String tableName, String dbColumnName) {
     final Entity entity = ModelProvider.getInstance().getEntityByTableName(tableName);
+    for (Property property : entity.getProperties()) {
+      if (property.getColumnName().equalsIgnoreCase(dbColumnName)) {
+        return property;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Finds a property using the db column name and table id.
+   * 
+   * @param tableId
+   *          the table id, is used to find the {@link Entity}
+   * @param dbColumnName
+   *          is used to find the {@link Property}
+   * @return a Property or null if no property found
+   */
+  public static Property getPropertyByTableId(String tableId, String dbColumnName) {
+    final Entity entity = ModelProvider.getInstance().getEntityByTableId(tableId);
     for (Property property : entity.getProperties()) {
       if (property.getColumnName().equalsIgnoreCase(dbColumnName)) {
         return property;
@@ -326,14 +345,6 @@ public class DalUtil {
             final List<BaseOBObject> sourceChildren = (List<BaseOBObject>) value;
             for (final BaseOBObject sourceChild : sourceChildren) {
               targetChildren.add(copy(sourceChild, copyChildren, resetId, fromTo));
-            }
-          } else {
-            final List<BaseOBObject> targetReferedObjects = new ArrayList<BaseOBObject>();
-            target.setValue(p.getName(), targetReferedObjects);
-            @SuppressWarnings("unchecked")
-            final List<BaseOBObject> sourceReferedObjects = (List<BaseOBObject>) value;
-            for (final BaseOBObject sourceReferedObject : sourceReferedObjects) {
-              targetReferedObjects.add(sourceReferedObject);
             }
           }
         }

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -41,6 +41,7 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.model.domaintype.ButtonDomainType;
+import org.openbravo.client.application.ApplicationConstants;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.datamodel.Column;
@@ -48,6 +49,8 @@ import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.module.ModuleDBPrefix;
 import org.openbravo.model.ad.system.Client;
+import org.openbravo.model.ad.ui.Field;
+import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.utility.DataSet;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.service.system.SystemValidationResult.SystemValidationType;
@@ -190,6 +193,12 @@ public class DatabaseValidator implements SystemValidator {
 
     final String moduleId = (getValidateModule() == null ? null : getValidateModule().getId());
     for (Table adTable : adTables) {
+
+      // Do not validate the table if it is based on a datasource
+      if (ApplicationConstants.DATASOURCEBASEDTABLE.equals(adTable.getDataOriginType())) {
+        continue;
+      }
+
       final org.apache.ddlutils.model.Table dbTable = dbTablesByName.get(adTable.getDBTableName()
           .toUpperCase());
       final View view = dbViews.get(adTable.getDBTableName().toUpperCase());
@@ -214,6 +223,7 @@ public class DatabaseValidator implements SystemValidator {
         }
         matchColumns(adTable, dbTable, result);
         tmpDBTablesByName.remove(dbTable.getName().toUpperCase());
+        checkFieldsInGridView(adTable, result);
       }
     }
     for (int i = 0; i < database.getTableCount(); i++) {
@@ -374,6 +384,12 @@ public class DatabaseValidator implements SystemValidator {
       return;
     }
     for (Property property : entity.getProperties()) {
+
+      // ignore computed columns
+      if (property.getSqlLogic() != null) {
+        continue;
+      }
+
       if (!property.isPrimitive() && !property.isOneToMany() && !property.isAuditInfo()) {
         // check if the property column is present in a foreign key
 
@@ -837,4 +853,26 @@ public class DatabaseValidator implements SystemValidator {
     this.dbsmExecution = dbsmExecution;
   }
 
+  /*
+   * Check at least one field is visible in grid view
+   */
+  public void checkFieldsInGridView(Table adTable, SystemValidationResult result) {
+    OBCriteria<Tab> tabCriteria = OBDal.getInstance().createCriteria(Tab.class);
+    tabCriteria.add(Restrictions.eq(Tab.PROPERTY_TABLE, adTable));
+    for (Tab tab : tabCriteria.list()) {
+      if ("Field Sequence".equals(tab.getName()) || ("Grid Sequence".equals(tab.getName()))) {
+        continue;
+      }
+      OBCriteria<Field> fieldCriteria = OBDal.getInstance().createCriteria(Field.class);
+      fieldCriteria.add(Restrictions.eq(Field.PROPERTY_TAB, tab));
+      fieldCriteria.add(Restrictions.eq(Field.PROPERTY_SHOWINGRIDVIEW, true));
+      if (fieldCriteria.count() == 0) {
+        result.addError(
+            SystemValidationType.NOFIELDSINGRIDVIEW,
+            "No Fields are visible in grid view for Tab " + tab.getWindow().getName() + " - "
+                + tab.getName());
+      }
+    }
+
+  }
 }

@@ -61,20 +61,30 @@ public class Locator extends HttpSecureAppServlet {
       String strName = vars.getRequestGlobalVariable("inpNameValue", "Locator.warehousename");
       String strWarehouse = "";
       String windowId = vars.getRequestGlobalVariable("WindowID", "Locator.windowId");
+
       if (!windowId.equals("") && windowId != null) {
         strWarehouse = LocatorData.selectname(this,
             Utility.getContext(this, vars, "M_Warehouse_ID", windowId));
+      }
+      if ("168".equals(windowId)) {
+        strWarehouse = LocatorData.selectname(this,
+            vars.getGlobalVariable("inpmWarehouseId", "168|m_warehouse_id", ""));
       }
       strName = strName + "%";
       strWarehouse = strWarehouse + "%";
       vars.setSessionValue("Locator.name", strName);
       vars.setSessionValue("Locator.warehousename", strWarehouse);
       String strOrg = vars.getGlobalVariable("inpadOrgId", "Locator.adorgid", "");
+
       if ("".equals(strOrg) || strOrg == null) {
         if ("184".equals(windowId) || "169".equals(windowId) || "800013".equals(windowId)
             || "800014".equals(windowId)) {
           strOrg = vars.getGlobalVariable("inpadOrgId", "CreateFrom|adOrgId", "");
         }
+        if ("168".equals(windowId)) {
+          strOrg = vars.getGlobalVariable("inpadOrgId", "168|ad_org_id", "");
+        }
+
       }
       if ("".equals(strOrg) || strOrg == null) {
         strOrg = vars.getStringParameter("paramOrgTree");

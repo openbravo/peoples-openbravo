@@ -1859,8 +1859,6 @@ public abstract class AcctServer {
    * 
    * @param BPartnerId
    *          : ID of the Business Partner
-   * @param isExpense
-   *          : Provision Expense Account. If not it applies to Provision Applied account
    * @param as
    *          : Accounting Schema
    * @param conn
@@ -1903,7 +1901,7 @@ public abstract class AcctServer {
       throw new IllegalStateException();
     }
     return new Account(conn, strValidCombination);
-  } // getAccountBPartnerBadDebt
+  }
 
   /**
    * Get the account for GL Item

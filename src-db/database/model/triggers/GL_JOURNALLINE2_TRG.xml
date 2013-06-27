@@ -60,7 +60,7 @@ BEGIN
   WHERE a.C_Currency_ID=c.C_Currency_ID
     AND a.C_AcctSchema_ID=v_AcctSchema_ID;
   v_rate:=v_CurrencyRate;
-  IF(v_rate IS NULL) THEN
+  IF(v_rate IS NULL OR v_rate = 0) THEN
     v_rate:=C_CURRENCY_RATE(:NEW.C_Currency_ID, v_TargetCurrency_ID, v_DateAcct, v_CurrencyRateType, :NEW.AD_CLIENT_ID, :NEW.AD_ORG_ID) ;
   END IF;
   :NEW.AMTACCTDR:=ROUND(COALESCE(:NEW.AMTSOURCEDR, 0) *v_rate, v_StdPrecision) ;

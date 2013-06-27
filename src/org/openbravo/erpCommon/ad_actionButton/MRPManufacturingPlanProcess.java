@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012 Openbravo SLU
+ * All portions are Copyright (C) 2012-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -74,17 +74,20 @@ public class MRPManufacturingPlanProcess extends DalBaseProcess {
 
       ScrollableResults linesToUpdate = getLinesToUpdate(strManufacturingMRPID);
       int i = 0;
-      while (linesToUpdate.next()) {
-        ProductionRunLine prLine = (ProductionRunLine) linesToUpdate.get(0);
-        prLine.setInserted(false);
-        OBDal.getInstance().save(prLine);
+      try {
+        while (linesToUpdate.next()) {
+          ProductionRunLine prLine = (ProductionRunLine) linesToUpdate.get(0);
+          prLine.setInserted(false);
+          OBDal.getInstance().save(prLine);
 
-        if (i % 100 == 0) {
-          OBDal.getInstance().flush();
-          OBDal.getInstance().getSession().clear();
+          if (i % 100 == 0) {
+            OBDal.getInstance().flush();
+            OBDal.getInstance().getSession().clear();
+          }
         }
+      } finally {
+        linesToUpdate.close();
       }
-
       log4j.debug("Call MRP_Run_Initialize process");
       // v_ResultStr:='Initialize';
       // MRP_RUN_INITIALIZE(v_User_ID, v_Org_ID, v_Client_ID, v_Record_ID, v_Planner_ID,

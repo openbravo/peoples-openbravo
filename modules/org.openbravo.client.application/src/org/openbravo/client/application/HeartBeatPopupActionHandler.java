@@ -43,6 +43,7 @@ import org.openbravo.erpCommon.ad_process.HeartbeatProcess.HeartBeatOrRegistrati
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.model.ad.module.Module;
+import org.openbravo.portal.PortalAccessible;
 import org.openbravo.service.db.DalConnectionProvider;
 
 /**
@@ -52,7 +53,7 @@ import org.openbravo.service.db.DalConnectionProvider;
  * @see StaticResourceComponent
  */
 @ApplicationScoped
-public class HeartBeatPopupActionHandler extends BaseActionHandler {
+public class HeartBeatPopupActionHandler extends BaseActionHandler implements PortalAccessible {
   private static final Logger log = Logger.getLogger(HeartBeatPopupActionHandler.class);
   private static final String APRM_MIGRATION_TOOL_ID = "4BD3D4B262B048518FE62496EF09D549";
 

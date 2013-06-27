@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -81,8 +81,11 @@ public class DalMappingGenerator implements OBSingleton {
     final ModelProvider mp = ModelProvider.getInstance();
     final StringBuilder sb = new StringBuilder();
     for (final Entity e : mp.getModel()) {
-      final String entityMapping = generateMapping(e);
-      sb.append(entityMapping);
+      // Do not map datasource based tables
+      if (!e.isDataSourceBased()) {
+        final String entityMapping = generateMapping(e);
+        sb.append(entityMapping);
+      }
     }
     final String mainTemplate = readFile(MAIN_TEMPLATE_FILE);
     final String result = mainTemplate.replace("contentPlaceholder", sb.toString());

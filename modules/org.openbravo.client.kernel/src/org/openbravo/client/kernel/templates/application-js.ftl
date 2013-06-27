@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2009-2012 Openbravo SLU
+ * All portions are Copyright (C) 2009-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -61,9 +61,12 @@ var OB = {
         ID : 'id',
         FIELDSEPARATOR : '$',
         WHERE_PARAMETER : '_where',
+        SQL_WHERE_PARAMETER : '_sqlWhere',
         ORG_PARAMETER : '_org',
         ORDERBY_PARAMETER : '_orderBy',
+        SQL_ORDERBY_PARAMETER : '_sqlOrderBy',
         FILTER_PARAMETER : '_filter',
+        SQL_FILTER_PARAMETER : '_sqlFilter',
         SORTBY_PARAMETER : '_sortBy',
         OR_EXPRESSION: '_OrExpression',
         TEXT_MATCH_PARAMETER_OVERRIDE: '_textMatchStyleOverride',

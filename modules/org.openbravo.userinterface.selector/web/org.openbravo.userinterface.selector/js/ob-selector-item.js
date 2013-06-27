@@ -78,6 +78,10 @@ isc.OBSelectorPopupWindow.addProperties({
       selector: this.selector,
       selectionAppearance: this.selectionAppearance,
 
+      // drawAllMaxCells is set to 0 to prevent extra reads of data
+      // Smartclient will try to read until drawAllMaxCells has been reached
+      drawAllMaxCells: 0,
+
       dataProperties: {
         useClientFiltering: false,
         useClientSorting: false
@@ -458,6 +462,9 @@ isc.OBSelectorItem.addProperties({
 
   setUpPickList: function (show, queueFetches, request) {
     this.pickListProperties.canResizeFields = true;
+    // drawAllMaxCells is set to 0 to prevent extra reads of data
+    // Smartclient will try to read until drawAllMaxCells has been reached
+    this.pickListProperties.drawAllMaxCells = 0;
     // Set the pickListWidth just before being shown.
     this.setPickListWidth();
     this.Super('setUpPickList', arguments);
@@ -491,6 +498,10 @@ isc.OBSelectorItem.addProperties({
       }
     } else { //Select by default the first option in the picklist, if possible
       this.selectFirstPickListOption();
+    }
+
+    if (this._clearingValue) {
+      this._editorEnterValue = null;
     }
 
     this.Super('setValue', arguments);
@@ -627,7 +638,7 @@ isc.OBSelectorItem.addProperties({
         this.valueMap = {};
       }
 
-      this.valueMap[record[this.valueField]] = record[this.displayField];
+      this.valueMap[record[this.valueField]] = record[this.displayField].replace(/[\n\r]/g, '');
       this.updateValueMap();
     }
 
@@ -963,7 +974,7 @@ isc.OBSelectorLinkItem.addProperties({
       if (!this.valueMap) {
         this.valueMap = {};
       }
-      this.valueMap[record[this.gridValueField]] = record[this.gridDisplayField];
+      this.valueMap[record[this.gridValueField]] = record[this.gridDisplayField].replace(/[\n\r]/g, '');
       this.updateValueMap();
     }
     this.handleOutFields(record);

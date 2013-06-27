@@ -109,6 +109,9 @@
       <index name="FIN_PAYM_SCH_INV_IDX" unique="false">
         <index-column name="C_INVOICE_ID"/>
       </index>
+      <index name="FIN_PAYM_SCH_ORD_IDX" unique="false">
+        <index-column name="C_ORDER_ID"/>
+      </index>
       <index name="FIN_PAYMENT_SCHEDULE_OUTAMT" unique="false">
         <index-column name="OUTSTANDINGAMT"/>
       </index>

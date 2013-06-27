@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2012 Openbravo SLU
+ * All portions are Copyright (C) 2011-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -429,7 +429,20 @@ isc.OBNumberItem.addProperties({
   },
 
   blur: function () {
-    var value;
+    var value, roundedValue, textRoundedValue;
+
+    // Make sure the number is rounded using the number of decimal digits specified in the number typeInstance
+    if (isc.isA.String(this.getValue())) {
+        value = OB.Utilities.Number.OBPlainToOBMasked(this.getValue(), this.typeInstance.maskNumeric, this.typeInstance.decSeparator, this.typeInstance.groupSeparator);
+        this.setValue(OB.Utilities.Number.OBMaskedToJS(value, this.typeInstance.decSeparator, this.typeInstance.groupSeparator));
+        if (this.form.setTextualValue) {
+            this.form.setTextualValue(this.name, value, this.typeInstance);
+        }
+    }
+
+    if (this.grid && this.grid.isEditing && this.grid.isEditing()) {
+      this.grid.setEditValue(this.grid.getEditRow(), this.name, this.getValue(), true, true);
+    }
 
     if (this.form && this.form._isRedrawing) {
       return;

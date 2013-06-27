@@ -109,7 +109,14 @@ public class InitialClientSetup {
       return logErrorAndRollback("@CreateClientFailed@", "process() - Cannot determine currency.",
           e);
     }
-
+    if (bCreateAccounting) {
+      if (fileCoAFilePath == null || fileCoAFilePath.getSize() < 1) {
+        log4j.debug("process() - Check COA");
+        obeResult = coaModule(strModules);
+        if (!obeResult.getType().equals(STRMESSAGEOK))
+          return obeResult;
+      }
+    }
     log4j.debug("process() - Creating client.");
     obeResult = insertClient(vars, strClientName, strClientUser, strCurrencyID);
     if (!obeResult.getType().equals(STRMESSAGEOK))
@@ -785,6 +792,27 @@ public class InitialClientSetup {
 
   private OBError logErrorAndRollback(String strMessage, String strLogError) {
     return logErrorAndRollback(strMessage, strLogError, null);
+  }
+
+  OBError coaModule(String strModules) {
+    strModules = cleanUpStrModules(strModules);
+    OBError obeResult = new OBError();
+    obeResult.setType(STRMESSAGEOK);
+    List<Module> lCoaModules = null;
+    try {
+      lCoaModules = InitialSetupUtility.getCOAModules(strModules);
+      // Modules with CoA are retrieved.
+      if (lCoaModules.size() < 1) {
+
+        return logErrorAndRollback(
+            "@CreateReferenceDataFailed@. @CreateAccountingButNoCoAProvided@",
+            "createReferenceData() - Create accounting option was active, but no file was provided, and no accoutning module was chosen");
+      }
+    } catch (Exception e) {
+      return logErrorAndRollback("@CreateReferenceDataFailed@",
+          "createReferenceData() - Exception while processing accounting modules", e);
+    }
+    return obeResult;
   }
 
 }

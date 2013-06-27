@@ -49,10 +49,11 @@ import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.portal.PortalAccessible;
 import org.openbravo.service.db.DalConnectionProvider;
 
 @ApplicationScoped
-public class MyOpenbravoActionHandler extends BaseActionHandler {
+public class MyOpenbravoActionHandler extends BaseActionHandler implements PortalAccessible {
   private static final Logger log = Logger.getLogger(MyOpenbravoActionHandler.class);
   private static final String WIDGET_MOVED = "WIDGET_MOVED";
   private static final String WIDGET_ADDED = "WIDGET_ADDED";

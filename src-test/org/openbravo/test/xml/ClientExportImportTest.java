@@ -221,12 +221,12 @@ public class ClientExportImportTest extends XMLBaseTest {
     ExcludeFilter excludeFilter = DBSMOBUtil.getInstance().getExcludeFilter(
         new File(OBPropertiesProvider.getInstance().getOpenbravoProperties()
             .getProperty("source.path")));
-    Database dbBefore = platform.loadModelFromDatabase(excludeFilter);
+    Database dbBefore = platform.loadTablesFromDatabase(excludeFilter);
     String newClientId = exportImport(QA_TEST_CLIENT_ID);
     Client client = OBDal.getInstance().get(Client.class, newClientId);
 
     SystemService.getInstance().deleteClient(client);
-    Database dbAfter = platform.loadModelFromDatabase(excludeFilter);
+    Database dbAfter = platform.loadTablesFromDatabase(excludeFilter);
     for (int i = 0; i < dbBefore.getTableCount(); i++) {
       Table table1 = dbBefore.getTable(i);
       Table table2 = dbAfter.getTable(i);

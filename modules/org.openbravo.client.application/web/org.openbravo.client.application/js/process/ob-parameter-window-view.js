@@ -56,15 +56,43 @@ isc.OBParameterWindowView.addProperties({
     // Buttons
 
     function actionClick() {
+      var hasErrors = false,
+          grid, fields, selection, len, allRows, lineNumbers, i, j, record, undef;
       view.messageBar.hide();
-      if (view.validate()) {
-        view.doProcess(this._buttonValue);
-      } else {
-        // If the messageBar is visible, it means that it has been set due to a custom validation inside view.validate()
-        // so we don't want to overwrite it with the generic OBUIAPP_ErrorInFields message
-        if (!view.messageBar.isVisible()) {
-          view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_ErrorInFields'));
+      if (view.grid && view.grid.viewGrid) {
+        grid = view.grid.viewGrid;
+        fields = grid.getFields();
+        selection = grid.getSelectedRecords() || [];
+        len = selection.length;
+        allRows = grid.data.allRows || grid.data.localData || grid.data;
+        for (i = 0; i < len; i++) {
+          record = grid.getEditedRecord(grid.getRecordIndex(selection[i]));
+          for (j = 0; j < fields.length; j++) {
+            if (fields[j].required) {
+              if (record[fields[j].name] === null || record[fields[j] === undef]) {
+                hasErrors = true;
+                if (lineNumbers === undef) {
+                  lineNumbers = grid.getRecordIndex(selection[i]).toString();
+                } else {
+                  lineNumbers = lineNumbers + "," + grid.getRecordIndex(selection[i]).toString();
+                }
+              }
+            }
+          }
         }
+      }
+      if (!hasErrors) {
+        if (view.validate()) {
+          view.doProcess(this._buttonValue);
+        } else {
+          // If the messageBar is visible, it means that it has been set due to a custom validation inside view.validate()
+          // so we don't want to overwrite it with the generic OBUIAPP_ErrorInFields message
+          if (!view.messageBar.isVisible()) {
+            view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_ErrorInFields'));
+          }
+        }
+      } else {
+        view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_FillMandatoryFields') + " " + lineNumbers);
       }
     }
 
@@ -255,13 +283,21 @@ isc.OBParameterWindowView.addProperties({
     if (message) {
       if (this.popup) {
         if (!retryExecution) {
-          this.buttonOwnerView.messageBar.setMessage(message.severity, message.text);
+          if (message.title) {
+            this.buttonOwnerView.messageBar.setMessage(message.severity, message.title, message.text);
+          } else {
+            this.buttonOwnerView.messageBar.setMessage(message.severity, message.text);
+          }
         } else {
           // Popup has no message bar, showing the message in a warn popup
           isc.warn(message.text);
         }
       } else {
-        this.messageBar.setMessage(message.severity, message.text);
+        if (message.title) {
+          this.messageBar.setMessage(message.severity, message.title, message.text);
+        } else {
+          this.messageBar.setMessage(message.severity, message.text);
+        }
       }
     }
 
@@ -393,10 +429,12 @@ isc.OBParameterWindowView.addProperties({
       }
 
       len = (allRows && allRows.length) || 0;
-
-      for (i = 0; i < len; i++) {
-        tmp = isc.addProperties({}, allRows[i], grid.getEditedRecord(grid.getRecordIndex(allRows[i])));
-        allProperties._allRows.push(tmp);
+      // Only send _allRows if all rows are cached
+      if (len <= grid.data.cachedRows) {
+        for (i = 0; i < len; i++) {
+          tmp = isc.addProperties({}, allRows[i], grid.getEditedRecord(grid.getRecordIndex(allRows[i])));
+          allProperties._allRows.push(tmp);
+        }
       }
     }
 

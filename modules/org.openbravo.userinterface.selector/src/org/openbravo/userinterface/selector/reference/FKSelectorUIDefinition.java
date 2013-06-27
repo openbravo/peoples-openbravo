@@ -27,6 +27,7 @@ import org.openbravo.base.model.Property;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.util.Check;
 import org.openbravo.base.weld.WeldUtils;
+import org.openbravo.client.application.ApplicationConstants;
 import org.openbravo.client.application.Parameter;
 import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.client.kernel.reference.ForeignKeyUIDefinition;
@@ -109,9 +110,28 @@ public class FKSelectorUIDefinition extends ForeignKeyUIDefinition {
       // fallback to the default
       return null;
     }
-    final String result = (prop.getName() + DalUtil.FIELDSEPARATOR + displayFieldName).replace(".",
-        DalUtil.FIELDSEPARATOR);
-    return result;
+
+    if (!prop.getReferencedProperty().getEntity().hasProperty(getFirstProperty(displayFieldName))) {
+      // If the first property of the display field name does not belong to the referenced entity,
+      // return the displayFieldName
+      // Otherwise trying to append the displayFieldName to the referenced property would later
+      // result in an error
+      return displayFieldName.replace(".", DalUtil.FIELDSEPARATOR);
+    } else {
+      final String result = (prop.getName() + DalUtil.FIELDSEPARATOR + displayFieldName).replace(
+          ".", DalUtil.FIELDSEPARATOR);
+      return result;
+    }
+
+  }
+
+  private String getFirstProperty(String displayFieldName) {
+    int dotPosition = displayFieldName.indexOf(DalUtil.DOT);
+    if (dotPosition == -1) {
+      return displayFieldName;
+    } else {
+      return displayFieldName.substring(0, dotPosition);
+    }
   }
 
   public String getFieldProperties(Field field) {
@@ -119,10 +139,18 @@ public class FKSelectorUIDefinition extends ForeignKeyUIDefinition {
       return super.getFieldProperties(field);
     }
     final Selector selector = getSelector(field);
+
     final String tableName = field.getColumn().getTable().getDBTableName();
     final String columnName = field.getColumn().getDBColumnName();
+    final String tableId = field.getColumn().getTable().getId();
 
-    final Property property = DalUtil.getProperty(tableName, columnName);
+    Property property = null;
+    if (ApplicationConstants.DATASOURCEBASEDTABLE.equals(field.getColumn().getTable()
+        .getDataOriginType())) {
+      property = DalUtil.getPropertyByTableId(tableId, columnName);
+    } else {
+      property = DalUtil.getProperty(tableName, columnName);
+    }
 
     final SelectorComponent selectorComponent = WeldUtils
         .getInstanceFromStaticBeanManager(SelectorComponent.class);

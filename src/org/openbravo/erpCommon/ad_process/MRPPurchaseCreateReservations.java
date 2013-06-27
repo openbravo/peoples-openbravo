@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2012 Openbravo SLU 
+ * All portions are Copyright (C) 2012-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -94,63 +94,68 @@ public class MRPPurchaseCreateReservations extends DalBaseProcess {
 
     PurchasingRunLine incomingLine = null;
     String productID = "";
-    while (outgoingRLs.next()) {
-      PurchasingRunLine outgoingLine = (PurchasingRunLine) outgoingRLs.get(0);
-      if (!productID.equals((String) DalUtil.getId(outgoingLine.getProduct()))) {
-        productID = (String) DalUtil.getId(outgoingLine.getProduct());
-        currentStock = BigDecimal.ZERO;
-      }
-      BigDecimal quantity = outgoingLine.getQuantity().negate();
-      boolean isSalesOrderLine = outgoingLine.getSalesOrderLine() != null
-          && outgoingLine.getSalesOrderLine().getSalesOrder().isSalesTransaction();
-      while (quantity.signum() == 1) {
-        if (currentStock.signum() < 1 && incomingRLs.next()) {
-          incomingLine = (PurchasingRunLine) incomingRLs.get(0);
-          if (!productID.equals((String) DalUtil.getId(outgoingLine.getProduct()))
-              && incomingRLs.next()) {
+    try {
+      while (outgoingRLs.next()) {
+        PurchasingRunLine outgoingLine = (PurchasingRunLine) outgoingRLs.get(0);
+        if (!productID.equals((String) DalUtil.getId(outgoingLine.getProduct()))) {
+          productID = (String) DalUtil.getId(outgoingLine.getProduct());
+          currentStock = BigDecimal.ZERO;
+        }
+        BigDecimal quantity = outgoingLine.getQuantity().negate();
+        boolean isSalesOrderLine = outgoingLine.getSalesOrderLine() != null
+            && outgoingLine.getSalesOrderLine().getSalesOrder().isSalesTransaction();
+        while (quantity.signum() == 1) {
+          if (currentStock.signum() < 1 && incomingRLs.next()) {
             incomingLine = (PurchasingRunLine) incomingRLs.get(0);
-          }
-          currentStock = currentStock.add(incomingLine.getQuantity());
-          if (incomingLine.getTransactionType().equals("PP")
-              && incomingLine.getSalesOrderLine() != null) {
-            OBDal.getInstance().refresh(incomingLine.getSalesOrderLine().getSalesOrder());
-            if (!incomingLine.getSalesOrderLine().getSalesOrder().isProcessed()) {
-              try {
-                processOrder(incomingLine.getSalesOrderLine().getSalesOrder());
-              } catch (OBException e) {
-                OBDal.getInstance().rollbackAndClose();
-                OBError error = OBMessageUtils.translateError(e.getMessage());
-                bundle.setResult(error);
-                return;
+            if (!productID.equals((String) DalUtil.getId(outgoingLine.getProduct()))
+                && incomingRLs.next()) {
+              incomingLine = (PurchasingRunLine) incomingRLs.get(0);
+            }
+            currentStock = currentStock.add(incomingLine.getQuantity());
+            if (incomingLine.getTransactionType().equals("PP")
+                && incomingLine.getSalesOrderLine() != null) {
+              OBDal.getInstance().refresh(incomingLine.getSalesOrderLine().getSalesOrder());
+              if (!incomingLine.getSalesOrderLine().getSalesOrder().isProcessed()) {
+                try {
+                  processOrder(incomingLine.getSalesOrderLine().getSalesOrder());
+                } catch (OBException e) {
+                  OBDal.getInstance().rollbackAndClose();
+                  OBError error = OBMessageUtils.translateError(e.getMessage());
+                  bundle.setResult(error);
+                  return;
+                }
               }
             }
           }
-        }
-        BigDecimal consumedQuantity = currentStock.min(quantity);
-        currentStock = currentStock.subtract(consumedQuantity);
-        quantity = quantity.subtract(consumedQuantity);
-        if (isSalesOrderLine) {
-          Reservation reservation = ReservationUtils.getReservationFromOrder(outgoingLine
-              .getSalesOrderLine());
-          if (reservation.getReservedQty().compareTo(reservation.getQuantity()) == -1) {
-            if (incomingLine.getTransactionType().equals("PP")
-                && incomingLine.getSalesOrderLine() != null) {
-              ReservationUtils.reserveStockManual(reservation, incomingLine.getSalesOrderLine(),
-                  consumedQuantity, "N");
-            }
+          BigDecimal consumedQuantity = currentStock.min(quantity);
+          currentStock = currentStock.subtract(consumedQuantity);
+          quantity = quantity.subtract(consumedQuantity);
+          if (isSalesOrderLine) {
+            Reservation reservation = ReservationUtils.getReservationFromOrder(outgoingLine
+                .getSalesOrderLine());
+            if (reservation.getReservedQty().compareTo(reservation.getQuantity()) == -1) {
+              if (incomingLine.getTransactionType().equals("PP")
+                  && incomingLine.getSalesOrderLine() != null) {
+                ReservationUtils.reserveStockManual(reservation, incomingLine.getSalesOrderLine(),
+                    consumedQuantity, "N");
+              }
 
-            if (quantity.signum() < 1 && reservation.getRESStatus().equals("DR")) {
-              ReservationUtils.processReserve(reservation, "PR");
+              if (quantity.signum() < 1 && reservation.getRESStatus().equals("DR")) {
+                ReservationUtils.processReserve(reservation, "PR");
+              }
             }
+            OBDal.getInstance().save(reservation);
+            OBDal.getInstance().flush();
           }
-          OBDal.getInstance().save(reservation);
-          OBDal.getInstance().flush();
+        }
+        if ((i % 100) == 0) {
+          SessionHandler.getInstance().commitAndStart();
+          OBDal.getInstance().getSession().clear();
         }
       }
-      if ((i % 100) == 0) {
-        SessionHandler.getInstance().commitAndStart();
-        OBDal.getInstance().getSession().clear();
-      }
+    } finally {
+      incomingRLs.close();
+      outgoingRLs.close();
     }
     OBError message = new OBError();
     message.setType("Success");

@@ -125,13 +125,11 @@ public class DocFINBankStatement extends AcctServer {
       }
       String Fact_Acct_Group_ID = SequenceIdData.getUUID();
       FIN_BankStatement bst = OBDal.getInstance().get(FIN_BankStatement.class, Record_ID);
-      fact.createLine(null, getAccount(conn, bst.getAccount(), as, totalAmount.signum() < 0),
-          C_Currency_ID,
+      fact.createLine(null, getAccount(conn, bst.getAccount(), as, true), C_Currency_ID,
           (totalAmount.signum() > 0 ? totalAmount.abs().toString() : ZERO.toString()),
           (totalAmount.signum() < 0 ? totalAmount.abs().toString() : ZERO.toString()),
           Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
-      fact.createLine(null, getAccount(conn, bst.getAccount(), as, totalAmount.signum() > 0),
-          C_Currency_ID,
+      fact.createLine(null, getAccount(conn, bst.getAccount(), as, false), C_Currency_ID,
           (totalAmount.signum() < 0 ? totalAmount.abs().toString() : ZERO.toString()),
           (totalAmount.signum() > 0 ? totalAmount.abs().toString() : ZERO.toString()),
           Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);

@@ -43,7 +43,8 @@
       '' AS M_INVENTORY_ID, '' AS M_MOVEMENT_ID, '' AS M_PRODUCTIONPLAN_ID, '' AS PRODUCTION_PLAN, '' AS M_INTERNAL_CONSUMPTION_ID
       FROM M_PRODUCT right join M_TRANSACTION on M_TRANSACTION.M_PRODUCT_ID = M_PRODUCT.M_PRODUCT_ID
                      left join M_ATTRIBUTESETINSTANCE ON M_ATTRIBUTESETINSTANCE.M_ATTRIBUTESETINSTANCE_ID=M_TRANSACTION.M_ATTRIBUTESETINSTANCE_ID,
-           M_INOUT left join C_BPARTNER on M_INOUT.C_BPARTNER_ID=C_BPARTNER.C_BPARTNER_ID, 
+           M_INOUT left join C_BPARTNER on M_INOUT.C_BPARTNER_ID=C_BPARTNER.C_BPARTNER_ID
+           left join C_DOCTYPE on M_INOUT.C_DOCTYPE_ID = C_DOCTYPE.C_DOCTYPE_ID, 
            M_LOCATOR, M_INOUTLINE, C_UOM, M_WAREHOUSE
       WHERE M_TRANSACTION.M_LOCATOR_ID = M_LOCATOR.M_LOCATOR_ID
       AND M_TRANSACTION.M_INOUTLINE_ID = M_INOUTLINE.M_INOUTLINE_ID
@@ -68,6 +69,7 @@
     <Parameter name="cBpartner" optional="true" after="AND 1=1"><![CDATA[ AND C_BPARTNER.C_BPARTNER_ID = ?]]></Parameter>
     <Parameter name="mProductId" optional="true" after="AND 1=1"><![CDATA[ AND M_PRODUCT.M_PRODUCT_ID = ?]]></Parameter>
     <Parameter name="parmAttributeSetInstanceId" optional="true" after="AND 1=1"><![CDATA[AND M_TRANSACTION.M_ATTRIBUTESETINSTANCE_ID = ?]]></Parameter>
+    <Parameter name="isReturn" optional="true" after="AND 1=1"><![CDATA[AND C_DOCTYPE.ISRETURN = ?]]></Parameter>
   </SqlMethod>
 
   <SqlMethod name="selectInventory" type="preparedStatement" return="multiple">

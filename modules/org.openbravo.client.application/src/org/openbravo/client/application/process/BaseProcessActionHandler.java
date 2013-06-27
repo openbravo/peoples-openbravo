@@ -35,6 +35,7 @@ import org.openbravo.client.kernel.KernelConstants;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.database.SessionInfo;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.PropertyException;
@@ -83,6 +84,11 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
           }
         }
       }
+
+      // Set information for audit trail
+      SessionInfo.setProcessType("PD");
+      SessionInfo.setProcessId(processId);
+      SessionInfo.setDBSessionInfo(OBDal.getInstance().getConnection(false));
 
       return doExecute(parameters, content);
 

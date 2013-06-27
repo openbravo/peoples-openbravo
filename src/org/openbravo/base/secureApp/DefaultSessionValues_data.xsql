@@ -22,6 +22,7 @@
         FROM AD_Column c 
         INNER JOIN AD_Table t ON (c.AD_Table_ID=t.AD_Table_ID) 
         WHERE c.IsKey='Y' AND t.IsActive='Y'
+        AND t.name <> 'ADModule'
         AND EXISTS (SELECT * FROM AD_Column cc 
         WHERE ColumnName = 'IsDefault' AND t.AD_Table_ID=cc.AD_Table_ID AND cc.IsActive='Y')
       ]]></Sql>

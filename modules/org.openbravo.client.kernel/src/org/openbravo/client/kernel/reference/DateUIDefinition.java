@@ -118,6 +118,9 @@ public class DateUIDefinition extends UIDefinition {
     if (value == null) {
       return "";
     }
+    if (value instanceof String) {
+      return (String) value;
+    }
     return getClassicFormat().format(value);
   }
 

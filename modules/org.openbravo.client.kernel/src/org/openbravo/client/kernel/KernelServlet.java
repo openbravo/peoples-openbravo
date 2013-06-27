@@ -37,9 +37,11 @@ import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 import org.openbravo.base.ConfigParameters;
 import org.openbravo.base.HttpBaseUtils;
+import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.util.OBClassLoader;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.portal.PortalAccessible;
 import org.openbravo.service.web.WebServiceUtil;
 
 /**
@@ -256,6 +258,17 @@ public class KernelServlet extends BaseKernelServlet {
       final Class<ActionHandler> actionHandlerClass = (Class<ActionHandler>) OBClassLoader
           .getInstance().loadClass(action);
       final ActionHandler actionHandler = weldUtils.getInstance(actionHandlerClass);
+
+      if (OBContext.getOBContext() != null && OBContext.getOBContext().isPortalRole()) {
+        if (!(actionHandler instanceof PortalAccessible)) {
+          log4j.error("Portal user " + OBContext.getOBContext().getUser() + " with role "
+              + OBContext.getOBContext().getRole()
+              + " is trying to access to non granted action handler " + request.getRequestURL()
+              + "?" + request.getQueryString());
+          throw new OBSecurityException("Portal role has no access to this handler");
+        }
+      }
+
       actionHandler.execute();
     } catch (Exception e) {
       log4j.error("Error executing action " + action + " error: " + e.getMessage(), e);

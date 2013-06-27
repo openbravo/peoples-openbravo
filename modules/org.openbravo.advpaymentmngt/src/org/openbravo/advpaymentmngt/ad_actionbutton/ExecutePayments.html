@@ -53,10 +53,6 @@
    // window.close();
     return true;
   }
-  function closeThisPage() {
-	submitCommandForm('CLOSE', true, frmMain, null);
-    return true;
-  }
 
   function onloadFunctions() {
   }
@@ -288,7 +284,7 @@
                 <td class="Button_CenterAlign_ContentCell">
                   <div>
                     <button type="button" id="buttonCancel" class="ButtonLink"
-                      onclick="closeThisPage();return false;"
+                      onclick="closePage();return false;"
                       onfocus="buttonEvent('onfocus', this); window.status='Cancel'; return true;"
                       onblur="buttonEvent('onblur', this);"
                       onkeyup="buttonEvent('onkeyup', this);"

@@ -22,6 +22,7 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
+import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -32,6 +33,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -79,6 +81,7 @@ import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.obps.ActivationKey.LicenseClass;
 import org.openbravo.erpCommon.reference.PInstanceProcessData;
+import org.openbravo.model.ad.process.ProcessInstance;
 import org.openbravo.model.ad.system.ClientInformation;
 import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.model.ad.ui.Process;
@@ -1095,6 +1098,22 @@ public class Utility {
     return true;
   }
 
+  public static boolean generateFileEncoding(String strPath, String strFile, String data,
+      String encoding) {
+    try {
+      BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File(
+          strPath, strFile)), encoding));
+      final PrintWriter printWriterData = new PrintWriter(out);
+      printWriterData.print(data);
+      out.close();
+    } catch (final IOException e) {
+      e.printStackTrace();
+      log4j.error("Problem of IOExceptio in file: " + strPath + " - " + strFile);
+      return false;
+    }
+    return true;
+  }
+
   /*
    * public static String sha1Base64(String text) throws ServletException { if (text==null ||
    * text.trim().equals("")) return ""; String result = text; result =
@@ -1243,8 +1262,7 @@ public class Utility {
   }
 
   /**
-   * @see OBMessageUtils#getProcessInstanceMessage(ConnectionProvider, VariablesSecureApp,
-   *      PInstanceProcessData[])
+   * @see OBMessageUtils#getProcessInstanceMessage(ProcessInstance)
    */
   public static OBError getProcessInstanceMessage(ConnectionProvider conn, VariablesSecureApp vars,
       PInstanceProcessData[] pinstanceData) throws ServletException {
@@ -2501,11 +2519,12 @@ public class Utility {
   }
 
   public static boolean isMobileBrowser(HttpServletRequest request) {
-    final String ua = request.getHeader("User-Agent").toLowerCase();
+    final String ua = request.getHeader("User-Agent");
     if (ua == null) {
       return false;
     } else {
-      return (ua.matches(MOBILE_VENDORS) || ua.substring(0, 4).matches(MOBILE_VERSION));
+      return (ua.toLowerCase().matches(MOBILE_VENDORS) || ua.toLowerCase().substring(0, 4)
+          .matches(MOBILE_VERSION));
     }
   }
 

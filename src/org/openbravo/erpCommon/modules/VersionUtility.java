@@ -507,8 +507,11 @@ public class VersionUtility {
   /**
    * Compares 2 versions taking into account just their major versions.
    * 
-   * @return<ul> <li>-1 in case ver1 is lower than ver2 <li>0 in case ver1 equals ver2 <li>1 in case
-   *             ver1 is higher than ver2 </ul>
+   * @return <ul>
+   *         <li>-1 in case ver1 is lower than ver2
+   *         <li>0 in case ver1 equals ver2
+   *         <li>1 in case ver1 is higher than ver2
+   *         </ul>
    */
   static public int versionCompareStrictMajorVersion(String ver1, String ver2) {
     if ((ver1 == null || ver1.equals("")) && (ver2 == null || ver2.equals("")))

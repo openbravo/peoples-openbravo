@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -59,6 +59,9 @@ public class ApplicationConstants {
 
   // Identifier of the key holding the value of the button clicked
   public static final String BUTTON_VALUE = "_buttonValue";
+
+  public static final String DATASOURCEBASEDTABLE = "Datasource";
+  public static final String TABLEBASEDTABLE = "Table";
 
   static {
     try {

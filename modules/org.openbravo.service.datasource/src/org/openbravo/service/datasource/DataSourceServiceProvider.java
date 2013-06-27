@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,9 +29,11 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.util.OBClassLoader;
 import org.openbravo.base.weld.WeldUtils;
+import org.openbravo.client.application.ApplicationConstants;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.datamodel.Table;
 
 /**
  * Provides {@link DataSourceService} instances and caches them in a global cache.
@@ -73,10 +75,22 @@ public class DataSourceServiceProvider {
           }
         }
         if (dataSource == null) {
-          ds = weldUtils.getInstance(DefaultDataSourceService.class);
-          ds.setName(name);
-          ds.setEntity(ModelProvider.getInstance().getEntity(name));
-          dataSources.put(name, ds);
+          final OBCriteria<Table> qTable = OBDal.getInstance().createCriteria(Table.class);
+          qTable.add(Restrictions.eq(Table.PROPERTY_NAME, name));
+          if (!qTable.list().isEmpty()) {
+            Table table = (Table) qTable.list().get(0);
+            if (ApplicationConstants.DATASOURCEBASEDTABLE.equals(table.getDataOriginType())) {
+              dataSource = table.getObserdsDatasource();
+              ds.setEntity(ModelProvider.getInstance().getEntityByTableId(table.getId()));
+            }
+          }
+          if (dataSource == null) {
+            ds = weldUtils.getInstance(DefaultDataSourceService.class);
+            ds.setName(name);
+            ds.setEntity(ModelProvider.getInstance().getEntity(name));
+            dataSources.put(name, ds);
+          }
+
         } else {
           if (dataSource.getJavaClassName() != null) {
             final Class<DataSourceService> clz = (Class<DataSourceService>) OBClassLoader

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -33,6 +33,7 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.client.application.ApplicationConstants;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
@@ -387,12 +388,20 @@ public class KernelUtils {
     List<Tab> tabsOfWindow = tab.getWindow().getADTabList();
     ArrayList<Entity> entities = new ArrayList<Entity>();
     HashMap<Entity, Tab> tabOfEntity = new HashMap<Entity, Tab>();
-    Entity theEntity = ModelProvider.getInstance().getEntityByTableName(
-        tab.getTable().getDBTableName());
+    Entity theEntity = null;
+    if (ApplicationConstants.DATASOURCEBASEDTABLE.equals(tab.getTable().getDataOriginType())) {
+      theEntity = ModelProvider.getInstance().getEntityByTableId(tab.getTable().getId());
+    } else {
+      theEntity = ModelProvider.getInstance().getEntityByTableName(tab.getTable().getDBTableName());
+    }
 
     for (Tab aTab : tabsOfWindow) {
-      Entity entity = ModelProvider.getInstance().getEntityByTableName(
-          aTab.getTable().getDBTableName());
+      Entity entity = null;
+      if (ApplicationConstants.DATASOURCEBASEDTABLE.equals(aTab.getTable().getDataOriginType())) {
+        entity = ModelProvider.getInstance().getEntityByTableId(tab.getTable().getId());
+      } else {
+        entity = ModelProvider.getInstance().getEntityByTableName(aTab.getTable().getDBTableName());
+      }
       entities.add(entity);
       tabOfEntity.put(entity, aTab);
     }

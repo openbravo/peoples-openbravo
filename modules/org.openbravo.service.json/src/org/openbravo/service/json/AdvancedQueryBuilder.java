@@ -28,6 +28,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONArray;
@@ -510,7 +512,7 @@ public class AdvancedQueryBuilder {
                 && referencedTable.getDisplayedColumn().isActive()) {
               useProperty = property.getEntity().getPropertyByColumnName(
                   referencedTable.getDisplayedColumn().getDBColumnName());
-              final int index = useFieldName.indexOf(DalUtil.DOT);
+              final int index = useFieldName.lastIndexOf(DalUtil.DOT);
               useFieldName = useFieldName.substring(0, index + 1) + useProperty.getName();
               break;
             }
@@ -1146,7 +1148,26 @@ public class AdvancedQueryBuilder {
   }
 
   protected String getOrderByClausePart(String orderByParam) {
-    String localOrderBy = orderByParam;
+    // Support for one argument functions
+    String functionPattern = "(.*)\\((.*)\\) (desc|DESC)+";
+    Pattern p = Pattern.compile(functionPattern);
+    Matcher m = p.matcher(orderByParam);
+
+    String localOrderBy = null;
+    String functionName = null;
+    boolean descOrderedFunction = false;
+    if (m.find()) {
+      // If it is a function, retrieve the function name and the localOrderBy
+      functionName = m.group(1);
+      localOrderBy = m.group(2);
+      if (m.groupCount() == 3) {
+        // Check if the property is to be ordered in descending order
+        descOrderedFunction = true;
+      }
+    } else {
+      localOrderBy = orderByParam;
+    }
+
     final boolean asc = !localOrderBy.startsWith("-");
     String direction = "";
     if (!asc) {
@@ -1215,7 +1236,15 @@ public class AdvancedQueryBuilder {
       sb.append(resolvedPath);
       sb.append(direction);
     }
-    return sb.toString();
+
+    String orderByClausePart = sb.toString();
+    if (functionName != null) {
+      orderByClausePart = functionName + "(" + orderByClausePart + ")";
+      if (descOrderedFunction) {
+        orderByClausePart = orderByClausePart + " desc";
+      }
+    }
+    return orderByClausePart;
   }
 
   // Creates a Hibernate concatenation if there are multiple identifierproperties

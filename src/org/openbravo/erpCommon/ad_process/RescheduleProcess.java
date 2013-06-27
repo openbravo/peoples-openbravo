@@ -71,7 +71,7 @@ public class RescheduleProcess extends HttpSecureAppServlet {
       message = Utility.messageBD(this, "RESCHED_ERROR", vars.getLanguage());
       String processErrorTit = Utility.messageBD(this, "Error", vars.getLanguage());
       advisePopUp(request, response, "ERROR", processErrorTit, message + " " + e.getMessage());
-
+      log.error("Error scheduling process", e);
     }
     message = Utility.messageBD(this, "RESCHED_SUCCESS", vars.getLanguage());
     String processTitle = Utility.messageBD(this, "Success", vars.getLanguage());

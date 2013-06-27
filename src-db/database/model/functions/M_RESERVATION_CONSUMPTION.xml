@@ -161,6 +161,7 @@ BEGIN
           WHERE m_reservation_id = p_reservation_id
             AND isallocated = 'N'
             AND quantity != COALESCE(releasedqty,0)
+            AND (m_attributesetinstance_id != p_attributesetinstance_id OR m_locator_id != p_locator_id)
           ORDER BY quantity - COALESCE(releasedqty,0)
       ) LOOP
         v_qtytounreserve_aux := LEAST(v_qtytounreserve, cur_reserved_stock.reservedqty);

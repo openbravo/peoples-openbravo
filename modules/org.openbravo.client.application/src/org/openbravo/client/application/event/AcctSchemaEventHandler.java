@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012 Openbravo SLU
+ * All portions are Copyright (C) 2012-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -55,7 +55,8 @@ public class AcctSchemaEventHandler extends EntityPersistenceEventObserver {
     return entities;
   }
 
-  public void onUpdate(@Observes EntityUpdateEvent event) {
+  public void onUpdate(@Observes
+  EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -152,21 +153,25 @@ public class AcctSchemaEventHandler extends EntityPersistenceEventObserver {
     elementValueQry.setFetchSize(1000);
 
     ScrollableResults elementvalues = elementValueQry.scroll(ScrollMode.FORWARD_ONLY);
-    // TODO: Review with Martin to see if flush is permitted in handlers
-    // int i = 0;
-    while (elementvalues.next()) {
-      ElementValue elementValue = (ElementValue) elementvalues.get(0);
-      boolean isCredit = getAccountSign(elementValue.getAccountType(), assetPositive,
-          liabilityPositive, ownersEquityPositive, expensePositive, revenuePositive);
-      if (!ACCOUNTTYPE_MEMO.equals(elementValue.getAccountType())) {
-        elementValue.setAccountSign(isCredit ? ACCOUNTSIGN_CREDIT : ACCOUNTSIGN_DEBIT);
+    try {
+      // TODO: Review with Martin to see if flush is permitted in handlers
+      // int i = 0;
+      while (elementvalues.next()) {
+        ElementValue elementValue = (ElementValue) elementvalues.get(0);
+        boolean isCredit = getAccountSign(elementValue.getAccountType(), assetPositive,
+            liabilityPositive, ownersEquityPositive, expensePositive, revenuePositive);
+        if (!ACCOUNTTYPE_MEMO.equals(elementValue.getAccountType())) {
+          elementValue.setAccountSign(isCredit ? ACCOUNTSIGN_CREDIT : ACCOUNTSIGN_DEBIT);
+        }
+        // if ((i % 100) == 0) {
+        // OBDal.getInstance().flush();
+        // OBDal.getInstance().getSession().clear();
+        // element = OBDal.getInstance().get(Element.class, element.getId());
+        // }
+        // i++;
       }
-      // if ((i % 100) == 0) {
-      // OBDal.getInstance().flush();
-      // OBDal.getInstance().getSession().clear();
-      // element = OBDal.getInstance().get(Element.class, element.getId());
-      // }
-      // i++;
+    } finally {
+      elementvalues.close();
     }
   }
 

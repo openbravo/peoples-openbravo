@@ -23,13 +23,16 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.model.ModelProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
@@ -65,7 +68,7 @@ public class ResetAccounting {
     String client = adClientId;
     List<String> tables = getTables(adTableId);
     try {
-      Set<String> orgIds = new OrganizationStructureProvider().getNaturalTree(adOrgId);
+      Set<String> orgIds = new OrganizationStructureProvider().getChildTree(adOrgId, true);
       for (String table : tables) {
         List<String> docbasetypes = getDocbasetypes(client, table, recordId);
         String myQuery = "select distinct e.recordID from FinancialMgmtAccountingFact e where e.organization.id in (:orgIds) and e.client.id = :clientId and e.table.id = :tableId";
@@ -74,64 +77,95 @@ public class ResetAccounting {
         }
         for (String dbt : docbasetypes) {
           List<Date[]> periods = new ArrayList<Date[]>();
+          // organizationPeriod: hashmap with organizations allow period control and their open
+          // periods
+          Map<String, List<Date[]>> organizationPeriod = new HashMap<String, List<Date[]>>();
+          // organizationPeriodControl: hashmap with organizations and their organization allow
+          // period control associated
+          Map<String, String> organizationPeriodControl = new HashMap<String, String>();
           String calendarId = getCalendarId(adOrgId);
-          periods = getPeriodsDates(getOpenPeriods(client, dbt, orgIds, calendarId, table,
-              recordId, strdatefrom, strdateto));
+          Iterator<String> iterator = orgIds.iterator();
+          while (iterator.hasNext()) {
+            String organization = iterator.next();
+            String myQuery1 = "select p.id from Organization p where ad_org_getperiodcontrolallow(:organization)=p.id";
+            Query query1 = OBDal.getInstance().getSession().createQuery(myQuery1);
+            query1.setString("organization", organization);
+            query1.setMaxResults(1);
+            if (query1.uniqueResult() != null) {
+              String orgperiodcontrol = query1.uniqueResult().toString();
+              organizationPeriodControl.put(organization, orgperiodcontrol);
+              if (!organizationPeriod.keySet().contains(orgperiodcontrol)) {
+                periods = getPeriodsDates(getOpenPeriods(client, dbt, orgIds, calendarId, table,
+                    recordId, strdatefrom, strdateto, orgperiodcontrol));
+                organizationPeriod.put(orgperiodcontrol, periods);
+              }
+            }
+          }
           int docUpdated = 0;
           int docDeleted = 0;
-          for (Date[] p : periods) {
-            StringBuffer consDate = new StringBuffer();
-            consDate.append(" and e.documentCategory = :dbt");
-            consDate.append(" and e.accountingDate >= :dateFrom and e.accountingDate <= :dateTo");
-            String exceptionsSql = myQuery + consDate.toString();
-            consDate
-                .append(" and not exists (select a from FinancialMgmtAccountingFact a where a.recordID = e.recordID and a.table.id = e.table.id and (a.accountingDate < :dateFrom or a.accountingDate > :dateTo))");
-            final Query query = OBDal.getInstance().getSession()
-                .createQuery(myQuery + consDate.toString());
-            if (recordId != null && !"".equals(recordId)) {
-              query.setString("recordId", recordId);
-            }
-            query.setParameterList("orgIds", orgIds);
-            query.setString("clientId", client);
-            query.setString("dbt", dbt);
-            query.setString("tableId", table);
-            query.setDate("dateFrom", p[0]);
-            query.setDate("dateTo", p[1]);
-            if (recordId != null && !"".equals(recordId)) {
-              query.setMaxResults(1);
-            } else {
-              query.setFetchSize(FETCH_SIZE);
-            }
-            start = System.currentTimeMillis();
-            List<String> transactions = query.list();
-            end = System.currentTimeMillis();
-            totalselect = totalselect + end - start;
-            while (transactions.size() > 0) {
-              HashMap<String, Integer> partial = delete(transactions, table, client);
+          for (String organization : orgIds) {
+            String orgAllow = organizationPeriodControl.get(organization);
+            periods = organizationPeriod.get(orgAllow);
+            for (Date[] p : periods) {
+              StringBuffer consDate = new StringBuffer();
+              consDate.append(" and e.documentCategory = :dbt");
+              consDate.append(" and e.organization.id = :organization");
+              consDate.append(" and e.accountingDate >= :dateFrom and e.accountingDate <= :dateTo");
+              String exceptionsSql = myQuery + consDate.toString();
+              consDate
+                  .append(" and not exists (select a from FinancialMgmtAccountingFact a where a.recordID = e.recordID and a.table.id = e.table.id and (a.accountingDate < :dateFrom or a.accountingDate > :dateTo))");
+              final Query query = OBDal.getInstance().getSession()
+                  .createQuery(myQuery + consDate.toString());
+              if (recordId != null && !"".equals(recordId)) {
+                query.setString("recordId", recordId);
+              }
+              query.setParameterList("orgIds", orgIds);
+              query.setString("clientId", client);
+              query.setString("dbt", dbt);
+              query.setString("tableId", table);
+              query.setDate("dateFrom", p[0]);
+              query.setDate("dateTo", p[1]);
+              query.setString("organization", organization);
+              if (recordId != null && !"".equals(recordId)) {
+                query.setMaxResults(1);
+              } else {
+                query.setFetchSize(FETCH_SIZE);
+              }
+              start = System.currentTimeMillis();
+              List<String> transactions = query.list();
+              end = System.currentTimeMillis();
+              totalselect = totalselect + end - start;
+              while (transactions.size() > 0) {
+                HashMap<String, Integer> partial = delete(transactions, table, client);
+                deleted = deleted + partial.get("deleted");
+                updated = updated + partial.get("updated");
+                docUpdated = docUpdated + partial.get("updated");
+                docDeleted = docDeleted + partial.get("deleted");
+                start = System.currentTimeMillis();
+                transactions = query.list();
+                end = System.currentTimeMillis();
+                totalselect = totalselect + end - start;
+              }
+              // Documents with postings in different periods are treated separately to validate
+              // all
+              // dates are within an open period
+              HashMap<String, Integer> partial = treatExceptions(exceptionsSql, recordId, table,
+                  orgIds, client, p[0], p[1], calendarId, strdatefrom, strdateto, dbt, orgAllow,
+                  organization);
               deleted = deleted + partial.get("deleted");
               updated = updated + partial.get("updated");
               docUpdated = docUpdated + partial.get("updated");
               docDeleted = docDeleted + partial.get("deleted");
-              start = System.currentTimeMillis();
-              transactions = query.list();
-              end = System.currentTimeMillis();
-              totalselect = totalselect + end - start;
             }
-            // Documents with postings in different periods are treated separately to validate all
-            // dates are within an open period
-            HashMap<String, Integer> partial = treatExceptions(exceptionsSql, recordId, table,
-                orgIds, client, p[0], p[1], calendarId, strdatefrom, strdateto, dbt);
-            deleted = deleted + partial.get("deleted");
-            updated = updated + partial.get("updated");
-            docUpdated = docUpdated + partial.get("updated");
-            docDeleted = docDeleted + partial.get("deleted");
           }
           log4j.debug("docBaseType: " + dbt);
           log4j.debug("updated: " + docUpdated);
           log4j.debug("deleted: " + docDeleted);
         }
       }
+
     } catch (OBException e) {
+
       throw e;
     } catch (Exception e) {
       throw new OBException("Delete failed", e);
@@ -209,7 +243,9 @@ public class ResetAccounting {
     try {
       Table table = OBDal.getInstance().get(Table.class, tableId);
       tableName = table.getName();
-      tableDate = lowerCaseFirst(camelCaseIt(table.getAcctdateColumn().getName()));
+      tableDate = ModelProvider.getInstance().getEntityByTableName(table.getDBTableName())
+          .getPropertyByColumnName(table.getAcctdateColumn().getDBColumnName()).getName();
+
       String strUpdate = "update "
           + tableName
           + " set posted='N', processNow=false where posted not in ('N','Y') and processed = 'Y' and organization.id in (:orgIds)  ";
@@ -298,13 +334,14 @@ public class ResetAccounting {
   @SuppressWarnings("unchecked")
   private static List<Period> getOpenPeriods(String clientId, String docBaseType,
       Set<String> orgIds, String calendarId, String tableId, String recordId, String datefrom,
-      String dateto) {
+      String dateto, String orgPeriodControl) {
     if (!"".equals(recordId)) {
       List<Period> periods = new ArrayList<Period>();
-      periods.add(getDocumentPeriod(clientId, tableId, recordId, docBaseType));
+      periods.add(getDocumentPeriod(clientId, tableId, recordId, docBaseType, orgPeriodControl));
       return periods;
+
     }
-    String myQuery = "select distinct p from FinancialMgmtPeriodControl e left join e.period p left join p.year y left join y.calendar c where c.id = :calendarId and e.client.id = :clientId and e.documentCategory = :docbasetype and e.periodStatus = 'O'";
+    String myQuery = "select distinct p from FinancialMgmtPeriodControl e left join e.period p left join p.year y left join y.calendar c where c.id = :calendarId and e.client.id = :clientId and e.documentCategory = :docbasetype and e.periodStatus = 'O' and e.organization.id = :orgPeriodControl";
 
     if (!("".equals(datefrom))) {
       myQuery = myQuery + " and p.startingDate >= :dateFrom";
@@ -318,6 +355,8 @@ public class ResetAccounting {
     query.setString("calendarId", calendarId);
     query.setString("clientId", clientId);
     query.setString("docbasetype", docBaseType);
+    query.setString("orgPeriodControl", orgPeriodControl);
+
     try {
       if (!("".equals(datefrom))) {
         query.setDate("dateFrom", OBDateUtils.getDate(datefrom));
@@ -332,13 +371,14 @@ public class ResetAccounting {
   }
 
   private static Period getDocumentPeriod(String clientId, String tableId, String recordId,
-      String docBaseType) {
-    String myQuery = "select distinct e.period from FinancialMgmtAccountingFact e , FinancialMgmtPeriodControl p where p.period=e.period and p.periodStatus = 'O' and e.client.id = :clientId and e.table.id = :tableId and e.recordID=:recordId and p.documentCategory = :docbasetype";
+      String docBaseType, String orgPeriodControl) {
+    String myQuery = "select distinct e.period from FinancialMgmtAccountingFact e , FinancialMgmtPeriodControl p where p.period=e.period and p.periodStatus = 'O' and e.client.id = :clientId and e.table.id = :tableId and e.recordID=:recordId and p.documentCategory = :docbasetype and p.organization.id  = :orgPeriodControl";
     Query query = OBDal.getInstance().getSession().createQuery(myQuery);
     query.setString("clientId", clientId);
     query.setString("tableId", tableId);
     query.setString("recordId", recordId);
     query.setString("docbasetype", docBaseType);
+    query.setString("orgPeriodControl", orgPeriodControl);
     query.setMaxResults(1);
     Period period = (Period) query.uniqueResult();
     if (period == null) {
@@ -389,7 +429,8 @@ public class ResetAccounting {
 
   private static HashMap<String, Integer> treatExceptions(String myQuery, String recordId,
       String table, Set<String> orgIds, String client, Date dateFrom, Date dateTo,
-      String calendarId, String datefrom, String dateto, String dbt) {
+      String calendarId, String datefrom, String dateto, String dbt, String orgPeriodControl,
+      String targetOrganization) {
     HashMap<String, Integer> results = new HashMap<String, Integer>();
     results.put("deleted", 0);
     results.put("updated", 0);
@@ -403,6 +444,7 @@ public class ResetAccounting {
     query.setString("tableId", table);
     query.setDate("dateFrom", dateFrom);
     query.setDate("dateTo", dateTo);
+    query.setString("organization", targetOrganization);
     if (recordId != null && !"".equals(recordId)) {
       query.setMaxResults(1);
     }
@@ -425,7 +467,7 @@ public class ResetAccounting {
         }
       }
       if (checkDates(exceptionDates, client, orgIds, facts.get(0).getDocumentCategory(),
-          calendarId, datefrom, dateto)) {
+          calendarId, datefrom, dateto, orgPeriodControl)) {
         List<String> toDelete = new ArrayList<String>();
         toDelete.add(transaction);
         results = delete(toDelete, table, client);
@@ -439,9 +481,10 @@ public class ResetAccounting {
   }
 
   private static boolean checkDates(Set<Date> exceptionDates, String clientId, Set<String> orgIds,
-      String documentCategory, String calendarId, String datefrom, String dateto) {
+      String documentCategory, String calendarId, String datefrom, String dateto,
+      String orgPeriodControl) {
     List<Period> openPeriods = getOpenPeriods(clientId, documentCategory, orgIds, calendarId, "",
-        "", datefrom, dateto);
+        "", datefrom, dateto, orgPeriodControl);
     int validDates = 0;
     for (Period period : openPeriods) {
       for (Date date : exceptionDates) {
@@ -452,37 +495,6 @@ public class ResetAccounting {
       }
     }
     return exceptionDates.size() == validDates;
-  }
-
-  private static String camelCaseIt(String mappingName) {
-    String localMappingName = mappingName.replaceAll("_", " ");
-    String separator = " ";
-    // strip _ at the end
-    while (localMappingName.endsWith(separator)) {
-      localMappingName = localMappingName.substring(0, localMappingName.length() - 1);
-    }
-    // strip _ at the beginning
-    while (localMappingName.startsWith(separator)) {
-      localMappingName = localMappingName.substring(1);
-    }
-
-    // "CamelCasing"
-    int pos = localMappingName.indexOf(separator);
-    while (pos != -1) {
-      final String leftPart = localMappingName.substring(0, pos);
-      final String camelLetter = String.valueOf(localMappingName.charAt(pos + 1)).toUpperCase();
-      final String rightPart = localMappingName.substring(pos + 2);
-      localMappingName = leftPart + camelLetter + rightPart;
-      pos = localMappingName.indexOf(separator);
-    }
-    return localMappingName;
-  }
-
-  private static String lowerCaseFirst(String value) {
-    if (value.length() > 1) {
-      return value.substring(0, 1).toLowerCase() + value.substring(1);
-    }
-    return value;
   }
 
 }

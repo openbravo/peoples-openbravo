@@ -202,10 +202,13 @@ public class SelectorUIReference extends UIReference {
           String parentFieldName = fieldName;
           String name = ((fieldName != null && !fieldName.equals("")) ? fieldName : comboTableData
               .getObjectName());
-          if (name.startsWith("EM_")) {
-            // For external module fields use the column field in selector to avoid comparing
-            // fields with EM_fieldname which will not be present in the current table.
-            // Refer issue https://issues.openbravo.com/view.php?id=23267
+          /*
+           * if the column name is available in selector use that for comparison as it is the column
+           * that is going to be saved. Solves issues
+           * https://issues.openbravo.com/view.php?id=23267,
+           * https://issues.openbravo.com/view.php?id=23124
+           */
+          if (selector.getColumn() != null) {
             name = selector.getColumn().getDBColumnName();
           }
           String tableDirName;

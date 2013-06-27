@@ -100,6 +100,9 @@
       <index name="M_STORAGE_DETAIL_PRODUCT" unique="false">
         <index-column name="M_PRODUCT_ID"/>
       </index>
+      <index name="M_STORAGE_DETAIL_UOM" unique="false">
+        <index-column name="C_UOM_ID"/>
+      </index>
       <unique name="M_STORAGE_DETAIL_UN">
         <unique-column name="M_PRODUCT_ID"/>
         <unique-column name="M_LOCATOR_ID"/>

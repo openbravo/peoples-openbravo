@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -47,6 +47,7 @@ import org.openbravo.base.model.Property;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.client.application.Process;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -611,8 +612,7 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
 
     long s1 = System.currentTimeMillis();
 
-    // get list of field-id's, excluding the ones with reference ID (13)
-    String hql = "as f where f.tab.id = :tabId and f.displayed = true and f.column.reference.id <> '13'";
+    String hql = "as f where f.tab.id = :tabId and (f.displayed = true or f.column.reference.id = '13')";
     OBQuery<Field> qf = OBDal.getInstance().createQuery(Field.class, hql);
     qf.setNamedParameter("tabId", tabId);
     List<Field> fieldList = qf.list();
@@ -1205,6 +1205,11 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     if ("CF".equals(processType)) {
       String processCFLabel = getTranslatedMessage(adMessageIdForCF);
       return processCFLabel + ": " + OBDal.getInstance().get(Table.class, process).getDBTableName();
+    }
+    if ("PD".equals(processType)) {
+      String processCFLabel = getTranslatedMessage(adMessageIdForProcess);
+      return processCFLabel + ": "
+          + OBDal.getInstance().get(Process.class, process).getIdentifier();
     }
     // all other cases -> Tab
     String windowLabel = getTranslatedMessage(adMessageIdForWindow);

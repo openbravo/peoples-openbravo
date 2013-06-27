@@ -250,7 +250,7 @@ isc.OBStandardView.addProperties({
       length = this.iconToolbarButtons.length;
       for (i = 0; i < length; i++) {
         // note create a somewhat unique id by concatenating the tabid and the index
-        OB.ToolbarRegistry.registerButton(this.tabId + '_' + i, isc.OBToolbarIconButton, this.iconToolbarButtons[i], 200 + (i * 10), this.tabId);
+        OB.ToolbarRegistry.registerButton(this.tabId + '_' + i, isc.OBToolbarIconButton, this.iconToolbarButtons[i], 200 + (i * 10), this.tabId, null, false);
       }
     }
 
@@ -1618,7 +1618,9 @@ isc.OBStandardView.addProperties({
       if (me.viewGrid.data) {
         var recordIndex = me.viewGrid.getRecordIndex(me.viewGrid.getSelectedRecord());
         data = OB.Utilities.Date.convertUTCTimeToLocalTime(data, me.viewGrid.completeFields);
-        me.viewGrid.data.updateCacheData(data, req);
+        if (me.viewGrid.data.updateCacheData) {
+          me.viewGrid.data.updateCacheData(data, req);
+        }
         me.viewGrid.selectRecord(me.viewGrid.getRecord(recordIndex));
         me.viewGrid.refreshRow(recordIndex);
         me.viewGrid.redraw();
@@ -1994,7 +1996,7 @@ isc.OBStandardView.addProperties({
         }
         // Prevents the proper id from being overwritten with the dummy id
         // See issue https://issues.openbravo.com/view.php?id=22625
-        if (this.viewGrid.getEditValues(rowNum)[OB.Constants.ID].indexOf('_') === 0 && this.viewGrid.getRecord(rowNum)[OB.Constants.ID].indexOf('_') !== 0) {
+        if (this.viewGrid.getEditValues(rowNum)[OB.Constants.ID] && this.viewGrid.getEditValues(rowNum)[OB.Constants.ID].indexOf('_') === 0 && this.viewGrid.getRecord(rowNum)[OB.Constants.ID].indexOf('_') !== 0) {
           record[OB.Constants.ID] = this.viewGrid.getRecord(rowNum)[OB.Constants.ID];
         }
       } else {

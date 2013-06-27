@@ -34,6 +34,10 @@ isc.OBHelpAbout.addProperties({
 
   // Set to empty to prevent an icon from being displayed on the button.
   src: '',
+  aboutLink: null,
+  helpLink: null,
+  dummyFirstField: null,
+  dummyLastField: null,
 
   showTitle: true,
 
@@ -64,25 +68,20 @@ isc.OBHelpAbout.addProperties({
   beforeShow: function () {
     // determine if the help should be displayed or not
     var tabPane = null,
-        aboutLink = null,
-        helpLink = null,
-        helpView = null,
-        dummyFirstField = null,
-        dummyLastField = null;
-
-    dummyFirstField = isc.OBFocusButton.create({
+        helpView = null;
+    this.dummyFirstField = isc.OBFocusButton.create({
       getFocusTarget: function () {
         return isc.OBQuickRun.currentQuickRun.members[0].members[isc.OBQuickRun.currentQuickRun.members[0].getMembers().length - 2];
       }
     });
 
-    dummyLastField = isc.OBFocusButton.create({
+    this.dummyLastField = isc.OBFocusButton.create({
       getFocusTarget: function () {
         return isc.OBQuickRun.currentQuickRun.members[0].members[1];
       }
     });
 
-    aboutLink = isc.OBHelpAboutLinkButton.create({
+    this.aboutLink = isc.OBHelpAboutLinkButton.create({
       name: 'aboutLink',
       title: OB.I18N.getLabel('UINAVBA_About'),
       keyPress: function () {
@@ -100,7 +99,7 @@ isc.OBHelpAbout.addProperties({
       }
     });
 
-    helpLink = isc.OBHelpAboutLinkButton.create({
+    this.helpLink = isc.OBHelpAboutLinkButton.create({
       name: 'helpLink',
       title: OB.I18N.getLabel('UINAVBA_Help'),
       keyPress: function () {
@@ -129,19 +128,41 @@ isc.OBHelpAbout.addProperties({
       this.members[0].destroyAndRemoveMembers(this.members[0].getMembers().duplicate());
     }
     if (!tabPane) {
-      this.members[0].addMembers([aboutLink]);
+      this.members[0].addMembers([this.aboutLink]);
     } else {
       helpView = tabPane.getHelpView();
       if (!helpView) {
-        this.members[0].addMembers([aboutLink]);
+        this.members[0].addMembers([this.aboutLink]);
       } else {
-        this.members[0].addMembers([helpLink, aboutLink]);
+        this.members[0].addMembers([this.helpLink, this.aboutLink]);
       }
     }
-    this.members[0].addMembers(dummyFirstField, 0);
-    this.members[0].addMembers(dummyLastField, this.members[0].getMembers().length);
-    OB.TestRegistry.register('org.openbravo.client.application.HelpAbout.HelpLink', helpLink);
-    OB.TestRegistry.register('org.openbravo.client.application.HelpAbout.AboutLink', aboutLink);
+    this.members[0].addMembers(this.dummyFirstField, 0);
+    this.members[0].addMembers(this.dummyLastField, this.members[0].getMembers().length);
+    OB.TestRegistry.register('org.openbravo.client.application.HelpAbout.HelpLink', this.helpLink);
+    OB.TestRegistry.register('org.openbravo.client.application.HelpAbout.AboutLink', this.aboutLink);
+  },
+
+  doHide: function () {
+    if (this.aboutLink) {
+      this.aboutLink.destroy();
+      this.aboutLink = null;
+      this.members[0].destroyAndRemoveMembers(this.aboutLink);
+    }
+    if (this.helpLink) {
+      this.helpLink.destroy();
+      this.helpLink = null;
+      this.members[0].destroyAndRemoveMembers(this.helpLink);
+    }
+    if (this.dummyFirstField) {
+      this.dummyFirstField.destroy();
+      this.dummyFirstField = null;
+    }
+    if (this.dummyLastField) {
+      this.dummyLastField.destroy();
+      this.dummyLastField = null;
+    }
+    this.Super('doHide', arguments);
   },
 
   members: [isc.VLayout.create({

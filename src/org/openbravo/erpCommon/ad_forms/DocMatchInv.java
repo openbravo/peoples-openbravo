@@ -20,6 +20,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -31,6 +32,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.financial.FinancialUtils;
 import org.openbravo.model.ad.system.Client;
@@ -240,6 +242,17 @@ public class DocMatchInv extends AcctServer {
       // If the Product is not checked as book using PO Price, the Cost of the
       // Transaction will be used to create the FactAcct Line
       MaterialTransaction transaction = getTransaction(Record_ID);
+      if (transaction == null) {
+        Map<String, String> parameters = new HashMap<String, String>();
+        parameters.put("Product", inOutLine.getProduct().getIdentifier());
+        parameters.put(
+            "Date",
+            (OBDateUtils.formatDate(OBDal.getInstance().get(ReceiptInvoiceMatch.class, Record_ID)
+                .getTransactionDate())).toString());
+        setMessageResult(conn, STATUS_InvalidCost, "error", parameters);
+        throw new IllegalStateException();
+
+      }
       if (!CostingStatus.getInstance().isMigrated()) {
         costCurrency = OBDal.getInstance().get(Client.class, AD_Client_ID).getCurrency();
       } else if (transaction != null && transaction.getCurrency() != null) {
@@ -468,10 +481,15 @@ public class DocMatchInv extends AcctServer {
   private MaterialTransaction getTransaction(String matchInvId) {
     OBContext.setAdminMode(false);
     MaterialTransaction transaction;
+    if (OBDal.getInstance().get(ReceiptInvoiceMatch.class, matchInvId).getGoodsShipmentLine()
+        .getMaterialMgmtMaterialTransactionList().size() == 0) {
+      return null;
+    }
     try {
       transaction = OBDal.getInstance().get(ReceiptInvoiceMatch.class, matchInvId)
           .getGoodsShipmentLine().getMaterialMgmtMaterialTransactionList().get(0);
     } finally {
+
       OBContext.restorePreviousMode();
     }
     return transaction;

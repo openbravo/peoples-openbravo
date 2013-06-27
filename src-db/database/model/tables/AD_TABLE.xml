@@ -49,7 +49,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="CLASSNAME" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
+      <column name="CLASSNAME" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault><![CDATA[REPLACE(NAME,'_','')]]></onCreateDefault>
       </column>
@@ -121,6 +121,21 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
+      <column name="ISAUDITINSERTS" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault><![CDATA['Y']]></onCreateDefault>
+      </column>
+      <column name="DATAORIGINTYPE" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
+        <default><![CDATA[Table]]></default>
+        <onCreateDefault><![CDATA['Table']]></onCreateDefault>
+      </column>
+      <column name="OBSERDS_DATASOURCE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <foreign-key foreignTable="OBSERDS_DATASOURCE" name="AD_COLUMN_DATASOURCE">
+        <reference local="OBSERDS_DATASOURCE_ID" foreign="OBSERDS_DATASOURCE_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_COLUMN" name="AD_COLUMN_TABLE">
         <reference local="ACCTDATE_COLUMN_ID" foreign="AD_COLUMN_ID"/>
       </foreign-key>
@@ -152,7 +167,10 @@
       <unique name="AD_TABLE_TREETYPE_UN">
         <unique-column name="TREETYPE"/>
       </unique>
+      <check name="AD_TABLE_CLASSNAME_CHK"><![CDATA[(UPPER((DATAORIGINTYPE)) = 'DATASOURCE') OR (CLASSNAME IS NOT NULL)]]></check>
+      <check name="AD_TABLE_DATASOURCE_CHK"><![CDATA[(UPPER((DATAORIGINTYPE)) = 'TABLE') OR (OBSERDS_DATASOURCE_ID IS NOT NULL)]]></check>
       <check name="AD_TABLE_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="AD_TABLE_ISAUDITINS_CHK"><![CDATA[ISAUDITINSERTS IN ('Y', 'N')]]></check>
       <check name="AD_TABLE_ISDELETEABLE_CHK"><![CDATA[ISDELETEABLE IN ('Y', 'N')]]></check>
       <check name="AD_TABLE_ISFULLYAUDITED_CHK"><![CDATA[ISFULLYAUDITED IN ('Y', 'N')]]></check>
       <check name="AD_TABLE_ISFULLYAUDITED_CHK2"><![CDATA[(ISFULLYAUDITED = 'N') OR (UPPER((TABLENAME)) <> 'AD_AUDIT_TRAIL')]]></check>

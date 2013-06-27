@@ -644,6 +644,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
         parameters.put("PageNo", strPageNo);
         parameters.put("DATE_FROM", strDateFrom);
         parameters.put("DATE_TO", strDateTo);
+        parameters.put("PAGEOF", Utility.messageBD(this, "PageOfNumber", vars.getLanguage()));
 
         renderJR(vars, response, strReportName, "pdf", parameters, data, null);
       }

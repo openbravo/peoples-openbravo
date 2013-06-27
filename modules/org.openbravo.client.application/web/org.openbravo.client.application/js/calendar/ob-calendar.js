@@ -350,16 +350,10 @@ isc.OBCalendar.addProperties({
   },
 
   getCriteria: function (criteria) {
-    var startTime, endTime, legend, i, orPart = {
+    var startTime, endTime, legend, i, startDateCriteria, middleDateCriteria, endDateCriteria, dateCriteriaOrPart, orPart = {
       operator: 'or',
       criteria: []
     };
-
-    if (this.month === 0) {
-      startTime = new Date(this.year - 1, 11, 23, 0, 0, 0);
-    } else {
-      startTime = new Date(this.year, this.month - 1, 23, 0, 0, 0);
-    }
 
     if (!criteria || !criteria.operator) {
       criteria = {
@@ -369,22 +363,77 @@ isc.OBCalendar.addProperties({
     }
     criteria.criteria = criteria.criteria || [];
 
+    if (this.month === 0) {
+      startTime = new Date(this.year - 1, 11, 23, 0, 0, 0);
+    } else {
+      startTime = new Date(this.year, this.month - 1, 23, 0, 0, 0);
+    }
+
     // add the date criteria
     if (this.month === 11) {
       endTime = new Date(this.year + 1, 0, 7, 0, 0, 0);
     } else {
       endTime = new Date(this.year, this.month + 1, 7, 0, 0, 0);
     }
-    criteria.criteria.push({
+
+    // To set an 'OR' logic for the following three cases. If at least one of them match, the event will be shown.
+    dateCriteriaOrPart = {
+      operator: 'or',
+      criteria: []
+    };
+
+    // To show events that starts in the current month
+    startDateCriteria = {
+      operator: "and",
+      criteria: []
+    };
+    startDateCriteria.criteria.push({
       fieldName: this.startDateField,
       operator: 'greaterOrEqual',
       value: startTime
     });
-    criteria.criteria.push({
-      fieldName: this.endDateField,
+    startDateCriteria.criteria.push({
+      fieldName: this.startDateField,
       operator: 'lessThan',
       value: endTime
     });
+    dateCriteriaOrPart.criteria.push(startDateCriteria);
+
+    // To show events that starts before current month and ends after current month
+    middleDateCriteria = {
+      operator: "and",
+      criteria: []
+    };
+    middleDateCriteria.criteria.push({
+      fieldName: this.startDateField,
+      operator: 'lessThan',
+      value: startTime
+    });
+    middleDateCriteria.criteria.push({
+      fieldName: this.endDateField,
+      operator: 'greaterThan',
+      value: endTime
+    });
+    dateCriteriaOrPart.criteria.push(middleDateCriteria);
+
+    // To show events that ends in the current month
+    endDateCriteria = {
+      operator: "and",
+      criteria: []
+    };
+    endDateCriteria.criteria.push({
+      fieldName: this.endDateField,
+      operator: 'greaterThan',
+      value: startTime
+    });
+    endDateCriteria.criteria.push({
+      fieldName: this.endDateField,
+      operator: 'lessOrEqual',
+      value: endTime
+    });
+    dateCriteriaOrPart.criteria.push(endDateCriteria);
+
+    criteria.criteria.push(dateCriteriaOrPart);
 
     if (this.multiCalendar) {
       legend = this.multiCalendar.leftControls.getLegendValueMap();
@@ -459,10 +508,10 @@ isc.OBCalendar.addProperties({
         if (!calendar.isInitialScrollAlreadyBeenSet && tabNum <= 1) {
           calendar.isInitialScrollAlreadyBeenSet = true;
           // Timeout to allow new selected tab grid be fully loaded
-          if (calendar.initialScrollTo) {
+          if (calendar.initialScrollTime) {
             setTimeout(function () {
               try {
-                calendar.scrollToTime(calendar.initialScrollTo);
+                calendar.scrollToTime(calendar.initialScrollTime);
               } catch (e) {}
             }, 100);
           }
@@ -471,10 +520,10 @@ isc.OBCalendar.addProperties({
       };
     }
     // Timeout to allow the tab grid be fully loaded
-    if (calendar.initialScrollTo) {
+    if (calendar.initialScrollTime) {
       setTimeout(function () {
         try {
-          calendar.scrollToTime(calendar.initialScrollTo);
+          calendar.scrollToTime(calendar.initialScrollTime);
         } catch (e) {}
       }, 100);
     }
@@ -486,7 +535,13 @@ isc.OBCalendar.addProperties({
   },
 
   filterData: function (criteria) {
-    return this.Super('filterData', [this.getCriteria(criteria)]);
+    var newCriteria, ret;
+    newCriteria = this.getCriteria(criteria);
+    ret = this.Super('filterData', [newCriteria]);
+    if (this.doPreFilterData) {
+      this.doPreFilterData(newCriteria);
+    }
+    return ret;
   },
 
   // read the dates for the current month

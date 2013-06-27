@@ -175,6 +175,11 @@ public abstract class NumberUIDefinition extends UIDefinition {
     if (value == null) {
       return "";
     }
+
+    if (value instanceof String) {
+      return (String) value;
+    }
+
     final String valueStr = value.toString();
     VariablesSecureApp variables = RequestContext.get().getVariablesSecureApp();
     // only replace the decimal symbol

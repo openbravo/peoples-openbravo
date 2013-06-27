@@ -25,7 +25,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2012 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2013 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -131,7 +131,13 @@
           ol.gross_unit_price,
           ol.grosspricestd,
           ol.grosspricelist, 
-          sl.explode
+          sl.explode,
+          ol.C_Project_ID, 
+          ol.C_Bpartner_ID, 
+          ol.A_Asset_ID,
+          ol.C_Costcenter_ID,
+          ol.User1_ID, 
+          ol.User2_ID
         FROM M_INOUT s, M_INOUTLINE sl
         RIGHT JOIN C_ORDERLINE ol
           ON sl.C_OrderLine_ID=ol.C_OrderLine_ID
@@ -251,13 +257,12 @@
                     AND o.ISSELECTED = 'Y'
                     AND o.DocStatus IN('CO', 'CL')
                     AND o.IsSOTrx='Y'  -- not for InvoiceSchedule
-                    AND o.InvoiceRule NOT IN ('S','D'))  -- of all or a specific business partner / organization
+                    AND o.InvoiceRule NOT IN ('S','D')))  -- of all or a specific business partner / organization
                 AND EXISTS
                     (SELECT *
                      FROM C_ORDERLINE l
                      WHERE o.C_Order_ID=l.C_Order_ID
                      AND l.QtyOrdered<>l.QtyInvoiced)
-            )
             group by bp.c_bpartner_id,bp.customer_blocking ,  bp.so_invoice_blocking ,  bp.name
           )
           LOOP    
@@ -292,13 +297,13 @@
               AND o.DocStatus IN('CO', 'CL')
               AND o.IsSOTrx='Y'  -- not for InvoiceSchedule
               AND o.InvoiceRule NOT IN ('S','D')  -- of all or a specific business partner / organization
-              )
+              ))
               AND EXISTS
               (SELECT *
               FROM C_ORDERLINE l
               WHERE o.C_Order_ID=l.C_Order_ID
                 AND l.QtyOrdered<>l.QtyInvoiced
-              ))
+              )
               ORDER BY o.DateOrdered,o.PriorityRule,
               o.C_BPartner_ID,
               o.DocumentNo
@@ -509,7 +514,6 @@
                 )
                 ;
               --
-             
               v_NoRecords:=v_NoRecords + 1;
               v_LineNo:=0;
               -- Insert Reference/Comment to Shipment for Warehouse Order/Pickup
@@ -528,7 +532,9 @@
                     Description, M_Product_ID, QtyInvoiced, PriceList,
                     PriceActual, PriceLimit, LineNetAmt, C_Charge_ID,
                     ChargeAmt, C_UOM_ID, C_Tax_ID, PriceStd, 
-                    explode, bom_parent_id 
+                    explode, bom_parent_id,
+                    C_Project_ID, C_Bpartner_ID, A_Asset_ID,
+                    C_Costcenter_ID, User1_ID, User2_ID
                   )
                   VALUES
                   (
@@ -538,12 +544,14 @@
                     v_Reference, NULL, 0, 0,
                     0, 0, 0, NULL,
                     0, NULL, NULL, 0, 
-                    ptr_ol.explode, (SELECT c_invoiceline_id 
+                    ptr_sl.explode, (SELECT c_invoiceline_id 
                                             FROM c_invoiceline 
                                             WHERE c_invoice_id=p_Invoice_ID 
                                                and c_orderline_id = (SELECT BOM_parent_id 
                                                                      FROM c_orderline 
-                                                                     WHERE c_orderline_id = ptr_ol.c_orderline_id))
+                                                                     WHERE c_orderline_id = ptr_sl.c_orderline_id)),
+                    ptr_sl.C_Project_ID, ptr_sl.C_Bpartner_ID, ptr_sl.A_Asset_ID,
+                    ptr_sl.C_Costcenter_ID, ptr_sl.User1_ID, ptr_sl.User2_ID
                   )
                   ;
               END IF;
@@ -621,7 +629,9 @@
                         gross_unit_price, line_gross_amount,
                         grosspricestd, grosspricelist,
                         isdeferred, defplantype, periodnumber, c_period_id,
-                        explode, bom_parent_id                        
+                        explode, bom_parent_id,
+                        C_Project_ID, C_Bpartner_ID, A_Asset_ID,
+                        C_Costcenter_ID, User1_ID, User2_ID
                       )
                       VALUES
                       (
@@ -642,7 +652,9 @@
                                             WHERE c_invoice_id=p_Invoice_ID 
                                                and c_orderline_id = (SELECT BOM_parent_id 
                                                                      FROM c_orderline 
-                                                                     WHERE c_orderline_id = ptr_ol.c_orderline_id))
+                                                                     WHERE c_orderline_id = ptr_ol.c_orderline_id)),
+                        ptr_ol.C_Project_ID, ptr_ol.C_BPartner_ID, ptr_ol.A_Asset_ID,
+                        ptr_ol.C_Costcenter_ID, ptr_ol.User1_ID, ptr_ol.User2_ID
                       )
                       ;
                   END IF;--Next_O_Line
@@ -718,7 +730,9 @@
                         gross_unit_price, line_gross_amount,
                         grosspricestd, grosspricelist,
                         isdeferred, defplantype, periodnumber, c_period_id, 
-                        explode, bom_parent_id
+                        explode, bom_parent_id,
+                        C_Project_ID, C_Bpartner_ID, A_Asset_ID,
+                        C_Costcenter_ID, User1_ID, User2_ID
                       )
                       VALUES
                       (
@@ -739,7 +753,9 @@
                                             WHERE c_invoice_id=p_Invoice_ID 
                                                and c_orderline_id = (SELECT BOM_parent_id 
                                                                      FROM c_orderline 
-                                                                     WHERE c_orderline_id = ptr_sl.c_orderline_id))
+                                                                     WHERE c_orderline_id = ptr_sl.c_orderline_id)),
+                        ptr_sl.C_Project_ID, ptr_sl.C_BPartner_ID, ptr_sl.A_Asset_ID,
+                        ptr_sl.C_Costcenter_ID, ptr_sl.User1_ID, ptr_sl.User2_ID
                       )
                       ;
                   END IF;--Next_S_Line
@@ -827,6 +843,7 @@
                 ) AS DocumentNo,
                 coalesce(sh.Description, o.Description) as description,
                 coalesce(sh.C_BPartner_ID,o.c_bpartner_id) as c_bpartner_id,
+                ol.C_Bpartner_ID as line_c_bpartner_id,
                 o.BillTo_ID,
                 o.C_BPartner_Location_ID,
                 sh.AD_User_ID,
@@ -1174,7 +1191,6 @@
                     )
                     ;
                   --
-                  
                   v_NoRecords:=v_NoRecords + 1;
                   v_LineNo:=0;
                   v_InOut_ID:='-1';
@@ -1255,7 +1271,7 @@
                     grosspricestd, grosspricelist,
                     isdeferred, defplantype, periodnumber, c_period_id,
                     c_project_id, c_costcenter_id, a_asset_id,
-                    user1_id, user2_id,
+                    user1_id, user2_id, c_bpartner_id,
                     explode, bom_parent_id
                   )
                   VALUES
@@ -1273,7 +1289,7 @@
                     COALESCE(Cur_InvoiceSchedule.grosspricestd,0), COALESCE(Cur_InvoiceSchedule.grosspricelist,0),
                     v_isdeferred_inv, v_defplantype_inv, v_periodnumber_inv, v_period_inv,
                     coalesce(Cur_InvoiceSchedule.line_c_project_id, Cur_InvoiceSchedule.c_project_id), coalesce(Cur_InvoiceSchedule.line_c_costcenter_id, Cur_InvoiceSchedule.c_costcenter_id), coalesce(Cur_InvoiceSchedule.line_a_asset_id,Cur_InvoiceSchedule.a_asset_id),
-                    coalesce(Cur_InvoiceSchedule.line_user1_id, Cur_InvoiceSchedule.user1_id), coalesce(Cur_InvoiceSchedule.line_user2_id, Cur_InvoiceSchedule.user2_id),
+                    coalesce(Cur_InvoiceSchedule.line_user1_id, Cur_InvoiceSchedule.user1_id), coalesce(Cur_InvoiceSchedule.line_user2_id, Cur_InvoiceSchedule.user2_id), coalesce(Cur_InvoiceSchedule.line_c_bpartner_id, Cur_InvoiceSchedule.c_bpartner_id),
                     Cur_InvoiceSchedule.explode, (SELECT c_invoiceline_id 
                                             FROM c_invoiceline 
                                             WHERE c_invoice_id=p_Invoice_ID 

@@ -54,6 +54,7 @@ public class ReportProductMovement extends HttpSecureAppServlet {
       String strmAttributesetinstanceId = vars.getGlobalVariable("inpmAttributeSetInstanceId",
           "ReportProductMovement|M_AttributeSetInstance_Id", "");
       String strInout = vars.getGlobalVariable("inpInout", "ReportProductMovement|inout", "-1");
+      String strReturn = vars.getGlobalVariable("inpReturn", "ReportProductMovement|return", "-1");
       String strInventory = vars.getGlobalVariable("inpInventory",
           "ReportProductMovement|inventory", "-1");
       String strMovement = vars.getGlobalVariable("inpMovement", "ReportProductMovement|movement",
@@ -63,8 +64,8 @@ public class ReportProductMovement extends HttpSecureAppServlet {
       String strInternalConsumption = vars.getGlobalVariable("inpInternalConsumption",
           "ReportProductMovement|internalConsumption", "-1");
       printPageDataSheet(response, vars, strDateFrom, strDateTo, strcBpartnerId, strmProductId,
-          strInout, strInventory, strMovement, strProduction, strmAttributesetinstanceId,
-          strInternalConsumption);
+          strInout, strReturn, strInventory, strMovement, strProduction,
+          strmAttributesetinstanceId, strInternalConsumption);
     } else if (vars.commandIn("DIRECT")) {
       String strDateFrom = vars.getGlobalVariable("inpDateFrom", "ReportProductMovement|dateFrom",
           "");
@@ -76,6 +77,7 @@ public class ReportProductMovement extends HttpSecureAppServlet {
       String strmAttributesetinstanceId = vars.getGlobalVariable("inpmAttributeSetInstanceId",
           "ReportProductMovement|M_AttributeSetInstance_Id", "");
       String strInout = vars.getGlobalVariable("inpInout", "ReportProductMovement|inout", "");
+      String strReturn = vars.getGlobalVariable("inpReturn", "ReportProductMovement|return", "");
       String strInventory = vars.getGlobalVariable("inpInventory",
           "ReportProductMovement|inventory", "");
       String strMovement = vars.getGlobalVariable("inpMovement", "ReportProductMovement|movement",
@@ -86,8 +88,8 @@ public class ReportProductMovement extends HttpSecureAppServlet {
           "ReportProductMovement|internalConsumption", "");
       setHistoryCommand(request, "DIRECT");
       printPageDataSheet(response, vars, strDateFrom, strDateTo, strcBpartnerId, strmProductId,
-          strInout, strInventory, strMovement, strProduction, strmAttributesetinstanceId,
-          strInternalConsumption);
+          strInout, strReturn, strInventory, strMovement, strProduction,
+          strmAttributesetinstanceId, strInternalConsumption);
     } else if (vars.commandIn("FIND")) {
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom",
           "ReportProductMovement|dateFrom");
@@ -99,6 +101,7 @@ public class ReportProductMovement extends HttpSecureAppServlet {
       String strmAttributesetinstanceId = vars.getRequestGlobalVariable(
           "inpmAttributeSetInstanceId", "ReportProductMovement|M_AttributeSetInstance_Id");
       String strInout = vars.getRequestGlobalVariable("inpInout", "ReportProductMovement|inout");
+      String strReturn = vars.getRequestGlobalVariable("inpReturn", "ReportProductMovement|return");
       String strInventory = vars.getRequestGlobalVariable("inpInventory",
           "ReportProductMovement|inventory");
       String strMovement = vars.getRequestGlobalVariable("inpMovement",
@@ -109,17 +112,17 @@ public class ReportProductMovement extends HttpSecureAppServlet {
           "ReportProductMovement|internalConsumption");
       setHistoryCommand(request, "DIRECT");
       printPageDataSheet(response, vars, strDateFrom, strDateTo, strcBpartnerId, strmProductId,
-          strInout, strInventory, strMovement, strProduction, strmAttributesetinstanceId,
-          strInternalConsumption);
+          strInout, strReturn, strInventory, strMovement, strProduction,
+          strmAttributesetinstanceId, strInternalConsumption);
     } else
       pageError(response);
   }
 
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strDateFrom, String strDateTo, String strcBpartnerId, String strmProductId,
-      String strInout, String strInventory, String strMovement, String strProduction,
-      String strmAttributesetinstanceId, String strInternalConsumption) throws IOException,
-      ServletException {
+      String strInout, String strReturn, String strInventory, String strMovement,
+      String strProduction, String strmAttributesetinstanceId, String strInternalConsumption)
+      throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     response.setContentType("text/html; charset=UTF-8");
@@ -130,7 +133,8 @@ public class ReportProductMovement extends HttpSecureAppServlet {
     ReportProductMovementData[] data2 = null;
     ReportProductMovementData[] data3 = null;
     ReportProductMovementData[] data4 = null;
-    String discard[] = { "discard", "discard", "discard", "discard", "discard" };
+    ReportProductMovementData[] data5 = null;
+    String discard[] = { "discard", "discard", "discard", "discard", "discard", "discard" };
     if (strDateFrom.equals("") && strDateTo.equals("")) {
       strDateTo = DateTimeData.today(this);
       strDateFrom = DateTimeData.weekBefore(this);
@@ -141,7 +145,7 @@ public class ReportProductMovement extends HttpSecureAppServlet {
             Utility.getContext(this, vars, "#User_Client", "ReportProductMovement"),
             Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProductMovement"),
             strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strcBpartnerId,
-            strmProductId, strmAttributesetinstanceId);
+            strmProductId, strmAttributesetinstanceId, "N");
         if (data == null || data.length == 0) {
           discard[0] = "selEliminar1";
           data = ReportProductMovementData.set();
@@ -150,6 +154,22 @@ public class ReportProductMovement extends HttpSecureAppServlet {
         discard[0] = "selEliminar1";
         data = ReportProductMovementData.set();
       }
+
+      if (strReturn.equals("-1")) {
+        data5 = ReportProductMovementData.select(this, vars.getLanguage(),
+            Utility.getContext(this, vars, "#User_Client", "ReportProductMovement"),
+            Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProductMovement"),
+            strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strcBpartnerId,
+            strmProductId, strmAttributesetinstanceId, "Y");
+        if (data5 == null || data5.length == 0) {
+          discard[5] = "selEliminar6";
+          data5 = ReportProductMovementData.set();
+        }
+      } else {
+        discard[5] = "selEliminar6";
+        data5 = ReportProductMovementData.set();
+      }
+
       if (strInventory.equals("-1")) {
         data1 = ReportProductMovementData.selectInventory(this,
             Utility.getContext(this, vars, "#User_Client", "ReportProductMovement"),
@@ -212,11 +232,13 @@ public class ReportProductMovement extends HttpSecureAppServlet {
       discard[2] = "selEliminar3";
       discard[3] = "selEliminar4";
       discard[4] = "selEliminar5";
+      discard[5] = "selEliminar6";
       data = ReportProductMovementData.set();
       data1 = ReportProductMovementData.set();
       data2 = ReportProductMovementData.set();
       data3 = ReportProductMovementData.set();
       data4 = ReportProductMovementData.set();
+      data5 = ReportProductMovementData.set();
     }
     xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_reports/ReportProductMovement", discard).createXmlDocument();
@@ -277,6 +299,7 @@ public class ReportProductMovement extends HttpSecureAppServlet {
     xmlDocument.setParameter("productDescription",
         ReportProductMovementData.selectMproduct(this, strmProductId));
     xmlDocument.setParameter("inout", strInout);
+    xmlDocument.setParameter("return", strReturn);
     xmlDocument.setParameter("inventory", strInventory);
     xmlDocument.setParameter("movement", strMovement);
     xmlDocument.setParameter("production", strProduction);
@@ -286,6 +309,7 @@ public class ReportProductMovement extends HttpSecureAppServlet {
     xmlDocument.setData("structure3", data2);
     xmlDocument.setData("structure4", data3);
     xmlDocument.setData("structure5", data4);
+    xmlDocument.setData("structure6", data5);
 
     out.println(xmlDocument.print());
     out.close();

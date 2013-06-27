@@ -504,6 +504,9 @@ public class DocInOut extends AcctServer {
             // Get related M_Transaction_ID
             ShipmentInOutLine inOutLine = OBDal.getInstance().get(ShipmentInOutLine.class,
                 data[i].mInoutlineId);
+            if (inOutLine.getProduct() == null) {
+              continue;
+            }
             MaterialTransaction trx = null;
             if (inOutLine.getMaterialMgmtMaterialTransactionList().size() > 0) {
               trx = inOutLine.getMaterialMgmtMaterialTransactionList().get(0);
@@ -555,7 +558,8 @@ public class DocInOut extends AcctServer {
             if (trxCost == null) {
               Map<String, String> parameters = getNotCalculatedCostParameters(trx);
               setMessageResult(conn, STATUS_NotCalculatedCost, "error", parameters);
-              throw new IllegalStateException();
+              setStatus(STATUS_NotCalculatedCost);
+              return false;
             }
           } finally {
             OBContext.restorePreviousMode();

@@ -153,6 +153,18 @@ OB.DateItemProperties = {
         break;
       }
     }
+
+    if (partIndex === 0 && parts[partIndex] !== '') {
+      // Only one or two digits have been entered, they represent the number of days
+      if (this.dateParts[1] === 'D') {
+        parts[1] = parts[0];
+        parts[0] = '';
+      } else if (this.dateParts[2] === 'D') {
+        parts[2] = parts[0];
+        parts[0] = '';
+      }
+    }
+
     for (i = 0; i < 3; i++) {
       if ((parts[i] === '0' || parts[i] === '00') && (this.dateParts[i] === 'D' || this.dateParts[i] === 'M')) {
         return str;

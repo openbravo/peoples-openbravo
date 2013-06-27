@@ -222,6 +222,13 @@ isc.OBNoteLayout.addProperties({
           }
           return this.Super('change', arguments);
         },
+        isDisabled: function () {
+          this.Super('isDisabled', arguments);
+          if (OB.PropertyStore.get("DisableNotesForReadOnlyTabs", this.windowId) === 'Y' && this.layout.getForm().view.readOnly === true) {
+            this.readOnly = true;
+            this.canEdit = false;
+          }
+        },
         validators: [{
           type: 'required'
         }]

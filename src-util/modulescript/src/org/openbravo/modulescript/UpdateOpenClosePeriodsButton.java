@@ -43,6 +43,11 @@ public class UpdateOpenClosePeriodsButton extends ModuleScript {
         UpdateOpenClosePeriodsButtonData.updateFactAcctTypeForDivideUp(cp);
         UpdateOpenClosePeriodsButtonData.createPreference(cp);
       }
+      boolean isUpdated2 = UpdateOpenClosePeriodsButtonData.isUpdated2(cp);
+      if (!isUpdated2){
+        UpdateOpenClosePeriodsButtonData.updateFactAcctTypeForDivideUp(cp); 
+        UpdateOpenClosePeriodsButtonData.createPreference2(cp);
+      }
     } catch (Exception e) {
       handleError(e);
     }

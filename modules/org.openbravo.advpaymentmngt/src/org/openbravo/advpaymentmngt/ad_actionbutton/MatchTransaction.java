@@ -40,6 +40,7 @@ import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.dao.MatchTransactionDao;
 import org.openbravo.advpaymentmngt.dao.TransactionsDao;
 import org.openbravo.advpaymentmngt.process.FIN_AddPayment;
+import org.openbravo.advpaymentmngt.process.FIN_ReconciliationProcess;
 import org.openbravo.advpaymentmngt.process.FIN_TransactionProcess;
 import org.openbravo.advpaymentmngt.utility.FIN_MatchedTransaction;
 import org.openbravo.advpaymentmngt.utility.FIN_MatchingTransaction;
@@ -317,12 +318,21 @@ public class MatchTransaction extends HttpSecureAppServlet {
           .getBankStatementLineMaxDate(financialAccount));
       reconciliation.setTransactionDate(MatchTransactionDao
           .getBankStatementLineMaxDate(financialAccount));
-      reconciliation.setProcessed(process);
-      reconciliation.setDocumentStatus(process ? "CO" : "DR");
-      reconciliation.setAPRMProcessReconciliation(process ? "R" : "P");
-      reconciliation.setAprmProcessRec(process ? "R" : "P");
+      if (!process) {
+        reconciliation.setProcessed(false);
+        reconciliation.setDocumentStatus("DR");
+        reconciliation.setAPRMProcessReconciliation("P");
+        reconciliation.setAprmProcessRec("P");
+      }
       OBDal.getInstance().save(reconciliation);
       OBDal.getInstance().flush();
+      if (process) {
+        // Process Reconciliation
+        OBError myError = processReconciliation(this, "P", reconciliation);
+        if (myError != null && myError.getType().equalsIgnoreCase("error")) {
+          throw new OBException(myError.getMessage());
+        }
+      }
     } catch (Exception ex) {
       OBError menssage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
       vars.setMessage(strTabId, menssage);
@@ -1265,6 +1275,19 @@ public class MatchTransaction extends HttpSecureAppServlet {
       }
     }
     return false;
+  }
+
+  private OBError processReconciliation(ConnectionProvider conn, String strAction,
+      FIN_Reconciliation reconciliation) throws Exception {
+    ProcessBundle pb = new ProcessBundle("FF8080812E2F8EAE012E2F94CF470014", vars).init(conn);
+    HashMap<String, Object> parameters = new HashMap<String, Object>();
+    parameters.put("action", strAction);
+    parameters.put("FIN_Reconciliation_ID", reconciliation.getId());
+    pb.setParams(parameters);
+    OBError myMessage = null;
+    new FIN_ReconciliationProcess().execute(pb);
+    myMessage = (OBError) pb.getResult();
+    return myMessage;
   }
 
   public String getServletInfo() {

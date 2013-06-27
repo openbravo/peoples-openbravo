@@ -38,6 +38,17 @@
       ]]>
     </Sql>
   </SqlMethod>
+  <SqlMethod name="isUpdated2" type="preparedStatement" return="boolean">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT count(*) as exist
+        FROM DUAL
+        WHERE EXISTS (SELECT 1 FROM ad_preference
+                      WHERE attribute='updateTypeForDivideUp')
+      ]]>
+    </Sql>
+  </SqlMethod>
   <SqlMethod name="updatePeriodControl" type="preparedStatement" return="rowcount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
@@ -85,6 +96,22 @@
           get_uuid(), '0', '0', 'Y',
           '0', NOW(), '0', NOW(),
           'Period_Open_Close_Button_is_Updated', 'Y'
+        )
+      ]]>
+    </Sql>
+  </SqlMethod>
+    <SqlMethod name="createPreference2" type="preparedStatement" return="rowcount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        INSERT INTO ad_preference (
+          ad_preference_id, ad_client_id, ad_org_id, isactive,
+          createdby, created, updatedby, updated,
+          attribute, value
+        ) VALUES (
+          get_uuid(), '0', '0', 'Y',
+          '0', NOW(), '0', NOW(),
+          'updateTypeForDivideUp', 'Y'
         )
       ]]>
     </Sql>

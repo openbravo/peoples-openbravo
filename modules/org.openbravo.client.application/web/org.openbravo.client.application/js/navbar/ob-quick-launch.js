@@ -120,6 +120,9 @@ isc.OBQuickLaunch.addProperties({
         OB.Utilities.openDirectTab(params.tabId, params.recordId, params.command);
       }
     }
+    if (this.members[1].getMembers()) {
+      this.members[1].destroyAndRemoveMembers(this.members[1].getMembers().duplicate());
+    }
 
     this.Super('doHide', arguments);
   },

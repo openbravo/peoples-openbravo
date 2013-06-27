@@ -99,6 +99,9 @@
       <foreign-key foreignTable="FIN_BANKSTATEMENT" name="FIN_BANKSTATLINE_FINNBANKSTAT">
         <reference local="FIN_BANKSTATEMENT_ID" foreign="FIN_BANKSTATEMENT_ID"/>
       </foreign-key>
+      <index name="FIN_BANKSTATEMENTLINE_TRX" unique="false">
+        <index-column name="FIN_FINACC_TRANSACTION_ID"/>
+      </index>
       <check name="FIN_BANKSTATLINE_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

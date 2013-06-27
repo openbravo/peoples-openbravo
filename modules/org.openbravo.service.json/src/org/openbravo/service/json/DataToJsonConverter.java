@@ -262,16 +262,18 @@ public class DataToJsonConverter {
           referencingProperty.getDisplayPropertyName());
       if (displayColumnProperty.hasDisplayColumn()) {
         // Allowing one level deep of displayed column pointing to references with display column
-        jsonObject.put(propertyName + DalUtil.FIELDSEPARATOR + JsonConstants.IDENTIFIER,
-            ((BaseOBObject) obObject.get(referencingProperty.getDisplayPropertyName()))
-                .get(displayColumnProperty.getDisplayPropertyName()));
+        jsonObject.put(propertyName.replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR)
+            + DalUtil.FIELDSEPARATOR + JsonConstants.IDENTIFIER, ((BaseOBObject) obObject
+            .get(referencingProperty.getDisplayPropertyName())).get(displayColumnProperty
+            .getDisplayPropertyName()));
       } else if (!displayColumnProperty.isPrimitive()) {
         // Displaying identifier for non primitive properties
-        jsonObject.put(propertyName + DalUtil.FIELDSEPARATOR + JsonConstants.IDENTIFIER,
-            ((BaseOBObject) obObject.get(referencingProperty.getDisplayPropertyName()))
-                .getIdentifier());
+        jsonObject.put(propertyName.replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR)
+            + DalUtil.FIELDSEPARATOR + JsonConstants.IDENTIFIER, ((BaseOBObject) obObject
+            .get(referencingProperty.getDisplayPropertyName())).getIdentifier());
       } else {
-        jsonObject.put(propertyName + DalUtil.FIELDSEPARATOR + JsonConstants.IDENTIFIER,
+        jsonObject.put(propertyName.replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR)
+            + DalUtil.FIELDSEPARATOR + JsonConstants.IDENTIFIER,
             obObject.get(referencingProperty.getDisplayPropertyName()));
       }
     } else {

@@ -193,7 +193,7 @@ public class ElementValueEventHandler extends EntityPersistenceEventObserver {
     obc.setFilterOnReadableClients(false);
     obc.setFilterOnReadableOrganization(false);
     List<TreeNode> nodes = obc.list();
-    if (nodes.size() > 0) {
+    if (nodes.size() > 0 && obc.list().get(0).getSequenceNumber() != null) {
       return obc.list().get(0).getSequenceNumber() + 10l;
     } else {
       return 10l;

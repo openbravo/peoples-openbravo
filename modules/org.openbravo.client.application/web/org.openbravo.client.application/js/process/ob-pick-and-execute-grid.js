@@ -105,12 +105,14 @@ isc.OBPickAndExecuteGrid.addProperties({
 
     // required to show the funnel icon and to work
     this.filterClause = this.gridProperties.filterClause;
-    if (this.filterClause && this.gridProperties.filterName) {
+    this.sqlFilterClause = this.gridProperties.sqlFilterClause;
+    if ((this.filterClause || this.sqlFilterClause) && this.gridProperties.filterName) {
       this.view.messageBar.setMessage(isc.OBMessageBar.TYPE_INFO, '<div><div class="' + OB.Styles.MessageBar.leftMsgContainerStyle + '">' + this.gridProperties.filterName + '<br/>' + OB.I18N.getLabel('OBUIAPP_ClearFilters') + '</div></div>', ' ');
       this.view.messageBar.hasFilterMessage = true;
     }
 
     this.orderByClause = this.gridProperties.orderByClause;
+    this.sqlOrderByClause = this.gridProperties.sqlOrderByClause;
 
     this.checkboxFieldProperties = isc.addProperties({}, this.checkboxFieldProperties | {}, {
       canFilter: true,
@@ -222,6 +224,21 @@ isc.OBPickAndExecuteGrid.addProperties({
     this.markForRedraw('Selection changed');
 
     this.Super('selectionUpdated', arguments);
+  },
+
+  cellEditEnd: function (editCompletionEvent, newValue, ficCallDone, autoSaveDone) {
+    var rowNum = this.getEditRow(),
+        colNum = this.getEditCol(),
+        editField = this.getEditField(colNum),
+        undef;
+    if (editField.required) {
+      if (newValue === null || newValue === undef) {
+        this.setFieldError(rowNum, editField.name, "Invalid Value");
+      } else {
+        this.clearFieldError(rowNum, editField.name);
+      }
+    }
+    this.Super('cellEditEnd', arguments);
   },
 
   handleFilterEditorSubmit: function (criteria, context) {
@@ -395,6 +412,10 @@ isc.OBPickAndExecuteGrid.addProperties({
       params[OB.Constants.ORDERBY_PARAMETER] = this.orderByClause;
     }
 
+    if (this.sqlOrderByClause) {
+      params[OB.Constants.SQL_ORDERBY_PARAMETER] = this.sqlOrderByClause;
+    }
+
     if (this.filterClause) {
       if (props.whereClause) {
         params[OB.Constants.WHERE_PARAMETER] = ' ((' + props.whereClause + ') and (' + this.filterClause + ")) ";
@@ -405,6 +426,18 @@ isc.OBPickAndExecuteGrid.addProperties({
       params[OB.Constants.WHERE_PARAMETER] = props.whereClause;
     } else {
       params[OB.Constants.WHERE_PARAMETER] = null;
+    }
+
+    if (this.sqlFilterClause) {
+      if (props.sqlWhereClause) {
+        params[OB.Constants.SQL_WHERE_PARAMETER] = ' ((' + props.sqlWhereClause + ') and (' + this.sqlFilterClause + ")) ";
+      } else {
+        params[OB.Constants.SQL_WHERE_PARAMETER] = this.sqlFilterClause;
+      }
+    } else if (props.sqlWhereClause) {
+      params[OB.Constants.SQL_WHERE_PARAMETER] = props.sqlWhereClause;
+    } else {
+      params[OB.Constants.SQL_WHERE_PARAMETER] = null;
     }
 
     return params;

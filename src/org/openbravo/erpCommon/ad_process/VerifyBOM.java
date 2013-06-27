@@ -56,6 +56,13 @@ public class VerifyBOM extends DalBaseProcess {
             OBContext.getOBContext().getLanguage().getLanguage()));
       }
 
+      for (ProductBOM productBom : productBOMList) {
+        if (productBom.getBOMQuantity().floatValue() < 0) {
+          throw new Exception(Utility.messageBD(new DalConnectionProvider(), "BOM_NegativeQty",
+              OBContext.getOBContext().getLanguage().getLanguage()));
+        }
+      }
+
       boolean cycle = checkForcycles(productList, productBOMList);
 
       if (cycle) {

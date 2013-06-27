@@ -223,7 +223,7 @@ public class HttpsUtils {
           System.getProperties().setProperty("http.proxyPassword", password);
         }
       } else {
-        System.getProperties().put("proxySet", false);
+        System.getProperties().put("proxySet", "false");
         System.getProperties().remove("http.proxyHost");
         System.getProperties().remove("http.proxyPort");
         System.getProperties().remove("https.proxyHost");

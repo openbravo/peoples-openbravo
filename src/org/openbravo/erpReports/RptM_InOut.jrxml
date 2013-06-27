@@ -2,6 +2,9 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="RptM_InOut" pageWidth="595" pageHeight="842" columnWidth="483" leftMargin="56" rightMargin="56" topMargin="56" bottomMargin="56">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="57"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -35,7 +38,7 @@
 	<queryString>
 		<![CDATA[SELECT M_INOUT.M_INOUT_ID, M_INOUT.ISSOTRX, C_BPARTNER_LOCATION.NAME, COALESCE(TO_CHAR(C_LOCATION.ADDRESS1),'')||COALESCE(TO_CHAR(C_LOCATION.ADDRESS2),'') AS ADDRESS,
 COALESCE(TO_CHAR(C_LOCATION.POSTAL),'')||' - '||COALESCE(TO_CHAR(C_LOCATION.CITY),'') AS POSTAL,
-C_REGION.NAME AS REGION, M_INOUT.DOCUMENTNO, M_INOUT.MOVEMENTDATE, C_BPARTNER.VALUE AS PARTNER_VALUE, C_BPARTNER.TAXID, 
+C_REGION.NAME AS REGION, M_INOUT.DOCUMENTNO, M_INOUT.MOVEMENTDATE, C_BPARTNER.VALUE AS PARTNER_VALUE, C_BPARTNER.TAXID,
 MAX(C_ORDER.POREFERENCE) AS POREFERENCE, AD_CLIENT.DESCRIPTION AS ENTITY, C_LOCATION_DESCRIPTION(AD_ORGINFO.C_LOCATION_ID) AS ENTITY_LOCATION,
 C_ORDER.DATEPROMISED, AD_ORGINFO.AD_ORG_ID AS ORGANIZATIONID, M_INOUT.docstatus AS STATUS, C_BPARTNER.NAME AS BP_NAME, AD_ORG.NAME AS ORG_NAME,
 AD_ORGINFO.TAXID AS ORG_TAXID, C_Location_Description(AD_ORGINFO.C_LOCATION_ID) AS LOCATION, (COALESCE(TO_CHAR(AD_USER.NAME), '') || CASE WHEN AD_USER.NAME IS null THEN '' ELSE CHR(13) END || COALESCE(TO_CHAR(C_BPARTNER.TAXID), '') || CASE WHEN C_BPARTNER.TAXID IS null THEN '' ELSE CHR(13) END ||
@@ -61,7 +64,7 @@ AND AD_ORGINFO.AD_ORG_ID = (SELECT o.AD_ORG_ID FROM AD_ORG o JOIN AD_OrgType t U
 AND COALESCE(C_BPARTNER_LOCATION.ISSHIPTO, 'Y') = 'Y'
 AND M_INOUT.M_INOUT_ID IN ($P{DOCUMENT_ID})
 AND AD_ORGINFO.AD_ORG_ID = AD_ORG.AD_ORG_ID
-GROUP BY M_INOUT.M_INOUT_ID, M_INOUT.ISSOTRX, C_BPARTNER.NAME, C_BPARTNER_LOCATION.NAME, C_LOCATION.ADDRESS1, C_LOCATION.ADDRESS2, C_LOCATION.POSTAL, C_LOCATION.CITY, C_REGION.NAME, 
+GROUP BY M_INOUT.M_INOUT_ID, M_INOUT.ISSOTRX, C_BPARTNER.NAME, C_BPARTNER_LOCATION.NAME, C_LOCATION.ADDRESS1, C_LOCATION.ADDRESS2, C_LOCATION.POSTAL, C_LOCATION.CITY, C_REGION.NAME,
 M_INOUT.DOCUMENTNO, M_INOUT.MOVEMENTDATE, C_BPARTNER.VALUE, C_BPARTNER.TAXID, AD_CLIENT.DESCRIPTION, AD_ORGINFO.C_LOCATION_ID, C_ORDER.DATEPROMISED, AD_ORGINFO.ad_org_id, M_INOUT.docstatus,
 AD_ORG.NAME, AD_ORGINFO.TAXID, AD_USER.NAME, C_BPARTNER_LOCATION.PHONE, C_BPARTNER_LOCATION.FAX, SHOWLOGO, SHOWCOMPANYDATA, HEADERMARGIN, AD_ORGINFO.ad_client_id, C_COUNTRY.NAME]]>
 	</queryString>
@@ -279,7 +282,7 @@ AD_ORG.NAME, AD_ORGINFO.TAXID, AD_USER.NAME, C_BPARTNER_LOCATION.PHONE, C_BPARTN
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA["Page " + $V{PAGE_NUMBER} + " of "]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
+			<textField evaluationTime="Report" isBlankWhenNull="false">
 				<reportElement key="textField-34" style="default" x="461" y="31" width="18" height="18"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="8"/>
