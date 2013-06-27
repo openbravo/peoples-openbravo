@@ -44,17 +44,7 @@ public class BusinessPartner extends ProcessHQLQuery {
             + "FROM BusinessPartnerLocation AS bpl left outer join bpl.businessPartner.aDUserList AS ulist "
             + "WHERE bpl.businessPartner.active=true AND (" + "(bpl.id = '"
             + org.getObretcoCBpLocation().getId()
-            + "')"
-            + " OR "
-            + "(bpl.businessPartner.id <> '"
-            + org.getObretcoCBpartner().getId()
-            + "' AND "
-            + "bpl.invoiceToAddress = true AND "
-            + "bpl.businessPartner.customer = true AND "
-            + "bpl.businessPartner.priceList IS NOT NULL AND "
-            + "bpl.$readableClientCriteria AND "
-            + "bpl.$naturalOrgCriteria "
-            + "))"
+            + "'))"
             // This section is added to prevent more than one row for each business partner from
             // being
             // selected (check issues 22249 and 22256)
@@ -74,9 +64,9 @@ public class BusinessPartner extends ProcessHQLQuery {
             + "bpl2.$naturalOrgCriteria "
             + ")) GROUP BY bpl2.businessPartner.id)"
             + " AND (ulist is null or ulist.id in (select max(ulist2.id) from ADUser as ulist2 where ulist2.businessPartner is not null group by ulist2.businessPartner)"
-            + " AND (bpl.businessPartner.id = '"
+            + ") AND (bpl.businessPartner.id = '"
             + org.getObretcoCBpartner().getId()
-            + "'))"
+            + "')"
             // Here the section to prevent the same business partner from being selected more than
             // once
             // ends
