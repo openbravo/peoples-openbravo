@@ -125,15 +125,19 @@ public class VariantChDescUpdateProcess extends DalBaseProcess {
 
       ScrollableResults products = productQuery.scroll(ScrollMode.FORWARD_ONLY);
       int i = 0;
-      while (products.next()) {
-        Product product = (Product) products.get(0);
-        updateProduct(product);
+      try {
+        while (products.next()) {
+          Product product = (Product) products.get(0);
+          updateProduct(product);
 
-        if ((i % 100) == 0) {
-          OBDal.getInstance().flush();
-          OBDal.getInstance().getSession().clear();
+          if ((i % 100) == 0) {
+            OBDal.getInstance().flush();
+            OBDal.getInstance().getSession().clear();
+          }
+          i++;
         }
-        i++;
+      } finally {
+        products.close();
       }
 
     } finally {
