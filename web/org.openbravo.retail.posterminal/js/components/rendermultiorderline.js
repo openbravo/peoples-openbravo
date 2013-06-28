@@ -42,18 +42,27 @@ enyo.kind({
     name: 'line',
     style: 'line-height: 23px; width: 100%;',
     components: [{
+      style: 'display: inline;',
       name: 'multiTopLine',
       initComponents: function () {
         this.setContent(this.owner.owner.model.get('documentNo') + ' - ' + this.owner.owner.model.get('bp').get('_identifier'));
       }
     }, {
-      style: 'color: #888888; display: inline;',
+      style: 'font-weight: bold; color: lightblue; float: right; text-align:right; ',
+      name: 'isLayaway',
+      initComponents: function () {
+        if (this.owner.owner.model.get('amountToLayaway')) {
+          this.setContent(OB.I18N.getLabel('OBPOS_ToBeLaidaway'));
+        }
+      }
+    }, {
+      style: 'color: #888888; display: inline-block;',
       name: 'multiBottonLine',
       initComponents: function () {
         this.setContent(this.owner.owner.model.printTotal() + ' - Remaining to pay: ' + this.owner.owner.model.printPending() + ' - (' + OB.I18N.formatDate(new Date(this.owner.owner.model.get('orderDate'))) + ') ');
       }
     }, {
-      style: 'font-weight: bold; float: right; text-align:right; ',
+      style: 'font-weight: bold; float: right; text-align:right; display: inline-block;',
       name: 'total',
       initComponents: function () {
         this.setContent(this.owner.owner.model.get('amountToLayaway') ? OB.I18N.formatCurrency(this.owner.owner.model.get('amountToLayaway')) : this.owner.owner.model.printPending());

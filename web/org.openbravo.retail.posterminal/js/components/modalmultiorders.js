@@ -195,9 +195,13 @@ enyo.kind({
   },
   components: [{
     name: 'line',
-    style: 'line-height: 23px;',
+    style: 'line-height: 23px; display: inline',
     components: [{
+      style: 'display: inline',
       name: 'topLine'
+    }, {
+      style: 'font-weight: bold; color: lightblue; float: right; text-align:right; ',
+      name: 'isLayaway'
     }, {
       style: 'color: #888888',
       name: 'bottonLine'
@@ -218,6 +222,9 @@ enyo.kind({
       this.addClass('active');
     } else {
       this.removeClass('active');
+    }
+    if (this.model.get('isLayaway')) {
+      this.$.isLayaway.setContent(OB.I18N.getLabel('OBPOS_LblLayaway'));
     }
     this.render();
   }
