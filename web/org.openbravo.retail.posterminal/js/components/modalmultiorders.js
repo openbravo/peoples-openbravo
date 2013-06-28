@@ -212,8 +212,8 @@ enyo.kind({
       this.model.set('totalamount', OB.DEC.mul(this.model.get('totalamount'), -1));
       returnLabel = ' (' + OB.I18N.getLabel('OBPOS_ToReturn') + ')';
     }
-    this.$.topLine.setContent(this.model.get('documentNo') + ' - ' + this.model.get('bp').get('_identifier') + returnLabel);
-    this.$.bottonLine.setContent(this.model.getPending() + ' (' + OB.I18N.formatDate(new Date(this.model.get('orderDate'))) + ') ');
+    this.$.topLine.setContent(this.model.get('documentNo') + ' - ' + (this.model.get('bp') ? this.model.get('bp').get('_identifier') : this.model.get('businessPartner')) + returnLabel);
+    this.$.bottonLine.setContent((this.model.get('totalamount') ? this.model.get('totalamount') : this.model.getPending()) + ' (' + OB.I18N.formatDate(new Date(this.model.get('orderDate'))) + ') ');
     if (this.model.get('checked')) {
       this.addClass('active');
     } else {
@@ -255,8 +255,7 @@ enyo.kind({
   searchAction: function (inSender, inEvent) {
     var me = this,
         toMatch = 0,
-        re, actualDate, i, process = new OB.DS.Process('org.openbravo.retail.posterminal.PaidReceipts'),
-        processHeader = new OB.DS.Process('org.openbravo.retail.posterminal.PaidReceiptsHeader');
+        re, actualDate, i, processHeader = new OB.DS.Process('org.openbravo.retail.posterminal.PaidReceiptsHeader');
     me.filters = inEvent.filters;
     this.clearAction();
     processHeader.exec({
@@ -282,19 +281,7 @@ enyo.kind({
           }
         });
         _.each(data, function (iter) {
-          process.exec({
-            orderid: iter.id
-          }, function (data) {
-            OB.UTIL.showLoading(false);
-            if (data) {
-              me.model.get('orderList').newPaidReceipt(data[0], function (order) {
-                me.multiOrdersList.add(order);
-              });
-            } else {
-              OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorDropDep'));
-            }
-          });
-          return true;
+          me.multiOrdersList.add(iter);
         });
 
       } else {
@@ -351,14 +338,43 @@ enyo.kind({
     this.$.cancelMultiOrdersButton.setContent(OB.I18N.getLabel('OBMOBC_LblCancel'));
   },
   doneAction: function () {
-    var selectedMultiOrders = _.compact(this.parent.parent.parent.$.body.$.listMultiOrders.multiOrdersList.map(function (e) {
-      if (e.get('checked')) {
-        return e;
+    var selectedMultiOrders = [],
+        me = this,
+        process = new OB.DS.Process('org.openbravo.retail.posterminal.PaidReceipts'),
+        checkedMultiOrders = _.compact(this.parent.parent.parent.$.body.$.listMultiOrders.multiOrdersList.map(function (e) {
+        if (e.get('checked')) {
+          return e;
+        }
+      }));
+    _.each(checkedMultiOrders, function (iter) {
+      if (_.indexOf(me.owner.owner.model.get('orderList').models, iter) !== -1) {
+        selectedMultiOrders.push(iter);
+      } else {
+        process.exec({
+          orderid: iter.id
+        }, function (data) {
+          OB.UTIL.showLoading(false);
+          if (data) {
+            me.owner.owner.model.get('orderList').newPaidReceipt(data[0], function (order) {
+              selectedMultiOrders.push(order);
+              if (selectedMultiOrders.length === checkedMultiOrders.length) {
+                me.doSelectMultiOrders({
+                  value: selectedMultiOrders
+                });
+              }
+            });
+          } else {
+            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorDropDep'));
+          }
+        });
       }
-    }));
-    this.doSelectMultiOrders({
-      value: selectedMultiOrders
+      if (selectedMultiOrders.length === checkedMultiOrders.length) {
+        me.doSelectMultiOrders({
+          value: selectedMultiOrders
+        });
+      }
     });
+
     this.doTabChange({
       tabPanel: 'payment',
       keyboard: 'toolbarpayment',
