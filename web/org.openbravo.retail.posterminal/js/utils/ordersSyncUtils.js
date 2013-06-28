@@ -22,22 +22,25 @@
         };
     if (OB.MobileApp.model.get('connectedToERP')) {
       OB.Dal.find(OB.Model.Order, criteria, function (ordersPaidNotProcessed) { //OB.Dal.find success
-        var successCallback, errorCallback;
+        var successCallback, errorCallback, pendingOrdersMessage;
         if (!ordersPaidNotProcessed || ordersPaidNotProcessed.length === 0) {
           return;
         }
         ordersPaidNotProcessed.each(function (order) {
           order.set('isbeingretriggered', 'Y');
         });
+        pendingOrdersMessage = OB.UTIL.showAlert.display(OB.I18N.getLabel('OBPOS_ProcessPendingOrders'), OB.I18N.getLabel('OBPOS_Info'));
         successCallback = function () {
+          pendingOrdersMessage.hide();
           if (orderSucessCallback) {
             orderSucessCallback(model);
             return;
           }
           OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgSuccessProcessOrder'));
         };
-        errorCallback = function () {};
-        OB.UTIL.showAlert.display(OB.I18N.getLabel('OBPOS_ProcessPendingOrders'), OB.I18N.getLabel('OBPOS_Info'));
+        errorCallback = function () {
+          pendingOrdersMessage.hide();
+        };
         OB.UTIL.processOrders(model, ordersPaidNotProcessed, successCallback, errorCallback);
       });
     }

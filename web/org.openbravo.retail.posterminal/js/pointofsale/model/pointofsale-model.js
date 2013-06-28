@@ -234,7 +234,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
           if (!payment.paymentMethod.iscash) {
             payment = OB.POS.terminal.terminal.paymentnames[OB.POS.modelterminal.get('paymentcash')];
           }
-          if (receipt.get('orderType') === 0 || (receipt.get('orderType') === 2 && receipt.get('payment') >= receipt.get('gross'))) {
+          if (receipt.get('payment') >= receipt.get('gross')) {
             receipt.addPayment(new OB.Model.PaymentLine({
               'kind': payment.payment.searchKey,
               'name': payment.payment.commercialName,
@@ -317,7 +317,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
     });
 
     receipt.on('change:bp', function (line) {
-      if (!receipt.get('isEditable')) {
+      if (!receipt.get('isEditable') || receipt.get('lines').length === 0) {
         return;
       }
       OB.Model.Discounts.applyPromotions(receipt);

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2013 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -73,15 +73,15 @@
     if(drop.rate!=='1'){
     %>
     <line>
-      <text align ="left" length="18"><%=OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblWithdrawal')+': '+drop.description) %></text>
-      <text align ="right" length="11"><%= '('+OB.I18N.formatCurrency(drop.amount)+' '+drop.isocode+')' %></text>
-      <text align ="right" length="10"><%= OB.I18N.formatCurrency(OB.DEC.mul(drop.amount, drop.rate)) %></text>
+      <text align ="left" length="10"><%=OB.UTIL.encodeXMLComponent(drop.description) %></text>
+      <text align ="right" length="17"><%= '('+OB.I18N.formatCurrency(drop.amount)+' '+drop.isocode+')' %></text>
+      <text align ="right" length="12"><%= OB.I18N.formatCurrency(OB.DEC.mul(drop.amount, drop.rate)) %></text>
     </line>
     <%
     }else{
     %>
     <line>
-      <text align ="left" length="25"><%=OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblWithdrawal')+': '+drop.description) %></text>
+      <text align ="left" length="25"><%=OB.UTIL.encodeXMLComponent(drop.description) %></text>
       <text align ="right" length="14"><%= OB.I18N.formatCurrency(drop.amount) %></text>
     </line>
     <%
@@ -99,15 +99,15 @@
     if(deposit.rate!=='1'){
     %>
     <line>
-      <text align ="left" length="18"><%=OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblDeposit')+': '+deposit.description) %></text>
-      <text align ="right" length="11"><%= '('+OB.I18N.formatCurrency(deposit.amount)+' '+deposit.isocode+')' %></text>
-      <text align ="right" length="10"><%= OB.I18N.formatCurrency(OB.DEC.mul(deposit.amount, deposit.rate)) %></text>
+      <text align ="left" length="10"><%=OB.UTIL.encodeXMLComponent(deposit.description) %></text>
+      <text align ="right" length="17"><%= '('+OB.I18N.formatCurrency(deposit.amount)+' '+deposit.isocode+')' %></text>
+      <text align ="right" length="12"><%= OB.I18N.formatCurrency(OB.DEC.mul(deposit.amount, deposit.rate)) %></text>
     </line>
     <%
     }else{
      %>
     <line>
-      <text align ="left" length="25"><%=OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblDeposit')+': '+deposit.description) %></text>
+      <text align ="left" length="25"><%=OB.UTIL.encodeXMLComponent(deposit.description) %></text>
       <text align ="right" length="14"><%= OB.I18N.formatCurrency(deposit.amount) %></text>
     </line>
     <%

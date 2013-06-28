@@ -56,6 +56,7 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.mobile.core.process.JSONPropertyToEntity;
 import org.openbravo.mobile.core.process.PropertyByType;
+import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.model.ad.access.InvoiceLineTax;
 import org.openbravo.model.ad.access.OrderLineTax;
 import org.openbravo.model.ad.process.ProcessInstance;
@@ -134,18 +135,20 @@ public class OrderLoader extends JSONProcessSimple {
 
   public JSONObject saveOrder(JSONArray jsonarray) throws JSONException {
     boolean error = false;
-    String currentClient = OBContext.getOBContext().getCurrentClient().getId();
-    String currentOrg = OBContext.getOBContext().getCurrentOrganization().getId();
-    String currentUser = OBContext.getOBContext().getUser().getId();
-    String currentRole = OBContext.getOBContext().getRole().getId();
+    String currentOrg = (String) RequestContext.get().getSession().getAttribute("#AD_ORG_ID");
+    String currentUser = (String) RequestContext.get().getSession().getAttribute("#AD_USER_ID");
+    String currentRole = (String) RequestContext.get().getSession().getAttribute("#AD_ROLE_ID");
     OBContext.setAdminMode(true);
     try {
       for (int i = 0; i < jsonarray.length(); i++) {
         long t1 = System.currentTimeMillis();
         JSONObject jsonorder = jsonarray.getJSONObject(i);
         String posTerminalId = jsonorder.getString("posTerminal");
-        OBContext.setOBContext(jsonorder.getString("createdBy"), currentRole,
-            jsonorder.getString("client"), jsonorder.getString("organization"));
+        if (!currentUser.equals(jsonorder.getString("createdBy"))
+            || !currentOrg.equals(jsonorder.getString("organization"))) {
+          OBContext.setOBContext(jsonorder.getString("createdBy"), currentRole,
+              jsonorder.getString("client"), jsonorder.getString("organization"));
+        }
         try {
           JSONObject result = saveOrder(jsonorder);
           if (!result.get(JsonConstants.RESPONSE_STATUS).equals(
@@ -154,8 +157,7 @@ public class OrderLoader extends JSONProcessSimple {
             error = true;
           }
           if (i % 1 == 0) {
-            OBDal.getInstance().flush();
-            OBDal.getInstance().getConnection().commit();
+            OBDal.getInstance().getConnection(false).commit();
             OBDal.getInstance().getSession().clear();
           }
           log.info("Total order time: " + (System.currentTimeMillis() - t1));
@@ -187,7 +189,6 @@ public class OrderLoader extends JSONProcessSimple {
       }
 
     } finally {
-      OBContext.setOBContext(currentUser, currentRole, currentClient, currentOrg);
       OBContext.restorePreviousMode();
     }
     JSONObject jsonResponse = new JSONObject();
@@ -205,7 +206,8 @@ public class OrderLoader extends JSONProcessSimple {
 
     boolean isQuotation = jsonorder.has("isQuotation") && jsonorder.getBoolean("isQuotation");
     if (jsonorder.getLong("orderType") != 2 && !jsonorder.getBoolean("isLayaway") && !isQuotation
-        && verifyOrderExistance(jsonorder)) {
+        && verifyOrderExistance(jsonorder)
+        && (!jsonorder.has("preserveId") || jsonorder.getBoolean("preserveId"))) {
       return successMessage(jsonorder);
     }
 
@@ -295,7 +297,6 @@ public class OrderLoader extends JSONProcessSimple {
       }
 
       t2 = System.currentTimeMillis();
-      OBDal.getInstance().flush();
       updateAuditInfo(order, invoice, jsonorder);
       t3 = System.currentTimeMillis();
       log.debug("Creation of bobs. Order: " + (t112 - t111) + "; Orderlines: " + (t113 - t112)
@@ -327,10 +328,11 @@ public class OrderLoader extends JSONProcessSimple {
         proc.exec(jsonorder, order, shipment, invoice);
       }
     }
-
+    long t5 = System.currentTimeMillis();
+    OBDal.getInstance().flush();
     log.info("Initial flush: " + (t1 - t0) + "; Generate bobs:" + (t11 - t1) + "; Save bobs:"
         + (t2 - t11) + "; First flush:" + (t3 - t2) + "; Second flush: " + (t4 - t3)
-        + "; Process Payments:" + (System.currentTimeMillis() - t4));
+        + "; Process Payments:" + (t5 - t4) + " Final flush: " + (System.currentTimeMillis() - t5));
 
     return successMessage(jsonorder);
   }
@@ -879,7 +881,9 @@ public class OrderLoader extends JSONProcessSimple {
     JSONPropertyToEntity.fillBobFromJSON(orderEntity, order, jsonorder,
         jsonorder.getLong("timezoneOffset"));
     order.setNewOBObject(true);
-    order.setId(jsonorder.getString("id"));
+    if (!jsonorder.has("preserveId") || jsonorder.getBoolean("preserveId")) {
+      order.setId(jsonorder.getString("id"));
+    }
     int stdPrecision = order.getCurrency().getStandardPrecision().intValue();
 
     order.setTransactionDocument((DocumentType) OBDal.getInstance().getProxy("DocumentType",
@@ -1047,7 +1051,7 @@ public class OrderLoader extends JSONProcessSimple {
               : BigDecimal.ZERO);
         } else {
           processPayments(paymentSchedule, paymentScheduleInvoice, order, invoice, paymentType,
-              payment, i == (payments.length() - 1) ? writeoffAmt : BigDecimal.ZERO);
+              payment, i == (payments.length() - 1) ? writeoffAmt : BigDecimal.ZERO, jsonorder);
         }
       }
       if (invoice != null && fullpayLayaway) {
@@ -1088,7 +1092,8 @@ public class OrderLoader extends JSONProcessSimple {
 
   protected void processPayments(FIN_PaymentSchedule paymentSchedule,
       FIN_PaymentSchedule paymentScheduleInvoice, Order order, Invoice invoice,
-      OBPOSAppPayment paymentType, JSONObject payment, BigDecimal writeoffAmt) throws Exception {
+      OBPOSAppPayment paymentType, JSONObject payment, BigDecimal writeoffAmt, JSONObject jsonorder)
+      throws Exception {
     long t1 = System.currentTimeMillis();
     OBContext.setAdminMode(true);
     try {
@@ -1108,7 +1113,8 @@ public class OrderLoader extends JSONProcessSimple {
       if (amount.signum() == 0) {
         return;
       }
-      if (writeoffAmt.signum() == 1) {
+      if ((writeoffAmt.signum() == 1 && (jsonorder.getLong("orderType") == 0 || isLayaway))
+          || (writeoffAmt.signum() == -1 && jsonorder.getLong("orderType") == 1)) {
         // there was an overpayment, we need to take into account the writeoffamt
         amount = amount.subtract(writeoffAmt).setScale(stdPrecision, RoundingMode.HALF_UP);
       }
@@ -1164,16 +1170,22 @@ public class OrderLoader extends JSONProcessSimple {
       Entity paymentEntity = ModelProvider.getInstance().getEntity(FIN_Payment.class);
       String paymentDocNo = getDocumentNo(paymentEntity, null, paymentDocType);
 
+      // get date
+      Date calculatedDate = payment.has("date") ? OBMOBCUtils.calculateServerDate(
+          (String) payment.get("date"), jsonorder.getLong("timezoneOffset")) : OBMOBCUtils
+          .stripTime(new Date());
+
       FIN_Payment finPayment = FIN_AddPayment.savePayment(null, true, paymentDocType, paymentDocNo,
           order.getBusinessPartner(), paymentType.getPaymentMethod().getPaymentMethod(), account,
-          amount.toString(), order.getOrderDate(), order.getOrganization(), null, detail,
-          paymentAmount, false, false, order.getCurrency(), mulrate, origAmount);
-      if (writeoffAmt.signum() == 1) {
+          amount.toString(), calculatedDate, order.getOrganization(), null, detail, paymentAmount,
+          false, false, order.getCurrency(), mulrate, origAmount);
+      if ((writeoffAmt.signum() == 1 && (jsonorder.getLong("orderType") == 0 || isLayaway))
+          || (writeoffAmt.signum() == -1 && jsonorder.getLong("orderType") == 1)) {
         FIN_AddPayment.saveGLItem(finPayment, writeoffAmt, paymentType.getPaymentMethod()
             .getGlitemWriteoff());
+        // Update Payment In amount after adding GLItem
+        finPayment.setAmount(origAmount.setScale(stdPrecision, RoundingMode.HALF_UP));
       }
-      // Update Payment In amount after adding GLItem
-      finPayment.setAmount(amount.setScale(stdPrecision, RoundingMode.HALF_UP));
       OBDal.getInstance().save(finPayment);
 
       String description = getPaymentDescription();

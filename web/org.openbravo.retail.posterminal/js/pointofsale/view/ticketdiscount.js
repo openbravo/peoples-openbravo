@@ -156,6 +156,7 @@ enyo.kind({
   }],
   show: function () {
     var me = this;
+    OB.MobileApp.view.scanningFocus(false);
     me.discounts.reset();
     //uncheck lines
     this.doCheckAllTicketLines({
@@ -259,6 +260,7 @@ enyo.kind({
     }
   },
   closingDiscounts: function (inSender, inEvent) {
+    OB.MobileApp.view.scanningFocus(true);
     this.$.checkSelectAll.unCheck();
     this.doDiscountsModeFinished({
       tabPanel: 'scan',

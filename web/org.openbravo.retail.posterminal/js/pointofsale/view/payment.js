@@ -541,7 +541,27 @@ enyo.kind({
   init: function (model) {
     this.model = model;
   },
+  disabled: false,
+  putDisabled: function (status) {
+    if (status === false) {
+      this.setDisabled(false);
+      this.removeClass('disabled');
+      this.disabled = false;
+    } else {
+      this.setDisabled(true);
+      this.addClass('disabled');
+      this.disabled = true;
+    }
+  },
+  initComponents: function () {
+    this.inherited(arguments);
+    this.putDisabled(!OB.MobileApp.model.hasPermission(this.permission));
+  },
   tap: function () {
+    if (this.disabled) {
+      return true;
+    }
+
     var process = new OB.DS.Process('org.openbravo.retail.posterminal.CheckBusinessPartnerCredit');
     var me = this;
     if (this.model.get('order').get('orderType') !== 1 && OB.POS.modelterminal.get('connectedToERP')) {

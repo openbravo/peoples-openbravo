@@ -105,12 +105,13 @@ enyo.kind({
       this.model.get('multiOrders').resetValues();
       return true;
     }
-    if (!this.model.get('order').get('isPaid') && !this.model.get('order').get('isQuotation') && !this.model.get('order').get('isLayaway')) {
+    // deletion without warning is allowed if the ticket has been processed
+    if (this.hasClass('paidticket')) {	
+      this.doDeleteOrder();
+    } else {
       this.doShowPopup({
         popup: 'modalConfirmReceiptDelete'
       });
-    } else {
-      this.doDeleteOrder();
     }
   },
   init: function (model) {

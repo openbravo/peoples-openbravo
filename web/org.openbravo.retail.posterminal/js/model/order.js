@@ -139,7 +139,9 @@
     defaults: {
       'amount': OB.DEC.Zero,
       'origAmount': OB.DEC.Zero,
-      'paid': OB.DEC.Zero // amount - change...
+      'paid': OB.DEC.Zero,
+      // amount - change...
+      'date': null
     },
     printAmount: function () {
       if (this.get('rate')) {
@@ -384,12 +386,20 @@
           //If the price doesn't include tax, the discounted gross has already been calculated
           var gross = me.get('lines').reduce(function (memo, e) {
             var grossLine = e.get('discountedGross');
-            return OB.DEC.add(memo, grossLine);
+            if (grossLine) {
+              return OB.DEC.add(memo, grossLine);
+            } else {
+              return memo;
+            }
           }, OB.DEC.Zero);
           me.set('gross', gross);
           var net = me.get('lines').reduce(function (memo, e) {
             var netLine = e.get('discountedNet');
-            return OB.DEC.add(memo, netLine);
+            if (netLine) {
+              return OB.DEC.add(memo, netLine);
+            } else {
+              return memo;
+            }
           }, OB.DEC.Zero);
           me.set('net', net);
           me.adjustPayment();
@@ -993,7 +1003,9 @@
         } else if (OB.DEC.compare(OB.DEC.sub(OB.DEC.add(OB.DEC.add(nocash, cash), origCash), total)) > 0) {
           pcash.set('paid', OB.DEC.sub(total, OB.DEC.add(nocash, OB.DEC.sub(paidCash, pcash.get('origAmount')))));
           this.set('payment', total);
-          this.set('change', OB.DEC.sub(OB.DEC.add(OB.DEC.add(nocash, cash), origCash), total));
+          //The change value will be computed through a rounded total value, to ensure that the total plus change
+          //add up to the paid amount without any kind of precission loss
+          this.set('change', OB.DEC.sub(OB.DEC.add(OB.DEC.add(nocash, cash), origCash), OB.Utilities.Number.roundJSNumber(total, 2)));
         } else {
           pcash.set('paid', auxCash);
           this.set('payment', OB.DEC.add(OB.DEC.add(nocash, cash), origCash));
