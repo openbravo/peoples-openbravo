@@ -144,8 +144,17 @@ public class InitialClientSetup extends HttpSecureAppServlet {
     xmlDocument.setParameter("messageType", obeResult.getType());
     xmlDocument.setParameter("messageTitle",
         Utility.parseTranslation(this, vars, strLanguage, obeResult.getTitle()));
-    xmlDocument.setParameter("messageMessage",
-        Utility.parseTranslation(this, vars, strLanguage, obeResult.getMessage()));
+    // In case the client creation is successful, the context has to be reloaded to use the created
+    // client in user profile widget. Refer https://issues.openbravo.com/view.php?id=24092
+    if (obeResult.getType().equalsIgnoreCase("success")) {
+      xmlDocument.setParameter("messageMessage",
+          Utility.parseTranslation(this, vars, strLanguage, obeResult.getMessage()) + "<br> "
+              + Utility.parseTranslation(this, vars, strLanguage, "@ReloadClientContext@")
+              + " <a href='#' onclick='window.parent.parent.location.reload();'> Reload </a>");
+    } else {
+      xmlDocument.setParameter("messageMessage",
+          Utility.parseTranslation(this, vars, strLanguage, obeResult.getMessage()));
+    }
 
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
