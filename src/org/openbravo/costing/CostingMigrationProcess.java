@@ -551,8 +551,8 @@ public class CostingMigrationProcess implements Process {
         + Costing.PROPERTY_STARTINGDATE);
     where.append("       and trx." + MaterialTransaction.PROPERTY_PRODUCT + " = c."
         + Costing.PROPERTY_PRODUCT);
-    where.append("       and trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " < c."
-        + Costing.PROPERTY_ENDINGDATE);
+    where.append("       and trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " < (c."
+        + Costing.PROPERTY_ENDINGDATE + " + 1) ");
     where.append("     )");
     where.append("   and " + Costing.PROPERTY_COST + " is not null");
     where.append(" order by " + Costing.PROPERTY_PRODUCT + ", " + Costing.PROPERTY_STARTINGDATE
