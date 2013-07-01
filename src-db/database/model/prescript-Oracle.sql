@@ -211,7 +211,7 @@ SELECT 0 AS value
 /-- END
 
 create or replace
-FUNCTION ADD_HMS(p_date IN DATE, p_hours IN NUMBER, p_minutes IN NUMBER, p_seconds IN NUMBER) RETURN TIMESTAMP
+FUNCTION ADD_HMS(p_date IN DATE, p_hours IN NUMBER, p_minutes IN NUMBER, p_seconds IN NUMBER) RETURN TIMESTAMP DETERMINISTIC
 
 AS
 /*************************************************************************

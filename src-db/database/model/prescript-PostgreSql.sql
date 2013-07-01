@@ -1630,5 +1630,5 @@ $BODY$ DECLARE
 BEGIN
   RETURN p_date + p_hours * interval '1 hour' + p_minutes * interval '1 minute' + p_seconds * interval '1 second';
 END ; $BODY$
-  LANGUAGE plpgsql VOLATILE
+  LANGUAGE plpgsql IMMUTABLE
 /-- END
