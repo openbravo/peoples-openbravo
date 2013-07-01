@@ -230,8 +230,6 @@ AS
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
-  v_Display VARCHAR2(4000) ;
-  v_SQL     VARCHAR2(4000):='';
 begin
   RETURN p_date + p_hours/24 + p_minutes/1440 + p_seconds/86400;
 end ADD_HMS;
