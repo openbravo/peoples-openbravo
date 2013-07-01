@@ -172,6 +172,8 @@ isc.OBTimeItemGrid.addProperties({
   showDiffText: null,
   timeLabels: null,
   maxTimeStringLength: 0,
+  _avoidHideOnBlur: false,
+  _waitingForReFocus: [],
 
   dateObjToTimeString: function (dateObj) {
     var lengthThreshold, tmpString, isPM = false,
@@ -384,6 +386,29 @@ isc.OBTimeItemGrid.addProperties({
 
     this.updatePosition();
     return this.Super('show', arguments);
+  },
+  scrolled: function () {
+    var me = this;
+    if (isc.Browser.isIE) {
+      //To avoid a problem in IE that once the scroll is pressed, the formItem loses the focus
+      this._avoidHideOnBlur = true;
+      this._waitingForReFocus.push('dummy');
+      setTimeout(function () {
+        me.formItem.form.focus();
+      }, 10);
+      setTimeout(function () {
+        me._waitingForReFocus.pop();
+        if (me._waitingForReFocus.length === 0) {
+          me._avoidHideOnBlur = false;
+        }
+      }, 150);
+    }
+    this.Super('scrolled', arguments);
+  },
+  hide: function () {
+    if (!this._avoidHideOnBlur) {
+      return this.Super('hide', arguments);
+    }
   },
   generateData: function () {
     var dateObj, timeGranularityInMilliSeconds, timeRef, dateArray = [];
