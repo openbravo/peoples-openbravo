@@ -329,6 +329,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="CREATE_POLINES" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="C_DOCTYPE" name="C_DOCTYPE_CORDER">
         <reference local="C_DOCTYPE_ID" foreign="C_DOCTYPE_ID"/>
       </foreign-key>
