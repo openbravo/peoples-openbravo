@@ -366,10 +366,10 @@
             SELECT  get_uuid(), v_PriceList_Version_ID,
             mp.M_Product_ID, v_Client_ID, v_Org_ID, 'Y',
             now(), v_UpdatedBy, now(), v_UpdatedBy, 
-            COALESCE(M_GET_COST (mp.M_Product_ID, v_validfromdate, mp.costtype, v_Org_ID, mp.ad_client_id, null, ac.c_currency_id, v_Currency_ID),0), 
-            COALESCE(M_GET_COST (mp.M_Product_ID, v_validfromdate, mp.costtype, v_Org_ID, mp.ad_client_id, null, ac.c_currency_id, v_Currency_ID),0), 
-            COALESCE(M_GET_COST (mp.M_Product_ID, v_validfromdate, mp.costtype, v_Org_ID, mp.ad_client_id, null, ac.c_currency_id, v_Currency_ID),0), 
-            COALESCE(M_GET_COST (mp.M_Product_ID, v_validfromdate, mp.costtype, v_Org_ID, mp.ad_client_id, null, ac.c_currency_id, v_Currency_ID),0)
+            COALESCE(M_GET_COST (mp.M_Product_ID, add_hms(v_validfromdate, 23, 59, 59), mp.costtype, v_Org_ID, mp.ad_client_id, null, ac.c_currency_id, v_Currency_ID),0), 
+            COALESCE(M_GET_COST (mp.M_Product_ID, add_hms(v_validfromdate, 23, 59, 59), mp.costtype, v_Org_ID, mp.ad_client_id, null, ac.c_currency_id, v_Currency_ID),0), 
+            COALESCE(M_GET_COST (mp.M_Product_ID, add_hms(v_validfromdate, 23, 59, 59), mp.costtype, v_Org_ID, mp.ad_client_id, null, ac.c_currency_id, v_Currency_ID),0), 
+            COALESCE(M_GET_COST (mp.M_Product_ID, add_hms(v_validfromdate, 23, 59, 59), mp.costtype, v_Org_ID, mp.ad_client_id, null, ac.c_currency_id, v_Currency_ID),0)
             from m_product mp, ad_client ac
             where mp.ad_client_id=ac.ad_client_id
             AND EXISTS
