@@ -19,6 +19,8 @@
 package org.openbravo.materialmgmt;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -225,7 +227,6 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
 
         for (i = 0; i < chNumber; i++) {
           ProductCharacteristicAux prChConfAux = prChUseCode.get(prChs.get(i));
-          List<CharacteristicValue> filteredValues = prChConfAux.getFilteredValues();
           currentValues[i] = prChConfAux.getNextValue();
           if (!prChConfAux.isIteratorReset()) {
             break;
@@ -235,6 +236,18 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
         }
         productNo++;
       } while (hasNext);
+      String strSortBy = parameters.get("_sortBy");
+      if (strSortBy == null) {
+        strSortBy = "characteristicDescription";
+      }
+      boolean ascending = true;
+      if (strSortBy.startsWith("-")) {
+        ascending = false;
+        strSortBy = strSortBy.substring(1);
+      }
+
+      Collections.sort(result, new ResultComparator(strSortBy, ascending));
+
     } catch (JSONException e) {
       // Do nothing
     } finally {
@@ -308,6 +321,48 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
 
     final Property searchKeyProperty = prodEntity.getProperty(Product.PROPERTY_SEARCHKEY);
     return searchKeyProperty.getFieldLength();
+  }
+
+  private static class ResultComparator implements Comparator<Map<String, Object>> {
+    private String sortByField;
+    private boolean ascending;
+
+    public ResultComparator(String _sortByField, boolean _ascending) {
+      sortByField = _sortByField;
+      ascending = _ascending;
+    }
+
+    @Override
+    public int compare(Map<String, Object> map1, Map<String, Object> map2) {
+      boolean sortByChanged = false;
+      if ("variantCreated".equals(sortByField)) {
+        Boolean o1 = (Boolean) map1.get(sortByField);
+        Boolean o2 = (Boolean) map2.get(sortByField);
+        if (o1 == o2) {
+          sortByField = "characteristicDescription";
+          sortByChanged = true;
+        } else if (ascending) {
+          return o1 ? -1 : 1;
+        } else {
+          return o2 ? -1 : 1;
+        }
+      }
+      // previous if might have changed the value of sortByField
+      if (!"variantCreated".equals(sortByField)) {
+        String str1 = (String) map1.get(sortByField);
+        String str2 = (String) map2.get(sortByField);
+        if (sortByChanged) {
+          sortByField = "variantCreated";
+        }
+        if (ascending) {
+          return str1.compareTo(str2);
+        } else {
+          return str2.compareTo(str1);
+        }
+      }
+      // returning 0 but should never reach this point.
+      return 0;
+    }
   }
 
   private class ProductCharacteristicAux {
