@@ -334,57 +334,59 @@ public class DocFINPayment extends AcctServer {
           String bpAmountConverted = bpAmount;
           Invoice invoice = line.getInvoice();
           String strcCurrencyId = C_Currency_ID;
-          if (!isPrepayment && invoice != null) {
+          if (invoice != null) {
             // To force opposite posting isReceipt is opposite as well. this is required when
             // looking backwards
             bpAmountConverted = convertAmount(new BigDecimal(bpAmount), !isReceipt, DateAcct,
                 TABLEID_Invoice, invoice.getId(), C_Currency_ID, as.m_C_Currency_ID, line, as,
                 fact, Fact_Acct_Group_ID, nextSeqNo(SeqNo), conn).toString();
-            if (line.getDoubtFulDebtAmount().signum() != 0) {
-              BigDecimal doubtFulDebtAmount = convertAmount(line.getDoubtFulDebtAmount(),
-                  isReceipt, DateAcct, TABLEID_Invoice, invoice.getId(), C_Currency_ID,
-                  as.m_C_Currency_ID, line, as, fact, Fact_Acct_Group_ID, nextSeqNo(SeqNo), conn,
-                  false);
-              fact.createLine(line, getAccountBPartner(bpartnerId, as, true, false, true, conn),
-                  strcCurrencyId, "", doubtFulDebtAmount.toString(), Fact_Acct_Group_ID,
-                  nextSeqNo(SeqNo), DocumentType, conn);
-              bpAmountConverted = new BigDecimal(bpAmountConverted).subtract(doubtFulDebtAmount)
-                  .toString();
-              fact.createLine(line,
-                  getAccountBPartnerAllowanceForDoubtfulDebt(bpartnerId, as, conn),
-                  this.C_Currency_ID, doubtFulDebtAmount.toString(), "", Fact_Acct_Group_ID2,
-                  nextSeqNo(SeqNo), DocumentType, conn);
-              // Assign expense to the dimensions of the invoice lines
-              BigDecimal assignedAmount = BigDecimal.ZERO;
-              DocDoubtfulDebtData[] data = DocDoubtfulDebtData.select(conn, invoice.getId());
-              Currency currency = OBDal.getInstance().get(Currency.class, C_Currency_ID);
-              for (int j = 0; j < data.length; j++) {
-                BigDecimal lineAmount = doubtFulDebtAmount.multiply(
-                    new BigDecimal(data[j].percentage)).setScale(
-                    currency.getStandardPrecision().intValue(), BigDecimal.ROUND_HALF_UP);
-                if (j == data.length - 1) {
-                  lineAmount = doubtFulDebtAmount.subtract(assignedAmount);
+            if (!isPrepayment) {
+              if (line.getDoubtFulDebtAmount().signum() != 0) {
+                BigDecimal doubtFulDebtAmount = convertAmount(line.getDoubtFulDebtAmount(),
+                    isReceipt, DateAcct, TABLEID_Invoice, invoice.getId(), C_Currency_ID,
+                    as.m_C_Currency_ID, line, as, fact, Fact_Acct_Group_ID, nextSeqNo(SeqNo), conn,
+                    false);
+                fact.createLine(line, getAccountBPartner(bpartnerId, as, true, false, true, conn),
+                    strcCurrencyId, "", doubtFulDebtAmount.toString(), Fact_Acct_Group_ID,
+                    nextSeqNo(SeqNo), DocumentType, conn);
+                bpAmountConverted = new BigDecimal(bpAmountConverted).subtract(doubtFulDebtAmount)
+                    .toString();
+                fact.createLine(line,
+                    getAccountBPartnerAllowanceForDoubtfulDebt(bpartnerId, as, conn),
+                    this.C_Currency_ID, doubtFulDebtAmount.toString(), "", Fact_Acct_Group_ID2,
+                    nextSeqNo(SeqNo), DocumentType, conn);
+                // Assign expense to the dimensions of the invoice lines
+                BigDecimal assignedAmount = BigDecimal.ZERO;
+                DocDoubtfulDebtData[] data = DocDoubtfulDebtData.select(conn, invoice.getId());
+                Currency currency = OBDal.getInstance().get(Currency.class, C_Currency_ID);
+                for (int j = 0; j < data.length; j++) {
+                  BigDecimal lineAmount = doubtFulDebtAmount.multiply(
+                      new BigDecimal(data[j].percentage)).setScale(
+                      currency.getStandardPrecision().intValue(), BigDecimal.ROUND_HALF_UP);
+                  if (j == data.length - 1) {
+                    lineAmount = doubtFulDebtAmount.subtract(assignedAmount);
+                  }
+                  DocLine lineDD = new DocLine(DocumentType, Record_ID, "");
+                  lineDD.m_A_Asset_ID = data[j].aAssetId;
+                  lineDD.m_M_Product_ID = data[j].mProductId;
+                  lineDD.m_C_Project_ID = data[j].cProjectId;
+                  lineDD.m_C_BPartner_ID = data[j].cBpartnerId;
+                  lineDD.m_C_Costcenter_ID = data[j].cCostcenterId;
+                  lineDD.m_C_Campaign_ID = data[j].cCampaignId;
+                  lineDD.m_C_Activity_ID = data[j].cActivityId;
+                  lineDD.m_C_Glitem_ID = data[j].mCGlitemId;
+                  lineDD.m_User1_ID = data[j].user1id;
+                  lineDD.m_User2_ID = data[j].user2id;
+                  lineDD.m_AD_Org_ID = data[j].adOrgId;
+                  fact.createLine(
+                      lineDD,
+                      getAccountBPartnerBadDebt(
+                          (lineDD.m_C_BPartner_ID == null || lineDD.m_C_BPartner_ID.equals("")) ? this.C_BPartner_ID
+                              : lineDD.m_C_BPartner_ID, false, as, conn), this.C_Currency_ID, "",
+                      lineAmount.toString(), Fact_Acct_Group_ID2, nextSeqNo(SeqNo), DocumentType,
+                      conn);
+                  assignedAmount = assignedAmount.add(lineAmount);
                 }
-                DocLine lineDD = new DocLine(DocumentType, Record_ID, "");
-                lineDD.m_A_Asset_ID = data[j].aAssetId;
-                lineDD.m_M_Product_ID = data[j].mProductId;
-                lineDD.m_C_Project_ID = data[j].cProjectId;
-                lineDD.m_C_BPartner_ID = data[j].cBpartnerId;
-                lineDD.m_C_Costcenter_ID = data[j].cCostcenterId;
-                lineDD.m_C_Campaign_ID = data[j].cCampaignId;
-                lineDD.m_C_Activity_ID = data[j].cActivityId;
-                lineDD.m_C_Glitem_ID = data[j].mCGlitemId;
-                lineDD.m_User1_ID = data[j].user1id;
-                lineDD.m_User2_ID = data[j].user2id;
-                lineDD.m_AD_Org_ID = data[j].adOrgId;
-                fact.createLine(
-                    lineDD,
-                    getAccountBPartnerBadDebt(
-                        (lineDD.m_C_BPartner_ID == null || lineDD.m_C_BPartner_ID.equals("")) ? this.C_BPartner_ID
-                            : lineDD.m_C_BPartner_ID, false, as, conn), this.C_Currency_ID, "",
-                    lineAmount.toString(), Fact_Acct_Group_ID2, nextSeqNo(SeqNo), DocumentType,
-                    conn);
-                assignedAmount = assignedAmount.add(lineAmount);
               }
             }
           }
