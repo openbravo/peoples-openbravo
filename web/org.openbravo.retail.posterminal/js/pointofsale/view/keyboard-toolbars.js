@@ -269,7 +269,7 @@ enyo.kind({
           if (exactpayment.rate && exactpayment.rate !== '1') {
             amount = OB.DEC.div(me.receipt.getPending(), exactpayment.rate);
           }
-          if (me.model.get('multiOrders').get('isMultiOrders') && me.model.get('multiOrders').get('total') !== OB.DEC.Zero) {
+          if (me.model.get('leftColumnViewManager').isMultiOrder() && me.model.get('multiOrders').get('total') !== OB.DEC.Zero) {
             amount = OB.DEC.div(OB.DEC.sub(me.model.get('multiOrders').get('total'), me.model.get('multiOrders').get('payment')), exactpayment.rate);
             me.payMultiOrder(amount, exactpayment.payment.searchKey, exactpayment.payment._identifier, exactpayment.paymentMethod, exactpayment.rate, exactpayment.mulrate, exactpayment.isocode);
           } else {
