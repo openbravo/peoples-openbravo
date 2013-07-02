@@ -54,9 +54,8 @@ public class SystemServiceTest extends BaseTest {
           .getInstance().hasChanged(ds, tomorrow));
     }
 
-    // 600 days in the past
-    final long manyDays = (long) 600 * ONEDAY;
-    final Date past = new Date(System.currentTimeMillis() - manyDays);
+    // pick smallest possible date in past to ensure that there is always a change in some dataset after this date
+    final Date past = new Date(0);
     for (DataSet ds : dss) {
       if (!DataSetService.getInstance().hasData(ds)) {
         continue;
