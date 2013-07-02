@@ -250,8 +250,10 @@ create.database: creates the database from scratch.
                             ORDER BY (CASE WHEN Name ='Default' THEN 2 ELSE 1 END))
                     WHERE RowNum = 1));
           DELETE FROM AD_SYSTEM_INFO;
-          INSERT INTO AD_SYSTEM_INFO(AD_SYSTEM_INFO_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, ANT_VERSION, OB_INSTALLMODE, CODE_REVISION, MATURITY_UPDATE, MATURITY_SEARCH)
-          VALUES('0', '0', '0', 'Y', NOW(), '0', NOW(), '0', '${ant.version}', 'From Sources', SUBSTR('${code.revision}',1,60), '200', '200');
+          INSERT INTO AD_SYSTEM_INFO(AD_SYSTEM_INFO_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, ANT_VERSION, OB_INSTALLMODE, CODE_REVISION, MATURITY_UPDATE, MATURITY_SEARCH,
+                your_company_login_image, your_it_service_login_image, your_company_menu_image, your_company_big_image, your_company_document_image, support_contact)
+          VALUES('0', '0', '0', 'Y', NOW(), '0', NOW(), '0', '${ant.version}', 'From Sources', SUBSTR('${code.revision}',1,60), '200', '200',
+                '37B37B6A8876462780DB969E5C4D81FD', '6C216D1786B34105ACCBA4DD8612A0CE', '5F3C04DF603F409A875C294910BD3491', 'B48852CB1AE641288F037EB59F968328', 'AA90B7900AD04E87A890BA2E2604A6D9', 'www.your-it-service.com');
           DELETE FROM AD_REGISTRATION_INFO;
           INSERT INTO AD_REGISTRATION_INFO(AD_REGISTRATION_INFO_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY)
           VALUES('0', '0', '0', 'Y', NOW(), '0', NOW(), '0');
@@ -293,8 +295,10 @@ create.database: creates the database from scratch.
                     ORDER BY (CASE WHEN Name ='Default' THEN 2 ELSE 1 END)
                     LIMIT 1));
           DELETE FROM AD_SYSTEM_INFO;
-          INSERT INTO AD_SYSTEM_INFO(AD_SYSTEM_INFO_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, ANT_VERSION, OB_INSTALLMODE, CODE_REVISION, MATURITY_UPDATE, MATURITY_SEARCH)
-          VALUES('0', '0', '0', 'Y', NOW(), '0', NOW(), '0', '${ant.version}', 'From Sources', SUBSTR('${code.revision}',1,60), '200', '200');
+          INSERT INTO AD_SYSTEM_INFO(AD_SYSTEM_INFO_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, ANT_VERSION, OB_INSTALLMODE, CODE_REVISION, MATURITY_UPDATE, MATURITY_SEARCH,
+                your_company_login_image, your_it_service_login_image, your_company_menu_image, your_company_big_image, your_company_document_image, support_contact)
+          VALUES('0', '0', '0', 'Y', NOW(), '0', NOW(), '0', '${ant.version}', 'From Sources', SUBSTR('${code.revision}',1,60), '200', '200',
+                '37B37B6A8876462780DB969E5C4D81FD', '6C216D1786B34105ACCBA4DD8612A0CE', '5F3C04DF603F409A875C294910BD3491', 'B48852CB1AE641288F037EB59F968328', 'AA90B7900AD04E87A890BA2E2604A6D9', 'www.your-it-service.com');
           DELETE FROM AD_REGISTRATION_INFO;
           INSERT INTO AD_REGISTRATION_INFO(AD_REGISTRATION_INFO_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY)
           VALUES('0', '0', '0', 'Y', NOW(), '0', NOW(), '0');

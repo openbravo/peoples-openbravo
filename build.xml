@@ -700,7 +700,6 @@ export.database: exports database structure and data to xml files.
     <antcall inheritall="true" inheritrefs="true" target="apply.module" />
 
     <antcall target="import.sample.data" />
-    <antcall target="load.logoimages" />
     <updatesystemstatus v="RB51"/> 
     <ant dir="${base.db}" target="setApplied" inheritAll="true" inheritRefs="true" />
 
@@ -767,7 +766,6 @@ export.database: exports database structure and data to xml files.
     <antcall target="generate.entities" />
     <antcall inheritall="true" inheritrefs="true" target="apply.module" />
     <antcall target="import.sample.data" />
-    <antcall target="load.logoimages" />
   </target>
 
 
@@ -1122,15 +1120,6 @@ export.database: exports database structure and data to xml files.
         <striplinebreaks/>
       </filterchain>
     </loadfile>
-  </target>
-  
-  
-  <target name="load.logoimages.forked">
-    <ant dir="${base.src}" target="load.logoimages.forked" inheritAll="true" inheritRefs="true" />
-  </target>
-
-  <target name="load.logoimages">
-    <ant dir="${base.src}" target="load.logoimages" inheritAll="true" inheritRefs="true" />
   </target>
   
   <target name="validate.wad">
