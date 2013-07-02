@@ -251,6 +251,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
         this.get('multiOrders').trigger('closed', iter);
         this.get('multiOrders').trigger('print', iter); // to guaranty execution order
       }
+      this.get('leftColumnViewManager').setOrderMode();
     }, this);
 
     customersave = new OB.DATA.CustomerSave(this);
