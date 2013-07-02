@@ -177,9 +177,12 @@ enyo.kind({
           name: 'receiptview',
           init: function (model) {
             this.model = model;
-            this.model.get('multiOrders').on('change:isMultiOrders', function () {
-              this.setShowing(!this.model.get('multiOrders').get('isMultiOrders'));
+            this.model.get('leftColumnViewManager').on('change:currentView', function (changedModel) {
+              this.setShowing(changedModel.isOrder());
             }, this);
+            //            this.model.get('multiOrders').on('change:isMultiOrders', function () {
+            //              this.setShowing(!this.model.get('multiOrders').get('isMultiOrders'));
+            //            }, this);
           }
         }, {
           classes: 'span12',
@@ -188,9 +191,12 @@ enyo.kind({
           showing: false,
           init: function (model) {
             this.model = model;
-            this.model.get('multiOrders').on('change:isMultiOrders', function () {
-              this.setShowing(this.model.get('multiOrders').get('isMultiOrders'));
+            this.model.get('leftColumnViewManager').on('change:currentView', function (changedModel) {
+              this.setShowing(changedModel.isMultiOrder());
             }, this);
+            //            this.model.get('multiOrders').on('change:isMultiOrders', function () {
+            //              this.setShowing(this.model.get('multiOrders').get('isMultiOrders'));
+            //            }, this);
           }
         }, {
           name: 'leftSubWindowsContainer',
@@ -578,10 +584,18 @@ enyo.kind({
             if (hasError) {
               OB.UTIL.showError(error);
             } else {
-              if (!me.model.get('multiOrders').get('isMultiOrders')) {
+              //            if (!me.model.get('multiOrders').get('isMultiOrders')) {
+              //              me.model.get('order').removePayment(inEvent.payment);
+              //            } else {
+              //              me.model.get('multiOrders').removePayment(inEvent.payment);
+              //            }
+              if (me.model.get('leftColumnViewManager').isOrder()) {
                 me.model.get('order').removePayment(inEvent.payment);
-              } else {
+                return;
+              }
+              if (me.model.get('leftColumnViewManager').isMultiOrder()) {
                 me.model.get('multiOrders').removePayment(inEvent.payment);
+                return;
               }
             }
             };
@@ -590,10 +604,18 @@ enyo.kind({
         return;
       }
     } else {
-      if (!me.model.get('multiOrders').get('isMultiOrders')) {
+      //      if (!me.model.get('multiOrders').get('isMultiOrders')) {
+      //        me.model.get('order').removePayment(inEvent.payment);
+      //      } else {
+      //        me.model.get('multiOrders').removePayment(inEvent.payment);
+      //      }
+      if (me.model.get('leftColumnViewManager').isOrder()) {
         me.model.get('order').removePayment(inEvent.payment);
-      } else {
+        return;
+      }
+      if (me.model.get('leftColumnViewManager').isMultiOrder()) {
         me.model.get('multiOrders').removePayment(inEvent.payment);
+        return;
       }
     }
   },
@@ -673,11 +695,12 @@ enyo.kind({
     var me = this;
     me.model.get('multiOrders').get('multiOrdersList').reset();
     _.each(inEvent.value, function (iter) {
-      iter.set('isMultiOrder', true);
+      //iter.set('isMultiOrder', true);
       me.model.get('orderList').addMultiReceipt(iter);
       me.model.get('multiOrders').get('multiOrdersList').add(iter);
     });
-    this.model.get('multiOrders').set('isMultiOrders', true);
+    this.model.get('leftColumnViewManager').setMultiOrderMode();
+    //this.model.get('multiOrders').set('isMultiOrders', true);
     return true;
   },
   removeMultiOrders: function (inSender, inEvent) {
@@ -696,6 +719,32 @@ enyo.kind({
     receipt = this.model.get('order');
     receiptList = this.model.get('orderList');
     OB.MobileApp.view.scanningFocus(true);
+
+    this.model.get('leftColumnViewManager').on('change:currentView', function (changedModel) {
+      debugger;
+      if (changedModel.isMultiOrder()) {
+        this.rightToolbarDisabled({}, {
+          status: true,
+          exceptionPanel: 'payment'
+        });
+        this.tabChange({}, {
+          tabPanel: 'payment',
+          keyboard: 'toolbarpayment'
+        });
+        return;
+      }
+      if (changedModel.isOrder()) {
+        this.rightToolbarDisabled({}, {
+          status: false
+        });
+        this.tabChange({}, {
+          tabPanel: 'scan',
+          keyboard: 'toolbarscan'
+        });
+        return;
+      }
+    }, this);
+
     this.model.get('subWindowManager').on('change:currentWindow', function (changedModel) {
 
       function restorePreviousState(swManager, changedModel) {

@@ -21,8 +21,8 @@ enyo.kind({
     var payment, amt, change, pending, isMultiOrders;
     if (!_.isUndefined(inEvent.value.payment)) {
       payment = inEvent.value.payment;
-
-      isMultiOrders = this.model.get('multiOrders').get('isMultiOrders') && this.model.get('multiOrders').get('multiOrdersList').length !== 0;
+      isMultiOrders = this.model.isValidMultiOrderState();
+      //isMultiOrders = this.model.get('multiOrders').get('isMultiOrders') && this.model.get('multiOrders').get('multiOrdersList').length !== 0;
       if (!isMultiOrders) {
         change = this.receipt.getChange();
         pending = this.receipt.getPending();
@@ -136,9 +136,12 @@ enyo.kind({
 
   receiptChanged: function () {
     var me = this;
-    if (this.model.get('multiOrders').get('isMultiOrders') || this.model.get('multiOrders').get('multiOrdersList').length !== 0) {
+    if (this.model.get('leftColumnViewManager').isMultiOrder()) {
       return true;
     }
+    //    if (this.model.get('multiOrders').get('isMultiOrders') || this.model.get('multiOrders').get('multiOrdersList').length !== 0) {
+    //      return true;
+    //    }
     this.$.payments.setCollection(this.receipt.get('payments'));
     this.$.multiPayments.setCollection(this.model.get('multiOrders').get('payments'));
     this.receipt.on('change:payment change:change calculategross change:bp change:gross', function () {
@@ -146,9 +149,12 @@ enyo.kind({
     }, this);
     this.updatePending();
     this.receipt.on('change:orderType change:isLayaway change:payment', function (model) {
-      if (me.model.get('multiOrders').get('isMultiOrders') || this.model.get('multiOrders').get('multiOrdersList').length !== 0) {
+      if (this.model.get('leftColumnViewManager').isMultiOrder()) {
         return true;
       }
+      //      if (me.model.get('multiOrders').get('isMultiOrders') || this.model.get('multiOrders').get('multiOrdersList').length !== 0) {
+      //        return true;
+      //      }
       var payment = OB.POS.terminal.terminal.paymentnames[OB.POS.terminal.terminal.get('paymentcash')];
       if ((model.get('orderType') === 2 || (model.get('isLayaway'))) && model.get('orderType') !== 3 && !model.getPaymentStatus().done) {
         this.$.creditsalesaction.hide();
@@ -165,9 +171,12 @@ enyo.kind({
 
 
   updatePending: function () {
-    if (this.model.get('multiOrders').get('isMultiOrders') || this.model.get('multiOrders').get('multiOrdersList').length !== 0) {
+    if (this.model.get('leftColumnViewManager').isMultiOrder()) {
       return true;
     }
+    //    if (this.model.get('multiOrders').get('isMultiOrders') || this.model.get('multiOrders').get('multiOrdersList').length !== 0) {
+    //      return true;
+    //    }
     var paymentstatus = this.receipt.getPaymentStatus();
     var symbol = '',
         rate = OB.DEC.One,
@@ -353,15 +362,27 @@ enyo.kind({
     this.model.get('multiOrders').on('change:payment change:total change:change', function () {
       this.updatePendingMultiOrders();
     }, this);
-    this.model.get('multiOrders').on('change:isMultiOrders', function () {
-      if (!this.model.get('multiOrders').get('isMultiOrders')) {
+    this.model.get('leftColumnViewManager').on('change:currentView', function (changedModel) {
+      if (changedModel.isOrder()) {
         this.$.multiPayments.hide();
         this.$.payments.show();
-      } else {
-        this.$.payments.hide();
+        return;
+      }
+      if (changedModel.isMultiOrder()) {
         this.$.multiPayments.show();
+        this.$.payments.hide();
+        return;
       }
     }, this);
+    //    this.model.get('multiOrders').on('change:isMultiOrders', function () {
+    //      if (!this.model.get('multiOrders').get('isMultiOrders')) {
+    //        this.$.multiPayments.hide();
+    //        this.$.payments.show();
+    //      } else {
+    //        this.$.payments.hide();
+    //        this.$.multiPayments.show();
+    //      }
+    //    }, this);
   }
 });
 
@@ -394,7 +415,9 @@ enyo.kind({
     }, this);
   },
   tap: function () {
-    if (this.owner.model.get('multiOrders').get('multiOrdersList').length === 0 && !this.owner.model.get('multiOrders').get('isMultiOrders')) {
+    var myModel = this.owner.model;
+    //if (this.owner.model.get('multiOrders').get('multiOrdersList').length === 0 && !this.owner.model.get('multiOrders').get('isMultiOrders')) {
+    if (myModel.get('leftColumnViewManager').isOrder()) {
       if (this.drawerpreference) {
         if (this.drawerOpened) {
           if (this.owner.receipt.get('orderType') === 3) {

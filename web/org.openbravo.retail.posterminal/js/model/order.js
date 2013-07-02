@@ -1420,7 +1420,7 @@
   var MultiOrders = Backbone.Model.extend({
     modelName: 'MultiOrders',
     defaults: {
-      isMultiOrders: false,
+      //isMultiOrders: false,
       multiOrdersList: new Backbone.Collection(),
       total: OB.DEC.Zero,
       payment: OB.DEC.Zero,
@@ -1441,7 +1441,7 @@
       OB.UTIL.adjustPayment(this.get('total'), this);
     },
     resetValues: function () {
-      this.set('isMultiOrders', false);
+      //this.set('isMultiOrders', false);
       this.get('multiOrdersList').reset();
       this.set('total', OB.DEC.Zero);
       this.set('payment', OB.DEC.Zero);
@@ -1449,6 +1449,12 @@
       this.set('change', OB.DEC.Zero);
       this.get('payments').reset();
       this.set('openDrawer', false);
+    },
+    hasDataInList: function () {
+      if (this.get('multiOrdersList') && this.get('multiOrdersList').length > 0) {
+        return true;
+      }
+      return false;
     }
   });
   var TaxLine = Backbone.Model.extend();

@@ -94,7 +94,7 @@ enyo.kind({
   },
   tap: function () {
     var i;
-    if (this.model.get('multiOrders').get('isMultiOrders')) {
+    if (this.model.get('leftColumnViewManager').isMultiOrder()) {
       for (i = 0; this.model.get('multiOrders').get('multiOrdersList').length > i; i++) {
         this.model.get('orderList').current = this.model.get('multiOrders').get('multiOrdersList').at(i);
         this.model.get('orderList').deleteCurrent();
@@ -103,10 +103,11 @@ enyo.kind({
         }
       }
       this.model.get('multiOrders').resetValues();
+      this.model.get('leftColumnViewManager').setOrderMode();
       return true;
     }
     // deletion without warning is allowed if the ticket has been processed
-    if (this.hasClass('paidticket')) {	
+    if (this.hasClass('paidticket')) {
       this.doDeleteOrder();
     } else {
       this.doShowPopup({
@@ -116,14 +117,25 @@ enyo.kind({
   },
   init: function (model) {
     this.model = model;
-    this.model.get('multiOrders').on('change:isMultiOrders', function (model) {
-      if (model.get('isMultiOrders')) {
-        this.addClass('paidticket');
-      } else {
-        this.removeClass('paidticket');
-      }
+    this.model.get('leftColumnViewManager').on('multiorder', function () {
+      this.addClass('paidticket');
       return true;
     }, this);
+    this.model.get('leftColumnViewManager').on('order', function () {
+      this.removeClass('paidticket');
+      if (this.model.get('order').get('isPaid') || this.model.get('order').get('isLayaway') || (this.model.get('order').get('isQuotation') && this.model.get('order').get('hasbeenpaid') === 'Y')) {
+        this.addClass('paidticket');
+      }
+    }, this);
+
+    //    this.model.get('multiOrders').on('change:isMultiOrders', function (model) {
+    //      if (model.get('isMultiOrders')) {
+    //        this.addClass('paidticket');
+    //      } else {
+    //        this.removeClass('paidticket');
+    //      }
+    //      return true;
+    //    }, this);
     this.model.get('order').on('change:isPaid change:isQuotation change:isLayaway change:hasbeenpaid', function (changedModel) {
       if (changedModel.get('isPaid') || changedModel.get('isLayaway') || (changedModel.get('isQuotation') && changedModel.get('hasbeenpaid') === 'Y')) {
         this.addClass('paidticket');

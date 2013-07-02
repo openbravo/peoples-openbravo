@@ -217,20 +217,20 @@ enyo.kind({
   },
   init: function (model) {
     this.model = model;
-    var me = this;
-    this.model.get('multiOrders').on('change:isMultiOrders', function (model) {
-      if (!model.get('isMultiOrders')) {
-        this.doTabChange({
-          tabPanel: this.tabPanel,
-          keyboard: 'toolbarscan',
-          edit: false,
-          status: ''
-        });
-      }
-      me.doRightToolbarDisabled({
-        status: model.get('isMultiOrders')
-      });
-    }, this);
+//    var me = this;
+    //    this.model.get('multiOrders').on('change:isMultiOrders', function (model) {
+    //      if (!model.get('isMultiOrders')) {
+    //        this.doTabChange({
+    //          tabPanel: this.tabPanel,
+    //          keyboard: 'toolbarscan',
+    //          edit: false,
+    //          status: ''
+    //        });
+    //      }
+    //      me.doRightToolbarDisabled({
+    //        status: model.get('isMultiOrders')
+    //      });
+    //    }, this);
   },
   disabledButton: function (inSender, inEvent) {
     this.isEnabled = !inEvent.status;
@@ -264,12 +264,12 @@ enyo.kind({
   },
   init: function (model) {
     this.model = model;
-    var me = this;
-    this.model.get('multiOrders').on('change:isMultiOrders', function (model) {
-      me.doRightToolbarDisabled({
-        status: model.get('isMultiOrders')
-      });
-    }, this);
+    //    var me = this;
+    //    this.model.get('multiOrders').on('change:isMultiOrders', function (model) {
+    //      me.doRightToolbarDisabled({
+    //        status: model.get('isMultiOrders')
+    //      });
+    //    }, this);
   },
   disabledButton: function (inSender, inEvent) {
     this.isEnabled = !inEvent.status;
@@ -303,12 +303,12 @@ enyo.kind({
   },
   init: function (model) {
     this.model = model;
-    var me = this;
-    this.model.get('multiOrders').on('change:isMultiOrders', function (model) {
-      me.doRightToolbarDisabled({
-        status: model.get('isMultiOrders')
-      });
-    }, this);
+    //    var me = this;
+    //    this.model.get('multiOrders').on('change:isMultiOrders', function (model) {
+    //      me.doRightToolbarDisabled({
+    //        status: model.get('isMultiOrders')
+    //      });
+    //    }, this);
   },
   disabledButton: function (inSender, inEvent) {
     this.isEnabled = !inEvent.status;
@@ -347,12 +347,12 @@ enyo.kind({
   },
   init: function (model) {
     this.model = model;
-    var me = this;
-    this.model.get('multiOrders').on('change:isMultiOrders', function (model) {
-      me.doRightToolbarDisabled({
-        status: model.get('isMultiOrders')
-      });
-    }, this);
+    //    var me = this;
+    //    this.model.get('multiOrders').on('change:isMultiOrders', function (model) {
+    //      me.doRightToolbarDisabled({
+    //        status: model.get('isMultiOrders')
+    //      });
+    //    }, this);
   },
   disabledButton: function (inSender, inEvent) {
     this.setDisabled(inEvent.status);

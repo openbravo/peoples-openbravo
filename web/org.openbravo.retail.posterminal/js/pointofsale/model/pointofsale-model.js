@@ -101,13 +101,18 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
       me.loadUnpaidOrders();
     }
   },
-
+  isValidMultiOrderState: function () {
+    if (this.get('leftColumnViewManager') && this.get('multiOrders')) {
+      return this.get('leftColumnViewManager').isMultiOrder() && this.get('multiOrders').hasDataInList();
+    }
+    return false;
+  },
   init: function () {
     var receipt = new OB.Model.Order(),
         i, j, k, amtAux, amountToPay, ordersLength, multiOrders = new OB.Model.MultiOrders(),
         me = this,
         iter, isNew = false,
-        discounts, ordersave, customersave, taxes, orderList, hwManager, ViewManager;
+        discounts, ordersave, customersave, taxes, orderList, hwManager, ViewManager, LeftColumnViewManager;
 
     function success() {
       return true;
@@ -143,6 +148,43 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
       },
       initialize: function () {}
     });
+
+    LeftColumnViewManager = Backbone.Model.extend({
+      defaults: {
+        currentView: {
+          name: 'order',
+          params: []
+        }
+      },
+      initialize: function () {},
+      setOrderMode: function (parameters) {
+        this.set('currentView', {
+          name: 'order',
+          params: parameters
+        });
+        this.trigger('order');
+      },
+      isOrder: function () {
+        if (this.get('currentView').name === 'order') {
+          return true;
+        }
+        return false;
+      },
+      setMultiOrderMode: function (parameters) {
+        this.set('currentView', {
+          name: 'multiorder',
+          params: parameters
+        });
+        this.trigger('multiorder');
+      },
+      isMultiOrder: function () {
+        if (this.get('currentView').name === 'multiorder') {
+          return true;
+        }
+        return false;
+      }
+    });
+
     this.set('order', receipt);
     orderList = new OB.Collection.OrderList(receipt);
     this.set('orderList', orderList);
@@ -213,6 +255,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
 
     customersave = new OB.DATA.CustomerSave(this);
 
+    this.set('leftColumnViewManager', new LeftColumnViewManager());
     this.set('subWindowManager', new ViewManager());
     discounts = new OB.DATA.OrderDiscount(receipt);
     ordersave = new OB.DATA.OrderSave(this);
