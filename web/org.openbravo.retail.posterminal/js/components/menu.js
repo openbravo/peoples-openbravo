@@ -27,25 +27,35 @@ enyo.kind({
       orderType: 1
     });
   },
+  displayLogic: function () {
+    if (!this.model.get('order').get('isQuotation')) {
+      this.show();
+    } else {
+      this.hide();
+      return;
+    }
+    if (this.model.get('order').get('isEditable') === false) {
+      this.setShowing(false);
+      return;
+    }
+    this.adjustVisibilityBasedOnPermissions();
+  },
   init: function (model) {
     this.model = model;
     var receipt = model.get('order'),
         me = this;
-    receipt.on('change:isQuotation', function (model) {
-      if (!model.get('isQuotation')) {
-        me.show();
-      } else {
-        me.hide();
-      }
+    receipt.on('change:isEditable change:isQuotation', function (changedModel) {
+      this.displayLogic();
     }, this);
-    receipt.on('change:isEditable', function (newValue) {
-      if (newValue) {
-        if (newValue.get('isEditable') === false) {
-          this.setShowing(false);
-          return;
-        }
+    this.model.get('leftColumnViewManager').on('change:currentView', function (changedModel) {
+      if (changedModel.isOrder()) {
+        this.displayLogic();
+        return;
       }
-      this.setShowing(true);
+      if (changedModel.isMultiOrder()) {
+        this.setShowing(false);
+        return;
+      }
     }, this);
   }
 });
@@ -88,16 +98,31 @@ enyo.kind({
       OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_lblPaymentNotProcessedHeader'), OB.I18N.getLabel('OBPOS_lblPaymentNotProcessedMessage', [notValid.get('name'), notValid.get('origAmount'), OB.MobileApp.model.paymentnames[notValid.get('kind')].isocode]));
     }
   },
+  displayLogic: function () {
+    if (model.get('order').get('isLayaway')) {
+      me.show();
+      this.adjustVisibilityBasedOnPermissions();
+    } else {
+      me.hide();
+    }
+  },
   init: function (model) {
     this.model = model;
     var receipt = model.get('order'),
         me = this;
     this.setShowing(false);
     receipt.on('change:isLayaway', function (model) {
-      if (model.get('isLayaway')) {
-        me.show();
-      } else {
-        me.hide();
+      this.displayLogic();
+    }, this);
+
+    this.model.get('leftColumnViewManager').on('change:currentView', function (changedModel) {
+      if (changedModel.isOrder()) {
+        this.displayLogic();
+        return;
+      }
+      if (changedModel.isMultiOrder()) {
+        this.setShowing(false);
+        return;
       }
     }, this);
   }
@@ -161,6 +186,20 @@ enyo.kind({
   },
   init: function (model) {
     this.model = model;
+    this.model.get('leftColumnViewManager').on('change:currentView', function (changedModel) {
+      if (changedModel.isOrder()) {
+        if (model.get('order').get('isEditable')) {
+          this.setDisabled(false);
+          this.adjustVisibilityBasedOnPermissions();
+        } else {
+          this.setDisabled(true);
+        }
+        return;
+      }
+      if (changedModel.isMultiOrder()) {
+        this.setDisabled(true);
+      }
+    }, this);
     this.model.get('order').on('change:isEditable', function (newValue) {
       if (newValue) {
         if (newValue.get('isEditable') === false) {
@@ -236,6 +275,7 @@ enyo.kind({
   init: function (model) {
     this.model = model;
     model.get('leftColumnViewManager').on('order', function () {
+      this.setDisabled(false);
       this.adjustVisibilityBasedOnPermissions();
     }, this);
 
