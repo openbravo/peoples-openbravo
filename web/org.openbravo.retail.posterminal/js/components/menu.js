@@ -99,7 +99,7 @@ enyo.kind({
     }
   },
   displayLogic: function () {
-    if (model.get('order').get('isLayaway')) {
+    if (this.model.get('order').get('isLayaway')) {
       me.show();
       this.adjustVisibilityBasedOnPermissions();
     } else {
