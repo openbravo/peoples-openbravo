@@ -232,6 +232,20 @@ enyo.kind({
         }
       }
     });
+  },
+  init: function (model) {
+    this.model = model;
+    model.get('leftColumnViewManager').on('order', function () {
+      if (this.permission && !OB.MobileApp.model.hasPermission(this.permission)) {
+        this.setDisabled(true);
+        return;
+      }
+      this.setDisabled(false);
+    }, this);
+
+    model.get('leftColumnViewManager').on('multiorder', function () {
+      this.setDisabled(true);
+    }, this);
   }
 });
 

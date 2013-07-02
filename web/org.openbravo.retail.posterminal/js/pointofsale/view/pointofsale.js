@@ -721,7 +721,6 @@ enyo.kind({
     OB.MobileApp.view.scanningFocus(true);
 
     this.model.get('leftColumnViewManager').on('change:currentView', function (changedModel) {
-      debugger;
       if (changedModel.isMultiOrder()) {
         this.rightToolbarDisabled({}, {
           status: true,
