@@ -39,6 +39,7 @@ import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.access.CharacteristicSubsetValue;
 import org.openbravo.model.common.plm.CharacteristicValue;
 import org.openbravo.model.common.plm.ProductCharacteristic;
@@ -60,6 +61,22 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
     }
     final ProductCharacteristic prCh = (ProductCharacteristic) event.getTargetInstance();
     if (prCh.isVariant() && prCh.getProduct().isGeneric()) {
+      if (prCh.isDefinesPrice()) {
+        // Check there is only 1.
+        for (ProductCharacteristic prChAux : prCh.getProduct().getProductCharacteristicList()) {
+          if (prChAux.isDefinesPrice() && !prChAux.getId().equals(prCh.getId())) {
+            throw new OBException(OBMessageUtils.messageBD("DuplicateDefinesPrice"));
+          }
+        }
+      }
+      if (prCh.isDefinesImage()) {
+        // Check there is only 1.
+        for (ProductCharacteristic prChAux : prCh.getProduct().getProductCharacteristicList()) {
+          if (prChAux.isDefinesImage() && !prChAux.getId().equals(prCh.getId())) {
+            throw new OBException(OBMessageUtils.messageBD("DuplicateDefinesImage"));
+          }
+        }
+      }
       final Entity prodCharEntity = ModelProvider.getInstance().getEntity(
           ProductCharacteristic.ENTITY_NAME);
 
@@ -82,7 +99,23 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
     final ProductCharacteristic prCh = (ProductCharacteristic) event.getTargetInstance();
     if (prCh.isVariant() && prCh.getProduct().isGeneric()) {
       if (!prCh.getProduct().getProductGenericProductList().isEmpty()) {
-        throw new OBException();
+        // throw new OBException();
+      }
+      if (prCh.isDefinesPrice()) {
+        // Check there is only 1.
+        for (ProductCharacteristic prChAux : prCh.getProduct().getProductCharacteristicList()) {
+          if (prChAux.isDefinesPrice() && !prChAux.getId().equals(prCh.getId())) {
+            throw new OBException(OBMessageUtils.messageBD("DuplicateDefinesPrice"));
+          }
+        }
+      }
+      if (prCh.isDefinesImage()) {
+        // Check there is only 1.
+        for (ProductCharacteristic prChAux : prCh.getProduct().getProductCharacteristicList()) {
+          if (prChAux.isDefinesImage() && !prChAux.getId().equals(prCh.getId())) {
+            throw new OBException(OBMessageUtils.messageBD("DuplicateDefinesImage"));
+          }
+        }
       }
       final Entity prodCharEntity = ModelProvider.getInstance().getEntity(
           ProductCharacteristic.ENTITY_NAME);

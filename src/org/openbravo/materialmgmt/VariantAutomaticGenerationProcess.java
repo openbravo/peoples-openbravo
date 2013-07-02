@@ -43,6 +43,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.financial.FinancialUtils;
+import org.openbravo.model.ad.utility.Image;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.common.plm.ProductAccounts;
 import org.openbravo.model.common.plm.ProductCharacteristic;
@@ -159,7 +160,13 @@ public class VariantAutomaticGenerationProcess implements Process {
               && prChConf.getNetUnitPrice() != null) {
             setPrice(variant, prChConf.getNetUnitPrice());
           }
+          if (prChConf.getCharacteristicOfProduct().isDefinesImage() && prChConf.getImage() != null) {
+            Image newImage = (Image) DalUtil.copy(prChConf.getImage(), false);
+            OBDal.getInstance().save(newImage);
+            variant.setImage(newImage);
+          }
         }
+        OBDal.getInstance().save(variant);
         OBDal.getInstance().flush();
         new VariantChDescUpdateProcess().update(variant.getId(), null);
 
