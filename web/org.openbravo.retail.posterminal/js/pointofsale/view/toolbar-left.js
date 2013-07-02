@@ -96,6 +96,9 @@ enyo.kind({
     var i;
     if (this.model.get('leftColumnViewManager').isMultiOrder()) {
       for (i = 0; this.model.get('multiOrders').get('multiOrdersList').length > i; i++) {
+        if (!this.model.get('multiOrders').get('multiOrdersList').at(i).get('isLayaway')) { //if it is not true, means that iti is a new order (not a loaded layaway)
+          continue;
+        }
         this.model.get('orderList').current = this.model.get('multiOrders').get('multiOrdersList').at(i);
         this.model.get('orderList').deleteCurrent();
         if (!_.isNull(this.model.get('multiOrders').get('multiOrdersList').at(i).id)) {
@@ -126,6 +129,9 @@ enyo.kind({
       if (this.model.get('order').get('isPaid') || this.model.get('order').get('isLayaway') || (this.model.get('order').get('isQuotation') && this.model.get('order').get('hasbeenpaid') === 'Y')) {
         this.addClass('paidticket');
       }
+      this.bubble('onChangeTotal', {
+        newTotal: this.model.get('order').getTotal()
+      });
     }, this);
 
     //    this.model.get('multiOrders').on('change:isMultiOrders', function (model) {
