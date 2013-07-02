@@ -69,8 +69,7 @@ public class ProductCharacteristicsDS extends DefaultDataSourceService {
       hqlBuilder.append(this.getClientOrgFilter());
       hqlBuilder.append(" order by c.name, ");
       hqlBuilder.append("          coalesce(tn.reportSet, '-1'), ");
-      hqlBuilder.append("          tn.sequenceNumber, ");
-      hqlBuilder.append("          v.sequenceNumber ");
+      hqlBuilder.append("          tn.sequenceNumber ");
 
       String hql = hqlBuilder.toString();
 

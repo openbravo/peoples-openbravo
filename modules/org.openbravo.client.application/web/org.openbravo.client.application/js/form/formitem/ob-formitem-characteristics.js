@@ -449,7 +449,11 @@ isc.OBCharacteristicsFilterItem.addProperties({
           value: inValues
         };
 
-        if (this.selectorWindow && this.selectorWindow.selector && this.selectorWindow.selector.selectorDefinitionId === this.productSelectorID) {
+        if (this.selectorWindow
+            && this.selectorWindow.selectorGrid
+            && this.selectorWindow.selectorGrid.dataSource
+            && this.selectorWindow.selectorGrid.dataSource.dataURL !== (OB.Application.contextUrl + 'org.openbravo.model.common.plm/Product')) {
+        //if (this.selectorWindow && this.selectorWindow.selector && this.selectorWindow.selector.selectorDefinitionId === this.productSelectorID) {
           charCriteria.existsQuery = this.productSelectorHqlExists;
         } else {
           charCriteria.existsQuery = this.defaultHqlExists;
