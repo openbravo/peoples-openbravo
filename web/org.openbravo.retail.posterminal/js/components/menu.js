@@ -100,10 +100,10 @@ enyo.kind({
   },
   displayLogic: function () {
     if (this.model.get('order').get('isLayaway')) {
-      me.show();
+      this.show();
       this.adjustVisibilityBasedOnPermissions();
     } else {
-      me.hide();
+      this.hide();
     }
   },
   init: function (model) {
