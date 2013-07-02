@@ -166,6 +166,22 @@ enyo.kind({
       }
       this.setShowing(true);
     }, this);
+
+    this.model.get('leftColumnViewManager').on('change:currentView', function (changedModel) {
+      if (changedModel.isOrder()) {
+        if (model.get('order').get('isEditable') && !this.model.get('order').get('isQuotation')) {
+          this.show();
+          this.adjustVisibilityBasedOnPermissions();
+        } else {
+          this.hide();
+        }
+        return;
+      }
+      if (changedModel.isMultiOrder()) {
+        this.hide();
+      }
+    }, this);
+
   }
 });
 
@@ -330,6 +346,12 @@ enyo.kind({
     this.inherited(arguments); // Manual dropdown menu closure
     if (OB.POS.modelterminal.get('terminal').terminalType.documentTypeForQuotations) {
       if (OB.POS.modelterminal.hasPermission(this.permission)) {
+        if (this.model.get('leftColumnViewManager').isMultiOrder()) {
+          if (this.model.get('multiorders')) {
+            this.model.get('multiorders').resetValues();
+          }
+          this.model.get('leftColumnViewManager').setOrderMode();
+        }
         this.doCreateQuotation();
       }
     } else {
@@ -346,6 +368,7 @@ enyo.kind({
   init: function (model) {
     var receipt = model.get('order'),
         me = this;
+    this.model = model;
     receipt.on('change:isQuotation', function (model) {
       this.updateVisibility(model);
     }, this);

@@ -356,10 +356,8 @@ enyo.kind({
   init: function (model) {
     var me = this;
     this.model = model;
-    this.model.get('multiOrders').get('multiOrdersList').on('all', function (event) {
-      if (this.model.isValidMultiOrderState()) {
-        this.updatePendingMultiOrders();
-      }
+    this.model.get('multiOrders').get('multiOrdersList').on('all', function () {
+      this.updatePendingMultiOrders();
     }, this);
     this.model.get('multiOrders').on('change:payment change:total change:change', function () {
       this.updatePendingMultiOrders();
