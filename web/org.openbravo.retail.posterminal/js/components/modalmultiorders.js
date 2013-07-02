@@ -273,7 +273,7 @@ enyo.kind({
         _.each(me.model.get('orderList').models, function (iter) {
           re = new RegExp(me.filters.filterText, 'gi');
           toMatch = iter.get('documentNo').match(re) + iter.get('bp').get('_identifier').match(re);
-          if (me.filters.filterText === "" || toMatch !== 0) {
+          if ((me.filters.filterText === "" || toMatch !== 0) && (iter.get('orderType') === 0 || iter.get('orderType') === 2) && !iter.get('isPaid') && !iter.get('isQuotation')) {
             actualDate = new Date().setHours(0, 0, 0, 0);
             if (me.filters.endDate === "" || new Date(me.filters.endDate) >= actualDate) {
               for (i = 0; i < me.filters.documentType.length; i++) {
