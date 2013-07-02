@@ -39,6 +39,8 @@ public class RefTable extends ModelObject {
 
   private Column displayColumn;
 
+  private boolean displayedValue;
+
   public Column getColumn() {
     return column;
   }
@@ -68,5 +70,13 @@ public class RefTable extends ModelObject {
 
   public void setDisplayColumn(Column displayColumn) {
     this.displayColumn = displayColumn;
+  }
+
+  public boolean getDisplayedValue() {
+    return this.displayedValue;
+  }
+
+  public void setDisplayedValue(boolean displayedValue) {
+    this.displayedValue = displayedValue;
   }
 }

@@ -41,6 +41,8 @@ import org.openbravo.base.structure.ActiveEnabled;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Is responsible for converting Openbravo business objects ({@link BaseOBObject} to a json
@@ -72,6 +74,8 @@ public class DataToJsonConverter {
 
   // limit the json serialization to these properties
   private List<String> selectedProperties = new ArrayList<String>();
+
+  private static final Logger log = LoggerFactory.getLogger(DataToJsonConverter.class);
 
   /**
    * Convert a list of Maps with key value pairs to a list of {@link JSONObject}.
@@ -260,12 +264,21 @@ public class DataToJsonConverter {
 
       Property displayColumnProperty = DalUtil.getPropertyFromPath(referencedProperty.getEntity(),
           referencingProperty.getDisplayPropertyName());
-      if (displayColumnProperty.hasDisplayColumn()) {
+      if (referencingProperty.hasDisplayColumn()) {
+        String identifier = (String) obObject.get(referencingProperty.getDisplayPropertyName());
+        if (referencingProperty.isDisplayValue()) {
+          if (obObject.getEntity().hasProperty("searchKey")) {
+            String value = (String) obObject.get("searchKey");
+            identifier = value + " - " + identifier;
+          } else {
+            log.warn("Entity "
+                + obObject.getEntity().getName()
+                + " does not have a searchKey property, the flag Displayed Value should not be used");
+          }
+        }
         // Allowing one level deep of displayed column pointing to references with display column
         jsonObject.put(propertyName.replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR)
-            + DalUtil.FIELDSEPARATOR + JsonConstants.IDENTIFIER, ((BaseOBObject) obObject
-            .get(referencingProperty.getDisplayPropertyName())).get(displayColumnProperty
-            .getDisplayPropertyName()));
+            + DalUtil.FIELDSEPARATOR + JsonConstants.IDENTIFIER, identifier);
       } else if (!displayColumnProperty.isPrimitive()) {
         // Displaying identifier for non primitive properties
         jsonObject.put(propertyName.replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR)

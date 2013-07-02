@@ -30,8 +30,10 @@
          
         <many-to-one name="reference" not-null="true" class="org.openbravo.base.model.Reference" column="ad_reference_id" insert="false" update="false"/>
 
-		<many-to-one name="column" not-null="true" class="org.openbravo.base.model.Column" column="ad_key"/>				
-
+		<many-to-one name="column" not-null="true" class="org.openbravo.base.model.Column" column="ad_key"/>	
+    
+        <property name="displayedValue" type="org.openbravo.base.session.OBYesNoType" not-null="true" column="IsValueDisplayed"/>
+    			
     <many-to-one name="displayColumn" not-null="true" class="org.openbravo.base.model.Column" column="ad_display"/>        
 		
 		<property name="updated"/>
