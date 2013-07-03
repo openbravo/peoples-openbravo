@@ -1191,8 +1191,7 @@ public class OrderLoader extends JSONProcessSimple {
       OBDal.getInstance().save(finPayment);
 
       String description = getPaymentDescription();
-      description += ": " + order.getDocumentNo().substring(1, order.getDocumentNo().length() - 1)
-          + "\n";
+      description += ": " + order.getDocumentNo() + "\n";
       finPayment.setDescription(description);
 
       long t3 = System.currentTimeMillis();
