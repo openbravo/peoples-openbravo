@@ -1209,6 +1209,8 @@
       order.set('isbeingprocessed', 'N');
       order.set('hasbeenpaid', 'Y');
       order.set('priceIncludesTax', model.priceIncludesTax);
+      order.set('checked', model.checked);
+
       if (model.isQuotation) {
         order.set('isQuotation', true);
         order.set('oldId', model.orderid);

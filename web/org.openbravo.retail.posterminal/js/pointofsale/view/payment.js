@@ -22,7 +22,6 @@ enyo.kind({
     if (!_.isUndefined(inEvent.value.payment)) {
       payment = inEvent.value.payment;
       isMultiOrders = this.model.isValidMultiOrderState();
-      //isMultiOrders = this.model.get('multiOrders').get('isMultiOrders') && this.model.get('multiOrders').get('multiOrdersList').length !== 0;
       if (!isMultiOrders) {
         change = this.receipt.getChange();
         pending = this.receipt.getPending();
@@ -150,7 +149,9 @@ enyo.kind({
     this.updatePending();
     this.receipt.on('change:orderType change:isLayaway change:payment', function (model) {
       if (this.model.get('leftColumnViewManager').isMultiOrder()) {
-        return true;
+        this.$.creditsalesaction.hide();
+        this.$.layawayaction.hide();
+        return;
       }
       //      if (me.model.get('multiOrders').get('isMultiOrders') || this.model.get('multiOrders').get('multiOrdersList').length !== 0) {
       //        return true;
@@ -324,10 +325,10 @@ enyo.kind({
       }
     }
 
+    this.$.creditsalesaction.hide();
+    this.$.layawayaction.hide();
     if (paymentstatus.get('multiOrdersList').length > 0 && OB.DEC.compare(paymentstatus.get('total')) >= 0 && (OB.DEC.compare(OB.DEC.sub(paymentstatus.get('payment'), paymentstatus.get('total'))) >= 0 || paymentstatus.get('total') === 0)) {
       this.$.exactaction.hide();
-      this.$.creditsalesaction.hide();
-      //            this.$.layawayaction.hide();
     } else {
       this.$.exactaction.show();
     }
@@ -359,8 +360,8 @@ enyo.kind({
     this.model.get('multiOrders').get('multiOrdersList').on('all', function (event) {
       if (this.model.isValidMultiOrderState()) {
         this.updatePendingMultiOrders();
-      }
-    }, this);
+      }, this);
+
     this.model.get('multiOrders').on('change:payment change:total change:change', function () {
       this.updatePendingMultiOrders();
     }, this);
@@ -385,8 +386,8 @@ enyo.kind({
     //        this.$.multiPayments.show();
     //      }
     //    }, this);
-  }
-});
+    }
+  });
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.DoneButton',

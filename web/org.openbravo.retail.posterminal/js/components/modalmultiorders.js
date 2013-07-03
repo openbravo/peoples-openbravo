@@ -279,7 +279,6 @@ enyo.kind({
               for (i = 0; i < me.filters.documentType.length; i++) {
                 if (me.filters.documentType[i] === iter.get('documentType')) {
                   if (!_.isNull(iter.id) && !_.isUndefined(iter.id)) {
-                    iter.set('checked', false);
                     me.multiOrdersList.add(iter);
                     break;
                   }
@@ -356,6 +355,7 @@ enyo.kind({
       }));
     _.each(checkedMultiOrders, function (iter) {
       if (_.indexOf(me.owner.owner.model.get('orderList').models, iter) !== -1) {
+        iter.save();
         selectedMultiOrders.push(iter);
       } else {
         process.exec({
@@ -364,6 +364,8 @@ enyo.kind({
           OB.UTIL.showLoading(false);
           if (data) {
             me.owner.owner.model.get('orderList').newPaidReceipt(data[0], function (order) {
+              order.set('checked', iter.get('checked'))
+              order.save();
               selectedMultiOrders.push(order);
               if (selectedMultiOrders.length === checkedMultiOrders.length) {
                 me.doSelectMultiOrders({

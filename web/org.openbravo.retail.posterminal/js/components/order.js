@@ -442,7 +442,7 @@ enyo.kind({
     this.total = 0;
     this.listMultiOrders = new Backbone.Collection();
     this.$.listMultiOrderLines.setCollection(this.listMultiOrders);
-    this.model.get('multiOrders').get('multiOrdersList').on('add remove change', function () {
+    this.model.get('multiOrders').get('multiOrdersList').on('reset add remove change', function () {
       me.total = _.reduce(me.model.get('multiOrders').get('multiOrdersList').models, function (memo, order) {
         return memo + (order.get('amountToLayaway') ? order.get('amountToLayaway') : order.getPending());
       }, 0);
