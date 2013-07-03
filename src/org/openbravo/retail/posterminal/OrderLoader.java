@@ -473,6 +473,7 @@ public class OrderLoader extends JSONProcessSimple {
       lineReferences.get(i).setInvoicedQuantity(qty);
       line.setInvoice(invoice);
       line.setSalesOrderLine(lineReferences.get(i));
+      line.setGoodsShipmentLine(lineReferences.get(i).getMaterialMgmtShipmentInOutLineList().get(0));
       line.setGrossAmount(lineReferences.get(i).getLineGrossAmount()
           .setScale(stdPrecision, RoundingMode.HALF_UP));
       invoice.getInvoiceLineList().add(line);
@@ -759,6 +760,7 @@ public class OrderLoader extends JSONProcessSimple {
     line.setLineNo(lineNo);
     line.setShipmentReceipt(shipment);
     line.setSalesOrderLine(orderLine);
+    orderLine.getMaterialMgmtShipmentInOutLineList().add(line);
 
     line.setMovementQuantity(qty);
     line.setStorageBin(bin);
