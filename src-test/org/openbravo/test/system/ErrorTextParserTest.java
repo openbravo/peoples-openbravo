@@ -79,38 +79,6 @@ public class ErrorTextParserTest extends BaseTest {
     }
   }
 
-  public void testErrorMessageParse() {
-    String message = null, expectedMessage = null;
-    OBError result = null;
-    ConnectionProvider conn = getConnectionProvider();
-    VariablesSecureApp vars = new VariablesSecureApp("", "", "");
-    try {
-
-      // checking in case of single delimiter \n
-      message = "ORA-20000: @LineAmountNotCorrect@"
-          + "\nORA-06512: at \"TAD.GL_JOURNAL_TRG\", line 30"
-          + "\nORA-04088: error during execution of trigger 'TAD.GL_JOURNAL_TRG'"
-          + "\nORA-06512: at \"TAD.GL_JOURNALLINE_TRG\", line 49"
-          + "\nORA-04088: error during execution of trigger 'TAD.GL_JOURNALLINE_TRG'";
-      expectedMessage = "Line Amount Is Not Correct";
-      result = Utility.translateError(conn, vars, vars.getLanguage(), message);
-      assertEquals(result.getMessage(), expectedMessage);
-
-      // checking in case of delimiter with double slash \\n
-      message = "ORA-20000: @LineAmountNotCorrect@"
-          + "\\\nORA-06512: at \"TAD.GL_JOURNAL_TRG\", line 30"
-          + "\\\nORA-04088: error during execution of trigger 'TAD.GL_JOURNAL_TRG'"
-          + "\\\nORA-06512: at \"TAD.GL_JOURNALLINE_TRG\", line 49"
-          + "\\\nORA-04088: error during execution of trigger 'TAD.GL_JOURNALLINE_TRG'";
-      expectedMessage = "Line Amount Is Not Correct";
-      result = Utility.translateError(conn, vars, vars.getLanguage(), message);
-      assertEquals(result.getMessage(), expectedMessage);
-
-    } catch (Exception e) {
-      assertTrue(false);
-    }
-  }
-
   private void doErrorTextParserTest(int testCase) throws Exception {
     ConnectionProvider conn = getConnectionProvider();
     VariablesSecureApp vars = new VariablesSecureApp("", "", "");
