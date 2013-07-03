@@ -122,13 +122,13 @@
 
               //We follow the same formula of function c_get_net_price_from_gross to compute the discounted net
               if (!(_.isNull(discountedGross) || _.isUndefined(discountedGross))) {
-                if (taxamtdc) {
+                if (taxamtdc && OB.DEC.toNumber(taxamtdc)!==0) {
                   discountedNet = OB.DEC.div(new BigDecimal(String(discountedGross)).multiply(new BigDecimal(String(discountedGross))), taxamtdc);
                   pricenet = new BigDecimal(String(discountedGross)).multiply(new BigDecimal(String(discountedGross))).divide(taxamtdc).divide(new BigDecimal(String(element.get('qty'))));
                 } else {
                   //taxamtdc === 0
-                  discountedNet = 0;
-                  pricenet = 0;
+                  discountedNet = new BigDecimal("0");
+                  pricenet = new BigDecimal("0");
                 }
               } else {
                 pricenet = linepricenet; // 2 decimals properly rounded.
