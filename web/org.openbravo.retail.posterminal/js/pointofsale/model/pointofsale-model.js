@@ -69,7 +69,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
   },
 
   loadCheckedMultiorders: function () {
-    debugger;
     // Shows a modal window with the orders pending to be paid
     var checkedMultiOrders, multiOrderList = this.get('multiOrders').get('multiOrdersList'),
         criteria = {
