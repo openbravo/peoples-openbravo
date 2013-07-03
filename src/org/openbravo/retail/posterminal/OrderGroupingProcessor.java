@@ -111,9 +111,7 @@ public class OrderGroupingProcessor {
 
           String language = RequestContext.get().getVariablesSecureApp().getLanguage();
           String description = Utility.messageBD(new DalConnectionProvider(false),
-              "OrderDocumentno", language)
-              + ": "
-              + order.getDocumentNo().substring(0, order.getDocumentNo().length()) + "\n";
+              "OrderDocumentno", language) + ": " + order.getDocumentNo() + "\n";
           invoice.setDescription(description);
         }
         origPaymentSchedule = createOriginalPaymentSchedule(invoice, paymentSchedule);
