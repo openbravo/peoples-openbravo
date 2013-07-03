@@ -662,4 +662,5 @@ enyo.kind({
     }
     receipt.trigger('paymentDone');
     receipt.trigger('openDrawer');
-  });
+  }
+});
