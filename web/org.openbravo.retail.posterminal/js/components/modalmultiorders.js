@@ -279,6 +279,7 @@ enyo.kind({
               for (i = 0; i < me.filters.documentType.length; i++) {
                 if (me.filters.documentType[i] === iter.get('documentType')) {
                   if (!_.isNull(iter.id) && !_.isUndefined(iter.id)) {
+                    iter.set('checked', false);
                     me.multiOrdersList.add(iter);
                     break;
                   }
