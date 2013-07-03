@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2012 Openbravo SLU
+ * All portions are Copyright (C) 2011-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s): Valery Lezhebokov.
  ************************************************************************
@@ -118,6 +118,8 @@ isc.OBNoteLayout.addProperties({
 
   recordId: null,
 
+  view: null,
+  //Set in initWidget
   layoutMargin: 0,
 
   membersMargin: 10,
@@ -132,10 +134,57 @@ isc.OBNoteLayout.addProperties({
 
   noteListGrid: null,
 
+  refreshFormWithEntities: [],
+  // * Entities that will force a refresh event when a new note be added or removed
+  // * If the string 'all' is found in the array, it will refresh in all cases
+  // * Entities can be added to the list by third parties by doing: isc.OBNoteLayout.getPrototype().refreshFormWithEntities.push(theEntityName);
+  //   Where 'theEntityName' is the string with the name of the entity
+  shouldRefreshAfterAddOrRemove: function () {
+    var i;
+    for (i = 0; i < this.refreshFormWithEntities.length; i++) {
+      if (this.refreshFormWithEntities[i].toLowerCase() === 'all' || this.refreshFormWithEntities[i] === this.entity) {
+        return true;
+      }
+    }
+    return false;
+  },
+
+  addOrRemoveCancelLogic: function () {
+    if (this.shouldRefreshAfterAddOrRemove() && this.view && this.view.viewForm && this.view.viewGrid && //
+    (this.view.viewForm.hasChanged || (this.view.isEditingGrid && this.view.viewGrid.getEditForm().hasChanged))) { //
+      // If should refresh after save, and there is already changes made in the form,
+      // notice it and cancel the note save action to avoid possible collisions
+      isc.warn(OB.I18N.getLabel('OBUIAPP_SaveChangesBeforeAddRemoveNote'), function () {
+        return true;
+      }, {
+        icon: '[SKINIMG]Dialog/error.png',
+        title: OB.I18N.getLabel('OBUIAPP_Error')
+      });
+      return false;
+    } else {
+      return true;
+    }
+  },
+
+  addOrRemoveNoteCallback: function (dsResponse, data, dsRequest) {
+    if (this.shouldRefreshAfterAddOrRemove()) {
+      this.view.refresh();
+    }
+  },
+
   /**
    * Saves the note to the DB.
    */
   saveNote: function () {
+    var me = this;
+    var addNoteCallback = function (dsResponse, data, dsRequest) {
+        me.addOrRemoveNoteCallback(dsResponse, data, dsRequest);
+        };
+
+    if (!this.addOrRemoveCancelLogic()) {
+      return false;
+    }
+
     var note = this.noteDynamicForm.getField('noteOBTextAreaItem').getValue();
 
     if (!note) {
@@ -154,7 +203,7 @@ isc.OBNoteLayout.addProperties({
       'table': this.getForm().view.standardProperties.inpTableId,
       'record': this.getForm().view.viewGrid.getSelectedRecord().id,
       'note': note
-    });
+    }, addNoteCallback);
 
     // clean text area
     this.noteDynamicForm.getItem('noteOBTextAreaItem').clearValue();
@@ -168,13 +217,22 @@ isc.OBNoteLayout.addProperties({
    * Deletes the note from the DB.
    */
   deleteNote: function ( /* note id to delete */ id) {
+    var me = this;
+    var removeNoteCallback = function (dsResponse, data, dsRequest) {
+        me.addOrRemoveNoteCallback(dsResponse, data, dsRequest);
+        };
+
+    if (!this.addOrRemoveCancelLogic()) {
+      return false;
+    }
+
     var noteDS = this.getNoteDataSource();
     var noteSection = this.parentElement.noteSection;
     isc.confirm(OB.I18N.getLabel('OBUIAPP_ConfirmRemoveNote'), function (clickedOK) {
       if (clickedOK) {
         noteDS.removeData({
           'id': id
-        });
+        }, removeNoteCallback);
         noteSection.setNoteCount(noteSection.noteCount - 1);
       }
     }, {
@@ -194,6 +252,9 @@ isc.OBNoteLayout.addProperties({
    */
   initWidget: function () {
     this.Super('initWidget', arguments);
+
+    var view = this.getForm().view;
+    this.view = view;
 
     var hLayout = isc.HLayout.create({
       width: '50%',
@@ -224,7 +285,7 @@ isc.OBNoteLayout.addProperties({
         },
         isDisabled: function () {
           this.Super('isDisabled', arguments);
-          if (OB.PropertyStore.get("DisableNotesForReadOnlyTabs", this.windowId) === 'Y' && this.layout.getForm().view.readOnly === true) {
+          if (OB.PropertyStore.get("DisableNotesForReadOnlyTabs", this.windowId) === 'Y' && view.readOnly === true) {
             this.readOnly = true;
             this.canEdit = false;
           }
@@ -310,7 +371,6 @@ isc.OBNoteLayout.addProperties({
           criteria.criteria = [];
         }
 
-        var view = this.layout.getForm().view;
         if (view && view.viewGrid.getSelectedRecord()) {
           criteria.criteria.push({
             fieldName: 'table',
@@ -340,7 +400,7 @@ isc.OBNoteLayout.addProperties({
 
         // show delete link if the note was created by
         // the current user
-        if (record.createdBy === OB.User.id) {
+        if (record && record.createdBy === OB.User.id) {
           value = value + ' <nobr><span class="OBNoteListGridDelete" ><a class="OBNoteListGridDelete" href="#" onclick="' + this.layout.ID + '.deleteNote(\'' + record.id + '\')">[ ' + OB.I18N.getLabel('OBUIAPP_delete') + ' ]</a></span></nobr>';
         }
         return value;
@@ -351,7 +411,7 @@ isc.OBNoteLayout.addProperties({
           return this.baseStyle;
         }
 
-        if (record.createdBy === OB.User.id) {
+        if (record && record.createdBy === OB.User.id) {
           return 'OBNoteListGridCurrentUserNoteCell';
         } else {
           return 'OBNoteListGridOtherUserNoteCell';
