@@ -1442,6 +1442,15 @@
       }
       OB.UTIL.adjustPayment(this.get('total'), this);
     },
+    getTotal: function () {
+      return this.get('total');
+    },
+    getPayment: function () {
+      return this.get('payment');
+    },
+    getPending: function () {
+      return OB.DEC.sub(this.getTotal(), this.getPayment());
+    },
     resetValues: function () {
       //this.set('isMultiOrders', false);
       this.get('multiOrdersList').reset();

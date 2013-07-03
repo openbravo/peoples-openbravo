@@ -136,6 +136,27 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
     }
     return false;
   },
+  getPending: function () {
+    if (this.get('leftColumnViewManager').isOrder()){
+      this.get('order').getPending();
+    } else {
+      this.get('multiorder').getPending();;
+    }
+  },
+  getChange: function () {
+    if (this.get('leftColumnViewManager').isOrder()){
+      this.get('order').getChange();
+    } else {
+      this.get('multiorder').getChange();
+    }
+  },
+  getPayment: function () {
+    if (this.get('leftColumnViewManager').isOrder()){
+      this.get('order').getPayment();
+    } else {
+      this.get('multiorder').getPayment();
+    }
+  },
   init: function () {
     var receipt = new OB.Model.Order(),
         i, j, k, amtAux, amountToPay, ordersLength, multiOrders = new OB.Model.MultiOrders(),
@@ -184,7 +205,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
       },
       initialize: function () {
         this.on('change:currentView', function (changedModel) {
-          debugger;
           localStorage.setItem('leftColumnCurrentView', JSON.stringify(changedModel.get('currentView')));
           this.trigger(changedModel.get('currentView').name);
         }, this);

@@ -22,13 +22,12 @@ enyo.kind({
     if (!_.isUndefined(inEvent.value.payment)) {
       payment = inEvent.value.payment;
       isMultiOrders = this.model.isValidMultiOrderState();
+      debugger;
+      change = this.model.getChange();
+      pending = this.model.getPending();
       if (!isMultiOrders) {
-        change = this.receipt.getChange();
-        pending = this.receipt.getPending();
         this.receipt.selectedPayment = payment.payment.searchKey;
       } else {
-        change = this.model.get('multiOrders').get('change');
-        pending = OB.DEC.sub(this.model.get('multiOrders').get('total'), this.model.get('multiOrders').get('payment'));
         this.model.get('multiOrders').set('selectedPayment', payment.payment.searchKey);
       }
 
@@ -360,7 +359,8 @@ enyo.kind({
     this.model.get('multiOrders').get('multiOrdersList').on('all', function (event) {
       if (this.model.isValidMultiOrderState()) {
         this.updatePendingMultiOrders();
-      }, this);
+      }
+    }, this);
 
     this.model.get('multiOrders').on('change:payment change:total change:change', function () {
       this.updatePendingMultiOrders();
@@ -386,8 +386,8 @@ enyo.kind({
     //        this.$.multiPayments.show();
     //      }
     //    }, this);
-    }
-  });
+  }
+});
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.DoneButton',
