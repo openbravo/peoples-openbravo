@@ -103,9 +103,19 @@ public class OrderGroupingProcessor {
         // New Order. We need to finish current invoice, and create a new one
         finishInvoice(invoice, totalNetAmount, invoiceTaxes, paymentSchedule, origPaymentSchedule);
         currentOrderId = orderId;
+        Order order = OBDal.getInstance().get(Order.class, orderId);
         currentOrder = OBDal.getInstance().get(Order.class, orderId);
         invoice = createNewInvoice(posTerminal, currentOrder, orderLine);
         paymentSchedule = createNewPaymentSchedule(invoice);
+        if (!posTerminal.getObposTerminaltype().isGroupingOrders()) {
+
+          String language = RequestContext.get().getVariablesSecureApp().getLanguage();
+          String description = Utility.messageBD(new DalConnectionProvider(false),
+              "OrderDocumentno", language)
+              + ": "
+              + order.getDocumentNo().substring(0, order.getDocumentNo().length()) + "\n";
+          invoice.setDescription(description);
+        }
         origPaymentSchedule = createOriginalPaymentSchedule(invoice, paymentSchedule);
         invoiceTaxes = new HashMap<String, InvoiceTax>();
         totalNetAmount = BigDecimal.ZERO;
