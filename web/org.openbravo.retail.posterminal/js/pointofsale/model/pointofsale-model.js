@@ -68,6 +68,32 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
     });
   },
 
+  loadCheckedMultiorders: function () {
+    debugger;
+    // Shows a modal window with the orders pending to be paid
+    var checkedMultiOrders, multiOrderList = this.get('multiOrders').get('multiOrdersList'),
+        criteria = {
+        'hasbeenpaid': 'N',
+        'session': OB.POS.modelterminal.get('session')
+        };
+    OB.Dal.find(OB.Model.Order, criteria, function (possibleMultiOrder) { //OB.Dal.find success
+      if (!possibleMultiOrder || possibleMultiOrder.length === 0) {
+        //nothing
+      } else {
+        checkedMultiOrders = _.compact(possibleMultiOrder.map(function (e) {
+          if (e.get('checked')) {
+            return e;
+          }
+        }));
+        //The order object is stored in the json property of the row fetched from the database
+        multiOrderList.reset(checkedMultiOrders);
+      }
+    }, function () {
+      // If there is an error fetching the checked orders of multiorders,
+      //OB.Dal.find error
+    });
+  },
+
   processChangedCustomers: function () {
     // Processes the customers who has been changed
     var me = this;
@@ -78,6 +104,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
         if (!customersChangedNotProcessed || customersChangedNotProcessed.length === 0) {
           OB.UTIL.processPaidOrders(me);
           me.loadUnpaidOrders();
+          me.loadCheckedMultiorders();
           return;
         }
         successCallback = function () {
@@ -85,11 +112,13 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
 
           OB.UTIL.processPaidOrders(me);
           me.loadUnpaidOrders();
+          me.loadCheckedMultiorders();
         };
         errorCallback = function () {
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorProcessingCustomersPendingData'));
           // we will not process pending orders in case there was an order while syncing customers
           me.loadUnpaidOrders();
+          me.loadCheckedMultiorders();
         };
         customersChangedNotProcessed.each(function (cus) {
           cus.set('json', enyo.json.parse(cus.get('json')));
@@ -99,6 +128,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
     } else {
       //We are offline. We continue the normal flow
       me.loadUnpaidOrders();
+      me.loadCheckedMultiorders();
     }
   },
   isValidMultiOrderState: function () {
@@ -112,7 +142,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
         i, j, k, amtAux, amountToPay, ordersLength, multiOrders = new OB.Model.MultiOrders(),
         me = this,
         iter, isNew = false,
-        discounts, ordersave, customersave, taxes, orderList, hwManager, ViewManager, LeftColumnViewManager;
+        discounts, ordersave, customersave, taxes, orderList, hwManager, ViewManager, LeftColumnViewManager, LeftColumnCurrentView;
 
     function success() {
       return true;
@@ -151,18 +181,21 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
 
     LeftColumnViewManager = Backbone.Model.extend({
       defaults: {
-        currentView: {
-          name: 'order',
-          params: []
-        }
+        currentView: {}
       },
-      initialize: function () {},
+      initialize: function () {
+        this.on('change:currentView', function (changedModel) {
+          debugger;
+          localStorage.setItem('leftColumnCurrentView', JSON.stringify(changedModel.get('currentView')));
+          this.trigger(changedModel.get('currentView').name);
+        }, this);
+      },
       setOrderMode: function (parameters) {
         this.set('currentView', {
           name: 'order',
           params: parameters
         });
-        this.trigger('order');
+        localStorage.setItem('leftColumnCurrentView', JSON.stringify(this.get('currentView')));
       },
       isOrder: function () {
         if (this.get('currentView').name === 'order') {
@@ -175,7 +208,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
           name: 'multiorder',
           params: parameters
         });
-        this.trigger('multiorder');
       },
       isMultiOrder: function () {
         if (this.get('currentView').name === 'multiorder') {

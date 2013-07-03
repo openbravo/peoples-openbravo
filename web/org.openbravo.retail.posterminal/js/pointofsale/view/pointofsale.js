@@ -233,16 +233,23 @@ enyo.kind({
   }],
   classModel: new Backbone.Model(),
   printReceipt: function () {
-
     if (OB.POS.modelterminal.hasPermission('OBPOS_print.receipt')) {
-      var receipt = this.model.get('order');
-      if (receipt.get("isPaid")) {
-        receipt.trigger('print');
+      if (this.model.get('leftColumnViewManager').isOrder()) {
+        var receipt = this.model.get('order');
+        if (receipt.get("isPaid")) {
+          receipt.trigger('print');
+          return;
+        }
+        receipt.calculateTaxes(function () {
+          receipt.trigger('print');
+        });
         return;
       }
-      receipt.calculateTaxes(function () {
-        receipt.trigger('print');
-      });
+      if (this.model.get('leftColumnViewManager').isMultiOrder()) {
+        _.each(this.model.get('multiOrders').get('multiOrdersList').models, function (order) {
+          this.model.get('multiOrders').trigger('print', order);
+        }, this);
+      }
     }
   },
   paidReceipts: function (inSender, inEvent) {
@@ -714,7 +721,7 @@ enyo.kind({
     return true;
   },
   init: function () {
-    var receipt, receiptList;
+    var receipt, receiptList, LeftColumnCurrentView;
     this.inherited(arguments);
     receipt = this.model.get('order');
     receiptList = this.model.get('orderList');
@@ -743,6 +750,15 @@ enyo.kind({
         return;
       }
     }, this);
+
+    LeftColumnCurrentView = enyo.json.parse(localStorage.getItem('leftColumnCurrentView'));
+    if (LeftColumnCurrentView === null) {
+      LeftColumnCurrentView = {
+        name: 'order',
+        params: []
+      };
+    }
+    this.model.get('leftColumnViewManager').set('currentView', LeftColumnCurrentView);
 
     this.model.get('subWindowManager').on('change:currentWindow', function (changedModel) {
 
