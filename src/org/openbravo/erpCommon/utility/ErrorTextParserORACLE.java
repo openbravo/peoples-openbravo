@@ -117,7 +117,10 @@ class ErrorTextParserORACLE extends ErrorTextParser {
 
           String toTranslate = myMessage.replace(errorCodeText + ": ", "");
           // assumption incoming error message useful part is completely contained in the first line
-          pos = toTranslate.indexOf("\\n");
+          pos = toTranslate.indexOf("\n");
+          if (pos == -1) {
+            pos = toTranslate.indexOf("\\n");
+          }
           if (pos != -1) {
             toTranslate = toTranslate.substring(0, pos);
           }
