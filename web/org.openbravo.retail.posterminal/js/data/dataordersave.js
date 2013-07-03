@@ -17,6 +17,7 @@
   OB.DATA.OrderSave = function (model) {
     this.context = model;
     this.receipt = model.get('order');
+    this.ordersToSend = OB.DEC.Zero;
 
     this.receipt.on('closed', function () {
       this.receipt = model.get('order');
@@ -125,25 +126,23 @@
       OB.Dal.save(this.receipt, function () {
         if (OB.POS.modelterminal.get('connectedToERP')) {
           OB.Dal.get(OB.Model.Order, receiptId, function (receipt) {
-            var successCallback, errorCallback, orderList;
+            var successCallback, errorCallback;
             successCallback = function () {
               OB.UTIL.showLoading(false);
-              //In case the processed document is a quotation, we remove its id so it can be reactivated
-              if (isLayaway) {
-                OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgLayawaySaved', [docno]));
-              } else {
-                OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgReceiptSaved', [docno]));
-              }
+              OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgAllReceiptSaved'));
             };
             errorCallback = function () {
-              OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgReceiptNotSaved', [docno]));
+              OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgAllReceiptNotSaved'));
             };
             model.get('orderList').current = receipt;
             model.get('orderList').deleteCurrent();
-            model.get('multiOrders').resetValues();
-            orderList = new OB.Collection.OrderList();
-            orderList.add(receipt);
-            OB.UTIL.processOrders(model, orderList, successCallback, errorCallback);
+            me.ordersToSend += 1;
+            if (model.get('multiOrders').get('multiOrdersList').length === me.ordersToSend) {
+              model.get('multiOrders').resetValues();
+              OB.MobileApp.model.runSyncProcess(model, successCallback);
+              me.ordersToSend = OB.DEC.Zero;
+            }
+
           }, null);
         }
       }, function () {
