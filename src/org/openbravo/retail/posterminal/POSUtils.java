@@ -1,6 +1,7 @@
 package org.openbravo.retail.posterminal;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -277,15 +278,27 @@ public class POSUtils {
     return null;
   }
 
-  public static int getLastDocumentNumberForPOS(String searchKey, String documentTypeId) {
+  public static int getLastDocumentNumberForPOS(String searchKey, List<String> documentTypeIds) {
+
     String curDbms = OBPropertiesProvider.getInstance().getOpenbravoProperties()
         .getProperty("bbdd.rdbms");
     String sqlToExecute;
+    String doctypeIds = "";
+    for (String doctypeId : documentTypeIds) {
+      if (!doctypeIds.equals("")) {
+        doctypeIds += ",";
+      }
+      doctypeIds += "'" + doctypeId + "'";
+    }
 
     if (curDbms.equals("POSTGRE")) {
-      sqlToExecute = "select max(a.docno) from (select to_number(substring(documentno, '/([0-9]+)$')) docno from c_order where em_obpos_applications_id= (select obpos_applications_id from obpos_applications where value = ?) and c_doctype_id = ? and documentno like (select orderdocno_prefix from obpos_applications where value = ?)||'%') a";
+      sqlToExecute = "select max(a.docno) from (select to_number(substring(documentno, '/([0-9]+)$')) docno from c_order where em_obpos_applications_id= (select obpos_applications_id from obpos_applications where value = ?) and c_doctype_id in ("
+          + doctypeIds
+          + ") and documentno like (select orderdocno_prefix from obpos_applications where value = ?)||'%') a";
     } else if (curDbms.equals("ORACLE")) {
-      sqlToExecute = "select max(a.docno) from (select to_number(substr(REGEXP_SUBSTR(documentno, '/([0-9]+)$'), 2)) docno from c_order where em_obpos_applications_id= (select obpos_applications_id from obpos_applications where value = ?) and c_doctype_id = ? and documentno like (select orderdocno_prefix from obpos_applications where value = ?)||'%' ) a";
+      sqlToExecute = "select max(a.docno) from (select to_number(substr(REGEXP_SUBSTR(documentno, '/([0-9]+)$'), 2)) docno from c_order where em_obpos_applications_id= (select obpos_applications_id from obpos_applications where value = ?) and c_doctype_id in ("
+          + doctypeIds
+          + ") and documentno like (select orderdocno_prefix from obpos_applications where value = ?)||'%' ) a";
     } else {
       // unknow DBMS
       // shouldn't happen
@@ -295,8 +308,7 @@ public class POSUtils {
 
     SQLQuery query = OBDal.getInstance().getSession().createSQLQuery(sqlToExecute);
     query.setString(0, searchKey);
-    query.setString(1, documentTypeId);
-    query.setString(2, searchKey);
+    query.setString(1, searchKey);
     List result = query.list();
     if (result.size() == 0 || result.get(0) == null) {
       return 0;
@@ -308,6 +320,12 @@ public class POSUtils {
     } else {
       return 0;
     }
+  }
+
+  public static int getLastDocumentNumberForPOS(String searchKey, String documentTypeId) {
+    ArrayList<String> doctypeId = new ArrayList<String>();
+    doctypeId.add(documentTypeId);
+    return getLastDocumentNumberForPOS(searchKey, doctypeId);
 
   }
 

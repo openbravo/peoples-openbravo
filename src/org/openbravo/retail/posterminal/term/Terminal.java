@@ -8,6 +8,7 @@
  */
 package org.openbravo.retail.posterminal.term;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -39,8 +40,11 @@ public class Terminal extends ProcessHQLQuery {
     // saving quotations doc id to prevent session to be lost in getLastDocumentNumberForPOS
     String quotationsDocTypeId = pOSTerminal.getObposTerminaltype().getDocumentTypeForQuotations() == null ? null
         : pOSTerminal.getObposTerminaltype().getDocumentTypeForQuotations().getId();
+    List<String> doctypeIds = new ArrayList<String>();
+    doctypeIds.add(pOSTerminal.getObposTerminaltype().getDocumentType().getId());
+    doctypeIds.add(pOSTerminal.getObposTerminaltype().getDocumentTypeForReturns().getId());
     int lastDocumentNumber = POSUtils.getLastDocumentNumberForPOS(pOSTerminal.getSearchKey(),
-        pOSTerminal.getObposTerminaltype().getDocumentType().getId()) + 1;
+        doctypeIds) + 1;
     int lastQuotationDocumentNumber = 0;
     if (quotationsDocTypeId != null) {
       lastQuotationDocumentNumber = POSUtils.getLastDocumentNumberForPOS(
