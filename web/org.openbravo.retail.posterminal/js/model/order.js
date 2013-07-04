@@ -1459,7 +1459,8 @@
       pending: OB.DEC.Zero,
       change: OB.DEC.Zero,
       payments: new Backbone.Collection(),
-      openDrawer: false
+      openDrawer: false,
+      additionalInfo: null
     },
     addPayment: function (payment) {
       var payments, total;
@@ -1514,6 +1515,19 @@
     getPending: function () {
       return OB.DEC.sub(this.getTotal(), this.getPayment());
     },
+    toInvoice: function (status) {
+      if (status === false){
+        this.unset('additionalInfo');
+        _.each(this.get('multiOrdersList').models, function (order) {
+          order.unset('generateInvoice');
+        }, this);
+        return;
+      }
+      this.set('additionalInfo', 'I');
+      _.each(this.get('multiOrdersList').models, function (order) {
+        order.set('generateInvoice', true);
+      }, this);
+    },
     resetValues: function () {
       //this.set('isMultiOrders', false);
       this.get('multiOrdersList').reset();
@@ -1523,6 +1537,7 @@
       this.set('change', OB.DEC.Zero);
       this.get('payments').reset();
       this.set('openDrawer', false);
+      this.set('additionalInfo', null);
     },
     hasDataInList: function () {
       if (this.get('multiOrdersList') && this.get('multiOrdersList').length > 0) {

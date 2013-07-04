@@ -374,15 +374,20 @@ enyo.kind({
     return true;
   },
   receiptToInvoice: function () {
-    if (this.model.get('order').get('isEditable') === false && !this.model.get('order').get('isLayaway')) {
-      this.doShowPopup({
-        popup: 'modalNotEditableOrder'
-      });
+    if (this.model.get('leftColumnViewManager').isOrder()) {
+      if (this.model.get('order').get('isEditable') === false && !this.model.get('order').get('isLayaway')) {
+        this.doShowPopup({
+          popup: 'modalNotEditableOrder'
+        });
+        return true;
+      }
+      this.model.get('order').setOrderInvoice();
+      this.model.get('orderList').saveCurrent();
       return true;
     }
-    this.model.get('order').setOrderInvoice();
-    this.model.get('orderList').saveCurrent();
-    return true;
+    if (this.model.get('leftColumnViewManager').isMultiOrder()) {
+      this.model.get('multiOrders').toInvoice(true);
+    }
   },
   createQuotation: function () {
     this.model.get('orderList').addNewQuotation();
@@ -428,15 +433,22 @@ enyo.kind({
   },
 
   cancelReceiptToInvoice: function (inSender, inEvent) {
-    if (this.model.get('order').get('isEditable') === false) {
-      this.doShowPopup({
-        popup: 'modalNotEditableOrder'
-      });
+    if (this.model.get('leftColumnViewManager').isOrder()) {
+      if (this.model.get('order').get('isEditable') === false) {
+        this.doShowPopup({
+          popup: 'modalNotEditableOrder'
+        });
+        return true;
+      }
+      this.model.get('order').resetOrderInvoice();
+      this.model.get('orderList').saveCurrent();
       return true;
     }
-    this.model.get('order').resetOrderInvoice();
-    this.model.get('orderList').saveCurrent();
-    return true;
+    if (this.model.get('leftColumnViewManager').isMultiOrder()) {
+      if (this.model.get('leftColumnViewManager').isMultiOrder()) {
+        this.model.get('multiOrders').toInvoice(false);
+      }
+    }
   },
   checkedLine: function (inSender, inEvent) {
     if (inEvent.originator.kind === 'OB.UI.RenderOrderLine') {

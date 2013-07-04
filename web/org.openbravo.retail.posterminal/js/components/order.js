@@ -433,6 +433,18 @@ enyo.kind({
         kind: 'OB.UI.TotalMultiReceiptLine',
         name: 'totalMultiReceiptLine'
       }]
+    },{
+      tag: 'li',
+      components: [{
+        style: 'padding: 10px; border-top: 1px solid #cccccc; height: 40px;',
+        components: [{
+          kind: 'btninvoice',
+          name: 'multiOrder_btninvoice',
+          showing: false
+        }, {
+          style: 'clear: both;'
+        }]
+      }]
     }]
   }],
   listMultiOrders: null,
@@ -442,6 +454,13 @@ enyo.kind({
     this.total = 0;
     this.listMultiOrders = new Backbone.Collection();
     this.$.listMultiOrderLines.setCollection(this.listMultiOrders);
+    this.model.get('multiOrders').on('change:additionalInfo', function(changedModel){
+      if (changedModel.get('additionalInfo') === 'I'){
+        this.$.multiOrder_btninvoice.show();
+        return;
+      }
+      this.$.multiOrder_btninvoice.hide();
+    }, this);
     this.model.get('multiOrders').get('multiOrdersList').on('reset add remove change', function () {
       me.total = _.reduce(me.model.get('multiOrders').get('multiOrdersList').models, function (memo, order) {
         return memo + (order.get('amountToLayaway') ? order.get('amountToLayaway') : order.getPending());
