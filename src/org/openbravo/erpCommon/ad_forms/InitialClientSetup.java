@@ -150,8 +150,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
       xmlDocument.setParameter("messageTitle",
           Utility.parseTranslation(this, vars, strLanguage, obeResult.getMessage()));
       xmlDocument.setParameter("messageMessage",
-          Utility.parseTranslation(this, vars, strLanguage, "@ReloadClientContext@")
-              + " <a href='#' onclick='window.parent.parent.location.reload();'> Reload </a>");
+          Utility.parseTranslation(this, vars, strLanguage, "@ReloadClientContext@"));
     } else {
       xmlDocument.setParameter("messageMessage",
           Utility.parseTranslation(this, vars, strLanguage, obeResult.getMessage()));
