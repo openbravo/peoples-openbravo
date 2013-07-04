@@ -255,6 +255,7 @@ enyo.kind({
       }]
     }]
   }],
+  cleanFilter: false,
   clearAction: function (inSender, inEvent) {
     this.multiOrdersList.reset();
     return true;
@@ -279,7 +280,10 @@ enyo.kind({
               for (i = 0; i < me.filters.documentType.length; i++) {
                 if (me.filters.documentType[i] === iter.get('documentType')) {
                   if (!_.isNull(iter.id) && !_.isUndefined(iter.id)) {
-                    iter.unset("checked");
+                    debugger;
+                    if (me.cleanFilter){
+                      iter.unset("checked");
+                    }
                     me.multiOrdersList.add(iter);
                     break;
                   }
@@ -288,6 +292,10 @@ enyo.kind({
             }
           }
         });
+        debugger;
+        if (me.cleanFilter){
+          me.cleanFilter = false;
+        }
         _.each(data, function (iter) {
           me.multiOrdersList.add(iter);
         });
@@ -407,6 +415,7 @@ enyo.kind({
   executeOnShow: function () {
     var i, j;
     this.$.header.$.modalMultiOrdersTopHeader.$.title.setContent(OB.I18N.getLabel('OBPOS_LblMultiOrders'));
+    this.$.body.$.listMultiOrders.cleanFilter = true;
   },
   i18nHeader: '',
   body: {
