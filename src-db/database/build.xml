@@ -156,6 +156,22 @@ export.database.structure: Exports the database structure in the xml's files.
       <antcall target="update.dbupdate.timestamp" />
   </target>
 
+
+  <target name="export.sample.data">
+    <taskdef name="exportsampledata" classname="org.openbravo.ddlutils.task.ExportSampledata">
+      <classpath refid="runtime-classpath" />
+    </taskdef>
+    <exportsampledata driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" verbosity="${bbdd.verbosity}" basedir="${basedir}/../../" client="${client}" module="${module}" />
+  </target>
+
+  <target name="import.sample.data">
+    <taskdef name="importsampledata" classname="org.openbravo.ddlutils.task.ImportSampledata">
+      <classpath refid="runtime-classpath" />
+    </taskdef>
+    <importsampledata driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" verbosity="${bbdd.verbosity}" basedir="${basedir}/../../" />
+    <antcall target="database.postupdate.${bbdd.rdbms}" />
+  </target>
+
   <target name="database.postupdate.ORACLE">
     <sql driver="${bbdd.driver}" url="${bbdd.owner.url}" userid="${bbdd.user}" password="${bbdd.password}" onerror="abort" autocommit="true">
       <classpath>
