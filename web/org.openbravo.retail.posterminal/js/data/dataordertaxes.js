@@ -306,7 +306,7 @@
                 var linepricenet = element.get('price');
                 var discountedprice;
                 if (!(_.isNull(discAmt) || _.isUndefined(discAmt))) {
-                  discountedprice = discAmt.d(new BigDecimal(String(element.get('qty'))));
+                  discountedprice = discAmt.divide(new BigDecimal(String(element.get('qty'))));
                   discountedNet = discAmt;
                 } else {
                   discountedprice = new BigDecimal(String(element.get('price')));
