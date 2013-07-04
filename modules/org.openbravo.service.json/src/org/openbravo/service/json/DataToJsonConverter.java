@@ -265,7 +265,7 @@ public class DataToJsonConverter {
       Property displayColumnProperty = DalUtil.getPropertyFromPath(referencedProperty.getEntity(),
           referencingProperty.getDisplayPropertyName());
       if (referencingProperty.hasDisplayColumn()) {
-        String identifier = (String) obObject.get(referencingProperty.getDisplayPropertyName());
+        String identifier = obObject.get(referencingProperty.getDisplayPropertyName()).toString();
         if (referencingProperty.isDisplayValue()) {
           if (obObject.getEntity().hasProperty("searchKey")) {
             String value = (String) obObject.get("searchKey");
