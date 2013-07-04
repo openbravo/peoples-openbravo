@@ -175,11 +175,7 @@ enyo.kind({
           }
           var amount = OB.DEC.number(OB.I18N.parseNumber(txt));
           amount = _.isNaN(amount) ? 100 : amount;
-          //          if (me.model.get('leftColumnViewManager').isMultiOrder() && me.model.get('multiOrders').get('total') !== OB.DEC.Zero) {
-          //            me.payMultiOrder(amount, payment.payment.searchKey, payment.payment._identifier, payment.paymentMethod, payment.rate, payment.mulrate, payment.isocode, options);
-          //          } else {
           me.pay(amount, payment.payment.searchKey, payment.payment._identifier, payment.paymentMethod, payment.rate, payment.mulrate, payment.isocode, options);
-          //          }
         }
       });
 
