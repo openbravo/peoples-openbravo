@@ -49,12 +49,6 @@ public class TaxRate extends ProcessHQLQuery {
     final Country fromCountry = storeInfo.getLocationAddress().getCountry();
     final Region fromRegion = storeInfo.getLocationAddress().getRegion();
 
-    // TO
-    final Country toCountry = posDetail.getOrganization().getObretcoCBpLocation()
-        .getLocationAddress().getCountry();
-    final Region toRegion = posDetail.getOrganization().getObretcoCBpLocation()
-        .getLocationAddress().getRegion();
-
     String hql = "from FinancialMgmtTaxRate as financialMgmtTaxRate where "
         + "(financialMgmtTaxRate.$incrementalUpdateCriteria) AND active = true "
         + "and salesPurchaseType in ('S', 'B') ";
@@ -68,18 +62,6 @@ public class TaxRate extends ProcessHQLQuery {
       hql = hql + "and (region.id = '" + fromRegion.getId() + "' or region is null) ";
     } else {
       hql = hql + "and region is null ";
-    }
-    if (toCountry != null) {
-      hql = hql + "and (destinationCountry.id = '" + toCountry.getId()
-          + "' or destinationCountry is null) ";
-    } else {
-      hql = hql + "and destinationCountry is null ";
-    }
-    if (toRegion != null) {
-      hql = hql + "and (destinationRegion.id = '" + toRegion.getId()
-          + "' or destinationRegion is null) ";
-    } else {
-      hql = hql + "and destinationRegion is null ";
     }
     hql = hql + "and $readableCriteria order by validFromDate desc ";
 
