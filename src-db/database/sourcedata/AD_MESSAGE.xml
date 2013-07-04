@@ -19945,7 +19945,7 @@ You can upgrade the license of your instance by contacting Openbravo sales staff
 <!--750BD7EF580544768D8DEC762753A24D-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--750BD7EF580544768D8DEC762753A24D-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--750BD7EF580544768D8DEC762753A24D-->  <VALUE><![CDATA[ReloadClientContext]]></VALUE>
-<!--750BD7EF580544768D8DEC762753A24D-->  <MSGTEXT><![CDATA[To access the newly created client the context needs to be reloaded. Unsaved changes will be lost.]]></MSGTEXT>
+<!--750BD7EF580544768D8DEC762753A24D-->  <MSGTEXT><![CDATA[A context reload is required to fully complete the action. You can reload this context automatically by <a href='#' onclick='window.parent.parent.location.reload();'>clicking here</a> or manually by logging out of the application.]]></MSGTEXT>
 <!--750BD7EF580544768D8DEC762753A24D-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--750BD7EF580544768D8DEC762753A24D-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--750BD7EF580544768D8DEC762753A24D-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
