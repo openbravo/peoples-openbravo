@@ -200,7 +200,7 @@ build.war: build a war file in the lib directory.
     </delete>
   </target>
 
-  <target name="export.sample.data" description="Exports Sample Data">
+  <target name="export.sample.data.old" description="Exports Sample Data">
     <taskdef name="exportsampledata" classname="org.openbravo.service.db.ExportReferenceDataTask">
       <classpath refid="project.class.path" />
     </taskdef>
@@ -209,7 +209,7 @@ build.war: build a war file in the lib directory.
     <exportsampledata userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" clients="QA Testing" />
   </target>
 
-  <target name="import.sample.data" description="Import Sample Data" depends="generate.entities">
+  <target name="import.sample.data.old" description="Import Sample Data" depends="generate.entities">
     <taskdef name="importsampledata" classname="org.openbravo.service.db.ImportReferenceDataTask">
       <classpath refid="project.class.path" />
     </taskdef>

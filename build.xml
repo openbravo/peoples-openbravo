@@ -603,12 +603,12 @@ export.database: exports database structure and data to xml files.
     />    
   </target>
 
-  <target name="export.sample.data" depends="code.rev">
-    <ant dir="${base.src}" target="export.sample.data" inheritAll="true" inheritRefs="true" />
+  <target name="export.sample.data.old" depends="code.rev">
+    <ant dir="${base.src}" target="export.sample.data.old" inheritAll="true" inheritRefs="true" />
   </target>
 
-  <target name="import.sample.data" depends="code.rev">
-    <ant dir="${base.src}" target="import.sample.data" inheritAll="true" inheritRefs="true" />
+  <target name="import.sample.data.old" depends="code.rev">
+    <ant dir="${base.src}" target="import.sample.data.old" inheritAll="true" inheritRefs="true" />
   </target>
 
   <target name="compile.src" depends="init">
@@ -756,6 +756,14 @@ export.database: exports database structure and data to xml files.
 
   <target name="export.config.script" depends="init, core.lib">
     <ant dir="${base.db}" target="export.config.script" inheritAll="true" inheritRefs="true" />
+  </target>
+
+  <target name="export.sample.data" depends="init, core.lib">
+    <ant dir="${base.db}" target="export.sample.data" inheritAll="true" inheritRefs="true" />
+  </target>
+
+  <target name="import.sample.data" depends="init, core.lib">
+    <ant dir="${base.db}" target="import.sample.data" inheritAll="true" inheritRefs="true" />
   </target>
 
   <target name="db.apply.modules" if="apply.modules.on.update">
