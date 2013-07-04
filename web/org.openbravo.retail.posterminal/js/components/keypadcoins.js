@@ -178,11 +178,9 @@ enyo.kind({
   tap: function () {
     if (OB.POS.modelterminal.hasPermission(this.paymenttype)) {
       var me = this,
-          myWindowModel = this.owner.owner.owner.owner.owner.owner.model,
-          
-          
-          //FIXME: TOO MANY OWNERS
-          i, max, p, receipt = myWindowModel.get('order'),
+          myWindowModel = this.owner.owner.owner.owner.owner.owner.model;
+      //FIXME: TOO MANY OWNERS
+      var i, max, p, receipt = myWindowModel.get('order'),
           multiOrders = myWindowModel.get('multiOrders'),
           openDrawer = false;
       for (i = 0, max = OB.POS.modelterminal.get('payments').length; i < max; i++) {
@@ -194,23 +192,12 @@ enyo.kind({
           break;
         }
       }
-      if (myWindowModel.get('leftColumnViewManager').isOrder()) {
-        receipt.addPayment(new OB.Model.PaymentLine({
-          kind: me.paymenttype,
-          name: OB.POS.modelterminal.getPaymentName(me.paymenttype),
-          amount: OB.DEC.number(me.amount),
-          openDrawer: openDrawer
-        }));
-        return;
-      }
-      if (myWindowModel.get('leftColumnViewManager').isMultiOrder()) {
-        multiOrders.addPayment(new OB.Model.PaymentLine({
-          kind: me.paymenttype,
-          name: OB.POS.modelterminal.getPaymentName(me.paymenttype),
-          amount: OB.DEC.number(me.amount),
-          openDrawer: openDrawer
-        }));
-      }
+      myWindowModel.addPayment(new OB.Model.PaymentLine({
+        kind: me.paymenttype,
+        name: OB.POS.modelterminal.getPaymentName(me.paymenttype),
+        amount: OB.DEC.number(me.amount),
+        openDrawer: openDrawer
+      }));
     }
   }
 });

@@ -1024,7 +1024,37 @@
     },
 
     addPayment: function (payment) {
-      OB.UTIL.addPayment(payment, this.get('payments'), this.getTotal(), this);
+      var payments, total;
+      var i, max, p;
+
+      if (!OB.DEC.isNumber(payment.get('amount'))) {
+        alert(OB.I18N.getLabel('OBPOS_MsgPaymentAmountError'));
+        return;
+      }
+
+      payments = this.get('payments');
+      total = this.getTotal();
+      if (!payment.get('paymentData')) {
+        // search for an existing payment only if there is not paymentData info.
+        // this avoids to merge for example card payments of different cards.
+        for (i = 0, max = payments.length; i < max; i++) {
+          p = payments.at(i);
+          if (p.get('kind') === payment.get('kind') && !p.get('isPrePayment')) {
+            p.set('amount', OB.DEC.add(payment.get('amount'), p.get('amount')));
+            if (p.get('rate') && p.get('rate') !== '1') {
+              p.set('origAmount', OB.DEC.add(payment.get('origAmount'), OB.DEC.mul(p.get('origAmount'), p.get('rate'))));
+            }
+            OB.UTIL.adjustPayment(total, this);
+            return;
+          }
+        }
+      }
+      if (payment.get('openDrawer')) {
+        this.set('openDrawer', payment.get('openDrawer'));
+      }
+      payment.set('date', new Date());
+      payments.add(payment);
+      OB.UTIL.adjustPayment(total, this);
     },
 
     overpaymentExists: function () {
@@ -1432,7 +1462,37 @@
       openDrawer: false
     },
     addPayment: function (payment) {
-      OB.UTIL.addPayment(payment, this.get('payments'), this.get('total'), this);
+      var payments, total;
+      var i, max, p;
+
+      if (!OB.DEC.isNumber(payment.get('amount'))) {
+        alert(OB.I18N.getLabel('OBPOS_MsgPaymentAmountError'));
+        return;
+      }
+
+      payments = this.get('payments');
+      total = this.getTotal();
+      if (!payment.get('paymentData')) {
+        // search for an existing payment only if there is not paymentData info.
+        // this avoids to merge for example card payments of different cards.
+        for (i = 0, max = payments.length; i < max; i++) {
+          p = payments.at(i);
+          if (p.get('kind') === payment.get('kind') && !p.get('isPrePayment')) {
+            p.set('amount', OB.DEC.add(payment.get('amount'), p.get('amount')));
+            if (p.get('rate') && p.get('rate') !== '1') {
+              p.set('origAmount', OB.DEC.add(payment.get('origAmount'), OB.DEC.mul(p.get('origAmount'), p.get('rate'))));
+            }
+            OB.UTIL.adjustPayment(total, this);
+            return;
+          }
+        }
+      }
+      if (payment.get('openDrawer')) {
+        this.set('openDrawer', payment.get('openDrawer'));
+      }
+      payment.set('date', new Date());
+      payments.add(payment);
+      OB.UTIL.adjustPayment(total, this);
     },
     removePayment: function (payment) {
       var payments = this.get('payments');
@@ -1444,6 +1504,9 @@
     },
     getTotal: function () {
       return this.get('total');
+    },
+    getChange: function () {
+      return this.get('change');
     },
     getPayment: function () {
       return this.get('payment');

@@ -137,25 +137,43 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
     return false;
   },
   getPending: function () {
-    if (this.get('leftColumnViewManager').isOrder()){
-      this.get('order').getPending();
+    if (this.get('leftColumnViewManager').isOrder()) {
+      return this.get('order').getPending();
     } else {
-      this.get('multiorder').getPending();;
+      return this.get('multiOrders').getPending();
     }
   },
   getChange: function () {
-    if (this.get('leftColumnViewManager').isOrder()){
-      this.get('order').getChange();
+    if (this.get('leftColumnViewManager').isOrder()) {
+      return this.get('order').getChange();
     } else {
-      this.get('multiorder').getChange();
+      return this.get('multiOrders').getChange();
+    }
+  },
+  getTotal: function () {
+    if (this.get('leftColumnViewManager').isOrder()) {
+      return this.get('order').getTotal();
+    } else {
+      return this.get('multiOrders').getTotal();
     }
   },
   getPayment: function () {
-    if (this.get('leftColumnViewManager').isOrder()){
-      this.get('order').getPayment();
+    if (this.get('leftColumnViewManager').isOrder()) {
+      return this.get('order').getPayment();
     } else {
-      this.get('multiorder').getPayment();
+      return this.get('multiOrders').getPayment();
     }
+  },
+  addPayment: function (payment) {
+    var modelToIncludePayment;
+
+    if (this.get('leftColumnViewManager').isOrder()) {
+      modelToIncludePayment = this.get('order');
+    } else {
+      modelToIncludePayment = this.get('multiOrders');
+    }
+
+    modelToIncludePayment.addPayment(payment);
   },
   init: function () {
     var receipt = new OB.Model.Order(),

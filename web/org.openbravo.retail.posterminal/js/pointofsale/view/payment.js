@@ -22,7 +22,6 @@ enyo.kind({
     if (!_.isUndefined(inEvent.value.payment)) {
       payment = inEvent.value.payment;
       isMultiOrders = this.model.isValidMultiOrderState();
-      debugger;
       change = this.model.getChange();
       pending = this.model.getPending();
       if (!isMultiOrders) {
@@ -134,27 +133,21 @@ enyo.kind({
 
   receiptChanged: function () {
     var me = this;
-    if (this.model.get('leftColumnViewManager').isMultiOrder()) {
-      return true;
-    }
-    //    if (this.model.get('multiOrders').get('isMultiOrders') || this.model.get('multiOrders').get('multiOrdersList').length !== 0) {
-    //      return true;
-    //    }
     this.$.payments.setCollection(this.receipt.get('payments'));
     this.$.multiPayments.setCollection(this.model.get('multiOrders').get('payments'));
     this.receipt.on('change:payment change:change calculategross change:bp change:gross', function () {
       this.updatePending();
     }, this);
     this.updatePending();
+    if (this.model.get('leftColumnViewManager').isMultiOrder()) {
+      this.updatePendingMultiOrders();
+    }
     this.receipt.on('change:orderType change:isLayaway change:payment', function (model) {
       if (this.model.get('leftColumnViewManager').isMultiOrder()) {
         this.$.creditsalesaction.hide();
         this.$.layawayaction.hide();
         return;
       }
-      //      if (me.model.get('multiOrders').get('isMultiOrders') || this.model.get('multiOrders').get('multiOrdersList').length !== 0) {
-      //        return true;
-      //      }
       var payment = OB.POS.terminal.terminal.paymentnames[OB.POS.terminal.terminal.get('paymentcash')];
       if ((model.get('orderType') === 2 || (model.get('isLayaway'))) && model.get('orderType') !== 3 && !model.getPaymentStatus().done) {
         this.$.creditsalesaction.hide();
@@ -174,9 +167,6 @@ enyo.kind({
     if (this.model.get('leftColumnViewManager').isMultiOrder()) {
       return true;
     }
-    //    if (this.model.get('multiOrders').get('isMultiOrders') || this.model.get('multiOrders').get('multiOrdersList').length !== 0) {
-    //      return true;
-    //    }
     var paymentstatus = this.receipt.getPaymentStatus();
     var symbol = '',
         rate = OB.DEC.One,

@@ -67,7 +67,7 @@ enyo.kind({
   },
   pay: function (amount, key, name, paymentMethod, rate, mulrate, isocode, options) {
     if (options && options.percentaje) {
-      var pending = this.receipt.getPending();
+      var pending = this.model.getPending();
       if (mulrate && mulrate !== '1') {
         pending = OB.DEC.mul(pending, mulrate);
       }
@@ -75,20 +75,28 @@ enyo.kind({
     }
 
     if (OB.DEC.compare(amount) > 0) {
-      var provider, me = this;
-      if (this.receipt.get('orderType') === 0 || this.receipt.get('orderType') === 2 || this.receipt.get('isLayaway')) {
+      var provider, receiptToPay, me = this;
+      if (this.model.get('leftColumnViewManager').isOrder()) {
+        receiptToPay = this.receipt;
+        if (this.receipt.get('orderType') === 0 || this.receipt.get('orderType') === 2 || this.receipt.get('isLayaway')) {
+          provider = paymentMethod.paymentProvider;
+        } else if (this.receipt.get('orderType') === 1 || this.receipt.get('orderType') === 3) {
+          provider = paymentMethod.refundProvider;
+        } else {
+          provider = null;
+        }
+      }
+      //multiorders doesn't allow to return
+      if (this.model.get('leftColumnViewManager').isMultiOrder()) {
         provider = paymentMethod.paymentProvider;
-      } else if (this.receipt.get('orderType') === 1 || this.receipt.get('orderType') === 3) {
-        provider = paymentMethod.refundProvider;
-      } else {
-        provider = null;
+        receiptToPay = this.model.get('multiOrders');
       }
 
       if (provider) {
         this.doShowPopup({
           popup: 'modalpayment',
           args: {
-            'receipt': this.receipt,
+            'receipt': receiptToPay,
             'provider': provider,
             'key': key,
             'name': name,
@@ -100,47 +108,7 @@ enyo.kind({
           }
         });
       } else {
-        this.receipt.addPayment(new OB.Model.PaymentLine({
-          'kind': key,
-          'name': name,
-          'amount': amount,
-          'rate': rate,
-          'mulrate': mulrate,
-          'isocode': isocode,
-          'openDrawer': paymentMethod.openDrawer
-        }));
-      }
-    }
-  },
-  payMultiOrder: function (amount, key, name, paymentMethod, rate, mulrate, isocode, options) {
-    if (options && options.percentaje) {
-      var pending = OB.DEC.sub(this.model.get('multiOrders').get('total'), this.model.get('multiOrders').get('payment'));
-      //multicurrency
-      if (mulrate && mulrate !== '1') {
-        pending = OB.DEC.mul(pending, mulrate);
-      }
-      amount = OB.DEC.div(OB.DEC.mul(pending, amount), 100);
-    }
-    if (OB.DEC.compare(amount) > 0) {
-      var provider = paymentMethod.paymentProvider,
-          me = this;
-      if (provider) {
-        this.doShowPopup({
-          popup: 'modalpayment',
-          args: {
-            'receipt': this.model.get('multiOrders'),
-            'provider': provider,
-            'key': key,
-            'name': name,
-            'paymentMethod': paymentMethod,
-            'amount': amount,
-            'rate': rate,
-            'mulrate': mulrate,
-            'isocode': isocode
-          }
-        });
-      } else {
-        this.model.get('multiOrders').addPayment(new OB.Model.PaymentLine({
+        this.model.addPayment(new OB.Model.PaymentLine({
           'kind': key,
           'name': name,
           'amount': amount,
@@ -207,11 +175,11 @@ enyo.kind({
           }
           var amount = OB.DEC.number(OB.I18N.parseNumber(txt));
           amount = _.isNaN(amount) ? 100 : amount;
-          if (me.model.get('leftColumnViewManager').isMultiOrder() && me.model.get('multiOrders').get('total') !== OB.DEC.Zero) {
-            me.payMultiOrder(amount, payment.payment.searchKey, payment.payment._identifier, payment.paymentMethod, payment.rate, payment.mulrate, payment.isocode, options);
-          } else {
-            me.pay(amount, payment.payment.searchKey, payment.payment._identifier, payment.paymentMethod, payment.rate, payment.mulrate, payment.isocode, options);
-          }
+          //          if (me.model.get('leftColumnViewManager').isMultiOrder() && me.model.get('multiOrders').get('total') !== OB.DEC.Zero) {
+          //            me.payMultiOrder(amount, payment.payment.searchKey, payment.payment._identifier, payment.paymentMethod, payment.rate, payment.mulrate, payment.isocode, options);
+          //          } else {
+          me.pay(amount, payment.payment.searchKey, payment.payment._identifier, payment.paymentMethod, payment.rate, payment.mulrate, payment.isocode, options);
+          //          }
         }
       });
 
@@ -265,17 +233,13 @@ enyo.kind({
         } else {
           // It is a payment...
           var exactpayment = allpayments[keyboard.status] || exactdefault,
-              amount = me.receipt.getPending();
+              amount = me.model.getPending();
           if (exactpayment.rate && exactpayment.rate !== '1') {
             amount = OB.DEC.div(me.receipt.getPending(), exactpayment.rate);
           }
-          if (me.model.get('leftColumnViewManager').isMultiOrder() && me.model.get('multiOrders').get('total') !== OB.DEC.Zero) {
-            amount = OB.DEC.div(OB.DEC.sub(me.model.get('multiOrders').get('total'), me.model.get('multiOrders').get('payment')), exactpayment.rate);
-            me.payMultiOrder(amount, exactpayment.payment.searchKey, exactpayment.payment._identifier, exactpayment.paymentMethod, exactpayment.rate, exactpayment.mulrate, exactpayment.isocode);
-          } else {
-            if (amount > 0 && exactpayment && OB.POS.modelterminal.hasPermission(exactpayment.payment.searchKey)) {
-              me.pay(amount, exactpayment.payment.searchKey, exactpayment.payment._identifier, exactpayment.paymentMethod, exactpayment.rate, exactpayment.mulrate, exactpayment.isocode);
-            }
+
+          if (amount > 0 && exactpayment && OB.POS.modelterminal.hasPermission(exactpayment.payment.searchKey)) {
+            me.pay(amount, exactpayment.payment.searchKey, exactpayment.payment._identifier, exactpayment.paymentMethod, exactpayment.rate, exactpayment.mulrate, exactpayment.isocode);
           }
         }
       }
