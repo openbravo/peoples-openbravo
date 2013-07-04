@@ -334,8 +334,8 @@
           line.set({
             nondiscountedprice: line.get('price'),
             nondiscountednet: line.get('net'),
-            net: line.get('discountedNet'),
-            pricenet: line.get('discountedNetPrice'),
+            net: OB.DEC.toNumber(line.get('discountedNet')),
+            pricenet: OB.DEC.toNumber(line.get('discountedNetPrice')),
             listPrice: line.get('priceList'),
             price: 0,
             grossListPrice: 0,
@@ -348,7 +348,11 @@
 
       var totalnet = this.get('lines').reduce(function (memo, e) {
         var netLine = e.get('discountedNet');
-        return memo.add(new BigDecimal(String(e.get('netfull'))));
+        if(e.get('netfull')){
+          return memo.add(new BigDecimal(String(e.get('netfull'))));
+        }else{
+          return memo.add(new BigDecimal(String(e.get('net'))));
+        }
       }, new BigDecimal(String(OB.DEC.Zero)));
       totalnet = OB.DEC.toNumber(totalnet);
 
@@ -387,14 +391,14 @@
         this.calculateTaxes(function () {
           //If the price doesn't include tax, the discounted gross has already been calculated
           var gross = me.get('lines').reduce(function (memo, e) {
-            var grossLine = e.get('discountedGross');
+            var grossLine = e.get('fulldiscountedGross');
             if (grossLine) {
-              return OB.DEC.add(memo, grossLine);
+              return memo.add(grossLine);
             } else {
               return memo;
             }
-          }, OB.DEC.Zero);
-          me.set('gross', gross);
+          }, new BigDecimal("0"));
+          me.set('gross', OB.DEC.toNumber(gross));
           var net = me.get('lines').reduce(function (memo, e) {
             var netLine = e.get('discountedNet');
             if (netLine) {
