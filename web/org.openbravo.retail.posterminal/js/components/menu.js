@@ -372,7 +372,6 @@ enyo.kind({
     this.model = model;
     receipt.on('change:isQuotation', function (model) {
       this.updateVisibility(model);
-      this.
     }, this);
   }
 });
