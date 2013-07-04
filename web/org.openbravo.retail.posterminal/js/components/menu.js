@@ -361,6 +361,7 @@ enyo.kind({
   updateVisibility: function (model) {
     if (!model.get('isQuotation')) {
       this.show();
+      this.adjustVisibilityBasedOnPermissions();
     } else {
       this.hide();
     }
@@ -371,6 +372,7 @@ enyo.kind({
     this.model = model;
     receipt.on('change:isQuotation', function (model) {
       this.updateVisibility(model);
+      this.
     }, this);
   }
 });
@@ -399,6 +401,10 @@ enyo.kind({
   },
   updateVisibility: function () {
     var me = this;
+    if (this.model.get('leftColumnViewManager').isMultiOrder()){
+      me.setDisabled(true);
+      return;
+    }
     if (this.receipt.get('lines').length > 0) {
       OB.Dal.find(OB.Model.Discount, {
         _whereClause: "where m_offer_type_id in ('D1D193305A6443B09B299259493B272A', '20E4EC27397344309A2185097392D964', '7B49D8CC4E084A75B7CB4D85A6A3A578', '8338556C0FBF45249512DB343FEFD280')"
@@ -408,12 +414,14 @@ enyo.kind({
         me.setDisabled(true);
       });
       me.setDisabled(false);
+      me.adjustVisibilityBasedOnPermissions();
     } else {
       me.setDisabled(true);
     }
   },
   init: function (model) {
     var me = this;
+    this.model = model;
     this.receipt = model.get('order');
     //set disabled until ticket has lines
     me.setDisabled(true);
@@ -466,6 +474,16 @@ enyo.kind({
     var receipt = model.get('order'),
         me = this;
     me.hide();
+
+    model.get('leftColumnViewManager').on('order', function () {
+      this.updateVisibility(receipt);
+      this.adjustVisibilityBasedOnPermissions();
+    }, this);
+    
+    model.get('leftColumnViewManager').on('multiorder', function () {
+      me.hide();
+    }, this);
+
     receipt.on('change:isQuotation', function (model) {
       this.updateVisibility(model);
     }, this);
@@ -539,6 +557,16 @@ enyo.kind({
     var receipt = model.get('order'),
         me = this;
     me.hide();
+
+    model.get('leftColumnViewManager').on('order', function () {
+      this.updateVisibility(receipt);
+      this.adjustVisibilityBasedOnPermissions();
+    }, this);
+
+    model.get('leftColumnViewManager').on('multiorder', function () {
+      me.hide();
+    }, this);
+
     receipt.on('change:isQuotation', function (model) {
       this.updateVisibility(model);
     }, this);
