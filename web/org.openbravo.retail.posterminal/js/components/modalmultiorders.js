@@ -272,28 +272,28 @@ enyo.kind({
     }, function (data) {
       if (data) {
         _.each(me.model.get('orderList').models, function (iter) {
-          re = new RegExp(me.filters.filterText, 'gi');
-          toMatch = iter.get('documentNo').match(re) + iter.get('bp').get('_identifier').match(re);
-          if ((me.filters.filterText === "" || toMatch !== 0) && (iter.get('orderType') === 0 || iter.get('orderType') === 2) && !iter.get('isPaid') && !iter.get('isQuotation')) {
-            actualDate = new Date().setHours(0, 0, 0, 0);
-            if (me.filters.endDate === "" || new Date(me.filters.endDate) >= actualDate) {
-              for (i = 0; i < me.filters.documentType.length; i++) {
-                if (me.filters.documentType[i] === iter.get('documentType')) {
-                  if (!_.isNull(iter.id) && !_.isUndefined(iter.id)) {
-                    debugger;
-                    if (me.cleanFilter){
-                      iter.unset("checked");
+          if (iter.get('lines') && iter.get('lines').length > 0) {
+            re = new RegExp(me.filters.filterText, 'gi');
+            toMatch = iter.get('documentNo').match(re) + iter.get('bp').get('_identifier').match(re);
+            if ((me.filters.filterText === "" || toMatch !== 0) && (iter.get('orderType') === 0 || iter.get('orderType') === 2) && !iter.get('isPaid') && !iter.get('isQuotation')) {
+              actualDate = new Date().setHours(0, 0, 0, 0);
+              if (me.filters.endDate === "" || new Date(me.filters.endDate) >= actualDate) {
+                for (i = 0; i < me.filters.documentType.length; i++) {
+                  if (me.filters.documentType[i] === iter.get('documentType')) {
+                    if (!_.isNull(iter.id) && !_.isUndefined(iter.id)) {
+                      if (me.cleanFilter) {
+                        iter.unset("checked");
+                      }
+                      me.multiOrdersList.add(iter);
+                      break;
                     }
-                    me.multiOrdersList.add(iter);
-                    break;
                   }
                 }
               }
             }
           }
         });
-        debugger;
-        if (me.cleanFilter){
+        if (me.cleanFilter) {
           me.cleanFilter = false;
         }
         _.each(data, function (iter) {
