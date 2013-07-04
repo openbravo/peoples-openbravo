@@ -248,8 +248,8 @@ public class InventoryCountProcess implements Process {
         + InventoryCountLine.PROPERTY_PRODUCT);
     where.append("         and coalesce(icl." + InventoryCountLine.PROPERTY_ATTRIBUTESETVALUE
         + ", '0') = coalesce(icl2." + InventoryCountLine.PROPERTY_ATTRIBUTESETVALUE + ", '0')");
-    where.append("         and icl." + InventoryCountLine.PROPERTY_ORDERUOM + " = icl2."
-        + InventoryCountLine.PROPERTY_ORDERUOM);
+    where.append("         and coalesce(icl." + InventoryCountLine.PROPERTY_ORDERUOM
+        + ", '0') = coalesce(icl2." + InventoryCountLine.PROPERTY_ORDERUOM + ", '0')");
     where.append("         and icl." + InventoryCountLine.PROPERTY_STORAGEBIN + " = icl2."
         + InventoryCountLine.PROPERTY_STORAGEBIN);
     where.append("         and icl." + InventoryCountLine.PROPERTY_LINENO + " <> icl2."
