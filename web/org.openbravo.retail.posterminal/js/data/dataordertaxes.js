@@ -209,7 +209,7 @@
 
               _.each(coll, function (taxRate, taxIndex) {
                 var taxId = taxRate.get('id');
-                taxes[taxId] = undefined;
+                delete taxes[taxId];
                 me.get('lines').each(function (line, taxIndex) {
                   var taxLines = line.get('taxLines');
                   if(!taxLines || !taxLines[taxId]){
