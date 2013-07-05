@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  Enterprise Intelligence Systems (http://www.eintel.com.au).
  *************************************************************************
@@ -62,7 +62,14 @@ function callBackGrid(paramXMLParticular, XMLHttpRequestObj) {
     try {
       if (XMLHttpRequestObj.responseText) {
         strText = XMLHttpRequestObj.responseText;
-        var aux = strText.substring(29, strText.length-8);
+        var objson = eval(strText);
+        if(objson.message!==''){
+          showJSMessage(objson.message, null, true, objson.params);
+          return true;
+        }else{
+          showJSMessage(null, null, true);
+        }
+        var aux = objson.grid;
         var tableBody = document.getElementById('sectionGrid');
         var browserName = getBrowserInfo('name');
         if (browserName.toUpperCase().indexOf('INTERNET EXPLORER') !== -1) {
@@ -78,7 +85,6 @@ function callBackGrid(paramXMLParticular, XMLHttpRequestObj) {
         } else {
           tableBody.innerHTML = aux;
         }
-        
         updateAll();
         updateTotal();
 
@@ -435,17 +441,17 @@ function removeGLItem(key, removedAmount) {
 function validate(action) {
   var frm = document.frmMain;
   if (action === 'openprocess') {
-	if (isMulticurrencyTxn()) {
-	  if (frm.inpActualConverted.value==null || frm.inpActualConverted.value=="") {
-	    setWindowElementFocus(frm.inpActualConverted);
-	    showJSMessage(7);
-	    return false;
-	  } else if (frm.inpExchangeRate.value==null || frm.inpExchangeRate.value=="") {
-	    setWindowElementFocus(frm.inpExchangeRate);
-	    showJSMessage(7);
-	     return false;
-	  }
-	}
+    if (isMulticurrencyTxn()) {
+      if (frm.inpActualConverted.value==null || frm.inpActualConverted.value=="") {
+        setWindowElementFocus(frm.inpActualConverted);
+        showJSMessage(7);
+        return false;
+      } else if (frm.inpExchangeRate.value==null || frm.inpExchangeRate.value=="") {
+        setWindowElementFocus(frm.inpExchangeRate);
+        showJSMessage(7);
+         return false;
+      }
+    }
     if (frm.inpActualPayment.value === null || frm.inpActualPayment.value === '') {
       setWindowElementFocus(frm.inpActualPayment);
       showJSMessage(7);
@@ -706,12 +712,12 @@ function displayMulticurrencyControls() {
   displayLogicElement('paramActualConvertedCell', display );
   displayLogicElement('lblActualConverted', display );
   if (document.frmMain.strNotAllowExchange.value === 'Y' && display) {  
-	  readOnlyLogicElement('paramExchangeRate', true);
+      readOnlyLogicElement('paramExchangeRate', true);
       readOnlyLogicElement('paramActualConverted', true);
       displayLogicElement('actualConvertedCal', false );
    }
   else {
-	  readOnlyLogicElement('paramExchangeRate', false);
+      readOnlyLogicElement('paramExchangeRate', false);
       readOnlyLogicElement('paramActualConvertedCell', false);
       displayLogicElement('actualConvertedCal', true );
   }
@@ -801,9 +807,6 @@ function paymentDateOnChange(){
 }
 </script>
 <script language="JavaScript" type="text/javascript">
-function onloadFunctions() {
-  keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/BusinessPartner.html', 'BPARTNER_SELECTOR', false, 'frmMain', 'inpcBpartnerId', 'inpBpartnerId_DES', document.frmMain.inpBpartnerId_DES.value, 'Command', 'KEY');", "inpBpartnerId_DES", "null");
-}
 function displayLogicForCredit() {
   var hasCredit = compare(document.getElementById('paramCredit').value, '>', '0');
   displayLogicElement('paramCredit', hasCredit );
@@ -836,9 +839,6 @@ function onLoadDo(){
   setBrowserAutoComplete(false);
 
   initializeTemplate();
-  try {
-    onloadFunctions();
-  } catch (e) {}
   setGLItemMode(isTrue('isInGLItemMode'));
   displayLogicElement('sectionDifference', false);
   displayLogicElement('sectionDifferenceBox', false);

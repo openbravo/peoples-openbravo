@@ -57,6 +57,7 @@
     <FIELD id="inpTransactionDate_xx" attribute="id" replace="xx">finBankLineId</FIELD>
     <FIELD id="inpMatchedDocument_xx">matchedDocument</FIELD>
     <FIELD id="inpMatchedDocument_xx" attribute="id" replace="xx">finBankLineId</FIELD>
+    <FIELD id="inpMatchedDocument_xx" attribute="title">trxDescription</FIELD>
     <FIELD id="inpBPartner_xx">transactionBPartner</FIELD>
     <FIELD id="inpBPartner_xx" attribute="title">trxDescription</FIELD>
     <FIELD id="inpBPartner_xx" attribute="id" replace="xx">finBankLineId</FIELD>

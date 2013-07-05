@@ -26,6 +26,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.utility.Utility;
@@ -39,11 +41,25 @@ public class MessageJS extends HttpSecureAppServlet {
     final VariablesSecureApp vars = new VariablesSecureApp(request);
 
     final String strValue = vars.getRequiredStringParameter("inpvalue");
-    printPage(response, vars, strValue);
+    final String strParams = vars.getStringParameter("inpparams", "");
+    JSONArray array = null;
+    try {
+      try {
+        array = new JSONArray(strParams);
+      } catch (JSONException e) {
+        // As parameters may come empty most of the times we silent by sending empty parameter
+        // JSONArray. Message will never be hidden as no exception will be raised.
+        array = new JSONArray();
+      }
+      printPage(response, vars, strValue, array);
+    } catch (JSONException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
   }
 
-  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strValue)
-      throws IOException, ServletException {
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strValue,
+      JSONArray array) throws IOException, ServletException, JSONException {
 
     String type = "Hidden";
     String title = "";
@@ -63,7 +79,11 @@ public class MessageJS extends HttpSecureAppServlet {
       type = (data[0].msgtype.equals("E") ? "Error" : (data[0].msgtype.equals("I") ? "Info"
           : (data[0].msgtype.equals("S") ? "Success" : "Warning")));
       title = Utility.messageBD(this, type, strLanguage);
-      description = "<![CDATA[" + data[0].msgtext + "]]>";
+      String msgtext = data[0].msgtext;
+      for (int i = 0; i < array.length(); i++) {
+        msgtext = String.format(msgtext, (String) array.get(i));
+      }
+      description = "<![CDATA[" + msgtext + "]]>";
     }
 
     response.setContentType("text/xml; charset=UTF-8");

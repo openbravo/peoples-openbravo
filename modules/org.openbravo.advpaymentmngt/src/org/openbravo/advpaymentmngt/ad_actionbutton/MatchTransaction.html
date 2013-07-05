@@ -82,6 +82,8 @@ function transactionFind(selected) {
   document.getElementById("inpMatchingType_" + sc_FIN_FinAcc_Transaction_ID.bslId).value = "MA";
   document.getElementById("inpCheckBox_" + sc_FIN_FinAcc_Transaction_ID.bslId).checked = true;
   document.getElementById("inpCheckBox_" + sc_FIN_FinAcc_Transaction_ID.bslId).disabled = false;
+  document.frmMain.inpFinBankStatementLineId.value = sc_FIN_FinAcc_Transaction_ID.bslId;
+  sendActionToServer("MATCH");
 }
 
 function openSelector(bslId) {
@@ -127,8 +129,9 @@ function disableChecks(){
 function unMatchLine(bankStatementLineId, isChecked) {
   if (!isChecked) {
     disableChecks();
-    APRMMatchStatementIds[bankStatementLineId]=false;
     document.frmMain.inpFinBankStatementLineId.value = bankStatementLineId;
+    APRMMatchStatementIds[bankStatementLineId]=false;
+    sendActionToServer("UNMATCH");
     document.getElementById("inpMatchedDocument_" + bankStatementLineId).innerHTML = "";
     document.getElementById("inpTransactionDate_" + bankStatementLineId).innerHTML = "";
     document.getElementById("inpBPartner_" + bankStatementLineId).innerHTML = "";
@@ -138,10 +141,11 @@ function unMatchLine(bankStatementLineId, isChecked) {
     document.getElementById("inpMatchStyle_" + bankStatementLineId).style.backgroundColor = "white";
     document.getElementById("inpMatchingType_" + bankStatementLineId).value = "";
     document.getElementById("inpExecuteMatching").value = "N";
-    sendActionToServer("UNMATCH");
   }
   else {
     APRMMatchStatementIds[bankStatementLineId]=true;
+    document.frmMain.inpFinBankStatementLineId.value = bankStatementLineId;
+    sendActionToServer("MATCH");
   }
   return true;
 }
@@ -172,12 +176,15 @@ function openAddTransaction(bankStatementLineId){
 }
 </script>
 <script language="JavaScript" type="text/javascript">
-    function loadGrid() {
+    function loadGrid(skipMatching) {
       try {
         var url = "../org.openbravo.advpaymentmngt.ad_actionbutton/MatchTransaction.html";
         var paramXMLReq = null;
         serverWorking = true;
         document.frmMain.buttonProcess.disabled = true;
+        if(skipMatching){
+         document.getElementById("inpExecuteMatching").value = "N";
+        }
         return submitXmlHttpRequest(callBackGrid, document.frmMain, "GRID", url, false, null, paramXMLReq);
       } catch (e) {
         alert(e);
@@ -215,7 +222,12 @@ function openAddTransaction(bankStatementLineId){
               document.frmMain.isFirstLoad.value="false";
             }
             if (showJSMessage === "Y") {
-              displayMessageBox('APRM_TransactionLinesAmountNotMatch');
+              if (confirm(document.frmMain.inpTrlSplitConfirmText.value)) {
+                document.frmMain.inpSelectedFindTransactionId.value = selected.id;
+                splitRow();
+              } else {
+                showJSMessage('APRM_LinesAmountMismatch');
+              }
             }else{
               initialize_MessageBox('messageBoxID');
             }
@@ -577,7 +589,7 @@ function splitCallback(paramXMLParticular, XMLHttpRequestObj) {
                         <td colspan="5" style="text-align: center; font-weight: bold;">Transactions in Openbravo</td>
                       </tr>
                       <tr style="border-top: thin solid gray;">
-                        <td colspan="5" style="border-right: thin solid gray;"><span class="LabelText">Show</span>&nbsp;<span><select name="inpPaymentTypeFilter" class="ComboKey Combo_TwoCells_width required" id="inpPaymentTypeFilter" onchange="loadGrid(); return true;"><option value="" class="discard">Deposits and payments</option></select></span>&nbsp;<nobr><span class="LabelText">Cleared</span>&nbsp;<span><input type="checkbox" name="inpShowCleared" id="inpShowCleared" disabled=true value="Y" onclick="loadGrid(); return true;" /></span></nobr></td>
+                        <td colspan="5" style="border-right: thin solid gray;"><span class="LabelText">Show</span>&nbsp;<span><select name="inpPaymentTypeFilter" class="ComboKey Combo_TwoCells_width required" id="inpPaymentTypeFilter" onchange="loadGrid(true); return true;"><option value="" class="discard">Deposits and payments</option></select></span>&nbsp;<nobr><span class="LabelText">Cleared</span>&nbsp;<span><input type="checkbox" name="inpShowCleared" id="inpShowCleared" disabled=true value="Y" onclick="loadGrid(true); return true;" /></span></nobr></td>
                         <td style="text-align: center;"></td>
                         <td colspan="5" style="border-left: thin solid gray;"></span>&nbsp;&nbsp;<span>Hide transactions after statement date</span>&nbsp;&nbsp;<span><input type="checkbox" name="inphideDate" id="fieldhideDate" disabled=true value="Y" onClick="loadGrid(); return true;"/></span>&nbsp;&nbsp;<span>Ending Date</span>&nbsp;&nbsp;<span type="LabelText" id="paramDateTo"></span></td>
                       </tr>

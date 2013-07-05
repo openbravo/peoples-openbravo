@@ -363,21 +363,45 @@ public class AddTransaction extends HttpSecureAppServlet {
     xmlDocument.setParameter("finFinancialAccountId", strFinancialAccountId);
     xmlDocument.setParameter("finBankStatementLineId", strBankStatementLineId);
     String transactionType = "P";
+    try {
+      String Document_Type_AddTransaction_Reference_ID = "40B84CF78FC9435790887846CCDAE875";
+      ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
+          Document_Type_AddTransaction_Reference_ID, "", Utility.getContext(this, vars,
+              "#AccessibleOrgTree", "AddTransaction"), Utility.getContext(this, vars,
+              "#User_Client", "AddTransaction"), 0);
+      Utility.fillSQLParameters(this, vars, null, comboTableData, "AddTransaction", "");
+      xmlDocument.setData("reportDocumentType", "liststructure", comboTableData.select(false));
+      comboTableData = null;
+    } catch (Exception ex) {
+      throw new ServletException(ex);
+    }
+    boolean isReceipt = true;
     if (!"".equals(strBankStatementLineId)) {
       FIN_BankStatementLine bsl = OBDal.getInstance().get(FIN_BankStatementLine.class,
           strBankStatementLineId);
       String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
           .getProperty("dateFormat.java");
       SimpleDateFormat dateFormater = new SimpleDateFormat(dateFormat);
-
+      // Default signum based on amount
+      isReceipt = bsl.getCramount().subtract(bsl.getDramount()).signum() > 0;
+      if (bsl.getBusinessPartner() != null && bsl.getBusinessPartner().isCustomer()
+          && !bsl.getBusinessPartner().isVendor()) {
+        isReceipt = true;
+      }
+      if (bsl.getBusinessPartner() != null && !bsl.getBusinessPartner().isCustomer()
+          && bsl.getBusinessPartner().isVendor()) {
+        isReceipt = false;
+      }
       xmlDocument.setParameter("depositAmount", bsl.getCramount().toString());
       xmlDocument.setParameter("paymentAmount", bsl.getDramount().toString());
       xmlDocument.setParameter("depositAmountGLItem", bsl.getCramount().toString());
       xmlDocument.setParameter("paymentAmountGLItem", bsl.getDramount().toString());
       xmlDocument.setParameter("mainDate", dateFormater.format(bsl.getTransactionDate()));
-      String bslDescription = !"".equals(bsl) ? bsl.getDescription() : "";
-      String strDescription = !"".equals(bsl.getBpartnername()) ? bsl.getBpartnername() + "\n"
-          + bslDescription : bslDescription;
+      String bslDescription = (!"".equals(bsl.getDescription()) && bsl.getDescription() != null) ? bsl
+          .getDescription() : "";
+      String strDescription = (!"".equals(bsl.getBpartnername()) && bsl.getBpartnername() != null) ? bsl
+          .getBpartnername() + "\n" + bslDescription
+          : bslDescription;
       xmlDocument.setParameter("GLItemDescription", strDescription);
       xmlDocument.setParameter("FeeDescription", strDescription);
       if (bsl.getGLItem() != null) {
@@ -398,6 +422,9 @@ public class AddTransaction extends HttpSecureAppServlet {
       xmlDocument.setParameter("FeeDescription", "");
 
     }
+    final String RECEIVED_IN_OPTION = "RCIN";
+    final String PAID_OUT_OPTION = "PDOUT";
+    xmlDocument.setParameter("documentType", isReceipt ? RECEIVED_IN_OPTION : PAID_OUT_OPTION);
     try {
       String Transaction_Type_AddTransaction_Reference_ID = "C1B4345A1F8841C2B1ADD403CA733D75";
       ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
@@ -489,12 +516,17 @@ public class AddTransaction extends HttpSecureAppServlet {
     // Payments not deposited/withdrawal
     // Not stored in Fin_Finacc_Transaction table
     final FieldProvider[] data;
-    if (showAlternativeFA & isReceipt) {
-      data = dao.getAlternativePaymentsNotDeposited(account, FIN_Utility.getDate(strFromDate),
-          FIN_Utility.getDate(DateTimeData.nDaysAfter(this, strToDate, "1")), isReceipt);
+    if (!"Y".equals(closeAutomatically)) {
+      if (showAlternativeFA & isReceipt) {
+        data = dao.getAlternativePaymentsNotDeposited(account, FIN_Utility.getDate(strFromDate),
+            FIN_Utility.getDate(DateTimeData.nDaysAfter(this, strToDate, "1")), isReceipt);
+      } else {
+        data = dao.getPaymentsNotDeposited(account, FIN_Utility.getDate(strFromDate),
+            FIN_Utility.getDate(DateTimeData.nDaysAfter(this, strToDate, "1")), isReceipt);
+      }
     } else {
-      data = dao.getPaymentsNotDeposited(account, FIN_Utility.getDate(strFromDate),
-          FIN_Utility.getDate(DateTimeData.nDaysAfter(this, strToDate, "1")), isReceipt);
+      vars.setSessionValue("MatchTransaction.executeMatching", "N");
+      data = null;
     }
     xmlDocument.setData("structure", (data == null) ? set() : data);
     JSONObject table = new JSONObject();
@@ -532,6 +564,7 @@ public class AddTransaction extends HttpSecureAppServlet {
     if (bsline.getCramount().compareTo(finTrans.getDepositAmount()) != 0
         || bsline.getDramount().compareTo(finTrans.getPaymentAmount()) != 0) {
       vars.setSessionValue("AddTransaction|ShowJSMessage", "Y");
+      vars.setSessionValue("AddTransaction|SelectedTransaction", finTrans.getId());
     } else {
       FIN_Reconciliation reconciliation = TransactionsDao.getLastReconciliation(
           finTrans.getAccount(), "N");

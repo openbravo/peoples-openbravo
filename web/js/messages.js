@@ -140,7 +140,7 @@ function mensaje(index, _language)
 	showJSMessage(index, _language);
 }
 
-function showJSMessage(index, _language, clean)
+function showJSMessage(index, _language, clean, params)
 {
   var clearMsgBox = typeof clean == 'undefined' || clean == null ? true : clean;
   if(clearMsgBox) {
@@ -151,7 +151,7 @@ function showJSMessage(index, _language, clean)
 	var strMessage = getMessage(index, _language);
   if (strMessage == null)  strMessage = getMessage(index, "en_US");
 	if (strMessage == null) {
-    getDataBaseMessage(index);
+    getDataBaseMessage(index, null, params);
     return true;
   }
 	var strDefault = getDefaultText(index, _language);
@@ -184,7 +184,7 @@ function getUrl() {
   return url;
 }
 
-function getDataBaseMessage(value, responseFunction) {
+function getDataBaseMessage(value, responseFunction, params) {
   var appUrl = getAppUrl();
   var paramXMLReq = null;
   var msgCode;
@@ -193,7 +193,7 @@ function getDataBaseMessage(value, responseFunction) {
   } else {
     msgCode = value;
   }
-  submitXmlHttpRequestUrl(((responseFunction==null)?messageResponse:responseFunction), (appUrl + "/businessUtility/MessageJS.html?inpvalue=" + escape(msgCode)), false, paramXMLReq)
+  submitXmlHttpRequestUrl(((responseFunction==null)?messageResponse:responseFunction), (appUrl + "/businessUtility/MessageJS.html?inpvalue=" + escape(msgCode) + "&inpparams=" + escape(isc.JSONEncoder.echo(params))), false, paramXMLReq)
 }
 
 function getDataBaseStandardMessage(value, responseFunction) {

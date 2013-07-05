@@ -30,6 +30,7 @@ import java.util.StringTokenizer;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.process.FIN_AddPayment;
@@ -58,6 +59,7 @@ public abstract class FIN_BankStatementImport {
   private FIN_FinancialAccount financialAccount;
   OBError myError = null;
   String filename = "";
+  private static Logger log4j = Logger.getLogger(FIN_BankStatementImport.class);
 
   public static final String DOCUMENT_BankStatementFile = "BSF";
 
@@ -173,6 +175,7 @@ public abstract class FIN_BankStatementImport {
       setMyError(processResult);
     } catch (Exception e) {
       OBDal.getInstance().rollbackAndClose();
+      log4j.error("Error importing file.", e);
       return getMyError();
     }
     if (getMyError() != null && !getMyError().getType().toLowerCase().equals("success")

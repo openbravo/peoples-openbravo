@@ -64,8 +64,10 @@
   
     
     <!-- Document Type -->
-    <PARAMETER id="paramDocument" name="document"/>
-    
+    <PARAMETER id="paramDocumentType" name="documentType"/>
+      <SUBREPORT id="reportDocumentType" name="reportDocumentType" report="org/openbravo/erpCommon/reference/List">
+        <ARGUMENT name="parameterListSelected" withId="paramDocumentType"/>
+      </SUBREPORT>
     <!-- Transaction Type -->
     <PARAMETER id="paramTransactionType" name="transactionType"/>
       <SUBREPORT id="reportTransactionType" name="reportTransactionType" report="org/openbravo/erpCommon/reference/List">
