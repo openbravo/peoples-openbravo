@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2012-2013 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -12,7 +12,8 @@
 (function () {
   // Because of problems with module dependencies, it is possible this object to already
   // be defined with some rules.
-  var alreadyDefinedRules = (OB && OB.Model && OB.Model.Discounts && OB.Model.Discounts.discountRules) || {};
+  var alreadyDefinedRules = (OB && OB.Model && OB.Model.Discounts && OB.Model.Discounts.discountRules) || {},
+      i;
 
   OB.Model.Discounts = {
     discountRules: alreadyDefinedRules,
@@ -156,4 +157,12 @@
       line.set('discountedLinePrice', discountedLinePrice);
     }
   });
+
+  
+  // Because of dependency models cannot be directly registered in promotions module 
+  if (OB && OB.Model && OB.Model.Discounts && OB.Model.Discounts.extraModels) {
+    for (i = 0; i < OB.Model.Discounts.extraModels.length; i++) {
+      OB.Data.Registry.registerModel(OB.Model.Discounts.extraModels[i]);
+    }
+  }
 }());

@@ -45,9 +45,17 @@
     source: 'org.openbravo.retail.posterminal.master.DiscountFilterProductCategory'
   });
 
+  var promotionsRole = Backbone.Model.extend({
+    modelName: 'DiscountFilterRole',
+    generatedStructure: true,
+    entityName: 'OBDISC_Offer_Role',
+    source: 'org.openbravo.retail.posterminal.master.DiscountFilterRole'
+  });
+
   OB.Data.Registry.registerModel(promotions);
   OB.Data.Registry.registerModel(promotionsBP);
   OB.Data.Registry.registerModel(promotionsBPCategory);
   OB.Data.Registry.registerModel(promotionsProduct);
   OB.Data.Registry.registerModel(promotionsProductCategory);
+  OB.Data.Registry.registerModel(promotionsRole);
 }());

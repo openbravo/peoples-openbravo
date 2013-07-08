@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2012-2013 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -164,7 +164,22 @@ enyo.kind({
     });
     //load discounts
     OB.Dal.find(OB.Model.Discount, {
-      _whereClause: "where m_offer_type_id in ('D1D193305A6443B09B299259493B272A', '20E4EC27397344309A2185097392D964', '7B49D8CC4E084A75B7CB4D85A6A3A578', '8338556C0FBF45249512DB343FEFD280')"
+      _whereClause: "where m_offer_type_id in ('D1D193305A6443B09B299259493B272A', '20E4EC27397344309A2185097392D964', '7B49D8CC4E084A75B7CB4D85A6A3A578', '8338556C0FBF45249512DB343FEFD280') "
+      // filter discretionary discounts by current role
+      + " AND ((EM_OBDISC_ROLE_SELECTION = 'Y'" //
+      + " AND NOT EXISTS" //
+      + " (SELECT 1" //
+      + " FROM OBDISC_OFFER_ROLE" //
+      + " WHERE M_OFFER_ID = M_OFFER.M_OFFER_ID" //
+      + "   AND AD_ROLE_ID = '" + OB.MobileApp.model.get('context').role.id + "'" //
+      + " ))" //
+      + " OR (EM_OBDISC_ROLE_SELECTION = 'N'" //
+      + " AND EXISTS" //
+      + " (SELECT 1" //
+      + " FROM OBDISC_OFFER_ROLE" //
+      + " WHERE M_OFFER_ID = M_OFFER.M_OFFER_ID" //
+      + "   AND AD_ROLE_ID = '" + OB.MobileApp.model.get('context').role.id + "'" //
+      + " )))" //
     }, function (promos) {
       me.discounts.reset(promos.models);
       //set the keyboard for selected discount 
