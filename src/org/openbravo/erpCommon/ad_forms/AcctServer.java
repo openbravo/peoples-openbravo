@@ -378,13 +378,11 @@ public abstract class AcctServer {
       log4j.debug("AcctServer.run - AD_Client_ID: " + AD_Client_ID);
 
       AcctServerData[] data = null;
-      final Set<String> orgSet = OBContext.getOBContext().getOrganizationStructureProvider()
-          .getChildTree(AD_Org_ID, true);
+      final Set<String> orgSet = OBContext.getOBContext()
+          .getOrganizationStructureProvider(AD_Client_ID).getChildTree(AD_Org_ID, true);
       String strOrgs = Utility.getInStrSet(orgSet);
-
       data = AcctServerData.select(connectionProvider, tableName, strDateColumn, AD_Client_ID,
           strOrgs, strDateFrom, strDateTo, 0, Integer.valueOf(batchSize).intValue());
-
       if (data != null && data.length > 0) {
         if (log4j.isDebugEnabled()) {
           log4j.debug("AcctServer - Run -Select inicial realizada N = " + data.length + " - Key: "
@@ -2094,8 +2092,8 @@ public abstract class AcctServer {
         AD_Client_ID);
     // if (log4j.isDebugEnabled())
     // log4j.debug("AcctServer - AcctSchema length-" + (this.m_as).length);
-    final Set<String> orgSet = OBContext.getOBContext().getOrganizationStructureProvider()
-        .getChildTree(AD_Org_ID, true);
+    final Set<String> orgSet = OBContext.getOBContext()
+        .getOrganizationStructureProvider(AD_Client_ID).getChildTree(AD_Org_ID, true);
     String strorgs = Utility.getInStrSet(orgSet);
 
     String rownum = "0", oraLimit1 = null, oraLimit2 = null, pgLimit = null;
