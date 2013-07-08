@@ -27,6 +27,7 @@ import java.util.List;
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -334,7 +335,7 @@ public class DocFINPayment extends AcctServer {
           String bpAmountConverted = bpAmount;
           Invoice invoice = line.getInvoice();
           String strcCurrencyId = C_Currency_ID;
-          if (invoice != null) {
+          if (!isOrderPrepayment(line.getLine_ID()) && invoice != null) {
             // To force opposite posting isReceipt is opposite as well. this is required when
             // looking backwards
             bpAmountConverted = convertAmount(new BigDecimal(bpAmount), !isReceipt, DateAcct,
@@ -463,6 +464,22 @@ public class DocFINPayment extends AcctServer {
 
     SeqNo = "0";
     return fact;
+  }
+
+  public boolean isOrderPrepayment(String paymentDetailID) {
+    StringBuilder hql = new StringBuilder();
+    hql.append("select pd ");
+    hql.append("from FIN_Payment_Detail pd ");
+    hql.append(" where pd.id = '" + paymentDetailID + "' ");
+
+    final Query obqPD = OBDal.getInstance().getSession().createQuery(hql.toString());
+
+    List<FIN_PaymentDetail> paymentDetailList = obqPD.list();
+    if (paymentDetailList.size() > 0) {
+      return paymentDetailList.get(0).isPrepayment();
+    } else {
+      return false;
+    }
   }
 
   public String nextSeqNo(String oldSeqNo) {
