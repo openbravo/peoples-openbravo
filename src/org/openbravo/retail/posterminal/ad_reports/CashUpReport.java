@@ -37,6 +37,7 @@ import net.sf.jasperreports.engine.data.ListOfArrayDataSource;
 import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
+import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -58,6 +59,8 @@ public class CashUpReport extends HttpSecureAppServlet {
   HashMap<String, String> psData;
   String reconIds;
   String cashupId;
+
+  private static final Logger log = Logger.getLogger(CashUpReport.class);
 
   OBPOSAppCashup cashup;
   List<?> salesTaxList;
@@ -378,8 +381,19 @@ public class CashUpReport extends HttpSecureAppServlet {
         Query cashToDepositQuery = OBDal.getInstance().getSession().createQuery(hqlCashToDeposit);
         cashToDepositQuery.setString(0, ((OBPOSAppCashReconcil) cashup
             .getOBPOSAppCashReconcilList().get(i)).getReconciliation().getId());
-        if (cashToDepositQuery.uniqueResult() != null) {
-          cashToDeposit = (BigDecimal) cashToDepositQuery.uniqueResult();
+        List<BigDecimal> lstCashToDeposit = cashToDepositQuery.list();
+        if (!lstCashToDeposit.isEmpty()) {
+          if (lstCashToDeposit.size() > 1) {
+            log.warn("Configuration error: It seems to be more than one events configured with the same GL Item. "
+                + lstCashToDeposit.size()
+                + " Transactions with the same GLItem have been found for the reconciliation "
+                + ((OBPOSAppCashReconcil) cashup.getOBPOSAppCashReconcilList().get(i))
+                    .getReconciliation().getIdentifier()
+                + ". This situation could cause wrong results");
+          }
+          for (BigDecimal itemCashToDeposit : lstCashToDeposit) {
+            cashToDeposit = cashToDeposit.add((BigDecimal) itemCashToDeposit);
+          }
         } else {
           cashToDeposit = BigDecimal.ZERO;
         }
