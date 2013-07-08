@@ -104,6 +104,22 @@ enyo.kind({
             }, this);
           }
         }, {
+          kind: 'OB.UI.SmallButton',
+          name: 'removeDiscountButton',
+          i18nContent: 'OBPOS_LblRemoveDiscount',
+          showing: false,
+          classes: 'btnlink-orange',
+          tap: function () {
+            if (this.owner && this.owner.line && this.owner.line.get('promotions')) {
+              this.owner.line.unset('promotions');
+              this.model.get('order').calculateGross();
+              this.hide();
+            }
+          },
+          init: function (model) {
+            this.model = model;
+          }
+        }, {
           kind: 'OB.OBPOSPointOfSale.UI.EditLine.OpenStockButton',
           name: 'checkStockButton',
           showing: false
@@ -219,6 +235,21 @@ enyo.kind({
       this.$.checkStockButton.show();
     } else {
       this.$.checkStockButton.hide();
+    }
+    if (this.line && this.line.get('promotions')) {
+      if (this.line.get('promotions').length > 0) {
+        var filtered;
+        filtered = _.filter(this.line.get('promotions'), function (prom) {
+          //discrectionary discounts ids
+          return prom.discountType === '20E4EC27397344309A2185097392D964' || prom.discountType === 'D1D193305A6443B09B299259493B272A' || prom.discountType === '8338556C0FBF45249512DB343FEFD280' || prom.discountType === '7B49D8CC4E084A75B7CB4D85A6A3A578';
+        }, this);
+        if (filtered.length === this.line.get('promotions').length) {
+          //lines with just discrectionary discounts can be removed.
+          this.$.removeDiscountButton.show();
+        }
+      }
+    } else {
+      this.$.removeDiscountButton.hide();
     }
     this.render();
   },

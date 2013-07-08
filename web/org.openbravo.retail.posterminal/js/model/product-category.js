@@ -17,6 +17,7 @@
     entityName: 'ProductCategory',
     source: 'org.openbravo.retail.posterminal.master.Category',
     dataLimit: 300,
+    includeTerminalDate: true,
     properties: ['id', 'searchKey', 'name', 'img', '_identifier', '_idx'],
     propertyMap: {
       'id': 'm_product_category_id',

@@ -182,7 +182,11 @@
         loadFunction: function (terminalModel) {
           console.log('loading... ' + this.properties);
           var me = this;
-          new OB.DS.Request('org.openbravo.retail.posterminal.term.PriceListVersion').exec(null, function (data) {
+          var params = {};
+          var currentDate = new Date();
+          params.terminalTime = currentDate;
+          params.terminalTimeOffset = currentDate.getTimezoneOffset();
+          new OB.DS.Request('org.openbravo.retail.posterminal.term.PriceListVersion').exec(params, function (data) {
             if (data[0]) {
               terminalModel.set(me.properties[0], data[0]);
               terminalModel.propertiesReady(me.properties);
