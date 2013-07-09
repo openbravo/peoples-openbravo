@@ -117,41 +117,56 @@ enyo.kind({
   events: {
     onTabChange: ''
   },
+
+  showPaymentTab: function () {
+    var receipt = this.model.get('order');
+    if (receipt.get('isQuotation')) {
+      if (receipt.get('hasbeenpaid') !== 'Y') {
+        receipt.prepareToSend(function () {
+          receipt.trigger('closed');
+          receipt.trigger('scan');
+        });
+      } else {
+        receipt.prepareToSend(function () {
+          receipt.trigger('scan');
+          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_QuotationClosed'));
+        });
+      }
+      return;
+    }
+    if (this.model.get('order').getTotal() < 0) {
+      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_NegativeTotal'), OB.I18N.getLabel('OBPOS_NegativeTotalMessage'));
+      return true;
+    }
+    if ((this.model.get('order').get('isEditable') === false && !this.model.get('order').get('isLayaway')) || this.model.get('order').get('orderType') === 3) {
+      return true;
+    }
+    OB.MobileApp.view.scanningFocus(false);
+    this.doTabChange({
+      tabPanel: this.tabPanel,
+      keyboard: 'toolbarpayment',
+      edit: false
+    });
+    this.bubble('onShowColumn', {
+      colNum: 1
+    });
+  },
+
   tap: function () {
     if (this.disabled === false) {
-      var receipt = this.model.get('order');
-      if (receipt.get('isQuotation')) {
-        if (receipt.get('hasbeenpaid') !== 'Y') {
-          receipt.prepareToSend(function () {
-            receipt.trigger('closed');
-            receipt.trigger('scan');
-          });
-        } else {
-          receipt.prepareToSend(function () {
-            receipt.trigger('scan');
-            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_QuotationClosed'));
-          });
+      console.log(this.model);
+      this.model.on('approvalChecked', function (event) {
+    	  
+        console.log('approvalChecked', event)
+        this.model.off('approvalChecked');
+        if (event.approved){
+          this.showPaymentTab();
         }
-        return;
-      }
-      if(this.model.get('order').getTotal()<0){
-        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_NegativeTotal'), OB.I18N.getLabel('OBPOS_NegativeTotalMessage'));
-        return true;
-      }
-      if ((this.model.get('order').get('isEditable') === false && !this.model.get('order').get('isLayaway')) || this.model.get('order').get('orderType') === 3) {
-        return true;
-      }
-      OB.MobileApp.view.scanningFocus(false);
-      this.doTabChange({
-        tabPanel: this.tabPanel,
-        keyboard: 'toolbarpayment',
-        edit: false
-      });
-      this.bubble('onShowColumn', {
-        colNum: 1
-      });
+      }, this);
+      this.model.checkPaymentApproval();
     }
   },
+
   attributes: {
     style: 'text-align: center; font-size: 30px;'
   },

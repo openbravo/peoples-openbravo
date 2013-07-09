@@ -256,5 +256,56 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
       });
 
     }, this);
+  },
+
+  /**
+   * Checks if approval is required to pay this ticket. If required, a popup is shown requesting it.
+   */
+  checkPaymentApproval: function () {
+    // Checking if applied discretionary discounts require approval, TODO: this might be moved to discounts module
+    // TODO: this should be defined in the type, not hardcoded
+    var discretionaryDiscountTypes = ['7B49D8CC4E084A75B7CB4D85A6A3A578', '8338556C0FBF45249512DB343FEFD280', 'D1D193305A6443B09B299259493B272A', '20E4EC27397344309A2185097392D964'],
+        discountsToCheck = [],
+        requiresApproval = false,
+        i;
+    console.log('checkPaymentApproval');
+    this.get('order').get('lines').each(function (l) {
+      var p, promotions;
+      promotions = l.get('promotions');
+      if (promotions) {
+        for (p = 0; p < promotions.length; p++) {
+          if (_.contains(discretionaryDiscountTypes, promotions[p].discountType) && !_.contains(discountsToCheck, promotions[p].ruleId)) {
+            discountsToCheck.push(promotions[p].ruleId);
+          }
+        }
+      }
+    }, this);
+
+    if (discountsToCheck.length > 0) {
+      OB.Dal.find(OB.Model.Discount, {
+        obdiscApprovalRequired: true
+      }, enyo.bind(this, function (discountsWithApproval) {
+        for (i = 0; i < discountsToCheck.length; i++) {
+          if (discountsWithApproval.where({
+            id: discountsToCheck[i]
+          }).length > 0) {
+            requiresApproval = true;
+            break;
+          }
+        }
+        console.log('requires', requiresApproval);
+        if (requiresApproval) {
+          OB.UTIL.Approval.requestApproval(this, 'OBPOS_approval.discounts');
+        } else {
+          this.trigger('approvalChecked', {
+            approved: true
+          });
+        }
+      }));
+    } else {
+      this.trigger('approvalChecked', {
+        approved: true
+      });
+    }
   }
 });
