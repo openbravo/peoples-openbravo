@@ -1,6 +1,7 @@
 package org.openbravo.retail.posterminal;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -217,10 +218,12 @@ public class POSUtils {
     return null;
   }
 
-  public static PriceListVersion getPriceListVersionForPriceList(String priceListId) {
+  public static PriceListVersion getPriceListVersionForPriceList(String priceListId,
+      Date terminalDate) {
 
     try {
       OBContext.setAdminMode(true);
+      SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
       Query priceListVersionQuery = OBDal
           .getInstance()
           .getSession()
@@ -230,7 +233,8 @@ public class POSUtils {
                   + priceListId
                   + "' and plv.validFromDate = (select max(pplv.validFromDate) "
                   + "from PricingPriceListVersion as pplv where pplv.active=true and pplv.priceList.id = '"
-                  + priceListId + "')");
+                  + priceListId + "' and pplv.validFromDate <= '" + format.format(terminalDate)
+                  + "' )");
       for (Object plv : priceListVersionQuery.list()) {
         return (PriceListVersion) plv;
       }
@@ -244,18 +248,19 @@ public class POSUtils {
     return null;
   }
 
-  public static PriceListVersion getPriceListVersionByTerminalId(String terminalId) {
+  public static PriceListVersion getPriceListVersionByTerminalId(String terminalId,
+      Date terminalDate) {
 
     PriceList priceList = POSUtils.getPriceListByTerminalId(terminalId);
     String priceListId = (String) DalUtil.getId(priceList);
-    return POSUtils.getPriceListVersionForPriceList(priceListId);
+    return POSUtils.getPriceListVersionForPriceList(priceListId, terminalDate);
   }
 
-  public static PriceListVersion getPriceListVersionByOrgId(String orgId) {
+  public static PriceListVersion getPriceListVersionByOrgId(String orgId, Date terminalDate) {
 
     PriceList priceList = POSUtils.getPriceListByOrgId(orgId);
     String priceListId = (String) DalUtil.getId(priceList);
-    return POSUtils.getPriceListVersionForPriceList(priceListId);
+    return POSUtils.getPriceListVersionForPriceList(priceListId, terminalDate);
   }
 
   public static OBRETCOProductList getProductListByOrgId(String orgId) {

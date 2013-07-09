@@ -11,11 +11,13 @@ package org.openbravo.retail.posterminal.master;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.model.pricing.pricelist.PriceListVersion;
 import org.openbravo.retail.config.OBRETCOProductList;
@@ -29,8 +31,13 @@ public class Product extends ProcessHQLQuery {
     String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
     final OBRETCOProductList productList = POSUtils.getProductListByOrgId(orgId);
 
+    final Date terminalDate = OBMOBCUtils.calculateServerDate(jsonsent.getJSONObject("parameters")
+        .getString("terminalTime"),
+        jsonsent.getJSONObject("parameters").getJSONObject("terminalTimeOffset").getLong("value"));
+
     final PriceList priceList = POSUtils.getPriceListByOrgId(orgId);
-    final PriceListVersion priceListVersion = POSUtils.getPriceListVersionByOrgId(orgId);
+    final PriceListVersion priceListVersion = POSUtils.getPriceListVersionByOrgId(orgId,
+        terminalDate);
 
     if (productList == null) {
       throw new JSONException("Product list not found");
