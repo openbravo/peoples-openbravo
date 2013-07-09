@@ -193,7 +193,11 @@ function getDataBaseMessage(value, responseFunction, params) {
   } else {
     msgCode = value;
   }
-  submitXmlHttpRequestUrl(((responseFunction==null)?messageResponse:responseFunction), (appUrl + "/businessUtility/MessageJS.html?inpvalue=" + escape(msgCode) + "&inpparams=" + escape(isc.JSONEncoder.echo(params))), false, paramXMLReq)
+  if(params){
+    submitXmlHttpRequestUrl(((responseFunction==null)?messageResponse:responseFunction), (appUrl + "/businessUtility/MessageJS.html?inpvalue=" + escape(msgCode) + "&inpparams=" + escape(isc.JSONEncoder.echo(params))), false, paramXMLReq)
+  }else{
+    submitXmlHttpRequestUrl(((responseFunction==null)?messageResponse:responseFunction), (appUrl + "/businessUtility/MessageJS.html?inpvalue=" + escape(msgCode)), false, paramXMLReq)
+  }
 }
 
 function getDataBaseStandardMessage(value, responseFunction) {
