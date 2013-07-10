@@ -1240,7 +1240,7 @@ public class OrderLoader extends JSONProcessSimple {
         JSONPropertyToEntity.fillBobFromJSON(approvalEntity, approval, jsonApproval,
             jsonorder.getLong("timezoneOffset"));
 
-        approval.setOrder(order);
+        approval.setSalesOrder(order);
 
         Long value = jsonorder.getLong("created");
         Date creationDate = new Date(value);
