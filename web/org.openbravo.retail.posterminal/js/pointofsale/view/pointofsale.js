@@ -60,7 +60,11 @@ enyo.kind({
     onLineChecked: 'checkedLine',
     onStatusChanged: 'statusChanged',
     onLayaways: 'layaways',
-    onChangeSalesRepresentative: 'changeSalesRepresentative'
+    onChangeSalesRepresentative: 'changeSalesRepresentative',
+    onMultiOrders: 'multiOrders',
+    onSelectMultiOrders: 'selectMultiOrders',
+    onRemoveMultiOrders: 'removeMultiOrders',
+    onRightToolDisabled: 'rightToolbarDisabled'
   },
   events: {
     onShowPopup: '',
@@ -101,6 +105,9 @@ enyo.kind({
     }, {
       kind: 'OB.UI.ModalPaidReceipts',
       name: 'modalPaidReceipts'
+    }, {
+      kind: 'OB.UI.ModalMultiOrders',
+      name: 'modalMultiOrders'
     }, {
       kind: 'OB.UI.ModalCreateOrderFromQuotation',
       name: 'modalCreateOrderFromQuotation'
@@ -143,6 +150,9 @@ enyo.kind({
     }, {
       kind: 'OB.UI.ModalSalesRepresentative',
       name: "modalsalesrepresentative"
+    }, {
+      kind: 'OB.UI.ModalMultiOrdersLayaway',
+      name: "modalmultiorderslayaway"
     }]
   }, {
     name: 'mainSubWindow',
@@ -164,7 +174,30 @@ enyo.kind({
         components: [{
           classes: 'span12',
           kind: 'OB.OBPOSPointOfSale.UI.ReceiptView',
-          name: 'receiptview'
+          name: 'receiptview',
+          init: function (model) {
+            this.model = model;
+            this.model.get('leftColumnViewManager').on('change:currentView', function (changedModel) {
+              this.setShowing(changedModel.isOrder());
+            }, this);
+            //            this.model.get('multiOrders').on('change:isMultiOrders', function () {
+            //              this.setShowing(!this.model.get('multiOrders').get('isMultiOrders'));
+            //            }, this);
+          }
+        }, {
+          classes: 'span12',
+          kind: 'OB.OBPOSPointOfSale.UI.MultiReceiptView',
+          name: 'multireceiptview',
+          showing: false,
+          init: function (model) {
+            this.model = model;
+            this.model.get('leftColumnViewManager').on('change:currentView', function (changedModel) {
+              this.setShowing(changedModel.isMultiOrder());
+            }, this);
+            //            this.model.get('multiOrders').on('change:isMultiOrders', function () {
+            //              this.setShowing(this.model.get('multiOrders').get('isMultiOrders'));
+            //            }, this);
+          }
         }, {
           name: 'leftSubWindowsContainer',
           components: [{
@@ -200,16 +233,23 @@ enyo.kind({
   }],
   classModel: new Backbone.Model(),
   printReceipt: function () {
-
     if (OB.POS.modelterminal.hasPermission('OBPOS_print.receipt')) {
-      var receipt = this.model.get('order');
-      if (receipt.get("isPaid")) {
-        receipt.trigger('print');
+      if (this.model.get('leftColumnViewManager').isOrder()) {
+        var receipt = this.model.get('order');
+        if (receipt.get("isPaid")) {
+          receipt.trigger('print');
+          return;
+        }
+        receipt.calculateTaxes(function () {
+          receipt.trigger('print');
+        });
         return;
       }
-      receipt.calculateTaxes(function () {
-        receipt.trigger('print');
-      });
+      if (this.model.get('leftColumnViewManager').isMultiOrder()) {
+        _.each(this.model.get('multiOrders').get('multiOrdersList').models, function (order) {
+          this.model.get('multiOrders').trigger('print', order);
+        }, this);
+      }
     }
   },
   paidReceipts: function (inSender, inEvent) {
@@ -334,15 +374,20 @@ enyo.kind({
     return true;
   },
   receiptToInvoice: function () {
-    if (this.model.get('order').get('isEditable') === false && !this.model.get('order').get('isLayaway')) {
-      this.doShowPopup({
-        popup: 'modalNotEditableOrder'
-      });
+    if (this.model.get('leftColumnViewManager').isOrder()) {
+      if (this.model.get('order').get('isEditable') === false && !this.model.get('order').get('isLayaway')) {
+        this.doShowPopup({
+          popup: 'modalNotEditableOrder'
+        });
+        return true;
+      }
+      this.model.get('order').setOrderInvoice();
+      this.model.get('orderList').saveCurrent();
       return true;
     }
-    this.model.get('order').setOrderInvoice();
-    this.model.get('orderList').saveCurrent();
-    return true;
+    if (this.model.get('leftColumnViewManager').isMultiOrder()) {
+      this.model.get('multiOrders').toInvoice(true);
+    }
   },
   createQuotation: function () {
     this.model.get('orderList').addNewQuotation();
@@ -388,15 +433,22 @@ enyo.kind({
   },
 
   cancelReceiptToInvoice: function (inSender, inEvent) {
-    if (this.model.get('order').get('isEditable') === false) {
-      this.doShowPopup({
-        popup: 'modalNotEditableOrder'
-      });
+    if (this.model.get('leftColumnViewManager').isOrder()) {
+      if (this.model.get('order').get('isEditable') === false) {
+        this.doShowPopup({
+          popup: 'modalNotEditableOrder'
+        });
+        return true;
+      }
+      this.model.get('order').resetOrderInvoice();
+      this.model.get('orderList').saveCurrent();
       return true;
     }
-    this.model.get('order').resetOrderInvoice();
-    this.model.get('orderList').saveCurrent();
-    return true;
+    if (this.model.get('leftColumnViewManager').isMultiOrder()) {
+      if (this.model.get('leftColumnViewManager').isMultiOrder()) {
+        this.model.get('multiOrders').toInvoice(false);
+      }
+    }
   },
   checkedLine: function (inSender, inEvent) {
     if (inEvent.originator.kind === 'OB.UI.RenderOrderLine') {
@@ -551,7 +603,19 @@ enyo.kind({
             if (hasError) {
               OB.UTIL.showError(error);
             } else {
-              me.model.get('order').removePayment(inEvent.payment);
+              //            if (!me.model.get('multiOrders').get('isMultiOrders')) {
+              //              me.model.get('order').removePayment(inEvent.payment);
+              //            } else {
+              //              me.model.get('multiOrders').removePayment(inEvent.payment);
+              //            }
+              if (me.model.get('leftColumnViewManager').isOrder()) {
+                me.model.get('order').removePayment(inEvent.payment);
+                return;
+              }
+              if (me.model.get('leftColumnViewManager').isMultiOrder()) {
+                me.model.get('multiOrders').removePayment(inEvent.payment);
+                return;
+              }
             }
             };
         //async call with defined callback
@@ -559,7 +623,19 @@ enyo.kind({
         return;
       }
     } else {
-      this.model.get('order').removePayment(inEvent.payment);
+      //      if (!me.model.get('multiOrders').get('isMultiOrders')) {
+      //        me.model.get('order').removePayment(inEvent.payment);
+      //      } else {
+      //        me.model.get('multiOrders').removePayment(inEvent.payment);
+      //      }
+      if (me.model.get('leftColumnViewManager').isOrder()) {
+        me.model.get('order').removePayment(inEvent.payment);
+        return;
+      }
+      if (me.model.get('leftColumnViewManager').isMultiOrder()) {
+        me.model.get('multiOrders').removePayment(inEvent.payment);
+        return;
+      }
     }
   },
   changeSubWindow: function (inSender, inEvent) {
@@ -627,12 +703,75 @@ enyo.kind({
     this.model.get('orderList').saveCurrent();
     return true;
   },
+  multiOrders: function (inSender, inEvent) {
+    this.model.get('multiOrders').resetValues();
+    this.doShowPopup({
+      popup: 'modalMultiOrders'
+    });
+    return true;
+  },
+  selectMultiOrders: function (inSender, inEvent) {
+    var me = this;
+    me.model.get('multiOrders').get('multiOrdersList').reset();
+    _.each(inEvent.value, function (iter) {
+      //iter.set('isMultiOrder', true);
+      me.model.get('orderList').addMultiReceipt(iter);
+      me.model.get('multiOrders').get('multiOrdersList').add(iter);
+    });
+    this.model.get('leftColumnViewManager').setMultiOrderMode();
+    //this.model.get('multiOrders').set('isMultiOrders', true);
+    return true;
+  },
+  removeMultiOrders: function (inSender, inEvent) {
+    var me = this;
+    me.model.get('multiOrders').get('multiOrdersList').remove(inEvent.order);
+    me.model.get('orderList').current = inEvent.order;
+    me.model.get('orderList').deleteCurrent();
+    if (!_.isNull(inEvent.order.id)) {
+      me.model.get('orderList').deleteCurrentFromDatabase(inEvent.order);
+    }
+    return true;
+  },
   init: function () {
-    var receipt, receiptList;
+    var receipt, receiptList, LeftColumnCurrentView;
     this.inherited(arguments);
     receipt = this.model.get('order');
     receiptList = this.model.get('orderList');
     OB.MobileApp.view.scanningFocus(true);
+
+    this.model.get('leftColumnViewManager').on('change:currentView', function (changedModel) {
+      if (changedModel.isMultiOrder()) {
+        this.rightToolbarDisabled({}, {
+          status: true,
+          exceptionPanel: 'payment'
+        });
+        this.tabChange({}, {
+          tabPanel: 'payment',
+          keyboard: 'toolbarpayment'
+        });
+        return;
+      }
+      if (changedModel.isOrder()) {
+        this.rightToolbarDisabled({}, {
+          status: false
+        });
+        this.tabChange({}, {
+          tabPanel: 'scan',
+          keyboard: 'toolbarscan'
+        });
+        return;
+      }
+    }, this);
+
+    LeftColumnCurrentView = enyo.json.parse(localStorage.getItem('leftColumnCurrentView'));
+    if (LeftColumnCurrentView === null) {
+      LeftColumnCurrentView = {
+        name: 'order',
+        params: []
+      };
+    }
+    this.model.get('leftColumnViewManager').set('currentView', LeftColumnCurrentView);
+
     this.model.get('subWindowManager').on('change:currentWindow', function (changedModel) {
 
       function restorePreviousState(swManager, changedModel) {

@@ -18,14 +18,22 @@ enyo.kind({
     onButtonStatusChanged: 'buttonStatusChanged'
   },
   buttonStatusChanged: function (inSender, inEvent) {
-    var payment, amt;
+    var payment, amt, change, pending, isMultiOrders;
     if (!_.isUndefined(inEvent.value.payment)) {
       payment = inEvent.value.payment;
-      this.receipt.selectedPayment = payment.payment.searchKey;
-      if (!_.isNull(this.receipt.getChange()) && this.receipt.getChange()) {
-        this.$.change.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(this.receipt.getChange(), payment.mulrate), payment.symbol, payment.currencySymbolAtTheRight));
-      } else if (this.receipt.getPending()) {
-        this.$.totalpending.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(this.receipt.getPending(), payment.mulrate), payment.symbol, payment.currencySymbolAtTheRight));
+      isMultiOrders = this.model.isValidMultiOrderState();
+      change = this.model.getChange();
+      pending = this.model.getPending();
+      if (!isMultiOrders) {
+        this.receipt.selectedPayment = payment.payment.searchKey;
+      } else {
+        this.model.get('multiOrders').set('selectedPayment', payment.payment.searchKey);
+      }
+
+      if (!_.isNull(change) && change) {
+        this.$.change.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(change, payment.mulrate), payment.symbol, payment.currencySymbolAtTheRight));
+      } else if (!_.isNull(pending) && pending) {
+        this.$.totalpending.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(pending, payment.mulrate), payment.symbol, payment.currencySymbolAtTheRight));
       }
     }
   },
@@ -91,6 +99,15 @@ enyo.kind({
                 style: 'height: 36px'
               }),
               renderLine: 'OB.OBPOSPointOfSale.UI.RenderPaymentLine'
+            }, {
+              kind: 'OB.UI.ScrollableTable',
+              scrollAreaMaxHeight: '150px',
+              name: 'multiPayments',
+              showing: false,
+              renderEmpty: enyo.kind({
+                style: 'height: 36px'
+              }),
+              renderLine: 'OB.OBPOSPointOfSale.UI.RenderPaymentLine'
             }]
           }]
         }]
@@ -115,13 +132,22 @@ enyo.kind({
   }],
 
   receiptChanged: function () {
+    var me = this;
     this.$.payments.setCollection(this.receipt.get('payments'));
-
+    this.$.multiPayments.setCollection(this.model.get('multiOrders').get('payments'));
     this.receipt.on('change:payment change:change calculategross change:bp change:gross', function () {
       this.updatePending();
     }, this);
     this.updatePending();
+    if (this.model.get('leftColumnViewManager').isMultiOrder()) {
+      this.updatePendingMultiOrders();
+    }
     this.receipt.on('change:orderType change:isLayaway change:payment', function (model) {
+      if (this.model.get('leftColumnViewManager').isMultiOrder()) {
+        this.$.creditsalesaction.hide();
+        this.$.layawayaction.hide();
+        return;
+      }
       var payment = OB.POS.terminal.terminal.paymentnames[OB.POS.terminal.terminal.get('paymentcash')];
       if ((model.get('orderType') === 2 || (model.get('isLayaway'))) && model.get('orderType') !== 3 && !model.getPaymentStatus().done) {
         this.$.creditsalesaction.hide();
@@ -138,6 +164,9 @@ enyo.kind({
 
 
   updatePending: function () {
+    if (this.model.get('leftColumnViewManager').isMultiOrder()) {
+      return true;
+    }
     var paymentstatus = this.receipt.getPaymentStatus();
     var symbol = '',
         rate = OB.DEC.One,
@@ -233,6 +262,79 @@ enyo.kind({
       this.$.donezerolbl.hide();
     }
   },
+  updatePendingMultiOrders: function () {
+    var paymentstatus = this.model.get('multiOrders');
+    var symbol = '',
+        symbolAtRight = true,
+        rate = OB.DEC.One,
+        selectedPayment;
+    this.$.layawayaction.hide();
+    if (paymentstatus.get('selectedPayment')) {
+      selectedPayment = OB.POS.terminal.terminal.paymentnames[paymentstatus.get('selectedPayment')];
+    } else {
+      selectedPayment = OB.POS.terminal.terminal.paymentnames[OB.POS.modelterminal.get('paymentcash')];
+    }
+    if (!_.isUndefined(selectedPayment)) {
+      symbol = selectedPayment.symbol;
+      rate = selectedPayment.mulrate;
+      symbolAtRight = selectedPayment.currencySymbolAtTheRight;
+    }
+    if (paymentstatus.get('change')) {
+      this.$.change.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(paymentstatus.get('change'), rate), symbol, symbolAtRight));
+      this.$.change.show();
+      this.$.changelbl.show();
+    } else {
+      this.$.change.hide();
+      this.$.changelbl.hide();
+    }
+    //overpayment
+    if (OB.DEC.compare(OB.DEC.sub(paymentstatus.get('payment'), paymentstatus.get('total'))) > 0) {
+      this.$.overpayment.setContent(OB.I18N.formatCurrency(OB.DEC.sub(paymentstatus.get('payment'), paymentstatus.get('total'))));
+      this.$.overpayment.show();
+      this.$.overpaymentlbl.show();
+    } else {
+      this.$.overpayment.hide();
+      this.$.overpaymentlbl.hide();
+    }
+
+    if (paymentstatus.get('multiOrdersList').length > 0 && OB.DEC.compare(paymentstatus.get('total')) >= 0 && OB.DEC.compare(OB.DEC.sub(paymentstatus.get('payment'), paymentstatus.get('total'))) >= 0) {
+      this.$.totalpending.hide();
+      this.$.totalpendinglbl.hide();
+      this.$.doneaction.show();
+      this.$.creditsalesaction.hide();
+      //            this.$.layawayaction.hide();
+    } else {
+      this.$.totalpending.setContent(OB.I18N.formatCurrency(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(OB.DEC.sub(paymentstatus.get('total'), paymentstatus.get('payment')), rate), symbol, symbolAtRight)));
+      this.$.totalpending.show();
+      this.$.totalpendinglbl.show();
+      this.$.doneaction.hide();
+      if (this.$.doneButton.drawerpreference) {
+        this.$.doneButton.setContent(OB.I18N.getLabel('OBPOS_LblOpen'));
+        this.$.doneButton.drawerOpened = false;
+      }
+    }
+
+    this.$.creditsalesaction.hide();
+    this.$.layawayaction.hide();
+    if (paymentstatus.get('multiOrdersList').length > 0 && OB.DEC.compare(paymentstatus.get('total')) >= 0 && (OB.DEC.compare(OB.DEC.sub(paymentstatus.get('payment'), paymentstatus.get('total'))) >= 0 || paymentstatus.get('total') === 0)) {
+      this.$.exactaction.hide();
+    } else {
+      this.$.exactaction.show();
+    }
+    if (paymentstatus.get('multiOrdersList').length > 0 && OB.DEC.compare(paymentstatus.get('total')) >= 0 && OB.DEC.compare(OB.DEC.sub(paymentstatus.get('payment'), paymentstatus.get('total'))) >= 0 && !paymentstatus.get('change') && OB.DEC.compare(OB.DEC.sub(paymentstatus.get('payment'), paymentstatus.get('total'))) <= 0) {
+      if (paymentstatus.get('total') === 0) {
+        this.$.exactlbl.hide();
+        this.$.donezerolbl.show();
+      } else {
+        this.$.donezerolbl.hide();
+        this.$.exactlbl.setContent(OB.I18N.getLabel('OBPOS_PaymentsExact'));
+        this.$.exactlbl.show();
+      }
+    } else {
+      this.$.exactlbl.hide();
+      this.$.donezerolbl.hide();
+    }
+  },
   initComponents: function () {
     this.inherited(arguments);
     this.$.totalpendinglbl.setContent(OB.I18N.getLabel('OBPOS_PaymentsRemaining'));
@@ -240,6 +342,40 @@ enyo.kind({
     this.$.overpaymentlbl.setContent(OB.I18N.getLabel('OBPOS_PaymentsOverpayment'));
     this.$.exactlbl.setContent(OB.I18N.getLabel('OBPOS_PaymentsExact'));
     this.$.donezerolbl.setContent(OB.I18N.getLabel('OBPOS_MsgPaymentAmountZero'));
+  },
+  init: function (model) {
+    var me = this;
+    this.model = model;
+    this.model.get('multiOrders').get('multiOrdersList').on('all', function (event) {
+      if (this.model.isValidMultiOrderState()) {
+        this.updatePendingMultiOrders();
+      }
+    }, this);
+
+    this.model.get('multiOrders').on('change:payment change:total change:change', function () {
+      this.updatePendingMultiOrders();
+    }, this);
+    this.model.get('leftColumnViewManager').on('change:currentView', function (changedModel) {
+      if (changedModel.isOrder()) {
+        this.$.multiPayments.hide();
+        this.$.payments.show();
+        return;
+      }
+      if (changedModel.isMultiOrder()) {
+        this.$.multiPayments.show();
+        this.$.payments.hide();
+        return;
+      }
+    }, this);
+    //    this.model.get('multiOrders').on('change:isMultiOrders', function () {
+    //      if (!this.model.get('multiOrders').get('isMultiOrders')) {
+    //        this.$.multiPayments.hide();
+    //        this.$.payments.show();
+    //      } else {
+    //        this.$.payments.hide();
+    //        this.$.multiPayments.show();
+    //      }
+    //    }, this);
   }
 });
 
@@ -260,28 +396,59 @@ enyo.kind({
         this.setContent(OB.I18N.getLabel('OBPOS_LblDone'));
       }
     }, this);
+    this.model.get('multiOrders').on('change:openDrawer', function () {
+      this.drawerpreference = this.model.get('multiOrders').get('openDrawer');
+      if (this.drawerpreference) {
+        this.drawerOpened = false;
+        this.setContent(OB.I18N.getLabel('OBPOS_LblOpen'));
+      } else {
+        this.drawerOpened = true;
+        this.setContent(OB.I18N.getLabel('OBPOS_LblDone'));
+      }
+    }, this);
   },
   tap: function () {
-    if (this.drawerpreference) {
-      if (this.drawerOpened) {
+    var myModel = this.owner.model;
+    //if (this.owner.model.get('multiOrders').get('multiOrdersList').length === 0 && !this.owner.model.get('multiOrders').get('isMultiOrders')) {
+    if (myModel.get('leftColumnViewManager').isOrder()) {
+      if (this.drawerpreference) {
+        if (this.drawerOpened) {
+          if (this.owner.receipt.get('orderType') === 3) {
+            this.owner.receipt.trigger('voidLayaway');
+          } else {
+            this.owner.model.get('order').trigger('paymentDone');
+          }
+          this.drawerOpened = false;
+          this.setContent(OB.I18N.getLabel('OBPOS_LblOpen'));
+        } else {
+          this.owner.receipt.trigger('openDrawer');
+          this.drawerOpened = true;
+          this.setContent(OB.I18N.getLabel('OBPOS_LblDone'));
+        }
+      } else {
+        //Void Layaway
         if (this.owner.receipt.get('orderType') === 3) {
           this.owner.receipt.trigger('voidLayaway');
         } else {
           this.owner.receipt.trigger('paymentDone');
+          this.owner.receipt.trigger('openDrawer');
         }
-        this.drawerOpened = false;
-        this.setContent(OB.I18N.getLabel('OBPOS_LblOpen'));
-      } else {
-        this.owner.receipt.trigger('openDrawer');
-        this.drawerOpened = true;
-        this.setContent(OB.I18N.getLabel('OBPOS_LblDone'));
       }
     } else {
-      //Void Layaway
-      if (this.owner.receipt.get('orderType') === 3) {
-        this.owner.receipt.trigger('voidLayaway');
+      if (this.drawerpreference) {
+        if (this.drawerOpened) {
+          this.owner.model.get('multiOrders').trigger('paymentDone');
+          this.owner.model.get('multiOrders').set('openDrawer', false);
+          this.drawerOpened = false;
+          this.setContent(OB.I18N.getLabel('OBPOS_LblOpen'));
+        } else {
+          this.owner.receipt.trigger('openDrawer');
+          this.drawerOpened = true;
+          this.setContent(OB.I18N.getLabel('OBPOS_LblDone'));
+        }
       } else {
-        this.owner.receipt.trigger('paymentDone');
+        this.owner.model.get('multiOrders').trigger('paymentDone');
+        this.owner.model.get('multiOrders').set('openDrawer', false);
         this.owner.receipt.trigger('openDrawer');
       }
     }

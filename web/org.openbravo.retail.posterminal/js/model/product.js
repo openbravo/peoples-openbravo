@@ -17,6 +17,7 @@
     entityName: 'Product',
     source: 'org.openbravo.retail.posterminal.master.Product',
     dataLimit: 300,
+    includeTerminalDate: true,
     properties: ['id', 'searchkey', 'uPCEAN', 'uOM', 'uOMsymbol', 'productCategory', 'taxCategory', 'img', 'description', 'obposScale', 'groupProduct', 'stocked', 'showstock', 'bestseller', 'ispack', 'listPrice', 'standardPrice', 'priceLimit', 'cost', '_identifier', '_idx'],
     propertiesFilter: ['_identifier', 'searchkey', 'uPCEAN'],
     propertyMap: {

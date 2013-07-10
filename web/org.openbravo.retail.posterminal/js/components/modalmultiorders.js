@@ -1,24 +1,24 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2013 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
 
-/*global B, Backbone, $, _, moment, enyo */
-
+/*global enyo, Backbone, _, moment */
 
 /*header of scrollable table*/
 enyo.kind({
-  name: 'OB.UI.ModalPRScrollableHeader',
+  name: 'OB.UI.ModalMultiOrdersHeader',
   kind: 'OB.UI.ScrollableTableHeader',
   events: {
     onSearchAction: '',
     onClearAction: ''
   },
   handlers: {
+    onSearchActionByKey: 'searchAction',
     onFiltered: 'searchAction'
   },
   components: [{
@@ -132,7 +132,6 @@ enyo.kind({
     this.doClearAction();
   },
   searchAction: function () {
-    var params = this.parent.parent.parent.parent.parent.parent.parent.parent.params;
     var startDate, endDate, startDateValidated = true,
         endDateValidated = true;
     startDate = this.$.startDate.getValue();
@@ -163,10 +162,10 @@ enyo.kind({
       this.$.endDate.removeClass("error");
     }
     this.filters = {
-      documentType: params.isQuotation ? ([OB.POS.modelterminal.get('terminal').terminalType.documentTypeForQuotations]) : ([OB.POS.modelterminal.get('terminal').terminalType.documentType, OB.POS.modelterminal.get('terminal').terminalType.documentTypeForReturns]),
-      docstatus: params.isQuotation ? 'UE' : null,
-      isQuotation: params.isQuotation ? true : false,
-      isLayaway: params.isLayaway ? true : false,
+      documentType: [OB.POS.modelterminal.get('terminal').terminalType.documentType, OB.POS.modelterminal.get('terminal').terminalType.documentTypeForReturns],
+      docstatus: null,
+      isQuotation: false,
+      isLayaway: true,
       filterText: this.$.filterText.getValue(),
       startDate: this.$.startDate.getValue(),
       endDate: this.$.endDate.getValue(),
@@ -183,21 +182,26 @@ enyo.kind({
 
 /*items of collection*/
 enyo.kind({
-  name: 'OB.UI.ListPRsLine',
-  kind: 'OB.UI.SelectButton',
-  allowHtml: true,
+  name: 'OB.UI.ListMultiOrdersLine',
+  kind: 'OB.UI.CheckboxButton',
+  classes: 'modal-dialog-btn-check',
+  style: 'border-bottom: 1px solid #cccccc;text-align: left; padding-left: 70px; height: 58px;',
   events: {
     onHideThisPopup: ''
   },
   tap: function () {
     this.inherited(arguments);
-    this.doHideThisPopup();
+    this.model.set('checked', !this.model.get('checked'));
   },
   components: [{
     name: 'line',
-    style: 'line-height: 23px;',
+    style: 'line-height: 23px; display: inline',
     components: [{
+      style: 'display: inline',
       name: 'topLine'
+    }, {
+      style: 'font-weight: bold; color: lightblue; float: right; text-align:right; ',
+      name: 'isLayaway'
     }, {
       style: 'color: #888888',
       name: 'bottonLine'
@@ -212,132 +216,222 @@ enyo.kind({
       this.model.set('totalamount', OB.DEC.mul(this.model.get('totalamount'), -1));
       returnLabel = ' (' + OB.I18N.getLabel('OBPOS_ToReturn') + ')';
     }
-    this.$.topLine.setContent(this.model.get('documentNo') + ' - ' + this.model.get('businessPartner') + returnLabel);
-    this.$.bottonLine.setContent(this.model.get('totalamount') + ' (' + this.model.get('orderDate').substring(0, 10) + ') ');
+    this.$.topLine.setContent(this.model.get('documentNo') + ' - ' + (this.model.get('bp') ? this.model.get('bp').get('_identifier') : this.model.get('businessPartner')) + returnLabel);
+    this.$.bottonLine.setContent((this.model.get('totalamount') ? this.model.get('totalamount') : this.model.getPending()) + ' (' + OB.I18N.formatDate(new Date(this.model.get('orderDate'))) + ') ');
+    if (this.model.get('checked')) {
+      this.addClass('active');
+    } else {
+      this.removeClass('active');
+    }
+    if (this.model.get('isLayaway')) {
+      this.$.isLayaway.setContent(OB.I18N.getLabel('OBPOS_LblLayaway'));
+    }
     this.render();
   }
 });
 
 /*scrollable table (body of modal)*/
 enyo.kind({
-  name: 'OB.UI.ListPRs',
+  name: 'OB.UI.ListMultiOrders',
   classes: 'row-fluid',
   handlers: {
     onSearchAction: 'searchAction',
     onClearAction: 'clearAction'
   },
-  events: {
-    onChangePaidReceipt: ''
-  },
   components: [{
     classes: 'span12',
     components: [{
-      style: 'border-bottom: 1px solid #cccccc;',
       classes: 'row-fluid',
       components: [{
         classes: 'span12',
         components: [{
-          name: 'prslistitemprinter',
+          name: 'multiorderslistitemprinter',
           kind: 'OB.UI.ScrollableTable',
-          scrollAreaMaxHeight: '400px',
-          renderHeader: 'OB.UI.ModalPRScrollableHeader',
-          renderLine: 'OB.UI.ListPRsLine',
+          scrollAreaMaxHeight: '300px',
+          renderHeader: 'OB.UI.ModalMultiOrdersHeader',
+          renderLine: 'OB.UI.ListMultiOrdersLine',
           renderEmpty: 'OB.UI.RenderEmpty'
         }]
       }]
     }]
   }],
+  cleanFilter: false,
   clearAction: function (inSender, inEvent) {
-    this.prsList.reset();
+    this.multiOrdersList.reset();
     return true;
   },
   searchAction: function (inSender, inEvent) {
     var me = this,
-        process = new OB.DS.Process('org.openbravo.retail.posterminal.PaidReceiptsHeader');
+        toMatch = 0,
+        re, actualDate, i, processHeader = new OB.DS.Process('org.openbravo.retail.posterminal.PaidReceiptsHeader');
+    me.filters = inEvent.filters;
     this.clearAction();
-    process.exec({
-      filters: inEvent.filters,
+    processHeader.exec({
+      filters: me.filters,
       _limit: OB.Model.Order.prototype.dataLimit
     }, function (data) {
       if (data) {
-        _.each(data, function (iter) {
-          me.model.get('orderList').newDynamicOrder(iter, function (order) {
-            me.prsList.add(order);
-          });
+        _.each(me.model.get('orderList').models, function (iter) {
+          if (iter.get('lines') && iter.get('lines').length > 0) {
+            re = new RegExp(me.filters.filterText, 'gi');
+            toMatch = iter.get('documentNo').match(re) + iter.get('bp').get('_identifier').match(re);
+            if ((me.filters.filterText === "" || toMatch !== 0) && (iter.get('orderType') === 0 || iter.get('orderType') === 2) && !iter.get('isPaid') && !iter.get('isQuotation')) {
+              actualDate = new Date().setHours(0, 0, 0, 0);
+              if (me.filters.endDate === "" || new Date(me.filters.endDate) >= actualDate) {
+                for (i = 0; i < me.filters.documentType.length; i++) {
+                  if (me.filters.documentType[i] === iter.get('documentType')) {
+                    if (!_.isNull(iter.id) && !_.isUndefined(iter.id)) {
+                      if (me.cleanFilter) {
+                        iter.unset("checked");
+                      }
+                      me.multiOrdersList.add(iter);
+                      break;
+                    }
+                  }
+                }
+              }
+            }
+          }
         });
+        if (me.cleanFilter) {
+          me.cleanFilter = false;
+        }
+        _.each(data, function (iter) {
+          me.multiOrdersList.add(iter);
+        });
+
       } else {
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorDropDep'));
       }
     });
     return true;
   },
-  prsList: null,
+  multiOrdersList: null,
   init: function (model) {
-    var me = this,
-        process = new OB.DS.Process('org.openbravo.retail.posterminal.PaidReceipts');
     this.model = model;
-    this.prsList = new Backbone.Collection();
-    this.$.prslistitemprinter.setCollection(this.prsList);
-    this.prsList.on('click', function (model) {
-      OB.UTIL.showLoading(true);
-      process.exec({
-        orderid: model.get('id')
-      }, function (data) {
-        OB.UTIL.showLoading(false);
-        if (data) {
-          if (me.model.get('leftColumnViewManager').isMultiOrder()){
-            if (me.model.get('multiorders')){
-              me.model.get('multiorders').resetValues();
-            }
-            me.model.get('leftColumnViewManager').setOrderMode();
-          }
-          me.model.get('orderList').newPaidReceipt(data[0], function (order) {
-            me.doChangePaidReceipt({
-              newPaidReceipt: order
-            });
-          });
-        } else {
-          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorDropDep'));
-        }
-      });
-      return true;
-
-    }, this);
+    this.multiOrdersList = new Backbone.Collection();
+    this.$.multiorderslistitemprinter.setCollection(this.multiOrdersList);
   }
 });
 
-/*Modal definiton*/
 enyo.kind({
-  name: 'OB.UI.ModalPaidReceipts',
-  kind: 'OB.UI.Modal',
-  topPosition: '125px',
-  i18nHeader: 'OBPOS_LblPaidReceipts',
-  published: {
-    params: null
+  name: 'OB.UI.ModalMultiOrdersTopHeader',
+  kind: 'OB.UI.ScrollableTableHeader',
+  events: {
+    onHideThisPopup: '',
+    onSelectMultiOrders: '',
+    onTabChange: '',
+    onRightToolDisabled: ''
   },
-  changedParams: function (value) {
+  components: [{
+    style: 'display: table;',
+    components: [{
+      style: 'display: table-cell; float:left',
+      components: [{
+        name: 'doneMultiOrdersButton',
+        kind: 'OB.UI.SmallButton',
+        ontap: 'doneAction'
+      }]
+    }, {
+      style: 'display: table-cell; vertical-align: middle; width: 100%;',
+      components: [{
+        name: 'title',
+        style: 'text-align: center;'
+      }]
+    }, {
+      style: 'display: table-cell; float:right',
+      components: [{
+        classes: 'btnlink-gray',
+        name: 'cancelMultiOrdersButton',
+        kind: 'OB.UI.SmallButton',
+        ontap: 'cancelAction'
+      }]
+    }]
+  }],
+  initComponents: function () {
+    this.inherited(arguments);
+    this.$.doneMultiOrdersButton.setContent(OB.I18N.getLabel('OBMOBC_LblDone'));
+    this.$.cancelMultiOrdersButton.setContent(OB.I18N.getLabel('OBMOBC_LblCancel'));
+  },
+  doneAction: function () {
+    var selectedMultiOrders = [],
+        me = this,
+        process = new OB.DS.Process('org.openbravo.retail.posterminal.PaidReceipts'),
+        checkedMultiOrders = _.compact(this.parent.parent.parent.$.body.$.listMultiOrders.multiOrdersList.map(function (e) {
+        if (e.get('checked')) {
+          return e;
+        }
+      }));
+    _.each(checkedMultiOrders, function (iter) {
+      if (_.indexOf(me.owner.owner.model.get('orderList').models, iter) !== -1) {
+        iter.save();
+        selectedMultiOrders.push(iter);
+      } else {
+        process.exec({
+          orderid: iter.id
+        }, function (data) {
+          OB.UTIL.showLoading(false);
+          if (data) {
+            me.owner.owner.model.get('orderList').newPaidReceipt(data[0], function (order) {
+              order.set('checked', iter.get('checked'))
+              order.save();
+              selectedMultiOrders.push(order);
+              if (selectedMultiOrders.length === checkedMultiOrders.length) {
+                me.doSelectMultiOrders({
+                  value: selectedMultiOrders
+                });
+              }
+            });
+          } else {
+            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorDropDep'));
+          }
+        });
+      }
+      if (selectedMultiOrders.length === checkedMultiOrders.length) {
+        me.doSelectMultiOrders({
+          value: selectedMultiOrders
+        });
+      }
+    });
 
+    this.doTabChange({
+      tabPanel: 'payment',
+      keyboard: 'toolbarpayment',
+      edit: false
+    });
+    this.doHideThisPopup();
   },
-  body: {
-    kind: 'OB.UI.ListPRs'
-  },
-  handlers: {
-    onChangePaidReceipt: 'changePaidReceipt'
-  },
-  changePaidReceipt: function (inSender, inEvent) {
-    this.model.get('orderList').addPaidReceipt(inEvent.newPaidReceipt);
-    return true;
+  cancelAction: function () {
+    this.doHideThisPopup();
+  }
+}); /*Modal definiton*/
+enyo.kind({
+  name: 'OB.UI.ModalMultiOrders',
+  topPosition: '125px',
+  kind: 'OB.UI.Modal',
+  executeOnHide: function () {
+    this.$.body.$.listMultiOrders.$.multiorderslistitemprinter.$.theader.$.modalMultiOrdersHeader.clearAction();
   },
   executeOnShow: function () {
-    if (this.params.isQuotation) {
-      this.$.header.setContent(OB.I18N.getLabel('OBPOS_Quotations'));
-    } else if (this.params.isLayaway) {
-      this.$.header.setContent(OB.I18N.getLabel('OBPOS_LblLayaways'));
-    } else {
-      this.$.header.setContent(OB.I18N.getLabel('OBPOS_LblPaidReceipts'));
-    }
+    var i, j;
+    this.$.header.$.modalMultiOrdersTopHeader.$.title.setContent(OB.I18N.getLabel('OBPOS_LblMultiOrders'));
+    this.$.body.$.listMultiOrders.cleanFilter = true;
+  },
+  i18nHeader: '',
+  body: {
+    kind: 'OB.UI.ListMultiOrders'
+  },
+  initComponents: function () {
+    this.inherited(arguments);
+    this.$.closebutton.hide();
+    this.$.header.createComponent({
+      kind: 'OB.UI.ModalMultiOrdersTopHeader'
+    });
   },
   init: function (model) {
     this.model = model;
+    this.waterfall('onSetModel', {
+      model: this.model
+    });
   }
 });

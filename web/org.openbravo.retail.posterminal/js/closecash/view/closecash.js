@@ -23,7 +23,7 @@ enyo.kind({
     if (this.model.get('cashUpSent')) {
       return true;
     }
-    if (this.model.get('step') === 4) {
+    if (this.model.get('step') === 4 && this.getName() === 'btnNext') {
       this.setDisabled(true);
       this.model.set('cashUpSent', true);
     }

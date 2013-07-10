@@ -27,25 +27,35 @@ enyo.kind({
       orderType: 1
     });
   },
+  displayLogic: function () {
+    if (!this.model.get('order').get('isQuotation')) {
+      this.show();
+    } else {
+      this.hide();
+      return;
+    }
+    if (this.model.get('order').get('isEditable') === false) {
+      this.setShowing(false);
+      return;
+    }
+    this.adjustVisibilityBasedOnPermissions();
+  },
   init: function (model) {
     this.model = model;
     var receipt = model.get('order'),
         me = this;
-    receipt.on('change:isQuotation', function (model) {
-      if (!model.get('isQuotation')) {
-        me.show();
-      } else {
-        me.hide();
-      }
+    receipt.on('change:isEditable change:isQuotation', function (changedModel) {
+      this.displayLogic();
     }, this);
-    receipt.on('change:isEditable', function (newValue) {
-      if (newValue) {
-        if (newValue.get('isEditable') === false) {
-          this.setShowing(false);
-          return;
-        }
+    this.model.get('leftColumnViewManager').on('change:currentView', function (changedModel) {
+      if (changedModel.isOrder()) {
+        this.displayLogic();
+        return;
       }
-      this.setShowing(true);
+      if (changedModel.isMultiOrder()) {
+        this.setShowing(false);
+        return;
+      }
     }, this);
   }
 });
@@ -88,16 +98,31 @@ enyo.kind({
       OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_lblPaymentNotProcessedHeader'), OB.I18N.getLabel('OBPOS_lblPaymentNotProcessedMessage', [notValid.get('name'), notValid.get('origAmount'), OB.MobileApp.model.paymentnames[notValid.get('kind')].isocode]));
     }
   },
+  displayLogic: function () {
+    if (this.model.get('order').get('isLayaway')) {
+      this.show();
+      this.adjustVisibilityBasedOnPermissions();
+    } else {
+      this.hide();
+    }
+  },
   init: function (model) {
     this.model = model;
     var receipt = model.get('order'),
         me = this;
     this.setShowing(false);
     receipt.on('change:isLayaway', function (model) {
-      if (model.get('isLayaway')) {
-        me.show();
-      } else {
-        me.hide();
+      this.displayLogic();
+    }, this);
+
+    this.model.get('leftColumnViewManager').on('change:currentView', function (changedModel) {
+      if (changedModel.isOrder()) {
+        this.displayLogic();
+        return;
+      }
+      if (changedModel.isMultiOrder()) {
+        this.setShowing(false);
+        return;
       }
     }, this);
   }
@@ -141,6 +166,22 @@ enyo.kind({
       }
       this.setShowing(true);
     }, this);
+
+    this.model.get('leftColumnViewManager').on('change:currentView', function (changedModel) {
+      if (changedModel.isOrder()) {
+        if (model.get('order').get('isEditable') && !this.model.get('order').get('isQuotation')) {
+          this.show();
+          this.adjustVisibilityBasedOnPermissions();
+        } else {
+          this.hide();
+        }
+        return;
+      }
+      if (changedModel.isMultiOrder()) {
+        this.hide();
+      }
+    }, this);
+
   }
 });
 
@@ -161,6 +202,20 @@ enyo.kind({
   },
   init: function (model) {
     this.model = model;
+    this.model.get('leftColumnViewManager').on('change:currentView', function (changedModel) {
+      if (changedModel.isOrder()) {
+        if (model.get('order').get('isEditable')) {
+          this.setDisabled(false);
+          this.adjustVisibilityBasedOnPermissions();
+        } else {
+          this.setDisabled(true);
+        }
+        return;
+      }
+      if (changedModel.isMultiOrder()) {
+        this.setDisabled(true);
+      }
+    }, this);
     this.model.get('order').on('change:isEditable', function (newValue) {
       if (newValue) {
         if (newValue.get('isEditable') === false) {
@@ -232,6 +287,17 @@ enyo.kind({
         }
       }
     });
+  },
+  init: function (model) {
+    this.model = model;
+    model.get('leftColumnViewManager').on('order', function () {
+      this.setDisabled(false);
+      this.adjustVisibilityBasedOnPermissions();
+    }, this);
+
+    model.get('leftColumnViewManager').on('multiorder', function () {
+      this.setDisabled(true);
+    }, this);
   }
 });
 
@@ -280,6 +346,12 @@ enyo.kind({
     this.inherited(arguments); // Manual dropdown menu closure
     if (OB.POS.modelterminal.get('terminal').terminalType.documentTypeForQuotations) {
       if (OB.POS.modelterminal.hasPermission(this.permission)) {
+        if (this.model.get('leftColumnViewManager').isMultiOrder()) {
+          if (this.model.get('multiorders')) {
+            this.model.get('multiorders').resetValues();
+          }
+          this.model.get('leftColumnViewManager').setOrderMode();
+        }
         this.doCreateQuotation();
       }
     } else {
@@ -289,6 +361,7 @@ enyo.kind({
   updateVisibility: function (model) {
     if (!model.get('isQuotation')) {
       this.show();
+      this.adjustVisibilityBasedOnPermissions();
     } else {
       this.hide();
     }
@@ -296,6 +369,7 @@ enyo.kind({
   init: function (model) {
     var receipt = model.get('order'),
         me = this;
+    this.model = model;
     receipt.on('change:isQuotation', function (model) {
       this.updateVisibility(model);
     }, this);
@@ -324,8 +398,29 @@ enyo.kind({
       });
     }
   },
+  updateVisibility: function () {
+    var me = this;
+    if (this.model.get('leftColumnViewManager').isMultiOrder()){
+      me.setDisabled(true);
+      return;
+    }
+    if (this.receipt.get('lines').length > 0) {
+      OB.Dal.find(OB.Model.Discount, {
+        _whereClause: "where m_offer_type_id in ('D1D193305A6443B09B299259493B272A', '20E4EC27397344309A2185097392D964', '7B49D8CC4E084A75B7CB4D85A6A3A578', '8338556C0FBF45249512DB343FEFD280')"
+      }, function (promos) {
+        me.setDisabled(promos.length === 0);
+      }, function () {
+        me.setDisabled(true);
+      });
+      me.setDisabled(false);
+      me.adjustVisibilityBasedOnPermissions();
+    } else {
+      me.setDisabled(true);
+    }
+  },
   init: function (model) {
     var me = this;
+    this.model = model;
     this.receipt = model.get('order');
     //set disabled until ticket has lines
     me.setDisabled(true);
@@ -333,19 +428,17 @@ enyo.kind({
       //no permissions, never will be enabled
       return;
     }
+
+    model.get('leftColumnViewManager').on('order', function () {
+      this.updateVisibility();
+    }, this);
+
+    model.get('leftColumnViewManager').on('multiorder', function () {
+      me.setDisabled(true);
+    }, this);
+
     this.receipt.get('lines').on('all', function () {
-      if (this.receipt.get('lines').length > 0) {
-        OB.Dal.find(OB.Model.Discount, {
-          _whereClause: "where m_offer_type_id in ('D1D193305A6443B09B299259493B272A', '20E4EC27397344309A2185097392D964', '7B49D8CC4E084A75B7CB4D85A6A3A578', '8338556C0FBF45249512DB343FEFD280')"
-        }, function (promos) {
-          me.setDisabled(promos.length === 0);
-        }, function () {
-          me.setDisabled(true);
-        });
-        me.setDisabled(false);
-      } else {
-        me.setDisabled(true);
-      }
+      this.updateVisibility();
     }, this);
   }
 });
@@ -380,6 +473,16 @@ enyo.kind({
     var receipt = model.get('order'),
         me = this;
     me.hide();
+
+    model.get('leftColumnViewManager').on('order', function () {
+      this.updateVisibility(receipt);
+      this.adjustVisibilityBasedOnPermissions();
+    }, this);
+    
+    model.get('leftColumnViewManager').on('multiorder', function () {
+      me.hide();
+    }, this);
+
     receipt.on('change:isQuotation', function (model) {
       this.updateVisibility(model);
     }, this);
@@ -453,6 +556,16 @@ enyo.kind({
     var receipt = model.get('order'),
         me = this;
     me.hide();
+
+    model.get('leftColumnViewManager').on('order', function () {
+      this.updateVisibility(receipt);
+      this.adjustVisibilityBasedOnPermissions();
+    }, this);
+
+    model.get('leftColumnViewManager').on('multiorder', function () {
+      me.hide();
+    }, this);
+
     receipt.on('change:isQuotation', function (model) {
       this.updateVisibility(model);
     }, this);
@@ -527,6 +640,29 @@ enyo.kind({
     }
     if (OB.POS.modelterminal.hasPermission(this.permission)) {
       this.doLayaways();
+    }
+  }
+});
+
+enyo.kind({
+  name: 'OB.UI.MenuMultiOrders',
+  kind: 'OB.UI.MenuAction',
+  permission: 'OBPOS_retail.multiorders',
+  events: {
+    onMultiOrders: ''
+  },
+  i18nLabel: 'OBPOS_LblPayOpenTickets',
+  tap: function () {
+    if (this.disabled) {
+      return true;
+    }
+    this.inherited(arguments); // Manual dropdown menu closure
+    if (!OB.POS.modelterminal.get('connectedToERP')) {
+      OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OfflineWindowRequiresOnline'));
+      return;
+    }
+    if (OB.POS.modelterminal.hasPermission(this.permission)) {
+      this.doMultiOrders();
     }
   }
 });

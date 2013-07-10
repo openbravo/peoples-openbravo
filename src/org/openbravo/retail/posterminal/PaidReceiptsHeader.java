@@ -23,12 +23,19 @@ public class PaidReceiptsHeader extends ProcessHQLQuery {
 
     OBContext.setAdminMode(true);
     JSONObject json = jsonsent.getJSONObject("filters");
+    String strIsLayaway = "false";
+    if (json.getBoolean("isLayaway")) {
+      strIsLayaway = "true";
+    }
     String hqlPaidReceipts = "select ord.id as id, ord.documentNo as documentNo, ord.orderDate as orderDate, "
-        + "ord.businessPartner.name as businessPartner, ord.grandTotalAmount as totalamount, ord.documentType.id as documentTypeId from Order as ord "
+        + "ord.businessPartner.name as businessPartner, ord.grandTotalAmount as totalamount, ord.documentType.id as documentTypeId, '"
+        + strIsLayaway
+        + "' as isLayaway from Order as ord "
         + "where ord.client='"
         + json.getString("client")
         + "' and ord.organization='"
-        + json.getString("organization") + "' and ord.obposApplications is not null";
+        + json.getString("organization")
+        + "' and ord.obposApplications is not null";
 
     if (!json.getString("filterText").isEmpty()) {
       hqlPaidReceipts += " and (ord.documentNo like '%" + json.getString("filterText")

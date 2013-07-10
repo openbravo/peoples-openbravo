@@ -444,6 +444,9 @@
     getPending: function () {
       return OB.DEC.sub(this.getTotal(), this.getPayment());
     },
+    printPending: function () {
+      return OB.I18N.formatCurrency(this.getPending());
+    },
 
     getPaymentStatus: function () {
       var total = this.getTotal();
@@ -954,7 +957,6 @@
         this.save();
       }
     },
-
     adjustPayment: function () {
       var i, max, p;
       var payments = this.get('payments');
@@ -1029,14 +1031,16 @@
     },
 
     addPayment: function (payment) {
+      var payments, total;
       var i, max, p;
+
       if (!OB.DEC.isNumber(payment.get('amount'))) {
         alert(OB.I18N.getLabel('OBPOS_MsgPaymentAmountError'));
         return;
       }
 
-      var payments = this.get('payments');
-
+      payments = this.get('payments');
+      total = this.getTotal();
       if (!payment.get('paymentData')) {
         // search for an existing payment only if there is not paymentData info.
         // this avoids to merge for example card payments of different cards.
@@ -1047,7 +1051,7 @@
             if (p.get('rate') && p.get('rate') !== '1') {
               p.set('origAmount', OB.DEC.add(payment.get('origAmount'), OB.DEC.mul(p.get('origAmount'), p.get('rate'))));
             }
-            this.adjustPayment();
+            OB.UTIL.adjustPayment(total, this);
             return;
           }
         }
@@ -1057,7 +1061,7 @@
       }
       payment.set('date', new Date());
       payments.add(payment);
-      this.adjustPayment();
+      OB.UTIL.adjustPayment(total, this);
     },
 
     overpaymentExists: function () {
@@ -1242,6 +1246,8 @@
       order.set('isbeingprocessed', 'N');
       order.set('hasbeenpaid', 'Y');
       order.set('priceIncludesTax', model.priceIncludesTax);
+      order.set('checked', model.checked);
+
       if (model.isQuotation) {
         order.set('isQuotation', true);
         order.set('oldId', model.orderid);
@@ -1378,6 +1384,11 @@
         window.console.error(arguments);
       }, model.get('isLayaway'));
     },
+    addMultiReceipt: function (model) {
+      OB.Dal.save(model, function () {}, function () {
+        window.console.error(arguments);
+      }, model.get('isLayaway'));
+    },
 
     addNewQuotation: function () {
       var documentseq, documentseqstr;
@@ -1394,17 +1405,15 @@
       this.add(this.current);
       this.loadCurrent();
     },
-
+    deleteCurrentFromDatabase: function (orderToDelete) {
+      OB.Dal.remove(orderToDelete, function () {
+        return true;
+      }, function () {
+        OB.UTIL.showError('Error removing');
+      });
+    },
     deleteCurrent: function () {
       var isNew = false;
-
-      function deleteCurrentFromDatabase(orderToDelete) {
-        OB.Dal.remove(orderToDelete, function () {
-          return true;
-        }, function () {
-          OB.UTIL.showError('Error removing');
-        });
-      }
 
       if (this.current) {
         this.remove(this.current);
@@ -1447,7 +1456,103 @@
     }
 
   });
+  var MultiOrders = Backbone.Model.extend({
+    modelName: 'MultiOrders',
+    defaults: {
+      //isMultiOrders: false,
+      multiOrdersList: new Backbone.Collection(),
+      total: OB.DEC.Zero,
+      payment: OB.DEC.Zero,
+      pending: OB.DEC.Zero,
+      change: OB.DEC.Zero,
+      payments: new Backbone.Collection(),
+      openDrawer: false,
+      additionalInfo: null
+    },
+    addPayment: function (payment) {
+      var payments, total;
+      var i, max, p;
 
+      if (!OB.DEC.isNumber(payment.get('amount'))) {
+        alert(OB.I18N.getLabel('OBPOS_MsgPaymentAmountError'));
+        return;
+      }
+
+      payments = this.get('payments');
+      total = this.getTotal();
+      if (!payment.get('paymentData')) {
+        // search for an existing payment only if there is not paymentData info.
+        // this avoids to merge for example card payments of different cards.
+        for (i = 0, max = payments.length; i < max; i++) {
+          p = payments.at(i);
+          if (p.get('kind') === payment.get('kind') && !p.get('isPrePayment')) {
+            p.set('amount', OB.DEC.add(payment.get('amount'), p.get('amount')));
+            if (p.get('rate') && p.get('rate') !== '1') {
+              p.set('origAmount', OB.DEC.add(payment.get('origAmount'), OB.DEC.mul(p.get('origAmount'), p.get('rate'))));
+            }
+            OB.UTIL.adjustPayment(total, this);
+            return;
+          }
+        }
+      }
+      if (payment.get('openDrawer')) {
+        this.set('openDrawer', payment.get('openDrawer'));
+      }
+      payment.set('date', new Date());
+      payments.add(payment);
+      OB.UTIL.adjustPayment(total, this);
+    },
+    removePayment: function (payment) {
+      var payments = this.get('payments');
+      payments.remove(payment);
+      if (payment.get('openDrawer')) {
+        this.set('openDrawer', false);
+      }
+      OB.UTIL.adjustPayment(this.get('total'), this);
+    },
+    getTotal: function () {
+      return this.get('total');
+    },
+    getChange: function () {
+      return this.get('change');
+    },
+    getPayment: function () {
+      return this.get('payment');
+    },
+    getPending: function () {
+      return OB.DEC.sub(this.getTotal(), this.getPayment());
+    },
+    toInvoice: function (status) {
+      if (status === false){
+        this.unset('additionalInfo');
+        _.each(this.get('multiOrdersList').models, function (order) {
+          order.unset('generateInvoice');
+        }, this);
+        return;
+      }
+      this.set('additionalInfo', 'I');
+      _.each(this.get('multiOrdersList').models, function (order) {
+        order.set('generateInvoice', true);
+      }, this);
+    },
+    resetValues: function () {
+      //this.set('isMultiOrders', false);
+      this.get('multiOrdersList').reset();
+      this.set('total', OB.DEC.Zero);
+      this.set('payment', OB.DEC.Zero);
+      this.set('pending', OB.DEC.Zero);
+      this.set('change', OB.DEC.Zero);
+      this.get('payments').reset();
+      this.set('openDrawer', false);
+      this.set('additionalInfo', null);
+    },
+    hasDataInList: function () {
+      if (this.get('multiOrdersList') && this.get('multiOrdersList').length > 0) {
+        return true;
+      }
+      return false;
+    }
+  });
   var TaxLine = Backbone.Model.extend();
   OB.Data.Registry.registerModel(OrderLine);
   OB.Data.Registry.registerModel(PaymentLine);
@@ -1457,6 +1562,7 @@
   window.OB.Model.Order = Order;
   window.OB.Collection.OrderList = OrderList;
   window.OB.Model.TaxLine = TaxLine;
+  window.OB.Model.MultiOrders = MultiOrders;
 
   window.OB.Model.modelLoaders = [];
 }());

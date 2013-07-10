@@ -1178,9 +1178,9 @@ public class OrderLoader extends JSONProcessSimple {
       String paymentDocNo = getDocumentNo(paymentEntity, null, paymentDocType);
 
       // get date
-      Date calculatedDate = payment.has("date") ? OBMOBCUtils.calculateServerDate(
-          (String) payment.get("date"), jsonorder.getLong("timezoneOffset")) : OBMOBCUtils
-          .stripTime(new Date());
+      Date calculatedDate = (payment.has("date") && !payment.isNull("date")) ? OBMOBCUtils
+          .calculateServerDate((String) payment.get("date"), jsonorder.getLong("timezoneOffset"))
+          : OBMOBCUtils.stripTime(new Date());
 
       FIN_Payment finPayment = FIN_AddPayment.savePayment(null, true, paymentDocType, paymentDocNo,
           order.getBusinessPartner(), paymentType.getPaymentMethod().getPaymentMethod(), account,
