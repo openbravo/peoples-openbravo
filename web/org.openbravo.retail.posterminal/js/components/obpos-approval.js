@@ -31,38 +31,60 @@ enyo.kind({
     }
   },
   handlers: {
-    onCheckCredentials: 'checkCredentials'
+    onCheckCredentials: 'checkCredentials',
+    onUserImgClick: 'handleUserImgClick'
   },
 
   header: 'Approval required',
   //TODO: trl
   bodyContent: {
-    name: 'loginInputs',
-    classes: 'login-inputs-browser-compatible',
+    classes: 'login-header-row',
+    style: 'color:black; line-height: 20px;',
     components: [{
+      classes: 'span6',
       components: [{
-        classes: 'login-status-info',
-        style: 'float: left;',
-        name: 'connectStatus'
-      }, {
-        classes: 'login-status-info',
-        name: 'screenLockedLbl'
+        kind: 'Scroller',
+        thumb: true,
+        horizontal: 'hidden',
+        name: 'loginUserContainer',
+        classes: 'login-user-container',
+        style: 'background-color:#5A5A5A;',
+        content: ['.']
       }]
     }, {
+      classes: 'span6',
       components: [{
-        kind: 'enyo.Input',
-        type: 'text',
-        name: 'username',
-        classes: 'input-login',
-        onkeydown: 'inputKeydownHandler'
-      }]
-    }, {
-      components: [{
-        kind: 'enyo.Input',
-        type: 'password',
-        name: 'password',
-        classes: 'input-login',
-        onkeydown: 'inputKeydownHandler'
+        classes: 'login-inputs-container',
+        components: [{
+          name: 'loginInputs',
+          classes: 'login-inputs-browser-compatible',
+          components: [{
+            components: [{
+              classes: 'login-status-info',
+              style: 'float: left;',
+              name: 'connectStatus'
+            }, {
+              classes: 'login-status-info',
+              name: 'screenLockedLbl'
+            }]
+          }, {
+            components: [{
+              kind: 'enyo.Input',
+              type: 'text',
+              name: 'username',
+              classes: 'input-login',
+              onkeydown: 'inputKeydownHandler'
+            }]
+          }, {
+            components: [{
+              kind: 'enyo.Input',
+              type: 'password',
+              name: 'password',
+              classes: 'input-login',
+              onkeydown: 'inputKeydownHandler'
+            }]
+          }]
+        }]
       }]
     }]
   },
@@ -73,10 +95,78 @@ enyo.kind({
     }]
   },
 
+  handleUserImgClick: function (inSender, inEvent) {
+    var u = inEvent.originator.user;
+    this.$.bodyContent.$.username.setValue(u);
+    this.$.bodyContent.$.password.setValue('');
+    this.$.bodyContent.$.password.focus();
+    return true;
+  },
+
   initComponents: function () {
     this.inherited(arguments);
     this.$.bodyContent.$.username.attributes.placeholder = OB.I18N.getLabel('OBMOBC_LoginUserInput');
     this.$.bodyContent.$.password.attributes.placeholder = OB.I18N.getLabel('OBMOBC_LoginPasswordInput');
+
+    this.postRenderActions();
+  },
+
+  setUserImages: function (inSender, inResponse) {
+    var name = [],
+        userName = [],
+        image = [],
+        connected = [],
+        me = this,
+        jsonImgData, i;
+
+
+    if (!inResponse.data) {
+      OB.Dal.find(OB.Model.User, {}, function (users) {
+        var i, user, session;
+        for (i = 0; i < users.models.length; i++) {
+          user = users.models[i];
+          name.push(user.get('name'));
+          userName.push(user.get('name'));
+          connected.push(false);
+        }
+        me.renderUserButtons(name, userName, image, connected);
+      }, function () {
+        window.console.error(arguments);
+      });
+      return true;
+    }
+    jsonImgData = inResponse.data;
+    enyo.forEach(jsonImgData, function (v) {
+      name.push(v.name);
+      userName.push(v.userName);
+      image.push(v.image);
+    });
+    this.renderUserButtons(name, userName, image, connected);
+  },
+
+  renderUserButtons: function (name, userName, image) {
+    var i, target = this.$.bodyContent.$.loginUserContainer;
+    for (i = 0; i < name.length; i++) {
+      target.createComponent({
+        kind: 'OB.OBPOSLogin.UI.UserButton',
+        user: userName[i],
+        userImage: image[i],
+        showConnectionStatus: false
+      });
+    }
+    target.render();
+    return true;
+  },
+
+  postRenderActions: function () {
+    var params = OB.MobileApp.model.get('loginUtilsParams') || {};
+    params.appName = OB.MobileApp.model.get('appName');
+
+    params.command = 'userImages';
+    params.approvalType = this.approvalType;
+    new OB.OBPOSLogin.UI.LoginRequest({
+      url: OB.MobileApp.model.get('loginUtilsUrl')
+    }).response(this, 'setUserImages').go(params);
   },
 
   checkCredentials: function () {

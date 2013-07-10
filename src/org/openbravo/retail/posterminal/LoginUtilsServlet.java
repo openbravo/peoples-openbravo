@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2012-2013 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -12,6 +12,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
@@ -69,7 +70,9 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
     JSONArray data = new JSONArray();
     final String terminalName = request.getParameter("terminalName");
 
-    final String hqlUser = "select distinct user.name, user.username, user.id "
+    final String approvalType = request.getParameter("approvalType");
+
+    String hqlUser = "select distinct user.name, user.username, user.id "
         + "from ADUser user, ADUserRoles userRoles, ADRole role, "
         + "ADFormAccess formAccess, OBPOS_Applications terminal "
         + "where user.active = true and "
@@ -83,10 +86,29 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
         + "terminal.searchKey = :theTerminalSearchKey and "
         + "user.id = userRoles.userContact.id and " + "userRoles.role.id = role.id and "
         + "userRoles.role.id = formAccess.role.id and "
-        + "formAccess.specialForm.id = :webPOSFormId " + "order by user.name";
+        + "formAccess.specialForm.id = :webPOSFormId ";
+
+    if (!StringUtils.isEmpty(approvalType)) {
+      // checking supervisor users for sent approval type
+      hqlUser += "and exists (from ADPreference as p" + //
+          " where property = :approvalType" + //
+          "   and active = true" + //
+          "   and searchKey = 'Y'" + //
+          "   and (userContact = user" + //
+          "        or exists (from ADUserRoles r" + //
+          "                  where r.role = p.visibleAtRole" + //
+          "                    and r.userContact = user)))";
+    }
+
+    hqlUser += "order by user.name";
+
     Query qryUser = OBDal.getInstance().getSession().createQuery(hqlUser);
     qryUser.setParameter("theTerminalSearchKey", terminalName);
     qryUser.setParameter("webPOSFormId", "B7B7675269CD4D44B628A2C6CF01244F");
+
+    if (!StringUtils.isEmpty(approvalType)) {
+      qryUser.setParameter("approvalType", approvalType);
+    }
 
     for (Object qryUserObject : qryUser.list()) {
       final Object[] qryUserObjectItem = (Object[]) qryUserObject;
