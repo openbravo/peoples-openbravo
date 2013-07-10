@@ -47,6 +47,8 @@ public class CheckApproval extends JSONProcessSimple {
       } else {
         String whereClause = "as p" + //
             " where property = :type" + //
+            "   and active = true" + //
+            "   and searchKey = 'Y'" + //
             "   and (userContact = :user" + //
             "        or exists (from ADUserRoles r" + //
             "                  where r.role = p.visibleAtRole" + //
@@ -55,15 +57,12 @@ public class CheckApproval extends JSONProcessSimple {
             whereClause);
         qPreference.setNamedParameter("user", qUser.list().get(0));
         qPreference.setNamedParameter("type", type);
-        if (qPreference.count() > 0) {
-          result.put("status", 0);
-          result.put("data", "ok");
-        } else {
-          result.put("status", 1);
-          JSONObject jsonError = new JSONObject();
-          jsonError.put("message", "missing pref");
-          result.put("error", jsonError);
-        }
+
+        result.put("status", 0);
+        JSONObject jsonData = new JSONObject();
+        jsonData.put("userId", qUser.list().get(0).getId());
+        jsonData.put("canApprove", qPreference.count() > 0);
+        result.put("data", jsonData);
       }
       return result;
     } finally {
