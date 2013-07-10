@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+  <database name="TABLE OBPOS_ORDER_APPROVAL">
+    <table name="OBPOS_ORDER_APPROVAL" primaryKey="OBPOS_ORDER_APPROVAL_PK">
+      <column name="OBPOS_ORDER_APPROVAL_ID" primaryKey="true" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="AD_ORG_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="ISACTIVE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="CREATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false">
+        <default><![CDATA[SYSDATE]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="CREATEDBY" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="UPDATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false">
+        <default><![CDATA[SYSDATE]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="UPDATEDBY" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="C_ORDER_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="AD_USER_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="APPROVAL_TYPE" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <foreign-key foreignTable="AD_CLIENT" name="OBPOS_ORDERAPPR_CLIENT">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="OBPOS_ORDERAPPR_ORG">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_USER" name="OBPOS_ORDERAPPR_USER">
+        <reference local="AD_USER_ID" foreign="AD_USER_ID"/>
+      </foreign-key>
+      <index name="OBPOS_ORDERAPPR_ORDER_IDX" unique="false">
+        <index-column name="C_ORDER_ID"/>
+      </index>
+      <check name="OBPOS_ORDERAPPR_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+    </table>
+  </database>

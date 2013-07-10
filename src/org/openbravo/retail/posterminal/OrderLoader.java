@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2012-2013 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -291,6 +291,10 @@ public class OrderLoader extends JSONProcessSimple {
         // Invoice lines
         createInvoiceLines(invoice, order, jsonorder, orderlines, lineReferences);
       }
+
+      long t116 = System.currentTimeMillis();
+      createApprovals(order, jsonorder);
+
       t11 = System.currentTimeMillis();
       if (shipment != null) {
         OBDal.getInstance().save(shipment);
@@ -300,7 +304,8 @@ public class OrderLoader extends JSONProcessSimple {
       updateAuditInfo(order, invoice, jsonorder);
       t3 = System.currentTimeMillis();
       log.debug("Creation of bobs. Order: " + (t112 - t111) + "; Orderlines: " + (t113 - t112)
-          + "; Shipment: " + (t115 - t113) + "; Invoice: " + (t11 - t115));
+          + "; Shipment: " + (t115 - t113) + "; Invoice: " + (t116 - t115) + "; Approvals"
+          + (t11 - t116));
     } finally {
       TriggerHandler.getInstance().enable();
     }
@@ -1218,6 +1223,36 @@ public class OrderLoader extends JSONProcessSimple {
       OBContext.restorePreviousMode();
     }
 
+  }
+
+  protected void createApprovals(Order order, JSONObject jsonorder) {
+    if (!jsonorder.has("approvals")) {
+      return;
+    }
+    Entity approvalEntity = ModelProvider.getInstance().getEntity(OrderApproval.class);
+    try {
+      JSONArray approvals = jsonorder.getJSONArray("approvals");
+      for (int i = 0; i < approvals.length(); i++) {
+        JSONObject jsonApproval = approvals.getJSONObject(i);
+
+        OrderApproval approval = OBProvider.getInstance().get(OrderApproval.class);
+
+        JSONPropertyToEntity.fillBobFromJSON(approvalEntity, approval, jsonApproval,
+            jsonorder.getLong("timezoneOffset"));
+
+        approval.setOrder(order);
+
+        Long value = jsonorder.getLong("created");
+        Date creationDate = new Date(value);
+        approval.setCreationDate(creationDate);
+        approval.setUpdated(creationDate);
+
+        OBDal.getInstance().save(approval);
+      }
+
+    } catch (JSONException e) {
+      log.error("Error creating approvals for order" + order, e);
+    }
   }
 
   protected void fillBobFromJSON(Entity entity, BaseOBObject bob, JSONObject json)

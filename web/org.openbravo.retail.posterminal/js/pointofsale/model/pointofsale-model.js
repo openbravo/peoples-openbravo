@@ -318,7 +318,13 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
     }
   },
 
+  /**
+   * Generic approval checker. It validates user/password can approve the approvalType.
+   * It can work online in case that user has done at least once the same approvalType
+   * in this same browser. Data regarding privileged users is stored in supervisor table 
+   */
   checkApproval: function (approvalType, username, password) {
+    console.log('check')
     OB.Dal.initCache(OB.Model.Supervisor, [], null, null);
     if (OB.MobileApp.model.get('connectedToERP')) {
       new OB.DS.Process('org.openbravo.retail.posterminal.utility.CheckApproval').exec({
@@ -329,7 +335,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
         var approved = false;
         if (response.exception) {
           OB.UTIL.showError(response.exception.message);
-          approved = false;
+          this.approvedTicket(false);
         } else {
           approved = response.canApprove;
           if (!approved) {
@@ -379,11 +385,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
 
               OB.Dal.save(supervisor);
             }
+            this.approvedTicket(approved, supervisor, approvalType);
           }));
         }
-        this.trigger('approvalChecked', {
-          approved: approved
-        });
       }));
     } else { // offline
       console.log('offline')
@@ -405,10 +409,47 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
             alert('incorrect password');
           }
         }
-        this.trigger('approvalChecked', {
-          approved: approved
-        });
+        this.approvedTicket(approved, supervisor, approvalType);
       }), function () {});
     }
+  },
+
+  /**
+   * Approval final stage. Where approvalChecked event is triggered, with approved
+   * property set to true or false regarding if approval was finally granted. In 
+   * case of granted approval, the approval is added to the order so it can be saved
+   * in backend for audit purposes.
+   */
+  approvedTicket: function (approved, supervisor, approvalType) {
+    var order = this.get('order'),
+        newApprovals = [],
+        approvals, approval, i;
+
+
+    approvals = order.get('approvals') || [];
+
+    for (i = 0; i < approvals.length; i++) {
+      // reset approvals
+      if (approvals[i].approvalType !== approvalType) {
+        newApprovals.push(approvals[i]);
+      }
+    }
+
+    if (approved) {
+      date = new Date();
+      date = date.getTime();
+      approval = {
+        approvalType: approvalType,
+        user: supervisor.get('id'),
+        created: (new Date()).getTime()
+      }
+      newApprovals.push(approval);
+      order.set('approvals', newApprovals);
+    }
+
+
+    this.trigger('approvalChecked', {
+      approved: approved
+    });
   }
 });

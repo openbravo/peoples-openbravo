@@ -511,6 +511,7 @@
       this.set('isLayaway', false);
       this.set('isEditable', true);
       this.set('openDrawer', false);
+      this.set('approvals', []);
     },
 
     clearWith: function (_order) {
