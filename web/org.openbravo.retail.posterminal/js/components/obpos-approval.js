@@ -35,53 +35,43 @@ enyo.kind({
     onUserImgClick: 'handleUserImgClick'
   },
 
-  header: 'Approval required',
-  //TODO: trl
+  i18nHeader: 'OBPOS_ApprovalRequiredTitle',
   bodyContent: {
-    classes: 'login-header-row',
-    style: 'color:black; line-height: 20px;',
     components: [{
-      classes: 'span6',
-      components: [{
-        kind: 'Scroller',
-        thumb: true,
-        horizontal: 'hidden',
-        name: 'loginUserContainer',
-        classes: 'login-user-container',
-        style: 'background-color:#5A5A5A;',
-        content: ['.']
-      }]
+      name: 'explainApprovalTxt',
     }, {
-      classes: 'span6',
+      name: 'explainCommonTxt'
+    }, {
+      classes: 'login-header-row',
+      style: 'color:black; line-height: 20px;',
       components: [{
-        classes: 'login-inputs-container',
+        classes: 'span6',
         components: [{
-          name: 'loginInputs',
-          classes: 'login-inputs-browser-compatible',
+          kind: 'Scroller',
+          thumb: true,
+          horizontal: 'hidden',
+          name: 'loginUserContainer',
+          classes: 'login-user-container',
+          style: 'background-color:#5A5A5A;',
+          content: ['.']
+        }]
+      }, {
+        classes: 'span6',
+        components: [{
+          classes: 'login-inputs-container',
           components: [{
+            name: 'loginInputs',
+            classes: 'login-inputs-browser-compatible',
             components: [{
-              classes: 'login-status-info',
-              style: 'float: left;',
-              name: 'connectStatus'
+              components: [{
+                kind: 'OB.UTIL.Approval.Input',
+                name: 'username'
+              }]
             }, {
-              classes: 'login-status-info',
-              name: 'screenLockedLbl'
-            }]
-          }, {
-            components: [{
-              kind: 'enyo.Input',
-              type: 'text',
-              name: 'username',
-              classes: 'input-login',
-              onkeydown: 'inputKeydownHandler'
-            }]
-          }, {
-            components: [{
-              kind: 'enyo.Input',
-              type: 'password',
-              name: 'password',
-              classes: 'input-login',
-              onkeydown: 'inputKeydownHandler'
+              components: [{
+                kind: 'OB.UTIL.Approval.Input',
+                name: 'password'
+              }]
             }]
           }]
         }]
@@ -107,6 +97,12 @@ enyo.kind({
     this.inherited(arguments);
     this.$.bodyContent.$.username.attributes.placeholder = OB.I18N.getLabel('OBMOBC_LoginUserInput');
     this.$.bodyContent.$.password.attributes.placeholder = OB.I18N.getLabel('OBMOBC_LoginPasswordInput');
+
+    if (OB.I18N.labels[this.approvalType]) {
+      this.$.bodyContent.$.explainApprovalTxt.setContent(OB.I18N.getLabel(this.approvalType));
+    }
+
+    this.$.bodyContent.$.explainCommonTxt.setContent(OB.I18N.getLabel('OBPOS_ApprovalTextHeader'));
 
     this.postRenderActions();
   },
@@ -170,8 +166,15 @@ enyo.kind({
   },
 
   checkCredentials: function () {
-    this.model.checkApproval(this.approvalType, this.$.bodyContent.$.username.getValue(), this.$.bodyContent.$.password.getValue());
-    this.waterfall('onHideThisPopup', {});
+    var u = this.$.bodyContent.$.username.getValue(),
+        p = this.$.bodyContent.$.password.getValue();
+
+    if (!u || !p) {
+      alert(OB.I18N.getLabel('OBPOS_EmptyUserPassword'));
+    } else {
+      this.model.checkApproval(this.approvalType, u, p);
+      this.waterfall('onHideThisPopup', {});
+    }
   }
 });
 
@@ -184,5 +187,26 @@ enyo.kind({
   },
   tap: function () {
     this.doCheckCredentials();
+  }
+});
+
+enyo.kind({
+  name: 'OB.UTIL.Approval.Input',
+  kind: 'enyo.Input',
+  type: 'text',
+  classes: 'input-login',
+  handlers: {
+    onkeydown: 'inputKeydownHandler'
+  },
+  events: {
+    onCheckCredentials: ''
+  },
+  inputKeydownHandler: function (inSender, inEvent) {
+    var keyCode = inEvent.keyCode;
+    if (keyCode === 13) { //Handle ENTER key
+      this.doCheckCredentials();
+      return true;
+    }
+    return false;
   }
 });

@@ -268,7 +268,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
         discountsToCheck = [],
         requiresApproval = false,
         i;
-    console.log('checkPaymentApproval');
 
     if (OB.POS.modelterminal.hasPermission('OBPOS_approval.discounts')) {
       // current user is a supervisor, no need to check further permissions
@@ -302,7 +301,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
             break;
           }
         }
-        console.log('requires', requiresApproval);
         if (requiresApproval) {
           OB.UTIL.Approval.requestApproval(this, 'OBPOS_approval.discounts');
         } else {
@@ -324,7 +322,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
    * in this same browser. Data regarding privileged users is stored in supervisor table 
    */
   checkApproval: function (approvalType, username, password) {
-    console.log('check')
     OB.Dal.initCache(OB.Model.Supervisor, [], null, null);
     if (OB.MobileApp.model.get('connectedToERP')) {
       new OB.DS.Process('org.openbravo.retail.posterminal.utility.CheckApproval').exec({
@@ -339,7 +336,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
         } else {
           approved = response.canApprove;
           if (!approved) {
-            OB.UTIL.showError("User cannot approve");
+            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_UserCannotApprove'));
           }
 
           // saving supervisor in local so next time it is possible to approve offline
@@ -390,23 +387,22 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
         }
       }));
     } else { // offline
-      console.log('offline')
       OB.Dal.find(OB.Model.Supervisor, {
         'name': username
       }, enyo.bind(this, function (users) {
         var supervisor, approved = false;
         if (users.models.length === 0) {
-          alert(OB.I18N.getLabel('No offline user'));
+          alert(OB.I18N.getLabel('OBPOS_OfflineSupervisorNotRegistered'));
         } else {
           supervisor = users.models[0];
           if (supervisor.get('password') === OB.MobileApp.model.generate_sha1(password + supervisor.get('created'))) {
             if (_.contains(JSON.parse(supervisor.get('permissions')), approvalType)) {
               approved = true;
             } else {
-              OB.UTIL.showError('User cannot approve');
+              OB.UTIL.showError(OB.I18N.getLabel('OBPOS_UserCannotApprove'));
             }
           } else {
-            alert('incorrect password');
+            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_InvalidUserPassword'));
           }
         }
         this.approvedTicket(approved, supervisor, approvalType);

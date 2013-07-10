@@ -18,6 +18,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.domain.Preference;
 import org.openbravo.retail.posterminal.JSONProcessSimple;
@@ -42,7 +43,7 @@ public class CheckApproval extends JSONProcessSimple {
         System.out.println();
         result.put("status", 1);
         JSONObject jsonError = new JSONObject();
-        jsonError.put("message", "invalid user/password");
+        jsonError.put("message", OBMessageUtils.getI18NMessage("OBPOS_InvalidUserPassword", null));
         result.put("error", jsonError);
       } else {
         String whereClause = "as p" + //
