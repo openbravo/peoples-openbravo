@@ -129,6 +129,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "model/taxRate",
         "model/promotions",
 
+        "model/obpos-supervisor-model",
+
         // Point of sale
         "pointofsale/model/pointofsale-print",
         "pointofsale/model/pointofsale-model",
