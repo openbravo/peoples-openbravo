@@ -269,6 +269,15 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
         requiresApproval = false,
         i;
     console.log('checkPaymentApproval');
+
+    if (OB.POS.modelterminal.hasPermission('OBPOS_approval.discounts')) {
+      // current user is a supervisor, no need to check further permissions
+      this.trigger('approvalChecked', {
+        approved: true
+      });
+      return;
+    }
+
     this.get('order').get('lines').each(function (l) {
       var p, promotions;
       promotions = l.get('promotions');
