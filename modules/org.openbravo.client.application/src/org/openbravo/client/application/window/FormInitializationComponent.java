@@ -516,10 +516,17 @@ public class FormInitializationComponent extends BaseActionHandler {
 
   private void setSessionAttributesFromParserResult(DynamicExpressionParser parser,
       Map<String, String> sessionAttributesMap, String windowId) {
+    String attribute = null, attrValue = null;
     for (String attrName : parser.getSessionAttributes()) {
       if (!sessionAttributesMap.containsKey(attrName)) {
-        final String attrValue = Utility.getContext(new DalConnectionProvider(false),
-            RequestContext.get().getVariablesSecureApp(), attrName, windowId);
+        if (attrName.startsWith("#")) {
+          attribute = attrName.substring(1, attrName.length());
+          attrValue = Utility.getContext(new DalConnectionProvider(false), RequestContext.get()
+              .getVariablesSecureApp(), attribute, windowId);
+        } else {
+          attrValue = Utility.getContext(new DalConnectionProvider(false), RequestContext.get()
+              .getVariablesSecureApp(), attrName, windowId);
+        }
         sessionAttributesMap.put(attrName.startsWith("#") ? attrName.replace("#", "_") : attrName,
             attrValue);
       }
