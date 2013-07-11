@@ -12,7 +12,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2012 Openbravo SLU
+* All portions are Copyright (C) 2001-2013 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************
@@ -369,6 +369,12 @@ export.database: exports database structure and data to xml files.
 
   <target name="compile.complete" depends="init, core.lib, wad.lib, trl.lib">
     <ant dir="${base.src}" target="compile.complete" inheritAll="true" inheritRefs="true" />
+  </target>
+
+  <target name="migrate.attachments" depends="init">
+    <java classname="org.openbravo.erpCommon.utility.MigrateAttachments" fork="true" failonerror="yes" jvm="${env.JAVA_HOME}/bin/java">
+      <classpath refid="project.class.path" />
+    </java>
   </target>
 
   <target name="smartbuild" depends="init">

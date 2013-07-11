@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2011 Openbravo SLU
+ * All portions are Copyright (C) 2001-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -34,6 +34,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItem;
+import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
@@ -45,8 +46,10 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
 import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.utility.Attachment;
 import org.openbravo.utils.FileUtility;
@@ -54,6 +57,7 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class TabAttachments extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
+  private static Logger log = Logger.getLogger(TabAttachments.class);
 
   @Override
   public void init(ServletConfig config) {
@@ -282,7 +286,7 @@ public class TabAttachments extends HttpSecureAppServlet {
   private OBError insert(VariablesSecureApp vars, String strFileReference, String tableId,
       String key, String strDataType, String strText) throws IOException, ServletException {
 
-    String cFileId = strFileReference;
+    String cFileId = strFileReference, fileDir = null, path = null;
     OBError myMessage = null;
     myMessage = new OBError();
     myMessage.setTitle("");
@@ -290,6 +294,7 @@ public class TabAttachments extends HttpSecureAppServlet {
     if (log4j.isDebugEnabled())
       log4j.debug("Deleting records");
     Connection conn = null;
+    fileDir = getAttachmentDirectoryForNewAttachments(tableId, key);
     try {
       conn = this.getTransactionConnection();
       final String inpName = "inpname";
@@ -316,17 +321,18 @@ public class TabAttachments extends HttpSecureAppServlet {
         }
       }
       if (!fileExists) {
+        path = getPath(fileDir);
         // We only insert a new record if there is no record for this file
         TabAttachmentsData.insert(conn, this, cFileId, vars.getClient(), vars.getOrg(),
-            vars.getUser(), tableId, key, strDataType, strText, strName);
+            vars.getUser(), tableId, key, strDataType, strText, strName, path);
       } else {
         // We update the existing record
         TabAttachmentsData.update(this, vars.getUser(), strDataType, strText, cFileId);
       }
       try {
         // FIXME: Get the directory separator from Java runtime
-        final File uploadedDir = new File(globalParameters.strFTPDirectory + "/" + tableId + "-"
-            + key);
+
+        final File uploadedDir = new File(globalParameters.strFTPDirectory + "/" + fileDir);
         if (!uploadedDir.exists())
           uploadedDir.mkdirs();
         final File uploadedFile = new File(uploadedDir, strName);
@@ -543,16 +549,17 @@ public class TabAttachments extends HttpSecureAppServlet {
 
   private void printPageFile(HttpServletResponse response, VariablesSecureApp vars,
       String strFileReference) throws IOException, ServletException {
+    String fileDir = null;
     final TabAttachmentsData[] data = TabAttachmentsData.selectEdit(this, strFileReference);
     if (data == null || data.length == 0)
       throw new ServletException("Missing file");
     FileUtility f = new FileUtility();
+    fileDir = getAttachmentDirectory(data[0].adTableId, data[0].adRecordId, data[0].name);
     // FIXME: Get the directory separator from Java runtime
-    final File file = new File(globalParameters.strFTPDirectory + "/" + data[0].adTableId + "-"
-        + data[0].adRecordId, data[0].name);
+    final File file = new File(globalParameters.strFTPDirectory + "/" + fileDir, data[0].name);
     if (file.exists())
-      f = new FileUtility(globalParameters.strFTPDirectory + "/" + data[0].adTableId + "-"
-          + data[0].adRecordId, data[0].name, false, true);
+      f = new FileUtility(globalParameters.strFTPDirectory + "/" + fileDir, data[0].name, false,
+          true);
     else
       f = new FileUtility(globalParameters.strFTPDirectory, strFileReference, false, true);
     if (data[0].datatypeContent.equals(""))
@@ -573,6 +580,122 @@ public class TabAttachments extends HttpSecureAppServlet {
     final PrintWriter out = response.getWriter();
     out.print(Utility.hasTabAttachments(this, vars, strTab, recordId));
     out.close();
+  }
+
+  /**
+   * Provides the directory in which the attachment has to be stored. For example for tableId "259",
+   * recordId "0F3A10E019754BACA5844387FB37B0D5", the file directory returned is
+   * "259/0F3/A10/E01/975/4BA/CA5/844/387/FB3/7B0/D5". In case 'SaveAttachmentsOldWay' preference is
+   * enabled then the file directory returned is "259-0F3A10E019754BACA5844387FB37B0D5"
+   * 
+   * @param tableId
+   *          UUID of the table
+   * 
+   * @param recordId
+   *          UUID of the record
+   * 
+   * @return file directory to save the attachment
+   */
+  public static String getAttachmentDirectoryForNewAttachments(String tableID, String recordID) {
+    String fileDir = tableID + "-" + recordID;
+    String saveAttachmentsOldWay = null;
+    try {
+      saveAttachmentsOldWay = Preferences.getPreferenceValue("SaveAttachmentsOldWay", true,
+          OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
+              .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
+              .getOBContext().getRole(), null);
+    } catch (PropertyException e) {
+      // if property not found, save attachments the new way
+      saveAttachmentsOldWay = "N";
+    }
+
+    if ("Y".equals(saveAttachmentsOldWay)) {
+      return fileDir;
+    } else {
+      fileDir = tableID + "/" + splitPath(recordID);
+    }
+    return fileDir;
+  }
+
+  /**
+   * Provides the directory in which the attachment is stored. For example for tableId "259",
+   * recordId "0F3A10E019754BACA5844387FB37B0D5", and fileName "test.txt" the file directory
+   * returned is "259/0F3/A10/E01/975/4BA/CA5/844/387/FB3/7B0/D5". In case 'SaveAttachmentsOldWay'
+   * preference is enabled then the file directory returned is
+   * "259-0F3A10E019754BACA5844387FB37B0D5"
+   * 
+   * @param tableId
+   *          UUID of the table
+   * 
+   * @param recordId
+   *          UUID of the record
+   * 
+   * @param fileName
+   *          Name of the file
+   * 
+   * @return file directory in which the attachment is stored
+   */
+  public static String getAttachmentDirectory(String tableID, String recordID, String fileName) {
+    String fileDir = tableID + "-" + recordID;
+    Table attachmentTable = null;
+    try {
+      OBContext.setAdminMode();
+      attachmentTable = OBDal.getInstance().get(Table.class, tableID);
+      OBCriteria<Attachment> attachmentCriteria = OBDal.getInstance().createCriteria(
+          Attachment.class);
+      attachmentCriteria.add(Restrictions.eq(Attachment.PROPERTY_RECORD, recordID));
+      attachmentCriteria.add(Restrictions.eq(Attachment.PROPERTY_TABLE, attachmentTable));
+      attachmentCriteria.add(Restrictions.eq(Attachment.PROPERTY_NAME, fileName));
+
+      if (attachmentCriteria.count() > 0) {
+        Attachment attachment = attachmentCriteria.list().get(0);
+        if (attachment.getPath() != null) {
+          fileDir = attachment.getPath();
+        }
+      }
+    } catch (Exception e) {
+      log.error(e.getMessage(), e);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    return fileDir;
+  }
+
+  /**
+   * Provides the value to be saved in path field in c_file. The path field is used to get the
+   * location of the attachment. For example 259/0F3/A10/E01/975/4BA/CA5/844/387/FB3/7B0/D5. This
+   * path is relative to the attachments folder
+   * 
+   * @param fileDirectory
+   *          the directory that is retrieved from getFileDirectory()
+   * 
+   * @return value to be saved in path in c_file
+   */
+  public static String getPath(String fileDirectory) {
+    if (fileDirectory != null && fileDirectory.contains("-")) {
+      return null;
+    } else {
+      return fileDirectory;
+    }
+  }
+
+  /**
+   * Splits the path name component so that the resulting path name is 3 characters long sub
+   * directories. For example 12345 is splitted to 123/45
+   * 
+   * @param origname
+   *          Original name
+   * @return splitted name.
+   */
+  public static String splitPath(final String origname) {
+    String newname = "";
+    for (int i = 0; i < origname.length(); i += 3) {
+      if (i != 0) {
+        newname += "/";
+      }
+      newname += origname.substring(i, Math.min(i + 3, origname.length()));
+    }
+    return newname;
   }
 
   @Override
