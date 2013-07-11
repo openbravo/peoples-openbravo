@@ -1108,7 +1108,8 @@ isc.OBStandardView.addProperties({
   editRecord: function (record, preventFocus, focusFieldName) {
     var rowNum,
     // at this point the time fields of the record are formatted in local time
-    localTime = true;
+    localTime = true,
+        isRecordSelected = false;
     this.messageBar.hide();
 
     if (!this.isShowingForm) {
@@ -1116,8 +1117,14 @@ isc.OBStandardView.addProperties({
     }
 
     if (!record) { //  new case
+      if (this.viewGrid.getSelectedRecords().length !== 0) {
+        //child views have to be refreshed if there are any records selected.
+        isRecordSelected = true;
+      }
       this.viewGrid.deselectAllRecords();
-      this.refreshChildViews();
+      if (isRecordSelected) {
+        this.refreshChildViews();
+      }
       this.viewForm.editNewRecord(preventFocus);
     } else {
       this.viewGrid.doSelectSingleRecord(record);
