@@ -26,8 +26,7 @@
     <FIELD id="fieldRownum1">rownum</FIELD>
     <FIELD id="fieldSelectedTransactionId" attribute="value">markSelectedId</FIELD>
     <FUNCTION id="funcEvenOddRowxx" name="MODULE" arg1="fieldRownum1" arg2="param2" format="integerEdition" attribute="class" replace="yy"/>
-    <FIELD id="fieldTransactionId" boolean="checked" withId="fieldSelectedTransactionId">transactionId</FIELD>
-    <FIELD id="fieldTransactionId" attribute="value">transactionId</FIELD>
+
     <FIELD id="fieldTransactionDate">transactionDate</FIELD>
     <FIELD id="fieldBusinessPartner">businessPartnerTrunc</FIELD>
     <FIELD id="fieldBusinessPartner" attribute="title" replace="zz">businessPartner</FIELD>
@@ -42,7 +41,8 @@
     <FIELD id="fieldRecordDepositAmt" attribute="value" format="euroEdition">depositAmount</FIELD>
     <FIELD id="fieldRecordPaymentAmt" attribute="name" replace="xx">transactionId</FIELD>
     <FIELD id="fieldRecordDepositAmt" attribute="name" replace="xx">transactionId</FIELD>
-   
+    
+    <FIELD id="fieldTransactionId_xx" boolean="checked" withId="fieldSelectedTransactionId">transactionId</FIELD>
     <FIELD id="fieldTransactionId_xx" attribute="value">transactionId</FIELD>
     <FIELD id="fieldTransactionId_xx" attribute="id">transactionId</FIELD>
     <FIELD id="fieldTransactionId_xx" attribute="onclick" replace="xx">transactionId</FIELD>
