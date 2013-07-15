@@ -588,10 +588,10 @@ public class TabAttachments extends HttpSecureAppServlet {
    * "259/0F3/A10/E01/975/4BA/CA5/844/387/FB3/7B0/D5". In case 'SaveAttachmentsOldWay' preference is
    * enabled then the file directory returned is "259-0F3A10E019754BACA5844387FB37B0D5"
    * 
-   * @param tableId
+   * @param tableID
    *          UUID of the table
    * 
-   * @param recordId
+   * @param recordID
    *          UUID of the record
    * 
    * @return file directory to save the attachment
@@ -624,10 +624,10 @@ public class TabAttachments extends HttpSecureAppServlet {
    * preference is enabled then the file directory returned is
    * "259-0F3A10E019754BACA5844387FB37B0D5"
    * 
-   * @param tableId
+   * @param tableID
    *          UUID of the table
    * 
-   * @param recordId
+   * @param recordID
    *          UUID of the record
    * 
    * @param fileName
