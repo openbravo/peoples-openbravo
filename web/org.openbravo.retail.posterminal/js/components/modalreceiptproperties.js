@@ -71,6 +71,19 @@ enyo.kind({
     permissionOption: 'OBPOS_SR.comboOrModal'
   }],
 
+  newOrderCreated: function () {
+    var p, att;
+    // reset all properties
+    for (p in this.newAttributes) {
+      if (this.newAttributes.hasOwnProperty(p)) {
+        att = this.$.bodyContent.$.attributes.$['line_' + this.newAttributes[p].name].$.newAttribute.$[this.newAttributes[p].name];
+        if (att && att.setValue) {
+          att.setValue('');
+        }
+      }
+    }
+  },
+
   init: function (model) {
     this.setHeader(OB.I18N.getLabel('OBPOS_ReceiptPropertiesDialogTitle'));
 

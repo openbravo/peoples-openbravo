@@ -279,6 +279,7 @@ enyo.kind({
     }
   },
   addNewOrder: function (inSender, inEvent) {
+    this.$.receiptPropertiesDialog.newOrderCreated();
     this.model.get('orderList').addNewOrder();
     return true;
   },
@@ -651,11 +652,17 @@ enyo.kind({
     return true;
   },
   setProperty: function (inSender, inEvent) {
+    var i;
     if (this.model.get('order').get('isEditable') === false) {
       this.doShowPopup({
         popup: 'modalNotEditableOrder'
       });
       return true;
+    }
+    if (inEvent.extraProperties) {
+      for (i = 0; i < inEvent.extraProperties.length; i++) {
+        this.model.get('order').setProperty(inEvent.extraProperties[i], inEvent.value);
+      }
     }
     this.model.get('order').setProperty(inEvent.property, inEvent.value);
     this.model.get('orderList').saveCurrent();
