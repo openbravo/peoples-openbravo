@@ -348,9 +348,9 @@
 
       var totalnet = this.get('lines').reduce(function (memo, e) {
         var netLine = e.get('discountedNet');
-        if(e.get('netfull')){
+        if (e.get('netfull')) {
           return memo.add(new BigDecimal(String(e.get('netfull'))));
-        }else{
+        } else {
           return memo.add(new BigDecimal(String(e.get('net'))));
         }
       }, new BigDecimal(String(OB.DEC.Zero)));
@@ -1232,22 +1232,15 @@
 
       //model.set('id', null);
       lines = new Backbone.Collection();
-      order.set('documentNo', model.documentNo);
-      order.set('isEditable', false);
-      order.set('client', model.client);
-      order.set('organization', model.organization);
-      order.set('posTerminal', model.posterminal);
-      order.set('posTerminal$_identifier', model.posterminalidentifier);
-      order.set('warehouse', model.warehouse);
-      order.set('currency', model.currency);
-      order.set('priceList', model.pricelist);
-      order.set('salesRepresentative', model.salesRepresentative);
-      order.set('currency$_identifier', model.currency_identifier);
+
+      // set all properties coming from the model
+      order.set(model);
+
+      // setting specific properties
       order.set('isbeingprocessed', 'N');
       order.set('hasbeenpaid', 'Y');
-      order.set('priceIncludesTax', model.priceIncludesTax);
-      order.set('checked', model.checked);
-
+      order.set('isEditable', false);
+      order.set('checked', model.checked); //TODO: what is this for, where it comes from?
       if (model.isQuotation) {
         order.set('isQuotation', true);
         order.set('oldId', model.orderid);
@@ -1270,8 +1263,6 @@
           order.set('orderType', 1);
         }
       }
-
-
 
       bpId = model.businessPartner;
       OB.Dal.get(OB.Model.BusinessPartner, bpId, function (bp) {
@@ -1523,7 +1514,7 @@
       return OB.DEC.sub(this.getTotal(), this.getPayment());
     },
     toInvoice: function (status) {
-      if (status === false){
+      if (status === false) {
         this.unset('additionalInfo');
         _.each(this.get('multiOrdersList').models, function (order) {
           order.unset('generateInvoice');

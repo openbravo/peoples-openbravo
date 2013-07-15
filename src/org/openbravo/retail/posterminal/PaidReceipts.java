@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2012-2013 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -12,6 +12,9 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
 import javax.servlet.ServletException;
 
 import org.codehaus.jettison.json.JSONArray;
@@ -21,73 +24,52 @@ import org.hibernate.Query;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.mobile.core.model.HQLPropertyList;
+import org.openbravo.mobile.core.model.ModelExtension;
+import org.openbravo.mobile.core.model.ModelExtensionUtils;
 import org.openbravo.model.common.order.OrderLineOffer;
 import org.openbravo.service.json.JsonConstants;
 
 public class PaidReceipts extends JSONProcessSimple {
+  public static final String paidReceiptsPropertyExtension = "PRExtension";
+
+  @Inject
+  @Any
+  @Qualifier(paidReceiptsPropertyExtension)
+  private Instance<ModelExtension> extensions;
 
   @Override
   public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {
-
     JSONArray respArray = new JSONArray();
     OBContext.setAdminMode(true);
     String orderid = jsonsent.getString("orderid");
 
-    String hqlPaidReceipts = "select ord.id as id, ord.documentNo as documentNo, ord.orderDate as orderDate, "
-        + "ord.businessPartner.id as businessPartner, ord.grandTotalAmount as totalamount,  "
-        + "ord.salesRepresentative.name as salesRepresentative_identifier, ord.documentType.name as documenttype, "
-        + "ord.warehouse.id as warehouse, ord.currency.iSOCode as currency, ord.obposApplications.name as posterminalidentifier, "
-        + "ord.businessPartner.name as businessPartner_identifier, ord.currency.id as currency, ord.priceList.id as priceList, "
-        + "ord.salesRepresentative.id as salesRepresentative, ord.organization.id as organization, ord.obposApplications.id as obposApplications, "
-        + "ord.client.id as client, ord.documentType.id as documenttypeid, ord.obposApplications.obposTerminaltype.documentTypeForQuotations.id as docTypeQuotation, ord.summedLineAmount as totalNetAmount, ord.deliveryStatus as deliveryStatus, ord.priceList.priceIncludesTax as priceIncludesTax from Order as ord where ord.id=? and ord.obposApplications is not null";
+    HQLPropertyList hqlProperties = ModelExtensionUtils.getPropertyExtensions(extensions);
+
+    String hqlPaidReceipts = "select " + hqlProperties.getHqlSelect() + //
+        " from Order as ord " + //
+        "where ord.id = :orderId " + //
+        "  and ord.obposApplications is not null";
 
     Query paidReceiptsQuery = OBDal.getInstance().getSession().createQuery(hqlPaidReceipts);
-    paidReceiptsQuery.setString(0, orderid);
+    paidReceiptsQuery.setString("orderId", orderid);
 
     for (Object obj : paidReceiptsQuery.list()) {
       Object[] objpaidReceipts = (Object[]) obj;
-      JSONObject paidReceipt = new JSONObject();
-      paidReceipt.put("orderid", objpaidReceipts[0]);
-      paidReceipt.put("documentNo", objpaidReceipts[1]);
-      paidReceipt.put("orderDate", (objpaidReceipts[2]));
-      paidReceipt.put("businessPartner", objpaidReceipts[3]);
-      paidReceipt.put("totalamount", objpaidReceipts[4]);
-      paidReceipt.put("salesrepresentative_identifier", objpaidReceipts[5]);
-      paidReceipt.put("documenttype", objpaidReceipts[6]);
-      paidReceipt.put("documenttypeid", objpaidReceipts[17]);
-      paidReceipt.put("warehouse", objpaidReceipts[7]);
-      paidReceipt.put("currency_identifier", objpaidReceipts[8]);
-      paidReceipt.put("posterminalidentifier", objpaidReceipts[9]);
-      paidReceipt.put("businessPartner_identifier", objpaidReceipts[10]);
-      paidReceipt.put("currency", objpaidReceipts[11]);
-      paidReceipt.put("priceList", objpaidReceipts[12]);
-      paidReceipt.put("salesRepresentative", objpaidReceipts[13]);
-      paidReceipt.put("organization", objpaidReceipts[14]);
-      paidReceipt.put("posterminal", objpaidReceipts[15]);
-      paidReceipt.put("client", objpaidReceipts[16]);
-      if (objpaidReceipts[18] != null
-          && objpaidReceipts[17].toString().equals(objpaidReceipts[18].toString())) {
-        paidReceipt.put("isQuotation", true);
-      } else {
-        paidReceipt.put("isQuotation", false);
-      }
-      paidReceipt.put("net", objpaidReceipts[19]);
-      if (Long.valueOf(objpaidReceipts[20].toString()).compareTo(new Long(0)) == 0) {
-        paidReceipt.put("isLayaway", true);
-      } else {
-        paidReceipt.put("isLayaway", false);
-      }
-      paidReceipt.put("priceIncludesTax", objpaidReceipts[21]);
+      JSONObject paidReceipt = hqlProperties.getJSONObjectRow(objpaidReceipts);
 
       JSONArray listpaidReceiptsLines = new JSONArray();
+
+      // TODO: make this extensible
       String hqlPaidReceiptsLines = "select ordLine.product.id as id, ordLine.product.name as name, ordLine.product.uOM.id as uOM, ordLine.orderedQuantity as quantity, "
           + "ordLine.baseGrossUnitPrice as unitPrice, ordLine.lineGrossAmount as linegrossamount, ordLine.id as lineId, ordLine.unitPrice as netPrice from OrderLine as ordLine where ordLine.salesOrder.id=?";
       Query paidReceiptsLinesQuery = OBDal.getInstance().getSession()
           .createQuery(hqlPaidReceiptsLines);
-      paidReceiptsLinesQuery.setString(0, (String) objpaidReceipts[0]);
+      paidReceiptsLinesQuery.setString(0, orderid);
       for (Object objLine : paidReceiptsLinesQuery.list()) {
         Object[] objpaidReceiptsLines = (Object[]) objLine;
         JSONObject paidReceiptLine = new JSONObject();
@@ -150,7 +132,7 @@ public class PaidReceipts extends JSONProcessSimple {
           + "from FIN_Payment_ScheduleDetail as scheduleDetail where scheduleDetail.orderPaymentSchedule.order.id=?";
       Query paymentsInQuery = OBDal.getInstance().getSession().createQuery(hqlPaymentsIn);
       // paidReceiptsQuery.setString(0, id);
-      paymentsInQuery.setString(0, (String) objpaidReceipts[0]);
+      paymentsInQuery.setString(0, orderid);
       for (Object objPaymentIn : paymentsInQuery.list()) {
         Object[] objPaymentsIn = (Object[]) objPaymentIn;
         JSONObject paymentsIn = new JSONObject();
@@ -214,7 +196,7 @@ public class PaidReceipts extends JSONProcessSimple {
 
       String hqlReceiptTaxes = "select orderTax.tax.id as taxId, orderTax.tax.rate as rate, orderTax.taxableAmount as taxableamount, orderTax.taxAmount as taxamount, orderTax.tax.name as name from OrderTax as orderTax where orderTax.salesOrder.id=?";
       Query ReceiptTaxesQuery = OBDal.getInstance().getSession().createQuery(hqlReceiptTaxes);
-      ReceiptTaxesQuery.setString(0, (String) objpaidReceipts[0]);
+      ReceiptTaxesQuery.setString(0, orderid);
       JSONArray jsonListTaxes = new JSONArray();
       for (Object objTax : ReceiptTaxesQuery.list()) {
         Object[] objTaxInfo = (Object[]) objTax;
