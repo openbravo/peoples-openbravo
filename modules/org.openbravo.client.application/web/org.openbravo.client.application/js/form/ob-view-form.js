@@ -1520,7 +1520,11 @@ OB.ViewFormProperties = {
         view.viewGrid.markForRedraw();
 
         keepSelection = true;
-        view.refreshChildViews(keepSelection);
+
+        //refresh child views only if there are selected records.
+        if (view.viewGrid && view.viewGrid.getSelectedRecords.length != 0) {
+          view.refreshChildViews(keepSelection);
+        }
 
         // success invoke the action, if any there
         view.standardWindow.autoSaveDone(view, true);
