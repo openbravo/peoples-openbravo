@@ -1069,7 +1069,7 @@ export.database: exports database structure and data to xml files.
   </target>
 
   <target name="setup" depends="setup.check.os, setup.check.arch, setup.exists.test" unless="setup.exists">
-    <get src="https://dev.openbravo.com/svn/packaging/setup/output/setup-properties-${osname}${osarch}.${bin.ext}" dest="config/setup-properties-${osname}${osarch}.${bin.ext}" verbose="true" />
+    <get src="https://code.openbravo.com/tools/rm/erp-setup-tool/raw-file/tip/setup/output/setup-properties-${osname}${osarch}.${bin.ext}" dest="config/setup-properties-${osname}${osarch}.${bin.ext}" verbose="true" />
 
     <chmod file="config/setup-properties-${osname}${osarch}.${bin.ext}" perm="+x" />
   </target>
