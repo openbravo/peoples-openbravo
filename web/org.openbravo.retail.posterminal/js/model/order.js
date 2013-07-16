@@ -1051,6 +1051,7 @@
               p.set('origAmount', OB.DEC.add(payment.get('origAmount'), OB.DEC.mul(p.get('origAmount'), p.get('rate'))));
             }
             this.adjustPayment();
+            this.trigger('displayTotal');
             return;
           }
         }
@@ -1061,6 +1062,7 @@
       payment.set('date', new Date());
       payments.add(payment);
       this.adjustPayment();
+      this.trigger('displayTotal');
     },
 
     overpaymentExists: function () {

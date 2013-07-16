@@ -195,6 +195,7 @@ enyo.kind({
         return true;
       }
       OB.MobileApp.view.scanningFocus(false);
+      receipt.trigger('displayTotal');
       this.doTabChange({
         tabPanel: this.tabPanel,
         keyboard: 'toolbarpayment',

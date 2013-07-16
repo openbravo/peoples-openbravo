@@ -19,6 +19,7 @@
       }, this);
       this.receipt.on('print', this.print, this);
       this.receipt.on('popenDrawer', this.openDrawer, this);
+      this.receipt.on('displayTotal', this.displayTotal, this);
 
       this.templateopendrawer = new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.OpenDrawer);
       this.templatereceipt = new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.ReceiptTemplate);
@@ -94,6 +95,16 @@
     });
   };
 
+  PrintReceipt.prototype.displayTotal = function () {
+    // Clone the receipt
+    var receipt = new OB.Model.Order();
+    receipt.clearWith(this.receipt);
+    this.template = new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.DisplayTotal);
+    OB.POS.hwserver.print(this.template, {
+      order: receipt
+    });
+  };
+
   var PrintReceiptLine = function (receipt) {
       this.receipt = receipt;
       this.line = null;
@@ -137,5 +148,6 @@
   OB.OBPOSPointOfSale.Print.ReceiptLineTemplate = 'res/printline.xml';
   OB.OBPOSPointOfSale.Print.OpenDrawerTemplate = 'res/opendrawer.xml';
   OB.OBPOSPointOfSale.Print.ReceiptTemplateLayaway = 'res/printlayaway.xml';
+  OB.OBPOSPointOfSale.Print.DisplayTotal = 'res/displaytotal.xml';
 
 }());
