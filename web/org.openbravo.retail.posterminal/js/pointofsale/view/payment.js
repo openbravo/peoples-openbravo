@@ -628,7 +628,7 @@ enyo.kind({
         popup: 'modalEnoughCredit',
         args: {
           order: this.model.get('order'),
-          message: 'OBPOS_unabletocheckcredit'
+          message: 'OBPOS_Unabletocheckcredit'
         }
       });
     }
