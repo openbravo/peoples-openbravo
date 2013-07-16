@@ -279,7 +279,7 @@ enyo.kind({
     }
   },
   addNewOrder: function (inSender, inEvent) {
-    this.$.receiptPropertiesDialog.newOrderCreated();
+    this.$.receiptPropertiesDialog.resetProperties();
     this.model.get('orderList').addNewOrder();
     return true;
   },

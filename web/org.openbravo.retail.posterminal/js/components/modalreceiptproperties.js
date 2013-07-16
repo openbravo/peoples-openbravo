@@ -71,7 +71,7 @@ enyo.kind({
     permissionOption: 'OBPOS_SR.comboOrModal'
   }],
 
-  newOrderCreated: function () {
+  resetProperties: function () {
     var p, att;
     // reset all properties
     for (p in this.newAttributes) {
@@ -96,6 +96,10 @@ enyo.kind({
           this.loadValue(att);
         }
       }
+    }, this);
+
+    this.model.bind('paymentAccepted', function () {
+      this.resetProperties();
     }, this);
   }
 });
