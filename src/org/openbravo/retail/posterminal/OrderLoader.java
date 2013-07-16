@@ -549,10 +549,17 @@ public class OrderLoader extends JSONProcessSimple {
 
     int stdPrecision = order.getCurrency().getStandardPrecision().intValue();
 
-    String description = jsonorder.has("description") ? jsonorder.getString("description") + "\n"
-        : "";
-    description += OBMessageUtils.getI18NMessage("OBPOS_InvoiceRelatedToOrder", null)
-        + jsonorder.getString("documentNo");
+    String description;
+    if (jsonorder.has("Invoice.description")) {
+      // in case the description is directly set to Invoice entity, preserve it
+      description = jsonorder.getString("Invoice.description");
+    } else {
+      // other case use generic description if present and add relationship to order
+      description = jsonorder.has("description") ? jsonorder.getString("description") + "\n" : "";
+      description += OBMessageUtils.getI18NMessage("OBPOS_InvoiceRelatedToOrder", null)
+          + jsonorder.getString("documentNo");
+    }
+
     invoice.setDescription(description);
     invoice
         .setDocumentType(getInvoiceDocumentType((String) DalUtil.getId(order.getDocumentType())));
