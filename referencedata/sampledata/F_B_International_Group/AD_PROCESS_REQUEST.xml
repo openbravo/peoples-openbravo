@@ -11931,8 +11931,8 @@
   <ISROLESECURITY><![CDATA[Y]]></ISROLESECURITY>
   <OB_CONTEXT><![CDATA[{"org.openbravo.scheduling.ProcessContext":{"user":100,"role":"42D0EEB1C66F497A90DD526DC597E6F0","language":"en_US","theme":"ltr\/org.openbravo.userinterface.skin.250to300Comp\/250to300Comp","client":"23C59575B9CF467C9620760EB255B389","organization":0,"warehouse":"","command":"DEFAULT","userClient":"","userOrganization":"","dbSessionID":"","javaDateFormat":"","jsDateFormat":"","sqlDateFormat":"","accessLevel":"","roleSecurity":true}}]]></OB_CONTEXT>
   <STATUS><![CDATA[SCH]]></STATUS>
-  <NEXT_FIRE_TIME><![CDATA[2013-05-29 16:10:07.0]]></NEXT_FIRE_TIME>
-  <PREVIOUS_FIRE_TIME><![CDATA[2013-05-29 16:05:07.0]]></PREVIOUS_FIRE_TIME>
+  <NEXT_FIRE_TIME><![CDATA[2013-07-17 17:40:07.0]]></NEXT_FIRE_TIME>
+  <PREVIOUS_FIRE_TIME><![CDATA[2013-07-17 17:35:07.0]]></PREVIOUS_FIRE_TIME>
   <CHANNEL><![CDATA[Process Scheduler]]></CHANNEL>
   <TIMING_OPTION><![CDATA[S]]></TIMING_OPTION>
   <START_TIME><![CDATA[2013-04-23 14:10:07.0]]></START_TIME>
