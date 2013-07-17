@@ -23,11 +23,13 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
+import java.net.URLEncoder;
 import java.sql.Connection;
 import java.util.HashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import javax.mail.internet.MimeUtility;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -194,7 +196,7 @@ public class TabAttachments extends HttpSecureAppServlet {
         response.sendRedirect(strDireccion + request.getServletPath());
     } else if (vars.commandIn("DISPLAY_DATA")) {
       final String strFileReference = vars.getStringParameter("inpcFileId");
-      printPageFile(response, vars, strFileReference);
+      printPageFile(response, vars, strFileReference, request);
     } else if (vars.getCommand().contains("GET_MULTIPLE_RECORDS_OB3")) {
       printPageFileMultiple(response, vars);
     } else if (vars.commandIn("DEFAULT")) {
@@ -225,7 +227,7 @@ public class TabAttachments extends HttpSecureAppServlet {
       printPageEdit(response, vars, strTab, strWindow, key, "");
     } else if (vars.commandIn("DISPLAY_DATA")) {
       final String strFileReference = vars.getRequiredStringParameter("inpcFileId");
-      printPageFile(response, vars, strFileReference);
+      printPageFile(response, vars, strFileReference, request);
     } else if (vars.commandIn("CHECK")) {
       final String tabId = vars.getStringParameter("inpTabId");
       final String inpKey = vars.getStringParameter("inpKey");
@@ -548,7 +550,7 @@ public class TabAttachments extends HttpSecureAppServlet {
   }
 
   private void printPageFile(HttpServletResponse response, VariablesSecureApp vars,
-      String strFileReference) throws IOException, ServletException {
+      String strFileReference, HttpServletRequest request) throws IOException, ServletException {
     String fileDir = null;
     final TabAttachmentsData[] data = TabAttachmentsData.selectEdit(this, strFileReference);
     if (data == null || data.length == 0)
@@ -566,8 +568,19 @@ public class TabAttachments extends HttpSecureAppServlet {
       response.setContentType("application/txt");
     else
       response.setContentType(data[0].datatypeContent);
-    response.setHeader("Content-Disposition",
-        "attachment; filename=\"" + data[0].name.replace("\"", "\\\"") + "\"");
+    response.setCharacterEncoding("UTF-8");
+    String userAgent = request.getHeader("user-agent");
+    if (userAgent.contains("MSIE")) {
+      response.setHeader(
+          "Content-Disposition",
+          "attachment; filename=\""
+              + URLEncoder.encode(data[0].name.replace("\"", "\\\""), "utf-8") + "\"");
+    } else {
+      response.setHeader(
+          "Content-Disposition",
+          "attachment; filename=\""
+              + MimeUtility.encodeWord(data[0].name.replace("\"", "\\\""), "utf-8", "Q") + "\"");
+    }
 
     f.dumpFile(response.getOutputStream());
     response.getOutputStream().flush();
