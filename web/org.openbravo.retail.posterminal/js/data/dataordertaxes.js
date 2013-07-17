@@ -103,8 +103,8 @@
               // the database function c_get_net_price_from_gross
               var linenet, linepricenet, linegross;
               if (orggross === 0) {
-                linenet = 0;
-                linepricenet = 0;
+                linenet = new BigDecimal('0');
+                linepricenet = new BigDecimal('0');
                 linegross = 0;
               } else {
                 linenet = new BigDecimal(String(orggross)).multiply(new BigDecimal(String(orggross))).divide(new BigDecimal(String(taxamt)));
