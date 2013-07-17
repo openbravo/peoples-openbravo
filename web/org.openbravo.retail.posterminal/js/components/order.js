@@ -377,7 +377,7 @@ enyo.kind({
     this.order.on('change:isPaid change:paidOnCredit change:isQuotation', function (model) {
       if (model.get('isPaid') === true && !model.get('isQuotation')) {
         this.$.divText.addStyles('width: 50%; color: #f8941d;');
-        if(model.get('paidOnCredit')){
+        if (model.get('paidOnCredit')) {
           this.$.divText.setContent(OB.I18N.getLabel('OBPOS_paidOnCredit'));
         } else if (model.get('documentType') === OB.POS.modelterminal.get('terminal').terminalType.documentTypeForReturns) {
           this.$.divText.setContent(OB.I18N.getLabel('OBPOS_paidReturn'));
@@ -435,7 +435,7 @@ enyo.kind({
         kind: 'OB.UI.TotalMultiReceiptLine',
         name: 'totalMultiReceiptLine'
       }]
-    },{
+    }, {
       tag: 'li',
       components: [{
         style: 'padding: 10px; border-top: 1px solid #cccccc; height: 40px;',
@@ -456,8 +456,8 @@ enyo.kind({
     this.total = 0;
     this.listMultiOrders = new Backbone.Collection();
     this.$.listMultiOrderLines.setCollection(this.listMultiOrders);
-    this.model.get('multiOrders').on('change:additionalInfo', function(changedModel){
-      if (changedModel.get('additionalInfo') === 'I'){
+    this.model.get('multiOrders').on('change:additionalInfo', function (changedModel) {
+      if (changedModel.get('additionalInfo') === 'I') {
         this.$.multiOrder_btninvoice.show();
         return;
       }
@@ -465,7 +465,7 @@ enyo.kind({
     }, this);
     this.model.get('multiOrders').get('multiOrdersList').on('reset add remove change', function () {
       me.total = _.reduce(me.model.get('multiOrders').get('multiOrdersList').models, function (memo, order) {
-        return memo + (order.get('amountToLayaway') ? order.get('amountToLayaway') : order.getPending());
+        return memo + ((!_.isUndefined(order.get('amountToLayaway')) && !_.isNull(order.get('amountToLayaway'))) ? order.get('amountToLayaway') : order.getPending());
       }, 0);
       this.model.get('multiOrders').set('total', this.total);
       this.model.get('multiOrders').on('change:total', function (model) {
