@@ -704,7 +704,7 @@ enyo.kind({
     return true;
   },
   multiOrders: function (inSender, inEvent) {
-    this.model.get('multiOrders').resetValues();
+    //    this.model.get('multiOrders').resetValues();
     this.doShowPopup({
       popup: 'modalMultiOrders'
     });
