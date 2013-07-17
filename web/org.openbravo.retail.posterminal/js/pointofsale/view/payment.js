@@ -138,6 +138,13 @@ enyo.kind({
     this.receipt.on('change:payment change:change calculategross change:bp change:gross', function () {
       this.updatePending();
     }, this);
+    this.model.get('leftColumnViewManager').on('change:currentView', function () {
+      if (!this.model.get('leftColumnViewManager').isMultiOrder()) {
+        this.updatePending();
+      } else {
+        this.updatePendingMultiOrders();
+      }
+    }, this);
     this.updatePending();
     if (this.model.get('leftColumnViewManager').isMultiOrder()) {
       this.updatePendingMultiOrders();
