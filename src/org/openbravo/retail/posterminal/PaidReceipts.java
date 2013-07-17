@@ -61,6 +61,7 @@ public class PaidReceipts extends JSONProcessSimple {
     for (Object obj : paidReceiptsQuery.list()) {
       Object[] objpaidReceipts = (Object[]) obj;
       JSONObject paidReceipt = hqlProperties.getJSONObjectRow(objpaidReceipts);
+      paidReceipt.put("orderid", orderid);
 
       JSONArray listpaidReceiptsLines = new JSONArray();
 
