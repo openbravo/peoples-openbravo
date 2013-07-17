@@ -53,6 +53,7 @@ enyo.kind({
             initComponents: function () {
               this.setValue(this.model.get('id'));
               this.originalText = this.model.get('_identifier');
+              // TODO: this shouldn't be hardcoded but defined in each promotion
               if (this.model.get('discountType') === 'D1D193305A6443B09B299259493B272A' || this.model.get('discountType') === '20E4EC27397344309A2185097392D964') {
                 //variable
                 this.requiresQty = true;
@@ -164,7 +165,7 @@ enyo.kind({
     });
     //load discounts
     OB.Dal.find(OB.Model.Discount, {
-      _whereClause: "where m_offer_type_id in ('D1D193305A6443B09B299259493B272A', '20E4EC27397344309A2185097392D964', '7B49D8CC4E084A75B7CB4D85A6A3A578', '8338556C0FBF45249512DB343FEFD280') "
+      _whereClause: "where m_offer_type_id in (" + OB.Model.Discounts.getManualPromotions() + ") "
       // filter discretionary discounts by current role
       + " AND ((EM_OBDISC_ROLE_SELECTION = 'Y'" //
       + " AND NOT EXISTS" //

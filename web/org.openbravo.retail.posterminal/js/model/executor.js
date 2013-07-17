@@ -111,7 +111,8 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
         productId = line.get('product').id,
         actionQueue = this.get('actionQueue'),
         me = this,
-        criteria, t0 = new Date().getTime();
+        criteria, t0 = new Date().getTime(),
+        whereClause = OB.Model.Discounts.standardFilter + " AND M_OFFER_TYPE_ID NOT IN (" + OB.Model.Discounts.getManualPromotions() + ")";
 
     if (!receipt.shouldApplyPromotions() || line.get('product').get('ignorePromotions')) {
       // Cannot apply promotions, leave actions empty
@@ -120,7 +121,7 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
     }
 
     criteria = {
-      '_whereClause': OB.Model.Discounts.standardFilter,
+      '_whereClause': whereClause,
       params: [bpId, bpId, bpId, bpId, productId, productId, productId, productId]
     };
 

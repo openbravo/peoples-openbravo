@@ -463,8 +463,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
    */
   checkPaymentApproval: function () {
     // Checking if applied discretionary discounts require approval, TODO: this might be moved to discounts module
-    // TODO: this should be defined in the type, not hardcoded
-    var discretionaryDiscountTypes = ['7B49D8CC4E084A75B7CB4D85A6A3A578', '8338556C0FBF45249512DB343FEFD280', 'D1D193305A6443B09B299259493B272A', '20E4EC27397344309A2185097392D964'],
+    var discretionaryDiscountTypes = OB.Model.Discounts.getManualPromotions(true),
         discountsToCheck = [],
         requiresApproval = false,
         i;

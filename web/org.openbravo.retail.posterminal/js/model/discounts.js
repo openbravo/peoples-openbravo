@@ -60,6 +60,35 @@
       }
     },
 
+    /**
+     * Gets the list of manual promotions. If asArray param is true, it is returned
+     * as an array, other case, as a comma separated string to be used in sql statements
+     */
+    getManualPromotions: function (asList) {
+      var p, promos = [],
+          promosSql = '';
+      for (p in this.discountRules) {
+        if (this.discountRules.hasOwnProperty(p)) {
+          if (this.discountRules[p].addManual) {
+            promos.push(p);
+          }
+        }
+      }
+
+      if (asList) {
+        return promos;
+      } else {
+        // generate sql
+        for (p = 0; p < promos.length; p++) {
+          if (promosSql !== '') {
+            promosSql += ', '
+          }
+          promosSql += "'" + promos[p] + "'";
+        }
+        return promosSql;
+      }
+    },
+
     registerRule: function (name, rule) {
       this.discountRules[name] = rule;
     },
@@ -129,8 +158,6 @@
     + "   AND P.M_PRODUCT_ID = ?" //
     + "   AND OP.M_PRODUCT_CATEGORY_ID = P.M_PRODUCT_CATEGORY_ID" //
     + " ))) " //
-    // TODO: Discretionary discounts, don't check them by id
-    + " AND M_OFFER_TYPE_ID NOT IN ('D1D193305A6443B09B299259493B272A', '20E4EC27397344309A2185097392D964', '7B49D8CC4E084A75B7CB4D85A6A3A578', '8338556C0FBF45249512DB343FEFD280')"
   };
 
   // Price Adjustment
@@ -158,7 +185,7 @@
     }
   });
 
-  
+
   // Because of dependency models cannot be directly registered in promotions module 
   if (OB && OB.Model && OB.Model.Discounts && OB.Model.Discounts.extraModels) {
     for (i = 0; i < OB.Model.Discounts.extraModels.length; i++) {
