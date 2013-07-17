@@ -468,7 +468,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
         requiresApproval = false,
         i;
 
-    if (OB.POS.modelterminal.hasPermission('OBPOS_approval.discounts')) {
+    if (OB.POS.modelterminal.hasPermission('OBPOS_approval.discounts', true)) {
       // current user is a supervisor, no need to check further permissions
       this.trigger('approvalChecked', {
         approved: true
