@@ -374,10 +374,12 @@ enyo.kind({
         this.$.divText.setContent(OB.I18N.getLabel('OBPOS_QuotationDraft'));
       }
     }, this);
-    this.order.on('change:isPaid change:isQuotation', function (model) {
+    this.order.on('change:isPaid change:paidOnCredit change:isQuotation', function (model) {
       if (model.get('isPaid') === true && !model.get('isQuotation')) {
         this.$.divText.addStyles('width: 50%; color: #f8941d;');
-        if (model.get('documentType') === OB.POS.modelterminal.get('terminal').terminalType.documentTypeForReturns) {
+        if(model.get('paidOnCredit')){
+          this.$.divText.setContent(OB.I18N.getLabel('OBPOS_paidOnCredit'));
+        } else if (model.get('documentType') === OB.POS.modelterminal.get('terminal').terminalType.documentTypeForReturns) {
           this.$.divText.setContent(OB.I18N.getLabel('OBPOS_paidReturn'));
         } else {
           this.$.divText.setContent(OB.I18N.getLabel('OBPOS_paid'));
@@ -386,7 +388,7 @@ enyo.kind({
         this.$.listPaymentLines.show();
         this.$.paymentBreakdown.show();
         //We have to ensure that there is not another handler showing this div
-      } else if (this.$.divText.content === OB.I18N.getLabel('OBPOS_paid') || this.$.divText.content === OB.I18N.getLabel('OBPOS_paidReturn')) {
+      } else if (this.$.divText.content === OB.I18N.getLabel('OBPOS_paid') || this.$.divText.content === OB.I18N.getLabel('OBPOS_paidReturn') || this.$.divText.content === OB.I18N.getLabel('OBPOS_paidOnCredit')) {
         this.$.divText.hide();
         this.$.listPaymentLines.hide();
         this.$.paymentBreakdown.hide();

@@ -511,6 +511,7 @@
       this.set('print', true);
       this.set('sendEmail', false);
       this.set('isPaid', false);
+      this.set('paidOnCredit', false);
       this.set('isLayaway', false);
       this.set('isEditable', true);
       this.set('openDrawer', false);
@@ -523,6 +524,7 @@
       this.set('documentType', _order.get('documentType'));
 
       this.set('isPaid', _order.get('isPaid'));
+      this.set('paidOnCredit', _order.get('paidOnCredit'));
       this.set('isLayaway', _order.get('isLayaway'));
       if (!_order.get('isEditable')) {
         // keeping it no editable as much as possible, to prevent
@@ -1203,6 +1205,7 @@
       order.set('posTerminal' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, OB.POS.modelterminal.get('terminal')._identifier);
       order.set('orderDate', new Date());
       order.set('isPaid', false);
+      order.set('paidOnCredit', false);
       order.set('isLayaway', false);
       order.set('taxes', null);
 
@@ -1249,6 +1252,7 @@
       order.set('priceIncludesTax', model.priceIncludesTax);
       order.set('checked', model.checked);
 
+      order.set('paidOnCredit', false);
       if (model.isQuotation) {
         order.set('isQuotation', true);
         order.set('oldId', model.orderid);
@@ -1264,6 +1268,9 @@
         order.set('session', OB.POS.modelterminal.get('session'));
       } else {
         order.set('isPaid', true);
+        if(model.receiptPayments.length===0){
+          order.set('paidOnCredit', true);
+        }
         order.set('id', model.orderid);
         order.set('documentType', model.documenttypeid);
         if (order.get('documentType') === OB.POS.modelterminal.get('terminal').terminalType.documentTypeForReturns) {
