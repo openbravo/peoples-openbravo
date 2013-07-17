@@ -1522,7 +1522,7 @@ OB.ViewFormProperties = {
         keepSelection = true;
 
         //refresh child views only if there are selected records.
-        if (view.viewGrid && view.viewGrid.getSelectedRecords.length != 0) {
+        if (view.viewGrid && view.viewGrid.getSelectedRecords.length !== 0) {
           view.refreshChildViews(keepSelection);
         }
 
