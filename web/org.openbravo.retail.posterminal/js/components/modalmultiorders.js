@@ -363,6 +363,9 @@ enyo.kind({
           return e;
         }
       }));
+    if (checkedMultiOrders.length === 0) {
+      return true;
+    }
     _.each(checkedMultiOrders, function (iter) {
       if (_.indexOf(me.owner.owner.model.get('orderList').models, iter) !== -1) {
         iter.save();
