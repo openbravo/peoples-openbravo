@@ -301,6 +301,11 @@ public class EntityXMLConverter implements OBNotSingleton {
   }
 
   protected void export(BaseOBObject obObject, boolean isAddedBecauseReferenced,
+      Boolean excludeAuditInfo) throws SAXException {
+    export(obObject, isAddedBecauseReferenced, excludeAuditInfo, "");
+  }
+
+  protected void export(BaseOBObject obObject, boolean isAddedBecauseReferenced,
       Boolean excludeAuditInfo, String exportedPropertyNameParam) throws SAXException {
 
     String exportedPropertyName = (exportedPropertyNameParam == null) ? ""
