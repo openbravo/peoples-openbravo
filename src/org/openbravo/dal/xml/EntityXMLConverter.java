@@ -81,6 +81,12 @@ public class EntityXMLConverter implements OBNotSingleton {
     return OBProvider.getInstance().get(EntityXMLConverter.class);
   }
 
+  // for each entity being exported, it contains the list of non child properties that will be
+  // exported
+  private Map<String, List<String>> propertiesToBeFetched;
+  // for each entity being exported, it contains the list of child properties that will be exported
+  private Map<String, List<String>> childPropertiesToBeFetched;
+
   // controls if many-toreferences objects are also exported
   private boolean optionIncludeReferenced = false;
 
@@ -291,11 +297,14 @@ public class EntityXMLConverter implements OBNotSingleton {
 
   protected void export(BaseOBObject obObject, boolean isAddedBecauseReferenced)
       throws SAXException {
-    export(obObject, isAddedBecauseReferenced, null);
+    export(obObject, isAddedBecauseReferenced, null, null);
   }
 
   protected void export(BaseOBObject obObject, boolean isAddedBecauseReferenced,
-      Boolean excludeAuditInfo) throws SAXException {
+      Boolean excludeAuditInfo, String exportedPropertyNameParam) throws SAXException {
+
+    String exportedPropertyName = (exportedPropertyNameParam == null) ? ""
+        : exportedPropertyNameParam;
     final String entityName = DalUtil.getEntityName(obObject);
 
     final AttributesImpl entityAttrs = new AttributesImpl();
@@ -346,6 +355,11 @@ public class EntityXMLConverter implements OBNotSingleton {
 
     // export each property
     for (final Property p : exportableProperties) {
+
+      if (!propertyShouldBeExported(p, exportedPropertyName)) {
+        continue;
+      }
+
       if (onlyIdentifierProps && !p.isIdentifier()) {
         continue;
       }
@@ -448,9 +462,11 @@ public class EntityXMLConverter implements OBNotSingleton {
                 .get(obObject.getEntity()) : null;
             if ((excludeAuditInfo != null && excludeAuditInfo)
                 || (dst != null && dst.isExcludeAuditInfo())) {
-              export((BaseOBObject) o, false, true);
+              export((BaseOBObject) o, false, true, exportedPropertyName);
             } else {
-              export((BaseOBObject) o, false);
+              String nextExportedPropertyName = (exportedPropertyName.isEmpty() ? p.getName()
+                  : exportedPropertyName + DalUtil.DOT + p.getName());
+              export((BaseOBObject) o, false, null, nextExportedPropertyName);
             }
           } else {
             // add the child as a tag, the child entityname is
@@ -491,6 +507,35 @@ public class EntityXMLConverter implements OBNotSingleton {
       }
     }
     xmlHandler.endElement("", "", entityName);
+  }
+
+  /**
+   * Checks if a property should be exported. If propertiesToBeFetched and
+   * childPropertiesToBeFetched is empty, then the property will be exported Otherwise, it will only
+   * be exported if the property is contained in one of the lists
+   * 
+   * @param p
+   *          the property that might be exported
+   * @param exportedPropertyName
+   *          the name of the property in its parent entity of the entity being exported
+   * @return true if the property has to be exported, false otherwise
+   */
+  private boolean propertyShouldBeExported(Property p, String exportedPropertyName) {
+    String key = (exportedPropertyName.isEmpty() ? "_top" : exportedPropertyName);
+    if (propertiesToBeFetched == null && childPropertiesToBeFetched == null) {
+      return true;
+    }
+    if (propertiesToBeFetched != null && !propertiesToBeFetched.isEmpty()
+        && propertiesToBeFetched.get(key) != null
+        && propertiesToBeFetched.get(key).contains(p.getName())) {
+      return true;
+    }
+    if (childPropertiesToBeFetched != null && !childPropertiesToBeFetched.isEmpty()
+        && childPropertiesToBeFetched.get(key) != null
+        && childPropertiesToBeFetched.get(key).contains(p.getName())) {
+      return true;
+    }
+    return false;
   }
 
   /**
@@ -692,6 +737,24 @@ public class EntityXMLConverter implements OBNotSingleton {
     this.includedProperties = includedProperties;
   }
 
+  /**
+   * 
+   * @param propertiesToBeFetched
+   *          set to the list of the non child properties to be exported for each entity
+   */
+  public void setPropertiesToBeFetched(Map<String, List<String>> propertiesToBeFetched) {
+    this.propertiesToBeFetched = propertiesToBeFetched;
+  }
+
+  /**
+   * 
+   * @param childPropertiesToBeFetched
+   *          set to the list of the non child properties to be exported for each entity
+   */
+  public void setChildPropertiesToBeFetched(Map<String, List<String>> childPropertiesToBeFetched) {
+    this.childPropertiesToBeFetched = childPropertiesToBeFetched;
+  }
+
   public Client getClient() {
     return client;
   }
@@ -746,4 +809,5 @@ public class EntityXMLConverter implements OBNotSingleton {
   public void setDataScroller(ScrollableResults dataScroller) {
     this.dataScroller = dataScroller;
   }
+
 }
