@@ -372,9 +372,10 @@ export.database: exports database structure and data to xml files.
   </target>
 
   <target name="migrate.attachments" depends="init">
-    <java classname="org.openbravo.erpCommon.utility.MigrateAttachments" fork="true" failonerror="yes" jvm="${env.JAVA_HOME}/bin/java">
+    <taskdef name="MigrateAttachments" classname="org.openbravo.erpCommon.utility.MigrateAttachments" >
       <classpath refid="project.class.path" />
-    </java>
+    </taskdef>
+    <MigrateAttachments/>
   </target>
 
   <target name="smartbuild" depends="init">

@@ -41,11 +41,16 @@ public class MigrateAttachments extends Task {
 
   private static Logger log = LoggerFactory.getLogger(MigrateAttachments.class);
 
-  public static void execute(String[] args) throws Exception {
+  @Override
+  public void execute() {
     String attachPath = OBPropertiesProvider.getInstance().getOpenbravoProperties()
         .getProperty("attach.path");
     log.info("Migrating Attachments");
-    migrateAttachments(attachPath);
+    try {
+      migrateAttachments(attachPath);
+    } catch (Exception e) {
+      log.error(e.getMessage(), e);
+    }
     log.info("Migration Successful");
   }
 
