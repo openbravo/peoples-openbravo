@@ -36,6 +36,7 @@ import org.openbravo.base.AntExecutor;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
+import org.openbravo.base.model.Property;
 import org.openbravo.base.session.OBPropertiesProvider;
 
 import freemarker.template.Configuration;
@@ -124,17 +125,30 @@ public class GenerateEntitiesTask extends Task {
     File ftlFile = new File(getBasePath(), ftlFilename);
     freemarker.template.Template template = createTemplateImplementation(ftlFile);
 
+    // template for computed columns entities
+    String ftlComputedFilename = "org/openbravo/base/gen/entityComputedColumns.ftl";
+    File ftlComputedFile = new File(getBasePath(), ftlComputedFilename);
+    freemarker.template.Template templateComputed = createTemplateImplementation(ftlComputedFile);
+
     // process template & write file for each entity
     List<Entity> entities = ModelProvider.getInstance().getModel();
     for (Entity entity : entities) {
       // If the entity is associated with a datasource based table, do not generate a Java file
-      if (!entity.isDataSourceBased()) {
-        String classfileName = entity.getClassName().replaceAll("\\.", "/") + ".java";
+      if (entity.isDataSourceBased()) {
+        continue;
+      }
+
+      File outFile;
+      String classfileName;
+      Writer outWriter = null;
+
+      if (!entity.isVirtualEntity()) {
+        classfileName = entity.getClassName().replaceAll("\\.", "/") + ".java";
         log.debug("Generating file: " + classfileName);
-        File outFile = new File(srcGenPath, classfileName);
+        outFile = new File(srcGenPath, classfileName);
         new File(outFile.getParent()).mkdirs();
 
-        Writer outWriter;
+        outWriter = null;
         try {
           outWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outFile),
               "UTF-8"));
@@ -143,6 +157,49 @@ public class GenerateEntitiesTask extends Task {
           processTemplate(template, data, outWriter);
         } catch (IOException e) {
           log.error("Error generating file: " + classfileName, e);
+        } finally {
+          if (outWriter != null) {
+            try {
+              outWriter.close();
+            } catch (IOException ignore) {
+            }
+          }
+        }
+      }
+
+      if (entity.hasComputedColumns()) {
+        classfileName = entity.getPackageName().replaceAll("\\.", "/") + "/"
+            + entity.getSimpleClassName() + Entity.COMPUTED_COLUMNS_CLASS_APPENDIX + ".java";
+        log.debug("Generating file: " + classfileName);
+        outFile = new File(srcGenPath, classfileName);
+        new File(outFile.getParent()).mkdirs();
+        outWriter = null;
+        try {
+          outWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outFile),
+              "UTF-8"));
+          Map<String, Object> data = new HashMap<String, Object>();
+          data.put("entity", entity);
+
+          List<Property> properties = entity.getComputedColumnProperties();
+
+          properties.add(entity.getProperty("client"));
+          properties.add(entity.getProperty("organization"));
+
+          data.put("properties", properties);
+          List<String> imports = entity.getJavaImports(properties);
+          imports.remove("import org.openbravo.base.structure.ActiveEnabled;");
+          imports.remove("import org.openbravo.base.structure.Traceable;");
+          data.put("javaImports", imports);
+          processTemplate(templateComputed, data, outWriter);
+        } catch (IOException e) {
+          log.error("Error generating file: " + classfileName, e);
+        } finally {
+          if (outWriter != null) {
+            try {
+              outWriter.close();
+            } catch (IOException ignore) {
+            }
+          }
         }
       }
     }

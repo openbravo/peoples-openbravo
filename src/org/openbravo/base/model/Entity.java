@@ -62,6 +62,7 @@ public class Entity {
   private List<Property> identifierProperties;
   private List<Property> parentProperties;
   private List<Property> orderByProperties;
+  private List<Property> computedColumnProperties;
 
   private String name = null;
   private String tableName;
@@ -83,6 +84,7 @@ public class Entity {
   private boolean isDeletable;
   private boolean isView;
   private boolean isDataSourceBased;
+  private boolean isVirtualEntity = false;
 
   private EntityValidator entityValidator;
   private AccessLevelChecker accessLevelChecker;
@@ -93,6 +95,8 @@ public class Entity {
   private String treeType;
 
   private static final String DATASOURCEBASEDTABLE = "Datasource";
+  public static final String COMPUTED_COLUMNS_PROXY_PROPERTY = "_computedColumns";
+  public static final String COMPUTED_COLUMNS_CLASS_APPENDIX = "_ComputedColumns";
 
   public String getTreeType() {
     return treeType;
@@ -127,6 +131,8 @@ public class Entity {
     identifierProperties = new ArrayList<Property>();
     parentProperties = new ArrayList<Property>();
     orderByProperties = new ArrayList<Property>();
+    computedColumnProperties = new ArrayList<Property>();
+
     // + 5 to take into account some additional properties for onetomany
     // and such
     propertiesByName = new HashMap<String, Property>(table.getColumns().size() + 5);
@@ -156,6 +162,22 @@ public class Entity {
       if (p.isOrderByProperty()) {
         orderByProperties.add(p);
       }
+      if (p.getSqlLogic() != null) {
+        computedColumnProperties.add(p);
+      }
+    }
+
+    if (hasComputedColumns()) {
+      // entities with computed columns have an extra property to proxy access to computed columns
+      // so they are lazily calculated
+      Property p = new Property();
+      p.setIndexInEntity(properties.size());
+      p.setEntity(this);
+      p.setName(COMPUTED_COLUMNS_PROXY_PROPERTY);
+      p.setColumnName(COMPUTED_COLUMNS_PROXY_PROPERTY);
+      p.setProxy(true);
+      properties.add(p);
+      propertiesByName.put(COMPUTED_COLUMNS_PROXY_PROPERTY, p);
     }
 
     Collections.sort(identifierProperties, new Comparator<Property>() {
@@ -199,6 +221,67 @@ public class Entity {
     }
 
     setModule(table.getThePackage().getModule());
+  }
+
+  /**
+   * Checks if entity has any computed column
+   */
+  public boolean hasComputedColumns() {
+    return computedColumnProperties != null && computedColumnProperties.size() > 0;
+  }
+
+  public List<Property> getComputedColumnProperties() {
+    return computedColumnProperties;
+  }
+
+  public void initializeComputedColumns(Table t, Entity e) {
+    setTableName(t.getTableName() + "_CC");
+    setTableId(t.getId() + "_CC");
+    setClassName(e.getPackageName() + "." + e.getSimpleClassName()
+        + COMPUTED_COLUMNS_CLASS_APPENDIX);
+    setName(e.getSimpleClassName() + COMPUTED_COLUMNS_CLASS_APPENDIX);
+    setDeletable(false);
+    setMutable(false);
+    setInActive(true);
+    setView(false);
+    setModule(t.getThePackage().getModule());
+    isVirtualEntity = true;
+    properties = new ArrayList<Property>();
+    idProperties = new ArrayList<Property>();
+    identifierProperties = new ArrayList<Property>();
+    propertiesByName = new HashMap<String, Property>();
+    propertiesByColumnName = new HashMap<String, Property>();
+
+    for (final Column c : t.getColumns()) {
+      if (!(c.isKey() || c.getSqlLogic() != null
+          || "AD_Client_ID".equalsIgnoreCase(c.getColumnName()) || "AD_Org_ID".equalsIgnoreCase(c
+          .getColumnName()))) {
+        continue;
+      }
+      final Property p = new Property();
+      p.setEntity(this);
+      p.initializeFromColumn(c, false);
+      properties.add(p);
+      p.setIndexInEntity(properties.size() - 1);
+
+      propertiesByName.put(p.getName(), p);
+      if (p.getColumnName() != null) {
+        propertiesByColumnName.put(p.getColumnName().toLowerCase(), p);
+      }
+      if (p.isId()) {
+        idProperties.add(p);
+      }
+    }
+
+  }
+
+  /**
+   * Virtual entities are used when the main entity has computed columns. These virtual entities are
+   * mapped to the same database table the main entity is mapped to, they contain all the computed
+   * column properties, making in this way possible to lazily compute them.
+   */
+  public boolean isVirtualEntity() {
+    return isVirtualEntity;
   }
 
   /**
@@ -452,8 +535,26 @@ public class Entity {
    * @throws CheckException
    */
   public Property getProperty(String propertyName) {
+    return getProperty(propertyName, true);
+  }
+
+  /**
+   * Retrieves the property using the propertyName. Throws a CheckException if no property exists
+   * with that name in case checkIsNotNull is true.
+   * 
+   * @param propertyName
+   *          the name used to search for the property.
+   * @param checkIsNotNull
+   *          if true, fails if property does not exists in entity, if false, returns null in this
+   *          case
+   * @return the found property
+   * @throws CheckException
+   */
+  public Property getProperty(String propertyName, boolean checkIsNotNull) {
     final Property prop = propertiesByName.get(propertyName);
-    Check.isNotNull(prop, "Property " + propertyName + " does not exist for entity " + this);
+    if (checkIsNotNull) {
+      Check.isNotNull(prop, "Property " + propertyName + " does not exist for entity " + this);
+    }
     return prop;
   }
 
@@ -530,6 +631,26 @@ public class Entity {
 
   public List<Property> getProperties() {
     return properties;
+  }
+
+  /**
+   * Gets a List of properties in the entity excluding, if present, the computed column proxy
+   * virtual property. If <code>includeComputed</code> parameter is <code>true</code>, all computed
+   * columns are also excluded.
+   * 
+   * @param includeComputed
+   *          should properties for computed columns be excluded from the list
+   * @return all the properties excluding proxy and, optionally, computed columns
+   */
+  public List<Property> getRealProperties(boolean includeComputed) {
+    List<Property> result = new ArrayList<Property>();
+    for (Property p : properties) {
+      if ((includeComputed || !p.isComputedColumn())
+          && !Entity.COMPUTED_COLUMNS_PROXY_PROPERTY.equals(p.getName())) {
+        result.add(p);
+      }
+    }
+    return result;
   }
 
   public void setProperties(List<Property> properties) {
@@ -680,6 +801,10 @@ public class Entity {
   }
 
   List<String> getJavaImportsInternal() {
+    return getJavaImportsInternal(properties);
+  }
+
+  List<String> getJavaImportsInternal(List<Property> propertyList) {
     List<String> imports = new ArrayList<String>();
     Set<String> simpleImports = new HashSet<String>();
     imports.add("org.openbravo.base.structure.BaseOBObject");
@@ -703,7 +828,7 @@ public class Entity {
     }
 
     // collect types of properties
-    for (Property p : properties) {
+    for (Property p : propertyList) {
       String fullType, simpleType;
       if (p.isOneToMany()) {
         // add list-type here to take precedence over model class named List
@@ -768,7 +893,11 @@ public class Entity {
    * Used to generate java import statements during generate.entities
    */
   public List<String> getJavaImports() {
-    List<String> imports = getJavaImportsInternal();
+    return getJavaImports(properties);
+  }
+
+  public List<String> getJavaImports(List<Property> propertyList) {
+    List<String> imports = getJavaImportsInternal(propertyList);
     List<String> result = new ArrayList<String>();
     String lastImport = "";
     for (String i : imports) {

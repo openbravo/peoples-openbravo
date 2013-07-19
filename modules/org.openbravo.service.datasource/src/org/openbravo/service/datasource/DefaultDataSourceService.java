@@ -328,7 +328,7 @@ public class DefaultDataSourceService extends BaseDataSourceService {
 
     final List<DataSourceProperty> result = new ArrayList<DataSourceProperty>();
     for (Property prop : entity.getProperties()) {
-      if (prop.isOneToMany()) {
+      if (prop.isOneToMany() || prop.isProxy()) {
         continue;
       }
 

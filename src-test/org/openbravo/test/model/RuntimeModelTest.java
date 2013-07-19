@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -214,7 +214,8 @@ public class RuntimeModelTest extends BaseTest {
   public void testColumnIdSet() {
     for (Entity entity : ModelProvider.getInstance().getModel()) {
       for (Property property : entity.getProperties()) {
-        if (property.isOneToMany() || property.isOneToOne() || property.isCompositeId()) {
+        if (property.isOneToMany() || property.isOneToOne() || property.isCompositeId()
+            || Entity.COMPUTED_COLUMNS_PROXY_PROPERTY.equals(property.getName())) {
           continue;
         }
         assertNotNull("Property " + property + " does not have a columnid ", property.getColumnId());

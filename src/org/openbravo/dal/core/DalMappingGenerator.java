@@ -21,9 +21,13 @@ package org.openbravo.dal.core;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
@@ -49,6 +53,7 @@ public class DalMappingGenerator implements OBSingleton {
   private static final Logger log = Logger.getLogger(DalMappingGenerator.class);
 
   private final static String HIBERNATE_FILE_PROPERTY = "hibernate.hbm.file";
+  private final static String HIBERNATE_READ_FILE_PROPERTY = "hibernate.hbm.readFile";
 
   private final static String TEMPLATE_FILE = "template.hbm.xml";
   private final static String MAIN_TEMPLATE_FILE = "template_main.hbm.xml";
@@ -79,11 +84,30 @@ public class DalMappingGenerator implements OBSingleton {
    * @return the generated Hibernate mapping (corresponds to what is found in a hbm.xml file)
    */
   public String generateMapping() {
+    final String hibernateFileLocation = OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties().getProperty(HIBERNATE_FILE_PROPERTY);
+    final String readMappingFromFile = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+        .getProperty(HIBERNATE_READ_FILE_PROPERTY);
+
+    if (hibernateFileLocation != null && readMappingFromFile != null
+        && Boolean.parseBoolean(readMappingFromFile)) {
+      try {
+        File hbm = new File(hibernateFileLocation);
+        if (hbm.exists()) {
+          log.info("Reading mapping from " + hibernateFileLocation);
+          FileInputStream fis = new FileInputStream(hbm);
+          return readFile(fis);
+        }
+      } catch (Exception e) {
+        log.error("Error reading mapping file, generating it instead", e);
+      }
+    }
+
     final ModelProvider mp = ModelProvider.getInstance();
     final StringBuilder sb = new StringBuilder();
     for (final Entity e : mp.getModel()) {
       // Do not map datasource based tables
-      if (!e.isDataSourceBased()) {
+      if (!e.isDataSourceBased() && !e.isVirtualEntity()) {
         final String entityMapping = generateMapping(e);
         sb.append(entityMapping);
       }
@@ -94,9 +118,6 @@ public class DalMappingGenerator implements OBSingleton {
     if (log.isDebugEnabled()) {
       log.debug(result);
     }
-
-    final String hibernateFileLocation = OBPropertiesProvider.getInstance()
-        .getOpenbravoProperties().getProperty(HIBERNATE_FILE_PROPERTY);
 
     if (hibernateFileLocation != null) {
       try {
@@ -129,6 +150,7 @@ public class DalMappingGenerator implements OBSingleton {
     // create the content by first getting the id
     final StringBuilder content = new StringBuilder();
 
+    content.append(TAB2);
     if (entity.getMappingClass() == null) {
       content.append("<tuplizer entity-mode=\"dynamic-map\" "
           + "class=\"org.openbravo.dal.core.OBDynamicTuplizer\"/>\n\n");
@@ -144,6 +166,7 @@ public class DalMappingGenerator implements OBSingleton {
     }
     content.append(NL);
 
+    List<Property> computedColumns = new ArrayList<Property>();
     // now handle the standard columns
     for (final Property p : entity.getProperties()) {
       if (p.isId()) { // && p.isPrimitive()) { // handled separately
@@ -157,7 +180,9 @@ public class DalMappingGenerator implements OBSingleton {
       if (p.isOneToMany()) {
         content.append(generateOneToMany(p));
       } else {
-        if (p.isPrimitive()) {
+        if (p.getSqlLogic() != null) {
+          computedColumns.add(p);
+        } else if (p.isPrimitive()) {
           content.append(generatePrimitiveMapping(p));
         } else {
           content.append(generateReferenceMapping(p));
@@ -165,12 +190,71 @@ public class DalMappingGenerator implements OBSingleton {
       }
     }
 
+    if (!computedColumns.isEmpty()) {
+      // create a proxy property for all computed columns
+      content.append(generateComputedColumnsMapping(entity));
+    }
+
     if (entity.isActiveEnabled()) {
-      content.append(getActiveFilter());
+      content.append(TAB2 + getActiveFilter());
     }
 
     hbm = hbm.replace("content", content.toString());
+
+    if (!computedColumns.isEmpty()) {
+      hbm = hbm + generateComputedColumnsClassMapping(entity, computedColumns);
+    }
     return hbm;
+  }
+
+  private String generateComputedColumnsClassMapping(Entity entity, List<Property> computedColumns) {
+    String hbm = getClassTemplateContents();
+    String entityName = getComputedColumnsEntityName(entity);
+    hbm = hbm.replaceAll("<class", "<class name=\"" + entity.getPackageName() + "." + entityName
+        + "\" ");
+    hbm = hbm.replaceAll("mappingName", entityName);
+    hbm = hbm.replaceAll("tableName", entity.getTableName());
+    hbm = hbm.replaceAll("ismutable", "false");
+
+    final StringBuilder content = new StringBuilder();
+    content.append(TAB2
+        + "<tuplizer entity-mode=\"pojo\" class=\"org.openbravo.dal.core.OBTuplizer\"/>" + NL + NL);
+    content.append(generateStandardID(entity) + NL);
+
+    content
+        .append(TAB2
+            + "<many-to-one name=\"client\" column=\"AD_Client_ID\" not-null=\"true\" update=\"false\" insert=\"false\" entity-name=\"ADClient\" access=\"org.openbravo.dal.core.OBDynamicPropertyHandler\"/>"
+            + NL);
+    content
+        .append(TAB2
+            + "<many-to-one name=\"organization\" column=\"AD_Org_ID\" not-null=\"true\" update=\"false\" insert=\"false\" entity-name=\"Organization\" access=\"org.openbravo.dal.core.OBDynamicPropertyHandler\"/>"
+            + NL + NL);
+
+    for (Property p : computedColumns) {
+      if (p.isPrimitive()) {
+        content.append(generatePrimitiveMapping(p));
+      } else {
+        content.append(generateReferenceMapping(p));
+      }
+    }
+    hbm = hbm.replace("content", content.toString());
+    return hbm;
+  }
+
+  private String generateComputedColumnsMapping(Entity entity) {
+    Check.isTrue(entity.getIdProperties().size() == 1,
+        "Computed columns are not supported in entities with composited ID");
+    StringBuffer sb = new StringBuffer();
+    final Property p = entity.getIdProperties().get(0);
+    sb.append(TAB2
+        + "<many-to-one name=\"_computedColumns\" update=\"false\" insert=\"false\" access=\"org.openbravo.dal.core.OBDynamicPropertyHandler\" ");
+    sb.append("column=\"" + p.getColumnName() + "\" ");
+    sb.append("entity-name=\"" + getComputedColumnsEntityName(entity) + "\"/>" + NL);
+    return sb.toString();
+  }
+
+  private String getComputedColumnsEntityName(Entity entity) {
+    return entity.getSimpleClassName() + "_ComputedColumns";
   }
 
   private String getActiveFilter() {
@@ -221,8 +305,12 @@ public class DalMappingGenerator implements OBSingleton {
 
   private String generateReferenceMapping(Property p) {
     if (p.getTargetEntity() == null) {
-      return "<!-- Unsupported reference type " + p.getName() + " of entity "
-          + p.getEntity().getName() + "-->" + NL;
+      if (p.isProxy()) {
+        return "";
+      } else {
+        return "<!-- Unsupported reference type " + p.getName() + " of entity "
+            + p.getEntity().getName() + "-->" + NL;
+      }
     }
     final StringBuffer sb = new StringBuffer();
     if (p.isOneToOne()) {
@@ -238,6 +326,7 @@ public class DalMappingGenerator implements OBSingleton {
       } else {
         sb.append("column=\"" + p.getColumnName() + "\"");
       }
+
       // cascade=\
       // "save-update\"
       if (p.isMandatory()) {
@@ -312,7 +401,7 @@ public class DalMappingGenerator implements OBSingleton {
       sb.append(TAB3 + "<one-to-many entity-name=\"" + p.getTargetEntity().getName() + "\"/>" + NL);
 
       if (p.getTargetEntity().isActiveEnabled()) {
-        sb.append(getActiveFilter());
+        sb.append(TAB3 + getActiveFilter());
       }
       sb.append(TAB2 + "</bag>" + NL);
 
@@ -381,8 +470,12 @@ public class DalMappingGenerator implements OBSingleton {
   }
 
   private String readFile(String fileName) {
+    return readFile(getClass().getResourceAsStream(fileName));
+  }
+
+  private String readFile(InputStream is) {
     try {
-      final InputStreamReader fr = new InputStreamReader(getClass().getResourceAsStream(fileName));
+      final InputStreamReader fr = new InputStreamReader(is);
       final BufferedReader br = new BufferedReader(fr);
       try {
         String line;

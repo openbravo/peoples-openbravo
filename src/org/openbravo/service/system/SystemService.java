@@ -322,7 +322,7 @@ public class SystemService implements OBSingleton {
       List<Entity> entities = ModelProvider.getInstance().getModel();
       for (Entity entity : entities) {
         if ((entity.isClientEnabled() || entity.getName().equals("ADClient")) && !entity.isView()
-            && !entity.isDataSourceBased()) {
+            && !entity.isDataSourceBased() && !entity.isVirtualEntity()) {
           final String sql = "delete from " + entity.getTableName() + " where ad_client_id=?";
           sqlCommands.add(sql);
         }

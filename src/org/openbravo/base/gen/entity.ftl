@@ -26,7 +26,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2008-2011 Openbravo SLU
+ * All portions are Copyright (C) 2008-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -46,12 +46,23 @@ public class ${entity.simpleClassName} extends BaseOBObject ${entity.implementsS
     public static final String TABLE_NAME = "${entity.tableName}";
     public static final String ENTITY_NAME = "${entity.name}";
     <#list entity.properties as p>
+    <#if !p.computedColumn>
     public static final String PROPERTY_${p.name?upper_case} = "${p.name}";
+    </#if>
     </#list>
+    
+    <#if entity.hasComputedColumns()>
+    // Computed columns properties, these properties cannot be directly accessed, they need
+    // to be read through _commputedColumns proxy. They cannot be directly used in HQL, OBQuery
+    // nor OBCriteria. 
+    <#list entity.computedColumnProperties as p>
+    public static final String COMPUTED_COLUMN_${p.name?upper_case} = "${p.name}";
+    </#list>
+    </#if>
 
     public ${entity.simpleClassName}() {
     <#list entity.properties as p>
-        <#if p.hasDefaultValue()>
+        <#if p.hasDefaultValue() && !p.computedColumn>
         setDefaultValue(PROPERTY_${p.name?upper_case}, ${p.formattedDefaultValue});
         </#if>
     </#list>
@@ -71,7 +82,11 @@ public class ${entity.simpleClassName} extends BaseOBObject ${entity.implementsS
     <#if p.partOfCompositeId>
         return ((Id)getId()).«getter((Property)p)»();
     <#else>
+      <#if !p.computedColumn>
         return (${p.shorterTypeName}) get(PROPERTY_${p.name?upper_case});
+      <#else>
+        return (${p.shorterTypeName}) get(COMPUTED_COLUMN_${p.name?upper_case});
+      </#if>
     </#if>
     }
 
@@ -82,7 +97,11 @@ public class ${entity.simpleClassName} extends BaseOBObject ${entity.implementsS
     <#if p.partOfCompositeId>
 	    ((Id)getId()).set${p.getterSetterName?cap_first}(${p.javaName});
 	<#else>
+      <#if !p.computedColumn>
         set(PROPERTY_${p.name?upper_case}, ${p.javaName});
+      <#else>
+        set(COMPUTED_COLUMN_${p.name?upper_case}, ${p.javaName});
+      </#if>
 	</#if>
     }
 
@@ -92,7 +111,12 @@ public class ${entity.simpleClassName} extends BaseOBObject ${entity.implementsS
 	<#if p.oneToMany>
     @SuppressWarnings("unchecked")
     public ${theList(entity)}<${p.shorterNameTargetEntity}> get${p.name?cap_first}() {
-        return (${theList(entity)}<${p.shorterNameTargetEntity}>) get(PROPERTY_${p.name?upper_case});
+      <#if !p.computedColumn>
+      return (${theList(entity)}<${p.shorterNameTargetEntity}>) get(PROPERTY_${p.name?upper_case});        
+      <#else>
+      //ss
+      return (${theList(entity)}<${p.shorterNameTargetEntity}>) get(COMPUTED_COLUMN_${p.name?upper_case});
+      </#if>
     }
 
     public void set${p.getterSetterName?cap_first}(${theList(entity)}<${p.shorterNameTargetEntity}> ${p.name}) {
@@ -170,4 +194,17 @@ public class ${entity.simpleClassName} extends BaseOBObject ${entity.implementsS
 		}		
 	}
 	</#if>
+	
+	<#if entity.hasComputedColumns()>
+    @Override
+    public Object get(String propName) {
+      <#list entity.computedColumnProperties as p>
+      if (COMPUTED_COLUMN_${p.name?upper_case}.equals(propName)){
+        return get_computedColumns().${getter(p)}();
+      }
+      </#list>
+    
+      return super.get(propName);
+    }
+    </#if>
 }
