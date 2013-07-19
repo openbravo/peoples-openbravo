@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -328,8 +328,14 @@ public class InstanceManagement extends HttpSecureAppServlet {
       } else {
         myMessage = new OBError();
         myMessage.setType(activationKey.getMessageType());
-        myMessage.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(),
-            activationKey.getErrorMessage()));
+        String msgTxt = Utility.parseTranslation(this, vars, vars.getLanguage(),
+            activationKey.getErrorMessage());
+
+        OBError originalMessage = vars.getMessage("InstanceManagement");
+        if (originalMessage != null) {
+          msgTxt = originalMessage.getMessage() + "<br/>" + msgTxt;
+        }
+        myMessage.setMessage(msgTxt);
       }
 
       if (myMessage == null
