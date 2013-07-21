@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2012 Openbravo SLU 
+ * All portions are Copyright (C) 2012-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -45,7 +45,8 @@ import org.openbravo.model.ad.ui.Tab;
 public class FieldHandler extends EntityPersistenceEventObserver {
   private static Entity[] entities = { ModelProvider.getInstance().getEntity(Field.ENTITY_NAME) };
 
-  public void onUpdate(@Observes EntityUpdateEvent event) {
+  public void onUpdate(@Observes
+  EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -53,7 +54,8 @@ public class FieldHandler extends EntityPersistenceEventObserver {
     setIgnoreInWad(event);
   }
 
-  public void onNew(@Observes EntityNewEvent event) {
+  public void onNew(@Observes
+  EntityNewEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -64,15 +66,16 @@ public class FieldHandler extends EntityPersistenceEventObserver {
   // must be called after setcolumn
   private void setIgnoreInWad(EntityPersistenceEvent event) {
     final Column column = (Column) event.getCurrentState(getColumnProperty());
-    if (column.getSqllogic() != null) {
+    if (column != null && column.getSqllogic() != null) {
       event.setCurrentState(getIgnoreInWadProperty(), true);
     }
   }
 
   private void setColumn(EntityPersistenceEvent event) {
     final String propertyPath = (String) event.getCurrentState(getPropertyProperty());
+    final String clientClass = (String) event.getCurrentState(getClientClassProperty());
     if (propertyPath == null || propertyPath.trim().length() == 0) {
-      if (event.getCurrentState(getColumnProperty()) == null) {
+      if (event.getCurrentState(getColumnProperty()) == null && clientClass == null) {
         throw new OBException(OBMessageUtils.messageBD("OBUIAPP_ColumnMustBeSet"));
       }
       return;
@@ -112,5 +115,9 @@ public class FieldHandler extends EntityPersistenceEventObserver {
 
   private Property getTabProperty() {
     return entities[0].getProperty(Field.PROPERTY_TAB);
+  }
+
+  private Property getClientClassProperty() {
+    return entities[0].getProperty(Field.PROPERTY_CLIENTCLASS);
   }
 }
