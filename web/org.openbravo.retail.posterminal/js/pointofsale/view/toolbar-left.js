@@ -187,7 +187,7 @@ enyo.kind({
         }
         return;
       }
-      if(this.model.get('order').getTotal()<0){
+      if (this.model.get('order').getTotal() < 0) {
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_NegativeTotal'), OB.I18N.getLabel('OBPOS_NegativeTotalMessage'));
         return true;
       }
@@ -195,7 +195,12 @@ enyo.kind({
         return true;
       }
       OB.MobileApp.view.scanningFocus(false);
-      receipt.trigger('displayTotal');
+      if (this.model.get('leftColumnViewManager').isMultiOrder()) {
+        this.model.get('multiOrders').trigger('displayTotal');
+      } else {
+        receipt.trigger('displayTotal');
+      }
+
       this.doTabChange({
         tabPanel: this.tabPanel,
         keyboard: 'toolbarpayment',

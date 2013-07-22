@@ -20,6 +20,9 @@
       this.receipt.on('print', this.print, this);
       this.receipt.on('popenDrawer', this.openDrawer, this);
       this.receipt.on('displayTotal', this.displayTotal, this);
+      this.multiOrders.on('displayTotal', function () {
+        this.displayTotalMultiorders();
+      }, this);
 
       this.templateopendrawer = new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.OpenDrawer);
       this.templatereceipt = new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.ReceiptTemplate);
@@ -102,6 +105,17 @@
     this.template = new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.DisplayTotal);
     OB.POS.hwserver.print(this.template, {
       order: receipt
+    });
+  };
+
+  PrintReceipt.prototype.displayTotalMultiorders = function () {
+    // Clone the receipt
+    var multiOrders;
+    multiOrders = new OB.Model.MultiOrders();
+    multiOrders = this.multiOrders;
+    this.template = new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.DisplayTotal);
+    OB.POS.hwserver.print(this.template, {
+      order: multiOrders
     });
   };
 

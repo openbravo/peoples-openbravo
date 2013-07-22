@@ -348,9 +348,9 @@
 
       var totalnet = this.get('lines').reduce(function (memo, e) {
         var netLine = e.get('discountedNet');
-        if(e.get('netfull')){
+        if (e.get('netfull')) {
           return memo.add(new BigDecimal(String(e.get('netfull'))));
-        }else{
+        } else {
           return memo.add(new BigDecimal(String(e.get('net'))));
         }
       }, new BigDecimal(String(OB.DEC.Zero)));
@@ -1268,7 +1268,7 @@
         order.set('session', OB.POS.modelterminal.get('session'));
       } else {
         order.set('isPaid', true);
-        if(model.receiptPayments.length===0){
+        if (model.receiptPayments.length === 0) {
           order.set('paidOnCredit', true);
         }
         order.set('id', model.orderid);
@@ -1477,78 +1477,88 @@
       openDrawer: false,
       additionalInfo: null
     },
+    getPaymentStatus: function () {
+      var total = this.getTotal();
+      var pay = this.getPayment();
+      return {
+        'total': OB.I18N.formatCurrency(this.getTotal()),
+        'pending': OB.DEC.compare(OB.DEC.sub(pay, total)) >= 0 ? OB.I18N.formatCurrency(OB.DEC.Zero) : OB.I18N.formatCurrency(OB.DEC.sub(total, pay)),
+        'change': OB.DEC.compare(this.getChange()) > 0 ? OB.I18N.formatCurrency(this.getChange()) : null,
+        'overpayment': OB.DEC.compare(OB.DEC.sub(pay, total)) > 0 ? OB.I18N.formatCurrency(OB.DEC.sub(pay, total)) : null
+      };
+    },
     adjustPayment: function () {
-        var i, max, p;
-        var payments = this.get('payments');
-        var total = this.getTotal();
+      var i, max, p;
+      var payments = this.get('payments');
+      var total = this.getTotal();
 
-        var nocash = OB.DEC.Zero;
-        var cash = OB.DEC.Zero;
-        var origCash = OB.DEC.Zero;
-        var auxCash = OB.DEC.Zero;
-        var prevCash = OB.DEC.Zero;
-        var paidCash = OB.DEC.Zero;
-        var pcash;
+      var nocash = OB.DEC.Zero;
+      var cash = OB.DEC.Zero;
+      var origCash = OB.DEC.Zero;
+      var auxCash = OB.DEC.Zero;
+      var prevCash = OB.DEC.Zero;
+      var paidCash = OB.DEC.Zero;
+      var pcash;
 
-        for (i = 0, max = payments.length; i < max; i++) {
-          p = payments.at(i);
-          if (p.get('rate') && p.get('rate') !== '1') {
-            p.set('origAmount', OB.DEC.mul(p.get('amount'), p.get('rate')));
-          } else {
-            p.set('origAmount', p.get('amount'));
-          }
-          p.set('paid', p.get('origAmount'));
-          if (p.get('kind') === OB.POS.modelterminal.get('paymentcash')) {
-            // The default cash method
-            cash = OB.DEC.add(cash, p.get('origAmount'));
-            pcash = p;
-            paidCash = OB.DEC.add(paidCash, p.get('origAmount'));
-          } else if (OB.POS.modelterminal.hasPayment(p.get('kind')) && OB.POS.modelterminal.hasPayment(p.get('kind')).paymentMethod.iscash) {
-            // Another cash method
-            origCash = OB.DEC.add(origCash, p.get('origAmount'));
-            pcash = p;
-            paidCash = OB.DEC.add(paidCash, p.get('origAmount'));
-          } else {
-            nocash = OB.DEC.add(nocash, p.get('origAmount'));
-          }
-        }
-
-        // Calculation of the change....
-        //FIXME
-        if (pcash) {
-          if (pcash.get('kind') !== OB.POS.modelterminal.get('paymentcash')) {
-            auxCash = origCash;
-            prevCash = cash;
-          } else {
-            auxCash = cash;
-            prevCash = origCash;
-          }
-          if (OB.DEC.compare(nocash - total) > 0) {
-            pcash.set('paid', OB.DEC.Zero);
-            this.set('payment', nocash);
-            this.set('change', OB.DEC.add(cash, origCash));
-          } else if (OB.DEC.compare(OB.DEC.sub(OB.DEC.add(OB.DEC.add(nocash, cash), origCash), total)) > 0) {
-            pcash.set('paid', OB.DEC.sub(total, OB.DEC.add(nocash, OB.DEC.sub(paidCash, pcash.get('origAmount')))));
-            this.set('payment', total);
-            //The change value will be computed through a rounded total value, to ensure that the total plus change
-            //add up to the paid amount without any kind of precission loss
-            this.set('change', OB.DEC.sub(OB.DEC.add(OB.DEC.add(nocash, cash), origCash), OB.Utilities.Number.roundJSNumber(total, 2)));
-          } else {
-            pcash.set('paid', auxCash);
-            this.set('payment', OB.DEC.add(OB.DEC.add(nocash, cash), origCash));
-            this.set('change', OB.DEC.Zero);
-          }
+      for (i = 0, max = payments.length; i < max; i++) {
+        p = payments.at(i);
+        if (p.get('rate') && p.get('rate') !== '1') {
+          p.set('origAmount', OB.DEC.mul(p.get('amount'), p.get('rate')));
         } else {
-          if (payments.length > 0) {
-            if (this.get('payment') === 0 || nocash > 0) {
-              this.set('payment', nocash);
-            }
-          } else {
-            this.set('payment', OB.DEC.Zero);
-          }
+          p.set('origAmount', p.get('amount'));
+        }
+        p.set('paid', p.get('origAmount'));
+        if (p.get('kind') === OB.POS.modelterminal.get('paymentcash')) {
+          // The default cash method
+          cash = OB.DEC.add(cash, p.get('origAmount'));
+          pcash = p;
+          paidCash = OB.DEC.add(paidCash, p.get('origAmount'));
+        } else if (OB.POS.modelterminal.hasPayment(p.get('kind')) && OB.POS.modelterminal.hasPayment(p.get('kind')).paymentMethod.iscash) {
+          // Another cash method
+          origCash = OB.DEC.add(origCash, p.get('origAmount'));
+          pcash = p;
+          paidCash = OB.DEC.add(paidCash, p.get('origAmount'));
+        } else {
+          nocash = OB.DEC.add(nocash, p.get('origAmount'));
+        }
+      }
+
+      // Calculation of the change....
+      //FIXME
+      if (pcash) {
+        if (pcash.get('kind') !== OB.POS.modelterminal.get('paymentcash')) {
+          auxCash = origCash;
+          prevCash = cash;
+        } else {
+          auxCash = cash;
+          prevCash = origCash;
+        }
+        if (OB.DEC.compare(nocash - total) > 0) {
+          pcash.set('paid', OB.DEC.Zero);
+          this.set('payment', nocash);
+          this.set('change', OB.DEC.add(cash, origCash));
+        } else if (OB.DEC.compare(OB.DEC.sub(OB.DEC.add(OB.DEC.add(nocash, cash), origCash), total)) > 0) {
+          pcash.set('paid', OB.DEC.sub(total, OB.DEC.add(nocash, OB.DEC.sub(paidCash, pcash.get('origAmount')))));
+          this.set('payment', total);
+          //The change value will be computed through a rounded total value, to ensure that the total plus change
+          //add up to the paid amount without any kind of precission loss
+          this.set('change', OB.DEC.sub(OB.DEC.add(OB.DEC.add(nocash, cash), origCash), OB.Utilities.Number.roundJSNumber(total, 2)));
+        } else {
+          pcash.set('paid', auxCash);
+          this.set('payment', OB.DEC.add(OB.DEC.add(nocash, cash), origCash));
           this.set('change', OB.DEC.Zero);
         }
-      },
+      } else {
+        if (payments.length > 0) {
+          if (this.get('payment') === 0 || nocash > 0) {
+            this.set('payment', nocash);
+          }
+        } else {
+          this.set('payment', OB.DEC.Zero);
+        }
+        this.set('change', OB.DEC.Zero);
+      }
+    },
     addPayment: function (payment) {
       var payments, total;
       var i, max, p;
@@ -1571,6 +1581,7 @@
               p.set('origAmount', OB.DEC.add(payment.get('origAmount'), OB.DEC.mul(p.get('origAmount'), p.get('rate'))));
             }
             this.adjustPayment();
+            this.trigger('displayTotal');
             return;
           }
         }
@@ -1581,6 +1592,7 @@
       payment.set('date', new Date());
       payments.add(payment);
       this.adjustPayment();
+      this.trigger('displayTotal');
     },
     removePayment: function (payment) {
       var payments = this.get('payments');
@@ -1589,6 +1601,9 @@
         this.set('openDrawer', false);
       }
       this.adjustPayment();
+    },
+    printGross: function () {
+      return OB.I18N.formatCurrency(this.getTotal());
     },
     getTotal: function () {
       return this.get('total');
@@ -1603,7 +1618,7 @@
       return OB.DEC.sub(this.getTotal(), this.getPayment());
     },
     toInvoice: function (status) {
-      if (status === false){
+      if (status === false) {
         this.unset('additionalInfo');
         _.each(this.get('multiOrdersList').models, function (order) {
           order.unset('generateInvoice');
