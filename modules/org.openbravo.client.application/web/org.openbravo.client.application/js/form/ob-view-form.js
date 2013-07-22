@@ -1413,8 +1413,11 @@ OB.ViewFormProperties = {
 
   // always let the saveRow callback handle the error
   saveEditorReply: function (response, data, request) {
-    if (request.editor && request.editor.view && request.operationType === 'add') {
-      delete request.editor.view._saving;
+    var form, isNewRecord;
+    form = request.editor.view.isShowingForm ? request.editor.view.viewForm : request.editor.view.viewGrid.getEditForm();
+    isNewRecord = form === null ? false : form.isNew;
+    if (request.editor && request.editor.view && isNewRecord) {
+      delete request.editor.view._savingNewRecord;
     }
     return true;
   },

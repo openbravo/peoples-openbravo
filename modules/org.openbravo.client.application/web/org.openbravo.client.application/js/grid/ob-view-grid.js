@@ -2677,7 +2677,7 @@ isc.OBViewGrid.addProperties({
   editComplete: function (rowNum, colNum, newValues, oldValues, editCompletionEvent, dsResponse) {
 
     var record = this.getRecord(rowNum),
-        editRow, editSession, autoSaveAction, keepSelection;
+        editRow, editSession, autoSaveAction, keepSelection, form, isNewRecord;
 
     // this happens when the record change causes a group name
     // change and therefore a group collapse
@@ -2689,6 +2689,12 @@ isc.OBViewGrid.addProperties({
     if (record && record._newId) {
       record.id = record._newId;
       delete record._newId;
+    }
+
+    form = this.getEditForm();
+    isNewRecord = (form === null) ? false : form.isNew;
+    if (isNewRecord) {
+      delete this.view._savingNewRecord;
     }
 
     // during save the record looses the link to the editColumnLayout,
