@@ -180,7 +180,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
         i, j, k, amtAux, amountToPay, ordersLength, multiOrders = new OB.Model.MultiOrders(),
         me = this,
         iter, isNew = false,
-        discounts, ordersave, customersave, taxes, orderList, hwManager, ViewManager, LeftColumnViewManager, LeftColumnCurrentView;
+        discounts, ordersave, customersave, taxes, orderList, hwManager, ViewManager, LeftColumnViewManager, LeftColumnCurrentView, SyncReadyToSendFunction;
+
 
     function success() {
       return true;
@@ -317,10 +318,25 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
             }
           }
         }
-        this.get('multiOrders').trigger('closed', iter);
-        this.get('multiOrders').trigger('print', iter); // to guaranty execution order
+
+        function readyToSendFunction() {
+          //this function is executed when all orders are ready to be sent
+          me.get('multiOrders').trigger('closed', iter);
+          me.get('multiOrders').trigger('print', iter); // to guaranty execution order
+          me.get('leftColumnViewManager').setOrderMode();
+        }
+
+        //this var is a function (copy of the above one) which is called by every items, but it is just executed once (when ALL items has called to it)
+        SyncReadyToSendFunction = _.after(this.get('multiOrders').get('multiOrdersList').length, readyToSendFunction);
+
+        _.each(this.get('multiOrders').get('multiOrdersList').models, function (multiOrderOrder) {
+          multiOrderOrder.prepareToSend(function () {
+            //things to do with each order
+            //Finally call to SyncReadyToSendFunction
+            SyncReadyToSendFunction();
+          });
+        }, this);
       }
-      this.get('leftColumnViewManager').setOrderMode();
     }, this);
 
     customersave = new OB.DATA.CustomerSave(this);
