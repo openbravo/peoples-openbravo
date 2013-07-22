@@ -13,6 +13,7 @@
   // Because of problems with module dependencies, it is possible this object to already
   // be defined with some rules.
   var alreadyDefinedRules = (OB && OB.Model && OB.Model.Discounts && OB.Model.Discounts.discountRules) || {},
+      onLoadActions = (OB && OB.Model && OB.Model.Discounts && OB.Model.Discounts.onLoadActions) || [],
       i;
 
   OB.Model.Discounts = {
@@ -190,6 +191,12 @@
   if (OB && OB.Model && OB.Model.Discounts && OB.Model.Discounts.extraModels) {
     for (i = 0; i < OB.Model.Discounts.extraModels.length; i++) {
       OB.Data.Registry.registerModel(OB.Model.Discounts.extraModels[i]);
+    }
+  }
+
+  for (i = 0; i < onLoadActions.length; i++) {
+    if (onLoadActions[i].execute) {
+      onLoadActions[i].execute();
     }
   }
 }());
