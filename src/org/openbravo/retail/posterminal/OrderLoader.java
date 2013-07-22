@@ -111,6 +111,10 @@ public class OrderLoader extends JSONProcessSimple {
   @Any
   private Instance<OrderLoaderHook> orderProcesses;
 
+  @Inject
+  @Any
+  private Instance<OrderLoaderPreProcessHook> orderPreProcesses;
+
   @Override
   public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {
     Object jsonorder = jsonsent.get("order");
@@ -203,6 +207,7 @@ public class OrderLoader extends JSONProcessSimple {
   }
 
   public JSONObject saveOrder(JSONObject jsonorder) throws Exception {
+    executeHooks(orderPreProcesses, jsonorder, null, null, null);
 
     boolean isQuotation = jsonorder.has("isQuotation") && jsonorder.getBoolean("isQuotation");
     if (jsonorder.getLong("orderType") != 2 && !jsonorder.getBoolean("isLayaway") && !isQuotation
@@ -328,10 +333,8 @@ public class OrderLoader extends JSONProcessSimple {
       }
 
       // Call all OrderProcess injected.
-      for (Iterator<OrderLoaderHook> procIter = orderProcesses.iterator(); procIter.hasNext();) {
-        OrderLoaderHook proc = procIter.next();
-        proc.exec(jsonorder, order, shipment, invoice);
-      }
+      executeHooks(orderProcesses, jsonorder, order, shipment, invoice);
+
     }
     long t5 = System.currentTimeMillis();
     OBDal.getInstance().flush();
@@ -340,6 +343,18 @@ public class OrderLoader extends JSONProcessSimple {
         + "; Process Payments:" + (t5 - t4) + " Final flush: " + (System.currentTimeMillis() - t5));
 
     return successMessage(jsonorder);
+  }
+
+  private void executeHooks(Instance<? extends Object> hooks, JSONObject jsonorder, Order order,
+      ShipmentInOut shipment, Invoice invoice) throws Exception {
+    for (Iterator<? extends Object> procIter = hooks.iterator(); procIter.hasNext();) {
+      Object proc = procIter.next();
+      if (proc instanceof OrderLoaderHook) {
+        ((OrderLoaderHook) proc).exec(jsonorder, order, shipment, invoice);
+      } else {
+        ((OrderLoaderPreProcessHook) proc).exec(jsonorder);
+      }
+    }
   }
 
   private void updateAuditInfo(Order order, Invoice invoice, JSONObject jsonorder)
