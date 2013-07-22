@@ -729,9 +729,9 @@ enyo.kind({
   removeMultiOrders: function (inSender, inEvent) {
     var me = this;
     me.model.get('multiOrders').get('multiOrdersList').remove(inEvent.order);
-    me.model.get('orderList').current = inEvent.order;
-    me.model.get('orderList').deleteCurrent();
-    if (!_.isNull(inEvent.order.id)) {
+    if (inEvent && inEvent.order && inEvent.order.get('loadedFromServer')) {
+      me.model.get('orderList').current = inEvent.order;
+      me.model.get('orderList').deleteCurrent();
       me.model.get('orderList').deleteCurrentFromDatabase(inEvent.order);
     }
     return true;
