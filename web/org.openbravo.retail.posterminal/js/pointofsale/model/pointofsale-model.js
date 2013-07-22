@@ -459,60 +459,14 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
   },
 
   /**
-   * Checks if approval is required to pay this ticket. If required, a popup is shown requesting it.
+   * DEVELOPERS: overwrite this function to do approvals when ticket is about to be paid
+   *             any function overwritting it must trigger 'approvalChecked', with 'approved'
+   *             property being true to continue the payment and false to cancel it.
    */
   checkPaymentApproval: function () {
-    // Checking if applied discretionary discounts require approval, TODO: this might be moved to discounts module
-    var discretionaryDiscountTypes = OB.Model.Discounts.getManualPromotions(true),
-        discountsToCheck = [],
-        requiresApproval = false,
-        i;
-
-    if (OB.POS.modelterminal.hasPermission('OBPOS_approval.discounts', true)) {
-      // current user is a supervisor, no need to check further permissions
-      this.trigger('approvalChecked', {
-        approved: true
-      });
-      return;
-    }
-
-    this.get('order').get('lines').each(function (l) {
-      var p, promotions;
-      promotions = l.get('promotions');
-      if (promotions) {
-        for (p = 0; p < promotions.length; p++) {
-          if (_.contains(discretionaryDiscountTypes, promotions[p].discountType) && !_.contains(discountsToCheck, promotions[p].ruleId)) {
-            discountsToCheck.push(promotions[p].ruleId);
-          }
-        }
-      }
-    }, this);
-
-    if (discountsToCheck.length > 0) {
-      OB.Dal.find(OB.Model.Discount, {
-        obdiscApprovalRequired: true
-      }, enyo.bind(this, function (discountsWithApproval) {
-        for (i = 0; i < discountsToCheck.length; i++) {
-          if (discountsWithApproval.where({
-            id: discountsToCheck[i]
-          }).length > 0) {
-            requiresApproval = true;
-            break;
-          }
-        }
-        if (requiresApproval) {
-          OB.UTIL.Approval.requestApproval(this, 'OBPOS_approval.discounts');
-        } else {
-          this.trigger('approvalChecked', {
-            approved: true
-          });
-        }
-      }));
-    } else {
-      this.trigger('approvalChecked', {
-        approved: true
-      });
-    }
+    this.trigger('approvalChecked', {
+      approved: true
+    });
   },
 
   /**
