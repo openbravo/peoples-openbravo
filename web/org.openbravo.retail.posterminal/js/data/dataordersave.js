@@ -65,29 +65,6 @@
             }
             };
         OB.MobileApp.model.runSyncProcess(model, successCallback);
-        //        if (OB.POS.modelterminal.get('connectedToERP')) {
-        //          OB.Dal.get(OB.Model.Order, receiptId, function (receipt) {
-        //            var successCallback, errorCallback, orderList;
-        //            successCallback = function () {
-        //              //In case the processed document is a quotation, we remove its id so it can be reactivated
-        //              if (model.get('order') && model.get('order').get('isQuotation')) {
-        //                model.get('order').set('oldId', model.get('order').get('id'));
-        //                model.get('order').set('id', null);
-        //                model.get('order').set('isbeingprocessed', 'N');
-        //                OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationSaved', [docno]));
-        //              } else {
-        //                if (isLayaway) {
-        //                  OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgLayawaySaved', [docno]));
-        //                } else {
-        //                  OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgReceiptSaved', [docno]));
-        //                }
-        //              }
-        //            };
-        //            orderList = new OB.Collection.OrderList();
-        //            orderList.add(receipt);
-        //            OB.UTIL.processOrders(model, orderList, successCallback, null);
-        //          }, null);
-        //        }
       }, function () {
         //We do nothing: we don't need to alert the user, as the order is still present in the database, so it will be resent as soon as the user logs in again
       });
