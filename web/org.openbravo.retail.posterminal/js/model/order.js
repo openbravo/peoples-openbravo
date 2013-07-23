@@ -89,6 +89,17 @@
       return OB.I18N.formatCurrency(this.get('nondiscountednet') || this.getNet());
     },
 
+    getTotalAmountOfPromotions: function () {
+      var memo = 0;
+      if (this.get('promotions') && this.get('promotions').length > 0) {
+        return _.reduce(this.get('promotions'), function (memo, prom) {
+          return memo + prom.amt;
+        }, memo, this);
+      } else {
+        return 0;
+      }
+    },
+
     isAffectedByPack: function () {
       return _.find(this.get('promotions'), function (promotion) {
         if (promotion.pack) {
