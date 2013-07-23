@@ -129,6 +129,14 @@ public class OBViewTab extends BaseTemplateComponent {
     return component.generate();
   }
 
+  public String getNotesDataSourceJavaScript() {
+    final Map<String, Object> dsParameters = new HashMap<String, Object>(getParameters());
+    dsParameters.put(DataSourceConstants.DS_ONLY_GENERATE_CREATESTATEMENT, true);
+    final Component component = dsComponentProvider.getComponent(
+        "090A37D22E61FE94012E621729090048", dsParameters);
+    return component.generate();
+  }
+
   protected Template getComponentTemplate() {
     final String windowType = tab.getWindow().getWindowType();
     if (TEMPLATE_MAP.containsKey(windowType)) {

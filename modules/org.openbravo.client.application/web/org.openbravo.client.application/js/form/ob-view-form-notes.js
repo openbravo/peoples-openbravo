@@ -427,8 +427,12 @@ isc.OBNoteLayout.addProperties({
 
     this.addMember(this.noteListGrid);
 
-    // register note DS
-    OB.Datasource.get(this.noteDSId, this.noteListGrid, null, true);
+    // use or get DS
+    if (view.notesDataSource) {
+      this.noteListGrid.setDataSource(view.notesDataSource);
+    } else {
+      OB.Datasource.get(this.noteDSId, this.noteListGrid, null, true);
+    }
   },
 
   /**
