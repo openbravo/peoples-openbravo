@@ -40,8 +40,6 @@ enyo.kind({
     components: [{
       name: 'explainApprovalTxt',
     }, {
-      name: 'explainCommonTxt'
-    }, {
       classes: 'login-header-row',
       style: 'color:black; line-height: 20px;',
       components: [{
@@ -52,7 +50,7 @@ enyo.kind({
           horizontal: 'hidden',
           name: 'loginUserContainer',
           classes: 'login-user-container',
-          style: 'background-color:#5A5A5A;',
+          style: 'background-color:#5A5A5A; margin: 5px;',
           content: ['.']
         }]
       }, {
@@ -82,6 +80,12 @@ enyo.kind({
   bodyButtons: {
     components: [{
       kind: 'OB.UTIL.Approval.ApproveButton',
+    }, {
+      kind: 'OB.UI.ModalDialogButton',
+      i18nLabel: 'OBPOS_Cancel',
+      tap: function () {
+        this.bubble('onHideThisPopup');
+      }
     }]
   },
 
@@ -94,15 +98,13 @@ enyo.kind({
   },
 
   initComponents: function () {
+    var msg;
     this.inherited(arguments);
     this.$.bodyContent.$.username.attributes.placeholder = OB.I18N.getLabel('OBMOBC_LoginUserInput');
     this.$.bodyContent.$.password.attributes.placeholder = OB.I18N.getLabel('OBMOBC_LoginPasswordInput');
 
-    if (OB.I18N.labels[this.approvalType]) {
-      this.$.bodyContent.$.explainApprovalTxt.setContent(OB.I18N.getLabel(this.approvalType));
-    }
-
-    this.$.bodyContent.$.explainCommonTxt.setContent(OB.I18N.getLabel('OBPOS_ApprovalTextHeader'));
+    msg = OB.I18N.labels[this.approvalType] || OB.I18N.getLabel('OBPOS_ApprovalTextHeader');
+    this.$.bodyContent.$.explainApprovalTxt.setContent(msg);
 
     this.postRenderActions();
   },
