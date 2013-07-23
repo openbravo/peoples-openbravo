@@ -459,13 +459,20 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
   },
 
   /**
-   * DEVELOPERS: overwrite this function to do approvals when ticket is about to be paid
-   *             any function overwritting it must trigger 'approvalChecked', with 'approved'
-   *             property being true to continue the payment and false to cancel it.
+   * Hooks for OBPOS_CheckPaymentApproval can modify args.approved to check if 
+   * payment is approved. In case value is true the process will continue, if not
+   * it is aborted
    */
   checkPaymentApproval: function () {
-    this.trigger('approvalChecked', {
-      approved: true
+    var me = this;
+    OB.MobileApp.model.hookManager.executeHooks('OBPOS_CheckPaymentApproval', {
+      approved: true,
+      context: this
+    }, function (args) {
+      console.log('appr', args)
+      me.trigger('approvalChecked', {
+        approved: args.approved
+      });
     });
   },
 
