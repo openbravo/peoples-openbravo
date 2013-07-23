@@ -22,7 +22,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2012 Openbravo SLU
+ * All portions are Copyright (C) 2001-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************/
@@ -178,7 +178,8 @@ BEGIN
                           AND TRUNC(c.DATETO) > v_ProductionDate
                           AND ppl.PRODUCTIONTYPE = '-'
                           AND ppl.M_PRODUCTIONPLAN_ID = Cur_ProductionPlan.M_PRODUCTIONPLAN_ID
-                          AND c.ISPRODUCTION='Y') LOOP
+                          AND c.ISPRODUCTION='Y'
+                          AND c.COSTTYPE <> 'STA') LOOP
           v_ProductionCost_Tmp := v_ProductionCost_Tmp + COALESCE(Cur_WIP.cost,0);
           UPDATE M_PRODUCTIONLINE
           SET calccost = COALESCE(Cur_WIP.cost, 0)
@@ -196,6 +197,7 @@ BEGIN
                                   AND ppl.PRODUCTIONTYPE = '-'
                                   AND ppl.M_PRODUCTIONPLAN_ID = Cur_ProductionPlan.M_PRODUCTIONPLAN_ID
                                   AND c.ISPRODUCTION='N'
+                                  AND c.COSTTYPE <> 'STA'
                                   AND NOT EXISTS (SELECT 1
                                                   FROM M_COSTING, M_PRODUCTIONLINE
                                                   WHERE M_COSTING.M_PRODUCT_ID = M_PRODUCTIONLINE.M_PRODUCT_ID
@@ -203,7 +205,8 @@ BEGIN
                                                     AND TRUNC(M_COSTING.DATETO) > v_ProductionDate
                                                     AND M_PRODUCTIONLINE.PRODUCTIONTYPE = '-'
                                                     AND M_PRODUCTIONLINE.M_PRODUCT_ID = c.M_Product_ID
-                                                    AND M_COSTING.ISPRODUCTION='Y')) LOOP
+                                                    AND M_COSTING.ISPRODUCTION='Y'
+                                                    AND M_COSTING.COSTTYPE <> 'STA')) LOOP
           v_ProductionCost_Tmp := v_ProductionCost_Tmp + COALESCE(Cur_RawMaterial.cost,0);
           UPDATE M_PRODUCTIONLINE
           SET calccost = COALESCE(Cur_RawMaterial.cost, 0)
