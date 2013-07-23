@@ -48,27 +48,34 @@
         this.receipt.set('isbeingprocessed', 'Y');
       }
 
-      OB.Dal.save(this.receipt, function () {
-        var successCallback = function (model) {
-            //In case the processed document is a quotation, we remove its id so it can be reactivated
-            if (model.get('order') && model.get('order').get('isQuotation')) {
-              model.get('order').set('oldId', model.get('order').get('id'));
-              model.get('order').set('id', null);
-              model.get('order').set('isbeingprocessed', 'N');
-              OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationSaved', [docno]));
-            } else {
-              if (isLayaway) {
-                OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgLayawaySaved', [docno]));
+      OB.MobileApp.model.hookManager.executeHooks('OBPOS_PreOrderSave', {
+        context: this
+      }, function (args) {
+        OB.Dal.save(args.context.receipt, function () {
+          var successCallback = function (model) {
+              //In case the processed document is a quotation, we remove its id so it can be reactivated
+              if (model.get('order') && model.get('order').get('isQuotation')) {
+                model.get('order').set('oldId', model.get('order').get('id'));
+                model.get('order').set('id', null);
+                model.get('order').set('isbeingprocessed', 'N');
+                OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationSaved', [docno]));
               } else {
-                OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgReceiptSaved', [docno]));
+                if (isLayaway) {
+                  OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgLayawaySaved', [docno]));
+                } else {
+                  OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgReceiptSaved', [docno]));
+                }
               }
-            }
-            };
-        OB.MobileApp.model.runSyncProcess(model, successCallback);
-      }, function () {
-        //We do nothing: we don't need to alert the user, as the order is still present in the database, so it will be resent as soon as the user logs in again
+              };
+          OB.MobileApp.model.runSyncProcess(model, successCallback);
+        }, function () {
+          //We do nothing: we don't need to alert the user, as the order is still present in the database, so it will be resent as soon as the user logs in again
+        });
       });
     }, this);
+
+
+
     this.context.get('multiOrders').on('closed', function (receipt) {
       if (!_.isUndefined(receipt)) {
         this.receipt = receipt;
