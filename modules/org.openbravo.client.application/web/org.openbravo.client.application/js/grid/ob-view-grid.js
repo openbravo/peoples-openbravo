@@ -2593,7 +2593,7 @@ isc.OBViewGrid.addProperties({
     this.createNewRecordForEditing(insertRow);
     this.startEditing(insertRow);
     this.recomputeCanvasComponents(insertRow);
-    this.view.refreshChildViews();
+    this.view.initChildViewsForNewRecord();
   },
 
   initializeEditValues: function (rowNum, colNum) {

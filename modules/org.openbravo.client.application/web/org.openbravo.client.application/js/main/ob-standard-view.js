@@ -969,6 +969,22 @@ isc.OBStandardView.addProperties({
     }
   },
 
+  /**
+   * Empties the data of the child tabs and shows emptyMessage
+   */
+  initChildViewsForNewRecord: function () {
+    var i, length, tabViewPane;
+
+    if (this.childTabSet) {
+      length = this.childTabSet.tabs.length;
+      for (i = 0; i < length; i++) {
+        tabViewPane = this.childTabSet.tabs[i].pane;
+        tabViewPane.viewGrid.setData([]);
+        tabViewPane.viewGrid.resetEmptyMessage();
+      }
+    }
+  },
+
   refreshMeAndMyChildViewsWithEntity: function (entity, excludedTabIds) {
     var i, length, tabViewPane, excludeTab = false;
     if (entity && excludedTabIds) {
@@ -1108,8 +1124,7 @@ isc.OBStandardView.addProperties({
   editRecord: function (record, preventFocus, focusFieldName) {
     var rowNum,
     // at this point the time fields of the record are formatted in local time
-    localTime = true,
-        isRecordSelected = false;
+    localTime = true;
     this.messageBar.hide();
 
     if (!this.isShowingForm) {
@@ -1117,14 +1132,8 @@ isc.OBStandardView.addProperties({
     }
 
     if (!record) { //  new case
-      if (this.viewGrid.getSelectedRecords().length !== 0) {
-        //child views have to be refreshed if there are any records selected.
-        isRecordSelected = true;
-      }
       this.viewGrid.deselectAllRecords();
-      if (isRecordSelected) {
-        this.refreshChildViews();
-      }
+      this.initChildViewsForNewRecord();
       this.viewForm.editNewRecord(preventFocus);
     } else {
       this.viewGrid.doSelectSingleRecord(record);
@@ -1309,6 +1318,10 @@ isc.OBStandardView.addProperties({
     var tabViewPane = null,
         i;
 
+    // Do not try to refresh the child tabs of a new record
+    if (this.viewGrid.getEditForm() && this.viewGrid.getEditForm().isNew) {
+      return;
+    }
     // refresh the tabs
     if (this.childTabSet && (differentRecordId || !this.isOpenDirectModeParent)) {
       length = this.childTabSet.tabs.length;
