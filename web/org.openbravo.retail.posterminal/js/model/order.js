@@ -1178,7 +1178,22 @@
     newOrder: function () {
       var order = new Order(),
           me = this,
-          documentseq, documentseqstr, extraProperties, i;
+          documentseq, documentseqstr, receiptProperties, i, p;
+
+      // reset in new order properties defined in Receipt Properties dialog
+      if (OB.MobileApp.view.$.containerWindow && OB.MobileApp.view.$.containerWindow.$.pointOfSale && OB.MobileApp.view.$.containerWindow.$.pointOfSale.$.receiptPropertiesDialog) {
+        receiptProperties = OB.MobileApp.view.$.containerWindow.$.pointOfSale.$.receiptPropertiesDialog.newAttributes;
+        for (i = 0; i < receiptProperties.length; i++) {
+          if (receiptProperties[i].modelProperty) {
+            order.set(receiptProperties[i].modelProperty, '');
+          }
+          if (receiptProperties[i].extraProperties) {
+            for (p = 0; p < receiptProperties[i].extraProperties.length; p++) {
+              order.set(receiptProperties[i].extraProperties[p], '');
+            }
+          }
+        }
+      }
 
       order.set('client', OB.POS.modelterminal.get('terminal').client);
       order.set('organization', OB.POS.modelterminal.get('terminal').organization);
@@ -1209,17 +1224,6 @@
       documentseqstr = OB.UTIL.padNumber(documentseq, 7);
       OB.POS.modelterminal.set('documentsequence', documentseq);
       order.set('documentNo', OB.POS.modelterminal.get('terminal').docNoPrefix + '/' + documentseqstr);
-
-
-      // reset in new order properties defined in Receipt Properties dialog
-      if (OB.MobileApp.view.$.containerWindow && OB.MobileApp.view.$.containerWindow.$.pointOfSale && OB.MobileApp.view.$.containerWindow.$.pointOfSale.$.receiptPropertiesDialog) {
-        extraProperties = OB.MobileApp.view.$.containerWindow.$.pointOfSale.$.receiptPropertiesDialog.newAttributes;
-        for (i = 0; i < extraProperties.length; i++) {
-          if (extraProperties[i].modelProperty) {
-            order.set(extraProperties[i].modelProperty, null);
-          }
-        }
-      }
 
       order.set('bp', OB.POS.modelterminal.get('businessPartner'));
       order.set('print', true);
