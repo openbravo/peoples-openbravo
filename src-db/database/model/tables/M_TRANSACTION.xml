@@ -162,6 +162,15 @@
       <foreign-key foreignTable="M_PRODUCTIONLINE" name="M_TRANSACTION_M_PRODUCTIONLINE">
         <reference local="M_PRODUCTIONLINE_ID" foreign="M_PRODUCTIONLINE_ID"/>
       </foreign-key>
+      <index name="M_TRANSACTION_INOUTLINE" unique="false">
+        <index-column name="M_INOUTLINE_ID"/>
+      </index>
+      <index name="M_TRANSACTION_INVENTORYLINE" unique="false">
+        <index-column name="M_INVENTORYLINE_ID"/>
+      </index>
+      <index name="M_TRANSACTION_MOVEMENTLINE" unique="false">
+        <index-column name="M_MOVEMENTLINE_ID"/>
+      </index>
       <index name="M_TRANSSACTION_PRODUCT" unique="false">
         <index-column name="M_PRODUCT_ID"/>
       </index>
