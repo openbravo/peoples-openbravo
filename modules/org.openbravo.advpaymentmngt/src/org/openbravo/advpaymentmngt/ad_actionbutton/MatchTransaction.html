@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -80,6 +80,7 @@ function transactionFind(selected) {
   document.getElementById("inpReferenceNo_" + sc_FIN_FinAcc_Transaction_ID.bslId).innerHTML = selected["finPayment" + OB.Constants.FIELDSEPARATOR + "referenceNo"]==undefined?'':selected["finPayment" + OB.Constants.FIELDSEPARATOR + "referenceNo"];
   document.getElementById("inpAmount_" + sc_FIN_FinAcc_Transaction_ID.bslId).innerHTML = subtract(depositAmt, paymentAmt);
   document.getElementById("inpMatchingType_" + sc_FIN_FinAcc_Transaction_ID.bslId).value = "MA";
+  document.getElementById("inpMatchType_" + sc_FIN_FinAcc_Transaction_ID.bslId).innerHTML = "Manual";
   document.getElementById("inpCheckBox_" + sc_FIN_FinAcc_Transaction_ID.bslId).checked = true;
   document.getElementById("inpCheckBox_" + sc_FIN_FinAcc_Transaction_ID.bslId).disabled = false;
   document.frmMain.inpFinBankStatementLineId.value = sc_FIN_FinAcc_Transaction_ID.bslId;
@@ -140,6 +141,7 @@ function unMatchLine(bankStatementLineId, isChecked) {
     document.getElementById("inpFinancialTransactionId_" + bankStatementLineId).value = "";
     document.getElementById("inpMatchStyle_" + bankStatementLineId).style.backgroundColor = "white";
     document.getElementById("inpMatchingType_" + bankStatementLineId).value = "";
+    document.getElementById("inpMatchType_" + bankStatementLineId).innerHTML = "";
     document.getElementById("inpExecuteMatching").value = "N";
   }
   else {
@@ -341,7 +343,11 @@ function splitCallback(paramXMLParticular, XMLHttpRequestObj) {
     try {
       onloadFunctions();
     } catch (e) {}
-    loadGrid();
+    if(confirm(document.getElementById("paramConfirmationMessage").value)){
+      loadGrid();   
+    }else{
+      loadGrid(true);
+    }
     resizeAreaCreateFrom();
   }
   function validate(action) {
@@ -358,6 +364,7 @@ function splitCallback(paramXMLParticular, XMLHttpRequestObj) {
   <input type="hidden" name="Command" />
   <input type="hidden" name="IsPopUpCall" value="1" />
   <input type="hidden" name="paraMatchedAgainstTransaction" value="xxTransaction" id="paraMatchedAgainstTransaction"/>
+  <input type="hidden" name="paramConfirmationMessage" value="xxMessage" id="paramConfirmationMessage"/>
   <input type="hidden" name="inpadOrgId" value="" id="fieldOrg"/>
   <input type="hidden" name="inpwindowId" value="MBS" id="fieldWindowId"/>
   <input type="hidden" name="inpTabId" value="" id="fieldTabId"/>
@@ -602,6 +609,7 @@ function splitCallback(paramXMLParticular, XMLHttpRequestObj) {
                         <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="100">Amount</th>
                         <th class="DataGrid_Header_Cell" style="text-align: center;" width="100">Match</th>
                         <th class="DataGrid_Header_Cell" width="70">Matched Document</th>
+                        <th class="DataGrid_Header_Cell" width="70">Match Type</th>
                         <th class="DataGrid_Header_Cell" width="70">Date</th>
                         <th class="DataGrid_Header_Cell" width="100">Bus. Partner</th>
                         <th class="DataGrid_Header_Cell" width="100">Reference</th>
@@ -641,19 +649,19 @@ function splitCallback(paramXMLParticular, XMLHttpRequestObj) {
                     id="buttonProcess"
                     class="ButtonLink"
                     onclick="submitThisPage('SAVE');return false;"
-                    onfocus="buttonEvent('onfocus', this); window.status='Save'; return true;"
+                    onfocus="buttonEvent('onfocus', this); window.status='OK'; return true;"
                     onblur="buttonEvent('onblur', this);"
                     onkeyup="buttonEvent('onkeyup', this);"
                     onkeydown="buttonEvent('onkeydown', this);"
                     onkeypress="buttonEvent('onkeypress', this);"
                     onmouseup="buttonEvent('onmouseup', this);"
                     onmousedown="buttonEvent('onmousedown', this);"
-                    onmouseover="buttonEvent('onmouseover', this); window.status='Save'; return true;"
+                    onmouseover="buttonEvent('onmouseover', this); window.status='OK'; return true;"
                     onmouseout="buttonEvent('onmouseout', this);">
                     <table class="Button">
                       <tr>
-                        <td class="Button_left"><img class="Button_Icon Button_Icon_save" alt="Save" title="Save" src="../../../../../web/images/blank.gif" border="0" /></td>
-                        <td class="Button_text Button_width">Save</td>
+                        <td class="Button_left"><img class="Button_Icon Button_Icon_save" alt="OK" title="OK" src="../../../../../web/images/blank.gif" border="0" /></td>
+                        <td class="Button_text Button_width">OK</td>
                         <td class="Button_right"></td>
                       </tr>
                     </table>
@@ -691,19 +699,19 @@ function splitCallback(paramXMLParticular, XMLHttpRequestObj) {
                     id="buttonCancel"
                     class="ButtonLink"
                     onclick="submitThisPage('CANCEL');return false;"
-                    onfocus="buttonEvent('onfocus', this); window.status='Cancel'; return true;"
+                    onfocus="buttonEvent('onfocus', this); window.status='Undo'; return true;"
                     onblur="buttonEvent('onblur', this);"
                     onkeyup="buttonEvent('onkeyup', this);"
                     onkeydown="buttonEvent('onkeydown', this);"
                     onkeypress="buttonEvent('onkeypress', this);"
                     onmouseup="buttonEvent('onmouseup', this);"
                     onmousedown="buttonEvent('onmousedown', this);"
-                    onmouseover="buttonEvent('onmouseover', this); window.status='Cancel'; return true;"
+                    onmouseover="buttonEvent('onmouseover', this); window.status='Undo'; return true;"
                     onmouseout="buttonEvent('onmouseout', this);">
                     <table class="Button">
                       <tr>
-                        <td class="Button_left"><img class="Button_Icon Button_Icon_cancel" alt="Cancel" title="Cancel" src="../../../../../web/images/blank.gif" border="0" /></td>
-                        <td class="Button_text Button_width">Cancel</td>
+                        <td class="Button_left"><img class="Button_Icon Button_Icon_cancel" alt="Undo" title="Undo" src="../../../../../web/images/blank.gif" border="0" /></td>
+                        <td class="Button_text Button_width">Undo</td>
                         <td class="Button_right"></td>
                       </tr>
                     </table>

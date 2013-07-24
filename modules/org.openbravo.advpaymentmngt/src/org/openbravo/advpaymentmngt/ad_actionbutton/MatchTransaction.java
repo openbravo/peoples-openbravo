@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -60,6 +60,8 @@ import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.domain.ListTrl;
+import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Organization;
@@ -209,6 +211,10 @@ public class MatchTransaction extends HttpSecureAppServlet {
                 + strMatchedBankStatementLineId);
         matchBankStatementLine(strMatchedBankStatementLineId, strFinancialTransactionId,
             strReconciliationId, null);
+        response.setContentType("text/html; charset=UTF-8");
+        PrintWriter out = response.getWriter();
+        out.println("data = " + new JSONObject().toString());
+        out.close();
         // log4j.error("Match took: " + (System.currentTimeMillis() - init));
       } else if (vars.commandIn("CANCEL")) {
         strReconciliationId = vars.getRequiredStringParameter("inpfinReconciliationId");
@@ -336,6 +342,7 @@ public class MatchTransaction extends HttpSecureAppServlet {
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
     final String MATCHED_AGAINST_TRANSACTION = FIN_Utility.messageBD("APRM_Transaction");
+    final String CONFIRMATION_MESSAGE = FIN_Utility.messageBD("APRM_AlgorithmConfirm");
 
     FIN_Reconciliation reconciliation = OBDal.getInstance().get(FIN_Reconciliation.class,
         reconciliationId);
@@ -346,6 +353,7 @@ public class MatchTransaction extends HttpSecureAppServlet {
     xmlDocument.setParameter("financialAccountId", strFinancialAccountId);
     xmlDocument.setParameter("reconciliationId", reconciliationId);
     xmlDocument.setParameter("matchedAgainstTransaction", MATCHED_AGAINST_TRANSACTION);
+    xmlDocument.setParameter("confirmationMessage", CONFIRMATION_MESSAGE);
     xmlDocument.setParameter("trlSplitConfirmText",
         FIN_Utility.messageBD("APRM_SplitBankStatementLineConfirm"));
 
@@ -486,9 +494,10 @@ public class MatchTransaction extends HttpSecureAppServlet {
     final String MATCHED_AGAINST_INVOICE = FIN_Utility.messageBD("APRM_Invoice");
     final String MATCHED_AGAINST_ORDER = FIN_Utility.messageBD("APRM_Order");
     final String MATCHED_AGAINST_CREDIT = FIN_Utility.messageBD("APRM_Credit");
+    HashMap<String, String> matchingTypes = getMatchingTypes();
     try {
       List<FIN_FinaccTransaction> excluded = new ArrayList<FIN_FinaccTransaction>();
-      long initMatch = 0l;
+      // long initMatch = 0l;
       for (int i = 0; i < data.length; i++) {
         final String COLOR_STRONG = "#66CC00";
         final String COLOR_WEAK = "#99CC66";
@@ -507,7 +516,7 @@ public class MatchTransaction extends HttpSecureAppServlet {
             try {
               long initMatchLine = System.currentTimeMillis();
               matched = matchingTransaction.match(line, excluded);
-              initMatch = initMatch + (System.currentTimeMillis() - initMatchLine);
+              // initMatch = initMatch + (System.currentTimeMillis() - initMatchLine);
               OBDal.getInstance().getConnection().commit();
             } catch (Exception e) {
               OBDal.getInstance().rollbackAndClose();
@@ -575,9 +584,12 @@ public class MatchTransaction extends HttpSecureAppServlet {
                         : ((FIN_MatchedTransaction.NOMATCH.equals(matchingType) || FIN_MatchedTransaction.MANUALMATCH
                             .equals(matchingType)) ? COLOR_WHITE : matchingType)));
         FieldProviderFactory.setField(data[i], "matchingType", matchingType);
+        FieldProviderFactory.setField(data[i], "matchingTypeDescription", "");
 
         if (transaction != null) {
           FieldProviderFactory.setField(data[i], "disabled", "N");
+          FieldProviderFactory.setField(data[i], "matchingTypeDescription",
+              matchingTypes.get(matchingType));
           // Auto Matching or already matched
           // FieldProviderFactory.setField(data[i], "checked",
           // FIN_MatchedTransaction.STRONG.equals(matchingType) || alreadyMatched ? "Y" : "N");
@@ -634,12 +646,47 @@ public class MatchTransaction extends HttpSecureAppServlet {
           FieldProviderFactory.setField(data[i], "transactionAmount", "");
         }
       }
-      log4j.error("matching took: " + initMatch);
+      // log4j.error("matching took: " + initMatch);
     } finally {
       OBContext.restorePreviousMode();
     }
     // log4j.error("Getting fieldprovider took: " + (System.currentTimeMillis() - init));
     return data;
+  }
+
+  private HashMap<String, String> getMatchingTypes() {
+    final Reference MATCHING_TYPE_REFERENCE = OBDal.getInstance().get(Reference.class,
+        "BCABCED4983A4ECB814A6D142593ACEA");
+    HashMap<String, String> result = new HashMap<String, String>();
+    OBContext.setAdminMode(false);
+    try {
+      OBCriteria<org.openbravo.model.ad.domain.List> obc = OBDal.getInstance().createCriteria(
+          org.openbravo.model.ad.domain.List.class);
+      obc.add(Restrictions.eq(org.openbravo.model.ad.domain.List.PROPERTY_REFERENCE,
+          MATCHING_TYPE_REFERENCE));
+      for (org.openbravo.model.ad.domain.List element : obc.list()) {
+        List<ListTrl> trlList = element.getADListTrlList();
+        if (trlList.size() > 0) {
+          boolean found = false;
+          for (ListTrl trl : trlList) {
+            if (trl.getLanguage().getLanguage()
+                .equals(OBContext.getOBContext().getLanguage().getLanguage())) {
+              result.put(element.getSearchKey(), trl.getName());
+              found = true;
+              break;
+            }
+          }
+          if (!found) {
+            result.put(element.getSearchKey(), element.getName());
+          }
+        } else {
+          result.put(element.getSearchKey(), element.getName());
+        }
+      }
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    return result;
   }
 
   public String checkReconciliationNotProcessed(VariablesSecureApp vars,
