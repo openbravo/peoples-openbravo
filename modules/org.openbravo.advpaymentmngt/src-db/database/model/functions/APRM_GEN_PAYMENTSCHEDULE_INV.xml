@@ -69,6 +69,7 @@ v_FIN_FINACC_TRANSACTION_ID FIN_FINACC_TRANSACTION.FIN_FINACC_TRANSACTION_ID%TYP
 v_Line FIN_FINACC_TRANSACTION.LINE%TYPE;
 v_count NUMBER;
 v_PaymentPriority VARCHAR(32);
+v_InvoicePaid CHAR(1);
 v_creditmultiplier NUMBER:= 1;
 v_lang AD_User.Default_AD_Language%TYPE;
 v_orderno C_Order.DocumentNo%TYPE:=null;
@@ -132,6 +133,27 @@ BEGIN
 
   -- complete invoice
   IF (p_docaction = 'CO') THEN
+    -- Do not add payment for the reversal invoice if the voided invoice is not paid
+    SELECT COUNT(*)
+    INTO v_Count
+    FROM C_Invoice_Reverse
+    WHERE C_Invoice_ID = p_record_id;
+
+    IF(v_Count <> 0) THEN
+	SELECT COALESCE(ispaid, 'Y')
+	INTO v_InvoicePaid
+	FROM C_Invoice
+	WHERE C_Invoice_ID IN (
+		SELECT Reversed_C_Invoice_ID
+		FROM C_Invoice_Reverse
+		WHERE C_Invoice_Id = p_record_id
+	);
+
+	IF (v_InvoicePaid = 'N') THEN
+		RETURN;
+	END IF;
+    END IF;
+    	
     -- Checking Payment Method ID is available
     IF(v_PaymentMethod IS NULL) THEN
       RAISE_APPLICATION_ERROR(-20000, '@APRM_PAYMENTMETHOD_MISSING@');
