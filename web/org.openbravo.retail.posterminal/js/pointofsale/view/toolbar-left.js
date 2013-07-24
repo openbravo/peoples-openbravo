@@ -195,6 +195,12 @@ enyo.kind({
       return true;
     }
     OB.MobileApp.view.scanningFocus(false);
+    if (this.model.get('leftColumnViewManager').isMultiOrder()) {
+      this.model.get('multiOrders').trigger('displayTotal');
+    } else {
+      receipt.trigger('displayTotal');
+    }
+
     this.doTabChange({
       tabPanel: this.tabPanel,
       keyboard: 'toolbarpayment',

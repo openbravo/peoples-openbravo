@@ -182,7 +182,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
         i, j, k, amtAux, amountToPay, ordersLength, multiOrders = new OB.Model.MultiOrders(),
         me = this,
         iter, isNew = false,
-        discounts, ordersave, customersave, taxes, orderList, hwManager, ViewManager, LeftColumnViewManager, LeftColumnCurrentView;
+        discounts, ordersave, customersave, taxes, orderList, hwManager, ViewManager, LeftColumnViewManager, LeftColumnCurrentView, SyncReadyToSendFunction;
+
 
     function success() {
       return true;
@@ -267,7 +268,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
         //Create the negative payment for change
         iter = this.get('multiOrders').get('multiOrdersList').at(j);
         amountToPay = !_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway')) ? iter.get('amountToLayaway') : OB.DEC.sub(iter.get('gross'), iter.get('payment'));
-        while ((iter.get('amountToLayaway') !== 0 && iter.get('gross') > iter.get('payment')) || (iter.get('amountToLayaway') > 0)) {
+        while (((_.isUndefined(iter.get('amountToLayaway')) || iter.get('amountToLayaway') > 0) && iter.get('gross') > iter.get('payment')) || (iter.get('amountToLayaway') > 0)) {
           for (i = 0; i < this.get('multiOrders').get('payments').length; i++) {
             var payment = this.get('multiOrders').get('payments').at(i),
                 paymentMethod = OB.POS.terminal.terminal.paymentnames[payment.get('kind')];
@@ -317,10 +318,25 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
             }
           }
         }
-        this.get('multiOrders').trigger('closed', iter);
-        this.get('multiOrders').trigger('print', iter); // to guaranty execution order
+
+        function readyToSendFunction() {
+          //this function is executed when all orders are ready to be sent
+          me.get('multiOrders').trigger('closed', iter);
+          me.get('multiOrders').trigger('print', iter); // to guaranty execution order
+          me.get('leftColumnViewManager').setOrderMode();
+        }
+
+        //this var is a function (copy of the above one) which is called by every items, but it is just executed once (when ALL items has called to it)
+        SyncReadyToSendFunction = _.after(this.get('multiOrders').get('multiOrdersList').length, readyToSendFunction);
+
+        _.each(this.get('multiOrders').get('multiOrdersList').models, function (multiOrderOrder) {
+          multiOrderOrder.prepareToSend(function () {
+            //things to do with each order
+            //Finally call to SyncReadyToSendFunction
+            SyncReadyToSendFunction();
+          });
+        }, this);
       }
-      this.get('leftColumnViewManager').setOrderMode();
     }, this);
 
     customersave = new OB.DATA.CustomerSave(this);
@@ -451,6 +467,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
             receipt.set('layawayGross', null);
           }
           orderList.deleteCurrent();
+          receipt.trigger('change:gross', receipt);
           OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgSuccessVoidLayaway'));
         }
       });

@@ -231,7 +231,7 @@ enyo.kind({
           var exactpayment = allpayments[keyboard.status] || exactdefault,
               amount = me.model.getPending();
           if (exactpayment.rate && exactpayment.rate !== '1') {
-            amount = OB.DEC.div(me.receipt.getPending(), exactpayment.rate);
+            amount = OB.DEC.div(me.model.getPending(), exactpayment.rate);
           }
 
           if (amount > 0 && exactpayment && OB.POS.modelterminal.hasPermission(exactpayment.payment.searchKey)) {

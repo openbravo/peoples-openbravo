@@ -38,7 +38,15 @@ enyo.kind({
   isDefaultAction: true,
   i18nContent: 'OBPOS_LblApplyButton',
   tap: function () {
-    this.model.get('multiOrders').get('multiOrdersList').get(this.owner.owner.args.id).set('amountToLayaway', OB.I18N.parseNumber(this.owner.$.btnModalMultiSearchInput.getValue()));
+    var amount = OB.DEC.Zero,
+        tmp;
+    if (this.owner.$.btnModalMultiSearchInput.getValue().indexOf('%') !== -1) {
+      tmp = this.owner.$.btnModalMultiSearchInput.getValue().replace('%', '');
+      amount = OB.DEC.div(OB.DEC.mul(this.model.get('multiOrders').get('multiOrdersList').get(this.owner.owner.args.id).getPending(), tmp), 100);
+    } else {
+      amount = OB.I18N.parseNumber(this.owner.$.btnModalMultiSearchInput.getValue());
+    }
+    this.model.get('multiOrders').get('multiOrdersList').get(this.owner.owner.args.id).set('amountToLayaway', amount);
     this.model.get('multiOrders').get('multiOrdersList').get(this.owner.owner.args.id).setOrderType(null, 2);
     this.doHideThisPopup();
   },

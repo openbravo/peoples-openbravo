@@ -18,6 +18,7 @@
     this.context = model;
     this.receipt = model.get('order');
     this.ordersToSend = OB.DEC.Zero;
+    this.hasInvLayaways = false;
 
     this.receipt.on('closed', function () {
       this.receipt = model.get('order');
@@ -118,11 +119,18 @@
             var successCallback, errorCallback;
             successCallback = function () {
               OB.UTIL.showLoading(false);
+              if (me.hasInvLayaways) {
+                OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_noInvoiceIfLayaway'));
+                me.hasInvLayaways = false;
+              }
               OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgAllReceiptSaved'));
             };
             errorCallback = function () {
               OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgAllReceiptNotSaved'));
             };
+            if (!_.isUndefined(receipt.get('amountToLayaway')) && !_.isNull(receipt.get('amountToLayaway')) && receipt.get('generateInvoice')) {
+              me.hasInvLayaways = true;
+            }
             model.get('orderList').current = receipt;
             model.get('orderList').deleteCurrent();
             me.ordersToSend += 1;

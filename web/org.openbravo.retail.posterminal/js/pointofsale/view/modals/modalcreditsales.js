@@ -27,7 +27,9 @@ enyo.kind({
     var pendingQty = this.args.order.getPending();
     var bpName = this.args.order.get('bp').get('_identifier');
     this.setHeader(OB.I18N.getLabel('OBPOS_enoughCreditHeader'));
-    if (this.args.order.get('orderType') === 1) {
+    if (this.args.message) {
+      this.$.bodyContent.$.popupmessage.setContent(OB.I18N.getLabel(this.args.message));
+    } else if (this.args.order.get('orderType') === 1) {
       this.$.bodyContent.$.popupmessage.setContent(OB.I18N.getLabel('OBPOS_enoughCreditReturnBody', [OB.I18N.formatCurrency(pendingQty), bpName]));
     } else {
       this.$.bodyContent.$.popupmessage.setContent(OB.I18N.getLabel('OBPOS_enoughCreditBody', [OB.I18N.formatCurrency(pendingQty), bpName]));
@@ -56,7 +58,7 @@ enyo.kind({
       var bpCreditUsed = this.model.get('order').get('bp').get('creditUsed');
       var totalPending = this.model.get('order').getPending();
 
-      if (this.args.order.get('orderType') === 1) {
+      if (this.parent.parent.parent.parent.args.order.get('orderType') === 1) {
         bp.set('creditUsed', bpCreditUsed - totalPending);
       } else {
         bp.set('creditUsed', bpCreditUsed + totalPending);

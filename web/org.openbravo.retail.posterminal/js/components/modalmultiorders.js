@@ -30,7 +30,8 @@ enyo.kind({
         components: [{
           kind: 'OB.UI.SearchInputAutoFilter',
           name: 'filterText',
-          style: 'width: 100%'
+          style: 'width: 100%',
+          isFirstFocus: true
         }]
       }, {
         style: 'display: table-cell;',
@@ -217,7 +218,7 @@ enyo.kind({
       returnLabel = ' (' + OB.I18N.getLabel('OBPOS_ToReturn') + ')';
     }
     this.$.topLine.setContent(this.model.get('documentNo') + ' - ' + (this.model.get('bp') ? this.model.get('bp').get('_identifier') : this.model.get('businessPartner')) + returnLabel);
-    this.$.bottonLine.setContent((this.model.get('totalamount') ? this.model.get('totalamount') : this.model.getPending()) + ' (' + OB.I18N.formatDate(new Date(this.model.get('orderDate'))) + ') ');
+    this.$.bottonLine.setContent(((this.model.get('totalamount') || this.model.get('totalamount') === 0)  ? this.model.get('totalamount') : this.model.getPending()) + ' (' + OB.I18N.formatDate(new Date(this.model.get('orderDate'))) + ') ');
     if (this.model.get('checked')) {
       this.addClass('active');
     } else {
@@ -362,6 +363,9 @@ enyo.kind({
           return e;
         }
       }));
+    if (checkedMultiOrders.length === 0) {
+      return true;
+    }
     _.each(checkedMultiOrders, function (iter) {
       if (_.indexOf(me.owner.owner.model.get('orderList').models, iter) !== -1) {
         iter.save();
@@ -370,10 +374,13 @@ enyo.kind({
         process.exec({
           orderid: iter.id
         }, function (data) {
+          var taxes;
           OB.UTIL.showLoading(false);
           if (data) {
             me.owner.owner.model.get('orderList').newPaidReceipt(data[0], function (order) {
+              order.set('loadedFromServer', true);
               order.set('checked', iter.get('checked'))
+              taxes = OB.DATA.OrderTaxes(order);
               order.save();
               selectedMultiOrders.push(order);
               if (selectedMultiOrders.length === checkedMultiOrders.length) {

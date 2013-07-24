@@ -180,7 +180,7 @@
         discountedLinePrice = (linePrice - discountRule.get('discountAmount')) * (1 - discountRule.get('discount') / 100);
       }
       receipt.addPromotion(line, discountRule, {
-        amt: (linePrice - discountedLinePrice) * qty
+        amt: (linePrice - OB.DEC.toNumber(new BigDecimal(String(discountedLinePrice)))) * qty
       });
       line.set('discountedLinePrice', discountedLinePrice);
     }

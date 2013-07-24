@@ -138,6 +138,13 @@ enyo.kind({
     this.receipt.on('change:payment change:change calculategross change:bp change:gross', function () {
       this.updatePending();
     }, this);
+    this.model.get('leftColumnViewManager').on('change:currentView', function () {
+      if (!this.model.get('leftColumnViewManager').isMultiOrder()) {
+        this.updatePending();
+      } else {
+        this.updatePendingMultiOrders();
+      }
+    }, this);
     this.updatePending();
     if (this.model.get('leftColumnViewManager').isMultiOrder()) {
       this.updatePendingMultiOrders();
@@ -612,19 +619,25 @@ enyo.kind({
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorCreditSales'));
         }
       });
-    } else {
+    } else if (this.model.get('order').get('orderType') === 1) {
       var actualCredit;
       var creditLimit = this.model.get('order').get('bp').get('creditLimit');
       var creditUsed = this.model.get('order').get('bp').get('creditUsed');
       var totalPending = this.model.get('order').getPending();
-      if (this.model.get('order').get('orderType') === 1) {
-        this.doShowPopup({
-          popup: 'modalEnoughCredit',
-          args: {
-            order: this.model.get('order')
-          }
-        });
-      }
+      this.doShowPopup({
+        popup: 'modalEnoughCredit',
+        args: {
+          order: this.model.get('order')
+        }
+      });
+    } else {
+      this.doShowPopup({
+        popup: 'modalEnoughCredit',
+        args: {
+          order: this.model.get('order'),
+          message: 'OBPOS_Unabletocheckcredit'
+        }
+      });
     }
   }
 });

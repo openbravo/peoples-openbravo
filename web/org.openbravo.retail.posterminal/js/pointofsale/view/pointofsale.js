@@ -611,10 +611,12 @@ enyo.kind({
               //            }
               if (me.model.get('leftColumnViewManager').isOrder()) {
                 me.model.get('order').removePayment(inEvent.payment);
+                me.model.get('order').trigger('displayTotal');
                 return;
               }
               if (me.model.get('leftColumnViewManager').isMultiOrder()) {
                 me.model.get('multiOrders').removePayment(inEvent.payment);
+                me.model.get('multiOrders').trigger('displayTotal');
                 return;
               }
             }
@@ -631,10 +633,12 @@ enyo.kind({
       //      }
       if (me.model.get('leftColumnViewManager').isOrder()) {
         me.model.get('order').removePayment(inEvent.payment);
+        me.model.get('order').trigger('displayTotal');
         return;
       }
       if (me.model.get('leftColumnViewManager').isMultiOrder()) {
         me.model.get('multiOrders').removePayment(inEvent.payment);
+        me.model.get('multiOrders').trigger('displayTotal');
         return;
       }
     }
@@ -711,7 +715,6 @@ enyo.kind({
     return true;
   },
   multiOrders: function (inSender, inEvent) {
-    this.model.get('multiOrders').resetValues();
     this.doShowPopup({
       popup: 'modalMultiOrders'
     });
@@ -732,9 +735,9 @@ enyo.kind({
   removeMultiOrders: function (inSender, inEvent) {
     var me = this;
     me.model.get('multiOrders').get('multiOrdersList').remove(inEvent.order);
-    me.model.get('orderList').current = inEvent.order;
-    me.model.get('orderList').deleteCurrent();
-    if (!_.isNull(inEvent.order.id)) {
+    if (inEvent && inEvent.order && inEvent.order.get('loadedFromServer')) {
+      me.model.get('orderList').current = inEvent.order;
+      me.model.get('orderList').deleteCurrent();
       me.model.get('orderList').deleteCurrentFromDatabase(inEvent.order);
     }
     return true;

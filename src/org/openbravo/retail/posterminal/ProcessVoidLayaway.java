@@ -21,6 +21,7 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.advpaymentmngt.dao.TransactionsDao;
 import org.openbravo.advpaymentmngt.process.FIN_AddPayment;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.model.Entity;
@@ -40,6 +41,7 @@ import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.order.OrderLineOffer;
 import org.openbravo.model.common.order.OrderTax;
+import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
@@ -159,6 +161,27 @@ public class ProcessVoidLayaway extends JSONProcessSimple {
               .setAmount(BigDecimal.ZERO);
         }
         OBDal.getInstance().save(finPayment);
+
+        FIN_FinancialAccount acc = paymentType.getFinancialAccount();
+        FIN_FinaccTransaction transaction = OBProvider.getInstance().get(
+            FIN_FinaccTransaction.class);
+        transaction.setCurrency(acc.getCurrency());
+        transaction.setAccount(acc);
+        transaction.setLineNo(TransactionsDao.getTransactionMaxLineNo(account) + 10);
+        transaction.setPaymentAmount(amount.negate());
+        transaction.setProcessed(true);
+        transaction.setTransactionType("BPW");
+        transaction.setStatus("RDNC");
+        String description = getPaymentDescription();
+        description += ": " + order.getDocumentNo() + "\n";
+        transaction.setDescription(description);
+        transaction.setDateAcct(POSUtils.getCurrentDate());
+        transaction.setTransactionDate(POSUtils.getCurrentDate());
+        transaction.setFinPayment(finPayment);
+        transaction.setBusinessPartner(order.getBusinessPartner());
+        OBDal.getInstance().save(transaction);
+        acc.setCurrentBalance(account.getCurrentBalance().subtract(amount.negate()));
+
       }
     } catch (Exception e) {
       log.error("There was an error voiding the orde Layaway: ", e);

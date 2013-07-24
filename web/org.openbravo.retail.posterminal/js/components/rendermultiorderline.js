@@ -51,7 +51,7 @@ enyo.kind({
       style: 'font-weight: bold; color: lightblue; float: right; text-align:right; ',
       name: 'isLayaway',
       initComponents: function () {
-        if (this.owner.owner.model.get('amountToLayaway')) {
+        if (!_.isUndefined(this.owner.owner.model.get('amountToLayaway')) && !_.isNull(this.owner.owner.model.get('amountToLayaway'))) {
           this.setContent(OB.I18N.getLabel('OBPOS_ToBeLaidaway'));
         }
       }
@@ -65,7 +65,7 @@ enyo.kind({
       style: 'font-weight: bold; float: right; text-align:right; display: inline-block;',
       name: 'total',
       initComponents: function () {
-        this.setContent(this.owner.owner.model.get('amountToLayaway') ? OB.I18N.formatCurrency(this.owner.owner.model.get('amountToLayaway')) : this.owner.owner.model.printPending());
+        this.setContent((!_.isUndefined(this.owner.owner.model.get('amountToLayaway')) && !_.isNull(this.owner.owner.model.get('amountToLayaway'))) ? OB.I18N.formatCurrency(this.owner.owner.model.get('amountToLayaway')) : this.owner.owner.model.printPending());
       }
     }, {
       style: 'clear: both;'

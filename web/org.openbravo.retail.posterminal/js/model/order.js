@@ -89,6 +89,16 @@
       return OB.I18N.formatCurrency(this.get('nondiscountednet') || this.getNet());
     },
 
+    getTotalAmountOfPromotions: function () {
+      var memo = 0;
+      if (this.get('promotions') && this.get('promotions').length > 0) {
+        return _.reduce(this.get('promotions'), function (memo, prom) {
+          return memo + prom.amt;
+        }, memo, this);
+      } else {
+        return 0;
+      }
+    },
     isAffectedByPack: function () {
       return _.find(this.get('promotions'), function (promotion) {
         if (promotion.pack) {
@@ -321,7 +331,7 @@
 
         if (this.get('priceIncludesTax')) {
           line.set({
-            net: OB.DEC.toNumber(line.get('discountedNet')) || OB.DEC.toNumber(line.get('net')),
+            net: OB.DEC.toNumber(line.get('discountedNet')) || line.get('net'),
             netfull: line.get('discountedNetfull') || OB.DEC.div(gross, line.get('linerate')),
             pricenet: line.get('discountedNet') ? OB.DEC.div(line.get('discountedNet'), line.get('qty')) : OB.DEC.div(OB.DEC.div(gross, line.get('linerate')), line.get('qty')),
             grossListPrice: grossListPrice || price,
@@ -511,6 +521,7 @@
       this.set('print', true);
       this.set('sendEmail', false);
       this.set('isPaid', false);
+      this.set('paidOnCredit', false);
       this.set('isLayaway', false);
       this.set('isEditable', true);
       this.set('openDrawer', false);
@@ -524,6 +535,7 @@
       this.set('documentType', _order.get('documentType'));
 
       this.set('isPaid', _order.get('isPaid'));
+      this.set('paidOnCredit', _order.get('paidOnCredit'));
       this.set('isLayaway', _order.get('isLayaway'));
       if (!_order.get('isEditable')) {
         // keeping it no editable as much as possible, to prevent
@@ -1051,7 +1063,8 @@
             if (p.get('rate') && p.get('rate') !== '1') {
               p.set('origAmount', OB.DEC.add(payment.get('origAmount'), OB.DEC.mul(p.get('origAmount'), p.get('rate'))));
             }
-            OB.UTIL.adjustPayment(total, this);
+            this.adjustPayment();
+            this.trigger('displayTotal');
             return;
           }
         }
@@ -1061,7 +1074,8 @@
       }
       payment.set('date', new Date());
       payments.add(payment);
-      OB.UTIL.adjustPayment(total, this);
+      this.adjustPayment();
+      this.trigger('displayTotal');
     },
 
     overpaymentExists: function () {
@@ -1217,6 +1231,7 @@
       order.set('posTerminal' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, OB.POS.modelterminal.get('terminal')._identifier);
       order.set('orderDate', new Date());
       order.set('isPaid', false);
+      order.set('paidOnCredit', false);
       order.set('isLayaway', false);
       order.set('taxes', null);
 
@@ -1256,6 +1271,8 @@
       order.set('hasbeenpaid', 'Y');
       order.set('isEditable', false);
       order.set('checked', model.checked); //TODO: what is this for, where it comes from?
+
+      order.set('paidOnCredit', false);
       if (model.isQuotation) {
         order.set('isQuotation', true);
         order.set('oldId', model.orderid);
@@ -1271,6 +1288,9 @@
         order.set('session', OB.POS.modelterminal.get('session'));
       } else {
         order.set('isPaid', true);
+        if (model.receiptPayments.length === 0) {
+          order.set('paidOnCredit', true);
+        }
         order.set('id', model.orderid);
         order.set('documentType', model.documenttypeid);
         if (order.get('documentType') === OB.POS.modelterminal.get('terminal').terminalType.documentTypeForReturns) {
@@ -1475,6 +1495,88 @@
       openDrawer: false,
       additionalInfo: null
     },
+    getPaymentStatus: function () {
+      var total = this.getTotal();
+      var pay = this.getPayment();
+      return {
+        'total': OB.I18N.formatCurrency(this.getTotal()),
+        'pending': OB.DEC.compare(OB.DEC.sub(pay, total)) >= 0 ? OB.I18N.formatCurrency(OB.DEC.Zero) : OB.I18N.formatCurrency(OB.DEC.sub(total, pay)),
+        'change': OB.DEC.compare(this.getChange()) > 0 ? OB.I18N.formatCurrency(this.getChange()) : null,
+        'overpayment': OB.DEC.compare(OB.DEC.sub(pay, total)) > 0 ? OB.I18N.formatCurrency(OB.DEC.sub(pay, total)) : null
+      };
+    },
+    adjustPayment: function () {
+      var i, max, p;
+      var payments = this.get('payments');
+      var total = this.getTotal();
+
+      var nocash = OB.DEC.Zero;
+      var cash = OB.DEC.Zero;
+      var origCash = OB.DEC.Zero;
+      var auxCash = OB.DEC.Zero;
+      var prevCash = OB.DEC.Zero;
+      var paidCash = OB.DEC.Zero;
+      var pcash;
+
+      for (i = 0, max = payments.length; i < max; i++) {
+        p = payments.at(i);
+        if (p.get('rate') && p.get('rate') !== '1') {
+          p.set('origAmount', OB.DEC.mul(p.get('amount'), p.get('rate')));
+        } else {
+          p.set('origAmount', p.get('amount'));
+        }
+        p.set('paid', p.get('origAmount'));
+        if (p.get('kind') === OB.POS.modelterminal.get('paymentcash')) {
+          // The default cash method
+          cash = OB.DEC.add(cash, p.get('origAmount'));
+          pcash = p;
+          paidCash = OB.DEC.add(paidCash, p.get('origAmount'));
+        } else if (OB.POS.modelterminal.hasPayment(p.get('kind')) && OB.POS.modelterminal.hasPayment(p.get('kind')).paymentMethod.iscash) {
+          // Another cash method
+          origCash = OB.DEC.add(origCash, p.get('origAmount'));
+          pcash = p;
+          paidCash = OB.DEC.add(paidCash, p.get('origAmount'));
+        } else {
+          nocash = OB.DEC.add(nocash, p.get('origAmount'));
+        }
+      }
+
+      // Calculation of the change....
+      //FIXME
+      if (pcash) {
+        if (pcash.get('kind') !== OB.POS.modelterminal.get('paymentcash')) {
+          auxCash = origCash;
+          prevCash = cash;
+        } else {
+          auxCash = cash;
+          prevCash = origCash;
+        }
+        if (OB.DEC.compare(nocash - total) > 0) {
+          pcash.set('paid', OB.DEC.Zero);
+          this.set('payment', nocash);
+          this.set('change', OB.DEC.add(cash, origCash));
+        } else if (OB.DEC.compare(OB.DEC.sub(OB.DEC.add(OB.DEC.add(nocash, cash), origCash), total)) > 0) {
+          pcash.set('paid', OB.DEC.sub(total, OB.DEC.add(nocash, OB.DEC.sub(paidCash, pcash.get('origAmount')))));
+          this.set('payment', total);
+          //The change value will be computed through a rounded total value, to ensure that the total plus change
+          //add up to the paid amount without any kind of precission loss
+          this.set('change', OB.DEC.sub(OB.DEC.add(OB.DEC.add(nocash, cash), origCash), OB.Utilities.Number.roundJSNumber(total, 2)));
+        } else {
+          pcash.set('paid', auxCash);
+          this.set('payment', OB.DEC.add(OB.DEC.add(nocash, cash), origCash));
+          this.set('change', OB.DEC.Zero);
+        }
+      } else {
+        if (payments.length > 0) {
+          if (this.get('payment') === 0 || nocash > 0) {
+            this.set('payment', nocash);
+          }
+        } else {
+          this.set('payment', OB.DEC.Zero);
+        }
+        this.set('change', OB.DEC.Zero);
+      }
+    },
     addPayment: function (payment) {
       var payments, total;
       var i, max, p;
@@ -1496,7 +1598,8 @@
             if (p.get('rate') && p.get('rate') !== '1') {
               p.set('origAmount', OB.DEC.add(payment.get('origAmount'), OB.DEC.mul(p.get('origAmount'), p.get('rate'))));
             }
-            OB.UTIL.adjustPayment(total, this);
+            this.adjustPayment();
+            this.trigger('displayTotal');
             return;
           }
         }
@@ -1506,7 +1609,8 @@
       }
       payment.set('date', new Date());
       payments.add(payment);
-      OB.UTIL.adjustPayment(total, this);
+      this.adjustPayment();
+      this.trigger('displayTotal');
     },
     removePayment: function (payment) {
       var payments = this.get('payments');
@@ -1514,7 +1618,10 @@
       if (payment.get('openDrawer')) {
         this.set('openDrawer', false);
       }
-      OB.UTIL.adjustPayment(this.get('total'), this);
+      this.adjustPayment();
+    },
+    printGross: function () {
+      return OB.I18N.formatCurrency(this.getTotal());
     },
     getTotal: function () {
       return this.get('total');

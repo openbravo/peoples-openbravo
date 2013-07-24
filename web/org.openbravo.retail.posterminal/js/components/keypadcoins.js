@@ -196,6 +196,9 @@ enyo.kind({
         kind: me.paymenttype,
         name: OB.POS.modelterminal.getPaymentName(me.paymenttype),
         amount: OB.DEC.number(me.amount),
+        rate: p.rate,
+        mulrate: p.mulrate,
+        isocode: p.isocode,
         openDrawer: openDrawer
       }));
     }
