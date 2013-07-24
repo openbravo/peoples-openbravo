@@ -41,7 +41,6 @@
       delete this.receipt.attributes.json;
       this.receipt.set('timezoneOffset', creationDate.getTimezoneOffset());
       this.receipt.set('created', creationDate.getTime());
-      this.receipt.set('json', JSON.stringify(this.receipt.toJSON()));
 
       // The order will not be processed if the navigator is offline
       if (OB.POS.modelterminal.get('connectedToERP')) {
@@ -49,21 +48,27 @@
       }
 
       OB.MobileApp.model.hookManager.executeHooks('OBPOS_PreOrderSave', {
-        context: this
+        context: this,
+        receipt: model.get('order')
       }, function (args) {
-        OB.Dal.save(args.context.receipt, function () {
+        var receipt = args.context.receipt,
+            currentDocNo = receipt.get('documentNo') || docno;
+
+        receipt.set('json', JSON.stringify(receipt.toJSON()));
+
+        OB.Dal.save(receipt, function () {
           var successCallback = function (model) {
               //In case the processed document is a quotation, we remove its id so it can be reactivated
               if (model.get('order') && model.get('order').get('isQuotation')) {
                 model.get('order').set('oldId', model.get('order').get('id'));
                 model.get('order').set('id', null);
                 model.get('order').set('isbeingprocessed', 'N');
-                OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationSaved', [docno]));
+                OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationSaved', [currentDocNo]));
               } else {
                 if (isLayaway) {
-                  OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgLayawaySaved', [docno]));
+                  OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgLayawaySaved', [currentDocNo]));
                 } else {
-                  OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgReceiptSaved', [docno]));
+                  OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgReceiptSaved', [currentDocNo]));
                 }
               }
               };
