@@ -269,9 +269,9 @@
             element.set('pricenet', element.get('net'));
             element.set('gross', element.get('net'));
             element.set('discountedGross', element.get('net'));
-            element.set('discountedNet', element.get('net'));
+            element.set('discountedNet', new BigDecimal(String(element.get('net'))));
             element.set('taxAmount', OB.DEC.Zero);
-            element.set('discountedNetPrice', element.get('net'));
+            element.set('discountedNetPrice', new BigDecimal(String(element.get('net'))));
             taxLine[OB.MobileApp.model.get('terminal').taxexempid] = {
               amount: 0,
               rate: 0,
