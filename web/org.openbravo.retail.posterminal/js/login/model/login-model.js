@@ -64,6 +64,9 @@
               } else {
                 terminalModel.propertiesReady(me.properties);
               }
+              OB.MobileApp.model.hookManager.executeHooks('OBPOS_TerminalLoadedFromBackend', {
+                data: data[0]
+              });
             } else {
               OB.UTIL.showError("Terminal does not exists: " + 'params.terminal');
             }
