@@ -330,7 +330,7 @@
                     } else {
                       linerate = linerate.add(rate);
                       linegross = linegross.add(new BigDecimal(String(linenet)).multiply(new BigDecimal(String(rate))));
-                      discountedGross = discountedGross .add(new BigDecimal(String(discountedNet)).multiply(rate));
+                      discountedGross = discountedGross.add(new BigDecimal(String(discountedNet)).multiply(rate));
                     }
                   } else {
                     linetaxid = taxRate.get('id');
