@@ -469,7 +469,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
       approved: true,
       context: this
     }, function (args) {
-      console.log('appr', args)
       me.trigger('approvalChecked', {
         approved: args.approved
       });

@@ -7,6 +7,8 @@
  ************************************************************************************
  */
 
+/*global enyo */
+
 enyo.kind({
   name: 'OB.UTIL.Approval',
   kind: 'OB.UI.ModalAction',
@@ -38,7 +40,7 @@ enyo.kind({
   i18nHeader: 'OBPOS_ApprovalRequiredTitle',
   bodyContent: {
     components: [{
-      name: 'explainApprovalTxt',
+      name: 'explainApprovalTxt'
     }, {
       classes: 'login-header-row',
       style: 'color:black; line-height: 20px;',
@@ -79,7 +81,7 @@ enyo.kind({
 
   bodyButtons: {
     components: [{
-      kind: 'OB.UTIL.Approval.ApproveButton',
+      kind: 'OB.UTIL.Approval.ApproveButton'
     }, {
       kind: 'OB.UI.ModalDialogButton',
       i18nLabel: 'OBPOS_Cancel',

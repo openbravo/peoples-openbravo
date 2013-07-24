@@ -82,7 +82,7 @@
         // generate sql
         for (p = 0; p < promos.length; p++) {
           if (promosSql !== '') {
-            promosSql += ', '
+            promosSql += ', ';
           }
           promosSql += "'" + promos[p] + "'";
         }

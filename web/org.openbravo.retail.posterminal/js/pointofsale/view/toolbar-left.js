@@ -207,12 +207,9 @@ enyo.kind({
 
   tap: function () {
     if (this.disabled === false) {
-      console.log(this.model);
       this.model.on('approvalChecked', function (event) {
-    	  
-        console.log('approvalChecked', event)
         this.model.off('approvalChecked');
-        if (event.approved){
+        if (event.approved) {
           this.showPaymentTab();
         }
       }, this);
