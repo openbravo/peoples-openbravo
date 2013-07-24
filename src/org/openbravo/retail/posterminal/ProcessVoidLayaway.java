@@ -172,7 +172,9 @@ public class ProcessVoidLayaway extends JSONProcessSimple {
         transaction.setProcessed(true);
         transaction.setTransactionType("BPW");
         transaction.setStatus("RDNC");
-        transaction.setDescription(getPaymentDescription());
+        String description = getPaymentDescription();
+        description += ": " + order.getDocumentNo() + "\n";
+        transaction.setDescription(description);
         transaction.setDateAcct(POSUtils.getCurrentDate());
         transaction.setTransactionDate(POSUtils.getCurrentDate());
         transaction.setFinPayment(finPayment);
