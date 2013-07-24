@@ -264,9 +264,19 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
     this.get('multiOrders').on('paymentAccepted', function () {
       OB.UTIL.showLoading(true);
       ordersLength = this.get('multiOrders').get('multiOrdersList').length;
+
+      function readyToSendFunction() {
+        //this function is executed when all orders are ready to be sent
+        me.get('leftColumnViewManager').setOrderMode();
+      }
+
+      //this var is a function (copy of the above one) which is called by every items, but it is just executed once (when ALL items has called to it)
+      SyncReadyToSendFunction = _.after(this.get('multiOrders').get('multiOrdersList').length, readyToSendFunction);
+
       for (j = 0; j < ordersLength; j++) {
         //Create the negative payment for change
         iter = this.get('multiOrders').get('multiOrdersList').at(j);
+        lastIter = iter;
         amountToPay = !_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway')) ? iter.get('amountToLayaway') : OB.DEC.sub(iter.get('gross'), iter.get('payment'));
         while (((_.isUndefined(iter.get('amountToLayaway')) || iter.get('amountToLayaway') > 0) && iter.get('gross') > iter.get('payment')) || (iter.get('amountToLayaway') > 0)) {
           for (i = 0; i < this.get('multiOrders').get('payments').length; i++) {
@@ -278,10 +288,11 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
               this.get('multiOrders').set('change', OB.DEC.Zero);
             }
             if (payment.get('origAmount') <= amountToPay) {
+              var bigDecAmount = new BigDecimal(String(OB.DEC.mul(payment.get('origAmount'), paymentMethod.mulrate)));
               iter.addPayment(new OB.Model.PaymentLine({
                 'kind': payment.get('kind'),
                 'name': payment.get('name'),
-                'amount': OB.DEC.mul(payment.get('origAmount'), paymentMethod.mulrate),
+                'amount': OB.DEC.toNumber(bigDecAmount),
                 'rate': paymentMethod.rate,
                 'mulrate': paymentMethod.mulrate,
                 'isocode': paymentMethod.isocode,
@@ -293,11 +304,14 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
               this.get('multiOrders').get('payments').remove(this.get('multiOrders').get('payments').at(i));
               amountToPay = !_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway')) ? iter.get('amountToLayaway') : OB.DEC.sub(iter.get('gross'), iter.get('payment'));
             } else {
+              var bigDecAmountAux;
               if (j === this.get('multiOrders').get('multiOrdersList').length - 1 && !paymentMethod.paymentMethod.iscash) {
-                amtAux = payment.get('origAmount');
+                bigDecAmountAux = new BigDecimal(String(payment.get('origAmount')));
+                amtAux = OB.DEC.toNumber(bigDecAmountAux);
                 this.get('multiOrders').get('payments').at(i).set('origAmount', OB.DEC.sub(this.get('multiOrders').get('payments').at(i).get('origAmount'), payment.get('origAmount')));
               } else {
-                amtAux = OB.DEC.mul(amountToPay, paymentMethod.mulrate);
+                bigDecAmountAux = new BigDecimal(String(OB.DEC.mul(amountToPay, paymentMethod.mulrate)));
+                amtAux = OB.DEC.toNumber(bigDecAmountAux);
                 this.get('multiOrders').get('payments').at(i).set('origAmount', OB.DEC.sub(this.get('multiOrders').get('payments').at(i).get('origAmount'), amountToPay));
               }
 
@@ -319,23 +333,13 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
           }
         }
 
-        function readyToSendFunction() {
-          //this function is executed when all orders are ready to be sent
+        iter.prepareToSend(function () {
+          //things to do with each order
+          //Finally call to SyncReadyToSendFunction
           me.get('multiOrders').trigger('closed', iter);
           me.get('multiOrders').trigger('print', iter); // to guaranty execution order
-          me.get('leftColumnViewManager').setOrderMode();
-        }
-
-        //this var is a function (copy of the above one) which is called by every items, but it is just executed once (when ALL items has called to it)
-        SyncReadyToSendFunction = _.after(this.get('multiOrders').get('multiOrdersList').length, readyToSendFunction);
-
-        _.each(this.get('multiOrders').get('multiOrdersList').models, function (multiOrderOrder) {
-          multiOrderOrder.prepareToSend(function () {
-            //things to do with each order
-            //Finally call to SyncReadyToSendFunction
-            SyncReadyToSendFunction();
-          });
-        }, this);
+          SyncReadyToSendFunction();
+        });
       }
     }, this);
 
