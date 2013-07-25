@@ -612,7 +612,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
       date = date.getTime();
       approval = {
         approvalType: approvalType,
-        user: supervisor.get('id'),
+        userContact: supervisor.get('id'),
         created: (new Date()).getTime()
       }
       newApprovals.push(approval);
