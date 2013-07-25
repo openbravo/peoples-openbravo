@@ -70,7 +70,8 @@ enyo.kind({
             }, {
               components: [{
                 kind: 'OB.UTIL.Approval.Input',
-                name: 'password'
+                name: 'password',
+                type: 'password'
               }]
             }]
           }]
