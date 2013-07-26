@@ -317,7 +317,7 @@ public class DalWebService implements WebService {
           value = propertyStr.substring(propertyStr.lastIndexOf(DalUtil.DOT) + 1);
           String[] propertyList;
           if (key.contains(DalUtil.DOT)) {
-            propertyList = key.split(DalUtil.DOT);
+            propertyList = key.split("\\" + DalUtil.DOT);
           } else {
             propertyList = new String[1];
             propertyList[0] = key;
