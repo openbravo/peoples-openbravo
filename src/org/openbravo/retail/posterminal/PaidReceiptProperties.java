@@ -39,13 +39,13 @@ public class PaidReceiptProperties extends ModelExtension {
         add(new HQLProperty("ord.documentType.name", "documenttype"));
         add(new HQLProperty("ord.warehouse.id", "warehouse"));
         add(new HQLProperty("ord.currency.iSOCode", "currency$_identifier"));
+        add(new HQLProperty("ord.obposApplications.id", "posTerminal"));
         add(new HQLProperty("ord.obposApplications.name", "posTerminal$_identifier"));
         add(new HQLProperty("ord.businessPartner.name", "businessPartner$_identifier"));
         add(new HQLProperty("ord.currency.id", "currency"));
         add(new HQLProperty("ord.priceList.id", "priceList"));
         add(new HQLProperty("ord.salesRepresentative.id", "salesRepresentative"));
         add(new HQLProperty("ord.organization.id", "organization"));
-        add(new HQLProperty("ord.obposApplications.id", "obposApplications"));
         add(new HQLProperty("ord.client.id", "client"));
         add(new HQLProperty(
             "(case when ord.documentType.id =  ord.obposApplications.obposTerminaltype.documentTypeForQuotations.id then true else false end)",
