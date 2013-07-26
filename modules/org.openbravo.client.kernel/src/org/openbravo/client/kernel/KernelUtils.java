@@ -382,14 +382,9 @@ public class KernelUtils {
    * 
    * @param tab
    *          The tab the object belongs to
-   * @return The parent tab of the given tab, <code>null</code> in case the tab is root
+   * @return The parent tab of the given tab
    */
   public Tab getParentTab(Tab tab) {
-    if (tab.getTabLevel() == 0) {
-      // root level, there is no parent
-      return null;
-    }
-
     List<Tab> tabsOfWindow = tab.getWindow().getADTabList();
     ArrayList<Entity> entities = new ArrayList<Entity>();
     HashMap<Entity, Tab> tabOfEntity = new HashMap<Entity, Tab>();
