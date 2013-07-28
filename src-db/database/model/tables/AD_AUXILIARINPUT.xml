@@ -41,7 +41,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="CODE" primaryKey="false" required="false" type="VARCHAR" size="3000" autoIncrement="false">
+      <column name="CODE" primaryKey="false" required="false" type="VARCHAR" size="510" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
