@@ -429,10 +429,6 @@
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="2768">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="2771">
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
@@ -554,10 +550,6 @@
       <newValue><![CDATA[N]]></newValue>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="3324">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="3327">
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
     </columnDataChange>
