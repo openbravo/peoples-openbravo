@@ -107,7 +107,7 @@
                 linepricenet = new BigDecimal('0');
                 linegross = 0;
               } else {
-                linenet = new BigDecimal(String(orggross)).multiply(new BigDecimal(String(orggross))).divide(new BigDecimal(String(taxamt)));
+                linenet = new BigDecimal(String(orggross)).multiply(new BigDecimal(String(orggross))).divide(new BigDecimal(String(taxamt)), 20, BigDecimal.prototype.ROUND_HALF_UP);
                 linepricenet = linenet.divide(new BigDecimal(String(element.get('qty'))));
                 linegross = element.get('lineGrossAmount') || element.get('gross');
               }
