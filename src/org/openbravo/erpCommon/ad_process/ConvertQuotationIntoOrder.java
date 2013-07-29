@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2012 Openbravo SLU 
+ * All portions are Copyright (C) 2012-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -156,9 +156,9 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
         try {
           OBContext.setAdminMode(true);
           if (objCloneOrder.getPriceList().isPriceIncludesTax()) {
-            price = objCloneOrdLine.getGrossUnitPrice();
+            price = objCloneOrdLine.getLineGrossAmount();
           } else {
-            price = objCloneOrdLine.getUnitPrice();
+            price = objCloneOrdLine.getLineNetAmount();
           }
         } finally {
           OBContext.restorePreviousMode();
