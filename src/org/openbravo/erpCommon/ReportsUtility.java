@@ -40,8 +40,8 @@ import org.openbravo.model.financialmgmt.accounting.coa.ElementValue;
 
 public class ReportsUtility {
 
-  public static BigDecimal getBeginingBalance(String orgId, String acctSchemaId, String bpartnerId,
-      String dateFrom) {
+  public static BigDecimal getBeginningBalance(String orgId, String acctSchemaId,
+      String bpartnerId, String dateFrom) {
     if (dateFrom == null || "".equals(dateFrom)) {
       return BigDecimal.ZERO;
     }
@@ -65,9 +65,9 @@ public class ReportsUtility {
     projections.add(Projections.sum(AccountingFact.PROPERTY_CREDIT));
     obc.setProjection(projections);
 
-    if (obc.list() != null && obc.list().size() > 0) {
-      @SuppressWarnings("rawtypes")
-      List o = obc.list();
+    @SuppressWarnings("rawtypes")
+    List o = obc.list();
+    if (o != null && o.size() > 0) {
       Object[] resultSet = (Object[]) o.get(0);
       BigDecimal debit = (resultSet[0] != null) ? (BigDecimal) resultSet[0] : BigDecimal.ZERO;
       BigDecimal credit = (resultSet[1] != null) ? (BigDecimal) resultSet[1] : BigDecimal.ZERO;

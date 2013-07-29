@@ -138,7 +138,7 @@ ORDER BY f.dateacct, f.created]]>
 		<variableExpression><![CDATA[$F{date}]]></variableExpression>
 	</variable>
 	<variable name="initialBalance" class="java.math.BigDecimal">
-		<variableExpression><![CDATA[ReportsUtility.getBeginingBalance($P{AD_Org_ID}, $P{C_AcctSchema_ID}, $P{C_BPartner_ID}, $P{DateFrom})]]></variableExpression>
+		<variableExpression><![CDATA[ReportsUtility.getBeginningBalance($P{AD_Org_ID}, $P{C_AcctSchema_ID}, $P{C_BPartner_ID}, $P{DateFrom})]]></variableExpression>
 	</variable>
 	<variable name="balance" class="java.math.BigDecimal">
 		<variableExpression><![CDATA[$V{initialBalance}.add($V{SUM})]]></variableExpression>
