@@ -2151,6 +2151,7 @@ isc.OBStandardView.addProperties({
   },
 
   setContextInfo: function (sessionProperties, callbackFunction, forced) {
+    var newCallback, me = this;
     // no need to set the context in this case
     if (!forced && (this.isEditingGrid || this.isShowingForm)) {
       if (callbackFunction) {
@@ -2163,12 +2164,23 @@ isc.OBStandardView.addProperties({
       sessionProperties = this.getContextInfo(true, true, false, true);
     }
 
+    newCallback = function (response, data, request) {
+      var context = {}, grid = me.viewGrid;
+      context.rowNum = grid.getRecordIndex(grid.getSelectedRecord());
+      context.grid = grid;
+      response.clientContext = context;
+      grid.processFICReturn (response, data, request);
+      if (callbackFunction) {
+        callbackFunction();
+      }
+    };
+
     OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', sessionProperties, {
-      MODE: 'SETSESSION',
+      MODE: 'EDIT',
       TAB_ID: this.tabId,
       PARENT_ID: this.getParentId(),
       ROW_ID: this.viewGrid.getSelectedRecord() ? this.viewGrid.getSelectedRecord().id : this.getCurrentValues().id
-    }, callbackFunction);
+    }, newCallback);
 
   },
 

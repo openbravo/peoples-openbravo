@@ -964,12 +964,19 @@ isc.OBViewGrid.addProperties({
 
   showField: function (field, suppressRelayout) {
     var res;
+    // Do not allow to add a new field while the grid is being edited. Adding a new field implies a grid refresh, 
+    // and the refresh toolbar button is disabled while the grid/form is being edited
+    if (this.view.isEditingGrid) {
+      this.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, OB.I18N.getLabel('OBUIAPP_Error'), OB.I18N.getLabel('OBUIAPP_NotAddingFieldsWhileGridEditing'));
+      return;
+    }
     this._showingField = true;
     this._savedEditValues = this.getEditValues(this.getEditRow());
     res = this.Super('showField', arguments);
     delete this._savedEditValues;
     delete this._showingField;
     this.view.standardWindow.storeViewState();
+    this.invalidateCache();
     this.refreshContents();
     return res;
   },
@@ -1949,7 +1956,8 @@ isc.OBViewGrid.addProperties({
     requestProperties.params = this.getFetchRequestParams(requestProperties.params);
   },
 
-  getFetchRequestParams: function (params) {
+  getFetchRequestParams: function (params, isExporting) {
+    var i, len, first, selectedProperties;
     params = params || {};
 
     if (this.targetRecordId) {
@@ -1992,6 +2000,29 @@ isc.OBViewGrid.addProperties({
       params[OB.Constants.WHERE_PARAMETER] = this.whereClause;
     } else {
       params[OB.Constants.WHERE_PARAMETER] = null;
+    }
+
+    if (!isExporting) {
+      first = true;
+      selectedProperties = '';
+      len = this.requiredGridProperties.length;
+      for (i = 0; i < len; i++) {
+        if (first) {
+          first = false;
+          selectedProperties = selectedProperties + this.requiredGridProperties[i];
+        } else {
+          selectedProperties = selectedProperties + ',' + this.requiredGridProperties[i];
+        }
+      }
+
+      len = this.fields.length;
+      for (i = 0; i < len; i++) {
+        if (this.fields[i].name[0] !== '_') {
+          selectedProperties = selectedProperties + ',';
+          selectedProperties = selectedProperties + this.fields[i].name;
+        }
+      }
+      params._selectedProperties = selectedProperties;
     }
     return params;
   },
@@ -3501,19 +3532,50 @@ isc.OBViewGrid.addProperties({
   },
 
   getFieldFromColumnName: function (columnName) {
-    var i, field, length, fields = this.completeFields;
+    var i, field, length, fields = this.view.propertyToColumns;
 
     length = fields.length;
 
     for (i = 0; i < fields.length; i++) {
-      if (fields[i].columnName === columnName) {
+      if (fields[i].dbColumn === columnName) {
         field = fields[i];
         break;
       }
     }
     return field;
-  }
+  },
 
+  processColumnValue: function (rowNum, columnName, columnValue) {
+    var field, newValue;
+    if (!columnValue) {
+      return;
+    }
+    field = this.getFieldFromColumnName(columnName);
+    if (!field) {
+      return;
+    }
+    newValue = {};
+    newValue[field.property] = columnValue.value;
+    this.setEditValue(rowNum, field.property, columnValue.value);
+  },
+
+  processFICReturn: function (response, data, request) {
+    var context = response && response.clientContext,
+        rowNum = context && context.rowNum,
+        grid = context && context.grid,
+        columnValues, prop, value, undef;
+
+    if (rowNum === undef || !data || !data.columnValues) {
+      return;
+    }
+    columnValues = data.columnValues;
+
+    for (prop in columnValues) {
+      if (columnValues.hasOwnProperty(prop)) {
+        grid.processColumnValue(rowNum, prop, columnValues[prop]);
+      }
+    }
+  }
 });
 
 // = OBGridToolStripIcon =
