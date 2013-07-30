@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -150,29 +150,34 @@ public class AddTransaction extends HttpSecureAppServlet {
 
       String strTransactionDate = vars.getStringParameter("inpMainDate", "");
       String strOrgId = vars.getRequestGlobalVariable("inpadOrgId", "AddTransaction|Org");
-      final Organization org = OBDal.getInstance().get(Organization.class, strOrgId);
-      String strclient = org.getClient().getId();
-      boolean orgLegalWithAccounting = false;
-      if ((org.getOrganizationType().isLegalEntity())
-          || (org.getOrganizationType().isBusinessUnit())) {
-        orgLegalWithAccounting = true;
-      }
-      if ((!FIN_Utility.isPeriodOpen(strclient, AcctServer.DOCTYPE_FinAccTransaction, strOrgId,
-          strTransactionDate)) && orgLegalWithAccounting) {
-        try {
-          JSONObject json = new JSONObject();
-          json.put("text", "PeriodNotAvailable");
-
-          response.setContentType("text/html; charset=UTF-8");
-          PrintWriter out = response.getWriter();
-          out.println("objson = " + json);
-          out.close();
-
-        } catch (JSONException e) {
-
-          e.printStackTrace();
+      OBContext.setAdminMode();
+      try {
+        final Organization org = OBDal.getInstance().get(Organization.class, strOrgId);
+        String strclient = org.getClient().getId();
+        boolean orgLegalWithAccounting = false;
+        if ((org.getOrganizationType().isLegalEntity())
+            || (org.getOrganizationType().isBusinessUnit())) {
+          orgLegalWithAccounting = true;
         }
+        if ((!FIN_Utility.isPeriodOpen(strclient, AcctServer.DOCTYPE_FinAccTransaction, strOrgId,
+            strTransactionDate)) && orgLegalWithAccounting) {
+          try {
+            JSONObject json = new JSONObject();
+            json.put("text", "PeriodNotAvailable");
 
+            response.setContentType("text/html; charset=UTF-8");
+            PrintWriter out = response.getWriter();
+            out.println("objson = " + json);
+            out.close();
+
+          } catch (JSONException e) {
+
+            e.printStackTrace();
+          }
+
+        }
+      } finally {
+        OBContext.restorePreviousMode();
       }
     }
 

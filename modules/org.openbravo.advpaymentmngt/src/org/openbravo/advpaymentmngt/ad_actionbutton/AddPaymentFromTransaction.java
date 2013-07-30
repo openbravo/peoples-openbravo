@@ -901,18 +901,22 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
     if (!isReceipt) {
       return false;
     }
-    OBCriteria<Preference> obCriteria = OBDal.getInstance().createCriteria(Preference.class);
-    obCriteria.add(Restrictions.eq(Preference.PROPERTY_ATTRIBUTE, "Doubtful_Debt_Visibility"));
-    obCriteria.add(Restrictions.eq(Preference.PROPERTY_CLIENT, OBContext.getOBContext()
-        .getCurrentClient()));
-    obCriteria.add(Restrictions.in(Preference.PROPERTY_ORGANIZATION + ".id", OBContext
-        .getOBContext().getReadableOrganizations()));
-    Preference preference = (Preference) obCriteria.uniqueResult();
-    if (preference != null) {
-      return "Y".equals(preference.getSearchKey());
-    } else {
-      return false;
+    OBContext.setAdminMode();
+    try {
+      OBCriteria<Preference> obCriteria = OBDal.getInstance().createCriteria(Preference.class);
+      obCriteria.add(Restrictions.eq(Preference.PROPERTY_ATTRIBUTE, "Doubtful_Debt_Visibility"));
+      obCriteria.add(Restrictions.eq(Preference.PROPERTY_CLIENT, OBContext.getOBContext()
+          .getCurrentClient()));
+      obCriteria.add(Restrictions.in(Preference.PROPERTY_ORGANIZATION + ".id", OBContext
+          .getOBContext().getReadableOrganizations()));
+      Preference preference = (Preference) obCriteria.uniqueResult();
+      if (preference != null) {
+        return "Y".equals(preference.getSearchKey());
+      } else {
+        return false;
+      }
+    } finally {
+      OBContext.restorePreviousMode();
     }
-
   }
 }
