@@ -1463,8 +1463,8 @@ isc.OBViewGrid.addProperties({
      * In case the url contains advanced criteria, the initial criteria contains the criteria to be applied. So it should not be deleted.
      * Refer issue https://issues.openbravo.com/view.php?id=23333
      */
-    if(this.view.standardWindow.additionalCriteriaTabId !== this.view.tabId){
-        delete this.initialCriteria;
+    if (this.view.standardWindow.additionalCriteriaTabId !== this.view.tabId) {
+      delete this.initialCriteria;
     }
 
     // do not refresh if the parent is not selected and we have no data
