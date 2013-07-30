@@ -152,7 +152,9 @@ public class ProcessVoidLayaway extends JSONProcessSimple {
                 .getPaymentMethod(), account, amount.toString(), new Date(), order
                 .getOrganization(), null, detail, paymentAmount, false, false, order.getCurrency(),
             mulrate.setScale(stdPrecision, RoundingMode.HALF_UP), foreignAmount);
-        finPayment.setDescription(getPaymentDescription());
+        String description = getPaymentDescription();
+        description += ": " + order.getDocumentNo() + "\n";
+        finPayment.setDescription(description);
         finPayment.setStatus("RDNC");
         finPayment.setProcessed(true);
         finPayment.setAPRMProcessPayment("RE");
@@ -172,8 +174,6 @@ public class ProcessVoidLayaway extends JSONProcessSimple {
         transaction.setProcessed(true);
         transaction.setTransactionType("BPW");
         transaction.setStatus("RDNC");
-        String description = getPaymentDescription();
-        description += ": " + order.getDocumentNo() + "\n";
         transaction.setDescription(description);
         transaction.setDateAcct(POSUtils.getCurrentDate());
         transaction.setTransactionDate(POSUtils.getCurrentDate());
