@@ -273,7 +273,7 @@ isc.OBDateItem.addProperties(OB.DateItemProperties, {
 
     //Setting the value to the textual value in case text field is changed. Fixes Issue https://issues.openbravo.com/view.php?id=22381
     if (this.textField._textChanged && this.textField.getValue() && (this.textField.getValue() !== value)) {
-      value = OB.Utilities.Date.OBToJS(this.textField.getValue(), this.dateFormat);
+      value = OB.Utilities.Date.OBToJS(this.textField.getValue(), (this.showTime ? OB.Format.dateTime : OB.Format.date));
     }
 
     ret = this.Super('setValue', newArguments);
