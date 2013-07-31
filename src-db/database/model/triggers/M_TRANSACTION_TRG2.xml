@@ -15,13 +15,18 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2012 Openbravo SLU
+* All portions are Copyright (C) 2012-2013 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
   v_onhand      NUMBER;
   v_reserved    NUMBER;
   v_count       NUMBER;
+  v_product     VARCHAR(60);
+  v_attr_description    VARCHAR2(255);
+  v_product_value       VARCHAR2(40);
+  v_locator_value       VARCHAR2(40);
+  v_uom_value           VARCHAR2(3);
 
 BEGIN
   IF (AD_isTriggerEnabled() = 'N') THEN RETURN;
@@ -57,7 +62,30 @@ BEGIN
           AND rs.m_locator_id = :NEW.m_locator_id
         GROUP BY sd.qtyonhand, sd.m_storage_detail_id;
         IF (v_onhand - v_reserved < ABS(:NEW.movementqty)) THEN
-          RAISE_APPLICATION_ERROR(-20000, '@CannotTakeOutReservedStock@');
+	  SELECT value
+            INTO v_product_value
+          FROM M_Product
+          WHERE M_Product_ID = :NEW.m_product_id;
+
+          IF(:NEW.m_attributesetinstance_id IS NOT NULL) THEN
+            SELECT description
+              INTO v_attr_description
+            FROM M_AttributeSetInstance
+            WHERE M_AttributeSetInstance_ID = :NEW.m_attributesetinstance_id;
+          END IF;
+
+          SELECT uomsymbol
+            INTO v_uom_value
+          FROM C_Uom
+          WHERE C_Uom_ID = :NEW.c_uom_id;
+
+          IF (:NEW.m_locator_id IS NOT NULL) THEN
+            SELECT value
+              INTO v_locator_value
+            FROM M_Locator
+            WHERE M_Locator_ID = :NEW.m_locator_id;
+          END IF;
+          RAISE_APPLICATION_ERROR(-20000, '@CannotTakeOutReservedStock@' || ' @of@' || ' @Product@: ' || v_product_value || ', @AttributeSetInstance@: ' || COALESCE(v_attr_description, '-') || ', @UOM@: ' || v_uom_value || ' @And@'||' @StorageBin@: ' || COALESCE(v_locator_value, '-'));
         END IF;
       END IF;
     END IF;
