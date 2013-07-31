@@ -46,19 +46,19 @@ enyo.kind({
           tmp = this.owner.$.btnModalMultiSearchInput.getValue().replace('%', '');
           amount = OB.DEC.div(OB.DEC.mul(this.model.get('multiOrders').get('multiOrdersList').get(this.owner.owner.args.id).getPending(), tmp), 100);
         } catch (e) {
-          OB.UTIL.showConfirmation.display('Invalid Input', 'Invalid input');
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_notValidInput_header'), OB.I18N.getLabel('OBPOS_notValidQty'));
           return;
         }
       } else {
         try {
           amount = OB.I18N.parseNumber(this.owner.$.btnModalMultiSearchInput.getValue());
         } catch (e) {
-          OB.UTIL.showConfirmation.display('Invalid Input', 'Invalid input');
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_notValidInput_header'), OB.I18N.getLabel('OBPOS_notValidQty'));
           return;
         }
       }
       if (_.isNaN(amount)) {
-        OB.UTIL.showConfirmation.display('Invalid Input', 'Invalid input');
+        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_notValidInput_header'), OB.I18N.getLabel('OBPOS_notValidQty'));
         return;
       }
       this.model.get('multiOrders').get('multiOrdersList').get(this.owner.owner.args.id).set('amountToLayaway', amount);
