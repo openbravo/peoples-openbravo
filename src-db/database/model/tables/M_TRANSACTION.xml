@@ -171,6 +171,9 @@
       <index name="M_TRANSACTION_MOVEMENTLINE" unique="false">
         <index-column name="M_MOVEMENTLINE_ID"/>
       </index>
+      <index name="M_TRANSACTION_PRODUCTIONLINE" unique="false">
+        <index-column name="M_PRODUCTIONLINE_ID"/>
+      </index>
       <index name="M_TRANSSACTION_PRODUCT" unique="false">
         <index-column name="M_PRODUCT_ID"/>
       </index>
