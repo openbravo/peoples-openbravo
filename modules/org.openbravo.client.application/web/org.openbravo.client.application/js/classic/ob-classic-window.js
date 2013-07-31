@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -155,8 +155,12 @@ isc.OBClassicWindow.addMethods({
       return this.appFrameWindow;
     }
     iframe = this.getIframeWindow();
-    this.appFrameWindow = (iframe && iframe.appFrame ? iframe.appFrame : null); // caching
-    // reference
+    try {
+      this.appFrameWindow = (iframe && iframe.appFrame ? iframe.appFrame : null); // caching reference
+    } catch (e) {
+      //To avoid cross-domain JS error (in case it exists)
+      this.appFrameWindow = null;
+    }
     return this.appFrameWindow;
   },
 
