@@ -41,6 +41,7 @@
   v_count3                              VARCHAR2(32);
   v_productName                         M_Product.Name%TYPE;
   v_ProductionDate                      DATE;
+  v_CostingDate                         DATE;
   v_Result NUMBER:= 1;
   v_ProductionCost                      NUMBER;
   v_ProductionCost_Tmp                  NUMBER;
@@ -100,13 +101,31 @@ BEGIN
                         AND pl.CALCULATED = 'N'
                         AND pl.M_PRODUCT_ID = M_PRODUCTIONLINE.M_PRODUCT_ID);
 
-    SELECT MAX(pr.ad_client_id), MAX(pr.ad_org_id), MAX(movementdate), COUNT (*), MAX(pr.DOCUMENTNO)
-    INTO v_Client_ID, v_Org_ID, v_ProductionDate, v_count, v_ProductionNo
-    FROM M_PRODUCTION pr, M_PRODUCTIONLINE pl, M_PRODUCTIONPLAN pp
-    WHERE pr.m_production_id = p_Production_ID
-      AND pr.m_production_id = pp.m_production_id
-      AND pp.m_productionplan_id = pl.m_productionplan_id
-      AND pl.calculated = 'N';
+    SELECT count(1) INTO v_count
+    FROM DUAL WHERE EXISTS (SELECT 1 FROM ad_preference
+                      WHERE attribute = 'Cost_Eng_Ins_Migrated');
+
+    IF (v_count > 0) THEN
+      -- Costing engine migrated
+      SELECT MAX(pr.ad_client_id), MAX(pr.ad_org_id), MAX(pr.movementdate), MAX(trxprocessdate), COUNT (*), MAX(pr.DOCUMENTNO)
+      INTO v_Client_ID, v_Org_ID, v_ProductionDate, v_CostingDate, v_count, v_ProductionNo
+      FROM M_PRODUCTION pr, M_PRODUCTIONLINE pl
+        LEFT JOIN M_TRANSACTION t ON t.m_productionline_id = pl.m_productionline_id
+        , M_PRODUCTIONPLAN pp
+      WHERE pr.m_production_id = p_Production_ID
+        AND pr.m_production_id = pp.m_production_id
+        AND pp.m_productionplan_id = pl.m_productionplan_id
+        AND pl.calculated = 'N';
+    ELSE
+      -- Costing engine not migrated
+      SELECT MAX(pr.ad_client_id), MAX(pr.ad_org_id), MAX(movementdate), MAX(movementdate), COUNT (*), MAX(pr.DOCUMENTNO)
+      INTO v_Client_ID, v_Org_ID, v_ProductionDate, v_CostingDate, v_count, v_ProductionNo
+      FROM M_PRODUCTION pr, M_PRODUCTIONLINE pl, M_PRODUCTIONPLAN pp
+      WHERE pr.m_production_id = p_Production_ID
+        AND pr.m_production_id = pp.m_production_id
+        AND pp.m_productionplan_id = pl.m_productionplan_id
+        AND pl.calculated = 'N';
+    END IF;
 
     SELECT CASE COUNT(1) WHEN 0 THEN 'N' ELSE 'Y' END INTO v_iscostmigrated
     FROM DUAL
@@ -174,8 +193,8 @@ BEGIN
         FOR Cur_WIP IN (SELECT c.COST*ppl.MOVEMENTQTY AS cost, ppl.M_PRODUCTIONLINE_ID
                         FROM M_COSTING c, M_PRODUCTIONLINE ppl
                         WHERE c.M_PRODUCT_ID = ppl.M_PRODUCT_ID
-                          AND TRUNC(c.DATEFROM) <= v_ProductionDate
-                          AND TRUNC(c.DATETO) > v_ProductionDate
+                          AND TRUNC(c.DATEFROM) <= v_CostingDate
+                          AND TRUNC(c.DATETO) > v_CostingDate
                           AND ppl.PRODUCTIONTYPE = '-'
                           AND ppl.M_PRODUCTIONPLAN_ID = Cur_ProductionPlan.M_PRODUCTIONPLAN_ID
                           AND c.ISPRODUCTION='Y'
@@ -192,8 +211,8 @@ BEGIN
         FOR Cur_RawMaterial IN (SELECT c.COST*ppl.MOVEMENTQTY AS cost, ppl.M_PRODUCTIONLINE_ID
                                 FROM M_COSTING c, M_PRODUCTIONLINE ppl
                                 WHERE c.M_PRODUCT_ID = ppl.M_PRODUCT_ID
-                                  AND TRUNC(c.DATEFROM) <= v_ProductionDate
-                                  AND TRUNC(c.DATETO) > v_ProductionDate
+                                  AND TRUNC(c.DATEFROM) <= v_CostingDate
+                                  AND TRUNC(c.DATETO) > v_CostingDate
                                   AND ppl.PRODUCTIONTYPE = '-'
                                   AND ppl.M_PRODUCTIONPLAN_ID = Cur_ProductionPlan.M_PRODUCTIONPLAN_ID
                                   AND c.ISPRODUCTION='N'
@@ -201,8 +220,8 @@ BEGIN
                                   AND NOT EXISTS (SELECT 1
                                                   FROM M_COSTING, M_PRODUCTIONLINE
                                                   WHERE M_COSTING.M_PRODUCT_ID = M_PRODUCTIONLINE.M_PRODUCT_ID
-                                                    AND TRUNC(M_COSTING.DATEFROM) <= v_ProductionDate
-                                                    AND TRUNC(M_COSTING.DATETO) > v_ProductionDate
+                                                    AND TRUNC(M_COSTING.DATEFROM) <= v_CostingDate
+                                                    AND TRUNC(M_COSTING.DATETO) > v_CostingDate
                                                     AND M_PRODUCTIONLINE.PRODUCTIONTYPE = '-'
                                                     AND M_PRODUCTIONLINE.M_PRODUCT_ID = c.M_Product_ID
                                                     AND M_COSTING.ISPRODUCTION='Y'
@@ -222,7 +241,7 @@ BEGIN
             AND pl.productiontype = '-'
             AND pl.calccost IS NULL;
           IF (v_count2 > 0) THEN
-            v_message := '@NoAvgCostDefined@ @Product@: ' || v_productname || ', @Date@:' || v_ProductionDate;
+            v_message := '@NoAvgCostDefined@ @Product@: ' || v_productname || ', @Date@:' || v_CostingDate;
             RAISE_APPLICATION_ERROR(-20000, v_message);
           END IF;
         END IF;
@@ -369,16 +388,16 @@ BEGIN
           SELECT COUNT(*) INTO v_count2
           FROM M_COSTING
           WHERE M_Product_ID = Cur_ProductionLine.M_PRODUCT_ID
-            AND TRUNC(DATETO) > v_ProductionDate
-            AND TRUNC(DATEFROM) <=v_ProductionDate
+            AND TRUNC(DATETO) > v_CostingDate
+            AND TRUNC(DATEFROM) <=v_CostingDate
             AND ISPRODUCTION='Y';
           v_ResultStr := 'previous costs ' || v_count2 || ' product: ' || Cur_ProductionLine.M_Product_ID;
           IF (v_count2 IS NOT NULL AND v_count2 <> 0) THEN
             SELECT COALESCE(COST,0) INTO v_CostOld
             FROM M_COSTING
             WHERE M_Product_ID = Cur_ProductionLine.M_PRODUCT_ID
-              AND TRUNC(DATETO) > v_ProductionDate
-              AND TRUNC(DATEFROM) <=v_ProductionDate
+              AND TRUNC(DATETO) > v_CostingDate
+              AND TRUNC(DATEFROM) <=v_CostingDate
               AND ISPRODUCTION='Y';
           ELSE
             v_CostOld := 0;
@@ -427,7 +446,7 @@ BEGIN
                             PRICE,  CUMQTY,
                             COST, ISPERMANENT, ISPRODUCTION, COSTTYPE)
                      VALUES (v_NextNo,now(), p_User_ID, now(), p_User_ID, Cur_ProductionLine.AD_CLIENT_ID,
-                            Cur_ProductionLine.AD_ORG_ID, Cur_ProductionLine.M_PRODUCT_ID, TO_DATE('31-12-9999','DD-MM-YYYY'), v_ProductionDate, 'N',
+                            Cur_ProductionLine.AD_ORG_ID, Cur_ProductionLine.M_PRODUCT_ID, TO_DATE('31-12-9999','DD-MM-YYYY'), v_CostingDate, 'N',
                             Cur_ProductionLine.M_PRODUCTIONLINE_ID, Cur_ProductionLine.MOVEMENTQTY,
                             ROUND(v_Cost/Cur_ProductionLine.MOVEMENTQTY,4), COALESCE(v_Qty,0) + Cur_ProductionLine.MOVEMENTQTY,
                             (CASE (Cur_ProductionLine.MOVEMENTQTY) WHEN 0 THEN 0 ELSE ROUND(v_Cost/Cur_ProductionLine.MOVEMENTQTY,4) END), 'N', 'Y', 'AV');
@@ -438,8 +457,8 @@ BEGIN
               SELECT COUNT(*) INTO v_count2
               FROM M_COSTING
               WHERE M_Product_ID = Cur_ProductionLine.M_PRODUCT_ID
-                AND DATETO > v_ProductionDate
-                AND DATEFROM <= v_ProductionDate
+                AND DATETO > v_CostingDate
+                AND DATEFROM <= v_CostingDate
                 AND ISPRODUCTION = 'Y';
               IF (v_count2 = 1) THEN
                 --The previous calculated cost of the product must change its
@@ -447,12 +466,12 @@ BEGIN
                 SELECT M_Costing_ID, DATETO INTO v_Costing_ID, v_DateTo
                 FROM M_COSTING
                 WHERE M_Product_ID = Cur_ProductionLine.M_PRODUCT_ID
-                  AND DATETO > v_ProductionDate
-                  AND DATEFROM <=v_ProductionDate
+                  AND DATETO > v_CostingDate
+                  AND DATEFROM <=v_CostingDate
                   AND ISPRODUCTION='Y';
 
                 UPDATE M_COSTING
-                SET DATETO = v_ProductionDate
+                SET DATETO = v_CostingDate
                 WHERE M_Costing_ID = v_Costing_ID
                   AND ISPRODUCTION = 'Y';
 
@@ -485,7 +504,7 @@ BEGIN
                             COST,
                             ISPERMANENT, ISPRODUCTION, COSTTYPE)
                        VALUES (v_NextNo,now(), p_User_ID, now(), p_User_ID, Cur_ProductionLine.AD_CLIENT_ID,
-                            Cur_ProductionLine.AD_ORG_ID, Cur_ProductionLine.M_PRODUCT_ID, v_DateTo, v_ProductionDate, 'N',
+                            Cur_ProductionLine.AD_ORG_ID, Cur_ProductionLine.M_PRODUCT_ID, v_DateTo, v_CostingDate, 'N',
                             Cur_ProductionLine.M_PRODUCTIONLINE_ID, Cur_ProductionLine.MOVEMENTQTY,
                             ROUND(v_Cost/Cur_ProductionLine.MOVEMENTQTY,4), COALESCE(v_Qty,0) + Cur_ProductionLine.MOVEMENTQTY,
                             (CASE (v_Qty+Cur_ProductionLine.MOVEMENTQTY) WHEN 0 THEN 0 ELSE ROUND(((v_Qty*v_CostOld)+(v_Cost))/(v_Qty+Cur_ProductionLine.MOVEMENTQTY),4)END),
@@ -493,7 +512,7 @@ BEGIN
               ELSIF (v_count2 = 0) THEN
                 SELECT COALESCE(MIN(DATEFROM), TO_DATE('31-12-9999','DD-MM-YYYY')) INTO v_DateTo
                 FROM M_COSTING
-                WHERE DATEFROM > v_ProductionDate
+                WHERE DATEFROM > v_CostingDate
                   AND M_PRODUCT_ID = Cur_ProductionLine.M_PRODUCT_ID;
 
                 --Calculate stocked product quantity just before production
@@ -515,7 +534,7 @@ BEGIN
                             COST,
                             ISPERMANENT, ISPRODUCTION, COSTTYPE)
                        VALUES (v_NextNo,now(), p_User_ID, now(), p_User_ID, Cur_ProductionLine.AD_CLIENT_ID,
-                            Cur_ProductionLine.AD_ORG_ID, Cur_ProductionLine.M_PRODUCT_ID, v_DateTo, v_ProductionDate, 'N',
+                            Cur_ProductionLine.AD_ORG_ID, Cur_ProductionLine.M_PRODUCT_ID, v_DateTo, v_CostingDate, 'N',
                             Cur_ProductionLine.M_PRODUCTIONLINE_ID, Cur_ProductionLine.MOVEMENTQTY,
                             ROUND(v_Cost/Cur_ProductionLine.MOVEMENTQTY,4), COALESCE(v_Qty,0) + Cur_ProductionLine.MOVEMENTQTY,
                             (CASE (v_Qty+Cur_ProductionLine.MOVEMENTQTY) WHEN 0 THEN 0 ELSE ROUND(((v_Qty*v_CostOld)+(v_Cost))/(v_Qty+Cur_ProductionLine.MOVEMENTQTY),4)END),
