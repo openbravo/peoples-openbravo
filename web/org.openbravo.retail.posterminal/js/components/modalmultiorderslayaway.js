@@ -40,31 +40,31 @@ enyo.kind({
   tap: function () {
     var amount = OB.DEC.Zero,
         tmp;
-    if (this.owner.$.btnModalMultiSearchInput.getValue().length > 0) {
-      if (this.owner.$.btnModalMultiSearchInput.getValue().indexOf('%') !== -1) {
-        try {
-          tmp = this.owner.$.btnModalMultiSearchInput.getValue().replace('%', '');
-          amount = OB.DEC.div(OB.DEC.mul(this.model.get('multiOrders').get('multiOrdersList').get(this.owner.owner.args.id).getPending(), tmp), 100);
-        } catch (e) {
-          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_notValidInput_header'), OB.I18N.getLabel('OBPOS_notValidQty'));
-          return;
-        }
-      } else {
-        try {
-          amount = OB.I18N.parseNumber(this.owner.$.btnModalMultiSearchInput.getValue());
-        } catch (e) {
-          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_notValidInput_header'), OB.I18N.getLabel('OBPOS_notValidQty'));
-          return;
-        }
-      }
-      if (_.isNaN(amount)) {
+    if (this.owner.$.btnModalMultiSearchInput.getValue().indexOf('%') !== -1) {
+      try {
+        tmp = this.owner.$.btnModalMultiSearchInput.getValue().replace('%', '');
+        amount = OB.DEC.div(OB.DEC.mul(this.model.get('multiOrders').get('multiOrdersList').get(this.owner.owner.args.id).getPending(), tmp), 100);
+      } catch (e) {
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_notValidInput_header'), OB.I18N.getLabel('OBPOS_notValidQty'));
         return;
       }
-      this.model.get('multiOrders').get('multiOrdersList').get(this.owner.owner.args.id).set('amountToLayaway', amount);
-      this.model.get('multiOrders').get('multiOrdersList').get(this.owner.owner.args.id).setOrderType(null, 2);
-      this.doHideThisPopup();
+    } else {
+      try {
+        amount = OB.I18N.parseNumber(this.owner.$.btnModalMultiSearchInput.getValue());
+      } catch (e) {
+        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_notValidInput_header'), OB.I18N.getLabel('OBPOS_notValidQty'));
+        return;
+      }
     }
+    if (_.isNaN(amount)) {
+      this.model.get('multiOrders').get('multiOrdersList').get(this.owner.owner.args.id).setOrderType(null,0);
+      this.model.get('multiOrders').get('multiOrdersList').get(this.owner.owner.args.id).set('amountToLayaway', null);
+      this.doHideThisPopup();
+      return;
+    }
+    this.model.get('multiOrders').get('multiOrdersList').get(this.owner.owner.args.id).set('amountToLayaway', amount);
+    this.model.get('multiOrders').get('multiOrdersList').get(this.owner.owner.args.id).setOrderType(null, 2);
+    this.doHideThisPopup();
   },
   init: function (model) {
     this.model = model;
