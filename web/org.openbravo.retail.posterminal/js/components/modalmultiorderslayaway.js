@@ -40,15 +40,31 @@ enyo.kind({
   tap: function () {
     var amount = OB.DEC.Zero,
         tmp;
-    if (this.owner.$.btnModalMultiSearchInput.getValue().indexOf('%') !== -1) {
-      tmp = this.owner.$.btnModalMultiSearchInput.getValue().replace('%', '');
-      amount = OB.DEC.div(OB.DEC.mul(this.model.get('multiOrders').get('multiOrdersList').get(this.owner.owner.args.id).getPending(), tmp), 100);
-    } else {
-      amount = OB.I18N.parseNumber(this.owner.$.btnModalMultiSearchInput.getValue());
+    if (this.owner.$.btnModalMultiSearchInput.getValue().length > 0) {
+      if (this.owner.$.btnModalMultiSearchInput.getValue().indexOf('%') !== -1) {
+        try {
+          tmp = this.owner.$.btnModalMultiSearchInput.getValue().replace('%', '');
+          amount = OB.DEC.div(OB.DEC.mul(this.model.get('multiOrders').get('multiOrdersList').get(this.owner.owner.args.id).getPending(), tmp), 100);
+        } catch (e) {
+          OB.UTIL.showConfirmation.display('Invalid Input', 'Invalid input');
+          return;
+        }
+      } else {
+        try {
+          amount = OB.I18N.parseNumber(this.owner.$.btnModalMultiSearchInput.getValue());
+        } catch (e) {
+          OB.UTIL.showConfirmation.display('Invalid Input', 'Invalid input');
+          return;
+        }
+      }
+      if (_.isNaN(amount)) {
+        OB.UTIL.showConfirmation.display('Invalid Input', 'Invalid input');
+        return;
+      }
+      this.model.get('multiOrders').get('multiOrdersList').get(this.owner.owner.args.id).set('amountToLayaway', amount);
+      this.model.get('multiOrders').get('multiOrdersList').get(this.owner.owner.args.id).setOrderType(null, 2);
+      this.doHideThisPopup();
     }
-    this.model.get('multiOrders').get('multiOrdersList').get(this.owner.owner.args.id).set('amountToLayaway', amount);
-    this.model.get('multiOrders').get('multiOrdersList').get(this.owner.owner.args.id).setOrderType(null, 2);
-    this.doHideThisPopup();
   },
   init: function (model) {
     this.model = model;
