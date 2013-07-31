@@ -83,7 +83,7 @@ public class NoteEventHandler extends EntityPersistenceEventObserver {
   /**
    * Checks if the note is accessible by the role
    */
-  public void isReadOnly() {
+  private void isReadOnly() {
     boolean isReadOnly = false;
     String disableNotesForReadOnly = "Y", tabId = null, roleId = null, language = null;
     ConnectionProvider connection = null;
