@@ -63,16 +63,22 @@ enyo.kind({
     this.model = model;
   },
   tap: function () {
-    var i;
-    for (i = 0; this.model.get('multiOrders').get('multiOrdersList').length > i; i++) {
-      this.model.get('orderList').current = this.model.get('multiOrders').get('multiOrdersList').at(i);
-      this.model.get('orderList').deleteCurrent();
-      if (!_.isNull(this.model.get('multiOrders').get('multiOrdersList').at(i).id)) {
-        this.model.get('orderList').deleteCurrentFromDatabase(this.model.get('multiOrders').get('multiOrdersList').at(i));
+    if (this.model.get('leftColumnViewManager').isMultiOrder()) {
+      for (i = 0; this.model.get('multiOrders').get('multiOrdersList').length > i; i++) {
+        if (!this.model.get('multiOrders').get('multiOrdersList').at(i).get('isLayaway')) { //if it is not true, means that iti is a new order (not a loaded layaway)
+          continue;
+        }
+        this.model.get('orderList').current = this.model.get('multiOrders').get('multiOrdersList').at(i);
+        this.model.get('orderList').deleteCurrent();
+        if (!_.isNull(this.model.get('multiOrders').get('multiOrdersList').at(i).id)) {
+          this.model.get('orderList').deleteCurrentFromDatabase(this.model.get('multiOrders').get('multiOrdersList').at(i));
+        }
       }
+      this.model.get('multiOrders').resetValues();
+      this.model.get('leftColumnViewManager').setOrderMode();
     }
-    this.model.get('multiOrders').resetValues();
     this.doAddNewOrder();
+    return true;
   }
 });
 
