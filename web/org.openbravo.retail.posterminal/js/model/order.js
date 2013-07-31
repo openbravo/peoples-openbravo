@@ -1283,7 +1283,7 @@
         order.set('session', OB.POS.modelterminal.get('session'));
       } else {
         order.set('isPaid', true);
-        if (model.receiptPayments.length === 0) {
+        if (model.receiptPayments.length === 0 && model.totalAmount > 0) {
           order.set('paidOnCredit', true);
         }
         order.set('id', model.orderid);
