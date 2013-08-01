@@ -585,7 +585,7 @@ IF (NOT FINISH_PROCESS) THEN
             v_UpdatedBy, IsSOTrx, v_RDocumentNo, 'DR',
              'CO', 'N', 'N', v_DoctypeReversed_ID,
             v_DoctypeReversed_ID, '(*R*: ' || DocumentNo || ') ' || Description, SalesRep_ID,
-            now(), NULL, 'N', now(),
+            now(), NULL, 'N', NULL,
             now(), C_PaymentTerm_ID, C_BPartner_ID, C_BPartner_Location_ID,
             AD_User_ID, POReference, DateOrdered, IsDiscountPrinted,
             C_Currency_ID, PaymentRule, C_Charge_ID, ChargeAmt * -1,
