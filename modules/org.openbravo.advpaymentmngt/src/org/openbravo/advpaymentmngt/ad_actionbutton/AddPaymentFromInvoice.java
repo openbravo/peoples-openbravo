@@ -667,8 +667,8 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
     }
     String processOprtionsComboHtml = null;
 
-    boolean forcedFinancialAccountTransaction = finAccPaymentMethod.isAutomaticDeposit()
-        || finAccPaymentMethod.isAutomaticWithdrawn();
+    boolean forcedFinancialAccountTransaction = isReceipt ? finAccPaymentMethod
+        .isAutomaticDeposit() : finAccPaymentMethod.isAutomaticWithdrawn();
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
