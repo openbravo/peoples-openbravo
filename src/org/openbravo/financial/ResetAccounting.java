@@ -391,11 +391,16 @@ public class ResetAccounting {
 
   private static List<Date[]> getPeriodsDates(List<Period> periods) {
     List<Date[]> result = new ArrayList<Date[]>();
-    for (Period period : periods) {
-      Date[] dates = new Date[2];
-      dates[0] = period.getStartingDate();
-      dates[1] = period.getEndingDate();
-      result.add(dates);
+    OBContext.setAdminMode();
+    try {
+      for (Period period : periods) {
+        Date[] dates = new Date[2];
+        dates[0] = period.getStartingDate();
+        dates[1] = period.getEndingDate();
+        result.add(dates);
+      }
+    } catch (Exception e) {
+      OBContext.restorePreviousMode();
     }
     return result;
   }

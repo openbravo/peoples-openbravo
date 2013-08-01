@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2012 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2013 Openbravo S.L.U.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.ad_forms;
@@ -27,6 +27,7 @@ import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.SequenceIdData;
@@ -832,20 +833,25 @@ public class FactLine {
   } // save
 
   void roundToCurrencyPrecision() {
-    // Applies currency precision
-    Currency currency = OBDal.getInstance().get(Currency.class, m_C_Currency_ID);
-    org.openbravo.model.financialmgmt.accounting.coa.AcctSchema schema = OBDal.getInstance().get(
-        org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class, m_C_AcctSchema_ID);
-    m_AmtSourceCr = new BigDecimal(m_AmtSourceCr).setScale(
-        currency.getStandardPrecision().intValue(), BigDecimal.ROUND_HALF_EVEN).toString();
-    m_AmtSourceDr = new BigDecimal(m_AmtSourceDr).setScale(
-        currency.getStandardPrecision().intValue(), BigDecimal.ROUND_HALF_EVEN).toString();
-    m_AmtAcctCr = new BigDecimal(m_AmtAcctCr).setScale(
-        schema.getCurrency().getStandardPrecision().intValue(), BigDecimal.ROUND_HALF_EVEN)
-        .toString();
-    m_AmtAcctDr = new BigDecimal(m_AmtAcctDr).setScale(
-        schema.getCurrency().getStandardPrecision().intValue(), BigDecimal.ROUND_HALF_EVEN)
-        .toString();
+    OBContext.setAdminMode();
+    try {
+      // Applies currency precision
+      Currency currency = OBDal.getInstance().get(Currency.class, m_C_Currency_ID);
+      org.openbravo.model.financialmgmt.accounting.coa.AcctSchema schema = OBDal.getInstance().get(
+          org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class, m_C_AcctSchema_ID);
+      m_AmtSourceCr = new BigDecimal(m_AmtSourceCr).setScale(
+          currency.getStandardPrecision().intValue(), BigDecimal.ROUND_HALF_EVEN).toString();
+      m_AmtSourceDr = new BigDecimal(m_AmtSourceDr).setScale(
+          currency.getStandardPrecision().intValue(), BigDecimal.ROUND_HALF_EVEN).toString();
+      m_AmtAcctCr = new BigDecimal(m_AmtAcctCr).setScale(
+          schema.getCurrency().getStandardPrecision().intValue(), BigDecimal.ROUND_HALF_EVEN)
+          .toString();
+      m_AmtAcctDr = new BigDecimal(m_AmtAcctDr).setScale(
+          schema.getCurrency().getStandardPrecision().intValue(), BigDecimal.ROUND_HALF_EVEN)
+          .toString();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
   /**
