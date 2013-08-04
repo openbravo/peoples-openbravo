@@ -1547,7 +1547,7 @@ Usually, company's internal identifiers for various records (products, customers
 <!--A246D4AC538E42BE9F0CD8182A558712-->  <SORTNO><![CDATA[7]]></SORTNO>
 <!--A246D4AC538E42BE9F0CD8182A558712-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--A246D4AC538E42BE9F0CD8182A558712-->  <ISOUTFIELD><![CDATA[N]]></ISOUTFIELD>
-<!--A246D4AC538E42BE9F0CD8182A558712-->  <DEFAULT_EXPRESSION><![CDATA[if (OB.isSalesTransaction() == true) {'true'}  else {if (OB.getWindowId() == '800097' ) {'true'} else {''}}]]></DEFAULT_EXPRESSION>
+<!--A246D4AC538E42BE9F0CD8182A558712-->  <DEFAULT_EXPRESSION><![CDATA[if(OB.getWindowId() == '140') {if (OB.getParameters().get("inpissold") == "true" && OB.getParameters().get("inpispurchased") == "false") {'true'} else {''}} else {if (OB.isSalesTransaction() == true) {'true'}  else {if (OB.getWindowId() == '800097' ) {'true'} else {''}}}]]></DEFAULT_EXPRESSION>
 <!--A246D4AC538E42BE9F0CD8182A558712-->  <DISPLAY_EXPRESSION><![CDATA[customer]]></DISPLAY_EXPRESSION>
 <!--A246D4AC538E42BE9F0CD8182A558712-->  <CLAUSE_LEFT_PART><![CDATA[bp.customer]]></CLAUSE_LEFT_PART>
 <!--A246D4AC538E42BE9F0CD8182A558712-->  <AD_REFERENCE_ID><![CDATA[20]]></AD_REFERENCE_ID>
@@ -2306,7 +2306,7 @@ Usually, company's internal identifiers for various records (products, customers
 <!--F91FD25B57A74BD587AEDB091A0FD53D-->  <SORTNO><![CDATA[8]]></SORTNO>
 <!--F91FD25B57A74BD587AEDB091A0FD53D-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--F91FD25B57A74BD587AEDB091A0FD53D-->  <ISOUTFIELD><![CDATA[N]]></ISOUTFIELD>
-<!--F91FD25B57A74BD587AEDB091A0FD53D-->  <DEFAULT_EXPRESSION><![CDATA[if (OB.isSalesTransaction() == true) {''}  else {if (OB.getWindowId() == '800097' || OB.getWindowId() == '132' ) {''} else {'true'}}]]></DEFAULT_EXPRESSION>
+<!--F91FD25B57A74BD587AEDB091A0FD53D-->  <DEFAULT_EXPRESSION><![CDATA[if(OB.getWindowId() == '140') {if (OB.getParameters().get("inpispurchased") == "true" && OB.getParameters().get("inpissold") == "false") {'true'} else {''}} else {if (OB.isSalesTransaction() == true) {''}  else {if (OB.getWindowId() == '800097' || OB.getWindowId() == '132' ) {''} else {'true'}}}]]></DEFAULT_EXPRESSION>
 <!--F91FD25B57A74BD587AEDB091A0FD53D-->  <DISPLAY_EXPRESSION><![CDATA[vendor]]></DISPLAY_EXPRESSION>
 <!--F91FD25B57A74BD587AEDB091A0FD53D-->  <CLAUSE_LEFT_PART><![CDATA[bp.vendor]]></CLAUSE_LEFT_PART>
 <!--F91FD25B57A74BD587AEDB091A0FD53D-->  <AD_REFERENCE_ID><![CDATA[20]]></AD_REFERENCE_ID>
