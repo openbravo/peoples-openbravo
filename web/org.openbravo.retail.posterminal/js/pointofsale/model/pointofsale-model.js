@@ -223,6 +223,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
         currentView: {}
       },
       initialize: function () {
+        this.off();
         this.on('change:currentView', function (changedModel) {
           localStorage.setItem('leftColumnCurrentView', JSON.stringify(changedModel.get('currentView')));
           this.trigger(changedModel.get('currentView').name);

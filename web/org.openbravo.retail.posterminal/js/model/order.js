@@ -1481,6 +1481,10 @@
   });
   var MultiOrders = Backbone.Model.extend({
     modelName: 'MultiOrders',
+    initialize: function () {
+      this.off();
+      this.get('multiOrdersList').off();
+    },
     defaults: {
       //isMultiOrders: false,
       multiOrdersList: new Backbone.Collection(),
