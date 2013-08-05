@@ -212,6 +212,26 @@
       });
 
       OB.Model.Terminal.prototype.initialize.call(this);
+
+      var me = this;
+      this.router.route("login", "login", function () {
+        if (!_.isNull(me.get('context'))) {
+          OB.UTIL.showLoading(true);
+          if (OB.MobileApp.model.get('connectedToERP')) {
+            new OB.DS.Request('org.openbravo.mobile.core.login.Context').exec({}, function (inResponse) {
+              if (inResponse && !inResponse.exception) {
+                me.navigate('retail.pointofsale');
+              } else {
+                OB.MobileApp.model.triggerLogout();
+              }
+            });
+          } else {
+            me.navigate('retail.pointofsale');
+          }
+        } else {
+          this.terminal.renderLogin();
+        }
+      });
     },
 
     runSyncProcess: function (model, orderSuccessCallback) {
