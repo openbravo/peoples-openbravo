@@ -285,8 +285,9 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
           .setScale(stdPrecision, BigDecimal.ROUND_HALF_UP));
 
       if (origDiscount.compareTo(newDiscount) != 0) {
-        BigDecimal baseUnitPrice = priceList.subtract(priceList.multiply(newDiscount).divide(
-            new BigDecimal("100"), pricePrecision, BigDecimal.ROUND_HALF_UP));
+        BigDecimal baseUnitPrice = priceList.subtract(
+            priceList.multiply(newDiscount).divide(new BigDecimal("100"))).setScale(pricePrecision,
+            BigDecimal.ROUND_HALF_UP);
         if (isTaxIncludedPriceList) {
           grossUnitPrice = PriceAdjustment.calculatePriceActual(order, product, qtyOrdered,
               baseUnitPrice);
