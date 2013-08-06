@@ -20,7 +20,6 @@ package org.openbravo.materialmgmt;
 
 import java.math.BigDecimal;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -42,7 +41,6 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
-import org.openbravo.financial.FinancialUtils;
 import org.openbravo.model.ad.utility.Image;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.common.plm.ProductAccounts;
@@ -248,14 +246,12 @@ public class VariantAutomaticGenerationProcess implements Process {
   }
 
   private void setPrice(Product variant, BigDecimal price) {
-    ProductPrice prodPrice = FinancialUtils.getProductPrice(variant, new Date(), true, null, false);
-    if (prodPrice == null) {
-      throw new OBException(OBMessageUtils.parseTranslation("@GenericMustHavePriceDefined@"));
+    for (ProductPrice prodPrice : variant.getPricingProductPriceList()) {
+      prodPrice.setStandardPrice(price);
+      prodPrice.setListPrice(price);
+      prodPrice.setPriceLimit(price);
+      OBDal.getInstance().save(prodPrice);
     }
-    prodPrice.setStandardPrice(price);
-    prodPrice.setListPrice(price);
-    prodPrice.setPriceLimit(price);
-    OBDal.getInstance().save(prodPrice);
   }
 
   private class ProductCharacteristicAux {
