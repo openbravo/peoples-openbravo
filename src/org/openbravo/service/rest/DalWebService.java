@@ -22,7 +22,9 @@ package org.openbravo.service.rest;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -31,11 +33,14 @@ import org.dom4j.Document;
 import org.dom4j.io.SAXReader;
 import org.hibernate.ScrollMode;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
+import org.openbravo.base.model.Property;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.util.Check;
 import org.openbravo.base.util.CheckException;
 import org.openbravo.dal.core.DalMappingGenerator;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
@@ -73,6 +78,8 @@ public class DalWebService implements WebService {
   public static final String PARAMETER_MAXRESULT = "maxResult";
   public static final String PARAMETER_INCLUDECHILDREN = "includeChildren";
   public static final String PARAMETER_EXCEL = "excel";
+  // Parameter to specify the list of properties to be returned
+  public static final String PARAMETER_PROPERTIES = "_selectedProperties";
 
   /**
    * Performs the GET REST operation. This service handles multiple types of request: the request
@@ -93,6 +100,7 @@ public class DalWebService implements WebService {
     final String[] segments = WebServiceUtil.getInstance().getSegments(path);
 
     String xml;
+    Entity entity = null;
     if (segment == null || segment.length() == 0) {
       xml = XMLUtil.getInstance().toString(ModelXMLConverter.getInstance().getEntitiesAsXML());
     } else if (segment.equals("schema")) {
@@ -103,7 +111,7 @@ public class DalWebService implements WebService {
       final String entityName = segment;
 
       try {
-        ModelProvider.getInstance().getEntity(entityName);
+        entity = ModelProvider.getInstance().getEntity(entityName);
       } catch (final CheckException ce) {
         throw new ResourceNotFoundException("Resource " + entityName + " not found", ce);
       }
@@ -187,6 +195,9 @@ public class DalWebService implements WebService {
             exc.export(obq.list());
           } else {
             final EntityXMLConverter exc = EntityXMLConverter.newInstance();
+            if (request.getParameter(PARAMETER_PROPERTIES) != null) {
+              addSelectedPropertiesToEXC(exc, request.getParameter(PARAMETER_PROPERTIES), entity);
+            }
             exc.setOptionEmbedChildren(true);
             exc.setOptionIncludeChildren(includeChildren);
             exc.setOptionIncludeReferenced(false);
@@ -211,6 +222,7 @@ public class DalWebService implements WebService {
         }
       } else {
         final BaseOBObject result = OBDal.getInstance().get(entityName, id);
+
         if (result == null) {
           throw new ResourceNotFoundException("No resource found for entity " + entityName
               + " using id " + id);
@@ -222,6 +234,9 @@ public class DalWebService implements WebService {
         exc.setOptionIncludeReferenced(false);
         exc.setOptionExportClientOrganizationReferences(true);
         exc.setOutput(sw);
+        if (request.getParameter(PARAMETER_PROPERTIES) != null) {
+          addSelectedPropertiesToEXC(exc, request.getParameter(PARAMETER_PROPERTIES), entity);
+        }
         exc.process(result);
         xml = sw.toString();
       }
@@ -245,6 +260,101 @@ public class DalWebService implements WebService {
       w.write(xml);
       w.close();
     }
+  }
+
+  /**
+   * Parses the PARAMETER_PROPERTIES parameter, creates two maps with the list of child and not
+   * child properties for each entity beind exported and sets them in the EntityXMLConverter
+   * instance
+   * 
+   * @param exc
+   *          instance of the EntityXMLConverter where the properties will be set
+   * @param selectedProperties
+   *          list of the properties to be exported
+   * @param entity
+   *          top level entity being exported
+   */
+  private void addSelectedPropertiesToEXC(EntityXMLConverter exc, String selectedProperties,
+      Entity entity) {
+    if (selectedProperties == null || selectedProperties.isEmpty()) {
+      return;
+    }
+    Map<String, List<String>> properties = null;
+    Map<String, List<String>> childProperties = null;
+    boolean parseChildProperties = false;
+    // First parse the non child properties...
+    properties = parseProperties(selectedProperties, entity, parseChildProperties);
+    parseChildProperties = true;
+    // ... and then the child properties
+    childProperties = parseProperties(selectedProperties, entity, parseChildProperties);
+    exc.setPropertiesToBeFetched(properties);
+    exc.setChildPropertiesToBeFetched(childProperties);
+  }
+
+  /**
+   * Parses the PARAMETER_PROPERTIES parameter and returns a map with a list of the properties that
+   * should be exported for each entity being exported
+   * 
+   * @param propertiesStr
+   *          PARAMETER_PROPERTIES parameter
+   * @param entity
+   *          top level entity being exported
+   * @param childProperties
+   *          flag to specify whether the child or the non child properties should be parsed
+   */
+  private Map<String, List<String>> parseProperties(String propertiesStr, Entity entity,
+      boolean childProperties) {
+    Map<String, List<String>> properties = new HashMap<String, List<String>>();
+    for (String propertyStr : propertiesStr.split(",")) {
+      propertyStr = propertyStr.trim();
+      if (!propertyStr.isEmpty()) {
+        String key = null;
+        String value = null;
+        Property property = null;
+        if (propertyStr.contains(DalUtil.DOT)) {
+          // property of a not top-level entity
+          key = propertyStr.substring(0, propertyStr.lastIndexOf(DalUtil.DOT));
+          value = propertyStr.substring(propertyStr.lastIndexOf(DalUtil.DOT) + 1);
+          String[] propertyList;
+          if (key.contains(DalUtil.DOT)) {
+            propertyList = key.split("\\" + DalUtil.DOT);
+          } else {
+            propertyList = new String[1];
+            propertyList[0] = key;
+          }
+          Entity auxEntity = entity;
+          // Gets the entity the property belongs to
+          for (String propertyName : propertyList) {
+            auxEntity = auxEntity.getProperty(propertyName).getTargetEntity();
+          }
+          property = auxEntity.getProperty(value);
+        } else {
+          // property of the top level entity
+          key = "_top";
+          value = propertyStr;
+          property = entity.getProperty(propertyStr);
+        }
+        if (property == null) {
+          continue;
+        }
+        if (!childProperties && property.isChild()) {
+          continue;
+        }
+        if (childProperties && !property.isChild()) {
+          continue;
+        }
+        List<String> propertyList = properties.get(key);
+        if (propertyList == null) {
+          propertyList = new ArrayList<String>();
+          propertyList.add("id");
+        }
+        if (!propertyList.contains(value)) {
+          propertyList.add(value);
+        }
+        properties.put(key, propertyList);
+      }
+    }
+    return properties;
   }
 
   /**
