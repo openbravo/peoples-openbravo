@@ -51,6 +51,7 @@ enyo.kind({
     }
 
     this.doHideThisPopup();
+    this.model.get('order').set('paidOnCredit', true);
     this.model.get('order').trigger('paymentDone');
     this.model.get('order').trigger('openDrawer');
     if (!OB.POS.modelterminal.get('connectedToERP')) {
